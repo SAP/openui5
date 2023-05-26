@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/ActionExtractor",
@@ -47,10 +47,10 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when getActions is called with DT Metadata containing valid actions", function(assert) {
 			oDTMetadata = new ElementDesignTimeMetadata({
 				data: {
@@ -71,7 +71,6 @@ sap.ui.define([
 			assert.notOk(this.fnLogErrorStub.called, "then no error is raised on the log");
 		});
 	});
-
 
 	// 	oBar (Bar)
 	//  	contentLeft
@@ -108,22 +107,22 @@ sap.ui.define([
 				plugins: [this.oPlugin]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function () {
+			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oVisibleLeftButtonOverlay = OverlayRegistry.getOverlay(this.oVisibleLeftButton);
 				done();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when the control does not have a change handler for reveal", function(assert) {
 			sandbox.stub(this.oPlugin, "hasChangeHandler").resolves(false);
 
 			return this.oPlugin._isEditableCheck(this.oVisibleLeftButtonOverlay, true)
-				.then(function(bIsEditable) {
-					assert.notOk(bIsEditable, "the overlay should not be editable as no actions are available for it");
-				});
+			.then(function(bIsEditable) {
+				assert.notOk(bIsEditable, "the overlay should not be editable as no actions are available for it");
+			});
 		});
 
 		QUnit.test("when the invisible button becomes invalid (destroyed) during the reveal check", function(assert) {
@@ -141,13 +140,13 @@ sap.ui.define([
 			}.bind(this));
 
 			return this.oPlugin._isEditableCheck(this.oVisibleLeftButtonOverlay, true)
-				.then(function(bIsEditable) {
-					assert.notOk(bIsEditable, "the overlay should not be editable as no actions are available for it");
-				});
+			.then(function(bIsEditable) {
+				assert.notOk(bIsEditable, "the overlay should not be editable as no actions are available for it");
+			});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

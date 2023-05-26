@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
@@ -109,13 +109,13 @@ sap.ui.define([
 		QUnit.test("when a payload with an existing element is provided", function(assert) {
 			var oButton = new Button("someId");
 			var oLabelStub = sandbox.stub(ElementUtil, "getLabelForElement")
-				.withArgs(oButton)
-				.callsFake(function(oElement) {
-					if (oElement === oButton) {
-						return "someLabel";
-					}
-					return oLabelStub.wrappedMethod.apply(this, arguments);
-				});
+			.withArgs(oButton)
+			.callsFake(function(oElement) {
+				if (oElement === oButton) {
+					return "someLabel";
+				}
+				return oLabelStub.wrappedMethod.apply(this, arguments);
+			});
 			var mDescription = CombineVisualization.getDescription(
 				{ originalSelectors: [oButton.getId(), "someOtherId"] },
 				"fallback",
@@ -132,7 +132,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

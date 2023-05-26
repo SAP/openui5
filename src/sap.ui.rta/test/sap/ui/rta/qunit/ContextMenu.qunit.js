@@ -47,13 +47,13 @@ sap.ui.define([
 	oContentDOM.style.right = "0";
 	oContentDOM.style.bottom = "0";
 	oContentDOM.style.top = "auto";
-	document.querySelector('body').appendChild(oContentDOM);
+	document.querySelector("body").appendChild(oContentDOM);
 
 	RtaQunitUtils.renderTestAppAtAsync("content")
-		.then(function(oCompCont) {
-			oComp = oCompCont.getComponentInstance();
-			QUnit.start();
-		});
+	.then(function(oCompCont) {
+		oComp = oCompCont.getComponentInstance();
+		QUnit.start();
+	});
 
 	QUnit.module("Given RTA is started...", {
 		before: function(assert) {
@@ -75,7 +75,7 @@ sap.ui.define([
 			});
 
 			this.oRta.start().then(function() {
-				this.oContextMenu = this.oRta.getPlugins()["contextMenu"];
+				this.oContextMenu = this.oRta.getPlugins().contextMenu;
 				this.oContextMenuControl = this.oContextMenu.oContextMenuControl;
 				// wait for Binding Context of the Group before starting the Tests
 				// The Context-Menu entry for adding an element needs the Binding Context to determine entries
@@ -138,7 +138,7 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 			// fake no Elements available (with empty CachedElements)
-			var oAdditionalElementsPlugin = this.oRta.getPlugins()["additionalElements"];
+			var oAdditionalElementsPlugin = this.oRta.getPlugins().additionalElements;
 			sandbox.stub(oAdditionalElementsPlugin, "_combineAnalyzerResults").resolves([]);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
 				var sText = "";
@@ -167,7 +167,7 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 			// fake no Elements available (with undefined CachedElements)
-			var oAdditionalElementsPlugin = this.oRta.getPlugins()["additionalElements"];
+			var oAdditionalElementsPlugin = this.oRta.getPlugins().additionalElements;
 			sandbox.stub(oAdditionalElementsPlugin, "getAllElements").resolves([]);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
 				assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
@@ -188,7 +188,7 @@ sap.ui.define([
 			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
 			sandbox.stub(FieldExtensibility, "getExtensionData").resolves("foo");
 			// fake no Elements available
-			var oAdditionalElementsPlugin = this.oRta.getPlugins()["additionalElements"];
+			var oAdditionalElementsPlugin = this.oRta.getPlugins().additionalElements;
 			sandbox.stub(oAdditionalElementsPlugin, "_combineAnalyzerResults").resolves([]);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
 				assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
@@ -367,7 +367,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when context menu (context menu) is opened on a Control with a defined settings action", function(assert) {
-			var oSettings = this.oRta.getPlugins()["settings"];
+			var oSettings = this.oRta.getPlugins().settings;
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves(PropertyChange);
 			var oGroupDesigntime = {
@@ -465,7 +465,7 @@ sap.ui.define([
 				fnDone();
 			}
 
-			this.oRta.getPlugins()["contextMenu"].attachEventOnce("openedContextMenu", fnExecuteChecks);
+			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", fnExecuteChecks);
 			QUnitUtils.triggerEvent("keyup", oFormElementOverlay.getDomRef(), oParams); // should be ignored
 			bFirstCallIgnored = true;
 			QUnitUtils.triggerEvent("keyup", oFormElementOverlay.getDomRef(), oParams);
@@ -521,7 +521,7 @@ sap.ui.define([
 			this.oContextMenu.attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "the contextMenu is open");
 			});
-			return RtaQunitUtils.getContextMenuItemCount.call(this, oGroupElementOverlay).then(function (iExpectedMenuItemsCount) {
+			return RtaQunitUtils.getContextMenuItemCount.call(this, oGroupElementOverlay).then(function(iExpectedMenuItemsCount) {
 				oGroupElementOverlay.focus();
 				oGroupElementOverlay.setSelected(true);
 
@@ -532,7 +532,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when the context menu is opened twice on different elements", function (assert) {
+		QUnit.test("when the context menu is opened twice on different elements", function(assert) {
 			assert.expect(2);
 			var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
 			var oFormOverlay = OverlayRegistry.getOverlay(this.oSmartForm);
@@ -540,7 +540,7 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 
-			return RtaQunitUtils.getContextMenuItemCount.call(this, oGroupElementOverlay).then(function (iExpectedMenuItemsCount) {
+			return RtaQunitUtils.getContextMenuItemCount.call(this, oGroupElementOverlay).then(function(iExpectedMenuItemsCount) {
 				oFormOverlay.focus();
 				oFormOverlay.setSelected(true);
 				RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFormOverlay);
@@ -636,11 +636,11 @@ sap.ui.define([
 		QUnit.test("when context menu (context menu) is opened on ObjectPageSection", function(assert) {
 			assert.expect(13);
 			var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection1);
-			this.oRta.getPlugins()["contextMenu"].attachEventOnce("openedContextMenu", function() {
+			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
 					sText = sText + " - " + oItem.getKey();
@@ -667,11 +667,11 @@ sap.ui.define([
 		QUnit.test("when context menu (context menu) is opened on ObjectPageSection3", function(assert) {
 			assert.expect(13);
 			var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection3);
-			this.oRta.getPlugins()["contextMenu"].attachEventOnce("openedContextMenu", function() {
+			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
 					sText = sText + " - " + oItem.getKey();
@@ -698,11 +698,11 @@ sap.ui.define([
 		QUnit.test("when context menu (context menu) is opened on ObjectPageSection on the anchor bar", function(assert) {
 			assert.expect(13);
 			var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout.getAggregation("_anchorBar").getContent()[0]);
-			this.oRta.getPlugins()["contextMenu"].attachEventOnce("openedContextMenu", function() {
+			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
 					sText = sText + " - " + oItem.getKey();
@@ -782,11 +782,11 @@ sap.ui.define([
 		QUnit.test("when context menu (context menu) is opened on ObjectPageSection", function(assert) {
 			assert.expect(6);
 			var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection1);
-			this.oRta.getPlugins()["contextMenu"].attachEventOnce("openedContextMenu", function() {
+			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
 					sText = sText + " - " + oItem.getKey();
@@ -851,11 +851,11 @@ sap.ui.define([
 		QUnit.test("when context menu (context menu) is opened on ObjectPageLayout, and the Section has an unstable ID and is hidden, ", function(assert) {
 			assert.expect(7);
 			var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout);
-			this.oRta.getPlugins()["contextMenu"].attachEventOnce("openedContextMenu", function() {
+			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				assert.ok(oOverlay.isEditable(), "then the overlay is editable");
 				if (oContextMenuControl.getItems().length === 2) {
 					assert.equal(oContextMenuControl.getItems().length, 2, " and 2 Menu Items are available");
@@ -874,7 +874,7 @@ sap.ui.define([
 		if (oComp) {
 			oComp.destroy();
 		}
-		document.getElementById("content").style.display = 'none';
+		document.getElementById("content").style.display = "none";
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

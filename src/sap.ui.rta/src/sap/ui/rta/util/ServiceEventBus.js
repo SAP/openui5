@@ -24,12 +24,11 @@ function(
 	 */
 	var ServiceEventBus = EventBus.extend("sap.ui.rta.util.ServiceEventBus");
 
-
-	ServiceEventBus.prototype._callListener = function (fnCallback, oListener, sChannelId, sEventId, vData) {
+	ServiceEventBus.prototype._callListener = function(fnCallback, oListener, sChannelId, sEventId, vData) {
 		fnCallback.call(oListener, vData);
 	};
 
-	ServiceEventBus.prototype.getChannel = function (sChannelId) {
+	ServiceEventBus.prototype.getChannel = function(sChannelId) {
 		return this._mChannels[sChannelId];
 	};
 

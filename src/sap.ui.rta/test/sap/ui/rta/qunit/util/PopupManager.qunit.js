@@ -67,7 +67,7 @@ sap.ui.define([
 			}
 		},
 		createContent: function() {
-			var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + '</mvc:View>';
+			var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + "</mvc:View>";
 			oView = new XMLView(this.createId("mockview"), {
 				viewContent: viewContent
 			});
@@ -156,7 +156,7 @@ sap.ui.define([
 		});
 	}
 
-	//RTA Toolbar needs RTA Mode settings
+	// RTA Toolbar needs RTA Mode settings
 	document.body.classList.add("sapUiRtaMode");
 
 	QUnit.module("Given PopupManager exists", {
@@ -200,7 +200,7 @@ sap.ui.define([
 			assert.strictEqual(this.oRta.getPopupManager().oRtaRootAppComponent, undefined, "then RTA root element is not set for PopupManager before RTA is started");
 			assert.strictEqual(this.fnOverrideFunctionsSpy.callCount, 0, "then '_overrideInstanceFunctions' not called since rta is not set");
 		});
-		//_getFocusEventName
+		// _getFocusEventName
 		QUnit.test("when _getValidatedPopups is called with 2 relevant and one non-relevant popups", function(assert) {
 			assert.strictEqual(this.oRta.getPopupManager()._getFocusEventName("add"), "_activateFocusHandle", "then 'add' as parameter returns _addFocusEventListeners");
 			assert.strictEqual(this.oRta.getPopupManager()._getFocusEventName("remove"), "_deactivateFocusHandle", "then 'remove' as parameter returns _removeFocusEventListeners");
@@ -235,16 +235,16 @@ sap.ui.define([
 
 	QUnit.module("Given RTA instance is initialized", {
 		beforeEach: function() {
-			stubBefore(true/*bPersistenceAPI*/);
+			stubBefore(true/* bPersistenceAPI */);
 
-			//mock RTA instance
+			// mock RTA instance
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl")
 			});
 			oCore.applyChanges();
 			this.oOriginalInstanceManager = merge({}, InstanceManager);
 
-			//mock same app component dialog
+			// mock same app component dialog
 			oComp.runAsOwner(function() {
 				this.oDialog = new Dialog({
 					id: oComp.createId("SmartFormDialog"),
@@ -261,7 +261,7 @@ sap.ui.define([
 					contentMinWidth: "250px",
 					contentWidth: "20%"
 				});
-				this.oPopover.oPopup.setAutoClose(false); /*when focus is taken away popover might close - resulting in failing tests*/
+				this.oPopover.oPopup.setAutoClose(false); /* when focus is taken away popover might close - resulting in failing tests */
 				this.oDialog.addStyleClass("sapUiNoContentPadding");
 				oView.addContent(this.oDialog);
 				oView.addContent(this.oPopover);
@@ -329,11 +329,11 @@ sap.ui.define([
 					assert.strictEqual(typeof this.fnOverrideAddFunctionsSpy.returnValues[0], "function", "then function is returned on the first call");
 					assert.strictEqual(typeof this.fnOverrideAddFunctionsSpy.returnValues[1], "function", "then function is returned on the second call");
 					assert.ok(this.fnIsPopupAdaptableSpy.calledWith(this.oNonRtaDialog), "the isPopupAdaptable is called with the non in-app Dialog");
-					//when dialog is opened, PopupManager.open() triggers bringToFront
+					// when dialog is opened, PopupManager.open() triggers bringToFront
 					assert.notStrictEqual(this.fnToolsMenuBringToFrontSpy.callCount, 0, "then 'bringToFront' is called at least once");
 					assert.strictEqual(this.fnCreateDialogSpy.callCount, 1, "then _createPopupOverlays called once for the relevant dialog");
 					assert.ok(this.fnCreateDialogSpy.calledOn(this.oRta.getPopupManager()), "then _createPopupOverlays called with the context of PopupManager");
-					//check z-index
+					// check z-index
 					assert.ok(this.oDialog.oPopup.oContent.$().zIndex() < this.oRta.getToolbar().$().zIndex(), "then Toolbar is on top of the app component dialog");
 					assert.ok(this.oNonRtaDialog.oPopup.oContent.$().zIndex() > this.oRta.getToolbar().$().zIndex(), "then Toolbar is not placed on top of the non-RTA dialog");
 					done();
@@ -378,7 +378,6 @@ sap.ui.define([
 			this.fnCreateDialogSpy.restore();
 			sandbox.stub(oPopupManager, "_createPopupOverlays");
 			var oInnerDialog;
-
 
 			var oDialogNotAllowed = new Dialog({
 				id: "adaptNotAllowedDialog",
@@ -462,9 +461,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _removePopupPatch is called", function(assert) {
-			//Prepare for Popover
+			// Prepare for Popover
 			var done = assert.async();
-			this.oPopover.oPopup.setAutoClose(true); /* Required to re-activate to check the number of calls to Popup.prototype._addFocusEventListeners()*/
+			this.oPopover.oPopup.setAutoClose(true); /* Required to re-activate to check the number of calls to Popup.prototype._addFocusEventListeners() */
 			this.oPopover.attachAfterOpen(function() {
 				var oPopup = this.oPopover.oPopup;
 				var vPopupElement = oPopup.getContent().getDomRef();
@@ -481,7 +480,7 @@ sap.ui.define([
 					done();
 				};
 
-				//TODO find a better way to test without checking for document focus. Else case is triggered when the test window is in an inactive state*/
+				// TODO find a better way to test without checking for document focus. Else case is triggered when the test window is in an inactive state*/
 				if (document.hasFocus()) {
 					vPopupElement.addEventListener("blur", fnCheckOnAfterRendering);
 				} else {
@@ -497,19 +496,19 @@ sap.ui.define([
 
 		QUnit.test("when getCategorizedOpenPopups is called", function(assert) {
 			var done = assert.async();
-			//Dialog
+			// Dialog
 			this.oDialog.attachAfterOpen(function() {
-				//Non-RTA Dialog
+				// Non-RTA Dialog
 				this.oNonRtaDialog.attachAfterOpen(function() {
-					//Popover
+					// Popover
 					this.oPopover.attachAfterOpen(function() {
-						assert.strictEqual(this.oRta.getPopupManager().getCategorizedOpenPopups()["aDialogs"].length, 1, "then one relevant dialog returned");
-						assert.deepEqual(this.oRta.getPopupManager().getCategorizedOpenPopups()["aDialogs"][0], this.oDialog, "then only dialog with same app component returned");
-						assert.strictEqual(this.oRta.getPopupManager().getCategorizedOpenPopups()["aPopovers"].length, 1, "then one relevant popover returned");
-						assert.deepEqual(this.oRta.getPopupManager().getCategorizedOpenPopups()["aPopovers"][0], this.oPopover, "then only popover with same app component returned");
-						//Dialog Close
+						assert.strictEqual(this.oRta.getPopupManager().getCategorizedOpenPopups().aDialogs.length, 1, "then one relevant dialog returned");
+						assert.deepEqual(this.oRta.getPopupManager().getCategorizedOpenPopups().aDialogs[0], this.oDialog, "then only dialog with same app component returned");
+						assert.strictEqual(this.oRta.getPopupManager().getCategorizedOpenPopups().aPopovers.length, 1, "then one relevant popover returned");
+						assert.deepEqual(this.oRta.getPopupManager().getCategorizedOpenPopups().aPopovers[0], this.oPopover, "then only popover with same app component returned");
+						// Dialog Close
 						this.oDialog.attachAfterClose(function() {
-							assert.deepEqual(this.oRta.getPopupManager().getCategorizedOpenPopups()["aDialogs"], [], "then no relevant dialogs available");
+							assert.deepEqual(this.oRta.getPopupManager().getCategorizedOpenPopups().aDialogs, [], "then no relevant dialogs available");
 							done();
 						}.bind(this));
 						this.oDialog.close();
@@ -522,12 +521,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when getCategorizedOpenPopups is called with MessageToast opened", function(assert) {
-			//not a valid popover but using InstanceManager.AddPopoverInstance
+			// not a valid popover but using InstanceManager.AddPopoverInstance
 			MessageToast.show("Test Message");
 			var oMessageToast = InstanceManager.getOpenPopovers()[0];
 			oMessageToast.destroy();
 			assert.ok(oMessageToast instanceof Popup, "then message toast returned");
-			assert.deepEqual(this.oRta.getPopupManager().getCategorizedOpenPopups()["aPopovers"], [], "then no valid popover returned");
+			assert.deepEqual(this.oRta.getPopupManager().getCategorizedOpenPopups().aPopovers, [], "then no valid popover returned");
 		});
 
 		QUnit.test("when _applyPopupPatch is called", function(assert) {
@@ -664,11 +663,11 @@ sap.ui.define([
 		});
 	});
 
-	//integration tests
-	//when RTA is started and then dialogs are opened
+	// integration tests
+	// when RTA is started and then dialogs are opened
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
 		beforeEach: function() {
-			stubBefore(true/*bPersistenceAPI*/, true/*bAppComponentForControl*/, true/*bSettingsInstance*/);
+			stubBefore(true/* bPersistenceAPI */, true/* bAppComponentForControl */, true/* bSettingsInstance */);
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl")
 			});
@@ -692,7 +691,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when Dialog with the same app component is opened and then closed / destroyed", function(assert) {
-			//to open the dialog
+			// to open the dialog
 			this.oButton.firePress();
 			var fnCloseDone = assert.async();
 			this.oDialog.attachAfterOpen(function() {
@@ -730,15 +729,15 @@ sap.ui.define([
 		});
 	});
 
-	//Dialog open -> RTA started
+	// Dialog open -> RTA started
 	QUnit.module("Given that a dialog is open and then RTA is started", {
 		beforeEach: function(assert) {
-			stubBefore(true/*bPersistenceAPI*/, true/*bAppComponentForControl*/);
+			stubBefore(true/* bPersistenceAPI */, true/* bAppComponentForControl */);
 
 			this.oDialog = new Dialog("testDialog");
 			oView.addDependent(this.oDialog);
 			this.oButton = createDialogOpenButton.call(this);
-			//to open the dialog
+			// to open the dialog
 			this.oButton.firePress();
 			var fnOpenDone = assert.async();
 			this.oDialog.attachAfterOpen(function() {
@@ -765,7 +764,7 @@ sap.ui.define([
 				}).indexOf(this.oDialog.getId()), -1, "then the opened dialog was added as a root element");
 				assert.ok(findOverlay(this.oDialog, oRta._oDesignTime), "then overlay exists for root dialog element");
 				assert.notOk(oRta._oDesignTime.getElementOverlays()[0].getVisible(), "then the visibility from the main root control overlay is false");
-				oRta.getDependent('toolbar').destroy();
+				oRta.getDependent("toolbar").destroy();
 				oRta.destroy();
 			}.bind(this);
 
@@ -820,9 +819,9 @@ sap.ui.define([
 
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
 		beforeEach: function(assert) {
-			stubBefore(true/*bPersistenceAPI*/);
+			stubBefore(true/* bPersistenceAPI */);
 
-			//mock RTA instance
+			// mock RTA instance
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl")
 			});
@@ -845,7 +844,7 @@ sap.ui.define([
 			this.oNonRtaDialog.destroy();
 		}
 	}, function() {
-		//_getComponentForControl
+		// _getComponentForControl
 		QUnit.test("when _getComponentForControl is called with a dialog inside an embedded component", function(assert) {
 			var sBaseCompId = this.oRta.getPopupManager()._getComponentForControl(this.oNonRtaDialog).getId();
 			assert.strictEqual(sBaseCompId, oComp.getId(), "then base component id returned");

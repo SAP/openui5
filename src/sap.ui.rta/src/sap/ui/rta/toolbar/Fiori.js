@@ -46,19 +46,19 @@ function(
 		type: "fiori"
 	});
 
-	Fiori.prototype.init = function () {
+	Fiori.prototype.init = function() {
 		this._oRenderer = Utils.getFiori2Renderer();
 		this._oFioriHeader = this._oRenderer.getRootControl().getShellHeader();
 		Adaptation.prototype.init.apply(this, arguments);
 	};
 
-	Fiori.prototype.show = function () {
+	Fiori.prototype.show = function() {
 		this._oFioriHeader.addStyleClass(FIORI_HIDDEN_CLASS);
 		return Adaptation.prototype.show.apply(this, arguments);
 	};
 
-	Fiori.prototype.buildControls = function () {
-		return Adaptation.prototype.buildControls.apply(this, arguments).then(function (aControls) {
+	Fiori.prototype.buildControls = function() {
+		return Adaptation.prototype.buildControls.apply(this, arguments).then(function(aControls) {
 			var sLogoPath = this._oFioriHeader.getLogo();
 
 			if (this._oFioriHeader.getShowLogo() && sLogoPath) {
@@ -93,9 +93,9 @@ function(
 	/**
 	 * @inheritDoc
 	 */
-	Fiori.prototype.hide = function () {
+	Fiori.prototype.hide = function() {
 		return Adaptation.prototype.hide.apply(this, arguments)
-		.then(function () {
+		.then(function() {
 			this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
 		}.bind(this));
 	};
@@ -154,7 +154,7 @@ function(
 		oIconSpacer.setVisible(bVisible);
 	};
 
-	Fiori.prototype.destroy = function () {
+	Fiori.prototype.destroy = function() {
 		// In case of destroy() without normal hide() call
 		this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
 

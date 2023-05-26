@@ -187,28 +187,28 @@ sap.ui.define([
 						})
 					});
 				},
-				iSearchFor: function (sSearchString) {
+				iSearchFor: function(sSearchString) {
 					return this.waitFor({
 						controlType: "sap.m.SearchField",
 						searchOpenDialogs: true,
 						actions: new EnterText({
 							text: sSearchString
 						}),
-						success: function (vControls) {
+						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
 							Opa5.assert.equal(oControl.getValue(), sSearchString);
 						},
 						errorMessage: "SearchField was not found"
 					});
 				},
-				iClearTheSearchField: function () {
+				iClearTheSearchField: function() {
 					return this.waitFor({
 						controlType: "sap.m.SearchField",
 						searchOpenDialogs: true,
 						actions: new EnterText({
 							text: ""
 						}),
-						success: function (vControls) {
+						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
 							Opa5.assert.equal(oControl.getValue(), "", "SearchField is cleared");
 						},
@@ -299,7 +299,7 @@ sap.ui.define([
 							modelName: "contextBased"
 						},
 						searchOpenDialogs: true,
-						success: function (vControls) {
+						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
 							Opa5.assert.ok(oControl, "Manage Adaptations Table exist");
 							Opa5.assert.strictEqual(oControl.getColumns().length, iExpectedColumnCount, "Column size is as expected");
@@ -315,13 +315,13 @@ sap.ui.define([
 							modelName: "contextBased"
 						},
 						searchOpenDialogs: true,
-						success: function (vControls) {
+						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
 							Opa5.assert.strictEqual(oControl.getText().endsWith(sDate), true, "Contains the correct DateFormat");
 						}
 					});
 				},
-				iShouldSeeTheDefaultContextTable: function (bIsVisible) {
+				iShouldSeeTheDefaultContextTable: function(bIsVisible) {
 					return this.waitFor({
 						controlType: "sap.m.Dialog",
 						i18NText: {
@@ -329,7 +329,7 @@ sap.ui.define([
 							key: "MANAGE_ADAPTATIONS_DIALOG_HEADER"
 						},
 						searchOpenDialogs: true,
-						success: function (vDialogControl) {
+						success: function(vDialogControl) {
 							var oDialogControl = vDialogControl[0] || vDialogControl;
 							var aTables = oDialogControl.getAggregation("content");
 							Opa5.assert.equal(aTables.length, 2, "Dialog should have 2 tables");
@@ -339,7 +339,7 @@ sap.ui.define([
 						}
 					});
 				},
-				iShouldSeeTheEnablementOfMoveUpButton: function (bIsEnabled) {
+				iShouldSeeTheEnablementOfMoveUpButton: function(bIsEnabled) {
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						enabled: false,
@@ -347,13 +347,13 @@ sap.ui.define([
 							icon: "sap-icon://navigation-up-arrow"
 						},
 						searchOpenDialogs: true,
-						success: function (vControls) {
+						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
 							Opa5.assert.equal(oControl.getEnabled(), bIsEnabled, "The enablement of the move up button should be: " + bIsEnabled);
 						}
 					});
 				},
-				iShouldSeeTheEnablementOfMoveDownButton: function (bIsEnabled) {
+				iShouldSeeTheEnablementOfMoveDownButton: function(bIsEnabled) {
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						enabled: false,
@@ -361,13 +361,13 @@ sap.ui.define([
 							icon: "sap-icon://navigation-down-arrow"
 						},
 						searchOpenDialogs: true,
-						success: function (vControls) {
+						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
 							Opa5.assert.equal(oControl.getEnabled(), bIsEnabled, "The enablement of the move Down button should be: " + bIsEnabled);
 						}
 					});
 				},
-				iShouldSeeTheEnablementOfDragAndDrop: function (bIsEnabled) {
+				iShouldSeeTheEnablementOfDragAndDrop: function(bIsEnabled) {
 					return this.waitFor({
 						controlType: "sap.m.Table",
 						bindingPath: {
@@ -376,7 +376,7 @@ sap.ui.define([
 							modelName: "contextBased"
 						},
 						searchOpenDialogs: true,
-						success: function (vControls) {
+						success: function(vControls) {
 							var oManageAdaptationsTable = vControls[0] || vControls;
 							var oDragAndDropConfig = oManageAdaptationsTable.getDragDropConfig()[0];
 							Opa5.assert.ok(oDragAndDropConfig, "Drag&Drop config for table with id='manageAdaptationsTable' exists");
@@ -384,17 +384,17 @@ sap.ui.define([
 						}
 					});
 				},
-				iShouldSeeEmptySearchField: function () {
+				iShouldSeeEmptySearchField: function() {
 					return this.waitFor({
 						controlType: "sap.m.SearchField",
 						searchOpenDialogs: true,
-						success: function (vControls) {
+						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
 							Opa5.assert.equal(oControl.getValue(), "", "Search field is empty");
 						}
 					});
 				},
-				iShouldSeeDefaultApplicationTitle: function (sExpectedTitle) {
+				iShouldSeeDefaultApplicationTitle: function(sExpectedTitle) {
 					return this.waitFor({
 						controlType: "sap.m.Text",
 						i18NText: {
@@ -402,13 +402,13 @@ sap.ui.define([
 							key: "TXT_DEFAULT_APP"
 						},
 						searchOpenDialogs: true,
-						success: function (vControls) {
+						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
 							Opa5.assert.strictEqual(oControl.getText(), sExpectedTitle);
 						}
 					});
 				},
-				iShouldSeeTheSelectionOfAdaptation: function (sTitle) {
+				iShouldSeeTheSelectionOfAdaptation: function(sTitle) {
 					return this.waitFor({
 						controlType: "sap.m.Table",
 						bindingPath: {
@@ -417,7 +417,7 @@ sap.ui.define([
 							modelName: "contextBased"
 						},
 						searchOpenDialogs: true,
-						success: function (vControls) {
+						success: function(vControls) {
 							var oManageAdaptationsTable = vControls[0] || vControls;
 							var sSelectedContextPath = oManageAdaptationsTable.getSelectedContextPaths()[0];
 							var iIndexOfAdaptation = sSelectedContextPath.split("/")[sSelectedContextPath.split("/").length - 1];
@@ -426,7 +426,7 @@ sap.ui.define([
 						}
 					});
 				},
-				iShouldSeeNoSelections: function () {
+				iShouldSeeNoSelections: function() {
 					return this.waitFor({
 						controlType: "sap.m.Table",
 						bindingPath: {
@@ -435,7 +435,7 @@ sap.ui.define([
 							modelName: "contextBased"
 						},
 						searchOpenDialogs: true,
-						success: function (vControls) {
+						success: function(vControls) {
 							var oManageAdaptationsTable = vControls[0] || vControls;
 							Opa5.assert.equal(oManageAdaptationsTable.getSelectedContextPaths().length, 0, "No table selection was made");
 						}

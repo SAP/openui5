@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component
 	 * @returns {object} Map containing localized description text and tooltip
 	 */
-	CombineVisualization.getDescription = function (mPayload, sLabel, mPropertyBag) {
+	CombineVisualization.getDescription = function(mPayload, sLabel, mPropertyBag) {
 		var iOriginalSelectorCount = (mPayload.originalSelectors || []).length;
 		if (iOriginalSelectorCount < 2) {
 			// Fallback if no payload was provided
@@ -48,7 +48,7 @@ sap.ui.define([
 
 		var oAppComponent = mPropertyBag.appComponent;
 		var aOriginalSelectors = mPayload.originalSelectors;
-		var aLabels = aOriginalSelectors.map(function (oSelector) {
+		var aLabels = aOriginalSelectors.map(function(oSelector) {
 			var sId = JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent);
 			var oControl = Core.byId(sId);
 			return oControl ? ElementUtil.getLabelForElement(oControl) : sId;
@@ -74,10 +74,10 @@ sap.ui.define([
 				[aLabels.length]
 			),
 			descriptionTooltip: aLabels
-				.map(function(sLabel) {
-					return "\"" + sLabel + "\"";
-				})
-				.join(",\n")
+			.map(function(sLabel) {
+				return "\"" + sLabel + "\"";
+			})
+			.join(",\n")
 		};
 	};
 

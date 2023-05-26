@@ -36,7 +36,7 @@ sap.ui.define([
 	var SINGULAR = true;
 	var PLURAL = false;
 
-	function isThereAnAggregationActionForSameAggregation (mActions, mParents) {
+	function isThereAnAggregationActionForSameAggregation(mActions, mParents) {
 		var sResponsibleElementsParentAggregation = mParents.responsibleElementOverlay.getParentAggregationOverlay().getAggregationName();
 		return Object.keys(mActions).some(function(sAggregationName) {
 			return sAggregationName === sResponsibleElementsParentAggregation;
@@ -102,7 +102,7 @@ sap.ui.define([
 
 		// For add elements plugin, include other aggregations which are potentially valid targets for hidden elements
 		_getRelevantOverlays: function(oOverlay) {
-			var aRelevantOverlays = OverlayUtil.findAllOverlaysInContainer(oOverlay, /*bIncludeOtherAggregations=*/true);
+			var aRelevantOverlays = OverlayUtil.findAllOverlaysInContainer(oOverlay, /* bIncludeOtherAggregations= */true);
 
 			oOverlay.setRelevantOverlays(aRelevantOverlays);
 			return aRelevantOverlays;
@@ -143,7 +143,7 @@ sap.ui.define([
 		},
 
 		isAvailable: function(aElementOverlays, bOverlayIsSibling) {
-			return aElementOverlays.every(function (oElementOverlay) {
+			return aElementOverlays.every(function(oElementOverlay) {
 				return this._isEditableByPlugin(oElementOverlay, bOverlayIsSibling);
 			}, this);
 		},
@@ -233,72 +233,72 @@ sap.ui.define([
 			var aAllElements = [];
 
 			return ActionExtractor.getActions(bOverlayIsSibling, oResponsibleElementOverlay, this, undefined, this.getDesignTime())
-				.then(function(mRetrievedActions) {
-					if (sAggregationName === "$$OnlyChildCustomField$$") {
-						return [];
-					}
-					mActions = mRetrievedActions[sAggregationName];
-					return this.getAllElements(bOverlayIsSibling, [mParents.responsibleElementOverlay], sControlName, sDisplayText);
-				}.bind(this))
+			.then(function(mRetrievedActions) {
+				if (sAggregationName === "$$OnlyChildCustomField$$") {
+					return [];
+				}
+				mActions = mRetrievedActions[sAggregationName];
+				return this.getAllElements(bOverlayIsSibling, [mParents.responsibleElementOverlay], sControlName, sDisplayText);
+			}.bind(this))
 
-				.then(function(aCollectedElements) {
-					aAllElements = aCollectedElements;
-					// getAllElements() also sets the extensibility info
-					var oExtensibilityInfo = this.getExtensibilityInfo(bOverlayIsSibling);
-					this.getDialog().setCustomFieldEnabled(!!oExtensibilityInfo);
-					if (oExtensibilityInfo) {
-						this.getDialog().detachEvent("openCustomField", this._onOpenCustomField, this);
-						this.getDialog().attachEvent("openCustomField", bOverlayIsSibling, this._onOpenCustomField, this);
-						this.getDialog().setCustomFieldButtonVisible(true);
-						return this.getDialog().addExtensionData(oExtensibilityInfo.extensionData);
-					}
-					return this.getDialog().setCustomFieldButtonVisible(false);
+			.then(function(aCollectedElements) {
+				aAllElements = aCollectedElements;
+				// getAllElements() also sets the extensibility info
+				var oExtensibilityInfo = this.getExtensibilityInfo(bOverlayIsSibling);
+				this.getDialog().setCustomFieldEnabled(!!oExtensibilityInfo);
+				if (oExtensibilityInfo) {
+					this.getDialog().detachEvent("openCustomField", this._onOpenCustomField, this);
+					this.getDialog().attachEvent("openCustomField", bOverlayIsSibling, this._onOpenCustomField, this);
+					this.getDialog().setCustomFieldButtonVisible(true);
+					return this.getDialog().addExtensionData(oExtensibilityInfo.extensionData);
+				}
+				return this.getDialog().setCustomFieldButtonVisible(false);
+			}.bind(this))
+
+			.then(function() {
+				var oAggregationWithElements = aAllElements.filter(function(mElementsPerAggregation) {
+					return mElementsPerAggregation.aggregation === sAggregationName;
+				})[0];
+				var aElementsPerAggregation = oAggregationWithElements ? oAggregationWithElements.elements : [];
+
+				this.getDialog().setElements(aElementsPerAggregation);
+				if (sDisplayText) {
+					// Aggregation is part of title
+					var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+					var sDialogTitle = oTextResources.getText("HEADER_ADDITIONAL_ELEMENTS_WITH_AGGREGATION", sDisplayText);
+					this.getDialog().setTitle(sDialogTitle);
+				} else if (sAggregationName || sControlName) {
+					// Only one aggregation, no aggregation in title
+					this._setDialogTitle(mActions || {}, mParents.parent, sControlName);
+				}
+
+				return this.getDialog().open()
+
+				.then(function() {
+					var aSelectedElements = this.getDialog().getSelectedElements();
+					return CommandBuilder.createCommands(mParents, vSiblingElement, mActions, iIndex, aSelectedElements, sAggregationName, this);
 				}.bind(this))
 
 				.then(function() {
-					var oAggregationWithElements = aAllElements.filter(function(mElementsPerAggregation) {
-						return mElementsPerAggregation.aggregation === sAggregationName;
-					})[0];
-					var aElementsPerAggregation = oAggregationWithElements ? oAggregationWithElements.elements : [];
-
-					this.getDialog().setElements(aElementsPerAggregation);
-					if (sDisplayText) {
-						//Aggregation is part of title
-						var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-						var sDialogTitle = oTextResources.getText("HEADER_ADDITIONAL_ELEMENTS_WITH_AGGREGATION", sDisplayText);
-						this.getDialog().setTitle(sDialogTitle);
-					} else if (sAggregationName || sControlName) {
-						//Only one aggregation, no aggregation in title
-						this._setDialogTitle(mActions || {}, mParents.parent, sControlName);
-					}
-
-					return this.getDialog().open()
-
-						.then(function() {
-							var aSelectedElements = this.getDialog().getSelectedElements();
-							return CommandBuilder.createCommands(mParents, vSiblingElement, mActions, iIndex, aSelectedElements, sAggregationName, this);
-						}.bind(this))
-
-						.then(function() {
-							var oOverlayToFocus = OverlayRegistry.getOverlay(vSiblingElement) || oResponsibleElementOverlay;
-							oOverlayToFocus.focus();
-						})
-
-						.catch(function(oError) {
-							//no error means canceled dialog
-							if (oError instanceof Error) {
-								throw oError;
-							}
-						});
-				}.bind(this))
+					var oOverlayToFocus = OverlayRegistry.getOverlay(vSiblingElement) || oResponsibleElementOverlay;
+					oOverlayToFocus.focus();
+				})
 
 				.catch(function(oError) {
+					// no error means canceled dialog
 					if (oError instanceof Error) {
 						throw oError;
-					} else {
-						Log.info("Service not up to date, skipping add dialog", "sap.ui.rta");
 					}
 				});
+			}.bind(this))
+
+			.catch(function(oError) {
+				if (oError instanceof Error) {
+					throw oError;
+				} else {
+					Log.info("Service not up to date, skipping add dialog", "sap.ui.rta");
+				}
+			});
 		},
 
 		_setDialogTitle: function(mActions, oParentElement, sControlName) {
@@ -306,8 +306,8 @@ sap.ui.define([
 			this.getDialog().setTitle(sDialogTitle);
 		},
 
-		//Function called when custom field button was pressed
-		_onOpenCustomField: function (oEvent, bOverlayIsSibling) {
+		// Function called when custom field button was pressed
+		_onOpenCustomField: function(oEvent, bOverlayIsSibling) {
 			var sRtaStyleClassName = Utils.getRtaStyleClassName();
 			return FieldExtensibility.onTriggerCreateExtensionData(this.getExtensibilityInfo(bOverlayIsSibling), sRtaStyleClassName);
 		},
@@ -321,57 +321,57 @@ sap.ui.define([
 		 */
 		_isEditable: function(oOverlay, mPropertyBag) {
 			return Promise.all([this._isEditableCheck(mPropertyBag.sourceElementOverlay, true), this._isEditableCheck(mPropertyBag.sourceElementOverlay, false)])
-				.then(function(aPromiseValues) {
-					return {
-						asSibling: aPromiseValues[0],
-						asChild: aPromiseValues[1]
-					};
-				})
-				.catch(function (vError) {
-					Log.error(vError);
-				});
+			.then(function(aPromiseValues) {
+				return {
+					asSibling: aPromiseValues[0],
+					asChild: aPromiseValues[1]
+				};
+			})
+			.catch(function(vError) {
+				Log.error(vError);
+			});
 		},
 
 		_isEditableCheck: function(oOverlay, bOverlayIsSibling) {
 			return Promise.resolve()
-				.then(function() {
-					var mParents = AdditionalElementsUtils.getParents(bOverlayIsSibling, oOverlay, this);
+			.then(function() {
+				var mParents = AdditionalElementsUtils.getParents(bOverlayIsSibling, oOverlay, this);
 
-					if (!mParents.relevantContainerOverlay) {
-						return false;
-					}
+				if (!mParents.relevantContainerOverlay) {
+					return false;
+				}
 
-					return ActionExtractor.getActions(bOverlayIsSibling, oOverlay, this, true, this.getDesignTime())
-						.then(function (mActions) {
-							this.clearCachedElements();
-							return Utils.doIfAllControlsAreAvailable([oOverlay, mParents.parentOverlay], function () {
-								var bEditable = false;
-								// For the sibling case, check if anything is available for the same aggregation
-								if (bOverlayIsSibling) {
-									bEditable = isThereAnAggregationActionForSameAggregation(mActions, mParents);
-								} else {
-									bEditable = Object.keys(mActions).some(function(sAggregationName) {
-										if (mActions[sAggregationName].addViaDelegate) {
-											bEditable = this.checkAggregationsOnSelf(mParents.parentOverlay, "add", undefined, "delegate");
-										}
-										if (!bEditable && mActions[sAggregationName].reveal) {
-											return true;
-										}
-										return bEditable;
-									}.bind(this));
+				return ActionExtractor.getActions(bOverlayIsSibling, oOverlay, this, true, this.getDesignTime())
+				.then(function(mActions) {
+					this.clearCachedElements();
+					return Utils.doIfAllControlsAreAvailable([oOverlay, mParents.parentOverlay], function() {
+						var bEditable = false;
+						// For the sibling case, check if anything is available for the same aggregation
+						if (bOverlayIsSibling) {
+							bEditable = isThereAnAggregationActionForSameAggregation(mActions, mParents);
+						} else {
+							bEditable = Object.keys(mActions).some(function(sAggregationName) {
+								if (mActions[sAggregationName].addViaDelegate) {
+									bEditable = this.checkAggregationsOnSelf(mParents.parentOverlay, "add", undefined, "delegate");
+								}
+								if (!bEditable && mActions[sAggregationName].reveal) {
+									return true;
 								}
 								return bEditable;
 							}.bind(this));
-						}.bind(this))
-						.then(function (bEditable) {
-							if (bEditable) {
-								bEditable =
-									this.hasStableId(oOverlay) //don't confuse the user/Web IDE by an editable overlay without stable ID
+						}
+						return bEditable;
+					}.bind(this));
+				}.bind(this))
+				.then(function(bEditable) {
+					if (bEditable) {
+						bEditable =
+									this.hasStableId(oOverlay) // don't confuse the user/Web IDE by an editable overlay without stable ID
 									&& this.hasStableId(mParents.parentOverlay);
-							}
-							return bEditable;
-						}.bind(this));
+					}
+					return bEditable;
 				}.bind(this));
+			}.bind(this));
 		},
 
 		/**
@@ -396,41 +396,41 @@ sap.ui.define([
 			this.clearExtensibilityInfo(bOverlayIsSibling);
 
 			return ActionExtractor.getActions(bOverlayIsSibling, oElementOverlay, this, undefined, this.getDesignTime())
-				.then(function(mAllActions) {
-					each(mAllActions, function(sAggregationName) {
-						mActions = mAllActions[sAggregationName];
-						mActions.aggregation = sAggregationName;
-						if (mActions.addViaDelegate) {
-							bCheckExtensibility = true;
-						}
-						aPromises.push({
-							aggregation: sAggregationName,
-							elementPromises: [
-								mActions.reveal ? AdditionalElementsAnalyzer.enhanceInvisibleElements(mParents.parent, mActions) : Promise.resolve([]),
-								mActions.addViaDelegate ? AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(mParents.parent, mActions.addViaDelegate) : Promise.resolve([])
-							]
-						});
-					});
-					if (bCheckExtensibility) {
-						return handleExtensibility(mParents.parent);
+			.then(function(mAllActions) {
+				each(mAllActions, function(sAggregationName) {
+					mActions = mAllActions[sAggregationName];
+					mActions.aggregation = sAggregationName;
+					if (mActions.addViaDelegate) {
+						bCheckExtensibility = true;
 					}
-					return undefined;
-				})
-
-				.then(function(oExtensibilityInfo) {
-					this.setExtensibilityInfo(bOverlayIsSibling, oExtensibilityInfo);
-				}.bind(this))
-
-				.then(this._combineAnalyzerResults.bind(this, aPromises))
-
-				.then(function(aAllElements) {
-					this.setCachedElements(aAllElements, bOverlayIsSibling);
-					return aAllElements;
-				}.bind(this))
-
-				.catch(function(oError) {
-					throw oError;
+					aPromises.push({
+						aggregation: sAggregationName,
+						elementPromises: [
+							mActions.reveal ? AdditionalElementsAnalyzer.enhanceInvisibleElements(mParents.parent, mActions) : Promise.resolve([]),
+							mActions.addViaDelegate ? AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(mParents.parent, mActions.addViaDelegate) : Promise.resolve([])
+						]
+					});
 				});
+				if (bCheckExtensibility) {
+					return handleExtensibility(mParents.parent);
+				}
+				return undefined;
+			})
+
+			.then(function(oExtensibilityInfo) {
+				this.setExtensibilityInfo(bOverlayIsSibling, oExtensibilityInfo);
+			}.bind(this))
+
+			.then(this._combineAnalyzerResults.bind(this, aPromises))
+
+			.then(function(aAllElements) {
+				this.setCachedElements(aAllElements, bOverlayIsSibling);
+				return aAllElements;
+			}.bind(this))
+
+			.catch(function(oError) {
+				throw oError;
+			});
 		},
 
 		/**
@@ -440,7 +440,7 @@ sap.ui.define([
 		 * @param  {sap.ui.dt.ElementOverlay} aElementOverlays - List of overlays for which the context menu was opened
 		 * @return {object[]} Array containing the items with required data
 		 */
-		getMenuItems: function (aElementOverlays) {
+		getMenuItems: function(aElementOverlays) {
 			var aMenuItems = [];
 			var oMenuItem;
 			this.clearCachedElements();
@@ -497,7 +497,7 @@ sap.ui.define([
 					aSubMenuItems = aSubMenuItems.concat(this._buildSubmenuItems(true, aElementOverlays, aElementsWithAggregations[1]));
 				}
 			} else {
-				vHandler = function (bOverlayIsSibling, aElementOverlays) {
+				vHandler = function(bOverlayIsSibling, aElementOverlays) {
 					return this.showAvailableElements(bOverlayIsSibling, sAggregationName, aElementOverlays);
 				}.bind(this, bOverlayIsSibling);
 			}
@@ -540,12 +540,12 @@ sap.ui.define([
 				var sAggregationName = mElementsWithAggregation.aggregation;
 				var sDisplayText = getMenuItemText(bOverlayIsSibling, sAggregationName, aElementOverlays);
 				var oItem = {
-					id: sPluginId + '_' + iPosition,
+					id: sPluginId + "_" + iPosition,
 					text: sDisplayText,
 					enabled: function(aElementOverlays) {
 						return this.isEnabled(aElementOverlays, bOverlayIsSibling, sAggregationName);
 					}.bind(this),
-					handler: function (bOverlayIsSibling, aElementOverlays) {
+					handler: function(bOverlayIsSibling, aElementOverlays) {
 						// showAvailableElements has optional parameters
 						return this.showAvailableElements(bOverlayIsSibling, sAggregationName, aElementOverlays, undefined, undefined, sDisplayText);
 					}.bind(this, bOverlayIsSibling),
@@ -605,25 +605,25 @@ sap.ui.define([
 			});
 
 			return Promise.all(aCollectedPromises)
-				.then(function(aElementsPerAggregation) {
-					// Filter out results without elements
-					return aElementsPerAggregation.filter(function(oElementsPerAggregation) {
-						var aElements = oElementsPerAggregation && oElementsPerAggregation.elements;
-						return aElements.length > 0;
-					});
+			.then(function(aElementsPerAggregation) {
+				// Filter out results without elements
+				return aElementsPerAggregation.filter(function(oElementsPerAggregation) {
+					var aElements = oElementsPerAggregation && oElementsPerAggregation.elements;
+					return aElements.length > 0;
 				});
+			});
 		},
 
 		clearCachedElements: function() {
 			this._oCachedElements = undefined;
 		},
 
-		setCachedElements: function (aElements, bOverlayIsSibling) {
+		setCachedElements: function(aElements, bOverlayIsSibling) {
 			this._oCachedElements = this._oCachedElements || {};
 			this._oCachedElements[bOverlayIsSibling ? "asSibling" : "asChild"] = aElements;
 		},
 
-		getCachedElements: function (bOverlayIsSibling) {
+		getCachedElements: function(bOverlayIsSibling) {
 			if (this._oCachedElements) {
 				return this._oCachedElements[bOverlayIsSibling ? "asSibling" : "asChild"];
 			}

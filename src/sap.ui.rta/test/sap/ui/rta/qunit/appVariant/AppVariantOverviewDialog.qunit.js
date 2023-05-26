@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	AppVariantOverviewDialog,
 	AppVariantOverviewUtils,
 	AppVariantUtils,
@@ -18,7 +18,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a AppVariantOverviewDialog is available", {
-		afterEach: function () {
+		afterEach: function() {
 			this.oAppVariantOverviewDialog.destroy();
 			sandbox.restore();
 		},
@@ -229,7 +229,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

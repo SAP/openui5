@@ -47,7 +47,7 @@ sap.ui.define([
 							for (var sSemanticObject in mSetting) {
 								aSemanticObjects.push(sSemanticObject);
 							}
-							return new Promise(function (resolve) {
+							return new Promise(function(resolve) {
 								setTimeout(function() {
 									resolve(aSemanticObjects);
 								}, 0);
@@ -66,7 +66,7 @@ sap.ui.define([
 									]);
 								});
 							}
-							return new Promise(function (resolve) {
+							return new Promise(function(resolve) {
 								setTimeout(function() {
 									resolve(aLinks);
 								}, 0);

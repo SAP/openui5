@@ -38,12 +38,12 @@ sap.ui.define([
 		var vBinding;
 		if (bAbsoluteAggregationBinding) {
 			vBinding = oElement.getBindingInfo(sAggregationName, sModelName);
-			//check to be model binding otherwise return undefined
+			// check to be model binding otherwise return undefined
 			if (typeof vBinding.model === "string" && vBinding.model !== sModelName) {
 				vBinding = undefined;
 			}
 		} else {
-			//here we explicitly request the models binding context
+			// here we explicitly request the models binding context
 			vBinding = oElement.getBindingContext(sModelName);
 		}
 		return vBinding;
@@ -59,8 +59,8 @@ sap.ui.define([
 	function _flattenProperties(aProperties) {
 		var aFlattenedProperties = aProperties.reduce(function(aFlattened, oProperty) {
 			if (Array.isArray(oProperty.properties)) {
-				//currently only one level supported by our dialogs, etc. => TODO make deep types possible
-				//Only take the leaves, but attach the parent property name/label to it
+				// currently only one level supported by our dialogs, etc. => TODO make deep types possible
+				// Only take the leaves, but attach the parent property name/label to it
 				aFlattened = aFlattened.concat(oProperty.properties.map(function(mInnerProp) {
 					mInnerProp.parentPropertyName = oProperty.label || oProperty.name;
 					return mInnerProp;
@@ -81,7 +81,7 @@ sap.ui.define([
 			payload: mAction.delegateInfo.payload || {}
 		};
 		return mAction.delegateInfo.delegate.getPropertyInfo(mPropertyBag)
-			.then(_flattenProperties.bind(null));
+		.then(_flattenProperties.bind(null));
 	}
 
 	function getAllPropertiesFromDelegate(oElement, sAggregationName) {
@@ -109,20 +109,20 @@ sap.ui.define([
 		} else {
 			fnGetAllProperties = getAllPropertiesFromDelegate.bind(null, oElement, sAggregationName);
 		}
-		return fnGetAllProperties() //arguments bound before
-			.then(function(aProperties) {
-				return _checkForDuplicateProperties(aProperties);
-			});
+		return fnGetAllProperties() // arguments bound before
+		.then(function(aProperties) {
+			return _checkForDuplicateProperties(aProperties);
+		});
 	}
 
 	function _filterUnsupportedProperties(aProperties) {
 		return aProperties.filter(function(mProperty) {
-			//see _enrichProperty
+			// see _enrichProperty
 			return !(mProperty.unsupported || mProperty.hideFromReveal);
 		});
 	}
 
-	function _oPropertyToAdditionalElementInfo (oProperty) {
+	function _oPropertyToAdditionalElementInfo(oProperty) {
 		return {
 			selected: false,
 			label: oProperty.label || oProperty.name,
@@ -130,7 +130,7 @@ sap.ui.define([
 			duplicateName: oProperty.duplicateName ? oProperty.duplicateName : false,
 			tooltip: oProperty.tooltip || oProperty.label,
 			originalLabel: "",
-			//command relevant data
+			// command relevant data
 			type: "delegate",
 			entityType: oProperty.entityType,
 			name: oProperty.name,
@@ -138,7 +138,7 @@ sap.ui.define([
 		};
 	}
 
-	function _elementToAdditionalElementInfo (mData) {
+	function _elementToAdditionalElementInfo(mData) {
 		var oElement = mData.element;
 		var mAction = mData.action;
 		return {
@@ -148,8 +148,8 @@ sap.ui.define([
 			parentPropertyName: oElement.__parentPropertyName ? oElement.__parentPropertyName : "",
 			duplicateName: oElement.__duplicateName ? oElement.__duplicateName : false,
 			originalLabel: oElement.__renamedLabel && oElement.__label !== oElement.__originalLabel ? oElement.__originalLabel : "",
-			bindingPath: oElement.__bindingPath, //used for OPA tests and debugging
-			//command relevant data
+			bindingPath: oElement.__bindingPath, // used for OPA tests and debugging
+			// command relevant data
 			type: "invisible",
 			elementId: oElement.getId(),
 			sourceAggregation: mData.sourceAggregation
@@ -173,22 +173,22 @@ sap.ui.define([
 			var sRelevantContainerBindingContext = _getBindingContextPath(oElement, sAggregationName, sModelName);
 
 			return ElementUtil
-				.findAllSiblingsInContainer(oElement, oRelevantContainer)
-				// We accept only siblings that are bound on the same model
-				.filter(function (oSiblingElement) {
-					return sRelevantContainerBindingContext === _getBindingContextPath(oSiblingElement, sAggregationName, sModelName);
-				});
+			.findAllSiblingsInContainer(oElement, oRelevantContainer)
+			// We accept only siblings that are bound on the same model
+			.filter(function(oSiblingElement) {
+				return sRelevantContainerBindingContext === _getBindingContextPath(oSiblingElement, sAggregationName, sModelName);
+			});
 		}
 		return [oElement];
 	}
 
 	function _checkForDuplicateProperties(aProperties) {
 		aProperties.forEach(function(oModelProperty, index, aProperties) {
-			if (oModelProperty["duplicateName"] !== true) {
+			if (oModelProperty.duplicateName !== true) {
 				for (var j = index + 1; j < aProperties.length - 1; j++) {
 					if (oModelProperty.label === aProperties[j].label) {
-						oModelProperty["duplicateName"] = true;
-						aProperties[j]["duplicateName"] = true;
+						oModelProperty.duplicateName = true;
+						aProperties[j].duplicateName = true;
 					}
 				}
 			}
@@ -196,7 +196,7 @@ sap.ui.define([
 		return aProperties;
 	}
 
-	//check for duplicate labels to later add the parent property name/label if available
+	// check for duplicate labels to later add the parent property name/label if available
 	function _checkForDuplicateLabels(oInvisibleElement, aProperties) {
 		return aProperties.some(function(oModelProperty) {
 			return oModelProperty.label === oInvisibleElement.__label;
@@ -225,31 +225,31 @@ sap.ui.define([
 	 */
 	function _findModelProperty(aControlsBindingPaths, aProperties) {
 		return aProperties
-			.sort(function (oProperty1, oProperty2) {
-				// Temporary fix to avoid evaluating technical properties like RAP feature
-				// control flags, might lead to problems if multiple value bindings exist
-				// on a hidden control
-				return !!oProperty2.hideFromReveal - !!oProperty1.hideFromReveal;
-			})
-			.filter(function (oModelProperty) {
-				return aControlsBindingPaths.some(function(sBindingPath) {
-					//there might be some deeper binding paths available on controls,
-					//than returned by the model evaluation (e.g. navigation property paths)
-					//in this case we only check if the navigation path is valid
-					//unsupported: check existence of the property also in the navigation target
-					return (
-						sBindingPath === oModelProperty.bindingPath
-						|| sBindingPath.startsWith(oModelProperty.bindingPath + '/')
-					);
-				});
-			})
-			.pop();
+		.sort(function(oProperty1, oProperty2) {
+			// Temporary fix to avoid evaluating technical properties like RAP feature
+			// control flags, might lead to problems if multiple value bindings exist
+			// on a hidden control
+			return !!oProperty2.hideFromReveal - !!oProperty1.hideFromReveal;
+		})
+		.filter(function(oModelProperty) {
+			return aControlsBindingPaths.some(function(sBindingPath) {
+				// there might be some deeper binding paths available on controls,
+				// than returned by the model evaluation (e.g. navigation property paths)
+				// in this case we only check if the navigation path is valid
+				// unsupported: check existence of the property also in the navigation target
+				return (
+					sBindingPath === oModelProperty.bindingPath
+						|| sBindingPath.startsWith(oModelProperty.bindingPath + "/")
+				);
+			});
+		})
+		.pop();
 	}
 
 	function _vBindingToPath(vBinding) {
 		return (
 			isPlainObject(vBinding)
-				? vBinding.parts[0].path //TODO what about complex bindings with multiple paths, this was not covered so far?
+				? vBinding.parts[0].path // TODO what about complex bindings with multiple paths, this was not covered so far?
 				: !!vBinding.getPath && vBinding.getPath()
 		);
 	}
@@ -282,7 +282,7 @@ sap.ui.define([
 		return _getRepresentedPropertiesFromDelegate(mAction, sAggregationName)
 		.then(function(aRepresentedProperties) {
 			if (aRepresentedProperties === undefined) {
-				//delegate skipped taking over => evaluate binding
+				// delegate skipped taking over => evaluate binding
 				return _getRepresentedBindingPathsFromBinding(oElement, mAction, sModelName, sAggregationName);
 			}
 			var aBindingPaths = [];
@@ -292,7 +292,6 @@ sap.ui.define([
 			return aBindingPaths;
 		});
 	}
-
 
 	function _getRepresentedBindingPaths(oElement, mAction, sModelName, sAggregationName) {
 		return Promise.resolve().then(function() {
@@ -318,7 +317,7 @@ sap.ui.define([
 
 		oInvisibleElement.__tooltip = mSomeItem.tooltip;
 
-		//found element
+		// found element
 		oInvisibleElement.__bindingPath = mSomeItem.name;
 
 		// oInvisibleElement.__label has the current label retrieved before in the analysis
@@ -343,7 +342,7 @@ sap.ui.define([
 		aRepresentedProperties.some(function(oProperty) {
 			if (oProperty.id === oInvisibleElement.getId()) {
 				oRepresentedProperty = oProperty;
-				return true; //skip processing
+				return true; // skip processing
 			}
 		});
 		return oRepresentedProperty.bindingPaths || [];
@@ -414,8 +413,8 @@ sap.ui.define([
 	}
 
 	function _getModelName(mAddViaDelegate) {
-		//ManagedObject jsdoc tells to use undefined for default model, therefore it
-		//is necessary to return undefined if modelName or whole delegateInfo is missing
+		// ManagedObject jsdoc tells to use undefined for default model, therefore it
+		// is necessary to return undefined if modelName or whole delegateInfo is missing
 		return ObjectPath.get("delegateInfo.payload.modelName", mAddViaDelegate);
 	}
 
@@ -440,33 +439,33 @@ sap.ui.define([
 				_getAllPropertiesFromModels(oElement, sAggregationName, mActions),
 				_getRepresentedBindingPathsFromDelegateIfAvailable(mAddViaDelegate, sAggregationName)
 			])
-				.then(function(args) {
-					var aProperties = args[0];
-					var aRepresentedProperties = args[1];
-					var aAllElementData = [];
-					var aInvisibleElements = mRevealData.elements || [];
+			.then(function(args) {
+				var aProperties = args[0];
+				var aRepresentedProperties = args[1];
+				var aAllElementData = [];
+				var aInvisibleElements = mRevealData.elements || [];
 
-					aInvisibleElements.forEach(function(mInvisibleElement) {
-						var oInvisibleElement = mInvisibleElement.element;
-						var mRevealAction = mInvisibleElement.action;
+				aInvisibleElements.forEach(function(mInvisibleElement) {
+					var oInvisibleElement = mInvisibleElement.element;
+					var mRevealAction = mInvisibleElement.action;
 
-						oInvisibleElement.__label = ElementUtil.getLabelForElement(oInvisibleElement, mRevealAction.getLabel);
+					oInvisibleElement.__label = ElementUtil.getLabelForElement(oInvisibleElement, mRevealAction.getLabel);
 
-						var bIncludeElement = _enhanceByMetadata(oElement, sAggregationName, oInvisibleElement, mActions, aRepresentedProperties, aProperties);
+					var bIncludeElement = _enhanceByMetadata(oElement, sAggregationName, oInvisibleElement, mActions, aRepresentedProperties, aProperties);
 
-						if (bIncludeElement) {
-							aAllElementData.push({
-								element: oInvisibleElement,
-								action: mRevealAction,
-								sourceAggregation: mInvisibleElement.sourceAggregation
-							});
-						}
-					});
-					return aAllElementData;
-				})
-				.then(function(aAllElementData) {
-					return aAllElementData.map(_elementToAdditionalElementInfo);
+					if (bIncludeElement) {
+						aAllElementData.push({
+							element: oInvisibleElement,
+							action: mRevealAction,
+							sourceAggregation: mInvisibleElement.sourceAggregation
+						});
+					}
 				});
+				return aAllElementData;
+			})
+			.then(function(aAllElementData) {
+				return aAllElementData.map(_elementToAdditionalElementInfo);
+			});
 		},
 
 		/**
@@ -477,7 +476,7 @@ sap.ui.define([
 		 *
 		 * @return {Promise} - returns a Promise which resolves with a list of available to display delegate properties
 		 */
-		getUnrepresentedDelegateProperties: function (oElement, mAction) {
+		getUnrepresentedDelegateProperties: function(oElement, mAction) {
 			var sModelName = _getModelName(mAction);
 			var oDefaultAggregation = oElement.getMetadata().getAggregation();
 			var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mAction.action.aggregation;
@@ -485,29 +484,29 @@ sap.ui.define([
 				_getAllPropertiesFromAddViaDelegateAction(oElement, sAggregationName, mAction),
 				_getRepresentedBindingPaths(oElement, mAction, sModelName, sAggregationName)
 			])
-				.then(function(args) {
-					var aAllProperties = args[0];
-					var aRepresentedBindingPaths = args[1];
+			.then(function(args) {
+				var aAllProperties = args[0];
+				var aRepresentedBindingPaths = args[1];
 
-					var fnFilter = mAction.action.filter ? mAction.action.filter : function() {return true;};
+				var fnFilter = mAction.action.filter ? mAction.action.filter : function() {return true;};
 
-					var aUnrepresentedProperties = _filterUnsupportedProperties(aAllProperties);
-					aUnrepresentedProperties = aUnrepresentedProperties.filter(function(oModelProperty) {
-						var bIsRepresented = false;
-						if (aRepresentedBindingPaths) {
-							bIsRepresented = aRepresentedBindingPaths.some(function(sBindingPath) {
-								return sBindingPath === oModelProperty.bindingPath;
-							});
-						}
-						return !bIsRepresented && fnFilter(mAction.relevantContainer, oModelProperty);
-					});
-
-					aUnrepresentedProperties = _checkForDuplicateProperties(aUnrepresentedProperties);
-
-					return aUnrepresentedProperties;
-				}).then(function(aUnrepresentedProperties) {
-					return aUnrepresentedProperties.map(_oPropertyToAdditionalElementInfo);
+				var aUnrepresentedProperties = _filterUnsupportedProperties(aAllProperties);
+				aUnrepresentedProperties = aUnrepresentedProperties.filter(function(oModelProperty) {
+					var bIsRepresented = false;
+					if (aRepresentedBindingPaths) {
+						bIsRepresented = aRepresentedBindingPaths.some(function(sBindingPath) {
+							return sBindingPath === oModelProperty.bindingPath;
+						});
+					}
+					return !bIsRepresented && fnFilter(mAction.relevantContainer, oModelProperty);
 				});
+
+				aUnrepresentedProperties = _checkForDuplicateProperties(aUnrepresentedProperties);
+
+				return aUnrepresentedProperties;
+			}).then(function(aUnrepresentedProperties) {
+				return aUnrepresentedProperties.map(_oPropertyToAdditionalElementInfo);
+			});
 		}
 	};
 	return oAnalyzer;

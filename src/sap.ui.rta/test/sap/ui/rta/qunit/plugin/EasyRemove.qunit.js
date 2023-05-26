@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/m/Button",
@@ -80,7 +80,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -128,7 +128,6 @@ sap.ui.define([
 		});
 	});
 
-
 	QUnit.module("Given a designTime and EasyRemove plugin are instantiated with a OP-Section without stableID", {
 		beforeEach: function(assert) {
 			var done = assert.async();
@@ -158,7 +157,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -169,7 +168,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		oMockedAppComponent.destroy();
 		document.getElementById("qunit-fixture").style.display = "none";
 	});

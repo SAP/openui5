@@ -29,12 +29,12 @@ function(
 	Utils._checkNavigationSupported = function(oNavigationParams) {
 		var oUShellContainer = FlUtils.getUshellContainer();
 		return oUShellContainer.getServiceAsync("CrossApplicationNavigation")
-			.then(function(oNavigationService) {
-				return oNavigationService.getLinks(oNavigationParams);
-			})
-			.catch(function(vError) {
-				throw new Error("Error retrieving ushell service CrossApplicationNavigation: " + vError);
-			});
+		.then(function(oNavigationService) {
+			return oNavigationService.getLinks(oNavigationParams);
+		})
+		.catch(function(vError) {
+			throw new Error("Error retrieving ushell service CrossApplicationNavigation: " + vError);
+		});
 	};
 
 	Utils._checkAppType = function(bOriginalApp, bAppVariant) {
@@ -53,11 +53,11 @@ function(
 		// Get the id of a new created app variant
 		var sNewAppVariantId = AppVariantUtils.getNewAppVariantId();
 
-		if (sAppVarStatus === 'R') {
+		if (sAppVarStatus === "R") {
 			return oI18n.getText("MAA_OPERATION_IN_PROGRESS");
 		} else if (sNewAppVariantId === sAppVariantInfoId) {
 			AppVariantUtils.setNewAppVariantId(null);
-			if (sAppVarStatus !== 'E') {
+			if (sAppVarStatus !== "E") {
 				return oI18n.getText("MAA_NEW_APP_VARIANT");
 			}
 		}
@@ -76,7 +76,7 @@ function(
 			// Unpublished state ('U')
 			// Error state ('E')
 			// Running state ('R')
-			if (oPreparedObject.appVarStatus === 'U' || oPreparedObject.appVarStatus === 'E' || oPreparedObject.appVarStatus === 'R') {
+			if (oPreparedObject.appVarStatus === "U" || oPreparedObject.appVarStatus === "E" || oPreparedObject.appVarStatus === "R") {
 				oAppVarObject.saveAsButtonEnabled = false;
 			}
 			oAppVarObject.adaptUIButtonVisibility = true;
@@ -93,7 +93,7 @@ function(
 				}
 			} else {
 				oAppVarObject.delAppVarButtonVisibility = true;
-				if (oPreparedObject.appVarStatus === 'R') {
+				if (oPreparedObject.appVarStatus === "R") {
 					// catalog unpublishing or publishing is currently in progress => not deleteable
 					oAppVarObject.delAppVarButtonEnabled = false;
 				} else {
@@ -129,7 +129,7 @@ function(
 			if (aResult.length && oPreparedObject.isKeyUser) {
 				oNavigationObject.adaptUIButtonEnabled = true;
 
-				if (oPreparedObject.appVarStatus === 'R' || oPreparedObject.appVarStatus === 'U' || oPreparedObject.appVarStatus === 'E') {
+				if (oPreparedObject.appVarStatus === "R" || oPreparedObject.appVarStatus === "U" || oPreparedObject.appVarStatus === "E") {
 					oNavigationObject.adaptUIButtonEnabled = false;
 					oNavigationObject.appVarStatus = oPreparedObject.appVarStatus;
 				}
@@ -160,10 +160,10 @@ function(
 	Utils._prepareAppVariantAttributes = function(oAppVariantInfo) {
 		return {
 			appId: oAppVariantInfo.appId,
-			title: oAppVariantInfo.title || '',
-			subTitle: oAppVariantInfo.subTitle || '',
-			description: oAppVariantInfo.description || '',
-			icon: oAppVariantInfo.iconUrl || '',
+			title: oAppVariantInfo.title || "",
+			subTitle: oAppVariantInfo.subTitle || "",
+			description: oAppVariantInfo.description || "",
+			icon: oAppVariantInfo.iconUrl || "",
 			iconText: oAppVariantInfo.iconText,
 			isOriginal: oAppVariantInfo.isOriginal,
 			isAppVariant: oAppVariantInfo.isAppVariant,
@@ -177,7 +177,7 @@ function(
 		// Adding the tooltip to every icon which is shown on the App Variant Overview Dialog
 		var sIconUrl = oAppVariantInfo.iconUrl;
 		if (sIconUrl && IconPool.isIconURI(sIconUrl)) {
-			oAppVariantInfo.iconText = sIconUrl.split('//')[1];
+			oAppVariantInfo.iconText = sIconUrl.split("//")[1];
 		}
 
 		oAppVariantAttributes = this._prepareAppVariantAttributes(oAppVariantInfo);
@@ -221,7 +221,7 @@ function(
 
 	Utils.getAppVariantOverview = function(sReferenceAppId, bKeyUser) {
 		// Customer* means the layer can be either CUSTOMER or CUSTOMER_BASE. This layer determination takes place in backend.
-		var sLayer = bKeyUser ? 'CUSTOMER*' : 'VENDOR';
+		var sLayer = bKeyUser ? "CUSTOMER*" : "VENDOR";
 
 		var mPropertyBag = {
 			selector: {

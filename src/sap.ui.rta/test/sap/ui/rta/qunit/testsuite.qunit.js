@@ -832,12 +832,12 @@ sap.ui.define([
 
 	var bCompAvailable = false;
 	var oXhr = new XMLHttpRequest();
-	oXhr.onreadystatechange = function () {
+	oXhr.onreadystatechange = function() {
 		if (this.readyState === 4) {
 			switch (this.status) {
 				case 200:
 				case 304:
-					bCompAvailable = JSON.parse(this.responseText).libraries.some(function (mLibrary) {
+					bCompAvailable = JSON.parse(this.responseText).libraries.some(function(mLibrary) {
 						return mLibrary.name === "sap.ui.comp";
 					});
 					break;

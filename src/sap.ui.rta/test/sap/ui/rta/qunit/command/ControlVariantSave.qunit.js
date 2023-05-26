@@ -94,7 +94,7 @@ sap.ui.define([
 					controlChanges: [this.oChange1, this.oChange2]
 				};
 
-				this.oModel.oData["variantMgmtId1"].variantsEditable = true;
+				this.oModel.oData.variantMgmtId1.variantsEditable = true;
 
 				this.oGetCurrentLayerStub = sinon.stub(FlLayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 				sinon.stub(VariantManagementState, "getControlChangesForVariant").returns([this.oChange1, this.oChange2]);
@@ -127,26 +127,26 @@ sap.ui.define([
 			return CommandFactory.getCommandFor(this.oVariantManagement, "save", {
 				model: this.oModel
 			}, oDesignTimeMetadata, mFlexSettings)
-				.then(function(oCommand) {
-					oControlVariantSaveCommand = oCommand;
-					assert.ok(oControlVariantSaveCommand, "control variant save command exists for element");
-					return oControlVariantSaveCommand.execute();
-				})
-				.then(function() {
-					assert.ok(oControlVariantSaveCommand._aDirtyChanges[0].getSavedToVariant(), "the first change is assigned to variant");
-					assert.ok(oControlVariantSaveCommand._aDirtyChanges[1].getSavedToVariant(), "the second change is assigned to variant");
-					assert.strictEqual(oInvalidationStub.callCount, 1, "the map was invalidated");
-					return oControlVariantSaveCommand.undo();
-				})
-				.then(function() {
-					assert.notOk(oControlVariantSaveCommand._aDirtyChanges[0].getSavedToVariant(), "the first change is not assigned to variant");
-					assert.notOk(oControlVariantSaveCommand._aDirtyChanges[1].getSavedToVariant(), "the second change is not assigned to variant");
-					assert.strictEqual(oInvalidationStub.callCount, 2, "the map was invalidated again");
-					return oControlVariantSaveCommand.undo();
-				})
-				.then(function() {
-					assert.ok(true, "then by default a Promise.resolve() is returned on undo(), even if no changes exist for the command");
-				});
+			.then(function(oCommand) {
+				oControlVariantSaveCommand = oCommand;
+				assert.ok(oControlVariantSaveCommand, "control variant save command exists for element");
+				return oControlVariantSaveCommand.execute();
+			})
+			.then(function() {
+				assert.ok(oControlVariantSaveCommand._aDirtyChanges[0].getSavedToVariant(), "the first change is assigned to variant");
+				assert.ok(oControlVariantSaveCommand._aDirtyChanges[1].getSavedToVariant(), "the second change is assigned to variant");
+				assert.strictEqual(oInvalidationStub.callCount, 1, "the map was invalidated");
+				return oControlVariantSaveCommand.undo();
+			})
+			.then(function() {
+				assert.notOk(oControlVariantSaveCommand._aDirtyChanges[0].getSavedToVariant(), "the first change is not assigned to variant");
+				assert.notOk(oControlVariantSaveCommand._aDirtyChanges[1].getSavedToVariant(), "the second change is not assigned to variant");
+				assert.strictEqual(oInvalidationStub.callCount, 2, "the map was invalidated again");
+				return oControlVariantSaveCommand.undo();
+			})
+			.then(function() {
+				assert.ok(true, "then by default a Promise.resolve() is returned on undo(), even if no changes exist for the command");
+			});
 		});
 	});
 

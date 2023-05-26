@@ -121,25 +121,25 @@ sap.ui.define([
 		}
 
 		return this.hasChangeHandler(mChangeSpecificData.changeType, oControl, sControlType)
-			.then(function(bHasChangeHandler) {
-				if (aSelectedOverlays[0].getVariantManagement && bHasChangeHandler && !oSettingsAction.CAUTION_variantIndependent) {
-					sVariantManagementReference = aSelectedOverlays[0].getVariantManagement();
-				}
-				return this.getCommandFactory().getCommandFor(
-					vSelector,
-					"settings",
-					mChangeSpecificData,
-					undefined,
-					sVariantManagementReference
-				);
-			}.bind(this))
-			.then(function(oSettingsCommand) {
-				var bRuntimeOnly = oSettingsAction.runtimeOnly;
-				if (oSettingsCommand && bRuntimeOnly) {
-					oSettingsCommand.setRuntimeOnly(bRuntimeOnly);
-				}
-				return oCompositeCommand.addCommand(oSettingsCommand);
-			});
+		.then(function(bHasChangeHandler) {
+			if (aSelectedOverlays[0].getVariantManagement && bHasChangeHandler && !oSettingsAction.CAUTION_variantIndependent) {
+				sVariantManagementReference = aSelectedOverlays[0].getVariantManagement();
+			}
+			return this.getCommandFactory().getCommandFor(
+				vSelector,
+				"settings",
+				mChangeSpecificData,
+				undefined,
+				sVariantManagementReference
+			);
+		}.bind(this))
+		.then(function(oSettingsCommand) {
+			var bRuntimeOnly = oSettingsAction.runtimeOnly;
+			if (oSettingsCommand && bRuntimeOnly) {
+				oSettingsCommand.setRuntimeOnly(bRuntimeOnly);
+			}
+			return oCompositeCommand.addCommand(oSettingsCommand);
+		});
 	};
 
 	Settings.prototype._handleAppDescriptorChangeCommand = function(mChange, oElement, oCompositeCommand) {

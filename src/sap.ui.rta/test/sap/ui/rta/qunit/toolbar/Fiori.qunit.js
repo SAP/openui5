@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"../RtaQunitUtils",
@@ -34,7 +34,7 @@ function(
 	sinon,
 	oCore
 ) {
-	'use strict';
+	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
@@ -82,7 +82,7 @@ function(
 		});
 	}
 
-	QUnit.module('Basic functionality', {
+	QUnit.module("Basic functionality", {
 		beforeEach: function(assert) {
 			oCore.applyChanges();
 
@@ -104,13 +104,13 @@ function(
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 
 			this.oToolbar.onFragmentLoaded().then(function() {
-				var oImage = this.oToolbar.getControl('icon');
+				var oImage = this.oToolbar.getControl("icon");
 				assert.ok(oImage, "then the logo is among the controls");
 				assert.equal(oImage.getMetadata().getName(), "sap.m.Image", "then the logo control is set correctly");
 				assert.equal(oImage.getSrc(), "logo", "then the name of the logo is correctly set");
 
 				var oErrorStub = sandbox.stub(Log, "error");
-				var oImg = document.createElement('img');
+				var oImg = document.createElement("img");
 				oImg.width = "5px";
 				oImg.height = "5px";
 				this.oToolbar._checkLogoSize(oImg, 6, 6);
@@ -233,7 +233,7 @@ function(
 					fnDone();
 				}.bind(this));
 				document.getElementById("qunit-fixture").style.width = "1600px";
-				window.dispatchEvent(new Event('resize'));
+				window.dispatchEvent(new Event("resize"));
 			}.bind(this));
 			return createAndStartRTA.call(this).then(function() {
 				assert.ok(this.oToolbar.getControl("iconBox").getVisible(), "first the logo is visible");
@@ -242,7 +242,7 @@ function(
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

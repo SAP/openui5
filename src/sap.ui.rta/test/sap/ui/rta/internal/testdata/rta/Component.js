@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel"
-], function (
+], function(
 	App,
 	UIComponent,
 	SmartLinkUtil,

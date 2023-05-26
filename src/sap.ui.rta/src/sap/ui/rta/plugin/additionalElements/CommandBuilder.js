@@ -53,20 +53,20 @@ sap.ui.define([
 		var sTargetAggregation = mPropertyBag.targetAggregation;
 		var oPlugin = mPropertyBag.plugin;
 		return createRevealCommandForInvisible(oSelectedElement, mActions, mParents, oPlugin)
-			.then(function(oRevealCommandForInvisible) {
-				oCompositeCommand.addCommand(oRevealCommandForInvisible);
-				return createMoveCommandForInvisible(oSelectedElement, mParents, oSiblingElement, iIndex, sTargetAggregation, oPlugin);
-			})
-			.then(function(oMoveCommandForInvisible) {
-				if (oMoveCommandForInvisible) {
-					oCompositeCommand.addCommand(oMoveCommandForInvisible);
-				} else {
-					Log.warning("No move action configured for "
+		.then(function(oRevealCommandForInvisible) {
+			oCompositeCommand.addCommand(oRevealCommandForInvisible);
+			return createMoveCommandForInvisible(oSelectedElement, mParents, oSiblingElement, iIndex, sTargetAggregation, oPlugin);
+		})
+		.then(function(oMoveCommandForInvisible) {
+			if (oMoveCommandForInvisible) {
+				oCompositeCommand.addCommand(oMoveCommandForInvisible);
+			} else {
+				Log.warning("No move action configured for "
 						+ mParents.parent.getMetadata().getName()
 						+ ", aggregation: " + oSelectedElement.aggregation, "sap.ui.rta");
-				}
-				return oCompositeCommand;
-			});
+			}
+			return oCompositeCommand;
+		});
 	}
 
 	function createRevealCommandForInvisible(mSelectedElement, mActions, mParents, oPlugin) {
@@ -100,7 +100,7 @@ sap.ui.define([
 	function createMoveCommandForInvisible(oSelectedElement, mParents, oSiblingElement, iIndex, sTargetAggregationName, oPlugin) {
 		var oRevealedElement = ElementUtil.getElementInstance(oSelectedElement.elementId);
 		var oRevealedElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
-		//Elements can also be moved between aggregations inside the parent
+		// Elements can also be moved between aggregations inside the parent
 		var sSourceAggregationName = oSelectedElement.sourceAggregation;
 		var oSourceParent = oRevealedElementOverlay.getParentElementOverlay().getElement() || mParents.parent;
 		var oTargetParent = mParents.parent;
@@ -169,18 +169,18 @@ sap.ui.define([
 		var oParentAggregationOverlay = mPropertyBag.parents.parentOverlay.getAggregationOverlay(mPropertyBag.actions.aggregation);
 		var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
 		return createCommandForAddLibrary(mPropertyBag.parents, mRequiredLibraries, oParentAggregationDTMetadata, mPropertyBag.plugin)
-			.then(function(oCommandForAddLibrary) {
-				if (oCommandForAddLibrary) {
-					oCompositeCommand.addCommand(oCommandForAddLibrary);
-				}
-				return createAddViaDelegateCommand(mPropertyBag, oParentAggregationDTMetadata);
-			})
-			.then(function(oAddViaDelegateCommand) {
-				if (oAddViaDelegateCommand) {
-					oCompositeCommand.addCommand(oAddViaDelegateCommand);
-				}
-				return oCompositeCommand;
-			});
+		.then(function(oCommandForAddLibrary) {
+			if (oCommandForAddLibrary) {
+				oCompositeCommand.addCommand(oCommandForAddLibrary);
+			}
+			return createAddViaDelegateCommand(mPropertyBag, oParentAggregationDTMetadata);
+		})
+		.then(function(oAddViaDelegateCommand) {
+			if (oAddViaDelegateCommand) {
+				oCompositeCommand.addCommand(oAddViaDelegateCommand);
+			}
+			return oCompositeCommand;
+		});
 	}
 
 	function getODataServiceUriFromManifest(oManifest) {
@@ -254,49 +254,49 @@ sap.ui.define([
 		if (aSelectedElements.length > 0) {
 			return oPlugin.getCommandFactory().getCommandFor(mParents.parent, "composite")
 
-					.then(function(oCompositeCommand) {
-						var oPromise = Promise.resolve();
-						aSelectedElements.forEach(function(oSelectedElement) {
-							var mPropertyBag = {
-								compositeCommand: oCompositeCommand,
-								selectedElement: oSelectedElement,
-								parents: mParents,
-								siblingElement: oSiblingElement,
-								actions: mActions,
-								index: iIndex,
-								targetAggregation: sTargetAggregation,
-								plugin: oPlugin
-							};
-							switch (oSelectedElement.type) {
-								case "invisible":
-									oPromise = oPromise.then(
-										createCommandsForInvisibleElement.bind(this, mPropertyBag));
-									break;
-								case "delegate":
-									oPromise = oPromise.then(
-										createCommandsForAddViaDelegate.bind(this, mPropertyBag));
-									break;
-								default:
-									Log.error("Can't create command for untreated element.type " + oSelectedElement.type);
-							}
-						}, this);
-						return oPromise.then(function() { return oCompositeCommand; });
-					}.bind(this))
+			.then(function(oCompositeCommand) {
+				var oPromise = Promise.resolve();
+				aSelectedElements.forEach(function(oSelectedElement) {
+					var mPropertyBag = {
+						compositeCommand: oCompositeCommand,
+						selectedElement: oSelectedElement,
+						parents: mParents,
+						siblingElement: oSiblingElement,
+						actions: mActions,
+						index: iIndex,
+						targetAggregation: sTargetAggregation,
+						plugin: oPlugin
+					};
+					switch (oSelectedElement.type) {
+						case "invisible":
+							oPromise = oPromise.then(
+								createCommandsForInvisibleElement.bind(this, mPropertyBag));
+							break;
+						case "delegate":
+							oPromise = oPromise.then(
+								createCommandsForAddViaDelegate.bind(this, mPropertyBag));
+							break;
+						default:
+							Log.error("Can't create command for untreated element.type " + oSelectedElement.type);
+					}
+				}, this);
+				return oPromise.then(function() { return oCompositeCommand; });
+			}.bind(this))
 
-					.then(function(oCompositeCommand) {
-						oPlugin.fireElementModified({
-							command: oCompositeCommand
-						});
-					})
+			.then(function(oCompositeCommand) {
+				oPlugin.fireElementModified({
+					command: oCompositeCommand
+				});
+			})
 
-					.catch(function(vMessage) {
-						throw DtUtils.propagateError(
-							vMessage,
-							"AdditionalElementsPlugin#_createCommands",
-							"Error occurred during _createCommands execution",
-							"sap.ui.rta.plugin"
-						);
-					});
+			.catch(function(vMessage) {
+				throw DtUtils.propagateError(
+					vMessage,
+					"AdditionalElementsPlugin#_createCommands",
+					"Error occurred during _createCommands execution",
+					"sap.ui.rta.plugin"
+				);
+			});
 		}
 		return Promise.resolve();
 	};

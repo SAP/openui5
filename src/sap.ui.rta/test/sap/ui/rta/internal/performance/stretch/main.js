@@ -10,7 +10,7 @@ sap.ui.require([
 	window.wpp = {
 		customMetrics: {}
 	};
-	window.onAppReady = new Promise(function (fnResolve) {
+	window.onAppReady = new Promise(function(fnResolve) {
 		window.fnResolve = fnResolve;
 	});
 	Measurement.setActive(true);

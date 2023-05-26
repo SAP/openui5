@@ -22,7 +22,7 @@ sap.ui.define([
 	var oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	QUnit.module("Given startKeyUserAdaptation()", {
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {

@@ -19,7 +19,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/m/MessageBox",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
-], function (
+], function(
 	sinon,
 	RtaAppVariantFeature,
 	AppVariantOverviewUtils,
@@ -79,7 +79,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that a RtaAppVariantFeature is instantiated", {
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.stub(FlUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(undefined));
 			sandbox.restore();
 		},
@@ -88,7 +88,7 @@ sap.ui.define([
 				document.getElementById("sapUiBusyIndicator").style.display = "none";
 			}
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when isManifestSupported() is called,", function(assert) {
 			var oMockedDescriptorData = {
 				"sap.app": {
@@ -973,7 +973,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

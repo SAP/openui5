@@ -29,7 +29,7 @@ sap.ui.define([
 			this.getRouter().initialize();
 		},
 
-		_startMockServer: function () {
+		_startMockServer: function() {
 			var sURL = "/destinations/E91/sap/opu/odata/SAP/EmbeddedComponentTest/";
 			var oMockServer = new MockServer({
 				rootUri: sURL
@@ -42,7 +42,7 @@ sap.ui.define([
 			return sURL;
 		},
 
-		_setModels: function (sURL) {
+		_setModels: function(sURL) {
 			var oModel = new ODataModel(sURL, {
 				json: true,
 				loadMetadataAsync: true
@@ -73,9 +73,9 @@ sap.ui.define([
 
 			if (!FlexUtils.getUshellContainer()) {
 				FeaturesAPI.isKeyUser()
-					.then(function (bIsKeyUser) {
-						oAppModel.setProperty("/showOuterAdaptButton", bIsKeyUser);
-					});
+				.then(function(bIsKeyUser) {
+					oAppModel.setProperty("/showOuterAdaptButton", bIsKeyUser);
+				});
 			}
 		}
 	});

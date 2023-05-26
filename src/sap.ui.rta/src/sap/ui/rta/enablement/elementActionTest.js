@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/library" //we have to ensure to load fl, so that change handler gets registered
+	"sap/ui/fl/library" // we have to ensure to load fl, so that change handler gets registered
 ], function(
 	UIComponent,
 	ComponentContainer,
@@ -121,7 +121,6 @@ sap.ui.define([
 			});
 		});
 
-
 		var UI_COMPONENT_NAME = "sap.ui.rta.control.enabling.comp";
 		var SYNC = false;
 		var ASYNC = true;
@@ -186,16 +185,16 @@ sap.ui.define([
 
 			return aActions.reduce(function(oLastPromise, oAction) {
 				return oLastPromise
-					.then(buildCommand.bind(this, assert, oAction))
-					.then(function(oCommand) {
-						aCommands.push(oCommand);
-						// Execute commands one by one to allow change dependencies
-						return oCommand.execute();
-					});
-			}.bind(this), Promise.resolve())
-				.then(function() {
-					return aCommands;
+				.then(buildCommand.bind(this, assert, oAction))
+				.then(function(oCommand) {
+					aCommands.push(oCommand);
+					// Execute commands one by one to allow change dependencies
+					return oCommand.execute();
 				});
+			}.bind(this), Promise.resolve())
+			.then(function() {
+				return aCommands;
+			});
 		}
 
 		function buildCommand(assert, oAction) {
@@ -437,7 +436,7 @@ sap.ui.define([
 			sandbox.stub(ChangePersistence.prototype, "getCacheKey").resolves("etag-123");
 
 			return createViewInComponent.call(this, SYNC)
-				.then(buildCommandsAndApplyChangesOnXML.bind(this, assert, aChanges));
+			.then(buildCommandsAndApplyChangesOnXML.bind(this, assert, aChanges));
 		}
 
 		function buildCommandsAndApplyChangesOnXML(assert, aChanges) {
@@ -449,21 +448,21 @@ sap.ui.define([
 
 			return aActions.reduce(function(oLastPromise, oAction) {
 				return oLastPromise
-					.then(buildCommand.bind(this, assert, oAction))
-					.then(function(oCommand) {
-						aCommands.push(oCommand);
-						aChanges.push(oCommand.getPreparedChange());
+				.then(buildCommand.bind(this, assert, oAction))
+				.then(function(oCommand) {
+					aCommands.push(oCommand);
+					aChanges.push(oCommand.getPreparedChange());
 
-						// Destroy and recreate component and view to get the changes applied
-						// Wait for each change to be applied individually to allow dependencies
-						// between changes of different actions
-						this.oUiComponentContainer.destroy();
-						return createViewInComponent.call(this, ASYNC);
-					}.bind(this));
-			}.bind(this), Promise.resolve())
-				.then(function() {
-					this.aCommands = aCommands;
+					// Destroy and recreate component and view to get the changes applied
+					// Wait for each change to be applied individually to allow dependencies
+					// between changes of different actions
+					this.oUiComponentContainer.destroy();
+					return createViewInComponent.call(this, ASYNC);
 				}.bind(this));
+			}.bind(this), Promise.resolve())
+			.then(function() {
+				this.aCommands = aCommands;
+			}.bind(this));
 		}
 
 		// XML View checks
@@ -565,16 +564,16 @@ sap.ui.define([
 				return mOptions.after.call(this.hookContext, assert);
 			},
 			beforeEach: function(assert) {
-				//no LREP response needed
+				// no LREP response needed
 				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve([]));
-				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(Cache.NOTAG); //no cache key => no xml view processing
+				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(Cache.NOTAG); // no cache key => no xml view processing
 				sandbox.stub(Settings, "getInstance").returns(Promise.resolve({_oSettings: {}}));
 
 				return createViewInComponent.call(this, SYNC)
-					.then(buildAndExecuteCommands.bind(this, assert))
-					.then(function(aCommands) {
-						this.aCommands = aCommands;
-					}.bind(this));
+				.then(buildAndExecuteCommands.bind(this, assert))
+				.then(function(aCommands) {
+					this.aCommands = aCommands;
+				}.bind(this));
 			},
 			afterEach: function() {
 				this.oDesignTime.destroy();

@@ -25,7 +25,7 @@ sap.ui.define([
 	function evaluateTemplateBinding(oElementOverlay) {
 		var mBoundControl = ElementUtil.getAggregationInformation(oElementOverlay.getElement());
 		if (mBoundControl.elementId) {
-			//check for additional binding
+			// check for additional binding
 			var oBoundControlOverlay = OverlayRegistry.getOverlay(mBoundControl.elementId);
 			var oParentElementOverlay = oBoundControlOverlay.getParentElementOverlay();
 			var bAdditionalBinding = oParentElementOverlay ?
@@ -259,7 +259,7 @@ sap.ui.define([
 				changeOnRelevantContainer: mSettings.changeOnRelevantContainer,
 				changeType: mSettings.changeType
 			});
-			delete mSettings["changeOnRelevantContainer"]; // this property is not required for a sap.ui.rta.command.CustomAdd
+			delete mSettings.changeOnRelevantContainer; // this property is not required for a sap.ui.rta.command.CustomAdd
 			return oAction;
 		}
 		return undefined;
@@ -406,14 +406,14 @@ sap.ui.define([
 			return Promise.reject(DtUtil.createError("CommandFactory#getCommandFor", "Command '" + sCommand + "' doesn't exist, check typing", "sap.ui.rta"));
 		}
 
-		return new Promise(function (fnResolve) {
+		return new Promise(function(fnResolve) {
 			var sClassName = mCommand.clazz;
-			sap.ui.require([sClassName], function (Command) {
+			sap.ui.require([sClassName], function(Command) {
 				fnResolve(Command);
 			});
 		})
 
-		.then(function (Command) {
+		.then(function(Command) {
 			var bIsUiElement = vElement instanceof ManagedObject;
 
 			// only sap.ui.rta.command.FlexCommand requires a selector property
@@ -458,7 +458,7 @@ sap.ui.define([
 
 			oCommand = new Command(mSettings);
 
-			var bSuccessfullyConfigured = true; //configuration is optional
+			var bSuccessfullyConfigured = true; // configuration is optional
 			if (mCommand.configure) {
 				bSuccessfullyConfigured = configureActionCommand(oCommand, oAction);
 			}
@@ -503,7 +503,7 @@ sap.ui.define([
 		}
 	});
 
-	CommandFactory.prototype.init = function () {
+	CommandFactory.prototype.init = function() {
 		this.setProperty("flexSettings", {
 			layer: Layer.CUSTOMER,
 			developerMode: true
@@ -515,7 +515,7 @@ sap.ui.define([
 	 *
 	 * @param {Object} [mFlexSettings] - Property bag. See {@link sap.ui.rta.RuntimeAuthoring#setFlexSettings} method for more information
 	 */
-	CommandFactory.prototype.setFlexSettings = function (mFlexSettings) {
+	CommandFactory.prototype.setFlexSettings = function(mFlexSettings) {
 		this.setProperty("flexSettings", Object.assign(this.getFlexSettings(), mFlexSettings));
 	};
 
@@ -528,7 +528,7 @@ sap.ui.define([
 	 * @param {string} sVariantManagementReference - Variant management reference
 	 * @returns {Promise} A promise which will return the created command
 	 */
-	CommandFactory.prototype.getCommandFor = function (vElement, sCommand, mSettings, oDesignTimeMetadata, sVariantManagementReference) {
+	CommandFactory.prototype.getCommandFor = function(vElement, sCommand, mSettings, oDesignTimeMetadata, sVariantManagementReference) {
 		return getCommandFor(vElement, sCommand, mSettings, oDesignTimeMetadata, this.getFlexSettings(), sVariantManagementReference);
 	};
 
@@ -547,7 +547,7 @@ sap.ui.define([
 	 * @param {string} [mFlexSettings.generator] - Generator of the change. Will be saved in the change
 	 * @returns {Promise} A promise which will return the created command
 	 */
-	CommandFactory.getCommandFor = function (vElement, sCommand, mSettings, oDesignTimeMetadata, mFlexSettings) {
+	CommandFactory.getCommandFor = function(vElement, sCommand, mSettings, oDesignTimeMetadata, mFlexSettings) {
 		if (!mFlexSettings) {
 			mFlexSettings = {
 				layer: Layer.CUSTOMER,

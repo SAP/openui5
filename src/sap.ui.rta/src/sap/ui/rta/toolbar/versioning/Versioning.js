@@ -67,8 +67,8 @@ sap.ui.define([
 		this.getToolbar().fireEvent("switchVersion", {version: sVersion});
 	}
 
-	function doesActiveVersionExists (aVersions) {
-		return aVersions.some(function (oVersion) {
+	function doesActiveVersionExists(aVersions) {
+		return aVersions.some(function(oVersion) {
 			return oVersion.type === Version.Type.Active;
 		});
 	}
@@ -161,7 +161,7 @@ sap.ui.define([
 				sType = Version.Type.Active;
 			}
 		} else {
-			var oDisplayedVersion = aVersions.find(function (oVersion) {
+			var oDisplayedVersion = aVersions.find(function(oVersion) {
 				return oVersion.version === sDisplayedVersion;
 			});
 			if (oDisplayedVersion) {
@@ -232,20 +232,20 @@ sap.ui.define([
 				name: "sap.ui.rta.toolbar.versioning.VersionTitleDialog",
 				id: this.getToolbar().getId() + "_fragment--sapUiRta_activateVersionDialog",
 				controller: {
-					onConfirmVersioningDialog: function () {
+					onConfirmVersioningDialog: function() {
 						var sVersionTitle = this.getToolbar().getControl("activateVersionDialog--versionTitleInput").getValue();
 						this.getToolbar().fireEvent("activate", {versionTitle: sVersionTitle});
 						this._oActivateVersionDialog.close();
 					}.bind(this),
-					onCancelVersioningDialog: function () {
+					onCancelVersioningDialog: function() {
 						this._oActivateVersionDialog.close();
 					}.bind(this),
-					onVersionTitleLiveChange: function (oEvent) {
+					onVersionTitleLiveChange: function(oEvent) {
 						var sValue = oEvent.getParameter("value");
 						this.getToolbar().getControl("activateVersionDialog--confirmVersionTitleButton").setEnabled(!!sValue);
 					}.bind(this)
 				}
-			}).then(function (oDialog) {
+			}).then(function(oDialog) {
 				this._oActivateVersionDialog = oDialog;
 				oDialog.addStyleClass(Utils.getRtaStyleClassName());
 				this.getToolbar().addDependent(this._oActivateVersionDialog);
@@ -255,7 +255,7 @@ sap.ui.define([
 			this.getToolbar().getControl("activateVersionDialog--confirmVersionTitleButton").setEnabled(false);
 		}
 
-		return this._oActivateVersionDialogPromise.then(function () {
+		return this._oActivateVersionDialogPromise.then(function() {
 			var sTitle = this.oTextResources.getText("TIT_VERSION_TITLE_DIALOG");
 			if (sDisplayedVersion !== Version.Number.Draft) {
 				sTitle = this.oTextResources.getText("TIT_REACTIVATE_VERSION_TITLE_DIALOG");

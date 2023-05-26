@@ -54,33 +54,33 @@ sap.ui.define([
 
 			BusyIndicator.show();
 			return Promise.resolve()
-				.then(function() {
-					if (oUShellContainer) {
-						return oUShellContainer.getServiceAsync("CrossApplicationNavigation")
-							.then(function(oCrossAppNavService) {
-								_oCrossAppNavService = oCrossAppNavService;
-							});
-					}
-					return undefined;
-				})
-				.then(AppVariantOverviewUtils.getAppVariantOverview.bind(AppVariantOverviewUtils, _sIdRunningApp, _bKeyUser))
-				.then(function(aAppVariantOverviewAttributes) {
-					BusyIndicator.hide();
-					if (aAppVariantOverviewAttributes.length) {
-						return this._arrangeOverviewDataAndBindToModel(aAppVariantOverviewAttributes).then(function(aAppVariantOverviewAttributes) {
-							return this._highlightNewCreatedAppVariant(aAppVariantOverviewAttributes);
-						}.bind(this));
-					}
-					AppVariantUtils.closeOverviewDialog();
-					return this._showMessageWhenNoAppVariantsExist();
-				}.bind(this))
-				.catch(function(oError) {
-					AppVariantUtils.closeOverviewDialog();
-					var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_MANAGE_APPS_FAILED", oError);
-					oErrorInfo.overviewDialog = true;
-					BusyIndicator.hide();
-					return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
-				});
+			.then(function() {
+				if (oUShellContainer) {
+					return oUShellContainer.getServiceAsync("CrossApplicationNavigation")
+					.then(function(oCrossAppNavService) {
+						_oCrossAppNavService = oCrossAppNavService;
+					});
+				}
+				return undefined;
+			})
+			.then(AppVariantOverviewUtils.getAppVariantOverview.bind(AppVariantOverviewUtils, _sIdRunningApp, _bKeyUser))
+			.then(function(aAppVariantOverviewAttributes) {
+				BusyIndicator.hide();
+				if (aAppVariantOverviewAttributes.length) {
+					return this._arrangeOverviewDataAndBindToModel(aAppVariantOverviewAttributes).then(function(aAppVariantOverviewAttributes) {
+						return this._highlightNewCreatedAppVariant(aAppVariantOverviewAttributes);
+					}.bind(this));
+				}
+				AppVariantUtils.closeOverviewDialog();
+				return this._showMessageWhenNoAppVariantsExist();
+			}.bind(this))
+			.catch(function(oError) {
+				AppVariantUtils.closeOverviewDialog();
+				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_MANAGE_APPS_FAILED", oError);
+				oErrorInfo.overviewDialog = true;
+				BusyIndicator.hide();
+				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+			});
 		},
 
 		_createResourceBundle: function() {
@@ -182,14 +182,14 @@ sap.ui.define([
 			}
 			if (!bAdaptUIButtonEnabled) {
 				switch (sAppVarStatus) {
-					case 'R':
+					case "R":
 						// For S4/Hana Cloud systems
 						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_RUNNING");
-					case 'U':
+					case "U":
 						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD_ERROR");
-					case 'E':
+					case "E":
 						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD_ERROR");
-					case 'P':
+					case "P":
 						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_PUBLISHED");
 					case undefined:
 						// For S4/Hana onPrem systems
@@ -283,11 +283,11 @@ sap.ui.define([
 			var bCurrentlyAdapting = sCurrentStatus === oI18n.getText("MAA_CURRENTLY_ADAPTING");
 
 			return AppVariantUtils.showRelevantDialog(oInfo)
-				.then(function() {
-					return RtaAppVariantFeature.onDeleteFromOverviewDialog(sAppVarId, bCurrentlyAdapting, _sLayer);
-				}).catch(function() {
-					return true;
-				});
+			.then(function() {
+				return RtaAppVariantFeature.onDeleteFromOverviewDialog(sAppVarId, bCurrentlyAdapting, _sLayer);
+			}).catch(function() {
+				return true;
+			});
 		}
 	});
 });

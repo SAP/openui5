@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_intersection",
 	"sap/m/InstanceManager"
 ],
-function (
+function(
 	Plugin,
 	Utils,
 	OverlayRegistry,
@@ -68,7 +68,7 @@ function (
 	function hasSharedMultiSelectionPlugins(aElementOverlays, aMultiSelectionRequiredPlugins) {
 		var aSharedMultiSelectionPlugins = aMultiSelectionRequiredPlugins.slice();
 
-		aElementOverlays.forEach(function (oElementOverlay) {
+		aElementOverlays.forEach(function(oElementOverlay) {
 			aSharedMultiSelectionPlugins = _intersection(aSharedMultiSelectionPlugins, oElementOverlay.getEditableByPlugins());
 		});
 
@@ -76,7 +76,7 @@ function (
 	}
 
 	function hasSharedRelevantContainer(aElementOverlays) {
-		return aElementOverlays.every(function (oElementOverlay) {
+		return aElementOverlays.every(function(oElementOverlay) {
 			return oElementOverlay.getRelevantContainer() === aElementOverlays[0].getRelevantContainer();
 		});
 	}
@@ -88,12 +88,12 @@ function (
 	}
 
 	function isOfSameType(aElementOverlays) {
-		return aElementOverlays.every(function (oElementOverlay) {
+		return aElementOverlays.every(function(oElementOverlay) {
 			return oElementOverlay.getElement().getMetadata().getName() === aElementOverlays[0].getElement().getMetadata().getName();
 		});
 	}
 
-	Selection.prototype.init = function () {
+	Selection.prototype.init = function() {
 		this._multiSelectionValidator = this._multiSelectionValidator.bind(this);
 		Plugin.prototype.init.apply(this, arguments);
 	};
@@ -104,7 +104,7 @@ function (
 	 * @returns {boolean} true if it's in developer mode
 	 * @private
 	 */
-	Selection.prototype._checkDeveloperMode = function (oOverlay, oDesignTimeMetadata) {
+	Selection.prototype._checkDeveloperMode = function(oOverlay, oDesignTimeMetadata) {
 		if (oDesignTimeMetadata) {
 			var bDeveloperMode = this.getCommandFactory().getFlexSettings().developerMode;
 			if (bDeveloperMode && this.hasStableId(oOverlay)) {
@@ -137,7 +137,7 @@ function (
 	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay object
 	 * @override
 	 */
-	Selection.prototype.registerElementOverlay = function (oOverlay) {
+	Selection.prototype.registerElementOverlay = function(oOverlay) {
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 		if (
 			!oDesignTimeMetadata.markedAsNotAdaptable() &&
@@ -245,11 +245,11 @@ function (
 	 *
 	 * @private
 	 */
-	Selection.prototype._deselectOverlays = function () {
+	Selection.prototype._deselectOverlays = function() {
 		this.getDesignTime().getSelectionManager().reset();
 	};
 
-	Selection.prototype._selectOverlay = function (oEvent) {
+	Selection.prototype._selectOverlay = function(oEvent) {
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (!this.getIsActive()) {
 			// Propagation should be stopped at the root overlay to prevent the selection of the underlying elements
@@ -367,21 +367,21 @@ function (
 	 * @override
 	 */
 	Selection.prototype.setDesignTime = function() {
-		//detach from listener from old DesignTime instance
+		// detach from listener from old DesignTime instance
 		if (this.getDesignTime()) {
 			this.getDesignTime().getSelectionManager().removeValidator(this._multiSelectionValidator);
 		}
 
-		//set new DesignTime instance in parent class
+		// set new DesignTime instance in parent class
 		Plugin.prototype.setDesignTime.apply(this, arguments);
 
-		//attach listener back to the new DesignTime instance
+		// attach listener back to the new DesignTime instance
 		if (this.getDesignTime()) {
 			this.getDesignTime().getSelectionManager().addValidator(this._multiSelectionValidator);
 		}
 	};
 
-	Selection.prototype._multiSelectionValidator = function (aElementOverlays) {
+	Selection.prototype._multiSelectionValidator = function(aElementOverlays) {
 		return (
 			aElementOverlays.length === 1
 			|| (

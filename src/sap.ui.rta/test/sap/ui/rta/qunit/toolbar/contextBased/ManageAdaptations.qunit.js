@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"../../RtaQunitUtils",
@@ -95,10 +95,10 @@ sap.ui.define([
 				sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves({adaptations: [DEFAULT_ADAPTATION]});
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 				return this.oManageAdaptations.openManageAdaptationDialog()
-					.then(function (oDialog) {
-						this.oDialog = oDialog;
-						return this.oToolbar._pFragmentLoaded;
-					}.bind(this));
+				.then(function(oDialog) {
+					this.oDialog = oDialog;
+					return this.oToolbar._pFragmentLoaded;
+				}.bind(this));
 			}
 		}, function() {
 			QUnit.test("and context-based adaptations dialog is visible", function(assert) {
@@ -157,7 +157,7 @@ sap.ui.define([
 				this.oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox");
 
 				return this.oManageAdaptations.openManageAdaptationDialog()
-				.then(function (oDialog) {
+				.then(function(oDialog) {
 					this.oDialog = oDialog;
 					this.oMoveUpButton = getControl(this.oToolbar, "moveUpButton");
 					this.oMoveDownButton = getControl(this.oToolbar, "moveDownButton");
@@ -176,7 +176,7 @@ sap.ui.define([
 
 			QUnit.test("and the priority of the context-based adaptations is first moved down then up again using the up and down button", function(assert) {
 				var sFirstAdaptationText = this.oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
-					.mAggregations.items[0].getProperty("text");
+				.mAggregations.items[0].getProperty("text");
 				this.oAdaptationsTable.getItems()[0].focus();
 				this.oAdaptationsTable.setSelectedItem(this.oAdaptationsTable.getItems()[0], true, true);
 
@@ -186,13 +186,13 @@ sap.ui.define([
 
 				this.oMoveDownButton.firePress();
 				var sNewFirstAdaptationText = this.oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
-					.mAggregations.items[0].getProperty("text");
+				.mAggregations.items[0].getProperty("text");
 				assert.notEqual(sFirstAdaptationText, sNewFirstAdaptationText, "priority of adaptations has changed");
 				assert.ok(this.oSaveButton.getEnabled(), "Save Button is enabled");
 
 				this.oMoveUpButton.firePress();
 				sNewFirstAdaptationText = this.oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
-					.mAggregations.items[0].getProperty("text");
+				.mAggregations.items[0].getProperty("text");
 				assert.strictEqual(sFirstAdaptationText, sNewFirstAdaptationText, "origianl priority is visible");
 				assert.notOk(this.oSaveButton.getEnabled(), "Save Button is disabled");
 			});
@@ -206,7 +206,7 @@ sap.ui.define([
 				var oReorderStub = sandbox.stub(ContextBasedAdaptationsAPI, "reorder").resolves();
 				var oFirstTableItem = this.oAdaptationsTable.getItems()[0];
 				var sFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
-					.mAggregations.items[0].getProperty("text");
+				.mAggregations.items[0].getProperty("text");
 				this.oAdaptationsTable.getItems()[0].focus();
 				this.oAdaptationsTable.setSelectedItem(this.oAdaptationsTable.getItems()[0], true, true);
 
@@ -333,10 +333,10 @@ sap.ui.define([
 				sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves(this.oContextBasedAdaptations);
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 				return this.oManageAdaptations.openManageAdaptationDialog()
-					.then(function (oDialog) {
-						this.oDialog = oDialog;
-						return this.oToolbar._pFragmentLoaded;
-					}.bind(this));
+				.then(function(oDialog) {
+					this.oDialog = oDialog;
+					return this.oToolbar._pFragmentLoaded;
+				}.bind(this));
 			}
 		}, function() {
 			[{

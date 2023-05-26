@@ -24,7 +24,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an AppVariantOverviewUtils is instantiated", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oUshellContainerStub = {
 				getServiceAsync: function() {
 					return Promise.resolve({
@@ -41,11 +41,11 @@ sap.ui.define([
 			};
 			sandbox.stub(FlUtils, "getUshellContainer").returns(this.oUshellContainerStub);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When getAppVariantOverviewAttributes() method is called with some missing properties (Key user view) on S4/Hana Cloud", function (assert) {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called with some missing properties (Key user view) on S4/Hana Cloud", function(assert) {
 			var oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
@@ -79,7 +79,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with app var status 'U'", function (assert) {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with app var status 'U'", function(assert) {
 			var oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
@@ -91,7 +91,7 @@ sap.ui.define([
 					semanticObject: "SemObj",
 					action: "Action"
 				},
-				appVarStatus: 'U'
+				appVarStatus: "U"
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
@@ -109,14 +109,14 @@ sap.ui.define([
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, true, "then it is a S4/Hana Cloud system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonVisibility, true, "then the button Adapt UI is available");
-				assert.equal(oAppVariantAttributes.appVarStatus, 'U', "then the right app var status is set");
+				assert.equal(oAppVariantAttributes.appVarStatus, "U", "then the right app var status is set");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is enabled");
 				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
 				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, true, "then the button Delete App Variant is enabled on an app variant");
 			});
 		});
 
-		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with app var status 'R'", function (assert) {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with app var status 'R'", function(assert) {
 			var oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
@@ -124,7 +124,7 @@ sap.ui.define([
 				isAppVariant: true,
 				descriptorUrl: "url1",
 				hasStartableIntent: false,
-				appVarStatus: 'R'
+				appVarStatus: "R"
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
@@ -143,13 +143,13 @@ sap.ui.define([
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, true, "then it is a S4/Hana Cloud system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonVisibility, true, "then the button Adapt UI is available");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is enabled");
-				assert.equal(oAppVariantAttributes.appVarStatus, 'R', "then the right app var status is set");
+				assert.equal(oAppVariantAttributes.appVarStatus, "R", "then the right app var status is set");
 				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
 				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, false, "then the button Delete App Variant is not enabled on an app variant");
 			});
 		});
 
-		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana onPremise and it has no target mappings", function (assert) {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana onPremise and it has no target mappings", function(assert) {
 			var oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
@@ -180,7 +180,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana onPremise and it has target mappings", function (assert) {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana onPremise and it has target mappings", function(assert) {
 			var oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
@@ -215,7 +215,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with status 'Error'", function (assert) {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with status 'Error'", function(assert) {
 			var oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
@@ -227,7 +227,7 @@ sap.ui.define([
 					semanticObject: "SemObj",
 					action: "Action"
 				},
-				appVarStatus: 'E'
+				appVarStatus: "E"
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
@@ -245,13 +245,13 @@ sap.ui.define([
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, true, "then it is a S4/Hana Cloud system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is not enabled");
-				assert.equal(oAppVariantAttributes.appVarStatus, 'E', "then the right app var status is set");
+				assert.equal(oAppVariantAttributes.appVarStatus, "E", "then the right app var status is set");
 				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
 				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, true, "then the button Delete App Variant is enabled on an app variant");
 			});
 		});
 
-		QUnit.test("When getAppVariantOverviewAttributes() method is called with no intent parameters (Key user view) in on prem system", function (assert) {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called with no intent parameters (Key user view) in on prem system", function(assert) {
 			var oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
@@ -286,7 +286,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getAppVariantOverviewAttributes() method is called with intent parameter as an object (Key user view) on cloud system", function (assert) {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called with intent parameter as an object (Key user view) on cloud system", function(assert) {
 			var oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
@@ -324,7 +324,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getAppVariantOverviewAttributes() method is called with intent parameter as a string (Key user view) in on prem system", function (assert) {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called with intent parameter as a string (Key user view) in on prem system", function(assert) {
 			var oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
@@ -359,7 +359,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getAppVariantOverviewAttributes() method is called but the ushell container fails to retrieve the CrossApplicationNavigation service", function (assert) {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called but the ushell container fails to retrieve the CrossApplicationNavigation service", function(assert) {
 			var oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
@@ -385,12 +385,12 @@ sap.ui.define([
 			};
 
 			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true)
-				.catch(function(oError) {
-					assert.equal(oError.message, "Error retrieving ushell service CrossApplicationNavigation: Failed to get service", "then an error is raised");
-				});
+			.catch(function(oError) {
+				assert.equal(oError.message, "Error retrieving ushell service CrossApplicationNavigation: Failed to get service", "then an error is raised");
+			});
 		});
 
-		QUnit.test("When getAppVariantOverview() method is called on a reference app (currently adapting) which also has intent information present (Key user view) on S4 cloud system", function (assert) {
+		QUnit.test("When getAppVariantOverview() method is called on a reference app (currently adapting) which also has intent information present (Key user view) on S4 cloud system", function(assert) {
 			var oResult = {
 				response: {
 					items: [
@@ -441,7 +441,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getAppVariantOverview() method is called on an app variant (currently adapting) which is laid in the customer layer (SAP developer view) on cloud system", function (assert) {
+		QUnit.test("When getAppVariantOverview() method is called on an app variant (currently adapting) which is laid in the customer layer (SAP developer view) on cloud system", function(assert) {
 			var oResult = {
 				response: {}
 			};
@@ -463,7 +463,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getAppVariantOverview() method is called on a reference app (currently adapting) which also has intent information present (SAP developer view) on prem system", function (assert) {
+		QUnit.test("When getAppVariantOverview() method is called on a reference app (currently adapting) which also has intent information present (SAP developer view) on prem system", function(assert) {
 			var oResult = {
 				response: {
 					items: [
@@ -503,7 +503,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getAppVariantOverview() method is called on an app variant (currently adapting) which has no intent information present (Key user view) on cloud system", function (assert) {
+		QUnit.test("When getAppVariantOverview() method is called on an app variant (currently adapting) which has no intent information present (Key user view) on cloud system", function(assert) {
 			var oResult = {
 				response: {
 					items: [
@@ -585,7 +585,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getAppVariantOverview() method is called with current status 'Operation in Process'", function (assert) {
+		QUnit.test("When getAppVariantOverview() method is called with current status 'Operation in Process'", function(assert) {
 			var oResult = {
 				response: {
 					items: [
@@ -609,7 +609,7 @@ sap.ui.define([
 									}
 								}
 							},
-							appVarStatus: 'R'
+							appVarStatus: "R"
 						}
 					]
 				}
@@ -663,11 +663,11 @@ sap.ui.define([
 			};
 			sandbox.stub(FlUtils, "getUshellContainer").returns(this.oUshellContainerStub);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When getAppVariantOverview() method is called on an app variant (currently adapting) which is also a reference app and has intent information present (Key user view) on cloud system", function (assert) {
+		QUnit.test("When getAppVariantOverview() method is called on an app variant (currently adapting) which is also a reference app and has intent information present (Key user view) on cloud system", function(assert) {
 			var oResult = {
 				response: {
 					items: [
@@ -716,7 +716,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getDescriptor() method is called", function (assert) {
+		QUnit.test("When getDescriptor() method is called", function(assert) {
 			var oResult = {
 				response: {
 					"sap.app": {
@@ -735,7 +735,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

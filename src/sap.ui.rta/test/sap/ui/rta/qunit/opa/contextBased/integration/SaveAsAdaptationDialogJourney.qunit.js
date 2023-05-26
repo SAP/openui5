@@ -116,7 +116,7 @@ sap.ui.define(
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(true);
 		});
 
-		opaTest("Should enter existing adaptation title", function (Given, When, Then) {
+		opaTest("Should enter existing adaptation title", function(Given, When, Then) {
 			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle(" ");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle(" ");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(false);
@@ -136,7 +136,7 @@ sap.ui.define(
 		});
 
 		QUnit.module("SaveAs Dialog with no adaptations data from backend (simulated backend error)");
-		opaTest("Should open SaveAs Adaptation Dialog via demo page button with backend error", function (Given, When, Then) {
+		opaTest("Should open SaveAs Adaptation Dialog via demo page button with backend error", function(Given, When, Then) {
 			Then.onTheDemoAppPage.iShouldSeeAddAdaptationWithErrorDialogButton();
 			When.onTheDemoAppPage.iClickOnOpenAddAdapationWithErrorDialogButton();
 			Then.onTheAddAdaptationDialogPage.iShouldSeeAddAdaptationDialog();

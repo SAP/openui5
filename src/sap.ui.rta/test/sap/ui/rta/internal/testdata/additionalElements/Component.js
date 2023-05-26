@@ -60,7 +60,7 @@ sap.ui.define([
 		 * Create stub answers from extensibility service
 		 * @private
 		 */
-		_enableExtensibility: function () {
+		_enableExtensibility: function() {
 			var aExtensionData;
 			ABAPAccess.getExtensionData = function(sServiceUri, sEntityTypeName, sEntitySetName) {
 				aExtensionData = [{ businessContext: sEntityTypeName + " EntityTypeContext", description: "Other BusinessContext description" }, { businessContext: sEntitySetName + " EntitySetContext", description: "Some BusinessContext description"}];

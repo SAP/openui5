@@ -1,4 +1,4 @@
-/*global QUnit */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/m/library",
@@ -24,7 +24,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Private methods", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oOTB = new OverflowToolbar({
 				content: [
 					new OverflowToolbarButton({
@@ -42,12 +42,12 @@ sap.ui.define([
 			this.oOTB.placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oOTB.destroy();
 		}
 	});
 
-	QUnit.test("_getText value for Button with icon", function (assert) {
+	QUnit.test("_getText value for Button with icon", function(assert) {
 		var oButton = this.oOTB.getContent()[0];
 		var oLayoutData = new OverflowToolbarLayoutData({
 			priority: OTBPriority.AlwaysOverflow
@@ -64,7 +64,7 @@ sap.ui.define([
 		assert.strictEqual(oButton._getText(), "Icon button", "OverflowToolbarButton text value is shown");
 	});
 
-	QUnit.test("_getText value for Button without icon", function (assert) {
+	QUnit.test("_getText value for Button without icon", function(assert) {
 		var oButton = this.oOTB.getContent()[1];
 		var oLayoutData = new OverflowToolbarLayoutData({
 			priority: OTBPriority.AlwaysOverflow
@@ -81,8 +81,7 @@ sap.ui.define([
 		assert.strictEqual(oButton._getText(), "Text button", "OverflowToolbarButton text value is correct");
 	});
 
-
-	QUnit.test("_onBeforeEnterOverflow and _onAfterExitOverflow for button with icon", function (assert) {
+	QUnit.test("_onBeforeEnterOverflow and _onAfterExitOverflow for button with icon", function(assert) {
 		var oButton = this.oOTB.getContent()[0];
 		var oLayoutData = new OverflowToolbarLayoutData({
 			priority: OTBPriority.AlwaysOverflow
@@ -90,11 +89,11 @@ sap.ui.define([
 		var oBeforeEnterSpy = sandbox.spy(oButton, "_onBeforeEnterOverflow");
 		var oAfterExitSpy = sandbox.spy(oButton, "_onAfterExitOverflow");
 
-		//Initial state (button in toolbar)
+		// Initial state (button in toolbar)
 		assert.notOk(oButton._bInOverflow, "OverflowToolbarButton is not in the overflow area");
 		assert.strictEqual(oButton.getIcon(), "sap-icon://search", "OverflowToolbarButton has an icon");
 
-		//Move button into overflowarea
+		// Move button into overflowarea
 		oButton.setLayoutData(oLayoutData);
 		Core.applyChanges();
 		assert.ok(DOMUtil.isVisible(this.oOTB._getOverflowButton().getDomRef()), "Overflow button is visible");
@@ -102,7 +101,7 @@ sap.ui.define([
 		assert.notOk(oButton.getIcon(), "OverflowToolbarButton has no icon");
 		assert.equal(oBeforeEnterSpy.callCount, 1, "_onBeforeEnterOverflow has been called");
 
-		//Move button back into toolbar
+		// Move button back into toolbar
 		oLayoutData.setPriority(OTBPriority.NeverOverflow);
 		Core.applyChanges();
 		assert.notOk(oButton._bInOverflow, "OverflowToolbarButton is not in the overflow area");
@@ -110,7 +109,7 @@ sap.ui.define([
 		assert.equal(oAfterExitSpy.callCount, 1, "_onAfterExitOverflow has been called");
 	});
 
-	QUnit.test("_onBeforeEnterOverflow and _onAfterExitOverflow for button without icon", function (assert) {
+	QUnit.test("_onBeforeEnterOverflow and _onAfterExitOverflow for button without icon", function(assert) {
 		var oButton = this.oOTB.getContent()[1];
 		var oLayoutData = new OverflowToolbarLayoutData({
 			priority: OTBPriority.AlwaysOverflow
@@ -118,11 +117,11 @@ sap.ui.define([
 		var oBeforeEnterSpy = sandbox.spy(oButton, "_onBeforeEnterOverflow");
 		var oAfterExitSpy = sandbox.spy(oButton, "_onAfterExitOverflow");
 
-		//Initial state (button in toolbar)
+		// Initial state (button in toolbar)
 		assert.notOk(oButton._bInOverflow, "OverflowToolbarButton is not in the overflow area");
 		assert.notOk(oButton.getIcon(), "OverflowToolbarButton has no icon");
 
-		//Move button into overflowarea
+		// Move button into overflowarea
 		oButton.setLayoutData(oLayoutData);
 		Core.applyChanges();
 		assert.ok(DOMUtil.isVisible(this.oOTB._getOverflowButton().getDomRef()), "Overflow button is visible");
@@ -130,7 +129,7 @@ sap.ui.define([
 		assert.notOk(oButton.getIcon(), "OverflowToolbarButton has no icon");
 		assert.equal(oBeforeEnterSpy.callCount, 1, "_onBeforeEnterOverflow has been called");
 
-		//Move button back into toolbar
+		// Move button back into toolbar
 		oLayoutData.setPriority(OTBPriority.NeverOverflow);
 		Core.applyChanges();
 		assert.notOk(oButton._bInOverflow, "OverflowToolbarButton is not in the overflow area");

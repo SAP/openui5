@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/layout/HorizontalLayout",
 	"sap/m/Link",
 	"sap/m/Text"
-], function (
+], function(
 	MessageBox,
 	HorizontalLayout,
 	Link,
@@ -43,7 +43,7 @@ sap.ui.define([
 	function convertIntoControls(aSymbols) {
 		var oLayout = new HorizontalLayout({
 			allowWrapping: true,
-			content: aSymbols.map(function (sSymbol) {
+			content: aSymbols.map(function(sSymbol) {
 				if (isLink(sSymbol)) {
 					var mLink = extractLink(sSymbol);
 					return new Link({
@@ -70,7 +70,7 @@ sap.ui.define([
 		var aSymbols = [sMessage];
 		var aLinks = getLinks(sMessage);
 
-		aLinks.forEach(function (sLink) {
+		aLinks.forEach(function(sLink) {
 			var i = 0;
 			while (i < aSymbols.length) {
 				var sSymbol = aSymbols[i];
@@ -81,7 +81,7 @@ sap.ui.define([
 					var aParts = sSymbol.split(sLink);
 					var aInsert = [];
 
-					aParts.forEach(function (sPart, iIndex, aOriginal) { // eslint-disable-line no-loop-func
+					aParts.forEach(function(sPart, iIndex, aOriginal) { // eslint-disable-line no-loop-func
 						aInsert.push(sPart);
 						if (iIndex !== aOriginal.length - 1) {
 							aInsert.push(sLink);
@@ -96,7 +96,6 @@ sap.ui.define([
 
 		return aSymbols;
 	}
-
 
 	/**
 	 * Displays sap.m.MessageBox and interprets markdown links in the messages.

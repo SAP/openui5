@@ -18,7 +18,7 @@ sap.ui.define([
 			window.fnResolve();
 		},
 
-		createContent: function () {
+		createContent: function() {
 			var oLayout = new VerticalLayout("visibleLayout");
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout, 100);
 			return oLayout;

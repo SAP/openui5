@@ -100,10 +100,10 @@ sap.ui.define([
 	/**
 	 * This function needs to be overwritten in every plugin.
 	 */
-	BasePlugin.prototype._isEditable = function () {};
+	BasePlugin.prototype._isEditable = function() {};
 
-	BasePlugin.prototype.executeWhenVisible = function (oElementOverlay, fnCallback) {
-		var fnGeometryChangedCallback = function (oEvent) {
+	BasePlugin.prototype.executeWhenVisible = function(oElementOverlay, fnCallback) {
+		var fnGeometryChangedCallback = function(oEvent) {
 			if (oEvent.getSource().getGeometry() && oEvent.getSource().getGeometry().visible) {
 				oElementOverlay.detachEvent("geometryChanged", fnGeometryChangedCallback, this);
 				fnCallback();
@@ -139,7 +139,7 @@ sap.ui.define([
 		mDebounceFunctions[sOverlayId][sName]();
 	}
 
-	var _onElementModified = function (oEvent) {
+	var _onElementModified = function(oEvent) {
 		// Initialize here because plugins may not extend the rta.Plugin and
 		// instead inherit the method via rta.Utils.extendWith
 		// Therefore the constructor/init might not be properly called
@@ -163,7 +163,7 @@ sap.ui.define([
 		if (oParams.type === "propertyChanged" && oParams.name === "visible") {
 			aRelevantOverlays = this._getRelevantOverlays(oOverlay);
 			if (oParams.value === true) {
-				this.executeWhenVisible(oOverlay, function () {
+				this.executeWhenVisible(oOverlay, function() {
 					this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
 				}.bind(this));
 			} else {
@@ -173,7 +173,7 @@ sap.ui.define([
 			if (this.getDesignTime().getStatus() === "synced") {
 				this.evaluateEditable([oOverlay], {onRegistration: false});
 			} else {
-				this.getDesignTime().attachEventOnce("synced", function () {
+				this.getDesignTime().attachEventOnce("synced", function() {
 					this.evaluateEditable([oOverlay], {onRegistration: false});
 				}, this);
 			}
@@ -181,12 +181,12 @@ sap.ui.define([
 			oParams.type === "insertAggregation"
 			|| oParams.type === "removeAggregation"
 		) {
-			debounceFunction(this._mDebounceFunctions["insertOrRemove"], oOverlay, oParams.name, function() {
+			debounceFunction(this._mDebounceFunctions.insertOrRemove, oOverlay, oParams.name, function() {
 				aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
 				this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
 			}.bind(this));
 		} else if (oParams.type === "addOrSetAggregation") {
-			debounceFunction(this._mDebounceFunctions["addOrSet"], oOverlay, oParams.name, function() {
+			debounceFunction(this._mDebounceFunctions.addOrSet, oOverlay, oParams.name, function() {
 				// Designtime might have been destroyed while waiting for the debounce callback
 				// In this case, the updates are no longer relevant
 				var oDesignTime = this.getDesignTime();
@@ -198,7 +198,7 @@ sap.ui.define([
 					aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
 					this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
 				} else {
-					oDesignTime.attachEventOnce("synced", function () {
+					oDesignTime.attachEventOnce("synced", function() {
 						aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
 						this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
 					}, this);
@@ -263,7 +263,7 @@ sap.ui.define([
 		}
 	};
 
-	BasePlugin.prototype._handleModifyPluginList = function (oOverlay, vEditable) {
+	BasePlugin.prototype._handleModifyPluginList = function(oOverlay, vEditable) {
 		// for the createContainer and additionalElements plugin the isEditable function returns an object with 2 properties, asChild and asSibling.
 		// for every other plugin isEditable should be a boolean.
 		if (vEditable !== undefined && vEditable !== null) {
@@ -292,14 +292,14 @@ sap.ui.define([
 		return sName;
 	};
 
-	BasePlugin.prototype._isEditableByPlugin = function (oOverlay, bSibling) {
+	BasePlugin.prototype._isEditableByPlugin = function(oOverlay, bSibling) {
 		var sPluginName = this._retrievePluginName(bSibling);
 		var aPluginList = oOverlay.getEditableByPlugins();
 		return aPluginList.indexOf(sPluginName) > -1;
 	};
 
 	BasePlugin.prototype.registerElementOverlay = function(oOverlay) {
-		this.executeWhenVisible(oOverlay, function () {
+		this.executeWhenVisible(oOverlay, function() {
 			this.evaluateEditable([oOverlay], {onRegistration: true});
 			oOverlay.attachElementModified(_onElementModified, this);
 		}.bind(this));
@@ -322,7 +322,7 @@ sap.ui.define([
 		return hasStableId(oOverlay);
 	};
 
-	BasePlugin.prototype.getVariantManagementReference = function (oOverlay) {
+	BasePlugin.prototype.getVariantManagementReference = function(oOverlay) {
 		var sVariantManagementReference;
 		if (oOverlay.getVariantManagement) {
 			sVariantManagementReference = oOverlay.getVariantManagement();
@@ -339,7 +339,7 @@ sap.ui.define([
 	 * @return {boolean} Whether the Aggregation has a valid action
 	 * @protected
 	 */
-	BasePlugin.prototype.checkAggregationsOnSelf = function (oOverlay, sAction, sParentAggregationName, sSubAction) {
+	BasePlugin.prototype.checkAggregationsOnSelf = function(oOverlay, sAction, sParentAggregationName, sSubAction) {
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 		var oElement = oOverlay.getElement();
 
@@ -399,8 +399,8 @@ sap.ui.define([
 		});
 	};
 
-	BasePlugin.prototype.isAvailable = function (aElementOverlays) {
-		return aElementOverlays.every(function (oElementOverlay) {
+	BasePlugin.prototype.isAvailable = function(aElementOverlays) {
+		return aElementOverlays.every(function(oElementOverlay) {
 			return this._isEditableByPlugin(oElementOverlay);
 		}, this);
 	};
@@ -424,11 +424,11 @@ sap.ui.define([
 				oElementOverlay.getElement();
 
 			return this.hasChangeHandler(oAction.changeType, oElement)
-				.then(function(bHasChangeHandler) {
-					return bHasChangeHandler
+			.then(function(bHasChangeHandler) {
+				return bHasChangeHandler
 						&& this._checkRelevantContainerStableID(oAction, oElementOverlay)
 						&& this.hasStableId(oElementOverlay);
-				}.bind(this));
+			}.bind(this));
 		}
 		return Promise.resolve(false);
 	};

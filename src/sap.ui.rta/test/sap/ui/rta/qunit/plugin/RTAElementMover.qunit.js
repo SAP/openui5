@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/m/Button",
@@ -79,7 +79,7 @@ sap.ui.define([
 		if (typeof vInstanceOf === "boolean") {
 			vRelevantContainerValue = vInstanceOf;
 		} else {
-			vRelevantContainerValue = function (oElement) {
+			vRelevantContainerValue = function(oElement) {
 				var sType = oElement.getMetadata().getName();
 				if (sType === vInstanceOf) {
 					return true;
@@ -117,7 +117,7 @@ sap.ui.define([
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			this.oDragDropPlugin = new DragDropPlugin({
 				commandFactory: new CommandFactory()
@@ -153,47 +153,47 @@ sap.ui.define([
 		},
 		after: function() {
 			this.oCompCont.destroy();
-			QUnit.config.fixture = '';
+			QUnit.config.fixture = "";
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oDragDropPlugin.destroy();
 			this.oElementMover.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when moving the group element bound to EntityType01 inside the group bound to EntityTypeNav...", function(assert) {
 			this.oElementMover.setMovedOverlay(this.oBoundGroupElementOverlay);
 			return this.oElementMover.checkTargetZone(this.oNavGroupAggrOverlay)
-				.then(function(bCheckTargetZone) {
-					assert.notOk(bCheckTargetZone, "then the group bound to the navigation is not a possible target zone");
-					return this.oElementMover.checkTargetZone(this.oOtherGroupAggrOverlay);
-				}.bind(this))
-				.then(function(bCheckTargetZone) {
-					assert.ok(bCheckTargetZone, "then the group with the element is a possible target zone");
-					this.oOtherGroupButton.setVisible(false);
-					return DtUtil.waitForSynced(this.oDesignTime)();
-				}.bind(this))
-				.then(this.oElementMover.checkMovable.bind(this.oElementMover, this.oBoundGroupElementOverlay))
-				.then(function(bMovable) {
-					assert.notOk(bMovable, "then the field is no longer movable if there are no more target zones");
-				});
+			.then(function(bCheckTargetZone) {
+				assert.notOk(bCheckTargetZone, "then the group bound to the navigation is not a possible target zone");
+				return this.oElementMover.checkTargetZone(this.oOtherGroupAggrOverlay);
+			}.bind(this))
+			.then(function(bCheckTargetZone) {
+				assert.ok(bCheckTargetZone, "then the group with the element is a possible target zone");
+				this.oOtherGroupButton.setVisible(false);
+				return DtUtil.waitForSynced(this.oDesignTime)();
+			}.bind(this))
+			.then(this.oElementMover.checkMovable.bind(this.oElementMover, this.oBoundGroupElementOverlay))
+			.then(function(bMovable) {
+				assert.notOk(bMovable, "then the field is no longer movable if there are no more target zones");
+			});
 		});
 
 		QUnit.test("when DT is loaded and moving the group bound to EntityType02 inside the form bound to EntityType02...", function(assert) {
 			this.oElementMover.setMovedOverlay(this.oGroupEntityType02Overlay);
 			return this.oElementMover.checkTargetZone(this.oFormAggrOverlay)
-				.then(function(bCheckTargetZone) {
-					assert.ok(bCheckTargetZone, "then the form is a possible target zone");
-				});
+			.then(function(bCheckTargetZone) {
+				assert.ok(bCheckTargetZone, "then the form is a possible target zone");
+			});
 		});
 
 		QUnit.test("when moving the group bound to EntityType01 inside the form bound to EntityType02...", function(assert) {
 			this.oElementMover.setMovedOverlay(this.oGroupEntityType01Overlay);
 			return this.oElementMover.checkTargetZone(this.oFormAggrOverlay)
-				.then(function(bCheckTargetZone) {
-					assert.ok(bCheckTargetZone, "then the form is a possible target zone");
-				});
+			.then(function(bCheckTargetZone) {
+				assert.ok(bCheckTargetZone, "then the form is a possible target zone");
+			});
 		});
 
 		QUnit.test("when the element is not available", function(assert) {
@@ -284,45 +284,45 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("and a group with stable id, when checking the target zone,", function(assert) {
 			return this.oElementMover.checkTargetZone(this.oGroup1AggrOverlay)
-				.then(function(bCheckTargetZone) {
-					assert.ok(bCheckTargetZone, "then the group is a possible target zone");
-					return this.oElementMover.checkMovable(this.oSmartGroupElementOverlay);
-				}.bind(this))
-				.then(function(bMovable) {
-					assert.notOk(bMovable, "but the element is not movable as there are no more elements in this group");
-				});
+			.then(function(bCheckTargetZone) {
+				assert.ok(bCheckTargetZone, "then the group is a possible target zone");
+				return this.oElementMover.checkMovable(this.oSmartGroupElementOverlay);
+			}.bind(this))
+			.then(function(bMovable) {
+				assert.notOk(bMovable, "but the element is not movable as there are no more elements in this group");
+			});
 		});
 
 		QUnit.test("and a group with stable id, when checking the target zone, during navigation mode", function(assert) {
 			// switch the navigation mode on
 			this.oDesignTime.setEnabled(false);
 			return DtUtil.waitForSynced(this.oDesignTime)()
-				.then(this.oElementMover.checkTargetZone.bind(this.oElementMover, this.oGroup1AggrOverlay, this.oSmartGroupElementOverlay, false))
-				.then(function(bCheckTargetZone) {
-					assert.ok(bCheckTargetZone, "then the group is a possible target zone");
-					return this.oElementMover.checkMovable(this.oSmartGroupElementOverlay);
-				}.bind(this));
+			.then(this.oElementMover.checkTargetZone.bind(this.oElementMover, this.oGroup1AggrOverlay, this.oSmartGroupElementOverlay, false))
+			.then(function(bCheckTargetZone) {
+				assert.ok(bCheckTargetZone, "then the group is a possible target zone");
+				return this.oElementMover.checkMovable(this.oSmartGroupElementOverlay);
+			}.bind(this));
 		});
 
 		QUnit.test("and a group from another smart form, when checking the target zone,", function(assert) {
 			return this.oElementMover.checkTargetZone(this.oGroup2AggrOverlay)
-				.then(function(bCheckTargetZone) {
-					assert.notOk(bCheckTargetZone, "then the group is no target zone");
-				});
+			.then(function(bCheckTargetZone) {
+				assert.notOk(bCheckTargetZone, "then the group is no target zone");
+			});
 		});
 
 		QUnit.test("and a group without stable id, when checking the target zone,", function(assert) {
 			return this.oElementMover.checkTargetZone(this.oGroup3AggrOverlay)
-				.then(function(bCheckTargetZone) {
-					assert.notOk(bCheckTargetZone, "then the group is not a possible target zone as the id is not stable");
-				});
+			.then(function(bCheckTargetZone) {
+				assert.notOk(bCheckTargetZone, "then the group is not a possible target zone as the id is not stable");
+			});
 		});
 	});
 
@@ -375,7 +375,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oMovedButton1Overlay.destroy();
 			this.oLayoutAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
@@ -383,38 +383,38 @@ sap.ui.define([
 			this.oButton2.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when DT is loaded and moving the movedButton inside the layout...", function(assert) {
 			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
 			return this.oElementMover.checkTargetZone(this.oLayoutAggregationOverlay)
-				.then(function(bCheckTargetZone) {
-					assert.ok(bCheckTargetZone, "then the layout is a possible target zone");
-				});
+			.then(function(bCheckTargetZone) {
+				assert.ok(bCheckTargetZone, "then the layout is a possible target zone");
+			});
 		});
 
 		QUnit.test("when DT is loaded and moving the movedButton inside the layout but without changeHandler...", function(assert) {
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").rejects();
 			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
 			return this.oElementMover.checkTargetZone(this.oLayoutAggregationOverlay)
-				.then(function(bCheckTargetZone) {
-					assert.notOk(bCheckTargetZone, "then the layout is not a possible target zone");
-				});
+			.then(function(bCheckTargetZone) {
+				assert.notOk(bCheckTargetZone, "then the layout is not a possible target zone");
+			});
 		});
 
 		QUnit.test("when Button2 is removed, leaving movedButton as the only element left in the Layout...", function(assert) {
 			this.oLayout.removeContent(this.oButton2);
 			return this.oElementMover.checkMovable(this.oMovedButton1Overlay)
-				.then(function(bMovable) {
-					assert.notOk(bMovable, "then the movedButton is no longer movable");
-				});
+			.then(function(bMovable) {
+				assert.notOk(bMovable, "then the movedButton is no longer movable");
+			});
 		});
 
 		QUnit.test("when Button2 is destroyed, leaving movedButton as the only element left in the Layout...", function(assert) {
 			this.oButton2.destroy();
 			return this.oElementMover.checkMovable(this.oMovedButton1Overlay)
-				.then(function(bMoveable) {
-					assert.notOk(bMoveable, "then the movedButton is no longer movable");
-				});
+			.then(function(bMoveable) {
+				assert.notOk(bMoveable, "then the movedButton is no longer movable");
+			});
 		});
 
 		QUnit.test("when the button has 'not-adaptable' as actions in DT", function(assert) {
@@ -479,20 +479,20 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oMovedButton1Overlay.destroy();
 			this.oInnerLayoutAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
 			this.oOuterLayout.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when DT is loaded and moving the movedButton to the innerLayout...", function(assert) {
 			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
 			return this.oElementMover.checkTargetZone(this.oInnerLayoutAggregationOverlay)
-				.then(function(bCheckTargetZone) {
-					assert.notOk(bCheckTargetZone, "then the innerLayout is not a possible target zone");
-				});
+			.then(function(bCheckTargetZone) {
+				assert.notOk(bCheckTargetZone, "then the innerLayout is not a possible target zone");
+			});
 		});
 	});
 
@@ -572,7 +572,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oMovedGroupElement1Overlay.destroy();
 			this.oGroupAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
@@ -580,7 +580,7 @@ sap.ui.define([
 			this.oGroup2.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when DT is loaded and movedGroupElement1 is moved to the Group2...", function(assert) {
 			this.oElementMover.setMovedOverlay(this.oMovedGroupElement1Overlay);
 			var oSourceInformation = OverlayUtil.getParentInformation(this.oMovedGroupElement1Overlay);
@@ -591,52 +591,52 @@ sap.ui.define([
 			};
 			var fnGetCommandForStub;
 			return this.oElementMover.checkTargetZone(this.oGroupAggregationOverlay)
-				.then(function(bCheckTargetZone) {
-					assert.ok(bCheckTargetZone, "then the group2 is a possible target zone");
-					// mock variant management
-					sandbox.stub(this.oElementMover.oBasePlugin, "getVariantManagementReference").returns("mockVariantReference");
-					// simulate move
-					sandbox.stub(this.oMovedGroupElement1Overlay, "getParent").returns(this.oGroupAggregationOverlay);
-					fnGetCommandForStub = sandbox.stub(this.oElementMover.getCommandFactory(), "getCommandFor").returns(Promise.resolve());
-					sandbox.stub(OverlayUtil, "getParentInformation")
-						.callThrough()
-						.withArgs(this.oMovedGroupElement1Overlay)
-						.returns(oTargetInformation);
+			.then(function(bCheckTargetZone) {
+				assert.ok(bCheckTargetZone, "then the group2 is a possible target zone");
+				// mock variant management
+				sandbox.stub(this.oElementMover.oBasePlugin, "getVariantManagementReference").returns("mockVariantReference");
+				// simulate move
+				sandbox.stub(this.oMovedGroupElement1Overlay, "getParent").returns(this.oGroupAggregationOverlay);
+				fnGetCommandForStub = sandbox.stub(this.oElementMover.getCommandFactory(), "getCommandFor").returns(Promise.resolve());
+				sandbox.stub(OverlayUtil, "getParentInformation")
+				.callThrough()
+				.withArgs(this.oMovedGroupElement1Overlay)
+				.returns(oTargetInformation);
 
-					return this.oElementMover.buildMoveCommand();
-				}.bind(this))
+				return this.oElementMover.buildMoveCommand();
+			}.bind(this))
 
-				.then(function() {
-					assert.strictEqual(arguments[0], undefined, "then a promise is received resolving to undefined");
-					assert.ok(
-						fnGetCommandForStub.calledWith(this.oMovedGroupElement1Overlay.getRelevantContainer(), "Move", {
-							movedElements: [{
-								element: this.oMovedGroupElement1,
-								sourceIndex: oSourceInformation.index,
-								targetIndex: this.oGroup2.getGroupElements().length
-							}],
-							source: delete oSourceInformation.index && oSourceInformation,
-							target: delete oTargetInformation.index && oTargetInformation
-						}, this.oGroupAggregationOverlay.getDesignTimeMetadata(), "mockVariantReference"),
-						"then CommandFactory.getCommandFor() called with the right parameters"
-					);
-				}.bind(this));
+			.then(function() {
+				assert.strictEqual(arguments[0], undefined, "then a promise is received resolving to undefined");
+				assert.ok(
+					fnGetCommandForStub.calledWith(this.oMovedGroupElement1Overlay.getRelevantContainer(), "Move", {
+						movedElements: [{
+							element: this.oMovedGroupElement1,
+							sourceIndex: oSourceInformation.index,
+							targetIndex: this.oGroup2.getGroupElements().length
+						}],
+						source: delete oSourceInformation.index && oSourceInformation,
+						target: delete oTargetInformation.index && oTargetInformation
+					}, this.oGroupAggregationOverlay.getDesignTimeMetadata(), "mockVariantReference"),
+					"then CommandFactory.getCommandFor() called with the right parameters"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("when Group 2 is removed and movedGroupElement1 does not have any valid target zones anymore...", function(assert) {
 			this.oSmartForm1.removeGroup(this.oGroup2);
 			return this.oElementMover.checkMovable(this.oMovedGroupElement1Overlay)
-				.then(function(bMoveable) {
-					assert.notOk(bMoveable, "then the movedGroupElement1 is no longer movable");
-				});
+			.then(function(bMoveable) {
+				assert.notOk(bMoveable, "then the movedGroupElement1 is no longer movable");
+			});
 		});
 
 		QUnit.test("when DT is loaded and moving a group element to the same Group, to where it originally belonged", function(assert) {
 			this.oElementMover.setMovedOverlay(this.oMovedGroupElement1Overlay);
 			return this.oElementMover.buildMoveCommand()
-				.then(function() {
-					assert.strictEqual(arguments[0], undefined, "then a promise is received resolving to undefined");
-				});
+			.then(function() {
+				assert.strictEqual(arguments[0], undefined, "then a promise is received resolving to undefined");
+			});
 		});
 	});
 
@@ -708,7 +708,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oMovedButton1Overlay.destroy();
 			this.oBarRightAggregationOverlay.destroy();
 			this.oBarMiddleAggregationOverlay.destroy();
@@ -716,21 +716,21 @@ sap.ui.define([
 			this.oDesignTime.destroy();
 			this.oBar.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when DT is loaded and moving the movedButton to the right bar aggregation...", function(assert) {
 			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
 			return this.oElementMover.checkTargetZone(this.oBarRightAggregationOverlay)
-				.then(function(bCheckTargetZone) {
-					assert.ok(bCheckTargetZone, "then the right bar aggregation is a possible target zone");
-				});
+			.then(function(bCheckTargetZone) {
+				assert.ok(bCheckTargetZone, "then the right bar aggregation is a possible target zone");
+			});
 		});
 
 		QUnit.test("when DT is loaded and moving the movedButton to the middle bar aggregation without move action...", function(assert) {
 			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
 			return this.oElementMover.checkTargetZone(this.oBarMiddleAggregationOverlay)
-				.then(function(bCheckTargetZone) {
-					assert.notOk(bCheckTargetZone, "then the middle bar aggregation is not a possible target zone");
-				});
+			.then(function(bCheckTargetZone) {
+				assert.notOk(bCheckTargetZone, "then the middle bar aggregation is not a possible target zone");
+			});
 		});
 
 		QUnit.test("when the bar has no stable id...", function(assert) {
@@ -742,9 +742,9 @@ sap.ui.define([
 			}.bind(this));
 
 			return this.oElementMover.isMoveAvailableOnRelevantContainer(this.oMovedButton1Overlay)
-				.then(function(bMoveAvailableOnRelevantContainer) {
-					assert.equal(bMoveAvailableOnRelevantContainer, false, "then the move is not available");
-				});
+			.then(function(bMoveAvailableOnRelevantContainer) {
+				assert.equal(bMoveAvailableOnRelevantContainer, false, "then the move is not available");
+			});
 		});
 	});
 
@@ -825,19 +825,19 @@ sap.ui.define([
 		QUnit.test("when isMoveAvailableForChildren is called with bar", function(assert) {
 			// should also work when AggregationOverlays are not defined
 			sandbox.stub(this.oBarOverlay, "getAggregationOverlay")
-				.callThrough()
-				.withArgs("contentLeft").returns(undefined);
+			.callThrough()
+			.withArgs("contentLeft").returns(undefined);
 			return this.oElementMover.isMoveAvailableForChildren(this.oBarOverlay)
-				.then(function(bMoveAvailableForChildren) {
-					assert.ok(bMoveAvailableForChildren, "then the result is 'true'");
-				});
+			.then(function(bMoveAvailableForChildren) {
+				assert.ok(bMoveAvailableForChildren, "then the result is 'true'");
+			});
 		});
 
 		QUnit.test("when isMoveAvailableForChildren is called with button", function(assert) {
 			return this.oElementMover.isMoveAvailableForChildren(this.oButton1Overlay)
-				.then(function(bMoveAvailableForChildren) {
-					assert.notOk(bMoveAvailableForChildren, "then the result is 'false'");
-				});
+			.then(function(bMoveAvailableForChildren) {
+				assert.notOk(bMoveAvailableForChildren, "then the result is 'false'");
+			});
 		});
 	});
 
@@ -856,8 +856,8 @@ sap.ui.define([
 						new VerticalLayout("verticalLayoutInTemplate",
 							{
 								content: [
-									new Button("boundListItemBoundButton", {text: '{text}'}),
-									new Button("bounListItemUnboundButton", {text: 'UnboundButton'})
+									new Button("boundListItemBoundButton", {text: "{text}"}),
+									new Button("bounListItemUnboundButton", {text: "UnboundButton"})
 								]
 							}
 						)
@@ -871,7 +871,7 @@ sap.ui.define([
 				templateShareable: false
 			});
 
-			//create a VerticalLayout containing the list
+			// create a VerticalLayout containing the list
 			this.oVerticalLayout = new VerticalLayout("parentVerticalLayout", {
 				content: [this.oBoundList]
 			});
@@ -899,9 +899,9 @@ sap.ui.define([
 			this.oElementMover = this.oDragDropPlugin.getElementMover();
 			var oListItemOverlay = OverlayRegistry.getOverlay(this.oBoundList.getItems()[0]);
 			return this.oElementMover.checkMovable(oListItemOverlay)
-				.then(function(bResult) {
-					assert.notOk(bResult, "then the item is not movable");
-				});
+			.then(function(bResult) {
+				assert.notOk(bResult, "then the item is not movable");
+			});
 		});
 
 		QUnit.test("when checking if an element inside the template is movable", function(assert) {
@@ -910,13 +910,13 @@ sap.ui.define([
 			var oButton = oVerticalLayout.getContent()[0];
 			var oButtonOverlay = OverlayRegistry.getOverlay(oButton);
 			return this.oElementMover.checkMovable(oButtonOverlay)
-				.then(function(bResult) {
-					assert.ok(bResult, "then the element inside the template is movable");
-				});
+			.then(function(bResult) {
+				assert.ok(bResult, "then the element inside the template is movable");
+			});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

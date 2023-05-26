@@ -48,7 +48,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	OverflowToolbarButton.prototype._onBeforeEnterOverflow = function () {
+	OverflowToolbarButton.prototype._onBeforeEnterOverflow = function() {
 		SapMOverflowToolbarButton.prototype._onBeforeEnterOverflow.apply(this, arguments);
 		this.setVisibleIcon(this.getIcon());
 		this.setIcon("");
@@ -59,7 +59,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	OverflowToolbarButton.prototype._onAfterExitOverflow = function () {
+	OverflowToolbarButton.prototype._onAfterExitOverflow = function() {
 		SapMOverflowToolbarButton.prototype._onAfterExitOverflow.apply(this, arguments);
 		this.setIcon(this.getVisibleIcon());
 	};
@@ -84,7 +84,7 @@ sap.ui.define([
 	 * @public
 	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
 	 */
-	OverflowToolbarButton.prototype.getOverflowToolbarConfig = function () {
+	OverflowToolbarButton.prototype.getOverflowToolbarConfig = function() {
 		return {
 			canOverflow: true,
 			onBeforeEnterOverflow: this._onBeforeEnterOverflow.bind(this),

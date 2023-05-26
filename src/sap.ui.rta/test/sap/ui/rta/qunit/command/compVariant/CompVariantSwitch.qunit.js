@@ -108,7 +108,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.done(function () {
+		QUnit.done(function() {
 			document.getElementById("qunit-fixture").style.display = "none";
 		});
 	});

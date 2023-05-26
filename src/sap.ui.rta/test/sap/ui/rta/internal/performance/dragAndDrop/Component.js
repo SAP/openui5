@@ -36,11 +36,11 @@ sap.ui.define([
 			window.fnResolve(RtaPerformanceTestUtil.startRta(oCore.byId("HBox")));
 		},
 
-		createContent: function () {
-			//create Vertical Layout
+		createContent: function() {
+			// create Vertical Layout
 			var oLayout1 = new VerticalLayout("Layout1");
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout1, 6);
-			DtPerformanceTestUtil.addMixedControlsTo(oLayout1, 31, 60, false /*invisible*/);
+			DtPerformanceTestUtil.addMixedControlsTo(oLayout1, 31, 60, false /* invisible */);
 			var oContainerLayout1 = new VerticalLayout({
 				id: "ContainerLayout1",
 				content: [
@@ -53,7 +53,7 @@ sap.ui.define([
 			});
 			var oLayout2 = new VerticalLayout("Layout2");
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout2, 6, 6);
-			DtPerformanceTestUtil.addMixedControlsTo(oLayout2, 91, 120, false /*invisible*/);
+			DtPerformanceTestUtil.addMixedControlsTo(oLayout2, 91, 120, false /* invisible */);
 			var oContainerLayout2 = new VerticalLayout({
 				id: "ContainerLayout2",
 				content: [
@@ -66,7 +66,7 @@ sap.ui.define([
 			});
 			var oLayout3 = new VerticalLayout("Layout3");
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout3, 6, 12);
-			DtPerformanceTestUtil.addMixedControlsTo(oLayout3, 151, 200, false /*invisible*/);
+			DtPerformanceTestUtil.addMixedControlsTo(oLayout3, 151, 200, false /* invisible */);
 			var oContainerLayout3 = new VerticalLayout({
 				id: "ContainerLayout3",
 				content: [

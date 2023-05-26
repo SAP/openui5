@@ -26,7 +26,7 @@ sap.ui.define([
 	* @returns {sap.ui.dt.ElementDesignTimeMetadata} Design time metadata
 	*/
 	function getDTMetadataFromActions(mActions) {
-		return mActions["addViaDelegate"] && mActions["addViaDelegate"].designTimeMetadata;
+		return mActions.addViaDelegate && mActions.addViaDelegate.designTimeMetadata;
 	}
 
 	/**
@@ -57,7 +57,7 @@ sap.ui.define([
 			relevantContainerOverlay: oRelevantContainerOverlay,
 			parentOverlay: oParentOverlay,
 			relevantContainer: oRelevantContainer,
-			parent: oParentOverlay && oParentOverlay.getElement() //root overlay has no parent
+			parent: oParentOverlay && oParentOverlay.getElement() // root overlay has no parent
 		};
 	};
 
@@ -96,7 +96,6 @@ sap.ui.define([
 			}
 			return _aNames;
 		}, []);
-
 
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 

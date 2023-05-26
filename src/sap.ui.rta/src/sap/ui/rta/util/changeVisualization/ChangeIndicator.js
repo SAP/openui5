@@ -397,7 +397,7 @@ sap.ui.define([
 
 	ChangeIndicator.prototype._toggleDetailPopover = function() {
 		if (!this.getAggregation("_popover")) {
-			//store the tabindex (tabindex will be removed on opening the popover)
+			// store the tabindex (tabindex will be removed on opening the popover)
 			this._iOldTabIndex = this.getDomRef().getAttribute("tabindex");
 			Fragment.load({
 				name: "sap.ui.rta.util.changeVisualization.ChangeIndicatorPopover",

@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 QUnit.dump.maxDepth = 50;
 
@@ -136,14 +136,14 @@ sap.ui.define([
 					})
 				]
 			});
-			this.oOuterLayout.placeAt('qunit-fixture');
+			this.oOuterLayout.placeAt("qunit-fixture");
 
 			this.oComponentContainer = new ComponentContainer({
 				id: "CompCont",
 				component: this.oComp,
 				height: "100%"
 			});
-			this.oComponentContainer.placeAt('qunit-fixture');
+			this.oComponentContainer.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
 			this.oRta = new RuntimeAuthoring({
@@ -170,7 +170,7 @@ sap.ui.define([
 			.withArgs(this.oButton2).returns(StaticDesigntimeMetadata.getButtonDesigntimeMetadata())
 			.withArgs(this.oOuterLayout).returns(StaticDesigntimeMetadata.getVerticalLayoutDesigntimeMetadata());
 
-			this.oRta.getService("outline").then(function (oService) {
+			this.oRta.getService("outline").then(function(oService) {
 				var fnElementOverlayCreatedHandler = function(oEvt) {
 					if (oEvt.getParameters().elementOverlay.getElement().getId() === "layout2") {
 						// Overlays for second root element created
@@ -188,32 +188,32 @@ sap.ui.define([
 			this.oRta.start();
 		},
 		after: function() {
-			QUnit.config.fixture = '';
+			QUnit.config.fixture = "";
 			this.oRta.destroy();
 			this.oComponentContainer.destroy();
 			this.oOuterLayout.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when get() is called and and no parameter is passed for initial control id and depth", function (assert) {
+		QUnit.test("when get() is called and and no parameter is passed for initial control id and depth", function(assert) {
 			return fetch("test-resources/sap/ui/rta/qunit/service/Outline.json")
-				.then(function(oResponse) {
-					return oResponse.json();
-				})
-				.then(function(aExpectedOutlineData) {
-					var aRootElements = this.oRta._oDesignTime.getRootElements();
-					this.oOutline.get().then(function(aReceivedResponse) {
-						assert.ok(Array.isArray(aReceivedResponse), "then an array is received");
-						assert.equal(aReceivedResponse.length, 2, "then two items in the array for each root element");
-						assert.strictEqual(aReceivedResponse[0].id, aRootElements[0].getId(), "then outline for first item created starting from the first root element");
-						assert.strictEqual(aReceivedResponse[1].id, aRootElements[1].getId(), "then outline for second created starting from the second root element");
-						assert.deepEqual(aReceivedResponse, aExpectedOutlineData, "then expected outline data received");
-					});
-				}.bind(this));
+			.then(function(oResponse) {
+				return oResponse.json();
+			})
+			.then(function(aExpectedOutlineData) {
+				var aRootElements = this.oRta._oDesignTime.getRootElements();
+				this.oOutline.get().then(function(aReceivedResponse) {
+					assert.ok(Array.isArray(aReceivedResponse), "then an array is received");
+					assert.equal(aReceivedResponse.length, 2, "then two items in the array for each root element");
+					assert.strictEqual(aReceivedResponse[0].id, aRootElements[0].getId(), "then outline for first item created starting from the first root element");
+					assert.strictEqual(aReceivedResponse[1].id, aRootElements[1].getId(), "then outline for second created starting from the second root element");
+					assert.deepEqual(aReceivedResponse, aExpectedOutlineData, "then expected outline data received");
+				});
+			}.bind(this));
 		});
 
-		QUnit.test("when get() is called and and depth (3) is passed without initial control id", function (assert) {
-			function checkElementsFromResponse (aReceivedResponse) {
+		QUnit.test("when get() is called and and depth (3) is passed without initial control id", function(assert) {
+			function checkElementsFromResponse(aReceivedResponse) {
 				return aReceivedResponse[0].elements.some(function(oChild1) {
 					if (oChild1.technicalName === "rootControl") { // root control in the component
 						assert.ok(Array.isArray(oChild1.elements), "then second level children are returned");
@@ -221,7 +221,7 @@ sap.ui.define([
 						var oChild2 = oChild1.elements[0]; // content of the page
 						assert.ok(Array.isArray(oChild2.elements), "then third level children are returned");
 
-						return oChild2.elements.some(function (oChild3) {
+						return oChild2.elements.some(function(oChild3) {
 							if (oChild3.technicalName === "content") { // content aggregation of the Page
 								assert.notOk(oChild3.elements, "then fourth level children are not returned");
 								return true;
@@ -240,20 +240,20 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when get() is called and initial control id is passed without depth", function (assert) {
+		QUnit.test("when get() is called and initial control id is passed without depth", function(assert) {
 			return this.oOutline.get("layout2").then(function(aReceivedResponse) {
 				assert.ok(aReceivedResponse[0], "then only one item applicable to the passed parameter returned");
 				assert.strictEqual(aReceivedResponse[0].id, "layout2", "then outline for first root element tree starts from the passed overlay");
 			});
 		});
 
-		QUnit.test("when get() is called and invalid control id is passed", function (assert) {
+		QUnit.test("when get() is called and invalid control id is passed", function(assert) {
 			return this.oOutline.get("dummy").catch(function(oError) {
 				assert.ok(oError.message.indexOf("Cannot find element with id= dummy") > -1, "then the correct error is thrown");
 			});
 		});
 
-		QUnit.test("when get() is called and both initial control id and depth (2) are passed", function (assert) {
+		QUnit.test("when get() is called and both initial control id and depth (2) are passed", function(assert) {
 			return this.oOutline.get("objPage", 2).then(function(aReceivedResponse) {
 				assert.strictEqual(aReceivedResponse[0].id, "objPage", "then outline for first item created starting from the passed overlay");
 
@@ -272,7 +272,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when get() is called with initial control id and depth (2), but second level overlay is being destroyed", function (assert) {
+		QUnit.test("when get() is called with initial control id and depth (2), but second level overlay is being destroyed", function(assert) {
 			var oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
 			sandbox.stub(oObjectPageSectionOverlay, "getShouldBeDestroyed").returns(true);
 			return this.oOutline.get("objPage", 2).then(function(aReceivedResponse) {
@@ -292,7 +292,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring and Outline service are created and get function is called", {
-		before: function () {
+		before: function() {
 
 		},
 		beforeEach: function(assert) {
@@ -356,7 +356,7 @@ sap.ui.define([
 				component: this.oComp,
 				height: "100%"
 			});
-			this.oComponentContainer.placeAt('qunit-fixture');
+			this.oComponentContainer.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
 			this.oRta = new RuntimeAuthoring({
@@ -366,7 +366,7 @@ sap.ui.define([
 			this.oRta.setPlugins({ testPlugin: oPlugin });
 			sandbox.stub(ReloadManager, "handleReloadOnStart").resolves(false);
 
-			this.oRta.getService("outline").then(function (oService) {
+			this.oRta.getService("outline").then(function(oService) {
 				this.oOutline = oService;
 				done();
 			}.bind(this));
@@ -378,11 +378,11 @@ sap.ui.define([
 			this.oComponentContainer.destroy();
 			sandbox.restore();
 		},
-		after: function () {
+		after: function() {
 
 		}
 	}, function() {
-		QUnit.test("when an element overlay is destroyed", function (assert) {
+		QUnit.test("when an element overlay is destroyed", function(assert) {
 			var done = assert.async();
 			this.oOutline.attachEventOnce("update", function(aUpdates) {
 				var oLastUpdate = aUpdates.pop();
@@ -390,10 +390,10 @@ sap.ui.define([
 				assert.strictEqual(oLastUpdate.element.id, this.oButton.getId(), "then a destroy update is sent for the correct node");
 				done();
 			}, this);
-			this.oButton.destroy(); //destroys overlay
+			this.oButton.destroy(); // destroys overlay
 		});
 
-		QUnit.test("when button1 and button2 are destroyed but the parent aggregation of button1 is already being destroyed", function (assert) {
+		QUnit.test("when button1 and button2 are destroyed but the parent aggregation of button1 is already being destroyed", function(assert) {
 			var done = assert.async();
 			this.oOutline.attachEventOnce("update", function(aUpdates) {
 				var oLastUpdate = aUpdates.pop();
@@ -405,7 +405,7 @@ sap.ui.define([
 			this.oButton1.destroy();
 		});
 
-		QUnit.test("when an element is inserted into an already existing aggregation", function (assert) {
+		QUnit.test("when an element is inserted into an already existing aggregation", function(assert) {
 			var done = assert.async();
 			assert.expect(2);
 			var oExpectedResponse1 = {
@@ -450,11 +450,11 @@ sap.ui.define([
 				}.bind(this));
 			}
 			this.oOutline.attachEvent("update", onUpdate, this);
-			this.oLayout.addContent(new Button("newButton")); //inserts new overlay
+			this.oLayout.addContent(new Button("newButton")); // inserts new overlay
 			oCore.applyChanges();
 		});
 
-		QUnit.test("when setEditable is called for an existing overlay", function (assert) {
+		QUnit.test("when setEditable is called for an existing overlay", function(assert) {
 			var done = assert.async();
 			var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton1);
 			var bOriginalEditable = oButtonOverlay.getEditable();
@@ -474,7 +474,7 @@ sap.ui.define([
 			oButtonOverlay.setEditable(!bOriginalEditable);
 		});
 
-		QUnit.test("when move of an aggregation occurs from one overlay to another", function (assert) {
+		QUnit.test("when move of an aggregation occurs from one overlay to another", function(assert) {
 			var done = assert.async();
 			var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 			var oRelevantContainer = oButtonOverlay.getRelevantContainer();
@@ -522,12 +522,12 @@ sap.ui.define([
 				return oMoveCommand.execute();
 			}.bind(this))
 
-			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			.catch(function(oError) {
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
-		QUnit.test("when a elementPropertyChange is triggered on an element with an existing overlay", function (assert) {
+		QUnit.test("when a elementPropertyChange is triggered on an element with an existing overlay", function(assert) {
 			assert.expect(2);
 			var done = assert.async(2);
 
@@ -556,62 +556,62 @@ sap.ui.define([
 					oldValue: "Default",
 					element: oExpectedResponse.element // unchanged
 				};
-				//property change operation #2
+				// property change operation #2
 				this.oButton.setType("Back");
 				done();
 			}, this);
 
-			//property change operation #1
+			// property change operation #1
 			this.oButton.setText("newText");
 		});
 
-		QUnit.test("when a root element is added to the design time", function (assert) {
+		QUnit.test("when a root element is added to the design time", function(assert) {
 			var done = assert.async();
 			fetch("test-resources/sap/ui/rta/qunit/service/Outline.json")
-				.then(function(oResponse) {
-					return oResponse.json();
-				})
-				.then(function(aExpectedOutlineData) {
-					aExpectedOutlineData[1].elements[0].elements.splice(1, 1); // clean-up of unwanted element
+			.then(function(oResponse) {
+				return oResponse.json();
+			})
+			.then(function(aExpectedOutlineData) {
+				aExpectedOutlineData[1].elements[0].elements.splice(1, 1); // clean-up of unwanted element
 
-					// control editable property is initially false
-					aExpectedOutlineData[1].editable = false;
-					aExpectedOutlineData[1].elements[0].elements[0].editable = false;
+				// control editable property is initially false
+				aExpectedOutlineData[1].editable = false;
+				aExpectedOutlineData[1].elements[0].elements[0].editable = false;
 
-					var oExpectedResponse = {
-						type: "new",
-						element: aExpectedOutlineData[1]
-					};
-					var oOuterLayout = new VerticalLayout({
-						id: "layout2",
-						content: [new Button("button2")]
-					});
-					oOuterLayout.placeAt('qunit-fixture');
-					oCore.applyChanges();
+				var oExpectedResponse = {
+					type: "new",
+					element: aExpectedOutlineData[1]
+				};
+				var oOuterLayout = new VerticalLayout({
+					id: "layout2",
+					content: [new Button("button2")]
+				});
+				oOuterLayout.placeAt("qunit-fixture");
+				oCore.applyChanges();
 
-					this.oRta._oDesignTime.addRootElement(oOuterLayout);
-					this.oOutline.attachEventOnce("update", function (aUpdates) {
-						assert.deepEqual(aUpdates[0], oExpectedResponse, "then expected response for new update was received");
-						oOuterLayout.destroy();
-						done();
-					}, this);
-				}.bind(this));
+				this.oRta._oDesignTime.addRootElement(oOuterLayout);
+				this.oOutline.attachEventOnce("update", function(aUpdates) {
+					assert.deepEqual(aUpdates[0], oExpectedResponse, "then expected response for new update was received");
+					oOuterLayout.destroy();
+					done();
+				}, this);
+			}.bind(this));
 		});
 	});
 
 	var sXmlString =
 	'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
 		'<Panel id="panel">' +
-			'<content>' +
+			"<content>" +
 				'<core:ExtensionPoint name="ExtensionPoint1" />' +
 				'<Label id="label2" text="Panel with stable id" />' +
 				'<core:ExtensionPoint name="ExtensionPoint2">' +
 					'<Label id="ep2-label1" text="Extension point label1 - default content" />' +
 					'<Label id="ep2-label2" text="Extension point label2 - default content" />' +
-				'</core:ExtensionPoint>' +
-			'</content>' +
-		'</Panel>' +
-	'</mvc:View>';
+				"</core:ExtensionPoint>" +
+			"</content>" +
+		"</Panel>" +
+	"</mvc:View>";
 
 	function _createComponent() {
 		var MockComponent = UIComponent.extend("MockController", {
@@ -634,7 +634,7 @@ sap.ui.define([
 
 	function _createAsyncView(sViewName, sXmlView, oComponent, oController) {
 		var mController = oController ? { controller: oController } : {};
-		return oComponent.runAsOwner(function () {
+		return oComponent.runAsOwner(function() {
 			return XMLView.create(Object.assign({
 				id: sViewName,
 				definition: sXmlView,
@@ -643,32 +643,32 @@ sap.ui.define([
 		});
 	}
 
-	function _beforeEachExtensionPoint (sXmlView, oController) {
+	function _beforeEachExtensionPoint(sXmlView, oController) {
 		sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 		sandbox.stub(oCore.getConfiguration(), "getSuppressDeactivationOfControllerCode").returns(true);
 		sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
 		this.oComponent = _createComponent();
 		return _createAsyncView("myView", sXmlView, this.oComponent, oController)
-			.then(function (oXmlView) {
-				this.oXmlView = oXmlView;
-				oXmlView.placeAt("qunit-fixture");
-				oCore.applyChanges();
-				return new RuntimeAuthoring({
-					showToolbars: false,
-					rootControl: this.oXmlView
-				});
-			}.bind(this))
-			.then(function (oRta) {
-				this.oRta = oRta;
-				this.oRta.start();
-				return this.oRta.getService("outline");
-			}.bind(this))
-			.then(function (oService) {
-				this.oOutline = oService;
-			}.bind(this));
+		.then(function(oXmlView) {
+			this.oXmlView = oXmlView;
+			oXmlView.placeAt("qunit-fixture");
+			oCore.applyChanges();
+			return new RuntimeAuthoring({
+				showToolbars: false,
+				rootControl: this.oXmlView
+			});
+		}.bind(this))
+		.then(function(oRta) {
+			this.oRta = oRta;
+			this.oRta.start();
+			return this.oRta.getService("outline");
+		}.bind(this))
+		.then(function(oService) {
+			this.oOutline = oService;
+		}.bind(this));
 	}
 
-	function _afterEachExtensionPoint () {
+	function _afterEachExtensionPoint() {
 		this.oRta.destroy();
 		this.oComponent.destroy();
 		this.oXmlView.destroy();
@@ -677,14 +677,14 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that xmlView with extensionPoints, RuntimeAuthoring and Outline service are created ", {
-		beforeEach: function () {
+		beforeEach: function() {
 			return _beforeEachExtensionPoint.call(this, sXmlString);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			return _afterEachExtensionPoint.call(this);
 		}
 	}, function() {
-		QUnit.test("when get() is called", function (assert) {
+		QUnit.test("when get() is called", function(assert) {
 			var mExtensionPointOutlineItem = {
 				name: "ExtensionPoint2",
 				technicalName: "sap.ui.extensionpoint",
@@ -699,15 +699,15 @@ sap.ui.define([
 				}
 			};
 			return this.oOutline.get()
-				.then(function(aReceivedResponse) {
-					var aPanelContent = aReceivedResponse[0].elements[0].elements[0].elements[0].elements;
-					assert.strictEqual(aPanelContent[0].technicalName, "sap.ui.extensionpoint", "then in the panel content the first item is an ExtensionPoint");
-					assert.strictEqual(aPanelContent[1].technicalName, "sap.m.Label", "then in the panel content the second item is a Label");
-					assert.strictEqual(aPanelContent[2].technicalName, "sap.ui.extensionpoint", "then in the panel content the third item is an ExtensionPoint");
-					assert.strictEqual(aPanelContent[3].technicalName, "sap.m.Label", "then in the panel content the fourth item is a Label (default content)");
-					assert.strictEqual(aPanelContent[4].technicalName, "sap.m.Label", "then in the panel content the fifth item is a Label (default content)");
-					assert.deepEqual(aPanelContent[2], mExtensionPointOutlineItem, "then all properties of the extension point outline item are correct");
-				});
+			.then(function(aReceivedResponse) {
+				var aPanelContent = aReceivedResponse[0].elements[0].elements[0].elements[0].elements;
+				assert.strictEqual(aPanelContent[0].technicalName, "sap.ui.extensionpoint", "then in the panel content the first item is an ExtensionPoint");
+				assert.strictEqual(aPanelContent[1].technicalName, "sap.m.Label", "then in the panel content the second item is a Label");
+				assert.strictEqual(aPanelContent[2].technicalName, "sap.ui.extensionpoint", "then in the panel content the third item is an ExtensionPoint");
+				assert.strictEqual(aPanelContent[3].technicalName, "sap.m.Label", "then in the panel content the fourth item is a Label (default content)");
+				assert.strictEqual(aPanelContent[4].technicalName, "sap.m.Label", "then in the panel content the fifth item is a Label (default content)");
+				assert.deepEqual(aPanelContent[2], mExtensionPointOutlineItem, "then all properties of the extension point outline item are correct");
+			});
 		});
 	});
 
@@ -715,24 +715,24 @@ sap.ui.define([
 		'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns="sap.m">' +
 			'<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="1" labelSpanM="3" columnsL="1" ' +
 				'columnsM="1" emptySpanL="1" emptySpanM="0" width="100%" title="test_simpleform" maxContainerCols="1">' +
-				'<form:content>' +
+				"<form:content>" +
 					'<core:ExtensionPoint name="ExtensionPoint3">' +
 						'<Label id="ep3-label3" text="Extension point label3 - default content" />' +
-					'</core:ExtensionPoint>' +
+					"</core:ExtensionPoint>" +
 					'<Label id="label3" text="label3"></Label>' +
-				'</form:content>' +
-			'</form:SimpleForm>' +
-		'</mvc:View>';
+				"</form:content>" +
+			"</form:SimpleForm>" +
+		"</mvc:View>";
 
 	QUnit.module("Given that xmlView with extensionPoints, RuntimeAuthoring and Outline service are created with 'simple form'", {
-		beforeEach: function () {
+		beforeEach: function() {
 			return _beforeEachExtensionPoint.call(this, oXmlSimpleForm);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			return _afterEachExtensionPoint.call(this);
 		}
 	}, function() {
-		QUnit.test("when get() is called", function (assert) {
+		QUnit.test("when get() is called", function(assert) {
 			var mExtensionPointOutlineItem = {
 				name: "ExtensionPoint3",
 				technicalName: "sap.ui.extensionpoint",
@@ -746,25 +746,25 @@ sap.ui.define([
 				}
 			};
 			return this.oOutline.get()
-				.then(function(aReceivedResponse) {
-					var aRootElements = aReceivedResponse[0].elements;
-					assert.strictEqual(aRootElements[0].technicalName, "sap.ui.extensionpoint", "then in the view elements the first item is an ExtensionPoint");
-					assert.strictEqual(aRootElements[1].technicalName, "content", "then in the view elements the second item is an content aggregation");
-					assert.deepEqual(aRootElements[0], mExtensionPointOutlineItem, "then all properties of the extension point outline item are correct");
-					var oFormAggregation = aRootElements[1].elements[0].elements[0];
-					var oFormContainerAggregation = oFormAggregation.elements[0].elements[0];
-					var oFormElementsAggregation = oFormContainerAggregation.elements[0].elements[0];
-					assert.deepEqual(oFormElementsAggregation.elements[0].instanceName, "Extension point label3 - default content",
-						"then the lable from default content of the extension point is now placed in the FormElements aggregation");
-					assert.deepEqual(oFormElementsAggregation.elements[1].instanceName, "label3",
-						"then the lable outsite the extension point is now placed in the FormElements aggregation");
-				});
+			.then(function(aReceivedResponse) {
+				var aRootElements = aReceivedResponse[0].elements;
+				assert.strictEqual(aRootElements[0].technicalName, "sap.ui.extensionpoint", "then in the view elements the first item is an ExtensionPoint");
+				assert.strictEqual(aRootElements[1].technicalName, "content", "then in the view elements the second item is an content aggregation");
+				assert.deepEqual(aRootElements[0], mExtensionPointOutlineItem, "then all properties of the extension point outline item are correct");
+				var oFormAggregation = aRootElements[1].elements[0].elements[0];
+				var oFormContainerAggregation = oFormAggregation.elements[0].elements[0];
+				var oFormElementsAggregation = oFormContainerAggregation.elements[0].elements[0];
+				assert.deepEqual(oFormElementsAggregation.elements[0].instanceName, "Extension point label3 - default content",
+					"then the lable from default content of the extension point is now placed in the FormElements aggregation");
+				assert.deepEqual(oFormElementsAggregation.elements[1].instanceName, "label3",
+					"then the lable outsite the extension point is now placed in the FormElements aggregation");
+			});
 		});
 	});
 
 	function createController(sController, oData) {
 		Controller.extend(sController, {
-			onInit: function () {
+			onInit: function() {
 				var oModel = new JSONModel(oData);
 				this.getView().setModel(oModel);
 			}
@@ -773,19 +773,19 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that xmlView with table and extensionPoint (RuntimeAuthoring and outline service are started) - Template case", {
-		afterEach: function () {
+		afterEach: function() {
 			return _afterEachExtensionPoint.call(this);
 		}
 	}, function() {
-		QUnit.test("for four products in the collection, when get() is called", function (assert) {
+		QUnit.test("for four products in the collection, when get() is called", function(assert) {
 			var oXmlTable =
 			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 				'<List id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
-					'<items>' +
+					"<items>" +
 						'<StandardListItem title="{Name}" />' +
-					'</items>' +
-				'</List>' +
-			'</mvc:View>';
+					"</items>" +
+				"</List>" +
+			"</mvc:View>";
 
 			var oData = {
 				ProductCollection: [
@@ -796,68 +796,68 @@ sap.ui.define([
 				]
 			};
 			return createController("myController", oData)
-				.then(function(oController) {
-					return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
-				}.bind(this))
-				.then(function() {
-					return this.oOutline.get();
-				}.bind(this))
-				.then(function(aReceivedResponse) {
-					var aRootElements = aReceivedResponse[0].elements;
-					assert.strictEqual(aRootElements[0].technicalName, "content",
-						"then in the view elements the second item is a content aggregation");
-					var oListElementInfo = aRootElements[0].elements[0];
-					assert.strictEqual(oListElementInfo.technicalName, "sap.m.List",
-						"then sap.m.List is available in the view elements");
-					assert.strictEqual(oListElementInfo.elements.length, 4,
-						"then list contains 4 entries: the template element + 2 empty aggregations + the items aggregation");
-					assert.strictEqual(oListElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
-						"then the first list entry (aggregation binding template) has the correct icon assigned");
-					assert.strictEqual(oListElementInfo.elements[0].name, "List Item",
-						"then the first list entry is named according to the template control type");
-					assert.strictEqual(oListElementInfo.elements[0].type, "aggregationBindingTemplate",
-						"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
-					assert.strictEqual(oListElementInfo.elements[2].icon, "sap-icon://card",
-						"then the second list entry (empty aggregation) has the correct icon assigned");
-					assert.strictEqual(oListElementInfo.elements[2].type, "aggregation",
-						"then the second list entry (empty aggregation) has the correct type (aggregation)");
-					assert.strictEqual(
-						oListElementInfo.elements[1].elements.length,
-						4,
-						"then the items aggregation contains the instances from the binding"
-					);
-					var sExpectedTemplateReference = oListElementInfo.elements[0].id;
-					assert.notOk(
-						oListElementInfo.hasOwnProperty("templateReference"),
-						"then elements outside the aggregation binding have no template reference"
-					);
-					assert.strictEqual(
-						oListElementInfo.elements[1].templateReference,
-						sExpectedTemplateReference,
-						"then the aggregation overlay has a reference on the template item"
-					);
-					assert.ok(
-						oListElementInfo.elements[1].elements.every(function(oItem) {
-							return oItem.templateReference === sExpectedTemplateReference;
-						}),
-						"then each aggregation instance has a reference on the template item"
-					);
-				});
+			.then(function(oController) {
+				return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+			}.bind(this))
+			.then(function() {
+				return this.oOutline.get();
+			}.bind(this))
+			.then(function(aReceivedResponse) {
+				var aRootElements = aReceivedResponse[0].elements;
+				assert.strictEqual(aRootElements[0].technicalName, "content",
+					"then in the view elements the second item is a content aggregation");
+				var oListElementInfo = aRootElements[0].elements[0];
+				assert.strictEqual(oListElementInfo.technicalName, "sap.m.List",
+					"then sap.m.List is available in the view elements");
+				assert.strictEqual(oListElementInfo.elements.length, 4,
+					"then list contains 4 entries: the template element + 2 empty aggregations + the items aggregation");
+				assert.strictEqual(oListElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
+					"then the first list entry (aggregation binding template) has the correct icon assigned");
+				assert.strictEqual(oListElementInfo.elements[0].name, "List Item",
+					"then the first list entry is named according to the template control type");
+				assert.strictEqual(oListElementInfo.elements[0].type, "aggregationBindingTemplate",
+					"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
+				assert.strictEqual(oListElementInfo.elements[2].icon, "sap-icon://card",
+					"then the second list entry (empty aggregation) has the correct icon assigned");
+				assert.strictEqual(oListElementInfo.elements[2].type, "aggregation",
+					"then the second list entry (empty aggregation) has the correct type (aggregation)");
+				assert.strictEqual(
+					oListElementInfo.elements[1].elements.length,
+					4,
+					"then the items aggregation contains the instances from the binding"
+				);
+				var sExpectedTemplateReference = oListElementInfo.elements[0].id;
+				assert.notOk(
+					oListElementInfo.hasOwnProperty("templateReference"),
+					"then elements outside the aggregation binding have no template reference"
+				);
+				assert.strictEqual(
+					oListElementInfo.elements[1].templateReference,
+					sExpectedTemplateReference,
+					"then the aggregation overlay has a reference on the template item"
+				);
+				assert.ok(
+					oListElementInfo.elements[1].elements.every(function(oItem) {
+						return oItem.templateReference === sExpectedTemplateReference;
+					}),
+					"then each aggregation instance has a reference on the template item"
+				);
+			});
 		});
 
-		QUnit.test("when an aggregation contains a template with a nested aggregation", function (assert) {
+		QUnit.test("when an aggregation contains a template with a nested aggregation", function(assert) {
 			var oXmlTable =
 			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 				'<VBox id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
-					'<items>' +
+					"<items>" +
 						'<VBox id="vb2">' +
-							'<items>' +
+							"<items>" +
 								'<Button id="myButton" text="Hello" />' +
-							'</items>' +
-						'</VBox>' +
-					'</items>' +
-				'</VBox>' +
-			'</mvc:View>';
+							"</items>" +
+						"</VBox>" +
+					"</items>" +
+				"</VBox>" +
+			"</mvc:View>";
 
 			var oData = {
 				ProductCollection: [
@@ -868,51 +868,51 @@ sap.ui.define([
 				]
 			};
 			return createController("myController", oData)
-				.then(function(oController) {
-					return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
-				}.bind(this))
-				.then(function() {
-					return this.oOutline.get();
-				}.bind(this))
-				.then(function(aReceivedResponse) {
-					var oOuterVBox = aReceivedResponse[0].elements[0].elements[0];
-					var oTemplate = oOuterVBox.elements[0];
-					var oInstance = oOuterVBox.elements[1].elements[0];
+			.then(function(oController) {
+				return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+			}.bind(this))
+			.then(function() {
+				return this.oOutline.get();
+			}.bind(this))
+			.then(function(aReceivedResponse) {
+				var oOuterVBox = aReceivedResponse[0].elements[0].elements[0];
+				var oTemplate = oOuterVBox.elements[0];
+				var oInstance = oOuterVBox.elements[1].elements[0];
 
-					assert.strictEqual(
-						oInstance.templateReference,
-						oTemplate.id,
-						"then instances have a reference on the template"
-					);
-					assert.strictEqual(
-						oInstance.elements[0].elements[0].templateReference,
-						oTemplate.elements[0].elements[0].id,
-						"then nested elements reference the equivalent elements in the template structure"
-					);
-					assert.notOk(
-						oTemplate.elements[0].elements[0].hasOwnProperty("templateReference"),
-						"then elements in the template structure have no template reference"
-					);
-				});
+				assert.strictEqual(
+					oInstance.templateReference,
+					oTemplate.id,
+					"then instances have a reference on the template"
+				);
+				assert.strictEqual(
+					oInstance.elements[0].elements[0].templateReference,
+					oTemplate.elements[0].elements[0].id,
+					"then nested elements reference the equivalent elements in the template structure"
+				);
+				assert.notOk(
+					oTemplate.elements[0].elements[0].hasOwnProperty("templateReference"),
+					"then elements in the template structure have no template reference"
+				);
+			});
 		});
 
-		QUnit.test("when an aggregation contains a template with a nested template", function (assert) {
+		QUnit.test("when an aggregation contains a template with a nested template", function(assert) {
 			var oXmlTable =
 			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 				'<VBox id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\', templateShareable: false}">' +
-					'<items>' +
+					"<items>" +
 						'<VBox id="vb2NoTemplate">' +
 							'<Button id="vb2TopButton" text="Prepended element" />' +
 							'<VBox id="vb3WithTemplate" items="{path: \'/ProductCollection\', templateShareable: false}">' +
-								'<items>' +
+								"<items>" +
 									'<Button id="vb3Button" text="{ProductId}" />' +
-								'</items>' +
-							'</VBox>' +
+								"</items>" +
+							"</VBox>" +
 							'<Button id="vb2BottomButton" text="Appended element" />' +
-						'</VBox>' +
-					'</items>' +
-				'</VBox>' +
-			'</mvc:View>';
+						"</VBox>" +
+					"</items>" +
+				"</VBox>" +
+			"</mvc:View>";
 
 			var oData = {
 				ProductCollection: [
@@ -923,99 +923,99 @@ sap.ui.define([
 				]
 			};
 			return createController("myController", oData)
-				.then(function(oController) {
-					return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
-				}.bind(this))
-				.then(function() {
-					return this.oOutline.get();
-				}.bind(this))
-				.then(function(aReceivedResponse) {
-					var oOuterVBox = aReceivedResponse[0].elements[0].elements[0];
-					var oOuterTemplate = oOuterVBox.elements[0];
-					var oInnerTemplate = oOuterTemplate.elements[0].elements[1];
-					var oOuterInstance = oOuterVBox.elements[1].elements[0];
-					var oInnerInstance = oOuterInstance.elements[0].elements[1];
+			.then(function(oController) {
+				return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+			}.bind(this))
+			.then(function() {
+				return this.oOutline.get();
+			}.bind(this))
+			.then(function(aReceivedResponse) {
+				var oOuterVBox = aReceivedResponse[0].elements[0].elements[0];
+				var oOuterTemplate = oOuterVBox.elements[0];
+				var oInnerTemplate = oOuterTemplate.elements[0].elements[1];
+				var oOuterInstance = oOuterVBox.elements[1].elements[0];
+				var oInnerInstance = oOuterInstance.elements[0].elements[1];
 
-					assert.strictEqual(
-						oOuterInstance.templateReference,
-						oOuterTemplate.id,
-						"then the root template is properly referenced"
-					);
-					assert.strictEqual(
-						oOuterInstance.elements[0].elements[0].templateReference,
-						oOuterTemplate.elements[0].elements[0].id,
-						"then nested elements reference the equivalent elements in the outer template structure - top button"
-					);
-					assert.strictEqual(
-						oOuterInstance.elements[0].elements[2].templateReference,
-						oOuterTemplate.elements[0].elements[2].id,
-						"then nested elements reference the equivalent elements in the outer template structure - bottom button"
-					);
-					assert.strictEqual(
-						oInnerInstance.templateReference,
-						oInnerTemplate.id,
-						"then the nested template is properly referenced"
-					);
-					assert.strictEqual(
-						oInnerInstance.elements[0].templateReference,
-						oInnerTemplate.elements[0].id,
-						"then nested elements reference the equivalent elements in the inner template structure"
-					);
-				});
+				assert.strictEqual(
+					oOuterInstance.templateReference,
+					oOuterTemplate.id,
+					"then the root template is properly referenced"
+				);
+				assert.strictEqual(
+					oOuterInstance.elements[0].elements[0].templateReference,
+					oOuterTemplate.elements[0].elements[0].id,
+					"then nested elements reference the equivalent elements in the outer template structure - top button"
+				);
+				assert.strictEqual(
+					oOuterInstance.elements[0].elements[2].templateReference,
+					oOuterTemplate.elements[0].elements[2].id,
+					"then nested elements reference the equivalent elements in the outer template structure - bottom button"
+				);
+				assert.strictEqual(
+					oInnerInstance.templateReference,
+					oInnerTemplate.id,
+					"then the nested template is properly referenced"
+				);
+				assert.strictEqual(
+					oInnerInstance.elements[0].templateReference,
+					oInnerTemplate.elements[0].id,
+					"then nested elements reference the equivalent elements in the inner template structure"
+				);
+			});
 		});
 
-		QUnit.test("for empty product collection, when get() is called", function (assert) {
+		QUnit.test("for empty product collection, when get() is called", function(assert) {
 			var oXmlTable =
 			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 				'<List id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
-					'<items>' +
+					"<items>" +
 						'<StandardListItem title="{Name}" />' +
-					'</items>' +
-				'</List>' +
-			'</mvc:View>';
+					"</items>" +
+				"</List>" +
+			"</mvc:View>";
 
 			var oData = {
 				ProductCollection: []
 			};
 			return createController("myController", oData)
-				.then(function(oController) {
-					return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
-				}.bind(this))
-				.then(function() {
-					return this.oOutline.get();
-				}.bind(this))
-				.then(function(aReceivedResponse) {
-					var aRootElements = aReceivedResponse[0].elements;
-					assert.strictEqual(aRootElements[0].technicalName, "content",
-						"then in the view elements the second item is a content aggregation");
-					var oListElementInfo = aRootElements[0].elements[0];
-					assert.strictEqual(oListElementInfo.technicalName, "sap.m.List",
-						"then sap.m.List is available in the view elements");
-					assert.strictEqual(oListElementInfo.elements.length, 4,
-						"then list contains 4 entries: the template element + 2 empty aggregations from the control + items aggregation");
-					assert.strictEqual(oListElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
-						"then the first list entry (aggregation binding template) has the correct icon assigned");
-					assert.strictEqual(oListElementInfo.elements[0].name, "List Item",
-						"then the first list entry contains the template");
-					assert.strictEqual(oListElementInfo.elements[0].type, "aggregationBindingTemplate",
-						"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
-				});
+			.then(function(oController) {
+				return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+			}.bind(this))
+			.then(function() {
+				return this.oOutline.get();
+			}.bind(this))
+			.then(function(aReceivedResponse) {
+				var aRootElements = aReceivedResponse[0].elements;
+				assert.strictEqual(aRootElements[0].technicalName, "content",
+					"then in the view elements the second item is a content aggregation");
+				var oListElementInfo = aRootElements[0].elements[0];
+				assert.strictEqual(oListElementInfo.technicalName, "sap.m.List",
+					"then sap.m.List is available in the view elements");
+				assert.strictEqual(oListElementInfo.elements.length, 4,
+					"then list contains 4 entries: the template element + 2 empty aggregations from the control + items aggregation");
+				assert.strictEqual(oListElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
+					"then the first list entry (aggregation binding template) has the correct icon assigned");
+				assert.strictEqual(oListElementInfo.elements[0].name, "List Item",
+					"then the first list entry contains the template");
+				assert.strictEqual(oListElementInfo.elements[0].type, "aggregationBindingTemplate",
+					"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
+			});
 		});
 
-		QUnit.test("for two lists, when get() is called", function (assert) {
+		QUnit.test("for two lists, when get() is called", function(assert) {
 			var oXmlTable =
 			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 				'<List id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
-					'<items>' +
+					"<items>" +
 						'<StandardListItem title="{Name}" />' +
-					'</items>' +
-				'</List>' +
+					"</items>" +
+				"</List>" +
 				'<List id="ShortPotatoList" headerText="Potatoes" items="{path: \'/PotatoCollection\'}">' +
-					'<items>' +
+					"<items>" +
 						'<StandardListItem title="{Name}" />' +
-					'</items>' +
-				'</List>' +
-			'</mvc:View>';
+					"</items>" +
+				"</List>" +
+			"</mvc:View>";
 
 			var oData = {
 				ProductCollection: [
@@ -1027,42 +1027,42 @@ sap.ui.define([
 				]
 			};
 			return createController("myController", oData)
-				.then(function(oController) {
-					return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
-				}.bind(this))
-				.then(function() {
-					return this.oOutline.get();
-				}.bind(this))
-				.then(function(aReceivedResponse) {
-					var aRootElements = aReceivedResponse[0].elements;
-					assert.strictEqual(aRootElements[0].technicalName, "content",
-						"then in the view elements the second item is a content aggregation");
-					var oList1ElementInfo = aRootElements[0].elements[0];
-					assert.strictEqual(oList1ElementInfo.technicalName, "sap.m.List",
-						"then sap.m.List is available in the view elements");
-					assert.strictEqual(oList1ElementInfo.elements.length, 4,
-						"then first list contains 4 entries: the template element + 2 empty aggregations from the control + items aggregation");
-					assert.strictEqual(oList1ElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
-						"then the first list entry (aggregation binding template) has the correct icon assigned");
-					assert.strictEqual(oList1ElementInfo.elements[0].name, "List Item",
-						"then the first list entry contains the template");
-					assert.strictEqual(oList1ElementInfo.elements[0].type, "aggregationBindingTemplate",
-						"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
+			.then(function(oController) {
+				return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+			}.bind(this))
+			.then(function() {
+				return this.oOutline.get();
+			}.bind(this))
+			.then(function(aReceivedResponse) {
+				var aRootElements = aReceivedResponse[0].elements;
+				assert.strictEqual(aRootElements[0].technicalName, "content",
+					"then in the view elements the second item is a content aggregation");
+				var oList1ElementInfo = aRootElements[0].elements[0];
+				assert.strictEqual(oList1ElementInfo.technicalName, "sap.m.List",
+					"then sap.m.List is available in the view elements");
+				assert.strictEqual(oList1ElementInfo.elements.length, 4,
+					"then first list contains 4 entries: the template element + 2 empty aggregations from the control + items aggregation");
+				assert.strictEqual(oList1ElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
+					"then the first list entry (aggregation binding template) has the correct icon assigned");
+				assert.strictEqual(oList1ElementInfo.elements[0].name, "List Item",
+					"then the first list entry contains the template");
+				assert.strictEqual(oList1ElementInfo.elements[0].type, "aggregationBindingTemplate",
+					"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
 
-					var oList2ElementInfo = aRootElements[0].elements[1];
-					assert.strictEqual(oList2ElementInfo.elements.length, 4,
-						"then second list contains 4 entries: the template element + 2 empty aggregations from the control + items aggregation");
-					assert.strictEqual(oList2ElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
-						"then the first list entry (aggregation binding template) has the correct icon assigned");
-					assert.strictEqual(oList2ElementInfo.elements[0].name, "List Item",
-						"then the frist list entry contains the template");
-					assert.strictEqual(oList2ElementInfo.elements[0].type, "aggregationBindingTemplate",
-						"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
-				});
+				var oList2ElementInfo = aRootElements[0].elements[1];
+				assert.strictEqual(oList2ElementInfo.elements.length, 4,
+					"then second list contains 4 entries: the template element + 2 empty aggregations from the control + items aggregation");
+				assert.strictEqual(oList2ElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
+					"then the first list entry (aggregation binding template) has the correct icon assigned");
+				assert.strictEqual(oList2ElementInfo.elements[0].name, "List Item",
+					"then the frist list entry contains the template");
+				assert.strictEqual(oList2ElementInfo.elements[0].type, "aggregationBindingTemplate",
+					"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
+			});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

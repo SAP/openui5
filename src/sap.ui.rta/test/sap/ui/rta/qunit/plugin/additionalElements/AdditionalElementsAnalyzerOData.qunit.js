@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
@@ -37,7 +37,7 @@ function(
 			return {
 				element: oFormElement,
 				action: {
-					//nothing relevant for the analyzer
+					// nothing relevant for the analyzer
 				}
 			};
 		});
@@ -47,7 +47,7 @@ function(
 		};
 	}
 
-	QUnit.module("Given test view", TestUtils.commonHooks(), function () {
+	QUnit.module("Given test view", TestUtils.commonHooks(), function() {
 		QUnit.test("when getting invisible elements with a control without model", function(assert) {
 			var mTestData = _createSimpleFormFakingFormElements(this.oView);
 			var oSimpleFormWithoutModel = mTestData.simpleForm;
@@ -85,7 +85,6 @@ function(
 				}
 			};
 			oSimpleFormWithJSONModel.setModel(new JSONModel({elements: "foo"}));
-
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSimpleFormWithJSONModel, mActionsObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 5, "then there are 5 invisible Elements that are not enhanced with oDataProperty properties");
@@ -132,7 +131,7 @@ function(
 						]
 					})
 				]
-			//not assigning delegate as it is not read anymore but passed upfront
+			// not assigning delegate as it is not read anymore but passed upfront
 			});
 			oForm.setModel(new JSONModel({
 				Property01: "foo",
@@ -158,12 +157,12 @@ function(
 				aggregation: "formElements",
 				reveal: {
 					elements: [{
-						action: {}, //reveal action, nothing relevant for the analyzer
+						action: {}, // reveal action, nothing relevant for the analyzer
 						element: mTestData.invisible
 					}]
 				},
 				addViaDelegate: {
-					action: {}, //not relevant for test,
+					action: {}, // not relevant for test,
 					delegateInfo: {
 						payload: {
 							modelName: sModelName
@@ -228,7 +227,6 @@ function(
 			});
 		});
 
-
 		function givenSomeControlsRepresentPropertiesWithoutBindings() {
 			var oInvisibleElement = new FormElement({
 				id: "invisible-representing-Property02",
@@ -253,7 +251,7 @@ function(
 						]
 					})
 				]
-			//not assigning delegate as it is not read anymore but passed upfront
+			// not assigning delegate as it is not read anymore but passed upfront
 			});
 			return {
 				form: oForm,
@@ -269,13 +267,13 @@ function(
 				aggregation: "formElements",
 				reveal: {
 					elements: [{
-						action: {}, //reveal action, nothing relevant for the analyzer
+						action: {}, // reveal action, nothing relevant for the analyzer
 
 						element: mTestData.invisible
 					}]
 				},
 				addViaDelegate: {
-					action: {}, //not relevant for test,
+					action: {}, // not relevant for test,
 					relevantContainer: mTestData.form,
 					delegateInfo: {
 						payload: {
@@ -405,7 +403,7 @@ function(
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

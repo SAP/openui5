@@ -18,7 +18,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.rta.test.rtaOpenUI5Only.ComplexTest", {
 		_aData: [],
 
-		onInit: function () {
+		onInit: function() {
 			var sURL = "/destinations/E91/sap/opu/odata/SAP/rtaOpenUI5OnlyTest/";
 
 			var oMockServer = new MockServer({
@@ -59,7 +59,7 @@ sap.ui.define([
 			oView.setModel(oStateModel, "state");
 
 			this._aData.push(
-				new Promise(function (resolve) {
+				new Promise(function(resolve) {
 					oView.byId("MainForm").bindElement({
 						path: "/EntityTypes2(EntityType02_Property01='EntityType02Property01Value')",
 						events: {
@@ -70,7 +70,7 @@ sap.ui.define([
 						}
 					});
 				}),
-				new Promise(function (resolve) {
+				new Promise(function(resolve) {
 					oView.byId("GroupEntityType01").bindElement({
 						path: "/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')",
 						events: {
@@ -81,7 +81,7 @@ sap.ui.define([
 			);
 		},
 
-		switchToAdaptionMode: function () {
+		switchToAdaptionMode: function() {
 			sap.ui.require([
 				"sap/ui/rta/api/startKeyUserAdaptation"
 			], function(startKeyUserAdaptation) {
@@ -91,7 +91,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		isDataReady: function () {
+		isDataReady: function() {
 			return Promise.all(this._aData);
 		}
 	});

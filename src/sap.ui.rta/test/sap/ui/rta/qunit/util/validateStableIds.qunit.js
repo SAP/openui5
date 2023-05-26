@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/rta/util/validateStableIds",
@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ],
-function (
+function(
 	validateStableIds,
 	UIComponent,
 	ComponentContainer,
@@ -31,7 +31,7 @@ function (
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Freestyle application", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.rta.test.Component", {
 				createContent: function() {
@@ -47,8 +47,8 @@ function (
 									'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 										'<l:VerticalLayout id="layout">' +
 											'<m:Button text="Button 1" id="button1" />' +
-										'</l:VerticalLayout>' +
-									'</mvc:View>'
+										"</l:VerticalLayout>" +
+									"</mvc:View>"
 							})
 						]
 					});
@@ -72,11 +72,11 @@ function (
 
 			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oComponentContainer.destroy();
 		}
-	}, function () {
-		QUnit.test("base functionality", function (assert) {
+	}, function() {
+		QUnit.test("base functionality", function(assert) {
 			assert.strictEqual(
 				validateStableIds(this.oDesignTime.getElementOverlays(), this.oComponent).length,
 				5
@@ -85,7 +85,7 @@ function (
 	});
 
 	QUnit.module("Fiori Elements Application with extension", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 				createContent: function() {
@@ -102,8 +102,8 @@ function (
 									'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 										'<l:VerticalLayout id="layout">' +
 											'<m:Button text="Button 1" id="button1" />' +
-										'</l:VerticalLayout>' +
-									'</mvc:View>'
+										"</l:VerticalLayout>" +
+									"</mvc:View>"
 							}),
 
 							// This view considered as a custom extension:
@@ -118,23 +118,22 @@ function (
 			var oParser = new DOMParser();
 
 			sandbox.stub(LoaderExtensions, "loadResource")
-				.callThrough()
-				.withArgs(
-					sinon.match(function (sResourceName) {
-						return typeof sResourceName === "string" && sResourceName.endsWith("fixture/application/ext/view/ProductDetailReview.view.xml");
-					})
-				)
-				.returns(
-					oParser.parseFromString(
-						'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
+			.callThrough()
+			.withArgs(
+				sinon.match(function(sResourceName) {
+					return typeof sResourceName === "string" && sResourceName.endsWith("fixture/application/ext/view/ProductDetailReview.view.xml");
+				})
+			)
+			.returns(
+				oParser.parseFromString(
+					'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 							'<l:VerticalLayout id="layout">' +
 								'<m:Button text="Button 1"/>' +
-							'</l:VerticalLayout>' +
-						'</mvc:View>',
-						"text/xml"
-					)
-				);
-
+							"</l:VerticalLayout>" +
+						"</mvc:View>",
+					"text/xml"
+				)
+			);
 
 			this.oComponent = new CustomComponent(); // Missing ID
 
@@ -181,11 +180,11 @@ function (
 
 			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("base functionality", function (assert) {
+	}, function() {
+		QUnit.test("base functionality", function(assert) {
 			assert.strictEqual(
 				validateStableIds(this.oDesignTime.getElementOverlays(), this.oComponent).length,
 				1
@@ -196,7 +195,7 @@ function (
 	var mManifest = {};
 
 	QUnit.module("Fiori Elements Applications without extensions", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.aDummyOverlays = ["overlay1", "overlay2"];
 			this.oComponent = {
 				getManifest: function() {
@@ -204,11 +203,11 @@ function (
 				}
 			};
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("V2", function (assert) {
+	}, function() {
+		QUnit.test("V2", function(assert) {
 			mManifest = {
 				"sap.ui.generic.app": {}
 			};
@@ -220,7 +219,7 @@ function (
 			);
 		});
 
-		QUnit.test("V4", function (assert) {
+		QUnit.test("V4", function(assert) {
 			mManifest = {
 				"sap.ui5": {
 					dependencies: {
@@ -240,7 +239,7 @@ function (
 			);
 		});
 
-		QUnit.test("OVP", function (assert) {
+		QUnit.test("OVP", function(assert) {
 			mManifest = {
 				"sap.ovp": {}
 			};
@@ -253,7 +252,7 @@ function (
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

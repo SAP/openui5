@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
@@ -45,7 +45,7 @@ sap.ui.define([
 			this.oPlugin.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when there are only siblings", function(assert) {
 			var sExpectedContextMenuText = "CONTEXT_MENU_TEXT";
 			var iExpectedRank = 20;
@@ -559,7 +559,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -169,7 +169,7 @@ function(
 		if (sQuery && sQuery.length > 0) {
 			syncEnabledPropertyOfMoveButtons.call(this);
 			enableDragAndDropForAdaptationTable.call(this, false);
-			//filter Table context
+			// filter Table context
 			var oFilterByTitle = new Filter("title", FilterOperator.Contains, sQuery);
 			var oFilterByContextId = new Filter({
 				path: "contexts/role",
@@ -182,7 +182,7 @@ function(
 			var oFilterCreatedBy = new Filter("createdBy", FilterOperator.Contains, sQuery);
 			var oFilterChangedBy = new Filter("changedBy", FilterOperator.Contains, sQuery);
 			oFilters = new Filter([oFilterByTitle, oFilterByContextId, oFilterCreatedBy, oFilterChangedBy]);
-			//Filter default Table context
+			// Filter default Table context
 			if (sDefaultTableText.toUpperCase().includes(sQuery.toUpperCase())) {
 				oDefaultApplicationTable.setVisible(true);
 			} else {

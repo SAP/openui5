@@ -99,24 +99,24 @@ sap.ui.define([
 			undefined,
 			sVariantManagementReference
 		)
-			.then(function(oResizeCommand) {
-				return oCompositeCommand.addCommand(oResizeCommand);
-			});
+		.then(function(oResizeCommand) {
+			return oCompositeCommand.addCommand(oResizeCommand);
+		});
 	};
 
 	Resize.prototype._createCompositeCommand = function(oOverlay, oElement, aChanges) {
 		var oCompositeCommand;
 
 		return this.getCommandFactory().getCommandFor(oElement, "composite")
-			.then(function(_oCompositeCommand) {
-				oCompositeCommand = _oCompositeCommand;
-				return aChanges.reduce(function(oPreviousPromise, mChange) {
-					return oPreviousPromise.then(this._createResizeCommand.bind(this, oOverlay, mChange, oCompositeCommand));
-				}.bind(this), Promise.resolve());
-			}.bind(this))
-			.then(function() {
-				return oCompositeCommand;
-			});
+		.then(function(_oCompositeCommand) {
+			oCompositeCommand = _oCompositeCommand;
+			return aChanges.reduce(function(oPreviousPromise, mChange) {
+				return oPreviousPromise.then(this._createResizeCommand.bind(this, oOverlay, mChange, oCompositeCommand));
+			}.bind(this), Promise.resolve());
+		}.bind(this))
+		.then(function() {
+			return oCompositeCommand;
+		});
 	};
 
 	Resize.prototype._createCommand = function(oOverlay, iNewWidth) {
@@ -125,46 +125,46 @@ sap.ui.define([
 		var fnHandler = oAction.handler;
 
 		return Promise.resolve()
-			.then(function() {
-				if (fnHandler) {
-					var mPropertyBag = {
+		.then(function() {
+			if (fnHandler) {
+				var mPropertyBag = {
+					newWidth: iNewWidth
+				};
+				return fnHandler(oElement, mPropertyBag)
+				.then(function(aChanges) {
+					if (aChanges.length > 0) {
+						return this._createCompositeCommand(oOverlay, oElement, aChanges);
+					}
+					return undefined;
+				}.bind(this))
+				.catch(function(vError) {
+					throw DtUtil.propagateError(
+						vError,
+						"Resize#handler",
+						"Error occurred during handler execution",
+						"sap.ui.rta.plugin"
+					);
+				});
+			}
+			// Case without handler - single command (= one change)
+			return this._createCompositeCommand(oOverlay, oElement, [{
+				changeSpecificData: {
+					changeType: oAction.changeType,
+					content: {
+						resizedElementId: oElement.getId(),
 						newWidth: iNewWidth
-					};
-					return fnHandler(oElement, mPropertyBag)
-						.then(function(aChanges) {
-							if (aChanges.length > 0) {
-								return this._createCompositeCommand(oOverlay, oElement, aChanges);
-							}
-							return undefined;
-						}.bind(this))
-						.catch(function(vError) {
-							throw DtUtil.propagateError(
-								vError,
-								"Resize#handler",
-								"Error occurred during handler execution",
-								"sap.ui.rta.plugin"
-							);
-						});
-				}
-				// Case without handler - single command (= one change)
-				return this._createCompositeCommand(oOverlay, oElement, [{
-					changeSpecificData: {
-						changeType: oAction.changeType,
-						content: {
-							resizedElementId: oElement.getId(),
-							newWidth: iNewWidth
-						}
-					},
-					selectorElement: oElement
-				}]);
-			}.bind(this))
-			.then(function(oCompositeCommand) {
-				if (oCompositeCommand && oCompositeCommand.getCommands().length > 0) {
-					this.fireElementModified({
-						command: oCompositeCommand
-					});
-				}
-			}.bind(this));
+					}
+				},
+				selectorElement: oElement
+			}]);
+		}.bind(this))
+		.then(function(oCompositeCommand) {
+			if (oCompositeCommand && oCompositeCommand.getCommands().length > 0) {
+				this.fireElementModified({
+					command: oCompositeCommand
+				});
+			}
+		}.bind(this));
 	};
 
 	Resize.prototype._onHandleMouseDown = function(oOverlay, oEvent) {
@@ -200,7 +200,7 @@ sap.ui.define([
 			var iHandleExtensionHeight = oAction.getHandleExtensionHeight(oElement);
 			oExtension = document.createElement("div");
 			oExtension.className = HANDLE_EXTENSION_CLASS_NAME;
-			oExtension.style["height"] = iHandleExtensionHeight + "px";
+			oExtension.style.height = iHandleExtensionHeight + "px";
 			oExtension.style["pointer-events"] = "none";
 		}
 
@@ -258,15 +258,15 @@ sap.ui.define([
 		oOverlay.setSelected(false);
 
 		return this._createCommand(oOverlay, iNewWidth)
-			.catch(function(vError) {
-				fnRestoreEventHandler.call(this);
-				throw DtUtil.propagateError(
-					vError,
-					"Resize",
-					"Error occurred during resize command creation",
-					"sap.ui.rta.plugin"
-				);
-			}.bind(this));
+		.catch(function(vError) {
+			fnRestoreEventHandler.call(this);
+			throw DtUtil.propagateError(
+				vError,
+				"Resize",
+				"Error occurred during resize command creation",
+				"sap.ui.rta.plugin"
+			);
+		}.bind(this));
 	};
 
 	Resize.prototype._limitNewWidth = function(oOverlay, iNewWidth) {

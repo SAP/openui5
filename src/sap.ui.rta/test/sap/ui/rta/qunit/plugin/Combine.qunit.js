@@ -1,4 +1,4 @@
-/*global QUnit */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/m/Button",
@@ -41,7 +41,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	var fnSetOverlayDesigntimeMetadata = function (oOverlay, oDesignTimeMetadata, bEnabled) {
+	var fnSetOverlayDesigntimeMetadata = function(oOverlay, oDesignTimeMetadata, bEnabled) {
 		bEnabled = bEnabled === undefined || bEnabled === null ? true : bEnabled;
 		if (oDesignTimeMetadata === DEFAULT_DTM) {
 			oDesignTimeMetadata = {
@@ -57,7 +57,7 @@ sap.ui.define([
 		oOverlay.setDesignTimeMetadata(oDesignTimeMetadata);
 	};
 
-	//Designtime Metadata with fake isEnabled function (returns false)
+	// Designtime Metadata with fake isEnabled function (returns false)
 	var oDesignTimeMetadata1 = {
 		actions: {
 			combine: {
@@ -70,7 +70,7 @@ sap.ui.define([
 		}
 	};
 
-	//Designtime Metadata with fake isEnabled function (returns true)
+	// Designtime Metadata with fake isEnabled function (returns true)
 	var oDesignTimeMetadata2 = {
 		actions: {
 			combine: {
@@ -105,7 +105,7 @@ sap.ui.define([
 		}
 	};
 
-	//DesignTime Metadata with different changeType
+	// DesignTime Metadata with different changeType
 	var oDesignTimeMetadata5 = {
 		actions: {
 			combine: {
@@ -115,7 +115,6 @@ sap.ui.define([
 			}
 		}
 	};
-
 
 	QUnit.module("Given a designTime and combine plugin are instantiated", {
 		beforeEach: function(assert) {
@@ -240,14 +239,14 @@ sap.ui.define([
 				"isEnabled is called and returns false"
 			);
 			return Promise.resolve()
-				.then(this.oCombinePlugin._isEditable.bind(this.oCombinePlugin, this.oButton1Overlay))
-				.then(function(bEditable) {
-					assert.strictEqual(
-						bEditable,
-						false,
-						"then the overlay is not editable"
-					);
-				});
+			.then(this.oCombinePlugin._isEditable.bind(this.oCombinePlugin, this.oButton1Overlay))
+			.then(function(bEditable) {
+				assert.strictEqual(
+					bEditable,
+					false,
+					"then the overlay is not editable"
+				);
+			});
 		});
 
 		QUnit.test("when an overlay has a combine action in designTime metadata", function(assert) {
@@ -365,7 +364,7 @@ sap.ui.define([
 				assert.ok(oGetCommandForSpy.calledWith(this.oButton2), "command creation is triggered with correct context element");
 			}.bind(this))
 
-			.catch(function (oError) {
+			.catch(function(oError) {
 				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
@@ -373,13 +372,13 @@ sap.ui.define([
 		QUnit.test("when an overlay has a combine action designTime metadata which has no changeOnRelevantContainer", function(assert) {
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesigntimeMetadata4);
 			return Promise.resolve()
-				.then(this.oCombinePlugin._isEditable.bind(this.oCombinePlugin, this.oButton1Overlay))
-				.then(function(bEditable) {
-					assert.strictEqual(bEditable, false, "then the overlay is not editable");
-				});
+			.then(this.oCombinePlugin._isEditable.bind(this.oCombinePlugin, this.oButton1Overlay))
+			.then(function(bEditable) {
+				assert.strictEqual(bEditable, false, "then the overlay is not editable");
+			});
 		});
 
-		QUnit.test("when Controls of different type with same change type are specified", function (assert) {
+		QUnit.test("when Controls of different type with same change type are specified", function(assert) {
 			assert.expect(9);
 			fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
 			fnSetOverlayDesigntimeMetadata(this.oButton6Overlay, DEFAULT_DTM);
@@ -398,11 +397,11 @@ sap.ui.define([
 
 			var bIsAvailable = true;
 
-			sinon.stub(this.oCombinePlugin, "isAvailable").callsFake(function (aElementOverlays) {
+			sinon.stub(this.oCombinePlugin, "isAvailable").callsFake(function(aElementOverlays) {
 				assert.equal(aElementOverlays[0].getId(), this.oButton6Overlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
 				return bIsAvailable;
 			}.bind(this));
-			sinon.stub(this.oCombinePlugin, "handleCombine").callsFake(function (aElementOverlays, oCombineElement) {
+			sinon.stub(this.oCombinePlugin, "handleCombine").callsFake(function(aElementOverlays, oCombineElement) {
 				assert.equal(aElementOverlays[0].getId(), this.oButton6Overlay.getId(), "the 'handler' method is called with the right overlay");
 				assert.equal(oCombineElement.getId(), this.oButton6.getId(), "the 'handler' method is called with the right combine element");
 			}.bind(this));
@@ -443,13 +442,13 @@ sap.ui.define([
 			}.bind(this));
 
 			return this.oCombinePlugin._isEditable(this.oOverflowToolbarButton1Overlay)
-				.then(function(bEditable) {
-					assert.strictEqual(
-						bEditable,
-						false,
-						"_isEditable returns false"
-					);
-				});
+			.then(function(bEditable) {
+				assert.strictEqual(
+					bEditable,
+					false,
+					"_isEditable returns false"
+				);
+			});
 		});
 	});
 

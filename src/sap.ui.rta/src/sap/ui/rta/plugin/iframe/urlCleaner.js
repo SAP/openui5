@@ -14,7 +14,7 @@ sap.ui.define([
 	 * @returns {string} Cleaned URL
 	 * @private
 	 */
-	return function (sURL) {
+	return function(sURL) {
 		return sURL.replace(/\t|\r|\n/g, "");
 	};
 });

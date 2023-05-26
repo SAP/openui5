@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/rta/plugin/iframe/urlCleaner"
-], function (urlCleaner) {
+], function(urlCleaner) {
 	"use strict";
 
 	QUnit.module("Given the URL entered by the user ", {
@@ -19,14 +19,14 @@ sap.ui.define([
 		}, {
 			from: "https://some.\t\r\ndomain.com/\r\ndemo-kit/#/search/{$user>/email}\r\n\r\n",
 			to: "https://some.domain.com/demo-kit/#/search/{$user>/email}"
-		}].forEach(function (oTestCase) {
-			QUnit.test(JSON.stringify(oTestCase.from), function (assert) {
+		}].forEach(function(oTestCase) {
+			QUnit.test(JSON.stringify(oTestCase.from), function(assert) {
 				assert.strictEqual(urlCleaner(oTestCase.from), oTestCase.to, "it cleans to " + JSON.stringify(oTestCase.to));
 			});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

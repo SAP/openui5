@@ -87,7 +87,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
@@ -255,7 +255,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		oMockedAppComponent._restoreGetAppComponentStub();
 		oMockedAppComponent.destroy();
 		document.getElementById("qunit-fixture").style.display = "none";

@@ -1,9 +1,9 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/rta/enablement/elementActionTest",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	elementActionTest,
 	sinon
 ) {
@@ -12,11 +12,11 @@ sap.ui.define([
 	// Test "only" function + straightforward execution
 	elementActionTest.only("remove");
 
-	var fnConfirmFormElementIsInvisible = function (oUiComponent, oViewAfterAction, assert) {
+	var fnConfirmFormElementIsInvisible = function(oUiComponent, oViewAfterAction, assert) {
 		assert.ok(oViewAfterAction.byId("formelement").getVisible() === false, "then the form element is invisible");
 	};
 
-	var fnConfirmFormElementIsVisible = function (oUiComponent, oViewAfterAction, assert) {
+	var fnConfirmFormElementIsVisible = function(oUiComponent, oViewAfterAction, assert) {
 		assert.ok(oViewAfterAction.byId("formelement").getVisible() === true, "then the form element is visible");
 	};
 
@@ -28,35 +28,35 @@ sap.ui.define([
 					'<FormContainer id="container">' +
 						'<FormElement id="formelement">' +
 							'<m:Button text="click me" />' +
-						'</FormElement>' +
-					'</FormContainer>' +
-				'</Form>' +
-			'</mvc:View>',
+						"</FormElement>" +
+					"</FormContainer>" +
+				"</Form>" +
+			"</mvc:View>",
 		action: {
 			name: "remove",
 			controlId: "formelement",
-			parameter: function (oView) {
+			parameter: function(oView) {
 				return {
 					removedElement: oView.byId("formelement")
 				};
 			}
 		},
-		beforeAction: function () {
+		beforeAction: function() {
 
 		},
-		afterAction: function () {
+		afterAction: function() {
 			fnConfirmFormElementIsInvisible.apply(this, arguments);
 		},
-		beforeUndo: function () {
+		beforeUndo: function() {
 
 		},
-		afterUndo: function () {
+		afterUndo: function() {
 			fnConfirmFormElementIsVisible.apply(this, arguments);
 		},
-		beforeRedo: function () {
+		beforeRedo: function() {
 
 		},
-		afterRedo: function () {
+		afterRedo: function() {
 			fnConfirmFormElementIsInvisible.apply(this, arguments);
 		},
 
@@ -89,13 +89,13 @@ sap.ui.define([
 						'<FormContainer id="container">' +
 							'<FormElement id="formelement">' +
 								'<m:Button text="click me" id="btn" press="oPressSpy" />' +
-							'</FormElement>' +
-						'</FormContainer>' +
-					'</Form>' +
-				'</mvc:View>',
-			//possibility to add preprocessors or other settings you can pass to sap.ui.xmlview, e.g.
+							"</FormElement>" +
+						"</FormContainer>" +
+					"</Form>" +
+				"</mvc:View>",
+			// possibility to add preprocessors or other settings you can pass to sap.ui.xmlview, e.g.
 			async: true,
-			preprocessors: null //add yours
+			preprocessors: null // add yours
 		},
 		action: {
 			name: "remove",
@@ -108,12 +108,12 @@ sap.ui.define([
 				};
 			}
 		},
-		before: function () {
+		before: function() {
 			window.oPressSpy = sinon.spy();
 
 			this.sSomeProperty = "some property";
 		},
-		after: function (assert) {
+		after: function(assert) {
 			delete window.oPressSpy;
 
 			assert.strictEqual(this.sSomeProperty, "some property", "then context between hooks is shared");
@@ -123,7 +123,7 @@ sap.ui.define([
 		afterRedo: fnConfirmFormContainerIsInvisible
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -60,7 +60,7 @@ function(
 				text: "{i18n>BTN_DONE}",
 				press: this.eventHandler.bind(this, "Exit")
 			}).data("name", "exit")
-		].forEach(function (oControl) {
+		].forEach(function(oControl) {
 			this.addItem(oControl);
 		}.bind(this));
 

@@ -239,35 +239,35 @@ sap.ui.define([
 	 */
 	AddIFrameDialog.buildUrlBuilderParametersFor = function(oObject) {
 		return getContainerUserInfo()
-			.then(function(oUserInfo) {
-				var oUserParameters = Object.keys(oUserInfo)
-					.map(function(sUserSetting) {
-						return {
-							label: sUserSetting,
-							key: "{$user>/" + sUserSetting + "}",
-							value: oUserInfo[sUserSetting]
-						};
-					});
-				var oBindingContext = oObject.getBindingContext();
-				var oDefaultBoundObjectParameters;
-				if (oBindingContext) {
-					var oDefaultBoundObject = oBindingContext.getObject();
-					oDefaultBoundObjectParameters = Object.keys(oDefaultBoundObject)
-						.filter(function(sProperty) {
-							return typeof oDefaultBoundObject[sProperty] !== "object";
-						})
-						.map(function(sProperty) {
-							return {
-								label: sProperty,
-								key: "{" + sProperty + "}",
-								value: oDefaultBoundObject[sProperty]
-							};
-						});
-				} else {
-					oDefaultBoundObjectParameters = [];
-				}
-				return oUserParameters.concat(oDefaultBoundObjectParameters);
+		.then(function(oUserInfo) {
+			var oUserParameters = Object.keys(oUserInfo)
+			.map(function(sUserSetting) {
+				return {
+					label: sUserSetting,
+					key: "{$user>/" + sUserSetting + "}",
+					value: oUserInfo[sUserSetting]
+				};
 			});
+			var oBindingContext = oObject.getBindingContext();
+			var oDefaultBoundObjectParameters;
+			if (oBindingContext) {
+				var oDefaultBoundObject = oBindingContext.getObject();
+				oDefaultBoundObjectParameters = Object.keys(oDefaultBoundObject)
+				.filter(function(sProperty) {
+					return typeof oDefaultBoundObject[sProperty] !== "object";
+				})
+				.map(function(sProperty) {
+					return {
+						label: sProperty,
+						key: "{" + sProperty + "}",
+						value: oDefaultBoundObject[sProperty]
+					};
+				});
+			} else {
+				oDefaultBoundObjectParameters = [];
+			}
+			return oUserParameters.concat(oDefaultBoundObjectParameters);
+		});
 	};
 
 	return AddIFrameDialog;

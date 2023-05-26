@@ -85,7 +85,7 @@ sap.ui.define([
 			}
 			var oIFrame = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewFrame");
 			oIFrame.setUrl(""); // Resets the preview first
-			//enable/disable expanding the Panel
+			// enable/disable expanding the Panel
 			var oPanel = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewLinkPanel");
 			var oPanelButton = oPanel.getDependents()[0];
 			if (sURL) {
@@ -236,8 +236,8 @@ sap.ui.define([
 
 		_areAllValueStateNones: function() {
 			var oData = this._oJSONModel.getData();
-			return _aTextInputFields.concat(_aNumericInputFields).every(function (sFieldName) {
-				return oData[sFieldName]["valueState"] === ValueState.None;
+			return _aTextInputFields.concat(_aNumericInputFields).every(function(sFieldName) {
+				return oData[sFieldName].valueState === ValueState.None;
 			}, this);
 		},
 
@@ -316,8 +316,8 @@ sap.ui.define([
 		_setFocusOnInvalidInput: function() {
 			var oData = this._oJSONModel.getData();
 			_aNumericInputFields.some(function(sFieldName) {
-				if (oData[sFieldName]["valueState"] === ValueState.Error) {
-					var oElement = sap.ui.getCore().byId(oData[sFieldName]["id"]);
+				if (oData[sFieldName].valueState === ValueState.Error) {
+					var oElement = sap.ui.getCore().byId(oData[sFieldName].id);
 					oElement.focus();
 					return true;
 				}

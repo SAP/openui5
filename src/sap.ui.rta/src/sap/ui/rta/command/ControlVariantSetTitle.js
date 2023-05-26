@@ -86,9 +86,9 @@ sap.ui.define([
 		};
 
 		return Promise.resolve(this.oModel.addVariantChange(this.sVariantManagementReference, mPropertyBag))
-			.then(function(oChange) {
-				this._oVariantChange = oChange;
-			}.bind(this));
+		.then(function(oChange) {
+			this._oVariantChange = oChange;
+		}.bind(this));
 	};
 
 	/**
@@ -105,9 +105,9 @@ sap.ui.define([
 		var oChange = this._oVariantChange;
 
 		return Promise.resolve(this.oModel.deleteVariantChange(this.sVariantManagementReference, mPropertyBag, oChange))
-			.then(function() {
-				this._oVariantChange = null;
-			}.bind(this));
+		.then(function() {
+			this._oVariantChange = null;
+		}.bind(this));
 	};
 
 	return ControlVariantSetTitle;

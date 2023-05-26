@@ -142,7 +142,7 @@ sap.ui.define([
 				return false;
 			}
 
-			return sMode.toLowerCase() === 'true';
+			return sMode.toLowerCase() === "true";
 		},
 		isManifestSupported: function() {
 			var oDescriptor = fnGetDescriptor();
@@ -250,14 +250,14 @@ sap.ui.define([
 
 					// Based on the key user provided info, app variant descriptor is created
 					return oAppVariantManager.createAppVariant(sAppVariantId, vSelector)
-						.catch(function(oError) {
-							var sMessageKey = oError.messageKey;
-							if (!sMessageKey) {
-								sMessageKey = "MSG_SAVE_APP_VARIANT_FAILED";
-							}
+					.catch(function(oError) {
+						var sMessageKey = oError.messageKey;
+						if (!sMessageKey) {
+							sMessageKey = "MSG_SAVE_APP_VARIANT_FAILED";
+						}
 
-							return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);
-						});
+						return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);
+					});
 				};
 
 				var fnClearRTACommandStack = function(oResult) {
@@ -290,30 +290,29 @@ sap.ui.define([
 					return oAppVariantManager.showSuccessMessage(oSuccessInfo);
 				};
 
-
 				var fnTriggerPlatformDependentFlow = function() {
 					BusyIndicator.show();
 					if (bIsS4HanaCloud) {
 						var oIAMResponse;
 						return fnS4HanaAddBrowserCloseWarning()
-							.then(function() {
-								return fnTriggerCatalogAssignment(oAppVariantSaveClosure.id, oAppVariantSaveClosure.reference);
-							})
-							.then(function(oResult) {
-								oIAMResponse = Object.assign({}, oResult);
-								BusyIndicator.hide();
-								return fnTriggerActionFlow.call(this, bSaveAsFromRta, null, sCurrentLayer);
-							}.bind(this))
-							.then(function() {
-								return fnTriggerPollingTileCreation(oIAMResponse, oAppVariantSaveClosure.id);
-							})
-							.then(function() {
-								fnS4HanaRemoveBrowserCloseWarning();
-								return fnShowCatalogAssignmentSuccessMessage();
-							})
-							.then(function() {
-								return bSaveAsFromRta ? resolve() : fnTriggerActionFlow.call(this, bSaveAsFromRta, bIsS4HanaCloud, sCurrentLayer);
-							}.bind(this));
+						.then(function() {
+							return fnTriggerCatalogAssignment(oAppVariantSaveClosure.id, oAppVariantSaveClosure.reference);
+						})
+						.then(function(oResult) {
+							oIAMResponse = Object.assign({}, oResult);
+							BusyIndicator.hide();
+							return fnTriggerActionFlow.call(this, bSaveAsFromRta, null, sCurrentLayer);
+						}.bind(this))
+						.then(function() {
+							return fnTriggerPollingTileCreation(oIAMResponse, oAppVariantSaveClosure.id);
+						})
+						.then(function() {
+							fnS4HanaRemoveBrowserCloseWarning();
+							return fnShowCatalogAssignmentSuccessMessage();
+						})
+						.then(function() {
+							return bSaveAsFromRta ? resolve() : fnTriggerActionFlow.call(this, bSaveAsFromRta, bIsS4HanaCloud, sCurrentLayer);
+						}.bind(this));
 					}
 					BusyIndicator.hide();
 					return fnTriggerActionFlow.call(this, bSaveAsFromRta, bIsS4HanaCloud, sCurrentLayer);
@@ -328,22 +327,22 @@ sap.ui.define([
 					}
 
 					return fnProcessSaveAsDialog()
-						.then(fnCreateInlineChanges) // Create the inline changes for application variant
-						.then(fnAddChangesToPersistence) // Adds the descriptor inline changes to the persistence
-						.then(fnCreateAppVariant) // Creates the application variant and saves it to the layered repository
-						.then(fnClearRTACommandStack)
-						.then(fnGetFlexSettings)
-						.then(fnTriggerSuccessMessage)
-						.then(fnTriggerPlatformDependentFlow.bind(this)).then(resolve)
-						.catch(function(oError) {
-							if (!oError) {// Cancelling Save As Dialog
-								return false;
-							}
-							if (bIsS4HanaCloud) {
-								fnS4HanaRemoveBrowserCloseWarning();
-							}
-							return fnTriggerActionFlow.call(this, null, bIsS4HanaCloud, sCurrentLayer).then(resolve);
-						}.bind(this));
+					.then(fnCreateInlineChanges) // Create the inline changes for application variant
+					.then(fnAddChangesToPersistence) // Adds the descriptor inline changes to the persistence
+					.then(fnCreateAppVariant) // Creates the application variant and saves it to the layered repository
+					.then(fnClearRTACommandStack)
+					.then(fnGetFlexSettings)
+					.then(fnTriggerSuccessMessage)
+					.then(fnTriggerPlatformDependentFlow.bind(this)).then(resolve)
+					.catch(function(oError) {
+						if (!oError) {// Cancelling Save As Dialog
+							return false;
+						}
+						if (bIsS4HanaCloud) {
+							fnS4HanaRemoveBrowserCloseWarning();
+						}
+						return fnTriggerActionFlow.call(this, null, bIsS4HanaCloud, sCurrentLayer).then(resolve);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		},
@@ -368,16 +367,16 @@ sap.ui.define([
 
 					var fnDeleteAppVariant = function() {
 						return oAppVariantManager.deleteAppVariant(sAppVariantId)
-							.catch(function(oError) {
-								if (oError === 'cancel') {
-									return Promise.reject("cancel");
-								}
-								var sMessageKey = oError.messageKey;
-								if (!sMessageKey) {
-									sMessageKey = "MSG_DELETE_APP_VARIANT_FAILED";
-								}
-								return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);
-							});
+						.catch(function(oError) {
+							if (oError === "cancel") {
+								return Promise.reject("cancel");
+							}
+							var sMessageKey = oError.messageKey;
+							if (!sMessageKey) {
+								sMessageKey = "MSG_DELETE_APP_VARIANT_FAILED";
+							}
+							return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);
+						});
 					};
 
 					var fnDeleteSuccessMessage = function() {
@@ -386,22 +385,21 @@ sap.ui.define([
 						return oAppVariantManager.showSuccessMessage(oSuccessInfo);
 					};
 
-
 					var fnTriggerS4HanaPolling = function(oSettings) {
 						bIsS4HanaCloud = AppVariantUtils.isS4HanaCloud(oSettings);
 						if (bIsS4HanaCloud) {
 							var oIAMResponse;
 							return fnS4HanaAddBrowserCloseWarning(bCurrentlyAdapting)
-								.then(function() {
-									return fnTriggerCatalogUnAssignment(sAppVariantId);
-								})
-								.then(function(oResult) {
-									oIAMResponse = Object.assign({}, oResult);
-									return fnReloadOverviewDialog.call(this, !bCurrentlyAdapting, sCurrentLayer);
-								}.bind(this))
-								.then(function() {
-									return fnTriggerPollingTileDeletion(oIAMResponse, sAppVariantId);
-								});
+							.then(function() {
+								return fnTriggerCatalogUnAssignment(sAppVariantId);
+							})
+							.then(function(oResult) {
+								oIAMResponse = Object.assign({}, oResult);
+								return fnReloadOverviewDialog.call(this, !bCurrentlyAdapting, sCurrentLayer);
+							}.bind(this))
+							.then(function() {
+								return fnTriggerPollingTileDeletion(oIAMResponse, sAppVariantId);
+							});
 						}
 						BusyIndicator.show();
 						return Promise.resolve();
@@ -421,19 +419,19 @@ sap.ui.define([
 					}
 
 					return fnGetFlexSettings()
-						.then(fnTriggerS4HanaPolling.bind(this))
-						.then(fnDeleteAppVariant)
-						.then(fnDeleteSuccessMessage)
-						.then(fnTriggerS4HanaRefresh.bind(this))
-						.catch(function(oError) {
-							if (oError === 'cancel') {
-								return false;
-							}
-							if (bIsS4HanaCloud) {
-								fnS4HanaRemoveBrowserCloseWarning();
-							}
-							return fnReloadOverviewDialog.call(this, null, bIsS4HanaCloud, sCurrentLayer).then(resolve);
-						}.bind(this));
+					.then(fnTriggerS4HanaPolling.bind(this))
+					.then(fnDeleteAppVariant)
+					.then(fnDeleteSuccessMessage)
+					.then(fnTriggerS4HanaRefresh.bind(this))
+					.catch(function(oError) {
+						if (oError === "cancel") {
+							return false;
+						}
+						if (bIsS4HanaCloud) {
+							fnS4HanaRemoveBrowserCloseWarning();
+						}
+						return fnReloadOverviewDialog.call(this, null, bIsS4HanaCloud, sCurrentLayer).then(resolve);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		}

@@ -82,10 +82,10 @@ function(
 			return Promise.resolve(false);
 		}
 		return this.checkMovable(oOverlay, bOnRegistration)
-			.then(function(bMovable) {
-				oOverlay.setMovable(bMovable);
-				return bMovable;
-			});
+		.then(function(bMovable) {
+			oOverlay.setMovable(bMovable);
+			return bMovable;
+		});
 	};
 
 	/**
@@ -118,21 +118,21 @@ function(
 		}
 
 		return this.isMoveAvailableOnRelevantContainer(oOverlay)
-			.then(function(bValid) {
-				if (bValid) {
-					bValid = this.oBasePlugin.hasStableId(oOverlay) &&
+		.then(function(bValid) {
+			if (bValid) {
+				bValid = this.oBasePlugin.hasStableId(oOverlay) &&
 					this.oBasePlugin.hasStableId(oParentElementOverlay) &&
 					this.oBasePlugin.hasStableId(oRelevantContainerOverlay);
-				}
-				return bValid;
-			}.bind(this))
-			.then(function(bValid) {
-				// element is only valid for move if it can be moved to somewhere else
-				if (bValid) {
-					return fnCheckForValidTargetZones.call(this, oOverlay, oRelevantContainerOverlay, bOnRegistration);
-				}
-				return bValid;
-			}.bind(this));
+			}
+			return bValid;
+		}.bind(this))
+		.then(function(bValid) {
+			// element is only valid for move if it can be moved to somewhere else
+			if (bValid) {
+				return fnCheckForValidTargetZones.call(this, oOverlay, oRelevantContainerOverlay, bOnRegistration);
+			}
+			return bValid;
+		}.bind(this));
 	}
 
 	function fnCheckForValidTargetZones(oOverlay, oRelevantContainerOverlay, bOnRegistration) {
@@ -140,29 +140,29 @@ function(
 
 		var aValidAggregationOverlayPromises = aOverlays.map(function(oAggregationOverlay) {
 			return this.checkTargetZone(oAggregationOverlay, oOverlay, bOnRegistration)
-				.then(function(bValid) {
-					return bValid ? oAggregationOverlay : undefined;
-				});
+			.then(function(bValid) {
+				return bValid ? oAggregationOverlay : undefined;
+			});
 		}.bind(this));
 
 		return Promise.all(aValidAggregationOverlayPromises)
-			.then(function(aValidAggregationOverlays) {
-				aValidAggregationOverlays = aValidAggregationOverlays.filter(function(aValidAggregationOverlay) {
-					return !!aValidAggregationOverlay;
-				});
-				if (aValidAggregationOverlays.length < 1) {
-					return false;
-				} else if (aValidAggregationOverlays.length === 1) {
-					var aVisibleOverlays = aValidAggregationOverlays[0].getChildren().filter(function(oChildOverlay) {
-						var oChildElement = oChildOverlay.getElement();
-						// At least one sibling has to be visible and still attached to the parent
-						// In some edge cases, the child element is not available anymore (element already got destroyed)
-						return (oChildElement && oChildElement.getVisible() && oChildElement.getParent());
-					});
-					return aVisibleOverlays.length > 1;
-				}
-				return true;
+		.then(function(aValidAggregationOverlays) {
+			aValidAggregationOverlays = aValidAggregationOverlays.filter(function(aValidAggregationOverlay) {
+				return !!aValidAggregationOverlay;
 			});
+			if (aValidAggregationOverlays.length < 1) {
+				return false;
+			} else if (aValidAggregationOverlays.length === 1) {
+				var aVisibleOverlays = aValidAggregationOverlays[0].getChildren().filter(function(oChildOverlay) {
+					var oChildElement = oChildOverlay.getElement();
+					// At least one sibling has to be visible and still attached to the parent
+					// In some edge cases, the child element is not available anymore (element already got destroyed)
+					return (oChildElement && oChildElement.getVisible() && oChildElement.getParent());
+				});
+				return aVisibleOverlays.length > 1;
+			}
+			return true;
+		});
 	}
 
 	/**
@@ -186,7 +186,7 @@ function(
 	 * @return {boolean} true if type is movable, false otherwise
 	 */
 	ElementMover.prototype.isMovableType = function() {
-		//real check is part of checkMovable which has the overlay
+		// real check is part of checkMovable which has the overlay
 		return true;
 	};
 
@@ -253,11 +253,11 @@ function(
 			}
 		}.bind(this));
 		return Promise.all(aAggregationWithMoveActionPromises)
-			.then(function(aMoveAvailableResults) {
-				return aMoveAvailableResults.some(function(aMoveAvailable) {
-					return aMoveAvailable;
-				});
+		.then(function(aMoveAvailableResults) {
+			return aMoveAvailableResults.some(function(aMoveAvailable) {
+				return aMoveAvailable;
 			});
+		});
 	};
 
 	/**

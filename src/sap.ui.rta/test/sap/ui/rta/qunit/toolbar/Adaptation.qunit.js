@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/m/Button",
@@ -62,14 +62,14 @@ sap.ui.define([
 			}
 		});
 		return this.oRta.start()
-			.then(function() {
-				this.oToolbar = this.oRta.getToolbar();
-				this.oRta._oContextBasedAdaptationsModel = oAdaptationsModel;
-			}.bind(this));
+		.then(function() {
+			this.oToolbar = this.oRta.getToolbar();
+			this.oRta._oContextBasedAdaptationsModel = oAdaptationsModel;
+		}.bind(this));
 	}
 
 	QUnit.module("Given Versions Model binding & formatter", {
-		before: function () {
+		before: function() {
 			this.oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 		},
@@ -78,7 +78,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When switching versions is possible", function (assert) {
+		QUnit.test("When switching versions is possible", function(assert) {
 			this.oVersionsModel = new JSONModel({
 				versioningEnabled: true
 			});
@@ -88,14 +88,14 @@ sap.ui.define([
 			});
 
 			return this.oToolbar._pFragmentLoaded
-				.then(function() {
-					this.oToolbar.setModel(this.oVersionsModel, "versions");
-					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
-					assert.ok(this.oToolbar.getControl("versionButton").getEnabled(), "then the version button is enabled");
-				}.bind(this));
+			.then(function() {
+				this.oToolbar.setModel(this.oVersionsModel, "versions");
+				this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+				assert.ok(this.oToolbar.getControl("versionButton").getEnabled(), "then the version button is enabled");
+			}.bind(this));
 		});
 
-		QUnit.test("When switching versions is not possible", function (assert) {
+		QUnit.test("When switching versions is not possible", function(assert) {
 			this.oVersionsModel = new JSONModel({
 				versioningEnabled: false
 			});
@@ -105,12 +105,12 @@ sap.ui.define([
 			});
 
 			return this.oToolbar._pFragmentLoaded
-				.then(function() {
-					this.oToolbar.setModel(this.oVersionsModel, "versions");
-					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
-					this.oVersionButton = this.oToolbar.getControl("versionButton");
-					assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "then the version button is not visible");
-				}.bind(this));
+			.then(function() {
+				this.oToolbar.setModel(this.oVersionsModel, "versions");
+				this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+				this.oVersionButton = this.oToolbar.getControl("versionButton");
+				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "then the version button is not visible");
+			}.bind(this));
 		});
 
 		QUnit.test("When adaptation toolbar is given including save button", function(assert) {
@@ -126,11 +126,11 @@ sap.ui.define([
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
 
 			return this.oToolbar._pFragmentLoaded
-				.then(function() {
-					assert.strictEqual(this.oToolbar.getControl("save").getTooltip(), "Save", "then without versioning enabled tooltip on save button is correct");
-					this.oVersionsModel.setProperty("/versioningEnabled", true);
-					assert.strictEqual(this.oToolbar.getControl("save").getTooltip(), "Save Draft", "then with versioning enabled tooltip on save button is correct");
-				}.bind(this));
+			.then(function() {
+				assert.strictEqual(this.oToolbar.getControl("save").getTooltip(), "Save", "then without versioning enabled tooltip on save button is correct");
+				this.oVersionsModel.setProperty("/versioningEnabled", true);
+				assert.strictEqual(this.oToolbar.getControl("save").getTooltip(), "Save Draft", "then with versioning enabled tooltip on save button is correct");
+			}.bind(this));
 		});
 	});
 
@@ -172,7 +172,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When no context-based adaptation is available", function (assert) {
+		QUnit.test("When no context-based adaptation is available", function(assert) {
 			this.oAdaptationsModel = new JSONModel({
 				adaptations: [],
 				count: 0,
@@ -190,7 +190,7 @@ sap.ui.define([
 			assert.notOk(this.oToolbar.getControl("switchAdaptations").getVisible(), "then the switch adaptations button is not visible");
 		});
 
-		QUnit.test("When two context-based adaptation are available and the displayed adaptation is default (context-free) ", function (assert) {
+		QUnit.test("When two context-based adaptation are available and the displayed adaptation is default (context-free) ", function(assert) {
 			this.oAdaptationsModel = new JSONModel({
 				allAdaptations: [{title: "Sales"}, {title: "Manager"}, {title: ""}],
 				adaptations: [{title: "Sales"}, {title: "Manager"}],
@@ -213,7 +213,7 @@ sap.ui.define([
 			assert.strictEqual(oSwitchAdaptationsButton.getItems().length, 3, "number of adaptations to be switched is correct");
 		});
 
-		QUnit.test("When two context-based adaptation are available", function (assert) {
+		QUnit.test("When two context-based adaptation are available", function(assert) {
 			this.oAdaptationsModel = new JSONModel({
 				allAdaptations: [{title: "Sales"}, {title: "Manager"}, {title: ""}],
 				adaptations: [{title: "Sales"}, {title: "Manager"}],
@@ -236,7 +236,7 @@ sap.ui.define([
 			assert.strictEqual(oSwitchAdaptationsButton.getItems().length, 3, "number of adaptations to be switched is correct");
 		});
 
-		QUnit.test("Given I am on backend draft, when save as is pressed", function (assert) {
+		QUnit.test("Given I am on backend draft, when save as is pressed", function(assert) {
 			this.oVersionsModel.setData({
 				backendDraft: true,
 				displayedVersion: "0"
@@ -252,7 +252,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given I am on client draft, when save as is pressed", function (assert) {
+		QUnit.test("Given I am on client draft, when save as is pressed", function(assert) {
 			this.oVersionsModel.setData({
 				backendDraft: false,
 				displayedVersion: "0"
@@ -268,7 +268,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given I am on active version without draft, when save as is pressed", function (assert) {
+		QUnit.test("Given I am on active version without draft, when save as is pressed", function(assert) {
 			this.oVersionsModel.setData({
 				backendDraft: false,
 				displayedVersion: "12345"
@@ -286,7 +286,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given I am on active version with draft, when save as is pressed I confirm warning", function (assert) {
+		QUnit.test("Given I am on active version with draft, when save as is pressed I confirm warning", function(assert) {
 			this.oVersionsModel.setData({
 				backendDraft: true,
 				displayedVersion: "12345"
@@ -303,7 +303,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given I am on active version with draft, when save as is pressed I cancel warning", function (assert) {
+		QUnit.test("Given I am on active version with draft, when save as is pressed I cancel warning", function(assert) {
 			this.oVersionsModel.setData({
 				backendDraft: true,
 				displayedVersion: "12345"
@@ -320,7 +320,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given I am on active version with draft, when edit as is pressed I confirm warning", function (assert) {
+		QUnit.test("Given I am on active version with draft, when edit as is pressed I confirm warning", function(assert) {
 			this.oVersionsModel.setData({
 				backendDraft: true,
 				displayedVersion: "12345"
@@ -339,7 +339,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given I am on active version with draft, when delete as is pressed I confirm warning", function (assert) {
+		QUnit.test("Given I am on active version with draft, when delete as is pressed I confirm warning", function(assert) {
 			this.oVersionsModel.setData({
 				backendDraft: true,
 				displayedVersion: "12345"
@@ -360,7 +360,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given I am on active version with draft, when manage as is pressed I confirm warning", function (assert) {
+		QUnit.test("Given I am on active version with draft, when manage as is pressed I confirm warning", function(assert) {
 			this.oVersionsModel.setData({
 				backendDraft: true,
 				displayedVersion: "12345"
@@ -393,7 +393,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When two context-based adaptation are available and then both adaptations are deleted one after the other", function (assert) {
+		QUnit.test("When two context-based adaptation are available and then both adaptations are deleted one after the other", function(assert) {
 			var oDefaultAdaptation = {
 				id: "DEFAULT",
 				contexts: {},
@@ -430,48 +430,48 @@ sap.ui.define([
 			sandbox.stub(ReloadManager, "triggerReload");
 
 			return createAndStartRTA.call(this, oAdaptationsModel)
-				.then(function() {
-					var oMenuButton = this.oToolbar.getControl("contextBasedAdaptationMenu");
-					this.oToolbar.setModel(oAdaptationsModel, "contextBasedAdaptations");
-					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
-					var oDeleteButton = this.oToolbar.getControl("deleteAdaptation");
-					var oEditButton = this.oToolbar.getControl("editAdaptation");
-					assert.ok(oMenuButton.getEnabled(), "then the context-based adaptation menu is enabled");
-					assert.strictEqual(oDeleteButton.getEnabled(), true, "then the context-based adaptation delete menu button is enabled");
+			.then(function() {
+				var oMenuButton = this.oToolbar.getControl("contextBasedAdaptationMenu");
+				this.oToolbar.setModel(oAdaptationsModel, "contextBasedAdaptations");
+				this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+				var oDeleteButton = this.oToolbar.getControl("deleteAdaptation");
+				var oEditButton = this.oToolbar.getControl("editAdaptation");
+				assert.ok(oMenuButton.getEnabled(), "then the context-based adaptation menu is enabled");
+				assert.strictEqual(oDeleteButton.getEnabled(), true, "then the context-based adaptation delete menu button is enabled");
+				assert.strictEqual(oDeleteButton.getVisible(), true, "then the context-based adaptation delete menu button is enabled");
+				assert.strictEqual(oEditButton.getEnabled(), true, "then the context-based edit menu button is enabled");
+				assert.strictEqual(oEditButton.getVisible(), true, "then the context-based edit menu button is enabled");
+				assert.strictEqual(oMenuButton.getText(), "Adapting for 'Sales'", "then the menu text is rendered correctly");
+
+				var oPromise = new Promise(function(resolve) {
+					setTimeout(resolve, 0);
+				}).then(function() {
+					assert.strictEqual(oAdaptationsModel.getProperty("/count"), 1, "only one adaptation is left in the model");
 					assert.strictEqual(oDeleteButton.getVisible(), true, "then the context-based adaptation delete menu button is enabled");
-					assert.strictEqual(oEditButton.getEnabled(), true, "then the context-based edit menu button is enabled");
 					assert.strictEqual(oEditButton.getVisible(), true, "then the context-based edit menu button is enabled");
-					assert.strictEqual(oMenuButton.getText(), "Adapting for 'Sales'", "then the menu text is rendered correctly");
-
-					var oPromise = new Promise(function(resolve) {
-						setTimeout(resolve, 0);
-					}).then(function() {
-						assert.strictEqual(oAdaptationsModel.getProperty("/count"), 1, "only one adaptation is left in the model");
-						assert.strictEqual(oDeleteButton.getVisible(), true, "then the context-based adaptation delete menu button is enabled");
-						assert.strictEqual(oEditButton.getVisible(), true, "then the context-based edit menu button is enabled");
-						assert.strictEqual(oMenuButton.getText(), "Adapting for 'Manager'", "then the menu text is rendered correctly");
-
-						oDeleteButton.firePress();
-
-						return new Promise(function(resolve) {
-							setTimeout(resolve, 0);
-						});
-					})
-					.then(function() {
-						assert.strictEqual(oAdaptationsModel.getProperty("/count"), 0, "only one adaptation is left in the model");
-						assert.strictEqual(oDeleteButton.getVisible(), false, "then the context-based adaptation delete menu button is enabled");
-						assert.strictEqual(oEditButton.getVisible(), false, "then the context-based edit menu button is enabled");
-						assert.strictEqual(oMenuButton.getText(), "Adapting for 'All Users'", "then the menu text is rendered correctly");
-					});
+					assert.strictEqual(oMenuButton.getText(), "Adapting for 'Manager'", "then the menu text is rendered correctly");
 
 					oDeleteButton.firePress();
-					return oPromise;
-				}.bind(this));
+
+					return new Promise(function(resolve) {
+						setTimeout(resolve, 0);
+					});
+				})
+				.then(function() {
+					assert.strictEqual(oAdaptationsModel.getProperty("/count"), 0, "only one adaptation is left in the model");
+					assert.strictEqual(oDeleteButton.getVisible(), false, "then the context-based adaptation delete menu button is enabled");
+					assert.strictEqual(oEditButton.getVisible(), false, "then the context-based edit menu button is enabled");
+					assert.strictEqual(oMenuButton.getText(), "Adapting for 'All Users'", "then the menu text is rendered correctly");
+				});
+
+				oDeleteButton.firePress();
+				return oPromise;
+			}.bind(this));
 		});
 	});
 
 	QUnit.module("Setting AppVariant properties", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oToolbar = new Adaptation({
 				textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
 				rtaInformation: {
@@ -490,7 +490,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given a toolbar is created and app variants parameter in the model are switched back and forth", function (assert) {
+		QUnit.test("Given a toolbar is created and app variants parameter in the model are switched back and forth", function(assert) {
 			this.oControlsModel.setProperty("/appVariantMenu/saveAs/visible", false);
 			this.oControlsModel.setProperty("/appVariantMenu/overview/visible", false);
 			this.oControlsModel.setProperty("/appVariantMenu/manageApps/visible", false);
@@ -500,79 +500,79 @@ sap.ui.define([
 			var oSaveAsStub;
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
-				.then(function() {
-					oGetOverviewStub = sandbox.stub(AppVariantFeature, "onGetOverview");
-					oSaveAsStub = sandbox.stub(AppVariantFeature, "onSaveAs");
-					return RtaQunitUtils.showActionsMenu(this.oToolbar);
-				}.bind(this))
-				.then(function () {
-					var oSaveAsButton = this.oToolbar.getControl("saveAs");
-					var oManageAppsButton = this.oToolbar.getControl("manageApps");
-					var oOverviewButton = this.oToolbar.getControl("appVariantOverview");
+			.then(function() {
+				oGetOverviewStub = sandbox.stub(AppVariantFeature, "onGetOverview");
+				oSaveAsStub = sandbox.stub(AppVariantFeature, "onSaveAs");
+				return RtaQunitUtils.showActionsMenu(this.oToolbar);
+			}.bind(this))
+			.then(function() {
+				var oSaveAsButton = this.oToolbar.getControl("saveAs");
+				var oManageAppsButton = this.oToolbar.getControl("manageApps");
+				var oOverviewButton = this.oToolbar.getControl("appVariantOverview");
 
-					assert.notOk(oSaveAsButton.getVisible(), "saveAs is not visible");
-					assert.notOk(oOverviewButton.getVisible(), "appVariantOverview is not visible");
-					assert.notOk(oManageAppsButton.getVisible(), "manageApps is not visible");
+				assert.notOk(oSaveAsButton.getVisible(), "saveAs is not visible");
+				assert.notOk(oOverviewButton.getVisible(), "appVariantOverview is not visible");
+				assert.notOk(oManageAppsButton.getVisible(), "manageApps is not visible");
 
-					this.oControlsModel.setProperty("/appVariantMenu/saveAs/visible", true);
-					this.oControlsModel.setProperty("/appVariantMenu/saveAs/enabled", false);
-					this.oControlsModel.setProperty("/appVariantMenu/overview/visible", false);
-					this.oControlsModel.setProperty("/appVariantMenu/manageApps/visible", true);
-					this.oControlsModel.setProperty("/appVariantMenu/manageApps/enabled", false);
-					assert.ok(oSaveAsButton.getVisible(), "saveAs is visible");
-					assert.notOk(oSaveAsButton.getEnabled(), "saveAs is not enabled");
-					assert.notOk(oOverviewButton.getVisible(), "AppVariantOverview is not visible");
-					assert.ok(oManageAppsButton.getVisible(), "manageApps is visible");
-					assert.notOk(oManageAppsButton.getEnabled(), "manageApps is not enabled");
+				this.oControlsModel.setProperty("/appVariantMenu/saveAs/visible", true);
+				this.oControlsModel.setProperty("/appVariantMenu/saveAs/enabled", false);
+				this.oControlsModel.setProperty("/appVariantMenu/overview/visible", false);
+				this.oControlsModel.setProperty("/appVariantMenu/manageApps/visible", true);
+				this.oControlsModel.setProperty("/appVariantMenu/manageApps/enabled", false);
+				assert.ok(oSaveAsButton.getVisible(), "saveAs is visible");
+				assert.notOk(oSaveAsButton.getEnabled(), "saveAs is not enabled");
+				assert.notOk(oOverviewButton.getVisible(), "AppVariantOverview is not visible");
+				assert.ok(oManageAppsButton.getVisible(), "manageApps is visible");
+				assert.notOk(oManageAppsButton.getEnabled(), "manageApps is not enabled");
 
-					this.oControlsModel.setProperty("/appVariantMenu/saveAs/visible", true);
-					this.oControlsModel.setProperty("/appVariantMenu/saveAs/enabled", true);
-					this.oControlsModel.setProperty("/appVariantMenu/overview/visible", false);
-					this.oControlsModel.setProperty("/appVariantMenu/manageApps/visible", true);
-					this.oControlsModel.setProperty("/appVariantMenu/manageApps/enabled", true);
-					assert.ok(oSaveAsButton.getVisible(), "saveAs is visible");
-					assert.ok(oSaveAsButton.getEnabled(), "saveAs is enabled");
-					assert.notOk(oOverviewButton.getVisible(), "AppVariantOverview is not visible");
-					assert.ok(oManageAppsButton.getVisible(), "manageApps is visible");
-					assert.ok(oManageAppsButton.getEnabled(), "manageApps is enabled");
+				this.oControlsModel.setProperty("/appVariantMenu/saveAs/visible", true);
+				this.oControlsModel.setProperty("/appVariantMenu/saveAs/enabled", true);
+				this.oControlsModel.setProperty("/appVariantMenu/overview/visible", false);
+				this.oControlsModel.setProperty("/appVariantMenu/manageApps/visible", true);
+				this.oControlsModel.setProperty("/appVariantMenu/manageApps/enabled", true);
+				assert.ok(oSaveAsButton.getVisible(), "saveAs is visible");
+				assert.ok(oSaveAsButton.getEnabled(), "saveAs is enabled");
+				assert.notOk(oOverviewButton.getVisible(), "AppVariantOverview is not visible");
+				assert.ok(oManageAppsButton.getVisible(), "manageApps is visible");
+				assert.ok(oManageAppsButton.getEnabled(), "manageApps is enabled");
 
-					oManageAppsButton.firePress();
-					assert.strictEqual(oGetOverviewStub.callCount, 1, "the overview function was called");
-					assert.strictEqual(oGetOverviewStub.lastCall.args[0], true, "the first agrument is true");
-					assert.strictEqual(oGetOverviewStub.lastCall.args[1], Layer.CUSTOMER, "the second agrument is the current layer");
+				oManageAppsButton.firePress();
+				assert.strictEqual(oGetOverviewStub.callCount, 1, "the overview function was called");
+				assert.strictEqual(oGetOverviewStub.lastCall.args[0], true, "the first agrument is true");
+				assert.strictEqual(oGetOverviewStub.lastCall.args[1], Layer.CUSTOMER, "the second agrument is the current layer");
 
-					oSaveAsButton.firePress();
-					assert.strictEqual(oSaveAsStub.callCount, 1, "the save as function was called");
-					assert.deepEqual(oSaveAsStub.lastCall.args, [true, true, Layer.CUSTOMER, null], "the correct arguments got passed");
+				oSaveAsButton.firePress();
+				assert.strictEqual(oSaveAsStub.callCount, 1, "the save as function was called");
+				assert.deepEqual(oSaveAsStub.lastCall.args, [true, true, Layer.CUSTOMER, null], "the correct arguments got passed");
 
-					this.oControlsModel.setProperty("/appVariantMenu/saveAs/visible", true);
-					this.oControlsModel.setProperty("/appVariantMenu/saveAs/enabled", true);
-					this.oControlsModel.setProperty("/appVariantMenu/overview/visible", true);
-					this.oControlsModel.setProperty("/appVariantMenu/overview/enabled", true);
-					this.oControlsModel.setProperty("/appVariantMenu/manageApps/visible", false);
-					this.oControlsModel.setProperty("/appVariantMenu/manageApps/enabled", false);
-					assert.ok(oSaveAsButton.getVisible(), "saveAs is visible");
-					assert.ok(oSaveAsButton.getEnabled(), "saveAs is enabled");
-					assert.ok(oOverviewButton.getVisible(), "AppVariantOverview is visible");
-					assert.ok(oOverviewButton.getEnabled(), "AppVariantOverview is enabled");
-					assert.notOk(oManageAppsButton.getVisible(), "manageApps is not visible");
-					assert.notOk(oManageAppsButton.getEnabled(), "manageApps is not enabled");
+				this.oControlsModel.setProperty("/appVariantMenu/saveAs/visible", true);
+				this.oControlsModel.setProperty("/appVariantMenu/saveAs/enabled", true);
+				this.oControlsModel.setProperty("/appVariantMenu/overview/visible", true);
+				this.oControlsModel.setProperty("/appVariantMenu/overview/enabled", true);
+				this.oControlsModel.setProperty("/appVariantMenu/manageApps/visible", false);
+				this.oControlsModel.setProperty("/appVariantMenu/manageApps/enabled", false);
+				assert.ok(oSaveAsButton.getVisible(), "saveAs is visible");
+				assert.ok(oSaveAsButton.getEnabled(), "saveAs is enabled");
+				assert.ok(oOverviewButton.getVisible(), "AppVariantOverview is visible");
+				assert.ok(oOverviewButton.getEnabled(), "AppVariantOverview is enabled");
+				assert.notOk(oManageAppsButton.getVisible(), "manageApps is not visible");
+				assert.notOk(oManageAppsButton.getEnabled(), "manageApps is not enabled");
 
-					oOverviewButton.getItems()[0].firePress();
-					assert.strictEqual(oGetOverviewStub.callCount, 2, "the overview function was called");
-					assert.strictEqual(oGetOverviewStub.lastCall.args[0], true, "the first agrument is true");
-					assert.strictEqual(oGetOverviewStub.lastCall.args[1], Layer.CUSTOMER, "the second agrument is the current layer");
+				oOverviewButton.getItems()[0].firePress();
+				assert.strictEqual(oGetOverviewStub.callCount, 2, "the overview function was called");
+				assert.strictEqual(oGetOverviewStub.lastCall.args[0], true, "the first agrument is true");
+				assert.strictEqual(oGetOverviewStub.lastCall.args[1], Layer.CUSTOMER, "the second agrument is the current layer");
 
-					oOverviewButton.getItems()[1].firePress();
-					assert.strictEqual(oGetOverviewStub.callCount, 3, "the overview function was called");
-					assert.strictEqual(oGetOverviewStub.lastCall.args[0], false, "the first agrument is false");
-					assert.strictEqual(oGetOverviewStub.lastCall.args[1], Layer.CUSTOMER, "the second agrument is the current layer");
-				}.bind(this));
+				oOverviewButton.getItems()[1].firePress();
+				assert.strictEqual(oGetOverviewStub.callCount, 3, "the overview function was called");
+				assert.strictEqual(oGetOverviewStub.lastCall.args[0], false, "the first agrument is false");
+				assert.strictEqual(oGetOverviewStub.lastCall.args[1], Layer.CUSTOMER, "the second agrument is the current layer");
+			}.bind(this));
 		});
 	});
 
 	QUnit.module("Setting different modes", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oToolbar = new Adaptation({
 				textResources: Core.getLibraryResourceBundle("sap.ui.rta")
 			});
@@ -612,39 +612,39 @@ sap.ui.define([
 			this.oControlsModel.setProperty("/modeSwitcher", "adaptation");
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
-				.then(function() {
-					assert.ok(this.oToolbar.getControl("undo").getVisible(), "undo is visible");
-					assert.ok(this.oToolbar.getControl("redo").getVisible(), "redo is visible");
-					assert.notOk(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is not visible");
-					assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "versionButton is visible");
-					assert.ok(this.oToolbar.getControl("activate").getVisible(), "activate is visible");
-					assert.ok(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is visible");
-					assert.ok(this.oToolbar.getControl("feedback").getVisible(), "feedback is visible");
+			.then(function() {
+				assert.ok(this.oToolbar.getControl("undo").getVisible(), "undo is visible");
+				assert.ok(this.oToolbar.getControl("redo").getVisible(), "redo is visible");
+				assert.notOk(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is not visible");
+				assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "versionButton is visible");
+				assert.ok(this.oToolbar.getControl("activate").getVisible(), "activate is visible");
+				assert.ok(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is visible");
+				assert.ok(this.oToolbar.getControl("feedback").getVisible(), "feedback is visible");
 
-					return RtaQunitUtils.showActionsMenu(this.oToolbar);
-				}.bind(this))
-				.then(function () {
-					assert.ok(this.oToolbar.getControl("restore").getVisible(), "restore is visible");
-					assert.ok(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is visible");
-					assert.ok(this.oToolbar.getControl("appVariantOverview").getVisible(), "appVariantOverview is visible");
-					assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
-				}.bind(this));
+				return RtaQunitUtils.showActionsMenu(this.oToolbar);
+			}.bind(this))
+			.then(function() {
+				assert.ok(this.oToolbar.getControl("restore").getVisible(), "restore is visible");
+				assert.ok(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is visible");
+				assert.ok(this.oToolbar.getControl("appVariantOverview").getVisible(), "appVariantOverview is visible");
+				assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
+			}.bind(this));
 		});
 
 		QUnit.test("Given a toolbar is created and mode is set to 'navigation'", function(assert) {
 			this.oControlsModel.setProperty("/modeSwitcher", "navigation");
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
-				.then(function() {
-					assert.notOk(this.oToolbar.getControl("undo").getVisible(), "undo is not visible");
-					assert.notOk(this.oToolbar.getControl("redo").getVisible(), "redo is not visible");
-					assert.notOk(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is not visible");
-					assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "versionButton is not visible");
-					assert.notOk(this.oToolbar.getControl("activate").getVisible(), "activate is not visible");
-					assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is not visible");
-					assert.notOk(this.oToolbar.getControl("actionsMenu").getVisible(), "actionsMenu is not visible");
-					assert.ok(this.oToolbar.getControl("feedback").getVisible(), "feedback is visible");
-				}.bind(this));
+			.then(function() {
+				assert.notOk(this.oToolbar.getControl("undo").getVisible(), "undo is not visible");
+				assert.notOk(this.oToolbar.getControl("redo").getVisible(), "redo is not visible");
+				assert.notOk(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is not visible");
+				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "versionButton is not visible");
+				assert.notOk(this.oToolbar.getControl("activate").getVisible(), "activate is not visible");
+				assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is not visible");
+				assert.notOk(this.oToolbar.getControl("actionsMenu").getVisible(), "actionsMenu is not visible");
+				assert.ok(this.oToolbar.getControl("feedback").getVisible(), "feedback is visible");
+			}.bind(this));
 		});
 
 		QUnit.test("Given a toolbar is created and mode is set to 'visualization'", function(assert) {
@@ -652,34 +652,34 @@ sap.ui.define([
 			this.oVersionsModel.setProperty("/versioningEnabled", false);
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
-				.then(function() {
-					assert.notOk(this.oToolbar.getControl("undo").getVisible(), "undo is not visible");
-					assert.notOk(this.oToolbar.getControl("redo").getVisible(), "redo is not visible");
-					assert.ok(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is visible");
-					assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "versionButton is not visible");
-					assert.notOk(this.oToolbar.getControl("activate").getVisible(), "activate is not visible");
-					assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is not visible");
-					assert.notOk(this.oToolbar.getControl("actionsMenu").getVisible(), "actionsMenu is not visible");
-					assert.ok(this.oToolbar.getControl("feedback").getVisible(), "feedback is visible");
-				}.bind(this));
+			.then(function() {
+				assert.notOk(this.oToolbar.getControl("undo").getVisible(), "undo is not visible");
+				assert.notOk(this.oToolbar.getControl("redo").getVisible(), "redo is not visible");
+				assert.ok(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is visible");
+				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "versionButton is not visible");
+				assert.notOk(this.oToolbar.getControl("activate").getVisible(), "activate is not visible");
+				assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is not visible");
+				assert.notOk(this.oToolbar.getControl("actionsMenu").getVisible(), "actionsMenu is not visible");
+				assert.ok(this.oToolbar.getControl("feedback").getVisible(), "feedback is visible");
+			}.bind(this));
 		});
 
 		QUnit.test("Given a toolbar is created and visualizationButton visible property is set to 'true'", function(assert) {
 			this.oControlsModel.setProperty("/visualizationButton/visible", true);
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
-				.then(function() {
-					assert.ok(this.oToolbar.getControl("visualizationSwitcherButton").getVisible(), "visualizationSwitcherButton is visible");
-				}.bind(this));
+			.then(function() {
+				assert.ok(this.oToolbar.getControl("visualizationSwitcherButton").getVisible(), "visualizationSwitcherButton is visible");
+			}.bind(this));
 		});
 
 		QUnit.test("Given a toolbar is created and visualizationButton visible property is set to 'false'", function(assert) {
 			this.oControlsModel.setProperty("/visualizationButton/visible", false);
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
-				.then(function() {
-					assert.notOk(this.oToolbar.getControl("visualizationSwitcherButton").getVisible(), "visualizationSwitcherButton is not visible");
-				}.bind(this));
+			.then(function() {
+				assert.notOk(this.oToolbar.getControl("visualizationSwitcherButton").getVisible(), "visualizationSwitcherButton is not visible");
+			}.bind(this));
 		});
 	});
 
@@ -780,77 +780,77 @@ sap.ui.define([
 		QUnit.test("when the toolbar gets initially shown in a wide window (1200px)", function(assert) {
 			document.getElementById("qunit-fixture").style.width = "1200px";
 			return createAndStartRTA.call(this)
-				.then(function() {
-					var oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
-					var oNavigationSwitcherButton = this.oToolbar.getControl("navigationSwitcherButton");
-					var oVisualizationSwitcherButton = this.oToolbar.getControl("visualizationSwitcherButton");
-					assert.strictEqual(
-						oAdaptationSwitcherButton.getText(),
-						this.oTextResources.getText("BTN_ADAPTATION"),
-						"the adaptation button shows the right text"
-					);
-					assert.strictEqual(
-						oNavigationSwitcherButton.getText(),
-						this.oTextResources.getText("BTN_NAVIGATION"),
-						"the navigation button shows the right text"
-					);
-					assert.strictEqual(
-						oVisualizationSwitcherButton.getText(),
-						this.oTextResources.getText("BTN_VISUALIZATION"),
-						"the visualization button shows the right text"
-					);
-					assert.strictEqual(this.oToolbar.getControl("save").getIcon(), "sap-icon://save", "the save button has save icon");
-					assert.notOk(this.oToolbar.getControl("save").getText(), "the save button has no text");
-					assert.strictEqual(this.oToolbar.getControl("exit").getIcon(), "sap-icon://decline", "the exit button has decline icon");
-					assert.notOk(this.oToolbar.getControl("exit").getText(), "the exit button has no text");
-					return RtaQunitUtils.showActionsMenu(this.oToolbar);
-				}.bind(this))
-				.then(function () {
-					assert.strictEqual(this.oToolbar.getControl("restore").getIcon(), "sap-icon://reset", "the reset button has reset icon");
-				}.bind(this));
+			.then(function() {
+				var oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
+				var oNavigationSwitcherButton = this.oToolbar.getControl("navigationSwitcherButton");
+				var oVisualizationSwitcherButton = this.oToolbar.getControl("visualizationSwitcherButton");
+				assert.strictEqual(
+					oAdaptationSwitcherButton.getText(),
+					this.oTextResources.getText("BTN_ADAPTATION"),
+					"the adaptation button shows the right text"
+				);
+				assert.strictEqual(
+					oNavigationSwitcherButton.getText(),
+					this.oTextResources.getText("BTN_NAVIGATION"),
+					"the navigation button shows the right text"
+				);
+				assert.strictEqual(
+					oVisualizationSwitcherButton.getText(),
+					this.oTextResources.getText("BTN_VISUALIZATION"),
+					"the visualization button shows the right text"
+				);
+				assert.strictEqual(this.oToolbar.getControl("save").getIcon(), "sap-icon://save", "the save button has save icon");
+				assert.notOk(this.oToolbar.getControl("save").getText(), "the save button has no text");
+				assert.strictEqual(this.oToolbar.getControl("exit").getIcon(), "sap-icon://decline", "the exit button has decline icon");
+				assert.notOk(this.oToolbar.getControl("exit").getText(), "the exit button has no text");
+				return RtaQunitUtils.showActionsMenu(this.oToolbar);
+			}.bind(this))
+			.then(function() {
+				assert.strictEqual(this.oToolbar.getControl("restore").getIcon(), "sap-icon://reset", "the reset button has reset icon");
+			}.bind(this));
 		});
 
 		QUnit.test("when the toolbar gets initially shown in a narrow window (600px)", function(assert) {
 			var fnDone = assert.async();
 			document.getElementById("qunit-fixture").style.width = "600px";
 			var oSwitchIconsStub = sandbox.stub(Adaptation.prototype, "_switchToIcons")
-				.callsFake(function() {
-					oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
-					var oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
-					var oNavigationSwitcherButton = this.oToolbar.getControl("navigationSwitcherButton");
-					var oVisualizationSwitcherButton = this.oToolbar.getControl("visualizationSwitcherButton");
-					assert.strictEqual(
-						oAdaptationSwitcherButton.getText(),
-						"",
-						"the adaptation button has no text"
-					);
-					assert.strictEqual(
-						oNavigationSwitcherButton.getText(),
-						"",
-						"the navigation button has no text"
-					);
-					assert.strictEqual(
-						oVisualizationSwitcherButton.getText(),
-						"",
-						"the visualization button has no text"
-					);
-					assert.strictEqual(
-						oAdaptationSwitcherButton.getIcon(),
-						"sap-icon://wrench",
-						"the adaptation button has the right icon"
-					);
-					assert.strictEqual(
-						oNavigationSwitcherButton.getIcon(),
-						"sap-icon://explorer",
-						"the navigation button has the right icon"
-					);
-					assert.strictEqual(
-						oVisualizationSwitcherButton.getIcon(),
-						"sap-icon://show",
-						"the visualization button has the right icon"
-					);
-					fnDone();
-				}.bind(this));
+			.callsFake(function() {
+				oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
+				var oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
+				var oNavigationSwitcherButton = this.oToolbar.getControl("navigationSwitcherButton");
+				var oVisualizationSwitcherButton = this.oToolbar.getControl("visualizationSwitcherButton");
+				assert.strictEqual(
+					oAdaptationSwitcherButton.getText(),
+					"",
+					"the adaptation button has no text"
+				);
+				assert.strictEqual(
+					oNavigationSwitcherButton.getText(),
+					"",
+					"the navigation button has no text"
+				);
+				assert.strictEqual(
+					oVisualizationSwitcherButton.getText(),
+					"",
+					"the visualization button has no text"
+				);
+				assert.strictEqual(
+					oAdaptationSwitcherButton.getIcon(),
+					"sap-icon://wrench",
+					"the adaptation button has the right icon"
+				);
+				assert.strictEqual(
+					oNavigationSwitcherButton.getIcon(),
+					"sap-icon://explorer",
+					"the navigation button has the right icon"
+				);
+				assert.strictEqual(
+					oVisualizationSwitcherButton.getIcon(),
+					"sap-icon://show",
+					"the visualization button has the right icon"
+				);
+				fnDone();
+			}.bind(this));
 			return createAndStartRTA.call(this);
 		});
 
@@ -880,24 +880,24 @@ sap.ui.define([
 			};
 
 			var oSwitchIconsStub = sandbox.stub(Adaptation.prototype, "_switchToIcons")
-				.callsFake(function() {
-					oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
-					fnCheckIcon.call(this);
-					var oSwitchTextsStub = sandbox.stub(Adaptation.prototype, "_switchToTexts").callsFake(function() {
-						oSwitchTextsStub.wrappedMethod.apply(this.oToolbar, arguments);
-						fnCheckText.call(this);
-						fnDone();
-					}.bind(this));
-					document.getElementById("qunit-fixture").style.width = "1200px";
-					window.dispatchEvent(new Event('resize'));
+			.callsFake(function() {
+				oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
+				fnCheckIcon.call(this);
+				var oSwitchTextsStub = sandbox.stub(Adaptation.prototype, "_switchToTexts").callsFake(function() {
+					oSwitchTextsStub.wrappedMethod.apply(this.oToolbar, arguments);
+					fnCheckText.call(this);
+					fnDone();
 				}.bind(this));
+				document.getElementById("qunit-fixture").style.width = "1200px";
+				window.dispatchEvent(new Event("resize"));
+			}.bind(this));
 
 			return createAndStartRTA.call(this)
-				.then(function() {
-					this.oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
-					fnCheckText.call(this);
-					document.getElementById("qunit-fixture").style.width = "600px";
-				}.bind(this));
+			.then(function() {
+				this.oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
+				fnCheckText.call(this);
+				document.getElementById("qunit-fixture").style.width = "600px";
+			}.bind(this));
 		});
 	});
 
@@ -930,77 +930,77 @@ sap.ui.define([
 		QUnit.test("when the toolbar gets initially shown in a wide window (1200px)", function(assert) {
 			document.getElementById("qunit-fixture").style.width = "1200px";
 			return createAndStartRTA.call(this)
-				.then(function() {
-					var oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
-					var oNavigationSwitcherButton = this.oToolbar.getControl("navigationSwitcherButton");
-					var oVisualizationSwitcherButton = this.oToolbar.getControl("visualizationSwitcherButton");
-					assert.strictEqual(
-						oAdaptationSwitcherButton.getText(),
-						this.oTextResources.getText("BTN_ADAPTATION"),
-						"the adaptation button shows the right text"
-					);
-					assert.strictEqual(
-						oNavigationSwitcherButton.getText(),
-						this.oTextResources.getText("BTN_NAVIGATION"),
-						"the navigation button shows the right text"
-					);
-					assert.strictEqual(
-						oVisualizationSwitcherButton.getText(),
-						this.oTextResources.getText("BTN_VISUALIZATION"),
-						"the visualization button shows the right text"
-					);
-					assert.strictEqual(this.oToolbar.getControl("save").getIcon(), "sap-icon://save", "the save button has save icon");
-					assert.notOk(this.oToolbar.getControl("save").getText(), "the save button has no text");
-					assert.strictEqual(this.oToolbar.getControl("exit").getIcon(), "sap-icon://decline", "the exit button has decline icon");
-					assert.notOk(this.oToolbar.getControl("exit").getText(), "the exit button has no text");
-					return RtaQunitUtils.showActionsMenu(this.oToolbar);
-				}.bind(this))
-				.then(function () {
-					assert.strictEqual(this.oToolbar.getControl("restore").getIcon(), "sap-icon://reset", "the reset button has reset icon");
-				}.bind(this));
+			.then(function() {
+				var oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
+				var oNavigationSwitcherButton = this.oToolbar.getControl("navigationSwitcherButton");
+				var oVisualizationSwitcherButton = this.oToolbar.getControl("visualizationSwitcherButton");
+				assert.strictEqual(
+					oAdaptationSwitcherButton.getText(),
+					this.oTextResources.getText("BTN_ADAPTATION"),
+					"the adaptation button shows the right text"
+				);
+				assert.strictEqual(
+					oNavigationSwitcherButton.getText(),
+					this.oTextResources.getText("BTN_NAVIGATION"),
+					"the navigation button shows the right text"
+				);
+				assert.strictEqual(
+					oVisualizationSwitcherButton.getText(),
+					this.oTextResources.getText("BTN_VISUALIZATION"),
+					"the visualization button shows the right text"
+				);
+				assert.strictEqual(this.oToolbar.getControl("save").getIcon(), "sap-icon://save", "the save button has save icon");
+				assert.notOk(this.oToolbar.getControl("save").getText(), "the save button has no text");
+				assert.strictEqual(this.oToolbar.getControl("exit").getIcon(), "sap-icon://decline", "the exit button has decline icon");
+				assert.notOk(this.oToolbar.getControl("exit").getText(), "the exit button has no text");
+				return RtaQunitUtils.showActionsMenu(this.oToolbar);
+			}.bind(this))
+			.then(function() {
+				assert.strictEqual(this.oToolbar.getControl("restore").getIcon(), "sap-icon://reset", "the reset button has reset icon");
+			}.bind(this));
 		});
 
 		QUnit.test("when the toolbar gets initially shown in a narrow window (600px)", function(assert) {
 			var fnDone = assert.async();
 			document.getElementById("qunit-fixture").style.width = "600px";
 			var oSwitchIconsStub = sandbox.stub(Adaptation.prototype, "_switchToIcons")
-				.callsFake(function() {
-					oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
-					var oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
-					var oNavigationSwitcherButton = this.oToolbar.getControl("navigationSwitcherButton");
-					var oVisualizationSwitcherButton = this.oToolbar.getControl("visualizationSwitcherButton");
-					assert.strictEqual(
-						oAdaptationSwitcherButton.getText(),
-						"",
-						"the adaptation button has no text"
-					);
-					assert.strictEqual(
-						oNavigationSwitcherButton.getText(),
-						"",
-						"the navigation button has no text"
-					);
-					assert.strictEqual(
-						oVisualizationSwitcherButton.getText(),
-						"",
-						"the visualization button has no text"
-					);
-					assert.strictEqual(
-						oAdaptationSwitcherButton.getIcon(),
-						"sap-icon://wrench",
-						"the adaptation button has the right icon"
-					);
-					assert.strictEqual(
-						oNavigationSwitcherButton.getIcon(),
-						"sap-icon://explorer",
-						"the navigation button has the right icon"
-					);
-					assert.strictEqual(
-						oVisualizationSwitcherButton.getIcon(),
-						"sap-icon://show",
-						"the visualization button has the right icon"
-					);
-					fnDone();
-				}.bind(this));
+			.callsFake(function() {
+				oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
+				var oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
+				var oNavigationSwitcherButton = this.oToolbar.getControl("navigationSwitcherButton");
+				var oVisualizationSwitcherButton = this.oToolbar.getControl("visualizationSwitcherButton");
+				assert.strictEqual(
+					oAdaptationSwitcherButton.getText(),
+					"",
+					"the adaptation button has no text"
+				);
+				assert.strictEqual(
+					oNavigationSwitcherButton.getText(),
+					"",
+					"the navigation button has no text"
+				);
+				assert.strictEqual(
+					oVisualizationSwitcherButton.getText(),
+					"",
+					"the visualization button has no text"
+				);
+				assert.strictEqual(
+					oAdaptationSwitcherButton.getIcon(),
+					"sap-icon://wrench",
+					"the adaptation button has the right icon"
+				);
+				assert.strictEqual(
+					oNavigationSwitcherButton.getIcon(),
+					"sap-icon://explorer",
+					"the navigation button has the right icon"
+				);
+				assert.strictEqual(
+					oVisualizationSwitcherButton.getIcon(),
+					"sap-icon://show",
+					"the visualization button has the right icon"
+				);
+				fnDone();
+			}.bind(this));
 			return createAndStartRTA.call(this);
 		});
 
@@ -1030,28 +1030,28 @@ sap.ui.define([
 			};
 
 			var oSwitchIconsStub = sandbox.stub(Adaptation.prototype, "_switchToIcons")
-				.callsFake(function() {
-					oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
-					fnCheckIcon.call(this);
-					var oSwitchTextsStub = sandbox.stub(Adaptation.prototype, "_switchToTexts").callsFake(function() {
-						oSwitchTextsStub.wrappedMethod.apply(this.oToolbar, arguments);
-						fnCheckText.call(this);
-						fnDone();
-					}.bind(this));
-					document.getElementById("qunit-fixture").style.width = "1200px";
-					window.dispatchEvent(new Event('resize'));
+			.callsFake(function() {
+				oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
+				fnCheckIcon.call(this);
+				var oSwitchTextsStub = sandbox.stub(Adaptation.prototype, "_switchToTexts").callsFake(function() {
+					oSwitchTextsStub.wrappedMethod.apply(this.oToolbar, arguments);
+					fnCheckText.call(this);
+					fnDone();
 				}.bind(this));
+				document.getElementById("qunit-fixture").style.width = "1200px";
+				window.dispatchEvent(new Event("resize"));
+			}.bind(this));
 
 			return createAndStartRTA.call(this)
-				.then(function() {
-					this.oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
-					fnCheckText.call(this);
-					document.getElementById("qunit-fixture").style.width = "600px";
-				}.bind(this));
+			.then(function() {
+				this.oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
+				fnCheckText.call(this);
+				document.getElementById("qunit-fixture").style.width = "600px";
+			}.bind(this));
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

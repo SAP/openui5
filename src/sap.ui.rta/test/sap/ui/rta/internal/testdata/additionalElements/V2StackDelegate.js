@@ -17,7 +17,7 @@ sap.ui.define([
 	 * @param {Object} mProperty - property from entityType
 	 * @returns {boolean} - Returns true if property is using a complex type
 	 */
-	function isComplexType (mProperty) {
+	function isComplexType(mProperty) {
 		if (mProperty && mProperty.type) {
 			if (mProperty.type.toLowerCase().indexOf("edm") !== 0) {
 				return true;
@@ -43,12 +43,12 @@ sap.ui.define([
 		var vBinding;
 		if (bAbsoluteAggregationBinding) {
 			vBinding = oElement.getBindingInfo(sAggregationName);
-			//check to be default model binding otherwise return undefined
+			// check to be default model binding otherwise return undefined
 			if (typeof vBinding.model === "string" && vBinding.model !== "") {
 				vBinding = undefined;
 			}
 		} else {
-			//here we explicitly request the default models binding context
+			// here we explicitly request the default models binding context
 			vBinding = oElement.getBindingContext();
 		}
 		return vBinding;
@@ -66,7 +66,7 @@ sap.ui.define([
 		var mQuickInfoAnnotation = mProperty["com.sap.vocabularies.Common.v1.QuickInfo"];
 		mProp.tooltip = mQuickInfoAnnotation && mQuickInfoAnnotation.String;
 
-		//CDS UI.Hidden new way also for sap:visible = false
+		// CDS UI.Hidden new way also for sap:visible = false
 		var mHiddenAnnotation = mProperty["com.sap.vocabularies.UI.v1.Hidden"];
 		mProp.hideFromReveal = !!mHiddenAnnotation && mHiddenAnnotation.Bool === "true";
 
@@ -77,7 +77,7 @@ sap.ui.define([
 			if (mFieldControlAnnotation && mFieldControlAnnotation.EnumMember) {
 				mProp.hideFromReveal = mFieldControlAnnotation.EnumMember === "com.sap.vocabularies.Common.v1.FieldControlType/Hidden";
 			} else {
-				//@runtime hidden by field control value = 0
+				// @runtime hidden by field control value = 0
 				var sFieldControlPath = mFieldControlAnnotation && mFieldControlAnnotation.Path;
 				if (sFieldControlPath) {
 					// if the binding is a listbinding, we skip the check for field control
@@ -92,12 +92,12 @@ sap.ui.define([
 		return mProp;
 	}
 
-	function _convertMetadataToDelegateFormat (mODataEntity, oMetaModel, oElement, sAggregationName) {
+	function _convertMetadataToDelegateFormat(mODataEntity, oMetaModel, oElement, sAggregationName) {
 		var aFieldControlProperties = mODataEntity.property.map(function(mProperty) {
 			return mProperty["sap:field-control"];
 		}).filter(Boolean);
 
-		var fnFilterFieldControlProperties = function (mProperty) {
+		var fnFilterFieldControlProperties = function(mProperty) {
 			return !aFieldControlProperties.includes(mProperty.name);
 		};
 
@@ -106,7 +106,7 @@ sap.ui.define([
 			if (isComplexType(mProperty)) {
 				var mComplexType = oMetaModel.getODataComplexType(mProperty.type);
 				if (mComplexType) {
-					//deep properties, could get multiple-level deep
+					// deep properties, could get multiple-level deep
 					mProp.properties = mComplexType.property.map(function(mComplexProperty) {
 						var mInnerProp = enrichProperty(mComplexProperty, mODataEntity, oElement, sAggregationName);
 						mInnerProp.bindingPath = mProperty.name + "/" + mComplexProperty.name;
@@ -127,11 +127,11 @@ sap.ui.define([
 				);
 				return {
 					name: mNavProp.name,
-					//no labels or tooltips for navigation properties
+					// no labels or tooltips for navigation properties
 					entityType: sFullyQualifiedEntityName,
 					bindingPath: mNavProp.name,
-					unsupported: true //no support for navigation properties yet
-					//can have properties (like complex types in future)
+					unsupported: true // no support for navigation properties yet
+					// can have properties (like complex types in future)
 				};
 			});
 			aProperties = aProperties.concat(aNavigationProperties);
@@ -152,19 +152,19 @@ sap.ui.define([
 	}
 	function _loadODataMetaModel(oElement, mPayload) {
 		return Promise.resolve()
-			.then(function() {
-				var oModel = oElement.getModel(mPayload.modelName);
-				if (oModel) {
-					var sModelType = oModel.getMetadata().getName();
-					if (sModelType === "sap.ui.model.odata.ODataModel" || sModelType === "sap.ui.model.odata.v2.ODataModel") {
-						var oMetaModel = oModel.getMetaModel();
-						return oMetaModel.loaded().then(function() {
-							return oMetaModel;
-						});
-					}
+		.then(function() {
+			var oModel = oElement.getModel(mPayload.modelName);
+			if (oModel) {
+				var sModelType = oModel.getMetadata().getName();
+				if (sModelType === "sap.ui.model.odata.ODataModel" || sModelType === "sap.ui.model.odata.v2.ODataModel") {
+					var oMetaModel = oModel.getMetaModel();
+					return oMetaModel.loaded().then(function() {
+						return oMetaModel;
+					});
 				}
-				return undefined;
-			});
+			}
+			return undefined;
+		});
 	}
 	function _getODataEntityFromMetaModel(oMetaModel, sBindingContextPath) {
 		var oMetaModelContext = oMetaModel.getMetaContext(sBindingContextPath);
@@ -191,24 +191,24 @@ sap.ui.define([
 
 	function _getODataPropertiesOfModel(oElement, sAggregationName, mPayload) {
 		return _loadODataMetaModel(oElement, mPayload)
-			.then(function(oMetaModel) {
-				var aProperties = [];
-				if (oMetaModel) {
-					var sBindingContextPath = _getBindingPath(oElement, sAggregationName, mPayload);
-					if (sBindingContextPath) {
-						var mODataEntity = _getODataEntityFromMetaModel(oMetaModel, sBindingContextPath);
+		.then(function(oMetaModel) {
+			var aProperties = [];
+			if (oMetaModel) {
+				var sBindingContextPath = _getBindingPath(oElement, sAggregationName, mPayload);
+				if (sBindingContextPath) {
+					var mODataEntity = _getODataEntityFromMetaModel(oMetaModel, sBindingContextPath);
 
-						mODataEntity = _adjustODataEntityForListBindings(oElement, oMetaModel, mODataEntity);
+					mODataEntity = _adjustODataEntityForListBindings(oElement, oMetaModel, mODataEntity);
 
-						aProperties = _convertMetadataToDelegateFormat(
-							mODataEntity,
-							oMetaModel,
-							oElement,
-							sAggregationName);
-					}
+					aProperties = _convertMetadataToDelegateFormat(
+						mODataEntity,
+						oMetaModel,
+						oElement,
+						sAggregationName);
 				}
-				return aProperties;
-			});
+			}
+			return aProperties;
+		});
 	}
 
 	var ASYNC = true;
@@ -236,7 +236,7 @@ sap.ui.define([
 			);
 		},
 		createControlForProperty: function(mPropertyBag) {
-			//see SmartField.flexibility.js fnCreateFieldWithLabel function
+			// see SmartField.flexibility.js fnCreateFieldWithLabel function
 			var oModifier = mPropertyBag.modifier;
 			return oModifier.createControl("sap.ui.comp.smartfield.SmartField",
 				mPropertyBag.appComponent,
@@ -254,18 +254,18 @@ sap.ui.define([
 		createLayout: function(mPropertyBag) {
 			var oModifier = mPropertyBag.modifier;
 			if (_isFormRelatedElement(mPropertyBag)) {
-				//Don't provide form handling
+				// Don't provide form handling
 				return Promise.resolve();
 			}
 			var oVBox;
 			var mInnerControls;
-			//TODO validate with object page header/VBox/HBox
+			// TODO validate with object page header/VBox/HBox
 			return oModifier.createControl("sap.m.VBox",
 				mPropertyBag.appComponent,
 				mPropertyBag.view,
 				mPropertyBag.fieldSelector,
 				{},
-				/*async*/true
+				/* async */true
 			).then(function(oCreatedVBox) {
 				oVBox = oCreatedVBox;
 				var mFieldPropertyBag = Object.assign({}, mPropertyBag);
@@ -273,11 +273,11 @@ sap.ui.define([
 				mSmartFieldSelector.id = mSmartFieldSelector.id + "-field";
 				mFieldPropertyBag.fieldSelector = mSmartFieldSelector;
 				return Delegate.createControlForProperty(mFieldPropertyBag).then(function(mField) {
-					//labelFor prop
+					// labelFor prop
 					var sNewFieldId = oModifier.getId(mField.control);
 					mFieldPropertyBag.labelFor = sNewFieldId;
 					return Delegate.createLabel(mFieldPropertyBag).then(function(oLabel) {
-						//harmonize return values for mediator create function and delegate:
+						// harmonize return values for mediator create function and delegate:
 						return {
 							label: oLabel,
 							control: mField.control,
@@ -288,18 +288,18 @@ sap.ui.define([
 			})
 			.then(function(mCreatedInnerControls) {
 				mInnerControls = mCreatedInnerControls;
-				//do some custom placement here
+				// do some custom placement here
 				return oModifier.insertAggregation(oVBox, "items", mInnerControls.label, 0, mPropertyBag.view);
 			})
 			.then(oModifier.insertAggregation.bind(oModifier, oVBox, "items", mInnerControls.control, 1, mPropertyBag.view))
-			.then(function () {
+			.then(function() {
 				return {
-					//modifier created container containing already the label and control
-					//as it is needed for the current control type or position in the app (can be derived from payload)
-					//control type of relevant container (e.g. Form, ObjectPageLayout, Table)
-					//aggregation name of control insertion is given to support
+					// modifier created container containing already the label and control
+					// as it is needed for the current control type or position in the app (can be derived from payload)
+					// control type of relevant container (e.g. Form, ObjectPageLayout, Table)
+					// aggregation name of control insertion is given to support
 					control: oVBox,
-					//if available it has to be added to the relevant containers dependents aggregation otherwise it is expected for not being needed or included in the control
+					// if available it has to be added to the relevant containers dependents aggregation otherwise it is expected for not being needed or included in the control
 					valueHelp: mInnerControls.valueHelp
 				};
 			});

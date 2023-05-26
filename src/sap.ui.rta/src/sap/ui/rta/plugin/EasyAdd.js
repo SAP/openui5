@@ -167,9 +167,9 @@ sap.ui.define([
 			icon: "sap-icon://add",
 			enabled: bIsEditable
 		})
-			.placeAt(oHtmlButtonOuter)
-			.attachBrowserEvent('click', fnCallback)
-			.attachBrowserEvent('tap', fnCallback);
+		.placeAt(oHtmlButtonOuter)
+		.attachBrowserEvent("click", fnCallback)
+		.attachBrowserEvent("tap", fnCallback);
 		oOverlayDom.append(oHtmlButtonOuter);
 
 		oHtmlButtonOuter.addEventListener("mouseover", function(oEvent) {

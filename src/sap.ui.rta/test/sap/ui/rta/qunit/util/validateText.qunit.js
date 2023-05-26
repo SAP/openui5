@@ -1,10 +1,10 @@
-/*global QUnit*/
+/* global QUnit */
 sap.ui.define([
 	"sap/ui/base/BindingParser",
 	"sap/ui/rta/util/validateText",
 	"sap/ui/thirdparty/sinon-4"
 ],
-function (
+function(
 	BindingParser,
 	validateText,
 	sinon
@@ -14,13 +14,13 @@ function (
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("validateText", {
-	}, function () {
-		QUnit.test("When a valid string is passed", function (assert) {
+	}, function() {
+		QUnit.test("When a valid string is passed", function(assert) {
 			validateText("Potato");
 			assert.ok(true, "then no errors were thrown");
 		});
 
-		QUnit.test("When two equal strings are passed", function (assert) {
+		QUnit.test("When two equal strings are passed", function(assert) {
 			try {
 				validateText("Potato", "Potato");
 			} catch (oError) {
@@ -28,7 +28,7 @@ function (
 			}
 		});
 
-		QUnit.test("When the text is an empty string (default validator)", function (assert) {
+		QUnit.test("When the text is an empty string (default validator)", function(assert) {
 			var sEmptyTextKey = "\xa0";
 			var oAction = {validators: ["noEmptyText"]};
 			assert.throws(
@@ -38,7 +38,7 @@ function (
 			);
 		});
 
-		QUnit.test("When a custom validator is used", function (assert) {
+		QUnit.test("When a custom validator is used", function(assert) {
 			function validatorFunction(sText) {
 				return sText === "Potato";
 			}
@@ -55,7 +55,7 @@ function (
 			}
 		});
 
-		QUnit.test("When a Binding is passed as text", function (assert) {
+		QUnit.test("When a Binding is passed as text", function(assert) {
 			try {
 				validateText("{Binding}");
 			} catch (oError) {
@@ -66,7 +66,7 @@ function (
 			}
 		});
 
-		QUnit.test("When a the Binding is passed as text", function (assert) {
+		QUnit.test("When a the Binding is passed as text", function(assert) {
 			sandbox.stub(BindingParser, "complexParser").throws(new Error());
 			try {
 				validateText("Wrong Binding");
@@ -79,7 +79,7 @@ function (
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

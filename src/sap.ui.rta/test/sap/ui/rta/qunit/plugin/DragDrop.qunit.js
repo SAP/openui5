@@ -45,7 +45,7 @@ sap.ui.define([
 		// 			[oLeftButton]
 		// 		contentMiddle
 		// 			[oMiddleButton1, oMiddleButton2]
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			this.oLeftButton = new Button({id: "LeftButton", visible: true, text: "Left"});
 			this.oMiddleButton1 = new Button({id: "MiddleButton1", visible: true, text: "Middle1"});
 			this.oMiddleButton2 = new Button({id: "MiddleButton2", visible: true, text: "Middle2"});
@@ -89,17 +89,17 @@ sap.ui.define([
 			sandbox.stub(this.oElementMover, "buildMoveCommand").resolves();
 		},
 
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 			this.oDragDropPlugin.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("When OnDragEnd is called with one button being moved from the middle to the left aggregation (position 0)", function(assert) {
 			var done = assert.async();
 
-			this.oElementMover.repositionOn(this.oMiddleButton1Overlay, this.oLeftButtonOverlay, /*bInsertAtEnd=*/false);
+			this.oElementMover.repositionOn(this.oMiddleButton1Overlay, this.oLeftButtonOverlay, /* bInsertAtEnd= */false);
 
 			sandbox.stub(this.oDragDropPlugin, "evaluateEditable").callsFake(function(aRelevantOverlays) {
 				fnCheckRelevantOverlays.call(this, aRelevantOverlays, assert);
@@ -112,7 +112,7 @@ sap.ui.define([
 		QUnit.test("When OnDragEnd is called with one button being moved from the middle to the left aggregation (position 1)", function(assert) {
 			var done = assert.async();
 
-			this.oElementMover.repositionOn(this.oMiddleButton1Overlay, this.oLeftButtonOverlay, /*bInsertAtEnd=*/true);
+			this.oElementMover.repositionOn(this.oMiddleButton1Overlay, this.oLeftButtonOverlay, /* bInsertAtEnd= */true);
 
 			sandbox.stub(this.oDragDropPlugin, "evaluateEditable").callsFake(function(aRelevantOverlays) {
 				fnCheckRelevantOverlays.call(this, aRelevantOverlays, assert);
@@ -137,7 +137,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

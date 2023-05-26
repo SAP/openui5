@@ -6,32 +6,32 @@ sap.ui.define([
 	"sap/ui/core/postmessage/Bus",
 	"sap/ui/dt/Util",
 	"sap/base/util/uid"
-], function (
+], function(
 	PostMessageBus,
 	DtUtil,
 	uid
 ) {
 	"use strict";
 
-	var CHANNEL_ID = 'sap.ui.rta.service.receiver';
+	var CHANNEL_ID = "sap.ui.rta.service.receiver";
 	var oPostMessageBus;
 
-	return function (oRta) {
+	return function(oRta) {
 		var mEventHandlers = {};
 
-		var fnReceiver = function (oEvent) {
+		var fnReceiver = function(oEvent) {
 			var mData = oEvent.data;
 			var mRequestBody = mData.body;
 
 			switch (oEvent.eventId) {
 				case "getService":
 					var sServiceName = mRequestBody.arguments[0];
-					oRta.getService(sServiceName).then(function (oService) {
+					oRta.getService(sServiceName).then(function(oService) {
 						var mProperties = {};
 						var aMethods = [];
 
-						Object.keys(oService).forEach(function (sKey) {
-							if (typeof oService[sKey] === 'function') {
+						Object.keys(oService).forEach(function(sKey) {
+							if (typeof oService[sKey] === "function") {
 								if (!/^(at|de)tach/.test(sKey)) { // ignore system methods
 									aMethods.push(sKey);
 								}
@@ -57,33 +57,11 @@ sap.ui.define([
 						});
 					});
 					break;
-				case 'callMethod':
+				case "callMethod":
 					oRta.getService(mRequestBody.service)
-						.then(function (oService) {
-							oService[mRequestBody.method].apply(null, mRequestBody.arguments)
-								.then(function (vResult) {
-									oPostMessageBus.publish({
-										target: oEvent.source,
-										origin: oEvent.origin,
-										channelId: CHANNEL_ID,
-										eventId: 'callMethod',
-										data: {
-											type: 'response',
-											status: 'success',
-											id: mData.id,
-											body: vResult
-										}
-									});
-								});
-						})
-						.catch(function (vError) {
-							var oError = DtUtil.propagateError(
-								vError,
-								"service.Receiver",
-								DtUtil.printf("Can't execute method {0} of service {1} due unexpected error.", mRequestBody.method, mRequestBody.service),
-								"sap.ui.rta"
-							);
-
+					.then(function(oService) {
+						oService[mRequestBody.method].apply(null, mRequestBody.arguments)
+						.then(function(vResult) {
 							oPostMessageBus.publish({
 								target: oEvent.source,
 								origin: oEvent.origin,
@@ -91,67 +69,89 @@ sap.ui.define([
 								eventId: "callMethod",
 								data: {
 									type: "response",
-									status: "error",
+									status: "success",
 									id: mData.id,
-									body: oError.toString()
+									body: vResult
 								}
 							});
 						});
+					})
+					.catch(function(vError) {
+						var oError = DtUtil.propagateError(
+							vError,
+							"service.Receiver",
+							DtUtil.printf("Can't execute method {0} of service {1} due unexpected error.", mRequestBody.method, mRequestBody.service),
+							"sap.ui.rta"
+						);
+
+						oPostMessageBus.publish({
+							target: oEvent.source,
+							origin: oEvent.origin,
+							channelId: CHANNEL_ID,
+							eventId: "callMethod",
+							data: {
+								type: "response",
+								status: "error",
+								id: mData.id,
+								body: oError.toString()
+							}
+						});
+					});
 					break;
-				case 'subscribe':
+				case "subscribe":
 					oRta.getService(mRequestBody.service)
-						.then(function (oService) {
-							var fnHandler = function (vData) {
-								oPostMessageBus.publish({
-									target: oEvent.source,
-									origin: oEvent.origin,
-									channelId: CHANNEL_ID,
-									eventId: 'event',
-									data: {
-										body: {
-											service: mRequestBody.service,
-											event: mRequestBody.event,
-											data: vData
-										}
-									}
-								});
-							};
-							var sHandlerId = uid();
-							mEventHandlers[sHandlerId] = fnHandler;
-							oService.attachEvent(mRequestBody.event, fnHandler);
+					.then(function(oService) {
+						var fnHandler = function(vData) {
 							oPostMessageBus.publish({
 								target: oEvent.source,
 								origin: oEvent.origin,
 								channelId: CHANNEL_ID,
-								eventId: 'subscribe',
+								eventId: "event",
 								data: {
-									type: 'response',
-									status: 'success',
-									id: mData.id,
 									body: {
-										id: sHandlerId
+										service: mRequestBody.service,
+										event: mRequestBody.event,
+										data: vData
 									}
 								}
 							});
-						});
-					break;
-				case 'unsubscribe':
-					oRta.getService(mRequestBody.service)
-						.then(function (oService) {
-							oService.detachEvent(mRequestBody.event, mEventHandlers[mRequestBody.id]);
-							delete mEventHandlers[mRequestBody.id];
-							oPostMessageBus.publish({
-								target: oEvent.source,
-								origin: oEvent.origin,
-								channelId: CHANNEL_ID,
-								eventId: 'unsubscribe',
-								data: {
-									type: 'response',
-									status: 'success',
-									id: mData.id
+						};
+						var sHandlerId = uid();
+						mEventHandlers[sHandlerId] = fnHandler;
+						oService.attachEvent(mRequestBody.event, fnHandler);
+						oPostMessageBus.publish({
+							target: oEvent.source,
+							origin: oEvent.origin,
+							channelId: CHANNEL_ID,
+							eventId: "subscribe",
+							data: {
+								type: "response",
+								status: "success",
+								id: mData.id,
+								body: {
+									id: sHandlerId
 								}
-							});
+							}
 						});
+					});
+					break;
+				case "unsubscribe":
+					oRta.getService(mRequestBody.service)
+					.then(function(oService) {
+						oService.detachEvent(mRequestBody.event, mEventHandlers[mRequestBody.id]);
+						delete mEventHandlers[mRequestBody.id];
+						oPostMessageBus.publish({
+							target: oEvent.source,
+							origin: oEvent.origin,
+							channelId: CHANNEL_ID,
+							eventId: "unsubscribe",
+							data: {
+								type: "response",
+								status: "success",
+								id: mData.id
+							}
+						});
+					});
 					break;
 				// no default
 			}
@@ -169,7 +169,7 @@ sap.ui.define([
 		oPostMessageBus.subscribe(CHANNEL_ID, "unsubscribe", fnReceiver);
 
 		return {
-			destroy: function () {
+			destroy: function() {
 				if (oPostMessageBus) {
 					oPostMessageBus.unsubscribe(CHANNEL_ID, "getService", fnReceiver);
 					oPostMessageBus.unsubscribe(CHANNEL_ID, "callMethod", fnReceiver);

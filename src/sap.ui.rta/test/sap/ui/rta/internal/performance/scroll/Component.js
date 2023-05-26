@@ -32,18 +32,18 @@ sap.ui.define([
 			window.fnResolve(RtaPerformanceTestUtil.startRta(oCore.byId("opLayout")));
 		},
 
-		createContent: function () {
+		createContent: function() {
 			var oHeaderLayout = new Panel("layout-header");
-			DtPerformanceTestUtil.addMixedControlsTo(oHeaderLayout, 1, 10, true /*visible*/);
-			DtPerformanceTestUtil.addMixedControlsTo(oHeaderLayout, 11, 20, false /*invisible*/);
+			DtPerformanceTestUtil.addMixedControlsTo(oHeaderLayout, 1, 10, true /* visible */);
+			DtPerformanceTestUtil.addMixedControlsTo(oHeaderLayout, 11, 20, false /* invisible */);
 
 			var oFirstSectionPanel = new VerticalLayout("panel1");
-			DtPerformanceTestUtil.addMixedControlsTo(oFirstSectionPanel, 21, 30, true /*visible*/);
-			DtPerformanceTestUtil.addMixedControlsTo(oFirstSectionPanel, 31, 40, false /*invisible*/);
+			DtPerformanceTestUtil.addMixedControlsTo(oFirstSectionPanel, 21, 30, true /* visible */);
+			DtPerformanceTestUtil.addMixedControlsTo(oFirstSectionPanel, 31, 40, false /* invisible */);
 
 			var oSecondSectionPanel = new VerticalLayout("panel2");
-			DtPerformanceTestUtil.addMixedControlsTo(oSecondSectionPanel, 41, 60, true /*visible*/);
-			DtPerformanceTestUtil.addMixedControlsTo(oSecondSectionPanel, 61, 80, false /*invisible*/);
+			DtPerformanceTestUtil.addMixedControlsTo(oSecondSectionPanel, 41, 60, true /* visible */);
+			DtPerformanceTestUtil.addMixedControlsTo(oSecondSectionPanel, 61, 80, false /* invisible */);
 
 			var oObjectPageLayout = new ObjectPageLayout("opLayout", {
 				headerTitle: new ObjectPageHeader("opHeader", {

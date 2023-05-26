@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"../../RtaQunitUtils",
@@ -106,7 +106,7 @@ sap.ui.define([
 			beforeEach: function() {
 				this.oSaveAsAdaptation = new SaveAsAdaptation({ toolbar: this.oToolbar });
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
-				return this.oSaveAsAdaptation.openAddAdaptationDialog().then(function (oDialog) {
+				return this.oSaveAsAdaptation.openAddAdaptationDialog().then(function(oDialog) {
 					this.oDialog = oDialog;
 					return this.oToolbar._pFragmentLoaded;
 				}.bind(this));
@@ -171,7 +171,7 @@ sap.ui.define([
 				];
 				this.oModel.updateAdaptations(this.oContextBasedAdaptatations.adaptations);
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
-				return this.oSaveAsAdaptation.openAddAdaptationDialog().then(function (oDialog) {
+				return this.oSaveAsAdaptation.openAddAdaptationDialog().then(function(oDialog) {
 					this.oDialog = oDialog;
 					return this.oToolbar._pFragmentLoaded;
 				}.bind(this))
@@ -382,7 +382,7 @@ sap.ui.define([
 				this.oModel.updateAdaptations(this.oContextBasedAdaptatations.adaptations);
 				this.oModel.switchDisplayedAdaptation(this.oContextBasedAdaptatations.adaptations[0]);
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
-				return this.oSaveAsAdaptation.openAddAdaptationDialog(sLayer, true).then(function (oDialog) {
+				return this.oSaveAsAdaptation.openAddAdaptationDialog(sLayer, true).then(function(oDialog) {
 					this.oDialog = oDialog;
 					return this.oToolbar._pFragmentLoaded;
 				}.bind(this))

@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/dt/ElementUtil",
 	"sap/base/util/isPlainObject"
-], function (
+], function(
 	FlUtils,
 	ElementUtil,
 	isPlainObject
@@ -50,7 +50,7 @@ sap.ui.define([
 
 			if (aStableElements.length > 0) {
 				if (isCloneFromAggregationBinding(oElementOverlay.getElement())) {
-					bUnstable = aStableElements.some(function (vStableElement) {
+					bUnstable = aStableElements.some(function(vStableElement) {
 						var vControl;
 						var oAppComponent;
 						var bUnstable = false;

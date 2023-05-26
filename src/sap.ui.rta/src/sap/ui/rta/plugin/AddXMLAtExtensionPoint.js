@@ -94,7 +94,7 @@ sap.ui.define([
 	 * @returns {Promise.<boolean>} <code>true</code> when editable wrapped in a promise
 	 * @private
 	 */
-	AddXMLAtExtensionPoint.prototype._isEditable = function (oOverlay) {
+	AddXMLAtExtensionPoint.prototype._isEditable = function(oOverlay) {
 		if (isDesignMode()) {
 			var oElement = oOverlay.getElement();
 			return this.hasChangeHandler(FLEX_CHANGE_TYPE, oElement).then(function(bHasChangeHandler) {
@@ -110,11 +110,11 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if enabled
 	 * @public
 	 */
-	AddXMLAtExtensionPoint.prototype.isEnabled = function (aElementOverlays) {
+	AddXMLAtExtensionPoint.prototype.isEnabled = function(aElementOverlays) {
 		return aElementOverlays.length === 1;
 	};
 
-	AddXMLAtExtensionPoint.prototype.isAvailable = function (aOverlays) {
+	AddXMLAtExtensionPoint.prototype.isAvailable = function(aOverlays) {
 		if (isDesignMode()) {
 			var oElement = aOverlays[0].getElement();
 			return hasExtensionPoints(oElement);
@@ -139,9 +139,9 @@ sap.ui.define([
 			FLEX_CHANGE_TYPE,
 			mExtensionPointSettings
 		)
-			.then(function (oAddXmlAtExtensionPointCommand) {
-				return oCompositeCommand.addCommand(oAddXmlAtExtensionPointCommand);
-			});
+		.then(function(oAddXmlAtExtensionPointCommand) {
+			return oCompositeCommand.addCommand(oAddXmlAtExtensionPointCommand);
+		});
 	}
 
 	function handleAppDescriptorChangeCommand(oElement, oCompositeCommand) {
@@ -203,47 +203,47 @@ sap.ui.define([
 	 * @param {sap.ui.rta.plugin.AddXMLAtExtensionPoint.fragmentHandler} [mPropertyBag.fragmentHandler] - Handler function for fragment handling. The fragment handler is a callback function that needs to be passed here into the <code>propertyBag</code> or alternatively on instantiation of the plugin.
 	 * @returns {Promise} Resolves when handler is executed successfully
 	 */
-	AddXMLAtExtensionPoint.prototype.handler = function (aElementOverlays, mPropertyBag) {
+	AddXMLAtExtensionPoint.prototype.handler = function(aElementOverlays, mPropertyBag) {
 		return Promise.resolve()
-			.then(function () {
-				var fnFragmentHandler = mPropertyBag.fragmentHandler || this.getFragmentHandler();
-				if (!fnFragmentHandler) {
-					return Promise.reject("Fragment handler function is not available in the handler");
-				}
-				var oOverlay = aElementOverlays[0];
-				var oElement = oOverlay.getElement();
-				var aExtensionPointInfos = getExtensionPointList(oElement);
-				return fnFragmentHandler(oOverlay, aExtensionPointInfos);
-			}.bind(this))
+		.then(function() {
+			var fnFragmentHandler = mPropertyBag.fragmentHandler || this.getFragmentHandler();
+			if (!fnFragmentHandler) {
+				return Promise.reject("Fragment handler function is not available in the handler");
+			}
+			var oOverlay = aElementOverlays[0];
+			var oElement = oOverlay.getElement();
+			var aExtensionPointInfos = getExtensionPointList(oElement);
+			return fnFragmentHandler(oOverlay, aExtensionPointInfos);
+		}.bind(this))
 
-			.then(function (mExtensionData) {
-				if (!mExtensionData.extensionPointName || !(typeof mExtensionData.extensionPointName === "string")) {
-					return Promise.reject("Extension point name is not selected!");
-				}
-				if (!mExtensionData.fragmentPath || !(typeof mExtensionData.fragmentPath === "string")) {
-					return Promise.reject("Fragment path is not available");
-				}
-				return mExtensionData;
-			})
+		.then(function(mExtensionData) {
+			if (!mExtensionData.extensionPointName || !(typeof mExtensionData.extensionPointName === "string")) {
+				return Promise.reject("Extension point name is not selected!");
+			}
+			if (!mExtensionData.fragmentPath || !(typeof mExtensionData.fragmentPath === "string")) {
+				return Promise.reject("Fragment path is not available");
+			}
+			return mExtensionData;
+		})
 
-			.then(function (mExtensionData) {
-				return handleCompositeCommand.call(this, aElementOverlays, mExtensionData);
-			}.bind(this))
+		.then(function(mExtensionData) {
+			return handleCompositeCommand.call(this, aElementOverlays, mExtensionData);
+		}.bind(this))
 
-			.then(function(oCompositeCommand) {
-				this.fireElementModified({
-					command: oCompositeCommand
-				});
-			}.bind(this))
-
-			.catch(function(vError) {
-				throw DtUtil.propagateError(
-					vError,
-					"AddXMLAtExtensionPoint#handler",
-					"Error occurred in AddXMLAtExtensionPoint handler function",
-					"sap.ui.rta"
-				);
+		.then(function(oCompositeCommand) {
+			this.fireElementModified({
+				command: oCompositeCommand
 			});
+		}.bind(this))
+
+		.catch(function(vError) {
+			throw DtUtil.propagateError(
+				vError,
+				"AddXMLAtExtensionPoint#handler",
+				"Error occurred in AddXMLAtExtensionPoint handler function",
+				"sap.ui.rta"
+			);
+		});
 	};
 
 	/**
@@ -251,7 +251,7 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @returns {object[]} Array of the items with required data
 	 */
-	AddXMLAtExtensionPoint.prototype.getMenuItems = function (aElementOverlays) {
+	AddXMLAtExtensionPoint.prototype.getMenuItems = function(aElementOverlays) {
 		return this._getMenuItems(aElementOverlays, {pluginId: "CTX_ADDXML_AT_EXTENSIONPOINT", rank: 110, icon: "sap-icon://add-equipment"});
 	};
 

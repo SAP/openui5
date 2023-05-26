@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/jquery"
-], function (
+], function(
 	DtUtil,
 	OverlayRegistry,
 	FlexUtils,
@@ -34,7 +34,7 @@ sap.ui.define([
 	 * @ui5-restricted
 	*/
 
-	return function (oRta) {
+	return function(oRta) {
 		function makeAjaxCall(sPath) {
 			return new Promise(function(resolve, reject) {
 				var sUrl;
@@ -88,7 +88,7 @@ sap.ui.define([
 					var oView = sap.ui.getCore().byId(sViewId);
 					var oAppComponent = FlexUtils.getAppComponentForControl(oView);
 					var sControllerName = oView.getControllerName && oView.getControllerName() || oView.getController() && oView.getController().getMetadata().getName();
-					//Calculate moduleName for code extension
+					// Calculate moduleName for code extension
 					var sReference = FlexRuntimeInfoAPI.getFlexReference({element: oAppComponent});
 					var sModuleName = sReference.replace(/\.Component/g, "").replace(/\./g, "/");
 					sModuleName += "/changes/";

@@ -17,10 +17,10 @@ sap.ui.define(["sap/uxap/library"],
 				}
 			},
 			someScope: {
-				newKey: "new", //new
-				someKeyToOverwriteInScopes: "scoped", //overwrite
+				newKey: "new", // new
+				someKeyToOverwriteInScopes: "scoped", // overwrite
 				some: {
-					deep: null //delete
+					deep: null // delete
 				}
 			}
 		};

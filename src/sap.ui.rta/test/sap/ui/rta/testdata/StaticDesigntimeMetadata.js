@@ -17,7 +17,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 				}
 			},
 			actions: {
-				rename: function (oPage) {
+				rename: function(oPage) {
 					// When a custom header is added the title is not visualized and we do not need a rename action.
 					if (oPage.getCustomHeader()) {
 						return undefined;
@@ -25,7 +25,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 
 					return {
 						changeType: "rename",
-						domRef: function (oControl) {
+						domRef: function(oControl) {
 							return oControl.getDomRef().querySelector("[id*='title-inner']");
 						}
 					};
@@ -86,7 +86,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 				},
 				rename: {
 					changeType: "rename",
-					domRef: function (oControl) {
+					domRef: function(oControl) {
 						return oControl.getDomRef().querySelector(".sapMBtnContent");
 					}
 				},
@@ -142,12 +142,12 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 			actions: {
 				remove: {
 					changeType: "hideControl",
-					isEnabled: function (oElement) {
+					isEnabled: function(oElement) {
 						var oSection = oElement.getParent();
 						var aVisibleSubSections;
 
 						if (oSection) {
-							aVisibleSubSections = oSection.getSubSections().filter(function (oSubSection) {
+							aVisibleSubSections = oSection.getSubSections().filter(function(oSubSection) {
 								return oSubSection.getVisible();
 							});
 
@@ -160,11 +160,11 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 				reveal: {
 					changeType: "unhideControl"
 				},
-				rename: function () {
+				rename: function() {
 					return {
 						changeType: "rename",
 						domRef: ".sapUxAPObjectPageSubSectionHeaderTitle",
-						isEnabled: function (oElement) {
+						isEnabled: function(oElement) {
 							return oElement.getDomRef().querySelector("[id*='headerTitle']") !== null;
 						}
 					};
@@ -206,11 +206,11 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 				reveal: {
 					changeType: "unstashControl"
 				},
-				rename: function () {
+				rename: function() {
 					return {
 						changeType: "rename",
 						domRef: ".sapUxAPObjectPageSectionTitle",
-						isEnabled: function (oElement) {
+						isEnabled: function(oElement) {
 							return oElement._getInternalTitleVisible();
 						}
 					};
@@ -255,12 +255,12 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 					actions: {
 						move: "moveControls"
 					},
-					beforeMove: function (ObjectPageLayout) {
+					beforeMove: function(ObjectPageLayout) {
 						if (ObjectPageLayout) {
 							ObjectPageLayout._suppressScroll();
 						}
 					},
-					afterMove: function (ObjectPageLayout) {
+					afterMove: function(ObjectPageLayout) {
 						if (ObjectPageLayout) {
 							ObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
 								ObjectPageLayout._resumeScroll(false);
@@ -274,7 +274,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 					},
 					actions: {
 						move: function(oElement) {
-							if (!oElement || oElement.getMetadata().getName() !== 'sap.uxap.ObjectPageSection') {
+							if (!oElement || oElement.getMetadata().getName() !== "sap.uxap.ObjectPageSection") {
 								return "moveControls";
 							}
 						}
@@ -294,7 +294,6 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 			}
 		};
 	};
-
 
 	return StaticDesigntimeMatadata;
 });

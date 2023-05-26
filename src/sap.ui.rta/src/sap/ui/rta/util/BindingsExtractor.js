@@ -135,7 +135,7 @@ function(
 		}
 		var aAggregationNames = sAggregationName ? [sAggregationName] : Object.keys(oElement.getMetadata().getAllAggregations());
 
-		aAggregationNames.forEach(function (sAggregationNameInLoop) {
+		aAggregationNames.forEach(function(sAggregationNameInLoop) {
 			aBindings = aBindings.concat(getBindingsForAggregation(oElement, oModel, mPropertyBag.template, sAggregationNameInLoop, oRelevantContainerElement));
 		});
 
@@ -169,7 +169,7 @@ function(
 		}
 
 		// Getting children of the current aggregation and iterating through all of them
-		aElements.forEach(function (oChildElement) {
+		aElements.forEach(function(oChildElement) {
 			if (oChildElement.getMetadata) {
 				if (isElementRelatedToRelevantContainer(oElement, oRelevantContainerElement)) {
 					// Fetching bindings from Element and all children of Element
@@ -207,7 +207,7 @@ function(
 		var sModelName = oBinding.getMetadata().getName();
 
 		if (sModelName === "sap.ui.model.CompositeBinding") {
-			oBinding.getBindings().forEach(function (oBinding) {
+			oBinding.getBindings().forEach(function(oBinding) {
 				aBindings = aBindings.concat(BindingsExtractor.filterAndFlattenBindings(oBinding, oParentDefaultModel));
 			});
 		} else if (
@@ -242,7 +242,7 @@ function(
 		var aParts = mBinding.parts;
 
 		// TODO: check if we need to filter bindings by modelName, relative indicator ("/")
-		aParts.forEach(function (mPart) {
+		aParts.forEach(function(mPart) {
 			aBindings.push({
 				parts: [mPart]
 			});
@@ -265,16 +265,16 @@ function(
 		var aPropertiesKeys = Object.keys(oElement.getMetadata().getAllProperties());
 
 		return aPropertiesKeys
-			// filter properties which are not bound
-			.filter(oElement.getBinding.bind(oElement))
-			.reduce(function (aBindings, sPropertyName) {
-				return aBindings.concat(
-					BindingsExtractor.filterAndFlattenBindings(
-						oElement.getBinding(sPropertyName),
-						oModel
-					)
-				);
-			}, []);
+		// filter properties which are not bound
+		.filter(oElement.getBinding.bind(oElement))
+		.reduce(function(aBindings, sPropertyName) {
+			return aBindings.concat(
+				BindingsExtractor.filterAndFlattenBindings(
+					oElement.getBinding(sPropertyName),
+					oModel
+				)
+			);
+		}, []);
 	};
 
 	/**
@@ -292,26 +292,26 @@ function(
 		var bIsSameModel;
 
 		return aPropertiesKeys
-			.filter(function (sPropertyName) {
-				var mBindingInfo = oTemplate.mBindingInfos[sPropertyName];
-				var sModelName = mBindingInfo && mBindingInfo.parts[0] && mBindingInfo.parts[0].model;
+		.filter(function(sPropertyName) {
+			var mBindingInfo = oTemplate.mBindingInfos[sPropertyName];
+			var sModelName = mBindingInfo && mBindingInfo.parts[0] && mBindingInfo.parts[0].model;
+			bIsSameModel = oModel === oTemplateParent.getModel(sModelName);
+			if (!sModelName) {
+				var oParentDefaultModel = oTemplateParent.getDefaultModel ? oTemplateParent.getDefaultModel() : null;
+				var oTemplateDefaultModel = oTemplate.getDefaultModel ? oTemplate.getDefaultModel() : null;
+				bIsSameModel = oParentDefaultModel === oTemplateDefaultModel;
+			} else {
 				bIsSameModel = oModel === oTemplateParent.getModel(sModelName);
-				if (!sModelName) {
-					var oParentDefaultModel = oTemplateParent.getDefaultModel ? oTemplateParent.getDefaultModel() : null;
-					var oTemplateDefaultModel = oTemplate.getDefaultModel ? oTemplate.getDefaultModel() : null;
-					bIsSameModel = oParentDefaultModel === oTemplateDefaultModel;
-				} else {
-					bIsSameModel = oModel === oTemplateParent.getModel(sModelName);
-				}
-				return mBindingInfo && bIsSameModel;
-			})
-			.reduce(function (aBindings, sPropertyName) {
-				return aBindings.concat(
-					flattenBindingsFromTemplate(
-						oTemplate.mBindingInfos[sPropertyName]
-					)
-				);
-			}, []);
+			}
+			return mBindingInfo && bIsSameModel;
+		})
+		.reduce(function(aBindings, sPropertyName) {
+			return aBindings.concat(
+				flattenBindingsFromTemplate(
+					oTemplate.mBindingInfos[sPropertyName]
+				)
+			);
+		}, []);
 	}
 
 	/**

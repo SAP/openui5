@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"qunit/RtaQunitUtils",
@@ -54,10 +54,10 @@ sap.ui.define([
 	QUnit.config.fixture = null;
 
 	var oComponentPromise = RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
-		.then(function(oCompContainer) {
-			oCompCont = oCompContainer;
-			oComp = oCompCont.getComponentInstance();
-		});
+	.then(function(oCompContainer) {
+		oCompCont = oCompContainer;
+		oComp = oCompCont.getComponentInstance();
+	});
 
 	function setupTest(fnCallback, oRootElement) {
 		this.oChangeVisualization = new ChangeVisualization({
@@ -95,7 +95,6 @@ sap.ui.define([
 		this.oContainer.destroy();
 		sandbox.restore();
 	}
-
 
 	function prepareMockEvent(sKey) {
 		var oMockEvent = {
@@ -144,11 +143,11 @@ sap.ui.define([
 			oRootComponent
 		));
 		sandbox.stub(ChangesUtils, "getControlIfTemplateAffected")
-			.callsFake(function(oChange, oControl) {
-				return {
-					control: oControl
-				};
-			});
+		.callsFake(function(oChange, oControl) {
+			return {
+				control: oControl
+			};
+		});
 		var oMergedChangeHandler = Object.assign(
 			{
 				getChangeVisualizationInfo: function() { }
@@ -179,16 +178,16 @@ sap.ui.define([
 		// Doesn't work with event handlers
 		return new Promise(function(resolve) {
 			sandbox.stub(oObject, sMethodName)
-				.callsFake(function() {
-					if (oObject[sMethodName].wrappedMethod) {
-						var oResult = oObject[sMethodName].wrappedMethod.apply(this, arguments);
-						resolve(oResult);
-					}
-				});
-		})
-			.then(function() {
-				oObject[sMethodName].restore();
+			.callsFake(function() {
+				if (oObject[sMethodName].wrappedMethod) {
+					var oResult = oObject[sMethodName].wrappedMethod.apply(this, arguments);
+					resolve(oResult);
+				}
 			});
+		})
+		.then(function() {
+			oObject[sMethodName].restore();
+		});
 	}
 
 	function collectIndicatorReferences() {
@@ -250,11 +249,11 @@ sap.ui.define([
 				flexSettings: this.oFlexSettings
 			});
 			return RtaQunitUtils.clear()
-				.then(this.oRta.start.bind(this.oRta))
-				.then(function() {
-					this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
-					this.oChangeVisualization = this.oRta.getChangeVisualization();
-				}.bind(this));
+			.then(this.oRta.start.bind(this.oRta))
+			.then(function() {
+				this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
+				this.oChangeVisualization = this.oRta.getChangeVisualization();
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -264,53 +263,53 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("Without changes - Check if Menu is bound correctly to the model", function(assert) {
 			return startVisualization(this.oRta)
-				.then(function() {
-					Core.applyChanges();
-					var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
-					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
-					return oOpenPopoverPromise;
-				}.bind(this))
-				.then(function() {
-					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
-					assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
-					assert.notOk(
-						this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getVisible(),
-						"Draft Button is invisible, no versioning is available"
-					);
-					assert.notOk(
-						this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[2].getEnabled(),
-						"Unsaved Button is disabled, no changes available for this category"
-					);
-					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
-					checkModel(assert, aVizModel[0], this.oCheckModelAll);
-					checkModel(assert, aVizModel[2], this.oCheckModelMove);
-					checkBinding(assert, aVizModel[0], aMenuItems[0]);
-					checkBinding(assert, aVizModel[2], aMenuItems[2]);
-				}.bind(this));
+			.then(function() {
+				Core.applyChanges();
+				var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
+				return oOpenPopoverPromise;
+			}.bind(this))
+			.then(function() {
+				var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
+				assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
+				assert.notOk(
+					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getVisible(),
+					"Draft Button is invisible, no versioning is available"
+				);
+				assert.notOk(
+					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[2].getEnabled(),
+					"Unsaved Button is disabled, no changes available for this category"
+				);
+				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
+				checkModel(assert, aVizModel[0], this.oCheckModelAll);
+				checkModel(assert, aVizModel[2], this.oCheckModelMove);
+				checkBinding(assert, aVizModel[0], aMenuItems[0]);
+				checkBinding(assert, aVizModel[2], aMenuItems[2]);
+			}.bind(this));
 		});
 
 		QUnit.test("Without changes - Check if Filter Menu for Draft when Versioning is available", function(assert) {
 			return startVisualization(this.oRta)
-				.then(function() {
-					Core.applyChanges();
-					this.oChangeVisualization._updateVisualizationModel({
-						versioningAvailable: true
-					});
-					var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
-					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
-					return oOpenPopoverPromise;
-				}.bind(this))
-				.then(function() {
-					assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
-					assert.ok(
-						this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getVisible(),
-						"Draft Button is visible, versioning is available"
-					);
-					assert.notOk(
-						this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getEnabled(),
-						"Draft Button is not enabled, no changes are available for this state"
-					);
-				}.bind(this));
+			.then(function() {
+				Core.applyChanges();
+				this.oChangeVisualization._updateVisualizationModel({
+					versioningAvailable: true
+				});
+				var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
+				return oOpenPopoverPromise;
+			}.bind(this))
+			.then(function() {
+				assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
+				assert.ok(
+					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getVisible(),
+					"Draft Button is visible, versioning is available"
+				);
+				assert.notOk(
+					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getEnabled(),
+					"Draft Button is not enabled, no changes are available for this state"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("With changes - Check if Menu is bound correctly to the model", function(assert) {
@@ -338,33 +337,33 @@ sap.ui.define([
 				count: 5
 			};
 			return startVisualization(this.oRta)
-				.then(function() {
-					Core.applyChanges();
-					var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
-					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
-					return oOpenPopoverPromise;
-				}.bind(this))
-				.then(function() {
-					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
-					assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
-					assert.notOk(
-						this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getVisible(),
-						"Draft Button is invisible, no versioning is available"
-					);
-					assert.ok(
-						this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[2].getEnabled(),
-						"Unsaved Button is enabled, changes available for this state"
-					);
-					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
-					checkModel(assert, aVizModel[0], this.oCheckModelAll);
-					checkModel(assert, aVizModel[2], this.oCheckModelMove);
-					checkModel(assert, aVizModel[1], this.oCheckModelAdd);
-					checkModel(assert, aVizModel[4], this.oCheckModelCombineAndSplit);
-					checkBinding(assert, aVizModel[0], aMenuItems[0]);
-					checkBinding(assert, aVizModel[2], aMenuItems[2]);
-					checkBinding(assert, aVizModel[1], aMenuItems[1]);
-					checkBinding(assert, aVizModel[4], aMenuItems[4]);
-				}.bind(this));
+			.then(function() {
+				Core.applyChanges();
+				var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
+				return oOpenPopoverPromise;
+			}.bind(this))
+			.then(function() {
+				var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
+				assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
+				assert.notOk(
+					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getVisible(),
+					"Draft Button is invisible, no versioning is available"
+				);
+				assert.ok(
+					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[2].getEnabled(),
+					"Unsaved Button is enabled, changes available for this state"
+				);
+				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
+				checkModel(assert, aVizModel[0], this.oCheckModelAll);
+				checkModel(assert, aVizModel[2], this.oCheckModelMove);
+				checkModel(assert, aVizModel[1], this.oCheckModelAdd);
+				checkModel(assert, aVizModel[4], this.oCheckModelCombineAndSplit);
+				checkBinding(assert, aVizModel[0], aMenuItems[0]);
+				checkBinding(assert, aVizModel[2], aMenuItems[2]);
+				checkBinding(assert, aVizModel[1], aMenuItems[1]);
+				checkBinding(assert, aVizModel[4], aMenuItems[4]);
+			}.bind(this));
 		});
 
 		QUnit.test("With changes - Check if Filter Menu for Draft when Versioning is available", function(assert) {
@@ -372,30 +371,30 @@ sap.ui.define([
 			this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [3]);
 			this.oCheckModelAll.count = 3;
 			return startVisualization(this.oRta)
-				.then(function() {
-					Core.applyChanges();
-					this.oChangeVisualization._updateVisualizationModel({
-						versioningAvailable: true
-					});
-					var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
-					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
-					return oOpenPopoverPromise;
-				}.bind(this))
-				.then(function() {
-					assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
-					assert.ok(
-						this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getVisible(),
-						"Draft Button is visible, versioning is available"
-					);
-					assert.ok(
-						this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getEnabled(),
-						"Draft Button is enabled, changes are available for this state"
-					);
-					assert.ok(
-						this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[2].getEnabled(),
-						"Unsaved Button is enabled, changes are available for this state"
-					);
-				}.bind(this));
+			.then(function() {
+				Core.applyChanges();
+				this.oChangeVisualization._updateVisualizationModel({
+					versioningAvailable: true
+				});
+				var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
+				return oOpenPopoverPromise;
+			}.bind(this))
+			.then(function() {
+				assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
+				assert.ok(
+					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getVisible(),
+					"Draft Button is visible, versioning is available"
+				);
+				assert.ok(
+					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getEnabled(),
+					"Draft Button is enabled, changes are available for this state"
+				);
+				assert.ok(
+					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[2].getEnabled(),
+					"Unsaved Button is enabled, changes are available for this state"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("With changes (Not all visible) - Check if Menu is bound correctly to the model", function(assert) {
@@ -406,21 +405,21 @@ sap.ui.define([
 			this.oCheckModelAll.tooltip = oRtaResourceBundle.getText("TOOLTIP_CHANGEVISUALIZATION_OVERVIEW_ADDITIONAL_CHANGES");
 			OverlayRegistry.getOverlay("Comp1---idMain1--lb2").destroy();
 			return startVisualization(this.oRta)
-				.then(function() {
-					Core.applyChanges();
-					var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
-					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
-					return oOpenPopoverPromise;
-				}.bind(this))
-				.then(function() {
-					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
-					assert.ok(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is visible");
-					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
-					checkModel(assert, aVizModel[0], this.oCheckModelAll);
-					checkModel(assert, aVizModel[2], this.oCheckModelMove);
-					checkBinding(assert, aVizModel[0], aMenuItems[0]);
-					checkBinding(assert, aVizModel[2], aMenuItems[2]);
-				}.bind(this));
+			.then(function() {
+				Core.applyChanges();
+				var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
+				return oOpenPopoverPromise;
+			}.bind(this))
+			.then(function() {
+				var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
+				assert.ok(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is visible");
+				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
+				checkModel(assert, aVizModel[0], this.oCheckModelAll);
+				checkModel(assert, aVizModel[2], this.oCheckModelMove);
+				checkBinding(assert, aVizModel[0], aMenuItems[0]);
+				checkBinding(assert, aVizModel[2], aMenuItems[2]);
+			}.bind(this));
 		});
 
 		QUnit.test("With one change belonging to other category - Check if Menu is bound correctly to the model", function(assert) {
@@ -438,21 +437,21 @@ sap.ui.define([
 			this.oCheckModelAll.count = 4;
 			this.oCheckModelAll.tooltip = oRtaResourceBundle.getText("TOOLTIP_CHANGEVISUALIZATION_OVERVIEW_ADDITIONAL_CHANGES");
 			return startVisualization(this.oRta)
-				.then(function() {
-					Core.applyChanges();
-					var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
-					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
-					return oOpenPopoverPromise;
-				}.bind(this))
-				.then(function() {
-					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
-					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
-					checkModel(assert, aVizModel[0], this.oCheckModelAll);
-					checkModel(assert, aVizModel[2], this.oCheckModelMove);
-					checkModel(assert, aVizModel[6], this.oCheckModelOther);
-					checkBinding(assert, aVizModel[0], aMenuItems[0]);
-					checkBinding(assert, aVizModel[2], aMenuItems[2]);
-				}.bind(this));
+			.then(function() {
+				Core.applyChanges();
+				var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
+				return oOpenPopoverPromise;
+			}.bind(this))
+			.then(function() {
+				var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
+				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
+				checkModel(assert, aVizModel[0], this.oCheckModelAll);
+				checkModel(assert, aVizModel[2], this.oCheckModelMove);
+				checkModel(assert, aVizModel[6], this.oCheckModelOther);
+				checkBinding(assert, aVizModel[0], aMenuItems[0]);
+				checkBinding(assert, aVizModel[2], aMenuItems[2]);
+			}.bind(this));
 		});
 
 		QUnit.test("With changes (Change gets invisible) - Check if Menu is bound correctly to the model", function(assert) {
@@ -460,39 +459,39 @@ sap.ui.define([
 			this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [3]);
 			this.oCheckModelAll.count = 3;
 			return startVisualization(this.oRta)
-				.then(function() {
-					Core.applyChanges();
-					var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
-					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
-					return oOpenPopoverPromise;
-				}.bind(this))
-				.then(function() {
-					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
-					assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
-					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
-					checkModel(assert, aVizModel[0], this.oCheckModelAll);
-					checkModel(assert, aVizModel[2], this.oCheckModelMove);
-					checkBinding(assert, aVizModel[0], aMenuItems[0]);
-					checkBinding(assert, aVizModel[2], aMenuItems[2]);
-					OverlayRegistry.getOverlay("Comp1---idMain1--rb2").destroy();
-					this.oChangeVisualization.getAggregation("popover").close();
-					this.oRta.setMode("navigation");
-					Core.applyChanges();
-					return startVisualization(this.oRta);
-				}.bind(this))
-				.then(function() {
-					this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [2]);
-					this.oCheckModelAll.count = 2;
-					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
-					Core.applyChanges();
-					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
-					assert.ok(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is visible");
-					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
-					checkModel(assert, aVizModel[0], this.oCheckModelAll);
-					checkModel(assert, aVizModel[2], this.oCheckModelMove);
-					checkBinding(assert, aVizModel[0], aMenuItems[0]);
-					checkBinding(assert, aVizModel[2], aMenuItems[2]);
-				}.bind(this));
+			.then(function() {
+				Core.applyChanges();
+				var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
+				return oOpenPopoverPromise;
+			}.bind(this))
+			.then(function() {
+				var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
+				assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
+				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
+				checkModel(assert, aVizModel[0], this.oCheckModelAll);
+				checkModel(assert, aVizModel[2], this.oCheckModelMove);
+				checkBinding(assert, aVizModel[0], aMenuItems[0]);
+				checkBinding(assert, aVizModel[2], aMenuItems[2]);
+				OverlayRegistry.getOverlay("Comp1---idMain1--rb2").destroy();
+				this.oChangeVisualization.getAggregation("popover").close();
+				this.oRta.setMode("navigation");
+				Core.applyChanges();
+				return startVisualization(this.oRta);
+			}.bind(this))
+			.then(function() {
+				this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [2]);
+				this.oCheckModelAll.count = 2;
+				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
+				Core.applyChanges();
+				var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
+				assert.ok(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is visible");
+				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
+				checkModel(assert, aVizModel[0], this.oCheckModelAll);
+				checkModel(assert, aVizModel[2], this.oCheckModelMove);
+				checkBinding(assert, aVizModel[0], aMenuItems[0]);
+				checkBinding(assert, aVizModel[2], aMenuItems[2]);
+			}.bind(this));
 		});
 
 		QUnit.test("Menu & Model are in correct order", function(assert) {
@@ -637,7 +636,7 @@ sap.ui.define([
 					);
 					fnDone();
 				},
-				adjustToolbarSectionWidths: function () {}
+				adjustToolbarSectionWidths: function() {}
 			});
 		});
 	});
@@ -657,12 +656,12 @@ sap.ui.define([
 				flexSettings: this.oFlexSettings
 			});
 			return RtaQunitUtils.clear()
-				.then(this.oRta.start.bind(this.oRta))
-				.then(function() {
-					this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
-					this.oChangeVisualization = this.oRta.getChangeVisualization();
-					this.oToolbar = this.oRta.getToolbar();
-				}.bind(this));
+			.then(this.oRta.start.bind(this.oRta))
+			.then(function() {
+				this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
+				this.oChangeVisualization = this.oRta.getChangeVisualization();
+				this.oToolbar = this.oRta.getToolbar();
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -673,59 +672,59 @@ sap.ui.define([
 		QUnit.test("when a command category is selected", function(assert) {
 			prepareChanges(this.aMockChanges);
 			return startVisualization(this.oRta)
-				.then(function() {
-					Core.applyChanges();
-					var aIndicators = collectIndicatorReferences();
-					assert.strictEqual(
-						aIndicators.length,
-						3,
-						"then all indicators are visible 1/2"
-					);
-					assert.ok(
-						aIndicators.every(function(oIndicator) {
-							return oIndicator.getVisible();
-						}),
-						"then all indicators are visible 2/2"
-					);
-				});
+			.then(function() {
+				Core.applyChanges();
+				var aIndicators = collectIndicatorReferences();
+				assert.strictEqual(
+					aIndicators.length,
+					3,
+					"then all indicators are visible 1/2"
+				);
+				assert.ok(
+					aIndicators.every(function(oIndicator) {
+						return oIndicator.getVisible();
+					}),
+					"then all indicators are visible 2/2"
+				);
+			});
 		});
 
 		QUnit.test("when change visualization is deactivated and activated again", function(assert) {
 			prepareChanges(this.aMockChanges);
 			return startVisualization(this.oRta)
-				.then(function() {
-					Core.applyChanges();
-					assert.strictEqual(
-						collectIndicatorReferences().filter(function(oIndicator) {
-							return oIndicator.getVisible();
-						}).length,
-						3,
-						"then all indicators are visible before deactivation"
-					);
+			.then(function() {
+				Core.applyChanges();
+				assert.strictEqual(
+					collectIndicatorReferences().filter(function(oIndicator) {
+						return oIndicator.getVisible();
+					}).length,
+					3,
+					"then all indicators are visible before deactivation"
+				);
 
-					// Deactivate
-					this.oChangeVisualization.setIsActive(false);
-					Core.applyChanges();
-					assert.strictEqual(
-						collectIndicatorReferences().filter(function(oIndicator) {
-							return oIndicator.getVisible();
-						}).length,
-						0,
-						"then all indicators are hidden after deactivation"
-					);
+				// Deactivate
+				this.oChangeVisualization.setIsActive(false);
+				Core.applyChanges();
+				assert.strictEqual(
+					collectIndicatorReferences().filter(function(oIndicator) {
+						return oIndicator.getVisible();
+					}).length,
+					0,
+					"then all indicators are hidden after deactivation"
+				);
 
-					// Activate again and select a different category
-					this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("add"));
-					this.oChangeVisualization.setIsActive(true);
-					Core.applyChanges();
-					assert.strictEqual(
-						collectIndicatorReferences().filter(function(oIndicator) {
-							return oIndicator.getVisible();
-						}).length,
-						2,
-						"then all indicators are visible again after reactivation"
-					);
-				}.bind(this));
+				// Activate again and select a different category
+				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("add"));
+				this.oChangeVisualization.setIsActive(true);
+				Core.applyChanges();
+				assert.strictEqual(
+					collectIndicatorReferences().filter(function(oIndicator) {
+						return oIndicator.getVisible();
+					}).length,
+					2,
+					"then all indicators are visible again after reactivation"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("when a change-related overlay id changes", function(assert) {
@@ -736,50 +735,50 @@ sap.ui.define([
 			]);
 
 			return startVisualization(this.oRta)
+			.then(function() {
+				assert.strictEqual(
+					this.oChangeVisualization._oChangeIndicatorRegistry.getChangeIndicator(sElementId).getOverlayId(),
+					sOriginalOverlayId,
+					"then the correct initial overlay id is stored in the registry"
+				);
+
+				// Simulate a change of the overlay id, e.g. because a change handler recreated the element
+				// during undo/redo
+				this.oRta.setMode("adaptation");
+				var oElement = Core.byId(sElementId);
+				var oParent = oElement.getParent();
+				var sParentAggregationName = oElement.sParentAggregationName;
+				oElement.destroy();
+				oParent.addAggregation(sParentAggregationName, new Button(sElementId));
+				var oDesignTimePromise = new Promise(function(fnResolve) {
+					this.oRta._oDesignTime.attachEventOnce("synced", function() {
+						fnResolve();
+					});
+				}.bind(this));
+
+				// Restart visualization
+				return oDesignTimePromise
 				.then(function() {
+					return startVisualization(this.oRta);
+				}.bind(this))
+				.then(function() {
+					var sNewOverlayId = OverlayRegistry.getOverlay(sElementId).getId();
+					assert.notEqual(sOriginalOverlayId, sNewOverlayId); // False negative avoidance
 					assert.strictEqual(
 						this.oChangeVisualization._oChangeIndicatorRegistry.getChangeIndicator(sElementId).getOverlayId(),
-						sOriginalOverlayId,
-						"then the correct initial overlay id is stored in the registry"
+						sNewOverlayId,
+						"then the overlay id of the indicator is updated"
 					);
 
-					// Simulate a change of the overlay id, e.g. because a change handler recreated the element
-					// during undo/redo
-					this.oRta.setMode("adaptation");
-					var oElement = Core.byId(sElementId);
-					var oParent = oElement.getParent();
-					var sParentAggregationName = oElement.sParentAggregationName;
-					oElement.destroy();
-					oParent.addAggregation(sParentAggregationName, new Button(sElementId));
-					var oDesignTimePromise = new Promise(function(fnResolve) {
-						this.oRta._oDesignTime.attachEventOnce("synced", function() {
-							fnResolve();
-						});
-					}.bind(this));
-
-					// Restart visualization
-					return oDesignTimePromise
-						.then(function() {
-							return startVisualization(this.oRta);
-						}.bind(this))
-						.then(function() {
-							var sNewOverlayId = OverlayRegistry.getOverlay(sElementId).getId();
-							assert.notEqual(sOriginalOverlayId, sNewOverlayId); // False negative avoidance
-							assert.strictEqual(
-								this.oChangeVisualization._oChangeIndicatorRegistry.getChangeIndicator(sElementId).getOverlayId(),
-								sNewOverlayId,
-								"then the overlay id of the indicator is updated"
-							);
-
-							// Recreate comp to avoid side effects with other tests
-							oCompCont.destroy();
-							return RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
-								.then(function(oCompContainer) {
-									oCompCont = oCompContainer;
-									oComp = oCompCont.getComponentInstance();
-								});
-						}.bind(this));
+					// Recreate comp to avoid side effects with other tests
+					oCompCont.destroy();
+					return RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
+					.then(function(oCompContainer) {
+						oCompCont = oCompContainer;
+						oComp = oCompCont.getComponentInstance();
+					});
 				}.bind(this));
+			}.bind(this));
 		});
 
 		QUnit.test("when a change is done on a control whose parent is different from its relevant container", function(assert) {
@@ -805,17 +804,17 @@ sap.ui.define([
 			);
 
 			return startVisualization(this.oRta)
-				.then(function() {
-					assert.strictEqual(
-						this.oChangeVisualization._oChangeIndicatorRegistry.getChangeIndicator(oParent.getId()).getOverlayId(),
-						oRelevantContainerOverlay.getId(),
-						"then the indicator is created on the relevant container's overlay"
-					);
-					assert.strictEqual(
-						this.oChangeVisualization._oChangeVisualizationModel.getData().sortedChanges.relevantHiddenChanges.length,
-						0,
-						"then the change is not displayed as hidden");
-				}.bind(this));
+			.then(function() {
+				assert.strictEqual(
+					this.oChangeVisualization._oChangeIndicatorRegistry.getChangeIndicator(oParent.getId()).getOverlayId(),
+					oRelevantContainerOverlay.getId(),
+					"then the indicator is created on the relevant container's overlay"
+				);
+				assert.strictEqual(
+					this.oChangeVisualization._oChangeVisualizationModel.getData().sortedChanges.relevantHiddenChanges.length,
+					0,
+					"then the change is not displayed as hidden");
+			}.bind(this));
 		});
 
 		QUnit.test("when the popover menu with dirty changes is opened and closed multiple times", function(assert) {
@@ -849,7 +848,6 @@ sap.ui.define([
 					4,
 					"then the indicator for the dirty change is added"
 				);
-
 
 				oChangeIndicator = collectIndicatorReferences().filter(function(oIndicator) {
 					return oIndicator.mProperties.selectorId === "Comp1---idMain1--lb2";
@@ -891,14 +889,14 @@ sap.ui.define([
 			assert.strictEqual(this.oChangeVisualization.getRootControlId(), undefined, "then the RootControlId was not set before");
 			assert.strictEqual(this.oChangeVisualization.getIsActive(), false, "then the ChangeVisualization was inactive before");
 			waitForMethodCall(this.oChangeVisualization, "triggerModeChange")
-				.then(function() {
-					assert.strictEqual(this.oChangeVisualization.getRootControlId(), "Comp1", "then the RootControlId is set afterwards");
-					assert.strictEqual(this.oChangeVisualization.getIsActive(), true, "then the ChangeVisualization is active afterwards");
-					var oRootOverlay = OverlayRegistry.getOverlay("Comp1");
-					oRootOverlay.getDomRef().dispatchEvent(new Event("click"));
-					assert.ok(fnClickSpy.called, "then the click event handler is added to the Root Overlay DomRef");
-					fnDone();
-				}.bind(this));
+			.then(function() {
+				assert.strictEqual(this.oChangeVisualization.getRootControlId(), "Comp1", "then the RootControlId is set afterwards");
+				assert.strictEqual(this.oChangeVisualization.getIsActive(), true, "then the ChangeVisualization is active afterwards");
+				var oRootOverlay = OverlayRegistry.getOverlay("Comp1");
+				oRootOverlay.getDomRef().dispatchEvent(new Event("click"));
+				assert.ok(fnClickSpy.called, "then the click event handler is added to the Root Overlay DomRef");
+				fnDone();
+			}.bind(this));
 			this.oChangeVisualization.triggerModeChange("Comp1", this.oRta.getToolbar());
 		});
 
@@ -934,18 +932,18 @@ sap.ui.define([
 			];
 			prepareChanges(aMockChanges);
 			return startVisualization(this.oRta)
-				.then(function() {
-					Core.applyChanges();
-					assert.strictEqual(
-						this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories[0].count,
-						2,
-						"then only changes with the fileType \"change\" are applied and visible"
-					);
-					assert.strictEqual(this.oRta.getToolbar().getModel("visualizationModel").getData().sortedChanges.relevantHiddenChanges.length,
-						4,
-						"the variants and related changes are part of the hidden changes"
-					);
-				}.bind(this));
+			.then(function() {
+				Core.applyChanges();
+				assert.strictEqual(
+					this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories[0].count,
+					2,
+					"then only changes with the fileType \"change\" are applied and visible"
+				);
+				assert.strictEqual(this.oRta.getToolbar().getModel("visualizationModel").getData().sortedChanges.relevantHiddenChanges.length,
+					4,
+					"the variants and related changes are part of the hidden changes"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("when appDescriptor changes are present (fileType 'change' but no selector)", function(assert) {
@@ -956,18 +954,18 @@ sap.ui.define([
 			];
 			prepareChanges(aMockChanges);
 			return startVisualization(this.oRta)
-				.then(function() {
-					Core.applyChanges();
-					assert.strictEqual(
-						this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories[0].count,
-						2,
-						"then only the other changes are applied and visible"
-					);
-					assert.strictEqual(this.oRta.getToolbar().getModel("visualizationModel").getData().sortedChanges.relevantHiddenChanges.length,
-						1,
-						"the app descriptor change is part of the hidden changes"
-					);
-				}.bind(this));
+			.then(function() {
+				Core.applyChanges();
+				assert.strictEqual(
+					this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories[0].count,
+					2,
+					"then only the other changes are applied and visible"
+				);
+				assert.strictEqual(this.oRta.getToolbar().getModel("visualizationModel").getData().sortedChanges.relevantHiddenChanges.length,
+					1,
+					"the app descriptor change is part of the hidden changes"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("when details are selected for a change", function(assert) {
@@ -1034,7 +1032,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when exiting after overlays were destroyed", function (assert) {
+		QUnit.test("when exiting after overlays were destroyed", function(assert) {
 			// Overlay might be already destroyed, e.g. during version switch
 			return startVisualization(this.oRta).then(function() {
 				var oRootOverlay = OverlayRegistry.getOverlay("Comp1");
@@ -1322,17 +1320,17 @@ sap.ui.define([
 				flexSettings: this.oFlexSettings
 			});
 			return RtaQunitUtils.clear()
-				.then(this.oRta.start.bind(this.oRta))
-				.then(function() {
-					this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
-					this.oChangeVisualization = this.oRta.getChangeVisualization();
-					this.oToolbar = this.oRta.getToolbar();
-					return startVisualization(this.oRta);
-				}.bind(this))
-				.then(function() {
-					Core.applyChanges();
-					this.oRta.setMode("navigation");
-				}.bind(this));
+			.then(this.oRta.start.bind(this.oRta))
+			.then(function() {
+				this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
+				this.oChangeVisualization = this.oRta.getChangeVisualization();
+				this.oToolbar = this.oRta.getToolbar();
+				return startVisualization(this.oRta);
+			}.bind(this))
+			.then(function() {
+				Core.applyChanges();
+				this.oRta.setMode("navigation");
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -1376,12 +1374,12 @@ sap.ui.define([
 				flexSettings: this.oFlexSettings
 			});
 			return RtaQunitUtils.clear()
-				.then(this.oRta.start.bind(this.oRta))
-				.then(function() {
-					this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
-					this.oChangeVisualization = this.oRta.getChangeVisualization();
-					this.oToolbar = this.oRta.getToolbar();
-				}.bind(this));
+			.then(this.oRta.start.bind(this.oRta))
+			.then(function() {
+				this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
+				this.oChangeVisualization = this.oRta.getChangeVisualization();
+				this.oToolbar = this.oRta.getToolbar();
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -1423,17 +1421,17 @@ sap.ui.define([
 				flexSettings: this.oFlexSettings
 			});
 			return RtaQunitUtils.clear()
-				.then(this.oRta.start.bind(this.oRta))
-				.then(function() {
-					this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
-					this.oChangeVisualization = this.oRta.getChangeVisualization();
-					this.oToolbar = this.oRta.getToolbar();
-					return startVisualization(this.oRta);
-				}.bind(this))
-				.then(function() {
-					this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
-					Core.applyChanges();
-				}.bind(this));
+			.then(this.oRta.start.bind(this.oRta))
+			.then(function() {
+				this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
+				this.oChangeVisualization = this.oRta.getChangeVisualization();
+				this.oToolbar = this.oRta.getToolbar();
+				return startVisualization(this.oRta);
+			}.bind(this))
+			.then(function() {
+				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
+				Core.applyChanges();
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oRta.destroy();

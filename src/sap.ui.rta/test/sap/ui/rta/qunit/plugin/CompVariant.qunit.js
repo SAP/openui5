@@ -262,7 +262,7 @@ sap.ui.define([
 			}, "the third variant is there and correct");
 
 			var oEvent = {
-				getParameters: function () {
+				getParameters: function() {
 					return {
 						item: {
 							getProperty: function() {
@@ -316,7 +316,7 @@ sap.ui.define([
 			var oMenuItem = getContextMenuEntryById.call(this, "CTX_COMP_VARIANT_SWITCH");
 
 			var oEvent = {
-				getParameters: function () {
+				getParameters: function() {
 					return {
 						item: {
 							getProperty: function() {

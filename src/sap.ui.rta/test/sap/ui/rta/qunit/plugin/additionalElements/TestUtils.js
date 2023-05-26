@@ -69,7 +69,7 @@ sap.ui.define([
 			return {
 				before: function() {
 					return _setupSharedObjects().then(function(mShared) {
-						//Shared objects for all tests => Don't modify them, it will have side-effects on other tests!
+						// Shared objects for all tests => Don't modify them, it will have side-effects on other tests!
 						this.oView = mShared.view;
 						this.mAddViaDelegateAction = mShared.mAddViaDelegateAction;
 						this.oDelegate = mShared.delegate;
@@ -79,7 +79,7 @@ sap.ui.define([
 				afterEach: function() {
 					this.sandbox.restore();
 				},
-				after: function () {
+				after: function() {
 					this.oView.getController().destroy();
 					this.oView.destroy();
 				}

@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/rta/appVariant/S4HanaCloudBackend",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	S4HanaCloudBackend,
 	sinon
 ) {
@@ -18,18 +18,16 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("When instantiated,", function(assert) {
 			var oS4HanaCloudBackend = new S4HanaCloudBackend();
-			assert.ok(oS4HanaCloudBackend, 'the constructor call is fine');
+			assert.ok(oS4HanaCloudBackend, "the constructor call is fine");
 		});
-
 
 		QUnit.test("When a notification is requested, that the FLP customizing is ready and there is no connection to the OData service,", function(assert) {
 			var oS4HanaCloudBackend = new S4HanaCloudBackend();
 			// Perform a check each 100 msec, no more than 3 checks
-			return oS4HanaCloudBackend.notifyFlpCustomizingIsReady('INVALID_IAM_ID', false, 100, 3).catch(function() {
+			return oS4HanaCloudBackend.notifyFlpCustomizingIsReady("INVALID_IAM_ID", false, 100, 3).catch(function() {
 				assert.ok(true, "then a failure is reported if there's no connection to an S4HANA service /sap/opu/odata/sap/APS_IAM_APP_SRV");
 			});
 		});
-
 
 		QUnit.test("When a notification is requested, that the FLP customizing is ready and there is a connection to the OData service,", function(assert) {
 			var oS4HanaCloudBackend = new S4HanaCloudBackend();
@@ -39,20 +37,19 @@ sap.ui.define([
 			var fnIsAppReady = sandbox.stub(S4HanaCloudBackend, "_isAppReady");
 
 			// Perform a check each 100 msec, no more than 3 checks
-			return oS4HanaCloudBackend.checkCatalogCustomizingIsReady('INVALID_IAM_ID', false).then(function() {
+			return oS4HanaCloudBackend.checkCatalogCustomizingIsReady("INVALID_IAM_ID", false).then(function() {
 				assert.ok(fnGetODataModelStub.calledOnce, "then the _getODataModel method is called once");
 				assert.ok(fnReadODataModelStub.calledOnce, "then the _readODataModel method is called once");
 				assert.ok(fnIsAppReady.calledOnce, "then the _isAppReady method is called once");
 			});
 		});
 
-
 		QUnit.test("When stubing checkCatalogCustomizingIsReady(\"VALID_IAM_ID\") to return true immediately,", function(assert) {
 			var oS4HanaCloudBackend = new S4HanaCloudBackend();
 
 			// Stubbing checkCatalogCustomizingIsReady
 			var checkCatalogCustomizingIsReadyStub = sandbox.stub(oS4HanaCloudBackend, "checkCatalogCustomizingIsReady");
-			checkCatalogCustomizingIsReadyStub.withArgs('VALID_IAM_ID').resolves(true);
+			checkCatalogCustomizingIsReadyStub.withArgs("VALID_IAM_ID").resolves(true);
 
 			// Perform a check each 100 msec, no more than 3 checks
 			return oS4HanaCloudBackend.notifyFlpCustomizingIsReady("VALID_IAM_ID", true, 100, 3).then(function(oResult) {
@@ -66,7 +63,7 @@ sap.ui.define([
 
 			// Stubbing checkCatalogCustomizingIsReady
 			var checkCatalogCustomizingIsReadyStub = sandbox.stub(oS4HanaCloudBackend, "checkCatalogCustomizingIsReady");
-			checkCatalogCustomizingIsReadyStub.withArgs('VALID_IAM_ID').onFirstCall().resolves(false);
+			checkCatalogCustomizingIsReadyStub.withArgs("VALID_IAM_ID").onFirstCall().resolves(false);
 			checkCatalogCustomizingIsReadyStub.onSecondCall().resolves(false);
 			checkCatalogCustomizingIsReadyStub.onThirdCall().resolves(true);
 
@@ -81,7 +78,7 @@ sap.ui.define([
 
 			// Stubbing checkFlpCustomizingIsReady
 			var checkCatalogCustomizingIsReadyStub = sandbox.stub(oS4HanaCloudBackend, "checkCatalogCustomizingIsReady");
-			checkCatalogCustomizingIsReadyStub.withArgs('VALID_IAM_ID').onFirstCall().resolves(false);
+			checkCatalogCustomizingIsReadyStub.withArgs("VALID_IAM_ID").onFirstCall().resolves(false);
 			checkCatalogCustomizingIsReadyStub.onSecondCall().resolves(false);
 			checkCatalogCustomizingIsReadyStub.onThirdCall().resolves(false);
 
@@ -133,7 +130,6 @@ sap.ui.define([
 			}
 		});
 
-
 		QUnit.test("When checking a backend response for an IAM app to see if the app status is unpublished with one catalog that has a locked status for app var deletion", function(assert) {
 			// Response of ODATA service
 			var response = {data: { results: [{ ActualStatus: 4}]}};
@@ -166,8 +162,7 @@ sap.ui.define([
 			);
 		});
 
-
-		QUnit.done(function () {
+		QUnit.done(function() {
 			document.getElementById("qunit-fixture").style.display = "none";
 		});
 	});
