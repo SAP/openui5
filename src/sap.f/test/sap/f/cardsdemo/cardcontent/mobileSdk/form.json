@@ -110,6 +110,26 @@
 									"message": "Enter a valid email"
 								}
 							]
+						},
+						{
+							"id": "duration",
+							"label": "Duration",
+							"type": "Duration",
+							"validations": [
+								{
+									"required": true
+								}
+							]
+						},
+						{
+							"id": "dateRange",
+							"label": "Date",
+							"type": "DateRange",
+							"validations": [
+								{
+									"required": true
+								}
+							]
 						}
 					]
 				}

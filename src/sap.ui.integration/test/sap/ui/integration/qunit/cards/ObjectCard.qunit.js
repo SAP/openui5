@@ -863,6 +863,24 @@ sap.ui.define([
 										"minLength": 10
 									}
 								]
+							},
+							{
+								"id": "i3",
+								"type": "DateRange",
+								"validations": [
+									{
+										"required": true
+									}
+								]
+							},
+							{
+								"id": "i4",
+								"type": "Duration",
+								"validations": [
+									{
+										"required": true
+									}
+								]
 							}
 						]
 					}
@@ -2491,13 +2509,15 @@ sap.ui.define([
 				oInput = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[0],
 				oTextArea = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1],
 				oComboBox = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[2],
-				oDateRange = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[3];
+				oDateRange = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[3],
+				oDuration = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[4];
 
 			// Assert
 			assert.strictEqual(oCard.getModel("form").getProperty("/i1"), undefined, "No initial value is stored");
 			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), undefined, "No initial value is stored");
 			assert.strictEqual(oCard.getModel("form").getProperty("/i3"), undefined, "No initial value is stored");
 			assert.strictEqual(oCard.getModel("form").getProperty("/i4"), undefined, "No initial value is stored");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i5"), undefined, "No initial value is stored");
 
 			// Act
 			oInput.$("inner").val("a").trigger("input");
@@ -2506,6 +2526,8 @@ sap.ui.define([
 			oComboBox.fireEvent("change");
 			oDateRange.$().find("input").val("Oct 7, 2021");
 			oDateRange.onChange();
+			oDuration.$().find("input").val("12:30");
+			oDuration.onChange();
 
 			Core.applyChanges();
 
@@ -2514,6 +2536,7 @@ sap.ui.define([
 			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), "a", "Value in model is updated");
 			assert.strictEqual(oCard.getModel("form").getProperty("/i3").value, "a", "Value in model is updated");
 			assert.deepEqual(oCard.getModel("form").getProperty("/i4"), DateRangeHelper.getValueForModel(oDateRange), "Value in model is updated");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i5"), "12:30", "Value in model is updated");
 
 			done();
 		});
@@ -2544,6 +2567,10 @@ sap.ui.define([
 								{
 									"id": "i4",
 									"type": "DateRange"
+								},
+								{
+									"id": "i5",
+									"type": "Duration"
 								}
 							]
 						}
@@ -2580,16 +2607,22 @@ sap.ui.define([
 			oCard = this.oCard;
 
 		oCard.attachEvent("_ready", function () {
+			var oDateRange = oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0].getItems()[2];
+
 			// Act
 			oCard.setFormValues([
 				{ "id": "i1", "value": "some text" },
-				{ "id": "i2", "value": "some long text" }
+				{ "id": "i2", "value": "some long text" },
+				{ "id": "i3", "value": { "option": "date", "values": ["2020-05-20"]} },
+				{ "id": "i4", "value": "12:30" }
 			]);
 
 			// Assert
 			assert.strictEqual(oCard.getModel("messages").getProperty("/hasErrors"), false, "Form has no errors");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i1"), "some text", "Form model has value");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), "some long text", "Form model has value");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i1"), "some text", "Form model has correct value for Input");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), "some long text", "Form model has correct value for TextArea");
+			assert.deepEqual(oCard.getModel("form").getProperty("/i3"), DateRangeHelper.getValueForModel(oDateRange), "Form model has correct value for DateRange");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i4"), "12:30", "Form model has correct value for Duration");
 
 			done();
 		});
