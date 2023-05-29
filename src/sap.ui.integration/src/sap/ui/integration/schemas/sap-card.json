@@ -65,6 +65,18 @@
           "description": "Markdown enablement for Adaptive Content",
           "type": "boolean"
         },
+        "modelSizeLimit": {
+          "description": "[Experimental] Represents the maximum number of entries that are used for list bindings.",
+          "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "$ref": "#/definitions/simpleBinding"
+              }
+          ],
+          "default": 1000
+        },
         "parameters": {
           "description": "Map of parameters",
           "type": "object",

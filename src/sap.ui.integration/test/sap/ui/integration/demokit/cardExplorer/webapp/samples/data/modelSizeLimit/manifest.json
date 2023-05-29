@@ -1,0 +1,49 @@
+{
+	"sap.app": {
+		"id": "card.explorer.data.modelSizeLimit",
+		"type": "card",
+		"title": "Sample of Card with Model Size Limit"
+	},
+	"sap.card": {
+		"extension": "./DataExtension",
+		"configuration": {
+			"modelSizeLimit": 2000,
+			"filters": {
+				"shipper": {
+					"type": "Select",
+					"label": "Shipper",
+					"item": {
+						"template": {
+							"title": "{shipper}"
+						}
+					},
+					"data": {
+						"extension": {
+							"method": "getFilterData"
+						}
+					}
+				}
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Orders by {filters>/shipper/selectedItem/title}",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"data": {
+				"extension": {
+					"method": "getOrdersData",
+					"args": ["{filters>/shipper/selectedItem/title}"]
+				}
+			},
+			"item": {
+				"title": "{order}",
+				"description": "{shipper}"
+			},
+			"maxItems": 5
+		}
+	}
+}
