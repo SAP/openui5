@@ -3444,7 +3444,35 @@ sap.ui.define([
 			this.oPC2, "Navigating back twice");
 	});
 
-	QUnit.test("Navigaton buttons disabled when on min/max dates", function(assert){
+	QUnit.test("Navigation via back/next buttons with altered firstDayOfWeek", function (assert) {
+		// Arrange
+		var iSelectedDate;
+
+		this.oPC2.setStartDate(UI5Date.getInstance(2023, 1, 5));
+		this.oPC2.setBuiltInViews(["Week"]);
+		this.oPC2.setFirstDayOfWeek(0);
+
+		iSelectedDate = this.oPC2._getHeader().getStartDate().getDate();
+
+		// Assert
+		assert.equal(iSelectedDate, 29, "Start date is correct");
+
+		// Act
+		this.oPC2._applyArrowsLogic();
+		iSelectedDate = this.oPC2._getHeader().getStartDate().getDate();
+
+		// Assert
+		assert.equal(iSelectedDate, 5, "Start date changes correctly with Next arrow");
+
+		// Act
+		this.oPC2._applyArrowsLogic(true);
+		iSelectedDate = this.oPC2._getHeader().getStartDate().getDate();
+
+		// Assert
+		assert.equal(iSelectedDate, 29, "Start date changes correctly with Back arrow");
+	});
+
+	QUnit.test("Navigaton buttons disabled when on min/max dates", function(assert) {
 		//Prepare
 		var oStartDate = this.oPC2.getStartDate();
 

@@ -2097,7 +2097,7 @@ sap.ui.define([
 	 * @returns {object} the shifted date
 	 * @private
 	 */
-	PlanningCalendar.prototype._shiftStartDate = function(oStartDate){
+	PlanningCalendar.prototype._shiftStartDate = function(oStartDate) {
 		if (this.getViewKey() === PlanningCalendarBuiltInView.Week) {
 			/* Calculates the first week's date for the given oStartDate. Have in mind that the oStartDate is the date that
 			 * the user sees in the UI, thus - local one. As CalendarUtils.getFirstDateOfWeek works with UTC dates (this
@@ -2106,9 +2106,14 @@ sap.ui.define([
 			 */
 			var sLocale = Configuration.getFormatSettings().getFormatLocale().toString(),
 				oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(sLocale)),
-				oFirstDateOfWeek = CalendarUtils.getFirstDateOfWeek(CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true), oWeekConfigurationValues),
-				//CalendarUtils.getFirstDateOfWeek works with UTC based date values, restore the result back in local timezone.
-				oLocalDate = CalendarUtils._createLocalDate(oFirstDateOfWeek, true);
+				oFirstDateOfWeek,
+				oLocalDate;
+
+			if (this.getFirstDayOfWeek() > -1) {
+				oWeekConfigurationValues.firstDayOfWeek = this.getFirstDayOfWeek();
+			}
+			oFirstDateOfWeek = CalendarUtils.getFirstDateOfWeek(CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true), oWeekConfigurationValues);
+			oLocalDate = CalendarUtils._createLocalDate(oFirstDateOfWeek, true);
 			if (this.getFirstDayOfWeek() > -1) {
 				oLocalDate.setDate(oLocalDate.getDate() - oLocalDate.getDay() + this.getFirstDayOfWeek());
 			}
