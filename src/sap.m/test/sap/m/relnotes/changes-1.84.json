@@ -1898,5 +1898,67 @@
         ]
       }
     ]
+  },
+  "1.84.36": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "f57a2cff5d6d889bbb2986f21e0488213fd6574c",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: adjust aria attribute names",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370060332"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380029140"
+          }
+        ]
+      },
+      {
+        "id": "7823580b44a3af636c78fa85cfb7ad837c6fd01c",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust click handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003578212023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003756512023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003754472023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003632232023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003796592023"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370061824"
+          }
+        ]
+      },
+      {
+        "id": "99fd5658cae67b88059664e09e620aa43820f560",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: aria-valuenow attribute added to the progress bar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370035236"
+          }
+        ]
+      }
+    ]
   }
 }
