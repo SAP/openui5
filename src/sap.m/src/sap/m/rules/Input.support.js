@@ -60,6 +60,9 @@ sap.ui.define(["sap/ui/support/library"],
 			var aLabels = oScope.getElementsByClassName("sap.m.Label");
 
 			oScope.getElementsByClassName("sap.m.Input")
+				.filter(function (oInput) {
+					return oInput.getUIArea(); // filter aggregation binding templates
+				})
 				.forEach(function(oInput) {
 					if (!isLabelled(oInput, aLabels)) {
 						issueManager.addIssue({
