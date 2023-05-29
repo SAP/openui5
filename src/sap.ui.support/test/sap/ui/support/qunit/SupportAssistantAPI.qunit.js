@@ -22,9 +22,8 @@ sap.ui.define([
 	// shortcut for sap.ui.support.Severity
 	var Severity = supportLibrary.Severity;
 
-	QUnit.module("sap.ui.support.Analyzer", {
+	QUnit.module("sap.ui.support.RuleAnalyzer", {
 		beforeEach: function () {
-
 			this.scope = {
 				type: "subtree",
 				parentId: "rootPanel"
@@ -63,6 +62,8 @@ sap.ui.define([
 					})
 				]
 			});
+
+			this.panel.placeAt("qunit-fixture");
 		},
 		afterEach: function () {
 			this.panel.destroy();
@@ -71,12 +72,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("analyze method filtered by custom preset", function (assert) {
-
 		var done = assert.async();
 
 		bootstrap.initSupportRules(["true", "silent"], {
 			onReady: function () {
-
 				var customPreset = {
 					id: "CustomPreset",
 					title: "Custom",
@@ -91,17 +90,15 @@ sap.ui.define([
 					assert.strictEqual(history.issues.length, 1, "Custom issues are correct");
 					done();
 				});
-			}
+			}.bind(this)
 		});
 	});
 
 	QUnit.test("analyze method using list of rules", function (assert) {
-
 		var done = assert.async();
 
 		bootstrap.initSupportRules(["true", "silent"], {
 			onReady: function () {
-
 				var rules = [
 					{ruleId: "inputNeedsLabel", libName: "sap.m"}
 				];
@@ -111,17 +108,15 @@ sap.ui.define([
 					assert.strictEqual(history.issues.length, 1, "List of rules issues are correct");
 					done();
 				});
-			}
+			}.bind(this)
 		});
 	});
 
 	QUnit.test("Temporary rule execution", function (assert) {
-
 		var done = assert.async();
 
 		bootstrap.initSupportRules(["true", "silent"], {
 			onReady: function () {
-
 				var tempRule = {
 					id: "TEMP RULE ID",
 					title: "TEMP RULE TITLE",
@@ -155,7 +150,7 @@ sap.ui.define([
 					assert.strictEqual(history.issues.length, 1, "List of temporary rules issues is correct");
 					done();
 				});
-			}
+			}.bind(this)
 		});
 	});
 
@@ -174,7 +169,7 @@ sap.ui.define([
 					assert.deepEqual(history.analysisMetadata, oMetadata, "Metadata is correctly (unchanged) passed from analyze to reports.");
 					done();
 				});
-			}
+			}.bind(this)
 		});
 	});
 

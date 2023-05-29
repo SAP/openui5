@@ -51,7 +51,7 @@ sap.ui.define([
 					new Label({
 						text:"Label"
 					}),
-					new Input()
+					new Input("inputInSimpleForm")
 				]
 			});
 			this.simpleForm.placeAt("qunit-fixture");
@@ -89,6 +89,13 @@ sap.ui.define([
 	testRule({
 		executionScopeType: "subtree",
 		executionScopeSelectors: "inputTestsContext",
+		libName: "sap.m",
+		ruleId: "inputNeedsLabel",
+		expectedNumberOfIssues: 1
+	});
+
+	testRule({
+		executionScopeType: "global",
 		libName: "sap.m",
 		ruleId: "inputNeedsLabel",
 		expectedNumberOfIssues: 1
