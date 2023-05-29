@@ -254,10 +254,10 @@ sap.ui.define([
 		var oResolvedGroupItem = merge({}, oItem),
 			aResolvedItems = [],
 			sFullPath = sObjectContentPath + sItemPath,
-			bHasValidations = ["TextArea", "Input", "ComboBox"].includes(oItem.type),
+			bIsFormInput = ["TextArea", "Input", "ComboBox", "Duration", "DateRange"].includes(oItem.type),
 			bHasItemsToResolve = ["ButtonGroup", "IconGroup"].includes(oItem.type);
 
-		if (bHasValidations) {
+		if (bIsFormInput) {
 			oResolvedGroupItem = merge(oResolvedGroupItem, this._getForm().resolveControl(oItem));
 		}
 
