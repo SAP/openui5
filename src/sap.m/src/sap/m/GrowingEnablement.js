@@ -152,9 +152,7 @@ sap.ui.define([
 		},
 
 		onScrollToLoad: function() {
-			var oTriggerButton = this._oControl.getDomRef("triggerList");
-
-			if (this._bLoading || !oTriggerButton || oTriggerButton.style.display != "none") {
+			if (this._bLoading) {
 				return;
 			}
 
@@ -634,7 +632,7 @@ sap.ui.define([
 
 				// put the focus to the newly added item if growing button is pressed
 				if (oTriggerDomRef && oTriggerDomRef.contains(document.activeElement)) {
-					(aItems[this._iLastItemsCount] || oControl).focus();
+					(aItems[this._iLastItemsCount] || aItems[iItemsLength - 1] ||  oControl).focus();
 				}
 
 				// show, update or hide the growing button
