@@ -38,7 +38,8 @@
 						"reasonText": "{form>/reason/value}",
 						"comment": "{form>/comment}",
 						"e-mail": "{form>/e-mail}",
-						"duration": "{form>/duration}"
+						"duration": "{form>/duration}",
+						"date": "{form>/date/range/startLocalDate}"
 					}
 				}
 			}
@@ -115,10 +116,11 @@
 						},
 						{
 							"id": "comment",
-							"label": "Comment",
+							"label": "Have anything to add?",
 							"type": "TextArea",
 							"rows": 4,
 							"placeholder": "Comment",
+							"showColon": false,
 							"validations": [
 								{
 									"required": true
@@ -128,16 +130,6 @@
 									"maxLength": 200,
 									"message": "Your comment should be between 10 and 200 characters.",
 									"type": "Warning"
-								}
-							]
-						},
-						{
-							"id": "duration",
-							"label": "Duration",
-							"type": "Duration",
-							"validations": [
-								{
-									"required": true
 								}
 							]
 						},
@@ -153,6 +145,26 @@
 								{
 									"pattern": "^\\w+[\\w-+\\.]*\\@\\w+([-\\.]\\w+)*\\.[a-zA-Z]{2,}+$",
 									"message": "You should enter a valid e-mail."
+								}
+							]
+						},
+						{
+							"id": "duration",
+							"label": "Duration",
+							"type": "Duration",
+							"validations": [
+								{
+									"required": true
+								}
+							]
+						},
+						{
+							"id": "date",
+							"label": "Date",
+							"type": "DateRange",
+							"validations": [
+								{
+									"required": true
 								}
 							]
 						}

@@ -5,12 +5,12 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/ui/integration/designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor",
 	"sap/base/util/restricted/_merge",
-	"sap/ui/integration/cards/filters/DateRangeFilter"
+	"sap/ui/integration/util/DateRangeHelper"
 ], function (
 	BasePropertyEditor,
 	ComplexMapEditor,
 	_merge,
-	DateRangeFilter
+	DateRangeHelper
 ) {
 	"use strict";
 
@@ -206,8 +206,7 @@ sap.ui.define([
 	};
 
 	FiltersEditor.prototype.getAllDateRangeOptions = function() {
-		var dateRangeFilter = new DateRangeFilter();
-		var oOptions = dateRangeFilter.getOptions();
+		var oOptions = DateRangeHelper.getAllOptions();
 		var optionsArray = [];
 		for (var key in oOptions) {
 			if (oOptions.hasOwnProperty(key)) {

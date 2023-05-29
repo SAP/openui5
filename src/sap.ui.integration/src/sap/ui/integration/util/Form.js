@@ -4,12 +4,24 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/library",
+	"sap/ui/core/Core",
 	"sap/base/Log",
 	"sap/base/util/deepExtend",
 	"./Validators",
+	"./BindingHelper",
 	"./BindingResolver",
-	"./BindingHelper"
-], function (ManagedObject, coreLibrary, Log, deepExtend, Validators, BindingResolver, BindingHelper) {
+	"./DateRangeHelper"
+], function (
+	ManagedObject,
+	coreLibrary,
+	Core,
+	Log,
+	deepExtend,
+	Validators,
+	BindingHelper,
+	BindingResolver,
+	DateRangeHelper
+) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -275,15 +287,18 @@ sap.ui.define([
 
 		this._removeMessageFromControl(oControl);
 
-		if (!oItem || !oItem.validations) {
+		if (!oItem) {
 			return bHasErrorSet;
 		}
 
-		aResolvedValidations = BindingResolver.resolveValue(oItem.validations, oControl, sBindingPath);
+		bHasErrorSet = !this._checkBuiltInValidations(oControl, oItem, bShowValueState);
 
-		bHasErrorSet = !aResolvedValidations.every(function (mValidationConfig) {
-			return this._checkValidationItem(mValidationConfig, oControl, oItem, bShowValueState, oExtension);
-		}.bind(this));
+		if (!bHasErrorSet && oItem.validations) {
+			aResolvedValidations = BindingResolver.resolveValue(oItem.validations, oControl, sBindingPath);
+			bHasErrorSet = !aResolvedValidations.every(function (mValidationConfig) {
+				return this._checkValidationItem(mValidationConfig, oControl, oItem, bShowValueState, oExtension);
+			}.bind(this));
+		}
 
 		this._updateMessageModel();
 
@@ -327,6 +342,22 @@ sap.ui.define([
 				bValidationPassed = false;
 				break;
 			}
+		}
+
+		return bValidationPassed;
+	};
+
+	Form.prototype._checkBuiltInValidations = function (oControl, oItem, bShowValueState) {
+		var bValidationPassed = true;
+
+		if (oControl.isA("sap.m.DatePicker") && !oControl.isValidValue()) {
+			this._addMessageToControl(oControl, bShowValueState, {
+				type: ValueState.Error,
+				message: Core.getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR"),
+				bindingPath: "/" + oItem.id
+			});
+
+			bValidationPassed = false;
 		}
 
 		return bValidationPassed;
@@ -429,6 +460,8 @@ sap.ui.define([
 		switch (oItem.type) {
 			case "ComboBox":
 				return "keyValuePair";
+			case "DateRange":
+				return "dateRange";
 			default:
 				return "string";
 		}
@@ -441,6 +474,8 @@ sap.ui.define([
 				key: oControl.getSelectedKey(),
 				value: oControl.getValue()
 			};
+		} else if (oControl.isA("sap.m.DynamicDateRange") || oControl.isA("sap.m.DatePicker")) {
+			return DateRangeHelper.getValueForModel(oControl);
 		} else {
 			return oControl.getValue();
 		}
