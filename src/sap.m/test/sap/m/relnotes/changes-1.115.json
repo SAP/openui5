@@ -3,6 +3,33 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "49c52552bff4cf73a42b9bdd03c5f86c9e2687d7",
+        "type": "FIX",
+        "text": " sap.m.MessageView: aria-labelledby added to the SegmentedButton"
+      },
+      {
+        "id": "81aef725311a0fec2f763246047ad398e21ad8cf",
+        "type": "FIX",
+        "text": " sap.ui.support: Input needs a label rule now considers Table and Form controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380032811"
+          }
+        ]
+      },
+      {
+        "id": "0d2db347ca9050597d9843ea987d41639a73f1aa",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Fix console error on touch devices",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370050847"
+          }
+        ]
+      },
+      {
         "id": "3347fa9e86fac89cdb9b3d7c09bbfe58faaa91c2",
         "type": "FIX",
         "text": " sap.m.RatingIndicator: Horizon styles are now adjusted",
@@ -43,6 +70,17 @@
         "id": "4676f992f3d74315a0c0d01bf1df3a166ed9034b",
         "type": "FEATURE",
         "text": " sap.m.Carousel: added new page indicator properties"
+      },
+      {
+        "id": "18175d1ad63b161df92b4aa4b512f6fbad840504",
+        "type": "FIX",
+        "text": " We've now send UploadSetItem for FileSizeExceeded and FilenameLengthExceed events",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370060107"
+          }
+        ]
       },
       {
         "id": "af3460a6e3691996cf73fe1dcf5a79a310395399",

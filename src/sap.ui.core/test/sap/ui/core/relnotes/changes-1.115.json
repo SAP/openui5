@@ -3,6 +3,17 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "ee4f07bdcb8f6f0aaeca54c9195059cff86fa7c2",
+        "type": "FIX",
+        "text": " base/util/fetch: Allow empty response header fields",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370067548"
+          }
+        ]
+      },
+      {
         "id": "14599a96b376eeb44a96599aa57749c272bf6e49",
         "type": "FIX",
         "text": " sap.ui.model.odata.v2.ODataModel: Avoid sending contradictory headers",
