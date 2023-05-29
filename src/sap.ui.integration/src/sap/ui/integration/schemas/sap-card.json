@@ -1469,6 +1469,19 @@
             },
             {
               "type": "number"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "option": {
+                  "description": "The date range option",
+                  "type": "string"
+                },
+                "values": {
+                  "type": "array"
+                }
+              }
             }
           ]
         },
@@ -1490,6 +1503,7 @@
                 "TextArea",
                 "Input",
                 "Duration",
+                "DateRange",
                 "RatingIndicator",
                 "phone",
                 "email",
