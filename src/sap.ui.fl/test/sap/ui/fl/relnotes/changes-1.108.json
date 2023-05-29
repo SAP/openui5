@@ -29,5 +29,21 @@
         ]
       }
     ]
+  },
+  "1.108.13": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "06d9123fbd9b1b7187f931960035d05fa5a8f9c8",
+        "type": "FIX",
+        "text": " sap.ui.fl - Remove invalid csrf in case of 403 response",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370069325"
+          }
+        ]
+      }
+    ]
   }
 }

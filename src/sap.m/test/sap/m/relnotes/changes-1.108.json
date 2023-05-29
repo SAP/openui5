@@ -901,5 +901,40 @@
         ]
       }
     ]
+  },
+  "1.108.13": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "0510c375453919af79f34e6f9b9eb7596ea73961",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: adjust aria attribute names",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370060332"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380029140"
+          }
+        ]
+      },
+      {
+        "id": "dbb58d437c183b24de4c8b419ca1569cc680a604",
+        "type": "FIX",
+        "text": " sap.m.Popover: calculate correct height when toggled in horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270151515"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370066235"
+          }
+        ]
+      }
+    ]
   }
 }

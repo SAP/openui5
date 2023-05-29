@@ -123,5 +123,21 @@
         ]
       }
     ]
+  },
+  "1.108.13": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "0e3b589253a41d892c2d721525703b31648e3683",
+        "type": "FIX",
+        "text": " mdc.FilterBar: in liveMode submit led to trigger search twice",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370055028"
+          }
+        ]
+      }
+    ]
   }
 }
