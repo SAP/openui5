@@ -121,7 +121,10 @@ sap.ui.define([
 			return;
 		}
 
-		oRM.openStart("div", oControl.getId() + "-main").class("sapTntToolPageMain").openEnd();
+		oRM.openStart("div", oControl.getId() + "-main")
+			.class("sapTntToolPageMain")
+			.class("sapTntToolPageMainBackground-" + oControl.getContentBackgroundDesign())
+			.openEnd();
 
 			oRM.openStart("div").class("sapTntToolPageMainContent").openEnd();
 
