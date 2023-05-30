@@ -62,6 +62,26 @@ sap.ui.define([
 			assert.strictEqual(oType.oFormat, null, "no formatter preload");
 		});
 
+		//*****************************************************************************************
+		QUnit.test("constructor calls checkParseEmptyValueToZero", function (assert) {
+			var oConstraints = {nullable : false}; // otherwise there are no constraints set to the type
+			var oFormatOptions = {"~formatOption" : "foo"};
+
+			var oExpectation = this.mock(ODataType.prototype).expects("checkParseEmptyValueToZero")
+					.withExactArgs()
+					.callsFake(function () {
+						assert.deepEqual(this.oConstraints, oConstraints);
+						assert.strictEqual(this.oFormatOptions, oFormatOptions);
+					});
+
+			// code under test
+			var oType = new TypeClass(oFormatOptions, oConstraints);
+
+			assert.ok(oExpectation.calledOn(oType));
+			assert.deepEqual(oType.oConstraints, oConstraints);
+			assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+		});
+
 		QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
 			function (assert) {
 				var oType = new TypeClass(null, null);
@@ -128,8 +148,6 @@ sap.ui.define([
 			assert.strictEqual(oType.parseValue(1234, "int"), 1234, "number parsed from int");
 
 			assert.strictEqual(oType.parseValue(null, "foo"), null, "null accepted for any type");
-			assert.strictEqual(oType.parseValue("", "foo"), null,
-				"empty string becomes null for any type");
 
 			Configuration.setLanguage("de-DE");
 			oType = new TypeClass();
@@ -139,6 +157,18 @@ sap.ui.define([
 			this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
 				.returns("string");
 			assert.strictEqual(oType.parseValue("1234", "sap.ui.core.CSSSize"), 1234);
+		});
+
+		//*****************************************************************************************
+		QUnit.test("parseValue calls getEmptyValue", function (assert) {
+			var oType = new TypeClass();
+
+			this.mock(oType).expects("getEmptyValue")
+				.withExactArgs("~emptyString", /*bNumeric*/ true)
+				.returns("~emptyValue");
+
+			// code under test
+			assert.strictEqual(oType.parseValue("~emptyString", "foo"), "~emptyValue");
 		});
 
 		["foo", "123.809"].forEach(function (oValue) {
@@ -285,15 +315,16 @@ sap.ui.define([
 
 		//*********************************************************************************************
 		QUnit.test("getFormat", function (assert) {
-			var oType = new TypeClass();
+			var oType = new TypeClass({parseEmptyValueToZero : true}, {nullable : false});
 
 			assert.strictEqual(oType.oFormat, null);
 
-			// code under test
-			var oResult = oType.getFormat();
+			this.mock(NumberFormat).expects("getIntegerInstance")
+				.withExactArgs({groupingEnabled : true})
+				.returns("~integerInstance");
 
-			assert.ok(oResult instanceof NumberFormat);
-			assert.strictEqual(oType.oFormat, oResult);
+			// code under test
+			assert.strictEqual(oType.getFormat(), "~integerInstance");
 		});
 	}
 
