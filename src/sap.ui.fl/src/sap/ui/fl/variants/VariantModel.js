@@ -71,6 +71,7 @@ sap.ui.define([
 			var oModel = mVariantProperties.model;
 			var sVMReference = mVariantProperties.vmReference;
 			var bVariantSwitch = false;
+			var bOldVariantWasModified = ObjectPath.get([sVMReference, "modified"], oModel.oData);
 			var sTargetVReference = mParameters.key;
 			var sSourceVReference = mParameters.key;
 			return Promise.resolve().then(function() {
@@ -91,7 +92,7 @@ sap.ui.define([
 				}
 			})
 			.then(function() {
-				if (ObjectPath.get([sVMReference, "modified"], oModel.oData) === true) {
+				if (bOldVariantWasModified) {
 					var aControlChanges = VariantManagementState.getControlChangesForVariant({
 						reference: oModel.sFlexReference,
 						vmReference: sVMReference,
@@ -105,6 +106,7 @@ sap.ui.define([
 						model: oModel
 					});
 				}
+				return Promise.resolve();
 			})
 			.then(function() {
 				// the variant switch already calls the listeners
