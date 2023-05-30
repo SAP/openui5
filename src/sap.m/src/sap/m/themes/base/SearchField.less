@@ -4,7 +4,6 @@
 /* ================================== */
 
 @_sap_m_SearchField_Height: 3rem;
-@_sap_m_SearchField_FormHeight: 2.5rem;
 @_sap_m_SearchField_ButtonSize: 2.375rem;
 @_sap_m_SearchField_ButtonFontSize: 1.125rem;
 @_sap_m_SearchField_CompactButtonLineHeight: 1.5rem;
@@ -86,7 +85,8 @@ input.sapMSFI[type="search"]:focus {
 .sapMSFF {
 	display: flex;
 	box-sizing: border-box;
-	height: @_sap_m_SearchField_FormHeight;
+	height: @sapUiElementHeight;
+	box-shadow: @sapUiFieldShadow;
 	border: @_sap_m_SearchField_Border;
 	background: @sapUiFieldBackgroundStyle;
 	background-color: @sapUiFieldBackground;
@@ -108,6 +108,11 @@ input.sapMSFI[type="search"]:focus {
 
 :not(.sapMSFDisabled) > .sapMSFF:hover {
 	border-color: @sapUiFieldHoverBorderColor;
+	box-shadow: @sapUiFieldHoverShadow;
+}
+
+:not(.sapMSFDisabled) > .sapMSFF:active {
+	background: @sapUiFieldFocusBackground;
 }
 
 .sapMSFI {
@@ -208,7 +213,7 @@ input.sapMSFI[type="search"]:focus {
 	}
 
 	.sapMSFF {
-		height: 1.625rem;
+		height: @sapUiElementCompactHeight;
 		padding-left: @_sap_m_SearchField_Compact_FormPaddingLeft;
 	}
 

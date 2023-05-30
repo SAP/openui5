@@ -8,7 +8,7 @@
 // ==========================================================================
 
 @_sap_m_SearchField_Height: 2.75rem;
-@_sap_m_SearchField_FormHeight: 2.25rem;
+@_sap_m_SearchField_FormHeight: @sapUiElementHeight;
 @_sap_m_SearchField_ButtonSize: 2.25rem;
 @_sap_m_SearchField_ButtonFontSize: 1rem;
 @_sap_m_SearchField_CompactButtonLineHeight: 1.625rem;
@@ -58,7 +58,6 @@
 }
 
 .sapMSF:not(.sapMSFDisabled):hover .sapMSFF {
-	box-shadow: @sapUiContentInteractionShadow;
 	background-color: @sapUiFieldHoverBackground;
 }
 
