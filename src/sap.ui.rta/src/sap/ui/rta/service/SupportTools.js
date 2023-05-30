@@ -5,10 +5,12 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/write/api/ChangesWriteAPI"
 ], function(
 	Core,
 	JsControlTreeModifier,
+	OverlayRegistry,
 	ChangesWriteAPI
 ) {
 	"use strict";
@@ -29,6 +31,8 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
+
+	var sHighlightClass = "sapUiFlexibilitySupportExtension_Selected";
 
 	function getPluginChangeHandler(oPlugin, oElementOverlay, oRta) {
 		var oAction = oPlugin.getAction(oElementOverlay);
@@ -74,14 +78,23 @@ sap.ui.define([
 	}
 
 	/*
+	 * Removes the highlighting of a non-selectable overlay
+	 */
+	function removeSelectionHighlight() {
+		var aHighlightedDom = document.getElementsByClassName(sHighlightClass);
+		 if (aHighlightedDom.length > 0) {
+			 aHighlightedDom[0].classList.remove(sHighlightClass);
+		 }
+	}
+
+	/*
 	 * Returns information about an overlay, namely:
-	 *  For every plugin that is part of the "editableByPlugins"
-	 *  aggregation, we return the plugin name and the result for
-	 *  isAvailable(). If the change handler can be determined, we
-	 *  return this information, which enables a button allowing the
-	 *  key user to print the change handler to the console.
+	 * For every plugin that is part of the "editableByPlugins"
+	 * aggregation, we return the plugin name and the result for
+	 * isAvailable(). If the change handler can be determined, we
+	 * return this information, which enables a button allowing the
+	 * key user to print the change handler to the console.
 	 *
-	 * @method sap.ui.rta.service.SupportTools.getOverlayInfo
 	 * @param {sap.ui.rta.RuntimeAuthoring} oRta - Instance of the RuntimeAuthoring class
 	 * @param {object} mPayload - Property Bag
 	 * @param {string} mPayload.overlayId
@@ -89,6 +102,11 @@ sap.ui.define([
 	function getOverlayInfo(oRta, mPayload) {
 		var oOverlay = Core.byId(mPayload.overlayId);
 		var oElement = oOverlay.getElement();
+
+		// remove previous selection highlighting on clicking in the app
+		if (oOverlay.getSelectable()) {
+			removeSelectionHighlight();
+		}
 
 		return Promise.all(oOverlay.getEditableByPlugins().map(function(sPluginName) {
 			var oInstance = getPluginByName(oRta, sPluginName);
@@ -113,11 +131,105 @@ sap.ui.define([
 		});
 	}
 
+	/*
+	 * Prints the change handler to the console
+	 *
+	 * @param {sap.ui.rta.RuntimeAuthoring} oRta - Instance of the RuntimeAuthoring class
+	 * @param {object} mPayload - Property Bag
+	 * @param {string} mPayload.overlayId
+	 * @param {string} mPayload.pluginName
+	 */
 	function printChangeHandler(oRta, mPayload) {
 		var oOverlay = Core.byId(mPayload.overlayId);
 		var oPlugin = getPluginByName(oRta, mPayload.pluginName);
 		getPluginChangeHandler(oPlugin, oOverlay, oRta)
 		.then(console.log); // eslint-disable-line no-console
+	}
+
+	/*
+	 * Closes the ContextMenu of the UI-Adaptation (if open)
+	 * This method is called when user selects a non-selectable
+	 * Overlay in Flex Support web extension (Overlay section)
+	 *
+	 * @param {sap.ui.rta.RuntimeAuthoring} oRta - Instance of the RuntimeAuthoring class
+	 */
+	function closeContextMenu(oRta) {
+		if (document.getElementsByClassName("sapUiDtContextMenu").length > 0) {
+			var oContextMenu = oRta.getPlugins().contextMenu;
+			oContextMenu.oContextMenuControl.close();
+		}
+	}
+
+	/*
+	 * Changes the focus/selection in UI-Adaptation
+	 * This method is called when user selects an entry in
+	 * the overlay table of the Flex Support web extension (Overlay Info Section)
+	 *
+	 * @param {sap.ui.rta.RuntimeAuthoring} oRta - Instance of the RuntimeAuthoring class
+	 * @param {object} mPayload - Property Bag
+	 * @param {string} mPayload.overlayId - ID of the Overlay
+	 */
+	function changeOverlaySelection(oRta, mPayload) {
+		// set new focus and enforce collecting overlay info data
+		var oOverlay = Core.byId(mPayload.overlayId);
+		oOverlay.focus();
+		window.postMessage({
+			type: "getOverlayInfo",
+			id: "ui5FlexibilitySupport.submodules.overlayInfo",
+			content: {
+				overlayId: oOverlay.getId()
+			}
+		}, "*");
+
+		// remove previous selection highlighting
+		removeSelectionHighlight();
+		// close the contextmenu in UI-Adaptation
+		closeContextMenu(oRta);
+
+		// set new selection (selectable overlays)
+		if (oOverlay.getSelectable()) {
+			oOverlay.setSelected(true);
+		} else {
+			// remove current selection(s)
+			var aSelection = oRta.getSelection();
+			aSelection.forEach(function(oSelectedOverlay) {
+				oSelectedOverlay.setSelected(false);
+			});
+			// highlight unselectable overlay
+			if (oOverlay.getDomRef()) {
+				oOverlay.getDomRef().classList.add("sapUiFlexibilitySupportExtension_Selected");
+			}
+		}
+	}
+
+	/*
+	 * Collects all relevant data for the overlay table in
+	 * Flex Support web extension (Overlay section)
+	 * This method is called during initialization of the
+	 * Overlay section and on pressing the "Reload" button
+	 */
+	function collectOverlayTableData() {
+		// create an array with all relevant overlays (no aggregation overlays)
+		var aAllOverlays = OverlayRegistry.getOverlays();
+		var aRelevantOverlayList = [];
+		aAllOverlays.forEach(function(oOverlay) {
+			if (!oOverlay.isA("sap.ui.dt.AggregationOverlay")) {
+				var sParentId = oOverlay.getParentElementOverlay()?.getId();
+				var aChildren = oOverlay.getChildren().map(function(oChild) {
+					return oChild.getId();
+				});
+				aRelevantOverlayList.push({
+					id: oOverlay.getId(),
+					parentId: sParentId,
+					elementId: oOverlay.getElement().getId(),
+					visible: oOverlay.getSelectable(),
+					idNum: parseInt(oOverlay.getId().replace("__overlay", "")),
+					children: aChildren,
+					hasParent: sParentId !== undefined
+				});
+			}
+		});
+		return aRelevantOverlayList;
 	}
 
 	function printDesignTimeMetadata(oRta, mPayload) {
@@ -139,8 +251,43 @@ sap.ui.define([
 		printDesignTimeMetadata: {
 			handler: printDesignTimeMetadata,
 			id: "ui5FlexibilitySupport.submodules.overlayInfo"
+		},
+		changeOverlaySelection: {
+			handler: changeOverlaySelection,
+			id: "ui5FlexibilitySupport.submodules.overlayInfo"
+		},
+		collectOverlayTableData: {
+			handler: collectOverlayTableData,
+			returnMessageType: "overlayInfoTableData",
+			id: "ui5FlexibilitySupport.submodules.overlayInfo"
 		}
 	};
+
+	/*
+	 * Handler method for the Rta event "stop"
+	 * sends a corresponding message to the
+	 * Flex Support web extension (Overlay section)
+	 */
+	function onRtaStop() {
+		window.postMessage({
+			type: "rtaStopped",
+			id: "ui5FlexibilitySupport.submodules.overlayInfo",
+			content: {}
+		}, "*");
+	}
+
+	/*
+	 * Sends a message to the Flex Support
+	 * web extension (Overlay section) that
+	 * UI Adaption has started
+	 */
+	function onRtaStart() {
+		window.postMessage({
+			type: "rtaStarted",
+			id: "ui5FlexibilitySupport.submodules.overlayInfo",
+			content: {}
+		}, "*");
+	}
 
 	/*
 	 * Event handler for the messages sent by the support extension.
@@ -153,7 +300,6 @@ sap.ui.define([
 	 *   - printDesignTimeMetadata (the calculated designtime metadata of the overlay is to be printed to the console)
 	 * - content: type-specific information, e.g. for getOverlayInfo, an 'overlayId' is provided
 	 *
-	 * @method sap.ui.rta.service.SupportTools.onMessageReceived
 	 * @param {sap.ui.rta.RuntimeAuthoring} oRta - Instance of the RuntimeAuthoring class
 	 * @param {object} oEvent - Event thrown by the browser on received message
 	 */
@@ -187,6 +333,8 @@ sap.ui.define([
 	return function(oRta) {
 		var fnOnMessageReceivedBound = onMessageReceived.bind(null, oRta);
 		window.addEventListener("message", fnOnMessageReceivedBound);
+		oRta.attachEventOnce("stop", onRtaStop);
+		onRtaStart();
 
 		return {
 			destroy: function() {
