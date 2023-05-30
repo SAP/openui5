@@ -63,7 +63,8 @@ sap.ui.define([
 			 * @private
 			 */
 			_filterVisibleElements: function (oData) {
-				var oFilteredData = {};
+				var oFilteredData = {},
+				    oАscendingOrderData;
 
 				Object.keys(oData).forEach(function(sVersion) {
 					var oVersion = oData[sVersion];
@@ -79,7 +80,29 @@ sap.ui.define([
 					}
 				}.bind(this));
 
-				return oFilteredData;
+				oАscendingOrderData = Object.keys(oFilteredData).sort(function(sVersionA, sVersionB) {
+					// Split the version name by dot
+					var aPartsA = sVersionA.split('.'),
+						aPartsB = sVersionB.split('.');
+
+					// Compare the major version part
+					var iMajorA = parseInt(aPartsA[0]),
+						iMajorB = parseInt(aPartsB[0]);
+
+					if (iMajorA !== iMajorB) {
+						return iMajorB - iMajorA;
+					}
+
+					// Compare the minor version part
+					var iMinorA = parseInt(aPartsA[1]),
+						iMinorB = parseInt(aPartsB[1]);
+					return iMinorB - iMinorA;
+				  }).reduce(function(oSortedData, sKey) {
+					oSortedData[sKey] = oFilteredData[sKey];
+					return oSortedData;
+				}, {});
+
+				return oАscendingOrderData;
 			},
 
 			/**
