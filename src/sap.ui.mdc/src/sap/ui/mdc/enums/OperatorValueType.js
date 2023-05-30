@@ -10,7 +10,7 @@ sap.ui.define(function() {
 	 *
 	 * @enum {string}
 	 * @public
-	 * @since 1.75
+	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.OperatorValueType
 	 */
 	var OperatorValueType = {
@@ -33,7 +33,6 @@ sap.ui.define(function() {
 		 * for validation, but the user input is used as value.
 		 *
 		 * @public
-		 * @since 1.86
 		 */
 		SelfNoParse: "selfNoParse"
 	};

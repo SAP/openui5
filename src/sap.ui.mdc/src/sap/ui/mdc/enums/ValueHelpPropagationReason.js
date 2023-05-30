@@ -8,7 +8,7 @@ sap.ui.define(function () {
      *
      * @enum {string}
      * @public
-     * @since 1.100.0
+     * @since 1.115
      * @alias sap.ui.mdc.enums.ValueHelpPropagationReason
      */
     var ValueHelpPropagationReason = {

@@ -10,7 +10,7 @@ sap.ui.define(function() {
 	 *
 	 * @enum {number}
 	 * @public
-	 * @since 1.114
+	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.LinkType
 	 */
 	var LinkType = {

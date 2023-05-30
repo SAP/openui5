@@ -11,7 +11,7 @@ sap.ui.define(function() {
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @since 1.87
+	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ContentMode
 	 */
 	var ContentMode = {
@@ -25,14 +25,12 @@ sap.ui.define(function() {
 		 * Display mode for multiple values
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
-		 * @since 1.96
 		 */
 		DisplayMultiValue: "DisplayMultiValue",
 		/**
 		 * Display mode for multiline single value
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
-		 * @since 1.91
 		 */
 		DisplayMultiLine: "DisplayMultiLine",
 		/**

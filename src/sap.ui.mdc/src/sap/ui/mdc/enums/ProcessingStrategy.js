@@ -11,7 +11,7 @@ sap.ui.define(function() {
 	 *
 	 * @enum {string}
 	 * @ui5-restricted sap.ui.mdc
-	 * @since 1.107
+	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ProcessingStrategy
 	 */
 	var ProcessingStrategy = {

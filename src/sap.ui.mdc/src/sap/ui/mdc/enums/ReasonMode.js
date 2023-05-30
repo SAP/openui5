@@ -13,7 +13,7 @@ sap.ui.define(function() {
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @since 1.111.0
+	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ReasonMode
 	 */
 	var ReasonMode = {
