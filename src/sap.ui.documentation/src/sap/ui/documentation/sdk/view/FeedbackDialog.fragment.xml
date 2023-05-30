@@ -78,7 +78,7 @@
 		</VBox>
 		</content>
 		<beginButton>
-			<Button id="sendButton" text="{i18n>FEEDBACK_DIALOG_BTN_SEND}" press="onFeedbackDialogSend" enabled="false" type="Emphasized"/>
+			<Button id="sendButton" text="{i18n>FEEDBACK_DIALOG_BTN_SEND}" press="onFeedbackDialogSendPress" enabled="false" type="Emphasized"/>
 		</beginButton>
 		<endButton>
 			<Button id="cancelButton" text="{i18n>FEEDBACK_DIALOG_BTN_CANCEL}" press="onFeedbackDialogCancel"/>

@@ -15,6 +15,8 @@ sap.ui.define([
 		Template: "Template"
 	};
 
+	var id = 0;
+
 	// function to compute the app objects for a demo object
 	function createDemoAppData(oDemoAppMetadata, sLibUrl, sLibNamespace) {
 
@@ -41,6 +43,7 @@ sap.ui.define([
 		}
 
 		var oApp = {
+			id: 'demoapp-' + oDemoAppMetadata.category + '-' + id++,
 			lib : oDemoAppMetadata.namespace || sLibNamespace,
 			name : oDemoAppMetadata.text,
 			icon : oDemoAppMetadata.icon,
@@ -168,20 +171,23 @@ sap.ui.define([
 		 * @public
 		 */
 		fillJSONModel: function (oModel) {
-			function fnHandleLibInfoLoaded  (aLibs, oDocIndicies) {
-				oModel.setProperty("/bFooterVisible", true);
-				if (!aLibs) {
-					return;
+			return new Promise(function (resolve) {
+				function fnHandleLibInfoLoaded  (aLibs, oDocIndicies) {
+					oModel.setProperty("/bFooterVisible", true);
+					if (!aLibs) {
+						return;
+					}
+
+					// set model
+					var oModelData = oModel.getData();
+					oModel.setData(extend(oModelData, createModelData(aLibs, oDocIndicies)));
+					resolve(oModel);
 				}
 
-				// set model
-				var oModelData = oModel.getData();
-				oModel.setData(extend(oModelData, createModelData(aLibs, oDocIndicies)));
-			}
-
-			// load and process all lib info
-			oModel.setProperty("/bFooterVisible", false);
-			library._loadAllLibInfo("", "_getDocuIndex", fnHandleLibInfoLoaded);
+				// load and process all lib info
+				oModel.setProperty("/bFooterVisible", false);
+				library._loadAllLibInfo("", "_getDocuIndex", fnHandleLibInfoLoaded);
+			});
 		},
 		getDemoAppsData: function () {
 			return new Promise(function (resolve) {

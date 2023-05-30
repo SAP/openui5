@@ -254,6 +254,24 @@ sap.ui.define([
 				this.sIFrameUrl = ResourcesUtil.getResourceOrigin() + "/resources/sap/ui/documentation/sdk/index.html" + sSampleSearchParams;
 			},
 
+			getSettingsDialog: function () {
+				return new Promise(function (resolve, reject) {
+					if (!this._oSettingsDialog) {
+						Fragment.load({
+							id: "sample",
+							name: "sap.ui.documentation.sdk.view.appSettingsDialog",
+							controller: this
+						}).then(function (oSettingsDialog) {
+							this._oSettingsDialog = oSettingsDialog;
+							this._oSettingsDialog.setModel(this._oMessageBundle, "i18n");
+							resolve(this._oSettingsDialog);
+						}.bind(this));
+					} else {
+						resolve(this._oSettingsDialog);
+					}
+				}.bind(this));
+			},
+
 			/**
 			 * Opens the View settings dialog
 			 * @public
@@ -266,17 +284,17 @@ sap.ui.define([
 					});
 				}
 
-				if (!this._oSettingsDialog) {
-					this._oSettingsDialog = sap.ui.xmlfragment("sample", "sap.ui.documentation.sdk.view.appSettingsDialog", this);
-
-					this._oSettingsDialog.setModel(this._oMessageBundle, "i18n");
-				}
-
-				this.loadSampleSettings(this.applySampleSettings.bind(this)).then(function() {
-					this._oSettingsDialog.open();
-				}.bind(this)).catch(function(err) {
-					Log.error(err);
-				});
+				this.getSettingsDialog()
+					.then(function (oSettingsDialog) {
+						this.loadSampleSettings(this.applySampleSettings.bind(this));
+						return oSettingsDialog;
+					}.bind(this))
+					.then(function(oSettingsDialog) {
+						oSettingsDialog.open();
+					})
+					.catch(function(err) {
+						Log.error(err);
+					});
 			},
 
 			applySampleSettings: function(eMessage) {
