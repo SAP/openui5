@@ -5071,13 +5071,6 @@ sap.ui.define([
 		oPromise = _Helper.addPromise(oElement);
 
 		assert.strictEqual(oPromise.isPending(), true);
-		_Helper.getPrivateAnnotation(oElement, "resolve")("foo");
-		assert.strictEqual(oPromise.getResult(), "foo");
-
-		// code under test
-		oPromise = _Helper.addPromise(oElement);
-
-		assert.strictEqual(oPromise.isPending(), true);
 		_Helper.getPrivateAnnotation(oElement, "reject")("~oError~");
 		assert.strictEqual(oPromise.isRejected(), true);
 		oPromise.catch(function (oError) {
@@ -5194,52 +5187,21 @@ sap.ui.define([
 		_Helper.setPrivateAnnotation(oCreatedElement1, "reject", fnReject1);
 		oElement.SO_2_SOITEM.$postBodyCollection = "~postBodyCollection~";
 		oHelperMock.expects("cancelNestedCreates")
-			.withExactArgs(sinon.match.same(oElement), "post/path", "update")
+			.withExactArgs(sinon.match.same(oElement), "Error message")
 			.callThrough(); // initial call
 		oHelperMock.expects("cancelNestedCreates")
-			.withExactArgs(sinon.match.same(oCreatedElement0), "post/path", "update");
+			.withExactArgs(sinon.match.same(oCreatedElement0), "Error message");
 		oHelperMock.expects("cancelNestedCreates")
-			.withExactArgs(sinon.match.same(oCreatedElement1), "post/path", "update");
+			.withExactArgs(sinon.match.same(oCreatedElement1), "Error message");
 
 		// code under test
-		_Helper.cancelNestedCreates(oElement, "post/path", "update");
+		_Helper.cancelNestedCreates(oElement, "Error message");
 
 		[fnReject0, fnReject1].forEach(function (fnReject) {
 			sinon.assert.calledOnceWithExactly(fnReject, sinon.match(function (oParameter) {
 				return oParameter instanceof Error && oParameter.canceled
-					&& oParameter.message === "Deep create of SO_2_SOITEM canceled with POST"
-						+ " post/path; group: update";
+					&& oParameter.message === "Error message";
 			}));
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("resolveNestedCreates", function () {
-		var oCreatedElement0 = {},
-			oCreatedElement1 = {},
-			oElement = {
-				SO_2_SOITEM : [oCreatedElement0, oCreatedElement1],
-				nulled : null,
-				otherCollection : [{}]
-			},
-			oHelperMock = this.mock(_Helper),
-			fnResolve0 = sinon.spy(),
-			fnResolve1 = sinon.spy();
-
-		_Helper.setPrivateAnnotation(oCreatedElement0, "resolve", fnResolve0);
-		_Helper.setPrivateAnnotation(oCreatedElement1, "resolve", fnResolve1);
-		oElement.SO_2_SOITEM.$postBodyCollection = "~postBodyCollection~";
-		oHelperMock.expects("resolveNestedCreates").withExactArgs(sinon.match.same(oElement))
-			.callThrough(); // initial call
-		oHelperMock.expects("resolveNestedCreates")
-			.withExactArgs(sinon.match.same(oCreatedElement0));
-		oHelperMock.expects("resolveNestedCreates")
-			.withExactArgs(sinon.match.same(oCreatedElement1));
-
-		// code under test
-		_Helper.resolveNestedCreates(oElement);
-
-		sinon.assert.calledOnceWithExactly(fnResolve0);
-		sinon.assert.calledOnceWithExactly(fnResolve1);
 	});
 });

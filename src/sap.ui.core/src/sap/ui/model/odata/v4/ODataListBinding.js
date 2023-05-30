@@ -708,12 +708,16 @@ sap.ui.define([
 	 * property together with the entity (so-called "deep create"), for example a list of items for
 	 * an order. For this purpose, bind the list relative to a transient context. Calling this
 	 * method then adds a transient entity to the parent's navigation property, which is sent with
-	 * the payload of the parent entity. Such a nested context also has a
-	 * {@link sap.ui.model.odata.v4.Context#created created} promise, which resolves when the deep
-	 * create resolves; it cannot be inactive. <b>Beware:</b> After a succesful creation of the main
-	 * entity the context returned for a nested entity is no longer valid. New contexts are created
-	 * for the nested collection because it is not possible to reliably assign the response entities
-	 * to those of the request, especially if the count differs.
+	 * the payload of the parent entity. Such a nested context cannot be inactive.
+	 *
+	 * <b>Beware:</b> After a succesful creation of the main entity the context returned for a
+	 * nested entity is no longer valid. Do not use the
+	 * {@link sap.ui.model.odata.v4.Context#created created} promise of such a context! New contexts
+	 * are created for the nested collection because it is not possible to reliably assign the
+	 * response entities to those of the request, especially if the count differs. For this reason,
+	 * the <code>created</code> promises of all nested contexts are always rejected with an instance
+	 * of <code>Error</code>, even if the deep create succeeds. This error always has the property
+	 * <code>canceled</code> with the value <code>true</code>.
 	 *
 	 * Deep create requires the <code>autoExpandSelect<code> parameter at the
 	 * {@link sap.ui.model.odata.v4.ODataModel#constructor model}. The refresh after a deep create
@@ -849,12 +853,11 @@ sap.ui.define([
 			function () { // submit callback
 				that.fireEvent("createSent", {context : oContext});
 			}
-		).then(function (oCreatedEntity) { // the entity was created on the server
+		).then(function (oCreatedEntity) {
+			// The entity was created on the server
+			// Note: This code is not called for nested creates, they are always rejected
 			var bDeepCreate, sGroupId, sPredicate;
 
-			if (!oCreatedEntity) { // a nested create
-				return;
-			}
 			// refreshSingle requires the new key predicate in oContext.getPath()
 			sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
 			if (sPredicate) {
@@ -880,6 +883,9 @@ sap.ui.define([
 		this.iCreatedContexts += 1;
 		oContext = Context.create(this.oModel, this, sTransientPath, -this.iCreatedContexts,
 			oCreatePromise, bInactive);
+		if (this.isTransient()) {
+			oContext.created().catch(this.oModel.getReporter());
+		}
 		// to make sure that #fetchValue does not overtake #createInCache, avoid bCached flag!
 		oContext.fetchValue().then(function (oElement) {
 			if (oElement) {
@@ -3024,7 +3030,7 @@ sap.ui.define([
 
 				oContext = Context.create(that.oModel, that, sResolvedPath + sTransientPredicate,
 					i - aInitialDataCollection.length, oPromise, false, true);
-				oContext.created().catch(function () { /* avoid "Uncaught (in promise)" */ });
+				oContext.created().catch(that.oModel.getReporter());
 
 				_Helper.setPrivateAnnotation(oInitialData, "context", oContext);
 				_Helper.setPrivateAnnotation(oInitialData, "firstCreateAtEnd", false);

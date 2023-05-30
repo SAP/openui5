@@ -189,15 +189,20 @@ sap.ui.define([
 	 * Once the promise is resolved, {@link #getPath} returns a path including the key predicate
 	 * of the new entity. This requires that all key properties are available.
 	 *
+	 * Note that the promise of a nested context within a deep create is always rejected, even if
+	 * the deep create succeeds. See {@link sap.ui.model.odata.v4.ODataListBinding#create} for more
+	 * details.
+	 *
 	 * @returns {Promise<void>|undefined}
 	 *   A promise that is resolved without data when the entity represented by this context has
 	 *   been created in the back end. It is rejected with an <code>Error</code> instance where
 	 *   <code>oError.canceled === true</code> if the transient entity is deleted before it is
 	 *   created in the back end, for example via {@link sap.ui.model.odata.v4.Context#delete},
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#resetChanges} or
-	 *   {@link sap.ui.model.odata.v4.ODataModel#resetChanges}. It is rejected with an
-	 *   <code>Error</code> instance without <code>oError.canceled</code> if loading of $metadata
-	 *   fails. Returns <code>undefined</code> if the context has not been created using
+	 *   {@link sap.ui.model.odata.v4.ODataModel#resetChanges}, and for all nested contexts within a
+	 *   deep create. It is rejected with an <code>Error</code> instance without
+	 *   <code>oError.canceled</code> if loading of $metadata fails. Returns <code>undefined</code>
+	 *   if the context has not been created using
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#create}.
 	 *
 	 * @public

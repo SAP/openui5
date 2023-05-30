@@ -49073,11 +49073,20 @@ sap.ui.define([
 				.expectChange("order", ["new"])
 				.expectChange("note", ["AAA", "CCC", "BBB"]);
 
+			that.expectCanceledError(
+					"Deep create of SalesOrderList succeeded. Do not use this promise.")
+				.expectCanceledError(
+					"Deep create of SalesOrderList succeeded. Do not use this promise.")
+				.expectCanceledError(
+					"Deep create of SalesOrderList succeeded. Do not use this promise.")
+				.expectCanceledError(
+					"Deep create of SalesOrderList succeeded. Do not use this promise.");
+
 			return Promise.all([
 				oModel.submitBatch("update"),
 				oCreatedOrderContext.created(),
 				oItemsBinding.getCurrentContexts().map(function (oContext) {
-					oContext.created();
+					checkCanceled(assert, oContext.created());
 				}),
 				that.waitForChanges(assert, "submit POST")
 			].flat());
@@ -49227,6 +49236,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectChange("note", [, "B"])
 				.expectChange("itemCount", "2");
+			that.expectCanceledError("Deleted from deep create");
 
 			// code under test
 			oCreatedItemContext3.delete();
@@ -49263,6 +49273,7 @@ sap.ui.define([
 					technical : true,
 					type : "Error"
 				}]);
+
 			return Promise.all([
 				oModel.submitBatch("update"),
 				that.waitForChanges(assert, "submit -> error")
@@ -49300,6 +49311,10 @@ sap.ui.define([
 						SalesOrderID : "new"
 					}]
 				})
+				.expectCanceledError(
+					"Deep create of SalesOrderList succeeded. Do not use this promise.")
+				.expectCanceledError(
+					"Deep create of SalesOrderList succeeded. Do not use this promise.")
 				.expectChange("isTransient", [false])
 				.expectChange("order", ["new"])
 				.expectChange("note", ["BBB", "additional", "AAA"])
@@ -49404,7 +49419,7 @@ sap.ui.define([
 						undefined,
 						"$expand request still pending");
 				}),
-				oCreatedItemContext2.created(),
+				checkCanceled(assert, oCreatedItemContext2.created()),
 				that.waitForChanges(assert, "submit -> success")
 			]);
 		}).then(function () {
@@ -49544,6 +49559,13 @@ sap.ui.define([
 				oCreatedEquipmentsContext2 = oEmployeesTable.getItems()[1].getCells()[1]
 					.getBinding("items").getAllCurrentContexts()[0];
 
+			that.expectCanceledError("Deep create of TEAMS canceled; group: update")
+				.expectCanceledError("Deep create of TEAMS canceled; group: update")
+				.expectCanceledError("Deep create of TEAMS canceled; group: update")
+				.expectCanceledError("Deep create of TEAMS canceled; group: update")
+				.expectCanceledError("Deep create of TEAMS canceled; group: update")
+				.expectCanceledError("Deep create of TEAMS canceled; group: update");
+
 			return Promise.all([
 				checkCanceled(assert, oCreatedTeamContext.created()),
 				checkCanceled(assert, oCreatedEmployeeContext1.created()),
@@ -49595,7 +49617,8 @@ sap.ui.define([
 				}, {
 					SalesOrderID : "new1",
 					SO_2_SOITEM : []
-				});
+				})
+				.expectCanceledError("Deleted from deep create");
 
 			oCreatedItemContext = that.oView.byId("items").getBinding("items")
 				.create({Note : "doNotSubmit"});
@@ -49737,7 +49760,11 @@ sap.ui.define([
 
 			that.expectChange("employeeCount", "2")
 				.expectChange("employeeName", [, "Frederic Fall"])
-				.expectChange("equipmentName", ["F1", "F2"]); // moved to another row
+				.expectChange("equipmentName", ["F1", "F2"]) // moved to another row
+				.expectCanceledError("Deleted from deep create")
+				.expectCanceledError("Deleted from deep create")
+				.expectCanceledError("Deleted from deep create")
+				.expectCanceledError("Deleted from deep create");
 
 			assert.strictEqual(aEquipmentsContexts.length, 3);
 			return Promise.all([
@@ -49802,6 +49829,11 @@ sap.ui.define([
 						}]
 					}]
 				})
+				.expectCanceledError("Deep create of TEAMS succeeded. Do not use this promise.")
+				.expectCanceledError("Deep create of TEAMS succeeded. Do not use this promise.")
+				.expectCanceledError("Deep create of TEAMS succeeded. Do not use this promise.")
+				.expectCanceledError("Deep create of TEAMS succeeded. Do not use this promise.")
+				.expectCanceledError("Deep create of TEAMS succeeded. Do not use this promise.")
 				.expectChange("equipmentName", ["P1", "P2"])
 				.expectChange("equipmentName", ["F1"]);
 
@@ -49811,13 +49843,13 @@ sap.ui.define([
 			return Promise.all([
 				oTeamContext.created(),
 				aEmployeesContexts.map(function (oContext) {
-					return oContext.created();
+					return checkCanceled(assert, oContext.created());
 				}),
 				aEquipmentsContexts0.map(function (oContext) {
-					return oContext.created();
+					return checkCanceled(assert, oContext.created());
 				}),
 				aEquipmentsContexts1.map(function (oContext) {
-					return oContext.created();
+					return checkCanceled(assert, oContext.created());
 				}),
 				// code under test
 				oModel.submitBatch("update"),
