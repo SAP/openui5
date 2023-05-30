@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-    "sap/base/Log"
+    "sap/base/Log",
+    "sap/ui/core/Core"
 ], function(
-    Log
+    Log,
+    Core
 ) {
 	"use strict";
 
@@ -171,7 +173,19 @@ sap.ui.define([
 
         Object.keys(obj).forEach(function (prop) {
 
-            var apiVersion = obj.apiVersion || 1;
+            var apiVersion;
+
+            var bNeedOldApiVersion =
+            ("sap.fe.core" in Core.getLoadedLibraries()) ||
+            ("sap.fe.macros" in Core.getLoadedLibraries()) ||
+            ("sap.sac.df" in Core.getLoadedLibraries());
+
+            if (bNeedOldApiVersion && !(obj.hasOwnProperty("apiVersion"))) {
+                apiVersion = 1;
+            } else {
+                apiVersion = obj.apiVersion || 2;
+            }
+
             if (versionMappings[apiVersion] && versionMappings[apiVersion][prop] && obj[prop] instanceof Function) {
 
                 var fnDelegateMethod = obj[prop];
