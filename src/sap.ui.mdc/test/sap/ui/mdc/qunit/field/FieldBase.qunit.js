@@ -68,7 +68,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	'./FieldBaseDelegateODataDefaultTypes'
 ], function(
 	jQuery,
 	qutils,
@@ -135,7 +136,8 @@ sap.ui.define([
 	Device,
 	KeyCodes,
 	oCore,
-	UI5Date
+	UI5Date,
+	FieldBaseDelegateODataDefaultTypes
 ) {
 	"use strict";
 
@@ -297,6 +299,7 @@ sap.ui.define([
 
 	QUnit.module("Field rendering", {
 		beforeEach: function() {
+			FieldBaseDelegateODataDefaultTypes.enable();
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
 			oField = new FieldBase("F1", {
@@ -304,6 +307,7 @@ sap.ui.define([
 			});
 		},
 		afterEach: function() {
+			FieldBaseDelegateODataDefaultTypes.disable();
 			oField.destroy();
 			oField = undefined;
 			oCM.destroy();
@@ -842,6 +846,7 @@ sap.ui.define([
 
 	QUnit.module("Field APIs", {
 		beforeEach: function() {
+			FieldBaseDelegateODataDefaultTypes.enable();
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
 			oField = new FieldBase("F1", {
@@ -849,6 +854,7 @@ sap.ui.define([
 			});
 		},
 		afterEach: function() {
+			FieldBaseDelegateODataDefaultTypes.disable();
 			oField.destroy();
 			oField = undefined;
 			oCM.destroy();
@@ -1046,6 +1052,7 @@ sap.ui.define([
 
 	QUnit.module("conditions & properties", {
 		beforeEach: function() {
+			FieldBaseDelegateODataDefaultTypes.enable();
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
 
@@ -1066,6 +1073,7 @@ sap.ui.define([
 			oCore.applyChanges();
 		},
 		afterEach: function() {
+			FieldBaseDelegateODataDefaultTypes.disable();
 			oFieldEditMulti.destroy();
 			oFieldEditSingle.destroy();
 			oFieldDisplay.destroy();
@@ -2701,6 +2709,7 @@ sap.ui.define([
 
 	QUnit.module("Clone", {
 		beforeEach: function() {
+			FieldBaseDelegateODataDefaultTypes.enable();
 			oField = new FieldBase("F1", { conditions: "{cm>/conditions/Name}" });
 			//			oField.attachChange(_myChangeHandler);
 			oField.fireChangeEvent = _myFireChange;
@@ -2713,6 +2722,7 @@ sap.ui.define([
 			oCore.applyChanges();
 		},
 		afterEach: function() {
+			FieldBaseDelegateODataDefaultTypes.disable();
 			oField.destroy();
 			oField = undefined;
 			iCount = 0;

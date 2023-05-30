@@ -91,7 +91,8 @@ sap.ui.define([
 			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
 			editMode: FieldEditMode.Display,
 			width:"100%",
-			multipleLines: false // set always to have property not initial
+			multipleLines: false, // set always to have property not initial,
+			delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}
 		};
 
 		if (oProperty.name === "countryOfOrigin_code") {

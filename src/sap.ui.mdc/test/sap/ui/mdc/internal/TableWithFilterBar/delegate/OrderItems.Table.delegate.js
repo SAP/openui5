@@ -74,7 +74,8 @@ sap.ui.define([
 			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
 			editMode: FieldEditMode.Display,
 			width:"100%",
-			multipleLines: false
+			multipleLines: false,
+			delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}
 		};
 
 		if (oProperty.name === "book_ID") {

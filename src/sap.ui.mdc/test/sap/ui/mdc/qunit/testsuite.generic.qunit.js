@@ -39,6 +39,7 @@ sap.ui.define([
 				}
 			},
 			"sap.ui.mdc.field.FieldBase": {
+				create: false,
 				properties: {
 					dataType: "sap.ui.model.type.String",
 					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit
