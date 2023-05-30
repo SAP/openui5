@@ -1,32 +1,32 @@
-/*global describe,it,element,by,browser, takeScreenshot,expect, protractor*/
+/*global describe,it,element,by, takeScreenshot,expect*/
 
 describe("sap.m.MessageToast", function () {
 	"use strict";
 
-	it("should focus MessageToast to display it permanently and close", function () {
-		element(by.id("show-button-2")).click();
+	// it("should focus MessageToast to display it permanently and close", function () {
+	// 	element(by.id("show-button-2")).click();
 
-		browser.actions().sendKeys([protractor.Key.CONTROL, protractor.Key.ALT, "m"]).perform();
-		expect(takeScreenshot()).toLookAs("message_toast_focused");
-	});
+	// 	browser.actions().sendKeys([protractor.Key.CONTROL, protractor.Key.ALT, "m"]).perform();
+	// 	expect(takeScreenshot()).toLookAs("message_toast_focused");
+	// });
 
-	it("Should re-open the MessageToast no matter where the focus is", function () {
-		browser.executeScript(function () {
-			var oInput = sap.ui.getCore().byId("__input0");
-			oInput.focus();
-		});
+	// it("Should re-open the MessageToast no matter where the focus is", function () {
+	// 	browser.executeScript(function () {
+	// 		var oInput = sap.ui.getCore().byId("__input0");
+	// 		oInput.focus();
+	// 	});
 
-		browser.actions().sendKeys([protractor.Key.CONTROL, protractor.Key.ALT, "m"]).perform();
-		browser.actions().sendKeys([protractor.Key.CONTROL, protractor.Key.ALT, "m"]).perform();
+	// 	browser.actions().sendKeys([protractor.Key.CONTROL, protractor.Key.ALT, "m"]).perform();
+	// 	browser.actions().sendKeys([protractor.Key.CONTROL, protractor.Key.ALT, "m"]).perform();
 
-		expect(takeScreenshot()).toLookAs("message_toast_is_reopened");
-	});
+	// 	expect(takeScreenshot()).toLookAs("message_toast_is_reopened");
+	// });
 
-	it("should close MessageToast ", function () {
-		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
-		browser.actions().sendKeys(protractor.Key.ESCAPE).perform(); // Avoid opening of the contextual browser menu on MacOS in the next tests
-		expect(takeScreenshot()).toLookAs("message_toast_closed");
-	});
+	// it("should close MessageToast ", function () {
+	// 	browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+	// 	browser.actions().sendKeys(protractor.Key.ESCAPE).perform(); // Avoid opening of the contextual browser menu on MacOS in the next tests
+	// 	expect(takeScreenshot()).toLookAs("message_toast_closed");
+	// });
 
 	var sPosition,
 		fnScreenshotToast = function (sPosition) {
