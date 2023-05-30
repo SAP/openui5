@@ -1,14 +1,24 @@
-/*global QUnit,sinon*/
+/*global QUnit, sinon */
 
 sap.ui.define(
 	[
-	    "sap/m/NavContainer",
-	    "sap/m/SplitContainer",
-	    "./helpers",
-	    "sap/ui/Device"
+		"sap/m/SplitContainer",
+		"sap/m/NavContainer",
+		"./helpers",
+		"sap/ui/Device"
 	],
-	function(NavContainer, SplitContainer, helpers, Device) {
+	function(SplitContainer, NavContainer, helpers, Device) {
 		"use strict";
+
+		// Helper to abstract from Sinon 1 and Sinon 4
+		// (this module is used with both versions)
+		function stubWith(sandbox, object, property, value) {
+			if ( sinon.log ) {// sinon has no version property, but 'log' was removed with 2.x
+				return sandbox.stub(object, property, value);
+			} else {
+				return sandbox.stub(object, property).value(value);
+			}
+		}
 
 		return {
 			start : function (oOptions) {
@@ -28,29 +38,30 @@ sap.ui.define(
 				QUnit.test("Should add one Navigation per detail and master aggregation for split app in desktop", function (assert) {
 					//Arrange
 					var oSplitContainer = new SplitContainer(),
-						oSplitContainerSpy = sinon.spy(oSplitContainer, "to");
+						oSplitContainerSpy = this.spy(oSplitContainer, "to"),
+						fnDone = assert.async();
 
 					fnSetup.call(this, {
 						"dummyMaster": {
 							targetControl: oSplitContainer.getId(),
-							view: "MasterDummy",
-							viewType: "JS",
+							view: "sap.ui.test.views.MasterDummy",
+							viewType: "XML",
 							targetAggregation: "masterPages",
 							subroutes: {
 								"dummyDetail": {
 									targetAggregation: "detailPages",
-									view: "DetailDummy",
-									viewType: "JS",
+									view: "sap.ui.test.views.DetailDummy",
+									viewType: "XML",
 									subroutes: {
 										"master": {
 											targetAggregation: "masterPages",
-											view: "Master",
-											viewType: "JS",
+											view: "sap.ui.test.views.Master",
+											viewType: "XML",
 											subroutes: {
 												"detail": {
 													pattern: "detail",
-													view: "Detail",
-													viewType: "JS",
+													view: "sap.ui.test.views.Detail",
+													viewType: "XML",
 													targetAggregation: "detailPages"
 												}
 											}
@@ -61,159 +72,158 @@ sap.ui.define(
 						}
 					});
 
-					this.stub(Device.system, "phone").value(false);
+					stubWith(this, Device.system, "phone", false);
 
-					helpers.setViewDelays({
-						MasterDummy: 100,
-						DetailDummy: 70,
-						Master: 40,
-						Detail: 10
-					});
+					//views
+					Promise.all([
+							helpers.createViewAndController("Detail"),
+							helpers.createViewAndController("DetailDummy"),
+							helpers.createViewAndController("Master"),
+							helpers.createViewAndController("MasterDummy")
+					]).then(function () {
+						//Act
+						fnAct.call(this, "detail", assert).then(function () {
+							//Assert
+							assert.strictEqual(oSplitContainerSpy.callCount, 2, "did invoke add two navigations");
 
-					//Act
-					var oPromise = fnAct.call(this, "detail", assert);
+							var oCurrentDetail = oSplitContainer.getCurrentDetailPage();
+							var oCurrentMaster = oSplitContainer.getCurrentMasterPage();
+							assert.strictEqual(oCurrentDetail.getViewName(), "Detail", "did navigate to the detail view");
+							assert.strictEqual(oCurrentMaster.getViewName(), "Master", "did navigate to the master view");
 
-					return oPromise.then(function() {
-						//Assert
-						assert.strictEqual(oSplitContainerSpy.callCount, 2, "did invoke add two navigations");
+							var oFirstCall = oSplitContainerSpy.getCall(0);
+							var oSecondCall = oSplitContainerSpy.getCall(1);
 
-						var oCurrentDetail = oSplitContainer.getCurrentDetailPage();
-						var oCurrentMaster = oSplitContainer.getCurrentMasterPage();
-						assert.strictEqual(oCurrentDetail.getViewName(), "Detail", "did navigate to the detail view");
-						assert.strictEqual(oCurrentMaster.getViewName(), "Master", "did navigate to the master view");
-
-						var oFirstCall = oSplitContainerSpy.getCall(0);
-						var oSecondCall = oSplitContainerSpy.getCall(1);
-
-						assert.strictEqual(oFirstCall.args[0], oCurrentMaster.getId(), "did invoke it with the master view");
-						assert.strictEqual(oSecondCall.args[0], oCurrentDetail.getId(), "did invoke it with the detail view");
-
-						oSplitContainerSpy.restore();
-						oSplitContainer.destroy();
-					});
+							assert.strictEqual(oFirstCall.args[0], oCurrentMaster.getId(), "did invoke it with the master view");
+							assert.strictEqual(oSecondCall.args[0], oCurrentDetail.getId(), "did invoke it with the detail view");
+							fnDone();
+						});
+					}.bind(this));
 
 				});
 
 				QUnit.test("Should preserve the view that is currently in the master or detail if configured (splitapp desktop)", function (assert) {
 					//Arrange
-					var oSplitContainer = new SplitContainer();
+					var oSplitContainer = new SplitContainer(),
+					fnDone = assert.async();
 
 					fnSetup.call(this, {
 						"firstMaster": {
 							targetControl: oSplitContainer.getId(),
-							view: "FirstMaster",
-							viewType: "JS",
+							view: "sap.ui.test.views.FirstMaster",
+							viewType: "XML",
 							targetAggregation: "masterPages",
 							preservePageInSplitContainer: true,
 							subroutes: {
 								"detail": {
 									pattern: "detail",
 									targetAggregation: "detailPages",
-									view: "Detail",
-									viewType: "JS"
+									view: "sap.ui.test.views.Detail",
+									viewType: "XML"
 								}
 							}
 						},
 						"secondMaster": {
 							targetControl: oSplitContainer.getId(),
 							pattern: "secondMaster",
-							view: "SecondMaster",
-							viewType: "JS",
+							view: "sap.ui.test.views.SecondMaster",
+							viewType: "XML",
 							targetAggregation: "masterPages"
 						}
 					});
 
-					this.stub(Device.system, "phone").value(false);
+					stubWith(this, Device.system, "phone", false);
 
-					helpers.setViewDelays({
-						SecondMaster: 70,
-						Detail: 10,
-						FirstMaster: 40
-					});
+					//views
+					Promise.all([
+						helpers.createViewAndController("Detail"),
+						helpers.createViewAndController("FirstMaster"),
+						helpers.createViewAndController("SecondMaster")
+					]).then(function () {
+						//Act
+						fnAct.call(this, "secondMaster", assert).then(function() {
+							assert.strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did load the secondMaster");
 
-					//Act
-					var oMasterPromise = fnAct.call(this, "secondMaster", assert);
-					oMasterPromise.then(function() {
-						assert.strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did load the secondMaster");
-					});
+							fnAct.call(this, "detail", assert).then(function () {
+								//Assert
+								assert.strictEqual(oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
+								assert.strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did not switch the masterview");
+								fnDone();
+							});
+						}.bind(this));
+					}.bind(this));
 
-					var oDetailPromise = fnAct.call(this, "detail");
-					return Promise.all([oMasterPromise, oDetailPromise]).then(function() {
-						//Assert
-						assert.strictEqual(oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
-						assert.strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did not switch the masterview");
-						oSplitContainer.destroy();
-					});
 				});
 
 				QUnit.test("Should not preserve the view that is currently in the master or detail if it is matching the pattern", function (assert) {
 					//Arrange
-					var oSplitContainer = new SplitContainer();
+					var oSplitContainer = new SplitContainer(),
+					fnDone = assert.async();
 
 					fnSetup.call(this, {
 						"firstMaster": {
 							targetControl: oSplitContainer.getId(),
 							pattern: "firstMaster",
-							view: "FirstMaster",
-							viewType: "JS",
+							view: "sap.ui.test.views.FirstMaster",
+							viewType: "XML",
 							targetAggregation: "masterPages",
 							preservePageInSplitContainer: true
 						},
 						"secondMaster": {
 							targetControl: oSplitContainer.getId(),
 							pattern: "secondMaster",
-							view: "SecondMaster",
-							viewType: "JS",
+							view: "sap.ui.test.views.SecondMaster",
+							viewType: "XML",
 							targetAggregation: "masterPages"
 						}
 					});
 
-					helpers.setViewDelays({
-						SecondMaster: 40,
-						FirstMaster: 10
-					});
+					//views
+					Promise.all([
+						helpers.createViewAndController("FirstMaster"),
+						helpers.createViewAndController("SecondMaster")
+					]).then(function(){
+						//Act
+						fnAct.call(this, "secondMaster").then(function () {
+							assert.strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did load the secondMaster");
 
-					//Act
-					var oSecondMasterPromise = fnAct.call(this, "secondMaster", assert);
-					return oSecondMasterPromise.then(function() {
-						assert.strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did load the secondMaster");
-						var oFirstMasterPromise = fnAct.call(this, "firstMaster");
-
-						return oFirstMasterPromise.then(function() {
-							//Assert
-							assert.strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "FirstMaster", "did switch the masterview");
-							oSplitContainer.destroy();
-						});
+							fnAct.call(this, "firstMaster").then(function () {
+								//Assert
+								assert.strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "FirstMaster", "did switch the masterview");
+								fnDone();
+							});
+						}.bind(this));
 					}.bind(this));
 				});
 
 				QUnit.test("Should preserve the view that is currently in the master with multiple Masters", function (assert) {
 					//Arrange
-					var oSplitContainer = new SplitContainer();
+					var oSplitContainer = new SplitContainer(),
+					fnDone = assert.async();
 
 					fnSetup.call(this, {
 						"firstMaster": {
 							targetControl: oSplitContainer.getId(),
-							view: "FirstMaster",
+							view: "sap.ui.test.views.FirstMaster",
 							targetAggregation: "masterPages",
-							viewType: "JS",
+							viewType: "XML",
 							subroutes: {
 								"secondMaster": {
-									view: "SecondMaster",
+									view: "sap.ui.test.views.SecondMaster",
 									targetAggregation: "masterPages",
-									viewType: "JS",
+									viewType: "XML",
 									subroutes: {
 										"thirdMaster": {
-											view: "ThirdMaster",
+											view: "sap.ui.test.views.ThirdMaster",
 											targetAggregation: "masterPages",
 											preservePageInSplitContainer: true,
-											viewType: "JS",
+											viewType: "XML",
 											subroutes: {
 												"detail": {
 													pattern: "detail",
 													targetAggregation: "detailPages",
-													view: "Detail",
-													viewType: "JS"
+													view: "sap.ui.test.views.Detail",
+													viewType: "XML"
 												}
 											}
 										}
@@ -223,26 +233,27 @@ sap.ui.define(
 						}
 					});
 
-					this.stub(Device.system, "phone").value(false);
+					stubWith(this, Device.system, "phone", false);
 
-					helpers.setViewDelays({
-						SecondMaster: 70,
-						FirstMaster: 100,
-						Detail: 10,
-						ThirdMaster: 40
-					});
+					//views
+					Promise.all([
+						helpers.createViewAndController("Detail"),
+						helpers.createViewAndController("FirstMaster"),
+						helpers.createViewAndController("SecondMaster"),
+						helpers.createViewAndController("ThirdMaster")
+					]).then(function () {
+						//Act
+						assert.strictEqual(oSplitContainer.getCurrentMasterPage(), undefined, "did not load a master yet");
+						fnAct.call(this, "detail").then(function () {
+							//Assert
+							assert.strictEqual(oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
+							assert.strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did not switch the masterview");
+							fnDone();
+						});
+					}.bind(this));
 
-					//Act
-					assert.strictEqual(oSplitContainer.getCurrentMasterPage(), undefined, "did not load a master yet");
-					var oPromise = fnAct.call(this, "detail", assert);
-
-					return oPromise.then(function() {
-						//Assert
-						assert.strictEqual(oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
-						assert.strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did not switch the masterview");
-						oSplitContainer.destroy();
-					});
 				});
+
 
 				QUnit.test("Test multiple views to be diplayed in the same order as they are requested", function(assert) {
 					//Arrange
@@ -250,30 +261,34 @@ sap.ui.define(
 					fnSetup.call(this, {
 						"first": {
 							targetControl: oNavContainer.getId(),
+							path: "sap.ui.test.views",
 							pattern: "first",
-							view: "First",
-							viewType: "JS",
+							view: "first",
+							viewType: "XML",
 							targetAggregation: "pages"
 						},
 						"second": {
 							targetControl: oNavContainer.getId(),
+							path: "sap.ui.test.views",
 							pattern: "second",
-							view: "Second",
-							viewType: "JS",
+							view: "second",
+							viewType: "XML",
 							targetAggregation: "pages"
 						},
 						"third": {
 							targetControl: oNavContainer.getId(),
+							path: "sap.ui.test.views",
 							pattern: "third",
-							view: "Third",
-							viewType: "JS",
+							view: "third",
+							viewType: "XML",
 							targetAggregation: "pages"
 						},
 						"fourth": {
 							targetControl: oNavContainer.getId(),
+							path: "sap.ui.test.views",
 							pattern: "fourth",
-							view: "Fourth",
-							viewType: "JS",
+							view: "fourth",
+							viewType: "XML",
 							targetAggregation: "pages"
 						}
 					});
@@ -293,12 +308,11 @@ sap.ui.define(
 					];
 
 					return Promise.all(aPromises).then(function() {
-						assert.equal(oNavContainer.getCurrentPage().getViewName(), "Fourth", "Correct view displayed");
+						assert.equal(oNavContainer.getCurrentPage().getViewName(), "fourth", "Correct view displayed");
 					});
 				});
 
 			}
 		};
-
 	}
 );

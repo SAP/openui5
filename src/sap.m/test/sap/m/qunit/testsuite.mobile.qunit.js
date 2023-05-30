@@ -2315,44 +2315,47 @@ sap.ui.define([
 			 * @deprecated Since 1.28
 			 */
 			"routing/async/RouteMatchedHandler": {
-				title: "QUnit Page for RouteMatchedHandler"
+				title: "QUnit Page for RouteMatchedHandler",
+				ui5: {
+					resourceroots: {
+						"sap.ui.test": "test-resources/sap/m/qunit/"
+					}
+				}
 			},
 			"routing/async/Router": {
-				title: "QUnit Page for sap.m.routing.Router"
+				title: "QUnit Page for sap.m.routing.Router",
+				ui5: {
+					resourceroots: {
+						"sap.ui.test": "test-resources/sap/m/qunit/"
+					}
+				}
 			},
 			"routing/async/Targets": {
-				title: "QUnit Page for sap.m.routing.Targets"
+				title: "QUnit Page for sap.m.routing.Targets",
+				ui5: {
+					resourceroots: {
+						"sap.ui.test": "test-resources/sap/m/qunit/"
+					}
+				}
 			},
 			/**
 			 * @deprecated Since 1.28
 			 */
 			"routing/common/RouteMatchedHandler": {
-				title: "QUnit Page for RouteMatchedHandler"
-			},
-			"routing/common/TargetHandler": {
-				title: "QUnit Page for sap.m.routing.TargetHandler"
-			},
-			/**
-			 * @deprecated Since 1.28
-			 */
-			"routing/sync/RouteMatchedHandler": {
 				title: "QUnit Page for RouteMatchedHandler",
-				sinon: {
-					version: 4,
-					useFakeTimers: true
+				ui5: {
+					resourceroots: {
+						"sap.ui.test": "test-resources/sap/m/qunit/"
+					}
 				}
 			},
-			/**
-			 * @deprecated Since 1.90 together with sync routing
-			 */
-			"routing/sync/Router": {
-				title: "QUnit Page for sap.m.routing.Router"
-			},
-			/**
-			 * @deprecated Since 1.90 together with sync routing
-			 */
-			"routing/sync/Targets": {
-				title: "QUnit Page for sap.m.routing.Targets"
+			"routing/common/TargetHandler": {
+				title: "QUnit Page for sap.m.routing.TargetHandler",
+				ui5: {
+					resourceroots: {
+						"sap.ui.test": "test-resources/sap/m/qunit/"
+					}
+				}
 			},
 			"semantic/Segment": {
 				title: "Test Page for sap.m.semantic.Segment"
