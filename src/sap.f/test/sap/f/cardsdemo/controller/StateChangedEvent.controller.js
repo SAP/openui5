@@ -207,7 +207,7 @@ sap.ui.define([
 				"value": "testaddress@sap.com"
 			}, {
 				"id": "duration",
-				"value": "12:30"
+				"value": "PT12H30M"
 			}, {
 				"id": "dateRange",
 				"value": {

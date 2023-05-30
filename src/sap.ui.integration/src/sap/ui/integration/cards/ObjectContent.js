@@ -33,6 +33,7 @@ sap.ui.define([
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/util/Form",
 	"sap/ui/integration/util/DateRangeHelper",
+	"sap/ui/integration/util/Duration",
 	"sap/f/AvatarGroup",
 	"sap/f/AvatarGroupItem",
 	"sap/f/cards/NumericIndicators",
@@ -74,6 +75,7 @@ sap.ui.define([
 	Utils,
 	Form,
 	DateRangeHelper,
+	Duration,
 	AvatarGroup,
 	AvatarGroupItem,
 	NumericIndicators,
@@ -836,7 +838,7 @@ sap.ui.define([
 				displayFormat: "HH:mm",
 				support2400: true,
 				required: oForm.getRequiredValidationValue(oItem),
-				value: oItem.value,
+				value: BindingHelper.formattedProperty(oItem.value, Duration.fromISO),
 				visible: BindingHelper.reuse(vVisible),
 				placeholder: oItem.placeholder
 			});
