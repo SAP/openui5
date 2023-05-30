@@ -84,6 +84,14 @@ sap.ui.define([
 			}
 		}));
 
+		/**
+		 * "and" property for chaining
+		 * @name sap.ui.test.Opa5.prototype.and
+		 * @member
+		 * @type {this}
+		 * @public
+		 */
+
 		Opa5._appUriParams = _OpaUriParameterParser._getAppParams();
 		Opa5._allUriParams = new URI().search(true);
 		Opa5._oPlugin = new OpaPlugin();
@@ -722,15 +730,8 @@ sap.ui.define([
 		 */
 
 		/**
-		 * @typedef {sap.ui.test.Opa5} sap.ui.test.Opa5.Chain
-		 * @description Used as return value of the {@link sap.ui.test.Opa5#waitFor} to assist chaining
-		 * @property {sap.ui.test.Opa5} and A reference to the same <code>sap.ui.test.Opa5</code> instance that can be used for chaining statements
-		 * @public
-		 */
-
-		/**
 		 * @param {sap.ui.test.Opa5.SingleControlSelector|sap.ui.test.Opa5.MultiControlSelector} options a superset of the parameters of {@link sap.ui.test.Opa#waitFor}
-		 * @returns {sap.ui.test.Opa5.Chain} an object extending a jQuery promise.
+		 * @returns {this} an object extending a jQuery promise.
 		 * The object is essentially a jQuery promise with an additional "and" method that can be used for chaining waitFor statements.
 		 * The promise is resolved when the waitFor completes successfully.
 		 * The promise is rejected with the options object, if an error occurs. In this case, options.errorMessage will contain a detailed error message containing the stack trace and Opa logs.
