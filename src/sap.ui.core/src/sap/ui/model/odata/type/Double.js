@@ -77,6 +77,9 @@ sap.ui.define([
 	 * @param {object} [oFormatOptions]
 	 *   Format options as defined in {@link sap.ui.core.format.NumberFormat.getFloatInstance}.
 	 *   In contrast to NumberFormat <code>groupingEnabled</code> defaults to <code>true</code>.
+	 * @param {boolean} [oFormatOptions.parseEmptyValueToZero=false]
+	 *   Whether the empty string and <code>null</code> are parsed to <code>0</code> if the <code>nullable</code>
+	 *   constraint is set to <code>false</code>; see {@link #parseValue parseValue}; since 1.115.0
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
 	 *   by default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
 	 *   "short" or "long"; since 1.89.0
@@ -94,6 +97,7 @@ sap.ui.define([
 					ODataType.apply(this, arguments);
 					this.oFormatOptions = oFormatOptions;
 					setConstraints(this, oConstraints);
+					this.checkParseEmptyValueToZero();
 				}
 			}
 		);
@@ -164,6 +168,7 @@ sap.ui.define([
 				oFormatOptions.preserveDecimals = true;
 			}
 			Object.assign(oFormatOptions, this.oFormatOptions);
+			delete oFormatOptions.parseEmptyValueToZero;
 			this.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
 		}
 
@@ -174,29 +179,34 @@ sap.ui.define([
 	 * Parses the given value, which is expected to be of the given type, to an Edm.Double in
 	 * <code>number</code> representation.
 	 *
-	 * @param {string|number} vValue
-	 *   the value to be parsed; the empty string and <code>null</code> are parsed to
-	 *   <code>null</code>; note that there is no way to enter <code>Infinity</code> or
+	 * @param {number|string|null} vValue
+	 *   The value to be parsed; note that there is no way to enter <code>Infinity</code> or
 	 *   <code>NaN</code> values
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>vValue</code>); may be "float", "int",
+	 *   The source type (the expected type of <code>vValue</code>); may be "float", "int",
 	 *   "string", or a type with one of these types as its
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
-	 * @returns {number}
-	 *   the parsed value
+	 * @returns {number|null}
+	 *   The parsed value. The empty string and <code>null</code> are parsed to:
+	 *   <ul>
+	 *     <li><code>0</code> if the <code>parseEmptyValueToZero</code> format option
+	 *       is set to <code>true</code> and the <code>nullable</code> constraint is set to <code>false</code>,</li>
+	 *     <li><code>null</code> otherwise.</li>
+	 *   </ul>
 	 * @throws {sap.ui.model.ParseException}
-	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to a
+	 *   If <code>sSourceType</code> is unsupported or if the given string cannot be parsed to a
 	 *   Double
 	 * @public
 	 * @since 1.29.0
 	 */
 	Double.prototype.parseValue = function (vValue, sSourceType) {
-		var fResult;
-
-		if (vValue === null || vValue === "") {
-			return null;
+		var vEmptyValue = this.getEmptyValue(vValue, true);
+		if (vEmptyValue !== undefined) {
+			return vEmptyValue;
 		}
+
+		var fResult;
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "string":
 				fResult = this.getFormat().parse(vValue);
@@ -212,6 +222,7 @@ sap.ui.define([
 				throw new ParseException("Don't know how to parse " + this.getName() + " from "
 					+ sSourceType);
 		}
+
 		return fResult;
 	};
 
