@@ -5121,6 +5121,23 @@ sap.ui.define([
 		assert.strictEqual(this.oInput.getMaxSuggestionWidth(), this.oInput._getSuggestionsPopover()._sPopoverContentWidth, "Input and Popover widths should be the same.");
 	});
 
+	QUnit.test("Setting maxSuggestionWidth should not change selected item", function (assert) {
+		var oInput = new Input({
+			showSuggestion: true,
+			maxSuggestionWidth: "200px"
+		}).placeAt("content");
+
+		oCore.applyChanges();
+		oInput._getSuggestionsPopover().getPopover().open();
+
+		this.clock.tick(300);
+		oCore.applyChanges();
+
+		assert.ok(oInput._bAfterOpenFinisihed, "After open flag is correct");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("calling _synchronizeSuggestions", function (assert) {
 		// arrange
 		var oStub = this.stub(Device, "system", {
