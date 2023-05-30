@@ -1896,7 +1896,7 @@ sap.ui.define([
 			oModelMock = this.mock(this.oModel),
 			oAddTask0,
 			oAddTask1,
-			oVirtualContext = {destroy : function () {}};
+			oVirtualContext = {getPath : function () {}};
 
 		oBinding.bUseExtendedChangeDetection = bUseExtendedChangeDetection;
 		oBinding.sChangeReason = "AddVirtualContext";
@@ -1909,6 +1909,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oBinding.oModel), sinon.match.same(oBinding),
 				"/~/" + Context.VIRTUAL, Context.VIRTUAL)
 			.returns(oVirtualContext);
+		this.mock(oVirtualContext).expects("getPath").withExactArgs().returns("/virtual/context");
 		oBindingMock.expects("fetchContexts").never();
 		oBindingMock.expects("_fireChange").never();
 		if (bSuspend !== false) {
@@ -1921,11 +1922,17 @@ sap.ui.define([
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 		assert.strictEqual(aContexts.length, 1);
 		assert.strictEqual(aContexts[0], oVirtualContext);
+		assert.strictEqual(oBinding.mPreviousContextsByPath["/virtual/context"], oVirtualContext);
+		assert.deepEqual(Object.keys(oBinding.mPreviousContextsByPath), ["/virtual/context"]);
+
+		// clean up to avoid trouble with ODLB#destroyPreviousContexts
+		delete oBinding.mPreviousContextsByPath["/virtual/context"];
 
 		// prerendering task
 		if (bSuspend === undefined) { // destroy early
-			oBinding.destroy();
-			this.mock(oVirtualContext).expects("destroy").withExactArgs();
+			oBinding.destroy(); // Note: #getContexts must now be avoided!
+			oBindingMock.expects("isRootBindingSuspended").never();
+			oBindingMock.expects("getContexts").never();
 		} else {
 			oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspend);
 			if (!bSuspend) {
@@ -1934,35 +1941,33 @@ sap.ui.define([
 					.callsFake(function () {
 						assert.strictEqual(this.bUseExtendedChangeDetection, false);
 					});
+			} else {
+				oBindingMock.expects("getContexts").never();
 			}
-			oAddTask1 = oModelMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func);
 		}
+		oAddTask1 = oModelMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func);
 
 		// code under test - call the 1st prerendering task
 		oAddTask0.args[0][0]();
 
 		assert.strictEqual(oBinding.bUseExtendedChangeDetection, bUseExtendedChangeDetection);
 
-		if (oAddTask1) {
-			if (bSuspend === 0) { // destroy late
-				oBinding.destroy();
-			} else {
-				oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspend);
-				if (!bSuspend) {
-					oBindingMock.expects("_fireChange").withExactArgs({
-							detailedReason : "RemoveVirtualContext",
-							reason : ChangeReason.Change
-						}).callsFake(function () {
-							assert.strictEqual(oBinding.sChangeReason, "RemoveVirtualContext");
-						});
-					oBindingMock.expects("reset").withExactArgs(ChangeReason.Refresh);
-				}
-			}
-			this.mock(oVirtualContext).expects("destroy").withExactArgs();
-
-			// code under test - call the 2nd prerendering task
-			oAddTask1.args[0][0]();
+		if (bSuspend === 0) { // destroy late
+			oBinding.destroy(); // Note: we can simply continue to run the code below
 		}
+		oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspend);
+		if (!bSuspend) {
+			oBindingMock.expects("_fireChange").withExactArgs({
+					detailedReason : "RemoveVirtualContext",
+					reason : ChangeReason.Change
+				}).callsFake(function () {
+					assert.strictEqual(oBinding.sChangeReason, "RemoveVirtualContext");
+				});
+			oBindingMock.expects("reset").withExactArgs(ChangeReason.Refresh);
+		}
+
+		// code under test - call the 2nd prerendering task
+		oAddTask1.args[0][0]();
 	});
 	});
 });

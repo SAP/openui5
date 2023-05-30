@@ -1116,6 +1116,8 @@ sap.ui.define([
 			}),
 			oBindingMock = this.mock(oBinding),
 			mChildLocalQueryOptions = {},
+			oChildQueryOptionsPromise
+				= SyncPromise.resolve(Promise.resolve(mChildLocalQueryOptions)),
 			oContext = Context.create(this.oModel, oBinding, "/Set('1')/navigation('2')",
 				oFixture.index),
 			oHelperMock = this.mock(_Helper),
@@ -1125,6 +1127,9 @@ sap.ui.define([
 			oParentBinding = new ODataParentBinding(),
 			oPromise;
 
+		oChildQueryOptionsPromise.then(function () {
+			oBinding.oContext = undefined; // this might happen e.g. for a virtual parent context
+		});
 		if (oFixture.keptAlive) {
 			oContext.isEffectivelyKeptAlive = function () { return true; };
 		}
@@ -1915,7 +1920,7 @@ sap.ui.define([
 			}),
 			oBindingMock = this.mock(oBinding),
 			mChildQueryOptions = {},
-			oChildQueryOptionsPromise = SyncPromise.resolve(mChildQueryOptions),
+			oChildQueryOptionsPromise = SyncPromise.resolve(Promise.resolve(mChildQueryOptions)),
 			oContext = Context.create(this.oModel, oBinding,
 				"/SalesOrderList('42')/SO_2_SOITEMS('23')", 23),
 			oHelperMock = this.mock(_Helper),
@@ -1924,6 +1929,9 @@ sap.ui.define([
 			oModelMock = this.mock(oBinding.oModel),
 			oPromise;
 
+		oChildQueryOptionsPromise.then(function () {
+			oBinding.oContext = undefined; // this might happen e.g. for a virtual parent context
+		});
 		oModelMock.expects("resolve")
 			.withExactArgs("SOITEMS_2_SO/Note", sinon.match.same(oContext))
 			.returns("/SalesOrderList('42')/SO_2_SOITEMS('23')/SOITEMS_2_SO/Note");

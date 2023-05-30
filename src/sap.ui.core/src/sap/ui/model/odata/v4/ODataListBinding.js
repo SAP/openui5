@@ -2147,19 +2147,15 @@ sap.ui.define([
 			this.oModel.addPrerenderingTask(function () {
 				var bOld = that.bUseExtendedChangeDetection;
 
-				if (that.aContexts === undefined) { // already destroyed
-					oVirtualContext.destroy();
-					return;
-				}
-				if (!that.isRootBindingSuspended()) {
+				if (that.aContexts && !that.isRootBindingSuspended()) {
 					// request data (before removing virtual context), but avoid E.C.D.
 					// (see BCP: 2270085692 for some interesting discussions)
 					that.bUseExtendedChangeDetection = false;
 					that.getContexts(iStart, iLength, iMaximumPrefetchSize);
 					that.bUseExtendedChangeDetection = bOld;
-				}
+				} // else: w/o that.aContexts, binding is already destroyed: just avoid #getContexts
 				that.oModel.addPrerenderingTask(function () {
-					if (that.aContexts && !that.isRootBindingSuspended()) {
+					if (!that.isRootBindingSuspended()) {
 						// Note: first result of getContexts after refresh is ignored
 						that.sChangeReason = "RemoveVirtualContext";
 						that._fireChange({
@@ -2168,12 +2164,13 @@ sap.ui.define([
 						});
 						that.reset(ChangeReason.Refresh);
 					}
-					oVirtualContext.destroy();
 				});
 			}, true);
 			oVirtualContext = Context.create(this.oModel, this,
 				sResolvedPath + "/" + Context.VIRTUAL,
 				Context.VIRTUAL);
+			// Destroy later when the next #getContexts does not reuse it, or inside #destroy
+			that.mPreviousContextsByPath[oVirtualContext.getPath()] = oVirtualContext;
 			return [oVirtualContext];
 		}
 

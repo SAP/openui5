@@ -5139,16 +5139,19 @@ sap.ui.define([
 	<Text text="{SalesOrderID}"/>\
 	<Table items="{path : \'SO_2_SOITEM\', templateShareable : false}">\
 		<Text text="{ItemPosition}"/>\
+		<Text text="{SOITEM_2_SO/CurrencyCode}"/>\
 	</Table>\
 </Table>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$select=SalesOrderID"
+		this.expectRequest("SalesOrderList?$select=CurrencyCode,SalesOrderID"
 				+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)&$skip=0&$top=100", {
 				value : [{
+					CurrencyCode : "EUR",
 					SalesOrderID : "1",
 					SO_2_SOITEM : []
 				}, {
+					CurrencyCode : "EUR",
 					SalesOrderID : "2",
 					SO_2_SOITEM : [
 						{ItemPosition : "0010", SalesOrderID : "2"}
@@ -5160,9 +5163,10 @@ sap.ui.define([
 			var oRootTable = that.oView.byId("rootTable");
 
 			that.expectRequest("DELETE SalesOrderList('1')")
-				.expectRequest("SalesOrderList?$select=SalesOrderID"
+				.expectRequest("SalesOrderList?$select=CurrencyCode,SalesOrderID"
 					+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)&$skip=0&$top=100", {
 					value : [{
+						CurrencyCode : "EUR",
 						SalesOrderID : "2",
 						SO_2_SOITEM : [
 							{ItemPosition : "0010", SalesOrderID : "2"}
@@ -5175,6 +5179,39 @@ sap.ui.define([
 					// refresh before the prerendering task caused by #getContexts after #delete
 					// has run, so that in that task _all_ contexts are parked
 					return oRootTable.getBinding("items").requestRefresh();
+				}),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A table is destroyed while its list binding is not yet finished with
+	// auto-$expand/$select.
+	//
+	// BCP: 2380052347
+	QUnit.test("BCP: 2380052347", function (assert) {
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/SalesOrderList\', suspended : true}">\
+	<Text text="{SalesOrderID}"/>\
+</Table>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table");
+
+			oTable.getBinding("items").resume();
+
+			that.expectCanceledError("Cache discarded as a new cache has been created")
+				.expectCanceledError(sODLB + ": /SalesOrderList: Failed to enhance query options"
+					+ " for auto-$expand/$select for child SalesOrderID",
+				"Cache discarded as a new cache has been created");
+
+			return Promise.all([
+				Promise.resolve().then(function () {
+					// code under test
+					oTable.destroy();
 				}),
 				that.waitForChanges(assert)
 			]);
