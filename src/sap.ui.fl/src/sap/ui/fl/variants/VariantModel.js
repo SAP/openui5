@@ -447,12 +447,10 @@ sap.ui.define([
 			vmReference: sVMReference,
 			reference: this.sFlexReference
 		});
-		var sCurrentVariantReference = this.oData[sVMReference].currentVariant;
 		var sDefaultVariantReference = this.oData[sVMReference].defaultVariant;
 		if (
 			oVariantManagementControl.getExecuteOnSelectionForStandardDefault()
-			&& sCurrentVariantReference === sDefaultVariantReference
-			&& sCurrentVariantReference === sVMReference
+			&& sDefaultVariantReference === sVMReference
 			&& !oVariantChangesForVariant.setExecuteOnSelect
 		) {
 			var oStandardVariant = getVariant(this.oData[sVMReference].variants, sVMReference);
