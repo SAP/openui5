@@ -5,12 +5,14 @@
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/base/DataType",
+	"sap/ui/core/Core",
 	"sap/base/util/merge",
 	"sap/base/util/isPlainObject",
 	"sap/base/Log"
 ], function(
 	BaseObject,
 	DataType,
+	Core,
 	merge,
 	isPlainObject,
 	Log
@@ -267,6 +269,14 @@ sap.ui.define([
 	}
 
 	function reportInvalidProperty(sMessage, oAdditionalInfo) {
+		var mLoadedLibraries = Core.getLoadedLibraries();
+		if (!(window.top['sap-ui-mdc-config'] && window.top['sap-ui-mdc-config'].disableStrictPropertyInfoValidation)
+			&& !("sap.fe.core" in mLoadedLibraries
+				|| "sap.fe.macros" in mLoadedLibraries
+				|| "sap.sac.df" in mLoadedLibraries)) {
+			throwInvalidPropertyError(sMessage, oAdditionalInfo);
+		}
+
 		// TODO: warning is logged momentarily so that consumers can adapt to have valid property definitions
 		//  valid use case would be to throw an error
 		if (Log.getLevel() < Log.WARNING) {
@@ -607,13 +617,13 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.validateProperty = function(oProperty, aProperties, aPreviousProperties) {
 		if (!isPlainObject(oProperty)) {
-			throwInvalidPropertyError("Property info must be a plain object.", oProperty);
+			throwInvalidPropertyError("Property info must be a plain object.");
 		}
 
 		validatePropertyDeep(this, oProperty, aProperties);
 
 		if (PropertyHelper.isPropertyComplex(oProperty)) {
-			if (oProperty.propertyInfos.length === 0) {
+			if (!oProperty.propertyInfos || oProperty.propertyInfos.length === 0) {
 				throwInvalidPropertyError("Complex property does not reference existing properties.", oProperty);
 			}
 		}
@@ -673,7 +683,7 @@ sap.ui.define([
 		var oUniquePropertiesSet = new Set(aPropertyNames);
 
 		if (aPropertyNames.indexOf(oProperty.name) > -1) {
-			throwInvalidPropertyError("Property references itself in the '" + sPath + "' attribute", oProperty);
+			throwInvalidPropertyError("Property references itself in the '" + sPath + "' attribute.", oProperty);
 		}
 
 		if (oUniquePropertiesSet.size !== aPropertyNames.length) {

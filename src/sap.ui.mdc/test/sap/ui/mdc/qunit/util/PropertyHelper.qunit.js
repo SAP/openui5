@@ -14,6 +14,8 @@ sap.ui.define([
 ], function(_PropertyHelper, ManagedObject, StringType, merge, Log) {
 	"use strict";
 
+	window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: false};
+
 	var PropertyHelper = _PropertyHelper.extend("sap.ui.mdc.util.test.PropertyHelper", {
 		constructor: function(aProperties, oParent, mAdditionalAttributes) {
 			_PropertyHelper.call(this, aProperties, oParent, Object.assign({
@@ -34,14 +36,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.module("Validation of property infos", {
-		beforeEach: function() {
-			this.logWarning = sinon.spy(Log, "warning");
-		},
-		afterEach: function() {
-			this.logWarning.restore();
-		}
-	});
+	QUnit.module("Validation of property infos");
 
 	QUnit.test("Without property infos", function(assert) {
 		assert.throws(function() {
@@ -51,96 +46,118 @@ sap.ui.define([
 
 	QUnit.test("Empty array as property infos", function(assert) {
 		new PropertyHelper([]).destroy();
-		assert.equal(this.logWarning.callCount, 0, "No warning logged");
+		assert.ok(true, "No error thrown");
 	});
 
 	QUnit.test("Contains non-plain objects", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "foo",
-				label: "bar"
+				label: "bar",
+				dataType: "String"
 			}, "string"
 			]);
-		}, "Error thrown if an item is a string");
+		}, new Error("Invalid property definition: Property info must be a plain object."), "string");
+
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "foo",
-				label: "bar"
+				label: "bar",
+				dataType: "String"
 			}, new ManagedObject()
 			]);
-		}, "Error thrown if an item is an instance");
+		}, new Error("Invalid property definition: Property info must be a plain object."), "object");
+
 		assert.throws(function() {
 			new PropertyHelper([Object.create({
 				name: "prop",
-				label: "prop"
+				label: "prop",
+				dataType: "String"
 			})]);
-		}, "Error thrown if an item is a complex object");
+		}, new Error("Invalid property definition: Property info must be a plain object."), "complex object");
 	});
 
 	QUnit.test("Properties with the same name", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "foo",
-				label: "bar"
+				label: "bar",
+				dataType: "String"
 			}, {
 				name: "foo",
-				label: "bar2"
+				label: "bar2",
+				dataType: "String"
 			}]);
 		}, new Error("Invalid property definition: Properties do not have unique names."));
 	});
 
 	QUnit.test("Unknown attribute", function(assert) {
-		new PropertyHelper([{
-			name: "foo",
-			label: "bar",
-			dataType: "String",
-			foo: "bar"
-		}]).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged if an attribute is unknown");
+		assert.throws(function() {
+			new PropertyHelper([{
+				name: "foo",
+				label: "bar",
+				dataType: "String",
+				foo: "bar"
+			}]);
+		}, new Error("Invalid property definition: Property contains invalid attribute 'foo'."
+					 + '\n{"name":"foo","label":"bar","dataType":"String","foo":"bar"}'));
 
-		this.logWarning.resetHistory();
-		new PropertyHelper([{
-			name: "foo",
-			label: "bar",
-			dataType: "String",
-			additionalAttribute: {
-				doesNotExist: true
-			}
-		}], null, {
-			additionalAttribute: {
-				type: {
-					exists: {type: "string"}
+		assert.throws(function() {
+			new PropertyHelper([{
+				name: "foo",
+				label: "bar",
+				dataType: "String",
+				additionalAttribute: {
+					doesNotExist: true
 				}
-			}
-		}).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged if a deeply nested attribute is unknown");
+			}], null, {
+				additionalAttribute: {
+					type: {
+						exists: {type: "string"}
+					}
+				}
+			});
+		},
+			new Error("Invalid property definition: Property contains invalid attribute 'additionalAttribute.doesNotExist'."
+					 + '\n{"name":"foo","label":"bar","dataType":"String","additionalAttribute":{"doesNotExist":true}}'),
+			"Deeply nested attribute"
+		);
 	});
 
 	QUnit.test("Default attribute that was not allowed", function(assert) {
-		new _PropertyHelper([{
-			name: "foo",
-			label: "bar",
-			dataType: "String",
-			filterable: true
-		}]).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged if a default attribute is set that is not allowed to be set");
+		assert.throws(function() {
+			new _PropertyHelper([{
+				name: "foo",
+				label: "bar",
+				dataType: "String",
+				filterable: true
+			}]);
+		}, new Error("Invalid property definition: Property contains invalid attribute 'filterable'."
+					 + '\n{"name":"foo","label":"bar","dataType":"String","filterable":true}'));
 	});
 
 	QUnit.test("Missing mandatory attribute", function(assert) {
-		new PropertyHelper([{
-			label: "foo",
-			dataType: "String"
-		}]).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged if 'name' is missing");
+		assert.throws(function() {
+			new PropertyHelper([{
+				label: "foo",
+				dataType: "String"
+			}]);
+		},
+			new Error("Invalid property definition: Property does not contain mandatory attribute 'name'."
+					 + '\n{"label":"foo","dataType":"String"}'),
+			"name"
+		);
 
-		this.logWarning.resetHistory();
-		new PropertyHelper([{
-			name: "foo",
-			dataType: "String"
-		}]).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged if 'label' is missing");
+		assert.throws(function() {
+			new PropertyHelper([{
+				name: "foo",
+				dataType: "String"
+			}]);
+		}, new Error("Invalid property definition: Property does not contain mandatory attribute 'label'."
+					 + '\n{"name":"foo","dataType":"String"}'),
+			"label"
+		);
 
-		this.logWarning.resetHistory();
 		new PropertyHelper([{
 			name: "foo",
 			label: "bar",
@@ -153,36 +170,52 @@ sap.ui.define([
 				}
 			}
 		}).destroy();
-		assert.equal(this.logWarning.callCount, 0, "No warning logged if a deeply nested attribute is missing");
+		assert.ok(true, "No error thrown if a deeply nested attribute is missing");
 
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: undefined,
-				label: "foo"
+				label: "foo",
+				dataType: "String"
 			}]);
-		}, "Error thrown if mandatory attribute is set to 'undefined'");
+		},
+			new Error("Invalid property definition: Property does not contain mandatory attribute 'name'."
+					 + '\n{"name":null,"label":"foo","dataType":"String"}'),
+			"Mandatory attribute is set to 'undefined'"
+		);
 
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: null,
-				label: "foo"
+				label: "foo",
+				dataType: "String"
 			}]);
-		}, "Error thrown if mandatory attribute is set to 'null'");
+		},
+			new Error("Invalid property definition: Property does not contain mandatory attribute 'name'."
+					 + '\n{"name":null,"label":"foo","dataType":"String"}'),
+			"Mandatory attribute is set to 'null'"
+		);
 
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "foo",
 				label: "bar",
+				dataType: "String",
 				additionalAttribute: null
 			}], null, {
 				additionalAttribute: {type: "object", mandatory: true, "default": {value: {}}}
 			});
-		}, "Error thrown if mandatory attribute of type 'object' is set to 'null'");
+		},
+			new Error("Invalid property definition: Property does not contain mandatory attribute 'additionalAttribute'."
+					 + '\n{"name":"foo","label":"bar","dataType":"String","additionalAttribute":null}'),
+			"Mandatory attribute of type 'object' is set to 'null'"
+		);
 
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "foo",
 				label: "bar",
+				dataType: "String",
 				additionalAttribute: null
 			}], null, {
 				additionalAttribute: {
@@ -192,7 +225,11 @@ sap.ui.define([
 					mandatory: true
 				}
 			});
-		}, "Error thrown if a mandatory complex attribute is set to 'null'");
+		},
+			new Error("Invalid property definition: Property does not contain mandatory attribute 'additionalAttribute'."
+					  + '\n{"name":"foo","label":"bar","dataType":"String","additionalAttribute":null}'),
+			"Mandatory complex attribute is set to 'null'"
+		);
 	});
 
 	QUnit.test("Invalid values", function(assert) {
@@ -202,7 +239,20 @@ sap.ui.define([
 				dataType: "String",
 				label: "label"
 			}]);
-		}, "Error thrown if the value has an incorrect type");
+		}, new Error("Invalid property definition: The value of 'name' is invalid."
+					 + '\n{"name":true,"dataType":"String","label":"label"}'));
+
+		assert.throws(function() {
+			new PropertyHelper([{
+				name: "foo",
+				label: "bar",
+				propertyInfos: "invalid"
+			}]);
+		},
+			new Error("Invalid property definition: The value of 'propertyInfos' is invalid."
+					  + '\n{"name":"foo","label":"bar","propertyInfos":"invalid"}'),
+			"'propertyInfos' attribute"
+		);
 
 		assert.throws(function() {
 			new PropertyHelper([{
@@ -211,7 +261,11 @@ sap.ui.define([
 				dataType: "String",
 				exportSettings: true
 			}]);
-		}, "Error thrown if the value of a complex object attribute has an incorrect type");
+		},
+			new Error("Invalid property definition: The value of 'exportSettings' is invalid."
+					  + '\n{"name":"foo","label":"bar","dataType":"String","exportSettings":true}'),
+			"Complex object attribute"
+		);
 
 		assert.throws(function() {
 			new PropertyHelper([{
@@ -228,59 +282,89 @@ sap.ui.define([
 					}
 				}
 			});
-		}, "Error thrown if the value of a deeply nested attribute has an incorrect type");
+		},
+			new Error("Invalid property definition: The value of 'additionalAttribute.bar' is invalid."
+					  + '\n{"name":"foo","label":"bar","dataType":"String","additionalAttribute":{"bar":true}}'),
+			"Deeply nested attribute"
+		);
 
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "foo",
 				label: "bar",
+				dataType: "String",
 				additionalAttribute: "bar"
 			}], null, {
 				additionalAttribute: {type: "string[]"}
 			});
-		}, "Error thrown if the value for an attribute of type 'string[]' is a string");
+		},
+			new Error("Invalid property definition: The value of 'additionalAttribute' is invalid."
+					  + '\n{"name":"foo","label":"bar","dataType":"String","additionalAttribute":"bar"}'),
+			"Value for an attribute of type 'string[]' is a string"
+		);
 	});
 
 	QUnit.test("Invalid values for mandatory attributes", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: undefined,
-				label: "bar"
+				label: "bar",
+				dataType: "String"
 			}]);
-		}, "Error thrown if the value for an attribute of type 'string' is 'undefined'");
+		},
+			new Error("Invalid property definition: Property does not contain mandatory attribute 'name'."
+					 + '\n{"name":null,"label":"bar","dataType":"String"}'),
+			"Attribute of type 'string' is 'undefined'"
+		);
 
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: null,
-				label: "bar"
+				label: "bar",
+				dataType: "String"
 			}]);
-		}, "Error thrown if the value for an attribute of type 'string' is 'null'");
+		},
+			new Error("Invalid property definition: Property does not contain mandatory attribute 'name'."
+					 + '\n{"name":null,"label":"bar","dataType":"String"}'),
+			"Attribute of type 'string' is 'null'"
+		);
 
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "foo",
 				label: "bar",
+				dataType: "String",
 				additionalAttribute: undefined
 			}], null, {
 				additionalAttribute: {type: "object", mandatory: true}
 			});
-		}, "Error thrown if the value for an attribute of type 'object' is 'undefined'");
+		},
+			new Error("Invalid property definition: Property does not contain mandatory attribute 'additionalAttribute'."
+					 + '\n{"name":"foo","label":"bar","dataType":"String","additionalAttribute":null}'),
+			"Attribute of type 'object' is 'undefined'"
+		);
 
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "foo",
 				label: "bar",
+				dataType: "String",
 				additionalAttribute: null
 			}], null, {
 				additionalAttribute: {type: "object", mandatory: true}
 			});
-		}, "Error thrown if the value for an attribute of type 'object' is 'null'");
+		},
+			new Error("Invalid property definition: Property does not contain mandatory attribute 'additionalAttribute'."
+					 + '\n{"name":"foo","label":"bar","dataType":"String","additionalAttribute":null}'),
+			"Attribute of type 'object' is 'null'"
+		);
 	});
 
 	QUnit.test("Valid values for optional attributes", function(assert) {
 		new PropertyHelper([{
 			name: "foo",
 			label: "bar",
+			dataType: "String",
 			path: undefined
 		}]).destroy();
 		assert.ok(true, "No error thrown if the value for an optional attribute is 'undefined'");
@@ -288,6 +372,7 @@ sap.ui.define([
 		new PropertyHelper([{
 			name: "foo",
 			label: "bar",
+			dataType: "String",
 			path: null
 		}]).destroy();
 		assert.ok(true, "No error thrown if the value for an optional attribute is 'null'");
@@ -295,19 +380,33 @@ sap.ui.define([
 		new PropertyHelper([{
 			name: "foo",
 			label: "bar",
-			typeConfig: {
-				className: undefined
+			dataType: "String",
+			additionalAttribute: {
+				bar: undefined
 			}
-		}]).destroy();
+		}], null, {
+			additionalAttribute: {
+				type: {
+					bar: {type: "string"}
+				}
+			}
+		}).destroy();
 		assert.ok(true, "No error thrown if the value of a deeply nested attribute is 'undefined'");
 
 		new PropertyHelper([{
 			name: "foo",
 			label: "bar",
-			typeConfig: {
-				className: null
+			dataType: "String",
+			additionalAttribute: {
+				bar: null
 			}
-		}]).destroy();
+		}], null, {
+			additionalAttribute: {
+				type: {
+					bar: {type: "string"}
+				}
+			}
+		}).destroy();
 		assert.ok(true, "No error thrown if the value of a deeply nested attribute is 'null'");
 	});
 
@@ -316,13 +415,15 @@ sap.ui.define([
 			new PropertyHelper([{
 				name: "prop",
 				label: "Property",
+				dataType: "String",
 				unit: "complexProperty"
 			}, {
 				name: "complexProperty",
 				label: "Complex property",
 				propertyInfos: ["prop"]
 			}]);
-		}, "Error thrown");
+		}, new Error("Invalid property definition: Property references complex properties in the 'unit' attribute."
+					 + '\n{"name":"prop","label":"Property","dataType":"String","unit":"complexProperty"}'));
 	});
 
 	QUnit.test("Single property reference: Referencing a property which does not exist", function(assert) {
@@ -330,9 +431,11 @@ sap.ui.define([
 			new PropertyHelper([{
 				name: "propA",
 				label: "Property A",
+				dataType: "String",
 				unit: "propB"
 			}]);
-		}, "Error thrown");
+		}, new Error("Invalid property definition: Property references non-existing properties in the 'unit' attribute."
+					 + '\n{"name":"propA","label":"Property A","dataType":"String","unit":"propB"}'));
 	});
 
 	QUnit.test("Single property reference: Referencing itself", function(assert) {
@@ -340,16 +443,19 @@ sap.ui.define([
 			new PropertyHelper([{
 				name: "propA",
 				label: "Property A",
+				dataType: "String",
 				unit: "propA"
 			}]);
-		}, "Error thrown");
+		}, new Error("Invalid property definition: Property references itself in the 'unit' attribute."
+					 + '\n{"name":"propA","label":"Property A","dataType":"String","unit":"propA"}'));
 	});
 
 	QUnit.test("Multiple property references: Referencing a complex property", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "prop",
-				label: "Property"
+				label: "Property",
+				dataType: "String"
 			}, {
 				name: "complexPropertyA",
 				label: "Complex property A",
@@ -359,20 +465,23 @@ sap.ui.define([
 				label: "Complex property B",
 				propertyInfos: ["prop"]
 			}]);
-		}, "Error thrown");
+		}, new Error("Invalid property definition: Property references complex properties in the 'propertyInfos' attribute."
+					 + '\n{"name":"complexPropertyA","label":"Complex property A","propertyInfos":["complexPropertyB"]}'));
 	});
 
 	QUnit.test("Multiple property references: One referenced property does not exist", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "prop",
-				label: "Property"
+				label: "Property",
+				dataType: "String"
 			}, {
 				name: "complexProperty",
 				label: "Complex property",
 				propertyInfos: ["prop", "nonExistingProperty"]
 			}]);
-		}, "Error thrown");
+		}, new Error("Invalid property definition: Property references non-existing properties in the 'propertyInfos' attribute."
+					 + '\n{"name":"complexProperty","label":"Complex property","propertyInfos":["prop","nonExistingProperty"]}'));
 	});
 
 	QUnit.test("Multiple property references: All referenced properties do not exist", function(assert) {
@@ -382,20 +491,23 @@ sap.ui.define([
 				label: "Complex property",
 				propertyInfos: ["nonExistingProperty"]
 			}]);
-		}, "Error thrown");
+		}, new Error("Invalid property definition: Property references non-existing properties in the 'propertyInfos' attribute."
+					 + '\n{"name":"complexProperty","label":"Complex property","propertyInfos":["nonExistingProperty"]}'));
 	});
 
 	QUnit.test("Multiple property references: Duplicate keys", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "prop",
-				label: "Property"
+				label: "Property",
+				dataType: "String"
 			}, {
 				name: "complexProperty",
 				label: "Complex property",
 				propertyInfos: ["prop", "prop"]
 			}]);
-		}, "Error thrown");
+		}, new Error("Invalid property definition: Property contains duplicate names in the 'propertyInfos' attribute."
+					 + '\n{"name":"complexProperty","label":"Complex property","propertyInfos":["prop","prop"]}'));
 	});
 
 	QUnit.test("Multiple property references: Referencing itself", function(assert) {
@@ -405,7 +517,8 @@ sap.ui.define([
 				label: "Complex property",
 				propertyInfos: ["complexProperty"]
 			}]);
-		}, "Error thrown");
+		}, new Error("Invalid property definition: Property references itself in the 'propertyInfos' attribute."
+					 + '\n{"name":"complexProperty","label":"Complex property","propertyInfos":["complexProperty"]}'));
 	});
 
 	QUnit.test("Property references in a nested attribute: Referencing a complex property", function(assert) {
@@ -413,6 +526,7 @@ sap.ui.define([
 			new PropertyHelper([{
 				name: "prop",
 				label: "Property",
+				dataType: "String",
 				additionalAttribute: {
 					foo: "complexProperty"
 				}
@@ -427,7 +541,8 @@ sap.ui.define([
 					}
 				}
 			});
-		}, "Error thrown");
+		}, new Error("Invalid property definition: Property references complex properties in the 'additionalAttribute.foo' attribute."
+					 + '\n{"name":"prop","label":"Property","dataType":"String","additionalAttribute":{"foo":"complexProperty"}}'));
 	});
 
 	QUnit.test("Property references in a nested attribute: One referenced property does not exist", function(assert) {
@@ -435,12 +550,14 @@ sap.ui.define([
 			new PropertyHelper([{
 				name: "propA",
 				label: "Property A",
+				dataType: "String",
 				additionalAttribute: {
 					foo: ["propB", "nonExistingProperty"]
 				}
 			}, {
 				name: "propB",
-				label: "Property B"
+				label: "Property B",
+				dataType: "String"
 			}], null, {
 				additionalAttribute: {
 					type: {
@@ -448,7 +565,8 @@ sap.ui.define([
 					}
 				}
 			});
-		}, "Error thrown");
+		}, new Error("Invalid property definition: Property references non-existing properties in the 'additionalAttribute.foo' attribute."
+					 + '\n{"name":"propA","label":"Property A","dataType":"String","additionalAttribute":{"foo":["propB","nonExistingProperty"]}}'));
 	});
 
 	QUnit.test("Property references in a nested attribute: All referenced properties do not exist", function(assert) {
@@ -456,6 +574,7 @@ sap.ui.define([
 			new PropertyHelper([{
 				name: "prop",
 				label: "Property",
+				dataType: "String",
 				additionalAttribute: {
 					foo: ["nonExistingProperty"]
 				}
@@ -466,7 +585,8 @@ sap.ui.define([
 					}
 				}
 			});
-		}, "Error thrown");
+		}, new Error("Invalid property definition: Property references non-existing properties in the 'additionalAttribute.foo' attribute."
+					 + '\n{"name":"prop","label":"Property","dataType":"String","additionalAttribute":{"foo":["nonExistingProperty"]}}'));
 	});
 
 	QUnit.test("Property references in a nested attribute: Duplicate keys", function(assert) {
@@ -474,12 +594,14 @@ sap.ui.define([
 			new PropertyHelper([{
 				name: "propA",
 				label: "Property A",
+				dataType: "String",
 				additionalAttribute: {
 					foo: ["propB", "propB"]
 				}
 			}, {
 				name: "propB",
-				label: "Property B"
+				label: "Property B",
+				dataType: "String"
 			}], null, {
 				additionalAttribute: {
 					type: {
@@ -487,7 +609,8 @@ sap.ui.define([
 					}
 				}
 			});
-		}, "Error thrown");
+		}, new Error("Invalid property definition: Property contains duplicate names in the 'additionalAttribute.foo' attribute."
+					 + '\n{"name":"propA","label":"Property A","dataType":"String","additionalAttribute":{"foo":["propB","propB"]}}'));
 	});
 
 	QUnit.test("Property references in a nested attribute: Referencing itself", function(assert) {
@@ -495,6 +618,7 @@ sap.ui.define([
 			new PropertyHelper([{
 				name: "propA",
 				label: "Property A",
+				dataType: "String",
 				additionalAttribute: {
 					foo: ["propA"]
 				}
@@ -505,13 +629,15 @@ sap.ui.define([
 					}
 				}
 			});
-		}, "Error thrown");
+		}, new Error("Invalid property definition: Property references itself in the 'additionalAttribute.foo' attribute."
+					 + '\n{"name":"propA","label":"Property A","dataType":"String","additionalAttribute":{"foo":["propA"]}}'));
 	});
 
 	QUnit.test("Property references in a nested attribute: No references", function(assert) {
 		new PropertyHelper([{
 			name: "propA",
 			label: "Property A",
+			dataType: "String",
 			additionalAttribute: {
 				foo: []
 			}
@@ -526,17 +652,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("Complex property with an attribute that is not allowed", function(assert) {
-		new PropertyHelper([{
-			name: "prop",
-			label: "Property",
-			dataType: "String"
-		}, {
-			name: "complexProperty",
-			label: "Complex property",
-			path: "complexPath", // not allowed for complex properties
-			propertyInfos: ["prop"]
-		}]).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+		assert.throws(function() {
+			new PropertyHelper([{
+				name: "prop",
+				label: "Property",
+				dataType: "String"
+			}, {
+				name: "complexProperty",
+				label: "Complex property",
+				path: "complexPath", // not allowed for complex properties
+				propertyInfos: ["prop"]
+			}]);
+		}, new Error("Invalid property definition: Complex property contains invalid attribute 'path'."
+					 + '\n{"name":"complexProperty","label":"Complex property","path":"complexPath","propertyInfos":["prop"]}'));
 	});
 
 	QUnit.test("Complex property does not reference any properties", function(assert) {
@@ -546,7 +674,11 @@ sap.ui.define([
 				label: "Complex property",
 				propertyInfos: []
 			}]);
-		}, "Error thrown if 'propertyInfos' is an empty array");
+		},
+			new Error("Invalid property definition: Complex property does not reference existing properties."
+					 + '\n{"name":"complexProperty","label":"Complex property","propertyInfos":[]}'),
+			"'propertyInfos' is an empty array"
+		);
 
 		assert.throws(function() {
 			new PropertyHelper([{
@@ -554,65 +686,68 @@ sap.ui.define([
 				label: "Complex property",
 				propertyInfos: null
 			}]);
-		}, "Error thrown if 'propertyInfos' is 'null'");
+		},
+			new Error("Invalid property definition: Complex property does not reference existing properties."
+					 + '\n{"name":"complexProperty","label":"Complex property","propertyInfos":null}'),
+			"'propertyInfos' is 'null'"
+		);
 	});
 
 	QUnit.test("Complex property with nested attribute including attributes that are not allowed for complex properties", function(assert) {
-		new PropertyHelper([{
-			name: "propA",
-			label: "prop A",
-			dataType: "String"
-		}, {
-			name: "propB",
-			label: "prop B",
-			propertyInfos: ["propA"],
-			foo: {
-				bar: {
-					propB: 2
-				}
-			}
-		}], null, null, {
-			foo: {
-				type: {
+		assert.throws(function() {
+			new PropertyHelper([{
+				name: "propA",
+				label: "prop A",
+				dataType: "String"
+			}, {
+				name: "propB",
+				label: "prop B",
+				propertyInfos: ["propA"],
+				foo: {
 					bar: {
-						type: {
-							propA: {type: "string"},
-							propB: {type: "int", forComplexProperty: {allowed: false}}
-						},
-						"default": {value: {}}
+						propB: 2
 					}
-				},
-				forComplexProperty: {
-					allowed: true
-				},
-				"default": {value: {}}
-			}
-		});
-		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+				}
+			}], null, {
+				foo: {
+					type: {
+						bar: {
+							type: {
+								propA: {type: "string"},
+								propB: {type: "int", forComplexProperty: {allowed: false}}
+							},
+							"default": {value: {}}
+						}
+					},
+					forComplexProperty: {
+						allowed: true
+					},
+					"default": {value: {}}
+				}
+			});
+		}, new Error("Invalid property definition: Complex property contains invalid attribute 'foo.bar.propB'."
+				  + '\n{"name":"propB","label":"prop B","propertyInfos":["propA"],"foo":{"bar":{"propB":2}}}'));
 	});
 
-	QUnit.module("Validation of additional attributes", {
-		beforeEach: function() {
-			this.logWarning = sinon.spy(Log, "warning");
-		},
-		afterEach: function() {
-			this.logWarning.restore();
-		}
-	});
+	QUnit.module("Validation of additional attributes");
 
-	QUnit.test("No additional attributes", function(assert) {
-		new _PropertyHelper([{
-			name: "foo",
-			label: "bar",
-			filterable: true
-		}]).destroy();
-		assert.ok(true, "No error thrown");
+	QUnit.test("Provide a reserved standard attribute that is not added", function(assert) {
+		assert.throws(function() {
+			new _PropertyHelper([{
+				name: "foo",
+				label: "bar",
+				dataType: "String",
+				filterable: true
+			}]);
+		}, new Error("Invalid property definition: Property contains invalid attribute 'filterable'."
+					 + '\n{"name":"foo","label":"bar","dataType":"String","filterable":true}'));
 	});
 
 	QUnit.test("Add a reserved standard attribute", function(assert) {
 		new _PropertyHelper([{
 			name: "foo",
 			label: "bar",
+			dataType: "String",
 			filterable: true
 		}], null, {
 			name: true,
@@ -625,7 +760,8 @@ sap.ui.define([
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "foo",
-				label: "bar"
+				label: "bar",
+				dataType: "String"
 			}], null, {
 				name: {type: "string"}
 			});
@@ -636,7 +772,8 @@ sap.ui.define([
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "foo",
-				label: "bar"
+				label: "bar",
+				dataType: "String"
 			}], null, {
 				name: false
 			});
@@ -645,7 +782,8 @@ sap.ui.define([
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "foo",
-				label: "bar"
+				label: "bar",
+				dataType: "String"
 			}], null, {
 				name: undefined
 			});
@@ -653,30 +791,34 @@ sap.ui.define([
 	});
 
 	QUnit.test("Missing mandatory attribute", function(assert) {
-		new PropertyHelper([{
-			name: "foo",
-			label: "bar",
-			dataType: "String"
-		}], null, {
-			additionalAttribute: {type: "string", mandatory: true}
-		}).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged if an attribute is missing");
+		assert.throws(function() {
+			new PropertyHelper([{
+				name: "foo",
+				label: "bar",
+				dataType: "String"
+			}], null, {
+				additionalAttribute: {type: "string", mandatory: true}
+			});
+		}, new Error("Invalid property definition: Property does not contain mandatory attribute 'additionalAttribute'."
+					 + '\n{"name":"foo","label":"bar","dataType":"String"}'));
 	});
 
 	QUnit.test("Complex property with an attribute that is not allowed", function(assert) {
-		new PropertyHelper([{
-			name: "prop",
-			label: "Property",
-			dataType: "String"
-		}, {
-			name: "complexProperty",
-			label: "Complex property",
-			propertyInfos: ["prop"],
-			additionalAttribute: "value"
-		}], null, {
-			additionalAttribute: {type: "string"}
-		}).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+		assert.throws(function() {
+			new PropertyHelper([{
+				name: "prop",
+				label: "Property",
+				dataType: "String"
+			}, {
+				name: "complexProperty",
+				label: "Complex property",
+				propertyInfos: ["prop"],
+				additionalAttribute: "value"
+			}], null, {
+				additionalAttribute: {type: "string"}
+			});
+		}, new Error("Invalid property definition: Complex property contains invalid attribute 'additionalAttribute'."
+					 + '\n{"name":"complexProperty","label":"Complex property","propertyInfos":["prop"],"additionalAttribute":"value"}'));
 	});
 
 	QUnit.module("Setting defaults and cloning of property infos", {
@@ -910,7 +1052,6 @@ sap.ui.define([
 		var oPropertyHelper = new PropertyHelper([{
 			name: "complexProp",
 			label: "Complex property",
-			dataType: "String",
 			propertyInfos: ["prop"]
 		}, {
 			name: "prop",
@@ -921,7 +1062,6 @@ sap.ui.define([
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "complexProp",
 			label: "Complex property",
-			dataType: "String",
 			propertyInfos: ["prop"]
 		}, {
 			name: "prop",
@@ -1281,14 +1421,10 @@ sap.ui.define([
 		var aPropertyInfos = [{
 			name: "prop",
 			label: "prop",
+			dataType: "String",
 			exportSettings: {
 				label: "exportLabel",
 				width: 10
-			},
-			typeConfig: {
-				baseType: "String",
-				className: "sap.ui.model.type.String",
-				typeInstance: oStringType
 			}
 		}, {
 			name: "complexProperty",
@@ -1301,7 +1437,6 @@ sap.ui.define([
 		assert.notStrictEqual(aClonedProperties, aPropertyInfos, "Property info array was cloned");
 		assert.notStrictEqual(aClonedProperties[0], aPropertyInfos[0], "Property object was cloned");
 		assert.notStrictEqual(aClonedProperties[0].exportSettings, aPropertyInfos[0].exportSettings, "Setting of type 'object' was cloned");
-		assert.notStrictEqual(aClonedProperties[0].typeConfig, aPropertyInfos[0].typeConfig, "Setting containing an instance was cloned");
 		assert.notStrictEqual(aClonedProperties[1], aPropertyInfos[1], "Complex property was cloned");
 		assert.notStrictEqual(aClonedProperties[1].propertyInfos, aPropertyInfos[1].propertyInfos,
 			"Property infos array of complex property was cloned");
@@ -1332,7 +1467,6 @@ sap.ui.define([
 		});
 		aPropertyInfos[0].name = "newName";
 		aPropertyInfos[0].exportSettings.width = 0;
-		aPropertyInfos[0].typeConfig = {};
 		aPropertyInfos[1].propertyInfos.push("something");
 
 		this.deepEqualProperties(assert, oPropertyHelper, [{
@@ -1412,6 +1546,7 @@ sap.ui.define([
 			this.oPropertyHelper = new PropertyHelper([{
 				name: "prop",
 				label: "Property",
+				dataType: "String",
 				additionalAttribute: {
 					object: {
 						object: {}
@@ -1427,7 +1562,8 @@ sap.ui.define([
 				propertyInfos: ["prop", "otherProp"]
 			}, {
 				name: "otherProp",
-				label: "My other property"
+				label: "My other property",
+				dataType: "String"
 			}], null, {
 				additionalAttribute: {type: "object"},
 				singleRef: {type: "PropertyReference"},
@@ -1494,17 +1630,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("API", {
-		before: function() {
-			this.oTypeConfig = {
-				baseType: "String",
-				className: "sap.ui.model.type.String",
-				typeInstance: new StringType()
-			};
-		},
 		beforeEach: function() {
 			this.aOriginalProperties = [{
 				name: "propA",
 				label: "Property A",
+				dataType: "String",
 				path: "propAPath",
 				unit: "propB",
 				groupLabel: "Property A group label",
@@ -1512,11 +1642,11 @@ sap.ui.define([
 					width: 20,
 					label: "Property A export label"
 				},
-				maxConditions: 2,
-				typeConfig: this.oTypeConfig
+				maxConditions: 2
 			}, {
 				name: "propB",
 				label: "Property B",
+				dataType: "String",
 				sortable: false,
 				filterable: false,
 				visible: false
@@ -1549,9 +1679,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oPropertyHelper.destroy();
-		},
-		after: function() {
-			this.oTypeConfig.typeInstance.destroy();
 		}
 	});
 
@@ -1577,12 +1704,14 @@ sap.ui.define([
 		var aReplacementProperties = [{
 			name: "ReplacedPropA",
 			label: "Replaced Property A",
+			dataType: "String",
 			sortable: false,
 			filterable: false,
 			visible: false
 		}, {
 			name: "ReplacedPropB",
 			label: "Replaced Property B",
+			dataType: "String",
 			sortable: false,
 			filterable: false,
 			visible: false
@@ -1744,10 +1873,12 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oPropertyHelper = new PropertyHelper([{
 				name: "prop",
-				label: "Property"
+				label: "Property",
+				dataType: "String"
 			}, {
 				name: "prop2",
 				label: "Property 2",
+				dataType: "String",
 				sortable: false,
 				filterable: false,
 				visible: false
@@ -1892,7 +2023,8 @@ sap.ui.define([
 		var oValidatePropertySpy = sinon.spy();
 		var aProperties = [{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}, {
 			name: "complexProp",
 			label: "Complex property",
@@ -1922,7 +2054,8 @@ sap.ui.define([
 		var oPreparePropertySpy = sinon.spy();
 		var aProperties = [{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}, {
 			name: "complexProp",
 			label: "Complex property",
