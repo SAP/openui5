@@ -49,12 +49,12 @@ sap.ui.define([
             /**
              *
              * @param {string} sPropertyName The property name
-             * @param {Object} oMDCChart Instance of the chart TODO: Which one? MDC or inner?
+             * @param {Object} oChart Instance of the chart TODO: Which one? MDC or inner?
              * @since 1.88
              * @returns {Promise} Promise that resolves with an instance of a <code>sap.ui.mdc.FilterField</code>.
              * For more information, see {@link sap.ui.mdc.AggregationBaseDelegate#addItem AggregationBaseDelegate}.
              */
-            addItem: function (sPropertyName, oMDCChart) {
+            addItem: function (sPropertyName, oChart) {
                 return Promise.resolve(null);
             }
         };
@@ -110,7 +110,7 @@ sap.ui.define([
      * Loads necessary libraries and creates inner chart
      * @returns {Promise} resolved when inner chart is ready
      */
-    ChartDelegate.initializeInnerChart = function (oMDCChart) {
+    ChartDelegate.initializeInnerChart = function (oChart) {
         return new Promise(function (resolve, reject) {
 
 
@@ -118,7 +118,7 @@ sap.ui.define([
                 this._oInnerChart = new Chart({});
                 resolve(this._oInnerChart);
             }.bind(this)).then(function() {
-                oMDCChart._innerChartDataLoadComplete();
+                oChart._innerChartDataLoadComplete();
             });
         }.bind(this));
     };
@@ -139,7 +139,7 @@ sap.ui.define([
     /**
      * Creates the inner dataset for the inner chart
      */
-    ChartDelegate.createInnerChartContent = function (oMDCChart, aPropertyInfos) {
+    ChartDelegate.createInnerChartContent = function (oChart, aPropertyInfos) {
         return Promise.resolve();
         //Nothing to test
     };
@@ -159,15 +159,15 @@ sap.ui.define([
     /**
      * Checks the binding of the table and rebinds it if required.
      *
-     * @param {sap.ui.mdc.Chart} oMDCChart The MDC chart instance
+     * @param {sap.ui.mdc.Chart} oChart The MDC chart instance
      * @param {object} oBindingInfo The bindingInfo of the chart
      */
-    ChartDelegate.rebind = function (oMDCChart, oBindingInfo) {
+    ChartDelegate.rebind = function (oChart, oBindingInfo) {
         //Nothing to test
     };
 
-    ChartDelegate.getBindingInfo = function (oMDCChart) {
-        var oMetadataInfo = oMDCChart.getDelegate().payload;
+    ChartDelegate.getBindingInfo = function (oChart) {
+        var oMetadataInfo = oChart.getDelegate().payload;
         var sEntitySetPath = "/" + oMetadataInfo.collectionName;
         var oBindingInfo = {
             path: sEntitySetPath/*,
@@ -203,21 +203,21 @@ sap.ui.define([
     /**
      * Adds an item to the inner chart (measure/dimension)
      */
-    ChartDelegate.addInnerItem = function (sPropertyName, oMDCChart, mPropertyBag) {
+    ChartDelegate.addInnerItem = function (sPropertyName, oChart, mPropertyBag) {
         return Promise.resolve(null);
     };
 
     /**
      * Inserts an item to the inner chart (measure/dimension)
      */
-    ChartDelegate.insertInnerItem = function (sPropertyName, oMDCChart, mPropertyBag) {
+    ChartDelegate.insertInnerItem = function (sPropertyName, oChart, mPropertyBag) {
 
     };
 
     /**
      * Removes an item from the inner chart
      */
-    ChartDelegate.removeInnerItem = function (sPropertyName, oMDCChart, mPropertyBag) {
+    ChartDelegate.removeInnerItem = function (sPropertyName, oChart, mPropertyBag) {
         // return true within the Promise for default behaviour (e.g. continue to destroy the item)
         return Promise.resolve(true);
     };
@@ -250,41 +250,41 @@ sap.ui.define([
         //Nothing to do here
     };
 
-    ChartDelegate.fetchProperties = function (oMDCChart) {
-        var oModel = this._getModel(oMDCChart);
+    ChartDelegate.fetchProperties = function (oChart) {
+        var oModel = this._getModel(oChart);
         var pCreatePropertyInfos;
 
         if (!oModel) {
             pCreatePropertyInfos = new Promise(function (resolve) {
-                oMDCChart.attachModelContextChange({
+                oChart.attachModelContextChange({
                     resolver: resolve
                 }, onModelContextChange, this);
             }.bind(this)).then(function (oModel) {
-                return this._createPropertyInfos(oMDCChart, oModel);
+                return this._createPropertyInfos(oChart, oModel);
             }.bind(this));
         } else {
-            pCreatePropertyInfos = this._createPropertyInfos(oMDCChart, oModel);
+            pCreatePropertyInfos = this._createPropertyInfos(oChart, oModel);
         }
 
         return pCreatePropertyInfos.then(function (aProperties) {
-            if (oMDCChart.data) {
-                oMDCChart.data("$mdcChartPropertyInfo", aProperties);
+            if (oChart.data) {
+                oChart.data("$mdcChartPropertyInfo", aProperties);
             }
             return aProperties;
         });
     };
 
     function onModelContextChange(oEvent, oData) {
-        var oMDCChart = oEvent.getSource();
-        var oModel = this._getModel(oMDCChart);
+        var oChart = oEvent.getSource();
+        var oModel = this._getModel(oChart);
 
         if (oModel) {
-            oMDCChart.detachModelContextChange(onModelContextChange);
+            oChart.detachModelContextChange(onModelContextChange);
             oData.resolver(oModel);
         }
     }
 
-    ChartDelegate._createPropertyInfos = function (oMDCChart, oModel) {
+    ChartDelegate._createPropertyInfos = function (oChart, oModel) {
         return Promise.resolve();
     };
 
@@ -311,12 +311,12 @@ sap.ui.define([
     /**
      * Initializes a new chart property helper.
      *
-     * @param {sap.ui.mdc.Chart} oMDCChart Instance of the MDC chart.
+     * @param {sap.ui.mdc.Chart} oChart Instance of the MDC chart.
      * @returns {Promise<sap.ui.mdc.chart.PropertyHelper>} A promise that resolves with the property helper.
      * @private
      * @ui5-restricted sap.ui.mdc
      */
-    ChartDelegate.initPropertyHelper = function (oMDCChart) {
+    ChartDelegate.initPropertyHelper = function (oChart) {
         return new Promise(function(resolve){
             resolve(new PropertyHelper([]));
         });

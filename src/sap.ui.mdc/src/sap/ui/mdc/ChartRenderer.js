@@ -26,25 +26,25 @@ sap.ui.define(['./library'],
          * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
          *
          * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-         * @param {sap.ui.mdc.Chart} oMDCChart An object representation of the control that should be rendered
+         * @param {sap.ui.mdc.Chart} oChart An object representation of the control that should be rendered
          */
-        ChartRenderer.render = function(oRm, oMDCChart) {
-                oRm.openStart("div", oMDCChart);
+        ChartRenderer.render = function(oRm, oChart) {
+                oRm.openStart("div", oChart);
                 oRm.class(ChartRenderer.CSS_CLASS);
                 //oRm.class("sapUiFixFlex");
                 //oRm.style("overflow", "hidden");
-                oRm.style("height", oMDCChart.getHeight());
-                oRm.style("width", oMDCChart.getWidth());
-                oRm.style("min-height", oMDCChart.getMinHeight());
-                oRm.style("min-width", oMDCChart.getMinWidth());
+                oRm.style("height", oChart.getHeight());
+                oRm.style("width", oChart.getWidth());
+                oRm.style("min-height", oChart.getMinHeight());
+                oRm.style("min-width", oChart.getMinWidth());
                 oRm.openEnd();
                     oRm.openStart("div");
                     oRm.openEnd();
-                    this.renderToolbar(oRm, oMDCChart.getAggregation("_toolbar"));
-                    this.renderInfoToolbar(oRm, oMDCChart.getAggregation("_infoToolbar"));
+                    this.renderToolbar(oRm, oChart.getAggregation("_toolbar"));
+                    this.renderInfoToolbar(oRm, oChart.getAggregation("_infoToolbar"));
                     oRm.close("div");
-                this.renderBreadcrumbs(oRm, oMDCChart.getAggregation("_breadcrumbs"));
-                this.renderInnerStructure(oRm, oMDCChart.getAggregation("_innerChart"));
+                this.renderBreadcrumbs(oRm, oChart.getAggregation("_breadcrumbs"));
+                this.renderInnerStructure(oRm, oChart.getAggregation("_innerChart"));
                 oRm.close("div");
         };
 

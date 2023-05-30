@@ -108,20 +108,20 @@ sap.ui.define([
                     oEvent.getParameter("content").destroy();
                 } else {
                     // Forward navigation to semantic objects
-                    oMDCChart._navigateToSemanticObjectDetails(oEvent);
+                    oChart._navigateToSemanticObjectDetails(oEvent);
                 }
 
             });*/
 
             this.attachActionPress(function(oEvent) {
-                var oMDCChart = this.getParent().getParent();
+                var oChart = this.getParent().getParent();
                 // extract binding information of each item
                 var aItemContexts = [];
                 oEvent.getParameter("items").forEach(function(oItem) {
                     aItemContexts.push(oItem.getBindingContext());
                 });
                 // Re-arrange event object and navigate to outer press handler
-                oMDCChart.fireSelectionDetailsActionPressed({
+                oChart.fireSelectionDetailsActionPressed({
                     id: oEvent.getParameter("id"),
                     action: oEvent.getParameter("action"),
                     itemContexts: aItemContexts,
