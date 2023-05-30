@@ -32,18 +32,19 @@ sap.ui.define([
 	var sExtensionPointName4 = "ExtensionPoint4";
 	var sExtensionPointName5 = "ExtensionPoint5";
 
-	function _createExtensionPoint(oView, sExtensionPointName, oParent, sAggregationName, iIndex) {
+	function _createExtensionPoint(oView, sExtensionPointName, oParent, sAggregationName, iIndex, aDefaultContent) {
 		return {
 			view: oView,
 			name: sExtensionPointName,
 			targetControl: oParent,
 			aggregationName: sAggregationName,
-			index: iIndex
+			index: iIndex,
+			defaultContent: aDefaultContent
 		};
 	}
 
-	function _createAndRegisterExtensionPoint(oView, sExtensionPointName, oParent, sAggregationName, iIndex) {
-		var mExtensionPointInfo = _createExtensionPoint(oView, sExtensionPointName, oParent, sAggregationName, iIndex);
+	function _createAndRegisterExtensionPoint(oView, sExtensionPointName, oParent, sAggregationName, iIndex, aDefaultContent) {
+		var mExtensionPointInfo = _createExtensionPoint(oView, sExtensionPointName, oParent, sAggregationName, iIndex, aDefaultContent);
 		ExtensionPointRegistry.registerExtensionPoint(mExtensionPointInfo);
 		return mExtensionPointInfo;
 	}
@@ -69,7 +70,10 @@ sap.ui.define([
 						'<content>' +
 							'<core:ExtensionPoint name="ExtensionPoint2" />' +
 							'<Label id="label4" />' +
-							'<core:ExtensionPoint name="ExtensionPoint3" />' +
+							'<core:ExtensionPoint name="ExtensionPoint3" >' +
+								'<Label id="ep3-label1" text="Extension point label1 - default content" />' +
+								'<Label id="ep3-label2" text="Extension point label2 - default content" />' +
+							'</core:ExtensionPoint>' +
 						'</content>' +
 					'</Panel>' +
 					'<HBox id="hbox1">' +
@@ -272,6 +276,20 @@ sap.ui.define([
 			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName2, this.oXMLView), mExtensionPointInfo2,
 				"then after destroy parent2 control the extension point info is still available");
 		});
+
+		QUnit.test("when destroying a default control of an extension point (e.g. because another content is added to it)", function(assert) {
+			this.oPanel = this.oXMLView.getContent()[1];
+			this.oLabel = this.oXMLView.getContent()[1].getContent()[1];
+			this.oLabel2 = this.oXMLView.getContent()[1].getContent()[2];
+			var aDefaultContent = [this.oLabel, this.oLabel2];
+			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName3, this.oPanel, "content", 1, aDefaultContent);
+			var mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
+			assert.strictEqual(mExtensionPointInfo.defaultContent.length, 2, "before the destroy there are two default controls");
+			this.oLabel.destroy();
+			mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
+			assert.strictEqual(mExtensionPointInfo.defaultContent.length, 1, "then the removed default control is also removed from the registry entry");
+			assert.strictEqual(mExtensionPointInfo.defaultContent[0].getId(), this.oLabel2.getId(), "then the remaining control is the remaining label");
+		});
 	});
 
 	QUnit.module("Given an extensionPoint.Registry instantiated by the fl extensionPoint.Processor", {
@@ -297,7 +315,7 @@ sap.ui.define([
 							'<core:ExtensionPoint name="ExtensionPoint3">' +
 								'<Label id="ep3-label1" text="Extension point label1 - default content" />' +
 								'<Label id="ep3-label2" text="Extension point label2 - default content" />' +
-						'</core:ExtensionPoint>' +
+							'</core:ExtensionPoint>' +
 						'</content>' +
 					'</Panel>' +
 				'</mvc:View>';

@@ -47,8 +47,16 @@ sap.ui.define([
 					if (aControlIds.indexOf(oEvent.child.getId()) < oExtensionPoint.index) {
 						oExtensionPoint.index++;
 					}
-				} else if (oExtensionPoint.aggregation.indexOf(oEvent.child.getId()) < oExtensionPoint.index) {
-					oExtensionPoint.index--;
+				} else {
+					// If element being removed is part of the default content, also clear it from the registry
+					if (Array.isArray(oExtensionPoint.defaultContent)) {
+						oExtensionPoint.defaultContent = oExtensionPoint.defaultContent.filter(function(oContent) {
+							return oContent.getId() !== oEvent.child.getId();
+						});
+					}
+					if (oExtensionPoint.aggregation.indexOf(oEvent.child.getId()) < oExtensionPoint.index) {
+						oExtensionPoint.index--;
+					}
 				}
 				oExtensionPoint.aggregation = aControlIds;
 			}
