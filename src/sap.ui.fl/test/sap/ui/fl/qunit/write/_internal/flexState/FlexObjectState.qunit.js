@@ -12,10 +12,13 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
+	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	UIComponent,
@@ -29,10 +32,13 @@ sap.ui.define([
 	VariantManagementState,
 	FlexObjectState,
 	SessionStorageConnector,
+	Versions,
+	Version,
 	ChangePersistenceFactory,
 	Layer,
 	Utils,
 	Settings,
+	JSONModel,
 	sinon
 ) {
 	"use strict";
@@ -590,7 +596,8 @@ sap.ui.define([
 		QUnit.test("Save", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			sandbox.stub(ManifestUtils, "getAppIdFromManifest").returns("id");
-			ManifestUtils.getFlexReferenceForControl.returns("name");
+			var sReference = "name";
+			ManifestUtils.getFlexReferenceForControl.returns(sReference);
 			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll").resolves();
 			var oFlexController = ChangesController.getFlexControllerInstance(oComponent);
 			var oSaveAllStub1 = sandbox.stub(oFlexController, "saveAll").resolves();
@@ -620,7 +627,55 @@ sap.ui.define([
 					layer: Layer.USER,
 					currentLayer: Layer.USER,
 					invalidateCache: true,
-					condenseAnyLayer: true
+					condenseAnyLayer: true,
+					reference: sReference
+				};
+				assert.deepEqual(oGetFlexObjectsStub.firstCall.args[0], oExpectedParameters, "the parameters for getFlexObjects are correct");
+			});
+		});
+
+		QUnit.test("Save with update version parameter from version model", function(assert) {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(ManifestUtils, "getAppIdFromManifest").returns("id");
+			var sReference = "name";
+			ManifestUtils.getFlexReferenceForControl.returns(sReference);
+			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll").resolves();
+			var oFlexController = ChangesController.getFlexControllerInstance(oComponent);
+			var oSaveAllStub1 = sandbox.stub(oFlexController, "saveAll").resolves();
+			var oGetFlexObjectsStub = sandbox.stub(FlexObjectState, "getFlexObjects").resolves("foo");
+			sandbox.stub(Versions, "hasVersionsModel").returns(true);
+			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+				displayedVersion: Version.Number.Draft
+			}));
+
+			return FlexObjectState.saveFlexObjects({
+				selector: oComponent,
+				skipUpdateCache: true,
+				draft: true,
+				layer: Layer.CUSTOMER,
+				condenseAnyLayer: true,
+				version: 1
+			}).then(function(sReturn) {
+				assert.equal(sReturn, "foo", "the function returns whatever getFlexObjects returns");
+				assert.equal(oPersistAllStub.callCount, 1, "the CompVariant changes were saved");
+
+				assert.equal(oSaveAllStub1.callCount, 1, "the UI Changes were saved");
+				assert.deepEqual(oSaveAllStub1.firstCall.args[0], oComponent, "the component was passed");
+				assert.deepEqual(oSaveAllStub1.firstCall.args[1], true, "the skipUpdateCache flag was passed");
+				assert.deepEqual(oSaveAllStub1.firstCall.args[2], true, "the draft flag was passed");
+				assert.deepEqual(oSaveAllStub1.firstCall.args[5], true, "the condense flag was passed");
+
+				assert.equal(oGetFlexObjectsStub.callCount, 1, "the changes were retrieved at the end");
+				var oExpectedParameters = {
+					componentId: "id",
+					selector: oComponent,
+					draft: true,
+					layer: Layer.CUSTOMER,
+					currentLayer: Layer.CUSTOMER,
+					invalidateCache: true,
+					condenseAnyLayer: true,
+					reference: sReference,
+					version: Version.Number.Draft
 				};
 				assert.deepEqual(oGetFlexObjectsStub.firstCall.args[0], oExpectedParameters, "the parameters for getFlexObjects are correct");
 			});
@@ -630,7 +685,8 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			sandbox.stub(ManifestUtils, "getAppIdFromManifest").returns("id");
 			sandbox.stub(Utils, "isVariantByStartupParameter").returns("true");
-			ManifestUtils.getFlexReferenceForControl.returns("name");
+			var sReference = "name";
+			ManifestUtils.getFlexReferenceForControl.returns(sReference);
 			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll").resolves();
 			var oFlexController = ChangesController.getFlexControllerInstance(oComponent);
 			var oSaveAllStub1 = sandbox.stub(oFlexController, "saveAll").resolves();
@@ -660,7 +716,8 @@ sap.ui.define([
 					layer: Layer.USER,
 					currentLayer: Layer.USER,
 					invalidateCache: true,
-					condenseAnyLayer: true
+					condenseAnyLayer: true,
+					reference: sReference
 				};
 				assert.deepEqual(oGetFlexObjectsStub.firstCall.args[0], oExpectedParameters, "the parameters for getFlexObjects are correct");
 			});

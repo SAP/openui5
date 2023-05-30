@@ -15,8 +15,8 @@ sap.ui.define([
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/apply/_internal/preprocessors/ComponentLifecycleHooks",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -44,8 +44,8 @@ sap.ui.define([
 	Overlay,
 	DtUtil,
 	KeyCodes,
+	ComponentLifecycleHooks,
 	FlexRuntimeInfoAPI,
-	FlexControllerFactory,
 	PersistenceWriteAPI,
 	Layer,
 	FlUtils,
@@ -755,7 +755,7 @@ sap.ui.define([
 			);
 
 			// Simulate RTA starting after app was reloaded
-			FlexControllerFactory.getChangesAndPropagate(oComp, {});
+			ComponentLifecycleHooks.instanceCreatedHook(oComp, {});
 			return oStartPromise
 				.then(function() {
 					assert.strictEqual(

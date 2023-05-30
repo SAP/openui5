@@ -3,26 +3,28 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/Adaptations",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/_internal/FlexInfoSession",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/model/json/JSONModel"
 ], function(
-	Settings,
 	Adaptations,
+	FeaturesAPI,
 	FlexObjectFactory,
 	ManifestUtils,
 	FlexObjectState,
 	Layer,
 	LayerUtils,
 	FlexUtils,
+	FlexInfoSession,
 	Storage,
 	Versions,
 	JSONModel
@@ -51,24 +53,32 @@ sap.ui.define([
 	}
 
 	/**
-	 * Processing the response to activate the draft if the expected status is contained in the response object
+	 * Processing the response to create/read/update/delete adaptations if the expected status is contained in the response object
+	 * In case of a deletion the version list is reloaded because the draft might have been deleted on the backend
 	 * @param {object} oResponse - Object with response data
 	 * @param {number} oResponse.status - HTTP response code
 	 * @param {number} nExpectedStatus - Expected HTTP response code
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {string} mPropertyBag.appId - Reference of the application
 	 * @param {string} mPropertyBag.layer - Layer
-	 * @returns {object} Object with response data
+	 * @param {boolean} [bDelete=false] - Indicator whether the response was from a delete
+	 * @returns {Promise<object>} Object with response data
 	 */
-	function handleResponseForVersioning(oResponse, nExpectedStatus, mPropertyBag) {
-		if (oResponse.status === nExpectedStatus) {
-			Versions.onAllChangesSaved({
+	function handleResponseForVersioning(oResponse, nExpectedStatus, mPropertyBag, bDelete) {
+		if (bDelete) {
+			return Versions.updateModelFromBackend({
 				reference: mPropertyBag.appId,
-				layer: mPropertyBag.layer,
-				contextBasedAdaptation: true
+				layer: mPropertyBag.layer
+			}).then(function() {
+				return oResponse;
 			});
 		}
-		return oResponse;
+		Versions.onAllChangesSaved({
+			reference: mPropertyBag.appId,
+			layer: mPropertyBag.layer,
+			contextBasedAdaptation: true
+		});
+		return Promise.resolve(oResponse);
 	}
 
 	/**
@@ -91,13 +101,26 @@ sap.ui.define([
 		if (_mInstances && _mInstances[sReference] && _mInstances[sReference][sLayer]) {
 			return Promise.resolve(_mInstances[sReference][sLayer]);
 		}
-		return Settings.getInstance()
-			.then(function(oSettings) {
-				var bContextBasedAdaptationsEnabled = oSettings.isContextBasedAdaptationEnabled();
+		var bContextBasedAdaptationsEnabled;
+		return FeaturesAPI.isContextBasedAdaptationAvailable(sLayer)
+			.then(function(bContextBasedAdaptationsEnabledResponse) {
+				bContextBasedAdaptationsEnabled = bContextBasedAdaptationsEnabledResponse;
 				var oAdaptationsPromise = bContextBasedAdaptationsEnabled ? ContextBasedAdaptationsAPI.load(mPropertyBag) : Promise.resolve({adaptations: []});
 				return oAdaptationsPromise;
-			}).then(function(oAdaptations) {
-				return ContextBasedAdaptationsAPI.createModel(oAdaptations.adaptations);
+			})
+			.then(function(oAdaptations) {
+				// Determine displayed adaptation
+				// Flex Info Session returns currently shown one based on Flex Data response
+				// If no longer available switch to highest ranked one
+				var oFlexInfoSession = FlexInfoSession.get(mPropertyBag.control) || {};
+				var oDisplayedAdaptation = oAdaptations.adaptations[0];
+				if (oFlexInfoSession.adaptationId) {
+					oDisplayedAdaptation = oAdaptations.adaptations.find(function(oAdaptation) {
+						return oAdaptation.id === oFlexInfoSession.adaptationId;
+					}) || oDisplayedAdaptation;
+				}
+
+				return ContextBasedAdaptationsAPI.createModel(oAdaptations.adaptations, oDisplayedAdaptation, bContextBasedAdaptationsEnabled);
 			})
 			.then(function(oModel) {
 				_mInstances[sReference] = _mInstances[sReference] || {};
@@ -109,19 +132,29 @@ sap.ui.define([
 
 	/**
 	 * Initializes and creates an new adaptation Model
-	 * @param {string[]} aAdaptations - List of adaptations from backend
+	 * @param {object[]} aAdaptations - List of adaptations from backend
+	 * @param {object} oDisplayedAdaptation - Adaptation to be set as displayedAdaptation
+	 * @param {boolean} bContextBasedAdaptationsEnabled - Whether the feature is enabled
 	 * @returns {sap.ui.model.json.JSONModel} - Model of adaptations enhanced with additional properties
 	 */
-	ContextBasedAdaptationsAPI.createModel = function(aAdaptations) {
+	ContextBasedAdaptationsAPI.createModel = function(aAdaptations, oDisplayedAdaptation, bContextBasedAdaptationsEnabled) {
 		if (!Array.isArray(aAdaptations)) {
 			throw Error("Adaptations model can only be initialized with an array of adaptations");
 		}
+		if (bContextBasedAdaptationsEnabled && !oDisplayedAdaptation) {
+			throw Error("Invalid call, must pass displayed adaptation");
+		}
+		if (!bContextBasedAdaptationsEnabled && aAdaptations.length) {
+			throw Error("Invalid call, must not pass adaptations if feature is disabled");
+		}
 
+		// TODO Extract class
 		var oModel = new JSONModel({
 			allAdaptations: [],
 			adaptations: [],
 			count: 0,
-			displayedAdaptation: {}
+			displayedAdaptation: {},
+			contextBasedAdaptationsEnabled: bContextBasedAdaptationsEnabled
 		});
 		oModel.updateAdaptations = function(aAdaptations) {
 			var aContextBasedAdaptations = aAdaptations.filter(function(oAdapation, iIndex) {
@@ -179,7 +212,7 @@ sap.ui.define([
 		};
 		if (aAdaptations.length > 0) {
 			oModel.updateAdaptations(aAdaptations);
-			oModel.setProperty("/displayedAdaptation", aAdaptations[0]);
+			oModel.setProperty("/displayedAdaptation", oDisplayedAdaptation);
 		}
 		return oModel;
 	};
@@ -232,8 +265,36 @@ sap.ui.define([
 		return _mInstances[sReference] && _mInstances[sReference][sLayer];
 	};
 
+	/**
+	 * Checks if an adaptation for a given reference and layer exists.
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
+	 * @param {string} mPropertyBag.layer - Layer
+	 * @returns {boolean} checks if at least one adaptation exists for this reference and layer
+	 */
+	ContextBasedAdaptationsAPI.adaptationExists = function(mPropertyBag) {
+		var sReference = mPropertyBag.reference;
+		var sLayer = mPropertyBag.layer;
+		return this.hasAdaptationsModel({reference: sReference, layer: sLayer}) && _mInstances[sReference][sLayer].getProperty("/count") > 0;
+	};
+
 	ContextBasedAdaptationsAPI.clearInstances = function() {
 		_mInstances = {};
+	};
+
+	/**
+	 * Discards the model, initializes it again and returns the displayed adaptation.
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
+	 * @param {string} mPropertyBag.layer - Layer
+	 * @returns {string} Displayed adaptation id of the refreshed model
+	 */
+	ContextBasedAdaptationsAPI.refreshAdaptationModel = function(mPropertyBag) {
+		this.clearInstances();
+		return this.initialize(mPropertyBag)
+		.then(function(oModel) {
+			return oModel.getProperty("/displayedAdaptation/id");
+		});
 	};
 
 	function getNewVariantId(mFileNames, sOldVariantId) {
@@ -248,10 +309,9 @@ sap.ui.define([
 	 */
 	function copyVariants(aVariants, aCopiedFlexObjects, mFileNames, sContextBasedAdaptationId) {
 		aVariants.forEach(function(oChange) {
-			var oCopiedVariant;
-			var sFileName = FlexUtils.createDefaultFileName(oChange.getId().split("_").pop());
 			// copy of CompVariant and FLVariant variants
-			oCopiedVariant = FlexObjectFactory.createFromFileContent(oChange.cloneFileContentWithNewId(sFileName));
+			var oCopiedVariant = FlexObjectFactory.createFromFileContent(oChange.cloneFileContentWithNewId());
+			var sFileName = oCopiedVariant.getId();
 			oCopiedVariant.setAdaptationId(sContextBasedAdaptationId);
 			aCopiedFlexObjects.push(oCopiedVariant);
 			mFileNames.set(oChange.getId(), sFileName);
@@ -359,9 +419,10 @@ sap.ui.define([
 		}).then(function(oResponse) {
 			var oModel = this.getAdaptationsModel(mPropertyBag);
 			oModel.insertAdaptation(mPropertyBag.contextBasedAdaptation);
-			handleResponseForVersioning(oResponse, 201, mPropertyBag);
+			return handleResponseForVersioning(oResponse, 201, mPropertyBag);
+		}.bind(this)).then(function() {
 			return FlexObjectState.getFlexObjects({ selector: mPropertyBag.control, invalidateCache: false, includeCtrlVariants: true, includeDirtyChanges: true, currentLayer: Layer.CUSTOMER });
-		}.bind(this)).then(function(aFlexObjects) {
+		}).then(function(aFlexObjects) {
 			//currently getFlexObjects contains also VENDOR layer ctrl variant changes which need to be removed before copy
 			//TODO refactor when FlexObjectState.getFlexObjects will be refactored
 			var aCustomerFlexObjects = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aFlexObjects, Layer.CUSTOMER);
@@ -459,7 +520,6 @@ sap.ui.define([
 		mPropertyBag.appId = getFlexReferenceForControl(mPropertyBag.control);
 		return Storage.contextBasedAdaptation.load({
 			layer: mPropertyBag.layer,
-			flexObject: mPropertyBag.parameters,
 			appId: mPropertyBag.appId,
 			version: getParentVersion(mPropertyBag)
 		}).then(function(oAdaptations) {
@@ -495,7 +555,7 @@ sap.ui.define([
 			adaptationId: mPropertyBag.adaptationId,
 			parentVersion: getParentVersion(mPropertyBag)
 		}).then(function(oResponse) {
-			return handleResponseForVersioning(oResponse, 204, mPropertyBag);
+			return handleResponseForVersioning(oResponse, 204, mPropertyBag, true);
 		});
 	};
 

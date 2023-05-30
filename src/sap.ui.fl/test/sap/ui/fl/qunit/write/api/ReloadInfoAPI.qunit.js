@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/FlexInfoSession",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
@@ -19,6 +20,7 @@ sap.ui.define([
 	ManifestUtils,
 	CompVariantState,
 	FlexInfoSession,
+	ContextBasedAdaptationsAPI,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	ReloadInfoAPI,
@@ -80,7 +82,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("allContexts is save in the session storage and do not call flex/info request", function(assert) {
+		QUnit.test("allContexts is saved in the session storage and do not call flex/info request", function(assert) {
 			var oReloadInfo = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
@@ -592,7 +594,7 @@ sap.ui.define([
 			assert.equal(oFlexInfoFronSession, null, "then allContexts is null in session storage");
 		});
 
-		QUnit.test("and all context was not loaded and there is no other reason for reload", function(assert) {
+		QUnit.test("and isEndUserAdaptation is true and there are also no other reasons for reload", function(assert) {
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
@@ -600,7 +602,7 @@ sap.ui.define([
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
-			var oFlexInfoResponse = {allContextsProvided: true};
+			var oFlexInfoResponse = {allContextsProvided: true, isEndUserAdaptation: true};
 			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
@@ -608,6 +610,24 @@ sap.ui.define([
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then NOT_NEEDED reloadMethod was set");
+		});
+
+		QUnit.test("and the only reload reason is that key user and end user adaptation don't match", function(assert) {
+			var oReloadInfo = {
+				layer: Layer.CUSTOMER,
+				selector: {},
+				changesNeedReload: false,
+				isDraftAvailable: false,
+				versioningEnabled: true
+			};
+			var oFlexInfoResponse = {allContextsProvided: true, isEndUserAdaptation: false};
+			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
+
+			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
+			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
 		});
 	});
 

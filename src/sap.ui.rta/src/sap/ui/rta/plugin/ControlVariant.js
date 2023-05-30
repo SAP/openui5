@@ -560,13 +560,15 @@ sap.ui.define([
 		var oModel = this._getVariantModel(oVariantManagementControl);
 		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
 		var mFlexSettings = this.getCommandFactory().getFlexSettings();
+		var mComponentPropertyBag = mFlexSettings;
+		mComponentPropertyBag.variantManagementControl = oVariantManagementControl;
 
 		return oModel.manageVariants(
 			oVariantManagementControl,
 			sVariantManagementReference,
 			mFlexSettings.layer,
 			Utils.getRtaStyleClassName(),
-			ContextSharingAPI.createComponent(mFlexSettings)
+			ContextSharingAPI.createComponent(mComponentPropertyBag)
 		)
 		.then(function(aConfiguredChanges) {
 			if (aConfiguredChanges.length > 0) {

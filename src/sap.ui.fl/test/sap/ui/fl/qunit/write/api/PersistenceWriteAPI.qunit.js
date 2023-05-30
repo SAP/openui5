@@ -265,17 +265,31 @@ sap.ui.define([
 		});
 
 		QUnit.test("when save dirty change and update flex info session", function(assert) {
-			FlexInfoSession.set({isResetEnabled: false});
+			FlexInfoSession.set({
+				isResetEnabled: false,
+				adaptationId: "adaptation1",
+				isEndUserAdaptation: true
+			});
 			var oFlexObjectStateSaveStub = sandbox.stub(FlexObjectState, "saveFlexObjects").resolves({change: "test"});
-			var oFlexInfo = {isResetEnabled: true};
-			var oPersistenceWriteGetFlexInfoStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves(oFlexInfo);
+			var oFlexInfo = {
+				isResetEnabled: true,
+				adaptationId: "adaptation1",
+				isEndUserAdaptation: true
+			};
+			var oPersistenceWriteGetFlexInfoStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves(new Promise(function(resolve) {
+				// Delay resolution to simulate a slow call
+				setTimeout(function() {
+					resolve(oFlexInfo);
+				}, 0);
+			}));
 			var mPropertyBag = { foo: "bar" };
-			return PersistenceWriteAPI.save(mPropertyBag).then(function() {
+			return PersistenceWriteAPI.save(mPropertyBag).then(function(oFlexObject) {
 				assert.equal(oFlexObjectStateSaveStub.callCount, 1, "the FlexObjectState save method was called");
+				assert.deepEqual(oFlexObject, {change: "test"}, "Flex objects returned from saveFlexObjects are returned");
 				assert.deepEqual(oFlexObjectStateSaveStub.firstCall.args[0], mPropertyBag, "the FlexObjectState was called with the same arguments");
 				assert.equal(oPersistenceWriteGetFlexInfoStub.callCount, 1, "the PersistenceWriteAPI getResetAndPublishInfo method was called");
 				assert.deepEqual(oPersistenceWriteGetFlexInfoStub.firstCall.args[0], mPropertyBag, "the PersistenceWriteAPI was called with the same arguments");
-				assert.deepEqual(oFlexInfo, FlexInfoSession.getByReference(), "session flex info is updated");
+				assert.deepEqual(oFlexInfo, FlexInfoSession.getByReference(), "session flex info is updated with isResetEnabled but adaptationId and isEndUserAdaptation are kept");
 			});
 		});
 

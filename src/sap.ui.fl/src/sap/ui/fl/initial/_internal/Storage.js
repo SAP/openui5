@@ -142,6 +142,8 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.componentName] componentName of the application which may differ from the reference in case of an app variant
 	 * @param {string} [mPropertyBag.cacheKey] cacheKey which can be used to etag / cachebuster the request
 	 * @param {number} [mPropertyBag.version] - Number of the version for which the data should be loaded
+	 * @param {boolean} [mPropertyBag.allContexts] Includes also restricted context
+	 * @param {string} [mPropertyBag.adaptationId] - Context-based adaptation to be loaded
 	 * @returns {Promise<object>} Resolves with the responses from all configured connectors merged into one object
 	 */
 	Storage.loadFlexData = function (mPropertyBag) {

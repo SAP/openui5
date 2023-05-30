@@ -102,10 +102,12 @@ sap.ui.define([
 	 * If allContextsProvided=false, that means that EndUser hasn't some specific roles to see the views,
 	 * so the reload should happen in order to provide all views for a KeyUser.
 	 *
+	 * @param {object} oReloadInfo - Information needed for the reload
 	 * @param {sap.ui.core.Control} oReloadInfo.selector - Root control instance
 	 * @return {boolean} true if allContextsProvided false and RTA wasn't started yet, otherwise false.
 	 */
 	function needContextSpecificReload(oReloadInfo) {
+		//TODO: could be disabled when ContextBasedAdaptationAPI is enabled
 		var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector);
 		if (oFlexInfoSession && oFlexInfoSession.initialAllContexts) {
 			return false; // if we are already in RTA mode, no reload needed again
@@ -134,6 +136,11 @@ sap.ui.define([
 		return oFlexInfoSession && !oFlexInfoSession.allContextsProvided;
 	}
 
+	function needAdaptationReloadOnExit(oControl) {
+		var oFlexInfoSession = FlexInfoSession.get(oControl);
+		return oFlexInfoSession && oFlexInfoSession.isEndUserAdaptation === false;
+	}
+
 	/**
 	 * Provides an API to get information about reload behavior in case of a draft and/or personalization changes.
 	 *
@@ -151,12 +158,12 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 		 * @param {sap.ui.core.Control} oReloadInfo.selector - Root control instance
 		 * @param {boolean} [oReloadInfo.ignoreMaxLayerParameter] - Indicates that personalization is to be checked without max layer filtering
+		 * @param {string} [oReloadInfo.adaptationId] - Context-based adaptation ID of the currently displayed adaptation
 		 * @param {object} oReloadInfo.parsedHash - Parsed URL hash
 		 *
 		 * @returns {Promise<object>} Promise resolving to an object with the reload reasons
 		 */
 		getReloadReasonsForStart: function(oReloadInfo) {
-			//TODO: add reload reason for context-based adaptations
 			return Promise.all([
 				areHigherLayerChangesAvailable.call(this, oReloadInfo),
 				isDraftAvailable(oReloadInfo),
@@ -333,12 +340,14 @@ sap.ui.define([
 				oReloadInfo.isDraftAvailable = false;
 			}
 			oReloadInfo.allContexts = isAllContextsAvailable(oReloadInfo.selector);
+			oReloadInfo.switchEndUserAdaptation = needAdaptationReloadOnExit(oReloadInfo.selector);
 			if (oReloadInfo.changesNeedReload
 				|| oReloadInfo.isDraftAvailable
 				|| oReloadInfo.hasHigherLayerChanges
 				|| oReloadInfo.initialDraftGotActivated
 				|| oReloadInfo.activeVersionNotSelected
 				|| oReloadInfo.allContexts
+				|| oReloadInfo.switchEndUserAdaptation
 			) {
 				oReloadInfo.reloadMethod = oRELOAD.RELOAD_PAGE;
 				// always try cross app navigation (via hash); we only need a hard reload because of appdescr changes (changesNeedReload = true)

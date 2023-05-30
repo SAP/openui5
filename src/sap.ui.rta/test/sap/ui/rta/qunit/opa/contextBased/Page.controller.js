@@ -44,10 +44,19 @@ sap.ui.define([
 			this.oAddAdaptationsDialog = new AddAdaptationDialog({ toolbar: this.oToolbar });
 			var oTempAdaptationsModel = new JSONModel();
 			oTempAdaptationsModel.loadData("./model/adaptations.json", "", false);
-			this.oModel = ContextBasedAdaptationsAPI.createModel(oTempAdaptationsModel.getProperty("/adaptations"));
+			var aAdaptations = oTempAdaptationsModel.getProperty("/adaptations");
+			this.oModel = ContextBasedAdaptationsAPI.createModel(aAdaptations, aAdaptations[0], true);
 		},
 		onManageAdaptations: function() {
 			setStubsWithData.call(this);
+			this.oManageAdaptationsDialog.openManageAdaptationDialog();
+		},
+		onManageAdaptationsWithOnlyOneAdaptation: function() {
+			setStubsWithData.call(this, "./model/onlyOneAdaptation.json");
+			this.oManageAdaptationsDialog.openManageAdaptationDialog();
+		},
+		onManageAdaptationsWithTwoAdaptations: function() {
+			setStubsWithData.call(this, "./model/twoAdaptations.json");
 			this.oManageAdaptationsDialog.openManageAdaptationDialog();
 		},
 		onManageAdaptationsWithBackendError: function() {
@@ -74,7 +83,7 @@ sap.ui.define([
 		this.removeStub = this.sandbox.stub(ContextBasedAdaptationsAPI, "remove");
 	}
 
-	function setStubsWithData() {
+	function setStubsWithData(sAdaptationsDataPath) {
 		this.sandbox.restore();
 		initStubs.call(this);
 		this.getContextsStub.callsFake(function(args) {
@@ -104,7 +113,15 @@ sap.ui.define([
 
 		this.loadStub.callsFake(function() {
 			var oAdaptationsModel = new JSONModel();
-			oAdaptationsModel.loadData("./model/adaptations.json", "", false);
+			var sAdaptationJsonModelPath;
+			if (sAdaptationsDataPath === "./model/onlyOneAdaptation.json") {
+				sAdaptationJsonModelPath = "./model/onlyOneAdaptation.json";
+			} else if (sAdaptationsDataPath === "./model/twoAdaptations.json") {
+				sAdaptationJsonModelPath = "./model/twoAdaptations.json";
+			} else {
+				sAdaptationJsonModelPath = "./model/adaptations.json";
+			}
+			oAdaptationsModel.loadData(sAdaptationJsonModelPath, "", false);
 			return Promise.resolve(oAdaptationsModel.getData());
 		});
 

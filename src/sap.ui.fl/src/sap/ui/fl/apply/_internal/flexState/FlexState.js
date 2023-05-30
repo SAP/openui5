@@ -280,7 +280,7 @@ sap.ui.define([
 				});
 
 				registerMaxLayerHandler(mPropertyBag.reference);
-				storeAllContextsProvided(mPropertyBag.reference, mResponse);
+				storeInfoInSession(mPropertyBag.reference, mResponse);
 
 				// no further changes to storageResponse properties allowed
 				Object.freeze(_mInstances[mPropertyBag.reference].storageResponse);
@@ -291,16 +291,16 @@ sap.ui.define([
 		return _mInitPromises[mPropertyBag.reference];
 	}
 
-	function storeAllContextsProvided(sReference, mResponse) {
+	function storeInfoInSession(sReference, mResponse) {
 		var oResponse = mResponse && mResponse.changes || {};
-		if (oResponse.info !== undefined) {
-			var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
-			if (oFlexInfoSession === null) {
-				oFlexInfoSession = {};
-			}
-			oFlexInfoSession.allContextsProvided = oResponse.info.allContextsProvided;
-			FlexInfoSession.setByReference(oFlexInfoSession, sReference);
+		var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
+		if (oFlexInfoSession === null) {
+			oFlexInfoSession = {};
 		}
+		if (oResponse.info !== undefined) {
+			oFlexInfoSession = Object.assign(oFlexInfoSession, oResponse.info);
+		}
+		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 	}
 
 	function registerMaxLayerHandler(sReference) {

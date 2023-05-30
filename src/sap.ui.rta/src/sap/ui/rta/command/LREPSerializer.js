@@ -150,7 +150,8 @@ sap.ui.define([
 	 * @param {boolean} mPropertyBag.saveAsDraft - save the changes as a draft
 	 * @param {string} [mPropertyBag.layer] - Layer for which the changes should be saved
 	 * @param {boolean} [mPropertyBag.removeOtherLayerChanges=false] - Whether to remove changes on other layers before saving
-	 * @param {string} [mPropertyBag.version] - Layer for which the changes should be saved
+	 * @param {string} [mPropertyBag.version] - Version to load into Flex State after saving (e.g. undefined when exiting RTA)
+	 * @param {string} [mPropertyBag.adaptationId] - Adaptation to load into Flex State after saving (e.g. undefined when exiting RTA)
 	 * @returns {Promise} return empty promise
 	 * @public
 	 */
@@ -170,6 +171,7 @@ sap.ui.define([
 				layer: mPropertyBag.layer,
 				removeOtherLayerChanges: !!mPropertyBag.removeOtherLayerChanges,
 				version: mPropertyBag.version,
+				adaptationId: mPropertyBag.adaptationId,
 				condenseAnyLayer: mPropertyBag.condenseAnyLayer
 			});
 		}.bind(this))

@@ -14,6 +14,8 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/Base",
+	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
+	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/Utils",
@@ -33,6 +35,8 @@ sap.ui.define([
 	AppVariantFeature,
 	Adaptation,
 	BaseToolbar,
+	ManageAdaptations,
+	SaveAsAdaptation,
 	RuntimeAuthoring,
 	ReloadManager,
 	Utils,
@@ -143,6 +147,25 @@ sap.ui.define([
 			});
 			this.oControlsModel = RtaQunitUtils.createToolbarControlsModel();
 			sandbox.stub(ContextBasedAdaptationsAPI, "initialize").resolves(oAdaptationsModel);
+
+			this.oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox");
+			this.oOpenAddAdaptationDialogStub = sandbox.stub(SaveAsAdaptation.prototype, "openAddAdaptationDialog");
+			this.oOpenManageAdaptationDialog = sandbox.stub(ManageAdaptations.prototype, "openManageAdaptationDialog");
+
+			this.oToolbar = new Adaptation({
+				textResources: this.oTextResources
+			});
+			this.oToolbar.setRtaInformation({
+				flexSettings: {
+					layer: "CUSTOMER"
+				}
+			});
+			this.oVersionsModel = new JSONModel({
+				backendDraft: true,
+				displayedVersion: "0"
+			});
+			this.oToolbar.setModel(this.oVersionsModel, "versions");
+			return this.oToolbar._pFragmentLoaded;
 		},
 		afterEach: function() {
 			this.oToolbar.destroy();
@@ -156,22 +179,15 @@ sap.ui.define([
 				displayedAdaptation: {}
 			});
 
-			this.oToolbar = new Adaptation({
-				textResources: this.oTextResources
-			});
-
-			return this.oToolbar._pFragmentLoaded
-				.then(function() {
-					this.oToolbar.setModel(this.oAdaptationsModel, "contextBasedAdaptations");
-					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
-					var oContextBasedAdaptationMenu = this.oToolbar.getControl("contextBasedAdaptationMenu");
-					assert.ok(oContextBasedAdaptationMenu.getEnabled(), "then the context-based adaptation menu is enabled");
-					var sExpectedTitle = this.oToolbar.getTextResources().getText("BTN_ADAPTING_FOR_ALL_USERS");
-					assert.strictEqual(oContextBasedAdaptationMenu.getText(), sExpectedTitle, "then the menu text is rendered correctly ");
-					assert.ok(this.oToolbar.getControl("saveAsAdaptation").getEnabled(), "then the save as new adaptation button is enabled");
-					assert.ok(this.oToolbar.getControl("manageAdaptations").getEnabled(), "then the manage adaptations button is enabled");
-					assert.notOk(this.oToolbar.getControl("switchAdaptations").getVisible(), "then the switch adaptations button is not visible");
-				}.bind(this));
+			this.oToolbar.setModel(this.oAdaptationsModel, "contextBasedAdaptations");
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+			var oContextBasedAdaptationMenu = this.oToolbar.getControl("contextBasedAdaptationMenu");
+			assert.ok(oContextBasedAdaptationMenu.getEnabled(), "then the context-based adaptation menu is enabled");
+			var sExpectedTitle = this.oToolbar.getTextResources().getText("BTN_ADAPTING_FOR_ALL_USERS");
+			assert.strictEqual(oContextBasedAdaptationMenu.getText(), sExpectedTitle, "then the menu text is rendered correctly ");
+			assert.ok(this.oToolbar.getControl("saveAsAdaptation").getEnabled(), "then the save as new adaptation button is enabled");
+			assert.ok(this.oToolbar.getControl("manageAdaptations").getEnabled(), "then the manage adaptations button is enabled");
+			assert.notOk(this.oToolbar.getControl("switchAdaptations").getVisible(), "then the switch adaptations button is not visible");
 		});
 
 		QUnit.test("When two context-based adaptation are available and the displayed adaptation is default (context-free) ", function (assert) {
@@ -182,26 +198,19 @@ sap.ui.define([
 				displayedAdaptation: {title: ""}
 			});
 
-			this.oToolbar = new Adaptation({
-				textResources: this.oTextResources
-			});
-
-			return this.oToolbar._pFragmentLoaded
-				.then(function() {
-					this.oToolbar.setModel(this.oAdaptationsModel, "contextBasedAdaptations");
-					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
-					var oContextBasedAdaptationMenu = this.oToolbar.getControl("contextBasedAdaptationMenu");
-					assert.ok(oContextBasedAdaptationMenu.getEnabled(), "then the context-based adaptation menu is enabled");
-					var sExpectedTitle = this.oToolbar.getTextResources().getText("BTN_ADAPTING_FOR", this.oToolbar.getTextResources().getText("TXT_DEFAULT_APP"));
-					assert.strictEqual(oContextBasedAdaptationMenu.getText(), sExpectedTitle, "then the menu text is rendered correctly ");
-					assert.ok(this.oToolbar.getControl("saveAsAdaptation").getEnabled(), "then the save as new adaptation button is enabled");
-					assert.ok(this.oToolbar.getControl("manageAdaptations").getEnabled(), "then the manage adaptations button is enabled");
-					assert.notOk(this.oToolbar.getControl("editAdaptation").getVisible(), "then the edit adaptations button is not visible");
-					assert.notOk(this.oToolbar.getControl("deleteAdaptation").getVisible(), "then the delete adaptations button is not visible");
-					var oSwitchAdaptationsButton = this.oToolbar.getControl("switchAdaptations");
-					assert.ok(oSwitchAdaptationsButton.getVisible(), "then the switch adaptations button is visible");
-					assert.strictEqual(oSwitchAdaptationsButton.getItems().length, 3, "number of adaptations to be switched is correct");
-				}.bind(this));
+			this.oToolbar.setModel(this.oAdaptationsModel, "contextBasedAdaptations");
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+			var oContextBasedAdaptationMenu = this.oToolbar.getControl("contextBasedAdaptationMenu");
+			assert.ok(oContextBasedAdaptationMenu.getEnabled(), "then the context-based adaptation menu is enabled");
+			var sExpectedTitle = this.oToolbar.getTextResources().getText(this.oToolbar.getTextResources().getText("TXT_DEFAULT_APP"));
+			assert.strictEqual(oContextBasedAdaptationMenu.getText(), sExpectedTitle, "then the menu text is rendered correctly ");
+			assert.ok(this.oToolbar.getControl("saveAsAdaptation").getEnabled(), "then the save as new adaptation button is enabled");
+			assert.ok(this.oToolbar.getControl("manageAdaptations").getEnabled(), "then the manage adaptations button is enabled");
+			assert.notOk(this.oToolbar.getControl("editAdaptation").getVisible(), "then the edit adaptations button is not visible");
+			assert.notOk(this.oToolbar.getControl("deleteAdaptation").getVisible(), "then the delete adaptations button is not visible");
+			var oSwitchAdaptationsButton = this.oToolbar.getControl("switchAdaptations");
+			assert.ok(oSwitchAdaptationsButton.getVisible(), "then the switch adaptations button is visible");
+			assert.strictEqual(oSwitchAdaptationsButton.getItems().length, 3, "number of adaptations to be switched is correct");
 		});
 
 		QUnit.test("When two context-based adaptation are available", function (assert) {
@@ -212,26 +221,160 @@ sap.ui.define([
 				displayedAdaptation: {title: "Sales"}
 			});
 
-			this.oToolbar = new Adaptation({
-				textResources: this.oTextResources
+			this.oToolbar.setModel(this.oAdaptationsModel, "contextBasedAdaptations");
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+			var oContextBasedAdaptationMenu = this.oToolbar.getControl("contextBasedAdaptationMenu");
+			assert.ok(oContextBasedAdaptationMenu.getEnabled(), "then the context-based adaptation menu is enabled");
+			var sExpectedTitle = this.oToolbar.getTextResources().getText("BTN_ADAPTING_FOR", "Sales");
+			assert.strictEqual(oContextBasedAdaptationMenu.getText(), sExpectedTitle, "then the menu text is rendered correctly ");
+			assert.ok(this.oToolbar.getControl("saveAsAdaptation").getEnabled(), "then the save as new adaptation button is enabled");
+			assert.ok(this.oToolbar.getControl("manageAdaptations").getEnabled(), "then the manage adaptations button is enabled");
+			assert.ok(this.oToolbar.getControl("editAdaptation").getVisible(), "then the edit adaptations button is visible");
+			assert.ok(this.oToolbar.getControl("deleteAdaptation").getVisible(), "then the delete adaptations button is visible");
+			var oSwitchAdaptationsButton = this.oToolbar.getControl("switchAdaptations");
+			assert.ok(oSwitchAdaptationsButton.getVisible(), "then the switch adaptations button is visible");
+			assert.strictEqual(oSwitchAdaptationsButton.getItems().length, 3, "number of adaptations to be switched is correct");
+		});
+
+		QUnit.test("Given I am on backend draft, when save as is pressed", function (assert) {
+			this.oVersionsModel.setData({
+				backendDraft: true,
+				displayedVersion: "0"
 			});
 
-			return this.oToolbar._pFragmentLoaded
-				.then(function() {
-					this.oToolbar.setModel(this.oAdaptationsModel, "contextBasedAdaptations");
-					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
-					var oContextBasedAdaptationMenu = this.oToolbar.getControl("contextBasedAdaptationMenu");
-					assert.ok(oContextBasedAdaptationMenu.getEnabled(), "then the context-based adaptation menu is enabled");
-					var sExpectedTitle = this.oToolbar.getTextResources().getText("BTN_ADAPTING_FOR", "Sales");
-					assert.strictEqual(oContextBasedAdaptationMenu.getText(), sExpectedTitle, "then the menu text is rendered correctly ");
-					assert.ok(this.oToolbar.getControl("saveAsAdaptation").getEnabled(), "then the save as new adaptation button is enabled");
-					assert.ok(this.oToolbar.getControl("manageAdaptations").getEnabled(), "then the manage adaptations button is enabled");
-					assert.ok(this.oToolbar.getControl("editAdaptation").getVisible(), "then the edit adaptations button is visible");
-					assert.ok(this.oToolbar.getControl("deleteAdaptation").getVisible(), "then the delete adaptations button is visible");
-					var oSwitchAdaptationsButton = this.oToolbar.getControl("switchAdaptations");
-					assert.ok(oSwitchAdaptationsButton.getVisible(), "then the switch adaptations button is visible");
-					assert.strictEqual(oSwitchAdaptationsButton.getItems().length, 3, "number of adaptations to be switched is correct");
-				}.bind(this));
+			this.oToolbar.getControl("saveAsAdaptation").firePress();
+
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			}).then(function() {
+				assert.strictEqual(this.oShowMessageBoxStub.callCount, 0, "Warning is not shown");
+				assert.strictEqual(this.oOpenAddAdaptationDialogStub.callCount, 1, "Dialog is opened");
+			}.bind(this));
+		});
+
+		QUnit.test("Given I am on client draft, when save as is pressed", function (assert) {
+			this.oVersionsModel.setData({
+				backendDraft: false,
+				displayedVersion: "0"
+			});
+
+			this.oToolbar.getControl("saveAsAdaptation").firePress();
+
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			}).then(function() {
+				assert.strictEqual(this.oShowMessageBoxStub.callCount, 0, "Warning is not shown");
+				assert.strictEqual(this.oOpenAddAdaptationDialogStub.callCount, 1, "Dialog is opened");
+			}.bind(this));
+		});
+
+		QUnit.test("Given I am on active version without draft, when save as is pressed", function (assert) {
+			this.oVersionsModel.setData({
+				backendDraft: false,
+				displayedVersion: "12345"
+			});
+
+			this.oToolbar.getControl("saveAsAdaptation").firePress();
+
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			}).then(function() {
+				assert.strictEqual(this.oShowMessageBoxStub.callCount, 0, "Warning is not shown");
+				assert.strictEqual(this.oOpenAddAdaptationDialogStub.callCount, 1, "Dialog is opened");
+				assert.strictEqual(this.oOpenAddAdaptationDialogStub.getCall(0).args[0], Layer.CUSTOMER, "Dialog has correct layer");
+				assert.notOk(this.oOpenAddAdaptationDialogStub.getCall(0).args[1], "Dialog not in edit mode (but create)");
+			}.bind(this));
+		});
+
+		QUnit.test("Given I am on active version with draft, when save as is pressed I confirm warning", function (assert) {
+			this.oVersionsModel.setData({
+				backendDraft: true,
+				displayedVersion: "12345"
+			});
+			this.oShowMessageBoxStub.resolves(MessageBox.Action.OK);
+
+			this.oToolbar.getControl("saveAsAdaptation").firePress();
+
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			}).then(function() {
+				assert.strictEqual(this.oShowMessageBoxStub.callCount, 1, "Warning is shown");
+				assert.strictEqual(this.oOpenAddAdaptationDialogStub.callCount, 1, "Dialog is opened");
+			}.bind(this));
+		});
+
+		QUnit.test("Given I am on active version with draft, when save as is pressed I cancel warning", function (assert) {
+			this.oVersionsModel.setData({
+				backendDraft: true,
+				displayedVersion: "12345"
+			});
+			this.oShowMessageBoxStub.returns(Promise.reject("cancel"));
+
+			this.oToolbar.getControl("saveAsAdaptation").firePress();
+
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			}).then(function() {
+				assert.strictEqual(this.oShowMessageBoxStub.callCount, 1, "Warning is shown");
+				assert.strictEqual(this.oOpenAddAdaptationDialogStub.callCount, 0, "Dialog is opened");
+			}.bind(this));
+		});
+
+		QUnit.test("Given I am on active version with draft, when edit as is pressed I confirm warning", function (assert) {
+			this.oVersionsModel.setData({
+				backendDraft: true,
+				displayedVersion: "12345"
+			});
+			this.oShowMessageBoxStub.resolves(MessageBox.Action.OK);
+
+			this.oToolbar.getControl("editAdaptation").firePress();
+
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			}).then(function() {
+				assert.strictEqual(this.oShowMessageBoxStub.callCount, 1, "Warning is shown");
+				assert.strictEqual(this.oOpenAddAdaptationDialogStub.callCount, 1, "Dialog is opened");
+				assert.strictEqual(this.oOpenAddAdaptationDialogStub.getCall(0).args[0], "CUSTOMER", "Dialog has correct layer");
+				assert.ok(this.oOpenAddAdaptationDialogStub.getCall(0).args[1], "Dialog in edit mode ");
+			}.bind(this));
+		});
+
+		QUnit.test("Given I am on active version with draft, when delete as is pressed I confirm warning", function (assert) {
+			this.oVersionsModel.setData({
+				backendDraft: true,
+				displayedVersion: "12345"
+			});
+			this.oShowMessageBoxStub.resolves(MessageBox.Action.OK);
+			var iEventCalls = 0;
+			this.oToolbar.attachDeleteAdaptation(function() {
+				iEventCalls++;
+			});
+
+			this.oToolbar.getControl("deleteAdaptation").firePress();
+
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			}).then(function() {
+				assert.strictEqual(this.oShowMessageBoxStub.callCount, 1, "Warning is shown");
+				assert.strictEqual(iEventCalls, 1, "Event is raised");
+			}.bind(this));
+		});
+
+		QUnit.test("Given I am on active version with draft, when manage as is pressed I confirm warning", function (assert) {
+			this.oVersionsModel.setData({
+				backendDraft: true,
+				displayedVersion: "12345"
+			});
+			this.oShowMessageBoxStub.resolves(MessageBox.Action.OK);
+
+			this.oToolbar.getControl("manageAdaptations").firePress();
+
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			}).then(function() {
+				assert.strictEqual(this.oShowMessageBoxStub.callCount, 0, "Warning is not shown (will be shown on save)");
+				assert.strictEqual(this.oOpenManageAdaptationDialog.callCount, 1, "Dialog is opened");
+			}.bind(this));
 		});
 	});
 
@@ -275,7 +418,7 @@ sap.ui.define([
 				},
 				oDefaultAdaptation
 			];
-			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations);
+			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations, aAdaptations[0], true);
 
 			this.oToolbar = new Adaptation({
 				textResources: this.oTextResources
@@ -293,27 +436,36 @@ sap.ui.define([
 					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 					var oDeleteButton = this.oToolbar.getControl("deleteAdaptation");
 					var oEditButton = this.oToolbar.getControl("editAdaptation");
-					assert.ok(this.oToolbar.getControl("contextBasedAdaptationMenu").getEnabled(), "then the context-based adaptation menu is enabled");
+					assert.ok(oMenuButton.getEnabled(), "then the context-based adaptation menu is enabled");
 					assert.strictEqual(oDeleteButton.getEnabled(), true, "then the context-based adaptation delete menu button is enabled");
 					assert.strictEqual(oDeleteButton.getVisible(), true, "then the context-based adaptation delete menu button is enabled");
 					assert.strictEqual(oEditButton.getEnabled(), true, "then the context-based edit menu button is enabled");
 					assert.strictEqual(oEditButton.getVisible(), true, "then the context-based edit menu button is enabled");
-					assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'Sales'", "then the menu text is rendered correctly");
-					oMenuButton.onAfterRendering = function() {
+					assert.strictEqual(oMenuButton.getText(), "Adapting for 'Sales'", "then the menu text is rendered correctly");
+
+					var oPromise = new Promise(function(resolve) {
+						setTimeout(resolve, 0);
+					}).then(function() {
 						assert.strictEqual(oAdaptationsModel.getProperty("/count"), 1, "only one adaptation is left in the model");
 						assert.strictEqual(oDeleteButton.getVisible(), true, "then the context-based adaptation delete menu button is enabled");
 						assert.strictEqual(oEditButton.getVisible(), true, "then the context-based edit menu button is enabled");
-						assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'Manager'", "then the menu text is rendered correctly");
+						assert.strictEqual(oMenuButton.getText(), "Adapting for 'Manager'", "then the menu text is rendered correctly");
 
 						oDeleteButton.firePress();
-						oMenuButton.onAfterRendering = function() {
-							assert.strictEqual(oAdaptationsModel.getProperty("/count"), 0, "only one adaptation is left in the model");
-							assert.strictEqual(oDeleteButton.getVisible(), false, "then the context-based adaptation delete menu button is enabled");
-							assert.strictEqual(oEditButton.getVisible(), false, "then the context-based edit menu button is enabled");
-							assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'All Users'", "then the menu text is rendered correctly");
-						}.bind(this);
-					}.bind(this);
+
+						return new Promise(function(resolve) {
+							setTimeout(resolve, 0);
+						});
+					})
+					.then(function() {
+						assert.strictEqual(oAdaptationsModel.getProperty("/count"), 0, "only one adaptation is left in the model");
+						assert.strictEqual(oDeleteButton.getVisible(), false, "then the context-based adaptation delete menu button is enabled");
+						assert.strictEqual(oEditButton.getVisible(), false, "then the context-based edit menu button is enabled");
+						assert.strictEqual(oMenuButton.getText(), "Adapting for 'All Users'", "then the menu text is rendered correctly");
+					});
+
 					oDeleteButton.firePress();
+					return oPromise;
 				}.bind(this));
 		});
 	});

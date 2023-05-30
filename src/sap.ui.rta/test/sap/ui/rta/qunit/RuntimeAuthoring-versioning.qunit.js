@@ -70,7 +70,15 @@ sap.ui.define([
 				rootControl: oComp
 			});
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
-			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
+			this.oLoadVersionStubFinished = false;
+			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication").callsFake(function() {
+				return new Promise(function(resolve) {
+					setTimeout(function() {
+						this.oLoadVersionStubFinished = true;
+						resolve();
+					}.bind(this), 0);
+				}.bind(this));
+			}.bind(this));
 			return this.oRta.start();
 		},
 		afterEach: function() {
@@ -100,18 +108,25 @@ sap.ui.define([
 		});
 
 		QUnit.test("when no version is in the url and the app", function(assert) {
-			var oReloadStub = sandbox.stub(ReloadManager, "triggerReload").resolves();
+			var oReloadStub = sandbox.stub(ReloadManager, "triggerReload").callsFake(function() {
+				assert.ok(this.oLoadVersionStubFinished, "then calls are properly chained");
+				return Promise.resolve();
+			}.bind(this));
 
-			this.oRta.getToolbar().fireSwitchVersion({
-				version: "1"
-			});
-			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
-			assert.equal(this.oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
-			var oLoadVersionArguments = this.oLoadVersionStub.getCall(0).args[0];
-			assert.equal(oLoadVersionArguments.control, oComp, "with the control");
-			assert.equal(oLoadVersionArguments.version, "1", ", the version number");
-			assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
-			assert.equal(oReloadStub.callCount, 1, "a navigation was triggered");
+			return new Promise(function(resolve) {
+				this.oRta.getToolbar().fireSwitchVersion({
+					version: "1",
+					callback: resolve
+				});
+			}.bind(this)).then(function() {
+				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
+				assert.equal(this.oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
+				var oLoadVersionArguments = this.oLoadVersionStub.getCall(0).args[0];
+				assert.equal(oLoadVersionArguments.control, oComp, "with the control");
+				assert.equal(oLoadVersionArguments.version, "1", ", the version number");
+				assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
+				assert.equal(oReloadStub.callCount, 1, "a navigation was triggered");
+			}.bind(this));
 		});
 
 		QUnit.test("when a version is in the url and the same version should be loaded again (i.e. loaded the app with " +
@@ -124,16 +139,20 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedUrlHash);
 
 
-			this.oRta.getToolbar().fireSwitchVersion({
-				version: Version.Number.Original
-			});
-			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is mentioned");
-			assert.equal(this.oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
-			var oLoadVersionArguments = this.oLoadVersionStub.getCall(0).args[0];
-			assert.equal(oLoadVersionArguments.control, oComp, "with the control");
-			assert.equal(oLoadVersionArguments.version, Version.Number.Original, ", the version number");
-			assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
-			assert.equal(this.oRestartFlpStub.callCount, 1, "a app restart was triggered");
+			return new Promise(function(resolve) {
+				this.oRta.getToolbar().fireSwitchVersion({
+					version: Version.Number.Original,
+					callback: resolve
+				});
+			}.bind(this)).then(function() {
+				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is mentioned");
+				assert.equal(this.oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
+				var oLoadVersionArguments = this.oLoadVersionStub.getCall(0).args[0];
+				assert.equal(oLoadVersionArguments.control, oComp, "with the control");
+				assert.equal(oLoadVersionArguments.version, Version.Number.Original, ", the version number");
+				assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
+				assert.equal(this.oRestartFlpStub.callCount, 1, "a app restart was triggered");
+			}.bind(this));
 		});
 	});
 
@@ -146,7 +165,7 @@ sap.ui.define([
 			sandbox.stub(this.oRta, "canSave").returns(true);
 			this.oSerializeStub = sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
-			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
+			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication").resolves();
 			this.nVersionParameter = 1;
 			return this.oRta.start();
 		},
@@ -367,10 +386,6 @@ sap.ui.define([
 			return this.oRta.start();
 		},
 		afterEach: function() {
-			if (this.oRta._oDraftDiscardWarningPromise) {
-				this.oRta._oDraftDiscardWarningPromise = undefined;
-				this.oRta._oDraftDiscardWarningDialog.destroy();
-			}
 			this.oRta.destroy();
 			sandbox.restore();
 		}

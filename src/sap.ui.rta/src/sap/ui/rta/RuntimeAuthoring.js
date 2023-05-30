@@ -439,6 +439,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RuntimeAuthoring.prototype.start = function() {
+		var bIsAutomaticRestart = RuntimeAuthoring.needsRestart(this.getLayer());
 		var oDesignTimePromise;
 		var vError;
 		// Create DesignTime
@@ -452,8 +453,8 @@ sap.ui.define([
 			}
 
 			return this._loadUShellServicesPromise
-			.then(initVersioning.bind(this))
-			.then(initContextBasedAdaptations.bind(this))
+			.then(initVersioning.bind(this, bIsAutomaticRestart))
+			.then(initContextBasedAdaptations.bind(this, bIsAutomaticRestart))
 			/*
 			 Check if the application has personalized changes and reload without them;
 			 Also Check if the application has an available draft and if yes, reload with those changes.
@@ -573,7 +574,7 @@ sap.ui.define([
 					validateFlexEnabled(this);
 				}
 				this._sStatus = STARTED;
-				RuntimeAuthoring.disableRestart(Layer.CUSTOMER);
+				RuntimeAuthoring.disableRestart(this.getLayer());
 				this.fireStart({
 					editablePluginsCount: this.getPluginManager().getEditableOverlaysCount()
 				});
@@ -1061,33 +1062,30 @@ sap.ui.define([
 	 * @returns {Promise} Resolves as soon as the MessageBox is closed
 	 */
 	function onStackModified() {
-		var bBackEndDraftExists = this._oVersionsModel.getProperty("/backendDraft");
-		var bDraftDisplayed = this._oVersionsModel.getProperty("/displayedVersion") === Version.Number.Draft;
 		var oCommandStack = this.getCommandStack();
 		var bCanUndo = oCommandStack.canUndo();
 
+		// FIXME Missing check whether action is saveable e.g. switching a view should not trigger this
+		// bCanUndo and _bUserDiscardedDraft seem to be redundant logic,
+		// because displayedVersion would be draft already
 		if (
 			!this.getShowToolbars() ||
 			!bCanUndo ||
-			this._bUserDiscardedDraft ||
-			bDraftDisplayed ||
-			!bBackEndDraftExists
+			this._bUserDiscardedDraft
 		) {
-			return modifyStack.call(this);
+			modifyStack.call(this);
+			return;
 		}
 
 		// warn the user: the existing draft would be discarded in case the user saves
-		return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_AND_CREATE_NEW_DIALOG", {
-			titleKey: "TIT_DRAFT_DISCARD_DIALOG",
-			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-			emphasizedAction: MessageBox.Action.OK
-		})
-		.then(function(sAction) {
-			if (sAction === MessageBox.Action.OK) {
-				discardDraftConfirmed.call(this);
-			} else {
-				this.undo();
+		Utils.checkDraftOverwrite(this._oVersionsModel)
+		.then(function(bDialogShown) {
+			if (bDialogShown) {
+				this._bUserDiscardedDraft = true;
 			}
+			modifyStack.call(this);
+		}.bind(this), function() {
+			this.undo();
 		}.bind(this));
 	}
 
@@ -1208,6 +1206,10 @@ sap.ui.define([
 
 			// Save changes on the current layer and discard dirty changes on other layers
 			mPropertyBag.saveAsDraft = this.getLayer() === Layer.CUSTOMER;
+		}
+		if (this._oContextBasedAdaptationsModel.getProperty("/contextBasedAdaptationsEnabled")) {
+			// If an adaptation is being processed, saving without exiting must retrieve the updated state of the adaptation
+			mPropertyBag.adaptationId = bIsExit ? undefined : this._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id");
 		}
 
 		return this._oSerializer.saveCommands(mPropertyBag)
@@ -1342,18 +1344,18 @@ sap.ui.define([
 				emphasizedAction: MessageBox.Action.YES
 			}).then(function(sAction) {
 				if (sAction === MessageBox.Action.YES) {
-					this._serializeToLrep()
+					return this._serializeToLrep()
 						.then(callbackFn);
 				} else if (sAction === MessageBox.Action.NO) {
 					// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
 					this.getCommandStack().removeAllCommands(true);
-					callbackFn();
+					return callbackFn();
 				}
-				return undefined;
+				return Promise.resolve();
 			}.bind(this));
-			return;
+			return Promise.resolve();
 		}
-		callbackFn();
+		return callbackFn();
 	}
 
 	function onSwitchAdaptation(oEvent) {
@@ -1364,15 +1366,20 @@ sap.ui.define([
 		var sAdaptationId = oEvent.getParameter("adaptationId");
 		this._sSwitchToAdaptationId = sAdaptationId;
 		return handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "BTN_SWITCH_ADAPTATIONS",
-			switchAdaptation.bind(this, this._sSwitchToAdaptationId));
+			switchAdaptation.bind(this, this._sSwitchToAdaptationId))
+			.catch(function(oError) {
+				Utils.showMessageBox("error", "MSG_SWITCH_ADAPTATION_FAILED", {error: oError});
+				Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
+			});
 	}
 
 	function switchAdaptation(sAdaptationId) {
 		var sVersion = this._oVersionsModel.getProperty("/displayedVersion");
-		switchVersion.call(this, sVersion, sAdaptationId);
+		return switchVersion.call(this, sVersion, sAdaptationId);
 	}
 
 	function onSwitchVersion(oEvent) {
+		var fnCallback = oEvent.getParameter("callback") || function() {};
 		var sVersion = oEvent.getParameter("version");
 		var sDisplayedVersion = this._oVersionsModel.getProperty("/displayedVersion");
 
@@ -1382,24 +1389,30 @@ sap.ui.define([
 		}
 
 		this._sSwitchToVersion = sVersion;
-		return handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "TIT_SWITCH_VERSION_DIALOG",
-			switchVersion.bind(this, this._sSwitchToVersion));
+		handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "TIT_SWITCH_VERSION_DIALOG",
+			switchVersion.bind(this, this._sSwitchToVersion))
+			.then(fnCallback)
+			.catch(function(oError) {
+				Utils.showMessageBox("error", "MSG_SWITCH_VERSION_FAILED", {error: oError});
+				Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
+			});
 	}
 
 	function switchVersion(sVersion, sAdaptationId) {
 		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
 
-		VersionsAPI.loadVersionForApplication({
+		return VersionsAPI.loadVersionForApplication({
 			control: this.getRootControlInstance(),
 			layer: this.getLayer(),
 			version: sVersion,
 			adaptationId: sAdaptationId
+		}).then(function() {
+			var oReloadInfo = {
+				versionSwitch: true,
+				version: sVersion
+			};
+			ReloadManager.triggerReload(oReloadInfo);
 		});
-		var oReloadInfo = {
-			versionSwitch: true,
-			version: sVersion
-		};
-		ReloadManager.triggerReload(oReloadInfo);
 	}
 
 	function onPublishVersion() {
@@ -1418,11 +1431,6 @@ sap.ui.define([
 		});
 	}
 
-	function discardDraftConfirmed() {
-		this._bUserDiscardedDraft = true;
-		modifyStack.call(this);
-	}
-
 	function isOldVersionDisplayed() {
 		return VersionsAPI.isOldVersionDisplayed({
 			control: this.getRootControlInstance(),
@@ -1437,7 +1445,15 @@ sap.ui.define([
 		});
 	}
 
-	function initVersioning() {
+	/**
+	 * Inits version models. Clears old state if RTA is starting from end user mode (no switch)
+	 * @param {boolean} bIsAutomaticRestart - If true this is not an RTA start but a reload due to version/adaptation switch
+	 * @returns {Promise<void>} - Promise
+	 */
+	function initVersioning(bIsAutomaticRestart) {
+		if (!bIsAutomaticRestart) {
+			VersionsAPI.clearInstances();
+		}
 		return VersionsAPI.initialize({
 			control: this.getRootControlInstance(),
 			layer: this.getLayer()
@@ -1446,7 +1462,15 @@ sap.ui.define([
 		}.bind(this));
 	}
 
-	function initContextBasedAdaptations() {
+	/**
+	 * Inits CBA models. Clears old state if RTA is starting from end user mode (no switch)
+	 * @param {boolean} bIsAutomaticRestart - If true this is not an RTA start but a reload due to version/adaptation switch
+	 * @returns {Promise<void>} - Promise
+	 */
+	function initContextBasedAdaptations(bIsAutomaticRestart) {
+		if (!bIsAutomaticRestart) {
+			ContextBasedAdaptationsAPI.clearInstances();
+		}
 		return ContextBasedAdaptationsAPI.initialize({
 			control: this.getRootControlInstance(),
 			layer: this.getLayer()

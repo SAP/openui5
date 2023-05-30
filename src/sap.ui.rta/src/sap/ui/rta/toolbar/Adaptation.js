@@ -350,15 +350,34 @@ sap.ui.define([
 	}
 
 	function onSaveAsAdaptation() {
-		this.getExtension("contextBasedSaveAs", SaveAsAdaptation).openAddAdaptationDialog(this.getRtaInformation().flexSettings.layer);
+		Utils.checkDraftOverwrite(this.getModel("versions"))
+		.then(function() {
+			this.getExtension("contextBasedSaveAs", SaveAsAdaptation).openAddAdaptationDialog(this.getRtaInformation().flexSettings.layer);
+		}.bind(this))
+		.catch(handleError);
 	}
 
 	function onEditAdaptation() {
-		this.getExtension("contextBasedSaveAs", SaveAsAdaptation).openAddAdaptationDialog(this.getRtaInformation().flexSettings.layer, true /*bIsEditMode*/);
+		Utils.checkDraftOverwrite(this.getModel("versions"))
+		.then(function() {
+			this.getExtension("contextBasedSaveAs", SaveAsAdaptation).openAddAdaptationDialog(this.getRtaInformation().flexSettings.layer, true /*bIsEditMode*/);
+		}.bind(this))
+		.catch(handleError);
+	}
+
+	function handleError(oError) {
+		if (oError !== "cancel") {
+			Utils.showMessageBox("error", "MSG_LREP_TRANSFER_ERROR", {error: oError});
+			Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
+		}
 	}
 
 	function onDeleteAdaptation() {
-		this.fireEvent("deleteAdaptation");
+		Utils.checkDraftOverwrite(this.getModel("versions"))
+		.then(function() {
+			this.fireEvent("deleteAdaptation");
+		}.bind(this))
+		.catch(handleError);
 	}
 
 	function onManageAdaptations() {
@@ -372,7 +391,7 @@ sap.ui.define([
 	function formatAdaptationsMenuText(iCount, sTitle) {
 		if (iCount > 0) {
 			if (sTitle === "") {
-				sTitle = this.getTextResources().getText("TXT_DEFAULT_APP");
+				return this.getTextResources().getText("TXT_DEFAULT_APP");
 			}
 			return this.getTextResources().getText("BTN_ADAPTING_FOR", sTitle);
 		}

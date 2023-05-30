@@ -317,7 +317,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function (vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getText().includes(sDate), true, "Contains the correct DateFormat");
+							Opa5.assert.strictEqual(oControl.getText().endsWith(sDate), true, "Contains the correct DateFormat");
 						}
 					});
 				},

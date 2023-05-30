@@ -1,5 +1,6 @@
 /* global QUnit */
 sap.ui.define([
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/Storage",
@@ -7,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	ContextBasedAdaptationsAPI,
 	ContextSharingAPI,
 	Layer,
 	WriteStorage,
@@ -55,6 +57,33 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSettings));
 
 			return ContextSharingAPI.createComponent({layer: Layer.CUSTOMER})
+				.then(renderComponentContainer.bind(this))
+				.then(function() {
+					assert.deepEqual(this.oCompCont.getComponentInstance().getSelectedContexts().role, [], "then component data for selected roles is correct");
+				}.bind(this));
+		});
+
+		QUnit.test("with connector and layer that support context sharing but an adaptation exists", function(assert) {
+			var oSettings = {
+				isContextSharingEnabled: true
+			};
+			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSettings));
+			sandbox.stub(ContextBasedAdaptationsAPI, "adaptationExists").returns(true);
+
+			return ContextSharingAPI.createComponent({layer: Layer.CUSTOMER, reference: "id"}).then(function(oCompContainer) {
+				this.oCompCont = oCompContainer;
+				assert.equal(oCompContainer, undefined, "then component is undefined");
+			}.bind(this));
+		});
+
+		QUnit.test("with connector and layer that support context sharing and no adaptation exists", function(assert) {
+			var oSettings = {
+				isContextSharingEnabled: true
+			};
+			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSettings));
+			sandbox.stub(ContextBasedAdaptationsAPI, "adaptationExists").returns(false);
+
+			return ContextSharingAPI.createComponent({layer: Layer.CUSTOMER, reference: "id"})
 				.then(renderComponentContainer.bind(this))
 				.then(function() {
 					assert.deepEqual(this.oCompCont.getComponentInstance().getSelectedContexts().role, [], "then component data for selected roles is correct");

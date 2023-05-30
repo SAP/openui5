@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/ValueState",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
@@ -18,6 +19,7 @@ sap.ui.define([
 	Core,
 	Control,
 	Fragment,
+	ValueState,
 	Layer,
 	ManifestUtils,
 	ContextBasedAdaptationsAPI,
@@ -78,10 +80,11 @@ sap.ui.define([
 		return oToolbar;
 	}
 
+	var DEFAULT_ADAPTATION = { id: "DEFAULT", type: "DEFAULT" };
 	QUnit.module("Given a Toolbar with enabled context-based adaptations feature", {
 		beforeEach: function() {
 			this.oGetAppComponentStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.test.app");
-			this.oModel = ContextBasedAdaptationsAPI.createModel([]);
+			this.oModel = ContextBasedAdaptationsAPI.createModel([DEFAULT_ADAPTATION], DEFAULT_ADAPTATION, true);
 			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oModel);
 			this.oToolbar = initializeToolbar();
 			this.oSaveAsAdaptation = new SaveAsAdaptation({ toolbar: this.oToolbar });
@@ -287,6 +290,41 @@ sap.ui.define([
 				aRemoveRoles.firePress();
 				this.clock.tick(100); // wait for event onContextRoleChange
 				assert.notOk(oSaveButton.getEnabled(), "save button is not enabled");
+			});
+
+			QUnit.test("and mandatory information is entered except title", function(assert) {
+				var oSaveButton = getToolbarRelatedControl(this.oToolbar, "saveAdaptation-saveButton");
+				var oTitleInput = getToolbarRelatedControl(this.oToolbar, "saveAdaptation-title-input");
+				var oContextVisibility = getControl("contextSharingContainer");
+				var oPrioritySelect = getToolbarRelatedControl(this.oToolbar, "saveAdaptation-rank-select");
+				var contextVisibilityComponent = getControl("contextSharingContainer");
+				var oContextsList = sap.ui.getCore().byId("contextSharing---ContextVisibility--selectedContextsList");
+				assert.ok(oContextVisibility.getVisible(), "context visibility container is visible");
+				oPrioritySelect.setSelectedItem(oPrioritySelect.getItemAt(2));
+				oPrioritySelect.fireChange({selectedItem: oPrioritySelect.getItemAt(2)});
+				assert.strictEqual(oPrioritySelect.getSelectedItem().getText(), this.aPriorityList[2].title, "the correct priority is selected");
+				contextVisibilityComponent.getComponentInstance().setSelectedContexts({role: ["Role 1", "Role 2"]});
+				oContextsList.fireUpdateFinished();
+				this.clock.tick(100); // wait for event onContextRoleChange
+				assert.strictEqual(oTitleInput.getValueState(), ValueState.None, "the value state is initially none");
+				assert.strictEqual(oTitleInput.getValue(), "", "correct value is written");
+				assert.notOk(oSaveButton.getEnabled(), "save button is not enabled");
+
+				// set the missing title
+				oTitleInput.setValue("first context-based adaptation");
+				oTitleInput.fireLiveChange();
+				assert.strictEqual(oTitleInput.getValueState(), ValueState.None, "the value state is still none");
+				assert.strictEqual(oTitleInput.getValue(), "first context-based adaptation", "correct value is written");
+				this.clock.tick(100); // wait for event onAdaptationTitleChange
+				assert.ok(oSaveButton.getEnabled(), "save button is enabled");
+
+				// delete the title again
+				oTitleInput.setValue("");
+				oTitleInput.fireLiveChange();
+				assert.strictEqual(oTitleInput.getValueState(), ValueState.Error, "the value state is set to error");
+				assert.strictEqual(oTitleInput.getValue(), "", "correct value is written");
+				this.clock.tick(100); // wait for event onAdaptationTitleChange
+				assert.notOk(oSaveButton.getEnabled(), "save button is not enabled anymore");
 			});
 		});
 

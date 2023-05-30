@@ -88,7 +88,7 @@ sap.ui.define([
 				},
 				oDefaultAdaptation
 			];
-			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations);
+			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations, aAdaptations[0], true);
 
 			Versions.clearInstances();
 			this.oRestartFlpStub = sandbox.stub();
@@ -118,17 +118,21 @@ sap.ui.define([
 			this.oRta.getToolbar().fireSwitchAdaptation({
 				adaptationId: "id_5678"
 			});
-
-			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
-			assert.equal(this.oFlexStateStub.callCount, 1, "a clear and initalize of FlexState is called");
-			assert.equal(this.oLoadVersionSpy.callCount, 1, "a reload for versions is triggered");
-			var oLoadVersionArguments = this.oLoadVersionSpy.getCall(0).args[0];
-			assert.equal(oLoadVersionArguments.control, oComp, "with the control");
-			assert.equal(oLoadVersionArguments.version, "1", ", the version number");
-			assert.equal(oLoadVersionArguments.adaptationId, "id_5678", ", the adaptation id number");
-			assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
-			assert.equal(oReloadStub.callCount, 1, "a navigation was triggered");
-			assert.equal(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "id_5678", "then the displayed adaptation has changed");
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			})
+			.then(function() {
+				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
+				assert.equal(this.oFlexStateStub.callCount, 1, "a clear and initalize of FlexState is called");
+				assert.equal(this.oLoadVersionSpy.callCount, 1, "a reload for versions is triggered");
+				var oLoadVersionArguments = this.oLoadVersionSpy.getCall(0).args[0];
+				assert.equal(oLoadVersionArguments.control, oComp, "with the control");
+				assert.equal(oLoadVersionArguments.version, "1", ", the version number");
+				assert.equal(oLoadVersionArguments.adaptationId, "id_5678", ", the adaptation id number");
+				assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
+				assert.equal(oReloadStub.callCount, 1, "a navigation was triggered");
+				assert.equal(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "id_5678", "then the displayed adaptation has changed");
+			}.bind(this));
 		});
 
 		QUnit.test("when save is enabled but all changes from stack have been removed", function(assert) {
@@ -140,18 +144,22 @@ sap.ui.define([
 				adaptationId: "id_5678",
 				trigger: "SaveAs"
 			});
-
-			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
-			assert.equal(oRemoveAllCommandsStub.callCount, 1, "then all commands are removed from stack");
-			assert.equal(this.oFlexStateStub.callCount, 1, "a clear and initalize of FlexState is called");
-			assert.equal(this.oLoadVersionSpy.callCount, 1, "a reload for versions is triggered");
-			var oLoadVersionArguments = this.oLoadVersionSpy.getCall(0).args[0];
-			assert.equal(oLoadVersionArguments.control, oComp, "with the control");
-			assert.equal(oLoadVersionArguments.version, "1", ", the version number");
-			assert.equal(oLoadVersionArguments.adaptationId, "id_5678", ", the adaptation id number");
-			assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
-			assert.equal(oReloadStub.callCount, 1, "a navigation was triggered");
-			assert.equal(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "id_5678", "then the displayed adaptation has changed");
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			})
+			.then(function() {
+				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
+				assert.equal(oRemoveAllCommandsStub.callCount, 1, "then all commands are removed from stack");
+				assert.equal(this.oFlexStateStub.callCount, 1, "a clear and initalize of FlexState is called");
+				assert.equal(this.oLoadVersionSpy.callCount, 1, "a reload for versions is triggered");
+				var oLoadVersionArguments = this.oLoadVersionSpy.getCall(0).args[0];
+				assert.equal(oLoadVersionArguments.control, oComp, "with the control");
+				assert.equal(oLoadVersionArguments.version, "1", ", the version number");
+				assert.equal(oLoadVersionArguments.adaptationId, "id_5678", ", the adaptation id number");
+				assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
+				assert.equal(oReloadStub.callCount, 1, "a navigation was triggered");
+				assert.equal(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "id_5678", "then the displayed adaptation has changed");
+			}.bind(this));
 		});
 	});
 
@@ -164,7 +172,7 @@ sap.ui.define([
 			sandbox.stub(this.oRta, "canSave").returns(true);
 			this.oSerializeStub = sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
-			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
+			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication").resolves();
 			this.nVersionParameter = 1;
 			this.sAdaptationId = "id_1234";
 			return this.oRta.start();
@@ -261,11 +269,11 @@ sap.ui.define([
 				},
 				oDefaultAdaptation
 			];
-			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(this.aAdaptations);
+			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(this.aAdaptations, this.aAdaptations[0], true);
 
 			this.oRemoveAllCommandsSpy = sandbox.spy(this.oRta.getCommandStack(), "removeAllCommands");
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
-			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
+			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication").resolves();
 			this.oRemoveStub = sandbox.stub(ContextBasedAdaptationsAPI, "remove").resolves();
 			this.nVersionParameter = 1;
 			this.sAdaptationId = "id_5678";
