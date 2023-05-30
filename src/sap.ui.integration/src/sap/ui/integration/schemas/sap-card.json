@@ -49,7 +49,8 @@
         "1.36.0",
         "1.37.0",
         "1.38.0",
-        "1.39.0"
+        "1.39.0",
+        "1.40.0"
       ]
     },
     "designtime": {
@@ -431,7 +432,7 @@
         },
         "title": {
           "description": "Represents a title of the header; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
-          "type": "string"
+          "$ref": "#/definitions/i18n_key_string"
         },
         "titleMaxLines": {
           "description": "[Experimental] Limit the number of lines for the title.",
@@ -447,7 +448,7 @@
         },
         "subTitle": {
           "description": "Represents a subtitle to the title; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
-          "type": "string"
+          "$ref": "#/definitions/i18n_key_string"
         },
         "subTitleMaxLines": {
           "description": "[Experimental] Limit the number of lines for the sub title.",
@@ -510,7 +511,7 @@
         },
         "title": {
           "description": "Represents a title of the header; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
-          "type": "string"
+          "$ref": "#/definitions/i18n_key_string"
         },
         "titleMaxLines": {
           "description": "[Experimental] Limit the number of lines for the title.",
@@ -526,7 +527,7 @@
         },
         "subTitle": {
           "description": "Represents a subtitle to the title; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
-          "type": "string"
+          "$ref": "#/definitions/i18n_key_string"
         },
         "subTitleMaxLines": {
           "description": "[Experimental] Limit the number of lines for the sub title.",
@@ -1390,7 +1391,7 @@
       "properties": {
         "title": {
           "description": "Represents a title of the object group; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
-          "type": "string"
+          "$ref": "#/definitions/i18n_key_string"
         },
         "titleMaxLines": {
             "description": "[Experimental] Limits the number of lines for wrapping the group title.",
@@ -2001,7 +2002,7 @@
       "properties": {
         "title": {
           "description": "Represents a title of the column; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
-          "type": "string"
+          "$ref": "#/definitions/i18n_key_string"
         },
         "width": {
           "description": "Defines the width of the column",
@@ -2867,7 +2868,7 @@
       "properties": {
         "label": {
           "description": "Represents a label of the field; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
-          "type": "string"
+          "$ref": "#/definitions/i18n_key_string"
         },
         "value": {
           "type": "string",
@@ -2875,9 +2876,11 @@
         }
       }
     },
-    "i18n_key": {
-      "type": "string",
-      "pattern": "^\\{\\{[\\w][\\w\\.\\-]*\\}\\}$"
+    "i18n_key_string": {
+      "anyOf": [
+        { "type": "string", "pattern": "^\\{\\{[\\w][\\w\\.\\-]*\\}\\}$" },
+        { "type": "string" }
+      ]
     },
     "simpleBinding": {
       "type": "string",
