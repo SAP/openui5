@@ -312,31 +312,37 @@ sap.ui.define([
 		var oGetLanguageStub = this.stub(oFormatLocaleObject, "getLanguage").returns("de");
 		var oGetRegionStub = this.stub(oFormatLocaleObject, "getRegion").returns("DE");
 
-		var oWeekObject = new UniversalDate(0);
-
+		var oWeekObject = new UniversalDate(2023,0,1);
 		// ISO 8601 (de)
 		oWeekObject.setWeek({week: 0, year: 2021});
-		assert.equal(oWeekObject.toDateString(), new UniversalDate(2021, 0, 4).toDateString(), "Date is the same");
-		oWeekObject.setUTCWeek({week: 0, year: 2021});
-		assert.equal(oWeekObject.toDateString(), new UniversalDate(2021, 0, 4).toDateString(), "Date is the same");
-
+		assert.strictEqual(oWeekObject.toString(), new UniversalDate(2021, 0, 4).toString());
 		// Western Traditional (en)
 		oWeekObject.setWeek({week: 0, year: 2021}, new Locale("en"));
-		assert.equal(oWeekObject.toDateString(), new UniversalDate(2020, 11, 27).toDateString(), "Date is the same");
-		oWeekObject.setUTCWeek({week: 0, year: 2021}, new Locale("en"));
-		assert.equal(oWeekObject.toDateString(), new UniversalDate(2020, 11, 27).toDateString(), "Date is the same");
-
+		assert.strictEqual(oWeekObject.toString(), new UniversalDate(2020, 11, 27).toString());
 		// Western Traditional (no locale)
 		oWeekObject.setWeek({week: 0, year: 2021}, undefined, CalendarWeekNumbering.WesternTraditional);
-		assert.equal(oWeekObject.toDateString(), new UniversalDate(2020, 11, 27).toDateString(), "Date is the same");
-		oWeekObject.setUTCWeek({week: 0, year: 2021}, undefined, CalendarWeekNumbering.WesternTraditional);
-		assert.equal(oWeekObject.toDateString(), new UniversalDate(2020, 11, 27).toDateString(), "Date is the same");
-
+		assert.strictEqual(oWeekObject.toString(), new UniversalDate(2020, 11, 27).toString());
 		// Western Traditional > locale de
 		oWeekObject.setWeek({week: 0, year: 2021}, new Locale("de"), CalendarWeekNumbering.WesternTraditional);
-		assert.equal(oWeekObject.toDateString(), new UniversalDate(2020, 11, 27).toDateString(), "Date is the same");
+		assert.strictEqual(oWeekObject.toString(), new UniversalDate(2020, 11, 27).toString());
+
+		oWeekObject = new UniversalDate(Date.UTC(2023,0,1));
+		// ISO 8601 (de)
+		oWeekObject.setUTCWeek({week: 0, year: 2021});
+		assert.strictEqual(oWeekObject.getJSDate().toUTCString(),
+			new UniversalDate(Date.UTC(2021, 0, 4)).getJSDate().toUTCString());
+		// Western Traditional (en)
+		oWeekObject.setUTCWeek({week: 0, year: 2021}, new Locale("en"));
+		assert.strictEqual(oWeekObject.getJSDate().toUTCString(),
+			new UniversalDate(Date.UTC(2020, 11, 27)).getJSDate().toUTCString());
+		// Western Traditional (no locale)
+		oWeekObject.setUTCWeek({week: 0, year: 2021}, undefined, CalendarWeekNumbering.WesternTraditional);
+		assert.strictEqual(oWeekObject.getJSDate().toUTCString(),
+			new UniversalDate(Date.UTC(2020, 11, 27)).getJSDate().toUTCString());
+		// Western Traditional > locale de
 		oWeekObject.setUTCWeek({week: 0, year: 2021}, new Locale("de"), CalendarWeekNumbering.WesternTraditional);
-		assert.equal(oWeekObject.toDateString(), new UniversalDate(2020, 11, 27).toDateString(), "Date is the same");
+		assert.strictEqual(oWeekObject.getJSDate().toUTCString(),
+			new UniversalDate(Date.UTC(2020, 11, 27)).getJSDate().toUTCString());
 
 		oGetLanguageStub.restore();
 		oGetRegionStub.restore();
@@ -352,37 +358,44 @@ sap.ui.define([
 
 		var aFixtures = [
 			{
-				oInputDate: new UniversalDate(2020, 11, 20, 6),
+				oInputDate: new UniversalDate(2020, 11, 20),
+				oInputDateUTC: new UniversalDate(Date.UTC(2020, 11, 20)),
 				iExpectedYear: 2020,
 				iExpectedWeek: 51
 			},
 			{
-				oInputDate: new UniversalDate(2020, 11, 26, 6),
+				oInputDate: new UniversalDate(2020, 11, 26),
+				oInputDateUTC: new UniversalDate(Date.UTC(2020, 11, 26)),
 				iExpectedYear: 2020,
 				iExpectedWeek: 51
 			},
 			{
-				oInputDate: new UniversalDate(2020, 11, 27, 6),
+				oInputDate: new UniversalDate(2020, 11, 27),
+				oInputDateUTC: new UniversalDate(Date.UTC(2020, 11, 27)),
 				iExpectedYear: 2020,
 				iExpectedWeek: 52
 			},
 			{
-				oInputDate: new UniversalDate(2020, 11, 31, 6),
+				oInputDate: new UniversalDate(2020, 11, 31),
+				oInputDateUTC: new UniversalDate(Date.UTC(2020, 11, 31)),
 				iExpectedYear: 2020,
 				iExpectedWeek: 52
 			},
 			{
-				oInputDate: new UniversalDate(2021, 0, 1, 6),
+				oInputDate: new UniversalDate(2021, 0, 1),
+				oInputDateUTC: new UniversalDate(Date.UTC(2021, 0, 1)),
 				iExpectedYear: 2021,
 				iExpectedWeek: 0
 			},
 			{
-				oInputDate: new UniversalDate(2021, 0, 2, 6),
+				oInputDate: new UniversalDate(2021, 0, 2),
+				oInputDateUTC: new UniversalDate(Date.UTC(2021, 0, 2)),
 				iExpectedYear: 2021,
 				iExpectedWeek: 0
 			},
 			{
-				oInputDate: new UniversalDate(2021, 0, 3, 6),
+				oInputDate: new UniversalDate(2021, 0, 3),
+				oInputDateUTC: new UniversalDate(Date.UTC(2021, 0, 3)),
 				iExpectedYear: 2021,
 				iExpectedWeek: 1
 			}
@@ -398,15 +411,15 @@ sap.ui.define([
 		oGetRegionStub = this.stub(oFormatLocaleObject, "getRegion").returns("US");
 
 		aFixtures.forEach(function(oFixture) {
-			oWeekObject = oFixture.oInputDate.getUTCWeek();
+			oWeekObject = oFixture.oInputDateUTC.getUTCWeek();
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 
-			oWeekObject = oFixture.oInputDate.getUTCWeek(oFormatLocaleObject, CalendarWeekNumbering.Default);
+			oWeekObject = oFixture.oInputDateUTC.getUTCWeek(oFormatLocaleObject, CalendarWeekNumbering.Default);
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 
-			oWeekObject = oFixture.oInputDate.getUTCWeek(oFormatLocaleObject, CalendarWeekNumbering.WesternTraditional);
+			oWeekObject = oFixture.oInputDateUTC.getUTCWeek(oFormatLocaleObject, CalendarWeekNumbering.WesternTraditional);
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 
@@ -440,32 +453,38 @@ sap.ui.define([
 
 		var aFixtures = [
 			{
-				oInputDate: new UniversalDate(2020, 11, 21, 6),
+				oInputDate: new UniversalDate(2020, 11, 21),
+				oInputDateUTC: new UniversalDate(Date.UTC(2020, 11, 21)),
 				iExpectedYear: 2020,
 				iExpectedWeek: 51
 			},
 			{
-				oInputDate: new UniversalDate(2020, 11, 27, 6),
+				oInputDate: new UniversalDate(2020, 11, 27),
+				oInputDateUTC: new UniversalDate(Date.UTC(2020, 11, 27)),
 				iExpectedYear: 2021,
 				iExpectedWeek: 0
 			},
 			{
-				oInputDate: new UniversalDate(2020, 11, 28, 6),
+				oInputDate: new UniversalDate(2020, 11, 28),
+				oInputDateUTC: new UniversalDate(Date.UTC(2020, 11, 28)),
 				iExpectedYear: 2021,
 				iExpectedWeek: 0
 			},
 			{
-				oInputDate: new UniversalDate(2021, 0, 3, 6),
+				oInputDate: new UniversalDate(2021, 0, 3),
+				oInputDateUTC: new UniversalDate(Date.UTC(2021, 0, 3)),
 				iExpectedYear: 2021,
 				iExpectedWeek: 1
 			},
 			{
-				oInputDate: new UniversalDate(2021, 0, 4, 6),
+				oInputDate: new UniversalDate(2021, 0, 4),
+				oInputDateUTC: new UniversalDate(Date.UTC(2021, 0, 4)),
 				iExpectedYear: 2021,
 				iExpectedWeek: 1
 			},
 			{
-				oInputDate: new UniversalDate(2021, 0, 10, 6),
+				oInputDate: new UniversalDate(2021, 0, 10),
+				oInputDateUTC: new UniversalDate(Date.UTC(2021, 0, 10)),
 				iExpectedYear: 2021,
 				iExpectedWeek: 2
 			}
@@ -485,7 +504,7 @@ sap.ui.define([
 			assert.equal(oFormatLocaleObject.getRegion(), oLocale.region, "Region should be: " + oLocale.region);
 
 			aFixtures.forEach(function(oFixture) {
-				oWeekObject = oFixture.oInputDate.getUTCWeek();
+				oWeekObject = oFixture.oInputDateUTC.getUTCWeek();
 				assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 				assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 
@@ -500,7 +519,7 @@ sap.ui.define([
 
 		// Locale "en"
 		aFixtures.forEach(function(oFixture) {
-			oWeekObject = oFixture.oInputDate.getUTCWeek(new Locale("en"));
+			oWeekObject = oFixture.oInputDateUTC.getUTCWeek(new Locale("en"));
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 
@@ -511,7 +530,7 @@ sap.ui.define([
 
 		// CalendarWeekNumbering.WesternTraditional
 		aFixtures.forEach(function(oFixture) {
-			oWeekObject = oFixture.oInputDate.getUTCWeek(new Locale("en"), CalendarWeekNumbering.WesternTraditional);
+			oWeekObject = oFixture.oInputDateUTC.getUTCWeek(new Locale("en"), CalendarWeekNumbering.WesternTraditional);
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 
@@ -522,7 +541,7 @@ sap.ui.define([
 
 		// CalendarWeekNumbering.WesternTraditional > Locale
 		aFixtures.forEach(function(oFixture) {
-			oWeekObject = oFixture.oInputDate.getUTCWeek(new Locale("de"), CalendarWeekNumbering.WesternTraditional);
+			oWeekObject = oFixture.oInputDateUTC.getUTCWeek(new Locale("de"), CalendarWeekNumbering.WesternTraditional);
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 
@@ -547,32 +566,38 @@ sap.ui.define([
 
 		var aFixtures = [
 			{
-				oInputDate: new UniversalDate(2020, 11, 21, 6),
+				oInputDate: new UniversalDate(2020, 11, 21),
+				oInputDateUTC: new UniversalDate(Date.UTC(2020, 11, 21)),
 				iExpectedYear: 2020,
 				iExpectedWeek: 51
 			},
 			{
-				oInputDate: new UniversalDate(2020, 11, 27, 6),
+				oInputDate: new UniversalDate(2020, 11, 27),
+				oInputDateUTC: new UniversalDate(Date.UTC(2020, 11, 27)),
 				iExpectedYear: 2020,
 				iExpectedWeek: 51
 			},
 			{
-				oInputDate: new UniversalDate(2020, 11, 28, 6),
+				oInputDate: new UniversalDate(2020, 11, 28),
+				oInputDateUTC: new UniversalDate(Date.UTC(2020, 11, 28)),
 				iExpectedYear: 2020,
 				iExpectedWeek: 52
 			},
 			{
-				oInputDate: new UniversalDate(2021, 0, 3, 6),
+				oInputDate: new UniversalDate(2021, 0, 3),
+				oInputDateUTC: new UniversalDate(Date.UTC(2021, 0, 3)),
 				iExpectedYear: 2020,
 				iExpectedWeek: 52
 			},
 			{
-				oInputDate: new UniversalDate(2021, 0, 4, 6),
+				oInputDate: new UniversalDate(2021, 0, 4),
+				oInputDateUTC: new UniversalDate(Date.UTC(2021, 0, 4)),
 				iExpectedYear: 2021,
 				iExpectedWeek: 0
 			},
 			{
-				oInputDate: new UniversalDate(2021, 0, 10, 6),
+				oInputDate: new UniversalDate(2021, 0, 10),
+				oInputDateUTC: new UniversalDate(Date.UTC(2021, 0, 10)),
 				iExpectedYear: 2021,
 				iExpectedWeek: 0
 			}
@@ -593,7 +618,7 @@ sap.ui.define([
 
 
 			aFixtures.forEach(function(oFixture) {
-				oWeekObject = oFixture.oInputDate.getUTCWeek();
+				oWeekObject = oFixture.oInputDateUTC.getUTCWeek();
 				assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 				assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 
@@ -608,7 +633,7 @@ sap.ui.define([
 
 		// Locale "en"
 		aFixtures.forEach(function(oFixture) {
-			oWeekObject = oFixture.oInputDate.getUTCWeek(new Locale("en-GB"));
+			oWeekObject = oFixture.oInputDateUTC.getUTCWeek(new Locale("en-GB"));
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 
@@ -619,7 +644,7 @@ sap.ui.define([
 
 		// CalendarWeekNumbering.WesternTraditional
 		aFixtures.forEach(function(oFixture) {
-			oWeekObject = oFixture.oInputDate.getUTCWeek(undefined, CalendarWeekNumbering.ISO_8601);
+			oWeekObject = oFixture.oInputDateUTC.getUTCWeek(undefined, CalendarWeekNumbering.ISO_8601);
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 
@@ -630,7 +655,7 @@ sap.ui.define([
 
 		// CalendarWeekNumbering.WesternTraditional > Locale
 		aFixtures.forEach(function(oFixture) {
-			oWeekObject = oFixture.oInputDate.getUTCWeek(new Locale("en"), CalendarWeekNumbering.ISO_8601);
+			oWeekObject = oFixture.oInputDateUTC.getUTCWeek(new Locale("en"), CalendarWeekNumbering.ISO_8601);
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 
