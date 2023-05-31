@@ -6,7 +6,8 @@
 		   height="100%"
 		>
 
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true" upperCaseAnchorBar="false">
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true" upperCaseAnchorBar="false"
+	headerContentPinned="true">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<heading>
