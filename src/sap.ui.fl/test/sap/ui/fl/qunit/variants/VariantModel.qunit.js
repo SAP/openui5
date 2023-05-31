@@ -2491,6 +2491,27 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when 'attachVariantApplied' is called with executeOnSelectionForStandardDefault set, standard being default, no flex change for apply automatically and a different current variant", function(assert) {
+			var sVMReference = "mockview--VariantManagement2";
+			var sVMControlId = "testComponent---" + sVMReference;
+			this.oView.byId(sVMControlId).setExecuteOnSelectionForStandardDefault(true);
+			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns({});
+			VariantManagementState.getCurrentVariantReference.restore();
+			this.oVariantModel.getData()[sVMReference].currentVariant = "variant2";
+
+			return this.oVariantModel.attachVariantApplied({
+				vmControlId: sVMControlId,
+				control: this.oView.byId("MainForm"),
+				callback: function() {},
+				callAfterInitialVariant: true
+			}).then(function() {
+				assert.ok(
+					this.oVariantModel.getData()[sVMReference].variants[0].executeOnSelect,
+					"then executeOnSelect is still set for the default variant"
+				);
+			}.bind(this));
+		});
+
 		QUnit.test("when 'attachVariantApplied' is called without executeOnSelectionForStandardDefault set, standard being default and no flex change for apply automatically", function(assert) {
 			var sVMReference = "mockview--VariantManagement2";
 			var sVMControlId = "testComponent---" + sVMReference;
