@@ -1362,7 +1362,7 @@ sap.ui.define([
 							var oTranslationPopover = oField._oTranslationPopover;
 							assert.equal(oTranslationPopover.getId(), sEditorId + "_string1_translation_popover", "Field 1: translation popover id");
 							var aCurrentLanguageControls = oTranslationPopover.getCustomHeader().getItems()[2].getItems();
-							assert.equal(aCurrentLanguageControls[0].getId(), sEditorId + "_string1_translation_popover_currentlanguage_desription_label", "Translation popover: current language description label id");
+							assert.equal(aCurrentLanguageControls[0].getId(), sEditorId + "_string1_translation_popover_currentlanguage_description_label", "Translation popover: current language description label id");
 							assert.equal(aCurrentLanguageControls[1].getId(), sEditorId + "_string1_translation_popover_currentlanguage_value_input", "Translation popover: current language value input id");
 							var oValueList = oTranslationPopover.getContent()[0];
 							assert.equal(oValueList.getId(), sEditorId + "_string1_translation_popover_value_list", "Translation popover: value list id");

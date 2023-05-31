@@ -1248,7 +1248,7 @@ sap.ui.define([
 			}
 			var oLanguage = {
 				"key": p,
-				"desription": oResourceBundleTemp.language,
+				"description": oResourceBundleTemp.language,
 				"value": sTranslatedValue,
 				"originValue": sOriginValue,
 				"editable": true
@@ -1265,7 +1265,7 @@ sap.ui.define([
 		for (var p in aEditorResourceBundles) {
 			aOriginTranslatedValues.push({
 				"key": p,
-				"desription": aEditorResourceBundles[p].language,
+				"description": aEditorResourceBundles[p].language,
 				"value": sKey,
 				"originValue": sKey,
 				"editable": true
@@ -1516,7 +1516,7 @@ sap.ui.define([
 				}
 			}
 			if (oTempTranslatedValue.key === oResourceBundle.sLocale.replaceAll('_', '-')) {
-				oTempTranslatedValue.desription += " (" + oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_CURRENTLANGUAGE") + ")";
+				oTempTranslatedValue.description += " (" + oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_CURRENTLANGUAGE") + ")";
 				aTempTranslatedLanguages.unshift(oTempTranslatedValue);
 			} else {
 				aTempTranslatedLanguages.push(oTempTranslatedValue);
@@ -1582,7 +1582,7 @@ sap.ui.define([
 						new VBox({
 							items: [
 								new Text({
-									text: "{languages>desription}"
+									text: "{languages>description}"
 								}),
 								new Input({
 									value: "{languages>value}",
@@ -1594,7 +1594,7 @@ sap.ui.define([
 					customData: [
 						new CustomData({
 							key: "{languages>key}",
-							value: "{languages>desription}"
+							value: "{languages>description}"
 						})
 					]
 				}),

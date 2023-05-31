@@ -388,7 +388,7 @@ sap.ui.define([
 			}
 			var oLanguage = {
 				"key": p,
-				"desription": oResourceBundleTemp.language,
+				"description": oResourceBundleTemp.language,
 				"value": sTranslatedValue,
 				"originValue": sOriginValue,
 				"editable": true
@@ -494,7 +494,7 @@ sap.ui.define([
 							new VBox({
 								items: [
 									new Text({
-										text: "{languages>desription}"
+										text: "{languages>description}"
 									}),
 									new Input({
 										value: "{languages>value}",
@@ -506,7 +506,7 @@ sap.ui.define([
 						customData: [
 							new CustomData({
 								key: "{languages>key}",
-								value: "{languages>desription}"
+								value: "{languages>description}"
 							})
 						]
 					}),
@@ -532,8 +532,8 @@ sap.ui.define([
 						}).addStyleClass("sapMHeaderTitle"),
 						new VBox({
 							items: [
-								new Text(sParameterId + "_translation_popover_currentlanguage_desription_label", {
-									text: "{languages>/currentLanguage/desription}"
+								new Text(sParameterId + "_translation_popover_currentlanguage_description_label", {
+									text: "{languages>/currentLanguage/description}"
 								}),
 								new Input(sParameterId + "_translation_popover_currentlanguage_value_input", {
 									value: "{languages>/currentLanguage/value}",
