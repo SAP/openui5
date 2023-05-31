@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control",
-	"sap/ui/core/Core"
-], function (Control, Core) {
+	"sap/f/cards/loading/PlaceholderBase",
+	"./ListPlaceholderRenderer"
+], function (PlaceholderBase, ListPlaceholderRenderer) {
 	"use strict";
 
 	/**
@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @since 1.76
 	 * @alias sap.f.cards.loading.ListPlaceholder
 	 */
-	var ListPlaceholder = Control.extend("sap.f.cards.loading.ListPlaceholder", {
+	var ListPlaceholder = PlaceholderBase.extend("sap.f.cards.loading.ListPlaceholder", {
 		metadata: {
 			library: "sap.f",
 			properties: {
@@ -49,120 +49,7 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: {
-			apiVersion: 2,
-			render: function (oRm, oControl) {
-				var iMinItems = oControl.getMinItems(),
-					oItem = oControl.getItem(),
-					// set title for screen reader
-					oResBundle = Core.getLibraryResourceBundle("sap.ui.core"),
-					sTitle = oResBundle.getText("BUSY_TEXT");
-
-				oRm.openStart("div", oControl)
-					.class("sapFCardContentPlaceholder")
-					.class("sapFCardContentListPlaceholder")
-					.attr("tabindex", "0")
-					.attr("title", sTitle);
-
-				oRm.accessibilityState(oControl, {
-					role: "progressbar",
-					valuemin: "0",
-					valuemax: "100"
-				});
-
-				oRm.openEnd();
-
-				for (var i = 0; i < iMinItems; i++) {
-					oRm.openStart("div")
-						.class("sapFCardListPlaceholderItem")
-						.style("height", oControl.getItemHeight())
-						.openEnd();
-
-					if (oItem && oItem.icon) {
-						oRm.openStart("div")
-							.class("sapFCardListPlaceholderImg")
-							.class("sapFCardLoadingShimmer")
-							.openEnd()
-							.close("div");
-					}
-
-					oRm.openStart("div")
-						.class("sapFCardListPlaceholderRows")
-						.openEnd();
-
-					if (oItem) {
-						this.renderTitleAndDescription(oRm, oItem);
-						this.renderAttributes(oRm, oItem);
-
-						if (oItem.chart) {
-							this.renderRow(oRm);
-						}
-
-						if (oItem.actionsStrip) {
-							this.renderRow(oRm);
-						}
-					}
-
-					oRm.close("div");
-					oRm.close("div");
-				}
-				oRm.close("div");
-			},
-
-			renderTitleAndDescription: function (oRm, oItem) {
-				if (oItem.attributes && oItem.title && oItem.description) {
-					this.renderRow(oRm, true);
-					return;
-				}
-
-				if (oItem.title) {
-					this.renderRow(oRm);
-				}
-
-				if (oItem.description) {
-					this.renderRow(oRm);
-				}
-			},
-
-			renderRow: function (oRm, bCombined) {
-				oRm.openStart("div")
-					.class("sapFCardListPlaceholderRow")
-					.class("sapFCardLoadingShimmer");
-
-				if (bCombined) {
-					oRm.class("sapFCardListPlaceholderRowCombined");
-				}
-
-				oRm.openEnd()
-					.close("div");
-			},
-
-			renderAttributes: function (oRm, oItem) {
-				if (!oItem.attributes) {
-					return;
-				}
-
-				var iAttrRows = oItem.attributes.length / 2 + 1;
-
-				for (var j = 0; j < iAttrRows; j++) {
-					oRm.openStart("div")
-						.class("sapFCardListPlaceholderRow")
-						.openEnd();
-
-					var iAttrPerRow = j === iAttrRows - 1 ? 1 : 2; // render single attribute on the last row
-
-					for (var i = 0; i < iAttrPerRow; i++) {
-						oRm.openStart("div")
-							.class("sapFCardListPlaceholderAttr")
-							.class("sapFCardLoadingShimmer")
-							.openEnd()
-							.close("div");
-					}
-					oRm.close("div");
-				}
-
-			}
-		}
+		renderer: ListPlaceholderRenderer
 	});
 
 	return ListPlaceholder;
