@@ -2175,19 +2175,20 @@ function(
 	 */
 	Input.prototype._handleTypeAhead = function (oInput) {
 		var sValue = this.getValue();
+		var oDomRef = oInput.getFocusDomRef();
 		var mTypeAheadInfo = {
 			value: "",
 			selectedItem: null
 		};
 		var oListDelegate;
 		var oList = oInput._getSuggestionsPopover() && oInput._getSuggestionsPopover().getItemsContainer();
+		this._setTypedInValue(oDomRef.value.substring(0, oDomRef.selectionStart));
 
 		// check if typeahead is already performed
 		if ((oInput && oInput.getValue().toLowerCase()) === (this._getProposedItemText() && this._getProposedItemText().toLowerCase())) {
 			return;
 		}
 
-		this._setTypedInValue(sValue);
 		oInput._setProposedItemText(null);
 
 		if (!this._bDoTypeAhead || sValue === "" ||
@@ -2257,14 +2258,15 @@ function(
 	 * @override
 	 */
 	Input.prototype.onsapright = function () {
-		var sValue = this.getValue();
+		var sValue = this.getValue(),
+			oDomRef = this.getFocusDomRef();
 
 		if (!this.getAutocomplete()) {
 			return;
 		}
 
 		if (this._getTypedInValue() !== sValue) {
-			this._setTypedInValue(sValue);
+			this._setTypedInValue(oDomRef.value.substring(0, oDomRef.selectionStart));
 
 			this.fireLiveChange({
 				value: sValue,
