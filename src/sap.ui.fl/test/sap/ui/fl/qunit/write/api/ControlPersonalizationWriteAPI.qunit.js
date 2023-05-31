@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
@@ -20,6 +21,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
+	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
@@ -37,6 +39,7 @@ sap.ui.define([
 	Element,
 	UIComponent,
 	VariantUtils,
+	FlexObjectFactory,
 	ControlVariantApplyAPI,
 	FlexRuntimeInfoAPI,
 	ChangeHandlerStorage,
@@ -46,6 +49,7 @@ sap.ui.define([
 	VariantModel,
 	ChangesWriteAPI,
 	ControlPersonalizationWriteAPI,
+	ChangePersistence,
 	ChangePersistenceFactory,
 	FlexControllerFactory,
 	Layer,
@@ -955,6 +959,138 @@ sap.ui.define([
 				assert.equal(aArguments[3], undefined, "the generator was passed");
 				assert.equal(aArguments[4], undefined, "the changeTypes were not passed");
 			}.bind(this));
+		});
+	});
+
+	function createUIChange(sLayer, sChangeType, sId) {
+		return FlexObjectFactory.createUIChange({
+			layer: sLayer || Layer.USER,
+			changeType: sChangeType || "someChangeType",
+			selector: {
+				idIsLocal: true,
+				id: sId || "view--control1"
+			},
+			generator: "myFancyGenerator"
+		});
+	}
+
+	QUnit.module("hasFlexObjects", {
+		beforeEach: function() {
+			this.oAppComponent = new UIComponent();
+			this.sControlId = "view--control1";
+			this.oControl = new Control(this.oAppComponent.createId(this.sControlId));
+			this.oGetAppComponentStub = sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(FlexState, "isInitialized").returns(true);
+			this.oGetDirtyFOStub = sandbox.stub(ChangePersistence.prototype, "getDirtyChanges");
+		},
+		afterEach: function() {
+			sandbox.restore();
+			this.oAppComponent.destroy();
+			this.oControl.destroy();
+		}
+	}, function() {
+		QUnit.test("when called with insufficient information", function(assert) {
+			assert.throws(
+				function() {
+					ControlPersonalizationWriteAPI.hasDirtyFlexObjects();
+				},
+				/No selector was provided/,
+				"the function throws an error"
+			);
+			assert.throws(
+				function() {
+					ControlPersonalizationWriteAPI.hasDirtyFlexObjects({});
+				},
+				/No selector was provided/,
+				"the function throws an error"
+			);
+			this.oGetAppComponentStub.restore();
+			assert.throws(
+				function() {
+					ControlPersonalizationWriteAPI.hasDirtyFlexObjects({selector: this.oControl});
+				},
+				/App Component could not be determined/,
+				"the function throws an error"
+			);
+		});
+
+		QUnit.test("when there are no dirty flex objects", function(assert) {
+			this.oGetDirtyFOStub.returns([]);
+			assert.notOk(
+				ControlPersonalizationWriteAPI.hasDirtyFlexObjects({selector: this.oControl}),
+				"the function returns false"
+			);
+		});
+
+		QUnit.test("with no USER layer changes", function(assert) {
+			this.oGetDirtyFOStub.returns([
+				createUIChange(Layer.CUSTOMER),
+				createUIChange(Layer.VENDOR)
+			]);
+			assert.notOk(
+				ControlPersonalizationWriteAPI.hasDirtyFlexObjects({selector: this.oControl}),
+				"the function returns false"
+			);
+		});
+
+		QUnit.test("with only changes for other controls", function(assert) {
+			this.oGetDirtyFOStub.returns([
+				createUIChange(undefined, undefined, "otherId"),
+				createUIChange(undefined, undefined, "otherId2")
+			]);
+			assert.notOk(
+				ControlPersonalizationWriteAPI.hasDirtyFlexObjects({
+					selector: this.oControl
+				}),
+				"the function returns false"
+			);
+		});
+
+		QUnit.test("called with change types", function(assert) {
+			this.oGetDirtyFOStub.returns([
+				createUIChange()
+			]);
+			assert.ok(
+				ControlPersonalizationWriteAPI.hasDirtyFlexObjects({
+					selector: this.oControl,
+					changeTypes: ["someChangeType"]
+				}),
+				"the function returns true"
+			);
+			assert.notOk(
+				ControlPersonalizationWriteAPI.hasDirtyFlexObjects({
+					selector: this.oControl,
+					changeTypes: ["otherChangeType"]
+				}),
+				"the function returns false"
+			);
+			assert.ok(
+				ControlPersonalizationWriteAPI.hasDirtyFlexObjects({
+					selector: this.oControl,
+					changeTypes: ["otherChangeType", "someChangeType"]
+				}),
+				"the function returns true"
+			);
+		});
+
+		QUnit.test("called with a generator", function(assert) {
+			this.oGetDirtyFOStub.returns([
+				createUIChange()
+			]);
+			assert.ok(
+				ControlPersonalizationWriteAPI.hasDirtyFlexObjects({
+					selector: this.oControl,
+					generator: "myFancyGenerator"
+				}),
+				"the function returns true"
+			);
+			assert.notOk(
+				ControlPersonalizationWriteAPI.hasDirtyFlexObjects({
+					selector: this.oControl,
+					generator: "myNotSoFancyGenerator"
+				}),
+				"the function returns false"
+			);
 		});
 	});
 
