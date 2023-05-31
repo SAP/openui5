@@ -13,7 +13,7 @@ sap.ui.define(function() {
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @since 1.90.1
+	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ValueHelpSelectionType
 	 */
 	var ValueHelpSelectionType = {

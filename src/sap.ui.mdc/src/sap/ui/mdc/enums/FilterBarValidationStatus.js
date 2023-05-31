@@ -11,7 +11,7 @@ sap.ui.define(function() {
 	 *
 	 * @enum {int}
 	 * @public
-	 * @since 1.110
+	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.FilterBarValidationStatus
 	 */
 	var FilterBarValidationStatus = {

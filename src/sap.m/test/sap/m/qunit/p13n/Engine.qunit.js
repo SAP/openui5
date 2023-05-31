@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/m/p13n/BasePanel",
 	"sap/ui/core/library",
-	"sap/ui/mdc/enum/PersistenceMode",
+	"sap/ui/mdc/enums/PersistenceMode",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/m/p13n/modules/xConfigAPI",

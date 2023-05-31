@@ -10,7 +10,7 @@ sap.ui.define(function() {
 	 *
 	 * @enum {string}
 	 * @public
-	 * @since 1.48.1
+	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.FieldEditMode
 	 */
 	var FieldEditMode = {
@@ -37,14 +37,12 @@ sap.ui.define(function() {
 		/**
 		 * If more than one control is rendered by the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField} or {@link sap.ui.mdc.MultiValueField MultiValueField} control,
 		 * the first part is editable, and the other parts are read-only.
-		 * @since 1.72.0
 		 * @public
 		 */
 		EditableReadOnly: "EditableReadOnly",
 		/**
 		 * If more than one control is rendered by the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField} or {@link sap.ui.mdc.MultiValueField MultiValueField} control,
 		 * the first part is editable, and the other parts are in display mode.
-		 * @since 1.72.0
 		 * @public
 		 */
 		EditableDisplay: "EditableDisplay"

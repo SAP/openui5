@@ -10,7 +10,7 @@ sap.ui.define(function() {
 	 *
 	 * @enum {string}
 	 * @public
-	 * @since 1.88
+	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ActionToolbarActionAlignment
 	 */
 	var ActionToolbarActionAlignment = {

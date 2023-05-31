@@ -11,7 +11,7 @@ sap.ui.define(function() {
 	 * @enum {string}
   	 * @alias sap.ui.mdc.enums.OperatorOverwrite
 	 * @public
-	 * @since 1.113
+	 * @since 1.115
 	 */
 	var OperatorOverwrite = {
 		/**
