@@ -407,18 +407,17 @@ sap.ui.define([
     };
 
     SelectionController.prototype._createAddRemoveChange = function(oControl, sOperation, oContent){
-		var oChangeContent = oContent;
 
-		if (sOperation === this.getChangeOperations()["add"]) {
-			oChangeContent.value = true;
-			oChangeContent.targetAggregation = this.getTargetAggregation();
-		}
+        var oChangeContent = oContent;
+
+        oChangeContent.value = true;
+        oChangeContent.targetAggregation = this.getTargetAggregation();
 
         var oAddRemoveChange = {
             selectorElement: oControl,
             changeSpecificData: {
                 changeType: sOperation,
-                content:  oChangeContent
+                content: oChangeContent
             }
         };
         return oAddRemoveChange;
