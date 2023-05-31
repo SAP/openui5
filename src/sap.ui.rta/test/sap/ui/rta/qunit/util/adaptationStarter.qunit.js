@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/Utils",
 	"sap/ui/rta/util/adaptationStarter",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
@@ -18,6 +19,7 @@ sap.ui.define([
 	Control,
 	FeaturesAPI,
 	PersistenceWriteAPI,
+	FlexUtils,
 	adaptationStarter,
 	RuntimeAuthoring,
 	sinon,
@@ -270,6 +272,32 @@ sap.ui.define([
 				assert.strictEqual(this.fnMessageBoxStub.callCount, 1, "a message box is displayed with the error");
 				assert.strictEqual(this.oLogStub.lastCall.args[0], "UI Adaptation could not be started", "the generic part is correct");
 				assert.strictEqual(this.oLogStub.lastCall.args[1], "This app is not enabled for key user adaptation", "the specific part is correct");
+				assert.ok(oError instanceof Error, "then promise was rejected with an error");
+				assert.strictEqual(oError.reason, "flexEnabled", "the reason is properly set");
+			}.bind(this));
+		});
+
+		QUnit.test("When the flexEnabled flag is set to false in FLP", function(assert) {
+			setIsKeyUser(true);
+			sandbox.stub(FlexUtils, "getUshellContainer").returns(true);
+			sandbox.stub(oAppComponent, "getManifest").returns({
+				"sap.ui5": {
+					flexEnabled: false
+				}
+			});
+			return adaptationStarter({
+				rootControl: oAppComponent,
+				flexSettings: {
+					layer: "CUSTOMER"
+				}
+			})
+			.then(function () {
+				assert.ok(false, "should not go here");
+			})
+			.catch(function(oError) {
+				assert.strictEqual(this.oRtaStartStub.callCount, 0, "RuntimeAuthoring is not started");
+				assert.strictEqual(this.oLogStub.callCount, 0, "no error was logged");
+				assert.strictEqual(this.fnMessageBoxStub.callCount, 0, "no message box is displayed");
 				assert.ok(oError instanceof Error, "then promise was rejected with an error");
 				assert.strictEqual(oError.reason, "flexEnabled", "the reason is properly set");
 			}.bind(this));
