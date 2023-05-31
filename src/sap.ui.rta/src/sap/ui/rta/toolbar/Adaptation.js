@@ -391,7 +391,7 @@ sap.ui.define([
 	function formatAdaptationsMenuText(iCount, sTitle) {
 		if (iCount > 0) {
 			if (sTitle === "") {
-				sTitle = this.getTextResources().getText("TXT_DEFAULT_APP");
+				return this.getTextResources().getText("TXT_DEFAULT_APP");
 			}
 			return this.getTextResources().getText("BTN_ADAPTING_FOR", sTitle);
 		}
