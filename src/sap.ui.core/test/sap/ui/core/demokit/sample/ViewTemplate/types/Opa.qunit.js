@@ -64,6 +64,13 @@ sap.ui.getCore().attachInit(function () {
 			When.onTheMainPage.enterInputValue("decimalInput", "101");
 			Then.onTheMainPage.checkInputValueState("decimalInput", ValueState.None, "");
 
+			When.onTheMainPage.enterInputValue("I87", "");
+			Then.onTheMainPage.checkInputValueState("I87", ValueState.None);
+			Then.onTheMainPage.checkInputValue("I87", "0");
+			When.onTheMainPage.enterInputValue("I83", "");
+			Then.onTheMainPage.checkInputValueState("I83", ValueState.None);
+			Then.onTheMainPage.checkInputValue("I83", "0");
+
 			When.onTheMainPage.enterStepInputValue("stepInput", "102");
 			Then.onTheMainPage.checkStepInputValueState("stepInput", ValueState.Error,
 				oBundle.getText("EnterNumberMax", ["99"]));
