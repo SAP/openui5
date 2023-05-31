@@ -3579,19 +3579,24 @@ sap.ui.define([
 	// Scenario: ODLB, late property. See that it is requested only once, even when bound twice. See
 	// that it is updated via requestSideEffects called at the parent binding (all visible rows).
 	// JIRA: CPOUI5UISERVICESV3-1878
-	// JIRA: CPOUI5ODATAV4-23 see that a late property for a nested entity (within $expand) is
-	// fetched
-	// JIRA: CPOUI5ODATAV4-27 see that two late property requests are merged
-	// BCP: 2070470932: see that sap-client and system query options are handled properly
-	// Test ODLB#getCount
-	// JIRA: CPOUI5ODATAV4-958
-	// JIRA: CPOUI5ODATAV4-1671: See that dataRequested/dataReceived events are fired for late
-	//   property requests
-	// JIRA: CPOUI5ODATAV4-1746 See that every GET request for late property requests is causing
-	//   dataRequested/dataReceived events. The additional GET request for late properties
-	//   is achieved by requesting an additional entity with the path
-	//   "TEAMS('1')/TEAM_2_EMPLOYEES('3')". The path from the GET request is attached to the event
-	//   parameter, no matter whether the request failed or succeeded.
+	//
+	// See that a late property for a nested entity (within $expand) is fetched
+	// JIRA: CPOUI5ODATAV4-23
+	//
+	// See that two late property requests are merged (JIRA: CPOUI5ODATAV4-27)
+	// See that sap-client and system query options are handled properly (BCP: 2070470932)
+	// Test ODLB#getCount (JIRA: CPOUI5ODATAV4-958)
+	//
+	// See that dataRequested/dataReceived events are fired for late property requests
+	// JIRA: CPOUI5ODATAV4-1671
+	//
+	// See that every GET request for late property requests is causing dataRequested/dataReceived
+	// events. The additional GET request for late properties is achieved by requesting an
+	// additional item with ItemPosition "20". The path from the GET request is attached to the
+	// event parameter, no matter whether the request failed or succeeded.
+	// JIRA: CPOUI5ODATAV4-1746
+	//
+	// Rewritten to use SalesOrder instead of TEAM (JIRA: CPOUI5ODATAV4-2172)
 	QUnit.test("ODLB: late property", function (assert) {
 		var bChange = false,
 			iDataReceived = 0,
@@ -3601,66 +3606,70 @@ sap.ui.define([
 			oRowContext,
 			oTable,
 			sView = '\
-<FlexBox id="form" binding="{/TEAMS(\'1\')}">\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Table id="table" growing="true" growingThreshold="2"\
-			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true,\
-				$search : \'foo\', $select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
-		<Text id="name" text="{Name}"/>\
-		<Text id="manager" text="{EMPLOYEE_2_MANAGER/ID}"/>\
+			items="{path : \'SO_2_SOITEM\', \
+				parameters : {$$ownRequest : true, $search : \'foo\', $select : \'Messages\'}}">\
+		<Text id="note" text="{Note}"/>\
+		<Text id="scheduleKey" text="{SOITEM_2_SCHDL/ScheduleKey}"/>\
 	</Table>\
 </FlexBox>\
-<Input id="age1" value="{AGE}"/>\
-<Text id="age2" text="{AGE}"/>\
-<Input id="team" value="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}"/>\
-<Input id="budget" value="{EMPLOYEE_2_TEAM/Budget}"/>',
+<Input id="unit1" value="{QuantityUnit}"/>\
+<Text id="unit2" text="{QuantityUnit}"/>\
+<Input id="bp" value="{SOITEM_2_PRODUCT/PRODUCT_2_BP/CompanyName}"/>',
 			that = this;
 
-		oModel = this.createModel(sTeaBusi + "?sap-client=123", {autoExpandSelect : true}, {
-			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=123"
-				: {source : "odata/v4/data/metadata.xml"}
+		oModel = this.createModel(sSalesOrderService + "?sap-client=123", {
+			autoExpandSelect : true
+		}, {
+			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata?sap-client=123"
+				: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"}
 		});
 
-		this.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$search=foo"
-				+ "&$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
-				+ "&$expand=EMPLOYEE_2_MANAGER($select=ID)&$skip=0&$top=2", {
+		this.expectRequest("SalesOrderList('1')/SO_2_SOITEM?sap-client=123&$search=foo"
+				+ "&$select=ItemPosition,Messages,Note,SalesOrderID"
+				+ "&$expand=SOITEM_2_SCHDL($select=ScheduleKey)&$skip=0&$top=2", {
 				value : [{
 					"@odata.etag" : "etag0",
-					ID : "2",
-					Name : "Frederic Fall",
-					EMPLOYEE_2_MANAGER : {ID : "5"}
+					ItemPosition : "10",
+					Messages : [],
+					Note : "Note #10",
+					SalesOrderID : "1",
+					SOITEM_2_SCHDL : {ScheduleKey : "Key #10"}
 				}, {
 					"@odata.etag" : "etag0",
-					ID : "3",
-					Name : "Jonathan Smith",
-					EMPLOYEE_2_MANAGER : {ID : "5"}
+					ItemPosition : "20",
+					Messages : [],
+					Note : "Note #20",
+					SalesOrderID : "1",
+					SOITEM_2_SCHDL : {ScheduleKey : "Key #20"}
 				}]
 			})
-			.expectChange("name", ["Frederic Fall", "Jonathan Smith"])
-			.expectChange("manager", ["5", "5"])
-			.expectChange("age1")
-			.expectChange("age2")
-			.expectChange("team")
-			.expectChange("budget");
+			.expectChange("note", ["Note #10", "Note #20"])
+			.expectChange("scheduleKey", ["Key #10", "Key #20"])
+			.expectChange("unit1")
+			.expectChange("unit2")
+			.expectChange("bp");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oTeam = that.oView.byId("team");
+			var oBusinessPartner = that.oView.byId("bp");
 
 			oTable = that.oView.byId("table");
-			oTeam.getBinding("value").attachEventOnce("change", function (oEvent) {
+			oBusinessPartner.getBinding("value").attachEventOnce("change", function (oEvent) {
 				bChange = true;
-				assert.strictEqual(oEvent.getSource().getValue(), "1");
-				assert.strictEqual(oTeam.getValue(), "1");
+				assert.strictEqual(oEvent.getSource().getValue(), "ACM");
+				assert.strictEqual(oBusinessPartner.getValue(), "ACM");
 			});
 			oModel.attachDataRequested(function (oEvent) {
 				sPath = oEvent.getParameter("path");
 
 				iDataRequested += 1;
 				if (iDataRequested === 1) {
-					assert.strictEqual(sPath, "/TEAMS('1')/TEAM_2_EMPLOYEES('2')");
+					assert.strictEqual(sPath,
+						"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')");
 				} else if (iDataRequested === 2) {
-					assert.strictEqual(sPath, "/TEAMS('1')/TEAM_2_EMPLOYEES('3')");
-				} else if (iDataRequested === 3) {
-					assert.strictEqual(sPath, "/TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_TEAM");
+					assert.strictEqual(sPath,
+						"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')");
 				}
 			}).attachDataReceived(function (oEvent) {
 				sPath = oEvent.getParameter("path");
@@ -3669,13 +3678,13 @@ sap.ui.define([
 				assert.deepEqual(oEvent.getParameter("data"), {});
 
 				if (iDataReceived === 1) {
-					assert.strictEqual(sPath, "/TEAMS('1')/TEAM_2_EMPLOYEES('3')");
+					assert.strictEqual(sPath,
+						"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')");
 					assert.strictEqual(bChange, false, "change event not yet fired");
 				} else if (iDataReceived === 2) {
-					assert.strictEqual(sPath, "/TEAMS('1')/TEAM_2_EMPLOYEES('2')");
+					assert.strictEqual(sPath,
+						"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')");
 					assert.strictEqual(bChange, true, "fired after change event");
-				} else if (iDataReceived === 3) {
-					assert.strictEqual(sPath, "/TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_TEAM");
 				}
 			});
 
@@ -3685,53 +3694,55 @@ sap.ui.define([
 
 			that.expectRequest({
 					batchNo : 2,
-					url : "TEAMS('1')/TEAM_2_EMPLOYEES('2')?sap-client=123"
-						+ "&$select=AGE&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
-						+ "$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))"
+					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')"
+						+ "?sap-client=123"
+						+ "&$select=QuantityUnit&$expand=SOITEM_2_PRODUCT($select=ProductID;"
+						+ "$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName))"
 				}, {
 					"@odata.etag" : "etag0",
-					AGE : 42,
-					EMPLOYEE_2_TEAM : {
+					QuantityUnit : "kg",
+					SOITEM_2_PRODUCT : {
 						"@odata.etag" : "etag1",
-						Team_Id : "1",
-						TEAM_2_MANAGER : {
+						ProductID : "3",
+						PRODUCT_2_BP : {
 							"@odata.etag" : "ETag",
-							ID : "5",
-							TEAM_ID : "1"
+							BusinessPartnerID : "4",
+							CompanyName : "ACM"
 						}
 					}
 				})
 				// the additional late property request
 				.expectRequest({
 					batchNo : 2,
-					url : "TEAMS('1')/TEAM_2_EMPLOYEES('3')?sap-client=123"
-					+ "&$select=EMPLOYEE_2_TEAM&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
-					+ "$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))"
+					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')"
+						+ "?sap-client=123"
+						+ "&$select=SOITEM_2_PRODUCT&$expand=SOITEM_2_PRODUCT($select=ProductID;"
+						+ "$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName))"
 				}, {
 					"@odata.etag" : "etag0",
-					EMPLOYEE_2_TEAM : {
+					SOITEM_2_PRODUCT : {
 						"@odata.etag" : "etag1",
-						Team_Id : "1",
-						TEAM_2_MANAGER : {
+						ProductID : "3",
+						PRODUCT_2_BP : {
 							"@odata.etag" : "ETag",
-							ID : "5",
-							TEAM_ID : "1"
+							BusinessPartnerID : "4",
+							CompanyName : "ACM"
 						}
 					}
 				})
-				.expectChange("age1", "42")
-				.expectChange("team", "1");
+				.expectChange("unit1", "kg")
+				.expectChange("bp", "ACM");
 
-			// code under test - AGE and Team_Id are requested
+			// code under test - QuantityUnit and CompanyName are requested
 			oRowContext = oTable.getItems()[0].getBindingContext();
-			that.oView.byId("age1").setBindingContext(oRowContext);
-			that.oView.byId("team").setBindingContext(oRowContext);
+			that.oView.byId("unit1").setBindingContext(oRowContext);
+			that.oView.byId("bp").setBindingContext(oRowContext);
 
 			return Promise.all([
 				// the additional late property request for a *different* row
 				// JIRA: CPOUI5ODATAV4-1746
 				oTable.getItems()[1].getBindingContext()
-					.requestProperty("EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID"),
+					.requestProperty("SOITEM_2_PRODUCT/PRODUCT_2_BP/CompanyName"),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -3739,164 +3750,160 @@ sap.ui.define([
 			assert.strictEqual(iDataReceived, 2);
 
 			// BCP 1980517597
-			that.expectChange("age1", "18")
+			that.expectChange("unit1", "t")
 				.expectRequest({
 					method : "PATCH",
 					headers : {"If-Match" : "etag0"},
-					url : "EMPLOYEES('2')?sap-client=123",
-					payload : {AGE : 18}
+					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')"
+						+ "?sap-client=123",
+					payload : {QuantityUnit : "t"}
 				}, {
 					"@odata.etag" : "etag23",
 					AGE : 18,
-					__CT__FAKE__Message : {
-						__FAKE__Messages : [{
-							code : "1",
-							message : "That is very young",
-							numericSeverity : 3,
-							target : "AGE",
-							transition : false
-						}]
-					}
+					Messages : [{
+						code : "1",
+						message : "Are you sure?",
+						numericSeverity : 3,
+						target : "QuantityUnit",
+						transition : false
+					}]
 				})
 				.expectMessages([{
 					code : "1",
-					message : "That is very young",
-					target : "/TEAMS('1')/TEAM_2_EMPLOYEES('2')/AGE",
+					message : "Are you sure?",
+					target : "/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')"
+						+ "/QuantityUnit",
 					type : "Warning"
 				}]);
 
 			// code under test
-			that.oView.byId("age1").getBinding("value").setValue(18);
+			that.oView.byId("unit1").getBinding("value").setValue("t");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			return that.checkValueState(assert, "age1", "Warning", "That is very young");
+			return that.checkValueState(assert, "unit1", "Warning", "Are you sure?");
 		}).then(function () {
-			that.expectChange("team", "changed")
+			that.expectChange("bp", "changed")
 				.expectRequest({
 					method : "PATCH",
 					headers : {"If-Match" : "ETag"},
-					url : "MANAGERS('5')?sap-client=123",
-					payload : {TEAM_ID : "changed"}
+					url : "BusinessPartnerList('4')?sap-client=123",
+					payload : {CompanyName : "changed"}
 				});
 
 			// code under test
-			that.oView.byId("team").getBinding("value").setValue("changed");
+			that.oView.byId("bp").getBinding("value").setValue("changed");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.strictEqual(iDataRequested, 2);
 			assert.strictEqual(iDataReceived, 2);
 
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_TEAM?sap-client=123"
-					+ "&$select=Budget,Team_Id", {
-					"@odata.etag" : "etag1",
-					Budget : "12.45",
-					Team_Id : "1"
-				})
-				.expectChange("budget", "12.45");
+			that.expectChange("unit2", "t");
 
-			// code under test - now the team is in the cache and only the budget is missing
-			that.oView.byId("budget").setBindingContext(oRowContext);
+			// code under test - QuantityUnit is cached now
+			that.oView.byId("unit2").setBindingContext(oRowContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM?sap-client=123&$search=foo"
+					+ "&$select=ItemPosition,Messages,Note,SalesOrderID"
+					+ "&$expand=SOITEM_2_SCHDL($select=ScheduleKey)&$skip=2&$top=2", {
+					value : [{
+						ItemPosition : "30",
+						Messages : [],
+						Note : "Note #30",
+						SalesOrderID : "1",
+						SOITEM_2_SCHDL : {ScheduleKey : "Key #30"}
+					}]
+				})
+				.expectChange("note", [,, "Note #30"])
+				.expectChange("scheduleKey", [,, "Key #30"]);
+
+			// code under test - QuantityUnit must not be requested when paging
+			oTable.requestItems();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(iDataRequested, 3, "bubbled up from the binding");
+			assert.strictEqual(iDataReceived, 3, "bubbled up from the binding");
+
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM?sap-client=123"
+					+ "&$select=ItemPosition,Note,QuantityUnit,SalesOrderID"
+					+ "&$filter=SalesOrderID eq '1' and ItemPosition eq '10' or SalesOrderID eq '1'"
+					+ " and ItemPosition eq '20' or SalesOrderID eq '1' and ItemPosition eq '30'"
+					+ "&$top=3", {
+					value : [
+						{ItemPosition : "10", Note : "#1", QuantityUnit : "g", SalesOrderID : "1"},
+						{ItemPosition : "20", Note : "#2", QuantityUnit : "dz", SalesOrderID : "1"},
+						{ItemPosition : "30", Note : "#3", QuantityUnit : "g", SalesOrderID : "1"}
+					]
+				})
+				.expectChange("unit1", "g")
+				.expectChange("unit2", "g")
+				.expectChange("note", ["#1", "#2", "#3"]);
+
+			// see that requestSideEffects updates QuantityUnit, too
+			return Promise.all([
+				oTable.getBinding("items").getHeaderContext()
+					.requestSideEffects(["Note", "QuantityUnit"]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(iDataRequested, 3);
+			assert.strictEqual(iDataReceived, 3);
+
+			that.expectChange("unit2", "dz");
+
+			// change one Text to the second row - must be cached from requestSideEffects
+			oRowContext = oTable.getItems()[1].getBindingContext();
+			that.oView.byId("unit2").setBindingContext(oRowContext);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.strictEqual(iDataRequested, 3);
 			assert.strictEqual(iDataReceived, 3);
 
-			that.expectChange("age2", "18");
-
-			// code under test - AGE is cached now
-			that.oView.byId("age2").setBindingContext(oRowContext);
-
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$search=foo"
-					+ "&$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
-					+ "&$expand=EMPLOYEE_2_MANAGER($select=ID)&$skip=2&$top=2", {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM?sap-client=123"
+					+ "&$select=ItemPosition,Note,QuantityUnit,SalesOrderID"
+					+ "&$filter=SalesOrderID eq '1' and ItemPosition eq '10' or SalesOrderID eq '1'"
+					+ " and ItemPosition eq '20' or SalesOrderID eq '1' and ItemPosition eq '30'"
+					+ "&$top=3", {
 					value : [
-						{ID : "4", Name : "Peter Burke", EMPLOYEE_2_MANAGER : {ID : "5"}}
+						{ItemPosition : "10", Note : "$1", QuantityUnit : "ou", SalesOrderID : "1"},
+						{ItemPosition : "20", Note : "$2", QuantityUnit : "t", SalesOrderID : "1"},
+						{ItemPosition : "30", Note : "$3", QuantityUnit : "?", SalesOrderID : "1"}
 					]
 				})
-				.expectChange("name", [,, "Peter Burke"])
-				.expectChange("manager", [,, "5"]);
-
-			// code under test - AGE must not be requested when paging
-			oTable.requestItems();
-
-			return that.waitForChanges(assert);
-		}).then(function () {
-			assert.strictEqual(iDataRequested, 4, "bubbled up from the binding");
-			assert.strictEqual(iDataReceived, 4, "bubbled up from the binding");
-
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$select=AGE,ID,Name"
-					+ "&$filter=ID eq '2' or ID eq '3' or ID eq '4'&$top=3", {
-					value : [
-						{AGE : 43, ID : "2", Name : "Frederic Fall *"},
-						{AGE : 29, ID : "3", Name : "Jonathan Smith *"},
-						{AGE : 0, ID : "4", Name : "Peter Burke *"}
-					]
-				})
-				.expectChange("age1", "43")
-				.expectChange("age2", "43")
-				.expectChange("name", ["Frederic Fall *", "Jonathan Smith *", "Peter Burke *"]);
-
-			// see that requestSideEffects updates AGE, too
-			return Promise.all([
-				oTable.getBinding("items").getHeaderContext().requestSideEffects(["AGE", "Name"]),
-				that.waitForChanges(assert)
-			]);
-		}).then(function () {
-			assert.strictEqual(iDataRequested, 4);
-			assert.strictEqual(iDataReceived, 4);
-
-			that.expectChange("age2", "29");
-
-			// change one Text to the second row - must be cached from requestSideEffects
-			oRowContext = oTable.getItems()[1].getBindingContext();
-			that.oView.byId("age2").setBindingContext(oRowContext);
-
-			return that.waitForChanges(assert);
-		}).then(function () {
-			assert.strictEqual(iDataRequested, 4);
-			assert.strictEqual(iDataReceived, 4);
-
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$select=AGE,ID,Name"
-					+ "&$filter=ID eq '2' or ID eq '3' or ID eq '4'&$top=3", {
-					value : [
-						{AGE : 44, ID : "2", Name : "Frederic Fall **"},
-						{AGE : 30, ID : "3", Name : "Jonathan Smith **"},
-						{AGE : -1, ID : "4", Name : "Peter Burke **"}
-					]
-				})
-				.expectChange("age1", "44")
-				.expectChange("age2", "30")
-				.expectChange("name", ["Frederic Fall **", "Jonathan Smith **", "Peter Burke **"]);
+				.expectChange("unit1", "ou")
+				.expectChange("unit2", "t")
+				.expectChange("note", ["$1", "$2", "$3"]);
 
 			return Promise.all([
 				// code under test: requestSideEffects on ODCB w/o data
 				that.oView.byId("form").getBindingContext().requestSideEffects([
-					{$PropertyPath : "TEAM_2_EMPLOYEES/AGE"},
-					{$PropertyPath : "TEAM_2_EMPLOYEES/Name"}
+					{$PropertyPath : "SO_2_SOITEM/QuantityUnit"},
+					{$PropertyPath : "SO_2_SOITEM/Note"}
 				]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(iDataRequested, 3);
+			assert.strictEqual(iDataReceived, 3);
+
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')"
+				+ "?sap-client=123&$select=CurrencyCode",
+				{"@odata.etag" : "etag0", CurrencyCode : "USD"});
+
+			return Promise.all([
+				oRowContext.requestProperty("CurrencyCode").then(function (sCurrencyCode) {
+					assert.strictEqual(sCurrencyCode, "USD");
+				}),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
 			assert.strictEqual(iDataRequested, 4);
 			assert.strictEqual(iDataReceived, 4);
-
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('3')?sap-client=123&$select=TEAM_ID",
-				{"@odata.etag" : "etag0", TEAM_ID : "1"});
-
-			return Promise.all([
-				oRowContext.requestProperty("TEAM_ID").then(function (sTeamId) {
-					assert.strictEqual(sTeamId, "1");
-				}),
-				that.waitForChanges(assert)
-			]);
-		}).then(function () {
-			assert.strictEqual(iDataRequested, 5);
-			assert.strictEqual(iDataReceived, 5);
 		});
 	});
 
