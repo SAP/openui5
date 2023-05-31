@@ -109,6 +109,7 @@ sap.ui.define([
 		 * @param {object} [mPropertyBag.name] - Title of the variant
 		 * @param {object} [mPropertyBag.content] - Content of the new change
 		 * @param {object} [mPropertyBag.favorite] - Flag if the variant should be flagged as a favorite
+		 * @param {boolean} [mPropertyBag.visible] - Flag if the variant should be set visible
 		 * @param {object} [mPropertyBag.executeOnSelection] - Flag if the variant should be executed on selection
 		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the variant update takes place
 		 * @param {boolean} [mPropertyBag.changeSpecificData.isUserDependent] - Flag if the variant is personalization only

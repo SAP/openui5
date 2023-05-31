@@ -145,6 +145,29 @@ sap.ui.define([
 			assert.strictEqual(oVariant.getVariantReference(), "myVariantReference", "the VariantReference is properly set");
 			assert.strictEqual(oVariant.getVariantManagementReference(), "myVariantManagementReference", "the VariantManagementReference is properly set");
 			assert.deepEqual(oVariant.getContexts(), {foo: "bar"}, "the contexts are properly set");
+			assert.ok(oVariant.hasContexts(), "then the variant has contexts");
+		});
+
+		QUnit.test("with no contexts property", function(assert) {
+			var oVariant = FlexObjectFactory.createFlVariant({
+				id: "myId",
+				variantName: "myVariantName",
+				variantManagementReference: "myVariantManagementReference",
+				variantReference: "myVariantReference",
+				user: "myUser",
+				layer: "myLayer",
+				reference: "myReference",
+				generator: "myGenerator"
+			});
+			assert.strictEqual(oVariant.getSupportInformation().user, "myUser", "the user is properly set");
+			assert.strictEqual(oVariant.getSupportInformation().generator, "myGenerator", "the generator is properly set");
+			assert.strictEqual(oVariant.getFlexObjectMetadata().reference, "myReference", "the reference is properly set");
+			assert.strictEqual(oVariant.getName(), "myVariantName", "the variant name is properly set");
+			assert.strictEqual(oVariant.getLayer(), "myLayer", "the layer is properly set");
+			assert.strictEqual(oVariant.getId(), "myId", "the Id is properly set");
+			assert.strictEqual(oVariant.getVariantReference(), "myVariantReference", "the VariantReference is properly set");
+			assert.strictEqual(oVariant.getVariantManagementReference(), "myVariantManagementReference", "the VariantManagementReference is properly set");
+			assert.notOk(oVariant.hasContexts(), "then the variant has no contexts");
 		});
 	});
 
@@ -175,7 +198,7 @@ sap.ui.define([
 			assert.strictEqual(oVariant.getName(), oClonedFLVariant.getName(), "the variant name is properly set");
 			assert.strictEqual(oVariant.getLayer(), oClonedFLVariant.getLayer(), "the layer is properly set");
 			assert.notStrictEqual(oVariant.getId(), oClonedFLVariant.getId(), "the Id is properly set");
-			assert.notStrictEqual(oVariant.getVariantReference(), oClonedFLVariant.getVariantReference(), "the VariantReference is properly set");
+			assert.strictEqual(oVariant.getVariantReference(), oClonedFLVariant.getVariantReference(), "the parent VariantReference is properly set");
 			assert.strictEqual(oVariant.getVariantManagementReference(), oClonedFLVariant.getVariantManagementReference(), "the VariantManagementReference is properly set");
 			assert.deepEqual(oVariant.getContexts(), oClonedFLVariant.getContexts(), "the contexts are properly set");
 		});

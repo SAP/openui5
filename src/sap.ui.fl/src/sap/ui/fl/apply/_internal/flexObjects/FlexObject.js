@@ -168,6 +168,7 @@ sap.ui.define([
 			"flexObjectMetadata.packageName": "packageName",
 			"flexObjectMetadata.moduleName": "moduleName",
 			"supportInformation.generator": "support.generator",
+			"supportInformation.clonedFrom": "support.clonedFrom",
 			"supportInformation.service": "support.service",
 			"supportInformation.sourceSystem": "sourceSystem",
 			"supportInformation.sourceClient": "sourceClient",
@@ -527,6 +528,7 @@ sap.ui.define([
 	FlexObject.prototype.cloneFileContentWithNewId = function() {
 		var mFileContent = this.convertToFileContent();
 		mFileContent.fileName = Utils.createDefaultFileName(mFileContent.fileName.split("_").pop());
+		mFileContent.support.clonedFrom = this.getId();
 		return mFileContent;
 	};
 	return FlexObject;

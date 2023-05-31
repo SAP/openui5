@@ -5,7 +5,6 @@
 sap.ui.define([
 	"./AdaptationRenderer",
 	"sap/base/Log",
-	"sap/m/MessageBox",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Popup",
@@ -13,18 +12,17 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/rta/toolbar/translation/Translation",
 	"sap/ui/rta/toolbar/versioning/Versioning",
-	"sap/ui/rta/Utils"
+	"sap/ui/rta/Utils",
+	"sap/m/MessageBox"
 ], function(
 	AdaptationRenderer,
 	Log,
-	MessageBox,
 	BusyIndicator,
 	Fragment,
 	Popup,
@@ -32,14 +30,14 @@ sap.ui.define([
 	ContextBasedAdaptationsAPI,
 	Version,
 	JSONModel,
-	ResourceModel,
 	AppVariantFeature,
 	Base,
 	ManageAdaptations,
 	SaveAsAdaptation,
 	Translation,
 	Versioning,
-	Utils
+	Utils,
+	MessageBox
 ) {
 	"use strict";
 
@@ -349,10 +347,60 @@ sap.ui.define([
 		AppVariantFeature.onSaveAs(true, true, this.getRtaInformation().flexSettings.layer, null);
 	}
 
+	function confirmMigration(oRtaInformation) {
+		var bDirty = oRtaInformation.commandStack.canSave();
+
+		Utils.showMessageBox("confirm", (bDirty) ? "DAC_DIALOG_MIGRATION_DIRTY_DESCRIPTION" : "DAC_DIALOG_MIGRATION_DESCRIPTION", {
+			titleKey: "DAC_DIALOG_MIGRATION_HEADER",
+			actionKeys: ["DAC_DIALOG_MIGRATION_HEADER"],
+			showCancel: true
+		})
+		.then(function(sAction) {
+			if (sAction !== MessageBox.Action.CANCEL) {
+				BusyIndicator.show();
+
+				if (bDirty) {
+					oRtaInformation.commandStack.removeAllCommands(true);
+				}
+
+				ContextBasedAdaptationsAPI.migrate({
+					control: oRtaInformation.rootControl,
+					layer: oRtaInformation.flexSettings.layer
+				})
+				.finally(function() {
+					BusyIndicator.hide();
+				})
+				.then(Utils.showMessageBox.bind(undefined, "information", "DAC_DIALOG_MIGRATION_SUCCESSFULL_DESCRIPTION", {
+					titleKey: "DAC_DIALOG_MIGRATION_HEADER"
+				}))
+				.then(function() {
+					return new Promise(function(resolve) {
+						this.fireEvent("switchAdaptation", {adaptationId: "DEFAULT", callback: resolve});
+					}.bind(this));
+				}.bind(this))
+				.catch(function(oError) {
+					Log.error(oError.stack || oError);
+					var sMessage = "DAC_DIALOG_MIGRATION_ERROR_DESCRIPTION";
+					var oOptions = {
+						titleKey: "DAC_DIALOG_MIGRATION_HEADER",
+						details: oError.userMessage || oError
+					};
+					Utils.showMessageBox("error", sMessage, oOptions);
+				});
+			}
+		}.bind(this));
+	}
+
 	function onSaveAsAdaptation() {
-		Utils.checkDraftOverwrite(this.getModel("versions"))
-		.then(function() {
-			this.getExtension("contextBasedSaveAs", SaveAsAdaptation).openAddAdaptationDialog(this.getRtaInformation().flexSettings.layer);
+		var oRtaInformation = this.getRtaInformation();
+		Utils.checkDraftOverwrite(this.getModel("versions")).then(function() {
+			return ContextBasedAdaptationsAPI.canMigrate({ control: oRtaInformation.rootControl, layer: oRtaInformation.flexSettings.layer });
+		}).then(function(bCanMigrate) {
+			if (bCanMigrate) {
+				confirmMigration.call(this, oRtaInformation);
+			} else {
+				this.getExtension("contextBasedSaveAs", SaveAsAdaptation).openAddAdaptationDialog(oRtaInformation.flexSettings.layer);
+			}
 		}.bind(this))
 		.catch(handleError);
 	}

@@ -23,11 +23,18 @@ sap.ui.define([
 		metadata: {
 			properties: {
 				/**
-				 * Indicates whether favorite variants are shown in the variants list.
+				 * Indicates whether variant is shown as favorite in the variants list.
 				 */
 				favorite: {
 					type: "boolean",
 					defaultValue: false
+				},
+				/**
+				 * Indicates whether variant is shown in the variant list.
+				 */
+				visible: {
+					type: "boolean",
+					defaultValue: true
 				},
 				/**
 				 * Indicates whether the variant is automatically executed.
@@ -107,5 +114,16 @@ sap.ui.define([
 		this.setText("variantName", sName, "XFLD", bSkipStateChange);
 	};
 
+	/**
+	 * Retrieves information whether the variant has at least one context.
+	 * @returns {boolean} true if variant has at least one context else false
+	 */
+	Variant.prototype.hasContexts = function() {
+		var oContexts = this.getContexts();
+		var aContextKeys = Object.keys(oContexts);
+		return aContextKeys.some(function(sContextKey) {
+			return oContexts[sContextKey].length > 0;
+		});
+	};
 	return Variant;
 });

@@ -430,14 +430,29 @@ sap.ui.define([
 	/**
 	 * Returns the variant management references saved in the FlexState.
 	 *
-	 * @param {string} sReference Flexreference of the current app
-	 * @returns {string[]} Array of flexreferences
+	 * @param {string} sReference - Flex reference of the current app
+	 * @returns {string[]} Array of flex references
 	 */
 	VariantManagementState.getVariantManagementReferences = function(sReference) {
 		var oVariantsMap = oVariantManagementMapDataSelector.get({
 			reference: sReference
 		});
 		return Object.keys(oVariantsMap);
+	};
+
+	/**
+	 * Returns all variants saved in the FlexState.
+	 *
+	 * @param {string} sReference - Flex reference of the current app
+	 * @returns {object[]} Array of variants
+	 */
+	VariantManagementState.getAllVariants = function(sReference) {
+		var oVariantsMap = oVariantManagementMapDataSelector.get({
+			reference: sReference
+		});
+		return Object.keys(oVariantsMap).reduce(function(aPrev, sCurr) {
+			return aPrev.concat(oVariantsMap[sCurr].variants);
+		}, []);
 	};
 
 	/**

@@ -39,7 +39,7 @@ sap.ui.define([
 	}
 
 	function getAdaptationTitle(oTableListItem) {
-		return oTableListItem.getCells()[1].getContent()[0].getItems()[0].getItems()[0].getText();
+		return oTableListItem.getCells()[1].getText();
 	}
 
 	function initializeToolbar() {
@@ -182,8 +182,7 @@ sap.ui.define([
 			});
 
 			QUnit.test("and the priority of the context-based adaptations is first moved down then up again using the up and down button", function(assert) {
-				var sFirstAdaptationText = this.oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
-				.mAggregations.items[0].getProperty("text");
+				var sFirstAdaptationText = this.oFirstTableItem.getCells()[1].getProperty("text");
 				this.oAdaptationsTable.getItems()[0].focus();
 				this.oAdaptationsTable.setSelectedItem(this.oAdaptationsTable.getItems()[0], true, true);
 
@@ -192,15 +191,13 @@ sap.ui.define([
 				assert.ok(this.oMoveDownButton.getEnabled(), "oMoveDownButton is enabled");
 
 				this.oMoveDownButton.firePress();
-				var sNewFirstAdaptationText = this.oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
-				.mAggregations.items[0].getProperty("text");
+				var sNewFirstAdaptationText = this.oFirstTableItem.getCells()[1].getProperty("text");
 				assert.notEqual(sFirstAdaptationText, sNewFirstAdaptationText, "priority of adaptations has changed");
 				assert.ok(this.oSaveButton.getEnabled(), "Save Button is enabled");
 
 				this.oMoveUpButton.firePress();
-				sNewFirstAdaptationText = this.oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
-				.mAggregations.items[0].getProperty("text");
-				assert.strictEqual(sFirstAdaptationText, sNewFirstAdaptationText, "origianl priority is visible");
+				sNewFirstAdaptationText = this.oFirstTableItem.getCells()[1].getProperty("text");
+				assert.strictEqual(sFirstAdaptationText, sNewFirstAdaptationText, "original priority is visible");
 				assert.notOk(this.oSaveButton.getEnabled(), "Save Button is disabled");
 			});
 
@@ -212,8 +209,7 @@ sap.ui.define([
 
 				var oReorderStub = sandbox.stub(ContextBasedAdaptationsAPI, "reorder").resolves();
 				var oFirstTableItem = this.oAdaptationsTable.getItems()[0];
-				var sFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
-				.mAggregations.items[0].getProperty("text");
+				var sFirstAdaptationText = oFirstTableItem.getCells()[1].getProperty("text");
 				this.oAdaptationsTable.getItems()[0].focus();
 				this.oAdaptationsTable.setSelectedItem(this.oAdaptationsTable.getItems()[0], true, true);
 
@@ -222,8 +218,7 @@ sap.ui.define([
 				assert.ok(this.oMoveDownButton.getEnabled(), "oMoveDownButton is enabled");
 
 				this.oMoveDownButton.firePress();
-				var sNewFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
-				.mAggregations.items[0].getProperty("text");
+				var sNewFirstAdaptationText = oFirstTableItem.getCells()[1].getProperty("text");
 				assert.notEqual(sFirstAdaptationText, sNewFirstAdaptationText, "priority of adaptations has changed");
 				assert.ok(this.oSaveButton.getEnabled(), "Save Button is enabled");
 
@@ -264,8 +259,7 @@ sap.ui.define([
 				var aExpectedAdaptationIds = ["id-1591275572834-1", "id-1591275572835-1"];
 				var oReorderStub = sandbox.stub(ContextBasedAdaptationsAPI, "reorder").resolves();
 				var oFirstTableItem = this.oAdaptationsTable.getItems()[0];
-				var sFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
-				.mAggregations.items[0].getProperty("text");
+				var sFirstAdaptationText = oFirstTableItem.getCells()[1].getProperty("text");
 				this.oAdaptationsTable.getItems()[0].focus();
 				this.oAdaptationsTable.setSelectedItem(this.oAdaptationsTable.getItems()[0], true, true);
 
@@ -274,8 +268,7 @@ sap.ui.define([
 				assert.ok(this.oMoveDownButton.getEnabled(), "oMoveDownButton is enabled");
 
 				this.oMoveDownButton.firePress();
-				var sNewFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
-				.mAggregations.items[0].getProperty("text");
+				var sNewFirstAdaptationText = oFirstTableItem.getCells()[1].getProperty("text");
 				assert.notEqual(sFirstAdaptationText, sNewFirstAdaptationText, "priority of adaptations has changed");
 				assert.ok(this.oSaveButton.getEnabled(), "Save Button is enabled");
 

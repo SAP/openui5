@@ -48,7 +48,7 @@
 					hAlign="Left">
 					<Text text="{i18n>CLM_HEADER_ADAPTATIONS_TITLE}" />
 				</Column>
-				<Column width="8rem"
+				<Column width="6rem"
 					minScreenWidth="tablet"
 					demandPopin="true"
 					popinDisplay="Inline"
@@ -87,14 +87,8 @@
 				<ColumnListItem>
 					<cells>
 						<Text text="{contextBased>rank}"/>
-						<CustomListItem>
-							<HBox>
-								<VBox class="sapUiSmallMarginTopBottom">
 									<Text wrapping="false" maxLines="1" text="{contextBased>title}"
 									tooltip="{contextBased>title}"/>
-								</VBox>
-							</HBox>
-						</CustomListItem>
 						<Text text="{ parts: ['contextBased>contexts/role'], formatter: '.formatContextColumnCell'}"
 							tooltip="{ parts: ['contextBased>contexts/role'], formatter: '.formatContextColumnTooltip'}" />
 						<Text text="{ parts: ['contextBased>createdBy', 'contextBased>createdAt'], formatter: '.formatCreatedChangedOnColumnCell'}"/>

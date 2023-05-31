@@ -31,6 +31,9 @@ sap.ui.define([
 			if (oChangeContent.contexts) {
 				oVariant.setContexts(oChangeContent.contexts);
 			}
+			if (oChangeContent.visible !== undefined) {
+				oVariant.setVisible(oChangeContent.visible);
+			}
 
 			if (oChangeContent.variantContent) {
 				oVariant.setContent(oChangeContent.variantContent, /* bSkipStateChange = */ true);
@@ -145,8 +148,20 @@ sap.ui.define([
 					return !oVariant.getContent() || !oVariant.getContent().standardvariant;
 				});
 			}
+
 			// apply all changes on non-standard variants
 			aVariants.forEach(applyChangesOnVariant.bind(undefined, mChanges));
+
+			// Remove all invisible variants
+			aVariants = aVariants.filter(function(oVariant) {
+				var bVisible = oVariant.getVisible();
+				if (!bVisible) {
+					var sVariantId = oVariant.getId();
+					delete mChanges[sVariantId];
+					delete mCompData.byId[sVariantId];
+				}
+				return bVisible;
+			});
 
 			// the standard must always be visible
 			oStandardVariant.setFavorite(true);

@@ -1359,6 +1359,7 @@ sap.ui.define([
 	}
 
 	function onSwitchAdaptation(oEvent) {
+		var fnCallback = oEvent.getParameter("callback") || function() {};
 		if (oEvent.getParameter("trigger") === "SaveAs") {
 			// remove all changes from command stack when triggered from saveAs dialog as they are already saved in a new adaptation
 			this.getCommandStack().removeAllCommands(true);
@@ -1367,6 +1368,7 @@ sap.ui.define([
 		this._sSwitchToAdaptationId = sAdaptationId;
 		return handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "BTN_SWITCH_ADAPTATIONS",
 			switchAdaptation.bind(this, this._sSwitchToAdaptationId))
+		.then(fnCallback)
 		.catch(function(oError) {
 			Utils.showMessageBox("error", "MSG_SWITCH_ADAPTATION_FAILED", {error: oError});
 			Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);

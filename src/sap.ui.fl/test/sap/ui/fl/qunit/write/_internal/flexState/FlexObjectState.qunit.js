@@ -261,6 +261,59 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("Get - Given flex objects are present in the CompVariantState + ChangePersistence + invalidateCache is true and setVisible change", function(assert) {
+			var sPersistencyKey = "persistency.key";
+			var oControl = new Control();
+			oControl.getPersistencyKey = function() {
+				return sPersistencyKey;
+			};
+			CompVariantState.addVariant({
+				changeSpecificData: {
+					type: "pageVariant",
+					isVariant: true,
+					content: {},
+					id: "myId"
+				},
+				reference: sReference,
+				persistencyKey: sPersistencyKey
+			});
+			CompVariantState.updateVariant({
+				favorite: true,
+				id: "myId",
+				layer: Layer.USER,
+				control: oControl,
+				reference: sReference,
+				persistencyKey: sPersistencyKey,
+				visible: false,
+				forceCreate: true
+			});
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+			addChangesToChangePersistence(oChangePersistence);
+			FlexState.setInitialNonFlCompVariantData(sReference, sPersistencyKey,
+				{
+					executeOnSelection: false,
+					id: "*standard*",
+					name: "Standard"
+				},
+				[{
+					favorite: true,
+					id: "#PS1",
+					name: "EntityType"
+				}]);
+			return FlexObjectState.getFlexObjects({
+				selector: this.appComponent,
+				invalidateCache: true
+			})
+			.then(function(aFlexObjects) {
+				assert.equal(aFlexObjects.length, 5, "an array with 5 entries is returned");
+				assert.equal(aFlexObjects[0].getChangeType(), "updateVariant", "the change from the compVariantState is present");
+				assert.equal(aFlexObjects[1].getVariantId(), "#PS1", "the oData variant is present");
+				assert.equal(aFlexObjects[2].getVariantId(), "*standard*", "the standard variant is present");
+				assert.equal(aFlexObjects[3].getChangeType(), "renameField", "the 1st change in changePersistence is present");
+				assert.equal(aFlexObjects[4].getChangeType(), "addGroup", "the 2nd change in changePersistence is present");
+			});
+		});
+
 		QUnit.test("Get - Given flex objects of different layers are present in the CompVariantState and currentLayer set", function(assert) {
 			var sPersistencyKey = "persistency.key";
 			var sVariantId = "variantId1";

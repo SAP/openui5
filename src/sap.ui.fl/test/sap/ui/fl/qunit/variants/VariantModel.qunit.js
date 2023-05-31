@@ -536,6 +536,23 @@ sap.ui.define([
 			},
 			{
 				inputParams: {
+					changeType: "setVisible",
+					visible: false,
+					variantReference: "variant1",
+					adaptationId: "migration_test_id"
+				},
+				variantCheck: {
+					functionName: "getVisible",
+					returnValue: false
+				},
+				expectedChangeContent: {
+					createdByReset: false,
+					visible: false
+				},
+				fileType: "ctrl_variant_change"
+			},
+			{
+				inputParams: {
 					changeType: "setExecuteOnSelect",
 					executeOnSelect: true,
 					variantReference: "variant1"
@@ -579,8 +596,10 @@ sap.ui.define([
 			QUnit.test("when calling 'addVariantChange' for " + oTestParams.inputParams.changeType + " to add a change", function(assert) {
 				oTestParams.inputParams.appComponent = this.oComponent;
 				var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
-				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
-				sandbox.stub(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId").returns("id_12345");
+				if (!oTestParams.inputParams.adaptationId) {
+					sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
+					sandbox.stub(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId").returns("id_12345");
+				}
 				var oVariantInstance = createVariant(this.oModel.oData[sVMReference].variants[2]);
 				sandbox.stub(this.oModel, "getVariant").returns({instance: oVariantInstance});
 
@@ -594,8 +613,12 @@ sap.ui.define([
 				if (oTestParams.variantCheck) {
 					assert.deepEqual(oVariantInstance[oTestParams.variantCheck.functionName](), oTestParams.variantCheck.returnValue, "the variant was updated");
 				}
+				if (oTestParams.inputParams.adaptationId) {
+					assert.strictEqual(oChange.getAdaptationId(), oTestParams.inputParams.adaptationId);
+				} else {
+					assert.strictEqual(oChange.getAdaptationId(), "id_12345", "then the new change created with the current adaptationId");
+				}
 				assert.strictEqual(oChange.getChangeType(), oTestParams.inputParams.changeType, "then the new change created with 'setTitle' as changeType");
-				assert.strictEqual(oChange.getAdaptationId(), "id_12345", "then the new change created with the current adaptationId");
 				assert.strictEqual(oChange.getFileType(), oTestParams.fileType, "then the new change created with 'ctrl_variant_change' as fileType");
 				assert.ok(fnAddDirtyChangeStub.calledWith(oChange), "then 'FlexController.addDirtyChange called with the newly created change");
 			});
