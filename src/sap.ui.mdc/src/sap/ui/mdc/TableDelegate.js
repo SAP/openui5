@@ -56,16 +56,9 @@ sap.ui.define([
 			oBindingInfo.filters = this.getFilters(oTable);
 		}
 
-		if (oTable._isOfType(TableType.ResponsiveTable)) {
-			var oGroupedProperty = oTable._getGroupedProperties()[0];
-
-			if (oGroupedProperty) {
-				var oSorter = this.getGroupSorter(oTable, oGroupedProperty.name);
-
-				if (oSorter) {
-					oBindingInfo.sorter.push(oSorter);
-				}
-			}
+		var oGroupSorter = this.getGroupSorter(oTable);
+		if (oGroupSorter) {
+			oBindingInfo.sorter.push(oGroupSorter);
 		}
 
 
@@ -123,22 +116,27 @@ sap.ui.define([
 	 * Creates a new sorter for the grouping functionality.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @param {string} sPropertyName Property to group
 	 * @returns {sap.ui.model.Sorter | undefined} New sorter
 	 * @protected
 	 */
-	TableDelegate.getGroupSorter = function(oTable, sPropertyName) {
+	TableDelegate.getGroupSorter = function(oTable) {
+		var oGroupedProperty = oTable._getGroupedProperties()[0];
+
+		if (!oGroupedProperty || !oTable._isOfType(TableType.ResponsiveTable)) {
+			return undefined;
+		}
+
 		var oSortedProperty = oTable._getSortedProperties().find(function(oProperty) {
-			return oProperty.name === sPropertyName;
+			return oProperty.name === oGroupedProperty.name;
 		});
-		var sPath = oTable.getPropertyHelper().getProperty(sPropertyName).path;
+		var sPath = oTable.getPropertyHelper().getProperty(oGroupedProperty.name).path;
 		var bDescending = oSortedProperty ? oSortedProperty.descending : false;
 
-		if (!oTable._mFormatGroupHeaderInfo || oTable._mFormatGroupHeaderInfo.propertyName !== sPropertyName) {
+		if (!oTable._mFormatGroupHeaderInfo || oTable._mFormatGroupHeaderInfo.propertyName !== oGroupedProperty.name) {
 			oTable._mFormatGroupHeaderInfo = {
-				propertyName: sPropertyName,
+				propertyName: oGroupedProperty.name,
 				formatter: function(oContext) {
-					return this.formatGroupHeader(oTable, oContext, sPropertyName);
+					return this.formatGroupHeader(oTable, oContext, oGroupedProperty.name);
 				}.bind(this)
 			};
 		}

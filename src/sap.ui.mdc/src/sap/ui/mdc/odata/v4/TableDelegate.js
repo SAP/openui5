@@ -377,12 +377,18 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	Delegate.getGroupSorter = function(oTable, sPropertyName) {
+	Delegate.getGroupSorter = function(oTable) {
+		var oGroupedProperty = oTable._getGroupedProperties()[0];
+
+		if (!oGroupedProperty || !oTable._isOfType(TableType.ResponsiveTable)) {
+			return undefined;
+		}
+
 		var oPropertyHelper = oTable.getPropertyHelper();
 		var oVisibleProperty = oTable._getVisibleProperties().find(function(oProperty) {
 			var oCurrentProperty = oPropertyHelper.getProperty(oProperty.name);
 			return oCurrentProperty.getSimpleProperties().find(function(oSimpleProperty) {
-				return oSimpleProperty.name === sPropertyName;
+				return oSimpleProperty.name === oGroupedProperty.name;
 			});
 		});
 
