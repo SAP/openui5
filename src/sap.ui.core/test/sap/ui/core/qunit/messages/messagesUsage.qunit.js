@@ -309,7 +309,7 @@ sap.ui.define([
 	QUnit.test("Model: Refresh with force update", function(assert) {
 		var done = assert.async();
 		var oModel = new Model();
-		var oMessage = new Message({message: "myMessage", type: library.MessageType.Error});
+		var oMessage = new Message({message: "myMessage", type: library.MessageType.Error, processor: oModel});
 		oModel.setMessages({"/test": oMessage});
 		oModel.attachMessageChange(function(oEvent){
 			assert.strictEqual(oMessage, oEvent.getParameter("oldMessages")[0]);
