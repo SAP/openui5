@@ -376,6 +376,7 @@ sap.ui.define([
 	CarouselRenderer._renderDummyArea = function(oRM, oControl, sAreaId) {
 		oRM.openStart("div", oControl.getId() + "-" + sAreaId)
 			.class("sapMCrslDummyArea")
+			.attr("role", "none")
 			.attr("tabindex", 0)
 			.openEnd()
 			.close("div");

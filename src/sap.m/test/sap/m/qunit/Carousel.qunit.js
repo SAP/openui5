@@ -1800,6 +1800,11 @@ sap.ui.define([
 		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-hidden"), "false", "Displayed page should have aria-hidden = false");
 	});
 
+	QUnit.test("Dummy area", function (assert) {
+		// arrange
+		assert.strictEqual(this.oCarousel.$().find(".sapMCrslDummyArea").attr("role"), "none", "Dummy area has role=none");
+	});
+
 	QUnit.test("When there are no pages, 'No Data' element is rendered with correct aria attributes", function (assert) {
 		// arrange
 		this.oCarousel.destroyPages();
