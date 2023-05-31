@@ -723,7 +723,7 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.Context#requestSideEffects} in the same $batch to refresh the
 	 * complete collection containing the newly created entity.
 	 *
-	 * Since 1.112.0 it is possible to create nested entities in a collection-valued navigation
+	 * Since 1.115.0 it is possible to create nested entities in a collection-valued navigation
 	 * property together with the entity (so-called "deep create"), for example a list of items for
 	 * an order. For this purpose, bind the list relative to a transient context. Calling this
 	 * method then adds a transient entity to the parent's navigation property, which is sent with
@@ -742,8 +742,6 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.ODataModel#constructor model}. The refresh after a deep create
 	 * is optimized. Only the (navigation) properties missing from the POST response are actually
 	 * requested. If the POST response contains all required properties, no request is sent at all.
-	 *
-	 * Deep create is an <b>experimental</b> API.
 	 *
 	 * Note: Creating at the end is only allowed if the final length of the binding is known (see
 	 * {@link #isLengthFinal}), so that there is a clear position to place this entity at. This is
