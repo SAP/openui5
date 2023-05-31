@@ -241,6 +241,38 @@ html:not(.sap-desktop) .sapFAvatarFocusable:focus {
 	}
 }
 
+.sapFAvatarWarning .sapFAvatarBadgeIcon {
+	background-color: @sapWarningBackground;
+	border: 0.0625rem solid @sapWarningBorderColor;
+	>.sapUiIcon {
+		color: @sapCriticalTextColor;
+	}
+}
+
+.sapFAvatarError .sapFAvatarBadgeIcon {
+	background-color: @sapErrorBackground;
+	border: 0.0625rem solid @sapErrorBorderColor;
+	>.sapUiIcon {
+		color: @sapNegativeTextColor;
+	}
+}
+
+.sapFAvatarInformation .sapFAvatarBadgeIcon {
+	background-color: @sapInformationBackground;
+	border: 0.0625rem solid @sapInformationBorderColor;
+	>.sapUiIcon {
+		color: @sapInformativeTextColor;
+	}
+}
+
+.sapFAvatarSuccess .sapFAvatarBadgeIcon {
+	background-color: @sapSuccessBackground;
+	border: 0.0625rem solid @sapSuccessBorderColor;
+	>.sapUiIcon {
+		color: @sapPositiveTextColor;
+	}
+}
+
 .sapFAvatarBadgeIcon {
 	display: inline-block;
 	box-sizing: border-box;
