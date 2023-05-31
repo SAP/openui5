@@ -2144,7 +2144,7 @@ sap.ui.define([
 				};
 				oData[this.sVMReference].variants.push(this.oVariant1);
 				oData[this.sVMReference].variants.push(this.oVariant2);
-				sandbox.stub(this.oVariantModel, "updateCurrentVariant").resolves();
+				this.oUpdateCurrentVariantStub = sandbox.stub(this.oVariantModel, "updateCurrentVariant").resolves();
 				sandbox.stub(VariantManagementState, "getCurrentVariantReference").returns("variant1");
 				sandbox.stub(VariantManagementState, "getControlChangesForVariant");
 				sandbox.stub(this.oVariantModel.oFlexController, "deleteChange");
@@ -2240,6 +2240,13 @@ sap.ui.define([
 			var aMockDirtyChanges = [FlexObjectFactory.createFromFileContent({fileName: "dirtyChange1"}), FlexObjectFactory.createFromFileContent({fileName: "dirtyChange2"})];
 			VariantManagementState.getControlChangesForVariant.returns(aMockDirtyChanges);
 			this.oVariantModel.oChangePersistence.getDirtyChanges.returns(aMockDirtyChanges);
+
+			// FIXME: Use actual data selectors in this module instead of faking their behavior
+			this.oUpdateCurrentVariantStub.callsFake(function() {
+				// Modified flag will immediately be set to false by the VariantManagementState
+				// when the variant was switched
+				this.oVariantModel.oData[this.sVMReference].modified = false;
+			}.bind(this));
 
 			// when new item is selected from the variants list
 			oVMControl.attachEventOnce("select", function(oEvent) {
