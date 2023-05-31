@@ -3063,6 +3063,8 @@ function(
 					var iInputWidth = this.getDomRef().getBoundingClientRect().width;
 					var sPopoverMaxWidth = getComputedStyle(this.getDomRef()).getPropertyValue("--sPopoverMaxWidth");
 
+					this._bAfterOpenFinisihed = true;
+
 					if (this.getMaxSuggestionWidth()) {
 						return;
 					}
@@ -3075,7 +3077,6 @@ function(
 
 					oSuggPopover.getPopover().getDomRef().style.setProperty("min-width", iInputWidth + "px");
 
-					this._bAfterOpenFinisihed = true;
 				}
 			}, this);
 		}
