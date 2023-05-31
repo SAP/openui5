@@ -604,6 +604,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks that deep create is possible in this binding.
+	 *
+	 * @throws {Error} If deep create is not possible
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.checkDeepCreate = function () {
+		if (!this.oModel.bAutoExpandSelect) {
+			throw new Error("Deep create is only supported with autoExpandSelect");
+		}
+		if (!this.oContext.isTransient()) {
+			throw new Error("Unexpected ODataContextBinding in deep create");
+		}
+		if (this.sPath.includes("/")) {
+			throw new Error("Invalid path '" + this.sPath + "' in deep create");
+		}
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#checkKeepAlive
 	 */
@@ -719,7 +738,7 @@ sap.ui.define([
 	 * of <code>Error</code>, even if the deep create succeeds. This error always has the property
 	 * <code>canceled</code> with the value <code>true</code>.
 	 *
-	 * Deep create requires the <code>autoExpandSelect<code> parameter at the
+	 * Deep create requires the <code>autoExpandSelect</code> parameter at the
 	 * {@link sap.ui.model.odata.v4.ODataModel#constructor model}. The refresh after a deep create
 	 * is optimized. Only the (navigation) properties missing from the POST response are actually
 	 * requested. If the POST response contains all required properties, no request is sent at all.
@@ -766,11 +785,16 @@ sap.ui.define([
 	 *     <li> <code>bInactive</code> is <code>true</code>, the list binding is relative and does
 	 *       not use the <code>$$ownRequest</code> parameter
 	 *       (see {@link sap.ui.model.odata.v4.ODataModel#bindList}),
-	 *     <li> <code>bInactive</code> is <code>true</code> and the list binding has a transient
-	 *       parent context (takes part in a deep create),
 	 *     <li> the list binding has a transient parent context (takes part in a deep create), but
-	 *       the <code>autoExpandSelect<code> parameter at the
-	 *       {@link sap.ui.model.odata.v4.ODataModel#constructor model} is not set,
+	 *       <ul>
+	 *         <li> <code>bInactive</code> is <code>true</code>,
+	 *         <li> or the <code>autoExpandSelect</code> parameter at the
+	 *           {@link sap.ui.model.odata.v4.ODataModel#constructor model} is not set,
+	 *         <li> or a context binding exists in the binding hierarchy between the binding and the
+	 *           parent list binding,
+	 *         <li> or its path contains more than a single navigation property (for example
+	 *           "BP_2_SO/SO_2_SOITEM"),
+	 *       </ul>
 	 *     <li> an automatic refresh of the created entity cannot be performed and
 	 *       <code>bSkipRefresh</code> is missing. This could be caused by a side-effects refresh
 	 *       happening in parallel to creation (error thrown since 1.114.0; previously failed
@@ -798,8 +822,11 @@ sap.ui.define([
 		if (this.mParameters.$$aggregation) {
 			throw new Error("Cannot create in " + this + " when using data aggregation");
 		}
-		if (!this.oModel.bAutoExpandSelect && this.isTransient()) {
-			throw new Error("Deep create is only supported with autoExpandSelect");
+		if (this.isTransient()) {
+			this.checkDeepCreate();
+			if (bInactive) {
+				throw new Error("Must not create an inactive context in a deep create: " + this);
+			}
 		}
 
 		bAtEnd = !!bAtEnd; // normalize to simplify comparisons
@@ -811,9 +838,6 @@ sap.ui.define([
 			throw new Error("Cannot create at the start after creation at end");
 		}
 		if (bInactive) {
-			if (this.isTransient()) {
-				throw new Error("Must not create an inactive context in a deep create: " + this);
-			}
 			if (this.isRelative() && !this.mParameters.$$ownRequest) {
 				throw new Error("Missing $$ownRequest at " + this);
 			}

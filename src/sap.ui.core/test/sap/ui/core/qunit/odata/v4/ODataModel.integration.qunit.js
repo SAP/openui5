@@ -49918,6 +49918,75 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: A deep create of a sales order with items is tried, but there is an ODCB w/o path
+	// (w/ or w/o own cache) in between. A non-deep create however must work.
+	// JIRA: CPOUI5ODATAV4-1976
+[false, true].forEach(function (bOwnRequest) {
+	var sTitle = "CPOUI5ODATAV4-1976, no deep create due to ODCB, ownRequest=" + bOwnRequest;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = this.createSalesOrdersModel(
+				{autoExpandSelect : true, updateGroupId : "update"}),
+			oOrderContext,
+			sOwnRequest = bOwnRequest ? ", parameters : {$$ownRequest : true}" : "",
+			sView = '\
+<FlexBox id="form" binding="{path : \'\'' + sOwnRequest + '}">\
+	<Text id="note" text="{Note}"/>\
+	<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+		<Text id="position" text="{ItemPosition}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("note")
+			.expectChange("position", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oOrdersBinding = oModel.bindList("/SalesOrderList");
+
+			that.expectChange("note", "Note");
+
+			oOrderContext = oOrdersBinding.create({Note : "Note"}, /*bSkipRefresh*/true);
+			that.oView.byId("form").setBindingContext(oOrderContext);
+
+			return that.waitForChanges(assert, "create & bind");
+		}).then(function () {
+			var oItemsBinding = that.oView.byId("items").getBinding("items");
+
+			assert.throws(function () {
+				oItemsBinding.create();
+			}, new Error("Unexpected ODataContextBinding in deep create"));
+
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {Note : "Note"}
+				}, {
+					Note : "Note*",
+					SalesOrderID : "new"
+				})
+				.expectChange("note", "Note*")
+				.expectRequest("SalesOrderList('new')/SO_2_SOITEM?$select=ItemPosition,SalesOrderID"
+					+ "&$skip=0&$top=100",
+					{value : []}
+				);
+			if (bOwnRequest) {
+				that.expectRequest("SalesOrderList('new')?$select=Note,SalesOrderID", {
+						Note : "Note*",
+						SalesOrderID : "new"
+					});
+			}
+
+			return Promise.all([
+				oOrderContext.created(),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert, "submit")
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario:
 	// (1) Binding for a part of a structural instance annotation works without binding the
 	//     property itself
