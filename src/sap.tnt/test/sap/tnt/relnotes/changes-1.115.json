@@ -3,6 +3,11 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "90a57d825b7c7af6dd7333e590d1d0b717ab2cd8",
+        "type": "FEATURE",
+        "text": " sap.tnt.ToolHeader: Horizon theme visual changes applied"
+      },
+      {
         "id": "de752ee5d3e82c1b01be42b1065a69ba6468e71b",
         "type": "FIX",
         "text": " sap.tnt.NavigationListItem: focus goes to the correct element",

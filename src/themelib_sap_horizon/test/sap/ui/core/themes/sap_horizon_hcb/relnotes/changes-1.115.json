@@ -3,6 +3,11 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "90a57d825b7c7af6dd7333e590d1d0b717ab2cd8",
+        "type": "FEATURE",
+        "text": " sap.tnt.ToolHeader: Horizon theme visual changes applied"
+      },
+      {
         "id": "ea83c074ddf04315a2e049bd453396b7d9a87b41",
         "type": "FEATURE",
         "text": " sap.ui.unified.Menu:  update visual design to latest SAP Horizon spec"

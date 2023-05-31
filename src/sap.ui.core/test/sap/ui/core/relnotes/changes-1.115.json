@@ -3,6 +3,42 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "497aefe269dc0664c793bec43902635308b82056",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#_isReloadNeeded: Avoid reload of created expanded entity",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370052919"
+          }
+        ]
+      },
+      {
+        "id": "fb55ba40404a9bff7206a91d0f95b147ec16221a",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.Single: format option parseEmptyValueToZero"
+      },
+      {
+        "id": "d28bb22a610910ea2fd37994824a939fd1de84c9",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.Int64: format option parseEmptyValueToZero"
+      },
+      {
+        "id": "26a20983568ca15d607e2b7d4f2f0126f85a020a",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.Int/Int16/Int32/SByte/Byte: format option parseEmptyValueToZero"
+      },
+      {
+        "id": "d5115d1213c9b3605be3d7521e6c1038fd3aea6b",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.Double: format option parseEmptyValueToZero"
+      },
+      {
+        "id": "acf5d14815e8dce22d3976fca03612f1a6a2694a",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.Decimal: format option parseEmptyValueToZero"
+      },
+      {
         "id": "ee4f07bdcb8f6f0aaeca54c9195059cff86fa7c2",
         "type": "FIX",
         "text": " base/util/fetch: Allow empty response header fields",

@@ -3,6 +3,49 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "0ed65e484d63b9f2d57285f6770573931efa00ab",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Escape text value when creating tokens with validator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370068095"
+          }
+        ]
+      },
+      {
+        "id": "90a57d825b7c7af6dd7333e590d1d0b717ab2cd8",
+        "type": "FEATURE",
+        "text": " sap.tnt.ToolHeader: Horizon theme visual changes applied"
+      },
+      {
+        "id": "261dc06734b144f85729707139cf0ba9746e9751",
+        "type": "FEATURE",
+        "text": " sap.m.Wizard: stepTitleLevel property introduced"
+      },
+      {
+        "id": "36e717562fc05710c81a6ff106a117c4c3d7e35e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Non-local firstDayOfWeek doesn't cause errors",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380032168"
+          }
+        ]
+      },
+      {
+        "id": "398a69ab6926c57b387b8fd911741453a34d7162",
+        "type": "FIX",
+        "text": " sap.ui.support: Input needs a label rule now skips binding templates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380032811"
+          }
+        ]
+      },
+      {
         "id": "49c52552bff4cf73a42b9bdd03c5f86c9e2687d7",
         "type": "FIX",
         "text": " sap.m.MessageView: aria-labelledby added to the SegmentedButton"

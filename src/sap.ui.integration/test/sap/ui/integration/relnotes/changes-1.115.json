@@ -3,6 +3,22 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "52653f1557cd2c68b4c7e4908fd2fd9998d956bf",
+        "type": "FIX",
+        "text": " Integration Cards: Misleading tooltip removed from 'Abstract' previewMode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370045000"
+          }
+        ]
+      },
+      {
+        "id": "bcdd0af29cf7dc268b4285d3bb30d06cd6140dbd",
+        "type": "FEATURE",
+        "text": " Integration Cards: Add DateRange input in Object card"
+      },
+      {
         "id": "4ac6ce691015760138d15a94c23ef2f3578232bc",
         "type": "FIX",
         "text": " Integration Cards: Fixed \"visible\" property for list item info",
@@ -12,6 +28,11 @@
             "reference": "2370070875"
           }
         ]
+      },
+      {
+        "id": "be9db49f035babdd907cf7a4e09d035e6fe8448c",
+        "type": "FEATURE",
+        "text": " Integration cards: added \"modelSizeLimit\" property"
       },
       {
         "id": "13bda4dcf0b60c1e3a8030f19734e3fee00187a6",

@@ -3,6 +3,27 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "52653f1557cd2c68b4c7e4908fd2fd9998d956bf",
+        "type": "FIX",
+        "text": " Integration Cards: Misleading tooltip removed from 'Abstract' previewMode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370045000"
+          }
+        ]
+      },
+      {
+        "id": "bcdd0af29cf7dc268b4285d3bb30d06cd6140dbd",
+        "type": "FEATURE",
+        "text": " Integration Cards: Add DateRange input in Object card"
+      },
+      {
+        "id": "be9db49f035babdd907cf7a4e09d035e6fe8448c",
+        "type": "FEATURE",
+        "text": " Integration cards: added \"modelSizeLimit\" property"
+      },
+      {
         "id": "af2844ea6418f36b84d689829afa9bb93b3b5640",
         "type": "FIX",
         "text": " sap.f.GridContainer: Fix types for insertItem and removeItem",
