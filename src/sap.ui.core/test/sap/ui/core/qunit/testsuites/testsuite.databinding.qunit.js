@@ -293,6 +293,9 @@ sap.ui.define(function() {
 			"model/Model": {
 				title: "sap.ui.model.Model"
 			},
+			"model/PropertyBinding": {
+				title: "sap.ui.model.PropertyBinding"
+			},
 			"model/Sorter": {
 				title: "sap.ui.model.Sorter"
 			},
