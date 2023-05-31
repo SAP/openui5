@@ -811,6 +811,10 @@ sap.ui.define([
 						oRelevantContainerOverlay.getId(),
 						"then the indicator is created on the relevant container's overlay"
 					);
+					assert.strictEqual(
+						this.oChangeVisualization._oChangeVisualizationModel.getData().sortedChanges.relevantHiddenChanges.length,
+						0,
+						"then the change is not displayed as hidden");
 				}.bind(this));
 		});
 
