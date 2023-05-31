@@ -1,0 +1,18 @@
+{
+  "1.116.0": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "d9fb6aff908b775670f71a9f8b3f887c27ac0f66",
+        "type": "FIX",
+        "text": " sap.m.Input: Correct after open flag",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380053379"
+          }
+        ]
+      }
+    ]
+  }
+}
