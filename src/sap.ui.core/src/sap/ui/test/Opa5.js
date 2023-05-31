@@ -1322,14 +1322,17 @@ sap.ui.define([
 
 		function convertClassToObjectMap(fnClass) {
 			var oDictionary = {};
-			Object.getOwnPropertyNames(fnClass.prototype)
-				.filter(function(sName) {
-					return sName !== 'constructor' && typeof fnClass.prototype[sName] === 'function';
-				})
-				.map(function(sName){
-					oDictionary[sName] = fnClass.prototype[sName];
-				}
-			);
+			function extractMethods(src) {
+				Object.getOwnPropertyNames(src)
+					.filter(function(sName) {
+						return sName !== 'constructor' && typeof src[sName] === 'function';
+					})
+					.map(function(sName){
+						oDictionary[sName] = src[sName];
+					});
+			}
+			extractMethods(fnClass.prototype);
+			extractMethods(fnClass);
 			return oDictionary;
 		}
 

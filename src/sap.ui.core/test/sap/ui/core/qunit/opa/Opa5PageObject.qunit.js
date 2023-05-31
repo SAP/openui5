@@ -205,6 +205,23 @@ sap.ui.define([
 		assertStandardAssertionsRegisteredFor(assert, "onMyFirstPage");
 	});
 
+	QUnit.test("should be able to pass actions and assertions on a function", function(assert) {
+		var oPage = Opa5.createPageObjects({
+			onMyFirstPage : {
+				actions : jQuery.extend({
+					iCanDoMagic : function(){ }
+				}),
+				assertions : jQuery.extend({
+					iCanSeeIt : function(){ }
+				})
+			}
+		});
+
+		assertPageObjectIsReturned(assert, oPage);
+		assert.ok(Opa.config.actions.onMyFirstPage.iCanDoMagic, "Should add action");
+		assert.ok(Opa.config.assertions.onMyFirstPage.iCanSeeIt, "Should add assertion");
+	});
+
 	QUnit.module("Page Object - ViewName", {
 		beforeEach: function (assert) {
 			// Note: This test is executed with QUnit 1 and QUnit 2.
