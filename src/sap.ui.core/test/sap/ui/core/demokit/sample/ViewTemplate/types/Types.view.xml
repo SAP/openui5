@@ -467,6 +467,8 @@
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 3}}" id="I28"/>
 			<Label text="scale: default (0), nullable: false"  labelFor="I29"/>
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false}}" id="I29"/>
+			<Label text="scale: default (0), nullable=false, parseEmptyValueToZero=true" labelFor="I87"/>
+			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false}, formatOptions: {parseEmptyValueToZero: true}}" id="I87"/>
 			<Label text="stepInput: min: 0 max: 99 scale: 0" labelFor="stepInput"/>
 			<StepInput id="stepInput" min="0" max="99" value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 0}}"/>
 			<Label text="scale: &quot;variable&quot;, style: &quot;short&quot;, shortDecimals: 3" labelFor="I30"/>
@@ -481,12 +483,16 @@
 			<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double'}" id="I31"/>
 			<Label text="nullable: false" labelFor="I32"/>
 			<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double', constraints: {nullable: false}}" id="I32"/>
+			<Label text="nullable: false, parseEmptyValueToZero=true" labelFor="I88"/>
+			<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double', constraints: {nullable: false}, formatOptions: {parseEmptyValueToZero: true}}" id="I88"/>
 
 			<core:Title text="sap.ui.model.odata.type.Single" />
 			<Label text="no constraints" labelFor="I33"/>
 			<Input value="{path: 'Single', type: 'sap.ui.model.odata.type.Single'}" id="I33"/>
 			<Label text="nullable: false" labelFor="I34"/>
 			<Input value="{path: 'Single', type: 'sap.ui.model.odata.type.Single', constraints: {nullable: false}}" id="I34"/>
+			<Label text="nullable: false, parseEmptyValueToZero=true" labelFor="I89"/>
+			<Input value="{path: 'Single', type: 'sap.ui.model.odata.type.Single', constraints: {nullable: false}, formatOptions: {parseEmptyValueToZero: true}}" id="I89"/>
 
 			<core:Title text="sap.ui.model.odata.type.Guid" />
 			<Label text="no constraints" labelFor="I35"/>
@@ -499,26 +505,36 @@
 			<Input value="{path: 'Byte', type: 'sap.ui.model.odata.type.Byte'}" id="I37"/>
 			<Label text="sap.ui.model.odata.type.Byte, nullable=false" labelFor="I38"/>
 			<Input value="{path: 'Byte', type: 'sap.ui.model.odata.type.Byte', constraints: {nullable: false}}" id="I38"/>
+			<Label text="sap.ui.model.odata.type.Byte, nullable=false, parseEmptyValueToZero=true" labelFor="I82"/>
+			<Input value="{path: 'Byte', type: 'sap.ui.model.odata.type.Byte', constraints: {nullable: false}, formatOptions: {parseEmptyValueToZero: true}}" id="I82"/>
 			<Label text="sap.ui.model.odata.type.Int16" labelFor="I39"/>
 			<Input value="{path: 'Int16', type: 'sap.ui.model.odata.type.Int16'}" id="I39"/>
 			<Label text="sap.ui.model.odata.type.Int16, nullable=false" labelFor="I40"/>
 			<Input value="{path: 'Int16', type: 'sap.ui.model.odata.type.Int16', constraints: {nullable: false}}" id="I40"/>
+			<Label text="sap.ui.model.odata.type.Int16, nullable=false, parseEmptyValueToZero=true" labelFor="I83"/>
+			<Input value="{path: 'Int16', type: 'sap.ui.model.odata.type.Int16', constraints: {nullable: false}, formatOptions: {parseEmptyValueToZero: true}}" id="I83"/>
 			<Label text="sap.ui.model.odata.type.Int32" labelFor="I41"/>
 			<Input value="{path: 'Int32', type: 'sap.ui.model.odata.type.Int32'}" id="I41"/>
 			<Label text="sap.ui.model.odata.type.Int32, nullable=false" labelFor="I42"/>
 			<Input value="{path: 'Int32', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}}" id="I42"/>
+			<Label text="sap.ui.model.odata.type.Int32, nullable=false, parseEmptyValueToZero=true" labelFor="I84"/>
+			<Input value="{path: 'Int32', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}, formatOptions: {parseEmptyValueToZero: true}}" id="I84"/>
 			<Label text="sap.ui.model.odata.type.Int32, style: &quot;short&quot;" labelFor="I43"/>
 			<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64', constraints: {nullable: false}, formatOptions: {style: 'short'}}" id="I43"/>
 			<Label text="sap.ui.model.odata.type.Int64" labelFor="I44"/>
 			<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64'}" id="I44"/>
 			<Label text="sap.ui.model.odata.type.Int64, nullable=false" labelFor="I45"/>
 			<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64', constraints: {nullable: false}}" id="I45"/>
+			<Label text="sap.ui.model.odata.type.Int64, nullable=false, parseEmptyValueToZero=true" labelFor="I85"/>
+			<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64', constraints: {nullable: false}, formatOptions: {parseEmptyValueToZero: true}}" id="I85"/>
 			<Label text="sap.ui.model.odata.type.Int64, style: &quot;short&quot;" labelFor="I46"/>
 			<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64', constraints: {nullable: false}, formatOptions: {style: 'short'}}" id="I46"/>
 			<Label text="sap.ui.model.odata.type.SByte" labelFor="I47"/>
 			<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte'}" id="I47"/>
 			<Label text="sap.ui.model.odata.type.SByte, nullable=false" labelFor="I48"/>
 			<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte', constraints: {nullable: false}}" id="I48"/>
+			<Label text="sap.ui.model.odata.type.SByte, nullable=false, parseEmptyValueToZero=true" labelFor="I86"/>
+			<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte', constraints: {nullable: false}, formatOptions: {parseEmptyValueToZero: true}}" id="I86"/>
 
 			<core:Title text="sap.ui.model.odata.type.String" />
 			<Label text="maxLength: 40, parseKeepsEmptyString: true" labelFor="I49"/>
