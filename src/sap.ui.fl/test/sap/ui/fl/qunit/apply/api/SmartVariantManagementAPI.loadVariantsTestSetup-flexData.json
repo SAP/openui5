@@ -65,6 +65,21 @@
           "value": "B Variant"
         }
       }
+    },
+    {
+      "fileName": "variant_invisible",
+      "fileType": "variant",
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "content": {},
+      "executeOnSelection": true,
+      "favorite": true,
+      "texts": {
+        "variantName": {
+          "value": "Variant which will be set to invisble"
+        }
+      }
     }],
     "changes": [{
       "fileName": "id_1606828544793_204_addFavorite",
@@ -234,6 +249,45 @@
       "jsOnly": false,
       "variantReference": "",
       "appDescriptorChange": false
+    },
+    {
+      "fileName": "id_1606828544793_206_updateVariant",
+      "fileType": "change",
+      "changeType": "updateVariant",
+      "moduleName": "",
+      "reference": "sap.ui.demoapps.rta.fiorielements.Component",
+      "packageName": "",
+      "content": {
+        "visible": false
+      },
+      "selector": {
+       "variantId": "variant_invisible",
+        "persistencyKey": "variantManagement1"
+      },
+      "layer": "USER",
+      "texts": {
+        "variantName": {
+          "value": "a new name",
+          "type": "XFLD"
+        },
+        "namespace": "apps/sap.ui.demoapps.rta.fiorielements/changes/",
+        "projectId": "sap.ui.demoapps.rta.fiorielements",
+        "creation": "2020-12-02T13:15:45.208Z",
+        "originalLanguage": "EN",
+        "support": {
+          "generator": "Change.createInitialFileContent",
+          "service": "",
+          "user": "some.user@sap.com",
+          "sapui5Version": "1.82.2",
+          "sourceChangeFileName": "",
+          "compositeCommand": ""
+        },
+        "oDataInformation": {},
+        "dependentSelector": {},
+        "jsOnly": false,
+        "variantReference": "",
+        "appDescriptorChange": false
+      }
     }]
   }
 }

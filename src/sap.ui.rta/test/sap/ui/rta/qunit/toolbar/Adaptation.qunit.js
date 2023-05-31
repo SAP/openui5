@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/Version",
@@ -25,6 +26,7 @@ sap.ui.define([
 	Button,
 	RtaQunitUtils,
 	Core,
+	FlexState,
 	ContextBasedAdaptationsAPI,
 	Settings,
 	Version,
@@ -134,7 +136,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given Adaptation Model binding & formatter", {
+	QUnit.module("Test Adaptation Model binding & formatter and save as", {
 		beforeEach: function() {
 			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
@@ -147,6 +149,8 @@ sap.ui.define([
 			});
 			this.oControlsModel = RtaQunitUtils.createToolbarControlsModel();
 			sandbox.stub(ContextBasedAdaptationsAPI, "initialize").resolves(oAdaptationsModel);
+			this.oCanMigrateStub = sandbox.stub(ContextBasedAdaptationsAPI, "canMigrate").resolves(false);
+			this.oMigrateStub = sandbox.stub(ContextBasedAdaptationsAPI, "migrate").resolves(false);
 
 			this.oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox");
 			this.oOpenAddAdaptationDialogStub = sandbox.stub(SaveAsAdaptation.prototype, "openAddAdaptationDialog");
@@ -155,9 +159,21 @@ sap.ui.define([
 			this.oToolbar = new Adaptation({
 				textResources: this.oTextResources
 			});
+			this.oToolbar.attachSwitchAdaptation(function(oEvent) {
+				this.sSwitchedToAdaptation = oEvent.getParameter("adaptationId");
+				oEvent.getParameter("callback")();
+			}.bind(this));
 			this.oToolbar.setRtaInformation({
 				flexSettings: {
 					layer: "CUSTOMER"
+				},
+				commandStack: {
+					canSave: function() {
+						return this.hasDirtyChanges;
+					}.bind(this),
+					removeAllCommands: function() {
+						this.bRemovedAllCommands = true;
+					}.bind(this)
 				}
 			});
 			this.oVersionsModel = new JSONModel({
@@ -172,7 +188,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When no context-based adaptation is available", function (assert) {
+		QUnit.test("Given no context-based adaptation is available", function (assert) {
 			this.oAdaptationsModel = new JSONModel({
 				adaptations: [],
 				count: 0,
@@ -190,7 +206,7 @@ sap.ui.define([
 			assert.notOk(this.oToolbar.getControl("switchAdaptations").getVisible(), "then the switch adaptations button is not visible");
 		});
 
-		QUnit.test("When two context-based adaptation are available and the displayed adaptation is default (context-free) ", function (assert) {
+		QUnit.test("Given two context-based adaptation are available and the displayed adaptation is default (context-free) ", function (assert) {
 			this.oAdaptationsModel = new JSONModel({
 				allAdaptations: [{title: "Sales"}, {title: "Manager"}, {title: ""}],
 				adaptations: [{title: "Sales"}, {title: "Manager"}],
@@ -213,7 +229,7 @@ sap.ui.define([
 			assert.strictEqual(oSwitchAdaptationsButton.getItems().length, 3, "number of adaptations to be switched is correct");
 		});
 
-		QUnit.test("When two context-based adaptation are available", function (assert) {
+		QUnit.test("Given two context-based adaptation are available", function (assert) {
 			this.oAdaptationsModel = new JSONModel({
 				allAdaptations: [{title: "Sales"}, {title: "Manager"}, {title: ""}],
 				adaptations: [{title: "Sales"}, {title: "Manager"}],
@@ -299,6 +315,7 @@ sap.ui.define([
 				setTimeout(resolve, 0);
 			}).then(function() {
 				assert.strictEqual(this.oShowMessageBoxStub.callCount, 1, "Warning is shown");
+				assert.strictEqual(this.oShowMessageBoxStub.getCall(0).args[0], "warning", "Warning is shown");
 				assert.strictEqual(this.oOpenAddAdaptationDialogStub.callCount, 1, "Dialog is opened");
 			}.bind(this));
 		});
@@ -316,6 +333,7 @@ sap.ui.define([
 				setTimeout(resolve, 0);
 			}).then(function() {
 				assert.strictEqual(this.oShowMessageBoxStub.callCount, 1, "Warning is shown");
+				assert.strictEqual(this.oShowMessageBoxStub.getCall(0).args[0], "warning", "Warning is shown");
 				assert.strictEqual(this.oOpenAddAdaptationDialogStub.callCount, 0, "Dialog is opened");
 			}.bind(this));
 		});
@@ -333,13 +351,14 @@ sap.ui.define([
 				setTimeout(resolve, 0);
 			}).then(function() {
 				assert.strictEqual(this.oShowMessageBoxStub.callCount, 1, "Warning is shown");
+				assert.strictEqual(this.oShowMessageBoxStub.getCall(0).args[0], "warning", "Warning is shown");
 				assert.strictEqual(this.oOpenAddAdaptationDialogStub.callCount, 1, "Dialog is opened");
 				assert.strictEqual(this.oOpenAddAdaptationDialogStub.getCall(0).args[0], "CUSTOMER", "Dialog has correct layer");
 				assert.ok(this.oOpenAddAdaptationDialogStub.getCall(0).args[1], "Dialog in edit mode ");
 			}.bind(this));
 		});
 
-		QUnit.test("Given I am on active version with draft, when delete as is pressed I confirm warning", function (assert) {
+		QUnit.test("Given I am on active version with draft, when delete is pressed I confirm warning", function (assert) {
 			this.oVersionsModel.setData({
 				backendDraft: true,
 				displayedVersion: "12345"
@@ -356,11 +375,12 @@ sap.ui.define([
 				setTimeout(resolve, 0);
 			}).then(function() {
 				assert.strictEqual(this.oShowMessageBoxStub.callCount, 1, "Warning is shown");
+				assert.strictEqual(this.oShowMessageBoxStub.getCall(0).args[0], "warning", "Warning is shown");
 				assert.strictEqual(iEventCalls, 1, "Event is raised");
 			}.bind(this));
 		});
 
-		QUnit.test("Given I am on active version with draft, when manage as is pressed I confirm warning", function (assert) {
+		QUnit.test("Given I am on active version with draft, when manage as is pressed", function (assert) {
 			this.oVersionsModel.setData({
 				backendDraft: true,
 				displayedVersion: "12345"
@@ -374,6 +394,81 @@ sap.ui.define([
 			}).then(function() {
 				assert.strictEqual(this.oShowMessageBoxStub.callCount, 0, "Warning is not shown (will be shown on save)");
 				assert.strictEqual(this.oOpenManageAdaptationDialog.callCount, 1, "Dialog is opened");
+			}.bind(this));
+		});
+
+		QUnit.test("Given a migration is needed and I am on backend draft, when save as is pressed and I cancel migration and there are no dirty changes", function (assert) {
+			this.oCanMigrateStub.resolves(true);
+			this.oVersionsModel.setData({
+				backendDraft: true,
+				displayedVersion: "0"
+			});
+			this.oShowMessageBoxStub.resolves(MessageBox.Action.CANCEL);
+			this.hasDirtyChanges = false;
+
+			this.oToolbar.getControl("saveAsAdaptation").firePress();
+
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			}).then(function() {
+				assert.strictEqual(this.oShowMessageBoxStub.callCount, 1, "Migration Information is shown");
+				assert.strictEqual(this.oShowMessageBoxStub.getCall(0).args[0], "confirm", "Migration Information is shown");
+				assert.strictEqual(this.oOpenAddAdaptationDialogStub.callCount, 0, "Dialog is not opened");
+				assert.notOk(this.bRemovedAllCommands, "Did not revert dirty changes");
+				assert.strictEqual(this.oMigrateStub.callCount, 0, "migrate is called");
+				assert.notOk(this.sSwitchedToAdaptation, "Did not switch adaptation");
+				assert.strictEqual(this.oOpenManageAdaptationDialog.callCount, 0, "Manage Dialog is not opened");
+			}.bind(this));
+		});
+
+		QUnit.test("Given a migration is needed and I am on backend draft, when save as is pressed and I confirm migration and there are no dirty changes", function (assert) {
+			this.oCanMigrateStub.resolves(true);
+			this.oVersionsModel.setData({
+				backendDraft: true,
+				displayedVersion: "0"
+			});
+			this.oShowMessageBoxStub.resolves("something positive");
+			this.hasDirtyChanges = false;
+
+			this.oToolbar.getControl("saveAsAdaptation").firePress();
+
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			}).then(function() {
+				assert.strictEqual(this.oShowMessageBoxStub.callCount, 2, "Migration Information is shown");
+				assert.strictEqual(this.oShowMessageBoxStub.getCall(0).args[0], "confirm", "Migration Information is shown");
+				assert.strictEqual(this.oShowMessageBoxStub.getCall(1).args[0], "information", "Migration completed is shown");
+				assert.strictEqual(this.oOpenAddAdaptationDialogStub.callCount, 0, "Dialog is not opened");
+				assert.notOk(this.bRemovedAllCommands, "Did not revert dirty changes");
+				assert.strictEqual(this.oMigrateStub.callCount, 1, "migrate is called");
+				assert.ok(this.sSwitchedToAdaptation, "switched adaptation");
+				assert.strictEqual(this.oOpenManageAdaptationDialog.callCount, 0, "Manage Dialog is not opened (because it does not work after reload)");
+			}.bind(this));
+		});
+
+		QUnit.test("Given a migration is needed and I am on active version with backend draft existing , when save as is pressed and I confirm all and there are dirty changes", function (assert) {
+			this.oCanMigrateStub.resolves(true);
+			this.oVersionsModel.setData({
+				backendDraft: true,
+				displayedVersion: "12345"
+			});
+			this.oShowMessageBoxStub.resolves(MessageBox.Action.OK);
+			this.hasDirtyChanges = true;
+
+			this.oToolbar.getControl("saveAsAdaptation").firePress();
+
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			}).then(function() {
+				assert.strictEqual(this.oShowMessageBoxStub.callCount, 3, "Some dialogs are show");
+				assert.strictEqual(this.oShowMessageBoxStub.getCall(0).args[0], "warning", "Discard draft warning is shown");
+				assert.strictEqual(this.oShowMessageBoxStub.getCall(1).args[0], "confirm", "Migration Information is shown");
+				assert.strictEqual(this.oShowMessageBoxStub.getCall(2).args[0], "information", "Migration completed is shown");
+				assert.strictEqual(this.oOpenAddAdaptationDialogStub.callCount, 0, "Save as Dialog is not opened");
+				assert.ok(this.bRemovedAllCommands, "Reverted dirty changes");
+				assert.strictEqual(this.oMigrateStub.callCount, 1, "migrate is called");
+				assert.ok(this.sSwitchedToAdaptation, "switched adaptation");
+				assert.strictEqual(this.oOpenManageAdaptationDialog.callCount, 0, "Manage Dialog is opened (because it does not work after reload)");
 			}.bind(this));
 		});
 	});
@@ -423,7 +518,7 @@ sap.ui.define([
 			this.oToolbar = new Adaptation({
 				textResources: this.oTextResources
 			});
-
+			sandbox.stub(FlexState, "clearAndInitialize").resolves();
 			sandbox.stub(ContextBasedAdaptationsAPI, "remove").returns(Promise.resolve({status: 204}));
 			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(oAdaptationsModel);
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);

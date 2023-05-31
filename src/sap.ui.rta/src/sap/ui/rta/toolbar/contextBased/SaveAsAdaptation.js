@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/rta/Utils",
-	"sap/ui/model/Binding",
 	"sap/ui/model/json/JSONModel"
 ], function(
 	ManagedObject,
@@ -26,7 +25,6 @@ sap.ui.define([
 	ContextBasedAdaptationsAPI,
 	ContextSharingAPI,
 	Utils,
-	Binding,
 	JSONModel
 ) {
 	"use strict";

@@ -598,6 +598,31 @@ sap.ui.define([
 			assert.equal(fnUpdateChangesForVariantManagementInMap.callCount, 1, "then VariantManagementState.updateChangesForVariantManagementInMap() was called");
 		});
 
+		QUnit.test("when calling 'addVariantChange' for 'setVisible' to add a change and passing an adaptationId (during migration)", function(assert) {
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
+			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
+			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
+			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
+			var mPropertyBag = {
+				changeType: "setVisible",
+				visible: false,
+				layer: Layer.CUSTOMER,
+				variantReference: "variant1",
+				appComponent: this.oComponent,
+				adaptationId: "migration_test_id"
+			};
+
+			var oChange = this.oModel.addVariantChange("variantMgmtId1", mPropertyBag);
+			assert.equal(oChange.getContent().visible, mPropertyBag.visible, "then the new change created with the parameter 'visible' in content");
+			assert.equal(oChange.getChangeType(), "setVisible", "then the new change created with 'setVisible' as changeType");
+			assert.equal(oChange.getFileType(), "ctrl_variant_change", "then the new change created with 'ctrl_variant_change' as fileType");
+			assert.equal(oChange.getAdaptationId(), "migration_test_id", "then the new change created with the passed adaptationId");
+			assert.ok(fnAddDirtyChangeStub.calledWith(oChange), "then 'FlexController.addDirtyChange called with the newly created change");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].visible, mPropertyBag.visible, "then the parameter 'visible' updated in the VariantModel");
+			assert.equal(fnSetVariantDataStub.callCount, 1, "then VariantManagementState.setVariant() was called");
+			assert.equal(fnUpdateChangesForVariantManagementInMap.callCount, 1, "then VariantManagementState.updateChangesForVariantManagementInMap() was called");
+		});
+
 		QUnit.test("when calling 'deleteVariantChange' for 'setVisible' to delete a change", function(assert) {
 			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);

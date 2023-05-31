@@ -52,18 +52,9 @@ sap.ui.define([
 						controlType: "sap.m.ColumnListItem",
 						searchOpenDialogs: true,
 						descendant: {
-							controlType: "sap.m.CustomListItem",
-							descendant: {
-								controlType: "sap.m.HBox",
-								descendant: {
-									controlType: "sap.m.VBox",
-									descendant: {
-										controlType: "sap.m.Text",
-										properties: {
-											text: sDragAdaptationTitle
-										}
-									}
-								}
+							controlType: "sap.m.Text",
+							properties: {
+								text: sDragAdaptationTitle
 							}
 						},
 						actions: new Drag()
@@ -74,18 +65,9 @@ sap.ui.define([
 						viewId: "sap.ui.rta.contextBased---ManageContexts",
 						searchOpenDialogs: true,
 						descendant: {
-							controlType: "sap.m.CustomListItem",
-							descendant: {
-								controlType: "sap.m.HBox",
-								descendant: {
-									controlType: "sap.m.VBox",
-									descendant: {
-										controlType: "sap.m.Text",
-										properties: {
-											text: sDropAdaptationTitle
-										}
-									}
-								}
+							controlType: "sap.m.Text",
+							properties: {
+								text: sDropAdaptationTitle
 							}
 						},
 						actions: new Drop(oDropOption)
@@ -259,7 +241,7 @@ sap.ui.define([
 							var aItems = aTables[0].getItems();
 							var aCells = aItems[iPosition].getCells();
 							var sRank = aCells[0].getText();
-							var sTitle = aCells[1].getContent()[0].getItems()[0].getItems()[0].getText();
+							var sTitle = aCells[1].getText();
 							Opa5.assert.equal(sRank, iPosition + 1, "I see correct context-based adaptation rank");
 							Opa5.assert.equal(sTitle, sExpectedTitle, "I see correct context-based adaptation title");
 							if (iRoleCount) {

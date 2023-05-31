@@ -77,7 +77,7 @@ function(
 					onSaveReorderedAdaptations: onSaveReorderedAdaptations.bind(this),
 					isAdaptationsSelected: isAdaptationsSelected.bind(this),
 					getIndexOfSelectedAdaptation: getIndexOfSelectedAdaptation.bind(this),
-					onClose: onCloseDialog.bind(this)
+					onCancel: onCancelDialog.bind(this)
 				}
 			}).then(function(oDialog) {
 				this._oManageAdaptationDialog = oDialog;
@@ -97,6 +97,7 @@ function(
 			this.oAdaptationsModel = ContextBasedAdaptationsAPI.getAdaptationsModel({control: this._oRtaInformation.rootControl, layer: this._oRtaInformation.flexSettings.layer});
 			this.oAdaptationsModel.updateAdaptations(oAdaptations.adaptations);
 			this.oReferenceAdaptationsData = JSON.parse(JSON.stringify(this.oAdaptationsModel.getProperty("/adaptations")));
+			this._oOriginAdaptationsData = JSON.parse(JSON.stringify(this.oAdaptationsModel.getProperty("/allAdaptations")));
 			this._oControlConfigurationModel = new JSONModel({isTableItemSelected: false});
 			this._oManageAdaptationDialog.setModel(this.oAdaptationsModel, "contextBased");
 			this._oManageAdaptationDialog.setModel(this._oControlConfigurationModel, "controlConfiguration");
@@ -290,8 +291,8 @@ function(
 
 	function didAdaptationsPriorityChange() {
 		return !_isEqual(
-			this.oAdaptationsModel.getProperty("/adaptations").map(function(oAdapation) { return oAdapation.id; }),
-			this.oReferenceAdaptationsData.map(function(oAdapation) { return oAdapation.id; })
+			this.oAdaptationsModel.getProperty("/adaptations").map(function(oAdaptation) { return oAdaptation.id; }),
+			this.oReferenceAdaptationsData.map(function(oAdaptation) { return oAdaptation.id; })
 		);
 	}
 
@@ -360,6 +361,12 @@ function(
 				Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
 			}
 		});
+	}
+
+	function onCancelDialog() {
+		// the adaptationsModel has to be set to its origin as no reorder has taken place
+		this.oAdaptationsModel.updateAdaptations(this._oOriginAdaptationsData);
+		onCloseDialog.call(this);
 	}
 
 	function onCloseDialog() {

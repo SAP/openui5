@@ -213,6 +213,14 @@ sap.ui.define([
 			assert.strictEqual(oCompVariant.getContent().specialContent, "my-test-content", "then content is stored into comp variant");
 		});
 
+		QUnit.test("when 'storeVisible' is called", function(assert) {
+			var oCompVariant = FlexObjectFactory.createCompVariant({});
+			oCompVariant.storeVisible(true);
+			assert.ok(oCompVariant.getVisible(), "then visible is stored into comp variant");
+			oCompVariant.storeVisible(false);
+			assert.notOk(oCompVariant.getVisible(), "then visible is stored into comp variant");
+		});
+
 		QUnit.test("when 'storeExecuteOnSelection' is called", function(assert) {
 			var oCompVariant = FlexObjectFactory.createCompVariant({});
 			oCompVariant.setState(States.LifecycleState.PERSISTED);
@@ -232,9 +240,11 @@ sap.ui.define([
 		QUnit.test("when 'storeContexts' is called", function(assert) {
 			var oCompVariant = FlexObjectFactory.createCompVariant({});
 			oCompVariant.setState(States.LifecycleState.PERSISTED);
+			assert.notOk(oCompVariant.hasContexts(), "the comp variant has contexts");
 			oCompVariant.storeContexts({
 				test: "test"
 			});
+			assert.ok(oCompVariant.hasContexts(), "the comp variant has contexts");
 			assert.strictEqual(oCompVariant.getContexts().test, "test", "then after setter is called, getContexts returns contexts");
 			assert.strictEqual(oCompVariant.getState(), States.LifecycleState.DIRTY, "then the comp variant state is 'dirty'");
 		});

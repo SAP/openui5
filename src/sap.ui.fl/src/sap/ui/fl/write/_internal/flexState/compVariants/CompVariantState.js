@@ -425,10 +425,13 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.name] - Title of the variant
 	 * @param {object} [mPropertyBag.content] - Content of the new change
 	 * @param {object} [mPropertyBag.favorite] - Flag if the variant should be flagged as a favorite
+	 * @param {boolean} [mPropertyBag.visible] - Flag if the variant should be set visible
 	 * @param {object} [mPropertyBag.executeOnSelection] - Flag if the variant should be executed on selection
 	 * @param {object} [mPropertyBag.contexts] - Map of contexts that restrict the visibility of the variant
 	 * @param {string[]} [mPropertyBag.contexts.role] - List of roles which are allowed to see the variant
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
+	 * @param {string} mPropertyBag.adaptationId - ID of the context-based adaptation
+	 * @param {boolean} [mPropertyBag.forceCreate] - Parameter that forces a new change to be created
 	 * this either updates the variant from the layer or writes a change to that layer.
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The updated variant
 	 */
@@ -458,6 +461,7 @@ sap.ui.define([
 					previousState: oVariant.getState(),
 					previousContent: oVariant.getContent(),
 					previousFavorite: oVariant.getFavorite(),
+					previousVisible: oVariant.getVisible(),
 					previousExecuteOnSelection: oVariant.getExecuteOnSelection(),
 					previousContexts: oVariant.getContexts(),
 					previousName: oVariant.getName(),
@@ -475,6 +479,9 @@ sap.ui.define([
 			}
 			if (mPropertyBag.favorite !== undefined) {
 				oVariant.storeFavorite(mPropertyBag.favorite);
+			}
+			if (mPropertyBag.visible !== undefined) {
+				oVariant.storeVisible(mPropertyBag.visible);
 			}
 			if (mPropertyBag.contexts) {
 				oVariant.storeContexts(mPropertyBag.contexts);
@@ -494,7 +501,7 @@ sap.ui.define([
 			var oRevertData = {
 				previousContent: Object.assign({}, oChangeContent),
 				previousState: oChange.getState(),
-				change: _pick(Object.assign({}, mPropertyBag), ["favorite", "executeOnSelection", "contexts", "content", "name"])
+				change: _pick(Object.assign({}, mPropertyBag), ["favorite", "visible", "executeOnSelection", "contexts", "content", "name"])
 			};
 			aRevertData.push(oRevertData);
 			oChange.setRevertData(aRevertData);
@@ -504,11 +511,17 @@ sap.ui.define([
 			if (mPropertyBag.favorite !== undefined) {
 				oChangeContent.favorite = mPropertyBag.favorite;
 			}
+			if (mPropertyBag.visible !== undefined) {
+				oChangeContent.visible = mPropertyBag.visible;
+			}
 			if (mPropertyBag.contexts) {
 				oChangeContent.contexts = mPropertyBag.contexts;
 			}
 			if (mPropertyBag.content) {
 				oChangeContent.variantContent = mPropertyBag.content;
+			}
+			if (mPropertyBag.adaptationId) {
+				oChange.setAdaptationId(mPropertyBag.adaptationId);
 			}
 			if (mPropertyBag.name) {
 				oChange.setText("variantName", mPropertyBag.name);
@@ -530,7 +543,7 @@ sap.ui.define([
 			}
 
 			var oContent = {};
-			["favorite", "executeOnSelection", "contexts"].forEach(function (sPropertyName) {
+			["favorite", "visible", "executeOnSelection", "contexts"].forEach(function (sPropertyName) {
 				if (mPropertyBag[sPropertyName] !== undefined) {
 					oContent[sPropertyName] = mPropertyBag[sPropertyName];
 				}
@@ -552,7 +565,9 @@ sap.ui.define([
 				}
 			});
 
-			if (mPropertyBag.changeSpecificData && mPropertyBag.changeSpecificData.adaptationId !== undefined) {
+			if (mPropertyBag.adaptationId !== undefined) {
+				oChange.setAdaptationId(mPropertyBag.adaptationId);
+			} else if (mPropertyBag.changeSpecificData && mPropertyBag.changeSpecificData.adaptationId !== undefined) {
 				oChange.setAdaptationId(mPropertyBag.changeSpecificData.adaptationId);
 			}
 
@@ -571,7 +586,9 @@ sap.ui.define([
 		var oVariant = getVariantById(mPropertyBag);
 		var sLayer = determineLayer(mPropertyBag);
 
-		if (variantCanBeUpdated(oVariant, sLayer)) {
+		if (mPropertyBag.forceCreate) {
+			createChange(mPropertyBag, oVariant);
+		} else if (variantCanBeUpdated(oVariant, sLayer)) {
 			updateVariant(mPropertyBag, oVariant);
 		} else {
 			var oUpdatableChange = getLatestUpdatableChange(oVariant);

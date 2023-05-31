@@ -238,6 +238,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the 'visible' flag of the runtime instance as well as the persistent representation.
+	 * This results in setting the definition as well as flagging the entity as 'dirty'.
+	 * @param {boolean} bVisible - Boolean to which the 'visible' flag should be set
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+	CompVariant.prototype.storeVisible = function(bVisible) {
+		if (bVisible !== this.getVisible()) {
+			this.setState(States.LifecycleState.DIRTY);
+			this.setVisible(bVisible);
+		}
+	};
+
+	/**
 	 * Retrieves the owner ID (user)
 	 * @returns {string} User ID
 	 */

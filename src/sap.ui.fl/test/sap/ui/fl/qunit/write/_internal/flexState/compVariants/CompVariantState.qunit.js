@@ -735,12 +735,37 @@ sap.ui.define([
 				layer: Layer.VENDOR,
 				executeOnSelection: true,
 				contexts: {foo: "bar"},
-				name: "newName"
+				name: "newName",
+				visible: false
 			});
 			assert.strictEqual(this.oVariant.getLayer(), Layer.VENDOR, "the layer of the variant is VENDOR");
 			assert.strictEqual(this.oVariant.getSupportInformation().user, "SAP", "the author is SAP");
 			assert.strictEqual(this.oVariant.getFavorite(), false, "the favorite was set to false for the variant");
 			assert.strictEqual(this.oVariant.getChanges().length, 0, "no change was written");
+			assert.notOk(this.oVariant.getVisible(), "then visible was set to false");
+		});
+
+		QUnit.test("Given updateVariant is called on an updatable variant with forceCreate", function(assert) {
+			//Set favorite to false
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: this.oVariant.getVariantId(),
+				favorite: false,
+				layer: Layer.VENDOR,
+				executeOnSelection: true,
+				contexts: {foo: "bar"},
+				name: "newName",
+				visible: false,
+				adaptationId: "test-AdaptationId1",
+				forceCreate: true
+			});
+			assert.strictEqual(this.oVariant.getLayer(), Layer.VENDOR, "the layer of the variant is VENDOR");
+			assert.strictEqual(this.oVariant.getSupportInformation().user, "SAP", "the author is SAP");
+			assert.strictEqual(this.oVariant.getFavorite(), false, "the favorite was set to false for the variant");
+			assert.strictEqual(this.oVariant.getChanges().length, 1, "no change was written");
+			assert.strictEqual(this.oVariant.getChanges()[0].getAdaptationId(), "test-AdaptationId1", "then the correct adaptationId was set");
+			assert.notOk(this.oVariant.getChanges()[0].getContent().visible, "then visible was set to false");
 		});
 
 		QUnit.test("Given updateVariant is called on a non-updatable variant (different layer)", function(assert) {

@@ -41,13 +41,6 @@ sap.ui.define([
 				 */
 				variantManagementReference: {
 					type: "string"
-				},
-				/**
-				 * Indicates if the variant should be shown to the user.
-				 */
-				visible: {
-					type: "boolean",
-					defaultValue: true
 				}
 			}
 		},
@@ -106,7 +99,6 @@ sap.ui.define([
 
 	FlVariant.prototype.cloneFileContentWithNewId = function() {
 		var mFileContent = Variant.prototype.cloneFileContentWithNewId.apply(this, arguments);
-		mFileContent.variantReference = mFileContent.fileName;
 		return mFileContent;
 	};
 

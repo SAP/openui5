@@ -960,12 +960,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the variant properties and adds a variant change
+	 * Sets the variant properties and creates a variant change
 	 * @param {string} sVariantManagementReference - Variant management reference
 	 * @param {object} mPropertyBag - Map of properties
+	 * @param {string} [mPropertyBag.adaptationId] - Adaptation ID to set which overrules the currently display adaptation
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} Created Change object
 	 */
-	VariantModel.prototype.addVariantChange = function(sVariantManagementReference, mPropertyBag) {
+	VariantModel.prototype.createVariantChange = function(sVariantManagementReference, mPropertyBag) {
 		var mAdditionalChangeContent = this.setVariantProperties(sVariantManagementReference, mPropertyBag);
 
 		var mNewChangeData = {};
@@ -981,13 +982,17 @@ sap.ui.define([
 		mNewChangeData.generator = mPropertyBag.generator;
 
 		//add adaptationId
-		var mContextBasedAdaptationBag = {
-			layer: mPropertyBag.layer,
-			control: mPropertyBag.appComponent,
-			reference: this.sFlexReference
-		};
-		if (ContextBasedAdaptationsAPI.hasAdaptationsModel(mContextBasedAdaptationBag)) {
-			mNewChangeData.adaptationId = ContextBasedAdaptationsAPI.getDisplayedAdaptationId(mContextBasedAdaptationBag);
+		if (mPropertyBag.adaptationId !== undefined) {
+			mNewChangeData.adaptationId = mPropertyBag.adaptationId;
+		} else {
+			var mContextBasedAdaptationBag = {
+				layer: mPropertyBag.layer,
+				control: mPropertyBag.appComponent,
+				reference: this.sFlexReference
+			};
+			if (ContextBasedAdaptationsAPI.hasAdaptationsModel(mContextBasedAdaptationBag)) {
+				mNewChangeData.adaptationId = ContextBasedAdaptationsAPI.getDisplayedAdaptationId(mContextBasedAdaptationBag);
+			}
 		}
 
 		if (mPropertyBag.changeType === "setDefault") {
@@ -1008,6 +1013,18 @@ sap.ui.define([
 		mUpdateVariantsStateParams.changeContent = oChange.convertToFileContent();
 		//update variants state and write change to ChangePersistence
 		VariantManagementState.updateChangesForVariantManagementInMap(mUpdateVariantsStateParams);
+		return oChange;
+	};
+
+	/**
+	 * Sets the variant properties and adds a variant change
+	 * @param {string} sVariantManagementReference - Variant management reference
+	 * @param {object} mPropertyBag - Map of properties
+	 * @param {string} [mPropertyBag.adaptationId] - Adaptation ID to set which overrules the currently display adaptation
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} Created Change object
+	 */
+	VariantModel.prototype.addVariantChange = function(sVariantManagementReference, mPropertyBag) {
+		var oChange = this.createVariantChange(sVariantManagementReference, mPropertyBag);
 		this.oChangePersistence.addDirtyChange(oChange);
 
 		return oChange;
