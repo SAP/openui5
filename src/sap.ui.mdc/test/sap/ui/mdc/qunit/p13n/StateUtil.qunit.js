@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/StateUtil",
 	"sap/ui/mdc/FilterBarDelegate",
 	"sap/ui/mdc/FilterField",
-	"sap/ui/mdc/ChartDelegate",
+	"sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
+	"sap/ui/mdc/chart/Item",
 	"sap/ui/mdc/odata/v4/TypeMap",
 	"sap/m/p13n/modules/StateHandlerRegistry",
 	"sap/ui/core/Core",
@@ -33,6 +34,7 @@ sap.ui.define([
 	FilterBarDelegate,
 	FilterField,
 	ChartDelegate,
+	ChartItem,
 	ODataV4TypeMap,
 	StateHandlerRegistry,
 	oCore,
@@ -1192,7 +1194,12 @@ sap.ui.define([
 	QUnit.module("API tests for Chart", {
 		before: function(){
 			sinon.stub(ChartDelegate, "fetchProperties").callsFake(myChartDelegatefetchProperties);
-
+			ChartDelegate.apiVersion = 2;
+			ChartDelegate.addItem = function (oChart, sPropertyName, mPropertyBag, sRole) {
+				if (oChart.getModel) {
+					return Promise.resolve(this._createMDCChartItem(sPropertyName, oChart, sRole));
+				}
+			};
 			var sChartView = '<mvc:View' +
 				'\t\t  xmlns:mvc="sap.ui.core.mvc"\n' +
 				'\t\t  xmlns:chart="sap.ui.mdc.chart"\n' +
