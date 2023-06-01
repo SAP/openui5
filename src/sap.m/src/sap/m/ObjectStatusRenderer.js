@@ -76,6 +76,13 @@ sap.ui.define(['sap/ui/core/library', './library', 'sap/ui/core/Core'],
 				oAccAttributes["describedby"] = { value: sTooltipId, append: true };
 			}
 
+			if (oObjStatus._hasExternalLabelling()) {
+				oAccAttributes["labelledby"] = {
+					value: oObjStatus._generateSelfLabellingIds(),
+					append: true
+				};
+			}
+
 			oRm.accessibilityState(oObjStatus, oAccAttributes);
 
 			oRm.openEnd();
