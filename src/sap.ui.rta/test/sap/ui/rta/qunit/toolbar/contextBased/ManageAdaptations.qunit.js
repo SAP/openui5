@@ -153,7 +153,7 @@ sap.ui.define([
 					backendDraft: true,
 					displayedVersion: "0"
 				});
-				this.oManageAdaptations.setModel(this.oVersionsModel, "versions");
+				this.oToolbar.setModel(this.oVersionsModel, "versions");
 				this.oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox");
 
 				return this.oManageAdaptations.openManageAdaptationDialog()
