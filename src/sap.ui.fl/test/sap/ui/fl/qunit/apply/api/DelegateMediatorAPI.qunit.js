@@ -310,11 +310,11 @@ sap.ui.define([
 			};
 			FlQUnitUtils.stubSapUiRequire(sandbox, [
 				{
-					name: ["sap/ui/rta/enablement/readonly/TestDelegate"],
+					name: "sap/ui/rta/enablement/readonly/TestDelegate",
 					stub: oFakeReadOnlyDelegate
 				},
 				{
-					name: ["sap/ui/rta/enablement/TestDelegate"],
+					name: "sap/ui/rta/enablement/TestDelegate",
 					stub: oFakeWriteOnlyDelegate
 				}
 			]);
