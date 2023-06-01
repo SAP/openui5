@@ -2615,7 +2615,6 @@ sap.ui.define([
 
 		assert.strictEqual($selectItems[1].getAttribute('aria-posinset'), iDelta + 1 + "", "posinset is set correctly");
 		assert.strictEqual($selectItems[1].getAttribute('aria-setsize'), "29", "setsize is set correctly");
-		assert.strictEqual($selectItems[1].getAttribute('aria-level'), "1", "level is set correctly");
 	});
 
 	QUnit.test("ariaTexts", function (assert) {

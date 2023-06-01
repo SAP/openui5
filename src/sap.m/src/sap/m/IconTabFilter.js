@@ -686,7 +686,6 @@ sap.ui.define([
 		if (iIndexInSet !== undefined && iSetSize !== undefined) {
 			oRM.attr("aria-posinset", iIndexInSet + 1);
 			oRM.attr("aria-setsize", iSetSize);
-			oRM.attr("aria-level", this._getNestedLevel());
 		}
 
 		var sTooltip = this.getTooltip_AsString();
