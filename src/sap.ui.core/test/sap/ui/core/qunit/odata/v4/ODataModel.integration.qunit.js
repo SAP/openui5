@@ -2623,6 +2623,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1396
 	QUnit.test("OLDB#requestContexts w/ sap.ui.table.Table", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			fnSpy = this.spy(ODataListBinding.prototype, "fetchResolvedQueryOptions"),
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="3">\
@@ -2655,6 +2656,7 @@ sap.ui.define([
 
 			oTable = that.oView.byId("table");
 			oBinding = oTable.getBinding("rows");
+			assert.strictEqual(fnSpy.callCount, 1, "initial #fetchResolvedQueryOptions"); // was: 5
 
 			that.expectEvents(assert, oBinding, [
 					[, "change", {reason : "change"}]
@@ -2683,6 +2685,8 @@ sap.ui.define([
 			oTable.setFirstVisibleRow(2);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(fnSpy.callCount, 1, "no more #fetchResolvedQueryOptions"); // was: 8
 		});
 	});
 
