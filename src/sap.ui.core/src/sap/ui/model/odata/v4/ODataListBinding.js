@@ -443,6 +443,7 @@ sap.ui.define([
 			sApply = _AggregationHelper.buildApply(mParameters.$$aggregation).$apply;
 		}
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
+		this.oQueryOptionsPromise = undefined; // @see #doFetchQueryOptions
 		this.mParameters = mParameters; // store mParameters at binding after validation
 		if (sApply) {
 			this.mQueryOptions.$apply = sApply;
@@ -1090,6 +1091,7 @@ sap.ui.define([
 		this.mPreviousContextsByPath = undefined;
 		this.aPreviousData = undefined;
 		this.mQueryOptions = undefined;
+		this.oQueryOptionsPromise = undefined;
 		this.aSorters = undefined;
 
 		asODataParentBinding.prototype.destroy.call(this);
@@ -1187,14 +1189,23 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchQueryOptions
 	 */
 	ODataListBinding.prototype.doFetchQueryOptions = function (oContext) {
-		var that = this;
+		// Note: an absolute binding needs no parent context :-)
+		var sMetaPath = oContext && _Helper.getMetaPath(oContext.getPath()),
+			that = this;
 
-		return this.fetchResolvedQueryOptions(oContext).then(function (mQueryOptions) {
-			return that.fetchFilter(oContext, mQueryOptions.$filter).then(function (aFilters) {
-				return _Helper.mergeQueryOptions(mQueryOptions,
-					that.getOrderby(mQueryOptions.$orderby), aFilters);
-			});
-		});
+		if (!(this.oQueryOptionsPromise && this.oQueryOptionsPromise.$metaPath === sMetaPath)) {
+			this.oQueryOptionsPromise
+				= this.fetchResolvedQueryOptions(oContext).then(function (mQueryOptions) {
+					return that.fetchFilter(oContext, mQueryOptions.$filter)
+						.then(function (aFilters) {
+							return _Helper.mergeQueryOptions(mQueryOptions,
+								that.getOrderby(mQueryOptions.$orderby), aFilters);
+						});
+				});
+			this.oQueryOptionsPromise.$metaPath = sMetaPath;
+		}
+
+		return this.oQueryOptionsPromise;
 	};
 
 	/**
@@ -1791,6 +1802,7 @@ sap.ui.define([
 		} else {
 			this.aApplicationFilters = aFilters;
 		}
+		this.oQueryOptionsPromise = undefined;
 
 		if (this.isRootBindingSuspended()) {
 			this.setResumeChangeReason(ChangeReason.Filter);
@@ -3743,6 +3755,7 @@ sap.ui.define([
 		}
 
 		this.aSorters = aSorters;
+		this.oQueryOptionsPromise = undefined;
 
 		if (this.isRootBindingSuspended()) {
 			this.setResumeChangeReason(ChangeReason.Sort);
