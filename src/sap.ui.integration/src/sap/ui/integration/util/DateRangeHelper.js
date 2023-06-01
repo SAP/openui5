@@ -95,45 +95,47 @@ sap.ui.define([
 		});
 
 		if (aOptions.length === 1 && aOptions[0] === "DATE" && bIsFormInput) {
-			var sDatePickerValue;
-
-			if (oConfig.value && oConfig.value.values && BindingHelper.isBindingInfo(oConfig.value.values)) {
-				sDatePickerValue = BindingHelper.formattedProperty(oConfig.value.values, function (aValues) {
-					if (aValues) {
-						return aValues[0];
-					}
-
-					return "";
-				});
-			} else if (oConfig.value && oConfig.value.values) {
-				sDatePickerValue = oConfig.value.values[0];
-			}
-
-			oControl = new DatePicker({
-				value: sDatePickerValue
-			});
+			oControl = new DatePicker();
 		} else {
 			oControl = new DynamicDateRange({
 				standardOptions: aOptions
 			});
-
-			if (oConfig.value) {
-				var oResolvedValue = BindingResolver.resolveValue(oConfig.value, oCard);
-				var sOption = oResolvedValue.option.toUpperCase();
-				var aTypes = oControl.getOption(sOption).getValueTypes();
-				oControl.setValue({
-					operator: sOption,
-					values: oResolvedValue.values.map(function (vValue, i) {
-						if (aTypes[i] === "date" || aTypes[i] === "datetime") {
-							return UI5Date.getInstance(vValue);
-						}
-						return vValue;
-					})
-				});
-			}
 		}
 
+		DateRangeHelper.setValue(oControl, oConfig.value, oCard);
+
 		return oControl;
+	};
+
+	DateRangeHelper.setValue = function (oControl, oValue, oCard) {
+		if (!oValue) {
+			return;
+		}
+
+		var oResolvedValue = BindingResolver.resolveValue(oValue, oCard);
+
+		if (oControl.isA("sap.m.DatePicker")) {
+			var sDatePickerValue;
+
+			if (oResolvedValue.values) {
+				sDatePickerValue = oResolvedValue.values[0];
+			}
+
+			oControl.setValue(sDatePickerValue);
+		} else {
+
+			var sOption = oResolvedValue.option.toUpperCase();
+			var aTypes = oControl.getOption(sOption).getValueTypes();
+			oControl.setValue({
+				operator: sOption,
+				values: oResolvedValue.values.map(function (vValue, i) {
+					if (aTypes[i] === "date" || aTypes[i] === "datetime") {
+						return UI5Date.getInstance(vValue);
+					}
+					return vValue;
+				})
+			});
+		}
 	};
 
 	DateRangeHelper.getValueForModel = function (oControl) {

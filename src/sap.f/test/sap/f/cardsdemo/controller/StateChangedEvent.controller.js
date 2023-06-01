@@ -205,6 +205,17 @@ sap.ui.define([
 			}, {
 				"id": "email",
 				"value": "testaddress@sap.com"
+			}, {
+				"id": "duration",
+				"value": "12:30"
+			}, {
+				"id": "dateRange",
+				"value": {
+					"option": "date",
+					"values": [
+						"2023-05-20"
+					]
+				}
 			}];
 
 			this._oSkeletonCard.setFormValues(aFormValues);
