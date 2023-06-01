@@ -845,10 +845,7 @@ sap.ui.define([
 					oControl.$("triggerList").css("display", "");
 					oControl.$("listUl").addClass("sapMListHasGrowing");
 					oTrigger.$().removeClass("sapMGrowingListBusyIndicatorVisible");
-
-					if (oControl.isA("sap.m.Table") && !oControl.hasPopin()) {
-						this.adaptTriggerButtonWidth(oControl, oTriggerDomRef);
-					}
+					this.adaptTriggerButtonWidth();
 				}
 
 				// store the last item count to be able to focus to the newly added item when the growing button is pressed
@@ -873,31 +870,31 @@ sap.ui.define([
 			}
 		},
 
-		adaptTriggerButtonWidth: function(oControl, oTriggerDomRef) {
-			// adapt trigger button width if dummy col is rendered
-			if (oControl.shouldRenderDummyColumn() && oControl.$("listUl").hasClass("sapMListHasGrowing")) {
+		// adapt trigger button width if dummy col is rendered
+		adaptTriggerButtonWidth: function() {
+			var oControl = this._oControl;
+			if (!oControl.isA("sap.m.Table") || oControl.hasPopin() || !oControl.shouldRenderDummyColumn()) {
+				return;
+			}
+
+			window.requestAnimationFrame(function() {
+				var oTriggerDomRef = this._oTrigger && this._oTrigger.getDomRef();
 				if (!oTriggerDomRef) {
-					oTriggerDomRef = this._oTrigger.getDomRef();
+					return;
 				}
 
-				window.requestAnimationFrame(function() {
-					if (oControl.bIsDestroyed) {
-						return;
+				var sCalWidth = Array.from(oControl.getDomRef("tblHeader").childNodes).slice(0, -1).map(function(oDomRef) {
+					var sWidth = oDomRef.style.width;
+					if (!sWidth || !sWidth.includes("%")) {
+						return oDomRef.getBoundingClientRect().width + "px";
+					} else {
+						return sWidth;
 					}
-
-					var sCalWidth = Array.from(oControl.getDomRef("tblHeader").childNodes).slice(0, -1).map(function(oDomRef) {
-						var sWidth = oDomRef.getAttribute("data-sap-width");
-						if (!sWidth || !sWidth.includes("%")) {
-							return oDomRef.getBoundingClientRect().width + "px";
-						} else {
-							return sWidth;
-						}
-					}).join(" + ");
-					// 1px is borderLeft of the dummyCell
-					oTriggerDomRef.style.width = "calc(" + sCalWidth + " + 1px)";
-					oTriggerDomRef.classList.add("sapMGrowingListDummyColumn");
-				});
-			}
+				}).join(" + ");
+				// 1px is borderLeft of the dummyCell
+				oTriggerDomRef.style.width = "calc(" + sCalWidth + " + 1px)";
+				oTriggerDomRef.classList.add("sapMGrowingListDummyColumn");
+			}.bind(this));
 		}
 	});
 

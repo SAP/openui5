@@ -378,17 +378,14 @@ sap.ui.define([
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 		assert.strictEqual(sut.getColCount(), 6, "highlight, 3 visible columns, navigation & navigated columns");
-		assert.strictEqual(sut.getColSpan(), 4, "navigation & navigated colums are ignored from the col span since they are always rendered by the table");
 
 		sut.setMode("MultiSelect");
 		Core.applyChanges();
 		assert.strictEqual(sut.getColCount(), 7, "highlight, MultiSelect, 3 visible columns, navigation & navigated columns");
-		assert.strictEqual(sut.getColSpan(), 5, "navigation & navigated colums are ignored from the col span since they are always rendered by the table");
 
 		sut.getItems()[0].setType("Navigation");
 		Core.applyChanges();
 		assert.strictEqual(sut.getColCount(), 7, "highlight, MultiSelect, 3 visible columns, navigation & navigated columns");
-		assert.strictEqual(sut.getColSpan(), 5, "navigation & navigated colums are ignored from the col span since they are always rendered by the table");
 
 		sut.setFixedLayout("Strict");
 		sut.getColumns().forEach(function(oColumn) {
@@ -396,7 +393,6 @@ sap.ui.define([
 		});
 		Core.applyChanges();
 		assert.strictEqual(sut.getColCount(), 8, "highlight, MultiSelect, 3 visible columns, navigation, navigated & dummy columns");
-		assert.strictEqual(sut.getColSpan(), 5, "navigation, navigated & dummy colums are ignored from the col span since they are always rendered by the table");
 
 		sut.addColumn(sut.removeAllColumns().pop());
 		Core.applyChanges();
@@ -2677,14 +2673,14 @@ sap.ui.define([
 		});
 
 		window.setTimeout(function() {
-			assert.ok(this.sut.$().find(".sapMListTblCell:visible").hasClass("sapMTableLastColumn"), "sapMTableLastColumn class added");
+			assert.ok(this.sut.$().find(".sapMListTblCell:visible").hasClass("sapMTableForcedColumn"), "sapMTableForcedColumn class added");
 			assert.strictEqual(oColumn.getDomRef().style.width, "", "column occupies the available width and not bigger than the table");
 			assert.notOk(this.sut._bCheckLastColumnWidth, "_bCheckLastColumnWidth=false, since _checkLastColumnWidth has been processed");
 
 			oColumn.setWidth("10px");
 			Core.applyChanges();
 			assert.ok(this.sut._bCheckLastColumnWidth, "_bCheckLastColumnWidth=true");
-			assert.notOk(this.sut.$().find(".sapMListTblCell:visible").hasClass("sapMTableLastColumn"), "sapMTableLastColumn class not added since column is smaller than table");
+			assert.notOk(this.sut.$().find(".sapMListTblCell:visible").hasClass("sapMTableForcedColumn"), "sapMTableForcedColumn class not added since column is smaller than table");
 
 			done();
 		}.bind(this), 1);
@@ -2736,17 +2732,19 @@ sap.ui.define([
 		Core.applyChanges();
 
 		oSmallColumn.setVisible(false);
+		Core.applyChanges();
 
 		window.setTimeout(function() {
-			assert.ok(this.sut.$().find(".sapMListTblCell:visible").hasClass("sapMTableLastColumn"), "sapMTableLastColumn class added to the column");
+			assert.ok(this.sut.$().find(".sapMListTblCell:visible").hasClass("sapMTableForcedColumn"), "sapMTableForcedColumn class added to the column");
 			assert.strictEqual(oBigColumn.getDomRef().style.width, "", "column occupies the available width and not bigger than the table");
 			done();
 		}.bind(this), 1);
 	});
 
-	QUnit.test("sapMTableLastColumn should be cleared if there are other columns visible", function(assert) {
+	QUnit.test("sapMTableForcedColumn should be cleared if there are other columns visible", function(assert) {
 		this.sut.destroy();
 		var clock = sinon.useFakeTimers();
+		var rafStub = this.stub(window, "requestAnimationFrame", window.setTimeout);
 
 		var oBigColumn = new Column({
 			width: "700px",
@@ -2789,21 +2787,22 @@ sap.ui.define([
 
 		assert.equal(this.sut.$("tblHeadDummyCell").length, 1, "DummyCol rendered");
 		// simulate changning of table width
-		this.sut.$().width("500px");
+		this.sut.setWidth("500px");
 		this.sut.setContextualWidth("500px");
 		Core.applyChanges();
-		clock.tick(10);
+		clock.tick(1);
 
-		assert.ok(this.sut.$("tblHeader").find(".sapMTableLastColumn").length > 0, "sapMTableLastColumn class added to the column");
-		assert.strictEqual(oSmallColumn.getDomRef().style.display, "none", "this column is hidden due to the hiddenInPopin feature");
+		assert.ok(this.sut.$("tblHeader").find(".sapMTableForcedColumn").length > 0, "sapMTableForcedColumn class added to the column");
+		assert.notOk(oSmallColumn.getDomRef(), "Small column is hidden due to the hiddenInPopin feature");
 		// simulate changing of table width
-		this.sut.$().width("");
+		this.sut.setWidth();
 		this.sut.setContextualWidth("1200px");
 		Core.applyChanges();
-		clock.tick(10);
+		clock.tick(1);
 
-		assert.notOk(this.sut.$("tblHeader").find(".sapMTableLastColumn").length, "sapMTableLastColumn not found and is removed from the column");
-		assert.strictEqual(oSmallColumn.getDomRef().style.display, "table-cell", "this column is visible again");
+		assert.notOk(this.sut.$("tblHeader").find(".sapMTableForcedColumn").length, "sapMTableForcedColumn not found and is removed from the column");
+		assert.ok(oSmallColumn.getDomRef(), "Small column is visible again");
+		rafStub.restore();
 		clock.restore();
 	});
 

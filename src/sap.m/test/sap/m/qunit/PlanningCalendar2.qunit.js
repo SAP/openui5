@@ -829,7 +829,7 @@ sap.ui.define([
 		_createCalendar: function (oStartDate) {
 			this._iRenderingCount = 0;
 			this._oPC = createPlanningCalendar("_oPC", new SearchField(), new Button(), (oStartDate || this.o14Sep2016MidOfMonth), CalendarIntervalType.OneMonth);
-			this._oPC.addEventDelegate({
+			this._oPC.getAggregation("table").addEventDelegate({
 				onAfterRendering: function() { this._iRenderingCount++; }
 			}, this);
 			this._oPC.placeAt("smallUiArea");

@@ -31,9 +31,10 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	// for dummy cell rendering position inherit from ColumnListItemRenderer
 	GroupHeaderListItemRenderer.renderContentLatter = ColumnListItemRenderer.renderContentLatter;
 
-	// GroupHeaderListItem does not respect counter property of the LIB
-	GroupHeaderListItemRenderer.renderCounter = function(rm, oLI) {
-	};
+	// GroupHeaderListItem does not respect mode, counter and highlight property of the LIB
+	GroupHeaderListItemRenderer.renderMode = function(rm, oLI) {};
+	GroupHeaderListItemRenderer.renderCounter = function(rm, oLI) {};
+	GroupHeaderListItemRenderer.renderHighlight = function(rm, oLI) {};
 
 	/**
 	 * Renders the attributes for the given list item, using the provided
@@ -66,11 +67,10 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	 */
 	GroupHeaderListItemRenderer.renderLIContentWrapper = function(rm, oLI) {
 		var oTable = oLI.getTable();
-
 		if (oTable) {
 			rm.openStart("td");
 			rm.class("sapMGHLICell");
-			rm.attr("colspan", oTable.getColSpan());
+			rm.attr("colspan", oTable.getColCount() - 2 /* Type and Navigated cells are always rendered */- oTable.shouldRenderDummyColumn());
 			rm.openEnd();
 		}
 

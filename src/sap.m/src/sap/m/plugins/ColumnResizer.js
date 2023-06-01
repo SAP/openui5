@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/ResizeHandler",
 	"sap/ui/Device",
 	"sap/m/ColumnPopoverActionItem",
 	"sap/m/table/columnmenu/QuickAction",
@@ -18,7 +17,6 @@ sap.ui.define([
 	Core,
 	Element,
 	InvisibleText,
-	ResizeHandler,
 	Device,
 	ColumnPopoverActionItem,
 	QuickAction,
@@ -106,11 +104,6 @@ sap.ui.define([
 			this._$Container.removeClass(CSS_CLASS + "Container").off("." + CSS_CLASS);
 			this._$Container.find(this.getConfig("resizable")).removeClass(CSS_CLASS + "Resizable");
 			this._updateAriaDescribedBy("remove");
-
-			if (this._sResizerID) {
-				ResizeHandler.deregister(this._sResizerID);
-				this._sResizerID = null;
-			}
 		}
 	};
 
@@ -121,7 +114,6 @@ sap.ui.define([
 		this._aResizables = this._$Container.find(this.getConfig("resizable")).addClass(CSS_CLASS + "Resizable").get();
 		this._updateAriaDescribedBy("add");
 		this._invalidatePositions();
-		this._sResizerID = ResizeHandler.register(this.getControl().getDomRef(), this._invalidatePositions.bind(this));
 	};
 
 	/**

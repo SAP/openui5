@@ -591,10 +591,7 @@ function(
 	ListBase.prototype.onAfterRendering = function() {
 		this._bRendering = false;
 		this._sLastMode = this.getMode();
-		// invalidate item navigation for desktop
-		if (Device.system.desktop) {
-			this._startItemNavigation(true);
-		}
+		this._startItemNavigation(true);
 	};
 
 	ListBase.prototype.exit = function () {
@@ -1028,8 +1025,6 @@ function(
 			var oSelectAllDomRef = this._getSelectAllCheckbox ? this._getSelectAllCheckbox() : undefined;
 			if (oSelectAllDomRef) {
 				Util.showSelectionLimitPopover(iSelectableItemCount, oSelectAllDomRef);
-			} else {
-				throw Error("Unsupported Operation");
 			}
 		}
 

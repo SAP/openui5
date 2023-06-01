@@ -149,25 +149,23 @@ sap.ui.define([
 		// remove cloned headers
 		oLI._destroyClonedHeaders();
 
-		aColumns.forEach(function(oColumn, i) {
+		aColumns.forEach(function(oColumn, iColumnIndex) {
 			var oHeader,
 				bRenderCell = true,
 				oCell = aCells[oColumn.getInitialOrder()];
 
-			if (!oColumn.getVisible() || !oCell || oColumn.isPopin()) {
-				// update the visible index of the column
-				oColumn.setIndex(-1);
+			if (!oCell || !oColumn.getVisible() || oColumn.isHidden()) {
 				return;
 			}
 
-			rm.openStart("td", oLI.getId() + "_cell" + i);
+			rm.openStart("td", oLI.getId() + "_cell" + iColumnIndex);
 			rm.class("sapMListTblCell");
 			rm.attr("data-sap-ui-column", oColumn.getId());
 
 			// check column properties
 			if (oColumn) {
-				var aStyleClass = oColumn.getStyleClass(true).split(" ");
-				aStyleClass && aStyleClass.forEach(function(sClassName) {
+				var aStyleClass = oColumn.getStyleClass().split(" ").filter(Boolean);
+				aStyleClass.forEach(function(sClassName) {
 					rm.class(sClassName);
 				});
 
@@ -205,11 +203,6 @@ sap.ui.define([
 
 				oColumn.getVAlign() != "Inherit" && rm.style("vertical-align", oColumn.getVAlign().toLowerCase());
 				rm.style("text-align", oColumn.getCssAlign());
-
-				if (oColumn.isHidden()) {
-					rm.style("display", "none");
-					rm.attr("aria-hidden", "true");
-				}
 			}
 
 			rm.openEnd();
@@ -257,13 +250,10 @@ sap.ui.define([
 		// popin row
 		rm.openStart("tr", oLI.getPopin());
 		rm.class("sapMListTblSubRow");
-		rm.attr("tabindex", "-1");
 		rm.attr("data-sap-ui-related", oLI.getId());
-
 		if (oLI.isSelectable()) {
 			rm.attr("aria-selected", oLI.getSelected());
 		}
-
 		rm.openEnd();
 
 		this.renderHighlight(rm, oLI);
@@ -271,15 +261,14 @@ sap.ui.define([
 		// cell
 		rm.openStart("td", oLI.getId() + "-subcell");
 		rm.class("sapMListTblSubRowCell");
-		rm.attr("colspan", oTable.shouldRenderDummyColumn() ? oTable.getColSpan() + 1 : oTable.getColSpan());
-
-		var sPopinLayout = oTable.getPopinLayout();
+		rm.attr("colspan", oTable.getColCount() - 2 /* Highlight and Navigated cells are always rendered in popin */);
 		rm.attr("aria-labelledby", this.getAriaAnnouncement(null, "TABLE_POPIN_ROLE_DESCRIPTION"));
 		rm.openEnd();
 
+		// container
 		rm.openStart("div");
 		rm.class("sapMListTblSubCnt");
-		rm.class("sapMListTblSubCnt" + sPopinLayout);
+		rm.class("sapMListTblSubCnt" + oTable.getPopinLayout());
 		rm.openEnd();
 
 		var aCells = oLI.getCells(),
@@ -290,26 +279,23 @@ sap.ui.define([
 				return;
 			}
 
-			var oCell = aCells[oColumn.getInitialOrder()],
-				oHeader = oColumn.getHeader();
-
+			var oCell = aCells[oColumn.getInitialOrder()];
+			var oHeader = oColumn.getHeader();
 			if (!oHeader && !oCell) {
 				return;
 			}
 
-			var aStyleClass = oColumn.getStyleClass().split(" "),
+			var aStyleClass = oColumn.getStyleClass().split(" ").filter(Boolean),
 				sPopinDisplay = oColumn.getPopinDisplay(),
 				oOriginalHeader = oHeader;
 
 			/* row start */
 			rm.openStart("div");
 			rm.class("sapMListTblSubCntRow");
-
 			if (sPopinDisplay == PopinDisplay.Inline) {
 				rm.class("sapMListTblSubCntRowInline");
 			}
-
-			aStyleClass && aStyleClass.forEach(function(sClassName) {
+			aStyleClass.forEach(function(sClassName) {
 				rm.class(sClassName);
 			});
 			rm.openEnd();
@@ -345,11 +331,15 @@ sap.ui.define([
 			rm.close("div");
 		}, this);
 
+		// container
 		rm.close("div");
+
+		// cell
 		rm.close("td");
 
 		this.renderNavigated(rm, oLI);
 
+		// popin row
 		rm.close("tr");
 	};
 
@@ -368,7 +358,6 @@ sap.ui.define([
 
 	ColumnListItemRenderer.renderContentLatter = function(rm, oLI) {
 		var oTable = oLI.getTable();
-
 		if (oTable && oTable.shouldRenderDummyColumn()) {
 			if (!oTable.hasPopin()) {
 				ListItemBaseRenderer.renderContentLatter.apply(this, arguments);

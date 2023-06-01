@@ -2295,7 +2295,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assert
-		assert.ok(oResizingSpy.calledThrice, "_adjustColumnHeadersTopOffset is called three times");
+		assert.equal(oResizingSpy.callCount, 4, "_adjustColumnHeadersTopOffset is called four times");
 
 		// cleanup
 		oPCWithSticky.destroy();

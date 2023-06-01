@@ -111,17 +111,13 @@ sap.ui.define([
 	QUnit.module("size and visibility");
 
 	QUnit.test("ShouldKnowIfItIsHidden", function(assert) {
-		var fnTestCase = function( expectedResult, hasMedia, hasMatchingMedia, hasScreen, minWidth){
+		var fnTestCase = function( expectedResult, hasMedia, hasMatchingMedia, minWidth){
 			//SUT
 			var result,
 				sut = new Column();
 
 			if (hasMedia) {
 				sut._media = { matches: hasMatchingMedia };
-			}
-
-			if (hasScreen){
-				sut._screen = true;
 			}
 
 			sut._minWidth = minWidth;
@@ -143,17 +139,10 @@ sap.ui.define([
 		//no media now it depends on screen and width
 
 		//no screen - false
-		fnTestCase(false, false, undefined, false, true);
+		fnTestCase(false, false, undefined, true);
 
 		//noMinWidth - false
-		fnTestCase(false, false, undefined, true, 0);
-
-		//minWidth is smaller than windows inner width - false
-		fnTestCase(false, false, undefined, true, -1);
-
-		//minWidth is bigger than windows inner width - true
-		fnTestCase(true, false, undefined, true, 10000);
-
+		fnTestCase(false, false, undefined, 0);
 	});
 
 	QUnit.test("ShouldValidateMinWidth", function(assert) {
@@ -191,16 +180,10 @@ sap.ui.define([
 
 	QUnit.test("ShouldKnowIfWidthIsPredefined", function(assert) {
 		//SUT
-		var sut = new Column({minScreenWidth : "240px"});
-
-
-		//Act
-		assert.strictEqual(sut._screen,"phone");
-		sut._isWidthPredefined("600px");
+		var sut = new Column({minScreenWidth : "tablet"});
 
 		//Assert
-		assert.strictEqual(sut._screen,"tablet");
-		assert.strictEqual(sut._minWidth,"600px");
+		assert.strictEqual(sut._minWidth, "600px");
 
 		//Cleanup
 		sut.destroy();
@@ -222,24 +205,27 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
 		assert.ok(sut.getVisible(), "Column is visible");
+		assert.ok(sut.getDomRef(), "Column is rendered");
 
 		oTable.setContextualWidth("Phone");
 		clock.tick(1);
-		assert.strictEqual(sut.getDomRef().style.display, "none", "Column is hidden due to minScreenWidth");
+		assert.notOk(sut.getDomRef(), "Column is not rendered due to minScreenWidth");
+		assert.notOk(oTable.hasPopin(), "Table has no popin");
 
 		sut.setVisible(false);
 		clock.tick(1);
-		assert.strictEqual(sut.getDomRef().style.display, "none", "Column is hidden");
+		assert.notOk(sut.getDomRef(), "Column is not rendered due to visible=false");
 
 		sut.setVisible(true);
 		clock.tick(1);
-		assert.ok(sut.isHidden(), "hidden via media query");
-		assert.strictEqual(sut.getDomRef().style.display, "none", "Column is hidden due to minScreenWidth");
+		assert.ok(sut.isHidden(), "Column is hidden");
+		assert.notOk(oTable.hasPopin(), "Table has no popin");
+		assert.notOk(sut.getDomRef(), "Column is still not rendered due to minScreenWidth");
 
 		oTable.setContextualWidth("Desktop");
 		clock.tick(1);
-		assert.notOk(sut.isHidden(), "visible via media query");
-		assert.strictEqual(sut.getDomRef().style.display, "table-cell", "Column is visible");
+		assert.notOk(sut.isHidden(), "Column is not hidden any more");
+		assert.ok(sut.getDomRef(), "Column is rendered");
 
 		oTable.destroy();
 	});
@@ -333,7 +319,7 @@ sap.ui.define([
 				minScreenWidth : "phone"
 			}),
 			parent = new Table({
-				columns : sut
+				columns : [new Column(), sut]
 			});
 
 		// The table needs to be rendered for the column media object to be initialized
@@ -398,7 +384,7 @@ sap.ui.define([
 					minScreenWidth : "tablet"
 				}),
 				parent = new Table({
-					columns : sut
+					columns : [new Column(), sut]
 				}),
 				page = new Page({
 					content: [parent]
@@ -525,79 +511,24 @@ sap.ui.define([
 
 	QUnit.module("display and style");
 
-	QUnit.test("ShouldSetDisplay", function(assert) {
-		//System under Test + Arrange
-		var sut = new Column({
-				demandPopin : true,
-				minScreenWidth : "1px"
-			}),
-			parent = new Table({
-				columns : sut,
-				items: new ColumnListItem({
-					cells: new Text({
-						text: "cell"
-					})
-				})
-			});
-
-		//Act
-		parent.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		//Act
-		sut.setDisplay(jQuery("table")[0], false);
-
-		//Assert
-		assert.strictEqual(parent.$().find("td").eq(1).css("display"), "none");
-		assert.strictEqual(parent.$().find("th").eq(1).css("display"), "none");
-
-		//Cleanup
-		parent.destroy();
-	});
-
-	QUnit.test("ShouldGetTheStyleClass", function(assert) {
-		//Arrange
-		var result,
-			className = "awesomeStyle",
-			media = "phone",
-			//System under Test
-			sut = new Column({
-				styleClass : className,
-				minScreenWidth : media
-			});
-
-		//Act
-		result = sut.getStyleClass(true);
-
-		//Assert
-		assert.ok(result.indexOf(className) !== -1, "style class was present in: " + result);
-		assert.ok(result.indexOf(media) !== -1, "media class was present in: " + result);
-	});
-
 	QUnit.test("Should convert units correctly", function(assert) {
 
-		var fnTestCase = function(width, px, screen) {
+		var fnTestCase = function(width, px) {
 			//SUT
 			var sut = new Column({minScreenWidth: width});
 
 			//Assert
 			assert.strictEqual(sut._minWidth, px);
-			assert.strictEqual(sut._screen, screen);
 
 			//Cleanup
 			sut.destroy();
 		};
 
-		fnTestCase("64rem", "1024px", "desktop");
-		fnTestCase("64em", "1024px", "desktop");
-		fnTestCase("desktop", "1024px", "desktop");
-		fnTestCase("Desktop", "1024px", "desktop");
-
-		fnTestCase("63rem", 63 * 16 + "px", "");
-		fnTestCase("63em", 63 * 16 + "px", "");
-
-		fnTestCase("63px", "63px", "");
-
+		fnTestCase("64rem", "1024px");
+		fnTestCase("64em", "1024px");
+		fnTestCase("desktop", "1024px");
+		fnTestCase("Desktop", "1024px");
+		fnTestCase("63px", "63px");
 	});
 
 	QUnit.test("Sorted property and sort icon", function(assert) {
