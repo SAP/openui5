@@ -102,7 +102,7 @@ sap.ui.define([
 	 */
 	Form.prototype.resolveControl = function (oItem) {
 		var oResolved = {},
-			vValue,
+			vValue = this.getModel("form").getProperty("/" + oItem.id),
 			aValidations = this.getModel("messages").getProperty("/records"),
 			oValueState = aValidations.find(function (oValidation) {
 				return oValidation.bindingPath === "/" + oItem.id;
@@ -113,12 +113,17 @@ sap.ui.define([
 			oResolved.valueState = { message: oValueState.message, type: oValueState.type };
 		}
 
-		if (oItem.type === "ComboBox") {
-			vValue = this.getModel("form").getProperty("/" + oItem.id);
-			oResolved.selectedKey = vValue.key;
-			vValue = vValue.value;
-		} else {
-			vValue = this.getModel("form").getProperty("/" + oItem.id);
+		switch (oItem.type) {
+			case "ComboBox":
+				oResolved.selectedKey = vValue.key;
+				vValue = vValue.value;
+				break;
+			case "DateRange":
+				vValue = vValue.value;
+				break;
+			default:
+				// do nothing
+				break;
 		}
 
 		oResolved.value = vValue;
@@ -138,14 +143,17 @@ sap.ui.define([
 		}
 
 		var sId = oFormControlData.id,
-			oControl = this._mControls.get(sId);
+			oControl = this._mControls.get(sId),
+			vValue = oFormControlData.value;
 
 		if (oControl.isA("sap.m.ComboBox")) {
 			this._setComboBoxValue(oControl, oFormControlData);
-		}
-
-		if ("value" in oFormControlData && oControl.isA(["sap.m.TextArea", "sap.m.Input"])) {
-			oControl.setValue(oFormControlData.value);
+		} else if (vValue) {
+			if (oControl.isA("sap.m.DatePicker") || oControl.isA("sap.m.DynamicDateRange")) {
+				DateRangeHelper.setValue(oControl, vValue, this._oCard);
+			} else {
+				oControl.setValue(vValue);
+			}
 		}
 
 		this._validateAndUpdate(oControl);
