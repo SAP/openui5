@@ -345,7 +345,7 @@ function(
 	}
 
 	function onSaveReorderedAdaptations() {
-		Utils.checkDraftOverwrite(this.getModel("versions")).then(function() {
+		Utils.checkDraftOverwrite(this.getToolbar().getModel("versions")).then(function() {
 			var oRtaInformation = this.getToolbar().getRtaInformation();
 			var aAdaptationPriorities = this.oAdaptationsModel.getProperty("/adaptations").map(function(oAdaptation) { return oAdaptation.id; });
 			return ContextBasedAdaptationsAPI.reorder({control: oRtaInformation.rootControl, layer: oRtaInformation.flexSettings.layer, parameters: {priorities: aAdaptationPriorities}});
