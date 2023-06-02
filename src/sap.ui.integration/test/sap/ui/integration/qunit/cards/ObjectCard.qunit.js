@@ -518,7 +518,7 @@ sap.ui.define([
 					"initialSelection": "reason1",
 					"initialComment": "Free text comment",
 					"initialValue": "Initial value",
-					"durationValue": "11:12",
+					"durationValue": "PT11H12M",
 					"reasons": [
 						{
 							"id": "reason1",
@@ -2333,7 +2333,7 @@ sap.ui.define([
 					},
 					"comment": "Free text comment",
 					"userValue": "Initial value",
-					"durationValue": "11:12",
+					"durationValue": "PT11H12M",
 					"dateRangeValue": DateRangeHelper.getValueForModel(oCard.getCardContent().getAggregation("_content").getItems()[0].getItems()[9])
 				};
 
@@ -2536,7 +2536,7 @@ sap.ui.define([
 			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), "a", "Value in model is updated");
 			assert.strictEqual(oCard.getModel("form").getProperty("/i3").value, "a", "Value in model is updated");
 			assert.deepEqual(oCard.getModel("form").getProperty("/i4"), DateRangeHelper.getValueForModel(oDateRange), "Value in model is updated");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i5"), "12:30", "Value in model is updated");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i5"), "PT12H30M", "Value in model is updated");
 
 			done();
 		});
@@ -2614,7 +2614,7 @@ sap.ui.define([
 				{ "id": "i1", "value": "some text" },
 				{ "id": "i2", "value": "some long text" },
 				{ "id": "i3", "value": { "option": "date", "values": ["2020-05-20"]} },
-				{ "id": "i4", "value": "12:30" }
+				{ "id": "i4", "value": "PT12H30M" }
 			]);
 
 			// Assert
@@ -2622,7 +2622,7 @@ sap.ui.define([
 			assert.strictEqual(oCard.getModel("form").getProperty("/i1"), "some text", "Form model has correct value for Input");
 			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), "some long text", "Form model has correct value for TextArea");
 			assert.deepEqual(oCard.getModel("form").getProperty("/i3"), DateRangeHelper.getValueForModel(oDateRange), "Form model has correct value for DateRange");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i4"), "12:30", "Form model has correct value for Duration");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i4"), "PT12H30M", "Form model has correct value for Duration");
 
 			done();
 		});
@@ -2913,7 +2913,6 @@ sap.ui.define([
 			done();
 		});
 
-
 		oCard.setManifest({
 			"sap.app": {
 				"type": "card",
@@ -2952,7 +2951,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("Forms Extension Validation", {
-
 		beforeEach: function () {
 			this.oCard = new Card({
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"

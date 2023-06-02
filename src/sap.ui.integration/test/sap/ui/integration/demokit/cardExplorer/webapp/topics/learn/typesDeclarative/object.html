@@ -883,9 +883,18 @@
 						<td>value</td>
 						<td>string</td>
 						<td>No</td>
-						<td>Defines the initial value for the duration input.
-							The available values are hours and minutes, formatted like HH:mm.
-							For example "10:30" - 10 hours and 30 minutes.</td>
+						<td>
+							Defines the initial value for the duration input. It should be in ISO 8601 duration format.
+							For example "PT10H30M" is 10 hours and 30 minutes.
+							<br>
+							The following restrictions apply:
+							<ul>
+								<li>Values that contain date part are not supported</li>
+								<li>Values that contain seconds are not supported</li>
+								<li>Values with decimal fractions are not supported</li>
+								<li>Hours can be in the range [0-24] and minutes in [0-59]</li>
+							</ul>
+						</td>
 						<td>1.54</td>
 						<td>1.114</td>
 					</tr>
