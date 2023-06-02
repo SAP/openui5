@@ -113,7 +113,7 @@ sap.ui.define([
 		var oVSbIOS = this.getVerticalScrollbar();
 		var oVSbThumb = this.getVerticalScrollbarThumb();
 
-		if (!oVSb) {
+		if (!oVSb || !oVSb.isConnected) {
 			return;
 		}
 
