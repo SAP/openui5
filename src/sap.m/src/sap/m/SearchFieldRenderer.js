@@ -41,7 +41,7 @@ sap.ui.define([
 			return;
 		}
 
-		var sPlaceholder = oSF.getPlaceholder() || Core.getLibraryResourceBundle("sap.m").getText("FACETFILTER_SEARCH", true),
+		var sPlaceholder = oSF.getPlaceholder() || Core.getLibraryResourceBundle("sap.m").getText("FACETFILTER_SEARCH", undefined, true),
 			sValue = oSF.getValue(),
 			sWidth = oSF.getProperty("width"),
 			sId = oSF.getId(),
