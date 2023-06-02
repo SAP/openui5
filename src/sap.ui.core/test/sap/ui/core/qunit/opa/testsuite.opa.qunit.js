@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/base/util/merge",
-	"sap/ui/Device"
-], function(merge, Device) {
+	"sap/base/util/merge"
+], function(merge) {
 	"use strict";
 
 	var oCommonTests = {
@@ -20,8 +19,7 @@ sap.ui.define([
 		"actions/EnterText": {
 			title: "QUnit Page for sap.ui.test.actions.EnterText",
 			qunit: {
-				testTimeout: 5000,
-				noglobals: !Device.browser.msie
+				testTimeout: 5000
 			},
 			sinon: {
 				version: 1,
@@ -32,9 +30,6 @@ sap.ui.define([
 		"actions/DnD": {
 			title: "QUnit Page for sap.ui.test.actions.Drag and sap.ui.test.actions.Drop",
 			module: "./actions/DnD.qunit",
-			qunit: {
-				noglobals: false
-			},
 			loader: {
 				paths: {
 					"sap/f/sample": "test-resources/sap/f/demokit/sample",
@@ -47,18 +42,13 @@ sap.ui.define([
 		},
 		"actions/Press": {
 			/* Hasher -> own page needed */
-			page: "test-resources/sap/ui/core/qunit/opa/actions/Press.qunit{qunitVersion}.html?noglobals=true",
+			page: "test-resources/sap/ui/core/qunit/opa/actions/Press.qunit{qunitVersion}.html",
 			title: "QUnit Page for sap.ui.test.actions.Press",
 			loader: {
 				paths: {
 					"samples" : "test-resources/sap/ui/core/samples/",
 					"unitTests" : "test-resources/sap/ui/core/qunit/opa/"
 				}
-			},
-			qunit: {
-				// The noglobals check is disabled because IE11 creates false negative from the blindlayer
-				// which is kept in the DOM as global variable
-				noglobals: !Device.browser.msie
 			},
 			sinon: {
 				version: 1,
@@ -87,55 +77,55 @@ sap.ui.define([
 			module: "./autowaiter/autoWaiter.qunit"
 		},
 		"demokit/sample/matcher/BindingPath/Opa": {
-			page: "test-resources/sap/ui/core/demokit/sample/matcher/BindingPath/Opa.html?noglobals=true&sap-ui-animation=false",
+			page: "test-resources/sap/ui/core/demokit/sample/matcher/BindingPath/Opa.html?sap-ui-animation=false",
 			title: "Opa Sample for Binding Path Matcher",
 			ui5: {
 				libs: "sap.m"
 			}
 		},
 		"demokit/sample/matcher/I18NText/Opa": {
-			page: "test-resources/sap/ui/core/demokit/sample/matcher/I18NText/Opa.html?noglobals=true&sap-ui-animation=false",
+			page: "test-resources/sap/ui/core/demokit/sample/matcher/I18NText/Opa.html?sap-ui-animation=false",
 			title: "Opa Sample for I18N Text Matcher",
 			ui5: {
 				libs: "sap.m"
 			}
 		},
 		"demokit/sample/matcher/LabelFor/Opa": {
-			page: "test-resources/sap/ui/core/demokit/sample/matcher/LabelFor/Opa.html?noglobals=true&sap-ui-animation=false",
+			page: "test-resources/sap/ui/core/demokit/sample/matcher/LabelFor/Opa.html?sap-ui-animation=false",
 			title: "Opa Sample for LabelFor Matcher",
 			ui5: {
 				libs: "sap.m"
 			}
 		},
 		"demokit/sample/matcher/Descendant/Opa": {
-			page: "test-resources/sap/ui/core/demokit/sample/matcher/Descendant/Opa.html?noglobals=true&sap-ui-animation=false",
+			page: "test-resources/sap/ui/core/demokit/sample/matcher/Descendant/Opa.html?sap-ui-animation=false",
 			title: "Opa Sample for Descendant Matcher",
 			ui5: {
 				libs: "sap.m"
 			}
 		},
 		"demokit/sample/OpaAutoWaitParams/OpaAutoWaitParams": {
-			page: "test-resources/sap/ui/core/demokit/sample/OpaAutoWaitParams/OpaAutoWaitParams.html?noglobals=true&sap-ui-animation=false",
+			page: "test-resources/sap/ui/core/demokit/sample/OpaAutoWaitParams/OpaAutoWaitParams.html?sap-ui-animation=false",
 			title: "OPA5 AutoWait Parameters"
 		},
 		"demokit/sample/OpaBusyIndicator/OpaBusyIndicator": {
-			page: "test-resources/sap/ui/core/demokit/sample/OpaBusyIndicator/OpaBusyIndicator.html?noglobals=true&sap-ui-animation=false",
+			page: "test-resources/sap/ui/core/demokit/sample/OpaBusyIndicator/OpaBusyIndicator.html?sap-ui-animation=false",
 			title: "Testing busy controls with OPA5"
 		},
 		"demokit/sample/OpaById/Opa": {
-			page: "test-resources/sap/ui/core/demokit/sample/OpaById/Opa.html?noglobals=true&sap-ui-animation=false",
+			page: "test-resources/sap/ui/core/demokit/sample/OpaById/Opa.html?sap-ui-animation=false",
 			title: "Opa sample for retrieving controls by id"
 		},
 		"demokit/sample/OpaDynamicWait/Opa": {
-			page: "test-resources/sap/ui/core/demokit/sample/OpaDynamicWait/Opa.html?noglobals=true&sap-ui-animation=false",
+			page: "test-resources/sap/ui/core/demokit/sample/OpaDynamicWait/Opa.html?sap-ui-animation=false",
 			title: "Opa sample for nested actions"
 		},
 		"demokit/sample/OpaMatchers/OpaMatchers": {
-			page: "test-resources/sap/ui/core/demokit/sample/OpaMatchers/OpaMatchers.html?noglobals=true&sap-ui-animation=false",
+			page: "test-resources/sap/ui/core/demokit/sample/OpaMatchers/OpaMatchers.html?sap-ui-animation=false",
 			title: "Opa sample for matchers"
 		},
 		"demokit/sample/OpaPageObject/OpaPageObject": {
-			page: "test-resources/sap/ui/core/demokit/sample/OpaPageObject/OpaPageObject.html?noglobals=true&sap-ui-animation=false",
+			page: "test-resources/sap/ui/core/demokit/sample/OpaPageObject/OpaPageObject.html?sap-ui-animation=false",
 			title: "Opa sample for PageObjects",
 			loader: {
 				paths: {
@@ -144,7 +134,7 @@ sap.ui.define([
 			}
 		},
 		"demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame": {
-			page: "test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame.html?noglobals=true&sap-ui-animation=false",
+			page: "test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame.html?sap-ui-animation=false",
 			title: "Opa sample for starting an app with a frame",
 			ui5: {
 				libs: "sap.m",
@@ -160,7 +150,7 @@ sap.ui.define([
 			}
 		},
 		"demokit/sample/OpaStartup/iStartMyUIComponent/iStartMyUIComponent": {
-			page: "test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyUIComponent/iStartMyUIComponent.html?noglobals=true&sap-ui-animation=false",
+			page: "test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyUIComponent/iStartMyUIComponent.html?sap-ui-animation=false",
 			title: "OPA sample for starting an app with a component",
 			ui5: {
 				libs: "sap.m",
@@ -175,11 +165,11 @@ sap.ui.define([
 			}
 		},
 		"demokit/sample/OpaStaticAreaControls/OpaStaticAreaControls": {
-			page: "test-resources/sap/ui/core/demokit/sample/OpaStaticAreaControls/OpaStaticAreaControls.html?noglobals=true&sap-ui-animation=false",
+			page: "test-resources/sap/ui/core/demokit/sample/OpaStaticAreaControls/OpaStaticAreaControls.html?sap-ui-animation=false",
 			title: "Retrieving controls in the static area with OPA5"
 		},
 		"demokit/sample/OpaTestLibrary/OpaTestLibrary": {
-			page: "test-resources/sap/ui/core/demokit/sample/OpaTestLibrary/OpaTestLibrary.html?noglobals=true&sap-ui-animation=false",
+			page: "test-resources/sap/ui/core/demokit/sample/OpaTestLibrary/OpaTestLibrary.html?sap-ui-animation=false",
 			title: "OPA5 Test Library Sample"
 		},
 		"demokit/sample/OpaURLParameters/iStartMyAppInAFrameWithURLParameters/iStartMyAppInAFrameWithURLParameters": {
@@ -205,9 +195,6 @@ sap.ui.define([
 				paths: {
 					"fixture": "test-resources/sap/ui/core/qunit/opa/fixture/"
 				}
-			},
-			qunit: {
-				noglobals: false
 			},
 			module: "./launchers/iFrameLauncher.qunit"
 		},
@@ -372,9 +359,6 @@ sap.ui.define([
 			sinon: {
 				version: 1,
 				qunitBridge: true
-			},
-			qunit: {
-				noglobals: false
 			},
 			loader: {
 				paths: {
@@ -585,9 +569,6 @@ sap.ui.define([
 				version: 1,
 				qunitBridge: true
 			},
-			qunit: {
-				noglobals: false
-			},
 			module: "./selectors/selectors.qunit"
 		},
 		"_BrowserLogCollector": {
@@ -603,9 +584,6 @@ sap.ui.define([
 	var oTestSuite = {
 		name: "TestSuite for sap.ui.core: GTP testcase CORE/OPA",
 		defaults: {
-			qunit: {
-				noglobals: true
-			},
 			ui5: {
 				animation: false
 			}
@@ -637,8 +615,9 @@ sap.ui.define([
 			oTestSuite.tests[name + "1"].page = oTestSuite.tests[name + "1"].page.replace("{qunitVersion}", "1");
 		}
 		if ( oTestSuite.tests[name + "2"].page ) {
-			oTestSuite.tests[name + "2"].page = oTestSuite.tests[name + "2"].page.replace("{qunitVersion}", "2") + "&sap-ui-qunitversion=2";
-		}
+			oTestSuite.tests[name + "2"].page = oTestSuite.tests[name + "2"].page.replace("{qunitVersion}", "2");
+			oTestSuite.tests[name + "2"].page += (oTestSuite.tests[name + "2"].page.includes("?") ? "&" : "?") + "sap-ui-qunitversion=2";
+    }
 
 		if ( oTestSuite.tests[name + "2"].title ) {
 			oTestSuite.tests[name + "2"].title = oTestSuite.tests[name + "2"].title + " (QUnit 2)";
