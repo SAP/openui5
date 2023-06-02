@@ -30,6 +30,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @inheritDoc
+	 */
 	TreeTableType.prototype.loadModules = function() {
 		if (InnerTable) {
 			return Promise.resolve();

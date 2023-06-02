@@ -250,6 +250,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @inheritDoc
+	 */
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
 		PropertyHelperBase.prototype.prepareProperty.apply(this, arguments);
 
