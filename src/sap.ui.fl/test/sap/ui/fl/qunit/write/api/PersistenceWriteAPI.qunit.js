@@ -265,9 +265,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("when save dirty change and update flex info session", function(assert) {
-			FlexInfoSession.set({isResetEnabled: false});
+			FlexInfoSession.set({
+				isResetEnabled: false,
+				adaptationId: "adaptation1",
+				isEndUserAdaptation: true
+			});
 			var oFlexObjectStateSaveStub = sandbox.stub(FlexObjectState, "saveFlexObjects").resolves({change: "test"});
-			var oFlexInfo = {isResetEnabled: true};
+			var oFlexInfo = {
+				isResetEnabled: true,
+				adaptationId: "adaptation1",
+				isEndUserAdaptation: true
+			};
 			var oPersistenceWriteGetFlexInfoStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves(new Promise(function(resolve) {
 				// Delay resolution to simulate a slow call
 				setTimeout(function() {
@@ -281,7 +289,7 @@ sap.ui.define([
 				assert.deepEqual(oFlexObjectStateSaveStub.firstCall.args[0], mPropertyBag, "the FlexObjectState was called with the same arguments");
 				assert.equal(oPersistenceWriteGetFlexInfoStub.callCount, 1, "the PersistenceWriteAPI getResetAndPublishInfo method was called");
 				assert.deepEqual(oPersistenceWriteGetFlexInfoStub.firstCall.args[0], mPropertyBag, "the PersistenceWriteAPI was called with the same arguments");
-				assert.deepEqual(oFlexInfo, FlexInfoSession.getByReference(), "session flex info is updated");
+				assert.deepEqual(oFlexInfo, FlexInfoSession.getByReference(), "session flex info is updated with isResetEnabled but adaptationId and isEndUserAdaptation are kept");
 			});
 		});
 
