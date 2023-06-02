@@ -298,7 +298,65 @@ sap.ui.define([
 
 		oItem._getConfirmRenameButton().firePress();
 		oCore.applyChanges();
+	});
 
+	[
+		{
+			message: "Rename filename to empty string -> show error",
+			inputString: ""
+		},
+		{
+			message: "Rename filename to string with multiple white spaces -> show error",
+			inputString: "       "
+		},
+		{
+			message: "Rename filename to string with multiple white spaces, horizontal tabulations, new line characters -> show error",
+			inputString: "    \t \n \t \t  \n  "
+		}
+	].forEach(function(data) {
+		QUnit.test(data.message, function (assert) {
+			// Arrange
+			var oItem = this.oUploadSet.getItems()[0];
+
+			oItem._getEditButton().firePress();
+			oItem._getFileNameEdit().setValue(data.inputString);
+			oItem._getConfirmRenameButton().firePress();
+
+			// Assert
+			var oEdit = oItem._getFileNameEdit();
+			assert.ok(!!oEdit, "Item edit control is present");
+			assert.equal(oEdit.getValueStateText(), "Please enter a file name.", "Item edit control error message is correct");
+		});
+	});
+
+	[
+		{
+			message: "Same file names are not allowed, rename file to already existing file name -> show error",
+			inputString: "Brenda"
+		},
+		{
+			message: "Same file names are not allowed, rename file to already existing file name with multiple white spaces -> show error",
+			inputString: "   Brenda      "
+		},
+		{
+			message: "Same file names are not allowed, rename file to already existing file name with multiple white spaces, horizontal tabulations, new line characters -> show error",
+			inputString: "    \t \n Brenda\t \t  \n  "
+		}
+	].forEach(function(data) {
+		QUnit.test(data.message, function (assert) {
+			// Arrange
+			var oItem = this.oUploadSet.getItems()[0];
+
+			oItem._getEditButton().firePress();
+			oItem._getFileNameEdit().setValue(data.inputString);
+			oItem._getConfirmRenameButton().firePress();
+
+			// Assert
+			assert.notOk(this.oUploadSet.getSameFilenameAllowed(), "Flag same file names are not allowed is set");
+			var oEdit = oItem._getFileNameEdit();
+			assert.ok(!!oEdit, "Item edit control is present");
+			assert.equal(oEdit.getValueStateText(), "File name already exists.", "Item edit control error message is correct");
+		});
 	});
 
 	QUnit.test("Then enabling edit button, UploadSet.handleItemGetDisabled is not called", function (assert) {
