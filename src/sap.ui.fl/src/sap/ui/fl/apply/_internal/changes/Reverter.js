@@ -107,7 +107,7 @@ sap.ui.define([
 				var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent);
 				if (!oControl) {
 					Log.warning("A flexibility change tries to revert changes on a nonexistent control with id " + oSelector.id);
-					return new FlUtils.FakePromise();
+					return (FlUtils.FakePromise ? new FlUtils.FakePromise() : Promise.resolve());
 				}
 				var mRevertProperties = {
 					modifier: mPropertyBag.modifier,

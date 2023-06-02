@@ -217,32 +217,25 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.createChangeWithControlSelector = function(oChangeSpecificData, oControl) {
-		var oAppComponent;
-		return new Utils.FakePromise()
-			.then(function() {
-				if (!oControl) {
-					throw new Error("A flexibility change cannot be created without a targeted control.");
-				}
+		if (!oControl) {
+			return Promise.reject(new Error("A flexibility change cannot be created without a targeted control."));
+		}
 
-				var sControlId = oControl.id || oControl.getId();
+		var sControlId = oControl.id || oControl.getId();
 
-				if (!oChangeSpecificData.selector) {
-					oChangeSpecificData.selector = {};
-				}
-				oAppComponent = oControl.appComponent || Utils.getAppComponentForControl(oControl);
-				if (!oAppComponent) {
-					throw new Error("No application component found. To offer flexibility, the control with the ID '"
-						+ sControlId + "' has to have a valid relation to its owning application component.");
-				}
+		if (!oChangeSpecificData.selector) {
+			oChangeSpecificData.selector = {};
+		}
+		var oAppComponent = oControl.appComponent || Utils.getAppComponentForControl(oControl);
+		if (!oAppComponent) {
+			return Promise.reject(new Error("No application component found. To offer flexibility, the control with the ID '"
+				+ sControlId + "' has to have a valid relation to its owning application component."));
+		}
 
-				// differentiate between controls containing the component id as a prefix and others
-				// get local Id for control at root component and use it as selector id
-				Object.assign(oChangeSpecificData.selector, JsControlTreeModifier.getSelector(sControlId, oAppComponent));
-				return oAppComponent;
-			})
-			.then(function(oAppComponent) {
-				return this._createChange(oChangeSpecificData, oAppComponent, oControl);
-			}.bind(this));
+		// differentiate between controls containing the component id as a prefix and others
+		// get local Id for control at root component and use it as selector id
+		Object.assign(oChangeSpecificData.selector, JsControlTreeModifier.getSelector(sControlId, oAppComponent));
+		return this._createChange(oChangeSpecificData, oAppComponent, oControl);
 	};
 
 	/**
@@ -595,7 +588,7 @@ sap.ui.define([
 				}
 				Log.error("A flexibility change tries to change a nonexistent control.");
 			}.bind(this));
-		}.bind(this), new Utils.FakePromise());
+		}.bind(this), (Utils.FakePromise ? new Utils.FakePromise() : Promise.resolve()));
 	};
 
 	/**

@@ -21,7 +21,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oLastPromise = new FlUtils.FakePromise();
+	var oLastPromise = (FlUtils.FakePromise ? new FlUtils.FakePromise() : Promise.resolve());
 
 	function checkControlAndDependentSelectorControls(oChange, mPropertyBag) {
 		var oSelector = oChange.getSelector && oChange.getSelector();
@@ -266,7 +266,7 @@ sap.ui.define([
 						return oResult;
 					});
 				} else if (!oChange.isApplyProcessFinished()) {
-					return new FlUtils.FakePromise().then(function() {
+					return (FlUtils.FakePromise ? new FlUtils.FakePromise() : Promise.resolve()).then(function() {
 						oChange.startApplying();
 						return oChangeHandler.applyChange(oChange, mControl.control, mPropertyBag);
 					})
@@ -425,7 +425,7 @@ sap.ui.define([
 						});
 						logApplyChangeError(oError, oChange);
 					});
-			}, new FlUtils.FakePromise())
+			}, (FlUtils.FakePromise ? new FlUtils.FakePromise() : Promise.resolve()))
 			.then(function() {
 				delete mPropertyBag.failedSelectors;
 

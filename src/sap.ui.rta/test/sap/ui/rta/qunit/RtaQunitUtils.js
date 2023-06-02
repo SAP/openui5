@@ -90,7 +90,7 @@ sap.ui.define([
 							element: oElementToBeReverted,
 							change: oChange
 						});
-					}, new flUtils.FakePromise());
+					}, Promise.resolve());
 			}
 			return undefined;
 		})

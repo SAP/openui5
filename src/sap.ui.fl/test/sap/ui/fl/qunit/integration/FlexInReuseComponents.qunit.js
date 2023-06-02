@@ -37,7 +37,7 @@ sap.ui.define([
 			this.oComponent.destroy();
 		}
 	}, function() {
-		QUnit.test("applies the change after the recreation of the changed control - Promises/FakePromises is intercepted", function(assert) {
+		QUnit.test("applies the change after the recreation of the changed control - Promises is intercepted", function(assert) {
 			var oNewFieldInstance;
 			var sFlexReference = ManifestUtils.getFlexReference({manifest: this.oComponent.getManifest()});
 			var oComponentContainer = this.oComponent.getRootControl();

@@ -80,7 +80,7 @@ sap.ui.define([
 			}.bind(this));
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl").callsFake(function() {
-				return new FlUtils.FakePromise({success: true});
+				return Promise.resolve({success: true});
 			});
 			this.oAppComponent = new UIComponent("appComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").callThrough().withArgs(this.oControl).returns(this.oAppComponent);
@@ -573,6 +573,9 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		/**
+		 * @deprecated As of version 1.114
+		 */
 		QUnit.test("applyAllChangesForControl dependency test 3 - mixed changehandler (sync, async, sync, async, sync)", function(assert) {
 			var oControlForm1 = new Control("mainform");
 			var oControlField1 = new Control("ReversalReasonName");
@@ -609,6 +612,9 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		/**
+		 * @deprecated As of version 1.114
+		 */
 		QUnit.test("applyAllChangesForControl dependency test 3 - mixed changehandler (async, sync, async, sync, async)", function(assert) {
 			var oControlForm1 = new Control("mainform");
 			var oControlField1 = new Control("ReversalReasonName");
@@ -747,6 +753,9 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		/**
+		 * @deprecated As of version 1.114
+		 */
 		QUnit.test("applyAllChangesForControl dependency test 6 - with broken changes", function(assert) {
 			var oControlGroup1 = new Control("group7-1");
 
@@ -781,13 +790,13 @@ sap.ui.define([
 			sandbox.restore();
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl")
 				.onFirstCall().callsFake(function() {
-					return new FlUtils.FakePromise({success: false, error: new Error("testError")});
+					return Promise.resolve({success: false, error: new Error("testError")});
 				})
 				.onSecondCall().callsFake(function() {
-					return new FlUtils.FakePromise({success: false, error: new Error("testError")});
+					return Promise.resolve({success: false, error: new Error("testError")});
 				})
 				.callsFake(function() {
-					return new FlUtils.FakePromise({success: true});
+					return Promise.resolve({success: true});
 				});
 
 			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, oControlGroup1)
