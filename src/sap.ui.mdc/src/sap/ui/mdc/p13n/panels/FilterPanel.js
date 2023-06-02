@@ -39,7 +39,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @public
+	 * @private
 	 * @experimental Since 1.107.
 	 * @since 1.107
 	 * @alias sap.ui.mdc.p13n.panels.FilterPanel
@@ -79,13 +79,12 @@ sap.ui.define([
 	 * @property {string} label The label describing the personalization item
 	 * @property {boolean} active Defines whether there is a visible grid shown in the panel for this key, also triggers the call of the <code>#itemFactory</code> function
 	 *
-	 * @public
+	 * @private
 	 */
 
 	/**
 	 * Sets the personalization state of the panel instance.
 	 * @name sap.ui.mdc.p13n.panels.FilterPanel.prototype.setP13nData
-	 * @public
 	 * @function
 	 *
 	 * @param {sap.ui.mdc.p13n.panels.FilterItem[]} aP13nData An array containing the personalization state

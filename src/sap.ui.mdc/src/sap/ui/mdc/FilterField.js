@@ -51,7 +51,6 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @alias sap.ui.mdc.FilterField
-	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.48.0
 	 *

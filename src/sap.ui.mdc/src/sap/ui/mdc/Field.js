@@ -54,7 +54,6 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @alias sap.ui.mdc.Field
-	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.54.0
 	 *

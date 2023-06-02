@@ -9,15 +9,48 @@ sap.ui.define([
 "use strict";
 
 	/**
-	* OData-specific type configuration map for MDC Delegates
+	* @class OData-specific <code>TypeMap</code> configuration
 	*
-	* @extends sap.ui.mdc.DefaultTypeMap
+	* <b>Note:</b> This <code>TypeMap</code> implementation contains the following types:
+	*
+	* <ul>
+	* <li>sap.ui.model.type.Boolean (alias Boolean)</li>
+	* <li>sap.ui.model.type.Currency (alias Currency)</li>
+	* <li>sap.ui.model.type.Date (alias Date)</li>
+	* <li>sap.ui.model.type.DateTime (alias DateTime)</li>
+	* <li>sap.ui.model.type.Float (alias Float)</li>
+	* <li>sap.ui.model.type.Integer (alias Integer)</li>
+	* <li>sap.ui.model.type.String (alias String)</li>
+	* <li>sap.ui.model.type.Time (alias Time)</li>
+	* <li>sap.ui.model.type.Unit (alias Unit)</li>
+	* <li>sap.ui.model.odata.type.Stream (alias Edm.Binary)</li>
+	* <li>sap.ui.model.odata.type.Boolean (alias Edm.Boolean)</li>
+	* <li>sap.ui.model.odata.type.Byte (alias Edm.Byte)</li>
+	* <li>sap.ui.model.odata.type.Date (alias Edm.Date)</li>
+	* <li>sap.ui.model.odata.type.DateTime (alias Edm.DateTime)</li>
+	* <li>sap.ui.model.odata.type.DateTimeOffset (alias Edm.DateTimeOffset)</li>
+	* <li>sap.ui.model.odata.type.Decimal (alias Edm.Decimal)</li>
+	* <li>sap.ui.model.odata.type.Double (alias Edm.Double)</li>
+	* <li>sap.ui.model.odata.type.Single (alias Edm.Float)</li>
+	* <li>sap.ui.model.odata.type.Guid (alias Edm.Guid)</li>
+	* <li>sap.ui.model.odata.type.Int16 (alias Edm.Int16)</li>
+	* <li>sap.ui.model.odata.type.Int32 (alias Edm.Int32)</li>
+	* <li>sap.ui.model.odata.type.Int64 (alias Edm.Int64)</li>
+	* <li>sap.ui.model.odata.type.SByte (alias Edm.SByte)</li>
+	* <li>sap.ui.model.odata.type.Single (alias Edm.Single)</li>
+	* <li>sap.ui.model.odata.type.Stream (alias Edm.Stream)</li>
+	* <li>sap.ui.model.odata.type.String (alias Edm.String)</li>
+	* <li>sap.ui.model.odata.type.Time (alias Edm.Time)</li>
+	* <li>sap.ui.model.odata.type.TimeOfDay (alias Edm.TimeOfDay)</li>
+	* </ul>
+	*
 	* @author SAP SE
 	* @version ${version}
 	* @public
-	* @alias sap.ui.mdc.odata.TypeMap
 	* @since 1.114.0
-	* @author SAP SE
+	* @namespace
+	* @alias module:sap/ui/mdc/odata/TypeMap
+	* @extends module:sap/ui/mdc/DefaultTypeMap
 	*/
 	var ODataTypeMap = Object.assign({}, DefaultTypeMap);
 
