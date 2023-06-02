@@ -1,0 +1,85 @@
+{
+	"@odata.metadataEtag" : "W/\"20200715082514\"",
+	"value" : [
+		{
+			"WAERS" : "ADP",
+			"LTEXT" : "Andorran Peseta --> (Old --> EUR)"
+		},
+		{
+			"WAERS" : "AED",
+			"LTEXT" : "United Arab Emirates Dirham"
+		},
+		{
+			"WAERS" : "AFA",
+			"LTEXT" : "Afghani (Old)"
+		},
+		{
+			"WAERS" : "AFN",
+			"LTEXT" : "Afghani"
+		},
+		{
+			"WAERS" : "ALL",
+			"LTEXT" : "Albanian Lek"
+		},
+		{
+			"WAERS" : "AMD",
+			"LTEXT" : "Armenian Dram"
+		},
+		{
+			"WAERS" : "ANG",
+			"LTEXT" : "West Indian Guilder"
+		},
+		{
+			"WAERS" : "AOA",
+			"LTEXT" : "Angolanische Kwanza"
+		},
+		{
+			"WAERS" : "AOK",
+			"LTEXT" : "Angolan Kwanza"
+		},
+		{
+			"WAERS" : "AON",
+			"LTEXT" : "Angolan New Kwanza (Old)"
+		},
+		{
+			"WAERS" : "AOR",
+			"LTEXT" : "Angolan Kwanza Reajustado (Old)"
+		},
+		{
+			"WAERS" : "ARA",
+			"LTEXT" : "Argentinian Austral"
+		},
+		{
+			"WAERS" : "ARS",
+			"LTEXT" : "Argentine Peso"
+		},
+		{
+			"WAERS" : "ATS",
+			"LTEXT" : "Austrian Schilling (Old --> EUR)"
+		},
+		{
+			"WAERS" : "AUD",
+			"LTEXT" : "Australian Dollar"
+		},
+		{
+			"WAERS" : "AWG",
+			"LTEXT" : "Aruban Florin"
+		},
+		{
+			"WAERS" : "AZM",
+			"LTEXT" : "Azerbaijani Manat (Old)"
+		},
+		{
+			"WAERS" : "AZN",
+			"LTEXT" : "Azerbaijani Manat"
+		},
+		{
+			"WAERS" : "BAD",
+			"LTEXT" : "Bosnia-Herzogovinian Dinar"
+		},
+		{
+			"WAERS" : "BAM",
+			"LTEXT" : "Bosnia and Herzegovina Convertible Mark"
+		}
+	]
+}

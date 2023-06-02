@@ -1,0 +1,20 @@
+{
+	"@odata.context" : "$metadata#SalesOrderList(LifecycleStatusDesc,Messages,Note,SalesOrderID)/$entity",
+	"@odata.metadataEtag" : "W/\"20230620150020\"",
+	"@odata.etag" : "W/\"20230621220000.0000000 \"",
+	"SalesOrderID" : "0500000000",
+	"Note" : "EPM DG: SO ID 0500000000 Deliver as fast as possible",
+	"LifecycleStatusDesc" : "New",
+	"Messages" : [
+		{
+			"additionalInfo" : "",
+			"additionalTargets" : [],
+			"code" : "ZUI5_EPM_SAMPLE/004",
+			"longtextUrl" : "",
+			"message" : "Enter a minimum quantity of 2",
+			"numericSeverity" : 4,
+			"target" : "SO_2_SOITEM(SalesOrderID='0500000000',ItemPosition='0000000010')/Quantity",
+			"transition" : false
+		}
+	]
+}

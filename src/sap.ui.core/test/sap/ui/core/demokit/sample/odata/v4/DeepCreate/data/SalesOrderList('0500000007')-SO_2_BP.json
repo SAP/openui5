@@ -1,0 +1,12 @@
+{
+	"@odata.context" : "$metadata#SalesOrderList(Messages,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName))/$entity",
+	"@odata.metadataEtag" : "W/\"20230620150020\"",
+	"@odata.etag" : "W/\"20230622064216.2786150 \"",
+	"Messages" : [],
+	"SalesOrderID" : "0500000007",
+	"SO_2_BP" : {
+		"@odata.etag" : "W/\"20230621133751.8968250 \"",
+		"BusinessPartnerID" : "0100000000",
+		"CompanyName" : "SAP"
+	}
+}

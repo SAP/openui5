@@ -1,0 +1,93 @@
+{
+	"@odata.metadataEtag" : "W/\"20200722082553\"",
+	"value" : [
+		{
+			"NODE_KEY" : "42010aee-2874-1eda-a6cb-2ec71aba0132",
+			"PRODUCT_ID" : "HT-1000",
+			"LANGU" : "EN",
+			"TEXT" : "Notebook Basic 15",
+			"SUPPLIER_KEY" : "00000000-0000-0000-0000-000000000000",
+			"SUPPLIER_ID" : ""
+		},
+		{
+			"NODE_KEY" : "42010aee-2874-1eda-a6cb-2ec71aba2132",
+			"PRODUCT_ID" : "HT-1001",
+			"LANGU" : "EN",
+			"TEXT" : "modified by QUnit test",
+			"SUPPLIER_KEY" : "00000000-0000-0000-0000-000000000000",
+			"SUPPLIER_ID" : ""
+		},
+		{
+			"NODE_KEY" : "42010aee-2874-1eda-a6cb-2ec71aba4132",
+			"PRODUCT_ID" : "HT-1002",
+			"LANGU" : "EN",
+			"TEXT" : "Notebook Basic 18",
+			"SUPPLIER_KEY" : "00000000-0000-0000-0000-000000000000",
+			"SUPPLIER_ID" : ""
+		},
+		{
+			"NODE_KEY" : "42010aee-2874-1eda-a6cb-2ec71aba6132",
+			"PRODUCT_ID" : "HT-1003",
+			"LANGU" : "EN",
+			"TEXT" : "Notebook Basic 19",
+			"SUPPLIER_KEY" : "00000000-0000-0000-0000-000000000000",
+			"SUPPLIER_ID" : ""
+		},
+		{
+			"NODE_KEY" : "42010aee-2874-1eda-a6cb-2ec71aba8132",
+			"PRODUCT_ID" : "HT-1007",
+			"LANGU" : "EN",
+			"TEXT" : "ITelO Vault",
+			"SUPPLIER_KEY" : "00000000-0000-0000-0000-000000000000",
+			"SUPPLIER_ID" : ""
+		},
+		{
+			"NODE_KEY" : "42010aee-2874-1eda-a6cb-2ec71abaa132",
+			"PRODUCT_ID" : "HT-1010",
+			"LANGU" : "EN",
+			"TEXT" : "Notebook Professional 15",
+			"SUPPLIER_KEY" : "00000000-0000-0000-0000-000000000000",
+			"SUPPLIER_ID" : ""
+		},
+		{
+			"NODE_KEY" : "42010aee-2874-1eda-a6cb-2ec71abac132",
+			"PRODUCT_ID" : "HT-1011",
+			"LANGU" : "EN",
+			"TEXT" : "Notebook Professional 17",
+			"SUPPLIER_KEY" : "00000000-0000-0000-0000-000000000000",
+			"SUPPLIER_ID" : ""
+		},
+		{
+			"NODE_KEY" : "42010aee-2874-1eda-a6cb-2ec71abae132",
+			"PRODUCT_ID" : "HT-1020",
+			"LANGU" : "EN",
+			"TEXT" : "ITelO Vault Net",
+			"SUPPLIER_KEY" : "00000000-0000-0000-0000-000000000000",
+			"SUPPLIER_ID" : ""
+		},
+		{
+			"NODE_KEY" : "42010aee-2874-1eda-a6cb-2ec71abb0132",
+			"PRODUCT_ID" : "HT-1021",
+			"LANGU" : "EN",
+			"TEXT" : "ITelO Vault SAT",
+			"SUPPLIER_KEY" : "00000000-0000-0000-0000-000000000000",
+			"SUPPLIER_ID" : ""
+		},
+		{
+			"NODE_KEY" : "42010aee-2874-1eda-a6cb-2ec71abb2132",
+			"PRODUCT_ID" : "HT-1022",
+			"LANGU" : "EN",
+			"TEXT" : "Comfort Easy",
+			"SUPPLIER_KEY" : "00000000-0000-0000-0000-000000000000",
+			"SUPPLIER_ID" : ""
+		},
+		{
+			"NODE_KEY" : "42010aee-2874-1eda-a6cb-2ec71abb4132",
+			"PRODUCT_ID" : "HT-1023",
+			"LANGU" : "EN",
+			"TEXT" : "Comfort Senior",
+			"SUPPLIER_KEY" : "00000000-0000-0000-0000-000000000000",
+			"SUPPLIER_ID" : ""
+		}
+	]
+}
