@@ -88,9 +88,9 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			}
 
 			oRm.openEnd();
-			// Used to benefit from the div[role="combobox"]. Direct textNode is the value of the div and no other elements should be placed inside.
 			this.renderFocusElement(oRm, oSelect);
 			// Used in case control is in a form submitted by input[type="submit"].
+			// Attribute "value" is holding the selectedKey property value.
 			this.renderHiddenInput(oRm, oSelect);
 			this.renderLabel(oRm, oSelect);
 
@@ -117,8 +117,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		};
 
 		/**
-		 * Renders the element, which receives the focus. This is needed because when using [role="combobox"] we benefit from the direct textNode
-		 * which serves as a VALUE and is read out by screen readers when it changes.
+		 * Renders the element, which receives the focus.
+		 * This element is holding the selectedItem text property in its textContent and it's announced by InvisibleMessage when changed.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.

@@ -747,7 +747,7 @@ function(
 		Select.prototype.setValue = function(sValue) {
 			var oDomRef = this.getDomRef(),
 				oTextPlaceholder = oDomRef && oDomRef.querySelector(".sapMSelectListItemText"),
-				bForceAnnounce = !this.isOpen() && this._isFocused() && this._oInvisibleMessage && Device.os.macintosh;
+				bForceAnnounce = !this.isOpen() && this._isFocused() && this._oInvisibleMessage;
 
 			if (oTextPlaceholder) {
 				oTextPlaceholder.textContent = sValue;
@@ -757,7 +757,6 @@ function(
 			this._getValueIcon();
 
 			if (bForceAnnounce) {
-				// auto-announce of new value (when direct text node of div@role="combobox" is changed) is not working on MacOS.
 				// InvisibleMessage is used in case the popover is closed.
 				// (aria-activedescendant is announcing the new selection when popover is opened).
 				this._oInvisibleMessage.announce(sValue, InvisibleMessageMode.Assertive);
@@ -768,12 +767,9 @@ function(
 			var oSelect = this._getHiddenSelect(),
 				oInput = this._getHiddenInput(),
 				oSelectedKey = this.getSelectedKey(),
-				oSelectedItem = this.getSelectedItem(),
-				sSelectedItemText;
+				sSelectedItemText = this._getSelectedItemText();
 
 			oInput.attr("value", oSelectedKey || "");
-
-			sSelectedItemText = oSelectedItem ? oSelectedItem.getText() : "";
 			oSelect.text(sSelectedItemText);
 		};
 
