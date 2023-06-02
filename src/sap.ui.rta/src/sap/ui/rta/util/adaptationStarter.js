@@ -153,7 +153,7 @@ sap.ui.define([
 			) {
 				var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
 				showMessageBox(
-					oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", vError.message),
+					oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", [vError.message]),
 					{title: oRtaResourceBundle.getText("MSG_ADAPTATION_COULD_NOT_START")},
 					"error"
 				);
