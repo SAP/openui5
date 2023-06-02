@@ -648,6 +648,34 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
+	QUnit.test("Labelling using aria-labelledby", function (assert) {
+		// Arrange
+		var sId = "oslab",
+		oLabel = new sap.m.Label("info", {
+			text: "Label",
+			labelFor: sId
+		}).placeAt("qunit-fixture"),
+		oObjectStatus = new ObjectStatus(sId, {
+			title: "Curious",
+			text: "Cat",
+			icon: "sap-icon://information",
+			state: "Information",
+			active: true
+		}).placeAt("qunit-fixture");
+
+		// Act
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(oObjectStatus.getDomRef().getAttribute("aria-labelledby"),
+			"info oslab-title oslab-text oslab-statusIcon oslab-state",
+			"ObjecStatus's content information is added in aria-labelledby alongside the label");
+
+		// Cleanup
+		oObjectStatus.destroy();
+		oLabel.destroy();
+	});
+
 	QUnit.test("Internal icon ARIA for icon-only ObjectStatus", function (assert) {
 		// Arrange
 		var oCore = sap.ui.getCore(),
