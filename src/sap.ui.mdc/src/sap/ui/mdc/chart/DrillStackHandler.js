@@ -97,11 +97,19 @@ sap.ui.define([
 			contentWidth: "25rem",
 			contentHeight: "20rem",
 			placement: PlacementType.VerticalPreferredBottom,
-			subHeader: oSearchField,
 			afterClose: function(){
 				oPopover.destroy();
 			}
 		});
+
+		// The ResponsivePopover only supports controls with sap.m.IBar interface, which is not the case when we place a SearchField as subHeader.
+		// On a Desktop we do not have any problem (the ResponsivePopoverRender is used in this case).
+		// On a Phone the Dialog renderer is used and the subHeader will not work. So we add the search field in this case into the content.
+		if (!Device.system.phone) {
+			oPopover.setSubHeader(oSearchField);
+		} else {
+			oPopover.addContent(oSearchField);
+		}
 
 		var oItemTemplate = new StandardListItem({
 			title: "{$ChartDrilldown>text}"
@@ -182,7 +190,8 @@ sap.ui.define([
 			oDrillDownPopover.setModel(new JSONModel(oData), "$ChartDrilldown");
 
 			if (oData.items.length < 7) {
-				oDrillDownPopover.getSubHeader().setVisible(false);
+				var oSearchField = oDrillDownPopover.getSubHeader() || oDrillDownPopover.getContent()[0];
+				oSearchField.setVisible(false);
 			}
 
 			return new Promise(function(resolve, reject) {

@@ -228,9 +228,17 @@ sap.ui.define([
 		var oPopover = new ResponsivePopover({
 			id: oChart.getId() + "-btnChartTypePopover",
 			placement: PlacementType.VerticalPreferredBottom,
-			subHeader: oSearchField,
 			contentWidth: "25rem"
 		});
+
+		// The ResponsivePopover only supports controls with sap.m.IBar interface, which is not the case when we place a SearchField as subHeader.
+		// On a Desktop we do not have any problem (the ResponsivePopoverRender is used in this case).
+		// On a Phone the Dialog renderer is used and the subHeader will not work. So we add the search field in this case into the content.
+		if (!Device.system.phone) {
+			oPopover.setSubHeader(oSearchField);
+		} else {
+			oPopover.addContent(oSearchField);
+		}
 
 		oPopover.setModel(this.oChartModel, "$chart");
 
