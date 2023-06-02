@@ -6639,7 +6639,7 @@ sap.ui.define([
 			this.mock(oBinding).expects("getQueryOptionsForPath")
 				.withExactArgs("", sinon.match.same(oContext))
 				.returns(oFixture.mInheritedQueryOptions);
-			this.mock(Object).expects("assign")
+			this.mock(_Helper).expects("merge")
 				.withExactArgs({}, sinon.match.same(oFixture.mInheritedQueryOptions),
 					oFixture.mExpectedQueryOptions)
 				.returns(mQueryOptions);

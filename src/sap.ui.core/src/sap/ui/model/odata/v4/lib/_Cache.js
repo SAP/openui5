@@ -85,7 +85,7 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL
 	 * @param {object} [mQueryOptions]
-	 *   A map of key-value pairs representing the query string
+	 *   A map of key-value pairs representing the query string (requires "copy on write"!)
 	 * @param {boolean} [bSortExpandSelect]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string;
 	 *   note that this flag can safely be ignored for all "new" features (after 1.47) which
@@ -672,7 +672,7 @@ sap.ui.define([
 		// clone data to avoid modifications outside the cache
 		// remove any property starting with "@$ui5."
 		oEntityData = _Helper.publicClone(oEntityData, true) || {};
-		oPostBody = _Helper.merge({}, oEntityData);
+		oPostBody = _Helper.clone(oEntityData);
 		// keep post body separate to allow local property changes in the cache
 		_Helper.setPrivateAnnotation(oEntityData, "postBody", oPostBody);
 		_Helper.setPrivateAnnotation(oEntityData, "transientPredicate", sTransientPredicate);
@@ -1557,8 +1557,8 @@ sap.ui.define([
 				mInCollectionQueryOptions = {},
 				sInCollectionUrl,
 				sKeyFilter,
-				mQueryOptions
-					= Object.assign({}, _Helper.getQueryOptionsForPath(that.mQueryOptions, sPath)),
+				mQueryOptions = _Helper.clone(
+					_Helper.getQueryOptionsForPath(that.mQueryOptions, sPath)),
 				sReadUrl,
 				sReadUrlPrefix = _Helper.buildPath(that.sResourcePath, sPath),
 				aRequests = [],
@@ -3281,7 +3281,7 @@ sap.ui.define([
 		 */
 		function calculateKeptElementsQuery() {
 			var aKeyFilters,
-				mQueryOptions = _Helper.merge({}, that.mQueryOptions);
+				mQueryOptions = _Helper.clone(that.mQueryOptions);
 
 			if (that.mLateQueryOptions) {
 				_Helper.aggregateExpandSelect(mQueryOptions, that.mLateQueryOptions);

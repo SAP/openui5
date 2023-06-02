@@ -4262,8 +4262,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("getQueryOptionsForPath")
 			.withExactArgs(sinon.match.same(mCacheQueryOptions), "EMPLOYEE_2_EQUIPMENTS")
 			.returns(mQueryOptionsForPath);
-		this.mock(Object).expects("assign")
-			.withExactArgs({}, sinon.match.same(mQueryOptionsForPath))
+		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(mQueryOptionsForPath))
 			.returns(oClonedQueryOptions);
 		this.mock(_Helper).expects("buildPath")
 			.withExactArgs("Employees('31')", "EMPLOYEE_2_EQUIPMENTS")
@@ -4369,8 +4368,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("getQueryOptionsForPath")
 			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "~")
 			.returns(mQueryOptionsForPath);
-		oObjectMock.expects("assign")
-			.withExactArgs({}, sinon.match.same(mQueryOptionsForPath))
+		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(mQueryOptionsForPath))
 			.returns(mQueryOptionsForPathCopy);
 		this.mock(_Helper).expects("buildPath").withExactArgs("TEAMS", "~")
 			.returns("~");
@@ -4461,8 +4459,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("getQueryOptionsForPath")
 			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "~")
 			.returns(mQueryOptionsForPath);
-		oObjectMock.expects("assign")
-			.withExactArgs({}, sinon.match.same(mQueryOptionsForPath))
+		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(mQueryOptionsForPath))
 			.returns(mQueryOptionsForPathCopy);
 		this.mock(_Helper).expects("aggregateExpandSelect")
 			.withExactArgs(sinon.match.same(mQueryOptionsForPathCopy),
@@ -4520,8 +4517,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("getQueryOptionsForPath")
 			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "EMPLOYEE_2_EQUIPMENTS")
 			.returns(mQueryOptionsForPath);
-		this.mock(Object).expects("assign")
-			.withExactArgs({}, sinon.match.same(mQueryOptionsForPath))
+		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(mQueryOptionsForPath))
 			.returns({$filter : "age gt 40"});
 		this.mock(_Helper).expects("buildPath")
 			.withExactArgs("Employees('31')", "EMPLOYEE_2_EQUIPMENTS")
@@ -8448,7 +8444,7 @@ sap.ui.define([
 			oHelperMock.expects("publicClone")
 				.withExactArgs(sinon.match.same(oInitialData), true)
 				.returns(oEntityDataCleaned);
-			oHelperMock.expects("merge").withExactArgs({}, sinon.match.same(oEntityDataCleaned))
+			oHelperMock.expects("clone").withExactArgs(sinon.match.same(oEntityDataCleaned))
 				.returns(oPostBody);
 			oHelperMock.expects("setPrivateAnnotation")
 				.withExactArgs(sinon.match.same(oEntityDataCleaned), "postBody",
@@ -8716,7 +8712,7 @@ sap.ui.define([
 		oHelperMock.expects("publicClone")
 			.withExactArgs(sinon.match.same("~oInitialData~"), true)
 			.returns(oEntityDataCleaned);
-		oHelperMock.expects("merge").withExactArgs({}, sinon.match.same(oEntityDataCleaned))
+		oHelperMock.expects("clone").withExactArgs(sinon.match.same(oEntityDataCleaned))
 			.returns("~oPostBody~");
 		oHelperMock.expects("setPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oEntityDataCleaned), "postBody",
@@ -9577,7 +9573,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("publicClone")
 			.withExactArgs(sinon.match.same(oEntityData), true)
 			.returns(oEntityData ? oEntityDataCleaned : undefined);
-		oHelperMock.expects("merge").withExactArgs({}, sinon.match(entityDataCleaned))
+		oHelperMock.expects("clone").withExactArgs(sinon.match(entityDataCleaned))
 			.returns(oPostBody);
 		oHelperMock.expects("setPrivateAnnotation")
 			.withExactArgs(sinon.match(entityDataCleaned), "postBody",
@@ -12946,7 +12942,7 @@ sap.ui.define([
 		});
 
 		// calculateKeptElementQuery
-		oHelperMock.expects("merge").withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
+		oHelperMock.expects("clone").withExactArgs(sinon.match.same(oCache.mQueryOptions))
 			.returns(mQueryOptionsCopy);
 		oHelperMock.expects("aggregateExpandSelect").exactly(bHasLateQueryOptions ? 1 : 0)
 			.withExactArgs(sinon.match.same(mQueryOptionsCopy),

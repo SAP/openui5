@@ -220,7 +220,7 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.aggregateQueryOptions = function (mQueryOptions, sBaseMetaPath,
 			bCacheImmutable, bIsProperty) {
-		var mAggregatedQueryOptionsClone = _Helper.merge({},
+		var mAggregatedQueryOptionsClone = _Helper.clone(
 				bCacheImmutable && this.mLateQueryOptions || this.mAggregatedQueryOptions),
 			that = this;
 
@@ -826,8 +826,8 @@ sap.ui.define([
 			}
 
 			if (that.bAggregatedQueryOptionsInitial) {
-				that.selectKeyProperties(mLocalQueryOptions, sBaseMetaPath);
 				that.mAggregatedQueryOptions = _Helper.clone(mLocalQueryOptions);
+				that.selectKeyProperties(that.mAggregatedQueryOptions, sBaseMetaPath);
 				that.bAggregatedQueryOptionsInitial = false;
 			}
 			if (bIsAdvertisement) {
@@ -930,7 +930,7 @@ sap.ui.define([
 
 		fnFetchMetadata = oModel.oInterface.fetchMetadata;
 		sMetaPath = _Helper.getMetaPath(oModel.resolve(this.sPath, oContext));
-		mConvertedQueryOptions = Object.assign({}, mQueryOptions, {$select : []});
+		mConvertedQueryOptions = Object.assign({}, _Helper.clone(mQueryOptions), {$select : []});
 		return SyncPromise.all(mQueryOptions.$select.map(function (sSelectPath) {
 			var sMetaSelectPath = sMetaPath + "/" + sSelectPath;
 

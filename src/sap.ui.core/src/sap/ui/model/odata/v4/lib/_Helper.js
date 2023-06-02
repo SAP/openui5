@@ -2897,6 +2897,12 @@ sap.ui.define([
 				oProperty = fnFetchMetadata(sPropertyMetaPath).getResult();
 				if (oProperty.$kind === "NavigationProperty") {
 					mQueryOptionsForPathPrefix.$expand = {};
+					if (i === aMetaPathSegments.length - 1) {
+						// avoid that mChildQueryOptions.$select is modified by selectKeyProperties
+						mChildQueryOptions = Object.assign({}, mChildQueryOptions);
+						mChildQueryOptions.$select = mChildQueryOptions.$select
+							&& mChildQueryOptions.$select.slice();
+					}
 					mQueryOptionsForPathPrefix
 						= mQueryOptionsForPathPrefix.$expand[sExpandSelectPath]
 						= (i === aMetaPathSegments.length - 1) // last segment in path

@@ -860,8 +860,8 @@ sap.ui.define([
 						oBindingMock = this.mock(oBinding),
 						mChildLocalQueryOptions = {},
 						mChildQueryOptions = oFixture.hasChildQueryOptions ? {} : undefined,
+						mClonedQueryOptions = {},
 						oContext = Context.create(this.oModel, oBinding, "/Set('2')"),
-						mExtendResult = {},
 						oHelperMock = this.mock(_Helper),
 						mLocalQueryOptions = {},
 						oMetaModelMock = this.mock(oMetaModel),
@@ -877,13 +877,13 @@ sap.ui.define([
 					oBindingMock.expects("doFetchQueryOptions")
 						.withExactArgs(sinon.match.same(oBinding.oContext))
 						.returns(SyncPromise.resolve(mLocalQueryOptions));
-					this.mock(_Helper).expects("fetchPropertyAndType")
+					oHelperMock.expects("fetchPropertyAndType")
 						.withExactArgs(sinon.match.same(fnFetchMetadata),
 							"/resolved/child/metaPath")
 						.returns(Promise.resolve().then(function () {
 							oBindingMock.expects("selectKeyProperties")
 								.exactly(oFixture.initial ? 1 : 0)
-								.withExactArgs(sinon.match.same(mLocalQueryOptions), "/Set");
+								.withExactArgs(sinon.match.same(mClonedQueryOptions), "/Set");
 							return {$kind : oFixture.$kind};
 						}));
 					oBindingMock.expects("getBaseForPathReduction")
@@ -896,9 +896,9 @@ sap.ui.define([
 					oHelperMock.expects("getRelativePath")
 						.withExactArgs("/reduced/child/metapath", "/Set")
 						.returns("reducedChildMetaPath");
-					this.mock(_Helper).expects("clone").exactly(oFixture.initial ? 1 : 0)
+					oHelperMock.expects("clone").exactly(oFixture.initial ? 1 : 0)
 						.withExactArgs(sinon.match.same(mLocalQueryOptions))
-						.returns(mExtendResult);
+						.returns(mClonedQueryOptions);
 					oHelperMock.expects("wrapChildQueryOptions")
 						.withExactArgs("/Set", "reducedChildMetaPath",
 							sinon.match.same(mChildLocalQueryOptions),
@@ -921,7 +921,7 @@ sap.ui.define([
 								: undefined);
 						assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
 						assert.strictEqual(oBinding.mAggregatedQueryOptions,
-							oFixture.initial ? mExtendResult : mAggregatedQueryOptions);
+							oFixture.initial ? mClonedQueryOptions : mAggregatedQueryOptions);
 						assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, false);
 						assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 					});
@@ -987,9 +987,11 @@ sap.ui.define([
 				.returns("/resolved/child/metaPath");
 			oBindingMock.expects("doFetchQueryOptions")
 				.returns(SyncPromise.resolve({}));
-			this.mock(_Helper).expects("fetchPropertyAndType")
+			oHelperMock.expects("fetchPropertyAndType")
 				.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/metaPath")
 				.returns(SyncPromise.resolve({$kind : "Property"}));
+			oHelperMock.expects("clone").never();
+			oBindingMock.expects("selectKeyProperties").never();
 			oBindingMock.expects("getBaseForPathReduction")
 				.withExactArgs().returns("/base/path");
 			oMetaModelMock.expects("getReducedPath")
@@ -1142,9 +1144,11 @@ sap.ui.define([
 			.returns("/resolved/child/metaPath");
 		oBindingMock.expects("doFetchQueryOptions")
 			.returns(SyncPromise.resolve({}));
-		this.mock(_Helper).expects("fetchPropertyAndType")
+		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/metaPath")
 			.returns(SyncPromise.resolve(Promise.resolve({$kind : "Property"})));
+		oHelperMock.expects("clone").never();
+		oBindingMock.expects("selectKeyProperties").never();
 		oBindingMock.expects("getBaseForPathReduction")
 			.withExactArgs().returns("/base/path");
 		oMetaModelMock.expects("getReducedPath")
@@ -1259,9 +1263,11 @@ sap.ui.define([
 			.returns("/resolved/child/metaPath@foo.bar");
 		oBindingMock.expects("doFetchQueryOptions")
 			.returns(SyncPromise.resolve({}));
-		this.mock(_Helper).expects("fetchPropertyAndType") // no @foo.bar here
+		oHelperMock.expects("fetchPropertyAndType") // no @foo.bar here
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/metaPath")
 			.returns(SyncPromise.resolve(Promise.resolve({$kind : "Property"})));
+		oHelperMock.expects("clone").never();
+		oBindingMock.expects("selectKeyProperties").never();
 		oBindingMock.expects("getBaseForPathReduction")
 			.withExactArgs().returns("/base/path");
 		oMetaModelMock.expects("getReducedPath")
@@ -1340,13 +1346,14 @@ sap.ui.define([
 			}),
 			oBindingMock = this.mock(oBinding),
 			mChildQueryOptions = {},
-			mWrappedChildQueryOptions = {},
+			mClonedQueryOptions = {},
 			oContext = Context.create(this.oModel, oBinding, "/Set/~", Context.VIRTUAL),
 			oHelperMock = this.mock(_Helper),
 			mLocalQueryOptions = {},
 			oMetaModelMock = this.mock(oMetaModel),
 			oModelMock = this.mock(oBinding.oModel),
-			oPromise;
+			oPromise,
+			mWrappedChildQueryOptions = {};
 
 		oModelMock.expects("resolve")
 			.withExactArgs("", sinon.match.same(oContext))
@@ -1357,11 +1364,14 @@ sap.ui.define([
 		oBindingMock.expects("doFetchQueryOptions")
 			.withExactArgs(sinon.match.same(oBinding.oContext))
 			.returns(SyncPromise.resolve(mLocalQueryOptions));
-		this.mock(_Helper).expects("fetchPropertyAndType")
+		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/metaPath")
 			.returns(SyncPromise.resolve({$kind : "EntitySet"}));
+		oHelperMock.expects("clone")
+			.withExactArgs(sinon.match.same(mLocalQueryOptions))
+			.returns(mClonedQueryOptions);
 		oBindingMock.expects("selectKeyProperties")
-			.withExactArgs(sinon.match.same(mLocalQueryOptions), "/Set");
+			.withExactArgs(mClonedQueryOptions, "/Set");
 		oBindingMock.expects("getBaseForPathReduction")
 			.withExactArgs().returns("/base/path");
 		oMetaModelMock.expects("getReducedPath")
@@ -1441,9 +1451,11 @@ sap.ui.define([
 			oHelperMock.expects("getMetaPath").withExactArgs("/Set('2')").returns("/Set");
 			oHelperMock.expects("getMetaPath").withExactArgs("/resolved/child/path")
 				.returns("/resolved/child/metaPath");
-			this.mock(_Helper).expects("fetchPropertyAndType")
+			oHelperMock.expects("fetchPropertyAndType")
 				.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/metaPath")
 				.returns(SyncPromise.resolve(oFixture.oProperty));
+			oHelperMock.expects("clone").never();
+			this.mock(oBinding).expects("selectKeyProperties").never();
 			this.mock(oBinding).expects("getBaseForPathReduction")
 				.withExactArgs().returns("/base/path");
 			oMetaModelMock.expects("getReducedPath")
@@ -1568,9 +1580,11 @@ sap.ui.define([
 		oHelperMock.expects("getMetaPath").withExactArgs("/Set('2')").returns("/Set");
 		oHelperMock.expects("getMetaPath").withExactArgs("/resolved/child/path")
 			.returns("/resolved/child/metaPath");
-		this.mock(_Helper).expects("fetchPropertyAndType")
+		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/metaPath")
 			.returns(SyncPromise.resolve());
+		oHelperMock.expects("clone").never();
+		this.mock(oBinding).expects("selectKeyProperties").never();
 		this.mock(oMetaModel).expects("getReducedPath")
 			.withExactArgs("/resolved/child/path", "/base/path")
 			.returns("/reduced/child/path");
@@ -1698,9 +1712,11 @@ sap.ui.define([
 		oHelperMock.expects("getMetaPath")
 			.withExactArgs("/Set('2')/operation(...)/$Parameter/foo/bar")
 			.returns("/Set/operation/$Parameter/foo/bar");
-		this.mock(_Helper).expects("fetchPropertyAndType")
+		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/Set/operation/$Parameter/foo/bar")
 			.returns(SyncPromise.resolve());
+		oHelperMock.expects("clone").never();
+		this.mock(oBinding).expects("selectKeyProperties").never();
 		oMetaModelMock.expects("getReducedPath")
 			.withExactArgs("/Set('2')/operation(...)/$Parameter/foo/bar", "/base/path")
 			.returns("/reduced/child/path");
@@ -1762,6 +1778,8 @@ sap.ui.define([
 		this.mock(_Helper).expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/path")
 			.returns(SyncPromise.resolve([{$isBound : true, $kind : "Function"}]));
+		this.mock(_Helper).expects("clone").never();
+		this.mock(oBinding).expects("selectKeyProperties").never();
 		this.mock(oBinding).expects("doFetchQueryOptions").withExactArgs(undefined)
 			.returns(SyncPromise.resolve());
 
@@ -1811,7 +1829,6 @@ sap.ui.define([
 			sChildPath = "value",
 			mChildQueryOptions = {},
 			oContext = Context.create(this.oModel, oBinding, "/Function(foo=42)"),
-			oHelperMock = this.mock(_Helper),
 			mLocalQueryOptions = {},
 			oModelMock = this.mock(oBinding.oModel),
 			oPromise;
@@ -1824,14 +1841,15 @@ sap.ui.define([
 			.returns(SyncPromise.resolve({$isCollection : true, $Type : "some.EntityType"}));
 		oBindingMock.expects("doFetchQueryOptions").withExactArgs(undefined)
 			.returns(SyncPromise.resolve(mLocalQueryOptions));
+		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.object).returns("~clone~");
 		oBindingMock.expects("selectKeyProperties")
-			.withExactArgs(sinon.match.object, "/Function"); // Note: w/o $Key nothing happens
+			.withExactArgs("~clone~", "/Function"); // Note: w/o $Key nothing happens
 		oBindingMock.expects("getBaseForPathReduction")
 			.withExactArgs().returns("/base/path");
 		this.mock(oMetaModel).expects("getReducedPath")
 			.withExactArgs("/resolved/child/path", "/base/path")
 			.returns("/reduced/child/path");
-		oHelperMock.expects("getRelativePath")
+		this.mock(_Helper).expects("getRelativePath")
 			.withExactArgs("/reduced/child/path", "/Function")
 			.returns("value");
 		oBindingMock.expects("aggregateQueryOptions")
@@ -1944,10 +1962,12 @@ sap.ui.define([
 		oBindingMock.expects("doFetchQueryOptions")
 			.withExactArgs(sinon.match.same(oBinding.oContext))
 			.returns(SyncPromise.resolve(mLocalQueryOptions));
-		this.mock(_Helper).expects("fetchPropertyAndType")
+		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata),
 				"/SalesOrderList/SO_2_SOITEMS/SOITEMS_2_SO/Note")
 			.returns(SyncPromise.resolve({$kind : "Property"}));
+		this.mock(_Helper).expects("clone").never();
+		this.mock(oBinding).expects("selectKeyProperties").never();
 		oBindingMock.expects("getBaseForPathReduction")
 			.withExactArgs().returns("/SalesOrderList");
 		oMetaModelMock.expects("getReducedPath")
@@ -2069,11 +2089,10 @@ sap.ui.define([
 					getMetaModel : function () { return oMetaModel; }
 				}
 			}),
-			oHelperMock = this.mock(_Helper),
 			oMetaModelMock = this.mock(oMetaModel);
 
-		oHelperMock.expects("merge")
-			.withExactArgs({}, sinon.match.same(oBinding.mLateQueryOptions))
+		this.mock(_Helper).expects("clone")
+			.withExactArgs(sinon.match.same(oBinding.mLateQueryOptions))
 			.returns(oFixture.aggregatedQueryOptions);
 		if (oFixture.metadata) {
 			Object.keys(oFixture.metadata).forEach(function (sMetaPath) {
@@ -3784,6 +3803,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("getQueryOptionsFromParameters").withExactArgs()
 			.returns(mQueryOptions);
+		this.mock(_Helper).expects("clone").never();
 
 		// code under test
 		oPromise = oBinding.fetchResolvedQueryOptions();
@@ -3804,6 +3824,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("getQueryOptionsFromParameters").withExactArgs()
 			.returns(mQueryOptions);
+		this.mock(_Helper).expects("clone").never();
 
 		// code under test
 		oPromise = oBinding.fetchResolvedQueryOptions();
@@ -3846,8 +3867,9 @@ sap.ui.define([
 			.returns("/resolved/path");
 		oHelperMock.expects("getMetaPath").withExactArgs("/resolved/path")
 			.returns("/meta/path");
-		this.mock(Object).expects("assign")
-			.withExactArgs({}, sinon.match.same(mQueryOptionsFromParameters), {$select : []})
+		oHelperMock.expects("clone")
+			.withExactArgs(sinon.match.same(mQueryOptionsFromParameters)).returns("~clone~");
+		this.mock(Object).expects("assign").withExactArgs({}, "~clone~", {$select : []})
 			.returns(mResolvedQueryOptions);
 		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs("fnFetchMetadata", "/meta/path/foo")
