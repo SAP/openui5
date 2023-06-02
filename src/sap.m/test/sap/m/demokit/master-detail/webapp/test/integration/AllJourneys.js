@@ -14,6 +14,7 @@ sap.ui.define([
 	Opa5.extendConfig({
 		arrangements: new Startup(),
 		viewNamespace: "sap.ui.demo.masterdetail.view.",
-		autoWait: true
+		autoWait: true,
+		timeout: 30
 	});
 });
