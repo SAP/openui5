@@ -1163,14 +1163,14 @@ sap.ui.define([
 							controller: this
 						}).then(function (oDialog) {
 							this._oChangeVersionDialog = oDialog;
+							this._oChangeVersionDialog.setModel(this._buildVersionDialogModel());
 							this._oView.addDependent(this._oChangeVersionDialog);
 							resolve(this._oChangeVersionDialog);
-						});
+						}.bind(this));
 					} else {
 						resolve(this._oChangeVersionDialog);
 					}
-				});
-
+				}.bind(this));
 			},
 
 			/**
