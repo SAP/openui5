@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @public
 	 * @since 1.114.0
-	 * @alias sap.ui.mdc.util.TypeMap
+	 * @alias module:sap/ui/mdc/util/TypeMap
 	 */
 	var TypeMap = {};
 
