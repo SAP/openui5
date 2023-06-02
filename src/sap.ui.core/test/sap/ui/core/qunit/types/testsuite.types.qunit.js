@@ -53,7 +53,7 @@ sap.ui.define(function () {
 			},
 			DateFormatTimezones: {
 				coverage : {
-					only : "sap/ui/core/format/DateFormatTimezones"
+					only : "sap/ui/core/format/DateFormat"
 				},
 				title: "QUnit Page for sap/ui/core/format/DateFormatTimezones"
 			},
