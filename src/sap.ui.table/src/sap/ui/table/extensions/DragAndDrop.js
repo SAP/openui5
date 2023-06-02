@@ -54,6 +54,24 @@ sap.ui.define([
 		 */
 		setInstanceSessionData: function(oDragSession, oTable, oSessionData) {
 			this.setSessionData(oDragSession, oSessionData, oTable.getId());
+		},
+
+		scrollVertically: TableUtils.throttle(function(oTable, bDown, iBase, iPercentage) {
+			var oVerticalScrollbar = oTable._getScrollExtension().getVerticalScrollbar();
+			oVerticalScrollbar.scrollTop += this.calculateScrollDistance(iBase, iPercentage) * (bDown ? 1 : -1);
+		}, 50),
+
+		scrollHorizontally: TableUtils.throttle(function(oTable, bRight, iBase, iPercentage) {
+			var oHorizontalScrollbar = oTable._getScrollExtension().getHorizontalScrollbar();
+			oHorizontalScrollbar.scrollLeft += this.calculateScrollDistance(iBase, iPercentage) * (bRight ? 1 : -1);
+		}, 50),
+
+		calculateScrollDistance: function(iBase, iPercentage) {
+			var iMinDistance = 2;
+			var iMaxDistance = 50;
+			var nRate = iPercentage / iBase;
+
+			return Math.max(iMinDistance, Math.round(iMaxDistance * nRate));
 		}
 	};
 
@@ -195,7 +213,6 @@ sap.ui.define([
 				return;
 			}
 
-			var iScrollDistance = 32;
 			var iThreshold = 50;
 			var oDropControl = oDragSession.getDropControl();
 			var oScrollExtension = this._getScrollExtension();
@@ -208,9 +225,9 @@ sap.ui.define([
 				var iPageY = oEvent.pageY;
 
 				if (iPageY >= oVerticalScrollEdge.top - iThreshold && iPageY <= oVerticalScrollEdge.top + iThreshold) {
-					oVerticalScrollbar.scrollTop -= iScrollDistance;
+					ExtensionHelper.scrollVertically(this, false, iThreshold * 2, oVerticalScrollEdge.top + iThreshold - iPageY);
 				} else if (iPageY <= oVerticalScrollEdge.bottom + iThreshold && iPageY >= oVerticalScrollEdge.bottom - iThreshold) {
-					oVerticalScrollbar.scrollTop += iScrollDistance;
+					ExtensionHelper.scrollVertically(this, true, iThreshold * 2, iPageY - oVerticalScrollEdge.bottom + iThreshold);
 				}
 			}
 
@@ -218,9 +235,9 @@ sap.ui.define([
 				var iPageX = oEvent.pageX;
 
 				if (iPageX >= oHorizontalScrollEdge.left - iThreshold && iPageX <= oHorizontalScrollEdge.left + iThreshold) {
-					oHorizontalScrollbar.scrollLeft -= iScrollDistance;
+					ExtensionHelper.scrollHorizontally(this, false, iThreshold * 2, oHorizontalScrollEdge.left + iThreshold - iPageX);
 				} else if (iPageX <= oHorizontalScrollEdge.right + iThreshold && iPageX >= oHorizontalScrollEdge.right - iThreshold) {
-					oHorizontalScrollbar.scrollLeft += iScrollDistance;
+					ExtensionHelper.scrollHorizontally(this, true, iThreshold * 2, iPageX - oHorizontalScrollEdge.right + iThreshold);
 				}
 			}
 		},
@@ -240,6 +257,11 @@ sap.ui.define([
 			if (oRow && (oDropControl === oRow || !oDropControl)) {
 				oRow.expand();
 			}
+		},
+
+		ondragend: function(oEvent) {
+			ExtensionHelper.scrollVertically.cancel();
+			ExtensionHelper.scrollHorizontally.cancel();
 		}
 	};
 
@@ -285,10 +307,13 @@ sap.ui.define([
 		 */
 		destroy: function() {
 			var oTable = this.getTable();
+
 			if (oTable) {
 				oTable.removeEventDelegate(this._oDelegate);
 			}
 
+			ExtensionHelper.scrollVertically.cancel();
+			ExtensionHelper.scrollHorizontally.cancel();
 			this._oDelegate = null;
 			ExtensionBase.prototype.destroy.apply(this, arguments);
 		}
