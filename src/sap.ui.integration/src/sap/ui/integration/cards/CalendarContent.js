@@ -119,7 +119,7 @@ sap.ui.define([
 			this._oCalendar._getMonthPicker().setMonth(iMonth);
 			this._oCalendar._selectMonth();
 			this.invalidate();
-			this.getCardInstance().fireStateChanged();
+			this.getCardInstance().scheduleFireStateChanged();
 		};
 
 		/**

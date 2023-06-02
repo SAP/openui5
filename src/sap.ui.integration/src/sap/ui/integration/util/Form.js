@@ -90,7 +90,7 @@ sap.ui.define([
 		}.bind(this));
 
 		if (bStateChanged && !bSkipFiringStateChangedEvent) {
-			this._oCard._fireStateChanged();
+			this._oCard.scheduleFireStateChanged();
 		}
 	};
 
@@ -217,7 +217,7 @@ sap.ui.define([
 		this._validateControl(oControl, true);
 		this._updateModel(oControl);
 
-		this._oCard._fireStateChanged();
+		this._oCard.scheduleFireStateChanged();
 	};
 
 	Form.prototype._isControlDataValid = function (oData) {

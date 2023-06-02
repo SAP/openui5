@@ -530,6 +530,8 @@ sap.ui.define([
 			this._bDataReady = true;
 		}.bind(this);
 
+		this._fireStateChangedBound = this._fireStateChanged.bind(this);
+
 		/**
 		 * Facade of the {@link sap.ui.integration.widgets.Card} control.
 		 * @interface
@@ -1285,6 +1287,7 @@ sap.ui.define([
 		this._oIntegrationRb = null;
 		this._aActiveLoadingProviders = null;
 		this._oContentMessage = null;
+		clearTimeout(this._iFireStateChangedCallId);
 
 		if (this._oActionsToolbar) {
 			this._oActionsToolbar.destroy();
@@ -1549,7 +1552,7 @@ sap.ui.define([
 
 		if (oContent) {
 			oContent.showBlockingMessage(oSettings);
-			this._fireStateChanged();
+			this.scheduleFireStateChanged();
 		}
 	};
 
@@ -2592,6 +2595,23 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Schedules to fire the stateChanged event. If called multiple times in the same tick, only one stateChanged will be fired.
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 */
+	Card.prototype.scheduleFireStateChanged = function () {
+		if (this._iFireStateChangedCallId) {
+			clearTimeout(this._iFireStateChangedCallId);
+		}
+
+		this._iFireStateChangedCallId = setTimeout(this._fireStateChangedBound, 0);
+	};
+
+	/**
+	 * Fires the stateChanged event of the card and of the host if any.
+	 * @private
+	 */
 	Card.prototype._fireStateChanged = function () {
 		var oHostInstance = this.getHostInstance();
 
@@ -2610,7 +2630,7 @@ sap.ui.define([
 
 	Card.prototype._fireDataChange = function () {
 		this.fireEvent("_dataChange");
-		this._fireStateChanged();
+		this.scheduleFireStateChanged();
 	};
 
 	Card.prototype._fireContentDataChange = function () {
@@ -2623,7 +2643,7 @@ sap.ui.define([
 		this._setActionButtonsEnabled(true);
 		this._validateContentControls(false, true);
 		this.fireEvent("_ready");
-		this._fireStateChanged();
+		this.scheduleFireStateChanged();
 	};
 
 	/**

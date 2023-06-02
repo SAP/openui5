@@ -65,7 +65,13 @@ sap.ui.define([
 		// Arrange
 		var done = assert.async(1),
 			oCard = new SkeletonCard(oSampleManifest),
+			bFirstCall = false,
 			fnStateChangedListener = function () {
+				if (bFirstCall) {
+					oCard.refresh();
+					return;
+				}
+
 				// Assert
 				assert.ok(true, "Card was refreshed");
 
@@ -75,9 +81,7 @@ sap.ui.define([
 				done();
 			};
 
-		oCard.attachEvent("_ready", function () {
-			oCard.attachEvent("stateChanged", fnStateChangedListener);
-		});
+		oCard.attachEvent("stateChanged", fnStateChangedListener);
 
 		// Act
 		oCard.refresh();

@@ -3148,6 +3148,16 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.module("Event stateChanged", {
+			beforeEach: function () {
+				this.oCard = new Card();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
 		QUnit.test("Event stateChanged is fired on refreshData", function (assert) {
 			var done = assert.async(),
 				oCard = this.oCard,
@@ -3181,6 +3191,7 @@ sap.ui.define([
 			});
 
 			// Act
+			oCard.setBaseUrl("/test-resources/sap/ui/integration/qunit/testResources/");
 			oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.stateChanged"
@@ -3196,6 +3207,44 @@ sap.ui.define([
 						"item": {
 							"title": "{Name}"
 						}
+					}
+				}
+			});
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
+		QUnit.test("Event stateChanged is fired only once", function (assert) {
+			var done = assert.async(),
+				oCard = this.oCard,
+				iStateChangedCounter = 0;
+
+			assert.expect(1);
+
+			oCard.attachEventOnce("_ready", function () {
+				oCard.attachStateChanged(function () {
+					iStateChangedCounter++;
+				});
+
+				oCard.scheduleFireStateChanged();
+				oCard.scheduleFireStateChanged();
+
+				setTimeout(function () {
+					assert.strictEqual(iStateChangedCounter, 1, "Event stateChanged is fired only once.");
+					done();
+				}, 100);
+			});
+
+			// Act
+			oCard.setBaseUrl("/test-resources/sap/ui/integration/qunit/testResources/");
+			oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.stateChanged2"
+				},
+				"sap.card": {
+					"type": "Object",
+					"header": {
+						"title": "Test state changed"
 					}
 				}
 			});
