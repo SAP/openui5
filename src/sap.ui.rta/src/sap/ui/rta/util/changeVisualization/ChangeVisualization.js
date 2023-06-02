@@ -57,6 +57,22 @@ sap.ui.define([
 		return !oOverlay || !oOverlay.getDomRef() || !oOverlay.isVisible();
 	}
 
+	function _determineElementOverlay(oElementId, oAffectedElementId) {
+		var oOverlay = OverlayRegistry.getOverlay(oElementId);
+		if (!oOverlay) {
+			// When the element has no Overlay, check if there is a relevant container Overlay
+			// e.g. change on a SmartForm group (Element: parent Form; Relevant Container: SmartForm)
+			var oElementOverlay = OverlayRegistry.getOverlay(oAffectedElementId);
+			var oRelevantContainer = oElementOverlay && oElementOverlay.getRelevantContainer();
+			if (oRelevantContainer) {
+				oOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+			}
+		}
+
+		return oOverlay;
+	}
+
+
 	/**
 	 * @class
 	 * Root control for RTA change visualization.
@@ -207,7 +223,7 @@ sap.ui.define([
 				bHasDraftChanges = true;
 			}
 
-			var oOverlay = OverlayRegistry.getOverlay(oChange.visualizationInfo.displayElementIds[0]);
+			var oOverlay = _determineElementOverlay(oChange.visualizationInfo.displayElementIds[0], oChange.visualizationInfo.affectedElementIds[0]);
 
 			if (!aAllRelevantChangeIds.includes(oChange.change.getId())) {
 				aHiddenChanges.push(oChange);
@@ -501,20 +517,8 @@ sap.ui.define([
 		Object.keys(oSelectors).forEach(function(sSelectorId) {
 			var aChangesOnIndicator = oSelectors[sSelectorId];
 			var aRelevantChanges = this._filterRelevantChanges(oSelectors[sSelectorId]);
-			var oOverlay = OverlayRegistry.getOverlay(sSelectorId);
-			if (!oOverlay) {
-				// When the selector has no Overlay, check if there is a relevant container Overlay
-				// e.g. change on a SmartForm group (Selector: parent Form; Relevant Container: SmartForm)
-				aChangesOnIndicator.some(function(oChange) {
-					var oElementOverlay = OverlayRegistry.getOverlay(oChange.affectedElementId);
-					var oRelevantContainer = oElementOverlay && oElementOverlay.getRelevantContainer();
-					if (oRelevantContainer) {
-						oOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
-						return true;
-					}
-					return false;
-				});
-			}
+			var oOverlay = _determineElementOverlay(sSelectorId, aChangesOnIndicator[0].affectedElementId);
+
 			if (_isOverlayInvisible(oOverlay)) {
 				// Change is not visible
 				return undefined;
