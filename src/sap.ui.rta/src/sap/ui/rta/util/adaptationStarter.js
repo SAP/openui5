@@ -147,7 +147,10 @@ sap.ui.define([
 			return oRta;
 		})
 		.catch(function(vError) {
-			if (vError !== "Reload triggered") {
+			if (
+				vError !== "Reload triggered"
+				&& !(FlexUtils.getUshellContainer() && vError.reason === "flexEnabled") // FLP Plugin already handles this error
+			) {
 				var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
 				showMessageBox(
 					oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", vError.message),
