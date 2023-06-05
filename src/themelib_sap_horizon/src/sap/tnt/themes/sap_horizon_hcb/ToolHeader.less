@@ -35,6 +35,26 @@
 	}
 }
 
+// Styling for the cases when we have Header and SubHeader
+.sapTntToolPageHeaderWithSubHeaderWrapper .sapTntToolPageHeader:first-of-type .sapTntToolHeader {
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 0;
+	border-bottom: none;
+	box-shadow: none;
+}
+
+.sapTntToolPageHeaderWithSubHeaderWrapper .sapTntToolPageHeader:nth-of-type(2) .sapTntToolHeader {
+	border-top-right-radius: 0;
+	border-top-left-radius: 0;
+	border-top: none;
+	box-shadow: none;
+}
+
+.sapTntToolPageHeaderWrapper.sapTntToolPageHeaderWithSubHeaderWrapper {
+	box-shadow: @_sap_tnt_ToolHeader_BoxShadow;
+	border-radius: @_sap_tnt_ToolHeader_BorderRadius;
+}
+
 // ==========================================================================
 // sap.m.Button overriding
 // ==========================================================================
