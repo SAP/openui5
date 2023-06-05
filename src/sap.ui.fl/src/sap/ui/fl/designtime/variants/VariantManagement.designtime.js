@@ -37,9 +37,6 @@ sap.ui.define([
 			showSetAsDefault: {
 				ignore: false
 			},
-			manualVariantKey: {
-				ignore: true
-			},
 			inErrorState: {
 				ignore: false
 			},

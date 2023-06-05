@@ -502,8 +502,6 @@ sap.ui.define([
 				this._oVM._openSaveAsDialog();
 
 				assert.ok(this._oVM.oInputName.getVisible());
-				assert.ok(!this._oVM.oLabelKey.getVisible());
-				assert.ok(!this._oVM.oInputManualKey.getVisible());
 
 				assert.ok(this._oVM.getSupportApplyAutomatically());
 				assert.ok(this._oVM.getSupportPublic());
@@ -544,15 +542,7 @@ sap.ui.define([
 				assert.ok(!oGridContent[2].getVisible());
 				assert.ok(!oGridContent[3].getVisible());
 
-				assert.ok(!this.oVariantManagement.getManualVariantKey());
-				assert.ok(!this._oVM.oInputManualKey.getVisible());
-				assert.ok(!this._oVM.oLabelKey.getVisible());
-
-				this.oVariantManagement.setManualVariantKey(true);
 				this._oVM._openSaveAsDialog();
-
-				assert.ok(this._oVM.oInputManualKey.getVisible());
-				assert.ok(this._oVM.oLabelKey.getVisible());
 			}.bind(this));
 		});
 
@@ -617,10 +607,6 @@ sap.ui.define([
 
 			this._oVM._handleVariantSaveAs(" ");
 			assert.equal(this._oVM.oInputName.getValueState(), "Error");
-
-			this.oVariantManagement.setManualVariantKey(true);
-			this._oVM._handleVariantSaveAs("1");
-			assert.equal(this._oVM.oInputManualKey.getValueState(), "Error");
 		});
 
 		QUnit.test("Checking _handleVariantSaveAs with cancel", function(assert) {
@@ -1420,16 +1406,16 @@ sap.ui.define([
 
 			var aContent = this._oVM.oSaveAsDialog.getContent();
 			assert.ok(aContent);
-			assert.equal(aContent.length, 5);
+			assert.equal(aContent.length, 3);
 
 			this._oVM.oSaveAsDialog.attachAfterOpen(function() {
 				assert.ok(true);
 
 				aContent = this._oVM.oSaveAsDialog.getContent();
 				assert.ok(aContent);
-				assert.equal(aContent.length, 6);
-				assert.ok(aContent[5].isA("sap.m.Text"));
-				assert.ok(aContent[5].getText(), "SAVE_AS");
+				assert.equal(aContent.length, 4);
+				assert.ok(aContent[3].isA("sap.m.Text"));
+				assert.ok(aContent[3].getText(), "SAVE_AS");
 
 				done();
 			}.bind(this));

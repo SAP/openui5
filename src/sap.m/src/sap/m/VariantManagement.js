@@ -702,7 +702,6 @@ sap.ui.define([
 
 	VariantManagement.prototype._createInnerModel = function() {
 		var oModel = new JSONModel({
-			showManualVariantKey: false,
 			showCreateTile: false,
 			isDesignMode: false
 		});
@@ -715,13 +714,6 @@ sap.ui.define([
 	};
 	VariantManagement.prototype._setShowCreateTile = function(bValue) {
 		this._setInnerModelProperty("/showCreateTile", bValue);
-	};
-
-	VariantManagement.prototype._getShowManualVariantKey = function() {
-		return this._getInnerModelProperty("/showManualVariantKey");
-	};
-	VariantManagement.prototype._setShowManualVariantKey = function(bValue) {
-		this._setInnerModelProperty("/showManualVariantKey", bValue);
 	};
 
 	VariantManagement.prototype.getDesignMode = function() {
@@ -1271,26 +1263,6 @@ sap.ui.define([
 				width: "100%"
 			});
 
-			this.oInputManualKey = new Input(this.getId() + "-key", {
-				visible: {
-					path: "/showManualVariantKey",
-					model: VariantManagement.INNER_MODEL_NAME
-				},
-				liveChange: function() {
-					this._checkVariantNameConstraints(this.oInputManualKey);
-				}.bind(this)
-			});
-
-			this.oLabelKey = new Label(this.getId() + "-keylabel", {
-				text: this._oRb.getText("VARIANT_MANAGEMENT_KEY"),
-				required: true,
-				visible: {
-					path: "/showManualVariantKey",
-					model: VariantManagement.INNER_MODEL_NAME
-				}
-			});
-			this.oLabelKey.setLabelFor(this.oInputManualKey);
-
 			this.oSaveSave = new Button(this.getId() + "-variantsave", {
 				text: this._oRb.getText("VARIANT_MANAGEMENT_SAVE"),
 				type: ButtonType.Emphasized,
@@ -1346,7 +1318,7 @@ sap.ui.define([
 					press: this._cancelPressed.bind(this)
 				}),
 				content: [
-					oLabelName, this.oInputName, this.oLabelKey, this.oInputManualKey, oSaveAsDialogOptionsGrid
+					oLabelName, this.oInputName, oSaveAsDialogOptionsGrid
 				],
 				stretch: Device.system.phone
 			});
@@ -1579,7 +1551,6 @@ sap.ui.define([
 	VariantManagement.prototype._handleVariantSaveAs = function(sNewVariantName) {
 		var sKey = null;
 		var sName = sNewVariantName.trim();
-		var sManualKey = this.oInputManualKey.getValue().trim();
 
 		if (sName === "") {
 			this.oInputName.setValueState(ValueState.Error);
@@ -1587,14 +1558,6 @@ sap.ui.define([
 			return false;
 		}
 
-		if (this._getShowManualVariantKey()) {
-			if (sManualKey === "") {
-				this.oInputManualKey.setValueState(ValueState.Error);
-				this.oInputManualKey.setValueStateText(this._oRb.getText("VARIANT_MANAGEMENT_ERROR_EMPTY"));
-				return false;
-			}
-			sKey = sManualKey;
-		}
 
 		var mContexts = this._getContextInfoChanges();
 		var bIsRestricted = this._isRestricted(mContexts);
