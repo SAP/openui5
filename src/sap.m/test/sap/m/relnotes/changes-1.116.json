@@ -1,7 +1,72 @@
 {
   "1.116.0": {
-    "date": "May 2023",
+    "date": "June 2023",
     "notes": [
+      {
+        "id": "590a183a754a879925b78fbce88363b5cc51d94a",
+        "type": "FIX",
+        "text": " sap/m/SearchFieldRenderer: Enforce the ignore of key fallback"
+      },
+      {
+        "id": "6ff6b91d532c4c9eb146029a9827b8c6cf99ebcd",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: enable labeling using ariaLabelledBy"
+      },
+      {
+        "id": "b7e3e8f6d38bf6a91da458e43a839e62efe70176",
+        "type": "FIX",
+        "text": " Now we display correct error message if user didn't entered file name when was renaming file",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380049617"
+          }
+        ]
+      },
+      {
+        "id": "43d455ca6e975b78ee6e3ba7ffeb1547cb532623",
+        "type": "FIX",
+        "text": " sap.m.ValueStateMessage: Prevent text truncation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004468002023"
+          }
+        ]
+      },
+      {
+        "id": "b3e07ffd7cc393a8fb94df5dbfb6da219deb9346",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Remove \"aria-level\" attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370027872"
+          }
+        ]
+      },
+      {
+        "id": "f592e426b91cecd1baa5cf5e57f2b993cc1b7614",
+        "type": "FIX",
+        "text": " sap.m.Carousel: focusable elements must have a role, role=none is added to the dummyArea",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380049264"
+          }
+        ]
+      },
+      {
+        "id": "5bcdf5f9909f5f4b4e8d9c3100bac5ee81a622b8",
+        "type": "FIX",
+        "text": " sap.m.Input: Type-ahead functionality corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370039995"
+          }
+        ]
+      },
       {
         "id": "d9fb6aff908b775670f71a9f8b3f887c27ac0f66",
         "type": "FIX",

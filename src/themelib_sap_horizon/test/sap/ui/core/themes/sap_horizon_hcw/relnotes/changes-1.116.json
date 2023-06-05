@@ -1,0 +1,23 @@
+{
+  "1.116.0": {
+    "date": "June 2023",
+    "notes": [
+      {
+        "id": "45b45b83f16872b85d9445cdf83d440bc48b63e3",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: implement visual spec changes"
+      },
+      {
+        "id": "bea0890a78a7819b36c93d26bf31f15afdfdbed6",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Removed double focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370039494"
+          }
+        ]
+      }
+    ]
+  }
+}
