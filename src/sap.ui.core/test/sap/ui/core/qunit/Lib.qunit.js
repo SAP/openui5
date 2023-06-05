@@ -4,8 +4,9 @@ sap.ui.require([
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/theming/ThemeManager",
 	"sap/base/i18n/ResourceBundle",
-	"sap/ui/dom/includeScript"
-], function(Library, ObjectPath, ThemeManager, ResourceBundle, includeScript) {
+	"sap/ui/dom/includeScript",
+	"sap/base/util/LoaderExtensions"
+], function(Library, ObjectPath, ThemeManager, ResourceBundle, includeScript, LoaderExtensions) {
 	"use strict";
 
 	QUnit.module("Instance methods");
@@ -239,6 +240,28 @@ sap.ui.require([
 
 		assert.equal(Object.keys(Library.all()).includes(sLibName), false, "The library " + sLibName + " is still not listed in Library.all()");
 		assert.equal(Object.keys(Library._all(true)).includes(sLibName), true, "The library " + sLibName + " is now listed in Library._all(true) (without considering settings enhancement)");
+	});
+
+	QUnit.test("Static method 'getResourceBundleFor' called on library where manifest.json exists", function(assert) {
+		var sLibraryName = "testlibs.resourcebundle.lib1";
+		var oResourceBundle = Library.getResourceBundleFor(sLibraryName);
+
+		assert.ok(oResourceBundle, "Resource bundle can be created successfully");
+		assert.equal(oResourceBundle.getText("TITLE1"), "i18n.properties", "The configured resource bundle file in manifest.json is loaded (i18n.properties)");
+	});
+
+	QUnit.test("Static method 'getResourceBundleFor' called on library where manifest.json does NOT exist", function(assert) {
+		var sLibraryName = "testlibs.resourcebundle.lib2";
+		var oResourceBundle = Library.getResourceBundleFor(sLibraryName);
+
+		assert.ok(oResourceBundle, "Resource bundle can be created successfully");
+		assert.equal(oResourceBundle.getText("TITLE1"), "messagebundle.properties", "The fallback file 'messagebundle.properties' is loaded because no manifest.json is available for the library");
+
+		var oLoadResourceSpy = this.spy(LoaderExtensions, "loadResource");
+
+		// try to get the resource bundle again
+		oResourceBundle = Library.getResourceBundleFor(sLibraryName);
+		assert.equal(oLoadResourceSpy.callCount, 0, "no further call is done for loading the manifest.json after the previous request failed");
 	});
 
 	QUnit.module("Library.js included in custom bundle");
