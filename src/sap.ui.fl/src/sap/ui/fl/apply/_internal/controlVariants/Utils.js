@@ -4,9 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/StaticArea",
 	"sap/ui/fl/Utils"
 ], function(
 	Core,
+	StaticArea,
 	Utils
 ) {
 	"use strict";
@@ -30,7 +32,7 @@ sap.ui.define([
 			aVMControls = Array.from(oRootControl.getDomRef().querySelectorAll(".sapUiFlVarMngmt"));
 		}
 		if (bUseStaticArea || aVMControls.length === 0) {
-			aVMControls = Array.from(Core.getStaticAreaRef().querySelectorAll(".sapUiFlVarMngmt"));
+			aVMControls = Array.from(StaticArea.getDomRef().querySelectorAll(".sapUiFlVarMngmt"));
 		}
 		return aVMControls.map(function (oVariantManagementNode) {
 			return oVariantManagementNode.id;

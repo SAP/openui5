@@ -4,19 +4,21 @@
 
 // Provides class sap.ui.dt.MutationObserver.
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/dt/OverlayUtil",
+	"sap/base/util/restricted/_intersection",
+	"sap/base/util/restricted/_uniq",
+	"sap/ui/core/StaticArea",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/DOMUtil",
-	"sap/base/util/restricted/_intersection",
-	"sap/base/util/restricted/_uniq"
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/thirdparty/jquery"
 ], function(
-	jQuery,
-	OverlayUtil,
+	_intersection,
+	_uniq,
+	StaticArea,
 	ManagedObject,
 	DOMUtil,
-	_intersection,
-	_uniq
+	OverlayUtil,
+	jQuery
 ) {
 	"use strict";
 
@@ -221,7 +223,7 @@ sap.ui.define([
 			&& document.body.contains(oNode)
 
 			// 3. Ignore direct mutation on static area Node
-			&& sNodeId !== "sap-ui-static"
+			&& sNodeId !== StaticArea.STATIC_UIAREA_ID
 
 			// 4. Node is not part of preserve area
 			&& !DOMUtil.contains("sap-ui-preserve", oNode)
@@ -251,7 +253,7 @@ sap.ui.define([
 	};
 
 	MutationObserver.prototype._getRelevantElementIdsFromStaticArea = function (oMutation) {
-		return oMutation.target.id === "sap-ui-static"
+		return oMutation.target.id === StaticArea.STATIC_UIAREA_ID
 			&& 	_intersection(
 				[]
 					.concat(
@@ -398,7 +400,7 @@ sap.ui.define([
 				aTargetElementIds.push(sTargetElementId);
 			} else if (
 				// Target Node is an ancestor of one of the root element, but not a static area
-				oTarget.getAttribute("id") !== "sap-ui-static"
+				oTarget.getAttribute("id") !== StaticArea.STATIC_UIAREA_ID
 			) {
 				aTargetElementIds = this._aRootIds.filter(function (sTargetElementId) {
 					return oTarget.contains(document.getElementById(sTargetElementId));
