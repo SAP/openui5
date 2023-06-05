@@ -22,7 +22,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new element
-	 * @class Content for the {@link sap.ui.mdc.valuehelp.base.Container Container} element showing a list with fix values.
+	 * @class Content for the {@link sap.ui.mdc.valuehelp.base.Container Container} element showing a list with fixed values.
 	 * @extends sap.ui.mdc.valuehelp.base.ListContent
 	 * @version ${version}
 	 * @constructor
@@ -52,7 +52,7 @@ sap.ui.define([
 				 * If set, the items of the list are filtered based on <code>filterValue</code>.
 				 *
 				 * If a type-ahead behavior for the connected field is wanted, this property must be set to <code>true</code>.
-				 * For small lists all values are meant to be shown, independent of the typing in the connected field.
+				 * For small lists, all values are meant to be shown, independent of the typing in the connected field.
 				 * In this case this property must be set to <code>false</code>.
 				 *
 				 * If not set, the list opens if the user clicks into the connected field.
@@ -65,13 +65,13 @@ sap.ui.define([
 			},
 			aggregations: {
 				/**
-				 * Items of the field help.
+				 * Items of the value help.
 				 *
 				 * The <code>key</code> of the items is not shown in the list, but is used as a value of the connected field.
 				 *
 				 * If the <code>additionalText</code> for all the items is not used, the column will not be displayed.
 				 *
-				 * <b>Note:</b> At the moment, icons are not supported.
+				 * <b>Note:</b> Icons are currently not supported.
 				 *
 				 */
 				items: {

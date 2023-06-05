@@ -14,7 +14,7 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>ListContent</code>.
 	 *
-	 * This is the basis for different value help list contents. It cannot be used directly.
+	 * This is the basis for various types of value help list content. It cannot be used directly.
 	 *
 	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new element
@@ -55,7 +55,7 @@ sap.ui.define([
 					defaultValue: true
 				},
 				/**
-				 * If set, the List is also opened if the ValueHelp icon is pressed.
+				 * If set, the list is opened whenever the value help icon is pressed.
 				 */
 				 useAsValueHelp: {
 					type: "boolean",
@@ -103,8 +103,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the <code>ListBinding</code> of the content
-	 * @returns {sap.ui.model.ListBinding} ListBinding
+	 * Gets the <code>ListBinding</code> of the content.
+	 * @returns {sap.ui.model.ListBinding} <code>ListBinding</code>
 	 * @protected
 	 */
 	ListContent.prototype.getListBinding = function () {

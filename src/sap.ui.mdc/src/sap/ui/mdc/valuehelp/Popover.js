@@ -49,9 +49,9 @@ sap.ui.define([
 				/**
 				 * Controls the possibility to open this popover container by clicking on a connected control, even if no content enforces it.
 				 *
-				 * <b>Note:</b> By default, a typeahead is only shown to provide suggestions when users enter input in a connected control.
-				 * This property enables scenarios, where popovers need to be shown earlier (e. g. recommendations or recently entered values)
-				 * Please also see {@link sap.ui.mdc.ValueHelpDelegate.showTypahead showTypahead}
+				 * <b>Note:</b> By default, a type-ahead is only shown to provide suggestions when users enter input in a connected control.
+				 * This property enables scenarios where popovers need to be shown earlier (for example, recommendations or recently entered values).
+				 * See also {@link sap.ui.mdc.ValueHelpDelegate.showTypeahead showTypeahead}
 	 			 * @since 1.110.0
 				 */
 				opensOnClick: {
@@ -59,11 +59,11 @@ sap.ui.define([
 					defaultValue: false
 				},
 				/**
-				 * Controls the possibility to open this popover container by focussing a connected control
+				 * Controls the possibility to open this popover container by focussing on a connected control.
 				 *
-				 * <b>Note:</b> By default, a typeahead is only shown to provide suggestions when users enter input in a connected control.
-				 * This property enables scenarios, where popovers need to be shown earlier (e. g. recommendations or recently entered values)
-				 * Please also see {@link sap.ui.mdc.ValueHelpDelegate.showTypahead showTypahead}
+				 * <b>Note:</b> By default, a type-ahead is only shown to provide suggestions when users enter input in a connected control.
+				 * This property enables scenarios where popovers need to be shown earlier (for example, recommendations or recently entered values).
+				 * See also {@link sap.ui.mdc.ValueHelpDelegate.showTypeahead showTypeahead}
 	 			 * @since 1.112.0
 				 */
 				opensOnFocus: {

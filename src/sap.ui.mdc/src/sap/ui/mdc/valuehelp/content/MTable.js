@@ -69,10 +69,10 @@ sap.ui.define([
 			},
 			aggregations: {
 				/**
-				 * Table to be used in value help
+				 * Table that is used in the value help.
 				 *
 				 * <b>Note:</b> Set the right selection mode (multiple selection or single selection) as it cannot be determined automatically
-				 * for every case. (In type-ahead also for multi-value {@link sap.ui.mdc.FilterField FilterField} controls only single selection from table might be wanted.)
+				 * for every case. (For type-ahead and also for multi-value {@link sap.ui.mdc.FilterField FilterField} controls, only single selection from the table might be wanted.)
 				 */
 				table: {
 					type: "sap.m.Table",
@@ -81,7 +81,7 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * This event is fired if the content of the table is updated
+				 * This event is fired when the content of the table is updated.
 				 */
 				contentUpdated: {} // TODO: Better way to solve missing popover maxheight? Part of ITypeahead? Or is this explicitly for IPopoverContent?
 			},

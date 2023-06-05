@@ -28,7 +28,7 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>FilterableListContent</code>.
 	 *
-	 * This is the basis for different value help list contents with filter functionality. It cannot be used directly.
+	 * This is the basis for various types of value help content with filter functionality. It cannot be used directly.
 	 *
 	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new element
@@ -47,9 +47,9 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			properties:	{
 				/**
-				 * The fields based on which the table data is filtered. For filtering the value of the <code>filterValue</code> property is used.
+				 * The fields based on which the table data is filtered. For filtering, the value of the <code>filterValue</code> property is used.
 				 *
-				 * If set to <code>$search</code> and the used binding supports search requests, a $search request is used for filtering.
+				 * If set to <code>$search</code>, and if the used binding supports search requests, a $search request is used for filtering.
 				 *
 				 * If set to one or more properties, the filters for these properties are used for filtering.
 				 * These filters are set on the <code>ListBinding</code> used.
@@ -65,8 +65,6 @@ sap.ui.define([
 				/**
 				 * The path of the key field in the content binding.
 				 * If a table is used as content, this is the binding path of the key of the items.
-				 *
-				 * If not set, the FieldPath of the assigned field is used.
 				 */
 				keyPath: {
 					type: "string",
@@ -94,14 +92,14 @@ sap.ui.define([
 			},
 			aggregations: {
 				/**
-				 * FilterBar
+				 * {@link sap.ui.mdc.filterbar.vh.FilterBar FilterBar} used for filtering.
 				 */
 				filterBar: {
 					type: "sap.ui.mdc.filterbar.vh.FilterBar",
 					multiple: false
 				},
 				/**
-				 * Default FilterBar, ceated internally if none given.
+				 * Default {@link sap.ui.mdc.filterbar.vh.FilterBar FilterBar}, created internally if none given.
 				 */
 				_defaultFilterBar: {
 					type: "sap.ui.mdc.filterbar.vh.FilterBar",
@@ -137,7 +135,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Applies the filter to the content control
+	 * Applies the filter to the content control.
 	 * @protected
 	 */
 	FilterableListContent.prototype.applyFilters = function () {
@@ -180,10 +178,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets an item for a BindingContext
+	 * Gets an item for a <code>BindingContext</code>.
 	 * @param {sap.ui.model.Context} oBindingContext BindingContext
-	 * @param {object} oOptions options
-	 * @returns {object} Item object containing <code>key</code>, <code>description</code> and <code>payload</code>
+	 * @param {object} [oOptions] Options
+	 * @returns {object} Item object containing <code>key</code>, <code>description</code>, and <code>payload</code>
 	 * @protected
 	 */
 	FilterableListContent.prototype.getItemFromContext = function (oBindingContext, oOptions) {
@@ -214,8 +212,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Created a payload for a value
-	 * @param {any[]} aValues values (key, description)
+	 * Creates a payload for a value.
+	 * @param {any[]} aValues Values (key, description)
 	 * @param {any} vContext context
 	 * @returns {object} payload
 	 * @protected
@@ -233,7 +231,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if an item is selected
+	 * Checks if an item is selected.
 	 * @param {sap.ui.core.Element} oItem Entry of a given list
 	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions current conditions
 	 * @returns {boolean} True, if item is selected
@@ -244,7 +242,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Created the default <code>FilterBar</code> control
+	 * Creates the default <code>FilterBar</code> control.
 	 * @returns {Promise<sap.ui.mdc.filterbar.vh.FilterBar>} FilterBar
 	 */
 	FilterableListContent.prototype._createDefaultFilterBar = function() {
@@ -307,7 +305,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the currently used <code>FilterBar</code> control
+	 * Gets the currently used <code>FilterBar</code> control.
 	 * @returns {sap.ui.mdc.filterbar.vh.FilterBar} FilterBar
 	 */
 	FilterableListContent.prototype._getPriorityFilterBar = function () {
@@ -367,8 +365,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the <code>BindingInfo</code> of the content
-	 * @returns {sap.ui.base.ManagedObject.AggregationBindingInfo} ListBindingInfo
+	 * Gets the <code>BindingInfo</code> of the content.
+	 * @returns {sap.ui.base.ManagedObject.AggregationBindingInfo} <code>ListBindingInfo</code>
 	 * @protected
 	 */
 	FilterableListContent.prototype.getListBindingInfo = function () {
@@ -376,9 +374,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the <code>BindingContext</code> for an item
+	 * Gets the <code>BindingContext</code> for an item.
 	 * @param {sap.ui.core.Element} oItem item
-	 * @returns {sap.ui.model.Context} BindingContext
+	 * @returns {sap.ui.model.Context} <code>BindingContext</code>
 	 */
 	FilterableListContent.prototype._getListItemBindingContext = function (oItem) {
 		var sModelName = this.getListBindingInfo().model;
@@ -386,7 +384,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the control that holds the initial focus
+	 * Gets the control that holds the initial focus.
 	 * @returns {sap.ui.core.control} control
 	 */
 	FilterableListContent.prototype.getInitialFocusedControl = function() {
@@ -394,7 +392,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Provides type information for listcontent filtering
+	 * Provides type information for listcontent filtering.
 	 * @param {object} oConditions set of conditions to create filters for
 	 * @returns {object} Returns a type map for property paths
 	 */
@@ -405,7 +403,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the formatted title based on the number of conditions
+	 * Gets the formatted title based on the number of conditions.
 	 * @param {int} iCount number of conditions
 	 * @returns {string} formatted title
 	 * @private
@@ -420,7 +418,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the formatted short-title
+	 * Gets the formatted short-title.
 	 * @returns {string} formatted short-title
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
@@ -434,7 +432,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the formatted tokenizer-title based on the number of conditions
+	 * Gets the formatted tokenizer-title based on the number of conditions.
 	 * @param {int} iCount number of conditions
 	 * @returns {string} formatted tokenizer-title
 	 * @private
@@ -463,7 +461,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the collective Search to the <code>FilterBar</code>
+	 * Sets the collective Search to the <code>FilterBar</code>.
 	 *
 	 * @param {sap.ui.mdc.filterbar.vh.CollectiveSearchSelect} oCollectiveSearchSelect Collective search control
 	 *
@@ -497,7 +495,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Executes logic before content is shown
+	 * Executes logic before content is shown.
 	 * @param {boolean} bInitial If <code>true</code> this is the first time the content is shown
 	 * @returns {Promise} Promise resolved if content is ready to be shown
 	 * @private
@@ -530,7 +528,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fires the {@link #events/select select} event
+	 * Fires the {@link #event:select select} event.
 	 * @param {object} oChange change object
 	 */
 	FilterableListContent.prototype._fireSelect = function (oChange) {
@@ -576,7 +574,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the currently used filter value
+	 * Gets the currently used filter value.
 	 * @returns {string} filter value
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelpDelegate
@@ -592,7 +590,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the conditions that are selecatble from list content
+	 * Gets the conditions that are selecatble from list content.
 	 *
 	 * This are validated conditions as other conditions are shown on the {@link sap.ui.mdc.valuehelp.base.DefineConditionPanel DefineConditionPanel}
 	 * @returns {sap.ui.base.ManagedObject.AggregationBindingInfo} ListBindingInfo

@@ -28,19 +28,21 @@ sap.ui.define([
 	 * That is why the <code>conditions</code> property must be bound to the related conditions in the {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.
 	 * The type of this data must be defined in the <code>dataType</code> property.
 	 *
+	 * Based on the data type settings, a default control is rendered by the <code>FilterField</code> as follows:
+	 *
 	 * <ul>
-	 * <li>In display mode normally a {@link sap.m.Text Text} control is rendered.</li>
-	 * <li>If <code>multipleLines</code> is set a {@link sap.m.ExpandableText ExpandableText} control is rendered.</li>
-	 * <li>If multiple values are allowed a {@link sap.m.Tokenizer Tokenizer} control is rendered.</li>
-	 * <li>In edit mode normally a {@link sap.m.Input Input} control is rendered.</li>
-	 * <li>If multiple values are allowed a {@link sap.m.MultiInput MultiInput} control is rendered.</li>
-	 * <li>If <code>multipleLines</code> is set a {@link sap.m.TextArea TextArea} control is rendered.</li>
-	 * <li>If a date type or a date-time type is used, a {@link sap.m.DateRangeSelection DateRangeSelection} control is rendered.</li>
+	 * <li>In display mode, usually a {@link sap.m.Text Text} control is rendered.</li>
+	 * <li>If <code>multipleLines</code> is set, an {@link sap.m.ExpandableText ExpandableText} control is rendered.</li>
+	 * <li>If multiple values are allowed, a {@link sap.m.Tokenizer Tokenizer} control is rendered.</li>
+	 * <li>In edit mode, usually an {@link sap.m.Input Input} control is rendered.</li>
+	 * <li>If multiple values are allowed, a {@link sap.m.MultiInput MultiInput} control is rendered.</li>
+	 * <li>If <code>multipleLines</code> is set, a {@link sap.m.TextArea TextArea} control is rendered.</li>
+	 * <li>If a date type or a date/time type is used, a {@link sap.m.DateRangeSelection DateRangeSelection} control is rendered.</li>
 	 * <li>If a date type is used and only single values are allowed, a {@link sap.m.DatePicker DatePicker} control is rendered.</li>
 	 * <li>If a date type is used and only single ranges are allowed, a {@link sap.m.DateRangeSelection DateRangeSelection} control is rendered.</li>
-	 * <li>If a date-time type is used and only single values are allowed, a {@link sap.m.DateTimePicker DateTimePicker} control is rendered.</li>
+	 * <li>If a date/time type is used and only single values are allowed, a {@link sap.m.DateTimePicker DateTimePicker} control is rendered.</li>
 	 * <li>If a time type is used and only single values are allowed, a {@link sap.m.TimePicker TimePicker} control is rendered.</li>
-	 * <li>If used for search a {@link sap.m.SearchField SearchField} control is rendered.</li>
+	 * <li>If used for search, a {@link sap.m.SearchField SearchField} control is rendered.</li>
 	 * </ul>
 	 *
 	 * @extends sap.ui.mdc.field.FieldBase
@@ -65,7 +67,7 @@ sap.ui.define([
 				/**
 				 * Supported operator names for conditions.
 				 *
-				 * If empty, default operators depending on used data type are used.
+				 * If empty, default operators depending on used data type are taken.
 				 *
 				 * @since 1.73.0
 				 */
@@ -127,7 +129,7 @@ sap.ui.define([
 
 						/**
 						 * Returns a <code>Promise</code> for the change. The <code>Promise</code> returns the value if it is resolved.
-						 * If the <code>change</code> event is synchronous, the promise has already been already resolved. If it is asynchronous,
+						 * If the <code>change</code> event is synchronous, the <code>Promise</code> has already been resolved. If it is asynchronous,
 						 * it will be resolved after the value has been updated.
 						 *
 						 * The <code>FilterField</code> should be set to busy during the parsing to prevent user input.

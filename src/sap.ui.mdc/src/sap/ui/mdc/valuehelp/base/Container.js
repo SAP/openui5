@@ -18,7 +18,7 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>Container</code>.
 	 *
-	 * This is the basis for different value help containers. It cannot be used directly.
+	 * This is the basis for various value help containers. It cannot be used directly.
 	 *
 	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new element
@@ -45,7 +45,7 @@ sap.ui.define([
 					defaultValue: ""
 				},
 				/**
-				 * This property may be used by FilterableListContents to share basic search state in collective search scenarios
+				 * This property may be used by <code>FilterableListContents</code> to share basic search states in collective search scenarios.
 				 *
 				 * @ui5-restricted
 				 * @private
@@ -57,7 +57,7 @@ sap.ui.define([
 			},
 			aggregations: {
 				/**
-				 * Used container element. (e.g. Popover or Dialog)
+				 * Used container element (for example, {@link sap.m.Popover Popover} or {@link sap.m.Dialog Dialog}).
 				 */
 				_container: {
 					type: "sap.ui.core.Element",
@@ -66,7 +66,7 @@ sap.ui.define([
 				},
 				/**
 				 * Content of the container.
-				 * This aggregation holds the actual controls enabling the user to select items or create conditions (e.g. tables or condition panels)
+				 * This aggregation holds the actual controls enabling the user to select items or create conditions (for example, tables or condition panels).
 				 */
 				 content: {
 					type: "sap.ui.mdc.valuehelp.base.Content",
@@ -75,7 +75,7 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * Fired if the selected condition changed.
+				 * This event is fired if the selected condition has changed.
 				 */
 				select: {
 					parameters: {
@@ -92,50 +92,50 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * Fired if a change on the value help is confirmed
+				 * This event is fired if a change of the value help is confirmed.
 				 */
 				confirm: {
 					parameters: {
 						/**
-						 * True if the value help needs to be closed
+						 * <code>true</code> if the value help needs to be closed
 						 */
 						close: { type: "boolean" }
 					}
 				},
 				/**
-				 * Fired if the value help is opened.
+				 * This event is fired if the value help is opened.
 				 */
 				opened: {},
 				/**
-				 * Fired if the value help is closed.
+				 * This event is fired if the value help is closed.
 				 */
 				closed: {},
 				/**
-				 * Fired if the change is cancelled.
+				 * This event is fired if the change is cancelled.
 				 */
 				cancel: {},
 				/**
-				 * Fired if the Container requests the delegate content.
+				 * This event is fired if the container requests the delegate content.
 				 */
 				requestDelegateContent: {
 					parameters: {
 						/**
-						 * Content wrapper id for which contents are requested
+						 * Content wrapper ID for which contents are requested
 						 */
 						contentId: { type: "string" }
 					}
 				},
 				/**
-				 * Fired if the value help should switch to dialog mode.
+				 * This event is fired if the value help should switch to dialog mode.
 				 */
 				requestSwitchToDialog: {},
 				/**
-				 * Fired if a navigation was executed in the content of the container
+				 * This event is fired if a navigation has been executed in the content of the container.
 				 */
 				navigated: {
 					parameters: {
 						/**
-						 * True if the focus should be set back to the field.
+						 * <code>true</code> if the focus should be set back to the field.
 						 */
 						leaveFocus: { type: "boolean" },
 						/**
@@ -162,7 +162,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Observes property and aggregation changes
+	 * Observes property and aggregation changes.
 	 * @param {object} oChanges Change
 	 * @protected
 	 */
@@ -178,7 +178,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Binds the content to the container
+	 * Binds the content to the container.
 	 * @param {sap.ui.mdc.valuehelp.base.Content} oContent content
 	 * @protected
 	 */
@@ -208,7 +208,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Unbinds the content from the container
+	 * Unbinds the content from the container.
 	 * @param {sap.ui.mdc.valuehelp.base.Content} oContent content
 	 * @protected
 	 */
@@ -233,7 +233,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the <code>requestSwitchToDialog</code> event of the content
+	 * Handles the <code>requestSwitchToDialog</code> event of the content.
 	 * @param {sap.ui.base.Event} oEvent event
 	 * @protected
 	 */
@@ -242,7 +242,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the <code>navigated</code> event of the content
+	 * Handles the <code>navigated</code> event of the content.
 	 * @param {sap.ui.base.Event} oEvent event
 	 * @protected
 	 */
@@ -251,7 +251,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the container control or element to be opened (for example Popover or Dialog)
+	 * Returns the container control or element that is opened (for example, a popover or dialog).
 	 * @reurns {sap.ui.core.Element} container
 	 * @protected
 	 */
@@ -259,7 +259,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns control connected to value help
+	 * Returns control connected to value help.
 	 * @returns {sap.ui.core.Control} connected control
 	 * @protected
 	 */
@@ -269,7 +269,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the maximum allowed number of conditions, -1 if no limit is set
+	 * Returns the maximum allowed number of conditions, -1 if no limit is set.
 	 * @returns {int} maximum allowed number of conditions
 	 * @protected
 	 */
@@ -279,8 +279,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns if the value help is used for single selection
-	 * @returns {boolean} <code>true</code> id single seletion
+	 * Returns if the value help is used for single selection.
+	 * @returns {boolean} <code>true</code> id single selection
 	 * @protected
 	 */
 	Container.prototype.isSingleSelect = function() {
@@ -297,7 +297,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the UIArea of the content
+	 * Returns the <code>UIArea</code> of the content.
 	 * @returns {sap.ui.core.UIArea|null} The UI area of the content or <code>null</code>
 	 * @protected
 	 */
@@ -306,7 +306,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Opens the container
+	 * Opens the container.
 	 *
 	 * @param {Promise} oValueHelpContentPromise Promise for content request
  	 * @param {boolean} bTypeahead Flag indicating whether the container is opened as type-ahead or dialog-like help
@@ -332,7 +332,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Closes the container
+	 * Closes the container.
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
@@ -349,7 +349,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Places the content into the container control or element
+	 * Places the content into the container control or element.
 	 * @param {sap.ui.core.Element} oContainer container
 	 * @returns {sap.ui.core.Element} container
 	 * @protected
@@ -359,7 +359,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Opens the container control or element
+	 * Opens the container control or element.
 	 * @param {sap.ui.core.Element} oContainer container
 	 * @param {boolean} bTypeahead if set, container is opened for typeahead
 	 * @protected
@@ -374,7 +374,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Closes the container control or element
+	 * Closes the container control or element.
 	 * @protected
 	 */
 	Container.prototype.closeContainer = function () {
@@ -382,7 +382,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the <code>opened</code> event of the container control or element
+	 * Handles the <code>opened</code> event of the container control or element.
 	 * @param {sap.ui.base.Event} oEvent event
 	 * @protected
 	 */
@@ -392,7 +392,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the <code>closed</code> event of the container control or element
+	 * Handles the <code>closed</code> event of the container control or element.
 	 * @param {sap.ui.base.Event} oEvent event
 	 * @protected
 	 */
@@ -408,9 +408,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the <code>confirmed</code> event of the content
+	 * Handles the <code>confirmed</code> event of the content.
 	 *
-	 * Here the {@link #events/confirm confirm} event needs to be fired.
+	 * Here the {@link #event:confirm confirm} event needs to be fired.
 	 * @param {sap.ui.base.Event} oEvent event
 	 * @protected
 	 */
@@ -419,9 +419,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the <code>cancelled</code> event of the content
+	 * Handles the <code>cancelled</code> event of the content.
 	 *
-	 * Here the {@link #events/cancel cancel} event needs to be fired.
+	 * Here the {@link #event:cancel cancel} event needs to be fired.
 	 * @param {sap.ui.base.Event} oEvent event
 	 * @protected
 	 */
@@ -430,9 +430,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the <code>select</code> event of the content
+	 * Handles the <code>select</code> event of the content.
 	 *
-	 * Here the {@link #events/select select} event needs to be fired.
+	 * Here the {@link #event:select select} event needs to be fired.
 	 * @param {sap.ui.base.Event} oEvent event
 	 * @protected
 	 */
@@ -540,7 +540,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the container is used as typeahead inside the value help
+	 * Determines if the container is used as typeahead inside the value help.
 	 *
 	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
 	 *
@@ -555,7 +555,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the content of the container supports typeahead
+	 * Determines if the content of the container supports typeahead.
 	 *
 	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
 	 *
@@ -569,7 +569,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the container is used as dialog inside the value help
+	 * Determines if the container is used as dialog inside the value help.
 	 *
 	 * The container is also used as dialog if <code>useAsValueHelp</code> is set on content and no other dialog is set.
 	 *
@@ -586,7 +586,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the container parent has a dialog inside the value help
+	 * Determines if the container parent has a dialog inside the value help.
 	 *
 	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
 	 *
@@ -616,7 +616,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the value help instane
+	 * Determines the value help instance.
 	 *
 	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
 	 *
@@ -631,7 +631,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the delegate of the value help
+	 * Determines the delegate of the value help.
 	 *
 	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
 	 *
@@ -647,7 +647,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the delegate payload of the value help
+	 * Determines the delegate payload of the value help.
 	 *
 	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
 	 *
@@ -678,7 +678,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if delegate of the value help is initialized
+	 * Determines if delegate of the value help is initialized.
 	 *
 	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
 	 *
@@ -720,7 +720,7 @@ sap.ui.define([
 
 	//TODO: define aria attribute object
 	/**
-	 * Returns the aria attributes the field needs from the value help
+	 * Returns the aria attributes the field needs from the value help.
 	 *
 	 * @param {int} iMaxConditions maximal conditions allowed (as <code>ValueHelp</code> might not be connected to a field)
 	 * @returns {object} object with the aria-attibutes
@@ -830,7 +830,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the confoguration for a specific content
+	 * Gets the configuration for a specific content.
 	 * @param {sap.ui.mdc.valuehelp.base.Content} oContent content
 	 * @returns {object} configuration
 	 * @protected
@@ -853,8 +853,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the promise for content creation
-	 * @returns {Promise} Promise for delegate content
+	 * Returns the <code>Promise</code> for content creation.
+	 * @returns {Promise} <code>Promise</code> for delegate content
 	 * @protected
 	 */
 	Container.prototype.getRetrieveDelegateContentPromise = function () {
@@ -863,7 +863,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Return the currently used content
+	 * Returns the currently used content.
 	 * @returns {sap.ui.mdc.valuehelp.base.Content} currently used content
 	 * @protected
 	 */
@@ -873,7 +873,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called if ValueHelp connection to Field changed
+	 * Called if <code>ValueHelp</code> connection to a control has changed.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
