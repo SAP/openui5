@@ -9,15 +9,30 @@ sap.ui.define([
 "use strict";
 
 	/**
-	* Basic Type configuration map for MDC Delegates
 	*
-	* @extends sap.ui.mdc.util.TypeMap
+	* Generic <code>TypeMap</code> configuration for simplistic usecases
+	*
+	* <b>Note:</b> This <code>TypeMap</code> implementation contains the following types:
+	*
+	* <ul>
+	* <li>sap.ui.model.type.Boolean (alias Boolean)</li>
+	* <li>sap.ui.model.type.Currency (alias Currency)</li>
+	* <li>sap.ui.model.type.Date (alias Date)</li>
+	* <li>sap.ui.model.type.DateTime (alias DateTime)</li>
+	* <li>sap.ui.model.type.Float (alias Float)</li>
+	* <li>sap.ui.model.type.Integer (alias Integer)</li>
+	* <li>sap.ui.model.type.String (alias String)</li>
+	* <li>sap.ui.model.type.Time (alias Time)</li>
+	* <li>sap.ui.model.type.Unit (alias Unit)</li>
+	* </ul>
+	*
 	* @author SAP SE
 	* @version ${version}
 	* @public
-	* @alias sap.ui.mdc.DefaultTypeMap
 	* @since 1.114.0
-	* @author SAP SE
+	* @namespace
+	* @alias module:sap/ui/mdc/DefaultTypeMap
+	* @extends module:sap/ui/mdc/util/TypeMap
 	*/
 	var DefaultTypeMap = Object.assign({}, TypeMap);
 

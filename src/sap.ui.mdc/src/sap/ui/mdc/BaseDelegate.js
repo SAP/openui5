@@ -12,8 +12,8 @@ sap.ui.define(['sap/ui/mdc/enums/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/ba
 	 * Basic Delegate for {@link sap.ui.mdc.Control}, {@link sap.ui.mdc.Element}<br>
 	 *
 	 * All delegate implementations for MDC controls must be derived directly or indirectly from this entity.
-	 *
-	 * <b>Note:</b> The method getTypeUtil is final. Please implement {@link sap.ui.mdc.BaseDelegate.getTypeMap getTypeMap} to customize type configuration for your usage-scenarios.
+	 * Applications should implement {@link sap.ui.mdc.BaseDelegate.getTypeMap getTypeMap} to provide type mappings based on their model usage.
+	 * Please also see the following extensible presets: {@link sap.ui.mdc.DefaultTypeMap}, {@link sap.ui.mdc.odata.TypeMap}, {@link sap.ui.mdc.odata.v4.TypeMap}
 	 *
 	 * @namespace
 	 * @alias module:sap/ui/mdc/BaseDelegate
@@ -25,11 +25,6 @@ sap.ui.define(['sap/ui/mdc/enums/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/ba
 
 	/**
 	* Returns a TypeUtil for this delegate.
-	*
-	* <b>Note:</b>
-	* Since 1.114.0 <code>getTypeUtil</code> is final!
-	* Applications should implement {@link sap.ui.mdc.BaseDelegate.getTypeMap getTypeMap} instead to provide type mappings.
-	* Please also see the following extensible presets: {@link sap.ui.mdc.DefaultTypeMap}, {@link sap.ui.mdc.odata.TypeMap}, {@link sap.ui.mdc.odata.v4.TypeMap}
 	*
 	* @param {sap.ui.mdc.Control} oControl Delegate payload object
 	* @return {sap.ui.mdc.util.TypeUtil|sap.ui.mdc.util.TypeMap} configured TypeUtil/TypeMap
@@ -54,6 +49,7 @@ sap.ui.define(['sap/ui/mdc/enums/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/ba
 	 * @return {sap.ui.mdc.util.TypeMap} typeMap configuration for this delegate
 	 * Note: The returned array will also serve as a key in the weakmap-based typeutil cache of BaseDelegate
 	 * @since 1.114.0
+	 * @public
 	 */
 	BaseDelegate.getTypeMap = function (oControl) {
 		// Support existing custom TypeUtils until all stakeholders switched to TypeMaps

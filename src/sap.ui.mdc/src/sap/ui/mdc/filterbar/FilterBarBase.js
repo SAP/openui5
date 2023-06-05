@@ -60,8 +60,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
-	 * @protected
-	 * @ui5-restricted sap.ui.mdc
+	 * @public
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.filterbar.FilterBarBase
 	 */

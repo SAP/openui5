@@ -27,7 +27,8 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 	 * Utility class used by mdc controls to create the filter statement
 	 *
 	 * @namespace
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.fe
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.util.FilterUtil
 	 */
