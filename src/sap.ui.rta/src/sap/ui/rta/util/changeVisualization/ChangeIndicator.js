@@ -3,29 +3,31 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Fragment",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Control",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/rta/util/changeVisualization/commands/getCommandVisualization",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/util/resolveBinding",
-	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils",
+	"sap/ui/core/Control",
 	"sap/ui/core/Core",
-	"sap/ui/rta/util/changeVisualization/ChangeCategories"
+	"sap/ui/core/Fragment",
+	"sap/ui/core/StaticArea",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/util/resolveBinding",
+	"sap/ui/fl/Utils",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/rta/util/changeVisualization/commands/getCommandVisualization",
+	"sap/ui/rta/util/changeVisualization/ChangeCategories",
+	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils"
 ], function(
-	Fragment,
-	JSONModel,
-	Control,
 	DateFormat,
-	KeyCodes,
-	getCommandVisualization,
-	FlUtils,
-	resolveBinding,
-	ChangeVisualizationUtils,
+	Control,
 	Core,
-	ChangeCategories
+	Fragment,
+	StaticArea,
+	KeyCodes,
+	resolveBinding,
+	FlUtils,
+	JSONModel,
+	getCommandVisualization,
+	ChangeCategories,
+	ChangeVisualizationUtils
 ) {
 	"use strict";
 
@@ -306,7 +308,7 @@ sap.ui.define([
 		if (oDomRef) {
 			oDomRef.parentNode.removeChild(oDomRef);
 		}
-		this.placeAt(Core.getStaticAreaRef());
+		this.placeAt(StaticArea.getDomRef());
 
 		this.setProperty("overlayId", sOverlayId);
 		return this;

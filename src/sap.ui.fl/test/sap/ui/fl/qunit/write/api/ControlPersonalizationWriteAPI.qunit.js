@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
+	"sap/ui/core/StaticArea",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
@@ -35,6 +36,7 @@ sap.ui.define([
 	Control,
 	Core,
 	Element,
+	StaticArea,
 	UIComponent,
 	VariantUtils,
 	ControlVariantApplyAPI,
@@ -464,7 +466,7 @@ sap.ui.define([
 			var sChangesSaved = "changesSaved";
 			var aSuccessfulChanges = ["mockChange1", "mockChange2"];
 			var oSaveStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves(sChangesSaved);
-			var aVMControl = new VariantManagement({modelName: ControlVariantApplyAPI.getVariantModelName()}).placeAt(Core.getStaticAreaRef());
+			var aVMControl = new VariantManagement({modelName: ControlVariantApplyAPI.getVariantModelName()}).placeAt(StaticArea.getDomRef());
 			sandbox.stub(VariantUtils, "getAllVariantManagementControlIds").returns([aVMControl.getId()]);
 			Core.applyChanges();
 

@@ -4,12 +4,14 @@
 
 sap.ui.define([
 	"sap/m/HBox",
+	"sap/ui/core/StaticArea",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/rta/util/Animation",
 	"./BaseRenderer"
 ], function(
 	HBox,
+	StaticArea,
 	ZIndexManager,
 	ResourceModel,
 	Animation,
@@ -166,7 +168,7 @@ sap.ui.define([
 	 */
 	Base.prototype.placeToContainer = function () {
 		// Render toolbar
-		this.placeAt(sap.ui.getCore().getStaticAreaRef());
+		this.placeAt(StaticArea.getDomRef());
 	};
 
 	/**

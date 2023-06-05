@@ -1,27 +1,29 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/dt/MutationObserver",
-	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/m/Panel",
-	"sap/m/Button",
-	"sap/ui/layout/VerticalLayout",
 	"sap/base/util/includes",
+	"sap/m/Button",
+	"sap/m/Panel",
+	"sap/ui/core/Core",
+	"sap/ui/core/StaticArea",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/MutationObserver",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/jquery"
 ], function(
-	MutationObserver,
-	DesignTime,
-	OverlayRegistry,
-	Panel,
-	Button,
-	VerticalLayout,
 	includes,
+	Button,
+	Panel,
+	oCore,
+	StaticArea,
+	DesignTime,
+	MutationObserver,
+	OverlayRegistry,
+	VerticalLayout,
 	sinon,
-	jQuery,
-	oCore
+	jQuery
 ) {
 	"use strict";
 
@@ -201,7 +203,7 @@ sap.ui.define([
 	QUnit.module("Static area mutations", {
 		beforeEach: function() {
 			this.$StaticUIArea = jQuery("<div></div>", {
-				id: "sap-ui-static"
+				id: StaticArea.STATIC_UIAREA_ID
 			}).appendTo("#qunit-fixture");
 
 			this.$Node = jQuery("<div></div>", {
