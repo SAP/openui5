@@ -2010,36 +2010,38 @@ sap.ui.define([
 			oCloudFilePickerInstance.close();
 		});
 
-		QUnit.test("Cloud File Picker button visibility", function (assert) {
-			// assert
-			assert.equal(this.oUploadSet._getCloudFilePicker(), null, "Cloud File Picker Button not enabled by default");
+		QUnit.test("Cloud File Picker Menu button visibility", function (assert) {
+            // assert
+            assert.equal(this.oUploadSet._getCloudFilePicker(), null, "Cloud File Picker Button not enabled by default");
 
-			//act
-			this.oUploadSet.setCloudFilePickerEnabled(true);
+            //act
+            this.oUploadSet.setCloudFilePickerEnabled(true);
 
-			// assert
-			assert.equal(this.oUploadSet._getCloudFilePicker() instanceof sap.m.Button, true, "Cloud File Picker Button enabled with CloudFilePicker property enabled");
-		});
+            // assert
+            assert.equal(this.oUploadSet._getCloudFilePicker() instanceof sap.m.MenuButton, true, "Cloud File Picker Menu Button enabled with CloudFilePicker property enabled");
+            assert.ok(this.oUploadSet._getCloudFilePicker().getMenu().getItems().length === 2, "Cloud File Picker Menu Button created with 2 menu items (local and cloud)");
+        });
 
-		QUnit.test("Cloud File picker button created with custom text", function (assert) {
+        QUnit.test("Cloud File picker Menu button created with custom text", function (assert) {
 
-			// arrange
-			var sDefaultCloudFilePickerButtonText = this.oUploadSet._oRb.getText("UPLOAD_SET_DEFAULT_CFP_BUTTON_TEXT");
+            // arrange
+            var sDefaultCloudFilePickerButtonText = this.oUploadSet._oRb.getText("UPLOAD_SET_DEFAULT_CFP_BUTTON_TEXT");
 
-			//act
-			this.oUploadSet.setCloudFilePickerEnabled(true);
-			var oCloudPickerButton = this.oUploadSet._getCloudFilePicker();
+            //act
+            this.oUploadSet.setCloudFilePickerEnabled(true);
+            var oCloudPickerButton = this.oUploadSet._getCloudFilePicker();
 
-			// assert
-			assert.ok(oCloudPickerButton && oCloudPickerButton.getText() === sDefaultCloudFilePickerButtonText, "Cloud File Picker Button created with default text");
+            // assert
+            assert.ok(oCloudPickerButton && oCloudPickerButton.getMenu().getItems()[1].getText() === sDefaultCloudFilePickerButtonText, "Cloud File Picker Menu Button created with default text");
 
-			//act
-			this.oUploadSet.setCloudFilePickerButtonText("Upload from cloud");
-			var oCloudPickerButton2 = this.oUploadSet._getCloudFilePicker();
+            //act
+            var sCustomCloudFilePickerButtonText = "Custom Cloud Picker Text";
+            this.oUploadSet.setCloudFilePickerButtonText(sCustomCloudFilePickerButtonText);
+            var oCloudPickerButton2 = this.oUploadSet._getCloudFilePicker();
 
-			// assert
-			assert.ok(oCloudPickerButton2 && oCloudPickerButton2.getText() === 'Upload from cloud', "Cloud File Picker Button created with custom text");
-		});
+            // assert
+            assert.ok(oCloudPickerButton2 && oCloudPickerButton2.getMenu().getItems()[1].getText() === sCustomCloudFilePickerButtonText, "Cloud File Picker Menu Button created with custom text");
+        });
 
 		QUnit.test("Cloud File Picker instance created with service url provided", function (assert) {
 
