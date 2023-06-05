@@ -98,16 +98,6 @@ sap.ui.define([
 					group: "Misc",
 					defaultValue: true
 				},
-				/**
-				 * If set to <code>true</code>, the key for a vendor variant will be added manually.<br>
-				 * <p>
-				 * <b>Note:</b> This flag is only used internally.
-				 */
-				manualVariantKey: {
-					type: "boolean",
-					group: "Misc",
-					defaultValue: false
-				},
 
 				/**
 				 * Indicates that the control is in error state. If set to <code>true</code>, an error message will be displayed whenever the variant is opened.
@@ -692,12 +682,6 @@ sap.ui.define([
 	VariantManagement.prototype.setDisplayTextForExecuteOnSelectionForStandardVariant = function(sValue) {
 		this.setProperty("displayTextForExecuteOnSelectionForStandardVariant", sValue);
 		this._oVM.setDisplayTextForExecuteOnSelectionForStandardVariant(sValue);
-		return this;
-	};
-
-	VariantManagement.prototype.setManualVariantKey = function(bValue) {
-		this.setProperty("manualVariantKey", bValue);
-		this._oVM._setShowManualVariantKey(bValue);
 		return this;
 	};
 
