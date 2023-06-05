@@ -1,23 +1,15 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Control",
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Column",
-	"sap/ui/table/Table",
-	"sap/ui/table/library",
-	"sap/ui/table/menus/ColumnHeaderMenuAdapter"
+	"sap/ui/table/menus/ColumnHeaderMenuAdapter",
+	"sap/ui/core/Control"
 ], function(
-	Control,
 	TableQUnitUtils,
-	qutils,
-	TableUtils,
 	Column,
-	Table,
-	library,
-	ColumnHeaderMenuAdapter
+	ColumnHeaderMenuAdapter,
+	Control
 ) {
 	"use strict";
 
@@ -26,6 +18,7 @@ sap.ui.define([
 	sap.ui.define("sap/ui/table/menus/test/TestAdapter", function() {
 		TestAdapter = ColumnHeaderMenuAdapter.extend("sap.ui.table.menus.test.TestAdapter", {
 			constructor: function() {
+				// eslint-disable-next-line consistent-this
 				oTestAdapterInstance = this;
 				oInjectMenuItemsSpy = sinon.spy(oTestAdapterInstance, "injectMenuItems");
 				oRemoveItemsSpy = sinon.spy(oTestAdapterInstance, "removeMenuItems");
@@ -47,8 +40,8 @@ sap.ui.define([
 		return TestAdapter;
 	});
 
-	sap.ui.define("sap/m/table/columnmenu/test/TestMenu", function() {
-		TestMenu = Control.extend("sap.m.table.columnmenu.test.TestMenu", {
+	sap.ui.define("sap/ui/table/test/Menu", function() {
+		TestMenu = Control.extend("sap.ui.table.test.Menu", {
 			openBy: function(oColumn) {
 			},
 			getAriaHasPopupType: function() {
@@ -78,23 +71,40 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("activateFor", function(assert) {
+	QUnit.test("activateFor - default adapter", function(assert) {
+		this.oColumn1.setHeaderMenu();
+
+		return ColumnHeaderMenuAdapter.activateFor(this.oColumn1).then(function() {
+			var sDefaultAdapterName = null;
+
+			if (sDefaultAdapterName) {
+				assert.ok(sap.ui.require("sap/ui/table/menus/" + sDefaultAdapterName), "Default adapter loaded");
+			} else {
+				assert.ok(true, "No default adapter available, but the Promise resolved");
+			}
+		});
+	});
+
+	QUnit.test("activateFor - specific adapter", function(assert) {
 		var done = assert.async();
 		var that = this;
 
 		ColumnHeaderMenuAdapter.activateFor(that.oColumn1);
+
 		setTimeout(function() {
+			var mInjectionTarget = oTestAdapterInstance._mInjectionTarget;
+
 			assert.ok(oInjectMenuItemsSpy.calledOnceWith(that.oMenu1, that.oColumn1), "injectMenuItems is called once with the correct parameters");
-			assert.ok(oTestAdapterInstance._mInjectionTarget.column === that.oColumn1 && oTestAdapterInstance._mInjectionTarget.menu === that.oMenu1,
-				"the injection target is correct");
+			assert.ok(mInjectionTarget.column === that.oColumn1 && mInjectionTarget.menu === that.oMenu1, "the injection target is correct");
 			oInjectMenuItemsSpy.reset();
 
 			ColumnHeaderMenuAdapter.activateFor(that.oColumn2);
+
 			setTimeout(function() {
+				mInjectionTarget = oTestAdapterInstance._mInjectionTarget;
 				assert.ok(oRemoveItemsSpy.calledOnceWith(that.oMenu1), "removeMenuItems is called once with the correct parameters");
 				assert.ok(oInjectMenuItemsSpy.calledOnceWith(that.oMenu2, that.oColumn2), "injectMenuItems called once with the correct parameters");
-				assert.ok(oTestAdapterInstance._mInjectionTarget.column === that.oColumn2 && oTestAdapterInstance._mInjectionTarget.menu === that.oMenu2,
-					"the injection target is correct");
+				assert.ok(mInjectionTarget.column === that.oColumn2 && mInjectionTarget.menu === that.oMenu2, "the injection target is correct");
 				done();
 			}, 0);
 		}, 0);

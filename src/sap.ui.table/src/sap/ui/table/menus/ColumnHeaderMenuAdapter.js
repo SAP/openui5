@@ -17,8 +17,9 @@ sap.ui.define([
 
 	var oAdapterRegistry = new window.Map();
 	var mAdapterMapping = {
+		"default": null,
 		"sap.m.table.columnmenu.Menu": "MobileColumnHeaderMenuAdapter",
-		"sap.m.table.columnmenu.test.TestMenu": "test/TestAdapter" // needed for qunit tests
+		"sap.ui.table.test.Menu": "test/TestAdapter" // needed for qunit tests
 	};
 
 	/**
@@ -181,7 +182,7 @@ sap.ui.define([
 			}
 		}
 
-		return "";
+		return mAdapterMapping.default;
 	}
 
 	function unlink(oColumn, sAdapterName) {
