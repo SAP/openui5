@@ -197,6 +197,7 @@
 								<include>package.json</include>
 								<include>ui5.yaml</include>
 								<include>.dtsgenrc</include>
+								<include>.npmignore</include>
 								<include>src/**/*</include>
 								<include>test/**/*</include>
 							</includes>
