@@ -75,6 +75,7 @@ sap.ui.define([
 		constructor: function (sSection, oManifestJson, sBaseUrl, aChanges) {
 			BaseObject.call(this);
 
+			this._sBaseUrl = sBaseUrl;
 			this._aChanges = aChanges;
 			this._sSection = sSection;
 
@@ -91,7 +92,6 @@ sap.ui.define([
 
 				if (sBaseUrl) {
 					mOptions.baseUrl = sBaseUrl;
-					this._sBaseUrl = sBaseUrl;
 				} else {
 					Log.error("If baseUrl is not provided when the manifest is an object, the relative resources cannot be loaded.", "sap.ui.integration.widgets.Card");
 				}
@@ -232,7 +232,8 @@ sap.ui.define([
 			manifestUrl: mSettings.manifestUrl,
 			async: true,
 			processJson: function (oManifestJson) {
-				this._registerManifestModulePath(oManifestJson, mSettings.manifestUrl.replace(/\/+[^\/]*$/, ""));
+				var sModuleBaseUrl = this._sBaseUrl || mSettings.manifestUrl.replace(/\/+[^\/]*$/, "") || "/";
+				this._registerManifestModulePath(oManifestJson, sModuleBaseUrl);
 				this._oInitialJson = deepClone(oManifestJson, 500);
 
 				if (this._aChanges) {

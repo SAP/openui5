@@ -234,7 +234,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the base URL of the Card Manifest. It should be used when manifest property is an object instead of a URL.
+				 * Defines the base URL of the card manifest. It should be used when manifest property is an object instead of a URL.
+				 * If both manifest URL and base URL are defined - the base URL will be used for loading dependencies.
 				 * @experimental Since 1.70
 				 * @since 1.70
 				 */
@@ -843,7 +844,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Instantiates a Card Manifest and applies it.
+	 * Instantiates a card manifest and applies it.
 	 *
 	 * @private
 	 * @param {object|string} vManifest The manifest URL or the manifest JSON.
