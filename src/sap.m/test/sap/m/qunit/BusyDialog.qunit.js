@@ -501,8 +501,11 @@ sap.ui.define([
 		this.oBusyDialog.addAriaLabelledBy('hiddenTxt');
 
 		this.oBusyDialog.open();
-
 		assert.strictEqual(this.oBusyDialog._oDialog.getAriaLabelledBy()[0], invText.getId(), 'Should be the same as ariaLabelledBy in the dialog.');
+
+		this.oBusyDialog.close();
+		this.clock.tick(500);
+		assert.notOk(this.oBusyDialog._oDialog.getAriaLabelledBy().length, 'arialabelledby is removed');
 	});
 
 	QUnit.test('Setting the Text property', function (assert) {
