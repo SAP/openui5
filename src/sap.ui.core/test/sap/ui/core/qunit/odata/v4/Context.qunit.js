@@ -935,14 +935,10 @@ sap.ui.define([
 
 		oBindingMock.expects("checkSuspended").withExactArgs();
 		oBindingMock.expects("fetchIfChildCanUseCache")
-			.withExactArgs(oContext, "bar", sinon.match(function (oPromise) {
-				return oPromise.isFulfilled() && _Helper.isEmptyObject(oPromise.getResult());
-			}))
+			.withExactArgs(oContext, "bar")
 			.resolves("/resolved/bar"); // no need to return a SyncPromise
 		oBindingMock.expects("fetchIfChildCanUseCache")
-			.withExactArgs(oContext, "baz", sinon.match(function (oPromise) {
-				return oPromise.isFulfilled() && _Helper.isEmptyObject(oPromise.getResult());
-			}))
+			.withExactArgs(oContext, "baz")
 			.resolves("/resolved/baz"); // no need to return a SyncPromise
 		oContextMock.expects("fetchPrimitiveValue")
 			.withExactArgs("/resolved/bar", "~bExternalFormat~")
@@ -968,9 +964,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("fetchIfChildCanUseCache")
-			.withExactArgs(oContext, "bar", sinon.match(function (oPromise) {
-				return oPromise.isFulfilled() && _Helper.isEmptyObject(oPromise.getResult());
-			}))
+			.withExactArgs(oContext, "bar")
 			.resolves(undefined); // no need to return a SyncPromise
 		this.mock(oContext).expects("fetchValue").never();
 		this.oLogMock.expects("error")
@@ -3908,7 +3902,7 @@ sap.ui.define([
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")
 			.resolves("path/to/messages");
 		oBindingMock.expects("fetchIfChildCanUseCache")
-			.withExactArgs(sinon.match.same(oContext), "path/to/messages", {})
+			.withExactArgs(sinon.match.same(oContext), "path/to/messages")
 			.resolves("/reduced/path");
 		this.mock(oContext).expects("fetchValue").withExactArgs("/reduced/path")
 			.rejects(oError);
@@ -4069,7 +4063,7 @@ sap.ui.define([
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")
 			.resolves("path/to/messages");
 		this.mock(oBinding).expects("fetchIfChildCanUseCache")
-			.withExactArgs(sinon.match.same(oContext), "path/to/messages", {})
+			.withExactArgs(sinon.match.same(oContext), "path/to/messages")
 			.rejects(oError);
 
 		// code under test

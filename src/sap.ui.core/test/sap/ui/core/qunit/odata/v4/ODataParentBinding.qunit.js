@@ -846,7 +846,7 @@ sap.ui.define([
 								? SyncPromise.resolve(Promise.resolve(null))
 								: SyncPromise.resolve(null),
 							oContext : {},
-							doFetchQueryOptions : function () {},
+							doFetchOrGetQueryOptions : function () {},
 							oModel : {
 								getMetaModel : function () { return oMetaModel; },
 								oInterface : {
@@ -858,7 +858,6 @@ sap.ui.define([
 							sPath : "path"
 						}),
 						oBindingMock = this.mock(oBinding),
-						mChildLocalQueryOptions = {},
 						mChildQueryOptions = oFixture.hasChildQueryOptions ? {} : undefined,
 						mClonedQueryOptions = {},
 						oContext = Context.create(this.oModel, oBinding, "/Set('2')"),
@@ -874,7 +873,7 @@ sap.ui.define([
 					oHelperMock.expects("getMetaPath").withExactArgs("/Set('2')").returns("/Set");
 					oHelperMock.expects("getMetaPath").withExactArgs("/resolved/child/path")
 						.returns("/resolved/child/metaPath");
-					oBindingMock.expects("doFetchQueryOptions")
+					oBindingMock.expects("doFetchOrGetQueryOptions")
 						.withExactArgs(sinon.match.same(oBinding.oContext))
 						.returns(SyncPromise.resolve(mLocalQueryOptions));
 					oHelperMock.expects("fetchPropertyAndType")
@@ -900,8 +899,7 @@ sap.ui.define([
 						.withExactArgs(sinon.match.same(mLocalQueryOptions))
 						.returns(mClonedQueryOptions);
 					oHelperMock.expects("wrapChildQueryOptions")
-						.withExactArgs("/Set", "reducedChildMetaPath",
-							sinon.match.same(mChildLocalQueryOptions),
+						.withExactArgs("/Set", "reducedChildMetaPath", {},
 							sinon.match.same(fnFetchMetadata))
 						.returns(mChildQueryOptions);
 					oBindingMock.expects("aggregateQueryOptions")
@@ -911,8 +909,8 @@ sap.ui.define([
 						.returns(oFixture.canMergeQueryOptions);
 
 					// code under test
-					oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath",
-						SyncPromise.resolve(mChildLocalQueryOptions), "~bIsProperty~");
+					oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath", undefined,
+						"~bIsProperty~");
 
 					return Promise.all([oPromise, oBinding.oCachePromise]).then(function (aResult) {
 						assert.strictEqual(aResult[0],
@@ -955,7 +953,7 @@ sap.ui.define([
 					bAggregatedQueryOptionsInitial : false,
 					oCache : bRejected ? undefined : oCache,
 					oCachePromise : oCachePromise,
-					doFetchQueryOptions : function () {},
+					doFetchOrGetQueryOptions : function () {},
 					oModel : {
 						getMetaModel : function () {
 							return oMetaModel;
@@ -985,8 +983,7 @@ sap.ui.define([
 			oHelperMock.expects("getMetaPath").withExactArgs("/Set('2')").returns("/Set");
 			oHelperMock.expects("getMetaPath").withExactArgs("/resolved/child/path")
 				.returns("/resolved/child/metaPath");
-			oBindingMock.expects("doFetchQueryOptions")
-				.returns(SyncPromise.resolve({}));
+			oBindingMock.expects("doFetchOrGetQueryOptions").returns(undefined);
 			oHelperMock.expects("fetchPropertyAndType")
 				.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/metaPath")
 				.returns(SyncPromise.resolve({$kind : "Property"}));
@@ -1103,7 +1100,7 @@ sap.ui.define([
 				oContext : {
 					getBinding : function () {}
 				},
-				doFetchQueryOptions : function () {},
+				doFetchOrGetQueryOptions : function () {},
 				isFirstCreateAtEnd : function () {},
 				oModel : {
 					getMetaModel : function () { return oMetaModel; },
@@ -1142,8 +1139,7 @@ sap.ui.define([
 			.returns("/Set/navigation");
 		oHelperMock.expects("getMetaPath").withExactArgs("/resolved/child/path")
 			.returns("/resolved/child/metaPath");
-		oBindingMock.expects("doFetchQueryOptions")
-			.returns(SyncPromise.resolve({}));
+		oBindingMock.expects("doFetchOrGetQueryOptions").returns({});
 		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/metaPath")
 			.returns(SyncPromise.resolve(Promise.resolve({$kind : "Property"})));
@@ -1180,10 +1176,7 @@ sap.ui.define([
 		this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
 			.exactly(oFixture.fetchIfChildCanUseCacheOnParentCount)
 			.withExactArgs(sinon.match.same(oBinding.oContext), "navigation",
-				sinon.match(function (p) {
-					return p.getResult() === mLateQueryOptions;
-				})
-			)
+				sinon.match.same(mLateQueryOptions))
 			.returns(SyncPromise.resolve(oFixture.rejected ? undefined : "/some/path"));
 
 		// code under test
@@ -1230,7 +1223,7 @@ sap.ui.define([
 				bAggregatedQueryOptionsInitial : false,
 				oCache : oCache0,
 				oCachePromise : oCachePromise,
-				doFetchQueryOptions : function () {},
+				doFetchOrGetQueryOptions : function () {},
 				oModel : {
 					getMetaModel : function () { return oMetaModel; },
 					oInterface : {
@@ -1261,8 +1254,7 @@ sap.ui.define([
 		oHelperMock.expects("getMetaPath").withExactArgs("/Set('2')").returns("/Set");
 		oHelperMock.expects("getMetaPath").withExactArgs("/resolved/child/path@foo.bar")
 			.returns("/resolved/child/metaPath@foo.bar");
-		oBindingMock.expects("doFetchQueryOptions")
-			.returns(SyncPromise.resolve({}));
+		oBindingMock.expects("doFetchOrGetQueryOptions").returns(undefined);
 		oHelperMock.expects("fetchPropertyAndType") // no @foo.bar here
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/metaPath")
 			.returns(SyncPromise.resolve(Promise.resolve({$kind : "Property"})));
@@ -1331,7 +1323,7 @@ sap.ui.define([
 				oCachePromise : SyncPromise.resolve(Promise.resolve(null)),
 				oContext : {},
 				wrapChildQueryOptions : function () {},
-				doFetchQueryOptions : function () {},
+				doFetchOrGetQueryOptions : function () {},
 				isFirstCreateAtEnd : function () {},
 				aggregateQueryOptions : function () {},
 				oModel : {
@@ -1361,7 +1353,7 @@ sap.ui.define([
 		oHelperMock.expects("getMetaPath").withExactArgs("/Set/~").returns("/Set");
 		oHelperMock.expects("getMetaPath").withExactArgs("/resolved/child/path")
 			.returns("/resolved/child/metaPath");
-		oBindingMock.expects("doFetchQueryOptions")
+		oBindingMock.expects("doFetchOrGetQueryOptions")
 			.withExactArgs(sinon.match.same(oBinding.oContext))
 			.returns(SyncPromise.resolve(mLocalQueryOptions));
 		oHelperMock.expects("fetchPropertyAndType")
@@ -1424,7 +1416,7 @@ sap.ui.define([
 					oCache : undefined,
 					oCachePromise : SyncPromise.resolve(Promise.resolve(null)),
 					oContext : {},
-					doFetchQueryOptions : function () {
+					doFetchOrGetQueryOptions : function () {
 						return SyncPromise.resolve({});
 					},
 					oModel : {
@@ -1504,7 +1496,7 @@ sap.ui.define([
 				oCache : bImmutable ? oCache : undefined,
 				oCachePromise : SyncPromise.resolve(bImmutable ? oCache : Promise.resolve(oCache)),
 				oContext : {},
-				doFetchQueryOptions : function () {
+				doFetchOrGetQueryOptions : function () {
 					return SyncPromise.resolve({});
 				},
 				oModel : oModel,
@@ -1556,7 +1548,7 @@ sap.ui.define([
 			},
 			fnFetchMetadata = function () {},
 			oBinding = new ODataParentBinding({
-				doFetchQueryOptions : function () {
+				doFetchOrGetQueryOptions : function () {
 					return SyncPromise.resolve({});
 				},
 				oModel : {
@@ -1687,7 +1679,7 @@ sap.ui.define([
 					getBinding : function () { return oParentBinding; },
 					getPath : function () { return "/Set('2')"; }
 				},
-				doFetchQueryOptions : function () {
+				doFetchOrGetQueryOptions : function () {
 					return SyncPromise.resolve({});
 				},
 				oModel : oModel,
@@ -1754,7 +1746,7 @@ sap.ui.define([
 			},
 			fnFetchMetadata = function () {},
 			oBinding = new ODataParentBinding({
-				doFetchQueryOptions : function () {},
+				doFetchOrGetQueryOptions : function () {},
 				oModel : {
 					getMetaModel : function () { return oMetaModel; },
 					oInterface : {
@@ -1780,7 +1772,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve([{$isBound : true, $kind : "Function"}]));
 		this.mock(_Helper).expects("clone").never();
 		this.mock(oBinding).expects("selectKeyProperties").never();
-		this.mock(oBinding).expects("doFetchQueryOptions").withExactArgs(undefined)
+		this.mock(oBinding).expects("doFetchOrGetQueryOptions").withExactArgs(undefined)
 			.returns(SyncPromise.resolve());
 
 		// code under test
@@ -1813,7 +1805,7 @@ sap.ui.define([
 			oBinding = new ODataParentBinding({
 				oCache : bImmutable ? oCache : undefined,
 				oCachePromise : SyncPromise.resolve(bImmutable ? oCache : Promise.resolve(oCache)),
-				doFetchQueryOptions : function () {},
+				doFetchOrGetQueryOptions : function () {},
 				oModel : {
 					getMetaModel : function () { return oMetaModel; },
 					oInterface : {
@@ -1827,7 +1819,6 @@ sap.ui.define([
 			}),
 			oBindingMock = this.mock(oBinding),
 			sChildPath = "value",
-			mChildQueryOptions = {},
 			oContext = Context.create(this.oModel, oBinding, "/Function(foo=42)"),
 			mLocalQueryOptions = {},
 			oModelMock = this.mock(oBinding.oModel),
@@ -1839,7 +1830,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/path")
 			.returns(SyncPromise.resolve({$isCollection : true, $Type : "some.EntityType"}));
-		oBindingMock.expects("doFetchQueryOptions").withExactArgs(undefined)
+		oBindingMock.expects("doFetchOrGetQueryOptions").withExactArgs(undefined)
 			.returns(SyncPromise.resolve(mLocalQueryOptions));
 		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.object).returns("~clone~");
 		oBindingMock.expects("selectKeyProperties")
@@ -1853,13 +1844,12 @@ sap.ui.define([
 			.withExactArgs("/reduced/child/path", "/Function")
 			.returns("value");
 		oBindingMock.expects("aggregateQueryOptions")
-			.withExactArgs(sinon.match.same(mChildQueryOptions), "/Function", bImmutable,
-				"~bIsProperty~")
+			.withExactArgs({}, "/Function", bImmutable, "~bIsProperty~")
 			.returns(!bImmutable);
 
 		// code under test
-		oPromise = oBinding.fetchIfChildCanUseCache(oContext, sChildPath,
-			SyncPromise.resolve(mChildQueryOptions), "~bIsProperty~");
+		oPromise = oBinding.fetchIfChildCanUseCache(oContext, sChildPath, undefined,
+			"~bIsProperty~");
 
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, bImmutable ? undefined : "/reduced/child/path");
@@ -1895,7 +1885,7 @@ sap.ui.define([
 
 		// getRootBinding cannot return undefined in fetchIfChildCanUseCache because it is
 		// called on a resolved binding see
-		// sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache
+		// sap.ui.model.odata.v4.ODataBinding#fetchOrGetQueryOptionsForOwnCache
 		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
 		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
 
@@ -1925,7 +1915,7 @@ sap.ui.define([
 					getBinding : function () { return oParentBinding; },
 					getPath : function () { return "/SalesOrderList('42')"; }
 				},
-				doFetchQueryOptions : function () {},
+				doFetchOrGetQueryOptions : function () {},
 				isFirstCreateAtEnd : function () {},
 				oModel : {
 					getMetaModel : function () { return oMetaModel; },
@@ -1959,7 +1949,7 @@ sap.ui.define([
 		oHelperMock.expects("getMetaPath")
 			.withExactArgs("/SalesOrderList('42')/SO_2_SOITEMS('23')/SOITEMS_2_SO/Note")
 			.returns("/SalesOrderList/SO_2_SOITEMS/SOITEMS_2_SO/Note");
-		oBindingMock.expects("doFetchQueryOptions")
+		oBindingMock.expects("doFetchOrGetQueryOptions")
 			.withExactArgs(sinon.match.same(oBinding.oContext))
 			.returns(SyncPromise.resolve(mLocalQueryOptions));
 		oHelperMock.expects("fetchPropertyAndType")

@@ -6357,7 +6357,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bChanged) {
-	QUnit.test("doFetchQueryOptions: meta path changed = " + bChanged, function (assert) {
+	QUnit.test("doFetchOrGetQueryOptions: meta path changed = " + bChanged, function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES"),
 			oContext = {
 				getPath : function () {}
@@ -6387,14 +6387,14 @@ sap.ui.define([
 			.returns(mMergedQueryOptions);
 
 		// code under test
-		oQueryOptionsPromise = oBinding.doFetchQueryOptions(oContext);
+		oQueryOptionsPromise = oBinding.doFetchOrGetQueryOptions(oContext);
 
 		assert.strictEqual(oBinding.oQueryOptionsPromise, oQueryOptionsPromise);
 		assert.strictEqual(oQueryOptionsPromise.getResult(), mMergedQueryOptions);
 		assert.strictEqual(oQueryOptionsPromise.$metaPath, "/TEAMS");
 
 		// code under test (promise exists, meta path unchanged)
-		assert.strictEqual(oBinding.doFetchQueryOptions(oContext), oQueryOptionsPromise);
+		assert.strictEqual(oBinding.doFetchOrGetQueryOptions(oContext), oQueryOptionsPromise);
 
 		assert.strictEqual(oBinding.oQueryOptionsPromise, oQueryOptionsPromise);
 		assert.strictEqual(oQueryOptionsPromise.$metaPath, "/TEAMS");

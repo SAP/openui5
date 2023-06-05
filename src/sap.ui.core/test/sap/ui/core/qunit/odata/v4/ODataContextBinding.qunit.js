@@ -3838,7 +3838,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("doFetchQueryOptions", function (assert) {
+	QUnit.test("doFetchOrGetQueryOptions", function (assert) {
 		var oBinding = this.bindContext("foo"),
 			oContext = {},
 			oPromise = {};
@@ -3848,7 +3848,7 @@ sap.ui.define([
 			.returns(oPromise);
 
 		// code under test
-		assert.strictEqual(oBinding.doFetchQueryOptions(oContext), oPromise);
+		assert.strictEqual(oBinding.doFetchOrGetQueryOptions(oContext), oPromise);
 	});
 
 	//*********************************************************************************************

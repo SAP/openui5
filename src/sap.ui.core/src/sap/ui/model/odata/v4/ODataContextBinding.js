@@ -748,9 +748,9 @@ sap.ui.define([
 
 	/**
 	 * @override
-	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchQueryOptions
+	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchOrGetQueryOptions
 	 */
-	ODataContextBinding.prototype.doFetchQueryOptions = function (oContext) {
+	ODataContextBinding.prototype.doFetchOrGetQueryOptions = function (oContext) {
 		return this.fetchResolvedQueryOptions(oContext);
 	};
 
