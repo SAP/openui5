@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node cli.js",
-    "test": "npm run lint && mocha",
+    "test": "npm run lint && npm run mocha",
+    "mocha": "mocha",
     "lint": "eslint ./"
   },
   "author": "SAP SE",
@@ -18,6 +19,7 @@
     "extend": "^2.0.0",
     "json2json": "^0.2.4",
     "mocha": "^10.2.0",
-    "pacote": "^15.1.1"
+    "pacote": "^15.1.1",
+    "sinon": "^15.1.0"
   }
 }
