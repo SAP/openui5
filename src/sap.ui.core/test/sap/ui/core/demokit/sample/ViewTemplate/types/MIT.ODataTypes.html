@@ -31,22 +31,9 @@
 		</ul>
 
 		<h2>REALIZE AND CHECK</h2>
-		<h3>Enter an invalid value for Validation.Minimum on Edm.Decimal</h3>
-		<ol>
-			<li>Start the application.</li>
-			<li>Enter a value less than or equal to 100 in the <code>sap.ui.model.odata.type.Decimal
-				(minimum: 100 (exclusive), maximum: 1000)</code> field.</li>
-			<li><b>Check</b>: You get a validation error.</li>
-			<li>Press <code>Reset Model</code>.</li>
-			<li><b>Check</b>: The validation error is gone and the old value is displayed.</li>
-			<li>Enter a value less than or equal to 100 in the <code>sap.ui.model.odata.type.Decimal
-				(minimum: 100 (exclusive), maximum: 1000)</code> field.</li>
-			<li><b>Check</b>: You get a validation error.</li>
-			<li>Correct errors by entering valid values.</li>
-			<li><b>Check</b>: The validation error is gone and the old value is displayed.</li>
-		</ol>
 		<h3>OData V4 Model tests</h3>
 		<ol>
+			<li>Start the application.</li>
 			<li>Press <code>V4</code> Button.</li>
 			<li>Enter invalid values in one or more of the data fields.</li>
 			<li><b>Check</b>: You get validation errors with appropriate error messages.</li>
@@ -65,6 +52,14 @@
 				100.000".</li>
 			<li>Correct the error by entering a valid value, e.g. 101</li>
 			<li><b>Check</b>: The validation error is gone.</li>
+			<li>Enter an empty value in the field labeled <code>scale: default (0), nullable=false,
+				parseEmptyValueToZero=true</code>.</li>
+			<li><b>Check</b>: No validation error is shown.</li>
+			<li><b>Check</b>: The value of the field is set to <code>0</code>.</li>
+			<li>Enter an empty value in the field labeled <code>sap.ui.model.odata.type.Int16, nullable=false,
+				parseEmptyValueToZero=true</code>.</li>
+			<li><b>Check</b>: No validation error is shown.</li>
+			<li><b>Check</b>: The value of the field is set to <code>0</code>.</li>
 			<li>Enter 102 in the field labeled <code>stepInput: min: 0 max: 99 scale: 0</code>.</li>
 			<li><b>Check</b>: You get an invalid data state "Enter a number with a maximum value of
 				99".</li>
