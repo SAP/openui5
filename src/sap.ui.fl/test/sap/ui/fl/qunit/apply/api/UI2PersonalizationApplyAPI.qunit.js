@@ -56,7 +56,7 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(FlexState, "initialize").resolves();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -65,7 +65,7 @@ sap.ui.define([
 				selector: this.oAppComponent
 			}).then(function() {
 				assert.notOk("Should never succeed!");
-			}).catch(function () {
+			}).catch(function() {
 				assert.ok(true, "a rejection took place");
 				assert.ok(this.oGetPersonalizationStub.notCalled, "then UI2PersonalizationState.getPersonalization is not called");
 			}.bind(this));
@@ -85,7 +85,7 @@ sap.ui.define([
 				containerKey: "someContainerKey"
 			}).then(function() {
 				assert.notOk("Should never succeed!");
-			}).catch(function () {
+			}).catch(function() {
 				assert.ok(true, "a rejection took place");
 				assert.ok(this.oGetPersonalizationStub.notCalled, "then UI2PersonalizationState.getPersonalization is not called");
 			}.bind(this));
@@ -95,7 +95,7 @@ sap.ui.define([
 			return UI2PersonalizationApplyAPI.load({
 				selector: this.oAppComponent,
 				containerKey: "someContainerKey"
-			}).then(function () {
+			}).then(function() {
 				assert.ok(this.oGetPersonalizationStub.calledWithExactly("testComponent", "someContainerKey", undefined), "then UI2PersonalizationState.getPersonalization is called with correct parameters and default appVersion is taken");
 			}.bind(this));
 		});

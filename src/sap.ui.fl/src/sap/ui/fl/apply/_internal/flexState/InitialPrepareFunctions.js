@@ -28,18 +28,18 @@ sap.ui.define([
 
 	InitialPrepareFunctions.variants = function(mPropertyBag) {
 		var aVariantIds = (mPropertyBag.storageResponse.changes.variants || [])
-			.map(function(oVariantDef) {
-				return oVariantDef.fileName;
+		.map(function(oVariantDef) {
+			return oVariantDef.fileName;
+		})
+		.concat(
+			mPropertyBag.externalData
+			.filter(function(oFlexObject) {
+				return oFlexObject.getFileType() === "ctrl_variant";
 			})
-			.concat(
-				mPropertyBag.externalData
-					.filter(function(oFlexObject) {
-						return oFlexObject.getFileType() === "ctrl_variant";
-					})
-					.map(function(oVariant) {
-						return oVariant.getId();
-					})
-			);
+			.map(function(oVariant) {
+				return oVariant.getId();
+			})
+		);
 
 		// Look through the variant references of known variants to find the standard
 		// variant id on any variant that directly inherited from it

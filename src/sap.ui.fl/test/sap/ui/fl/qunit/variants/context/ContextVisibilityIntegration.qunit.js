@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/variants/context/controller/ContextVisibility.controller",
@@ -105,15 +105,15 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given ContextVisibility Component without selected contexts", {
-		before: function () {
+		before: function() {
 			QUnit.config.fixture = null;
 			this.oMockResponse = duplicateRoles(51, oDuplicates);
 		},
-		after: function () {
+		after: function() {
 			QUnit.config.fixture = "";
 		},
 
-		beforeEach: function () {
+		beforeEach: function() {
 			this.fnGetContextsStub = sandbox.stub(WriteStorage, "getContexts").resolves(this.oMockResponse);
 			sandbox.stub(WriteStorage, "loadContextDescriptions").resolves(oDescriptionResponse);
 			return renderComponent.call(this, []).then(setInitialControls.bind(this));
@@ -124,7 +124,7 @@ sap.ui.define([
 		}
 
 	}, function() {
-		QUnit.test("when rendering the component, empty selected roles panel with list with info message strip and two buttons is visible", function (assert) {
+		QUnit.test("when rendering the component, empty selected roles panel with list with info message strip and two buttons is visible", function(assert) {
 			assert.equal(this.oVisibilityPanel.getVisible(), true, "panel is visible");
 			assert.equal(this.oSelectedRolesList.getVisible(), true, "selected roles list is visible");
 			assert.equal(this.oSelectedRolesList.getItems().length, 0, "selected roles list contains entries");
@@ -133,17 +133,17 @@ sap.ui.define([
 			assert.equal(this.oRemoveAllBtn.getEnabled(), false, "remove all context button is disabled");
 		});
 
-		QUnit.test("when showMessageStrip is called with false", function (assert) {
+		QUnit.test("when showMessageStrip is called with false", function(assert) {
 			this.oComp.showMessageStrip(false);
 			assert.equal(this.oVisibilityMessageStrip.getVisible(), false, "message strip is not visible");
 		});
 
-		QUnit.test("when showMessageStrip is called with true", function (assert) {
+		QUnit.test("when showMessageStrip is called with true", function(assert) {
 			this.oComp.showMessageStrip(true);
 			assert.equal(this.oVisibilityMessageStrip.getVisible(), true, "message strip is visible");
 		});
 
-		QUnit.test("when pressing add contexts button, select roles dialog is opened, no items are pre-selected", function (assert) {
+		QUnit.test("when pressing add contexts button, select roles dialog is opened, no items are pre-selected", function(assert) {
 			var fnDone = assert.async();
 			var oAddContextStub = sandbox.stub(ContextVisibilityController.prototype, "_addContexts");
 
@@ -163,16 +163,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given SelectContexts Dialog", {
-		before: function () {
+		before: function() {
 			QUnit.config.fixture = null;
 			this.oMockResponse = duplicateRoles(51, oDuplicates);
 			this.oMockSearchResponse = {values: [{ id: "KPI", description: "KPI Framework"}]};
 		},
-		after: function () {
+		after: function() {
 			QUnit.config.fixture = "";
 		},
 
-		beforeEach: function () {
+		beforeEach: function() {
 			this.fnLoadContextDescriptionStub = sandbox.stub(WriteStorage, "loadContextDescriptions").resolves(oDescriptionResponse);
 			this.fnGetContextsStub = sandbox.stub(WriteStorage, "getContexts");
 			this.fnGetContextsStub.withArgs({layer: Layer.CUSTOMER, type: "role"}).resolves(this.oMockResponse);
@@ -191,7 +191,7 @@ sap.ui.define([
 		}
 
 	}, function() {
-		QUnit.test("when initiating component with selected roles, then tooltips are rendered correctly", function (assert) {
+		QUnit.test("when initiating component with selected roles, then tooltips are rendered correctly", function(assert) {
 			assert.equal(this.oAddBtn.getEnabled(), true, "add context button is enabled");
 			assert.equal(this.oRemoveAllBtn.getEnabled(), true, "remove all context button is enabled");
 			assert.equal(this.oSelectedRolesList.getItems().length, 2, "selected roles list contains entries");
@@ -204,7 +204,7 @@ sap.ui.define([
 			assert.equal(oSecondItem.getTooltip(), "No description available", "tooltip is not available so fallback i18n description is used");
 		});
 
-		QUnit.test("when searching for a value, back end request is fired and list entries are adjusted", function (assert) {
+		QUnit.test("when searching for a value, back end request is fired and list entries are adjusted", function(assert) {
 			var fnDone = assert.async();
 
 			var oAddContextStub = sandbox.stub(ContextVisibilityController.prototype, "_addContexts");
@@ -243,7 +243,7 @@ sap.ui.define([
 			this.oAddBtn.firePress();
 		});
 
-		QUnit.test("when pressing 'More' button, back end request is fired and list entries are extended", function (assert) {
+		QUnit.test("when pressing 'More' button, back end request is fired and list entries are extended", function(assert) {
 			var fnDone = assert.async();
 
 			var oAddContextStub = sandbox.stub(ContextVisibilityController.prototype, "_addContexts");
@@ -269,7 +269,7 @@ sap.ui.define([
 			this.oAddBtn.firePress();
 		});
 
-		QUnit.test("when pressing 'Cancel' button, then nothing is taken over to SelectedContexts list", function (assert) {
+		QUnit.test("when pressing 'Cancel' button, then nothing is taken over to SelectedContexts list", function(assert) {
 			var fnDone = assert.async();
 
 			var oAddContextStub = sandbox.stub(ContextVisibilityController.prototype, "_addContexts");
@@ -291,7 +291,7 @@ sap.ui.define([
 			this.oAddBtn.firePress();
 		});
 
-		QUnit.test("when pressing 'Confirm' button, then selected contexts are taken over to SelectedContexts list", function (assert) {
+		QUnit.test("when pressing 'Confirm' button, then selected contexts are taken over to SelectedContexts list", function(assert) {
 			var fnDone = assert.async();
 
 			var oAddContextStub = sandbox.stub(ContextVisibilityController.prototype, "_addContexts");
@@ -313,15 +313,15 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given ContextVisibility Component with selected contexts", {
-		before: function () {
+		before: function() {
 			QUnit.config.fixture = null;
 			this.oMockResponse = duplicateRoles(51, oDuplicates);
 		},
-		after: function () {
+		after: function() {
 			QUnit.config.fixture = "";
 		},
 
-		beforeEach: function () {
+		beforeEach: function() {
 			this.fnGetContextsStub = sandbox.stub(WriteStorage, "getContexts").resolves(this.oMockResponse);
 			this.fnLoadContextDescriptionStub = sandbox.stub(WriteStorage, "loadContextDescriptions").resolves({role: []});
 			return renderComponent.call(this, ["Random Test ID", "REMOTE"]).then(setInitialControls.bind(this));
@@ -332,7 +332,7 @@ sap.ui.define([
 		}
 
 	}, function() {
-		QUnit.test("when rendering, 1 panel and selected contexts list are visible", function (assert) {
+		QUnit.test("when rendering, 1 panel and selected contexts list are visible", function(assert) {
 			assert.equal(this.oVisibilityPanel.getVisible(), true, "panel is visible");
 			assert.equal(this.oSelectedRolesList.getVisible(), true, "selected roles panel is visible");
 			assert.equal(this.oSelectedRolesList.getItems().length, 2, "list contains 2 entries");
@@ -341,7 +341,7 @@ sap.ui.define([
 			assert.equal(this.oRemoveAllBtn.getEnabled(), true, "remove all context button is enabled");
 		});
 
-		QUnit.test("when rendering and back end returns empty list of tooltips", function (assert) {
+		QUnit.test("when rendering and back end returns empty list of tooltips", function(assert) {
 			assert.equal(this.oSelectedRolesList.getItems().length, 2, "selected roles still contains all entries");
 			assert.equal(this.fnLoadContextDescriptionStub.callCount, 1, "back end is called once to retrieve description");
 			var mExpectedProperties = {layer: "CUSTOMER", flexObjects: {role: ["Random Test ID", "REMOTE"]}};
@@ -350,7 +350,7 @@ sap.ui.define([
 			assert.equal(this.oSelectedRolesList.getItems()[1].getTooltip(), "No description available", "fallback tooltip is used");
 		});
 
-		QUnit.test("when pressing remove first row button, first context is removed", function (assert) {
+		QUnit.test("when pressing remove first row button, first context is removed", function(assert) {
 			assert.equal(this.oSelectedRolesList.getItems().length, 2, "list contains 2 entries");
 			var oRmvFirstRowBtn = this.oSelectedRolesList.getItems()[0].getDeleteControl();
 			assert.equal(oRmvFirstRowBtn.getVisible(), true, "remove first row button is visible");
@@ -360,7 +360,7 @@ sap.ui.define([
 			assert.equal(this.oVisibilityMessageStrip.getVisible(), false, "message strip is not visible");
 		});
 
-		QUnit.test("when pressing remove first row button until every role is removed, select roles list should be visible and empty", function (assert) {
+		QUnit.test("when pressing remove first row button until every role is removed, select roles list should be visible and empty", function(assert) {
 			assert.equal(this.oVisibilityMessageStrip.getVisible(), false, "message strip is not visible");
 			assert.equal(this.oSelectedRolesList.getItems().length, 2, "list contains 2 entries");
 			var oRmvFirstRowBtn = this.oSelectedRolesList.getItems()[0].getDeleteControl();
@@ -381,7 +381,7 @@ sap.ui.define([
 			assert.equal(this.oRemoveAllBtn.getEnabled(), false, "remove all context button is disabled");
 		});
 
-		QUnit.test("when pressing remove all button, all contexts are removed, select roles list should be visible and empty", function (assert) {
+		QUnit.test("when pressing remove all button, all contexts are removed, select roles list should be visible and empty", function(assert) {
 			assert.equal(this.oVisibilityMessageStrip.getVisible(), false, "message strip is not visible");
 			assert.equal(this.oSelectedRolesList.getItems().length, 2, "table contains 2 entries");
 			assert.equal(this.oRemoveAllBtn.getVisible(), true, "remove all rows button is visible");
@@ -393,7 +393,7 @@ sap.ui.define([
 			assert.equal(this.oRemoveAllBtn.getEnabled(), false, "remove all context button is disabled");
 		});
 
-		QUnit.test("when pressing add contexts button, select roles dialog is opened, and items are pre-selected", function (assert) {
+		QUnit.test("when pressing add contexts button, select roles dialog is opened, and items are pre-selected", function(assert) {
 			var fnDone = assert.async();
 			var oAddContextStub = sandbox.stub(ContextVisibilityController.prototype, "_addContexts");
 

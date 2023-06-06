@@ -20,7 +20,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Connector", {
-		beforeEach: function () {
+		beforeEach: function() {
 			InitialPersonalizationConnector.xsrfToken = "123";
 		},
 		afterEach: function() {
@@ -28,7 +28,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("given write is called", function (assert) {
+		QUnit.test("given write is called", function(assert) {
 			var mPropertyBag = {
 				url: "/flexPersonalization",
 				flexObjects: {}
@@ -53,7 +53,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when update is triggered", function (assert) {
+		QUnit.test("given a mock server, when update is triggered", function(assert) {
 			var oFlexObject = {
 				fileType: "change",
 				fileName: "myFileName"
@@ -61,7 +61,7 @@ sap.ui.define([
 			var mPropertyBag = {url: "/flexPersonalization", flexObject: oFlexObject};
 			var sUrl = "/flexPersonalization/flex/personalization/v1/changes/myFileName";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
-			return WritePersonalizationConnector.update(mPropertyBag).then(function () {
+			return WritePersonalizationConnector.update(mPropertyBag).then(function() {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
 					tokenUrl: "/flexPersonalization/flex/personalization/v1/actions/getcsrftoken",
 					initialConnector: InitialPersonalizationConnector,
@@ -73,7 +73,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when remove is triggered", function (assert) {
+		QUnit.test("given a mock server, when remove is triggered", function(assert) {
 			var oFlexObject = {
 				fileType: "variant",
 				fileName: "myFileName",
@@ -87,7 +87,7 @@ sap.ui.define([
 			var sUrl = "/flexPersonalization/flex/personalization/v1/changes/myFileName?namespace=myNamespace";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
-			return WritePersonalizationConnector.remove(mPropertyBag).then(function () {
+			return WritePersonalizationConnector.remove(mPropertyBag).then(function() {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
 					tokenUrl: "/flexPersonalization/flex/personalization/v1/actions/getcsrftoken",
 					initialConnector: InitialPersonalizationConnector,
@@ -98,7 +98,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given reset is called", function (assert) {
+		QUnit.test("given reset is called", function(assert) {
 			var mPropertyBag = {
 				url: "/flexPersonalization",
 				reference: "reference",
@@ -121,7 +121,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given reset is called with optional parameters", function (assert) {
+		QUnit.test("given reset is called with optional parameters", function(assert) {
 			var mPropertyBag = {
 				url: "/flexPersonalization",
 				reference: "reference",
@@ -145,7 +145,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given load features is called", function (assert) {
+		QUnit.test("given load features is called", function(assert) {
 			var mExpectedFeatures = {
 				isProductiveSystem: true,
 				hasPersoConnector: true
@@ -157,17 +157,15 @@ sap.ui.define([
 		});
 	});
 
-
-
 	QUnit.module("PersonalizationConnector handing xsrf token in combination of the apply connector", {
-		beforeEach: function () {
+		beforeEach: function() {
 		},
 		afterEach: function() {
 			InitialUtils.sendRequest.restore();
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("given a mock server, when write is triggered and the apply connectors xsrf token is outdated", function (assert) {
+	}, function() {
+		QUnit.test("given a mock server, when write is triggered and the apply connectors xsrf token is outdated", function(assert) {
 			var newToken = "newToken456";
 
 			InitialPersonalizationConnector.xsrfToken = "oldToken123";
@@ -178,7 +176,7 @@ sap.ui.define([
 			oStubSendRequest.onCall(2).resolves({response: "something"});
 
 			var mPropertyBag = {url: "/flexPersonalization", flexObjects: []};
-			return WritePersonalizationConnector.write(mPropertyBag).then(function () {
+			return WritePersonalizationConnector.write(mPropertyBag).then(function() {
 				assert.equal(oStubSendRequest.callCount, 3, "three request were sent");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the first request was a POST request");
 				assert.equal(oStubSendRequest.getCall(1).args[1], "HEAD", "the second request was a HEAD request");
@@ -186,7 +184,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when write is triggered and the apply connectors has no token", function (assert) {
+		QUnit.test("given a mock server, when write is triggered and the apply connectors has no token", function(assert) {
 			var newToken = "newToken456";
 
 			InitialPersonalizationConnector.xsrfToken = undefined;
@@ -196,7 +194,7 @@ sap.ui.define([
 			oStubSendRequest.onCall(1).resolves({response: "something"});
 
 			var mPropertyBag = {url: "/flexPersonalization", flexObjects: []};
-			return WritePersonalizationConnector.write(mPropertyBag).then(function () {
+			return WritePersonalizationConnector.write(mPropertyBag).then(function() {
 				assert.equal(oStubSendRequest.callCount, 2, "two request were sent");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "HEAD", "the first request was a HEAD request");
 				assert.equal(oStubSendRequest.getCall(1).args[1], "POST", "the second request was a POST request");
@@ -204,7 +202,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

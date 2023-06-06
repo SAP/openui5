@@ -14,7 +14,7 @@ sap.ui.define([
 	function _fillTextsFromContent(mPropertyBag) {
 		if (!mPropertyBag.texts) {
 			mPropertyBag.texts = {
-				"": mPropertyBag.content //property name = text key set when adding to descriptor variant
+				"": mPropertyBag.content // property name = text key set when adding to descriptor variant
 			};
 			mPropertyBag.content = {};
 		}
@@ -55,7 +55,7 @@ sap.ui.define([
 		return Promise.resolve(oAppVariantInlineChange);
 	};
 
-	//public static factory methods
+	// public static factory methods
 	/**
 	 * Creates an inline change.
 	 * @param {object} mPropertyBag Parameters
@@ -73,7 +73,6 @@ sap.ui.define([
 		// This will call the right changeType method and will be validated properly
 		return this[fnTriggerChangeTypeMethod](mPropertyBag);
 	};
-
 
 	/**
 	 * Creates an inline change of change type <code>appdescr_ovp_addNewCard</code>.
@@ -537,7 +536,6 @@ sap.ui.define([
 		Utils.checkParameterAndType(mPropertyBag.content, "destination", "object");
 		return _createAppVariantInlineChange(mPropertyBag);
 	};
-
 
 	/**
 	 * Creates an inline change of change type <code>appdescr_app_setKeywords</code>.

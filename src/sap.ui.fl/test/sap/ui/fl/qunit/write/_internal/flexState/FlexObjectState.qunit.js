@@ -122,7 +122,7 @@ sap.ui.define([
 			});
 		});
 
-		//TODO some tests in this test-suite do not have sufficient cleanup, which results in an error in this test when moved further down
+		// TODO some tests in this test-suite do not have sufficient cleanup, which results in an error in this test when moved further down
 		QUnit.test("when flex objects are requested and no variant management model exists", function(assert) {
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
 			var oVariant = FlexObjectFactory.createFromFileContent({
@@ -145,9 +145,9 @@ sap.ui.define([
 				invalidateCache: true,
 				onlyCurrentVariants: true
 			})
-				.then(function(aFlexObjects) {
-					assert.deepEqual(aFlexObjects, [oVariant, oChangeOnVariant1], "then all flex objects are returned correctly");
-				});
+			.then(function(aFlexObjects) {
+				assert.deepEqual(aFlexObjects, [oVariant, oChangeOnVariant1], "then all flex objects are returned correctly");
+			});
 		});
 
 		QUnit.test("Get - Given flex objects are present in the CompVariantState", function(assert) {
@@ -203,10 +203,10 @@ sap.ui.define([
 				selector: this.appComponent,
 				invalidateCache: true
 			})
-				.then(function(aFlexObjects) {
-					assert.equal(aFlexObjects.length, 1, "an array with 1 entries is returned");
-					assert.equal(aFlexObjects[0].getVariantId(), "*standard*", "the standard variant is present");
-				});
+			.then(function(aFlexObjects) {
+				assert.equal(aFlexObjects.length, 1, "an array with 1 entries is returned");
+				assert.equal(aFlexObjects[0].getVariantId(), "*standard*", "the standard variant is present");
+			});
 		});
 
 		QUnit.test("Get - Given flex objects are present in the CompVariantState + ChangePersistence + invalidateCache is true", function(assert) {
@@ -250,15 +250,15 @@ sap.ui.define([
 				selector: this.appComponent,
 				invalidateCache: true
 			})
-				.then(function(aFlexObjects) {
-					assert.equal(aFlexObjects.length, 6, "an array with 6 entries is returned");
-					assert.equal(aFlexObjects[0].getChangeType(), "pageVariant", "the variant from the compVariantState is present");
-					assert.equal(aFlexObjects[1].getChangeType(), "updateVariant", "the change from the compVariantState is present");
-					assert.equal(aFlexObjects[2].getVariantId(), "#PS1", "the oData variant is present");
-					assert.equal(aFlexObjects[3].getVariantId(), "*standard*", "the standard variant is present");
-					assert.equal(aFlexObjects[4].getChangeType(), "renameField", "the 1st change in changePersistence is present");
-					assert.equal(aFlexObjects[5].getChangeType(), "addGroup", "the 2nd change in changePersistence is present");
-				});
+			.then(function(aFlexObjects) {
+				assert.equal(aFlexObjects.length, 6, "an array with 6 entries is returned");
+				assert.equal(aFlexObjects[0].getChangeType(), "pageVariant", "the variant from the compVariantState is present");
+				assert.equal(aFlexObjects[1].getChangeType(), "updateVariant", "the change from the compVariantState is present");
+				assert.equal(aFlexObjects[2].getVariantId(), "#PS1", "the oData variant is present");
+				assert.equal(aFlexObjects[3].getVariantId(), "*standard*", "the standard variant is present");
+				assert.equal(aFlexObjects[4].getChangeType(), "renameField", "the 1st change in changePersistence is present");
+				assert.equal(aFlexObjects[5].getChangeType(), "addGroup", "the 2nd change in changePersistence is present");
+			});
 		});
 
 		QUnit.test("Get - Given flex objects of different layers are present in the CompVariantState and currentLayer set", function(assert) {
@@ -419,11 +419,11 @@ sap.ui.define([
 				invalidateCache: true,
 				onlyCurrentVariants: true
 			})
-				.then(function(aFlexObjects) {
-					assert.notOk(aFlexObjects.includes(oChangeOnVariant2), "then flex objects with different variant references are filtered");
-					assert.ok(aFlexObjects.includes(oVariantIndependentChange), "then variant independent flex objects are not filtered");
-					assert.strictEqual(aFlexObjects.length, 7, "then the non UI are not filtered");
-				});
+			.then(function(aFlexObjects) {
+				assert.notOk(aFlexObjects.includes(oChangeOnVariant2), "then flex objects with different variant references are filtered");
+				assert.ok(aFlexObjects.includes(oVariantIndependentChange), "then variant independent flex objects are not filtered");
+				assert.strictEqual(aFlexObjects.length, 7, "then the non UI are not filtered");
+			});
 		});
 
 		[true, false].forEach(function(bIncludeDirtyChanges) {
@@ -555,18 +555,18 @@ sap.ui.define([
 			addChangesToChangePersistence(oChangePersistence);
 
 			return oChangePersistence.getChangesForComponent()
-				.then(oChangePersistence.saveDirtyChanges.bind(oChangePersistence, oComponent, false))
-				.then(function() {
-					addDirtyChanges(oChangePersistence);
-				})
-				.then(FlexObjectState.getDirtyFlexObjects.bind(undefined, {
-					selector: this.appComponent
-				}))
-				.then(function(aFlexObjects) {
-					assert.equal(aFlexObjects.length, 2, "an array with two entries is returned");
-					assert.equal(aFlexObjects[0].getChangeType(), "dirtyRenameField", "the first change from the persistence is present");
-					assert.equal(aFlexObjects[1].getChangeType(), "dirtyAddGroup", "the second change from the persistence is present");
-				});
+			.then(oChangePersistence.saveDirtyChanges.bind(oChangePersistence, oComponent, false))
+			.then(function() {
+				addDirtyChanges(oChangePersistence);
+			})
+			.then(FlexObjectState.getDirtyFlexObjects.bind(undefined, {
+				selector: this.appComponent
+			}))
+			.then(function(aFlexObjects) {
+				assert.equal(aFlexObjects.length, 2, "an array with two entries is returned");
+				assert.equal(aFlexObjects[0].getChangeType(), "dirtyRenameField", "the first change from the persistence is present");
+				assert.equal(aFlexObjects[1].getChangeType(), "dirtyAddGroup", "the second change from the persistence is present");
+			});
 		});
 
 		QUnit.test("hasDirtyObjects - Given flex objects and dirty changes are present in the ChangePersistence", function(assert) {

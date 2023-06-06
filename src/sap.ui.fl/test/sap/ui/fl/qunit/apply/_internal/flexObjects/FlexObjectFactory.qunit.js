@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
@@ -37,8 +37,8 @@ sap.ui.define([
 		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when a FlexObject is created", function (assert) {
+	}, function() {
+		QUnit.test("when a FlexObject is created", function(assert) {
 			var oFlexObject = FlexObjectFactory.createFromFileContent(this.oBackendResponse);
 			assert.ok(oFlexObject instanceof UIChange, "then the factory chooses the proper class based on the fileType");
 			assert.strictEqual(
@@ -88,7 +88,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

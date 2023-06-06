@@ -82,7 +82,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		create: function (mPropertyBag) {
+		create: function(mPropertyBag) {
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}
@@ -118,7 +118,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		update: function (mPropertyBag) {
+		update: function(mPropertyBag) {
 			_validateAndAdjustPropertyBag(mPropertyBag);
 			return _checkSettingsAndExecuteActionByName("updateAppVariant", mPropertyBag);
 		},
@@ -136,7 +136,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		remove: function (mPropertyBag) {
+		remove: function(mPropertyBag) {
 			_validateAndAdjustPropertyBag(mPropertyBag);
 			return _checkSettingsAndExecuteActionByName("deleteAppVariant", mPropertyBag);
 		},
@@ -149,7 +149,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		getDesignTimeVariant: function (mPropertyBag) {
+		getDesignTimeVariant: function(mPropertyBag) {
 			if (!mPropertyBag.id) {
 				return Promise.reject("App Variant ID must be provided");
 			}
@@ -166,7 +166,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		getRunTimeVariant: function (mPropertyBag) {
+		getRunTimeVariant: function(mPropertyBag) {
 			if (!mPropertyBag.appId) {
 				return Promise.reject("Reference App ID must be provided");
 			}
@@ -216,7 +216,7 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		add: function (mPropertyBag) {
+		add: function(mPropertyBag) {
 			if (!mPropertyBag.appId) {
 				return Promise.reject("appId must be provided");
 			}

@@ -36,7 +36,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise<boolean>} Promise resolves with false
 		 */
-		isContextSharingEnabled: function () {
+		isContextSharingEnabled: function() {
 			return Promise.resolve(false);
 		},
 		/**
@@ -67,14 +67,14 @@ sap.ui.define([
 				return Promise.reject("contextBasedAdaptation.load is not implemented");
 			}
 		},
-		loadFeatures: function (mPropertyBag) {
+		loadFeatures: function(mPropertyBag) {
 			if (InitialConnector.settings) {
 				return Promise.resolve(InitialConnector.settings);
 			}
 			var mParameters = {};
 
 			var sFeaturesUrl = InitialUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
-			return InitialUtils.sendRequest(sFeaturesUrl, "GET", {initialConnector: InitialConnector}).then(function (oResult) {
+			return InitialUtils.sendRequest(sFeaturesUrl, "GET", {initialConnector: InitialConnector}).then(function(oResult) {
 				oResult.response.isContextSharingEnabled = false;
 				return oResult.response;
 			});

@@ -36,7 +36,7 @@ sap.ui.define([
 	 * @returns {object} Mapping information
 	 * @static
 	 */
-	AppDescriptorChange.getMappingInfo = function () {
+	AppDescriptorChange.getMappingInfo = function() {
 		return Object.assign(FlexObject.getMappingInfo(), {
 			appDescriptorChange: "appDescriptorChange"
 		});
@@ -47,7 +47,7 @@ sap.ui.define([
 	 * Can be overridden to avoid access of static mapping within base methods.
 	 * @returns {object} Mapping information
 	 */
-	AppDescriptorChange.prototype.getMappingInfo = function () {
+	AppDescriptorChange.prototype.getMappingInfo = function() {
 		return AppDescriptorChange.getMappingInfo();
 	};
 

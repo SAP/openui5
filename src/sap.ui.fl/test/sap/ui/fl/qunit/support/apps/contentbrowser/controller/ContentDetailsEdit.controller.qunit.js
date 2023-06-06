@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/controller/ContentDetailsEdit.controller",
@@ -27,14 +27,14 @@ sap.ui.define([
 	var oController;
 
 	QUnit.module("ContentDetailsEdit", {
-		beforeEach: function () {
+		beforeEach: function() {
 			oController = new ContentDetailsEdit();
 		},
 		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("sets all parameters when a route matched for this page", function (assert) {
+		QUnit.test("sets all parameters when a route matched for this page", function(assert) {
 			var sLayer = Layer.VENDOR;
 			var sNamespace = "hi/there/";
 			var sFileName = "helloWorld";
@@ -44,7 +44,7 @@ sap.ui.define([
 				value: "CUSTOMER"
 			}];
 			var oRouteParameters = {
-				getParameter: function () {
+				getParameter: function() {
 					return {
 						layer: sLayer,
 						namespace: sNamespace,
@@ -57,9 +57,9 @@ sap.ui.define([
 			oController.oSelectedContentModel = oSelectedContentModel;
 
 			sandbox.stub(oController, "getView").returns({
-				getContent: function () {
+				getContent: function() {
 					return [{
-						setBusy: function () {
+						setBusy: function() {
 						}
 					}];
 				},
@@ -101,7 +101,7 @@ sap.ui.define([
 				value: "CUSTOMER"
 			}];
 			var oPage = {
-				setBusy: function () {}
+				setBusy: function() {}
 			};
 			var sContentSuffix = "pathtothefile";
 			var oStubbedFormatData = sandbox.stub(DataUtils, "formatData");
@@ -112,7 +112,7 @@ sap.ui.define([
 			};
 
 			return oController._onContentReceived(oModelData, oPage, sContentSuffix, oData).then(
-				function () {
+				function() {
 					assert.ok(oStubbedGetContent.calledOnce, "then request for metadata is sent");
 					assert.ok(oStubbedFormatData.calledOnce, "then received data is formatted");
 					assert.equal(oStubbedFormatData.getCall(0).args[0], oData, "with correct data");
@@ -122,7 +122,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when _saveFile is called", function (assert) {
+		QUnit.test("when _saveFile is called", function(assert) {
 			var oStubbedNavTo = sandbox.stub(oController, "_navToDisplayMode");
 			var oStubbedLrepConSaveFile = sandbox.stub(LRepConnector, "saveFile").returns(Promise.resolve());
 			return oController._saveFile(Layer.VENDOR, "namespace", "fileName", "fileType", "somedata", "sTransportId", "package").then(function() {
@@ -131,11 +131,11 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when onSave is called with USER layer", function (assert) {
+		QUnit.test("when onSave is called with USER layer", function(assert) {
 			sandbox.stub(oController, "getView").returns({
-				getModel: function () {
+				getModel: function() {
 					return {
-						getData: function () {
+						getData: function() {
 							return {
 								fileName: "fileName",
 								fileType: "fileType",
@@ -171,11 +171,11 @@ sap.ui.define([
 			assert.equal(oStubbedSaveFile.getCall(0).args[6], undefined, "with correct package");
 		});
 
-		QUnit.test("when onSave is called with LOAD layer", function (assert) {
+		QUnit.test("when onSave is called with LOAD layer", function(assert) {
 			sandbox.stub(oController, "getView").returns({
-				getModel: function () {
+				getModel: function() {
 					return {
-						getData: function () {
+						getData: function() {
 							return {
 								fileName: "fileName",
 								fileType: "fileType",
@@ -211,11 +211,11 @@ sap.ui.define([
 			assert.equal(oStubbedSaveFile.getCall(0).args[6], undefined, "with correct package");
 		});
 
-		QUnit.test("when onSave is called with ATO_NOTIFICATION content", function (assert) {
+		QUnit.test("when onSave is called with ATO_NOTIFICATION content", function(assert) {
 			sandbox.stub(oController, "getView").returns({
-				getModel: function () {
+				getModel: function() {
 					return {
-						getData: function () {
+						getData: function() {
 							return {
 								data: "{packageName: \"$TMP\"}",
 								fileName: "fileName",
@@ -255,11 +255,11 @@ sap.ui.define([
 			assert.equal(oStubbedSaveFile.getCall(0).args[6], undefined, "with correct package");
 		});
 
-		QUnit.test("when onSave is called with local object in VENDOR layer", function (assert) {
+		QUnit.test("when onSave is called with local object in VENDOR layer", function(assert) {
 			sandbox.stub(oController, "getView").returns({
-				getModel: function () {
+				getModel: function() {
 					return {
-						getData: function () {
+						getData: function() {
 							return {
 								data: "{packageName: \"\"}",
 								fileName: "fileName",
@@ -296,11 +296,11 @@ sap.ui.define([
 			assert.equal(oStubbedSaveFile.getCall(0).args[6], undefined, "with correct package");
 		});
 
-		QUnit.test("when onSave is called with transported content", function (assert) {
+		QUnit.test("when onSave is called with transported content", function(assert) {
 			var oStubbedGetView = sandbox.stub(oController, "getView").returns({
-				getModel: function () {
+				getModel: function() {
 					return {
-						getData: function () {
+						getData: function() {
 							return {
 								data: "{packageName: \"package\"}",
 								fileName: "fileName",
@@ -327,7 +327,7 @@ sap.ui.define([
 					};
 				}
 			});
-			var oStubbedOpenDialog = sandbox.stub(Dialog.prototype, 'open').returns("dummy");
+			var oStubbedOpenDialog = sandbox.stub(Dialog.prototype, "open").returns("dummy");
 
 			oController.onSave();
 
@@ -335,7 +335,7 @@ sap.ui.define([
 			assert.ok(oStubbedOpenDialog.calledOnce, "The transport Dialog is opened");
 		});
 
-		QUnit.test("when cancel button is clicked", function (assert) {
+		QUnit.test("when cancel button is clicked", function(assert) {
 			var oStubbedNavTo = sandbox.stub(oController, "_navToDisplayMode");
 
 			oController.onCancel();
@@ -343,12 +343,12 @@ sap.ui.define([
 			assert.ok(oStubbedNavTo.calledOnce, "then navigation to display mode is triggered");
 		});
 
-		QUnit.test("when navigate to display mode is triggered", function (assert) {
+		QUnit.test("when navigate to display mode is triggered", function(assert) {
 			var oRouter = new Router();
 			sandbox.stub(oController, "getView").returns({
-				getModel: function () {
+				getModel: function() {
 					return {
-						getData: function () {
+						getData: function() {
 							return {
 								layer: Layer.VENDOR,
 								fileName: "fileName",

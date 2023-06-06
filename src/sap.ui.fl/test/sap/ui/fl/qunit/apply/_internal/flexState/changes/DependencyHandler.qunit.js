@@ -123,8 +123,8 @@ sap.ui.define([
 			this.oAppComponent.destroy();
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("addChangeApplyCallbackToDependency is called with a function", function (assert) {
+	}, function() {
+		QUnit.test("addChangeApplyCallbackToDependency is called with a function", function(assert) {
 			assert.expect(2);
 			var fnCallback = function() {
 				assert.ok(true, "the function was called");
@@ -145,7 +145,7 @@ sap.ui.define([
 			assert.deepEqual(mChangesMap, mExpectedChangesMap, "the callback was added to the changes map");
 		});
 
-		QUnit.test("'insertChange' is called", function (assert) {
+		QUnit.test("'insertChange' is called", function(assert) {
 			var oReferenceChange = this.mChangesMap.aChanges[2];
 			var sReferenceChangeId = oReferenceChange.getId();
 			var oNewFileName = "newChangeFileName";
@@ -155,7 +155,7 @@ sap.ui.define([
 			assert.strictEqual(this.mChangesMap.aChanges[3].getId(), oNewFileName, "then the newly created change is positioned right after the reference change");
 		});
 
-		QUnit.test("'insertChange' is called and the reference change is not in the changes map", function (assert) {
+		QUnit.test("'insertChange' is called and the reference change is not in the changes map", function(assert) {
 			var sReferenceChangeFileName = "referenceChangeFileName";
 			var sNewFileName = "newChangeFileName";
 			var oReferenceChange = createChange({ fileName: sReferenceChangeFileName });
@@ -240,7 +240,7 @@ sap.ui.define([
 					controlId2: ["fileNameChange1"]
 				}
 			});
-			//Remove selector id from change2 and change4
+			// Remove selector id from change2 and change4
 			this.oChange2.setSelector({});
 			this.oChange4.setSelector({});
 			DependencyHandler.addChangeAndUpdateDependencies(this.oChange1, this.oAppComponent, mChangesMap);
@@ -271,14 +271,14 @@ sap.ui.define([
 			mExpectedChangesMap.aChanges.push(this.oChange4);
 			assert.deepEqual(mChangesMap, mExpectedChangesMap, "the map was updated correctly");
 
-			//Add selector id to change4 and update dependencies
+			// Add selector id to change4 and update dependencies
 			this.oChange4.setSelector({
 				id: "controlId1",
 				idIsLocal: false
 			});
 			DependencyHandler.addChangeAndUpdateDependencies(this.oChange4, this.oAppComponent, mChangesMap);
-			mExpectedChangesMap.mChanges.controlId1.push(this.oChange4); //Only now change4 is added to selector list
-			//And its dependencies created
+			mExpectedChangesMap.mChanges.controlId1.push(this.oChange4); // Only now change4 is added to selector list
+			// And its dependencies created
 			mExpectedChangesMap.mDependencies.fileNameChange4 = {
 				changeObject: this.oChange4,
 				controlsDependencies: ["controlId1"],
@@ -289,14 +289,14 @@ sap.ui.define([
 			mExpectedChangesMap.mControlsWithDependencies.controlId1.push("fileNameChange4");
 			assert.deepEqual(mChangesMap, mExpectedChangesMap, "the map was updated correctly");
 
-			//Add selector id to change2 and update dependencies
+			// Add selector id to change2 and update dependencies
 			this.oChange2.setSelector({
 				id: "controlId1",
 				idIsLocal: false
 			});
 			DependencyHandler.addChangeAndUpdateDependencies(this.oChange2, this.oAppComponent, mChangesMap);
-			mExpectedChangesMap.mChanges.controlId1.push(this.oChange2); //Only now change2 is added to selector list
-			//And its dependencies created
+			mExpectedChangesMap.mChanges.controlId1.push(this.oChange2); // Only now change2 is added to selector list
+			// And its dependencies created
 			mExpectedChangesMap.mDependencies.fileNameChange2 = {
 				changeObject: this.oChange2,
 				controlsDependencies: ["controlId1"],
@@ -341,20 +341,20 @@ sap.ui.define([
 			mChangesCopy.mDependencies.fileNameChange2.controlsDependencies.splice(0, 1);
 			mChangesCopy.mDependencies.fileNameChange3.controlsDependencies.splice(0, 1);
 			mChangesCopy.mDependencies.fileNameChange4.controlsDependencies.splice(0, 1);
-			mChangesCopy.dependencyRemovedInLastBatch["controlId1"] = ["fileNameChange1", "fileNameChange2", "fileNameChange3", "fileNameChange4"];
+			mChangesCopy.dependencyRemovedInLastBatch.controlId1 = ["fileNameChange1", "fileNameChange2", "fileNameChange3", "fileNameChange4"];
 			assert.deepEqual(mChangesCopy, this.mChangesMap, "the map was updated correctly");
 
 			DependencyHandler.removeControlsDependencies(this.mChangesMap, "controlId2");
 			delete mChangesCopy.mControlsWithDependencies.controlId2;
 			mChangesCopy.mDependencies.fileNameChange1.controlsDependencies.splice(0, 1);
 			mChangesCopy.mDependencies.fileNameChange3.controlsDependencies.splice(0, 1);
-			mChangesCopy.dependencyRemovedInLastBatch["controlId2"] = ["fileNameChange1", "fileNameChange3"];
+			mChangesCopy.dependencyRemovedInLastBatch.controlId2 = ["fileNameChange1", "fileNameChange3"];
 			assert.deepEqual(mChangesCopy, this.mChangesMap, "the map was updated correctly");
 
 			DependencyHandler.removeControlsDependencies(this.mChangesMap, "controlId3");
 			delete mChangesCopy.mControlsWithDependencies.controlId3;
 			mChangesCopy.mDependencies.fileNameChange3.controlsDependencies.splice(0, 1);
-			mChangesCopy.dependencyRemovedInLastBatch["controlId3"] = ["fileNameChange3"];
+			mChangesCopy.dependencyRemovedInLastBatch.controlId3 = ["fileNameChange3"];
 			assert.deepEqual(mChangesCopy, this.mChangesMap, "the map was updated correctly");
 
 			DependencyHandler.removeControlsDependencies(this.mChangesMap, "controlId4");
@@ -506,7 +506,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("removeChangeFromDependencies", function (assert) {
+		QUnit.test("removeChangeFromDependencies", function(assert) {
 			var oResolveStub = sandbox.stub(DependencyHandler, "resolveDependenciesForChange");
 			assert.ok(this.mChangesMap.mDependencies.fileNameChange2, "the change has a dependency");
 			DependencyHandler.removeChangeFromDependencies(this.mChangesMap, "fileNameChange2");
@@ -514,7 +514,7 @@ sap.ui.define([
 			assert.notOk(this.mChangesMap.mDependencies.fileNameChange2, "the dependency is not there anymore");
 		});
 
-		QUnit.test("removeChangeFromMap", function (assert) {
+		QUnit.test("removeChangeFromMap", function(assert) {
 			DependencyHandler.removeChangeFromMap(this.mChangesMap, "fileNameChange2");
 			assert.equal(this.mChangesMap.mChanges.controlId1.length, 3, "the change got deleted from the map");
 			assert.equal(this.mChangesMap.mChanges.controlId1[0].getId(), "fileNameChange1", "a correct change is still there");
@@ -527,7 +527,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

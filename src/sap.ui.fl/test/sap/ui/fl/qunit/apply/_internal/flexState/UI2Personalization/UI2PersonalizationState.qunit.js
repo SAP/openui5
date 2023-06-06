@@ -29,8 +29,8 @@ sap.ui.define([
 	QUnit.module("getPersonalization", {
 		beforeEach: function() {
 			this.oGetPersStub = sandbox.stub(FlexState, "getUI2Personalization")
-				.withArgs(sReference)
-				.returns(oFlexStatePers);
+			.withArgs(sReference)
+			.returns(oFlexStatePers);
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -59,8 +59,8 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oPersState = merge({}, oFlexStatePers);
 			this.oGetPersStub = sandbox.stub(FlexState, "getUI2Personalization")
-				.withArgs(sReference)
-				.returns(this.oPersState);
+			.withArgs(sReference)
+			.returns(this.oPersState);
 			this.oLrepConnectorCreateStub = sandbox.stub(LrepConnector.ui2Personalization, "create");
 		},
 		afterEach: function() {
@@ -69,9 +69,9 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("with missing information: oPersonalization", function(assert) {
 			return UI2PersonalizationState.setPersonalization()
-				.catch(function(oError) {
-					assert.equal(oError, sErrorMsg, "an error is thrown");
-				});
+			.catch(function(oError) {
+				assert.equal(oError, sErrorMsg, "an error is thrown");
+			});
 		});
 
 		QUnit.test("with missing information: oPersonalization.reference", function(assert) {
@@ -81,9 +81,9 @@ sap.ui.define([
 				itemName: "itemName",
 				content: "content"
 			})
-				.catch(function(oError) {
-					assert.equal(oError, sErrorMsg, "an error is thrown");
-				});
+			.catch(function(oError) {
+				assert.equal(oError, sErrorMsg, "an error is thrown");
+			});
 		});
 
 		QUnit.test("with missing information: oPersonalization.containerKey", function(assert) {
@@ -93,9 +93,9 @@ sap.ui.define([
 				itemName: "itemName",
 				content: "content"
 			})
-				.catch(function(oError) {
-					assert.equal(oError, sErrorMsg, "an error is thrown");
-				});
+			.catch(function(oError) {
+				assert.equal(oError, sErrorMsg, "an error is thrown");
+			});
 		});
 
 		QUnit.test("with missing information: oPersonalization.itemName", function(assert) {
@@ -105,9 +105,9 @@ sap.ui.define([
 				itemName: "",
 				content: "content"
 			})
-				.catch(function(oError) {
-					assert.equal(oError, sErrorMsg, "an error is thrown");
-				});
+			.catch(function(oError) {
+				assert.equal(oError, sErrorMsg, "an error is thrown");
+			});
 		});
 
 		QUnit.test("with missing information: oPersonalization.content", function(assert) {
@@ -117,9 +117,9 @@ sap.ui.define([
 				itemName: "itemName",
 				content: ""
 			})
-				.catch(function(oError) {
-					assert.equal(oError, sErrorMsg, "an error is thrown");
-				});
+			.catch(function(oError) {
+				assert.equal(oError, sErrorMsg, "an error is thrown");
+			});
 		});
 
 		QUnit.test("with all information, LrepConnector resolving and the container already available", function(assert) {
@@ -136,17 +136,17 @@ sap.ui.define([
 				itemName: "itemName",
 				content: "content"
 			})
-				.then(function() {
-					assert.equal(this.oLrepConnectorCreateStub.callCount, 1, "the send method was called once");
-					assert.deepEqual(this.oLrepConnectorCreateStub.firstCall.args[0].flexObjects, {
-						containerKey: "containerKey",
-						content: "content",
-						itemName: "itemName",
-						reference: "reference"
-					}, "the data was passed correct");
-					assert.deepEqual(this.oPersState[sContainerKey].length, 3);
-					assert.deepEqual(this.oPersState[sContainerKey][2], mResult.response, "the correct object was set");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oLrepConnectorCreateStub.callCount, 1, "the send method was called once");
+				assert.deepEqual(this.oLrepConnectorCreateStub.firstCall.args[0].flexObjects, {
+					containerKey: "containerKey",
+					content: "content",
+					itemName: "itemName",
+					reference: "reference"
+				}, "the data was passed correct");
+				assert.deepEqual(this.oPersState[sContainerKey].length, 3);
+				assert.deepEqual(this.oPersState[sContainerKey][2], mResult.response, "the correct object was set");
+			}.bind(this));
 		});
 
 		QUnit.test("with all information, LrepConnector resolving and the container not available", function(assert) {
@@ -163,11 +163,11 @@ sap.ui.define([
 				itemName: "itemName",
 				content: "content"
 			})
-				.then(function() {
-					assert.deepEqual(this.oPersState[sContainerKey].length, 2, "the old objects were not touched");
-					assert.deepEqual(this.oPersState["sContainerKey"].length, 1, "the new object was added");
-					assert.deepEqual(this.oPersState["sContainerKey"][0], mResult.response, "the correct object was set");
-				}.bind(this));
+			.then(function() {
+				assert.deepEqual(this.oPersState[sContainerKey].length, 2, "the old objects were not touched");
+				assert.deepEqual(this.oPersState.sContainerKey.length, 1, "the new object was added");
+				assert.deepEqual(this.oPersState.sContainerKey[0], mResult.response, "the correct object was set");
+			}.bind(this));
 		});
 
 		QUnit.test("with all information and LrepConnector rejecting", function(assert) {
@@ -178,9 +178,9 @@ sap.ui.define([
 				itemName: "itemName",
 				content: "content"
 			})
-				.catch(function(oError) {
-					assert.equal(oError, "MyError", "the error is passed through");
-				});
+			.catch(function(oError) {
+				assert.equal(oError, "MyError", "the error is passed through");
+			});
 		});
 	});
 
@@ -188,8 +188,8 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oPersState = merge({}, oFlexStatePers);
 			this.oGetPersStub = sandbox.stub(FlexState, "getUI2Personalization")
-				.withArgs(sReference)
-				.returns(this.oPersState);
+			.withArgs(sReference)
+			.returns(this.oPersState);
 			this.oLrepConnectorRemoveStub = sandbox.stub(LrepConnector.ui2Personalization, "remove");
 		},
 		afterEach: function() {
@@ -198,50 +198,50 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("with missing information: sReference", function(assert) {
 			return UI2PersonalizationState.deletePersonalization(undefined, sContainerKey, "sItemName")
-				.catch(function(oError) {
-					assert.equal(oError, sErrorMsg, "an error is thrown");
-				});
+			.catch(function(oError) {
+				assert.equal(oError, sErrorMsg, "an error is thrown");
+			});
 		});
 
 		QUnit.test("with missing information: sContainerKey", function(assert) {
 			return UI2PersonalizationState.deletePersonalization(sReference, undefined, "sItemName")
-				.catch(function(oError) {
-					assert.equal(oError, sErrorMsg, "an error is thrown");
-				});
+			.catch(function(oError) {
+				assert.equal(oError, sErrorMsg, "an error is thrown");
+			});
 		});
 
 		QUnit.test("with missing information: sItemName", function(assert) {
 			return UI2PersonalizationState.deletePersonalization(sReference, sContainerKey, undefined)
-				.catch(function(oError) {
-					assert.equal(oError, sErrorMsg, "an error is thrown");
-				});
+			.catch(function(oError) {
+				assert.equal(oError, sErrorMsg, "an error is thrown");
+			});
 		});
 
 		QUnit.test("with all information", function(assert) {
 			this.oLrepConnectorRemoveStub.resolves();
 			return UI2PersonalizationState.deletePersonalization(sReference, sContainerKey, "item1")
-				.then(function() {
-					assert.equal(this.oLrepConnectorRemoveStub.callCount, 1, "the send method was called once");
-					assert.deepEqual(this.oLrepConnectorRemoveStub.firstCall.args[0],
-						{
-							containerKey: "container1",
-							itemName: "item1",
-							reference: "sap.ui.fl.Reference"
-						}, "the data was passed correct");
-					assert.equal(this.oPersState[sContainerKey].length, 1, "one object was deleted");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oLrepConnectorRemoveStub.callCount, 1, "the send method was called once");
+				assert.deepEqual(this.oLrepConnectorRemoveStub.firstCall.args[0],
+					{
+						containerKey: "container1",
+						itemName: "item1",
+						reference: "sap.ui.fl.Reference"
+					}, "the data was passed correct");
+				assert.equal(this.oPersState[sContainerKey].length, 1, "one object was deleted");
+			}.bind(this));
 		});
 
 		QUnit.test("with all information and LrepConnector rejecting", function(assert) {
 			this.oLrepConnectorRemoveStub.rejects("MyError");
 			return UI2PersonalizationState.deletePersonalization(sReference, sContainerKey, "item1")
-				.catch(function(oError) {
-					assert.equal(oError, "MyError", "the error is passed through");
-				});
+			.catch(function(oError) {
+				assert.equal(oError, "MyError", "the error is passed through");
+			});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

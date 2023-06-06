@@ -34,7 +34,7 @@ sap.ui.define([
 		if (bUseStaticArea || aVMControls.length === 0) {
 			aVMControls = Array.from(StaticArea.getDomRef().querySelectorAll(".sapUiFlVarMngmt"));
 		}
-		return aVMControls.map(function (oVariantManagementNode) {
+		return aVMControls.map(function(oVariantManagementNode) {
 			return oVariantManagementNode.id;
 		});
 	}
@@ -53,9 +53,9 @@ sap.ui.define([
 			return 0;
 		},
 
-		getIndexToSortVariant: function (aVariants, oVariantEntry) {
+		getIndexToSortVariant: function(aVariants, oVariantEntry) {
 			var iSortedIndex = aVariants.length;
-			aVariants.some(function (oExistingVariant, index) {
+			aVariants.some(function(oExistingVariant, index) {
 				if (VariantsApplyUtil.compareVariants(oVariantEntry.instance, oExistingVariant.instance) < 0) {
 					iSortedIndex = index;
 					return true;

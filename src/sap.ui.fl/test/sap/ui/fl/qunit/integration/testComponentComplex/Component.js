@@ -18,7 +18,7 @@ sap.ui.define([
 		init: function() {
 			UIComponent.prototype.init.apply(this, arguments);
 		},
-		createContent: function () {
+		createContent: function() {
 			return this.createComponent({
 				usage: "myUsage",
 				id: this.createId("sap.ui.fl.qunit.integration.testComponentReuse"),
@@ -26,7 +26,7 @@ sap.ui.define([
 					manifest: "json"
 				},
 				async: true
-			}).then(function (oEmbedded) {
+			}).then(function(oEmbedded) {
 				var oComponentContainer = new ComponentContainer(this.createId("myContainer"), {
 					propagateModel: true,
 					component: oEmbedded

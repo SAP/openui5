@@ -14,8 +14,8 @@ function(
 	function applyExtensionPoint(oExtensionPoint, bSkipInsertContent) {
 		var mExtensionPointInfo = merge({defaultContent: []}, oExtensionPoint);
 		return ApplyProcessor.registerExtensionPoint(mExtensionPointInfo)
-			.then(ApplyProcessor.createDefaultContent.bind(this, oExtensionPoint, bSkipInsertContent, applyExtensionPoint, []/*in base processor changes are not taken into account*/))
-			.then(ApplyProcessor.addDefaultContentToExtensionPointInfo.bind(this, mExtensionPointInfo, bSkipInsertContent));
+		.then(ApplyProcessor.createDefaultContent.bind(this, oExtensionPoint, bSkipInsertContent, applyExtensionPoint, []/* in base processor changes are not taken into account */))
+		.then(ApplyProcessor.addDefaultContentToExtensionPointInfo.bind(this, mExtensionPointInfo, bSkipInsertContent));
 	}
 
 	/**

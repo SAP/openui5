@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ovp/DeleteCard",
@@ -14,7 +14,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("applyChange", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oChange = new AppDescriptorChange({
 				flexObjectMetadata: {
 					changeType: "appdescr_ovp_removeCard"
@@ -24,11 +24,11 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when calling '_applyChange' with a change to delete card that is defined in manifest", function (assert) {
+		QUnit.test("when calling '_applyChange' with a change to delete card that is defined in manifest", function(assert) {
 			var oManifest = {
 				"sap.ovp": {
 					cards: {
@@ -38,10 +38,10 @@ sap.ui.define([
 				}
 			};
 			var oNewManifest = DeleteCard.applyChange(oManifest, this.oChange);
-			assert.strictEqual(oNewManifest["sap.ovp"]["cards"]["card1"], undefined, "the card is deleted correctly.");
+			assert.strictEqual(oNewManifest["sap.ovp"].cards.card1, undefined, "the card is deleted correctly.");
 		});
 
-		QUnit.test("when calling '_applyChange' with a change to delete card that is not defined in manifest", function (assert) {
+		QUnit.test("when calling '_applyChange' with a change to delete card that is not defined in manifest", function(assert) {
 			var oManifest = {
 				"sap.ovp": {
 					cards: {

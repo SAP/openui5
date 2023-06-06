@@ -36,22 +36,26 @@ sap.ui.define([
 		}
 
 		return mPropertyBag.modifier.bySelectorTypeIndependent(oSelector, mPropertyBag.appComponent, mPropertyBag.view)
-			.then(function (oControl) {
-				if (!oControl) {
-					throw Error("A flexibility change tries to change a nonexistent control.");
-				}
-				checkFailedSelectors(oSelector);
+		.then(function(oControl) {
+			if (!oControl) {
+				throw Error("A flexibility change tries to change a nonexistent control.");
+			}
+			checkFailedSelectors(oSelector);
 
-				var aDependentControlSelectorList = oChange.getDependentControlSelectorList();
-				aDependentControlSelectorList.forEach(function(oDependentControlSelector) {
-					var oDependentControl = mPropertyBag.modifier.bySelector(oDependentControlSelector, mPropertyBag.appComponent, mPropertyBag.view);
-					if (!oDependentControl) {
-						throw new Error("A dependent selector control of the flexibility change is not available.");
-					}
-					checkFailedSelectors(oDependentControlSelector);
-				});
-				return oControl;
+			var aDependentControlSelectorList = oChange.getDependentControlSelectorList();
+			aDependentControlSelectorList.forEach(function(oDependentControlSelector) {
+				var oDependentControl = mPropertyBag.modifier.bySelector(
+					oDependentControlSelector,
+					mPropertyBag.appComponent,
+					mPropertyBag.view
+				);
+				if (!oDependentControl) {
+					throw new Error("A dependent selector control of the flexibility change is not available.");
+				}
+				checkFailedSelectors(oDependentControlSelector);
 			});
+			return oControl;
+		});
 	}
 
 	function isXmlModifier(mPropertyBag) {
@@ -105,28 +109,28 @@ sap.ui.define([
 
 	function handleAfterApply(oChange, mControl, oInitializedControl, mPropertyBag) {
 		return Promise.resolve()
-			.then(function () {
-				// changeHandler can return a different control, e.g. case where a visible UI control replaces the stashed control placeholder
-				if (oInitializedControl instanceof Element) {
-					// the newly rendered control could have custom data set from the XML modifier
-					mControl.control = oInitializedControl;
-				}
-				if (mControl.control) {
-					return mPropertyBag.modifier.updateAggregation(mControl.originalControl, oChange.getContent().boundAggregation);
-				}
-				return undefined;
-			})
-			.then(function () {
-				// only save the revert data in the custom data when the change is being processed in XML,
-				// as it's only relevant for viewCache at the moment
-				return FlexCustomData.addAppliedCustomData(mControl.control, oChange, mPropertyBag, isXmlModifier(mPropertyBag));
-			})
-			.then(function () {
-				// if a change was reverted previously remove the flag as it is not reverted anymore
-				var oResult = {success: true};
-				oChange.markSuccessful(oResult);
-				return oResult;
-			});
+		.then(function() {
+			// changeHandler can return a different control, e.g. case where a visible UI control replaces the stashed control placeholder
+			if (oInitializedControl instanceof Element) {
+				// the newly rendered control could have custom data set from the XML modifier
+				mControl.control = oInitializedControl;
+			}
+			if (mControl.control) {
+				return mPropertyBag.modifier.updateAggregation(mControl.originalControl, oChange.getContent().boundAggregation);
+			}
+			return undefined;
+		})
+		.then(function() {
+			// only save the revert data in the custom data when the change is being processed in XML,
+			// as it's only relevant for viewCache at the moment
+			return FlexCustomData.addAppliedCustomData(mControl.control, oChange, mPropertyBag, isXmlModifier(mPropertyBag));
+		})
+		.then(function() {
+			// if a change was reverted previously remove the flag as it is not reverted anymore
+			var oResult = {success: true};
+			oChange.markSuccessful(oResult);
+			return oResult;
+		});
 	}
 
 	function handleAfterApplyError(oError, oChange, mControl, mPropertyBag) {
@@ -139,27 +143,41 @@ sap.ui.define([
 		var sCustomDataIdentifier = FlexCustomData.getCustomDataIdentifier(false, bErrorOccurred, bXmlModifier);
 		switch (sCustomDataIdentifier) {
 			case FlexCustomData.notApplicableChangesCustomDataKey:
-				FlUtils.formatAndLogMessage("info", [sLogMessage, oError.message], [sChangeId]);
+				FlUtils.formatAndLogMessage(
+					"info",
+					[sLogMessage, oError.message],
+					[sChangeId]
+				);
 				break;
 			case FlexCustomData.failedChangesCustomDataKeyXml:
-				FlUtils.formatAndLogMessage("warning", [sLogMessage, "Merge error detected while processing the XML tree."], [sChangeId], oError.stack);
+				FlUtils.formatAndLogMessage(
+					"warning",
+					[sLogMessage, "Merge error detected while processing the XML tree."],
+					[sChangeId],
+					oError.stack
+				);
 				break;
 			case FlexCustomData.failedChangesCustomDataKeyJs:
-				FlUtils.formatAndLogMessage("error", [sLogMessage, "Merge error detected while processing the JS control tree."], [sChangeId], oError.stack);
+				FlUtils.formatAndLogMessage(
+					"error",
+					[sLogMessage, "Merge error detected while processing the JS control tree."],
+					[sChangeId],
+					oError.stack
+				);
 				break;
-			/*no default*/
+			/* no default */
 		}
 		return FlexCustomData.addFailedCustomData(mControl.control, oChange, mPropertyBag, sCustomDataIdentifier)
-			.then(function () {
-				// if the change failed during XML processing, the status has to be reset
-				// the change will be applied again in JS
-				if (bXmlModifier) {
-					oChange.setInitialApplyState();
-				} else {
-					oChange.markFailed(oResult);
-				}
-				return oResult;
-			});
+		.then(function() {
+			// if the change failed during XML processing, the status has to be reset
+			// the change will be applied again in JS
+			if (bXmlModifier) {
+				oChange.setInitialApplyState();
+			} else {
+				oChange.markFailed(oResult);
+			}
+			return oResult;
+		});
 	}
 
 	function logApplyChangeError(oError, oChange) {
@@ -208,7 +226,7 @@ sap.ui.define([
 	}
 
 	function registerOnAfterXMLChangeProcessingHandler(aOnAfterXMLChangeProcessingHandlers, oChangeHandler, oControl) {
-		var iChangeHandlerIndex = aOnAfterXMLChangeProcessingHandlers.findIndex(function (mHandler) {
+		var iChangeHandlerIndex = aOnAfterXMLChangeProcessingHandlers.findIndex(function(mHandler) {
 			return mHandler.handler === oChangeHandler;
 		});
 		if (iChangeHandlerIndex < 0) {
@@ -230,7 +248,7 @@ sap.ui.define([
 		 * @param {Promise} oPromise - Promise which is resolved when precondition fulfilled
 		 */
 		addPreConditionForInitialChangeApplying: function(oPromise) {
-			oLastPromise = oLastPromise.then(function () {
+			oLastPromise = oLastPromise.then(function() {
 				return oPromise;
 			});
 		},
@@ -313,7 +331,7 @@ sap.ui.define([
 				view: FlUtils.getViewForControl(oControl)
 			};
 
-			aChangesForControl.forEach(function (oChange) {
+			aChangesForControl.forEach(function(oChange) {
 				checkAndAdjustChangeStatus(oControl, oChange, mChangesMap, oFlexController, mPropertyBag);
 				if (!oChange.isApplyProcessFinished() && !oChange._ignoreOnce) {
 					oChange.setQueuedForApply();
@@ -332,8 +350,9 @@ sap.ui.define([
 					bControlWithDependencies = true;
 				}
 
-				aChangesForControl.forEach(function (oChange) {
-					// in the ExtensionPoint scenario changes can get cloned, in case of a template change the original selector has to be adjusted
+				aChangesForControl.forEach(function(oChange) {
+					// in the ExtensionPoint scenario changes can get cloned,
+					// in case of a template change the original selector has to be adjusted
 					if (oChange.originalSelectorToBeAdjusted) {
 						adjustOriginalSelector(oChange, oControl, oAppComponent);
 						delete oChange.originalSelectorToBeAdjusted;
@@ -355,7 +374,7 @@ sap.ui.define([
 				});
 
 				if (aChangesForControl.length || bControlWithDependencies) {
-					return FlUtils.execPromiseQueueSequentially(aPromiseStack).then(function () {
+					return FlUtils.execPromiseQueueSequentially(aPromiseStack).then(function() {
 						return DependencyHandler.processDependentQueue(mChangesMap, oAppComponent, sControlId);
 					});
 				}
@@ -389,50 +408,50 @@ sap.ui.define([
 			return aChanges.reduce(function(oPreviousPromise, oChange) {
 				var oControl;
 				return oPreviousPromise
-					.then(checkControlAndDependentSelectorControls.bind(null, oChange, mPropertyBag))
-					.then(function (oReturnedControl) {
-						oControl = oReturnedControl;
-						var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
-						return Utils.getChangeHandler(oChange, mControl, mPropertyBag);
-					})
-					.then(function (oChangeHandler) {
-						mPropertyBag.changeHandler = oChangeHandler;
-						oChange.setQueuedForApply();
-						checkAndAdjustChangeStatus(oControl, oChange, undefined, undefined, mPropertyBag);
+				.then(checkControlAndDependentSelectorControls.bind(null, oChange, mPropertyBag))
+				.then(function(oReturnedControl) {
+					oControl = oReturnedControl;
+					var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
+					return Utils.getChangeHandler(oChange, mControl, mPropertyBag);
+				})
+				.then(function(oChangeHandler) {
+					mPropertyBag.changeHandler = oChangeHandler;
+					oChange.setQueuedForApply();
+					checkAndAdjustChangeStatus(oControl, oChange, undefined, undefined, mPropertyBag);
 
-						if (!oChange.isApplyProcessFinished()) {
-							if (typeof mPropertyBag.changeHandler.onAfterXMLChangeProcessing === "function") {
-								registerOnAfterXMLChangeProcessingHandler(
-									aOnAfterXMLChangeProcessingHandlers,
-									mPropertyBag.changeHandler,
-									oControl
-								);
-							}
-							return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag);
+					if (!oChange.isApplyProcessFinished()) {
+						if (typeof mPropertyBag.changeHandler.onAfterXMLChangeProcessing === "function") {
+							registerOnAfterXMLChangeProcessingHandler(
+								aOnAfterXMLChangeProcessingHandlers,
+								mPropertyBag.changeHandler,
+								oControl
+							);
 						}
-						return {success: true};
-					})
-					.then(function(oReturn) {
-						if (!oReturn.success) {
-							throw Error(oReturn.error);
+						return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag);
+					}
+					return {success: true};
+				})
+				.then(function(oReturn) {
+					if (!oReturn.success) {
+						throw Error(oReturn.error);
+					}
+				})
+				.catch(function(oError) {
+					oChange.getDependentSelectorList().forEach(function(oDependentControlSelector) {
+						if (FlUtils.indexOfObject(mPropertyBag.failedSelectors, oDependentControlSelector) === -1) {
+							mPropertyBag.failedSelectors.push(oDependentControlSelector);
 						}
-					})
-					.catch(function(oError) {
-						oChange.getDependentSelectorList().forEach(function(oDependentControlSelector) {
-							if (FlUtils.indexOfObject(mPropertyBag.failedSelectors, oDependentControlSelector) === -1) {
-								mPropertyBag.failedSelectors.push(oDependentControlSelector);
-							}
-						});
-						logApplyChangeError(oError, oChange);
 					});
+					logApplyChangeError(oError, oChange);
+				});
 			}, (FlUtils.FakePromise ? new FlUtils.FakePromise() : Promise.resolve()))
 			.then(function() {
 				delete mPropertyBag.failedSelectors;
 
 				// Once all changes for a control are processed, call the
 				// onAfterXMLChangeProcessing hooks of all involved change handlers
-				aOnAfterXMLChangeProcessingHandlers.forEach(function (mHandler) {
-					mHandler.controls.forEach(function (oControl) {
+				aOnAfterXMLChangeProcessingHandlers.forEach(function(mHandler) {
+					mHandler.controls.forEach(function(oControl) {
 						try {
 							mHandler.handler.onAfterXMLChangeProcessing(oControl, mPropertyBag);
 						} catch (oError) {

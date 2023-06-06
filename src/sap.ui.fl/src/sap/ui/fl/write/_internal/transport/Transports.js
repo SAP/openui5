@@ -51,14 +51,14 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.write._internal.transport
 		 */
-		getTransports: function (mParameters) {
+		getTransports: function(mParameters) {
 			if (FlexUtils.getClient()) {
 				mParameters["sap-client"] = FlexUtils.getClient();
 			}
 			var sGetTransportsUrl = InitialUtils.getUrl(ROUTES.ACTION_GET_TRANSPORTS, {url: FlexUtils.getLrepUrl()}, mParameters);
-			//decode url before sending to ABAP back end which does not expect encoded special character such as "/" in the package name
+			// decode url before sending to ABAP back end which does not expect encoded special character such as "/" in the package name
 			sGetTransportsUrl = decodeURIComponent(sGetTransportsUrl);
-			return InitialUtils.sendRequest(sGetTransportsUrl, "GET").then(function (oResponse) {
+			return InitialUtils.sendRequest(sGetTransportsUrl, "GET").then(function(oResponse) {
 				if (oResponse.response) {
 					if (!oResponse.response.localonly) {
 						oResponse.response.localonly = false;
@@ -69,7 +69,7 @@ sap.ui.define([
 					return Promise.resolve(oResponse.response);
 				}
 
-				return Promise.reject('response is empty');
+				return Promise.reject("response is empty");
 			});
 		},
 
@@ -86,7 +86,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.write._internal.transport
 		 */
-		makeChangesTransportable: function (mParameters) {
+		makeChangesTransportable: function(mParameters) {
 			if (!mParameters.transportId) {
 				return Promise.reject(new Error("no transportId provided as attribute of mParameters"));
 			}
@@ -119,7 +119,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.write._internal.transport
 		 */
-		convertToChangeTransportData: function (aLocalChanges, aAppVariantDescriptors) {
+		convertToChangeTransportData: function(aLocalChanges, aAppVariantDescriptors) {
 			var aTransportData = [];
 			var i;
 

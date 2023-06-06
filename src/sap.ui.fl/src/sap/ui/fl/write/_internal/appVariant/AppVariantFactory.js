@@ -61,7 +61,7 @@ sap.ui.define([
 		}).then(function(oResult) {
 			var oAppVariantConfig = oResult.response;
 			if (!isPlainObject(oAppVariantConfig)) {
-				//Parse if needed. Happens if backend sends wrong content type
+				// Parse if needed. Happens if backend sends wrong content type
 				oAppVariantConfig = JSON.parse(oAppVariantConfig);
 			}
 			mPropertyBag = merge(
@@ -100,7 +100,7 @@ sap.ui.define([
 				Utils.checkParameterAndType(mPropertyBag, "version", "string");
 			}
 
-			//default layer to CUSTOMER
+			// default layer to CUSTOMER
 			if (!mPropertyBag.layer) {
 				mPropertyBag.layer = Layer.CUSTOMER;
 			} else {
@@ -165,10 +165,10 @@ sap.ui.define([
 	 */
 	AppVariantFactory.prepareDelete = function(mPropertyBag) {
 		return ((mPropertyBag.isForSmartBusiness) ? Promise.resolve(new AppVariant(mPropertyBag)) : AppVariantFactory.load(mPropertyBag))
-			.then(function(oAppVariant) {
-				oAppVariant.setMode("DELETION");
-				return oAppVariant;
-			});
+		.then(function(oAppVariant) {
+			oAppVariant.setMode("DELETION");
+			return oAppVariant;
+		});
 	};
 
 	return AppVariantFactory;

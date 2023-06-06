@@ -45,7 +45,7 @@ sap.ui.define([
 		 * @returns {Promise} Returns a Promise resolved empty after the script was included
 		 * @private
 		 */
-		 _loadModules: function (sFlexModulesUri) {
+		 _loadModules: function(sFlexModulesUri) {
 			return new Promise(function(resolve, reject) {
 				includeScript(sFlexModulesUri, undefined, resolve, reject);
 			});
@@ -58,7 +58,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.write._internal.connectors.LrepConnector
 		 */
-		_addClientInfo: function (mParameters) {
+		_addClientInfo: function(mParameters) {
 			var sClient = FlexUtils.getUrlParameter("sap-client");
 			if (!mParameters && sClient) {
 				mParameters = {};
@@ -112,7 +112,7 @@ sap.ui.define([
 				xsrfToken: this.xsrfToken,
 				siteId: mPropertyBag.siteId,
 				sAppDescriptorId: sAppDescriptorId
-			}).then(function (oResult) {
+			}).then(function(oResult) {
 				var oResponse = oResult.response;
 				if (oResult.etag) {
 					oResponse.cacheKey = oResult.etag;
@@ -131,7 +131,7 @@ sap.ui.define([
 				}
 
 				var sModulesUrl = Utils.getUrl(ROUTES.MODULES, mPropertyBag, mParameters);
-				return this._loadModules(sModulesUrl).then(function () {
+				return this._loadModules(sModulesUrl).then(function() {
 					return oResponse;
 				});
 			}.bind(this));

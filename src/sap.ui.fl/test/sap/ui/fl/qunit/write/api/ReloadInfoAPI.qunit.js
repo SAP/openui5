@@ -62,7 +62,7 @@ sap.ui.define([
 			});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
 				var oExpectedArgs = {
 					selector: oReloadInfo.selector,
 					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
@@ -97,7 +97,7 @@ sap.ui.define([
 			var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves();
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
 				var oExpectedArgs = {
 					selector: oReloadInfo.selector,
 					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
@@ -121,7 +121,7 @@ sap.ui.define([
 			var oFlexInfoResponse = {allContextsProvided: false, initialAllContexts: true};
 			var oStubs = setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(oStubs.oReloadInfo).then(function (oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(oStubs.oReloadInfo).then(function(oReloadInfo) {
 				assertReloadReasonsAndSession(oReloadInfo, oStubs, assert);
 				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, false, "allContextsProvided is set to true");
 				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
@@ -133,7 +133,7 @@ sap.ui.define([
 			var oFlexInfoResponse = {allContextsProvided: false};
 			var reasons = setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(reasons.oReloadInfo).then(function (oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(reasons.oReloadInfo).then(function(oReloadInfo) {
 				assertReloadReasonsAndSession(oReloadInfo, reasons, assert);
 				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, false, "allContextsProvided is set to true");
 				assert.deepEqual(oReloadInfo.allContexts, true, "allContexts is set to false");
@@ -145,7 +145,7 @@ sap.ui.define([
 			var oFlexInfoResponse = {allContextsProvided: true, initialAllContexts: true};
 			var reasons = setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(reasons.oReloadInfo).then(function (oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(reasons.oReloadInfo).then(function(oReloadInfo) {
 				assertReloadReasonsAndSession(oReloadInfo, reasons, assert);
 				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, true, "allContextsProvided is set to true");
 				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
@@ -157,7 +157,7 @@ sap.ui.define([
 			var oFlexInfoResponse = {allContextsProvided: true};
 			var reasons = setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(reasons.oReloadInfo).then(function (oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(reasons.oReloadInfo).then(function(oReloadInfo) {
 				assertReloadReasonsAndSession(oReloadInfo, reasons, assert);
 				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, true, "allContextsProvided is set to true");
 				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
@@ -183,7 +183,7 @@ sap.ui.define([
 			});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
 				var oExpectedArgs = {
 					selector: oReloadInfo.selector,
 					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
@@ -223,8 +223,8 @@ sap.ui.define([
 			});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
-				assert.deepEqual(oReloadInfo.isDraftAvailable, false, "isDraftAvailable is set to false"); //If param is set it will not load the draft
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
+				assert.deepEqual(oReloadInfo.isDraftAvailable, false, "isDraftAvailable is set to false"); // If param is set it will not load the draft
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
 				assert.deepEqual(oReloadInfo.allContexts, true, "allContexts is set to true");
 			});
@@ -253,7 +253,7 @@ sap.ui.define([
 			});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
 				assert.deepEqual(oReloadInfo.isDraftAvailable, false, "isDraftAvailable is set to false");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, true, "hasHigherLayerChanges is set to true");
 				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
@@ -283,7 +283,7 @@ sap.ui.define([
 			});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
 				assert.deepEqual(oReloadInfo.isDraftAvailable, false, "isDraftAvailable is set to false");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false"); // parameter already set;
 				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
@@ -344,10 +344,10 @@ sap.ui.define([
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(null);
 			window.sessionStorage.removeItem("sap.ui.fl.info.true");
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("and no reason to reload was found", function(assert) {
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
@@ -405,7 +405,7 @@ sap.ui.define([
 				isDraftAvailable: false,
 				versioningEnabled: true,
 				activeVersion: "2",
-				URLParsingService: true //the functionality is stubbed, but is needs to exist
+				URLParsingService: true // the functionality is stubbed, but is needs to exist
 			};
 
 			var mParsedHash = {
@@ -431,7 +431,7 @@ sap.ui.define([
 				isDraftAvailable: false,
 				versioningEnabled: true,
 				activeVersion: "2",
-				URLParsingService: true //the functionality is stubbed, but is needs to exist
+				URLParsingService: true // the functionality is stubbed, but is needs to exist
 			};
 
 			var mParsedHash = {
@@ -640,10 +640,10 @@ sap.ui.define([
 			};
 			sandbox.stub(FlexUtils, "getUshellContainer").returns(false);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("and versioning is enabled & version parameter is in the url", function(assert) {
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
@@ -700,7 +700,7 @@ sap.ui.define([
 	QUnit.module("Given that a hasVersionParameterWithValue is called in FLP and the version parameter is in the hash", {
 		beforeEach: function() {
 			this.oURLParsingService = {
-				parseShellHash: function () {
+				parseShellHash: function() {
 					return {
 						params: {
 							"sap-ui-fl-version": [Version.Number.Draft]
@@ -727,7 +727,7 @@ sap.ui.define([
 	QUnit.module("Given that a hasMaxLayerParameterWithValue is called in FLP and the version parameter is in the hash", {
 		beforeEach: function() {
 			this.oURLParsingService = {
-				parseShellHash: function () {
+				parseShellHash: function() {
 					return {
 						params: {
 							"sap-ui-fl-max-layer": [Layer.CUSTOMER]
@@ -754,7 +754,7 @@ sap.ui.define([
 	QUnit.module("Given that a hasVersionParameterWithValue is called in FLP and the version parameter is not in the hash", {
 		beforeEach: function() {
 			this.oURLParsingService = {
-				parseShellHash: function () {
+				parseShellHash: function() {
 					return {
 						params: {
 						}
@@ -974,7 +974,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 

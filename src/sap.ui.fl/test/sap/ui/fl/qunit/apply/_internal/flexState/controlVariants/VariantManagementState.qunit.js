@@ -386,7 +386,8 @@ sap.ui.define([
 				})
 			]);
 
-			var aVariants = VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference].variants;
+			var aVariants = VariantManagementState.getVariantManagementMap()
+			.get({ reference: sReference })[sVariantManagementReference].variants;
 			assert.strictEqual(
 				aVariants[0].key,
 				sVariantManagementReference,
@@ -445,7 +446,8 @@ sap.ui.define([
 				layer: Layer.USER
 			});
 			stubFlexObjectsSelector([oIndependentUIChange, oUIChange, oUIChange2, oVariant]);
-			var aVariants = VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference].variants;
+			var aVariants = VariantManagementState.getVariantManagementMap()
+			.get({ reference: sReference })[sVariantManagementReference].variants;
 			assert.strictEqual(aVariants[0].controlChanges.length, 2, "there is one control change on standard");
 			assert.strictEqual(aVariants[1].controlChanges.length, 1, "the referenced control change is also in the depending variant");
 		});
@@ -538,7 +540,7 @@ sap.ui.define([
 					);
 					if (oTestInput.flexObjects.length === 2) {
 						assert.strictEqual(
-							oVariantsMap["secondVariant"].variants[0].key,
+							oVariantsMap.secondVariant.variants[0].key,
 							"secondVariant",
 							"then the standard variant is automatically added based on the existing variant"
 						);
@@ -552,25 +554,25 @@ sap.ui.define([
 				componentId: sComponentId,
 				reference: sReference
 			})
-				.then(function() {
-					var oVariant = createVariant({
-						fileName: sVariantManagementReference
-					});
-					VariantManagementState.addFakeStandardVariant(sReference, sComponentId, sVariantManagementReference, oVariant);
-
-					var oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
-
-					assert.strictEqual(
-						oVariantManagementState[sVariantManagementReference].variants.length,
-						1,
-						"then the standard variant is added to the vm state"
-					);
-					assert.strictEqual(
-						oVariantManagementState[sVariantManagementReference].defaultVariant,
-						sVariantManagementReference,
-						"then the standard variant is is set as default"
-					);
+			.then(function() {
+				var oVariant = createVariant({
+					fileName: sVariantManagementReference
 				});
+				VariantManagementState.addFakeStandardVariant(sReference, sComponentId, sVariantManagementReference, oVariant);
+
+				var oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+
+				assert.strictEqual(
+					oVariantManagementState[sVariantManagementReference].variants.length,
+					1,
+					"then the standard variant is added to the vm state"
+				);
+				assert.strictEqual(
+					oVariantManagementState[sVariantManagementReference].defaultVariant,
+					sVariantManagementReference,
+					"then the standard variant is is set as default"
+				);
+			});
 		});
 
 		QUnit.test("when the fake standard variant is reset", function(assert) {
@@ -578,27 +580,27 @@ sap.ui.define([
 				componentId: sComponentId,
 				reference: sReference
 			})
-				.then(function() {
-					var oVariant = createVariant({
-						fileName: sVariantManagementReference
-					});
-					VariantManagementState.addFakeStandardVariant(sReference, sComponentId, sVariantManagementReference, oVariant);
-
-					var oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
-
-					assert.strictEqual(
-						oVariantManagementState[sVariantManagementReference].variants.length,
-						1,
-						"then the standard variant is initially added to the vm state"
-					);
-
-					VariantManagementState.clearFakeStandardVariants(sReference, sComponentId);
-					assert.strictEqual(
-						VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference],
-						undefined,
-						"then the standard variant gets cleared"
-					);
+			.then(function() {
+				var oVariant = createVariant({
+					fileName: sVariantManagementReference
 				});
+				VariantManagementState.addFakeStandardVariant(sReference, sComponentId, sVariantManagementReference, oVariant);
+
+				var oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+
+				assert.strictEqual(
+					oVariantManagementState[sVariantManagementReference].variants.length,
+					1,
+					"then the standard variant is initially added to the vm state"
+				);
+
+				VariantManagementState.clearFakeStandardVariants(sReference, sComponentId);
+				assert.strictEqual(
+					VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference],
+					undefined,
+					"then the standard variant gets cleared"
+				);
+			});
 		});
 
 		QUnit.test("when a second fake variant is added for the same reference", function(assert) {
@@ -606,37 +608,37 @@ sap.ui.define([
 				componentId: sComponentId,
 				reference: sReference
 			})
-				.then(function() {
-					VariantManagementState.addFakeStandardVariant(
-						sReference,
-						sComponentId,
-						sVariantManagementReference,
-						createVariant({
-							fileName: sVariantManagementReference
-						})
-					);
-					VariantManagementState.addFakeStandardVariant(
-						sReference,
-						sComponentId,
-						sVariantManagementReference,
-						createVariant({
-							fileName: sVariantManagementReference + "-duplicate"
-						})
-					);
+			.then(function() {
+				VariantManagementState.addFakeStandardVariant(
+					sReference,
+					sComponentId,
+					sVariantManagementReference,
+					createVariant({
+						fileName: sVariantManagementReference
+					})
+				);
+				VariantManagementState.addFakeStandardVariant(
+					sReference,
+					sComponentId,
+					sVariantManagementReference,
+					createVariant({
+						fileName: sVariantManagementReference + "-duplicate"
+					})
+				);
 
-					var oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+				var oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
 
-					assert.strictEqual(
-						oVariantManagementState[sVariantManagementReference].variants.length,
-						1,
-						"then the standard variant is only added once"
-					);
-					assert.strictEqual(
-						oVariantManagementState[sVariantManagementReference].defaultVariant,
-						sVariantManagementReference,
-						"then the first variant is kept as the default"
-					);
-				});
+				assert.strictEqual(
+					oVariantManagementState[sVariantManagementReference].variants.length,
+					1,
+					"then the standard variant is only added once"
+				);
+				assert.strictEqual(
+					oVariantManagementState[sVariantManagementReference].defaultVariant,
+					sVariantManagementReference,
+					"then the first variant is kept as the default"
+				);
+			});
 		});
 
 		QUnit.test("when a fake variant is added for the same reference but different vm", function(assert) {
@@ -644,37 +646,37 @@ sap.ui.define([
 				componentId: sComponentId,
 				reference: sReference
 			})
-				.then(function() {
-					VariantManagementState.addFakeStandardVariant(
-						sReference,
-						sComponentId,
-						sVariantManagementReference,
-						createVariant({
-							fileName: sVariantManagementReference
-						})
-					);
-					VariantManagementState.addFakeStandardVariant(
-						sReference,
-						sComponentId,
-						"secondVM",
-						createVariant({
-							fileName: "secondVM",
-							variantManagementReference: "secondVM"
-						})
-					);
+			.then(function() {
+				VariantManagementState.addFakeStandardVariant(
+					sReference,
+					sComponentId,
+					sVariantManagementReference,
+					createVariant({
+						fileName: sVariantManagementReference
+					})
+				);
+				VariantManagementState.addFakeStandardVariant(
+					sReference,
+					sComponentId,
+					"secondVM",
+					createVariant({
+						fileName: "secondVM",
+						variantManagementReference: "secondVM"
+					})
+				);
 
-					var oVMMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
-					assert.strictEqual(
-						oVMMap[sVariantManagementReference].defaultVariant,
-						sVariantManagementReference,
-						"then the default variant is set"
-					);
-					assert.strictEqual(
-						oVMMap["secondVM"].defaultVariant,
-						"secondVM",
-						"then the default variant is set for the second vm"
-					);
-				});
+				var oVMMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+				assert.strictEqual(
+					oVMMap[sVariantManagementReference].defaultVariant,
+					sVariantManagementReference,
+					"then the default variant is set"
+				);
+				assert.strictEqual(
+					oVMMap.secondVM.defaultVariant,
+					"secondVM",
+					"then the default variant is set for the second vm"
+				);
+			});
 		});
 	});
 
@@ -747,7 +749,7 @@ sap.ui.define([
 				"then the current variant is set"
 			);
 			assert.strictEqual(
-				oVMMap["secondVM"].currentVariant,
+				oVMMap.secondVM.currentVariant,
 				"customVariantForSecondVM",
 				"then the current variant is set for the second vm"
 			);
@@ -1061,47 +1063,47 @@ sap.ui.define([
 	QUnit.module("Initial changes handling", {
 		beforeEach: function() {
 			return initializeFlexStateWithStandardVariant()
-				.then(function() {
-					VariantManagementState.addFakeStandardVariant(
-						sReference,
-						sComponentId,
-						"someOtherVM",
-						createVariant({
-							fileName: "someOtherVM",
-							variantManagementReference: "someOtherVM"
-						})
-					);
-					var aUIChanges = [
-						FlexObjectFactory.createUIChange({
-							id: "change1",
-							layer: Layer.CUSTOMER,
-							variantReference: sVariantManagementReference,
-							selector: {
-								id: "someId"
-							}
-						}),
-						FlexObjectFactory.createUIChange({
-							id: "change2",
-							layer: Layer.CUSTOMER,
-							variantReference: sVariantManagementReference,
-							selector: {
-								id: "someOtherId"
-							}
-						}),
-						FlexObjectFactory.createUIChange({
-							id: "change3",
-							layer: Layer.CUSTOMER,
-							variantReference: "someOtherVM",
-							selector: {
-								id: "someThirdId"
-							}
-						})
-					];
-					aUIChanges.forEach(function(oUIChange) {
-						oUIChange.setState(States.LifecycleState.PERSISTED);
-					});
-					stubFlexObjectsSelector(aUIChanges);
+			.then(function() {
+				VariantManagementState.addFakeStandardVariant(
+					sReference,
+					sComponentId,
+					"someOtherVM",
+					createVariant({
+						fileName: "someOtherVM",
+						variantManagementReference: "someOtherVM"
+					})
+				);
+				var aUIChanges = [
+					FlexObjectFactory.createUIChange({
+						id: "change1",
+						layer: Layer.CUSTOMER,
+						variantReference: sVariantManagementReference,
+						selector: {
+							id: "someId"
+						}
+					}),
+					FlexObjectFactory.createUIChange({
+						id: "change2",
+						layer: Layer.CUSTOMER,
+						variantReference: sVariantManagementReference,
+						selector: {
+							id: "someOtherId"
+						}
+					}),
+					FlexObjectFactory.createUIChange({
+						id: "change3",
+						layer: Layer.CUSTOMER,
+						variantReference: "someOtherVM",
+						selector: {
+							id: "someThirdId"
+						}
+					})
+				];
+				aUIChanges.forEach(function(oUIChange) {
+					oUIChange.setState(States.LifecycleState.PERSISTED);
 				});
+				stubFlexObjectsSelector(aUIChanges);
+			});
 		},
 		afterEach: function() {
 			cleanup();
@@ -1153,32 +1155,32 @@ sap.ui.define([
 				appComponent: {},
 				flexController: oFlexControllerStub
 			})
-				.then(function(vReturn) {
-					assert.strictEqual(
-						vReturn,
-						"foo",
-						"then the function returns the return value of waitForChanges"
-					);
-					assert.ok(
-						oFlexControllerStub.waitForChangesToBeApplied.calledOnce,
-						"waitForChanges was called"
-					);
-					var aArguments = oFlexControllerStub.waitForChangesToBeApplied.lastCall.args[0];
-					assert.ok(
-						aArguments.some(
-							function(oArgument) {
-								return oArgument.selector === "someId";
-							}),
-						"then the first selector was passed"
-					);
-					assert.ok(
-						aArguments.some(
-							function(oArgument) {
-								return oArgument.selector === "someOtherId";
-							}),
-						"then the second selector was passed"
-					);
-				});
+			.then(function(vReturn) {
+				assert.strictEqual(
+					vReturn,
+					"foo",
+					"then the function returns the return value of waitForChanges"
+				);
+				assert.ok(
+					oFlexControllerStub.waitForChangesToBeApplied.calledOnce,
+					"waitForChanges was called"
+				);
+				var aArguments = oFlexControllerStub.waitForChangesToBeApplied.lastCall.args[0];
+				assert.ok(
+					aArguments.some(
+						function(oArgument) {
+							return oArgument.selector === "someId";
+						}),
+					"then the first selector was passed"
+				);
+				assert.ok(
+					aArguments.some(
+						function(oArgument) {
+							return oArgument.selector === "someOtherId";
+						}),
+					"then the second selector was passed"
+				);
+			});
 		});
 
 		QUnit.test("when calling waitForInitialVariantChanges with unavailable controls", function(assert) {
@@ -1193,9 +1195,9 @@ sap.ui.define([
 				appComponent: {},
 				flexController: oFlexControllerStub
 			})
-				.then(function() {
-					assert.ok(oFlexControllerStub.waitForChangesToBeApplied.notCalled, "then waitForChanges was not called");
-				});
+			.then(function() {
+				assert.ok(oFlexControllerStub.waitForChangesToBeApplied.notCalled, "then waitForChanges was not called");
+			});
 		});
 	});
 

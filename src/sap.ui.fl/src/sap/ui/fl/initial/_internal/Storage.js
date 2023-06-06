@@ -45,7 +45,6 @@ sap.ui.define([
 		return oConnectorSpecificPropertyBag;
 	}
 
-
 	function _shouldAllContextsParameterBeSet(sFlexReference) {
 		var oFlexInfoSession = FlexInfoSession.getByReference(sFlexReference);
 		// a sign that we are in the RTA mode and allContexts query parameter should be set for flex/data request
@@ -63,7 +62,7 @@ sap.ui.define([
 	 */
 
 	function _loadFlexDataFromConnectors(mPropertyBag, aConnectors) {
-		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
+		var aConnectorPromises = aConnectors.map(function(oConnectorConfig) {
 			var oConnectorSpecificPropertyBag = Object.assign({}, mPropertyBag, {
 				url: oConnectorConfig.url,
 				path: oConnectorConfig.path
@@ -72,11 +71,11 @@ sap.ui.define([
 			oConnectorSpecificPropertyBag = _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, mPropertyBag);
 
 			return oConnectorConfig.loadConnectorModule.loadFlexData(oConnectorSpecificPropertyBag)
-				.then(function (oResponse) {
-					// ensure an object with the corresponding properties
-					return oResponse || StorageUtils.getEmptyFlexDataResponse();
-				})
-				.catch(StorageUtils.logAndResolveDefault.bind(undefined, StorageUtils.getEmptyFlexDataResponse(), oConnectorConfig, "loadFlexData"));
+			.then(function(oResponse) {
+				// ensure an object with the corresponding properties
+				return oResponse || StorageUtils.getEmptyFlexDataResponse();
+			})
+			.catch(StorageUtils.logAndResolveDefault.bind(undefined, StorageUtils.getEmptyFlexDataResponse(), oConnectorConfig, "loadFlexData"));
 		});
 
 		return Promise.all(aConnectorPromises);
@@ -85,7 +84,7 @@ sap.ui.define([
 	function _flattenResponses(aResponses) {
 		var aFlattenedResponses = [];
 
-		aResponses.forEach(function (oResponse) {
+		aResponses.forEach(function(oResponse) {
 			if (Array.isArray(oResponse)) {
 				aFlattenedResponses = aFlattenedResponses.concat(oResponse);
 			} else {
@@ -97,17 +96,17 @@ sap.ui.define([
 	}
 
 	function _disassembleVariantSectionsIfNecessary(aResponses) {
-		return aResponses.map(function (oResponse) {
+		return aResponses.map(function(oResponse) {
 			return storageResultDisassemble(oResponse);
 		});
 	}
 
 	function _flattenAndMergeResultPromise(aResponses) {
 		return Promise.resolve(aResponses)
-			.then(_flattenResponses)
-			.then(_disassembleVariantSectionsIfNecessary)
-			.then(_flattenResponses)
-			.then(StorageResultMerger.merge);
+		.then(_flattenResponses)
+		.then(_disassembleVariantSectionsIfNecessary)
+		.then(_flattenResponses)
+		.then(StorageResultMerger.merge);
 	}
 
 	function _loadFlexDataFromStaticFileConnector(mPropertyBag) {
@@ -125,13 +124,13 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.componentName] componentName of the application which may differ from the reference in case of an app variant
 	 * @returns {Promise<object>} Resolves with the responses from all configured connectors merged into one object
 	 */
-	Storage.completeFlexData = function (mPropertyBag) {
+	Storage.completeFlexData = function(mPropertyBag) {
 		if (!mPropertyBag || !mPropertyBag.reference) {
 			return Promise.reject("No reference was provided");
 		}
 
 		return Promise.all([_loadFlexDataFromStaticFileConnector(mPropertyBag), mPropertyBag.partialFlexData])
-			.then(_flattenAndMergeResultPromise);
+		.then(_flattenAndMergeResultPromise);
 	};
 
 	/**
@@ -146,14 +145,14 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.adaptationId] - Context-based adaptation to be loaded
 	 * @returns {Promise<object>} Resolves with the responses from all configured connectors merged into one object
 	 */
-	Storage.loadFlexData = function (mPropertyBag) {
+	Storage.loadFlexData = function(mPropertyBag) {
 		if (!mPropertyBag || !mPropertyBag.reference) {
 			return Promise.reject("No reference was provided");
 		}
 
 		return StorageUtils.getLoadConnectors()
-			.then(_loadFlexDataFromConnectors.bind(this, mPropertyBag))
-			.then(_flattenAndMergeResultPromise);
+		.then(_loadFlexDataFromConnectors.bind(this, mPropertyBag))
+		.then(_flattenAndMergeResultPromise);
 	};
 
 	return Storage;

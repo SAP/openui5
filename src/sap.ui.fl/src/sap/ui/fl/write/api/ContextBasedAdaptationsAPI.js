@@ -103,31 +103,31 @@ sap.ui.define([
 		}
 		var bContextBasedAdaptationsEnabled;
 		return FeaturesAPI.isContextBasedAdaptationAvailable(sLayer)
-			.then(function(bContextBasedAdaptationsEnabledResponse) {
-				bContextBasedAdaptationsEnabled = bContextBasedAdaptationsEnabledResponse;
-				var oAdaptationsPromise = bContextBasedAdaptationsEnabled ? ContextBasedAdaptationsAPI.load(mPropertyBag) : Promise.resolve({adaptations: []});
-				return oAdaptationsPromise;
-			})
-			.then(function(oAdaptations) {
-				// Determine displayed adaptation
-				// Flex Info Session returns currently shown one based on Flex Data response
-				// If no longer available switch to highest ranked one
-				var oFlexInfoSession = FlexInfoSession.get(mPropertyBag.control) || {};
-				var oDisplayedAdaptation = oAdaptations.adaptations[0];
-				if (oFlexInfoSession.adaptationId) {
-					oDisplayedAdaptation = oAdaptations.adaptations.find(function(oAdaptation) {
-						return oAdaptation.id === oFlexInfoSession.adaptationId;
-					}) || oDisplayedAdaptation;
-				}
+		.then(function(bContextBasedAdaptationsEnabledResponse) {
+			bContextBasedAdaptationsEnabled = bContextBasedAdaptationsEnabledResponse;
+			var oAdaptationsPromise = bContextBasedAdaptationsEnabled ? ContextBasedAdaptationsAPI.load(mPropertyBag) : Promise.resolve({adaptations: []});
+			return oAdaptationsPromise;
+		})
+		.then(function(oAdaptations) {
+			// Determine displayed adaptation
+			// Flex Info Session returns currently shown one based on Flex Data response
+			// If no longer available switch to highest ranked one
+			var oFlexInfoSession = FlexInfoSession.get(mPropertyBag.control) || {};
+			var oDisplayedAdaptation = oAdaptations.adaptations[0];
+			if (oFlexInfoSession.adaptationId) {
+				oDisplayedAdaptation = oAdaptations.adaptations.find(function(oAdaptation) {
+					return oAdaptation.id === oFlexInfoSession.adaptationId;
+				}) || oDisplayedAdaptation;
+			}
 
-				return ContextBasedAdaptationsAPI.createModel(oAdaptations.adaptations, oDisplayedAdaptation, bContextBasedAdaptationsEnabled);
-			})
-			.then(function(oModel) {
-				_mInstances[sReference] = _mInstances[sReference] || {};
-				_mInstances[sReference][sLayer] = _mInstances[sReference][sLayer] || {};
-				_mInstances[sReference][sLayer] = oModel;
-				return _mInstances[sReference][sLayer];
-			});
+			return ContextBasedAdaptationsAPI.createModel(oAdaptations.adaptations, oDisplayedAdaptation, bContextBasedAdaptationsEnabled);
+		})
+		.then(function(oModel) {
+			_mInstances[sReference] = _mInstances[sReference] || {};
+			_mInstances[sReference][sLayer] = _mInstances[sReference][sLayer] || {};
+			_mInstances[sReference][sLayer] = oModel;
+			return _mInstances[sReference][sLayer];
+		});
 	};
 
 	/**
@@ -423,8 +423,8 @@ sap.ui.define([
 		}.bind(this)).then(function() {
 			return FlexObjectState.getFlexObjects({ selector: mPropertyBag.control, invalidateCache: false, includeCtrlVariants: true, includeDirtyChanges: true, currentLayer: Layer.CUSTOMER });
 		}).then(function(aFlexObjects) {
-			//currently getFlexObjects contains also VENDOR layer ctrl variant changes which need to be removed before copy
-			//TODO refactor when FlexObjectState.getFlexObjects will be refactored
+			// currently getFlexObjects contains also VENDOR layer ctrl variant changes which need to be removed before copy
+			// TODO refactor when FlexObjectState.getFlexObjects will be refactored
 			var aCustomerFlexObjects = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aFlexObjects, Layer.CUSTOMER);
 			var aCopiedChanges = copyVariantsAndChanges(aCustomerFlexObjects, mPropertyBag.contextBasedAdaptation.id);
 			return Storage.contextBasedAdaptation.writeChange({
@@ -538,7 +538,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.appId - Reference of the application
 	 * @returns {Promise} Promise that resolves with the context-based adaptation
 	 */
-	ContextBasedAdaptationsAPI.remove = function (mPropertyBag) {
+	ContextBasedAdaptationsAPI.remove = function(mPropertyBag) {
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}

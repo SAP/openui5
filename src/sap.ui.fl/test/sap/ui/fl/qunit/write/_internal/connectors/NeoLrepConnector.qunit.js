@@ -18,7 +18,7 @@ sap.ui.define([
 			assert.deepEqual(WriteConnector.initialConnector, InitialConnector, "then the initialConnector is set");
 		});
 
-		QUnit.test("given a mock server, when loadFeatures is triggered", function (assert) {
+		QUnit.test("given a mock server, when loadFeatures is triggered", function(assert) {
 			var oServerResponse = {
 				isKeyUser: true,
 				isVersioningEnabled: false,
@@ -33,7 +33,7 @@ sap.ui.define([
 			var mPropertyBag = {url: "/sap/bc/lrep"};
 			var sUrl = "/sap/bc/lrep/flex/settings";
 
-			return WriteConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
+			return WriteConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
 				assert.ok(oStubSendRequest.calledOnce, "a request is sent");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "request method is GET");
 				assert.equal(oStubSendRequest.getCall(0).args[0], sUrl, "Url is correct");
@@ -41,9 +41,8 @@ sap.ui.define([
 			});
 		});
 	});
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });
-
 

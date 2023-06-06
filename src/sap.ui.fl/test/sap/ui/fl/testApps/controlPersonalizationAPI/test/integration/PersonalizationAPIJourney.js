@@ -1,14 +1,14 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"./pages/MainView"
-], function (opaTest) {
+], function(opaTest) {
 	"use strict";
 
 	QUnit.module("PersonalizationAPI Journey");
 
-	opaTest("Complete test to check isPersonalization on control, reset personalization on control, reset personalization for whole component", function (Given, When, Then) {
+	opaTest("Complete test to check isPersonalization on control, reset personalization on control, reset personalization for whole component", function(Given, When, Then) {
 		// Starting the app
 		Given.iStartMyApp();
 
@@ -74,7 +74,7 @@ sap.ui.define([
 		Then.onTheAppPage.iPersonalizationStatusShouldBeCorrect("FirstSubView", "labelPersStatus", false);
 		Then.onTheAppPage.iPersonalizationStatusShouldBeCorrect("FirstSubView", "labelInVariantPersStatus", false);
 
-		//Cleanup
+		// Cleanup
 		Then.iTeardownMyApp();
 	});
 });

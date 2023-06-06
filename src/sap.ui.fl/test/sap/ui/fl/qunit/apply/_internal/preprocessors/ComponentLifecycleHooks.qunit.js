@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"rta/qunit/RtaQunitUtils",
@@ -59,7 +59,7 @@ sap.ui.define([
 				"sap.app": {
 					type: "application"
 				},
-				getEntry: function (key) {
+				getEntry: function(key) {
 					return this[key];
 				}
 			};
@@ -92,7 +92,7 @@ sap.ui.define([
 				"sap.app": {
 					type: "notAnApplication"
 				},
-				getEntry: function (key) {
+				getEntry: function(key) {
 					return this[key];
 				}
 			}
@@ -334,10 +334,10 @@ sap.ui.define([
 			});
 			FlexControllerFactory._instanceCache[sMockComponentName] = {
 				_oChangePersistence: {
-					loadChangesMapForComponent: function () {
+					loadChangesMapForComponent: function() {
 						return Promise.resolve();
 					},
-					getComponentName: function () {
+					getComponentName: function() {
 						return sMockComponentName;
 					}
 				}
@@ -354,17 +354,17 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when no restart from rta should be triggered and no draft is requested", function(assert) {
 			return ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {})
-				.then(function() {
-					assert.equal(this.oLoadLibStub.callCount, 0, "then no rta functionality is requested");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oLoadLibStub.callCount, 0, "then no rta functionality is requested");
+			}.bind(this));
 		});
 
 		QUnit.test("when no ushell was found", function(assert) {
 			sandbox.stub(Utils, "getUshellContainer").returns(false);
 			return ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {})
-				.then(function() {
-					assert.equal(this.oLoadLibStub.callCount, 0, "then no rta functionality is requested");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oLoadLibStub.callCount, 0, "then no rta functionality is requested");
+			}.bind(this));
 		});
 
 		QUnit.test("when a rta restart was triggered for the VENDOR layer", function(assert) {
@@ -387,10 +387,10 @@ sap.ui.define([
 			});
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
 			return ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {})
-				.then(function() {
-					assert.equal(this.oLoadLibStub.callCount, 0, "rta functionality is not requested");
-					assert.equal(window.sessionStorage.getItem("sap.ui.rta.restart.VENDOR"), "MockCompName", "and the restart parameter was NOT removed from the sessionStorage");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oLoadLibStub.callCount, 0, "rta functionality is not requested");
+				assert.equal(window.sessionStorage.getItem("sap.ui.rta.restart.VENDOR"), "MockCompName", "and the restart parameter was NOT removed from the sessionStorage");
+			}.bind(this));
 		});
 
 		QUnit.test("when a rta restart was triggered for the CUSTOMER layer", function(assert) {
@@ -407,11 +407,11 @@ sap.ui.define([
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
 			this.oAppComponent.rootControlLoaded = sandbox.stub().resolves();
 			return ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {})
-				.then(function() {
-					assert.strictEqual(this.oLoadLibStub.callCount, 1, "rta library is requested");
-					assert.strictEqual(fnStartRtaStub.callCount, 1, "and rta is started");
-					assert.strictEqual(fnStartRtaStub.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
-				}.bind(this));
+			.then(function() {
+				assert.strictEqual(this.oLoadLibStub.callCount, 1, "rta library is requested");
+				assert.strictEqual(fnStartRtaStub.callCount, 1, "and rta is started");
+				assert.strictEqual(fnStartRtaStub.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
+			}.bind(this));
 		});
 
 		QUnit.test("when a rta restart was triggered for the CUSTOMER layer in a ushell scenario", function(assert) {
@@ -439,10 +439,10 @@ sap.ui.define([
 			});
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
 			return ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {})
-				.then(function() {
-					assert.equal(this.oLoadLibStub.callCount, 0, "rta library is not requested");
-					assert.equal(fnStartRtaStub.callCount, 0, "and rta is not started");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oLoadLibStub.callCount, 0, "rta library is not requested");
+				assert.equal(fnStartRtaStub.callCount, 0, "and rta is not started");
+			}.bind(this));
 		});
 
 		QUnit.test("when a rta restart was triggered for the CUSTOMER layer via a boolean flag", function(assert) {
@@ -459,11 +459,11 @@ sap.ui.define([
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
 			this.oAppComponent.rootControlLoaded = sandbox.stub().resolves();
 			return ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {})
-				.then(function() {
-					assert.strictEqual(this.oLoadLibStub.callCount, 1, "rta library is requested");
-					assert.strictEqual(fnStartRtaStub.callCount, 1, "and rta is started");
-					assert.strictEqual(fnStartRtaStub.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
-				}.bind(this));
+			.then(function() {
+				assert.strictEqual(this.oLoadLibStub.callCount, 1, "rta library is requested");
+				assert.strictEqual(fnStartRtaStub.callCount, 1, "and rta is started");
+				assert.strictEqual(fnStartRtaStub.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
+			}.bind(this));
 		});
 
 		QUnit.test("when a rta restart was triggered for the CUSTOMER layer via a boolean flag but Root Control is not loaded", function(assert) {
@@ -475,11 +475,11 @@ sap.ui.define([
 			var sError = "Root Control didn't load";
 			this.oAppComponent.rootControlLoaded = sandbox.stub().rejects(new Error(sError));
 			return ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {})
-				.catch(function(oError) {
-					assert.equal(this.oLoadLibStub.callCount, 1, "rta library is requested");
-					assert.equal(fnStartRtaStub.callCount, 0, "but rta is not started");
-					assert.equal(oError.message, sError, "and the promise is rejected with the right error");
-				}.bind(this));
+			.catch(function(oError) {
+				assert.equal(this.oLoadLibStub.callCount, 1, "rta library is requested");
+				assert.equal(fnStartRtaStub.callCount, 0, "but rta is not started");
+				assert.equal(oError.message, sError, "and the promise is rejected with the right error");
+			}.bind(this));
 		});
 
 		QUnit.test("when a rta restart was triggered for the CUSTOMER layer, but for a different component", function(assert) {
@@ -499,13 +499,13 @@ sap.ui.define([
 			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
 			ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {})
-				.then(function() {
-					assert.equal(this.oLoadLibStub.callCount, 0, "rta library is requested");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oLoadLibStub.callCount, 0, "rta library is requested");
+			}.bind(this));
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

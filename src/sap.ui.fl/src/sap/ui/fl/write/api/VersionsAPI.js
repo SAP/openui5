@@ -89,7 +89,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.model.json.JSONModel>} Model with list of versions if available and further version properties;
 	 * Rejects if not all parameters were passed or the application could not be determined
 	 */
-	VersionsAPI.initialize = function (mPropertyBag) {
+	VersionsAPI.initialize = function(mPropertyBag) {
 		if (!mPropertyBag.control) {
 			return Promise.reject("No control was provided");
 		}
@@ -105,7 +105,7 @@ sap.ui.define([
 		});
 	};
 
-	VersionsAPI.clearInstances = function () {
+	VersionsAPI.clearInstances = function() {
 		Versions.clearInstances();
 	};
 
@@ -119,11 +119,11 @@ sap.ui.define([
 	 * @return {boolean} Flag if a draft is available;
 	 * Throws an error in case no initialization took place upfront
 	 */
-	VersionsAPI.isDraftAvailable = function (mPropertyBag) {
+	VersionsAPI.isDraftAvailable = function(mPropertyBag) {
 		var oModel = getVersionsModel(mPropertyBag);
 
 		var aVersions = oModel.getProperty("/versions");
-		var oDraft = aVersions.find(function (oVersion) {
+		var oDraft = aVersions.find(function(oVersion) {
 			return oVersion.version === Version.Number.Draft;
 		});
 
@@ -140,7 +140,7 @@ sap.ui.define([
 	 * @return {boolean} Flag if the displayed version is not the active version
 	 * Throws an error in case no initialization took place upfront
 	 */
-	VersionsAPI.isOldVersionDisplayed = function (mPropertyBag) {
+	VersionsAPI.isOldVersionDisplayed = function(mPropertyBag) {
 		var oModel = getVersionsModel(mPropertyBag);
 
 		var displayedVersion = oModel.getProperty("/displayedVersion");
@@ -160,7 +160,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.
 	 */
-	VersionsAPI.loadDraftForApplication = function (mPropertyBag) {
+	VersionsAPI.loadDraftForApplication = function(mPropertyBag) {
 		mPropertyBag.version = Version.Number.Draft;
 		return VersionsAPI.loadVersionForApplication(mPropertyBag);
 	};
@@ -178,7 +178,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.
 	 */
-	VersionsAPI.loadVersionForApplication = function (mPropertyBag) {
+	VersionsAPI.loadVersionForApplication = function(mPropertyBag) {
 		if (!mPropertyBag.control) {
 			return Promise.reject("No control was provided");
 		}
@@ -235,7 +235,7 @@ sap.ui.define([
 	 * rejects if an error occurs, the layer does not support draft handling, there is unsaved content, there is no draft to activate or
 	 * when the displayed version is already active
 	 */
-	VersionsAPI.activate = function (mPropertyBag) {
+	VersionsAPI.activate = function(mPropertyBag) {
 		if (!mPropertyBag.control) {
 			return Promise.reject("No control was provided");
 		}
@@ -269,7 +269,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} Promise resolving with a flag if a discarding took place;
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
-	VersionsAPI.discardDraft = function (mPropertyBag) {
+	VersionsAPI.discardDraft = function(mPropertyBag) {
 		if (!mPropertyBag.control) {
 			return Promise.reject("No control was provided");
 		}
@@ -294,21 +294,21 @@ sap.ui.define([
 				if (bHasAdaptationsModel) {
 					return ContextBasedAdaptationsAPI.refreshAdaptationModel(mPropertyBag)
 					.then(function(sDisplayedAdaptationId) {
-						//invalidate flexState to trigger getFlexData for the current active version after discard
+						// invalidate flexState to trigger getFlexData for the current active version after discard
 						return FlexState.clearAndInitialize({
 							componentId: oAppComponent.getId(),
 							reference: sReference,
 							adaptationId: sDisplayedAdaptationId
-						}).then(function () {
+						}).then(function() {
 							return oDiscardInfo;
 						});
 					});
 				}
-				//invalidate flexState to trigger getFlexData for the current active version after discard
+				// invalidate flexState to trigger getFlexData for the current active version after discard
 				return FlexState.clearAndInitialize({
 					componentId: oAppComponent.getId(),
 					reference: sReference
-				}).then(function () {
+				}).then(function() {
 					return oDiscardInfo;
 				});
 			}
@@ -329,7 +329,7 @@ sap.ui.define([
 	 * - <sMessage> when all the version is successfully transported fl will return the message to show
 	 * - "Error" in case of a problem
 	 */
-	VersionsAPI.publish = function (mPropertyBag) {
+	VersionsAPI.publish = function(mPropertyBag) {
 		if (!mPropertyBag.selector) {
 			return Promise.reject("No selector was provided");
 		}

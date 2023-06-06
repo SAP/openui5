@@ -44,7 +44,7 @@ sap.ui.define([
 			return oUI2Personalization[sContainerKey];
 		}
 
-		return oUI2Personalization[sContainerKey].filter(function (oEntry) {
+		return oUI2Personalization[sContainerKey].filter(function(oEntry) {
 			return oEntry.itemName === sItemName;
 		})[0];
 	};

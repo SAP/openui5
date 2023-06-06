@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	'sap/base/Log',
+	"sap/base/Log",
 	"sap/m/VariantManagement",
 	"sap/ui/test/matchers/Ancestor"
 ], function(
@@ -16,20 +16,20 @@ sap.ui.define([
 
 	return {
 
-		theVariantShouldBeDisplayed: function (sFlVMId, sVariantTitle) {
+		theVariantShouldBeDisplayed: function(sFlVMId, sVariantTitle) {
 			return this.waitFor({
 				id: sFlVMId,
-				success: function (oVariantManagement) {
+				success: function(oVariantManagement) {
 					Opa5.assert.equal(oVariantManagement.getTitle().getText(), sVariantTitle, "Expected " + sVariantTitle + " to be displayed.");
 				},
 				errorMessage: "VariantManagement could't be found"
 			});
 		},
 
-		theMyViewShouldContain: function (sFlVMId, aVariantNames) {
+		theMyViewShouldContain: function(sFlVMId, aVariantNames) {
 			return this.waitFor({
 				id: sFlVMId + "-vm-popover-popover",
-				success: function () {
+				success: function() {
 					return this.waitFor({
 						controlType: "sap.m.SelectList",
 						id: sFlVMId + "-vm-list",
@@ -53,16 +53,16 @@ sap.ui.define([
 			});
 		},
 
-		theOpenDialog: function (sId) {
+		theOpenDialog: function(sId) {
 			return this.waitFor({
 				id: sId,
-				success: function (oDialog) {
+				success: function(oDialog) {
 					Opa5.assert.ok(oDialog);
 				}
 			});
 		},
 
-		theOpenManageViewsDialogTitleShouldContain: function (aVariantNames) {
+		theOpenManageViewsDialogTitleShouldContain: function(aVariantNames) {
 			return	this.waitFor({
 				controlType: "sap.m.Dialog",
 				success: function(aDialogs) {
@@ -91,7 +91,7 @@ sap.ui.define([
 			});
 		},
 
-		theOpenManageViewsDialogFavoritesShouldContain: function (aVariantFavorites) {
+		theOpenManageViewsDialogFavoritesShouldContain: function(aVariantFavorites) {
 			return	this.waitFor({
 				controlType: "sap.m.Dialog",
 				success: function(aDialogs) {
@@ -116,7 +116,7 @@ sap.ui.define([
 			});
 		},
 
-		theOpenManageViewsDialogApplyAutomaticallyShouldContain: function (aVariantApplayAutos) {
+		theOpenManageViewsDialogApplyAutomaticallyShouldContain: function(aVariantApplayAutos) {
 			return	this.waitFor({
 				controlType: "sap.m.Dialog",
 				success: function(aDialogs) {
@@ -129,7 +129,7 @@ sap.ui.define([
 							var aIsVariantApplyAutos = [];
 							oTable.getItems().forEach(function(oItem) {
 								if (oItem.getVisible()) {
-									var oCell = oItem.getCells()[4]; //EXEC
+									var oCell = oItem.getCells()[4]; // EXEC
 									aIsVariantApplyAutos.push(oCell.getSelected());
 								}
 							});
@@ -142,7 +142,7 @@ sap.ui.define([
 			});
 		},
 
-		theOpenManageViewsDialogSharingShouldContain: function (aVariantSharing) {
+		theOpenManageViewsDialogSharingShouldContain: function(aVariantSharing) {
 			return	this.waitFor({
 				controlType: "sap.m.Dialog",
 				success: function(aDialogs) {
@@ -155,7 +155,7 @@ sap.ui.define([
 							var aIsVariantSharing = [];
 							oTable.getItems().forEach(function(oItem) {
 								if (oItem.getVisible()) {
-									var oCell = oItem.getCells()[2]; //SHARING
+									var oCell = oItem.getCells()[2]; // SHARING
 									aIsVariantSharing.push(oCell.getText());
 								}
 							});
@@ -168,7 +168,7 @@ sap.ui.define([
 			});
 		},
 
-		theOpenManageViewsDialogDefaultShouldBe: function (sVariantName) {
+		theOpenManageViewsDialogDefaultShouldBe: function(sVariantName) {
 			return	this.waitFor({
 				controlType: "sap.m.Dialog",
 				success: function(aDialogs) {
@@ -189,7 +189,7 @@ sap.ui.define([
 							if (!oListItem) {
 								Log.error("No variant with name " + sVariantName + " was found in 'Manage Views'");
 							} else {
-								var oDefault = oListItem.getCells()[3]; //DEF
+								var oDefault = oListItem.getCells()[3]; // DEF
 								Opa5.assert.ok(oDefault.getSelected(), "the default for " + sVariantName + " was expected to be set");
 							}
 						},

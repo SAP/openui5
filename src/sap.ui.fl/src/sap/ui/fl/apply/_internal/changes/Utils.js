@@ -47,7 +47,7 @@ sap.ui.define([
 		 * @returns {object} Contains the information about the control
 		 * @private
 		 */
-		getControlIfTemplateAffected: function (oChange, oControl, mPropertyBag) {
+		getControlIfTemplateAffected: function(oChange, oControl, mPropertyBag) {
 			var oModifier = mPropertyBag.modifier;
 			var mControl = {
 				originalControl: oControl

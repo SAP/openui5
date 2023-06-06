@@ -59,24 +59,24 @@ sap.ui.define([
 		}
 
 		return Promise.resolve()
-			.then(function() {
-				return oModifier.bySelector(mMovedElement.selector || mMovedElement.id, oAppComponent, oView);
-			});
+		.then(function() {
+			return oModifier.bySelector(mMovedElement.selector || mMovedElement.id, oAppComponent, oView);
+		});
 	}
 
 	function fnHandleMovedElement(mMovedElement, oModifier, oAppComponent, oView, oSourceParent, oTargetParent, sSourceAggregation, sTargetAggregation) {
 		var oMovedElement;
 		return fnGetElementControlOrThrowError(mMovedElement, oModifier, oAppComponent, oView)
-			.then(function(oRetrievedMovedElement) {
-				oMovedElement = oRetrievedMovedElement;
-				if (!oMovedElement) {
-					Log.warning("Element to move not found");
-					return Promise.reject();
-				}
-				return Promise.resolve()
-					.then(oModifier.removeAggregation.bind(oModifier, oSourceParent, sSourceAggregation, oMovedElement))
-					.then(oModifier.insertAggregation.bind(oModifier, oTargetParent, sTargetAggregation, oMovedElement, mMovedElement.targetIndex, oView));
-			});
+		.then(function(oRetrievedMovedElement) {
+			oMovedElement = oRetrievedMovedElement;
+			if (!oMovedElement) {
+				Log.warning("Element to move not found");
+				return Promise.reject();
+			}
+			return Promise.resolve()
+			.then(oModifier.removeAggregation.bind(oModifier, oSourceParent, sSourceAggregation, oMovedElement))
+			.then(oModifier.insertAggregation.bind(oModifier, oTargetParent, sTargetAggregation, oMovedElement, mMovedElement.targetIndex, oView));
+		});
 	}
 
 	/**
@@ -104,35 +104,35 @@ sap.ui.define([
 		var oTargetParent;
 
 		return fnCheckConditions(oChange, oModifier, oView, oAppComponent)
-			.then(function() {
-				sSourceAggregation = oChange.getSelector().aggregation;
-				sTargetAggregation = oChangeContent.target.selector.aggregation;
-				return oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView);
-			})
-			.then(function(oRetrievedTargetParent) {
-				oTargetParent = oRetrievedTargetParent;
-				var aPromises = [];
-				oChangeContent.movedElements.forEach(function(mMovedElement) {
-					aPromises.push(fnHandleMovedElement.bind(
-						null,
-						mMovedElement,
-						oModifier,
-						oAppComponent,
-						oView,
-						oSourceParent,
-						oTargetParent,
-						sSourceAggregation,
-						sTargetAggregation));
-				});
-				return FlUtils.execPromiseQueueSequentially(aPromises, true, true);
+		.then(function() {
+			sSourceAggregation = oChange.getSelector().aggregation;
+			sTargetAggregation = oChangeContent.target.selector.aggregation;
+			return oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView);
+		})
+		.then(function(oRetrievedTargetParent) {
+			oTargetParent = oRetrievedTargetParent;
+			var aPromises = [];
+			oChangeContent.movedElements.forEach(function(mMovedElement) {
+				aPromises.push(fnHandleMovedElement.bind(
+					null,
+					mMovedElement,
+					oModifier,
+					oAppComponent,
+					oView,
+					oSourceParent,
+					oTargetParent,
+					sSourceAggregation,
+					sTargetAggregation));
 			});
+			return FlUtils.execPromiseQueueSequentially(aPromises, true, true);
+		});
 	};
 
 	/**
 	 * @deprecated
 	 */
 	MoveElements.completeChangeContent = function() {
-		throw new Error('Using deprecated change handler. Please consider using \'MoveControls\' instead');
+		throw new Error("Using deprecated change handler. Please consider using 'MoveControls' instead");
 	};
 
 	/**

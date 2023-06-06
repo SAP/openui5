@@ -27,9 +27,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function unbind (vValue) {
+	function unbind(vValue) {
 		if (vValue.parts && vValue.formatter) {
-			return vValue.formatter.apply(null, vValue.parts.map(function (oPart) {
+			return vValue.formatter.apply(null, vValue.parts.map(function(oPart) {
 				if (oPart.model) {
 					return "{" + oPart.model + ">" + oPart.path + "}";
 				}
@@ -103,18 +103,18 @@ sap.ui.define([
 			designtime: "sap/ui/fl/designtime/util/IFrame.designtime"
 		},
 
-		init: function () {
+		init: function() {
 			if (Control.prototype.init) {
 				Control.prototype.init.apply(this, arguments);
 			}
 			this._oInitializePromise = getContainerUserInfo()
-				.then(function(oUserInfo) {
-					this._oUserModel = new JSONModel(oUserInfo);
-					this.setModel(this._oUserModel, "$user");
-				}.bind(this));
+			.then(function(oUserInfo) {
+				this._oUserModel = new JSONModel(oUserInfo);
+				this.setModel(this._oUserModel, "$user");
+			}.bind(this));
 		},
 
-		waitForInit: function () {
+		waitForInit: function() {
 			return this._oInitializePromise ? this._oInitializePromise : Promise.reject();
 		},
 
@@ -137,7 +137,7 @@ sap.ui.define([
 
 				this.setProperty("url", "");
 
-				this._oSetUrlPromise = new CancelablePromise(function (fnResolve, fnReject, onCancel) {
+				this._oSetUrlPromise = new CancelablePromise(function(fnResolve, fnReject, onCancel) {
 					onCancel.shouldReject = false;
 					// Use a timeout here to avoid issues with browser caching in Chrome
 					// that seem to lead to a mismatch between IFrame content and src,
@@ -154,7 +154,7 @@ sap.ui.define([
 			return this;
 		},
 
-		applySettings: function (mSettings) {
+		applySettings: function(mSettings) {
 			Control.prototype.applySettings.apply(this, arguments);
 			if (mSettings) {
 				var mMergedSettings = this.getProperty("_settings") || {};
@@ -162,18 +162,18 @@ sap.ui.define([
 					extend(mMergedSettings, mSettings._settings);
 				} else {
 					Object.keys(mSettings)
-						.filter(function (sPropertyName) {
-							return !!mSettings[sPropertyName];
-						})
-						.forEach(function (sPropertyName) {
-							mMergedSettings[sPropertyName] = unbind(mSettings[sPropertyName]);
-						});
+					.filter(function(sPropertyName) {
+						return !!mSettings[sPropertyName];
+					})
+					.forEach(function(sPropertyName) {
+						mMergedSettings[sPropertyName] = unbind(mSettings[sPropertyName]);
+					});
 				}
 				this.setProperty("_settings", mMergedSettings);
 			}
 		},
 
-		exit: function () {
+		exit: function() {
 			if (this._oUserModel) {
 				this._oUserModel.destroy();
 				delete this._oUserModel;

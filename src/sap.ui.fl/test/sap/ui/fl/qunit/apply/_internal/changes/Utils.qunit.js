@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/m/Text",
@@ -30,17 +30,17 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("getControlIfTemplateAffected", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oControl = new Control("controlId");
 			this.oText = new Text("textId");
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oControl.destroy();
 			this.oText.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when calling 'getControlIfTemplateAffected' with a change containing the parameter boundAggregation", function (assert) {
+		QUnit.test("when calling 'getControlIfTemplateAffected' with a change containing the parameter boundAggregation", function(assert) {
 			var oChange = new UIChange({
 				content: {
 					boundAggregation: true
@@ -68,7 +68,7 @@ sap.ui.define([
 			assert.deepEqual(mControl.bTemplateAffected, mExpectedResult.bTemplateAffected, "the parameter 'bTemplateAffected' is correct.");
 		});
 
-		QUnit.test("when calling 'getControlIfTemplateAffected' with a change without containing the parameter boundAggregation", function (assert) {
+		QUnit.test("when calling 'getControlIfTemplateAffected' with a change without containing the parameter boundAggregation", function(assert) {
 			var oChange = new UIChange({
 				content: {}
 			});
@@ -90,7 +90,7 @@ sap.ui.define([
 			assert.deepEqual(mControl.bTemplateAffected, mExpectedResult.bTemplateAffected, "the parameter 'bTemplateAffected' is correct.");
 		});
 
-		QUnit.test("when calling 'getControlIfTemplateAffected' without a control and a change without containing the parameter boundAggregation", function (assert) {
+		QUnit.test("when calling 'getControlIfTemplateAffected' without a control and a change without containing the parameter boundAggregation", function(assert) {
 			var oChange = new UIChange({
 				content: {}
 			});
@@ -130,8 +130,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when change handler is not loaded yet and we have to wait for registration", function(assert) {
 			var oWaitStub = sandbox.stub(ChangeHandlerRegistration, "waitForChangeHandlerRegistration")
-				.withArgs("library")
-				.resolves();
+			.withArgs("library")
+			.resolves();
 			var oGetChangeHandlerStub = sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves("changeHandler");
 			var mPropertyBag = {
 				modifier: {

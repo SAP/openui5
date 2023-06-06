@@ -18,7 +18,7 @@ sap.ui.define([
 
 	QUnit.module("Loading of Connector", {}, function() {
 		QUnit.test("given a custom connector is configured", function(assert) {
-			return StorageUtils.getLoadConnectors().then(function (aConnectors) {
+			return StorageUtils.getLoadConnectors().then(function(aConnectors) {
 				assert.equal(aConnectors.length, 2, "two connectors are loaded");
 				assert.equal(aConnectors[0].connector, "StaticFileConnector", "the StaticFileConnector is the first connector");
 				assert.equal(aConnectors[1].connector, "JsObjectConnector", "the JsObjectConnector is the second connector");
@@ -63,7 +63,7 @@ sap.ui.define([
 
 	parameterizedTest(JsObjectConnector.storage, "WriteConnector");
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

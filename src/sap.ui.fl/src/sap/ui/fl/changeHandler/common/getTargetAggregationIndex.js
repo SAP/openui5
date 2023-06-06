@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @return {Promise} Promise resolving with target aggregation index to insert the control
 	 * @ui5-restricted sap.ui.fl
 	 */
-	return function (oChange, oControl, mPropertyBag) {
+	return function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oChangeContent = oChange.getContent();
 		var sAggregationName = oChangeContent.targetAggregation;
@@ -26,10 +26,10 @@ sap.ui.define([
 
 		if (iIndex === undefined) {
 			return Promise.resolve()
-				.then(oModifier.getAggregation.bind(oModifier, oControl, sAggregationName))
-				.then(function(aAggregationContent) {
-					return aAggregationContent.length; /* last by default */
-				});
+			.then(oModifier.getAggregation.bind(oModifier, oControl, sAggregationName))
+			.then(function(aAggregationContent) {
+				return aAggregationContent.length; /* last by default */
+			});
 		}
 		return Promise.resolve(iIndex);
 	};

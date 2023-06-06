@@ -19,8 +19,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.support.api.SupportAPI
 	 */
 
-	return function () {
-		return Settings.getInstance().then(function (oSettings) {
+	return function() {
+		return Settings.getInstance().then(function(oSettings) {
 			return Object.keys(oSettings._oSettings).map(function(sKey) {
 				var value = oSettings._oSettings[sKey];
 

@@ -27,7 +27,7 @@ sap.ui.define([
 		 * @returns {Promise<string[]>} List of URLs that should be requested and will contain a JSON of a flex object like changes,
 		 * i.e.: <code>["/some/url/id_12345_123_propertyChange.change", "/some/url/id_67890_456_.ctrl_variant", ...]</code>
 		 */
-		getFileList: function (/* sReference */) {
+		getFileList: function(/* sReference */) {
 			return Promise.reject("not implemented");
 		},
 		layers: [],

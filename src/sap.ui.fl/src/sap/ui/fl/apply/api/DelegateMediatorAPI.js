@@ -28,7 +28,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag.delegateType - Defines the type of the default delegate. Please look at <code>DelegageMediator.types</code> for possible entries
 	 	 * @param {object} [mPropertyBag.requiredLibraries] - map of required libraries
 		 */
-		registerDefaultDelegate: function (mPropertyBag) {
+		registerDefaultDelegate: function(mPropertyBag) {
 			DelegateMediator.registerDefaultDelegate(mPropertyBag);
 		},
 
@@ -42,7 +42,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.supportsDefault] - Include default delegate if no instance specific delegate is available
 		 * @returns {Promise.<sap.ui.core.util.reflection.FlexDelegateInfo>} Delegate information including the lazy loaded instance of the delegate
 		 */
-		getDelegateForControl: function (mPropertyBag) {
+		getDelegateForControl: function(mPropertyBag) {
 			return DelegateMediator.getDelegateForControl(
 				mPropertyBag.control,
 				mPropertyBag.modifier,
@@ -55,7 +55,7 @@ sap.ui.define([
 		 * Returns a list of library names which needs to be required to get default delegates loaded.
 		 * @returns {array} List of library names
 		 */
-		getKnownDefaultDelegateLibraries: function () {
+		getKnownDefaultDelegateLibraries: function() {
 			return DelegateMediator.getKnownDefaultDelegateLibraries();
 		},
 
@@ -69,7 +69,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.sModelType] - Model type, if none is provided the default model of oControl is taken instead
 		 * @returns {string[]} Required libraries
 		 */
-		getRequiredLibrariesForDefaultDelegate: function (mPropertyBag) {
+		getRequiredLibrariesForDefaultDelegate: function(mPropertyBag) {
 			return DelegateMediator.getRequiredLibrariesForDefaultDelegate(
 				mPropertyBag.delegateName,
 				mPropertyBag.control,

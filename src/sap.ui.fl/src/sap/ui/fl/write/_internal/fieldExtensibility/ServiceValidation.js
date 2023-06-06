@@ -21,7 +21,6 @@ sap.ui.define([
 	 */
 	var ServiceValidation = {};
 
-
 	/**
 	 * Local storage key
 	 */
@@ -168,7 +167,6 @@ sap.ui.define([
 			_getLocalStorage().put(_sStorageKey, JSON.stringify(mData));
 		}
 	}
-
 
 	 /**
 	  * Returns a local storage instance. Allows <code>window.localStorage</code> to be stubbed in tests.

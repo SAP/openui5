@@ -42,50 +42,50 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.apply.changes.Applyer
 	 * @name sap.ui.fl.changeHandler.AddXMLAtExtensionPoint#applyChange
 	 */
-	AddXMLAtExtensionPoint.applyChange = function (oChange, oControl, mPropertyBag) {
+	AddXMLAtExtensionPoint.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oView = mPropertyBag.view;
 		var oModifier = mPropertyBag.modifier;
 		var oSelector = oChange.getSelector();
 		var mExtensionPointInfo;
 
 		return Promise.resolve()
-			.then(function() {
-				var mChangeExtensionPointInfo = oChange.getExtensionPointInfo && oChange.getExtensionPointInfo();
-				if (!mChangeExtensionPointInfo) {
-					return oModifier.getExtensionPointInfo(oSelector.name, oView);
-				}
-				return mChangeExtensionPointInfo;
-			})
-			.then(function(mRetrievedExtensionPointInfo) {
-				mExtensionPointInfo = mRetrievedExtensionPointInfo;
-				if (!mExtensionPointInfo) {
-					throw new Error("AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name '"
+		.then(function() {
+			var mChangeExtensionPointInfo = oChange.getExtensionPointInfo && oChange.getExtensionPointInfo();
+			if (!mChangeExtensionPointInfo) {
+				return oModifier.getExtensionPointInfo(oSelector.name, oView);
+			}
+			return mChangeExtensionPointInfo;
+		})
+		.then(function(mRetrievedExtensionPointInfo) {
+			mExtensionPointInfo = mRetrievedExtensionPointInfo;
+			if (!mExtensionPointInfo) {
+				throw new Error("AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name '"
 					+ (oSelector && oSelector.name)
 					+ "' or multiple Extension-Points available with the given name in the view (view.id='"
 					+ (oView && oModifier.getId(oView))
 					+ "'). Multiple Extension-points with the same name in one view are not supported!");
+			}
+			(mExtensionPointInfo.defaultContent || []).forEach(function(vControl) {
+				// Remove default implementation of extension points in async apply (xml-preprocessing) and create (via action handler) sceanrios
+				if (vControl) {
+					oModifier.destroy(vControl);
 				}
-				(mExtensionPointInfo.defaultContent || []).forEach(function (vControl) {
-					// Remove default implementation of extension points in async apply (xml-preprocessing) and create (via action handler) sceanrios
-					if (vControl) {
-						oModifier.destroy(vControl);
-					}
-				});
-				mExtensionPointInfo.defaultContent = [];
-				// calculate index from nested extensionpoints
-				mExtensionPointInfo.index = calculateExtensionPointIndex(mExtensionPointInfo);
-				if (oModifier.targets === "xmlTree") {
-					mExtensionPointInfo.skipAdjustIndex = true;
-				}
-				return BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mExtensionPointInfo);
-			})
-			.then(function(aNewControls) {
-				if (mExtensionPointInfo.ready) {
-					// Confirm with ready function in sync apply scenario (preprocessing with JSView)
-					mExtensionPointInfo.ready(aNewControls);
-				}
-				return true;
 			});
+			mExtensionPointInfo.defaultContent = [];
+			// calculate index from nested extensionpoints
+			mExtensionPointInfo.index = calculateExtensionPointIndex(mExtensionPointInfo);
+			if (oModifier.targets === "xmlTree") {
+				mExtensionPointInfo.skipAdjustIndex = true;
+			}
+			return BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mExtensionPointInfo);
+		})
+		.then(function(aNewControls) {
+			if (mExtensionPointInfo.ready) {
+				// Confirm with ready function in sync apply scenario (preprocessing with JSView)
+				mExtensionPointInfo.ready(aNewControls);
+			}
+			return true;
+		});
 	};
 
 	/**
@@ -117,7 +117,7 @@ sap.ui.define([
 	AddXMLAtExtensionPoint.completeChangeContent = function(oChange, oSpecificChangeInfo) {
 		// Complete change content could be called with a third parameter. That would override the
 		// optional changeDefinition parameter of the BaseAddXml used in e.g. addxml usecase
-		BaseAddXml.completeChangeContent(oChange, oSpecificChangeInfo/*, oContent*/);
+		BaseAddXml.completeChangeContent(oChange, oSpecificChangeInfo/* , oContent */);
 	};
 
 	return AddXMLAtExtensionPoint;

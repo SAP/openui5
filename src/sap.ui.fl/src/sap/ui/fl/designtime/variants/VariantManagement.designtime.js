@@ -11,7 +11,7 @@ sap.ui.define([
 	flUtils
 ) {
 	"use strict";
-	var fnSetControlAttributes = function (oVariantManagement, bDesignTimeMode) {
+	var fnSetControlAttributes = function(oVariantManagement, bDesignTimeMode) {
 		var oAppComponent = flUtils.getAppComponentForControl(oVariantManagement);
 		var sControlId = oVariantManagement.getId();
 		var oModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());

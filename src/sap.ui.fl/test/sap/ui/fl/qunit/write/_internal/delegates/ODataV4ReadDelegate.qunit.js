@@ -145,11 +145,11 @@ sap.ui.define(["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"], funct
 
 	function stringifySortedObjectProperties(oObj) {
 		return Object.getOwnPropertyNames(oObj)
-			.sort()
-			.map(function(sKey) {
-				return [sKey, oObj[sKey]].join("=");
-			})
-			.join(",");
+		.sort()
+		.map(function(sKey) {
+			return [sKey, oObj[sKey]].join("=");
+		})
+		.join(",");
 	}
 
 	function getPropertyBagForGetPropertyInfo(oTestContext) {

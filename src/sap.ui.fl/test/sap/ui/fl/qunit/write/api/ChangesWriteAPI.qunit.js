@@ -54,22 +54,22 @@ sap.ui.define([
 
 	function mockFlexController(oControl, oReturn) {
 		sandbox.stub(ChangesController, "getFlexControllerInstance")
-			.throws("invalid parameters for flex persistence function")
-			.withArgs(oControl)
-			.returns(oReturn);
+		.throws("invalid parameters for flex persistence function")
+		.withArgs(oControl)
+		.returns(oReturn);
 
 		sandbox.stub(ChangesController, "getAppComponentForSelector")
-			.throws("invalid parameters for flex persistence function")
-			.withArgs(oControl)
-			.returns(oReturn);
+		.throws("invalid parameters for flex persistence function")
+		.withArgs(oControl)
+		.returns(oReturn);
 	}
 
 	function getMethodStub(aArguments, vReturnValue) {
 		var fnPersistenceStub = sandbox.stub();
 		fnPersistenceStub
-			.throws("invalid parameters for flex persistence function")
-			.withArgs.apply(fnPersistenceStub, aArguments)
-			.returns(vReturnValue);
+		.throws("invalid parameters for flex persistence function")
+		.withArgs.apply(fnPersistenceStub, aArguments)
+		.returns(vReturnValue);
 		return fnPersistenceStub;
 	}
 
@@ -101,7 +101,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given ChangesWriteAPI", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.vSelector = {
 				elementId: "selector",
 				elementType: "sap.ui.core.Control",
@@ -140,9 +140,9 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns(mPropertyBag.selector.appComponent.getManifest());
 
 			return ChangesWriteAPI.create(mPropertyBag)
-				.then(function (oChange) {
-					assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
-				});
+			.then(function(oChange) {
+				assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
+			});
 		});
 
 		QUnit.test("when create is called for a ControllerExtensionChange", function(assert) {
@@ -231,7 +231,7 @@ sap.ui.define([
 		QUnit.test("when apply is called with no dependencies on control", function(assert) {
 			var mPropertyBag = {
 				change: {
-					getSelector: function () {
+					getSelector: function() {
 						return "selector";
 					}
 				},
@@ -252,10 +252,10 @@ sap.ui.define([
 		QUnit.test("when apply is called with dependencies on control", function(assert) {
 			var mPropertyBag = {
 				change: {
-					getSelector: function () {
+					getSelector: function() {
 						return "selector";
 					},
-					getId: function () {
+					getId: function() {
 						return "changeId";
 					}
 				},
@@ -283,7 +283,7 @@ sap.ui.define([
 				getOpenDependentChangesForControl: function() {return aDependentChanges;}
 			});
 
-			return ChangesWriteAPI.apply(mPropertyBag).catch(function (oError) {
+			return ChangesWriteAPI.apply(mPropertyBag).catch(function(oError) {
 				assert.equal(oApplyStub.callCount, 1, "the change got applied");
 				assert.equal(oRevertStub.callCount, 1, "the change got reverted");
 				assert.strictEqual(
@@ -307,8 +307,8 @@ sap.ui.define([
 			var oAppComponent = {type: "appComponent"};
 
 			sandbox.stub(ChangesController, "getAppComponentForSelector")
-				.withArgs(mPropertyBag.element)
-				.returns(oAppComponent);
+			.withArgs(mPropertyBag.element)
+			.returns(oAppComponent);
 
 			var mRevertSettings = {
 				modifier: JsControlTreeModifier,
@@ -317,10 +317,10 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(Reverter, "revertChangeOnControl")
-				.withArgs(mPropertyBag.change, mPropertyBag.element, mRevertSettings)
-				.resolves(sReturnValue);
+			.withArgs(mPropertyBag.change, mPropertyBag.element, mRevertSettings)
+			.resolves(sReturnValue);
 
-			return ChangesWriteAPI.revert(mPropertyBag).then(function (sValue) {
+			return ChangesWriteAPI.revert(mPropertyBag).then(function(sValue) {
 				assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
 			});
 		});
@@ -336,10 +336,10 @@ sap.ui.define([
 				appComponent: undefined
 			};
 			sandbox.stub(Reverter, "revertChangeOnControl")
-				.withArgs(mPropertyBag.change, mPropertyBag.element, mRevertSettings)
-				.resolves(sReturnValue);
+			.withArgs(mPropertyBag.change, mPropertyBag.element, mRevertSettings)
+			.resolves(sReturnValue);
 
-			return ChangesWriteAPI.revert(mPropertyBag).then(function (sValue) {
+			return ChangesWriteAPI.revert(mPropertyBag).then(function(sValue) {
 				assert.strictEqual(sValue, sReturnValue, "the return value from the revert function was passed");
 			});
 		});
@@ -354,8 +354,8 @@ sap.ui.define([
 			var oAppComponent = {type: "appComponent"};
 
 			sandbox.stub(ChangesController, "getAppComponentForSelector")
-				.withArgs(mPropertyBag.element)
-				.returns(oAppComponent);
+			.withArgs(mPropertyBag.element)
+			.returns(oAppComponent);
 
 			var mRevertSettings = {
 				modifier: JsControlTreeModifier,
@@ -364,10 +364,10 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(Reverter, "revertChangeOnControl")
-				.withArgs(mPropertyBag.change[0], mPropertyBag.element, mRevertSettings)
-				.resolves(sReturnValue);
+			.withArgs(mPropertyBag.change[0], mPropertyBag.element, mRevertSettings)
+			.resolves(sReturnValue);
 
-			return ChangesWriteAPI.revert(mPropertyBag).then(function (aValues) {
+			return ChangesWriteAPI.revert(mPropertyBag).then(function(aValues) {
 				assert.strictEqual(aValues[0], sReturnValue, "then the flex persistence was called with correct parameters");
 			});
 		});
@@ -383,8 +383,8 @@ sap.ui.define([
 			var oAppComponent = {type: "appComponent"};
 
 			sandbox.stub(ChangesController, "getAppComponentForSelector")
-				.withArgs(mPropertyBag.element)
-				.returns(oAppComponent);
+			.withArgs(mPropertyBag.element)
+			.returns(oAppComponent);
 
 			var mRevertSettings = {
 				modifier: JsControlTreeModifier,
@@ -393,15 +393,15 @@ sap.ui.define([
 				}
 			};
 			var oRevertChangeOnControlStub = sandbox.stub(Reverter, "revertChangeOnControl")
-				.withArgs(mPropertyBag.change[0], mPropertyBag.element, mRevertSettings)
-				.callsFake(function() {
-					assert.ok(oRevertChangeOnControlStub.calledOnce, "then the revert is first called on the second change");
-					return Promise.resolve(sReturnValue);
-				})
-				.withArgs(mPropertyBag.change[1], mPropertyBag.element, mRevertSettings)
-				.resolves(sReturnValue2);
+			.withArgs(mPropertyBag.change[0], mPropertyBag.element, mRevertSettings)
+			.callsFake(function() {
+				assert.ok(oRevertChangeOnControlStub.calledOnce, "then the revert is first called on the second change");
+				return Promise.resolve(sReturnValue);
+			})
+			.withArgs(mPropertyBag.change[1], mPropertyBag.element, mRevertSettings)
+			.resolves(sReturnValue2);
 
-			return ChangesWriteAPI.revert(mPropertyBag).then(function (aValues) {
+			return ChangesWriteAPI.revert(mPropertyBag).then(function(aValues) {
 				assert.strictEqual(aValues[0], sReturnValue, "then the flex persistence was called with correct parameters for the first change");
 				assert.strictEqual(aValues[1], sReturnValue2, "then the flex persistence was called with correct parameters for the second change");
 			});
@@ -417,8 +417,8 @@ sap.ui.define([
 			var oAppComponent = {type: "appComponent"};
 
 			sandbox.stub(ChangesController, "getAppComponentForSelector")
-				.withArgs(mPropertyBag.element)
-				.returns(oAppComponent);
+			.withArgs(mPropertyBag.element)
+			.returns(oAppComponent);
 
 			var mRevertSettings = {
 				modifier: JsControlTreeModifier,
@@ -427,15 +427,15 @@ sap.ui.define([
 				}
 			};
 			var oRevertChangeOnControlStub = sandbox.stub(Reverter, "revertChangeOnControl")
-				.withArgs(mPropertyBag.change[0], mPropertyBag.element, mRevertSettings)
-				.callsFake(function() {
-					assert.ok(oRevertChangeOnControlStub.calledOnce, "then the revert is first called on the second change");
-					return Promise.resolve(sReturnValue);
-				})
-				.withArgs(mPropertyBag.change[1], mPropertyBag.element, mRevertSettings)
-				.resolves(false);
+			.withArgs(mPropertyBag.change[0], mPropertyBag.element, mRevertSettings)
+			.callsFake(function() {
+				assert.ok(oRevertChangeOnControlStub.calledOnce, "then the revert is first called on the second change");
+				return Promise.resolve(sReturnValue);
+			})
+			.withArgs(mPropertyBag.change[1], mPropertyBag.element, mRevertSettings)
+			.resolves(false);
 
-			return ChangesWriteAPI.revert(mPropertyBag).then(function (aValues) {
+			return ChangesWriteAPI.revert(mPropertyBag).then(function(aValues) {
 				assert.strictEqual(aValues[0], sReturnValue, "then the flex persistence was called with correct parameters for the first change");
 				assert.strictEqual(aValues[1], false, "then the second revert returns false");
 			});
@@ -457,7 +457,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given ChangesWriteAPI in an app with adaptationId", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.vSelector = {
 				elementId: "selector",
 				elementType: "sap.ui.core.Control",
@@ -610,9 +610,9 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves({});
 
 			return ChangesWriteAPI.create(mPropertyBag)
-				.then(function (oChange) {
-					assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
-				});
+			.then(function(oChange) {
+				assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
+			});
 		});
 
 		QUnit.test("when create is called for a descriptor change with app version as a part of selector", function(assert) {
@@ -669,13 +669,13 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves({});
 
 			return ChangesWriteAPI.create(mPropertyBag)
-				.then(function (oChange) {
-					assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
-				});
+			.then(function(oChange) {
+				assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
+			});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

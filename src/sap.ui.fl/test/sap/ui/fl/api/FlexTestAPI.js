@@ -82,9 +82,9 @@ sap.ui.define([
 				appComponent: mPropertyBag.appComponent
 			});
 			return oModel.initialize()
-				.then(function() {
-					return oModel;
-				});
+			.then(function() {
+				return oModel;
+			});
 		});
 	};
 
@@ -120,8 +120,8 @@ sap.ui.define([
 		var oConnector = sStorageType === "LocalStorage" ? LocalStorageConnector : SessionStorageConnector;
 
 		return oConnector.loadFlexData({reference: sReference})
-		.then(function (aResponses) {
-			return aResponses.reduce(function (iNumberOfChanges, oResponse) {
+		.then(function(aResponses) {
+			return aResponses.reduce(function(iNumberOfChanges, oResponse) {
 				return iNumberOfChanges + oResponse.changes.length;
 			}, 0);
 		});

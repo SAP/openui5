@@ -24,7 +24,7 @@ sap.ui.define([
 
 	function _extractName(sQualifiedName) {
 		if (sQualifiedName && sQualifiedName.split) {
-			var aSegments = sQualifiedName.split("."); //If separator does not occur, the returned array contains one element consisting of the entire string
+			var aSegments = sQualifiedName.split("."); // If separator does not occur, the returned array contains one element consisting of the entire string
 
 			return aSegments[aSegments.length - 1];
 		}
@@ -282,7 +282,7 @@ sap.ui.define([
 	Utils.executeRequest = function(sRequestUri, mParameters) {
 		var sFullRequestUri = sRequestUri + this.getUriParameters(mParameters);
 
-		return new Promise(function (fResolve) {
+		return new Promise(function(fResolve) {
 			var mSettings = {
 				type: "GET",
 				async: true,

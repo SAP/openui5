@@ -74,7 +74,7 @@ sap.ui.define([
 		if (bAsync) {
 			if (!sComponentId) {
 				Log.warning("No component ID for determining the anchor of the code extensions was passed.");
-				//always return a promise if async
+				// always return a promise if async
 				return Promise.resolve([]);
 			}
 
@@ -86,16 +86,16 @@ sap.ui.define([
 				return Promise.resolve([]);
 			}
 			if (!Utils.isApplication(oAppComponent.getManifestObject())) {
-				//we only consider components whose type is application. Otherwise, we might send request for components that can never have changes.
+				// we only consider components whose type is application. Otherwise, we might send request for components that can never have changes.
 				return Promise.resolve([]);
 			}
 			var sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
 			return oChangePersistence.getChangesForComponent().then(function(aChanges) {
-				var aExtensionModules = aChanges.filter(function (oChange) {
+				var aExtensionModules = aChanges.filter(function(oChange) {
 					return isCodeExt(oChange) && isForController(sControllerName, oChange);
-				}).map(function (oChange) {
+				}).map(function(oChange) {
 					return oChange.getModuleName();
 				});
 

@@ -35,13 +35,13 @@ sap.ui.define([
 	UnhideControl.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		return Promise.resolve()
-			.then(oModifier.getProperty.bind(oModifier, oControl, PROPERTY_NAME))
-			.then(function(oOriginalValue) {
-				oChange.setRevertData({
-					originalValue: oOriginalValue
-				});
-				mPropertyBag.modifier.setVisible(oControl, true);
+		.then(oModifier.getProperty.bind(oModifier, oControl, PROPERTY_NAME))
+		.then(function(oOriginalValue) {
+			oChange.setRevertData({
+				originalValue: oOriginalValue
 			});
+			mPropertyBag.modifier.setVisible(oControl, true);
+		});
 	};
 
 	/**

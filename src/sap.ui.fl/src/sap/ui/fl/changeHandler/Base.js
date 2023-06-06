@@ -69,13 +69,13 @@ sap.ui.define([
 			var oModifier = mPropertyBag.modifier;
 			var oView = mPropertyBag.view;
 			return Promise.resolve()
-				.then(function () {
-					var sFragment = LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
-					return oModifier.instantiateFragment(sFragment, sIdPrefix, oView)
-						.catch(function (oError) {
-							throw new Error("The following XML Fragment could not be instantiated: " + sFragment + " Reason: " + oError.message);
-						});
+			.then(function() {
+				var sFragment = LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
+				return oModifier.instantiateFragment(sFragment, sIdPrefix, oView)
+				.catch(function(oError) {
+					throw new Error("The following XML Fragment could not be instantiated: " + sFragment + " Reason: " + oError.message);
 				});
+			});
 		},
 
 		/**

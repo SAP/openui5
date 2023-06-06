@@ -41,7 +41,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		create: function (mPropertyBag) {
+		create: function(mPropertyBag) {
 			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
 			mPropertyBag.reference = oFlexController.getComponentName();
 

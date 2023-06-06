@@ -45,9 +45,9 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	var DescriptorChange = function(mChangeFile, oInlineChange) { //so far, parameter correspond to inline change format
+	var DescriptorChange = function(mChangeFile, oInlineChange) { // so far, parameter correspond to inline change format
 		this._mChangeFile = mChangeFile;
-		this._mChangeFile.packageName = '';
+		this._mChangeFile.packageName = "";
 		this._oInlineChange = oInlineChange;
 	};
 
@@ -62,7 +62,7 @@ sap.ui.define([
 	DescriptorChange.prototype.submit = function() {
 		this.store();
 
-		//submit
+		// submit
 		var oChangePersistence = this._getChangePersistence(this._mChangeFile.reference);
 		return oChangePersistence.saveDirtyChanges();
 	};
@@ -80,7 +80,7 @@ sap.ui.define([
 		var sComponentName = this._mChangeFile.reference;
 		var oChangePersistence = this._getChangePersistence(sComponentName);
 
-		//add change to persistence
+		// add change to persistence
 		var oChange = this._getChangeToSubmit();
 		oChangePersistence.addChange(oChange);
 
@@ -115,7 +115,7 @@ sap.ui.define([
 		return fnBaseMerge({}, this._getMap());
 	};
 
-	//Descriptor LREP Change Factory
+	// Descriptor LREP Change Factory
 	/**
 	 * Factory for Descriptor Changes
 	 *
@@ -146,7 +146,7 @@ sap.ui.define([
 	DescriptorChangeFactory.prototype.createNew = function(sReference, oInlineChange, sLayer, oAppComponent, sTool) {
 		// providing "hosting id" for appdescr_app_setTitle and similar
 		// "hosting id" is descriptor variant id
-		if (oInlineChange["setHostingIdForTextKey"]) {
+		if (oInlineChange.setHostingIdForTextKey) {
 			oInlineChange.setHostingIdForTextKey(sReference);
 		}
 
@@ -157,8 +157,8 @@ sap.ui.define([
 		mPropertyBag.generator = sTool;
 		mPropertyBag.support = oInlineChange.getMap().support;
 
-		//default to 'CUSTOMER'
-		mPropertyBag.layer = sLayer || 'CUSTOMER';
+		// default to 'CUSTOMER'
+		mPropertyBag.layer = sLayer || "CUSTOMER";
 
 		return Promise.resolve(new DescriptorChange(mPropertyBag, oInlineChange));
 	};

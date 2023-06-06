@@ -32,23 +32,23 @@ sap.ui.define([
 	 * @return {Promise<object>} Promise returning the settings
 	 * @ui5-restricted sap.ui.fl
 	 */
-	function getIFrameSettings (oModifier, oIFrame) {
+	function getIFrameSettings(oModifier, oIFrame) {
 		var oSettings = {};
 		var aPromises = [];
-		aUpdatableProperties.forEach(function (sPropertyName) {
+		aUpdatableProperties.forEach(function(sPropertyName) {
 			var oPromise = Promise.resolve()
-				.then(oModifier.getProperty.bind(oModifier, oIFrame, sPropertyName))
-				.then(function(vValue) {
-					if (vValue !== undefined) {
-						oSettings[sPropertyName] = vValue;
-					}
-				});
+			.then(oModifier.getProperty.bind(oModifier, oIFrame, sPropertyName))
+			.then(function(vValue) {
+				if (vValue !== undefined) {
+					oSettings[sPropertyName] = vValue;
+				}
+			});
 			aPromises.push(oPromise);
 		});
 		return Promise.all(aPromises)
-			.then(function() {
-				return oSettings;
-			});
+		.then(function() {
+			return oSettings;
+		});
 	}
 
 	/**
@@ -60,10 +60,10 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving with applySettings
 	 * @ui5-restricted sap.ui.fl
 	 */
-	function applySettings (oModifier, oIFrame, mSettings) {
+	function applySettings(oModifier, oIFrame, mSettings) {
 		var mFullSettings = extend({ _settings: mSettings }, mSettings);
 		return Promise.resolve()
-			.then(oModifier.applySettings.bind(oModifier, oIFrame, mFullSettings));
+		.then(oModifier.applySettings.bind(oModifier, oIFrame, mFullSettings));
 	}
 
 	/**
@@ -80,18 +80,18 @@ sap.ui.define([
 		var oModifier = mPropertyBag.modifier;
 
 		return oModifier.getControlMetadata(oControl)
-			.then(function (oControlMetadata) {
-				if (oControlMetadata.getName() !== "sap.ui.fl.util.IFrame") {
-					return Promise.reject(new Error("UpdateIFrame only for sap.ui.fl.util.IFrame"));
-				}
-				return getIFrameSettings(oModifier, oControl);
-			})
-			.then(function(oOriginalSettings) {
-				oChange.setRevertData({
-					originalSettings: oOriginalSettings
-				});
-				return applySettings(oModifier, oControl, oChange.getContent());
+		.then(function(oControlMetadata) {
+			if (oControlMetadata.getName() !== "sap.ui.fl.util.IFrame") {
+				return Promise.reject(new Error("UpdateIFrame only for sap.ui.fl.util.IFrame"));
+			}
+			return getIFrameSettings(oModifier, oControl);
+		})
+		.then(function(oOriginalSettings) {
+			oChange.setRevertData({
+				originalSettings: oOriginalSettings
 			});
+			return applySettings(oModifier, oControl, oChange.getContent());
+		});
 	};
 
 	/**
@@ -108,19 +108,19 @@ sap.ui.define([
 		var mRevertData = oChange.getRevertData();
 
 		return Promise.resolve()
-			.then(function() {
-				if (mRevertData) {
-					// If available, the URL is reverted to before parsing the parameters (saved in "_settings")
-					if (mRevertData.originalSettings._settings && mRevertData.originalSettings._settings.url) {
-						mRevertData.originalSettings.url = mRevertData.originalSettings._settings.url;
-					}
-					return applySettings(mPropertyBag.modifier, oControl, mRevertData.originalSettings);
+		.then(function() {
+			if (mRevertData) {
+				// If available, the URL is reverted to before parsing the parameters (saved in "_settings")
+				if (mRevertData.originalSettings._settings && mRevertData.originalSettings._settings.url) {
+					mRevertData.originalSettings.url = mRevertData.originalSettings._settings.url;
 				}
-				return Promise.reject(new Error("Attempt to revert an unapplied change."));
-			})
-			.then(function() {
-				oChange.resetRevertData();
-			});
+				return applySettings(mPropertyBag.modifier, oControl, mRevertData.originalSettings);
+			}
+			return Promise.reject(new Error("Attempt to revert an unapplied change."));
+		})
+		.then(function() {
+			oChange.resetRevertData();
+		});
 	};
 
 	/**
@@ -134,8 +134,8 @@ sap.ui.define([
 	 * @param {string} oSpecificChangeInfo.content.url Url
 	 * @ui5-restricted sap.ui.fl
 	 */
-	UpdateIFrame.completeChangeContent = function (oChange, oSpecificChangeInfo) {
-		if (!oSpecificChangeInfo.content || !Object.keys(oSpecificChangeInfo.content).some(function (sProperty) {
+	UpdateIFrame.completeChangeContent = function(oChange, oSpecificChangeInfo) {
+		if (!oSpecificChangeInfo.content || !Object.keys(oSpecificChangeInfo.content).some(function(sProperty) {
 			return aUpdatableProperties.indexOf(sProperty) !== -1;
 		})) {
 			throw new Error("oSpecificChangeInfo attribute required");

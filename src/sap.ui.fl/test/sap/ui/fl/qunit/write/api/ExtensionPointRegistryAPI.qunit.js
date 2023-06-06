@@ -17,7 +17,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	function createFakeControl(sId) {
-		return { getId: function () { return sId; }};
+		return { getId: function() { return sId; }};
 	}
 
 	function createAndRegisterExtensionPoint(oView, sExtensionPointName, oParent, sAggregationName, iIndex) {
@@ -33,7 +33,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given ExtensionPointRegistryAPI.getExtensionPointInfo is called", {
-		before: function () {
+		before: function() {
 			this.oView1 = createFakeControl("FakeViewId1");
 			this.oView2 = createFakeControl("FakeViewId2");
 			this.oTargetControl1 = new Panel("FakeTargetControlId1");
@@ -47,7 +47,7 @@ sap.ui.define([
 			this.mExtensionPointInfo3 = createAndRegisterExtensionPoint(this.oView1, this.sExtensionPointName3, this.oTargetControl2, "content", 1);
 			this.mExtensionPointInfo4 = createAndRegisterExtensionPoint(this.oView1, this.sExtensionPointName4, this.oTargetControl1, "dependents", 1);
 		},
-		after: function () {
+		after: function() {
 			this.oTargetControl1.destroy();
 			this.oTargetControl2.destroy();
 			ExtensionPointRegistry.clear();
@@ -62,7 +62,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("without valid view provided as parameter", function(assert) {
-			assert.throws(function () {
+			assert.throws(function() {
 				ExtensionPointRegistryAPI.getExtensionPointInfo({name: this.sExtensionPointName1, view: {}});
 			}, "then an exception is thrown when there is no correct view object.");
 		});
@@ -77,7 +77,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given ExtensionPointRegistryAPI.getExtensionPointInfoByParentId is called", {
-		before: function () {
+		before: function() {
 			this.oView1 = createFakeControl("FakeViewId1");
 			this.oTargetControl2 = new HBox("FakeTargetControlId2");
 			this.sExtensionPointName2 = "ExtensionPoint2";
@@ -102,7 +102,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given ExtensionPointRegistryAPI.getExtensionPointInfoByViewId is called", {
-		before: function () {
+		before: function() {
 			this.oView1 = createFakeControl("FakeViewId1");
 			this.oTargetControl2 = new HBox("FakeTargetControlId2");
 			this.sExtensionPointName2 = "ExtensionPoint2";
@@ -128,7 +128,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 		sandbox.restore();
 	});

@@ -21,12 +21,12 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function loadDataFromStorage (mPropertyBag) {
+	function loadDataFromStorage(mPropertyBag) {
 		var aFlexObjects = [];
 
 		return ObjectStorageUtils.forEachObjectInStorage(mPropertyBag, function(mFlexObject) {
 			aFlexObjects.push(mFlexObject.changeDefinition);
-		}).then(function () {
+		}).then(function() {
 			return aFlexObjects;
 		});
 	}
@@ -210,7 +210,7 @@ sap.ui.define([
 			return loadDataFromStorage({
 				storage: this.storage,
 				reference: mPropertyBag.reference
-			}).then(function (aFlexObjects) {
+			}).then(function(aFlexObjects) {
 				StorageUtils.sortFlexObjects(aFlexObjects);
 				var mGroupedFlexObjects = StorageUtils.getGroupedFlexObjects(aFlexObjects);
 				var aResponses = StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
@@ -232,7 +232,7 @@ sap.ui.define([
 				return this.storage.setItem(sKey, vFlexObject);
 			}.bind(this));
 
-			return Promise.all(aPromises).then(function () {
+			return Promise.all(aPromises).then(function() {
 				// return nothing
 			});
 		},
@@ -259,7 +259,7 @@ sap.ui.define([
 				layer: mPropertyBag.layer
 			}, function(mFlexObject) {
 				if (shouldChangeBeDeleted(mPropertyBag, mFlexObject.changeDefinition)) {
-					return Promise.resolve(this.storage.removeItem(mFlexObject.key)).then(function () {
+					return Promise.resolve(this.storage.removeItem(mFlexObject.key)).then(function() {
 						return {
 							fileName: mFlexObject.changeDefinition && mFlexObject.changeDefinition.fileName
 						};
@@ -268,7 +268,7 @@ sap.ui.define([
 			}.bind(this))
 			.then(function(aResponse) {
 				return {
-					response: aResponse.filter(function (oChangeDefinition) {
+					response: aResponse.filter(function(oChangeDefinition) {
 						return !!oChangeDefinition;
 					})
 				};
@@ -304,7 +304,7 @@ sap.ui.define([
 		 */
 		getFlexInfo: function(mPropertyBag) {
 			mPropertyBag.storage = this.storage;
-			return ObjectStorageUtils.getAllFlexObjects(mPropertyBag).then(function (aFlexObjects) {
+			return ObjectStorageUtils.getAllFlexObjects(mPropertyBag).then(function(aFlexObjects) {
 				return {
 					isResetEnabled: aFlexObjects.length > 0
 				};

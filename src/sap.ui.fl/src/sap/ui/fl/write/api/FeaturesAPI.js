@@ -32,8 +32,8 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		isPublishAvailable: function () {
-			return Settings.getInstance().then(function (oSettings) {
+		isPublishAvailable: function() {
+			return Settings.getInstance().then(function(oSettings) {
 				return (
 					oSettings.isPublishAvailable() ||
 					(!oSettings.isProductiveSystem() && oSettings.isSystemWithTransports())
@@ -55,12 +55,12 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		isSaveAsAvailable: function (sLayer) {
+		isSaveAsAvailable: function(sLayer) {
 			return Promise.all([
 				Settings.getInstance(),
 				Utils.getUShellService("CrossApplicationNavigation")
 			])
-			.then(function (aPromises) {
+			.then(function(aPromises) {
 				var oSettings = aPromises[0];
 				var oCrossAppNav = aPromises[1];
 				return (
@@ -69,12 +69,11 @@ sap.ui.define([
 					&& oCrossAppNav !== undefined // Not a standalone app
 				);
 			})
-			.catch(function () {
-				//either Settings or CrossApplicationNavigation service from Unified Shell failed -> disable save as app variant
+			.catch(function() {
+				// either Settings or CrossApplicationNavigation service from Unified Shell failed -> disable save as app variant
 				return false;
 			});
 		},
-
 
 		/**
 		 * Determine if the context-based adaptation feature is available in the connected backend
@@ -86,7 +85,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		isContextBasedAdaptationAvailable: function(sLayer) {
-			return Settings.getInstance().then(function (oSettings) {
+			return Settings.getInstance().then(function(oSettings) {
 				if (oSettings.isContextBasedAdaptationEnabled() && sLayer === Layer.CUSTOMER) {
 					return true;
 				}
@@ -103,11 +102,11 @@ sap.ui.define([
 		 * @returns {Promise<boolean>} Resolves to a boolean indicating if the key user role is assigned to the user
 		 * @public
 		 */
-		isKeyUser: function () {
+		isKeyUser: function() {
 			return Settings.getInstance()
-				.then(function (oSettings) {
-					return oSettings.isKeyUser();
-				});
+			.then(function(oSettings) {
+				return oSettings.isKeyUser();
+			});
 		},
 
 		/**
@@ -118,11 +117,11 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.rta
 		 */
-		isVersioningEnabled: function (sLayer) {
+		isVersioningEnabled: function(sLayer) {
 			return Settings.getInstance()
-				.then(function (oSettings) {
-					return oSettings.isVersioningEnabled(sLayer);
-				});
+			.then(function(oSettings) {
+				return oSettings.isVersioningEnabled(sLayer);
+			});
 		},
 
 		/**
@@ -133,10 +132,10 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.rta
 		 */
-		isKeyUserTranslationEnabled: function (sLayer) {
+		isKeyUserTranslationEnabled: function(sLayer) {
 			if (sLayer === Layer.CUSTOMER) {
 				return Settings.getInstance()
-				.then(function (oSettings) {
+				.then(function(oSettings) {
 					return oSettings.isKeyUserTranslationEnabled();
 				});
 			}
@@ -152,12 +151,12 @@ sap.ui.define([
 		 * @deprecated
 		 * @ui5-restricted sap.ui.fl.write.api.ContextSharingAPI
 		 */
-		isContextSharingEnabled: function (sLayer) {
+		isContextSharingEnabled: function(sLayer) {
 			if (sLayer !== Layer.CUSTOMER) {
 				return Promise.resolve(false);
 			}
 			return Settings.getInstance()
-			.then(function (oSettings) {
+			.then(function(oSettings) {
 				return oSettings.isContextSharingEnabled({layer: sLayer});
 			});
 		}

@@ -12,7 +12,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("prepareAppDescriptorMap: ", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.mPropertyBag = {
 				storageResponse: {
 					changes: {
@@ -21,16 +21,16 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when called with no parameters", function (assert) {
+	}, function() {
+		QUnit.test("when called with no parameters", function(assert) {
 			var oExpectedMap = {appDescriptorChanges: []};
 			assert.deepEqual(prepareAppDescriptorMap({storageResponse: {changes: {}}}), oExpectedMap, "the function returns an object with a map inside");
 		});
 
-		QUnit.test("when called with three non condesable changes", function (assert) {
+		QUnit.test("when called with three non condesable changes", function(assert) {
 			var aChanges = [
 				{
 					changeType: "appdescr_ui5_addLibraries",
@@ -51,8 +51,8 @@ sap.ui.define([
 			assert.equal(aResult[2].getContent().libraries, "sap.ushell", "the map contains third change");
 		});
 
-		//TODO: Enable once condensable change mergers are implemented
-		QUnit.skip("when called with three condesable changes", function (assert) {
+		// TODO: Enable once condensable change mergers are implemented
+		QUnit.skip("when called with three condesable changes", function(assert) {
 			var aChanges = [
 				{
 					changeType: "appdescr_app_setTitle",
@@ -72,7 +72,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

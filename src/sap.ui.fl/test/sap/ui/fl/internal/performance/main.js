@@ -4,7 +4,7 @@ sap.ui.require([
 	"sap/ui/performance/Measurement",
 	"fl/performance/utils/FlexPerformanceTestUtil" // needs to be defined, it is called externally
 ],
-function (
+function(
 	Shell,
 	ComponentContainer,
 	Measurement
@@ -20,7 +20,7 @@ function (
 	window.wpp = {
 		customMetrics: {}
 	};
-	window.onAppReady = new Promise(function (fnResolve) {
+	window.onAppReady = new Promise(function(fnResolve) {
 		window.fnResolve = fnResolve;
 	});
 	Measurement.setActive(true);
@@ -34,5 +34,5 @@ function (
 	});
 	new Shell({
 		app: oComponentContainer
-	}).placeAt('content');
+	}).placeAt("content");
 });

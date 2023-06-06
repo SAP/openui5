@@ -91,10 +91,10 @@ sap.ui.define([
 				reference: sReference,
 				componentId: sComponentId
 			})
-				.then(function() {
-					assert.ok(FlexState.getFlexObjectsDataSelector(), "then the data selector is created");
-					assert.strictEqual(this.oCheckUpdateSelectorStub.callCount, 1, "then the selector is updated during the state initialization");
-				}.bind(this));
+			.then(function() {
+				assert.ok(FlexState.getFlexObjectsDataSelector(), "then the data selector is created");
+				assert.strictEqual(this.oCheckUpdateSelectorStub.callCount, 1, "then the selector is updated during the state initialization");
+			}.bind(this));
 		});
 
 		QUnit.test("When a FlexObject is added and removed", function(assert) {
@@ -102,35 +102,35 @@ sap.ui.define([
 				reference: sReference,
 				componentId: sComponentId
 			})
-				.then(function() {
-					var oDummyFlexObject = { test: "test" };
-					FlexState.addDirtyFlexObject(sReference, oDummyFlexObject);
-					assert.deepEqual(
-						FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0],
-						oDummyFlexObject,
-						"then the flexObject is added to the selector"
-					);
-					assert.strictEqual(
-						this.oCheckUpdateSelectorStub.callCount,
-						2,
-						"then the selector is updated after adding a flexObject"
-					);
-					FlexState.removeDirtyFlexObject(sReference, oDummyFlexObject);
-					assert.notOk(
-						FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0],
-						"then the flexObject is removed from the selector"
-					);
-					assert.strictEqual(
-						this.oCheckUpdateSelectorStub.callCount,
-						3,
-						"then the selector is updated after removing a flexObject"
-					);
-					assert.deepEqual(
-						FlexState.getFlexObjectsDataSelector().get({reference: "wrongReference"}),
-						[],
-						"then an empty array is returned for invalid references"
-					);
-				}.bind(this));
+			.then(function() {
+				var oDummyFlexObject = { test: "test" };
+				FlexState.addDirtyFlexObject(sReference, oDummyFlexObject);
+				assert.deepEqual(
+					FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0],
+					oDummyFlexObject,
+					"then the flexObject is added to the selector"
+				);
+				assert.strictEqual(
+					this.oCheckUpdateSelectorStub.callCount,
+					2,
+					"then the selector is updated after adding a flexObject"
+				);
+				FlexState.removeDirtyFlexObject(sReference, oDummyFlexObject);
+				assert.notOk(
+					FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0],
+					"then the flexObject is removed from the selector"
+				);
+				assert.strictEqual(
+					this.oCheckUpdateSelectorStub.callCount,
+					3,
+					"then the selector is updated after removing a flexObject"
+				);
+				assert.deepEqual(
+					FlexState.getFlexObjectsDataSelector().get({reference: "wrongReference"}),
+					[],
+					"then an empty array is returned for invalid references"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("When data from the storage response is loaded", function(assert) {
@@ -150,23 +150,23 @@ sap.ui.define([
 				reference: sReference,
 				componentId: sComponentId
 			})
-				.then(function() {
-					assert.deepEqual(
-						FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
-						2,
-						"then the flexObjects are created and added to the selector"
-					);
-					assert.strictEqual(
-						FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0].getFlexObjectMetadata().changeType,
-						"moveChange",
-						"then the data is set correctly"
-					);
-					assert.strictEqual(
-						FlexState.getFlexObjectsDataSelector().get({reference: sReference})[1].getFlexObjectMetadata().changeType,
-						"variant1",
-						"then the data is set correctly"
-					);
-				});
+			.then(function() {
+				assert.deepEqual(
+					FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
+					2,
+					"then the flexObjects are created and added to the selector"
+				);
+				assert.strictEqual(
+					FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0].getFlexObjectMetadata().changeType,
+					"moveChange",
+					"then the data is set correctly"
+				);
+				assert.strictEqual(
+					FlexState.getFlexObjectsDataSelector().get({reference: sReference})[1].getFlexObjectMetadata().changeType,
+					"variant1",
+					"then the data is set correctly"
+				);
+			});
 		});
 	});
 
@@ -197,22 +197,22 @@ sap.ui.define([
 				reference: sReference,
 				componentId: sComponentId
 			})
-				.then(function() {
-					assert.ok(FlexState.isInitialized({ reference: sReference }), "FlexState has been initialized");
-					assert.notOk(FlexState.isInitialized({ control: this.oAppComponent }), "FlexState is not initialized at beginning");
-					assert.strictEqual(this.oLoadFlexDataStub.callCount, 1, "the FlexState made a call to load the flex data");
-					assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 0, "no prepare function was called");
-					assert.strictEqual(this.oFilterStub.callCount, 0, "nothing got filtered");
-					return FlexState.getStorageResponse(sReference);
-				}.bind(this))
-				.then(function() {
-					assert.ok(
-						aInitialPreparationSpies.every(function(oSpy) {
-							return oSpy.calledOnce;
-						}),
-						"then the initial prepare functions are all called during the state initialization"
-					);
-				});
+			.then(function() {
+				assert.ok(FlexState.isInitialized({ reference: sReference }), "FlexState has been initialized");
+				assert.notOk(FlexState.isInitialized({ control: this.oAppComponent }), "FlexState is not initialized at beginning");
+				assert.strictEqual(this.oLoadFlexDataStub.callCount, 1, "the FlexState made a call to load the flex data");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 0, "no prepare function was called");
+				assert.strictEqual(this.oFilterStub.callCount, 0, "nothing got filtered");
+				return FlexState.getStorageResponse(sReference);
+			}.bind(this))
+			.then(function() {
+				assert.ok(
+					aInitialPreparationSpies.every(function(oSpy) {
+						return oSpy.calledOnce;
+					}),
+					"then the initial prepare functions are all called during the state initialization"
+				);
+			});
 		});
 
 		QUnit.test("when initialize is called without a reference and with a componentID", function(assert) {
@@ -372,15 +372,15 @@ sap.ui.define([
 				component: {},
 				componentId: sComponentId
 			})
-				.then(function() {
-					oChangePersistence.addDirtyChange({});
-					FlexState.clearState(sReference);
-					assert.strictEqual(
-						oChangePersistence.getDirtyChanges().length,
-						0,
-						"then dirty changes are removed"
-					);
-				});
+			.then(function() {
+				oChangePersistence.addDirtyChange({});
+				FlexState.clearState(sReference);
+				assert.strictEqual(
+					oChangePersistence.getDirtyChanges().length,
+					0,
+					"then dirty changes are removed"
+				);
+			});
 		});
 
 		QUnit.test("when clearAndInitialize is called for two component references", function(assert) {
@@ -560,8 +560,8 @@ sap.ui.define([
 			var sOldHash = "sOldLayer";
 
 			this.oGetMaxLayerTechnicalParameter
-				.withArgs(sNewHash).returns(sNewHash)
-				.withArgs(sOldHash).returns(sOldHash);
+			.withArgs(sNewHash).returns(sNewHash)
+			.withArgs(sOldHash).returns(sOldHash);
 
 			return FlexState.initialize({
 				reference: sReference,
@@ -584,8 +584,8 @@ sap.ui.define([
 			var sOldHash = "sLayer";
 
 			this.oGetMaxLayerTechnicalParameter
-				.withArgs(sNewHash).returns(sNewHash)
-				.withArgs(sOldHash).returns(sOldHash);
+			.withArgs(sNewHash).returns(sNewHash)
+			.withArgs(sOldHash).returns(sOldHash);
 
 			return FlexState.initialize({
 				reference: sReference,

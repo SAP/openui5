@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
@@ -62,9 +62,9 @@ sap.ui.define([
 				_oVariant = oVariant;
 				return oVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
 			}).then(function() {
-				assert.ok(_oVariant.getDefinition().content[0].texts['a.id_sap.app.title'], 'Initial empty text key replaced');
-				assert.ok(!_oVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oVariant.getDefinition().content[0].texts['a.id_sap.app.title'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+				assert.ok(_oVariant.getDefinition().content[0].texts["a.id_sap.app.title"], "Initial empty text key replaced");
+				assert.ok(!_oVariant.getDefinition().content[0].texts[""], "Initial empty text key removed ");
+				assert.deepEqual(_oVariant.getDefinition().content[0].texts["a.id_sap.app.title"], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 			});
 		});
 
@@ -100,9 +100,9 @@ sap.ui.define([
 				_oVariant = oVariant;
 				return oVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
 			}).then(function() {
-				assert.ok(_oVariant.getDefinition().content[0].texts['a.id_sap.app.subTitle'], 'Initial empty text key replaced');
-				assert.ok(!_oVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oVariant.getDefinition().content[0].texts['a.id_sap.app.subTitle'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+				assert.ok(_oVariant.getDefinition().content[0].texts["a.id_sap.app.subTitle"], "Initial empty text key replaced");
+				assert.ok(!_oVariant.getDefinition().content[0].texts[""], "Initial empty text key removed ");
+				assert.deepEqual(_oVariant.getDefinition().content[0].texts["a.id_sap.app.subTitle"], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 			});
 		});
 
@@ -132,12 +132,12 @@ sap.ui.define([
 				_oVariant = oVariant;
 				return oVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
 			}).then(function() {
-				assert.ok(_oVariant.getDefinition().content[0].content.libraries['descriptor.mocha133'], 'Library is added');
-				assert.deepEqual(_oVariant.getDefinition().content[0].content, mParameter, 'Added library properties are equal to parameters set in factory method');
+				assert.ok(_oVariant.getDefinition().content[0].content.libraries["descriptor.mocha133"], "Library is added");
+				assert.deepEqual(_oVariant.getDefinition().content[0].content, mParameter, "Added library properties are equal to parameters set in factory method");
 			});
 		});
 
-		QUnit.test("create_ui5_addLibraries failure", function (assert) {
+		QUnit.test("create_ui5_addLibraries failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_addLibraries({
 					content: {
@@ -175,12 +175,12 @@ sap.ui.define([
 				_oVariant = oVariant;
 				return oVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
 			}).then(function() {
-				assert.ok(_oVariant.getDefinition().content[0].content.componentUsages['descriptor.mocha133'], 'Component usage is added');
-				assert.deepEqual(_oVariant.getDefinition().content[0].content, mParameter, 'Added component usage properties are equal to parameters set in factory method');
+				assert.ok(_oVariant.getDefinition().content[0].content.componentUsages["descriptor.mocha133"], "Component usage is added");
+				assert.deepEqual(_oVariant.getDefinition().content[0].content, mParameter, "Added component usage properties are equal to parameters set in factory method");
 			});
 		});
 
-		QUnit.test("create_ui5_addComponentUsages failure", function (assert) {
+		QUnit.test("create_ui5_addComponentUsages failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_addComponentUsages({
 					content: {
@@ -222,9 +222,9 @@ sap.ui.define([
 				_oVariant = oVariant;
 				return oVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
 			}).then(function() {
-				assert.ok(_oVariant.getDefinition().content[0].texts['a.id_sap.app.shortTitle'], 'Initial empty text key replaced');
-				assert.ok(!_oVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oVariant.getDefinition().content[0].texts['a.id_sap.app.shortTitle'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+				assert.ok(_oVariant.getDefinition().content[0].texts["a.id_sap.app.shortTitle"], "Initial empty text key replaced");
+				assert.ok(!_oVariant.getDefinition().content[0].texts[""], "Initial empty text key removed ");
+				assert.deepEqual(_oVariant.getDefinition().content[0].texts["a.id_sap.app.shortTitle"], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 			});
 		});
 
@@ -260,9 +260,9 @@ sap.ui.define([
 				_oVariant = oVariant;
 				return oVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
 			}).then(function() {
-				assert.ok(_oVariant.getDefinition().content[0].texts['a.id_sap.app.description'], 'Initial empty text key replaced');
-				assert.ok(!_oVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oVariant.getDefinition().content[0].texts['a.id_sap.app.description'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+				assert.ok(_oVariant.getDefinition().content[0].texts["a.id_sap.app.description"], "Initial empty text key replaced");
+				assert.ok(!_oVariant.getDefinition().content[0].texts[""], "Initial empty text key removed ");
+				assert.deepEqual(_oVariant.getDefinition().content[0].texts["a.id_sap.app.description"], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 			});
 		});
 
@@ -297,9 +297,9 @@ sap.ui.define([
 				_oVariant = oVariant;
 				return oVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
 			}).then(function() {
-				assert.ok(_oVariant.getDefinition().content[0].texts['a.id_sap.app.info'], 'Initial empty text key replaced');
-				assert.ok(!_oVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oVariant.getDefinition().content[0].texts['a.id_sap.app.info'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+				assert.ok(_oVariant.getDefinition().content[0].texts["a.id_sap.app.info"], "Initial empty text key replaced");
+				assert.ok(!_oVariant.getDefinition().content[0].texts[""], "Initial empty text key removed ");
+				assert.deepEqual(_oVariant.getDefinition().content[0].texts["a.id_sap.app.info"], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 			});
 		});
 
@@ -315,7 +315,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_Ach failure", function (assert) {
+		QUnit.test("create_app_Ach failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_setAch({
 					content: {
@@ -396,7 +396,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_setKeywords failure", function (assert) {
+		QUnit.test("create_app_setKeywords failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_setKeywords({
 					content: {
@@ -415,7 +415,7 @@ sap.ui.define([
 
 		QUnit.test("createDescriptorInlineChange", function(assert) {
 			return AppVariantInlineChangeFactory.createDescriptorInlineChange({
-				changeType: 'appdescr_ovp_addNewCard',
+				changeType: "appdescr_ovp_addNewCard",
 				content: {
 					card: {
 						"customer.acard": {
@@ -459,7 +459,7 @@ sap.ui.define([
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
-				assert.equal(oDescriptorInlineChange.getMap().changeType, 'appdescr_ovp_addNewCard');
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ovp_addNewCard");
 				assert.notEqual(oDescriptorInlineChange.getMap().content, null);
 				assert.notEqual(oDescriptorInlineChange.getMap().texts, null);
 			});
@@ -592,8 +592,8 @@ sap.ui.define([
 				},
 				content: mParameters
 			}).then(function(oInlineChange) {
-				if (oInlineChange["setHostingIdForTextKey"]) {
-					oInlineChange["setHostingIdForTextKey"]("ZDEMOOVP_RESIZE");
+				if (oInlineChange.setHostingIdForTextKey) {
+					oInlineChange.setHostingIdForTextKey("ZDEMOOVP_RESIZE");
 				}
 				oInlineChange.replaceHostingIdForTextKey("customer.ZDEMOOVP_RESIZE.id_1559043616388_1827", "ZDEMOOVP_RESIZE", oInlineChange.getContent(), oInlineChange.getTexts());
 				Object.keys(oInlineChange.getTexts()).forEach(function(sTextKey) {
@@ -653,7 +653,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_ovp_addNewCard failure", function (assert) {
+		QUnit.test("create_ovp_addNewCard failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ovp_addNewCard({
 					content: {
@@ -682,7 +682,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_ovp_removeCard failure", function (assert) {
+		QUnit.test("create_ovp_removeCard failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ovp_removeCard({
 					content: {
@@ -699,8 +699,8 @@ sap.ui.define([
 			});
 		});
 
-		//Test change card with valid input and multiple changes
-		QUnit.test("create_ovp_changeCard multiple changes", function (assert) {
+		// Test change card with valid input and multiple changes
+		QUnit.test("create_ovp_changeCard multiple changes", function(assert) {
 			return AppVariantInlineChangeFactory.create_ovp_changeCard({
 				changeType: "appdescr_ovp_changeCard",
 				content: {
@@ -723,29 +723,29 @@ sap.ui.define([
 						}
 					]
 				}
-			}).then(function (oDescriptorInlineChange) {
+			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ovp_changeCard");
 			});
 		});
 
-		//Test change card with invalid parameters
-		QUnit.test("create_ovp_changeCard failure", function (assert) {
-			assert.throws(function () {
+		// Test change card with invalid parameters
+		QUnit.test("create_ovp_changeCard failure", function(assert) {
+			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ovp_changeCard({
 					content: {
 						cards: "sap.existingCard01"
 					}
 				});
 			});
-			assert.throws(function () {
+			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ovp_changeCard({
 					content: {
 						cardId: undefined
 					}
 				});
 			});
-			assert.throws(function () {
+			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ovp_changeCard({
 					content: {
 						cardId: {}
@@ -799,7 +799,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_addNewInbound failure", function (assert) {
+		QUnit.test("create_app_addNewInbound failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addNewInbound({
 					content: {
@@ -828,7 +828,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_removeInbound failure", function (assert) {
+		QUnit.test("create_app_removeInbound failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeInbound({
 					content: {
@@ -857,7 +857,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_removeAllInboundsExceptOne failure", function (assert) {
+		QUnit.test("create_app_removeAllInboundsExceptOne failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeAllInboundsExceptOne({
 					content: {
@@ -944,7 +944,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_changeInbound failure", function (assert) {
+		QUnit.test("create_app_changeInbound failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_changeInbound({
 					content: {
@@ -988,7 +988,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_addNewOutbound failure", function (assert) {
+		QUnit.test("create_app_addNewOutbound failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addNewOutbound({
 					content: {
@@ -1017,7 +1017,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_removeOutbound failure", function (assert) {
+		QUnit.test("create_app_removeOutbound failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeOutbound({
 					content: {
@@ -1082,7 +1082,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_changeOutbound failure", function (assert) {
+		QUnit.test("create_app_changeOutbound failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_changeOutbound({
 					content: {
@@ -1118,7 +1118,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_addNewDataSource failure", function (assert) {
+		QUnit.test("create_app_addNewDataSource failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addNewDataSource({
 					content: {
@@ -1147,7 +1147,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_removeDataSource failure", function (assert) {
+		QUnit.test("create_app_removeDataSource failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeDataSource({
 					content: {
@@ -1203,7 +1203,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_changeDataSource failure", function (assert) {
+		QUnit.test("create_app_changeDataSource failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_changeDataSource({
 					content: {
@@ -1241,7 +1241,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_appdescr_app_addAnnotationsToOData failure", function (assert) {
+		QUnit.test("create_appdescr_app_addAnnotationsToOData failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addAnnotationsToOData({
 					content: {
@@ -1298,7 +1298,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_setDestination failure", function (assert) {
+		QUnit.test("create_app_setDestination failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_setDestination({
 					content: {
@@ -1327,7 +1327,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_addTechnicalAttributes failure", function (assert) {
+		QUnit.test("create_app_addTechnicalAttributes failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addTechnicalAttributes({
 					content: {
@@ -1356,7 +1356,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_removeTechnicalAttributes failure", function (assert) {
+		QUnit.test("create_app_removeTechnicalAttributes failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeTechnicalAttributes({
 					content: {
@@ -1385,7 +1385,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_addCdsViews failure", function (assert) {
+		QUnit.test("create_app_addCdsViews failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addCdsViews({
 					content: {
@@ -1414,7 +1414,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_removeCdsViews failure", function (assert) {
+		QUnit.test("create_app_removeCdsViews failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeCdsViews({
 					content: {
@@ -1446,7 +1446,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_flp_setConfig failure", function (assert) {
+		QUnit.test("create_flp_setConfig failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_flp_setConfig({
 					content: {
@@ -1480,7 +1480,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_ui5_addNewModel failure", function (assert) {
+		QUnit.test("appdescr_ui5_addNewModel failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_addNewModel({
 					content: {
@@ -1496,7 +1496,6 @@ sap.ui.define([
 				});
 			});
 		});
-
 
 		QUnit.test("appdescr_ui5_removeModel", function(assert) {
 			return AppVariantInlineChangeFactory.create_ui5_removeModel({
@@ -1510,7 +1509,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_ui5_removeModel failure", function (assert) {
+		QUnit.test("appdescr_ui5_removeModel failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_removeModel({
 					content: {
@@ -1527,7 +1526,6 @@ sap.ui.define([
 			});
 		});
 
-
 		QUnit.test("appdescr_ui5_addNewModelEnhanceWith", function(assert) {
 			return AppVariantInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
 				changeType: "appdescr_ui5_addNewModelEnhanceWith",
@@ -1540,7 +1538,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_ui5_addNewModelEnhanceWith failure", function (assert) {
+		QUnit.test("appdescr_ui5_addNewModelEnhanceWith failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
 					content: {
@@ -1574,7 +1572,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_ui5_replaceComponentUsage failure", function (assert) {
+		QUnit.test("appdescr_ui5_replaceComponentUsage failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_replaceComponentUsage({
 					content: {
@@ -1603,7 +1601,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_ui5_setMinUI5Version failure", function (assert) {
+		QUnit.test("appdescr_ui5_setMinUI5Version failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_setMinUI5Version({
 					content: {
@@ -1642,7 +1640,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_smb_addNamespace failure", function (assert) {
+		QUnit.test("appdescr_smb_addNamespace failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_smb_addNamespace({
 					content: {
@@ -1681,7 +1679,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_smb_changeNamespace failure", function (assert) {
+		QUnit.test("appdescr_smb_changeNamespace failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_smb_changeNamespace({
 					content: {
@@ -1718,7 +1716,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_ui_generic_app_setMainPage failure", function (assert) {
+		QUnit.test("appdescr_ui_generic_app_setMainPage failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui_generic_app_setMainPage({
 					content: {
@@ -1746,7 +1744,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_ui_setIcon failure", function (assert) {
+		QUnit.test("create_ui_setIcon failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui_setIcon({
 					content: {
@@ -1778,7 +1776,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_ui_setDeviceTypes failure", function (assert) {
+		QUnit.test("create_ui_setDeviceTypes failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui_setDeviceTypes({
 					content: {
@@ -1810,7 +1808,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_url_setUri failure", function (assert) {
+		QUnit.test("create_url_setUri failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_url_setUri({
 					content: {
@@ -1831,7 +1829,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_fiori_setRegistrationIds", function (assert) {
+		QUnit.test("create_fiori_setRegistrationIds", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_fiori_setRegistrationIds({
 					content: {
@@ -1861,7 +1859,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_ui5_setFlexExtensionPointEnabled incorrect change content", function (assert) {
+		QUnit.test("create_ui5_setFlexExtensionPointEnabled incorrect change content", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_setFlexExtensionPointEnabled({
 					content: {
@@ -1878,7 +1876,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_ui5_setFlexExtensionPointEnabled without changetype", function (assert) {
+		QUnit.test("create_ui5_setFlexExtensionPointEnabled without changetype", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_setFlexExtensionPointEnabled({
 					content: {
@@ -1901,7 +1899,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_fiori_setAbstract incorrect change content", function (assert) {
+		QUnit.test("create_fiori_setAbstract incorrect change content", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_fiori_setAbstract({
 					content: {
@@ -1925,7 +1923,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_fiori_setAbstract without changetype", function (assert) {
+		QUnit.test("create_fiori_setAbstract without changetype", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_fiori_setAbstract({
 					content: {
@@ -2011,7 +2009,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_ui5_changeModel failure", function (assert) {
+		QUnit.test("create_ui5_changeModel failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_changeModel({
 					content: {
@@ -2052,7 +2050,7 @@ sap.ui.define([
 					entityPropertyChange: {
 						propertyPath: "variantManagement",
 						operation: "UPSERT",
-						propertyValue: 'Control'
+						propertyValue: "Control"
 					}
 				}
 			}).then(function(oDescriptorInlineChange) {
@@ -2062,7 +2060,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

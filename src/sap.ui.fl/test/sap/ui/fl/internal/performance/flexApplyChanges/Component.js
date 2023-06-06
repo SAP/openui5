@@ -31,7 +31,7 @@ sap.ui.define([
 			UIComponent.prototype.constructor.apply(this, arguments);
 		},
 
-		createContent: function () {
+		createContent: function() {
 			var oApp = new App();
 			var sTestCase = FlUtils.getUrlParameter("sap-ui-fl-test-case") || "rename";
 			var sTestProcessing = FlUtils.getUrlParameter("sap-ui-fl-test-processing") || "js";
@@ -41,13 +41,13 @@ sap.ui.define([
 				viewName: "fl.performance.view." + (sTestProcessing === "js" ? "jsBaseView" : sTestCase + "-scenario")
 			};
 			if (sTestProcessing === "js") {
-				XMLView.create(mViewProperties).then(function (oView) {
+				XMLView.create(mViewProperties).then(function(oView) {
 					oApp.addPage(oView);
 					window.fnResolve();
 				});
 			} else {
 				FlexPerformanceTestUtil.startMeasurementForXmlPreprocessing(this);
-				XMLView.create(mViewProperties).then(function (oView) {
+				XMLView.create(mViewProperties).then(function(oView) {
 					oApp.addPage(oView);
 
 					var sControlToBeChanged;

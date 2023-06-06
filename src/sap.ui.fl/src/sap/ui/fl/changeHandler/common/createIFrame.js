@@ -21,13 +21,13 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving with the created IFrame
 	 * @ui5-restricted sap.ui.fl
 	 */
-	return function (oChange, mPropertyBag, oSelector, mRenameInfo) {
+	return function(oChange, mPropertyBag, oSelector, mRenameInfo) {
 		var oModifier = mPropertyBag.modifier;
 		var oChangeContent = oChange.getContent();
 		var oView = mPropertyBag.view;
 		var oComponent = mPropertyBag.appComponent;
 		var mIFrameSettings = { _settings: {} };
-		["url", "width", "height"].forEach(function (sIFrameProperty) {
+		["url", "width", "height"].forEach(function(sIFrameProperty) {
 			var vValue = oChangeContent[sIFrameProperty];
 			mIFrameSettings[sIFrameProperty] = vValue;
 			mIFrameSettings._settings[sIFrameProperty] = vValue;
@@ -39,8 +39,8 @@ sap.ui.define([
 		}
 
 		return Promise.resolve()
-			.then(function() {
-				return oModifier.createControl("sap.ui.fl.util.IFrame", oComponent, oView, oSelector, mIFrameSettings, false);
-			});
+		.then(function() {
+			return oModifier.createControl("sap.ui.fl.util.IFrame", oComponent, oView, oSelector, mIFrameSettings, false);
+		});
 	};
 });

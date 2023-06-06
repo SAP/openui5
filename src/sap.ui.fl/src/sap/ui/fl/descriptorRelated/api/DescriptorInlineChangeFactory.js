@@ -61,7 +61,7 @@ sap.ui.define([
 		return AppVariantInlineChangeFactory.createNew(mPropertyBag);
 	};
 
-	//public static factory methods
+	// public static factory methods
 	/**
 	 * Creates an inline change
 	 *
@@ -383,7 +383,7 @@ sap.ui.define([
 	DescriptorInlineChangeFactory.create_app_setTitle = function(mParameters, mTexts) {
 		if (!mTexts) {
 			mTexts = {
-				"": mParameters //property name = text key set when adding to descriptor variant
+				"": mParameters // property name = text key set when adding to descriptor variant
 			};
 			mParameters = {};
 		}
@@ -410,7 +410,7 @@ sap.ui.define([
 	DescriptorInlineChangeFactory.create_app_setSubTitle = function(mParameters, mTexts) {
 		if (!mTexts) {
 			mTexts = {
-				"": mParameters //property name = text key set when adding to descriptor variant
+				"": mParameters // property name = text key set when adding to descriptor variant
 			};
 			mParameters = {};
 		}
@@ -438,7 +438,7 @@ sap.ui.define([
 	DescriptorInlineChangeFactory.create_app_setShortTitle = function(mParameters, mTexts) {
 		if (!mTexts) {
 			mTexts = {
-				"": mParameters //property name = text key set when adding to descriptor variant
+				"": mParameters // property name = text key set when adding to descriptor variant
 			};
 			mParameters = {};
 		}
@@ -466,7 +466,7 @@ sap.ui.define([
 	DescriptorInlineChangeFactory.create_app_setDescription = function(mParameters, mTexts) {
 		if (!mTexts) {
 			mTexts = {
-				"": mParameters //property name = text key set when adding to descriptor variant
+				"": mParameters // property name = text key set when adding to descriptor variant
 			};
 			mParameters = {};
 		}
@@ -494,7 +494,7 @@ sap.ui.define([
 	DescriptorInlineChangeFactory.create_app_setInfo = function(mParameters, mTexts) {
 		if (!mTexts) {
 			mTexts = {
-				"": mParameters //property name = text key set when adding to descriptor variant
+				"": mParameters // property name = text key set when adding to descriptor variant
 			};
 			mParameters = {};
 		}
@@ -520,7 +520,6 @@ sap.ui.define([
 		return AppVariantInlineChangeFactory.create_app_setAch(mPropertyBag);
 	};
 
-
 	/**
 	 * Creates an inline change of change type appdescr_app_setDestination
 	 *
@@ -537,7 +536,6 @@ sap.ui.define([
 		var mPropertyBag = _preparePropertyBag("appdescr_app_setDestination", mParameters);
 		return AppVariantInlineChangeFactory.create_app_setDestination(mPropertyBag);
 	};
-
 
 	/**
 	 * Creates an inline change of change type appdescr_app_setKeywords

@@ -69,17 +69,17 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		clearVariantParameterInURL: function (mPropertyBag) {
+		clearVariantParameterInURL: function(mPropertyBag) {
 			var aUpdatedVariantParameters;
 			var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
 			var oVariantModel = oAppComponent && oAppComponent.getModel(VARIANT_MODEL_NAME);
 			if (!oVariantModel) {
-				//technical parameters are not updated, only URL hash is updated
+				// technical parameters are not updated, only URL hash is updated
 				Log.error("Variant model could not be found on the provided control");
 				return;
 			}
 
-			//check if variant for the passed variant management control is present
+			// check if variant for the passed variant management control is present
 			if (mPropertyBag.control.isA("sap.ui.fl.variants.VariantManagement")) {
 				var sVariantManagementReference = oVariantModel.getLocalId(mPropertyBag.control.getId(), oAppComponent);
 				var mCleansedParametersWithIndex = URLHandler.removeURLParameterForVariantManagement({
@@ -89,7 +89,7 @@ sap.ui.define([
 				aUpdatedVariantParameters = mCleansedParametersWithIndex.parameters;
 			}
 
-			//both technical parameters and URL hash updated
+			// both technical parameters and URL hash updated
 			URLHandler.update({
 				parameters: aUpdatedVariantParameters || [],
 				updateURL: true,

@@ -56,7 +56,7 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(FlexState, "initialize").resolves();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -64,13 +64,13 @@ sap.ui.define([
 			return UI2PersonalizationWriteAPI.create({
 				selector: this.oAppComponent
 			})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function() {
-					assert.ok(true, "a rejection took place");
-					assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
-				}.bind(this));
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function() {
+				assert.ok(true, "a rejection took place");
+				assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
+			}.bind(this));
 		});
 
 		QUnit.test("create is called and complains about missing component name", function(assert) {
@@ -88,13 +88,13 @@ sap.ui.define([
 				itemName: "someItemName",
 				content: {}
 			})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function () {
-					assert.ok(true, "a rejection took place");
-					assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
-				}.bind(this));
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function() {
+				assert.ok(true, "a rejection took place");
+				assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
+			}.bind(this));
 		});
 
 		QUnit.test("create is called and complains about too few parameters (no containerKey)", function(assert) {
@@ -103,13 +103,13 @@ sap.ui.define([
 				itemName: "someItemName",
 				content: {}
 			})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function() {
-					assert.ok(true, "a rejection took place");
-					assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
-				}.bind(this));
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function() {
+				assert.ok(true, "a rejection took place");
+				assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
+			}.bind(this));
 		});
 
 		QUnit.test("create is called and complains about too few parameters (no ItemName)", function(assert) {
@@ -118,13 +118,13 @@ sap.ui.define([
 				containerKey: "someContainerKey",
 				content: {}
 			})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function() {
-					assert.ok(true, "a rejection took place");
-					assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
-				}.bind(this));
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function() {
+				assert.ok(true, "a rejection took place");
+				assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
+			}.bind(this));
 		});
 
 		QUnit.test("create is called and successful", function(assert) {
@@ -136,16 +136,16 @@ sap.ui.define([
 				category: "someCategory",
 				containerCategory: "someContainerCategory"
 			})
-				.then(function() {
-					assert.ok(this.oSetPersonalizationStub.calledWithExactly({
-						reference: "testComponent",
-						containerKey: "someContainerKey",
-						itemName: "someItemName",
-						content: {},
-						category: "someCategory",
-						containerCategory: "someContainerCategory"
-					}), "then UI2PersonalizationState.setPersonalization is called with correct parameters");
-				}.bind(this));
+			.then(function() {
+				assert.ok(this.oSetPersonalizationStub.calledWithExactly({
+					reference: "testComponent",
+					containerKey: "someContainerKey",
+					itemName: "someItemName",
+					content: {},
+					category: "someCategory",
+					containerCategory: "someContainerCategory"
+				}), "then UI2PersonalizationState.setPersonalization is called with correct parameters");
+			}.bind(this));
 		});
 
 		QUnit.test("deletePersonalization is called and successful", function(assert) {
@@ -154,9 +154,9 @@ sap.ui.define([
 				containerKey: "someContainerKey",
 				itemName: "someItemName"
 			})
-				.then(function () {
-					assert.ok(this.oDeletePersonalizationStub.calledWithExactly("testComponent", "someContainerKey", "someItemName"), "then UI2PersonalizationState.deletePersonalization is called with correct parameters");
-				}.bind(this));
+			.then(function() {
+				assert.ok(this.oDeletePersonalizationStub.calledWithExactly("testComponent", "someContainerKey", "someItemName"), "then UI2PersonalizationState.deletePersonalization is called with correct parameters");
+			}.bind(this));
 		});
 
 		QUnit.test("deletePersonalization is called and complains about missing component name", function(assert) {
@@ -173,26 +173,26 @@ sap.ui.define([
 				containerKey: "someContainerKey",
 				itemName: "someItemName"
 			})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function () {
-					assert.ok(true, "a rejection took place");
-					assert.ok(this.oDeletePersonalizationStub.notCalled, "then UI2PersonalizationState.deletePersonalization is not called");
-				}.bind(this));
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function() {
+				assert.ok(true, "a rejection took place");
+				assert.ok(this.oDeletePersonalizationStub.notCalled, "then UI2PersonalizationState.deletePersonalization is not called");
+			}.bind(this));
 		});
 
 		QUnit.test("deletePersonalization gets called and complains about too few parameters (no properties except selector property)", function(assert) {
 			return UI2PersonalizationWriteAPI.deletePersonalization({
 				selector: this.oAppComponent
 			})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function() {
-					assert.ok(true, "a rejection took place");
-					assert.ok(this.oDeletePersonalizationStub.notCalled, "then UI2PersonalizationState.deletePersonalization is not called");
-				}.bind(this));
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function() {
+				assert.ok(true, "a rejection took place");
+				assert.ok(this.oDeletePersonalizationStub.notCalled, "then UI2PersonalizationState.deletePersonalization is not called");
+			}.bind(this));
 		});
 	});
 });

@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
@@ -414,84 +414,84 @@ sap.ui.define([
 
 		QUnit.test("When prepareCreate is called and failed with different possible failure options", function(assert) {
 			return AppVariantFactory.prepareCreate({})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
-				})
-				.then(function() {
-					return AppVariantFactory.prepareCreate({
-						id: "a.id"
-					});
-				})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
-				})
-				.then(function() {
-					return AppVariantFactory.prepareCreate({
-						reference: "a.reference"
-					});
-				})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
-				})
-				.then(function() {
-					return AppVariantFactory.createNew({
-						id: 1,
-						reference: "a.reference"
-					});
-				})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
-				})
-				.then(function() {
-					return AppVariantFactory.createNew({
-						id: "a.id",
-						reference: 1
-					});
-				})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
-				})
-				.then(function() {
-					return AppVariantFactory.createNew({
-						id: "a.id",
-						reference: "a.reference",
-						version: 2
-					});
-				})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
-				})
-				.then(function() {
-					return AppVariantFactory.createNew({
-						id: "a.id",
-						reference: "a.reference",
-						layer: true
-					});
-				})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function(sError) {
+				assert.ok(sError);
+			})
+			.then(function() {
+				return AppVariantFactory.prepareCreate({
+					id: "a.id"
 				});
+			})
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function(sError) {
+				assert.ok(sError);
+			})
+			.then(function() {
+				return AppVariantFactory.prepareCreate({
+					reference: "a.reference"
+				});
+			})
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function(sError) {
+				assert.ok(sError);
+			})
+			.then(function() {
+				return AppVariantFactory.createNew({
+					id: 1,
+					reference: "a.reference"
+				});
+			})
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function(sError) {
+				assert.ok(sError);
+			})
+			.then(function() {
+				return AppVariantFactory.createNew({
+					id: "a.id",
+					reference: 1
+				});
+			})
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function(sError) {
+				assert.ok(sError);
+			})
+			.then(function() {
+				return AppVariantFactory.createNew({
+					id: "a.id",
+					reference: "a.reference",
+					version: 2
+				});
+			})
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function(sError) {
+				assert.ok(sError);
+			})
+			.then(function() {
+				return AppVariantFactory.createNew({
+					id: "a.id",
+					reference: "a.reference",
+					layer: true
+				});
+			})
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function(sError) {
+				assert.ok(sError);
+			});
 		});
 
 		QUnit.test("When prepareCreate is called and app variant is submitted", function(assert) {
@@ -592,7 +592,7 @@ sap.ui.define([
 			}).then(function(oResponse) {
 				assert.ok(oStubOpenTransportSelection.calledOnce);
 				assert.notEqual(oResponse, null);
-				assert.equal(oNewConnectorStub.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/a.id');
+				assert.equal(oNewConnectorStub.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/a.id");
 			});
 		});
 
@@ -613,14 +613,14 @@ sap.ui.define([
 				assert.ok(oStubOpenTransportSelection.calledOnce);
 				assert.notEqual(oResponse, null);
 				assert.equal(oNewConnectorStub.callCount, 2);
-				assert.equal(oNewConnectorStub.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=aTransport');
+				assert.equal(oNewConnectorStub.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?changelist=aTransport");
 			});
 		});
 	});
 
 	QUnit.module("Given a AppVariantFactory for S4/Hana Cloud systems", {
 		beforeEach: function() {
-			//define sandboxes and stubs explicitly for each modules
+			// define sandboxes and stubs explicitly for each modules
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser: false,
@@ -650,7 +650,7 @@ sap.ui.define([
 				return oVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(oNewConnectorStub.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?sap-language=EN');
+				assert.equal(oNewConnectorStub.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?sap-language=EN");
 			});
 		});
 
@@ -671,7 +671,7 @@ sap.ui.define([
 				return oVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(oNewConnectorStub.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?parentVersion=versionGUID&sap-language=EN');
+				assert.equal(oNewConnectorStub.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?parentVersion=versionGUID&sap-language=EN");
 			});
 		});
 
@@ -692,7 +692,7 @@ sap.ui.define([
 				return oVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(oNewConnectorStub.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&sap-language=EN');
+				assert.equal(oNewConnectorStub.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&sap-language=EN");
 			});
 		});
 
@@ -711,7 +711,7 @@ sap.ui.define([
 				return oVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(oNewConnectorStub.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION&sap-language=EN');
+				assert.equal(oNewConnectorStub.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION&sap-language=EN");
 			});
 		});
 
@@ -759,7 +759,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

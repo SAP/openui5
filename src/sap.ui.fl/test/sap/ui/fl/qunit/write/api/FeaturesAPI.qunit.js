@@ -20,15 +20,15 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given FeaturesAPI", {
-		afterEach: function () {
+		afterEach: function() {
 			Settings._instance = undefined;
 			sandbox.restore();
 		}
-	}, function () {
-		[true, false].forEach(function (bValueToBeSet) {
-			QUnit.test("when isPublishAvailable() is called for " + (bValueToBeSet ? "a" : "not a") + " productive system with transports and no publish available info", function (assert) {
+	}, function() {
+		[true, false].forEach(function(bValueToBeSet) {
+			QUnit.test("when isPublishAvailable() is called for " + (bValueToBeSet ? "a" : "not a") + " productive system with transports and no publish available info", function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isProductiveSystem: function () {
+					isProductiveSystem: function() {
 						return bValueToBeSet;
 					},
 					isSystemWithTransports: function() {
@@ -39,14 +39,14 @@ sap.ui.define([
 					}
 				});
 
-				return FeaturesAPI.isPublishAvailable().then(function (bReturnValue) {
+				return FeaturesAPI.isPublishAvailable().then(function(bReturnValue) {
 					assert.strictEqual(bReturnValue, !bValueToBeSet, "then " + !bValueToBeSet + " is returned");
 				});
 			});
 
-			QUnit.test("when isPublishAvailable() is called for " + (bValueToBeSet ? "a" : "not a") + " productive system without transports and no publish available info", function (assert) {
+			QUnit.test("when isPublishAvailable() is called for " + (bValueToBeSet ? "a" : "not a") + " productive system without transports and no publish available info", function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isProductiveSystem: function () {
+					isProductiveSystem: function() {
 						return bValueToBeSet;
 					},
 					isSystemWithTransports: function() {
@@ -57,14 +57,14 @@ sap.ui.define([
 					}
 				});
 
-				return FeaturesAPI.isPublishAvailable().then(function (bReturnValue) {
+				return FeaturesAPI.isPublishAvailable().then(function(bReturnValue) {
 					assert.notOk(bReturnValue, "then false is returned");
 				});
 			});
 
-			QUnit.test("when isPublishAvailable() is called for " + (bValueToBeSet ? "a" : "not a") + " productive system with transports and publish available info", function (assert) {
+			QUnit.test("when isPublishAvailable() is called for " + (bValueToBeSet ? "a" : "not a") + " productive system with transports and publish available info", function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isProductiveSystem: function () {
+					isProductiveSystem: function() {
 						return bValueToBeSet;
 					},
 					isSystemWithTransports: function() {
@@ -75,14 +75,14 @@ sap.ui.define([
 					}
 				});
 
-				return FeaturesAPI.isPublishAvailable().then(function (bReturnValue) {
+				return FeaturesAPI.isPublishAvailable().then(function(bReturnValue) {
 					assert.ok(bReturnValue, "then true is returned");
 				});
 			});
 
-			QUnit.test("when isPublishAvailable() is called for " + (bValueToBeSet ? "a" : "not a") + " productive system without transports and publish available info", function (assert) {
+			QUnit.test("when isPublishAvailable() is called for " + (bValueToBeSet ? "a" : "not a") + " productive system without transports and publish available info", function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isProductiveSystem: function () {
+					isProductiveSystem: function() {
 						return bValueToBeSet;
 					},
 					isSystemWithTransports: function() {
@@ -93,85 +93,85 @@ sap.ui.define([
 					}
 				});
 
-				return FeaturesAPI.isPublishAvailable().then(function (bReturnValue) {
+				return FeaturesAPI.isPublishAvailable().then(function(bReturnValue) {
 					assert.ok(bReturnValue, "then true is returned");
 				});
 			});
 
-			QUnit.test("when isSaveAsAvailable() is called for " + (bValueToBeSet ? "not a" : "a") + " steampunk system", function (assert) {
+			QUnit.test("when isSaveAsAvailable() is called for " + (bValueToBeSet ? "not a" : "a") + " steampunk system", function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isAppVariantSaveAsEnabled: function () {
+					isAppVariantSaveAsEnabled: function() {
 						return bValueToBeSet;
 					}
 				});
 
 				sandbox.stub(Utils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve("DummyService"));
 
-				return FeaturesAPI.isSaveAsAvailable(Layer.CUSTOMER).then(function (bReturnValue) {
+				return FeaturesAPI.isSaveAsAvailable(Layer.CUSTOMER).then(function(bReturnValue) {
 					assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
 				});
 			});
 
-			QUnit.test("when isSaveAsAvailable() is called for " + (bValueToBeSet ? "not a" : "a") + " steampunk system and standalone app without CrossApplicationNavigation service", function (assert) {
+			QUnit.test("when isSaveAsAvailable() is called for " + (bValueToBeSet ? "not a" : "a") + " steampunk system and standalone app without CrossApplicationNavigation service", function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isAppVariantSaveAsEnabled: function () {
+					isAppVariantSaveAsEnabled: function() {
 						return bValueToBeSet;
 					}
 				});
 
 				sandbox.stub(Utils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.reject("DummyService"));
 
-				return FeaturesAPI.isSaveAsAvailable(Layer.CUSTOMER).then(function (bReturnValue) {
+				return FeaturesAPI.isSaveAsAvailable(Layer.CUSTOMER).then(function(bReturnValue) {
 					assert.strictEqual(bReturnValue, false, "then false is returned");
 				});
 			});
 
-			QUnit.test("when isKeyUser() is called for " + (bValueToBeSet ? "a" : "not a") + " key user", function (assert) {
+			QUnit.test("when isKeyUser() is called for " + (bValueToBeSet ? "a" : "not a") + " key user", function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isKeyUser: function () {
+					isKeyUser: function() {
 						return bValueToBeSet;
 					}
 				});
 				return FeaturesAPI.isKeyUser()
-					.then(function (bReturnValue) {
-						assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
-					});
+				.then(function(bReturnValue) {
+					assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
+				});
 			});
 
-			QUnit.test("when isKeyUserTranslationEnabled() is called for " + (bValueToBeSet ? "a" : "not a") + " admin key user", function (assert) {
+			QUnit.test("when isKeyUserTranslationEnabled() is called for " + (bValueToBeSet ? "a" : "not a") + " admin key user", function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isKeyUserTranslationEnabled: function () {
+					isKeyUserTranslationEnabled: function() {
 						return bValueToBeSet;
 					}
 				});
 				return FeaturesAPI.isKeyUserTranslationEnabled(Layer.CUSTOMER)
-				.then(function (bReturnValue) {
+				.then(function(bReturnValue) {
 					assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
 				});
 			});
 
 			QUnit.test("when isVersioningEnabled(sLayer) is called in a " +
-					(bValueToBeSet ? "draft enabled" : "non draft enabled") + " layer", function (assert) {
+					(bValueToBeSet ? "draft enabled" : "non draft enabled") + " layer", function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isVersioningEnabled: function () {
+					isVersioningEnabled: function() {
 						return bValueToBeSet;
 					}
 				});
 				return FeaturesAPI.isVersioningEnabled(Layer.CUSTOMER)
-					.then(function (bReturnValue) {
-						assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
-					});
+				.then(function(bReturnValue) {
+					assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
+				});
 			});
 
 			/**
 			 * @deprecated Since version 1.108
 			 */
-			QUnit.test("given isContextSharingEnabled is called for all existing layer in a" + (bValueToBeSet ? "n ABAP system" : " non ABAP system"), function (assert) {
+			QUnit.test("given isContextSharingEnabled is called for all existing layer in a" + (bValueToBeSet ? "n ABAP system" : " non ABAP system"), function(assert) {
 				sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 					bValueToBeSet ? {connector: "LrepConnector"} : {connector: "NeoLrepConnector"}
 				]);
 				sandbox.stub(Settings, "getInstance").resolves({
-					isContextSharingEnabled: function () {
+					isContextSharingEnabled: function() {
 						return bValueToBeSet;
 					}
 				});
@@ -184,8 +184,8 @@ sap.ui.define([
 					});
 				}
 
-				return Promise.all(aSetupForLayers.map(function (oSetup) {
-					return FeaturesAPI.isContextSharingEnabled(oSetup.layer).then(function (bContextSharingEnabled) {
+				return Promise.all(aSetupForLayers.map(function(oSetup) {
+					return FeaturesAPI.isContextSharingEnabled(oSetup.layer).then(function(bContextSharingEnabled) {
 						assert.equal(bContextSharingEnabled, oSetup.expectedResult, "then the returned flag is correct for layer " + oSetup.layer);
 					});
 				}));

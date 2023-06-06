@@ -90,7 +90,7 @@ sap.ui.define([
 			this.aMockLocalChanges = [this.oMockNewChange];
 			this.aAppVariantDescriptors = [this.oAppVariantDescriptor];
 		},
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
 		},
@@ -98,7 +98,7 @@ sap.ui.define([
 			sandbox.verifyAndRestore();
 		}
 	}, function() {
-		QUnit.test("given a mock server, when error happen in the ABAP back end", function (assert) {
+		QUnit.test("given a mock server, when error happen in the ABAP back end", function(assert) {
 			var oExpectedResponse = {
 				messages: [
 					{
@@ -114,14 +114,14 @@ sap.ui.define([
 			fnReturnData(500, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
 
 			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", layer: Layer.VENDOR};
-			return WriteLrepConnector.getFlexInfo(mPropertyBag).catch(function (oError) {
+			return WriteLrepConnector.getFlexInfo(mPropertyBag).catch(function(oError) {
 				assert.equal(oError.userMessage, "Error text 1\nError text 2\n", "Correct user message is returned in the error object");
 				assert.equal(oError.status, "500", "Correct status is returned in the error object");
 				assert.equal(oError.message, "Internal Server Error", "Correct message is returned in the error object");
 			});
 		});
 
-		QUnit.test("given a mock server, when get flex info is triggered", function (assert) {
+		QUnit.test("given a mock server, when get flex info is triggered", function(assert) {
 			var oExpectedResponse = {
 				isResetEnabled: false,
 				isPublishEnabled: false
@@ -130,14 +130,14 @@ sap.ui.define([
 
 			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", layer: Layer.VENDOR};
 			var sUrl = "/sap/bc/lrep/flex/info/reference?layer=VENDOR";
-			return WriteLrepConnector.getFlexInfo(mPropertyBag).then(function (oResponse) {
+			return WriteLrepConnector.getFlexInfo(mPropertyBag).then(function(oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a flex info request is send containing the reference in the url and the app version and the layer as query parameters");
 				assert.deepEqual(oResponse, oExpectedResponse, "getFlexInfo response flow is correct");
 			});
 		});
 
-		QUnit.test("given a mock server, when get contexts is triggered", function (assert) {
+		QUnit.test("given a mock server, when get contexts is triggered", function(assert) {
 			var oExpectedResponse = {
 				types: [
 					{
@@ -155,14 +155,14 @@ sap.ui.define([
 
 			var mPropertyBag = {url: "/sap/bc/lrep", type: "role", $skip: 100, $filter: "SAP"};
 			var sUrl = "/sap/bc/lrep/flex/contexts/?type=role&%24skip=100&%24filter=SAP";
-			return WriteLrepConnector.getContexts(mPropertyBag).then(function (oResponse) {
+			return WriteLrepConnector.getContexts(mPropertyBag).then(function(oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a getContexts request is send containing the type and layer as query parameters");
 				assert.deepEqual(oResponse, oExpectedResponse, "getContexts response flow is correct");
 			});
 		});
 
-		QUnit.test("given a mock server, when post requst to get contexts description is triggered", function (assert) {
+		QUnit.test("given a mock server, when post requst to get contexts description is triggered", function(assert) {
 			var oExpectedResponse = {
 				types: [
 					{
@@ -180,7 +180,7 @@ sap.ui.define([
 
 			var mPropertyBag = {url: "/sap/bc/lrep", flexObjects: {role: ["/IWBEP/RT_MGW_DSP"]}};
 			var sUrl = "/sap/bc/lrep/flex/contexts/?sap-language=EN";
-			return WriteLrepConnector.loadContextDescriptions(mPropertyBag).then(function (oResponse) {
+			return WriteLrepConnector.loadContextDescriptions(mPropertyBag).then(function(oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "HEAD", "first request method is HEAD");
 				assert.equal(sandbox.server.getRequest(0).url, "/sap/bc/lrep/actions/getcsrftoken/", "request is send containing the correct url");
 				assert.equal(sandbox.server.getRequest(1).method, "POST", "second request method is POST");
@@ -326,7 +326,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when calling reset in VENDOR layer with mix content of $TMP and transported changes", function (assert) {
+		QUnit.test("when calling reset in VENDOR layer with mix content of $TMP and transported changes", function(assert) {
 			var oMockTransportInfo = {
 				packageName: "PackageName",
 				transport: "transportId"
@@ -404,7 +404,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when calling resetChanges in VENDOR layer for transported changes with selector and change type", function (assert) {
+		QUnit.test("when calling resetChanges in VENDOR layer for transported changes with selector and change type", function(assert) {
 			var oMockTransportInfo = {
 				packageName: "PackageName",
 				transport: "transportId"
@@ -446,7 +446,6 @@ sap.ui.define([
 
 			var aChanges = [oVENDORChange1, oVENDORChange2];
 
-
 			// Settings in registry
 			var oSetting = {
 				isKeyUser: true,
@@ -476,7 +475,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when calling resetChanges in CUSTOMER layer with ATO_NOTIFICATION", function (assert) {
+		QUnit.test("when calling resetChanges in CUSTOMER layer with ATO_NOTIFICATION", function(assert) {
 			var oMockTransportInfo = {
 				transport: "ATO_NOTIFICATION"
 			};
@@ -562,7 +561,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when calling resetChanges in CUSTOMER layer with selector IDs", function (assert) {
+		QUnit.test("when calling resetChanges in CUSTOMER layer with selector IDs", function(assert) {
 			// Settings in registry
 			var oSetting = {
 				isKeyUser: true,
@@ -593,7 +592,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when calling resetChanges in USER layer with selector IDs", function (assert) {
+		QUnit.test("when calling resetChanges in USER layer with selector IDs", function(assert) {
 			var oTransportStub = sandbox.stub(TransportSelection.prototype, "setTransports");
 			// Settings in registry
 			var oSetting = {
@@ -626,7 +625,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when loadFeatures is triggered without a public layer available", function (assert) {
+		QUnit.test("given a mock server, when loadFeatures is triggered without a public layer available", function(assert) {
 			var oServerResponse = {
 				isKeyUser: true,
 				isVersioningEnabled: false,
@@ -641,15 +640,14 @@ sap.ui.define([
 			var mPropertyBag = {url: "/sap/bc/lrep"};
 			var sUrl = "/sap/bc/lrep/flex/settings";
 
-			return WriteLrepConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
+			return WriteLrepConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "Url is correct");
 				assert.deepEqual(oExpectedResponse, oResponse, "loadFeatures response flow is correct");
 			});
 		});
 
-
-		QUnit.test("given a mock server, when loadFeatures is triggered with a public layer available", function (assert) {
+		QUnit.test("given a mock server, when loadFeatures is triggered with a public layer available", function(assert) {
 			var oServerResponse = {
 				isKeyUser: true,
 				isVersioningEnabled: false,
@@ -664,26 +662,26 @@ sap.ui.define([
 			var mPropertyBag = {url: "/sap/bc/lrep"};
 			var sUrl = "/sap/bc/lrep/flex/settings";
 
-			return WriteLrepConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
+			return WriteLrepConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "Url is correct");
 				assert.deepEqual(oExpectedResponse, oResponse, "loadFeatures response flow is correct");
 			});
 		});
 
-		QUnit.test("given a mock server, when loadFeatures is triggered when settings already stored in apply connector", function (assert) {
+		QUnit.test("given a mock server, when loadFeatures is triggered when settings already stored in apply connector", function(assert) {
 			var oExpectedResponse = {
 				isKeyUser: false
 			};
 			var mPropertyBag = {url: "/sap/bc/lrep"};
 			InitialLrepConnector.settings = {isKeyUser: false};
-			return WriteLrepConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
+			return WriteLrepConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
 				assert.deepEqual(oResponse, oExpectedResponse, "the settings object is obtain from apply connector correctly");
 				assert.equal(sandbox.server.requestCount, 0, "no request is sent to back end");
 			});
 		});
 
-		QUnit.test("given a mock server, when write a draft is triggered", function (assert) {
+		QUnit.test("given a mock server, when write a draft is triggered", function(assert) {
 			var mPropertyBag = {
 				flexObjects: [],
 				url: "/sap/bc/lrep",
@@ -692,7 +690,7 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/changes/?parentVersion=versionGUID&sap-language=EN";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
-			return WriteLrepConnector.write(mPropertyBag).then(function () {
+			return WriteLrepConnector.write(mPropertyBag).then(function() {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -704,7 +702,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when write a local change is triggered", function (assert) {
+		QUnit.test("given a mock server, when write a local change is triggered", function(assert) {
 			var mPropertyBag = {
 				flexObjects: [],
 				url: "/sap/bc/lrep"
@@ -712,7 +710,7 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/changes/?sap-language=EN";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
-			return WriteLrepConnector.write(mPropertyBag).then(function () {
+			return WriteLrepConnector.write(mPropertyBag).then(function() {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -724,7 +722,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when update a local change is triggered", function (assert) {
+		QUnit.test("given a mock server, when update a local change is triggered", function(assert) {
 			var oFlexObject = {
 				fileType: "change",
 				fileName: "myFileName"
@@ -736,7 +734,7 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/changes/myFileName?sap-language=EN";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
-			return WriteLrepConnector.update(mPropertyBag).then(function () {
+			return WriteLrepConnector.update(mPropertyBag).then(function() {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -748,7 +746,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when update a transportable variant is triggered", function (assert) {
+		QUnit.test("given a mock server, when update a transportable variant is triggered", function(assert) {
 			var oFlexObject = {
 				fileType: "variant",
 				fileName: "myFileName"
@@ -761,7 +759,7 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/variants/myFileName?changelist=transportID&sap-language=EN";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
-			return WriteLrepConnector.update(mPropertyBag).then(function () {
+			return WriteLrepConnector.update(mPropertyBag).then(function() {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -773,7 +771,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when remove change is triggered", function (assert) {
+		QUnit.test("given a mock server, when remove change is triggered", function(assert) {
 			var oFlexObject = {
 				fileType: "change",
 				fileName: "myFileName",
@@ -788,7 +786,7 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/changes/myFileName?namespace=level1/level2/level3&layer=VENDOR&changelist=transportID";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
-			return WriteLrepConnector.remove(mPropertyBag).then(function () {
+			return WriteLrepConnector.remove(mPropertyBag).then(function() {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -799,7 +797,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when remove change is triggered with parentVersion", function (assert) {
+		QUnit.test("given a mock server, when remove change is triggered with parentVersion", function(assert) {
 			var oFlexObject = {
 				fileType: "change",
 				fileName: "myFileName",
@@ -815,7 +813,7 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/changes/myFileName?namespace=level1/level2/level3&layer=VENDOR&changelist=transportID&parentVersion=parentVersionGUID";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
-			return WriteLrepConnector.remove(mPropertyBag).then(function () {
+			return WriteLrepConnector.remove(mPropertyBag).then(function() {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -826,7 +824,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when remove variant is triggered", function (assert) {
+		QUnit.test("given a mock server, when remove variant is triggered", function(assert) {
 			var oFlexObject = {
 				fileType: "variant",
 				fileName: "myFileName",
@@ -841,7 +839,7 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/variants/myFileName?namespace=level1/level2/level3&layer=VENDOR&changelist=transportID";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
-			return WriteLrepConnector.remove(mPropertyBag).then(function () {
+			return WriteLrepConnector.remove(mPropertyBag).then(function() {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -852,7 +850,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when remove variant is triggered with parentVersion", function (assert) {
+		QUnit.test("given a mock server, when remove variant is triggered with parentVersion", function(assert) {
 			var oFlexObject = {
 				fileType: "variant",
 				fileName: "myFileName",
@@ -868,7 +866,7 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/variants/myFileName?namespace=level1/level2/level3&layer=VENDOR&changelist=transportID&parentVersion=parentVersionGUID";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
-			return WriteLrepConnector.remove(mPropertyBag).then(function () {
+			return WriteLrepConnector.remove(mPropertyBag).then(function() {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -881,7 +879,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LrepConnector.appVariant", {
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
 			this.oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
@@ -891,7 +889,7 @@ sap.ui.define([
 			sandbox.verifyAndRestore();
 		}
 	}, function() {
-		QUnit.test("given a mock server, when appVariant.getManifirstSupport is triggered", function (assert) {
+		QUnit.test("given a mock server, when appVariant.getManifirstSupport is triggered", function(assert) {
 			var mPropertyBag = {
 				appId: "test.app.id"
 			};
@@ -899,7 +897,7 @@ sap.ui.define([
 			var sUrl = "/sap/bc/ui2/app_index/ui5_app_mani_first_supported/?id=test.app.id";
 			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
 
-			return WriteLrepConnector.appVariant.getManifirstSupport(mPropertyBag).then(function (oResponse) {
+			return WriteLrepConnector.appVariant.getManifirstSupport(mPropertyBag).then(function(oResponse) {
 				assert.equal(oResponse, true);
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a getManifirstSupport request is send containing the id as query parameters");
@@ -907,14 +905,14 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when appVariant.getManifest is triggered", function (assert) {
+		QUnit.test("given a mock server, when appVariant.getManifest is triggered", function(assert) {
 			var mPropertyBag = {
 				appVarUrl: "/sap/bc/lrep/content/apps/someBaseAppId/appVariants/someAppVariantID/manifest.appdescr_variant",
 				layer: Layer.CUSTOMER,
 				url: "/sap/bc/lrep"
 			};
 
-			return WriteLrepConnector.appVariant.getManifest(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.getManifest(mPropertyBag).then(function() {
 				assert.ok(this.oStubSendRequest.calledWith(mPropertyBag.appVarUrl, "GET", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -924,7 +922,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when appVariant.load is triggered", function (assert) {
+		QUnit.test("given a mock server, when appVariant.load is triggered", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
@@ -932,7 +930,7 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId";
 
-			return WriteLrepConnector.appVariant.load(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.load(mPropertyBag).then(function() {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "GET", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -942,7 +940,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when appVariant.create is triggered with transport info provided", function (assert) {
+		QUnit.test("given a mock server, when appVariant.create is triggered with transport info provided", function(assert) {
 			var oFlexObject = {
 				fileName: "manifest",
 				fileType: "appdescr_variant",
@@ -964,7 +962,7 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?changelist=aTransport&sap-language=EN";
 
-			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function() {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -975,7 +973,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when appVariant.create is triggered, ATO is enable and skipIam is provided", function (assert) {
+		QUnit.test("given a mock server, when appVariant.create is triggered, ATO is enable and skipIam is provided", function(assert) {
 			var oFlexObject = {
 				fileName: "manifest",
 				fileType: "appdescr_variant",
@@ -998,7 +996,7 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN";
 
-			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function() {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -1009,7 +1007,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when appVariant.create is triggered, no transport info provided and ATO is not enabled", function (assert) {
+		QUnit.test("given a mock server, when appVariant.create is triggered, no transport info provided and ATO is not enabled", function(assert) {
 			var oFlexObject = {
 				fileName: "manifest",
 				fileType: "appdescr_variant",
@@ -1035,7 +1033,7 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?sap-language=EN";
 
-			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function() {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -1046,7 +1044,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when appVariant.assignCatalogs is triggered", function (assert) {
+		QUnit.test("given a mock server, when appVariant.assignCatalogs is triggered", function(assert) {
 			var mPropertyBag = {
 				action: "assignCatalogs",
 				assignFromAppId: "someBaseApplicationId",
@@ -1055,7 +1053,7 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?action=assignCatalogs&assignFromAppId=someBaseApplicationId";
 
-			return WriteLrepConnector.appVariant.assignCatalogs(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.assignCatalogs(mPropertyBag).then(function() {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -1065,7 +1063,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when appVariant.unassignCatalogs is triggered", function (assert) {
+		QUnit.test("given a mock server, when appVariant.unassignCatalogs is triggered", function(assert) {
 			var mPropertyBag = {
 				action: "unassignCatalogs",
 				layer: Layer.CUSTOMER,
@@ -1073,7 +1071,7 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?action=unassignCatalogs";
 
-			return WriteLrepConnector.appVariant.unassignCatalogs(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.unassignCatalogs(mPropertyBag).then(function() {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -1083,7 +1081,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when appVariant.update is triggered with transport info provided", function (assert) {
+		QUnit.test("given a mock server, when appVariant.update is triggered with transport info provided", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
@@ -1093,7 +1091,7 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport&sap-language=EN";
 
-			return WriteLrepConnector.appVariant.update(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.update(mPropertyBag).then(function() {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "PUT", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -1103,7 +1101,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when appVariant.update is triggered with transport selection successful", function (assert) {
+		QUnit.test("given a mock server, when appVariant.update is triggered with transport selection successful", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
@@ -1121,13 +1119,13 @@ sap.ui.define([
 							fileType: "appdescr_variant"
 						};
 					},
-					getPackage: function () {return "aPackage";},
+					getPackage: function() {return "aPackage";},
 					getNamespace: function() {return "aNameSpace";}
 				}
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport&sap-language=EN";
 			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: "aTransport"});
-			return WriteLrepConnector.appVariant.update(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.update(mPropertyBag).then(function() {
 				assert.ok(oStubOpenTransportSelection.calledOnce);
 				assert.equal(oStubOpenTransportSelection.getCalls()[0].args[0].package, "", "no package information is sent to get transport info");
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "PUT", {
@@ -1140,7 +1138,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when appVariant.update is triggered with with transport selection unsuccessful", function (assert) {
+		QUnit.test("given a mock server, when appVariant.update is triggered with with transport selection unsuccessful", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
@@ -1158,12 +1156,12 @@ sap.ui.define([
 							fileType: "appdescr_variant"
 						};
 					},
-					getPackage: function () {return "aPackage";},
+					getPackage: function() {return "aPackage";},
 					getNamespace: function() {return "aNameSpace";}
 				}
 			};
 			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves(undefined);
-			return WriteLrepConnector.appVariant.update(mPropertyBag).then(function () {},
+			return WriteLrepConnector.appVariant.update(mPropertyBag).then(function() {},
 				function(oError) {
 					assert.ok(oStubOpenTransportSelection.calledOnce);
 					assert.equal(oError.message, "Transport information could not be determined", "promise rejected with correct error message");
@@ -1171,7 +1169,7 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("given a mock server, when appVariant.remove is triggered with transport info provided", function (assert) {
+		QUnit.test("given a mock server, when appVariant.remove is triggered with transport info provided", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
@@ -1180,7 +1178,7 @@ sap.ui.define([
 				transport: "aTransport"
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport";
-			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function() {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "DELETE", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
@@ -1190,7 +1188,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when appVariant.remove is triggered with transport selection successful", function (assert) {
+		QUnit.test("given a mock server, when appVariant.remove is triggered with transport selection successful", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
@@ -1213,7 +1211,7 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport";
 			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: "aTransport"});
-			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function() {
 				assert.ok(oStubOpenTransportSelection.calledOnce);
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "DELETE", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
@@ -1225,7 +1223,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when appVariant.remove is triggered with transport selection unsuccessful", function (assert) {
+		QUnit.test("given a mock server, when appVariant.remove is triggered with transport selection unsuccessful", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
@@ -1247,7 +1245,7 @@ sap.ui.define([
 				}
 			};
 			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves(undefined);
-			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function () {},
+			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function() {},
 				function(oError) {
 					assert.ok(oStubOpenTransportSelection.calledOnce);
 					assert.equal(oError.message, "Transport information could not be determined", "promise rejected with correct error message");
@@ -1255,7 +1253,7 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("given a mock server, when appVariant.remove is triggered with cancel from transport dialog", function (assert) {
+		QUnit.test("given a mock server, when appVariant.remove is triggered with cancel from transport dialog", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
@@ -1277,7 +1275,7 @@ sap.ui.define([
 				}
 			};
 			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves("cancel");
-			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function () {},
+			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function() {},
 				function(oError) {
 					assert.ok(oStubOpenTransportSelection.calledOnce);
 					assert.equal(oError, "cancel", "promise rejected with cancel value");
@@ -1285,7 +1283,7 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("given a mock server, when appVariant.list is triggered", function (assert) {
+		QUnit.test("given a mock server, when appVariant.list is triggered", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.VENDOR,
 				reference: "someId",
@@ -1293,7 +1291,7 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/app_variant_overview/?layer=VENDOR&sap.app%2fid=someId";
 
-			return WriteLrepConnector.appVariant.list(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.list(mPropertyBag).then(function() {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "GET", {
 					tokenUrl: undefined,
 					initialConnector: InitialLrepConnector,
@@ -1305,7 +1303,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LrepConnector.contextBasedAdaptation", {
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
 			this.sLayer = Layer.CUSTOMER;
@@ -1313,16 +1311,16 @@ sap.ui.define([
 			this.sAdaptationId = "id_12345678";
 
 			this.oStubWriteSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
-			this.oStubInitialUtilsSendRequest = sandbox.stub(InitialUtils, "sendRequest").callsFake(function () {
+			this.oStubInitialUtilsSendRequest = sandbox.stub(InitialUtils, "sendRequest").callsFake(function() {
 				return Promise.resolve({response: {}});
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			WriteUtils.sendRequest.restore();
 			sandbox.verifyAndRestore();
 		}
-	}, function () {
-		QUnit.test("Given a mock server, when contextBasedAdaptation.create is triggered", function (assert) {
+	}, function() {
+		QUnit.test("Given a mock server, when contextBasedAdaptation.create is triggered", function(assert) {
 			var contextBasedAdaptationData = {
 				id: "__fiori0",
 				title: "test title",
@@ -1341,7 +1339,7 @@ sap.ui.define([
 				url: "/sap/bc/lrep"
 			};
 
-			return WriteLrepConnector.contextBasedAdaptation.create(mPropertyBag).then(function () {
+			return WriteLrepConnector.contextBasedAdaptation.create(mPropertyBag).then(function() {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
 				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/?parentVersion="
@@ -1351,7 +1349,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given a mock server, when contextBasedAdaptation.update is triggered", function (assert) {
+		QUnit.test("Given a mock server, when contextBasedAdaptation.update is triggered", function(assert) {
 			var contextBasedAdaptationData = {
 				title: "another test title",
 				property: "2",
@@ -1370,7 +1368,7 @@ sap.ui.define([
 				url: "/sap/bc/lrep"
 			};
 
-			return WriteLrepConnector.contextBasedAdaptation.update(mPropertyBag).then(function () {
+			return WriteLrepConnector.contextBasedAdaptation.update(mPropertyBag).then(function() {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
 				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/" + mPropertyBag.adaptationId + "?parentVersion="
@@ -1380,7 +1378,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given a mock server, when contextBasedAdaptation.load is triggered", function (assert) {
+		QUnit.test("Given a mock server, when contextBasedAdaptation.load is triggered", function(assert) {
 			var mPropertyBag = {
 				layer: this.sLayer,
 				appId: this.sAppId,
@@ -1388,7 +1386,7 @@ sap.ui.define([
 				version: "4124001231923DHS91231231"
 			};
 
-			return WriteLrepConnector.contextBasedAdaptation.load(mPropertyBag).then(function () {
+			return WriteLrepConnector.contextBasedAdaptation.load(mPropertyBag).then(function() {
 				assert.equal(this.oStubInitialUtilsSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubInitialUtilsSendRequest.getCall(0).args;
 				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/?version=" + mPropertyBag.version, "the correct url was passed");
@@ -1396,7 +1394,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given a mock server, when contextBasedAdaptation.remove is triggered", function (assert) {
+		QUnit.test("Given a mock server, when contextBasedAdaptation.remove is triggered", function(assert) {
 			var mPropertyBag = {
 				layer: this.sLayer,
 				appId: this.sAppId,
@@ -1405,7 +1403,7 @@ sap.ui.define([
 				parentVersion: "4124001231923DHS91231230"
 			};
 
-			return WriteLrepConnector.contextBasedAdaptation.remove(mPropertyBag).then(function () {
+			return WriteLrepConnector.contextBasedAdaptation.remove(mPropertyBag).then(function() {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
 				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/" + mPropertyBag.adaptationId + "?parentVersion=" + mPropertyBag.parentVersion + "&sap-language=EN", "the correct url was passed");
@@ -1413,7 +1411,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given a mock server, when contextBasedAdaptation.reorder is triggered", function (assert) {
+		QUnit.test("Given a mock server, when contextBasedAdaptation.reorder is triggered", function(assert) {
 			var oFlexObject = {priorities: ["id_9188277817982_0210", "id_877748372927_9812", "id_8837817291721_8271"]};
 
 			var mPropertyBag = {
@@ -1423,7 +1421,7 @@ sap.ui.define([
 				url: "/sap/bc/lrep"
 			};
 
-			return WriteLrepConnector.contextBasedAdaptation.reorder(mPropertyBag).then(function () {
+			return WriteLrepConnector.contextBasedAdaptation.reorder(mPropertyBag).then(function() {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
 				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/?sap-language=EN", "the correct url was passed");
@@ -1434,7 +1432,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LrepConnector.ui2personalization", {
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
 			this.oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
@@ -1444,7 +1442,7 @@ sap.ui.define([
 			sandbox.verifyAndRestore();
 		}
 	}, function() {
-		QUnit.test("given a mock server, when ui2Personalization.create is triggered", function (assert) {
+		QUnit.test("given a mock server, when ui2Personalization.create is triggered", function(assert) {
 			var oContainerData = {
 				reference: "test.app",
 				containerKey: "container12",
@@ -1456,7 +1454,7 @@ sap.ui.define([
 				flexObject: oContainerData
 			};
 
-			return WriteLrepConnector.ui2Personalization.create(mPropertyBag).then(function () {
+			return WriteLrepConnector.ui2Personalization.create(mPropertyBag).then(function() {
 				assert.equal(this.oStubSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubSendRequest.getCall(0).args;
 				assert.equal(oCallArguments[0], "/sap/bc/lrep/ui2personalization/", "the correct url was passed");
@@ -1465,14 +1463,14 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when ui2Personalization.remove is triggered", function (assert) {
+		QUnit.test("given a mock server, when ui2Personalization.remove is triggered", function(assert) {
 			var mPropertyBag = {
 				reference: "test.app",
 				containerKey: "container12",
 				itemName: "tablePersonalization"
 			};
 
-			return WriteLrepConnector.ui2Personalization.remove(mPropertyBag).then(function () {
+			return WriteLrepConnector.ui2Personalization.remove(mPropertyBag).then(function() {
 				assert.equal(this.oStubSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubSendRequest.getCall(0).args;
 				assert.equal(oCallArguments[0], "/sap/bc/lrep/ui2personalization/?reference=test.app" +
@@ -1486,8 +1484,8 @@ sap.ui.define([
 		afterEach: function() {
 			sandbox.verifyAndRestore();
 		}
-	}, function () {
-		QUnit.test("get Versions", function (assert) {
+	}, function() {
+		QUnit.test("get Versions", function(assert) {
 			var mPropertyBag = {
 				url: "/sap/bc/lrep",
 				reference: "com.sap.test.app",
@@ -1504,7 +1502,7 @@ sap.ui.define([
 				versionId: "versionGUID"
 			}]};
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: aReturnedVersions});
-			return WriteLrepConnector.versions.load(mPropertyBag).then(function (oResponse) {
+			return WriteLrepConnector.versions.load(mPropertyBag).then(function(oResponse) {
 				assert.deepEqual(oResponse, [{
 					version: Version.Number.Draft
 				}, {
@@ -1521,8 +1519,8 @@ sap.ui.define([
 		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("discard draft", function (assert) {
+	}, function() {
+		QUnit.test("discard draft", function(assert) {
 			var mPropertyBag = {
 				url: "/sap/bc/lrep",
 				reference: "com.sap.test.app"
@@ -1532,7 +1530,7 @@ sap.ui.define([
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app"
 			};
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
-			return WriteLrepConnector.versions.discardDraft(mPropertyBag).then(function () {
+			return WriteLrepConnector.versions.discardDraft(mPropertyBag).then(function() {
 				assert.equal(oStubSendRequest.getCall(0).args[0], "/sap/bc/lrep/flex/versions/draft/com.sap.test.app", "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "DELETE", "the method is correct");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
@@ -1544,8 +1542,8 @@ sap.ui.define([
 		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("activate draft", function (assert) {
+	}, function() {
+		QUnit.test("activate draft", function(assert) {
 			var sActivateVersion = Version.Number.Draft;
 			var mPropertyBag = {
 				url: "/sap/bc/lrep",
@@ -1566,7 +1564,7 @@ sap.ui.define([
 				versionId: "versionGUID"
 			};
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: oActivatedVersion});
-			return WriteLrepConnector.versions.activate(mPropertyBag).then(function (oResponse) {
+			return WriteLrepConnector.versions.activate(mPropertyBag).then(function(oResponse) {
 				assert.deepEqual(oResponse, {
 					version: "versionGUID"
 				}, "the activated version is returned correctly");
@@ -1576,7 +1574,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("reactivate old version", function (assert) {
+		QUnit.test("reactivate old version", function(assert) {
 			var sActivateVersion = "1";
 			var mPropertyBag = {
 				url: "/sap/bc/lrep",
@@ -1597,7 +1595,7 @@ sap.ui.define([
 				versionId: "versionGUID"
 			};
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: oActivatedVersion});
-			return WriteLrepConnector.versions.activate(mPropertyBag).then(function (oResponse) {
+			return WriteLrepConnector.versions.activate(mPropertyBag).then(function(oResponse) {
 				assert.deepEqual(oResponse, {
 					version: "versionGUID"
 				}, "the reactivated version is returned correctly");
@@ -1607,7 +1605,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("reactivate original app", function (assert) {
+		QUnit.test("reactivate original app", function(assert) {
 			var sActivateVersion = Version.Number.Original;
 			var mPropertyBag = {
 				url: "/sap/bc/lrep",
@@ -1628,7 +1626,7 @@ sap.ui.define([
 				versionId: "versionGUID"
 			};
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: oActivatedVersion});
-			return WriteLrepConnector.versions.activate(mPropertyBag).then(function (oResponse) {
+			return WriteLrepConnector.versions.activate(mPropertyBag).then(function(oResponse) {
 				assert.deepEqual(oResponse, {
 					version: "versionGUID"
 				}, "the activated version is returned correctly");
@@ -1643,7 +1641,7 @@ sap.ui.define([
 		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when calling publish successfully", function(assert) {
 			var oMockTransportInfo = {
 				transport: "transportId"
@@ -1742,7 +1740,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

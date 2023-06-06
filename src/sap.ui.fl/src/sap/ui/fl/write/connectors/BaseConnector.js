@@ -35,7 +35,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.draft=false] - Indicates if changes should be written as a draft
 		 * @returns {Promise} Resolves as soon as the writing is completed without data
 		 */
-		write: function (/* mPropertyBag */) {
+		write: function(/* mPropertyBag */) {
 			return Promise.reject("write is not implemented");
 		},
 
@@ -52,7 +52,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.draft=false] - Indicates if changes should be written as a draft
 		 * @returns {Promise} Resolves as soon as the writing is completed without data
 		 */
-		condense: function (/* mPropertyBag */) {
+		condense: function(/* mPropertyBag */) {
 			return Promise.reject("condense is not implemented");
 		},
 
@@ -66,7 +66,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
 		 * @returns {Promise} Resolves as soon as the writing is completed without data
 		 */
-		update: function (/* mPropertyBag */) {
+		update: function(/* mPropertyBag */) {
 			return Promise.reject("write is not implemented");
 		},
 
@@ -80,7 +80,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
 		 * @returns {Promise} Resolves as soon as the deletion is completed without data
 		 */
-		remove: function (/* mPropertyBag */) {
+		remove: function(/* mPropertyBag */) {
 			return Promise.reject("remove is not implemented");
 		},
 
@@ -96,7 +96,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.changeTypes] Change types of the changes which should be reset (comma-separated list)
 		 * @returns {Promise} Resolves as soon as the reset is completed without data
 		 */
-		reset: function (/* mPropertyBag */) {
+		reset: function(/* mPropertyBag */) {
 			return Promise.reject("reset is not implemented");
 		},
 
@@ -110,7 +110,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.changelist Transport Id
 		 * @returns {Promise} Resolves as soon as the publish is completed without data
 		 */
-		publish: function (/* mPropertyBag */) {
+		publish: function(/* mPropertyBag */) {
 			return Promise.reject("publish is not implemented");
 		},
 
@@ -125,7 +125,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
 		 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
 		 */
-		getFlexInfo: function (/* mPropertyBag */) {
+		getFlexInfo: function(/* mPropertyBag */) {
 			return Promise.resolve({});
 		},
 
@@ -144,7 +144,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
 		 * @returns {Promise<object>} Promise resolves as soon as context has been retrieved
 		 */
-		getContexts: function (/* mPropertyBag */) {
+		getContexts: function(/* mPropertyBag */) {
 			return Promise.reject("getContexts is not implemented");
 		},
 
@@ -155,7 +155,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.flexObjects Payload for the post request
 		 * @returns {Promise<object>} Promise resolves as soon as context descriptions have has been retrieved
 		 */
-		loadContextDescriptions: function (/* mPropertyBag */) {
+		loadContextDescriptions: function(/* mPropertyBag */) {
 			return Promise.reject("loadContextDescriptions is not implemented");
 		},
 
@@ -164,7 +164,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise<object>} Resolves with an object containing the data for the flex features
 		 */
-		isContextSharingEnabled: function () {
+		isContextSharingEnabled: function() {
 			return Promise.resolve(false);
 		},
 
@@ -173,7 +173,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise<object>} Resolves with an object containing the data for the flex features
 		 */
-		loadFeatures: function () {
+		loadFeatures: function() {
 			return Promise.reject("loadFeatures is not implemented");
 		},
 
@@ -203,7 +203,7 @@ sap.ui.define([
 			 * @param {string} mPropertyBag.reference Flex reference
 			 * @returns {Promise<sap.ui.fl.Version[]>} Resolves with an object containing the data for the versions
 			 */
-			load: function () {
+			load: function() {
 				return Promise.reject("versions.load is not implemented");
 			},
 
@@ -216,7 +216,7 @@ sap.ui.define([
 			 * @param {string} mPropertyBag.title Title of the to be activated version
 			 * @returns {Promise<sap.ui.fl.Version>} Resolves with list of versions after the activation took place.
 			 */
-			activate: function () {
+			activate: function() {
 				return Promise.reject("versions.activate is not implemented");
 			},
 
@@ -228,7 +228,7 @@ sap.ui.define([
 			 * @param {string} mPropertyBag.reference Flex reference
 			 * @returns {Promise} Resolves after the draft is discarded.
 			 */
-			discardDraft: function () {
+			discardDraft: function() {
 				return Promise.reject("versions.discardDraft is not implemented");
 			}
 		},
@@ -243,7 +243,7 @@ sap.ui.define([
 			 * @returns {Promise} Promise resolving after the languages are retrieved;
 			 * rejects if an error occurs
 			 */
-			getSourceLanguages: function () {
+			getSourceLanguages: function() {
 				return Promise.reject("translation.getSourceLanguages is not implemented");
 			},
 
@@ -258,7 +258,7 @@ sap.ui.define([
 			 * @returns {Promise} Promise resolving after the download was started;
 			 * rejects if an error occurs
 			 */
-			getTexts: function () {
+			getTexts: function() {
 				return Promise.reject("translation.getTexts is not implemented");
 			},
 
@@ -271,7 +271,7 @@ sap.ui.define([
 			 * @returns {Promise} Resolves after the file was uploaded;
 			 * rejects if an error occurs or a parameter is missing
 			 */
-			postTranslationTexts: function () {
+			postTranslationTexts: function() {
 				return Promise.reject("translation.postTranslationTexts is not implemented");
 			}
 		}

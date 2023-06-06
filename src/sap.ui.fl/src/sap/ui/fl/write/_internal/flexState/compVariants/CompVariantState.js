@@ -107,7 +107,7 @@ sap.ui.define([
 			layer: oFlexObject.getLayer(),
 			transport: oFlexObject.getRequest(),
 			parentVersion: sParentVersion
-		}).then(function (result) {
+		}).then(function(result) {
 			// update FlexObject and versionModel
 			if (result && result.response) {
 				oFlexObject.setResponse(result.response);
@@ -121,7 +121,7 @@ sap.ui.define([
 			} else {
 				oFlexObject.setState(States.LifecycleState.PERSISTED);
 			}
-		}).then(function () {
+		}).then(function() {
 			// update StorageResponse
 			var aObjectArray = getSubSection(oStoredResponse.changes.comp, oFlexObject);
 			var oFileContent = oFlexObject.convertToFileContent();
@@ -132,9 +132,9 @@ sap.ui.define([
 
 	function removeFromArrayById(aObjectArray, sObjectId) {
 		for (var i = aObjectArray.length - 1; i >= 0; i--) {
-			//aObjectArray can come from either back end response or flex state
-			//In the first case, the fileName is a direct property of object
-			//In the second case, it can be obtained from getId() function
+			// aObjectArray can come from either back end response or flex state
+			// In the first case, the fileName is a direct property of object
+			// In the second case, it can be obtained from getId() function
 			var sFileName = aObjectArray[i].fileName || (aObjectArray[i].getId() && aObjectArray[i].getId());
 			if ((sFileName || aObjectArray[i].getId()) === sObjectId) {
 				aObjectArray.splice(i, 1);
@@ -159,7 +159,7 @@ sap.ui.define([
 			layer: oFlexObject.getLayer(),
 			transport: oFlexObject.getRequest(),
 			parentVersion: sParentVersion
-		}).then(function () {
+		}).then(function() {
 			// update CompVariantsMap
 			removeFromCompVariantsMap(oFlexObject, mCompVariantsMapByPersistencyKey);
 		}).then(Versions.updateModelFromBackend.bind(this, {
@@ -178,7 +178,7 @@ sap.ui.define([
 	function getTexts(mPropertyBag) {
 		var mInternalTexts = {};
 		if (typeof (mPropertyBag.texts) === "object") {
-			Object.keys(mPropertyBag.texts).forEach(function (key) {
+			Object.keys(mPropertyBag.texts).forEach(function(key) {
 				mInternalTexts[key] = {
 					value: mPropertyBag.texts[key],
 					type: "XFLD"
@@ -195,9 +195,9 @@ sap.ui.define([
 
 	function getAllCompVariantObjects(mCompVariantsMapByPersistencyKey) {
 		return mCompVariantsMapByPersistencyKey.variants
-			.concat(mCompVariantsMapByPersistencyKey.changes)
-			.concat(mCompVariantsMapByPersistencyKey.defaultVariants)
-			.concat(mCompVariantsMapByPersistencyKey.standardVariantChange);
+		.concat(mCompVariantsMapByPersistencyKey.changes)
+		.concat(mCompVariantsMapByPersistencyKey.defaultVariants)
+		.concat(mCompVariantsMapByPersistencyKey.standardVariantChange);
 	}
 
 	function determineLayer(mPropertyBag) {
@@ -299,7 +299,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Layer} [mPropertyBag.layer = Layer.USER] - Enables setDefault for the given layer
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} Created or updated change object in charge for setting the default variant
 	 */
-	CompVariantState.setDefault = function (mPropertyBag) {
+	CompVariantState.setDefault = function(mPropertyBag) {
 		var oContent = {
 			defaultVariantName: mPropertyBag.defaultVariantId
 		};
@@ -353,7 +353,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.reference - Flex reference of the application
 	 * @param {string} mPropertyBag.persistencyKey - ID of the variant management internal identifier
 	 */
-	CompVariantState.revertSetDefaultVariantId = function (mPropertyBag) {
+	CompVariantState.revertSetDefaultVariantId = function(mPropertyBag) {
 		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference)._getOrCreate(mPropertyBag.persistencyKey);
 		var aDefaultVariantChanges = mCompVariantsMap.defaultVariants;
 		var oChange = aDefaultVariantChanges[aDefaultVariantChanges.length - 1];
@@ -432,20 +432,20 @@ sap.ui.define([
 	 * this either updates the variant from the layer or writes a change to that layer.
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The updated variant
 	 */
-	CompVariantState.updateVariant = function (mPropertyBag) {
+	CompVariantState.updateVariant = function(mPropertyBag) {
 		function variantCanBeUpdated(oVariant, sLayer) {
 			var bSameLayer = oVariant.getLayer() === sLayer;
 			var sPackageName = oVariant.getFlexObjectMetadata().packageName;
 			var bNotTransported = !sPackageName || sPackageName === "$TMP";
 			// in case changes were already done within the layer, no update of the variant can be done to safeguard the execution order
-			var bIsChangedOnLayer = oVariant.getChanges().some(function (oChange) {
+			var bIsChangedOnLayer = oVariant.getChanges().some(function(oChange) {
 				return oChange.getLayer() === sLayer;
 			});
 			return oVariant.getPersisted() && bSameLayer && bNotTransported && !bIsChangedOnLayer && isVersionIndependentOrInDraft(oVariant, mPropertyBag);
 		}
 
 		function getLatestUpdatableChange(oVariant) {
-			return oVariant.getChanges().reverse().find(function (oChange) {
+			return oVariant.getChanges().reverse().find(function(oChange) {
 				return oChange.getChangeType() === "updateVariant" && isChangeUpdatable(oChange, mPropertyBag);
 			});
 		}
@@ -530,7 +530,7 @@ sap.ui.define([
 			}
 
 			var oContent = {};
-			["favorite", "executeOnSelection", "contexts"].forEach(function (sPropertyName) {
+			["favorite", "executeOnSelection", "contexts"].forEach(function(sPropertyName) {
 				if (mPropertyBag[sPropertyName] !== undefined) {
 					oContent[sPropertyName] = mPropertyBag[sPropertyName];
 				}
@@ -601,8 +601,8 @@ sap.ui.define([
 		var oVariant = getVariantById(mPropertyBag);
 		var aVariantRevertData = oVariant.getRevertData();
 		if (aVariantRevertData.length !== 0) {
-			//Look at revert data backward, to find the content of last save action
-			var bIsVariantSaved = aVariantRevertData.slice().reverse().some(function (oRevertData) {
+			// Look at revert data backward, to find the content of last save action
+			var bIsVariantSaved = aVariantRevertData.slice().reverse().some(function(oRevertData) {
 				if (oRevertData.getContent().previousAction === CompVariantState.updateActionType.SAVE) {
 					mPropertyBag.content = oRevertData.getContent().previousContent;
 					mPropertyBag.action = CompVariantState.updateActionType.DISCARD;
@@ -614,7 +614,7 @@ sap.ui.define([
 				mPropertyBag.content = aVariantRevertData[0].getContent().previousContent;
 				mPropertyBag.action = CompVariantState.updateActionType.DISCARD;
 			}
-			//Update variant content to the last saved or original content
+			// Update variant content to the last saved or original content
 			CompVariantState.updateVariant(mPropertyBag);
 		}
 		return oVariant;
@@ -659,7 +659,7 @@ sap.ui.define([
 	 * this either removes the variant from the layer or writes a change to that layer.
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The removed variant
 	 */
-	CompVariantState.removeVariant = function (mPropertyBag) {
+	CompVariantState.removeVariant = function(mPropertyBag) {
 		var oVariant = getVariantById(mPropertyBag);
 		var sCurrentState = oVariant.getState();
 
@@ -693,12 +693,12 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.id - ID of the variant
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The reverted variant
 	 */
-	CompVariantState.revert = function (mPropertyBag) {
+	CompVariantState.revert = function(mPropertyBag) {
 		function removeChange(oChange) {
 			var sPersistencyKey = oChange.getSelector().persistencyKey;
 			var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
 			delete mCompVariantsMap[sPersistencyKey].byId[oChange.getId()];
-			mCompVariantsMap[sPersistencyKey].changes = mCompVariantsMap[sPersistencyKey].changes.filter(function (oChangeInMap) {
+			mCompVariantsMap[sPersistencyKey].changes = mCompVariantsMap[sPersistencyKey].changes.filter(function(oChangeInMap) {
 				return oChangeInMap !== oChange;
 			});
 		}
@@ -783,7 +783,7 @@ sap.ui.define([
 		oStandardVariant.setExecuteOnSelection(!!mPropertyBag.executeOnSelection);
 		var aChanges = oStandardVariant.getChanges();
 		oStandardVariant.removeAllChanges();
-		aChanges.forEach(function (oChange) {
+		aChanges.forEach(function(oChange) {
 			CompVariantMerger.applyChangeOnVariant(oStandardVariant, oChange);
 		});
 	};
@@ -811,7 +811,7 @@ sap.ui.define([
 				transport: oFlexObject.getRequest(),
 				isLegacyVariant: oFlexObject.isVariant && oFlexObject.isVariant(),
 				parentVersion: sParentVersion
-			}).then(function (result) {
+			}).then(function(result) {
 				// updateFlexObject and versionModel
 				if (result && result.response && result.response[0]) {
 					oFlexObject.setResponse(result.response[0]);
@@ -825,7 +825,7 @@ sap.ui.define([
 				} else {
 					oFlexObject.setState(States.LifecycleState.PERSISTED);
 				}
-			}).then(function () {
+			}).then(function() {
 				// update StorageResponse
 				var oFileContent = oFlexObject.convertToFileContent();
 				getSubSection(oStoredResponse.changes.comp, oFlexObject).push(oFileContent);
@@ -855,31 +855,31 @@ sap.ui.define([
 		var mCompVariantsMapByPersistencyKey = mCompVariantsMap._getOrCreate(sPersistencyKey);
 
 		return FlexState.getStorageResponse(sReference)
-			.then(function(oStoredResponse) {
-				var aFlexObjects = getAllCompVariantObjects(mCompVariantsMapByPersistencyKey).filter(needsPersistencyCall);
-				var aPromises = aFlexObjects.map(function(oFlexObject, index) {
-					if (index === 0) {
-						var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {
-							layer: oFlexObject.getLayer(),
-							reference: oFlexObject.getFlexObjectMetadata().reference
-						});
+		.then(function(oStoredResponse) {
+			var aFlexObjects = getAllCompVariantObjects(mCompVariantsMapByPersistencyKey).filter(needsPersistencyCall);
+			var aPromises = aFlexObjects.map(function(oFlexObject, index) {
+				if (index === 0) {
+					var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {
+						layer: oFlexObject.getLayer(),
+						reference: oFlexObject.getFlexObjectMetadata().reference
+					});
 						// TODO: use condensing route to reduce backend requests
 						// need to save first entry to generate draft version in backend
-						return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion)
-						.then(function() {
-							var aPromises = aFlexObjects.map(function(oFlexObject, index) {
-								if (index !== 0) {
-									var sDraftVersion = sParentVersion ? Version.Number.Draft : undefined;
-									return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sDraftVersion);
-								}
-							});
-							return aPromises;
+					return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion)
+					.then(function() {
+						var aPromises = aFlexObjects.map(function(oFlexObject, index) {
+							if (index !== 0) {
+								var sDraftVersion = sParentVersion ? Version.Number.Draft : undefined;
+								return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sDraftVersion);
+							}
 						});
-					}
-				});
-				// TODO Consider not rejecting with first error, but wait for all promises and collect the results
-				return Promise.all(aPromises);
+						return aPromises;
+					});
+				}
 			});
+				// TODO Consider not rejecting with first error, but wait for all promises and collect the results
+			return Promise.all(aPromises);
+		});
 	};
 
 	/**
@@ -906,7 +906,7 @@ sap.ui.define([
 	 * @param {string} sReference - Flex reference of the app
 	 * @returns {boolean} <code>true</code> if dirty changes exist
 	 */
-	CompVariantState.hasDirtyChanges = function (sReference) {
+	CompVariantState.hasDirtyChanges = function(sReference) {
 		var mCompEntities = FlexState.getCompVariantsMap(sReference);
 		var aEntities = [];
 		for (var sPersistencyKey in mCompEntities) {

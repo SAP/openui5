@@ -285,23 +285,23 @@ sap.ui.define([
 
 	function loadFlexData(mPropertyBag) {
 		_mInitPromises[mPropertyBag.reference] = Loader.loadFlexData(mPropertyBag)
-			.then(function(mResponse) {
-				_mInstances[mPropertyBag.reference] = merge({}, {
-					unfilteredStorageResponse: mResponse,
-					preparedMaps: {},
-					componentId: mPropertyBag.componentId,
-					componentData: mPropertyBag.componentData,
-					partialFlexState: mPropertyBag.partialFlexState
-				});
-
-				registerMaxLayerHandler(mPropertyBag.reference);
-				storeInfoInSession(mPropertyBag.reference, mResponse);
-
-				// no further changes to storageResponse properties allowed
-				Object.freeze(_mInstances[mPropertyBag.reference].storageResponse);
-				Object.freeze(_mInstances[mPropertyBag.reference].unfilteredStorageResponse);
-				return mResponse;
+		.then(function(mResponse) {
+			_mInstances[mPropertyBag.reference] = merge({}, {
+				unfilteredStorageResponse: mResponse,
+				preparedMaps: {},
+				componentId: mPropertyBag.componentId,
+				componentData: mPropertyBag.componentData,
+				partialFlexState: mPropertyBag.partialFlexState
 			});
+
+			registerMaxLayerHandler(mPropertyBag.reference);
+			storeInfoInSession(mPropertyBag.reference, mResponse);
+
+			// no further changes to storageResponse properties allowed
+			Object.freeze(_mInstances[mPropertyBag.reference].storageResponse);
+			Object.freeze(_mInstances[mPropertyBag.reference].unfilteredStorageResponse);
+			return mResponse;
+		});
 
 		return _mInitPromises[mPropertyBag.reference];
 	}
@@ -378,13 +378,13 @@ sap.ui.define([
 			Utils.getUShellService("ShellNavigation"),
 			Utils.getUShellService("URLParsing")
 		])
-			.then(function(aServices) {
-				_oShellNavigationService = aServices[0];
-				_oURLParsingService = aServices[1];
-			})
-			.catch(function(oError) {
-				Log.error("Error getting service from Unified Shell: " + oError.message);
-			});
+		.then(function(aServices) {
+			_oShellNavigationService = aServices[0];
+			_oURLParsingService = aServices[1];
+		})
+		.catch(function(oError) {
+			Log.error("Error getting service from Unified Shell: " + oError.message);
+		});
 	}
 
 	function getUShellService(sServiceName) {
@@ -430,26 +430,26 @@ sap.ui.define([
 			loadUShellServices(),
 			lazyLoadModules()
 		])
-			.then(function() {
-				enhancePropertyBag(mPropertyBag);
-				var sFlexReference = mPropertyBag.reference;
+		.then(function() {
+			enhancePropertyBag(mPropertyBag);
+			var sFlexReference = mPropertyBag.reference;
 
-				if (_mInitPromises[sFlexReference]) {
-					return _mInitPromises[sFlexReference]
-						.then(checkPartialFlexState.bind(null, mPropertyBag))
-						.then(checkComponentId)
-						.then(function(mEvaluatedProperties) {
-							return mEvaluatedProperties.reInitialize
-								? loadFlexData(mEvaluatedProperties)
-								: _mInstances[sFlexReference].unfilteredStorageResponse;
-						});
-				}
+			if (_mInitPromises[sFlexReference]) {
+				return _mInitPromises[sFlexReference]
+				.then(checkPartialFlexState.bind(null, mPropertyBag))
+				.then(checkComponentId)
+				.then(function(mEvaluatedProperties) {
+					return mEvaluatedProperties.reInitialize
+						? loadFlexData(mEvaluatedProperties)
+						: _mInstances[sFlexReference].unfilteredStorageResponse;
+				});
+			}
 
-				return loadFlexData(mPropertyBag);
-			})
-			.then(function(mPropertyBag) {
-				initializeNewInstance(mPropertyBag);
-			}.bind(null, mPropertyBag));
+			return loadFlexData(mPropertyBag);
+		})
+		.then(function(mPropertyBag) {
+			initializeNewInstance(mPropertyBag);
+		}.bind(null, mPropertyBag));
 	};
 
 	/**
@@ -460,7 +460,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.reference] - Flex reference of the app
 	 * @returns {boolean} <code>true</code> in case flex state has been initialized
 	 */
-	FlexState.isInitialized = function (mPropertyBag) {
+	FlexState.isInitialized = function(mPropertyBag) {
 		var sReference = mPropertyBag.reference ? mPropertyBag.reference : ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
 		return !!_mInstances[sReference];
 	};

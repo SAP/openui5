@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ovp/ChangeCard",
@@ -14,7 +14,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("applyChange", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oManifest = {
 				"sap.ovp": {
 					cards: {
@@ -24,11 +24,11 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when calling '_applyChange' with a change containing title in the OVP card", function (assert) {
+		QUnit.test("when calling '_applyChange' with a change containing title in the OVP card", function(assert) {
 			var oChange = new AppDescriptorChange({
 				flexObjectMetadata: {
 					changeType: "appdescr_ovp_changecard"
@@ -46,10 +46,10 @@ sap.ui.define([
 			});
 
 			var oNewManifest = ChangeCard.applyChange(this.oManifest, oChange);
-			assert.strictEqual(oNewManifest["sap.ovp"]["cards"]["card1"]["customer.settings"]["title"], "Title", "the Manifest is updated correctly.");
+			assert.strictEqual(oNewManifest["sap.ovp"].cards.card1["customer.settings"].title, "Title", "the Manifest is updated correctly.");
 		});
 
-		QUnit.test("when calling '_applyChange' with a change not containing customer settings", function (assert) {
+		QUnit.test("when calling '_applyChange' with a change not containing customer settings", function(assert) {
 			var oChange = new AppDescriptorChange({
 				flexObjectMetadata: {
 					changeType: "appdescr_ovp_changecard"
@@ -67,7 +67,7 @@ sap.ui.define([
 			"throws error");
 		});
 
-		QUnit.test("when calling '_applyChange' with change that is not a valid operation", function (assert) {
+		QUnit.test("when calling '_applyChange' with change that is not a valid operation", function(assert) {
 			var oChange = new AppDescriptorChange({
 				flexObjectMetadata: {
 					changeType: "appdescr_ovp_changecard"
@@ -89,7 +89,7 @@ sap.ui.define([
 			"throws error");
 		});
 
-		QUnit.test("when calling '_applyChange' with change that is an array and not object", function (assert) {
+		QUnit.test("when calling '_applyChange' with change that is an array and not object", function(assert) {
 			var oChange = new AppDescriptorChange({
 				flexObjectMetadata: {
 					changeType: "appdescr_ovp_changecard"

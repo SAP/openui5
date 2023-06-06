@@ -22,13 +22,13 @@ sap.ui.define([
 	function setMethodStub(aStubArgs, aArguments, vReturnValue) {
 		var fnPersistenceStub = sandbox.stub.apply(sandbox, aStubArgs);
 		fnPersistenceStub
-			.withArgs.apply(fnPersistenceStub, aArguments)
-			.returns(vReturnValue);
+		.withArgs.apply(fnPersistenceStub, aArguments)
+		.returns(vReturnValue);
 		return fnPersistenceStub;
 	}
 
 	QUnit.module("Given ChangesController", {
-		beforeEach: function () {
+		beforeEach: function() {
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -90,7 +90,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

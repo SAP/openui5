@@ -1,11 +1,11 @@
 sap.ui.define([
 	"sap/ui/test/Opa5"
-], function (Opa5) {
+], function(Opa5) {
 	"use strict";
 
 	return Opa5.extend("test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.test.integration.arrangements.Startup", {
 
-		iStartMyApp: function (oOptionsParameter) {
+		iStartMyApp: function(oOptionsParameter) {
 			var oOptions = oOptionsParameter || {};
 
 			// start the app with a minimal delay to make tests fast but still async to discover basic timing issues

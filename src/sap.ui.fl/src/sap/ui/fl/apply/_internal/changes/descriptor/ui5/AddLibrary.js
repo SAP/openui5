@@ -10,7 +10,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-
 	/**
 	 * Merges already existing library.
 	 * If a min version is specified by the existing or new dependency the highest version is taken over.
@@ -64,10 +63,10 @@ sap.ui.define([
 		 */
 		applyChange: function(oManifest, oChange) {
 			// sap.ui5/dependencies node is mandatory in manifest
-			if (!oManifest["sap.ui5"]["dependencies"]["libs"]) {
-				oManifest["sap.ui5"]["dependencies"]["libs"] = {};
+			if (!oManifest["sap.ui5"].dependencies.libs) {
+				oManifest["sap.ui5"].dependencies.libs = {};
 			}
-			var oManifestLibs = oManifest["sap.ui5"]["dependencies"]["libs"];
+			var oManifestLibs = oManifest["sap.ui5"].dependencies.libs;
 			var oChangeLibs = oChange.getContent().libraries;
 
 			Object.keys(oChangeLibs).forEach(function(sLibName) {
@@ -79,7 +78,6 @@ sap.ui.define([
 			});
 			return oManifest;
 		}
-
 
 	};
 

@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/m/MessageItem",
 	"sap/m/MessagePopover",
 	"sap/ui/model/json/JSONModel"],
-function (MessageItem, MessagePopover, JSONModel) {
+function(MessageItem, MessagePopover, JSONModel) {
 	"use strict";
 
 	/**
@@ -43,7 +43,7 @@ function (MessageItem, MessagePopover, JSONModel) {
 		 * @param {Object} oModel - input model
 		 * @public
 		 */
-	ErrorUtils.setMessagesModel = function (oComponent, oModel) {
+	ErrorUtils.setMessagesModel = function(oComponent, oModel) {
 		ErrorUtils._masterComponent = oComponent;
 		ErrorUtils._messagesModel = oModel;
 		ErrorUtils._messagePopover.setModel(ErrorUtils._messagesModel, "messages");
@@ -54,7 +54,7 @@ function (MessageItem, MessagePopover, JSONModel) {
 		 * @param {Object} oSource - input source
 		 * @public
 		 */
-	ErrorUtils.handleMessagePopoverPress = function (oSource) {
+	ErrorUtils.handleMessagePopoverPress = function(oSource) {
 		ErrorUtils._messagePopover.openBy(oSource);
 	};
 
@@ -65,7 +65,7 @@ function (MessageItem, MessagePopover, JSONModel) {
 		 * @param {string} sDescription - message description
 		 * @public
 		 */
-	ErrorUtils.displayError = function (sType, sTitle, sDescription) {
+	ErrorUtils.displayError = function(sType, sTitle, sDescription) {
 		if (ErrorUtils._messagesModel) {
 			var sMessages = ErrorUtils._messagesModel.getData();
 			sMessages.push({

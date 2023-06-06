@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
@@ -32,7 +32,7 @@ sap.ui.define([
 	*/
 	QUnit.module("DescriptorInlineChangeFactory", {
 		beforeEach: function() {
-			//define sandboxes and stubs explicitly for each modules
+			// define sandboxes and stubs explicitly for each modules
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser: false,
@@ -49,7 +49,7 @@ sap.ui.define([
 		QUnit.test("createForExistingVariant", function(assert) {
 			var oServer = sandbox.useFakeServer();
 			oServer.respondWith("GET", "/sap/bc/lrep/appdescr_variants/id.string",
-				[200, { "Content-Type": "text/plain" }, //Simulate an server with incorrect content type response
+				[200, { "Content-Type": "text/plain" }, // Simulate an server with incorrect content type response
 					'{ "id": "id.string", "reference":"base.id", "content": [] }']);
 			oServer.respondWith("GET", "/sap/bc/lrep/appdescr_variants/id.json",
 				[200, { "Content-Type": "application/json" },
@@ -77,7 +77,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("createDescriptorInlineChange", function(assert) {
-			return DescriptorInlineChangeFactory.createDescriptorInlineChange('appdescr_ovp_addNewCard', {
+			return DescriptorInlineChangeFactory.createDescriptorInlineChange("appdescr_ovp_addNewCard", {
 				card: {
 					"customer.acard": {
 						model: "customer.boring_model",
@@ -118,7 +118,7 @@ sap.ui.define([
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
-				assert.equal(oDescriptorInlineChange.getMap().changeType, 'appdescr_ovp_addNewCard');
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ovp_addNewCard");
 				assert.notEqual(oDescriptorInlineChange.getMap().content, null);
 				assert.notEqual(oDescriptorInlineChange.getMap().texts, null);
 			});
@@ -164,16 +164,16 @@ sap.ui.define([
 			};
 
 			return DescriptorInlineChangeFactory.create_ovp_changeCard(mParameters, mTexts)
-				.then(function(oInlineChange) {
-					oInlineChange.replaceHostingIdForTextKey("customer.ZDEMOOVP_RESIZE.id_1559043616388_1827", "ZDEMOOVP_RESIZE", oInlineChange.getContent(), oInlineChange.getTexts());
-					Object.keys(oInlineChange.getTexts()).forEach(function(sTextKey, index) {
-						assert.strictEqual(sTextKey, "customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value", "then the text keys are properly set and are correct");
-					});
-					var aProperties = oInlineChange.getContent().entityPropertyChange.propertyValue.tabs;
-					aProperties.forEach(function(oProperty, index) {
-						assert.strictEqual(oProperty.value, "{{customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value}}", "then the property values are correctly set");
-					});
+			.then(function(oInlineChange) {
+				oInlineChange.replaceHostingIdForTextKey("customer.ZDEMOOVP_RESIZE.id_1559043616388_1827", "ZDEMOOVP_RESIZE", oInlineChange.getContent(), oInlineChange.getTexts());
+				Object.keys(oInlineChange.getTexts()).forEach(function(sTextKey, index) {
+					assert.strictEqual(sTextKey, "customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value", "then the text keys are properly set and are correct");
 				});
+				var aProperties = oInlineChange.getContent().entityPropertyChange.propertyValue.tabs;
+				aProperties.forEach(function(oProperty, index) {
+					assert.strictEqual(oProperty.value, "{{customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value}}", "then the property values are correctly set");
+				});
+			});
 		});
 
 		QUnit.test("replaceHostingIdForTextKey - changeNewCard without text keys", function(assert) {
@@ -216,16 +216,16 @@ sap.ui.define([
 			};
 
 			return DescriptorInlineChangeFactory.create_ovp_changeCard(mParameters, mTexts)
-				.then(function(oInlineChange) {
-					oInlineChange.replaceHostingIdForTextKey("customer.ZDEMOOVP_RESIZE.id_1559043616388_1827", "ZDEMOOVP_RESIZE", oInlineChange.getContent(), oInlineChange.getTexts());
-					Object.keys(oInlineChange.getTexts()).forEach(function(sTextKey, index) {
-						assert.strictEqual(sTextKey, "customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value", "then the text keys are properly set and are correct");
-					});
-					var aProperties = oInlineChange.getContent().entityPropertyChange.propertyValue.tabs;
-					aProperties.forEach(function(oProperty, index) {
-						assert.strictEqual(oProperty.value, "ZDEMOOVP_RESIZE_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value", "then the property values are correctly set");
-					});
+			.then(function(oInlineChange) {
+				oInlineChange.replaceHostingIdForTextKey("customer.ZDEMOOVP_RESIZE.id_1559043616388_1827", "ZDEMOOVP_RESIZE", oInlineChange.getContent(), oInlineChange.getTexts());
+				Object.keys(oInlineChange.getTexts()).forEach(function(sTextKey, index) {
+					assert.strictEqual(sTextKey, "customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value", "then the text keys are properly set and are correct");
 				});
+				var aProperties = oInlineChange.getContent().entityPropertyChange.propertyValue.tabs;
+				aProperties.forEach(function(oProperty, index) {
+					assert.strictEqual(oProperty.value, "ZDEMOOVP_RESIZE_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value", "then the property values are correctly set");
+				});
+			});
 		});
 
 		QUnit.test("replaceHostingIdForTextKey - addTitle", function(assert) {
@@ -239,8 +239,8 @@ sap.ui.define([
 			};
 
 			return DescriptorInlineChangeFactory.create_app_setTitle(mParameters).then(function(oInlineChange) {
-				if (oInlineChange["setHostingIdForTextKey"]) {
-					oInlineChange["setHostingIdForTextKey"]("ZDEMOOVP_RESIZE");
+				if (oInlineChange.setHostingIdForTextKey) {
+					oInlineChange.setHostingIdForTextKey("ZDEMOOVP_RESIZE");
 				}
 				oInlineChange.replaceHostingIdForTextKey("customer.ZDEMOOVP_RESIZE.id_1559043616388_1827", "ZDEMOOVP_RESIZE", oInlineChange.getContent(), oInlineChange.getTexts());
 				Object.keys(oInlineChange.getTexts()).forEach(function(sTextKey) {
@@ -296,7 +296,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_ovp_addNewCard failure", function (assert) {
+		QUnit.test("create_ovp_addNewCard failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ovp_addNewCard({
 					cardId: {}
@@ -318,7 +318,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_ovp_removeCard failure", function (assert) {
+		QUnit.test("create_ovp_removeCard failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ovp_removeCard({
 					cards: "a.id"
@@ -331,8 +331,8 @@ sap.ui.define([
 			});
 		});
 
-		//Test change card with valid input and multiple changes
-		QUnit.test("create_ovp_changeCard multiple changes", function (assert) {
+		// Test change card with valid input and multiple changes
+		QUnit.test("create_ovp_changeCard multiple changes", function(assert) {
 			return DescriptorInlineChangeFactory.create_ovp_changeCard({
 				cardId: "sap.existingCard01",
 				entityPropertyChange: [
@@ -352,25 +352,25 @@ sap.ui.define([
 						propertyValue: "New Added Subtitle"
 					}
 				]
-			}).then(function (oDescriptorInlineChange) {
+			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ovp_changeCard");
 			});
 		});
 
-		//Test change card with invalid parameters
-		QUnit.test("create_ovp_changeCard failure", function (assert) {
-			assert.throws(function () {
+		// Test change card with invalid parameters
+		QUnit.test("create_ovp_changeCard failure", function(assert) {
+			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ovp_changeCard({
 					cards: "sap.existingCard01"
 				});
 			});
-			assert.throws(function () {
+			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ovp_changeCard({
 					cardId: undefined
 				});
 			});
-			assert.throws(function () {
+			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ovp_changeCard({
 					cardId: {}
 				});
@@ -418,7 +418,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_addNewInbound failure", function (assert) {
+		QUnit.test("create_app_addNewInbound failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addNewInbound({
 					inboundId: {}
@@ -440,7 +440,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_removeInbound failure", function (assert) {
+		QUnit.test("create_app_removeInbound failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeInbound({
 					inbounds: "a.id"
@@ -462,7 +462,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_removeAllInboundsExceptOne failure", function (assert) {
+		QUnit.test("create_app_removeAllInboundsExceptOne failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeAllInboundsExceptOne({
 					inbounds: "a.id"
@@ -535,7 +535,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_changeInbound failure", function (assert) {
+		QUnit.test("create_app_changeInbound failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_changeInbound({
 					inbounds: "a.id"
@@ -570,7 +570,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_addNewOutbound failure", function (assert) {
+		QUnit.test("create_app_addNewOutbound failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addNewOutbound({
 					outboundId: {}
@@ -592,7 +592,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_removeOutbound failure", function (assert) {
+		QUnit.test("create_app_removeOutbound failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeOutbound({
 					outbounds: "a.id"
@@ -647,7 +647,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_changeOutbound failure", function (assert) {
+		QUnit.test("create_app_changeOutbound failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_changeOutbound({
 					outbounds: "a.id"
@@ -674,7 +674,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_addNewDataSource failure", function (assert) {
+		QUnit.test("create_app_addNewDataSource failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addNewDataSource({
 					dataSourceId: {}
@@ -696,7 +696,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_removeDataSource failure", function (assert) {
+		QUnit.test("create_app_removeDataSource failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeDataSource({
 					dataSources: "a.id"
@@ -742,7 +742,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_changeDataSource failure", function (assert) {
+		QUnit.test("create_app_changeDataSource failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_changeDataSource({
 					dataSources: "a.id"
@@ -771,7 +771,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_appdescr_app_addAnnotationsToOData failure", function (assert) {
+		QUnit.test("create_appdescr_app_addAnnotationsToOData failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
 					dataSourceId: {}
@@ -824,7 +824,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("setReference failure", function (assert) {
+		QUnit.test("setReference failure", function(assert) {
 			return DescriptorVariantFactory.createNew({
 				id: "a.id",
 				reference: "a.reference"
@@ -891,9 +891,9 @@ sap.ui.define([
 				_oDescriptorVariant = oDescriptorVariant;
 				return oDescriptorVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
 			}).then(function() {
-				assert.ok(_oDescriptorVariant.getDefinition().content[0].texts['a.id_sap.app.title'], 'Initial empty text key replaced');
-				assert.ok(!_oDescriptorVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oDescriptorVariant.getDefinition().content[0].texts['a.id_sap.app.title'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+				assert.ok(_oDescriptorVariant.getDefinition().content[0].texts["a.id_sap.app.title"], "Initial empty text key replaced");
+				assert.ok(!_oDescriptorVariant.getDefinition().content[0].texts[""], "Initial empty text key removed ");
+				assert.deepEqual(_oDescriptorVariant.getDefinition().content[0].texts["a.id_sap.app.title"], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 			});
 		});
 
@@ -917,9 +917,9 @@ sap.ui.define([
 				return new DescriptorChangeFactory().createNew("a.reference", _oDescriptorInlineChange);
 			}).then(function(_oDescriptorChange) {
 				_oDescriptorChange._getChangeToSubmit();
-				assert.ok(_oDescriptorChange._mChangeFile.texts['a.reference_sap.app.title'], 'Initial empty text key replaced');
-				assert.ok(!_oDescriptorChange._mChangeFile.texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oDescriptorChange._mChangeFile.texts['a.reference_sap.app.title'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+				assert.ok(_oDescriptorChange._mChangeFile.texts["a.reference_sap.app.title"], "Initial empty text key replaced");
+				assert.ok(!_oDescriptorChange._mChangeFile.texts[""], "Initial empty text key removed ");
+				assert.deepEqual(_oDescriptorChange._mChangeFile.texts["a.reference_sap.app.title"], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 			});
 		});
 
@@ -949,9 +949,9 @@ sap.ui.define([
 				_oDescriptorVariant = oDescriptorVariant;
 				return oDescriptorVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
 			}).then(function() {
-				assert.ok(_oDescriptorVariant.getDefinition().content[0].texts['a.id_sap.app.subTitle'], 'Initial empty text key replaced');
-				assert.ok(!_oDescriptorVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oDescriptorVariant.getDefinition().content[0].texts['a.id_sap.app.subTitle'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+				assert.ok(_oDescriptorVariant.getDefinition().content[0].texts["a.id_sap.app.subTitle"], "Initial empty text key replaced");
+				assert.ok(!_oDescriptorVariant.getDefinition().content[0].texts[""], "Initial empty text key removed ");
+				assert.deepEqual(_oDescriptorVariant.getDefinition().content[0].texts["a.id_sap.app.subTitle"], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 			});
 		});
 
@@ -978,12 +978,12 @@ sap.ui.define([
 				_oDescriptorVariant = oDescriptorVariant;
 				return oDescriptorVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
 			}).then(function() {
-				assert.ok(_oDescriptorVariant.getDefinition().content[0].content.libraries['descriptor.mocha133'], 'Library is added');
-				assert.deepEqual(_oDescriptorVariant.getDefinition().content[0].content, mParameter, 'Added library properties are equal to parameters set in factory method');
+				assert.ok(_oDescriptorVariant.getDefinition().content[0].content.libraries["descriptor.mocha133"], "Library is added");
+				assert.deepEqual(_oDescriptorVariant.getDefinition().content[0].content, mParameter, "Added library properties are equal to parameters set in factory method");
 			});
 		});
 
-		QUnit.test("create_ui5_addLibraries failure", function (assert) {
+		QUnit.test("create_ui5_addLibraries failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_addLibraries({
 					libraries: "a.id"
@@ -1017,9 +1017,9 @@ sap.ui.define([
 				_oDescriptorVariant = oDescriptorVariant;
 				return oDescriptorVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
 			}).then(function() {
-				assert.ok(_oDescriptorVariant.getDefinition().content[0].texts['a.id_sap.app.shortTitle'], 'Initial empty text key replaced');
-				assert.ok(!_oDescriptorVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oDescriptorVariant.getDefinition().content[0].texts['a.id_sap.app.shortTitle'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+				assert.ok(_oDescriptorVariant.getDefinition().content[0].texts["a.id_sap.app.shortTitle"], "Initial empty text key replaced");
+				assert.ok(!_oDescriptorVariant.getDefinition().content[0].texts[""], "Initial empty text key removed ");
+				assert.deepEqual(_oDescriptorVariant.getDefinition().content[0].texts["a.id_sap.app.shortTitle"], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 			});
 		});
 
@@ -1049,9 +1049,9 @@ sap.ui.define([
 				_oDescriptorVariant = oDescriptorVariant;
 				return oDescriptorVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
 			}).then(function() {
-				assert.ok(_oDescriptorVariant.getDefinition().content[0].texts['a.id_sap.app.description'], 'Initial empty text key replaced');
-				assert.ok(!_oDescriptorVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oDescriptorVariant.getDefinition().content[0].texts['a.id_sap.app.description'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+				assert.ok(_oDescriptorVariant.getDefinition().content[0].texts["a.id_sap.app.description"], "Initial empty text key replaced");
+				assert.ok(!_oDescriptorVariant.getDefinition().content[0].texts[""], "Initial empty text key removed ");
+				assert.deepEqual(_oDescriptorVariant.getDefinition().content[0].texts["a.id_sap.app.description"], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 			});
 		});
 
@@ -1080,9 +1080,9 @@ sap.ui.define([
 				_oDescriptorVariant = oDescriptorVariant;
 				return oDescriptorVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
 			}).then(function() {
-				assert.ok(_oDescriptorVariant.getDefinition().content[0].texts['a.id_sap.app.info'], 'Initial empty text key replaced');
-				assert.ok(!_oDescriptorVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oDescriptorVariant.getDefinition().content[0].texts['a.id_sap.app.info'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+				assert.ok(_oDescriptorVariant.getDefinition().content[0].texts["a.id_sap.app.info"], "Initial empty text key replaced");
+				assert.ok(!_oDescriptorVariant.getDefinition().content[0].texts[""], "Initial empty text key removed ");
+				assert.deepEqual(_oDescriptorVariant.getDefinition().content[0].texts["a.id_sap.app.info"], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 			});
 		});
 
@@ -1095,7 +1095,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_Ach failure", function (assert) {
+		QUnit.test("create_app_Ach failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_setAch({
 					AchH: {}
@@ -1141,7 +1141,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_setKeywords failure", function (assert) {
+		QUnit.test("create_app_setKeywords failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_setKeywords({
 					keywords: {}
@@ -1165,7 +1165,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_setDestination failure", function (assert) {
+		QUnit.test("create_app_setDestination failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_setDestination({
 					destinations: {}
@@ -1187,7 +1187,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_addTechnicalAttributes failure", function (assert) {
+		QUnit.test("create_app_addTechnicalAttributes failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addTechnicalAttributes({
 					technicalAttributes: {}
@@ -1209,7 +1209,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_removeTechnicalAttributes failure", function (assert) {
+		QUnit.test("create_app_removeTechnicalAttributes failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeTechnicalAttributes({
 					technicalAttributes: {}
@@ -1231,7 +1231,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_addCdsViews failure", function (assert) {
+		QUnit.test("create_app_addCdsViews failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addCdsViews({
 					cdsViews: {}
@@ -1253,7 +1253,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_app_removeCdsViews failure", function (assert) {
+		QUnit.test("create_app_removeCdsViews failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeCdsViews({
 					cdsViews: {}
@@ -1277,7 +1277,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_flp_setConfig failure", function (assert) {
+		QUnit.test("create_flp_setConfig failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_flp_setConfig({
 					configs: { }
@@ -1304,7 +1304,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_ui5_addNewModel failure", function (assert) {
+		QUnit.test("appdescr_ui5_addNewModel failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_addNewModel({
 					modelId: {}
@@ -1316,7 +1316,6 @@ sap.ui.define([
 				});
 			});
 		});
-
 
 		QUnit.test("appdescr_ui5_removeModel", function(assert) {
 			return DescriptorInlineChangeFactory.create_ui5_removeModel({
@@ -1327,7 +1326,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_ui5_removeModel failure", function (assert) {
+		QUnit.test("appdescr_ui5_removeModel failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_removeModel({
 					modelId: {}
@@ -1340,7 +1339,6 @@ sap.ui.define([
 			});
 		});
 
-
 		QUnit.test("appdescr_ui5_addNewModelEnhanceWith", function(assert) {
 			return DescriptorInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
 				modelId: "customer.existingModelId"
@@ -1350,7 +1348,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_ui5_addNewModelEnhanceWith failure", function (assert) {
+		QUnit.test("appdescr_ui5_addNewModelEnhanceWith failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
 					modelId: {}
@@ -1377,7 +1375,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_ui5_replaceComponentUsage failure", function (assert) {
+		QUnit.test("appdescr_ui5_replaceComponentUsage failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_replaceComponentUsage({
 					componentUsageId: {}
@@ -1399,7 +1397,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_ui5_setMinUI5Version failure", function (assert) {
+		QUnit.test("appdescr_ui5_setMinUI5Version failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_setMinUI5Version({
 					minUI5Version: {}
@@ -1433,7 +1431,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_smb_addNamespace failure", function (assert) {
+		QUnit.test("appdescr_smb_addNamespace failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_smb_addNamespace({
 					smartBusinessAppId: {}
@@ -1465,7 +1463,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_smb_changeNamespace failure", function (assert) {
+		QUnit.test("appdescr_smb_changeNamespace failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_smb_changeNamespace({
 					smartBusinessAppId: {}
@@ -1495,7 +1493,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("appdescr_ui_generic_app_setMainPage failure", function (assert) {
+		QUnit.test("appdescr_ui_generic_app_setMainPage failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui_generic_app_setMainPage({
 					pageId: {}
@@ -1516,7 +1514,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_ui_setIcon failure", function (assert) {
+		QUnit.test("create_ui_setIcon failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui_setIcon({
 					iconId: "a.string"
@@ -1537,7 +1535,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_ui_setDeviceTypes failure", function (assert) {
+		QUnit.test("create_ui_setDeviceTypes failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui_setDeviceTypes({
 					types: { desktop: true, tablet: true, phone: true }
@@ -1558,7 +1556,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_url_setUri failure", function (assert) {
+		QUnit.test("create_url_setUri failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_url_setUri({
 					uri: { }
@@ -1574,7 +1572,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_fiori_setRegistrationIds", function (assert) {
+		QUnit.test("create_fiori_setRegistrationIds", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_fiori_setRegistrationIds({
 					registrationIds: 1.0
@@ -1596,7 +1594,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("create_fiori_setAbstract failure", function (assert) {
+		QUnit.test("create_fiori_setAbstract failure", function(assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_fiori_setAbstract({
 					"abstract": []
@@ -1619,7 +1617,6 @@ sap.ui.define([
 			});
 		});
 	});
-
 
 	QUnit.module("DescriptorVariant", {
 		beforeEach: function() {
@@ -1694,7 +1691,7 @@ sap.ui.define([
 				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
-				assert.equal(oDescriptorVariant._getMap().packageName, "");//check the default
+				assert.equal(oDescriptorVariant._getMap().packageName, "");// check the default
 				oDescriptorVariant_ = oDescriptorVariant;
 				return oDescriptorVariant.setPackage("/ABC/DEFGH_IJKL12345");
 			}).then(function() {
@@ -1707,7 +1704,7 @@ sap.ui.define([
 				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
-				assert.equal(oDescriptorVariant._getMap().packageName, "");//check the default
+				assert.equal(oDescriptorVariant._getMap().packageName, "");// check the default
 				return oDescriptorVariant.setPackage("SomePackage_WrongFormat");
 			}).then(
 				function() {
@@ -1757,7 +1754,7 @@ sap.ui.define([
 			return DescriptorVariantFactory.createNew({
 				id: "a.id",
 				reference: "a.reference"
-				//no layer -> default to customer expected
+				// no layer -> default to customer expected
 			}).then(function(oDescriptorVariant) {
 				assert.notEqual(oDescriptorVariant, null);
 				assert.equal(oDescriptorVariant.getId(), "a.id");
@@ -1770,84 +1767,84 @@ sap.ui.define([
 
 		QUnit.test("createNew failure", function(assert) {
 			return DescriptorVariantFactory.createNew({})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
-				})
-				.then(function() {
-					return DescriptorVariantFactory.createNew({
-						id: "a.id"
-					});
-				})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
-				})
-				.then(function() {
-					return DescriptorVariantFactory.createNew({
-						reference: "a.reference"
-					});
-				})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
-				})
-				.then(function() {
-					return DescriptorVariantFactory.createNew({
-						id: 1,
-						reference: "a.reference"
-					});
-				})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
-				})
-				.then(function() {
-					return DescriptorVariantFactory.createNew({
-						id: "a.id",
-						reference: 1
-					});
-				})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
-				})
-				.then(function() {
-					return DescriptorVariantFactory.createNew({
-						id: "a.id",
-						reference: "a.reference",
-						version: 2
-					});
-				})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
-				})
-				.then(function() {
-					return DescriptorVariantFactory.createNew({
-						id: "a.id",
-						reference: "a.reference",
-						layer: true
-					});
-				})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function(sError) {
+				assert.ok(sError);
+			})
+			.then(function() {
+				return DescriptorVariantFactory.createNew({
+					id: "a.id"
 				});
+			})
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function(sError) {
+				assert.ok(sError);
+			})
+			.then(function() {
+				return DescriptorVariantFactory.createNew({
+					reference: "a.reference"
+				});
+			})
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function(sError) {
+				assert.ok(sError);
+			})
+			.then(function() {
+				return DescriptorVariantFactory.createNew({
+					id: 1,
+					reference: "a.reference"
+				});
+			})
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function(sError) {
+				assert.ok(sError);
+			})
+			.then(function() {
+				return DescriptorVariantFactory.createNew({
+					id: "a.id",
+					reference: 1
+				});
+			})
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function(sError) {
+				assert.ok(sError);
+			})
+			.then(function() {
+				return DescriptorVariantFactory.createNew({
+					id: "a.id",
+					reference: "a.reference",
+					version: 2
+				});
+			})
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function(sError) {
+				assert.ok(sError);
+			})
+			.then(function() {
+				return DescriptorVariantFactory.createNew({
+					id: "a.id",
+					reference: "a.reference",
+					layer: true
+				});
+			})
+			.then(function() {
+				assert.notOk("Should never succeed!");
+			})
+			.catch(function(sError) {
+				assert.ok(sError);
+			});
 		});
 
 		QUnit.test("createNew - layer - set to CUSTOMER", function(assert) {
@@ -1856,7 +1853,7 @@ sap.ui.define([
 				reference: "a.reference",
 				layer: Layer.CUSTOMER
 			}).then(function(oDescriptorVariant) {
-				assert.equal(oDescriptorVariant._getMap().layer, 'CUSTOMER');
+				assert.equal(oDescriptorVariant._getMap().layer, "CUSTOMER");
 			});
 		});
 
@@ -1866,7 +1863,7 @@ sap.ui.define([
 				reference: "a.reference",
 				layer: Layer.CUSTOMER_BASE
 			}).then(function(oDescriptorVariant) {
-				assert.equal(oDescriptorVariant._getMap().layer, 'CUSTOMER_BASE');
+				assert.equal(oDescriptorVariant._getMap().layer, "CUSTOMER_BASE");
 			});
 		});
 
@@ -1876,7 +1873,7 @@ sap.ui.define([
 				reference: "a.reference",
 				layer: Layer.PARTNER
 			}).then(function(oDescriptorVariant) {
-				assert.equal(oDescriptorVariant._getMap().layer, 'PARTNER');
+				assert.equal(oDescriptorVariant._getMap().layer, "PARTNER");
 			});
 		});
 
@@ -1886,7 +1883,7 @@ sap.ui.define([
 				reference: "a.reference",
 				layer: Layer.VENDOR
 			}).then(function(oDescriptorVariant) {
-				assert.equal(oDescriptorVariant._getMap().layer, 'VENDOR');
+				assert.equal(oDescriptorVariant._getMap().layer, "VENDOR");
 			});
 		});
 
@@ -1982,9 +1979,9 @@ sap.ui.define([
 				new DescriptorChangeFactory().createNew(
 					"a.reference",
 					oDescriptorInlineChange
-					//no sLayer -> default is 'CUSTOMER'
+					// no sLayer -> default is 'CUSTOMER'
 				).then(function(oDescriptorChange) {
-					assert.equal(oDescriptorChange._mChangeFile.layer, 'CUSTOMER');
+					assert.equal(oDescriptorChange._mChangeFile.layer, "CUSTOMER");
 				});
 			});
 		});
@@ -1994,9 +1991,9 @@ sap.ui.define([
 				new DescriptorChangeFactory().createNew(
 					"a.reference",
 					oDescriptorInlineChange,
-					'VENDOR'
+					"VENDOR"
 				).then(function(oDescriptorChange) {
-					assert.equal(oDescriptorChange._mChangeFile.layer, 'VENDOR');
+					assert.equal(oDescriptorChange._mChangeFile.layer, "VENDOR");
 				});
 			});
 		});
@@ -2006,9 +2003,9 @@ sap.ui.define([
 				new DescriptorChangeFactory().createNew(
 					"a.reference",
 					oDescriptorInlineChange,
-					'CUSTOMER'
+					"CUSTOMER"
 				).then(function(oDescriptorChange) {
-					assert.equal(oDescriptorChange._mChangeFile.layer, 'CUSTOMER');
+					assert.equal(oDescriptorChange._mChangeFile.layer, "CUSTOMER");
 				});
 			});
 		});
@@ -2018,9 +2015,9 @@ sap.ui.define([
 				new DescriptorChangeFactory().createNew(
 					"a.reference",
 					oDescriptorInlineChange,
-					'CUSTOMER_BASE'
+					"CUSTOMER_BASE"
 				).then(function(oDescriptorChange) {
-					assert.equal(oDescriptorChange._mChangeFile.layer, 'CUSTOMER_BASE');
+					assert.equal(oDescriptorChange._mChangeFile.layer, "CUSTOMER_BASE");
 				});
 			});
 		});
@@ -2030,9 +2027,9 @@ sap.ui.define([
 				new DescriptorChangeFactory().createNew(
 					"a.reference",
 					oDescriptorInlineChange,
-					'PARTNER'
+					"PARTNER"
 				).then(function(oDescriptorChange) {
-					assert.equal(oDescriptorChange._mChangeFile.layer, 'PARTNER');
+					assert.equal(oDescriptorChange._mChangeFile.layer, "PARTNER");
 				});
 			});
 		});
@@ -2042,7 +2039,7 @@ sap.ui.define([
 				new DescriptorChangeFactory().createNew(
 					"a.reference",
 					oDescriptorInlineChange,
-					'CUSTOMER'
+					"CUSTOMER"
 				).then(function(oDescriptorChange) {
 					var mExpectedPartJson = {
 						reference: "a.reference",
@@ -2098,10 +2095,10 @@ sap.ui.define([
 
 		QUnit.test("createNew - with tool", function(assert) {
 			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
-				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange, 'VENDOR', undefined, 'RTA');
+				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange, "VENDOR", undefined, "RTA");
 			}).then(function(oDescriptorChange) {
 				assert.equal(oDescriptorChange._mChangeFile.layer, Layer.VENDOR);
-				assert.equal(oDescriptorChange._mChangeFile.generator, 'RTA');
+				assert.equal(oDescriptorChange._mChangeFile.generator, "RTA");
 			});
 		});
 	});
@@ -2193,7 +2190,7 @@ sap.ui.define([
 				return oDescriptorVariant.submit().then(function(oResponse) {
 					assert.ok(oStubOpenTransportSelection.calledOnce);
 					assert.notEqual(oResponse, null);
-					assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/a.id');
+					assert.equal(that._fStubSend.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/a.id");
 				});
 			});
 		});
@@ -2208,7 +2205,7 @@ sap.ui.define([
 					assert.ok(oStubOpenTransportSelection.calledOnce);
 					assert.notEqual(oResponse, null);
 					assert.equal(that._fStubSend.callCount, 2);
-					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=aTransport');
+					assert.equal(that._fStubSend.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?changelist=aTransport");
 				});
 			});
 		});
@@ -2248,7 +2245,7 @@ sap.ui.define([
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?sap-language=EN');
+				assert.equal(that._fStubSend.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?sap-language=EN");
 			});
 		});
 
@@ -2264,7 +2261,7 @@ sap.ui.define([
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN');
+				assert.equal(that._fStubSend.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN");
 			});
 		});
 
@@ -2272,28 +2269,28 @@ sap.ui.define([
 			var that = this;
 			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: ""});
 			return DescriptorVariantFactory.createForExisting("a.id")
-				.then(function(oDescriptorVariant) {
-					return oDescriptorVariant.submit();
-				}).then(function(oResponse) {
-					assert.ok(oStubOpenTransportSelection.calledOnce);
-					assert.notEqual(oResponse, null);
-					assert.equal(that._fStubSend.callCount, 2);
-					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?sap-language=EN');
-				});
+			.then(function(oDescriptorVariant) {
+				return oDescriptorVariant.submit();
+			}).then(function(oResponse) {
+				assert.ok(oStubOpenTransportSelection.calledOnce);
+				assert.notEqual(oResponse, null);
+				assert.equal(that._fStubSend.callCount, 2);
+				assert.equal(that._fStubSend.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?sap-language=EN");
+			});
 		});
 
 		QUnit.test("delete - submit", function(assert) {
 			var that = this;
 			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: ""});
 			return DescriptorVariantFactory.createDeletion("a.id")
-				.then(function(oDescriptorVariant) {
-					return oDescriptorVariant.submit();
-				}).then(function(oResponse) {
-					assert.ok(oStubOpenTransportSelection.calledOnce);
-					assert.notEqual(oResponse, null);
-					assert.equal(that._fStubSend.callCount, 2);
-					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id');
-				});
+			.then(function(oDescriptorVariant) {
+				return oDescriptorVariant.submit();
+			}).then(function(oResponse) {
+				assert.ok(oStubOpenTransportSelection.calledOnce);
+				assert.notEqual(oResponse, null);
+				assert.equal(that._fStubSend.callCount, 2);
+				assert.equal(that._fStubSend.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id");
+			});
 		});
 	});
 
@@ -2329,7 +2326,7 @@ sap.ui.define([
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(this._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?sap-language=EN');
+				assert.equal(this._fStubSend.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?sap-language=EN");
 			}.bind(this));
 		});
 
@@ -2344,7 +2341,7 @@ sap.ui.define([
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(this._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN');
+				assert.equal(this._fStubSend.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN");
 			}.bind(this));
 		});
 
@@ -2354,7 +2351,7 @@ sap.ui.define([
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(this._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION&sap-language=EN');
+				assert.equal(this._fStubSend.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION&sap-language=EN");
 			}.bind(this));
 		});
 
@@ -2364,7 +2361,7 @@ sap.ui.define([
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(this._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION');
+				assert.equal(this._fStubSend.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION");
 			}.bind(this));
 		});
 	});
@@ -2396,7 +2393,7 @@ sap.ui.define([
 				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 			}).then(function(oDescriptorChange) {
 				_oDescriptorChange = oDescriptorChange;
-				assert.equal(_oDescriptorChange._getChangeToSubmit().getRequest(), '');
+				assert.equal(_oDescriptorChange._getChangeToSubmit().getRequest(), "");
 			});
 		});
 	});
@@ -2428,24 +2425,24 @@ sap.ui.define([
 				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 			}).then(function(oDescriptorChange) {
 				_oDescriptorChange = oDescriptorChange;
-				assert.equal(_oDescriptorChange._mChangeFile.layer, 'CUSTOMER');
-				assert.equal(_oDescriptorChange._getChangeToSubmit().getRequest(), '');
+				assert.equal(_oDescriptorChange._mChangeFile.layer, "CUSTOMER");
+				assert.equal(_oDescriptorChange._getChangeToSubmit().getRequest(), "");
 			});
 		});
 
 		QUnit.test("create new - CUSTOMER_BASE layer", function(assert) {
 			var _oDescriptorChange;
 			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
-				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange, 'CUSTOMER_BASE');
+				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange, "CUSTOMER_BASE");
 			}).then(function(oDescriptorChange) {
 				_oDescriptorChange = oDescriptorChange;
-				assert.equal(_oDescriptorChange._mChangeFile.layer, 'CUSTOMER_BASE');
-				assert.equal(_oDescriptorChange._getChangeToSubmit().getRequest(), '');
+				assert.equal(_oDescriptorChange._mChangeFile.layer, "CUSTOMER_BASE");
+				assert.equal(_oDescriptorChange._getChangeToSubmit().getRequest(), "");
 			});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

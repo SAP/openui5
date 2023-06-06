@@ -32,7 +32,7 @@ sap.ui.define([
 		return aChangeAnnotations.indexOf(sAnnotation) >= 0;
 	}
 
-	function checkingDataSourceId (oManifestDataSources, sChangeDataSourceId) {
+	function checkingDataSourceId(oManifestDataSources, sChangeDataSourceId) {
 		if (sChangeDataSourceId) {
 			if (Object.keys(oManifestDataSources).length > 0) {
 				if (!isDataSourceIdExistingInManifest(oManifestDataSources, sChangeDataSourceId)) {
@@ -50,7 +50,7 @@ sap.ui.define([
 		}
 	}
 
-	function checkingAnnotationArray (aChangeAnnotations) {
+	function checkingAnnotationArray(aChangeAnnotations) {
 		if (aChangeAnnotations) {
 			if (aChangeAnnotations.length === 0) {
 				throw new Error("Invalid change format: The 'annotations' array property is empty");
@@ -60,7 +60,7 @@ sap.ui.define([
 		}
 	}
 
-	function checkingAnnotationsInsertPosition (sChangeAnnotationsInsertPosition) {
+	function checkingAnnotationsInsertPosition(sChangeAnnotationsInsertPosition) {
 		if (!(SUPPORTED_INSERT_POSITION.indexOf(sChangeAnnotationsInsertPosition) >= 0) && !(sChangeAnnotationsInsertPosition === undefined)) { // default is 'BEGINNING'
 			throw new Error("The defined insert position '" + sChangeAnnotationsInsertPosition + "' is not supported. The supported insert positions are: " + SUPPORTED_INSERT_POSITION.join("|"));
 		}
@@ -94,24 +94,24 @@ sap.ui.define([
 	}
 
 	function mergeAnnotationArray(oManifestDataSourceId, aChangeAnnotations, sChangeAnnotationsInsertPosition) {
-		if (!oManifestDataSourceId["settings"]) {
-			oManifestDataSourceId["settings"] = {};
+		if (!oManifestDataSourceId.settings) {
+			oManifestDataSourceId.settings = {};
 		}
 
-		if (!oManifestDataSourceId["settings"].annotations) {
-			oManifestDataSourceId["settings"].annotations = [];
+		if (!oManifestDataSourceId.settings.annotations) {
+			oManifestDataSourceId.settings.annotations = [];
 		}
 
-		var aNotExistingAnnotationsInChange = oManifestDataSourceId["settings"].annotations.filter(function(annotation) {
+		var aNotExistingAnnotationsInChange = oManifestDataSourceId.settings.annotations.filter(function(annotation) {
 			return (aChangeAnnotations.indexOf(annotation) < 0);
 		});
 
-		oManifestDataSourceId["settings"].annotations = aNotExistingAnnotationsInChange;
+		oManifestDataSourceId.settings.annotations = aNotExistingAnnotationsInChange;
 
 		if (sChangeAnnotationsInsertPosition === "END") {
-			oManifestDataSourceId["settings"].annotations = oManifestDataSourceId["settings"].annotations.concat(aChangeAnnotations);
+			oManifestDataSourceId.settings.annotations = oManifestDataSourceId.settings.annotations.concat(aChangeAnnotations);
 		} else {
-			oManifestDataSourceId["settings"].annotations = aChangeAnnotations.concat(oManifestDataSourceId["settings"].annotations);
+			oManifestDataSourceId.settings.annotations = aChangeAnnotations.concat(oManifestDataSourceId.settings.annotations);
 		}
 	}
 
@@ -119,7 +119,7 @@ sap.ui.define([
 		Object.assign(oManifestDataSources, oChangeDataSource);
 	}
 
-	function postChecks (oManifestDataSources, oChangeDataSource, aChangeAnnotations) {
+	function postChecks(oManifestDataSources, oChangeDataSource, aChangeAnnotations) {
 		// Further checks after main checks
 		aChangeAnnotations.forEach(function(sAnnotation) {
 			if (!isAnnotationExisting(oManifestDataSources, oChangeDataSource, sAnnotation)) {
@@ -166,9 +166,9 @@ sap.ui.define([
 			checkingAnnotationArray(aChangeAnnotations);
 			checkingAnnotationsInsertPosition(sChangeAnnotationsInsertPosition);
 			checkingAnnotationDataSource(oChangeDataSource, aChangeAnnotations, oChange);
-			postChecks(oManifest["sap.app"]["dataSources"], oChangeDataSource, aChangeAnnotations);
+			postChecks(oManifest["sap.app"].dataSources, oChangeDataSource, aChangeAnnotations);
 
-			merge(oManifest["sap.app"]["dataSources"], sChangeDataSourceId, aChangeAnnotations, sChangeAnnotationsInsertPosition, oChangeDataSource);
+			merge(oManifest["sap.app"].dataSources, sChangeDataSourceId, aChangeAnnotations, sChangeAnnotationsInsertPosition, oChangeDataSource);
 
 			return oManifest;
 		}

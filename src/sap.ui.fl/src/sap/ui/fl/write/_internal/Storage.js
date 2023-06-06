@@ -37,7 +37,7 @@ sap.ui.define([
 	}
 
 	function findConnectorConfigForLayer(sLayer, aConnectors) {
-		var aFilteredConnectors = aConnectors.filter(function (oConnector) {
+		var aFilteredConnectors = aConnectors.filter(function(oConnector) {
 			return oConnector.layers.indexOf("ALL") !== -1 || oConnector.layers.indexOf(sLayer) !== -1;
 		});
 
@@ -55,18 +55,18 @@ sap.ui.define([
 	}
 
 	function _sendLoadFeaturesToConnector(aConnectors) {
-		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
+		var aConnectorPromises = aConnectors.map(function(oConnectorConfig) {
 			return oConnectorConfig.writeConnectorModule.loadFeatures({url: oConnectorConfig.url})
-				.then(function (oFeatures) {
-					return {
-						features: oFeatures,
-						layers: oConnectorConfig.layers
-					};
-				})
-				.catch(StorageUtils.logAndResolveDefault.bind(null, {
-					features: {},
+			.then(function(oFeatures) {
+				return {
+					features: oFeatures,
 					layers: oConnectorConfig.layers
-				}, oConnectorConfig, "loadFeatures"));
+				};
+			})
+			.catch(StorageUtils.logAndResolveDefault.bind(null, {
+				features: {},
+				layers: oConnectorConfig.layers
+			}, oConnectorConfig, "loadFeatures"));
 		});
 
 		return Promise.all(aConnectorPromises);
@@ -83,22 +83,22 @@ sap.ui.define([
 			return Promise.reject("No layer was provided");
 		}
 		return _getWriteConnectors()
-			.then(findConnectorConfigForLayer.bind(this, sLayer));
+		.then(findConnectorConfigForLayer.bind(this, sLayer));
 	}
 
 	function _validateDraftScenario(mPropertyBag) {
 		if (mPropertyBag.draft) {
-			return new Promise(function (resolve, reject) {
+			return new Promise(function(resolve, reject) {
 				// no loop of classes included since loadFeatures is not using executeActionsByName
-				sap.ui.require(["sap/ui/fl/write/api/FeaturesAPI"], function (FeaturesAPI) {
+				sap.ui.require(["sap/ui/fl/write/api/FeaturesAPI"], function(FeaturesAPI) {
 					FeaturesAPI.isVersioningEnabled(mPropertyBag.layer)
-						.then(function (bDraftEnabled) {
-							if (bDraftEnabled) {
-								resolve();
-							} else {
-								reject("Draft is not supported for the given layer: " + mPropertyBag.layer);
-							}
-						});
+					.then(function(bDraftEnabled) {
+						if (bDraftEnabled) {
+							resolve();
+						} else {
+							reject("Draft is not supported for the given layer: " + mPropertyBag.layer);
+						}
+					});
 				});
 			});
 		}
@@ -213,12 +213,12 @@ sap.ui.define([
 
 	function _executeActionByName(sActionName, mPropertyBag) {
 		return _validateDraftScenario(mPropertyBag)
-			.then(_getConnectorConfigByLayer.bind(undefined, mPropertyBag.layer))
-			.then(function (oConnectorConfig) {
-				mPropertyBag.url = oConnectorConfig.url;
-				var oConnector = ObjectPath.get(sActionName, oConnectorConfig.writeConnectorModule);
-				return oConnector.call(oConnectorConfig.writeConnectorModule, mPropertyBag);
-			});
+		.then(_getConnectorConfigByLayer.bind(undefined, mPropertyBag.layer))
+		.then(function(oConnectorConfig) {
+			mPropertyBag.url = oConnectorConfig.url;
+			var oConnector = ObjectPath.get(sActionName, oConnectorConfig.writeConnectorModule);
+			return oConnector.call(oConnectorConfig.writeConnectorModule, mPropertyBag);
+		});
 	}
 
 	var Storage = {};
@@ -390,8 +390,8 @@ sap.ui.define([
 	 */
 	Storage.loadFeatures = function() {
 		return _getWriteConnectors()
-			.then(_sendLoadFeaturesToConnector)
-			.then(StorageFeaturesMerger.mergeResults);
+		.then(_sendLoadFeaturesToConnector)
+		.then(StorageFeaturesMerger.mergeResults);
 	};
 
 	/**
@@ -418,26 +418,26 @@ sap.ui.define([
 	Storage.contextBasedAdaptation = {
 		create: function(mPropertyBag) {
 			return _getWriteConnectors()
-				.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.create", mPropertyBag));
+			.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.create", mPropertyBag));
 		},
 		reorder: function(mPropertyBag) {
 			return _getWriteConnectors()
-				.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.reorder", mPropertyBag));
+			.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.reorder", mPropertyBag));
 		},
 		update: function(mPropertyBag) {
 			return _getWriteConnectors()
-				.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.update", mPropertyBag));
+			.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.update", mPropertyBag));
 		},
 		load: function(mPropertyBag) {
 			return _getWriteConnectors()
-				.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.load", mPropertyBag));
+			.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.load", mPropertyBag));
 		},
 		writeChange: function(mPropertyBag) {
 			return Storage.write(mPropertyBag);
 		},
 		remove: function(mPropertyBag) {
 			return _getWriteConnectors()
-				.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.remove", mPropertyBag));
+			.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.remove", mPropertyBag));
 		}
 	};
 
@@ -452,9 +452,9 @@ sap.ui.define([
 		 * @returns {Promise<sap.ui.fl.Version[]>} Promise resolving with a list of versions if available;
 		 * rejects if an error occurs or the layer does not support draft handling
 		 */
-		load: function (mPropertyBag) {
+		load: function(mPropertyBag) {
 			return _getWriteConnectors()
-				.then(_executeActionByName.bind(undefined, "versions.load", mPropertyBag));
+			.then(_executeActionByName.bind(undefined, "versions.load", mPropertyBag));
 		},
 
 		/**
@@ -467,9 +467,9 @@ sap.ui.define([
 		 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the activated version;
 		 * rejects if an error occurs or the layer does not support draft handling
 		 */
-		activate: function (mPropertyBag) {
+		activate: function(mPropertyBag) {
 			return _getWriteConnectors()
-				.then(_executeActionByName.bind(undefined, "versions.activate", mPropertyBag));
+			.then(_executeActionByName.bind(undefined, "versions.activate", mPropertyBag));
 		},
 
 		/**
@@ -481,12 +481,12 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolving after the draft is discarded;
 		 * rejects if an error occurs or the layer does not support draft handling
 		 */
-		discardDraft: function (mPropertyBag) {
+		discardDraft: function(mPropertyBag) {
 			return _getWriteConnectors()
-				.then(_executeActionByName.bind(undefined, "versions.discardDraft", mPropertyBag));
+			.then(_executeActionByName.bind(undefined, "versions.discardDraft", mPropertyBag));
 		},
 
-		publish: function (mPropertyBag) {
+		publish: function(mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "versions.publish", mPropertyBag));
 		}
@@ -502,10 +502,10 @@ sap.ui.define([
 		 * @returns {Promise} Resolving after the languages are retrieved;
 		 * rejects if an error occurs
 		 */
-		getSourceLanguages: function (mPropertyBag) {
+		getSourceLanguages: function(mPropertyBag) {
 			// TODO: cache the request & invalidate it in case of a writing operation
 			return _getWriteConnectors()
-				.then(_executeActionByName.bind(undefined, "translation.getSourceLanguages", mPropertyBag));
+			.then(_executeActionByName.bind(undefined, "translation.getSourceLanguages", mPropertyBag));
 		},
 
 		/**
@@ -519,7 +519,7 @@ sap.ui.define([
 		 * @returns {Promise} Resolving after the languages are retrieved;
 		 * rejects if an error occurs
 		 */
-		getTexts: function (mPropertyBag) {
+		getTexts: function(mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "translation.getTexts", mPropertyBag));
 		},
@@ -533,7 +533,7 @@ sap.ui.define([
 		 * @returns {Promise} Resolves after the file was uploaded;
 		 * rejects if an error occurs or the parameter is missing
 		 */
-		postTranslationTexts: function (mPropertyBag) {
+		postTranslationTexts: function(mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "translation.postTranslationTexts", mPropertyBag));
 		}

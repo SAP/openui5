@@ -286,7 +286,7 @@ sap.ui.define([
 			if (oUpdateCondenserInfo) {
 				ObjectPath.set(aPath, oUpdateCondenserInfo, mReducedChanges[sAffectedControlId]);
 				delete mReducedChanges[sUpdateControlId][CondenserUtils.NOT_INDEX_RELEVANT]
-					[CondenserClassification.Update][oCondenserInfo.uniqueKey];
+				[CondenserClassification.Update][oCondenserInfo.uniqueKey];
 			}
 		}
 		return mReducedChanges[sAffectedControlId];
@@ -352,11 +352,11 @@ sap.ui.define([
 			if (oCondenserInfo !== undefined) {
 				addType(oCondenserInfo);
 				return addClassifiedChange(mTypes, mUIReconstructions, aIndexRelatedChanges, oCondenserInfo, oChange)
-					.then(function() {
-						if (oCondenserInfo.update) {
-							condenseUpdateChange(mTypes, oCondenserInfo, oChange);
-						}
-					});
+				.then(function() {
+					if (oCondenserInfo.update) {
+						condenseUpdateChange(mTypes, oCondenserInfo, oChange);
+					}
+				});
 			}
 			addUnclassifiedChange(mTypes, UNCLASSIFIED, oChange);
 			mReducedChanges[UNCLASSIFIED] = true;

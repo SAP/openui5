@@ -187,7 +187,7 @@ sap.ui.define([
 				this.fnAddPreparedChangeSpy = sandbox.spy(this.oFlexController, "addPreparedChange");
 				this.fnApplyChangeSpy = sandbox.spy(ChangesWriteAPI, "apply");
 
-				//registration is triggered by instantiation of XML View above
+				// registration is triggered by instantiation of XML View above
 				return ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap");
 			}.bind(this)).then(function() {
 				// register all ChangeHandlers again with modified default layer permissions
@@ -239,25 +239,25 @@ sap.ui.define([
 		QUnit.test("when adding multiple changes at once", function(assert) {
 			this.fnApplyChangeSpy.restore();
 			var fnApplyChangeStub = sandbox.stub(ChangesWriteAPI, "apply")
-				.callsFake(function() {
-					assert.strictEqual(
-						this.fnAddPreparedChangeSpy.callCount,
-						2,
-						"Both changes have been created and added before one is applied"
-					);
-					return {success: true};
-				}.bind(this));
+			.callsFake(function() {
+				assert.strictEqual(
+					this.fnAddPreparedChangeSpy.callCount,
+					2,
+					"Both changes have been created and added before one is applied"
+				);
+				return {success: true};
+			}.bind(this));
 
 			return ControlPersonalizationWriteAPI.add({
 				changes: [this.mMoveChangeData1, this.mMoveChangeData2]
 			})
-				.then(function() {
-					assert.ok(
-						this.fnAddPreparedChangeSpy.calledBefore(fnApplyChangeStub),
-						"then the changes are created before they are applied"
-					);
-					assert.strictEqual(fnApplyChangeStub.callCount, 2, "ChangesWriteAPI.apply has been called twice");
-				}.bind(this));
+			.then(function() {
+				assert.ok(
+					this.fnAddPreparedChangeSpy.calledBefore(fnApplyChangeStub),
+					"then the changes are created before they are applied"
+				);
+				assert.strictEqual(fnApplyChangeStub.callCount, 2, "ChangesWriteAPI.apply has been called twice");
+			}.bind(this));
 		});
 
 		QUnit.test("when calling 'add' with three changes, one with an invalid, one without and the other with a valid changeSpecificData", function(assert) {
@@ -391,20 +391,20 @@ sap.ui.define([
 
 		QUnit.test("when calling 'add' with 'ignoreVariantManagement' property set, for change contents with and without variantReferences and no variant model", function(assert) {
 			sandbox.stub(this.oComp, "getModel")
-				.callThrough()
-				.withArgs(ControlVariantApplyAPI.getVariantModelName())
-				.returns(undefined);
+			.callThrough()
+			.withArgs(ControlVariantApplyAPI.getVariantModelName())
+			.returns(undefined);
 			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
 			return ControlPersonalizationWriteAPI.add({
 				changes: [this.mMoveChangeData1, this.mRenameChangeData1],
 				ignoreVariantManagement: true
 			})
-				.then(function(aSuccessfulChanges) {
-					assert.equal(this.fnLogErrorStub.callCount, 0, "no error occurred");
-					assert.equal(this.fnApplyChangeSpy.callCount, 2, "ChangesWriteAPI.apply was called twice");
-					assert.strictEqual(aSuccessfulChanges.length, 2, "then all passed change contents were applied successfully");
-					assert.notOk(aSuccessfulChanges[0].getVariantReference(), "then variantReference property is deleted for the change, where it was preset");
-				}.bind(this));
+			.then(function(aSuccessfulChanges) {
+				assert.equal(this.fnLogErrorStub.callCount, 0, "no error occurred");
+				assert.equal(this.fnApplyChangeSpy.callCount, 2, "ChangesWriteAPI.apply was called twice");
+				assert.strictEqual(aSuccessfulChanges.length, 2, "then all passed change contents were applied successfully");
+				assert.notOk(aSuccessfulChanges[0].getVariantReference(), "then variantReference property is deleted for the change, where it was preset");
+			}.bind(this));
 		});
 
 		QUnit.test("when calling 'add' without any changes", function(assert) {
@@ -461,9 +461,9 @@ sap.ui.define([
 
 			return ControlPersonalizationWriteAPI.save({selector: {appComponent: this.oComp}, changes: aSuccessfulChanges})
 
-				.then(function() {
-					assert.notOk(oSaveStub.calledOnce, "then FlexController.saveSequenceOfDirtyChanges is not called");
-				});
+			.then(function() {
+				assert.notOk(oSaveStub.calledOnce, "then FlexController.saveSequenceOfDirtyChanges is not called");
+			});
 		});
 
 		QUnit.test("When save() is called with an array of changes and a valid component and an invalid VM control on the page", function(assert) {
@@ -496,14 +496,14 @@ sap.ui.define([
 			return ControlPersonalizationWriteAPI.add({
 				changes: [this.mMoveChangeData1, this.mMoveChangeData2]
 			})
-				.then(function() {
-					assert.ok(fnCallback.calledOnce, "then the callback is called");
-					assert.strictEqual(
-						fnCallback.getCall(0).args[0].length,
-						2,
-						"then the callback is called with both personalization changes"
-					);
-				});
+			.then(function() {
+				assert.ok(fnCallback.calledOnce, "then the callback is called");
+				assert.strictEqual(
+					fnCallback.getCall(0).args[0].length,
+					2,
+					"then the callback is called with both personalization changes"
+				);
+			});
 		});
 
 		QUnit.test("when attaching and later detaching a change creation listener", function(assert) {
@@ -514,9 +514,9 @@ sap.ui.define([
 			return ControlPersonalizationWriteAPI.add({
 				changes: [this.mMoveChangeData1]
 			})
-				.then(function() {
-					assert.ok(fnCallback.notCalled, "then the callback is not called");
-				});
+			.then(function() {
+				assert.ok(fnCallback.notCalled, "then the callback is not called");
+			});
 		});
 
 		QUnit.test("when attaching multiple change creation listener", function(assert) {
@@ -528,28 +528,28 @@ sap.ui.define([
 			return ControlPersonalizationWriteAPI.add({
 				changes: [this.mMoveChangeData1]
 			})
-				.then(function() {
-					assert.ok(fnCallback.calledOnce, "then the first callback is called");
-					assert.ok(fnCallback2.calledOnce, "then the second callback is called");
-				});
+			.then(function() {
+				assert.ok(fnCallback.calledOnce, "then the first callback is called");
+				assert.ok(fnCallback2.calledOnce, "then the second callback is called");
+			});
 		});
 
 		QUnit.test("when attaching change creation listeners for different flex references", function(assert) {
 			var fnCallback = sandbox.spy();
 			var fnCallback2 = sandbox.spy();
 			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference")
-				.callThrough()
-				.onFirstCall().returns("someDifferentReference");
+			.callThrough()
+			.onFirstCall().returns("someDifferentReference");
 			ControlPersonalizationWriteAPI.attachChangeCreation("someControl", fnCallback2);
 			ControlPersonalizationWriteAPI.attachChangeCreation(this.oObjectPageLayout, fnCallback);
 
 			return ControlPersonalizationWriteAPI.add({
 				changes: [this.mMoveChangeData1]
 			})
-				.then(function() {
-					assert.ok(fnCallback.calledOnce, "then the first callback is called");
-					assert.ok(fnCallback2.notCalled, "then the callback for the different reference is not called");
-				});
+			.then(function() {
+				assert.ok(fnCallback.calledOnce, "then the first callback is called");
+				assert.ok(fnCallback2.notCalled, "then the callback for the different reference is not called");
+			});
 		});
 	});
 
@@ -668,7 +668,7 @@ sap.ui.define([
 				this.fnLogErrorStub = sandbox.stub(Log, "error");
 				this.fnApplyChangeSpy = sandbox.spy(ChangesWriteAPI, "apply");
 
-				//registration is triggered by instantiation of XML View above
+				// registration is triggered by instantiation of XML View above
 				ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(done);
 			}.bind(this));
 		},
@@ -727,11 +727,11 @@ sap.ui.define([
 	function createResetStub(oAppComponent) {
 		var fnResetStub = sandbox.stub();
 		sandbox.stub(FlexControllerFactory, "createForControl")
-			.callThrough()
-			.withArgs(oAppComponent)
-			.returns({
-				resetChanges: fnResetStub.resolves()
-			});
+		.callThrough()
+		.withArgs(oAppComponent)
+		.returns({
+			resetChanges: fnResetStub.resolves()
+		});
 
 		return fnResetStub;
 	}
@@ -767,9 +767,9 @@ sap.ui.define([
 			var fnResetStub = createResetStub(this.oAppComponent);
 
 			return ControlPersonalizationWriteAPI.reset({selectors: this.aControls, changeTypes: aChangeTypes})
-				.then(function() {
-					assert.ok(fnResetStub.calledWith(Layer.USER, undefined, this.oAppComponent, this.getControlIds(), aChangeTypes), "then FlexController.reset is called with the passed selectors and change types");
-				}.bind(this));
+			.then(function() {
+				assert.ok(fnResetStub.calledWith(Layer.USER, undefined, this.oAppComponent, this.getControlIds(), aChangeTypes), "then FlexController.reset is called with the passed selectors and change types");
+			}.bind(this));
 		});
 
 		QUnit.test("When reset() is called with an array of control IDs which are partially local and partially not", function(assert) {
@@ -780,9 +780,9 @@ sap.ui.define([
 			var fnResetStub = createResetStub(this.oAppComponent);
 
 			return ControlPersonalizationWriteAPI.reset({selectors: this.aControls, changeTypes: aChangeTypes})
-				.then(function() {
-					assert.ok(fnResetStub.calledWith(Layer.USER, undefined, this.oAppComponent, ["view--controlId2", "feElementsView::controlId"], aChangeTypes), "then FlexController.reset is called with the passed control IDs and change types");
-				}.bind(this));
+			.then(function() {
+				assert.ok(fnResetStub.calledWith(Layer.USER, undefined, this.oAppComponent, ["view--controlId2", "feElementsView::controlId"], aChangeTypes), "then FlexController.reset is called with the passed control IDs and change types");
+			}.bind(this));
 		});
 
 		QUnit.test("When reset() is called with a control IDs map and for no control ID a control is instantiated but an app component was provided", function(assert) {
@@ -793,9 +793,9 @@ sap.ui.define([
 			var fnResetStub = createResetStub(this.oAppComponent);
 
 			return ControlPersonalizationWriteAPI.reset({selectors: aSelector})
-				.then(function() {
-					assert.ok(fnResetStub.calledWith(Layer.USER, undefined, this.oAppComponent, ["controlId3", "view--controlId4"], undefined), "then FlexController.reset is called with the passed control IDs and change types");
-				}.bind(this));
+			.then(function() {
+				assert.ok(fnResetStub.calledWith(Layer.USER, undefined, this.oAppComponent, ["controlId3", "view--controlId4"], undefined), "then FlexController.reset is called with the passed control IDs and change types");
+			}.bind(this));
 		});
 
 		QUnit.test("When reset() is called with a mixture of control IDs and controls and for no control ID a control", function(assert) {
@@ -804,9 +804,9 @@ sap.ui.define([
 			var fnResetStub = createResetStub(this.oAppComponent);
 
 			return ControlPersonalizationWriteAPI.reset({selectors: aSelectors})
-				.then(function() {
-					assert.ok(fnResetStub.calledWith(Layer.USER, undefined, this.oAppComponent, ["controlId3", "controlId4"], undefined), "then FlexController.reset is called with the passed control IDs and change types");
-				}.bind(this));
+			.then(function() {
+				assert.ok(fnResetStub.calledWith(Layer.USER, undefined, this.oAppComponent, ["controlId3", "controlId4"], undefined), "then FlexController.reset is called with the passed control IDs and change types");
+			}.bind(this));
 		});
 
 		QUnit.test("When reset() is called but FlexState is not initialized", function(assert) {
@@ -817,9 +817,9 @@ sap.ui.define([
 			sandbox.stub(FlexState, "isInitialized").returns(false);
 
 			return ControlPersonalizationWriteAPI.reset({selectors: aSelectors})
-				.then(function() {
-					assert.notOk(fnResetStub.calledOnce, "then FlexController.reset is not called");
-				});
+			.then(function() {
+				assert.notOk(fnResetStub.calledOnce, "then FlexController.reset is not called");
+			});
 		});
 
 		QUnit.test("When reset() is called with an undefined selector array", function(assert) {
@@ -860,16 +860,16 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when called without a property bag", function(assert) {
 			return ControlPersonalizationWriteAPI.restore()
-				.catch(function(sMessage) {
-					assert.equal(sMessage, "No selector was provided", "then a rejection with the correct message was done");
-				});
+			.catch(function(sMessage) {
+				assert.equal(sMessage, "No selector was provided", "then a rejection with the correct message was done");
+			});
 		});
 
 		QUnit.test("when called without a selector", function(assert) {
 			return ControlPersonalizationWriteAPI.restore({})
-				.catch(function(sMessage) {
-					assert.equal(sMessage, "No selector was provided", "then a rejection with the correct message was done");
-				});
+			.catch(function(sMessage) {
+				assert.equal(sMessage, "No selector was provided", "then a rejection with the correct message was done");
+			});
 		});
 
 		QUnit.test("when no app component could be determined", function(assert) {
@@ -878,9 +878,9 @@ sap.ui.define([
 			return ControlPersonalizationWriteAPI.restore({
 				selector: this.oControl
 			})
-				.catch(function(sMessage) {
-					assert.equal(sMessage, "App Component could not be determined", "then a rejection with the correct message was done");
-				});
+			.catch(function(sMessage) {
+				assert.equal(sMessage, "App Component could not be determined", "then a rejection with the correct message was done");
+			});
 		});
 
 		QUnit.test("When FlexState is not initialized", function(assert) {
@@ -895,9 +895,9 @@ sap.ui.define([
 				selector: this.oControl,
 				generator: sGenerator
 			})
-				.then(function() {
-					assert.notOk(oRemoveDirtyChangesSpy.calledOnce, "then FlexController.removeDirtyChanges is not called");
-				});
+			.then(function() {
+				assert.notOk(oRemoveDirtyChangesSpy.calledOnce, "then FlexController.removeDirtyChanges is not called");
+			});
 		});
 
 		QUnit.test("when a restore with a generator was called", function(assert) {

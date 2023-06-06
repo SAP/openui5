@@ -37,18 +37,18 @@ sap.ui.define([
 		var oModifier = mPropertyBag.modifier;
 
 		return Promise.resolve()
-			.then(oModifier.getStashed.bind(oModifier, oControl))
-			.then(function(bRetrievedStashed) {
-				bStashed = bRetrievedStashed;
-				return oModifier.findIndexInParentAggregation(oControl);
-			})
-			.then(function(iOriginalIndex) {
-				this.setChangeRevertData(oChange, bStashed, iOriginalIndex);
-				if (LayerUtils.isDeveloperLayer(oChange.getLayer())) {
-					return oModifier.setStashed(oControl, true);
-				}
-				return oModifier.setVisible(oControl, false);
-			}.bind(this));
+		.then(oModifier.getStashed.bind(oModifier, oControl))
+		.then(function(bRetrievedStashed) {
+			bStashed = bRetrievedStashed;
+			return oModifier.findIndexInParentAggregation(oControl);
+		})
+		.then(function(iOriginalIndex) {
+			this.setChangeRevertData(oChange, bStashed, iOriginalIndex);
+			if (LayerUtils.isDeveloperLayer(oChange.getLayer())) {
+				return oModifier.setStashed(oControl, true);
+			}
+			return oModifier.setVisible(oControl, false);
+		}.bind(this));
 	};
 
 	function fnHandleUnstashedControl(iUnstashedIndex, mRevertData, oUnstashedControl, oModifier) {
@@ -56,12 +56,12 @@ sap.ui.define([
 		if (iUnstashedIndex !== mRevertData.originalIndex) {
 			var oParent = oModifier.getParent(oUnstashedControl);
 			return Promise.return()
-				.then(oModifier.getParentAggregationName.bind(oModifier, oUnstashedControl))
-				.then(function(sRetrievedAggregationName) {
-					sAggregationName = sRetrievedAggregationName;
-					return oModifier.removeAggregation(oParent, sAggregationName, oUnstashedControl);
-				})
-				.then(oModifier.insertAggregation.bind(oModifier, oParent, sAggregationName, oUnstashedControl, mRevertData.originalIndex));
+			.then(oModifier.getParentAggregationName.bind(oModifier, oUnstashedControl))
+			.then(function(sRetrievedAggregationName) {
+				sAggregationName = sRetrievedAggregationName;
+				return oModifier.removeAggregation(oParent, sAggregationName, oUnstashedControl);
+			})
+			.then(oModifier.insertAggregation.bind(oModifier, oParent, sAggregationName, oUnstashedControl, mRevertData.originalIndex));
 		}
 		return Promise.resolve();
 	}
@@ -81,23 +81,23 @@ sap.ui.define([
 		var oModifier = mPropertyBag.modifier;
 
 		return Promise.resolve()
-			.then(function() {
-				if (LayerUtils.isDeveloperLayer(oChange.getLayer())) {
-					var oUnstashedControl = oModifier.setStashed(oControl, mRevertData.originalValue, mPropertyBag.appComponent);
-					if (oUnstashedControl) {
-						return Promise.resolve()
-							.then(oModifier.findIndexInParentAggregation.bind(oModifier, oUnstashedControl))
-							.then(function(iUnstashedIndex) {
-								return fnHandleUnstashedControl(iUnstashedIndex, mRevertData, oUnstashedControl, oModifier);
-							});
-					}
-					return Promise.resolve();
+		.then(function() {
+			if (LayerUtils.isDeveloperLayer(oChange.getLayer())) {
+				var oUnstashedControl = oModifier.setStashed(oControl, mRevertData.originalValue, mPropertyBag.appComponent);
+				if (oUnstashedControl) {
+					return Promise.resolve()
+					.then(oModifier.findIndexInParentAggregation.bind(oModifier, oUnstashedControl))
+					.then(function(iUnstashedIndex) {
+						return fnHandleUnstashedControl(iUnstashedIndex, mRevertData, oUnstashedControl, oModifier);
+					});
 				}
-				return oModifier.setVisible(oControl, !mRevertData.originalValue);
-			})
-			.then(function() {
-				oChange.resetRevertData();
-			});
+				return Promise.resolve();
+			}
+			return oModifier.setVisible(oControl, !mRevertData.originalValue);
+		})
+		.then(function() {
+			oChange.resetRevertData();
+		});
 	};
 
 	/**

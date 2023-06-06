@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
@@ -161,10 +161,10 @@ sap.ui.define([
 			var oPromise2 = oUIChange.addChangeProcessingPromise(States.Operations.REVERT);
 
 			Promise.all([oPromise, oPromise2])
-				.then(function() {
-					assert.ok(true, "the function resolves");
-					done();
-				});
+			.then(function() {
+				assert.ok(true, "the function resolves");
+				done();
+			});
 
 			oUIChange.markFinished();
 			oUIChange.markRevertFinished();
@@ -177,10 +177,10 @@ sap.ui.define([
 			var oPromise2 = oUIChange.addChangeProcessingPromise(States.Operations.REVERT);
 
 			Promise.all([oPromise, oPromise2])
-				.then(function() {
-					assert.ok(true, "the promises were resolved");
-					done();
-				});
+			.then(function() {
+				assert.ok(true, "the promises were resolved");
+				done();
+			});
 
 			oUIChange.markFinished();
 			oUIChange.markRevertFinished();
@@ -199,10 +199,10 @@ sap.ui.define([
 			assert.equal(aPromises.length, 3, "3 promises got added");
 
 			Promise.all(aPromises)
-				.then(function() {
-					assert.ok(true, "the function resolves");
-					done();
-				});
+			.then(function() {
+				assert.ok(true, "the function resolves");
+				done();
+			});
 
 			oUIChange.markFinished();
 			oUIChange.markRevertFinished();
@@ -219,10 +219,10 @@ sap.ui.define([
 			assert.equal(aPromises.length, 2, "2 promises got added");
 
 			Promise.all(aPromises)
-				.then(function() {
-					assert.ok(true, "the function resolves");
-					done();
-				});
+			.then(function() {
+				assert.ok(true, "the function resolves");
+				done();
+			});
 
 			oUIChange.markFinished();
 			oUIChange.markRevertFinished();
@@ -328,7 +328,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

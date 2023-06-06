@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
@@ -27,7 +27,7 @@ sap.ui.define([
 				return this.mSystemInfo;
 			}
 		},
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.stub(Utils, "getUshellContainer").returns(this.mUShellContainer);
 		},
 		afterEach: function() {
@@ -252,7 +252,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

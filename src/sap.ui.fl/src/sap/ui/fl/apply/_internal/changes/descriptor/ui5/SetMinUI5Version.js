@@ -10,7 +10,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-
 	/**
 	 * Descriptor change merger for change type <code>appdescr_ui5_setMinUI5Version</code>.
 	 * Sets minUI5Version to manifest node <code>sap.ui5/dependencies/minUI5Version</code>.
@@ -37,14 +36,13 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
 		applyChange: function(oManifest, oChange) {
-			//TODO: Should existens of minui5version be checked in manifest and change or is the check during deployment enough and I can expect minui5version to be set in both?
+			// TODO: Should existens of minui5version be checked in manifest and change or is the check during deployment enough and I can expect minui5version to be set in both?
 			var vCurrentVersion = new Version(oManifest["sap.ui5"].dependencies.minUI5Version);
 			if (vCurrentVersion.compareTo(oChange.getContent().minUI5Version) <= 0) {
 				oManifest["sap.ui5"].dependencies.minUI5Version = oChange.getContent().minUI5Version;
 			}
 			return oManifest;
 		}
-
 
 	};
 

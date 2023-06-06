@@ -96,7 +96,7 @@ sap.ui.define([
 		return Promise.resolve(oResult);
 	}
 
-	function propagateChangesForAppComponent (oAppComponent) {
+	function propagateChangesForAppComponent(oAppComponent) {
 		// only manifest with type = "application" will fetch changes
 		var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 		var oVariantModel;
@@ -129,17 +129,17 @@ sap.ui.define([
 				componentId: sComponentId,
 				asyncHints: vConfig.asyncHints
 			})
-				.then(propagateChangesForAppComponent.bind(this, oComponent))
-				.then(function() {
-					// update any potential embedded component waiting for this app component
-					if (oEmbeddedComponentsPromises[sComponentId]) {
-						oEmbeddedComponentsPromises[sComponentId].forEach(function(oEmbeddedComponent) {
-							var oVariantModel = oComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
-							oEmbeddedComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
-						});
-						delete oEmbeddedComponentsPromises[sComponentId];
-					}
-				});
+			.then(propagateChangesForAppComponent.bind(this, oComponent))
+			.then(function() {
+				// update any potential embedded component waiting for this app component
+				if (oEmbeddedComponentsPromises[sComponentId]) {
+					oEmbeddedComponentsPromises[sComponentId].forEach(function(oEmbeddedComponent) {
+						var oVariantModel = oComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
+						oEmbeddedComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
+					});
+					delete oEmbeddedComponentsPromises[sComponentId];
+				}
+			});
 			ComponentLifecycleHooks._componentInstantiationPromises.set(oComponent, oReturnPromise);
 
 			return oReturnPromise;

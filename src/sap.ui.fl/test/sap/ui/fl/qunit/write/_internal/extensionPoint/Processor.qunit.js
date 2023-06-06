@@ -1,4 +1,4 @@
-/*global QUnit */
+/* global QUnit */
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
@@ -89,7 +89,7 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[13].getId(), sReference + "---mainView--" + sView + "--button7", "view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[14].getId(), sReference + "---mainView--" + sView + "--button8", "view content is in correct order"); // Main
 
-			var aTableItems = oView.byId(sView).byId('fragmentWithExtensionPoint3--customTable').getItems();
+			var aTableItems = oView.byId(sView).byId("fragmentWithExtensionPoint3--customTable").getItems();
 			var aTableCells = aTableItems[0].getCells();
 			assert.strictEqual(aTableCells.length, 1, "ExtensionPoint default content added to" + sView + " view into aggregation binding template");
 			var sTemplatePrefix = sReference + "---mainView--" + sView + "--fragmentWithExtensionPoint3--";
@@ -110,7 +110,7 @@ sap.ui.define([
 		// we poll for the panels aggregation content until all ExtensionPoints have been resolved
 		var iPoll = setInterval(function() {
 			var aPanelContent = oView.byId("async").byId("Panel").getContent();
-			var aTableCells = oView.byId("async").byId('fragmentWithExtensionPoint3--customTable').getItems()[0].getCells();
+			var aTableCells = oView.byId("async").byId("fragmentWithExtensionPoint3--customTable").getItems()[0].getCells();
 			if (
 				aPanelContent.length === 15
 				&& aTableCells.length === 1
@@ -122,18 +122,18 @@ sap.ui.define([
 	}
 
 	QUnit.module("ExtensionPoints with async view when component is created async with 'flexExtensionPointEnabled: false'", {
-		before: function () {
+		before: function() {
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
 			return createComponentAndContainer();
 		},
 		after: destroyComponentAndContainer
-	}, function () {
+	}, function() {
 		QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
 			baseCheck(assert);
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

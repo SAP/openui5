@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @private
 	 * @returns {sap.ui.fl.write._internal.fieldExtensibility.ABAPExtensibilityVariant} ABAP Extensibility Variant
 	 */
-	function getExtensibilityVariant () {
+	function getExtensibilityVariant() {
 		if (!_oExtensibilityVariant) {
 			return ABAPExtensibilityVariantFactory.getInstance(_oCurrentControl).then(function(oExtensibilityVariant) {
 				_oExtensibilityVariant = oExtensibilityVariant;

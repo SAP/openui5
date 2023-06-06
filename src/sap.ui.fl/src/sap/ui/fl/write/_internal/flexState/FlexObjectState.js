@@ -56,7 +56,7 @@ sap.ui.define([
 	function getCompVariantEntities(mPropertyBag) {
 		var mCompEntities = FlexState.getCompVariantsMap(mPropertyBag.reference);
 		var aEntities = [];
-		//Enhance CompVariantsMap with external data and standard variant after FlexState has been cleared and reinitialized
+		// Enhance CompVariantsMap with external data and standard variant after FlexState has been cleared and reinitialized
 		if (mPropertyBag.invalidateCache) {
 			var oDataToRestore = FlexState.getInitialNonFlCompVariantData(mPropertyBag.reference);
 			if (oDataToRestore) {
@@ -132,22 +132,22 @@ sap.ui.define([
 		var oChangePersistence = getChangePersistence(mPropertyBag);
 
 		return oChangePersistence.getChangesForComponent(_omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache)
-			.then(function(aPersistedChanges) {
-				var aDirtyChanges = [];
-				if (mPropertyBag.includeDirtyChanges) {
-					aDirtyChanges = oChangePersistence.getDirtyChanges();
-					if (mPropertyBag.currentLayer) {
-						aDirtyChanges = aDirtyChanges.filter(function(oChange) {
-							return oChange.getLayer() === mPropertyBag.currentLayer;
-						});
-					}
+		.then(function(aPersistedChanges) {
+			var aDirtyChanges = [];
+			if (mPropertyBag.includeDirtyChanges) {
+				aDirtyChanges = oChangePersistence.getDirtyChanges();
+				if (mPropertyBag.currentLayer) {
+					aDirtyChanges = aDirtyChanges.filter(function(oChange) {
+						return oChange.getLayer() === mPropertyBag.currentLayer;
+					});
 				}
-				var aChanges = aPersistedChanges.concat(aDirtyChanges);
-				if (mPropertyBag.onlyCurrentVariants) {
-					return filterChangesByCurrentVariants(aChanges, mPropertyBag.selector);
-				}
-				return aChanges;
-			});
+			}
+			var aChanges = aPersistedChanges.concat(aDirtyChanges);
+			if (mPropertyBag.onlyCurrentVariants) {
+				return filterChangesByCurrentVariants(aChanges, mPropertyBag.selector);
+			}
+			return aChanges;
+		});
 	}
 
 	function saveChangePersistenceEntities(mPropertyBag, oAppComponent) {
@@ -177,13 +177,13 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.version] - The version for which the objects are retrieved
 	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
 	 */
-	FlexObjectState.getFlexObjects = function (mPropertyBag) {
+	FlexObjectState.getFlexObjects = function(mPropertyBag) {
 		return initFlexStateAndSetReference(mPropertyBag)
-			.then(function () {
-				return getChangePersistenceEntities(mPropertyBag);
-			}).then(function (aChangePersistenceEntities) {
-				return getCompVariantEntities(mPropertyBag).concat(aChangePersistenceEntities);
-			});
+		.then(function() {
+			return getChangePersistenceEntities(mPropertyBag);
+		}).then(function(aChangePersistenceEntities) {
+			return getCompVariantEntities(mPropertyBag).concat(aChangePersistenceEntities);
+		});
 	};
 
 	/**
@@ -196,7 +196,7 @@ sap.ui.define([
 	 * @param {boolean} mPropertyBag.includeCtrlVariants - Flag if control variant changes should be included
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
 	 */
-	FlexObjectState.getDirtyFlexObjects = function (mPropertyBag) {
+	FlexObjectState.getDirtyFlexObjects = function(mPropertyBag) {
 		mPropertyBag.includeDirtyChanges = true;
 		var oChangePersistence = getChangePersistence(mPropertyBag);
 		var aChangePersistenceEntities = oChangePersistence.getDirtyChanges();
@@ -214,7 +214,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector To retrieve the associated flex persistence
 	 * @returns {boolean} <code>true</code> if dirty flex objects exist
 	 */
-	FlexObjectState.hasDirtyFlexObjects = function (mPropertyBag) {
+	FlexObjectState.hasDirtyFlexObjects = function(mPropertyBag) {
 		var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
 		var sReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 		if (ChangePersistenceFactory.getChangePersistenceForComponent(sReference).getDirtyChanges().length > 0) {
@@ -250,7 +250,7 @@ sap.ui.define([
 				mPropertyBag.version = oModel.getProperty("/displayedVersion");
 			}
 			if (mPropertyBag.layer) {
-				//TODO: sync the layer parameter name with new persistence and remove this line
+				// TODO: sync the layer parameter name with new persistence and remove this line
 				mPropertyBag.currentLayer = mPropertyBag.layer;
 			}
 			// with invalidation more parameters are required to make a new storage request

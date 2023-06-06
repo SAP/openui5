@@ -27,7 +27,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag.view - View object
 		 * @returns {object} mExtensionPointInfo - Map of extension point information
 		 */
-		getExtensionPointInfo: function (mPropertyBag) {
+		getExtensionPointInfo: function(mPropertyBag) {
 			return ExtensionPointRegistry.getExtensionPointInfo(mPropertyBag.name, mPropertyBag.view);
 		},
 
@@ -37,7 +37,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.viewId - ID of the view
 		 * @returns {object} map of extension points
 		 */
-		getExtensionPointInfoByViewId: function (mPropertyBag) {
+		getExtensionPointInfoByViewId: function(mPropertyBag) {
 			return ExtensionPointRegistry.getExtensionPointInfoByViewId(mPropertyBag.viewId);
 		},
 
@@ -48,7 +48,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.parentId - ID of the extension point parent control
 		 * @returns {Array} Array of extension point information
 		 */
-		getExtensionPointInfoByParentId: function (mPropertyBag) {
+		getExtensionPointInfoByParentId: function(mPropertyBag) {
 			return ExtensionPointRegistry.getExtensionPointInfoByParentId(mPropertyBag.parentId);
 		}
 	};

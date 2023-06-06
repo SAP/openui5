@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/base/Log",
@@ -28,7 +28,7 @@ sap.ui.define([
 	var sControlId = "foo";
 
 	QUnit.module("revertChangeOnControl", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oChange = new UIChange({
 				selector: {
 					id: sControlId,
@@ -54,12 +54,12 @@ sap.ui.define([
 			});
 			this.oLogStub = sandbox.stub(Log, "error");
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			this.oControl.destroy();
 		}
 	}, function() {
-		QUnit.test("with an unavailable change handler", function (assert) {
+		QUnit.test("with an unavailable change handler", function(assert) {
 			this.oGetChangeHandlerStub.restore();
 			sandbox.stub(ChangeUtils, "getChangeHandler").rejects(Error("no change handler"));
 
@@ -71,7 +71,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("with an applied change with revert data and available change handler", function (assert) {
+		QUnit.test("with an applied change with revert data and available change handler", function(assert) {
 			sandbox.stub(this.oAppliedChange, "hasRevertData").returns(true);
 			var oUpdateAggregationStub = sandbox.stub(JsControlTreeModifier, "updateAggregation");
 
@@ -82,7 +82,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("with an applied change with revert data and available change handler returning a new control", function (assert) {
+		QUnit.test("with an applied change with revert data and available change handler returning a new control", function(assert) {
 			sandbox.stub(this.oAppliedChange, "hasRevertData").returns(true);
 			this.oRevertChangeStub.callsFake(function() {
 				this.oControl.destroy();
@@ -174,7 +174,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("revertMultipleChanges", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oChange = new UIChange({
 				selector: {
 					id: sControlId,
@@ -215,11 +215,11 @@ sap.ui.define([
 			this.oLogStub = sandbox.stub(Log, "warning");
 			this.oDestroyCustomDataStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData").resolves();
 			sandbox.stub(Reverter, "revertChangeOnControl")
-				.onCall(0).resolves(false)
-				.onCall(1).resolves(true)
-				.onCall(2).resolves(this.oControl);
+			.onCall(0).resolves(false)
+			.onCall(1).resolves(true)
+			.onCall(2).resolves(this.oControl);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			this.oControl.destroy();
 		}

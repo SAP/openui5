@@ -31,7 +31,7 @@ sap.ui.define([
 		beforeEach: function() {
 			sandbox.stub(WriteStorage, "loadContextDescriptions").resolves({});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			if (this.oCompCont) {
 				this.oCompCont.destroy();
@@ -57,10 +57,10 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSettings));
 
 			return ContextSharingAPI.createComponent({layer: Layer.CUSTOMER})
-				.then(renderComponentContainer.bind(this))
-				.then(function() {
-					assert.deepEqual(this.oCompCont.getComponentInstance().getSelectedContexts().role, [], "then component data for selected roles is correct");
-				}.bind(this));
+			.then(renderComponentContainer.bind(this))
+			.then(function() {
+				assert.deepEqual(this.oCompCont.getComponentInstance().getSelectedContexts().role, [], "then component data for selected roles is correct");
+			}.bind(this));
 		});
 
 		QUnit.test("with connector and layer that support context sharing but an adaptation exists", function(assert) {
@@ -84,10 +84,10 @@ sap.ui.define([
 			sandbox.stub(ContextBasedAdaptationsAPI, "adaptationExists").returns(false);
 
 			return ContextSharingAPI.createComponent({layer: Layer.CUSTOMER, reference: "id"})
-				.then(renderComponentContainer.bind(this))
-				.then(function() {
-					assert.deepEqual(this.oCompCont.getComponentInstance().getSelectedContexts().role, [], "then component data for selected roles is correct");
-				}.bind(this));
+			.then(renderComponentContainer.bind(this))
+			.then(function() {
+				assert.deepEqual(this.oCompCont.getComponentInstance().getSelectedContexts().role, [], "then component data for selected roles is correct");
+			}.bind(this));
 		});
 
 		QUnit.test("with connector and layer that support context sharing with duplicate create call", function(assert) {
@@ -97,16 +97,16 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSettings));
 
 			return ContextSharingAPI.createComponent({layer: Layer.CUSTOMER})
-				.then(renderComponentContainer.bind(this))
-				.then(function() {
-					assert.deepEqual(this.oCompCont.getComponentInstance().getSelectedContexts().role, [], "then component data for selected roles is correct");
-				}.bind(this)).then(function() {
-					return ContextSharingAPI.createComponent({layer: Layer.CUSTOMER});
-				});
+			.then(renderComponentContainer.bind(this))
+			.then(function() {
+				assert.deepEqual(this.oCompCont.getComponentInstance().getSelectedContexts().role, [], "then component data for selected roles is correct");
+			}.bind(this)).then(function() {
+				return ContextSharingAPI.createComponent({layer: Layer.CUSTOMER});
+			});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

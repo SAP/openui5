@@ -107,7 +107,7 @@ sap.ui.define([
 	 * @return {boolean} true if allContextsProvided false and RTA wasn't started yet, otherwise false.
 	 */
 	function needContextSpecificReload(oReloadInfo) {
-		//TODO: could be disabled when ContextBasedAdaptationAPI is enabled
+		// TODO: could be disabled when ContextBasedAdaptationAPI is enabled
 		var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector);
 		if (oFlexInfoSession && oFlexInfoSession.initialAllContexts) {
 			return false; // if we are already in RTA mode, no reload needed again
@@ -118,13 +118,13 @@ sap.ui.define([
 				layer: oReloadInfo.layer
 			};
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag)
-				.then(function (oResult) {
-					if (oFlexInfoSession === null || !oFlexInfoSession.initialAllContexts) {
-						oResult.initialAllContexts = true;
-					}
-					FlexInfoSession.set(oResult, oReloadInfo.selector);
-					return !oResult.allContextsProvided;
-				});
+			.then(function(oResult) {
+				if (oFlexInfoSession === null || !oFlexInfoSession.initialAllContexts) {
+					oResult.initialAllContexts = true;
+				}
+				FlexInfoSession.set(oResult, oReloadInfo.selector);
+				return !oResult.allContextsProvided;
+			});
 		}
 		oFlexInfoSession.initialAllContexts = true;
 		FlexInfoSession.set(oFlexInfoSession, oReloadInfo.selector);

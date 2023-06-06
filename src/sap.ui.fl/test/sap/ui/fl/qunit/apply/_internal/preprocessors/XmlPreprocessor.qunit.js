@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
@@ -26,11 +26,11 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("XmlPreprocessor", {
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("process xml view is called if cache key could be determined", function (assert) {
+		QUnit.test("process xml view is called if cache key could be determined", function(assert) {
 			var oView = {
 				sId: "testView"
 			};
@@ -39,18 +39,18 @@ sap.ui.define([
 				sync: false
 			};
 			var oMockedComponent = {
-				getComponentClassName: function () {
+				getComponentClassName: function() {
 					return sFlexReference;
 				}
 			};
 			var oMockedAppComponent = {
-				getManifestObject: function () {
+				getManifestObject: function() {
 					return {};
 				},
-				getManifest: function () {
+				getManifest: function() {
 					return {};
 				},
-				getManifestEntry: function () {}
+				getManifestEntry: function() {}
 			};
 			var oChangePersistence = new ChangePersistence({name: sFlexReference});
 			var oFlexControllerCreationStub = sandbox.stub(FlexControllerFactory, "create").returns({
@@ -65,13 +65,13 @@ sap.ui.define([
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 			sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve("abc123"));
 
-			return XmlPreprocessor.process(oView, mProperties).then(function (oProcessedView) {
+			return XmlPreprocessor.process(oView, mProperties).then(function(oProcessedView) {
 				assert.equal(oFlexControllerCreationStub.callCount, 1, "a flex controller was created for processing");
 				assert.deepEqual(oProcessedView, oView, "a processed view is returned");
 			});
 		});
 
-		QUnit.test("xml view is returned even if problem happen when getting cache key", function (assert) {
+		QUnit.test("xml view is returned even if problem happen when getting cache key", function(assert) {
 			var oView = {
 				sId: "testView"
 			};
@@ -80,12 +80,12 @@ sap.ui.define([
 				sync: false
 			};
 			var oMockedComponent = {
-				getComponentClassName: function () {
+				getComponentClassName: function() {
 					return sFlexReference;
 				}
 			};
 			var oMockedAppComponent = {
-				getManifest: function () {
+				getManifest: function() {
 					return {};
 				}
 			};
@@ -101,23 +101,23 @@ sap.ui.define([
 			sandbox.stub(Utils, "isApplication").returns(true);
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 
-			return XmlPreprocessor.process(oView, mProperties).then(function (oProcessedView) {
+			return XmlPreprocessor.process(oView, mProperties).then(function(oProcessedView) {
 				assert.equal(oFlexControllerCreationStub.callCount, 0, "no flex controller creation was created for processing");
 				assert.deepEqual(oProcessedView, oView, "the original view is returned");
 			});
 		});
 
-		QUnit.test("getCacheKey does return a cache key", function (assert) {
+		QUnit.test("getCacheKey does return a cache key", function(assert) {
 			var sCacheKey = "abc123";
 			var sFlexReference = "theAppComponent";
 			var mProperties = {
 				componentId: sFlexReference
 			};
 			var oMockedAppComponent = {
-				getManifest: function () {
+				getManifest: function() {
 					return {};
 				},
-				getManifestEntry: function () {}
+				getManifestEntry: function() {}
 			};
 			var oChangePersistence = new ChangePersistence({name: sFlexReference});
 			sandbox.stub(Component, "get");
@@ -126,12 +126,12 @@ sap.ui.define([
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 			sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(sCacheKey));
 
-			return XmlPreprocessor.getCacheKey(mProperties).then(function (sReturnedCacheKey) {
+			return XmlPreprocessor.getCacheKey(mProperties).then(function(sReturnedCacheKey) {
 				assert.equal(sReturnedCacheKey, sCacheKey);
 			});
 		});
 
-		QUnit.test("getCacheKey disallows view caching in case of an variant by startup parameters", function (assert) {
+		QUnit.test("getCacheKey disallows view caching in case of an variant by startup parameters", function(assert) {
 			var sFlexReference = "theAppComponent";
 			var mProperties = {
 				componentId: sFlexReference
@@ -142,23 +142,23 @@ sap.ui.define([
 				}
 			};
 			var oMockedAppComponent = {
-				getManifest: function () {
+				getManifest: function() {
 					return {};
 				},
-				getComponentData: function () {
+				getComponentData: function() {
 					return oComponentData;
 				},
-				getManifestEntry: function () {}
+				getManifestEntry: function() {}
 			};
 			sandbox.stub(Component, "get");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 
-			return XmlPreprocessor.getCacheKey(mProperties).then(function (response) {
+			return XmlPreprocessor.getCacheKey(mProperties).then(function(response) {
 				assert.ok(!response, "an 'undefined' was returned to prevent the view caching");
 			});
 		});
 
-		QUnit.test("detects the app variant id and requests the changes for it", function (assert) {
+		QUnit.test("detects the app variant id and requests the changes for it", function(assert) {
 			var oView = {
 				sId: "testView"
 			};
@@ -176,21 +176,21 @@ sap.ui.define([
 			};
 
 			var oMockedComponent = {
-				getComponentClassName: function () {
+				getComponentClassName: function() {
 					return sComponentName;
 				}
 			};
 			var oMockedAppComponent = {
-				getManifestObject: function () {
+				getManifestObject: function() {
 					return {};
 				},
-				getManifest: function () {
+				getManifest: function() {
 					return {};
 				},
-				getManifestEntry: function () {
+				getManifestEntry: function() {
 					return undefined;
 				},
-				getComponentData: function () {
+				getComponentData: function() {
 					return oComponentData;
 				}
 			};
@@ -206,15 +206,14 @@ sap.ui.define([
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 			sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(sValidCacheKey));
 
-			return XmlPreprocessor.process(oView, mProperties).then(function (oProcessedView) {
+			return XmlPreprocessor.process(oView, mProperties).then(function(oProcessedView) {
 				assert.equal(oFlexControllerCreationStub.callCount, 1, "a flex controller creation was triggered for the xml processing");
 				assert.equal(oFlexControllerCreationStub.getCall(0).args[0], sFlexReference, "the controller for the variant was created");
 				assert.deepEqual(oProcessedView, oView, "the original view is returned");
 			});
 		});
 
-
-		QUnit.test("skips the processing in case of a synchronous view", function (assert) {
+		QUnit.test("skips the processing in case of a synchronous view", function(assert) {
 			var oView = {
 				sId: "testView"
 			};
@@ -232,7 +231,7 @@ sap.ui.define([
 			assert.deepEqual(oProcessedView, oView, "the original view is returned");
 		});
 
-		QUnit.test("skips the processing in case of a component whose type is not application", function (assert) {
+		QUnit.test("skips the processing in case of a component whose type is not application", function(assert) {
 			var oView = {
 				sId: "testView"
 			};
@@ -248,16 +247,16 @@ sap.ui.define([
 			};
 
 			var oMockedAppComponent = {
-				getManifest: function () {
+				getManifest: function() {
 					return {};
 				},
-				getManifestEntry: function () {
+				getManifestEntry: function() {
 					return undefined;
 				},
-				getComponentData: function () {
+				getComponentData: function() {
 					return oComponentData;
 				},
-				getComponentClassName: function () {
+				getComponentClassName: function() {
 					return sComponentName;
 				}
 			};
@@ -266,13 +265,13 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(Utils, "isApplication").returns(true);
 
-			return XmlPreprocessor.process(oView, mProperties).then(function (oProcessedView) {
+			return XmlPreprocessor.process(oView, mProperties).then(function(oProcessedView) {
 				assert.deepEqual(oProcessedView, oView, "the original view is returned");
 			});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

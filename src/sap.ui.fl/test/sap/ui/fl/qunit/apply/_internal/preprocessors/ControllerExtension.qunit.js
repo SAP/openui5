@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/base/Log",
@@ -67,10 +67,10 @@ sap.ui.define([
 		QUnit.test("When an sync view is processed", function(assert) {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("<sap-app-id> or <component name>");
 
-			//check sync case
+			// check sync case
 			var spy = sandbox.spy(Log, "warning");
 			var aEmptyCodeExtensionSync = this.oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", false);
-			//should return empty array and log warning
+			// should return empty array and log warning
 			assert.ok(Array.isArray(aEmptyCodeExtensionSync), "Then an array is returned");
 			assert.equal(aEmptyCodeExtensionSync.length, 0, "which is empty");
 			assert.equal(spy.callCount, 1, "and a warning log is written");
@@ -117,41 +117,41 @@ sap.ui.define([
 			};
 
 			var oChangesFillingCachePromise = new Promise(
-				function (resolve) {
+				function(resolve) {
 					resolve(oFileContent);
 				}
 			);
 
 			var oAppComponent = {
-				getManifest: function () {
+				getManifest: function() {
 					return {
 						"sap.app": {
 							applicationVersion: {
 								version: "1.2.3"
 							}
 						},
-						getEntry: function () {
+						getEntry: function() {
 							return {
 								type: "application"
 							};
 						}
 					};
 				},
-				getManifestObject: function () {
+				getManifestObject: function() {
 					return {
 						"sap.app": {
 							applicationVersion: {
 								version: "1.2.3"
 							}
 						},
-						getEntry: function () {
+						getEntry: function() {
 							return {
 								type: "application"
 							};
 						}
 					};
 				},
-				getManifestEntry: function () {}
+				getManifestEntry: function() {}
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
@@ -159,7 +159,7 @@ sap.ui.define([
 
 			var oCodeExtensionsPromise = this.oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", true);
 
-			return oCodeExtensionsPromise.then(function (aCodeExtensions) {
+			return oCodeExtensionsPromise.then(function(aCodeExtensions) {
 				assert.equal(aCodeExtensions.length, 1, "one code extension should be returned");
 				assert.equal(aCodeExtensions[0].getMetadata().getPublicMethods().length, 2, "then two methods were extended");
 				assert.equal(aCodeExtensions[0].getMetadata().getPublicMethods()[0], "extHookOnInit", "of which one is extHookOnInit");
@@ -170,7 +170,7 @@ sap.ui.define([
 		/**
 		 * @deprecated Since version 1.58 due to <code>sap.ui.base.Metadata.getAllPublicMethods</code> deprecation
 		 */
-		QUnit.test("apply multiple changes on different controllers", function (assert) {
+		QUnit.test("apply multiple changes on different controllers", function(assert) {
 			// expect both extensions to be called
 			var done1 = assert.async();
 			var done2 = assert.async();
@@ -194,7 +194,7 @@ sap.ui.define([
 			sap.ui.define(sModuleName1, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) { // legacy-relevant: simulates a loaded code extension. no option to replace this regarding legacy free coding
 				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension2", {
 					overrides: {
-						onInit: function () {
+						onInit: function() {
 							assert.strictEqual(this.base.getView().getId(), "testView1", "View1 is available and ID of View1 is correct");
 							done1();
 						}
@@ -216,7 +216,7 @@ sap.ui.define([
 			sap.ui.define(sModuleName2, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) { // legacy-relevant: simulates a loaded code extension. no option to replace this regarding legacy free coding
 				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension3", {
 					overrides: {
-						onInit: function () {
+						onInit: function() {
 							assert.strictEqual(this.base.getView().getId(), "testView2", "View2 is available and ID of View2 is correct");
 							done2();
 						}
@@ -241,7 +241,7 @@ sap.ui.define([
 			};
 
 			var oChangesFillingCachePromise = new Promise(
-				function (resolve) {
+				function(resolve) {
 					resolve(oFileContent);
 				}
 			);
@@ -278,7 +278,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("make sure requests are only sent if app component is defined", function (assert) {
+		QUnit.test("make sure requests are only sent if app component is defined", function(assert) {
 			var done = assert.async();
 			var sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
 			var oExtensionProvider = new ControllerExtension();
@@ -287,7 +287,7 @@ sap.ui.define([
 			var spy = sandbox.spy(Log, "warning");
 
 			oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", true).then(
-				function (aCodeExtensions) {
+				function(aCodeExtensions) {
 					assert.ok(Array.isArray(aCodeExtensions), "Then an array is returned");
 					assert.equal(aCodeExtensions.length, 0, "which is empty");
 					assert.equal(spy.callCount, 1, "and a warning log is written");
@@ -298,13 +298,13 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("make sure requests are only sent for app components", function (assert) {
+		QUnit.test("make sure requests are only sent for app components", function(assert) {
 			var done = assert.async();
 			var sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
 			var oExtensionProvider = new ControllerExtension();
 
 			var oComponent = {
-				getManifestObject: function () {
+				getManifestObject: function() {
 					return {
 						"sap.app": {
 							applicationVersion: {
@@ -314,7 +314,7 @@ sap.ui.define([
 						}
 					};
 				},
-				getManifest: function () {
+				getManifest: function() {
 					return {
 						"sap.app": {
 							applicationVersion: {
@@ -324,37 +324,37 @@ sap.ui.define([
 						}
 					};
 				},
-				getManifestEntry: function () {}
+				getManifestEntry: function() {}
 			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
 			oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", true).then(
-				function (aCodeExtensions) {
+				function(aCodeExtensions) {
 					assert.equal(aCodeExtensions.length, 0, "No extensions were returned.");
 					done();
 				}
 			);
 		});
 
-		QUnit.test("make sure requests are only sent for app components (even without manifest)", function (assert) {
+		QUnit.test("make sure requests are only sent for app components (even without manifest)", function(assert) {
 			var done = assert.async();
 			var oExtensionProvider = new ControllerExtension();
 
 			var oComponent = {
-				getManifest: function () {
+				getManifest: function() {
 					return undefined;
 				},
-				getManifestObject: function () {
+				getManifestObject: function() {
 					return undefined;
 				},
-				getManifestEntry: function () {}
+				getManifestEntry: function() {}
 			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
 			oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", true).then(
-				function (aCodeExtensions) {
+				function(aCodeExtensions) {
 					assert.equal(aCodeExtensions.length, 0, "No extensions were returned.");
 					done();
 				}
@@ -362,7 +362,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -96,9 +96,9 @@ sap.ui.define([
 			return Promise.resolve([]);
 		}
 		return oChangePersistence.getChangesForComponent()
-			.then(function(aChanges) {
-				return aChanges.filter(isChangeValidForExtensionPoint.bind(undefined, mPropertyBag));
-			});
+		.then(function(aChanges) {
+			return aChanges.filter(isChangeValidForExtensionPoint.bind(undefined, mPropertyBag));
+		});
 	};
 
 	/**
@@ -115,61 +115,61 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
-	ExtensionPointState.enhanceExtensionPointChanges = function (mPropertyBag, mExtensionPointInfo) {
+	ExtensionPointState.enhanceExtensionPointChanges = function(mPropertyBag, mExtensionPointInfo) {
 		mPropertyBag.extensionPointName = mExtensionPointInfo.name;
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mExtensionPointInfo.targetControl);
 
 		return ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, mPropertyBag)
-			.then(function (aChanges) {
-				var aPromises = [];
-				aChanges.forEach(function (oChange) {
-					//Only continue process if the change has not been applied, such as in case of XMLPreprocessing of an async view
-					if (oChange.isInInitialState() && !(oChange.getExtensionPointInfo && oChange.getExtensionPointInfo())) {
-						oChange.setExtensionPointInfo(mExtensionPointInfo);
+		.then(function(aChanges) {
+			var aPromises = [];
+			aChanges.forEach(function(oChange) {
+				// Only continue process if the change has not been applied, such as in case of XMLPreprocessing of an async view
+				if (oChange.isInInitialState() && !(oChange.getExtensionPointInfo && oChange.getExtensionPointInfo())) {
+					oChange.setExtensionPointInfo(mExtensionPointInfo);
 
-						//Set correct selector from extension point targetControl's ID
-						replaceChangeSelector(oChange, mExtensionPointInfo, false);
+					// Set correct selector from extension point targetControl's ID
+					replaceChangeSelector(oChange, mExtensionPointInfo, false);
 
-						//If the component creation is async, the changesMap already created without changes on EP --> it need to be updated
-						//Otherwise, update the selector of changes is enough, change map will be created later correctly
-						if (oChangePersistence.isChangeMapCreated()) {
-							oChangePersistence.addChangeAndUpdateDependencies(mPropertyBag.appComponent, oChange);
-						}
-					} else if (isValidForRuntimeOnlyChanges(oChange, mExtensionPointInfo)) {
-						//Change is applied but we need to create additional runtime only changes
-						//in case of duplicate extension points with different fragment id (fragment as template)
-						var oChangeFileContent = oChange.convertToFileContent();
-						var oChangeContent = oChange.getContent();
-						var mChangeSpecificData = _omit(oChangeFileContent, ["dependentSelector", "fileName", "selector", "content"]);
-						Object.keys(oChangeContent).forEach(function (sKey) {
-							mChangeSpecificData[sKey] = oChangeContent[sKey];
-						});
-						mChangeSpecificData.support.sourceChangeFileName = oChange.getId() || "";
-						aPromises.push(ChangesWriteAPI.create({
-							changeSpecificData: mChangeSpecificData,
-							selector: {
-								view: mExtensionPointInfo.view,
-								name: mExtensionPointInfo.name
-							}
-						})
-							.then(function (oRuntimeOnlyChange) {
-								//Set correct selector from extension point targetControl's ID
-								replaceChangeSelector(oRuntimeOnlyChange, mExtensionPointInfo, true);
-								oRuntimeOnlyChange.setExtensionPointInfo(mExtensionPointInfo);
-								var oFlexObjectMetadata = oRuntimeOnlyChange.getFlexObjectMetadata();
-								oFlexObjectMetadata.moduleName = oChange.getFlexObjectMetadata().moduleName;
-								oRuntimeOnlyChange.setFlexObjectMetadata(oFlexObjectMetadata);
-								oRuntimeOnlyChange.setCreation(oChange.getCreation());
-								oChangePersistence.addChangeAndUpdateDependencies(mPropertyBag.appComponent, oRuntimeOnlyChange, oChange);
-							})
-						);
+					// If the component creation is async, the changesMap already created without changes on EP --> it need to be updated
+					// Otherwise, update the selector of changes is enough, change map will be created later correctly
+					if (oChangePersistence.isChangeMapCreated()) {
+						oChangePersistence.addChangeAndUpdateDependencies(mPropertyBag.appComponent, oChange);
 					}
-				});
-				return Promise.all(aPromises)
-					.then(function () {
-						return aChanges;
+				} else if (isValidForRuntimeOnlyChanges(oChange, mExtensionPointInfo)) {
+					// Change is applied but we need to create additional runtime only changes
+					// in case of duplicate extension points with different fragment id (fragment as template)
+					var oChangeFileContent = oChange.convertToFileContent();
+					var oChangeContent = oChange.getContent();
+					var mChangeSpecificData = _omit(oChangeFileContent, ["dependentSelector", "fileName", "selector", "content"]);
+					Object.keys(oChangeContent).forEach(function(sKey) {
+						mChangeSpecificData[sKey] = oChangeContent[sKey];
 					});
+					mChangeSpecificData.support.sourceChangeFileName = oChange.getId() || "";
+					aPromises.push(ChangesWriteAPI.create({
+						changeSpecificData: mChangeSpecificData,
+						selector: {
+							view: mExtensionPointInfo.view,
+							name: mExtensionPointInfo.name
+						}
+					})
+					.then(function(oRuntimeOnlyChange) {
+						// Set correct selector from extension point targetControl's ID
+						replaceChangeSelector(oRuntimeOnlyChange, mExtensionPointInfo, true);
+						oRuntimeOnlyChange.setExtensionPointInfo(mExtensionPointInfo);
+						var oFlexObjectMetadata = oRuntimeOnlyChange.getFlexObjectMetadata();
+						oFlexObjectMetadata.moduleName = oChange.getFlexObjectMetadata().moduleName;
+						oRuntimeOnlyChange.setFlexObjectMetadata(oFlexObjectMetadata);
+						oRuntimeOnlyChange.setCreation(oChange.getCreation());
+						oChangePersistence.addChangeAndUpdateDependencies(mPropertyBag.appComponent, oRuntimeOnlyChange, oChange);
+					})
+					);
+				}
 			});
+			return Promise.all(aPromises)
+			.then(function() {
+				return aChanges;
+			});
+		});
 	};
 
 	return ExtensionPointState;

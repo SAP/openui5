@@ -23,7 +23,7 @@ sap.ui.define([
 			try {
 				return LoaderExtensions.loadResource(sBundleResourcePath);
 			} catch (e) {
-				//JSON parse error of bundle file --> log error
+				// JSON parse error of bundle file --> log error
 				if (e.name.includes("SyntaxError")) {
 					Log.error(e);
 				}
@@ -50,7 +50,7 @@ sap.ui.define([
 		 * @param {string} [mComponent.componentName] Component name of the current application which may differ in case of an app variant
 		 * @returns {Promise<Object>} Resolving with an object containing a data contained in the bundle
 		 */
-		loadFlexData: function (mPropertyBag) {
+		loadFlexData: function(mPropertyBag) {
 			var sComponentName = mPropertyBag.componentName;
 
 			if (!sComponentName) {

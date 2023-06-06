@@ -12,7 +12,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-
 	/**
 	 * Descriptor change merger for change type <code>appdescr_ui5_addNewModelEnhanceWith</code>.
 	 * Adds a <code>settings/enhanceWith</code> node of an existing model with a path to an i18n properties file relative to the location of the manifest.
@@ -55,7 +54,6 @@ sap.ui.define([
 			return oManifest;
 		},
 		skipPostprocessing: true
-
 
 	};
 

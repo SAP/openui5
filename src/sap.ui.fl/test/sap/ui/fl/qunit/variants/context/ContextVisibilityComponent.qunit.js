@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/variants/context/Component",
@@ -23,7 +23,6 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-
 	QUnit.module("Given a ContextVisibility component is given", {
 		beforeEach: function() {
 			this.oComp = new ContextVisibilityComponent("test");
@@ -32,7 +31,7 @@ sap.ui.define([
 			// Ensure view is fully loaded
 			return this.oComp.getRootControl().oAsyncState.promise;
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			this.oComp.destroy();
 		}

@@ -51,7 +51,7 @@ sap.ui.define([
 			ObjectPath.get(["element", "type"], oJson) === "cds.String"
 			&& Array.isArray(vRange)
 		) {
-			ObjectPath.set(["element", "enum"], vRange.reduce(function (enumMap, enumOption) {
+			ObjectPath.set(["element", "enum"], vRange.reduce(function(enumMap, enumOption) {
 				enumMap[enumOption] = {};
 				return enumMap;
 			}, {}), oJson);

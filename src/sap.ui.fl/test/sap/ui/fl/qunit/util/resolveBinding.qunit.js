@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
@@ -133,7 +133,7 @@ sap.ui.define([
 
 		QUnit.test("when a string contains an expression binding with a formatter", function(assert) {
 			sandbox.stub(this.oView, "getController").returns({
-				formatter: function (value) {
+				formatter: function(value) {
 					return value && value.toUpperCase();
 				}
 			});
@@ -146,7 +146,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

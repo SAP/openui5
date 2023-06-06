@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -85,51 +85,51 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier are called", function (assert) {
+		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier are called", function(assert) {
 			UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
 
 			return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
-				.then(function() {
-					return this.oIFrame._oSetUrlPromise;
-				}.bind(this))
-				.then(function() {
-					assert.strictEqual(this.oIFrame.getUrl(), sSapUI5Url, "then the IFrame url changes");
-				}.bind(this));
+			.then(function() {
+				return this.oIFrame._oSetUrlPromise;
+			}.bind(this))
+			.then(function() {
+				assert.strictEqual(this.oIFrame.getUrl(), sSapUI5Url, "then the IFrame url changes");
+			}.bind(this));
 		});
 
-		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier are called and then reverted", function (assert) {
+		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier are called and then reverted", function(assert) {
 			var originalUrl = this.oIFrame.getUrl();
 
 			UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
 
 			return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
-				.then(UpdateIFrame.revertChange.bind(UpdateIFrame, this.oChange, this.oIFrame, mPropertyBag))
-				.then(function() {
-					return this.oIFrame._oSetUrlPromise;
-				}.bind(this))
-				.then(function() {
-					assert.strictEqual(this.oIFrame.getUrl(), originalUrl, "then the IFrame url is the same as before");
-				}.bind(this));
+			.then(UpdateIFrame.revertChange.bind(UpdateIFrame, this.oChange, this.oIFrame, mPropertyBag))
+			.then(function() {
+				return this.oIFrame._oSetUrlPromise;
+			}.bind(this))
+			.then(function() {
+				assert.strictEqual(this.oIFrame.getUrl(), originalUrl, "then the IFrame url is the same as before");
+			}.bind(this));
 		});
 
-		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier and binding value are called", function (assert) {
+		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier and binding value are called", function(assert) {
 			this.mSapUI5UrlChange.content.url = sBoundUrl;
 
 			UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
 
 			return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
-				.then(function() {
-					return this.oIFrame._oSetUrlPromise;
-				}.bind(this))
-				.then(function() {
-					var oBindingInfo = this.oIFrame.getBindingInfo("url");
-					assert.strictEqual(oBindingInfo.parts[0].path, "/protocol", "then the property value binding path has changed as expected");
-					assert.strictEqual(oBindingInfo.parts[0].model, "model", "and the property value binding model has changed as expected");
-					assert.strictEqual(this.oIFrame.getUrl(), sSapUI5Url, "and the property value is correct");
-				}.bind(this));
+			.then(function() {
+				return this.oIFrame._oSetUrlPromise;
+			}.bind(this))
+			.then(function() {
+				var oBindingInfo = this.oIFrame.getBindingInfo("url");
+				assert.strictEqual(oBindingInfo.parts[0].path, "/protocol", "then the property value binding path has changed as expected");
+				assert.strictEqual(oBindingInfo.parts[0].model, "model", "and the property value binding model has changed as expected");
+				assert.strictEqual(this.oIFrame.getUrl(), sSapUI5Url, "and the property value is correct");
+			}.bind(this));
 		});
 
-		QUnit.test("when a value is bound, completeChangeContent & applyChange with JsControlTreeModifier are called and then reverted", function (assert) {
+		QUnit.test("when a value is bound, completeChangeContent & applyChange with JsControlTreeModifier are called and then reverted", function(assert) {
 			this.oIFrame.applySettings({
 				url: sBoundUrl,
 				_settings: {
@@ -143,20 +143,20 @@ sap.ui.define([
 				UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
 
 				return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
-					.then(UpdateIFrame.revertChange.bind(UpdateIFrame, this.oChange, this.oIFrame, mPropertyBag))
-					.then(function() {
-						return this.oIFrame._oSetUrlPromise;
-					}.bind(this))
-					.then(function() {
-						var oBindingInfo = this.oIFrame.getBindingInfo("url");
-						assert.strictEqual(oBindingInfo.parts[0].path, "/protocol", "then the property value binding path does not change");
-						assert.strictEqual(oBindingInfo.parts[0].model, "model", "and the property value binding model does not change");
-						assert.strictEqual(this.oIFrame.getUrl(), sSapUI5Url, "and the property value is still correct");
-					}.bind(this));
+				.then(UpdateIFrame.revertChange.bind(UpdateIFrame, this.oChange, this.oIFrame, mPropertyBag))
+				.then(function() {
+					return this.oIFrame._oSetUrlPromise;
+				}.bind(this))
+				.then(function() {
+					var oBindingInfo = this.oIFrame.getBindingInfo("url");
+					assert.strictEqual(oBindingInfo.parts[0].path, "/protocol", "then the property value binding path does not change");
+					assert.strictEqual(oBindingInfo.parts[0].model, "model", "and the property value binding model does not change");
+					assert.strictEqual(this.oIFrame.getUrl(), sSapUI5Url, "and the property value is still correct");
+				}.bind(this));
 			}.bind(this));
 		});
 
-		QUnit.test("when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later", function (assert) {
+		QUnit.test("when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later", function(assert) {
 			this.myLayoutId = "myLayout";
 			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId), {
 				content: [this.oIFrame]
@@ -180,15 +180,15 @@ sap.ui.define([
 			UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
 
 			return UpdateIFrame.applyChange(this.oChange, this.oXmlIFrame, {modifier: XmlTreeModifier})
-				.then(function() {
-					assert.equal(this.oXmlIFrame.getAttribute("url"), sSapUI5Url, "then the IFrame url changes");
-					return UpdateIFrame.revertChange(this.oChange, this.oXmlIFrame, {modifier: XmlTreeModifier});
-				}.bind(this))
-				.then(function() {
-					assert.equal(this.oXmlIFrame.getAttribute("url"), sOpenUI5Url, "then the IFrame url does not change");
+			.then(function() {
+				assert.equal(this.oXmlIFrame.getAttribute("url"), sSapUI5Url, "then the IFrame url changes");
+				return UpdateIFrame.revertChange(this.oChange, this.oXmlIFrame, {modifier: XmlTreeModifier});
+			}.bind(this))
+			.then(function() {
+				assert.equal(this.oXmlIFrame.getAttribute("url"), sOpenUI5Url, "then the IFrame url does not change");
 
-					this.oLayout.destroy();
-				}.bind(this));
+				this.oLayout.destroy();
+			}.bind(this));
 		});
 
 		// DISABLE since I have a question about this test
@@ -233,13 +233,13 @@ sap.ui.define([
 		// 	this.oLayout.destroy();
 		// });
 
-		QUnit.test("when completeChangeContent is called without a setting", function (assert) {
+		QUnit.test("when completeChangeContent is called without a setting", function(assert) {
 			assert.throws(
 				UpdateIFrame.completeChangeContent.bind(this, this.oChange, {}, mPropertyBag),
 				"then an error is thrown");
 		});
 
-		QUnit.test("when completeChangeContent is called without a value", function (assert) {
+		QUnit.test("when completeChangeContent is called without a value", function(assert) {
 			delete this.mSapUI5UrlChange.content.url;
 
 			assert.throws(
@@ -248,7 +248,7 @@ sap.ui.define([
 		});
 	});
 
-	//TODO: Negative test to check if the error is properly raised when change is incomplete
+	// TODO: Negative test to check if the error is properly raised when change is incomplete
 
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";

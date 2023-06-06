@@ -72,7 +72,7 @@ sap.ui.define([
 	 * @returns {object} Mapping information
 	 * @static
 	 */
-	Variant.getMappingInfo = function () {
+	Variant.getMappingInfo = function() {
 		return Object.assign(FlexObject.getMappingInfo(), {
 			favorite: "favorite",
 			executeOnSelection: "executeOnSelection",
@@ -86,7 +86,7 @@ sap.ui.define([
 	 * Can be overridden to avoid access of static mapping within base methods.
 	 * @returns {object} Mapping information
 	 */
-	Variant.prototype.getMappingInfo = function () {
+	Variant.prototype.getMappingInfo = function() {
 		return Variant.getMappingInfo();
 	};
 
@@ -94,7 +94,7 @@ sap.ui.define([
 	 * Retrieves the variant name from the <code>texts</code> FlexObject property
 	 * @returns {string} Variant name
 	 */
-	Variant.prototype.getName = function () {
+	Variant.prototype.getName = function() {
 		return this.getText("variantName");
 	};
 

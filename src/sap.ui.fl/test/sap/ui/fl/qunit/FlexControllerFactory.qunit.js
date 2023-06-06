@@ -21,7 +21,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("shall provide an API to create a FlexController", function(assert) {
-			assert.strictEqual(typeof FlexControllerFactory.create, 'function');
+			assert.strictEqual(typeof FlexControllerFactory.create, "function");
 		});
 
 		QUnit.test("shall create a new FlexController", function(assert) {
@@ -51,9 +51,8 @@ sap.ui.define([
 
 			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oMockControl).returns(oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
-				.withArgs(oAppComponent)
-				.returns(sMockComponentName);
-
+			.withArgs(oAppComponent)
+			.returns(sMockComponentName);
 
 			sandbox.stub(FlexControllerFactory, "create");
 
@@ -68,4 +67,4 @@ sap.ui.define([
 	});
 });
 
-/*global QUnit*/
+/* global QUnit */

@@ -17,19 +17,19 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 	var sReference = "fl.reference";
-	var APP_ID_AT_DESIGN_TIME = "${pro" + "ject.art" + "ifactId}"; //avoid replaced by content of ${project.artifactId} placeholder at build steps
+	var APP_ID_AT_DESIGN_TIME = "${pro" + "ject.art" + "ifactId}"; // avoid replaced by content of ${project.artifactId} placeholder at build steps
 
 	function createAppComponent(bFlexExtensionPointEnabled) {
 		return {
-			getManifestEntry: function () {
+			getManifestEntry: function() {
 				return {
 					flexExtensionPointEnabled: bFlexExtensionPointEnabled
 				};
 			},
-			getComponentData: function () {},
-			getManifestObject: function () {
+			getComponentData: function() {},
+			getManifestObject: function() {
 				return {
-					getEntry: function () {
+					getEntry: function() {
 						return {
 							appVariantId: "appId"
 						};
@@ -40,22 +40,22 @@ sap.ui.define([
 	}
 
 	QUnit.module("ManifestUtils.getFlexReferenceForControl", {
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("with a control", function (assert) {
+	}, function() {
+		QUnit.test("with a control", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(createAppComponent(false));
 			assert.equal(ManifestUtils.getFlexReferenceForControl({}), "appId", "the app id is returned");
 		});
 	});
 
 	QUnit.module("ManifestUtils.getFlexReference", {
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("with 'sap-app-id'", function (assert) {
+	}, function() {
+		QUnit.test("with 'sap-app-id'", function(assert) {
 			var mPropertyBag = {
 				componentData: {
 					startupParameters: {
@@ -66,7 +66,7 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "oldAppId", "the old app var id is returned");
 		});
 
-		QUnit.test("with an appvar id (raw manifest)", function (assert) {
+		QUnit.test("with an appvar id (raw manifest)", function(assert) {
 			var mPropertyBag = {
 				manifest: {
 					"sap.ui5": {
@@ -77,7 +77,7 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appVarId", "the new app var id is returned");
 		});
 
-		QUnit.test("with sap.ui5 component name (raw manifest)", function (assert) {
+		QUnit.test("with sap.ui5 component name (raw manifest)", function(assert) {
 			var mPropertyBag = {
 				manifest: {
 					"sap.ui5": {
@@ -88,7 +88,7 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "componentName", "the componentName is returned");
 		});
 
-		QUnit.test("without old or new appvar id or componentName (raw manifest)", function (assert) {
+		QUnit.test("without old or new appvar id or componentName (raw manifest)", function(assert) {
 			var mPropertyBag = {
 				manifest: {
 					"sap.app": {
@@ -102,7 +102,7 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId", "the app id is returned");
 		});
 
-		QUnit.test("with an appvar id (manifest object)", function (assert) {
+		QUnit.test("with an appvar id (manifest object)", function(assert) {
 			var mPropertyBag = {
 				manifest: new Manifest({
 					"sap.ui5": {
@@ -113,7 +113,7 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appVarId", "the new app var id is returned");
 		});
 
-		QUnit.test("with sap.ui5 component name (manifest object)", function (assert) {
+		QUnit.test("with sap.ui5 component name (manifest object)", function(assert) {
 			var mPropertyBag = {
 				manifest: new Manifest({
 					"sap.ui5": {
@@ -124,7 +124,7 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "componentName", "the componentName is returned");
 		});
 
-		QUnit.test("without old or new appvar id or componentName (manifest object)", function (assert) {
+		QUnit.test("without old or new appvar id or componentName (manifest object)", function(assert) {
 			var mPropertyBag = {
 				manifest: new Manifest({
 					"sap.app": {
@@ -138,10 +138,10 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId", "the app id is returned");
 		});
 
-		QUnit.test("with manifest object at design time and getComponentName is available", function (assert) {
+		QUnit.test("with manifest object at design time and getComponentName is available", function(assert) {
 			var mPropertyBag = {
 				manifest: {
-					getEntry: function () {
+					getEntry: function() {
 						return {
 							id: APP_ID_AT_DESIGN_TIME
 						};
@@ -154,10 +154,10 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId", "the app id is returned");
 		});
 
-		QUnit.test("with manifest object at design time and getComponentName is not available", function (assert) {
+		QUnit.test("with manifest object at design time and getComponentName is not available", function(assert) {
 			var mPropertyBag = {
 				manifest: {
-					getEntry: function () {
+					getEntry: function() {
 						return {
 							id: APP_ID_AT_DESIGN_TIME
 						};
@@ -167,7 +167,7 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), APP_ID_AT_DESIGN_TIME, "the app id at design time is returned");
 		});
 
-		QUnit.test("with manifest raw at design time and name property available", function (assert) {
+		QUnit.test("with manifest raw at design time and name property available", function(assert) {
 			var mPropertyBag = {
 				manifest: {
 					"sap-ui6": {
@@ -182,7 +182,7 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId", "the app id is returned");
 		});
 
-		QUnit.test("with manifest raw at design time and name property is not available", function (assert) {
+		QUnit.test("with manifest raw at design time and name property is not available", function(assert) {
 			var mPropertyBag = {
 				manifest: {
 					"sap-ui6": {
@@ -198,11 +198,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("ManifestUtils.getAppIdFromManifest", {
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("with a getEntry function (manifest instance)", function (assert) {
+	}, function() {
+		QUnit.test("with a getEntry function (manifest instance)", function(assert) {
 			var sId = "appId";
 			var oManifest = {
 				getEntry: function() {
@@ -215,7 +215,7 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getAppIdFromManifest(oManifest), sId, "the ID is returned");
 		});
 
-		QUnit.test("without a getEntry function (manifest JSON)", function (assert) {
+		QUnit.test("without a getEntry function (manifest JSON)", function(assert) {
 			var sId = "appId";
 			var oManifest = {
 				"sap.app": {
@@ -226,13 +226,13 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getAppIdFromManifest(oManifest), sId, "the ID is returned");
 		});
 
-		QUnit.test("with a design time placeholder (manifest instance)", function (assert) {
+		QUnit.test("with a design time placeholder (manifest instance)", function(assert) {
 			var sId = "appId";
 			var oManifest = {
 				"sap.app": {
 					id: APP_ID_AT_DESIGN_TIME
 				},
-				getComponentName: function () {
+				getComponentName: function() {
 					return sId;
 				}
 			};
@@ -240,7 +240,7 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getAppIdFromManifest(oManifest), sId, "the ID is returned");
 		});
 
-		QUnit.test("with a design time placeholder (manifest JSON)", function (assert) {
+		QUnit.test("with a design time placeholder (manifest JSON)", function(assert) {
 			var sId = "appId";
 			var oManifest = {
 				"sap.app": {
@@ -442,7 +442,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

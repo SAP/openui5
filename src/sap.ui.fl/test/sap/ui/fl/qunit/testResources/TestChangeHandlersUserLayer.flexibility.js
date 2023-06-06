@@ -2,15 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define([], function () {
+sap.ui.define([], function() {
 	"use strict";
 
 	return {
 		doSomething: {
 			changeHandler: {
-				applyChange: function () {
+				applyChange: function() {
 				},
-				completeChangeContent: function () {
+				completeChangeContent: function() {
 				},
 				revertChange: function() {
 				},
@@ -23,9 +23,9 @@ sap.ui.define([], function () {
 		},
 		doSomethingElse: {
 			changeHandler: {
-				applyChange: function () {
+				applyChange: function() {
 				},
-				completeChangeContent: function () {
+				completeChangeContent: function() {
 				},
 				revertChange: function() {
 				}

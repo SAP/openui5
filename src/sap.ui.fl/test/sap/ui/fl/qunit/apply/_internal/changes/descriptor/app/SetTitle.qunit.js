@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/app/SetTitle",
@@ -12,11 +12,11 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("applyChange", {
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when calling '_applyChange' with title", function (assert) {
+		QUnit.test("when calling '_applyChange' with title", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					id: "custom.app.variant",

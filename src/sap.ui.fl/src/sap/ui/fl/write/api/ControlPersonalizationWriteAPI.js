@@ -125,72 +125,72 @@ sap.ui.define([
 				var aChanges = [];
 				return mPropertyBag.changes.reduce(function(pPromise, oPersonalizationChange) {
 					return pPromise
-						.then(function() {
-							oPersonalizationChange.selectorControl = oPersonalizationChange.selectorElement;
-							return checkChangeSpecificData(oPersonalizationChange, sLayer);
-						})
-						.then(function() {
-							// Transient changes are always VM-independent
-							if (!oPersonalizationChange.transient && !mPropertyBag.ignoreVariantManagement) {
-								// check for preset variantReference
-								if (!oPersonalizationChange.changeSpecificData.variantReference) {
-									var sVariantManagementReference = getRelevantVariantManagementReference(oAppComponent, oPersonalizationChange.selectorControl, mPropertyBag.useStaticArea);
-									if (sVariantManagementReference) {
-										var sCurrentVariantReference = oVariantModel.oData[sVariantManagementReference].currentVariant;
-										oPersonalizationChange.changeSpecificData.variantReference = sCurrentVariantReference;
-									}
-								}
-							} else {
-								// delete preset variantReference
-								delete oPersonalizationChange.changeSpecificData.variantReference;
-							}
-
-							oPersonalizationChange.changeSpecificData = Object.assign(oPersonalizationChange.changeSpecificData, {developerMode: false, layer: sLayer});
-							return ChangesWriteAPI.create({
-								changeSpecificData: oPersonalizationChange.changeSpecificData,
-								selector: oPersonalizationChange.selectorControl
-							});
-						})
-						.then(function(oCreatedChange) {
-							if (!oPersonalizationChange.transient) {
-								oCreatedChange = oFlexController.addPreparedChange(oCreatedChange, oAppComponent);
-							}
-
-							aChanges.push({
-								changeInstance: oCreatedChange,
-								selectorControl: oPersonalizationChange.selectorControl
-							});
-						})
-						.catch(function(oError) {
-							Log.error("A Change was not added successfully. Reason: ", oError.message);
-						});
-				}, Promise.resolve())
 					.then(function() {
-						return aChanges;
+						oPersonalizationChange.selectorControl = oPersonalizationChange.selectorElement;
+						return checkChangeSpecificData(oPersonalizationChange, sLayer);
+					})
+					.then(function() {
+						// Transient changes are always VM-independent
+						if (!oPersonalizationChange.transient && !mPropertyBag.ignoreVariantManagement) {
+							// check for preset variantReference
+							if (!oPersonalizationChange.changeSpecificData.variantReference) {
+								var sVariantManagementReference = getRelevantVariantManagementReference(oAppComponent, oPersonalizationChange.selectorControl, mPropertyBag.useStaticArea);
+								if (sVariantManagementReference) {
+									var sCurrentVariantReference = oVariantModel.oData[sVariantManagementReference].currentVariant;
+									oPersonalizationChange.changeSpecificData.variantReference = sCurrentVariantReference;
+								}
+							}
+						} else {
+							// delete preset variantReference
+							delete oPersonalizationChange.changeSpecificData.variantReference;
+						}
+
+						oPersonalizationChange.changeSpecificData = Object.assign(oPersonalizationChange.changeSpecificData, {developerMode: false, layer: sLayer});
+						return ChangesWriteAPI.create({
+							changeSpecificData: oPersonalizationChange.changeSpecificData,
+							selector: oPersonalizationChange.selectorControl
+						});
+					})
+					.then(function(oCreatedChange) {
+						if (!oPersonalizationChange.transient) {
+							oCreatedChange = oFlexController.addPreparedChange(oCreatedChange, oAppComponent);
+						}
+
+						aChanges.push({
+							changeInstance: oCreatedChange,
+							selectorControl: oPersonalizationChange.selectorControl
+						});
+					})
+					.catch(function(oError) {
+						Log.error("A Change was not added successfully. Reason: ", oError.message);
 					});
+				}, Promise.resolve())
+				.then(function() {
+					return aChanges;
+				});
 			}
 
 			function applyChanges(aChanges) {
 				return aChanges.reduce(function(pPromise, oChange) {
 					return pPromise
-						.then(function() {
-							oChange.changeInstance.setQueuedForApply();
-							return ChangesWriteAPI.apply({
-								change: oChange.changeInstance,
-								element: oChange.selectorControl
-							});
-						})
-						.then(function(oResult) {
-							if (oResult.success) {
-								aSuccessfulChanges.push(oChange.changeInstance);
-							} else {
-								throw oResult.error || new Error("ChangesWriteAPI.apply failed with unspecified error");
-							}
-						})
-						.catch(function(oError) {
-							oFlexController.deleteChange(oChange.changeInstance, oAppComponent);
-							Log.error("A Change was not applied successfully. Reason: ", oError.message);
+					.then(function() {
+						oChange.changeInstance.setQueuedForApply();
+						return ChangesWriteAPI.apply({
+							change: oChange.changeInstance,
+							element: oChange.selectorControl
 						});
+					})
+					.then(function(oResult) {
+						if (oResult.success) {
+							aSuccessfulChanges.push(oChange.changeInstance);
+						} else {
+							throw oResult.error || new Error("ChangesWriteAPI.apply failed with unspecified error");
+						}
+					})
+					.catch(function(oError) {
+						oFlexController.deleteChange(oChange.changeInstance, oAppComponent);
+						Log.error("A Change was not applied successfully. Reason: ", oError.message);
+					});
 				}, Promise.resolve());
 			}
 
@@ -201,14 +201,14 @@ sap.ui.define([
 				componentId: oAppComponent.getId()
 			}).then(function() {
 				return createChanges()
-					.then(applyChanges)
-					.then(function() {
-						(mChangeCreationListeners[sFlexReference] || [])
-							.forEach(function(fnCallback) {
-								fnCallback(aSuccessfulChanges);
-							});
-						return aSuccessfulChanges;
+				.then(applyChanges)
+				.then(function() {
+					(mChangeCreationListeners[sFlexReference] || [])
+					.forEach(function(fnCallback) {
+						fnCallback(aSuccessfulChanges);
 					});
+					return aSuccessfulChanges;
+				});
 			});
 		},
 
@@ -234,7 +234,7 @@ sap.ui.define([
 				return logAndReject("App Component could not be determined");
 			}
 
-			var aSelectorIds = mPropertyBag.selectors.map(function (vControl) {
+			var aSelectorIds = mPropertyBag.selectors.map(function(vControl) {
 				var sControlId = vControl.id || vControl.getId();
 				var sLocalId = oAppComponent.getLocalId(sControlId);
 				return sLocalId || sControlId;
@@ -260,7 +260,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		restore: function (mPropertyBag) {
+		restore: function(mPropertyBag) {
 			if (!mPropertyBag || !mPropertyBag.selector) {
 				return Promise.reject("No selector was provided");
 			}
@@ -377,11 +377,11 @@ sap.ui.define([
 		 * @private
 		 * @sapui5-restricted sap.ovp
 		 */
-		isCondensingEnabled: function () {
+		isCondensingEnabled: function() {
 			return Settings.getInstance()
-				.then(function (oSettings) {
-					return oSettings.isCondensingEnabled(Layer.USER);
-				});
+			.then(function(oSettings) {
+				return oSettings.isCondensingEnabled(Layer.USER);
+			});
 		},
 
 		/**

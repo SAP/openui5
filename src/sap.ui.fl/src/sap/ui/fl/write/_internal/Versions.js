@@ -31,13 +31,13 @@ sap.ui.define([
 		oModel.setDefaultBindingMode(BindingMode.OneWay);
 		oModel.setSizeLimit(MODEL_SIZE_LIMIT);
 		// TODO: currently called by sap.ui.rta.RuntimeAuthoring but should be by a ChangesState
-		oModel.setDirtyChanges = function (bDirtyChanges) {
+		oModel.setDirtyChanges = function(bDirtyChanges) {
 			oModel.setProperty("/dirtyChanges", bDirtyChanges);
 			oModel.updateDraftVersion();
 			oModel.updateBindings(true);
 		};
 
-		oModel.updateDraftVersion = function () {
+		oModel.updateDraftVersion = function() {
 			var aVersions = oModel.getProperty("/versions");
 			var bVersioningEnabled = oModel.getProperty("/versioningEnabled");
 			var bDirtyChanges = oModel.getProperty("/dirtyChanges");
@@ -80,7 +80,7 @@ sap.ui.define([
 			sPersistedBasisForDisplayedVersion = Version.Number.Original;
 		}
 
-		aVersions.forEach(function (oVersion) {
+		aVersions.forEach(function(oVersion) {
 			if (oVersion.version === Version.Number.Draft) {
 				oVersion.type = Version.Type.Draft;
 				oVersion.isPublished = false;
@@ -93,8 +93,8 @@ sap.ui.define([
 				} else {
 					oVersion.type = Version.Type.Inactive;
 				}
-				//If the current selected version is not yet published, enable the publish button
-				//Original versions are not part of back end response, so publish button is not enabled by default value
+				// If the current selected version is not yet published, enable the publish button
+				// Original versions are not part of back end response, so publish button is not enabled by default value
 				if ((oVersion.version === sPersistedBasisForDisplayedVersion) && (oVersion.isPublished === false)) {
 					bPublishVersionEnabled = true;
 				}
@@ -137,7 +137,7 @@ sap.ui.define([
 		// remove all dirty changes
 		var aDirtyChanges = [];
 		var aChangePersistences = oDirtyChangeInfo.changePersistences;
-		aChangePersistences.forEach(function (oChangePersistence) {
+		aChangePersistences.forEach(function(oChangePersistence) {
 			aDirtyChanges = oChangePersistence.getDirtyChanges().concat();
 			aDirtyChanges.forEach(function(oChange) {
 				oChangePersistence.deleteChange(oChange, true);
@@ -210,24 +210,24 @@ sap.ui.define([
 		mPropertyBag.limit = BACKEND_REQUEST_LIMIT;
 
 		return Settings.getInstance()
-			.then(function (oSettings) {
-				var bVersionsEnabled = oSettings.isVersioningEnabled(sLayer);
-				//TODO: similar to ContextBasedAdaptationsAPI this could also be moved outside
-				if (_mInstances && _mInstances[sReference] && _mInstances[sReference][sLayer]) {
-					return _mInstances[sReference][sLayer];
-				}
-				var aVersionsPromise = bVersionsEnabled ? Storage.versions.load(mPropertyBag) : Promise.resolve([]);
-				return aVersionsPromise
-					.then(function (aVersions) {
-						return createModel(bVersionsEnabled, aVersions);
-					})
-					.then(function (oModel) {
-						_mInstances[sReference] = _mInstances[sReference] || {};
-						_mInstances[sReference][sLayer] = _mInstances[sReference][sLayer] || {};
-						_mInstances[sReference][sLayer] = oModel;
-						return _mInstances[sReference][sLayer];
-					});
+		.then(function(oSettings) {
+			var bVersionsEnabled = oSettings.isVersioningEnabled(sLayer);
+			// TODO: similar to ContextBasedAdaptationsAPI this could also be moved outside
+			if (_mInstances && _mInstances[sReference] && _mInstances[sReference][sLayer]) {
+				return _mInstances[sReference][sLayer];
+			}
+			var aVersionsPromise = bVersionsEnabled ? Storage.versions.load(mPropertyBag) : Promise.resolve([]);
+			return aVersionsPromise
+			.then(function(aVersions) {
+				return createModel(bVersionsEnabled, aVersions);
+			})
+			.then(function(oModel) {
+				_mInstances[sReference] = _mInstances[sReference] || {};
+				_mInstances[sReference][sLayer] = _mInstances[sReference][sLayer] || {};
+				_mInstances[sReference][sLayer] = oModel;
+				return _mInstances[sReference][sLayer];
 			});
+		});
 	};
 
 	/**
@@ -275,7 +275,7 @@ sap.ui.define([
 		if (Versions.hasVersionsModel(mPropertyBag)) {
 			mPropertyBag.limit = BACKEND_REQUEST_LIMIT;
 			return Storage.versions.load(mPropertyBag)
-			.then(function (aVersions) {
+			.then(function(aVersions) {
 				var oVersionsModel = Versions.getVersionsModel(mPropertyBag);
 				return _prepareVersionsModel(oVersionsModel.getProperty("/versioningEnabled"), aVersions, oVersionsModel);
 			});
@@ -291,7 +291,7 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.contextBasedAdaptation] - Parameter that indicates whether or not a new backend draft was triggered via contextBasedAdaptationsAPI
 	 * @param {array} [mPropertyBag.draftFilenames] - Array with filesnames which was saved as draft
 	 */
-	Versions.onAllChangesSaved = function (mPropertyBag) {
+	Versions.onAllChangesSaved = function(mPropertyBag) {
 		var oModel = Versions.getVersionsModel(mPropertyBag);
 		var bVersioningEnabled = oModel.getProperty("/versioningEnabled");
 		var bDirtyChanges = oModel.getProperty("/dirtyChanges");
@@ -332,7 +332,7 @@ sap.ui.define([
 
 		var oDirtyChangeInfo = _getDirtyChangesInfo(mPropertyBag);
 		var aChangePersistences = oDirtyChangeInfo.changePersistences;
-		var bDirtyChangesExists = aChangePersistences.some(function (oChangePersistence) {
+		var bDirtyChangesExists = aChangePersistences.some(function(oChangePersistence) {
 			return oChangePersistence.getDirtyChanges().length > 0;
 		});
 
@@ -341,8 +341,8 @@ sap.ui.define([
 		}
 
 		return Storage.versions.activate(mPropertyBag)
-		.then(function (oVersion) {
-			aVersions.forEach(function (oVersionEntry) {
+		.then(function(oVersion) {
+			aVersions.forEach(function(oVersionEntry) {
 				oVersionEntry.type = Version.Type.Inactive;
 			});
 			oVersion.type = Version.Type.Active;
@@ -374,7 +374,7 @@ sap.ui.define([
 		var bBackendDraftExists = oModel.getProperty("/backendDraft");
 		var oDiscardPromise = bBackendDraftExists ? Storage.versions.discardDraft(mPropertyBag) : Promise.resolve();
 
-		return oDiscardPromise.then(function () {
+		return oDiscardPromise.then(function() {
 			var aVersions = oModel.getProperty("/versions");
 			aVersions.shift();
 			_updateVersionModelWhenDiscardOrActivate(oModel, oModel.getProperty("/activeVersion"));
@@ -405,26 +405,26 @@ sap.ui.define([
 			layer: mPropertyBag.layer
 		});
 		return Storage.versions.publish(mPropertyBag)
-			.then(function (sMessage) {
-				//If transport version success, disable publish version button
-				if (sMessage !== "Error" && sMessage !== "Cancel") {
-					oModel.setProperty("/publishVersionEnabled", false);
-					var aVersions = oModel.getProperty("/versions");
-					var bIsPublishedOrOlderVersion = false;
-					aVersions.forEach(function (oVersion) {
-						if (oVersion.isPublished) {
-							return;
-						}
-						if (oVersion.version === mPropertyBag.version) {
-							bIsPublishedOrOlderVersion = true;
-						}
-						if (bIsPublishedOrOlderVersion && !oVersion.isPublished) {
-							oVersion.isPublished = true;
-						}
-					});
-				}
-				return sMessage;
-			});
+		.then(function(sMessage) {
+			// If transport version success, disable publish version button
+			if (sMessage !== "Error" && sMessage !== "Cancel") {
+				oModel.setProperty("/publishVersionEnabled", false);
+				var aVersions = oModel.getProperty("/versions");
+				var bIsPublishedOrOlderVersion = false;
+				aVersions.forEach(function(oVersion) {
+					if (oVersion.isPublished) {
+						return;
+					}
+					if (oVersion.version === mPropertyBag.version) {
+						bIsPublishedOrOlderVersion = true;
+					}
+					if (bIsPublishedOrOlderVersion && !oVersion.isPublished) {
+						oVersion.isPublished = true;
+					}
+				});
+			}
+			return sMessage;
+		});
 	};
 
 	return Versions;

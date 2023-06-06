@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/base/security/encodeURLParameters",
 	"sap/ui/core/Configuration"
-], function (
+], function(
 	encodeURLParameters,
 	Configuration
 ) {
@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.initial._internal.connectors, sap.ui.fl.write._internal.connectors, sap.ui.fl.write._internal.transport
 	 */
 
-	var DEFAULT_TIMEOUT = 20000; //20 seconds
+	var DEFAULT_TIMEOUT = 20000; // 20 seconds
 
 	/**
 	 * Creates <code>Error<code> object from <code>XMLHttpRequest<code> and an additional message for end user
@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @param {string} sUserMessage Message which can be displayed to end user
 	 * @returns {object} <code>Error<code> object
 	 */
-	var _createError = function (oRequest, sUserMessage) {
+	var _createError = function(oRequest, sUserMessage) {
 		var oError = new Error(oRequest.statusText);
 		oError.status = oRequest.status;
 		oError.userMessage = sUserMessage;
@@ -43,7 +43,7 @@ sap.ui.define([
 	 * @param {string} sTextKey Text key for text look up
 	 * @returns {string} Text value
 	 */
-	var _getTextFromResourceBundle = function (sTextKey) {
+	var _getTextFromResourceBundle = function(sTextKey) {
 		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl").getText(sTextKey);
 	};
 
@@ -54,7 +54,7 @@ sap.ui.define([
 		 * @param {object} mParameters - Parameters of the request
 		 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
-		addLanguageInfo: function (mParameters) {
+		addLanguageInfo: function(mParameters) {
 			if (!mParameters) {
 				throw new Error("No parameters map were passed");
 			}
@@ -67,7 +67,7 @@ sap.ui.define([
 		 * @param {object} mParameters - Parameters of the request
 		 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
-		addSAPLogonLanguageInfo: function (mParameters) {
+		addSAPLogonLanguageInfo: function(mParameters) {
 			if (!mParameters) {
 				throw new Error("No parameters map were passed");
 			}
@@ -89,7 +89,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.initial._internal, sap.ui.fl.write._internal
 		 */
-		getUrl: function (sRoute, mPropertyBag, mParameters) {
+		getUrl: function(sRoute, mPropertyBag, mParameters) {
 			if (!sRoute || !mPropertyBag.url) {
 				throw new Error("Not all necessary parameters were passed");
 			}
@@ -107,7 +107,7 @@ sap.ui.define([
 
 			// Adding Query-Parameters to the Url
 			if (mParameters) {
-				Object.keys(mParameters).forEach(function (sKey) {
+				Object.keys(mParameters).forEach(function(sKey) {
 					if (mParameters[sKey] === undefined) {
 						delete mParameters[sKey];
 					}
@@ -135,14 +135,14 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
 		 */
-		sendRequest: function (sUrl, sMethod, mPropertyBag) {
+		sendRequest: function(sUrl, sMethod, mPropertyBag) {
 			sMethod = sMethod || "GET";
 			sMethod = sMethod.toUpperCase();
 
-			return new Promise(function (resolve, reject) {
+			return new Promise(function(resolve, reject) {
 				var xhr = new XMLHttpRequest();
 				xhr.open(sMethod, sUrl);
-				xhr.timeout = DEFAULT_TIMEOUT; //TODO Implement logic for connectors to configure dedicated timeout values which overwrite the default
+				xhr.timeout = DEFAULT_TIMEOUT; // TODO Implement logic for connectors to configure dedicated timeout values which overwrite the default
 				if ((sMethod === "GET" || sMethod === "HEAD") && (!mPropertyBag || !mPropertyBag.initialConnector || !mPropertyBag.initialConnector.xsrfToken)) {
 					xhr.setRequestHeader("X-CSRF-Token", "fetch");
 				}
@@ -162,7 +162,7 @@ sap.ui.define([
 					xhr.responseType = mPropertyBag.dataType;
 				}
 
-				xhr.onload = function () {
+				xhr.onload = function() {
 					if (xhr.status >= 200 && xhr.status < 400) {
 						try {
 							var oResult = {};
@@ -185,7 +185,7 @@ sap.ui.define([
 							}
 							oResult.status = xhr.status;
 							if (xhr.getResponseHeader("X-CSRF-Token")) {
-								//Only obtain token from non-cacheable request
+								// Only obtain token from non-cacheable request
 								if (!sUrl.match(/\/~.*~/g)) {
 									oResult.xsrfToken = xhr.getResponseHeader("X-CSRF-Token");
 									if (mPropertyBag && mPropertyBag.initialConnector) {
@@ -204,7 +204,7 @@ sap.ui.define([
 					} else {
 						var sErrorMessage = "";
 						try {
-							//Handle back end error. TODO Implement CF error with the same format
+							// Handle back end error. TODO Implement CF error with the same format
 							var oResponse = typeof xhr.response === "string" ? JSON.parse(xhr.response) : xhr.response;
 							if (Array.isArray(oResponse.messages) && oResponse.messages.length) {
 								sErrorMessage = oResponse.messages.reduce(function(sConcatenatedMessage, oErrorResponse) {
@@ -212,17 +212,17 @@ sap.ui.define([
 								}, sErrorMessage);
 							}
 						} catch (e) {
-							//Do nothing if the response is not in JSON format
+							// Do nothing if the response is not in JSON format
 						}
 						reject(_createError(xhr, sErrorMessage));
 					}
 				};
 
-				xhr.ontimeout = function () {
+				xhr.ontimeout = function() {
 					reject(_createError(xhr, _getTextFromResourceBundle("MSG_CONNECTION_TIMEOUT_ERROR")));
 				};
 
-				xhr.onerror = function () {
+				xhr.onerror = function() {
 					reject(_createError(xhr, _getTextFromResourceBundle("MSG_NETWORK_ERROR")));
 				};
 

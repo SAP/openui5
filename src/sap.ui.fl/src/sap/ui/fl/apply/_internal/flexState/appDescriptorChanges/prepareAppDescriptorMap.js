@@ -26,7 +26,7 @@ sap.ui.define([
 	 */
 	return function(mPropertyBag) {
 		var aChangeDefinitions = mPropertyBag.storageResponse.changes.appDescriptorChanges || [];
-		//TODO: add filtering for condensable changeTypes once necessary
+		// TODO: add filtering for condensable changeTypes once necessary
 
 		var aChanges = aChangeDefinitions.map(function(oChangeDefinition) {
 			return FlexObjectFactory.createFromFileContent(oChangeDefinition);

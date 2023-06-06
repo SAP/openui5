@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/core/UIComponent",
@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/support/RuleAnalyzer",
 	"test-resources/sap/ui/support/TestHelper",
 	"sap/ui/core/Core"
-], function (
+], function(
 	UIComponent,
 	ComponentContainer,
 	XMLView,
@@ -36,7 +36,7 @@ sap.ui.define([
 	 * @deprecated Since version 1.54. Due to <code>sap.ui.dt.ElementOverlay.getAggregationOverlays</code> deprecation
 	 */
 	QUnit.module("Base functionality for app component's root view", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 				createContent: function() {
@@ -52,8 +52,8 @@ sap.ui.define([
 									'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 										'<l:VerticalLayout id="layout">' +
 											'<m:Button text="Button 1" id="button1" />' +
-										'</l:VerticalLayout>' +
-									'</mvc:View>'
+										"</l:VerticalLayout>" +
+									"</mvc:View>"
 							})
 						]
 					});
@@ -72,10 +72,10 @@ sap.ui.define([
 				onReady: fnDone
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oComponentContainer.destroy();
 		}
-	}, function () {
+	}, function() {
 		testRule({
 			executionScopeType: "global",
 			libName: "sap.ui.fl",
@@ -85,7 +85,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Base functionality for popups", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 				createContent: function() {
@@ -97,7 +97,7 @@ sap.ui.define([
 			this.oComponent = new CustomComponent("componentId");
 
 			// popups with app components + unstable
-			this.oComponent.runAsOwner(function () {
+			this.oComponent.runAsOwner(function() {
 				this.oDialog = new Dialog({
 					id: this.oComponent.createId("DialogWithComponent"),
 					showHeader: false,
@@ -117,7 +117,7 @@ sap.ui.define([
 					showHeader: false,
 					contentWidth: "270px"
 				});
-				this.oPopoverAdaptationDisabled.isPopupAdaptationAllowed = function () {
+				this.oPopoverAdaptationDisabled.isPopupAdaptationAllowed = function() {
 					return false;
 				};
 				// when focus is taken away popover might close - resulting in failing tests
@@ -140,10 +140,10 @@ sap.ui.define([
 			this.oComponentContainer.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			this.oDialog.attachAfterOpen(function () {
-				this.oPopover.attachAfterOpen(function () {
-					this.oDialogWithoutComponent.attachAfterOpen(function () {
-						this.oPopoverAdaptationDisabled.attachAfterOpen(function () {
+			this.oDialog.attachAfterOpen(function() {
+				this.oPopover.attachAfterOpen(function() {
+					this.oDialogWithoutComponent.attachAfterOpen(function() {
+						this.oPopoverAdaptationDisabled.attachAfterOpen(function() {
 							// recognized as a dialog from InstanceManager
 							MessageBox.show("message box");
 							Bootstrap.initSupportRules(["true", "silent"], {
@@ -158,7 +158,7 @@ sap.ui.define([
 			}.bind(this));
 			this.oDialog.open();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oPopover.destroy();
 			this.oPopoverAdaptationDisabled.destroy();
 			this.oDialog.destroy();
@@ -166,21 +166,21 @@ sap.ui.define([
 			InstanceManager.closeAllDialogs();
 			this.oComponentContainer.destroy();
 		}
-	}, function () {
-		QUnit.test("stableId check", function (assert) {
+	}, function() {
+		QUnit.test("stableId check", function(assert) {
 			return RuleAnalyzer.analyze({type: "global"},
 				[{
 					libName: "sap.ui.fl",
 					ruleId: "stableId"
 				}]
-			).then(function () {
+			).then(function() {
 				var aUnstableIds = [
 					this.oDialog.getContent()[0].getId(),
 					this.oPopover.getContent()[0].getId(),
 					this.oPopover.getId()
 				];
 				var oHistory = RuleAnalyzer.getLastAnalysisHistory();
-				oHistory.issues.forEach(function (oIssue) {
+				oHistory.issues.forEach(function(oIssue) {
 					var iUnstableIdIndex = aUnstableIds.indexOf(oIssue.context.id);
 					if (iUnstableIdIndex > -1) {
 						aUnstableIds.splice(iUnstableIdIndex, 1);
@@ -192,7 +192,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Aggregation Binding via template", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 				createContent: function() {
@@ -201,11 +201,11 @@ sap.ui.define([
 						viewContent:
 							'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 								'<l:VerticalLayout id="layout" content="{/buttons}">' +
-									'<l:content>' +
+									"<l:content>" +
 										'<m:Button text="{text}" />' +
-									'</l:content>' +
-								'</l:VerticalLayout>' +
-							'</mvc:View>'
+									"</l:content>" +
+								"</l:VerticalLayout>" +
+							"</mvc:View>"
 					});
 				}
 			});
@@ -231,11 +231,11 @@ sap.ui.define([
 				onReady: fnDone
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oComponentContainer.destroy();
 			this.oComponent.destroy();
 		}
-	}, function () {
+	}, function() {
 		testRule({
 			executionScopeType: "global",
 			libName: "sap.ui.fl",
@@ -245,7 +245,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Aggregation Binding via factory function", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 				createContent: function() {
@@ -254,7 +254,7 @@ sap.ui.define([
 						viewContent:
 							'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout">' +
 								'<l:VerticalLayout id="layout" />' +
-							'</mvc:View>'
+							"</mvc:View>"
 					});
 				}
 			});
@@ -270,7 +270,7 @@ sap.ui.define([
 			this.oComponent.setModel(this.oModel);
 
 			this.oVerticalLayout = this.oComponent.getRootControl().byId("layout");
-			this.oVerticalLayout.bindAggregation("content", "/buttons", function (sId) {
+			this.oVerticalLayout.bindAggregation("content", "/buttons", function(sId) {
 				return new Button(sId, {
 					text: {
 						path: "text"
@@ -289,11 +289,11 @@ sap.ui.define([
 				onReady: fnDone
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oComponentContainer.destroy();
 			this.oComponent.destroy();
 		}
-	}, function () {
+	}, function() {
 		// Controls in bound aggregations should be ignored during the evaluation
 		testRule({
 			executionScopeType: "global",

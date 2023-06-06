@@ -23,7 +23,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.Cache, sap.ui.fl.apply._internal.flexState.FlexState
 	 */
 	function concatFlexObjects(aResponses, sPath) {
-		var aFlexObjects = aResponses.reduce(function (aFlexObjects, oResponse) {
+		var aFlexObjects = aResponses.reduce(function(aFlexObjects, oResponse) {
 			if (ObjectPath.get(sPath, oResponse)) {
 				return aFlexObjects.concat(ObjectPath.get(sPath, oResponse));
 			}
@@ -31,7 +31,7 @@ sap.ui.define([
 		}, []);
 
 		var aFlexObjectIds = [];
-		return aFlexObjects.filter(function (oFlexObject) {
+		return aFlexObjects.filter(function(oFlexObject) {
 			var sFileName = oFlexObject.fileName;
 			var bObjectAlreadyAdded = aFlexObjectIds.indexOf(sFileName) !== -1;
 			if (bObjectAlreadyAdded) {
@@ -53,7 +53,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.Cache
 	 */
 	function concatUi2personalization(aResponses) {
-		return aResponses.reduce(function (oUi2Section, oResponse) {
+		return aResponses.reduce(function(oUi2Section, oResponse) {
 			return merge({}, oUi2Section, oResponse.ui2personalization);
 		}, {});
 	}
@@ -68,7 +68,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.Cache
 	 */
 	function _concatEtag(aResponses) {
-		return aResponses.reduce(function (sCacheKey, oResponse) {
+		return aResponses.reduce(function(sCacheKey, oResponse) {
 			// eslint-disable-next-line no-return-assign
 			return oResponse.cacheKey ? sCacheKey += oResponse.cacheKey : sCacheKey;
 		}, "") || null;

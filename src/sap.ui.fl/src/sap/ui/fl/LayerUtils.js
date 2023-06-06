@@ -13,7 +13,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	//Stack of layers in the layered repository
+	// Stack of layers in the layered repository
 	var aLayers = [
 		Layer.BASE,
 		Layer.VENDOR,
@@ -24,7 +24,7 @@ sap.ui.define([
 		Layer.USER
 	];
 
-	//Precalculates index of layers
+	// Precalculates index of layers
 	var mLayersIndex = {};
 	aLayers.forEach(function(sLayer, iIndex) {
 		mLayersIndex[sLayer] = iIndex;
@@ -53,8 +53,8 @@ sap.ui.define([
 		 * @returns {boolean} <code>true</code> if the layer is valid
 		 * @public
 		 */
-		isValidLayer: function (sLayer) {
-			return Object.keys(Layer).some(function (sExistingLayer) {
+		isValidLayer: function(sLayer) {
+			return Object.keys(Layer).some(function(sExistingLayer) {
 				return sExistingLayer === sLayer;
 			});
 		},
@@ -65,7 +65,7 @@ sap.ui.define([
 		 * @returns {boolean} true if it's an application variant
 		 * @public
 		 */
-		isVendorLayer: function () {
+		isVendorLayer: function() {
 			return this.getCurrentLayer() === Layer.VENDOR;
 		},
 
@@ -99,7 +99,7 @@ sap.ui.define([
 		 * @returns {boolean} Indicates whether a new variant needs an ABAP package
 		 * @public
 		 */
-		doesCurrentLayerRequirePackage: function () {
+		doesCurrentLayerRequirePackage: function() {
 			var sCurrentLayer = this.getCurrentLayer();
 			return (sCurrentLayer === Layer.VENDOR) || (sCurrentLayer === Layer.PARTNER) || (sCurrentLayer === Layer.CUSTOMER_BASE);
 		},
@@ -111,7 +111,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.service.Service} oURLParsingService Unified Shell URL Parsing Service
 		 * @return {string} maxLayer
 		 */
-		getMaxLayer: function (oURLParsingService) {
+		getMaxLayer: function(oURLParsingService) {
 			var sParseMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(hasher.getHash(), oURLParsingService);
 			return sParseMaxLayer || getUrlParameter(this.FL_MAX_LAYER_PARAM) || LayerUtils._sTopLayer;
 		},
@@ -146,7 +146,7 @@ sap.ui.define([
 		 * @returns {boolean} <code>true</code> if the first input layer is higher than the second input layer, otherwise <code>false</code>
 		 * @public
 		 */
-		isOverLayer: function (sObjectsLayer, sComparedLayer) {
+		isOverLayer: function(sObjectsLayer, sComparedLayer) {
 			return this.getLayerIndex(sObjectsLayer) > this.getLayerIndex(sComparedLayer);
 		},
 
@@ -187,7 +187,7 @@ sap.ui.define([
 		 * @returns {boolean} <code>true</code> if the top layer is also the max layer, otherwise <code>false</code>
 		 * @public
 		 */
-		isSapUiLayerParameterProvided: function () {
+		isSapUiLayerParameterProvided: function() {
 			return !!getUrlParameter("sap-ui-layer");
 		},
 
@@ -197,7 +197,7 @@ sap.ui.define([
 		 * @returns {string} the current layer
 		 * @public
 		 */
-		getCurrentLayer: function () {
+		getCurrentLayer: function() {
 			var sLayer = getUrlParameter("sap-ui-layer") || "";
 			return sLayer.toUpperCase() || Layer.CUSTOMER;
 		},

@@ -31,7 +31,7 @@ sap.ui.define([
 		return JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent);
 	}
 
-	function createNewDependencyObject (oChange) {
+	function createNewDependencyObject(oChange) {
 		return {
 			changeObject: oChange,
 			dependencies: [],
@@ -67,7 +67,7 @@ sap.ui.define([
 			if (oSelector.id) {
 				addMapEntry(getCompleteIdFromSelector(oSelector, oAppComponent), oChange, mChangesMap);
 			} else {
-				//If the selector id is not defined, add the change to the list to make sure it has the correct order
+				// If the selector id is not defined, add the change to the list to make sure it has the correct order
 				addChangeIntoList(mChangesMap, oChange);
 			}
 		}
@@ -86,7 +86,7 @@ sap.ui.define([
 			// If 2 changes have the same dependent selector, they are depend on each other
 			if (isSelectorInArray(aDependentSelectorsOfExistingChange, oDependentSelector)) {
 				var sDependentControlId = getCompleteIdFromSelector(oDependentSelector, oAppComponent);
-				//If checking order is required, the target change and the existing change can be in revert order
+				// If checking order is required, the target change and the existing change can be in revert order
 				var bIsChangesInRevertOrder = bCheckingOrder && aChanges.indexOf(oTargetChange) < aChanges.indexOf(oExistingChange);
 				if (bIsChangesInRevertOrder) {
 					addDependencyEntry(oExistingChange, oTargetChange, sDependentControlId, mChangesMap, true);

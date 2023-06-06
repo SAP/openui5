@@ -75,7 +75,7 @@ sap.ui.define([
 		this._mChanges = DependencyHandler.createEmptyDependencyMap();
 		this._bChangesMapCreated = false;
 
-		//_mChangesInitial contains a clone of _mChanges to recreated dependencies if changes need to be reapplied
+		// _mChangesInitial contains a clone of _mChanges to recreated dependencies if changes need to be reapplied
 		this._mChangesInitial = merge({}, this._mChanges);
 
 		if (!this._mComponent || !this._mComponent.name) {
@@ -183,65 +183,65 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag, bInvalidateCache) {
 		return Utils.getUShellService("URLParsing")
-			.then(function(oURLParsingService) {
-				this._oUShellURLParsingService = oURLParsingService;
-				return Cache.getChangesFillingCache(this._mComponent, mPropertyBag, bInvalidateCache);
-			}.bind(this))
-			.then(function(mPropertyBag, oWrappedChangeFileContent) {
-				var oChangeFileContent = merge({}, oWrappedChangeFileContent);
-				var oAppComponent = mPropertyBag && mPropertyBag.component && Utils.getAppComponentForControl(mPropertyBag.component);
+		.then(function(oURLParsingService) {
+			this._oUShellURLParsingService = oURLParsingService;
+			return Cache.getChangesFillingCache(this._mComponent, mPropertyBag, bInvalidateCache);
+		}.bind(this))
+		.then(function(mPropertyBag, oWrappedChangeFileContent) {
+			var oChangeFileContent = merge({}, oWrappedChangeFileContent);
+			var oAppComponent = mPropertyBag && mPropertyBag.component && Utils.getAppComponentForControl(mPropertyBag.component);
 
-				var bHasFlexObjects = StorageUtils.isStorageResponseFilled(oChangeFileContent.changes);
+			var bHasFlexObjects = StorageUtils.isStorageResponseFilled(oChangeFileContent.changes);
 
-				if (!bHasFlexObjects) {
-					return [];
-				}
+			if (!bHasFlexObjects) {
+				return [];
+			}
 
-				var aChanges = oChangeFileContent.changes.changes;
+			var aChanges = oChangeFileContent.changes.changes;
 
-				//Binds a json model of message bundle to the component the first time a change within the vendor layer was detected
-				//It enables the translation of changes
-				if (!this._oMessagebundle && oChangeFileContent.messagebundle && oAppComponent) {
-					if (!oAppComponent.getModel("i18nFlexVendor")) {
-						if (aChanges.some(function(oChange) {
-							return oChange.layer === Layer.VENDOR;
-						})) {
-							this._oMessagebundle = oChangeFileContent.messagebundle;
-							var oModel = new JSONModel(this._oMessagebundle);
-							oAppComponent.setModel(oModel, "i18nFlexVendor");
-						}
+			// Binds a json model of message bundle to the component the first time a change within the vendor layer was detected
+			// It enables the translation of changes
+			if (!this._oMessagebundle && oChangeFileContent.messagebundle && oAppComponent) {
+				if (!oAppComponent.getModel("i18nFlexVendor")) {
+					if (aChanges.some(function(oChange) {
+						return oChange.layer === Layer.VENDOR;
+					})) {
+						this._oMessagebundle = oChangeFileContent.messagebundle;
+						var oModel = new JSONModel(this._oMessagebundle);
+						oAppComponent.setModel(oModel, "i18nFlexVendor");
 					}
 				}
+			}
 
-				var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
-				var bFilterMaxLayer = !(mPropertyBag && mPropertyBag.ignoreMaxLayerParameter);
-				var fnFilter = function() { return true; };
-				if (sCurrentLayer) {
-					aChanges = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aChanges, sCurrentLayer);
-				} else if (LayerUtils.isLayerFilteringRequired(this._oUShellURLParsingService) && bFilterMaxLayer) {
-					fnFilter = filterChangeForMaxLayer.bind(this);
-					//If layer filtering required, excludes changes in higher layer than the max layer
-					aChanges = aChanges.filter(fnFilter);
-				} else if (this._bHasChangesOverMaxLayer && !bFilterMaxLayer) {
-					// ignoreMaxLayerParameter = true is set from flexController.hasHigherLayerChanges(),
-					// triggered by rta.stop(), to check if reload needs to be performed
-					// as ctrl variant changes are already gone and to improve performance, just return the constant
-					this._bHasChangesOverMaxLayer = false;
-					return this.HIGHER_LAYER_CHANGES_EXIST;
-				}
+			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
+			var bFilterMaxLayer = !(mPropertyBag && mPropertyBag.ignoreMaxLayerParameter);
+			var fnFilter = function() { return true; };
+			if (sCurrentLayer) {
+				aChanges = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aChanges, sCurrentLayer);
+			} else if (LayerUtils.isLayerFilteringRequired(this._oUShellURLParsingService) && bFilterMaxLayer) {
+				fnFilter = filterChangeForMaxLayer.bind(this);
+				// If layer filtering required, excludes changes in higher layer than the max layer
+				aChanges = aChanges.filter(fnFilter);
+			} else if (this._bHasChangesOverMaxLayer && !bFilterMaxLayer) {
+				// ignoreMaxLayerParameter = true is set from flexController.hasHigherLayerChanges(),
+				// triggered by rta.stop(), to check if reload needs to be performed
+				// as ctrl variant changes are already gone and to improve performance, just return the constant
+				this._bHasChangesOverMaxLayer = false;
+				return this.HIGHER_LAYER_CHANGES_EXIST;
+			}
 
-				var bIncludeControlVariants = oChangeFileContent.changes && mPropertyBag && mPropertyBag.includeCtrlVariants;
-				var aFilteredVariantChanges = this._getAllCtrlVariantChanges(oChangeFileContent, bIncludeControlVariants, fnFilter);
-				aChanges = aChanges.concat(aFilteredVariantChanges);
+			var bIncludeControlVariants = oChangeFileContent.changes && mPropertyBag && mPropertyBag.includeCtrlVariants;
+			var aFilteredVariantChanges = this._getAllCtrlVariantChanges(oChangeFileContent, bIncludeControlVariants, fnFilter);
+			aChanges = aChanges.concat(aFilteredVariantChanges);
 
-				return this._checkAndGetChangeInstances(aChanges, oChangeFileContent);
-			}.bind(this, mPropertyBag));
+			return this._checkAndGetChangeInstances(aChanges, oChangeFileContent);
+		}.bind(this, mPropertyBag));
 	};
 
 	ChangePersistence.prototype._checkAndGetChangeInstances = function(aChanges, oChangeFileContent) {
 		return aChanges
-			.filter(preconditionsFulfilled)
-			.map(getChangeInstance.bind(this, oChangeFileContent));
+		.filter(preconditionsFulfilled)
+		.map(getChangeInstance.bind(this, oChangeFileContent));
 	};
 
 	function filterChangeForMaxLayer(oChangeOrChangeContent) {
@@ -272,13 +272,13 @@ sap.ui.define([
 			return VariantManagementState.getInitialChanges({reference: this._mComponent.name});
 		}
 		return ["variants", "variantChanges", "variantDependentControlChanges", "variantManagementChanges"]
-			.reduce(function(aResult, sVariantChangeType) {
-				if (oChangeFileContent.changes[sVariantChangeType]) {
-					return aResult.concat(oChangeFileContent.changes[sVariantChangeType]);
-				}
-				return aResult;
-			}, [])
-			.filter(fnFilter);
+		.reduce(function(aResult, sVariantChangeType) {
+			if (oChangeFileContent.changes[sVariantChangeType]) {
+				return aResult.concat(oChangeFileContent.changes[sVariantChangeType]);
+			}
+			return aResult;
+		}, [])
+		.filter(fnFilter);
 	};
 
 	/**
@@ -293,7 +293,7 @@ sap.ui.define([
 
 		function createChangeMap(aChanges) {
 			Measurement.start("fl.createDependencyMap", "Measurement of creating initial dependency map");
-			//Since starting RTA does not recreate ChangePersistence instance, resets changes map is required to filter personalized changes
+			// Since starting RTA does not recreate ChangePersistence instance, resets changes map is required to filter personalized changes
 			this._mChanges = DependencyHandler.createEmptyDependencyMap();
 
 			aChanges.forEach(this.addChangeAndUpdateDependencies.bind(this, oAppComponent));
@@ -413,7 +413,7 @@ sap.ui.define([
 		var aChanges = union(
 			this.getChangesMapForComponent().aChanges,
 			mPropertyBag.includeDirtyChanges && this.getDirtyChanges()
-		).filter(function (oChange) {
+		).filter(function(oChange) {
 			return (
 				Boolean(oChange)
 				&& oChange.getFileType() === "change"
@@ -726,7 +726,7 @@ sap.ui.define([
 		if (sParentVersion) {
 			// in case of changes saved for a draft only the first writing operation must have the parentVersion targeting the basis
 			// followup changes must point the the existing draft created with the first request
-			var aNewChanges = aDirtyChanges.filter(function (oChange) {
+			var aNewChanges = aDirtyChanges.filter(function(oChange) {
 				return oChange.getState() === States.LifecycleState.NEW;
 			});
 			oFirstNewChange = [].concat(aNewChanges).shift();
@@ -734,8 +734,8 @@ sap.ui.define([
 
 		return aDirtyChanges.reduce(function(oPreviousPromise, oDirtyChange) {
 			return oPreviousPromise
-				.then(performSingleSaveAction.bind(undefined, oDirtyChange, oFirstNewChange, sParentVersion))
-				.then(this._updateCacheAndDirtyState.bind(this, oDirtyChange, bSkipUpdateCache));
+			.then(performSingleSaveAction.bind(undefined, oDirtyChange, oFirstNewChange, sParentVersion))
+			.then(this._updateCacheAndDirtyState.bind(this, oDirtyChange, bSkipUpdateCache));
 		}.bind(this), Promise.resolve());
 	};
 
@@ -933,7 +933,7 @@ sap.ui.define([
 
 			return Storage.publish({
 				transportDialogSettings: {
-					rootControl: oRootControl, //TODO not used value, should be removed.
+					rootControl: oRootControl, // TODO not used value, should be removed.
 					styleClass: sStyleClass
 				},
 				layer: sLayer,
@@ -972,7 +972,7 @@ sap.ui.define([
 		var aLayers = [].concat(vLayer || []);
 		var aDirtyChanges = this._aDirtyChanges;
 
-		var aChangesToBeRemoved = aDirtyChanges.filter(function (oChange) {
+		var aChangesToBeRemoved = aDirtyChanges.filter(function(oChange) {
 			var bChangeValid = true;
 
 			if (aLayers.length && !aLayers.includes(oChange.getLayer())) {
@@ -995,7 +995,7 @@ sap.ui.define([
 			return bChangeValid;
 		});
 
-		aChangesToBeRemoved.forEach(function (oChange) {
+		aChangesToBeRemoved.forEach(function(oChange) {
 			var nIndex = aDirtyChanges.indexOf(oChange);
 			aDirtyChanges.splice(nIndex, 1);
 			FlexState.removeDirtyFlexObject(this._mComponent.name, oChange);
@@ -1021,7 +1021,7 @@ sap.ui.define([
 		var bSelectorIdsProvided = aSelectorIds && aSelectorIds.length > 0;
 		var bChangeTypesProvided = aChangeTypes && aChangeTypes.length > 0;
 
-		//In case of application reset and PUBLIC layer available, also includes comp variant entities
+		// In case of application reset and PUBLIC layer available, also includes comp variant entities
 		var isPublicLayerAvailable = Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().isPublicLayerAvailable();
 		var isApplicationReset = sGenerator === undefined && aSelectorIds === undefined && aChangeTypes === undefined;
 		var aCompVariantsEntries = [];
@@ -1050,11 +1050,11 @@ sap.ui.define([
 		}.bind(this))
 		.then(function(oResponse) {
 			var aChangesToRevert = [];
-			//If reset changes for control, returns an array of deleted changes for reverting
+			// If reset changes for control, returns an array of deleted changes for reverting
 			if (aSelectorIds || aChangeTypes) {
 				var aNames = [];
 				if (oResponse && oResponse.response && oResponse.response.length > 0) {
-					oResponse.response.forEach(function (oChangeContentId) {
+					oResponse.response.forEach(function(oChangeContentId) {
 						aNames.push(oChangeContentId.fileName);
 					});
 				}

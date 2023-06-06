@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/transport/TransportDialog",
@@ -19,40 +19,40 @@ sap.ui.define([
 	var ValueState = coreLibrary.ValueState;
 
 	QUnit.module("sap.ui.fl.write._internal.transport.TransportDialog", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oDialog = new TransportDialog();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oDialog.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Shall be instantiable", function (assert) {
+		QUnit.test("Shall be instantiable", function(assert) {
 			assert.ok(this.oDialog);
 		});
 
-		QUnit.test("Escape handler is set", function (assert) {
+		QUnit.test("Escape handler is set", function(assert) {
 			assert.ok(this.oDialog.getEscapeHandler());
 			assert.equal(typeof this.oDialog.getEscapeHandler(), "function");
 		});
 
-		QUnit.test("setPackage", function (assert) {
+		QUnit.test("setPackage", function(assert) {
 			this.oDialog.setPkg("$TMP");
 			assert.equal(this.oDialog.getProperty("pkg"), "$TMP");
 		});
 
-		QUnit.test("setLrepObject", function (assert) {
+		QUnit.test("setLrepObject", function(assert) {
 			this.oDialog.setLrepObject({type: "variant", name: "id_1414740501651_318", namespace: ""});
 			assert.equal(this.oDialog.getProperty("lrepObject").name, "id_1414740501651_318");
 		});
 
-		QUnit.test("setHidePackage", function (assert) {
+		QUnit.test("setHidePackage", function(assert) {
 			this.oDialog.setHidePackage(true);
 			assert.equal(this.oDialog.getProperty("hidePackage"), true);
 			assert.equal(this.oDialog._oPackageListItem.getVisible(), false);
 		});
 
-		QUnit.test("setTransports", function (assert) {
+		QUnit.test("setTransports", function(assert) {
 			var aTransports = [
 				{
 					transportId: "T1",
@@ -81,7 +81,7 @@ sap.ui.define([
 			assert.equal(this.oDialog._oTransport.getEnabled(), true);
 		});
 
-		QUnit.test("setLocalObjectVisible", function (assert) {
+		QUnit.test("setLocalObjectVisible", function(assert) {
 			assert.equal(this.oDialog._oLocalObjectButton.getVisible(), true, "by default the localObject button is visible");
 			this.oDialog.setLocalObjectVisible(false);
 			assert.equal(this.oDialog._oLocalObjectButton.getVisible(), false, "the button is hidden");
@@ -89,17 +89,17 @@ sap.ui.define([
 			assert.equal(this.oDialog._oLocalObjectButton.getVisible(), true, "the button is visible");
 		});
 
-		QUnit.test("_onPackageChangeError", function (assert) {
+		QUnit.test("_onPackageChangeError", function(assert) {
 			this.oDialog._onPackageChangeError({});
 			assert.equal(this.oDialog.getProperty("transports").length, 0);
 		});
 
-		QUnit.test("_onPackageChangeSuccess - localonly flag", function (assert) {
+		QUnit.test("_onPackageChangeSuccess - localonly flag", function(assert) {
 			this.oDialog._onPackageChangeSuccess({localonly: true});
 			assert.equal(this.oDialog._oTransport.getEnabled(), false);
 		});
 
-		QUnit.test("_onPackageChangeSuccess - locked flag", function (assert) {
+		QUnit.test("_onPackageChangeSuccess - locked flag", function(assert) {
 			var oTransports = {
 				transports: [
 					{
@@ -114,7 +114,7 @@ sap.ui.define([
 			assert.ok(this.oDialog._hasLock.calledOnce);
 		});
 
-		QUnit.test("_onPackageChangeSuccess - error code", function (assert) {
+		QUnit.test("_onPackageChangeSuccess - error code", function(assert) {
 			this.oDialog._onPackageChangeSuccess({
 				errorCode: "INVALID_PACKAGE",
 				transports: []
@@ -123,10 +123,10 @@ sap.ui.define([
 			assert.equal(this.oDialog._oPackage.getValueState(), ValueState.Error);
 		});
 
-		QUnit.test("okay callback not invoked", function (assert) {
-			//no package, no hide package, no transport.
+		QUnit.test("okay callback not invoked", function(assert) {
+			// no package, no hide package, no transport.
 			var bPressed = false;
-			var fPressed = function () {
+			var fPressed = function() {
 				bPressed = true;
 			};
 			var aButtons = this.oDialog.getButtons();
@@ -135,10 +135,10 @@ sap.ui.define([
 			assert.equal(bPressed, false);
 		});
 
-		QUnit.test("okay callback invoked", function (assert) {
-			//hide package set.
+		QUnit.test("okay callback invoked", function(assert) {
+			// hide package set.
 			var bPressed = false;
-			var fPressed = function () {
+			var fPressed = function() {
 				bPressed = true;
 			};
 			var aButtons = this.oDialog.getButtons();
@@ -147,20 +147,20 @@ sap.ui.define([
 			assert.equal(bPressed, false);
 		});
 
-		QUnit.test("_onOkay", function (assert) {
+		QUnit.test("_onOkay", function(assert) {
 			var bPressed = false;
-			var fPressed = function () {
+			var fPressed = function() {
 				bPressed = true;
 			};
-			//this.oDialog._oLocal.bLocal = true;
+			// this.oDialog._oLocal.bLocal = true;
 			this.oDialog.attachOk(fPressed);
 			this.oDialog._onOkay();
 			assert.equal(bPressed, false);
 		});
 
-		QUnit.test("cancel callback invoked", function (assert) {
+		QUnit.test("cancel callback invoked", function(assert) {
 			var bPressed = false;
-			var fPressed = function () {
+			var fPressed = function() {
 				bPressed = true;
 			};
 			var aButtons = this.oDialog.getButtons();
@@ -169,7 +169,7 @@ sap.ui.define([
 			assert.equal(bPressed, true);
 		});
 
-		QUnit.test("_createObjectInfo", function (assert) {
+		QUnit.test("_createObjectInfo", function(assert) {
 			this.oDialog.setProperty("lrepObject", {
 				type: "variant",
 				name: "id_1414740501651_318",
@@ -182,10 +182,10 @@ sap.ui.define([
 			assert.equal(oInfo.type, "variant");
 		});
 
-		QUnit.test("local object button-pressed event", function (assert) {
+		QUnit.test("local object button-pressed event", function(assert) {
 			var sPackage;
 			var sTransport;
-			this.oDialog.attachOk(function (oParam) {
+			this.oDialog.attachOk(function(oParam) {
 				sPackage = oParam.mParameters.selectedPackage;
 				sTransport = oParam.mParameters.selectedTransport;
 			});
@@ -195,10 +195,10 @@ sap.ui.define([
 			assert.equal(sTransport, "");
 		});
 
-		QUnit.test("_onLocal", function (assert) {
+		QUnit.test("_onLocal", function(assert) {
 			var sPackage;
 			var sTransport;
-			this.oDialog.attachOk(function (oParam) {
+			this.oDialog.attachOk(function(oParam) {
 				sPackage = oParam.mParameters.selectedPackage;
 				sTransport = oParam.mParameters.selectedTransport;
 			});
@@ -208,22 +208,22 @@ sap.ui.define([
 			assert.equal(sTransport, "");
 		});
 
-		QUnit.test("_checkOkay returns false", function (assert) {
+		QUnit.test("_checkOkay returns false", function(assert) {
 			this.oDialog._checkOkay();
 			assert.equal(this.oDialog._checkOkay(), false);
 		});
 
-		QUnit.test("_checkOkay returns true", function (assert) {
+		QUnit.test("_checkOkay returns true", function(assert) {
 			this.oDialog._checkOkay();
 			assert.equal(this.oDialog._checkOkay("1234"), true);
 		});
 
-		QUnit.test("_checkOkay returns false, if hidePackage is set", function (assert) {
+		QUnit.test("_checkOkay returns false, if hidePackage is set", function(assert) {
 			this.oDialog.setHidePackage(true);
 			assert.equal(this.oDialog._checkOkay(), false);
 		});
 
-		QUnit.test("_setTransports", function (assert) {
+		QUnit.test("_setTransports", function(assert) {
 			var aTransports = [
 				{
 					transportId: "T1",
@@ -255,7 +255,7 @@ sap.ui.define([
 			assert.equal(!this.oDialog._oTransport.getSelectedKey(), true);
 		});
 
-		QUnit.test("_setTransports - empty transports", function (assert) {
+		QUnit.test("_setTransports - empty transports", function(assert) {
 			this.oDialog._setTransports({
 				transports: []
 			});
@@ -264,7 +264,7 @@ sap.ui.define([
 			assert.equal(!this.oDialog._oTransport.getSelectedKey(), true);
 		});
 
-		QUnit.test("_setTransports - one transport", function (assert) {
+		QUnit.test("_setTransports - one transport", function(assert) {
 			var aTransports = [
 				{
 					transportId: "T1",
@@ -280,24 +280,24 @@ sap.ui.define([
 			assert.equal(this.oDialog._oTransport.getSelectedKey(), "T1");
 		});
 
-		QUnit.test("_oTransport - selectionChange event - when package is hide", function (assert) {
+		QUnit.test("_oTransport - selectionChange event - when package is hide", function(assert) {
 			this.oDialog.setHidePackage(true);
 			this.oDialog._oTransport.fireSelectionChange();
 			assert.equal(this.oDialog.getButtons()[1].getEnabled(), true);
 		});
 
-		QUnit.test("_oTransport - selectionChange event - changing nothing", function (assert) {
+		QUnit.test("_oTransport - selectionChange event - changing nothing", function(assert) {
 			this.oDialog._oTransport.fireSelectionChange();
 			assert.equal(this.oDialog.getButtons()[1].getEnabled(), false);
 		});
 
-		QUnit.test("_oTransport - selectionChange event - enabling okay button", function (assert) {
+		QUnit.test("_oTransport - selectionChange event - enabling okay button", function(assert) {
 			this.oDialog._oPackage.setValue("abc123");
 			this.oDialog._oTransport.fireSelectionChange();
 			assert.equal(this.oDialog.getButtons()[1].getEnabled(), true);
 		});
 
-		QUnit.test("_oTransport - change event disabling okay button", function (assert) {
+		QUnit.test("_oTransport - change event disabling okay button", function(assert) {
 			this.oDialog.getButtons()[1].setEnabled(true);
 			this.oDialog._oTransport.fireChange({
 				newValue: "T1"
@@ -305,7 +305,7 @@ sap.ui.define([
 			assert.equal(this.oDialog.getButtons()[1].getEnabled(), false);
 		});
 
-		QUnit.test("_oTransport - change event disabling okay button", function (assert) {
+		QUnit.test("_oTransport - change event disabling okay button", function(assert) {
 			var aTransports = [
 				{
 					transportId: "T1",
@@ -324,7 +324,7 @@ sap.ui.define([
 			assert.equal(this.oDialog.getButtons()[1].getEnabled(), false);
 		});
 
-		QUnit.test("_oTransport - change event causing no change", function (assert) {
+		QUnit.test("_oTransport - change event causing no change", function(assert) {
 			var aTransports = [
 				{
 					transportId: "T1",
@@ -343,19 +343,19 @@ sap.ui.define([
 			assert.equal(this.oDialog.getButtons()[1].getEnabled(), true);
 		});
 
-		QUnit.test("_oPackage - liveChange - changing transport button", function (assert) {
+		QUnit.test("_oPackage - liveChange - changing transport button", function(assert) {
 			assert.equal(this.oDialog._oTransport.getEnabled(), false);
 			this.oDialog._oPackage.fireLiveChange({liveValue: "live"});
 			assert.equal(this.oDialog._oTransport.getEnabled(), true);
 		});
 
-		QUnit.test("_oPackage - liveChange - changing nothing", function (assert) {
+		QUnit.test("_oPackage - liveChange - changing nothing", function(assert) {
 			assert.equal(this.oDialog._oTransport.getEnabled(), false);
 			this.oDialog._oPackage.fireLiveChange();
 			assert.equal(this.oDialog._oTransport.getEnabled(), false);
 		});
 
-		QUnit.test("_oPackage - change event executing promise ", function (assert) {
+		QUnit.test("_oPackage - change event executing promise ", function(assert) {
 			sandbox.stub(Transports, "getTransports").returns(Promise.resolve(assert.ok("promise executed")));
 			this.oDialog._oPackage.fireChange();
 		});

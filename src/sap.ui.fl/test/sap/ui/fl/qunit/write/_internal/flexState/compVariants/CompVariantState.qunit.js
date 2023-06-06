@@ -50,9 +50,9 @@ sap.ui.define([
 	var oComponent = new UIComponent(sComponentId);
 
 	QUnit.module("add", {
-		beforeEach: function () {
+		beforeEach: function() {
 			return Settings.getInstance()
-			.then(function () {
+			.then(function() {
 				return FlexState.initialize({
 					componentId: sComponentId,
 					reference: sComponentId
@@ -160,7 +160,7 @@ sap.ui.define([
 			targetCategory: "variants",
 			publicLayerAvailable: true,
 			expectedLayer: Layer.USER
-		}].forEach(function (oTestData) {
+		}].forEach(function(oTestData) {
 			QUnit.test(oTestData.testName, function(assert) {
 				var sPersistencyKey = "persistency.key";
 				var mPropertyBag = Object.assign({
@@ -207,7 +207,7 @@ sap.ui.define([
 			});
 		}
 
-		QUnit.test("does not store the default executeOnSelection and favorite and contexts", function (assert) {
+		QUnit.test("does not store the default executeOnSelection and favorite and contexts", function(assert) {
 			var sPersistencyKey = "persistency.key";
 			sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
 			var mPropertyBag = {
@@ -240,7 +240,7 @@ sap.ui.define([
 			assert.strictEqual(mCompVariantsMapForPersistencyKey.variants[0], oAddedObject, "which is the returned entity");
 		});
 
-		QUnit.test("also stores passed executeOnSelection, favorite, contexts and author", function (assert) {
+		QUnit.test("also stores passed executeOnSelection, favorite, contexts and author", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				getUserId: function() {return "test user";},
 				isPublicLayerAvailable: function() {return false;}
@@ -330,7 +330,7 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
 			})
-			.then(function () {
+			.then(function() {
 				assert.equal(CompVariantState.hasDirtyChanges(sComponentId), false, "hasDirtyChanges is false after persisting all changes");
 				assert.strictEqual(oWriteStub.callCount, 2, "then the write method was called 2 times,");
 				assert.strictEqual(oUpdateStub.callCount, 0, "no update was called");
@@ -382,7 +382,7 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
 			})
-			.then(function () {
+			.then(function() {
 				assert.equal(CompVariantState.hasDirtyChanges(sComponentId), false, "hasDirtyChanges is false after persisting all changes");
 				assert.strictEqual(oWriteStub.callCount, 3, "then the write method was called 3 times,");
 				assert.strictEqual(oUpdateStub.callCount, 0, "no update was called");
@@ -392,7 +392,7 @@ sap.ui.define([
 				assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[0].getState(), States.LifecycleState.PERSISTED, "the set default variant is persisted");
 				assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[0].getNamespace(), "apps/the.app.component/changes/", "the set default variant change has namespace in the content");
 			})
-			.then(function () {
+			.then(function() {
 				oCompVariantStateMapForPersistencyKey.variants[0].setState(States.LifecycleState.DELETED);
 				oCompVariantStateMapForPersistencyKey.changes[0].setState(States.LifecycleState.DIRTY);
 				oCompVariantStateMapForPersistencyKey.defaultVariants[0].setState(States.LifecycleState.DELETED);
@@ -401,7 +401,7 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
 			}))
-			.then(function () {
+			.then(function() {
 				assert.strictEqual(oWriteStub.callCount, 3, "AFTER SOME CHANGES; still the write method was called 3 times,");
 				assert.strictEqual(oUpdateStub.callCount, 1, "one update was called");
 				assert.strictEqual(oRemoveStub.callCount, 2, "and two deletes were called");
@@ -438,7 +438,7 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
 			})
-			.then(function () {
+			.then(function() {
 				assert.equal(oWriteStub.callCount, 0, "no write was called");
 				assert.equal(oUpdateStub.callCount, 0, "no update was called");
 				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
@@ -489,7 +489,7 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
 			})
-			.then(function () {
+			.then(function() {
 				assert.equal(oWriteStub.callCount, 0, "no write was called");
 				assert.equal(oUpdateStub.callCount, 0, "no update was called");
 				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
@@ -521,7 +521,7 @@ sap.ui.define([
 			this.sVariantId1 = "variantId1";
 			this.sVariantId2 = "variantId2";
 		},
-		beforeEach: function () {
+		beforeEach: function() {
 			return FlexState.initialize({
 				componentId: sComponentId,
 				reference: sComponentId
@@ -716,7 +716,7 @@ sap.ui.define([
 			return FlexState.initialize({
 				componentId: sComponentId,
 				reference: sComponentId
-			}).then(function () {
+			}).then(function() {
 				this.oVariant = CompVariantState.addVariant(this.oVariantData);
 			}.bind(this));
 		},
@@ -726,7 +726,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Given updateVariant is called on an updatable variant", function(assert) {
-			//Set favorite to false
+			// Set favorite to false
 			CompVariantState.updateVariant({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey,
@@ -745,7 +745,7 @@ sap.ui.define([
 
 		QUnit.test("Given updateVariant is called on a non-updatable variant (different layer)", function(assert) {
 			var oApplyChangesOnVariantSpy = sandbox.spy(CompVariantMerger, "applyChangeOnVariant");
-			//Set favorite to false
+			// Set favorite to false
 			CompVariantState.updateVariant({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey,
@@ -864,7 +864,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given discardVariantContent is called and changes are made on the initial variant", function (assert) {
+		QUnit.test("Given discardVariantContent is called and changes are made on the initial variant", function(assert) {
 			sandbox.stub(Storage, "write").resolves();
 			var oVariant = CompVariantState.addVariant(this.oVariantData);
 			var sVariantId = oVariant.getVariantId();
@@ -873,7 +873,7 @@ sap.ui.define([
 			return CompVariantState.persist({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
-			}).then(function () {
+			}).then(function() {
 				assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data is present");
 				assert.strictEqual(oVariant.getState(), States.LifecycleState.PERSISTED, "the variant has the correct state");
 				assert.strictEqual(oVariant.getFavorite(), true, "the favorite flag was set correctly");
@@ -932,7 +932,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given discardVariantContent is called and changes are made on as saved variant", function (assert) {
+		QUnit.test("Given discardVariantContent is called and changes are made on as saved variant", function(assert) {
 			sandbox.stub(Storage, "write").resolves();
 			var oVariant = CompVariantState.addVariant(this.newVariantData);
 			var sNewVariantId = oVariant.getVariantId();
@@ -940,7 +940,7 @@ sap.ui.define([
 			return CompVariantState.persist({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
-			}).then(function () {
+			}).then(function() {
 				assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data is present");
 				assert.strictEqual(oVariant.getState(), States.LifecycleState.PERSISTED, "the variant has the correct state");
 				assert.strictEqual(oVariant.getFavorite(), true, "the favorite flag was set correctly");
@@ -1003,7 +1003,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given discardVariantContent is called when no changes were made", function (assert) {
+		QUnit.test("Given discardVariantContent is called when no changes were made", function(assert) {
 			sandbox.stub(Storage, "write").resolves();
 			var oVariant = CompVariantState.addVariant(this.newVariantData);
 			var sNewVariantId = oVariant.getVariantId();
@@ -1011,7 +1011,7 @@ sap.ui.define([
 			return CompVariantState.persist({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
-			}).then(function () {
+			}).then(function() {
 				assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data is present");
 				assert.strictEqual(oVariant.getState(), States.LifecycleState.PERSISTED, "the variant has the correct state");
 				assert.strictEqual(oVariant.getFavorite(), true, "the favorite flag was set correctly");
@@ -1028,7 +1028,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given discardVariantContent is called and changes are made on a variant with multiple saves before", function (assert) {
+		QUnit.test("Given discardVariantContent is called and changes are made on a variant with multiple saves before", function(assert) {
 			sandbox.stub(Storage, "write").resolves();
 			var oVariant = CompVariantState.addVariant(this.newVariantData);
 			var sNewVariantId = oVariant.getVariantId();
@@ -1036,7 +1036,7 @@ sap.ui.define([
 			return CompVariantState.persist({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
-			}).then(function () {
+			}).then(function() {
 				assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data is present");
 				assert.strictEqual(oVariant.getState(), States.LifecycleState.PERSISTED, "the variant has the correct state");
 				assert.strictEqual(oVariant.getFavorite(), true, "the favorite flag was set correctly");
@@ -1121,7 +1121,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("revert", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.sPersistencyKey = "persistency.key";
 			this.oVariantData = {
 				changeSpecificData: {
@@ -1187,7 +1187,7 @@ sap.ui.define([
 			assert.strictEqual(oVariant.getExecuteOnSelection(), true, "executeOnSelection remains true on the variant after the revert");
 		});
 
-		QUnit.test("Given a variant was updated and reverted multiple times (update, update, revert, update, revert, revert)", function (assert) {
+		QUnit.test("Given a variant was updated and reverted multiple times (update, update, revert, update, revert, revert)", function(assert) {
 			sandbox.stub(Storage, "write").resolves();
 			var oVariant = CompVariantState.addVariant(this.oVariantData);
 			var sVariantId = oVariant.getVariantId();
@@ -1196,7 +1196,7 @@ sap.ui.define([
 			return CompVariantState.persist({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
-			}).then(function () {
+			}).then(function() {
 				assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data is present");
 				assert.strictEqual(oVariant.getState(), States.LifecycleState.PERSISTED, "the variant has the correct state");
 
@@ -1302,7 +1302,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given a variant in another layer was updated and reverted multiple times (update, update, revert, update, revert, revert)", function (assert) {
+		QUnit.test("Given a variant in another layer was updated and reverted multiple times (update, update, revert, update, revert, revert)", function(assert) {
 			var oWriteStub = sandbox.stub(Storage, "write").resolves();
 
 			this.oVariantData.changeSpecificData.layer = Layer.CUSTOMER_BASE;
@@ -1314,7 +1314,7 @@ sap.ui.define([
 			return CompVariantState.persist({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
-			}).then(function () {
+			}).then(function() {
 				assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data is present");
 				assert.strictEqual(oVariant.getState(), States.LifecycleState.PERSISTED, "the variant has the correct state");
 
@@ -1422,12 +1422,12 @@ sap.ui.define([
 				assert.strictEqual(oVariant.getChanges().length, 0, "the changes list contains no entries");
 				assert.strictEqual(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 				assert.deepEqual(oVariant.getContent(), {}, "the content was set correct");
-			}.bind(this)).then(function () {
+			}.bind(this)).then(function() {
 				CompVariantState.persist({
 					reference: sComponentId,
 					persistencyKey: this.sPersistencyKey
 				});
-			}.bind(this)).then(function () {
+			}.bind(this)).then(function() {
 				assert.strictEqual(oWriteStub.callCount, 1, "only the initial variant was written");
 			});
 		});
@@ -1437,23 +1437,23 @@ sap.ui.define([
 			sandbox.stub(Storage, "write").resolves();
 
 			return Settings.getInstance()
-				.then(function () {
-					// adding a change to test, that the remove-function not existent in changes is not called = the test does not die
-					CompVariantState.updateVariant({
-						reference: sComponentId,
-						executeOnSelection: true,
-						persistencyKey: this.sPersistencyKey,
-						id: oVariant.getVariantId(),
-						favorite: true
-					});
-
-					return CompVariantState.persist({
-						reference: sComponentId,
-						persistencyKey: this.sPersistencyKey
-					});
-				}.bind(this)).then(function () {
-					assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data is present");
+			.then(function() {
+				// adding a change to test, that the remove-function not existent in changes is not called = the test does not die
+				CompVariantState.updateVariant({
+					reference: sComponentId,
+					executeOnSelection: true,
+					persistencyKey: this.sPersistencyKey,
+					id: oVariant.getVariantId(),
+					favorite: true
 				});
+
+				return CompVariantState.persist({
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey
+				});
+			}.bind(this)).then(function() {
+				assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data is present");
+			});
 		});
 
 		QUnit.test("Given a variant was removed", function(assert) {
@@ -1494,7 +1494,7 @@ sap.ui.define([
 			this.sPersistencyKey = "persistency.key";
 			FlexState.clearState(sComponentId);
 		},
-		beforeEach: function () {
+		beforeEach: function() {
 			return FlexState.initialize({
 				componentId: sComponentId,
 				reference: sComponentId
@@ -1505,7 +1505,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given a standard variant, when the standard variant is overridden", function (assert) {
+		QUnit.test("Given a standard variant, when the standard variant is overridden", function(assert) {
 			var mCompData = FlexState.getCompVariantsMap(sComponentId);
 			CompVariantMerger.merge(this.sPersistencyKey, mCompData._getOrCreate(this.sPersistencyKey), {});
 
@@ -1520,7 +1520,7 @@ sap.ui.define([
 			assert.strictEqual(oStandardVariant.getExecuteOnSelection(), false, "then the default executeOnSelection is set to false");
 		});
 
-		QUnit.test("Given a standard variant with an applied change, when the standard variant is overridden", function (assert) {
+		QUnit.test("Given a standard variant with an applied change, when the standard variant is overridden", function(assert) {
 			var mCompData = FlexState.getCompVariantsMap(sComponentId);
 			CompVariantMerger.merge(this.sPersistencyKey, mCompData._getOrCreate(this.sPersistencyKey), {});
 			var oStandardVariant = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey).standardVariant;
@@ -1543,7 +1543,7 @@ sap.ui.define([
 			assert.strictEqual(oStandardVariant.getChanges().length, 1, "the change is mentioned as applied");
 		});
 
-		QUnit.test("Given a standard variant set by the loadVariants call, when the standard variant is overridden", function (assert) {
+		QUnit.test("Given a standard variant set by the loadVariants call, when the standard variant is overridden", function(assert) {
 			var mCompData = FlexState.getCompVariantsMap(sComponentId);
 			CompVariantMerger.merge(this.sPersistencyKey, mCompData._getOrCreate(this.sPersistencyKey), {
 				executeOnSelection: true
@@ -1560,7 +1560,7 @@ sap.ui.define([
 			assert.strictEqual(oStandardVariant.getExecuteOnSelection(), false, "then the executeOnSelection is set to false");
 		});
 
-		QUnit.test("Given a standard variant set by the loadVariants call and an applied change, when the standard variant is overridden", function (assert) {
+		QUnit.test("Given a standard variant set by the loadVariants call and an applied change, when the standard variant is overridden", function(assert) {
 			var mCompData = FlexState.getCompVariantsMap(sComponentId);
 			CompVariantMerger.merge(this.sPersistencyKey, mCompData._getOrCreate(this.sPersistencyKey), {
 				executeOnSelection: true
@@ -1586,7 +1586,7 @@ sap.ui.define([
 			assert.strictEqual(oStandardVariant.getChanges().length, 1, "the change is mentioned as applied");
 		});
 
-		QUnit.test("Given a standard variant set by a back end variant flagged as standard, when the standard variant is overridden", function (assert) {
+		QUnit.test("Given a standard variant set by a back end variant flagged as standard, when the standard variant is overridden", function(assert) {
 			var mCompData = FlexState.getCompVariantsMap(sComponentId);
 			var mMapForPersistencyKey = mCompData._getOrCreate(this.sPersistencyKey);
 			CompVariantMerger.merge(this.sPersistencyKey, mMapForPersistencyKey, {});
@@ -1606,7 +1606,7 @@ sap.ui.define([
 			assert.strictEqual(oMockedStandardVariant.getExecuteOnSelection(), false, "then the executeOnSelection is set to false");
 		});
 
-		QUnit.test("Given a standard variant set by a back end variant flagged as standard and an applied change, when the standard variant is overridden", function (assert) {
+		QUnit.test("Given a standard variant set by a back end variant flagged as standard and an applied change, when the standard variant is overridden", function(assert) {
 			var mCompData = FlexState.getCompVariantsMap(sComponentId);
 			var mMapForPersistencyKey = mCompData._getOrCreate(this.sPersistencyKey);
 			CompVariantMerger.merge(this.sPersistencyKey, mMapForPersistencyKey, {});
@@ -1634,7 +1634,7 @@ sap.ui.define([
 			assert.strictEqual(oMockedStandardVariant.getChanges().length, 1, "one change is mentioned as applied");
 		});
 
-		QUnit.test("Given a standard variant set by a back end variant flagged as standard and an applied legacy change", function (assert) {
+		QUnit.test("Given a standard variant set by a back end variant flagged as standard and an applied legacy change", function(assert) {
 			var mCompData = FlexState.getCompVariantsMap(sComponentId);
 			var mMapForPersistencyKey = mCompData._getOrCreate(this.sPersistencyKey);
 			CompVariantMerger.merge(this.sPersistencyKey, mMapForPersistencyKey, {});
@@ -1660,7 +1660,7 @@ sap.ui.define([
 			assert.strictEqual(oMockedStandardVariant.getChanges().length, 1, "one change is mentioned as applied");
 		});
 
-		QUnit.test("Given a standard variant set by a back end variant flagged as standard and an applied legacy change, when overrideStandardVariant is called and overrules the legacy change", function (assert) {
+		QUnit.test("Given a standard variant set by a back end variant flagged as standard and an applied legacy change, when overrideStandardVariant is called and overrules the legacy change", function(assert) {
 			var mCompData = FlexState.getCompVariantsMap(sComponentId);
 			var mMapForPersistencyKey = mCompData._getOrCreate(this.sPersistencyKey);
 			CompVariantMerger.merge(this.sPersistencyKey, mMapForPersistencyKey, {});
@@ -1717,7 +1717,7 @@ sap.ui.define([
 			return FlexState.initialize({
 				componentId: sComponentId,
 				reference: sComponentId
-			}).then(function () {
+			}).then(function() {
 				this.oVariant = CompVariantState.addVariant(oVariantData);
 			}.bind(this));
 		},
@@ -1831,7 +1831,7 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
 			})
-			.then(function () {
+			.then(function() {
 				assert.equal(oWriteStub.callCount, 3, "then the write method was called three times,");
 				assert.equal(oUpdateStub.callCount, 0, "no update was called");
 				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
@@ -1839,7 +1839,7 @@ sap.ui.define([
 				assert.equal(oWriteStub.getCalls()[1].args[0].parentVersion, Version.Number.Draft, "and the second request the parentVersion parmeter is draft a version");
 				assert.equal(oVersionsOnAllChangesSaved.callCount, 3, "and versions.onAllChangesSaved is called three time");
 			})
-			.then(function () {
+			.then(function() {
 				oCompVariantStateMapForPersistencyKey.variants[0].setState(States.LifecycleState.DIRTY);
 				oCompVariantStateMapForPersistencyKey.defaultVariants[0].setState(States.LifecycleState.DELETED);
 			})
@@ -1847,7 +1847,7 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
 			}))
-			.then(function () {
+			.then(function() {
 				assert.equal(oWriteStub.callCount, 3, "AFTER SOME CHANGES; still the write method was called three times,");
 				assert.equal(oUpdateStub.callCount, 1, "one update was called");
 				assert.equal(oRemoveStub.callCount, 1, "and one deletes were called");
@@ -1885,14 +1885,14 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
 			})
-			.then(function () {
+			.then(function() {
 				assert.equal(oWriteStub.callCount, 1, "then the write method was called one times,");
 				assert.equal(oUpdateStub.callCount, 0, "no update was called");
 				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
 				assert.equal(oWriteStub.getCalls()[0].args[0].parentVersion, sParentVersion, "and parentVersion is set correct");
 				assert.equal(oVersionsOnAllChangesSaved.callCount, 1, "and versions.onAllChangesSaved is called one time");
 			})
-			.then(function () {
+			.then(function() {
 				oCompVariantStateMapForPersistencyKey.variants[0].setState(States.LifecycleState.DELETED);
 				var aReturnedBackendVersions = [{
 					version: "1"
@@ -1903,7 +1903,7 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
 			}))
-			.then(function () {
+			.then(function() {
 				assert.equal(oWriteStub.callCount, 1, "AFTER SOME CHANGES; still the write method was called one times,");
 				assert.equal(oUpdateStub.callCount, 0, "no update was called");
 				assert.equal(oRemoveStub.callCount, 1, "and one deletes were called");

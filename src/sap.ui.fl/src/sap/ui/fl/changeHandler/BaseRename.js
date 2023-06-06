@@ -49,16 +49,16 @@ sap.ui.define([
 					var sValue = oChange.getText(mRenameSettings.changePropertyName);
 
 					return Promise.resolve()
-						.then(function() {
-							if (sValue) {
-								return oModifier.getPropertyBindingOrProperty(oControl, sPropertyName)
-									.then(function (vPropertyValue) {
-										oChange.setRevertData(vPropertyValue);
-										return oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, sValue);
-									});
-							}
-							return undefined;
-						});
+					.then(function() {
+						if (sValue) {
+							return oModifier.getPropertyBindingOrProperty(oControl, sPropertyName)
+							.then(function(vPropertyValue) {
+								oChange.setRevertData(vPropertyValue);
+								return oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, sValue);
+							});
+						}
+						return undefined;
+					});
 				},
 
 				/**
@@ -99,22 +99,22 @@ sap.ui.define([
 					var sTranslationTextType = mRenameSettings.translationTextType;
 
 					return Promise.resolve()
-						.then(function() {
-							return mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
-						})
-						.then(function(oControlToBeRenamed) {
-							oChange.setContent({
-								originalControlType: mPropertyBag.modifier.getControlType(oControlToBeRenamed)
-							});
-
-							if (typeof (mSpecificChangeInfo.value) === "string") {
-								oChange.setText(sChangePropertyName, mSpecificChangeInfo.value, sTranslationTextType);
-							} else if (typeof (mSpecificChangeInfo.content.value) === "string") {
-								oChange.setText(sChangePropertyName, mSpecificChangeInfo.content.value, sTranslationTextType);
-							} else {
-								return Promise.reject(new Error("oSpecificChangeInfo.value attribute required"));
-							}
+					.then(function() {
+						return mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
+					})
+					.then(function(oControlToBeRenamed) {
+						oChange.setContent({
+							originalControlType: mPropertyBag.modifier.getControlType(oControlToBeRenamed)
 						});
+
+						if (typeof (mSpecificChangeInfo.value) === "string") {
+							oChange.setText(sChangePropertyName, mSpecificChangeInfo.value, sTranslationTextType);
+						} else if (typeof (mSpecificChangeInfo.content.value) === "string") {
+							oChange.setText(sChangePropertyName, mSpecificChangeInfo.content.value, sTranslationTextType);
+						} else {
+							return Promise.reject(new Error("oSpecificChangeInfo.value attribute required"));
+						}
+					});
 				},
 
 				/**

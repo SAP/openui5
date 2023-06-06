@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/fl/initial/_internal/StorageUtils"
@@ -12,12 +11,12 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function loadDataFromStorage (mPropertyBag) {
+	function loadDataFromStorage(mPropertyBag) {
 		var aFlexObjects = [];
 
 		return ObjectStorageUtils.forEachObjectInStorage(mPropertyBag, function(mFlexObject) {
 			aFlexObjects.push(mFlexObject.changeDefinition);
-		}).then(function () {
+		}).then(function() {
 			return aFlexObjects;
 		});
 	}
@@ -49,11 +48,11 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.reference reference of the application
 		 * @returns {Promise<Object>} resolving with an object containing a data contained in the changes-bundle
 		 */
-		loadFlexData: function (mPropertyBag) {
+		loadFlexData: function(mPropertyBag) {
 			return loadDataFromStorage({
 				storage: this.oStorage,
 				reference: mPropertyBag.reference
-			}).then(function (aFlexObjects) {
+			}).then(function(aFlexObjects) {
 				var mGroupedFlexObjects = StorageUtils.getGroupedFlexObjects(aFlexObjects);
 				return StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
 			});

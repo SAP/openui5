@@ -14,13 +14,13 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Send request functions", {
-		beforeEach: function () {
+		beforeEach: function() {
 		},
 		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("sendRequest success at the first time", function (assert) {
+		QUnit.test("sendRequest success at the first time", function(assert) {
 			var sUrl = "anUrl";
 			var sMethod = "POST";
 			var mPropertyBag = {
@@ -30,13 +30,13 @@ sap.ui.define([
 			};
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: "something"});
-			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function (oResponse) {
+			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function(oResponse) {
 				assert.deepEqual(oResponse, {response: "something"}, "correct response is returned");
 				assert.ok(oStubSendRequest.calledWith(sUrl, sMethod, mPropertyBag), "there is one request sent");
 			});
 		});
 
-		QUnit.test("getRequestOptions", function (assert) {
+		QUnit.test("getRequestOptions", function(assert) {
 			var sTokenUrl = "tokenUrl";
 			var oInitialConnector = {
 			};
@@ -51,7 +51,7 @@ sap.ui.define([
 			assert.deepEqual(WriteUtils.getRequestOptions(oInitialConnector, sTokenUrl, [], "contentType", "dataType"), oExpectedOptions);
 		});
 
-		QUnit.test("sendRequest failed with error code different from 403", function (assert) {
+		QUnit.test("sendRequest failed with error code different from 403", function(assert) {
 			var sUrl = "anUrl";
 			var sMethod = "POST";
 			var mPropertyBag = {
@@ -61,13 +61,13 @@ sap.ui.define([
 			};
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").rejects({status: 500});
-			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function (oError) {
+			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function(oError) {
 				assert.equal(oError.status, 500, "correct error is returned");
 				assert.ok(oStubSendRequest.calledWith(sUrl, sMethod, mPropertyBag), "there is one request sent");
 			});
 		});
 
-		QUnit.test("sendRequest failed with error code 403, get new token success and new request success", function (assert) {
+		QUnit.test("sendRequest failed with error code 403, get new token success and new request success", function(assert) {
 			var sUrl = "anUrl";
 			var sMethod = "POST";
 			var sTokenUrl = "tokenUrl";
@@ -84,7 +84,7 @@ sap.ui.define([
 			oStubSendRequest.onCall(0).rejects({status: 403});
 			oStubSendRequest.onCall(1).resolves({xsrfToken: "newToken"});
 			oStubSendRequest.onCall(2).resolves({response: "something"});
-			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function (oResponse) {
+			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function(oResponse) {
 				assert.deepEqual(oResponse, {response: "something"}, "correct response is returned");
 				assert.equal(oStubSendRequest.callCount, 3, "there are 3 requests sent in total");
 				assert.ok(oStubSendRequest.getCall(0).calledWith(sUrl, sMethod, mPropertyBag), "first request has correct parameters");
@@ -93,7 +93,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("sendRequest failed with error code 403, get new token success and new request also failed", function (assert) {
+		QUnit.test("sendRequest failed with error code 403, get new token success and new request also failed", function(assert) {
 			var sUrl = "anUrl";
 			var sMethod = "POST";
 			var sTokenUrl = "tokenUrl";
@@ -110,7 +110,7 @@ sap.ui.define([
 			oStubSendRequest.onCall(0).rejects({status: 403});
 			oStubSendRequest.onCall(1).resolves({xsrfToken: "newToken"});
 			oStubSendRequest.onCall(2).rejects({status: 500});
-			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function (oError) {
+			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function(oError) {
 				assert.equal(oError.status, 500, "correct error is returned");
 				assert.equal(oStubSendRequest.callCount, 3, "there are 3 requests sent in total");
 				assert.ok(oStubSendRequest.getCall(0).calledWith(sUrl, sMethod, mPropertyBag), "first request has correct parameters");
@@ -119,7 +119,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("sendRequest failed with error code 403, get new token failed", function (assert) {
+		QUnit.test("sendRequest failed with error code 403, get new token failed", function(assert) {
 			var sUrl = "anUrl";
 			var sMethod = "POST";
 			var sTokenUrl = "tokenUrl";
@@ -134,7 +134,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest");
 			oStubSendRequest.onCall(0).rejects({status: 403});
 			oStubSendRequest.onCall(1).rejects({status: 500});
-			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function (oError) {
+			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function(oError) {
 				assert.equal(oError.status, 500, "correct error is returned");
 				assert.equal(mPropertyBag.initialConnector.xsrfToken, undefined, "new token is not passed in the second sendRequest");
 				assert.equal(oInitialConnector.xsrfToken, undefined, "token is removed from apply connector");
@@ -144,7 +144,7 @@ sap.ui.define([
 			});
 		});
 	});
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

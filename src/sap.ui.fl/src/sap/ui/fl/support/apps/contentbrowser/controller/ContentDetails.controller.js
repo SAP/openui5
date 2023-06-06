@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/UIComponent"
-], function (
+], function(
 	Controller,
 	Dialog,
 	Text,
@@ -51,7 +51,7 @@ sap.ui.define([
 		 * Handles data binding and route matching.
 		 * @public
 		 */
-		onInit: function () {
+		onInit: function() {
 			this._initAndBindSelectedContentModel();
 			var oRouter = UIComponent.getRouterFor(this);
 			oRouter.getRoute("ContentDetails").attachMatched(this._onRouteMatched, this);
@@ -62,7 +62,7 @@ sap.ui.define([
 		 * Creates and binds the model for the selected content.
 		 * @private
 		 */
-		_initAndBindSelectedContentModel: function () {
+		_initAndBindSelectedContentModel: function() {
 			this.oSelectedContentModel = new JSONModel();
 			this.getView().setModel(this.oSelectedContentModel, "selectedContent");
 		},
@@ -74,7 +74,7 @@ sap.ui.define([
 		 * @returns {Promise} <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
-		_onRouteMatched: function (oRouteMatch) {
+		_onRouteMatched: function(oRouteMatch) {
 			var that = this;
 			var mRouteArguments = oRouteMatch.getParameter("arguments");
 
@@ -94,7 +94,7 @@ sap.ui.define([
 
 			return LRepConnector.getContent(oModelData.layer, sContentSuffix, null, null, true).then(
 				that._onContentReceived.bind(that, oModelData, oPage, sContentSuffix),
-				function () {
+				function() {
 					oPage.setBusy(false);
 				}
 			);
@@ -110,14 +110,14 @@ sap.ui.define([
 		 * @returns {Promise} <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
-		_onContentReceived: function (oModelData, oPage, sContentSuffix, oData) {
+		_onContentReceived: function(oModelData, oPage, sContentSuffix, oData) {
 			var that = this;
 			oModelData.data = DataUtils.formatData(oData, oModelData.fileType);
 
 			if (oModelData.fileType) {
 				return LRepConnector.getContent(oModelData.layer, sContentSuffix, true).then(
 					that._onContentMetadataReceived.bind(that, oModelData, oPage),
-					function () {
+					function() {
 						oPage.setBusy(false);
 					}
 				);
@@ -134,10 +134,10 @@ sap.ui.define([
 		 * @param {object} oMetadata - Metadata which is received from <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
-		_onContentMetadataReceived: function (oModelData, oPage, oMetadata) {
+		_onContentMetadataReceived: function(oModelData, oPage, oMetadata) {
 			oModelData.metadata = oMetadata;
 			this.oSelectedContentModel.setData(oModelData);
-			oModelData.metadata.some(function (oMetadata) {
+			oModelData.metadata.some(function(oMetadata) {
 				if (oMetadata.name === "layer") {
 					if (oMetadata.value === "CUSTOMER") {
 						this.getView().byId("activeVersionCheckBox").setVisible(true);
@@ -163,7 +163,7 @@ sap.ui.define([
 		 * Navigates to Edit mode of content.
 		 * @public
 		 */
-		onEditClicked: function () {
+		onEditClicked: function() {
 			var oSelectedContentModel = this.getView().getModel("selectedContent");
 			var oContentData = oSelectedContentModel.getData();
 			var oRouter = UIComponent.getRouterFor(this);
@@ -181,7 +181,7 @@ sap.ui.define([
 		 * The function displays a confirmation dialog. On confirmation, the deletion of the displayed content is triggered.
 		 * @public
 		 */
-		onDeleteClicked: function () {
+		onDeleteClicked: function() {
 			var that = this;
 
 			var oDialog = new Dialog({
@@ -191,18 +191,18 @@ sap.ui.define([
 				beginButton: new Button({
 					text: "{i18n>confirm}",
 					type: ButtonType.Reject,
-					press: function () {
+					press: function() {
 						oDialog.close();
 						that._selectTransportAndDeleteFile();
 					}
 				}),
 				endButton: new Button({
 					text: "{i18n>cancel}",
-					press: function () {
+					press: function() {
 						oDialog.close();
 					}
 				}),
-				afterClose: function () {
+				afterClose: function() {
 					oDialog.destroy();
 				}
 			});
@@ -216,7 +216,7 @@ sap.ui.define([
 		 * Select correct transport id (through a dialog if necessary) and trigger deletion of file.
 		 * @private
 		 */
-		_selectTransportAndDeleteFile: function () {
+		_selectTransportAndDeleteFile: function() {
 			var that = this;
 			var oSelectedContentModel = this.getView().getModel("selectedContent");
 			var bOnActivatedVersion = this.getView().byId("activeVersionCheckBox").getSelected();
@@ -227,13 +227,13 @@ sap.ui.define([
 			var sPackageFromContent;
 			var sTransportId;
 
-			oContentData.metadata.some(function (mMetadata) {
+			oContentData.metadata.some(function(mMetadata) {
 				if (mMetadata.name === "layer") {
 					sContentLayer = mMetadata.value;
 					return true;
 				}
 			});
-			oContentData.metadata.some(function (mMetadata) {
+			oContentData.metadata.some(function(mMetadata) {
 				if (mMetadata.name === "transportId") {
 					sTransportIdFromContent = mMetadata.value;
 					return true;
@@ -242,7 +242,7 @@ sap.ui.define([
 			try {
 				sPackageFromContent = JSON.parse(oContentData.data).packageName;
 			} catch (e) {
-				//when content is not in JSON format, package is undefined but does not break the code.
+				// when content is not in JSON format, package is undefined but does not break the code.
 			}
 
 			var sNamespace = oContentData.namespace;
@@ -253,15 +253,15 @@ sap.ui.define([
 				(sContentLayer === "LOAD") ||
 				(sContentLayer === "VENDOR_LOAD") ||
 				(!sTransportIdFromContent && (!sPackageFromContent || sPackageFromContent === "$TMP"))) {
-				//USER, LOAD (and VENDOR_LOAD) layers together with non-ABAP and local ABAP content do not need transport
+				// USER, LOAD (and VENDOR_LOAD) layers together with non-ABAP and local ABAP content do not need transport
 				sTransportId = undefined;
 				that._deleteFile(sContentLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer, bOnActivatedVersion);
 			} else if (sTransportIdFromContent === "ATO_NOTIFICATION") {
-				//ATO_NOTIFICATION content
+				// ATO_NOTIFICATION content
 				sTransportId = sTransportIdFromContent;
 				that._deleteFile(sContentLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer, bOnActivatedVersion);
 			} else {
-				//Bring up an simple transport input dialog
+				// Bring up an simple transport input dialog
 				var oTransportInput = new Input({placeholder: "Transport ID or ATO_NOTIFICATION" });
 				var oDialog = new Dialog({
 					title: "{i18n>transportInput}",
@@ -272,7 +272,7 @@ sap.ui.define([
 					beginButton: new Button({
 						text: "{i18n>confirm}",
 						type: ButtonType.Accept,
-						press: function () {
+						press: function() {
 							sTransportId = oTransportInput.getValue();
 							oDialog.close();
 							that._deleteFile(sContentLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer);
@@ -280,11 +280,11 @@ sap.ui.define([
 					}),
 					endButton: new Button({
 						text: "{i18n>cancel}",
-						press: function () {
+						press: function() {
 							oDialog.close();
 						}
 					}),
-					afterClose: function () {
+					afterClose: function() {
 						oDialog.destroy();
 					}
 				});
@@ -298,8 +298,8 @@ sap.ui.define([
 		 * @returns {Promise} <code>LRepConnector</code> "deleteFile" promise
 		 * @private
 		 */
-		_deleteFile: function (sLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer, bSupport) {
-			return LRepConnector.deleteFile(sLayer, sNamespace, sFileName, sFileType, sTransportId, bSupport).then(function () {
+		_deleteFile: function(sLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer, bSupport) {
+			return LRepConnector.deleteFile(sLayer, sNamespace, sFileName, sFileType, sTransportId, bSupport).then(function() {
 				var oRouter = UIComponent.getRouterFor(this);
 				oRouter.navTo("LayerContentMaster", {
 					layer: sSelectedLayer,

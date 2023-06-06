@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
 	"sap/base/util/restricted/_isEqual"
-], function (
+], function(
 	Controller,
 	Fragment,
 	WriteStorage,
@@ -15,7 +15,6 @@ sap.ui.define([
 	_isEqual
 ) {
 	"use strict";
-
 
 	function buildQueryParameterMap(mConfig) {
 		var mDefaultValues = {layer: Layer.CUSTOMER, type: "role"};
@@ -57,7 +56,6 @@ sap.ui.define([
 	function itemToJson(oItem) {
 		return {id: oItem.getTitle(), description: oItem.getDescription()};
 	}
-
 
 	return Controller.extend("sap.ui.fl.variants.context.controller.ContextVisibility", {
 		onInit: function() {
@@ -103,7 +101,6 @@ sap.ui.define([
 			}
 			return sDescription.length === 0 ? this.oI18n.getText("NO_DESCRIPTION") : sDescription;
 		},
-
 
 		/**
 		 * Checks if all data is loaded from back end.
@@ -154,7 +151,7 @@ sap.ui.define([
 			if (!this._oDialog) {
 				this._oDialog = loadFragment.call(this);
 			}
-			return this._oDialog.then(function (oDialog) {
+			return this._oDialog.then(function(oDialog) {
 				return this._addContexts(oDialog);
 			}.bind(this));
 		},

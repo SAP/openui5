@@ -7,7 +7,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function _setDimensionAsStyle (oRm, sDimension, sValue) {
+	function _setDimensionAsStyle(oRm, sDimension, sValue) {
 		if (sValue !== "" || sValue.toLowerCase() === "auto") {
 			oRm.style(sDimension, sValue);
 		}

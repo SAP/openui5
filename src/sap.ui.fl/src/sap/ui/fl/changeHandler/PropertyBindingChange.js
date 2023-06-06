@@ -51,13 +51,13 @@ sap.ui.define([
 		// }
 
 		return Promise.resolve()
-			.then(oModifier.getPropertyBindingOrProperty.bind(oModifier, oControl, sPropertyName))
-			.then(function(vOriginalValue) {
-				oChange.setRevertData({
-					originalValue: vOriginalValue
-				});
-				oModifier.setPropertyBinding(oControl, sPropertyName, vPropertyValue);
+		.then(oModifier.getPropertyBindingOrProperty.bind(oModifier, oControl, sPropertyName))
+		.then(function(vOriginalValue) {
+			oChange.setRevertData({
+				originalValue: vOriginalValue
 			});
+			oModifier.setPropertyBinding(oControl, sPropertyName, vPropertyValue);
+		});
 	};
 
 	/**

@@ -47,7 +47,6 @@ sap.ui.define([
 	 */
 	var RegistrationDelegator = {};
 
-
 	function registerChangesInComponent() {
 		Component._fnOnInstanceCreated = ComponentLifecycleHooks.instanceCreatedHook;
 	}

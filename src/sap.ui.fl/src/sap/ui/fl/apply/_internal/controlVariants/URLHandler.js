@@ -108,7 +108,7 @@ sap.ui.define([
 	 * @private
 	 */
 	function _handleVariantIdChangeInURL(oModel, sNewHash) {
-		//TODO: Check if this is really necessary, as the method is never called with a new hash and in the test the parameter is not a string
+		// TODO: Check if this is really necessary, as the method is never called with a new hash and in the test the parameter is not a string
 		try {
 			var oURLParsingService = oModel.getUShellService("URLParsing");
 			if (oURLParsingService) {
@@ -260,7 +260,6 @@ sap.ui.define([
 		var oParsedHash = oURLParsingService && oURLParsingService.parseShellHash(hasher.getHash());
 		return oParsedHash && oParsedHash.params && oParsedHash.params[VariantUtil.VARIANT_TECHNICAL_PARAMETER];
 	}
-
 
 	URLHandler.variantTechnicalParameterName = "sap-ui-fl-control-variant-id";
 

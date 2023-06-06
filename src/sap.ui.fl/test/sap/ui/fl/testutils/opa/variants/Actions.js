@@ -66,7 +66,7 @@ sap.ui.define([
 			});
 		},
 
-		iSetFavoriteVariant: function (sVariantName, bValue) {
+		iSetFavoriteVariant: function(sVariantName, bValue) {
 			return waitForEditableVariantItemByVariantName.call(this, sVariantName, {
 				actions: function(oManageVariantItem) {
 					this.waitFor({
@@ -85,7 +85,7 @@ sap.ui.define([
 			});
 		},
 
-		iRenameVariant: function (sOriginalVariantName, sNewVariantName) {
+		iRenameVariant: function(sOriginalVariantName, sNewVariantName) {
 			return waitForEditableVariantItemByVariantName.call(this, sOriginalVariantName, {
 				actions: function(oManageVariantItem) {
 					this.waitFor({
@@ -106,7 +106,7 @@ sap.ui.define([
 			});
 		},
 
-		iSetDefaultVariant: function (sVariantName) {
+		iSetDefaultVariant: function(sVariantName) {
 			return waitForEditableVariantItemByVariantName.call(this, sVariantName, {
 				actions: function(oManageVariantItem) {
 					this.waitFor({
@@ -120,7 +120,7 @@ sap.ui.define([
 			});
 		},
 
-		iRemoveVariant: function (sVariantName) {
+		iRemoveVariant: function(sVariantName) {
 			return waitForEditableVariantItemByVariantName.call(this, sVariantName, {
 				actions: function(oManageVariantItem) {
 					this.waitFor({
@@ -138,7 +138,7 @@ sap.ui.define([
 			});
 		},
 
-		iApplyAutomaticallyVariant: function (sVariantName, bApplyAuto) {
+		iApplyAutomaticallyVariant: function(sVariantName, bApplyAuto) {
 			return waitForEditableVariantItemByVariantName.call(this, sVariantName, {
 				actions: function(oManageVariantItem) {
 					this.waitFor({
@@ -157,10 +157,10 @@ sap.ui.define([
 			});
 		},
 
-		iCreateNewVariant: function (sFlVMId, sVariantTitle, bDefault, bApplyAuto, bPublic) {
+		iCreateNewVariant: function(sFlVMId, sVariantTitle, bDefault, bApplyAuto, bPublic) {
 			return this.waitFor({
 				id: sFlVMId + "-vm-name",
-				success: function (oInput) {
+				success: function(oInput) {
 					new EnterText({
 						text: sVariantTitle
 					}).executeOn(oInput);
