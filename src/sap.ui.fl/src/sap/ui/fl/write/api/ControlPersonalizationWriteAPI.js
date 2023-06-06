@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
@@ -27,6 +28,7 @@ sap.ui.define([
 	ChangeHandlerStorage,
 	Settings,
 	ChangesWriteAPI,
+	ChangePersistenceFactory,
 	FlexControllerFactory,
 	Layer,
 	Utils
@@ -275,6 +277,46 @@ sap.ui.define([
 				return oFlexController.removeDirtyChanges(Layer.USER, oAppComponent, mPropertyBag.selector, mPropertyBag.generator, mPropertyBag.changeTypes);
 			}
 			return Promise.resolve();
+		},
+
+		/**
+		 * Checks for dirty flex objects that match the given parameters.
+		 * This function can be used to determine if a restore should be enabled.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.core.Control} mPropertyBag.selector - Control for which dirty flex objects are checked
+		 * @param {string} [mPropertyBag.generator] - Generator of changes
+		 * @param {string[]} [mPropertyBag.changeTypes] - Types of changes
+		 * @returns {boolean} True if the control has dirty flex objects
+		 */
+		hasDirtyFlexObjects: function(mPropertyBag) {
+			if (!mPropertyBag || !mPropertyBag.selector) {
+				throw Error("No selector was provided");
+			}
+			var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
+			if (!oAppComponent) {
+				throw Error("App Component could not be determined");
+			}
+
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
+			var aDirtyFlexObjects = oChangePersistence.getDirtyChanges();
+
+			return aDirtyFlexObjects.some(function(oFlexObject) {
+				if (oFlexObject.getLayer() !== Layer.USER) {
+					return false;
+				}
+
+				if (mPropertyBag.generator && oFlexObject.getSupportInformation().generator !== mPropertyBag.generator) {
+					return false;
+				}
+
+				if (mPropertyBag.changeTypes && mPropertyBag.changeTypes.indexOf(oFlexObject.getChangeType()) === -1) {
+					return false;
+				}
+
+				var vSelector = oFlexObject.getSelector();
+				return mPropertyBag.selector.getId() === JsControlTreeModifier.getControlIdBySelector(vSelector, oAppComponent);
+			});
 		},
 
 		/**
