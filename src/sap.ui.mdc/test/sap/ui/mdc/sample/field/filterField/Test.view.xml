@@ -169,6 +169,7 @@
 						propertyKey="DateTime"
 						dataType="sap.ui.model.odata.type.DateTime"
 						dataTypeFormatOptions='\{"style": "long"\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 						display="Value"
 						maxConditions="1"
 						operators="EQ"
@@ -184,6 +185,7 @@
 						propertyKey="DateTime"
 						dataType="sap.ui.model.odata.type.DateTime"
 						dataTypeFormatOptions='\{"style": "short"\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 						display="Value"
 						maxConditions="1"
 						placeholder="{/#Product/DateTime/@sap:label}"
@@ -198,6 +200,7 @@
 						propertyKey="DateTime"
 						dataType="sap.ui.model.odata.type.DateTime"
 						dataTypeFormatOptions='\{"style": "medium"\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 						maxConditions="1"
 						editMode="Display"
 						placeholder="{/#Product/DateTime/@sap:label}"
@@ -213,6 +216,7 @@
 						dataType="sap.ui.model.odata.type.DateTime"
 						dataTypeFormatOptions='\{"style": "long"\}'
 						dataTypeConstraints='\{"displayFormat": "Date"\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 						display="Value"
 						maxConditions="1"
 						placeholder="{/#Product/Date/@sap:label}"
@@ -229,6 +233,7 @@
 						dataType="sap.ui.model.odata.type.DateTime"
 						dataTypeFormatOptions='\{"style": "long"\}'
 						dataTypeConstraints='\{"displayFormat": "Date"\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 						display="Value"
 						maxConditions="1"
 						placeholder="{/#Product/Date/@sap:label}"
@@ -244,6 +249,7 @@
 						dataType="sap.ui.model.odata.type.DateTime"
 						dataTypeFormatOptions='\{"style": "short"\}'
 						dataTypeConstraints='\{"displayFormat": "Date"\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 						display="Value"
 						maxConditions="1"
 						operators="BT"
@@ -260,6 +266,7 @@
 						dataType="sap.ui.model.odata.type.DateTime"
 						dataTypeFormatOptions='\{"style": "short"\}'
 						dataTypeConstraints='\{"displayFormat": "Date"\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 						display="Value"
 						maxConditions="-1"
 						operators="EQ"
@@ -336,6 +343,7 @@
 						propertyKey="Quantity"
 						dataType="Edm.Int32"
 						dataTypeConstraints='\{"nullable": false\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 						display="Value"
 						maxConditions="2"
 						placeholder="{/#Product/Quantity/@sap:label}"
@@ -350,6 +358,7 @@
 						conditions="{cm>/conditions/Quantity}"
 						propertyKey="Quantity"
 						dataType="Edm.Int32"
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 						maxConditions="2"
 						editMode="Display"
 						placeholder="{/#Product/Quantity/@sap:label}"
@@ -680,6 +689,7 @@
 						propertyKey="CityId"
 						dataType="sap.ui.model.odata.type.String"
 						dataTypeConstraints='\{"maxLength": 2, "isDigitSequence": true, "nullable": false\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 						display="ValueDescription"
 						label="{/#Product/CityId/@sap:label}"
 						change="handleChange"
@@ -767,6 +777,7 @@
 												display= "ValueDescription"
 												dataType="sap.ui.model.type.String"
 												dataTypeConstraints='\{"maxLength": 3\}'
+												delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 												width="100%"
 												conditions="{$filters>/conditions/countryId}"
 												propertyKey="countryId"
@@ -779,6 +790,7 @@
 												display= "ValueDescription"
 												dataType="sap.ui.model.type.String"
 												dataTypeConstraints='\{"maxLength": 2, "search": "^[0-9]+$"\}'
+												delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 												width="100%"
 												conditions="{$filters>/conditions/regionId}"
 												propertyKey="regionId"
@@ -792,6 +804,7 @@
 												dataType="sap.ui.model.odata.type.String"
 												dataTypeFormatOptions='\{"parseKeepsEmptyString": true\}'
 												dataTypeConstraints='\{"maxLength": 100, "nullable": false\}'
+												delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 												width="100%"
 												conditions="{$filters>/conditions/info}"
 												propertyKey="info"/>

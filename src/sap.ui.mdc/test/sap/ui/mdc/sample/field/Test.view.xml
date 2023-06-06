@@ -67,7 +67,7 @@
 				<c:Title text="Fields with content controls"></c:Title>
 
 				<m:Label text="Slider"></m:Label>
-				<mdc:Field id="F3" value="{Quantity}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" dataType="Edm.Float">
+				<mdc:Field id="F3" value="{Quantity}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" dataType="Edm.Float" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'>
 					<m:Slider value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"/>
 				</mdc:Field>
 
@@ -86,24 +86,24 @@
 				<c:Title text="different types"></c:Title>
 
 				<m:Label text="type date"></m:Label>
-				<mdc:Field id="F8" value="{path:'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}, constraints: {displayFormat: 'Date'}, targetType: 'string'}" dataType="Edm.DateTime" dataTypeFormatOptions='\{"style": "short"\}' dataTypeConstraints='\{"displayFormat": "Date"\}' change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
+				<mdc:Field id="F8" value="{path:'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}, constraints: {displayFormat: 'Date'}, targetType: 'string'}" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
 				<m:Text id="T1" text="{path:'Date', type:'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}" />
 
 				<m:Label text="type date in display mode"></m:Label>
-				<mdc:Field id="F9" value="{Date}" dataType="Edm.DateTime" dataTypeFormatOptions='\{"style": "short"\}' dataTypeConstraints='\{"displayFormat": "Date"\}' editMode="Display" change="handleChange" submit="handleSubmit"></mdc:Field>
+				<mdc:Field id="F9" value="{Date}" dataType="Edm.DateTime" dataTypeFormatOptions='\{"style": "short"\}' dataTypeConstraints='\{"displayFormat": "Date"\}' delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' editMode="Display" change="handleChange" submit="handleSubmit"></mdc:Field>
 
 				<m:Label text="type dateTime"></m:Label>
-				<mdc:Field id="F10" value="{DateTime}" dataType="Edm.DateTimeOffset" dataTypeFormatOptions='\{"style": "short"\}' change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
-				<mdc:Field id="F10a" value="{path: 'DateTime', type:'sap.ui.model.type.DateTime', targetType: 'string'}" dataType="sap.ui.model.type.DateTime" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
+				<mdc:Field id="F10" value="{DateTime}" dataType="Edm.DateTimeOffset" dataTypeFormatOptions='\{"style": "short"\}' delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
+				<mdc:Field id="F10a" value="{path: 'DateTime', type:'sap.ui.model.type.DateTime', targetType: 'string'}" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
 
 				<m:Label text="type dateTime in display mode"></m:Label>
-				<mdc:Field id="F13" value="{DateTime}" dataType="Edm.DateTimeOffset" dataTypeFormatOptions='\{"style": "short"\}' editMode="Display" change="handleChange" submit="handleSubmit"></mdc:Field>
+				<mdc:Field id="F13" value="{DateTime}" dataType="Edm.DateTimeOffset" dataTypeFormatOptions='\{"style": "short"\}' delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' editMode="Display" change="handleChange" submit="handleSubmit"></mdc:Field>
 
 				<m:Label text="dateTime with timezone"/>
-				<mdc:Field id="F25" value="{parts: [{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime'}, {path: 'TimeZone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone', formatOptions: {showDate: true, showTime: true, showTimezone: true, style: 'short'}}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+				<mdc:Field id="F25" value="{parts: [{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime'}, {path: 'TimeZone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone', formatOptions: {showDate: true, showTime: true, showTimezone: true, style: 'short'}}" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
 
 				<m:Label text="dateTime with timezone in display mode"/>
-				<mdc:Field id="F26" value="{parts: [{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime'}, {path: 'TimeZone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone', formatOptions: {showDate: true, showTime: true, showTimezone: true, style: 'medium'}}" editMode="Display" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+				<mdc:Field id="F26" value="{parts: [{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime'}, {path: 'TimeZone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone', formatOptions: {showDate: true, showTime: true, showTimezone: true, style: 'medium'}}" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' editMode="Display" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
 
 				<m:Label text="type Time"></m:Label>
 				<mdc:Field id="F14" value="{path:'Time', type:'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}, targetType: 'string'}" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
@@ -115,10 +115,10 @@
 				<mdc:Field id="F16" value="SAP" additionalValue="http://www.sap.com" dataType="Link" editMode="Display" press="handlePress"></mdc:Field>
 -->
 				<m:Label text="type Boolean"></m:Label>
-				<mdc:Field id="F22" value="{path:'Important', type:'sap.ui.model.odata.type.Boolean', constraints: {nullable: false}}" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
+				<mdc:Field id="F22" value="{path:'Important', type:'sap.ui.model.odata.type.Boolean', constraints: {nullable: false}}" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
 
 				<m:Label text="type Boolean in display mode"></m:Label>
-				<mdc:Field id="F23" value="{Important}" dataType="Edm.Boolean" display="Description" editMode="Display" change="handleChange" submit="handleSubmit"></mdc:Field>
+				<mdc:Field id="F23" value="{Important}" dataType="Edm.Boolean" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' display="Description" editMode="Display" change="handleChange" submit="handleSubmit"></mdc:Field>
 
 			</form:SimpleForm>
 			<m:footer>
@@ -903,6 +903,7 @@
 				<mdc:Field
 					id="F6-10_2"
 					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {showMeasure: true, showNumber: false, emptyString: 0}}"
+					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Value" change="handleChange"
 					liveChange="handleLiveChange"
@@ -936,6 +937,7 @@
 				<mdc:Field
 					id="F6-IO1"
 					value="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 10, search: '^(|[0-9])+$', nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}"
+					delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 					display="ValueDescription"
 					change="handleChange"
 					liveChange="handleLiveChange"
@@ -1205,6 +1207,7 @@
 				<mdc:Field
 					id="F6-IOCity"
 					value="{path: 'CityId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}"
+					delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 					placeholder="{/#Product/CityId/@sap:label}"
 					display="ValueDescription"
 					change="handleChange"
@@ -1300,6 +1303,7 @@
 													display= "ValueDescription"
 													dataType="sap.ui.model.type.String"
 													dataTypeConstraints='\{"maxLength": 3\}'
+													delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 													width="100%"
 													conditions="{$filters>/conditions/countryId}"
 													valueHelp="VH-Country"/>
@@ -1310,6 +1314,7 @@
 													display= "ValueDescription"
 													dataType="sap.ui.model.type.String"
 													dataTypeConstraints='\{"maxLength": 2, "search": "^(|[0-9])+$"\}'
+													delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 													width="100%"
 													conditions="{$filters>/conditions/regionId}"/>
 												<mdc:FilterField
@@ -1320,6 +1325,7 @@
 													dataType="sap.ui.model.odata.type.String"
 													dataTypeFormatOptions='\{"parseKeepsEmptyString": true\}'
 													dataTypeConstraints='\{"maxLength": 100, "nullable": false\}'
+													delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 													width="100%"
 													conditions="{$filters>/conditions/info}"/>
 											</vhfb:FilterBar>
@@ -1605,13 +1611,13 @@
 						<mdc:Field id="T-F4" value="{= '../../../../../../' + ${ProductPicUrl}}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" width="100%">
 							<m:Image src="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" height="1rem"/>
 						</mdc:Field>
-						<mdc:Field id="T-F5" value="{DateTime}" dataType="Edm.DateTimeOffset" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" width="100%"></mdc:Field>
+						<mdc:Field id="T-F5" value="{DateTime}" dataType="Edm.DateTimeOffset" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" width="100%"></mdc:Field>
 						<mdc:Field id="T-F6" value="{Status}" display="Description" valueHelp="T-F6-H" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" width="100%"></mdc:Field>
-						<mdc:Field id="T-F7" value="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 10, search: '^(|[0-9])+$', nullable:true}}" display="Description" valueHelp="VH-IO1" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" width="100%"/>
+						<mdc:Field id="T-F7" value="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 10, search: '^(|[0-9])+$', nullable:true}}" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' display="Description" valueHelp="VH-IO1" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" width="100%"/>
 						<mdc:Field id="T-F8" value="{parts: ['MatrQuantity', 'MatrUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit'}" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' placeholder="{/#Product/WeightMeasure/@sap:label}" display="Value" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" valueHelp="FVH-WeightUnit4" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
 						<mdc:Field id="T-F9" value="{path: 'CountryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}" placeholder="{/#Product/CountryId/@sap:label}" display="ValueDescription" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" valueHelp="VH-Country"/>
 						<mdc:Field id="T-F10" value="{path: 'RegionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}" placeholder="{/#Product/RegionId/@sap:label}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" display="ValueDescription" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" valueHelp="VH-Region"/>
-						<mdc:Field id="T-F11" value="{path: 'CityId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}" placeholder="{/#Product/CityId/@sap:label}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" display="ValueDescription" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" valueHelp="VH-City"/>
+						<mdc:Field id="T-F11" value="{path: 'CityId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' placeholder="{/#Product/CityId/@sap:label}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" display="ValueDescription" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" valueHelp="VH-City"/>
 					</m:ColumnListItem>
 				</m:items>
 				<m:dependents>
@@ -1646,8 +1652,8 @@
 						<mdc:Field id="F4-2" value="{Name}" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress"/>
 					</form:SemanticFormElement>
 					<form:SemanticFormElement label="Date Fields">
-						<mdc:Field id="F4-3" value="{path:'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}, constraints: {displayFormat: 'Date'}, targetType: 'string'}" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress"/>
-						<mdc:Field id="F4-4" value="{DateTime}" dataType="Edm.DateTimeOffset" dataTypeFormatOptions='\{"style": "short"\}' editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+						<mdc:Field id="F4-3" value="{path:'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}, constraints: {displayFormat: 'Date'}, targetType: 'string'}" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress"/>
+						<mdc:Field id="F4-4" value="{DateTime}" dataType="Edm.DateTimeOffset" dataTypeFormatOptions='\{"style": "short"\}' editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
 						<mdc:Field id="F4-5" value="{path:'Time', type:'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}, targetType: 'string'}" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
 					</form:SemanticFormElement>
 					<form:SemanticFormElement label="Boolean Fields">
