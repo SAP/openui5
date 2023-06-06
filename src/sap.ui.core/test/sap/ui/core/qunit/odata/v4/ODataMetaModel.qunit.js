@@ -3136,13 +3136,13 @@ sap.ui.define([
 		oResult : undefined
 	}, {
 		oProperty : {$Precision : 7, $Type : "Edm.DateTimeOffset"},
-		oResult : {precision : 7}
+		oResult : {precision : 7, V4 : true}
 	}, {
 		oProperty : {$Nullable : false, $Precision : 7, $Type : "Edm.DateTimeOffset"},
-		oResult : {nullable : false, precision : 7}
+		oResult : {nullable : false, precision : 7, V4 : true}
 	}, {
 		oProperty : {$Nullable : false, $Type : "Edm.DateTimeOffset"},
-		oResult : {nullable : false}
+		oResult : {nullable : false, V4 : true}
 	}, {
 		mGetObjectResults : {
 			"/foo@Org.OData.Validation.V1.Minimum/$Decimal" : "0.00",
