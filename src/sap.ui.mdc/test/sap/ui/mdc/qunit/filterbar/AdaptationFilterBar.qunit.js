@@ -15,7 +15,8 @@ sap.ui.define([
 	"./UnitTestMetadataDelegate",
 	"../QUnitUtils",
 	"sap/m/p13n/Engine",
-	"sap/ui/mdc/p13n/subcontroller/FilterController"
+	"sap/ui/mdc/p13n/subcontroller/FilterController",
+	"sap/ui/mdc/util/PropertyHelper"
 ], function (
 	AdaptationFilterBar,
 	FlexUtil,
@@ -31,7 +32,8 @@ sap.ui.define([
 	FBTestDelegate,
 	MDCQUnitUtils,
 	Engine,
-	FilterController
+	FilterController,
+	PropertyHelper
 ) {
 	"use strict";
 
@@ -40,10 +42,14 @@ sap.ui.define([
 		beforeEach: function () {
 			var aPropertyInfo = [
 				{
-					name: "key1"
+					label: "Key 1",
+					name: "key1",
+					dataType: "sap.ui.model.type.String"
 				},
 				{
-					name: "key2"
+					label: "Key 2",
+					name: "key2",
+					dataType: "sap.ui.model.type.String"
 				}
 			];
 
@@ -149,6 +155,18 @@ sap.ui.define([
 			});
 			return new IFilterControl(mSettings);
 		},
+		createPropertyHelper: function() {
+			var CustomHelper = PropertyHelper.extend("TestHelper");
+
+			CustomHelper.prototype.prepareProperty = function(oProperty) {
+				PropertyHelper.prototype.prepareProperty.apply(this, arguments);
+				var oParent = this.getParent();
+				var oTypeUtil = oParent._oDelegate.getTypeMap(oParent);
+				oProperty.typeConfig = oTypeUtil.getTypeConfig(oProperty.dataType, oProperty.formatOptions, oProperty.constraints);
+			};
+
+			return CustomHelper;
+		},
 		createIFilterSource: function(mSettings) {
 			var IFilterControl = Control.extend("temp", {
 				metadata: {
@@ -201,17 +219,20 @@ sap.ui.define([
 				{
 					name: "key1",
 					path: "key1",
-					typeConfig: ODataV4TypeMap.getTypeConfig("sap.ui.model.type.String")
+					label: "Key 1",
+					dataType: "sap.ui.model.type.String"
 				},
 				{
 					name: "key2",
 					path: "key2",
-					typeConfig: ODataV4TypeMap.getTypeConfig("sap.ui.model.odata.type.DateTimeOffset")
+					label: "Key 2",
+					dataType: "sap.ui.model.odata.type.DateTimeOffset"
 				},
 				{
 					name: "key3",
 					path: "key3",
-					typeConfig: ODataV4TypeMap.getTypeConfig("sap.ui.model.type.String")
+					label: "Key 3",
+					dataType: "sap.ui.model.type.String"
 				}
 			];
 
@@ -285,7 +306,7 @@ sap.ui.define([
 
 		Promise.all([
 			//1) Init Parent (Delegate + PropertyHelper)
-			this.oParent.initPropertyHelper(),
+			this.oParent.initPropertyHelper(this.createPropertyHelper()),
 			this.oParent.initControlDelegate()
 		])
 		.then(function(){
@@ -306,7 +327,7 @@ sap.ui.define([
 
 		Promise.all([
 			//1) Init Parent (Delegate + PropertyHelper)
-			this.oParent.initPropertyHelper(),
+			this.oParent.initPropertyHelper(this.createPropertyHelper()),
 			this.oParent.initControlDelegate()
 		])
 		.then(function(){
@@ -349,7 +370,7 @@ sap.ui.define([
 
 		Promise.all([
 			//1) Init Parent (Delegate + PropertyHelper)
-			this.oParent.initPropertyHelper(),
+			this.oParent.initPropertyHelper(this.createPropertyHelper()),
 			this.oParent.initControlDelegate()
 		])
 		.then(function(){
@@ -407,7 +428,7 @@ sap.ui.define([
 
 		Promise.all([
 			//1) Init Parent (Delegate + PropertyHelper)
-			this.oParent.initPropertyHelper(),
+			this.oParent.initPropertyHelper(this.createPropertyHelper()),
 			this.oParent.initControlDelegate()
 		]).then(function(){
 
@@ -439,7 +460,7 @@ sap.ui.define([
 
 		Promise.all([
 			//1) Init Parent (Delegate + PropertyHelper)
-			this.oParent.initPropertyHelper(),
+			this.oParent.initPropertyHelper(this.createPropertyHelper()),
 			this.oParent.initControlDelegate()
 		]).then(function(){
 
@@ -496,7 +517,7 @@ sap.ui.define([
 
 		Promise.all([
 			//1) Init Parent (Delegate + PropertyHelper)
-			this.oParent.initPropertyHelper(),
+			this.oParent.initPropertyHelper(this.createPropertyHelper()),
 			this.oParent.initControlDelegate()
 		])
 		.then(function(){
@@ -550,7 +571,7 @@ sap.ui.define([
 
 		Promise.all([
 			//1) Init Parent (Delegate + PropertyHelper)
-			this.oParent.initPropertyHelper(),
+			this.oParent.initPropertyHelper(this.createPropertyHelper()),
 			this.oParent.initControlDelegate()
 		])
 		.then(function(){
@@ -587,7 +608,7 @@ sap.ui.define([
 
 		Promise.all([
 			//1) Init Parent (Delegate + PropertyHelper)
-			this.oParent.initPropertyHelper(),
+			this.oParent.initPropertyHelper(this.createPropertyHelper()),
 			this.oParent.initControlDelegate()
 		])
 		.then(function(){
@@ -647,7 +668,7 @@ sap.ui.define([
 
 		Promise.all([
 			//1) Init Parent (Delegate + PropertyHelper)
-			this.oParent.initPropertyHelper(),
+			this.oParent.initPropertyHelper(this.createPropertyHelper()),
 			this.oParent.initControlDelegate()
 		])
 		.then(function(){
@@ -699,7 +720,7 @@ sap.ui.define([
 
 		Promise.all([
 			//1) Init Parent (Delegate + PropertyHelper)
-			this.oParent.initPropertyHelper(),
+			this.oParent.initPropertyHelper(this.createPropertyHelper()),
 			this.oParent.initControlDelegate()
 		])
 		.then(function(){
@@ -742,7 +763,7 @@ sap.ui.define([
 
 		Promise.all([
 			//1) Init Parent (Delegate + PropertyHelper)
-			this.oParent.initPropertyHelper(),
+			this.oParent.initPropertyHelper(this.createPropertyHelper()),
 			this.oParent.initControlDelegate()
 		])
 		.then(function(){
@@ -792,7 +813,7 @@ sap.ui.define([
 						collectionName: "test"
 					}
 				},
-				propertyInfo: [{name: "key1", typeConfig: {}}],
+				propertyInfo: [{name: "key1", label: "Key 1", dataType: "sap.ui.model.type.String"}],
 				filterItems: {
 					path: "$custom>/data",
 					template: new FilterField({
