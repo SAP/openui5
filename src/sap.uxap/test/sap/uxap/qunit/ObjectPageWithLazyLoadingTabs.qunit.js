@@ -98,10 +98,13 @@ function (Core, JSONModel, XMLView) {
 				viewName: "view.UxAP-27_ObjectPageConfig"
 			}).then(function (oView) {
 				this.oView = oView;
+				this.oComponentContainer = this.oView.byId("objectPageContainer");
 				this.oView.setModel(oConfigModel, "objectPageLayoutMetadata");
 				this.oView.placeAt("qunit-fixture");
 				Core.applyChanges();
-				done();
+				this.oComponentContainer.attachEventOnce("componentCreated", function () {
+					done();
+				});
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -109,9 +112,8 @@ function (Core, JSONModel, XMLView) {
 			this.clock.restore();
 		}
 	});
-
 	QUnit.test("loading the selected section/tab", function (assert) {
-		var oObjectPageLayout = this.oView.byId("objectPageContainer").getObjectPageLayoutInstance(),
+		var oObjectPageLayout = this.oComponentContainer.getObjectPageLayoutInstance(),
 			oData = oConfigModel.getData(),
 			aSections = oObjectPageLayout.getSections(),
 			aLoadedSections = [0];
