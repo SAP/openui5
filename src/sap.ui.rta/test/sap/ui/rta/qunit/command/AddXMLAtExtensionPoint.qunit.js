@@ -36,25 +36,25 @@ sap.ui.define([
 			var oXmlString =
 				'<mvc:View id="testapp---view" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
 					'<HBox id="hbox">' +
-						'<items>' +
+						"<items>" +
 							'<core:ExtensionPoint name="ExtensionPoint1" />' +
 							'<Label id="label" text="TestLabel" />' +
-						'</items>' +
-					'</HBox>' +
+						"</items>" +
+					"</HBox>" +
 					'<Panel id="panel">' +
-						'<content>' +
+						"<content>" +
 							'<core:ExtensionPoint name="ExtensionPoint2" />' +
-						'</content>' +
-					'</Panel>' +
-				'</mvc:View>';
+						"</content>" +
+					"</Panel>" +
+				"</mvc:View>";
 			return XMLView.create({id: "testapp---view", definition: oXmlString})
-				.then(function(oXMLView) {
-					this.oXMLView = oXMLView;
-					this.mExtensionPointReference = {
-						name: "ExtensionPoint1",
-						view: this.oXMLView
-					};
-				}.bind(this));
+			.then(function(oXMLView) {
+				this.oXMLView = oXMLView;
+				this.mExtensionPointReference = {
+					name: "ExtensionPoint1",
+					view: this.oXMLView
+				};
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oComponent.destroy();
@@ -121,8 +121,8 @@ sap.ui.define([
 				assert.equal(oPreloadSpy.lastCall.args[0][sPath], sFragment, "the preload was called with the correct object");
 			})
 
-			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			.catch(function(oError) {
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -171,13 +171,13 @@ sap.ui.define([
 				assert.strictEqual(oChange.getJsOnly(), true, "then change is marked to be applied on js only");
 			})
 
-			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			.catch(function(oError) {
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

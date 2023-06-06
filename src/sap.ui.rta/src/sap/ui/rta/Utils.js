@@ -60,7 +60,7 @@ function(
 
 	Utils._sFocusableOverlayClass = ".sapUiDtOverlaySelectable";
 
-	Utils._sRtaStyleClassName = '';
+	Utils._sRtaStyleClassName = "";
 
 	/**
 	 * Returns the rta specific Style Class
@@ -98,7 +98,7 @@ function(
 					return FieldExtensibility.isServiceOutdated(oModel.sServiceUrl).then(function(bServiceOutdated) {
 						if (bServiceOutdated) {
 							FieldExtensibility.setServiceValid(oModel.sServiceUrl);
-							//needs FLP to trigger UI restart popup
+							// needs FLP to trigger UI restart popup
 							Core.getEventBus().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
 						}
 					});
@@ -304,7 +304,7 @@ function(
 
 		while (oPreviousFocusableSiblingOverlay && !this.isOverlaySelectable(oPreviousFocusableSiblingOverlay)) {
 			oPreviousFocusableSiblingOverlay = OverlayUtil
-					.getPreviousSiblingOverlay(oPreviousFocusableSiblingOverlay);
+			.getPreviousSiblingOverlay(oPreviousFocusableSiblingOverlay);
 		}
 		if (!oPreviousFocusableSiblingOverlay) {
 			oPreviousFocusableSiblingOverlay = this._findSiblingOverlay(oOverlay, PREVIOUS);
@@ -403,7 +403,7 @@ function(
 		return aPaths;
 	};
 
-	Utils.isOriginalFioriToolbarAccessible = function () {
+	Utils.isOriginalFioriToolbarAccessible = function() {
 		var oRenderer = Utils.getFiori2Renderer();
 		return oRenderer
 			&& oRenderer.getRootControl
@@ -429,9 +429,9 @@ function(
 	 * @param {Function} fnCustomizer - The customizer is invoked with five arguments:
 	 *                                  (vDestinationValue, vSourceValue, sProperty, mDestination, mSource).
 	 */
-	Utils.extendWith = function (mDestination, mSource, fnCustomizer) {
+	Utils.extendWith = function(mDestination, mSource, fnCustomizer) {
 		if (!(typeof fnCustomizer === "function")) {
-			throw new Error('In order to use extendWith() utility function fnCustomizer should be provided!');
+			throw new Error("In order to use extendWith() utility function fnCustomizer should be provided!");
 		}
 
 		for (var sSourceProperty in mSource) {
@@ -456,7 +456,7 @@ function(
 	 * @returns{boolean} - Returns if <code>oDomElement</code> is currently visible on the screen.
 	 */
 	Utils.isElementInViewport = function(oDomElement) {
-		//TODO: remove when all calls are replaced
+		// TODO: remove when all calls are replaced
 		oDomElement = oDomElement.jquery ? oDomElement.get(0) : oDomElement;
 
 		var mRect = oDomElement.getBoundingClientRect();
@@ -571,8 +571,8 @@ function(
 	 * @param {string} sValueFieldName - Field name to use as value
 	 * @returns {object} Hashmap
 	 */
-	Utils.buildHashMapFromArray = function (aArray, sKeyFieldName, sValueFieldName) {
-		return aArray.reduce(function (mMap, oItem) {
+	Utils.buildHashMapFromArray = function(aArray, sKeyFieldName, sValueFieldName) {
+		return aArray.reduce(function(mMap, oItem) {
 			mMap[oItem[sKeyFieldName]] = oItem[sValueFieldName];
 			return mMap;
 		}, {});
@@ -599,49 +599,49 @@ function(
 		}
 
 		return ElementUtil.checkTargetZone(oAggregationOverlay, oMovedOverlay, bOverlayNotInDom)
-			.then(function(bTargetZone) {
-				if (!bTargetZone) {
-					return false;
-				}
+		.then(function(bTargetZone) {
+			if (!bTargetZone) {
+				return false;
+			}
 
-				var oMovedElement = oMovedOverlay.getElement();
-				var oTargetOverlay = oAggregationOverlay.getParent();
-				var oMovedRelevantContainer = oMovedOverlay.getRelevantContainer();
+			var oMovedElement = oMovedOverlay.getElement();
+			var oTargetOverlay = oAggregationOverlay.getParent();
+			var oMovedRelevantContainer = oMovedOverlay.getRelevantContainer();
 
-				// the element or the parent overlay might be destroyed or not available
-				if (!oMovedElement || !oTargetOverlay) {
-					return false;
-				}
+			// the element or the parent overlay might be destroyed or not available
+			if (!oMovedElement || !oTargetOverlay) {
+				return false;
+			}
 
-				var oTargetElement = oTargetOverlay.getElement();
-				var oAggregationDtMetadata = oAggregationOverlay.getDesignTimeMetadata();
+			var oTargetElement = oTargetOverlay.getElement();
+			var oAggregationDtMetadata = oAggregationOverlay.getDesignTimeMetadata();
 
-				// determine target relevantContainer
-				var vTargetRelevantContainerAfterMove = MetadataPropagationUtil.getRelevantContainerForPropagation(oAggregationDtMetadata.getData(), oMovedElement);
-				vTargetRelevantContainerAfterMove = vTargetRelevantContainerAfterMove || oTargetElement;
+			// determine target relevantContainer
+			var vTargetRelevantContainerAfterMove = MetadataPropagationUtil.getRelevantContainerForPropagation(oAggregationDtMetadata.getData(), oMovedElement);
+			vTargetRelevantContainerAfterMove = vTargetRelevantContainerAfterMove || oTargetElement;
 
-				// check for same relevantContainer
-				if (
-					!oMovedRelevantContainer
+			// check for same relevantContainer
+			if (
+				!oMovedRelevantContainer
 					|| !vTargetRelevantContainerAfterMove
 					|| !hasStableId(oTargetOverlay)
 					|| oMovedRelevantContainer !== vTargetRelevantContainerAfterMove
-				) {
-					return false;
-				}
+			) {
+				return false;
+			}
 
-				// check if binding context is the same
-				if (
-					// binding context is not relevant if the element is being moved inside its parent
-					oMovedOverlay.getParent().getElement() !== oTargetElement
+			// check if binding context is the same
+			if (
+			// binding context is not relevant if the element is being moved inside its parent
+				oMovedOverlay.getParent().getElement() !== oTargetElement
 					&& !Utils.checkSourceTargetBindingCompatibility(oMovedElement, oTargetElement)
-				) {
-					return false;
-				}
+			) {
+				return false;
+			}
 
-				// check if movedOverlay is movable into the target aggregation
-				return fnHasMoveAction(oAggregationOverlay, oMovedElement, vTargetRelevantContainerAfterMove, oPlugin);
-			});
+			// check if movedOverlay is movable into the target aggregation
+			return fnHasMoveAction(oAggregationOverlay, oMovedElement, vTargetRelevantContainerAfterMove, oPlugin);
+		});
 	};
 
 	/**

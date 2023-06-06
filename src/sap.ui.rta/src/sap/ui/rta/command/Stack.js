@@ -128,8 +128,8 @@ sap.ui.define([
 					mChanges[oChange.getId()] = oChange;
 				});
 				aFileNames
-					.reduce(toAvailableChanges.bind(null, mChanges), [])
-					.forEach(pushToStack.bind(null, oComponent, mComposite, oStack));
+				.reduce(toAvailableChanges.bind(null, mChanges), [])
+				.forEach(pushToStack.bind(null, oComponent, mComposite, oStack));
 				return oStack;
 			});
 		}
@@ -222,7 +222,7 @@ sap.ui.define([
 
 	Stack.prototype.execute = function() {
 		this._oLastCommand = this._oLastCommand.catch(function() {
-			//continue also if previous command failed
+			// continue also if previous command failed
 		}).then(function() {
 			var oCommand = this._getCommandToBeExecuted();
 			if (oCommand) {

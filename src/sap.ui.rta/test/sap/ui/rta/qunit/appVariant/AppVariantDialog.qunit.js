@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantDialog",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
-], function (
+], function(
 	AppVariantDialog,
 	sinon,
 	oCore
@@ -15,14 +15,14 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a AppVariantDialog is instantiated", {
-		beforeEach: function () {
+		beforeEach: function() {
 			oAppVariantDialog = new AppVariantDialog();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			oAppVariantDialog.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("When open is called,", function(assert) {
 			oAppVariantDialog.open();
 			assert.ok("then the app variant dialog is opened");
@@ -177,7 +177,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

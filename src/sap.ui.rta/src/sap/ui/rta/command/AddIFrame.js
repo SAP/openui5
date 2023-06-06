@@ -68,12 +68,12 @@ sap.ui.define([
 	AddIFrame.prototype.applySettings = function(mSettings) {
 		var mSettingsWithoutUrl = {};
 		Object.keys(mSettings)
-			.filter(function (sSettingName) {
-				return sSettingName !== "url";
-			})
-			.forEach(function (sSettingName) {
-				mSettingsWithoutUrl[sSettingName] = mSettings[sSettingName];
-			});
+		.filter(function(sSettingName) {
+			return sSettingName !== "url";
+		})
+		.forEach(function(sSettingName) {
+			mSettingsWithoutUrl[sSettingName] = mSettings[sSettingName];
+		});
 		var aArguments = [].slice.call(arguments);
 		aArguments[0] = mSettingsWithoutUrl;
 		FlexCommand.prototype.applySettings.apply(this, aArguments);

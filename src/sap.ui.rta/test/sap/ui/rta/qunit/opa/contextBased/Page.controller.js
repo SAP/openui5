@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
-	'sap/ui/core/mvc/Controller',
+	"sap/ui/core/mvc/Controller",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
@@ -89,8 +89,8 @@ sap.ui.define([
 		this.getContextsStub.callsFake(function(args) {
 			if (Object.keys(args).includes("$filter")) {
 				var filterRoles = this.oRolesModel.getData().values.filter(function(element) {
-					if (element.id.toLowerCase().includes(args["$filter"].toLowerCase()) ||
-						element.description.toLowerCase().includes(args["$filter"].toLowerCase())) {
+					if (element.id.toLowerCase().includes(args.$filter.toLowerCase()) ||
+						element.description.toLowerCase().includes(args.$filter.toLowerCase())) {
 						return element;
 					}
 				});
@@ -101,8 +101,8 @@ sap.ui.define([
 
 		this.loadContextDescriptionStub.callsFake(function(mPropertyBag) {
 			var aFilterRoles = this.oRolesModel.getProperty("/values").filter(function(oElement) {
-				for (var i = 0; i < mPropertyBag["flexObjects"].role.length; i++) {
-					var role = mPropertyBag["flexObjects"].role[i];
+				for (var i = 0; i < mPropertyBag.flexObjects.role.length; i++) {
+					var role = mPropertyBag.flexObjects.role[i];
 					if (role.toLowerCase() === oElement.id.toLowerCase()) {
 						return oElement;
 					}
@@ -158,8 +158,8 @@ sap.ui.define([
 		this.getContextsStub.callsFake(function(args) {
 			if (Object.keys(args).includes("$filter")) {
 				var filterRoles = this.oRolesModel.getData().values.filter(function(element) {
-					if (element.id.toLowerCase().includes(args["$filter"].toLowerCase()) ||
-						element.description.toLowerCase().includes(args["$filter"].toLowerCase())) {
+					if (element.id.toLowerCase().includes(args.$filter.toLowerCase()) ||
+						element.description.toLowerCase().includes(args.$filter.toLowerCase())) {
 						return element;
 					}
 				});
@@ -170,8 +170,8 @@ sap.ui.define([
 
 		this.loadContextDescriptionStub.callsFake(function(mPropertyBag) {
 			var aFilterRoles = this.oRolesModel.getProperty("/values").filter(function(oElement) {
-				for (var i = 0; i < mPropertyBag["flexObjects"].role.length; i++) {
-					var role = mPropertyBag["flexObjects"].role[i];
+				for (var i = 0; i < mPropertyBag.flexObjects.role.length; i++) {
+					var role = mPropertyBag.flexObjects.role[i];
 					if (role.toLowerCase() === oElement.id.toLowerCase()) {
 						return oElement;
 					}

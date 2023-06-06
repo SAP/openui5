@@ -313,9 +313,9 @@ function(
 			this.addStyleClass(RtaUtils.getRtaStyleClassName());
 		},
 		onAfterRendering: function() {
-			document.getElementById('title1').style.height = "0px";
-			document.getElementById('title2').style.height = "0px";
-			document.getElementById('tile').style.float = "left";
+			document.getElementById("title1").style.height = "0px";
+			document.getElementById("title2").style.height = "0px";
+			document.getElementById("tile").style.float = "left";
 		},
 		_onCreate: function() {
 			var sTitle = oTitleInput.getValue() || " ";

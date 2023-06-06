@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
-], function (
+], function(
 	AppVariantUtils,
 	Settings,
 	Layer,
@@ -33,7 +33,7 @@ sap.ui.define([
 
 	function stubUshellContainer() {
 		var oUshellContainerStub = {
-			getServiceAsync: function () {
+			getServiceAsync: function() {
 				return Promise.resolve({
 					getHash: function() {
 						return "testSemanticObject-testAction";
@@ -58,32 +58,32 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given the ushell container is stubbed", {
-		beforeEach: function () {
+		beforeEach: function() {
 			stubUshellContainer();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("When getId() method is called with an id which does not have a 'customer' prefix", function (assert) {
+	}, function() {
+		QUnit.test("When getId() method is called with an id which does not have a 'customer' prefix", function(assert) {
 			assert.notEqual(AppVariantUtils.getId("testId"), "customer.testId", "then the id is concatenated with prefix customer and suffix generated UID");
 		});
 
-		QUnit.test("When getId() method is called with an id which has a 'customer' prefix", function (assert) {
+		QUnit.test("When getId() method is called with an id which has a 'customer' prefix", function(assert) {
 			assert.notEqual(AppVariantUtils.getId("customer.testId"), "customer.testId", "then the id is concatenated with suffix generated UID");
 		});
 
-		QUnit.test("When trimIdIfRequired() method is called with an id which has a 'customer' prefix and more than 56 characters long", function (assert) {
+		QUnit.test("When trimIdIfRequired() method is called with an id which has a 'customer' prefix and more than 56 characters long", function(assert) {
 			var sTrimmedId = AppVariantUtils.trimIdIfRequired("customer.testId.id_1234567890123456789012345678901234567890");
 			assert.equal(sTrimmedId.length, 56, "then the id trimmed to 56 characters");
 		});
 
-		QUnit.test("When getId() method is called with an id which has a 'customer' prefix and has a generated UID as a suffix", function (assert) {
+		QUnit.test("When getId() method is called with an id which has a 'customer' prefix and has a generated UID as a suffix", function(assert) {
 			assert.notEqual(AppVariantUtils.getId("customer.testId.id_1234567"), "customer.testId.id_1234567", "then the id is replaced with suffix generated UID");
 			assert.notEqual(AppVariantUtils.getId("customer.testId.id_1234567890123456789012345678901234567890"), "customer.testId.id_1234567890123456789012345678901234567890", "then the guid has been changed");
 		});
 
-		QUnit.test("When getId() method is called with an id which had problems with trimming", function (assert) {
+		QUnit.test("When getId() method is called with an id which had problems with trimming", function(assert) {
 			var sTrimmedId = AppVariantUtils.getId("cus.sd.schedulingagreements.manage");
 			assert.ok(sTrimmedId.length < 56, "then the id has been trimmed properly and will never complain of already exisiting id");
 
@@ -91,12 +91,12 @@ sap.ui.define([
 			assert.ok(sTrimmedId.length < 56, "then the id has been trimmed properly and will never complain of already exisiting id");
 		});
 
-		QUnit.test("When getNewAppVariantId() method is called with an id which has a 'customer' prefix and has a generated UID as a suffix", function (assert) {
+		QUnit.test("When getNewAppVariantId() method is called with an id which has a 'customer' prefix and has a generated UID as a suffix", function(assert) {
 			var sGeneratedId = AppVariantUtils.getId("customer.testId.id_1234567");
 			assert.strictEqual(AppVariantUtils.getNewAppVariantId(), sGeneratedId, "then the id is correct");
 		});
 
-		QUnit.test("When prepareTextsChange() method is called", function (assert) {
+		QUnit.test("When prepareTextsChange() method is called", function(assert) {
 			var oPropertyChange = {
 				type: "XTIT",
 				maxLength: 50,
@@ -108,22 +108,22 @@ sap.ui.define([
 			assert.deepEqual(AppVariantUtils.prepareTextsChange("title", "TestTitle"), oPropertyChange, "then the inline property change is correct");
 		});
 
-		QUnit.test("When getInlineChangeInputIcon() method is called", function (assert) {
+		QUnit.test("When getInlineChangeInputIcon() method is called", function(assert) {
 			assert.deepEqual(AppVariantUtils.getInlineChangeInputIcon("testIcon"), {content: {icon: "testIcon"}}, "then the content of icon inline change is correct");
 		});
 
-		QUnit.test("When prepareRemoveAllInboundsExceptOneChange() method is called", function (assert) {
+		QUnit.test("When prepareRemoveAllInboundsExceptOneChange() method is called", function(assert) {
 			assert.deepEqual(AppVariantUtils.prepareRemoveAllInboundsExceptOneChange("testInbound"), {content: {inboundId: "testInbound"}}, "then the content of remove inbound inline change is correct");
 		});
 
-		QUnit.test("When getInboundInfo() is called, the running app has no inbounds present in the descriptor of an application", function (assert) {
+		QUnit.test("When getInboundInfo() is called, the running app has no inbounds present in the descriptor of an application", function(assert) {
 			return AppVariantUtils.getInboundInfo()
-				.then(function(mInboundInfo) {
-					assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
-				});
+			.then(function(mInboundInfo) {
+				assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
+			});
 		});
 
-		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound does not match with inbounds present in the descriptor of an application", function (assert) {
+		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound does not match with inbounds present in the descriptor of an application", function(assert) {
 			var oInbounds = {
 				inbound1: {
 					semanticObject: "semanticObject1",
@@ -140,12 +140,12 @@ sap.ui.define([
 			};
 
 			return AppVariantUtils.getInboundInfo(oInbounds)
-				.then(function(mInboundInfo) {
-					assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
-				});
+			.then(function(mInboundInfo) {
+				assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
+			});
 		});
 
-		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound does match with an inbound present in the descriptor of an application", function (assert) {
+		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound does match with an inbound present in the descriptor of an application", function(assert) {
 			var oInbounds = {
 				"customer.savedAsAppVariant": {
 					semanticObject: "testSemanticObject",
@@ -154,12 +154,12 @@ sap.ui.define([
 			};
 
 			return AppVariantUtils.getInboundInfo(oInbounds)
-				.then(function(mInboundInfo) {
-					assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: false}, "then the existing inbound will be reused");
-				});
+			.then(function(mInboundInfo) {
+				assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: false}, "then the existing inbound will be reused");
+			});
 		});
 
-		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound match with 1 inbounds' SO and action", function (assert) {
+		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound match with 1 inbounds' SO and action", function(assert) {
 			var oInbounds = {
 				inbound1: {
 					semanticObject: "semanticObject1",
@@ -176,12 +176,12 @@ sap.ui.define([
 			};
 
 			return AppVariantUtils.getInboundInfo(oInbounds)
-				.then(function(mInboundInfo) {
-					assert.deepEqual(mInboundInfo, {currentRunningInbound: "inbound2", addNewInboundRequired: false}, "then the current inbound info is correct");
-				});
+			.then(function(mInboundInfo) {
+				assert.deepEqual(mInboundInfo, {currentRunningInbound: "inbound2", addNewInboundRequired: false}, "then the current inbound info is correct");
+			});
 		});
 
-		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound match with 2 inbounds' SO and action", function (assert) {
+		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound match with 2 inbounds' SO and action", function(assert) {
 			var oInbounds = {
 				inbound1: {
 					semanticObject: "semanticObject1",
@@ -198,12 +198,12 @@ sap.ui.define([
 			};
 
 			return AppVariantUtils.getInboundInfo(oInbounds)
-				.then(function(mInboundInfo) {
-					assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
-				});
+			.then(function(mInboundInfo) {
+				assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
+			});
 		});
 
-		QUnit.test("When prepareAddNewInboundChange() method is called", function (assert) {
+		QUnit.test("When prepareAddNewInboundChange() method is called", function(assert) {
 			var oInboundPropertyChange = {
 				content: {
 					inbound: {
@@ -252,12 +252,12 @@ sap.ui.define([
 			};
 
 			return AppVariantUtils.prepareAddNewInboundChange("customer.savedAsAppVariant", "appVariantId", {title: "Test Title", subTitle: "Test Subtitle", icon: "Test icon", referenceAppId: "referenceId"})
-				.then(function(oPreparedInboundChange) {
-					assert.deepEqual(oPreparedInboundChange, oInboundPropertyChange, "then the addNewInbound change structure is correct");
-				});
+			.then(function(oPreparedInboundChange) {
+				assert.deepEqual(oPreparedInboundChange, oInboundPropertyChange, "then the addNewInbound change structure is correct");
+			});
 		});
 
-		QUnit.test("When prepareChangeInboundChange() method is called", function (assert) {
+		QUnit.test("When prepareChangeInboundChange() method is called", function(assert) {
 			var oInboundPropertyChange = {
 				content: {
 					inboundId: "customer.savedAsAppVariant",
@@ -311,7 +311,7 @@ sap.ui.define([
 			assert.deepEqual(AppVariantUtils.prepareChangeInboundChange("customer.savedAsAppVariant", "appVariantId", {title: "Test Title", subTitle: "Test Subtitle", icon: "Test icon", referenceAppId: "referenceId"}), oInboundPropertyChange, "then the addNewInbound change structure is correct");
 		});
 
-		QUnit.test("When getInlineChangeForInboundPropertySaveAs() method is called", function (assert) {
+		QUnit.test("When getInlineChangeForInboundPropertySaveAs() method is called", function(assert) {
 			var oInboundPropertyChange = {
 				inboundId: "testInbound",
 				entityPropertyChange: {
@@ -332,7 +332,7 @@ sap.ui.define([
 			assert.deepEqual(AppVariantUtils.getInlineChangeForInboundPropertySaveAs("testInbound", "customer.appvar.id"), oInboundPropertyChange, "then the inbound property change is correct");
 		});
 
-		QUnit.test("When getTransportInput() method is called", function (assert) {
+		QUnit.test("When getTransportInput() method is called", function(assert) {
 			var oTransportInput = AppVariantUtils.getTransportInput("", "TestNamespace", "TestId", "appdescr_variant");
 
 			assert.strictEqual(oTransportInput.getPackage(), "", "then the package is correct");
@@ -341,22 +341,22 @@ sap.ui.define([
 			assert.strictEqual(oTransportInput.getDefinition().fileType, "appdescr_variant", "then the file type is correct");
 		});
 
-		QUnit.test("When onTransportInDialogSelected() method is called and rejected", function (assert) {
+		QUnit.test("When onTransportInDialogSelected() method is called and rejected", function(assert) {
 			var oTransportInfo;
 
 			return AppVariantFactory.prepareCreate({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			})
-				.then(function(oDescriptorVariant) {
-					return AppVariantUtils.onTransportInDialogSelected(oDescriptorVariant, oTransportInfo);
-				})
-				.catch(function() {
-					assert.ok("Operation cancelled successfully");
-				});
+			.then(function(oDescriptorVariant) {
+				return AppVariantUtils.onTransportInDialogSelected(oDescriptorVariant, oTransportInfo);
+			})
+			.catch(function() {
+				assert.ok("Operation cancelled successfully");
+			});
 		});
 
-		QUnit.test("When deleteAppVariant() method is called", function (assert) {
+		QUnit.test("When deleteAppVariant() method is called", function(assert) {
 			var fnDeleteAppVariantStub = sandbox.stub(AppVariantWriteAPI, "deleteAppVariant").resolves();
 			var vAppIdSelector = {appId: "customer.appvar.id"};
 			return AppVariantUtils.deleteAppVariant(vAppIdSelector, Layer.CUSTOMER).then(function() {
@@ -364,11 +364,11 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When copyId() is called", function (assert) {
+		QUnit.test("When copyId() is called", function(assert) {
 			assert.equal(AppVariantUtils.copyId("CopyMe"), true, "then the the string is copied to your clipboard");
 		});
 
-		QUnit.test("When buildErrorInfo() is called for different error possibilities", function (assert) {
+		QUnit.test("When buildErrorInfo() is called for different error possibilities", function(assert) {
 			var oError = {
 				messages: [{
 					text: "Error1"
@@ -376,7 +376,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Error1").returns();
-			var oResult = AppVariantUtils.buildErrorInfo('MSG_COPY_UNSAVED_CHANGES_FAILED', oError, "AppVariantId");
+			var oResult = AppVariantUtils.buildErrorInfo("MSG_COPY_UNSAVED_CHANGES_FAILED", oError, "AppVariantId");
 			assert.strictEqual(oResult.appVariantId, "AppVariantId", "then the appVariantId is correct");
 			assert.notEqual(oResult.text, undefined, "then the text is correct");
 
@@ -387,7 +387,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IamId").returns();
-			oResult = AppVariantUtils.buildErrorInfo('MSG_COPY_UNSAVED_CHANGES_FAILED', oError, "AppVariantId");
+			oResult = AppVariantUtils.buildErrorInfo("MSG_COPY_UNSAVED_CHANGES_FAILED", oError, "AppVariantId");
 			assert.strictEqual(oResult.appVariantId, "AppVariantId", "then the appVariantId is correct");
 			assert.notEqual(oResult.text, undefined, "then the text is correct");
 
@@ -396,12 +396,12 @@ sap.ui.define([
 			oError = "Error2";
 
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Error2").returns();
-			oResult = AppVariantUtils.buildErrorInfo('MSG_COPY_UNSAVED_CHANGES_FAILED', oError, "AppVariantId");
+			oResult = AppVariantUtils.buildErrorInfo("MSG_COPY_UNSAVED_CHANGES_FAILED", oError, "AppVariantId");
 			assert.strictEqual(oResult.appVariantId, "AppVariantId", "then the appVariantId is correct");
 			assert.notEqual(oResult.text, undefined, "then the text is correct");
 		});
 
-		QUnit.test("When _getErrorMessageText() is called with differente errors", function (assert) {
+		QUnit.test("When _getErrorMessageText() is called with differente errors", function(assert) {
 			var oError = {
 				status: 500,
 				messageKey: "MSG_SAVE_APP_VARIANT_FAILED"
@@ -441,7 +441,7 @@ sap.ui.define([
 			assert.strictEqual(sErrorMessage, oError, "then the error object is returned");
 		});
 
-		QUnit.test("When showRelevantDialog() is called with success message and Ok button is pressed", function (assert) {
+		QUnit.test("When showRelevantDialog() is called with success message and Ok button is pressed", function(assert) {
 			var oInfo = {
 				text: "Text",
 				copyId: false
@@ -459,7 +459,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When showRelevantDialog() is called with success message and CopyID and Ok button is pressed", function (assert) {
+		QUnit.test("When showRelevantDialog() is called with success message and CopyID and Ok button is pressed", function(assert) {
 			var oInfo = {
 				text: "Text",
 				copyId: true,
@@ -479,7 +479,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When showRelevantDialog() is called from overview dialog with failure message and Close button is pressed", function (assert) {
+		QUnit.test("When showRelevantDialog() is called from overview dialog with failure message and Close button is pressed", function(assert) {
 			var oInfo = {
 				text: "Text",
 				overviewDialog: true
@@ -496,7 +496,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When showRelevantDialog() is called with failure message and close button is pressed", function (assert) {
+		QUnit.test("When showRelevantDialog() is called with failure message and close button is pressed", function(assert) {
 			var oInfo = {
 				text: "Text"
 			};
@@ -511,7 +511,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When showRelevantDialog() is called with failure message and Copy ID and close button is pressed", function (assert) {
+		QUnit.test("When showRelevantDialog() is called with failure message and Copy ID and close button is pressed", function(assert) {
 			var oInfo = {
 				text: "Text",
 				copyId: true,
@@ -527,7 +527,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When showRelevantDialog() is called with info message (Delete an app variant) and Ok button is pressed", function (assert) {
+		QUnit.test("When showRelevantDialog() is called with info message (Delete an app variant) and Ok button is pressed", function(assert) {
 			var oInfo = {
 				text: "Text",
 				deleteAppVariant: true
@@ -542,7 +542,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When showRelevantDialog() is called with info message (Delete an app variant) and Close button is pressed", function (assert) {
+		QUnit.test("When showRelevantDialog() is called with info message (Delete an app variant) and Close button is pressed", function(assert) {
 			var oInfo = {
 				text: "Text",
 				deleteAppVariant: true
@@ -559,7 +559,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("When navigateToFLPHomepage() method is called and navigation to launchpad gets triggered", function (assert) {
+		QUnit.test("When navigateToFLPHomepage() method is called and navigation to launchpad gets triggered", function(assert) {
 			sandbox.restore();
 			var bUShellNavigationTriggered = false;
 
@@ -583,7 +583,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When navigateToFLPHomepage() method is called and navigation to launchad does not get triggered", function (assert) {
+		QUnit.test("When navigateToFLPHomepage() method is called and navigation to launchad does not get triggered", function(assert) {
 			sandbox.restore();
 			var bUShellNavigationTriggered = false;
 
@@ -611,14 +611,14 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When triggerCatalogAssignment() method is called on S4 Cloud system", function (assert) {
+		QUnit.test("When triggerCatalogAssignment() method is called on S4 Cloud system", function(assert) {
 			var oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return AppVariantUtils.triggerCatalogAssignment("AppVarId", Layer.CUSTOMER, "OriginalId").then(function() {
 				assert.ok(oSendRequestStub.calledWith("/sap/bc/lrep/appdescr_variants/AppVarId?action=assignCatalogs&assignFromAppId=OriginalId", "POST"));
 			});
 		});
 
-		QUnit.test("When triggerCatalogUnAssignment() method is called on S4 Cloud system", function (assert) {
+		QUnit.test("When triggerCatalogUnAssignment() method is called on S4 Cloud system", function(assert) {
 			var oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return AppVariantUtils.triggerCatalogUnAssignment("AppVarId", Layer.CUSTOMER).then(function() {
 				assert.ok(oSendRequestStub.calledWith("/sap/bc/lrep/appdescr_variants/AppVarId?action=unassignCatalogs", "POST"));
@@ -661,13 +661,13 @@ sap.ui.define([
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			})
-				.then(function(oAppVariant) {
-					return AppVariantUtils.buildSuccessInfo(oAppVariant.getId(), false, false);
-				}).then(function(oInfo) {
-					assert.equal(oGetText.callCount, 2, "then the getText() method is called twice");
-					assert.strictEqual(oInfo.appVariantId, "customer.TestId", "then the app variant id is as expected");
-					assert.strictEqual(oInfo.copyId, true, "then the copyID value is as expected");
-				});
+			.then(function(oAppVariant) {
+				return AppVariantUtils.buildSuccessInfo(oAppVariant.getId(), false, false);
+			}).then(function(oInfo) {
+				assert.equal(oGetText.callCount, 2, "then the getText() method is called twice");
+				assert.strictEqual(oInfo.appVariantId, "customer.TestId", "then the app variant id is as expected");
+				assert.strictEqual(oInfo.copyId, true, "then the copyID value is as expected");
+			});
 		});
 
 		QUnit.test("When buildSuccessInfo() method is called for S/4HANA Cloud", function(assert) {
@@ -685,13 +685,13 @@ sap.ui.define([
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			})
-				.then(function(oAppVariant) {
-					return AppVariantUtils.buildSuccessInfo(oAppVariant.getId(), false, true);
-				}).then(function(oInfo) {
-					assert.equal(oGetText.callCount, 2, "then the getText() method is called twice");
-					assert.strictEqual(oInfo.appVariantId, "customer.TestId", "then the app variant id is as expected");
-					assert.strictEqual(oInfo.copyId, false, "then the copyID value is as expected");
-				});
+			.then(function(oAppVariant) {
+				return AppVariantUtils.buildSuccessInfo(oAppVariant.getId(), false, true);
+			}).then(function(oInfo) {
+				assert.equal(oGetText.callCount, 2, "then the getText() method is called twice");
+				assert.strictEqual(oInfo.appVariantId, "customer.TestId", "then the app variant id is as expected");
+				assert.strictEqual(oInfo.copyId, false, "then the copyID value is as expected");
+			});
 		});
 
 		QUnit.test("When buildFinalSuccessInfoS4HANACloud() method is called for S/4HANA Cloud after catalog assignment finished succesfully", function(assert) {
@@ -731,14 +731,14 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When createAppVariant() method is called", function (assert) {
+		QUnit.test("When createAppVariant() method is called", function(assert) {
 			var fnSaveAsAppVariantStub = sandbox.stub(AppVariantWriteAPI, "saveAs").resolves();
 			return AppVariantUtils.createAppVariant(this.oAppComponent, {id: "customer.appvar.id", layer: Layer.CUSTOMER}).then(function() {
 				assert.ok(fnSaveAsAppVariantStub.calledWithExactly({selector: this.oAppComponent, id: "customer.appvar.id", layer: Layer.CUSTOMER, version: "1.0.0"}));
 			}.bind(this));
 		});
 
-		QUnit.test("When createInlineChange() method is called for propertyChange 'title'", function (assert) {
+		QUnit.test("When createInlineChange() method is called for propertyChange 'title'", function(assert) {
 			var oPropertyChange = {
 				type: "XTIT",
 				maxLength: 50,
@@ -758,7 +758,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When createInlineChange() method is called for propertyChange 'subTitle'", function (assert) {
+		QUnit.test("When createInlineChange() method is called for propertyChange 'subTitle'", function(assert) {
 			var oPropertyChange = {
 				type: "XTIT",
 				maxLength: 50,
@@ -778,7 +778,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When createInlineChange() method is called for propertyChange 'description'", function (assert) {
+		QUnit.test("When createInlineChange() method is called for propertyChange 'description'", function(assert) {
 			var oPropertyChange = {
 				type: "XTIT",
 				maxLength: 50,
@@ -798,7 +798,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When createInlineChange() method is called for propertyChange 'icon'", function (assert) {
+		QUnit.test("When createInlineChange() method is called for propertyChange 'icon'", function(assert) {
 			var oPropertyChange = {
 				content: {
 					icon: "testIcon"
@@ -815,7 +815,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When createInlineChange() method is called for propertyChange 'inbound'", function (assert) {
+		QUnit.test("When createInlineChange() method is called for propertyChange 'inbound'", function(assert) {
 			var oGeneratedID = AppVariantUtils.getId("testId");
 			var oPropertyChange = {
 				content: {
@@ -847,7 +847,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When createInlineChange() method is called for propertyChange 'createInbound'", function (assert) {
+		QUnit.test("When createInlineChange() method is called for propertyChange 'createInbound'", function(assert) {
 			var oPropertyChange = {
 				content: {
 					inbound: {
@@ -869,7 +869,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundTitle'", function (assert) {
+		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundTitle'", function(assert) {
 			var oPropertyChange = {
 				content: {
 					inboundId: "testInbound",
@@ -901,7 +901,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundSubtitle'", function (assert) {
+		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundSubtitle'", function(assert) {
 			var oPropertyChange = {
 				content: {
 					inboundId: "testInbound",
@@ -933,7 +933,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundIcon'", function (assert) {
+		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundIcon'", function(assert) {
 			var oPropertyChange = {
 				content: {
 					inboundId: "testInbound",
@@ -955,7 +955,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When createInlineChange() method is called for propertyChange 'removeInbound'", function (assert) {
+		QUnit.test("When createInlineChange() method is called for propertyChange 'removeInbound'", function(assert) {
 			var oPropertyChange = {
 				content: {
 					inboundId: "testInbound"
@@ -973,7 +973,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

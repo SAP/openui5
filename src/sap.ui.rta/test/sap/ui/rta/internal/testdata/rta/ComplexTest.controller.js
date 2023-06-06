@@ -26,10 +26,10 @@ sap.ui.define([
 	oCore
 ) {
 	"use strict";
-	function setTableModelData (oModel, sResourcePath) {
+	function setTableModelData(oModel, sResourcePath) {
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", sResourcePath + "/TableData.json", true);
-		xhr.onload = function () {
+		xhr.onload = function() {
 			if (xhr.readyState === 4) {
 				if (xhr.status >= 200 && xhr.status < 400) {
 					var oTableData = JSON.parse(xhr.responseText);
@@ -42,7 +42,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.rta.test.ComplexTest", {
 
-		onInit: function () {
+		onInit: function() {
 			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
 			var oManifest = FlUtils.getAppComponentForControl(this.getView()).getManifest();
 			var iServerDelay = UriParameters.fromQuery(window.location.search).get("serverDelay");
@@ -53,7 +53,7 @@ sap.ui.define([
 			var sMockServerPath;
 			var sMetadataUrl;
 			var aEntities = [];
-			var oDataSources = oManifest["sap.app"]["dataSources"];
+			var oDataSources = oManifest["sap.app"].dataSources;
 
 			MockServer.config({
 				autoRespond: true,
@@ -64,7 +64,7 @@ sap.ui.define([
 				if (oDataSources.hasOwnProperty(property)) {
 					dataSource = oDataSources[property];
 
-					//do we have a mock url in the app descriptor
+					// do we have a mock url in the app descriptor
 					if (dataSource.settings && dataSource.settings.localUri) {
 						if (typeof dataSource.type === "undefined" || dataSource.type === "OData") {
 							oMockServer = new MockServer({
@@ -79,7 +79,7 @@ sap.ui.define([
 								aEntitySetsNames: aEntities
 							});
 						}
-						//else if *Other types can be inserted here, like Annotations*
+						// else if *Other types can be inserted here, like Annotations*
 						oMockServer.start();
 						Log.info("Running the app with mock data for " + property);
 
@@ -114,15 +114,15 @@ sap.ui.define([
 							this.oView.bindElement("/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')");
 
 							return fetch(this._sResourcePath + "/countriesExtendedCollection.json")
-								.then(function(oResponse) {
-									return oResponse.json();
-								}).then(function(oJson) {
-									var oComboBox = this.byId("ComboBox0");
-									var oCountriesModel = new JSONModel(oJson);
-									oComboBox.setModel(oCountriesModel);
-								}.bind(this));
+							.then(function(oResponse) {
+								return oResponse.json();
+							}).then(function(oJson) {
+								var oComboBox = this.byId("ComboBox0");
+								var oCountriesModel = new JSONModel(oJson);
+								oComboBox.setModel(oCountriesModel);
+							}.bind(this));
 						} else if (property === "smartFilterService") {
-							//smartfilterbar bind
+							// smartfilterbar bind
 							var oSmartFilterModel = new ODataModel("/foo", true);
 							oSmartFilterModel.setDefaultCountMode(CountMode.None);
 							var oSmartFilterLayout = this.byId("smartFilterLayout");
@@ -191,14 +191,14 @@ sap.ui.define([
 			}
 
 			undo(oStack)
-				.then(function() {
-					MessageToast.show("All changes undone", {duration: 1000});
+			.then(function() {
+				MessageToast.show("All changes undone", {duration: 1000});
 
-					return redo(oStack);
-				})
-				.then(function() {
-					MessageToast.show("All changes redone", {duration: 1000});
-				});
+				return redo(oStack);
+			})
+			.then(function() {
+				MessageToast.show("All changes redone", {duration: 1000});
+			});
 		},
 
 		switchToAdaptionMode: function() {
@@ -223,7 +223,7 @@ sap.ui.define([
 				});
 
 				Stack.initializeWithChanges(oCore.byId("Comp1---idMain1"), aFileNames).then(function(oStack) {
-					//expose undo/redo test function to console
+					// expose undo/redo test function to console
 					window.undoRedoStack = this._undoRedoStack.bind(this, oStack);
 
 					startAdaptation({

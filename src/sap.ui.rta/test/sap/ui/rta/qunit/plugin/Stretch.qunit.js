@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/base/util/restricted/_debounce",
@@ -37,7 +37,7 @@ sap.ui.define([
 	Stretch,
 	sinon
 ) {
-	'use strict';
+	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
@@ -217,7 +217,7 @@ sap.ui.define([
 			};
 
 			this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
-				setTimeout(function () {
+				setTimeout(function() {
 					this.oStretchPlugin._onElementOverlayChanged(oEvent);
 					assert.notOk(isStretched(this.oLayoutOverlay), "the style class was removed");
 					done();
@@ -291,7 +291,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 			var oConfig = { attributes: true, childList: false, characterData: false, subtree: true};
-			oObserver.observe(document.getElementById('qunit-fixture'), oConfig);
+			oObserver.observe(document.getElementById("qunit-fixture"), oConfig);
 
 			this.oLayout.setWidth("300px");
 		});
@@ -620,7 +620,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 			var oConfig = { attributes: true, childList: false, characterData: false, subtree: true};
-			oObserver.observe(document.getElementById('qunit-fixture'), oConfig);
+			oObserver.observe(document.getElementById("qunit-fixture"), oConfig);
 
 			this.oHBox2.setVisible(true);
 			oCore.applyChanges();
@@ -791,7 +791,7 @@ sap.ui.define([
 				layout: new FormLayout()
 			});
 
-			this.oForm.placeAt('qunit-fixture');
+			this.oForm.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
 			this.oStretchPlugin = new Stretch();
@@ -821,7 +821,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

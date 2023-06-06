@@ -137,7 +137,6 @@ sap.ui.define([
 		});
 	};
 
-
 	/**
 	 * Polls the OData model to check catalog publishing status of the given IAM app ID.
 	 *
@@ -148,12 +147,12 @@ sap.ui.define([
 	 */
 	S4HanaCloudBackend.prototype.checkCatalogCustomizingIsReady = function(sIamAppId, bAppVarCreation) {
 		return S4HanaCloudBackend._getODataModel()
-			.then(function(oModel) {
-				return S4HanaCloudBackend._readODataModel(oModel, sIamAppId);
-			})
-			.then(function(oAppStatusResponse) {
-				return S4HanaCloudBackend._isAppReady(oAppStatusResponse, bAppVarCreation);
-			});
+		.then(function(oModel) {
+			return S4HanaCloudBackend._readODataModel(oModel, sIamAppId);
+		})
+		.then(function(oAppStatusResponse) {
+			return S4HanaCloudBackend._isAppReady(oAppStatusResponse, bAppVarCreation);
+		});
 	};
 
 	return S4HanaCloudBackend;

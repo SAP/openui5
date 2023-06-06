@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
@@ -47,10 +47,10 @@ sap.ui.define([
 	function waitForMethodCall(oObject, sMethodName) {
 		return new Promise(function(resolve) {
 			sandbox.stub(oObject, sMethodName)
-				.onFirstCall().callsFake(function() {
-					resolve(oObject[sMethodName].wrappedMethod.apply(this, arguments));
-				})
-				.callThrough();
+			.onFirstCall().callsFake(function() {
+				resolve(oObject[sMethodName].wrappedMethod.apply(this, arguments));
+			})
+			.callThrough();
 		});
 	}
 
@@ -92,11 +92,11 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when a change indicator with a single change is created", function(assert) {
 			sandbox.stub(DateFormat, "getDateTimeInstance")
-				.callThrough()
-				.withArgs({ relative: "true" })
-				.returns({
-					format: function() { return "myTime"; }
-				});
+			.callThrough()
+			.withArgs({ relative: "true" })
+			.returns({
+				format: function() { return "myTime"; }
+			});
 			var mPayload = {
 				originalLabel: "BeforeValue",
 				newLabel: "AfterValue"
@@ -123,63 +123,63 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
 
 			return oOpenPopoverPromise
-				.then(function() {
-					assert.ok(
-						this.oChangeIndicator.getAggregation("_popover"),
-						"then the popover is opened on click"
-					);
-					assert.ok(
-						this.oChangeIndicator.getAggregation("_popover").getContent()[0].getVisible(),
-						"then the changes table is visible"
-					);
-					assert.ok(
-						this.oChangeIndicator.getAggregation("_popover").getContent()[0].getVisible(),
-						"then the single change layout is visible"
-					);
-					var aItems = this.oChangeIndicator.getAggregation("_popover").getContent()[0].getItems();
-					assert.strictEqual(
-						aItems.length,
-						1,
-						"then the change is displayed"
-					);
-					assert.notOk(
-						aItems[0].getCells()[1].getItems()[1].getVisible(),
-						"then the show details button is not visible in the description column when no dependent selectors exist"
-					);
-					assert.strictEqual(
-						aItems[0].getCells()[1].getItems()[0].getText(),
-						oRtaResourceBundle.getText(
-							"TXT_CHANGEVISUALIZATION_CHANGE_RENAME_FROM_TO",
-							["AfterValue", "BeforeValue"]
-						),
-						"then a description for the change is displayed"
-					);
-					assert.strictEqual(
-						aItems[0].getCells()[0].getTooltip(),
-						oRtaResourceBundle.getText(
-							"TXT_CHANGEVISUALIZATION_OVERVIEW_RENAME"
-						),
-						"then the proper icon tooltip is displayed"
-					);
-					assert.notOk(
-						aItems[0].getCells()[1].getItems()[0].getTooltip(),
-						"then the description tooltip is not set because the description was not shorted"
-					);
-					var sDate = aItems[0].getCells()[2].getText();
-					assert.strictEqual(sDate, "myTime", "then a relative date string is displayed correctly");
+			.then(function() {
+				assert.ok(
+					this.oChangeIndicator.getAggregation("_popover"),
+					"then the popover is opened on click"
+				);
+				assert.ok(
+					this.oChangeIndicator.getAggregation("_popover").getContent()[0].getVisible(),
+					"then the changes table is visible"
+				);
+				assert.ok(
+					this.oChangeIndicator.getAggregation("_popover").getContent()[0].getVisible(),
+					"then the single change layout is visible"
+				);
+				var aItems = this.oChangeIndicator.getAggregation("_popover").getContent()[0].getItems();
+				assert.strictEqual(
+					aItems.length,
+					1,
+					"then the change is displayed"
+				);
+				assert.notOk(
+					aItems[0].getCells()[1].getItems()[1].getVisible(),
+					"then the show details button is not visible in the description column when no dependent selectors exist"
+				);
+				assert.strictEqual(
+					aItems[0].getCells()[1].getItems()[0].getText(),
+					oRtaResourceBundle.getText(
+						"TXT_CHANGEVISUALIZATION_CHANGE_RENAME_FROM_TO",
+						["AfterValue", "BeforeValue"]
+					),
+					"then a description for the change is displayed"
+				);
+				assert.strictEqual(
+					aItems[0].getCells()[0].getTooltip(),
+					oRtaResourceBundle.getText(
+						"TXT_CHANGEVISUALIZATION_OVERVIEW_RENAME"
+					),
+					"then the proper icon tooltip is displayed"
+				);
+				assert.notOk(
+					aItems[0].getCells()[1].getItems()[0].getTooltip(),
+					"then the description tooltip is not set because the description was not shorted"
+				);
+				var sDate = aItems[0].getCells()[2].getText();
+				assert.strictEqual(sDate, "myTime", "then a relative date string is displayed correctly");
 
-					this.oChangeIndicator.exit();
-					assert.notOk(this.oChangeIndicator.getAggregation("_popover"), "then the popover was destroyed");
-				}.bind(this));
+				this.oChangeIndicator.exit();
+				assert.notOk(this.oChangeIndicator.getAggregation("_popover"), "then the popover was destroyed");
+			}.bind(this));
 		});
 
 		QUnit.test("when a change indicator with a single change is created and the Text or ID of the element is too long", function(assert) {
 			sandbox.stub(DateFormat, "getDateTimeInstance")
-				.callThrough()
-				.withArgs({ relative: "true" })
-				.returns({
-					format: function() { return "myTime"; }
-				});
+			.callThrough()
+			.withArgs({ relative: "true" })
+			.returns({
+				format: function() { return "myTime"; }
+			});
 			var mPayload = {
 				originalLabel: "BeforeValueOfAFieldWithAnExtremelyLongButtonNameOrIDWhichThePopoverCouldNotCorrectlyDisplayWithoutAnyIssues",
 				newLabel: "AfterValueOfAFieldWithAnExtremelyLongButtonNameOrIDWhichThePopoverCouldNotCorrectlyDisplayWithoutAnyIssues"
@@ -201,50 +201,50 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
 
 			return oOpenPopoverPromise
-				.then(function() {
-					assert.ok(
-						this.oChangeIndicator.getAggregation("_popover"),
-						"then the popover is opened on click"
-					);
-					assert.ok(
-						this.oChangeIndicator.getAggregation("_popover").getContent()[0].getVisible(),
-						"then the changes table is visible"
-					);
-					var aItems = this.oChangeIndicator.getAggregation("_popover").getContent()[0].getItems();
-					assert.strictEqual(
-						aItems.length,
-						1,
-						"then the change is displayed"
-					);
-					assert.notOk(
-						aItems[0].getCells()[1].getItems()[1].getVisible(),
-						"then the show details button is not visible in the description column when no dependent selectors exist"
-					);
-					assert.strictEqual(
-						aItems[0].getCells()[1].getItems()[0].getText(),
-						oRtaResourceBundle.getText(
-							"TXT_CHANGEVISUALIZATION_CHANGE_RENAME_FROM_TO",
-							[
-								"AfterValueOfAFieldWithAnExt(...)ctlyDisplayWithoutAnyIssues",
-								"BeforeValueOfAFieldWithAnEx(...)ctlyDisplayWithoutAnyIssues"
-							]
-						),
-						"then a description for the change is displayed"
-					);
-					assert.strictEqual(
-						aItems[0].getCells()[1].getItems()[0].getTooltip(),
-						oRtaResourceBundle.getText(
-							"TXT_CHANGEVISUALIZATION_CHANGE_RENAME_FROM_TO",
-							[
-								"AfterValueOfAFieldWithAnExtremelyLongButtonNameOrIDWhichThePopoverCouldNotCorrectlyDisplayWithoutAnyIssues",
-								"BeforeValueOfAFieldWithAnExtremelyLongButtonNameOrIDWhichThePopoverCouldNotCorrectlyDisplayWithoutAnyIssues"
-							]
-						),
-						"then the description tooltip shows the not shorted text"
-					);
-					var sDate = aItems[0].getCells()[2].getText();
-					assert.strictEqual(sDate, "myTime", "then a relative date string is displayed correctly");
-				}.bind(this));
+			.then(function() {
+				assert.ok(
+					this.oChangeIndicator.getAggregation("_popover"),
+					"then the popover is opened on click"
+				);
+				assert.ok(
+					this.oChangeIndicator.getAggregation("_popover").getContent()[0].getVisible(),
+					"then the changes table is visible"
+				);
+				var aItems = this.oChangeIndicator.getAggregation("_popover").getContent()[0].getItems();
+				assert.strictEqual(
+					aItems.length,
+					1,
+					"then the change is displayed"
+				);
+				assert.notOk(
+					aItems[0].getCells()[1].getItems()[1].getVisible(),
+					"then the show details button is not visible in the description column when no dependent selectors exist"
+				);
+				assert.strictEqual(
+					aItems[0].getCells()[1].getItems()[0].getText(),
+					oRtaResourceBundle.getText(
+						"TXT_CHANGEVISUALIZATION_CHANGE_RENAME_FROM_TO",
+						[
+							"AfterValueOfAFieldWithAnExt(...)ctlyDisplayWithoutAnyIssues",
+							"BeforeValueOfAFieldWithAnEx(...)ctlyDisplayWithoutAnyIssues"
+						]
+					),
+					"then a description for the change is displayed"
+				);
+				assert.strictEqual(
+					aItems[0].getCells()[1].getItems()[0].getTooltip(),
+					oRtaResourceBundle.getText(
+						"TXT_CHANGEVISUALIZATION_CHANGE_RENAME_FROM_TO",
+						[
+							"AfterValueOfAFieldWithAnExtremelyLongButtonNameOrIDWhichThePopoverCouldNotCorrectlyDisplayWithoutAnyIssues",
+							"BeforeValueOfAFieldWithAnExtremelyLongButtonNameOrIDWhichThePopoverCouldNotCorrectlyDisplayWithoutAnyIssues"
+						]
+					),
+					"then the description tooltip shows the not shorted text"
+				);
+				var sDate = aItems[0].getCells()[2].getText();
+				assert.strictEqual(sDate, "myTime", "then a relative date string is displayed correctly");
+			}.bind(this));
 		});
 
 		QUnit.test("when a change was created within the session", function(assert) {
@@ -271,13 +271,13 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
 
 			return oOpenPopoverPromise
-				.then(function() {
-					assert.strictEqual(
-						this.oChangeIndicator.getAggregation("_popover").getContent()[0].getItems()[0].getCells()[2].getText(),
-						oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CREATED_IN_SESSION_DATE"),
-						"then a fallback label for the date is displayed"
-					);
-				}.bind(this));
+			.then(function() {
+				assert.strictEqual(
+					this.oChangeIndicator.getAggregation("_popover").getContent()[0].getItems()[0].getCells()[2].getText(),
+					oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CREATED_IN_SESSION_DATE"),
+					"then a fallback label for the date is displayed"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("when a move change indicator is created", function(assert) {
@@ -307,21 +307,21 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
 
 			return oOpenPopoverPromise
-				.then(function() {
-					var aItems = this.oChangeIndicator.getAggregation("_popover").getContent()[0].getItems();
-					assert.notOk(
-						aItems[0].getCells()[1].getItems()[1].getVisible(),
-						"then the show details button is not visible if the element was moved in the same group"
-					);
-					assert.ok(
-						aItems[1].getCells()[1].getItems()[1].getVisible(),
-						"then the show details button is visible if the element was moved outside its group"
-					);
-					assert.notOk(
-						aItems[2].getCells()[1].getItems()[1].getVisible(),
-						"then the show details button is not visible if the element has no source parent id"
-					);
-				}.bind(this));
+			.then(function() {
+				var aItems = this.oChangeIndicator.getAggregation("_popover").getContent()[0].getItems();
+				assert.notOk(
+					aItems[0].getCells()[1].getItems()[1].getVisible(),
+					"then the show details button is not visible if the element was moved in the same group"
+				);
+				assert.ok(
+					aItems[1].getCells()[1].getItems()[1].getVisible(),
+					"then the show details button is visible if the element was moved outside its group"
+				);
+				assert.notOk(
+					aItems[2].getCells()[1].getItems()[1].getVisible(),
+					"then the show details button is not visible if the element has no source parent id"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("when a change indicator is created for a settings command change", function(assert) {
@@ -394,40 +394,40 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
 
 			return oOpenPopoverPromise
-				.then(function() {
-					assert.ok(
-						this.oChangeIndicator.getAggregation("_popover"),
-						"then the popover is opened on click"
-					);
-					assert.ok(
-						this.oChangeIndicator.getAggregation("_popover").getContent()[0].getVisible(),
-						"then the changes table is visible"
-					);
-					var aItems = this.oChangeIndicator.getAggregation("_popover").getContent()[0].getItems();
-					assert.strictEqual(
-						aItems.length,
-						2,
-						"then both changes are displayed"
-					);
-					assert.notOk(
-						aItems[0].getCells()[1].getItems()[1].getVisible(),
-						"then the show details button is not visible when dependent selectors don't exist"
-					);
-					assert.strictEqual(
-						aItems[0].getCells()[0].getTooltip(),
-						oRtaResourceBundle.getText(
-							"TXT_CHANGEVISUALIZATION_OVERVIEW_ADD"
-						),
-						"then the proper icon tooltip is displayed for add"
-					);
-					assert.strictEqual(
-						aItems[1].getCells()[0].getTooltip(),
-						oRtaResourceBundle.getText(
-							"TXT_CHANGEVISUALIZATION_OVERVIEW_MOVE"
-						),
-						"then the proper icon tooltip is displayed for move"
-					);
-				}.bind(this));
+			.then(function() {
+				assert.ok(
+					this.oChangeIndicator.getAggregation("_popover"),
+					"then the popover is opened on click"
+				);
+				assert.ok(
+					this.oChangeIndicator.getAggregation("_popover").getContent()[0].getVisible(),
+					"then the changes table is visible"
+				);
+				var aItems = this.oChangeIndicator.getAggregation("_popover").getContent()[0].getItems();
+				assert.strictEqual(
+					aItems.length,
+					2,
+					"then both changes are displayed"
+				);
+				assert.notOk(
+					aItems[0].getCells()[1].getItems()[1].getVisible(),
+					"then the show details button is not visible when dependent selectors don't exist"
+				);
+				assert.strictEqual(
+					aItems[0].getCells()[0].getTooltip(),
+					oRtaResourceBundle.getText(
+						"TXT_CHANGEVISUALIZATION_OVERVIEW_ADD"
+					),
+					"then the proper icon tooltip is displayed for add"
+				);
+				assert.strictEqual(
+					aItems[1].getCells()[0].getTooltip(),
+					oRtaResourceBundle.getText(
+						"TXT_CHANGEVISUALIZATION_OVERVIEW_MOVE"
+					),
+					"then the proper icon tooltip is displayed for move"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("when a change indicator with five changes is created", function(assert) {
@@ -584,11 +584,11 @@ sap.ui.define([
 
 		QUnit.test("when a change indicator is hidden", function(assert) {
 			sandbox.stub(DateFormat, "getDateTimeInstance")
-				.callThrough()
-				.withArgs({ relative: "true" })
-				.returns({
-					format: function() { return "myTime"; }
-				});
+			.callThrough()
+			.withArgs({ relative: "true" })
+			.returns({
+				format: function() { return "myTime"; }
+			});
 			var mPayload = {
 				originalLabel: "BeforeValue",
 				newLabel: "AfterValue"

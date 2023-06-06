@@ -16,7 +16,7 @@ function(
 
 	BaseRenderer.apiVersion = 1; // @todo-semantic-rendering out of order .class() and .style() calls before openStart
 
-	BaseRenderer.render = function (oRM, oControl) {
+	BaseRenderer.render = function(oRM, oControl) {
 		oRM.class("sapUiRtaToolbar");
 		oRM.class("color_" + oControl.getColor());
 
@@ -29,7 +29,6 @@ function(
 
 		HBoxRenderer.render(oRM, oControl);
 	};
-
 
 	return BaseRenderer;
 });

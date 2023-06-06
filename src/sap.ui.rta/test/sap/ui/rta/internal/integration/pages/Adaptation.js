@@ -21,7 +21,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oContextMenuEvent = new MouseEvent('contextmenu', {
+	var oContextMenuEvent = new MouseEvent("contextmenu", {
 		bubbles: true,
 		cancelable: true,
 		view: window,
@@ -352,8 +352,8 @@ sap.ui.define([
 					FlexTestAPI.clearStorage("SessionStorage");
 				},
 				iPressOnEscape: function() {
-					window.dispatchEvent(new KeyboardEvent('keydown', {
-						key: 'escape'
+					window.dispatchEvent(new KeyboardEvent("keydown", {
+						key: "escape"
 					}));
 				}
 			},

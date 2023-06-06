@@ -24,7 +24,7 @@ sap.ui.define([
 	"use strict";
 
 	Controller.extend("sap.ui.rta.qunitrta.ComplexTest", {
-		onInit: function () {
+		onInit: function() {
 			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
 			var oManifest = FlUtils.getAppComponentForControl(this.getView()).getManifest();
 			var iServerDelay = UriParameters.fromQuery(window.location.search).get("serverDelay");
@@ -35,7 +35,7 @@ sap.ui.define([
 			var sMockServerPath;
 			var sMetadataUrl;
 			var aEntities = [];
-			var oDataSources = oManifest["sap.app"]["dataSources"];
+			var oDataSources = oManifest["sap.app"].dataSources;
 
 			MockServer.config({
 				autoRespond: true,
@@ -43,7 +43,7 @@ sap.ui.define([
 			});
 
 			var fnGetDataPromise = function(oView) {
-				return new Promise(function (resolve) {
+				return new Promise(function(resolve) {
 					oView.bindElement({
 						path: "/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')",
 						events: {
@@ -57,7 +57,7 @@ sap.ui.define([
 				if (oDataSources.hasOwnProperty(property)) {
 					dataSource = oDataSources[property];
 
-					//do we have a mock url in the app descriptor
+					// do we have a mock url in the app descriptor
 					if (dataSource.settings && dataSource.settings.localUri) {
 						if (typeof dataSource.type === "undefined" || dataSource.type === "OData") {
 							oMockServer = new MockServer({
@@ -72,7 +72,7 @@ sap.ui.define([
 								aEntitySetsNames: aEntities
 							});
 						}
-						//else if *Other types can be inserted here, like Annotations*
+						// else if *Other types can be inserted here, like Annotations*
 						oMockServer.start();
 						Log.info("Running the app with mock data for " + property);
 
@@ -126,7 +126,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		isDataReady: function () {
+		isDataReady: function() {
 			return this._dataPromise;
 		}
 	});

@@ -30,12 +30,12 @@ sap.ui.define([
 			return oRuntimeAuthoring.start()
 			.then(function() {
 				var sMeasureName = "RTA start function called";
-				//will result in custom timer in webPageTest
+				// will result in custom timer in webPageTest
 				window.performance.mark("rta.start.ends");
 				window.performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
 				window.wpp.customMetrics.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
 				Log.info(sMeasureName, window.wpp.customMetrics.startTime + "ms");
-				//visual change at the end
+				// visual change at the end
 				var oOverlay = OverlayRegistry.getOverlay(oHorizontalLayout);
 				oOverlay.setSelected(true);
 			});
@@ -47,7 +47,7 @@ sap.ui.define([
 				showToolbars: false
 			});
 			var mPlugins = oRuntimeAuthoring.getDefaultPlugins();
-			delete mPlugins["stretch"];
+			delete mPlugins.stretch;
 			oRuntimeAuthoring.setPlugins(mPlugins);
 
 			// will result in custom timer in webPageTest
@@ -56,12 +56,12 @@ sap.ui.define([
 			return oRuntimeAuthoring.start()
 			.then(function() {
 				var sMeasureName = "RTA start function called";
-				//will result in custom timer in webPageTest
+				// will result in custom timer in webPageTest
 				window.performance.mark("rta.start.ends");
 				window.performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
 				window.wpp.customMetrics.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
 				Log.info(sMeasureName, window.wpp.customMetrics.startTime + "ms");
-				//visual change at the end
+				// visual change at the end
 				var oOverlay = OverlayRegistry.getOverlay(oRootControl);
 				oOverlay.setSelected(true);
 			});
@@ -82,7 +82,7 @@ sap.ui.define([
 				});
 			}
 
-			//will result in custom timer in webPageTest
+			// will result in custom timer in webPageTest
 			window.performance.mark("rta.init.ends");
 			window.performance.measure(sMeasureName, "rta.init.starts", "rta.init.ends");
 			window.wpp.customMetrics.creationTime = window.performance.getEntriesByName(sMeasureName)[0].duration;

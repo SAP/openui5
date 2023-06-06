@@ -31,14 +31,14 @@ sap.ui.define([
 	function checkKeyUser(sLayer) {
 		if (Layer.CUSTOMER === sLayer) {
 			return FeaturesAPI.isKeyUser()
-				.then(function(bIsKeyUser) {
-					if (!bIsKeyUser) {
-						var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
-						var oError = new Error(oRtaResourceBundle.getText("MSG_NO_KEY_USER_RIGHTS_ERROR_MESSAGE"));
-						oError.reason = "isKeyUser";
-						throw oError;
-					}
-				});
+			.then(function(bIsKeyUser) {
+				if (!bIsKeyUser) {
+					var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+					var oError = new Error(oRtaResourceBundle.getText("MSG_NO_KEY_USER_RIGHTS_ERROR_MESSAGE"));
+					oError.reason = "isKeyUser";
+					throw oError;
+				}
+			});
 		}
 		return Promise.resolve();
 	}
@@ -121,28 +121,28 @@ sap.ui.define([
 				};
 
 				PersistenceWriteAPI.getChangesWarning(mPropertyBag)
-					.then(function(oWarningMessage) {
-						if (oWarningMessage.showWarning) {
-							var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
-							var oMessageProps = oWarningMessage.warningType === "mixedChangesWarning"
-								? {
-									text: "MSG_ADAPTATION_STARTER_MIXED_CHANGES_WARNING",
-									title: "TIT_ADAPTATION_STARTER_MIXED_CHANGES_TITLE"
-								}
-								: {
-									text: "MSG_ADAPTATION_STARTER_NO_CHANGES_IN_P_WARNING",
-									title: "TIT_ADAPTATION_STARTER_NO_CHANGES_IN_P_TITLE"
-								};
+				.then(function(oWarningMessage) {
+					if (oWarningMessage.showWarning) {
+						var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+						var oMessageProps = oWarningMessage.warningType === "mixedChangesWarning"
+							? {
+								text: "MSG_ADAPTATION_STARTER_MIXED_CHANGES_WARNING",
+								title: "TIT_ADAPTATION_STARTER_MIXED_CHANGES_TITLE"
+							}
+							: {
+								text: "MSG_ADAPTATION_STARTER_NO_CHANGES_IN_P_WARNING",
+								title: "TIT_ADAPTATION_STARTER_NO_CHANGES_IN_P_TITLE"
+							};
 
-							showMessageBox(
-								oRtaResourceBundle.getText(oMessageProps.text),
-								{
-									title: oRtaResourceBundle.getText(oMessageProps.title)
-								},
-								"warning"
-							);
-						}
-					});
+						showMessageBox(
+							oRtaResourceBundle.getText(oMessageProps.text),
+							{
+								title: oRtaResourceBundle.getText(oMessageProps.title)
+							},
+							"warning"
+						);
+					}
+				});
 			}
 			return oRta;
 		})

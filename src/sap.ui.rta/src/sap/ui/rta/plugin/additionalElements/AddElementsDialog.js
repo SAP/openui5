@@ -81,10 +81,10 @@ sap.ui.define([
 			customFieldVisible: false,
 			businessContextVisible: false,
 			customFieldButtonTooltip: "",
-			businessContextTexts: [{text: ""}] //empty element in first place, to be replaced by the headerText (see: addExtensionData)
+			businessContextTexts: [{text: ""}] // empty element in first place, to be replaced by the headerText (see: addExtensionData)
 		});
 
-		this._oDialogPromise.then(function (oDialog) {
+		this._oDialogPromise.then(function(oDialog) {
 			oDialog.setModel(this._oDialogModel);
 			if (!oRTAResourceModel) {
 				oRTAResourceModel = new ResourceModel({bundleName: "sap.ui.rta.messagebundle"});
@@ -95,8 +95,8 @@ sap.ui.define([
 
 			this._oDialogModel.setProperty("/listNoDataText", oRTAResourceModel.getProperty("MSG_NO_FIELDS").toLowerCase());
 
-			//retrieve List to set the sorting for the 'items' aggregation, since sap.ui.model.Sorter
-			//does not support binding to a model property...
+			// retrieve List to set the sorting for the 'items' aggregation, since sap.ui.model.Sorter
+			// does not support binding to a model property...
 			this._oList = sap.ui.getCore().byId(this.getId() + "--rta_addElementsDialogList");
 			this._bDescendingSortOrder = false;
 		}.bind(this));
@@ -125,21 +125,21 @@ sap.ui.define([
 			oDialog.close();
 			this._fnResolveOnDialogConfirm();
 		}.bind(this));
-		//indicate that the dialog has been closed and the selected fields (if any) are to be added to the UI
+		// indicate that the dialog has been closed and the selected fields (if any) are to be added to the UI
 	};
 
 	/**
 	 * Close dialog. All sections will be reverted
 	 */
 	AddElementsDialog.prototype._cancelDialog = function() {
-		//clear all selections
+		// clear all selections
 		this._oDialogModel.getObject("/elements").forEach(function(oElem) {
 			oElem.selected = false;
 		});
 		this._oDialogPromise.then(function(oDialog) {
 			oDialog.close();
 		});
-		//indicate that the dialog has been closed without choosing to add any fields (canceled)
+		// indicate that the dialog has been closed without choosing to add any fields (canceled)
 		this._fnRejectOnDialogCancel();
 	};
 
@@ -182,7 +182,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	AddElementsDialog.prototype._resortList = function () {
+	AddElementsDialog.prototype._resortList = function() {
 		this._bDescendingSortOrder = !this._bDescendingSortOrder;
 		var oBinding = this._oList.getBinding("items");
 		var aSorter = [];
@@ -217,7 +217,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	AddElementsDialog.prototype._redirectToCustomFieldCreation = function () {
+	AddElementsDialog.prototype._redirectToCustomFieldCreation = function() {
 		this.fireOpenCustomField();
 		this._oDialogPromise.then(function(oDialog) {
 			oDialog.close();
@@ -259,31 +259,31 @@ sap.ui.define([
 	 * @returns {Promise<undefined>} A promise resolving to undefined
 	 * @public
 	 */
-	AddElementsDialog.prototype.addExtensionData = function (aExtensionData) {
-		//clear old values from last run
+	AddElementsDialog.prototype.addExtensionData = function(aExtensionData) {
+		// clear old values from last run
 		this._removeExtensionDataTexts();
 
 		var aBusinessContextTexts = this._oDialogModel.getObject("/businessContextTexts");
 		if (aExtensionData && aExtensionData.length > 0) {
-			aExtensionData.forEach(function (oContext) {
+			aExtensionData.forEach(function(oContext) {
 				aBusinessContextTexts.push({
 					text: oContext.description
 				});
 			}, this);
 		} else {
-			//Message "none" when no extension data is available
+			// Message "none" when no extension data is available
 			aBusinessContextTexts.push({
 				text: oRTAResourceModel.getProperty("MSG_NO_BUSINESS_CONTEXTS")
 			});
 		}
-		//set the container visible
+		// set the container visible
 		this._setBusinessContextVisible(true);
 
 		return FieldExtensibility.getTexts().then(function(oFieldExtensibilityTexts) {
 			if (oFieldExtensibilityTexts) {
 				this._oDialogModel.setProperty("/customFieldButtonTooltip", oFieldExtensibilityTexts.tooltip);
-				//the first entry is always the "header" to be set by the implementation of FieldExtensibility
-				//it is set during the instantiation of the model, in the 'init' function
+				// the first entry is always the "header" to be set by the implementation of FieldExtensibility
+				// it is set during the instantiation of the model, in the 'init' function
 				this._oDialogModel.setProperty("/businessContextTexts/0/text", oFieldExtensibilityTexts.headerText);
 			}
 		}.bind(this));
@@ -294,7 +294,7 @@ sap.ui.define([
 	 * (except for the title)
 	 * @private
 	 */
-	AddElementsDialog.prototype._removeExtensionDataTexts = function () {
+	AddElementsDialog.prototype._removeExtensionDataTexts = function() {
 		var aBusinessContextTexts = this._oDialogModel.getObject("/businessContextTexts");
 		aBusinessContextTexts.splice(1);
 	};

@@ -22,14 +22,14 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Given a list of libraries that needs to be added to the app descriptor...", {
-		before: function () {
+		before: function() {
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 		},
-		after: function () {
+		after: function() {
 			this.oMockedAppComponent._restoreGetAppComponentStub();
 			this.oMockedAppComponent.destroy();
 		},
-		beforeEach: function () {
+		beforeEach: function() {
 			this.sReference = "appReference";
 			this.sLayer = Layer.CUSTOMER;
 			this.sChangeType = "appdescr_ui5_addLibraries";
@@ -43,10 +43,10 @@ sap.ui.define([
 
 			this.oButton = new Button("myButton");
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oButton.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when calling command factory for AddLibrary ...", function(assert) {
 			var done = assert.async();
 			var oAddLibraryCommand;
@@ -55,11 +55,11 @@ sap.ui.define([
 				store: function() {
 					assert.ok(true, "the descriptor change was submitted");
 					oAddLibraryCommand.execute()
-						.then(function() {
-							assert.ok(
-								oCore.getLoadedLibraries()["sap.uxap"], "upon execution, 'sap.uxap' library is loaded");
-							done();
-						});
+					.then(function() {
+						assert.ok(
+							oCore.getLoadedLibraries()["sap.uxap"], "upon execution, 'sap.uxap' library is loaded");
+						done();
+					});
 				}
 			};
 
@@ -98,7 +98,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when calling execute for AddLibrary ...", function (assert) {
+		QUnit.test("when calling execute for AddLibrary ...", function(assert) {
 			this.mLibraries = {
 				"sap.uxap": {
 					minVersion: "1.44",
@@ -114,17 +114,17 @@ sap.ui.define([
 				reference: this.sReference,
 				parameters: { libraries: this.mLibraries }
 			}, {}, {layer: this.sLayer})
-			.then(function (oAddLibraryCommand) {
+			.then(function(oAddLibraryCommand) {
 				assert.ok(oAddLibraryCommand, "addLibrary command exists for element");
 				return oAddLibraryCommand.execute();
 			})
-			.catch(function (e) {
+			.catch(function(e) {
 				assert.ok(e, "then trying to load a non-existing library causes the error " + e);
 			});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

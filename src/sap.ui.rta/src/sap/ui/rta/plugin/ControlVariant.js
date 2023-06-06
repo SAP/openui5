@@ -422,15 +422,15 @@ sap.ui.define([
 			});
 		} else {
 			getCommandForSwitch.call(this, oTargetOverlay, sNewVariantReference, sCurrentVariantReference)
-				.then(function(oSwitchCommand) {
-					this.fireElementModified({
-						command: oSwitchCommand
-					});
-				}.bind(this))
-
-				.catch(function(oMessage) {
-					throw DtUtil.createError("ControlVariant#switchVariant", oMessage, "sap.ui.rta");
+			.then(function(oSwitchCommand) {
+				this.fireElementModified({
+					command: oSwitchCommand
 				});
+			}.bind(this))
+
+			.catch(function(oMessage) {
+				throw DtUtil.createError("ControlVariant#switchVariant", oMessage, "sap.ui.rta");
+			});
 		}
 	};
 
@@ -459,11 +459,11 @@ sap.ui.define([
 	ControlVariant.prototype.createSaveCommand = function(aElementOverlays) {
 		var oOverlay = aElementOverlays[0];
 		return getCommandForSave.call(this, oOverlay)
-			.then(function(oSaveCommand) {
-				this.fireElementModified({
-					command: oSaveCommand
-				});
-			}.bind(this));
+		.then(function(oSaveCommand) {
+			this.fireElementModified({
+				command: oSaveCommand
+			});
+		}.bind(this));
 	};
 
 	ControlVariant.prototype.createSaveAsCommand = function(aElementOverlays) {
@@ -478,11 +478,11 @@ sap.ui.define([
 			sourceVariantReference: sCurrentVariantReference,
 			model: oModel
 		}, oDesignTimeMetadata, sVariantManagementReference)
-			.then(function(oSaveAsCommand) {
-				this.fireElementModified({
-					command: oSaveAsCommand
-				});
-			}.bind(this));
+		.then(function(oSaveAsCommand) {
+			this.fireElementModified({
+				command: oSaveAsCommand
+			});
+		}.bind(this));
 	};
 
 	/**
@@ -535,7 +535,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ControlVariant.prototype._prepareOverlayForValueState = function(oOverlay, sValueStateText) {
-		//Prepare VariantManagement control overlay for valueStateMessage
+		// Prepare VariantManagement control overlay for valueStateMessage
 		oOverlay.getValueState = function() {
 			return "Error";
 		};
@@ -673,7 +673,7 @@ sap.ui.define([
 
 			aMenuItems.push({
 				id: "CTX_VARIANT_SWITCH_SUBMENU",
-				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_SWITCH'),
+				text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_VARIANT_SWITCH"),
 				handler: function(aElementOverlays, mPropertyBag) {
 					var sNewVariantKey = mPropertyBag.eventItem.getParameters().item.getProperty("key");
 					var oTargetOverlay = aElementOverlays[0];

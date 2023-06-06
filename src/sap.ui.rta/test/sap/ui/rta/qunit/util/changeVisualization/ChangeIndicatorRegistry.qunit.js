@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/base/Log",
@@ -159,19 +159,19 @@ sap.ui.define([
 			assert.deepEqual(this.oRegistry.getChangeIndicators()[0], oIndicator, "then it is included in the list of change indicator references");
 		});
 
-		QUnit.test("when a registered change has the updateRequired flag and should be removed from the registry", function (assert) {
+		QUnit.test("when a registered change has the updateRequired flag and should be removed from the registry", function(assert) {
 			ChangesWriteAPI.getChangeHandler.reset();
 			ChangesWriteAPI.getChangeHandler
-				.onFirstCall()
-				.resolves({
-					getChangeVisualizationInfo: function() {
-						return {
-							updateRequired: true
-						};
-					}
-				})
-				.onSecondCall()
-				.resolves();
+			.onFirstCall()
+			.resolves({
+				getChangeVisualizationInfo: function() {
+					return {
+						updateRequired: true
+					};
+				}
+			})
+			.onSecondCall()
+			.resolves();
 			var oRemoveOutdatedRegisteredChangesSpy = sandbox.spy(this.oRegistry, "removeOutdatedRegisteredChanges");
 			return Promise.all([
 				this.oRegistry.registerChange(createMockChange("fooChange"), "foo"),
@@ -179,14 +179,14 @@ sap.ui.define([
 			]).then(function() {
 				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 2, "then the two changes are registered correctly");
 				this.oRegistry.removeOutdatedRegisteredChanges();
-			}.bind(this)).then(function () {
+			}.bind(this)).then(function() {
 				assert.ok(oRemoveOutdatedRegisteredChangesSpy.calledOnce, "then the function was called only once");
 				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 1, "then only one change is registered");
 				assert.notOk(this.oRegistry.getAllRegisteredChanges()[0].visualizationInfo.updateRequired, "then the remaining change has no updateRequired flag");
 			}.bind(this));
 		});
 
-		QUnit.test("when a registered change has no displayElementId and should be removed from the registry", function (assert) {
+		QUnit.test("when a registered change has no displayElementId and should be removed from the registry", function(assert) {
 			ChangesWriteAPI.getChangeHandler.reset();
 			ChangesWriteAPI.getChangeHandler.resolves();
 			var oRemoveRegisteredChangesWithoutVizInfoSpy = sandbox.spy(this.oRegistry, "removeRegisteredChangesWithoutVizInfo");
@@ -197,7 +197,7 @@ sap.ui.define([
 				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 2, "then the two changes are registered correctly");
 				this.oRegistry.getAllRegisteredChanges()[0].visualizationInfo.displayElementIds = [];
 				this.oRegistry.removeRegisteredChangesWithoutVizInfo();
-			}.bind(this)).then(function () {
+			}.bind(this)).then(function() {
 				assert.ok(oRemoveRegisteredChangesWithoutVizInfoSpy.calledOnce, "then the function was called only once");
 				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 1, "then only one change is registered");
 				assert.strictEqual(this.oRegistry.getAllRegisteredChanges()[0].visualizationInfo.displayElementIds.length, 1, "then the remaining change has a display element id");

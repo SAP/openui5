@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/commands/MoveVisualization",
@@ -56,7 +56,7 @@ sap.ui.define([
 				"then the button text is returned"
 			);
 		});
-		QUnit.test("when an element was moved outside its parent that has no source id", function (assert) {
+		QUnit.test("when an element was moved outside its parent that has no source id", function(assert) {
 			var oPayloadOutsideGroup = {
 				sourceContainer: { id: null },
 				targetContainer: { id: "Group2" }

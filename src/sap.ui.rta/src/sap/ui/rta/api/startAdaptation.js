@@ -50,8 +50,8 @@ sap.ui.define([
 		};
 		mOptions = merge(mDefaultOptions, mOptions);
 		return Promise.resolve()
-			.then(checkLayer.bind(this, mOptions.flexSettings.layer))
-			.then(adaptationStarter.bind(this, mOptions, loadPlugins, onStart, onFailed, onStop));
+		.then(checkLayer.bind(this, mOptions.flexSettings.layer))
+		.then(adaptationStarter.bind(this, mOptions, loadPlugins, onStart, onFailed, onStop));
 	}
 
 	return startAdaptation;

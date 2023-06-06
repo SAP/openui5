@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/write/api/FieldExtensibility",
@@ -75,16 +75,16 @@ sap.ui.define([
 			});
 			this.oAddElementsDialog = createDialog();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oAddElementsDialog.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when item is selected, focus should persist", function(assert) {
 			var done = assert.async();
 
 			function getItemByPath(aItems, sBindingPath) {
-				return aItems.filter(function (oItem) {
+				return aItems.filter(function(oItem) {
 					return oItem.getBindingContext().getPath() === sBindingPath;
 				})[0];
 			}
@@ -100,7 +100,7 @@ sap.ui.define([
 					oTargetItem.getDomRef().dispatchEvent(new Event("touchstart"));
 
 					// Wait until list is re-rendered
-					setTimeout(function () {
+					setTimeout(function() {
 						var oTargetItem = getItemByPath(oList.getItems(), sBindingPath);
 						assert.strictEqual(document.activeElement, oTargetItem.getDomRef());
 						done();
@@ -246,7 +246,7 @@ sap.ui.define([
 		QUnit.test("when on opened AddElementsDialog the list gets filtered via input", function(assert) {
 			var done = assert.async();
 
-			this.oAddElementsDialog.attachOpened(function () {
+			this.oAddElementsDialog.attachOpened(function() {
 				assert.equal(this._oList.getItems().length, 5, "then initially 5 entries are there");
 				this._updateModelFilter({getParameter: function() {return "2";}});
 				assert.equal(this._oList.getItems().length, 1, "when filtering for '2' then 1 entry is shown");
@@ -264,7 +264,7 @@ sap.ui.define([
 			this.oAddElementsDialog.open();
 		});
 
-		QUnit.test("when on opened AddElementsDialog the resort-button is pressed,", function (assert) {
+		QUnit.test("when on opened AddElementsDialog the resort-button is pressed,", function(assert) {
 			var done = assert.async();
 
 			this.oAddElementsDialog.attachOpened(function() {
@@ -277,7 +277,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

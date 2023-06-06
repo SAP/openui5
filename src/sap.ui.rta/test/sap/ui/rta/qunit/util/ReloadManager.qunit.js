@@ -290,7 +290,6 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-
 		QUnit.test("with versioning and a draft and all context and adaptationId and with a reload reason", function(assert) {
 			this.oGetReloadReasonsStub.resolves({isDraftAvailable: true, allContexts: true, adaptationId: "id_1234"});
 			return ReloadManager.handleReloadOnStart({versioningEnabled: true}).then(function() {

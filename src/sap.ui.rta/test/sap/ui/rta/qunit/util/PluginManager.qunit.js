@@ -42,7 +42,7 @@ function(
 			this.oPluginManager.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when PluginManager is initialized", function(assert) {
 			assert.strictEqual(this.oPluginManager.getEditableOverlaysCount(), 0, "then number of editable overlays should be 0");
 		});
@@ -98,8 +98,8 @@ function(
 		});
 
 		QUnit.test("when 'handleStopCutPaste' function is called", function(assert) {
-			this.oPluginManager.preparePlugins([], function () {});
-			var oCutPastePlugin = this.oPluginManager.getPlugins()['cutPaste'];
+			this.oPluginManager.preparePlugins([], function() {});
+			var oCutPastePlugin = this.oPluginManager.getPlugins().cutPaste;
 			var oCutPastePluginSpy = sandbox.spy(oCutPastePlugin, "stopCutAndPaste");
 			this.oPluginManager.handleStopCutPaste();
 			assert.equal(oCutPastePluginSpy.callCount, 1, "then handleStopCutPaste is working as expected");
@@ -113,18 +113,18 @@ function(
 			assert.strictEqual(oGetDefaultPluginsSpy.callCount, 1, "then the get default plugins function is called once");
 			assert.strictEqual(oDestroyDefaultPluginsSpy.callCount, 0, "then the destroy default plugins function is not called because all default plugins are in use");
 			var oPlugins = this.oPluginManager.getPlugins();
-			Object.keys(oPlugins).forEach(function (sPluginName) {
+			Object.keys(oPlugins).forEach(function(sPluginName) {
 				if (oPlugins[sPluginName].attachElementModified) {
-					assert.ok(oPlugins[sPluginName].mEventRegistry["elementModified"],
+					assert.ok(oPlugins[sPluginName].mEventRegistry.elementModified,
 						"then '" + sPluginName + "' plugin attached a handler function for the elmenetModified event");
 				}
 			});
-			assert.strictEqual(this.oPluginManager.getPlugins()["settings"].getCommandStack().id,
+			assert.strictEqual(this.oPluginManager.getPlugins().settings.getCommandStack().id,
 				oFakeCommandStack.id, "then command stack is provided to the settings plugin");
 		});
 
 		QUnit.test("when 'preparePlugins' function is called with specific plugins defined", function(assert) {
-			var oDefaultRenamePlugin = this.oPluginManager.getDefaultPlugins({layer: Layer.CUSTOMER})["rename"];
+			var oDefaultRenamePlugin = this.oPluginManager.getDefaultPlugins({layer: Layer.CUSTOMER}).rename;
 			var oGetDefaultPluginsSpy = sandbox.spy(this.oPluginManager, "getDefaultPlugins");
 			var oDestroyDefaultPluginsSpy = sandbox.spy(this.oPluginManager, "_destroyDefaultPlugins");
 			this.oPluginManager.setPlugins({
@@ -137,13 +137,13 @@ function(
 			assert.strictEqual(oGetDefaultPluginsSpy.callCount, 0, "then the get default plugins function is not called");
 			assert.strictEqual(oDestroyDefaultPluginsSpy.callCount, 1, "then the destroy default plugins function is called once");
 			var oPlugins = this.oPluginManager.getPlugins();
-			Object.keys(oPlugins).forEach(function (sPluginName) {
+			Object.keys(oPlugins).forEach(function(sPluginName) {
 				if (oPlugins[sPluginName].attachElementModified) {
-					assert.ok(oPlugins[sPluginName].mEventRegistry["elementModified"],
+					assert.ok(oPlugins[sPluginName].mEventRegistry.elementModified,
 						"then '" + sPluginName + "' plugin attached a handler function for the elmenetModified event");
 				}
 			});
-			assert.strictEqual(this.oPluginManager.getPlugins()["settings"].getCommandStack().id,
+			assert.strictEqual(this.oPluginManager.getPlugins().settings.getCommandStack().id,
 				oFakeCommandStack.id, "then command stack is provided to the settings plugin");
 		});
 
@@ -172,7 +172,7 @@ function(
 			this.oPluginManager.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but with local reset unavailable", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isVariantAdaptationEnabled: function() {
@@ -182,7 +182,7 @@ function(
 					return false;
 				}
 			});
-			var oDefaultLocalResetPlugin = this.oPluginManager.getDefaultPlugins({layer: Layer.CUSTOMER})["localReset"];
+			var oDefaultLocalResetPlugin = this.oPluginManager.getDefaultPlugins({layer: Layer.CUSTOMER}).localReset;
 			assert.equal(oDefaultLocalResetPlugin, undefined, "then the localReset plugin is not available");
 		});
 
@@ -200,7 +200,7 @@ function(
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

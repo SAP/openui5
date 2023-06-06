@@ -200,7 +200,7 @@ function(
 			}
 		}
 		if (aRelevantOverlays.length > 0) {
-			//Remove duplicates (e.g. when the parent is the same)
+			// Remove duplicates (e.g. when the parent is the same)
 			aRelevantOverlays = aRelevantOverlays.filter(function(oRelevantOverlay, iIndex, aSource) {
 				return iIndex === aSource.indexOf(oRelevantOverlay);
 			});

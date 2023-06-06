@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/rta/util/hasStableId",
@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ],
-function (
+function(
 	hasStableId,
 	Log,
 	UIComponent,
@@ -32,14 +32,14 @@ function (
 
 	var sandbox = sinon.createSandbox();
 
-	QUnit.module("Default parameters", function () {
-		QUnit.test("when hasStableId is called without parameters", function (assert) {
+	QUnit.module("Default parameters", function() {
+		QUnit.test("when hasStableId is called without parameters", function(assert) {
 			assert.strictEqual(hasStableId(), false);
 		});
 	});
 
 	QUnit.module("Control with unstable ID", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
@@ -50,7 +50,7 @@ function (
 						}
 					}
 				},
-				createContent: function () {
+				createContent: function() {
 					return new VerticalLayout();
 				}
 			});
@@ -61,7 +61,7 @@ function (
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
 				component: this.oComponent
 			});
-			this.oComponentContainer.placeAt('qunit-fixture');
+			this.oComponentContainer.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
@@ -75,19 +75,19 @@ function (
 				fnDone();
 			}, this);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when hasStableId is called", function (assert) {
+	}, function() {
+		QUnit.test("when hasStableId is called", function(assert) {
 			assert.strictEqual(hasStableId(this.oLayoutOverlay), false);
 		});
 	});
 
 	QUnit.module("Control with stable ID", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
@@ -98,7 +98,7 @@ function (
 						}
 					}
 				},
-				createContent: function () {
+				createContent: function() {
 					return new VerticalLayout("layout");
 				}
 			});
@@ -109,7 +109,7 @@ function (
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
 				component: this.oComponent
 			});
-			this.oComponentContainer.placeAt('qunit-fixture');
+			this.oComponentContainer.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
@@ -123,23 +123,23 @@ function (
 				fnDone();
 			}, this);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when hasStableId is called", function (assert) {
+	}, function() {
+		QUnit.test("when hasStableId is called", function(assert) {
 			assert.strictEqual(hasStableId(this.oLayoutOverlay), true);
 		});
-		QUnit.test("when Overlay is destroyed", function (assert) {
+		QUnit.test("when Overlay is destroyed", function(assert) {
 			this.oLayoutOverlay.destroy();
 			assert.strictEqual(hasStableId(this.oLayoutOverlay), false);
 		});
 	});
 
 	QUnit.module("Control in binding template (template has stable ID, control has stable ID)", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			var oModel = new JSONModel([
 				{ text: "item1-bound" },
@@ -154,7 +154,7 @@ function (
 						}
 					}
 				},
-				createContent: function () {
+				createContent: function() {
 					return new XMLView({
 						id: "myView",
 						viewContent:
@@ -162,9 +162,9 @@ function (
 								'<m:List id="layout" items="{path: \'/\'}">' +
 									'<m:CustomListItem id="itemTpl">' +
 										'<m:Text id="text" text="{text}" />' +
-									'</m:CustomListItem>' +
-								'</m:List>' +
-							'</mvc:View>'
+									"</m:CustomListItem>" +
+								"</m:List>" +
+							"</mvc:View>"
 					});
 				}
 			});
@@ -176,7 +176,7 @@ function (
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
 				component: this.oComponent
 			});
-			this.oComponentContainer.placeAt('qunit-fixture');
+			this.oComponentContainer.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
 			this.oText1 = this.oView.byId("layout").getItems()[0].getContent()[0];
@@ -192,19 +192,19 @@ function (
 				fnDone();
 			}, this);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when hasStableId is called", function (assert) {
+	}, function() {
+		QUnit.test("when hasStableId is called", function(assert) {
 			assert.strictEqual(hasStableId(this.oText1Overlay), true);
 		});
 	});
 
 	QUnit.module("Control in binding template (template has stable ID, control has unstable ID)", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			var oModel = new JSONModel([
 				{ text: "item1-bound" },
@@ -219,7 +219,7 @@ function (
 						}
 					}
 				},
-				createContent: function () {
+				createContent: function() {
 					return new XMLView({
 						id: "myView",
 						viewContent:
@@ -227,9 +227,9 @@ function (
 								'<m:List id="layout" items="{path: \'/\'}">' +
 									'<m:CustomListItem id="itemTpl">' +
 										'<m:Text text="{text}" />' +
-									'</m:CustomListItem>' +
-								'</m:List>' +
-							'</mvc:View>'
+									"</m:CustomListItem>" +
+								"</m:List>" +
+							"</mvc:View>"
 					});
 				}
 			});
@@ -241,7 +241,7 @@ function (
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
 				component: this.oComponent
 			});
-			this.oComponentContainer.placeAt('qunit-fixture');
+			this.oComponentContainer.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
 			this.oText1 = this.oView.byId("layout").getItems()[0].getContent()[0];
@@ -257,19 +257,19 @@ function (
 				fnDone();
 			}, this);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when hasStableId is called", function (assert) {
+	}, function() {
+		QUnit.test("when hasStableId is called", function(assert) {
 			assert.strictEqual(hasStableId(this.oText1Overlay), false);
 		});
 	});
 
 	QUnit.module("Control in binding template (template has unstable ID, control has stable ID)", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			var oModel = new JSONModel([
 				{ text: "item1-bound" },
@@ -284,7 +284,7 @@ function (
 						}
 					}
 				},
-				createContent: function () {
+				createContent: function() {
 					return new XMLView({
 						id: "myView",
 						viewContent:
@@ -292,9 +292,9 @@ function (
 								'<m:List id="layout" items="{path: \'/\'}">' +
 									'<m:CustomListItem id="itemTpl">' +
 										'<m:Text text="{text}" />' +
-									'</m:CustomListItem>' +
-								'</m:List>' +
-							'</mvc:View>'
+									"</m:CustomListItem>" +
+								"</m:List>" +
+							"</mvc:View>"
 					});
 				}
 			});
@@ -306,7 +306,7 @@ function (
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
 				component: this.oComponent
 			});
-			this.oComponentContainer.placeAt('qunit-fixture');
+			this.oComponentContainer.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
 			this.oText1 = this.oView.byId("layout").getItems()[0].getContent()[0];
@@ -322,18 +322,18 @@ function (
 				fnDone();
 			}, this);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when hasStableId is called", function (assert) {
+	}, function() {
+		QUnit.test("when hasStableId is called", function(assert) {
 			assert.strictEqual(hasStableId(this.oText1Overlay), false);
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

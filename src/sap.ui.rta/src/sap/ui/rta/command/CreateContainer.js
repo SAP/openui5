@@ -30,7 +30,7 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 					type: "string",
 					group: "content"
 				},
-				label: { //legacy property => exposed in tests
+				label: { // legacy property => exposed in tests
 					type: "string"
 				},
 				parentId: {

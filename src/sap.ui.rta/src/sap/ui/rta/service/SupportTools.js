@@ -42,12 +42,12 @@ sap.ui.define([
 				modifier: JsControlTreeModifier,
 				layer: oRta.getLayer()
 			})
-				.then(function(oChangeHandler) {
-					return oChangeHandler;
-				})
-				.catch(function() {
-					return;
-				});
+			.then(function(oChangeHandler) {
+				return oChangeHandler;
+			})
+			.catch(function() {
+				return;
+			});
 		}
 		return Promise.resolve(undefined);
 	}
@@ -95,29 +95,29 @@ sap.ui.define([
 			var bIsSibling = isPluginForSibling(sPluginName);
 
 			return getPluginChangeHandler(oInstance, oOverlay, oRta)
-				.then(function(oChangeHandler) {
-					return {
-						name: sPluginName,
-						isAvailable: oInstance.isAvailable([oOverlay], bIsSibling),
-						hasChangeHandler: !!oChangeHandler
-					};
-				});
-		}))
-			.then(function(aPlugins) {
+			.then(function(oChangeHandler) {
 				return {
-					elementId: oElement.getId(),
-					elementControlType: oElement.getMetadata().getName(),
-					overlayId: oOverlay.getId(),
-					plugins: aPlugins
+					name: sPluginName,
+					isAvailable: oInstance.isAvailable([oOverlay], bIsSibling),
+					hasChangeHandler: !!oChangeHandler
 				};
 			});
+		}))
+		.then(function(aPlugins) {
+			return {
+				elementId: oElement.getId(),
+				elementControlType: oElement.getMetadata().getName(),
+				overlayId: oOverlay.getId(),
+				plugins: aPlugins
+			};
+		});
 	}
 
 	function printChangeHandler(oRta, mPayload) {
 		var oOverlay = Core.byId(mPayload.overlayId);
 		var oPlugin = getPluginByName(oRta, mPayload.pluginName);
 		getPluginChangeHandler(oPlugin, oOverlay, oRta)
-			.then(console.log); // eslint-disable-line no-console
+		.then(console.log); // eslint-disable-line no-console
 	}
 
 	function printDesignTimeMetadata(oRta, mPayload) {
@@ -172,15 +172,15 @@ sap.ui.define([
 
 		if (mHandler) {
 			Promise.resolve(mHandler.handler(oRta, oEvent.data.content))
-				.then(function(oResult) {
-					if (mHandler.returnMessageType) {
-						oEvent.source.postMessage({
-							id: mHandler.id,
-							type: mHandler.returnMessageType,
-							content: oResult
-						});
-					}
-				});
+			.then(function(oResult) {
+				if (mHandler.returnMessageType) {
+					oEvent.source.postMessage({
+						id: mHandler.id,
+						type: mHandler.returnMessageType,
+						content: oResult
+					});
+				}
+			});
 		}
 	}
 

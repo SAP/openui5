@@ -128,7 +128,7 @@ sap.ui.define([
 
 			this._mDefaultPlugins = {};
 
-			this._mDefaultPlugins["selection"] = new SelectionPlugin({
+			this._mDefaultPlugins.selection = new SelectionPlugin({
 				commandFactory: this._oCommandFactory,
 				multiSelectionRequiredPlugins: [
 					CombinePlugin.getMetadata().getName(),
@@ -141,79 +141,79 @@ sap.ui.define([
 				commandFactory: this._oCommandFactory
 			});
 
-			this._mDefaultPlugins["dragDrop"] = new RTADragDropPlugin({
+			this._mDefaultPlugins.dragDrop = new RTADragDropPlugin({
 				elementMover: this._oRTAElementMover,
 				commandFactory: this._oCommandFactory,
 				dragStarted: this.handleStopCutPaste.bind(this)
 			});
 
-			this._mDefaultPlugins["rename"] = new RTARenamePlugin({
+			this._mDefaultPlugins.rename = new RTARenamePlugin({
 				commandFactory: this._oCommandFactory,
 				editable: this.handleStopCutPaste.bind(this)
 			});
 
-			this._mDefaultPlugins["additionalElements"] = new AdditionalElementsPlugin({
+			this._mDefaultPlugins.additionalElements = new AdditionalElementsPlugin({
 				commandFactory: this._oCommandFactory
 			});
 
-			this._mDefaultPlugins["createContainer"] = new CreateContainerPlugin({
+			this._mDefaultPlugins.createContainer = new CreateContainerPlugin({
 				commandFactory: this._oCommandFactory
 			});
 
-			this._mDefaultPlugins["remove"] = new RemovePlugin({
+			this._mDefaultPlugins.remove = new RemovePlugin({
 				commandFactory: this._oCommandFactory
 			});
 
-			this._mDefaultPlugins["cutPaste"] = new CutPastePlugin({
+			this._mDefaultPlugins.cutPaste = new CutPastePlugin({
 				elementMover: this._oRTAElementMover,
 				commandFactory: this._oCommandFactory
 			});
 
-			this._mDefaultPlugins["settings"] = new SettingsPlugin({
+			this._mDefaultPlugins.settings = new SettingsPlugin({
 				commandFactory: this._oCommandFactory
 			});
 
-			this._mDefaultPlugins["combine"] = new CombinePlugin({
+			this._mDefaultPlugins.combine = new CombinePlugin({
 				commandFactory: this._oCommandFactory
 			});
 
-			this._mDefaultPlugins["split"] = new SplitPlugin({
+			this._mDefaultPlugins.split = new SplitPlugin({
 				commandFactory: this._oCommandFactory
 			});
 
-			this._mDefaultPlugins["resize"] = new ResizePlugin({
+			this._mDefaultPlugins.resize = new ResizePlugin({
 				commandFactory: this._oCommandFactory
 			});
 
-			this._mDefaultPlugins["contextMenu"] = new ContextMenuPlugin();
+			this._mDefaultPlugins.contextMenu = new ContextMenuPlugin();
 
-			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();
+			this._mDefaultPlugins.tabHandling = new TabHandlingPlugin();
 
-			this._mDefaultPlugins["stretch"] = new StretchPlugin();
+			this._mDefaultPlugins.stretch = new StretchPlugin();
 
 			var oSettings = Settings.getInstanceOrUndef();
 			if (oSettings && oSettings.isVariantAdaptationEnabled()) {
-				this._mDefaultPlugins["compVariant"] = new CompVariantPlugin({
+				this._mDefaultPlugins.compVariant = new CompVariantPlugin({
 					commandFactory: this._oCommandFactory
 				});
 			}
 
-			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
+			this._mDefaultPlugins.controlVariant = new ControlVariantPlugin({
 				commandFactory: this._oCommandFactory
 			});
 
-			this._mDefaultPlugins["addIFrame"] = new AddIFramePlugin({
+			this._mDefaultPlugins.addIFrame = new AddIFramePlugin({
 				commandFactory: this._oCommandFactory
 			});
 
-			this._mDefaultPlugins["toolHooks"] = new ToolHooksPlugin();
+			this._mDefaultPlugins.toolHooks = new ToolHooksPlugin();
 
 			if (
 				oFlexSettings.layer === Layer.CUSTOMER
 				&& oSettings
 				&& oSettings.isLocalResetEnabled()
 			) {
-				this._mDefaultPlugins["localReset"] = new LocalResetPlugin({
+				this._mDefaultPlugins.localReset = new LocalResetPlugin({
 					commandFactory: this._oCommandFactory
 				});
 			}
@@ -229,7 +229,7 @@ sap.ui.define([
 	 * @param {function} fnHandleElementModified - Handler function for element modified events
 	 * @param {sap.ui.rta.command.Stack} oCommandStack - Command stack required in plugins
 	 */
-	PluginManager.prototype.preparePlugins = function (oFlexSettings, fnHandleElementModified, oCommandStack) {
+	PluginManager.prototype.preparePlugins = function(oFlexSettings, fnHandleElementModified, oCommandStack) {
 		// Take default plugins if no plugins handed over
 		if (isEmptyObject(this.getPlugins())) {
 			this.setPlugins(this.getDefaultPlugins(oFlexSettings));
@@ -251,7 +251,7 @@ sap.ui.define([
 	 * Returns a list of registered plugins
 	 * @returns {array} list of plugins
 	 */
-	PluginManager.prototype.getPluginList = function () {
+	PluginManager.prototype.getPluginList = function() {
 		return values(this.getPlugins());
 	};
 
@@ -260,7 +260,7 @@ sap.ui.define([
 	 * @param {string} sPluginName - Plugin name
 	 * @returns {sap.ui.rta.plugin.Plugin} plugin
 	 */
-	PluginManager.prototype.getPlugin = function (sPluginName) {
+	PluginManager.prototype.getPlugin = function(sPluginName) {
 		return this.getPlugins()[sPluginName];
 	};
 
@@ -269,7 +269,7 @@ sap.ui.define([
 	 * @param {string} sPluginName - Plugin name
 	 * @param {sap.ui.rta.command.Stack} oCommandStack - Command stack required in plugins
 	 */
-	PluginManager.prototype.provideCommandStack = function (sPluginName, oCommandStack) {
+	PluginManager.prototype.provideCommandStack = function(sPluginName, oCommandStack) {
 		if (this.getPlugin(sPluginName)) {
 			this.getPlugin(sPluginName).setCommandStack(oCommandStack);
 		}
@@ -299,7 +299,7 @@ sap.ui.define([
 		}
 	};
 
-	PluginManager.prototype._destroyDefaultPlugins = function (mPluginsToKeep) {
+	PluginManager.prototype._destroyDefaultPlugins = function(mPluginsToKeep) {
 		for (var sDefaultPluginName in this._mDefaultPlugins) {
 			var oDefaultPlugin = this._mDefaultPlugins[sDefaultPluginName];
 

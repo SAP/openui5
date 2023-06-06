@@ -10,13 +10,13 @@ sap.ui.define(
 		"./pages/contextVisibility/ContextSharingVisibilityFragment",
 		"./pages/AppPage"
 	],
-	function (opaTest, Opa5, oCore) {
+	function(opaTest, Opa5, oCore) {
 		"use strict";
 
 		var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 		var arrangements = new Opa5({
-			iStartMyApp: function () {
+			iStartMyApp: function() {
 				return this.iStartMyAppInAFrame("test-resources/sap/ui/rta/qunit/opa/contextBased/index.html");
 			}
 		});
@@ -28,7 +28,7 @@ sap.ui.define(
 
 		// Show the demo page with one button to open the app context dialog
 		QUnit.module("Demo Page");
-		opaTest("Should open App Context Dialog via demo page button", function (Given, When, Then) {
+		opaTest("Should open App Context Dialog via demo page button", function(Given, When, Then) {
 			Given.iStartMyApp();
 			Then.onTheDemoAppPage.iShouldSeeManageAdaptationsDialogButton();
 			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButton();
@@ -37,7 +37,7 @@ sap.ui.define(
 
 		QUnit.module("App Context Dialog");
 		// Filter title
-		opaTest("Should search for title that does not exist and clears the search field", function (Given, When, Then) {
+		opaTest("Should search for title that does not exist and clears the search field", function(Given, When, Then) {
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(4);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(true);
 			When.onTheManageAdaptationsDialogPage.iSearchFor("NotExistingTitle");
@@ -48,7 +48,7 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(true);
 		});
 
-		opaTest("Should search for title and clears the search field", function (Given, When, Then) {
+		opaTest("Should search for title and clears the search field", function(Given, When, Then) {
 			When.onTheManageAdaptationsDialogPage.iSearchFor("German Admin");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(1);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(false);
@@ -58,7 +58,7 @@ sap.ui.define(
 		});
 
 		// Filter context_id
-		opaTest("Should search for context_id that does not exist and clears the search field", function (Given, When, Then) {
+		opaTest("Should search for context_id that does not exist and clears the search field", function(Given, When, Then) {
 			When.onTheManageAdaptationsDialogPage.iSearchFor("NotExistingContextId");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(0);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(false);
@@ -67,7 +67,7 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(true);
 		});
 
-		opaTest("Should search for context_id='MaNaGER' and clears the search field", function (Given, When, Then) {
+		opaTest("Should search for context_id='MaNaGER' and clears the search field", function(Given, When, Then) {
 			When.onTheManageAdaptationsDialogPage.iSearchFor("MaNaGER");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(3);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(false);
@@ -76,7 +76,7 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(true);
 		});
 
-		opaTest("Should search for context_id='sales' and clears the search field", function (Given, When, Then) {
+		opaTest("Should search for context_id='sales' and clears the search field", function(Given, When, Then) {
 			When.onTheManageAdaptationsDialogPage.iSearchFor("sales");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(1);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(false);
@@ -86,7 +86,7 @@ sap.ui.define(
 		});
 
 		// Filter createdBy
-		opaTest("Should search for createdBy that does not exist and clears the search field", function (Given, When, Then) {
+		opaTest("Should search for createdBy that does not exist and clears the search field", function(Given, When, Then) {
 			When.onTheManageAdaptationsDialogPage.iSearchFor("NotExistingCreatedBy");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(0);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(false);
@@ -95,7 +95,7 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(true);
 		});
 
-		opaTest("Should search for createdBy='Test User 2' and clears the search field", function (Given, When, Then) {
+		opaTest("Should search for createdBy='Test User 2' and clears the search field", function(Given, When, Then) {
 			When.onTheManageAdaptationsDialogPage.iSearchFor("Test User 2");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(1);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(false);
@@ -104,7 +104,7 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(true);
 		});
 
-		opaTest("Should search for createdBy='TeSt uSeR 1' and clears the search field", function (Given, When, Then) {
+		opaTest("Should search for createdBy='TeSt uSeR 1' and clears the search field", function(Given, When, Then) {
 			When.onTheManageAdaptationsDialogPage.iSearchFor("TeSt uSeR 1");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(3);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(false);
@@ -114,7 +114,7 @@ sap.ui.define(
 		});
 
 		// Filter changedBy
-		opaTest("Should search for changedBy that does not exist and clears the search field", function (Given, When, Then) {
+		opaTest("Should search for changedBy that does not exist and clears the search field", function(Given, When, Then) {
 			When.onTheManageAdaptationsDialogPage.iSearchFor("NotExistingCreatedAt");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(0);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(false);
@@ -123,7 +123,7 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(true);
 		});
 
-		opaTest("Should search for changedBy='Test User 2' and clears the search field", function (Given, When, Then) {
+		opaTest("Should search for changedBy='Test User 2' and clears the search field", function(Given, When, Then) {
 			When.onTheManageAdaptationsDialogPage.iSearchFor("Test User 2");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(1);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(false);
@@ -132,7 +132,7 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(true);
 		});
 
-		opaTest("Should search for changedBy='TeSt uSeR 1' and clears the search field", function (Given, When, Then) {
+		opaTest("Should search for changedBy='TeSt uSeR 1' and clears the search field", function(Given, When, Then) {
 			When.onTheManageAdaptationsDialogPage.iSearchFor("TeSt uSeR 1");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(3);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(false);
@@ -142,7 +142,7 @@ sap.ui.define(
 		});
 
 		// Test default context table
-		opaTest("Should search for 'dEFaUlT ApP' and clears the search field", function (Given, When, Then) {
+		opaTest("Should search for 'dEFaUlT ApP' and clears the search field", function(Given, When, Then) {
 			When.onTheManageAdaptationsDialogPage.iSearchFor(oRtaResourceBundle.getText("TXT_DEFAULT_APP").toUpperCase());
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(0);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(true);
@@ -152,7 +152,7 @@ sap.ui.define(
 		});
 
 		// Test drag&drop as well as move up/down button
-		opaTest("Should disable drag & drop as well as move up/down button while searching", function (Given, When, Then) {
+		opaTest("Should disable drag & drop as well as move up/down button while searching", function(Given, When, Then) {
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveUpButton(false);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveDownButton(false);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfDragAndDrop(true);
@@ -193,7 +193,7 @@ sap.ui.define(
 		});
 
 		// Test reopen of the dialog
-		opaTest("Should always clear the search field after reopening the dialog and the default app is still present", function (Given, When, Then) {
+		opaTest("Should always clear the search field after reopening the dialog and the default app is still present", function(Given, When, Then) {
 			Given.iStartMyApp();
 			Then.onTheDemoAppPage.iShouldSeeManageAdaptationsDialogButton();
 			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButton();
@@ -219,7 +219,7 @@ sap.ui.define(
 		});
 
 		// Test move up/down button when more then one adaptation is available and one of them is selected
-		opaTest("Should always enable move up/down button if more then one adaptation is available when it is selected", function (Given, When, Then) {
+		opaTest("Should always enable move up/down button if more then one adaptation is available when it is selected", function(Given, When, Then) {
 			Given.iStartMyApp();
 			Then.onTheDemoAppPage.iShouldSeeManageAdaptationsDialogButton();
 			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButton();
@@ -244,7 +244,7 @@ sap.ui.define(
 		});
 
 		// Test move up/down button when only one adaptation is available and when this is selected
-		opaTest("Should always disable move up/down button if only one adaptation is available although it is selected", function (Given, When, Then) {
+		opaTest("Should always disable move up/down button if only one adaptation is available although it is selected", function(Given, When, Then) {
 			Given.iStartMyApp();
 			Then.onTheDemoAppPage.iShouldSeeManageAdaptationsDialogButton();
 			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButtonWithOnlyOneAdaptation();
@@ -269,7 +269,7 @@ sap.ui.define(
 		});
 
 		// Test move up/down buttons when more then one adaptation is available
-		opaTest("Should always enable move up/down button seperate from each other when respective item is selected", function (Given, When, Then) {
+		opaTest("Should always enable move up/down button seperate from each other when respective item is selected", function(Given, When, Then) {
 			Given.iStartMyApp();
 			Then.onTheDemoAppPage.iShouldSeeManageAdaptationsDialogButton();
 			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButton();
@@ -330,7 +330,7 @@ sap.ui.define(
 		});
 
 		// Test move up/down button when only two adaptations are available
-		opaTest("Should not enable move up/down button in the same time", function (Given, When, Then) {
+		opaTest("Should not enable move up/down button in the same time", function(Given, When, Then) {
 			Given.iStartMyApp();
 			Then.onTheDemoAppPage.iShouldSeeManageAdaptationsDialogButton();
 			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButtonWithTwoAdaptations();

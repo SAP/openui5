@@ -106,7 +106,7 @@ sap.ui.define([
 
 	Adaptation.prototype._calculateWindowWidth = function(aEntries) {
 		var iSectionWidth = aEntries[0].intersectionRect.width;
-		return (iSectionWidth * 2) + this._iSwitcherToolbarWidth + 80/*toolbar padding*/;
+		return (iSectionWidth * 2) + this._iSwitcherToolbarWidth + 80/* toolbar padding */;
 	};
 
 	Adaptation.prototype.onFragmentLoaded = function() {
@@ -130,7 +130,7 @@ sap.ui.define([
 		}
 	};
 
-	Adaptation.prototype._onResize = function () {
+	Adaptation.prototype._onResize = function() {
 		if (this._iOnResizeAnimationFrame) {
 			window.cancelAnimationFrame(this._iOnResizeAnimationFrame);
 		}
@@ -207,9 +207,9 @@ sap.ui.define([
 
 	Adaptation.prototype.show = function() {
 		return Base.prototype.show.call(this, this.initialAdjustToolbarSectionWidths.bind(this))
-			.then(function() {
-				this._observeIntersections();
-			}.bind(this));
+		.then(function() {
+			this._observeIntersections();
+		}.bind(this));
 	};
 
 	function setButtonProperties(sButtonName, sIcon, sTextKey, sToolTipKey) {
@@ -221,15 +221,15 @@ sap.ui.define([
 		oButton.setIcon(sIcon || "");
 	}
 
-	Adaptation.prototype.formatPublishVersionVisibility = function (bPublishVisible, bVersioningEnabled, sDisplayedVersion, sModeSwitcher) {
+	Adaptation.prototype.formatPublishVersionVisibility = function(bPublishVisible, bVersioningEnabled, sDisplayedVersion, sModeSwitcher) {
 		return this.getExtension("versioning", Versioning).formatPublishVersionVisibility(bPublishVisible, bVersioningEnabled, sDisplayedVersion, sModeSwitcher);
 	};
 
-	Adaptation.prototype.formatDiscardDraftVisible = function (sDisplayedVersion, bVersioningEnabled, sModeSwitcher) {
+	Adaptation.prototype.formatDiscardDraftVisible = function(sDisplayedVersion, bVersioningEnabled, sModeSwitcher) {
 		return this.getExtension("versioning", Versioning).formatDiscardDraftVisible(sDisplayedVersion, bVersioningEnabled, sModeSwitcher);
 	};
 
-	Adaptation.prototype.formatVersionButtonText = function (aVersions, sDisplayedVersion) {
+	Adaptation.prototype.formatVersionButtonText = function(aVersions, sDisplayedVersion) {
 		return this.getExtension("versioning", Versioning).formatVersionButtonText(aVersions, sDisplayedVersion);
 	};
 
@@ -237,7 +237,7 @@ sap.ui.define([
 		return this.getExtension("versioning", Versioning).showVersionHistory(oEvent);
 	};
 
-	Adaptation.prototype._openVersionTitleDialog = function (sDisplayedVersion) {
+	Adaptation.prototype._openVersionTitleDialog = function(sDisplayedVersion) {
 		return this.getExtension("versioning", Versioning).openActivateVersionDialog(sDisplayedVersion);
 	};
 
@@ -285,7 +285,7 @@ sap.ui.define([
 		this.adjustToolbarSectionWidths();
 	};
 
-	Adaptation.prototype._switchToTexts = function () {
+	Adaptation.prototype._switchToTexts = function() {
 		this._showButtonText("adaptationSwitcherButton", "BTN_ADAPTATION");
 		this._showButtonText("navigationSwitcherButton", "BTN_NAVIGATION");
 		this._showButtonText("visualizationSwitcherButton", "BTN_VISUALIZATION");
@@ -299,7 +299,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise<sap.ui.core.Control[]>} Returns the controls in a structure described above.
 	 */
-	Adaptation.prototype.buildControls = function () {
+	Adaptation.prototype.buildControls = function() {
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.Adaptation",
 			id: this.getId() + "_fragment",
@@ -360,7 +360,7 @@ sap.ui.define([
 	function onEditAdaptation() {
 		Utils.checkDraftOverwrite(this.getModel("versions"))
 		.then(function() {
-			this.getExtension("contextBasedSaveAs", SaveAsAdaptation).openAddAdaptationDialog(this.getRtaInformation().flexSettings.layer, true /*bIsEditMode*/);
+			this.getExtension("contextBasedSaveAs", SaveAsAdaptation).openAddAdaptationDialog(this.getRtaInformation().flexSettings.layer, true /* bIsEditMode */);
 		}.bind(this))
 		.catch(handleError);
 	}
@@ -448,7 +448,7 @@ sap.ui.define([
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.FeedbackDialog",
 			controller: this
-		}).then(function (oFeedbackDialog) {
+		}).then(function(oFeedbackDialog) {
 			this._oFeedbackDialog = oFeedbackDialog;
 			this._oFeedbackDialog.addStyleClass(Utils.getRtaStyleClassName());
 			this._oFeedbackDialog.setModel(oFeedbackDialogModel, "feedbackModel");
@@ -457,7 +457,7 @@ sap.ui.define([
 				this._oFeedbackDialog.destroy();
 			}.bind(this));
 			this._oFeedbackDialog.open();
-		}.bind(this)).catch(function (oError) {
+		}.bind(this)).catch(function(oError) {
 			Log.error("Error loading fragment sap.ui.rta.toolbar.FeedbackDialog: ", oError);
 		});
 	};

@@ -53,7 +53,7 @@ sap.ui.define([
 		/**
 		 * @override
 		 */
-		_manageClickEvent: function (vEventOrElement) {
+		_manageClickEvent: function(vEventOrElement) {
 			var oOverlay = vEventOrElement.getSource ? vEventOrElement.getSource() : vEventOrElement;
 			if (oOverlay.isSelected() && this.isRenameAvailable(oOverlay) && this.isRenameEnabled([oOverlay])) {
 				oOverlay.attachBrowserEvent("click", RenameHandler._onClick, this);
@@ -75,7 +75,7 @@ sap.ui.define([
 		 * @param {map} mPropertyBag - (required) contains required properties
 		 * @public
 		 */
-		startEdit: function (mPropertyBag) {
+		startEdit: function(mPropertyBag) {
 			this.setBusy(true);
 			this._oEditedOverlay = mPropertyBag.overlay;
 
@@ -94,10 +94,10 @@ sap.ui.define([
 			var mMutators = typeof mPropertyBag.getTextMutators === "function"
 				? mPropertyBag.getTextMutators(oElement)
 				: {
-					getText: function () {
+					getText: function() {
 						return this._oEditableControlDomRef.textContent;
 					}.bind(this),
-					setText: function (sNewText) {
+					setText: function(sNewText) {
 						this._oEditableControlDomRef.textContent = sNewText;
 					}.bind(this)
 				};
@@ -181,7 +181,7 @@ sap.ui.define([
 			this._oEditableField.style.textOverflow = "clip";
 			this._oEditableField.style.whiteSpace = "nowrap";
 
-			//only for renaming variants in edge browser [SPECIAL CASE]
+			// only for renaming variants in edge browser [SPECIAL CASE]
 			if (
 				Device.browser.name === "ed"
 				&& oElement.getMetadata().getName() === "sap.ui.fl.variants.VariantManagement"
@@ -228,7 +228,7 @@ sap.ui.define([
 			});
 		},
 
-		_setDesignTime: function (oDesignTime) {
+		_setDesignTime: function(oDesignTime) {
 			this._aSelection = [];
 			var oOldDesignTime = this.getDesignTime();
 
@@ -261,7 +261,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - event object
 		 * @private
 		 */
-		_stopPropagation: function (oEvent) {
+		_stopPropagation: function(oEvent) {
 			oEvent.stopPropagation();
 		},
 
@@ -269,7 +269,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - event object
 		 * @private
 		 */
-		_preventDefault: function (oEvent) {
+		_preventDefault: function(oEvent) {
 			oEvent.preventDefault();
 		},
 
@@ -277,7 +277,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - event object
 		 * @private
 		 */
-		_onEditableFieldFocus: function (oEvent) {
+		_onEditableFieldFocus: function(oEvent) {
 			var el = oEvent.target;
 			var range = document.createRange();
 			range.selectNodeContents(el);
@@ -291,7 +291,7 @@ sap.ui.define([
 		 * @param {string} sPluginMethodName - method name of the plugin
 		 * @private
 		 */
-		_stopEdit: function (bRestoreFocus, sPluginMethodName) {
+		_stopEdit: function(bRestoreFocus, sPluginMethodName) {
 			var oOverlay;
 			this.setBusy(false);
 			this._oEditableField.removeEventListener("blur", this._oBlurHandler);
@@ -338,11 +338,11 @@ sap.ui.define([
 			});
 		},
 
-		_onEditableFieldBlur: function (oEvent) {
+		_onEditableFieldBlur: function(oEvent) {
 			return RenameHandler._handlePostRename.call(this, false, oEvent);
 		},
 
-		_handlePostRename: function (bRestoreFocus, oEvent) {
+		_handlePostRename: function(bRestoreFocus, oEvent) {
 			if (!this._bBlurOrKeyDownStarted) {
 				this._oEditedOverlay.removeStyleClass(RenameHandler.errorStyleClass);
 				this._bBlurOrKeyDownStarted = true;
@@ -359,7 +359,7 @@ sap.ui.define([
 					}
 					throw oError;
 				})
-				.then(function (fnErrorHandler) {
+				.then(function(fnErrorHandler) {
 					this.stopEdit(bRestoreFocus);
 					// ControlVariant rename handles the validation itself
 					if (typeof fnErrorHandler === "function") {
@@ -394,7 +394,7 @@ sap.ui.define([
 			validateText(sNewText, this.getOldValue(), oRenameAction);
 		},
 
-		_onEditableFieldKeydown: function (oEvent) {
+		_onEditableFieldKeydown: function(oEvent) {
 			switch (oEvent.keyCode) {
 				case KeyCodes.ENTER:
 					// to prevent context menu from opening when rename is finished
@@ -407,7 +407,7 @@ sap.ui.define([
 					break;
 				case KeyCodes.DELETE:
 				case KeyCodes.BACKSPACE:
-					//Incident IDs: #1680315103, #2380033173
+					// Incident IDs: #1680315103, #2380033173
 					RenameHandler._stopPropagation.call(this, oEvent);
 					break;
 				default:
@@ -419,7 +419,7 @@ sap.ui.define([
 		 * @returns {string} current editable field text
 		 * @private
 		 */
-		_getCurrentEditableFieldText: function () {
+		_getCurrentEditableFieldText: function() {
 			// Rename to empty string should not be possible
 			// to prevent issues with disappearing elements
 			var sText = this._oEditableField ? this._oEditableField.textContent.trim() : "";

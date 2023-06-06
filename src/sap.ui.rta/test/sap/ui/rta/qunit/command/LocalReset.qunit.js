@@ -1,4 +1,4 @@
-/*global QUnit */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/base/Log",
@@ -28,17 +28,17 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a SimpleForm with designtime metadata for localReset ...", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oSimpleForm = new Control();
 			var oOverlay = new ElementOverlay({element: this.oSimpleForm});
 			sandbox.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 			this.oLogStub = sandbox.stub(Log, "error");
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oSimpleForm.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when calling command factory for localReset ...", function(assert) {
 			var oChange1 = RtaQunitUtils.createUIChange({
 				fileName: "change1",
@@ -84,24 +84,24 @@ sap.ui.define([
 			return CommandFactory.getCommandFor(this.oSimpleForm, "localReset", {
 				currentVariant: ""
 			}, oDesignTimeMetadata)
-				.then(function(oCommand) {
-					oLocalResetCommand = oCommand;
-					assert.ok(oLocalResetCommand, "localReset command exists for element");
-					assert.strictEqual(this.oLogStub.callCount, 0, "no error was logged");
-					return oLocalResetCommand.execute();
-				}.bind(this))
-				.then(function() {
-					assert.strictEqual(oResetChangesStub.callCount, 1, "then on execute resetChanges is called once");
-					assert.strictEqual(oResetChangesStub.args[0][0], aChanges, "...with the correct array of changes");
-					return oLocalResetCommand.undo();
-				})
-				.then(function() {
-					assert.strictEqual(oRestoreChangesStub.callCount, 1, "then on undo restoreChanges is called once");
-					assert.strictEqual(oRestoreChangesStub.args[0][0], aChanges, "...with the correct array of changes");
-				})
-				.catch(function (oError) {
-					assert.ok(false, "catch must never be called - Error: " + oError);
-				});
+			.then(function(oCommand) {
+				oLocalResetCommand = oCommand;
+				assert.ok(oLocalResetCommand, "localReset command exists for element");
+				assert.strictEqual(this.oLogStub.callCount, 0, "no error was logged");
+				return oLocalResetCommand.execute();
+			}.bind(this))
+			.then(function() {
+				assert.strictEqual(oResetChangesStub.callCount, 1, "then on execute resetChanges is called once");
+				assert.strictEqual(oResetChangesStub.args[0][0], aChanges, "...with the correct array of changes");
+				return oLocalResetCommand.undo();
+			})
+			.then(function() {
+				assert.strictEqual(oRestoreChangesStub.callCount, 1, "then on undo restoreChanges is called once");
+				assert.strictEqual(oRestoreChangesStub.args[0][0], aChanges, "...with the correct array of changes");
+			})
+			.catch(function(oError) {
+				assert.ok(false, "catch must never be called - Error: " + oError);
+			});
 		});
 
 		QUnit.test("when calling the command factory for localReset with CAUTION_variantIndependent", function(assert) {
@@ -127,7 +127,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

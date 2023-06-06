@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/base/util/includes",
@@ -36,7 +36,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 	var sLogErrorTextPart = "Control ID was generated dynamically by SAPUI5.";
 	var sMessageBoxTextKey = "MSG_UNSTABLE_ID_FOUND";
-	var vLoggedErrorMatcher = sinon.match(function (vError) {
+	var vLoggedErrorMatcher = sinon.match(function(vError) {
 		return typeof vError === "string" && vError.startsWith(sLogErrorTextPart);
 	});
 
@@ -60,9 +60,9 @@ sap.ui.define([
 
 	function stubMessageBoxAndLog() {
 		sandbox.stub(Log, "error")
-			.callThrough()
-			.withArgs(vLoggedErrorMatcher)
-			.returns();
+		.callThrough()
+		.withArgs(vLoggedErrorMatcher)
+		.returns();
 
 		sandbox.stub(MessageBox, "show");
 	}
@@ -93,7 +93,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("flexEnabled set to `true` and there is unstable control when RTA is started", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oComponent = getMockedComponent(true, true);
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
@@ -113,14 +113,14 @@ sap.ui.define([
 
 			return this.oRta.start();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			return this.oRta.stop().then(function() {
 				this.oComponentContainer.destroy();
 				sandbox.restore();
 			}.bind(this));
 		}
-	}, function () {
-		QUnit.test("base functionality", function (assert) {
+	}, function() {
+		QUnit.test("base functionality", function(assert) {
 			assert.ok(Log.error.withArgs(vLoggedErrorMatcher).calledOnce, "then an error was logged");
 			assert.ok(MessageBox.show.calledWith(sinon.match(function(vMessage) {
 				var sDisplayedErrorPart = vMessage.getContent()[0].getText();
@@ -129,7 +129,7 @@ sap.ui.define([
 			})), "then message box was shown");
 		});
 
-		QUnit.test("when two unstable controls are added in adaptation mode, out of which one gets destroyed shortly after", function (assert) {
+		QUnit.test("when two unstable controls are added in adaptation mode, out of which one gets destroyed shortly after", function(assert) {
 			var done = assert.async();
 			var oButtonWithUnstableId = createButtonWithUnstableId();
 			var oButtonToBeDestroyedWithUnstableId = createButtonWithUnstableId();
@@ -137,9 +137,9 @@ sap.ui.define([
 			MessageBox.show.resetHistory();
 
 			this.oRta._oDesignTime.attachEvent("elementOverlayCreated", sandbox.stub().onSecondCall().callsFake(
-				function () {
+				function() {
 					oButtonToBeDestroyedWithUnstableId.destroy();
-					DtUtil.waitForSynced(this.oRta._oDesignTime, function () {
+					DtUtil.waitForSynced(this.oRta._oDesignTime, function() {
 						assert.ok(Log.error.withArgs(vLoggedErrorMatcher).calledOnce, "then an error was logged once");
 						assert.strictEqual(Log.error.withArgs(vLoggedErrorMatcher).getCall(0).args[1], oButtonWithUnstableId.getId(), "then the error was logged for the control which was not destroyed");
 						assert.ok(MessageBox.show.notCalled, "then message box was not shown");
@@ -151,14 +151,14 @@ sap.ui.define([
 			this.oComponent.getRootControl().addContent(oButtonToBeDestroyedWithUnstableId);
 		});
 
-		QUnit.test("when another stable control is added in adaptation mode", function (assert) {
+		QUnit.test("when another stable control is added in adaptation mode", function(assert) {
 			var done = assert.async();
 			var oButtonWithUnstableId = createButtonWithStableId(this.oComponent.createId("addedButtonWithStableId"));
 			Log.error.resetHistory();
 			MessageBox.show.resetHistory();
 
-			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function () {
-				DtUtil.waitForSynced(this.oRta._oDesignTime, function () {
+			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function() {
+				DtUtil.waitForSynced(this.oRta._oDesignTime, function() {
 					assert.ok(Log.error.withArgs(vLoggedErrorMatcher).notCalled, "then no error was logged");
 					assert.ok(MessageBox.show.notCalled, "then message box was not shown");
 					done();
@@ -167,7 +167,7 @@ sap.ui.define([
 			this.oComponent.getRootControl().addContent(oButtonWithUnstableId);
 		});
 
-		QUnit.test("when two unstable controls are added in navigation mode, out of which one is destroyed shortly after, followed later by a switch to adaptation mode", function (assert) {
+		QUnit.test("when two unstable controls are added in navigation mode, out of which one is destroyed shortly after, followed later by a switch to adaptation mode", function(assert) {
 			var done = assert.async();
 			var oButtonWithUnstableId = createButtonWithUnstableId();
 			var oButtonToBeDestroyedWithUnstableId = createButtonWithUnstableId();
@@ -176,8 +176,8 @@ sap.ui.define([
 			MessageBox.show.resetHistory();
 
 			this.oRta._oDesignTime.attachEvent("elementOverlayCreated", sandbox.stub().onSecondCall().callsFake(
-				function () {
-					DtUtil.waitForSynced(this.oRta._oDesignTime, function () {
+				function() {
+					DtUtil.waitForSynced(this.oRta._oDesignTime, function() {
 						assert.ok(Log.error.withArgs(vLoggedErrorMatcher).notCalled, "then no error was logged initially");
 						assert.ok(MessageBox.show.notCalled, "then message box was not shown initially");
 						oButtonToBeDestroyedWithUnstableId.destroy();
@@ -193,7 +193,7 @@ sap.ui.define([
 			this.oComponent.getRootControl().addContent(oButtonToBeDestroyedWithUnstableId);
 		});
 
-		QUnit.test("when no element overlays are created while switching between navigation and adaptation modes", function (assert) {
+		QUnit.test("when no element overlays are created while switching between navigation and adaptation modes", function(assert) {
 			setNavigationMode(this.oRta);
 			Log.error.resetHistory();
 			MessageBox.show.resetHistory();
@@ -204,7 +204,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("flexEnabled set to `true` and there are no unstable controls", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oComponent = this.oComponent = getMockedComponent(true, false);
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
@@ -222,32 +222,32 @@ sap.ui.define([
 
 			this.oRta._oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 
-			return this.oRta.start().then(function () {
+			return this.oRta.start().then(function() {
 				Log.error.resetHistory();
 				MessageBox.show.resetHistory();
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			return this.oRta.stop().then(function() {
 				this.oComponentContainer.destroy();
 				sandbox.restore();
 			}.bind(this));
 		}
-	}, function () {
-		QUnit.test("base functionality", function (assert) {
+	}, function() {
+		QUnit.test("base functionality", function(assert) {
 			validateFlexEnabled(this.oRta);
 			assert.strictEqual(Log.error.withArgs(vLoggedErrorMatcher).callCount, 0, "then no error was logged");
 			assert.strictEqual(MessageBox.show.callCount, 0, "then no message box was shown");
 		});
 
-		QUnit.test("when an unstable control is added in adaptation mode", function (assert) {
+		QUnit.test("when an unstable control is added in adaptation mode", function(assert) {
 			var done = assert.async();
 			var oButtonWithUnstableId = createButtonWithUnstableId();
 
-			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function () {
-				DtUtil.waitForSynced(this.oRta._oDesignTime, function () {
+			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function() {
+				DtUtil.waitForSynced(this.oRta._oDesignTime, function() {
 					assert.ok(Log.error.withArgs(vLoggedErrorMatcher).calledOnce, "then an error was logged");
-					assert.ok(MessageBox.show.calledWith(sinon.match(function (vMessage) {
+					assert.ok(MessageBox.show.calledWith(sinon.match(function(vMessage) {
 						var sDisplayedErrorPart = vMessage.getContent()[0].getText();
 						var sError = getText(sMessageBoxTextKey);
 						return includes(sError, sDisplayedErrorPart);
@@ -258,12 +258,12 @@ sap.ui.define([
 			this.oComponent.getRootControl().addContent(oButtonWithUnstableId);
 		});
 
-		QUnit.test("when a stable control is added in  adaptation mode", function (assert) {
+		QUnit.test("when a stable control is added in  adaptation mode", function(assert) {
 			var done = assert.async();
 			var oButtonWithUnstableId = createButtonWithStableId(this.oComponent.createId("addedButtonWithStableId"));
 
-			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function () {
-				DtUtil.waitForSynced(this.oRta._oDesignTime, function () {
+			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function() {
+				DtUtil.waitForSynced(this.oRta._oDesignTime, function() {
 					assert.ok(Log.error.withArgs(vLoggedErrorMatcher).notCalled, "then no error was logged");
 					assert.ok(MessageBox.show.notCalled, "then message box was not shown");
 					done();
@@ -272,18 +272,18 @@ sap.ui.define([
 			this.oComponent.getRootControl().addContent(oButtonWithUnstableId);
 		});
 
-		QUnit.test("when an unstable control is added in navigation mode, which is later switched to adaptation mode", function (assert) {
+		QUnit.test("when an unstable control is added in navigation mode, which is later switched to adaptation mode", function(assert) {
 			var done = assert.async();
 			var oButtonWithUnstableId = createButtonWithUnstableId();
 			setNavigationMode(this.oRta);
 
-			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function () {
-				DtUtil.waitForSynced(this.oRta._oDesignTime, function () {
+			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function() {
+				DtUtil.waitForSynced(this.oRta._oDesignTime, function() {
 					assert.ok(Log.error.withArgs(vLoggedErrorMatcher).notCalled, "then no error was logged initially");
 					assert.ok(MessageBox.show.notCalled, "then message box was not shown initially");
 					setAdaptationMode(this.oRta);
 					assert.ok(Log.error.withArgs(vLoggedErrorMatcher).calledOnce, "then an error was logged after mode switch to adaptation");
-					assert.ok(MessageBox.show.calledWith(sinon.match(function (vMessage) {
+					assert.ok(MessageBox.show.calledWith(sinon.match(function(vMessage) {
 						var sDisplayedErrorPart = vMessage.getContent()[0].getText();
 						var sError = getText(sMessageBoxTextKey);
 						return includes(sError, sDisplayedErrorPart);
@@ -296,7 +296,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("flexEnabled is not set and there is an unstable control", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oComponent = this.oComponent = getMockedComponent(false, false);
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
@@ -314,30 +314,30 @@ sap.ui.define([
 
 			this.oRta._oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 
-			return this.oRta.start().then(function () {
+			return this.oRta.start().then(function() {
 				Log.error.resetHistory();
 				MessageBox.show.resetHistory();
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			return this.oRta.stop().then(function() {
 				this.oComponentContainer.destroy();
 				sandbox.restore();
 			}.bind(this));
 		}
-	}, function () {
-		QUnit.test("base functionality", function (assert) {
+	}, function() {
+		QUnit.test("base functionality", function(assert) {
 			validateFlexEnabled(this.oRta);
 			assert.strictEqual(Log.error.withArgs(vLoggedErrorMatcher).callCount, 0);
 			assert.strictEqual(MessageBox.show.callCount, 0, "No warning dialog should be shown");
 		});
 
-		QUnit.test("when another unstable control is added in adaptation mode", function (assert) {
+		QUnit.test("when another unstable control is added in adaptation mode", function(assert) {
 			var done = assert.async();
 			var oButtonWithUnstableId = createButtonWithUnstableId();
 
-			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function () {
-				DtUtil.waitForSynced(this.oRta._oDesignTime, function () {
+			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function() {
+				DtUtil.waitForSynced(this.oRta._oDesignTime, function() {
 					assert.ok(Log.error.withArgs(vLoggedErrorMatcher).notCalled, "then no error was logged");
 					assert.ok(MessageBox.show.notCalled, "then message box was not shown");
 					done();
@@ -346,12 +346,12 @@ sap.ui.define([
 			this.oComponent.getRootControl().addContent(oButtonWithUnstableId);
 		});
 
-		QUnit.test("when another stable control is added in adaptation mode", function (assert) {
+		QUnit.test("when another stable control is added in adaptation mode", function(assert) {
 			var done = assert.async();
 			var oButtonWithUnstableId = createButtonWithUnstableId();
 
-			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function () {
-				DtUtil.waitForSynced(this.oRta._oDesignTime, function () {
+			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function() {
+				DtUtil.waitForSynced(this.oRta._oDesignTime, function() {
 					assert.ok(Log.error.withArgs(vLoggedErrorMatcher).notCalled, "then no error was logged");
 					assert.ok(MessageBox.show.notCalled, "then message box was not shown");
 					done();
@@ -360,13 +360,13 @@ sap.ui.define([
 			this.oComponent.getRootControl().addContent(oButtonWithUnstableId);
 		});
 
-		QUnit.test("when another unstable control is added in navigation mode, which is later switched to adaptation mode", function (assert) {
+		QUnit.test("when another unstable control is added in navigation mode, which is later switched to adaptation mode", function(assert) {
 			var done = assert.async();
 			var oButtonWithUnstableId = createButtonWithUnstableId();
 			setNavigationMode(this.oRta);
 
-			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function () {
-				DtUtil.waitForSynced(this.oRta._oDesignTime, function () {
+			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function() {
+				DtUtil.waitForSynced(this.oRta._oDesignTime, function() {
 					assert.ok(Log.error.withArgs(vLoggedErrorMatcher).notCalled, "then no error was logged initially");
 					assert.ok(MessageBox.show.notCalled, "then message box was not shown initially");
 					setAdaptationMode(this.oRta);
@@ -379,7 +379,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

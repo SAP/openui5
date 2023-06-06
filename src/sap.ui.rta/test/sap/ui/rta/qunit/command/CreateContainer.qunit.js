@@ -24,7 +24,7 @@ sap.ui.define([
 		newLabel: "myFancyLabel"
 	}));
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -54,7 +54,7 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	LocalReset.prototype._isEditable = function (oOverlay) {
+	LocalReset.prototype._isEditable = function(oOverlay) {
 		var vLocalResetAction = this.getAction(oOverlay);
 		return !!vLocalResetAction;
 	};
@@ -62,7 +62,7 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	LocalReset.prototype.isEnabled = function (aElementOverlays) {
+	LocalReset.prototype.isEnabled = function(aElementOverlays) {
 		if (aElementOverlays.length !== 1) {
 			return false;
 		}
@@ -104,7 +104,7 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
 	 * @return {object[]} Array of the items with required data
 	 */
-	LocalReset.prototype.getMenuItems = function (vElementOverlays) {
+	LocalReset.prototype.getMenuItems = function(vElementOverlays) {
 		return this._getMenuItems(vElementOverlays, { pluginId: "CTX_LOCAL_RESET", rank: 61, icon: "sap-icon://reset" });
 	};
 
@@ -152,28 +152,28 @@ sap.ui.define([
 				sVariantManagementReference
 			)
 		].filter(Boolean))
-			.then(function (aCommands) {
-				aCommands.forEach(function (oCommand) {
-					oCompositeCommand.addCommand(oCommand);
-				});
-				this.fireElementModified({
-					command: oCompositeCommand
-				});
-				if (bHasVariant) {
-					var sMessage = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("MSG_LOCAL_RESET_VARIANT_SAVE");
-					MessageToast.show(sMessage, {
-						duration: 5000
-					});
-				}
-			}.bind(this))
-			.catch(function(vError) {
-				throw DtUtil.propagateError(
-					vError,
-					"LocalReset#handler",
-					"Error occurred during handler execution",
-					"sap.ui.rta.plugin"
-				);
+		.then(function(aCommands) {
+			aCommands.forEach(function(oCommand) {
+				oCompositeCommand.addCommand(oCommand);
 			});
+			this.fireElementModified({
+				command: oCompositeCommand
+			});
+			if (bHasVariant) {
+				var sMessage = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("MSG_LOCAL_RESET_VARIANT_SAVE");
+				MessageToast.show(sMessage, {
+					duration: 5000
+				});
+			}
+		}.bind(this))
+		.catch(function(vError) {
+			throw DtUtil.propagateError(
+				vError,
+				"LocalReset#handler",
+				"Error occurred during handler execution",
+				"sap.ui.rta.plugin"
+			);
+		});
 	};
 
 	return LocalReset;

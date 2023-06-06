@@ -42,7 +42,7 @@ sap.ui.define([
 	 * @return {Promise.<boolean>} <code>true</code> if it's editable wrapped in a promise.
 	 * @private
 	 */
-	Split.prototype._isEditable = function (oOverlay) {
+	Split.prototype._isEditable = function(oOverlay) {
 		var oSplitAction = this.getAction(oOverlay);
 		if (oSplitAction && oSplitAction.changeOnRelevantContainer) {
 			return this._checkChangeHandlerAndStableId(oOverlay);
@@ -57,7 +57,7 @@ sap.ui.define([
 	 * @return {boolean} true if available
 	 * @public
 	 */
-	Split.prototype.isAvailable = function (aElementOverlays) {
+	Split.prototype.isAvailable = function(aElementOverlays) {
 		if (aElementOverlays.length !== 1) {
 			return false;
 		}
@@ -84,7 +84,7 @@ sap.ui.define([
 	 * @return {boolean} true if enabled
 	 * @public
 	 */
-	Split.prototype.isEnabled = function (aElementOverlays) {
+	Split.prototype.isEnabled = function(aElementOverlays) {
 		var oElementOverlay = aElementOverlays[0];
 
 		// check that each selected element has an enabled action
@@ -109,7 +109,7 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - element overlay to split
 	 * @returns {Promise<sap.ui.rta.command.Split>} Resolves with a split command
 	 */
-	Split.prototype.handleSplit = function (oElementOverlay) {
+	Split.prototype.handleSplit = function(oElementOverlay) {
 		var oSplitElement = oElementOverlay.getElement();
 		var oParent = oSplitElement.getParent();
 		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
@@ -152,7 +152,7 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - overlays for which actions are requested
 	 * @return {object[]} - array of the items with required data
 	 */
-	Split.prototype.getMenuItems = function (vElementOverlays) {
+	Split.prototype.getMenuItems = function(vElementOverlays) {
 		return this._getMenuItems(vElementOverlays, {pluginId: "CTX_UNGROUP_FIELDS", rank: 100, icon: "sap-icon://split"});
 	};
 
@@ -168,7 +168,7 @@ sap.ui.define([
 	 * Trigger the plugin execution.
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 */
-	Split.prototype.handler = function (aElementOverlays) {
+	Split.prototype.handler = function(aElementOverlays) {
 		this.handleSplit(aElementOverlays[0]);
 	};
 

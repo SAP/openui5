@@ -115,7 +115,7 @@ sap.ui.define([
 				assert.equal(oPreloadSpy.lastCall.args[0][sPath], sFragment, "the preload was called with the correct object");
 			})
 
-			.catch(function (oError) {
+			.catch(function(oError) {
 				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
@@ -200,7 +200,7 @@ sap.ui.define([
 				assert.strictEqual(oChange.getJsOnly(), true, "then change is marked to be applied on js only");
 			})
 
-			.catch(function (oError) {
+			.catch(function(oError) {
 				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
@@ -286,7 +286,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

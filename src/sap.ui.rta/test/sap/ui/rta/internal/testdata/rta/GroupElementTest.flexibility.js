@@ -4,11 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/comp/smartform/flexibility/changes/RenameField"
-], function (RenameField) {
+], function(RenameField) {
 	"use strict";
 
 	return {
-		//new change handler
+		// new change handler
 		renameField: {
 			changeHandler: {
 				applyChange: function(oChange, oControl, mPropertyBag) {

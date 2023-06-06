@@ -73,7 +73,7 @@ sap.ui.define([
 		RenameHandler._setDesignTime.call(this, oDesignTime);
 	};
 
-	Rename.prototype.startEdit = function (oOverlay) {
+	Rename.prototype.startEdit = function(oOverlay) {
 		var vDomRef = this.getAction(oOverlay).domRef;
 		var fnGetTextMutators = this.getAction(oOverlay).getTextMutators;
 		RenameHandler.startEdit.call(this, {
@@ -84,11 +84,11 @@ sap.ui.define([
 		});
 	};
 
-	Rename.prototype.stopEdit = function (bRestoreFocus) {
+	Rename.prototype.stopEdit = function(bRestoreFocus) {
 		RenameHandler._stopEdit.call(this, bRestoreFocus, "plugin.Rename.stopEdit");
 	};
 
-	Rename.prototype.handler = function (aElementOverlays) {
+	Rename.prototype.handler = function(aElementOverlays) {
 		aElementOverlays = this.getSelectedOverlays() || aElementOverlays;
 		this.startEdit(aElementOverlays[0]);
 	};
@@ -104,7 +104,7 @@ sap.ui.define([
 		return this._isEditableByPlugin(oOverlay);
 	};
 
-	Rename.prototype.isRenameEnabled = function (aOverlays) {
+	Rename.prototype.isRenameEnabled = function(aOverlays) {
 		return this.isEnabled(aOverlays);
 	};
 
@@ -114,7 +114,7 @@ sap.ui.define([
 	 * @returns {boolean} true if it's enabled
 	 * @public
 	 */
-	Rename.prototype.isEnabled = function (aElementOverlays) {
+	Rename.prototype.isEnabled = function(aElementOverlays) {
 		if (aElementOverlays.length > 1) {
 			return false;
 		}
@@ -211,7 +211,7 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
 	 * @return {object[]} - array of the items with required data
 	 */
-	Rename.prototype.getMenuItems = function (vElementOverlays) {
+	Rename.prototype.getMenuItems = function(vElementOverlays) {
 		return this._getMenuItems(vElementOverlays, { pluginId: "CTX_RENAME", rank: 10, icon: "sap-icon://edit" });
 	};
 

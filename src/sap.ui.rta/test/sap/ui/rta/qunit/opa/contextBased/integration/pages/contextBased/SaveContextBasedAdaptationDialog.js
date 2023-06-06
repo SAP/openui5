@@ -78,7 +78,7 @@ sap.ui.define([
 				}
 			},
 			assertions: {
-				iShouldSeeDialogTitle: function (sTitle) {
+				iShouldSeeDialogTitle: function(sTitle) {
 					this.waitFor({
 						controlType: "sap.m.Title",
 						properties: {

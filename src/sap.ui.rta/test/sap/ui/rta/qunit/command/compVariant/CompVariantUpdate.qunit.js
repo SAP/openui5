@@ -34,7 +34,7 @@ sap.ui.define([
 			this.oControl.updateVariant = oUpdateControlStub;
 			var oSetModifiedStub = sandbox.stub();
 			this.oControl.setModified = oSetModifiedStub;
-			this.oControl.getModified = function () {
+			this.oControl.getModified = function() {
 				return true;
 			};
 			var oUpdateFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "saveVariantContent");

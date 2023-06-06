@@ -138,7 +138,6 @@ sap.ui.define([
 			mParsedUrlHash.params["sap-ui-fl-version"] = [Version.Number.Original.toString()];
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedUrlHash);
 
-
 			return new Promise(function(resolve) {
 				this.oRta.getToolbar().fireSwitchVersion({
 					version: Version.Number.Original,

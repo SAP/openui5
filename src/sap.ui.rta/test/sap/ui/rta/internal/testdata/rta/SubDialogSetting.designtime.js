@@ -24,15 +24,15 @@ sap.ui.define([
 		actions: {
 			settings: {
 				icon: "sap-icon://popup-window",
-				handler: function (oSelectedElement, mPropertyBag) {
+				handler: function(oSelectedElement, mPropertyBag) {
 					var oAppComponent = FlUtils.getAppComponentForControl(oSelectedElement);
 					var oDialog;
-					return new Promise(function (resolve) {
-						oAppComponent.runAsOwner(function () {
+					return new Promise(function(resolve) {
+						oAppComponent.runAsOwner(function() {
 							oDialog = new Dialog("testDialog", {
 								endButton: new Button({
 									text: "Close",
-									press: function () {
+									press: function() {
 										oDialog.destroy();
 										resolve([]);
 									}

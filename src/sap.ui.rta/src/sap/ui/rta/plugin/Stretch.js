@@ -73,7 +73,7 @@ sap.ui.define([
 				oElement.removeStyleClass(Stretch.STRETCHSTYLECLASS);
 			}
 		} else {
-			//TODO: replace when  Overlay.getAssociatedDomRef() does not return jQuery any more
+			// TODO: replace when  Overlay.getAssociatedDomRef() does not return jQuery any more
 			var oElementDomRef = oOverlay.getAssociatedDomRef() && oOverlay.getAssociatedDomRef().get(0);
 			if (oElementDomRef) {
 				if (bAddClass) {
@@ -379,7 +379,7 @@ sap.ui.define([
 
 	Stretch.prototype._reevaluateStretching = function(oOverlay) {
 		if (!oOverlay.bIsDestroyed) {
-			//TODO: replace when getAssociatedDomRef does not return jQuery any more
+			// TODO: replace when getAssociatedDomRef does not return jQuery any more
 			var oElementDomRef = oOverlay.getAssociatedDomRef() && oOverlay.getAssociatedDomRef().get(0);
 			if (oElementDomRef) {
 				var bIsStretched = oElementDomRef.classList.contains(Stretch.STRETCHSTYLECLASS);
@@ -396,7 +396,7 @@ sap.ui.define([
 
 	Stretch.prototype._checkParentAndAddToStretchCandidates = function(oOverlay) {
 		var oParentOverlay = oOverlay.getParentElementOverlay();
-		//TODO: replace when getAssociatedDomRef does not return jQuery any more
+		// TODO: replace when getAssociatedDomRef does not return jQuery any more
 		var oParentElementDOM = oParentOverlay && oParentOverlay.getAssociatedDomRef() && oParentOverlay.getAssociatedDomRef().get(0);
 		if (oParentElementDOM) {
 			if (startAtSamePosition(oParentOverlay, oOverlay)) {

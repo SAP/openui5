@@ -75,37 +75,36 @@ sap.ui.define([
 		var oAddIFrameDialog = new AddIFrameDialog();
 		var sNewContainerTitle;
 		AddIFrameDialog.buildUrlBuilderParametersFor(oParent)
-			.then(function(mURLParameters) {
-				var mAddIFrameDialogSettings = {
-					parameters: mURLParameters,
-					asContainer: bAsContainer
-				};
-				return oAddIFrameDialog.open(mAddIFrameDialogSettings);
-			})
-			.then(function(mSettings) {
-				if (!mSettings) {
-					return Promise.reject(); // Cancel
-				}
-				mSettings.index = iIndex;
-				mSettings.aggregation = oAction.aggregation;
-				sNewContainerTitle = mSettings.title;
-				return getAddIFrameCommand.call(this, oParent, mSettings, oDesignTimeMetadata, sVariantManagementReference);
-			}.bind(this))
-			.then(function(oCommand) {
-				this.fireElementModified({
-					command: oCommand,
-					newControlId: oCommand.getBaseId(),
-					action: bAsContainer ? oAction : undefined,
-					title: sNewContainerTitle
-				});
-			}.bind(this))
-			.catch(function(vError) {
-				if (vError) {
-					throw DtUtil.createError("AddIFrame#handler", vError, "sap.ui.rta");
-				}
+		.then(function(mURLParameters) {
+			var mAddIFrameDialogSettings = {
+				parameters: mURLParameters,
+				asContainer: bAsContainer
+			};
+			return oAddIFrameDialog.open(mAddIFrameDialogSettings);
+		})
+		.then(function(mSettings) {
+			if (!mSettings) {
+				return Promise.reject(); // Cancel
+			}
+			mSettings.index = iIndex;
+			mSettings.aggregation = oAction.aggregation;
+			sNewContainerTitle = mSettings.title;
+			return getAddIFrameCommand.call(this, oParent, mSettings, oDesignTimeMetadata, sVariantManagementReference);
+		}.bind(this))
+		.then(function(oCommand) {
+			this.fireElementModified({
+				command: oCommand,
+				newControlId: oCommand.getBaseId(),
+				action: bAsContainer ? oAction : undefined,
+				title: sNewContainerTitle
 			});
+		}.bind(this))
+		.catch(function(vError) {
+			if (vError) {
+				throw DtUtil.createError("AddIFrame#handler", vError, "sap.ui.rta");
+			}
+		});
 	}
-
 
 	/**
 	 * Constructor for a new AddIFrame plugin.
@@ -194,15 +193,15 @@ sap.ui.define([
 		bIsSibling = false;
 		if (this.isAvailable(aElementOverlays, bIsSibling)) {
 			aMenuItems = aMenuItems.concat(this.getCreateActions(bIsSibling, aElementOverlays[0])
-				.map(function(oAction, iIndex) {
-					var oParentMenuItem = Object.assign({
-						action: oAction,
-						id: "CTX_CREATE_CHILD_IFRAME_" + oAction.aggregation.toUpperCase(),
-						rank: iBaseRank + 10 * iIndex
-					}, getCommonProperties.call(this, oAction.aggregation));
+			.map(function(oAction, iIndex) {
+				var oParentMenuItem = Object.assign({
+					action: oAction,
+					id: "CTX_CREATE_CHILD_IFRAME_" + oAction.aggregation.toUpperCase(),
+					rank: iBaseRank + 10 * iIndex
+				}, getCommonProperties.call(this, oAction.aggregation));
 
-					return this.enhanceItemWithResponsibleElement(oParentMenuItem, aElementOverlays);
-				}, this)
+				return this.enhanceItemWithResponsibleElement(oParentMenuItem, aElementOverlays);
+			}, this)
 			);
 		}
 		return aMenuItems;

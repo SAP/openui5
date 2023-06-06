@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
@@ -74,10 +74,10 @@ sap.ui.define([
 			});
 
 			return this.oRta.start()
-				.then(function() {
-					this.oColumn0Overlay = OverlayRegistry.getOverlay(this.oComponent.createId("column0"));
-					this.oResizePlugin = this.oRta.getPlugins()["resize"];
-				}.bind(this));
+			.then(function() {
+				this.oColumn0Overlay = OverlayRegistry.getOverlay(this.oComponent.createId("column0"));
+				this.oResizePlugin = this.oRta.getPlugins().resize;
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oComponent.destroy();

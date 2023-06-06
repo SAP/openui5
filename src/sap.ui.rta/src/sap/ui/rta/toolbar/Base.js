@@ -148,7 +148,7 @@ sap.ui.define([
 	 * @param {string} sEventName - Name of the event
 	 * @param {sap.ui.base.Event} oEvent - Event object
 	 */
-	Base.prototype.eventHandler = function (sEventName, oEvent) {
+	Base.prototype.eventHandler = function(sEventName, oEvent) {
 		this["fire" + sEventName](oEvent.getParameters());
 	};
 
@@ -158,7 +158,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.core.Control[]>} A Promise that resolves with an array of controls
 	 * @protected
 	 */
-	Base.prototype.buildControls = function () {
+	Base.prototype.buildControls = function() {
 		return Promise.resolve([]);
 	};
 
@@ -166,7 +166,7 @@ sap.ui.define([
 	 * Function renders the Toolbar into the page
 	 * @protected
 	 */
-	Base.prototype.placeToContainer = function () {
+	Base.prototype.placeToContainer = function() {
 		// Render toolbar
 		this.placeAt(StaticArea.getDomRef());
 	};
@@ -176,8 +176,8 @@ sap.ui.define([
 	 * @protected
 	 * @returns {Promise} An empty Promise
 	 */
-	Base.prototype.buildContent = function () {
-		return this.buildControls().then(function (aControls) {
+	Base.prototype.buildContent = function() {
+		return this.buildControls().then(function(aControls) {
 			aControls.forEach(this.addItem, this);
 		}.bind(this));
 	};
@@ -190,9 +190,9 @@ sap.ui.define([
 	 */
 	Base.prototype.show = function(fnAdjustToolbarCallback) {
 		// 1) create Promise and wait until DomRef is available
-		return new Promise(function (fnResolve) {
+		return new Promise(function(fnResolve) {
 			var oDelegate = {
-				onAfterRendering: function () {
+				onAfterRendering: function() {
 					this.removeEventDelegate(oDelegate);
 					fnResolve();
 				}
@@ -202,7 +202,7 @@ sap.ui.define([
 			this.setVisible(true); // show DomRef
 		}.bind(this))
 		// 2) animate DomRef
-		.then(function () {
+		.then(function() {
 			if (fnAdjustToolbarCallback && typeof fnAdjustToolbarCallback === "function") {
 				fnAdjustToolbarCallback();
 			}
@@ -211,7 +211,7 @@ sap.ui.define([
 				: Promise.resolve();
 		}.bind(this))
 		// 3) focus on Toolbar
-		.then(function () {
+		.then(function() {
 			this.focus();
 		}.bind(this));
 	};
@@ -234,9 +234,9 @@ sap.ui.define([
 		}
 		return oPromise
 		// 2) hide DomRef
-			.then(function () {
-				this.setVisible(false);
-			}.bind(this));
+		.then(function() {
+			this.setVisible(false);
+		}.bind(this));
 	};
 
 	/**
@@ -254,7 +254,7 @@ sap.ui.define([
 	 * Place the Toolbar above everything on the page
 	 * @public
 	 */
-	Base.prototype.bringToFront = function () {
+	Base.prototype.bringToFront = function() {
 		this.setZIndex(ZIndexManager.getNextZIndex());
 	};
 

@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/m/Button",
@@ -23,7 +23,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
-], function (
+], function(
 	Button,
 	Label,
 	Input,
@@ -233,7 +233,7 @@ sap.ui.define([
 
 			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
 			assert.equal(oSetProcessingStatusSpy.firstCall.args[0], true, "the plugin switched to processing state on first");
-			this.oPlugin.attachEventOnce('processingStatusChange', function() {
+			this.oPlugin.attachEventOnce("processingStatusChange", function() {
 				assert.equal(oModifyPluginListSpy.lastCall.args[1], true, "the _modifyPluginList function is called");
 				assert.equal(oSetProcessingStatusSpy.lastCall.args[0], false, "the plugin switched the processing state off again");
 				fnDone();
@@ -247,7 +247,7 @@ sap.ui.define([
 
 			// clearing up all default actions and replacing with getResponsibleElement()
 			this.oLayoutOverlay.getDesignTimeMetadata().getData().actions = {
-				getResponsibleElement: function () {
+				getResponsibleElement: function() {
 					return this.oButton;
 				}.bind(this),
 				actionsFromResponsibleElement: ["actionName"]
@@ -274,7 +274,7 @@ sap.ui.define([
 
 			// clearing up all default actions and replacing with getResponsibleElement()
 			this.oLayoutOverlay.getDesignTimeMetadata().getData().actions = {
-				getResponsibleElement: function () {
+				getResponsibleElement: function() {
 					return this.oButton;
 				}.bind(this)
 			};
@@ -452,16 +452,16 @@ sap.ui.define([
 			// Element modified callback is async due to debouncing, make sure to wait for both plugins
 			// to start editable evaluation as a workaround
 			var oEvaluateEditableStub = sandbox.stub(Plugin.prototype, "evaluateEditable")
-				.callThrough()
-				.onSecondCall()
-				.callsFake(function() {
-					oEvaluateEditableStub.wrappedMethod.apply(this.oRemovePlugin, arguments);
-					assert.strictEqual(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
-					assert.strictEqual(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
-					assert.strictEqual(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
-					assert.strictEqual(this.oLayoutOverlay.getRelevantOverlays().length, 4, "then four overlays are relevant");
-					fnDone();
-				}.bind(this));
+			.callThrough()
+			.onSecondCall()
+			.callsFake(function() {
+				oEvaluateEditableStub.wrappedMethod.apply(this.oRemovePlugin, arguments);
+				assert.strictEqual(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
+				assert.strictEqual(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
+				assert.strictEqual(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
+				assert.strictEqual(this.oLayoutOverlay.getRelevantOverlays().length, 4, "then four overlays are relevant");
+				fnDone();
+			}.bind(this));
 
 			this.oLayoutOverlay.fireElementModified({
 				type: "removeAggregation",
@@ -472,11 +472,11 @@ sap.ui.define([
 		QUnit.test("when the elementModified event is thrown multiple times in a row", function(assert) {
 			var fnDone = assert.async();
 			var oEvaluateEditableStub = sandbox.stub(this.oRenamePlugin, "evaluateEditable")
-				.callsFake(function() {
-					oEvaluateEditableStub.wrappedMethod.apply(this.oRemovePlugin, arguments);
-					assert.ok(oEvaluateEditableStub.calledOnce, "then the evaluation is only executed once");
-					fnDone();
-				}.bind(this));
+			.callsFake(function() {
+				oEvaluateEditableStub.wrappedMethod.apply(this.oRemovePlugin, arguments);
+				assert.ok(oEvaluateEditableStub.calledOnce, "then the evaluation is only executed once");
+				fnDone();
+			}.bind(this));
 
 			this.oLayoutOverlay.fireElementModified({
 				type: "removeAggregation",
@@ -600,9 +600,9 @@ sap.ui.define([
 			});
 
 			return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType")
-				.then(function(bCheck) {
-					assert.ok(bCheck, "then it returns true");
-				});
+			.then(function(bCheck) {
+				assert.ok(bCheck, "then it returns true");
+			});
 		});
 
 		QUnit.test("when DesignTimeMetadata has actions and checkAggregations method is called without the action name", function(assert) {
@@ -611,9 +611,9 @@ sap.ui.define([
 			});
 
 			return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, undefined)
-				.then(function(bCheck) {
-					assert.notOk(bCheck, "then it returns false");
-				});
+			.then(function(bCheck) {
+				assert.notOk(bCheck, "then it returns false");
+			});
 		});
 
 		QUnit.test("when DesignTimeMetadata has no actions but aggregations with actions and checkAggregationsOnSelf method is called with the aggregation name", function(assert) {
@@ -628,13 +628,13 @@ sap.ui.define([
 			});
 
 			return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType", "formContainers")
-				.then(function(bCheck) {
-					assert.ok(bCheck, "then it returns true for the correct aggregation");
-					return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType", "dummyAggregation")
+			.then(function(bCheck) {
+				assert.ok(bCheck, "then it returns true for the correct aggregation");
+				return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType", "dummyAggregation")
 				.then(function(bCheck) {
 					assert.notOk(bCheck, "then it returns false for another aggregation");
 				});
-				}.bind(this));
+			}.bind(this));
 		});
 	});
 
@@ -860,7 +860,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

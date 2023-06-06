@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/rta/Utils",
 	"sap/ui/dt/Util"
-], function (
+], function(
 	FlUtils,
 	MessageBox,
 	ObjectPath,
@@ -22,7 +22,7 @@ sap.ui.define([
 	DtUtil
 ) {
 	"use strict";
-	return function (oRta) {
+	return function(oRta) {
 		var mMessageBoxShow = {};
 		var aPendingOverlaysToValidate = [];
 		var oComponent = FlUtils.getAppComponentForControl(oRta.getRootControlInstance());
@@ -86,7 +86,7 @@ sap.ui.define([
 			var oElementOverlayCreated = oEvent.getParameters().elementOverlay;
 			if (oRta.getMode() === "adaptation") {
 				var oComponent = FlUtils.getAppComponentForControl(oRta.getRootControlInstance());
-				DtUtil.waitForSynced(oRta._oDesignTime, function (oOverlay) {
+				DtUtil.waitForSynced(oRta._oDesignTime, function(oOverlay) {
 					if (_isControlAvailable(oOverlay)) {
 						_handleUnstableIds(oRta, oComponent, [oOverlay]);
 					}
@@ -100,14 +100,14 @@ sap.ui.define([
 			var aUnstableOverlays = validateStableIds(aElementOverlays, oComponent);
 
 			if (aUnstableOverlays.length) {
-				aUnstableOverlays.forEach(function (oElementOverlay) {
+				aUnstableOverlays.forEach(function(oElementOverlay) {
 					Log.error("Control ID was generated dynamically by SAPUI5. To support SAPUI5 flexibility, a stable control ID is needed to assign the changes to.", oElementOverlay.getElement().getId());
 				});
 				_displayMessage(oRta, oComponent, "MSG_UNSTABLE_ID_FOUND", "ERROR", "HEADER_ERROR");
 			}
 		}
 
-		oRta.attachEventOnce("stop", function () {
+		oRta.attachEventOnce("stop", function() {
 			_setMessageBoxShow(oComponent.getId(), false);
 		});
 

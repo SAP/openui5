@@ -54,12 +54,12 @@ sap.ui.define([
 			}.bind(this);
 
 			var oDeleteButton = this._addButton(oOverlay);
-			oDeleteButton.attachBrowserEvent("contextmenu", function (oEvent) {
+			oDeleteButton.attachBrowserEvent("contextmenu", function(oEvent) {
 				oEvent.stopPropagation();
 				oEvent.preventDefault();
 			});
 
-			var fnOnClick = function (oEvent) {
+			var fnOnClick = function(oEvent) {
 				var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id.replace("-DeleteIcon", ""));
 				onDeletePressed(oOverlay);
 				oEvent.stopPropagation();
@@ -67,8 +67,8 @@ sap.ui.define([
 			};
 
 			oDeleteButton
-				.attachBrowserEvent("click", fnOnClick)
-				.attachBrowserEvent("tap", fnOnClick);
+			.attachBrowserEvent("click", fnOnClick)
+			.attachBrowserEvent("tap", fnOnClick);
 		}
 
 		Remove.prototype.registerElementOverlay.apply(this, arguments);

@@ -41,7 +41,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + '</mvc:View>';
+	var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + "</mvc:View>";
 
 	var oMockedViewWithStableId;
 	XMLView.create({
@@ -99,7 +99,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			this.oMockedAppComponent.destroy();
 			this.oVerticalLayout.destroy();
@@ -187,7 +187,7 @@ sap.ui.define([
 						actions: {
 							createContainer: {
 								changeType: "addGroup",
-								isEnabled: function (oElement) {
+								isEnabled: function(oElement) {
 									return oElement.getMetadata().getName() === "sap.ui.layout.form.Form";
 								}
 							}
@@ -384,7 +384,7 @@ sap.ui.define([
 		QUnit.test("when a sibling overlay has createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
 			var fnDone = assert.async();
 
-			this.oCreateContainer.attachEventOnce("elementModified", function (oEvent) {
+			this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
 				var oCommand = oEvent.getParameter("command");
 				assert.ok(oCommand, "then command is available");
 				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
@@ -448,13 +448,13 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			this.oMockedAppComponent.destroy();
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when a child overlay has propagated createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
 			var fnDone = assert.async();
 
@@ -488,7 +488,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

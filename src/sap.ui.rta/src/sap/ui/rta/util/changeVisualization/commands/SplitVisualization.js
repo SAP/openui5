@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @param {string} sLabel - Current element label
 	 * @returns {object} Localized description text and button text
 	 */
-	SplitVisualization.getDescription = function (mPayload, sLabel) {
+	SplitVisualization.getDescription = function(mPayload, sLabel) {
 		var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
 		var sDescriptionText = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_SPLIT", ChangeVisualizationUtils.shortenString(sLabel));
 		var sDescriptionTooltip = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_SPLIT", sLabel);

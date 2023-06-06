@@ -170,7 +170,7 @@ sap.ui.define([
 	fnParamerizedTest(SimpleFormLayout.GridLayout);
 	fnParamerizedTest(SimpleFormLayout.ResponsiveGridLayout);
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

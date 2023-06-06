@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/m/Button",
@@ -38,7 +38,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("basic functionality", {
-		before: function () {
+		before: function() {
 			QUnit.config.fixture = null;
 			this.oButton1 = new Button("button1");
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(
@@ -57,7 +57,7 @@ sap.ui.define([
 			this.oComponentContainer.placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.stub(BasePlugin.prototype, "hasChangeHandler").resolves(true);
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,
@@ -70,7 +70,7 @@ sap.ui.define([
 			});
 			sandbox.stub(ReloadManager, "handleReloadOnStart").resolves(false);
 
-			return this.oRta.start().then(function () {
+			return this.oRta.start().then(function() {
 				return this.oRta.getService("supportTools");
 			}.bind(this));
 		},
@@ -78,7 +78,7 @@ sap.ui.define([
 			this.oRta.destroy();
 			sandbox.restore();
 		},
-		after: function () {
+		after: function() {
 			QUnit.config.fixture = "";
 			this.oComponentContainer.destroy();
 		}
@@ -138,12 +138,12 @@ sap.ui.define([
 				layer: "CUSTOMER"
 			}).then(function(oChangeHandler) {
 				oConsoleStub
-					.callThrough()
-					.withArgs(oChangeHandler)
-					.callsFake(function() {
-						assert.ok(true, "then the change handler is printed to console");
-						fnDone();
-					});
+				.callThrough()
+				.withArgs(oChangeHandler)
+				.callsFake(function() {
+					assert.ok(true, "then the change handler is printed to console");
+					fnDone();
+				});
 
 				window.postMessage({
 					id: "ui5FlexibilitySupport.submodules.overlayInfo",
@@ -163,12 +163,12 @@ sap.ui.define([
 			var oButtonDesigntimeMetadata = oButtonOverlay.getDesignTimeMetadata().getData();
 
 			oConsoleStub
-				.callThrough()
-				.withArgs(oButtonDesigntimeMetadata)
-				.callsFake(function() {
-					assert.ok(true, "then the design time metadata is printed to console");
-					fnDone();
-				});
+			.callThrough()
+			.withArgs(oButtonDesigntimeMetadata)
+			.callsFake(function() {
+				assert.ok(true, "then the design time metadata is printed to console");
+				fnDone();
+			});
 
 			window.postMessage({
 				id: "ui5FlexibilitySupport.submodules.overlayInfo",
@@ -180,7 +180,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

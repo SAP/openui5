@@ -47,7 +47,7 @@ sap.ui.define([
 
 	AppVariantUtils.trimIdIfRequired = function(sId) {
 		if (sId.length > HANA_CLOUD_ID_LENGTH) {
-			var aIdStrings = sId.split('.');
+			var aIdStrings = sId.split(".");
 			var sTrimmedId;
 			var sGuidLength = aIdStrings[aIdStrings.length - 1].length;
 			var sGuidString = aIdStrings.pop();
@@ -62,7 +62,7 @@ sap.ui.define([
 			}
 
 			// After adjusting the id, if the last character of string has period '.', just append the guid string otherwise append period '.' in between
-			if (sTrimmedId[sTrimmedId.length - 1] === '.') {
+			if (sTrimmedId[sTrimmedId.length - 1] === ".") {
 				sTrimmedId = sTrimmedId + sGuidString;
 			} else {
 				sTrimmedId = sTrimmedId + "." + sGuidString;
@@ -77,7 +77,7 @@ sap.ui.define([
 
 	AppVariantUtils.getId = function(sBaseAppID) {
 		var sChangedId;
-		var aIdStrings = sBaseAppID.split('.');
+		var aIdStrings = sBaseAppID.split(".");
 
 		if (aIdStrings[0] !== "customer") {
 			aIdStrings[0] = "customer." + aIdStrings[0];
@@ -151,44 +151,44 @@ sap.ui.define([
 		}
 
 		return FlexUtils.getUShellService("URLParsing")
-			.then(function(oURLParsingService) {
-				return FlexUtils.getParsedURLHash(oURLParsingService);
-			})
-			.then(function(oParsedHash) {
-				var aInbounds = Object.keys(oInbounds);
-				var aInboundsFound = [];
+		.then(function(oURLParsingService) {
+			return FlexUtils.getParsedURLHash(oURLParsingService);
+		})
+		.then(function(oParsedHash) {
+			var aInbounds = Object.keys(oInbounds);
+			var aInboundsFound = [];
 
-				// This will only happen if app variants are created on top of app variants
-				if (aInbounds.length === 1 && aInbounds[0] === "customer.savedAsAppVariant") {
-					return {
-						currentRunningInbound: "customer.savedAsAppVariant",
-						addNewInboundRequired: false
-					};
+			// This will only happen if app variants are created on top of app variants
+			if (aInbounds.length === 1 && aInbounds[0] === "customer.savedAsAppVariant") {
+				return {
+					currentRunningInbound: "customer.savedAsAppVariant",
+					addNewInboundRequired: false
+				};
+			}
+
+			aInbounds.forEach(function(sInboundId) {
+				if ((oInbounds[sInboundId].action === oParsedHash.action) && (oInbounds[sInboundId].semanticObject === oParsedHash.semanticObject)) {
+					aInboundsFound.push(sInboundId);
 				}
-
-				aInbounds.forEach(function(sInboundId) {
-					if ((oInbounds[sInboundId].action === oParsedHash.action) && (oInbounds[sInboundId].semanticObject === oParsedHash.semanticObject)) {
-						aInboundsFound.push(sInboundId);
-					}
-				});
-
-				switch (aInboundsFound.length) {
-					case 0:
-						oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
-						oInboundInfo.addNewInboundRequired = true;
-						break;
-					case 1:
-						oInboundInfo.currentRunningInbound = aInboundsFound[0];
-						oInboundInfo.addNewInboundRequired = false;
-						break;
-					default:
-						oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
-						oInboundInfo.addNewInboundRequired = true;
-						break;
-				}
-
-				return oInboundInfo;
 			});
+
+			switch (aInboundsFound.length) {
+				case 0:
+					oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
+					oInboundInfo.addNewInboundRequired = true;
+					break;
+				case 1:
+					oInboundInfo.currentRunningInbound = aInboundsFound[0];
+					oInboundInfo.addNewInboundRequired = false;
+					break;
+				default:
+					oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
+					oInboundInfo.addNewInboundRequired = true;
+					break;
+			}
+
+			return oInboundInfo;
+		});
 	};
 
 	AppVariantUtils.getInboundPropertiesKey = function(sAppVariantId, sCurrentRunningInboundId, sPropertyName) {
@@ -225,50 +225,50 @@ sap.ui.define([
 	 */
 	AppVariantUtils.prepareAddNewInboundChange = function(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData) {
 		return FlexUtils.getUShellService("URLParsing")
-			.then(function(oURLParsingService) {
-				return FlexUtils.getParsedURLHash(oURLParsingService);
-			})
-			.then(function(oParsedHash) {
-				var oProperty = {
-					content: {
-						inbound: {}
-					},
-					texts: {}
-				};
+		.then(function(oURLParsingService) {
+			return FlexUtils.getParsedURLHash(oURLParsingService);
+		})
+		.then(function(oParsedHash) {
+			var oProperty = {
+				content: {
+					inbound: {}
+				},
+				texts: {}
+			};
 
-				var sInboundTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "title");
-				var sInboundSubTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "subTitle");
+			var sInboundTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "title");
+			var sInboundSubTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "subTitle");
 
-				// Filling change content
-				oProperty.content.inbound[sCurrentRunningInboundId] = {
-					semanticObject: oParsedHash.semanticObject,
-					action: oParsedHash.action,
-					title: "{{" + sInboundTitleKey + "}}",
-					subTitle: "{{" + sInboundSubTitleKey + "}}",
-					icon: oAppVariantSpecificData.icon,
-					signature: {
-						parameters: {
-							"sap-appvar-id": {
-								required: true,
-								filter: {
-									value: sAppVariantId,
-									format: "plain"
-								},
-								launcherValue: {
-									value: sAppVariantId
-								}
+			// Filling change content
+			oProperty.content.inbound[sCurrentRunningInboundId] = {
+				semanticObject: oParsedHash.semanticObject,
+				action: oParsedHash.action,
+				title: "{{" + sInboundTitleKey + "}}",
+				subTitle: "{{" + sInboundSubTitleKey + "}}",
+				icon: oAppVariantSpecificData.icon,
+				signature: {
+					parameters: {
+						"sap-appvar-id": {
+							required: true,
+							filter: {
+								value: sAppVariantId,
+								format: "plain"
+							},
+							launcherValue: {
+								value: sAppVariantId
 							}
-						},
-						additionalParameters: "ignored"
-					}
-				};
+						}
+					},
+					additionalParameters: "ignored"
+				}
+			};
 
-				// Filling change texts
-				oProperty.texts[sInboundTitleKey] = this.prepareTextsChange("title", oAppVariantSpecificData.title);
-				oProperty.texts[sInboundSubTitleKey] = this.prepareTextsChange("subTitle", oAppVariantSpecificData.subTitle);
+			// Filling change texts
+			oProperty.texts[sInboundTitleKey] = this.prepareTextsChange("title", oAppVariantSpecificData.title);
+			oProperty.texts[sInboundSubTitleKey] = this.prepareTextsChange("subTitle", oAppVariantSpecificData.subTitle);
 
-				return oProperty;
-			}.bind(this));
+			return oProperty;
+		}.bind(this));
 	};
 
 	AppVariantUtils.prepareChangeInboundChange = function(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData) {
@@ -392,7 +392,7 @@ sap.ui.define([
 		document.body.appendChild(textArea);
 		textArea.select();
 
-		document.execCommand('copy');
+		document.execCommand("copy");
 		document.body.removeChild(textArea);
 
 		return true;
@@ -502,7 +502,7 @@ sap.ui.define([
 		aActions.push(sRightButtonText);
 
 		return new Promise(function(resolve, reject) {
-			var fnCallback = function (sAction) {
+			var fnCallback = function(sAction) {
 				if (sAction === sCopyIdButtonText) {
 					AppVariantUtils.copyId(oInfo.appVariantId);
 				}
@@ -550,22 +550,22 @@ sap.ui.define([
 		var oComponentInstance;
 		if (oUshellContainer) {
 			return oUshellContainer.getServiceAsync("AppLifeCycle")
-				.then(function(oAppConfiguration) {
-					var oApplication = oAppConfiguration.getCurrentApplication();
-					oComponentInstance = oApplication.componentInstance;
-					if (oComponentInstance) {
-						return oUshellContainer.getServiceAsync("CrossApplicationNavigation");
-					}
-					return undefined;
-				})
-				.then(function(oCrossAppNav) {
-					if (oCrossAppNav && oCrossAppNav.toExternal) {
-						oCrossAppNav.toExternal({target: {shellHash: "#"}}, oComponentInstance);
-					}
-				})
-				.catch(function(vError) {
-					throw new Error("Error navigating to FLP Homepage: " + vError);
-				});
+			.then(function(oAppConfiguration) {
+				var oApplication = oAppConfiguration.getCurrentApplication();
+				oComponentInstance = oApplication.componentInstance;
+				if (oComponentInstance) {
+					return oUshellContainer.getServiceAsync("CrossApplicationNavigation");
+				}
+				return undefined;
+			})
+			.then(function(oCrossAppNav) {
+				if (oCrossAppNav && oCrossAppNav.toExternal) {
+					oCrossAppNav.toExternal({target: {shellHash: "#"}}, oComponentInstance);
+				}
+			})
+			.catch(function(vError) {
+				throw new Error("Error navigating to FLP Homepage: " + vError);
+			});
 		}
 		return Promise.resolve();
 	};
@@ -578,7 +578,7 @@ sap.ui.define([
 		});
 	};
 
-	AppVariantUtils.handleBeforeUnloadEvent = function () {
+	AppVariantUtils.handleBeforeUnloadEvent = function() {
 		return AppVariantUtils.getText("MSG_DO_NOT_CLOSE_BROWSER");
 	};
 

@@ -3,7 +3,7 @@
 sap.ui.define([
 	"rta/test/qunit/command/basicCommandTest",
 	"sap/ui/core/Control"
-], function (
+], function(
 	basicCommandTest,
 	Control
 ) {
@@ -30,7 +30,7 @@ sap.ui.define([
 		parentId: "myFancyParentId"
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

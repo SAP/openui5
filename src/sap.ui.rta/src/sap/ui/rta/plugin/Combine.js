@@ -45,7 +45,7 @@ sap.ui.define([
 	 * @returns {Promise.<boolean>} <code>true</code> when editable wrapped in a promise.
 	 * @private
 	 */
-	Combine.prototype._isEditable = function (oOverlay) {
+	Combine.prototype._isEditable = function(oOverlay) {
 		var oCombineAction = this.getAction(oOverlay);
 		if (!oOverlay.isRoot() && oCombineAction && oCombineAction.changeOnRelevantContainer) {
 			return this._checkChangeHandlerAndStableId(oOverlay);
@@ -92,13 +92,13 @@ sap.ui.define([
 	 * @return {boolean} true if available
 	 * @public
 	 */
-	Combine.prototype.isAvailable = function (aElementOverlays) {
+	Combine.prototype.isAvailable = function(aElementOverlays) {
 		if (aElementOverlays.length <= 1) {
 			return false;
 		}
 
 		return (
-			aElementOverlays.every(function (oElementOverlay) {
+			aElementOverlays.every(function(oElementOverlay) {
 				return this._isEditableByPlugin(oElementOverlay);
 			}, this)
 			&& this._checkForSameRelevantContainer(aElementOverlays)
@@ -111,13 +111,13 @@ sap.ui.define([
 	 * @return {boolean} true if enabled
 	 * @public
 	 */
-	Combine.prototype.isEnabled = function (aElementOverlays) {
+	Combine.prototype.isEnabled = function(aElementOverlays) {
 		// check that at least 2 fields can be combined
 		if (!this.isAvailable(aElementOverlays) || aElementOverlays.length <= 1) {
 			return false;
 		}
 
-		var aControls = aElementOverlays.map(function (oElementOverlay) {
+		var aControls = aElementOverlays.map(function(oElementOverlay) {
 			return oElementOverlay.getElement();
 		});
 
@@ -155,7 +155,7 @@ sap.ui.define([
 	 */
 	Combine.prototype.handleCombine = function(aElementOverlays, oCombineElement) {
 		var oCombineElementOverlay;
-		var aElements = aElementOverlays.map(function (oElementOverlay) {
+		var aElements = aElementOverlays.map(function(oElementOverlay) {
 			if (oElementOverlay.getElement().getId() === oCombineElement.getId()) {
 				oCombineElementOverlay = oElementOverlay;
 			}
@@ -194,7 +194,7 @@ sap.ui.define([
 	 * @param  {sap.ui.dt.ElementOverlay[]} aElementOverlays - Overlays for which actions are requested
 	 * @return {object[]} - returns array containing the items with required data
 	 */
-	Combine.prototype.getMenuItems = function (aElementOverlays) {
+	Combine.prototype.getMenuItems = function(aElementOverlays) {
 		return this._getMenuItems(
 			aElementOverlays,
 			{
@@ -219,7 +219,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.core.Element} mPropertyBag.contextElement - Element where combine was triggered
 	 */
-	Combine.prototype.handler = function (aElementOverlays, mPropertyBag) {
+	Combine.prototype.handler = function(aElementOverlays, mPropertyBag) {
 		this.handleCombine(aElementOverlays, mPropertyBag.contextElement);
 	};
 

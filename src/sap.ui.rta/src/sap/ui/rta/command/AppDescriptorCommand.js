@@ -66,7 +66,7 @@ sap.ui.define([
 	 * @param  {string} mFlexSettings.layer - Layer where the change is applied
 	 * @returns {boolean} <code>true</true>
 	 */
-	AppDescriptorCommand.prototype.prepare = function (mFlexSettings) {
+	AppDescriptorCommand.prototype.prepare = function(mFlexSettings) {
 		this.setLayer(mFlexSettings.layer);
 		return true;
 	};
@@ -75,11 +75,11 @@ sap.ui.define([
 	 * Retrieves the prepared change for e.g. undo execution.
 	 * @return {sap.ui.fl.apply._internal.flexObjects.UIChange} Returns change after being created and stored
 	 */
-	AppDescriptorCommand.prototype.getPreparedChange = function () {
+	AppDescriptorCommand.prototype.getPreparedChange = function() {
 		return this._oPreparedChange;
 	};
 
-	AppDescriptorCommand.prototype.setCompositeId = function (sCompositeId) {
+	AppDescriptorCommand.prototype.setCompositeId = function(sCompositeId) {
 		this._sCompositeId = sCompositeId;
 	};
 
@@ -87,7 +87,7 @@ sap.ui.define([
 	 * Create the change for the app descriptor and adds it to the Flex Persistence.
 	 * @return {Promise} Returns Promise resolving after change has been created and stored
 	 */
-	AppDescriptorCommand.prototype.createAndStoreChange = function () {
+	AppDescriptorCommand.prototype.createAndStoreChange = function() {
 		return AppVariantInlineChangeFactory.createDescriptorInlineChange({
 			changeType: this.getChangeType(),
 			content: this.getParameters(),
@@ -96,19 +96,19 @@ sap.ui.define([
 				compositeCommand: this._sCompositeId || ""
 			}
 		})
-			.then(function(oAppDescriptorChangeContent) {
-				return new DescriptorChangeFactory().createNew(
-					this.getReference(),
-					oAppDescriptorChangeContent,
-					this.getLayer(),
-					this.getAppComponent(),
-					"sap.ui.rta.AppDescriptorCommand"
-				);
-			}.bind(this))
-			.then(function(oAppDescriptorChange) {
-				var oChange = oAppDescriptorChange.store();
-				this._oPreparedChange = oChange;
-			}.bind(this));
+		.then(function(oAppDescriptorChangeContent) {
+			return new DescriptorChangeFactory().createNew(
+				this.getReference(),
+				oAppDescriptorChangeContent,
+				this.getLayer(),
+				this.getAppComponent(),
+				"sap.ui.rta.AppDescriptorCommand"
+			);
+		}.bind(this))
+		.then(function(oAppDescriptorChange) {
+			var oChange = oAppDescriptorChange.store();
+			this._oPreparedChange = oChange;
+		}.bind(this));
 	};
 	return AppDescriptorCommand;
 });

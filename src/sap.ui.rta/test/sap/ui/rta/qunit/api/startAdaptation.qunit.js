@@ -22,11 +22,11 @@ sap.ui.define([
 	var oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	QUnit.module("Given startAdaptation()", {
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.stub(RuntimeAuthoring.prototype, "start");
 			sandbox.stub(PersistenceWriteAPI, "getChangesWarning").resolves({});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {

@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"rta/test/qunit/command/basicCommandTest"
-], function (
+], function(
 	basicCommandTest
 ) {
 	"use strict";
@@ -18,7 +18,7 @@ sap.ui.define([
 		revealedElementId: "myFancyRevealedElement"
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

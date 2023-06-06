@@ -1,4 +1,4 @@
-/*global QUnit */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core"
-], function (
+], function(
 	DesignTime,
 	CommandFactory,
 	OverlayRegistry,
@@ -28,7 +28,7 @@ sap.ui.define([
 			split: {
 				changeType: "splitStuff",
 				changeOnRelevantContainer: true,
-				getControlsCount: function () {
+				getControlsCount: function() {
 					return 3;
 				}
 			}
@@ -57,8 +57,8 @@ sap.ui.define([
 							'<Button id="button1" />' +
 							'<Button id="button2" />' +
 							'<Button id="button3" />' +
-						'</Panel>' +
-					'</mvc:View>'
+						"</Panel>" +
+					"</mvc:View>"
 			});
 
 			this.oView.placeAt("qunit-fixture");
@@ -87,7 +87,7 @@ sap.ui.define([
 			this.oView.destroy();
 			this.oDesignTime.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when an overlay has no split action in designTime metadata", function(assert) {
 			fnSetOverlayDesigntimeMetadata(this.oPanelOverlay, {});
 			assert.strictEqual(
@@ -101,17 +101,17 @@ sap.ui.define([
 				"isEnabled is called and returns false"
 			);
 			return Promise.resolve()
-				.then(this.oSplitPlugin._isEditable.bind(this.oSplitPlugin, this.oButton1Overlay))
-				.then(function(bEditable) {
-					assert.strictEqual(
-						bEditable,
-						false,
-						"then the overlay is not editable"
-					);
-				});
+			.then(this.oSplitPlugin._isEditable.bind(this.oSplitPlugin, this.oButton1Overlay))
+			.then(function(bEditable) {
+				assert.strictEqual(
+					bEditable,
+					false,
+					"then the overlay is not editable"
+				);
+			});
 		});
 
-		QUnit.test("when an overlay has a split action in designTime metadata and the specified element has more than one control", function (assert) {
+		QUnit.test("when an overlay has a split action in designTime metadata and the specified element has more than one control", function(assert) {
 			var done = assert.async();
 			var oDesignTimeMetadata1 = {
 				actions: {
@@ -145,7 +145,7 @@ sap.ui.define([
 			this.oSplitPlugin.registerElementOverlay(this.oButton1Overlay);
 		});
 
-		QUnit.test("when an overlay has a split action in designTime metadata relevant container has no stable id", function (assert) {
+		QUnit.test("when an overlay has a split action in designTime metadata relevant container has no stable id", function(assert) {
 			var done = assert.async();
 			var oDesignTimeMetadata1 = {
 				actions: {
@@ -169,21 +169,21 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oSplitPlugin._isEditable(this.oButton1Overlay)
-					.then(function(bEditable) {
-						assert.strictEqual(
-							bEditable,
-							false,
-							"_isEditable returns false"
-						);
-						done();
-					});
+				.then(function(bEditable) {
+					assert.strictEqual(
+						bEditable,
+						false,
+						"_isEditable returns false"
+					);
+					done();
+				});
 			}.bind(this));
 
 			this.oSplitPlugin.deregisterElementOverlay(this.oButton1Overlay);
 			this.oSplitPlugin.registerElementOverlay(this.oButton1Overlay);
 		});
 
-		QUnit.test("when isEnabled() is a function in designTime metadata and the specified element contains only one control", function (assert) {
+		QUnit.test("when isEnabled() is a function in designTime metadata and the specified element contains only one control", function(assert) {
 			var oDesignTimeMetadata2 = {
 				actions: {
 					split: {
@@ -216,13 +216,13 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when there is no getControlsCount() function in designTime metadata", function (assert) {
+		QUnit.test("when there is no getControlsCount() function in designTime metadata", function(assert) {
 			var oDesignTimeMetadata3 = {
 				actions: {
 					split: {
 						changeType: "splitField",
 						changeOnRelevantContainer: true,
-						isEnabled: function () {
+						isEnabled: function() {
 							return true;
 						}
 					}
@@ -246,7 +246,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when two controls are specified", function (assert) {
+		QUnit.test("when two controls are specified", function(assert) {
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 			fnSetOverlayDesigntimeMetadata(this.oButton3Overlay, DEFAULT_DTM);
 
@@ -269,12 +269,12 @@ sap.ui.define([
 			sandbox.stub(ChangesWriteAPI, "create").resolves({});
 			var oStub1 = sandbox.stub();
 			var oStub2 = oStub1
-				.withArgs(
-					sinon.match(function (oEvent) {
-						var oSplitCommand = oEvent.getParameter("command");
-						return oSplitCommand.getNewElementIds().length === this.oPanel.getContent().length;
-					}.bind(this))
-				);
+			.withArgs(
+				sinon.match(function(oEvent) {
+					var oSplitCommand = oEvent.getParameter("command");
+					return oSplitCommand.getNewElementIds().length === this.oPanel.getContent().length;
+				}.bind(this))
+			);
 
 			this.oSplitPlugin.attachElementModified(oStub1, this);
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
@@ -287,17 +287,17 @@ sap.ui.define([
 			.then(function() {
 				assert.strictEqual(oStub2.callCount, 1, "fireElementModified is called once with correct arguments");
 			})
-			.catch(function (oError) {
+			.catch(function(oError) {
 				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
-		QUnit.test("when an overlay has a split action designTime metadata", function (assert) {
+		QUnit.test("when an overlay has a split action designTime metadata", function(assert) {
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 			return this.oSplitPlugin._isEditable(this.oButton1Overlay)
-				.then(function(bEditable) {
-					assert.strictEqual(bEditable, true, "then the overlay is editable");
-				});
+			.then(function(bEditable) {
+				assert.strictEqual(bEditable, true, "then the overlay is editable");
+			});
 		});
 
 		QUnit.test("when an overlay has a split action designTime metadata which has no changeOnRelevantContainer", function(assert) {
@@ -305,17 +305,17 @@ sap.ui.define([
 				actions: {
 					split: {
 						changeType: "splitStuff",
-						getControlsCount: function () {
+						getControlsCount: function() {
 							return 2;
 						}
 					}
 				}
 			});
 			return Promise.resolve()
-				.then(this.oSplitPlugin._isEditable.bind(this.oSplitPlugin, this.oButton1Overlay))
-				.then(function(bEditable) {
-					assert.strictEqual(bEditable, false, "then the overlay is not editable");
-				});
+			.then(this.oSplitPlugin._isEditable.bind(this.oSplitPlugin, this.oButton1Overlay))
+			.then(function(bEditable) {
+				assert.strictEqual(bEditable, false, "then the overlay is not editable");
+			});
 		});
 
 		QUnit.test("when retrieving the context menu item", function(assert) {
@@ -323,14 +323,14 @@ sap.ui.define([
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 
 			var bIsAvailable = true;
-			sandbox.stub(this.oSplitPlugin, "isAvailable").callsFake(function (aElementOverlays) {
+			sandbox.stub(this.oSplitPlugin, "isAvailable").callsFake(function(aElementOverlays) {
 				assert.equal(aElementOverlays[0].getId(), this.oButton1Overlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
 				return bIsAvailable;
 			}.bind(this));
-			sandbox.stub(this.oSplitPlugin, "handleSplit").callsFake(function (oElementOverlay) {
+			sandbox.stub(this.oSplitPlugin, "handleSplit").callsFake(function(oElementOverlay) {
 				assert.deepEqual(oElementOverlay.getId(), this.oButton1Overlay.getId(), "the 'handleSplit' method is called with the right overlay");
 			}.bind(this));
-			sandbox.stub(this.oSplitPlugin, "isEnabled").callsFake(function (aElementOverlays) {
+			sandbox.stub(this.oSplitPlugin, "isEnabled").callsFake(function(aElementOverlays) {
 				assert.equal(aElementOverlays[0].getId(), this.oButton1Overlay.getId(), "the 'enabled' function calls isEnabled with the correct element overlay");
 			}.bind(this));
 
@@ -349,8 +349,7 @@ sap.ui.define([
 		});
 	});
 
-
-	QUnit.done(function () {
+	QUnit.done(function() {
 		oMockedAppComponent._restoreGetAppComponentStub();
 		oMockedAppComponent.destroy();
 		document.getElementById("qunit-fixture").style.display = "none";

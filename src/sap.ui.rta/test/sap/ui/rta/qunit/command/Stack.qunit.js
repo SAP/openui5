@@ -143,22 +143,22 @@ sap.ui.define([
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
 			}, this.oInputDesignTimeMetadata)
-				.then(function(oRemoveCommand) {
-					return this.oCommandStack.pushAndExecute(oRemoveCommand);
-				}.bind(this))
-				.then(CommandFactory.getCommandFor.bind(this, this.oInput2, "Remove", {
-					removedElement: this.oInput2
-				}, this.oInputDesignTimeMetadata))
-				.then(function(oRemoveCommand) {
-					//force an error
-					sandbox.stub(this.oCommandStack, "getSubCommands").returns(undefined);
-					return this.oCommandStack.pushAndExecute(oRemoveCommand);
-				}.bind(this))
-				.catch(function(oError) {
-					assert.ok(true, "catch has be called during execution of second command - Error: " + oError);
-					assert.equal(this.oCommandStack._toBeExecuted, -1, "the Variable '_toBeExecuted' is not descreased a second time");
-					done();
-				}.bind(this));
+			.then(function(oRemoveCommand) {
+				return this.oCommandStack.pushAndExecute(oRemoveCommand);
+			}.bind(this))
+			.then(CommandFactory.getCommandFor.bind(this, this.oInput2, "Remove", {
+				removedElement: this.oInput2
+			}, this.oInputDesignTimeMetadata))
+			.then(function(oRemoveCommand) {
+				// force an error
+				sandbox.stub(this.oCommandStack, "getSubCommands").returns(undefined);
+				return this.oCommandStack.pushAndExecute(oRemoveCommand);
+			}.bind(this))
+			.catch(function(oError) {
+				assert.ok(true, "catch has be called during execution of second command - Error: " + oError);
+				assert.equal(this.oCommandStack._toBeExecuted, -1, "the Variable '_toBeExecuted' is not descreased a second time");
+				done();
+			}.bind(this));
 		});
 
 		QUnit.test("execute / undo / redo with CommandExecutionHandler", function(assert) {
@@ -394,7 +394,6 @@ sap.ui.define([
 			var oCompositeCommand = new CompositeCommand();
 			oCompositeCommand.addCommand(oBaseCommand);
 			oCompositeCommand.addCommand(oBaseCommand2);
-
 
 			return this.oCommandStack.pushAndExecute(oCompositeCommand)
 			.then(function() {

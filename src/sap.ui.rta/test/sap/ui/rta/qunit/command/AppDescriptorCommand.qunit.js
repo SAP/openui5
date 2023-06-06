@@ -22,14 +22,14 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Given the parameters required to create an app descriptor change...", {
-		before: function () {
+		before: function() {
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 		},
-		after: function () {
+		after: function() {
 			this.oMockedAppComponent._restoreGetAppComponentStub();
 			this.oMockedAppComponent.destroy();
 		},
-		beforeEach: function () {
+		beforeEach: function() {
 			this.sReference = "appReference";
 			this.mFlexSettings = {
 				layer: Layer.CUSTOMER
@@ -59,10 +59,10 @@ sap.ui.define([
 
 			this.oButton = new Button("myButton");
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oButton.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when calling command factory for a generic app descriptor change type ...", function(assert) {
 			var done = assert.async();
 			var fnAssertSpy = sinon.spy(ManagedObject.prototype, "applySettings");
@@ -92,7 +92,7 @@ sap.ui.define([
 				return Promise.resolve(oMockDescriptorInlineChange);
 			}.bind(this));
 
-			this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew").callsFake(function (sReference, oInlineChange, sLayer, oAppComponent, sGenerator) {
+			this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew").callsFake(function(sReference, oInlineChange, sLayer, oAppComponent, sGenerator) {
 				assert.strictEqual(sReference, this.sReference, "reference is properly passed to createNew function");
 				assert.strictEqual(oInlineChange.mockName, oMockDescriptorInlineChange.mockName, "Inline Change is properly passed to createNew function");
 				assert.strictEqual(sLayer, this.sLayer, "layer is properly passed to createNew function");
@@ -118,7 +118,7 @@ sap.ui.define([
 				oAppDescriptorCommand.createAndStoreChange();
 			})
 
-			.catch(function (oError) {
+			.catch(function(oError) {
 				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
@@ -134,22 +134,22 @@ sap.ui.define([
 				changeType: "create_ui5_addLibraries",
 				appComponent: this.oMockedAppComponent
 			}, {}, {layer: this.sLayer})
-				.then(function(oAppDescriptorCommand) {
-					oAppDescriptorCommand.setCompositeId(sCompositeCommandId);
-					assert.ok(oAppDescriptorCommand, "App Descriptor command exists for element");
-					return oAppDescriptorCommand.createAndStoreChange()
-						.then(function () {
-							var oStoredChange = oAppDescriptorCommand.getPreparedChange();
-							assert.strictEqual(oStoredChange.getSupportInformation().compositeCommand, sCompositeCommandId, "then composite command id is attached to the change definition");
-						});
-				})
-				.catch(function (oError) {
-					assert.ok(false, "catch must never be called - Error: " + oError);
+			.then(function(oAppDescriptorCommand) {
+				oAppDescriptorCommand.setCompositeId(sCompositeCommandId);
+				assert.ok(oAppDescriptorCommand, "App Descriptor command exists for element");
+				return oAppDescriptorCommand.createAndStoreChange()
+				.then(function() {
+					var oStoredChange = oAppDescriptorCommand.getPreparedChange();
+					assert.strictEqual(oStoredChange.getSupportInformation().compositeCommand, sCompositeCommandId, "then composite command id is attached to the change definition");
 				});
+			})
+			.catch(function(oError) {
+				assert.ok(false, "catch must never be called - Error: " + oError);
+			});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

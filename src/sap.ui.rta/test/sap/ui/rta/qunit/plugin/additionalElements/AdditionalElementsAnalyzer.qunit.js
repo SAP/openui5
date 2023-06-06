@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
@@ -20,17 +20,17 @@ sap.ui.define([
 	"use strict";
 
 	function registerTestOverlaysWithRelevantContainer(oElement) {
-		return new Promise(function (resolve) {
+		return new Promise(function(resolve) {
 			this.oDesignTime = new DesignTime({
 				rootElements: [oElement]
 			});
-			this.oDesignTime.attachEventOnce("synced", function () {
+			this.oDesignTime.attachEventOnce("synced", function() {
 				resolve();
 			});
 		}.bind(this));
 	}
 
-	QUnit.module("Given a test view", TestUtils.commonHooks(), function () {
+	QUnit.module("Given a test view", TestUtils.commonHooks(), function() {
 		QUnit.test("checks if navigation and absolute binding work (form example)", function(assert) {
 			var oGroupElement1 = this.oView.byId("EntityType02.NavigationProperty"); // With correct navigation binding
 			var oGroupElement2 = this.oView.byId("EntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
@@ -39,42 +39,42 @@ sap.ui.define([
 			oCore.applyChanges();
 			var oGroup = oGroupElement4.getParent();
 			return registerTestOverlaysWithRelevantContainer.call(this,	oGroup)
-				.then(function () {
-					var oActionsObject = {
-						aggregation: "formElements",
-						reveal: {
-							elements: [{
-								element: oGroupElement1,
-								action: {} //nothing relevant for the analyzer tests
-							}, {
-								element: oGroupElement2,
-								action: {} //nothing relevant for the analyzer tests
-							}, {
-								element: oGroupElement3,
-								action: {} //nothing relevant for the analyzer tests
-							}, {
-								element: oGroupElement4,
-								action: {} //nothing relevant for the analyzer tests
-							}]
-						},
-						addViaDelegate: {
-							delegateInfo: {
-								delegate: this.oDelegate
-							}
+			.then(function() {
+				var oActionsObject = {
+					aggregation: "formElements",
+					reveal: {
+						elements: [{
+							element: oGroupElement1,
+							action: {} // nothing relevant for the analyzer tests
+						}, {
+							element: oGroupElement2,
+							action: {} // nothing relevant for the analyzer tests
+						}, {
+							element: oGroupElement3,
+							action: {} // nothing relevant for the analyzer tests
+						}, {
+							element: oGroupElement4,
+							action: {} // nothing relevant for the analyzer tests
+						}]
+					},
+					addViaDelegate: {
+						delegateInfo: {
+							delegate: this.oDelegate
 						}
-					};
-					return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject).then(function(aAdditionalElements) {
-						// We expect only one element to be returned with a correct navigation property
-						assert.equal(aAdditionalElements.length, 2, "then there are 2 additional Elements available");
-						assert.equal(aAdditionalElements[0].label, oGroupElement1.getLabelText(), "the element with correct navigation binding should be in the list");
-						assert.equal(aAdditionalElements[0].tooltip, oGroupElement1.getLabelText(), "the label is used as tooltip for elements with navigation binding");
-						assert.equal(aAdditionalElements[1].label, oGroupElement3.getLabelText(), "the element with absolute binding should be in the list");
-						assert.equal(aAdditionalElements[1].tooltip, oGroupElement3.getLabelText(), "the label is used as tooltip for elements with absolute binding");
-					});
-				}.bind(this))
-				.then(function () {
-					this.oDesignTime.destroy();
-				}.bind(this));
+					}
+				};
+				return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject).then(function(aAdditionalElements) {
+					// We expect only one element to be returned with a correct navigation property
+					assert.equal(aAdditionalElements.length, 2, "then there are 2 additional Elements available");
+					assert.equal(aAdditionalElements[0].label, oGroupElement1.getLabelText(), "the element with correct navigation binding should be in the list");
+					assert.equal(aAdditionalElements[0].tooltip, oGroupElement1.getLabelText(), "the label is used as tooltip for elements with navigation binding");
+					assert.equal(aAdditionalElements[1].label, oGroupElement3.getLabelText(), "the element with absolute binding should be in the list");
+					assert.equal(aAdditionalElements[1].tooltip, oGroupElement3.getLabelText(), "the label is used as tooltip for elements with absolute binding");
+				});
+			}.bind(this))
+			.then(function() {
+				this.oDesignTime.destroy();
+			}.bind(this));
 		});
 
 		QUnit.test("checks if navigation and absolute binding work (object page layout example)", function(assert) {
@@ -84,39 +84,39 @@ sap.ui.define([
 			oCore.applyChanges();
 			var oElementWithHideFromRevealProperty = this.oView.byId("EntityType01.technicalInvisibleProp");
 			return registerTestOverlaysWithRelevantContainer.call(this, oElementWithHideFromRevealProperty)
-				.then(function () {
-					var oActionsObject = {
-						aggregation: "sections",
-						reveal: {
-							elements: [{
-								element: oSection1,
-								action: {} //nothing relevant for the analyzer tests
-							}, {
-								element: oSection2,
-								action: {} //nothing relevant for the analyzer tests
-							}, {
-								element: oSection3,
-								action: {} //nothing relevant for the analyzer tests
-							}]
-						},
-						addViaDelegate: {
-							delegateInfo: {
-								delegate: this.oDelegate
-							}
+			.then(function() {
+				var oActionsObject = {
+					aggregation: "sections",
+					reveal: {
+						elements: [{
+							element: oSection1,
+							action: {} // nothing relevant for the analyzer tests
+						}, {
+							element: oSection2,
+							action: {} // nothing relevant for the analyzer tests
+						}, {
+							element: oSection3,
+							action: {} // nothing relevant for the analyzer tests
+						}]
+					},
+					addViaDelegate: {
+						delegateInfo: {
+							delegate: this.oDelegate
 						}
-					};
-					return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSection1.getParent(), oActionsObject).then(function(aAdditionalElements) {
-						// We expect only two elements to be returned with a correct navigation property
-						assert.equal(aAdditionalElements.length, 2, "then there are 2 additional Elements available");
-						assert.equal(aAdditionalElements[0].label, oSection1.getTitle(), "the element with correct navigation binding should be in the list");
-						assert.equal(aAdditionalElements[0].tooltip, oSection1.getTitle(), "the label is used as tooltip for elements with navigation binding");
-						assert.equal(aAdditionalElements[1].label, oSection2.getTitle(), "the element with absolute binding should be in the list");
-						assert.equal(aAdditionalElements[1].tooltip, oSection2.getTitle(), "the label is used as tooltip for elements with absolute binding");
-					});
-				}.bind(this))
-				.then(function () {
-					this.oDesignTime.destroy();
-				}.bind(this));
+					}
+				};
+				return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSection1.getParent(), oActionsObject).then(function(aAdditionalElements) {
+					// We expect only two elements to be returned with a correct navigation property
+					assert.equal(aAdditionalElements.length, 2, "then there are 2 additional Elements available");
+					assert.equal(aAdditionalElements[0].label, oSection1.getTitle(), "the element with correct navigation binding should be in the list");
+					assert.equal(aAdditionalElements[0].tooltip, oSection1.getTitle(), "the label is used as tooltip for elements with navigation binding");
+					assert.equal(aAdditionalElements[1].label, oSection2.getTitle(), "the element with absolute binding should be in the list");
+					assert.equal(aAdditionalElements[1].tooltip, oSection2.getTitle(), "the label is used as tooltip for elements with absolute binding");
+				});
+			}.bind(this))
+			.then(function() {
+				this.oDesignTime.destroy();
+			}.bind(this));
 		});
 
 		QUnit.test("skip adding oData information if AddViaDelegate is not available", function(assert) {
@@ -124,23 +124,23 @@ sap.ui.define([
 
 			oCore.applyChanges();
 			return registerTestOverlaysWithRelevantContainer.call(this, oSection1)
-				.then(function () {
-					var oActionsObject = {
-						aggregation: "sections",
-						reveal: {
-							elements: [{
-								element: oSection1,
-								action: {} //nothing relevant for the analyzer tests
-							}]
-						}
-					};
-					return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSection1.getParent(), oActionsObject).then(function(aAdditionalElements) {
-						assert.notOk(aAdditionalElements[0].originalLabel, "the section does not have an original label");
-					});
-				})
-				.then(function () {
-					this.oDesignTime.destroy();
-				}.bind(this));
+			.then(function() {
+				var oActionsObject = {
+					aggregation: "sections",
+					reveal: {
+						elements: [{
+							element: oSection1,
+							action: {} // nothing relevant for the analyzer tests
+						}]
+					}
+				};
+				return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSection1.getParent(), oActionsObject).then(function(aAdditionalElements) {
+					assert.notOk(aAdditionalElements[0].originalLabel, "the section does not have an original label");
+				});
+			})
+			.then(function() {
+				this.oDesignTime.destroy();
+			}.bind(this));
 		});
 
 		QUnit.test("checks if navigation and absolute binding work with delegate", function(assert) {
@@ -154,13 +154,13 @@ sap.ui.define([
 				reveal: {
 					elements: [{
 						element: oGroupElement1,
-						action: {} //nothing relevant for the analyzer tests
+						action: {} // nothing relevant for the analyzer tests
 					}, {
 						element: oGroupElement2,
-						action: {} //nothing relevant for the analyzer tests
+						action: {} // nothing relevant for the analyzer tests
 					}, {
 						element: oGroupElement3,
-						action: {} //nothing relevant for the analyzer tests
+						action: {} // nothing relevant for the analyzer tests
 					}]
 				},
 				addViaDelegate: {
@@ -189,7 +189,7 @@ sap.ui.define([
 				reveal: {
 					elements: [{
 						element: oGroupElement1,
-						action: {} //nothing relevant for the analyzer tests
+						action: {} // nothing relevant for the analyzer tests
 					}]
 				}
 			};
@@ -197,10 +197,10 @@ sap.ui.define([
 			// Because "start" is not part of a promise chain, we need to use setTimeout to wait for its execution
 			setTimeout(function() {
 				AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject)
-					.then(function(aAdditionalElements) {
-						assert.equal(aAdditionalElements[0].label, oGroupElement1.getDataSourceLabel(), "the displayed label is the data source label");
-						fnDone();
-					});
+				.then(function(aAdditionalElements) {
+					assert.equal(aAdditionalElements[0].label, oGroupElement1.getDataSourceLabel(), "the displayed label is the data source label");
+					fnDone();
+				});
 			});
 
 			// The method inside the "start" property is where the label is retrieved from oData (SmartField.designtime.js)
@@ -216,18 +216,18 @@ sap.ui.define([
 					elements: [
 						{
 							element: this.oView.byId("idMain1--ObjectPageSectionInvisible"),
-							action: {} //not relevant for test
+							action: {} // not relevant for test
 						}, {
 							element: this.oView.byId("idMain1--ObjectPageSectionStashed1"),
-							action: {} //not relevant for test
+							action: {} // not relevant for test
 						},
 						{
 							element: this.oView.byId("idMain1--ObjectPageSectionStashed2"),
-							action: {} //not relevant for test
+							action: {} // not relevant for test
 						},
 						{
 							element: this.oView.byId("idMain1--ObjectPageSectionForNavigationWithoutOtherGroup"),
-							action: {} //not relevant for test
+							action: {} // not relevant for test
 						}
 					]
 				}
@@ -306,7 +306,7 @@ sap.ui.define([
 					}, "the unbound property is found");
 					assert.deepEqual(aAdditionalElements[1], {
 						selected: false,
-						label: "Entity1-Property07-ignored-unbound", //available, because there is no ignore filtering implemented
+						label: "Entity1-Property07-ignored-unbound", // available, because there is no ignore filtering implemented
 						tooltip: "Unbound Property7",
 						type: "delegate",
 						entityType: "EntityType01",
@@ -443,10 +443,10 @@ sap.ui.define([
 				reveal: {
 					elements: [{
 						element: oGroupElement1,
-						action: {} //nothing relevant for the analyzer test
+						action: {} // nothing relevant for the analyzer test
 					}, {
 						element: oGroupElement2,
-						action: {} //nothing relevant for the analyzer test
+						action: {} // nothing relevant for the analyzer test
 					}]
 				},
 				addViaDelegate: {
@@ -479,7 +479,7 @@ sap.ui.define([
 				reveal: {
 					elements: [{
 						element: oGroupElement1,
-						action: {} //not relevant for test
+						action: {} // not relevant for test
 					}]
 				},
 				addViaDelegate: {
@@ -502,21 +502,21 @@ sap.ui.define([
 			var oDelegateMediatorStub = this.sandbox.stub(DelegateMediatorAPI, "getDelegateForControl");
 			function getDelegateForControl() {
 				return oDelegateMediatorStub.wrappedMethod.apply(this, arguments)
-				.then(function (oDelegateInfo) {
+				.then(function(oDelegateInfo) {
 					var fnGetPropertyInfo = oDelegateInfo.instance.getPropertyInfo;
-					oDelegateInfo.instance.getPropertyInfo = function () {
+					oDelegateInfo.instance.getPropertyInfo = function() {
 						return fnGetPropertyInfo.apply(this, arguments)
-							.then(function (aProperties) {
-								return aProperties.concat({
-									name: "UxFcThatMakeFieldVisible",
-									bindingPath: "UxFcThatMakeFieldVisible",
-									entityType: "EntityType01",
-									label: "UI Field Control",
-									tooltip: "UI Field Control Byte (Should be defined centrally)",
-									hideFromReveal: true,
-									unsupported: true
-								});
+						.then(function(aProperties) {
+							return aProperties.concat({
+								name: "UxFcThatMakeFieldVisible",
+								bindingPath: "UxFcThatMakeFieldVisible",
+								entityType: "EntityType01",
+								label: "UI Field Control",
+								tooltip: "UI Field Control Byte (Should be defined centrally)",
+								hideFromReveal: true,
+								unsupported: true
 							});
+						});
 					};
 					return oDelegateInfo;
 				});
@@ -531,7 +531,7 @@ sap.ui.define([
 				reveal: {
 					elements: [{
 						element: oGroupElement,
-						action: {} //not relevant for test
+						action: {} // not relevant for test
 					}]
 				}
 			};
@@ -544,17 +544,17 @@ sap.ui.define([
 		QUnit.test("when getting invisible elements of a bound group containing an invisible field that is a deleted custom field", function(assert) {
 			var oGroup = this.oView.byId("GroupEntityType01");
 			var oGroupElement1 = this.oView.byId("EntityType01.Prop9");
-			var oGroupElement2 = this.oView.byId("EntityType01.Prop10"); //deleted custom field
+			var oGroupElement2 = this.oView.byId("EntityType01.Prop10"); // deleted custom field
 
 			var oActionsObject = {
 				aggregation: "formElements",
 				reveal: {
 					elements: [{
 						element: oGroupElement1,
-						action: {} //not relevant for test
+						action: {} // not relevant for test
 					}, {
 						element: oGroupElement2,
-						action: {} //not relevant for test
+						action: {} // not relevant for test
 					}]
 				},
 				addViaDelegate: {
@@ -579,7 +579,7 @@ sap.ui.define([
 				reveal: {
 					elements: [{
 						element: oGroupElement1,
-						action: {} //not relevant for test
+						action: {} // not relevant for test
 					}]
 				},
 				addViaDelegate: {
@@ -597,17 +597,17 @@ sap.ui.define([
 		QUnit.test("when getting invisible elements of a bound group with delegate containing an invisible field with bindings inside belonging to the same context", function(assert) {
 			var oGroup = this.oView.byId("DelegateGroupEntityType01");
 			var oGroupElement1 = this.oView.byId("DelegateEntityType01.Prop9");
-			var oGroupElement2 = this.oView.byId("DelegateEntityType01.Prop10"); //deleted custom field
+			var oGroupElement2 = this.oView.byId("DelegateEntityType01.Prop10"); // deleted custom field
 
 			var oActionsObject = {
 				aggregation: "formElements",
 				reveal: {
 					elements: [{
 						element: oGroupElement1,
-						action: {} //not relevant for test
+						action: {} // not relevant for test
 					}, {
 						element: oGroupElement2,
-						action: {} //not relevant for test
+						action: {} // not relevant for test
 					}]
 				},
 				addViaDelegate: {
@@ -634,7 +634,7 @@ sap.ui.define([
 				reveal: {
 					elements: [{
 						element: oGroupElement1,
-						action: {} //not relevant for test
+						action: {} // not relevant for test
 					}]
 				},
 				addViaDelegate: {
@@ -662,7 +662,7 @@ sap.ui.define([
 				reveal: {
 					elements: [{
 						element: oGroupElement1,
-						action: {} //not relevant for test
+						action: {} // not relevant for test
 					}]
 				},
 				addViaDelegate: {
@@ -686,11 +686,11 @@ sap.ui.define([
 				reveal: {
 					elements: [{
 						element: oGroupElement1,
-						action: {} //not relevant for test
+						action: {} // not relevant for test
 					}]
 				},
 				addViaDelegate: {
-					action: {}, //not relevant for test,
+					action: {}, // not relevant for test,
 					delegateInfo: {
 						payload: {},
 						delegate: this.oDelegate
@@ -713,11 +713,11 @@ sap.ui.define([
 				reveal: {
 					elements: [{
 						element: oGroupElement1,
-						action: {} //not relevant for test
+						action: {} // not relevant for test
 					}]
 				},
 				addViaDelegate: {
-					action: {}, //not relevant for test,
+					action: {}, // not relevant for test,
 					delegateInfo: {
 						payload: {},
 						delegate: this.oDelegate
@@ -735,7 +735,7 @@ sap.ui.define([
 			var oGroupElement1 = oGroup.getGroupElements()[3];
 			oGroupElement1.setVisible(false);
 			oGroupElement1.setLabel("RenamedLabel");
-			//ComplexType binding element
+			// ComplexType binding element
 			var oGroupElement2 = oGroup.getGroupElements()[0];
 			oGroupElement2.setVisible(false);
 			oGroupElement2.getLabelControl().setText("RenamedLabel");
@@ -746,10 +746,10 @@ sap.ui.define([
 				reveal: {
 					elements: [{
 						element: oGroupElement1,
-						action: {} //not relevant for test
+						action: {} // not relevant for test
 					}, {
 						element: oGroupElement2,
-						action: {} //not relevant for test
+						action: {} // not relevant for test
 					}]
 				},
 				addViaDelegate: {
@@ -775,7 +775,7 @@ sap.ui.define([
 			}).map(function(oFormElement) {
 				return {
 					element: oFormElement,
-					action: {} //not relevant for test
+					action: {} // not relevant for test
 				};
 			});
 
@@ -795,7 +795,7 @@ sap.ui.define([
 				assert.equal(aAdditionalElements.length, 4, "then the 3 invisible elements with oData + the element without binding are returned");
 				assert.equal(aAdditionalElements[0].label, "Invisible 1", "then the label is set correctly");
 				assert.equal(aAdditionalElements[1].label, "Complex Invisible oData Property", "then the label is set correctly");
-				assert.ok(typeof aAdditionalElements[2].label === 'string', "the element without binding is assigned a label");
+				assert.ok(typeof aAdditionalElements[2].label === "string", "the element without binding is assigned a label");
 				assert.equal(aAdditionalElements[3].label, "Invisible Property04", "then the label is set correctly");
 				assert.equal(aAdditionalElements[0].type, "invisible", "then the type is set correctly");
 				assert.equal(aAdditionalElements[1].type, "invisible", "then the type is set correctly");
@@ -815,7 +815,7 @@ sap.ui.define([
 				reveal: {
 					elements: [{
 						element: oGroupElement1,
-						action: {} //not relevant for test
+						action: {} // not relevant for test
 					}]
 				},
 				addViaDelegate: {
@@ -853,7 +853,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

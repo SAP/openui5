@@ -66,10 +66,10 @@ sap.ui.define([
 			this.oView.destroy();
 			this.oCompContPromise = undefined;
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("Given extensibility disabled in the system when isServiceUpToDate is called", function(assert) {
 			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(false);
 
@@ -196,12 +196,12 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		afterEach: function () {
+		afterEach: function() {
 			this.oObjectPageLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when DesignTime is created and getFocusableParentOverlay is called", function(assert) {
 			this.oObjectPageSection1Overlay.setSelectable(true);
 			var oOverlay = Utils.getFocusableParentOverlay(this.oLabel1Overlay);
@@ -239,8 +239,8 @@ sap.ui.define([
 
 		QUnit.test("when DesignTime is created and getNextFocusableSiblingOverlay is called", function(assert) {
 			var getNextSiblingOverlay = sandbox.stub(OverlayUtil, "getNextSiblingOverlay")
-				.onFirstCall().returns(this.oObjectPageSubSection2Overlay)
-				.onSecondCall().returns(this.oObjectPageSubSection3Overlay);
+			.onFirstCall().returns(this.oObjectPageSubSection2Overlay)
+			.onSecondCall().returns(this.oObjectPageSubSection3Overlay);
 			this.oObjectPageSubSection3Overlay.setSelectable(true);
 			var oOverlay = Utils.getNextFocusableSiblingOverlay(this.oObjectPageSubSection1Overlay);
 			assert.equal(getNextSiblingOverlay.callCount, 2,
@@ -251,8 +251,8 @@ sap.ui.define([
 
 		QUnit.test("when DesignTime is created and getPreviousFocusableSiblingOverlay is called", function(assert) {
 			var getPreviousSiblingOverlay = sandbox.stub(OverlayUtil, "getPreviousSiblingOverlay")
-				.onFirstCall().returns(this.oObjectPageSubSection2Overlay)
-				.onSecondCall().returns(this.oObjectPageSubSection1Overlay);
+			.onFirstCall().returns(this.oObjectPageSubSection2Overlay)
+			.onSecondCall().returns(this.oObjectPageSubSection1Overlay);
 			this.oObjectPageSubSection1Overlay.setSelectable(true);
 			var oOverlay = Utils.getPreviousFocusableSiblingOverlay(this.oObjectPageSubSection3Overlay);
 			assert.equal(getPreviousSiblingOverlay.callCount, 2,
@@ -261,7 +261,6 @@ sap.ui.define([
 				"when oObjectPageSubSection3Overlay parameter set then oObjectPageSubSection1Overlay is returned");
 		});
 	});
-
 
 	QUnit.module("Given an ObjectPageLayout with Overlays created, but all except for the button overlays are not selectable", {
 		beforeEach: function(assert) {
@@ -336,12 +335,12 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oLayout0.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when the function for the next or previous sibling overlay is called", function(assert) {
 			assert.equal(Utils.getNextFocusableSiblingOverlay(this.oButtonOverlay1).getId(), this.oButtonOverlay2.getId(), "the next sibling gets selected in another aggregation");
 			assert.equal(Utils.getNextFocusableSiblingOverlay(this.oButtonOverlay0).getId(), this.oButtonOverlay1.getId(), "the next sibling gets selected in same aggregation with another parent");
@@ -369,7 +368,7 @@ sap.ui.define([
 			this.oInsideDom.remove();
 			this.oOutsideDom.remove();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when isElementInViewport is called from inside viewport", function(assert) {
 			assert.ok(Utils.isElementInViewport(this.oInsideDom), "then the function returns true");
 		});
@@ -379,7 +378,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("setRtaStyleClassName", function () {
+	QUnit.module("setRtaStyleClassName", function() {
 		QUnit.test("when setRtaStyleClassName is called", function(assert) {
 			var sExpectedStyleClass = "sapUiRTABorder";
 			Utils._sRtaStyleClassName = "";
@@ -468,7 +467,7 @@ sap.ui.define([
 				}
 			};
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when extendWith is called with a customizer function that always returns true", function(assert) {
 			var fnCustomizer = function() {
 				return true;
@@ -498,12 +497,12 @@ sap.ui.define([
 			this.oTarget = new Label({text: "Label2" });
 		},
 
-		afterEach: function () {
+		afterEach: function() {
 			this.oSource.destroy();
 			this.oTarget.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("Given checkSourceTargetBindingCompatibility is called with source control without bindings", function(assert) {
 			var sBindingContextPath = "/fakeBindingContext";
 			var mBindingsCollection = {
@@ -511,12 +510,12 @@ sap.ui.define([
 				bindingContextPaths: [sBindingContextPath]
 			};
 			sandbox.stub(BindingsExtractor, "collectBindingPaths")
-				.callThrough()
-				.withArgs(this.oSource, undefined)
-				.returns(mBindingsCollection);
+			.callThrough()
+			.withArgs(this.oSource, undefined)
+			.returns(mBindingsCollection);
 			sandbox.stub(BindingsExtractor, "getBindingContextPath")
-				.withArgs(this.oSource).returns(sBindingContextPath)
-				.withArgs(this.oTarget).returns(sBindingContextPath);
+			.withArgs(this.oSource).returns(sBindingContextPath)
+			.withArgs(this.oTarget).returns(sBindingContextPath);
 			assert.strictEqual(
 				Utils.checkSourceTargetBindingCompatibility(this.oSource, this.oTarget), true,
 				"then bindings are compatible");
@@ -529,12 +528,12 @@ sap.ui.define([
 				bindingContextPaths: [sBindingContextPath]
 			};
 			sandbox.stub(BindingsExtractor, "collectBindingPaths")
-				.callThrough()
-				.withArgs(this.oSource, undefined)
-				.returns(mBindingsCollection);
+			.callThrough()
+			.withArgs(this.oSource, undefined)
+			.returns(mBindingsCollection);
 			sandbox.stub(BindingsExtractor, "getBindingContextPath")
-				.withArgs(this.oSource).returns(sBindingContextPath)
-				.withArgs(this.oTarget).returns(sBindingContextPath);
+			.withArgs(this.oSource).returns(sBindingContextPath)
+			.withArgs(this.oTarget).returns(sBindingContextPath);
 			assert.strictEqual(
 				Utils.checkSourceTargetBindingCompatibility(this.oSource, this.oTarget), true,
 				"then bindings are compatible");
@@ -547,12 +546,12 @@ sap.ui.define([
 				bindingContextPaths: [sBindingContextPath]
 			};
 			sandbox.stub(BindingsExtractor, "collectBindingPaths")
-				.callThrough()
-				.withArgs(this.oSource, undefined)
-				.returns(mBindingsCollection);
+			.callThrough()
+			.withArgs(this.oSource, undefined)
+			.returns(mBindingsCollection);
 			sandbox.stub(BindingsExtractor, "getBindingContextPath")
-				.withArgs(this.oSource).returns(sBindingContextPath)
-				.withArgs(this.oTarget).returns(undefined);
+			.withArgs(this.oSource).returns(sBindingContextPath)
+			.withArgs(this.oTarget).returns(undefined);
 			assert.strictEqual(
 				Utils.checkSourceTargetBindingCompatibility(this.oSource, this.oTarget), false,
 				"then bindings are not compatible");
@@ -582,7 +581,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given stubbed fiori renderer available", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oRenderer = {
 				getRootControl: function() {
 					return {
@@ -593,12 +592,12 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({
-				getRenderer: function () {
+				getRenderer: function() {
 					return this.oRenderer;
 				}.bind(this)
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -612,15 +611,15 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given stubbed but invalid fiori renderer available", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oRenderer = { id: "mockedInvalidRenderer" };
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({
-				getRenderer: function () {
+				getRenderer: function() {
 					return this.oRenderer;
 				}.bind(this)
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -634,10 +633,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given fiori renderer is not available", {
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({ id: "mockedContainer" });
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -647,16 +646,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("showMessageBox", {
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.stub(Utils, "getRtaStyleClassName").returns("RtaStyleClass");
 			this.oWarningStub = sandbox.stub(MessageBox, "warning");
 			this.oErrorStub = sandbox.stub(MessageBox, "error");
 			return oCore.getLibraryResourceBundle("sap.ui.rta", true)
-				.then(function(oBundle) {
-					this.oRtaMessageBundle = oBundle;
-				}.bind(this));
+			.then(function(oBundle) {
+				this.oRtaMessageBundle = oBundle;
+			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -743,7 +742,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

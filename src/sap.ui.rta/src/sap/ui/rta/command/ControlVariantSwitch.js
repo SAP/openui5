@@ -51,9 +51,9 @@ sap.ui.define([
 
 	function discardVariantContent(sVReference) {
 		return this.oModel.eraseDirtyChangesOnVariant(this.sVariantManagementReference, sVReference)
-			.then(function(aDirtyChanges) {
-				this._aSourceVariantDirtyChanges = aDirtyChanges;
-			}.bind(this));
+		.then(function(aDirtyChanges) {
+			this._aSourceVariantDirtyChanges = aDirtyChanges;
+		}.bind(this));
 	}
 
 	ControlVariantSwitch.prototype._getAppComponent = function() {
@@ -76,13 +76,13 @@ sap.ui.define([
 		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oElement, oAppComponent).id;
 
 		return Promise.resolve()
-			.then(function() {
-				if (this.getDiscardVariantContent()) {
-					return discardVariantContent.call(this, this.getSourceVariantReference());
-				}
-				return undefined;
-			}.bind(this))
-			.then(this._updateModelVariant.bind(this, sNewVariantReference, oAppComponent));
+		.then(function() {
+			if (this.getDiscardVariantContent()) {
+				return discardVariantContent.call(this, this.getSourceVariantReference());
+			}
+			return undefined;
+		}.bind(this))
+		.then(this._updateModelVariant.bind(this, sNewVariantReference, oAppComponent));
 	};
 
 	/**

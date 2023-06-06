@@ -119,14 +119,14 @@ sap.ui.define([
 		}
 
 		return this._createChange(mFlexSettings, sVariantManagementReference, sCommand)
-			.then(function(oChange) {
-				this._oPreparedChange = oChange;
-				return true;
-			}.bind(this))
-			.catch(function(oError) {
-				Log.error(oError.message || oError.name);
-				return false;
-			});
+		.then(function(oChange) {
+			this._oPreparedChange = oChange;
+			return true;
+		}.bind(this))
+		.catch(function(oError) {
+			Log.error(oError.message || oError.name);
+			return false;
+		});
 	};
 
 	/**
@@ -158,12 +158,12 @@ sap.ui.define([
 			changeType: this.getChangeType()
 		};
 		objectValues(mProperties)
-			.filter(function (oProperty) {
-				return oProperty.group === "content";
-			})
-			.forEach(function (oProperty) {
-				mChangeSpecificData[oProperty.name] = oProperty.get(this);
-			}, this);
+		.filter(function(oProperty) {
+			return oProperty.group === "content";
+		})
+		.forEach(function(oProperty) {
+			mChangeSpecificData[oProperty.name] = oProperty.get(this);
+		}, this);
 		return mChangeSpecificData;
 	};
 
@@ -210,18 +210,18 @@ sap.ui.define([
 		mChangeSpecificData.command = sCommand;
 		mChangeSpecificData.generator = mFlexSettings.generator || rtaLibrary.GENERATOR_NAME;
 		return ChangesWriteAPI.create({changeSpecificData: mChangeSpecificData, selector: this._validateControlForChange(mFlexSettings)})
-			.then(function(oChange) {
-				// originalSelector is only present when making a change on/inside a template; the selector does not work with the JS propagation hook (the template has no parent),
-				// therefore the selector is changed to the parent (already the selector of the command) and the original selector saved as dependent.
-				// Also 'boundAggregation' property gets saved in the change content
-				// ATTENTION! the change gets applied as soon as the parent is available, so there might be possible side effects with lazy loading
-				if (mFlexSettings && mFlexSettings.originalSelector) {
-					oChange.addDependentControl(mFlexSettings.originalSelector, "originalSelector", {modifier: JsControlTreeModifier, appComponent: this.getAppComponent()});
-					oChange.setSelector(Object.assign(oChange.getSelector(), JsControlTreeModifier.getSelector(this.getSelector().id, this.getAppComponent())));
-					oChange.setContent(Object.assign({}, oChange.getContent(), mFlexSettings.content));
-				}
-				return oChange;
-			}.bind(this));
+		.then(function(oChange) {
+			// originalSelector is only present when making a change on/inside a template; the selector does not work with the JS propagation hook (the template has no parent),
+			// therefore the selector is changed to the parent (already the selector of the command) and the original selector saved as dependent.
+			// Also 'boundAggregation' property gets saved in the change content
+			// ATTENTION! the change gets applied as soon as the parent is available, so there might be possible side effects with lazy loading
+			if (mFlexSettings && mFlexSettings.originalSelector) {
+				oChange.addDependentControl(mFlexSettings.originalSelector, "originalSelector", {modifier: JsControlTreeModifier, appComponent: this.getAppComponent()});
+				oChange.setSelector(Object.assign(oChange.getSelector(), JsControlTreeModifier.getSelector(this.getSelector().id, this.getAppComponent())));
+				oChange.setContent(Object.assign({}, oChange.getContent(), mFlexSettings.content));
+			}
+			return oChange;
+		}.bind(this));
 	};
 
 	/**
@@ -241,12 +241,11 @@ sap.ui.define([
 	 * @returns {Promise} Returns an empty promise
 	 */
 	FlexCommand.prototype._applyChange = function(vChange) {
-		//TODO: remove the following compatibility code when concept is implemented
+		// TODO: remove the following compatibility code when concept is implemented
 		var oChange = vChange.change || vChange;
 
 		var oAppComponent = this.getAppComponent();
 		var oSelectorElement = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-
 
 		var mPropertyBag = {
 			modifier: JsControlTreeModifier,

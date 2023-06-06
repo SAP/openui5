@@ -10,7 +10,7 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		constructor: function () {
+		constructor: function() {
 			UIComponent.prototype.constructor.apply(this, arguments);
 		},
 

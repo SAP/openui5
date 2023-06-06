@@ -78,7 +78,7 @@ sap.ui.define([
 	};
 
 	LREPSerializer.prototype.handleCommandExecuted = function(oEvent) {
-		return (function (oEvent) {
+		return (function(oEvent) {
 			var oParams = oEvent;
 			this._lastPromise = this._lastPromise.catch(function() {
 				// _lastPromise chain must not be interrupted

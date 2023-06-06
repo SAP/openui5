@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/m/Button",
@@ -28,7 +28,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("basic functionality", {
-		before: function () {
+		before: function() {
 			QUnit.config.fixture = null;
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
@@ -61,7 +61,7 @@ sap.ui.define([
 
 			this.oHasChangeHandlerStud = sinon.stub(BasePlugin.prototype, "hasChangeHandler").resolves(true);
 		},
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,
 				isPublishEnabled: true
@@ -73,12 +73,12 @@ sap.ui.define([
 			});
 			sandbox.stub(ReloadManager, "handleReloadOnStart").resolves(false);
 
-			return this.oRta.start().then(function () {
-				this.oRta._oDesignTime.getElementOverlays().forEach(function (oElementOverlay) {
+			return this.oRta.start().then(function() {
+				this.oRta._oDesignTime.getElementOverlays().forEach(function(oElementOverlay) {
 					oElementOverlay.setSelectable(true);
 				});
 
-				return this.oRta.getService("selection").then(function (oSelectionService) {
+				return this.oRta.getService("selection").then(function(oSelectionService) {
 					this.oSelectionService = oSelectionService;
 				}.bind(this));
 			}.bind(this));
@@ -87,46 +87,46 @@ sap.ui.define([
 			this.oRta.destroy();
 			sandbox.restore();
 		},
-		after: function () {
+		after: function() {
 			QUnit.config.fixture = "";
 			this.oComponentContainer.destroy();
 			this.oHasChangeHandlerStud.restore();
 		}
 	}, function() {
-		QUnit.test("get()", function (assert) {
-			return this.oSelectionService.get().then(function (aSelection) {
+		QUnit.test("get()", function(assert) {
+			return this.oSelectionService.get().then(function(aSelection) {
 				assert.ok(Array.isArray(aSelection));
 				assert.strictEqual(aSelection.length, 0);
 			});
 		});
-		QUnit.test("add() with a control id to the empty selection", function (assert) {
-			return this.oSelectionService.add(this.oButton1.getId()).then(function (bResult) {
+		QUnit.test("add() with a control id to the empty selection", function(assert) {
+			return this.oSelectionService.add(this.oButton1.getId()).then(function(bResult) {
 				assert.strictEqual(bResult, true);
-				return this.oSelectionService.get().then(function (aSelection) {
+				return this.oSelectionService.get().then(function(aSelection) {
 					assert.strictEqual(aSelection.length, 1);
 					assert.strictEqual(aSelection[0], this.oButton1.getId());
 				}.bind(this));
 			}.bind(this));
 		});
-		QUnit.test("add() with multiple control ids the empty selection", function (assert) {
-			return this.oSelectionService.add([this.oButton1.getId(), this.oButton2.getId()]).then(function (bResult) {
+		QUnit.test("add() with multiple control ids the empty selection", function(assert) {
+			return this.oSelectionService.add([this.oButton1.getId(), this.oButton2.getId()]).then(function(bResult) {
 				assert.strictEqual(bResult, true);
-				return this.oSelectionService.get().then(function (aSelection) {
+				return this.oSelectionService.get().then(function(aSelection) {
 					assert.strictEqual(aSelection.length, 2);
 					assert.strictEqual(aSelection[0], this.oButton1.getId());
 					assert.strictEqual(aSelection[1], this.oButton2.getId());
 				}.bind(this));
 			}.bind(this));
 		});
-		QUnit.test("add() with multiple control ids the existing selection", function (assert) {
-			return this.oSelectionService.add(this.oButton1.getId()).then(function (bResult) {
+		QUnit.test("add() with multiple control ids the existing selection", function(assert) {
+			return this.oSelectionService.add(this.oButton1.getId()).then(function(bResult) {
 				assert.strictEqual(bResult, true);
-				return this.oSelectionService.get().then(function (aSelection) {
+				return this.oSelectionService.get().then(function(aSelection) {
 					assert.strictEqual(aSelection.length, 1);
 					assert.strictEqual(aSelection[0], this.oButton1.getId());
-					return this.oSelectionService.add([this.oButton2.getId(), this.oButton3.getId()]).then(function (bResult) {
+					return this.oSelectionService.add([this.oButton2.getId(), this.oButton3.getId()]).then(function(bResult) {
 						assert.strictEqual(bResult, true);
-						return this.oSelectionService.get().then(function (aSelection) {
+						return this.oSelectionService.get().then(function(aSelection) {
 							assert.strictEqual(aSelection.length, 3);
 							assert.strictEqual(aSelection[0], this.oButton1.getId());
 							assert.strictEqual(aSelection[1], this.oButton2.getId());
@@ -136,15 +136,15 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
-		QUnit.test("set() with a control id", function (assert) {
-			return this.oSelectionService.add(this.oButton1.getId()).then(function (bResult) {
+		QUnit.test("set() with a control id", function(assert) {
+			return this.oSelectionService.add(this.oButton1.getId()).then(function(bResult) {
 				assert.strictEqual(bResult, true);
-				return this.oSelectionService.get().then(function (aSelection) {
+				return this.oSelectionService.get().then(function(aSelection) {
 					assert.strictEqual(aSelection.length, 1);
 					assert.strictEqual(aSelection[0], this.oButton1.getId());
-					return this.oSelectionService.set(this.oButton2.getId()).then(function (bResult) {
+					return this.oSelectionService.set(this.oButton2.getId()).then(function(bResult) {
 						assert.strictEqual(bResult, true);
-						return this.oSelectionService.get().then(function (aSelection) {
+						return this.oSelectionService.get().then(function(aSelection) {
 							assert.strictEqual(aSelection.length, 1);
 							assert.strictEqual(aSelection[0], this.oButton2.getId());
 						}.bind(this));
@@ -152,15 +152,15 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
-		QUnit.test("set() with multiple control ids", function (assert) {
-			return this.oSelectionService.add(this.oButton1.getId()).then(function (bResult) {
+		QUnit.test("set() with multiple control ids", function(assert) {
+			return this.oSelectionService.add(this.oButton1.getId()).then(function(bResult) {
 				assert.strictEqual(bResult, true);
-				return this.oSelectionService.get().then(function (aSelection) {
+				return this.oSelectionService.get().then(function(aSelection) {
 					assert.strictEqual(aSelection.length, 1);
 					assert.strictEqual(aSelection[0], this.oButton1.getId());
-					return this.oSelectionService.set([this.oButton2.getId(), this.oButton3.getId()]).then(function (bResult) {
+					return this.oSelectionService.set([this.oButton2.getId(), this.oButton3.getId()]).then(function(bResult) {
 						assert.strictEqual(bResult, true);
-						return this.oSelectionService.get().then(function (aSelection) {
+						return this.oSelectionService.get().then(function(aSelection) {
 							assert.strictEqual(aSelection.length, 2);
 							assert.strictEqual(aSelection[0], this.oButton2.getId());
 							assert.strictEqual(aSelection[1], this.oButton3.getId());
@@ -169,16 +169,16 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
-		QUnit.test("remove() with a control id", function (assert) {
-			return this.oSelectionService.add([this.oButton1.getId(), this.oButton2.getId()]).then(function (bResult) {
+		QUnit.test("remove() with a control id", function(assert) {
+			return this.oSelectionService.add([this.oButton1.getId(), this.oButton2.getId()]).then(function(bResult) {
 				assert.strictEqual(bResult, true);
-				return this.oSelectionService.get().then(function (aSelection) {
+				return this.oSelectionService.get().then(function(aSelection) {
 					assert.strictEqual(aSelection.length, 2);
 					assert.strictEqual(aSelection[0], this.oButton1.getId());
 					assert.strictEqual(aSelection[1], this.oButton2.getId());
-					return this.oSelectionService.remove(this.oButton1.getId()).then(function (bResult) {
+					return this.oSelectionService.remove(this.oButton1.getId()).then(function(bResult) {
 						assert.strictEqual(bResult, true);
-						return this.oSelectionService.get().then(function (aSelection) {
+						return this.oSelectionService.get().then(function(aSelection) {
 							assert.strictEqual(aSelection.length, 1);
 							assert.strictEqual(aSelection[0], this.oButton2.getId());
 						}.bind(this));
@@ -186,14 +186,14 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
-		QUnit.test("remove() with a multiple control ids", function (assert) {
+		QUnit.test("remove() with a multiple control ids", function(assert) {
 			return this.oSelectionService.add([
 				this.oButton1.getId(),
 				this.oButton2.getId(),
 				this.oButton3.getId()
-			]).then(function (bResult) {
+			]).then(function(bResult) {
 				assert.strictEqual(bResult, true);
-				return this.oSelectionService.get().then(function (aSelection) {
+				return this.oSelectionService.get().then(function(aSelection) {
 					assert.strictEqual(aSelection.length, 3);
 					assert.strictEqual(aSelection[0], this.oButton1.getId());
 					assert.strictEqual(aSelection[1], this.oButton2.getId());
@@ -201,9 +201,9 @@ sap.ui.define([
 					return this.oSelectionService.remove([
 						this.oButton1.getId(),
 						this.oButton2.getId()
-					]).then(function (bResult) {
+					]).then(function(bResult) {
 						assert.strictEqual(bResult, true);
-						return this.oSelectionService.get().then(function (aSelection) {
+						return this.oSelectionService.get().then(function(aSelection) {
 							assert.strictEqual(aSelection.length, 1);
 							assert.strictEqual(aSelection[0], this.oButton3.getId());
 						}.bind(this));
@@ -211,26 +211,26 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
-		QUnit.test("reset()", function (assert) {
-			return this.oSelectionService.add([this.oButton1.getId(), this.oButton2.getId()]).then(function (bResult) {
+		QUnit.test("reset()", function(assert) {
+			return this.oSelectionService.add([this.oButton1.getId(), this.oButton2.getId()]).then(function(bResult) {
 				assert.strictEqual(bResult, true);
-				return this.oSelectionService.get().then(function (aSelection) {
+				return this.oSelectionService.get().then(function(aSelection) {
 					assert.strictEqual(aSelection.length, 2);
 					assert.strictEqual(aSelection[0], this.oButton1.getId());
 					assert.strictEqual(aSelection[1], this.oButton2.getId());
-					return this.oSelectionService.reset().then(function (bResult) {
+					return this.oSelectionService.reset().then(function(bResult) {
 						assert.strictEqual(bResult, true);
-						return this.oSelectionService.get().then(function (aSelection) {
+						return this.oSelectionService.get().then(function(aSelection) {
 							assert.strictEqual(aSelection.length, 0);
 						});
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
-		QUnit.test("receiving an event when selection has been changed", function (assert) {
+		QUnit.test("receiving an event when selection has been changed", function(assert) {
 			assert.expect(2);
 			var fnDone = assert.async();
-			this.oSelectionService.attachEvent("change", function (aSelection) {
+			this.oSelectionService.attachEvent("change", function(aSelection) {
 				assert.ok(Array.isArray(aSelection));
 				assert.strictEqual(aSelection[0], this.oButton1.getId());
 				fnDone();
@@ -239,7 +239,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

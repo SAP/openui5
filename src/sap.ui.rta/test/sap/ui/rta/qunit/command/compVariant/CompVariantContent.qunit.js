@@ -66,13 +66,13 @@ sap.ui.define([
 			this.oControl.setModified = oSetModifiedStub;
 			var oUpdateFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "updateVariantContent");
 			var oUndoVariantFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "revert").returns({
-				getRevertData: function () {
+				getRevertData: function() {
 					return [];
 				},
-				getContent: function () {
+				getContent: function() {
 					return { myKey: {content: "oldContent"} };
 				},
-				getDirtyStatus: function () {
+				getDirtyStatus: function() {
 					return false;
 				}
 			});
@@ -93,33 +93,33 @@ sap.ui.define([
 				newContent: this.oNewContent,
 				isModifiedBefore: false
 			}, {})
-				.then(function(oCreatedCommand) {
-					oCommand = oCreatedCommand;
+			.then(function(oCreatedCommand) {
+				oCommand = oCreatedCommand;
 
-					return oCommand.execute();
-				}).then(function() {
-					assert.deepEqual(oUpdateFlAPIStub.lastCall.args[0], mExpectedProperties, "the FL API was called with the correct properties");
-					assert.equal(oSetModifiedStub.callCount, 1, "the setModified was called..");
-					assert.equal(oSetModifiedStub.lastCall.args[0], true, "and set to true");
-					assert.equal(oCommand.getIsModifiedBefore(), false, "isModifiedBefore value stored correctly");
-					assertApplyVariantByPersistencyKeyCalled.call(this, assert, oCommand, {myKey: this.oNewContent});
+				return oCommand.execute();
+			}).then(function() {
+				assert.deepEqual(oUpdateFlAPIStub.lastCall.args[0], mExpectedProperties, "the FL API was called with the correct properties");
+				assert.equal(oSetModifiedStub.callCount, 1, "the setModified was called..");
+				assert.equal(oSetModifiedStub.lastCall.args[0], true, "and set to true");
+				assert.equal(oCommand.getIsModifiedBefore(), false, "isModifiedBefore value stored correctly");
+				assertApplyVariantByPersistencyKeyCalled.call(this, assert, oCommand, {myKey: this.oNewContent});
 
-					return oCommand.undo();
-				}.bind(this)).then(function() {
-					assert.equal(oUndoVariantFlAPIStub.callCount, 1, "the undo function was called");
-					assert.equal(oSetModifiedStub.callCount, 2, "the setModified was called again..");
-					assert.equal(oSetModifiedStub.lastCall.args[0], false, "and set to false");
-					assertApplyVariantByPersistencyKeyCalled.call(this, assert, oCommand, {myKey: this.oOldContent});
+				return oCommand.undo();
+			}.bind(this)).then(function() {
+				assert.equal(oUndoVariantFlAPIStub.callCount, 1, "the undo function was called");
+				assert.equal(oSetModifiedStub.callCount, 2, "the setModified was called again..");
+				assert.equal(oSetModifiedStub.lastCall.args[0], false, "and set to false");
+				assertApplyVariantByPersistencyKeyCalled.call(this, assert, oCommand, {myKey: this.oOldContent});
 
-					return oCommand.execute();
-				}.bind(this)).then(function() {
-					assert.equal(oUpdateFlAPIStub.callCount, 2, "the FL update function was called again");
-					assert.deepEqual(oUpdateFlAPIStub.lastCall.args[0], mExpectedProperties, "the FL API was called with the correct properties");
-					assert.equal(oSetModifiedStub.callCount, 3, "the setModified was called again..");
-					assert.equal(oSetModifiedStub.lastCall.args[0], true, "and set to true");
-					assert.equal(oCommand.getIsModifiedBefore(), false, "isModifiedBefore value stored correctly");
-					assertApplyVariantByPersistencyKeyCalled.call(this, assert, oCommand, {myKey: this.oNewContent});
-				}.bind(this));
+				return oCommand.execute();
+			}.bind(this)).then(function() {
+				assert.equal(oUpdateFlAPIStub.callCount, 2, "the FL update function was called again");
+				assert.deepEqual(oUpdateFlAPIStub.lastCall.args[0], mExpectedProperties, "the FL API was called with the correct properties");
+				assert.equal(oSetModifiedStub.callCount, 3, "the setModified was called again..");
+				assert.equal(oSetModifiedStub.lastCall.args[0], true, "and set to true");
+				assert.equal(oCommand.getIsModifiedBefore(), false, "isModifiedBefore value stored correctly");
+				assertApplyVariantByPersistencyKeyCalled.call(this, assert, oCommand, {myKey: this.oNewContent});
+			}.bind(this));
 		});
 
 		QUnit.test("when a CompVariantContent command is created, executed, undone and redone", function(assert) {
@@ -128,13 +128,13 @@ sap.ui.define([
 			this.oControl.setModified = oSetModifiedStub;
 			var oUpdateFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "updateVariantContent");
 			var oUndoVariantFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "revert").returns({
-				getRevertData: function () {
+				getRevertData: function() {
 					return [];
 				},
-				getContent: function () {
+				getContent: function() {
 					return { content: "oldContent"};
 				},
-				getDirtyStatus: function () {
+				getDirtyStatus: function() {
 					return false;
 				}
 			});
@@ -154,33 +154,33 @@ sap.ui.define([
 				newContent: this.oNewContent,
 				isModifiedBefore: true
 			}, {})
-				.then(function(oCreatedCommand) {
-					oCommand = oCreatedCommand;
+			.then(function(oCreatedCommand) {
+				oCommand = oCreatedCommand;
 
-					return oCommand.execute();
-				}).then(function() {
-					assert.deepEqual(oUpdateFlAPIStub.lastCall.args[0], mExpectedProperties, "the FL API was called with the correct properties");
-					assert.equal(oSetModifiedStub.callCount, 1, "the setModified was called..");
-					assert.equal(oSetModifiedStub.lastCall.args[0], true, "and set to true");
-					assert.equal(oCommand.getIsModifiedBefore(), true, "isModifiedBefore value stored correctly");
-					assertApplyVariantCalled.call(this, assert, oCommand, this.oNewContent);
+				return oCommand.execute();
+			}).then(function() {
+				assert.deepEqual(oUpdateFlAPIStub.lastCall.args[0], mExpectedProperties, "the FL API was called with the correct properties");
+				assert.equal(oSetModifiedStub.callCount, 1, "the setModified was called..");
+				assert.equal(oSetModifiedStub.lastCall.args[0], true, "and set to true");
+				assert.equal(oCommand.getIsModifiedBefore(), true, "isModifiedBefore value stored correctly");
+				assertApplyVariantCalled.call(this, assert, oCommand, this.oNewContent);
 
-					return oCommand.undo();
-				}.bind(this)).then(function() {
-					assert.equal(oUndoVariantFlAPIStub.callCount, 1, "the undo function was called");
-					assert.equal(oSetModifiedStub.callCount, 2, "the setModified was called again..");
-					assert.equal(oSetModifiedStub.lastCall.args[0], true, "and set to true");
-					assertApplyVariantCalled.call(this, assert, oCommand, this.oOldContent);
+				return oCommand.undo();
+			}.bind(this)).then(function() {
+				assert.equal(oUndoVariantFlAPIStub.callCount, 1, "the undo function was called");
+				assert.equal(oSetModifiedStub.callCount, 2, "the setModified was called again..");
+				assert.equal(oSetModifiedStub.lastCall.args[0], true, "and set to true");
+				assertApplyVariantCalled.call(this, assert, oCommand, this.oOldContent);
 
-					return oCommand.execute();
-				}.bind(this)).then(function() {
-					assert.equal(oUpdateFlAPIStub.callCount, 2, "the FL update function was called again");
-					assert.deepEqual(oUpdateFlAPIStub.lastCall.args[0], mExpectedProperties, "the FL API was called with the correct properties");
-					assert.equal(oSetModifiedStub.callCount, 3, "the setModified was called again..");
-					assert.equal(oCommand.getIsModifiedBefore(), true, "isModifiedBefore value stored correctly");
-					assert.equal(oSetModifiedStub.lastCall.args[0], true, "and set to true");
-					assertApplyVariantCalled.call(this, assert, oCommand, this.oNewContent);
-				}.bind(this));
+				return oCommand.execute();
+			}.bind(this)).then(function() {
+				assert.equal(oUpdateFlAPIStub.callCount, 2, "the FL update function was called again");
+				assert.deepEqual(oUpdateFlAPIStub.lastCall.args[0], mExpectedProperties, "the FL API was called with the correct properties");
+				assert.equal(oSetModifiedStub.callCount, 3, "the setModified was called again..");
+				assert.equal(oCommand.getIsModifiedBefore(), true, "isModifiedBefore value stored correctly");
+				assert.equal(oSetModifiedStub.lastCall.args[0], true, "and set to true");
+				assertApplyVariantCalled.call(this, assert, oCommand, this.oNewContent);
+			}.bind(this));
 		});
 	});
 

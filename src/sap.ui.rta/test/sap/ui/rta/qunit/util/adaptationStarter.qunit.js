@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/base/util/UriParameters",
@@ -76,7 +76,7 @@ sap.ui.define([
 				flexSettings: {
 					layer: "CUSTOMER"
 				}
-			}).then(function () {
+			}).then(function() {
 				assert.strictEqual(this.fnMessageBoxStub.callCount, 1, "then the warning is shown");
 				assert.strictEqual(
 					this.fnMessageBoxStub.lastCall.args[1].title,
@@ -103,7 +103,7 @@ sap.ui.define([
 					layer: "CUSTOMER"
 				}
 			})
-			.then(function () {
+			.then(function() {
 				assert.strictEqual(this.fnMessageBoxStub.callCount, 1, "then the warning is shown");
 				assert.strictEqual(
 					this.fnMessageBoxStub.lastCall.args[1].title,
@@ -129,7 +129,7 @@ sap.ui.define([
 					layer: "CUSTOMER"
 				}
 			})
-			.then(function () {
+			.then(function() {
 				assert.strictEqual(this.fnMessageBoxStub.callCount, 0, "then the warning is not shown");
 			}.bind(this));
 		});
@@ -141,7 +141,7 @@ sap.ui.define([
 					layer: "USER"
 				}
 			})
-			.then(function () {
+			.then(function() {
 				assert.strictEqual(FeaturesAPI.isKeyUser.callCount, 0, "the key user check was not performed");
 				assert.strictEqual(this.fnRtaStartStub.callCount, 1, "RTA was started");
 			}.bind(this));
@@ -160,7 +160,8 @@ sap.ui.define([
 				return oRta.stop(true, true);
 			})
 			.then(function() {
-				assert.strictEqual(oRuntimeAuthoring.isDestroyStarted(), true, "the instance is getting destroyed via the default stop handler");
+				assert.strictEqual(oRuntimeAuthoring.isDestroyStarted(), true,
+					"the instance is getting destroyed via the default stop handler");
 			});
 		});
 
@@ -177,9 +178,12 @@ sap.ui.define([
 				}
 			}, oLoadPluginsStub, oOnStartStub, oOnFailedStub, oOnStopStub)
 			.then(function(oRta) {
-				assert.strictEqual(oRta.mEventRegistry.start.pop().fFunction, oOnStartStub, "then the passed on load handler is registered as event handler");
-				assert.strictEqual(oRta.mEventRegistry.failed.pop().fFunction, oOnFailedStub, "then the passed on failed handler is registered as event handler");
-				assert.strictEqual(oRta.mEventRegistry.stop.pop().fFunction, oOnStopStub, "then the passed on stop handler is registered as event handler");
+				assert.strictEqual(oRta.mEventRegistry.start.pop().fFunction, oOnStartStub,
+					"then the passed on load handler is registered as event handler");
+				assert.strictEqual(oRta.mEventRegistry.failed.pop().fFunction, oOnFailedStub,
+					"then the passed on failed handler is registered as event handler");
+				assert.strictEqual(oRta.mEventRegistry.stop.pop().fFunction, oOnStopStub,
+					"then the passed on stop handler is registered as event handler");
 			});
 		});
 
@@ -202,9 +206,9 @@ sap.ui.define([
 				}
 			});
 			sandbox.stub(UriParameters.prototype, "get")
-				.callThrough()
-				.withArgs("fiori-tools-rta-mode")
-				.returns("true");
+			.callThrough()
+			.withArgs("fiori-tools-rta-mode")
+			.returns("true");
 
 			return adaptationStarter({
 				rootControl: oAppComponent,
@@ -237,15 +241,17 @@ sap.ui.define([
 					layer: "CUSTOMER"
 				}
 			})
-			.then(function () {
+			.then(function() {
 				assert.ok(false, "should not go here");
 			})
 			.catch(function(oError) {
 				assert.strictEqual(this.oRtaStartStub.callCount, 0, "RuntimeAuthoring is not started");
 				assert.strictEqual(this.oLogStub.callCount, 1, "an error was logged");
 				assert.strictEqual(this.fnMessageBoxStub.callCount, 1, "a message box is displayed with the error");
-				assert.strictEqual(this.oLogStub.lastCall.args[0], "UI Adaptation could not be started", "the generic part is correct");
-				assert.strictEqual(this.oLogStub.lastCall.args[1], "You do not have key user permissions. Please contact your administrator.", "the specific part is correct");
+				assert.strictEqual(this.oLogStub.lastCall.args[0],
+					"UI Adaptation could not be started", "the generic part is correct");
+				assert.strictEqual(this.oLogStub.lastCall.args[1],
+					"You do not have key user permissions. Please contact your administrator.", "the specific part is correct");
 				assert.strictEqual(oError.reason, "isKeyUser", "the reason is properly set");
 			}.bind(this));
 		});
@@ -263,15 +269,17 @@ sap.ui.define([
 					layer: "CUSTOMER"
 				}
 			})
-			.then(function () {
+			.then(function() {
 				assert.ok(false, "should not go here");
 			})
 			.catch(function(oError) {
 				assert.strictEqual(this.oRtaStartStub.callCount, 0, "RuntimeAuthoring is not started");
 				assert.strictEqual(this.oLogStub.callCount, 1, "an error was logged");
 				assert.strictEqual(this.fnMessageBoxStub.callCount, 1, "a message box is displayed with the error");
-				assert.strictEqual(this.oLogStub.lastCall.args[0], "UI Adaptation could not be started", "the generic part is correct");
-				assert.strictEqual(this.oLogStub.lastCall.args[1], "This app is not enabled for key user adaptation", "the specific part is correct");
+				assert.strictEqual(this.oLogStub.lastCall.args[0],
+					"UI Adaptation could not be started", "the generic part is correct");
+				assert.strictEqual(this.oLogStub.lastCall.args[1],
+					"This app is not enabled for key user adaptation", "the specific part is correct");
 				assert.ok(oError instanceof Error, "then promise was rejected with an error");
 				assert.strictEqual(oError.reason, "flexEnabled", "the reason is properly set");
 			}.bind(this));
@@ -291,7 +299,7 @@ sap.ui.define([
 					layer: "CUSTOMER"
 				}
 			})
-			.then(function () {
+			.then(function() {
 				assert.ok(false, "should not go here");
 			})
 			.catch(function(oError) {
@@ -311,7 +319,7 @@ sap.ui.define([
 					layer: "CUSTOMER"
 				}
 			})
-			.then(function () {
+			.then(function() {
 				assert.ok(false, "should not go here");
 			})
 			.catch(function(oError) {
@@ -343,7 +351,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		oAppComponent.destroy();
 		document.getElementById("qunit-fixture").style.display = "none";
 	});

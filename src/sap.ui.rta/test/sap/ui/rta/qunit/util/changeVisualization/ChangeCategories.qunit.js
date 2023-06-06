@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/ChangeCategories"
@@ -20,7 +20,7 @@ sap.ui.define([
 				"then the change categories are returned as object keys"
 			);
 			assert.deepEqual(
-				ChangeCategories.getCategories()["add"],
+				ChangeCategories.getCategories().add,
 				["createContainer", "addDelegateProperty", "reveal", "addIFrame"],
 				"then the commands for the categories are returned"
 			);

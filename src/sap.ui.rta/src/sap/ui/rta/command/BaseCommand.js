@@ -48,7 +48,6 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function(ManagedObject) {
 		}
 	});
 
-
 	/**
 	 * Returns element instance instead of ID.
 	 * @override

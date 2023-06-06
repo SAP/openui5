@@ -124,7 +124,7 @@ sap.ui.define(
 			When.onTheDemoAppPage.iClickOnCloseDialogButton();
 		});
 
-		opaTest("Should clear the table selection after reopening the dialog", function (Given, When, Then) {
+		opaTest("Should clear the table selection after reopening the dialog", function(Given, When, Then) {
 			Then.onTheDemoAppPage.iShouldSeeManageAdaptationsDialogButton();
 			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButton();
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeManageContextBasedAdaptationDialogIsOpend();
@@ -148,7 +148,7 @@ sap.ui.define(
 			Then.iTeardownMyApp();
 		});
 
-		opaTest("Should move and enable the correct move up/down buttons", function (Given, When, Then) {
+		opaTest("Should move and enable the correct move up/down buttons", function(Given, When, Then) {
 			Given.iStartMyApp();
 			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButton();
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeManageContextBasedAdaptationDialogIsOpend();
@@ -256,7 +256,7 @@ sap.ui.define(
 			Then.iTeardownMyApp();
 		});
 
-		opaTest("Should move and enable the correct move up/down buttons with only two adaptations", function (Given, When, Then) {
+		opaTest("Should move and enable the correct move up/down buttons with only two adaptations", function(Given, When, Then) {
 			Given.iStartMyApp();
 			Then.onTheDemoAppPage.iShouldSeeManageAdaptationsDialogButton();
 			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButtonWithTwoAdaptations();
@@ -397,7 +397,6 @@ sap.ui.define(
 
 			When.onTheAddAdaptationDialogPage.iEnterAdaptationDescription(testData.editAdaptation.description);
 			Then.onTheAddAdaptationDialogPage.iShouldSeeAdaptationDescription(testData.editAdaptation.description);
-
 
 			Then.onTheContextSharingVisibilityFragmentPage.iShouldSeeSelectedRolesSection();
 			When.onTheContextSharingVisibilityFragmentPage.iClickOnAddRoleButton();
