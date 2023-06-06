@@ -63,7 +63,7 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 			}
 
 			// initialize propertyHelper also, when store is initially empty
-			if (this._sPropertyInfoStore && (!arguments[0] || !arguments[0].hasOwnProperty(this._sPropertyInfoStore))) {
+			if (!this._bPropertyHelperInitializing && this._sPropertyInfoStore && (!arguments[0] || !arguments[0].hasOwnProperty(this._sPropertyInfoStore))) {
 				_createOrUpdatePropertyHelper.call(this, [], false);
 			}
 
