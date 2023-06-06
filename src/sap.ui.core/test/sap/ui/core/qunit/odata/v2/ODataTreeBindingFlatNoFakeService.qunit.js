@@ -167,8 +167,8 @@ sap.ui.define([
 }, {
 	inputParameters : {bar : "~baz", groupId : "~value0", refreshAfterChange : "~value1"},
 	expectedParameters : {bar : "~baz", groupId : "~groupId", refreshAfterChange : false}
-}].forEach(function (oFixture) {
-	QUnit.test("createEntry: resolved binding", function (assert) {
+}].forEach(function (oFixture, i) {
+	QUnit.test("createEntry: resolved binding, #" + i, function (assert) {
 		var oBinding = {
 				oModel : {
 					_resolveGroup : function () {},

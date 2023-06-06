@@ -51,19 +51,13 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	//getProperty()
-	QUnit.test("test model getProperty", function(assert) {
-		var value = oModel.getProperty("TEST_TEXT");
-		assert.equal(value, "A text en");
-	});
-
 	//setProperty must not exist!
 	QUnit.test("set Property must have no effect", function(assert) {
 		assert.ok(!oModel.setProperty, "set Property method should not be defined");
 	});
 
 	//getProperty()/binding
-	QUnit.test("test model getProperty", function(assert) {
+	QUnit.test("test model getProperty and via binding", function(assert) {
 		oLabel = new TestButton("myLabel", {text: "{TEST_TEXT}"});
 		oLabel.placeAt("target1");
 		var value = oModel.getProperty("TEST_TEXT");
@@ -97,19 +91,13 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	//getProperty()
-	QUnit.test("test model getProperty", function(assert) {
-		var value = oModel.getProperty("TEST_TEXT");
-		assert.equal(value, "A text en");
-	});
-
 	//setProperty must not exist!
 	QUnit.test("set Property must have no effect", function(assert) {
 		assert.ok(!oModel.setProperty, "set Property method should not be defined");
 	});
 
 	//getProperty()/binding
-	QUnit.test("test model getProperty", function(assert) {
+	QUnit.test("test model getProperty and via binding", function(assert) {
 		oLabel = new TestButton("myLabel", {text: "{i18n>TEST_TEXT}"});
 		oLabel.placeAt("target1");
 		var value = oModel.getProperty("TEST_TEXT");
@@ -146,17 +134,12 @@ sap.ui.define([
 
 		oLabel.destroy();
 	});
-	//getProperty()
-	QUnit.test("test model getProperty", function(assert) {
-		var value = oModel.getProperty("TEST_TEXT");
-		assert.equal(value, "A text en");
-	});
 	//setProperty must not exist!
 	QUnit.test("set Property must have no effect", function(assert) {
 		assert.ok(!oModel.setProperty, "set Property method should not be defined");
 	});
 	//getProperty()/binding
-	QUnit.test("test model getProperty", function(assert) {
+	QUnit.test("test model getProperty and via binding", function(assert) {
 		oLabel = new TestButton("myLabel", {text: "{i18n>TEST_TEXT}"});
 		oLabel.placeAt("target1");
 		var value = oModel.getProperty("TEST_TEXT");
@@ -182,7 +165,7 @@ sap.ui.define([
 		assert.equal(info.key, "TEST_TEXT");
 	});
 
-	QUnit.test("Model instantiated successful", function(assert) {
+	QUnit.test("Model instantiated successfully, named model", function(assert) {
 		oLabel = new TestButton("myLabel", {text: "{i18n>TEST_TEXT}"});
 		oLabel.setModel(oModel, "i18n");
 		var oClone = oLabel.clone();
@@ -193,7 +176,7 @@ sap.ui.define([
 		oModel.destroy();
 	});
 
-	QUnit.test("Model instantiated successful", function(assert) {
+	QUnit.test("Model instantiated successfully, cloned before named model is set", function(assert) {
 		oLabel = new TestButton("myLabel", {text: "{i18n>TEST_TEXT}"});
 		var oClone = oLabel.clone();
 		oClone.setModel(oModel, "i18n");

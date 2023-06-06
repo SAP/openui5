@@ -129,7 +129,7 @@ sap.ui.define([
 
 	 });
 
-	QUnit.test("TreeBinding getRootContexts getNodeContexts", function(assert) {
+	QUnit.test("TreeBinding getRootContexts getNodeContexts setXML", function(assert) {
 		var treeBinding = this.createTreeBinding("/orgStructure"),
 			contexts,
 			context;

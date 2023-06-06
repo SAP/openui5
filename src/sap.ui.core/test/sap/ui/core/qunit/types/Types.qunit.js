@@ -1552,8 +1552,8 @@ sap.ui.define([
 	{constraints : {search : "ab"}, message : "String.Search"},
 	{constraints : {startsWith : "ab"}, message : "String.StartsWith ab"},
 	{constraints : {startsWithIgnoreCase : "ab"}, message : "String.StartsWith ab"}
-].forEach(function (oFixture) {
-	QUnit.test("string validateValue with null, exception, " + oFixture.message, function (assert) {
+].forEach(function (oFixture, i) {
+	QUnit.test("string validateValue with null, exception, #" + i, function (assert) {
 		var oType = new StringType(null, oFixture.constraints);
 
 		TestUtils.withNormalizedMessages(function () {
@@ -2385,41 +2385,6 @@ sap.ui.define([
 		// "" --> 0
 		var oUnitType5 = new UnitType({emptyString: 0, parseAsString: true});
 		assert.deepEqual(oUnitType5.parseValue("", "string"), ["0", undefined], "0 is returned");
-	});
-
-	QUnit.test("Multiple Unit-Instances with bound custom units and other distinct format options", function (assert) {
-		// new Meter type
-		var CustomUnitType = UnitType.extend("sap.ui.core.test.CustomUnitType", {
-			constructor: function (oFormatOptions, oConstraints) {
-				UnitType.apply(this, [oFormatOptions, oConstraints, ["customUnits"]]);
-			}
-		});
-
-		var oCustomUnitConfig = {
-			"length-meter": {
-				"unitPattern-count-one": "{0} m",
-				"unitPattern-count-many": "{0} m",
-				"unitPattern-count-other": "{0} m",
-				"decimals": 4
-			}
-		};
-
-		var oCustomUnitTypeInstanceSpy = this.spy(NumberFormat, "getUnitInstance");
-
-		var oCustomUnitType = new CustomUnitType(/* showMeasure is true by default*/);
-		var oCustomUnitType2 = new CustomUnitType({showMeasure: false});
-		var oCustomUnitType3 = new CustomUnitType({showMeasure: false});
-
-		// straight forward case
-		assert.strictEqual(oCustomUnitType.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string"), "123.456789 m");
-		assert.strictEqual(oCustomUnitTypeInstanceSpy.callCount, 1, "1st instance created");
-
-		// additional format options
-		assert.strictEqual(oCustomUnitType2.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string"), "123.456789", "formatted value respects the 'decimals' of custom unit");
-		assert.strictEqual(oCustomUnitTypeInstanceSpy.callCount, 2, "2nd instance created, because of different format options");
-
-		assert.strictEqual(oCustomUnitType3.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string"), "123.456789", "formatted value respects the 'decimals' of custom unit");
-		assert.strictEqual(oCustomUnitTypeInstanceSpy.callCount, 2, "No additional instance is created, 2nd instance is taken from cache");
 	});
 
 	QUnit.test("unit parseValue with strict mode - CLDR (showMeasure=true)", function (assert) {
