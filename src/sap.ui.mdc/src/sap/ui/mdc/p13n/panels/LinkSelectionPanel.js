@@ -53,7 +53,8 @@ sap.ui.define([
                                     customData: new CustomData({
                                         key: "internalHref",
                                         value: "{" + this.P13N_MODEL + ">internalHref}"
-                                    })
+                                    }),
+                                    wrapping: true
                                 }),
                                 new Text({
                                     text: "{" + this.P13N_MODEL + ">description}",
