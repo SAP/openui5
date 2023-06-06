@@ -87,6 +87,23 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("numeric font-weight", function(assert) {
+		assert.equal(
+			sanitizeHTML("<span style=\"font-weight: 900\"></span>"),
+			"<span style=\"font-weight: 900\"></span>",
+			"a standard numeric font-weight (900) is accepted");
+
+		assert.equal(
+			sanitizeHTML("<span style=\"font-weight: lighter\"></span>"),
+			"<span style=\"font-weight: lighter\"></span>",
+			"a named font-weight (lighter) is accepted");
+
+		assert.equal(
+			sanitizeHTML("<span style=\"font-weight: 451\"></span>"),
+			"<span style=\"font-weight: \"></span>",
+			"a CSS Font Level 4 value (451) is not accepted");
+	});
+
 	QUnit.module("Sanitizer Performance", {
 		before: function(assert) {
 			// add a custom assertion "lower than"

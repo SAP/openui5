@@ -489,7 +489,10 @@ var cssSchema = (function () {
       },
       'font-weight': {
         'cssPropBits': 0,
-        'cssLitGroup': [ L[ 4 ], L[ 47 ], L[ 55 ] ]
+        'cssLitGroup': [ L[ 4 ], L[ 47 ], L[ 55 ] ],
+        // ##### BEGIN: MODIFIED BY SAP
+        'cssLitNumeric': true
+        // ##### END: MODIFIED BY SAP
       },
       'height': {
         'cssPropBits': 37,
@@ -1217,101 +1220,113 @@ var sanitizeCssProperty = (function () {
       token = (
         // Strip out spaces.  Normally cssparser.js dumps these, but we
         // strip them out in case the content doesn't come via cssparser.js.
-        (cc === ' '.charCodeAt(0)) ? ''
-        : (cc === '"'.charCodeAt(0)) ? (  // Quoted string.
-          (qstringBits === CSS_PROP_BIT_QSTRING_URL && opt_naiveUriRewriter)
-          // Sanitize and convert to url("...") syntax.
-          // Treat url content as case-sensitive.
-          ? (normalizeUrl(safeUri(
-                decodeCss(tokens[i].substring(1, token.length - 1)),
-                property,
-                opt_naiveUriRewriter)))
-          // Drop if plain text content strings not allowed.
-          : (qstringBits === CSS_PROP_BIT_QSTRING_CONTENT) ? token : '')
-        // Preserve hash color literals if allowed.
-        : (cc === '#'.charCodeAt(0) && /^#(?:[0-9a-f]{3}){1,2}$/.test(token))
-        ? (propBits & CSS_PROP_BIT_HASH_VALUE ? token : '')
-        : ('0'.charCodeAt(0) <= cc && cc <= '9'.charCodeAt(0))
-        // A number starting with a digit.
-        ? ((propBits & CSS_PROP_BIT_QUANTITY)
-          ? ((propBits & CSS_PROP_BIT_Z_INDEX)
-            ? (token.match(/^\d{1,7}$/) ? token : '')
-            : token)
-          : '')
-        // Normalize quantities so they don't start with a '.' or '+' sign and
-        // make sure they all have an integer component so can't be confused
-        // with a dotted identifier.
-        // This can't be done in the lexer since ".4" is a valid rule part.
-        : (cc1 = token.charCodeAt(1),
-           cc2 = token.charCodeAt(2),
-           isnum1 = '0'.charCodeAt(0) <= cc1 && cc1 <= '9'.charCodeAt(0),
-           isnum2 = '0'.charCodeAt(0) <= cc2 && cc2 <= '9'.charCodeAt(0),
-           // +.5 -> 0.5 if allowed.
-           (cc === '+'.charCodeAt(0)
-            && (isnum1 || (cc1 === '.'.charCodeAt(0) && isnum2))))
-          ? ((propBits & CSS_PROP_BIT_QUANTITY)
-            ? ((propBits & CSS_PROP_BIT_Z_INDEX)
-              ? (token.match(/^\+\d{1,7}$/) ? token : '')
-              : ((isnum1 ? '' : '0') + token.substring(1)))
-            : '')
-        // -.5 -> -0.5 if allowed otherwise -> 0 if quantities allowed.
-        : (cc === '-'.charCodeAt(0)
-           && (isnum1 || (cc1 === '.'.charCodeAt(0) && isnum2)))
-          ? ((propBits & CSS_PROP_BIT_NEGATIVE_QUANTITY)
-             ? ((propBits & CSS_PROP_BIT_Z_INDEX)
-               ? (token.match(/^\-\d{1,7}$/) ? token : '')
-               : ((isnum1 ? '-' : '-0') + token.substring(1)))
-             : ((propBits & CSS_PROP_BIT_QUANTITY) ? '0' : ''))
-        // .5 -> 0.5 if allowed.
-        : (cc === '.'.charCodeAt(0) && isnum1)
-        ? ((propBits & CSS_PROP_BIT_QUANTITY) ? '0' + token : '')
-        // Handle url("...") by rewriting the body.
-        : ('url(' === token.substring(0, 4))
-        ? ((opt_naiveUriRewriter && (qstringBits & CSS_PROP_BIT_QSTRING_URL))
-           ? normalizeUrl(safeUri(
-                tokens[i].substring(5, token.length - 2),
-                property,
-                opt_naiveUriRewriter))
-           : '')
-        // Handle func(...) and literal tokens
-        // such as keywords and punctuation.
-        : (
-          // Step 1. Combine func(...) into something that can be compared
-          // against propertySchema.cssExtra.
-          (token.charAt(token.length-1) === '(')
-          && (end = normalizeFunctionCall(tokens, i),
-              // When tokens is
-              //   ['x', ' ', 'rgb(', '255', ',', '0', ',', '0', ')', ' ', 'y']
-              // and i is the index of 'rgb(' and end is the index of ')'
-              // splices tokens to where i now is the index of the whole call:
-              //   ['x', ' ', 'rgb( 255 , 0 , 0 )', ' ', 'y']
-              tokens.splice(i, end - i,
-                            token = tokens.slice(i, end).join(' '))),
-          litGroup = propertySchema.cssLitGroup,
-          litMap = (litGroup
-                    ? (propertySchema.cssLitMap
-                       // Lazily compute the union from litGroup.
-                       || (propertySchema.cssLitMap = unionArrays(litGroup)))
-                    : ALLOWED_LITERAL),  // A convenient empty object.
-          (litMap[token] === ALLOWED_LITERAL
-           || propertySchema.cssExtra && propertySchema.cssExtra.test(token)))
-          // Token is in the literal map or matches extra.
-          ? token
-          : (/^\w+$/.test(token)
-             && (qstringBits === CSS_PROP_BIT_QSTRING_CONTENT))
-          // Quote unrecognized keywords so font names like
-          //    Arial Bold
-          // ->
-          //    "Arial Bold"
-          ? (lastQuoted+1 === k
-             // If the last token was also a keyword that was quoted, then
-             // combine this token into that.
-             ? (tokens[lastQuoted] = tokens[lastQuoted]
-                .substring(0, tokens[lastQuoted].length-1) + ' ' + token + '"',
-                token = '')
-             : (lastQuoted = k, '"' + token + '"'))
-          // Disallowed.
-          : '');
+        (cc === ' '.charCodeAt(0))
+          ? ''
+          : (cc === '"'.charCodeAt(0))
+              ? (  // Quoted string.
+                  (qstringBits === CSS_PROP_BIT_QSTRING_URL && opt_naiveUriRewriter)
+                  // Sanitize and convert to url("...") syntax.
+                  // Treat url content as case-sensitive.
+                  ? (normalizeUrl(
+                       safeUri(
+                         decodeCss(tokens[i].substring(1, token.length - 1)),
+                         property,
+                         opt_naiveUriRewriter
+                       )
+                     ))
+                  // Drop if plain text content strings not allowed.
+                  : (qstringBits === CSS_PROP_BIT_QSTRING_CONTENT) ? token : '')
+              // Preserve hash color literals if allowed.
+              : (cc === '#'.charCodeAt(0) && /^#(?:[0-9a-f]{3}){1,2}$/.test(token))
+                  ? (propBits & CSS_PROP_BIT_HASH_VALUE ? token : '')
+                  // ##### BEGIN: MODIFIED BY SAP
+                  // : ('0'.charCodeAt(0) <= cc && cc <= '9'.charCodeAt(0))
+                  : ('0'.charCodeAt(0) <= cc && cc <= '9'.charCodeAt(0) && !propertySchema.cssLitNumeric)
+                  // ##### END: MODIFIED BY SAP
+                      // A number starting with a digit.
+                      ? ((propBits & CSS_PROP_BIT_QUANTITY)
+                           ? ((propBits & CSS_PROP_BIT_Z_INDEX)
+                                ? (token.match(/^\d{1,7}$/) ? token : '')
+                                : token)
+                           : '')
+                      // Normalize quantities so they don't start with a '.' or '+' sign and
+                      // make sure they all have an integer component so can't be confused
+                      // with a dotted identifier.
+                      // This can't be done in the lexer since ".4" is a valid rule part.
+                      : (cc1 = token.charCodeAt(1),
+                         cc2 = token.charCodeAt(2),
+                         isnum1 = '0'.charCodeAt(0) <= cc1 && cc1 <= '9'.charCodeAt(0),
+                         isnum2 = '0'.charCodeAt(0) <= cc2 && cc2 <= '9'.charCodeAt(0),
+                         // +.5 -> 0.5 if allowed.
+                         (cc === '+'.charCodeAt(0)
+                          && (isnum1 || (cc1 === '.'.charCodeAt(0) && isnum2))))
+                           ? ((propBits & CSS_PROP_BIT_QUANTITY)
+                                ? ((propBits & CSS_PROP_BIT_Z_INDEX)
+                                     ? (token.match(/^\+\d{1,7}$/) ? token : '')
+                                     : ((isnum1 ? '' : '0') + token.substring(1)))
+                                : '')
+                           // -.5 -> -0.5 if allowed otherwise -> 0 if quantities allowed.
+                           : (cc === '-'.charCodeAt(0)
+                              && (isnum1 || (cc1 === '.'.charCodeAt(0) && isnum2)))
+                                ? ((propBits & CSS_PROP_BIT_NEGATIVE_QUANTITY)
+                                     ? ((propBits & CSS_PROP_BIT_Z_INDEX)
+                                          ? (token.match(/^\-\d{1,7}$/) ? token : '')
+                                          : ((isnum1 ? '-' : '-0') + token.substring(1)))
+                                     : ((propBits & CSS_PROP_BIT_QUANTITY) ? '0' : ''))
+                                // .5 -> 0.5 if allowed.
+                                : (cc === '.'.charCodeAt(0) && isnum1)
+                                     ? ((propBits & CSS_PROP_BIT_QUANTITY) ? '0' + token : '')
+                                     // Handle url("...") by rewriting the body.
+                                     : ('url(' === token.substring(0, 4))
+                                          ? ((opt_naiveUriRewriter && (qstringBits & CSS_PROP_BIT_QSTRING_URL))
+                                               ? normalizeUrl(
+                                                   safeUri(
+                                                     tokens[i].substring(5, token.length - 2),
+                                                     property,
+                                                     opt_naiveUriRewriter
+                                                   )
+                                                 )
+                                               : '')
+                                          // Handle func(...) and literal tokens
+                                          // such as keywords and punctuation.
+                                          : (
+                                             // Step 1. Combine func(...) into something that can be compared
+                                             // against propertySchema.cssExtra.
+                                             (token.charAt(token.length-1) === '(')
+                                             && (end = normalizeFunctionCall(tokens, i),
+                                               // When tokens is
+                                               //   ['x', ' ', 'rgb(', '255', ',', '0', ',', '0', ')', ' ', 'y']
+                                               // and i is the index of 'rgb(' and end is the index of ')'
+                                               // splices tokens to where i now is the index of the whole call:
+                                               //   ['x', ' ', 'rgb( 255 , 0 , 0 )', ' ', 'y']
+                                               tokens.splice(i, end - i,
+                                                 token = tokens.slice(i, end).join(' '))),
+                                             litGroup = propertySchema.cssLitGroup,
+                                             litMap = (
+                                                litGroup
+                                                ? (propertySchema.cssLitMap
+                                                   // Lazily compute the union from litGroup.
+                                                   || (propertySchema.cssLitMap = unionArrays(litGroup)))
+                                                : ALLOWED_LITERAL),  // A convenient empty object.
+                                             (litMap[token] === ALLOWED_LITERAL
+                                              || propertySchema.cssExtra && propertySchema.cssExtra.test(token)))
+                                                // Token is in the literal map or matches extra.
+                                                ? token
+                                                : (/^\w+$/.test(token)
+                                                   && (qstringBits === CSS_PROP_BIT_QSTRING_CONTENT))
+                                                     // Quote unrecognized keywords so font names like
+                                                      //    Arial Bold
+                                                      // ->
+                                                      //    "Arial Bold"
+                                                      ? (lastQuoted+1 === k
+                                                         // If the last token was also a keyword that was quoted, then
+                                                         // combine this token into that.
+                                                         ? (tokens[lastQuoted] = tokens[lastQuoted]
+                                                            .substring(0, tokens[lastQuoted].length-1) + ' ' + token + '"',
+                                                            token = '')
+                                                         : (lastQuoted = k, '"' + token + '"'))
+                                                      // Disallowed.
+                                                      : '');
       if (token) {
         tokens[k++] = token;
       }
