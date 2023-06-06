@@ -411,7 +411,7 @@ sap.ui.define([
 		var aRows = oTable.getRows();
 		var $Row = aRows[3].getDomRefs(true);
 
-		$Row.rowSelector.click();
+		$Row.rowSelector.trigger("tap");
 		assert.equal(oTable.getProperty("selectedIndex"), -1, "selectedIndex is -1");
 	});
 
@@ -424,7 +424,7 @@ sap.ui.define([
 		var $LastRow = oLastRow.getDomRefs(true);
 
 		if ($LastRow.rowSelector) {
-			$LastRow.rowSelector.click();
+			$LastRow.rowSelector.trigger("tap");
 			assert.equal(oTable.getSelectedIndex(), 199, "Selected Index is 199");
 		}
 	});
@@ -2951,9 +2951,9 @@ sap.ui.define([
 		oTable.attachRowSelectionChange(fnHandler);
 
 		sTestCase = "userSelectAll";
-		jQuery(oTable.getDomRef("selall")).trigger("click");
+		jQuery(oTable.getDomRef("selall")).trigger("tap");
 		sTestCase = "userClearSelectAll";
-		jQuery(oTable.getDomRef("selall")).trigger("click");
+		jQuery(oTable.getDomRef("selall")).trigger("tap");
 
 		sTestCase = "APISelectAll";
 		oTable.selectAll();
@@ -2961,9 +2961,9 @@ sap.ui.define([
 		oTable.clearSelection();
 
 		sTestCase = "userSetSelectedIndex";
-		jQuery("#" + oTable.getId() + "-rowsel0").trigger("click");
+		jQuery("#" + oTable.getId() + "-rowsel0").trigger("tap");
 		sTestCase = "userUnsetSelectedIndex";
-		jQuery("#" + oTable.getId() + "-rowsel0").trigger("click");
+		jQuery("#" + oTable.getId() + "-rowsel0").trigger("tap");
 
 		sTestCase = "APISetSelectedIndex";
 		oTable.setSelectedIndex(0);
@@ -2994,7 +2994,7 @@ sap.ui.define([
 		});
 
 		assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
-		oTable.$("selall").trigger("click");
+		oTable.$("selall").trigger("tap");
 	});
 
 	QUnit.module("Event: _rowsUpdated", {

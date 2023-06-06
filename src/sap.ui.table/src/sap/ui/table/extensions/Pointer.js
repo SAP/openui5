@@ -681,7 +681,7 @@ sap.ui.define([
 			}
 		},
 
-		onclick: function(oEvent) {
+		ontap: function(oEvent) {
 			// clean up the timer
 			clearTimeout(this._mTimeouts.delayedColumnReorderTimerId);
 

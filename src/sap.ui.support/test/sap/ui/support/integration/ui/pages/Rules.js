@@ -247,7 +247,7 @@ sap.ui.define([
 						matchers: new AggregationFilled({name: "columns"}),
 						success: function (oTable) {
 							var oRowElements = getRowElements(oTable, sTitle);
-							oRowElements.checkbox.click();
+							Opa5.getJQuery()(oRowElements.checkbox).trigger("tap");
 							Opa5.assert.ok(true, sSuccessMessage);
 						},
 						errorMessage: sErrorMessage

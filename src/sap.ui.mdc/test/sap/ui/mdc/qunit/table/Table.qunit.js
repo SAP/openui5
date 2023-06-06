@@ -1699,9 +1699,9 @@ sap.ui.define([
 		function selectItem(oRow, bUser, bNoRowSelector) {
 			if (bUser) {
 				if (bNoRowSelector) {
-					jQuery(oRow.getCells()[0].getDomRef()).trigger("click");
+					jQuery(oRow.getCells()[0].getDomRef()).trigger("tap");
 				} else {
-					jQuery(oRow.getDomRefs().rowSelector).trigger("click");
+					jQuery(oRow.getDomRefs().rowSelector).trigger("tap");
 				}
 				return;
 			}

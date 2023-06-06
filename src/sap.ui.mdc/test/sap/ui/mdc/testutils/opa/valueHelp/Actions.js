@@ -70,7 +70,7 @@ sap.ui.define([
                     if (oResult.isA('sap.m.ColumnListItem')) {
                         new Press().executeOn(oResult);
                     } else {
-                        new TriggerEvent({event: "click"}).executeOn(oResult.getCells()[0]);
+                        new TriggerEvent({event: "tap"}).executeOn(oResult.getCells()[0]);
                     }
                     Opa5.assert.ok(oResult, "The listitem with text " + sText + " was pressed. ");
                 }
