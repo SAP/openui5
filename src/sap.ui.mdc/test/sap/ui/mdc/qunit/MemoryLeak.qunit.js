@@ -9,7 +9,9 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldBase",
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/FilterField",
+	"sap/ui/mdc/MultiValueField",
 	"sap/ui/mdc/field/FieldBaseDelegate", // make sure delegate is loaded
+	"sap/ui/mdc/field/MultiValueFieldDelegate", // make sure delegate is loaded
 	"sap/ui/mdc/valuehelp/base/DefineConditionPanel",
 	"sap/ui/mdc/field/FieldInput", // make sure inner control is loaded
 	"sap/ui/mdc/field/FieldMultiInput", // make sure inner control is loaded
@@ -46,7 +48,9 @@ sap.ui.define([
 		FieldBase,
 		Field,
 		FilterField,
+		MultiValueField,
 		FieldBaseDelegate,
+		MultiValueFieldDelegate,
 		DefineConditionPanel,
 		FieldInput,
 		FieldMultiInput,
@@ -108,6 +112,16 @@ sap.ui.define([
 		return oField;
 	});
 
+	MemoryLeakCheck.checkControl("MultiValueField", function() {
+		var oField = new MultiValueField("F1", {
+			dataType: 'sap.ui.model.type.String', // set to prevent test to set dummy value
+			dataTypeFormatOptions: {}, // set to prevent test to set dummy value
+			dataTypeConstraints: {maxLength: 1000} // set to prevent test to set dummy value
+		});
+		// configure the Field
+		return oField;
+	});
+
 	var oModel = new JSONModel({
 		items:[{text: "Item 1", key: "I1", additionalText: "Text 1", filter: "XXX"},
 			   {text: "Item 2", key: "I2", additionalText: "Text 2", filter: "XXX"},
@@ -125,6 +139,9 @@ sap.ui.define([
 		});
 
 		var oMTable = new MTable("VH1-MTable", {
+			filterFields: "text",
+			keyPath: "key",
+			descriptionPath: "text",
 			table: new Table("VH1-Table", {
 				width: "26rem",
 				columns: [ new Column({header: new Label({text: "Id"})}),
@@ -135,9 +152,6 @@ sap.ui.define([
 		});
 		var oPopover = new VHPopover("VH1-Pop", {
 			title: "Title",
-			filterFields: "text",
-			keyPath: "key",
-			descriptionPath: "text",
 			content: oMTable
 		});
 		var oValueHelp = new ValueHelp("VH1", {
@@ -166,6 +180,9 @@ sap.ui.define([
 		});
 
 		var oMTable = new MTable("VH1-MTable", {
+			filterFields: "text",
+			keyPath: "key",
+			descriptionPath: "text",
 			table: new Table("VH1-Table", {
 				width: "26rem",
 				columns: [ new Column({header: new Label({text: "Id"})}),
@@ -176,9 +193,6 @@ sap.ui.define([
 		});
 		var oDialog = new VHDialog("VH1-Dia", {
 			title: "Title",
-			filterFields: "text",
-			keyPath: "key",
-			descriptionPath: "text",
 			content: [oMTable, new VHConditions("VH1-Cond", {label: "Label"})]
 		});
 		var oValueHelp = new ValueHelp("VH1", {
@@ -201,8 +215,8 @@ sap.ui.define([
 
 	MemoryLeakCheck.checkControl("DefineConditionPanel", function() {
 		var oDataType = new StringType();
-		var oFormatOptions = {
-				valueType: oDataType,
+		var oConfig = {
+				dataType: oDataType,
 				maxConditions: -1,
 				delegate: FieldBaseDelegate
 		};
@@ -210,9 +224,9 @@ sap.ui.define([
 		var oDCP = new DefineConditionPanel("DCP1", {
 			conditions: [Condition.createCondition("EQ", ["Test1"]),
 						 Condition.createCondition("BT", ["A", "Z"])],
-			formatOptions: oFormatOptions
+			config: oConfig
 		});
-		// configure the Field
+
 		return oDCP;
 	});
 

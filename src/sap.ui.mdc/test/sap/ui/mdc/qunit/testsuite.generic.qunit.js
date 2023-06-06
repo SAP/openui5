@@ -24,7 +24,12 @@ sap.ui.define([
 			"sap.ui.mdc.MultiValueField": {
 				properties: {
 					dataType: "sap.ui.model.type.String",
+					dataTypeFormatOptions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					dataTypeConstraints: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
 					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit
+				},
+				knownIssues: {
+					memoryLeaks: true // as tested in MemoryLeak.qunit.js
 				}
 			},
 			"sap.ui.mdc.FilterBar": {
@@ -39,22 +44,42 @@ sap.ui.define([
 				}
 			},
 			"sap.ui.mdc.field.FieldBase": {
-				create: false,
 				properties: {
 					dataType: "sap.ui.model.type.String",
+					dataTypeFormatOptions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					dataTypeConstraints: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
 					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit
+				},
+				knownIssues: {
+					memoryLeaks: true // as tested in MemoryLeak.qunit.js
 				}
 			},
 			"sap.ui.mdc.Field": {
 				properties: {
 					dataType: "sap.ui.model.type.String",
+					dataTypeFormatOptions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					dataTypeConstraints: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
 					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit
+				},
+				knownIssues: {
+					memoryLeaks: true // as tested in MemoryLeak.qunit.js
 				}
 			},
 			"sap.ui.mdc.FilterField": {
 				properties: {
 					dataType: "sap.ui.model.type.String",
+					dataTypeFormatOptions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					dataTypeConstraints: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					operators: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
 					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit
+				},
+				knownIssues: {
+					memoryLeaks: true // as tested in MemoryLeak.qunit.js
+				}
+			},
+			"sap.ui.mdc.valuehelp.base.DefineConditionPanel": {
+				knownIssues: {
+					memoryLeaks: true // as tested in MemoryLeak.qunit.js
 				}
 			},
 			"sap.ui.mdc.chart.ChartTypeButton": {
