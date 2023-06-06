@@ -609,7 +609,7 @@ sap.ui.define([
 									sClassName);
 							}
 						});
-						if (aResult.length > 0) {
+						if (aResult.length) {
 							oSemantics.type = {EnumMember : aResult.join(" ")};
 						}
 					}
@@ -688,19 +688,19 @@ sap.ui.define([
 				sTarget = sEntityContainerName + "/" + sEntitySetName;
 				mAnnotations = _Helper.merge(this.convertedV2Annotations[sTarget] || {},
 					this.mEntityType2EntitySetAnnotation[oEntitySet.$Type]);
-				if (Object.keys(mAnnotations).length) {
+				if (!_Helper.isEmptyObject(mAnnotations)) {
 					this.convertedV2Annotations[sTarget] = mAnnotations;
 				}
 			}
 		}
 
 		if (this.bIgnoreAnnotations) {
-			if (Object.keys(this.convertedV2Annotations).length) {
+			if (!_Helper.isEmptyObject(this.convertedV2Annotations)) {
 				this.schema.$Annotations = {};
 			}
 		} else if (this.schema.$Annotations) {
 			this.mergeAnnotations(this.convertedV2Annotations, this.schema.$Annotations);
-		} else if (Object.keys(this.convertedV2Annotations).length > 0) {
+		} else if (!_Helper.isEmptyObject(this.convertedV2Annotations)) {
 			this.schema.$Annotations = this.convertedV2Annotations;
 		}
 		this.convertedV2Annotations = {}; // reset schema annotations for next schema

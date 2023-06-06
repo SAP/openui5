@@ -1024,7 +1024,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.getQueryOptionsForPath = function (sPath, oContext) {
-		if (Object.keys(this.mParameters).length) {
+		if (!_Helper.isEmptyObject(this.mParameters)) {
 			// binding has parameters -> all query options need to be defined at the binding
 			return _Helper.getQueryOptionsForPath(this.getQueryOptionsFromParameters(), sPath);
 		}

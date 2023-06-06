@@ -3,7 +3,6 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/base/util/isEmptyObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Cache",
@@ -11,8 +10,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor"
-], function (Log, isEmptyObject, SyncPromise, ODataUtils, _Cache, _GroupLock, _Helper, _Parser,
-		_Requestor) {
+], function (Log, SyncPromise, ODataUtils, _Cache, _GroupLock, _Helper, _Parser, _Requestor) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Cache",
@@ -9568,7 +9566,7 @@ sap.ui.define([
 				return oParam === oEntityDataCleaned;
 			}
 			oEntityDataCleaned = oParam;
-			return isEmptyObject(oParam);
+			return _Helper.isEmptyObject(oParam);
 		}
 
 		oCallbacksMock.expects("errorCallback").never();

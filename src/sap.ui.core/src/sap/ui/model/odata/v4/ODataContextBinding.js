@@ -594,7 +594,7 @@ sap.ui.define([
 					&& !oOperationMetadata.$ReturnType.$Type.startsWith("Edm.")) {
 				sMetaPath += "/$Type";
 			}
-		} else if (Object.keys(mParameters).length) {
+		} else if (!_Helper.isEmptyObject(mParameters)) {
 			throw new Error("Unsupported parameters for navigation property");
 		}
 

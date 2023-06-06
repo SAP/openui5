@@ -658,14 +658,14 @@ sap.ui.define([
 
 		// relative list or context binding with parameters which are not query options
 		// (such as $$groupId)
-		if (this.mParameters && Object.keys(this.mParameters).length) {
+		if (this.mParameters && !_Helper.isEmptyObject(this.mParameters)) {
 			return wrapQueryOptions(oQueryOptionsPromise);
 		}
 
 		// relative binding which may have query options from UI5 filter or sorter objects
 		return oQueryOptionsPromise.then(function (mQueryOptions) {
 			return wrapQueryOptions(
-				Object.keys(mQueryOptions).length ? mQueryOptions : undefined);
+				_Helper.isEmptyObject(mQueryOptions) ? undefined : mQueryOptions);
 		});
 	};
 
