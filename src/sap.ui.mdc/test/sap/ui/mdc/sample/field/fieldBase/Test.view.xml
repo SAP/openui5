@@ -266,6 +266,7 @@
 								dataType="Edm.DateTime"
 								dataTypeFormatOptions='\{"style": "short"\}'
 								dataTypeConstraints='\{"displayFormat": "Date"\}'
+								delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 								maxConditions="1"
 								placeholder="{/#Product/Date/@sap:label}"
 								liveChange="handleLiveChange"
@@ -279,6 +280,7 @@
 								dataType="Edm.DateTime"
 								dataTypeFormatOptions='\{"style": "long"\}'
 								dataTypeConstraints='\{"displayFormat": "Date"\}'
+								delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 								maxConditions="1"
 								editMode="Display"
 								placeholder="Placeholder"
@@ -291,6 +293,7 @@
 							<mdcField:FieldBase id="FB9"
 								conditions="{cm>/conditions/Quantity}"
 								dataType="Edm.Decimal"
+								delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 								maxConditions="1"
 								placeholder="{/#Product/Quantity/@sap:label}"
 								tooltip="{/#Product/Quantity/@sap:label}"
@@ -304,6 +307,7 @@
 							<mdcField:FieldBase id="FB9a"
 								conditions="{cm>/conditions/Quantity}"
 								dataType="Edm.Decimal"
+								delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 								maxConditions="1"
 								placeholder="{/#Product/Quantity/@sap:label}"
 								tooltip="{/#Product/Quantity/@sap:label}"
@@ -322,6 +326,7 @@
 							<mdcField:FieldBase id="FB9b"
 								conditions="{cm>/conditions/Quantity}"
 								dataType="Edm.Decimal"
+								delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 								maxConditions="1"
 								liveChange="handleLiveChange"
 								submit="handleSubmit">
@@ -335,6 +340,7 @@
 							<mdcField:FieldBase id="FB9c"
 								conditions="{cm>/conditions/Quantity}"
 								dataType="Edm.Decimal"
+								delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 								maxConditions="-1"
 								liveChange="handleLiveChange"
 								submit="handleSubmit"
@@ -391,6 +397,7 @@
 							<mdcField:FieldBase id="FB11"
 								conditions="{cm>/conditions/Quantity}"
 								dataType="Edm.Decimal"
+								delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 								maxConditions="-1"
 								placeholder="{/#Product/Quantity/@sap:label}"
 								liveChange="handleLiveChange"
@@ -477,6 +484,7 @@
 								conditions="{cm>/conditions/Important}"
 								dataType="sap.ui.model.odata.type.Boolean"
 								dataTypeConstraints='\{"nullable": false\}'
+								delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 								maxConditions="1"
 								display="Value"
 								placeholder="{/#Product/Important/@sap:label}"
@@ -498,6 +506,7 @@
 							<mdcField:FieldBase id="FB17"
 								conditions="{cm>/conditions/Important}"
 								dataType="Edm.Boolean"
+								delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 								maxConditions="1"
 								display="Description"
 								editMode="Display"
