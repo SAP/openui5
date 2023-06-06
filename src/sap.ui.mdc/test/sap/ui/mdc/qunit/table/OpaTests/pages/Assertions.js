@@ -781,7 +781,7 @@ sap.ui.define([
 			return Util.waitForColumnMenu.call(this, {
 				success: function(oColumnMenu) {
 					this.waitFor({
-						controlType: "sap.m.Text",
+						controlType: "sap.m.Title",
 						matchers: [{
 							ancestor: oColumnMenu,
 							properties: {
