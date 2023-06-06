@@ -376,7 +376,7 @@ sap.ui.define([
 			}
 		} else {
 			// else we bubble up the hierarchy
-			if (oParent && !oParent.isInvalidateSuppressed() && (
+			if (oParent && (
 					this.bOutput /* && !this.getUIArea() */ ||
 					/* !this.bOutput && */ !(this.getVisible && this.getVisible() === false))) {
 

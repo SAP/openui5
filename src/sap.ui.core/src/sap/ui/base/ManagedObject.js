@@ -2540,13 +2540,13 @@ sap.ui.define([
 	 * Changing the state via the standard mutators, therefore, does not require an explicit call to <code>invalidate</code>.
 	 * The same applies to changes made via data binding, as it internally uses the standard mutators.
 	 *
-	 * By default, a <code>ManagedObject</code> propagates any invalidation to its parent, unless the invalidation is
-	 * suppressed on the parent. Controls or UIAreas handle invalidation on their own by triggering a re-rendering.
+	 * By default, a <code>ManagedObject</code> propagates any invalidation to its parent. Controls or UIAreas
+	 * handle invalidation on their own by triggering a re-rendering.
 	 *
 	 * @protected
 	 */
 	ManagedObject.prototype.invalidate = function() {
-		if (this.oParent && this.oParent.isInvalidateSuppressed && !this.oParent.isInvalidateSuppressed()) {
+		if (this.oParent) {
 			this.oParent.invalidate(this);
 		}
 	};
@@ -2559,7 +2559,11 @@ sap.ui.define([
 	 * @protected
 	 */
 	ManagedObject.prototype.isInvalidateSuppressed = function() {
-		return this.iSuppressInvalidate > 0;
+		var bInvalidateSuppressed = this.iSuppressInvalidate > 0;
+		if (this.oParent && this.oParent instanceof ManagedObject) {
+			bInvalidateSuppressed = bInvalidateSuppressed || this.oParent.isInvalidateSuppressed();
+		}
+		return bInvalidateSuppressed;
 	};
 
 	/**
@@ -2715,7 +2719,7 @@ sap.ui.define([
 		if (bSuppressInvalidate) {
 			//Refresh only for changes with suppressed invalidation (others lead to rerendering and refresh is handled there)
 			ActivityDetection.refresh();
-			oParent.iSuppressInvalidate++;
+			this.iSuppressInvalidate++;
 		}
 
 		var oOldParent = this.getParent();
@@ -2751,13 +2755,13 @@ sap.ui.define([
 		this._applyContextualSettings(oParent._oContextualSettings);
 
 		// only the parent knows where to render us, so we have to invalidate it
-		if ( oParent && !oParent.isInvalidateSuppressed() ) {
+		if ( oParent && !this.isInvalidateSuppressed() ) {
 			oParent.invalidate(this);
 		}
 
 		// reset suppress invalidate flag
 		if (bSuppressInvalidate) {
-			oParent.iSuppressInvalidate--;
+			this.iSuppressInvalidate--;
 		}
 
 		//observe the aggregation change
