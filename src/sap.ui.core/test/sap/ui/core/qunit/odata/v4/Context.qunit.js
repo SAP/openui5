@@ -3,12 +3,11 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/base/util/isEmptyObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (Log, isEmptyObject, SyncPromise, BaseContext, Context, _Helper) {
+], function (Log, SyncPromise, BaseContext, Context, _Helper) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.Context";
@@ -937,12 +936,12 @@ sap.ui.define([
 		oBindingMock.expects("checkSuspended").withExactArgs();
 		oBindingMock.expects("fetchIfChildCanUseCache")
 			.withExactArgs(oContext, "bar", sinon.match(function (oPromise) {
-				return oPromise.isFulfilled() && isEmptyObject(oPromise.getResult());
+				return oPromise.isFulfilled() && _Helper.isEmptyObject(oPromise.getResult());
 			}))
 			.resolves("/resolved/bar"); // no need to return a SyncPromise
 		oBindingMock.expects("fetchIfChildCanUseCache")
 			.withExactArgs(oContext, "baz", sinon.match(function (oPromise) {
-				return oPromise.isFulfilled() && isEmptyObject(oPromise.getResult());
+				return oPromise.isFulfilled() && _Helper.isEmptyObject(oPromise.getResult());
 			}))
 			.resolves("/resolved/baz"); // no need to return a SyncPromise
 		oContextMock.expects("fetchPrimitiveValue")
@@ -970,7 +969,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("fetchIfChildCanUseCache")
 			.withExactArgs(oContext, "bar", sinon.match(function (oPromise) {
-				return oPromise.isFulfilled() && isEmptyObject(oPromise.getResult());
+				return oPromise.isFulfilled() && _Helper.isEmptyObject(oPromise.getResult());
 			}))
 			.resolves(undefined); // no need to return a SyncPromise
 		this.mock(oContext).expects("fetchValue").never();

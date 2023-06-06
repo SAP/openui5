@@ -2803,7 +2803,7 @@ sap.ui.define([
 	ODataListBinding.prototype.inheritQueryOptions = function (mQueryOptions, oContext) {
 		var mInheritedQueryOptions;
 
-		if (!Object.keys(this.mParameters).length) {
+		if (_Helper.isEmptyObject(this.mParameters)) {
 			// mix-in inherited static query options
 			mInheritedQueryOptions = this.getQueryOptionsForPath("", oContext);
 			if (mQueryOptions.$orderby && mInheritedQueryOptions.$orderby) {
@@ -2878,7 +2878,7 @@ sap.ui.define([
 		// When suspended it matches if it already has contexts. Then its getKeepAliveContext fails.
 		return this.mParameters.$$getKeepAliveContext && this.getResolvedPath() === sPath
 			&& (!this.isRootBindingSuspended() || this.aContexts.length
-				|| Object.keys(this.mPreviousContextsByPath).length);
+				|| !_Helper.isEmptyObject(this.mPreviousContextsByPath));
 	};
 
 	/**

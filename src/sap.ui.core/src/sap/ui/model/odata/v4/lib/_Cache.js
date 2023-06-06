@@ -8,10 +8,9 @@ sap.ui.define([
 	"./_Helper",
 	"./_Requestor",
 	"sap/base/Log",
-	"sap/base/util/isEmptyObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/ODataUtils"
-], function (_GroupLock, _Helper, _Requestor, Log, isEmptyObject, SyncPromise, ODataUtils) {
+], function (_GroupLock, _Helper, _Requestor, Log, SyncPromise, ODataUtils) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
@@ -1352,7 +1351,7 @@ sap.ui.define([
 	 * @see #registerChangeListener
 	 */
 	_Cache.prototype.hasChangeListeners = function () {
-		return !isEmptyObject(this.mChangeListeners);
+		return !_Helper.isEmptyObject(this.mChangeListeners);
 	};
 
 	/**
@@ -4050,7 +4049,7 @@ sap.ui.define([
 		if (oData) {
 			sHttpMethod = oData["X-HTTP-Method"] || sHttpMethod;
 			delete oData["X-HTTP-Method"];
-			if (this.oRequestor.isActionBodyOptional() && !Object.keys(oData).length) {
+			if (this.oRequestor.isActionBodyOptional() && _Helper.isEmptyObject(oData)) {
 				oData = undefined;
 			}
 		}
