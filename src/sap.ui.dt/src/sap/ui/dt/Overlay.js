@@ -214,35 +214,35 @@ sap.ui.define([
 			}
 
 			this.asyncInit()
-				.then(function() {
-					// Can happen that destroy() is called during asynchronous initialization
-					if (this._bShouldBeDestroyed) {
-						this.fireInitFailed({
-							error: Util.createError(
-								"Overlay#asyncInit",
-								"ElementOverlay is destroyed during initialization ('" + this.getId() + "')"
-							)
-						});
-					} else {
-						this._bInit = true;
-						this.fireInit();
-					}
-				}.bind(this))
-				.catch(function(vError) {
-					var oError = Util.propagateError(
-						vError,
-						"Overlay#asyncInit",
-						Util.printf(
-							"Can't initialize overlay (id='{0}') properly. Original error: {1}",
-							this.getId(),
-							Util.wrapError(vError).message
-						)
-					);
-
+			.then(function() {
+				// Can happen that destroy() is called during asynchronous initialization
+				if (this._bShouldBeDestroyed) {
 					this.fireInitFailed({
-						error: oError
+						error: Util.createError(
+							"Overlay#asyncInit",
+							"ElementOverlay is destroyed during initialization ('" + this.getId() + "')"
+						)
 					});
-				}.bind(this));
+				} else {
+					this._bInit = true;
+					this.fireInit();
+				}
+			}.bind(this))
+			.catch(function(vError) {
+				var oError = Util.propagateError(
+					vError,
+					"Overlay#asyncInit",
+					Util.printf(
+						"Can't initialize overlay (id='{0}') properly. Original error: {1}",
+						this.getId(),
+						Util.wrapError(vError).message
+					)
+				);
+
+				this.fireInitFailed({
+					error: oError
+				});
+			}.bind(this));
 
 			// Attach stored browser events
 			this.attachEventOnce("afterRendering", function(oEvent) {
@@ -402,7 +402,6 @@ sap.ui.define([
 	Overlay.prototype.isReady = function() {
 		return this.isInit() && this.isRendered();
 	};
-
 
 	Overlay.prototype.addStyleClass = function(sClassName) {
 		if (!this.hasStyleClass(sClassName)) {
@@ -622,15 +621,15 @@ sap.ui.define([
 
 		// TODO: refactor geometryChanged event
 		return oGeometryChangedPromise
-			.catch(function(vError) {
-				Log.error(Util.createError(
-					"Overlay#applyStyles",
-					"An error occurred during applySizes calculation: " + vError
-				));
-			})
-			.then(function() {
-				this.fireGeometryChanged();
-			}.bind(this));
+		.catch(function(vError) {
+			Log.error(Util.createError(
+				"Overlay#applyStyles",
+				"An error occurred during applySizes calculation: " + vError
+			));
+		})
+		.then(function() {
+			this.fireGeometryChanged();
+		}.bind(this));
 	};
 
 	Overlay.prototype._applySizes = function(oGeometry, $RenderingParent, bForceScrollbarSync) {
@@ -640,17 +639,17 @@ sap.ui.define([
 		}
 		// We need to know when all our children have correct positions
 		var aPromises = this.getChildren()
-			.filter(function(oChild) {
-				return oChild.isRendered();
-			})
-			.map(function(oChild) {
-				var mParameters = {};
-				mParameters.bForceScrollbarSync = bForceScrollbarSync;
-				return new Promise(function(fnResolve) {
-					oChild.attachEventOnce("geometryChanged", fnResolve);
-					oChild.fireApplyStylesRequired(mParameters);
-				});
+		.filter(function(oChild) {
+			return oChild.isRendered();
+		})
+		.map(function(oChild) {
+			var mParameters = {};
+			mParameters.bForceScrollbarSync = bForceScrollbarSync;
+			return new Promise(function(fnResolve) {
+				oChild.attachEventOnce("geometryChanged", fnResolve);
+				oChild.fireApplyStylesRequired(mParameters);
 			});
+		});
 		return Promise.all(aPromises);
 	};
 

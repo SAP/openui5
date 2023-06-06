@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/dt/SelectionMode",
 	"sap/ui/core/library"
 ],
-function (
+function(
 	ManagedObjectMetadata
 ) {
 	"use strict";

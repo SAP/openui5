@@ -14,8 +14,8 @@ sap.ui.define([], function() {
 	 * @private
 	 */
 	return {
-		SYNCING: 'syncing',
-		SYNCED: 'synced'
+		SYNCING: "syncing",
+		SYNCED: "synced"
 	};
 });
 

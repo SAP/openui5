@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
@@ -15,7 +15,7 @@ function(
 	"use strict";
 
 	QUnit.module("Given an overlay and a ToolHooks plugin...", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			this.oButton = new Button({
 				text: "Button"
 			});
@@ -35,8 +35,8 @@ function(
 			this.oButton.destroy();
 			this.oToolHooksPlugin.destroy();
 		}
-	}, function () {
-		QUnit.test("with both functions in DesignTimeMetadata", function (assert) {
+	}, function() {
+		QUnit.test("with both functions in DesignTimeMetadata", function(assert) {
 			assert.expect(2);
 			var sButtonId = this.oButton.getId();
 			this.oElementOverlay.setDesignTimeMetadata({
@@ -53,7 +53,7 @@ function(
 			this.oToolHooksPlugin.deregisterElementOverlay(this.oElementOverlay);
 		});
 
-		QUnit.test("with both entries not being a function in DesignTimeMetadata", function (assert) {
+		QUnit.test("with both entries not being a function in DesignTimeMetadata", function(assert) {
 			this.oElementOverlay.setDesignTimeMetadata({
 				tool: {
 					start: "notAFunction",
@@ -64,7 +64,7 @@ function(
 			assert.throws(function() {this.oToolHooksPlugin.deregisterElementOverlay(this.oElementOverlay);});
 		});
 
-		QUnit.test("with no tool section in DesignTimeMetadata", function (assert) {
+		QUnit.test("with no tool section in DesignTimeMetadata", function(assert) {
 			this.oToolHooksPlugin.registerElementOverlay(this.oElementOverlay);
 			this.oToolHooksPlugin.deregisterElementOverlay(this.oElementOverlay);
 			assert.ok(true, "the function does not throw an error");

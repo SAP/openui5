@@ -26,12 +26,12 @@ sap.ui.define([
 			color: white;\
 		}\
 	');
-	style.sheet.insertRule('\
+	style.sheet.insertRule("\
 		#left-part .withBeforeElementAndAttrContent::before {\
 			content: attr(data-sap-ui-icon-content);\
 		}\
-	');
-	style.sheet.insertRule('\
+	");
+	style.sheet.insertRule("\
 		.shrink {\
 			transform: scale(0.1, 0.5);\
 			-webkit-transform: scale(0.1, 0.5);\
@@ -39,7 +39,7 @@ sap.ui.define([
 			-ms-transform: scale(0.1, 0.5);\
 			-o-transform: scale(0.1, 0.5);\
 		}\
-	');
+	");
 
 	/**
 	 * getSize
@@ -191,7 +191,7 @@ sap.ui.define([
 			this.oDomElement.remove();
 		}
 	}, function() {
-		//TODO: change when getDomRefForCSSSelector does not return jQuery Object any more
+		// TODO: change when getDomRefForCSSSelector does not return jQuery Object any more
 		QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref", function(assert) {
 			var oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref");
 			assert.strictEqual(oDomRef.length, 1, "one element found");
@@ -232,7 +232,7 @@ sap.ui.define([
 	 */
 	QUnit.module("Given that some DOM element with child nodes is rendered...", {
 		beforeEach: function() {
-			//TODO: check why classes are not considered when using JS
+			// TODO: check why classes are not considered when using JS
 			jQuery("<div style='float: left; width: 50%; height: 100%;' id='left-part'></div>").appendTo("#qunit-fixture");
 			jQuery("<div style='float: left; width: 50%; height: 100%;' id='right-part'></div>").appendTo("#qunit-fixture");
 
@@ -309,13 +309,13 @@ sap.ui.define([
 
 	QUnit.module("copyComputedStyle()", {
 		beforeEach: function() {
-			//TODO: check why classes are not considered when using JS
+			// TODO: check why classes are not considered when using JS
 			this.oSrcDomElement = jQuery("<div class='child' id='first-child' " +
 				"style='background: #000; width: 200px; height: 200px;'" +
 				"></div>")
-				.appendTo("#qunit-fixture");
+			.appendTo("#qunit-fixture");
 			this.oDestDomElement = jQuery("<div class='child' id='second-child'></div>")
-				.appendTo("#qunit-fixture");
+			.appendTo("#qunit-fixture");
 		}
 	}, function() {
 		QUnit.test("when copyComputedStyle is called and css-attribute display is set to none", function(assert) {
@@ -325,7 +325,7 @@ sap.ui.define([
 			DOMUtil.copyComputedStyle(this.oSrcDomElement.get(0), this.oDestDomElement.get(0));
 			var mSrcStyles = window.getComputedStyle(this.oSrcDomElement.get(0));
 			var mDestStyles = window.getComputedStyle(this.oDestDomElement.get(0));
-			assert.strictEqual(mDestStyles["display"], "none", "css-attribute display is copied to source dom element");
+			assert.strictEqual(mDestStyles.display, "none", "css-attribute display is copied to source dom element");
 			assert.notEqual(mDestStyles["background-color"], mSrcStyles["background-color"],
 				"css-attribute background on source and dest Element are not equal");
 		});
@@ -627,7 +627,6 @@ sap.ui.define([
 		});
 	});
 
-
 	QUnit.module("setDraggable()", function() {
 		QUnit.test("basic functionality", function(assert) {
 			var oFixtureNode = document.getElementById("qunit-fixture");
@@ -705,7 +704,6 @@ sap.ui.define([
 			assert.strictEqual(oNode1.scrollLeft, 100);
 		});
 	});
-
 
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";

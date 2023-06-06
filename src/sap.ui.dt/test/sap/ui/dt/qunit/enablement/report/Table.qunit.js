@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/enablement/report/LibraryReport",
@@ -8,7 +8,7 @@ sap.ui.define([
 	// ensure the test library is loaded so it can be used in the library enablement test
 	"sap/ui/testLibrary/library"
 ],
-function (
+function(
 	LibraryReport,
 	Table,
 	QUnitUtils,
@@ -17,16 +17,16 @@ function (
 	"use strict";
 
 	QUnit.module("Given that a sap.m Library is tested", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oLibraryReport = new LibraryReport({
 				libraryName: "sap.ui.testLibrary"
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oLibraryReport.destroy();
 		}
-	}, function () {
-		QUnit.test("when the result is returned and displayed with the Table report", function (assert) {
+	}, function() {
+		QUnit.test("when the result is returned and displayed with the Table report", function(assert) {
 			var fnDone = assert.async();
 			this.oLibraryReport.run()
 			.then(function(oResult) {

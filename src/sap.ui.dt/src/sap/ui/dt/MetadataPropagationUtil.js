@@ -29,10 +29,10 @@ sap.ui.define([
 
 	MetadataPropagationUtil._getParentPropagationInfo = function(mAggregationMetadata) {
 		if (!mAggregationMetadata ||
-			!mAggregationMetadata["propagationInfos"]) {
+			!mAggregationMetadata.propagationInfos) {
 			return false;
 		}
-		return Object.assign([], mAggregationMetadata["propagationInfos"]);
+		return Object.assign([], mAggregationMetadata.propagationInfos);
 	};
 
 	MetadataPropagationUtil._getCurrentRelevantContainerPropagation = function(mElementDtMetadataForAggregation, oElement) {
@@ -50,8 +50,8 @@ sap.ui.define([
 			var oError = Util.wrapError("Wrong type: it should be either a function or a boolean value and it is:" +
 				typeof mElementDtMetadataForAggregation.propagateRelevantContainer);
 
-			var sLocation = 'sap.ui.dt.MetadataPropagationUtil#_getCurrentRelevantContainerPropagation';
-			oError.name = 'Error in ' + sLocation;
+			var sLocation = "sap.ui.dt.MetadataPropagationUtil#_getCurrentRelevantContainerPropagation";
+			oError.name = "Error in " + sLocation;
 			oError.message = Util.printf("{0} / {1}", sLocation, oError.message);
 			throw oError;
 		}
@@ -69,8 +69,8 @@ sap.ui.define([
 			var oError = Util.wrapError("Wrong type: it should be a function and it is:" +
 				typeof mElementDtMetadataForAggregation.propagateRelevantContainer);
 
-			var sLocation = 'sap.ui.dt.MetadataPropagationUtil#_getCurrentDesigntimePropagation';
-			oError.name = 'Error in ' + sLocation;
+			var sLocation = "sap.ui.dt.MetadataPropagationUtil#_getCurrentDesigntimePropagation";
+			oError.name = "Error in " + sLocation;
 			oError.message = Util.printf("{0} / {1}", sLocation, oError.message);
 			throw oError;
 		}
@@ -161,8 +161,8 @@ sap.ui.define([
 			return false;
 		}
 
-		//Propagated infos are ordered from highest to lowest parent
-		//The highest parent always "wins", so we need to extend starting from the bottom
+		// Propagated infos are ordered from highest to lowest parent
+		// The highest parent always "wins", so we need to extend starting from the bottom
 		var aRevertedPropagationInfos = mParentMetadata.propagationInfos.slice().reverse();
 
 		vReturnMetadata = aRevertedPropagationInfos.reduce(function(vReturnMetadata, oPropagatedInfo) {
@@ -205,7 +205,7 @@ sap.ui.define([
 
 				if (mResultMetadata.aggregations) {
 					aAggregationNames = aAggregationNames.concat(
-						Object.keys(mResultMetadata.aggregations).filter(function (sAggregationName) {
+						Object.keys(mResultMetadata.aggregations).filter(function(sAggregationName) {
 							return aAggregationNames.indexOf(sAggregationName) < 0;
 						})
 					);

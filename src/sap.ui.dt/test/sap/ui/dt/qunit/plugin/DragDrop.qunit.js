@@ -133,7 +133,7 @@ sap.ui.define([
 			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when the touchstart is triggered on an overlay and touchmove is being listened", function(assert) {
 			testDragAndDropEventHandlerTriggering.call(this, "onDragStart", this.oButtonOverlay, ["touchstart", "touchmove"], assert, this.mFakeTouchEvents);
 		});
@@ -244,7 +244,6 @@ sap.ui.define([
 		});
 	});
 
-
 	QUnit.module("Given that an DragDrop touchevents are initialized ", {
 		beforeEach: function(assert) {
 			this.oButton = new Button();
@@ -305,7 +304,7 @@ sap.ui.define([
 			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when the touchmove is triggered on an overlay and dragenter is triggered on an element overlay (go to the parent) which is in the target zone", function(assert) {
 			var fnElementFromPointStub = sandbox.stub(document, "elementFromPoint");
 
@@ -407,7 +406,7 @@ sap.ui.define([
 				}
 				this.oDragDrop.destroy();
 			}
-		}, function () {
+		}, function() {
 			// FIXME: in FireFox
 			// QUnit.test("when a dragover event happens in a an overlay with a scrollbar near the edge...", function(assert) {
 			// 	var done = assert.async();
@@ -447,9 +446,8 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });
-
 

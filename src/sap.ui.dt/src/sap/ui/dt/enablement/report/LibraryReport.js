@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/dt/enablement/Test",
 	"sap/ui/dt/enablement/ElementEnablementTest"
-], function (
+], function(
 	Test,
 	ElementEnablementTest
 ) {
@@ -47,7 +47,6 @@ sap.ui.define([
 			}
 		}
 	});
-
 
 	/**
 	 * @return {Promise} A promise providing the test results.
@@ -93,7 +92,7 @@ sap.ui.define([
 			}
 			var oElementEnablementTest = aElementEnablementTest.shift();
 			if (oElementEnablementTest) {
-				return oElementEnablementTest.run().then(function (mResult) {
+				return oElementEnablementTest.run().then(function(mResult) {
 					oElementEnablementTest.destroy();
 					return fnIterate(mResult);
 				});
@@ -101,7 +100,6 @@ sap.ui.define([
 
 			return Promise.resolve(aResults);
 		};
-
 
 		return fnIterate().then(function(aResults) {
 			var mResult = this.createSuite("Library Enablement Test");

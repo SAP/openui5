@@ -284,9 +284,9 @@ sap.ui.define([
 	ElementUtil.getAssociationInstances = function(oElement, sAssociationName) {
 		var vValue = Util.castArray(this.getAssociation(oElement, sAssociationName));
 		return vValue
-			.map(function (sId) {
-				return this.getElementInstance(sId);
-			}, this);
+		.map(function(sId) {
+			return this.getElementInstance(sId);
+		}, this);
 	};
 
 	ElementUtil.hasInterface = function(oElement, sInterface) {
@@ -300,7 +300,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Object} oObject - Object for validation
 	 * @returns {boolean} <code>true</code> if object is not in bound aggregation or has a valid template representation
 	 */
-	ElementUtil.isElementInTemplate = function (oObject) {
+	ElementUtil.isElementInTemplate = function(oObject) {
 		var mLocationInTemplate = ElementUtil.getAggregationInformation(oObject);
 
 		if (mLocationInTemplate.templateId) {
@@ -320,7 +320,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Object} oObject - Object for validation
 	 * @returns {boolean} <code>true</code> if object is a direct clone of the template
 	 */
-	 ElementUtil.isElementDirectTemplateChild = function (oObject) {
+	 ElementUtil.isElementDirectTemplateChild = function(oObject) {
 		var mLocationInTemplate = ElementUtil.getAggregationInformation(oObject);
 
 		if (mLocationInTemplate.templateId) {
@@ -342,7 +342,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Object} oObject - Object for validation
 	 * @returns {boolean} <code>true</code> if object is supported
 	 */
-	ElementUtil.isElementValid = function (oObject) {
+	ElementUtil.isElementValid = function(oObject) {
 		var bValid = (
 			(
 				oObject instanceof Element
@@ -355,8 +355,8 @@ sap.ui.define([
 		return bValid;
 	};
 
-	ElementUtil.getParent = function (oElement) {
-		return BaseObject.isA(oElement, 'sap.ui.core.Component')
+	ElementUtil.getParent = function(oElement) {
+		return BaseObject.isA(oElement, "sap.ui.core.Component")
 			? oElement.oContainer
 			: oElement.getParent();
 	};
@@ -522,7 +522,7 @@ sap.ui.define([
 	 * @param {string} sAggregationName - Aggregation name required to check binding info for this one aggregation
 	 * @returns {sap.ui.base.ManagedObject} Aggregation binding template for the given element and aggregation name
 	 */
-	ElementUtil.getAggregationBindingTemplate = function (oElement, sAggregationName) {
+	ElementUtil.getAggregationBindingTemplate = function(oElement, sAggregationName) {
 		var oBinding = oElement && oElement.getBindingInfo(sAggregationName);
 		return oBinding && oBinding.template;
 	};

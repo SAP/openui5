@@ -17,16 +17,16 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		createContent: function () {
-			//create Vertical Layout
+		createContent: function() {
+			// create Vertical Layout
 			var oLayout = new VerticalLayout("visibleLayout");
-			PerformanceTestUtil.addMixedControlsTo(oLayout, 1, 200, true /*visible*/);
-			PerformanceTestUtil.addMixedControlsTo(oLayout, 201, 500, false /*invisible*/);
+			PerformanceTestUtil.addMixedControlsTo(oLayout, 1, 200, true /* visible */);
+			PerformanceTestUtil.addMixedControlsTo(oLayout, 201, 500, false /* invisible */);
 
 			var oInvisibleLayout = new VerticalLayout("invisibleLayout", {
 				visible: false
 			});
-			PerformanceTestUtil.addMixedControlsTo(oInvisibleLayout, 2001, 3000, true /*visible*/);
+			PerformanceTestUtil.addMixedControlsTo(oInvisibleLayout, 2001, 3000, true /* visible */);
 
 			var oHorizontalLayout = new HorizontalLayout("HorizontalLayout", {
 				content: [oLayout, oInvisibleLayout]

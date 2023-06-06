@@ -86,7 +86,7 @@ sap.ui.define([
 			});
 
 			var fnDone = assert.async();
-			this.oDesignTime.attachEventOnce("synced", function () {
+			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oButtonOverlay01 = OverlayRegistry.getOverlay(this.oButton01);
 				this.oButtonOverlay02 = OverlayRegistry.getOverlay(this.oButton02);
 				this.oLayoutOverlay0 = OverlayRegistry.getOverlay(this.oLayout0);
@@ -102,7 +102,7 @@ sap.ui.define([
 			this.oLayout2.destroy();
 			this.oDesignTime.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when Overlays are created and the getNextOverlay function is called", function(assert) {
 			var oNextOverlay = OverlayUtil.getNextOverlay(this.oLayoutOverlay2);
 			assert.strictEqual(oNextOverlay, this.oLayoutOverlay1, "layoutOverlay2 -> layoutOverlay1");
@@ -297,7 +297,7 @@ sap.ui.define([
 		QUnit.test("when getAggregation is called and Element is part of the aggregation and not all other Elements have Overlays", function(assert) {
 			var oButton = new Button();
 			this.oLayout0.addContent(oButton);
-			//remove Overlay from Button01
+			// remove Overlay from Button01
 			OverlayRegistry.deregister(OverlayRegistry.getOverlay(this.oButton01));
 			var nPosition = OverlayUtil.getIndexInAggregation(oButton, this.oLayout0, "content");
 			assert.strictEqual(nPosition, 1, "then it returns the correct index position");
@@ -416,7 +416,7 @@ sap.ui.define([
 			this.oVBox0.destroy();
 			this.oDesignTime.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when findAllOverlaysInContainer is called", function(assert) {
 			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oVBoxOverlay0).length, 2, "then it returns the correct overlays");
 

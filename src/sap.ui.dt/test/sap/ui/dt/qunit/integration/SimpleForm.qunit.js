@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/layout/library",
 	"sap/ui/core/Core",
-	//preload simple form layouts to avoid async requests during test execution
+	// preload simple form layouts to avoid async requests during test execution
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/layout/form/ColumnLayout",
 	"sap/ui/layout/ResponsiveFlowLayoutData",
@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/layout/form/GridElementData",
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/ui/layout/form/ColumnLayout"
-], function (
+], function(
 	DesignTime,
 	OverlayRegistry,
 	TabHandling,
@@ -37,35 +37,35 @@ sap.ui.define([
 				var done = assert.async();
 
 				XMLView.create({id: "testView", viewName: "dt.view.TestSimpleForm"})
-					.then(function (oView) {
-						this.oView = oView;
-						var oSimpleForm = oCore.byId("testView--SimpleForm0");
-						/*
+				.then(function(oView) {
+					this.oView = oView;
+					var oSimpleForm = oCore.byId("testView--SimpleForm0");
+					/*
 						 * Attention:
 						 * this call can lead to async requests that postpone
 						 * SimpleForm layouting & rendering after layouts are loaded and onAfterRendering
 						 * therefore we need to preload all modules upfront
 						 */
-						oSimpleForm.setLayout(oSimpleFormLayout);
-						this.oView.placeAt("qunit-fixture");
+					oSimpleForm.setLayout(oSimpleFormLayout);
+					this.oView.placeAt("qunit-fixture");
 
-						oCore.applyChanges();
+					oCore.applyChanges();
 
-						var oTabHandlingPlugin = new TabHandling();
-						var oSelectionPlugin = new MouseSelection();
-						this.oCutPaste = new CutPaste({
-							movableTypes: aMovableTypes
-						});
+					var oTabHandlingPlugin = new TabHandling();
+					var oSelectionPlugin = new MouseSelection();
+					this.oCutPaste = new CutPaste({
+						movableTypes: aMovableTypes
+					});
 
-						this.oDesignTime = new DesignTime({
-							plugins: [oTabHandlingPlugin, oSelectionPlugin, this.oCutPaste],
-							rootElements: [oView]
-						});
+					this.oDesignTime = new DesignTime({
+						plugins: [oTabHandlingPlugin, oSelectionPlugin, this.oCutPaste],
+						rootElements: [oView]
+					});
 
-						this.oDesignTime.attachEventOnce("synced", function () {
-							done();
-						});
-					}.bind(this));
+					this.oDesignTime.attachEventOnce("synced", function() {
+						done();
+					});
+				}.bind(this));
 			},
 
 			afterEach: function() {
@@ -159,15 +159,15 @@ sap.ui.define([
 
 	function whenCutAndPaste(oSourceOverlay, oTargetOverlay) {
 		return new Promise(function(resolve) {
-			//although cut and paste is more or less sync, SimpleForm might react async
+			// although cut and paste is more or less sync, SimpleForm might react async
 			this.oDesignTime.attachEventOnce("elementOverlayMoved", function() {
 				resolve();
 			});
 
 			this.oCutPaste.cut(oSourceOverlay)
-				.then(function() {
-					this.oCutPaste.paste(oTargetOverlay);
-				}.bind(this));
+			.then(function() {
+				this.oCutPaste.paste(oTargetOverlay);
+			}.bind(this));
 		}.bind(this));
 	}
 

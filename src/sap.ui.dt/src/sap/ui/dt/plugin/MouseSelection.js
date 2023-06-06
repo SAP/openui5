@@ -53,12 +53,12 @@ function(Plugin) {
 	 */
 	MouseSelection.prototype.registerElementOverlay = function(oOverlay) {
 		oOverlay.setSelectable(true);
-		oOverlay.attachBrowserEvent('click', this._onClick, oOverlay);
+		oOverlay.attachBrowserEvent("click", this._onClick, oOverlay);
 	};
 
 	// * @override
 	MouseSelection.prototype.deregisterElementOverlay = function(oOverlay) {
-		oOverlay.detachBrowserEvent('click', this._onClick, oOverlay);
+		oOverlay.detachBrowserEvent("click", this._onClick, oOverlay);
 	};
 
 	/*

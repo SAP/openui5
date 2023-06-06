@@ -87,18 +87,18 @@ sap.ui.define([
 	ControlDragDrop.prototype.registerElementOverlay = function(oOverlay) {
 		var oElement = oOverlay.getElement();
 		this.getElementMover().checkMovable(oOverlay)
-			.then(function(bMovable) {
-				if (
-					this.getElementMover().isMovableType(oElement)
+		.then(function(bMovable) {
+			if (
+				this.getElementMover().isMovableType(oElement)
 					&& bMovable
-				) {
-					oOverlay.setMovable(true);
-				}
-				if (this.oDraggedElement) {
-					this.getElementMover().activateTargetZonesFor(oOverlay, sDROP_ZONE_STYLE);
-				}
-				DragDrop.prototype.registerElementOverlay.call(this, oOverlay);
-			}.bind(this));
+			) {
+				oOverlay.setMovable(true);
+			}
+			if (this.oDraggedElement) {
+				this.getElementMover().activateTargetZonesFor(oOverlay, sDROP_ZONE_STYLE);
+			}
+			DragDrop.prototype.registerElementOverlay.call(this, oOverlay);
+		}.bind(this));
 	};
 
 	/**

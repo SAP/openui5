@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/enablement/report/QUnitReport",
@@ -13,11 +13,11 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.dt.test.report.QUnit", {
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when a Test Report is created with mock data", function (assert) {
+	}, function() {
+		QUnit.test("when a Test Report is created with mock data", function(assert) {
 			assert.expect(10);
 			var oModuleStub = sandbox.stub(QUnit, "module");
 			var oTestStub = sandbox.stub(QUnit, "test");
@@ -78,7 +78,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

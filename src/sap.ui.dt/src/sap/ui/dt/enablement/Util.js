@@ -47,7 +47,6 @@ sap.ui.define([
 		};
 	};
 
-
 	/**
 	 * Returns all aggregation infos of the element
 	 * @param {sap.ui.core.Element} oElement - Element to test
@@ -92,7 +91,6 @@ sap.ui.define([
 
 		return mAggregationTest;
 	};
-
 
 	/**
 	 * Returns all information of all aggregations of the element

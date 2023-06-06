@@ -105,7 +105,7 @@ sap.ui.define([
 
 		if (Configuration.getRTL()) {
 			var iParentWidth = oParent ? oParent.offsetWidth : window.innerWidth;
-			//TODO: Workaround - remove when bug in Safari (issue 336512063) is solved
+			// TODO: Workaround - remove when bug in Safari (issue 336512063) is solved
 			if (Device.browser.safari && !Device.browser.mobile && DOMUtil.hasVerticalScrollBar(oParent)) {
 				mOffset.left -= DOMUtil.getScrollbarWidth();
 			}
@@ -209,7 +209,7 @@ sap.ui.define([
 	 * @returns {number} returns width in pixels
 	 */
 	DOMUtil.getScrollbarWidth = function() {
-		if (typeof DOMUtil.getScrollbarWidth._cache === 'undefined') {
+		if (typeof DOMUtil.getScrollbarWidth._cache === "undefined") {
 			// add outer div
 			var oOuter = document.createElement("div");
 			oOuter.style.position = "absolute";
@@ -236,7 +236,6 @@ sap.ui.define([
 
 		return DOMUtil.getScrollbarWidth._cache;
 	};
-
 
 	/**
 	 * @param {HTMLElement} oDomRef - DOM element

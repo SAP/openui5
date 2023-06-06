@@ -52,7 +52,7 @@ function(
 	OverlayUtil.getParentInformation = function(oElementOverlay) {
 		var oParentOverlay = oElementOverlay.getParentElementOverlay();
 		if (oParentOverlay) {
-			//calculate index in direct (maybe in hidden tree) parent
+			// calculate index in direct (maybe in hidden tree) parent
 			var oParent = oParentOverlay.getElement();
 			var sParentAggregationName = oElementOverlay.getParentAggregationOverlay().getAggregationName();
 			var aChildren = ElementUtil.getAggregation(oParent, sParentAggregationName);

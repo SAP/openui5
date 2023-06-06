@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/ui/core/Core"
-], function (
+], function(
 	DesignTime,
 	OverlayRegistry,
 	ElementUtil,
@@ -19,7 +19,7 @@ sap.ui.define([
 	Button,
 	oCore
 ) {
-	'use strict';
+	"use strict";
 
 	var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 		/**
@@ -126,7 +126,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 
-			//add the component later
+			// add the component later
 			this.oComponent = new CustomComponent();
 			oInnerLayout = this.oComponent.getRootControl();
 
@@ -145,7 +145,7 @@ sap.ui.define([
 
 			var LateComponent = UIComponent.extend("sap.ui.dt.test.LateComponent", {
 				createContent: function() {
-					return null; //do it like fiori elements and add it later
+					return null; // do it like fiori elements and add it later
 				}
 			});
 			this.oComponent = new LateComponent();
@@ -185,7 +185,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 
-			//add the root control later
+			// add the root control later
 			this.oComponent.setAggregation("rootControl", oNewRootControl);
 		});
 	});

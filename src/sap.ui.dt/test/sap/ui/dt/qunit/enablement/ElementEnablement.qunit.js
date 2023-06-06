@@ -1,11 +1,11 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/enablement/ElementEnablementTest",
 	"sap/m/Button",
 	"sap/ui/thirdparty/sinon-4"
 ],
-function (
+function(
 	ElementEnablementTest,
 	Button,
 	sinon
@@ -28,15 +28,15 @@ function (
 	};
 
 	QUnit.module("Given that a sap.m.Button is tested", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oElementEnablementTest = new ElementEnablementTest({
 				type: "sap.m.Button"
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oElementEnablementTest.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when the test is started", function(assert) {
 			return this.oElementEnablementTest.run()
 			.then(function(oResult) {
@@ -62,7 +62,7 @@ function (
 		afterEach: function() {
 			this.oElementEnablementTest.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when the test is started", function(assert) {
 			return this.oElementEnablementTest.run()
 			.then(function(oResult) {

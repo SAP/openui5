@@ -5,15 +5,15 @@
 sap.ui.define([
 	"sap/ui/dt/enablement/report/QUnitReport",
 	"sap/ui/dt/enablement/ElementEnablementTest"
-], function (
+], function(
 	QUnitReport,
 	ElementEnablementTest
 ) {
 	"use strict";
 
-	var elementTest = function (mParameters) {
+	var elementTest = function(mParameters) {
 		var oElementEnablementTest = new ElementEnablementTest(mParameters);
-		return oElementEnablementTest.run().then(function (oData) {
+		return oElementEnablementTest.run().then(function(oData) {
 			var oQUnitReport = new QUnitReport({
 				data: oData
 			});

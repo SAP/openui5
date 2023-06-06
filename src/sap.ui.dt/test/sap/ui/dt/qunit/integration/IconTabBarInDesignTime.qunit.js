@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/m/Button",
@@ -88,7 +88,7 @@ sap.ui.define([
 			this.oIconTabBar.destroy();
 			this.oDesignTime.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("initially...", function(assert) {
 			var oListOverlay = OverlayRegistry.getOverlay(this.oList);
 			var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);

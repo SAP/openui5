@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/m/CheckBox",
@@ -137,7 +137,6 @@ sap.ui.define([
 		var $ContainerOverlay2 = oContainerOverlay2.$();
 		assert.ok($ContainerOverlay2, "Overlay for FormContainer2 exists");
 		assert.ok(isElementChildOf($ContainerOverlay2, $FormContainersOverlay), "... and is a child of a formContainers overlay");
-
 
 		var oContainerOverlay3 = OverlayRegistry.getOverlay(this.oFormContainer3.getId());
 		var $ContainerOverlay3 = oContainerOverlay3.$();

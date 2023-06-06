@@ -1,11 +1,11 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/ControlObserver",
 	"sap/m/Button",
 	"sap/ui/core/Core"
 ],
-function (
+function(
 	ControlObserver,
 	Button,
 	oCore
@@ -25,11 +25,11 @@ function (
 			this.oControlObserver.destroy();
 			this.oButton.destroy();
 		}
-	}, function () {
-		QUnit.test("when the property of the Button is modified", function (assert) {
+	}, function() {
+		QUnit.test("when the property of the Button is modified", function(assert) {
 			var done = assert.async();
 
-			this.oControlObserver.attachEventOnce("modified", function (oEvent) {
+			this.oControlObserver.attachEventOnce("modified", function(oEvent) {
 				assert.ok(oEvent, 'then a "Changed" event is fired because of the property change');
 				done();
 			});
@@ -37,11 +37,11 @@ function (
 			this.oButton.setText("test");
 		});
 
-		QUnit.test("when the Button is re-rendered", function (assert) {
+		QUnit.test("when the Button is re-rendered", function(assert) {
 			var done = assert.async();
 
-			this.oControlObserver.attachEventOnce("modified", function (oEvent) {
-				assert.ok(oEvent.getParameter("type") === "afterRendering", 'DomChanged event is fired');
+			this.oControlObserver.attachEventOnce("modified", function(oEvent) {
+				assert.ok(oEvent.getParameter("type") === "afterRendering", "DomChanged event is fired");
 				done();
 			});
 

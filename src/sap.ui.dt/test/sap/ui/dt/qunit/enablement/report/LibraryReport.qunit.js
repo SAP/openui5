@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/enablement/report/LibraryReport",
@@ -7,7 +7,7 @@ sap.ui.define([
 	// ensure the test library is loaded so it can be used in the library enablement test
 	"sap/ui/testLibrary/library"
 ],
-function (
+function(
 	LibraryReport,
 	SimpleScrollControl,
 	sinon
@@ -34,8 +34,8 @@ function (
 		afterEach: function() {
 			this.oLibraryReport.destroy();
 		}
-	}, function () {
-		QUnit.test("when the test is started", function (assert) {
+	}, function() {
+		QUnit.test("when the test is started", function(assert) {
 			return this.oLibraryReport.run()
 			.then(function(oResult) {
 				assert.ok(oResult, "A result is returned");

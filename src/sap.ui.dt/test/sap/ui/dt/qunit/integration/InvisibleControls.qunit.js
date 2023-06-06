@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/SplitContainer",
 	"sap/ui/core/Core"
-], function (
+], function(
 	DesignTime,
 	OverlayRegistry,
 	Button,
@@ -15,7 +15,7 @@ sap.ui.define([
 	SplitContainer,
 	oCore
 ) {
-	'use strict';
+	"use strict";
 
 	QUnit.module("Given that a DesignTime is created for a SplitContainer with 2 pages, one is hidden and one is visible", {
 		beforeEach: function(assert) {
@@ -68,7 +68,7 @@ sap.ui.define([
 			this.oDesignTime.destroy();
 			this.oSplitContainer.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when the SplitContainer is rendered", function(assert) {
 			assert.notOk(OverlayRegistry.getOverlay(this.oButton1).isVisible(), "no overlays for controls in hidden page are not visible");
 			assert.ok(OverlayRegistry.getOverlay(this.oButton2).isVisible(), "overlays for controls in visible page are visible");

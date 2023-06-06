@@ -49,7 +49,7 @@ function(
 				}
 			}
 		},
-		constructor: function () {
+		constructor: function() {
 			ManagedObject.apply(this, arguments);
 			this._mQueuedTasks = {};
 			this._mPendingTasks = {};
@@ -76,7 +76,7 @@ function(
 	function getTaskIdentifierFunction(vTaskIdentifier) {
 		var fnTaskIdentifier;
 		if (typeof vTaskIdentifier === "string") {
-			fnTaskIdentifier = function (mTask) { return mTask[vTaskIdentifier]; };
+			fnTaskIdentifier = function(mTask) { return mTask[vTaskIdentifier]; };
 		} else if (typeof vTaskIdentifier === "function") {
 			fnTaskIdentifier = vTaskIdentifier;
 		} else {
@@ -103,9 +103,9 @@ function(
 		}
 	};
 
-	TaskManager.prototype._removeTaskById = function (iTaskId, sListName) {
-		Object.keys(this[sListName]).forEach(function (sTypeName) {
-			this[sListName][sTypeName] = this[sListName][sTypeName].filter(function (mTask) {
+	TaskManager.prototype._removeTaskById = function(iTaskId, sListName) {
+		Object.keys(this[sListName]).forEach(function(sTypeName) {
+			this[sListName][sTypeName] = this[sListName][sTypeName].filter(function(mTask) {
 				if (mTask.id === iTaskId) {
 					this._iTaskCounter--;
 					return false;
@@ -139,7 +139,7 @@ function(
 	 * by <code>vDoubleIdentifier</code> are removed before adding the new task.
 	 * @return {number} Task ID
 	 */
-	TaskManager.prototype.add = function (mTask, vDoubleIdentifier) {
+	TaskManager.prototype.add = function(mTask, vDoubleIdentifier) {
 		validateTask(mTask);
 		this._removeTasksByIdentifier(mTask, vDoubleIdentifier, "_mQueuedTasks");
 		return this._addTask(mTask);
@@ -149,7 +149,7 @@ function(
 	 * Completes the task by its ID
 	 * @param {number} iTaskId - Task ID
 	 */
-	TaskManager.prototype.complete = function (iTaskId) {
+	TaskManager.prototype.complete = function(iTaskId) {
 		this._removeTaskById(iTaskId, "_mQueuedTasks");
 		this._removeTaskById(iTaskId, "_mPendingTasks");
 		if (!this.getSuppressEvents()) {
@@ -165,12 +165,12 @@ function(
 	 * @param {object} mTask - Task definition map
 	 * @param {object} mTask.type - Task type
 	 */
-	TaskManager.prototype.completeBy = function (mTask) {
+	TaskManager.prototype.completeBy = function(mTask) {
 		validateTask(mTask);
 		var aCompledTaskIds = [];
 		// TODO: get rid of filtering other task parameters then type for performance reasons
-		var _removeTasksByDefinition = function (aTasks) {
-			return (aTasks || []).filter(function (mLocalTask) {
+		var _removeTasksByDefinition = function(aTasks) {
+			return (aTasks || []).filter(function(mLocalTask) {
 				var bCompleteTask = Object.keys(mTask).every(function(sKey) {
 					return mLocalTask[sKey] && mLocalTask[sKey] === mTask[sKey];
 				});
@@ -195,7 +195,7 @@ function(
 	 * Cancels the task by its ID
 	 * @param {number} iTaskId - Task ID
 	 */
-	TaskManager.prototype.cancel = function (iTaskId) {
+	TaskManager.prototype.cancel = function(iTaskId) {
 		this.complete(iTaskId);
 	};
 
@@ -207,7 +207,7 @@ function(
 	 * @param {string} sTaskIdentifier - Identifier for tasks in <code>TaskManager</code> related to the specific task type.
 	 *  The existing tasks that are identified by <code>sTaskIdentifier</code> are removed
 	 */
-	TaskManager.prototype.cancelBy = function (mTask, sTaskIdentifier) {
+	TaskManager.prototype.cancelBy = function(mTask, sTaskIdentifier) {
 		this._removeTasksByIdentifier(mTask, sTaskIdentifier, "_mQueuedTasks");
 		this._removeTasksByIdentifier(mTask, sTaskIdentifier, "_mPendingTasks");
 	};
@@ -216,7 +216,7 @@ function(
 	 * Checks if the queue is empty
 	 * @return {boolean} <code>true</code> if there is no pending task
 	 */
-	TaskManager.prototype.isEmpty = function () {
+	TaskManager.prototype.isEmpty = function() {
 		return this._iTaskCounter === 0;
 	};
 
@@ -225,16 +225,16 @@ function(
 	 * @param {string} [sType] - type of pending tasks to be counted. When <code>undefined</code> the count will be returned for all tasks
 	 * @return {number} Amount of tasks
 	 */
-	TaskManager.prototype.count = function (sType) {
+	TaskManager.prototype.count = function(sType) {
 		return this.getList(sType).length;
 	};
 
-	TaskManager.prototype._markAsPending = function (sType, aTasks) {
+	TaskManager.prototype._markAsPending = function(sType, aTasks) {
 		this._mPendingTasks[sType] = (this._mPendingTasks[sType] || []).concat(aTasks);
 		this._mQueuedTasks[sType] = [];
 	};
 
-	TaskManager.prototype._getTypedList = function (sTaskType, bMarkAsPending) {
+	TaskManager.prototype._getTypedList = function(sTaskType, bMarkAsPending) {
 		var aTasks = [];
 		if (this._mQueuedTasks[sTaskType]) {
 			aTasks = this._mQueuedTasks[sTaskType].slice(0);
@@ -247,7 +247,7 @@ function(
 		return aTasks;
 	};
 
-	TaskManager.prototype._getAllTasks = function (bMarkAsPending) {
+	TaskManager.prototype._getAllTasks = function(bMarkAsPending) {
 		var aAllTasks = [];
 		aAllTasks = Object.keys(this._mQueuedTasks).reduce(function(aResult, _sType) {
 			aResult = aResult.concat(this._mQueuedTasks[_sType]);
@@ -271,7 +271,7 @@ function(
 	 * @param {string} [sType] - type of tasks to be returned. When <code>undefined</code> all tasks will be returned
 	 * @return {array} List copy of pending tasks
 	 */
-	TaskManager.prototype.getList = function (sType) {
+	TaskManager.prototype.getList = function(sType) {
 		if (sType) {
 			return this._getTypedList(sType, false);
 		}
@@ -284,7 +284,7 @@ function(
 	 * @param {string} [sType] - type of tasks to be returned. When <code>undefined</code> all open (queued) tasks will be returned
 	 * @return {array} List copy of open (queued) tasks
 	 */
-	TaskManager.prototype.getQueuedTasks = function (sType) {
+	TaskManager.prototype.getQueuedTasks = function(sType) {
 		if (sType) {
 			return this._getTypedList(sType, true);
 		}
@@ -294,9 +294,9 @@ function(
 	/**
 	 * @override
 	 */
-	TaskManager.prototype.destroy = function () {
+	TaskManager.prototype.destroy = function() {
 		this.setSuppressEvents(true);
-		this.getList().forEach(function (oTask) {
+		this.getList().forEach(function(oTask) {
 			this.cancel(oTask.id);
 		}, this);
 		ManagedObject.prototype.destroy.apply(this, arguments);

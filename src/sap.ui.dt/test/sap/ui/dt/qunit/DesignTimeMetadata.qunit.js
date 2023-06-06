@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
@@ -34,7 +34,7 @@ sap.ui.define([
 						action2: {
 							changeType: "secondChangeType"
 						},
-						action3: function (oElement) {
+						action3: function(oElement) {
 							return {
 								changeType: oElement.name
 							};
@@ -45,7 +45,7 @@ sap.ui.define([
 							}
 						},
 						actionWithASubActionInsideFunction: {
-							subAction: function (oElement) {
+							subAction: function(oElement) {
 								return {
 									changeType: oElement.name
 								};
@@ -245,7 +245,7 @@ sap.ui.define([
 				data: {
 					actions: {
 						rename: {
-							domRef: function (oElement) {
+							domRef: function(oElement) {
 								return oElement.getDomRef();
 							}
 						}
@@ -274,7 +274,7 @@ sap.ui.define([
 				data: {
 					actions: {
 						rename: {
-							domRef: function (oElement) {
+							domRef: function(oElement) {
 								return oElement.getDomRef();
 							}
 						}
@@ -292,7 +292,7 @@ sap.ui.define([
 				data: {
 					actions: {
 						rename: {
-							domRef: function (oElement) {
+							domRef: function(oElement) {
 								return oElement.getDomRef();
 							}
 						}
@@ -309,7 +309,7 @@ sap.ui.define([
 				data: {
 					actions: {
 						rename: {
-							domRef: function () {
+							domRef: function() {
 								throw new Error("Something wrong");
 							}
 						}
@@ -412,7 +412,7 @@ sap.ui.define([
 					actions: {
 						rename: function() {
 							return {
-								domRef: function (oElement) {
+								domRef: function(oElement) {
 									return oElement.getDomRef();
 								}
 							};
@@ -478,14 +478,14 @@ sap.ui.define([
 			assert.equal(this.oDesignTimeMetadataWithoutActions.getResponsibleElement(oResponsibleElement), undefined);
 		});
 
-		QUnit.test("when isResponsibleActionAvailable() is called for designTimeMetadata with no actions", function (assert) {
-			this.fnGetData = function () {
+		QUnit.test("when isResponsibleActionAvailable() is called for designTimeMetadata with no actions", function(assert) {
+			this.fnGetData = function() {
 				return {};
 			};
 			assert.strictEqual(this.oDesignTimeMetadataWithoutActions.isResponsibleActionAvailable("dummyActionEnabled"), false, "then false is returned");
 		});
 
-		QUnit.test("when isResponsibleActionAvailable() is called for designTimeMetadata with enabled action", function (assert) {
+		QUnit.test("when isResponsibleActionAvailable() is called for designTimeMetadata with enabled action", function(assert) {
 			assert.strictEqual(this.oDesignTimeMetadataWithResponsibleElement.isResponsibleActionAvailable("dummyActionDisabled"), false, "then false is returned for a non enabled action");
 			assert.strictEqual(this.oDesignTimeMetadataWithResponsibleElement.isResponsibleActionAvailable("dummyActionEnabled"), true, "then true is returned for an enabled action");
 		});

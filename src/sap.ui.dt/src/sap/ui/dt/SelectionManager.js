@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/base/util/includes"
 ],
-function (
+function(
 	ManagedObject,
 	OverlayRegistry,
 	Util,
@@ -56,25 +56,25 @@ function (
 
 	function getOverlays(vObjects) {
 		return Util.castArray(vObjects)
-			// Get overlays
-			.map(function (oObject) {
-				if (oObject instanceof ElementOverlay) {
-					return oObject;
-				}
+		// Get overlays
+		.map(function(oObject) {
+			if (oObject instanceof ElementOverlay) {
+				return oObject;
+			}
 
-				var oElementOverlay = OverlayRegistry.getOverlay(oObject);
-				if (oElementOverlay) {
-					return oElementOverlay;
-				}
-			})
-			// Filter out not found overlays & duplicates
-			.filter(function (oElementOverlay, iIndex, aSource) {
-				return oElementOverlay && aSource.indexOf(oElementOverlay) === iIndex;
-			});
+			var oElementOverlay = OverlayRegistry.getOverlay(oObject);
+			if (oElementOverlay) {
+				return oElementOverlay;
+			}
+		})
+		// Filter out not found overlays & duplicates
+		.filter(function(oElementOverlay, iIndex, aSource) {
+			return oElementOverlay && aSource.indexOf(oElementOverlay) === iIndex;
+		});
 	}
 
 	function selectableValidator(aElementOverlays) {
-		return aElementOverlays.every(function (oElementOverlay) {
+		return aElementOverlays.every(function(oElementOverlay) {
 			return oElementOverlay.isSelectable();
 		});
 	}
@@ -96,12 +96,12 @@ function (
 		this.addValidator(selectableValidator);
 	};
 
-	SelectionManager.prototype.exit = function () {
+	SelectionManager.prototype.exit = function() {
 		delete this._aSelection;
 		delete this._aValidators;
 	};
 
-	SelectionManager.prototype.getSelectionMode = function () {
+	SelectionManager.prototype.getSelectionMode = function() {
 		return this._aSelection.length > 1 ? SelectionMode.Multi : SelectionMode.Single;
 	};
 
@@ -125,12 +125,12 @@ function (
 	 * @return {boolean} true if selection has changed
 	 * @public
 	 */
-	SelectionManager.prototype.set = function (vObjects) {
+	SelectionManager.prototype.set = function(vObjects) {
 		var aElementOverlays = getOverlays(vObjects);
 		var bResult = false;
 
 		if (this._validate(aElementOverlays)) {
-			var aElementOverlaysToRemove = this.get().filter(function (oElementOverlay) {
+			var aElementOverlaysToRemove = this.get().filter(function(oElementOverlay) {
 				return !includes(aElementOverlays, oElementOverlay);
 			});
 
@@ -147,17 +147,17 @@ function (
 		return bResult;
 	};
 
-	SelectionManager.prototype._validate = function (aElementOverlays) {
-		return this.getValidators().every(function (fnValidator) {
+	SelectionManager.prototype._validate = function(aElementOverlays) {
+		return this.getValidators().every(function(fnValidator) {
 			return fnValidator(aElementOverlays);
 		});
 	};
 
-	SelectionManager.prototype._add = function (aElementOverlays) {
+	SelectionManager.prototype._add = function(aElementOverlays) {
 		var aCurrentSelection = this.get();
 
 		// Filter out already selected overlays
-		aElementOverlays = aElementOverlays.filter(function (oElementOverlay) {
+		aElementOverlays = aElementOverlays.filter(function(oElementOverlay) {
 			return !includes(aCurrentSelection, oElementOverlay);
 		});
 
@@ -167,7 +167,7 @@ function (
 			if (this._validate(aNextSelection)) {
 				this._aSelection = aNextSelection;
 
-				aElementOverlays.forEach(function (oElementOverlay) {
+				aElementOverlays.forEach(function(oElementOverlay) {
 					oElementOverlay.setSelected(true);
 				}, this);
 
@@ -189,7 +189,7 @@ function (
 	 * @return {boolean} true if selection has changed
 	 * @public
 	 */
-	SelectionManager.prototype.add = function (vObjects) {
+	SelectionManager.prototype.add = function(vObjects) {
 		if (this._add(getOverlays(vObjects))) {
 			this.fireChange({
 				selection: this.get()
@@ -199,17 +199,17 @@ function (
 		return false;
 	};
 
-	SelectionManager.prototype._remove = function (aElementOverlays) {
+	SelectionManager.prototype._remove = function(aElementOverlays) {
 		var aCurrentSelection = this.get();
 
-		var aNextSelection = aCurrentSelection.filter(function (oElementOverlay) {
+		var aNextSelection = aCurrentSelection.filter(function(oElementOverlay) {
 			return !includes(aElementOverlays, oElementOverlay);
 		});
 
 		if (aNextSelection.length !== aCurrentSelection.length) {
 			this._aSelection = aNextSelection;
 
-			aElementOverlays.forEach(function (oElementOverlay) {
+			aElementOverlays.forEach(function(oElementOverlay) {
 				oElementOverlay.setSelected(false);
 			});
 
@@ -230,7 +230,7 @@ function (
 	 * @return {boolean} true if selection has changed
 	 * @public
 	 */
-	SelectionManager.prototype.remove = function (vObjects) {
+	SelectionManager.prototype.remove = function(vObjects) {
 		if (this._remove(getOverlays(vObjects))) {
 			this.fireChange({
 				selection: this.get()
@@ -244,7 +244,7 @@ function (
 	 * Resets the current selection.
 	 * @returns {boolean} true if completed successfully (if nothing to reset, then FALSE is returned)
 	 */
-	SelectionManager.prototype.reset = function () {
+	SelectionManager.prototype.reset = function() {
 		return this.remove(this.get());
 	};
 
@@ -252,7 +252,7 @@ function (
 	 * Adds a new validator.
 	 * @param {function} fnValidator - Validator function which will be invoked during add/set calls
 	 */
-	SelectionManager.prototype.addValidator = function (fnValidator) {
+	SelectionManager.prototype.addValidator = function(fnValidator) {
 		if (
 			typeof fnValidator === "function"
 			&& !includes(this._aValidators, fnValidator)
@@ -265,8 +265,8 @@ function (
 	 * Removes a specified validator.
 	 * @param {function} fnValidator - Validator function to remove
 	 */
-	SelectionManager.prototype.removeValidator = function (fnValidator) {
-		this._aValidators = this._aValidators.filter(function (fnCurrent) {
+	SelectionManager.prototype.removeValidator = function(fnValidator) {
+		this._aValidators = this._aValidators.filter(function(fnCurrent) {
 			return fnValidator !== fnCurrent;
 		});
 	};
@@ -275,7 +275,7 @@ function (
 	 * Gets all registered validators.
 	 * @returns {function[]} List of validator functions
 	 */
-	SelectionManager.prototype.getValidators = function () {
+	SelectionManager.prototype.getValidators = function() {
 		return this._aValidators.slice();
 	};
 

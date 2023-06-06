@@ -105,7 +105,7 @@ sap.ui.define([
 
 			// Create DesignTime in other tick
 			return new Promise(function(resolve) {
-				//will result in custom timer in webPageTest
+				// will result in custom timer in webPageTest
 				window.performance.mark("dt.starts");
 
 				var MOVABLE_TYPES = ["sap.ui.layout.VerticalLayout", "sap.m.Button", "sap.m.Label", "sap.m.DatePicker", "sap.m.Slider", "sap.m.RatingIndicator"];
@@ -131,12 +131,12 @@ sap.ui.define([
 					]
 				});
 				oDesignTime.attachEventOnce("synced", function() {
-					//will result in custom timer in webPageTest
+					// will result in custom timer in webPageTest
 					window.performance.mark("dt.synced");
 					window.performance.measure("Create DesignTime and Overlays", "dt.starts", "dt.synced");
-					window.wpp.customMetrics["creationTime"] = window.performance.getEntriesByName("Create DesignTime and Overlays")[0].duration;
-					Log.info("Create DesignTime and Overlays", window.wpp.customMetrics["creationTime"] + "ms");
-					//visual change at the end
+					window.wpp.customMetrics.creationTime = window.performance.getEntriesByName("Create DesignTime and Overlays")[0].duration;
+					Log.info("Create DesignTime and Overlays", window.wpp.customMetrics.creationTime + "ms");
+					// visual change at the end
 					var oOverlay = OverlayRegistry.getOverlay(sSelectedOverlayId || "Control2");
 					oOverlay.setSelected(true);
 
@@ -158,7 +158,7 @@ sap.ui.define([
 			var iCountCall = 0;
 			var bMeasurementDone = false;
 
-			var fnDebouncedFn = _debounce(function () {
+			var fnDebouncedFn = _debounce(function() {
 				if (!bMeasurementDone) {
 					bMeasurementDone = true;
 					window.wpp.customMetrics[sCustomMetricName] = aStack[aStack.length - 1] - aStack[0];
@@ -170,8 +170,8 @@ sap.ui.define([
 				}
 			}, iWaitUntilDoneInMs);
 
-			OverlayRegistry.getOverlays().forEach(function (oElementOverlay) {
-				oElementOverlay.attachGeometryChanged(function () {
+			OverlayRegistry.getOverlays().forEach(function(oElementOverlay) {
+				oElementOverlay.attachGeometryChanged(function() {
 					aStack.push(new Date().getTime());
 					iCountCall++;
 					setTimeout(fnDebouncedFn);

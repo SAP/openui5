@@ -80,15 +80,15 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given the sap.ui.table.Table is created", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oModel = _createJSONModel();
 			this.oTable = _createTable(this.oModel);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oTable.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when design time is started with sap.ui.table.Table as root element", function(assert) {
 			var done = assert.async();
 			var oOnErrorSpy = sandbox.spy(Log, "error");
@@ -129,7 +129,7 @@ sap.ui.define([
 			this.oTable.destroy();
 			this.oDesignTime.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when Table is scrolled horizontally via aggregationOverlay hScroll...", function(assert) {
 			var done = assert.async();
 
@@ -198,7 +198,7 @@ sap.ui.define([
 				rootElements: [this.oTable]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function () {
+			this.oDesignTime.attachEventOnce("synced", function() {
 				oCore.applyChanges();
 
 				// TODO: Temporal solution. Remove when the synced event in DesignTime waits for all async processes to be completed.
@@ -209,7 +209,7 @@ sap.ui.define([
 			this.oTable.destroy();
 			this.oDesignTime.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when AnalyticalTable is scrolled horizontally via aggregationOverlay hScroll...", function(assert) {
 			var done = assert.async();
 

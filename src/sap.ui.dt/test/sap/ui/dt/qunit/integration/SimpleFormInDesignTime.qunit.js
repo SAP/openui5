@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
@@ -76,7 +76,7 @@ sap.ui.define([
 			this.oDesignTime.destroy();
 			this.oSimpleForm.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when the content is added to a SimpleForm ...", function(assert) {
 			var oSimpleFormOverlay = OverlayRegistry.getOverlay(this.oSimpleForm);
 			var oFormAggregationOverlay = oSimpleFormOverlay.getAggregationOverlay("form");
@@ -105,30 +105,30 @@ sap.ui.define([
 		});
 
 		QUnit.test("when getIndex is called in a simpleForm", function(assert) {
-			var oForm = this.oSimpleForm.getAggregation('form');
+			var oForm = this.oSimpleForm.getAggregation("form");
 			var oFormOverlay = OverlayRegistry.getOverlay(oForm);
-			var fnGetIndex = oFormOverlay.getDesignTimeMetadata().getAggregation('formContainers').getIndex;
+			var fnGetIndex = oFormOverlay.getDesignTimeMetadata().getAggregation("formContainers").getIndex;
 			assert.equal(fnGetIndex(oForm), 1, "then the new index should be 1");
 		});
 
 		QUnit.test("when getIndex is called in a simpleForm with a sibling", function(assert) {
-			var oForm = this.oSimpleForm.getAggregation('form');
+			var oForm = this.oSimpleForm.getAggregation("form");
 			var oFormOverlay = OverlayRegistry.getOverlay(oForm);
-			var fnGetIndex = oFormOverlay.getDesignTimeMetadata().getAggregation('formContainers').getIndex;
+			var fnGetIndex = oFormOverlay.getDesignTimeMetadata().getAggregation("formContainers").getIndex;
 			assert.equal(fnGetIndex(oForm, oForm.getFormContainers()[0]), 1, "then the new index should be 1");
 		});
 
 		QUnit.test("when getIndex is called in a simpleForm without Title", function(assert) {
-			var oForm = this.oSimpleForm.getAggregation('form');
+			var oForm = this.oSimpleForm.getAggregation("form");
 			var oFormOverlay = OverlayRegistry.getOverlay(oForm);
-			var fnGetIndex = oFormOverlay.getDesignTimeMetadata().getAggregation('formContainers').getIndex;
+			var fnGetIndex = oFormOverlay.getDesignTimeMetadata().getAggregation("formContainers").getIndex;
 			oForm.getFormContainers()[0].removeAllFormElements();
 			this.oSimpleForm.removeContent(oForm.getAggregation("formContainers")[0].getTitle());
 			assert.equal(fnGetIndex(oForm), 0, "then the new index should be 0");
 		});
 
 		QUnit.test("when rename is called in a simpleForm without Title", function(assert) {
-			var oFirstFormContainer = this.oSimpleForm.getAggregation('form').getAggregation('formContainers')[0];
+			var oFirstFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
 			var oFormContainerOverlay = OverlayRegistry.getOverlay(oFirstFormContainer);
 			var fnRename = oFormContainerOverlay.getDesignTimeMetadata().getData().actions.rename;
 			this.oSimpleForm.removeContent(oFirstFormContainer.getTitle());
@@ -136,7 +136,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when remove is called in a simpleForm without Title", function(assert) {
-			var oFirstFormContainer = this.oSimpleForm.getAggregation('form').getAggregation('formContainers')[0];
+			var oFirstFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
 			var oFormContainerOverlay = OverlayRegistry.getOverlay(oFirstFormContainer);
 			var fnRemove = oFormContainerOverlay.getDesignTimeMetadata().getData().actions.remove;
 			this.oSimpleForm.removeContent(oFirstFormContainer.getTitle());
