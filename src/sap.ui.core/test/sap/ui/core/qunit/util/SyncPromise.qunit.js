@@ -1220,6 +1220,9 @@ sap.ui.define([
 	QUnit.test("resolve() re-uses the same instance", function (assert) {
 		// code under test
 		assert.strictEqual(SyncPromise.resolve(), SyncPromise.resolve(undefined));
+
+		// code under test
+		assert.strictEqual(SyncPromise.resolve(null), SyncPromise.resolve(null));
 	});
 
 	//*********************************************************************************************
