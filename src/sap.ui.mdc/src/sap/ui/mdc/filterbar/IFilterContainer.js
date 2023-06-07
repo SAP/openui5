@@ -36,7 +36,7 @@ sap.ui.define([
 	/**
 	 * Inserts the inner content into the layout item.
 	 * @public
-	 * @param {sap.ui.mdc.FilterItem} oControl to be inserted
+	 * @param {sap.ui.mdc.FilterField} oControl to be inserted
 	 * @param {int} iIndex Position where the control is added
 	 */
 	IFilterContainer.prototype.insertFilterField = function(oControl, iIndex) {
@@ -46,7 +46,7 @@ sap.ui.define([
 	/**
 	 * Removes the inner content from the layout item.
 	 * @public
-	 * @param {sap.ui.mdc.FilterItem} oControl Control that is removed
+	 * @param {sap.ui.mdc.FilterField} oControl Control that is removed
 	 */
 	IFilterContainer.prototype.removeFilterField = function(oControl) {
 		//remove the content from the inner layout this.oLayout
@@ -54,7 +54,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the inner controls of the layout item.
-	 * @returns {sap.ui.mdc.FilterItem[]} Array of all inner controls in the layout item
+	 * @returns {sap.ui.mdc.FilterField[]} Array of all inner controls in the layout item
 	 * @public
 	 */
 	IFilterContainer.prototype.getFilterFields = function() {

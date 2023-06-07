@@ -704,8 +704,7 @@
 	 * @since 1.80
 	 * @name sap.ui.mdc.IFilterSource
 	 * @interface
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 */
 
 	/**
@@ -740,8 +739,7 @@
 	 * @extends sap.ui.mdc.IFilterSource
 	 * @name sap.ui.mdc.IFilter
 	 * @interface
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 */
 
 	/**
@@ -752,8 +750,8 @@
 	 * @param {boolean} bSuppressSearch Determines whether the search should be suppressed. The default is <code>null<code>.
 	 * @returns {Promise} A promise resolving once the necessary result validation has been handled
 	 * @since 1.80
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @method
+	 * @function
+	 * @public
 	 */
 
 	/**
@@ -762,8 +760,8 @@
 	 * @name sap.ui.mdc.IFilter.getSearch
 	 * @returns {string} The search string to be used for an approximate string matching
 	 * @since 1.80
-	 * @ui5-restricted sap.fe
-	 * @method
+	 * @function
+	 * @public
 	 */
 
 	/**
@@ -793,8 +791,7 @@
 	 * @since 1.75
 	 * @name sap.ui.mdc.IxState
 	 * @interface
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @public
 	 */
 
 	/**
@@ -1275,8 +1272,8 @@
 	 *   The label of the identifier
 	 * @property {string} [tooltip]
 	 *   The tooltip of the identifier
-	 * @property {string} datatype
-	 *   The name of the type of the property
+	 * @property {string} dataType
+	 *   The data type of the property
 	 * @property {object} [constraints]
 	 *   Defines constraints for the data type of the property
 	 * @property {object} [formatOptions]

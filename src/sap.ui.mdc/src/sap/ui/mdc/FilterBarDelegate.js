@@ -26,8 +26,8 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	 * method might be called without the parameter <code>mPropertyBag</code>.
 	 *
 	 * @public
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of the filter bar
 	 * @param {string} sPropertyName The name of the property info object/JSON
-	 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
 	 * @param {Object} [mPropertyBag] Instance of property bag from SAPUI5 flexibility change API
 	 *
 	 * @returns {Promise<sap.ui.mdc.FilterField>} <code>Promise</code> that resolves with an instance of the implementing {@link sap.ui.mdc.FilterField Control}.
@@ -36,8 +36,8 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	 * has already been created, it must to either return the existing instance or create a new instance.
 	 *
 	 */
-	FilterBarDelegate.addItem = function(oControl, sPropertyName, mPropertyBag) {
-		return AggregationBaseDelegate.addItem(oControl, sPropertyName, mPropertyBag);
+	FilterBarDelegate.addItem = function(oFilterBar, sPropertyName, mPropertyBag) {
+		return AggregationBaseDelegate.addItem(oFilterBar, sPropertyName, mPropertyBag);
 	};
 
 	/**
@@ -49,42 +49,42 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	 * method can be called without the parameter <code>mPropertyBag</code>.
 	 *
 	 * @public
-	 * @param {sap.ui.core.Control} oItem The control instance that was removed
-	 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of the filter bar
+	 * @param {sap.ui.mdc.FilterField} oFilterField The filter field instance that was removed
 	 * @param {Object} [mPropertyBag] Instance of property bag from SAPUI5 flexibility
 	 *
 	 * @returns {Promise<boolean>} <code>Promise</code> that resolved with <code>true</code>, <code>false</code> to allow/prevent default behavior of the change
 	 */
-	FilterBarDelegate.removeItem = function(oControl, oItem, mPropertyBag) {
+	FilterBarDelegate.removeItem = function(oFilterBar, oFilterField, mPropertyBag) {
 		// return true within the Promise for default behavior
-		return AggregationBaseDelegate.removeItem(oControl, oItem, mPropertyBag);
+		return AggregationBaseDelegate.removeItem(oFilterBar, oFilterField, mPropertyBag);
 	};
 
 	/**
 	 * This method is called during the appliance of the add condition change.
-	 * The intention is to update the {@link sap.ui.mdc.FilterBar#propertyInfo} property.
+	 * The intention is to update the {@link sap.ui.mdc.FilterBar#setPropertyInfo propertyInfo} property.
 	 *
 	 * @public
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of the filter bar
 	 * @param {string} sPropertyName The name of a property
-	 * @param {sap.ui.mdc.Control} oControl The instance of a filter bar
 	 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility change API
 	 * @returns {Promise} <code>Promise</code> that is resolved once the propertyInfo property has been updated
 	 */
-	FilterBarDelegate.addCondition = function(oControl, sPropertyName, mPropertyBag) {
+	FilterBarDelegate.addCondition = function(oFilterBar, sPropertyName, mPropertyBag) {
 		return Promise.resolve();
     };
 
-	/**
+	/** propertyInfo
 	 * This method is called during the appliance of the remove condition change.
-	 * The intention is to update the  {@link sap.ui.mdc.FilterBar#propertyInfo} property.
+	 * The intention is to update the {@link sap.ui.mdc.FilterBar#setPropertyInfo propertyInfo} property.
 	 *
 	 * @public
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of the filter bar
 	 * @param {string} sPropertyName The name of a property
-	 * @param {sap.ui.mdc.Control} oControl The instance of a filter bar
 	 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility change API
 	 * @returns {Promise} <code>Promise</code> that is resolved once the propertyInfo property has been updated
 	 */
-	FilterBarDelegate.removeCondition = function(oControl, sPropertyName, mPropertyBag) {
+	FilterBarDelegate.removeCondition = function(oFilterBar, sPropertyName, mPropertyBag) {
 		return Promise.resolve();
     };
 
@@ -93,21 +93,21 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	 * Retrieves the relevant metadata for a given payload and returns the property info array.
 	 *
 	 * @public
-	 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of the filter bar
 	 * @returns {Promise<sap.ui.mdc.filterbar.PropertyInfo[]>} Once resolved, an array of property info objects is returned
 	 */
-	FilterBarDelegate.fetchProperties = function(oControl) {
-		return AggregationBaseDelegate.fetchProperties(oControl);
+	FilterBarDelegate.fetchProperties = function(oFilterBar) {
+		return AggregationBaseDelegate.fetchProperties(oFilterBar);
 	};
 
 	/**
 	 * This method is called when the Clear button is pressed.
 	 *
 	 * @public
-	 * @param {sap.ui.mdc.Control} oControl The instance of a filter bar
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of the filter bar
 	 * @returns {Promise} <code>Promise</code> that is resolved once the action has been completed
 	 */
-	FilterBarDelegate.clearFilters = function(oControl) {
+	FilterBarDelegate.clearFilters = function(oFilterBar) {
 		return Promise.resolve();
     };
 
@@ -115,7 +115,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	 * A validator to evaluate the filter bar state.
 	 *
 	 * @public
-	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of an <code>sap.ui.mdc.FilterBar</code>
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of the filter bar
 	 * @param {map} [mValidation] Object describing the validation result. This object is only provided when called from the {@link sap.ui.mdc.FilterBar FilterBar}
 	 * @param {string} [mValidation.status] Status of the validation {@link sap.ui.mdc.enums.FilterBarValidationStatus}
 	 * @returns {sap.ui.mdc.enums.FilterBarValidationStatus} The inner filter bar state
@@ -128,7 +128,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	 * Visualizes the filter bar validation state.
 	 *
 	 * @public
-	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of an <code>sap.ui.mdc.FilterBar</code>
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of the filter bar
 	 * @param {map} mValidation Describes the validation result. This object is only provided when called from the {@link sap.ui.mdc.FilterBar FilterBar}
 	 * @param {sap.ui.mdc.enums.FilterBarValidationStatus} mValidation.status Status of the validation as returned via {@link sap.ui.mdc.filterbar.FilterBarBase#checkValidationState checkValidationState}
 	 */
