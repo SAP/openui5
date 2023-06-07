@@ -2167,6 +2167,10 @@ function(
 
 		// clear invalidations
 		this._bItemNavigationInvalidated = false;
+
+		if (document.activeElement == oNavigationRoot) {
+			jQuery(oNavigationRoot).trigger("focus");
+		}
 	};
 
 	/*
