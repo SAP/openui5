@@ -67,11 +67,6 @@ sap.ui.define([
 				this.setName(mSettings.content.title);
 			}
 
-			var aTitleKeyMatch = this.getName().match(/.i18n>(\w+)./);
-			if (aTitleKeyMatch) {
-				this.setName(Core.getLibraryResourceBundle("sap.ui.fl").getText(aTitleKeyMatch[1]));
-			}
-
 			var oSupportInfo = this.getSupportInformation();
 			if (this.getId() === this.getVariantManagementReference()) {
 				this.setStandardVariant(true);

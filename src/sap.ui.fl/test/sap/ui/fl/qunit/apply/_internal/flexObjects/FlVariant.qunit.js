@@ -103,25 +103,6 @@ sap.ui.define([
 			assert.strictEqual(oVariant.getName(), "myTranslatableTitle", "the title is correctly set");
 		});
 
-		QUnit.test("with an i18n title key", function(assert) {
-			sandbox.stub(Core, "getLibraryResourceBundle").returns({
-				getText: function(sKey) {
-					assert.strictEqual(sKey, "bar", "the correct kay was passed");
-					return "foo";
-				}
-			});
-			var oVariant = new FlVariant({
-				flexObjectMetadata: {
-					reference: sReference
-				},
-				content: {
-					title: "{i18n>bar}"
-				}
-			});
-
-			assert.strictEqual(oVariant.getName(), "foo", "the title is correctly set");
-		});
-
 		QUnit.test("mapping information", function(assert) {
 			var oVariant = new FlVariant({
 				flexObjectMetadata: {
