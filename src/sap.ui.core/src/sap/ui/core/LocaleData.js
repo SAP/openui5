@@ -7,12 +7,13 @@ sap.ui.define([
 	"./CalendarType",
 	"./Locale",
 	"sap/base/assert",
+	"sap/base/i18n/Localization",
 	"sap/base/util/extend",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/base/Object",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/CalendarWeekNumbering"
-], function(CalendarType, Locale, assert, extend, LoaderExtensions, BaseObject, Configuration, CalendarWeekNumbering) {
+], function(CalendarType, Locale, assert, Localization, extend, LoaderExtensions, BaseObject, Configuration, CalendarWeekNumbering) {
 	"use strict";
 
 	var rCIgnoreCase = /c/i,
@@ -51,9 +52,9 @@ sap.ui.define([
 	var LocaleData = BaseObject.extend("sap.ui.core.LocaleData", /** @lends sap.ui.core.LocaleData.prototype */ {
 
 		constructor: function(oLocale) {
-			this.oLocale = oLocale;
+			this.oLocale = Locale._getCoreLocale(oLocale);
 			BaseObject.apply(this);
-			var oDataLoaded = getData(oLocale);
+			var oDataLoaded = getData(this.oLocale);
 			this.mData = oDataLoaded.mData;
 			this.sCLDRLocaleId = oDataLoaded.sCLDRLocaleId;
 		},
@@ -114,7 +115,7 @@ sap.ui.define([
 		getCurrentLanguageName: function() {
 			var oLanguages = this.getLanguages();
 			var sCurrentLanguage;
-			var sLanguage = this.oLocale.getModernLanguage();
+			var sLanguage = Localization.getModernLanguage(this.oLocale.language);
 			var sScript = this.oLocale.getScript();
 			// special case for "sr_Latn" language: "sh" should then be used
 			// the key used in the languages object for serbian latin is "sh"
@@ -2232,10 +2233,34 @@ sap.ui.define([
 		"A": { group: "Other", numericCeiling: 100}
 	};
 
-	var M_ISO639_OLD_TO_NEW = {
-			"iw" : "he",
-			"ji" : "yi"
-	};
+	/**
+	 * Helper to analyze and parse designtime (aka buildtime) variables
+	 *
+	 * At buildtime, the build can detect a pattern like $some-variable-name:some-value$
+	 * and replace 'some-value' with a value determined at buildtime (here: the actual list of locales).
+	 *
+	 * At runtime, this method removes the surrounding pattern ('$some-variable-name:' and '$') and leaves only the 'some-value'.
+	 * Additionally, this value is parsed as a comma-separated list (because this is the only use case here).
+	 *
+	 * The mimic of the comments is borrowed from the CVS (Concurrent Versions System),
+	 * see http://web.mit.edu/gnu/doc/html/cvs_17.html.
+	 *
+	 * If no valid <code>sValue</code> is given, <code>null</code> is returned
+	 *
+	 * @param {string} sValue The raw designtime property e.g. $cldr-rtl-locales:ar,fa,he$
+	 * @returns {string[]|null} The designtime property e.g. ['ar', 'fa', 'he']
+	 * @private
+	 */
+	 function getDesigntimePropertyAsArray(sValue) {
+		var m = /\$([-a-z0-9A-Z._]+)(?::([^$]*))?\$/.exec(sValue);
+		return (m && m[2]) ? m[2].split(/,/) : null;
+	}
+
+	/**
+	 * A list of locales for which CLDR data is bundled with the UI5 runtime.
+	 * @private
+	 */
+	var _cldrLocales = getDesigntimePropertyAsArray("$cldr-locales:ar,ar_EG,ar_SA,bg,ca,cy,cs,da,de,de_AT,de_CH,el,el_CY,en,en_AU,en_GB,en_HK,en_IE,en_IN,en_NZ,en_PG,en_SG,en_ZA,es,es_AR,es_BO,es_CL,es_CO,es_MX,es_PE,es_UY,es_VE,et,fa,fi,fr,fr_BE,fr_CA,fr_CH,fr_LU,he,hi,hr,hu,id,it,it_CH,ja,kk,ko,lt,lv,ms,nb,nl,nl_BE,pl,pt,pt_PT,ro,ru,ru_UA,sk,sl,sr,sr_Latn,sv,th,tr,uk,vi,zh_CN,zh_HK,zh_SG,zh_TW$");
 
 	/**
 	 * A set of locales for which the UI5 runtime contains a CLDR JSON file.
@@ -2245,7 +2270,7 @@ sap.ui.define([
 	 * @private
 	 */
 	var M_SUPPORTED_LOCALES = (function() {
-		var LOCALES = Locale._cldrLocales,
+		var LOCALES = _cldrLocales,
 			result = {},
 			i;
 
@@ -2403,7 +2428,7 @@ sap.ui.define([
 		}
 
 		// normalize language and handle special cases
-		sLanguage = (sLanguage && M_ISO639_OLD_TO_NEW[sLanguage]) || sLanguage;
+		sLanguage = (sLanguage && Localization.getModernLanguage(sLanguage)) || sLanguage;
 		// Special case 1: in an SAP context, the inclusive language code "no" always means Norwegian Bokmal ("nb")
 		if ( sLanguage === "no" ) {
 			sLanguage = "nb";
@@ -2565,8 +2590,11 @@ sap.ui.define([
 	 *
 	 */
 	LocaleData.getInstance = function(oLocale) {
+		oLocale = Locale._getCoreLocale(oLocale);
 		return oLocale.hasPrivateUseSubtag("sapufmt") ? new CustomLocaleData(oLocale) : new LocaleData(oLocale);
 	};
+
+	LocaleData._cldrLocales = _cldrLocales;
 
 	return LocaleData;
 

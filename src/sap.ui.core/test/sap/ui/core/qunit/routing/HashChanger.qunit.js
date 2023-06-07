@@ -4,9 +4,8 @@ sap.ui.define([
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/History",
 	"sap/ui/thirdparty/hasher",
-	"sap/ui/base/EventProvider",
 	"sap/ui/thirdparty/signals"
-], function (Log, HashChanger, History, hasher, EventProvider) {
+], function (Log, HashChanger, History, hasher) {
 	"use strict";
 
 
@@ -690,9 +689,6 @@ sap.ui.define([
 	QUnit.module("Integration: RouterHashChanger and HashChanger", {
 		beforeEach: function(assert) {
 			hasher.setHash("");
-			// overwrite the returnObject function of the eventPool in EventProvider
-			// to make the trace of event parameter easier
-			this.oReturnObjectStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
 
 			this.oHashChanger = new HashChanger();
 			this.oRHC = this.oHashChanger.createRouterHashChanger();
@@ -707,7 +703,6 @@ sap.ui.define([
 		afterEach: function(assert) {
 			this.oRHC.destroy();
 			this.oHashChanger.destroy();
-			this.oReturnObjectStub.restore();
 		}
 	});
 

@@ -3,49 +3,23 @@
  */
 
 // Provides type sap.ui.core.CalendarType.
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/base/i18n/date/CalendarType"
+], function(
+	CalendarType
+) {
 	"use strict";
-
 	/**
 	 * The types of <code>Calendar</code>.
 	 *
 	 * @enum {string}
-	 * @alias sap.ui.core.CalendarType
+	 * @name sap.ui.core.CalendarType
 	 * @public
+	 * @borrows module:sap/base/i18n/date/CalendarType.Gregorian as Gregorian
+	 * @borrows module:sap/base/i18n/date/CalendarType.Islamic as Islamic
+	 * @borrows module:sap/base/i18n/date/CalendarType.Japanese as Japanese
+	 * @borrows module:sap/base/i18n/date/CalendarType.Persian as Persian
+	 * @borrows module:sap/base/i18n/date/CalendarType.Buddhist as Buddhist
 	 */
-	var CalendarType = {
-
-		/**
-		 * The Gregorian calendar
-		 * @public
-		 */
-		Gregorian: "Gregorian",
-
-		/**
-		 * The Islamic calendar
-		 * @public
-		 */
-		Islamic: "Islamic",
-
-		/**
-		 * The Japanese emperor calendar
-		 * @public
-		 */
-		Japanese: "Japanese",
-
-		/**
-		 * The Persian Jalali calendar
-		 * @public
-		 */
-		Persian: "Persian",
-
-		/**
-		 * The Thai buddhist calendar
-		 * @public
-		 */
-		Buddhist: "Buddhist"
-	};
-
 	return CalendarType;
-
 }, /* bExport= */ true);

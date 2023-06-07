@@ -1,6 +1,6 @@
 /*global QUnit, sinon */
 QUnit.config.autostart = false;
-
+QUnit.config.reorder = false;
 sap.ui.require([
 	'sap/ui/core/CalendarType',
 	'sap/ui/core/Configuration',
@@ -8,13 +8,14 @@ sap.ui.require([
 	'sap/ui/core/date/CalendarWeekNumbering',
 	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/Locale',
-	'sap/base/Log',
-	'sap/base/config',
-	'sap/routing/HistoryUtils',
 	'sap/ui/base/Interface',
+	'sap/base/config',
+	'sap/base/Log',
+	'sap/routing/HistoryUtils',
+	'sap/ui/base/config/URLConfigurationProvider',
 	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
-], function(CalendarType, Configuration, Core, CalendarWeekNumbering, TimezoneUtil, Locale, Log, BaseConfig,
-		HistoryUtils, Interface/*, LocaleData*/) {
+], function(CalendarType, Configuration, Core, CalendarWeekNumbering, TimezoneUtil, Locale, Interface, BaseConfig, Log,
+		HistoryUtils, URLConfigurationProvider/*, LocaleData*/) {
 	"use strict";
 
 	var browserUrl = {
@@ -69,7 +70,7 @@ sap.ui.require([
 		assert.ok(oLogSpy.calledTwice, "There should be two errors logged for each constructor call.");
 		assert.strictEqual(oLogSpy.getCall(0).args[0], sExpectedErrorText, "Correct error logged");
 		assert.strictEqual(oLogSpy.getCall(1).args[0], sExpectedErrorText, "Correct error logged");
-		assert.strictEqual(oConfiguration1.calendarWeekNumbering, CalendarWeekNumbering.Default,
+		assert.strictEqual(oConfiguration1.getCalendarWeekNumbering(), CalendarWeekNumbering.Default,
 			"calendar week number is set to default in c'tor");
 		oLogSpy.restore();
 	});
@@ -109,8 +110,9 @@ sap.ui.require([
 	});
 
 	QUnit.test("getter and setter for option 'calendar'", function(assert) {
-		var oCfg = new Configuration(),
+		var oCfg = Configuration,
 			oFormatSettings = oCfg.getFormatSettings();
+			oFormatSettings.setLegacyDateFormat();
 
 		assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The bootstrap parameter is respected");
 
@@ -169,25 +171,21 @@ sap.ui.require([
 
 		oFormatSettings.setLegacyDateFormat("C");
 		assert.equal(oCfg.getCalendarType(), CalendarType.Persian, "The legacy date format 'C' changes the calendar type to persian");
-
+		//reset language
+		oCfg.setLanguage("en");
 	});
 
 	QUnit.test("getter and setter for option calendarWeekNumbering", function(assert) {
-		var mChanges = {},
-			oConfiguration = new Configuration();
+		var oConfiguration = new Configuration();
 
 		assert.strictEqual(oConfiguration.getCalendarWeekNumbering(), CalendarWeekNumbering.Default);
 
-		this.mock(oConfiguration).expects("_collect").withExactArgs().returns(mChanges);
-		this.mock(oConfiguration).expects("_endCollect").withExactArgs();
-
-		assert.strictEqual(oConfiguration.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601), oConfiguration);
-		assert.strictEqual(mChanges.calendarWeekNumbering, CalendarWeekNumbering.ISO_8601);
+		assert.ok(oConfiguration.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601), oConfiguration);
 		assert.strictEqual(oConfiguration.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601);
 
 		assert.throws(function() {
 			oConfiguration.setCalendarWeekNumbering("invalid");
-		}, new Error("Unsupported Enumeration value for calendarWeekNumbering, valid values are: "
+		}, new TypeError("Unsupported Enumeration value for calendarWeekNumbering, valid values are: "
 				+ "Default, ISO_8601, MiddleEastern, WesternTraditional"));
 	});
 
@@ -205,9 +203,10 @@ sap.ui.require([
 					this.changes.push(changes);
 				}.bind(this)
 			};
-			window['sap-ui-config'] = {
-				language: 'en'
-			};
+			Configuration.setRTL(null);
+			Configuration.setLanguage("en");
+			Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
+			Configuration.setCalendarType("Gregorian");
 			Configuration.setCore(this.oCoreMock);
 			this.oConfig = Configuration;
 		}
@@ -273,6 +272,8 @@ sap.ui.require([
 		assert.equal(this.oConfig.getTimezone(), sDifferentTimezone, "timezone should be '" + sDifferentTimezone + "'");
 		assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
 		assert.deepEqual(Object.keys(this.changes[0]), ['timezone'], "event should have reported 'timezone' as changed");
+		// reset to local timezone
+		this.oConfig.setTimezone(sLocalTimezone);
 	});
 
 	QUnit.test("setTimezone(null) - simple", function(assert) {
@@ -454,15 +455,23 @@ sap.ui.require([
 
 		oConfig.setLanguage("sr-Latn");
 		assert.equal(oConfig.getSAPLogonLanguage(), "SH", "SAP Logon language should be 'SH'");
-		assert.equal(oConfig.getLanguageTag(), "sh", "Language Tag should be 'sr-Latn'");
+		assert.equal(oConfig.getLanguageTag(), "sh", "Language Tag should be 'sh'");
 
 		oConfig.setLanguage("sh");
 		assert.equal(oConfig.getSAPLogonLanguage(), "SH", "SAP Logon language should be 'SH'");
-		assert.equal(oConfig.getLanguageTag(), "sh", "Language Tag should be 'sr-Latn'");
+		assert.equal(oConfig.getLanguageTag(), "sh", "Language Tag should be 'sh'");
 
 		oConfig.setLanguage("sr");
 		assert.equal(oConfig.getSAPLogonLanguage(), "SR", "SAP Logon language should be 'SR'");
 		assert.equal(oConfig.getLanguageTag(), "sr", "Language Tag should be 'sr'");
+
+		oConfig.setLanguage("iw");
+		assert.equal(oConfig.getSAPLogonLanguage(), "HE", "SAP Logon language should be 'HE'");
+		assert.equal(oConfig.getLanguageTag(), "he", "Language Tag should be 'he'");
+
+		oConfig.setLanguage("ji");
+		assert.equal(oConfig.getSAPLogonLanguage(), "YI", "SAP Logon language should be 'YI'");
+		assert.equal(oConfig.getLanguageTag(), "yi", "Language Tag should be 'yi'");
 	});
 
 	QUnit.test("configured via API", function(assert) {
@@ -479,40 +488,57 @@ sap.ui.require([
 	});
 
 	QUnit.module("SAP Logon Language (via url)", {
+		before: function() {
+			this.oConfig = Configuration;
+		},
 		beforeEach: function(assert) {
-			this.setupConfig = function(sLanguage, sUrl) {
+			this.setupConfig = function(sLanguage, data) {
 				var oCoreMock = {
 					fireLocalizationChanged: function() {}
 				};
-				window["sap-ui-config"] = window["sap-ui-config"] || {};
-				window["sap-ui-config"].language = sLanguage;
-				browserUrl.change(sUrl);
+				data = data ? data : {};
+				this.oStub && this.oStub.restore();
+				this.oStub = sinon.stub(BaseConfig, "get");
+				this.oStub.callsFake(function(mParameters) {
+					if (mParameters.name === "sapUiLanguage") {
+						return data["sap-ui-language"] || sLanguage || "";
+					} else if (mParameters.name === "sapLanguage") {
+						return data["sap-language"] || this.oStub.wrappedMethod.call(this, mParameters);
+					} else if (mParameters.name === "sapLocale") {
+						return data["sap-locale"] || this.oStub.wrappedMethod.call(this, mParameters);
+					} else if (mParameters.name === "sapUiFormatLocale") {
+						return data["sap-ui-formatLocale"]  ? new Locale(data["sap-ui-formatLocale"]) :  this.oStub.wrappedMethod.call(this, mParameters);
+					} else {
+						return this.oStub.wrappedMethod.call(this, mParameters);
+					}
+				}.bind(this));
+
 				// reset sapLogonLanguage
-				Configuration.setLanguage("xx", undefined);
+				this.oConfig.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
 				Configuration.setCore(oCoreMock);
 				return Configuration;
 			};
 		},
 		afterEach: function() {
-			browserUrl.reset();
+			this.oStub && this.oStub.restore();
 		}
 	});
 
 	[
 		/* URL parameter							language			languageTag 		SAP-L	Caption */
-		[ "?sap-language=en",						"en",				"en",				"EN",	"sap-language is the valid ISO language EN"],
-		[ "?sap-language=EN",						"EN",				"en",				"EN",	"sap-language is the valid ISO language EN"],
-		[ "?sap-language=ZH",						"zh-Hans",			"zh-Hans",			"ZH",	"sap-language is the known SAP language ZN"],
-		[ "?sap-language=ZF",						"zh-Hant",			"zh-Hant",			"ZF",	"sap-language is the known SAP language ZF"],
-		[ "?sap-language=1Q",						"en-US-x-saptrc",	"en-US-x-saptrc",	"1Q",	"sap-language is the known SAP language 1Q"],
-		[ "?sap-language=2Q",						"en-US-x-sappsd",	"en-US-x-sappsd",	"2Q",	"sap-language is the known SAP language 2Q"],
-		[ "?sap-language=3Q",						"en-US-x-saprigi",	"en-US-x-saprigi",	"3Q",	"sap-language is the known SAP language 3Q"],
-		[ "?sap-language=6N",						"en-GB",			"en-GB",			"6N",	"sap-language is the unknown SAP language 6N"],
-		[ "?sap-language=SH",						"sr-Latn",			"sh",		    	"SH",	"sap-language is the unknown SAP language 6N"],
-		[ "?sap-locale=fr_CH",						"fr_CH",			"fr-CH",			"FR",	"sap-locale is the accepted BCP47 tag fr_CH"],
-		[ "?sap-locale=En_gb&sap-language=6N",		"En_gb",			"en-GB",			"6N",	"valid combination of sap-locale and sap-language (En_gb, 6N)"],
-		[ "?sap-ui-language=en_GB&sap-language=6N",	"en_GB",			"en-GB",			"6N",	"valid combination of sap-ui-language and sap-language (en_GB, 6N)"],
-		[ "?sap-language=EN&sap-locale=en_GB",		"en_GB",			"en-GB",			"EN",	"valid combination of sap-language and sap-locale, both as BCP47 tag (EN, en_GB)"]
+		[ {"sap-language": "en"},								"en",				"en",				"EN",	"sap-language is the valid ISO language EN"],
+		[ {"sap-language": "EN"},								"EN",				"en",				"EN",	"sap-language is the valid ISO language EN"],
+		[ {"sap-language": "ZH"},								"zh-Hans",			"zh-Hans",			"ZH",	"sap-language is the known SAP language ZN"],
+		[ {"sap-language": "ZF"},								"zh-Hant",			"zh-Hant",			"ZF",	"sap-language is the known SAP language ZF"],
+		[ {"sap-language": "1Q"},								"en-US-x-saptrc",	"en-US-x-saptrc",	"1Q",	"sap-language is the known SAP language 1Q"],
+		[ {"sap-language": "2Q"},								"en-US-x-sappsd",	"en-US-x-sappsd",	"2Q",	"sap-language is the known SAP language 2Q"],
+		[ {"sap-language": "3Q"},								"en-US-x-saprigi",	"en-US-x-saprigi",	"3Q",	"sap-language is the known SAP language 3Q"],
+		[ {"sap-language": "6N"},								"en-GB",			"en-GB",			"6N",	"sap-language is the unknown SAP language 6N"],
+		[ {"sap-language": "SH"},								"sr-Latn",			"sh",		    	"SH",	"sap-language is the unknown SAP language 6N"],
+		[ {"sap-locale": "fr_CH"},								"fr_CH",			"fr-CH",			"FR",	"sap-locale is the accepted BCP47 tag fr_CH"],
+		[ {"sap-locale": "En_gb", "sap-language": "6N"},		"En_gb",			"en-GB",			"6N",	"valid combination of sap-locale and sap-language (En_gb, 6N)"],
+		[ {"sap-ui-language":"en_GB", "sap-language": "6N"},	"en-GB",			"en-GB",			"6N",	"valid combination of sap-ui-language and sap-language (en_GB, 6N)"],
+		[ {"sap-language": "EN", "sap-locale": "en_GB"},		"en_GB",			"en-GB",			"EN",	"valid combination of sap-language and sap-locale, both as BCP47 tag (EN, en_GB)"]
 	].forEach(function( data ) {
 
 		QUnit.test(data[4], function(assert) {
@@ -526,50 +552,61 @@ sap.ui.require([
 
 	});
 
-	QUnit.test("language via url, locale+language via API", function(assert) {
+	// url: sap-language=en
+	// window: language=de
+	// ==> en
+	// url: sap-language=en&sap-ui-language=de
+	// ==> de
 
-		var oConfig = this.setupConfig("de", "?sap-language=6N");
+	QUnit.test("language via url, locale+language via API", function(assert) {
+		var oConfig = this.setupConfig("de", {"sap-language": "6N"});
 		assert.equal(oConfig.getLanguage(), "en-GB", "the effective language still should be 'en-GB'");
 		assert.equal(oConfig.getLanguageTag(), "en-GB", "the effective language tag still should be 'en-GB'");
 		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "the SAP Logon language should be '6N' already");
-
-		oConfig = this.setupConfig("de", "?sap-language=1E");
+		oConfig = this.setupConfig("de", {"sap-language":"1E"});
 		assert.equal(oConfig.getLanguage(), "de", "the effective language still should be 'de'");
 		assert.equal(oConfig.getLanguageTag(), "de", "the effective language tag still should be 'de'");
 		assert.equal(oConfig.getSAPLogonLanguage(), "1E", "the SAP Logon language should be '6N' already");
+	});
 
+	QUnit.test("language via url, locale+language via API", function(assert) {
 		// without the second parameter, the sap language now would be 'EN' only
-		oConfig.setLanguage("en-GB");
-		assert.equal(oConfig.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
-		assert.equal(oConfig.getLanguageTag(), "en-GB", "the effective language tag should be 'en-GB'");
-		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "the SAP Logon language should be 'EN'");
+		this.oConfig.setLanguage("en-GB");
+		assert.equal(this.oConfig.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
+		assert.equal(this.oConfig.getLanguageTag(), "en-GB", "the effective language tag should be 'en-GB'");
+		assert.equal(this.oConfig.getSAPLogonLanguage(), "6N", "the SAP Logon language should be 'EN'");
 
 		// but with the second parameter, everything should be fine
-		oConfig.setLanguage("en-GB", "6N");
-		assert.equal(oConfig.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
-		assert.equal(oConfig.getLanguageTag(), "en-GB", "the effective language tag should be 'en-GB'");
-		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "the SAP Logon language should be '6N'");
+		this.oConfig.setLanguage("en-GB", "6N");
+		assert.equal(this.oConfig.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
+		assert.equal(this.oConfig.getLanguageTag(), "en-GB", "the effective language tag should be 'en-GB'");
+		assert.equal(this.oConfig.getSAPLogonLanguage(), "6N", "the SAP Logon language should be '6N'");
 
-		oConfig.setLanguage("en-GB", "1E");
-		assert.equal(oConfig.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
-		assert.equal(oConfig.getLanguageTag(), "en-GB", "the effective language tag should be 'en-GB'");
-		assert.equal(oConfig.getSAPLogonLanguage(), "1E", "the SAP Logon language should be '1E'");
+		this.oConfig.setLanguage("en-GB", "1E");
+		assert.equal(this.oConfig.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
+		assert.equal(this.oConfig.getLanguageTag(), "en-GB", "the effective language tag should be 'en-GB'");
+		assert.equal(this.oConfig.getSAPLogonLanguage(), "1E", "the SAP Logon language should be '1E'");
 
 	});
 
 	QUnit.test("error reporting", function(assert) {
-		this.stub(Log, 'warning');
-		this.setupConfig("de", "?sap-language=1E&sap-locale=en-GB");
+		this.stub(Log, 'warning').callThrough();
+		this.setupConfig("de", {"sap-language":"1E", "sap-locale": "en-GB"});
+		this.oConfig.getLanguage();
 		assert.strictEqual(Log.warning.called, false, "no warning should be written if accompanied by sap-locale");
-		this.setupConfig("de", "?sap-language=1E&sap-ui-language=en-GB");
+		this.setupConfig("de", {"sap-language":"1E", "sap-ui-language":"en-GB"});
+		this.oConfig.getLanguage();
 		assert.strictEqual(Log.warning.called, false, "no warning should be written if accompanied by sap-ui-language");
-		this.setupConfig("de", "?sap-language=1E");
+		this.setupConfig(null, {"sap-language" :"1E"});
+		this.oConfig.getLanguage();
 		assert.ok(Log.warning.calledWith(sinon.match(/1E/).and(sinon.match(/BCP-?47/i))), "warning must have been written");
 		assert.throws(function() {
-			this.setupConfig("de", "?sap-locale=1E&sap-language=1E");
+			this.setupConfig("de", {"sap-locale":"1E","sap-language":"1E"});
+			this.oConfig.getLanguage();
 		}, "setting an invalid (non-BCP-47) sap-locale should cause an error");
 		assert.throws(function() {
-			this.setupConfig("de", "?sap-ui-language=1E&sap-language=1E");
+			this.setupConfig("de", {"sap-ui-language":"1E", "sap-language":"1E"});
+			this.oConfig.getLanguage();
 		}, "setting an invalid (non-BCP-47) sap-ui-language should cause an error");
 	});
 
@@ -587,15 +624,17 @@ sap.ui.require([
 		};
 		var oConfig;
 
-		window['sap-ui-config'].formatlocale = 'fr-CH'; // Note: Configuration expects sap-ui-config names converted to lowercase (done by bootstrap)
-		oConfig = this.setupConfig("fr-FR", "");
+		//window['sap-ui-config'].formatlocale = 'fr-CH'; // Note: Configuration expects sap-ui-config names converted to lowercase (done by bootstrap)
+		oConfig = this.setupConfig("fr-FR", {});
+		oConfig.setFormatLocale("fr-CH");
 		assert.equal(oConfig.getLanguageTag(), "fr-FR", "language should be fr-FR");
 		assert.equal(oConfig.getFormatLocale(), "fr-CH", "format locale string should be fr-CH");
 		assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Interface, "format locale should exist");
 		assert.equal(oConfig.getFormatSettings().getFormatLocale().toString(), "fr-CH", "format locale should be fr-CH");
 
-		window['sap-ui-config'].formatlocale = null;
-		oConfig = this.setupConfig("fr-FR", "");
+		//window['sap-ui-config'].formatlocale = null;
+		oConfig = this.setupConfig("fr-FR", {});
+		oConfig.setFormatLocale(null);
 		assert.equal(oConfig.getLanguageTag(), "fr-FR", "language should be fr-FR");
 		assert.equal(oConfig.getFormatLocale(), "fr-FR", "format locale string should be fr-CH");
 		assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Interface, "format locale should exist");
@@ -603,17 +642,19 @@ sap.ui.require([
 		assert.equal(oConfig.getFormatSettings().getFormatLocale().toString(), "fr-FR", "format locale should be fr-CH");
 		delete window['sap-ui-config'].formatlocale;
 
-		oConfig = this.setupConfig("de", "?sap-language=EN&sap-ui-formatLocale=en-AU");
+		oConfig = this.setupConfig("de", {"sap-language": "EN", "sap-ui-formatLocale": "en-AU"});
 		assert.equal(oConfig.getLanguageTag(), "en", "language should be en");
 		assert.equal(oConfig.getFormatLocale(), "en-AU", "format locale string should be en-AU");
 		assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Interface, "format locale should exist");
 		assert.equal(oConfig.getFormatSettings().getFormatLocale().toString(), "en-AU", "format locale should be en-AU");
 
+		oConfig = this.setupConfig();
 		oConfig.setFormatLocale("en-CA");
 		assert.equal(oConfig.getFormatLocale(), "en-CA", "format locale string should be en-CA");
 		assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Interface, "format locale should exist");
 		assert.equal(oConfig.getFormatSettings().getFormatLocale().toString(), "en-CA", "format locale should be en-CA");
 
+		oConfig = this.setupConfig("de", {"sap-language": "EN"});
 		oConfig.setFormatLocale();
 		assert.equal(oConfig.getFormatLocale(), "en", "format locale string should be en");
 		assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Interface, "format locale should exist");
@@ -636,9 +677,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("Read 'sap-ui-legacy-number-format' from URL", function(assert) {
-
-		var oSpySetLegacyNumberFormat = this.spy(Configuration.FormatSettings.prototype, "setLegacyNumberFormat");
-
+		var oStub;
 		[
 			{ param: '', expected: undefined },
 			{ param: ' ', expected: ' ' },
@@ -647,24 +686,27 @@ sap.ui.require([
 			{ param: 'Y', expected: 'Y' },
 			{ param: 'y', expected: 'Y' }
 		].forEach(function (data) {
-
 			// setup
-			browserUrl.change('?sap-ui-legacy-number-format=' + encodeURIComponent(data.param));
-			oSpySetLegacyNumberFormat.resetHistory();
-
+			oStub && oStub.restore();
+			oStub = sinon.stub(BaseConfig, "get");
+			oStub.callsFake(function(mParameters) {
+				if (mParameters.name === "sapUiLegacyNumberFormat") {
+					return data.param;
+				} else {
+					return oStub.wrappedMethod.call(this, mParameters);
+				}
+			}.bind(this));
 			// call method under test
 			Configuration.setCore();
 
 			// verify results
-			assert.equal(oSpySetLegacyNumberFormat.callCount, 1, "setLegacyNumberFormat with value: '" + data.param + "' must be called");
 			assert.equal(Configuration.getFormatSettings().getLegacyNumberFormat(), data.expected, "Value of number format must be '" + data.expected + "'.");
-		});
+		}.bind(this));
+		oStub.restore();
 	});
 
 	QUnit.test("Read 'sap-ui-legacy-date-format' from URL", function(assert) {
-
-		var oSpySetLegacyDateFormat = this.spy(Configuration.FormatSettings.prototype, "setLegacyDateFormat");
-
+		var oStub;
 		[
 			{ param: '', expected: undefined },
 			{ param: '1', expected: '1' },
@@ -683,19 +725,26 @@ sap.ui.require([
 			{ param: 'b', expected: 'B' },
 			{ param: 'c', expected: 'C' }
 		].forEach(function (data) {
-
-			browserUrl.change('?sap-ui-legacy-date-format=' + encodeURIComponent(data.param));
-			oSpySetLegacyDateFormat.resetHistory();
+			// setup
+			oStub && oStub.restore();
+			oStub = sinon.stub(BaseConfig, "get");
+			oStub.callsFake(function(mParameters) {
+				if (mParameters.name === "sapUiLegacyDateFormat") {
+					return data.param;
+				} else {
+					return oStub.wrappedMethod.call(this, mParameters);
+				}
+			}.bind(this));
 
 			Configuration.setCore();
 
-			assert.equal(oSpySetLegacyDateFormat.callCount, 1, "setLegacyDateFormat must have been called one time");
 			assert.equal(Configuration.getFormatSettings().getLegacyDateFormat(), data.expected, "Value of date format must be '" + data.expected + "'.");
 		});
+		oStub.restore();
 	});
 
 	QUnit.test("Read 'sap-ui-legacy-time-format' from URL", function(assert) {
-		var oSpySetLegacyTimeFormat = this.spy(Configuration.FormatSettings.prototype, "setLegacyTimeFormat");
+		var oStub, oBaseStub;
 
 		[
 			{ param: '', expected: undefined },
@@ -705,29 +754,52 @@ sap.ui.require([
 			{ param: '3', expected: '3' },
 			{ param: '4', expected: '4' }
 		].forEach(function (data) {
-
-			browserUrl.change('?sap-ui-legacy-time-format=' + encodeURIComponent(data.param));
-			oSpySetLegacyTimeFormat.resetHistory();
+			// setup
+			oStub && oStub.restore();
+			oStub = sinon.stub(URLConfigurationProvider, "get");
+			oStub.callsFake(function(key) {
+				if (key === "sapUiLegacyTimeFormat") {
+					return data.param;
+				} else {
+					return oStub.wrappedMethod.call(this, key);
+				}
+			}.bind(this));
+			//reset memory Provider
+			oBaseStub && oBaseStub.restore();
+			oBaseStub = sinon.stub(BaseConfig, "get");
+			oBaseStub.callsFake(function(mParameters) {
+				mParameters.provider = undefined;
+				return oBaseStub.wrappedMethod.call(this, mParameters);
+			}.bind(this));
 
 			Configuration.setCore();
 
-			assert.equal(oSpySetLegacyTimeFormat.callCount, 1, "setLegacyTimeFormat must be called one time");
 			assert.equal(Configuration.getFormatSettings().getLegacyTimeFormat(), data.expected, "Value of time format must be '" + data.expected + "'.");
 		});
+		oStub.restore();
+		oBaseStub.restore();
 	});
 
 	QUnit.module("CalendarWeekNumbering", {
-		beforeEach: function(assert) {
-			window["sap-ui-config"].language = "en";
-		},
-		afterEach: function() {
-			browserUrl.reset();
-		}
+
 	});
 
 	QUnit.test("Read calendarWeekNumbering from URL", function(assert) {
 		// setup
-		browserUrl.change('?sap-ui-calendarWeekNumbering=ISO_8601');
+		var	oStub = sinon.stub(URLConfigurationProvider, "get");
+		oStub.callsFake(function(key) {
+			if (key === "sapUiCalendarWeekNumbering") {
+				return "ISO_8601";
+			} else {
+				return oStub.wrappedMethod.call(this, key);
+			}
+		}.bind(this));
+		//reset memory Provider
+		var oBaseStub = sinon.stub(BaseConfig, "get");
+		oBaseStub.callsFake(function(mParameters) {
+			mParameters.provider = undefined;
+			return oBaseStub.wrappedMethod.call(this, mParameters);
+		}.bind(this));
 
 		// call method under test
 		Configuration.setCore();
@@ -735,11 +807,26 @@ sap.ui.require([
 		// verify results
 		assert.equal(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601,
 			'calendarWeekNumbering set via URL');
+		oStub.restore();
+		oBaseStub.restore();
 	});
 
 	QUnit.test("Read calendarWeekNumbering from URL - empty string leads to default value", function(assert) {
 		// setup
-		browserUrl.change('?sap-ui-calendarWeekNumbering=');
+		var	oStub = sinon.stub(URLConfigurationProvider, "get");
+		oStub.callsFake(function(key) {
+			if (key === "sapUiCalendarWeekNumbering") {
+				return "";
+			} else {
+				return oStub.wrappedMethod.call(this, key);
+			}
+		}.bind(this));
+		//reset memory Provider
+		var oBaseStub = sinon.stub(BaseConfig, "get");
+		oBaseStub.callsFake(function(mParameters) {
+			mParameters.provider = undefined;
+			return oBaseStub.wrappedMethod.call(this, mParameters);
+		}.bind(this));
 
 		// call method under test
 		Configuration.setCore();
@@ -747,83 +834,68 @@ sap.ui.require([
 		// verify results
 		assert.equal(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.Default,
 			'no value in URL leads to default value');
+		oStub.restore();
+		oBaseStub.restore();
 	});
 
 	QUnit.test("Read calendarWeekNumbering from URL - invalid value", function(assert) {
-		// setup
-		browserUrl.change('?sap-ui-calendarWeekNumbering=invalid');
-
-		// call method under test
 		assert.throws(function() {
-			Configuration.setCore();
-		}, new Error("Unsupported Enumeration value for calendarWeekNumbering, valid values are: "
+			Configuration.setCalendarWeekNumbering("invalid");
+		}, new TypeError("Unsupported Enumeration value for calendarWeekNumbering, valid values are: "
 				+ "Default, ISO_8601, MiddleEastern, WesternTraditional"));
 	});
 
 	QUnit.module("Timezone", {
 		beforeEach: function(assert) {
-			window["sap-ui-config"].language = "en";
-		},
-		afterEach: function() {
-			browserUrl.reset();
+			Configuration.setLanguage("en");
 		}
 	});
 
 	QUnit.test("Read timezone from URL", function(assert) {
 		// setup
-		browserUrl.change('?sap-ui-timezone=America/Los_Angeles');
-
-		// call method under test
-		Configuration.setCore();
+		var oStub = sinon.stub(BaseConfig, "get");
+		oStub.callsFake(function(mParameters) {
+			if (mParameters.name === "sapUiTimezone") {
+				return "America/Los_Angeles";
+			} else {
+				return oStub.wrappedMethod.call(this, mParameters);
+			}
+		});
 
 		// verify results
 		assert.equal(Configuration.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
+		oStub.restore();
 	});
 
 	QUnit.test("Read timezone from URL sap-timezone", function(assert) {
-		// setup
-		browserUrl.change('?sap-timezone=America/Los_Angeles');
-
-		// call method under test
-		Configuration.setCore();
+		var oStub = sinon.stub(BaseConfig, "get");
+		oStub.callsFake(function(mParameters) {
+			if (mParameters.name === "sapTimezone") {
+				return "America/Los_Angeles";
+			} else {
+				return oStub.wrappedMethod.call(this, mParameters);
+			}
+		});
 
 		// verify results
 		assert.equal(Configuration.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
+		oStub.restore();
+	});
 
-		// repeat the test with an invalid timezone to reset _experimentalTimezone flag before executing other tests
+	QUnit.test("Read timezone from URL: invalid", function(assert) {
 		// setup
-		browserUrl.change('?sap-timezone=invalid');
-
-		// call method under test
-		Configuration.setCore();
+		var oStub = sinon.stub(BaseConfig, "get");
+		oStub.callsFake(function(mParameters) {
+			if (mParameters.name === "sapUiTimezone") {
+				return "invalid";
+			} else {
+				return oStub.wrappedMethod.call(this, mParameters);
+			}
+		});
 
 		// verify results
 		assert.equal(Configuration.getTimezone(), sLocalTimezone, "fallback to '" + sLocalTimezone + "'");
-	});
-
-	QUnit.module("SAP parameters", {
-		beforeEach: function(assert) {
-			window["sap-ui-config"].language = "en";
-		},
-		afterEach: function() {
-			browserUrl.reset();
-		}
-	});
-
-	QUnit.test("Set SAPLogonLanguage and SAP parameter is updated", function(assert) {
-
-		// setup
-		browserUrl.change('?sap-language=EN');
-
-		// call method under test
-		Configuration.setCore();
-
-		// verify results
-		assert.equal(Configuration.getSAPLogonLanguage(), 'EN', 'SAP parameter sap-language=EN');
-		Configuration.setLanguage("es");
-		assert.equal(Configuration.getSAPLogonLanguage(), 'ES', 'SAP parameter sap-language=ES');
-
-
+		oStub.restore();
 	});
 
 	// "animationmode" is the normalized value, the application still needs to use "animationMode".
@@ -886,7 +958,7 @@ sap.ui.require([
 		window['sap-ui-config'][sAnimationModeConfigurationName] = "someuUnsupportedStringValue";
 		assert.throws(
 			function() { Configuration.setCore(); },
-			new Error("Unsupported Enumeration value for animationMode, valid values are: full, basic, minimal, none"),
+			new TypeError("Unsupported Enumeration value for animationMode, valid values are: full, basic, minimal, none"),
 			"Unsupported value for animation mode should throw an error."
 		);
 	});
@@ -947,7 +1019,7 @@ sap.ui.require([
 
 		assert.throws(
 			function() { oConfiguration.setAnimationMode("someUnsupportedStringValue"); },
-			new Error("Unsupported Enumeration value for animationMode, valid values are: full, basic, minimal, none"),
+			new TypeError("Unsupported Enumeration value for animationMode, valid values are: full, basic, minimal, none"),
 			"Unsupported value for animation mode should throw an error."
 		);
 

@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.base.EventProvider
-sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
-	function(Event, BaseObject, ObjectPool, assert) {
+sap.ui.define(['./Event', './Object', "sap/base/assert"],
+	function(Event, BaseObject, assert) {
 	"use strict";
 
 
@@ -44,12 +44,6 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 	 * @static
 	 */
 	EventProvider.M_EVENTS = {EventHandlerChange:EVENT__LISTENERS_CHANGED};
-
-	/**
-	 * Pool is defined on the prototype to be shared among all EventProviders
-	 * @private
-	 */
-	EventProvider.prototype.oEventPool = new ObjectPool(Event);
 
 	/**
 	 * Attaches an event handler to the event with the given identifier.
@@ -238,7 +232,7 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 
 				// avoid issues with 'concurrent modification' (e.g. if an event listener unregisters itself).
 				aEventListeners = aEventListeners.slice();
-				oEvent = oEvent || this.oEventPool.borrowObject(sEventId, this, oParameters); // borrow event lazily
+				oEvent = new Event(sEventId, this, oParameters);
 
 				for (i = 0, iL = aEventListeners.length; i < iL; i++) {
 					oInfo = aEventListeners[i];
@@ -255,7 +249,6 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 		if ( oEvent ) {
 			// remember 'prevent default' state before returning event to the pool
 			bPreventDefault = oEvent.bPreventDefault;
-			this.oEventPool.returnObject(oEvent);
 		}
 
 		// return 'execute default' flag only when 'prevent default' has been enabled, otherwise return 'this' (for compatibility)
@@ -373,5 +366,4 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 
 
 	return EventProvider;
-
 });

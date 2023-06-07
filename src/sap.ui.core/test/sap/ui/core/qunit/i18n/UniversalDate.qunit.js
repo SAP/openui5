@@ -307,10 +307,9 @@ sap.ui.define([
 	QUnit.test("setWeek/setUTCWeek", function (assert) {
 		this.dateSpy.restore();
 
-		var oFormatLocaleObject = Core.getConfiguration().getFormatSettings().getFormatLocale();
+		var oFormatSettings = Core.getConfiguration().getFormatSettings();
 
-		var oGetLanguageStub = this.stub(oFormatLocaleObject, "getLanguage").returns("de");
-		var oGetRegionStub = this.stub(oFormatLocaleObject, "getRegion").returns("DE");
+		var oGetFormatLocaleStub = this.stub(oFormatSettings, "getFormatLocale").returns(new Locale("de-DE"));
 
 		var oWeekObject = new UniversalDate(2023,0,1);
 		// ISO 8601 (de)
@@ -344,8 +343,7 @@ sap.ui.define([
 		assert.strictEqual(oWeekObject.getJSDate().toUTCString(),
 			new UniversalDate(Date.UTC(2020, 11, 27)).getJSDate().toUTCString());
 
-		oGetLanguageStub.restore();
-		oGetRegionStub.restore();
+		oGetFormatLocaleStub.restore();
 	});
 
 	QUnit.test("getWeek/getUTCWeek with locale en_US (split week)", function (assert) {
@@ -444,9 +442,9 @@ sap.ui.define([
 		this.dateSpy.restore();
 
 		var oWeekObject;
-		var oGetLanguageStub;
-		var oGetRegionStub;
-		var oFormatLocaleObject = Core.getConfiguration().getFormatSettings().getFormatLocale();
+		var oFormatSettings = Core.getConfiguration().getFormatSettings();
+		var oGetFormatLocaleStub;
+
 		var aLocales = [
 			{ language: "en", region: null }
 		];
@@ -498,11 +496,7 @@ sap.ui.define([
 		// CW02 2021-01-03 - 2021-01-09 ({year:2021, week: 1})
 		// Note: function getWeek returns the calendar week index which starts at 0
 		aLocales.forEach(function(oLocale) {
-			oGetLanguageStub = this.stub(oFormatLocaleObject, "getLanguage").returns(oLocale.language);
-			oGetRegionStub = this.stub(oFormatLocaleObject, "getRegion").returns(oLocale.region);
-			assert.equal(oFormatLocaleObject.getLanguage(), oLocale.language, "Language should be: " + oLocale.language);
-			assert.equal(oFormatLocaleObject.getRegion(), oLocale.region, "Region should be: " + oLocale.region);
-
+			oGetFormatLocaleStub = this.stub(oFormatSettings, "getFormatLocale").returns(new Locale(oLocale.language));
 			aFixtures.forEach(function(oFixture) {
 				oWeekObject = oFixture.oInputDateUTC.getUTCWeek();
 				assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
@@ -513,8 +507,7 @@ sap.ui.define([
 				assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 			});
 
-			oGetLanguageStub.restore();
-			oGetRegionStub.restore();
+			oGetFormatLocaleStub.restore();
 		}.bind(this));
 
 		// Locale "en"
@@ -556,9 +549,9 @@ sap.ui.define([
 		this.dateSpy.restore();
 
 		var oWeekObject;
-		var oGetLanguageStub;
-		var oGetRegionStub;
-		var oFormatLocaleObject = Core.getConfiguration().getFormatSettings().getFormatLocale();
+		var oFormatSettings = Core.getConfiguration().getFormatSettings();
+		var oGetFormatLocaleStub;
+
 		var aLocales = [
 			{ language: "de", region: null },
 			{ language: "en", region: "GB" }
@@ -611,10 +604,8 @@ sap.ui.define([
 		// CW01 2021-01-04 - 2021-01-10 ({year:2020, week: 0})
 		// Note: function getWeek returns the calendar week index which starts at 0
 		aLocales.forEach(function(oLocale) {
-			oGetLanguageStub = this.stub(oFormatLocaleObject, "getLanguage").returns(oLocale.language);
-			oGetRegionStub = this.stub(oFormatLocaleObject, "getRegion").returns(oLocale.region);
-			assert.equal(oFormatLocaleObject.getLanguage(), oLocale.language, "Language should be: " + oLocale.language);
-			assert.equal(oFormatLocaleObject.getRegion(), oLocale.region, "Region should be: " + oLocale.region);
+			var sLocaleId = oLocale.region ? oLocale.language + "-" + oLocale.region : oLocale.language;
+			oGetFormatLocaleStub = this.stub(oFormatSettings, "getFormatLocale").returns(new Locale(sLocaleId));
 
 
 			aFixtures.forEach(function(oFixture) {
@@ -627,8 +618,7 @@ sap.ui.define([
 				assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 			});
 
-			oGetLanguageStub.restore();
-			oGetRegionStub.restore();
+			oGetFormatLocaleStub.restore();
 		}.bind(this));
 
 		// Locale "en"

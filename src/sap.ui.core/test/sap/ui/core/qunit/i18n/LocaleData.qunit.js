@@ -73,7 +73,7 @@ sap.ui.define([
 		assert.equal(oLocaleData.sCLDRLocaleId, "en");
 	});
 
-	var aLanguages = Locale._cldrLocales.slice();
+	var aLanguages = LocaleData._cldrLocales.slice();
 	aLanguages.push("sh");
 
 	aLanguages.forEach(function(sLanguage) {

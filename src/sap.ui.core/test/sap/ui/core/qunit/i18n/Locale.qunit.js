@@ -69,15 +69,6 @@ sap.ui.define([
 		assert.equal(oLocale.hasPrivateUseSubtag("ufmt"), false, "parts of PrivateUse subtag must not be detected");
 	});
 
-	QUnit.test("_getSAPLogonLanguage", function(assert) {
-		aLocales.forEach(function(aLocaleData) {
-			var oLocale = new Locale(aLocaleData[0]);
-			assert.equal(oLocale._getSAPLogonLanguage(), aLocaleData[7],
-				"locale '" + aLocaleData[0] + "'"
-				+ " should return the SAP logon language '" + aLocaleData[7] + "'");
-		});
-	});
-
 	/**
 	 * @deprecated As of 1.44
 	 */
@@ -88,48 +79,5 @@ sap.ui.define([
 				"locale '" + aLocaleData[0] + "'"
 				+ " should return the SAP logon language '" + aLocaleData[7] + "'");
 		});
-	});
-
-	QUnit.test("fromSAPLogonLanguage", function(assert) {
-		assert.equal(Locale.fromSAPLogonLanguage("ZH").toString(), "zh-Hans");
-		assert.equal(Locale.fromSAPLogonLanguage("ZF").toString(), "zh-Hant");
-		assert.equal(Locale.fromSAPLogonLanguage("SH").toString(), "sr-Latn");
-		assert.equal(Locale.fromSAPLogonLanguage("6N").toString(), "en-GB");
-		assert.equal(Locale.fromSAPLogonLanguage("1P").toString(), "pt-PT");
-		assert.equal(Locale.fromSAPLogonLanguage("1X").toString(), "es-MX");
-		assert.equal(Locale.fromSAPLogonLanguage("3F").toString(), "fr-CA");
-		assert.equal(Locale.fromSAPLogonLanguage("1Q").toString(), "en-US-x-saptrc");
-		assert.equal(Locale.fromSAPLogonLanguage("2Q").toString(), "en-US-x-sappsd");
-		assert.equal(Locale.fromSAPLogonLanguage("3Q").toString(), "en-US-x-saprigi");
-		assert.strictEqual(Locale.fromSAPLogonLanguage(""), undefined, "no language");
-		assert.strictEqual(Locale.fromSAPLogonLanguage(false), undefined, "no language");
-		assert.strictEqual(Locale.fromSAPLogonLanguage({}), undefined, "no language");
-		assert.strictEqual(Locale.fromSAPLogonLanguage("1E"), undefined, "no language");
-		assert.equal(Locale.fromSAPLogonLanguage("XX").toString(), "xx");
-	});
-
-	QUnit.test("fromSAPLogonLanguage reverse _getSAPLogonLanguage", function(assert) {
-		["ZH", "ZF", "SH", "6N", "1P", "1X", "3F", "1Q", "2Q", "3Q"].forEach(function(sSAPLanguage) {
-			assert.equal(Locale.fromSAPLogonLanguage(sSAPLanguage)._getSAPLogonLanguage(), sSAPLanguage);
-		});
-	});
-
-	/**
-	 * @deprecated As of 1.44
-	 */
-	QUnit.test("fromSAPLogonLanguage reverse getSAPLogonLanguage", function(assert) {
-		["ZH", "ZF", "SH", "6N", "1P", "1X", "3F", "1Q", "2Q", "3Q"].forEach(function(sSAPLanguage) {
-			assert.equal(Locale.fromSAPLogonLanguage(sSAPLanguage).getSAPLogonLanguage(), sSAPLanguage);
-		});
-	});
-
-	QUnit.test("toLanguageTag", function(assert) {
-		assert.equal(new Locale("sh").toLanguageTag(), "sh");
-		assert.equal(new Locale("sr-Latn").toLanguageTag(), "sh");
-		assert.equal(new Locale("sr-RS").toLanguageTag(), "sr-RS");
-		assert.equal(new Locale("sh-RS").toLanguageTag(), "sh-RS");
-		assert.equal(new Locale("en-GB").toLanguageTag(), "en-GB");
-		assert.equal(new Locale("iw").toLanguageTag(), "he");
-		assert.equal(new Locale("ji").toLanguageTag(), "yi");
 	});
 });
