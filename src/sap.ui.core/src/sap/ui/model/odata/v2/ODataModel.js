@@ -5090,26 +5090,27 @@ sap.ui.define([
 	 * supported and may not work. These should be done separately and directly on the corresponding entry.
 	 *
 	 * @param {string} sPath A string containing the path to the data that should be updated.
-	 * 		The path is concatenated to the sServiceUrl which was specified
-	 * 		in the model constructor.
+	 *   The path is concatenated to the sServiceUrl which was specified
+	 *   in the model constructor.
 	 * @param {object} oData Data of the entry that should be updated.
 	 * @param {object} [mParameters] Optional, can contain the following attributes:
 	 * @param {object} [mParameters.context] If specified the sPath has to be is relative to the path given with the context.
 	 * @param {function} [mParameters.success] A callback function which is called when the data has been successfully updated.
 	 * @param {function} [mParameters.error] A callback function which is called when the request failed.
-	 * 		The handler can have the parameter <code>oError</code> which contains additional error information.
+	 *   The handler can have the parameter <code>oError</code> which contains additional error information.
+	 *   If the <code>PUT/MERGE</code> request has been aborted, the error has an <code>aborted</code> flag set to
+	 *   <code>true</code>.
 	 * @param {string} [mParameters.eTag] If specified, the <code>If-Match</code> header will be set to this ETag.
-	 * 		Caution: This feature in not officially supported as using asynchronous requests can lead
-	 * 		to data inconsistencies. If you decide to use this feature nevertheless, you have to make
-	 * 		sure that the request is completed before the data is processed any further.
+	 *   Caution: This feature in not officially supported as using asynchronous requests can lead
+	 *   to data inconsistencies. If you decide to use this feature nevertheless, you have to make
+	 *   sure that the request is completed before the data is processed any further.
 	 * @param {Object<string,string>} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {Object<string,string>} [mParameters.headers] A map of headers for this request
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
-	 * @param {boolean} [mParameters.refreshAfterChange] Since 1.46; defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
-	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
-	 *
+	 * @param {boolean} [mParameters.refreshAfterChange] Since 1.46; defines whether to update all bindings after submitting this change operation.
+	 *   See {@link #setRefreshAfterChange}. If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
@@ -5175,24 +5176,26 @@ sap.ui.define([
 	 * {@link #createEntry} or {@link sap.ui.model.odata.v2.ODataListBinding#create} instead.
 	 *
 	 * @param {string} sPath A string containing the path to the collection where an entry
-	 *		should be created. The path is concatenated to the service URL
-	 *		which was specified in the model constructor.
+	 *   should be created. The path is concatenated to the service URL
+	 *   which was specified in the model constructor.
 	 * @param {object} oData Data of the entry that should be created.
 	 * @param {object} [mParameters] Optional parameter map containing any of the following properties:
 	 * @param {object} [mParameters.context] If specified , <code>sPath</code> has to be relative to the path given with the context.
 	 * @param {function} [mParameters.success] A callback function which is called when the data has
-	 *		been successfully retrieved. The handler can have the
-	 *		following parameters: <code>oData</code> and <code>response</code>. The <code>oData</code> parameter contains the data of the newly created entry if it is provided by the backend.
-	 *		The <code>response</code> parameter contains information about the response of the request.
+	 *   been successfully retrieved. The handler can have the
+	 *   following parameters: <code>oData</code> and <code>response</code>. The <code>oData</code> parameter contains the data of the newly created entry if it is provided by the backend.
+	 *   The <code>response</code> parameter contains information about the response of the request.
 	 * @param {function} [mParameters.error] A callback function which is called when the request failed.
-	 *		The handler can have the parameter <code>oError</code> which contains additional error information.
+	 *   The handler can have the parameter <code>oError</code> which contains additional error information.
+	 *   If the <code>POST</code> request has been aborted, the error has an <code>aborted</code> flag set to
+	 *   <code>true</code>.
 	 * @param {Object<string,string>} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {Object<string,string>} [mParameters.headers] A map of headers for this request
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
-	 * @param {boolean} [mParameters.refreshAfterChange] Since 1.46; defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
-	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
+	 * @param {boolean} [mParameters.refreshAfterChange] Since 1.46; defines whether to update all bindings after submitting this change operation.
+	 *   See {@link #setRefreshAfterChange}. If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
@@ -5268,6 +5271,8 @@ sap.ui.define([
 	 * @param {function} [mParameters.error]
 	 *   A callback function which is called when the request failed. The handler can have the
 	 *   parameter: <code>oError</code> which contains additional error information.
+	 *   If the <code>DELETE</code> request has been aborted, the error has an <code>aborted</code> flag set to
+	 *   <code>true</code>.
 	 * @param {string} [mParameters.eTag]
 	 *   If specified, the <code>If-Match</code> header will be set to this ETag.
 	 * @param {Object<string,string>} [mParameters.urlParameters]
@@ -5405,6 +5410,7 @@ sap.ui.define([
 	 * @param {function} [mParameters.error]
 	 *   A callback function which is called when the request failed. The handler can have the
 	 *   parameter: <code>oError</code> which contains additional error information.
+	 *   If the request has been aborted, the error has an <code>aborted</code> flag set to <code>true</code>.
 	 * @param {string} [mParameters.eTag]
 	 *   If the function import changes an entity, the ETag for this entity can be passed with this
 	 *   parameter
@@ -5743,16 +5749,18 @@ sap.ui.define([
 	 *   ignored, use <code>mParameters.urlParameters</code> instead
 	 * @param {object} [mParameters] Optional parameter map containing any of the following properties:
 	 * @param {object} [mParameters.context] If specified, <code>sPath</code> has to be relative to the path
-	 * 		given with the context.
+	 *   given with the context.
 	 * @param {Object<string,string>} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {sap.ui.model.Filter[]} [mParameters.filters] An array of filters to be included in the request URL
 	 * @param {sap.ui.model.Sorter[]} [mParameters.sorters] An array of sorters to be included in the request URL
 	 * @param {function} [mParameters.success] A callback function which is called when the data has
-	 *		been successfully retrieved. The handler can have the
-	 *		following parameters: <code>oData</code> and <code>response</code>. The <code>oData</code> parameter contains the data of the retrieved data.
-	 *		The <code>response</code> parameter contains further information about the response of the request.
+	 *   been successfully retrieved. The handler can have the
+	 *   following parameters: <code>oData</code> and <code>response</code>. The <code>oData</code> parameter contains the data of the retrieved data.
+	 *   The <code>response</code> parameter contains further information about the response of the request.
 	 * @param {function} [mParameters.error] A callback function which is called when the request
-	 * 		failed. The handler can have the parameter: <code>oError</code> which contains additional error information.
+	 *   failed. The handler can have the parameter: <code>oError</code> which contains additional error information.
+	 *   If the <code>GET</code> request has been aborted, the error has an <code>aborted</code> flag set to
+	 *   <code>true</code>.
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {boolean} [mParameters.updateAggregatedMessages]
@@ -6178,7 +6186,10 @@ sap.ui.define([
 	 * and change sets of the actual batch request which was sent to the backend.
 	 * The changeResponses contain the actual response of that change set in the <code>response</code> property.
 	 * For each change set there is also a <code>__changeResponse</code> property.
-	 * @param {function} [mParameters.error] A callback function which is called when the request failed. The handler can have the parameter: <code>oError</code> which contains additional error information
+	 * @param {function} [mParameters.error] A callback function which is called when the request failed.
+	 *   The handler can have the parameter: <code>oError</code> which contains additional error information.
+	 *   If all contained requests have been aborted, the error has an <code>aborted</code> flag set to
+	 *   <code>true</code>.
 	 * @param {string} [mParameters.batchGroupId]
 	 *   <b>Deprecated</b>, use <code>groupId</code> instead
 	 * @param {boolean} [mParameters.merge]
@@ -6440,7 +6451,7 @@ sap.ui.define([
 	 * @param {array} [aPath]
 	 *   Paths to be reset; if no array is passed, all changes are reset
 	 * @param {boolean} [bAll=false]
-	 *   Whether also deferred requests are taken into account
+	 *   Whether also deferred requests are taken into account so that they are aborted
 	 * @param {boolean} [bDeleteCreatedEntities=false]
 	 *   Whether to delete the entities created via {@link #createEntry} or {@link #callFunction};
 	 *   since 1.95.0
