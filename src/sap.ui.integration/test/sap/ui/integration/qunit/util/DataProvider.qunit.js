@@ -224,7 +224,6 @@ sap.ui.define([
 	testSetSettings(DataProvider);
 
 	QUnit.test("updateInterval", function (assert) {
-
 		var done = assert.async();
 
 		// Arrange
@@ -236,7 +235,7 @@ sap.ui.define([
 		};
 
 		this.oDataProvider.setSettings(oSettings);
-		var fnSpy = sinon.spy(this.oDataProvider, "onDataRequestComplete");
+		var fnSpy = this.spy(this.oDataProvider, "onDataRequestComplete");
 
 		// Act
 		this.oDataProvider.triggerDataUpdate();
@@ -245,9 +244,28 @@ sap.ui.define([
 			assert.ok(fnSpy.callCount > 1, "onDataRequestComplete is called more than once");
 			done();
 		}, 2000);
+	});
 
-		// Cleanup
-		fnSpy.reset();
+	QUnit.test("Pending update with updateInterval with simultaneous refresh", function (assert) {
+		var done = assert.async();
+
+		// Arrange
+		var oSettings = {
+			updateInterval: 1
+		};
+
+		this.oDataProvider.setSettings(oSettings);
+		var fnSpy = sinon.spy(this.oDataProvider, "triggerDataUpdate");
+
+		// Act
+		this.oDataProvider.triggerDataUpdate();
+		this.oDataProvider.triggerDataUpdate();
+		this.oDataProvider.triggerDataUpdate();
+
+		setTimeout(function () {
+			assert.strictEqual(fnSpy.callCount, 4, "triggerDataUpdate should be called just 1 more time");
+			done();
+		}, 2000);
 	});
 
 	QUnit.test("triggerDataUpdate - with JSON", function (assert) {
