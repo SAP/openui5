@@ -19,10 +19,6 @@ sap.ui.define([
 			"<member firstName=\"Flash\" lastName=\"Gordon\"> </member>" +
 		"</clients> </root>";
 
-	var oContentDIV = document.createElement("div");
-	oContentDIV.id = "target1";
-	document.body.appendChild(oContentDIV);
-
 	QUnit.module("sap.ui.model.xml.XMLModel: BindingMode", {
 		beforeEach: function() {
 			this.oModel = new XMLModel();
@@ -49,7 +45,7 @@ sap.ui.define([
 			for (i = 0; i < 7; i++){
 				oInput = new Input();
 				oInput.bindProperty(sName, "/clients/member/" + i + "/" + property, null, sMode);
-				oInput.placeAt("target1");
+				oInput.placeAt("qunit-fixture");
 				aInputs.push(oInput);
 			}
 
@@ -177,7 +173,7 @@ sap.ui.define([
 		var oInput = new Input();
 		oInput.bindProperty("value", "/clients/member/0/@lastName");
 		oInput.bindProperty("enabled", "model2>/test/0/enabled");
-		oInput.placeAt("target1");
+		oInput.placeAt("qunit-fixture");
 
 		var oValue = this.oModel.getProperty("/clients/member/0/@lastName");
 		assert.equal(oValue, "Duck", "old value check");
@@ -214,7 +210,7 @@ sap.ui.define([
 		var oInput = new Input();
 		oInput.bindProperty("value", "/clients/member/0/@lastName");
 		oInput.bindProperty("enabled", "model2>/test/0/enabled");
-		oInput.placeAt("target1");
+		oInput.placeAt("qunit-fixture");
 
 		var oValue = this.oModel.getProperty("/clients/member/0/@lastName");
 		assert.equal(oValue, "Duck", "old value check");
