@@ -93,6 +93,9 @@ sap.ui.define([
 		return oTable ? oTable._oTable : null;
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	TableTypeBase.prototype.setProperty = function(sProperty, vValue) {
 		Element.prototype.setProperty.apply(this, arguments);
 		this.updateTableByProperty(sProperty, vValue);

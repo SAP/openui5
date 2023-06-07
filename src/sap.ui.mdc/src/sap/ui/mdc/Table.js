@@ -982,6 +982,9 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	Table.prototype.focus = function(oFocusInfo) {
 		if (this._oTable) {
 			this._oTable.focus(oFocusInfo);
@@ -1723,7 +1726,7 @@ sap.ui.define([
 	 * Fetches the current state of the table (as a JSON)
 	 * <b>Note:</b> This API may return attributes corresponding to the <code>p13nMode</code> property configuration.
 	 *
-	 * @protected
+	 * @private
 	 * @returns {Object} Current state of the table
 	 */
 	Table.prototype.getCurrentState = function() {
@@ -1760,7 +1763,7 @@ sap.ui.define([
 	/**
 	 * Checks whether filter personalization is enabled.
 	 *
-	 * @protected
+	 * @private
 	 * @returns {boolean} Whether filter personalization is enabled
 	 */
 	Table.prototype.isFilteringEnabled = function() {
@@ -1770,7 +1773,7 @@ sap.ui.define([
 	/**
 	 * Checks whether sort personalization is enabled.
 	 *
-	 * @protected
+	 * @private
 	 * @returns {boolean} Whether sort personalization is enabled
 	 */
 	Table.prototype.isSortingEnabled = function() {
@@ -1780,7 +1783,7 @@ sap.ui.define([
 	/**
 	 * Checks whether group personalization is enabled.
 	 *
-	 * @protected
+	 * @private
 	 * @returns {boolean} Whether group personalization is enabled
 	 */
 	Table.prototype.isGroupingEnabled = function () {
@@ -1790,7 +1793,7 @@ sap.ui.define([
 	/**
 	 * Checks whether aggregation personalization is enabled.
 	 *
-	 * @protected
+	 * @private
 	 * @returns {boolean} Whether aggregation personalization is enabled
 	 */
 	Table.prototype.isAggregationEnabled = function () {

@@ -87,6 +87,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @inheritDoc
+	 */
 	GridTableType.prototype.exit = function() {
 		TableTypeBase.prototype.exit.apply(this, arguments);
 		this.disableColumnResize();

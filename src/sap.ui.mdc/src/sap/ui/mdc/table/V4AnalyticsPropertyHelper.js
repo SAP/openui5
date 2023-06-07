@@ -113,6 +113,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @inheritDoc
+	 */
 	PropertyHelper.prototype.validateProperty = function(oProperty, aProperties, aPreviousProperties) {
 		TablePropertyHelper.prototype.validateProperty.apply(this, arguments);
 
@@ -124,6 +127,9 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
 		TablePropertyHelper.prototype.prepareProperty.apply(this, arguments);
 
