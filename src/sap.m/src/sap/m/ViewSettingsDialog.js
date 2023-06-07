@@ -613,7 +613,7 @@ function(
 	};
 
 	ViewSettingsDialog.prototype._createListItemPropertyValue = function(sType, sPropertyName, oVSItem) {
-		var vVal = oVSItem.getMetadata().getAllProperties()[sPropertyName].get(oVSItem),
+		var vVal = ManagedObject.escapeSettingsValue(oVSItem.getMetadata().getAllProperties()[sPropertyName].get(oVSItem)),
 			fn = this.mToList[sType].itemPropertyMap[sPropertyName].fn;
 		return fn ? fn(vVal) : vVal;
 	};
