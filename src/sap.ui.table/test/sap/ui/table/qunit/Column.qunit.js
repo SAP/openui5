@@ -74,6 +74,7 @@ sap.ui.define([
 			assert.strictEqual(that._oColumn.shouldRender(), bShouldRender,
 				"Returned " + bShouldRender + ": "
 				+ (bVisible ? "Visible" : "Not visible")
+				//@deprecated As of version 1.118.
 				+ ", " + (bGrouped ? "grouped" : "not grouped")
 				+ ", " + (vTemplate != null ? ",has template" : "has no template"));
 		}
@@ -1373,7 +1374,6 @@ sap.ui.define([
 			this.oTable = TableQUnitUtils.createTable({
 				columns: [this.oColumn1, this.oColumn2]
 			});
-			this.oTable.setEnableGrouping(true);
 			this.oTable.setEnableColumnFreeze(true);
 		},
 		afterEach: function() {
@@ -1436,7 +1436,12 @@ sap.ui.define([
 		assert.equal(this.oColumn1.$().attr("aria-haspopup"), "dialog", "aria-haspopup was set correctly");
 	});
 
+	/**
+	 * @deprecated As of version 1.118.
+	 */
 	QUnit.test("_setGrouped", function(assert) {
+		this.oTable.setEnableGrouping(true);
+
 		var oColumn = this.oColumn1;
 		var oSetGroupedSpy = sinon.spy(this.oTable, "setGroupBy");
 

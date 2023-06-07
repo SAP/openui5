@@ -82,7 +82,14 @@ sap.ui.define([
 			/**
 			 * If the column is grouped, this formatter is used to format the value in the group header
 			 */
-			groupHeaderFormatter: {type: "function", group: "Behavior", defaultValue: null}
+			groupHeaderFormatter: {type: "function", group: "Appearance", defaultValue: null},
+
+			/**
+			 * Indicates if the column is grouped.
+			 * @since 1.118
+			 */
+			grouped: {type: "boolean", group: "Appearance", defaultValue: false}
+
 		}
 	}});
 

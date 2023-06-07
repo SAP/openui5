@@ -214,8 +214,9 @@ sap.ui.define([
 
 			/**
 			 * Indicates if the column is grouped.
+			 * @deprecated As of version 1.118.
 			 */
-			grouped: {type: "boolean", group: "Appearance", defaultValue: false},
+			grouped: {type: "boolean", group: "Appearance", defaultValue: false, deprecated: true},
 
 			/**
 			 * Invisible controls are not rendered.
@@ -638,6 +639,7 @@ sap.ui.define([
 	 * - sortProperty must be defined
 	 * - showFilterMenuEntry must be true (which is the default)
 	 *
+	 * @deprecated As of version 1.118.
 	 * @returns {boolean}
 	 */
 	Column.prototype.isGroupableByMenu = function() {
@@ -699,6 +701,10 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @deprecated As of version 1.118.
+	 * @private
+	*/
 	Column.prototype._setGrouped = function(bGrouped) {
 		var oTable = this._getTable();
 		oTable.setGroupBy(bGrouped ? this : null);

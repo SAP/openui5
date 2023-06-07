@@ -423,6 +423,7 @@ sap.ui.define([
 		 * Initializes the experimental grouping for sap.ui.table.Table.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @deprecated As of version 1.118.
 		 */
 		setupExperimentalGrouping: function(oTable) {
 			if (!oTable.getEnableGrouping()) {

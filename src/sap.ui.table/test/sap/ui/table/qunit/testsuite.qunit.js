@@ -101,12 +101,9 @@ sap.ui.define([
 				group: "Menus",
 				module: "./menus/{name}.qunit"
 			},
-			"Row": {
-			},
-			"RowAction": {
-			},
-			"RowSettings": {
-			},
+			"Row": {},
+			"RowAction": {},
+			"RowSettings": {},
 			"CreationRow": {
 				ui5: {
 					// The test and sap.ui.table.CreationRow have dependencies to sap.m modules
@@ -130,10 +127,9 @@ sap.ui.define([
 					only: null /*full report*/
 				}
 			},
-			"AnalyticalTable": {
-			},
-			"TableColumnHeaders": {
-			},
+			"AnalyticalTable": {},
+			"AnalyticalColumn": {},
+			"TableColumnHeaders": {},
 
 			// Utils
 			"TableUtils": {

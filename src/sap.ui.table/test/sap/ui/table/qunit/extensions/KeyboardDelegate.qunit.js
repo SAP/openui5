@@ -1114,6 +1114,27 @@ sap.ui.define([
 					this.triggerKey(Key.Arrow.UP, oTarget, this.oTable.qunit.getColumnHeaderCell(0));
 				}
 			}
+		},
+		/**
+		 * Updates the row states based on the defined states set in aStates array
+		 *
+		 * @param {Object} aStates Array of row states.
+		 * @private
+		 */
+		setRowStates: function(aStates) {
+			var i = 0;
+
+			function updateRowState(oState) {
+				Object.assign(oState, aStates[i]);
+				i++;
+			}
+
+			TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Row.UpdateState, updateRowState);
+			this.oTable.getBinding().refresh(true);
+
+			return this.oTable.qunit.whenRenderingFinished().then(function() {
+				TableUtils.Hook.deregister(this.oTable, TableUtils.Hook.Keys.Row.UpdateState, updateRowState);
+			}.bind(this));
 		}
 	});
 
@@ -1121,8 +1142,37 @@ sap.ui.define([
 	 * @deprecated As of version 1.28
 	 */
 	QUnit.test("Grouped", function(assert) {
-		this.oTable.setEnableGrouping(true);
-		this.oTable.setGroupBy(this.oTable._getVisibleColumns()[0]);
+		var oTable = this.oTable;
+		var oRow = oTable.getRows()[0];
+		var aRowInfo = [{
+			title: "A",
+			state: {type: oRow.Type.Standard, expandable: true, expanded: true},
+			expectContentHidden: false
+		}, {
+			title: "B",
+			state: {type: oRow.Type.Standard, expandable: true, expanded: true},
+			expectContentHidden: true
+		}, {
+			title: "C",
+			state: {type: oRow.Type.GroupHeader, expandable: true, expanded: true},
+			expectContentHidden: true
+		}, {
+			title: "D",
+			state: {type: oRow.Type.Summary, expandable: true, expanded: true},
+			expectContentHidden: true
+		}, {
+			title: "E",
+			state: {type: oRow.Type.Standard, expandable: true, expanded: true},
+			expectContentHidden: true
+		}, {
+			title: "F",
+			state: {type: oRow.Type.Standard, expandable: true, expanded: true},
+			expectContentHidden: true
+		}];
+
+		this.setRowStates(aRowInfo.map(function(mRowInfo) {
+			return mRowInfo.state;
+		}));
 		oCore.applyChanges();
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
@@ -6904,13 +6954,6 @@ sap.ui.define([
 		afterEach: function() {
 			teardownTest();
 		},
-
-		setupGrouping: function() {
-			oTable.setEnableGrouping(true);
-			oTable.setGroupBy(oTable.getColumns()[0]);
-			oCore.applyChanges();
-		},
-
 		testAsync: function(mSettings) {
 			mSettings.act();
 
@@ -7491,6 +7534,48 @@ sap.ui.define([
 			}.bind(this));
 
 			return pTestSequence;
+		},
+		/**
+		 * Returns an array of row information relevant for setting up the grouping
+		 *
+		 * @param {Object} oRow Row object.
+		 * @private
+		 */
+		getRowGroupingInfo: function(oRow) {
+			return [{
+				title: "0",
+				state: {type: oRow.Type.GroupHeader, expandable: true, expanded: true},
+				expectContentHidden: false
+			}, {
+				title: "1",
+				state: {type: oRow.Type.GroupHeader, expandable: true, expanded: true},
+				expectContentHidden: true
+			}, {
+				title: "2",
+				state: {type: oRow.Type.Standard},
+				expectContentHidden: true
+			}];
+		},
+		/**
+		 * Changes the row states to in getRowGroupingInfo defined states
+		 *
+		 * @private
+		 */
+		setRowStates: function() {
+			var i = 0;
+			var oRow = oTable.getRows()[0];
+			var aRowInfo = this.getRowGroupingInfo(oRow);
+			var aStates = aRowInfo.map(function(mRowInfo) {
+				return mRowInfo.state;
+			});
+
+			function updateRowState(oState) {
+				Object.assign(oState, aStates[i]);
+				i++;
+			}
+
+			TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.UpdateState, updateRowState);
+			oTable.getBinding().refresh(true);
 		}
 	});
 
@@ -7548,7 +7633,7 @@ sap.ui.define([
 
 	QUnit.test("TAB & Shift+TAB - Grouping", function(assert) {
 		oTable.setSelectionMode(library.SelectionMode.None);
-		this.setupGrouping();
+		this.setRowStates();
 
 		return this.testActionModeTabNavigation(assert);
 	});
@@ -7559,7 +7644,7 @@ sap.ui.define([
 		oTable.setFixedRowCount(2);
 		oTable.setFixedBottomRowCount(2);
 		initRowActions(oTable, 2, 2);
-		this.setupGrouping();
+		this.setRowStates();
 
 		return this.testActionModeTabNavigation(assert);
 	});
@@ -7570,7 +7655,7 @@ sap.ui.define([
 		oTable.setFixedRowCount(2);
 		oTable.setFixedBottomRowCount(2);
 		initRowActions(oTable, 1, 0);
-		this.setupGrouping();
+		this.setRowStates();
 
 		return this.testActionModeTabNavigation(assert);
 	});
