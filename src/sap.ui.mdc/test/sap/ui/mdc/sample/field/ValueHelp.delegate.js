@@ -216,7 +216,7 @@ sap.ui.define([
 			var sModelName = oContent.getListBindingInfo().model;
 			var oContext = oItem && oItem.getBindingContext(sModelName);
 			var oItemData = oContent.getItemFromContext(oContext);
-			var oInConditions = this.getFilterConditions(oPayload, oContent, {control: oContent && oContent.getControl()}); // to use if no payload is provided
+			var oInConditions = this.getFilterConditions(oValueHelp, oContent, {control: oContent && oContent.getControl()}); // to use if no payload is provided
 			aConditions = merge([], aConditions);
 			_mapInOutToPayload(aConditions, oPayload);
 
