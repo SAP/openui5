@@ -9,12 +9,13 @@ sap.ui.require([
 	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/Locale',
 	'sap/ui/base/Interface',
+	'sap/ui/core/Theming',
 	'sap/base/config',
 	'sap/base/Log',
 	'sap/routing/HistoryUtils',
 	'sap/ui/base/config/URLConfigurationProvider',
 	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
-], function(CalendarType, Configuration, Core, CalendarWeekNumbering, TimezoneUtil, Locale, Interface, BaseConfig, Log,
+], function(CalendarType, Configuration, Core, CalendarWeekNumbering, TimezoneUtil, Locale, Interface, Theming, BaseConfig, Log,
 		HistoryUtils, URLConfigurationProvider/*, LocaleData*/) {
 	"use strict";
 
@@ -1128,120 +1129,132 @@ sap.ui.require([
 		assert.equal(_getNumberOfFlModules(Configuration), 1);
 	});
 
-	QUnit.module("ThemeRoot Validation", {
-		before: HistoryUtils.check
-	});
+	QUnit.module("ThemeRoot Validation");
 
 	[
 		{
 			caption: "Relative URL, All Origins",
-			url: location.origin + "?sap-theme=custom@custom-theme/",
+			theme: "custom@custom-theme/",
 			allowedOrigins: "*",
-			expectedThemeRoot: location.origin + "/custom-theme/UI5/"
+			expectedThemeRoot: "custom-theme/UI5/"
 		},
 		{
 			caption: "Relative URL, no valid origins",
-			url: location.origin + "?sap-theme=custom@custom-theme/",
+			theme: "custom@custom-theme/",
 			allowedOrigins: null,
-			expectedThemeRoot: location.origin + "/custom-theme/UI5/"
+			expectedThemeRoot: "custom-theme/UI5/"
 		},
 		{
 			caption: "Relative URL, baseURI on different domain, no valid origins",
-			url: location.origin + "?sap-theme=custom@custom-theme/",
+			theme: "custom@custom-theme/",
 			allowedOrigins: null,
-			expectedThemeRoot: location.origin + "/custom-theme/UI5/",
-			baseURI: "http://example.org"
+			expectedThemeRoot: "custom-theme/UI5/",
+			baseURI: "http://example.org" //Check why needed
 		},
 		{
 			caption: "Relative URL, baseURI on different domain, All origins",
-			url: location.origin + "?sap-theme=custom@custom-theme/",
+			theme: "custom@custom-theme/",
 			allowedOrigins: "*",
-			expectedThemeRoot: location.origin + "/custom-theme/UI5/",
-			baseURI: "http://example.org"
+			expectedThemeRoot: "custom-theme/UI5/",
+			baseURI: "http://example.org" //Check why needed
 		},
 		{
 			caption: "Relative URL, relative baseURI",
-			url: location.origin + "/foo/bar/?sap-theme=custom@../custom-theme",
+			theme: "custom@../custom-theme",
 			allowedOrigins: null,
-			expectedThemeRoot: location.origin + "/foo/custom-theme/UI5/",
-			baseURI: "/some/other/path/"
+			expectedThemeRoot: "../custom-theme/UI5/",
+			baseURI: "/some/other/path/" //Check why needed
 		},
 		{
 			caption: "Absolute URL, All Origins",
-			url: location.origin + "?sap-theme=custom@ftp://example.org/theming/custom-theme/",
+			theme: "custom@ftp://example.org/theming/custom-theme/",
 			allowedOrigins: "*",
 			expectedThemeRoot: "ftp://example.org/theming/custom-theme/UI5/"
 		},
 		{
 			caption: "Absolute URL, Same Domain",
-			url: location.origin + "?sap-theme=custom@" + location.origin + "/theming/custom-theme/",
+			theme: "custom@" + location.origin + "/theming/custom-theme/",
 			allowedOrigins: location.origin,
-			expectedThemeRoot: location.origin + "/theming/custom-theme/UI5/"
+			expectedThemeRoot: "/theming/custom-theme/UI5/"
 		},
 		{
 			caption: "Absolute URL, Valid, but Different Domain",
-			url: location.origin + "?sap-theme=custom@https://example.com/theming/custom-theme/",
+			theme: "custom@https://example.com/theming/custom-theme/",
 			allowedOrigins: "https://example.com",
 			expectedThemeRoot: "https://example.com/theming/custom-theme/UI5/"
 		},
 		{
 			caption: "Absolute URL, no valid origins",
-			url: location.origin + "?sap-theme=custom@https://example.com/theming/custom-theme/",
+			theme: "custom@https://example.com/theming/custom-theme/",
 			allowedOrigins: null,
-			expectedThemeRoot: location.origin + "/theming/custom-theme/UI5/"
+			expectedThemeRoot: "/theming/custom-theme/UI5/"
 		},
 		{
 			caption: "Absolute URL, empty valid origins",
-			url: location.origin + "?sap-theme=custom@https://example.com/theming/custom-theme/",
+			theme: "custom@https://example.com/theming/custom-theme/",
 			allowedOrigins: "",
-			expectedThemeRoot: location.origin + "/theming/custom-theme/UI5/"
+			expectedThemeRoot: "/theming/custom-theme/UI5/"
 		},
 		{
 			caption: "Absolute URL with same protocol, Valid",
-			url: location.origin + "?sap-theme=custom@//example.com/theming/custom-theme/",
+			theme: "custom@//example.com/theming/custom-theme/",
 			allowedOrigins: "example.com",
-			expectedThemeRoot: "//example.com/theming/custom-theme/UI5/"
+			expectedThemeRoot: "//example.com/theming/custom-theme/UI5/",
+			noProtocol: true
+		},
+		{
+			caption: "Absolute URL with same protocol and themeRoot has default port, Valid",
+			theme: "custom@//example.com:80/theming/custom-theme/",
+			allowedOrigins: "example.com",
+			expectedThemeRoot: "//example.com/theming/custom-theme/UI5/",
+			noProtocol: true
+		},
+		{
+			caption: "Absolute URL with same protocol and allowedThemeOrigin has default port, Valid",
+			theme: "custom@//example.com/theming/custom-theme/",
+			allowedOrigins: "example.com:80",
+			expectedThemeRoot: "//example.com/theming/custom-theme/UI5/",
+			noProtocol: true
+		},
+		{
+			caption: "Absolute URL with same protocol and custom port, Valid",
+			theme: "custom@//example.com:8080/theming/custom-theme/",
+			allowedOrigins: "example.com:8080",
+			expectedThemeRoot: "//example.com:8080/theming/custom-theme/UI5/",
+			noProtocol: true
+		},
+		{
+			caption: "Absolute URL with same protocol and themeRoot has custom port, not valid",
+			theme: "custom@//example.com:8080/theming/custom-theme/",
+			allowedOrigins: "example.com",
+			expectedThemeRoot: location.origin.replace(location.protocol, "") + "/theming/custom-theme/UI5/",
+			noProtocol: true
+		},
+		{
+			caption: "Absolute URL with same protocol and allowedThemeOrigin has custom port, not valid",
+			theme: "custom@//example.com/theming/custom-theme/",
+			allowedOrigins: "example.com:8080",
+			expectedThemeRoot: location.origin.replace(location.protocol, "") + "/theming/custom-theme/UI5/",
+			noProtocol: true
 		}
 	].forEach(function(oSetup) {
-
 		QUnit.test(oSetup.caption, function(assert) {
-			var oMeta = null, oBase = null, sExistingBaseHref;
-			browserUrl.change(oSetup.url);
-			if ( oSetup.allowedOrigins != null ) {
-				oMeta = document.createElement("meta");
-				oMeta.setAttribute("name", "sap-allowedThemeOrigins");
-				oMeta.setAttribute("content", oSetup.allowedOrigins);
-				document.head.appendChild(oMeta);
-			}
-			if ( oSetup.baseURI != null ) {
-				oBase = document.querySelector("base");
-				if (oBase) {
-					sExistingBaseHref = oBase.getAttribute("href");
-				} else {
-					oBase = document.createElement("base");
-					document.head.appendChild(oBase);
+			var oStub = sinon.stub(BaseConfig, "get");
+			oStub.callsFake(function(mParameters) {
+				switch (mParameters.name) {
+					case "sapAllowedThemeOrigins":
+						return oSetup.allowedOrigins;
+					case "sapUiTheme":
+						return oSetup.theme;
+					default:
+						return oStub.wrappedMethod.call(this, mParameters);
 				}
-				oBase.setAttribute("href", oSetup.baseURI);
-			}
-			try {
-				Configuration.setCore(oRealCore);
-				assert.equal(Configuration.getTheme(), "custom", "Configuration 'theme'");
-				assert.equal(Configuration.getThemeRoot(), oSetup.expectedThemeRoot, "Configuration 'themeRoot'");
-			} finally {
-				browserUrl.reset();
-				if ( oMeta ) {
-					document.head.removeChild(oMeta);
-				}
-				if ( oBase ) {
-					if ( sExistingBaseHref ) {
-						oBase.setAttribute("href", sExistingBaseHref);
-					} else {
-						document.head.removeChild(oBase);
-					}
-				}
-			}
+			});
+			assert.equal(Theming.getTheme(), "custom", "Configuration 'getTheme' returns expected 'theme' " + Theming.getTheme());
+			assert.equal(Theming.getThemeRoot(), oSetup.noProtocol ? oSetup.expectedThemeRoot : new URL(oSetup.expectedThemeRoot, location.href).toString(),
+				"Theming 'getThemeRoot' returns expected 'themeRoot' " + Theming.getThemeRoot());
+			oStub.restore();
 		});
-
 	});
 
 	/*

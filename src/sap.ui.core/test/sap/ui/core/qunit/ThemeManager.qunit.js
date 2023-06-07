@@ -164,7 +164,7 @@ sap.ui.define([
 		};
 		var checkLoadedCss = function () {
 			var aAllThemeLinksForLibs = document.querySelectorAll("link[id^=sap-ui-theme]");
-			var aCustomCssLink = document.querySelectorAll("link[id=" + ThemeManager._CUSTOMID + "]");
+			var aCustomCssLink = document.querySelectorAll("link[id=sap-ui-core-customcss]");
 			aAllThemeLinksForLibs.forEach(function ($link) {
 				// Depending on order of test execution there could be more link tags as expected by this test
 				// Only do asserts here for the expected link tags and check for complete test execution by assert.expect
@@ -175,7 +175,7 @@ sap.ui.define([
 			assert.ok(aCustomCssLink[0].getAttribute("href")
 				.endsWith("/libraries/customCss/sap/ui/core/themes/customTheme/custom.css"), "URI of custom.css link tag is correct");
 		};
-		ThemeManager.applyTheme("customTheme");
+		sap.ui.getCore().applyTheme("customTheme");
 
 		return themeApplied().then(function () {
 			return sap.ui.getCore().loadLibrary("testlibs.customCss.lib1", true).then(function () {

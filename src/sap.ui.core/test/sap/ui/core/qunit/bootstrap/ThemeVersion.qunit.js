@@ -156,40 +156,29 @@ sap.ui.define([
 	});
 
 	QUnit.test("RTL Change", function(assert) {
-		var done = assert.async();
-
-		var fnThemeChanged = function () {
-			var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
-			var sHref = oLink.href;
-			var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
-
-			var sExpectedHref = new URL(sap.ui.require.toUrl("sap/ui/core/themes/sap_bluecrystal/library-RTL.css"), document.baseURI);
-
-			if (mOptions.versionedLibCss) {
-				assert.equal(
-					sHref,
-					sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + oVersionInfo.version,
-					"'sap.ui.core' library-RTL.css URL should contain version parameters."
-				);
-			} else {
-				assert.equal(
-					sHref,
-					sExpectedHref,
-					"'sap.ui.core' library-RTL.css URL should not contain version parameters."
-				);
-			}
-
-			sap.ui.getCore().detachThemeChanged(fnThemeChanged);
-			Configuration.setRTL(false);
-
-			done();
-		};
-
-		sap.ui.getCore().attachThemeChanged(fnThemeChanged);
-		// setTheme to ensure applyTheme is really applying 'sap_bluecrystal'
-		Configuration.setTheme("sap_hcb");
-		sap.ui.getCore().applyTheme("sap_bluecrystal");
 		Configuration.setRTL(true);
+
+		var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
+		var sHref = oLink.href;
+		var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
+
+		var sExpectedHref = new URL(sap.ui.require.toUrl("sap/ui/core/themes/" + Configuration.getTheme() + "/library-RTL.css"), document.baseURI);
+
+		if (mOptions.versionedLibCss) {
+			assert.equal(
+				sHref,
+				sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + oVersionInfo.version,
+				"'sap.ui.core' library-RTL.css URL should contain version parameters."
+			);
+		} else {
+			assert.equal(
+				sHref,
+				sExpectedHref,
+				"'sap.ui.core' library-RTL.css URL should not contain version parameters."
+			);
+		}
+
+		Configuration.setRTL(false);
 	});
 
 	return waitForThemeApplied();

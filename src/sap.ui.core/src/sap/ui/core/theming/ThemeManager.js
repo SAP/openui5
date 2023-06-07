@@ -5,28 +5,46 @@
 // Provides class sap.ui.core.theming.ThemeManager
 sap.ui.define([
 	"sap/base/assert",
+	"sap/base/Eventing",
 	"sap/base/Log",
+	"sap/base/config",
+	"sap/base/i18n/Localization",
 	"sap/base/util/each",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/Device",
 	"sap/ui/Global",
-	"sap/ui/base/EventProvider",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Element",
-	"sap/ui/dom/includeStylesheet",
-	"sap/ui/util/ActivityDetection",
-	"sap/ui/thirdparty/jquery",
-	"./ThemeHelper"
-],
-	function(assert, Log, each, LoaderExtensions, Device, Global, EventProvider, Configuration, Element, includeStylesheet, ActivityDetection, jQuery, ThemeHelper) {
+	"sap/ui/core/Lib",
+	"sap/ui/core/Theming",
+	"sap/ui/core/theming/ThemeHelper",
+	"sap/ui/dom/includeStylesheet"
+], function(
+	assert,
+	Eventing,
+	Log,
+	BaseConfig,
+	Localization,
+	each,
+	LoaderExtensions,
+	Device,
+	Global,
+	Library,
+	Theming,
+	ThemeHelper,
+	includeStylesheet
+) {
 	"use strict";
-
-
-	var oThemeManager;
 
 	var maxThemeCheckCycles = 150;
 	var mAllLoadedLibraries = {};
 	var CUSTOMCSSCHECK = /\.sapUiThemeDesignerCustomCss/i;
+
+	var _iCount = 0; // Prevent endless loop
+	var _CUSTOMID = "sap-ui-core-customcss";
+	var _customCSSAdded = false;
+	var _themeCheckedForCustom = null;
+	var _sFallbackTheme = null;
+	var _mThemeFallback = {};
+	var _sThemeCheckId;
 
 	/**
 	 * Creates a new ThemeManager object.
@@ -36,32 +54,18 @@ sap.ui.define([
 	 * It could happen that e.g. in onAfterRendering not all themes are available. In these cases the
 	 * check waits until the CSS is applied and fires an onThemeChanged event.
 	 *
-	 * @extends sap.ui.base.EventProvider
-	 * @since 1.10.0
+	 * @extends sap.ui.base.BaseObject
 	 * @author SAP SE
 	 * @private
 	 * @alias sap.ui.core.theming.ThemeManager
 	 */
-	var ThemeManager = EventProvider.extend("sap.ui.core.theming.ThemeManager", /** @lends sap.ui.core.theming.ThemeManager.prototype */ {
-
-		constructor : function() {
-			EventProvider.apply(this, arguments);
-			this._iCount = 0; // Prevent endless loop
-			this._CUSTOMID = "sap-ui-core-customcss";
-			this._customCSSAdded = false;
-			this._themeCheckedForCustom = null;
-			this._sFallbackTheme = null;
-			this._mThemeFallback = {};
-
-			setupThemes(this);
-			this.themeLoaded = true;
-		},
-
-		metadata: {
-			events: {
-				"ThemeChanged": {}
-			}
-		},
+	var ThemeManager = {
+		/**
+		 * Wether theme is already loaded or not
+		 * @private
+		 * @ui-restricted sap.ui.core
+		 */
+		themeLoaded: true,
 
 		/**
 		 * Trigger ThemeManager
@@ -70,46 +74,215 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.core
 		 */
 		checkThemeChanged : function() {
-			this.reset();
+			ThemeManager.reset();
 			delayedCheckTheme(true);
-			if (!this._sThemeCheckId) {
-				this.fireThemeChanged();
+			if (!_sThemeCheckId) {
+				ThemeManager.fireThemeChanged();
 			}
-		}
+		},
 
-	});
+		/**
+		 * Resets the internal bookkeeping
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.core
+		 */
+		reset: function() {
+			ThemeManager.themeLoaded = false;
+			if (_sThemeCheckId) {
+				clearTimeout(_sThemeCheckId);
+				_sThemeCheckId = null;
+				_iCount = 0;
+				_sFallbackTheme = null;
+				_mThemeFallback = {};
+			}
+		},
 
-	ThemeManager.prototype.themeLoaded = false;
+		/**
+		 * Includes a library theme into the current page (if a variant is specified it
+		 * will include the variant library theme) and ensure theme root
+		 * @param {object} [oLibThemingInfo] to be used only by the Core
+		 * @private
+		 * @ui5-restricted sap.ui.core
+		 */
+		_includeLibraryThemeAndEnsureThemeRoot: function(oLibThemingInfo) {
+			var sLibName = oLibThemingInfo.name;
+			// ensure to register correct library theme module path even when "preloadLibCss" prevents
+			// including the library theme as controls might use it to calculate theme-specific URLs
+			_ensureThemeRoot(sLibName, Theming.getTheme());
 
-	/**
-	 * Resets the internal bookkeeping
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.core.Core
-	 */
-	ThemeManager.prototype.reset = function() {
-		this.themeLoaded = false;
-		if (this._sThemeCheckId) {
-			clearTimeout(this._sThemeCheckId);
-			this._sThemeCheckId = null;
-			this._iCount = 0;
-			this._sFallbackTheme = null;
-			this._mThemeFallback = {};
+			// also ensure correct theme root for the library's base theme which might be relevant in some cases
+			// (e.g. IconPool which includes font files from sap.ui.core base theme)
+			_ensureThemeRoot(sLibName, "base");
+
+			mAllLoadedLibraries[sLibName] = oLibThemingInfo;
+			if (!oLibThemingInfo.preloadedCss) {
+				ThemeManager.includeLibraryTheme(sLibName, oLibThemingInfo.variant, oLibThemingInfo);
+			}
+		},
+
+		/**
+		 * Includes a library theme into the current page (if a variant is specified it
+		 * will include the variant library theme)
+		 * @param {string} sLibName the name of the UI library
+		 * @param {string} [sVariant] the variant to include (optional)
+		 * @param {string|object} [vQueryOrLibInfo] to be used only by the Core
+		 * @private
+		 * @ui5-restricted sap.ui.core
+		 */
+		includeLibraryTheme: function(sLibName, sVariant, vQueryOrLibInfo) {
+			assert(typeof sLibName === "string", "sLibName must be a string");
+			assert(sVariant === undefined || typeof sVariant === "string", "sVariant must be a string or undefined");
+			var sQuery = vQueryOrLibInfo;
+
+			if (typeof sQuery === "object") {
+				// check for configured query parameters and use them
+				sQuery = getLibraryCssQueryParams(vQueryOrLibInfo);
+			}
+
+			/*
+			* by specifying a library name containing a colon (":") you can specify
+			* the file name of the CSS file to include (ignoring RTL)
+			*/
+
+			// include the stylesheet for the library (except for "classic" and "legacy" lib)
+			if ((sLibName != "sap.ui.legacy") && (sLibName != "sap.ui.classic")) {
+				var oGetCssVariablesParam = {
+					name: "sapUiXxCssVariables",
+					type: BaseConfig.Type.Boolean
+				};
+
+				// no variant?
+				if (!sVariant) {
+					sVariant = "";
+				}
+				// determine CSS Variables / RTL
+				var sCssVars = BaseConfig.get(oGetCssVariablesParam) ? "_skeleton" : "";
+				var sRtl = (Localization.getRTL() ? "-RTL" : "");
+
+				// create the library file name
+				var sLibFileName,
+					sLibId = sLibName + (sVariant.length > 0 ? "-[" + sVariant + "]" : sVariant);
+				if (sLibName && sLibName.indexOf(":") == -1) {
+					sLibFileName = "library" + sVariant + sCssVars + sRtl;
+				} else {
+					sLibFileName = sLibName.substring(sLibName.indexOf(":") + 1) + sVariant;
+					sLibName = sLibName.substring(0, sLibName.indexOf(":"));
+				}
+
+				var sLinkId = "sap-ui-theme-" + sLibId;
+				var sOldCssUri = document.getElementById(sLinkId) && document.getElementById(sLinkId).href;
+				var sCssBasePath = new URL(ThemeManager._getThemePath(sLibName, Theming.getTheme()), document.baseURI).toString();
+				// Create a link tag and set the URL as href in order to ensure AppCacheBuster handling.
+				// AppCacheBuster ID is added to the href by defineProperty for the "href" property of
+				// HTMLLinkElement in AppCacheBuster.js
+				// Note: Considered to use AppCacheBuster.js#convertURL for adding the AppCachebuster ID
+				//       but there would be a dependency to AppCacheBuster as trade-off
+				var oTmpLink = document.createElement("link");
+				oTmpLink.href = sCssBasePath + sLibFileName + ".css" + (sQuery ? sQuery : "");
+				var sCssPathAndName = oTmpLink.href;
+				oTmpLink.href = sCssBasePath + "css_variables.css" + (sQuery ? sQuery : "");
+				var sCssVariablesPathAndName = oTmpLink.href;
+
+				// includeStylesheet takes care of adding link tag for library only once but we need to take care to skip
+				// checkThemeChanged in case the link tag does not change in order to avoid fireThemeChanged
+				if (!(sCssPathAndName === sOldCssUri || sCssVariablesPathAndName === sOldCssUri)) {
+					// use the special FOUC handling for initially existing stylesheets
+					// to ensure that they are not just replaced when using the
+					// includeStyleSheet API and to be removed later
+					fnAddFoucmarker(sLinkId);
+
+					// include the css variables
+					oGetCssVariablesParam.type = BaseConfig.Type.String;
+					if (/^(true|x|additional)$/i.test(BaseConfig.get(oGetCssVariablesParam))) {
+						Log.info("Including " + sCssVariablesPathAndName + " -  sap.ui.core.theming.ThemeManager.includeLibraryTheme()");
+						includeStylesheet(sCssVariablesPathAndName, sLinkId);
+						// include the skeleton css next to the css variables
+						sLinkId = "sap-ui-themeskeleton-" + sLibId;
+						fnAddFoucmarker(sLinkId);
+					}
+
+					// log and include
+					Log.info("Including " + sCssPathAndName + " -  sap.ui.core.theming.ThemeManager.includeLibraryTheme()");
+					includeStylesheet(sCssPathAndName, sLinkId);
+
+					// if parameters have been used, update them with the new style sheet
+					var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
+					if (Parameters) {
+						Parameters._addLibraryTheme(sLibId);
+					}
+					ThemeManager.checkThemeChanged();
+				}
+			}
+		},
+
+		/**
+		 * Returns the URL of the folder in which the CSS file for the given theme and the given library is located.
+		 *
+		 * @param {string} sLibName Library name (dot separated)
+		 * @param {string} sThemeName Theme name
+		 * @returns {string} module path URL (ends with a slash)
+		 * @private
+		 * @ui5-restricted sap.ui.core,sap.ui.support.supportRules.report.DataCollector
+		 */
+		_getThemePath: function(sLibName, sThemeName) {
+
+			// make sure to register correct theme module path in case themeRoots are defined
+			_ensureThemeRoot(sLibName, sThemeName);
+
+			// use the library location as theme location
+			return sap.ui.require.toUrl((sLibName + ".themes." + sThemeName).replace(/\./g, "/") + "/");
+		},
+
+		/**
+		 * Modify style sheet URLs to point to the given theme, using the current RTL mode
+		 *
+		 * @param {string} sThemeName The name of the theme to update
+		 * @param {boolean} bSuppressFOUC If FOUC-Marker should be added or not
+		 * @private
+		 * @ui5-restricted sap.ui.core.Core
+		 */
+		_updateThemeUrls: function(sThemeName, bSuppressFOUC) {
+			// select "our" stylesheets
+			var oQueryResult = document.querySelectorAll("link[id^=sap-ui-theme-],link[id^=sap-ui-themeskeleton-]");
+
+			Array.prototype.forEach.call(oQueryResult, function(oHTMLElement) {
+				updateThemeUrl(oHTMLElement, sThemeName, bSuppressFOUC);
+			});
+		},
+		/**
+		 * Notify theme change
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.core
+		 */
+		fireThemeChanged: function () {
+			// special hook for resetting theming parameters before the controls get
+			// notified (lightweight coupling to static Parameters module)
+			var ThemeParameters = sap.ui.require("sap/ui/core/theming/Parameters");
+			if (ThemeParameters) {
+				ThemeParameters._reset(/* bOnlyWhenNecessary= */ true);
+			}
+
+			ThemeManager.fireEvent("ThemeChanged", {
+				theme: Theming.getTheme()
+			});
 		}
 	};
 
+
 	function checkTheme() {
-		var sThemeName = Configuration.getTheme();
-		var sPath = oThemeManager._getThemePath("sap.ui.core", sThemeName) + "custom.css";
+		var sThemeName = Theming.getTheme();
+		var sPath = ThemeManager._getThemePath("sap.ui.core", sThemeName) + "custom.css";
 		var bIsStandardTheme = sThemeName.indexOf("sap_") === 0 || sThemeName === "base";
 		var res = true;
 
 		var aFailedLibs = [];
 
-		if (oThemeManager._customCSSAdded && oThemeManager._themeCheckedForCustom === sThemeName) {
+		if (_customCSSAdded && _themeCheckedForCustom === sThemeName) {
 			// include custom style sheet here because it has already been added using sap/ui/dom/includeStyleSheet
 			// hence, needs to be checked for successful inclusion, too
-			mAllLoadedLibraries[oThemeManager._CUSTOMID] = {};
+			mAllLoadedLibraries[_CUSTOMID] = {};
 		}
 
 		function checkLib(lib) {
@@ -126,7 +299,7 @@ sap.ui.define([
 				 * if this has not been checked successfully before for the same theme
 				 */
 				// Only need to adjust custom css in case the theme changed or we have no custom.css yet
-				if (!oThemeManager._customCSSAdded || oThemeManager._themeCheckedForCustom != sThemeName) {
+				if (!_customCSSAdded || _themeCheckedForCustom != sThemeName) {
 					// custom css is only supported for custom themes
 					if (!bIsStandardTheme && checkCustom(lib)) {
 						// load custom css available at sap/ui/core/themename/custom.css
@@ -138,22 +311,22 @@ sap.ui.define([
 							sCustomCssPath += sLibCssQueryParams;
 						}
 
-						includeStylesheet(sCustomCssPath, oThemeManager._CUSTOMID);
-						oThemeManager._customCSSAdded = true;
+						includeStylesheet(sCustomCssPath, _CUSTOMID);
+						_customCSSAdded = true;
 						Log.debug("ThemeManager: delivered custom CSS needs to be loaded, Theme not yet applied");
-						oThemeManager._themeCheckedForCustom = sThemeName;
+						_themeCheckedForCustom = sThemeName;
 						res = false;
 						return false;
 					// only remove custom css in case a custom.css was added
-					} else if (oThemeManager._customCSSAdded) {
+					} else if (_customCSSAdded) {
 						// remove stylesheet once the particular class is not available (e.g. after theme switch)
 						/*check for custom theme was not successful, so we need to make sure there are no custom style sheets attached*/
-						var oCustomCssLink = document.querySelector("LINK[id='" +  oThemeManager._CUSTOMID + "']");
+						var oCustomCssLink = document.querySelector("LINK[id='" +  _CUSTOMID + "']");
 						if (oCustomCssLink) {
 							oCustomCssLink.remove();
 							Log.debug("ThemeManager: Custom CSS removed");
 						}
-						oThemeManager._customCSSAdded = false;
+						_customCSSAdded = false;
 					}
 
 				}
@@ -161,7 +334,7 @@ sap.ui.define([
 
 			// Collect all libs that failed to load and no fallback has been applied, yet.
 			// The fallback relies on custom theme metadata, so it is not done for standard themes
-			if (!bIsStandardTheme && currentRes && !oThemeManager._mThemeFallback[lib]) {
+			if (!bIsStandardTheme && currentRes && !_mThemeFallback[lib]) {
 				var oStyle = document.getElementById(sStyleId);
 				// Check for error marker (data-sap-ui-ready=false) and that there are no rules
 				// to be sure the stylesheet couldn't be loaded at all.
@@ -182,32 +355,32 @@ sap.ui.define([
 		if (aFailedLibs.length > 0) {
 
 			// Only retrieve the fallback theme once per ThemeManager cycle
-			if (!oThemeManager._sFallbackTheme) {
+			if (!_sFallbackTheme) {
 				for (var sLib in mAllLoadedLibraries) {
 					var oThemeMetaData = ThemeHelper.getMetadata(sLib);
 					if (oThemeMetaData && oThemeMetaData.Extends && oThemeMetaData.Extends[0]) {
-						oThemeManager._sFallbackTheme = oThemeMetaData.Extends[0];
+						_sFallbackTheme = oThemeMetaData.Extends[0];
 						break;
 					}
 				}
 			}
 
-			if (oThemeManager._sFallbackTheme) {
+			if (_sFallbackTheme) {
 				aFailedLibs.forEach(function(lib) {
 					var sStyleId = "sap-ui-theme-" + lib;
 					var oStyle = document.getElementById(sStyleId);
 
 					Log.warning(
 						"ThemeManager: Custom theme '" + sThemeName + "' could not be loaded for library '" + lib + "'. " +
-						"Falling back to its base theme '" + oThemeManager._sFallbackTheme + "'."
+						"Falling back to its base theme '" + _sFallbackTheme + "'."
 					);
 
 					// Change the URL to load the fallback theme
-					updateThemeUrl(oStyle, oThemeManager._sFallbackTheme);
+					updateThemeUrl(oStyle, _sFallbackTheme);
 
 					// remember the lib to prevent doing the fallback multiple times
 					// (if the fallback also can't be loaded)
-					oThemeManager._mThemeFallback[lib] = true;
+					_mThemeFallback[lib] = true;
 				});
 
 				// Make sure to wait for the fallback themes to be loaded
@@ -218,14 +391,18 @@ sap.ui.define([
 		if (!res) {
 			Log.debug("ThemeManager: Theme not yet applied.");
 		} else {
-			oThemeManager._themeCheckedForCustom = sThemeName;
+			_themeCheckedForCustom = sThemeName;
 		}
 		return res;
 	}
 
-	/* checks if a particular class is available
+	/**
+	 * checks if a particular class is available
+	 *
+	 * @param {string} lib The library name
+	 * @returns {boolean} Wether lib has custom css or not
 	 */
-	 function checkCustom(lib) {
+	function checkCustom(lib) {
 
 		var cssFile = window.document.getElementById("sap-ui-theme-" + lib);
 
@@ -303,31 +480,31 @@ sap.ui.define([
 	}
 
 	function delayedCheckTheme(bFirst) {
-		oThemeManager._iCount++;
+		_iCount++;
 
-		var bEmergencyExit = oThemeManager._iCount > maxThemeCheckCycles;
+		var bEmergencyExit = _iCount > maxThemeCheckCycles;
 
 		if (!checkTheme() && !bEmergencyExit) {
 			// Use dynamic delay to have a fast check for most use cases
 			// but not cause too much CPU usage for long running css requests
 			var iDelay;
-			if (oThemeManager._iCount <= 100) {
+			if (_iCount <= 100) {
 				iDelay = 2; // 1. Initial interval
-			} else if (oThemeManager._iCount <= 110) {
+			} else if (_iCount <= 110) {
 				iDelay = 500; // 2. After 100 cycles
 			} else {
 				iDelay = 1000; // 3. After another 10 cycles (about 5 seconds)
 			}
-			oThemeManager._sThemeCheckId = setTimeout(delayedCheckTheme, iDelay);
+			_sThemeCheckId = setTimeout(delayedCheckTheme, iDelay);
 		} else if (!bFirst) {
-			oThemeManager.reset();
-			oThemeManager.themeLoaded = true;
-			oThemeManager.fireThemeChanged();
+			ThemeManager.reset();
+			ThemeManager.themeLoaded = true;
+			ThemeManager.fireThemeChanged();
 			if (bEmergencyExit) {
 				Log.error("ThemeManager: max. check cycles reached.");
 			}
 		} else {
-			oThemeManager.themeLoaded = true;
+			ThemeManager.themeLoaded = true;
 		}
 	}
 
@@ -340,138 +517,39 @@ sap.ui.define([
 	}
 
 	/**
-	 * Includes a library theme into the current page (if a variant is specified it
-	 * will include the variant library theme) and ensure theme root
-	 * @param {object} [oLibThemingInfo] to be used only by the Core
-	 * @since 1.108
-	 * @private
-	 * @ui5-restricted sap.ui.core
-	 */
-	ThemeManager.prototype._includeLibraryThemeAndEnsureThemeRoot = function(oLibThemingInfo) {
-		var sLibName = oLibThemingInfo.name;
-		// ensure to register correct library theme module path even when "preloadLibCss" prevents
-		// including the library theme as controls might use it to calculate theme-specific URLs
-		_ensureThemeRoot(sLibName, Configuration.getTheme());
-
-		// also ensure correct theme root for the library's base theme which might be relevant in some cases
-		// (e.g. IconPool which includes font files from sap.ui.core base theme)
-		_ensureThemeRoot(sLibName, "base");
-
-		mAllLoadedLibraries[sLibName] = oLibThemingInfo;
-		if (Configuration.getValue('preloadLibCss').indexOf(sLibName) < 0) {
-			this.includeLibraryTheme(sLibName, oLibThemingInfo.variant, oLibThemingInfo);
-		}
-	};
-
-	/**
-	 * Includes a library theme into the current page (if a variant is specified it
-	 * will include the variant library theme)
-	 * @param {string} sLibName the name of the UI library
-	 * @param {string} [sVariant] the variant to include (optional)
-	 * @param {string|object} [vQueryOrLibInfo] to be used only by the Core
-	 * @since 1.108
-	 * @private
-	 * @ui5-restricted sap.ui.core
-	 */
-	ThemeManager.prototype.includeLibraryTheme = function(sLibName, sVariant, vQueryOrLibInfo) {
-		assert(typeof sLibName === "string", "sLibName must be a string");
-		assert(sVariant === undefined || typeof sVariant === "string", "sVariant must be a string or undefined");
-		var sQuery = vQueryOrLibInfo;
-
-		if (typeof sQuery === "object") {
-			// check for configured query parameters and use them
-			sQuery = getLibraryCssQueryParams(vQueryOrLibInfo);
-		}
-
-		/*
-		* by specifying a library name containing a colon (":") you can specify
-		* the file name of the CSS file to include (ignoring RTL)
-		*/
-
-		// include the stylesheet for the library (except for "classic" and "legacy" lib)
-		if ((sLibName != "sap.ui.legacy") && (sLibName != "sap.ui.classic")) {
-
-			// no variant?
-			if (!sVariant) {
-				sVariant = "";
-			}
-			// determine CSS Variables / RTL
-			var sCssVars = (/^(true|x)$/i.test(Configuration.getValue('xx-cssVariables')) ? "_skeleton" : "");
-			var sRtl = (Configuration.getRTL() ? "-RTL" : "");
-
-			// create the library file name
-			var sLibFileName,
-				sLibId = sLibName + (sVariant.length > 0 ? "-[" + sVariant + "]" : sVariant);
-			if (sLibName && sLibName.indexOf(":") == -1) {
-				sLibFileName = "library" + sVariant + sCssVars + sRtl;
-			} else {
-				sLibFileName = sLibName.substring(sLibName.indexOf(":") + 1) + sVariant;
-				sLibName = sLibName.substring(0, sLibName.indexOf(":"));
-			}
-
-			var sLinkId = "sap-ui-theme-" + sLibId;
-			var sOldCssUri = document.getElementById(sLinkId) && document.getElementById(sLinkId).href;
-			var sCssBasePath = new URL(this._getThemePath(sLibName, this.sTheme), document.baseURI).toString();
-			// Create a link tag and set the URL as href in order to ensure AppCacheBuster handling.
-			// AppCacheBuster ID is added to the href by defineProperty for the "href" property of
-			// HTMLLinkElement in AppCacheBuster.js
-			// Note: Considered to use AppCacheBuster.js#convertURL for adding the AppCachebuster ID
-			//       but there would be a dependency to AppCacheBuster as trade-off
-			var oTmpLink = document.createElement("link");
-			oTmpLink.href = sCssBasePath + sLibFileName + ".css" + (sQuery ? sQuery : "");
-			var sCssPathAndName = oTmpLink.href;
-			oTmpLink.href = sCssBasePath + "css_variables.css" + (sQuery ? sQuery : "");
-			var sCssVariablesPathAndName = oTmpLink.href;
-
-			// includeStylesheet takes care of adding link tag for library only once but we need to take care to skip
-			// checkThemeChanged in case the link tag does not change in order to avoid fireThemeChanged
-			if (!(sCssPathAndName === sOldCssUri || sCssVariablesPathAndName === sOldCssUri)) {
-				// use the special FOUC handling for initially existing stylesheets
-				// to ensure that they are not just replaced when using the
-				// includeStyleSheet API and to be removed later
-				fnAddFoucmarker(sLinkId);
-
-				// include the css variables
-				if (/^(true|x|additional)$/i.test(Configuration.getValue('xx-cssVariables'))) {
-					Log.info("Including " + sCssVariablesPathAndName + " -  sap.ui.core.theming.ThemeManager.includeLibraryTheme()");
-					includeStylesheet(sCssVariablesPathAndName, sLinkId);
-					// include the skeleton css next to the css variables
-					sLinkId = "sap-ui-themeskeleton-" + sLibId;
-					fnAddFoucmarker(sLinkId);
-				}
-
-				// log and include
-				Log.info("Including " + sCssPathAndName + " -  sap.ui.core.theming.ThemeManager.includeLibraryTheme()");
-				includeStylesheet(sCssPathAndName, sLinkId);
-
-				// if parameters have been used, update them with the new style sheet
-				var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
-				if (Parameters) {
-					Parameters._addLibraryTheme(sLibId);
-				}
-				this.checkThemeChanged();
-			}
-		}
-	};
-
-	/**
-	 * Returns the URL of the folder in which the CSS file for the given theme and the given library is located.
+	 * Applies the theme with the given name (by loading the respective style sheets, which does not disrupt the application).
 	 *
-	 * @param {string} sLibName Library name (dot separated)
-	 * @param {string} sThemeName Theme name
-	 * @returns {string} module path URL (ends with a slash)
-	 * @since 1.108
+	 * By default, the theme files are expected to be located at path relative to the respective control library ([libraryLocation]/themes/[themeName]).
+	 *
+	 * Different locations can be configured by using the method setThemePath().
+	 * sThemeBaseUrl is a single URL to specify the default location of all theme files. This URL is the base folder below which the control library folders
+	 * are located. E.g. if the CSS files are not located relative to the root location of UI5, but instead they are at locations like
+	 *    http://my.server/myapp/resources/sap/ui/core/themes/my_theme/library.css
+	 * then the URL that needs to be given is:
+	 *    http://my.server/myapp/resources
+	 * All theme resources are then loaded from below this folder - except if for a certain library a different location has been registered.
+	 *
+	 * If the theme resources are not all either below this base location or  with their respective libraries, then setThemePath must be
+	 * used to configure individual locations.
+	 * @param {object} oTheme Theme object containing the old and the new theme
+	 * @param {string} oTheme.new Name of the new theme
+	 * @param {string} oTheme.old Name of the previous theme
+	 *
 	 * @private
-	 * @ui5-restricted sap.ui.core,sap.ui.support.supportRules.report.DataCollector
 	 */
-	ThemeManager.prototype._getThemePath = function(sLibName, sThemeName) {
+	function applyTheme(oTheme) {
+		var html = document.documentElement;
+		var sTheme = oTheme.new;
+		ThemeManager._updateThemeUrls(sTheme, /* bSuppressFOUC */ true);
 
-		// make sure to register correct theme module path in case themeRoots are defined
-		_ensureThemeRoot(sLibName, sThemeName);
+		// modify the <html> tag's CSS class with the theme name
+		html.classList.remove("sapUiTheme-" + oTheme.old);
+		html.classList.add("sapUiTheme-" + sTheme);
 
-		// use the library location as theme location
-		return sap.ui.require.toUrl((sLibName + ".themes." + sThemeName).replace(/\./g, "/") + "/");
-	};
+		// notify the listeners
+		ThemeManager.checkThemeChanged();
+	}
+
 
 	/**
 	 * Makes sure to register the correct module path for the given library and theme
@@ -482,116 +560,13 @@ sap.ui.define([
 	 * @private
 	 */
 	function _ensureThemeRoot(sLibName, sThemeName) {
-		if (oThemeManager._mThemeRoots) {
-			var path =  oThemeManager._mThemeRoots[sThemeName + " " + sLibName] || oThemeManager._mThemeRoots[sThemeName];
+		var sThemeRoot = Theming.getThemeRoot(sThemeName, sLibName);
+		if (sThemeRoot) {
 			// check whether for this combination (theme+lib) a URL is registered or for this theme a default location is registered
-			if (path) {
-				path = path + sLibName.replace(/\./g, "/") + "/themes/" + sThemeName + "/";
-				LoaderExtensions.registerResourcePath((sLibName + ".themes." + sThemeName).replace(/\./g, "/"), path);
-			}
+			sThemeRoot = sThemeRoot + (sThemeRoot.slice( -1) == "/" ? "" : "/") + sLibName.replace(/\./g, "/") + "/themes/" + sThemeName + "/";
+			LoaderExtensions.registerResourcePath((sLibName + ".themes." + sThemeName).replace(/\./g, "/"), sThemeRoot);
 		}
 	}
-
-	/**
-	 * Defines the root directory from below which UI5 should load the theme with the given name.
-	 * Optionally allows restricting the setting to parts of a theme covering specific control libraries.
-	 *
-	 * Example:
-	 * <pre>
-	 *   sap.ui.getCore().setThemeRoot("my_theme", "https://mythemeserver.com/allThemes");
-	 *   sap.ui.getCore().applyTheme("my_theme");
-	 * </pre>
-	 *
-	 * will cause the following file to be loaded (assuming that the bootstrap is configured to load
-	 *  libraries <code>sap.m</code> and <code>sap.ui.layout</code>):
-	 * <pre>
-	 *   https://mythemeserver.com/allThemes/sap/ui/core/themes/my_theme/library.css
-	 *   https://mythemeserver.com/allThemes/sap/ui/layout/themes/my_theme/library.css
-	 *   https://mythemeserver.com/allThemes/sap/m/themes/my_theme/library.css
-	 * </pre>
-	 *
-	 * If parts of the theme are at different locations (e.g. because you provide a standard theme
-	 * like "sap_belize" for a custom control library and this self-made part of the standard theme is at a
-	 * different location than the UI5 resources), you can also specify for which control libraries the setting
-	 * should be used, by giving an array with the names of the respective control libraries as second parameter:
-	 * <pre>
-	 *   sap.ui.getCore().setThemeRoot("sap_belize", ["my.own.library"], "https://mythemeserver.com/allThemes");
-	 * </pre>
-	 *
-	 * This will cause the Belize theme to be loaded from the UI5 location for all standard libraries.
-	 * Resources for styling the <code>my.own.library</code> controls will be loaded from the configured
-	 * location:
-	 * <pre>
-	 *   https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/sap_belize/library.css
-	 *   https://openui5.hana.ondemand.com/resources/sap/ui/layout/themes/sap_belize/library.css
-	 *   https://openui5.hana.ondemand.com/resources/sap/m/themes/sap_belize/library.css
-	 *   https://mythemeserver.com/allThemes/my/own/library/themes/sap_belize/library.css
-	 * </pre>
-	 *
-	 * If the custom theme should be loaded initially (via bootstrap attribute), the <code>themeRoots</code>
-	 * property of the <code>window["sap-ui-config"]</code> object must be used instead of calling
-	 * <code>sap.ui.getCore().setThemeRoot(...)</code> in order to configure the theme location early enough.
-	 *
-	 * @param {string} sThemeName Name of the theme for which to configure the location
-	 * @param {string[]} [aLibraryNames] Optional library names to which the configuration should be restricted
-	 * @param {string} sThemeBaseUrl Base URL below which the CSS file(s) will be loaded from
-	 * @param {boolean} [bForceUpdate=false] Force updating URLs of currently loaded theme
-	 * @since 1.108
-	 * @private
-	 * @ui5-restricted sap.ui.core.Core
-	 */
-	ThemeManager.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl, bForceUpdate) {
-		assert(typeof sThemeName === "string", "sThemeName must be a string");
-		assert((Array.isArray(aLibraryNames) && typeof sThemeBaseUrl === "string") || (typeof aLibraryNames === "string" && sThemeBaseUrl === undefined), "either the second parameter must be a string (and the third is undefined), or it must be an array and the third parameter is a string");
-
-		if (!this._mThemeRoots) {
-			this._mThemeRoots = {};
-		}
-
-		// normalize parameters
-		if (typeof aLibraryNames === "string") {
-			bForceUpdate = sThemeBaseUrl;
-			sThemeBaseUrl = aLibraryNames;
-			aLibraryNames = undefined;
-		}
-		sThemeBaseUrl = sThemeBaseUrl + (sThemeBaseUrl.slice( -1) == "/" ? "" : "/");
-
-		if (aLibraryNames) {
-			// registration of URL for several libraries
-			for (var i = 0; i < aLibraryNames.length; i++) {
-				var lib = aLibraryNames[i];
-				this._mThemeRoots[sThemeName + " " + lib] = sThemeBaseUrl;
-			}
-
-		} else {
-			// registration of theme default base URL
-			this._mThemeRoots[sThemeName] = sThemeBaseUrl;
-		}
-
-		// Update theme urls when theme roots of currently loaded theme have changed
-		if (bForceUpdate && sThemeName === this.sTheme) {
-			this._updateThemeUrls(this.sTheme);
-		}
-	};
-
-	/**
-	 * Modify style sheet URLs to point to the given theme, using the current RTL mode
-	 *
-	 * @param {string} sThemeName The name of the theme to update
-	 * @param {boolean} bSuppressFOUC If FOUC-Marker should be added or not
-	 * @since 1.108
-	 * @private
-	 * @ui5-restricted sap.ui.core.Core
-	 */
-	ThemeManager.prototype._updateThemeUrls = function(sThemeName, bSuppressFOUC) {
-		// select "our" stylesheets
-		var oQueryResult = document.querySelectorAll("link[id^=sap-ui-theme-],link[id^=sap-ui-themeskeleton-]");
-
-		Array.prototype.forEach.call(oQueryResult, function(oHTMLElement) {
-			updateThemeUrl(oHTMLElement, sThemeName, bSuppressFOUC);
-		});
-
-	};
 
 	// this function is also used by "sap.ui.core.theming.ThemeManager" to load a fallback theme for a single library
 	function updateThemeUrl(oLink, sThemeName, bSuppressFOUC) {
@@ -600,7 +575,7 @@ sap.ui.define([
 		    sLibFileName,
 		    sQuery,
 		    sStandardLibFilePrefix = "library",
-		    sRTL = Configuration.getRTL() ? "-RTL" : "",
+		    sRTL = Localization.getRTL() ? "-RTL" : "",
 		    sHref,
 		    pos;
 
@@ -638,7 +613,7 @@ sap.ui.define([
 			sLibFileName = sStandardLibFilePrefix + sRTL + ".css";
 		}
 
-		sHref = oThemeManager._getThemePath(sLibName, sThemeName) + sLibFileName + sQuery;
+		sHref = ThemeManager._getThemePath(sLibName, sThemeName) + sLibFileName + sQuery;
 		if ( sHref != oLink.href ) {
 			// sap/ui/dom/includeStylesheet has a special FOUC handling
 			// which is activated once the attribute data-sap-ui-foucmarker is
@@ -656,59 +631,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Applies the theme with the given name (by loading the respective style sheets, which does not disrupt the application).
-	 *
-	 * By default, the theme files are expected to be located at path relative to the respective control library ([libraryLocation]/themes/[themeName]).
-	 * Different locations can be configured by using the method setThemePath() or by using the second parameter "sThemeBaseUrl" of applyTheme().
-	 * Usage of this second parameter is a shorthand for setThemePath and internally calls setThemePath, so the theme location is then known.
-	 *
-	 * sThemeBaseUrl is a single URL to specify the default location of all theme files. This URL is the base folder below which the control library folders
-	 * are located. E.g. if the CSS files are not located relative to the root location of UI5, but instead they are at locations like
-	 *    http://my.server/myapp/resources/sap/ui/core/themes/my_theme/library.css
-	 * then the URL that needs to be given is:
-	 *    http://my.server/myapp/resources
-	 * All theme resources are then loaded from below this folder - except if for a certain library a different location has been registered.
-	 *
-	 * If the theme resources are not all either below this base location or  with their respective libraries, then setThemePath must be
-	 * used to configure individual locations.
-	 *
-	 * @param {string} sThemeName The name of the theme to be loaded
-	 * @param {string} [sThemeBaseUrl] The (optional) base location of the theme
-	 * @param {boolean} [bForce] Apply theme even if theme hasn't changed.
-	 * 							<code>sap.ui.core.Core</code> does a lazy require of
-	 * 							ThemeManager. Loading could be already done, but no change
-	 * 							was fired.
-	 * @since 1.108
-	 * @private
-	 */
-	ThemeManager.prototype.applyTheme = function(sThemeName, sThemeBaseUrl, bForce) {
-		assert(typeof sThemeName === "string", "sThemeName must be a string");
-		assert(typeof sThemeBaseUrl === "string" || typeof sThemeBaseUrl === "undefined", "sThemeBaseUrl must be a string or undefined");
-
-		sThemeName = Configuration.normalizeTheme(sThemeName, sThemeBaseUrl);
-
-		if (sThemeBaseUrl) {
-			this.setThemeRoot(sThemeName, sThemeBaseUrl);
-		}
-
-		// only apply the theme if it is different from the active one
-		if ((sThemeName && this.sTheme != sThemeName) || bForce) {
-			var sCurrentTheme = this.sTheme;
-			var html = document.documentElement;
-			this._updateThemeUrls(sThemeName, /* bSuppressFOUC */ true);
-			this.sTheme = sThemeName;
-			Configuration.setTheme(sThemeName);
-
-			// modify the <html> tag's CSS class with the theme name
-			html.classList.remove("sapUiTheme-" + sCurrentTheme);
-			html.classList.add("sapUiTheme-" + sThemeName);
-
-			// notify the listeners
-			this.checkThemeChanged();
-		}
-	};
-
-	/**
 	 * Returns a string containing query parameters for theme specific files.
 	 *
 	 * Used in Core#initLibrary and ThemeManager#checkStyle.
@@ -719,7 +641,7 @@ sap.ui.define([
 	 */
 	function getLibraryCssQueryParams(oLibInfo) {
 		var sQuery;
-		if (Configuration.getValue("versionedLibCss") && oLibInfo) {
+		if (Library.getVersionedLibCss() && oLibInfo) {
 			sQuery = "?version=" + oLibInfo.version;
 
 			// distribution version may not be available (will be loaded in Core constructor syncpoint2)
@@ -730,83 +652,24 @@ sap.ui.define([
 		return sQuery;
 	}
 
-	/**
-	 * Initializes the window "sap-ui-config" property, sets theme roots, initializes sTheme, sets theme CSS classes
-	 * @private
-	 */
-	function setupThemes(oThemeManager) {
-		var mThemeRoots = Configuration.getValue("themeRoots");
-		// read themeRoots configuration
-		if (mThemeRoots) {
-			for (var themeName in mThemeRoots) {
-				var themeRoot = mThemeRoots[themeName];
-				if (typeof themeRoot === "string") {
-					oThemeManager.setThemeRoot(themeName, themeRoot);
-				} else {
-					for (var lib in themeRoot) {
-						if (lib.length > 0) {
-							oThemeManager.setThemeRoot(themeName, [lib], themeRoot[lib]);
-						} else {
-							oThemeManager.setThemeRoot(themeName, themeRoot[lib]);
-						}
-					}
-				}
-			}
+	Eventing.apply(ThemeManager);
+
+	// set CSS class for the theme name
+	document.documentElement.classList.add("sapUiTheme-" + Theming.getTheme());
+	Log.info("Declared theme " + Theming.getTheme(), null);
+
+	Theming.attachChange(function(oEvent) {
+		var mThemeRoots = oEvent.themeRoots;
+		var oTheme = oEvent.theme;
+		if (mThemeRoots && mThemeRoots.forceUpdate) {
+			ThemeManager._updateThemeUrls(Theming.getTheme());
 		}
-
-		// set CSS class for the theme name
-		oThemeManager.sTheme = Configuration.getTheme();
-		document.documentElement.classList.add("sapUiTheme-" + oThemeManager.sTheme);
-		Log.info("Declared theme " + oThemeManager.sTheme,null);
-	}
-
-	/**
-	 * Notify content density changes
-	 *
-	 * @since 1.108
-	 * @private
-	 * @ui5-restricted sap.ui.core.Core
-	 */
-	ThemeManager.prototype.notifyContentDensityChanged = function () {
-		this.fireThemeChanged();
-	};
-
-	/**
-	 * Notify theme change
-	 *
-	 * @param {object} oParameters The event parameters
-	 * @since 1.108
-	 * @private
-	 * @ui5-restricted sap.ui.core.Core
-	 */
-	ThemeManager.prototype.fireThemeChanged = function (oParameters) {
-		// special hook for resetting theming parameters before the controls get
-		// notified (lightweight coupling to static Parameters module)
-		var ThemeParameters = sap.ui.require("sap/ui/core/theming/Parameters");
-		if (ThemeParameters) {
-			ThemeParameters._reset(/* bOnlyWhenNecessary= */ true);
+		if (oTheme) {
+			applyTheme(oTheme);
 		}
+	});
 
-		oParameters = oParameters || {};
-		// set the current theme name as default if omitted
-		if (!oParameters.theme) {
-			oParameters.theme = Configuration.getTheme();
-		}
+	Theming.registerThemeManager(ThemeManager);
 
-		// notify all elements/controls via a pseudo browser event
-		var sEventId = "ThemeChanged";
-		var oEvent = jQuery.Event(sEventId);
-		oEvent.theme = oParameters.theme;
-		Element.registry.forEach(function(oElement) {
-			oElement._handleEvent(oEvent);
-		});
-
-		ActivityDetection.refresh();
-		this.fireEvent(sEventId, oParameters);
-	};
-
-	oThemeManager = new ThemeManager();
-
-	return oThemeManager;
-
+	return ThemeManager;
 });

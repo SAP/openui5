@@ -12,7 +12,9 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Parmeters.get", {
-		beforeEach: function () {
+		before: function() {
+			// For some reasons window.performance.getResourceByType does only return the first 250?!
+			// entries therefore clear the resource timings upfront
 			window.performance.clearResourceTimings();
 		}
 	});
@@ -83,7 +85,9 @@ sap.ui.define([
 	}
 
 	QUnit.module("Parmeters.get (sync)", {
-		beforeEach: function () {
+		before: function() {
+			// For some reasons window.performance.getResourceByType does only return the first 250?!
+			// entries therefore clear the resource timings upfront
 			window.performance.clearResourceTimings();
 		}
 	});
@@ -405,7 +409,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Parmeters.get (async)", {
-		beforeEach: function () {
+		before: function() {
+			// For some reasons window.performance.getResourceByType does only return the first 250?!
+			// entries therefore clear the resource timings upfront
 			window.performance.clearResourceTimings();
 		}
 	});
