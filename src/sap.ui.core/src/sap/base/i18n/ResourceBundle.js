@@ -4,11 +4,12 @@
 sap.ui.define([
 		'sap/base/assert',
 		'sap/base/Log',
+		'sap/base/i18n/Localization',
 		'sap/base/strings/formatMessage',
 		'sap/base/util/Properties',
 		'sap/base/util/merge'
 	],
-	function(assert, Log, formatMessage, Properties, merge) {
+	function(assert, Log, Localization, formatMessage, Properties, merge) {
 	"use strict";
 
 	/* global Promise */
@@ -157,27 +158,11 @@ sap.ui.define([
 	function defaultLocale(sFallbackLocale) {
 		var sLocale;
 		// use the current session locale, if available
-		if (window.sap && window.sap.ui && sap.ui.getCore) {
-			sLocale = sap.ui.getCore().getConfiguration().getLanguage();
-			sLocale = normalize(sLocale);
-		}
+		sLocale = Localization.getLanguage();
+		sLocale = normalize(sLocale);
 		// last fallback is fallbackLocale if no or no valid locale is given
 		return sLocale || sFallbackLocale;
 	}
-
-	/**
-	 * Returns the supported locales from the configuration.
-	 * @returns {string[]} supported locales from the configuration. Otherwise, an empty array is returned.
-	 * @private
-	 */
-	function defaultSupportedLocales() {
-		if (window.sap && window.sap.ui && sap.ui.getCore) {
-			return sap.ui.getCore().getConfiguration().getSupportedLanguages();
-		}
-		return [];
-	}
-
-
 
 	/**
 	 * Helper to normalize the given locale (java.util.Locale format) to the BCP-47 syntax.
@@ -297,7 +282,7 @@ sap.ui.define([
 		this._aFallbackLocales = calculateFallbackChain(
 			this.sLocale,
 			// bundle specific supported locales will be favored over configuration ones
-			aSupportedLocales || defaultSupportedLocales(),
+			aSupportedLocales || Localization.getSupportedLanguages(),
 			sFallbackLocale,
 			" of the bundle '" + this.oUrlInfo.url + "'",
 			bSkipFallbackLocaleAndRaw
