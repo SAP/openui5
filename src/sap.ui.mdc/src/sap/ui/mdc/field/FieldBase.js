@@ -2694,12 +2694,16 @@ sap.ui.define([
 			var aConditions = this.getConditions();
 			_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
 			oFieldHelp.toggleOpen(!!bOpenAsTypeahed);
+			var oContent = oEvent.srcControl || oEvent.getSource(); // as, if called from Tap or other browser event getSource is not available
 			if (!oFieldHelp.isFocusInHelp()) {
 				// need to reset bValueHelpRequested in Input, otherwise on focusout no change event and navigation don't work
-				var oContent = oEvent.srcControl || oEvent.getSource(); // as, if called from Tap or other brwowser event getSource is not available
 				if (oContent.bValueHelpRequested) {
 					oContent.bValueHelpRequested = false; // TODO: need API
 				}
+			}
+			if (oContent && oContent.closeValueStateMessage && oContent.setShowValueStateMessage) { // on after opened it looks very delayed
+				oContent.closeValueStateMessage(); // close valueState-message as it is shown inside popover and it should not appear twice if popover opens above field
+				oContent.setShowValueStateMessage(false); // to prevent reopen on rerendering
 			}
 		}
 
@@ -2950,9 +2954,9 @@ sap.ui.define([
 
 	function _handleFieldHelpAfterClose(oEvent) {
 
+		var oContent = this.getControlForSuggestion();
 		if (this._bIgnoreInputValue) {
 			// remove filter value from input and don't use it as input
-			var oContent = this.getControlForSuggestion();
 			this._bIgnoreInputValue = false;
 			oContent.setDOMValue("");
 			this._sFilterValue = "";
@@ -2961,6 +2965,10 @@ sap.ui.define([
 				// clear "value" property of MultiInput as there might be an old value from a invalid input before
 				this._oManagedObjectModel.checkUpdate(true); // forces update of value property via binding to conditions
 			}
+		}
+
+		if (oContent && oContent.setShowValueStateMessage) {
+			oContent.setShowValueStateMessage(true); // to show it again if needed (disabled while opening)
 		}
 
 		_setAriaAttributes.call(this, false);
@@ -2975,6 +2983,7 @@ sap.ui.define([
 	function _handleFieldHelpOpened(oEvent) {
 
 		_setAriaAttributes.call(this, true);
+		// close ValueState message on opening, because opened is sometimes very delayed what would lead to strange effect
 
 	}
 
