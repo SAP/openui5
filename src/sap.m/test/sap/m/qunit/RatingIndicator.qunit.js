@@ -3,6 +3,7 @@ sap.ui.define([
 	'sap/ui/qunit/QUnitUtils',
 	'sap/ui/qunit/utils/createAndAppendDiv',
 	'sap/m/App',
+	'sap/m/Label',
 	'sap/m/Page',
 	'sap/m/RatingIndicator',
 	'sap/ui/core/Core',
@@ -12,7 +13,7 @@ sap.ui.define([
 	'sap/ui/dom/includeStylesheet',
 	'sap/ui/thirdparty/jquery',
 	'require'
-], function(qutils, createAndAppendDiv, App, Page, RatingIndicator, Core, IconPool, mobileLibrary,  KeyCodes, includeStylesheet, jQuery, require) {
+], function(qutils, createAndAppendDiv, App, Label, Page, RatingIndicator, Core, IconPool, mobileLibrary,  KeyCodes, includeStylesheet, jQuery, require) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -702,6 +703,43 @@ sap.ui.define([
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 
 		oControl.destroy();
+	});
+
+	QUnit.test("Required property handling", function(assert) {
+		// Arrange
+		var oRI = new RatingIndicator("ratingIndicator", {value: 5, maxValue: 10}),
+		oRIRequired = new RatingIndicator("ratingIndicator1", {value: 1, maxValue: 3, required: true}),
+		oLabel = new Label({text: "test", labelFor: "ratingIndicator", required: true}),
+		oLabel1 = new Label({text: "test", labelFor: "ratingIndicator1"});
+
+		oLabel1.placeAt("content");
+		oRIRequired.placeAt("content");
+		oLabel.placeAt("content");
+		oRI.placeAt("content");
+		Core.applyChanges();
+
+		var oRIRequiredDomRef = oRIRequired.getDomRef(),
+		oRIDomRef = oRI.getDomRef(),
+		oLabelDomRef = oLabel.getDomRef(),
+		oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
+		// Assert
+		assert.strictEqual(oRIRequired.getRequired(), true, "Required property is set correctly");
+		assert.strictEqual(oLabel1.getRequired(), false, "The label is required");
+		assert.notOk(oRIRequiredDomRef.getAttribute("aria-required"), "aria-required property is not added to the DOM when the control is required");
+		assert.strictEqual(oRIRequiredDomRef.getAttribute("aria-description"), oResourceBundle.getText("ELEMENT_REQUIRED"), "aria-description text is correct");
+		assert.ok(oLabelDomRef.classList.contains("sapMLabelRequired"), "label is marked as required when the control is required");
+
+		assert.strictEqual(oRI.getRequired(), false, "Required property is set correctly");
+		assert.strictEqual(oLabel.getRequired(), true, "The label is required");
+		assert.notOk(oRIDomRef.getAttribute("aria-required"), "aria-required property is not added to the DOM when the label is required");
+		assert.strictEqual(oRIDomRef.getAttribute("aria-description"), oResourceBundle.getText("ELEMENT_REQUIRED"), "aria-description text is correct");
+
+		// Clean up
+		oRI.destroy();
+		oRIRequired.destroy();
+		oLabel.destroy();
+		oLabel1.destroy();
 	});
 
 	QUnit.module("Performance");
