@@ -168,7 +168,7 @@ sap.ui.define([
 		this.oBasePanel.setMessageStrip(oMessageStrip);
 		this.oBasePanel.setMessageStrip();
 
-		assert.equal(this.oBasePanel.getAggregation("_content").getItems().length, 1, "Only table in content area of the BasePanel");
+		assert.equal(this.oBasePanel.getAggregation("_content").getItems().length, 2, "Only table and InvisibleText in content area of the BasePanel");
 
 	});
 
@@ -180,7 +180,7 @@ sap.ui.define([
 		var oMessageStrip2 = new MessageStrip();
 		this.oBasePanel.setMessageStrip(oMessageStrip2);
 
-		assert.equal(this.oBasePanel.getAggregation("_content").getItems().length, 2, "Only one strip has been added to the BasePanel");
+		assert.equal(this.oBasePanel.getAggregation("_content").getItems().length, 3, "Only one strip has been added to the BasePanel");
 
 	});
 
