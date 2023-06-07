@@ -638,7 +638,7 @@ sap.ui.define([
 
 		oTreeTable.attachEventOnce("rowsUpdated", fnHandler);
 		var oTreeIcon = oTreeTable.getRows()[0].getDomRef("col0").querySelector(".sapUiTableTreeIcon");
-		qutils.triggerMouseEvent(oTreeIcon, "click");
+		qutils.triggerMouseEvent(oTreeIcon, "tap");
 	});
 
 	QUnit.test("Group Header", function(assert) {
@@ -667,7 +667,7 @@ sap.ui.define([
 
 		oTreeTable.attachEventOnce("rowsUpdated", fnHandler);
 		var oGroupHeader = oTreeTable.getRows()[0].getDomRef("groupHeader");
-		qutils.triggerMouseEvent(oGroupHeader, "click");
+		qutils.triggerMouseEvent(oGroupHeader, "tap");
 	});
 
 	QUnit.test("Analytical Table Sum", function(assert) {
@@ -681,7 +681,7 @@ sap.ui.define([
 		};
 
 		return fakeSumRow(0, oTreeTable).then(function() {
-			qutils.triggerMouseEvent(oTreeTable.getDomRef("rowsel0"), "click");
+			qutils.triggerMouseEvent(oTreeTable.getDomRef("rowsel0"), "tap");
 			assert.ok(!bSelected, "Selection was not performed");
 
 			oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
@@ -703,7 +703,7 @@ sap.ui.define([
 		var $FakeButton = TableUtils.getRowColCell(oTreeTable, 0, 0).cell.$();
 
 		$FakeButton.addClass("sapUiTableGroupMenuButton");
-		qutils.triggerMouseEvent($FakeButton, "click");
+		qutils.triggerMouseEvent($FakeButton, "tap");
 		assert.ok(!bSelected, "Selection was not performed");
 		assert.ok(oOpenContextMenu.calledOnce, "Context Menu was opened");
 
@@ -750,7 +750,7 @@ sap.ui.define([
 				"Cell Click Event: Parameter rowBindingContext");
 		});
 		var $Cell = oRowColCell.cell.$();
-		qutils.triggerMouseEvent($Cell, "click"); // Should increase the counter
+		qutils.triggerMouseEvent($Cell, "tap"); // Should increase the counter
 		assert.equal(iSelectCount, 1, iSelectCount + " selections performed");
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 
@@ -758,7 +758,7 @@ sap.ui.define([
 			oEvent.preventDefault();
 			bClickHandlerCalled = true;
 		});
-		qutils.triggerMouseEvent($Cell, "click");
+		qutils.triggerMouseEvent($Cell, "tap");
 		assert.equal(iSelectCount, 1, iSelectCount + " selections performed");
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 
@@ -766,22 +766,22 @@ sap.ui.define([
 			bClickHandlerCalled = true;
 		});
 		$Cell = oTreeTable.getRows()[0].$("col0");
-		qutils.triggerMouseEvent($Cell, "click"); // Should increase the counter
+		qutils.triggerMouseEvent($Cell, "tap"); // Should increase the counter
 		assert.equal(iSelectCount, 2, iSelectCount + " selections performed");
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 
 		bClickHandlerCalled = false;
-		var oEvent = jQuery.Event({type: "click"});
+		var oEvent = jQuery.Event({type: "tap"});
 		oEvent.setMarked();
 		$Cell.trigger(oEvent);
 		assert.equal(iSelectCount, 2, iSelectCount + " selections performed");
 		assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 
-		qutils.triggerMouseEvent(oTreeTable.getDomRef("rowsel0"), "click"); // Should increase the counter
+		qutils.triggerMouseEvent(oTreeTable.getDomRef("rowsel0"), "tap"); // Should increase the counter
 		assert.equal(iSelectCount, 3, iSelectCount + " selections performed");
 		assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 
-		qutils.triggerMouseEvent(oTable._getVisibleColumns()[0].getDomRef(), "click");
+		qutils.triggerMouseEvent(oTable._getVisibleColumns()[0].getDomRef(), "tap");
 		assert.equal(iSelectCount, 3, iSelectCount + " selections performed");
 		assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 
@@ -794,7 +794,7 @@ sap.ui.define([
 		$Cell = oRowColCell.cell.$();
 		for (var i = 0; i < aKnownClickableControls.length; i++) {
 			$Cell.toggleClass(aKnownClickableControls[i], true);
-			qutils.triggerMouseEvent($Cell, "click");
+			qutils.triggerMouseEvent($Cell, "tap");
 			assert.equal(iSelectCount, 3, iSelectCount + " selections performed");
 			assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 			$Cell.toggleClass(aKnownClickableControls[i], false);
@@ -805,7 +805,7 @@ sap.ui.define([
 		var iStartCount = iSelectCount;
 		for (var i = 0; i < aKnownClickableControls.length; i++) {
 			$Cell.toggleClass(aKnownClickableControls[i], true);
-			qutils.triggerMouseEvent($Cell, "click");
+			qutils.triggerMouseEvent($Cell, "tap");
 			assert.equal(iSelectCount, iStartCount + i + 1, iSelectCount + " selections performed");
 			assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 			$Cell.toggleClass(aKnownClickableControls[i], false);
@@ -824,16 +824,16 @@ sap.ui.define([
 
 		assert.ok(!oTable.isIndexSelected(0), "First row is not selected");
 
-		qutils.triggerMouseEvent(getCell(0, 0), "click");
+		qutils.triggerMouseEvent(getCell(0, 0), "tap");
 		assert.ok(oTable.isIndexSelected(0), "Click on data cell in first row -> First row selected");
 
-		qutils.triggerMouseEvent(getRowHeader(0), "click");
+		qutils.triggerMouseEvent(getRowHeader(0), "tap");
 		assert.ok(!oTable.isIndexSelected(0), "Click on row header cell in first row -> First row  not selected");
 
-		qutils.triggerMouseEvent(getRowAction(0), "click");
+		qutils.triggerMouseEvent(getRowAction(0), "tap");
 		assert.ok(oTable.isIndexSelected(0), "Click on row action cell in first row -> First row selected");
 
-		qutils.triggerMouseEvent(getCell(1, 0), "click");
+		qutils.triggerMouseEvent(getCell(1, 0), "tap");
 		assert.deepEqual(oTable.getSelectedIndices(), [1], "Click on data cell in second row -> Second row selected");
 	});
 
@@ -848,7 +848,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		oTable._enableLegacyMultiSelection();
-		qutils.triggerEvent("click", getCell(0, 0), {metaKey: true, ctrlKey: true});
+		qutils.triggerEvent("tap", getCell(0, 0), {metaKey: true, ctrlKey: true});
 		assert.deepEqual(oTable.getSelectedIndices(), [0],
 			"Ctrl+Click on data cell in first row with legacy multi selection enabled -> First row selected");
 	});
@@ -859,19 +859,19 @@ sap.ui.define([
 		initRowActions(oTable, 2, 2);
 		oCore.applyChanges();
 
-		qutils.triggerMouseEvent(getCell(0, 0), "click");
+		qutils.triggerMouseEvent(getCell(0, 0), "tap");
 		assert.ok(oTable.isIndexSelected(0), "Click on first row -> Row selected");
 
 		oTable.setFirstVisibleRow(3); // Scroll down 3 rows
 		oCore.applyChanges();
-		qutils.triggerEvent("click", getCell(2, 0), {shiftKey: true});
+		qutils.triggerEvent("tap", getCell(2, 0), {shiftKey: true});
 		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5], "Range selection with Shift + Click selected the correct rows");
 		assert.strictEqual(window.getSelection().toString(), "", "Range selection with Shift + Click did not select text");
 
-		qutils.triggerMouseEvent(getCell(0, 0), "click"); // Deselect row with index 3
-		qutils.triggerMouseEvent(getCell(0, 0), "click"); // Select row with index 3
-		qutils.triggerMouseEvent(getCell(0, 0), "click"); // Deselect row with index 3
-		qutils.triggerEvent("click", getCell(2, 0), {shiftKey: true});
+		qutils.triggerMouseEvent(getCell(0, 0), "tap"); // Deselect row with index 3
+		qutils.triggerMouseEvent(getCell(0, 0), "tap"); // Select row with index 3
+		qutils.triggerMouseEvent(getCell(0, 0), "tap"); // Deselect row with index 3
+		qutils.triggerEvent("tap", getCell(2, 0), {shiftKey: true});
 		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 4, 5], "Range selection with Shift + Click did not deselect");
 	});
 
@@ -887,8 +887,8 @@ sap.ui.define([
 		oTable._enableLegacyMultiSelection();
 		oTable.setFirstVisibleRow(0);
 		oCore.applyChanges();
-		qutils.triggerMouseEvent(getCell(0, 0), "click"); // Select row with index 5
-		qutils.triggerEvent("click", getCell(2, 0), {shiftKey: true, ctrlKey: true});
+		qutils.triggerMouseEvent(getCell(0, 0), "tap"); // Select row with index 5
+		qutils.triggerEvent("tap", getCell(2, 0), {shiftKey: true, ctrlKey: true});
 		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2],
 			"Range selection with Shift + Click selected the correct rows,"
 			+ "even though Ctrl was also pressed and legacy multi selection was enabled");
@@ -902,13 +902,13 @@ sap.ui.define([
 		initRowActions(oTable, 2, 2);
 		oCore.applyChanges();
 
-		qutils.triggerMouseEvent(getCell(0, 0), "click");
+		qutils.triggerMouseEvent(getCell(0, 0), "tap");
 		assert.deepEqual(oTable.getSelectedIndices(), [0], "Click on unselected row with index 0");
 
-		qutils.triggerMouseEvent(getCell(1, 0), "click");
+		qutils.triggerMouseEvent(getCell(1, 0), "tap");
 		assert.deepEqual(oTable.getSelectedIndices(), [0, 1], "Click on unselected row with index 1");
 
-		qutils.triggerMouseEvent(getCell(0, 0), "click");
+		qutils.triggerMouseEvent(getCell(0, 0), "tap");
 		assert.deepEqual(oTable.getSelectedIndices(), [1], "Click on selected row with index 0");
 	});
 
@@ -923,22 +923,22 @@ sap.ui.define([
 
 		oTable._enableLegacyMultiSelection();
 
-		qutils.triggerMouseEvent(getCell(0, 0), "click");
+		qutils.triggerMouseEvent(getCell(0, 0), "tap");
 		assert.deepEqual(oTable.getSelectedIndices(), [0], "Click on unselected row with index 0");
 
-		qutils.triggerMouseEvent(getCell(1, 0), "click");
+		qutils.triggerMouseEvent(getCell(1, 0), "tap");
 		assert.deepEqual(oTable.getSelectedIndices(), [1], "Click on unselected row with index 1");
 
-		qutils.triggerEvent("click", getCell(2, 0), {metaKey: true, ctrlKey: true});
+		qutils.triggerEvent("tap", getCell(2, 0), {metaKey: true, ctrlKey: true});
 		assert.deepEqual(oTable.getSelectedIndices(), [1, 2], "Ctrl + Click on unselected row with index 2");
 
-		qutils.triggerEvent("click", getCell(0, 0), {metaKey: true, ctrlKey: true});
+		qutils.triggerEvent("tap", getCell(0, 0), {metaKey: true, ctrlKey: true});
 		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2], "Ctrl + Click on unselected row with index 0");
 
-		qutils.triggerEvent("click", getCell(1, 0), {metaKey: true, ctrlKey: true});
+		qutils.triggerEvent("tap", getCell(1, 0), {metaKey: true, ctrlKey: true});
 		assert.deepEqual(oTable.getSelectedIndices(), [0, 2], "Ctrl + Click on selected row with index 1");
 
-		qutils.triggerMouseEvent(getCell(2, 0), "click");
+		qutils.triggerMouseEvent(getCell(2, 0), "tap");
 		assert.deepEqual(oTable.getSelectedIndices(), [2], "Click on selected row with index 2");
 	});
 

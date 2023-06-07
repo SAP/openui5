@@ -78,14 +78,12 @@ sap.ui.define([
 							errorMessage: "Did not find the 'Select all' checkbox"
 						});
 					} else {
-						var $checkBox = Opa5.getJQuery()("#" + sTableId + "-innerTable-selall");
-
 						return this.waitFor({
 							check: function() {
-								return $checkBox.length === 1;
+								return Opa5.getJQuery()("#" + sTableId + "-innerTable-selall").length === 1;
 							},
 							success: function() {
-								$checkBox.trigger("click");
+								new Press({idSuffix: "innerTable-selall"}).executeOn(oTable);
 							},
 							errorMessage: "Did not find the 'Select all' checkbox"
 						});
@@ -119,14 +117,12 @@ sap.ui.define([
 							errorMessage: "Did not find the 'Deselect all' icon"
 						});
 					} else {
-						var $checkBox = Opa5.getJQuery()("#" + sTableId + "-innerTable-selall");
-
 						return this.waitFor({
 							check: function() {
-								return $checkBox.length === 1;
+								return Opa5.getJQuery()("#" + sTableId + "-innerTable-selall").length === 1;
 							},
 							success: function() {
-								$checkBox.trigger("click");
+								new Press({idSuffix: "innerTable-selall"}).executeOn(oTable);
 							},
 							errorMessage: "Did not find the 'Deselect all' icon"
 						});
@@ -147,8 +143,6 @@ sap.ui.define([
 		 * @private
 		 */
 		iClickOnRowSelectCheckBox: function(oControl, iStartIndex, iEndIndex) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
-
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
 					var iIndex = iStartIndex;
@@ -165,7 +159,7 @@ sap.ui.define([
 						}
 					} else {
 						for (iIndex; iIndex <= iEndIndex; iIndex++) {
-							Opa5.getJQuery()("#" + sTableId + "-innerTable-rowsel" + iIndex).trigger('click');
+							new Press({idSuffix: "innerTable-rowsel" + iIndex}).executeOn(oTable);
 						}
 					}
 				},

@@ -1186,7 +1186,7 @@ sap.ui.define([
 					resolve();
 				});
 				$Cell = that.oTable.$("rowsel0");
-				qutils.triggerEvent("click", $Cell);
+				qutils.triggerEvent("tap", $Cell);
 			}, 100);
 		}).then(function() {
 			return new Promise(function(resolve) {
@@ -1197,7 +1197,7 @@ sap.ui.define([
 				});
 				that.oTable.setFirstVisibleRow(7);
 				$Cell = that.oTable.$("rowsel1");
-				qutils.triggerEvent("click", $Cell, {shiftKey: true});
+				qutils.triggerEvent("tap", $Cell, {shiftKey: true});
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
@@ -1231,7 +1231,7 @@ sap.ui.define([
 
 				that.oTable.setFirstVisibleRow(7);
 				var $Cell = that.oTable.$("rowsel2");
-				qutils.triggerEvent("click", $Cell);
+				qutils.triggerEvent("tap", $Cell);
 			}, 100);
 		}).then(function() {
 			return new Promise(function(resolve) {
@@ -1242,7 +1242,7 @@ sap.ui.define([
 				});
 				that.oTable.setFirstVisibleRow(0);
 				$Cell = that.oTable.$("rowsel0");
-				qutils.triggerEvent("click", $Cell, {shiftKey: true});
+				qutils.triggerEvent("tap", $Cell, {shiftKey: true});
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {

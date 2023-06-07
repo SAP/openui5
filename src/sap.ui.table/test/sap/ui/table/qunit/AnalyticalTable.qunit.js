@@ -562,7 +562,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		function doTest(oTable) {
-			oTable.$().find(".sapUiTableGroupMenuButton").trigger("click");
+			oTable.$().find(".sapUiTableGroupMenuButton").trigger("tap");
 			assert.ok(oTable._oCellContextMenu.bOpen, "Menu is open");
 			oShowGroupMenuButton.restore();
 			done();
