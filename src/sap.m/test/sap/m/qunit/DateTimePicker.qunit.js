@@ -280,10 +280,10 @@ sap.ui.define([
 
 	QUnit.test("placeholder", function(assert) {
 		if (Device.support.input.placeholder) {
-			assert.equal(jQuery("#DTP1").find("input").attr("placeholder"), "MMM d, y, h:mm:ss a" , "DTP1: placeholder");
-			assert.equal(jQuery("#DTP2").find("input").attr("placeholder"), "dd+MM+yyyy:HH+mm", "DTP2: placeholder");
-			assert.equal(jQuery("#DTP3").find("input").attr("placeholder"), "M/d/yy, h:mm a", "DTP3: placeholder");
-			assert.equal(jQuery("#DTP4").find("input").attr("placeholder"), "MMM d, y, h:mm:ss a", "DTP4: placeholder from binding used");
+			assert.equal(jQuery("#DTP1").find("input").attr("placeholder"), "For example Dec 31, 2023, 11:59:58 PM" , "DTP1: placeholder");
+			assert.equal(jQuery("#DTP2").find("input").attr("placeholder"), "For example 31+12+2023:23+59", "DTP2: placeholder");
+			assert.equal(jQuery("#DTP3").find("input").attr("placeholder"), "For example 12/31/23, 11:59 PM", "DTP3: placeholder");
+			assert.equal(jQuery("#DTP4").find("input").attr("placeholder"), "For example Dec 31, 2023, 11:59:58 PM", "DTP4: placeholder from binding used");
 		} else {
 			assert.ok(!jQuery("#DTP1").find("input").attr("placeholder"), "No placeholder attribute");
 		}
