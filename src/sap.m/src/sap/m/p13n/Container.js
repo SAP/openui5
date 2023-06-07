@@ -5,7 +5,8 @@ sap.ui.define([
 	"sap/m/p13n/AbstractContainer",
 	"sap/m/Bar",
 	"sap/m/Button",
-	"sap/m/Text",
+	"sap/m/Title",
+	"sap/ui/core/TitleLevel",
 	"sap/m/List",
 	"sap/m/IconTabBar",
 	"sap/m/IconTabFilter",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/library",
 	"sap/m/StandardListItem"
-], function (AbstractContainer, Bar, Button, Text, List, IconTabBar, IconTabFilter, ContainerItem, Device, mLibrary, StandardListItem) {
+], function (AbstractContainer, Bar, Button, Title, TitleLevel, List, IconTabBar, IconTabFilter, ContainerItem, Device, mLibrary, StandardListItem) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -250,8 +251,7 @@ sap.ui.define([
 
 	Container.prototype._getHeaderText = function () {
 		if (!this._oHeaderText) {
-			this._oHeaderText = new Text({
-			});
+			this._oHeaderText = new Title({ level: Device.system.phone ? TitleLevel.H2 : TitleLevel.H1});
 			this.addDependent(this._oHeaderText);
 		}
 		return this._oHeaderText;
