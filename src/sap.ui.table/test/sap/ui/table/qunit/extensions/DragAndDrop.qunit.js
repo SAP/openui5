@@ -304,13 +304,36 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("draggable attribute", function(assert) {
+	QUnit.test("draggable attribute of row with data", function(assert) {
 		assert.strictEqual(getRowHeader(0)[0].getAttribute("draggable"), null,
 			"Row header does not have a draggable attribute");
 		assert.strictEqual(getCell(0, 0).parent()[0].getAttribute("draggable"), "true",
 			"Row in the fixed column area does have a draggable attribute with value \"true\"");
+		assert.strictEqual(getCell(0, 0).parent()[0].getAttribute("data-sap-ui-draggable"), "true",
+			"Row in the fixed column area does have a data-sap-ui-draggable attribute with value \"true\"");
 		assert.strictEqual(getCell(0, 1).parent()[0].getAttribute("draggable"), "true",
 			"Row in the scrollable column area does have a draggable attribute with value \"true\"");
+		assert.strictEqual(getCell(0, 1).parent()[0].getAttribute("data-sap-ui-draggable"), "true",
+			"Row in the scrollable column area does have a data-sap-ui-draggable attribute with value \"true\"");
+		assert.strictEqual(getRowAction(0)[0].getAttribute("draggable"), null,
+			"Row action does not have a draggable attribute");
+	});
+
+	QUnit.test("draggable attribute of empty row", function(assert) {
+		oTable.setShowNoData(false);
+		oTable.unbindRows();
+		oCore.applyChanges();
+
+		assert.strictEqual(getRowHeader(0)[0].getAttribute("draggable"), null,
+			"Row header does not have a draggable attribute");
+		assert.strictEqual(getCell(0, 0).parent()[0].getAttribute("draggable"), "true",
+			"Row in the fixed column area does have a draggable attribute with value \"true\"");
+		assert.strictEqual(getCell(0, 0).parent()[0].getAttribute("data-sap-ui-draggable"), "true",
+			"Row in the fixed column area does have a data-sap-ui-draggable attribute with value \"true\"");
+		assert.strictEqual(getCell(0, 1).parent()[0].getAttribute("draggable"), "true",
+			"Row in the scrollable column area does have a draggable attribute with value \"true\"");
+		assert.strictEqual(getCell(0, 1).parent()[0].getAttribute("data-sap-ui-draggable"), "true",
+			"Row in the scrollable column area does have a data-sap-ui-draggable attribute with value \"true\"");
 		assert.strictEqual(getRowAction(0)[0].getAttribute("draggable"), null,
 			"Row action does not have a draggable attribute");
 	});

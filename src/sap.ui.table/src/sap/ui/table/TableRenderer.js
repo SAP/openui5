@@ -1102,15 +1102,16 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		rm.class("sapUiTableRow");
 		rm.class("sapUiTableContentRow");
 		rm.class("sapUiTableTr");
+
+		if (bDraggable && bFixedTable) {
+			rm.attr("draggable", "true");
+			rm.attr("data-sap-ui-draggable", "true");
+		}
+
 		if (oRow.isContentHidden()) {
 			rm.class("sapUiTableRowHidden");
-		} else {
-			if (bDraggable && bFixedTable) {
-				rm.attr("draggable", true);
-			}
-			if (oSelectionPlugin.isSelected(oRow)) {
-				rm.class("sapUiTableRowSel");
-			}
+		} else if (oSelectionPlugin.isSelected(oRow)) {
+			rm.class("sapUiTableRowSel");
 		}
 
 		if (iRowIndex % 2 != 0 && oTable.getAlternateRowColors() && !TableUtils.Grouping.isInTreeMode(oTable)) {
