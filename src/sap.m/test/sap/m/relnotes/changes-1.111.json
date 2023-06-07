@@ -447,5 +447,29 @@
         ]
       }
     ]
+  },
+  "1.111.5": {
+    "date": "June 2023",
+    "notes": [
+      {
+        "id": "cf41c5ea94f018213c0f8cf2a7aec6635d43c74b",
+        "type": "FIX",
+        "text": " Calendar controls: adjust calendar type API",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280203403"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280197317"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400001300602023"
+          }
+        ]
+      }
+    ]
   }
 }
