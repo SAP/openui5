@@ -436,7 +436,9 @@ sap.ui.define([
 		this.oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
 			var mQueryOptions = aResult[0].mQueryOptions;
 
-			that.sReducedPath = aResult[0].sReducedPath;
+			if (aResult[0].sReducedPath) {
+				that.sReducedPath = aResult[0].sReducedPath;
+			}
 
 			// Note: do not create a cache for a virtual context
 			if (mQueryOptions && !(oContext && oContext.iIndex === Context.VIRTUAL)) {

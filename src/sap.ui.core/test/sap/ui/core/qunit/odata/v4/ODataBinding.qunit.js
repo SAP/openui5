@@ -1266,9 +1266,6 @@ sap.ui.define([
 			var oBinding = new ODataBinding({
 					oCache : oCache,
 					oCachePromise : SyncPromise.resolve(oCache),
-					fetchQueryOptionsForOwnCache : function () {
-						return SyncPromise.resolve({/*don't care, no own cache*/});
-					},
 					oModel : {
 						oRequestor : {
 							ready : function () { return SyncPromise.resolve(); }
@@ -1281,11 +1278,17 @@ sap.ui.define([
 					.withExactArgs("", sinon.match.same(oBinding));
 				this.mock(oCache).expects("setActive").withExactArgs(false);
 			}
+			oBinding.sReducedPath = "~sReducedPath~";
+			this.mock(oBinding).expects("fetchQueryOptionsForOwnCache")
+				.withExactArgs(undefined, undefined)
+				.returns(SyncPromise.resolve({})); // no mQueryOptions or sReducedPath
+			this.mock(oBinding).expects("fetchResourcePath").never();
 
 			// code under test
 			oBinding.fetchCache();
 
 			assert.strictEqual(oBinding.oCache, null);
+			assert.strictEqual(oBinding.sReducedPath, "~sReducedPath~", "unchanged");
 		});
 	});
 
