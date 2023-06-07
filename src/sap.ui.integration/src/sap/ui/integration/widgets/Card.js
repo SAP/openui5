@@ -1217,10 +1217,10 @@ sap.ui.define([
 		this.resetPaginator();
 	};
 
-	/*
-	* @private
-	* @ui5-restricted sap.ui.integration
-	* */
+	/**
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 */
 	Card.prototype.refreshAllData = function () {
 		var oHeader = this.getCardHeader(),
 			oContent = this.getCardContent(),
