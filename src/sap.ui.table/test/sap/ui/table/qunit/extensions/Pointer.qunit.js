@@ -167,6 +167,16 @@ sap.ui.define([
 		moveResizer(aVisibleColumns[2], assert, true, 2);
 	});
 
+	QUnit.test("Moving Resizer with padding on the root element", function(assert) {
+		oTable.getDomRef().style.padding = "1rem";
+		var aVisibleColumns = oTable._getVisibleColumns();
+		moveResizer(aVisibleColumns[0], assert, true, 0);
+		moveResizer(aVisibleColumns[1], assert, false, 0);
+		assert.ok(Math.abs(oTable.getDomRef("rsz").getBoundingClientRect().left - aVisibleColumns[0].getDomRef().getBoundingClientRect().right) < 5,
+			"Position of Resizer still on column 0");
+		moveResizer(aVisibleColumns[2], assert, true, 2);
+	});
+
 	QUnit.test("Automatic Column Resize via Double Click", function(assert) {
 		Device.system.desktop = true;
 

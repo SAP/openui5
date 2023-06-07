@@ -275,7 +275,7 @@ sap.ui.define([
 		initColumnTracking: function(oTable) {
 			// attach mousemove listener to update resizer position
 			oTable.$().find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed").on("mousemove", function(oEvent) {
-				var oDomRef = this.getDomRef();
+				var oDomRef = this.getDomRef("sapUiTableCnt");
 				if (!oDomRef || this._bIsColumnResizerMoving) {
 					return;
 				}
