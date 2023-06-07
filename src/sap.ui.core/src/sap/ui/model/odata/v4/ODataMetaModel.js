@@ -2200,6 +2200,9 @@ sap.ui.define([
 			if (oProperty.$Nullable === false) {
 				setConstraint("nullable", false);
 			}
+			if (oProperty.$Type === "Edm.DateTimeOffset") {
+				setConstraint("V4", true);
+			}
 		}
 		return mConstraints;
 	};
