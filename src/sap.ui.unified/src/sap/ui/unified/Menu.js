@@ -628,7 +628,7 @@ sap.ui.define([
 		//right or down (RTL: left or down)
 		if (oEvent.keyCode !== KeyCodes.ARROW_DOWN && !oEvent.metaKey && !oEvent.altKey) {
 			//Go to sub menu if available
-			if (oSubMenu && this.checkEnabled(this.oHoveredItem)) {
+			if (oSubMenu) {
 				if (oSubMenu.bOpen) {
 					oNextSelectableItem = oSubMenu.getNextSelectableItem(-1);
 					oSubMenu.setHoveredItem(oNextSelectableItem);
@@ -818,13 +818,12 @@ sap.ui.define([
 		}
 		this._discardOpenSubMenuDelayed();
 		this._delayedSubMenuTimer = setTimeout(function(){
-			this.checkEnabled(oItem) && this.closeSubmenu(false, true);
-			if (this.checkEnabled(oItem) && oItem.getSubmenu()) {
+			if (oItem.getSubmenu()) {
 				this.setHoveredItem(oItem);
 				oItem && oItem.focus(this);
 				this.openSubmenu(oItem, false, true);
 			}
-		}.bind(this), oItem.getSubmenu() && this.checkEnabled(oItem) ? Menu._DELAY_SUBMENU_TIMER : Menu._DELAY_SUBMENU_TIMER_EXT);
+		}.bind(this), oItem.getSubmenu() ? Menu._DELAY_SUBMENU_TIMER : Menu._DELAY_SUBMENU_TIMER_EXT);
 	};
 
 	Menu.prototype._discardOpenSubMenuDelayed = function(oItem){
@@ -1015,6 +1014,10 @@ sap.ui.define([
 			return;
 		}
 
+		if (!this.checkEnabled(oItem)) {
+			return;
+		}
+
 		if (this.oOpenedSubMenu && this.oOpenedSubMenu !== oSubMenu) {
 			// Another sub menu is open and has not been fixed. Close it at first.
 			this.closeSubmenu();
@@ -1107,12 +1110,12 @@ sap.ui.define([
 
 		// At first, start with the next index
 		for (var i = iIdx + 1; i < aItems.length; i++) {
-			if (aItems[i].getVisible() && this.checkEnabled(aItems[i])) {
+			if (aItems[i].getVisible()) {
 				return aItems[i];
 			}
 		}
 
-		return oItem && oItem.getVisible() && this.checkEnabled(oItem) ? oItem : null;
+		return oItem && oItem.getVisible() ? oItem : null;
 	};
 
 	Menu.prototype.getPreviousSelectableItem = function(iIdx){
@@ -1121,12 +1124,12 @@ sap.ui.define([
 
 		// At first, start with the previous index
 		for (var i = iIdx - 1; i >= 0; i--) {
-			if (aItems[i].getVisible() && this.checkEnabled(aItems[i])) {
+			if (aItems[i].getVisible()) {
 				return aItems[i];
 			}
 		}
 
-		return oItem && oItem.getVisible() && this.checkEnabled(oItem) ? oItem : null;
+		return oItem && oItem.getVisible() ? oItem : null;
 	};
 
 	Menu.prototype.setRootMenuTopStyle = function(bUseTopStyle){

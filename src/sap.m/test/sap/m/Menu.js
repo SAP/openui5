@@ -92,10 +92,12 @@ sap.ui.define([
 						text: "save and open",
 						items: [
 							new MenuItem({
-								text: "save as"
+								text: "save as",
+								enabled: false
 							}),
 							new MenuItem({
-								text: "save"
+								text: "save",
+								enabled: false
 							}),new MenuItem({
 								text: "open from"
 							}),
