@@ -70,7 +70,6 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 	padding: 0.5rem @_sap_f_Card_ContentPadding;
 	background: @sapUiTileBackground;
 	border-bottom: @_sap_f_Card_HeaderBorder;
-	z-index: 1;
 
 	.sapFCardFilterBarContent {
 		overflow: hidden;
@@ -96,7 +95,6 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 	justify-content: space-between;
 	background: @sapUiTileBackground;
 	border-bottom: @_sap_f_Card_HeaderBorder;
-	z-index: 2;
 	border-radius: @_sap_f_Card_BorderRadius @_sap_f_Card_BorderRadius 0 0;
 	padding: @_sap_f_Card_ContentPadding;
 	display: flex;
@@ -207,10 +205,6 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 	&:not(.sapFAvatarImage):not(.sapFAvatarInitials) {
 		border: none;
 	}
-}
-
-.sapFCard .sapUiLocalBusyIndicator {
-	z-index: 10; // busy layer should be over the header and sub-headers BCP 2080150813
 }
 
 .sapFCard.sapFCardBottomHeader {
