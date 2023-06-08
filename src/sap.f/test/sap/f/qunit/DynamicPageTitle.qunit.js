@@ -408,6 +408,27 @@ function (
 		assert.equal($TitleTopArea.hasClass("sapUiHidden"), true, "Top area should not be visible when all aggregations are removed");
 	});
 
+	QUnit.test("sapFDynamicPageTitleTopBreadCrumbsOnly upon navigation actions visibility change", function (assert) {
+		var oTitle = this.oDynamicPageTitle,
+			$TitleTopArea = oTitle.$("top");
+
+		// Act (1) - hide all navigation actions
+		oTitle.getNavigationActions().forEach(function(oAction) {
+			oAction.setVisible(false);
+		});
+
+		// Assert
+		assert.equal($TitleTopArea.hasClass("sapFDynamicPageTitleTopBreadCrumbsOnly"), true,
+			"breadcrumbs take the whole top area when there are no visible navigation actions");
+
+		// Act (2) - show random navigation action
+		oTitle.getNavigationActions()[0].setVisible(true);
+
+		// Assert
+		assert.equal($TitleTopArea.hasClass("sapFDynamicPageTitleTopBreadCrumbsOnly"), false,
+			"breadcrumbs do not take the whole top area when when there is at least one visible navigation action");
+	});
+
 	QUnit.module("DynamicPage - Rendering - Title with navigationActions and actions", {
 		beforeEach: function () {
 			this.oDynamicPageStandardAndNavigationActions = oFactory.getDynamicPageWithStandardAndNavigationActions();
