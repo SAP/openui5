@@ -4,6 +4,7 @@
         >
     <ObjectPageComponentContainer id="objectPageContainer"
             mode="JsonModel"
+            async="true"
             height="100%"
             width="100%" />
 

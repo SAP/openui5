@@ -3808,9 +3808,12 @@ function (
 				viewName: "view.UxAP-27_ObjectPageConfig"
 			}).then(function (oView) {
 				this.oView = oView;
+				this.oComponentContainer = this.oView.byId("objectPageContainer");
 				this.oView.placeAt("qunit-fixture");
 				Core.applyChanges();
-				done();
+				this.oComponentContainer.attachEventOnce("componentCreated", function () {
+					done();
+				});
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -3819,18 +3822,16 @@ function (
 	});
 
 	QUnit.test("component instance", function (assert) {
-		var oComponentContainer = this.oView
-			.byId("objectPageContainer"),
-			oComponent = oComponentContainer._oComponent;
+		var oComponent = this.oComponentContainer._oComponent;
 
 		// assert init state
 		assert.ok(oComponent, "component is created");
 
 		// Act: mock rerendering of the component container
-		oComponentContainer.onBeforeRendering();
+		this.oComponentContainer.onBeforeRendering();
 
 		// Check
-		assert.strictEqual(oComponentContainer._oComponent, oComponent, "component instance is not changed");
+		assert.strictEqual(this.oComponentContainer._oComponent, oComponent, "component instance is not changed");
 	});
 
 	QUnit.module("ObjectPageLayout - API - headerContentPinned property", {
