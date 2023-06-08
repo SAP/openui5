@@ -10,7 +10,7 @@
 	</script>
 	<script>
 
-		new sap.ui.core.InvisibleText("illustatedMessage_label", {text: "My label"}).toStatic();
+		new sap.ui.core.InvisibleText("illustatedMessage_label", {text: "No activities Illustration"}).toStatic();
 
 		var oApp = new sap.m.App("myApp"),
 			oPage = new sap.m.Page("myPage", {
@@ -19,7 +19,7 @@
 					content: [
 						new sap.m.IllustratedMessage({
 							illustrationType: "sapIllus-NoActivities",
-							illustrationAriaLabelledBy: "illustation_label",
+							illustrationAriaLabelledBy: "illustatedMessage_label",
 							additionalContent: [
 								new sap.m.Button({
 									text: "Add activity"

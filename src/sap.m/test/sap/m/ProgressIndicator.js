@@ -25,7 +25,8 @@ sap.ui.define([
 	// create progressIndicator
 	var oProgInd1 = new ProgressIndicator("pi1", {
 		percentValue:50,
-		displayValue:"50%"
+		displayValue:"50%",
+		tooltip: "Progress indicator with value 50% in neutral state"
 	});
 
 	var oInput = new Input("input", {
@@ -43,7 +44,8 @@ sap.ui.define([
 	var oProgInd2 = new ProgressIndicator("pi2", {
 		percentValue:75,
 		displayValue:"75%",
-		state: ValueState.Error
+		state: ValueState.Error,
+		tooltip: "Progress indicator with value 75% in error state"
 	});
 
 	var label3 = new Label({
@@ -56,7 +58,8 @@ sap.ui.define([
 		height: "1.375rem",
 		percentValue:88,
 		displayValue:"0.88GB of 1GB",
-		state: ValueState.Success
+		state: ValueState.Success,
+		tooltip: "Progress indicator with value 99% in success state"
 	});
 
 	var label4 = new Label({
@@ -69,7 +72,8 @@ sap.ui.define([
 		width:"50%",
 		percentValue:25,
 		displayValue:"25%",
-		state: ValueState.Warning
+		state: ValueState.Warning,
+		tooltip: "Progress indicator with value 25% in warning state with width of 50%"
 	});
 
 	/*
@@ -84,7 +88,8 @@ sap.ui.define([
 		percentValue:99,
 		displayValue:"99%",
 		showValue:false,
-		visible:false
+		visible:false,
+		tooltip: "Progress indicator with value 99% with no value state and width of 50%"
 	});
 
 	var label6 = new Label({
@@ -98,7 +103,8 @@ sap.ui.define([
 		percentValue:65,
 		displayValue:"65%",
 		enabled: false,
-		state: ValueState.Error
+		state: ValueState.Error,
+		tooltip: "Progress indicator with value 65% in error state and width of 80%"
 	});
 
 	var label7 = new Label({
@@ -111,7 +117,8 @@ sap.ui.define([
 		width:"80%",
 		percentValue:45,
 		displayValue:"45%",
-		state: ValueState.Warning
+		state: ValueState.Warning,
+		tooltip: "Progress indicator with value 45% in warning state and width of 80%"
 	});
 
 	var label8 = new Label({
@@ -124,7 +131,8 @@ sap.ui.define([
 		width:"10%",
 		percentValue:49,
 		displayValue:"49%",
-		state: ValueState.Success
+		state: ValueState.Success,
+		tooltip: "Progress indicator with value 94% in success state and width of 10%"
 	});
 
 	var label9 = new Label({
@@ -137,7 +145,8 @@ sap.ui.define([
 		width:"80%",
 		percentValue:39,
 		displayValue:"39%",
-		state: ValueState.Information
+		state: ValueState.Information,
+		tooltip: "Progress indicator with value 39% in informaton state and width of 80%"
 	});
 
 	var label10 = new Label({
@@ -149,7 +158,8 @@ sap.ui.define([
 		percentValue:0,
 		displayValue:"0%",
 		state: ValueState.Success,
-		displayAnimation: false
+		displayAnimation: false,
+		tooltip: "Progress indicator with value 0% in success state"
 	});
 
 	var oButton = new Button("button", {
