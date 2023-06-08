@@ -400,6 +400,9 @@ function(
 
 	// open links href using safe API
 	function openLink (oEvent) {
+		if (oEvent.originalEvent.defaultPrevented) {
+			return;
+		}
 		oEvent.preventDefault();
 		openWindow(oEvent.currentTarget.href, oEvent.currentTarget.target);
 	}
@@ -610,6 +613,10 @@ function(
 		if (this.getLessLabel()) {
 			sLessLabel = this.getLessLabel();
 		}
+
+		// detach click events
+		$text.find('a[target="_blank"]').off("click");
+
 		if (this._bTextExpanded) {
 			$text.html(this._sShortText.replace(/&#xa;/g, "<br>"));
 			$threeDots.text(" ... ");
@@ -622,6 +629,9 @@ function(
 			this._oLinkExpandCollapse.setText(sLessLabel);
 			this._bTextExpanded = true;
 		}
+
+		// attach again click events since the text is changed without rerendering
+		$text.find('a[target="_blank"]').on("click", openLink);
 	};
 
 	/**
