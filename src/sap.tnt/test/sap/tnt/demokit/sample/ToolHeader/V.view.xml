@@ -1,70 +1,69 @@
 <mvc:View
-	controllerName="sap.tnt.sample.ToolHeader.C"
-	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:tnt="sap.tnt"
+	controllerName="sap.tnt.sample.ToolHeader.C"
 	height="100%">
-	<tnt:ToolHeader>
-		<Button icon="sap-icon://menu2" type="Transparent">
-			<layoutData>
-				<OverflowToolbarLayoutData priority="NeverOverflow" />
-			</layoutData>
-		</Button>
-		<MenuButton text="File" type="Transparent">
-			<layoutData>
-				<OverflowToolbarLayoutData priority="Low" />
-			</layoutData>
-		</MenuButton>
-		<MenuButton text="Edit" type="Transparent" enabled="false">
-			<layoutData>
-				<OverflowToolbarLayoutData priority="Low" />
-			</layoutData>
-		</MenuButton>
-		<MenuButton text="View" type="Transparent">
-			<layoutData>
-				<OverflowToolbarLayoutData priority="Low" />
-			</layoutData>
-		</MenuButton>
-		<MenuButton text="Navigate" type="Transparent">
-			<layoutData>
-				<OverflowToolbarLayoutData priority="Low" />
-			</layoutData>
-		</MenuButton>
-		<MenuButton text="Code" type="Transparent">
-			<layoutData>
-				<OverflowToolbarLayoutData priority="Low" />
-			</layoutData>
-		</MenuButton>
-		<MenuButton text="Refactor" type="Transparent">
-			<layoutData>
-				<OverflowToolbarLayoutData priority="Low" />
-			</layoutData>
-		</MenuButton>
-		<MenuButton text="Run" type="Transparent">
-			<layoutData>
-				<OverflowToolbarLayoutData priority="Low" />
-			</layoutData>
-		</MenuButton>
-		<MenuButton text="Tools" type="Transparent">
-			<layoutData>
-				<OverflowToolbarLayoutData priority="Low" />
-			</layoutData>
-		</MenuButton>
-		<tnt:ToolHeaderUtilitySeparator />
-		<ToolbarSpacer>
-			<layoutData>
-				<OverflowToolbarLayoutData minWidth="20px" />
-			</layoutData>
-		</ToolbarSpacer>
-		<SearchField width="240px">
-		<layoutData>
-				<OverflowToolbarLayoutData priority="NeverOverflow" />
-			</layoutData>
-		</SearchField>
-		<Button text="Alan Smith" type="Transparent" press=".onUserNamePress" ariaHasPopup="Menu">
-			<layoutData>
-				<OverflowToolbarLayoutData priority="NeverOverflow" />
-			</layoutData>
-		</Button>
-	</tnt:ToolHeader>
+	<ScrollContainer vertical="true" height="100%">
+		<tnt:ToolHeader id="shellLikeToolHeader" class="">
+			<Button icon="sap-icon://menu2" type="Transparent">
+				<layoutData>
+					<OverflowToolbarLayoutData priority="NeverOverflow"/>
+				</layoutData>
+			</Button>
+			<Image src="test-resources/sap/tnt/images/SAP_Logo.png" decorative="false" press="onLogoPressed">
+				<layoutData>
+					<OverflowToolbarLayoutData priority="NeverOverflow"/>
+				</layoutData>
+			</Image>
+			<Title text="Prоduct Name" wrapping="false">
+				<layoutData>
+					<OverflowToolbarLayoutData priority="Disappear"/>
+				</layoutData>
+			</Title>
+			<Text text="Second title" wrapping="false" id="secondTitle">
+				<layoutData>
+					<OverflowToolbarLayoutData priority="Disappear"/>
+				</layoutData>
+			</Text>
+			<ToolbarSpacer />
+			<SearchField width="16rem">
+				<layoutData>
+					<OverflowToolbarLayoutData priority="Low" group="1"/>
+				</layoutData>
+			</SearchField>
+			<ToolbarSpacer>
+				<layoutData>
+					<OverflowToolbarLayoutData priority="Low" group="1"/>
+				</layoutData>
+			</ToolbarSpacer>
+			<Button icon="sap-icon://source-code" type="Transparent">
+				<layoutData>
+					<OverflowToolbarLayoutData group="2"/>
+				</layoutData>
+			</Button>
+			<Button icon="sap-icon://card" type="Transparent">
+				<layoutData>
+					<OverflowToolbarLayoutData group="2"/>
+				</layoutData>
+			</Button>
+			<ToolbarSeparator>
+				<layoutData>
+					<OverflowToolbarLayoutData group="2"/>
+				</layoutData>
+			</ToolbarSeparator>
+			<Button icon="sap-icon://action-settings" type="Transparent"/>
+			<Button icon="sap-icon://bell" type="Transparent">
+				<layoutData>
+					<OverflowToolbarLayoutData priority="NeverOverflow"/>
+				</layoutData>
+			</Button>
+			<ToolbarSeparator />
+			<Avatar src="test-resources/sap/tnt/images/Woman_avatar_01.png" displaySize="XS" press=".onAvatarPressed">
+				<layoutData>
+					<OverflowToolbarLayoutData priority="NeverOverflow"/>
+				</layoutData>
+			</Avatar>
+		</tnt:ToolHeader>
+	</ScrollContainer>
 </mvc:View>
