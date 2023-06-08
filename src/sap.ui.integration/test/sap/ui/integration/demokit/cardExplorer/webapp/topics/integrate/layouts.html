@@ -16,6 +16,13 @@
 			</h1>
 			<p>Cards have responsive behavior and could be used in different layouts, homepages and dashboards.
 			</p>
+			<h2 id="layoutRequirements">
+				Layout Requirements
+			</h2>
+			<p>
+				The layout that the cards are placed in shouldn't limit their height growth, otherwise their content might be truncated.
+				Use "min-height" or GridContainer's "minRows" options if a minimum height is needed in the layout.
+			</p>
 			<h2 id="recommendendLayouts">
 				Recommended Layouts
 			</h2>
@@ -52,8 +59,6 @@
 				To create a home page or a dashboard, you can place your cards into the sap.f.GridContainer.
 				You need to specify the number of columns, which the card will take.
 				The card's height (number of rows) is automatically calculated, depending on the card content.
-				<br />
-				<br />
 				An exception is the Analytical Card, where you can specify also the "minRows" property and
 				the card will stretch to any given dimension.
 				The sap.f.GridContainer will arrange the cards in the best possible way.

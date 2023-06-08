@@ -17,30 +17,41 @@
 			</h1>
 			<p>
 				By default the card has 100% width and auto height.
-				This means the card takes the 100% of the surrounding container's width
-				and the height is automatically calculated, depending on the card content.
+				This means the card takes the 100% of the surrounding container's width and the height should grow depending on the card content.
+				However, this behavior is highly dependent on the layout that the card is put in.
+			</p>
+			<p>
+				In order to limit the height grow of the card indefinitely the card developer should use property "maxItems" for List, Table and Timeline cards.
+			</p>
+			<h2 id="layout">
+				Layout
+			</h2>
+			<p>
+				The layout in which the card will be placed will be essential for the card's display.
+				It is responsibility of the host developer to create a layout that avoids card truncation.
+				For more information read the <a href="../../../index.html#/integrate/layouts/layoutRequirements" target="_parent">Layout Requirements</a>.
 			</p>
 			<h2 id="responsive">
 				Responsive Behavior
 			</h2>
 			<p>
-				Some of the cards can rearrange their content, depending on their width. Such cards are:
+				Some of the cards can rearrange their content automatically, depending on the provided width. Such cards are:
 			</p>
 			<ul>
-				<li><a href="../../index.html#/explore/calendar" target="_parent">Calendar Card</a></li>
-				<li><a href="../../index.html#/explore/object" target="_parent">Object Card</a></li>
+				<li><a href="../../../index.html#/explore/calendar" target="_parent">Calendar Card</a></li>
+				<li><a href="../../../index.html#/explore/object" target="_parent">Object Card</a></li>
 			</ul>
 			<h2 id="minItemsMaxItems">
 				minItems and maxItems Properties
 			</h2>
 			<p>
-				The minItems property defines the minimum number of expected items in the card. Its purpose is the calculation of the minimum card height, based on estimated item's height.
-				When minItems is not defined, then the maxItems or pageSize will be used for calculating the minimum card height.
+				The "minItems" property defines the minimum number of expected items in the card. Its purpose is the calculation of the minimum card height, based on estimated item's height.
+				When "minItems" is not defined, then the "maxItems" or "pageSize" will be used for calculating the minimum card height.
 				This calculation is needed to prevent the card of changing its height too much, until data is loaded.
-				Note that there will be an empty space if you set minItems to 5, but there are only 3 items.
+				Note that there will be an empty space if you set "minItems" to 5, but there are only 3 items.
 				<br />
 				<br />
-				The maxItems property defines the maximum number of items the card may contain.
+				The "maxItems" property defines the maximum number of items the card may contain.
 				It is used to set a (preliminary) sizing limit in the model, used during the initial loading animation.
 			<pre class="lang-json">
 {
@@ -56,7 +67,7 @@
 </pre>
 			<br />
 			<div class="messageStripWarning">
-				Because of UI5 data model, the maximum number of displayed items is 100.
+				The maximum number of displayed items depends on the "sap.card"/configuration/modelSizeLimit property, which is 1000 by default.
 			</div>
 			<br />
 			<p>The content minItems and maxItems properties can be used in:</p>
@@ -70,9 +81,8 @@
 				requiredHeight and requiredWidth Properties
 			</h2>
 			<p>
-				The requiredHeight and requiredWidth properties can be used by the host environment to
-				indicate the minimum space required by the card
-				if the end user tries to put the card on too narrow or too short space.
+				You should provide "requiredHeight" and "requiredWidth" properties to hint the hosting environment if the end user is trying
+				to put it on too narrow or too short space.
 			</p>
 
 			<pre class="lang-json">
