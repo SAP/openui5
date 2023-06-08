@@ -1186,6 +1186,20 @@ sap.ui.define([
 						|| oAction === aVisibleActions[0];
 			})[0];
 
+			// Clean action sheet CSS class
+			var oActionCtrl = oActionToBeMoved._getControl && oActionToBeMoved._getControl();
+			if (oActionCtrl) {
+				var AC_CLASS_PREFIX = "sapMActionSheet";
+				oActionCtrl.aCustomStyleClasses
+					.filter(function (sStyleClass) {
+						return sStyleClass.indexOf(AC_CLASS_PREFIX) > -1;
+					})
+					.forEach(function (sACStyleClass) {
+						oActionCtrl.removeStyleClass(sACStyleClass);
+					});
+			}
+
+
 			this._addShareMenuSingleAction(oActionToBeMoved);
 		}
 	};
