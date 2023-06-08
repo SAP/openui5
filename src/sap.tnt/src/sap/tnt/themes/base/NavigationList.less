@@ -34,6 +34,20 @@
 	padding: @_sap_tnt_NavigationList_Padding;
 	list-style: none;
 	box-sizing: border-box;
+	overflow: hidden auto;
+}
+
+.sapTntNavLI.sapTntNavLICollapsed {
+	overflow: visible hidden;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.sapTnTNavLIOverflow {
+	flex: 1;
+	display: flex;
+	flex-direction: column-reverse;
 }
 
 .sapTntNavLI ul {
@@ -121,6 +135,10 @@
 		width: 1.125rem;
 		padding: 0.6875rem 0.9375rem;
 	}
+}
+
+.sapTnTNavLIHiddenItem {
+	display: none;
 }
 
 .sapTntNavLIPopup {
@@ -257,7 +275,6 @@
 }
 
 .sapTntNavLICollapsed .sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled) {
-	overflow: hidden;
 	border-bottom: none;
 
 	// create the selection indicator with pseudo element, in order to avoid it having border-radius
@@ -319,6 +336,15 @@
 	// nested items
 	.sapTntNavLIGroupItem .sapMText {
 		padding-left: @_sap_tnt_NavigationList_NoIconsNestedItemPadding;
+	}
+}
+
+.sapTntNavLIMenu:not(.sapUiSubmenu) li {
+	font-size: @sapUiFontSize;
+	font-weight: @_sap_tnt_NavigationList_GroupTextWeight;
+
+	.sapUiIcon {
+		color: @_sap_tnt_NavigationList_IconColor;
 	}
 }
 

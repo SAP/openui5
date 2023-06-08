@@ -2,14 +2,7 @@
 <html>
 <head>
 	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<title></title>
-
-	<style>
-		html,
-		body {
-			height: 100%;
-		}
-	</style>
+	<title>ToolPage test page</title>
 	<script src="shared-config.js"></script>
 	<script
 			src="../../../resources/sap-ui-core.js"
@@ -46,11 +39,13 @@
 				icon: 'sap-icon://building',
 				enabled: false
 			}, {
-				title: 'Root Item',
+				title: 'Unselectable Root Item 3',
 				icon: 'sap-icon://card',
 				expanded: false,
+				selectable: false,
 				items: [{
-					title: 'Child Item'
+					title: 'Unselectable Child Item',
+					selectable: false
 				}, {
 					title: 'Child Item'
 				}, {
@@ -256,6 +251,7 @@
 				href: '#/fixeditem'
 			}, {
 				title: 'www.sap.com',
+				selectable: false,
 				icon: 'sap-icon://building',
 				key: 'fixeditem1',
 				href: 'https://www.sap.com',
@@ -279,10 +275,12 @@
 						icon: '{icon}',
 						enabled: '{enabled}',
 						expanded: '{expanded}',
+						selectable: '{selectable}',
 						key: '{key}',
 						href: '{href}',
 						items: {
 							template: new sap.tnt.NavigationListItem({
+								selectable: '{selectable}',
 								text: '{title}',
 								key: '{key}',
 								href: '{href}',
@@ -300,6 +298,7 @@
 				items: {
 					template: new sap.tnt.NavigationListItem({
 						text: '{title}',
+						selectable: '{selectable}',
 						icon: '{icon}',
 						key: '{key}',
 						href: '{href}',

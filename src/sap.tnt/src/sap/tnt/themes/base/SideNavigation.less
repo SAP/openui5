@@ -18,7 +18,8 @@
 .sapTntSideNavigation {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  flex: 1;
+  min-height: 0;
   box-sizing: border-box;
   overflow: hidden;
   background: @sapUiListBackground;
@@ -40,7 +41,6 @@ html.sap-tablet:not(html.sap-combi) {
 }
 
 .sapTntSideNavigationNotExpanded {
-
 	.sapTntNavLIText, .sapTntNavLIExpandIcon  {
 		display: none;
 	}
@@ -61,15 +61,21 @@ html.sap-tablet:not(html.sap-combi) {
 }
 
 .sapTntSideNavigationFlexible {
-	-webkit-box-flex: 1;
-	-webkit-flex-grow: 1;
-	flex-grow: 1;
-	-webkit-flex-basis: 100%;
-	flex-basis: 100%;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
 	position: relative;
 	overflow: hidden;
 	box-sizing: border-box;
 	outline: none;
+}
+
+.sapTntSideNavigationFlexibleContent {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
 }
 
 .sapTntSideNavigationSeparator {
@@ -84,57 +90,11 @@ html.sap-tablet:not(html.sap-combi) {
   position: relative;
 }
 
-.sapTntSideNavigationVerticalScrolling {
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 10rem;
-}
-
-/* Styles for layout with arrows
-   ========================================================================== */
-
-.sapTntSideNavigationScrollIcon {
-  display: none;
-  padding: 0.6875rem 0;
-  outline: none;
-  -webkit-user-select: none;  /* Chrome all / Safari all */
-  -moz-user-select: none;     /* Firefox all */
-  user-select: none;
-  color: @sapUiContentIconColor;
-}
-
-.sapTntSideNavigationScrollIcon.sapUiIcon:focus {
-  outline: none;
-}
-
-.sapTntSideNavigationScrollIconDisabled {
-  cursor: auto;
-}
-
-.sapTntSideNavigationScrollIconUp {
-  border-bottom: 1px solid @sapUiListBorderColor;
-}
-
-.sapTntSideNavigationScrollIconDown {
-  border-top: 1px solid @sapUiListBorderColor;
-}
-
-.sapTntSideNavigationScrollIcon:not(.sapTntSideNavigationScrollIconDisabled):hover {
-  background-color: @sapUiListHoverBackground;
-}
-
-.sapTntSideNavigationScrollIcon:not(.sapTntSideNavigationScrollIconDisabled):active {
-  background-color: @sapUiListActiveBackground;
-  color: @sapUiListActiveTextColor;
-}
-
 /*  Compact size
    ========================================================================== */
 
 .sapUiSizeCompact {
-
 	.sapTntSideNavigationNotExpanded {
-
 		.sapTntSideNavigationSeparator {
 			margin: @_sap_tnt_SideNavigation_NavigationSeparatorMarginCollapsed;
 		}
@@ -142,9 +102,5 @@ html.sap-tablet:not(html.sap-combi) {
 
 	.sapTntSideNavigationSeparator {
 		margin: @_sap_tnt_SideNavigation_NavigationSeparatorMarginCollapsed;
-	}
-
-	.sapTntSideNavigationScrollIcon {
-		padding: 0.5rem 0;
 	}
 }
