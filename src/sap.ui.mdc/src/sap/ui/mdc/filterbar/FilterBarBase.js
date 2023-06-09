@@ -71,6 +71,7 @@ sap.ui.define([
 			designtime: "sap/ui/mdc/designtime/filterbar/FilterBarBase.designtime",
 			defaultAggregation: "filterItems",
 			interfaces : [
+				"sap.ui.mdc.IFilterSource",
 				"sap.ui.mdc.IFilter",
 				"sap.ui.mdc.IxState"
 			],
@@ -842,7 +843,7 @@ sap.ui.define([
 	/**
 	 * Triggers the search.
 	 * @public
-	 * @returns {Promise} Returns a Promise which resolves after the validation of erroneous fields has been propagated.
+	 * @returns {Promise} In case the property {@link sap.ui.mdc.FilterBarDelegate#setSuspendSelection suspendSelection} is set to <code>true</code> the method will be immediatelly resolved, otherwise it returns the result of the {@link sap.ui.mdc.FilterBarDelegate#validate} call.
 	 */
 	FilterBarBase.prototype.triggerSearch = function() {
 		if (this.getSuspendSelection()) {
