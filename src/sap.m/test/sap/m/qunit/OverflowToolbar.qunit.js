@@ -30,6 +30,7 @@ sap.ui.define([
 	"sap/m/Slider",
 	"sap/m/MenuItem",
 	"sap/m/Menu",
+	"sap/m/Panel",
 	"sap/m/Popover",
 	"sap/m/OverflowToolbarAssociativePopover",
 	"sap/m/OverflowToolbarAssociativePopoverControls",
@@ -68,6 +69,7 @@ sap.ui.define([
 	Slider,
 	MenuItem,
 	Menu,
+	Panel,
 	Popover,
 	OverflowToolbarAssociativePopover,
 	OverflowToolbarAssociativePopoverControls,
@@ -3857,6 +3859,53 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(oTable.getItems()[0].getContentAnnouncement(), "Button Test Button Button " + sExpectedTooltip, "here");
+	});
+
+	QUnit.test("OverflowToolbar recalculates controls' sizes when there are content with relative width and OFT loses width", function (assert) {
+		//Arrange
+		var oOtb = new OverflowToolbar({
+			content: [
+				new Button({
+					width: "20%",
+					text: "Test Button"
+				}),
+				new Button({
+					text: "Test Button 2"
+				})
+			]
+		}),
+		oPanel = new Panel({
+			content: oOtb
+		}),
+		oPanelRerenderingDelegate = {
+			onAfterRendering: function () {
+				oPanel.removeEventDelegate(oPanelRerenderingDelegate);
+				oPanel.setWidth("500px");
+				oSpy = sinon.spy(oOtb, "_cacheControlsInfo");
+
+				oOtb.addEventDelegate({
+					onAfterRendering: function () {
+						// Assert
+						assert.ok(oSpy.calledOnce, "_cacheControlsInfo is called");
+
+						// Clean up
+						oPanel.destroy();
+						fnDone();
+					}
+				});
+			}
+		},
+		fnDone = assert.async(),
+		oSpy;
+
+		assert.expect(1);
+
+		//Act
+		oPanel.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oPanel.setWidth("0px");
+		oPanel.addEventDelegate(oPanelRerenderingDelegate);
 	});
 
 	QUnit.module("Associative popover");
