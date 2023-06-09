@@ -15,27 +15,6 @@
 
 (function(__global) {
 	"use strict";
-	if ( __global.Promise === undefined || !__global.Promise.prototype.finally || __global.URLSearchParams === undefined ) {
-		var page = document.documentElement, pageStyle = page.style,
-			msg = "Microsoft Internet Explorer 11 and other legacy browsers are no longer supported. For more information, see ",
-			hrefText = "Internet Explorer 11 will no longer be supported by various SAP UI technologies in newer releases",
-			href = "https://blogs.sap.com/2021/02/02/internet-explorer-11-will-no-longer-be-supported-by-various-sap-ui-technologies-in-newer-releases/";
-
-		page.innerHTML = '<body style="margin:0;padding:0;overflow-y:hidden;background-color:#f7f7f7;text-align:center;width:100%;position:absolute;top:50%;transform:translate(0,-50%);"><div style="color:#32363a;font-family:Arial,Helvetica,sans-serif;font-size:.875rem;">' +
-			msg + '<a href="' + href + '" style="color:#4076b4;">' + hrefText + '</a>.</div></body>';
-		pageStyle.margin = pageStyle.padding = "0";
-		pageStyle.width = pageStyle.height = "100%";
-		if (__global.stop) { // Check for __global.stop first because Safari 11 has __global.stop and document.execCommand but document.execCommand('Stop') does not work in Safari 11
-			__global.stop();
-		} else {
-			document.execCommand('Stop');
-		}
-		throw new Error(msg + href);
-	}
-}(window));
-
-(function(__global) {
-	"use strict";
 
 	/*
 	 * Helper function that removes any query and/or hash parts from the given URL.
@@ -877,7 +856,7 @@
 	/**
 	 * A module/resource as managed by the module system.
 	 *
-	 * Each module is an object with the following properties
+	 * Each module has the following properties
 	 * <ul>
 	 * <li>{int} state one of the module states defined in this function</li>
 	 * <li>{string} url URL where the module has been loaded from</li>
@@ -886,193 +865,198 @@
 	 * <li>{string} error an error description for state <code>FAILED</code></li>
 	 * <li>{any} content the content of the module as exported via define()<(li>
 	 * </ul>
-	 *
-	 * @param {string} name Name of the module, including extension
 	 */
-	function Module(name) {
-		this.name = name;
-		this.state = INITIAL;
-		/*
-		 * Whether processing of the module is complete.
-		 * This is very similar to, but not the same as state >= READY because declareModule() sets state=READY very early.
-		 * That state transition is 'legacy' from the library-all files; it needs to be checked whether it can be removed.
+	class Module {
+
+		/**
+		 * Creates a new Module.
+		 *
+		 * @param {string} name Name of the module, including extension
 		 */
-		this.settled = false;
-		this.url =
-		this._deferred =
-		this.data =
-		this.group =
-		this.error =
-		this.pending = null;
-		this.content = NOT_YET_DETERMINED;
-	}
-
-	Module.prototype.deferred = function() {
-		if ( this._deferred == null ) {
-			var deferred = this._deferred = {};
-			deferred.promise = new Promise(function(resolve,reject) {
-				deferred.resolve = resolve;
-				deferred.reject = reject;
-			});
-			// avoid 'Uncaught (in promise)' log entries
-			deferred.promise.catch(noop);
+		constructor(name) {
+			this.name = name;
+			this.state = INITIAL;
+			/*
+			* Whether processing of the module is complete.
+			* This is very similar to, but not the same as state >= READY because declareModule() sets state=READY very early.
+			* That state transition is 'legacy' from the library-all files; it needs to be checked whether it can be removed.
+			*/
+			this.settled = false;
+			this.url =
+			this._deferred =
+			this.data =
+			this.group =
+			this.error =
+			this.pending = null;
+			this.content = NOT_YET_DETERMINED;
 		}
-		return this._deferred;
-	};
 
-	Module.prototype.api = function() {
-		if ( this._api == null ) {
-			this._exports = {};
-			this._api = {
-				id: this.name.slice(0,-3),
-				exports: this._exports,
-				url: this.url,
-				config: noop
-			};
+		deferred() {
+			if ( this._deferred == null ) {
+				const deferred = this._deferred = {};
+				deferred.promise = new Promise(function(resolve,reject) {
+					deferred.resolve = resolve;
+					deferred.reject = reject;
+				});
+				// avoid 'Uncaught (in promise)' log entries
+				deferred.promise.catch(noop);
+			}
+			return this._deferred;
 		}
-		return this._api;
-	};
 
-	/**
-	 * Sets the module state to READY and either determines the value or sets
-	 * it from the given parameter.
-	 * @param {any} value Module value
-	 */
-	Module.prototype.ready = function(value) {
-		// should throw, but some tests and apps would fail
-		assert(!this.settled, "Module " + this.name + " is already settled");
-		this.state = READY;
-		this.settled = true;
-		if ( arguments.length > 0 ) {
-			// check arguments.length to allow a value of undefined
-			this.content = value;
+		api() {
+			if ( this._api == null ) {
+				this._exports = {};
+				this._api = {
+					id: this.name.slice(0,-3),
+					exports: this._exports,
+					url: this.url,
+					config: noop
+				};
+			}
+			return this._api;
 		}
-		this.deferred().resolve(wrapExport(this.value()));
-		if ( this.aliases ) {
-			value = this.value();
-			this.aliases.forEach(function(alias) {
-				Module.get(alias).ready(value);
-			});
-		}
-	};
 
-	Module.prototype.failWith = function(msg, cause) {
-		var err = makeModuleError(msg, this, cause);
-		this.fail(err);
-		return err;
-	};
-
-	Module.prototype.fail = function(err) {
-		// should throw, but some tests and apps would fail
-		assert(!this.settled, "Module " + this.name + " is already settled");
-		this.settled = true;
-		if ( this.state !== FAILED ) {
-			this.state = FAILED;
-			this.error = err;
-			this.deferred().reject(err);
+		/**
+		 * Sets the module state to READY and either determines the value or sets
+		 * it from the given parameter.
+		 * @param {any} value Module value
+		 */
+		ready(value) {
+			// should throw, but some tests and apps would fail
+			assert(!this.settled, "Module " + this.name + " is already settled");
+			this.state = READY;
+			this.settled = true;
+			if ( arguments.length > 0 ) {
+				// check arguments.length to allow a value of undefined
+				this.content = value;
+			}
+			this.deferred().resolve(wrapExport(this.value()));
 			if ( this.aliases ) {
+				value = this.value();
 				this.aliases.forEach(function(alias) {
-					Module.get(alias).fail(err);
+					Module.get(alias).ready(value);
 				});
 			}
 		}
-	};
 
-	Module.prototype.addPending = function(sDependency) {
-		(this.pending || (this.pending = [])).push(sDependency);
-	};
-
-	Module.prototype.addAlias = function(sAliasName) {
-		(this.aliases || (this.aliases = [])).push(sAliasName);
-		// add this module as pending dependency to the original
-		Module.get(sAliasName).addPending(this.name);
-	};
-
-	Module.prototype.preload = function(url, data, bundle) {
-		if ( this.state === INITIAL && !(fnIgnorePreload && fnIgnorePreload(this.name)) ) {
-			this.state = PRELOADED;
-			this.url = url;
-			this.data = data;
-			this.group = bundle;
+		failWith(msg, cause) {
+			const err = makeModuleError(msg, this, cause);
+			this.fail(err);
+			return err;
 		}
-		return this;
-	};
 
-	/**
-	 * Determines the value of this module.
-	 *
-	 * If the module hasn't been loaded or executed yet, <code>undefined</code> will be returned.
-	 *
-	 * @returns {any} Export of the module or <code>undefined</code>
-	 * @private
-	 */
-	Module.prototype.value = function() {
-
-		if ( this.state === READY ) {
-			if ( this.content === NOT_YET_DETERMINED ) {
-				// Determine the module value lazily.
-				// For AMD modules this has already been done on execution of the factory function.
-				// For other modules that are required synchronously, it has been done after execution.
-				// For the few remaining scenarios (like global scripts), it is done here
-				var oShim = mShims[this.name],
-					sExport = oShim && (Array.isArray(oShim.exports) ? oShim.exports[0] : oShim.exports);
-				// best guess for thirdparty modules or legacy modules that don't use sap.ui.define
-				this.content = getGlobalProperty( sExport || urnToUI5(this.name) );
+		fail(err) {
+			// should throw, but some tests and apps would fail
+			assert(!this.settled, "Module " + this.name + " is already settled");
+			this.settled = true;
+			if ( this.state !== FAILED ) {
+				this.state = FAILED;
+				this.error = err;
+				this.deferred().reject(err);
+				if ( this.aliases ) {
+					this.aliases.forEach(function(alias) {
+						Module.get(alias).fail(err);
+					});
+				}
 			}
-			return this.content;
 		}
 
-		return undefined;
-	};
+		addPending(sDependency) {
+			(this.pending || (this.pending = [])).push(sDependency);
+		}
 
-	/**
-	 * Checks whether this module depends on the given module.
-	 *
-	 * When a module definition (define) is executed, the requested dependencies are added
-	 * as 'pending' to the Module instance. This function checks if the oDependantModule is
-	 * reachable from this module when following the pending dependency information.
-	 *
-	 * Note: when module aliases are introduced (all module definitions in a file use an ID that differs
-	 * from the request module ID), then the alias module is also added as a "pending" dependency.
-	 *
-	 * @param {Module} oDependantModule Module which has a dependency to <code>oModule</code>
-	 * @returns {boolean} Whether this module depends on the given one.
-	 * @private
-	 */
-	Module.prototype.dependsOn = function(oDependantModule) {
-		var dependant = oDependantModule.name,
-			visited = Object.create(null);
+		addAlias(sAliasName) {
+			(this.aliases || (this.aliases = [])).push(sAliasName);
+			// add this module as pending dependency to the original
+			Module.get(sAliasName).addPending(this.name);
+		}
 
-		// log.debug("checking for a cycle between", this.name, "and", dependant);
-		function visit(mod) {
-			if ( !visited[mod] ) {
-				// log.debug("  ", mod);
-				visited[mod] = true;
-				var pending = mModules[mod] && mModules[mod].pending;
-				return Array.isArray(pending) &&
-					(pending.indexOf(dependant) >= 0 || pending.some(visit));
+		preload(url, data, bundle) {
+			if ( this.state === INITIAL && !(fnIgnorePreload && fnIgnorePreload(this.name)) ) {
+				this.state = PRELOADED;
+				this.url = url;
+				this.data = data;
+				this.group = bundle;
 			}
-			return false;
+			return this;
 		}
 
-		return this.name === dependant || visit(this.name);
-	};
+		/**
+		 * Determines the value of this module.
+		 *
+		 * If the module hasn't been loaded or executed yet, <code>undefined</code> will be returned.
+		 *
+		 * @returns {any} Export of the module or <code>undefined</code>
+		 * @private
+		 */
+		value() {
+			if ( this.state === READY ) {
+				if ( this.content === NOT_YET_DETERMINED ) {
+					// Determine the module value lazily.
+					// For AMD modules this has already been done on execution of the factory function.
+					// For other modules that are required synchronously, it has been done after execution.
+					// For the few remaining scenarios (like global scripts), it is done here
+					const oShim = mShims[this.name],
+						sExport = oShim && (Array.isArray(oShim.exports) ? oShim.exports[0] : oShim.exports);
+					// best guess for thirdparty modules or legacy modules that don't use sap.ui.define
+					this.content = getGlobalProperty( sExport || urnToUI5(this.name) );
+				}
+				return this.content;
+			}
 
-	/**
-	 * Find or create a module by its unified resource name.
-	 *
-	 * If the module doesn't exist yet, a new one is created in state INITIAL.
-	 *
-	 * @param {string} sModuleName Name of the module in URN syntax
-	 * @returns {Module} Module with that name, newly created if it didn't exist yet
-	 * @static
-	 */
-	Module.get = function(sModuleName) {
-		if (!mModules[sModuleName]) {
-			mModules[sModuleName] = new Module(sModuleName);
+			return undefined;
 		}
-		return mModules[sModuleName];
-	};
+
+		/**
+		 * Checks whether this module depends on the given module.
+		 *
+		 * When a module definition (define) is executed, the requested dependencies are added
+		 * as 'pending' to the Module instance. This function checks if the oDependantModule is
+		 * reachable from this module when following the pending dependency information.
+		 *
+		 * Note: when module aliases are introduced (all module definitions in a file use an ID that differs
+		 * from the request module ID), then the alias module is also added as a "pending" dependency.
+		 *
+		 * @param {Module} oDependantModule Module which has a dependency to <code>oModule</code>
+		 * @returns {boolean} Whether this module depends on the given one.
+		 * @private
+		 */
+		dependsOn(oDependantModule) {
+			const dependant = oDependantModule.name,
+				visited = Object.create(null);
+
+			// log.debug("checking for a cycle between", this.name, "and", dependant);
+			function visit(mod) {
+				if ( !visited[mod] ) {
+					// log.debug("  ", mod);
+					visited[mod] = true;
+					const pending = mModules[mod] && mModules[mod].pending;
+					return Array.isArray(pending) &&
+						(pending.indexOf(dependant) >= 0 || pending.some(visit));
+				}
+				return false;
+			}
+
+			return this.name === dependant || visit(this.name);
+		}
+
+		/**
+		 * Find or create a module by its unified resource name.
+		 *
+		 * If the module doesn't exist yet, a new one is created in state INITIAL.
+		 *
+		 * @param {string} sModuleName Name of the module in URN syntax
+		 * @returns {Module} Module with that name, newly created if it didn't exist yet
+		 */
+		static get(sModuleName) {
+			if (!mModules[sModuleName]) {
+				mModules[sModuleName] = new Module(sModuleName);
+			}
+			return mModules[sModuleName];
+		}
+
+	}
 
 	/*
 	 * Determines the currently executing module.
