@@ -3073,16 +3073,24 @@ sap.ui.define([
 
 		var sut = createSUT(false, false, "None", false);
 		var oBundle = Core.getLibraryResourceBundle("sap.m");
+		var oInvisibleMessage = ListBase.getInvisibleText();
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
+		var $noData = sut.$().find("#" + sut.getId() + "-nodata");
+		$noData.focus();
+
 		var $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
 		assert.strictEqual($noDataText.text(), oBundle.getText("TABLE_NO_COLUMNS"), "Table's no columns nodata-text contains correct string");
+		assert.strictEqual(oInvisibleMessage.getText(), oBundle.getText("TABLE_NO_COLUMNS"), "Invisible Message is set correct.");
 
 		setTimeout(function () {
 			sut.setNoData();
+			$noData.focus();
+
 			var $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
 			assert.strictEqual($noDataText.text(), oBundle.getText("TABLE_NO_COLUMNS"), "Table's no columns nodata-text contains correct string");
+			assert.strictEqual(oInvisibleMessage.getText(), oBundle.getText("TABLE_NO_COLUMNS"), "Invisible Message is set correct.");
 			done();
 
 			sut.setNoData(new IllustratedMessage());
@@ -3090,8 +3098,10 @@ sap.ui.define([
 				sut.setNoData();
 				Core.applyChanges();
 
+				$noData.focus();
 				var oNoColumnsMessage = sut.getAggregation("_noColumnsMessage");
 				assert.strictEqual($noDataText.children().get(0), oNoColumnsMessage.getDomRef(), "Table's nodata-text contains figure's DOM element");
+				assert.strictEqual(oInvisibleMessage.getText(), oBundle.getText("TABLE_NO_COLUMNS"), "Invisible Message is set correct.");
 
 				done();
 				sut.destroy();
