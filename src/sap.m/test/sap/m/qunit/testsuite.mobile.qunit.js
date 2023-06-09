@@ -1794,6 +1794,20 @@ sap.ui.define([
 					"./upload/UploadSetOpenFileDialog.qunit"
 				]
 			},
+			UploadSetTable: {
+				title: "Test Page for sap.m.upload.UploadSetTable",
+				coverage: {
+					only: "[sap/m/upload/UploadSetTable.js,sap/m/upload/UploadSetTableItem.js,sap/m/upload/UploadSetTableRenderer.js,sap/m/upload/UploadSetTableItemRenderer.js]"
+				},
+				ui5: {
+					language: "en",
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
+				},
+				module: [
+					"./upload/UploadSetTable.qunit",
+					"./upload/UploadSetTableItem.qunit"
+				]
+			},
 			VBox: {
 				title: "QUnit Page for sap.m.VBox"
 			},
