@@ -295,6 +295,8 @@ function(
 
 				/**
 				 * Specifies whether the suggestions highlighting is enabled.
+				 * <b>Note:</b> Due to performance constraints, the functionality will be disabled above 200 items.
+				 *
 				 * @since 1.46
 				 */
 				enableSuggestionsHighlighting: {type: "boolean", group: "Behavior", defaultValue: true},
