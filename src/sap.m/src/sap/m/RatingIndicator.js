@@ -11,9 +11,10 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	'sap/ui/core/LabelEnablement'
 ],
-	function(library, Control, Parameters, RatingIndicatorRenderer, KeyCodes, Log, jQuery, Configuration) {
+	function(library, Control, Parameters, RatingIndicatorRenderer, KeyCodes, Log, jQuery, Configuration, LabelEnablement) {
 	"use strict";
 
 
@@ -114,7 +115,14 @@ sap.ui.define([
 				 * Defines whether the user is allowed to edit the RatingIndicator. If editable is false the control is focusable, and in the tab chain but not interactive.
 				 * @since 1.52.0
 				 */
-				editable : {type : "boolean", group : "Behavior", defaultValue : true}
+				editable : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Indicates that the control is required. This property is only needed for accessibility purposes when a single relationship between
+				 * the control and a label (see aggregation <code>labelFor</code> of <code>sap.m.Label</code>) cannot be established
+				 * (e.g. one label should label multiple controls).
+				 * @since 1.116
+				 */
+				required : {type : "boolean", group : "Misc", defaultValue : false}
 			},
 			associations: {
 				/**
@@ -262,6 +270,10 @@ sap.ui.define([
 		} else {
 			this._setContentDensitySizes();
 		}
+	};
+
+	RatingIndicator.prototype._isRequired = function () {
+		return this.getRequired() || LabelEnablement.isRequired(this);
 	};
 
 	RatingIndicator.prototype._setDisplayOnlySizes = function () {

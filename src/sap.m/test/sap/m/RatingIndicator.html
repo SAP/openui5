@@ -113,7 +113,7 @@
 						value: 2.5
 					});
 
-				var oLabel3 = new Label({text:'Medium active rating'}),
+				var oLabel3 = new Label({text:'Medium active rating', required: true, labelFor: "mediumActiveRI"}),
 					oRating3 = new RatingIndicator("mediumActiveRI", {
 						iconSize: "1.375rem",
 						value: 2.5
@@ -126,10 +126,11 @@
 						value: 2.5
 					});
 
-				var oLabel5 = new Label({text:'Large active rating'}),
+				var oLabel5 = new Label({text:'Large active rating', labelFor: "largeActiveRI"}),
 					oRating5 = new RatingIndicator("largeActiveRI", {
 						iconSize: "2rem",
-						value: 2.5
+						value: 2.5,
+						required: true
 					});
 
 				var oLabel6 = new Label({text:'Default active rating'}),
