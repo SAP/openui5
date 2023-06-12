@@ -1,0 +1,12 @@
+{
+  "1.116.0": {
+    "date": "June 2023",
+    "notes": [
+      {
+        "id": "f39a8af1a5867522f0fdf60b7198feba3b4ac34b",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.MenuItem: now focusable when disabled"
+      }
+    ]
+  }
+}

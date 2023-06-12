@@ -3,6 +3,22 @@
     "date": "June 2023",
     "notes": [
       {
+        "id": "2696e5caef6cf4367b9c00090ae6002b8b3000dd",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Focus on HCW and HCB Horizon themes is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370075171"
+          }
+        ]
+      },
+      {
+        "id": "e7cf6b0d9eb2c357147148e919a1739d2e8badd9",
+        "type": "FEATURE",
+        "text": " sap.m.SearchField: Horizon themes updated style parameters applied"
+      },
+      {
         "id": "45b45b83f16872b85d9445cdf83d440bc48b63e3",
         "type": "FEATURE",
         "text": " sap.ui.unified.Calendar: implement visual spec changes"

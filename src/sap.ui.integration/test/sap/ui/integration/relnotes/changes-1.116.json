@@ -1,0 +1,18 @@
+{
+  "1.116.0": {
+    "date": "June 2023",
+    "notes": [
+      {
+        "id": "1f50b65186ac432c0de54cda40f8bb40a480a3f1",
+        "type": "FIX",
+        "text": " Integration Cards: refreshData now resets pending update interval",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370061342"
+          }
+        ]
+      }
+    ]
+  }
+}

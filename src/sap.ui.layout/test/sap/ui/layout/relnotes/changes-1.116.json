@@ -1,0 +1,18 @@
+{
+  "1.116.0": {
+    "date": "June 2023",
+    "notes": [
+      {
+        "id": "9a496e640bb851bd9bf4d680fd95c28a94b7ba04",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: fixed getScrollDelegate method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370031057"
+          }
+        ]
+      }
+    ]
+  }
+}

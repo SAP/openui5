@@ -1,0 +1,12 @@
+{
+  "1.116.0": {
+    "date": "June 2023",
+    "notes": [
+      {
+        "id": "4bc13a3fdf0678964813f45ee51858a6ab009e4a",
+        "type": "FIX",
+        "text": " MDC: Public Documentation adjustments"
+      }
+    ]
+  }
+}

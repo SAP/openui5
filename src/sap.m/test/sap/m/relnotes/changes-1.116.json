@@ -3,9 +3,67 @@
     "date": "June 2023",
     "notes": [
       {
+        "id": "ca133b74ddb96b1ecefcc682fc84989c4caa55ce",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: removed transparent background in Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004385772023"
+          }
+        ]
+      },
+      {
+        "id": "00408a63c58a75fc344a897b641d7993575cb8bc",
+        "type": "FEATURE",
+        "text": " sap.m.RatingIndicator: Required property introduced"
+      },
+      {
+        "id": "628b83777184cda2a5a48c57262fa8ed234cb905",
+        "type": "FIX",
+        "text": " sap.m.Input: Add documentation for enableSuggestionsHiglighting performance limitation"
+      },
+      {
+        "id": "e7cf6b0d9eb2c357147148e919a1739d2e8badd9",
+        "type": "FEATURE",
+        "text": " sap.m.SearchField: Horizon themes updated style parameters applied"
+      },
+      {
+        "id": "54685e4df6a2c91b0078e05f315c5bb54213fbf6",
+        "type": "FEATURE",
+        "text": " sap.m Date & Time controls: changed the default placeholder text"
+      },
+      {
+        "id": "f39a8af1a5867522f0fdf60b7198feba3b4ac34b",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.MenuItem: now focusable when disabled"
+      },
+      {
+        "id": "a7c64713d0d2970cf2ccb21521e2a6ef820e426f",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: Title information is now read only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380003779"
+          }
+        ]
+      },
+      {
         "id": "590a183a754a879925b78fbce88363b5cc51d94a",
         "type": "FIX",
         "text": " sap/m/SearchFieldRenderer: Enforce the ignore of key fallback"
+      },
+      {
+        "id": "2fd9c3f05e7188a8dfe1d7b9ac67396bfc762aa8",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Align icon with status text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380041661"
+          }
+        ]
       },
       {
         "id": "6ff6b91d532c4c9eb146029a9827b8c6cf99ebcd",
@@ -77,6 +135,11 @@
             "reference": "2380053379"
           }
         ]
+      },
+      {
+        "id": "e7feeab7fd92f0fb8064ed76adb089022a22de1f",
+        "type": "FIX",
+        "text": " sap.m.FormattedText,sap.m.FeedListItem: Allow to prevent navigation"
       }
     ]
   }
