@@ -1,7 +1,18 @@
 {
   "1.115.0": {
-    "date": "May 2023",
+    "date": "June 2023",
     "notes": [
+      {
+        "id": "5edb392df6d08dd3b2d0a3e19484bcc6512aef32",
+        "type": "FIX",
+        "text": " MDC: Public Documentation adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
       {
         "id": "9ada4ac5635155cf609d8ac8ca12c3d8619a8b01",
         "type": "FIX",
