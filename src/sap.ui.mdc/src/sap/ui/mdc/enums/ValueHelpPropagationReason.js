@@ -15,22 +15,19 @@ sap.ui.define(function () {
         /**
          * Triggered by connected control after processing valuehelp output
          *
-         * @private
-         * @ui5-restricted sap.fe
+         * @public
          */
          ControlChange: "ControlChange",
         /**
          * Triggered by <code>ValueHelp</code> itself on selection
          *
-         * @private
-         * @ui5-restricted sap.fe
+         * @public
          */
          Select: "Select",
         /**
          * Triggered by <code>ValueHelp</code> itself on <code>getItemForValue</code>
          *
-         * @private
-         * @ui5-restricted sap.fe
+         * @public
          */
          Info: "Info"
     };

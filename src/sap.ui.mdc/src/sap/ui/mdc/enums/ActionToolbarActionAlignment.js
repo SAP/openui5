@@ -16,10 +16,12 @@ sap.ui.define(function() {
 	var ActionToolbarActionAlignment = {
 		/**
 		 * Align to the beginning
+		 * @public
 		 */
 		Begin: "Begin",
 		/**
 		 * Align to the end
+		 * @public
 		 */
 		End: "End"
 	};
