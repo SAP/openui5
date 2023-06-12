@@ -564,6 +564,9 @@ sap.ui.define([
 					"hideControl": "default",
 					"unhideControl": "default",
 					"moveControls": "default"
+				},
+				"sap.m.ObjectHeader": {
+					"moveControls": "default"
 				}
 			},
 			//Configuration used for rule loading of Support Assistant
