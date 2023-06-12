@@ -25,7 +25,7 @@ sap.ui.define(
 		 * @class The FilterContainer is a IFilterContainer implementation for <code>AlignedFlowLayout</code>
 		 * @extends sap.ui.mdc.filterbar.IFilterContainer
 		 * @constructor
-		 * @protected
+		 * @private
 		 * @since 1.84.0
 		 * @alias sap.ui.mdc.filterbar.vh.FilterContainer
 		 */

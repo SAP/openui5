@@ -32,12 +32,12 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Object to label gropus on value help dialog.
+	 * Object to label groups in the value help dialog.
 	 *
 	 * @static
 	 * @constant
 	 * @typedef {object} sap.ui.mdc.valuehelp.content.GroupLabel
-	 * @property {string} label Label with counter. The placeholder for counter needs to defined wihl <code>{0}</code>
+	 * @property {string} label Label with counter. The placeholder for counter needs to be defined with <code>{0}</code>
 	 * @property {string} nnLabel Label without counter
 	 * @public
 	 */
