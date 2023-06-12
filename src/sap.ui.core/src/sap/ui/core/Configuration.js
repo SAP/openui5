@@ -329,12 +329,11 @@ sap.ui.define([
 
 				return oConfiguration;
 			}
+			this.oFormatSettings = new FormatSettings(this);
 		},
 
 		init: function() {
 			this.bInitialized = true;
-
-			this.oFormatSettings = new FormatSettings(this);
 
 			/* Object that carries the real configuration data */
 			var config = this; // eslint-disable-line consistent-this
