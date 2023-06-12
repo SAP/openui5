@@ -268,6 +268,7 @@ sap.ui.define([
 	 * @name sap.ui.unified.MenuTextFieldItem#getSubmenu
 	 * @deprecated As of version 1.21, the aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 * @function
+	 * @ui5-not-supported
 	 */
 
 	/**
@@ -277,6 +278,7 @@ sap.ui.define([
 	 * @public
 	 * @name sap.ui.unified.MenuTextFieldItem#destroySubmenu
 	 * @deprecated As of version 1.21, the aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
+	 * @ui5-not-supported
 	 * @function
 	 */
 
@@ -287,6 +289,7 @@ sap.ui.define([
 	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @deprecated As of version 1.21, the aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
+	 * @ui5-not-supported
 	 */
 	MenuTextFieldItem.prototype.setSubmenu = function(oMenu){
 		Log.warning("The aggregation 'submenu' is not supported for this type of menu item.", "", "sap.ui.unified.MenuTextFieldItem");
