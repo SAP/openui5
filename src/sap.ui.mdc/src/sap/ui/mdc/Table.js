@@ -1997,8 +1997,7 @@ sap.ui.define([
 			this._sAggregation = "items";
 			// map bindItems to bindRows for Mobile Table to enable reuse of rebind mechanism
 			this._oTable.bindRows = this._oTable.bindItems;
-			// Enable active column headers by default
-			this._oTable.bActiveHeaders = true;
+			this._oTable.bActiveHeaders = this.getActiveP13nModes().length > 0;
 			this._oTable.attachEvent("columnPress", this._onResponsiveTableColumnPress, this);
 		} else {
 			this._oTable = GridTableType.createTable(this.getId() + "-innerTable", {

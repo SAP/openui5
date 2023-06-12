@@ -70,7 +70,6 @@ sap.ui.define([
 		return oTable._fullyInitialized().then(function () {
 			oTable.setEnableColumnResize(false);
 
-			assert.ok(oTable._oTable.bActiveHeaders, "The table has active headers");
 			assert.ok(!oTable._oColumnHeaderMenu, "The ColumnMenu is not initialized");
 			assert.ok(!oTable._oQuickActionContainer, "The QuickActionContainer is not initialized");
 			assert.ok(!oTable._oItemContainer, "The ItemContainer is not initialized");

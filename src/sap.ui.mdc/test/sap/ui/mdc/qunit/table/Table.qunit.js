@@ -225,6 +225,30 @@ sap.ui.define([
 		assert.ok(this.oTable.isA("sap.ui.mdc.IxState"));
 	});
 
+	QUnit.test("ResponsiveTable - bActiveHeaders", function(assert) {
+		var oTable = new Table({
+			type: "ResponsiveTable"
+		});
+
+		// place the table at the dom
+		oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		return oTable._fullyInitialized().then(function() {
+			assert.notOk(oTable._oTable.bActiveHeaders);
+
+			oTable.destroy();
+			oTable = new Table({
+				type: "ResponsiveTable",
+				p13nMode: ["Sort"]
+			});
+
+			return oTable._fullyInitialized().then(function() {
+				assert.ok(oTable._oTable.bActiveHeaders);
+			});
+		});
+	});
+
 	QUnit.test("Create UI5 Grid Table (default) after initialise", function(assert) {
 		assert.ok(!this.oTable._oTable);
 		assert.ok(!this.oTable._oTemplate);
@@ -2110,8 +2134,6 @@ sap.ui.define([
 		]);
 
 		return this.oTable._fullyInitialized().then(function() {
-			assert.ok(this.oTable._oTable.bActiveHeaders);
-
 			var oInnerColumn = this.oTable._oTable.getColumns()[0];
 			assert.ok(oInnerColumn.isA("sap.m.Column"));
 			this.oTable._oTable.fireEvent("columnPress", {
