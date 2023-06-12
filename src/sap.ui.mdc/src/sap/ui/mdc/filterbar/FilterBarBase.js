@@ -466,7 +466,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the external conditions of the inner condition model.
-	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#p13nMode} property configuration.
+	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#setP13nMode p13nMode} property configuration.
 	 *
 	 * @public
 	 * @returns {sap.ui.mdc.State} Object containing the current status of the <code>FilterBarBase</code>
@@ -843,7 +843,7 @@ sap.ui.define([
 	/**
 	 * Triggers the search.
 	 * @public
-	 * @returns {Promise} In case the property {@link sap.ui.mdc.FilterBarDelegate#setSuspendSelection suspendSelection} is set to <code>true</code> the method will be immediatelly resolved, otherwise it returns the result of the {@link sap.ui.mdc.FilterBarDelegate#validate} call.
+	 * @returns {Promise} In case the property {@link sap.ui.mdc.FilterBarBase#setSuspendSelection suspendSelection} is set to <code>true</code> the method will be immediatelly resolved, otherwise it returns the result of the {@link sap.ui.mdc.FilterBarBase#validate} call.
 	 */
 	FilterBarBase.prototype.triggerSearch = function() {
 		if (this.getSuspendSelection()) {

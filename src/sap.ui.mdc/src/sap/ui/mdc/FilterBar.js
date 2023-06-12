@@ -226,7 +226,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the external conditions of the inner condition model.
-	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#p13nMode} property configuration.
+	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#setP13nMode p13nMode} property configuration.
 	 * @public
 	 * @returns {sap.ui.mdc.State} Object containing the current status of the <code>FilterBar</code>
 	 */
