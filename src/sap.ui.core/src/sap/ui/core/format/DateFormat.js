@@ -450,29 +450,34 @@ sap.ui.define([
 	 * </ul>
 	 */
 	DateFormat.getDateTimeWithTimezoneInstance = function(oFormatOptions, oLocale) {
-		// do not modify the input format options
 		if (oFormatOptions && !(oFormatOptions instanceof Locale)) {
-			oFormatOptions = Object.assign({}, oFormatOptions);
-			// translate old showTimezone values (backward compatibility)
-			if (typeof oFormatOptions.showTimezone === "string") {
-				var sShowTimezone = oFormatOptions.showTimezone;
-				if (oFormatOptions.showDate === undefined && oFormatOptions.showTime === undefined) {
-					if (sShowTimezone === "Hide") {
-						oFormatOptions.showTimezone = false;
-					} else if (sShowTimezone === "Only") {
-						oFormatOptions.showDate = false;
-						oFormatOptions.showTime = false;
+			/** @deprecated As of version 1.101.0 */
+			(function () {
+				// do not modify the input format options
+				oFormatOptions = Object.assign({}, oFormatOptions);
+				// translate old showTimezone values (backward compatibility)
+				if (typeof oFormatOptions.showTimezone === "string") {
+					var sShowTimezone = oFormatOptions.showTimezone;
+					if (oFormatOptions.showDate === undefined && oFormatOptions.showTime === undefined) {
+						if (sShowTimezone === "Hide") {
+							oFormatOptions.showTimezone = false;
+						} else if (sShowTimezone === "Only") {
+							oFormatOptions.showDate = false;
+							oFormatOptions.showTime = false;
+						}
 					}
+					oFormatOptions.showTimezone = sShowTimezone !== "Hide";
 				}
-				oFormatOptions.showTimezone = sShowTimezone !== "Hide";
-			}
+			}());
 			if (oFormatOptions.showDate === false
 				&& oFormatOptions.showTime === false
 				&& oFormatOptions.showTimezone === false) {
-				throw new TypeError("Invalid Configuration. One of the following format options must be true: showDate, showTime or showTimezone.");
+				throw new TypeError("Invalid Configuration. One of the following format options must be true: "
+					+ "showDate, showTime or showTimezone.");
 			}
 		}
-		return this.createInstance(oFormatOptions, oLocale, DateFormat._getDateTimeWithTimezoneInfo(oFormatOptions || {}));
+		return this.createInstance(oFormatOptions, oLocale,
+			DateFormat._getDateTimeWithTimezoneInfo(oFormatOptions || {}));
 	};
 
 	/**
