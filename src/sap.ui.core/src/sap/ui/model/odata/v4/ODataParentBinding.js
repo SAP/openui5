@@ -702,13 +702,13 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   A context of this binding which is the direct or indirect parent of the child binding.
 	 *   Initially it is the child binding's parent context (See
-	 *   {@link sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache}). When a binding
-	 *   delegates up to its parent binding, it passes its own parent context adjusting
+	 *   {@link sap.ui.model.odata.v4.ODataBinding#fetchOrGetQueryOptionsForOwnCache}). When a
+	 *   binding delegates up to its parent binding, it passes its own parent context adjusting
 	 *   <code>sChildPath</code> accordingly.
 	 * @param {string} sChildPath
 	 *   The child binding's binding path relative to <code>oContext</code>
-	 * @param {object|sap.ui.base.SyncPromise} vChildQueryOptions
-	 *   The child binding's (aggregated) query options or a promise resolving with them
+	 * @param {object|sap.ui.base.SyncPromise} [vChildQueryOptions={}]
+	 *   The child binding's (aggregated) query options (if any) or a promise resolving with them
 	 * @param {boolean} bIsProperty
 	 *   Whether the child is a property binding
 	 * @returns {sap.ui.base.SyncPromise}
@@ -788,7 +788,7 @@ sap.ui.define([
 			|| this.oCache === null
 			|| this.oCache && this.oCache.hasSentRequest();
 		aPromises = [
-			this.doFetchQueryOptions(oParentContext),
+			this.doFetchOrGetQueryOptions(oParentContext),
 			// After access to complete meta path of property, the metadata of all prefix paths
 			// is loaded so that synchronous access in wrapChildQueryOptions via getObject is
 			// possible
@@ -796,7 +796,7 @@ sap.ui.define([
 			vChildQueryOptions
 		];
 		oCanUseCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
-			var mChildQueryOptions = aResult[2],
+			var mChildQueryOptions = aResult[2] || {},
 				mWrappedChildQueryOptions,
 				mLocalQueryOptions = aResult[0],
 				oProperty = aResult[1],
@@ -867,8 +867,7 @@ sap.ui.define([
 					that.oCache.setLateQueryOptions(that.mLateQueryOptions);
 				} else if (that.oCache === null) {
 					return oParentContext.getBinding()
-						.fetchIfChildCanUseCache(oParentContext, that.sPath,
-							SyncPromise.resolve(that.mLateQueryOptions))
+						.fetchIfChildCanUseCache(oParentContext, that.sPath, that.mLateQueryOptions)
 						.then(function (sPath) {
 							return sPath && sReducedPath;
 						});
@@ -1053,8 +1052,8 @@ sap.ui.define([
 	 * @function
 	 * @name sap.ui.model.odata.v4.ODataParentBinding.getQueryOptionsFromParameters
 	 * @private
-	 * @see sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache
-	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchQueryOptions
+	 * @see sap.ui.model.odata.v4.ODataBinding#fetchOrGetQueryOptionsForOwnCache
+	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchOrGetQueryOptions
 	 */
 
 	/**

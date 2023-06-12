@@ -336,7 +336,7 @@ sap.ui.define([
 			sApply = _AggregationHelper.buildApply(mParameters.$$aggregation).$apply;
 		}
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
-		this.oQueryOptionsPromise = undefined; // @see #doFetchQueryOptions
+		this.oQueryOptionsPromise = undefined; // @see #doFetchOrGetQueryOptions
 		this.mParameters = mParameters; // store mParameters at binding after validation
 		if (sApply) {
 			this.mQueryOptions.$apply = sApply;
@@ -1280,9 +1280,9 @@ sap.ui.define([
 
 	/**
 	 * @override
-	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchQueryOptions
+	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchOrGetQueryOptions
 	 */
-	ODataListBinding.prototype.doFetchQueryOptions = function (oContext) {
+	ODataListBinding.prototype.doFetchOrGetQueryOptions = function (oContext) {
 		// Note: an absolute binding needs no parent context :-)
 		var sMetaPath = oContext && _Helper.getMetaPath(oContext.getPath()),
 			that = this;
