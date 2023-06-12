@@ -66,9 +66,6 @@
 				In order for this mechanism to work, it is essential that the host environment supports it and the card developer knows exactly what parameters
 				the host environment expects. It is supported by environments like SAP Fiori Launchpad and SAP Work Zone.
 			</p>
-			<b>Note:</b> This navigation is experimental and may change!
-			<br>
-			<b>Note:</b> This navigation strongly depends on the host environment.
 			<h3 id="intentBasedParameters">Parameters</h3>
 			<div class="tableWrapper">
 				<table>
@@ -83,13 +80,11 @@
 					</tr>
 					<tr>
 						<td>ibnTarget</td>
-						<td><a href="#ibnTargetParams">IBNTarget</a></td>
+						<td><a href="#ibnTarget">IBNTarget</a></td>
 						<td></td>
 						<td>Yes</td>
 						<td>
 							Target for intent-based navigation.
-							<br>
-							<b>Note:</b> This property is experimental.
 						</td>
 						<td>1.41.0</td>
 						<td>1.102</td>
@@ -103,15 +98,24 @@
 							Map of parameters for intent-based navigation that define an instance of the semantic object. The parameter value can be a string or an array of strings.
 							<br>
 							For example <code>{ "employeeID": 4 }</code>
-							<br>
-							<b>Note:</b> This property is experimental.
 						</td>
 						<td>1.41.0</td>
 						<td>1.102</td>
 					</tr>
+					<tr>
+						<td>ibnAppSpecificRoute</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>
+							App specific route for this intent-based navigation.
+						</td>
+						<td>1.41.0</td>
+						<td>1.116</td>
+					</tr>
 				</table>
 			</div>
-			<h4 id="ibnTargetParams">Properties for IBNTarget</h4>
+			<h4 id="ibnTarget">Properties for IBNTarget</h4>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -150,7 +154,7 @@
 			<ul>
 				<li>If you develop host environment, see how navigation can be handled <a target="_parent" href="../../../index.html#/integrate/handleActions/handleNavigationAction">here</a></li>
 				<li>
-					<a target="_blank" 
+					<a target="_blank"
 						href="https://help.sap.com/docs/SAP_HANA_PLATFORM/52715f71adba4aaeb480d946c742d1f6/5ff538515a2a455696f9c203939d9360.html?version=2.0.01"
 						rel="noopener noreferrer">
 						Intent-Based Navigation on SAP Hana Platform
@@ -199,7 +203,8 @@
 							},
 							"ibnParams": {
 								"applicationName": "{Name}"
-							}
+							},
+							"ibnAppSpecificRoute": "item/{Id}"
 						}
 					}
 				]
