@@ -21,6 +21,13 @@ sap.ui.define([
 	var ValueState = coreLibrary.ValueState;
 
 	/**
+	 * Modules for personalization controls
+	 * @namespace
+	 * @name sap.ui.mdc.filterbar.p13n
+	 * @private
+	 */
+
+	/**
 	 * Constructor for a new AdaptationFilterBar.
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
