@@ -68,6 +68,12 @@ sap.ui.define([
 		});
 	}
 
+	function getAdaptationIds(oAdaptationsModel) {
+		return oAdaptationsModel.getProperty("/adaptations").map(function(oAdaptation) {
+			return oAdaptation.id;
+		});
+	}
+
 	var DEFAULT_ADAPTATION = { id: "DEFAULT", type: "DEFAULT" };
 	QUnit.module("Given a Toolbar with enabled context-based adaptations feature", {
 		beforeEach: function() {
@@ -163,6 +169,7 @@ sap.ui.define([
 					this.oMoveDownButton = getControl(this.oToolbar, "moveDownButton");
 					this.oAdaptationsTable = getControl(this.oToolbar, "manageAdaptationsTable");
 					this.oSaveButton = getControl(this.oToolbar, "manageAdaptations-saveButton");
+					this.oCloseButton = getControl(this.oToolbar, "manageAdaptations-closeButton");
 					this.oFirstTableItem = this.oAdaptationsTable.getItems()[0];
 					return this.oToolbar._pFragmentLoaded;
 				}.bind(this));
@@ -245,6 +252,42 @@ sap.ui.define([
 					assert.strictEqual(mCalledProps.control, this.oRootControl, "reorder stub is called with correct rootControl");
 					assert.deepEqual(mCalledProps.parameters, {priorities: ["id-1591275572835-1", "id-1591275572834-1"]}, "reorder stub is called with correct priorities");
 					assert.deepEqual(getRanks(this.oManageAdaptations.oAdaptationsModel), [1, 2], "ranks are updated correctly");
+				}.bind(this));
+			});
+
+			QUnit.test("and the priority of the context-based adaptations is moved down and then cancel button is clicked", function(assert) {
+				this.oVersionsModel.setData({
+					backendDraft: true,
+					displayedVersion: "12345"
+				});
+
+				var aExpectedAdaptationIds = ["id-1591275572834-1", "id-1591275572835-1"];
+				var oReorderStub = sandbox.stub(ContextBasedAdaptationsAPI, "reorder").resolves();
+				var oFirstTableItem = this.oAdaptationsTable.getItems()[0];
+				var sFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
+				.mAggregations.items[0].getProperty("text");
+				this.oAdaptationsTable.getItems()[0].focus();
+				this.oAdaptationsTable.setSelectedItem(this.oAdaptationsTable.getItems()[0], true, true);
+
+				assert.notOk(this.oSaveButton.getEnabled(), "Save Button is disabled");
+				assert.notOk(this.oMoveUpButton.getEnabled(), "MoveUpButton is disabled");
+				assert.ok(this.oMoveDownButton.getEnabled(), "oMoveDownButton is enabled");
+
+				this.oMoveDownButton.firePress();
+				var sNewFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
+				.mAggregations.items[0].getProperty("text");
+				assert.notEqual(sFirstAdaptationText, sNewFirstAdaptationText, "priority of adaptations has changed");
+				assert.ok(this.oSaveButton.getEnabled(), "Save Button is enabled");
+
+				assert.strictEqual(oReorderStub.callCount, 0, "reorder stub is not called");
+
+				this.oCloseButton.firePress();
+
+				return new Promise(function(resolve) {
+					setTimeout(resolve, 0);
+				}).then(function() {
+					assert.strictEqual(oReorderStub.callCount, 0, "reorder stub is not called");
+					assert.deepEqual(getAdaptationIds(this.oManageAdaptations.oAdaptationsModel), aExpectedAdaptationIds, "ranks are not changed");
 				}.bind(this));
 			});
 
