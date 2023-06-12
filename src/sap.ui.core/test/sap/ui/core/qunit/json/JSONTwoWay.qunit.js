@@ -10,11 +10,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	//add divs for control tests
-	var oTarget1 = document.createElement("div");
-	oTarget1.id = "target1";
-	document.body.appendChild(oTarget1);
-
 	var constTestData = {
 		clients:[
 			{firstName:"Donald", lastName:"Duck", id: "1", rating : 5},
@@ -56,7 +51,7 @@ sap.ui.define([
 			this.aTextFields = constTestData.clients.map(function (entry, i) {
 				var oTextField = new Input();
 				oTextField.bindProperty(sName, "/clients/" + i + "/" + sProperty, null, sMode);
-				oTextField.placeAt("target1");
+				oTextField.placeAt("qunit-fixture");
 				return oTextField;
 			});
 
@@ -185,7 +180,7 @@ sap.ui.define([
 		var oTextField = new Input();
 		oTextField.bindProperty("value", "/clients/0/lastName");
 		oTextField.bindProperty("enabled", "model2>/test/0/enabled");
-		oTextField.placeAt("target1");
+		oTextField.placeAt("qunit-fixture");
 
 		var oValue = this.oModel.getProperty("/clients/0/lastName");
 		assert.equal(oValue, "Duck", "old value check");
@@ -221,7 +216,7 @@ sap.ui.define([
 		var oTextField = new Input();
 		oTextField.bindProperty("value", "/clients/0/lastName");
 		oTextField.bindProperty("enabled", "model2>/test/0/enabled");
-		oTextField.placeAt("target1");
+		oTextField.placeAt("qunit-fixture");
 
 		var oValue = this.oModel.getProperty("/clients/0/lastName");
 		assert.equal(oValue, "Duck", "old value check");

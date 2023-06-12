@@ -33,10 +33,6 @@ sap.ui.define([
 			"</values>" +
 		"</root>";
 
-	var oContentDIV = document.createElement("div");
-	oContentDIV.id = "target1";
-	document.body.appendChild(oContentDIV);
-
 	QUnit.module("sap.ui.model.xml.XMLPropertyBinding", {
 		beforeEach: function() {
 			// reset bindings
@@ -146,7 +142,7 @@ sap.ui.define([
 		var oInput = new Input({
 			value: "{/name}"
 		});
-		oInput.placeAt("target1");
+		oInput.placeAt("qunit-fixture");
 		oInput.attachChange(function() {
 			assert.ok(false, "should not land here!");
 		});
@@ -176,7 +172,7 @@ sap.ui.define([
 		var oInput = new Input({
 			value: "{/name}"
 		});
-		oInput.placeAt("target1");
+		oInput.placeAt("qunit-fixture");
 		oInput.attachChange(this, function() {
 			assert.ok(false, "should not land here!");
 		});
@@ -207,7 +203,7 @@ sap.ui.define([
 		var oInput = new Input({
 			value: "{/name}"
 		});
-		oInput.placeAt("target1");
+		oInput.placeAt("qunit-fixture");
 		oInput.attachChange(this, function() {
 			assert.ok(false, "should not land here!");
 		});
@@ -246,7 +242,7 @@ sap.ui.define([
 		var oInput = new Input({
 			value: "{/name}"
 		});
-		oInput.placeAt("target1");
+		oInput.placeAt("qunit-fixture");
 		oInput.attachChange(this, function() {
 			assert.ok(false, "should not land here!");
 		});
@@ -281,7 +277,7 @@ sap.ui.define([
 		var oInput = new Input({
 			value: "{/name}"
 		});
-		oInput.placeAt("target1");
+		oInput.placeAt("qunit-fixture");
 		this.oModel.attachPropertyChange(this, function(oEvent){
 			var sPath = oEvent.getParameter('path');
 			var oContext = oEvent.getParameter('context');
@@ -307,7 +303,7 @@ sap.ui.define([
 		var oInput = new Input({
 			value: "{@firstName}"
 		});
-		oInput.placeAt("target1");
+		oInput.placeAt("qunit-fixture");
 		this.oModel.attachPropertyChange(this, function(oEvent){
 			var sPath = oEvent.getParameter('path');
 			var oContext = oEvent.getParameter('context');
@@ -335,7 +331,7 @@ sap.ui.define([
 			value: "{@firstName}"
 		});
 		var iCount = 0;
-		oInput.placeAt("target1");
+		oInput.placeAt("qunit-fixture");
 		this.oModel.attachPropertyChange(this, function(oEvent){
 			iCount++;
 			var sPath = oEvent.getParameter('path');
