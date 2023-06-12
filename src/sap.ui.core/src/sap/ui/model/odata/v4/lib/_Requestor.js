@@ -1201,6 +1201,7 @@ sap.ui.define([
 			return oRequest.$queryOptions && aResultingRequests.some(function (oCandidate) {
 				if (oCandidate.$queryOptions && oRequest.url === oCandidate.url
 						&& oRequest.$owner === oCandidate.$owner) {
+					oCandidate.$queryOptions = _Helper.clone(oCandidate.$queryOptions);
 					_Helper.aggregateExpandSelect(oCandidate.$queryOptions, oRequest.$queryOptions);
 					oRequest.$resolve(oCandidate.$promise);
 					if (oCandidate.$mergeRequests && oRequest.$mergeRequests) {

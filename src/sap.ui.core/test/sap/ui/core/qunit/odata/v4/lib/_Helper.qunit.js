@@ -3378,7 +3378,8 @@ sap.ui.define([
 		}
 	}].forEach(function (oFixture) {
 		QUnit.test("wrapChildQueryOptions, " + oFixture.childPath, function (assert) {
-			var oMetaModel = {
+			var sChildQueryOptions = JSON.stringify(oFixture.childQueryOptions),
+				oMetaModel = {
 					// Note: "this" not needed, save Function#bind below
 					fetchObject : function () {}
 				},
@@ -3411,6 +3412,7 @@ sap.ui.define([
 				oFixture.childQueryOptions, oMetaModel.fetchObject);
 
 			assert.deepEqual(mWrappedQueryOptions, oFixture.expected);
+			assert.strictEqual(JSON.stringify(oFixture.childQueryOptions), sChildQueryOptions);
 		});
 	});
 

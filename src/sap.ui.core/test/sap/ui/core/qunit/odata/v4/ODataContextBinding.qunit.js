@@ -4435,7 +4435,9 @@ sap.ui.define([
 		oBinding.mLateQueryOptions = bWithLateQueryOptions ? {} : undefined;
 		oBinding.oReturnValueContext = oReturnValueContext;
 		this.mock(oBinding).expects("computeOperationQueryOptions").withExactArgs()
-			.returns(mQueryOptions);
+			.returns(bWithLateQueryOptions ? "~operationQueryOptions~" : mQueryOptions);
+		this.mock(_Helper).expects("clone").exactly(bWithLateQueryOptions ? 1 : 0)
+			.withExactArgs("~operationQueryOptions~").returns(mQueryOptions);
 		this.mock(_Helper).expects("aggregateExpandSelect")
 			.exactly(bWithLateQueryOptions ? 1 : 0)
 			.withExactArgs(sinon.match.same(mQueryOptions),

@@ -2813,7 +2813,7 @@ sap.ui.define([
 				mQueryOptions.$filter = "(" + mQueryOptions.$filter + ") and ("
 					+ mInheritedQueryOptions.$filter + ")";
 			}
-			mQueryOptions = Object.assign({}, mInheritedQueryOptions, mQueryOptions);
+			mQueryOptions = _Helper.merge({}, mInheritedQueryOptions, mQueryOptions);
 			_Helper.aggregateExpandSelect(mQueryOptions, mInheritedQueryOptions);
 		}
 

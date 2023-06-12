@@ -4742,7 +4742,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("mergeGetRequests", function (assert) {
-		var oHelperMock = this.mock(_Helper),
+		var oClone1 = {},
+			oClone6 = {},
+			oClone9 = {$expand : {np2 : null}},
+			oHelperMock = this.mock(_Helper),
 			aMergedRequests,
 			oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
 			oRequestorMock = this.mock(oRequestor),
@@ -4792,32 +4795,42 @@ sap.ui.define([
 				url : "EntitySet1('44')?foo=bar",
 				$queryOptions : {$select : [], $expand : {np1 : null}},
 				$resolve : function () {}
-			}];
+			}],
+			aRequestQueryOptions = aRequests.map(function (oRequest) {
+				// Note: the original query options may well contain "live" references
+				// => "copy on write" is needed!
+				return oRequest.$queryOptions;
+			}),
+			aRequestQueryOptionsJSON = aRequestQueryOptions.map(function (mQueryOptions) {
+				return JSON.stringify(mQueryOptions);
+			});
 
 		aRequests.iChangeSet = 1;
+		oHelperMock.expects("clone").withExactArgs(sinon.match.same(aRequests[1].$queryOptions))
+			.returns(oClone1);
 		oHelperMock.expects("aggregateExpandSelect")
-			.withExactArgs(sinon.match.same(aRequests[1].$queryOptions),
-				sinon.match.same(aRequests[3].$queryOptions))
+			.withExactArgs(sinon.match.same(oClone1), sinon.match.same(aRequests[3].$queryOptions))
 			.callThrough(); // -> {$select : ["p1", "p3"]}
 		this.mock(aRequests[3]).expects("$resolve")
 			.withExactArgs(sinon.match.same(aRequests[1].$promise));
+		oHelperMock.expects("clone").withExactArgs(sinon.match.same(aRequests[6].$queryOptions))
+			.returns(oClone6);
 		oHelperMock.expects("aggregateExpandSelect")
-			.withExactArgs(sinon.match.same(aRequests[6].$queryOptions),
-				sinon.match.same(aRequests[7].$queryOptions))
+			.withExactArgs(sinon.match.same(oClone6), sinon.match.same(aRequests[7].$queryOptions))
 			.callThrough(); // -> {$select : ["p6", "p7"]}
 		this.mock(aRequests[7]).expects("$mergeRequests").withExactArgs().returns("~aPaths~");
 		this.mock(aRequests[6]).expects("$mergeRequests").withExactArgs("~aPaths~");
 		this.mock(aRequests[7]).expects("$resolve")
 			.withExactArgs(sinon.match.same(aRequests[6].$promise));
+		oHelperMock.expects("clone").withExactArgs(sinon.match.same(aRequests[9].$queryOptions))
+			.returns(oClone9);
 		oHelperMock.expects("aggregateExpandSelect")
-			.withExactArgs(sinon.match.same(aRequests[9].$queryOptions),
-				sinon.match.same(aRequests[10].$queryOptions))
+			.withExactArgs(sinon.match.same(oClone9), sinon.match.same(aRequests[10].$queryOptions))
 			.callThrough(); // -> {$select : [], $expand : {np2 : null, np1 : null}}
 		this.mock(aRequests[10]).expects("$resolve")
 			.withExactArgs(sinon.match.same(aRequests[9].$promise));
 		oRequestorMock.expects("addQueryString")
-			.withExactArgs(aRequests[1].url, aRequests[1].$metaPath,
-				sinon.match.same(aRequests[1].$queryOptions))
+			.withExactArgs(aRequests[1].url, aRequests[1].$metaPath, sinon.match.same(oClone1))
 			.returns("EntitySet1('42')?$select=p1,p3");
 		oRequestorMock.expects("addQueryString")
 			.withExactArgs(aRequests[5].url, aRequests[5].$metaPath,
@@ -4825,8 +4838,7 @@ sap.ui.define([
 					.and(sinon.match({$select : ["p5"], $expand : {np5 : null}})))
 			.returns("EntitySet3('42')?$select=p5&expand=np5");
 		oRequestorMock.expects("addQueryString")
-			.withExactArgs(aRequests[6].url, aRequests[6].$metaPath,
-				sinon.match.same(aRequests[6].$queryOptions))
+			.withExactArgs(aRequests[6].url, aRequests[6].$metaPath, sinon.match.same(oClone6))
 			.returns("EntitySet2('42')?$select=p6,p7");
 		oRequestorMock.expects("addQueryString")
 			.withExactArgs(aRequests[8].url, aRequests[8].$metaPath,
@@ -4834,7 +4846,7 @@ sap.ui.define([
 			.returns("EntitySet1('42')?$select=p8");
 		oRequestorMock.expects("addQueryString")
 			.withExactArgs(aRequests[9].url, aRequests[9].$metaPath,
-				sinon.match.same(aRequests[9].$queryOptions)
+				sinon.match.same(oClone9)
 					.and(sinon.match({$select : ["np1"], $expand : {np1 : null, np2 : null}})))
 			.returns("EntitySet1('44')?$select=np1&$expand=np1,np2");
 
@@ -4856,6 +4868,10 @@ sap.ui.define([
 		assert.strictEqual(aMergedRequests[5].url, "EntitySet2('42')?$select=p6,p7");
 		assert.strictEqual(aMergedRequests[6].url, "EntitySet1('42')?$select=p8");
 		assert.strictEqual(aMergedRequests[7].url, "EntitySet1('44')?$select=np1&$expand=np1,np2");
+		aRequestQueryOptions.forEach(function (mQueryOptions, i) {
+			assert.strictEqual(JSON.stringify(mQueryOptions), aRequestQueryOptionsJSON[i],
+				"unchanged #" + i);
+		});
 	});
 
 	//*********************************************************************************************
