@@ -151,7 +151,7 @@
 		<endButton>
 			<Button id="manageAdaptations-closeButton"
 				text="{i18n>APP_CTX_DIALOG_CANCEL}"
-				press=".onClose"/>
+				press=".onCancel"/>
 		</endButton>
 	</Dialog>
 </core:FragmentDefinition>
