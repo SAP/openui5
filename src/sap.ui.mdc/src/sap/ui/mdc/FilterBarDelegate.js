@@ -62,7 +62,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 
 	/**
 	 * This method is called during the appliance of the add condition change.
-	 * The intention is to update the {@link sap.ui.mdc.FilterBar#setPropertyInfo propertyInfo} property.
+	 * The intention is to update the {@link sap.ui.mdc.FilterBarBase#setPropertyInfo propertyInfo} property.
 	 *
 	 * @public
 	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of the filter bar
@@ -76,7 +76,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 
 	/** propertyInfo
 	 * This method is called during the appliance of the remove condition change.
-	 * The intention is to update the {@link sap.ui.mdc.FilterBar#setPropertyInfo propertyInfo} property.
+	 * The intention is to update the {@link sap.ui.mdc.FilterBarBase#setPropertyInfo propertyInfo} property.
 	 *
 	 * @public
 	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of the filter bar
