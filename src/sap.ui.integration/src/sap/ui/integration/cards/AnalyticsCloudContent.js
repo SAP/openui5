@@ -108,6 +108,10 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticsCloudContent.prototype.onAfterRendering = function () {
+		if (this.getAggregation("_blockingMessage")) {
+			return;
+		}
+
 		this._createHighchart();
 	};
 
