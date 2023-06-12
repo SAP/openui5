@@ -12,11 +12,12 @@ sap.ui.require([
 	'sap/ui/core/Theming',
 	'sap/base/config',
 	'sap/base/Log',
+	"sap/base/config/GlobalConfigurationProvider",
 	'sap/routing/HistoryUtils',
 	'sap/ui/base/config/URLConfigurationProvider',
 	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
 ], function(CalendarType, Configuration, Core, CalendarWeekNumbering, TimezoneUtil, Locale, Interface, Theming, BaseConfig, Log,
-		HistoryUtils, URLConfigurationProvider/*, LocaleData*/) {
+		GlobalConfigurationProvider, HistoryUtils, URLConfigurationProvider/*, LocaleData*/) {
 	"use strict";
 
 	var browserUrl = {
@@ -43,14 +44,6 @@ sap.ui.require([
 	function getHtmlAttribute(sAttribute) {
 		return document.documentElement.getAttribute(sAttribute);
 	}
-
-	// used to get access to the non-public core parts
-	var oRealCore;
-	var TestCorePlugin = function() {};
-	TestCorePlugin.prototype.startPlugin = function(oCore, bOnInit) {
-		oRealCore = oCore;
-	};
-	sap.ui.getCore().registerPlugin(new TestCorePlugin());
 
 	// Initialize the HistoryUtils
 	QUnit.begin(HistoryUtils.init);
@@ -899,9 +892,6 @@ sap.ui.require([
 		oStub.restore();
 	});
 
-	// "animationmode" is the normalized value, the application still needs to use "animationMode".
-	var sAnimationModeConfigurationName = 'animationmode';
-
 	/**
 	 * Tests the interaction between the legacy "animation" and the modern "animationMode" settings.
 	 * If only the legacy "animation" settings is given, the modern "animationMode" settings is
@@ -910,29 +900,42 @@ sap.ui.require([
 	 */
 	QUnit.module("[Legacy] Animation & AnimationMode interaction", {
 		beforeEach: function() {
-			window['sap-ui-config'] = window["sap-ui-config"] || {};
-			delete window["sap-ui-config"]['animation'];
-			delete window["sap-ui-config"][sAnimationModeConfigurationName];
+			this.mParams = {};
+			this.oGlobalConfigStub = sinon.stub(GlobalConfigurationProvider, "get");
+			this.oGlobalConfigStub.callsFake(function(sKey) {
+				if (this.mParams[sKey] !== undefined) {
+					return this.mParams[sKey];
+				} else {
+					return this.oGlobalConfigStub.wrappedMethod.call(this, sKey);
+				}
+			}.bind(this));
+			this.oBaseStub = sinon.stub(BaseConfig, "get");
+			this.oBaseStub.callsFake(function(mParameters) {
+				mParameters.provider = undefined;
+				return this.oBaseStub.wrappedMethod.call(this, mParameters);
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oGlobalConfigStub.restore();
+			this.oBaseStub.restore();
 		}
 	});
 
 	QUnit.test("Default animation and animation mode", function(assert) {
-		Configuration.setCore();
 		assert.ok(Configuration.getAnimation(), "Default animation.");
 		assert.equal(Configuration.getAnimationMode(), AnimationMode.full, "Default animation mode.");
 	});
 
 	QUnit.test("Animation is off, default animation mode", function(assert) {
-		window['sap-ui-config'] = { animation: false };
-		Configuration.setCore();
+		this.mParams.sapUiAnimation = false;
+		this.mParams.sapUiAnimationMode = undefined;
 		assert.ok(!Configuration.getAnimation(), "Animation should be off.");
 		assert.equal(Configuration.getAnimationMode(), AnimationMode.minimal, "Animation mode should switch to " + AnimationMode.minimal + ".");
 	});
 
 	QUnit.test("Animation is off, valid but not possible mode is set and sanitized", function(assert) {
-		window['sap-ui-config']['animation'] = false;
-		window['sap-ui-config'][sAnimationModeConfigurationName] = AnimationMode.basic;
-		Configuration.setCore();
+		this.mParams.sapUiAnimation = false;
+		this.mParams.sapUiAnimationMode = AnimationMode.basic;
 		assert.ok(Configuration.getAnimation(), "Animation should be on because animation mode overwrites animation.");
 		assert.equal(Configuration.getAnimationMode(), AnimationMode.basic, "Animation mode should switch to " + AnimationMode.basic + ".");
 	});
@@ -941,8 +944,8 @@ sap.ui.require([
 		for (var sAnimationModeKey in AnimationMode) {
 			if (AnimationMode.hasOwnProperty(sAnimationModeKey)) {
 				var sAnimationMode = AnimationMode[sAnimationModeKey];
-				window['sap-ui-config'][sAnimationModeConfigurationName] = sAnimationMode;
-				Configuration.setCore();
+				this.mParams.sapUiAnimation = false;
+				this.mParams.sapUiAnimationMode = sAnimationMode;
 				if (sAnimationMode === AnimationMode.none || sAnimationMode === AnimationMode.minimal) {
 					assert.ok(!Configuration.getAnimation(), "Animation is switched to off because of animation mode.");
 				} else {
@@ -953,13 +956,35 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.module("AnimationMode initial setting evaluation");
+	QUnit.module("AnimationMode initial setting evaluation", {
+		beforeEach: function() {
+			this.mParams = {};
+			this.oGlobalConfigStub = sinon.stub(GlobalConfigurationProvider, "get");
+			this.oGlobalConfigStub.callsFake(function(sKey) {
+				if (this.mParams[sKey] !== undefined) {
+					return this.mParams[sKey];
+				} else {
+					return this.oGlobalConfigStub.wrappedMethod.call(this, sKey);
+				}
+			}.bind(this));
+			this.oBaseStub = sinon.stub(BaseConfig, "get");
+			this.oBaseStub.callsFake(function(mParameters) {
+				mParameters.provider = undefined;
+				return this.oBaseStub.wrappedMethod.call(this, mParameters);
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oGlobalConfigStub.restore();
+			this.oBaseStub.restore();
+		}
+	});
 
 	QUnit.test("Invalid animation mode", function(assert) {
-		window['sap-ui-config'][sAnimationModeConfigurationName] = "someuUnsupportedStringValue";
+		this.mParams.sapUiAnimation = false;
+		this.mParams.sapUiAnimationMode = "someuUnsupportedStringValue";
 		assert.throws(
-			function() { Configuration.setCore(); },
-			new TypeError("Unsupported Enumeration value for animationMode, valid values are: full, basic, minimal, none"),
+			function() { Configuration.getAnimationMode(); },
+			new TypeError("Unsupported Enumeration value for sapUiAnimationMode, valid values are: full, basic, minimal, none"),
 			"Unsupported value for animation mode should throw an error."
 		);
 	});
@@ -968,8 +993,8 @@ sap.ui.require([
 		for (var sAnimationModeKey in AnimationMode) {
 			if (AnimationMode.hasOwnProperty(sAnimationModeKey)) {
 				var sAnimationMode = AnimationMode[sAnimationModeKey];
-				window['sap-ui-config'][sAnimationModeConfigurationName] = sAnimationMode;
-				Configuration.setCore();
+				this.mParams.sapUiAnimation = false;
+				this.mParams.sapUiAnimationMode = sAnimationMode;
 				assert.equal(Configuration.getAnimationMode(), sAnimationMode, "Test for animation mode: " + sAnimationMode);
 			}
 		}
@@ -977,15 +1002,16 @@ sap.ui.require([
 
 	QUnit.module("AnimationMode changes at runtime", {
 		before: function () {
-			window["sap-ui-config"] = {};
-			Configuration.setCore(oRealCore);
 			this.getConfiguration = function () {
 				return Configuration;
 			};
 		},
-		afterEach: function() {
+		beforeEach: function() {
 			// Restore default animation mode
 			Configuration.setAnimationMode(AnimationMode.full);
+		},
+		afterEach: function() {
+			Configuration.setAnimationMode(AnimationMode.minimal);
 		}
 	});
 

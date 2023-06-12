@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/base/Interface',
 	'sap/ui/base/Object',
 	'sap/ui/base/ManagedObject',
+	'./AnimationMode',
 	'./Component',
 	'./Configuration',
 	'./Element',
@@ -17,6 +18,7 @@ sap.ui.define([
 	'./Lib',
 	'./Rendering',
 	'./RenderManager',
+	'./ControlBehavior',
 	'./UIArea',
 	'./message/MessageManager',
 	'./StaticArea',
@@ -41,6 +43,7 @@ sap.ui.define([
 		Interface,
 		BaseObject,
 		ManagedObject,
+		AnimationMode,
 		Component,
 		Configuration,
 		Element,
@@ -48,6 +51,7 @@ sap.ui.define([
 		Library,
 		Rendering,
 		RenderManager,
+		ControlBehavior,
 		UIArea,
 		MessageManager,
 		StaticArea,
@@ -745,14 +749,22 @@ sap.ui.define([
 	 * @private
 	 */
 	Core.prototype._setupAnimation = function() {
-		var html = document.documentElement;
-		var sAnimationMode = Configuration.getAnimationMode();
-		html.dataset.sapUiAnimationMode = sAnimationMode;
-		var bAnimation = (sAnimationMode !== Configuration.AnimationMode.minimal && sAnimationMode !== Configuration.AnimationMode.none);
-		html.dataset.sapUiAnimation = bAnimation ? "on" : "off";
-		if (typeof jQuery !== "undefined") {
-			jQuery.fx.off = !bAnimation;
+		function adaptAnimationMode() {
+			var html = document.documentElement;
+			var sAnimationMode = ControlBehavior.getAnimationMode();
+			html.dataset.sapUiAnimationMode = sAnimationMode;
+			var bAnimation = (sAnimationMode !== AnimationMode.minimal && sAnimationMode !== AnimationMode.none);
+			html.dataset.sapUiAnimation = bAnimation ? "on" : "off";
+			if (typeof jQuery !== "undefined") {
+				jQuery.fx.off = !bAnimation;
+			}
 		}
+		ControlBehavior.attachChange(function(oEvent) {
+			if (oEvent.animationMode) {
+				adaptAnimationMode();
+			}
+		});
+		adaptAnimationMode();
 	};
 
 	/**

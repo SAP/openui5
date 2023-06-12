@@ -6,6 +6,8 @@
 sap.ui.define([
 	'../Device',
 	'../base/Object',
+	'./AnimationMode',
+	'./ControlBehavior',
 	'./Locale',
 	"./format/TimezoneUtil",
 	"sap/ui/core/_ConfigurationProvider",
@@ -24,6 +26,8 @@ sap.ui.define([
 	function(
 		Device,
 		BaseObject,
+		AnimationMode,
+		ControlBehavior,
 		Locale,
 		TimezoneUtil,
 		_ConfigurationProvider,
@@ -177,32 +181,6 @@ sap.ui.define([
 		}
 	}
 
-	var M_ANIMATION_MODE = {
-		/**
-		 * <code>full</code> represents a mode with unrestricted animation capabilities.
-		 * @public
-		 */
-		full : "full",
-
-		/**
-		 * <code>basic</code> can be used for a reduced, more light-weight set of animations.
-		 * @public
-		 */
-		basic : "basic",
-
-		/**
-		 * <code>minimal</code> includes animations of fundamental functionality.
-		 * @public
-		 */
-		minimal : "minimal",
-
-		/**
-		 * <code>none</code> deactivates the animation completely.
-		 * @public
-		 */
-		none : "none"
-	};
-
 	// Definition of supported settings
 	// Valid property types are: string, boolean, string[], code, object, function, function[].
 	// Objects as an enumeration list of valid values can also be provided (e.g. Configuration.AnimationMode).
@@ -217,7 +195,7 @@ sap.ui.define([
 		"accessibility"         : { type : "boolean",  defaultValue : true },
 		"autoAriaBodyRole"      : { type : "boolean",  defaultValue : false,     noUrl:true }, //whether the framework automatically adds the ARIA role 'application' to the html body
 		"animation"             : { type : "boolean",  defaultValue : true }, // deprecated, please use animationMode
-		"animationMode"         : { type : M_ANIMATION_MODE, defaultValue : undefined }, // If no value is provided, animationMode will be set on instantiation depending on the animation setting.
+		"animationMode"         : { type : AnimationMode, defaultValue : undefined }, // If no value is provided, animationMode will be set on instantiation depending on the animation setting.
 		"rtl"                   : { type : "boolean",  defaultValue : null },
 		"debug"                 : { type : "boolean",  defaultValue : false },
 		"inspect"               : { type : "boolean",  defaultValue : false },
@@ -338,6 +316,7 @@ sap.ui.define([
 	 * @borrows module:sap/base/i18n/Localization.getSupportedLanguages as #getSupportedLanguages
 	 * @borrows module:sap/ui/core/Theming.getTheme as #getTheme
 	 * @borrows module:sap/ui/core/Theming.setTheme as #setTheme
+	 * @borrows module:sap/ui/core/ControlBehavior.isAccessibilityEnabled as #getAccessibility
 	 */
 	var Configuration = BaseObject.extend("sap.ui.core.Configuration", /** @lends sap.ui.core.Configuration.prototype */ {
 
@@ -465,19 +444,6 @@ sap.ui.define([
 				if ( config[n] !== M_SETTINGS[n].defaultValue ) {
 					Log.info("  " + n + " = " + config[n]);
 				}
-			}
-
-			// Setup animation mode. If no animation mode is provided
-			// the value is set depending on the animation setting.
-			if (this.getAnimationMode() === undefined) {
-				if (this.animation) {
-					this.setAnimationMode(Configuration.AnimationMode.full);
-				} else {
-					this.setAnimationMode(Configuration.AnimationMode.minimal);
-				}
-			} else {
-				// Validate and set the provided value for the animation mode
-				this.setAnimationMode(this.getAnimationMode());
 			}
 
 			// The following code can't be done in the _ConfigurationProvider
@@ -808,14 +774,7 @@ sap.ui.define([
 
 		getSupportedLanguages : Localization.getSupportedLanguages,
 
-		/**
-		 * Returns whether the accessibility mode is used or not.
-		 * @return {boolean} whether the accessibility mode is used or not
-		 * @public
-		 */
-		getAccessibility : function () {
-			return this.getValue("accessibility");
-		},
+		getAccessibility : ControlBehavior.isAccessibilityEnabled,
 
 		/**
 		 * Returns whether the framework automatically adds
@@ -835,19 +794,20 @@ sap.ui.define([
 		 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
 		 */
 		getAnimation : function () {
-			return this.getValue("animation");
+			var sAnimationMode = this.getAnimationMode();
+			// Set the animation to on or off depending on the animation mode to ensure backward compatibility.
+			return (sAnimationMode !== Configuration.AnimationMode.minimal && sAnimationMode !== Configuration.AnimationMode.none);
 		},
 
 		/**
-		 * Returns the current animation mode.
-		 *
-		 * @return {sap.ui.core.Configuration.AnimationMode} The current animationMode
-		 * @since 1.50.0
-		 * @public
-		 */
-		getAnimationMode : function () {
-			return this.getValue("animationMode");
-		},
+         * Returns the current animation mode.
+         *
+         * @return {sap.ui.core.Configuration.AnimationMode} The current animationMode
+         * @since 1.50.0
+		 * @function
+         * @public
+         */
+		getAnimationMode : ControlBehavior.getAnimationMode,
 
 		/**
 		 * Sets the current animation mode.
@@ -861,20 +821,10 @@ sap.ui.define([
 		 * @param {sap.ui.core.Configuration.AnimationMode} sAnimationMode A valid animation mode
 		 * @throws {Error} If the provided <code>sAnimationMode</code> does not exist, an error is thrown
 		 * @since 1.50.0
+		 * @function
 		 * @public
 		 */
-		setAnimationMode : function(sAnimationMode) {
-			BaseConfig._.checkEnum(Configuration.AnimationMode, sAnimationMode, "animationMode");
-
-			// Set the animation to on or off depending on the animation mode to ensure backward compatibility.
-			this.animation = (sAnimationMode !== Configuration.AnimationMode.minimal && sAnimationMode !== Configuration.AnimationMode.none);
-
-			// Set the animation mode and update html attributes.
-			this.animationMode = sAnimationMode;
-			if (this._oCore && this._oCore._setupAnimation) {
-				this._oCore._setupAnimation();
-			}
-		},
+		setAnimationMode : ControlBehavior.setAnimationMode,
 
 		/**
 		 * Returns whether the Fiori2Adaptation is on.
@@ -1571,14 +1521,44 @@ sap.ui.define([
 	/**
 	 * Enumerable list with available animation modes.
 	 *
-	 * This enumerable is used to validate the animation mode. Animation modes allow to specify different animation scenarios or levels.
-	 * The implementation of the Control (JavaScript or CSS) has to be done differently for each animation mode.
+	 * This enumerable is used to validate the animation mode. Animation modes allow to specify
+	 * different animation scenarios or levels. The implementation of the Control (JavaScript or CSS)
+	 * has to be done differently for each animation mode.
 	 *
 	 * @enum {string}
+	 * @name sap.ui.core.Configuration.AnimationMode
 	 * @since 1.50.0
 	 * @public
 	 */
-	Configuration.AnimationMode = M_ANIMATION_MODE;
+
+	/**
+	 * <code>full</code> represents a mode with unrestricted animation capabilities.
+	 * @public
+	 * @name sap.ui.core.Configuration.AnimationMode.full
+	 * @member
+	 */
+
+	/**
+	 * <code>basic</code> can be used for a reduced, more light-weight set of animations.
+	 * @public
+	 * @name sap.ui.core.Configuration.AnimationMode.basic
+	 * @member
+	 */
+
+	/**
+	 * <code>minimal</code> includes animations of fundamental functionality.
+	 * @public
+	 * @name sap.ui.core.Configuration.AnimationMode.minimal
+	 * @member
+	 */
+
+	/**
+	 * <code>none</code> deactivates the animation completely.
+	 * @public
+	 * @name sap.ui.core.Configuration.AnimationMode.none
+	 * @member
+	 */
+	Configuration.AnimationMode = AnimationMode;
 
 	/*
 	 * Helper that creates a Locale object from the given language
