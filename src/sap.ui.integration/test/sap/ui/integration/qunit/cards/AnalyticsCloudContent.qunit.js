@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/integration/cards/AnalyticsCloudContent",
+	"sap/m/IllustratedMessageType",
 	"sap/ui/integration/widgets/Card",
 	"sap/base/Log"
 ], function (
 	Core,
 	AnalyticsCloudContent,
+	IllustratedMessageType,
 	Card,
 	Log
 ) {
@@ -217,5 +219,49 @@ sap.ui.define([
 		oCard.setManifest(oExample1);
 		oCard.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
+	});
+
+	QUnit.module("Display errors", {
+		beforeEach: function () {
+			this.fnCreateHighchartStub = sinon.stub(AnalyticsCloudContent.prototype, "_createHighchart");
+
+			this.fnChartStub = sinon.stub();
+			window.Highcharts = fakeHighcharts(this.fnChartStub);
+
+			this.oCard = new Card("testCard", {
+				manifest: oExample1
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.fnCreateHighchartStub.restore();
+			delete window.Highcharts;
+			this.oCard.destroy();
+		}
+	});
+
+	QUnit.test("showBlockingMessage method", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			fnCreateHighchartStub = this.fnCreateHighchartStub;
+
+		setTimeout(function () {
+			Core.applyChanges();
+
+			// Assert
+			assert.ok(fnCreateHighchartStub.calledOnce, "_createHighchart is called once");
+
+			this.oCard.getCardContent().showBlockingMessage({
+				illustrationType: IllustratedMessageType.ErrorScreen,
+				title: "Title"
+			});
+
+			Core.applyChanges();
+
+			assert.ok(fnCreateHighchartStub.calledOnce, "_createHighchart is called once");
+			done();
+		}.bind(this), 300);
 	});
 });
