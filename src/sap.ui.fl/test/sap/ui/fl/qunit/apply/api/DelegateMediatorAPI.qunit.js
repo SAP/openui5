@@ -64,13 +64,19 @@ sap.ui.define([
 
 		QUnit.test("When it is called with valid property bag", function(assert) {
 			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
-			assert.ok(DelegateMediator.isDelegateRegistered(this.mPropertyBag.modelType), "then the delegate is registered successfull with the given modelType");
+			assert.ok(
+				DelegateMediator.isDelegateRegistered(this.mPropertyBag.modelType),
+				"then the delegate is registered successfull with the given modelType"
+			);
 		});
 
 		QUnit.test("When it is called with valid property bag including optional requiredLibraries property", function(assert) {
 			this.mPropertyBag.requiredLibraries = mRequiredLibraries;
 			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
-			assert.ok(DelegateMediator.isDelegateRegistered(this.mPropertyBag.modelType), "then the delegate is registered successfull with the given modelType");
+			assert.ok(
+				DelegateMediator.isDelegateRegistered(this.mPropertyBag.modelType),
+				"then the delegate is registered successfull with the given modelType"
+			);
 		});
 
 		QUnit.test("When it is called with valid property bag multiple times with harmonized delegate types", function(assert) {
@@ -79,7 +85,10 @@ sap.ui.define([
 			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
 			this.mPropertyBag.delegateType = "writeonly";
 			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
-			assert.ok(DelegateMediator.isDelegateRegistered(this.mPropertyBag.modelType), "then the delegate is registered successfull with the given modelType");
+			assert.ok(
+				DelegateMediator.isDelegateRegistered(this.mPropertyBag.modelType),
+				"then the delegate is registered successfull with the given modelType"
+			);
 		});
 
 		[["readonly", "readonly"], ["writeonly", "complete"], ["complete", "writeonly"]].forEach(function(sDelegateType) {
@@ -168,13 +177,27 @@ sap.ui.define([
 		QUnit.test("When it is called with delegate specified as default delegate (XML Case)", function(assert) {
 			var vDomNode = document.getElementById("qunit-fixture");
 			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
-			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(vDomNode, XmlTreeModifier, this.mPropertyBag.modelType, true))
+			var mPropertyBag = createPropertyBag(vDomNode, XmlTreeModifier, this.mPropertyBag.modelType, true);
+			return DelegateMediatorAPI.getDelegateForControl(mPropertyBag)
 			.then(function(mDelegateInfo) {
 				assert.deepEqual(mDelegateInfo.instance, TestDelegate, "then the default delegate info is returned");
 				assert.deepEqual(mDelegateInfo.names, [this.mPropertyBag.delegate], "then the default delegate info is returned");
 				assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
-				assert.strictEqual(mDelegateInfo.modelType, this.mPropertyBag.modelType, "then the default delegate info contains the modelType");
-				assert.deepEqual(mDelegateInfo.requiredLibraries, this.mPropertyBag.requiredLibraries, "then the default delegate info contains the passed required libraries");
+				assert.strictEqual(
+					mDelegateInfo.modelType,
+					this.mPropertyBag.modelType,
+					"then the default delegate info contains the modelType"
+				);
+				assert.strictEqual(
+					mDelegateInfo.delegateType,
+					DelegateMediatorAPI.types.COMPLETE,
+					"then the default delegate contains the delegateType"
+				);
+				assert.deepEqual(
+					mDelegateInfo.requiredLibraries,
+					this.mPropertyBag.requiredLibraries,
+					"then the default delegate info contains the passed required libraries"
+				);
 			}.bind(this));
 		});
 
@@ -186,8 +209,21 @@ sap.ui.define([
 				assert.deepEqual(mDelegateInfo.instance, TestDelegate, "then the default delegate info is returned");
 				assert.deepEqual(mDelegateInfo.names, [this.mPropertyBag.delegate], "then the default delegate info is returned");
 				assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
-				assert.strictEqual(mDelegateInfo.modelType, SomeModel.getMetadata().getName(), "then the default delegate info contains the modelType");
-				assert.deepEqual(mDelegateInfo.requiredLibraries, this.mPropertyBag.requiredLibraries, "then the default delegate info contains the passed required libraries");
+				assert.strictEqual(
+					mDelegateInfo.modelType,
+					SomeModel.getMetadata().getName(),
+					"then the default delegate info contains the modelType"
+				);
+				assert.strictEqual(
+					mDelegateInfo.delegateType,
+					DelegateMediatorAPI.types.COMPLETE,
+					"then the default delegate contains the delegateType"
+				);
+				assert.deepEqual(
+					mDelegateInfo.requiredLibraries,
+					this.mPropertyBag.requiredLibraries,
+					"then the default delegate info contains the passed required libraries"
+				);
 			}.bind(this));
 		});
 
@@ -200,8 +236,15 @@ sap.ui.define([
 				assert.deepEqual(mDelegateInfo.instance, TestDelegate, "then the default delegate info is returned");
 				assert.deepEqual(mDelegateInfo.names, [this.mPropertyBag.delegate], "then the default delegate info is returned");
 				assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
-				assert.strictEqual(mDelegateInfo.modelType, SomeModel.getMetadata().getName(), "then the default delegate info contains the modelType");
-				assert.notOk(mDelegateInfo.requiredLibraries, "then the default delegate does not contain any required libraries defined as default");
+				assert.strictEqual(
+					mDelegateInfo.modelType,
+					SomeModel.getMetadata().getName(),
+					"then the default delegate info contains the modelType"
+				);
+				assert.notOk(
+					mDelegateInfo.requiredLibraries,
+					"then the default delegate does not contain any required libraries defined as default"
+				);
 			}.bind(this));
 		});
 
@@ -269,10 +312,27 @@ sap.ui.define([
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier, undefined, true))
 			.then(function(mDelegateInfo) {
 				assert.ok(mDelegateInfo, "then delegate info is returned");
-				assert.deepEqual(mDelegateInfo.names, ["sap/ui/rta/enablement/TestDelegate2", "sap/ui/rta/enablement/TestDelegate1"], "then names are returned as expected");
-				assert.deepEqual(Object.keys(mDelegateInfo.requiredLibraries), ["sap.some.other.lib", "sap.some.lib"], "then instance contains the method from write delegate");
+				assert.deepEqual(
+					mDelegateInfo.names,
+					["sap/ui/rta/enablement/TestDelegate2", "sap/ui/rta/enablement/TestDelegate1"],
+					"then names are returned as expected"
+				);
+				assert.deepEqual(
+					Object.keys(mDelegateInfo.requiredLibraries),
+					["sap.some.other.lib", "sap.some.lib"],
+					"then instance contains the method from write delegate"
+				);
 				assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
-				assert.strictEqual(mDelegateInfo.modelType, SomeModel.getMetadata().getName(), "then the default delegate info contains the modelType");
+				assert.strictEqual(
+					mDelegateInfo.modelType,
+					SomeModel.getMetadata().getName(),
+					"then the default delegate info contains the modelType"
+				);
+				assert.strictEqual(
+					mDelegateInfo.delegateType,
+					DelegateMediatorAPI.types.READONLY,
+					"then the default delegate contains the delegateType"
+				);
 				assert.ok(mDelegateInfo.instance.getPropertyInfo, "then instance contains the method from read delegate");
 				assert.ok(mDelegateInfo.instance.createLabel, "then instance contains the method from write delegate");
 				return mDelegateInfo.instance.getPropertyInfo()
@@ -322,10 +382,27 @@ sap.ui.define([
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier, undefined, true))
 			.then(function(mDelegateInfo) {
 				assert.ok(mDelegateInfo, "then delegate info is returned");
-				assert.deepEqual(mDelegateInfo.names, ["sap/ui/rta/enablement/TestDelegate", "sap/ui/rta/enablement/readonly/TestDelegate"], "then names are returned as expected");
-				assert.deepEqual(Object.keys(mDelegateInfo.requiredLibraries), ["sap.some.lib"], "then instance contains the method from write delegate");
+				assert.deepEqual(
+					mDelegateInfo.names,
+					["sap/ui/rta/enablement/TestDelegate", "sap/ui/rta/enablement/readonly/TestDelegate"],
+					"then names are returned as expected"
+				);
+				assert.deepEqual(
+					Object.keys(mDelegateInfo.requiredLibraries),
+					["sap.some.lib"],
+					"then instance contains the method from write delegate"
+				);
 				assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
-				assert.strictEqual(mDelegateInfo.modelType, SomeModel.getMetadata().getName(), "then the default delegate info contains the modelType");
+				assert.strictEqual(
+					mDelegateInfo.modelType,
+					SomeModel.getMetadata().getName(),
+					"then the default delegate info contains the modelType"
+				);
+				assert.strictEqual(
+					mDelegateInfo.delegateType,
+					DelegateMediatorAPI.types.READONLY,
+					"then the default delegate contains the delegateType"
+				);
 				assert.ok(mDelegateInfo.instance.getPropertyInfo, "then instance contains the method from read delegate");
 				assert.ok(mDelegateInfo.instance.createLabel, "then instance contains the method from write delegate");
 				return mDelegateInfo.instance.getPropertyInfo()
@@ -334,7 +411,11 @@ sap.ui.define([
 					return mDelegateInfo.instance.createLabel();
 				})
 				.then(function(oElement) {
-					assert.strictEqual(oElement.getId(), "buttonFromInstancespecificDelegate", "then method from write delegate is executable");
+					assert.strictEqual(
+						oElement.getId(),
+						"buttonFromInstancespecificDelegate",
+						"then method from write delegate is executable"
+					);
 				});
 			});
 		});
@@ -349,7 +430,8 @@ sap.ui.define([
 
 		QUnit.test("When no default delegate is available, but default delegate is asked (JS Case)", function(assert) {
 			this.oPanel.setModel(new SomeModel());
-			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier, "some.not.existing.model", true))
+			var mPropertyBag = createPropertyBag(this.oPanel, JsControlTreeModifier, "some.not.existing.model", true);
+			return DelegateMediatorAPI.getDelegateForControl(mPropertyBag)
 			.then(function(mDelegateInfo) {
 				assert.notOk(mDelegateInfo, "then an 'undefined' is returned");
 			});
@@ -386,7 +468,11 @@ sap.ui.define([
 		QUnit.test("When it is called", function(assert) {
 			var aExpectedResult = ["sap.ui.comp"];
 			var aExistingKnownDefaultDelegateLibs = DelegateMediatorAPI.getKnownDefaultDelegateLibraries();
-			assert.deepEqual(aExistingKnownDefaultDelegateLibs, aExpectedResult, "then the known libs for default delegate locations are returned");
+			assert.deepEqual(
+				aExistingKnownDefaultDelegateLibs,
+				aExpectedResult,
+				"then the known libs for default delegate locations are returned"
+			);
 		});
 	});
 

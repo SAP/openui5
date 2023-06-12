@@ -120,6 +120,9 @@ sap.ui.define([
 			// is available maximum once for instancespecific delegate
 			mTargetDelegateInfo.payload = mDelegateInfo.payload;
 		}
+		if (mDelegateInfo.delegateType) {
+			mTargetDelegateInfo.delegateType = mDelegateInfo.delegateType;
+		}
 		return mTargetDelegateInfo;
 	}
 
