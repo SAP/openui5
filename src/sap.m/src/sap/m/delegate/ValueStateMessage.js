@@ -110,7 +110,6 @@ sap.ui.define([
 				oControl.getDomRefForValueStateMessage(),
 				null,
 				null,
-				null,
 				Device.system.phone ? true : Popup.CLOSE_ON_SCROLL
 			);
 
