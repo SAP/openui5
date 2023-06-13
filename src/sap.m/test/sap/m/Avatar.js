@@ -21,32 +21,42 @@ sap.ui.define([
 				content: [
 					new Avatar("defaultXSSquareAvatar", {
 						displaySize: "XS",
-						displayShape: "Square"
+						displayShape: "Square",
+						tooltip: "XS size Avatar"
 					}),
-					new Avatar("defaultAvatar"),
-					new Avatar("decorativeAvatar", { decorative: true }),
+					new Avatar("defaultAvatar", {
+						tooltip: "S size Avatar"
+					}),
+					new Avatar("decorativeAvatar", {
+						 decorative: true,
+						 tooltip: "S size Avatar decorative"
+						}),
 					new Avatar("initialsMCircleAvatar", {
 						initials: "BP",
-						displaySize: "M"
+						displaySize: "M",
+						tooltip: "М size Avatar with initials"
 					}),
 					new Avatar("iconLAvatar", {
 						src: "sap-icon://lab",
-						displaySize: "L"
+						displaySize: "L",
+						tooltip: "L size Avatar with icon"
 					}),
 					new Avatar("imageXL", {
 						src: "images/Woman_avatar_01.png",
-						displaySize: "XL"
+						displaySize: "XL",
+						tooltip: "XL size Avatar with image"
 
 					}),
 					// if image cannot be found, the initials will be shown if provided
 					new Avatar("imageXL2", {
 						initials: "YY",
 						src: "images/cannotfind_Woman_avatar_01.png",
-						displaySize: "XL"
+						displaySize: "XL",
+						tooltip: "XL size Avatar with image and initials"
 					}),
 					new Avatar("imageXLSquareCover", {
 						ariaLabelledBy: 'avatar_label',
-						tooltip: "Image with cover fit type",
+						tooltip: "XL Avatar with Image with cover fit type",
 						src: "images/Screw_avatar_01.jpg",
 						displaySize: "XL",
 						displayShape: "Square",
@@ -55,7 +65,7 @@ sap.ui.define([
 					}).addStyleClass("sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"),
 					new Avatar("imageXLSquareContain", {
 						ariaLabelledBy: 'avatar_label',
-						tooltip: "Image with contain fit type",
+						tooltip: "XL Avatar with Image with contain fit type",
 						src: "images/Lamp_avatar_01.jpg",
 						displaySize: "XL",
 						displayShape: "Square",
@@ -64,20 +74,21 @@ sap.ui.define([
 					}).addStyleClass("sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"),
 					new Avatar("initialsCustomAvatar", {
 						ariaLabelledBy: 'avatar_label',
-						tooltip: "Custom size and font size",
+						tooltip: "Avatar with Custom size and font size",
 						initials: "BP",
 						displaySize: "Custom",
 						customDisplaySize: "10rem",
 						customFontSize: "2rem",
 						badgeIcon: "sap-icon://zoom-in",
+						badgeTooltip: "Zoom in",
 						press: onAvatarPress
 					}),
 					new Avatar({
 						ariaLabelledBy: 'avatar_label',
-						tooltip: "Custom size and font size",
+						tooltip: "M size Avatar",
 						initials: "LB",
 						displaySize: "M",
-
+						badgeTooltip: "Zoom in",
 						detailBox: new LightBox({
 							id: "lightBox",
 							imageContent: new LightBoxItem({
