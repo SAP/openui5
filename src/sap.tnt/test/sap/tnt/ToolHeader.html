@@ -82,7 +82,10 @@
 					press: function() {
 					}
 				}),
-				new sap.m.ToolbarSeparator(),
+				new sap.tnt.ToolHeaderUtilitySeparator(),
+				new sap.m.ToolbarSpacer({
+					width: "1.125rem"
+				}),
 				new sap.m.Avatar({
 					src: "images/Woman_avatar_01.png",
 					initials: "UI",
@@ -91,7 +94,7 @@
 					layoutData: new sap.m.OverflowToolbarLayoutData({
 						priority: sap.m.OverflowToolbarPriority.NeverOverflow
 					})
-				}),
+				})
 			]
 		});
 
