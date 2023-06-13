@@ -1,11 +1,13 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/integration/formatters/IconFormatter",
-	"sap/ui/integration/widgets/Card"
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/util/Manifest"
 ],
 function (
 	IconFormatter,
-	Card
+	Card,
+	Manifest
 ) {
 	"use strict";
 
@@ -15,7 +17,11 @@ function (
 	QUnit.module("IconFormatter", {
 		beforeEach: function () {
 			this.oCard = new Card();
-			this.oCard._sAppId = APP_ID;
+			this.oCard._oCardManifest = new Manifest("sap.card", {
+				"sap.app": {
+					"id": APP_ID
+				}
+			});
 			this.oIconFormatter = new IconFormatter({
 				card: this.oCard
 			});

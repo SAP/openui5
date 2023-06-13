@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "test.componentCard",
+		"type": "card"
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "test.componentCard.V",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"resourceRoots": {
+			"component.card.inner.resources": "./componentCardInnerResources"
+		},
+		"dependencies": {
+			"minUI5Version": "1.38",
+			"libs": {
+				"component.card.inner.resources.lib1": {}
+			}
+		}
+	},
+	"sap.card": {
+		"type": "Component",
+		"header": {
+			"title": "Visit our workshop"
+		}
+	}
+}

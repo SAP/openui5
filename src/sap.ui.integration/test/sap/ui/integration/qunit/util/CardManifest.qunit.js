@@ -226,45 +226,84 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 		});
 	});
 
-	QUnit.test("loadDependenciesAndIncludes method", function (assert) {
+	QUnit.test("loadDependenciesAndIncludes when the manifest is given as object", function (assert) {
 		// Arrange
 		var done = assert.async();
 		sap.ui.loader.config({
 			paths: { "card/test/shared/lib": "test-resources/sap/ui/integration/qunit/testResources/sharedLib"}
 		});
-		var oManifest = new CardManifest("sap.card", {
-			"sap.ui5": {
-				"dependencies": {
-					"libs": {
-						"card.test.shared.lib": {}
+		var logStub = this.stub(Log, "info");
+		var oManifest = new CardManifest(
+			"sap.card",
+			{
+				"sap.app": {
+					"id": "test.manifest.someid"
+				},
+				"sap.ui5": {
+					"dependencies": {
+						"libs": {
+							"card.test.shared.lib": {},
+							"cardInnerLibs.lib1": {}
+						}
+					},
+					"resourceRoots": {
+						"cardInnerLibs": "./innerLibs"
+					}
+				},
+				"sap.card": {
+					"type": "Object",
+					"header": {
+						"title": "Title"
+					},
+					"content": {
+						"content": {
+							"groups": [{
+								"items": [
+									{
+										"id": "item1"
+									}
+								]
+							}]
+						}
 					}
 				}
 			},
-			"sap.card": {
-				"type": "Object",
-				"header": {
-					"title": "Title"
-				},
-				"content": {
-					"content": {
-						"groups": [{
-							"items": [
-								{
-									"id": "item1"
-								}
-							]
-						}]
-					}
-				}
-			}
-		});
+			"test-resources/sap/ui/integration/qunit/testResources/cardWithDependencies/"
+		);
 
 		// Act
 		oManifest.loadDependenciesAndIncludes()
 			.then(function () {
 				// Assert
 				assert.ok(true, "loadDependenciesAndIncludes promise is resolved");
-				assert.ok(sap.ui.require("card/test/shared/lib/library"), "card/test/shared/lib/library should be loaded");
+				assert.ok(sap.ui.require("card/test/shared/lib/library"), "card/test/shared/lib/library (external library) should be loaded");
+				assert.ok(logStub.calledWith("cardWithDependencies.innerLibs.lib1 loaded"), "cardWithDependencies/innerLibs/lib1 (inner library) should be loaded");
+
+				done();
+			});
+	});
+
+	QUnit.test("loadDependenciesAndIncludes when the manifest is given as URL", function (assert) {
+		// Arrange
+		var done = assert.async();
+		sap.ui.loader.config({
+			paths: { "card/test/shared/lib": "test-resources/sap/ui/integration/qunit/testResources/sharedLib"}
+		});
+		var logStub = this.stub(Log, "info");
+		var oManifest = new CardManifest("sap.card");
+
+		// Act
+		oManifest.load({
+				manifestUrl: "test-resources/sap/ui/integration/qunit/testResources/cardWithDependencies/manifest.json"
+			})
+			.then(function () {
+				return oManifest.loadDependenciesAndIncludes();
+			})
+			.then(function () {
+				// Assert
+				assert.ok(true, "loadDependenciesAndIncludes promise is resolved");
+				assert.ok(sap.ui.require("card/test/shared/lib/library"), "card/test/shared/lib/library (external library) should be loaded");
+				assert.ok(logStub.calledWith("cardWithDependencies.innerLibs.lib2 loaded"), "cardWithDependencies/innerLibs/lib2 (inner library) should be loaded");
 
 				done();
 			});
