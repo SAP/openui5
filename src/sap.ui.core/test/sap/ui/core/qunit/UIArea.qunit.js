@@ -3,13 +3,14 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/Core",
 	"sap/ui/core/HTML",
 	"sap/ui/core/UIArea",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/testlib/TestButton",
 	"sap/ui/thirdparty/jquery"
-], function(Log, Control, oCore, HTML, UIArea, createAndAppendDiv, TestButton, jQuery) {
+], function(Log, Control, Element, oCore, HTML, UIArea, createAndAppendDiv, TestButton, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("uiArea1");
@@ -316,6 +317,211 @@ sap.ui.define([
 	QUnit.test("When an item is moved to another parent...", function(assert) {
 		var oOther = new Control();
 		oOther.addDependent(this.uiArea.getDependents()[0]);
+	});
+
+
+	var TestControl = Control.extend("test.TestControl", {
+		metadata: {
+			properties: {
+				header: {type: "string"}
+			},
+			aggregations: {
+				items: {type: "test.TestControl", multiple: true}
+			}
+		},
+		renderer: {
+			apiVersion: 2,
+			render: function (oRM, oControl) {
+				oRM.openStart("div", oControl).openEnd();
+				oRM.openStart("h1").openEnd().text(oControl.getHeader()).close("h1");
+				oControl.getItems().forEach(oRM.renderControl, oRM);
+				oRM.close("div");
+			}
+		}
+	});
+
+	QUnit.module("supressInvalidateFor", {
+		before: function() {
+			this.oRenderingSpy = sinon.spy(Control.prototype, "onBeforeRendering");
+		},
+		beforeEach: function () {
+			this.oGrandChild1 = new TestControl({ header: "GrandChild1" });
+			this.oGrandChild2 = new TestControl({ header: "GrandChild2" });
+			this.oChild1 = new TestControl({ header: "Child1", items: this.oGrandChild1 });
+			this.oChild2 = new TestControl({ header: "Child2", items: this.oGrandChild2 });
+			this.oParent = new TestControl({
+				header: "Parent",
+				items: [this.oChild1, this.oChild2]
+			});
+			this.oParent.placeAt("uiArea1");
+			oCore.applyChanges();
+
+			this.oRenderingSpy.resetHistory();
+			this.oUiArea = this.oParent.getUIArea();
+		},
+		afterEach: function () {
+			this.oParent.destroy();
+		},
+		after: function() {
+			this.oRenderingSpy.restore();
+		}
+	});
+
+	QUnit.test("Invalid calls", function(assert) {
+		[false, true, 5, "test", {}, jQuery, new Element(), this.oUiArea].forEach(function(vCallParam) {
+			assert.throws(function() {
+				this.oUiArea.suppressInvalidationFor(vCallParam);
+			}, "TypeError is thrown for the parameter: " + vCallParam);
+			assert.throws(function() {
+				this.oUiArea.resumeInvalidationFor(vCallParam);
+			}, "TypeError is thrown for the parameter: " + vCallParam);
+		});
+		assert.throws(function() {
+			this.oUiArea.resumeInvalidationFor(this.oParent);
+		}, "Error is thrown since the invalidation has not yet been suppressed");
+	});
+
+	QUnit.test("Return value of suppressInvalidationFor", function(assert) {
+		assert.strictEqual(this.oUiArea.suppressInvalidationFor(this.oParent), true, "Invalidation is correctly suppressed");
+		assert.strictEqual(this.oUiArea.suppressInvalidationFor(this.oParent), false, "Invalidation was already suppressed");
+	});
+
+	QUnit.test("Invalidate all children", function(assert) {
+		this.oUiArea.suppressInvalidationFor(this.oParent);
+		this.oUiArea.suppressInvalidationFor(this.oParent);
+		this.oParent.findElements(true, function(oElement) {
+			oElement.invalidate();
+		});
+		this.oParent.invalidate();
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oParent);
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 5);
+	});
+
+	QUnit.test("Invalidate a single leaf control", function(assert) {
+		this.oUiArea.suppressInvalidationFor(this.oParent);
+		this.oGrandChild1.invalidate();
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oParent);
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 1);
+	});
+
+	QUnit.test("Suppress invalidation for different roots", function(assert) {
+		var oCloneParent = this.oParent.clone();
+		oCloneParent.placeAt("uiArea1");
+		oCore.applyChanges();
+		this.oRenderingSpy.resetHistory();
+
+		this.oUiArea.suppressInvalidationFor(this.oParent);
+		this.oUiArea.suppressInvalidationFor(oCloneParent);
+
+		this.oChild1.invalidate();
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		oCloneParent.getItems()[0].invalidate();
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oParent);
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 2);
+		this.oRenderingSpy.resetHistory();
+
+		this.oUiArea.resumeInvalidationFor(oCloneParent);
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 2);
+		oCloneParent.destroy("uiArea1");
+	});
+
+	QUnit.test("parent rendering", function(assert) {
+		this.oUiArea.suppressInvalidationFor(this.oChild1);
+		this.oGrandChild1.invalidate();
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oParent.invalidate();
+		oCore.applyChanges();
+		this.oRenderingSpy.resetHistory();
+		this.oUiArea.resumeInvalidationFor(this.oChild1);
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+	});
+
+	QUnit.test("bookkeeping cleanup", function(assert) {
+		this.oUiArea.suppressInvalidationFor(this.oParent);
+		this.oParent.invalidate();
+		this.oGrandChild1.invalidate();
+		this.oUiArea.suppressInvalidationFor(this.oChild1);
+		this.oGrandChild1.invalidate();
+		this.oUiArea.suppressInvalidationFor(this.oGrandChild1);
+		this.oGrandChild1.invalidate();
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oParent);
+		oCore.applyChanges();
+		assert.ok(this.oRenderingSpy.called);
+		this.oRenderingSpy.resetHistory();
+
+		this.oUiArea.resumeInvalidationFor(this.oChild1);
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oGrandChild1);
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+	});
+
+	QUnit.test("nested suppressed controls - the child resumes invalidation before the parent", function(assert) {
+		this.oDeepestChild1 = new TestControl({ header: "DeepestChild1" });
+		this.oGrandChild1.addItem(this.oDeepestChild1);
+		oCore.applyChanges();
+		this.oRenderingSpy.resetHistory();
+
+		this.oUiArea.suppressInvalidationFor(this.oParent);
+		this.oUiArea.suppressInvalidationFor(this.oGrandChild1);
+		this.oDeepestChild1.invalidate();
+		this.oChild1.invalidate();
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oGrandChild1);
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oParent);
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 3);
+	});
+
+	QUnit.test("nested suppressed controls - the parent resumes invalidation before the child", function(assert) {
+		this.oDeepestChild1 = new TestControl({ header: "DeepestChild1" });
+		this.oGrandChild1.addItem(this.oDeepestChild1);
+		oCore.applyChanges();
+		this.oRenderingSpy.resetHistory();
+
+		this.oUiArea.suppressInvalidationFor(this.oParent);
+		this.oUiArea.suppressInvalidationFor(this.oGrandChild1);
+		this.oDeepestChild1.invalidate();
+		this.oChild1.invalidate();
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oParent);
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 3);
+		this.oRenderingSpy.resetHistory();
+
+		this.oUiArea.resumeInvalidationFor(this.oGrandChild1);
+		oCore.applyChanges();
+		assert.equal(this.oRenderingSpy.callCount, 0);
 	});
 
 });
