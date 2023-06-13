@@ -6,15 +6,15 @@ sap.ui.define([
 	"sap/m/Bar",
 	"sap/m/Button",
 	"sap/m/Title",
-	"sap/ui/core/TitleLevel",
 	"sap/m/List",
 	"sap/m/IconTabBar",
 	"sap/m/IconTabFilter",
 	"sap/m/p13n/AbstractContainerItem",
 	"sap/ui/Device",
 	"sap/m/library",
-	"sap/m/StandardListItem"
-], function (AbstractContainer, Bar, Button, Title, TitleLevel, List, IconTabBar, IconTabFilter, ContainerItem, Device, mLibrary, StandardListItem) {
+	"sap/m/StandardListItem",
+	"sap/ui/core/library"
+], function (AbstractContainer, Bar, Button, Title, List, IconTabBar, IconTabFilter, ContainerItem, Device, mLibrary, StandardListItem, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -22,6 +22,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.ListType
 	var ListItemType = mLibrary.ListType;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	/**
 	 * Constructor for a new <code>Container</code>.
