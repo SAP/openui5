@@ -6,6 +6,7 @@
  */
 sap.ui.define([
 	"sap/ui/base/DataType",
+	"sap/ui/core/Core",
 	"sap/ui/Global",
 	// library dependency
 	"sap/ui/core/library",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/f/library",
 	"sap/ui/unified/library",
 	"sap/ui/layout/library"
-], function (DataType) {
+], function (DataType, oCore) {
 	"use strict";
 
 	/**
@@ -26,7 +27,7 @@ sap.ui.define([
 	 * @since 1.62
 	 * @public
 	 */
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = oCore.initLibrary({
 		name: "sap.ui.integration",
 		version: "${version}",
 		dependencies: [

@@ -330,6 +330,10 @@ sap.ui.define([
 				value: false,
 				writable: true
 			});
+			Object.defineProperty(this, "_manifestFailed", {
+				value: false,
+				writable: true
+			});
 		},
 
 		/**
@@ -761,19 +765,33 @@ sap.ui.define([
 		 * Only when the library's manifest is preloaded with the library's preload bundle, the manifest will be
 		 * returned from this function. This function never triggers a separate request to load the library's manifest.
 		 *
+		 * @param {boolean} [bSync=false] whether to use sync request to load the library manifest when it doesn't exist
+		 *  in preload cache
 		 * @returns {object|undefined} The manifest of the library
 		 */
-		getManifest: function() {
+		getManifest: function(bSync) {
 			if (!this.oManifest) {
 				var manifestModule = this.name.replace(/\./g, '/') + '/manifest.json';
 
-				if ( sap.ui.loader._.getModuleState(manifestModule) ) {
+				if (sap.ui.loader._.getModuleState(manifestModule)) {
 					this.oManifest = LoaderExtensions.loadResource(manifestModule, {
 						dataType: 'json',
 						async: false, // always sync as we are sure to load from preload cache
 						failOnError: false
 					});
+				} else if (bSync && !this._manifestFailed) {
+					try {
+						this.oManifest = LoaderExtensions.loadResource(manifestModule, {
+							dataType: 'json',
+							async: false,
+							failOnError: true
+						});
+					} catch (e) {
+						this._manifestFailed = true;
+					}
+				}
 
+				if (this._oManifest) {
 					deepFreeze(this.oManifest);
 				}
 			}
@@ -969,11 +987,11 @@ sap.ui.define([
 		 * @param {string} [bSync=false] Whether to load the resource bundle synchronously
 		 * @returns {module:sap/base/i18n/ResourceBundle|Promise<module:sap/base/i18n/ResourceBundle>} The resource
 		 * bundle in synchronous case, otherwise a promise that resolves with the resource bundle
-		 * @prviate
+		 * @private
 		 */
 		_loadResourceBundle: function(sLocale, bSync) {
 			var that = this,
-				oManifest = this.getManifest(),
+				oManifest = this.getManifest(bSync),
 				// A library ResourceBundle can be requested before its owning library is preloaded.
 				// In this case we do not have the library's manifest yet and the default bundle (messagebundle.properties) is requested.
 				// We still cache this default bundle for as long as the library remains "not-preloaded".
@@ -1543,6 +1561,24 @@ sap.ui.define([
 
 			return aLibs;
 		}
+	};
+
+	/**
+	 * Retrieves a resource bundle for the given library and locale.
+	 *
+	 * If only one argument is given, it is assumed to be the library name. The locale
+	 * then falls back to the current {@link sap.ui.core.Configuration#getLanguage session locale}.
+	 *
+	 * @param {string} sLibrary Name of the library to retrieve the bundle for
+	 * @param {string} [sLocale] Locale to retrieve the resource bundle for
+	 * @returns {module:sap/base/i18n/ResourceBundle|undefined} The best matching resource bundle for the given
+	 *  parameters or <code>undefined</code>
+	 * @public
+	 */
+	Library.getResourceBundleFor = function(sLibrary, sLocale) {
+		var oLibrary = Library._get(sLibrary, true);
+
+		return oLibrary.getResourceBundle(sLocale);
 	};
 
 	/**
