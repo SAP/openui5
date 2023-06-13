@@ -4963,8 +4963,8 @@ sap.ui.define([
 	{entitySetPath : "~FooSetPath"},
 	{entitySet : "~FooSet", returnType : "Collection(~FooType)"},
 	{entitySetPath : "~FooSetPath", returnType : "Collection(~FooType)"}
-].forEach(function (oFunctionMetadata) {
-	QUnit.test("callFunction: with expand; retuns a collection", function (assert) {
+].forEach(function (oFunctionMetadata, i) {
+	QUnit.test("callFunction: with expand; returns a collection, #" + i, function (assert) {
 		var callFunctionResult,
 			oMetadata = {
 				_getFunctionImportMetadata : function () {}
@@ -5444,8 +5444,8 @@ sap.ui.define([
 	{bPersist : true, bExpected : true},
 	{bPersist : undefined, bExpected : false},
 	{bPersist : false, bExpected : false}
-].forEach(function (oFixture) {
-	QUnit.test("_parseResponse, message parser does not exist", function (assert) {
+].forEach(function (oFixture, i) {
+	QUnit.test("_parseResponse, message parser does not exist, #" + i, function (assert) {
 		var oModel = {
 				bIsMessageScopeSupported : "~bIsMessageScopeSupported",
 				bPersistTechnicalMessages : oFixture.bPersist,
