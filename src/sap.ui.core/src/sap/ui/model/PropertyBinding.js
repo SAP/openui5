@@ -35,6 +35,16 @@ sap.ui.define([
 
 		constructor : function (oModel, sPath, oContext, mParameters) {
 			Binding.apply(this, arguments);
+			// The formatter providing the external representation of this binding's value
+			this.fnFormatter = undefined;
+			// The internal type of this binding, cf. #setType and
+			// sap.ui.base.ManagedObject.PropertyBindingInfo.targetType
+			this.sInternalType = undefined;
+			// The binding's sap.ui.model.BindingMode, cf. #setBindingMode and
+			// sap.ui.base.ManagedObject.PropertyBindingInfo.mode
+			this.sMode = undefined;
+			// The binding's sap.ui.model.SimpleType, cf. #setType
+			this.oType = undefined;
 		},
 		metadata : {
 			"abstract" : true,

@@ -255,6 +255,28 @@ sap.ui.define([
 		this.composite.resume();
 	});
 
+	//**********************************************************************************************
+	QUnit.test("constructor", function (assert) {
+		var aBindings = [],
+			oBinding = new CompositeBinding(aBindings, "~bRawValues", "~bInternalValues");
+
+		// CompositeBinding has its own #getModel and #getPath methods always returning null; values passed to the base
+		// class constructor are not used there
+		assert.strictEqual(oBinding.oModel, null, "model passed to PropertyBinding c'tor");
+		assert.strictEqual(oBinding.sPath, "", "path passed to PropertyBinding c'tor");
+		assert.strictEqual(oBinding.aValues, null);
+		assert.strictEqual(oBinding.bRawValues, "~bRawValues");
+		assert.strictEqual(oBinding.bPreventUpdate, false);
+		assert.strictEqual(oBinding.bInternalValues, "~bInternalValues");
+		assert.ok(oBinding.hasOwnProperty("aOriginalValues"));
+		assert.strictEqual(oBinding.aOriginalValues, undefined);
+		assert.ok(oBinding.hasOwnProperty("fnChangeHandler"));
+		assert.strictEqual(oBinding.fnChangeHandler, undefined);
+		assert.ok(oBinding.hasOwnProperty("fnDataStateChangeHandler"));
+		assert.strictEqual(oBinding.fnDataStateChangeHandler, undefined);
+
+	});
+
 [{
 	aModels : [{}, null /*static binding*/],
 	bMultipleModels : false
@@ -268,7 +290,7 @@ sap.ui.define([
 	aModels : [{}], // same model
 	bMultipleModels : false
 }].forEach(function (oFixture, i) {
-	QUnit.test("Constructor, bMultipleModels, # " + i, function (assert) {
+	QUnit.test("constructor, bMultipleModels, # " + i, function (assert) {
 		var aBinding0 = {getModel : function () {}},
 			aBinding1 = {getModel : function () {}},
 			aModels = oFixture.aModels;

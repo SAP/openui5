@@ -36,20 +36,33 @@ sap.ui.define([
 	 */
 	var Binding = EventProvider.extend("sap.ui.model.Binding", /** @lends sap.ui.model.Binding.prototype */ {
 
-		constructor : function(oModel, sPath, oContext, mParameters){
+		constructor : function (oModel, sPath, oContext, mParameters) {
 			EventProvider.apply(this);
 
+			// the binding's model
 			this.oModel = oModel;
+			// whether the binding is relative
 			this.bRelative = !sPath.startsWith('/');
+			// the binding's path
 			this.sPath = sPath;
+			// the binding's context
 			this.oContext = oContext;
 			this.vMessages = undefined;
+			// the binding's parameters
 			this.mParameters = mParameters;
+			// whether the binding is initial
 			this.bInitial = false;
+			// whether the binding is suspended
 			this.bSuspended = false;
+			// the binding's data state
 			this.oDataState = null;
 			// whether this binding does not propagate model messages to the control
 			this.bIgnoreMessages = undefined;
+			// whether this binding is currently being destroyed, cf. #destroy
+			this.bIsBeingDestroyed = undefined;
+			// whether this binding has *asynchronously* triggered a data state change event which is not yet
+			// fired, cf. #_checkDataState
+			this.bFiredAsync = undefined;
 		},
 
 		metadata : {
@@ -224,7 +237,7 @@ sap.ui.define([
 
 	/**
 	 * Getter for current active messages.
-	 * @return {Object} The context object
+	 * @returns {Object} The context object
 	 */
 	Binding.prototype.getMessages = function() {
 		return this.vMessages;
@@ -232,7 +245,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the data state for this binding.
-	 * @return {sap.ui.model.DataState} The data state
+	 * @returns {sap.ui.model.DataState} The data state
 	 */
 	Binding.prototype.getDataState = function() {
 		if (!this.oDataState) {

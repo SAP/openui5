@@ -94,6 +94,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/model/FilterProcessor.qunit",
 		"sap/ui/core/qunit/model/ListBinding.qunit",
 		"sap/ui/core/qunit/model/Model.qunit",
+		"sap/ui/core/qunit/model/PropertyBinding.qunit",
 		"sap/ui/core/qunit/model/Sorter.qunit",
 		"sap/ui/core/qunit/model/TreeBinding.qunit",
 		"sap/ui/core/qunit/model/TreeBindingAdapter.qunit",

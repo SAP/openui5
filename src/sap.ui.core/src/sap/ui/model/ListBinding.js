@@ -41,12 +41,20 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 		constructor : function(oModel, sPath, oContext, aSorters, aFilters, mParameters){
 			Binding.call(this, oModel, sPath, oContext, mParameters);
 
+			// the binding's sorters
 			this.aSorters = makeArray(aSorters, Sorter);
+			// the binding's control filters
 			this.aFilters = [];
+			// the binding's application filters
 			this.aApplicationFilters = makeArray(aFilters, Filter);
+			// the filter combined from control and application filters
 			this.oCombinedFilter = null;
+			// whether the binding uses extended change detection, cf. #getContexts
 			this.bUseExtendedChangeDetection = false;
+			// whether changes within an entity cause a delete and insert, cf. #enableExtendedChangeDetection
 			this.bDetectUpdates = true;
+			// the configuration for extended change detection, cf. #enableExtendedChangeDetection
+			this.oExtendedChangeDetectionConfig = undefined;
 		},
 
 		metadata : {

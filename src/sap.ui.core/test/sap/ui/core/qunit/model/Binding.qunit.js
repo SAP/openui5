@@ -25,6 +25,41 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("constructor", function (assert) {
+		var oBinding = new Binding("~oModel", "some/path", "~oContext", "~mParameters");
+
+		// code under test
+		assert.strictEqual(oBinding.oModel, "~oModel");
+		assert.strictEqual(oBinding.sPath, "some/path");
+		assert.strictEqual(oBinding.oContext, "~oContext");
+		assert.ok(oBinding.hasOwnProperty("vMessages"));
+		assert.strictEqual(oBinding.vMessages, undefined);
+		assert.strictEqual(oBinding.mParameters, "~mParameters");
+		assert.strictEqual(oBinding.bInitial, false);
+		assert.strictEqual(oBinding.bSuspended, false);
+		assert.strictEqual(oBinding.oDataState, null);
+		assert.ok(oBinding.hasOwnProperty("bIgnoreMessages"));
+		assert.strictEqual(oBinding.bIgnoreMessages, undefined);
+		assert.ok(oBinding.hasOwnProperty("bIsBeingDestroyed"));
+		assert.strictEqual(oBinding.bIsBeingDestroyed, undefined);
+		assert.ok(oBinding.hasOwnProperty("bFiredAsync"));
+		assert.strictEqual(oBinding.bFiredAsync, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("constructor, bRelative", function (assert) {
+		var oBinding = new Binding(/*oModel*/null, "/absolute");
+
+		// code under test
+		assert.strictEqual(oBinding.bRelative, false);
+
+		oBinding = new Binding(/*oModel*/null, "relative");
+
+		// code under test
+		assert.strictEqual(oBinding.bRelative, true);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("setContext", function (assert) {
 		var oContext = {},
 			oBinding = new Binding(/*oModel*/null, "some/path", oContext),
@@ -87,11 +122,8 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("setIgnoreMessages and constructor", function (assert) {
+	QUnit.test("setIgnoreMessages", function (assert) {
 		var oBinding = new Binding(/*oModel*/null, "some/path");
-
-		// code under test
-		assert.strictEqual(oBinding.bIgnoreMessages, undefined, "not yet set");
 
 		// code under test
 		oBinding.setIgnoreMessages("~boolean");

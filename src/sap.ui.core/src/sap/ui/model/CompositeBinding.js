@@ -64,17 +64,30 @@ sap.ui.define([
 			var oModel;
 
 			PropertyBinding.apply(this, [null,""]);
+			// the property bindings for the parts of this composite binding
 			this.aBindings = aBindings;
+			// the values of the parts
 			this.aValues = null;
+			// whether to use raw (= model representation) values of parts
 			this.bRawValues = bRawValues;
+			// whether the binding is not updated in #checkUpdate, as it is currently being initialized, cf. #initialize
 			this.bPreventUpdate = false;
+			// whether to use internal values of parts
 			this.bInternalValues = bInternalValues;
+			// whether parts use multiple models
 			this.bMultipleModels = this.aBindings.some(function (oBinding) {
 				var oCurrentModel = oBinding.getModel();
 
 				oModel = oModel || oCurrentModel;
 				return oModel && oCurrentModel && oCurrentModel !== oModel;
 			});
+			// the original values of the parts retrieved on the last update, cf- #checkUpdate
+			this.aOriginalValues = undefined;
+			// the function attached to the change event on all part bindings, cf. #attachChange, #detachChange
+			this.fnChangeHandler = undefined;
+			// the function attached to the DateStateChange and AggregatedDataStateChange event on all part bindings,
+			// cf. #attachDataStateChange, #detachDataStateChange and respective methods for AggregatedDataStateChange
+			this.fnDataStateChangeHandler = undefined;
 		},
 		metadata : {
 
@@ -592,13 +605,13 @@ sap.ui.define([
 	 */
 	CompositeBinding.prototype.attachChange = function(fnFunction, oListener) {
 		var that = this;
-		this.fChangeHandler = function(oEvent) {
+		this.fnChangeHandler = function(oEvent) {
 			if (that.bSuspended) {
 				return;
 			}
 			var oBinding = oEvent.getSource();
 			if (oBinding.getBindingMode() == BindingMode.OneTime) {
-				oBinding.detachChange(that.fChangeHandler);
+				oBinding.detachChange(that.fnChangeHandler);
 			}
 			/*bForceUpdate true gets lost (e.g. checkUpdate(true) on model); But if an embedded binding fires a change we could
 			 * call checkUpdate(true) so we handle both cases: a value change of the binding and a checkUpdate(true)
@@ -608,7 +621,7 @@ sap.ui.define([
 		this.attachEvent("change", fnFunction, oListener);
 		if (this.aBindings) {
 			this.aBindings.forEach(function(oBinding) {
-				oBinding.attachChange(that.fChangeHandler);
+				oBinding.attachChange(that.fnChangeHandler);
 			});
 		}
 	};
@@ -626,7 +639,7 @@ sap.ui.define([
 		this.detachEvent("change", fnFunction, oListener);
 		if (this.aBindings) {
 			this.aBindings.forEach(function(oBinding) {
-				oBinding.detachChange(that.fChangeHandler);
+				oBinding.detachChange(that.fnChangeHandler);
 			});
 		}
 	};
@@ -645,10 +658,10 @@ sap.ui.define([
 	 */
 	CompositeBinding.prototype.attachDataStateChange = function(fnFunction, oListener) {
 		var that = this;
-		this.fDataStateChangeHandler = function(oEvent) {
+		this.fnDataStateChangeHandler = function(oEvent) {
 			var oBinding = oEvent.getSource();
 			if (oBinding.getBindingMode() == BindingMode.OneTime) {
-				oBinding.detachDataStateChange(that.fChangeHandler);
+				oBinding.detachDataStateChange(that.fnChangeHandler);
 			}
 
 			that.checkDataState();
@@ -656,7 +669,7 @@ sap.ui.define([
 		this.attachEvent("DataStateChange", fnFunction, oListener);
 		if (this.aBindings) {
 			this.aBindings.forEach(function(oBinding) {
-				oBinding.attachEvent("DataStateChange", that.fDataStateChangeHandler);
+				oBinding.attachEvent("DataStateChange", that.fnDataStateChangeHandler);
 			});
 		}
 	};
@@ -674,7 +687,7 @@ sap.ui.define([
 		this.detachEvent("DataStateChange", fnFunction, oListener);
 		if (this.aBindings) {
 			this.aBindings.forEach(function(oBinding) {
-				oBinding.detachEvent("DataStateChange", that.fDataStateChangeHandler);
+				oBinding.detachEvent("DataStateChange", that.fnDataStateChangeHandler);
 			});
 		}
 	};
@@ -694,11 +707,11 @@ sap.ui.define([
 	CompositeBinding.prototype.attachAggregatedDataStateChange = function(fnFunction, oListener) {
 		var that = this;
 
-		if (!this.fDataStateChangeHandler) {
-			this.fDataStateChangeHandler = function(oEvent) {
+		if (!this.fnDataStateChangeHandler) {
+			this.fnDataStateChangeHandler = function(oEvent) {
 				var oBinding = oEvent.getSource();
 				if (oBinding.getBindingMode() == BindingMode.OneTime) {
-					oBinding.detachDataStateChange(that.fChangeHandler);
+					oBinding.detachDataStateChange(that.fnChangeHandler);
 				}
 
 				that.checkDataState();
@@ -708,7 +721,7 @@ sap.ui.define([
 		this.attachEvent("AggregatedDataStateChange", fnFunction, oListener);
 		if (this.aBindings) {
 			this.aBindings.forEach(function(oBinding) {
-				oBinding.attachEvent("DataStateChange", that.fDataStateChangeHandler);
+				oBinding.attachEvent("DataStateChange", that.fnDataStateChangeHandler);
 			});
 		}
 	};
@@ -727,7 +740,7 @@ sap.ui.define([
 		this.detachEvent("AggregatedDataStateChange", fnFunction, oListener);
 		if (this.aBindings) {
 			this.aBindings.forEach(function(oBinding) {
-				oBinding.detachEvent("DataStateChange", that.fDataStateChangeHandler);
+				oBinding.detachEvent("DataStateChange", that.fnDataStateChangeHandler);
 			});
 		}
 	};

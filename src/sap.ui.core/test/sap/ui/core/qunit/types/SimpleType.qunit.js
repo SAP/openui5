@@ -20,13 +20,21 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
+		var oSetFormatOptionsCall = this.mock(SimpleType.prototype).expects("setFormatOptions").withExactArgs({})
+				.callsFake(function () {
+					assert.ok(this.hasOwnProperty("oInputFormat"), "oInputFormat set before setFormatOptions call");
+					assert.strictEqual(this.oInputFormat, undefined);
+				});
+		var oSetConstraintsCall = this.mock(SimpleType.prototype).expects("setConstraints").withExactArgs({});
+
+		// code under test
 		var oType = new SimpleType();
 
 		assert.ok(oType instanceof Type, "is a Type");
 		assert.ok(oType instanceof SimpleType, "is a SimpleType");
 		assert.strictEqual(oType.getName(), "SimpleType", "type name");
-		assert.deepEqual(oType.oFormatOptions, {}, "default format options");
-		assert.deepEqual(oType.oConstraints, {}, "default constraints");
+		assert.ok(oSetFormatOptionsCall.calledOn(oType));
+		assert.ok(oSetConstraintsCall.calledOn(oType));
 	});
 
 	//*********************************************************************************************
@@ -40,6 +48,12 @@ sap.ui.define([
 
 		assert.strictEqual(oType.oConstraints, oConstraints);
 		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+
+		// code under test
+		oType = new SimpleType();
+
+		assert.deepEqual(oType.oConstraints, {});
+		assert.deepEqual(oType.oFormatOptions, {});
 
 		// code under test
 		oType = new SimpleType(null, null);

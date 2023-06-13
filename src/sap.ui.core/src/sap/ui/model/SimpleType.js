@@ -50,6 +50,9 @@ sap.ui.define([
 
 		constructor : function (oFormatOptions, oConstraints) {
 			Type.apply(this, arguments);
+			// The formatter to convert between the value in internal and model representation, cf. #getModelFormat
+			//   setFormatOptions may be overwritten by subclasses and set an own oInputFormat => must be set before
+			this.oInputFormat = undefined;
 			this.setFormatOptions(oFormatOptions || {});
 			this.setConstraints(oConstraints || {});
 			this.sName = "SimpleType";
