@@ -32,8 +32,6 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oModel, "~oModel");
 		assert.strictEqual(oBinding.sPath, "some/path");
 		assert.strictEqual(oBinding.oContext, "~oContext");
-		assert.ok(oBinding.hasOwnProperty("vMessages"));
-		assert.strictEqual(oBinding.vMessages, undefined);
 		assert.strictEqual(oBinding.mParameters, "~mParameters");
 		assert.strictEqual(oBinding.bInitial, false);
 		assert.strictEqual(oBinding.bSuspended, false);
