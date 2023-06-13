@@ -47,7 +47,6 @@ sap.ui.define([
 			this.sPath = sPath;
 			// the binding's context
 			this.oContext = oContext;
-			this.vMessages = undefined;
 			// the binding's parameters
 			this.mParameters = mParameters;
 			// whether the binding is initial
@@ -233,14 +232,6 @@ sap.ui.define([
 			}
 			this._fireChange(mChangeParameters);
 		}
-	};
-
-	/**
-	 * Getter for current active messages.
-	 * @returns {Object} The context object
-	 */
-	Binding.prototype.getMessages = function() {
-		return this.vMessages;
 	};
 
 	/**
