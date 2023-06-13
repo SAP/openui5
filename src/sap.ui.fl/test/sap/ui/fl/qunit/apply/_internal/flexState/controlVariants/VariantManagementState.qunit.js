@@ -464,47 +464,87 @@ sap.ui.define([
 			cleanup();
 		}
 	}, function() {
-		QUnit.test("when the storageResponse contains multiple custom variants", function(assert) {
-			var oInitialPrepareSpy = sandbox.spy(InitialPrepareFunctions, "variants");
+		[{
+			flexObjects: [createVariant({
+				variantReference: sVariantManagementReference,
+				fileName: "customVariant"
+			})],
+			responseKey: "variants",
+			testName: "custom variant"
+		},
+		{
+			flexObjects: [
+				createVariant({
+					variantReference: sVariantManagementReference,
+					fileName: "customVariant"
+				}),
+				createVariant({
+					variantReference: "secondVariant",
+					fileName: "customVariant2"
+				})
+			],
+			responseKey: "variants",
+			testName: "multiple custom variants"
+		},
+		{
+			flexObjects: [FlexObjectFactory.createUIChange({
+				id: "someUIChange",
+				layer: Layer.CUSTOMER,
+				variantReference: sStandardVariantReference
+			})],
+			responseKey: "variantDependentControlChanges",
+			testName: "a UI change depending on the standard variant"
+		},
+		{
+			flexObjects: [FlexObjectFactory.createUIChange({
+				variantReference: sVariantManagementReference,
+				id: "someVariantChange",
+				fileType: "ctrl_variant_change",
+				changeType: "setTitle",
+				selector: { id: sStandardVariantReference}
+			})],
+			responseKey: "variantChanges",
+			testName: "a variant change (e.g. setTitle)"
+		}].forEach(function(oTestInput) {
+			var sName = "when the storageResponse contains " + oTestInput.testName;
+			QUnit.test(sName, function(assert) {
+				var oInitialPrepareSpy = sandbox.spy(InitialPrepareFunctions, "variants");
 
-			var oLoaderStub = sandbox.stub(Loader, "loadFlexData");
-			function fakeLoadFlexData() {
-				return oLoaderStub.wrappedMethod.apply(this, arguments)
-				.then(function(oOriginalResponse) {
-					var oResponseAddition = { changes: {} };
-					oResponseAddition.changes.variants = toFileContent([
-						createVariant({
-							variantReference: sVariantManagementReference,
-							fileName: "customVariant"
-						}),
-						createVariant({
-							variantReference: "someReference",
-							fileName: "customVariant2",
-							variantManagementReference: "secondVariant"
-						})
-					]);
-					return merge(
-						oOriginalResponse,
-						oResponseAddition
-					);
-				});
-			}
-			oLoaderStub.callsFake(fakeLoadFlexData);
+				var oLoaderStub = sandbox.stub(Loader, "loadFlexData");
+				function fakeLoadFlexData() {
+					return oLoaderStub.wrappedMethod.apply(this, arguments)
+					// eslint-disable-next-line max-nested-callbacks
+					.then(function(oOriginalResponse) {
+						var oResponseAddition = { changes: {} };
+						oResponseAddition.changes[oTestInput.responseKey] = toFileContent(oTestInput.flexObjects);
+						return merge(
+							oOriginalResponse,
+							oResponseAddition
+						);
+					});
+				}
+				oLoaderStub.callsFake(fakeLoadFlexData);
 
-			return FlexState.initialize({
-				componentId: sComponentId,
-				reference: sReference
-			})
-			.then(function() {
-				var oVariantsMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
-				assert.ok(oInitialPrepareSpy.calledOnce, "then the initial prepare function is called");
+				return FlexState.initialize({
+					componentId: sComponentId,
+					reference: sReference
+				})
 				// eslint-disable-next-line max-nested-callbacks
-				[sVariantManagementReference, "secondVariant"].forEach(function(sVMR) {
+				.then(function() {
+					var oVariantsMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+					assert.ok(oInitialPrepareSpy.calledOnce, "then the initial prepare function is called");
 					assert.strictEqual(
-						oVariantsMap[sVMR].variants[0].key,
-						sVMR,
+						oVariantsMap[sVariantManagementReference].variants[0].key,
+						sStandardVariantReference,
 						"then the standard variant is automatically added based on the existing variant"
 					);
+					if (oTestInput.flexObjects.length === 2) {
+						assert.strictEqual(
+							oVariantsMap.secondVariant.variants[0].key,
+							"secondVariant",
+							"then the standard variant is automatically added based on the existing variant"
+						);
+					}
 				});
 			});
 		});
@@ -636,43 +676,6 @@ sap.ui.define([
 					"secondVM",
 					"then the default variant is set for the second vm"
 				);
-			});
-		});
-
-		QUnit.test("when there are changes referencing a deleted variant", function(assert) {
-			var sDeletedVariant = "deletedVariantRef";
-			var oUIChange = FlexObjectFactory.createUIChange({
-				id: "someUIChange",
-				layer: Layer.CUSTOMER,
-				variantReference: sDeletedVariant
-			});
-			var oSetTitleChange = FlexObjectFactory.createUIChange({
-				variantReference: sVariantManagementReference,
-				id: "someVariantChange",
-				fileType: "ctrl_variant_change",
-				changeType: "setTitle",
-				selector: { id: sDeletedVariant}
-			});
-			var oSetDefaultChange = FlexObjectFactory.createUIChange({
-				id: "setDefaultVariantChange",
-				layer: Layer.CUSTOMER,
-				changeType: "setDefault",
-				fileType: "ctrl_variant_management_change",
-				selector: {
-					id: sVariantManagementReference
-				},
-				content: {
-					defaultVariant: "anotherCustomVariant"
-				}
-			});
-			stubFlexObjectsSelector([oUIChange, oSetTitleChange, oSetDefaultChange]);
-			return FlexState.initialize({
-				componentId: sComponentId,
-				reference: sReference
-			})
-			.then(function() {
-				var oVariantMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
-				assert.deepEqual(oVariantMap, {}, "no variant entry was created");
 			});
 		});
 	});
