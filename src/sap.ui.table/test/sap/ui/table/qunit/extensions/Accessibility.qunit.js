@@ -1021,12 +1021,10 @@ sap.ui.define([
 		var $Elem;
 
 		$Elem = oTable.$("rowsel0");
-		assert.strictEqual($Elem.parent().attr("role"), "row", "parent role");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 
 		$Elem = oTable.$("rowsel1");
-		assert.strictEqual($Elem.parent().attr("role"), "row", "parent role");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 		oTable.invalidate();
 		oCore.applyChanges();
@@ -1326,12 +1324,10 @@ sap.ui.define([
 		var $Elem;
 
 		$Elem = oTable.$("rowact0");
-		assert.strictEqual($Elem.parent().attr("role"), "row", "parent role");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 
 		$Elem = oTable.$("rowact1");
-		assert.strictEqual($Elem.parent().attr("role"), "row", "parent role");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
@@ -1588,17 +1584,25 @@ sap.ui.define([
 	});
 
 	QUnit.test("ARIA Attributes of TR Elements", function(assert) {
+		initRowActions(oTable, 1, 1);
+		oCore.applyChanges();
+
+		var sTableId = oTable.getId();
 		var $Elem = getCell(0, 0, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
+		assert.strictEqual($Elem.attr("aria-owns"), undefined, "aria-owns");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 		$Elem = getCell(0, 1, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
+		assert.strictEqual($Elem.attr("aria-owns"), sTableId + "-rowselecthdr0 " + sTableId + "-rows-row0-col0 " + sTableId + "-rowact0", "aria-owns");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 		$Elem = getCell(1, 0, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
+		assert.strictEqual($Elem.attr("aria-owns"), undefined, "aria-owns");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 		$Elem = getCell(1, 1, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
+		assert.strictEqual($Elem.attr("aria-owns"), sTableId + "-rowselecthdr1 " + sTableId + "-rows-row1-col0 " + sTableId + "-rowact1", "aria-owns");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
@@ -1722,11 +1726,6 @@ sap.ui.define([
 				assert.strictEqual($Elem.attr("aria-current"), (i === iCurrentRow ? "true" : undefined),
 					"row " + i + ": aria-current of the tr element");
 				$Elem = oTable.$("rowsel" + i).parent();
-				assert.strictEqual($Elem.attr("aria-current"), (i === iCurrentRow ? "true" : undefined),
-					"row " + i + ": aria-current of the row header");
-				$Elem = oTable.$("rowact" + i).parent();
-				assert.strictEqual($Elem.attr("aria-current"), (i === iCurrentRow ? "true" : undefined),
-					"row " + i + ": aria-current of the row action");
 			}
 		}
 
