@@ -1298,9 +1298,11 @@ sap.ui.define([
 		assert.ok(oSubMenu.getRootMenu() === oMenu, "Menu is the root");
 		oSubMenu.setRootMenuTopStyle(true);
 		assert.ok(oMenu.bUseTopStyle, "Top Style active");
+		Core.applyChanges();
 		assert.ok(oMenu.$().hasClass("sapUiMnuTop"), "Top Style CSS class set");
 		oMenu.setRootMenuTopStyle(false);
 		assert.ok(!oMenu.bUseTopStyle, "Top Style inactive");
+		Core.applyChanges();
 		assert.ok(!oMenu.$().hasClass("sapUiMnuTop"), "Top Style CSS class not set");
 		oMenu.destroy();
 	});

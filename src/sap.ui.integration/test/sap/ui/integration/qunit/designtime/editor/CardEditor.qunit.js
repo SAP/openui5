@@ -689,6 +689,7 @@ sap.ui.define([
 								oMultiComboBox.focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
+								Core.applyChanges();
 								var sMsgStripId = oField1.getAssociation("_messageStrip");
 								var oMsgStrip = Core.byId(sMsgStripId);
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
