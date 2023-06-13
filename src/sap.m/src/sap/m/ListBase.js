@@ -2065,7 +2065,7 @@ function(
 			// prepare the announcement for the screen reader
 			var oAccInfo = oItem.getAccessibilityInfo(),
 				oBundle = Core.getLibraryResourceBundle("sap.m"),
-				sDescription = oAccInfo.type + " . ";
+				sDescription = oItem.isGroupHeader() ? "" : oAccInfo.type + " . ";
 
 			if (this.isA("sap.m.Table")) {
 				var mPosition = this.getAccessbilityPosition(oItem);
