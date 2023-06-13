@@ -401,8 +401,7 @@ sap.ui.define([
 				ui5: {
 					resourceroots: {
 						"rta/qunit": "test-resources/sap/ui/rta/qunit/"
-					},
-					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
+					}
 				}
 			},
 			"apply/_internal/flexState/controlVariants/Switcher": {

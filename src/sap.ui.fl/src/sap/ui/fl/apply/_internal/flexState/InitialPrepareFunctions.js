@@ -27,7 +27,6 @@ sap.ui.define([
 	var InitialPrepareFunctions = {};
 
 	InitialPrepareFunctions.variants = function(mPropertyBag) {
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
 		var aVariantIds = (mPropertyBag.storageResponse.changes.variants || [])
 		.map(function(oVariantDef) {
 			return oVariantDef.fileName;
@@ -42,7 +41,7 @@ sap.ui.define([
 			})
 		);
 
-		// Look through the variant management references of known variants to find the standard
+		// Look through the variant references of known variants to find the standard
 		// variant id on any variant that directly inherited from it
 		// If it is not part of the runtime persistence, create it
 		// If there are no custom variants at all, the VariantModel will create the
@@ -52,20 +51,28 @@ sap.ui.define([
 				flexObjects: []
 			}
 		};
-
 		// TODO: remove fallback to empty array and adjust tests that don't use the whole changes structure
-		(mPropertyBag.storageResponse.changes.variants || []).forEach(function(oVariant) {
-			if (!includes(aVariantIds, oVariant.variantManagementReference)) {
+		var aRelevantFlexObjects = []
+		.concat(mPropertyBag.storageResponse.changes.variants || [])
+		.concat(mPropertyBag.storageResponse.changes.variantDependentControlChanges || [])
+		.concat(mPropertyBag.storageResponse.changes.variantChanges || []);
+
+		aRelevantFlexObjects.forEach(function(oFlexObject) {
+			var sVariantReference = oFlexObject.fileType === "ctrl_variant_change"
+				? oFlexObject.selector.id
+				: oFlexObject.variantReference;
+			if (sVariantReference && !includes(aVariantIds, sVariantReference)) {
+				var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
 				var oNewVariant = FlexObjectFactory.createFlVariant({
-					id: oVariant.variantManagementReference,
-					variantManagementReference: oVariant.variantManagementReference,
+					id: sVariantReference,
+					variantManagementReference: sVariantReference,
 					variantName: oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
 					layer: Layer.BASE,
 					user: ControlVariantUtils.DEFAULT_AUTHOR,
-					reference: oVariant.reference
+					reference: oFlexObject.reference
 				});
 				oUpdate.runtimeOnlyData.flexObjects.push(oNewVariant);
-				aVariantIds.push(oVariant.variantReference);
+				aVariantIds.push(sVariantReference);
 			}
 		});
 

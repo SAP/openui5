@@ -218,9 +218,7 @@ sap.ui.define([
 		})
 		.forEach(function(oVariantChange) {
 			var oVariantEntry = findVariant(oVariantManagementsMap, oVariantChange);
-			if (oVariantEntry) {
-				applyVariantChange(oVariantEntry, oVariantChange, sReference, oVariantManagementsMap);
-			}
+			applyVariantChange(oVariantEntry, oVariantChange, sReference, oVariantManagementsMap);
 		});
 
 		aFlexObjects
