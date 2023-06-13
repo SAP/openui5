@@ -3438,9 +3438,12 @@ sap.ui.define([
 	QUnit.test("hidden column header row should not be included in the ItemNavigation items", function(assert) {
 		var aItems = this.oTable.getItems(),
 			oFirstItem = aItems[0],
-			oLastItem = aItems[aItems.length - 1];
+			oLastItem = aItems[aItems.length - 1],
+			$tblHeader = this.oTable.$("tblHeader");
 
-		assert.notOk(this.oTable.$("tblHeader").attr("tabindex"), "tabindex attribute is not added to hidden column header row");
+		assert.notOk($tblHeader.attr("tabindex"), "tabindex attribute is not added to hidden column header row");
+		assert.ok($tblHeader.hasClass("sapMListTblHeaderNone"), "invisible table header has the correct css class");
+		assert.equal($tblHeader.attr("aria-hidden"), "true", "table header has aria-hidden=true");
 
 		oFirstItem.focus();
 		qutils.triggerKeydown(document.activeElement, "END", false, false, false);
@@ -3455,14 +3458,17 @@ sap.ui.define([
 	QUnit.test("visible column header row should be included in the ItemNavigation items", function(assert) {
 		var aItems = this.oTable.getItems(),
 			oFirstItem = aItems[0],
-			oLastItem = aItems[aItems.length - 1];
+			oLastItem = aItems[aItems.length - 1],
+			$tblHeader = this.oTable.$("tblHeader");
 
 		var oColumn = this.oTable.getColumns()[1];
 		// add "header" aggregation to a column
 		oColumn.setHeader(new Text({text: "Last Name"}));
 		Core.applyChanges();
 
-		assert.ok(this.oTable.$("tblHeader").attr("tabindex"), "tabindex attribute is added to column header row");
+		assert.ok($tblHeader.attr("tabindex"), "tabindex attribute is added to column header row");
+		assert.notOk($tblHeader.hasClass("sapMListTblHeaderNone"), "invisible table header css class is not assigned");
+		assert.notOk($tblHeader.attr("aria-hidden"), "aria-hidden is not assigned");
 		oFirstItem.focus();
 		qutils.triggerKeydown(document.activeElement, "END", false, false, false);
 		Core.applyChanges();
