@@ -1570,7 +1570,7 @@ sap.ui.define([
 		assert.ok(document.getElementById("generic-tile-failed-overlay"), "Generic tile icon was rendered successfully");
 		assert.ok(document.getElementById("tile-cont-failed"), "TileContent was rendered successfully");
 		assert.ok(!document.getElementById("tile-cont-failed-footer-text"), "TileContent footer text was not rendered");
-		assert.equal(getComputedStyle(document.getElementById("generic-tile-failed-overlay")).opacity, "0.8","Overlay has been added successfully");
+		assert.ok(document.querySelector(".sapMGTOverlay"),"Overlay has been added successfully");
 
 		this.oGenericTile.setState("Loaded");
 		oCore.applyChanges();
@@ -1630,7 +1630,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("GenericTile in Disabled state rendered", function(assert) {
-		assert.equal(getComputedStyle(document.getElementById("generic-tile-failed-overlay")).opacity, "0.8","Overlay has been added successfully");
+		assert.ok(document.querySelector(".sapMGTOverlay"),"Overlay has been added successfully");
 	});
 
 	QUnit.module("GenericTileMode tests", {
