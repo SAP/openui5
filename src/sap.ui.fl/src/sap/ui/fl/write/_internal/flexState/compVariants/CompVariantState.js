@@ -473,7 +473,10 @@ sap.ui.define([
 			if (mPropertyBag.executeOnSelection !== undefined) {
 				oVariant.storeExecuteOnSelection(mPropertyBag.executeOnSelection);
 			}
-			if (mPropertyBag.favorite !== undefined) {
+			// public variant should not be visible for other users
+			if (mPropertyBag.layer === Layer.PUBLIC) {
+				oVariant.storeFavorite(false);
+			} else	if (mPropertyBag.favorite !== undefined) {
 				oVariant.storeFavorite(mPropertyBag.favorite);
 			}
 			if (mPropertyBag.contexts) {
