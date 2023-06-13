@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/odata/_ODataMetaModelUtils",
 	"sap/ui/model/odata/ODataMetadata",
-	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/datajs"
-], function (Log, _ODataMetaModelUtils, ODataMetadata, TestUtils, OData) {
+], function (Log, _ODataMetaModelUtils, ODataMetadata, OData) {
 	/*global QUnit, sinon*/
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
@@ -31,10 +30,6 @@ sap.ui.define([
 			this.sUrl = "/some/url";
 			this.oMetadata = new ODataMetadata(this.sUrl, {});
 			oLoadMetadataStub.restore();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 

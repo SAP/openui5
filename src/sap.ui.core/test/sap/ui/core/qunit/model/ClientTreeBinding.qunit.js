@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/ClientTreeBinding",
 	"sap/ui/model/FilterProcessor",
-	"sap/ui/model/FilterType",
-	"sap/ui/test/TestUtils"
-], function (Log, ClientTreeBinding, FilterProcessor, FilterType, TestUtils) {
+	"sap/ui/model/FilterType"
+], function (Log, ClientTreeBinding, FilterProcessor, FilterType) {
 	"use strict";
 	/*global QUnit, sinon */
 
@@ -17,10 +16,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 

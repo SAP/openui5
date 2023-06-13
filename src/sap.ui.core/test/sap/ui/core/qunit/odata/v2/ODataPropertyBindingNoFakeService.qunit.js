@@ -10,10 +10,9 @@ sap.ui.define([
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/ODataPropertyBinding",
-	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/test/TestUtils"
+	"sap/ui/model/odata/v2/ODataModel"
 ], function (Log, SyncPromise, Binding, ChangeReason, Context, PropertyBinding, ODataMetaModel,
-		ODataPropertyBinding, ODataModel, TestUtils) {
+		ODataPropertyBinding, ODataModel) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0*/
 	"use strict";
@@ -24,10 +23,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 

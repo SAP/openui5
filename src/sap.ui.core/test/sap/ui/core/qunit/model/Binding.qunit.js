@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/EventProvider",
 	"sap/ui/model/Binding",
-	"sap/ui/model/ChangeReason",
-	"sap/ui/test/TestUtils"
-], function (Log, EventProvider, Binding, ChangeReason, TestUtils) {
+	"sap/ui/model/ChangeReason"
+], function (Log, EventProvider, Binding, ChangeReason) {
 	/*global QUnit, sinon*/
 	"use strict";
 
@@ -17,10 +16,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 

@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
 	"sap/ui/model/TreeBinding",
-	"sap/ui/model/odata/ODataTreeBindingFlat",
-	"sap/ui/test/TestUtils"
-], function (Log, _Helper, ChangeReason, Filter, TreeBinding, ODataTreeBindingFlat, TestUtils) {
+	"sap/ui/model/odata/ODataTreeBindingFlat"
+], function (Log, _Helper, ChangeReason, Filter, TreeBinding, ODataTreeBindingFlat) {
 	/*global QUnit,sinon*/
 	"use strict";
 
@@ -21,10 +20,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 

@@ -16,11 +16,10 @@ sap.ui.define([
 	"sap/ui/model/type/Date",
 	"sap/ui/model/type/Float",
 	"sap/ui/model/type/Integer",
-	"sap/ui/model/type/String",
-	"sap/ui/test/TestUtils"
+	"sap/ui/model/type/String"
 ], function (Log, deepEqual, Configuration, UI5Date, BindingMode, CompositeBinding, CompositeType,
 		Context, ParseException, PropertyBinding, StaticBinding, ValidateException, JSONModel,
-		TypeDate, TypeFloat, TypeInteger, TypeString, TestUtils
+		TypeDate, TypeFloat, TypeInteger, TypeString
 ) {
 	"use strict";
 
@@ -833,9 +832,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 
