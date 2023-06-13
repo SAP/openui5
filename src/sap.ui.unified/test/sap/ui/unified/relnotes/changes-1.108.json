@@ -127,5 +127,25 @@
         ]
       }
     ]
+  },
+  "1.108.15": {
+    "date": "June 2023",
+    "notes": [
+      {
+        "id": "e13b732c102e109c2c421a3bab2c79e1a8f15f8b",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Menu opens every time with SPACE after closing its menu with ESCAPE or TAB",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270189696"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370008955"
+          }
+        ]
+      }
+    ]
   }
 }

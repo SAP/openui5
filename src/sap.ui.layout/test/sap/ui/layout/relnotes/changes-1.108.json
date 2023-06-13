@@ -19,5 +19,21 @@
         "text": " SimpleForm: stable IDs"
       }
     ]
+  },
+  "1.108.15": {
+    "date": "June 2023",
+    "notes": [
+      {
+        "id": "9e0a167923da4805a6ad52a009069b1f9f54ccf5",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: fixed getScrollDelegate method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370031057"
+          }
+        ]
+      }
+    ]
   }
 }

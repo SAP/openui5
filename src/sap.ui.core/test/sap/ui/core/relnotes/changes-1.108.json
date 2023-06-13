@@ -373,5 +373,21 @@
         ]
       }
     ]
+  },
+  "1.108.15": {
+    "date": "June 2023",
+    "notes": [
+      {
+        "id": "886de629597fb24350d4b0706390ba1d076f1e32",
+        "type": "FIX",
+        "text": " base/util/fetch: Allow empty response header fields",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370067548"
+          }
+        ]
+      }
+    ]
   }
 }
