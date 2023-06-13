@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/Version",
+	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode"
 ], function(
@@ -14,6 +15,7 @@ sap.ui.define([
 	ChangePersistenceFactory,
 	Storage,
 	Version,
+	Utils,
 	JSONModel,
 	BindingMode
 ) {
@@ -26,45 +28,45 @@ sap.ui.define([
 	var BACKEND_REQUEST_LIMIT = MODEL_SIZE_LIMIT + 1;
 
 	function createModel(bVersioningEnabled, aVersions) {
-		var oModel = _prepareVersionsModel(bVersioningEnabled, aVersions);
+		return _prepareVersionsModel(bVersioningEnabled, aVersions)
+		.then(function(oModel) {
+			oModel.setDefaultBindingMode(BindingMode.OneWay);
+			oModel.setSizeLimit(MODEL_SIZE_LIMIT);
+			// TODO: currently called by sap.ui.rta.RuntimeAuthoring but should be by a ChangesState
+			oModel.setDirtyChanges = function(bDirtyChanges) {
+				oModel.setProperty("/dirtyChanges", bDirtyChanges);
+				oModel.updateDraftVersion();
+				oModel.updateBindings(true);
+			};
 
-		oModel.setDefaultBindingMode(BindingMode.OneWay);
-		oModel.setSizeLimit(MODEL_SIZE_LIMIT);
-		// TODO: currently called by sap.ui.rta.RuntimeAuthoring but should be by a ChangesState
-		oModel.setDirtyChanges = function(bDirtyChanges) {
-			oModel.setProperty("/dirtyChanges", bDirtyChanges);
-			oModel.updateDraftVersion();
-			oModel.updateBindings(true);
-		};
+			oModel.updateDraftVersion = function() {
+				var aVersions = oModel.getProperty("/versions");
+				var bVersioningEnabled = oModel.getProperty("/versioningEnabled");
+				var bDirtyChanges = oModel.getProperty("/dirtyChanges");
+				var bBackendDraft = oModel.getProperty("/backendDraft");
+				var bDraftAvailable = bVersioningEnabled && (bDirtyChanges || bBackendDraft);
+				oModel.setProperty("/draftAvailable", bDraftAvailable);
 
-		oModel.updateDraftVersion = function() {
-			var aVersions = oModel.getProperty("/versions");
-			var bVersioningEnabled = oModel.getProperty("/versioningEnabled");
-			var bDirtyChanges = oModel.getProperty("/dirtyChanges");
-			var bBackendDraft = oModel.getProperty("/backendDraft");
-			var bDraftAvailable = bVersioningEnabled && (bDirtyChanges || bBackendDraft);
-			oModel.setProperty("/draftAvailable", bDraftAvailable);
+				if (bDirtyChanges) {
+					oModel.setProperty("/displayedVersion", Version.Number.Draft);
+				}
 
-			if (bDirtyChanges) {
-				oModel.setProperty("/displayedVersion", Version.Number.Draft);
-			}
+				// add draft
+				if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
+					aVersions.splice(0, 0, {version: Version.Number.Draft, type: Version.Type.Draft, filenames: [], isPublished: false});
+				}
 
-			// add draft
-			if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
-				aVersions.splice(0, 0, {version: Version.Number.Draft, type: Version.Type.Draft, filenames: [], isPublished: false});
-			}
+				// remove draft
+				if (_doesDraftExistInVersions(aVersions) && !bDraftAvailable) {
+					aVersions.shift();
+					oModel.setProperty("/displayedVersion", oModel.getProperty("/persistedVersion"));
+				}
 
-			// remove draft
-			if (_doesDraftExistInVersions(aVersions) && !bDraftAvailable) {
-				aVersions.shift();
-				oModel.setProperty("/displayedVersion", oModel.getProperty("/persistedVersion"));
-			}
-
-			var bActivateEnabled = oModel.getProperty("/displayedVersion") !== oModel.getProperty("/activeVersion");
-			oModel.setProperty("/activateEnabled", bActivateEnabled);
-		};
-
-		return oModel;
+				var bActivateEnabled = oModel.getProperty("/displayedVersion") !== oModel.getProperty("/activeVersion");
+				oModel.setProperty("/activateEnabled", bActivateEnabled);
+			};
+			return oModel;
+		});
 	}
 
 	function _prepareVersionsModel(bVersioningEnabled, aVersions, oVersionsModel) {
@@ -115,18 +117,26 @@ sap.ui.define([
 			oVersionsModel.setProperty("/draftFilenames", aDraftFilenames);
 			oVersionsModel.updateBindings(true);
 		} else {
-			oVersionsModel = new JSONModel({
-				publishVersionEnabled: bPublishVersionEnabled,
-				versioningEnabled: bVersioningEnabled,
-				versions: aVersions,
-				backendDraft: bBackendDraft,
-				dirtyChanges: false,
-				draftAvailable: bBackendDraft,
-				activateEnabled: bBackendDraft,
-				activeVersion: sActiveVersion,
-				persistedVersion: sPersistedBasisForDisplayedVersion,
-				displayedVersion: sPersistedBasisForDisplayedVersion,
-				draftFilenames: aDraftFilenames
+			// when a standalone app switch the version it always trigger a hard reload there the version url parameter is needed
+			oVersionsModel = Utils.getUShellService("URLParsing")
+			.then(function(oURLParsingService) {
+				var sUrlVersionParameter = Utils.getParameter(
+					Version.UrlParameter,
+					oURLParsingService
+				);
+				return new JSONModel({
+					publishVersionEnabled: bPublishVersionEnabled,
+					versioningEnabled: bVersioningEnabled,
+					versions: aVersions,
+					backendDraft: bBackendDraft,
+					dirtyChanges: false,
+					draftAvailable: bBackendDraft,
+					activateEnabled: bBackendDraft,
+					activeVersion: sActiveVersion,
+					persistedVersion: sUrlVersionParameter || sPersistedBasisForDisplayedVersion,
+					displayedVersion: sUrlVersionParameter || sPersistedBasisForDisplayedVersion,
+					draftFilenames: aDraftFilenames
+				});
 			});
 		}
 
