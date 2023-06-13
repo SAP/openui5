@@ -215,7 +215,8 @@ sap.ui.define([
 	 *   see {@link #setRefreshAfterChange}. If given, this overrules the model-wide
 	 *   <code>refreshAfterChange</code> flag for this operation only.
 	 * @returns {Promise<undefined>} A promise resolving with <code>undefined</code> in case of
-	 *   successful deletion or rejecting with an error in case the deletion failed
+	 *   successful deletion or rejecting with an error in case the deletion failed. If the <code>DELETE</code> request
+	 *   has been aborted, the error has an <code>aborted</code> flag set to <code>true</code>.
 	 * @throws {Error}
 	 *   If the given parameter map contains any other parameter than those documented above in case
 	 *   of a persistent context
