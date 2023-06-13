@@ -329,7 +329,7 @@ sap.ui.define([
 		});
 
 		// register the response handler for data collection
-		XHRInterceptor.register(INTERACTION, "open", function () {
+		XHRInterceptor.register(INTERACTION, "open", function (sMethod, sUrl, bAsync) {
 			var sEpp,
 				sAction,
 				sRootContextID;
@@ -341,8 +341,9 @@ sap.ui.define([
 			}
 			// we only need to take care of requests when we have a running interaction
 			if (oPendingInteraction) {
+				var bIsNoCorsRequest = !isCORSRequest(sUrl);
 				// only use Interaction for non CORS requests
-				if (!isCORSRequest(arguments[1])) {
+				if (bIsNoCorsRequest) {
 					//only track if FESR.clientID == EPP.Action && FESR.rootContextID == EPP.rootContextID
 					sEpp = Interaction.passportHeader.get(this);
 					if (sEpp && sEpp.length >= 370) {
@@ -354,6 +355,13 @@ sap.ui.define([
 					if (!sEpp || sAction && sRootContextID && oPendingInteraction.passportAction.endsWith(sAction)) {
 						this.addEventListener("readystatechange", handleResponse.bind(this,  oPendingInteraction.id));
 					}
+				}
+				// arguments at position 2 is indicatior whether request is async or not
+				// readystatechange must not be used for sync CORS request since it does not work properly
+				// this is especially necessary in case request was not started by LoaderExtension
+				// bAsync is by default true, therefore we need to check eplicitly for value 'false'
+				if (bIsNoCorsRequest || bAsync !== false) {
+					// notify async step for all XHRs (even CORS requests)
 					this.addEventListener("readystatechange", handleInteraction.bind(this, Interaction.notifyAsyncStep()));
 				}
 				// assign the current interaction to the xhr for later response header retrieval.
@@ -599,6 +607,7 @@ sap.ui.define([
 				LoaderExtensions.notifyResourceLoading = Interaction.notifyAsyncStep;
 			}
 			bInteractionActive = bActive;
+			Interaction.notifyStepStart("startup", "startup", true);
 		},
 
 		/**
