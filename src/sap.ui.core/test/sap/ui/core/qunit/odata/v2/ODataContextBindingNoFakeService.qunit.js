@@ -6,9 +6,8 @@ sap.ui.define([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
 	"sap/ui/model/ContextBinding",
-	"sap/ui/model/odata/v2/ODataContextBinding",
-	"sap/ui/test/TestUtils"
-], function (Log, ChangeReason, BaseContext, ContextBinding, ODataContextBinding, TestUtils) {
+	"sap/ui/model/odata/v2/ODataContextBinding"
+], function (Log, ChangeReason, BaseContext, ContextBinding, ODataContextBinding) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0*/
 	"use strict";
@@ -19,10 +18,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 

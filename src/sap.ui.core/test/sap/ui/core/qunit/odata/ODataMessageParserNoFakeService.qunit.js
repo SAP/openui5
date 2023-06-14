@@ -9,10 +9,8 @@ sap.ui.define([
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/ODataMessageParser",
 	"sap/ui/model/odata/ODataMetadata",
-	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/test/TestUtils"
-], function (Log, coreLibrary, Message, MessageManager, MessageScope, ODataMessageParser, ODataMetadata, ODataUtils,
-		 TestUtils) {
+	"sap/ui/model/odata/ODataUtils"
+], function (Log, coreLibrary, Message, MessageManager, MessageScope, ODataMessageParser, ODataMetadata, ODataUtils) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
@@ -27,10 +25,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 

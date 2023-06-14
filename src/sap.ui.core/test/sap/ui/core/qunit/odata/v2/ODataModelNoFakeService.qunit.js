@@ -24,13 +24,11 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataContextBinding",
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/model/odata/v2/ODataTreeBinding",
-	"sap/ui/test/TestUtils"
+	"sap/ui/model/odata/v2/ODataTreeBinding"
 ], function (Log, SyncPromise, Configuration, UI5Date, Message, _Helper, BaseContext,
 		FilterProcessor, Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser,
 		ODataMetaModel, ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context,
-		ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding,
-		TestUtils
+		ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding
 ) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
@@ -58,10 +56,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 
@@ -216,6 +210,8 @@ sap.ui.define([
 		var oModel = new ODataModel(mParameters);
 
 		assert.strictEqual(oModel.bIgnoreAnnotationsFromMetadata, oFixture.member);
+
+		return oPromise;
 	});
 });
 

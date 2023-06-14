@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/BindingMode",
-	"sap/ui/model/Model",
-	"sap/ui/test/TestUtils"
-], function (Log, Message, BindingMode, Model, TestUtils) {
+	"sap/ui/model/Model"
+], function (Log, Message, BindingMode, Model) {
 	/*global QUnit, Set*/
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
@@ -18,10 +17,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 

@@ -10,10 +10,9 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONListBinding",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/test/TestUtils"
+	"sap/ui/model/json/JSONModel"
 ], function(Log, deepEqual, Device, ClientListBinding, Filter, FilterOperator, Sorter,
-		JSONListBinding, JSONModel, TestUtils) {
+		JSONListBinding, JSONModel) {
 	/*global QUnit */
 	"use strict";
 
@@ -1525,10 +1524,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 

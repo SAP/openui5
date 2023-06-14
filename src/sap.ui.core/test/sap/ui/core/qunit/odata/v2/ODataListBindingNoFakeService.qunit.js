@@ -12,10 +12,9 @@ sap.ui.define([
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/OperationMode",
-	"sap/ui/model/odata/v2/ODataListBinding",
-	"sap/ui/test/TestUtils"
+	"sap/ui/model/odata/v2/ODataListBinding"
 ], function (Log, UI5Date, ChangeReason, Context, Filter, FilterOperator, FilterProcessor,
-		CountMode, ODataUtils, OperationMode, ODataListBinding, TestUtils
+		CountMode, ODataUtils, OperationMode, ODataListBinding
 ) {
 	/*global QUnit,sinon*/
 	/*eslint max-nested-callbacks: 0*/
@@ -29,10 +28,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 

@@ -1,8 +1,7 @@
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/message/MessageMixin",
-	"sap/ui/test/TestUtils"
-], function (Log, MessageMixin, TestUtils) {
+	"sap/ui/core/message/MessageMixin"
+], function (Log, MessageMixin) {
 	/*global QUnit*/
 	"use strict";
 
@@ -12,10 +11,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 

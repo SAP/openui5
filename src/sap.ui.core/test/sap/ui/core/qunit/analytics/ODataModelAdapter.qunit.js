@@ -4,9 +4,8 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/analytics/odata4analytics",
-	"sap/ui/model/analytics/ODataModelAdapter",
-	"sap/ui/test/TestUtils"
-], function (Log, odata4analytics, ODataModelAdapter, TestUtils) {
+	"sap/ui/model/analytics/ODataModelAdapter"
+], function (Log, odata4analytics, ODataModelAdapter) {
 	/*global QUnit */
 	"use strict";
 
@@ -16,10 +15,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 

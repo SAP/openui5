@@ -11,10 +11,9 @@ sap.ui.define([
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
-	"sap/ui/model/Sorter",
-	"sap/ui/test/TestUtils"
+	"sap/ui/model/Sorter"
 ], function (Log, ChangeReason, Context, Filter, FilterProcessor, FilterType, CountMode, OperationMode,
-		ODataTreeBinding, Sorter, TestUtils) {
+		ODataTreeBinding, Sorter) {
 	/*global QUnit,sinon*/
 	"use strict";
 
@@ -24,10 +23,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 

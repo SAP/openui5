@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/Filter",
 	"sap/ui/model/ListBinding",
-	"sap/ui/model/Sorter",
-	"sap/ui/test/TestUtils"
-], function (Log, Filter, ListBinding, Sorter, TestUtils) {
+	"sap/ui/model/Sorter"
+], function (Log, Filter, ListBinding, Sorter) {
 	/*global QUnit*/
 	"use strict";
 
@@ -17,10 +16,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-		},
-
-		afterEach : function (assert) {
-			return TestUtils.awaitRendering();
 		}
 	});
 

@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/core/message/Message",
 	"sap/ui/model/ClientListBinding",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/message/MessageListBinding",
-	"sap/ui/test/TestUtils"
-], function (Log, UI5Date, Message, ClientListBinding, JSONModel, MessageListBinding, TestUtils) {
+	"sap/ui/model/message/MessageListBinding"
+], function (Log, UI5Date, Message, ClientListBinding, JSONModel, MessageListBinding) {
 	"use strict";
 
 	QUnit.module("sap.ui.model.message.MessageListBinding", {
@@ -16,10 +15,6 @@ sap.ui.define([
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
 			sap.ui.getCore().getMessageManager().removeAllMessages();
-		},
-		beforeEach: function() {
-			sap.ui.getCore().getMessageManager().removeAllMessages();
-			return TestUtils.awaitRendering();
 		}
 	});
 
