@@ -39,7 +39,7 @@
 					"Main.view.xml",
 					"manifest.json",
 					"SandboxModel.js",
-					"../../../common/Helper",
+					"../../../common/Helper.js",
 					"../../../common/SandboxModelHelper.js"
 				]
 			}
