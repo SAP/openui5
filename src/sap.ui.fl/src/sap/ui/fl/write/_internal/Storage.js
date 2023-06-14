@@ -260,8 +260,18 @@ sap.ui.define([
 		if (
 			mCondense.create || mCondense.reorder || mCondense.update || mCondense.delete
 		) {
+			var oCreatedChanges = mCondense.create && mCondense.create.change ? mCondense.create.change : [];
 			mPropertyBag.flexObjects = mCondense;
-			return _executeActionByName("condense", mPropertyBag);
+			return _executeActionByName("condense", mPropertyBag)
+			.then(function(oResult) {
+				if (oResult && oResult.status && oResult.status === 205 && oCreatedChanges.length) {
+					var aResponse = oCreatedChanges.map(function(oChange) {
+						return Object.values(oChange).pop();
+					});
+					oResult.response = aResponse;
+				}
+				return oResult;
+			});
 		}
 		return Promise.resolve();
 	};

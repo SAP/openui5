@@ -2137,7 +2137,6 @@ sap.ui.define([
 				}
 			});
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
-
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
 				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
 				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
