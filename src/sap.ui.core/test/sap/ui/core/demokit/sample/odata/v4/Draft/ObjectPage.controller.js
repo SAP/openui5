@@ -71,15 +71,15 @@ sap.ui.define([
 		onPatternMatched : function (oEvent) {
 			var oContext,
 				sPath = "/Products" + oEvent.getParameter("arguments").key,
-				oView = this.getView();
+				oView = this.getView(),
+				oOldContext = oView.getBindingContext();
 
-			oContext = oView.getBindingContext();
-			if (oContext && oContext !== this.oActiveContext) {
-				oContext.setKeepAlive(false);
-			}
 			oContext = oView.getModel().getKeepAliveContext(sPath, false,
 				{$$patchWithoutSideEffects : true});
 			oView.setBindingContext(oContext);
+			if (oOldContext && oOldContext !== oContext && oOldContext !== this.oActiveContext) {
+				oOldContext.setKeepAlive(false);
+			}
 			oView.setBusy(true);
 			oContext.requestProperty("IsActiveEntity").catch(function () {
 				// ignore; it's logged anyway
