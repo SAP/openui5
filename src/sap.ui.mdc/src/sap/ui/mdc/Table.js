@@ -212,6 +212,17 @@ sap.ui.define([
 					defaultValue: TitleLevel.Auto
 				},
 				/**
+				 * Defines style of the header.
+				 * For more information, see {@link sap.m.Title#setTitleStyle}.
+				 * @experimental Internal use only
+				 * @ui5-restricted sap.fe
+				 * @since 1.116
+				 */
+				headerStyle: {
+					type: "sap.ui.core.TitleLevel",
+					group: "Appearance"
+				},
+				/**
 				 * Determines whether to bind the table automatically after the initial creation or re-creation of the table.
 				 */
 				autoBindOnInit: {
@@ -982,6 +993,15 @@ sap.ui.define([
 		return this;
 	};
 
+	Table.prototype.setHeaderStyle = function(sStyle) {
+		if (this.getHeaderStyle() === sStyle) {
+			return this;
+		}
+		this.setProperty("headerStyle", sStyle, true);
+		this._oTitle && this._oTitle.setTitleStyle(this.getHeaderStyle() || TitleLevel.H4);
+		return this;
+	};
+
 	/**
 	 * @inheritDoc
 	 */
@@ -1618,7 +1638,7 @@ sap.ui.define([
 				text: this.getHeader(),
 				width: this.getHeaderVisible() ? undefined : "0px",
 				level: this.getHeaderLevel(),
-				titleStyle: TitleLevel.H4
+				titleStyle: this.getHeaderStyle() || TitleLevel.H4
 			});
 			// Create Toolbar
 			this._oToolbar = new ActionToolbar(this.getId() + "-toolbar", {
