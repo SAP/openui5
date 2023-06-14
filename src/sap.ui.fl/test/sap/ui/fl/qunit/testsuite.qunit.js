@@ -1089,7 +1089,8 @@ sap.ui.define([
 				ui5: {
 					resourceroots: {
 						"sap.ui.test": "test-resources/sap/ui/fl/qunit/testResources/"
-					}
+					},
+					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 				},
 				coverage: {
 					only: ["sap/ui/fl/variants/VariantModel"]

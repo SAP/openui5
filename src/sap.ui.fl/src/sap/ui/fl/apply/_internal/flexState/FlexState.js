@@ -618,33 +618,34 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds a fake standard variant to the external data map which survives when the FlexState is cleared.
+	 * Adds a runtime-steady object to the external data map which survives when the FlexState is cleared.
+	 * For example: a fake standard variant.
 	 * Fake standard variant refers to a variant that was not created based on file content returned from the backend.
 	 * If the flex response contains no variants that inherited from the standard variant, it is impossible
 	 * to know its ID without access to the related variant management control. Thus the standard variant cannot
 	 * be created during initialization but has to be added by the VariantManagement control via this method.
 	 * @param {string} sReference - Flex reference of the app
 	 * @param {string} sComponentId - ID of the component
-	 * @param {object} oStandardVariantInstance - Variant instance
+	 * @param {object} oFlexObject - Flex object to be added as runtime-steady
 	 */
-	FlexState.addFakeStandardVariantToExternalData = function(sReference, sComponentId, oStandardVariantInstance) {
+	FlexState.addRuntimeSteadyObject = function(sReference, sComponentId, oFlexObject) {
 		if (!_mExternalData.flexObjects[sReference]) {
 			_mExternalData.flexObjects[sReference] = {};
 		}
 		if (!_mExternalData.flexObjects[sReference][sComponentId]) {
 			_mExternalData.flexObjects[sReference][sComponentId] = [];
 		}
-		_mExternalData.flexObjects[sReference][sComponentId].push(oStandardVariantInstance);
+		_mExternalData.flexObjects[sReference][sComponentId].push(oFlexObject);
 		oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
 	};
 
 	/**
-	 * Resets the fake standard variants for all variant management controls of the given component.
+	 * Clears the runtime-steady objects of the given component.
 	 *
 	 * @param {string} sReference - Flex reference of the app
 	 * @param {string} sComponentId - ID of the component
 	 */
-	FlexState.resetFakeStandardVariants = function(sReference, sComponentId) {
+	FlexState.clearRuntimeSteadyObjects = function(sReference, sComponentId) {
 		// External data is currently only used to store the standard variant
 		if (_mExternalData.flexObjects[sReference]) {
 			delete _mExternalData.flexObjects[sReference][sComponentId];

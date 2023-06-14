@@ -1039,7 +1039,7 @@ sap.ui.define([
 				reference: this.sFlexReference
 			});
 
-			VariantManagementState.addFakeStandardVariant(this.sFlexReference, this.oAppComponent.getId(), sVariantManagementReference, oStandardVariantInstance);
+			VariantManagementState.addRuntimeSteadyObject(this.sFlexReference, this.oAppComponent.getId(), oStandardVariantInstance);
 		}
 	};
 
@@ -1277,6 +1277,37 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	function resolveTitleBindingsAndCreateVariantChanges(oVariantManagementControl, sVariantManagementReference) {
+		this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
+			// Find model and key from patterns like {i18n>TextKey} - only resource models are supported
+			var aMatches = oVariant.title && oVariant.title.match(/{(\w+)>(\w+)}/);
+			if (aMatches) {
+				var sModelName = aMatches[1];
+				var sKey = aMatches[2];
+				var oModel = oVariantManagementControl.getModel(sModelName);
+				if (oModel) {
+					var sResolvedTitle = oModel.getResourceBundle().getText(sKey);
+					var mChangeProperties = {
+						variantReference: oVariant.key,
+						changeType: "setTitle",
+						title: sResolvedTitle,
+						layer: oVariant.layer,
+						appComponent: this.oAppComponent
+					};
+					var oVariantChange = this.createVariantChange(sVariantManagementReference, mChangeProperties);
+					// The change cannot be added as a dirty change but must survive a state invalidation
+					VariantManagementState.addRuntimeSteadyObject(this.sFlexReference, this.oAppComponent.getId(), oVariantChange);
+				} else {
+					// Wait for model to be assigned and try again
+					oVariantManagementControl.attachEventOnce(
+						"modelContextChange",
+						resolveTitleBindingsAndCreateVariantChanges.bind(this, oVariantManagementControl, sVariantManagementReference)
+					);
+				}
+			}
+		}.bind(this));
+	}
+
 	VariantModel.prototype.registerToModel = function(oVariantManagementControl) {
 		var sVariantManagementReference = this.getVariantManagementReferenceForControl(oVariantManagementControl);
 
@@ -1288,6 +1319,9 @@ sap.ui.define([
 
 		// only attachVariantApplied will set this to true
 		this.oData[sVariantManagementReference].showExecuteOnSelection = false;
+
+		// replace bindings in titles with the resolved texts
+		resolveTitleBindingsAndCreateVariantChanges.call(this, oVariantManagementControl, sVariantManagementReference);
 
 		// attach/detach events on control
 		// select event
@@ -1400,7 +1434,7 @@ sap.ui.define([
 	 */
 	VariantModel.prototype.destroy = function() {
 		this.oDataSelector.removeUpdateListener(this.fnUpdateListener);
-		VariantManagementState.clearFakeStandardVariants(this.sFlexReference, this.oAppComponent.getId());
+		VariantManagementState.clearRuntimeSteadyObjects(this.sFlexReference, this.oAppComponent.getId());
 		JSONModel.prototype.destroy.apply(this);
 	};
 
