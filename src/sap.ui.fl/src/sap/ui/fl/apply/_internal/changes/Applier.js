@@ -165,7 +165,8 @@ sap.ui.define([
 					oError.stack
 				);
 				break;
-			/* no default */
+			default:
+				// no default
 		}
 		return FlexCustomData.addFailedCustomData(mControl.control, oChange, mPropertyBag, sCustomDataIdentifier)
 		.then(function() {
