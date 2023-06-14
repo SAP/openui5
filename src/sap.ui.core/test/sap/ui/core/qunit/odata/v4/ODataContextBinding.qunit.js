@@ -141,7 +141,7 @@ sap.ui.define([
 			bAction : undefined,
 			mChangeListeners : {},
 			mParameters : {},
-			sResourcePath : undefined
+			mRefreshParameters : {}
 		});
 		assert.strictEqual(oBinding.oReturnValueContext, null);
 		assert.strictEqual(oBinding.sUpdateGroupId, "updateGroup");
@@ -2420,7 +2420,7 @@ sap.ui.define([
 				bAction : undefined,
 				mChangeListeners : {},
 				mParameters : {},
-				sResourcePath : undefined
+				mRefreshParameters : {}
 			});
 
 		assert.throws(function () {
@@ -2433,7 +2433,7 @@ sap.ui.define([
 				bAction : undefined,
 				mChangeListeners : {},
 				mParameters : {},
-				sResourcePath : undefined
+				mRefreshParameters : {}
 			}, "unchanged");
 	});
 
