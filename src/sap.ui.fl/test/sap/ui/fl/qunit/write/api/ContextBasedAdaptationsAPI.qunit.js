@@ -1908,8 +1908,12 @@ sap.ui.define([
 				}
 				return undefined;
 			});
+			oCompVariantFlexDataResponse.comp.changes.forEach(function(oChange) {
+				if (oChange.changeType === "updateVariant") {
+					oChange.content.contexts = {role: []};
+				}
+			});
 			sandbox.stub(InitialStorage, "loadFlexData").resolves(oCompVariantFlexDataResponse);
-
 			return ContextBasedAdaptationsAPI.canMigrate(this.mPropertyBag).then(function(bCanMigrate) {
 				assert.strictEqual(bCanMigrate, false, "then no migration needed");
 			});
@@ -1929,6 +1933,15 @@ sap.ui.define([
 			});
 			oFLVariantFlexDataResponse.variantChanges = [];
 			sandbox.stub(InitialStorage, "loadFlexData").resolves(oFLVariantFlexDataResponse);
+			// Stub getAllVariants to return variants that would be visible in an RTA environment only
+			var aMigrationLayers = [Layer.VENDOR, Layer.PARTNER, Layer.CUSTOMER_BASE, Layer.CUSTOMER];
+			var oGetAllVariantsStub = sandbox.stub(VariantManagementState, "getAllVariants");
+			oGetAllVariantsStub.callsFake(function() {
+				var aOriginalReturnValue = oGetAllVariantsStub.wrappedMethod(ManifestUtils.getFlexReferenceForControl());
+				return aOriginalReturnValue.filter(function(oVariant) {
+					return aMigrationLayers.includes(oVariant.layer);
+				});
+			});
 
 			return ContextBasedAdaptationsAPI.canMigrate(this.mPropertyBag).then(function(bCanMigrate) {
 				assert.strictEqual(bCanMigrate, false, "then no migration needed");
