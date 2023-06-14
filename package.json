@@ -4,7 +4,7 @@
   "description": "OpenUI5 Core & Runtime",
   "private": true,
   "scripts": {
-    "start": "npm run start --workspace src/testsuite",
+    "start": "npm run start --workspace src/testsuite --",
     "start-grunt": "grunt serve",
     "testsuite": "npm run testsuite --workspace src/testsuite",
     "sdk": "npm run sdk --workspace src/testsuite",
