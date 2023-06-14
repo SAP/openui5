@@ -71,6 +71,7 @@ sap.ui.define([
 			if (!bVariantIndependent && bVariantPresent) {
 				this.mCurrentExpectedSpecificData.variantManagementReference = "variantReference";
 				this.mCurrentExpectedSpecificData.variantReference = "variantReference";
+				this.mCurrentExpectedSpecificData.isChangeOnStandardVariant = true;
 			}
 
 			assert.deepEqual(this.oCreateStub.lastCall.args[0].changeSpecificData, this.mCurrentExpectedSpecificData, "the correct change specific data were passed");

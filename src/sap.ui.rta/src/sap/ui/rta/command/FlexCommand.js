@@ -203,7 +203,8 @@ sap.ui.define([
 		if (sVariantReference && !this.getVariantIndependent()) {
 			var mVariantObj = {
 				variantManagementReference: sVariantManagementReference,
-				variantReference: sVariantReference
+				variantReference: sVariantReference,
+				isChangeOnStandardVariant: sVariantManagementReference === sVariantReference
 			};
 			mChangeSpecificData = Object.assign({}, mChangeSpecificData, mVariantObj);
 		}

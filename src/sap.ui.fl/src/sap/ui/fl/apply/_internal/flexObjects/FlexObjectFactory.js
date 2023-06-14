@@ -139,6 +139,7 @@ sap.ui.define([
 		mProperties.selector = mPropertyBag.selector;
 		mProperties.jsOnly = mPropertyBag.jsOnly;
 		mProperties.variantReference = mPropertyBag.variantReference;
+		mProperties.isChangeOnStandardVariant = mPropertyBag.isChangeOnStandardVariant;
 		mProperties.fileType = mPropertyBag.fileType || "change";
 		return new UIChange(mProperties);
 	};

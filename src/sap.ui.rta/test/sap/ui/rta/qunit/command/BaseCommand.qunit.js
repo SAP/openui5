@@ -565,24 +565,20 @@ sap.ui.define([
 
 	QUnit.module("Given variant model, variant management reference and flex settings for a rename command", {
 		beforeEach: function() {
-			var sVariantManagementReference = "dummyVariantManagementReference";
-			this.sCurrentVariantReference = "dummyVariantReference";
+			this.sCurrentVMReference = "dummyVariantManagementReference";
 			this.oFlexSettings = {
 				layer: Layer.VENDOR,
 				developerMode: false
 			};
 
-			sandbox.stub(oMockedAppComponent, "getModel").callsFake(function(sModelName) {
-				if (sModelName === ControlVariantApplyAPI.getVariantModelName()) {
-					return {
-						getCurrentVariantReference: function(sVariantManagementRef) {
-							if (sVariantManagementRef === sVariantManagementReference) {
-								return this.sCurrentVariantReference;
-							}
-						}.bind(this)
-					};
-				}
-			}.bind(this));
+			var oVariantModel = {
+				getCurrentVariantReference: function() {}
+			};
+			sandbox.stub(oMockedAppComponent, "getModel")
+			.callThrough()
+			.withArgs(ControlVariantApplyAPI.getVariantModelName())
+			.returns(oVariantModel);
+			this.oGetCurrentVariantReferenceStub = sandbox.stub(oVariantModel, "getCurrentVariantReference");
 
 			sandbox.spy(FlexCommand.prototype, "prepare");
 
@@ -591,10 +587,7 @@ sap.ui.define([
 			this.oCommandFactory = new CommandFactory({
 				flexSettings: this.oFlexSettings
 			});
-
-			return oCommandFactory.getCommandFor(this.oButton, "Rename", {
-				renamedElement: this.oButton
-			}, new ElementDesignTimeMetadata({
+			this.oElementDTMetadata = new ElementDesignTimeMetadata({
 				data: {
 					actions: {
 						rename: {
@@ -602,26 +595,73 @@ sap.ui.define([
 						}
 					}
 				}
-			}), "dummyVariantManagementReference")
-			.then(function(oCommand) {
-				this.oCommand = oCommand;
-			}.bind(this));
+			});
 		},
 		afterEach: function() {
 			sandbox.restore();
-			this.oCommand.destroy();
 			this.oButton.destroy();
 			this.oCommandFactory.destroy();
 			delete this.fnOriginalGetModel;
 			delete this.oFlexSettings;
-			delete this.sCurrentVariantReference;
+			delete this.sCurrentVMReference;
 		}
 	}, function() {
-		QUnit.test("when prepare() of remove command is called", function(assert) {
-			assert.ok(FlexCommand.prototype.prepare.calledOnce, "then FlexCommand.prepare() called once");
-			assert.strictEqual(this.oCommand.getPreparedChange().getVariantReference(), this.sCurrentVariantReference, "then correct variant reference set to the prepared change");
-			assert.strictEqual(this.oCommand.getPreparedChange().getLayer(), this.oFlexSettings.layer, "then correct layer was set to the prepared change");
-			assert.deepEqual(this.oCommandFactory.getFlexSettings(), this.oFlexSettings, "then correct flex settings were set to the command factory");
+		QUnit.test("when prepare() of rename command is called while standard variant is active", function(assert) {
+			this.oGetCurrentVariantReferenceStub.returns(this.sCurrentVMReference);
+			return oCommandFactory.getCommandFor(
+				this.oButton,
+				"Rename",
+				{ renamedElement: this.oButton },
+				this.oElementDTMetadata,
+				"dummyVariantManagementReference"
+			)
+			.then(function(oCommand) {
+				assert.ok(FlexCommand.prototype.prepare.calledOnce, "then FlexCommand.prepare() called once");
+				assert.strictEqual(
+					oCommand.getPreparedChange().getVariantReference(),
+					this.sCurrentVMReference,
+					"then the correct variant reference is set to the prepared change"
+				);
+				assert.ok(
+					oCommand.getPreparedChange().getIsChangeOnStandardVariant(),
+					"then isChangeOnStandardVariant is set to true"
+				);
+				assert.strictEqual(
+					oCommand.getPreparedChange().getLayer(),
+					this.oFlexSettings.layer,
+					"then the correct layer was set to the prepared change"
+				);
+				assert.deepEqual(
+					this.oCommandFactory.getFlexSettings(),
+					this.oFlexSettings,
+					"then the correct flex settings were set to the command factory"
+				);
+				oCommand.destroy();
+			}.bind(this));
+		});
+
+		QUnit.test("when prepare() of rename command is called while a custom variant is active", function(assert) {
+			this.oGetCurrentVariantReferenceStub.returns("someCustomVariant");
+			return oCommandFactory.getCommandFor(
+				this.oButton,
+				"Rename",
+				{ renamedElement: this.oButton },
+				this.oElementDTMetadata,
+				"dummyVariantManagementReference"
+			)
+			.then(function(oCommand) {
+				assert.ok(FlexCommand.prototype.prepare.calledOnce, "then FlexCommand.prepare() called once");
+				assert.strictEqual(
+					oCommand.getPreparedChange().getVariantReference(),
+					"someCustomVariant",
+					"then the correct variant reference is set to the prepared change"
+				);
+				assert.notOk(
+					oCommand.getPreparedChange().getIsChangeOnStandardVariant(),
+					"then isChangeOnStandardVariant is set to false"
+				);
+				oCommand.destroy();
+			});
 		});
 	});
 

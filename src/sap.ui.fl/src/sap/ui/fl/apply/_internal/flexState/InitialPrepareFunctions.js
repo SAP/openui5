@@ -52,14 +52,24 @@ sap.ui.define([
 			}
 		};
 		// TODO: remove fallback to empty array and adjust tests that don't use the whole changes structure
-		var aRelevantFlexObjects = []
-		.concat(mPropertyBag.storageResponse.changes.variants || [])
-		.concat(mPropertyBag.storageResponse.changes.variantDependentControlChanges || [])
-		.concat(mPropertyBag.storageResponse.changes.variantChanges || []);
+		var aVariantChanges = mPropertyBag.storageResponse.changes.variants || [];
+		var aRelevantVariantDependenControlChanges = (mPropertyBag.storageResponse.changes.variantDependentControlChanges || [])
+		.filter(function(oControlChangeObject) {
+			// Only create fake variants for standard variants and ignore other deleted variants
+			// Thus only consider changes on the standard variant
+			var bIsChangeOnStandardVariant = oControlChangeObject.isChangeOnStandardVariant;
+			if (bIsChangeOnStandardVariant !== undefined && bIsChangeOnStandardVariant !== null) {
+				return bIsChangeOnStandardVariant;
+			}
+			// Legacy changes without the isChangeOnStandardVariant flag need to be determined heuristically
+			// based on the variant name pattern defined in fl.Utils
+			return !/id_\d{13}_\d*_flVariant/.test(oControlChangeObject.variantReference);
+		});
+		var aRelevantFlexObjects = aVariantChanges.concat(aRelevantVariantDependenControlChanges);
 
 		aRelevantFlexObjects.forEach(function(oFlexObject) {
-			var sVariantReference = oFlexObject.fileType === "ctrl_variant_change"
-				? oFlexObject.selector.id
+			var sVariantReference = oFlexObject.fileType === "ctrl_variant"
+				? oFlexObject.variantManagementReference
 				: oFlexObject.variantReference;
 			if (sVariantReference && !includes(aVariantIds, sVariantReference)) {
 				var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
