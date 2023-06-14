@@ -1601,6 +1601,7 @@ sap.ui.define([
 		if (bParentHasChanges || sResumeChangeReason) {
 			this.mAggregatedQueryOptions = {};
 			this.bAggregatedQueryOptionsInitial = true;
+			this.mCanUseCachePromiseByChildPath = {};
 			this.removeCachesAndMessages("");
 			this.fetchCache(this.oContext);
 		}

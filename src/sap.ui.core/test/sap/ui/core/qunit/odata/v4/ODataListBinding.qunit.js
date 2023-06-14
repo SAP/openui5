@@ -2373,6 +2373,7 @@ sap.ui.define([
 		if (oFixture.aggregation) {
 			oBinding.mParameters.$$aggregation = oAggregation;
 		}
+		oBinding.mCanUseCachePromiseByChildPath = "~mCanUseCachePromiseByChildPath~";
 		oBinding.sChangeReason = "sChangeReason";
 		oBinding.bHasPathReductionToParent = oFixture.backLink;
 
@@ -2408,6 +2409,8 @@ sap.ui.define([
 
 		assert.ok(oFetchCacheCall.calledAfter(oResetKeepAliveCall));
 		assert.strictEqual(oBinding.sChangeReason, sExpectedChangeReason);
+		assert.deepEqual(oBinding.mCanUseCachePromiseByChildPath,
+			i === 0 ? {} : "~mCanUseCachePromiseByChildPath~");
 		if (oFixture.newContext) {
 			assert.deepEqual(oBinding.mPreviousContextsByPath, {
 				"/foo/Suppliers" : oOldHeaderContext
