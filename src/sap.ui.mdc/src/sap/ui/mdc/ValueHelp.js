@@ -48,7 +48,7 @@ sap.ui.define([
 	/**
 	 * Base-modules for {@link sap.ui.mdc.ValueHelp ValueHelp}
 	 *
-	 * These modules are not to be used stand-alone.
+	 * These modules must not be used stand-alone.
 	 * @namespace
 	 * @name sap.ui.mdc.valuehelp.base
 	 * @since 1.95.0
@@ -56,9 +56,9 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Content-modules to be used in {@link sap.ui.mdc.valueHelp.Popover Popover} or {@link sap.ui.mdc.valueHelp.Dialog Dialog}
+	 * Content-modules that is used in {@link sap.ui.mdc.valueHelp.Popover Popover} or {@link sap.ui.mdc.valueHelp.Dialog Dialog}
 	 *
-	 * These modules are not to be used stand-alone.
+	 * These modules must not be used stand-alone.
 	 * @namespace
 	 * @name sap.ui.mdc.valuehelp.content
 	 * @since 1.95.0
@@ -68,8 +68,8 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>ValueHelp</code>.
 	 *
-	 * The <code>ValueHelp</code> element can be assigned to {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField}
-	 * and {@link sap.ui.mdc.FilterField FilterField} controls using <code>valueHelp</code> association. One <code>ValueHelp</code> element instance can be
+	 * The <code>ValueHelp</code> element can be assigned to the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField},
+	 * and {@link sap.ui.mdc.FilterField FilterField} controls using the <code>valueHelp</code> association. One <code>ValueHelp</code> element instance can be
 	 * assigned to multiple fields (like in different table rows). It should be placed in the control tree on the container holding the fields.
 	 *
 	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
@@ -766,14 +766,14 @@ sap.ui.define([
 	 * @typedef {object} sap.ui.mdc.valuehelp.base.ItemForValueConfiguration
 	 * @property {any} value Value as entered by user
 	 * @property {any} [parsedValue] Value parsed by type to fit the data type of the key
-	 * @property {object} [context] Contextual information provided by condition payload or inParameters/outParameters. This is only filled if the description needs to be determined for an existing condition.
-	 * @property {object} [context.inParameter] In parameters of the current condition (InParameter are not used any longer, but it might be filled in older conditiotions stored in variants.)
-	 * @property {object} [context.ouParameter] Out parameters of the current condition (OutParameter are not used any longer, but it might be filled in older conditiotions stored in variants.)
+	 * @property {object} [context] Contextual information provided by condition <code>payload</code> or <code>inParameters</code>/<code>outParameters</code>. This is only filled if the description needs to be determined for an existing condition.
+	 * @property {object} [context.inParameter] In parameters of the current condition (<code>inParameters</code> are not used any longer, but it might be filled in older conditions stored in variants.)
+	 * @property {object} [context.ouParameter] Out parameters of the current condition (<code>outParameters</code> are not used any longer, but it might be filled in older conditions stored in variants.)
 	 * @property {object} [context.payload] Payload of the current condition
-	 * @property {sap.ui.model.Context} [bindingContext] <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
+	 * @property {sap.ui.model.Context} [bindingContext] <code>BindingContext</code> of the checked field. Inside a table, the <code>ValueHelp</code> element might be connected to a different row.
 	 * @property {boolean} checkKey If set, the value help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
 	 * @property {boolean} checkDescription If set, the value help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
-	 * @property {boolean} [caseSensitive] If set, the check is done case sensitive
+	 * @property {boolean} [caseSensitive] If set, the check is done case-sensitively
 	 * @property {sap.ui.core.Control} control Instance of the calling control
 	 * @public
 	 */

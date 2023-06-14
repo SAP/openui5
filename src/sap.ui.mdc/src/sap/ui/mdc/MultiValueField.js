@@ -25,13 +25,13 @@ sap.ui.define([
 	 * @class
 	 * A <code>MultiValueField</code> control can hold multiple values. The values are stored as items.
 	 * A <code>MultiValueField</code> control can be used to bind its items to data of a certain data type. Based on the data type settings, a default
-	 * control is rendered by the <code>MultiValueField</code> control.
+	 * control is rendered by the <code>MultiValueField</code> control as follows:
 	 *
 	 * <ul>
-	 * <li>In display mode normally a {@link sap.m.Tokenizer Tokenizer} control is rendered.</li>
-	 * <li>If <code>multipleLines</code> is set a {@link sap.m.ExpandableText ExpandableText} control is rendered.</li>
-	 * <li>In edit mode normally a {@link sap.m.MultiInput MultiInput} control is rendered.</li>
-	 * <li>If <code>multipleLines</code> is set a {@link sap.m.TextArea TextArea} control is rendered.</li>
+	 * <li>In display mode, usually a {@link sap.m.Tokenizer Tokenizer} control is rendered.</li>
+	 * <li>If <code>multipleLines</code> is set, an {@link sap.m.ExpandableText ExpandableText} control is rendered.</li>
+	 * <li>In edit mode, usually a {@link sap.m.MultiInput MultiInput} control is rendered.</li>
+	 * <li>If <code>multipleLines</code> is set, a {@link sap.m.TextArea TextArea} control is rendered.</li>
 	 * </ul>
 	 *
 	 * @extends sap.ui.mdc.field.FieldBase
@@ -101,7 +101,7 @@ sap.ui.define([
 
 						/**
 						 * Returns a <code>Promise</code> for the change. The <code>Promise</code> returns the items when it is resolved.
-						 * If the <code>change</code> event is synchronous, the promise has already been resolved. If it is asynchronous,
+						 * If the <code>change</code> event is synchronous, the <code>Promise</code> has already been resolved. If it is asynchronous,
 						 * it will be resolved after the items have been updated.
 						 *
 						 * The <code>MultiValueField</code> control should be set to busy during the parsing to prevent user input.

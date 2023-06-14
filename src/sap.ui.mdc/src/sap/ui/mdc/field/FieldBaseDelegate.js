@@ -32,7 +32,7 @@ sap.ui.define([
 
 	/**
 	 * Provides the possibility to convey custom data in conditions.
-	 * This enables an application to enhance conditions with data relevant for combined key or outparameter scenarios.
+	 * This enables an application to enhance conditions with data relevant for combined key or out parameter scenarios.
 	 *
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
 	 * @param {sap.ui.core.Control} [oControl] Instance of the calling control
@@ -48,14 +48,14 @@ sap.ui.define([
 	/**
 	 * Enables applications to control condition updates based on <code>value</code> / <code>additionalvalue</code> property changes.
 	 *
-	 * <b>Note:</b> Use with care! Custom implementations of this method may lead to intransparency as a field's condition may then differ from the state of the <code>value</code> / <code>additionalvalue</code> properties.
-	 * Please also avoid expensive operations, as this can delay the rendering of the output!
+	 * <b>Note:</b> Custom implementations of this method may lead to intransparency as a field's condition may then differ from the state of the <code>value</code> / <code>additionalvalue</code> properties.
+	 * Avoid expensive operations, as this can delay the rendering of the output.
 	 *
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
 	 * @param {sap.ui.core.Control} [oControl] Instance of the calling control
-	 * @param {any[]} aValues key, description pair for the condition which is to be created.
-	 * @param {undefined|sap.ui.mdc.condition.ConditionObject} oCurrentCondition currently available condition before the property change
- 	 * @returns {undefined|sap.ui.mdc.condition.ConditionObject} Returns a condition object to be set on the control
+	 * @param {any[]} aValues Key and description for the condition that is created
+	 * @param {undefined|sap.ui.mdc.condition.ConditionObject} oCurrentCondition Currently available condition before the property change
+ 	 * @returns {undefined|sap.ui.mdc.condition.ConditionObject} Returns a condition object that is set on the control
 	 * @public
 	 * @since 1.107.0
 	 */
@@ -134,7 +134,7 @@ sap.ui.define([
 	 * Determines the description for a given key.
 	 *
 	 * This function is called while formatting the output of a {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control
-	 * in case a description is to be displayed but only a key is given.
+	 * if a description should be displayed but only a key is given.
 	 *
 	 * If this needs to be determined asynchronously, a <code>Promise</code> is returned.
 	 *
@@ -145,15 +145,15 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control
 	 * @param {any} vKey Key
-	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.) (Only filled in conditions of old variants.)
-	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.) (Only filled in conditions of old variants.)
-	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
-	 * @param {undefined} oConditionModel <code>ConditionModel</code>, if bound to one - NOT LONGER USED
-	 * @param {undefined} sConditionModelName Name of the <code>ConditionModel</code>, if bound to one - NOT LONGER USED
+	 * @param {object} oInParameters In parameters for the key (as a key is not necessarily unique.) (Only filled in conditions of old variants.)
+	 * @param {object} oOutParameters Out parameters for the key (as a key is not necessarily unique.) (Only filled in conditions of old variants.)
+	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field; Inside a table, the <code>ValueHelp</code> element might be connected to a different row.
+	 * @param {undefined} [oConditionModel] <code>ConditionModel</code>, if bound to one - NO LONGER USED
+	 * @param {undefined} [sConditionModelName] Name of the <code>ConditionModel</code>, if bound to one - NO LONGER USED
 	 * @param {object} oConditionPayload Additional context information for this key
-	 * @param {sap.ui.core.Control} oControl Instance if the calling control is not the field itself
+	 * @param {sap.ui.core.Control} oControl Instance of the calling control if it is not the field itself
 	 * @param {sap.ui.model.Type} oType Type of the value
-	 * @returns {string|sap.ui.mdc.valuehelp.ValueHelpItem|Promise<string|sap.ui.mdc.valuehelp.ValueHelpItem>} Description for key or object containing description, key and payload. If it is not available right away (must be requested), a <code>Promise</code> is returned.
+	 * @returns {string|sap.ui.mdc.valuehelp.ValueHelpItem|Promise<string|sap.ui.mdc.valuehelp.ValueHelpItem>} Description for key or object containing description, key, and payload. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.FormatException} if the description cannot be determined
 	 * @since: 1.78.0
 	 * @public
