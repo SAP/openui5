@@ -15,7 +15,7 @@
 			<Button text="{i18n>btnAdapt}" visible="{view>/showAdaptButton}" press=".switchToAdaptionMode" />
 		</headerContent>
 		<content>
-			<Panel id="layout0" expandable="true" headerText="Not Adaptable Panel" width="auto" class="sapUiResponsiveMargin" expanded="true">
+			<Panel id="layout0" expandable="true" headerText="Not Adaptable Panel" width="auto" class="sapUiResponsiveMargin" expanded="true" sap.ui.dt:designtime="not-adaptable-tree">
 				<ObjectHeader id="obheader0" title="{CompanyCodeName}" number="{Summary}" numberUnit="{CoCodeCurrency}">
 					<attributes>
 						<ObjectAttribute id="attribute1" title="{AccountingDocumentTypeName}" text="{AccountingDocument}" active="false"/>
