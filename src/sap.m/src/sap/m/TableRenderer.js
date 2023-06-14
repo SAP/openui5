@@ -105,6 +105,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 		rm.openStart("tr", oTable.addNavSection(sIdPrefix + sType + "er"));
 		if (bHeaderHidden) {
 			rm.class("sapMListTblHeaderNone");
+			rm.attr("aria-hidden", true);
 		} else {
 			rm.attr("tabindex", -1);
 			rm.class("sapMListTblRow").class("sapMListTbl" + sType + "er");
