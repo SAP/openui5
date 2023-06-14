@@ -109,8 +109,7 @@ onAction: function (oEvent) {
 		sap.ushell.Container.getServiceAsync("CrossApplicationNavigation").then(function (CrossApplicationNavigationService) {
 			CrossApplicationNavigationService.toExternal({
 				target: oParameters.ibnTarget,
-				params: oParameters.ibnParams,
-				appSpecificRoute: oParameters.ibnAppSpecificRoute
+				params: oParameters.ibnParams
 			});
 		});
 	}
