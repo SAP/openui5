@@ -71,8 +71,9 @@ sap.ui.define([
 	var SomeModel = JSONModel.extend("sap.ui.rta.qunit.test.Model");
 	var DEFAULT_DELEGATE_REGISTRATION = {
 		modelType: SomeModel.getMetadata().getName(),
+		names: ["sap/ui/comp/smartfield/flexibility/ODataV2Delegate"],
 		delegate: TEST_DELEGATE_PATH,
-		delegateType: "complete",
+		delegateType: DelegateMediatorAPI.types.COMPLETE,
 		requiredLibraries: {
 			"sap.uxap": {
 				minVersion: "1.44",
@@ -261,6 +262,58 @@ sap.ui.define([
 							});
 					}.bind(this));
 			});
+		});
+
+		QUnit.test(" when the control's dt metadata has add via delegate action but the delegate is read-only", function(assert) {
+			sandbox.stub(DelegateMediatorAPI, "getDelegateForControl").resolves(
+				Object.assign(DEFAULT_DELEGATE_REGISTRATION, {
+					delegateType: DelegateMediatorAPI.types.READONLY
+				})
+			);
+			return createOverlayWithAggregationActions.call(this, {
+				add: {
+					delegate: {
+						changeType: "foo",
+						supportsDefaultDelegate: true
+					}
+				}
+			}, ON_SIBLING)
+			.then(function(oOverlay) {
+				this.oDesignTime.addPlugin(this.oPlugin);
+				this.oPlugin.registerElementOverlay(oOverlay);
+				return DtUtil.waitForSynced(this.oDesignTime, function() {
+					return oOverlay;
+				})();
+			}.bind(this))
+			.then(function(oOverlay) {
+				assert.notOk(this.oPlugin.isAvailable([oOverlay], true), "then the action is not available");
+			}.bind(this));
+		});
+
+		QUnit.test(" when the control's dt metadata has add via delegate action but the delegate is write-only", function(assert) {
+			sandbox.stub(DelegateMediatorAPI, "getDelegateForControl").resolves(
+				Object.assign(DEFAULT_DELEGATE_REGISTRATION, {
+					delegateType: DelegateMediatorAPI.types.WRITEONLY
+				})
+			);
+			return createOverlayWithAggregationActions.call(this, {
+				add: {
+					delegate: {
+						changeType: "foo",
+						supportsDefaultDelegate: true
+					}
+				}
+			}, ON_SIBLING)
+			.then(function(oOverlay) {
+				this.oDesignTime.addPlugin(this.oPlugin);
+				this.oPlugin.registerElementOverlay(oOverlay);
+				return DtUtil.waitForSynced(this.oDesignTime, function() {
+					return oOverlay;
+				})();
+			}.bind(this))
+			.then(function(oOverlay) {
+				assert.notOk(this.oPlugin.isAvailable([oOverlay], true), "then the action is not available");
+			}.bind(this));
 		});
 
 		QUnit.test(" when the control's dt metadata has a reveal action, but no name", function (assert) {
@@ -2017,7 +2070,8 @@ sap.ui.define([
 			var sDelegateModulePath = mActions.delegateModulePath || TEST_DELEGATE_PATH;
 			oCustomDataValue["sap.ui.fl"] = {
 				delegate: JSON.stringify({
-					name: sDelegateModulePath
+					name: sDelegateModulePath,
+					delegateType: DelegateMediatorAPI.types.COMPLETE
 				})
 			};
 			var oCustomData = new CustomData({
