@@ -2084,6 +2084,12 @@ function(
 		}
 	};
 
+	ListBase.prototype.onItemFocusOut = function(oItem) {
+		var oInvisibleText = ListBase.getInvisibleText(),
+			$ItemDomRef = jQuery(oItem.getDomRef());
+		$ItemDomRef.removeAriaLabelledBy(oInvisibleText.getId());
+	};
+
 	ListBase.prototype.updateInvisibleText = function(sText, oItemDomRef, bPrepend) {
 		var oInvisibleText = ListBase.getInvisibleText(),
 			$FocusedItem = jQuery(oItemDomRef || document.activeElement);
