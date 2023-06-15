@@ -230,7 +230,8 @@ function (
 	QUnit.test("test Custom Text Actions", function (assert) {
 		var oButton = oFactory.getAction(),
 			oButton2 = oFactory.getAction(),
-			iContentCount = 0, iContentIdx = 0;
+			iContentCount = 0, iContentIdx = 0,
+			aGetterResult;
 
 		// Act
 		iContentCount++;
@@ -243,12 +244,15 @@ function (
 			"The action is added is on index: " + iContentIdx);
 
 		// Act
+		aGetterResult = this.oSemanticTitle.getCustomTextActions();
 		iContentCount--;
 		this.oSemanticTitle.removeAllCustomTextActions();
 
 		// Assert
 		assert.equal(this.oSemanticTitle.getCustomTextActions().length, iContentCount,
 			"The single action has been removed - actions left: " + iContentCount);
+		assert.equal(aGetterResult.length, 1,
+			"The result of the earlier call to getCustomTextActions is unchanged");
 
 		// Act
 		iContentCount += 2;
@@ -286,7 +290,8 @@ function (
 	QUnit.test("test Custom Icon Actions", function (assert) {
 		var oButton = oFactory.getAction(),
 			oButton2 = oFactory.getAction(),
-			iContentCount = 0, iContentIdx = 0;
+			iContentCount = 0, iContentIdx = 0,
+			aGetterResult;
 
 		// Act
 		iContentCount++;
@@ -299,12 +304,15 @@ function (
 			"The action is added is on index: " + iContentIdx);
 
 		// Act
+		aGetterResult = this.oSemanticTitle.getCustomIconActions();
 		iContentCount--;
 		this.oSemanticTitle.removeAllCustomIconActions();
 
 		// Assert
 		assert.equal(this.oSemanticTitle.getCustomIconActions().length, iContentCount,
 			"The single action has been removed - actions left: " + iContentCount);
+		assert.equal(aGetterResult.length, 1,
+			"The result of the earlier call to getCustomIconActions is unchanged");
 
 		// Act
 		iContentCount += 2;
@@ -423,7 +431,8 @@ function (
 	QUnit.test("test Custom Actions", function (assert) {
 		var oButton = oFactory.getAction(),
 			oButton2 = oFactory.getAction(),
-			iContentCount = 0, iContentIdx = 0;
+			iContentCount = 0, iContentIdx = 0,
+			aGetterResult;
 
 		// Act
 		iContentCount++;
@@ -436,12 +445,15 @@ function (
 			"The action is added is on index: " + iContentIdx);
 
 		// Act
+		aGetterResult = this.oSemanticFooter.getCustomActions();
 		iContentCount--;
 		this.oSemanticFooter.removeAllCustomActions();
 
 		// Assert
 		assert.equal(this.oSemanticFooter.getCustomActions().length, iContentCount,
 			"The single action has been removed - actions left: " + iContentCount);
+		assert.equal(aGetterResult.length, 1,
+			"The result of the earlier call to getCustomActions is unchanged");
 
 		// Act
 		iContentCount += 2;
@@ -673,6 +685,7 @@ function (
 		var oButton = oFactory.getAction(),
 			oButton2 = oFactory.getAction(),
 			iContentCount = 0, iContentIdx = 0, mMode = {initial: "initial", menu: "menu"},
+			aGetterResult,
 			oSpy = this.spy(this.oSemanticShareMenu, "_fireContentChanged");
 
 		// Assert
@@ -693,6 +706,7 @@ function (
 			"The action is added is on index: " + iContentIdx);
 
 		// Act
+		aGetterResult = this.oSemanticShareMenu.getCustomActions();
 		iContentCount--;
 		this.oSemanticShareMenu.removeAllCustomActions();
 
@@ -702,6 +716,8 @@ function (
 		assert.ok(oSpy.called, "The Internal ContentChanged event is fired");
 		assert.equal(this.oSemanticShareMenu.getCustomActions().length, iContentCount,
 			"The single action has been removed - actions left: " + iContentCount);
+		assert.equal(aGetterResult.length, 1,
+			"The result of the earlier call to getCustomActions is unchanged");
 
 		// Act
 		iContentCount += 2;

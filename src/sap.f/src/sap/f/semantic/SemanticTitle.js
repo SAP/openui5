@@ -133,7 +133,7 @@ sap.ui.define(["sap/m/library", "./SemanticContainer"], function(mobileLibrary, 
 	};
 
 	SemanticTitle.prototype.getCustomTextActions = function() {
-		return this._aCustomTextActions;
+		return this._aCustomTextActions.slice();
 	};
 
 	/*
@@ -184,7 +184,7 @@ sap.ui.define(["sap/m/library", "./SemanticContainer"], function(mobileLibrary, 
 	};
 
 	SemanticTitle.prototype.getCustomIconActions = function() {
-		return this._aCustomIconActions;
+		return this._aCustomIconActions.slice();
 	};
 
 

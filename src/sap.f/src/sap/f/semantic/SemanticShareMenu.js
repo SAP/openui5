@@ -102,7 +102,7 @@ sap.ui.define([
 	};
 
 	SemanticShareMenu.prototype.getCustomActions = function() {
-		return this._aCustomShareActions;
+		return this._aCustomShareActions.slice();
 	};
 
 	SemanticShareMenu.prototype.indexOfCustomAction = function(oCustomControl) {
