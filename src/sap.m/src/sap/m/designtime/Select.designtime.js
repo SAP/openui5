@@ -16,7 +16,8 @@ sap.ui.define([],
 		},
 		aggregations : {
 			items : {
-				domRef : ":sap-domref"
+				domRef : ":sap-domref",
+				ignore : true
 			},
 			picker: {
 				ignore: true
