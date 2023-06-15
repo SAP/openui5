@@ -153,7 +153,8 @@ sap.ui.define([
 						});
 					});
 					break;
-				// no default
+				default:
+					// no default
 			}
 		};
 

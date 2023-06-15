@@ -266,7 +266,8 @@ sap.ui.define([
 			case STATUS_DECLINED:
 				mRequest.reject(new Error("sap.ui.rta.Client.getService(): connection to RuntimeAuthoring instance has been refused"));
 				break;
-			// no default
+			default:
+				// no default
 		}
 
 		return mRequest.promise;
@@ -395,7 +396,8 @@ sap.ui.define([
 				mRequest.resolve(mData.body);
 				delete this._mPendingRequests[mData.id];
 				break;
-			// no default
+			default:
+				// no default
 		}
 	};
 
