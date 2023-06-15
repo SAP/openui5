@@ -174,6 +174,11 @@ sap.ui.define([
 					assert.deepEqual(mDelegateInfo.names, [this.mPropertyBag.delegate], "then the default delegate info is returned");
 					assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
 					assert.strictEqual(mDelegateInfo.modelType, this.mPropertyBag.modelType, "then the default delegate info contains the modelType");
+					assert.strictEqual(
+						mDelegateInfo.delegateType,
+						DelegateMediatorAPI.types.COMPLETE,
+						"then the default delegate contains the delegateType"
+					);
 					assert.deepEqual(mDelegateInfo.requiredLibraries, this.mPropertyBag.requiredLibraries, "then the default delegate info contains the passed required libraries");
 				}.bind(this));
 		});
@@ -187,6 +192,11 @@ sap.ui.define([
 					assert.deepEqual(mDelegateInfo.names, [this.mPropertyBag.delegate], "then the default delegate info is returned");
 					assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
 					assert.strictEqual(mDelegateInfo.modelType, SomeModel.getMetadata().getName(), "then the default delegate info contains the modelType");
+					assert.strictEqual(
+						mDelegateInfo.delegateType,
+						DelegateMediatorAPI.types.COMPLETE,
+						"then the default delegate contains the delegateType"
+					);
 					assert.deepEqual(mDelegateInfo.requiredLibraries, this.mPropertyBag.requiredLibraries, "then the default delegate info contains the passed required libraries");
 				}.bind(this));
 		});

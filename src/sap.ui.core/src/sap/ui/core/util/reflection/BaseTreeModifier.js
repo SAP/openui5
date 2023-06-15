@@ -872,7 +872,9 @@ sap.ui.define([
 		 * Object containing delegate information.
 		 *
 		 * @typedef {object} sap.ui.core.util.reflection.FlexDelegateInfo
-		 * @property {string} name Module name of the delegate
+		 * @property {string[]} names Module names of the delegates
+		 * @property {string} modelType Module type of the delegate
+		 * @property {string} [delegateType] Delegate type ("readonly", "writeonly" or "complete")
 		 * @property {object} payload Additional information for the delegate
 		 * @property {string} [payload.path] Relative/absolute path to a node in a UI5 model, optional if it can be derived by the delegate, e.g. from binding context
 		 * @property {string} [payload.modelName] Runtime model name, optional if default model is used (allows to support named models)
