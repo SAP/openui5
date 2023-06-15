@@ -84,7 +84,7 @@ sap.ui.define([
             type: mLibrary.ButtonType.Transparent,
             press: function (oEvent) {
                 this.fireRemoveAllFilters();
-                // TODO this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.REMOVEALLTOKEN_ANNOUNCE"), InvisibleMessageMode.Polite);
+                // TODO this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.REMOVEALLTOKEN_ANNOUNCE"), InvisibleMessageMode.Assertive);
             }.bind(this),
             icon: "sap-icon://decline",
             tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("infobar.REMOVEALLFILTERS")

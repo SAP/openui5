@@ -122,6 +122,10 @@ sap.ui.define([
 		return this._getResourceText("p13n.FILTER_REMOVEICONTOOLTIP");
 	};
 
+	FilterPanel.prototype._getRemoveButtonAnnouncementText = function () {
+		return this._getResourceText("p13n.FILTER_REMOVEICONANNOUNCE");
+	};
+
 	FilterPanel.prototype._createKeySelect = function (sKey) {
 
 		var oComboBox = new ComboBox({
