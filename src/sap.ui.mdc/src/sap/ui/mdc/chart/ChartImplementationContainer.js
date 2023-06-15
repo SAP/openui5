@@ -56,7 +56,7 @@ sap.ui.define([
 					/**
 					 * Control that is shown when there is no data available inside the chart.<br>
 					 * This can be used if the standard behavior of the used chart control needs to be overriden.<br>
-					 * To show this <code>noDataContent</code>, set {@link ap.ui.mdc.chart.ChartImplementationContainer#showNoDataStruct showNoDataStruct}.
+					 * To show this <code>noDataContent</code>, set {@link sap.ui.mdc.chart.ChartImplementationContainer#showNoDataStruct showNoDataStruct}.
 					 *
 					 */
 					noDataContent: {

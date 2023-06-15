@@ -179,7 +179,7 @@ sap.ui.define([
 		// same as:
 		//    When.onTheMDCChart.iClickOnTheChartTypeButton(sChartID);
 		//    When.onTheMDCChart.iSelectChartTypeInPopover("Pie Chart");
-		Then.onTheMDCChart.iShouldSeeTheChartWithChartType(sChartID, "pie"); // char type key and NOT the ui label!!!!
+		Then.onTheMDCChart.iShouldSeeTheChartWithChartType(sChartID, "pie"); // chart type key and NOT the ui label!!!!
 
 		Then.iTeardownMyAppFrame();
 	});

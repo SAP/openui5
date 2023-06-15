@@ -432,7 +432,7 @@ sap.ui.define([
 	 * @property {string} [tooltip]
 	 *   The tooltip of the identifier
 	 * @property {string} datatype
-	 *   The name of the type of the property
+	 *   The name of the data type of the property
 	 * @property {object} [constraints]
 	 *   Defines constraints for the data type of the property
 	 * @property {object} [formatOptions]

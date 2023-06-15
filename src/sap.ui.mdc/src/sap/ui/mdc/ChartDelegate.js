@@ -285,7 +285,7 @@ sap.ui.define([
 
 
 	/**
-	 * Char <code>ChartTypeLayoutConfig</code> type.
+	 * Chart <code>ChartTypeLayoutConfig</code> type.
 	 *
 	 * @typedef {object} sap.ui.mdc.chart.ChartTypeLayoutConfig
 	 * @property {string} key identifier for the chart type
@@ -345,7 +345,7 @@ sap.ui.define([
 	/**
 	 * Sets the chart type of the inner chart.
 	 * This function is called by the chart when the <code>chartType</code> property is updated.
-	 *  <b>Note:</b> This function is called by the chart only. You must not call it directly but use {@link sap.ui.mdc.Chart#setChartType setChartType} instead.
+	 * <b>Note:</b> This function is called by the chart only. You must not call it directly but use {@link sap.ui.mdc.Chart#chartType chartType} instead.
 	 *
 	 * @param {string} sChartType New chart type
 	 *
