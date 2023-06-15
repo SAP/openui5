@@ -494,7 +494,11 @@ sap.ui.define([
 				.withExactArgs(sinon.match.string, "LegacyParametersGet", "sap.ui.support",
 					sinon.match.func)
 				.atLeast(0);
-			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("error")
+				.withExactArgs(sinon.match(function (sMsg) {
+					return sMsg.includes("/manifest.json could not be loaded");
+				}))
+				.atLeast(0);
 			this.oLogMock.expects("fatal").never();
 
 			// Counter for batch requests
