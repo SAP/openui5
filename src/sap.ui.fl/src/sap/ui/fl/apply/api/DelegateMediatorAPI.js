@@ -19,6 +19,12 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var DelegateMediatorAPI = /** @lends sap.ui.fl.apply.api.DelegateMediatorAPI */{
+		types: {
+			READONLY: DelegateMediator.types.READONLY,
+			WRITEONLY: DelegateMediator.types.WRITEONLY,
+			COMPLETE: DelegateMediator.types.COMPLETE
+		},
+
 		/**
 		 * Registers the default delegate by model type.
 		 *
