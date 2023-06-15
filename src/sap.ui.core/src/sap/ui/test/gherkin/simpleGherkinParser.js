@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"jquery.sap.sjax"
+	"sap/ui/thirdparty/jquery"
 ], function(jQuery) {
 	"use strict";
 
@@ -183,16 +183,21 @@ sap.ui.define([
 			// Interpret the path as a standard SAPUI5 module path
 			sPath = sap.ui.require.toUrl((sPath).replace(/\./g, "/")) + ".feature";
 
-			var oResult = jQuery.sap.sjax({
+			var oResponse;
+			jQuery.ajax({
 				url: sPath,
-				dataType: "text"
+				dataType: "text",
+				async: false,
+				success: function(data) {
+					oResponse = data;
+				}
 			});
 
-			if (!oResult.success) {
+			if (oResponse === undefined) {
 				throw new Error("simpleGherkinParser.parseFile: error loading URL: " + sPath);
 			}
 
-			return this.parse(oResult.data);
+			return this.parse(oResponse);
 		}
 	};
 
