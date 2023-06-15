@@ -5434,6 +5434,21 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Header Style Property added", function(assert) {
+		var done = assert.async();
+		this.oTable.setType("ResponsiveTable");
+
+		this.oTable.initialized().then(function() {
+			assert.strictEqual(this.oTable._oTable.getHeaderToolbar().getContent()[0].getTitleStyle(), "H4", "Header style set to the header");
+			this.oTable.setHeaderStyle("H2");
+			this.oTable.setHeader("Test Table");
+			assert.strictEqual(this.oTable._oTable.getHeaderToolbar().getContent()[0].getTitleStyle(), "H2", "Header style changed");
+			this.oTable.setHeaderStyle(null);
+			assert.strictEqual(this.oTable._oTable.getHeaderToolbar().getContent()[0].getTitleStyle(), "H4", "Header style set to the header");
+			done();
+		}.bind(this));
+	});
+
 	QUnit.test("ACC Announcement of table after a FilterBar search", function(assert) {
 		this.oTable.destroy();
 		this.oTable = new Table({
