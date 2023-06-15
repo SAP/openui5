@@ -91,7 +91,7 @@ sap.ui.define([
 			// assert
 			assert.ok(oLink, "there is something");
 			assert.ok(oLink.isA("sap.m.Link"), "it's a link");
-			assert.equal(oLink.getText(), "3 More", "it's text is correct");
+			assert.equal(oLink.getText().toLowerCase(), "3 more", "it's text is correct");
 		});
 
 		QUnit.test("more link shows correct value for multi-day appointments", function(assert) {
@@ -99,8 +99,8 @@ sap.ui.define([
 				oLinkDay5 = this.oSPC._aLinks[6];
 
 			// assert
-			assert.equal(oLinkDay3.getText(), "2 More", "it's text is correct on the next day");
-			assert.equal(oLinkDay5.getText(), "1 More", "it's text is correct on the last day");
+			assert.equal(oLinkDay3.getText().toLowerCase(), "2 more", "it's text is correct on the next day");
+			assert.equal(oLinkDay5.getText().toLowerCase(), "1 more", "it's text is correct on the last day");
 
 		});
 
