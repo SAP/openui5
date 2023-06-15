@@ -2,9 +2,10 @@
 sap.ui.define(["sap/ui/thirdparty/jquery",
                "sap/ui/core/Core",
                "sap/ui/model/json/JSONModel",
+			   "sap/uxap/ObjectPageDynamicHeaderTitle",
                "sap/uxap/ObjectPageLayout",
                "sap/ui/core/mvc/XMLView"],
-function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
+function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayout, XMLView) {
 	"use strict";
 
 	// utility function that will be used in these tests
@@ -388,6 +389,43 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 		oObjectPage.placeAt("qunit-fixture");
 		Core.applyChanges();
 	});
+
+	QUnit.test("Sections are lazy loaded when header content is pinned initially", function (assert) {
+		// Arrange
+		var oObjectPageLayout = new ObjectPageLayout({
+				enableLazyLoading: true,
+				headerContentPinned: true,
+				headerTitle: [new ObjectPageDynamicHeaderTitle()]
+			}),
+			fnDone = assert.async(),
+			fnOnBeforeRendering = function () {
+				oObjectPageLayout.removeEventDelegate(fnOnBeforeRendering);
+				oLazyLoadingSpy = this.spy(oObjectPageLayout._oLazyLoading, "doLazyLoading");
+			}.bind(this),
+			oLazyLoadingSpy;
+
+		assert.expect(1);
+
+		// Setup: mock framework call on before rendering
+		oObjectPageLayout.addEventDelegate({
+			"onBeforeRendering": fnOnBeforeRendering
+		});
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady",
+			function () {
+				// Assert
+				assert.ok(oLazyLoadingSpy.calledOnce, "LazyLoading is called");
+
+				// Clean up
+				oObjectPageLayout.destroy();
+				fnDone();
+			}
+		);
+
+		oObjectPageLayout.placeAt("qunit-fixture");
+		Core.applyChanges();
+	});
+
 
 	QUnit.module("Lifecycle");
 
