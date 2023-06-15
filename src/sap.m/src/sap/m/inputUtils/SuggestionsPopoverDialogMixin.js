@@ -7,9 +7,9 @@
  */
 sap.ui.define([
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/library",
+	"sap/ui/core/Lib",
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/Bar",
@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/ToggleButton",
 	"sap/m/ValueStateHeader"
-], function (library, Core, IconPool, coreLibrary, Dialog, Button, Bar, Title, Toolbar, ToggleButton, ValueStateHeader) {
+], function (library, IconPool, coreLibrary, Library, Dialog, Button, Bar, Title, Toolbar, ToggleButton, ValueStateHeader) {
 	"use strict";
 
 	// shortcut for sap.m.TitleAlignment
@@ -164,7 +164,7 @@ sap.ui.define([
 		 * @returns {sap.m.Dialog} The newly created picker.
 		 */
 		this.createPopover = function (oInput, mOptions, InputClass) {
-			var oMessageBundle = Core.getLibraryResourceBundle("sap.m"),
+			var oMessageBundle = Library.getResourceBundleFor("sap.m"),
 				that = this,
 				oPopupInput = InputClass && new InputClass(oInput.getId() + "-popup-input", {
 					width: "100%",
@@ -216,7 +216,7 @@ sap.ui.define([
 		 * @private
 		 */
 		this._updatePickerHeaderTitle = function () {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.m"),
+			var oResourceBundle = Library.getResourceBundleFor("sap.m"),
 				oPickerTitle = this.getPickerTitle(),
 				oLabel, aLabels;
 
@@ -276,7 +276,7 @@ sap.ui.define([
 		 */
 		function _createFilterSelectedButton() {
 			var sIconURI = IconPool.getIconURI("multiselect-all");
-			var sSelectedItemsIconText = Core.getLibraryResourceBundle("sap.m").getText("SHOW_SELECTED_BUTTON");
+			var sSelectedItemsIconText = Library.getResourceBundleFor("sap.m").getText("SHOW_SELECTED_BUTTON");
 
 			return new ToggleButton({
 				icon: sIconURI,

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/Device', 'sap/ui/core/Configuration'],
-	function(Renderer, Core, coreLibrary, ValueStateSupport, Device, Configuration) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/Device', 'sap/ui/core/Configuration', "sap/ui/core/Lib"],
+	function(Renderer, coreLibrary, ValueStateSupport, Device, Configuration, Library) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -327,7 +327,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 		var sValueStateTypeText;
 
 
-		sValueStateTypeText = Core.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_" + sValueState.toUpperCase());
+		sValueStateTypeText = Library.getResourceBundleFor("sap.m").getText("INPUTBASE_VALUE_STATE_" + sValueState.toUpperCase());
 
 		oRm.openStart("div", oControl.getValueStateMessageId() + "-sr")
 			.class("sapUiPseudoInvisibleText");

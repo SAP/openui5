@@ -1,5 +1,6 @@
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/Theming",
 	"sap/m/List",
 	"sap/m/table/Util",
 	"sap/ui/core/theming/Parameters",
@@ -19,7 +20,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/core/InvisibleMessage"
-], function(Core, List, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, InvisibleMessage) {
+], function(Core, Theming, List, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, InvisibleMessage) {
 	"use strict";
 	/* global QUnit,sinon */
 
@@ -40,15 +41,15 @@ sap.ui.define([
 	}
 
 	QUnit.test("measureText", function(assert) {
-		var oThemeParametersStub, fSizeBeforeThemeChanged;
+		var oThemeParametersStub, fSizeBeforeNewThemeApplied;
 		var done = assert.async();
-		var fnThemeChanged = function() {
-			var fSizeAfterThemeChanged = Util.measureText("Text");
-			assert.ok(fSizeAfterThemeChanged > fSizeBeforeThemeChanged);
+		var fnNewThemeApplied = function() {
+			var fSizeAfterNewThemeApplied = Util.measureText("Text");
+			assert.ok(fSizeAfterNewThemeApplied > fSizeBeforeNewThemeApplied);
 
 			oThemeParametersStub.restore();
-			Core.detachThemeChanged(fnThemeChanged);
-			Core.notifyContentDensityChanged();
+			Theming.detachApplied(fnNewThemeApplied);
+			Theming.notifyContentDensityChanged();
 			done();
 		};
 		assert.ok(Util.measureText("aaa") > Util.measureText("aa"));
@@ -58,33 +59,33 @@ sap.ui.define([
 		assert.ok(Util.measureText("0") < Util.measureText("0", "bold 16px Arial"));
 		assert.ok(Util.measureText("w", "12px Arial") > Util.measureText("w", "10px Arial"));
 
-		fSizeBeforeThemeChanged = Util.measureText("Text");
+		fSizeBeforeNewThemeApplied = Util.measureText("Text");
 
 		oThemeParametersStub = sinon.stub(ThemeParameters, "get");
 		oThemeParametersStub.withArgs({ name: "sapMFontMediumSize" }).returns("1rem");
 		oThemeParametersStub.withArgs({ name: "sapUiFontFamily" }).returns("Helvetica");
-		Core.attachThemeChanged(fnThemeChanged);
-		Core.notifyContentDensityChanged();
+		Theming.attachApplied(fnNewThemeApplied);
+		Theming.notifyContentDensityChanged();
 	});
 
 	QUnit.test("calcTypeWidth - Boolean", function(assert) {
 		var done = assert.async();
 		var oThemeParametersStub = sinon.stub(ThemeParameters, "get");
-		var fnThemeChanged = function() {
-			assert.ok(Util.calcTypeWidth(new BooleanType()) > fYesBeforeThemeChanged);
+		var fYesBeforeNewThemeApplied = Util.measureText("Yes");
+		var fnNewThemeApplied = function() {
+			assert.ok(Util.calcTypeWidth(new BooleanType()) > fYesBeforeNewThemeApplied);
 
 			oThemeParametersStub.restore();
-			Core.detachThemeChanged(fnThemeChanged);
-			Core.notifyContentDensityChanged();
+			Theming.detachApplied(fnNewThemeApplied);
+			Theming.notifyContentDensityChanged();
 			done();
 		};
-		var fYesBeforeThemeChanged = Util.measureText("Yes");
-		assert.equal(Util.calcTypeWidth(new BooleanType()), fYesBeforeThemeChanged);
+		assert.equal(Util.calcTypeWidth(new BooleanType()), fYesBeforeNewThemeApplied);
 
 		oThemeParametersStub.withArgs({ name: "sapMFontMediumSize" }).returns("1rem");
 		oThemeParametersStub.withArgs({ name: "sapUiFontFamily" }).returns("Arial");
-		Core.attachThemeChanged(fnThemeChanged);
-		Core.notifyContentDensityChanged();
+		Theming.attachApplied(fnNewThemeApplied);
+		Theming.notifyContentDensityChanged();
 	});
 
 	QUnit.test("calcTypeWidth - String", function(assert) {
@@ -149,15 +150,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("calcHeaderWidth", function(assert) {
-		var fSizeBeforeThemeChanged, fSizeAfterThemeChanged, oThemeParametersStub;
+		var fSizeBeforeNewThemeApplied, fSizeAfterNewThemeApplied, oThemeParametersStub;
 		var done = assert.async();
-		var fnThemeChanged = function() {
-			fSizeAfterThemeChanged = Util.calcHeaderWidth("Some Long Header Text", 9);
-			assert.ok(fSizeAfterThemeChanged > fSizeBeforeThemeChanged);
+		var fnNewThemeApplied = function() {
+			fSizeAfterNewThemeApplied = Util.calcHeaderWidth("Some Long Header Text", 9);
+			assert.ok(fSizeAfterNewThemeApplied > fSizeBeforeNewThemeApplied);
 
 			oThemeParametersStub.restore();
-			Core.detachThemeChanged(fnThemeChanged);
-			Core.notifyContentDensityChanged();
+			Theming.detachApplied(fnNewThemeApplied);
+			Theming.notifyContentDensityChanged();
 			done();
 		};
 		var sFontRequired = ThemeParameters.get({ name: "sapMFontLargeSize" }) || "normal";
@@ -172,14 +173,14 @@ sap.ui.define([
 		assert.ok(Util.calcHeaderWidth("A".repeat(100), 10) > Util.calcHeaderWidth("A".repeat(100), 5));
 		assert.ok(Util.calcHeaderWidth("A".repeat(25), 15) > Util.calcHeaderWidth("A".repeat(20), 15));
 
-		fSizeBeforeThemeChanged = Util.calcHeaderWidth("Some Long Header Text", 9);
+		fSizeBeforeNewThemeApplied = Util.calcHeaderWidth("Some Long Header Text", 9);
 
 		oThemeParametersStub = sinon.stub(ThemeParameters, "get");
 		oThemeParametersStub.withArgs({ name: "sapMFontMediumSize" }).returns("0.875rem");
 		oThemeParametersStub.withArgs({ name: "sapUiFontFamily" }).returns("Arial");
 		oThemeParametersStub.withArgs({ name: "sapUiColumnHeaderFontWeight" }).returns("bold");
-		Core.attachThemeChanged(fnThemeChanged);
-		Core.notifyContentDensityChanged();
+		Theming.attachApplied(fnNewThemeApplied);
+		Theming.notifyContentDensityChanged();
 	});
 
 	QUnit.test("calcColumnWidth", function(assert) {

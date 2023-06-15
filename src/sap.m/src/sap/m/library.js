@@ -6,6 +6,7 @@
  * Initialization Code and shared classes of library sap.m.
  */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/Device",
 	"sap/ui/base/DataType",
 	"sap/ui/base/EventProvider",
@@ -34,6 +35,7 @@ sap.ui.define([
 	"./Support" // referenced here to enable the Support feature
 ],
 	function(
+	Library,
 	Device,
 	DataType,
 	EventProvider,
@@ -72,7 +74,7 @@ sap.ui.define([
 	 * @since 1.4
 	 * @public
 	 */
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Library.init({
 		name : "sap.m",
 		version: "${version}",
 		dependencies : ["sap.ui.core"],

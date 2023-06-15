@@ -5,7 +5,6 @@
 // Provides control sap.m.SelectList.
 sap.ui.define([
 	'./library',
-	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/core/Element',
 	'sap/ui/core/delegate/ItemNavigation',
@@ -13,7 +12,7 @@ sap.ui.define([
 	'./SelectListRenderer',
 	'sap/base/Log'
 ],
-	function(library, Core, Control, Element, ItemNavigation, Item, SelectListRenderer, Log) {
+	function(library, Control, Element, ItemNavigation, Item, SelectListRenderer, Log) {
 		"use strict";
 
 		// shortcut for sap.m.touch
@@ -577,7 +576,7 @@ sap.ui.define([
 			this.setProperty("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem);
 
 			if (typeof vItem === "string") {
-				vItem = Core.byId(vItem);
+				vItem = Element.registry.get(vItem);
 			}
 
 			this.setProperty("selectedKey", vItem ? vItem.getKey() : "", true);
@@ -926,7 +925,7 @@ sap.ui.define([
 
 			if (typeof vItem === "string") {
 				this.setAssociation("selectedItem", vItem, true);
-				vItem = Core.byId(vItem);
+				vItem = Element.registry.get(vItem);
 			}
 
 			if (!(vItem instanceof Item) && vItem !== null) {
@@ -991,7 +990,7 @@ sap.ui.define([
 		 */
 		SelectList.prototype.getSelectedItem = function() {
 			var vSelectedItem = this.getAssociation("selectedItem");
-			return (vSelectedItem === null) ? null : Core.byId(vSelectedItem) || null;
+			return (vSelectedItem === null) ? null : Element.registry.get(vSelectedItem) || null;
 		};
 
 		/**

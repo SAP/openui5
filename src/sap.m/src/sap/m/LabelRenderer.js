@@ -3,8 +3,8 @@
  */
 
 // Provides the default renderer for control sap.m.Label
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/Renderer', 'sap/ui/core/AccessKeysEnablement', 'sap/m/library', 'sap/ui/core/library', 'sap/m/HyphenationSupport', "sap/ui/core/LabelEnablement"],
-	function(Core, Renderer, AccessKeysEnablement, library, coreLibrary, HyphenationSupport, LabelEnablement) {
+sap.ui.define(['sap/ui/core/Lib', 'sap/ui/core/Renderer', 'sap/ui/core/AccessKeysEnablement', 'sap/m/library', 'sap/ui/core/library', 'sap/m/HyphenationSupport', "sap/ui/core/LabelEnablement"],
+	function(Library, Renderer, AccessKeysEnablement, library, coreLibrary, HyphenationSupport, LabelEnablement) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -143,7 +143,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/Renderer', 'sap/ui/core/AccessKe
 		// shows the colon and the required asterisk
 		rm.openStart("span");
 		rm.class("sapMLabelColonAndRequired");
-		rm.attr("data-colon", Core.getLibraryResourceBundle("sap.m").getText("LABEL_COLON"));
+		rm.attr("data-colon", Library.getResourceBundleFor("sap.m").getText("LABEL_COLON"));
 		if (sLabelForRendering || oLabel._isInColumnHeaderContext) {
 			rm.accessibilityState({
 				hidden: "true"

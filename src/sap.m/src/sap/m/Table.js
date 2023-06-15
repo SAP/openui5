@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
+	"sap/ui/core/ControlBehavior",
 	"./library",
 	"./ListBase",
 	"./ListItemBase",
@@ -18,10 +19,11 @@ sap.ui.define([
 	"sap/m/ListBaseRenderer",
 	"sap/ui/core/Icon",
 	"sap/m/table/Util",
-	// jQuery custom selectors ":sapTabbable"
+	"sap/ui/core/Lib",
+    // jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Selectors"
 ],
-	function(KeyCodes, Core, library, ListBase, ListItemBase, CheckBox, TableRenderer, BaseObject, ResizeHandler, PasteHelper, jQuery, ListBaseRenderer, Icon, Util) {
+	function(KeyCodes, Core, ControlBehavior, library, ListBase, ListItemBase, CheckBox, TableRenderer, BaseObject, ResizeHandler, PasteHelper, jQuery, ListBaseRenderer, Icon, Util, Library) {
 	"use strict";
 
 
@@ -367,7 +369,7 @@ sap.ui.define([
 				this.invalidate();
 			} else {
 				// Only set the no columns string, if there is no illustrated message present
-				this.$("nodata-text").text(Core.getLibraryResourceBundle("sap.m").getText("TABLE_NO_COLUMNS"));
+				this.$("nodata-text").text(Library.getResourceBundleFor("sap.m").getText("TABLE_NO_COLUMNS"));
 			}
 		}
 
@@ -802,7 +804,7 @@ sap.ui.define([
 			this._clearAllButton = new Icon({
 				id: this.getId() + "-clearSelection",
 				src: "sap-icon://clear-all",
-				tooltip: Core.getLibraryResourceBundle("sap.m").getText("TABLE_CLEARBUTTON_TOOLTIP"),
+				tooltip: Library.getResourceBundleFor("sap.m").getText("TABLE_CLEARBUTTON_TOOLTIP"),
 				decorative: false,
 				press: this.removeSelections.bind(this, false, true, false)
 			}).setParent(this, null, true).addEventDelegate({
@@ -832,7 +834,7 @@ sap.ui.define([
 			this._selectAllCheckBox = new CheckBox({
 				id: this.getId("sa"),
 				activeHandling: false,
-				tooltip: Core.getLibraryResourceBundle("sap.m").getText("TABLE_SELECT_ALL_TOOLTIP")
+				tooltip: Library.getResourceBundleFor("sap.m").getText("TABLE_SELECT_ALL_TOOLTIP")
 			}).addStyleClass("sapMLIBSelectM").setParent(this, null, true).attachSelect(function () {
 				if (this._selectAllCheckBox.getSelected()) {
 					this.selectAll(true);
@@ -887,9 +889,9 @@ sap.ui.define([
 	 */
 	Table.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
 		if (oElement == this._clearAllButton) {
-			mAriaProps.label = Core.getLibraryResourceBundle("sap.m").getText("TABLE_ICON_DESELECT_ALL");
+			mAriaProps.label = Library.getResourceBundleFor("sap.m").getText("TABLE_ICON_DESELECT_ALL");
 		} else if (oElement == this._selectAllCheckBox) {
-			mAriaProps.label = Core.getLibraryResourceBundle("sap.m").getText("TABLE_CHECKBOX_SELECT_ALL");
+			mAriaProps.label = Library.getResourceBundleFor("sap.m").getText("TABLE_CHECKBOX_SELECT_ALL");
 		}
 	};
 
@@ -937,11 +939,11 @@ sap.ui.define([
 
 	// returns accessibility role
 	Table.prototype.getAccessibilityType = function() {
-		return Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TABLE");
+		return Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_TABLE");
 	};
 
 	Table.prototype._setHeaderAnnouncement = function() {
-		var oBundle = Core.getLibraryResourceBundle("sap.m"),
+		var oBundle = Library.getResourceBundleFor("sap.m"),
 			sAnnouncement = oBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " ";
 
 		if (this.isAllSelectableSelected()) {
@@ -963,7 +965,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._setFooterAnnouncement = function() {
-		var sAnnouncement = Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_FOOTER_ROW") + " ";
+		var sAnnouncement = Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_FOOTER_ROW") + " ";
 		this.getColumns(true).forEach(function(oColumn, i) {
 			if (!oColumn.getVisible() || oColumn.isHidden()) {
 				return;
@@ -1335,7 +1337,7 @@ sap.ui.define([
 	Table.prototype.onItemFocusIn = function(oItem, oFocusedControl) {
 		ListBase.prototype.onItemFocusIn.apply(this, arguments);
 
-		if (oItem != oFocusedControl || !Core.getConfiguration().getAccessibility()) {
+		if (oItem != oFocusedControl || !ControlBehavior.isAccessibilityEnabled()) {
 			return;
 		}
 
