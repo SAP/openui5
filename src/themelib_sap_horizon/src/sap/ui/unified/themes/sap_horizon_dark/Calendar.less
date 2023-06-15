@@ -437,6 +437,7 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 			border: 0.125rem solid @sapUiLegendCurrentDateTime;
 			border-radius: 0.5rem;
 			z-index: 1;
+			pointer-events: none;
 		}
 	}
 	.sapUiCalItemText:after {
@@ -694,7 +695,6 @@ html.sap-desktop .sapUiCalItemOtherMonth:not(.sapUiCalItemSel) :not(.sapUiCalWee
 	}
 }
 
-//Looking here. Add rule that only applies to :not(.sapUiCalMonthSecType)?
 .sapUiCalItem:focus {
 	&:not(.sapUiCalItemNow):not(.sapUiCalItemSel) .sapUiCalItemText:after {
 		position: absolute;
