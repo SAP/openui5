@@ -22,19 +22,7 @@ sap.ui.define(
 	) {
 		"use strict";
 		/**
-		 * Modules for different filterbars
-		 * @namespace
-		 * @name sap.ui.mdc.filterbar
-		 * @since 1.80.0
-		 * @private
-		 * @experimental As of version 1.80
-		 * @ui5-restricted sap.ui.mdc
-		 */
-
-		/**
-		 * Base-modules for {@link sap.ui.mdc.filterbar.vh.FiterBar FilterBar}
-		 *
-		 * These modules are not to be used stand-alone.
+		 * Modules for value help dialog {@link sap.ui.mdc.filterbar.vh.FilterBar FilterBar}
 		 * @namespace
 		 * @name sap.ui.mdc.filterbar.vh
 		 * @since 1.84.0
@@ -42,14 +30,15 @@ sap.ui.define(
 		 */
 
 		/**
-		 * Constructor for a new FilterBar.
+		 * Constructor for a new <code>FilterBar</code> for a value help dialog.
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] initial settings for the new control
 		 * @class The <code>FilterBar</code> control is used to display filter properties in a user-friendly manner to populate values for a query.
 		 * The filters are arranged in a logical row that is divided depending on the space available and the width of the filters.
 		 * The Go button triggers the search event, and the Show Filters button shows the additional filter field.<br>
 		 * The <code>FilterBar</code> control creates and handles the filters based on the provided metadata information.
-		 * The metadata information is provided via the {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} implementation. This implementation has to be provided by the application.
+		 * The metadata information is provided via the {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} implementation. This implementation has to be provided by the application.<br>
+		 * <b>Note:</b> The <code>FilterBar</code> can only be used for a {@link sap.ui.mdc.valuehelp.Dialog Dialog} and not on its own.
 		 * @extends sap.ui.mdc.filterbar.FilterBarBase
 		 * @author SAP SE
 		 * @version ${version}
@@ -229,7 +218,7 @@ sap.ui.define(
 		};
 
 		/**
-		 * Destroyes the <code>CollectiveSearch</code> control
+		 * Destroys the <code>CollectiveSearch</code> control.
 		 *
 		 * <b>Note:</b> This must only be used by the corresponding value help, not from outside.
 		 *
