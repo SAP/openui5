@@ -481,6 +481,8 @@ sap.ui.define([
 	// ----------------------- sap/ui/mdc/LinkDelegate function calls ----------------------------------------------
 
 	/**
+	 * Retrieves the <code>AdditionalContent</code> objects depending on the given <code>LinkDelegate</code>.
+	 * Caches the returned objects for further usage.
 	 * @returns {Promise<sap.ui.core.Control[]>} Resolves an array of type {@link sap.ui.core.Control}
 	 * @public
 	 */
@@ -524,6 +526,7 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines the <code>LinkType</code> object depending on the given <code>LinkDelegate</code>.
 	 * @returns {Promise<undefined|sap.ui.mdc.link.LinkType>} Returns <code>undefined</code> or a {@link sap.ui.mdc.link.LinkType}, once resolved
 	 * @public
 	 */
