@@ -48,7 +48,7 @@ sap.ui.require([
 			autoWait: false,
 			id: "myList",
 			check: function (oList) {
-				return oList.isBusy();
+				return oList.getBusy();
 			},
 			success: function () {
 				Opa5.assert.ok(true, "The list is busy");
