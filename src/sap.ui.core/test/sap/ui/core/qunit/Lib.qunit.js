@@ -5,8 +5,9 @@ sap.ui.require([
 	"sap/ui/core/theming/ThemeManager",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/dom/includeScript",
-	"sap/base/util/LoaderExtensions"
-], function(Library, ObjectPath, ThemeManager, ResourceBundle, includeScript, LoaderExtensions) {
+	"sap/base/util/LoaderExtensions",
+	"sap/base/Log"
+], function(Library, ObjectPath, ThemeManager, ResourceBundle, includeScript, LoaderExtensions, Log) {
 	"use strict";
 
 	QUnit.module("Instance methods");
@@ -250,18 +251,47 @@ sap.ui.require([
 		assert.equal(oResourceBundle.getText("TITLE1"), "i18n.properties", "The configured resource bundle file in manifest.json is loaded (i18n.properties)");
 	});
 
-	QUnit.test("Static method 'getResourceBundleFor' called on library where manifest.json does NOT exist", function(assert) {
+	QUnit.test("Static method 'getResourceBundleFor' called on known library where manifest.json does NOT exist", function(assert) {
 		var sLibraryName = "testlibs.resourcebundle.lib2";
+
+		return Library.load({name: sLibraryName}).then(function(oLibrary) {
+			var oErrorLogSpy = this.spy(Log, "error");
+			var oResourceBundle = Library.getResourceBundleFor(sLibraryName);
+
+			assert.ok(oResourceBundle, "Resource bundle can be created successfully");
+			assert.equal(oResourceBundle.getText("TITLE1"), "messagebundle.properties", "The fallback file 'messagebundle.properties' is loaded because no manifest.json is available for the library");
+			assert.equal(oErrorLogSpy.callCount, 0, "The failed request isn't logged");
+
+			var oLoadResourceSpy = this.spy(LoaderExtensions, "loadResource");
+
+			// try to get the resource bundle again
+			oResourceBundle = Library.getResourceBundleFor(sLibraryName);
+			assert.equal(oLoadResourceSpy.callCount, 0, "no further call is done for loading the manifest.json after the previous request failed");
+			assert.equal(oErrorLogSpy.callCount, 0, "No new error is logged");
+		}.bind(this));
+
+	});
+
+	QUnit.test("Static method 'getResourceBundleFor' called on unknown library where manifest.json does NOT exist", function(assert) {
+		var sLibraryName = "testlibs.resourcebundle.unknownLib";
+
+		var oErrorLogSpy = this.spy(Log, "error");
 		var oResourceBundle = Library.getResourceBundleFor(sLibraryName);
 
 		assert.ok(oResourceBundle, "Resource bundle can be created successfully");
-		assert.equal(oResourceBundle.getText("TITLE1"), "messagebundle.properties", "The fallback file 'messagebundle.properties' is loaded because no manifest.json is available for the library");
+
+		assert.equal(oErrorLogSpy.callCount, 1, "Error is logged");
+		var oExpectedErr = sinon.match.instanceOf(Error).and(sinon.match.has('message', sinon.match(/unknownLib\/manifest.json(?:.)+not(?:.)*loaded/)));
+		sinon.assert.calledWith(oErrorLogSpy.getCall(0), oExpectedErr);
+
+		oErrorLogSpy.reset();
 
 		var oLoadResourceSpy = this.spy(LoaderExtensions, "loadResource");
 
 		// try to get the resource bundle again
 		oResourceBundle = Library.getResourceBundleFor(sLibraryName);
 		assert.equal(oLoadResourceSpy.callCount, 0, "no further call is done for loading the manifest.json after the previous request failed");
+		assert.equal(oErrorLogSpy.callCount, 0, "No new error is logged");
 	});
 
 	QUnit.module("Library.js included in custom bundle");
