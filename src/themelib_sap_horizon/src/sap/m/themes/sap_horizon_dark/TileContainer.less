@@ -15,3 +15,21 @@
 	left: -1px;
 	right: -1px;
 }
+
+.sapMTC .sapMTile,
+.sapMTC .sapMCustomTile {
+	&:focus {
+		outline: none;
+
+		&::before {
+			content: "";
+			position: absolute;
+			left: -0.1875rem;
+			right: -0.1875rem;
+			top: -0.1875rem;
+			bottom: -0.1875rem;
+			border: 0.125rem solid @sapUiContentFocusColor;
+			border-radius: 0.125rem;
+		}
+	}
+}
