@@ -24,27 +24,38 @@ sap.ui.define([
 		bDomReady = true;
 	});
 
-	/*
-	 * Helper module to create and retrieve the static UIArea.
+	/**
+	 * Helper module to access the static area.
+	 *
+	 * The static area is a hidden DOM element with a unique ID and managed by the framework.
+	 * It is typically used for hidden or temporarily hidden elements like InvisibleText, Popup,
+	 * Shadow, Blocklayer etc.
+	 *
+	 * All methods throw an <code>Error</code> when they are called before the document is ready.
 	 *
 	 * @private
 	 * @ui5-restricted SAPUI5 Dist
+	 * @alias module:sap/ui/core/StaticArea
+	 * @namespace
 	 */
 	var StaticArea = {};
 
-	/*
-	 * The ID of the static UIArea.
+	/**
+	 * The unique ID of the static area.
 	 *
 	 * @private
 	 * @ui5-restricted SAPUI5 Dist
+	 * @type {string}
 	 */
 	StaticArea.STATIC_UIAREA_ID = "sap-ui-static";
 
 	var oStaticArea;
-	/*
-	 * Returns the instance of the static UIArea. If none exists yet, one gets created.
-	 * @return {sap.ui.core.UIArea} The instance of the static UIArea
-	 * @throws {Error} an Error if the document is not ready yet
+
+	/**
+	 * Returns the <code>UIArea</code> instance for the static area. If none exists yet, one gets created.
+	 *
+	 * @returns {sap.ui.core.UIArea} The <code>UIArea</code> instance for the static area
+	 * @throws {Error} if the document is not ready yet
 	 *
 	 * @private
 	 * @ui5-restricted SAPUI5 Dist
@@ -58,8 +69,8 @@ sap.ui.define([
 	};
 
 	/*
-	 * Helper function that returns the static UIArea DOM reference. Creates one, if none exists yet.
-	 * @return {Element} The DOM reference of the static UIArea
+	 * Helper function that returns the root element of the static area. Creates it, if it doesn't exist yet.
+	 * @returns {Element} The root DOM element of the static area
 	 *
 	 * @private
 	 */
@@ -94,13 +105,14 @@ sap.ui.define([
 		return oStaticArea;
 	}
 
-	/*
-	 * Returns the static, hidden area DOM element belonging the core instance.
+	/**
+	 * Returns the root element of the static, hidden area.
+	 *
 	 * It can be used e.g. for hiding elements like Popup, Shadow, Blocklayer etc.
 	 * If it is not yet available, a DIV element is created and appended to the body.
 	 *
-	 * @return {ELement} the static, hidden area DOM element.
-	 * @throws {Error} an Error if the document is not ready yet
+	 * @returns {ELement} the root DOM element of the static, hidden area
+	 * @throws {Error} if the document is not ready yet
 	 *
 	 * @private
 	 * @ui5-restricted SAPUI5 Dist
@@ -109,10 +121,12 @@ sap.ui.define([
 		return StaticArea.getUIArea().getRootNode();
 	};
 
-	/*
-	 * Checks whether the given DOM reference is part of the static UIArea.
+	/**
+	 * Checks whether the given DOM element is part of the static area.
+	 *
 	 * @param {Element} oDomRef
-	 * @return {boolean} Whether the given DOM reference is part of the static UIArea
+	 * @returns {boolean} Whether the given DOM reference is part of the static UIArea
+	 * @throws {Error} if the document is not ready yet
 	 *
 	 * @private
 	 * @ui5-restricted SAPUI5 Dist
