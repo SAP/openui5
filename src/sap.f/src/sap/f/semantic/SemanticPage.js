@@ -722,6 +722,15 @@ sap.ui.define([
 		return Control.prototype.removeStyleClass.call(this, sClass, bSuppressRerendering);
 	};
 
+	SemanticPage.prototype.clone = function(){
+		var oClone = Control.prototype.clone.apply(this, arguments),
+			oContent = this.getAggregation('_dynamicPage').getContent();
+
+		oClone.setContent(oContent.clone());
+
+		return oClone;
+	};
+
 	/*
 	 * =================================================
 	 * AGGREGATION METHODS

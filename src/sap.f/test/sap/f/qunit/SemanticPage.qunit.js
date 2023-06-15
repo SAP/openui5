@@ -167,6 +167,20 @@ function (
 			"SemanticPage preserveHeaderStateOnScroll set to true and retrieved successfully.");
 	});
 
+	QUnit.test("test SemanticPage clone", function(assert) {
+		//Arrange
+		var oStub = this.stub(sap.f.semantic.SemanticPage.prototype, "setContent"),
+			oText = new Text({ text: "yo"});
+
+		this.oSemanticPage._getPage().setContent(oText);
+
+		//Act
+		this.oSemanticPage.clone();
+
+		//Assert
+		assert.equal(oStub.callCount, 1, "Function 'setContent' was called once");
+		assert.strictEqual(oStub.args[0][0].getText(), oText.getText(), "SemanticPage's content is properly set to the DynamicPage's content clone");
+	});
 
 	QUnit.test("test SemanticPage toggleHeaderOnTitleClick setter and getter", function (assert) {
 		// Assert default
