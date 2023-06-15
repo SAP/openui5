@@ -1153,6 +1153,7 @@ sap.ui.define([
 				clearTimeout(this._iAfterRenderingDomReadyTimeout);
 			}
 			this._iAfterRenderingDomReadyTimeout = setTimeout(this._onAfterRenderingDomReady.bind(this), this._getDOMCalculationDelay());
+			this._adjustTitlePositioning(); // adjust early to prevent visual offset/flickering of content
 		}
 
 		if (oHeaderContent && oHeaderContent.supportsPinUnpin()) {
