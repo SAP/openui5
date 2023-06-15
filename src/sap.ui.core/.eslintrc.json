@@ -138,6 +138,17 @@
 			"parserOptions": {
 				"ecmaVersion": 6
 			}
+		},
+		{
+			"files": [
+				"src/ui5loader.js"
+			],
+			"env": {
+				"es2022": true
+			},
+			"parserOptions": {
+				"ecmaVersion": 2022
+			}
 		}
 	]
 }
