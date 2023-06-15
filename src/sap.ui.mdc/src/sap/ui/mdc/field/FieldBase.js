@@ -685,7 +685,7 @@ sap.ui.define([
 
 	var _setFocusTimer = function (oEvent) {
 		var oFieldHelp = _getFieldHelp.call(this);
-		if (oFieldHelp && !this._iFocusTimer && oFieldHelp.shouldOpenOnFocus() && !oFieldHelp.isOpen()) {
+		if (this.getEditMode() === EditMode.Editable && oFieldHelp && !this._iFocusTimer && oFieldHelp.shouldOpenOnFocus() && !oFieldHelp.isOpen()) {
 			this._iFocusTimer = setTimeout(function () {
 				if (!this.bIsDestroyed && !oFieldHelp.isOpen()) {
 					_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
@@ -909,7 +909,7 @@ sap.ui.define([
 
 		// in "Select"-case the suggestion help should open on click into field
 		var oFieldHelp = _getFieldHelp.call(this);
-		if (oFieldHelp) {
+		if (this.getEditMode() === EditMode.Editable && oFieldHelp) {
 			if (oFieldHelp.shouldOpenOnClick() && !oFieldHelp.isOpen()) {
 				_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
 			}

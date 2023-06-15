@@ -3118,10 +3118,29 @@ sap.ui.define([
 					setTimeout(function () {
 						assert.ok(oFieldHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
 						assert.ok(oFieldHelp.toggleOpen.calledOnce, "open called once");
-
 						oFieldHelp.close();
 
-						resolve();
+						//in display mode value help must not open
+						oField.getFocusDomRef().blur();
+						oFieldHelp.shouldOpenOnFocus.resetHistory();
+						oFieldHelp.shouldOpenOnFocus.returns(true);
+						oFieldHelp.toggleOpen.resetHistory();
+
+						oField.setEditMode(EditMode.Display);
+						setTimeout(function() { // to wait for promises taht changes inner controls
+							oCore.applyChanges();
+							var oFocusDomRef = oField.getFocusDomRef();
+							jQuery(oFocusDomRef).attr("tabindex", 0); // to make it focusable
+							oField.focus();
+
+							setTimeout(function () {
+								assert.notOk(oFieldHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus must not be called");
+								assert.notOk(oFieldHelp.toggleOpen.called, "open not called");
+
+								oFieldHelp.close();
+								resolve();
+							},350);
+						});
 					},350);
 				},350);
 			},350);
@@ -3143,7 +3162,6 @@ sap.ui.define([
 		assert.ok(oFieldHelp.toggleOpen.calledOnce, "open called once");
 		assert.ok(oFieldHelp.toggleOpen.calledWith(true), "open called for typeahed");
 
-
 		//do the same test with openByClick(false) and the open should not be called
 		oFieldHelp.shouldOpenOnClick.resetHistory();
 		oFieldHelp.shouldOpenOnClick.returns(false);
@@ -3155,7 +3173,25 @@ sap.ui.define([
 		assert.ok(oFieldHelp.shouldOpenOnClick.calledOnce, "shouldOpenOnClick called once");
 		assert.notOk(oFieldHelp.toggleOpen.called, "open not called");
 
-		oFieldHelp.close();
+		//in display mode value help must not open
+		oFieldHelp.shouldOpenOnClick.resetHistory();
+		oFieldHelp.shouldOpenOnClick.returns(true);
+		oFieldHelp.toggleOpen.resetHistory();
+
+		oField.setEditMode(EditMode.Display);
+		var fnDone = assert.async();
+		setTimeout(function() { // to wait for promises taht changes inner controls
+			oCore.applyChanges();
+			oField.focus();
+			oInnerField = oField.getAggregation("_content")[0];
+			qutils.triggerEvent("tap", oInnerField.getId());
+
+			assert.notOk(oFieldHelp.shouldOpenOnClick.calledOnce, "shouldOpenOnClick must not be called");
+			assert.notOk(oFieldHelp.toggleOpen.called, "open not called");
+
+			oFieldHelp.close();
+			fnDone();
+		});
 	});
 
 	QUnit.test("Opening FieldHelp after isTypeaheadSupported-Promise is resolved", function (assert) {
