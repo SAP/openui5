@@ -22,7 +22,6 @@ src/sap.ui.fl/test/sap/ui/fl/qunit/testResources/TestChangeHandlersBROKEN.flexib
 src/sap.ui.fl/test/sap/ui/fl/testApps/controlPersonalizationAPI/test/testsuite.qunit.js
 src/sap.ui.integration/src/sap/ui/integration/thirdparty
 src/sap.ui.integration/src/sap/ui/integration/designtime/thirdparty
-src/testsuite-utils
 src/sap.ui.webc.main/src/sap/ui/webc/main/thirdparty
 src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty
 src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/thirdparty

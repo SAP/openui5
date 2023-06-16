@@ -122,6 +122,6 @@
     "es5-ext": "<=0.10.53"
   },
   "workspaces": [
-    "src/!(testsuite-utils)"
+    "src/*"
   ]
 }

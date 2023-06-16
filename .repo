@@ -4,11 +4,6 @@
 	<appData>
 		<!-- Thirdparty references -->
 		<thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-			<lib name="less" displayName="LESS" npmName="less" version="1.6.3" hash="fb7893fd45c3d4c4b43242f7b7879977" homepage="http://lesscss.org/" id="73555000106100001897">
-				<license url="https://raw.github.com/cloudhead/less.js/master/LICENSE" type="Apache-2.0" />
-				<copyright>2009-2014, Alexis Sellier &lt;self@cloudhead.net&gt;</copyright>
-				<pattern>src/testsuite-utils/src/main/resources/META-INF/less/less.js</pattern>
-			</lib>
 			<lib name="jsdoc-3.6.7" displayName="JSDoc 3" npmName="jsdoc" version="3.6.7" homepage="https://github.com/jsdoc/jsdoc">
 				<license url="https://github.com/jsdoc/jsdoc/blob/master/LICENSE" type="Apache-2.0" />
 				<copyright>2011-present Michael Mathews micmath@gmail.com and the contributors to JSDoc</copyright>

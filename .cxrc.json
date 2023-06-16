@@ -30,7 +30,6 @@
       "!src/sap.ui.core/src/sap/ui/core/util/ExportType.js",
       "!src/sap.ui.core/src/sap/ui/core/util/ExportTypeCSV.js",
       "!src/sap.ui.core/src/sap/ui/core/util/File.js",
-      "src/testsuite-utils/**/*",
       "src/testsuite/**/*"
     ],
     "suite-controls": [

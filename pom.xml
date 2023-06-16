@@ -327,26 +327,6 @@
 
 		</profile>
 
-		<profile>
-			<id>testsuite.build</id>
-
-			<activation>
-				<activeByDefault>true</activeByDefault>
-				<property>
-					<name>ui5workspace</name>
-				</property>
-			</activation>
-
-			<modules>
-
-				<!-- testsuite -->
-				<module>src/testsuite-utils</module>
-				<module>src/testsuite</module>
-
-			</modules>
-
-		</profile>
-
 		<!-- Newer JDKs 9 and higher require at least Maven 3.6.x due to JAXB issues to load package-info.java  -->
 		<!-- Details: https://stackoverflow.com/questions/52157040/jaxb-package-info-ignored-when-using-java-10 -->
 		<profile>
