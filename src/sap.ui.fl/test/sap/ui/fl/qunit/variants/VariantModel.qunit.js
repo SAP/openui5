@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
+	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
@@ -42,6 +43,7 @@ sap.ui.define([
 	ComponentContainer,
 	Manifest,
 	UIComponent,
+	ResourceModel,
 	Reverter,
 	URLHandler,
 	VariantUtil,
@@ -2309,6 +2311,80 @@ sap.ui.define([
 			this.oModel.registerToModel(this.oVariantManagement);
 
 			return oReturnPromise;
+		});
+
+		QUnit.test("when there is a variant with a resource model key as its title", function(assert) {
+			var oResourceModel = new ResourceModel({bundleUrl: oResourceBundle.oUrlInfo.url});
+			this.oVariantManagement.setModel(oResourceModel, "i18n");
+			var oData = {
+				varMgmtRef1: {
+					defaultVariant: "variant1",
+					originalDefaultVariant: "variant1",
+					variants: [
+						{
+							author: VariantUtil.DEFAULT_AUTHOR,
+							key: "varMgmtRef1",
+							layer: Layer.VENDOR,
+							title: "{i18n>VARIANT_MANAGEMENT_AUTHOR}", //key chosen arbitrarily
+							favorite: true,
+							visible: true,
+							executeOnSelect: false
+						}
+					]
+				}
+			};
+			this.oModel.setData(oData);
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["varMgmtRef1"].variants[0])});
+			sandbox.stub(VariantManagementState, "setVariantData").returns(1);
+			sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
+			this.oModel.registerToModel(this.oVariantManagement);
+			return this.oModel.waitForVMControlInit("varMgmtRef1").then(function() {
+				assert.strictEqual(this.oModel.getData()['varMgmtRef1'].variants[0].title, oResourceBundle.getText("VARIANT_MANAGEMENT_AUTHOR"), "the text is resolved");
+			}.bind(this));
+		});
+
+		QUnit.test("when there is a variant with a resource model key as its title but the model was not yet set", function(assert) {
+			var fnDone = assert.async();
+			var oResourceModel = new ResourceModel({bundleUrl: oResourceBundle.oUrlInfo.url});
+			this.oVariantManagement.setModel(oResourceModel, "i18n");
+			var oData = {
+				varMgmtRef1: {
+					defaultVariant: "variant1",
+					originalDefaultVariant: "variant1",
+					variants: [
+						{
+							author: VariantUtil.DEFAULT_AUTHOR,
+							key: "varMgmtRef1",
+							layer: Layer.VENDOR,
+							title: "{anotherResourceModel>VARIANT_MANAGEMENT_AUTHOR}", //key chosen arbitrarily
+							favorite: true,
+							visible: true,
+							executeOnSelect: false
+						}
+					]
+				}
+			};
+			this.oModel.setData(oData);
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["varMgmtRef1"].variants[0])});
+			sandbox.stub(VariantManagementState, "setVariantData").returns(1);
+			sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
+			this.oModel.registerToModel(this.oVariantManagement);
+			this.oVariantManagement.attachModelContextChange(function() {
+				assert.strictEqual(
+					this.oModel.getData()['varMgmtRef1'].variants[0].title,
+					oResourceBundle.getText("VARIANT_MANAGEMENT_AUTHOR"),
+					"when the model is set, the text gets resolved"
+				);
+				fnDone();
+			}.bind(this));
+			return this.oModel.waitForVMControlInit("varMgmtRef1").then(function() {
+				assert.strictEqual(
+					this.oModel.getData()['varMgmtRef1'].variants[0].title,
+					"{anotherResourceModel>VARIANT_MANAGEMENT_AUTHOR}",
+					"before the model is set, the string is not resolved yet"
+				);
+				this.oVariantManagement.setModel(oResourceModel, "anotherResourceModel");
+			}.bind(this));
 		});
 
 		QUnit.test("when variant management controls are initialized with with 'updateVariantInURL' property set and default (false)", function(assert) {
