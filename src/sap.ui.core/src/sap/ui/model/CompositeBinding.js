@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /*eslint-disable max-len */
-// Provides an abstract property binding.
+// Provides an abstract composite binding.
 sap.ui.define([
 	"./BindingMode",
 	"./ChangeReason",
@@ -105,21 +105,47 @@ sap.ui.define([
 		PropertyBinding.prototype.destroy.apply(this);
 	};
 
+	/**
+	 * Returns <code>null</code> for the path of this binding instance, as a composite binding has no path.
+	 *
+	 * @returns {null} <code>null</code>
+	 * @public
+	 */
+	// @override sap.ui.model.Binding#getPath
 	CompositeBinding.prototype.getPath = function() {
-		assert(null, "Composite Binding has no path!");
 		return null;
 	};
 
+	/**
+	 * Returns <code>null</code> for the model of this binding instance, as a composite binding has no model.
+	 *
+	 * @returns {null} <code>null</code>
+	 * @public
+	 */
+	// @override sap.ui.model.Binding#getModel
 	CompositeBinding.prototype.getModel = function() {
-		assert(null, "Composite Binding has no model!");
 		return null;
 	};
 
+	/**
+	 * Returns <code>null</code> for the context of this binding instance, as a composite binding has no context.
+	 *
+	 * @returns {null} <code>null</code>
+	 * @public
+	 */
+	// @override sap.ui.model.Binding#getContext
 	CompositeBinding.prototype.getContext = function() {
-		assert(null, "Composite Binding has no context!");
 		return null;
 	};
 
+	/**
+	 * Returns whether all binding parts are resolved.
+	 *
+	 * @returns {boolean} Whether all binding parts are resolved
+	 * @public
+	 * @since 1.79.0
+	 */
+	// @override sap.ui.model.Binding#isResolved
 	CompositeBinding.prototype.isResolved = function() {
 		return this.aBindings.every(function(oBinding) {
 			return oBinding.isResolved();
