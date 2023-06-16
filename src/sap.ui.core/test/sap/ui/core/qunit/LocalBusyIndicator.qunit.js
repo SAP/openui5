@@ -8,12 +8,13 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/VBox",
 	"sap/ui/core/Control",
+	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils"
-], function(LocalBusyIndicatorSupport, BusyDialog, Button, List, Slider, StandardListItem, VBox, Control, Element, XMLView, KeyCodes, jQuery, qutils) {
+], function(LocalBusyIndicatorSupport, BusyDialog, Button, List, Slider, StandardListItem, VBox, Control, Core, Element, XMLView, KeyCodes, jQuery, qutils) {
 	"use strict";
 
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
@@ -113,7 +114,7 @@ sap.ui.define([
 			this.oFocusAfter = new Button("FocusAfter").placeAt("target1");
 			this.oSlider = new Slider().placeAt("target2");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 
 		afterEach : function() {
@@ -285,7 +286,7 @@ sap.ui.define([
 
 			this.oSlider = new Slider().placeAt("target2");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 
 		afterEach : function() {
@@ -382,10 +383,11 @@ sap.ui.define([
 			definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" busyIndicatorDelay="0"></mvc:View>'
 		}).then(function(myView) {
 			myView.placeAt('target1');
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			myView.setBusy(true);
 			// this rerendering is crucial to test the behavior
-			myView.rerender();
+			myView.invalidate();
+			Core.applyChanges();
 			setTimeout(function() {
 				// assert
 				assert.ok(myView.$("busyIndicator").length, "BusyIndicator rendered");
@@ -445,8 +447,9 @@ sap.ui.define([
 		this.oButton.placeAt("target1");
 		this.oButton.setBusy(true);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
+		// before delegate
 		this.oButton.addDelegate({
 			onBeforeRendering: function() {
 				var oControl = this.getDomRef();
@@ -460,6 +463,7 @@ sap.ui.define([
 			}
 		}, true, this.oButton);
 
+		// after delegate
 		this.oButton.addDelegate({
 			onBeforeRendering: function() {
 				var oControl = this.getDomRef();
@@ -478,14 +482,16 @@ sap.ui.define([
 			}
 		}, false, this.oButton);
 
-		this.oButton.rerender();
+		// force a rendering
+		this.oButton.invalidate();
+		Core.applyChanges();
 	});
 
 	QUnit.test("OnAfterRendering", function(assert) {
 		var done = assert.async();
 		assert.expect(4);
 		this.oButton.placeAt("target1");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var that = this;
 
 		setTimeout(function() {
@@ -524,7 +530,7 @@ sap.ui.define([
 		};
 		this.oButton.addDelegate(oOnAfterRenderingDelegate, false, this);
 		this.oButton.placeAt("target1");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var that = this;
 
 		setTimeout(function() {
@@ -564,7 +570,7 @@ sap.ui.define([
 		this.oBtn.addDelegate(this.oDelegate);
 		this.oSpy = sinon.spy(this.oDelegate, "onAfterRendering");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		setTimeout(function() {
 			var $Animation = jQuery(".sapUiLocalBusyIndicatorAnimation");
@@ -600,7 +606,7 @@ sap.ui.define([
 		this.oBtn.addDelegate(this.oDelegate);
 		this.oSpy = sinon.spy(this.oDelegate, "onAfterRendering");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		setTimeout(function() {
 			var $Animation = jQuery(".sapUiLocalBusyIndicatorAnimation");
@@ -636,7 +642,7 @@ sap.ui.define([
 			busy : true
 		}).placeAt("target3");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		setTimeout(function() {
 			var $Animation = jQuery(".sapUiLocalBusyIndicatorAnimation");
@@ -687,13 +693,14 @@ sap.ui.define([
 		}, this.oButton);
 
 		this.oButton.placeAt("target1");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.oButton.setBusy(false);
 		// after reset the busy state, the control should be able to react to click event
 		this.testClickEventOn(this.oButton, assert);
 
-		// rerender the control to activate the busy state
-		this.oButton.rerender();
+		// rerender the control to activate the busy state (problem only occurs with 2nd. rendering)
+		this.oButton.invalidate();
+		Core.applyChanges();
 		this.oButton.setBusy(false);
 		// after reset the busy state, the control should be able to react to click event
 		this.testClickEventOn(this.oButton, assert);
