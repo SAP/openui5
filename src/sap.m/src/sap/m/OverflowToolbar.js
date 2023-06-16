@@ -373,6 +373,10 @@ sap.ui.define([
 		// Deregister the resize handler to avoid multiple instances of the same code running at the same time
 		this._deregisterToolbarResize();
 
+		if (this._iPreviousToolbarWidth !== iWidth) {
+			this._bResized = true;
+		}
+
 		if (iWidth > 0) {
 
 			// Cache controls widths and other info, if not done already
@@ -386,6 +390,8 @@ sap.ui.define([
 				this._setControlsOverflowAndShrinking(iWidth);
 				this.fireEvent("_controlWidthChanged");
 			}
+		} else {
+			this._iPreviousToolbarWidth = iWidth;
 		}
 
 		// Register the resize handler again after all calculations are done and it's safe to do so
