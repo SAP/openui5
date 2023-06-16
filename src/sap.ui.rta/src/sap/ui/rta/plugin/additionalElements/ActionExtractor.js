@@ -68,7 +68,8 @@ sap.ui.define([
 								payload: mAction.delegateInfo.payload || {},
 								delegate: mAction.delegateInfo.instance,
 								modelType: mAction.delegateInfo.modelType,
-								requiredLibraries: mAction.delegateInfo.requiredLibraries
+								requiredLibraries: mAction.delegateInfo.requiredLibraries,
+								delegateType: mAction.delegateInfo.delegateType
 							}
 						}
 					};
@@ -149,7 +150,13 @@ sap.ui.define([
 					supportsDefault: mAction.supportsDefaultDelegate
 				})
 					.then(function(mDelegateInfo) {
-						if (mDelegateInfo && mDelegateInfo.names && mDelegateInfo.names.length) {
+						// Only complete delegators can be used for additional elements
+						if (
+							mDelegateInfo &&
+							mDelegateInfo.names &&
+							mDelegateInfo.names.length &&
+							mDelegateInfo.delegateType === DelegateMediatorAPI.types.COMPLETE
+						) {
 							var aRequiredLibraries = DelegateMediatorAPI.getRequiredLibrariesForDefaultDelegate({
 								delegateName: mDelegateInfo.names,
 								control: mParents.relevantContainer
