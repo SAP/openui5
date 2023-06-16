@@ -79,7 +79,7 @@ sap.ui.define([
 			assert.strictEqual(oInstance.getAndClearLog(), "", "Log should be empty");
 		});
 
-		/*
+		/**
 		 * @deprecated since 1.58
 		 */
 		QUnit.test("Should only collect logs with the right component (legacy APIs)", function (assert) {
