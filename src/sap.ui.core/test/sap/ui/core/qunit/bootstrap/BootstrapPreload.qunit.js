@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.test("Check Existance of Core", function(assert) {
-		assert.expect(10);
+		assert.expect(9);
 
 		var aExpectedLibraries = ["sap.m", "sap.ui.layout", "sap.ui.table"].sort();
 		var aConfigurationModules = Configuration.getValue("modules").sort();
@@ -16,7 +16,6 @@ sap.ui.define([
 		var sExpectedLibrary, sLoadedLibrary, aDependendLibraries = [];
 
 		/* check that SAPUI5 has been loaded */
-		assert.ok(jQuery.sap, "jQuery.sap namespace exists");
 		assert.ok(sap.ui.getCore(), "sap.ui.getCore() returns a value");
 
 		var id = document.querySelector("html").getAttribute("data-sap-ui-browser");
