@@ -195,7 +195,7 @@ sap.ui.define([
 	/**
 	 * Clones this UI5Date instance.
 	 *
-	 * @returns {Date|module:sap/ui/core/date/UI5Date}
+	 * @returns {Date|module:sap/ui/core/date/UI5Date} The cloned date instance
 	 *
 	 * @private
 	 */
