@@ -31,7 +31,7 @@
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
-								<mdcValueHelp:Popover id="VH1-Pop">
+								<mdcValueHelp:Popover id="VH1-Pop" opensOnClick ="true" opensOnFocus="true">
 									<mdcValueHelpContent:MTable id="VH1-Pop-MTable"
 										filterFields="*ProductId,Name*"
 										keyPath="ProductId"
