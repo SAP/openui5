@@ -564,6 +564,9 @@ sap.ui.define([
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/ControlPersonalizationWriteAPI"]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 				}
 			},
 			"write/api/ExtensionPointRegistryAPI": {
