@@ -1347,7 +1347,7 @@ sap.ui.define([
 						onAfterRendering: function () {
 							var card = cardPreview._getCardPreview();
 							assert.ok(card, "Preview mode card: OK");
-							assert.ok(card.mCustomStyleClassMap.sapUiIntegrationDTPreviewNoScale, "Preview mode no scale: OK");
+							assert.equal(card.getParent().getDomRef("card").getAttribute("class"), "sapUiIntegrationDTPreviewNoScale", "Preview mode no scale: OK");
 							var modeToggleButton = cardPreview._oModeToggleButton;
 							assert.ok(modeToggleButton.getDomRef(), "Preview mode button: Button is OK");
 							assert.equal(modeToggleButton.getIcon(), "sap-icon://media-play", "Preview mode button: Icon is OK");

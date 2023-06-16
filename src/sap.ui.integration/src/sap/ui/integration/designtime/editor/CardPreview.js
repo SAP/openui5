@@ -86,14 +86,33 @@ sap.ui.define([
 					document.body.style.setProperty("--sapUiIntegrationEditorPreviewHeight", "100%");
 				}
 				oRm.openEnd();
-				oRm.openStart("div", oControl.getId() + "-before");
-				oRm.attr("tabindex", "-1");
+				oRm.openStart("div", oControl.getId() + "-card");
+				if (!oControl.getSettings().preview || oControl.getSettings().preview.scaled !== false) {
+					if (oControl._getCurrentSize() !== "Full") {
+						oRm.class("sapUiIntegrationDTPreviewScale");
+						var sLanguge = Core.getConfiguration().getLanguage().replaceAll('_', '-');
+						if (sLanguge.startsWith("ar") || sLanguge.startsWith("he")) {
+							// for the languages "ar-SA"(Arabic) and "he-IL"(Hebrew) which write from right to left, use spec style
+							oRm.class("withSpec");
+						} else {
+							oRm.class("noSpec");
+						}
+					} else {
+						oRm.class("sapUiIntegrationDTPreviewNoScale");
+					}
+				} else {
+					oRm.class("sapUiIntegrationDTPreviewNoScale");
+				}
 				oRm.openEnd();
-				oRm.close("div");
-				oRm.renderControl(oControl._getCardPreview());
-				oRm.openStart("div", oControl.getId() + "-after");
-				oRm.attr("tabindex", "-1");
-				oRm.openEnd();
+					oRm.openStart("div", oControl.getId() + "-before");
+					oRm.attr("tabindex", "-1");
+					oRm.openEnd();
+					oRm.close("div");
+					oRm.renderControl(oControl._getCardPreview());
+					oRm.openStart("div", oControl.getId() + "-after");
+					oRm.attr("tabindex", "-1");
+					oRm.openEnd();
+					oRm.close("div");
 				oRm.close("div");
 				// TODO unsupported DOM structure: button is not a child of the root element
 				var sModes = oControl._getModes();
@@ -190,26 +209,8 @@ sap.ui.define([
 		}
 		if (oPreview) {
 			this.setAggregation("cardPreview", oPreview);
-			oPreview.removeStyleClass("sapUiIntegrationDTPreviewNoScale");
-			oPreview.removeStyleClass("sapUiIntegrationDTPreviewScaleBasic");
-			oPreview.removeStyleClass("withScale");
-			oPreview.removeStyleClass("withScaleSpec");
-			if (!this.getSettings().preview || this.getSettings().preview.scaled !== false) {
-				var sLanguge = Core.getConfiguration().getLanguage().replaceAll('_', '-');
-				if (this._getCurrentSize() !== "Full") {
-					oPreview.addStyleClass("sapUiIntegrationDTPreviewScaleBasic");
-					if (sLanguge.startsWith("ar") || sLanguge.startsWith("he")) {
-						// for the languages "ar-SA"(Arabic) and "he-IL"(Hebrew) which write from right to left, use spec style
-						oPreview.addStyleClass("withScaleSpec");
-					} else {
-						oPreview.addStyleClass("withScale");
-					}
-				} else {
-					oPreview.addStyleClass("sapUiIntegrationDTPreviewNoScale");
-				}
-			} else {
-				oPreview.addStyleClass("sapUiIntegrationDTPreviewNoScale");
-			}
+			oPreview.removeStyleClass("sapUiIntegrationDTPreviewCard");
+			oPreview.addStyleClass("sapUiIntegrationDTPreviewCard");
 		}
 		return oPreview;
 	};
@@ -283,12 +284,13 @@ sap.ui.define([
 
 	CardPreview.prototype._resetHeight = function () {
 		var oCardDom = this._oCardPreview.getDomRef();
-		if (oCardDom && this._getCurrentSize() !== "Full" ) {
+		if (oCardDom) {
 			var sHeight = oCardDom.offsetHeight;
-			document.body.style.setProperty("--sapUiIntegrationEditorPreviewCardHeight", sHeight + "px");
-			document.body.style.setProperty("--sapUiIntegrationEditorPreviewHeight", (sHeight * 0.45 + 56)  + "px");
-		} else {
-			document.body.style.removeProperty("--sapUiIntegrationEditorPreviewCardHeight");
+			if (this._getCurrentSize() !== "Full") {
+				document.body.style.setProperty("--sapUiIntegrationEditorPreviewCardHeight", sHeight * 0.45 + "px");
+			} else {
+				document.body.style.setProperty("--sapUiIntegrationEditorPreviewCardHeight", sHeight + "px");
+			}
 		}
 	};
 

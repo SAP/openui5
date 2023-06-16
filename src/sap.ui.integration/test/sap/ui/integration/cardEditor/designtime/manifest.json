@@ -362,13 +362,13 @@
 				}
 			}
 		},
-		"data": {
+		"data1": {
 			"extension": {
 				"method": "getData"
 			},
 			"path": "/values"
 		},
-		"data1": {
+		"data": {
 			"request": {
 				"url": "{{destinations.northwind}}/Customers",
 				"parameters": {
@@ -378,14 +378,14 @@
 			"path": "/value"
 		},
 		"content": {
-			"item1": {
+			"item": {
 				"title": "{CustomerID}",
 				"description": "Trainer: {CompanyName}",
 				"info": {
 					"value": "Location: {Country} - {City} - {Address}"
 				}
 			},
-			"item": {
+			"item1": {
 				"title": "{title}",
 				"description": "Trainer: {trainer}",
 				"info": {
