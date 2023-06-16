@@ -3357,30 +3357,49 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{expandedListUsable : false, entityType : "~wrongType", refreshExpected : false},
-	{expandedListUsable : true, entityType : "~entityType", refreshExpected : false},
-	{expandedListUsable : false, entityType : "~entityType", refreshExpected : true}
+	{hasTransientParentContext : false, entityType : "~nonMatchingType"},
+	{hasTransientParentContext : true, entityType : "~entityType"}
 ].forEach(function (oFixture, i) {
-	QUnit.test("_refreshForSideEffects: " + i, function (assert) {
+	QUnit.test("_refreshForSideEffects: is affected = false " + i, function (assert) {
 		var oBinding = {
 				oEntityType : oFixture.entityType,
+				_hasTransientParentContext : function () {},
+				_refresh : function () {}
+			};
+
+		this.mock(oBinding).expects("_hasTransientParentContext")
+			.withExactArgs()
+			.returns(oFixture.hasTransientParentContext);
+		this.mock(oBinding).expects("_refresh").never();
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype._refreshForSideEffects.call(oBinding,
+			new Set(["~entityType"]), "~sGroupId"), false);
+	});
+});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bExpandedListUsable) {
+	QUnit.test("_refreshForSideEffects: is affected, expanded list usable = " + bExpandedListUsable, function (assert) {
+		var oBinding = {
+				oEntityType : "~entityType",
+				_hasTransientParentContext : function () {},
 				_isExpandedListUsable : function () {},
 				_refresh : function () {}
 			};
 
-		this.mock(oBinding).expects("_isExpandedListUsable")
-			.withExactArgs()
-			.returns(oFixture.expandedListUsable);
+		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_isExpandedListUsable").withExactArgs().returns(bExpandedListUsable);
 		this.mock(oBinding).expects("_refresh")
 			.withExactArgs()
 			.callsFake(function () {
 				assert.strictEqual(oBinding.sRefreshGroupId, "~sGroupId");
 			})
-			.exactly(oFixture.refreshExpected ? 1 : 0);
+			.exactly(bExpandedListUsable ? 0 : 1);
 
 		// code under test
-		ODataListBinding.prototype._refreshForSideEffects.call(oBinding,
-			new Set(["~entityType"]), "~sGroupId");
+		assert.strictEqual(ODataListBinding.prototype._refreshForSideEffects.call(oBinding,
+			new Set(["~entityType"]), "~sGroupId"), true);
 
 		assert.strictEqual(oBinding.sRefreshGroupId, undefined);
 	});

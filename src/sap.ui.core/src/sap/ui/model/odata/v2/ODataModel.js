@@ -5895,10 +5895,10 @@ sap.ui.define([
 	 * @param {Object<string,string>} [mParameters.urlParameters]
 	 *   URL parameters for the side-effects request as a map from a URL parameter name to its
 	 *   string value including <code>$expand</code> and <code>$select</code>
-	 * @returns {Promise}
-	 *   The promise on the outcome of the side-effects request; resolves with
-	 *   <code>undefined</code> if the request is processed successfully, or rejects with an error
-	 *   object if the request fails
+	 * @returns {Promise<Array<sap.ui.model.odata.v2.ODataListBinding>>}
+	 *   The promise on the outcome of the side-effects request; resolves with the array of affected
+	 *   list bindings if the request is processed successfully, or rejects with an error object if
+	 *   the request fails
 	 * @throws {Error}
 	 *   If the given parameters map contains any other parameter than those documented above
 	 *
@@ -5919,6 +5919,7 @@ sap.ui.define([
 
 		return new Promise(function (resolve, reject) {
 			var oAffectedEntityTypes = new Set(),
+				aAffectedListBindings = [],
 				sExpands = mParameters.urlParameters && mParameters.urlParameters["$expand"];
 
 			that._read("", {
@@ -5927,7 +5928,7 @@ sap.ui.define([
 					error : reject,
 					groupId : mParameters.groupId,
 					success : function (/*oData, oResponse*/) {
-						resolve();
+						resolve(aAffectedListBindings);
 					},
 					updateAggregatedMessages : true,
 					urlParameters : mParameters.urlParameters
@@ -5942,7 +5943,9 @@ sap.ui.define([
 				});
 				that.getBindings().forEach(function (oBinding) {
 					if (oBinding.isA("sap.ui.model.odata.v2.ODataListBinding")) {
-						oBinding._refreshForSideEffects(oAffectedEntityTypes, mParameters.groupId);
+						if (oBinding._refreshForSideEffects(oAffectedEntityTypes, mParameters.groupId)) {
+							aAffectedListBindings.push(oBinding);
+						}
 					}
 				});
 			}
