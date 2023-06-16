@@ -341,20 +341,20 @@ sap.ui.define([
 		var oProperty = {
 			name: "fieldPath1",
 			label: "Field Path",
-			typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String"),
+			dataType: "sap.ui.model.type.String",
 			visible: true
 		};
 		var oProperty2 = {
-				name: "fieldPath2",
-				label: "Field Path2",
-				typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String"),
-				visible: true
+			name: "fieldPath2",
+			label: "Field Path2",
+			dataType: "sap.ui.model.type.String",
+			visible: true
 		};
 		var oProperty3 = {
-				name: "$search",
-				label: "",
-				typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String"),
-				visible: true
+			name: "$search",
+			label: "",
+			dataType: "sap.ui.model.type.String",
+			visible: true
 		};
 		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty, oProperty2, oProperty3]);
 		sinon.stub(oFilterBar, "_getPropertyByName").callsFake(function(sName) {
@@ -469,12 +469,14 @@ sap.ui.define([
 	QUnit.test("check _getNonHiddenPropertyByName ", function (assert) {
 		var oProperty1 = {
 			name: "key1",
-			type: "Edm.String",
+			label: "Key1",
+			dataType: "Edm.String",
 			visible: true
 		};
 
 		var oProperty2 = {
 			name: "key2",
+			label: "Key2",
 			hiddenFilter: true,
 			visible: true
 		};
@@ -826,18 +828,16 @@ sap.ui.define([
 		var oProperty1 = {
 			name: "key1",
 			label: "label 1",
-			type: "Edm.String",
+			dataType: "Edm.String",
 			constraints: { maxLength: 40 },
-			visible: true,
-			filterExpression: "SingleValue"
+			visible: true
 		};
 		var oProperty2 = {
 			name: "key2",
 			label: "label 2",
-			type: "Edm.String",
+			dataType: "Edm.String",
 			constraints: { maxLength: 40 },
-			visible: true,
-			filterExpression: "SingleValue"
+			visible: true
 		};
 
 		var aPromise = [];
@@ -908,21 +908,19 @@ sap.ui.define([
 	QUnit.test("check properties based on filterItems", function (assert) {
 		var oProperty1 = {
 			name: "key1",
-			type: "Edm.String",
-			constraints: { maxLength: 40 },
-			filterExpression: "SingleValue",
-			typeConfig: {}
+			label: "Key1",
+			dataType: "Edm.String",
+			constraints: { maxLength: 40 }
 		};
 		var oProperty2 = {
 			name: "key3",
 			label: "label",
-			type: "Edm.String",
-			filterExpression: "MultiValue",
-			typeConfig: {}
+			dataType: "Edm.String"
 		};
 
 		var oDelegate = {
-			fetchProperties: function () { return Promise.resolve([oProperty1, oProperty2]); }
+			fetchProperties: function () { return Promise.resolve([oProperty1, oProperty2]); },
+			getTypeMap: function() {return ODataTypeMap;}
 		};
 
 		var oMyModel = new JSONModel();
@@ -1027,21 +1025,18 @@ sap.ui.define([
 		var oProperty1 = {
 			name: "field1",
 			label: "A",
-			type: "Edm.String",
-			constraints: { maxLength: 40 },
-			filterExpression: "SingleValue"
+			dataType: "Edm.String",
+			constraints: { maxLength: 40 }
 		};
 		var oProperty2 = {
 			name: "field2",
 			label: "B",
-			type: "Edm.String",
-			filterExpression: "MultiValue"
+			dataType: "Edm.String"
 		};
 		var oProperty3 = {
 			name: "field3",
 			label: "C",
-			type: "Edm.String",
-			filterExpression: "MultiValue"
+			dataType: "Edm.String"
 		};
 
 		oFilterBar.setP13nMode(["Item"]);
@@ -1080,13 +1075,15 @@ sap.ui.define([
 
 		var oProperty1 = {
 			name: "key1",
-			type: "sap.ui.model.odata.type.String",
+			label: "Key1",
+			dataType: "sap.ui.model.odata.type.String",
 			filterOperators: ["EQ", "StartsWith"],
 			visible: true
 		};
 		var oProperty2 = {
 			name: "key2",
-			type: "sap.ui.model.odata.type.String",
+			label: "Key2",
+			dataType: "sap.ui.model.odata.type.String",
 			visible: true
 		};
 
@@ -1230,7 +1227,7 @@ sap.ui.define([
 
 		var oProperty = {
 			name: "key",
-			type: "Edm.String",
+			dataType: "Edm.String",
 			display: "Description"
 		};
 
