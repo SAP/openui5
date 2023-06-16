@@ -142,7 +142,7 @@ sap.ui.define([
 				bAction : undefined,
 				mChangeListeners : {}, // map from path to an array of change listeners
 				mParameters : {},
-				sResourcePath : undefined
+				mRefreshParameters : {}
 			};
 			if (!this.bRelative) {
 				this.oParameterContext = Context.create(this.oModel, this,
