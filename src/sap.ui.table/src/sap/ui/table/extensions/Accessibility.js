@@ -845,6 +845,21 @@ sap.ui.define([
 					if (mParams.rowNavigated) {
 						mAttributes["aria-current"] = true;
 					}
+
+					if (!mParams.fixedCol) {
+						mAttributes["aria-owns"] = [];
+						if (TableUtils.hasRowHeader(oTable)) {
+							mAttributes["aria-owns"].push(sTableId + "-rowselecthdr" + mParams.index);
+						}
+						if (TableUtils.hasFixedColumns(oTable)) {
+							for (var j = 0; j < oTable.getComputedFixedColumnCount(); j++) {
+								mAttributes["aria-owns"].push(sTableId + "-rows-row" + mParams.index + "-col" + j);
+							}
+						}
+						if (TableUtils.hasRowActions(oTable)) {
+							mAttributes["aria-owns"].push(sTableId + "-rowact" + mParams.index);
+						}
+					}
 					break;
 
 				case AccExtension.ELEMENTTYPES.TREEICON: //The expand/collapse icon in the TreeTable
