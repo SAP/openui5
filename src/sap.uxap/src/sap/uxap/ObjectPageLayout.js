@@ -3290,7 +3290,10 @@ sap.ui.define([
 
 		if (this._bSupressModifyOnScrollOnce) {
 			this._bSupressModifyOnScrollOnce = false;
-			return;
+
+			if (!bImmediateLazyLoading) {
+				return;
+			}
 		}
 
 		if (!$wrapper || !$spacer) {
