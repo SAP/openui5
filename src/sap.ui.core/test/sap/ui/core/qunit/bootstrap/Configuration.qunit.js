@@ -605,17 +605,24 @@ sap.ui.require([
 	});
 
 	QUnit.test("Format Locale", function(assert) {
-		var checkPublicMethods = function (oObject, fnClass) {
-			var aMethodNames = fnClass.getMetadata().getAllPublicMethods(), i;
+		// Checks via duck-typing whether the given object is an instance of Locale
+		// The check should work with facades (1.x) as well as with instances (2.x)
+		function assertCoreLocale(oObject) {
+			var aMethodNames = Object.keys(Locale.prototype).filter(function(sKey) {
+				return !/^(_|getMetadata$|isA$)/.test(sKey) && typeof Locale.prototype[sKey] === "function";
+			});
 
-			for ( i = 0; i < aMethodNames.length; i++ ) {
-				assert.ok(oObject[aMethodNames[i]] !== undefined, "expected interface method should actually exist: " + aMethodNames[i]);
-			}
+			aMethodNames.forEach(function(sMethodName) {
+				assert.strictEqual(typeof oObject[sMethodName], "function",
+					"expected interface method should actually exist: " + sMethodName);
+			});
 
-			for ( i in oObject ) {
-				assert.ok(aMethodNames.indexOf(i) >= 0, "actual method should be part of expected interface: " + i);
+			for ( var sMethodName in oObject ) {
+				assert.ok(aMethodNames.includes(sMethodName),
+					"actual method should be part of expected interface: " + sMethodName);
 			}
-		};
+		}
+
 		var oConfig;
 
 		//window['sap-ui-config'].formatlocale = 'fr-CH'; // Note: Configuration expects sap-ui-config names converted to lowercase (done by bootstrap)
@@ -623,7 +630,8 @@ sap.ui.require([
 		oConfig.setFormatLocale("fr-CH");
 		assert.equal(oConfig.getLanguageTag(), "fr-FR", "language should be fr-FR");
 		assert.equal(oConfig.getFormatLocale(), "fr-CH", "format locale string should be fr-CH");
-		assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Interface, "format locale should exist");
+		assert.ok(oConfig.getFormatSettings().getFormatLocale(), "format locale should exist");
+		assertCoreLocale(oConfig.getFormatSettings().getFormatLocale());
 		assert.equal(oConfig.getFormatSettings().getFormatLocale().toString(), "fr-CH", "format locale should be fr-CH");
 
 		//window['sap-ui-config'].formatlocale = null;
@@ -631,27 +639,26 @@ sap.ui.require([
 		oConfig.setFormatLocale(null);
 		assert.equal(oConfig.getLanguageTag(), "fr-FR", "language should be fr-FR");
 		assert.equal(oConfig.getFormatLocale(), "fr-FR", "format locale string should be fr-CH");
-		assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Interface, "format locale should exist");
-		checkPublicMethods(Configuration.getFormatSettings().getFormatLocale(), Locale);
+		assert.ok(oConfig.getFormatSettings().getFormatLocale(), "format locale should exist");
 		assert.equal(oConfig.getFormatSettings().getFormatLocale().toString(), "fr-FR", "format locale should be fr-CH");
 		delete window['sap-ui-config'].formatlocale;
 
 		oConfig = this.setupConfig("de", {"sap-language": "EN", "sap-ui-formatLocale": "en-AU"});
 		assert.equal(oConfig.getLanguageTag(), "en", "language should be en");
 		assert.equal(oConfig.getFormatLocale(), "en-AU", "format locale string should be en-AU");
-		assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Interface, "format locale should exist");
+		assert.ok(oConfig.getFormatSettings().getFormatLocale(), "format locale should exist");
 		assert.equal(oConfig.getFormatSettings().getFormatLocale().toString(), "en-AU", "format locale should be en-AU");
 
 		oConfig = this.setupConfig();
 		oConfig.setFormatLocale("en-CA");
 		assert.equal(oConfig.getFormatLocale(), "en-CA", "format locale string should be en-CA");
-		assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Interface, "format locale should exist");
+		assert.ok(oConfig.getFormatSettings().getFormatLocale(), "format locale should exist");
 		assert.equal(oConfig.getFormatSettings().getFormatLocale().toString(), "en-CA", "format locale should be en-CA");
 
 		oConfig = this.setupConfig("de", {"sap-language": "EN"});
 		oConfig.setFormatLocale();
 		assert.equal(oConfig.getFormatLocale(), "en", "format locale string should be en");
-		assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Interface, "format locale should exist");
+		assert.ok(oConfig.getFormatSettings().getFormatLocale(), "format locale should exist");
 		assert.equal(oConfig.getFormatSettings().getFormatLocale().toString(), "en", "format locale should be en");
 
 		assert.throws(function() {
@@ -980,6 +987,9 @@ sap.ui.require([
 	});
 
 	QUnit.test("Invalid animation mode", function(assert) {
+		/**
+		 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
+		 */
 		this.mParams.sapUiAnimation = false;
 		this.mParams.sapUiAnimationMode = "someuUnsupportedStringValue";
 		assert.throws(
@@ -993,6 +1003,9 @@ sap.ui.require([
 		for (var sAnimationModeKey in AnimationMode) {
 			if (AnimationMode.hasOwnProperty(sAnimationModeKey)) {
 				var sAnimationMode = AnimationMode[sAnimationModeKey];
+				/**
+				 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
+				 */
 				this.mParams.sapUiAnimation = false;
 				this.mParams.sapUiAnimationMode = sAnimationMode;
 				assert.equal(Configuration.getAnimationMode(), sAnimationMode, "Test for animation mode: " + sAnimationMode);
@@ -1032,12 +1045,18 @@ sap.ui.require([
 		// Check if default values are set
 		assert.equal(oConfiguration.getAnimationMode(), AnimationMode.full, "Default animation mode is " + AnimationMode.full + ".");
 		assert.equal(getHtmlAttribute("data-sap-ui-animation-mode"), AnimationMode.full, "Default animation mode should be injected as attribute.");
+		/**
+		 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
+		 */
 		assert.equal(getHtmlAttribute("data-sap-ui-animation"), "on", "Default animation should be injected as attribute.");
 
 		// Change animation mode
 		oConfiguration.setAnimationMode(AnimationMode.none);
 		assert.equal(oConfiguration.getAnimationMode(), AnimationMode.none, "Animation mode should switch to " + AnimationMode.none + ".");
 		assert.equal(getHtmlAttribute("data-sap-ui-animation-mode"), AnimationMode.none, "Animation mode should be injected as attribute.");
+		/**
+		 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
+		 */
 		assert.equal(getHtmlAttribute("data-sap-ui-animation"), "off", "Animation should be turned off.");
 	});
 
