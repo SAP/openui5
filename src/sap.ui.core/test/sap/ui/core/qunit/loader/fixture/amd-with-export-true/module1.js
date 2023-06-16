@@ -1,8 +1,8 @@
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(['sap/base/util/ObjectPath'], function(ObjectPath) {
 	"use strict";
 
 	var result = {
-		parentNamespace: jQuery.sap.getObject("fixture.amd-with-export-true")
+		parentNamespace: ObjectPath.get("fixture.amd-with-export-true")
 	};
 
 	return result;
