@@ -80,9 +80,10 @@ function(
 					 *	<li><code>ol</code></li>
 					 *	<li><code>li</code></li>
 					 * </ul>
-					 * <p><code>class, style,</code> and <code>target</code> attributes are allowed.
-					 * If <code>target</code> is not set, links open in a new window by default.
-					 * <p>Only safe <code>href</code> attributes can be used. See {@link module:sap/base/security/URLWhitelist URLWhitelist}.
+					 * <p><code>style, dir</code> and <code>target</code> attributes are allowed.
+					 * <p>The <code>class</code> attribute is allowed, but its value is sanitized to contain only supported CSS classes, see {@link topic:91a4946b0dcf4356aaaedc4e502864f4 List of Supported CSS Classes}.
+					 * <p>If <code>target</code> is not set, links open in a new window by default.
+					 * <p>Only safe <code>href</code> attributes can be used. See {@link module:sap/base/security/URLListValidator URLListValidator}.
 					 *
 					 * <b>Note:</b> Keep in mind that not supported HTML tags and
 					 * the content nested inside them are both not rendered by the control.
