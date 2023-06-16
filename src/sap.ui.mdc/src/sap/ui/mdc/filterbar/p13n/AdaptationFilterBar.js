@@ -25,6 +25,7 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.mdc.filterbar.p13n
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 
 	/**
