@@ -773,26 +773,23 @@ sap.ui.define([
 			if (!this.oManifest) {
 				var manifestModule = this.name.replace(/\./g, '/') + '/manifest.json';
 
-				if (sap.ui.loader._.getModuleState(manifestModule)) {
-					this.oManifest = LoaderExtensions.loadResource(manifestModule, {
-						dataType: 'json',
-						async: false, // always sync as we are sure to load from preload cache
-						failOnError: false
-					});
-				} else if (bSync && !this._manifestFailed) {
+				if (sap.ui.loader._.getModuleState(manifestModule) || (bSync && !this._manifestFailed)) {
 					try {
 						this.oManifest = LoaderExtensions.loadResource(manifestModule, {
 							dataType: 'json',
 							async: false,
-							failOnError: true
+							failOnError: !this.isSettingsEnhanced()
 						});
+
+						if (this._oManifest) {
+							deepFreeze(this.oManifest);
+						} else {
+							this._manifestFailed = true;
+						}
 					} catch (e) {
 						this._manifestFailed = true;
 					}
-				}
 
-				if (this._oManifest) {
-					deepFreeze(this.oManifest);
 				}
 			}
 
@@ -1255,9 +1252,8 @@ sap.ui.define([
 	 * files must be kept in sync.
 	 *
 	 * @param {object} mSettings Info object for the library
-	 * @param {string} [mSettings.name] Name of the library; when given it must match the name by which the library has
-	 *  been loaded
-	 * @param {string} mSettings.version Version of the library
+	 * @param {string} mSettings.name Name of the library; It must match the name by which the library has been loaded
+	 * @param {string} [mSettings.version] Version of the library
 	 * @param {string[]} [mSettings.dependencies=[]] List of libraries that this library depends on; names are in dot
 	 *  notation (e.g. "sap.ui.core")
 	 * @param {string[]} [mSettings.types=[]] List of names of types that this library provides; names are in dot
@@ -1270,10 +1266,9 @@ sap.ui.define([
 	 *  names are in dot notation (e.g. "sap.ui.core.Item")
 	 * @param {boolean} [mSettings.noLibraryCSS=false] Indicates whether the library doesn't provide / use theming.
 	 *  When set to true, no library.css will be loaded for this library
-	 * @param {object} [oLibInfo.extensions] Potential extensions of the library metadata; structure not defined by the
+	 * @param {object} [mSettings.extensions] Potential extensions of the library metadata; structure not defined by the
 	 *  UI5 core framework.
-	 * @returns {object|undefined} As of version 1.101; returns the library namespace, based on the given library name.
-	 *  Returns 'undefined' if no library name is provided.
+	 * @returns {object} As of version 1.101; returns the library namespace, based on the given library name.
 	 * @public
 	 */
 	Library.init = function(mSettings) {
