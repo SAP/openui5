@@ -81,6 +81,17 @@ sap.ui.define([
 		assert.strictEqual(oToggleButton.$().attr("aria-disabled"), undefined, "aria-disabled is not rendered");
 	});
 
+	QUnit.test("Should not change pressed state when Shift is pressed between the keydown and keyup  of the Space press", function(assert) {
+		var oToggleButton = oCore.byId("testToggleButton_2"),
+			bIsPressed = oToggleButton.getPressed();
+
+		qutils.triggerKeyEvent("keydown", "testToggleButton_2", KeyCodes.SPACE);
+		qutils.triggerKeyEvent("keydown", "testToggleButton_2", KeyCodes.SHIFT);
+		qutils.triggerKeyEvent("keyup", "testToggleButton_2", KeyCodes.SPACE);
+
+		assert.strictEqual(oToggleButton.getPressed(), bIsPressed, "The pressed state has not changed");
+	});
+
 	QUnit.test("Should not change the pressed state, from untoggled to toggled, on a tap Event if the toggle button is disabled", function(assert) {
 		// Arrange + System under Test
 		var oToggleButton = new ToggleButton({
