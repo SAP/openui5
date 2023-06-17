@@ -279,7 +279,7 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 }
 
 .sapUiCalItem,
-.sapUiCalWeekNum{
+.sapUiCalWeekNum {
 	height: 3rem;
 	line-height: 2.875rem;
 	font-size: @sapMFontMediumSize;
@@ -292,7 +292,7 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	cursor: default;
 }
 
-.sapUiCalWH{
+.sapUiCalWH {
 	color: @sapUiBaseText;
 	white-space: nowrap;
 	height: 2rem;
@@ -300,14 +300,14 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	font-size: @sapMFontSmallSize;
 }
 
-.sapUiCalItem{
+.sapUiCalItem {
 	color: @sapUiBaseText;
 	background-color: lighten(@sapUiContentForegroundColor,7);
 }
 
-.sapUiCalItemDsbl{
+.sapUiCalItemDsbl {
 	pointer-events: none;
-	color: fade(@sapUiBaseText, 50);
+	color: fade(@sapUiBaseText, (@sapUiContentDisabledOpacity * 100));
 	background-color: fade(lighten(@sapUiContentForegroundColor,5), 50);
 }
 
@@ -325,15 +325,16 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	margin-left: 0;
 }
 
-.sapUiCalItemOtherMonth{
+.sapUiCalItemOtherMonth {
 	color: @sapUiContentDisabledTextColor;
 }
 
 .sapUiCalMulti .sapUiCalItemOtherMonth {
 	opacity: 0;
+	visibility: hidden;
 }
 
-.sapUiCalItemNow{
+.sapUiCalItemNow {
 	color: @sapUiHighlight;
 }
 
@@ -341,12 +342,16 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	color: fade(@sapUiBaseText, 50);
 }
 
-.sapUiCalItemWeekEnd{
+.sapUiCalItemWeekEnd {
 	background-color: darken(@sapUiContentForegroundColor, 3);
 }
 
 .sapUiCalItemWeekEnd.sapUiCalItemDsbl{
 	background-color: fade(@sapUiContentForegroundColor, 50);
+}
+
+.sapUiCalItemOtherMonth.sapUiCalItemWeekEnd {
+	background-color: @sapUiListBackground;
 }
 
 .sapUiCalItemSel{
