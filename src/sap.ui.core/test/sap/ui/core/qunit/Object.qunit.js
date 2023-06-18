@@ -21,9 +21,12 @@ sap.ui.define([
 			assert.ok(this.oObject.getInterface === BaseObject.prototype.getInterface, "fresh object doesn't have own getInterface implementation");
 		});
 
+		/**
+		 * @deprecated
+		 */
 		QUnit.test("GetInterface", function(assert) {
 			var oIntf1 = this.oNewClassInstance.getInterface();
-			assert.ok(oIntf1 !== undefined && oIntf1 !== null, "interface returned");
+			assert.ok(oIntf1 != null, "interface returned");
 			// assert("object has interface member", this.oObject.oInterface && typeof this.oObject.oInterface === "object" );
 			assert.ok(this.oNewClassInstance.getInterface !== BaseObject.prototype.getInterface, "object has own getInterface implementation");
 			var oIntf2 = this.oNewClassInstance.getInterface();
