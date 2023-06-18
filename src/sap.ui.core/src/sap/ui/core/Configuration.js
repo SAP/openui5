@@ -45,8 +45,6 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	// Singleton instance for configuration
-	var oConfiguration;
 	var M_SETTINGS;
 	var VERSION = "${version}";
 	var mCompatVersion;
@@ -100,7 +98,7 @@ sap.ui.define([
 		return convertToLocaleOrNull( (navigator.languages && navigator.languages[0]) || navigatorLanguage() || navigator.userLanguage || navigator.browserLanguage ) || new Locale("en");
 	}
 
-	function setValue(sName, vValue, config) {
+	function setValue(sName, vValue) {
 		if ( vValue == null ) {
 			return;
 		}
@@ -260,15 +258,39 @@ sap.ui.define([
 	};
 
 	var M_COMPAT_FEATURES = {
-			"xx-test"               : "1.15", //for testing purposes only
-			"flexBoxPolyfill"       : "1.14",
-			"sapMeTabContainer"     : "1.14",
-			"sapMeProgessIndicator" : "1.14",
-			"sapMGrowingList"       : "1.14",
-			"sapMListAsTable"       : "1.14",
-			"sapMDialogWithPadding" : "1.14",
-			"sapCoreBindingSyntax"  : "1.24"
+		"xx-test"               : "1.15", //for testing purposes only
+		"flexBoxPolyfill"       : "1.14",
+		"sapMeTabContainer"     : "1.14",
+		"sapMeProgessIndicator" : "1.14",
+		"sapMGrowingList"       : "1.14",
+		"sapMListAsTable"       : "1.14",
+		"sapMDialogWithPadding" : "1.14",
+		"sapCoreBindingSyntax"  : "1.24"
 	};
+
+	// Lazy dependency to core
+	var oCore;
+
+	// ---- change handling ----
+
+	var mChanges;
+
+	function _collect() {
+		mChanges = mChanges || { __count : 0};
+		mChanges.__count++;
+		return mChanges;
+	}
+
+	function _endCollect() {
+		if ( mChanges && (--mChanges.__count) === 0 ) {
+			var mChangesToReport = mChanges;
+			delete mChanges.__count;
+			mChanges = undefined;
+			oCore && oCore.fireLocalizationChanged(mChangesToReport);
+		}
+	}
+
+	// ---- Configuration state and init ----
 
 	/**
 	 * Creates a new Configuration object.
@@ -303,165 +325,168 @@ sap.ui.define([
 	 *
 	 * @hideconstructor
 	 * @extends sap.ui.base.Object
-	 * @author Frank Weigel (Martin Schaus)
 	 * @public
 	 * @alias sap.ui.core.Configuration
 	 *
-	 * @borrows module:sap/base/i18n/Localization.getSAPLogonLanguage as #getSAPLogonLanguage
-	 * @borrows module:sap/base/i18n/Localization.getTimezone as #getTimezone
-	 * @borrows module:sap/base/i18n/Localization.setLanguage as #setLanguage
-	 * @borrows module:sap/base/i18n/Localization.getRTL as #getRTL
-	 * @borrows module:sap/base/i18n/Localization.setRTL as #setRTL
-	 * @borrows module:sap/base/i18n/Localization.getLanguagesDeliveredWithCore as #getLanguagesDeliveredWithCore
-	 * @borrows module:sap/base/i18n/Localization.getSupportedLanguages as #getSupportedLanguages
-	 * @borrows module:sap/ui/core/Theming.getTheme as #getTheme
-	 * @borrows module:sap/ui/core/Theming.setTheme as #setTheme
-	 * @borrows module:sap/ui/core/ControlBehavior.isAccessibilityEnabled as #getAccessibility
+	 * @borrows module:sap/base/i18n/Localization.getSAPLogonLanguage as getSAPLogonLanguage
+	 * @borrows module:sap/base/i18n/Localization.getTimezone as getTimezone
+	 * @borrows module:sap/base/i18n/Localization.setLanguage as setLanguage
+	 * @borrows module:sap/base/i18n/Localization.getRTL as getRTL
+	 * @borrows module:sap/base/i18n/Localization.setRTL as setRTL
+	 * @borrows module:sap/base/i18n/Localization.getLanguagesDeliveredWithCore as getLanguagesDeliveredWithCore
+	 * @borrows module:sap/base/i18n/Localization.getSupportedLanguages as getSupportedLanguages
+	 * @borrows module:sap/ui/core/Theming.getTheme as getTheme
+	 * @borrows module:sap/ui/core/Theming.setTheme as setTheme
+	 * @borrows module:sap/ui/core/ControlBehavior.isAccessibilityEnabled as getAccessibility
 	 */
 	var Configuration = BaseObject.extend("sap.ui.core.Configuration", /** @lends sap.ui.core.Configuration.prototype */ {
 
 		constructor : function() {
-			if (oConfiguration) {
-				Log.error(
-					"Configuration is designed as a singleton and should not be created manually! " +
-					"Please require 'sap/ui/core/Configuration' instead and use the module export directly without using 'new'."
-				);
+			Log.error(
+				"Configuration is designed as a singleton and should not be created manually! " +
+				"Please require 'sap/ui/core/Configuration' instead and use the module export directly without using 'new'."
+			);
 
-				return oConfiguration;
+			return Configuration;
+		}
+
+	});
+
+	/* Object that carries the real configuration data */
+	var config = {};
+
+	var bInitialized = false;
+
+	function init() {
+		bInitialized = true;
+
+		// apply settings from global config object (already merged with script tag attributes)
+		var oCfg = window["sap-ui-config"] || {};
+		oCfg.oninit = oCfg.oninit || oCfg["evt-oninit"];
+		for (var n in M_SETTINGS) {
+			// collect the defaults
+			config[n] = Array.isArray(M_SETTINGS[n].defaultValue) ? [] : M_SETTINGS[n].defaultValue;
+			if ( oCfg.hasOwnProperty(n.toLowerCase()) ) {
+				setValue(n, oCfg[n.toLowerCase()]);
+			} else if ( !/^xx-/.test(n) && oCfg.hasOwnProperty("xx-" + n.toLowerCase()) ) {
+				setValue(n, oCfg["xx-" + n.toLowerCase()]);
 			}
-			this.oFormatSettings = new FormatSettings(this);
-		},
+		}
 
-		init: function() {
-			this.bInitialized = true;
+		// if libs are configured, convert them to modules and prepend them to the existing modules list
+		if ( oCfg.libs ) {
+			config.modules = oCfg.libs.split(",").map(function(lib) {
+				return lib.trim() + ".library";
+			}).concat(config.modules);
+		}
 
-			/* Object that carries the real configuration data */
-			var config = this; // eslint-disable-line consistent-this
+		var oUriParams;
 
-			// apply settings from global config object (already merged with script tag attributes)
-			var oCfg = window["sap-ui-config"] || {};
-			oCfg.oninit = oCfg.oninit || oCfg["evt-oninit"];
+		// apply the settings from the url (only if not blocked by app configuration)
+		if ( !config.ignoreUrlParams ) {
+			var sUrlPrefix = "sap-ui-";
+			oUriParams = new URLSearchParams(window.location.search);
+
+			if (oUriParams.has('sap-statistics')) {
+				var sValue = oUriParams.get('sap-statistics');
+				setValue('statistics', sValue);
+			}
+
+			// now analyze sap-ui parameters
 			for (var n in M_SETTINGS) {
-				// collect the defaults
-				config[n] = Array.isArray(M_SETTINGS[n].defaultValue) ? [] : M_SETTINGS[n].defaultValue;
-				if ( oCfg.hasOwnProperty(n.toLowerCase()) ) {
-					setValue(n, oCfg[n.toLowerCase()], this);
-				} else if ( !/^xx-/.test(n) && oCfg.hasOwnProperty("xx-" + n.toLowerCase()) ) {
-					setValue(n, oCfg["xx-" + n.toLowerCase()], this);
+				if ( M_SETTINGS[n].noUrl ) {
+					continue;
 				}
-			}
-
-			// if libs are configured, convert them to modules and prepend them to the existing modules list
-			if ( oCfg.libs ) {
-				config.modules = oCfg.libs.split(",").map(function(lib) {
-					return lib.trim() + ".library";
-				}).concat(config.modules);
-			}
-
-			var oUriParams;
-
-			// apply the settings from the url (only if not blocked by app configuration)
-			if ( !config.ignoreUrlParams ) {
-				var sUrlPrefix = "sap-ui-";
-				oUriParams = new URLSearchParams(window.location.search);
-
-				if (oUriParams.has('sap-statistics')) {
-					var sValue = oUriParams.get('sap-statistics');
-					setValue('statistics', sValue, this);
+				var sValue = oUriParams.get(sUrlPrefix + n);
+				if ( sValue == null && !/^xx-/.test(n) ) {
+					sValue = oUriParams.get(sUrlPrefix + "xx-" + n);
 				}
-
-				// now analyze sap-ui parameters
-				for (var n in M_SETTINGS) {
-					if ( M_SETTINGS[n].noUrl ) {
-						continue;
-					}
-					var sValue = oUriParams.get(sUrlPrefix + n);
-					if ( sValue == null && !/^xx-/.test(n) ) {
-						sValue = oUriParams.get(sUrlPrefix + "xx-" + n);
-					}
-					if (sValue === "") {
-						//empty URL parameters set the parameter back to its system default
-						config[n] = M_SETTINGS[n].defaultValue;
-					} else {
-						//sets the value (null or empty value ignored)
-						setValue(n, sValue, this);
-					}
-				}
-			}
-
-			//parse fiori 2 adaptation parameters
-			var vAdaptations = config['xx-fiori2Adaptation'];
-			if ( vAdaptations.length === 0 || (vAdaptations.length === 1 && vAdaptations[0] === 'false') ) {
-				vAdaptations = false;
-			} else if ( vAdaptations.length === 1 && vAdaptations[0] === 'true' ) {
-				vAdaptations = true;
-			}
-
-			config['xx-fiori2Adaptation'] = vAdaptations;
-
-			config["allowlistService"] = config["allowlistService"] || /* fallback to legacy config */ config["whitelistService"];
-
-			// Configure allowlistService / frameOptions via <meta> tag if not already defined via UI5 configuration
-			if (!config["allowlistService"]) {
-				var sAllowlistMetaTagValue = getMetaTagValue('sap.allowlistService') || /* fallback to legacy config */ getMetaTagValue('sap.whitelistService');
-				if (sAllowlistMetaTagValue) {
-					config["allowlistService"] = sAllowlistMetaTagValue;
-					// Set default "frameOptions" to "trusted" instead of "allow"
-					if (config["frameOptions"] === "default") {
-						config["frameOptions"] = "trusted";
-					}
-				}
-			}
-
-			// Verify and set default for "frameOptions" configuration
-			if (config["frameOptions"] === "default" ||
-				(config["frameOptions"] !== "allow"
-				&& config["frameOptions"] !== "deny"
-				&& config["frameOptions"] !== "trusted")) {
-
-				// default => allow
-				config["frameOptions"] = "allow";
-			}
-
-			// frameOptionsConfig: Handle compatibility of renamed config option
-			var oFrameOptionsConfig = config["frameOptionsConfig"];
-			if (oFrameOptionsConfig) {
-				oFrameOptionsConfig.allowlist = oFrameOptionsConfig.allowlist || oFrameOptionsConfig.whitelist;
-			}
-
-			// in case the flexibilityServices configuration was set to a non-empty, non-default value, sap.ui.fl becomes mandatory
-			// if not overruled by xx-skipAutomaticFlLibLoading
-			if (config.flexibilityServices
-					&& config.flexibilityServices !== M_SETTINGS.flexibilityServices.defaultValue
-					&& !config['xx-skipAutomaticFlLibLoading']
-					&& config.modules.indexOf("sap.ui.fl.library") == -1) {
-				config.modules.push("sap.ui.fl.library");
-			}
-
-			// log  all non default value
-			for (var n in M_SETTINGS) {
-				if ( config[n] !== M_SETTINGS[n].defaultValue ) {
-					Log.info("  " + n + " = " + config[n]);
-				}
-			}
-
-			// The following code can't be done in the _ConfigurationProvider
-			// because of cyclic dependency
-			var syncCallBehavior = this.getSyncCallBehavior();
-			sap.ui.loader.config({
-				reportSyncCalls: syncCallBehavior
-			});
-
-			if ( syncCallBehavior && oCfg.__loaded ) {
-				var sMessage = "[nosync]: configuration loaded via sync XHR";
-				if (syncCallBehavior === 1) {
-					Log.warning(sMessage);
+				if (sValue === "") {
+					//empty URL parameters set the parameter back to its system default
+					config[n] = M_SETTINGS[n].defaultValue;
 				} else {
-					Log.error(sMessage);
+					//sets the value (null or empty value ignored)
+					setValue(n, sValue);
 				}
 			}
-		},
+		}
 
+		//parse fiori 2 adaptation parameters
+		var vAdaptations = config['xx-fiori2Adaptation'];
+		if ( vAdaptations.length === 0 || (vAdaptations.length === 1 && vAdaptations[0] === 'false') ) {
+			vAdaptations = false;
+		} else if ( vAdaptations.length === 1 && vAdaptations[0] === 'true' ) {
+			vAdaptations = true;
+		}
+
+		config['xx-fiori2Adaptation'] = vAdaptations;
+
+		config["allowlistService"] = config["allowlistService"] || /* fallback to legacy config */ config["whitelistService"];
+
+		// Configure allowlistService / frameOptions via <meta> tag if not already defined via UI5 configuration
+		if (!config["allowlistService"]) {
+			var sAllowlistMetaTagValue = getMetaTagValue('sap.allowlistService') || /* fallback to legacy config */ getMetaTagValue('sap.whitelistService');
+			if (sAllowlistMetaTagValue) {
+				config["allowlistService"] = sAllowlistMetaTagValue;
+				// Set default "frameOptions" to "trusted" instead of "allow"
+				if (config["frameOptions"] === "default") {
+					config["frameOptions"] = "trusted";
+				}
+			}
+		}
+
+		// Verify and set default for "frameOptions" configuration
+		if (config["frameOptions"] === "default" ||
+			(config["frameOptions"] !== "allow"
+			&& config["frameOptions"] !== "deny"
+			&& config["frameOptions"] !== "trusted")) {
+
+			// default => allow
+			config["frameOptions"] = "allow";
+		}
+
+		// frameOptionsConfig: Handle compatibility of renamed config option
+		var oFrameOptionsConfig = config["frameOptionsConfig"];
+		if (oFrameOptionsConfig) {
+			oFrameOptionsConfig.allowlist = oFrameOptionsConfig.allowlist || oFrameOptionsConfig.whitelist;
+		}
+
+		// in case the flexibilityServices configuration was set to a non-empty, non-default value, sap.ui.fl becomes mandatory
+		// if not overruled by xx-skipAutomaticFlLibLoading
+		if (config.flexibilityServices
+				&& config.flexibilityServices !== M_SETTINGS.flexibilityServices.defaultValue
+				&& !config['xx-skipAutomaticFlLibLoading']
+				&& config.modules.indexOf("sap.ui.fl.library") == -1) {
+			config.modules.push("sap.ui.fl.library");
+		}
+
+		// log  all non default value
+		for (var n in M_SETTINGS) {
+			if ( config[n] !== M_SETTINGS[n].defaultValue ) {
+				Log.info("  " + n + " = " + config[n]);
+			}
+		}
+
+		// The following code can't be done in the _ConfigurationProvider
+		// because of cyclic dependency
+		var syncCallBehavior = Configuration.getSyncCallBehavior();
+		sap.ui.loader.config({
+			reportSyncCalls: syncCallBehavior
+		});
+
+		if ( syncCallBehavior && oCfg.__loaded ) {
+			var sMessage = "[nosync]: configuration loaded via sync XHR";
+			if (syncCallBehavior === 1) {
+				Log.warning(sMessage);
+			} else {
+				Log.error(sMessage);
+			}
+		}
+	}
+
+	var oFormatSettings;
+
+	Object.assign(Configuration, /** @lends sap.ui.core.Configuration */ {
 		/**
 		 * Returns the version of the framework.
 		 *
@@ -470,13 +495,13 @@ sap.ui.define([
 		 * @return {module:sap/base/util/Version} the version
 		 * @public
 		 */
-		getVersion : function () {
-			if (this._version) {
-				return this._version;
+		getVersion: function () {
+			if (config._version) {
+				return config._version;
 			}
 
-			this._version = new Version(VERSION);
-			return this._version;
+			config._version = new Version(VERSION);
+			return config._version;
 		},
 
 		/**
@@ -639,7 +664,7 @@ sap.ui.define([
 		 * @private
 		 */
 		isUI5CacheOn: function () {
-			return this.getValue("xx-cache-use");
+			return Configuration.getValue("xx-cache-use");
 		},
 
 		/**
@@ -651,7 +676,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.core
 		 */
 		setUI5CacheOn: function (on) {
-			this["xx-cache-use"] = on;
+			config["xx-cache-use"] = on;
 			return this;
 		},
 
@@ -663,7 +688,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.core
 		 */
 		isUI5CacheSerializationSupportOn: function () {
-			return this.getValue("xx-cache-serialization");
+			return Configuration.getValue("xx-cache-serialization");
 		},
 
 		/**
@@ -675,7 +700,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.core
 		 */
 		setUI5CacheSerializationSupport: function (on) {
-			this["xx-cache-serialization"] = on;
+			config["xx-cache-serialization"] = on;
 			return this;
 		},
 
@@ -688,7 +713,7 @@ sap.ui.define([
 		 * @see sap.ui.core.cache.LRUPersistentCache#keyMatchesExclusionStrings
 		 */
 		getUI5CacheExcludedKeys: function () {
-			return this.getValue("xx-cache-excludedKeys");
+			return Configuration.getValue("xx-cache-excludedKeys");
 		},
 
 		/**
@@ -783,7 +808,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getAutoAriaBodyRole : function () {
-			return this.getValue("autoAriaBodyRole");
+			return Configuration.getValue("autoAriaBodyRole");
 		},
 
 		/**
@@ -793,7 +818,7 @@ sap.ui.define([
 		 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
 		 */
 		getAnimation : function () {
-			var sAnimationMode = this.getAnimationMode();
+			var sAnimationMode = Configuration.getAnimationMode();
 			// Set the animation to on or off depending on the animation mode to ensure backward compatibility.
 			return (sAnimationMode !== Configuration.AnimationMode.minimal && sAnimationMode !== Configuration.AnimationMode.none);
 		},
@@ -832,7 +857,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getFiori2Adaptation : function () {
-			return this.getValue("xx-fiori2Adaptation");
+			return Configuration.getValue("xx-fiori2Adaptation");
 		},
 
 		/**
@@ -855,7 +880,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getInspect : function () {
-			return this.getValue("inspect");
+			return Configuration.getValue("inspect");
 		},
 
 		/**
@@ -864,7 +889,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getOriginInfo : function () {
-			return this.getValue("originInfo");
+			return Configuration.getValue("originInfo");
 		},
 
 		/**
@@ -884,7 +909,7 @@ sap.ui.define([
 		 * @return {boolean} whether a trace view should be shown
 		 */
 		getTrace : function () {
-			return this.getValue("trace");
+			return Configuration.getValue("trace");
 		},
 
 		/**
@@ -895,7 +920,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getUIDPrefix : function() {
-			return this.getValue("uidPrefix");
+			return Configuration.getValue("uidPrefix");
 		},
 
 
@@ -942,7 +967,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.watt, com.sap.webide
 		 */
 		getControllerCodeDeactivated : function() {
-			return this.getDesignMode() && !this.getSuppressDeactivationOfControllerCode();
+			return Configuration.getDesignMode() && !Configuration.getSuppressDeactivationOfControllerCode();
 		},
 
 		/**
@@ -953,7 +978,7 @@ sap.ui.define([
 		 * @deprecated Since 1.15.1. Please use {@link module:sap/ui/core/ComponentSupport} instead. See also {@link topic:82a0fcecc3cb427c91469bc537ebdddf Declarative API for Initial Components}.
 		 */
 		getApplication : function() {
-			return this.getValue("application");
+			return Configuration.getValue("application");
 		},
 
 		/**
@@ -964,7 +989,7 @@ sap.ui.define([
 		 * @deprecated Since 1.95. Please use {@link module:sap/ui/core/ComponentSupport} instead. See also {@link topic:82a0fcecc3cb427c91469bc537ebdddf Declarative API for Initial Components}.
 		 */
 		getRootComponent : function() {
-			return this.getValue("rootComponent");
+			return Configuration.getValue("rootComponent");
 		},
 
 		/**
@@ -1019,7 +1044,7 @@ sap.ui.define([
 		 * @experimental Since 1.44
 		 */
 		getViewCache : function() {
-			return this.getValue("xx-viewCache");
+			return Configuration.getValue("xx-viewCache");
 		},
 
 		/**
@@ -1032,7 +1057,7 @@ sap.ui.define([
 		 */
 		getPreload : function() {
 			// if debug sources are requested, then the preload feature must be deactivated
-			if (this.getDebug() === true) {
+			if (Configuration.getDebug() === true) {
 				return "";
 			}
 			// determine preload mode (e.g. resolve default or auto)
@@ -1107,7 +1132,7 @@ sap.ui.define([
 		 * @since 1.60.0
 		 */
 		getFlexibilityServices : function() {
-			var vFlexibilityServices = this.getValue("flexibilityServices") || [];
+			var vFlexibilityServices = Configuration.getValue("flexibilityServices") || [];
 
 			if (typeof vFlexibilityServices === 'string') {
 				if (vFlexibilityServices[0] === "/") {
@@ -1120,9 +1145,9 @@ sap.ui.define([
 					vFlexibilityServices = JSON.parse(vFlexibilityServices);
 				}
 			}
-			this.flexibilityServices = vFlexibilityServices;
+			config.flexibilityServices = vFlexibilityServices;
 
-			return this.flexibilityServices;
+			return config.flexibilityServices;
 		},
 
 		/**
@@ -1141,7 +1166,7 @@ sap.ui.define([
 		 * @since 1.73.0
 		 */
 		setFlexibilityServices: function (aFlexibilityServices) {
-			this.flexibilityServices = aFlexibilityServices.slice();
+			config.flexibilityServices = aFlexibilityServices.slice();
 		},
 
 		/**
@@ -1152,7 +1177,7 @@ sap.ui.define([
 		 * @experimental Since 1.16.3, might change completely.
 		 */
 		getComponentPreload : function() {
-			return BaseConfig.get({name: "sapUiXxComponentPreload", type: BaseConfig.Type.String, external: true}) || this.getPreload();
+			return BaseConfig.get({name: "sapUiXxComponentPreload", type: BaseConfig.Type.String, external: true}) || Configuration.getPreload();
 		},
 
 		/**
@@ -1162,7 +1187,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getFormatSettings : function() {
-			return this.oFormatSettings;
+			return oFormatSettings;
 		},
 
 		/**
@@ -1172,7 +1197,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getFrameOptions : function() {
-			return this.getValue("frameOptions");
+			return Configuration.getValue("frameOptions");
 		},
 
 		/**
@@ -1185,7 +1210,7 @@ sap.ui.define([
 		 * Since APIs cannot be renamed or immediately removed for compatibility reasons, this API has been deprecated.
 		 */
 		getWhitelistService : function() {
-			return this.getAllowlistService();
+			return Configuration.getAllowlistService();
 		},
 
 		/**
@@ -1195,7 +1220,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getAllowlistService : function() {
-			return this.getValue("allowlistService");
+			return Configuration.getValue("allowlistService");
 		},
 
 		/**
@@ -1210,7 +1235,7 @@ sap.ui.define([
 		 * @since 1.102
 		 */
 		getFileShareSupport : function() {
-			return this.getValue("fileShareSupport") || undefined;
+			return Configuration.getValue("fileShareSupport") || undefined;
 		},
 
 		/**
@@ -1220,7 +1245,7 @@ sap.ui.define([
 		 * @experimental
 		 */
 		getSupportMode : function() {
-			return this.getValue("support");
+			return Configuration.getValue("support");
 		},
 
 		/**
@@ -1230,22 +1255,7 @@ sap.ui.define([
 		 * @experimental
 		 */
 		getTestRecorderMode : function() {
-			return this.getValue("testRecorder");
-		},
-
-		_collect : function() {
-			var mChanges = this.mChanges || (this.mChanges = { __count : 0});
-			mChanges.__count++;
-			return mChanges;
-		},
-
-		_endCollect : function() {
-			var mChanges = this.mChanges;
-			if ( mChanges && (--mChanges.__count) === 0 ) {
-				delete mChanges.__count;
-				delete this.mChanges;
-				this._oCore && this._oCore.fireLocalizationChanged(mChanges);
-			}
+			return Configuration.getValue("testRecorder");
 		},
 
 		/**
@@ -1260,7 +1270,7 @@ sap.ui.define([
 		 * @since 1.20.0
 		 */
 		getStatistics : function() {
-			return this.getStatisticsEnabled();
+			return Configuration.getStatisticsEnabled();
 		},
 
 		/**
@@ -1274,7 +1284,7 @@ sap.ui.define([
 		 * @since 1.106.0
 		 */
 		getStatisticsEnabled : function() {
-			var result = this.getValue("statistics");
+			var result = Configuration.getValue("statistics");
 			try {
 				result = result || window.localStorage.getItem("sap-ui-statistics") == "X";
 			} catch (e) {
@@ -1303,7 +1313,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getHandleValidation : function() {
-			return this.getValue("xx-handleValidation");
+			return Configuration.getValue("xx-handleValidation");
 		},
 
 		/**
@@ -1313,7 +1323,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getHyphenation : function() {
-			return this.getValue("xx-hyphenation");
+			return Configuration.getValue("xx-hyphenation");
 		},
 
 		/**
@@ -1336,7 +1346,7 @@ sap.ui.define([
 		 * @see #setSecurityTokenHandlers
 		 */
 		getSecurityTokenHandlers : function () {
-			return this.getValue("securityTokenHandlers").slice();
+			return Configuration.getValue("securityTokenHandlers").slice();
 		},
 
 		/**
@@ -1347,7 +1357,7 @@ sap.ui.define([
 		 * @experimental
 		 */
 		getMeasureCards: function () {
-			return this.getValue("xx-measure-cards");
+			return Configuration.getValue("xx-measure-cards");
 		},
 
 		/**
@@ -1364,7 +1374,7 @@ sap.ui.define([
 				check(typeof fnSecurityTokenHandler === "function",
 					"Not a function: " + fnSecurityTokenHandler);
 			});
-			this.securityTokenHandlers = aSecurityTokenHandlers.slice();
+			config.securityTokenHandlers = aSecurityTokenHandlers.slice();
 		},
 
 		getBindingSyntax: function() {
@@ -1375,7 +1385,7 @@ sap.ui.define([
 				freeze: true
 			});
 			if ( sBindingSyntax === "default" ) {
-				sBindingSyntax = (this.getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") < 0) ? "simple" : "complex";
+				sBindingSyntax = (Configuration.getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") < 0) ? "simple" : "complex";
 			}
 			return sBindingSyntax;
 		},
@@ -1419,8 +1429,8 @@ sap.ui.define([
 				var sName, sMethod;
 				for ( sName in m ) {
 					sMethod = "set" + sName.slice(0,1).toUpperCase() + sName.slice(1);
-					if ( sName === 'formatSettings' && ctx.oFormatSettings ) {
-						applyAll(ctx.oFormatSettings, m[sName]);
+					if ( sName === 'formatSettings' && oFormatSettings ) {
+						applyAll(oFormatSettings, m[sName]);
 					} else if ( typeof ctx[sMethod] === 'function' ) {
 						ctx[sMethod](m[sName]);
 					} else {
@@ -1431,9 +1441,9 @@ sap.ui.define([
 
 			assert(typeof mSettings === 'object', "mSettings must be an object");
 
-			this._collect(); // block events
-			applyAll(this, mSettings);
-			this._endCollect(); // might fire localizationChanged
+			_collect(); // block events
+			applyAll(Configuration, mSettings);
+			_endCollect(); // might fire localizationChanged
 
 			return this;
 		},
@@ -1446,11 +1456,11 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted sap.ui.core.Core
 		 */
-		setCore: function (oCore) {
+		setCore: function (oNewCore) {
 			// Setting the core needs to happen before init
-			// because getValue relies on _oCore and is used in init
-			this._oCore = oCore;
-			this.init();
+			// because getValue relies on oCore and is used in init
+			oCore = oNewCore;
+			init();
 		},
 
 		/**
@@ -1482,10 +1492,10 @@ sap.ui.define([
 			// (if a setter was called), from URL or window["sap-ui-config"].
 			// In case there is no value or the type conversion fails we return the defaultValue.
 			// After the Configuration is initialized we only return the value of the configuration.
-			if (this.bInitialized || this.hasOwnProperty(sName)) {
-				vValue = this[sName];
+			if (bInitialized || config.hasOwnProperty(sName)) {
+				vValue = config[sName];
 			} else {
-				if (!this.ignoreUrlParams && !M_SETTINGS[sName].noUrl) {
+				if (!config.ignoreUrlParams && !M_SETTINGS[sName].noUrl) {
 					var oUriParams = new URLSearchParams(window.location.search);
 					vValue = oUriParams.get("sap-ui-" + sName) || oUriParams.get("sap-" + sName);
 				}
@@ -1820,25 +1830,24 @@ sap.ui.define([
 		getCustomLocaleData : Formatting.getCustomLocaleData
 	});
 
-	oConfiguration =  new Configuration();
+	oFormatSettings = new FormatSettings(this);
 
 	//enable Eventing
 	Localization.attachChange(function(oEvent) {
-		if (!this.mChanges && this._oCore) {
-			this._oCore.fireLocalizationChanged(BaseEvent.getParameters(oEvent));
-		} else if (this.mChanges) {
-			Object.assign(this.mChanges, BaseEvent.getParameters(oEvent));
+		if (!mChanges && oCore) {
+			oCore.fireLocalizationChanged(BaseEvent.getParameters(oEvent));
+		} else if (mChanges) {
+			Object.assign(mChanges, BaseEvent.getParameters(oEvent));
 		}
-	}.bind(oConfiguration));
+	});
 
 	Formatting.attachChange(function(oEvent) {
-		if (!this.mChanges && this._oCore) {
-			this._oCore.fireLocalizationChanged(BaseEvent.getParameters(oEvent));
-		} else if (this.mChanges) {
-			Object.assign(this.mChanges, BaseEvent.getParameters(oEvent));
+		if (!mChanges && oCore) {
+			oCore.fireLocalizationChanged(BaseEvent.getParameters(oEvent));
+		} else if (mChanges) {
+			Object.assign(mChanges, BaseEvent.getParameters(oEvent));
 		}
-	}.bind(oConfiguration));
+	});
 
-	Object.assign(Configuration, oConfiguration.getInterface());
 	return Configuration;
 });
