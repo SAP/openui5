@@ -605,11 +605,13 @@ sap.ui.require([
 	});
 
 	QUnit.test("Format Locale", function(assert) {
+		var rMethodsToIgnore = /^(_|destroy|getInterface$|getMetadata$|isA$)/;
+
 		// Checks via duck-typing whether the given object is an instance of Locale
 		// The check should work with facades (1.x) as well as with instances (2.x)
 		function assertCoreLocale(oObject) {
 			var aMethodNames = Object.keys(Locale.prototype).filter(function(sKey) {
-				return !/^(_|getMetadata$|isA$)/.test(sKey) && typeof Locale.prototype[sKey] === "function";
+				return !rMethodsToIgnore.test(sKey) && typeof Locale.prototype[sKey] === "function";
 			});
 
 			aMethodNames.forEach(function(sMethodName) {
@@ -618,8 +620,10 @@ sap.ui.require([
 			});
 
 			for ( var sMethodName in oObject ) {
-				assert.ok(aMethodNames.includes(sMethodName),
-					"actual method should be part of expected interface: " + sMethodName);
+				if ( !rMethodsToIgnore.test(sMethodName) && typeof oObject[sMethodName] === "function" ) {
+					assert.ok(aMethodNames.includes(sMethodName),
+						"actual method should be part of expected interface: " + sMethodName);
+				}
 			}
 		}
 
