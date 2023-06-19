@@ -1,10 +1,11 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"sap/m/p13n/PersistenceProvider",
-	"sap/ui/mdc/enums/PersistenceMode", //TODO Change this
+	"sap/m/p13n/enum/PersistenceMode",
 	"sap/ui/core/Core",
-	"sap/ui/core/Control"
-], function (PersistenceProvider, mode, oCore, Control) {
+	"sap/ui/core/Control",
+	"sap/ui/core/StaticArea"
+], function (PersistenceProvider, mode, oCore, Control, StaticArea) {
 	"use strict";
 
 	QUnit.module("PersistenceProvider tests (generic)", {
@@ -40,14 +41,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("PersistenceProvider is placed in the static area", function(assert){
-		var aStaticAreaContent = oCore.getUIArea(oCore.getStaticAreaRef()).getContent();
+		var aStaticAreaContent = StaticArea.getUIArea().getContent();
 
 		assert.ok(aStaticAreaContent[0].getContent()[0].isA("sap.ui.fl.variants.VariantManagement"), "VM has been placed in the static area");
 	});
 
 	QUnit.test("PersistenceProvider is wrapped by a container that sets aria-hidden after rendering", function(assert){
 		var done = assert.async();
-		var aStaticAreaContent = oCore.getUIArea(oCore.getStaticAreaRef()).getContent();
+		var aStaticAreaContent = StaticArea.getUIArea().getContent();
 
 		this.oPP.onAfterRendering = function() {
 			assert.equal(aStaticAreaContent[0].getDomRef().getAttribute("aria-hidden"), "true", "accWrapper container sets aria-hidden attribute");
@@ -107,7 +108,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("PersistenceProvider NOT is placed in the static area", function(assert){
-		var aStaticAreaContent = oCore.getUIArea(oCore.getStaticAreaRef()).getContent();
+		var aStaticAreaContent = StaticArea.getUIArea().getContent();
 
 		assert.equal(aStaticAreaContent.length, 0, "No VM in static area");
 	});

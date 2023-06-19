@@ -2,8 +2,15 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control", 	"sap/ui/fl/variants/VariantManagement", "sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/m/p13n/enum/PersistenceMode", "sap/ui/layout/VerticalLayout", "sap/ui/core/UIArea", "sap/ui/core/Core"
-], function(CoreControl, VariantManagement, ControlVariantApplyAPI, mode, VerticalLayout, UIArea, Core) {
+	"sap/ui/core/Control",
+	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
+	"sap/m/p13n/enum/PersistenceMode",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/core/UIArea",
+	"sap/ui/core/Core",
+	"sap/ui/core/StaticArea"
+], function(CoreControl, VariantManagement, ControlVariantApplyAPI, mode, VerticalLayout, UIArea, Core, StaticArea) {
 	"use strict";
 
 	/**
@@ -92,10 +99,8 @@ sap.ui.define([
 				this.getDomRef().setAttribute("aria-hidden", true);
 			};
 
-			var oStaticAreaRef = Core.getStaticAreaRef();
-			var oStatic = UIArea.registry.get(oStaticAreaRef.id);
-			oStatic.addContent(this._oWrapper, true);
-			Core.createRenderManager().render(this._oWrapper, oStaticAreaRef);
+			StaticArea.getUIArea().addContent(this._oWrapper, true);
+			Core.createRenderManager().render(this._oWrapper, StaticArea.getDomRef());
 		}
 
 		return this;
