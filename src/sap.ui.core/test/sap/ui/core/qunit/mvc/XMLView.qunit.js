@@ -1046,23 +1046,24 @@ sap.ui.define([
 	QUnit.test("registration", function(assert) {
 		var logSpyError = this.spy(Log, "error");
 
-		XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, jQuery.noop, false);
-		XMLView.registerPreprocessor(XMLView.PreprocessorType.VIEWXML, jQuery.noop, false);
-		XMLView.registerPreprocessor(XMLView.PreprocessorType.CONTROLS, jQuery.noop, false);
+		var noop = function() {};
+		XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, noop, false);
+		XMLView.registerPreprocessor(XMLView.PreprocessorType.VIEWXML, noop, false);
+		XMLView.registerPreprocessor(XMLView.PreprocessorType.CONTROLS, noop, false);
 
-		assert.strictEqual(View._mPreprocessors["XML"]["xml"][1].preprocessor, jQuery.noop, "Registration for xml successful");
-		assert.strictEqual(View._mPreprocessors["XML"]["viewxml"][0].preprocessor, jQuery.noop, "Registration for viewxml successful");
-		assert.strictEqual(View._mPreprocessors["XML"]["controls"][0].preprocessor, jQuery.noop, "Registration for content successful");
+		assert.strictEqual(View._mPreprocessors["XML"]["xml"][1].preprocessor, noop, "Registration for xml successful");
+		assert.strictEqual(View._mPreprocessors["XML"]["viewxml"][0].preprocessor, noop, "Registration for viewxml successful");
+		assert.strictEqual(View._mPreprocessors["XML"]["controls"][0].preprocessor, noop, "Registration for content successful");
 
 		logSpyError.resetHistory();
-		XMLView.registerPreprocessor("unknown", jQuery.noop, false, {type: "unknown"});
+		XMLView.registerPreprocessor("unknown", noop, false, {type: "unknown"});
 		assert.ok(
 			logSpyError.calledWith(sinon.match(/could not be registered due to unknown/)),
 			"Error logged when registering invalid type");
 		assert.strictEqual(View._mPreprocessors["XML"]["unknown"], undefined, "Registration for invalid type refused");
 
 		logSpyError.resetHistory();
-		XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, jQuery.noop, false, true);
+		XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, noop, false, true);
 		assert.ok(
 			logSpyError.calledWith(sinon.match(/only one on-demand-preprocessor allowed/)),
 			"Error logged when registering more than one ondemand pp");

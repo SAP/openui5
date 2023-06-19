@@ -1,5 +1,5 @@
-sap.ui.predefine("sap/test/lib4/library", ['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.predefine("sap/test/lib4/library", [],
+	function() {
 	"use strict";
 
 	sap.ui.getCore().initLibrary({
