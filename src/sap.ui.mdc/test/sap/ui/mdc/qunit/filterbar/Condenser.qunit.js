@@ -8,8 +8,8 @@ sap.ui.define([
 
 	function buildXML(sFilterConditions) {
 
-		var sPropertyInfo = '[\\{"name":"prop2", "dataType":"sap.ui.model.type.String", "maxConditions":1\\}, \\{"name":"prop3", "dataType":"sap.ui.model.type.String", "maxConditions":-1\\},' +
-							 '\\{"name":"prop4", "dataType":"sap.ui.model.type.String", "maxConditions":1\\}, \\{"name":"prop5", "dataType":"sap.ui.model.type.String", "maxConditions":-1\\}]';
+		var sPropertyInfo = '[\\{"name":"prop2", "label":"Prop2", "dataType":"sap.ui.model.type.String", "maxConditions":1\\}, \\{"name":"prop3", "label":"Prop3", "dataType":"sap.ui.model.type.String", "maxConditions":-1\\},' +
+							 '\\{"name":"prop4", "label":"Prop4", "dataType":"sap.ui.model.type.String", "maxConditions":1\\}, \\{"name":"prop5", "label":"Prop5", "dataType":"sap.ui.model.type.String", "maxConditions":-1\\}]';
 		var sDelegate = '\\{"name": "sap/ui/mdc/qunit/filterbar/sample/FilterBarTest.delegate", "payload": \\{\\}\\}';
 
 		var b = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc">' +

@@ -24,7 +24,7 @@ sap.ui.define([
 	var JSONFilterBarDelegate = Object.assign({}, FilterBarDelegate);
 
 
-	JSONFilterBarDelegate._createFilterField = function(oProperty, oFilterBar, mPropertyBag) {
+	JSONFilterBarDelegate._createFilterField = function(oFilterBar, oProperty, mPropertyBag) {
 		var oModifier = mPropertyBag ? mPropertyBag.modifier : JsControlTreeModifier;
 		var oAppComponent = mPropertyBag ? mPropertyBag.appComponent : FlUtils.getAppComponentForControl(oFilterBar);
 		var oView = (mPropertyBag && mPropertyBag.view ) ? mPropertyBag.view : FlUtils.getViewForControl(oFilterBar);
@@ -48,7 +48,7 @@ sap.ui.define([
 		}
 
 		return oModifier.createControl("sap.ui.mdc.FilterField", oAppComponent, oView, sId, {
-			dataType: oProperty.typeConfig.className,
+			dataType: oProperty.dataType,
 			conditions: "{$filters>/conditions/" + sName + '}',
 			propertyKey: sName,
 			required: oProperty.required,
@@ -96,7 +96,7 @@ sap.ui.define([
 		});
 	};
 
-	JSONFilterBarDelegate.addItem = function(sPropertyName, oFilterBar, mPropertyBag) {
+	JSONFilterBarDelegate.addItem = function(oFilterBar, sPropertyName, mPropertyBag) {
 		return JSONFilterBarDelegate.fetchProperties().then(function(aProperties) {
 
 			var oProperty = null;
@@ -109,13 +109,13 @@ sap.ui.define([
 			});
 
 			if (oProperty) {
-				return JSONFilterBarDelegate._createFilterField(oProperty, oFilterBar, mPropertyBag);
+				return JSONFilterBarDelegate._createFilterField(oFilterBar, oProperty, mPropertyBag);
 			}
 		});
 	};
 
 
-	JSONFilterBarDelegate.removeItem =  function(sPropertyName, oFilterBar, mPropertyBag) {
+	JSONFilterBarDelegate.removeItem =  function(oFilterBar, sPropertyName, mPropertyBag) {
 		return Promise.resolve(true);
 	};
 
