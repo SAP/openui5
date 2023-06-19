@@ -777,14 +777,12 @@ sap.ui.define([
 		if (!bSkipUpdateCache) {
 			switch (oDirtyChange.getState()) {
 				case States.LifecycleState.NEW:
-					oDirtyChange.setState(States.LifecycleState.PERSISTED);
 					Cache.addChange(this._mComponent, oDirtyChange.convertToFileContent());
 					break;
 				case States.LifecycleState.DELETED:
 					Cache.deleteChange(this._mComponent, oDirtyChange.convertToFileContent());
 					break;
 				case States.LifecycleState.DIRTY:
-					oDirtyChange.setState(States.LifecycleState.PERSISTED);
 					Cache.updateChange(this._mComponent, oDirtyChange.convertToFileContent());
 					break;
 				default:

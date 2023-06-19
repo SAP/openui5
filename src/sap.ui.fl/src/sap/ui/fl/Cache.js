@@ -102,7 +102,7 @@ function(
 	Cache.getChangesFillingCache = function(mComponent, mPropertyBag, bInvalidateCache) {
 		var oPromise = Promise.resolve();
 		if (bInvalidateCache) {
-			oPromise = FlexState.clearAndInitialize(mPropertyBag);
+			oPromise = FlexState.update(mPropertyBag);
 		}
 
 		return oPromise.then(function() {

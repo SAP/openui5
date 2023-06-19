@@ -1142,6 +1142,8 @@ sap.ui.define([
 		if (!this._bDesignTimeMode) {
 			return oFlexController.saveSequenceOfDirtyChanges(aCopiedVariantDirtyChanges, oAppComponent)
 			.then(function(oResponse) {
+				// TODO: as soon as the invalidation is done automatically this can be removed
+				this.invalidateMap();
 				if (oResponse) {
 					var oResponseData = oResponse.response[0];
 					this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {

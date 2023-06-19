@@ -404,12 +404,17 @@ sap.ui.define([
 					}
 				}));
 
-				return FlexState.clearAndInitialize({
+				return FlexState.initialize({
 					reference: sReference,
 					componentId: oAppComponent.getId(),
 					manifest: {},
 					componentData: {}
-				}).then(SmartVariantManagementApplyAPI.loadVariants.bind(undefined, {
+				}).then(FlexState.update.bind(undefined, {
+					reference: sReference,
+					componentId: oAppComponent.getId(),
+					manifest: {},
+					componentData: {}
+				})).then(SmartVariantManagementApplyAPI.loadVariants.bind(undefined, {
 					control: oControl,
 					standardVariant: {
 						name: "sStandardVariantTitle"
@@ -721,21 +726,30 @@ sap.ui.define([
 					}
 				));
 
-				return FlexState.clearAndInitialize({
+				return FlexState.initialize({
 					reference: sReference,
 					componentId: oAppComponent.getId(),
 					manifest: {},
 					componentData: {}
-				}).then(SmartVariantManagementApplyAPI.loadVariants.bind(undefined, {
+				})
+				.then(FlexState.update.bind(undefined, {
+					reference: sReference,
+					componentId: oAppComponent.getId(),
+					manifest: {},
+					componentData: {}
+				}))
+				.then(SmartVariantManagementApplyAPI.loadVariants.bind(undefined, {
 					control: oControl,
 					standardVariant: {
 						name: "sStandardVariantTitle"
 					},
 					variants: aVariants
-				})).then(function() {
+				}))
+				.then(function() {
 					testData.updateVariantPropertyBag.control = oControl;
 					return SmartVariantManagementWriteAPI.updateVariant(testData.updateVariantPropertyBag);
-				}).then(function(oVariant) {
+				})
+				.then(function(oVariant) {
 					assert.equal(oVariant.getChanges().length, 1, "one change was added");
 					var oChange = oVariant.getChanges()[0];
 					assert.equal(oChange.getLayer(), testData.expected.layer, "the layer is set correct");
@@ -809,7 +823,7 @@ sap.ui.define([
 					}
 				});
 
-				return FlexState.clearAndInitialize({
+				return FlexState.update({
 					reference: sReference,
 					componentId: oAppComponent.getId(),
 					manifest: {},
@@ -1101,12 +1115,17 @@ sap.ui.define([
 					settings: {}
 				}));
 
-				return FlexState.clearAndInitialize({
+				return FlexState.initialize({
 					reference: sReference,
 					componentId: "__component0",
 					manifest: {},
 					componentData: {}
-				}).then(Settings.getInstance)
+				}).then(FlexState.update.bind(undefined, {
+					reference: sReference,
+					componentId: "__component0",
+					manifest: {},
+					componentData: {}
+				})).then(Settings.getInstance)
 				.then(function() {
 					switch (testData.details) {
 						case "a new name for a variant":
@@ -1229,16 +1248,19 @@ sap.ui.define([
 			return SmartVariantManagementApplyAPI.loadVariants({
 				control: this.oControl,
 				standardVariant: {}
-			}).then(function(oResponse) {
+			})
+			.then(function(oResponse) {
 				oVariant = oResponse.variants[0]; // user variant with 2 legacy changes (addFavorite & removeFavorite)
-			}).then(function() {
+			})
+			.then(function() {
 				SmartVariantManagementWriteAPI.updateVariant({
 					isUserDependent: true,
 					id: oVariant.getId(),
 					control: this.oControl,
 					favorite: true
 				});
-			}.bind(this)).then(function() {
+			}.bind(this))
+			.then(function() {
 				var aVariantChanges = oVariant.getChanges();
 				assert.equal(aVariantChanges.length, 3, "a new change was created");
 				assert.equal(aVariantChanges[2].getChangeType(), "updateVariant", "a new update was written");
@@ -1287,19 +1309,27 @@ sap.ui.define([
 				}
 			}));
 
-			return FlexState.clearAndInitialize({
+			return FlexState.initialize({
 				reference: sReference,
 				componentId: "__component0",
 				manifest: {},
 				componentData: {}
-			}).then(function() {
+			})
+			.then(FlexState.update.bind(undefined, {
+				reference: sReference,
+				componentId: "__component0",
+				manifest: {},
+				componentData: {}
+			}))
+			.then(function() {
 				return SmartVariantManagementWriteAPI.removeVariant({
 					reference: sReference,
 					persistencyKey: sPersistencyKey,
 					id: "test_variant",
 					control: oControl
 				});
-			}).then(function(oRemovedVariant) {
+			})
+			.then(function(oRemovedVariant) {
 				assert.equal(oRemovedVariant.getState(), States.LifecycleState.DELETED, "the variant is flagged for deletion");
 				var aRevertData = oRemovedVariant.getRevertData();
 				assert.equal(aRevertData.length, 1, "revertData was stored");
@@ -1361,7 +1391,7 @@ sap.ui.define([
 				}
 			));
 
-			return FlexState.clearAndInitialize({
+			return FlexState.update({
 				reference: sReference,
 				componentId: "__component0",
 				manifest: {},

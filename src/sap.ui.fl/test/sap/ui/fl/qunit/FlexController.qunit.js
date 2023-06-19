@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/model/json/JSONModel",
@@ -41,6 +42,7 @@ sap.ui.define([
 	ChangeUtils,
 	Reverter,
 	FlexObjectFactory,
+	States,
 	Versions,
 	Storage,
 	JSONModel,
@@ -260,10 +262,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("when saveSequenceOfDirtyChanges is called with an array of changes", function(assert) {
-			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges");
-			var aChanges = ["mockChange1", "mockChange2"];
-			this.oFlexController.saveSequenceOfDirtyChanges(aChanges, oComponent);
-			assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, false, aChanges), "then sap.ui.fl.ChangePersistence.saveSequenceOfDirtyChanges() was called with correct parameters");
+			var oRes = { dummy: "response" };
+			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves(oRes);
+			var oChange1 = FlexObjectFactory.createFromFileContent(labelChangeContent);
+			var oChange2 = FlexObjectFactory.createFromFileContent(labelChangeContent2);
+			var aChanges = [oChange1, oChange2];
+			return this.oFlexController.saveSequenceOfDirtyChanges(aChanges, oComponent)
+			.then(function(oResponse) {
+				assert.ok(
+					fnChangePersistenceSaveStub.calledWith(oComponent, false, aChanges),
+					"then sap.ui.fl.ChangePersistence.saveSequenceOfDirtyChanges() was called with correct parameters"
+				);
+				assert.strictEqual(oChange1.getState(), States.LifecycleState.PERSISTED, "then the first change is set to persisted");
+				assert.strictEqual(oChange2.getState(), States.LifecycleState.PERSISTED, "then the second change is set to persisted");
+				assert.strictEqual(oRes, oResponse, "then the method returns the proper result");
+			});
 		});
 
 		QUnit.test("applyChange shall not crash if Applier.applyChangeOnControl throws an error", function(assert) {
