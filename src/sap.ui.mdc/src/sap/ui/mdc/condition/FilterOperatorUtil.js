@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/date/UniversalDateUtils',
 	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/StaticArea',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/type/Integer'
 ],
@@ -35,6 +36,7 @@ function(
 		UniversalDate,
 		UniversalDateUtils,
 		DateFormat,
+		StaticArea,
 		JSONModel,
 		Integer	// the Integer type must be  available for some of the RangeOperators
 	) {
@@ -2547,10 +2549,9 @@ function(
 						return this._aMonthsItems;
 					}.bind(this);
 
-					var oMonthValueHelp = new ValueHelp({
-						id: sId,
-						typeahead: new Popover({
-							content: [new FixedList({
+					var oMonthValueHelp = new ValueHelp(sId, {
+						typeahead: new Popover(sId + "-pop", {
+							content: [new FixedList(sId + "-FL", {
 								filterList: false,
 								useFirstMatch: true,
 								items: {
@@ -2567,9 +2568,7 @@ function(
 
 					// put in static UIArea to have only one instance. As in UIArea only controls are alloweg we need a dummy Control
 					try {
-						var oStaticAreaRef = sap.ui.getCore().getStaticAreaRef();
-						// only a facade of the static UIArea is returned that contains only the public methods
-						var oStaticUIArea = sap.ui.getCore().getUIArea(oStaticAreaRef);
+						var oStaticUIArea = StaticArea.getUIArea();
 						var oControl = new Control(sId + "-parent", {dependents: [oMonthValueHelp]});
 						oStaticUIArea.addContent(oControl, true); // do not invalidate UIArea
 					} catch (e) {
