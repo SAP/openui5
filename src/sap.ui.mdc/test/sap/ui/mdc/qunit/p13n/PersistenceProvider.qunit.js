@@ -1,7 +1,7 @@
 /* global QUnit */
 sap.ui.define([
 	"sap/ui/mdc/p13n/PersistenceProvider",
-	"sap/ui/mdc/enums/PersistenceMode",
+	"sap/m/p13n/enum/PersistenceMode",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control"
 ], function (PersistenceProvider, mode, oCore, Control) {
