@@ -25,8 +25,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/mdc/enums/ChartItemRoleType"
-], function (BasePanel, Label, ColumnListItem, Select, Text, Item, Button, Column, Table, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, coreLibrary, KeyCode, ChartItemRoleType) {
+	"sap/ui/mdc/enums/ChartItemRoleType",
+	"sap/ui/core/InvisibleMessage"
+], function (BasePanel, Label, ColumnListItem, Select, Text, Item, Button, Column, Table, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, coreLibrary, KeyCode, ChartItemRoleType, InvisibleMessage) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -709,10 +710,18 @@ sap.ui.define([
 			}
 		}.bind(this));
 
+		this._announce(this._getResourceTextMDC("chart.PERSONALIZATION_DIALOG_REMOVE_ENTRY_ANNOUNCE")); //this._getRemoveButtonAnnouncementText());
+
 		this._getP13nModel().setProperty("/items", aItems);
 		this._refreshP13nModel();
 		this._fireChangeItems();
 		this._updateVisibleIndexes();
+	};
+
+	ChartItemPanel.prototype._announce = function (sMessage) {
+		var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
+		var oInvisibleMessage = InvisibleMessage.getInstance();
+		oInvisibleMessage.announce(sMessage, InvisibleMessageMode.Assertive);
 	};
 
 	ChartItemPanel.prototype.setP13nData = function(aP13nData){

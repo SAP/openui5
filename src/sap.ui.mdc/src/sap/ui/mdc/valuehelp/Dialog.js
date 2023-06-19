@@ -659,7 +659,7 @@ sap.ui.define([
 						press: function(oEvent) {
 							this.fireSelect({type: ValueHelpSelectionType.Set, conditions: []});
 
-							this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.REMOVEALLTOKEN_ANNOUNCE"), InvisibleMessageMode.Polite);
+							this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.REMOVEALLTOKEN_ANNOUNCE"), InvisibleMessageMode.Assertive);
 						}.bind(this),
 						type: ButtonType.Transparent,
 						icon: "sap-icon://decline",

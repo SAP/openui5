@@ -146,6 +146,11 @@ sap.ui.define([
 		return this._getResourceText("p13n.GROUP_REMOVEICONTOOLTIP");
 	};
 
+	GroupPanel.prototype._getRemoveButtonAnnouncementText = function () {
+		return this._getResourceText("p13n.GROUP_REMOVEICONANNOUNCE");
+	};
+
+
 	GroupPanel.prototype._selectKey = function(oComboBox) {
 		QueryPanel.prototype._selectKey.apply(this, arguments);
 

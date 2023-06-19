@@ -327,7 +327,7 @@ sap.ui.define([
 				this._bFocusLastRemoveBtn = true; // as remove-Button will disappear and focus should set on the last row remove button
 			}
 
-			this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_REMOVECONDITION_ANNOUNCE"), InvisibleMessageMode.Polite);
+			this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_REMOVECONDITION_ANNOUNCE"), InvisibleMessageMode.Assertive);
 
 			// try to reset valueState and value of value Fields inside the removed row
 			var oGrid = this.byId("conditions");
@@ -398,7 +398,7 @@ sap.ui.define([
 				}
 			}
 
-			this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_ADDCONDITION_ANNOUNCE"), InvisibleMessageMode.Polite);
+			this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_ADDCONDITION_ANNOUNCE"), InvisibleMessageMode.Assertive);
 		},
 
 		addDummyCondition: function(index) {
@@ -1823,7 +1823,7 @@ sap.ui.define([
 		this._iStartIndex = 0;
 		this._iShownAdditionalConditions = 0;
 		this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
-		this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_REMOVECONDITION_ANNOUNCE"), InvisibleMessageMode.Polite);
+		this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_REMOVECONDITION_ANNOUNCE"), InvisibleMessageMode.Assertive);
 		this.fireConditionProcessed();
 
 	}
@@ -1865,7 +1865,7 @@ sap.ui.define([
 			}
 		}
 
-		this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_ADDCONDITION_ANNOUNCE"), InvisibleMessageMode.Polite);
+		this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_ADDCONDITION_ANNOUNCE"), InvisibleMessageMode.Assertive);
 
 	}
 
