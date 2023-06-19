@@ -75,8 +75,13 @@ sap.ui.define([
 			})
 			.then(function(aAggregationContent) {
 				aContent = aAggregationContent;
-				// this is needed to trigger a refresh of a simpleform! Otherwise simpleForm content and visualization are not in sync
-				return oModifier.removeAllAggregation(oControl, "content");
+			}).then(function() {
+				// Remove each control from the "content" aggregation without leaving them orphan (would reset bindings).
+				// This is needed to trigger a refresh of a simpleform! Otherwise simpleForm content and visualization are not in sync
+				return aContent.reduce(function(oPreviousPromise, oContent) {
+					return oPreviousPromise
+					.then(oModifier.insertAggregation.bind(oModifier, oControl, "dependents", oContent, 0, oView));
+				}, Promise.resolve());
 			})
 			.then(function() {
 				return aContent.reduce(function(oPreviousPromise, oContent, i) {

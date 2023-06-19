@@ -68,7 +68,7 @@ sap.ui.define([
 					>' +
 						'<f:content>' +
 							'<m:Label id="label00"/>' +
-							'<m:Input id="input00"/>' +
+							'<m:Input id="input00" value="{foo}"/>' +
 							'<m:Label id="label01"/>' +
 							'<m:Input id="input01"/>' +
 							'<core:Title id="title1"/>' +
@@ -381,6 +381,7 @@ sap.ui.define([
 				var oNewLabel = oView.byId("my_new_control-label");
 				var oNewField = oView.byId(NEW_CONTROL_ID);
 				var oExistingLabel = oView.byId("label1");
+				var oExistingInput = oView.byId("input00");
 
 
 				assert.equal(aFormContent.length, 10, "then a new label and field are added");
@@ -388,6 +389,7 @@ sap.ui.define([
 				assert.equal(aFormContent.indexOf(oNewLabel), 5, "then a new label is added");
 				assert.equal(aFormContent.indexOf(oNewField), 6, "then a new field is added");
 				assert.equal(oNewField.getBindingPath("text"), "binding/path", "and the field inside is bound correctly");
+				assert.ok(oExistingInput.getBindingInfo("value").binding, "then the binding on the existing field is still there");
 				assert.equal(aFormContent.indexOf(oExistingLabel), 7, "then the existing label in the group is moved");
 
 				var aDependents = oSimpleForm.getDependents();
