@@ -104,47 +104,6 @@ sap.ui.define([
 				}
 			}
 		},
-		onTheMessagePopover : {
-			actions : {
-				close : function () {
-					this.waitFor({
-						actions : function (oMessagePopover) {
-							oMessagePopover.close();
-						},
-						controlType : "sap.m.MessagePopover",
-						success : function (aControls) {
-							Opa5.assert.strictEqual(aControls.length, 1, "Message Popover closed");
-						}
-					});
-				}
-			}, assertions : {
-				checkMessages : function (aExpectedMessages) {
-					this.waitFor({
-						controlType : "sap.m.MessagePopover",
-						success : function (aMessagePopover) {
-							var iExpectedCount = aExpectedMessages.length,
-								aItems = aMessagePopover[0].getItems();
-
-							Opa5.assert.ok(aMessagePopover.length === 1);
-							Opa5.assert.strictEqual(aItems.length, iExpectedCount,
-								"Check Messages: message count is as expected: " + iExpectedCount
-							);
-							aExpectedMessages.forEach(function (oExpectedMessage, i) {
-								var bFound;
-
-								bFound = aItems.some(function (oItem) {
-									return oItem.getTitle() === oExpectedMessage.message
-										&& oItem.getType() === oExpectedMessage.type;
-								});
-								Opa5.assert.ok(bFound, "Check Messages: expected message[" + i
-									+ "]: " + oExpectedMessage.message + " type: "
-									+ oExpectedMessage.type);
-							});
-						}
-					});
-				}
-			}
-		},
 		onTheObjectPage : {
 			actions : {
 				confirmDeletion : function () {
