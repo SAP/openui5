@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/ui/security/FrameOptions",
 	"sap/base/assert",
+	"sap/base/util/Deferred",
 	"sap/base/util/ObjectPath",
 	'sap/ui/performance/trace/initTraces',
 	'sap/base/util/isEmptyObject',
@@ -60,6 +61,7 @@ sap.ui.define([
 		Measurement,
 		FrameOptions,
 		assert,
+		Deferred,
 		ObjectPath,
 		initTraces,
 		isEmptyObject,
@@ -304,11 +306,10 @@ sap.ui.define([
 			this.oRootComponent = null;
 
 			/**
-			 * Ordered collection of initEvent listeners
-			 * Moved here (before boot()) so that the libraries can be registered for lazy load!!
+			 * Ready Promise
 			 * @private
 			 */
-			this.aInitListeners = [];
+			this.pReady = new Deferred();
 
 			/**
 			 * Whether the legacy library has to be loaded.
@@ -618,6 +619,8 @@ sap.ui.define([
 				// @private, @ui5-restricted sap.ui.core
 				//  - Init
 				"boot",
+				//  - Ready Promise
+				"ready",
 				//  - UIArea & Rendering
 				"addPrerenderingTask",
 				//  - Messaging
@@ -1097,33 +1100,13 @@ sap.ui.define([
 		}
 	};
 
-	Core.prototype._executeInitListeners = function() {
-		var METHOD = "sap.ui.core.Core.init()";
-
-		// make sure that we have no concurrent modifications on the init listeners
-		var aCallbacks = this.aInitListeners;
-		// reset the init listener so that we are aware the listeners are already
-		// executed and the initialization phase is over / follow up registration
-		// would then immediately call the init event handler
-		this.aInitListeners = undefined;
-
-		// execute registered init event handlers
-		if (aCallbacks && aCallbacks.length > 0) {
-			// execute the callbacks
-			Log.info("Fire Loaded Event",null,METHOD);
-			aCallbacks.forEach(function(fn) {
-				fn();
-			});
-		}
-	};
-
 	Core.prototype._executeInitialization = function() {
+		// chain ready to be the firstone that is executed
 		var METHOD = "sap.ui.core.Core.init()"; // Because it's only used from init
 		if (this.bInitialized) {
 			return;
 		}
 		this.bInitialized = true;
-
 		Log.info("Initialized",null,METHOD);
 
 		// start the plugins
@@ -1133,7 +1116,7 @@ sap.ui.define([
 
 		this._executeOnInit();
 		this._setupRootComponent(); // @legacy-relevant: private API for 2 deprecated concepts "rootComponent" & "sap.ui.app.Application"
-		this._executeInitListeners();
+		this.pReady.resolve();
 	};
 
 	/**
@@ -1181,8 +1164,8 @@ sap.ui.define([
 	 */
 	Core.prototype.attachInitEvent = function (fnFunction) {
 		assert(typeof fnFunction === "function", "fnFunction must be a function");
-		if (this.aInitListeners) {
-			this.aInitListeners.push(fnFunction);
+		if (!this.isInitialized()) {
+			this.pReady.promise.then(fnFunction);
 		}
 	};
 
@@ -1201,11 +1184,7 @@ sap.ui.define([
 	 */
 	Core.prototype.attachInit = function (fnFunction) {
 		assert(typeof fnFunction === "function", "fnFunction must be a function");
-		if (this.aInitListeners) {
-			this.aInitListeners.push(fnFunction);
-		} else {
-			fnFunction();
-		}
+		this.ready(fnFunction);
 	};
 
 	/**
@@ -2993,6 +2972,24 @@ sap.ui.define([
 	 */
 	Core.prototype.addPrerenderingTask = function (fnPrerenderingTask, bFirst) {
 		Rendering.addPrerenderingTask(fnPrerenderingTask, bFirst);
+	};
+
+	/** returns a Promise that resolves if the Core is initialized
+	 *
+	 * @param {function():void} [fnReady] If the Core is ready the function will be called immediately, otherwise when the ready Promise resolves.
+	 * @returns {Promise<undefined>} The ready promise
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	Core.prototype.ready = function(fnReady) {
+		if (fnReady) {
+			if (this.bInitialized) {
+				fnReady();
+			} else {
+				this.pReady.promise.then(fnReady);
+			}
+		}
+		return this.pReady.promise;
 	};
 
 	Core.prototype.destroy = function() {

@@ -651,9 +651,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Control.prototype.placeAt = function(oRef, vPosition) {
-		if (Core.isInitialized()) {
-			// core already initialized, do it now
-
+		Core.ready(function() {
 			// 1st try to resolve the oRef as a container control
 			var oContainer = oRef;
 			if (typeof oRef === "string") {
@@ -694,13 +692,7 @@ sap.ui.define([
 						Log.warning("Position " + vPosition + " is not supported for function placeAt.");
 				}
 			}
-		} else {
-			// core not yet initialized, defer execution
-			var that = this;
-			Core.attachInit(function () {
-				that.placeAt(oRef, vPosition);
-			});
-		}
+		}.bind(this));
 		return this;
 	};
 
