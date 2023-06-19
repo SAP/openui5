@@ -1553,7 +1553,10 @@ sap.ui.define([
 
 		aDependentBindings.forEach(function (oDependentBinding) {
 			var sPath = _Helper.buildPath(sPrefix,
-					_Helper.getMetaPath(oDependentBinding.getPath())),
+					oDependentBinding.oOperation
+					? "" // operation's name cannot appear inside aPaths!
+					: _Helper.getMetaPath(oDependentBinding.getPath())
+				),
 				aStrippedPaths;
 
 			if (oDependentBinding.oCache) {

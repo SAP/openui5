@@ -3710,6 +3710,12 @@ sap.ui.define([
 					getPath : function () { return "baz(3)"; },
 					requestSideEffects : function () {}
 				},
+				oChild4 = {
+					oCache : {},
+					oOperation : "~truthy~",
+					// getPath must not be called
+					requestSideEffects : function () {}
+				},
 				sGroupId = "group",
 				oHelperMock = this.mock(_Helper),
 				oModel = {
@@ -3718,19 +3724,21 @@ sap.ui.define([
 				aPaths = [],
 				aPaths0 = ["A"],
 				aPaths1 = [/*empty!*/],
-				aPaths3 = ["A"],
+				aPaths3 = ["B"],
+				aPaths4 = ["C"],
 				oPromise0 = {index : 0}, // give deepEqual a chance
 				oPromise3 = {index : 3},
+				oPromise4 = {index : 4},
 				aPromises = [];
 
 			if (oFixture.oContext) {
 				oBinding.oModel = oModel;
 				this.mock(oModel).expects("getDependentBindings")
 					.withExactArgs(sinon.match.same(oFixture.oContext))
-					.returns([oChild0, oChild1, oChild2, oChild3]);
+					.returns([oChild0, oChild1, oChild2, oChild3, oChild4]);
 			} else {
 				this.mock(oBinding).expects("getDependentBindings").withExactArgs()
-					.returns([oChild0, oChild1, oChild2, oChild3]);
+					.returns([oChild0, oChild1, oChild2, oChild3, oChild4]);
 			}
 			oHelperMock.expects("stripPathPrefix")
 				.withExactArgs(oFixture.bPrefix ? "~/foo" : "foo", sinon.match.same(aPaths))
@@ -3751,12 +3759,18 @@ sap.ui.define([
 			this.mock(oChild3).expects("requestSideEffects")
 				.withExactArgs(sGroupId, sinon.match.same(aPaths3))
 				.returns(oPromise3);
+			oHelperMock.expects("stripPathPrefix")
+				.withExactArgs(oFixture.bPrefix ? "~" : "", sinon.match.same(aPaths))
+				.returns(aPaths4);
+			this.mock(oChild4).expects("requestSideEffects")
+				.withExactArgs(sGroupId, sinon.match.same(aPaths4))
+				.returns(oPromise4);
 
 			// code under test
 			oBinding.visitSideEffects(sGroupId, aPaths, oFixture.oContext, aPromises,
 				oFixture.bPrefix ? "~" : undefined);
 
-			assert.deepEqual(aPromises, [oPromise0, oPromise3]);
+			assert.deepEqual(aPromises, [oPromise0, oPromise3, oPromise4]);
 		});
 	});
 
