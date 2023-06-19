@@ -301,20 +301,28 @@ sap.ui.define([
 			var oButton = oEvent.getSource(),
 			oView = this.getView();
 
-		// create menu
-		if (!this._oMenuFragment) {
-			this._oMenuFragment = Fragment.load({
-				id: oView.getId(),
-				name: "sap.m.uploadSetTableDemo.menu",
-				controller: this
-			}).then(function(oMenu) {
-				oMenu.openBy(oButton);
-						this._oMenuFragment = oMenu;
-						return this._oMenuFragment;
-			}.bind(this));
-		} else {
-			this._oMenuFragment.openBy(oButton);
-		}
+			// create menu
+			if (!this._oMenuFragment) {
+				this._oMenuFragment = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.uploadSetTableDemo.menu",
+					controller: this
+				}).then(function(oMenu) {
+					oMenu.openBy(oButton);
+							this._oMenuFragment = oMenu;
+							return this._oMenuFragment;
+				}.bind(this));
+			} else {
+				this._oMenuFragment.openBy(oButton);
+			}
+		},
+		openPreview: function(oEvent) {
+			var clickedControl = oEvent.getSource();
+			while (clickedControl && !(clickedControl instanceof UploadSetTableItem)) {
+				clickedControl = clickedControl.getParent();
+			}
+			var oUploadSetTableItem = clickedControl;
+			UploadSetTableItem.openPreview(oUploadSetTableItem);
 		}
 	});
 });
