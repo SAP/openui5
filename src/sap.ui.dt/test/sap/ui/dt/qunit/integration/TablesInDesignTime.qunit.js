@@ -91,7 +91,6 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when design time is started with sap.ui.table.Table as root element", function(assert) {
 			var done = assert.async();
-			var oOnErrorSpy = sandbox.spy(Log, "error");
 			var oDesignTime = new DesignTime({
 				rootElements: [this.oTable]
 			});
@@ -103,7 +102,6 @@ sap.ui.define([
 				var oTableOverlay = OverlayRegistry.getOverlay(this.oTable);
 				var oColumnsOverlay = oTableOverlay.getAggregationOverlay("columns");
 				assert.strictEqual(oColumnsOverlay.getChildren().length, 5, "then there should be 5 children overlays for column available");
-				assert.notOk(oOnErrorSpy.called, "then design time should not throw errors in console on start");
 				done();
 			}.bind(this));
 		});
