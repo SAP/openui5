@@ -296,7 +296,7 @@ sap.ui.define([
 
 				for (var i = aMessages.length - 6; i < aMessages.length; ++i) {
 					var oM = aMessages[i];
-					var sIdentifier = [oM.getType(), oM.getCode(), oM.getTarget(), oM.getMessage()].join("|");
+					var sIdentifier = [oM.getType(), oM.getCode(), oM.getTargets()[0], oM.getMessage()].join("|");
 
 					assert.equal(mAddesMessages[sIdentifier], false, "Message is as expected");
 					mAddesMessages[sIdentifier] = true;
