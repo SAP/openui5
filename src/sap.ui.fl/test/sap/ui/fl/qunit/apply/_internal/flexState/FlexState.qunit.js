@@ -233,6 +233,17 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when initialize is called without appComponent", function(assert) {
+			this.oAppComponent.destroy();
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			})
+			.then(function() {
+				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the data is only requested once");
+			}.bind(this));
+		});
+
 		QUnit.test("when initialize is called twice with the same reference with waiting", function(assert) {
 			return FlexState.initialize({
 				reference: sReference,
