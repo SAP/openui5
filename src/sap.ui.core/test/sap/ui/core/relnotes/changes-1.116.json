@@ -1,0 +1,18 @@
+{
+  "1.116.0": {
+    "date": "June 2023",
+    "notes": [
+      {
+        "id": "f34d28d3cbe41cc04e13bc106a462637d3c02963",
+        "type": "FIX",
+        "text": " sap/ui/util/Mobile: Prevent overwriting existing meta tag",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370034490"
+          }
+        ]
+      }
+    ]
+  }
+}

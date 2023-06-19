@@ -3,6 +3,11 @@
     "date": "June 2023",
     "notes": [
       {
+        "id": "27607030f48a883f09183c9e4d293b255c5afe00",
+        "type": "FEATURE",
+        "text": " Accessibility: Improve test pages"
+      },
+      {
         "id": "c5a8c2e2c5940a271962c038ac02c0814624ef5b",
         "type": "FIX",
         "text": " sap.f.DynamicPageTitle: Breadcrumb visibility corrected",

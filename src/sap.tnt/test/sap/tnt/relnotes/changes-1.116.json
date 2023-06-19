@@ -1,0 +1,12 @@
+{
+  "1.116.0": {
+    "date": "June 2023",
+    "notes": [
+      {
+        "id": "74692daf4d2c650926cf7e934d0447ded40bd562",
+        "type": "FEATURE",
+        "text": " sap.tnt.ToolHeader: Sample that shows responsive behaviour added"
+      }
+    ]
+  }
+}

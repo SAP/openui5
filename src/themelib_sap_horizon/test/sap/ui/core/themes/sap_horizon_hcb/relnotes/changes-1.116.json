@@ -3,6 +3,48 @@
     "date": "June 2023",
     "notes": [
       {
+        "id": "5a960a10c744bf1e3642c856ea374d60c5b5fe06",
+        "type": "FIX",
+        "text": " sap.m.Select: Icon and text centered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380061756"
+          }
+        ]
+      },
+      {
+        "id": "38ff98f21103b61f1aaace77c13c7d45dcc30bee",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fixed slection of today's date in Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380068648"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380066967"
+          }
+        ]
+      },
+      {
+        "id": "e65a030efa88517a9aac29ab13dcaefc396c0d40",
+        "type": "FEATURE",
+        "text": " sap.m.RadioButton: Horizon themes updated style parameters applied"
+      },
+      {
+        "id": "b47a738dbcf31afd8a51b779346c1885fe88a2ff",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Correct line-height for mirror element in Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380062751"
+          }
+        ]
+      },
+      {
         "id": "2696e5caef6cf4367b9c00090ae6002b8b3000dd",
         "type": "FIX",
         "text": " sap.m.CheckBox: Focus on HCW and HCB Horizon themes is fixed",
