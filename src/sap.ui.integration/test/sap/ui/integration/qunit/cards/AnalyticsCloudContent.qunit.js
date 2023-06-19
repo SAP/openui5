@@ -148,7 +148,8 @@ sap.ui.define([
 			window.Highcharts = fakeHighcharts(this.fnChartStub);
 
 			this.oCard = new Card("testCard", {
-				manifest: oExample1
+				manifest: oExample1,
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources"
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);

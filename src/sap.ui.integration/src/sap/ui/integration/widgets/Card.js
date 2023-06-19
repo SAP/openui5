@@ -876,6 +876,10 @@ sap.ui.define([
 					throw new Error(CARD_DESTROYED_ERROR);
 				}
 
+				if (!this._oCardManifest.get("/sap.app/id")) {
+					this._logSevereError("Card sap.app/id entry in the manifest is mandatory");
+				}
+
 				return this._oCardManifest.loadDependenciesAndIncludes();
 			}.bind(this))
 			.then(function () {
@@ -884,7 +888,6 @@ sap.ui.define([
 				}
 
 				Measurement.end(this._sPerformanceId + "initManifest");
-				this._registerManifestModulePath();
 				this._isManifestReady = true;
 				this.fireManifestReady();
 
@@ -1364,22 +1367,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Registers the manifest ID as a module path.
-	 */
-	Card.prototype._registerManifestModulePath = function () {
-		if (!this._oCardManifest) {
-			return;
-		}
-
-		this._sAppId = this._oCardManifest.get("/sap.app/id");
-		if (this._sAppId) {
-			LoaderExtensions.registerResourcePath(this._sAppId.replace(/\./g, "/"), this._oCardManifest.getUrl() || "/");
-		} else {
-			this._logSevereError("Card sap.app/id entry in the manifest is mandatory");
-		}
-	};
-
-	/**
 	 * Overwrites getter for card manifest.
 	 *
 	 * @public
@@ -1643,7 +1630,7 @@ sap.ui.define([
 	 * Absolute paths are not changed.
 	 *
 	 * @example
-	 * oCard.getRuntimeUrl("images/Avatar.png") === "sample/card/images/Avatar.png"
+	 * oCard.getRuntimeUrl("images/Avatar.png") === "{cardBaseUrl}/images/Avatar.png"
 	 * oCard.getRuntimeUrl("http://www.someurl.com/Avatar.png") === "http://www.someurl.com/Avatar.png"
 	 * oCard.getRuntimeUrl("https://www.someurl.com/Avatar.png") === "https://www.someurl.com/Avatar.png"
 	 *
@@ -1652,7 +1639,7 @@ sap.ui.define([
 	 * @returns {string} The resolved URL.
 	 */
 	Card.prototype.getRuntimeUrl = function (sUrl) {
-		var sAppId = this._sAppId,
+		var sAppId = this._oCardManifest ? this._oCardManifest.get("/sap.app/id") : null,
 			sAppName,
 			sSanitizedUrl = sUrl && sUrl.trim().replace(/^\//, "");
 
@@ -2030,7 +2017,6 @@ sap.ui.define([
 				serviceManager: this._oServiceManager,
 				dataProviderFactory: this._oDataProviderFactory,
 				iconFormatter: this._oIconFormatter,
-				appId: this._sAppId,
 				noDataConfiguration: this._oCardManifest.get(MANIFEST_PATHS.NO_DATA_MESSAGES)
 			});
 		} catch (e) {

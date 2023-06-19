@@ -869,7 +869,7 @@ sap.ui.define([
 			oCard.destroy();
 		});
 
-		QUnit.test("Register module path", function (assert) {
+		QUnit.test("Register module path for card with manifest as object, without baseUrl", function (assert) {
 			// Arrange
 			var done = assert.async(),
 				oCard = new Card({
@@ -880,7 +880,7 @@ sap.ui.define([
 			oCard.attachEventOnce("_ready", function () {
 				// Assert
 				assert.ok(fnRegisterSpy.called, "LoaderExtensions.registerResourcePath is called.");
-				assert.ok(fnRegisterSpy.calledWith("my/card/qunit/test/ListCard", "resources/my/card/qunit/test/ListCard/"), "LoaderExtensions.registerResourcePath is called with correct params.");
+				assert.ok(fnRegisterSpy.calledWith("my/card/qunit/test/ListCard", "/"), "LoaderExtensions.registerResourcePath is called with correct params.");
 
 				// Clean up
 				oCard.destroy();
@@ -890,7 +890,54 @@ sap.ui.define([
 
 			// Act
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+		});
+
+		QUnit.test("Register module path for card with manifest as object, with baseUrl", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				sBaseUrl = "test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations",
+				oCard = new Card({
+					manifest: oManifest_ListCard,
+					baseUrl: sBaseUrl
+				}),
+				fnRegisterSpy = sinon.spy(LoaderExtensions, "registerResourcePath");
+
+			oCard.attachEventOnce("_ready", function () {
+				// Assert
+				assert.ok(fnRegisterSpy.called, "LoaderExtensions.registerResourcePath is called.");
+				assert.ok(fnRegisterSpy.calledWith("my/card/qunit/test/ListCard", sBaseUrl), "LoaderExtensions.registerResourcePath is called with correct params.");
+
+				// Clean up
+				oCard.destroy();
+				fnRegisterSpy.restore();
+				done();
+			});
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Register module path for card with manifest given by URL", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = new Card({
+					manifest: "test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json"
+				}),
+				fnRegisterSpy = sinon.spy(LoaderExtensions, "registerResourcePath");
+
+			oCard.attachEventOnce("_ready", function () {
+				// Assert
+				assert.ok(fnRegisterSpy.called, "LoaderExtensions.registerResourcePath is called.");
+				assert.ok(fnRegisterSpy.calledWith("my/test/card", "test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations"), "LoaderExtensions.registerResourcePath is called with correct params.");
+
+				// Clean up
+				oCard.destroy();
+				fnRegisterSpy.restore();
+				done();
+			});
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
 		QUnit.test("Default model is not propagated", function (assert) {
@@ -1062,10 +1109,10 @@ sap.ui.define([
 					done();
 				});
 
-			this.oCard.createManifest(oManifest_ListCard);
+			this.oCard.createManifest(oManifest_ListCard, "");
 
 			this.oCard._destroyManifest();
-			this.oCard.createManifest(oManifest_ListCard);
+			this.oCard.createManifest(oManifest_ListCard, "");
 		});
 
 		QUnit.test("Manifest works if it has very deep structure", function (assert) {
@@ -1144,7 +1191,7 @@ sap.ui.define([
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
-		QUnit.test("getRuntimeUrl", function (assert) {
+		QUnit.test("getRuntimeUrl when baseUrl is not set", function (assert) {
 			// Arrange
 			var done = assert.async(),
 				oCard = this.oCard,
@@ -1154,21 +1201,21 @@ sap.ui.define([
 					}
 				},
 				mSamples = new Map([
-					["", "resources/sample/card/"],
+					["", "/"],
+					["some.json", "/some.json"],
+
+					["./", "/./"],
+					["./images/Avatar.png", "/./images/Avatar.png"],
+
+					["/", "/"],
+					["/some.json", "/some.json"],
 
 					["//some.json", "//some.json"],
 
-					["./", "resources/sample/card/./"],
-					["./images/Avatar.png", "resources/sample/card/./images/Avatar.png"],
-
-					["/", "resources/sample/card/"],
-					["/some.json", "resources/sample/card/some.json"],
+					["../some.json", "/../some.json"],
 
 					["http://sap.com", "http://sap.com"],
-					["https://sap.com", "https://sap.com"],
-
-					["../some.json", "resources/sample/card/../some.json"],
-					["some.json", "resources/sample/card/some.json"]
+					["https://sap.com", "https://sap.com"]
 				]);
 
 			oCard.attachManifestReady(function () {
@@ -1183,6 +1230,50 @@ sap.ui.define([
 
 			// Act
 			oCard.setManifest(oManifest);
+			oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("getRuntimeUrl when baseUrl is set", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard,
+				sBaseUrl = "https://sdk.openui5.org",
+				oManifest = {
+					"sap.app": {
+						"id": "sample.card"
+					}
+				},
+				mSamples = new Map([
+					["", sBaseUrl + "/"],
+					["some.json", sBaseUrl + "/some.json"],
+
+					["./", sBaseUrl + "/./"],
+					["./images/Avatar.png", sBaseUrl + "/./images/Avatar.png"],
+
+					["/", sBaseUrl + "/"],
+					["/some.json", sBaseUrl + "/some.json"],
+
+					["../some.json", sBaseUrl + "/../some.json"],
+
+					["//some.json", "//some.json"],
+
+					["http://sap.com", "http://sap.com"],
+					["https://sap.com", "https://sap.com"]
+				]);
+
+			oCard.attachManifestReady(function () {
+				// Assert
+				mSamples.forEach(function (sExpectedResult, sUrl) {
+					var sResult = oCard.getRuntimeUrl(sUrl);
+
+					assert.strictEqual(sResult, sExpectedResult, "Result is correct for '" + sUrl + "'.");
+				});
+				done();
+			});
+
+			// Act
+			oCard.setManifest(oManifest);
+			oCard.setBaseUrl(sBaseUrl);
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
@@ -4115,14 +4206,14 @@ sap.ui.define([
 
 		QUnit.test("Destroy card while manifest is loading", function (assert) {
 			// Arrange
-			var oSpy = sinon.spy(Card.prototype, "_registerManifestModulePath"),
-				done = assert.async();
+			var done = assert.async();
 
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/listCard.manifest.json");
 			this.oCard.setDataMode(CardDataMode.Active);
 			Core.applyChanges();
 
 			assert.ok(this.oCard._oCardManifest, "There is Manifest instance");
+			var oSpy = sinon.spy(this.oCard._oCardManifest, "loadDependenciesAndIncludes");
 
 			// Act
 			this.oCard.destroy();
@@ -4138,7 +4229,9 @@ sap.ui.define([
 
 		QUnit.module("Custom Models", {
 			beforeEach: function () {
-				this.oCard = new Card();
+				this.oCard = new Card({
+					baseUrl: "test-resources/sap/ui/integration/qunit/testResources"
+				});
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -4206,7 +4299,6 @@ sap.ui.define([
 				oCard.setManifest(oManifest_CustomModels);
 				oCard.startManifestProcessing();
 				Core.applyChanges();
-
 			});
 
 			// Act

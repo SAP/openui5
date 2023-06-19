@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/base/Object",
+	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/Manifest",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepExtend",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/integration/util/CardMerger"
 ], function (
 	BaseObject,
+	LoaderExtensions,
 	CoreManifest,
 	deepClone,
 	deepExtend,
@@ -91,8 +93,10 @@ sap.ui.define([
 					mOptions.baseUrl = sBaseUrl;
 					this._sBaseUrl = sBaseUrl;
 				} else {
-					Log.warning("If no base URL is provided when the manifest is an object static resources cannot be loaded.");
+					Log.error("If baseUrl is not provided when the manifest is an object, the relative resources cannot be loaded.", "sap.ui.integration.widgets.Card");
 				}
+
+				this._registerManifestModulePath(oManifestJson, sBaseUrl || "/");
 
 				if (this._aChanges) {
 					oMergedManifest = this.mergeDeltaChanges(oManifestJson);
@@ -228,7 +232,7 @@ sap.ui.define([
 			manifestUrl: mSettings.manifestUrl,
 			async: true,
 			processJson: function (oManifestJson) {
-
+				this._registerManifestModulePath(oManifestJson, mSettings.manifestUrl.replace(/\/+[^\/]*$/, ""));
 				this._oInitialJson = deepClone(oManifestJson, 500);
 
 				if (this._aChanges) {
@@ -614,6 +618,16 @@ sap.ui.define([
 		}
 
 		return aResult;
+	};
+
+	Manifest.prototype._registerManifestModulePath = function (oManifestJson, sBaseUrl) {
+		var sAppId = oManifestJson && oManifestJson["sap.app"] && oManifestJson["sap.app"].id;
+
+		if (!sAppId) {
+			return;
+		}
+
+		LoaderExtensions.registerResourcePath(sAppId.replace(/\./g, "/"), sBaseUrl);
 	};
 
 	return Manifest;
