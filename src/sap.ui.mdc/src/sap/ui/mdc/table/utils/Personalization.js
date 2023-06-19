@@ -81,7 +81,7 @@ sap.ui.define([
 				oTable.getInbuiltFilter().setVisibleFields(null);
 			}
 
-			return oEngine.uimanager.show(oTable, aPanelKeys, {
+			return oEngine.show(oTable, aPanelKeys, {
 				close: function() {
 					if (fnOnClose) {
 						fnOnClose();

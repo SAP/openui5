@@ -211,7 +211,7 @@ sap.ui.define([
 	FilterBar.prototype.onAdaptFilters = function(oEvent) {
 
 		return this._retrieveMetadata().then(function() {
-			return this.getEngine().uimanager.show(this, "Item", {
+			return this.getEngine().show(this, "Item", {
 				reset: function(){
 					this.getEngine().reset(this);
 			}.bind(this)

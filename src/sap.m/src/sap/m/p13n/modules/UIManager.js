@@ -62,6 +62,8 @@ sap.ui.define([
 	 * @param {sap.ui.core.CSSSize} [mSettings.contentHeight] Height configuration for the related popup container
 	 * @param {sap.ui.core.CSSSize} [mSettings.contentWidth] Width configuration for the related popup container
 	 * @param {boolean} [mSettings.showReset] Determines the visibility of the <code>Reset</code> button
+	 * @param {boolean} [mSettings.enableReset] Determines the enablement status of the <code>Reset</code> button
+	 * (Note: only takes effect if the button is shown via <code>showReset</code>)
 	 * @param {function} [mSettings.reset] Custom reset handling to opt out the default reset which will trigger a reset for all open tabs.
 	 * @param {function} [mSettings.close] Event handler once the Popup has been closed
 	 *
@@ -123,7 +125,6 @@ sap.ui.define([
 							fnReset(oControl, aPanelKeys);
 						});
 					}
-
 
 					aInitializedPanels.forEach(function(oPanel, iIndex){
 						oP13nContainer.addPanel(oPanel, aPanelKeys[iIndex]);
@@ -215,9 +216,9 @@ sap.ui.define([
 		return oUIManager;
 	};
 
-	UIManager.prototype.setActiveP13n = function(vControl, vKeys) {
+	UIManager.prototype.setActiveP13n = function(vControl, vKeys, bModified) {
 		if (this.oAdaptationProvider.setActiveP13n instanceof Function) {
-			this.oAdaptationProvider.setActiveP13n(vControl, vKeys);
+			this.oAdaptationProvider.setActiveP13n(vControl, vKeys, bModified);
 		}
 	};
 

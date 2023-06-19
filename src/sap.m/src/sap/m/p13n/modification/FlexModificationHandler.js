@@ -9,7 +9,7 @@ sap.ui.define([
 ], function(ModificationHandler, FlexUtil, mode, Core) {
 	"use strict";
 
-    var oFlexModificationHandler, pInitialize, pRuntimeAPI;
+    var oFlexModificationHandler, pInitialize, pRuntimeAPI, pWriteAPI;
 
     var _requireFlexRuntimeAPI = function() {
         if (!pRuntimeAPI) {
@@ -22,6 +22,19 @@ sap.ui.define([
             });
         }
         return pRuntimeAPI;
+    };
+
+    var _requireWriteAPI = function() {
+        if (!pWriteAPI) {
+            pWriteAPI = new Promise(function (resolve, reject) {
+                sap.ui.require([
+                    "sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
+                ], function (ControlPersonalizationWriteAPI) {
+                    resolve(ControlPersonalizationWriteAPI);
+                });
+            });
+        }
+        return pWriteAPI;
     };
 
     /**
@@ -62,11 +75,21 @@ sap.ui.define([
             }) : oHandleChangesPromise;
         });
     };
+
     FlexModificationHandler.prototype.waitForChanges = function(mPropertyBag, oModificationPayload){
         return this.initialize()
         .then(function(){
             return _requireFlexRuntimeAPI().then(function(FlexRuntimeInfoAPI){
                 return FlexRuntimeInfoAPI.waitForChanges(mPropertyBag, oModificationPayload);
+            });
+        });
+    };
+
+    FlexModificationHandler.prototype.hasChanges = function(mPropertyBag, oModificationPayload){
+        return this.initialize()
+        .then(function(){
+            return _requireWriteAPI().then(function(ControlPersonalizationWriteAPI){
+                return ControlPersonalizationWriteAPI.hasDirtyFlexObjects(mPropertyBag);
             });
         });
     };

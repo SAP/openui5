@@ -48,7 +48,7 @@ sap.ui.define([
 			oEngine.validateP13n(oTable, sKey, this.getContent());
 
 			this.changeButtonSettings({
-				reset: {visible: true}//TODO
+				reset: {visible: true}
 			});
 		}.bind(this));
 	};

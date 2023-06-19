@@ -191,10 +191,10 @@ sap.ui.define([
 
                         //TODO: Move this to p13n functionality?
                         if (oChart.isPropertyHelperFinal()){
-                            oChart.getEngine().uimanager.show(oChart, aP13nMode);
+                            oChart.getEngine().show(oChart, aP13nMode);
                         } else {
                             oChart.finalizePropertyHelper().then(function(){
-                                oChart.getEngine().uimanager.show(oChart, aP13nMode);
+                                oChart.getEngine().show(oChart, aP13nMode);
                             });
                         }
                     }
