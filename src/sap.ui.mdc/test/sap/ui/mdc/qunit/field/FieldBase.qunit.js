@@ -2827,6 +2827,45 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("check for user interaction", function(assert) {
+
+		var oIcon = new Icon("I1", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content");
+		oCore.applyChanges();
+
+		var aContent = oField.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+
+		assert.notOk(oField.hasPendingUserInput(), "initial no user interaction");
+		oField.focus();
+		assert.notOk(oField.hasPendingUserInput(), "no user interaction after focus");
+		jQuery(oContent.getFocusDomRef()).val("X");
+		oContent.fireLiveChange({ newValue: "X" });
+		assert.ok(oField.hasPendingUserInput(), "user interaction after liveChange");
+		oContent.fireChange({ newValue: "X" });
+		assert.notOk(oField.hasPendingUserInput(), "no user interaction after change");
+
+		jQuery(oContent.getFocusDomRef()).val("");
+		oContent.fireLiveChange({ newValue: "" });
+		assert.ok(oField.hasPendingUserInput(), "user interaction after liveChange");
+		jQuery(oContent.getFocusDomRef()).val("X");
+		oContent.fireLiveChange({ newValue: "X" });
+		assert.ok(oField.hasPendingUserInput(), "user interaction after liveChange to old value");
+		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		assert.notOk(oField.hasPendingUserInput(), "no user interaction after ENTER");
+
+		jQuery(oContent.getFocusDomRef()).val("Z");
+		oContent.fireLiveChange({ newValue: "Z" });
+		assert.ok(oField.hasPendingUserInput(), "user interaction after liveChange");
+		jQuery(oContent.getFocusDomRef()).val("X");
+		oContent.fireLiveChange({ newValue: "X" });
+		assert.ok(oField.hasPendingUserInput(), "user interaction after liveChange to old value");
+		oIcon.focus();
+		assert.notOk(oField.hasPendingUserInput(), "no user interaction after focusout");
+
+		oIcon.destroy();
+
+	});
+
 	QUnit.module("Clone", {
 		beforeEach: function() {
 			FieldBaseDelegateODataDefaultTypes.enable();
@@ -3061,6 +3100,7 @@ sap.ui.define([
 		assert.equal(aConditions[0].values[0], "Hello", "condition value");
 		assert.equal(aConditions[0].operator, "EQ", "condition operator");
 		assert.ok(oFieldHelp.onControlChange.calledOnce, "onControlChange called on FieldHelp");
+		assert.notOk(oField.hasPendingUserInput(), "no user interaction after select");
 
 		oFieldHelp.fireNavigated({ condition: Condition.createItemCondition("Y", "Navigate") });
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
@@ -3069,6 +3109,7 @@ sap.ui.define([
 		assert.equal(aConditions[0].values[0], "Hello", "condition value");
 		assert.equal(aConditions[0].operator, "EQ", "condition operator");
 		assert.equal(oContent._$input.val(), "Navigate (Y)", "Field shown value");
+		assert.ok(oField.hasPendingUserInput(), "user interaction after navigation");
 
 		sinon.spy(oContent, "focus");
 		oFieldHelp.fireNavigated({ condition: undefined, leaveFocus: true });
@@ -3083,6 +3124,7 @@ sap.ui.define([
 		assert.equal(aConditions[1].values[0], "Y", "condition value[0]");
 		assert.equal(aConditions[1].values[1], "Navigate", "condition value[1]");
 		assert.equal(aConditions[1].operator, "EQ", "condition operator");
+		assert.notOk(oField.hasPendingUserInput(), "no user interaction after ENTER");
 
 		// simulate value help request to see if FieldHelp opens
 		oContent.fireValueHelpRequest();
@@ -4478,12 +4520,13 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		jQuery(oContent.getFocusDomRef()).val("Item3");
+		oContent.fireLiveChange({ newValue: "Item3" });
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.ok(oPromise, "Promise returned");
+		assert.ok(oField.hasPendingUserInput(), "user interaction after ENTER");
 		oPromise.then(function(vResult) {
-			assert.ok(vResult, "Promise resolved");
 			assert.ok(vResult, "Promise resolved");
 			var aConditions = oCM.getConditions("Name");
 			assert.deepEqual(vResult, aConditions, "Promise result");
@@ -4493,6 +4536,7 @@ sap.ui.define([
 			assert.equal(aConditions[0].operator, "EQ", "condition operator");
 			assert.ok(oFieldHelp.onControlChange.calledOnce, "onControlChange called on FieldHelp");
 			assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
+			assert.notOk(oField.hasPendingUserInput(), "no user interaction after Promise resolved");
 			fnDone();
 		}).catch(function(oException) {
 			assert.notOk(true, "Promise must not be rejected");
@@ -4515,12 +4559,13 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		jQuery(oContent.getFocusDomRef()).val("I3");
+		oContent.fireLiveChange({ newValue: "I3" });
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.ok(oPromise, "Promise returned");
+		assert.ok(oField.hasPendingUserInput(), "user interaction after ENTER");
 		oPromise.then(function(vResult) {
-			assert.ok(vResult, "Promise resolved");
 			assert.ok(vResult, "Promise resolved");
 			var aConditions = oCM.getConditions("Name");
 			assert.deepEqual(vResult, aConditions, "Promise result");
@@ -4530,6 +4575,7 @@ sap.ui.define([
 			assert.equal(aConditions[0].operator, "EQ", "condition operator");
 			assert.ok(oFieldHelp.onControlChange.notCalled, "onControlChange not called on FieldHelp");
 			assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
+			assert.notOk(oField.hasPendingUserInput(), "no user interaction after Promise resolved");
 			fnDone();
 		}).catch(function(oException) {
 			assert.notOk(true, "Promise must not be rejected");
@@ -4565,12 +4611,14 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent._$input.val("=Invalid");
+		oContent.fireLiveChange({ newValue: "=Invalid" });
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 		assert.equal(vGetItemsForValue, "Invalid", "getItemForValue called");
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.ok(oPromise, "Promise returned");
+		assert.ok(oField.hasPendingUserInput(), "user interaction after ENTER");
 		oPromise.then(function(vResult) {
 			assert.notOk(true, "Promise must not be resolved");
 
@@ -4592,6 +4640,7 @@ sap.ui.define([
 					assert.equal(aConditions[0] && aConditions[0].values[0], "I2", "condition value");
 					assert.ok(oFieldHelp.close.called, "close called");
 					assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
+					assert.notOk(oField.hasPendingUserInput(), "no user interaction after Promise rejected");
 
 					// use default operator
 					vGetItemsForValue = undefined;
