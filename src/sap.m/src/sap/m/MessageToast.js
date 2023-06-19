@@ -357,15 +357,6 @@ sap.ui.define([
 				oFocusableElement.focus();
 				clearTimeout(this._iCloseTimeoutId);
 			}
-
-			if (!oPopup && bAlt && bCtrl && oEvent.code === "KeyM") {
-				this.show(this._sMessage, this._mOptions, oEvent);
-				oPopup = this._aPopups[0];
-				oFocusableElement = document.querySelector(".sapMMessageToastHiddenFocusable");
-				oFocusableElement && oFocusableElement.focus();
-				oPopup.getContent().classList.add("sapMFocus");
-				clearTimeout(this._iCloseTimeoutId);
-			}
 		};
 
 		// Close the message when in permanent display mode
@@ -420,8 +411,6 @@ sap.ui.define([
 				sPointerEvents = "mousedown." + CSSCLASS + " touchstart." + CSSCLASS,
 				iMouseLeaveTimeoutId;
 
-			MessageToast._mOptions = mOptions;
-			MessageToast._sMessage = sMessage;
 			MessageToast._mSettings.opener = oOpener;
 
 			// Find the uppper-most parent to attach the keyboard shortcut as we need to be
