@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/Core",
-	"sap/ui/mdc/sample/TableFilterBarJson/webapp/model/metadata/JSONPropertyInfo"
+	"sap/ui/mdc/demokit/sample/TableFilterBarJson/webapp/model/metadata/JSONPropertyInfo"
 ], function(TableDelegate, Column, Text,
 	Filter,
 	FilterOperator,

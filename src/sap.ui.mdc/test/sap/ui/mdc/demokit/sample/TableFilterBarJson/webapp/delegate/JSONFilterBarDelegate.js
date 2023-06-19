@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/mdc/FilterBarDelegate",
-	"sap/ui/mdc/sample/TableFilterBarJson/webapp/model/metadata/JSONPropertyInfo",
+	"sap/ui/mdc/demokit/sample/TableFilterBarJson/webapp/model/metadata/JSONPropertyInfo",
 	"sap/base/util/merge",
 	"sap/ui/mdc/util/IdentifierUtil",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -10,6 +10,16 @@ sap.ui.define([
 	"use strict";
 
 	var JSONFilterBarDelegate = Object.assign({}, FilterBarDelegate);
+
+	JSONFilterBarDelegate._createValueHelp = function(sName, oView, sViewId) {
+		var sValueHelp = sName + "-vh";
+		if (!sViewId) { // viewId is only set during xmlTree processing
+			sValueHelp = oView.createId(sValueHelp);
+		} else {
+			sValueHelp = sViewId + "--" + sValueHelp;
+		}
+		return sValueHelp;
+	};
 
 	JSONFilterBarDelegate._createFilterField = function(oProperty, oFilterBar, mPropertyBag) {
 		var oModifier = mPropertyBag ? mPropertyBag.modifier : JsControlTreeModifier;
@@ -45,15 +55,7 @@ sap.ui.define([
 		}, true)
 		.then(function(oCreatedFilterField) {
 			oFilterField = oCreatedFilterField;
-			if (oProperty.valueHelp) {
-				var sValueHelp = oProperty.valueHelp;
-				if (!sViewId) { // viewId is only set during xmlTree processing
-					sValueHelp = oView.createId(oProperty.valueHelp);
-				} else {
-					sValueHelp = sViewId + "--" + oProperty.valueHelp;
-				}
-				oModifier.setAssociation(oFilterField, "valueHelp", sValueHelp);
-			}
+			oModifier.setAssociation(oFilterField, "valueHelp", JSONFilterBarDelegate._createValueHelp(sName, oView, sViewId));
 			if (oProperty.filterOperators) {
 				if (oFilterBar.getId) {
 					return oModifier.setProperty(oFilterField, "operators", oProperty.filterOperators);

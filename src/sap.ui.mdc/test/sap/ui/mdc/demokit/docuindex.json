@@ -11,6 +11,10 @@
 			{
 				"namespace": "delegates",
 				"ref": "test-resources/sap/ui/mdc/delegates"
+			},
+			{
+				"namespace": "sap.ui.mdc.demokit.sample",
+				"ref": "test-resources/sap/ui/mdc/demokit/sample"
 			}
 		],
 		"entities": [
@@ -53,6 +57,15 @@
 				"since": "1.99",
 				"samples": [
 					"sap.ui.mdc.sample.StateUtil"
+				]
+			},
+			{
+				"id": "sap.ui.mdc",
+				"name": "MDC Overview",
+				"category": "Container",
+				"since": "1.116",
+				"samples": [
+					"sap.ui.mdc.demokit.sample.TableFilterBarJson"
 				]
 			}
 		],
@@ -143,8 +156,8 @@
 				"name": "7.1 StateUtil overview",
 				"description": "example demonstrating StateUtil functionality"
 			}, {
-				"id": "sap.ui.mdc.sample.TableFilterBarJson",
-				"name": "8.1 Table with FilterBar and JSON model",
+				"id": "sap.ui.mdc.demokit.sample.TableFilterBarJson",
+				"name": "1.1 Table with FilterBar and JSON model",
 				"description": "Table and Filterbar example with JSON model"
 			}
 		]

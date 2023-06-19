@@ -26,8 +26,7 @@ sap.ui.define([
 		label: "Name",
 		visible: true,
 		path: "name",
-		dataType: "sap.ui.model.type.String",
-		valueHelp: "name-vh"
+		dataType: "sap.ui.model.type.String"
 	},{
 		name: "height",
 		label: "Height",
@@ -45,8 +44,7 @@ sap.ui.define([
 		label: "Range",
 		visible: true,
 		path: "range",
-		dataType: "sap.ui.model.type.String",
-		valueHelp: "range-vh"
+		dataType: "sap.ui.model.type.String"
 	},{
 		name: "coordinates",
 		label: "Coordinates",

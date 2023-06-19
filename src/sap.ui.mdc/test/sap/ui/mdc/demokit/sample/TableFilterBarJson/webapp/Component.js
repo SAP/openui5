@@ -6,7 +6,7 @@ sap.ui.define([
 	function (UIComponent, mdcLibrary) {
 		"use strict";
 
-		return UIComponent.extend("sap.ui.mdc.sample.TableFilterBarJson.webapp.Component", {
+		return UIComponent.extend("sap.ui.mdc.demokit.sample.TableFilterBarJson.webapp.Component", {
 			metadata: {
 				manifest: "json"
 			},
