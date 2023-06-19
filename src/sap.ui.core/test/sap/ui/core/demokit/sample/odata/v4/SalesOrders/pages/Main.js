@@ -749,6 +749,24 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				checkFirstSalesOrderChanged : function () {
+					this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderList",
+						check : function (oSalesOrderTable) {
+							var sActual = oSalesOrderTable.getItems()[0].getCells()[0].getText(),
+								sExpected = Opa.getContext().firstSalesOrderId;
+
+							return sActual !== sExpected;
+						},
+						success : function (oSalesOrderTable) {
+							Opa5.assert.ok(true, "First SalesOrderID changed from: "
+								+ Opa.getContext().firstSalesOrderId + " to: "
+								+ oSalesOrderTable.getItems()[0].getCells()[0].getText());
+						},
+						viewName : sViewName
+					});
+				},
 				checkHighlight : function (iRow, sHighlight) {
 					this.waitFor({
 						controlType : "sap.m.Table",
