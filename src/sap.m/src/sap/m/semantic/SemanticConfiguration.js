@@ -405,7 +405,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("discussion-2"),
-					text: oBundle.getText("SEMANTIC_CONTROL_DISCUSS_IN_JAM")
+					text: oBundle.getText("SEMANTIC_CONTROL_DISCUSS_IN_WORK_ZONE")
 				};
 			},
 			order: 1,
@@ -417,7 +417,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("share-2"),
-					text: oBundle.getText("SEMANTIC_CONTROL_SHARE_IN_JAM")
+					text: oBundle.getText("SEMANTIC_CONTROL_SHARE_ON_WORK_ZONE")
 				};
 			},
 			order: 2,
