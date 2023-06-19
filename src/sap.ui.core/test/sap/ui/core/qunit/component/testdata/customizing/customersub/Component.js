@@ -4,7 +4,6 @@ sap.ui.define([
 	"use strict";
 
 	var Component = CustomerComponent.extend("testdata.customizing.customersub.Component", {
-
 		metadata : {
 			version : "1.0",
 
@@ -32,10 +31,7 @@ sap.ui.define([
 
 			}
 		}
-
 	});
 
-
 	return Component;
-
 });

@@ -1,5 +1,5 @@
-sap.ui.define(['jquery.sap.global', 'sap/test/lib2/library'],
-	function(jQuery, library1) {
+sap.ui.define(['sap/test/lib2/library'],
+	function() {
 	"use strict";
 
 	sap.ui.getCore().initLibrary({

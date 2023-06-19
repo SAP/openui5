@@ -1,13 +1,12 @@
 /*global QUnit,sinon*/
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"./TestControl",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/core/dnd/DropInfo",
 	"sap/ui/core/dnd/DragDropInfo",
 	"./DragInfo.qunit",
 	"./DropInfo.qunit"
-], function(jQuery, TestControl, DragInfo, DropInfo, DragDropInfo) {
+], function(TestControl, DragInfo, DropInfo, DragDropInfo) {
 	"use strict";
 
 	QUnit.test("Basics", function(assert) {

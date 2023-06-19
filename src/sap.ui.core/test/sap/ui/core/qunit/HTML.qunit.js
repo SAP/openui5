@@ -79,57 +79,57 @@ sap.ui.define([
 	var FRAGMENT_1 = {
 		content : "<div class='fragment1' style='width:64px;height:64px;background-color:rgb(255,0,0);'></div>",
 		selector : "div.fragment1",
-		check : function(assert, $) {
-			assert.equal($.length, 1, "content must have length 1");
-			assert.equal($.css("width"), "64px", "fragment width");
-			assert.equal($.css("height"), "64px", "fragment height");
-			assert.equal(normalize($.css("background-color")), "rgb(255,0,0)", "fragment bg color");
-			return $.length === 1
-					&& $.css("width") === "64px"
-					&& $.css("height") === "64px"
-					&& normalize($.css("background-color")) === "rgb(255,0,0)";
+		check : function(assert, $content) {
+			assert.equal($content.length, 1, "content must have length 1");
+			assert.equal($content.css("width"), "64px", "fragment width");
+			assert.equal($content.css("height"), "64px", "fragment height");
+			assert.equal(normalize($content.css("background-color")), "rgb(255,0,0)", "fragment bg color");
+			return $content.length === 1
+					&& $content.css("width") === "64px"
+					&& $content.css("height") === "64px"
+					&& normalize($content.css("background-color")) === "rgb(255,0,0)";
 		}
 	};
 
 	var FRAGMENT_2 = {
 		content : "<div class='fragment2' style='width:64px;height:64px;background-color:rgb(0,0,255);'></div>",
 		selector : "div.fragment2",
-		check : function(assert, $) {
-			assert.equal($.length, 1, "content must have length 1");
-			assert.equal($.css("width"), "64px", "fragment width");
-			assert.equal($.css("height"), "64px", "fragment height");
-			assert.equal(normalize($.css("background-color")), "rgb(0,0,255)", "fragment bg color");
-			return $.length === 1
-					&& $.css("width") === "64px"
-					&& $.css("height") === "64px"
-					&& normalize($.css("background-color")) === "rgb(0,0,255)";
+		check : function(assert, $content) {
+			assert.equal($content.length, 1, "content must have length 1");
+			assert.equal($content.css("width"), "64px", "fragment width");
+			assert.equal($content.css("height"), "64px", "fragment height");
+			assert.equal(normalize($content.css("background-color")), "rgb(0,0,255)", "fragment bg color");
+			return $content.length === 1
+					&& $content.css("width") === "64px"
+					&& $content.css("height") === "64px"
+					&& normalize($content.css("background-color")) === "rgb(0,0,255)";
 		}
 	};
 
 	var FRAGMENT_3 = {
 		selector : "div.fragment3",
-		check : function(assert, $) {
-			return $.length === 1
-					&& $.css("width") === "42px"
-					&& $.css("height") === "42px"
-					&& normalize($.css("background-color")) === "rgb(255,0,0)";
+		check : function(assert, $content) {
+			return $content.length === 1
+					&& $content.css("width") === "42px"
+					&& $content.css("height") === "42px"
+					&& normalize($content.css("background-color")) === "rgb(255,0,0)";
 		}
 	};
 
 	var FRAGMENT_4 = {
 		selector : "div.fragment4",
-		check : function(assert, $) {
-			return $.length === 1
-					&& $.css("width") === "77px"
-					&& $.css("height") === "77px"
-					&& normalize($.css("background-color")) === "rgb(255,255,0)";
+		check : function(assert, $content) {
+			return $content.length === 1
+					&& $content.css("width") === "77px"
+					&& $content.css("height") === "77px"
+					&& normalize($content.css("background-color")) === "rgb(255,255,0)";
 		}
 	};
 
 	function okFragment(assert, oFragment, sUIArea, sComment) {
-		var $ = jQuery(oFragment.selector, document.getElementById(sUIArea));
-		assert.ok($.length > 0, "expected HTML fragment exists");
-		assert.ok(oFragment.check(assert, $), sComment);
+		var $content = jQuery(oFragment.selector, document.getElementById(sUIArea));
+		assert.ok($content.length > 0, "expected HTML fragment exists");
+		assert.ok(oFragment.check(assert, $content), sComment);
 	}
 
 	function afterRerendering(fnTest) {

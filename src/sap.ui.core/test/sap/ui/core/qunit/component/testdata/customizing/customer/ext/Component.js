@@ -3,9 +3,7 @@ sap.ui.define([
 ], function(UIComponent) {
 	"use strict";
 
-
 	var Component = UIComponent.extend("testdata.customizing.customer.Component", {
-
 		metadata : {
 			version : "1.0",
 			rootView : {
@@ -17,9 +15,7 @@ sap.ui.define([
 			customizing: {
 			}
 		}
-
 	});
 
 	return Component;
-
 });

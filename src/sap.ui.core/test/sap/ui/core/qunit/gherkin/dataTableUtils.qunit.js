@@ -132,7 +132,7 @@ sap.ui.define([
 
 		assert.deepEqual(dtu.toTable(data, "camelCase"), expected, "camelCase string");
 
-		var normalizationFunction = sap.ui.test.gherkin.dataTableUtils.normalization.camelCase;
+		var normalizationFunction = dtu.normalization.camelCase;
 		assert.deepEqual(dtu.toTable(data, normalizationFunction), expected, "camelCase function");
 	});
 
@@ -331,7 +331,7 @@ sap.ui.define([
 
 		assert.deepEqual(dtu.toObject(data, "hyphenated"), expected, "hyphenated string");
 
-		var normalizationFunction = sap.ui.test.gherkin.dataTableUtils.normalization.hyphenated;
+		var normalizationFunction = dtu.normalization.hyphenated;
 		assert.deepEqual(dtu.toObject(data, normalizationFunction), expected, "hyphenated function");
 	});
 
