@@ -226,10 +226,17 @@ sap.ui.define([
 		};
 	}
 
-	function removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContentClone, oView) {
+	function removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContentClone, aContent, oView) {
 		return Promise.resolve()
-			.then(oModifier.removeAllAggregation.bind(oModifier, oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION))
+			.then(function() {
+				// Remove each control from the "content" aggregation without leaving them orphan (would reset bindings)
+				return aContent.reduce(function(oPreviousPromise, oContent) {
+					return oPreviousPromise
+					.then(oModifier.insertAggregation.bind(oModifier, oSimpleForm, "dependents", oContent, 0, oView));
+				}, Promise.resolve());
+			})
 			.then(function(){
+				// Add the removed controls one by one in the new order
 				return aContentClone.reduce(function(oPreviousPromise, oContentClone, iIndex) {
 					return oPreviousPromise
 						.then(oModifier.insertAggregation.bind(oModifier,
@@ -314,7 +321,7 @@ sap.ui.define([
 					}
 
 					if (iSourceFieldIndex != iTargetFieldIndex) {
-						return removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContentClone, oView);
+						return removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContentClone, aContent, oView);
 					}
 
 				} else if (oChange.getChangeType() === MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP) {
@@ -357,7 +364,7 @@ sap.ui.define([
 							// and insert it at the target index
 							aContentClone = arrayRangeCopy(aContent, iMovedGroupIndex, aContentClone, iTargetIndex + iOffset, iMovedLength);
 
-							return removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContentClone, oView);
+							return removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContentClone, aContent, oView);
 						});
 				} else {
 					Log.warning("Unknown change type detected. Cannot apply to SimpleForm");
@@ -441,11 +448,12 @@ sap.ui.define([
 		var oView = mPropertyBag.view;
 		var oRevertData = oChange.getRevertData();
 		var aContentSelectors = oRevertData.content;
-
-		var aContent = aContentSelectors.map(function(oSelector) {
-			return oModifier.bySelector(oSelector, oAppComponent, oView);
-		});
-		return removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContent, oView)
+		return oModifier.getAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION)
+		.then(function(aCurrentContent) {
+			var aContent = aContentSelectors.map(function(oSelector) {
+				return oModifier.bySelector(oSelector, oAppComponent, oView);
+			});
+			return removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContent, aCurrentContent, oView)
 			.then(function(){
 				// destroy implicitly created title
 				var oCreatedTitleSelector = oRevertData.createdTitleSelector;
@@ -458,6 +466,7 @@ sap.ui.define([
 
 				return true;
 			});
+		});
 	};
 
 	MoveSimpleForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {

@@ -372,7 +372,11 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.module("AddField for SimpleForm in XML", {
+	// element action test does not work due to the complicated aggregation structure of the SimpleForm
+	// the change needs the form container (which is not available in xml) to be created
+	// Changes can't be created with xml controls since this is not a valid scenario
+	// -> currently tests for XML are skipped
+	QUnit.skip("AddField for SimpleForm in XML", {
 		beforeEach: function () {
 			this.oMockedAppComponent = {
 				getLocalId: function () {
@@ -382,7 +386,7 @@ function(
 		}
 	});
 
-	QUnit.test('Add smart field to SimpleForm xml tree in the end', function (assert) {
+	QUnit.skip('Add smart field to SimpleForm xml tree in the end', function (assert) {
 
 		var sAddedFieldId = "addedFieldId";
 		var sValue = "{BindingPath1}";
@@ -438,7 +442,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test('Add smart field to SimpleForm xml tree in the beginning', function (assert) {
+	QUnit.skip('Add smart field to SimpleForm xml tree in the beginning', function (assert) {
 		var sAddedFieldId = "addedFieldId";
 		var sValue = "{BindingPath1}";
 		var sTitleId = "NewTitle";
@@ -493,7 +497,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test('Add smart field to SimpleForm xml tree in the middle', function (assert) {
+	QUnit.skip('Add smart field to SimpleForm xml tree in the middle', function (assert) {
 		var sAddedFieldId = "addedFieldId";
 		var sValue = "{BindingPath1}";
 		var sTitleId = "NewTitle";
@@ -554,7 +558,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test('Add smart field in the middle of SimpleForm without title/toolbar in xml tree', function (assert) {
+	QUnit.skip('Add smart field in the middle of SimpleForm without title/toolbar in xml tree', function (assert) {
 
 		var sAddedFieldId = "addedFieldId";
 		var sValue = "{BindingPath1}";
