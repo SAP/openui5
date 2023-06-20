@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
+	"sap/base/util/merge",
 	"sap/m/List",
 	"sap/m/CustomListItem",
 	"sap/m/Button",
@@ -35,6 +36,7 @@ sap.ui.define([
 ], function(
 	jQuery,
 	Log,
+	merge,
 	List,
 	CustomListItem,
 	Button,
@@ -2386,6 +2388,54 @@ sap.ui.define([
 					fnDone();
 				}
 			);
+		});
+
+		QUnit.test("when an overlay with actionsFromResponsibleElement is created", function(assert) {
+			var oButton1 = new Button("button1");
+			var oLayout = new VerticalLayout("layout1", {
+				content: [
+					oButton1
+				]
+			});
+			var oButton2 = new Button("button2");
+			var oLayout2 = new VerticalLayout("layout2", {
+				content: [
+					oButton2
+				]
+			});
+			var oNewDesigntime = {};
+			return oButton1.getMetadata().loadDesignTime().then(function(oDesignTimeMetadata) {
+				oNewDesigntime = merge(oNewDesigntime, oDesignTimeMetadata, {
+					actions: {
+						actionsFromResponsibleElement: "rename",
+						getResponsibleElement: function(oButton) {
+							return oButton.getParent();
+						}
+					}
+				});
+				sandbox.stub(Button.prototype.getMetadata(), "loadDesignTime").resolves(oNewDesigntime);
+
+				return Promise.all([
+					this.oDesignTime.createOverlay(oLayout),
+					this.oDesignTime.createOverlay(oLayout2)
+				]);
+			}.bind(this))
+			.then(function() {
+				assert.deepEqual(
+					this.oDesignTime.getSelectionManager().getConnectedElements(),
+					{
+						layout1: "button1",
+						button1: "layout1",
+						layout2: "button2",
+						button2: "layout2"
+					},
+					"the connected overlays are registered in the selection manager"
+				);
+			}.bind(this))
+			.finally(function() {
+				oLayout.destroy();
+				oLayout2.destroy();
+			});
 		});
 	});
 
