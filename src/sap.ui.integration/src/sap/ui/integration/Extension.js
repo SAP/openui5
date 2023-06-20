@@ -224,7 +224,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Extension.prototype._setCard = function (oCard, oCardInterface) {
-		this._oCard = oCard;
+		this._oCard = oCard; // @ui5-restricted sap.insights.CardExtension
 		this._oCardInterface = oCardInterface;
 	};
 
