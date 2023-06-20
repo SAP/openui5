@@ -15,6 +15,7 @@ sap.ui.define([
 		var TMPL_REF = sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl"),
 			MOCK_DATA_REF = sap.ui.require.toUrl("sap/ui/demo/mock");
 
+		// TODO : refactor hardcoded libs
 		var OPENUI5_LIBS = ["sap.ui.core", "sap.ui.dt", "sap.m", "sap.ui.fl", "sap.ui.layout", "sap.ui.mdc", "sap.ui.unified",
 			"sap.f", "sap.ui.rta", "sap.ui.commons", "sap.ui.codeeditor", "sap.ui.table", "sap.uxap", "sap.ui.integration",
 			"sap.tnt", "sap.ui.ux3", "sap.ui.suite", "sap.ui.webc.common", "sap.ui.webc.fiori", "sap.ui.webc.main" ];
@@ -28,8 +29,8 @@ sap.ui.define([
 	return BaseController.extend("sap.ui.documentation.sdk.controller.SampleBaseController", {
 		_aMockFiles: ["products.json", "supplier.json", "img.json"],
 
-		fetchSourceFile: function (sUrl, bTreatAsText) {
-			return ResourceDownloadUtil.fetch(sUrl, bTreatAsText).catch(function (e) {
+		fetchSourceFile: function (sUrl, bTreatAsText, bForceFetch) {
+			return ResourceDownloadUtil.fetch(sUrl, bTreatAsText, bForceFetch).catch(function (e) {
 				Log.warning(e);
 				return "File not loaded"; // substitute content to display in the editor
 			});

@@ -9,8 +9,8 @@ sap.ui.define([], function() {
 		var _fetchPromises = {};
 
 		var AJAXUtils = {
-			fetch: function (sUrl, bTreatAsText) {
-				if (!(sUrl in _fetchPromises)) {
+			fetch: function (sUrl, bTreatAsText, bForceFetch) {
+				if (!(sUrl in _fetchPromises) || bForceFetch) {
 					_fetchPromises[sUrl] = this._fetch(sUrl, bTreatAsText);
 				}
 				return _fetchPromises[sUrl];

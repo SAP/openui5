@@ -23,6 +23,13 @@
 				</contentLeft>
 				<contentMiddle>
 					<Title level="H1" text="{/title}" tooltip="{/title}"/>
+					<Button
+							id="warningSample"
+							icon="sap-icon://warning"	
+							visible="{=${/showWarning}}"
+							tooltip="{i18n>SAMPLE_EDITED_TOOLTIP}"
+							class="sapUiExploredWarningIcon"
+							press="onWarningSample"/>
 				</contentMiddle>
 				<contentRight>
 					<Button
