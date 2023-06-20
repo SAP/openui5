@@ -10,9 +10,9 @@ sap.ui.define([
 ], function (Controller, JSONModel, UploadSetTable, UploadSetTableItem, MessageBox, Fragment, MockServer, MessageToast) {
 	"use strict";
 
-	return Controller.extend("sap.m.sample.UploadSetTable.Page", {
+	return Controller.extend("sap.m.uploadSetTableDemo.Page", {
 		onInit: function () {
-			var sPath = sap.ui.require.toUrl("sap/m/sample/UploadSetTable/items.json");
+			var sPath = sap.ui.require.toUrl("sap/m/uploadSetTableDemo/items.json");
 
 			this.getView().setModel(new JSONModel(sPath));
 
@@ -168,7 +168,7 @@ sap.ui.define([
 				});
 				if (!this._fileUploadFragment) {
 					Fragment.load({
-						name: "sap.m.sample.UploadSetTable.FileUpload",
+						name: "sap.m.uploadSetTableDemo.FileUpload",
 						id: this.getView().getId() + "-file-upload-dialog",
 						controller: this
 					})

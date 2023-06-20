@@ -168,6 +168,7 @@ sap.ui.define([
 	Uploader.prototype.uploadItem = function (oItem, aHeaderFields) {
 		var oXhr = new window.XMLHttpRequest(),
 			oFile = oItem.getFileObject(),
+			aAdditionalFileInfo = oItem.getAdditionalFileInfo(),
 			that = this,
 			oRequestHandler = {
 				xhr: oXhr,
@@ -175,6 +176,13 @@ sap.ui.define([
 			},
 			sHttpRequestMethod = this.getHttpRequestMethod(),
 			sUploadUrl = oItem.getUploadUrl() || this.getUploadUrl();
+
+		try {
+			aAdditionalFileInfo = JSON.stringify(aAdditionalFileInfo);
+		} catch (error) {
+			// if unable to parse send empty job
+			aAdditionalFileInfo = "{}";
+		}
 
 		oXhr.open(sHttpRequestMethod, sUploadUrl, true);
 
@@ -186,18 +194,6 @@ sap.ui.define([
 			aHeaderFields.forEach(function (oHeader) {
 				oXhr.setRequestHeader(oHeader.getKey(), oHeader.getText());
 			});
-		}
-
-		if (this.getUseMultipart()) {
-			var oFormData = new window.FormData();
-			var name = oFile ? oFile.name : null;
-			if (oFile instanceof window.Blob && name) {
-				oFormData.append(name, oFile, oFile.name);
-			} else {
-				oFormData.append(name, oFile);
-			}
-			oFormData.append("_charset_", "UTF-8");
-			oFile = oFormData;
 		}
 
 		oXhr.onreadystatechange = function () {
@@ -216,9 +212,27 @@ sap.ui.define([
 			}
 		};
 
-		this._mRequestHandlers[oItem.getId()] = oRequestHandler;
-		oXhr.send(oFile);
-		this.fireUploadStarted({item: oItem});
+		if (this.getUseMultipart()) {
+			var oFormData = new window.FormData();
+			var name = oFile ? oFile.name : null;
+			if (oFile instanceof window.Blob && name) {
+				oFormData.append(name, oFile, oFile.name);
+			} else {
+				oFormData.append(name, oFile);
+			}
+			oFormData.append("_charset_", "UTF-8");
+			oFormData.append("additionalFileInfo", aAdditionalFileInfo);
+			oFile = oFormData;
+
+			this._mRequestHandlers[oItem.getId()] = oRequestHandler;
+			oXhr.send(oFile);
+			this.fireUploadStarted({item: oItem});
+		} else {
+			this._mRequestHandlers[oItem.getId()] = oRequestHandler;
+			oXhr.send({file: oFile, additionalFileInfo: aAdditionalFileInfo});
+			this.fireUploadStarted({item: oItem});
+		}
+
 	};
 
 	/**

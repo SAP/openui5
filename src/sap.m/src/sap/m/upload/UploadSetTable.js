@@ -424,6 +424,14 @@ sap.ui.define([
 		return this;
 	};
 
+	UploadSetTable.prototype.setMultiple = function (bMultiple) {
+		if (this.getMultiple() !== bMultiple) {
+			this.setProperty("multiple", bMultiple);
+			this.getDefaultFileUploader().setMultiple(bMultiple);
+		}
+		return this;
+	};
+
 	/* ============== */
 	/* Public methods */
 	/* ============== */

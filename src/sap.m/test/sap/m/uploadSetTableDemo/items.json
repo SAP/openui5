@@ -1,0 +1,45 @@
+{
+	"documentTableTitle": "Documents",
+	"items": [
+		{
+			"id": "23004569",
+			"fileName": "Invoice summary.doc",
+			"mediaType": "application/msword",
+			"imageUrl": "test-resources/sap/m/images/invoice_manager.png",
+			"url": "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Agenda.doc",
+			"uploadState": "Complete",
+			"revision": "01",
+			"status": "In work",
+			"fileSize": 200,
+			"lastModifiedBy": "Jane Burns",
+			"lastmodified": "10/03/21, 10:03:00 PM",
+			"documentType": "Invoice"
+		},
+		{
+			"id": "23004589",
+			"fileName": "Business Plan Topics.xls",
+			"mimeType": "application/xls",
+			"url": "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Topics.xls",
+			"uploadState": "Complete",
+			"revision": "00",
+			"status": "In work",
+			"fileSize": 2400,
+			"lastModifiedBy": "Jane Burns",
+			"lastmodified": "10/03/21, 10:03:00 PM",
+			"documentType": "Invoice"
+		},
+		{
+			"id": "23004578",
+			"fileName": "Instructions.pdf",
+			"mimeType": "application/pdf",
+			"url": "demokit/sample/UploadCollection/LinkedDocuments/Instructions.pdf",
+			"uploadState": "Complete",
+			"revision": "01",
+			"status": "In work",
+			"fileSize": 30000,
+			"lastModifiedBy": "Jane Burns",
+			"lastmodified": "10/03/21, 10:03:00 PM",
+			"documentType": "Specification"
+		}
+	]
+}
