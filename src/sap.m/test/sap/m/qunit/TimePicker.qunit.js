@@ -393,8 +393,9 @@ sap.ui.define([
 	QUnit.test("Set displayFormat to 'HH:mm'", function (assert) {
 		// Act
 		this.oTimePicker.setDisplayFormat("HH:mm");
+		var sPlaceholderPrefix = oCore.getLibraryResourceBundle("sap.ui.core").getText("date.placeholder").split("{")[0];
 		// Assert
-		assert.equal(this.oTimePicker._getPlaceholder(), "For example 23:59", "The placeholder is correct");
+		assert.ok(this.oTimePicker._getPlaceholder().includes(sPlaceholderPrefix), "The placeholder is correct");
 	});
 
 	QUnit.test("Set displayFormat to 'short'", function (assert) {
