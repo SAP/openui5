@@ -177,7 +177,7 @@ sap.ui.define([
 				return oObject.getId();
 			}
 
-			return JSONListBinding.prototype.getEntryKey.apply(this, arguments);
+			return JSONListBinding.prototype.getEntryData.apply(this, arguments); // as ListBinding.prototype.getContextData falls back to getEntryData if getEntryKey is not defined
 		},
 		getEntryData: function(oContext) {
 			// use the id of the ManagedObject instance as the identifier
