@@ -2071,12 +2071,13 @@ sap.ui.define([
 			var aTokens = oContent.getTokens ? oContent.getTokens() : [];
 			assert.equal(aTokens.length, 0, "MultiInput has no Token");
 			assert.equal(jQuery(oContent.getFocusDomRef()).val(), "15", "Value still in Input");
+			assert.equal(oContent.getValueState(), "Error", "ValueState set on inner Control");
 			assert.equal(oField.getValueState(), "Error", "ValueState set on Field");
 
 			// on switch to display mode error must be removed (as wrong input is not stored)
 			oField.setEditMode(FieldEditMode.Display);
 			oCore.applyChanges();
-			assert.equal(oField.getValueState(), "None", "ValueState after switch to display mode");
+			assert.equal(oField.getValueState(), "None", "ValueState on Field after switch to display mode"); // no check on inner control as it has no valueState property
 			aContent = oField.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.equal(oContent.getTokens().length, 0, "No tokens in content control");
@@ -2126,6 +2127,7 @@ sap.ui.define([
 			assert.equal(aConditions.length, 0, "no conditions");
 			assert.equal(jQuery(oContent.getFocusDomRef()).val(), "15", "Value still in Input");
 			assert.equal(oField.getValueState(), "Error", "ValueState set on Field");
+			assert.equal(oContent.getValueState(), "Error", "ValueState set on inner Content");
 
 			fnDone();
 		}, 0);
@@ -2354,7 +2356,8 @@ sap.ui.define([
 			assert.equal(aConditions.length, 0, "no condition in Codition model");
 			assert.equal(jQuery(oContent.getFocusDomRef()).val(), "15", "Value still in Input");
 			assert.equal(iValidationError, 1, "ValidationError fired");
-			assert.equal(oField.getValueState(), "Error", "ValueState");
+			assert.equal(oField.getValueState(), "Error", "ValueState on Field");
+			assert.equal(oContent.getValueState(), "Error", "ValueState on Content");
 
 			// on switch to display mode error must be removed (as wrong input is not stored)
 			oField.setEditMode(FieldEditMode.Display);
@@ -2610,6 +2613,122 @@ sap.ui.define([
 			aTokens = oContent1.getTokens ? oContent1.getTokens() : [];
 			assert.equal(aTokens.length, 0, "MultiInput has no Token after delete");
 		}
+
+	});
+
+	QUnit.test("wrong input with type currency", function(assert) {
+
+		oField.setDataType("sap.ui.model.type.Currency");
+		var oCondition = Condition.createCondition("EQ", [[123.45, "USD"]], undefined, undefined, ConditionValidated.NotValidated, {payload: "X"});
+		oField.setConditions([oCondition]);
+		oCore.applyChanges();
+
+		var aContent = oField.getAggregation("_content");
+		var oContent1 = aContent && aContent.length > 0 && aContent[0];
+		var oContent2 = aContent && aContent.length > 0 && aContent[1];
+		oContent1.focus();
+
+		var fnDone = assert.async();
+		jQuery(oContent1.getFocusDomRef()).val("A");
+		qutils.triggerKeydown(oContent1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		setTimeout(function() { // to wait to update ValueState via binding
+			assert.equal(iCount, 1, "change event fired once");
+			assert.equal(sId, "F1", "change event fired on Field");
+			// assert.equal(sValue, "A", "change event value");
+			assert.notOk(bValid, "change event not valid");
+			assert.ok(oPromise, "Promise returned");
+			assert.equal(iSubmitCount, 1, "submit event fired once");
+			assert.equal(sSubmitId, "F1", "submit event fired on Field");
+			assert.ok(oSubmitPromise, "submit: Promise returned");
+			var aConditions = oCM.getConditions("Name");
+			assert.equal(aConditions.length, 1, "old condition still in Codition model");
+			assert.equal(jQuery(oContent1.getFocusDomRef()).val(), "A", "Value still in Input");
+			assert.equal(iParseError, 1, "PartseError fired");
+			assert.equal(oField.getValueState(), "Error", "ValueState on Field");
+			assert.equal(oContent1.getValueState(), "Error", "ValueState on Content1");
+			assert.equal(oContent1.getValueStateText(), oField.getValueStateText(), "ValueStateText on Content1");
+			assert.equal(oContent2.getValueState(), "None", "No ValueState on Content2");
+			assert.equal(oContent2.getValueStateText(), "", "No ValueStateText on Content2");
+
+			oPromise.then(function(vResult) {
+				assert.notOk(true, "Promise must not be resolved");
+				fnDone();
+			}).catch(function(oException) {
+				assert.ok(true, "Promise must be rejected");
+				oSubmitPromise.then(function(vResult) {
+					assert.notOk(true, "submit: Promise must not be resolved");
+					fnDone();
+				}).catch(function(oException) {
+					assert.ok(true, "submit: Promise rejected");
+
+					// currency part
+					iCount = 0; sId = ""; sValue = ""; bValid = undefined; oPromise = undefined;
+					iSubmitCount = 0; sSubmitId = ""; oSubmitPromise = undefined;
+					iParseError = 0; iValidationError = 0; iValidationSuccess = 0;
+					jQuery(oContent2.getFocusDomRef()).val("B");
+					qutils.triggerKeydown(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+					setTimeout(function() { // to wait to update ValueState via binding
+						assert.equal(iCount, 1, "change event fired once");
+						assert.equal(sId, "F1", "change event fired on Field");
+						// assert.equal(sValue, "A", "change event value");
+						assert.notOk(bValid, "change event not valid");
+						assert.ok(oPromise, "Promise returned");
+						assert.equal(iSubmitCount, 1, "submit event fired once");
+						assert.equal(sSubmitId, "F1", "submit event fired on Field");
+						assert.ok(oSubmitPromise, "submit: Promise returned");
+						var aConditions = oCM.getConditions("Name");
+						assert.equal(aConditions.length, 1, "old condition still in Codition model");
+						assert.equal(jQuery(oContent1.getFocusDomRef()).val(), "A", "Value still in Input1");
+						assert.equal(jQuery(oContent2.getFocusDomRef()).val(), "B", "Value still in Input2");
+						assert.equal(iParseError, 1, "PartseError fired");
+						assert.equal(oField.getValueState(), "Error", "ValueState on Field");
+						assert.equal(oContent1.getValueState(), "Error", "ValueState on Content1");
+						assert.notEqual(oContent1.getValueStateText(), oField.getValueStateText(), "ValueStateText on Content1");
+						assert.equal(oContent2.getValueState(), "Error", "ValueState on Content2");
+						assert.equal(oContent2.getValueStateText(), oField.getValueStateText(), "ValueStateText on Content2");
+
+						oPromise.then(function(vResult) {
+							assert.notOk(true, "Promise must not be resolved");
+							fnDone();
+						}).catch(function(oException) {
+							assert.ok(true, "Promise must be rejected");
+							oSubmitPromise.then(function(vResult) {
+								assert.notOk(true, "submit: Promise must not be resolved");
+								fnDone();
+							}).catch(function(oException) {
+								assert.ok(true, "submit: Promise rejected");
+
+								// updating condition must remove value state
+								var oCondition = Condition.createCondition("EQ", [[234, "USD"]], undefined, undefined, ConditionValidated.NotValidated, {payload: "X"});
+								oField.setConditions([oCondition]);
+								setTimeout(function() { // to wait to update ValueState via binding
+									assert.equal(oField.getValueState(), "None", "No ValueState after updating condition");
+									assert.equal(oField.getValueStateText(), "", "No ValueStateText on Field");
+									assert.equal(oContent1.getValueState(), "None", "No ValueState on Content1");
+									assert.equal(oContent1.getValueStateText(), "", "No ValueStateText on Content1");
+									assert.equal(oContent2.getValueState(), "None", "No ValueState on Content2");
+									assert.equal(oContent2.getValueStateText(), "", "No ValueStateText on Content2");
+
+									// setting ValueStae from outside should show it on both Fields
+									oField.setValueState("Warning");
+									oField.setValueStateText("My Warning");
+									setTimeout(function() { // to wait to update ValueState via binding
+										assert.equal(oField.getValueState(), "Warning", "ValueState after updating condition");
+										assert.equal(oField.getValueStateText(), "My Warning", "ValueStateText on Field");
+										assert.equal(oContent1.getValueState(), "Warning", "ValueState on Content1");
+										assert.equal(oContent1.getValueStateText(), "My Warning", "ValueStateText on Content1");
+										assert.equal(oContent2.getValueState(), "Warning", "ValueState on Content2");
+										assert.equal(oContent2.getValueStateText(), "My Warning", "ValueStateText on Content2");
+
+										fnDone();
+									});
+								});
+							});
+						});
+					}, 0);
+				});
+			});
+		}, 0);
 
 	});
 
@@ -3549,8 +3668,10 @@ sap.ui.define([
 		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
 		assert.notOk(oFieldHelp.getItemForValue.called, "getItemForValue not called");
 		assert.equal(oContent.getDOMValue(), "", "value not longer shown in inner control");
-		assert.equal(oField.getValueState(), "None", "No ValueState");
-		assert.equal(oField.getValueStateText(), "", "No ValueStateText");
+		assert.equal(oField.getValueState(), "None", "No ValueState on Field");
+		assert.equal(oField.getValueStateText(), "", "No ValueStateText on Field");
+		assert.equal(oContent.getValueState(), "None", "No ValueState on inner content");
+		assert.equal(oContent.getValueStateText(), "", "No ValueStateText on inner content");
 		assert.notOk(oField.isInvalidInput(), "no parse error");
 
 		// simulate select event with close to see if field is updated
@@ -3578,6 +3699,8 @@ sap.ui.define([
 		assert.equal(oContent.getProperty("value"), "", "no value set in inner control"); // as getValue returns DomValue, not property
 		assert.equal(oField.getValueState(), "None", "No ValueState"); // after updating conditions valueStae should be cleared
 		assert.equal(oField.getValueStateText(), "", "No ValueStateText");
+		assert.equal(oContent.getValueState(), "None", "No ValueState on inner content");
+		assert.equal(oContent.getValueStateText(), "", "No ValueStateText on inner content");
 		assert.notOk(oField.isInvalidInput(), "no parse error");
 		oField._oContentFactory._oConditionsType.parseValue.restore();
 

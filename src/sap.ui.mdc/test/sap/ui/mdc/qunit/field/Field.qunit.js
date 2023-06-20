@@ -726,7 +726,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("clenaup wrong input", function(assert) {
+	QUnit.test("cleanup wrong input", function(assert) {
 
 		var fnDone = assert.async();
 		oCore.getMessageManager().registerObject(oField, true); // to test valueState
@@ -758,7 +758,8 @@ sap.ui.define([
 				setTimeout(function() { // to wait for ManagedObjectModel update
 					setTimeout(function() { // to wait for Message update
 						assert.equal(jQuery(oContent.getFocusDomRef()).val(), "", "no value shown");
-						assert.equal(oField.getValueState(), "None", "ValueState removed");
+						assert.equal(oField.getValueState(), "None", "ValueState on Field  removed");
+						assert.equal(oContent.getValueState(), "None", "ValueState on Content  removed");
 
 						fnDone();
 					}, 0);

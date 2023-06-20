@@ -1212,12 +1212,12 @@ sap.ui.define([
 
 	};
 
-	// function _setUIMessage(sMsg) {
+	function _setUIMessage(sMsg) {
 
-	// 	this.setValueState(ValueState.Error);
-	// 	this.setValueStateText(sMsg);
+		this.setValueState(ValueState.Error);
+		this.setValueStateText(sMsg);
 
-	// }
+	}
 
 	FieldBase.prototype._removeUIMessage = function() {
 
@@ -1274,7 +1274,7 @@ sap.ui.define([
 		}
 
 		if (oChanges.name === "conditions") {
-			this.resetInvalidInput(); // if conditions updated from outside parse error is obsolete. If updated from inside no parse error occurs
+			this.resetInvalidInput(true); // if conditions updated from outside parse error is obsolete. If updated from inside no parse error occurs
 			_handleConditionsChange.call(this, oChanges.current, oChanges.old);
 
 			// try to find the corresponding async. change
@@ -1989,8 +1989,7 @@ sap.ui.define([
 
 		if (this.isInvalidInput()) {
 			// as wrong input get lost if content control is destroyed.
-			this.resetInvalidInput();
-			this._removeUIMessage();
+			this.resetInvalidInput(true);
 		}
 
 		if (this.getContentFactory().isMeasure()) {
@@ -2234,15 +2233,39 @@ sap.ui.define([
 
 	}
 
-	FieldBase.prototype._setInvalidInput = function(oException, vValue, sReason) {
+	FieldBase.prototype._setInvalidInput = function(oException, vValue, sReason, oSource) {
 
-		this._oInvalidInput = {exception: oException, value: vValue, reason: sReason};
+		var sSourceId = oSource ? oSource.getId() : this.getId();
+
+		if (!this._oInvalidInput) {
+			this._oInvalidInput = {};
+		}
+		this._oInvalidInput[sSourceId] = {exception: oException, value: vValue, reason: sReason};
 
 	};
 
-	FieldBase.prototype._getInvalidInputException = function() {
+	FieldBase.prototype._getInvalidInputException = function(oContent) {
 
-		return this._oInvalidInput && this._oInvalidInput.exception;
+		var oException;
+
+		if (this._oInvalidInput) {
+			if (oContent) {
+				if (this._oInvalidInput[oContent.getId()]) {
+					return this._oInvalidInput[oContent.getId()].exception;
+				} else if (this._oInvalidInput[this.getId()]) {
+					return this._oInvalidInput[this.getId()].exception;
+				}
+			} else {
+				// just take the exception we have
+				for (var sId in this._oInvalidInput) {
+					oException = this._oInvalidInput[sId].exception;
+					if (oException) {
+						break;
+					}
+				}
+			}
+		}
+		return oException;
 
 	};
 
@@ -2250,11 +2273,15 @@ sap.ui.define([
 	 * Resets invalid input information.
 	 *
 	 * Might be called if Binding changes or field is initialized.
+	 * @param {boolean} bRemoveUIMessage If set to <code>true</code> the <code>ValueState</code> and <code>ValueStateText</code> is removed
 	 * @protected
 	 */
-	FieldBase.prototype.resetInvalidInput = function() {
+	FieldBase.prototype.resetInvalidInput = function(bRemoveUIMessage) {
 
 		this._oInvalidInput = null;
+		if (bRemoveUIMessage) {
+			this._removeUIMessage(); // to be sure that valueState is removed, even for Unit fields
+		}
 
 	};
 
@@ -2269,13 +2296,27 @@ sap.ui.define([
 
 	};
 
+	// for unit field we need to check on what part the invalid input was made
+	FieldBase.prototype._isInvalidInputForContent = function(oContent) {
+
+		return this._oInvalidInput && (this._oInvalidInput[oContent.getId()] || this._oInvalidInput[this.getId()]);
+
+	};
+
 	function _handleParseError(oEvent) {
 
 		// as change event if inner control is fired even Input is wrong, check parse exception from binding
 		var vValue = oEvent.getParameter("newValue");
 		var oException = oEvent.getParameter("exception");
-		this._setInvalidInput(oException, vValue, "ParseError");
+		var oSource = oEvent.getSource();
+		this._setInvalidInput(oException, vValue, "ParseError", oSource);
 		this._sFilterValue = "";
+
+		var oBinding = oSource.getBinding("valueState");
+		if (oBinding && oBinding.getBindingMode() === BindingMode.OneWay) {
+			// for unit fields the valueState binding is OneWay, so we need to set the valueState manually
+			_setUIMessage.call(this, oEvent.getParameter("message"));
+		}
 
 	}
 
@@ -2284,7 +2325,8 @@ sap.ui.define([
 		// as change event if inner control is fired even Input is wrong, check validation exception from binding
 		var vValue = oEvent.getParameter("newValue");
 		var oException = oEvent.getParameter("exception");
-		this._setInvalidInput(oException, vValue, "ValidationError");
+		var oSource = oEvent.getSource();
+		this._setInvalidInput(oException, vValue, "ValidationError", oSource);
 		this._sFilterValue = "";
 
 		// try to find the corresponding async. change and reject it
@@ -2311,11 +2353,28 @@ sap.ui.define([
 			this._aAsyncChanges.splice(i, 1);
 		}
 
+		var oBinding = oSource.getBinding("valueState");
+		if (oBinding && oBinding.getBindingMode() === BindingMode.OneWay) {
+			// for unit fields the valueState binding is OneWay, so we need to set the valueState manually
+			_setUIMessage.call(this, oEvent.getParameter("message"));
+		}
+
 	}
 
 	function _handleValidationSuccess(oEvent) {
 
-		this.resetInvalidInput(); // if last valid value is entered again no condition is updated
+		var oSource = oEvent.getSource();
+
+		if (this._isInvalidInputForContent(oSource)) {
+			var oBinding = oSource.getBinding("valueState");
+			var bRemoveUIMessage = false; // for TwoWay-binding let the binding remove the valueState
+			if (oBinding && oBinding.getBindingMode() === BindingMode.OneWay) {
+				// for unit fields the valueState binding is OneWay, so we need to remove the valueState manually
+				bRemoveUIMessage = true;
+			}
+			this.resetInvalidInput(bRemoveUIMessage); // if last valid value is entered again no condition is updated
+		}
+
 
 	}
 
@@ -2829,8 +2888,7 @@ sap.ui.define([
 
 			// after selection input cannot be wrong
 			if (this.isInvalidInput()) { // only remove messages set by Field itself, message from outside should stay.
-				this.resetInvalidInput();
-				this._removeUIMessage();
+				this.resetInvalidInput(true);
 				bChangeAfterError = true;
 			}
 		}
@@ -3304,7 +3362,7 @@ sap.ui.define([
 
 			oPromise.then(function(vResult) {// vResult can be a condition or an array of conditions
 				oChange.result = vResult;
-				this.resetInvalidInput();
+				this.resetInvalidInput(); // UIMessage will be removed by ValidationSuccess handling
 				var aConditions = this.getConditions();
 				if (deepEqual(vResult, aConditions)) {
 					// parsingResult is same as current value -> no update will happen
@@ -3318,7 +3376,9 @@ sap.ui.define([
 					// unknown error -> just raise it
 					throw oException;
 				}
-				this._setInvalidInput(oException, undefined, "AsyncParsing");
+				// as async parsing only happens on content control with value help, use this ID
+				var oContent = this.getControlForSuggestion();
+				this._setInvalidInput(oException, undefined, "AsyncParsing", oContent);
 				fReject(oException);
 				_removeAsyncChange.call(this, oChange);
 			}.bind(this));
