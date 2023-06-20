@@ -20,6 +20,7 @@ sap.ui.define([
 	"use strict";
 	var mChanges;
 	var oWritableConfig = BaseConfig.getWritableInstance();
+	var bLanguageWarningLogged = false;
 
 	/**
 	 * A map of preferred Calendar types according to the language.
@@ -316,9 +317,11 @@ sap.ui.define([
 				oLanguageTag = createLanguageTag(sSapLocale);
 				sDerivedLanguage = sSapLocale;
 			} else if (sSapLanguage) {
-				if (!sLanguage) {
+				if (!sLanguage && !bLanguageWarningLogged) {
 					// only complain about an invalid sap-language if neither sap-locale nor sap-ui-language are given
 					Log.warning("sap-language '" + sSapLanguage + "' is not a valid BCP47 language tag and will only be used as SAP logon language");
+					// Avoid multiple logging of this warning
+					bLanguageWarningLogged = true;
 				}
 				//fromSAPLogonLanguage catches errors oLanguageTag could be undefined
 				var oSAPLogonLanguage = fromSAPLogonLanguage(sSapLanguage);
