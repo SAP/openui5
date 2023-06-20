@@ -29041,10 +29041,17 @@ sap.ui.define([
 	// entity via a bound action using another return value context.
 	// The elements referenced via the navigation property must not be taken from the cache.
 	// See CPOUI5UISERVICESV3-1686.
-	QUnit.test("return value contexts: don't reuse caches if context changed", function (assert) {
+	//
+	// Request an absolute side effect for the table below the R.V.C. (BCP: 2380046603)
+["_Publication", "/special.cases.Container/Artists/_Publication"].forEach(function (sPath) {
+	var sTitle = "return value contexts: don't reuse caches if context changed; side effect path: "
+			+ sPath;
+
+	QUnit.test(sTitle, function (assert) {
 		var oActiveArtistContext,
 			oInactiveArtistContext,
 			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			oNewActiveArtistContext,
 			sView = '\
 <FlexBox id="objectPage">\
 	<Text id="id" text="{ArtistID}"/>\
@@ -29090,7 +29097,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			var oOperation = that.oModel.bindContext("special.cases.EditAction(...)",
-					that.oView.getBindingContext(), {$$inheritExpandSelect : true});
+					oActiveArtistContext, {$$inheritExpandSelect : true});
 
 			that.expectRequest({
 					method : "POST",
@@ -29132,7 +29139,6 @@ sap.ui.define([
 					url : "Artists(ArtistID='42',IsActiveEntity=false)/_Publication('42-0')",
 					payload : {Price : "8.88"}
 				}, {
-					"@odata.etag" : "ETag1",
 					Price : "8.88"
 				})
 				.expectChange("price", ["8.88"]);
@@ -29158,7 +29164,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			var oOperation = that.oModel.bindContext("special.cases.ActivationAction(...)",
-					that.oView.getBindingContext(), {$$inheritExpandSelect : true});
+					oInactiveArtistContext, {$$inheritExpandSelect : true});
 
 			that.expectRequest({
 					method : "POST",
@@ -29177,7 +29183,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aPromiseResults) {
-			var oNewActiveArtistContext = aPromiseResults[0];
+			oNewActiveArtistContext = aPromiseResults[0];
 
 			// new active artist context causes dependent binding to reload data
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
@@ -29193,8 +29199,37 @@ sap.ui.define([
 			that.oView.setBindingContext(oNewActiveArtistContext);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=100", {
+					value : [{
+						Price : "8.89", // side effect
+						PublicationID : "42-0"
+					}]
+				})
+				.expectChange("price", ["8.89"]);
+
+			return Promise.all([
+				oNewActiveArtistContext.requestSideEffects([sPath]),
+				that.waitForChanges(assert, "side effect at R.V.C.")
+			]);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=100", {
+					value : [{
+						Price : "8.99", // side effect
+						PublicationID : "42-0"
+					}]
+				})
+				.expectChange("price", ["8.99"]);
+
+			return Promise.all([
+				oActiveArtistContext.requestSideEffects([sPath]),
+				that.waitForChanges(assert, "side effect above operation binding")
+			]);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: List and details containing a dependent table with an own request. Use

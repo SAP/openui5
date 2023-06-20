@@ -4535,10 +4535,12 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[0, 1, 2].forEach(function (iOperation) {
 	[false, true].forEach(function (bWithContext) {
 		[false, true].forEach(function (bRecursionRejects) {
 			var sTitle = "requestSideEffects, with context: " + bWithContext
-					+ "; recursion rejects: " + bRecursionRejects;
+					+ "; recursion rejects: " + bRecursionRejects
+					+ "; operation setup #" + iOperation;
 
 			QUnit.test(sTitle, function (assert) {
 				// Note: w/o a context, the binding would be relative in real life
@@ -4559,32 +4561,52 @@ sap.ui.define([
 					oResult,
 					that = this;
 
+				function expectVisitEtc(aPromises) {
+					that.mock(oBinding).expects("visitSideEffects")
+						.withExactArgs(sGroupId, sinon.match.same(aPaths),
+							sinon.match.same(oContext), aPromises)
+						.callsFake(function (_sGroupId, _aPaths, _oContext, aPromises) {
+							aPromises.push(Promise.resolve());
+							aPromises.push(Promise.reject(oCanceledError));
+							if (bRecursionRejects) {
+								aPromises.push(Promise.reject(oError));
+							}
+						});
+					that.mock(oBinding).expects("refreshDependentListBindingsWithoutCache")
+						.exactly(bRecursionRejects ? 0 : 1).withExactArgs().resolves("~");
+				}
+
 				oCanceledError.canceled = true;
 				oBinding.oCache = oCache; // simulate execute
-				this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId)
-					.returns(oGroupLock);
-				if (bWithContext) {
-					this.mock(oContext).expects("getPath").withExactArgs().returns("/Me");
+				switch (iOperation) {
+					case 0:
+						oBinding.oOperation = null;
+						break;
+
+					case 1:
+						oBinding.oReturnValueContext = "~truthy~";
+						break;
+
+					default:
+						// oOperation, but no oReturnValueContext
 				}
-				this.mock(oCache).expects("requestSideEffects")
+				this.mock(oBinding).expects("lockGroup").exactly(iOperation < 2 ? 1 : 0)
+					.withExactArgs(sGroupId).returns(oGroupLock);
+				if (bWithContext) {
+					this.mock(oContext).expects("getPath").exactly(iOperation < 2 ? 1 : 0)
+						.withExactArgs().returns("/Me");
+				}
+				this.mock(oCache).expects("requestSideEffects").exactly(iOperation < 2 ? 1 : 0)
 					.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths),
 						bWithContext ? "Me" : undefined)
-					.callsFake(function (_oGroupLock, aPaths) {
-						that.mock(oBinding).expects("visitSideEffects")
-							.withExactArgs(sGroupId, sinon.match.same(aPaths),
-								sinon.match.same(oContext), [oPromise])
-							.callsFake(function (_sGroupId, _aPaths, _oContext, aPromises) {
-								aPromises.push(Promise.resolve());
-								aPromises.push(Promise.reject(oCanceledError));
-								if (bRecursionRejects) {
-									aPromises.push(Promise.reject(oError));
-								}
-							});
-							that.mock(oBinding).expects("refreshDependentListBindingsWithoutCache")
-								.exactly(bRecursionRejects ? 0 : 1).withExactArgs().resolves("~");
+					.callsFake(function () {
+						expectVisitEtc([oPromise]);
 
 						return oPromise;
 					});
+				if (iOperation >= 2) {
+					expectVisitEtc([]);
+				}
 				oModelMock.expects("reportError")
 					.withExactArgs("Failed to request side effects", sClassName,
 						sinon.match.same(oCanceledError));
@@ -4610,10 +4632,11 @@ sap.ui.define([
 			});
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: no cache", function (assert) {
-		var oBinding = this.bindContext("/Me/name.space.Operation(...)");
+		var oBinding = this.bindContext("/Me");
 
 		// @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
 		// @throws {Error} - If this binding does not use own data service requests
@@ -4625,7 +4648,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: fails", function (assert) {
-		var oBinding = this.bindContext("/Me/name.space.Operation(...)"),
+		var oBinding = this.bindContext("/Me/Friends('42')"),
 			oCache = {
 				requestSideEffects : function () {}
 			},
@@ -4677,6 +4700,7 @@ sap.ui.define([
 					oRefreshPromise = bReturnValueContext ? SyncPromise.resolve() : null;
 
 				oBinding.oCache = oCache; // simulate execute
+				oBinding.oReturnValueContext = "~truthy~";
 				if (sPath === "") {
 					this.mock(oCache).expects("requestSideEffects").never();
 				} else {
@@ -4741,7 +4765,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: do not stifle errors", function (assert) {
-		var oBinding = this.bindContext("/Me/name.space.Operation(...)"),
+		var oBinding = this.bindContext("/Me"),
 			oCache = {
 				requestSideEffects : function () {}
 			},

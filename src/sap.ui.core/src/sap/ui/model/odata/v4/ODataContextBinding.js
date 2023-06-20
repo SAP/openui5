@@ -1527,9 +1527,11 @@ sap.ui.define([
 
 		if (aPaths.indexOf("") < 0) {
 			try {
-				aPromises.push(
-					this.oCache.requestSideEffects(this.lockGroup(sGroupId), aPaths,
-						oContext && oContext.getPath().slice(1)));
+				if (!this.oOperation || this.oReturnValueContext) {
+					aPromises.push(
+						this.oCache.requestSideEffects(this.lockGroup(sGroupId), aPaths,
+							oContext && oContext.getPath().slice(1)));
+				}
 
 				this.visitSideEffects(sGroupId, aPaths, oContext, aPromises);
 
