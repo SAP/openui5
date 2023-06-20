@@ -3999,6 +3999,11 @@ sap.ui.define([
 			]).then(function (aResult) {
 				that.buildOriginalResourcePath(aResult[0], aResult[1], fnGetOriginalResourcePath);
 				that.visitResponse(aResult[0], aResult[1]);
+				if (that.mQueryOptions && that.mQueryOptions.$select) {
+					// add "@$ui5.noData" annotations, e.g. for missing Edm.Stream properties
+					_Helper.updateSelected({}, "", aResult[0], aResult[0],
+						that.mQueryOptions.$select);
+				}
 				that.bPosting = false;
 				if (oRequestLock) {
 					oRequestLock.unlock();

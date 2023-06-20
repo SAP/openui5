@@ -11150,10 +11150,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bHasETag) {
-	QUnit.test("SingleCache: post for bound operation, has ETag: " + bHasETag, function (assert) {
-		var sResourcePath = "TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
-			oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, true, false, undefined,
-				true, "/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType/$Type"),
+	[false, true].forEach(function (bHasSelect) {
+		var sTitle = "SingleCache: post for bound operation, has ETag: " + bHasETag
+				+ ", has $select: " + bHasSelect;
+
+	QUnit.test(sTitle, function (assert) {
+		var mQueryOptions = bHasSelect ? {$select : "~select~"} : {},
+			sResourcePath = "TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
+			oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryOptions, true, false,
+				undefined, true, "/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType/$Type"),
 			oEntity = bHasETag ? {"@odata.etag" : 'W/"19700101000000.0000000"'} : {},
 			oGroupLock = {getGroupId : function () {}},
 			oGroupLockMock = this.mock(oGroupLock),
@@ -11182,6 +11187,9 @@ sap.ui.define([
 				"fnGetOriginalResourcePath");
 		oResponseExpectation = this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oReturnValue), sinon.match.same(mTypes));
+		this.mock(_Helper).expects("updateSelected").exactly(bHasSelect ? 1 : 0)
+			.withExactArgs({}, "", sinon.match.same(oReturnValue), sinon.match.same(oReturnValue),
+				"~select~");
 
 		// code under test
 		oResult = oCache.post(oGroupLock, /*oData*/null, oEntity, /*bIgnoreETag*/true, undefined,
@@ -11202,6 +11210,7 @@ sap.ui.define([
 				assert.ok(oUnlockExpectation.calledAfter(oResponseExpectation));
 				assert.ok(oResponseExpectation.calledAfter(oPathExpectation));
 			});
+	});
 	});
 });
 	//TODO with an expand on 1..n navigation properties, compute the count of the nested collection

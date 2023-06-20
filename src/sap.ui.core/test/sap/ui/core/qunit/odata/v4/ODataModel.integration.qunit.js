@@ -29470,6 +29470,87 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: An Edm.Stream property is requested as a "late" property and then inherited by an
+	// "Edit" action which replaces the active version by a draft inside the (hidden) ODLB. The
+	// property itself is missing from the response, but is not again requested.
+	// BCP: 2380058514
+	QUnit.test("BCP: 2380058514", function (assert) {
+		var oContext,
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox>\
+	<Text id="id" text="{ArtistID}"/>\
+	<Text id="isActive" text="{IsActiveEntity}"/>\
+	<Text id="url" text="{Picture}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("id")
+			.expectChange("isActive")
+			.expectChange("url");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity,Picture", {
+					ArtistID : "42",
+					IsActiveEntity : true
+					// Picture property not seen here -> "Picture@$ui5.noData" : true
+					// "Picture@odata.mediaContentType" etc. intentionally left out here
+				})
+				.expectChange("id", "42")
+				.expectChange("isActive", "Yes")
+				.expectChange("url",
+					"/special/cases/Artists(ArtistID='42',IsActiveEntity=true)/Picture");
+
+			oContext = oModel.getKeepAliveContext("/Artists(ArtistID='42',IsActiveEntity=true)");
+			that.oView.setBindingContext(oContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oOperation = that.oModel.bindContext("special.cases.EditAction(...)", oContext,
+					{$$inheritExpandSelect : true});
+
+			assert.deepEqual(oContext.getObject(), {
+				ArtistID : "42",
+				IsActiveEntity : true,
+				"Picture@$ui5.noData" : true
+			});
+
+			that.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction"
+						+ "?$select=ArtistID,IsActiveEntity,Picture",
+					payload : {}
+				}, {
+					ArtistID : "42",
+					IsActiveEntity : false
+					// Picture property not seen here -> "Picture@$ui5.noData" : true
+					// "Picture@odata.mediaContentType" etc. intentionally left out here
+				});
+
+			return Promise.all([
+				// code under test
+				oOperation.execute(undefined, false, null, /*bReplaceWithRVC*/true),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			assert.deepEqual(aResults[0].getObject(), {
+				ArtistID : "42",
+				IsActiveEntity : false,
+				"Picture@$ui5.noData" : true
+			});
+
+			that.expectChange("isActive", "No")
+				.expectChange("url",
+					"/special/cases/Artists(ArtistID='42',IsActiveEntity=false)/Picture");
+
+			that.oView.setBindingContext(aResults[0]);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Call an action which returns the binding parameter as return value. Expect that
 	// the result is copied back to the binding parameter.
 	// JIRA: CPOUI5UISERVICESV3-523
