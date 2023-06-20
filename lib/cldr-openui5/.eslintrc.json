@@ -28,6 +28,7 @@
 		"no-prototype-builtins": "off",
 		"no-unused-vars": "warn",
 		"no-var": "error",
+		"space-infix-ops": "error",
 		"quotes": [
 			"error",
 			"double",
