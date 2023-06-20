@@ -699,7 +699,7 @@ sap.ui.define([
 						controlType: "sap.m.Button",
 						matchers: new PropertyStrictEquals({
 							name: "text",
-							value: TestUtil.getTextFromResourceBundle("sap.ui.fl", "VARIANT_MANAGEMENT_SAVEAS")
+							value: TestUtil.getTextFromResourceBundle("sap.m", "VARIANT_MANAGEMENT_SAVEAS")
 						}),
 						actions: new Press(),
 						success: function (aButtons) {
@@ -719,7 +719,7 @@ sap.ui.define([
 										controlType: "sap.m.Button",
 										matchers: new PropertyStrictEquals({
 											name: "text",
-											value: TestUtil.getTextFromResourceBundle("sap.ui.fl", "VARIANT_MANAGEMENT_SAVE")
+											value: TestUtil.getTextFromResourceBundle("sap.m", "VARIANT_MANAGEMENT_SAVE")
 										}),
 										actions: new Press(),
 										success: function (aButtons) {
