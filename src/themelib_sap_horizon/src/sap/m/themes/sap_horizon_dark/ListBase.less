@@ -13,9 +13,21 @@
 	background: lighten(@sapUiListHeaderBackground, 2);
 }
 
+.sapUiTableOnObjectPageAdjustmentsForSection .sapMListHdrText,
+.sapUiTableOnObjectPageAdjustmentsForSection .sapMSticky > .sapMListHdrTBar.sapMTB-Transparent-CTX {
+	background: @sapUiGlobalBackgroundColor;
+	border-top-right-radius: 0;
+	border-top-left-radius: 0;
+}
+
 .sapMListHdr {
 	border-top-right-radius: @sapUiElementBorderCornerRadius;
 	border-top-left-radius: @sapUiElementBorderCornerRadius;
+}
+
+.sapUiTableOnObjectPageAdjustmentsForSection .sapMListHdr {
+	border-top-right-radius: 0;
+	border-top-left-radius: 0;
 }
 
 .sapMListNoData,
