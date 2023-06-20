@@ -1518,7 +1518,7 @@ sap.ui.define([
 		assert.equal(this.oSortSpy.callCount, 1, "Binding#sort called once");
 		sinon.assert.calledWithExactly(this.oSortSpy, [new Sorter("Name", true)]);
 		assert.equal(this.oFilterSpy.callCount, 1, "Binding#filter called once");
-		sinon.assert.calledWithExactly(this.oFilterSpy, [FilterUtil.getFilterInfo(this.oTable.getControlDelegate().getTypeUtil(), this.oTable.getConditions(), aTableProperties).filters], "Application");
+		sinon.assert.calledWithExactly(this.oFilterSpy, [FilterUtil.getFilterInfo(this.oTable.getControlDelegate().getTypeMap(), this.oTable.getConditions(), aTableProperties).filters], "Application");
 		assert.equal(this.oChangeParametersSpy.callCount, 1, "Binding#changeParameters called once");
 		sinon.assert.calledWithExactly(this.oChangeParametersSpy, {});
 		assert.equal(this.oSetAggregationSpy.callCount, 1, "Binding#setAggregation called once");
