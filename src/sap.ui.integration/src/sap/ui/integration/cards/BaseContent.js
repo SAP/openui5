@@ -420,6 +420,8 @@ sap.ui.define([
 	BaseContent.prototype.showNoDataMessage = function (oSettings) {
 		var oNoDataConfiguration = this.getNoDataConfiguration() || {};
 
+		oNoDataConfiguration = BindingResolver.resolveValue(oNoDataConfiguration, this.getCardInstance());
+
 		var oMessageSettings = {
 			type: CardBlockingMessageType.NoData,
 			illustrationType: IllustratedMessageType[oNoDataConfiguration.type] || oSettings.illustrationType,

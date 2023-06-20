@@ -45,6 +45,17 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinit
 		]);
 	};
 
+	Extension1.prototype.loadData = function () {
+		return Promise.resolve(
+			{
+				IMType: "SimpleError",
+				IMTitle: "No Data",
+				IMDescription: "Test",
+				IMSize: "Auto"
+			}
+		);
+	};
+
 	Extension1.prototype.getDataForContent = function () {
 		return Promise.resolve([
 			{ city: "Berlin", description: "Germany" },

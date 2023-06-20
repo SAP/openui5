@@ -697,4 +697,59 @@ sap.ui.define([
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
+
+	QUnit.test("No data IllustratedMessage set by extension binding", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEventOnce("_ready", function () {
+			Core.applyChanges();
+			var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
+
+			// Assert
+			assert.strictEqual(oMessage.getIllustrationType(), sap.m.IllustratedMessageType.SimpleError, "The no data message type set by expression binding is correct");
+			assert.strictEqual(oMessage.getDescription(), "Test", "The no data message description set by expression binding is correct");
+			assert.strictEqual(oMessage.getTitle(), "No Data", "The no data message title set by expression binding is correct");
+			assert.strictEqual(oMessage.getIllustrationSize(), "Auto", "The no data message size set by expression binding is correct");
+
+			// Clean up
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.NoData"
+			},
+			"sap.card": {
+				"type": "List",
+				"extension": "./extensions/Extension1",
+				"data": {
+					"extension": {
+						"method": "loadData"
+					}
+				},
+				"configuration": {
+					"messages": {
+						"noData": {
+							"type": "{/IMType}",
+							"title": "{/IMTitle}",
+							"description": "{/IMDescription}",
+							"size": "{/IMSize}"
+						}
+					}
+				},
+				"header": {},
+				"content": {
+					"data": {
+						"path": "/items"
+					},
+					"item": {
+						"title": "{title}"
+					},
+					"maxItems": "{maxItems}"
+				}
+			}
+		});
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
 });
