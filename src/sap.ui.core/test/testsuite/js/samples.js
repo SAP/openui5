@@ -353,6 +353,7 @@ sap.ui.define([
 						uniquePages.add(oEntry.fullpage);
 						return true;
 					}
+					return false;
 				}).sort(function(oEntry1, oEntry2) {
 					return compare(oEntry1.fullpage, oEntry2.fullpage);
 				});
@@ -391,6 +392,7 @@ sap.ui.define([
 						url: "../.." + oTestConfig.fullpage
 					};
 				}
+				return;
 			}).filter(Boolean);
 
 			renderAllTests();

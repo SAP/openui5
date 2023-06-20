@@ -1327,7 +1327,7 @@ sap.ui.define([
 					.filter(function(sName) {
 						return sName !== 'constructor' && typeof src[sName] === 'function';
 					})
-					.map(function(sName){
+					.forEach(function(sName){
 						oDictionary[sName] = src[sName];
 					});
 			}

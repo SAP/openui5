@@ -165,15 +165,10 @@ sap.ui.define([
 	DOMElement.prototype.attr = function(sKey, sValue) {
 
 		// lookup the attribute (required for the setter and the getter)
-		var aAttributes = this.getAttributes(),
-			oAttribute;
-		aAttributes.forEach(function(oValue) {
-			var sName = oValue.getName();
-			if (sName.toLowerCase() === sKey) {
-				oAttribute = oValue;
-				return false;
-			}
-		});
+		var oAttribute = this.getAttributes().find(function(oValue) {
+				var sName = oValue.getName();
+				return sName.toLowerCase() === sKey;
+			});
 
 		if (sValue === undefined) {
 

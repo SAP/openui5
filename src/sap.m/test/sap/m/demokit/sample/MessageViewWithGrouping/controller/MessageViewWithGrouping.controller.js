@@ -214,7 +214,7 @@ sap.ui.define([
 						sIcon = sIcon !== "sap-icon://message-error" ? "sap-icon://message-warning" : sIcon;
 						break;
 					case "Success":
-						sIcon = "sap-icon://message-error" && sIcon !== "sap-icon://message-warning" ? "sap-icon://message-success" : sIcon;
+						sIcon = sIcon !== "sap-icon://message-error" && sIcon !== "sap-icon://message-warning" ? "sap-icon://message-success" : sIcon;
 						break;
 					default:
 						sIcon = !sIcon ? "sap-icon://message-information" : sIcon;

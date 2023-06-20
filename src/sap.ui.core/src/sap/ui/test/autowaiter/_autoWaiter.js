@@ -121,7 +121,7 @@ sap.ui.define([
 	};
 
 	Object.keys(mDefaultWaiters).forEach(function (sWaiter) {
-		return oAutoWaiter._addWaiter(sWaiter)(mDefaultWaiters[sWaiter]);
+		oAutoWaiter._addWaiter(sWaiter)(mDefaultWaiters[sWaiter]);
 	});
 
 	return oAutoWaiter;

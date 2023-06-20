@@ -170,6 +170,7 @@ sap.ui.define([
 				} else if (sLabelText && oLabel.getText() === sLabelText) {
 					return oControl.getId() === oLabel.getLabelForRendering();
 				}
+				return false;
 			});
 
 			if (!bIsMatching) {

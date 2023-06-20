@@ -153,8 +153,8 @@ sap.ui.require([
 				return this.waitFor({
 					check: function () {
 						var aPopoverContent = aPopovers[0].getContent();
-						var aButtons = aPopoverContent.forEach(function (oChild) {
-							return oChild.getMetadata().getName() === "sap.m.Button" && oChild.getText() === "Another text";
+						var aButtons = aPopoverContent.filter(function (oChild) {
+							return oChild.isA("sap.m.Button") && oChild.getText() === "Another text";
 						});
 						return !aButtons || !aButtons.length;
 					},

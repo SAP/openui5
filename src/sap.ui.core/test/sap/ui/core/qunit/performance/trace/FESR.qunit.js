@@ -82,6 +82,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 				// duration - end_to_end_time
 				return values[4] === "1000";
 			}
+			return false;
 		}), "Found the FESR header field values.");
 
 		assert.ok(oHeaderSpy.args.some(function(args) {
@@ -90,6 +91,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 				// application_name, step_name, application_name with 70 characters
 				return values[0] === "newAppNameShort" && values[1] === "newStepName" && values[15] === "1" && values[19] === "newAppNameLong";
 			}
+			return false;
 		}), "Found the optional FESR header field values.");
 
 		Interaction.end(true);
@@ -154,6 +156,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 				// duration - end_to_end_time
 				return values[4] === "1000";
 			}
+			return false;
 		}), "Found the FESR header field values.");
 
 		assert.ok(oHeaderSpy.args.some(function(args) {
@@ -162,6 +165,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 				// application_name, step_name, application_name with 70 characters
 				return values[0] === "newAppNameShort" && values[1] === "newStepName" && values[15] === "2" && values[19] === "newAppNameLong";
 			}
+			return false;
 		}), "Found the optional FESR header field values.");
 
 		Interaction.end(true);
@@ -203,6 +207,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 				assert.ok(bEquals, "action string matches");
 				return bEquals && bStepCountAvailable;
 			}
+			return false;
 		}), "Found the FESR header field values.");
 
 		assert.strictEqual(oHeaderSpy.args.filter(function(args) {

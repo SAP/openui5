@@ -462,7 +462,7 @@ sap.ui.define([
 		//private methods not exposed
 		assert.ok(!oExtension.getBase()._increaseLifecycleCall, "extension1.getBase()._increaseLifecycleCall cannot be accessed");
 
-		aPublicExpected.filter(
+		aPublicExpected.forEach(
 			function(sName) {
 				assert.strictEqual(typeof oExtension[sName], "function", "extension: function " + sName + " available");
 			}
@@ -575,7 +575,7 @@ sap.ui.define([
 		assert.ok(!oProviderExt1.getBase()._increaseLifecycleCall, "ext.example.ProviderExt1.getBase()._increaseLifecycleCall cannot be accessed");
 		assert.ok(!oProviderExt2.getBase()._increaseLifecycleCall, "ext.example.ProviderExt2.getBase()._increaseLifecycleCall cannot be accessed");
 
-		aPublicExpected.filter(
+		aPublicExpected.forEach(
 			function(sName) {
 				assert.strictEqual(typeof oExtension[sName], "function", "extension: function " + sName + " available");
 				assert.strictEqual(typeof oProviderExt1[sName], "function", "ext.example.ProviderExt1: function " + sName + " available");
@@ -664,7 +664,7 @@ sap.ui.define([
 				//private methods not exposed
 				assert.ok(!oExtension.getBase()._increaseLifecycleCall, "extension1.getBase()._increaseLifecycleCall cannot be accessed");
 
-				aPublicExpected.filter(
+				aPublicExpected.forEach(
 					function(sName) {
 						assert.strictEqual(typeof oExtension[sName], "function", "extension: function " + sName + " available");
 					}
@@ -768,7 +768,7 @@ sap.ui.define([
 				assert.ok(!oProviderExt1.getBase()._increaseLifecycleCall, "ext.example.ProviderExt1.getBase()._increaseLifecycleCall cannot be accessed");
 				assert.ok(!oProviderExt2.getBase()._increaseLifecycleCall, "ext.example.ProviderExt2.getBase()._increaseLifecycleCall cannot be accessed");
 
-				aPublicExpected.filter(
+				aPublicExpected.forEach(
 					function(sName) {
 						assert.strictEqual(typeof oExtension[sName], "function", "extension: function " + sName + " available");
 						assert.strictEqual(typeof oProviderExt1[sName], "function", "ext.example.ProviderExt1: function " + sName + " available");

@@ -163,7 +163,7 @@ sap.ui.define([
 				};
 
 				/* eslint-disable no-loop-func */
-				selectedStepsByTime.map(function(step) {
+				selectedStepsByTime.forEach(function(step) {
 					stepItem.totalDuration += step.calculatedDuration;
 				});
 				/* eslint-enable no-loop-func */

@@ -409,6 +409,7 @@ function(
 						+ oRequireContext[sKey] + "'under key '" + sKey + "'";
 					return true;
 				}
+				return false;
 			});
 		}
 

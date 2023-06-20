@@ -1430,8 +1430,10 @@ sap.ui.define([
 						// check whether there's a duplicate history entry with the last history entry and remove it if there is
 						this._aHistory.some(function(oEntry, i, aHistory) {
 							if (i < aHistory.length - 1 && deepEqual(oEntry, oLastHistoryEntry)) {
-								return aHistory.splice(i, 1);
+								aHistory.splice(i, 1);
+								return true;
 							}
+							return false;
 						});
 					} else {
 						if (this._bLastHashReplaced) {

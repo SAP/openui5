@@ -53,9 +53,10 @@ sap.ui.define([
 	];
 
 	var aTerritories = aLocales.map(function(sLocale) {
-		if (sLocale !== "zh-TW") {
-			return sLocale.substr(3);
+		if (sLocale === "zh-TW") {
+			return;
 		}
+		return sLocale.slice(3);
 	}).filter(Boolean);
 
 	var LocaleListItem = ListItemBase.extend("LocaleListItem", {
