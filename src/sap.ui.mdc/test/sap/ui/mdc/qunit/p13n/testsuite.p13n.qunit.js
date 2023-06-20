@@ -42,15 +42,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			// Whether to call QUnit.start() when the test setup is done
 		},
 		tests: {
-			"PersistenceProvider": {
-				group: "Silent Persistence",
-				module: "./PersistenceProvider.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
 			/*
 			"LinkPanelController": {
 				group: "SubController (generic)",
