@@ -1924,6 +1924,11 @@ sap.ui.define([
 				}
 				return undefined;
 			});
+			oCompVariantFlexDataResponse.comp.changes.forEach(function(oChange) {
+				if (oChange.changeType === "updateVariant") {
+					oChange.content.contexts = {role: []};
+				}
+			});
 			sandbox.stub(InitialStorage, "loadFlexData").resolves(oCompVariantFlexDataResponse);
 			return createModel.call(this)
 			.then(function() {
@@ -1948,6 +1953,7 @@ sap.ui.define([
 			});
 			oFLVariantFlexDataResponse.variantChanges = [];
 			sandbox.stub(InitialStorage, "loadFlexData").resolves(oFLVariantFlexDataResponse);
+
 			return createModel.call(this)
 			.then(function() {
 				return ContextBasedAdaptationsAPI.canMigrate(this.mPropertyBag);

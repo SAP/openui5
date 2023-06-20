@@ -44,6 +44,7 @@ sap.ui.define([
 	var _mInstances = {};
 
 	var _oResourceBundle;
+	var aMigrationLayers = [Layer.VENDOR, Layer.PARTNER, Layer.CUSTOMER_BASE, Layer.CUSTOMER];
 
 	/**
 	 * Provides an API for creating and managing context-based adaptation.
@@ -738,7 +739,6 @@ sap.ui.define([
 		var sParentVersion = getParentVersion(mPropertyBag);
 		mPropertyBag.parentVersion = sParentVersion;
 
-		var aMigrationLayers = [Layer.VENDOR, Layer.PARTNER, Layer.CUSTOMER_BASE, Layer.CUSTOMER];
 		var aFlexObjectsData = [];
 
 		// Old way which has been refactored after 1.115
@@ -809,10 +809,15 @@ sap.ui.define([
 			selector: mPropertyBag.control,
 			invalidateCache: false,
 			includeCtrlVariants: true,
-			includeDirtyChanges: true,
-			currentLayer: Layer.CUSTOMER
+			includeDirtyChanges: true
 		})
 		.then(function (aFlexObjects) {
+			// Filter FlexObjects for migration relevant objects
+			var aFilteredFlexObjects = [];
+			aMigrationLayers.forEach(function(sLayer) {
+				aFilteredFlexObjects.push(getObjectsByLayerAndType(aFlexObjects, sLayer, true));
+			});
+			aFilteredFlexObjects = aFilteredFlexObjects.flat();
 			// Old way which has been refactored after 1.115
 			var oVariantsMap = FlexState.getVariantsState(ManifestUtils.getFlexReferenceForControl(mPropertyBag.control));
 			var aFlVariantsFinalState = Object.keys(oVariantsMap).reduce(function(aPrev, sCurr) {
@@ -821,15 +826,12 @@ sap.ui.define([
 			.map(function(oEntry) {
 				return oEntry.instance;
 			});
-			return aFlexObjects.some(function(oFlexObject) {
-				if (oFlexObject.isA("sap.ui.fl.apply._internal.flexObjects.Variant")) {
-					var oFinalState = getFinalState(aFlVariantsFinalState, aFlexObjects, oFlexObject);
+			return aFilteredFlexObjects.some(function(oFlexObject) {
+				var oFinalState = getFinalState(aFlVariantsFinalState, aFlexObjects, oFlexObject);
 
-					return oFinalState.visible === true && Object.keys(oFinalState.contexts).some(function(sKey) {
-						return oFinalState.contexts[sKey].length !== 0;
-					});
-				}
-				return false;
+				return oFinalState.visible === true && Object.keys(oFinalState.contexts).some(function(sKey) {
+					return oFinalState.contexts[sKey].length !== 0;
+				});
 			});
 		});
 	};
