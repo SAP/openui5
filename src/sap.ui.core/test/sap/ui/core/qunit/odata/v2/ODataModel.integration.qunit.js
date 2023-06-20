@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/core/message/Message",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
+	"sap/ui/core/Rendering",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -35,7 +36,7 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
 ], function (Log, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration,
-		Core, coreLibrary, UI5Date, Message, Controller, View, BindingMode, Filter, FilterOperator,
+		Core, coreLibrary, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter, FilterOperator,
 		FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Context,
 		ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
@@ -490,15 +491,8 @@ sap.ui.define([
 				response : [{source : "qunit/odata/v2/data/ZUI5_GWSAMPLE_BASIC.metadata.xml"}]
 			}]);
 			this.oLogMock = this.mock(Log);
-			this.oLogMock.expects("warning")
-				.withExactArgs(sinon.match.string, "LegacyParametersGet", "sap.ui.support",
-					sinon.match.func)
-				.atLeast(0);
-			this.oLogMock.expects("error")
-				.withExactArgs(sinon.match(function (sMsg) {
-					return sMsg.includes("/manifest.json could not be loaded");
-				}))
-				.atLeast(0);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("fatal").never();
 
 			// Counter for batch requests
@@ -8971,8 +8965,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		// invalidating the UI via refresh and calling setGrouped immediately after cause
 		// "Couldn't rerender..." warnings that can be ignored here
-		this.oLogMock.expects("warning")
-			.withExactArgs(sinon.match.string, undefined, "sap.ui.Rendering", undefined)
+		this.mock(Rendering.getLogger()).expects("warning")
+			.withExactArgs(sinon.match.string)
 			.atLeast(0);
 
 		return this.createView(assert, sView, oModel).then(function () {
