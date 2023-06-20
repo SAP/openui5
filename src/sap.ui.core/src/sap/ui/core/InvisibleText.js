@@ -5,12 +5,15 @@
 // Provides control sap.ui.core.InvisibleText.
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/base/security/encodeXML",
-	"./Configuration",
 	"./Control",
+	"./ControlBehavior",
+	"./Element",
 	"./Lib",
+	"./StaticArea",
 	"./library" // ensure loading of CSS
-], function(Log, encodeXML, Configuration, Control, Library) {
+], function(Log, Localization, encodeXML, Control, ControlBehavior, Element, Library, StaticArea) {
 	"use strict";
 
 
@@ -145,10 +148,8 @@ sap.ui.define([
 	 * @see sap.ui.core.Control#placeAt
 	 */
 	InvisibleText.prototype.toStatic = function() {
-		var oCore = sap.ui.getCore();
-
 		try {
-			var oStatic = oCore.getStaticAreaRef();
+			var oStatic = StaticArea.getDomRef();
 			oStatic.insertAdjacentHTML("beforeend", this.getRendererMarkup());
 			this.bOutput = true;
 		} catch (e) {
@@ -179,7 +180,7 @@ sap.ui.define([
 	InvisibleText.getStaticId = function(sLibrary, sTextKey) {
 		var sTextId = "", sKey, oBundle, oText, oLibrary;
 
-		if ( Configuration.getAccessibility() && sTextKey ) {
+		if ( ControlBehavior.isAccessibilityEnabled() && sTextKey ) {
 			// Note: identify by lib and text key, not by text to avoid conflicts after a language change
 			sKey = sLibrary + "|" + sTextKey;
 			sTextId = mTextIds[sKey];
@@ -201,13 +202,12 @@ sap.ui.define([
 	};
 
 	// listen to localizationChange event and update shared texts
-	sap.ui.getCore().attachLocalizationChanged(function(oEvent) {
-		var oCore = sap.ui.getCore(),
-			sKey, p, oBundle, oText;
+	Localization.attachChange(function(oEvent) {
+		var sKey, p, oBundle, oText;
 		for ( sKey in mTextIds ) {
 			p = sKey.indexOf('|');
-			oBundle = Library.get(sKey.slice(0, p)).getResourceBundle();
-			oText = oCore.byId(mTextIds[sKey]);
+			oBundle = Library.getResourceBundleFor(sKey.slice(0, p));
+			oText = Element.registry.get(mTextIds[sKey]);
 			oText && oText.setText(oBundle.getText(sKey.slice(p + 1)));
 		}
 	});

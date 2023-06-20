@@ -10,18 +10,18 @@
 
 // Provides class sap.ui.core.delegate.ScrollEnablement
 sap.ui.define([
+	'sap/base/i18n/Localization',
 	'sap/ui/Device',
 	'sap/ui/base/Object',
-	'sap/ui/core/Core',
 	'sap/ui/core/IntervalTrigger',
 	'sap/ui/core/ResizeHandler',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes"
 ],
 	function(
+		Localization,
 		Device,
 		BaseObject,
-		Core,
 		IntervalTrigger,
 		ResizeHandler,
 		jQuery,
@@ -423,7 +423,7 @@ sap.ui.define([
 							}
 
 							if (!this.getVertical()) {
-								left = Core.getConfiguration().getRTL() ?
+								left = Localization.getRTL() ?
 									container.clientWidth - container.scrollWidth : this._scrollX;
 							}
 
@@ -851,7 +851,7 @@ sap.ui.define([
 					if (oConfig.nonTouchScrolling === true) {
 						this._bDragScroll = true; // optional drag instead of native scrolling
 					}
-					if (Core.getConfiguration().getRTL()) {
+					if (Localization.getRTL()) {
 						this._scrollX = 9999; // in RTL case initially scroll to the very right
 					}
 				},
