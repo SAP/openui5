@@ -10,13 +10,12 @@ sap.ui.define([
 	"./CompositeType",
 	"./Context",
 	"./PropertyBinding",
-	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
 	"sap/ui/base/DataType",
 	"sap/ui/base/SyncPromise"
 ], function(BindingMode, ChangeReason, CompositeDataState, CompositeType, Context, PropertyBinding,
-		assert, Log, deepEqual, DataType, SyncPromise) {
+		Log, deepEqual, DataType, SyncPromise) {
 	"use strict";
 
 
