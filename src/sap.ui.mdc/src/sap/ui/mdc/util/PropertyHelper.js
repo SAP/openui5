@@ -270,8 +270,12 @@ sap.ui.define([
 
 	function reportInvalidProperty(sMessage, oAdditionalInfo) {
 		var mLoadedLibraries = Core.getLoadedLibraries();
-		if (!(window.top['sap-ui-mdc-config'] && window.top['sap-ui-mdc-config'].disableStrictPropertyInfoValidation)
-			&& !("sap.fe.core" in mLoadedLibraries
+
+		var bValidationEnabled = !(window['sap-ui-mdc-config'] && window['sap-ui-mdc-config'].disableStrictPropertyInfoValidation) &&
+								 !(window.top['sap-ui-mdc-config'] && window.top['sap-ui-mdc-config'].disableStrictPropertyInfoValidation);
+
+		if (bValidationEnabled &&
+				!("sap.fe.core" in mLoadedLibraries
 				|| "sap.fe.macros" in mLoadedLibraries
 				|| "sap.sac.df" in mLoadedLibraries)) {
 			throwInvalidPropertyError(sMessage, oAdditionalInfo);
