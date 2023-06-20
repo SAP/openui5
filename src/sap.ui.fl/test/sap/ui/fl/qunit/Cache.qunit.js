@@ -535,7 +535,7 @@ sap.ui.define([
 	QUnit.module("getChangesFillingCache", {
 		beforeEach: function() {
 			this.oGetStorageResponseStub = sandbox.stub(FlexState, "getStorageResponse").resolves("response");
-			this.oClearAndInitStub = sandbox.stub(FlexState, "clearAndInitialize").resolves();
+			this.oUpdateStub = sandbox.stub(FlexState, "update").resolves();
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -544,7 +544,7 @@ sap.ui.define([
 		QUnit.test("getChangesFillingCache should call the FlexState and return the StorageResponse", function(assert) {
 			return Cache.getChangesFillingCache({name: "name"}, {}, false).then(function(oResponse) {
 				assert.equal(oResponse, "response", "the function returns the value of the function");
-				assert.equal(this.oClearAndInitStub.callCount, 0, "the function was not called");
+				assert.equal(this.oUpdateStub.callCount, 0, "the function was not called");
 				assert.equal(this.oGetStorageResponseStub.callCount, 1, "the function was called once");
 				assert.equal(this.oGetStorageResponseStub.lastCall.args[0], "name", "the function was called with the correct parameter");
 			}.bind(this));
@@ -558,8 +558,8 @@ sap.ui.define([
 			return Cache.getChangesFillingCache({name: "name"}, oPropertyBag, true).then(function(oResponse) {
 				assert.equal(oResponse, "response", "the function returns the value of the function");
 				assert.equal(this.oGetStorageResponseStub.callCount, 1, "the function was called once");
-				assert.equal(this.oClearAndInitStub.callCount, 1, "the function was called once");
-				assert.equal(this.oClearAndInitStub.lastCall.args[0], oPropertyBag, "the function was called with the correct parameter");
+				assert.equal(this.oUpdateStub.callCount, 1, "the function was called once");
+				assert.equal(this.oUpdateStub.lastCall.args[0], oPropertyBag, "the function was called with the correct parameter");
 			}.bind(this));
 		});
 	});

@@ -3,11 +3,8 @@
 sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/m/MessageBox",
-	"sap/ui/core/Control",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/Utils",
@@ -19,11 +16,8 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	MessageBox,
-	Control,
 	FlexState,
 	ContextBasedAdaptationsAPI,
-	Settings,
-	Version,
 	VersionsAPI,
 	Versions,
 	FlexUtils,

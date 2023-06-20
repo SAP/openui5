@@ -621,15 +621,21 @@ sap.ui.define([
 
 	/**
 	 * Saves changes sequentially on the associated change persistence instance;
-	 * This API must be only used in scnarios without draft (like personalization).
+	 * This API must be only used in scenarios without draft (like personalization).
 	 *
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aDirtyChanges Array of dirty changes to be saved
 	 * @param {sap.ui.core.UIComponent} [oAppComponent] - AppComponent instance
-	 * @returns {Promise} A Promise which resolves when all changes have been saved
+	 * @returns {Promise} A Promise which resolves when all changes have been saved with the backend response
 	 * @public
 	 */
 	FlexController.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, oAppComponent) {
-		return this._oChangePersistence.saveDirtyChanges(oAppComponent, false, aDirtyChanges);
+		return this._oChangePersistence.saveDirtyChanges(oAppComponent, false, aDirtyChanges)
+		.then(function(oResponse) {
+			aDirtyChanges.forEach(function(oDirtyChange) {
+				oDirtyChange.setState(States.LifecycleState.PERSISTED);
+			});
+			return oResponse;
+		});
 	};
 
 	return FlexController;

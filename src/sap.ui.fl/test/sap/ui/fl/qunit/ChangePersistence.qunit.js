@@ -2092,11 +2092,10 @@ sap.ui.define([
 				originalLanguage: "DE"
 			};
 
-			var oChange = this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
 				assert.equal(this.oWriteStub.callCount, 1);
-				assert.strictEqual(oChange.getState(), States.LifecycleState.PERSISTED, "the state was changed to persisted");
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called with only one change");
 			}.bind(this));
 		});
@@ -2111,12 +2110,10 @@ sap.ui.define([
 				}
 			});
 			setURLParameterForCondensing("true");
-			var aChanges = addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR);
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oStorageCondenseStub.callCount, 1, "the condense route of the storage is called");
-				assert.strictEqual(aChanges[0].getState(), States.LifecycleState.PERSISTED, "the state was changed to persisted");
-				assert.strictEqual(aChanges[1].getState(), States.LifecycleState.PERSISTED, "the state was changed to persisted");
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 			}.bind(this));
 		});
@@ -3107,8 +3104,6 @@ sap.ui.define([
 				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0].fileName, oChangeContent1.fileName, "the first change was processed first");
 				assert.deepEqual(this.oWriteStub.getCall(1).args[0].flexObjects[0].fileName, oChangeContent3.fileName, "the second change was processed afterwards");
 				assert.strictEqual(oDirtyChange2.getState(), States.LifecycleState.NEW, "the state was not changed");
-				assert.strictEqual(oDirtyChange1.getState(), States.LifecycleState.PERSISTED, "the state was changed to persisted");
-				assert.strictEqual(oDirtyChange3.getState(), States.LifecycleState.PERSISTED, "the state was changed to persisted");
 			}.bind(this));
 		});
 

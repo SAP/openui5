@@ -383,34 +383,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when clearAndInitialize is called for two component references", function(assert) {
-			var sReference2 = "second.reference";
-			sandbox.spy(FlexState, "clearState");
-			this.oLoadFlexDataStub.resolves(mEmptyResponse);
-			return FlexState.initialize({
-				reference: sReference,
-				componentId: sComponentId
-			})
-			.then(FlexState.clearAndInitialize.bind(null, {
-				reference: sReference,
-				componentId: sComponentId
-			}))
-			.then(function() {
-				assert.ok(FlexState.clearState.calledWith(sReference), "then state was cleared for reference1");
-			})
-			.then(FlexState.initialize.bind(null, {
-				reference: sReference2,
-				componentId: sComponentId
-			}))
-			.then(FlexState.clearAndInitialize.bind(null, {
-				reference: sReference2,
-				componentId: sComponentId
-			}))
-			.then(function() {
-				assert.ok(FlexState.clearState.calledWith(sReference2), "then state was cleared for reference2");
-			});
-		});
-
 		QUnit.test("when external comp variant data is stored and retrieved", function(assert) {
 			var oStoredData = FlexState.getInitialNonFlCompVariantData(this.sFlexReference);
 			assert.equal(oStoredData, undefined, "when no external data is stored, retrieve function return undefined");
@@ -887,6 +859,341 @@ sap.ui.define([
 				FlexState.resetFakeStandardVariants(this.sReference, sComponentId2);
 				oAppComponent2.destroy();
 			}.bind(this));
+		});
+	});
+
+	QUnit.module("FlexState update", {
+		beforeEach: function() {
+			this.sComponentId = "componentId";
+			this.oAppComponent = new UIComponent(sComponentId);
+			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
+			this.sPersistencyKey = "persistencyKey";
+		},
+		afterEach: function() {
+			FlexState.clearState();
+			this.oAppComponent.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("new change is updated (e.g. after a save)", function(assert) {
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: this.sComponentId
+			})
+			.then(function() {
+				// New change created in runtime
+				var oNewChange = FlexObjectFactory.createFromFileContent({
+					fileName: "change1",
+					fileType: "change",
+					changeType: "rename",
+					layer: LayerUtils.getCurrentLayer()
+				});
+				oNewChange.setRevertData("revertData");
+				FlexState.addDirtyFlexObject(sReference, oNewChange);
+
+				// Change gets additional information from storage response (user)
+				this.oLoadFlexDataStub.resolves(merge(
+					{},
+					mEmptyResponse,
+					{
+						changes: {
+							changes: [{
+								fileName: "change1",
+								fileType: "change",
+								changeType: "rename",
+								layer: LayerUtils.getCurrentLayer(),
+								support: {
+									user: "supportUser"
+								}
+							}]
+						}
+					}
+				));
+				this.oDataSelectorUpdateSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
+				return FlexState.update({
+					reference: sReference,
+					componentId: this.sComponentId,
+					manifest: {},
+					componentData: {}
+				});
+			}.bind(this))
+			.then(function() {
+				// TODO: Replace with getUIChanges when map is properly initialized?
+				var aChanges = FlexState.getFlexObjectsDataSelector().get({reference: sReference});
+				assert.strictEqual(aChanges[0].getRevertData(), "revertData", "then the runtime information is still available");
+				assert.strictEqual(
+					aChanges[0].getSupportInformation().user,
+					"supportUser",
+					"then the change is updated with the additional information from the backend"
+				);
+				assert.ok(this.oDataSelectorUpdateSpy.calledOnce, "then the data selector update was called");
+			}.bind(this));
+		});
+
+		QUnit.test("new comp variant change gets updated", function(assert) {
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: this.sComponentId
+			})
+			.then(function() {
+				var oNewChange = FlexObjectFactory.createFromFileContent({
+					fileName: "change1",
+					fileType: "change",
+					selector: {
+						persistencyKey: this.sPersistencyKey
+					}
+				});
+				FlexState.addDirtyFlexObject(sReference, oNewChange);
+
+				// The new change gets additional information from storage response (user)
+				this.oLoadFlexDataStub.resolves(merge(
+					{},
+					mEmptyResponse,
+					{
+						changes: {
+							comp: {
+								variants: [],
+								changes: [{
+									fileName: "change1",
+									fileType: "change",
+									selector: {
+										persistencyKey: this.sPersistencyKey
+									},
+									support: {
+										user: "supportUser"
+									}
+								}],
+								defaultVariants: [],
+								standardVariants: []
+							}
+						}
+					}
+				));
+				this.oDataSelectorUpdateSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
+				return FlexState.update({
+					reference: sReference,
+					componentId: this.sComponentId,
+					manifest: {},
+					componentData: {}
+				});
+			}.bind(this))
+			.then(function() {
+				var aChanges = FlexState.getCompVariantsMap(sReference)[this.sPersistencyKey].changes;
+				assert.strictEqual(
+					aChanges[0].getSupportInformation().user,
+					"supportUser",
+					"then the new change is updated with the additional information from the backend"
+				);
+				assert.ok(this.oDataSelectorUpdateSpy.calledOnce, "then the data selector update was called");
+			}.bind(this));
+		});
+
+		QUnit.test("A flex object is deleted", function(assert) {
+			// Get initial comp variant changes
+			this.oLoadFlexDataStub.resolves(merge(
+				{},
+				mEmptyResponse,
+				{
+					changes: {
+						comp: {
+							variants: [],
+							changes: [{
+								fileName: "change1",
+								fileType: "change",
+								selector: {
+									persistencyKey: this.sPersistencyKey
+								},
+								support: {
+									user: "supportUser"
+								}
+							},
+							{
+								fileName: "change2",
+								fileType: "change",
+								selector: {
+									persistencyKey: this.sPersistencyKey
+								},
+								support: {
+									user: "supportUser"
+								}
+							}],
+							defaultVariants: [],
+							standardVariants: []
+						}
+					}
+				}
+			));
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: this.sComponentId
+			})
+			.then(function() {
+				this.oDataSelectorUpdateSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
+				// Change1 is deleted (no longer in storage response)
+				this.oLoadFlexDataStub.resolves(merge(
+					{},
+					mEmptyResponse,
+					{
+						changes: {
+							comp: {
+								variants: [],
+								changes: [{
+									fileName: "change2",
+									fileType: "change",
+									selector: {
+										persistencyKey: this.sPersistencyKey
+									},
+									support: {
+										user: "supportUser"
+									}
+								}],
+								defaultVariants: [],
+								standardVariants: []
+							}
+						}
+					}
+				));
+				return FlexState.update({
+					reference: sReference,
+					componentId: this.sComponentId,
+					manifest: {},
+					componentData: {}
+				});
+			}.bind(this))
+			.then(function() {
+				// Check the runtimePersistence directly? Or check both?
+				var aChanges = FlexState.getCompVariantsMap(sReference)[this.sPersistencyKey].changes;
+				assert.strictEqual(
+					aChanges.length,
+					1,
+					"then one flex object was deleted"
+				);
+				assert.ok(this.oDataSelectorUpdateSpy.calledOnce, "then the data selector update was called");
+			}.bind(this));
+		});
+
+		QUnit.test("no update required (nothing changed)", function(assert) {
+			// Get initial comp variant changes
+			this.oLoadFlexDataStub.resolves(merge(
+				{},
+				mEmptyResponse,
+				{
+					changes: {
+						comp: {
+							variants: [],
+							changes: [{
+								fileName: "change1",
+								fileType: "change",
+								selector: {
+									persistencyKey: this.sPersistencyKey
+								},
+								support: {
+									user: "supportUser"
+								}
+							},
+							{
+								fileName: "change2",
+								fileType: "change",
+								selector: {
+									persistencyKey: this.sPersistencyKey
+								},
+								support: {
+									user: "supportUser"
+								}
+							}],
+							defaultVariants: [],
+							standardVariants: []
+						}
+					}
+				}
+			));
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: this.sComponentId
+			})
+			.then(function() {
+				this.oDataSelectorUpdateSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
+				// nothing changes - same data is returned from the storage
+				return FlexState.update({
+					reference: sReference,
+					componentId: this.sComponentId,
+					manifest: {},
+					componentData: {}
+				});
+			}.bind(this))
+			.then(function() {
+				var aChanges = FlexState.getCompVariantsMap(sReference)[this.sPersistencyKey].changes;
+				assert.strictEqual(
+					aChanges.length,
+					2,
+					"then both objects are still in the persistence"
+				);
+				assert.ok(this.oDataSelectorUpdateSpy.notCalled, "then the data selector update was not called");
+			}.bind(this));
+		});
+
+		QUnit.test("An unknown object is returned from storage", function(assert) {
+			var fnDone = assert.async();
+			FlexState.initialize({
+				reference: sReference,
+				componentId: this.sComponentId
+			})
+			.then(function() {
+				var oNewChange = FlexObjectFactory.createFromFileContent({
+					fileName: "change1",
+					fileType: "change",
+					selector: {
+						persistencyKey: this.sPersistencyKey
+					}
+				});
+				FlexState.addDirtyFlexObject(sReference, oNewChange);
+
+				// The new change is returned together with an unknown change
+				this.oLoadFlexDataStub.resolves(merge(
+					{},
+					mEmptyResponse,
+					{
+						changes: {
+							comp: {
+								variants: [],
+								changes: [{
+									fileName: "change1",
+									fileType: "change",
+									selector: {
+										persistencyKey: this.sPersistencyKey
+									},
+									support: {
+										user: "supportUser"
+									}
+								},
+								{
+									fileName: "change2",
+									fileType: "change",
+									selector: {
+										persistencyKey: this.sPersistencyKey
+									},
+									support: {
+										user: "supportUser"
+									}
+								}],
+								defaultVariants: [],
+								standardVariants: []
+							}
+						}
+					}
+				));
+				return FlexState.update({
+					reference: sReference,
+					componentId: this.sComponentId,
+					manifest: {},
+					componentData: {}
+				});
+			}.bind(this))
+			.catch(function(oError) {
+				assert.ok(oError, "then an error is raised");
+				// Use assert.async instead of direct return to make sure that the promise is rejected
+				fnDone();
+			});
 		});
 	});
 

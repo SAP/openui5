@@ -398,11 +398,12 @@ sap.ui.define([
 			if (oChange.condenserState === "delete") {
 				return;
 			}
-			oCondenserInfo.update(oChange, oUpdateCondenserInfo.updateContent);
-			delete mTypes[CondenserUtils.NOT_INDEX_RELEVANT][CondenserClassification.Update][oCondenserInfo.uniqueKey];
 			if (oChange.isPersisted()) {
 				oChange.condenserState = "update";
 			}
+			oCondenserInfo.update(oChange, oUpdateCondenserInfo.updateContent);
+			oChange.setState(States.LifecycleState.DIRTY);
+			delete mTypes[CondenserUtils.NOT_INDEX_RELEVANT][CondenserClassification.Update][oCondenserInfo.uniqueKey];
 		}
 	}
 

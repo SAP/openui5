@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/appDescriptorChanges/prepareAppDescriptorMap",
 	"sap/ui/fl/apply/_internal/flexState/changes/prepareChangesMap",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/prepareCompVariantsMap",
@@ -29,6 +30,7 @@ sap.ui.define([
 	Log,
 	Component,
 	FlexObjectFactory,
+	States,
 	prepareAppDescriptorMap,
 	prepareChangesMap,
 	prepareCompVariantsMap,
@@ -131,21 +133,21 @@ sap.ui.define([
 	}
 
 	function createFlexObjects(oStorageResponse) {
-		var aRuntimePersistence = [];
+		var aFlexObjects = [];
 		each(oStorageResponse.changes, function(sKey, vValue) {
 			if (Array.isArray(vValue)) {
 				vValue.forEach(function(oChangeDef) {
-					aRuntimePersistence.push(FlexObjectFactory.createFromFileContent(oChangeDef, null, true));
+					aFlexObjects.push(FlexObjectFactory.createFromFileContent(oChangeDef, null, true));
 				});
 			} else if (sKey === "comp") {
 				each(vValue, function(sKey, vValue) {
 					vValue.forEach(function(oChangeDef) {
-						aRuntimePersistence.push(FlexObjectFactory.createFromFileContent(oChangeDef, null, true));
+						aFlexObjects.push(FlexObjectFactory.createFromFileContent(oChangeDef, null, true));
 					});
 				});
 			}
 		});
-		return aRuntimePersistence;
+		return aFlexObjects;
 	}
 
 	function runInitialPreparation(sMapName, mPropertyBag) {
@@ -234,6 +236,52 @@ sap.ui.define([
 			}
 		});
 		return oFlexInstance;
+	}
+
+	function updateRuntimePersistence(sReference, oStorageResponse, oRuntimePersistence) {
+		var aFlexObjects = oRuntimePersistence.flexObjects.slice();
+		var iInitialFlexObjectsLength = aFlexObjects.length;
+		var bUpdate;
+		var aChangeDefinitions = [];
+
+		each(oStorageResponse.changes, function(sKey, vValue) {
+			if (Array.isArray(vValue)) {
+				aChangeDefinitions = aChangeDefinitions.concat(vValue);
+			} else if (sKey === "comp") {
+				each(vValue, function(sKey, vValue) {
+					aChangeDefinitions = aChangeDefinitions.concat(vValue);
+				});
+			}
+		});
+
+		_mInstances[sReference].runtimePersistence = Object.assign(oRuntimePersistence, {
+			flexObjects: aChangeDefinitions.map(function(oChangeDef) {
+				var iObjectIndex;
+				// Only keep FlexObjects found in the storage change definitions
+				var oExistingFlexObject = aFlexObjects.find(function(oFlexObject, iIndex) {
+					iObjectIndex = iIndex;
+					return oFlexObject.getId() === oChangeDef.fileName;
+				});
+				if (oExistingFlexObject) {
+					aFlexObjects.splice(iObjectIndex, 1);
+					// Only update FlexObjects which were modified (new, updated)
+					if (oExistingFlexObject.getState() !== States.LifecycleState.PERSISTED) {
+						oExistingFlexObject.setResponse(oChangeDef);
+						bUpdate = true;
+					}
+					return oExistingFlexObject;
+				}
+				// If unknown change definitions are found, throw error (storage does not create flex objects)
+				throw new Error("Error updating runtime persistence: storage returned unknown flex objects");
+			})
+		});
+
+		// If the final length is different, an object is no longer there (e.g. new version requested)
+		if (iInitialFlexObjectsLength !== _mInstances[sReference].runtimePersistence.flexObjects.length) {
+			bUpdate = true;
+		}
+
+		return bUpdate;
 	}
 
 	function initializeNewInstance(mPropertyBag) {
@@ -481,6 +529,52 @@ sap.ui.define([
 		enhancePropertyBag(mPropertyBag);
 		FlexState.clearState(mPropertyBag.reference);
 		return FlexState.initialize(mPropertyBag);
+	};
+
+	/**
+	 * Triggers a call to the backend to fetch new data and update the runtime persistence
+	 *
+	 * @param {object} mPropertyBag - Contains additional data needed for reading and storing changes
+	 * @param {string} mPropertyBag.componentId - ID of the component
+	 * @param {string} [mPropertyBag.reference] - Flex reference of the app
+	 * @param {object} [mPropertyBag.manifest] - Manifest that belongs to actual component
+	 * @param {string} [mPropertyBag.componentData] - Component data of the current component
+	 * @param {string} [mPropertyBag.version] - Number of the version in which the state should be updated
+	 * @param {string} [mPropertyBag.adaptationId] - Context-based adaptation for which the state should be updated
+	 * @returns {Promise<undefined>} Resolves when the data is loaded and the runtime persistence is updated
+	 */
+	FlexState.update = function(mPropertyBag) {
+		enhancePropertyBag(mPropertyBag);
+		var sReference = mPropertyBag.reference;
+
+		deRegisterMaxLayerHandler(sReference);
+
+		var oCurrentRuntimePersistence = _mInstances[sReference].runtimePersistence;
+
+		// TODO: get rid of the following persistence operations as soon as the change state
+		// is migrated from ChangePersistenceFactory to the FlexState
+		if (
+			_oChangePersistenceFactory
+			&& (_oChangePersistenceFactory._instanceCache || {}).hasOwnProperty(sReference)
+		) {
+			_oChangePersistenceFactory._instanceCache[sReference].removeDirtyChanges();
+		}
+
+		// TODO Do we need to consider partial flex state
+
+		return (_mInitPromises[sReference] || Promise.resolve())
+		.then(loadFlexData.bind(this, mPropertyBag))
+		.then(function() {
+			_mInstances[sReference].storageResponse = filterByMaxLayer(_mInstances[sReference].unfilteredStorageResponse);
+			var bUpdated = updateRuntimePersistence(
+				sReference,
+				_mInstances[sReference].storageResponse,
+				oCurrentRuntimePersistence
+			);
+			if (bUpdated) {
+				oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
+			}
+		});
 	};
 
 	FlexState.clearState = function(sReference) {

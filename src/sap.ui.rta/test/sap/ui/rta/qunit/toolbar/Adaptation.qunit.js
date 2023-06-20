@@ -518,7 +518,7 @@ sap.ui.define([
 			this.oToolbar = new Adaptation({
 				textResources: this.oTextResources
 			});
-			sandbox.stub(FlexState, "clearAndInitialize").resolves();
+			sandbox.stub(FlexState, "update").resolves();
 			sandbox.stub(ContextBasedAdaptationsAPI, "remove").returns(Promise.resolve({status: 204}));
 			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(oAdaptationsModel);
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);
