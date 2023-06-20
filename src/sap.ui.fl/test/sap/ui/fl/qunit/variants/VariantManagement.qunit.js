@@ -293,14 +293,14 @@ sap.ui.define([
 
 			oConfiguration.setLanguage("en_EN");
 
-			this.oVariantManagement._oRb = oCore.getLibraryResourceBundle("sap.ui.fl");
+			this.oVariantManagement._oRb = oCore.getLibraryResourceBundle("sap.m");
 
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
-			assert.equal(this._oVM.oVariantInvisibleText.getText(), "View Standard. To select view, press spacebar.");
+			assert.equal(this._oVM.oVariantInvisibleText.getText(), "View Standard.");
 
 			this.oVariantManagement.setCurrentVariantKey("2");
-			assert.equal(this._oVM.oVariantInvisibleText.getText(), "View Two. To select view, press spacebar.");
+			assert.equal(this._oVM.oVariantInvisibleText.getText(), "View Two.");
 
 			oConfiguration.setLanguage(sLanguage);
 		});
