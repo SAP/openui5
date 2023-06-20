@@ -609,3 +609,11 @@ div.sapMSltPicker .sapMDialogScrollCont {
     height: 100%;
     border: none;
 }
+
+// when the Busy Indicator is inside Select it should be with different positions - BCP 1870362962
+.sapMSlt .sapUiLocalBusyIndicator:focus:after {
+	left: 1px;
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+}
