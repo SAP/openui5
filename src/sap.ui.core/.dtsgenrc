@@ -225,6 +225,24 @@
 						]
 					}
 				]
+			},
+			{
+				"name": "sap.ui.test.Opa",
+				"properties": [
+					{
+						"name": "and",
+						"type": "Omit<this, \"and\">"
+					}
+				]
+			},
+			{
+				"name": "sap.ui.test.Opa5",
+				"properties": [
+					{
+						"name": "and",
+						"type": "Omit<this, \"and\">"
+					}
+				]
 			}
 		]
 	}
