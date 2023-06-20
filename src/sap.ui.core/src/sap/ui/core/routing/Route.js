@@ -371,6 +371,7 @@ sap.ui.define([
 								}
 							});
 					}
+					return;
 				});
 
 				return Promise.all(aLoadedPromises);

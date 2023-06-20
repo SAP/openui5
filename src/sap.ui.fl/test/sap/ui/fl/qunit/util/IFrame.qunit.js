@@ -36,7 +36,7 @@ sap.ui.define([
 			assert.strictEqual(
 				oIFrame.getUrl(),
 				sExpectedUrl,
-				"then the url is properly updated" || sDescription
+				sDescription || "then the url is properly updated"
 			);
 		});
 	}

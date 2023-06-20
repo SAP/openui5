@@ -52,6 +52,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	jQuery.sap.sjax = function sjax(oOrigSettings) {
 
+		var oResult;
+
 		var s = jQuery.extend(true, {}, jQuery.sap.sjaxSettings, oOrigSettings,
 
 			// the following settings are enforced as this is the rightmost object in the extend call
@@ -65,8 +67,6 @@ sap.ui.define(['jquery.sap.global'],
 					oResult = { success : false, data : undefined, status : textStatus, error : error, statusCode : xhr.status, errorResponse :  xhr.responseText};
 				}
 			});
-
-		var oResult;
 
 		jQuery.ajax(s);
 

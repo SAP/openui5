@@ -1634,7 +1634,7 @@ sap.ui.define([
 				if (oContext.getModel().isA("sap.ui.model.odata.v4.ODataModel")) { // ODataModel v4 throws an exception on getObject()
 					mContextInfos.unverifiedPath = true;
 				} else {
-					if (!oContext.getObject() == null) {
+					if (oContext.getObject() == null) {
 						mContextInfos.invalidPath = true;
 					}
 				}

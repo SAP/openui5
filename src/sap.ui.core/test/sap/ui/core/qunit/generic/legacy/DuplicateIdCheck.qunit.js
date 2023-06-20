@@ -203,6 +203,7 @@ sap.ui.define([
 							});
 					} else {
 						mLoadedLibraries[sInfoLibName] = mLoadedLibraries[sInfoLibName].controls; // only the control list is needed
+						return;
 					}
 				}));
 		}).then(function() {
@@ -475,6 +476,7 @@ sap.ui.define([
 								});
 							}
 						}
+						return;
 					}));
 
 			});

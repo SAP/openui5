@@ -2787,7 +2787,7 @@ sap.ui.define([
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 		assert.strictEqual(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
-		assert.strictEqual(getPopupItemsContent(oPopup).$().find("tbody").find("tr>td>span" || "tr>td>label")[0].textContent, oSuggestionData.tabularSuggestionItems[1].name, "Product 2 is filtered");
+		assert.strictEqual(getPopupItemsContent(oPopup).$().find("tbody").find("tr>td>span, tr>td>label")[0].textContent, oSuggestionData.tabularSuggestionItems[1].name, "Product 2 is filtered");
 
 		getPopupItemsContent(oPopup).getItems()[1].ontap(new jQuery.Event());
 		this.clock.tick(300);

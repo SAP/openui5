@@ -396,6 +396,7 @@ sap.ui.define([
 				return sAllowedOrigin === "*" || sOrigin === new URL(sAllowedOrigin.trim(), globalThis.location.href).origin;
 			} catch (error) {
 				Log.error("sapAllowedThemeOrigin provides invalid theme origin: " + sAllowedOrigin);
+				return false;
 			}
 		});
 	}
