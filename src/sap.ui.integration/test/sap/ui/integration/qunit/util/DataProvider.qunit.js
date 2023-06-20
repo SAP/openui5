@@ -1352,4 +1352,68 @@ sap.ui.define([
 
 		oDataProvider.triggerDataUpdate();
 	});
+
+	QUnit.module("No data requests", {
+		beforeEach: function () {
+			this.oServer = sinon.createFakeServer({
+				autoRespond: true
+			});
+			this.oServer.respondImmediately = true;
+		},
+
+		afterEach: function () {
+			this.oServer.restore();
+		}
+	});
+
+	QUnit.test("Error is thrown when the response body is invalid JSON (empty string)", function (assert) {
+		var done = assert.async(),
+
+		oDataProviderFactory = new DataProviderFactory({});
+
+		var oManifest = {
+			"_version": "1.36.0",
+			"sap.app": {
+				"id": "test.card.data.request.card"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"request": {
+						"url": "/fakeService/Products",
+						"method": "GET",
+						"headers": {
+							"Content-Type": "application/json"
+						}
+					},
+					"path": "/results"
+				},
+				"header": {
+					"title": "Products"
+				},
+				"content": {
+					"item": {
+						"title": "{Name}"
+					}
+				}
+			}
+		};
+
+		var oDataConfig = oManifest["sap.card"]["data"];
+		var oDataProvider = oDataProviderFactory.create(oDataConfig);
+
+		this.oServer.respondWith("/fakeService/Products", function (oXhr) {
+			oXhr.respond(200, {
+				"content-type": "application/json"
+			}, "");
+
+		});
+		oDataProvider.attachError(function () {
+			assert.ok(true, "Should throw an error if the response is invalid JSON.");
+			assert.strictEqual(arguments[0].mParameters.message, "SyntaxError: Unexpected end of JSON input",
+				"The correct error is thrown.");
+			done();
+		});
+		oDataProvider.triggerDataUpdate();
+	});
 });

@@ -259,7 +259,11 @@ sap.ui.define([
 
 				return oResponse.text().then(function (vData) {
 					if (isJsonResponse(oResponse)) {
-						vData = JSON.parse(vData !== "" ? vData : null);
+						try {
+							vData = JSON.parse(vData);
+						} catch (oError) {
+							return Promise.reject([oError.toString(), null, null, oRequest]);
+						}
 					} else if (isXmlResponse(oResponse)) {
 						vData = (new window.DOMParser()).parseFromString(vData, "text/xml");
 					}
