@@ -27,7 +27,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Model} oModel The model
 	 * @param {string} sPath The path
-	 * @param {sap.ui.model.Context} oContext The context object
+	 * @param {sap.ui.model.Context} [oContext] The context object
 	 * @param {object} [mParameters] Additional, implementation-specific parameters
 	 * @abstract
 	 * @public
@@ -183,7 +183,7 @@ sap.ui.define([
 	 * Might be a relative or absolute path. If it is relative, it will be resolved relative
 	 * to the context as returned by {@link #getContext}.
 	 *
-	 * @returns {string} Binding path
+	 * @returns {null|string} Binding path
 	 * @public
 	 */
 	Binding.prototype.getPath = function() {
@@ -195,7 +195,7 @@ sap.ui.define([
 	 *
 	 * If the binding path is absolute, the context is not relevant.
 	 *
-	 * @returns {sap.ui.model.Context} Context object
+	 * @returns {null|undefined|sap.ui.model.Context} Context object
 	 * @public
 	 */
 	Binding.prototype.getContext = function() {
@@ -248,7 +248,7 @@ sap.ui.define([
 	/**
 	 * Returns the model to which this binding belongs.
 	 *
-	 * @returns {sap.ui.model.Model} Model to which this binding belongs
+	 * @returns {null|sap.ui.model.Model} Model to which this binding belongs
 	 * @public
 	 */
 	Binding.prototype.getModel = function() {
