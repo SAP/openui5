@@ -10,18 +10,6 @@ describe("sap.m.MessageToast", function () {
 	// 	expect(takeScreenshot()).toLookAs("message_toast_focused");
 	// });
 
-	// it("Should re-open the MessageToast no matter where the focus is", function () {
-	// 	browser.executeScript(function () {
-	// 		var oInput = sap.ui.getCore().byId("__input0");
-	// 		oInput.focus();
-	// 	});
-
-	// 	browser.actions().sendKeys([protractor.Key.CONTROL, protractor.Key.ALT, "m"]).perform();
-	// 	browser.actions().sendKeys([protractor.Key.CONTROL, protractor.Key.ALT, "m"]).perform();
-
-	// 	expect(takeScreenshot()).toLookAs("message_toast_is_reopened");
-	// });
-
 	// it("should close MessageToast ", function () {
 	// 	browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 	// 	browser.actions().sendKeys(protractor.Key.ESCAPE).perform(); // Avoid opening of the contextual browser menu on MacOS in the next tests
