@@ -15,6 +15,8 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"],
 	 *
 	 * @public
 	 *
+	 * @deprecated since 1.115.
+	 *
 	 * @class Table Personalization Provider
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
@@ -32,6 +34,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"],
 		},
 
 		metadata: {
+			deprecated: true,
 			"abstract": true,
 			library: "sap.m"
 		}
