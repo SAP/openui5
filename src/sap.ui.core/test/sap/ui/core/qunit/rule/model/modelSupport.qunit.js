@@ -1,9 +1,11 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/base/Log",
 	"sap/m/Button",
 	"sap/m/StandardListItem",
 	"sap/m/Table",
+	"sap/m/Text",
 	"sap/m/VBox",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/CountMode",
@@ -12,7 +14,7 @@ sap.ui.define([
 	"sap/ui/support/library",
 	"sap/ui/support/RuleAnalyzer",
 	"sap/ui/test/TestUtils"
-], function(Button, StandardListItem, Table, VBox, JSONModel, CountMode, ODataV2Model, ODataV4Model,
+], function(Log, Button, StandardListItem, Table, Text, VBox, JSONModel, CountMode, ODataV2Model, ODataV4Model,
 		SupportLib, RuleAnalyzer, TestUtils) {
 	"use strict";
 
@@ -32,6 +34,10 @@ sap.ui.define([
 					: oEmptyV2Response,
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('42')"
 					: oEmptyV2Response,
+				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('42')/firstName"
+					: oEmptyV2Response,
+				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('42')/lastName"
+					: oEmptyV2Response,
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
 					: {source : "qunit/odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES?$select=ID&$skip=0&$top=100"
@@ -43,6 +49,10 @@ sap.ui.define([
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES('42')"
 					: oEmptyV4Response
 			});
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("fatal").never();
 		}
 	});
 
@@ -174,6 +184,29 @@ sap.ui.define([
 
 			assert.strictEqual(aIssues.length, 0, "Correct number of issues");
 			oTable.destroy();
+		});
+	});
+
+	//**********************************************************************************************
+	QUnit.test("selectUsedInBoundAggregation: composite binding", function (assert) {
+		var oModel = new ODataV2Model({
+				defaultCountMode : CountMode.None,
+				serviceUrl : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/",
+				useBatch : false
+			});
+		var oText = new Text();
+
+		oText.setModel(oModel);
+		oText.placeAt("qunit-fixture");
+		oText.bindText({parts: [{path: "/SalesOrderSet('42')/firstName"}, {path: "/SalesOrderSet('42')/lastName"}]});
+
+		return RuleAnalyzer.analyze({type: "global"},
+				[{libName: "sap.ui.core", ruleId: "selectUsedInBoundAggregation"}]).then(function () {
+			var aIssues = RuleAnalyzer.getLastAnalysisHistory().issues;
+
+			assert.strictEqual(aIssues.length, 0, "Correct number of issues");
+			oText.destroy();
+			oModel.destroy();
 		});
 	});
 

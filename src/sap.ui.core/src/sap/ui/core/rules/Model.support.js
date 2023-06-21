@@ -55,7 +55,9 @@ sap.ui.define([
 				var oBinding = mBindingInfos[sName].binding,
 					sDetails;
 
-				if (!oBinding || oBinding.getModel().bAutoExpandSelect) {
+				if (!oBinding
+						|| oBinding.isA("sap.ui.model.CompositeBinding")
+						|| oBinding.getModel().bAutoExpandSelect) {
 					return;
 				}
 
