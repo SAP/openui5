@@ -25,7 +25,8 @@
 					"items.json",
 					"manifest.json",
 					"FileUpload.fragment.xml",
-					"mockserver.js"
+					"mockserver.js",
+					"menu.fragment.xml"
 				]
 			}
 		}
