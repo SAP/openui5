@@ -13,7 +13,27 @@
 			"fileSize": 200,
 			"lastModifiedBy": "Jane Burns",
 			"lastmodified": "10/03/21, 10:03:00 PM",
-			"documentType": "Invoice"
+			"documentType": "Invoice",
+			"versions": [
+				{
+					"fileName": "Invoice summary.doc",
+					"version": "00",
+					"modifiedBy": "Jane Burns",
+					"modifiedOn": "01/03/21, 10:03:00 PM"
+				},
+				{
+					"fileName": "Invoice summary.doc",
+					"version": "01",
+					"modifiedBy": "Jane Burns",
+					"modifiedOn": "02/03/21, 10:03:00 PM"
+				},
+				{
+					"fileName": "Invoice summary.doc",
+					"version": "02",
+					"modifiedBy": "Jane Burns",
+					"modifiedOn": "10/03/21, 10:03:00 PM"
+				}
+			]
 		},
 		{
 			"id": "23004589",
@@ -26,7 +46,27 @@
 			"fileSize": 2400,
 			"lastModifiedBy": "Jane Burns",
 			"lastmodified": "10/03/21, 10:03:00 PM",
-			"documentType": "Invoice"
+			"documentType": "Invoice",
+			"versions": [
+				{
+					"fileName": "Business Plan Topics.xls",
+					"version": "00",
+					"modifiedBy": "Jane Burns",
+					"modifiedOn": "01/03/21, 10:03:00 PM"
+				},
+				{
+					"fileName": "Business Plan Topics.xls",
+					"version": "01",
+					"modifiedBy": "Jane Burns",
+					"modifiedOn": "02/03/21, 10:03:00 PM"
+				},
+				{
+					"fileName": "Business Plan Topics.xls",
+					"version": "02",
+					"modifiedBy": "Jane Burns",
+					"modifiedOn": "10/03/21, 10:03:00 PM"
+				}
+			]
 		},
 		{
 			"id": "23004578",

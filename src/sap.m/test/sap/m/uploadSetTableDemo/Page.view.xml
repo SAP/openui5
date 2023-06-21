@@ -157,7 +157,7 @@
                         />
                     </m:VBox>
                     <m:HBox>
-                        <m:Button text="View Details" />
+                        <m:Button text="View Details" press=".onViewDetails"/>
                         <m:Button
                             class="sapUiTinyMarginBegin"
                             type="Transparent"

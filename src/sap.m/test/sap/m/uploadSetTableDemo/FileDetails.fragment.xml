@@ -1,0 +1,113 @@
+<!-- Fragment.fragment.xml -->
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:t="sap.ui.table"
+    templateShareable="false"
+    class="sapUiTinyMarginTop">
+  <Dialog
+      title="Details: {fileName}"
+      contentWidth="70%"
+      contentHeight="60%">
+    <content>
+      <IconTabBar>
+        <items>
+          <IconTabFilter text="Basic Details">
+            <f:Form editable="false">
+              <f:layout>
+                <f:ColumnLayout columnsM="2" columnsL="3" columnsXL="4" />
+              </f:layout>
+              <f:formContainers>
+                <f:FormContainer>
+                  <f:formElements>
+                    <f:FormElement label="Name">
+                      <f:fields>
+                        <Text text="{fileName}"/>
+                      </f:fields>
+                    </f:FormElement>
+                    <f:FormElement label="Version">
+                      <f:fields>
+                        <Text text="{revision}"/>
+                      </f:fields>
+                    </f:FormElement>
+                    <f:FormElement label="Modified On">
+                      <f:fields>
+                        <Text text="{lastmodified}"/>
+                      </f:fields>
+                    </f:FormElement>
+                  </f:formElements>
+                </f:FormContainer>
+                <f:FormContainer>
+                  <f:formElements>
+                    <f:FormElement label="Type">
+                      <f:fields>
+                        <Text text="{documentType}"/>
+                      </f:fields>
+                    </f:FormElement>
+                    <f:FormElement label="ID">
+                      <f:fields>
+                        <Text text="{id}"/>
+                      </f:fields>
+                    </f:FormElement>
+                    <f:FormElement label="Status">
+                      <f:fields>
+                        <Text text="{status}"/>
+                      </f:fields>
+                    </f:FormElement>
+                    <f:FormElement label="Modified By">
+                      <f:fields>
+                        <Text text="{lastModifiedBy}"/>
+                      </f:fields>
+                    </f:FormElement>
+                  </f:formElements>
+                </f:FormContainer>
+              </f:formContainers>
+            </f:Form>
+          </IconTabFilter>
+          <IconTabFilter text="Version History">
+            <Table items="{versions}">
+              <columns>
+                <Column><Text text="Version"></Text></Column>
+                <Column><Text text="Name/Type"></Text></Column>
+                <Column><Text text="Modified At"></Text></Column>
+                <Column><Text text="Modified By"></Text></Column>
+                <Column id="download" />
+                <Column id="restore" />
+              </columns>
+              <items>
+                <ColumnListItem>
+                  <cells>
+                    <Text text="{version}"></Text>
+                    <Text text="{fileName}"></Text>
+                    <Text text="{modifiedOn}"></Text>
+                    <Text text="{modifiedBy}"></Text>
+                    <Button icon="sap-icon://download"/>
+                    <Button text="Restore"/>
+                  </cells>
+                </ColumnListItem>
+              </items>
+            </Table>
+          </IconTabFilter>
+          <IconTabFilter text="Alternative File Formats">
+          </IconTabFilter>
+          <IconTabFilter text="Change Log">
+          </IconTabFilter>
+          <IconTabFilter text="Linked Objects">
+          </IconTabFilter>
+        </items>
+      </IconTabBar>
+    </content>
+    <beginButton>
+      <Button
+          text="Apply"
+          type="Emphasized"
+          press=".onViewDetailsClose" />
+    </beginButton>
+    <endButton>
+      <Button
+          text="Close"
+          press=".onViewDetailsClose" />
+    </endButton>
+  </Dialog>
+</core:FragmentDefinition>
