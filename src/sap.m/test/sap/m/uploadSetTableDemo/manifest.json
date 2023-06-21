@@ -11,6 +11,11 @@
 			"type": "XML",
 			"async": true,
 			"id": "app"
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
 		}
 	}
 }
