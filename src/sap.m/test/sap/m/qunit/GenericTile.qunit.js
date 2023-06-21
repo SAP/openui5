@@ -4305,36 +4305,57 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
 	});
 
+	/**
+	 * @deprecated since 1.48.0, FrameType.TwoThird is deprecated
+	 */
 	QUnit.test("GenericTile - Loaded/TwoThirds , TileContent - Loaded", function(assert) {
 		this.fnCreateGenericTile(LoadState.Loaded, LoadState.Loaded, FrameType.TwoThirds);
 		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
 	});
 
+	/**
+	 * @deprecated since 1.48.0, FrameType.TwoThird is deprecated
+	 */
 	QUnit.test("GenericTile - Loaded/TwoThirds , TileContent - Loading", function(assert) {
 		this.fnCreateGenericTile(LoadState.Loaded, LoadState.Loading, FrameType.TwoThirds);
 		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
 	});
 
+	/**
+	 * @deprecated since 1.48.0, FrameType.TwoThird is deprecated
+	 */
 	QUnit.test("GenericTile - Loaded/TwoThirds , TileContent - Failed", function(assert) {
 		this.fnCreateGenericTile(LoadState.Loaded, LoadState.Failed, FrameType.TwoThirds);
 		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
 	});
 
+	/**
+	 * @deprecated since 1.48.0, FrameType.TwoThird is deprecated
+	 */
 	QUnit.test("GenericTile - Loaded/TwoThirds , TileContent - Disabled", function(assert) {
 		this.fnCreateGenericTile(LoadState.Loaded, LoadState.Disabled, FrameType.TwoThirds);
 		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
 	});
 
+	/**
+	 * @deprecated since 1.48.0, FrameType.TwoThird is deprecated
+	 */
 	QUnit.test("GenericTile - Loading/TwoThirds", function(assert) {
 		this.fnCreateGenericTile(LoadState.Loading, LoadState.Loaded, FrameType.TwoThirds);
 		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
 	});
 
+	/**
+	 * @deprecated since 1.48.0, FrameType.TwoThird is deprecated
+	 */
 	QUnit.test("GenericTile - Disabled/TwoThirds", function(assert) {
 		this.fnCreateGenericTile(LoadState.Disabled, LoadState.Loaded, FrameType.TwoThirds);
 		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
 	});
 
+	/**
+	 * @deprecated since 1.48.0, FrameType.TwoThird is deprecated
+	 */
 	QUnit.test("GenericTile - Failed/TwoThirds", function(assert) {
 		this.fnCreateGenericTile(LoadState.Failed, LoadState.Loaded, FrameType.TwoThirds);
 		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
