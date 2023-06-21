@@ -1016,7 +1016,7 @@ sap.ui.define([
 			}
 		}
 
-		if (!this.mLateQueryOptions) {
+		if (!(this.mLateQueryOptions || this.mQueryOptions && this.mQueryOptions.$select)) {
 			return false; // no autoExpandSelect
 		}
 
@@ -1029,10 +1029,15 @@ sap.ui.define([
 		aUpdateProperties = [sRequestedPropertyPath];
 
 		sFullResourceMetaPath = _Helper.buildPath(this.sMetaPath, sResourceMetaPath);
+		mQueryOptions = this.mLateQueryOptions
+			|| { // ensure that $select precedes $expand in the resulting query
+				$select : this.mQueryOptions.$select,
+				$expand : this.mQueryOptions.$expand
+			};
 		// sRequestedPropertyPath is also a metapath because the binding does not accept a path with
 		// a collection-valued navigation property for a late property
 		mQueryOptions = _Helper.intersectQueryOptions(
-			_Helper.getQueryOptionsForPath(this.mLateQueryOptions, sResourcePath),
+			_Helper.getQueryOptionsForPath(mQueryOptions, sResourcePath),
 			[sRequestedPropertyPath], this.oRequestor.getModelInterface().fetchMetadata,
 			sFullResourceMetaPath);
 		if (!mQueryOptions) {
@@ -1305,7 +1310,7 @@ sap.ui.define([
 	/**
 	 * Returns this cache's query options.
 	 *
-	 * @returns {object} The query options
+	 * @returns {object|undefined} The query options, if any
 	 *
 	 * @public
 	 * @see #setQueryOptions

@@ -45052,6 +45052,85 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Flexible Column Layout, ODataModel#getKeepAliveContext
+	// Object page requests a kept-alive context from an empty list. See that the object page
+	// request's $select contains all properties from the list's $select even if there has not been
+	// a late property yet.
+	// Note that getKeepAliveContext requests the key properties (and poss. the messages). So in
+	// order to have no late properties yet, the list must show all key properties, and messages
+	// must not be requested. The test only has the shared property "Name" to avoid timing issues.
+	// JIRA: CPOUI5ODATAV4-2190
+	QUnit.test("getKeepAliveContext: properties from the list's $select", function (assert) {
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="list" growing="true" growingThreshold="1" items="{path : \'Artists\',\
+ 		parameters : {$$getKeepAliveContext : true, $$ownRequest : true}}">\
+	<Text id="id" text="{ArtistID}"/>\
+	<Text id="isActiveEntity" text="{IsActiveEntity}"/>\
+	<Text id="listName" text="{Name}"/>\
+	<Text id="listFriend" text="{BestFriend/Name}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Text id="name" text="{Name}"/>\
+	<Text id="friend" text="{BestFriend/Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("id", [])
+			.expectChange("isActiveEntity", [])
+			.expectChange("listName", [])
+			.expectChange("listFriend", [])
+			.expectChange("name")
+			.expectChange("friend");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					batchNo : 1,
+					url : "Artists?$select=ArtistID,IsActiveEntity,Name"
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)&$skip=0&$top=1"
+				}, {
+					value : [{
+						ArtistID : "1",
+						IsActiveEntity : true,
+						Name : "The Who",
+						BestFriend : {
+							ArtistID : "2",
+							IsActiveEntity : true,
+							Name : "The The"
+						}
+					}]
+				})
+				.expectRequest({
+					batchNo : 1,
+					url : "Artists(ArtistID='3',IsActiveEntity=false)"
+						+ "?$select=ArtistID,IsActiveEntity,Name"
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+				}, {
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "The Beatles",
+					BestFriend : {
+						ArtistID : "4",
+						IsActiveEntity : true,
+						Name : "The Rolling Stones"
+					}
+				})
+				.expectChange("id", ["1"])
+				.expectChange("isActiveEntity", ["Yes"])
+				.expectChange("listName", ["The Who"])
+				.expectChange("listFriend", ["The The"])
+				.expectChange("name", "The Beatles")
+				.expectChange("friend", "The Rolling Stones");
+
+			that.oView.byId("list").setBindingContext(oModel.createBindingContext("/"));
+			that.oView.byId("objectPage").setBindingContext(
+				oModel.getKeepAliveContext("/Artists(ArtistID='3',IsActiveEntity=false)"));
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: List report with absolute binding, object page with a late property. Ensure that
 	// the late property is not requested for all rows of the list, but only for the single row that
 	// needs it.
