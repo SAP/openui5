@@ -665,7 +665,12 @@ sap.ui.define([
 		}
     };
 
-    UploadSetTable.prototype._processSelectedFileObjects = function (oFiles) {
+	UploadSetTable.prototype.uploadItemViaUrl = function (sName, aAdditionalInfo) {
+		var oFileObject = new File([new Blob([])], sName);
+		this._processSelectedFileObjects([oFileObject], aAdditionalInfo);
+	};
+
+    UploadSetTable.prototype._processSelectedFileObjects = function (oFiles, additionalParams) {
         var aFiles = [];
 
 		// Need to explicitly copy the file list, FileUploader deliberately resets its form completely
@@ -682,6 +687,25 @@ sap.ui.define([
 			oItem._setFileObject(oFile);
 			oItem.setFileName(oFile.name);
 			selectedFiles.push(oItem);
+			// if url is passed, add it in UploadSetTableItem.
+			function _getUrlFromParam (oParams) {
+				var sUrl = '';
+				if (oParams.length > 0) {
+					oParams.filter(function (oObj) {
+						if (oObj.key === 'url'){
+							sUrl = oObj.value;
+						}
+					});
+				}
+				return sUrl;
+			}
+			if (Array.isArray(additionalParams) && additionalParams.length > 0) {
+				var sUrl = _getUrlFromParam(additionalParams);
+				if (sUrl){
+					oItem.setUrl(sUrl);
+				}
+				oItem.setAdditionalFileInfo(additionalParams);
+			}
 			/* fire the beforeInitiatingUpload to support use case for non instant uploads,
 			where additional item properties can be set by the consumer of the control */
 			this.fireBeforeInitiatingItemUpload({item: oItem});

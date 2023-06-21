@@ -6,8 +6,14 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/core/Fragment",
 	"./mockserver",
-	"sap/m/MessageToast"
-], function (Controller, JSONModel, UploadSetTable, UploadSetTableItem, MessageBox, Fragment, MockServer, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/m/Dialog",
+	"sap/m/Button",
+	"sap/m/library",
+	"sap/m/Text",
+	"sap/ui/core/library",
+	'sap/base/util/uid'
+], function (Controller, JSONModel, UploadSetTable, UploadSetTableItem, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, coreLibrary, uid) {
 	"use strict";
 
 	return Controller.extend("sap.m.uploadSetTableDemo.Page", {
@@ -36,6 +42,7 @@ sap.ui.define([
 			var oDownloadBtn = this.byId("downloadSelectedButton");
 			var oChangeStatusBtn = this.byId("changeStatusButton");
 			var oCreateRevisionBtn = this.byId("createRevisionButton");
+			var oEditUrlBtn = this.byId("editUrlButton");
 
 			if (aSelectedItems.length > 0) {
 				oDownloadBtn.setEnabled(true);
@@ -45,6 +52,11 @@ sap.ui.define([
 				oDownloadBtn.setEnabled(false);
 				oChangeStatusBtn.setEnabled(false);
 				oCreateRevisionBtn.setEnabled(false);
+			}
+			if (aSelectedItems.length === 1){
+				oEditUrlBtn.setEnabled(true);
+			} else {
+				oEditUrlBtn.setEnabled(false);
 			}
 		},
 		// Download files handler
@@ -77,7 +89,7 @@ sap.ui.define([
 			if (iResponseStatus === 201) {
 				oData.unshift(
 					{
-						"id": "23004569",
+						"id": uid(),
 						"fileName": oItem.getFileName(),
 						"mediaType": oItem.getMediaType(),
 						"url": oResponseBody ? oResponseBody.fileUrl : "",
@@ -351,6 +363,180 @@ sap.ui.define([
 		onViewDetailsClose: function() {
 			this._fileDetailsFragment.destroy();
 			this._fileUploadFragment = null;
+		},
+		_isValidUrl: function (sUrl) {
+			var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+			return regexp.test(sUrl);
+		},
+		_isValidName: function () {
+			var domRefName = sap.ui.getCore().byId('addViaUrlDialog--nameInput'),
+			sName = domRefName.getValue(),
+			bHasError = false;
+			if (!sName) {
+				domRefName.setValueState('Error');
+				domRefName.setValueStateText('Text is either empty or contains special characters');
+				bHasError = true;
+			} else {
+				domRefName.setValueState('None');
+				bHasError = false;
+			}
+			return !bHasError;
+		},
+		_validateAddOrEditUrlDialog:  function () {
+			var domRefUrl = sap.ui.getCore().byId('addViaUrlDialog--urlInput'),
+			domRefName = sap.ui.getCore().byId('addViaUrlDialog--nameInput'),
+			domRefDocType = sap.ui.getCore().byId('addViaUrlDialog--docTypeCombobox'),
+			sUrl = domRefUrl.getValue(),
+			sName = domRefName.getValue(),
+			sDocType = domRefDocType.getValue(),
+			bFormHasError = !this._isValidName();
+
+			if (!sUrl || !this._isValidUrl(sUrl)) {
+				domRefUrl.setValueState('Error');
+				domRefUrl.setValueStateText('Enter Valid URL');
+				bFormHasError = true;
+			} else {
+				domRefUrl.setValueState('None');
+			}
+			if (!sDocType) {
+				domRefDocType.setValueState('Error');
+				domRefDocType.setValueStateText('Invalid option');
+				bFormHasError = true;
+			} else {
+				domRefDocType.setValueState('None');
+			}
+
+			return {
+				error: bFormHasError,
+				name: sName,
+				url: sUrl,
+				docType: sDocType
+			};
+		},
+		showEditConfirmation: function () {
+			// validate name and set valueState.
+			var DialogType = mobileLibrary.DialogType;
+			var ValueState = coreLibrary.ValueState;
+			var ButtonType = mobileLibrary.ButtonType;
+			this.oWarningMessageDialog = new Dialog({
+				type: DialogType.Message,
+				title: "Warning",
+				state: ValueState.Warning,
+				content: new Text({ text: "You have made changes to this object. What would you like to do?" }),
+				buttons: [ new Button({
+					type: ButtonType.Emphasized,
+					text: "Save",
+					press: [function () {
+						var oValidateObject = this._validateAddOrEditUrlDialog(),
+						sName = oValidateObject.name,
+						sUrl = oValidateObject.url,
+						sDocType = oValidateObject.docType,
+						oUploadSetTable = this.byId("UploadSetTable");
+						var oBidningContextObject = oUploadSetTable.getSelectedItem().getBindingContext().getObject();
+						var oModel = this.getView().getModel();
+						var oData = oModel.getProperty("/items");
+						var iUpdateIndex, item;
+						oData.filter( function (obj, index) {
+							if (obj.id === oBidningContextObject.id) {
+								iUpdateIndex = index;
+								item = obj;
+							}
+						});
+						oData[iUpdateIndex] = Object.assign(item, {
+							fileName: sName,
+							url: sUrl,
+							documentType: sDocType
+						});
+						oModel.setProperty("/items", oData);
+						this.oWarningMessageDialog.close();
+						this.closeAddViaUrlFragment();
+
+					},this]
+				}), new Button({
+					text: "DiscardChanges",
+					press: [function () {
+						this.oWarningMessageDialog.close();
+					},this]
+				})]
+			});
+			this.oWarningMessageDialog.open();
+		},
+		handleAddViaUrl: function (){
+			if (this.bEditDocument) {
+				if (this._isValidName()){
+					this.showEditConfirmation();
+				} else {
+					MessageToast.show("No Changes found");
+				}
+				return;
+			}
+			var oValidateObject = this._validateAddOrEditUrlDialog(),
+			sName = oValidateObject.name,
+			sUrl = oValidateObject.url,
+			sDocType = oValidateObject.docType,
+			bHasError = oValidateObject.error;
+			if (!bHasError) {
+				setTimeout(function(){
+					var oUploadSetTableInstance = this.byId("UploadSetTable");
+					oUploadSetTableInstance.uploadItemViaUrl(sName, [{
+						key: 'url',
+						value: sUrl
+					},{
+						key: 'docType',
+						value: sDocType
+					}]);
+					this._addViaUrlFragment.destroy();
+					this._addViaUrlFragment = null;
+				}.bind(this), 1000);
+			}
+		},
+		openAddOrEditDialog: function () {
+			if (!this._addViaUrlFragment){
+				Fragment.load({
+					name: "sap.m.uploadSetTableDemo.AddViaUrl",
+					id: "addViaUrlDialog",
+					controller: this
+				})
+				.then(function (oPopover) {
+					this._addViaUrlFragment = oPopover;
+					this.getView().addDependent(oPopover);
+					// if edit is clicked
+					var fileInfo = this.oEditDocumentInfo;
+					if (this.bEditDocument && fileInfo) {
+						sap.ui.getCore().byId('addViaUrlDialog--addViaUrlDialog').setTitle("Edit URL");
+						sap.ui.getCore().byId('addViaUrlDialog--addDocumentBtn').setText("Apply");
+						sap.ui.getCore().byId('addViaUrlDialog--urlInput').setValue(fileInfo.url);
+						sap.ui.getCore().byId('addViaUrlDialog--nameInput').setValue(fileInfo.name);
+						sap.ui.getCore().byId('addViaUrlDialog--docTypeCombobox').setValue(fileInfo.docType);
+						sap.ui.getCore().byId('addViaUrlDialog--urlInputLabel').setRequired(false);
+						sap.ui.getCore().byId('addViaUrlDialog--docTypeComboboxLabel').setRequired(false);
+					}
+					oPopover.open();
+				}.bind(this));
+			} else {
+				this._addViaUrlFragment.open();
+			}
+		},
+		closeAddViaUrlFragment: function () {
+			this.bEditDocument = false;
+			this.oEditDocumentInfo = null;
+			this._addViaUrlFragment.destroy();
+			this._addViaUrlFragment = null;
+		},
+		onEditUrl: function(oEvent) {
+			var oUploadSet = this.byId("UploadSetTable"),
+			 oBidningContextObject = oUploadSet.getSelectedItems()[0].getBindingContext().getObject(),
+			 sUrl = oBidningContextObject.url,
+			 sName = oBidningContextObject.fileName,
+			 sDocType = oBidningContextObject.documentType;
+
+			 this.bEditDocument = true;
+			 this.oEditDocumentInfo = {
+				url: sUrl,
+				name: sName,
+				docType: sDocType
+			 };
+			 this.openAddOrEditDialog();
 		}
 	});
 });
