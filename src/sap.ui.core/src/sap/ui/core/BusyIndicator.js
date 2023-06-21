@@ -8,6 +8,7 @@ sap.ui.define([
 	'../base/EventProvider',
 	'./Popup',
 	'./BusyIndicatorUtils',
+	'sap/ui/core/Core',
 	'sap/ui/core/library',
 	'sap/ui/core/Lib',
 	"sap/ui/performance/trace/FESR",
@@ -21,6 +22,7 @@ sap.ui.define([
 		EventProvider,
 		Popup,
 		BusyIndicatorUtils,
+		Core,
 		coreLib,
 		Library,
 		FESR,
@@ -174,48 +176,37 @@ sap.ui.define([
 		Log.debug("sap.ui.core.BusyIndicator.show (delay: " + iDelay + ") at " + Date.now());
 		assert(iDelay === undefined || (typeof iDelay == "number" && (iDelay % 1 == 0)), "iDelay must be empty or an integer");
 
-		// If body/Core are not available yet, give them some more time and open
-		// later if still required
-		if (!document.body || !sap.ui.getCore().isInitialized()) {
-			// register core init only once, when bShowIsDelayed is not set yet
-			if (BusyIndicator._bShowIsDelayed === undefined) {
-				sap.ui.getCore().attachInit(function () {
-					// ignore init event, in case hide() was called in between
-					if (BusyIndicator._bShowIsDelayed) {
-						BusyIndicator.show(iDelay);
-					}
-				});
-			}
-			// everytime show() is called the call has to be delayed
+		if (BusyIndicator._bShowIsDelayed === undefined) {
 			BusyIndicator._bShowIsDelayed = true;
-			return;
-		}
+			Core.ready(function() {
+				BusyIndicator._bShowIsDelayed = undefined;
+				if ((iDelay === undefined)
+						|| ((iDelay != 0) && (parseInt(iDelay) == 0))
+						|| (parseInt(iDelay) < 0)) {
+					iDelay = this.iDEFAULT_DELAY_MS;
+				}
+				if (FESR.getActive()) {
+					this._fDelayedStartTime = now() + iDelay;
+				}
 
-		if ((iDelay === undefined)
-				|| ((iDelay != 0) && (parseInt(iDelay) == 0))
-				|| (parseInt(iDelay) < 0)) {
-			iDelay = this.iDEFAULT_DELAY_MS;
-		}
-		if (FESR.getActive()) {
-			this._fDelayedStartTime = now() + iDelay;
-		}
+				// Initialize/create the BusyIndicator if this has not been done yet.
+				// This has to be done before calling '_showNowIfRequested' because within
+				// '_init' the BusyIndicator attaches itself to the Popup's open event and
+				// to keep the correct order of 'show -> _showNowIfRequested -> _onOpen'
+				// the attaching has to happen earlier.
+				// Otherwise if an application attaches itself to the open event, this listener
+				// will be called before the BusyIndicator's open listener.
+				if (!this.oDomRef) {
+					this._init();
+				}
 
-		// Initialize/create the BusyIndicator if this has not been done yet.
-		// This has to be done before calling '_showNowIfRequested' because within
-		// '_init' the BusyIndicator attaches itself to the Popup's open event and
-		// to keep the correct order of 'show -> _showNowIfRequested -> _onOpen'
-		// the attaching has to happen earlier.
-		// Otherwise if an application attaches itself to the open event, this listener
-		// will be called before the BusyIndicator's open listener.
-		if (!this.oDomRef) {
-			this._init();
-		}
-
-		this.bOpenRequested = true;
-		if (iDelay === 0) { // avoid async call when there is no delay
-			this._showNowIfRequested();
-		} else {
-			setTimeout(this["_showNowIfRequested"].bind(this), iDelay);
+				this.bOpenRequested = true;
+				if (iDelay === 0) { // avoid async call when there is no delay
+					this._showNowIfRequested();
+				} else {
+					setTimeout(this["_showNowIfRequested"].bind(this), iDelay);
+				}
+			}.bind(this));
 		}
 	};
 
