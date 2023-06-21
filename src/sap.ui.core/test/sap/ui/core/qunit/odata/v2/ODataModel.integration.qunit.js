@@ -14836,6 +14836,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	//    request in order to avoid duplicates
 	// 4. Nested collections are updated
 	// JIRA: CPOUI5MODELS-656
+	// Scenario: The promise returned by requestSideEffects is to be resolved with the list bindings
+	// which have been refreshed.
+	// JIRA: CPOUI5MODELS-1299
 	QUnit.test("Request side effects: $batch, nested collections", function (assert) {
 		var oBinding, oTable,
 			oModel = createSalesOrdersModel(),
@@ -15066,19 +15069,19 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectValue("name", "SAP - SideEffect", 2);
 
 			// code under test
-			oModel.requestSideEffects(that.oView.byId("objectPage").getBindingContext(), {
-				urlParameters : {
-					$expand : "ToSalesOrders,ToSalesOrders/ToBusinessPartner,"
-						+ "ToSalesOrders/ToLineItems",
-					$select : "ToSalesOrders/SalesOrderID,ToSalesOrders/Note,"
-						+ "ToSalesOrders/ToBusinessPartner/CompanyName,"
-						+ "ToSalesOrders/ToLineItems/SalesOrderID,"
-						+ "ToSalesOrders/ToLineItems/ItemPosition,ToSalesOrders/ToLineItems/Note"
-				}
-			});
+			var oSideEffectPromise = oModel.requestSideEffects(that.oView.byId("objectPage").getBindingContext(), {
+					urlParameters : {
+						$expand : "ToSalesOrders,ToSalesOrders/ToBusinessPartner,"
+							+ "ToSalesOrders/ToLineItems",
+						$select : "ToSalesOrders/SalesOrderID,ToSalesOrders/Note,"
+							+ "ToSalesOrders/ToBusinessPartner/CompanyName,"
+							+ "ToSalesOrders/ToLineItems/SalesOrderID,"
+							+ "ToSalesOrders/ToLineItems/ItemPosition,ToSalesOrders/ToLineItems/Note"
+					}
+				});
 
-			return that.waitForChanges(assert);
-		}).then(function () {
+			return Promise.all([oSideEffectPromise, that.waitForChanges(assert)]);
+		}).then(function (aResults) {
 			var aSelectItems = oTable.getRows()[0].getCells()[2].getItems();
 
 			assert.strictEqual(aSelectItems.length, 1);
@@ -15089,6 +15092,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			aSelectItems = oTable.getRows()[2].getCells()[2].getItems();
 			assert.strictEqual(aSelectItems.length, 1);
 			assert.strictEqual(aSelectItems[0].getText(), "Sales Order Line Item 1 - SideEffect");
+
+			var aAffectedListBindings = aResults[0];
+
+			assert.strictEqual(aAffectedListBindings.length, 3);
+			// only list bindings with non-transient parent context may be affected by side effects
+			assert.ok(aAffectedListBindings.includes(oTable.getBinding("rows")));
+			assert.ok(aAffectedListBindings.includes(oTable.getRows()[0].getCells()[2].getBinding("items")));
+			assert.ok(aAffectedListBindings.includes(oTable.getRows()[2].getCells()[2].getBinding("items")));
 
 			return that.waitForChanges(assert);
 		});
