@@ -50,6 +50,16 @@
 				</VBox>
 				<VBox alignItems="Center">
 					<Avatar
+							enabled="false"
+							initials="PI"
+							displaySize="XL"
+							press="onPress"/>
+					<Text
+							text="Disabled"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
 							displaySize="XL"
 							backgroundColor="Transparent"
 							press="onPress"/>

@@ -8,6 +8,7 @@
 @_sap_m_Avatar_Font_Size_M: 1.5rem;
 @_sap_m_Avatar_Font_Size_S: 1.125rem;
 @_sap_m_Avatar_Font_Size_XS: 1rem;
+@_sap_m_Avatar_Hover_Box_Shadow_Offset: 0px;
 
 .sapFAvatarImageContain,
 .sapFAvatarIcon,
@@ -28,8 +29,11 @@
 }
 
 .sapFAvatarFocusable:focus {
-	outline: none;
-	box-shadow: 0px 0px 0px 0.125rem @sapUiContentFocusColor;
+	outline-width: 0.125rem;
+}
+
+.sapFAvatar:not(.sapMAvatarPressed):not(.sapMAvatarDisabled):hover {
+	background-color: @sapActiveColor;
 }
 
 .sapFAvatarColorTileIcon {
