@@ -576,6 +576,30 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("format and parse with type object", function (assert) {
+		var oType = new DateTime();
+
+		// code under test
+		assert.strictEqual(oType.formatValue(oDateTime, "object"), oDateTime);
+		assert.strictEqual(oType.parseValue(oDateTime, "object"), oDateTime);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format and parse with type object (Date only)", function (assert) {
+		var oType = new DateTime({}, {displayFormat : "Date"});
+
+		this.mock(oType).expects("getDateValue").withExactArgs(oDateOnly).returns("~dateValue");
+
+		// code under test
+		assert.strictEqual(oType.formatValue(oDateOnly, "object"), "~dateValue");
+
+		this.mock(oType).expects("_getModelValue").withExactArgs(oDateOnly).returns("~modelValue");
+
+		// code under test
+		assert.strictEqual(oType.parseValue(oDateOnly, "object"), "~modelValue");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("validate (Date only)", function (assert) {
 		validate(assert, "sap.ui.model.odata.type.DateTime", {displayFormat : "Date"}, "EnterDate");
 	});
