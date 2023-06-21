@@ -5362,10 +5362,49 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		oInput._oClearButton.firePress();
-
 		assert.strictEqual(changeHandler.callCount, 1, "Change should be called once");
 		assert.strictEqual(liveChangeHandler.callCount, 1, "Live Change should be called once");
 		assert.strictEqual(oInput.getValue(), "", "Input's value should be cleared");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Clear Icon - Value should be updated before firing liveChange and change events", function (assert) {
+		var done = assert.async(3);
+		var oInput = new Input({
+			showClearIcon: true,
+			value: "Dryanovo"
+		}).placeAt("content");
+
+		// Arrange
+		oInput.attachLiveChange(function(oEvent) {
+			var sValue = oEvent.getParameter("value");
+			var oInputValue = oEvent.getSource().getValue();
+
+			oCore.applyChanges();
+
+			// Assert
+			assert.strictEqual(sValue, oInputValue, 'Value should be updated before firing the live change event');
+			done();
+		});
+
+		// Arrange
+		oInput.attachChange(function(oEvent) {
+			var sValue = oEvent.getParameter("value");
+			var oInputValue = oEvent.getSource().getValue();
+
+			oCore.applyChanges();
+
+			// Assert
+			assert.strictEqual(sValue, oInputValue, 'Value should be updated before firing the change event');
+			done();
+		});
+
+		oCore.applyChanges();
+		oInput._oClearButton.firePress();
+
+		assert.strictEqual(oInput.getValue(), "", "Input's value should be cleared");
+		done();
 
 		oInput.destroy();
 	});
