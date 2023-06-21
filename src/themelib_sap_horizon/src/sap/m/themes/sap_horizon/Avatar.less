@@ -21,9 +21,19 @@
 	font-size: inherit;
 }
 
-.sapFAvatarFocusable:focus {
-	outline: none;
+.sapFAvatarFocusable.sapMAvatarPressed {
 	box-shadow: 0px 0px 0px 0.125rem @sapUiContentFocusColor;
+
+	&:hover {
+		box-shadow: 0px 0px 0px 0.125rem @sapUiButtonSelectedHoverBorderColor;
+	}
+}
+
+.sapFAvatarFocusable:focus {
+	outline-offset: .125rem;
+	&.sapFAvatarSquare {
+		outline-offset: .125rem;
+	}
 }
 
 .sapFAvatarColorTileIcon {
