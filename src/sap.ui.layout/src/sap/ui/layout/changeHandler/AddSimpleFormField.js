@@ -116,7 +116,11 @@ sap.ui.define([
 					aContent = aAggregationContent;
 					iNewIndex = getIndex(aContent, mPropertyBag);
 					aContentClone = insertLabelAndField(aContent, iNewIndex, mInnerControls);
-					return oModifier.removeAllAggregation(oSimpleForm, "content");
+					// Remove each control from the "content" aggregation without leaving them orphan (would reset bindings)
+					return aContent.reduce(function(oPreviousPromise, oContent) {
+						return oPreviousPromise
+						.then(oModifier.insertAggregation.bind(oModifier, oSimpleForm, "dependents", oContent, 0, mPropertyBag.view));
+					}, Promise.resolve());
 				})
 				.then(function() {
 					return recreateContentAggregation(oSimpleForm, aContentClone, oModifier, mPropertyBag);
