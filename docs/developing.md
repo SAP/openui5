@@ -12,17 +12,19 @@ OpenUI5 content is developed in an environment based on Node.js. [UI5 Tooling](h
 ### Standard Setup
 This setup allows you to start a server for the OpenUI5 project in an easy way:
 
+Note for **Windows users**: You can download and install Git from [git-scm.com](http://git-scm.com/download). Please **use the Git Bash** (contained in the git-scm.com installer) instead of CMD or PowerShell for development tasks in OpenUI5.
+
 1. Install [Node.js](http://nodejs.org/). This also includes npm, the [node package manager](https://docs.npmjs.com/getting-started/what-is-npm).
-2. Clone the OpenUI5 Git repository. You can download and install Git from [git-scm.com](http://git-scm.com/download).
+2. Clone the OpenUI5 Git repository:
 ```sh
 git clone https://github.com/SAP/openui5.git
 ```
-3. Install all npm dependencies.
+3. Install all npm dependencies:
 ```sh
 cd openui5
 npm install
 ```
-4. Start the server
+4. Start the server:
 ```sh
 npm start
 ```
