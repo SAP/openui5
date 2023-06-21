@@ -1045,9 +1045,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sorting of invisible dimensions and measures", function(assert) {
-		assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "D");
-		assert.equal(this.oPanel.$().find("tr").find("span")[9].textContent, "E");
-		assert.equal(this.oPanel.$().find("tr").find("span")[15].textContent, "É");
-		assert.equal(this.oPanel.$().find("tr").find("span")[21].textContent, "F");
+		assert.equal(this.oPanel.$().find("tr").find("span")[4].textContent, "D");
+		assert.equal(this.oPanel.$().find("tr").find("span")[10].textContent, "E");
+		assert.equal(this.oPanel.$().find("tr").find("span")[16].textContent, "É");
+		assert.equal(this.oPanel.$().find("tr").find("span")[22].textContent, "F");
 	});
 });
