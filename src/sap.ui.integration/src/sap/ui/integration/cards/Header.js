@@ -89,6 +89,7 @@ sap.ui.define([
 			FHeader.call(this, sId, mSettings);
 
 			this._oConfiguration = mConfiguration;
+			this._oIconFormatter = oIconFormatter;
 		},
 
 		metadata: {
@@ -219,6 +220,10 @@ sap.ui.define([
 
 		if (oBindingInfo) {
 			oConfiguration.status.text = oBindingInfo;
+		}
+
+		if (oConfiguration.icon && oConfiguration.icon.src) {
+			oConfiguration.icon.src = this._oIconFormatter.formatSrc(BindingResolver.resolveValue(oConfiguration.icon.src, this));
 		}
 
 		return oConfiguration;

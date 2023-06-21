@@ -189,7 +189,13 @@ sap.ui.define([
 					items: aResolvedItems
 				};
 			} else {
-				aResolvedItems.push(BindingResolver.resolveValue(oConfiguration.item, this, oItem.getBindingContext().getPath()));
+				var oResolvedItem = BindingResolver.resolveValue(oConfiguration.item, this, oItem.getBindingContext().getPath());
+
+				if (oResolvedItem.icon && oResolvedItem.icon.src) {
+					oResolvedItem.icon.src = this._oIconFormatter.formatSrc(oResolvedItem.icon.src);
+				}
+
+				aResolvedItems.push(oResolvedItem);
 			}
 		}.bind(this));
 

@@ -229,7 +229,11 @@ sap.ui.define([
 					delete oColumn.hAlign;
 					delete oColumn.visible;
 					delete oColumn.identifier;
-				});
+
+					if (oColumn.icon && oColumn.icon.src) {
+						oColumn.icon.src = this._oIconFormatter.formatSrc(oColumn.icon.src);
+					}
+				}.bind(this));
 
 				aResolvedRows.push(oResolvedRow);
 			}

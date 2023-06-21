@@ -990,6 +990,28 @@ sap.ui.define([
 			oCard.startManifestProcessing();
 		});
 
+		QUnit.test("Base url in combination with manifest path", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = new Card({
+					manifest: "test-resources/sap/ui/integration/qunit/manifests/manifest.json",
+					baseUrl: "http://someurltest/"
+				});
+
+			oCard.attachEventOnce("_ready", function () {
+				// Assert
+				assert.strictEqual(oCard.getRuntimeUrl("/"), "http://someurltest/", "The given baseUrl is used for card base url.");
+
+				// Clean up
+				oCard.destroy();
+				done();
+			});
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
 		QUnit.module("Clone");
 
 		QUnit.test("Cloned card has its own models", function (assert) {

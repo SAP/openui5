@@ -15,7 +15,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 				this.oCard = new Card({
 					width: "400px",
 					height: "600px",
-					baseUrl: "test-resources/sap/ui/integration/qunit/cardBundle/bundle/"
+					baseUrl: "test-resources/sap/ui/integration/qunit/cardbundle/bundle/"
 				});
 
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
@@ -338,7 +338,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 				this.oCard = new Card({
 					width: "400px",
 					height: "600px",
-					baseUrl: "test-resources/sap/ui/integration/qunit/cardBundle/bundle/"
+					baseUrl: "test-resources/sap/ui/integration/qunit/cardbundle/bundle/"
 				});
 
 				this.oCard.placeAt(DOM_RENDER_LOCATION);

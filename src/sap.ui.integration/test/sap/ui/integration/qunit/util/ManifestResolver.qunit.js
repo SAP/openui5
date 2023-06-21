@@ -71,7 +71,10 @@ sap.ui.define([
 					}
 				},
 				"header": {
-					"title": "{firstName} {lastName}"
+					"title": "{firstName} {lastName}",
+					"icon": {
+						"src": "{photo}"
+					}
 				},
 				"content": {
 					"groups": [
@@ -79,6 +82,9 @@ sap.ui.define([
 							"title": "Contact Details",
 							"items": [
 								{
+									"icon": {
+										"src": "{photo}"
+									},
 									"label": "First name",
 									"value": "{firstName}"
 								}
@@ -99,7 +105,9 @@ sap.ui.define([
 			.then(function (oRes) {
 				// Assert
 				assert.strictEqual(oRes["sap.card"].header.title, "Donna Moore", "Binding is resolved in the header");
+				assert.strictEqual(oRes["sap.card"].header.icon.src, "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/./images/Woman_avatar_01.png", "The icon paths are resolved correctly.");
 				assert.strictEqual(oRes["sap.card"].content.groups[0].items[0].value, "Donna", "Binding is resolved in the content");
+				assert.strictEqual(oRes["sap.card"].content.groups[0].items[0].icon.src, "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/./images/Woman_avatar_01.png", "The icon paths are resolved correctly.");
 
 				oCard.destroy();
 			});
@@ -666,15 +674,20 @@ sap.ui.define([
 					"data": {
 						"json": [
 							{
-								"Name": "Comfort Easy"
+								"Name": "Comfort Easy",
+								"Icon": "../../images/Woman_avatar_01.png"
 							},
 							{
-								"Name": "ITelO Vault"
+								"Name": "ITelO Vault",
+								"Icon": "../../images/Woman_avatar_02.png"
 							}
 						]
 					},
 					"item": {
-						"title": "{Name}"
+						"title": "{Name}",
+						"icon": {
+							"src": "{Icon}"
+						}
 					}
 				}
 			}
@@ -693,10 +706,16 @@ sap.ui.define([
 						{
 							"items": [
 								{
-									"title": "Comfort Easy"
+									"title": "Comfort Easy",
+									"icon": {
+										"src": "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/../../images/Woman_avatar_01.png"
+									}
 								},
 								{
-									"title": "ITelO Vault"
+									"title": "ITelO Vault",
+									"icon": {
+										"src": "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/../../images/Woman_avatar_02.png"
+									}
 								}
 							]
 						}
@@ -1424,17 +1443,22 @@ sap.ui.define([
 						"json": [
 							{
 								"FirstName": "Donna",
-								"LastName": "Moore"
+								"LastName": "Moore",
+								"Icon": "../../images/Woman_avatar_01.png"
 							},
 							{
 								"FirstName": "John",
-								"LastName": "Miller"
+								"LastName": "Miller",
+								"Icon": "../../images/Woman_avatar_02.png"
 							}
 						]
 					},
 					"row": {
 						"columns": [
 							{
+								"icon": {
+									"src": "{Icon}"
+								},
 								"title": "First Name",
 								"value": "{FirstName}",
 								"width": "18%",
@@ -1479,6 +1503,9 @@ sap.ui.define([
 								{
 									"columns": [
 										{
+											"icon": {
+												"src": "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/../../images/Woman_avatar_01.png"
+											},
 											"value": "Donna"
 										},
 										{
@@ -1489,6 +1516,10 @@ sap.ui.define([
 								{
 									"columns": [
 										{
+
+											"icon": {
+												"src": "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/../../images/Woman_avatar_02.png"
+											},
 											"value": "John"
 										},
 										{
@@ -2070,7 +2101,7 @@ sap.ui.define([
 						"items": [
 							{
 								"icon": {
-									"src": "../../images/Woman_avatar_01.png",
+									"src": "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/../../images/Woman_avatar_01.png",
 									"initials": "EE"
 								},
 								"actions": [{

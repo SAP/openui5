@@ -453,7 +453,7 @@ sap.ui.define([
 	QUnit.module("Dynamic filters", {
 		beforeEach: function () {
 			this.oCard = new Card({
-				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+				baseUrl: "test-resources/sap/ui/integration/qunit/manifests/"
 			});
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		},
