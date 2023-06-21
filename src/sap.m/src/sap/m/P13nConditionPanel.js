@@ -88,6 +88,9 @@ sap.ui.define([
 	// shortcut for sap.m.OverflowToolbarPriority
 	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
+	// shortcut for sap.m.P13nConditionOperation
+	var P13nConditionOperation = library.P13nConditionOperation;
+
 	// lazy dependency to sap.ui.layout.Grid
 	var Grid;
 	// lazy dependency to sap.ui.layout.GridData
@@ -2082,6 +2085,13 @@ sap.ui.define([
 			if (oKeyField.type && oKeyField.type !== "" && this._oTypeOperations[oKeyField.type]) {
 				sType = oKeyField.type;
 				aOperations = this._oTypeOperations[sType];
+			}
+
+			// check if maxLength is 1 and remove Contains, StartsWith and EndsWith operations
+			if (oKeyField.maxLength === 1 || oKeyField.maxLength === "1") {
+				aOperations = aOperations.filter(function(sOperation) {
+					return [P13nConditionOperation.Contains, P13nConditionOperation.StartsWith, P13nConditionOperation.EndsWith].indexOf(sOperation) === -1;
+				});
 			}
 			if (oKeyField.operations) {
 				aOperations = oKeyField.operations;

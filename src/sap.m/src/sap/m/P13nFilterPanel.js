@@ -563,23 +563,6 @@ sap.ui.define([
 					isDefault: fGetValueOfProperty("isDefault", oContext, oItem_),
 					values: fGetValueOfProperty("values", oContext, oItem_)
 				});
-
-				// check if maxLength is 1 and remove contains, start and ends with operations
-				var n = aKeyFields.length;
-				if (aKeyFields[n - 1].maxLength === 1 || aKeyFields[n - 1].maxLength === "1") {
-					// Take the operations from the string type (because maxLength is only supported by type string) and remove Contains, StartsWith and EndsWith
-					// This operations array on the keyFields will overwrite the type operations which are defined by the type!
-					// We could also handle this in the P13nConditionPanel and remove all the not supported operations (e.g. Contains, StartsWith and EndsWith when maxLength == 1)
-					// BCP 1970047060
-					var oKeyField = aKeyFields[n - 1];
-					var aOperations = this._oIncludeFilterPanel.getOperations(oKeyField.type);
-					oKeyField.operations = [];
-					aOperations.forEach(function(sOperation) {
-						if ([P13nConditionOperation.Contains, P13nConditionOperation.StartsWith, P13nConditionOperation.EndsWith].indexOf(sOperation) === -1) {
-							oKeyField.operations.push(sOperation);
-						}
-					}, this);
-				}
 			}, this);
 			this.setKeyFields(aKeyFields);
 
