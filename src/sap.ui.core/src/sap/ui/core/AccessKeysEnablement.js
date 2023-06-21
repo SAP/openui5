@@ -3,11 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/base/config",
 	"sap/ui/base/Object",
+	"sap/ui/core/Element",
 	'sap/ui/Device'
 ],
-	function(Core, BaseObject, Device) {
+	function(BaseConfig, BaseObject, Element, Device) {
 	"use strict";
 
 	var AccessKeysEnablement = BaseObject.extend("sap.ui.core.AccessKeysEnablement",  /** @lends sap.ui.core.AccessKeysEnablement.prototype */ {});
@@ -129,19 +130,23 @@ sap.ui.define([
 
 	AccessKeysEnablement.getElementToBeFocused = function (sText) {
 		return [].filter.call(document.querySelectorAll("[data-ui5-accesskey='" + sText.toLowerCase() + "']"), function(oDom) {
-			var oControl = sap.ui.getCore().byId(oDom.getAttribute("id"));
+			var oControl = Element.registry.get(oDom.getAttribute("id"));
 			var bEnabled = oControl.getEnabled ? oControl.getEnabled() : true;
 			var bVisible = oControl.getVisible();
 
 			return bEnabled && bVisible;
 		}).map(function(oElement) {
-			oElement = sap.ui.getCore().byId(oElement.getAttribute("id"));
+			oElement = Element.registry.get(oElement.getAttribute("id"));
 			return oElement.getAccessKeysFocusTarget ? oElement.getAccessKeysFocusTarget() : oElement.getFocusDomRef();
 		});
 	};
 
 	AccessKeysEnablement.registerControl = function (oControl) {
-		var bEnableAccKeys = Core.getConfiguration().getAccKeys();
+		var bEnableAccKeys = BaseConfig.get({
+			name: "sapUiXxAccKeys",
+			type: BaseConfig.Type.Boolean,
+			external: true
+		});
 
 		/* Disable the feature for Mac OS due to depreacated KeyCode API */
 		if (Device.os.macintosh) {

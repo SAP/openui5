@@ -1317,17 +1317,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Gets if pressing alt key will highlight access keys enabled elements on the screen.
-		 *
-		 * @returns {boolean} whether access keys is enabled
-		 * @since 1.104.0
-		 * @experimental
-		 */
-		getAccKeys: function () {
-			return this.getValue("xx-acc-keys");
-		},
-
-		/**
 		 * Returns the list of active terminologies defined via the Configuration.
 		 *
 		 * @returns {string[]|undefined} if no active terminologies are set, the default value <code>undefined</code> is returned.

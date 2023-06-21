@@ -1,11 +1,11 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ScrollContainer",
 	"sap/m/Image",
 	"sap/ui/core/Core",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/HTML",
 	"sap/m/App",
 	"sap/m/Page",
@@ -14,12 +14,12 @@ sap.ui.define([
 	"sap/ui/dom/includeStylesheet",
 	"require"
 ], function(
+	Localization,
 	qutils,
 	createAndAppendDiv,
 	ScrollContainer,
 	Image,
 	Core,
-	Configuration,
 	HTML,
 	App,
 	Page,
@@ -581,7 +581,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press [CTRL] + [END] in RTL", function(assert) {
-		var oStub = this.stub(Configuration, "getRTL", function() { return true; }),
+		var oStub = this.stub(Localization, "getRTL", function() { return true; }),
 			oSpy = this.spy(oSC5._oScroller, "_scrollTo");
 
 		qutils.triggerKeydown(oSC5.getDomRef(), "END", false, false, true);

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library", "sap/ui/base/ManagedObject", "sap/base/Log"],
-function (coreLibrary, ManagedObject, Log) {
+sap.ui.define(["./library", "sap/ui/base/ManagedObject", "sap/base/Log", "sap/ui/core/StaticArea"],
+function (coreLibrary, ManagedObject, Log, StaticArea) {
 	"use strict";
 
 	var oInstance;
@@ -67,8 +67,7 @@ function (coreLibrary, ManagedObject, Log) {
 	};
 
 	InvisibleMessage.prototype.init = function () {
-		var oCore = sap.ui.getCore(),
-			oStatic = oCore.getStaticAreaRef();
+		var oStatic = StaticArea.getDomRef();
 
 		oStatic.insertAdjacentHTML("beforeend", this.getPoliteInstance());
 		oStatic.insertAdjacentHTML("beforeend", this.getAssertiveInstance());
@@ -82,8 +81,7 @@ function (coreLibrary, ManagedObject, Log) {
 	 * @public
 	 */
 	InvisibleMessage.prototype.announce = function (sText, sMode) {
-		var oCore = sap.ui.getCore(),
-			oStatic = oCore.getStaticAreaRef(),
+		var oStatic = StaticArea.getDomRef(),
 			oPoliteMarkup = oStatic.querySelector(".sapUiInvisibleMessagePolite"),
 			oAssertiveMarkup = oStatic.querySelector(".sapUiInvisibleMessageAssertive");
 
