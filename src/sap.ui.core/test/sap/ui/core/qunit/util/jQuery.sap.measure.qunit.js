@@ -183,20 +183,25 @@ sap.ui.define([
 	QUnit.module("test measure rendering");
 
 	QUnit.test("render Button", function(assert) {
+		var done = assert.async();
 		assert.expect(4);
 		var oButton = new Button("B1",{text:"Test"});
 		oButton.placeAt("target1");
-		sap.ui.getCore().applyChanges();
-		var aMeasurements = jQuery.sap.measure.getAllMeasurements();
-		assert.ok(aMeasurements.length > 0, "Number of measurements > 0");
+		oButton.onAfterRendering = function() {
+			Button.prototype.onAfterRendering.apply(this, arguments);
+			var aMeasurements = jQuery.sap.measure.getAllMeasurements();
+			assert.ok(aMeasurements.length > 0, "Number of measurements > 0");
 
-		var oMeasurement = jQuery.sap.measure.getMeasurement("B1---AfterRendering");
-		oMeasurement = jQuery.sap.measure.getMeasurement("B1---AfterRendering");
-		assert.ok(oMeasurement, "Measurement for Button AfterRendering found");
-		oMeasurement = jQuery.sap.measure.getMeasurement("renderPendingUIUpdates");
-		assert.ok(oMeasurement, "Measurement for rendering all UIAreas found");
-		oMeasurement = jQuery.sap.measure.getMeasurement("target1---rerender");
-		assert.ok(oMeasurement, "Measurement for rendering UIArea found");
+			var oMeasurement = jQuery.sap.measure.getMeasurement("B1---AfterRendering");
+			assert.ok(oMeasurement, "Measurement for Button AfterRendering found");
+			oMeasurement = jQuery.sap.measure.getMeasurement("renderPendingUIUpdates");
+			assert.ok(oMeasurement, "Measurement for rendering all UIAreas found");
+			oMeasurement = jQuery.sap.measure.getMeasurement("target1---rerender");
+			assert.ok(oMeasurement, "Measurement for rendering UIArea found");
+
+			oButton.destroy();
+			done();
+		};
 
 		/*
 		 * @evo-todo temp. disable test as JS resources are no longer loaded with jQuery.ajax
