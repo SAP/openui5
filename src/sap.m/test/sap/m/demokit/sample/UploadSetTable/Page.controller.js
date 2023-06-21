@@ -52,6 +52,25 @@ sap.ui.define([
 			var oUploadSet = this.byId("UploadSetTable");
 			oUploadSet.downloadItems(oUploadSet.getSelectedItems());
 		},
+		onOverflowPress: function(oEvent) {
+			var oButton = oEvent.getSource(),
+			oView = this.getView();
+
+		// create menu
+		if (!this._oMenuFragment) {
+			this._oMenuFragment = Fragment.load({
+				id: oView.getId(),
+				name: "sap.m.sample.UploadSetTable.menu",
+				controller: this
+			}).then(function(oMenu) {
+				oMenu.openBy(oButton);
+						this._oMenuFragment = oMenu;
+						return this._oMenuFragment;
+			}.bind(this));
+		} else {
+			this._oMenuFragment.openBy(oButton);
+		}
+		},
 		// UploadCompleted event handler
 		onUploadCompleted: function(oEvent) {
 			var oModel = this.getView().getModel();
