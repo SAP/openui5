@@ -535,15 +535,6 @@
 			]
 		},
 		{
-			"id": "sap.m.upload.UploadSetTable",
-			"name": "Upload Set With Table",
-			"category": "Action",
-			"since": "1.115",
-			"samples": [
-				"sap.m.sample.UploadSetTable"
-			]
-		},
-		{
 		  "id": "sap.m.GenericTag",
 		  "name": "Generic Tag",
 		  "category": "Action",

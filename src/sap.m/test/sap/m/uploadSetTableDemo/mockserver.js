@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	// mockserver to intercept the XMLHTTP requests and respond with custom data
-	return ManagedObject.extend("sap.m.sample.UploadSetTable.mockServer", {
+	return ManagedObject.extend("sap.m.uploadSetTableDemo.mockServer", {
 		started: null,
 		init: function () {
 
@@ -21,14 +21,14 @@ sap.ui.define([
 				 */
 				fServer.xhr.addFilter(function (method, url) {
 					// whenever this returns true the request will not faked
-					return !url.match(/\/upload/); // request url's not matching path "/upload" will be ignored
+					return !url.match(/\/uploadFiles/); // request url's not matching path "/upload" will be ignored
 				});
 
 			/**
 			 * Intercepting file upload requests for the purpose of mocking the response.
 			 * Please note this is mocked response to simulate sucessful file uploads and the structure of the response is for demonstration purpose.
 			 */
-			fServer.respondWith("POST", RegExp("/upload","i"), function (xhr) {
+			fServer.respondWith("POST", RegExp("/uploadFiles","i"), function (xhr) {
 				// intercepting the request body sent to the request and extracting the details for the mocked response.
 				var oFile = xhr.requestBody ? xhr.requestBody.file : null;
 				var url = URL.createObjectURL(oFile);
