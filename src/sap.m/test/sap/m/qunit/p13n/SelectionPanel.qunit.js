@@ -5,9 +5,13 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/core/Core",
 	"sap/m/Input",
-	"sap/base/util/merge"
-], function(SelectionPanel, VBox, sinon, oCore, Input, merge) {
+	"sap/base/util/merge",
+	"sap/m/library"
+], function(SelectionPanel, VBox, sinon, oCore, Input, merge, mLibrary) {
 	"use strict";
+
+	// shortcut for sap.m.ListType
+	var ListType = mLibrary.ListType;
 
 	QUnit.module("API Tests", {
 		getTestData: function() {
@@ -477,4 +481,28 @@ sap.ui.define([
 			assert.equal(sLabelFor, "testAccInput" + sKey, "Label for assocation points to children element");
 		});
     });
+
+	QUnit.test("Check type of inner item depending if values are shown", function(assert){
+
+		this.oSelectionPanel.setP13nData(this.getTestData());
+		var oInnerTable = this.oSelectionPanel._oListControl;
+		var aItems = oInnerTable.getItems();
+
+		//In case the factory is not shown, the item should be clickable/active in case its selected
+		aItems.forEach(function(oItem){
+			if (oItem.getSelected()) {
+				assert.equal(oItem.getType(), ListType.Active, "The list item is set to active");
+			} else {
+				assert.equal(oItem.getType(), ListType.Inactive, "The list item is set to active");
+			}
+		});
+
+		this.oSelectionPanel.showFactory(true);
+
+		//Once the factory is shown, the item should be inactive since move buttons are disabled
+		aItems.forEach(function(oItem){
+			assert.equal(oItem.getType(), ListType.Inactive, "The list item is set to inactive");
+		});
+
+	});
 });

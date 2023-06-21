@@ -135,8 +135,10 @@ sap.ui.define([
 			type: {
 				path: this.P13N_MODEL + ">" + this.PRESENCE_ATTRIBUTE,
 				formatter: function(bSelected) {
-					return bSelected ? ListType.Active : ListType.Inactive;
-				}
+					//In case the factory control is displayed, no move buttons are displayed --> item should be inactive
+					//to avoid issues with the label for mechanism
+					return bSelected && !this._bShowFactory ? ListType.Active : ListType.Inactive;
+				}.bind(this)
 			},
 			cells: [
 				new VBox({
@@ -291,6 +293,11 @@ sap.ui.define([
 	SelectionPanel.prototype.showFactory = function(bShow) {
 		this._bShowFactory = bShow;
 		this._displayColumns();
+
+		this._oListControl.getItems().forEach(function(oItem){
+			oItem.setType(bShow ? "Inactive" : "Active");
+		});
+
 		if (bShow){
 			this.removeStyleClass("SelectionPanelHover");
 			this._oListControl.setKeyboardMode(ListKeyboardMode.Edit); //--> tab through editable fields (fields shown)
