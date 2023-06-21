@@ -70,6 +70,20 @@ sap.ui.define([
 		afterEach: teardownFunction
 	});
 
+	QUnit.test("Avatar with 'enable' set to 'false' has the proper attr and class", function (assert) {
+		// arrange
+		var $oAvatar = this.oAvatar.$();
+
+		// act
+		this.oAvatar.setEnabled(false);
+		oCore.applyChanges();
+
+		// assert
+		assert.ok($oAvatar.hasClass("sapMAvatarDisabled"), "Avatar has the disabled CSS class");
+		assert.strictEqual($oAvatar.attr("disabled"), "disabled", "Avatar has the 'disabled' DOM attribute");
+	});
+
+
 	QUnit.test("Avatar with press event only", function (assert) {
 		var $oAvatar = this.oAvatar.$();
 
@@ -570,6 +584,45 @@ sap.ui.define([
 			oCore.applyChanges();
 		},
 		afterEach: teardownFunction
+	});
+
+	QUnit.test(".sapMAvatarPressed class is added where applicable", function (assert) {
+		// Arrange
+		var fnHandler = this.stub();
+		this.oAvatar.attachPress(fnHandler);
+
+		// Act - Simulate press in order to add the new CSS class
+		this.oAvatar._handlePress();
+
+		// Assert
+		assert.ok(this.oAvatar.hasStyleClass('sapMAvatarPressed'), ".sapMAvatarPressed class is added to the Avatar");
+
+		// Act - Simulate press in order to remove the new CSS class
+		this.oAvatar._handlePress();
+
+		// Assert
+		assert.notOk(this.oAvatar.hasStyleClass('sapMAvatarPressed'), ".sapMAvatarPressed class is removed from the Avatar");
+
+		// Act - Remove the press handler
+		this.oAvatar.detachPress(fnHandler);
+
+		// Act - Simulate press in order to add the new CSS class
+		this.oAvatar._handlePress();
+
+		// Assert
+		assert.notOk(this.oAvatar.hasStyleClass('sapMAvatarPressed'), ".sapMAvatarPressed class isn't added to the Avatar when there is no press handler");
+	});
+
+	QUnit.test("press isn't fired when 'enabled' is set to 'false'", function (assert) {
+		// arrange
+		var oSpy = this.spy(Avatar.prototype, "firePress");
+
+		// act
+		this.oAvatar.setEnabled(false);
+		qutils.triggerKeyup(this.oAvatar, KeyCodes.SPACE);
+
+		// assert
+		assert.notOk(oSpy.called, "Press event isn't fired when the 'enabled' prop is set to 'false'");
 	});
 
 	QUnit.test("URL escaping", function (assert) {
