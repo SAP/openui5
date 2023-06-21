@@ -5,28 +5,20 @@
     xmlns:m="sap.m"
     xmlns:core="sap.ui.core"
     xmlns="sap.m.upload"
-    xmlns:vm="sap.ui.fl.variants"
-    xmlns:sap.ui.fl="sap.ui.fl"
-    xmlns:sap.ui.dt="sap.ui.dt"
 >
 <m:App id="app" >
     <m:Page showHeader="false">
-        <m:HBox class="sapUiSmallMarginTop">
-            <vm:VariantManagement for="UploadSetTable" class="sapUiTinyMarginBegin" titleStyle="H3" />
-        </m:HBox>
         <UploadSetTable
             id="UploadSetTable"
-            fileTypes="txt,doc,png,pdf"
-            maxFileNameLength="30"
-            maxFileSize="200"
-            mediaTypes="text/plain,application/msword,image/png,application/pdf"
+            fileTypes="txt,doc,png,pdf,docx"
+            maxFileNameLength="60"
+            mediaTypes="text/plain,application/msword,image/png,application/pdf,application/docx"
             uploadUrl="/uploadFiles"
-            multiple="true"
+            multiple="false"
             items="{path: '/items', templateShareable: false}"
             mode="MultiSelect"
             fixedLayout="false"
             selectionChange="onSelectionChange"
-            sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex"
             uploadCompleted="onUploadCompleted"
             afterItemRemoved="onAfterItemRemoved"
             noDataText="No documents available"
@@ -78,6 +70,7 @@
                         enabled="false"
                         press="onCreateRevision"
                     />
+                    <m:ToggleButton icon="sap-icon://overflow" press="onOverflowPress"/>
                     <m:ToolbarSeparator />
                     <m:Button
                         icon="sap-icon://action-settings"

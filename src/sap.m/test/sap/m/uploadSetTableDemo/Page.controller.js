@@ -296,6 +296,25 @@ sap.ui.define([
 			if (oEvent.getSource().getSelected()) {
 				oModelData.setProperty("/sameFileNameUploadChoice", oEvent.getSource().getText());
 			}
+		},
+		onOverflowPress: function(oEvent) {
+			var oButton = oEvent.getSource(),
+			oView = this.getView();
+
+		// create menu
+		if (!this._oMenuFragment) {
+			this._oMenuFragment = Fragment.load({
+				id: oView.getId(),
+				name: "sap.m.uploadSetTableDemo.menu",
+				controller: this
+			}).then(function(oMenu) {
+				oMenu.openBy(oButton);
+						this._oMenuFragment = oMenu;
+						return this._oMenuFragment;
+			}.bind(this));
+		} else {
+			this._oMenuFragment.openBy(oButton);
+		}
 		}
 	});
 });
