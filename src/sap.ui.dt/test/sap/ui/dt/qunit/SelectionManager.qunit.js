@@ -527,6 +527,44 @@ sap.ui.define([
 			assert.strictEqual(this.oSelectionManager.reset(), true);
 		});
 
+		QUnit.test("when an element overlay with connected elements is selected and deselected", function(assert) {
+			var fnDone = assert.async();
+			var oConnectedElements = this.oSelectionManager.getConnectedElements();
+			var sButtonId1 = this.oButton1.getId();
+			var sButtonId2 = this.oButton2.getId();
+			oConnectedElements[sButtonId1] = sButtonId2;
+			oConnectedElements[sButtonId2] = sButtonId1;
+
+			this.oSelectionManager.attachChange(function(oEvent) {
+				if (oEvent.getParameter("selection").length === 1) {
+					assert.ok(this.oButton1Overlay.isSelected(), "then the element overlay is selected");
+					assert.notOk(this.oButton2Overlay.isSelected(), "then the connected element overlay is not selected");
+					assert.ok(
+						this.oButton1Overlay.hasStyleClass("sapUiDtOverlaySelected"),
+						"then the selected overlay has the style class"
+					);
+					assert.ok(
+						this.oButton2Overlay.hasStyleClass("sapUiDtOverlaySelected"),
+						"then the connected overlay has the style class"
+					);
+				} else {
+					assert.notOk(this.oButton1Overlay.isSelected(), "then the element overlay is not selected");
+					assert.notOk(
+						this.oButton1Overlay.hasStyleClass("sapUiDtOverlaySelected"),
+						"then the style class was removed from the element overlay"
+					);
+					assert.notOk(
+						this.oButton2Overlay.hasStyleClass("sapUiDtOverlaySelected"),
+						"then the style class was removed from the connected element overlay"
+					);
+					fnDone();
+				}
+			}, this);
+
+			assert.strictEqual(this.oSelectionManager.set(this.oButton1Overlay), true);
+			assert.strictEqual(this.oSelectionManager.remove(this.oButton1Overlay), true);
+		});
+
 		QUnit.test("when addValidator()/removeValidator() are called with a custom validator", function(assert) {
 			// Validator allows to select only overlays for sap.m.Button control
 			var fnCustomValidator = function(aElementOverlays) {

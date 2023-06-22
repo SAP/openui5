@@ -3,54 +3,55 @@
  */
 
 sap.ui.define([
-	"sap/ui/base/ManagedObject",
-	"sap/ui/dt/ElementOverlay",
-	"sap/ui/dt/AggregationOverlay",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/SelectionManager",
-	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/dt/AggregationDesignTimeMetadata",
-	"sap/ui/dt/ElementUtil",
-	"sap/ui/dt/Overlay",
-	"sap/ui/dt/OverlayUtil",
-	"sap/ui/dt/MetadataPropagationUtil",
-	"sap/ui/dt/Util",
-	"sap/ui/dt/TaskManager",
-	"sap/ui/dt/TaskRunner",
-	"sap/base/Log",
-	"sap/base/util/isPlainObject",
-	"sap/base/util/merge",
-	"sap/ui/dt/SelectionMode",
-	"sap/base/util/includes",
-	"sap/ui/dt/DesignTimeStatus",
 	"sap/base/util/restricted/_curry",
 	"sap/base/util/restricted/_difference",
-	"sap/base/util/isEmptyObject"
-],
-function(
-	ManagedObject,
-	ElementOverlay,
-	AggregationOverlay,
-	OverlayRegistry,
-	SelectionManager,
-	ElementDesignTimeMetadata,
-	AggregationDesignTimeMetadata,
-	ElementUtil,
-	Overlay,
-	OverlayUtil,
-	MetadataPropagationUtil,
-	Util,
-	TaskManager,
-	TaskRunner,
-	Log,
-	isPlainObject,
-	merge,
-	SelectionMode,
-	includes,
-	DesignTimeStatus,
+	"sap/base/util/includes",
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/isPlainObject",
+	"sap/base/util/merge",
+	"sap/base/util/ObjectPath",
+	"sap/base/Log",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/dt/AggregationDesignTimeMetadata",
+	"sap/ui/dt/AggregationOverlay",
+	"sap/ui/dt/DesignTimeStatus",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/dt/ElementOverlay",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/MetadataPropagationUtil",
+	"sap/ui/dt/Overlay",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/dt/SelectionManager",
+	"sap/ui/dt/SelectionMode",
+	"sap/ui/dt/TaskManager",
+	"sap/ui/dt/TaskRunner",
+	"sap/ui/dt/Util"
+], function(
 	_curry,
 	_difference,
-	isEmptyObject
+	includes,
+	isEmptyObject,
+	isPlainObject,
+	merge,
+	ObjectPath,
+	Log,
+	ManagedObject,
+	AggregationDesignTimeMetadata,
+	AggregationOverlay,
+	DesignTimeStatus,
+	ElementDesignTimeMetadata,
+	ElementOverlay,
+	ElementUtil,
+	MetadataPropagationUtil,
+	Overlay,
+	OverlayRegistry,
+	OverlayUtil,
+	SelectionManager,
+	SelectionMode,
+	TaskManager,
+	TaskRunner,
+	Util
 ) {
 	"use strict";
 
@@ -912,6 +913,15 @@ function(
 					oElementOverlay.attachEvent("elementModified", this._onElementModified, this);
 					oElementOverlay.attachEvent("editableChange", this._onEditableChanged, this);
 					oElementOverlay.attachEvent("applyStylesRequired", this._onApplyStylesRequired, this);
+
+					if (ObjectPath.get(["actions", "actionsFromResponsibleElement"], oElementOverlay.getDesignTimeMetadata().getData())) {
+						var mConnectedElements = this.getSelectionManager().getConnectedElements();
+						var oElement = oElementOverlay.getElement();
+						var oResponsibleElement = oElementOverlay.getDesignTimeMetadata().getResponsibleElement(oElement);
+						mConnectedElements[oElement.getId()] = oResponsibleElement.getId();
+						mConnectedElements[oResponsibleElement.getId()] = oElement.getId();
+						this.getSelectionManager().setConnectedElements(mConnectedElements);
+					}
 				}.bind(this),
 				initFailed: function(sElementId, oEvent) {
 					var oElementOverlay = oEvent.getSource();

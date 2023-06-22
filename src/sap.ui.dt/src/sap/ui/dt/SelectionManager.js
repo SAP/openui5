@@ -50,6 +50,12 @@ function(
 						}
 					}
 				}
+			},
+			properties: {
+				connectedElements: {
+					type: "object",
+					defaultValue: {}
+				}
 			}
 		}
 	});
@@ -77,6 +83,15 @@ function(
 		return aElementOverlays.every(function(oElementOverlay) {
 			return oElementOverlay.isSelectable();
 		});
+	}
+
+	function highlightConnectedOverlay(oElementOverlay, bAdd) {
+		var sConnectedElementId = this.getConnectedElements()[oElementOverlay.getAssociation("element")];
+		var oConnectedOverlay = OverlayRegistry.getOverlay(sConnectedElementId);
+		if (oConnectedOverlay) {
+			var sFunctionName = bAdd ? "addStyleClass" : "removeStyleClass";
+			oConnectedOverlay[sFunctionName]("sapUiDtOverlaySelected");
+		}
 	}
 
 	SelectionManager.prototype.init = function() {
@@ -169,7 +184,8 @@ function(
 
 				aElementOverlays.forEach(function(oElementOverlay) {
 					oElementOverlay.setSelected(true);
-				}, this);
+					highlightConnectedOverlay.call(this, oElementOverlay, true);
+				}.bind(this));
 
 				return true;
 			}
@@ -211,7 +227,8 @@ function(
 
 			aElementOverlays.forEach(function(oElementOverlay) {
 				oElementOverlay.setSelected(false);
-			});
+				highlightConnectedOverlay.call(this, oElementOverlay, false);
+			}.bind(this));
 
 			return true;
 		}
