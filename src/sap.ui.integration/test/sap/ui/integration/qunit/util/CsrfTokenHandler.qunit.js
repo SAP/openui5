@@ -277,7 +277,7 @@ sap.ui.define([
 			oXhr.respond(200, {
 				"Content-Type": "application/json",
 				"X-CSRF-Token": "FAKETOKEN"
-			});
+			}, "{}");
 
 			done();
 		});
@@ -383,7 +383,7 @@ sap.ui.define([
 			oXhr.respond(200, {
 				"Content-Type": "application/json",
 				"X-CSRF-Token": "FAKETOKEN"
-			});
+			}, "{}");
 
 			done();
 		});
@@ -424,7 +424,7 @@ sap.ui.define([
 			oXhr.respond(200, {
 				"Content-Type": "application/json",
 				"X-CSRF-Token": "FAKETOKEN"
-			});
+			}, "{}");
 
 			done();
 		});
@@ -475,7 +475,7 @@ sap.ui.define([
 			oXhr.respond(200, {
 				"Content-Type": "application/json",
 				"X-CSRF-Token": "FAKETOKEN"
-			});
+			}, "{}");
 
 			done();
 		});
@@ -540,7 +540,7 @@ sap.ui.define([
 			oXhr.respond(200, {
 				"Content-Type": "application/json",
 				"X-CSRF-Token": "FAKETOKEN"
-			});
+			}, "{}");
 		});
 
 		// respond to the actual data request
