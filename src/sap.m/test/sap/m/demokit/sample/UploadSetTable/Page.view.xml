@@ -148,7 +148,7 @@
                             class="sapMUSTItemImage sapMUSTItemIcon"
                         />
                         <m:VBox class="sapUiTinyMargin sapUiSmallMarginBegin">
-                            <m:Link text="{fileName}" />
+                            <m:Link text="{fileName}" press="openPreview" />
                             <m:Text text="{documentType}" />
                         </m:VBox>
                     </m:HBox>

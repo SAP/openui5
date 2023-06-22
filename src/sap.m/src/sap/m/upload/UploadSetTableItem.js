@@ -4,12 +4,35 @@
 
 // Provides control sap.m.upload.UploadSetTableItem.
 sap.ui.define([
-    "sap/m/ColumnListItem",
-    "sap/ui/core/IconPool",
+	"sap/m/ColumnListItem",
+	"sap/ui/core/IconPool",
 	"sap/m/upload/UploadSetTableItemRenderer",
-	"sap/base/Log"
-], function (ColumnListItem, IconPool, UploadSetTableItemRenderer, Log) {
+	"sap/base/Log",
+	"sap/m/library",
+	"sap/m/upload/FilePreviewDialog"
+], function (ColumnListItem, IconPool, UploadSetTableItemRenderer, Log, MobileLibrary, FilePreviewDialog) {
     "use strict";
+
+	/**
+	 * Integrated media types.
+	 * @enum {string}
+	 * @private
+	 * @alias sap.m.IntegratedMediaType
+	 */
+	var IntegratedMediaType = {
+		"msword": "application/msword",
+		"vnd.google-apps.document": "application/vnd.google-apps.document",
+		"vnd.openxmlformats-officedocument.wordprocessingml.document": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+		"msexcel": "application/msexcel",
+		"vnd.ms-excel": "application/vnd.ms-excel",
+		"vnd.google-apps.spreadsheet": "application/vnd.google-apps.spreadsheet",
+		"vnd.openxmlformats-officedocument.spreadsheetml.sheet": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+		"mspowerpoint": "application/mspowerpoint",
+		"vnd.ms-powerpoint": "application/vnd.ms-powerpoint",
+		"vnd.google-apps.presentation": "application/vnd.google-apps.presentation",
+		"vnd.openxmlformats-officedocument.presentationml.presentation": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+		"vnd.openxmlformats-officedocument.presentationml.slideshow": "application/vnd.openxmlformats-officedocument.presentationml.slideshow"
+	};
 
 	/**
 	 * Constructor for a new UploadSetTableItem.
@@ -25,7 +48,6 @@ sap.ui.define([
 	 * @internal
 	 * @alias sap.m.upload.UploadSetTableItem
 	 */
-
     var UploadSetTableItem = ColumnListItem.extend("sap.m.upload.UploadSetTableItem", {
         metadata: {
             properties: {
@@ -124,6 +146,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Previews pressed file.
+	 * @param {sap.m.upload.UploadSetTableItem} oItem The pressed UploadSetTableItem.
+	 * @public
+	 */
+	UploadSetTableItem.openPreview = function (oItem) {
+		oItem._handleFileNamePressed();
+	};
+
+	/**
 	 * Downloads the item. Only possible when the item has a valid URL specified in the <code>url</code> property.
 	 * @param {boolean} bAskForLocation Whether to ask for a location where to download the file or not.
 	 * @public
@@ -136,7 +167,7 @@ sap.ui.define([
 			return false;
 		}
 
-		return oParent._getActiveUploader ? oParent._getActiveUploader().downloadItem(this, [], bAskForLocation) : false;
+		return oParent._getActiveUploader ? oParent._getActiveUploader().download(this, [], bAskForLocation) : false;
 	};
 
 	/**
@@ -151,11 +182,51 @@ sap.ui.define([
 		return this._isRestricted();
 	};
 
+	/* ============== */
+	/* Event handlers */
+	/* ============== */
+
+	UploadSetTableItem.prototype._handleFileNamePressed = function () {
+		if (this._isIntegratedDocument()) {
+			this._previewIntegratedDocument();
+		} else {
+			this._previewCarousel();
+		}
+	};
+
 	/* =============== */
 	/* Private methods */
 	/* =============== */
 
-    UploadSetTableItem._getIconByMimeType = function(sMimeType, fileName) {
+	UploadSetTableItem.prototype._isIntegratedDocument = function () {
+		var sMediaType = this.getMediaType();
+		if (!sMediaType) {
+			return false;
+		}
+
+		if (Object.values(IntegratedMediaType).indexOf(sMediaType.toLowerCase()) > -1) {
+			return true;
+		}
+
+		return false;
+	};
+
+	/**
+	 * Previews file in a dialog with carousel.
+	 */
+	UploadSetTableItem.prototype._previewCarousel = function () {
+		var filePreviewDialog = new FilePreviewDialog(this);
+		filePreviewDialog.open();
+	};
+
+	/**
+	 * Previews file in a new tab.
+	 */
+	UploadSetTableItem.prototype._previewIntegratedDocument = function () {
+		MobileLibrary.URLHelper.redirect(this.getUrl(), true);
+	};
+
+	UploadSetTableItem._getIconByMimeType = function(sMimeType, fileName) {
 
 		var mimeTypeForImages = ["image/png", "image/tiff", "image/bmp", "image/jpeg", "image/gif"];
 
@@ -169,7 +240,7 @@ sap.ui.define([
 		}
 	};
 
-    UploadSetTableItem._getIconByFileType = function (fileName) {
+	UploadSetTableItem._getIconByFileType = function (fileName) {
 		var sFileExtension = UploadSetTableItem._splitFileName(fileName).extension;
 		if (!sFileExtension) {
 			return "sap-icon://document";
@@ -201,7 +272,7 @@ sap.ui.define([
 		}
 	};
 
-    UploadSetTableItem._splitFileName = function (sFileName, bWithDot) {
+	UploadSetTableItem._splitFileName = function (sFileName, bWithDot) {
 		var oResult = {};
 		var oRegex = /(?:\.([^.]+))?$/;
 		var aFileExtension = oRegex.exec(sFileName);

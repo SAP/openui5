@@ -446,6 +446,7 @@ sap.ui.define([
 			"sap.m.ToolbarLayoutData",
 			"sap.m.UploadCollectionItem",
 			"sap.m.UploadCollectionParameter",
+			"sap.m.upload.FilePreviewDialog",
 			"sap.m.upload.Uploader",
 			"sap.m.upload.UploaderTableItem",
 			"sap.m.upload.UploadSetItem",

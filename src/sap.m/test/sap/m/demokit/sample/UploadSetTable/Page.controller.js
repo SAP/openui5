@@ -315,6 +315,14 @@ sap.ui.define([
 			if (oEvent.getSource().getSelected()) {
 				oModelData.setProperty("/sameFileNameUploadChoice", oEvent.getSource().getText());
 			}
+		},
+		openPreview: function(oEvent) {
+			var clickedControl = oEvent.getSource();
+			while (clickedControl && !(clickedControl instanceof UploadSetTableItem)) {
+				clickedControl = clickedControl.getParent();
+			}
+			var oUploadSetTableItem = clickedControl;
+			UploadSetTableItem.openPreview(oUploadSetTableItem);
 		}
 	});
 });
