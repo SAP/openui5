@@ -3810,6 +3810,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("destroyPreviousContexts: cache & hidden context", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oContext1 = {
+				iIndex : undefined,
+				destroy : function () {},
+				isEffectivelyKeptAlive : function () {},
+				isTransient : function () {}
+			},
+			oContext2 = {
+				iIndex : 0,
+				destroy : function () {},
+				isEffectivelyKeptAlive : function () {},
+				isTransient : function () {}
+			};
+
+		oBinding.mPreviousContextsByPath = {
+			p1 : oContext1,
+			p2 : oContext2,
+			p3 : "~oContext3~"
+		};
+		this.mock(oContext1).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
+		this.mock(oContext1).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext1).expects("destroy").withExactArgs();
+		this.mock(oContext2).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
+		this.mock(oContext2).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext2).expects("destroy").withExactArgs();
+		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs().returns("/EMPLOYEES");
+		this.mock(_Helper).expects("getRelativePath")
+			.withExactArgs("p1", "/EMPLOYEES").returns("relative/path");
+		this.mock(oBinding.oCache).expects("removeKeptElement").withExactArgs("relative/path");
+
+		// code under test
+		oBinding.destroyPreviousContexts(["p1", "p2"]);
+
+		assert.deepEqual(oBinding.mPreviousContextsByPath, {p3 : "~oContext3~"});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("destroyPreviousContexts: binding already destroyed", function (assert) {
 		var oBinding = this.bindList("relative");
 
@@ -10448,6 +10486,80 @@ sap.ui.define([
 			// code under test
 			oBinding.checkDeepCreate();
 		}, new Error("Invalid path 'SO_2_SOITEM/SOITEM_2_SCHDL' in deep create"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onKeepAliveChanged: remove from cache", function () {
+		var oBinding = this.bindList("/SalesOrderList"),
+			oContext = {
+				isDeleted : function () {},
+				isEffectivelyKeptAlive : function () {},
+				getPath : function () {}
+			};
+
+		oBinding.mPreviousContextsByPath = {
+			"/SalesOrderList('1')" : "~" // would actually be the context
+		};
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("getPath").twice()
+			.withExactArgs().returns("/SalesOrderList('1')");
+		this.mock(oContext).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
+		this.mock(oBinding).expects("destroyPreviousContextsLater")
+			.withExactArgs(["/SalesOrderList('1')"]);
+
+		// code under test
+		oBinding.onKeepAliveChanged(oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onKeepAliveChanged: deleted", function () {
+		var oBinding = this.bindList("/SalesOrderList"),
+			oContext = {
+				isDeleted : function () {}
+			};
+
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(true);
+		this.mock(oBinding).expects("destroyPreviousContextsLater").never();
+
+		// code under test
+		oBinding.onKeepAliveChanged(oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onKeepAliveChanged: in the binding's collection", function () {
+		var oBinding = this.bindList("/SalesOrderList"),
+			oContext = {
+				isDeleted : function () {},
+				getPath : function () {}
+			};
+
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/SalesOrderList('1')");
+		this.mock(oBinding).expects("destroyPreviousContextsLater").never();
+
+		// code under test
+		oBinding.onKeepAliveChanged(oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onKeepAliveChanged: effectively kept alive", function () {
+		var oBinding = this.bindList("/SalesOrderList"),
+			oContext = {
+				isDeleted : function () {},
+				isEffectivelyKeptAlive : function () {},
+				getPath : function () {}
+			};
+
+		oBinding.mPreviousContextsByPath = {
+			"/SalesOrderList('1')" : oContext
+		};
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/SalesOrderList('1')");
+		this.mock(oContext).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		this.mock(oBinding).expects("destroyPreviousContextsLater").never();
+
+		// code under test
+		oBinding.onKeepAliveChanged(oContext);
 	});
 });
 
