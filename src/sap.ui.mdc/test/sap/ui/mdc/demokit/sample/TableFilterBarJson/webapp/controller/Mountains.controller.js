@@ -9,11 +9,10 @@ sap.ui.define([
 	function (Controller, JSONModel, NumberFormat) {
 		"use strict";
 
-		return Controller.extend("sap.ui.mdc.sample.TableFilterBarJson.webapp.controller.Mountains", {
+		return Controller.extend("sap.ui.mdc.demokit.sample.TableFilterBarJson.webapp.controller.Mountains", {
 
 			onInit: function () {
 				// initialization
-				window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
 			},
 
 			formatHeight: function(iHeight) {

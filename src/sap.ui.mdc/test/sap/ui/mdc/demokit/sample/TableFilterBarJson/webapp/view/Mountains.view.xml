@@ -8,7 +8,7 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdct="sap.ui.mdc.table"
 	xmlns:vm="sap.ui.fl.variants"
-	controllerName="sap.ui.mdc.sample.TableFilterBarJson.webapp.controller.Mountains">
+	controllerName="sap.ui.mdc.demokit.sample.TableFilterBarJson.webapp.controller.Mountains">
 
 	<f:DynamicPage id="dynamicPageId">
 		<f:title>
@@ -20,7 +20,7 @@
 		</f:title>
 		<f:header>
 			<f:DynamicPageHeader pinnable="true">
-				<mdc:FilterBar id="filterbar" delegate="{name: 'sap/ui/mdc/sample/TableFilterBarJson/webapp/delegate/JSONFilterBarDelegate'}"
+				<mdc:FilterBar id="filterbar" delegate="{name: 'sap/ui/mdc/demokit/sample/TableFilterBarJson/webapp/delegate/JSONFilterBarDelegate'}"
 						propertyInfo = '[\{"label": "Name", "name": "name", "dataType":"sap.ui.model.type.String", "maxConditions":-1, "required":false\}]'
 						p13nMode = "Item,Value">
 
@@ -47,8 +47,8 @@
 							valueHelp="range-vh"/>
 					</mdc:filterItems>
 					<mdc:dependents>
-						<core:Fragment fragmentName="sap.ui.mdc.sample.TableFilterBarJson.webapp.view.fragment.NameValueHelp" type="XML"/>
-						<core:Fragment fragmentName="sap.ui.mdc.sample.TableFilterBarJson.webapp.view.fragment.RangeValueHelp" type="XML"/>
+						<core:Fragment fragmentName="sap.ui.mdc.demokit.sample.TableFilterBarJson.webapp.view.fragment.NameValueHelp" type="XML"/>
+						<core:Fragment fragmentName="sap.ui.mdc.demokit.sample.TableFilterBarJson.webapp.view.fragment.RangeValueHelp" type="XML"/>
 					</mdc:dependents>
 				</mdc:FilterBar>
 			</f:DynamicPageHeader>
@@ -63,7 +63,7 @@
 				filter="filterbar"
 				showRowCount="false"
 				delegate="{
-					name: 'sap/ui/mdc/sample/TableFilterBarJson/webapp/delegate/JSONTableDelegate',
+					name: 'sap/ui/mdc/demokit/sample/TableFilterBarJson/webapp/delegate/JSONTableDelegate',
 					payload: {
 						collectionPath: 'mountains>/mountains'
 					}

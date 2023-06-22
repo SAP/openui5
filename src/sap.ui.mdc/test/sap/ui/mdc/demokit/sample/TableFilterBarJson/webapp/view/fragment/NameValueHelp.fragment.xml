@@ -33,7 +33,7 @@
 			<vh:Dialog title="Name">
 				<vhc:MDCTable keyPath="name">
 					<vhc:filterBar>
-						<vhfb:FilterBar id="name-vhd-fb" liveMode="true" delegate="{name: 'sap/ui/mdc/sample/TableFilterBarJson/webapp/delegate/JSONFilterBarDelegate'}">
+						<vhfb:FilterBar id="name-vhd-fb" liveMode="true" delegate="{name: 'sap/ui/mdc/demokit/sample/TableFilterBarJson/webapp/delegate/JSONFilterBarDelegate'}">
 							<vhfb:filterItems>
 								<mdc:FilterField label="Name" conditions="{$filters>/conditions/name}" />
 							</vhfb:filterItems>
@@ -45,7 +45,7 @@
 						height="100%"
 						selectionMode="Multi"
 						delegate="{
-							name: 'sap/ui/mdc/sample/TableFilterBarJson/webapp/delegate/JSONTableDelegate',
+							name: 'sap/ui/mdc/demokit/sample/TableFilterBarJson/webapp/delegate/JSONTableDelegate',
 							payload: {
 								collectionPath: 'mountains>/mountains'
 							}

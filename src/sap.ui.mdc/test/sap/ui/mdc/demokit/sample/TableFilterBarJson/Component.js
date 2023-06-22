@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function (UIComponent) {
 	'use strict';
 
-	var oComponent = UIComponent.extend('sap.ui.mdc.sample.TableFilterBarJson.Component', {
+	var oComponent = UIComponent.extend('sap.ui.mdc.demokit.sample.TableFilterBarJson.Component', {
 		metadata: {
 			config: {
 				sample: {
