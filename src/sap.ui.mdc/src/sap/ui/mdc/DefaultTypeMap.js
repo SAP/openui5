@@ -15,15 +15,15 @@ sap.ui.define([
 	* <b>Note:</b> This <code>TypeMap</code> implementation contains the following types:
 	*
 	* <ul>
-	* <li>sap.ui.model.type.Boolean (alias Boolean)</li>
-	* <li>sap.ui.model.type.Currency (alias Currency)</li>
-	* <li>sap.ui.model.type.Date (alias Date)</li>
-	* <li>sap.ui.model.type.DateTime (alias DateTime)</li>
-	* <li>sap.ui.model.type.Float (alias Float)</li>
-	* <li>sap.ui.model.type.Integer (alias Integer)</li>
-	* <li>sap.ui.model.type.String (alias String)</li>
-	* <li>sap.ui.model.type.Time (alias Time)</li>
-	* <li>sap.ui.model.type.Unit (alias Unit)</li>
+	* <li>{@link sap.ui.model.type.Boolean} (alias <code>Boolean</code>)</li>
+	* <li>{@link sap.ui.model.type.Currency} (alias <code>Currency</code>)</li>
+	* <li>{@link sap.ui.model.type.Date} (alias <code>Date</code>)</li>
+	* <li>{@link sap.ui.model.type.DateTime} (alias <code>DateTime</code>)</li>
+	* <li>{@link sap.ui.model.type.Float} (alias <code>Float</code>)</li>
+	* <li>{@link sap.ui.model.type.Integer} (alias <code>Integer</code>)</li>
+	* <li>{@link sap.ui.model.type.String} (alias <code>String</code>)</li>
+	* <li>{@link sap.ui.model.type.Time} (alias <code>Time</code>)</li>
+	* <li>{@link sap.ui.model.type.Unit} (alias <code>Unit</code>)</li>
 	* </ul>
 	*
 	* @author SAP SE
