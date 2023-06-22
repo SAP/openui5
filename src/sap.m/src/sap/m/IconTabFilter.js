@@ -634,7 +634,8 @@ sap.ui.define([
 		oRM.close("div");
 
 		if (this.getItems().length && !bIsUnselectable) {
-			oRM.openStart("span")
+
+			oRM.openStart("span").class("sapMITBFilterExpandBtnSeparator")
 				.accessibilityState({ role: "separator" })
 				.openEnd()
 			.close("span");
