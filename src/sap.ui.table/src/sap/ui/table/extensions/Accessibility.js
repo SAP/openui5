@@ -849,7 +849,7 @@ sap.ui.define([
 					if (!mParams.fixedCol) {
 						mAttributes["aria-owns"] = [];
 						if (TableUtils.hasRowHeader(oTable)) {
-							mAttributes["aria-owns"].push(sTableId + "-rowselecthdr" + mParams.index);
+							mAttributes["aria-owns"].push(sTableId + "-rowsel" + mParams.index);
 						}
 						if (TableUtils.hasFixedColumns(oTable)) {
 							for (var j = 0; j < oTable.getComputedFixedColumnCount(); j++) {
