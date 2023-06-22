@@ -456,41 +456,41 @@ sap.ui.define([
      * Inserts an MDC chart item (in case of sap.chart.Chart a measure/dimension) on the inner chart.
      * This function is called by the MDC chart after a change of the <code>Items</code> aggregation-
      * @param {sap.ui.mdc.Chart} oChart MDC chart to insert the item into
-     * @param {sap.ui.mdc.chart.Item} oChartItem MDC chart item to insert into the inner chart
+     * @param {sap.ui.mdc.chart.Item} oItem MDC chart item to insert into the inner chart
      * @param {int} iIndex Index to insert into
      *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartDelegate.insertItemToInnerChart = function (oChart, oChartItem, iIndex) {
+    ChartDelegate.insertItemToInnerChart = function (oChart, oItem, iIndex) {
         //TODO: Create Measures/Dimension only when required?
-        if (oChartItem.getType() === "groupable") {
+        if (oItem.getType() === "groupable") {
 
-            var sInnerDimName = this.getInternalChartNameFromPropertyNameAndKind(oChartItem.getName(), "groupable", oChart);
+            var sInnerDimName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart);
             var oDim = this._getChart(oChart).getDimensionByName(sInnerDimName);
 
             if (!oDim) {
-                this.createInnerDimension(oChart, oChartItem);
+                this.createInnerDimension(oChart, oItem);
             } else {
                 //Update Dimension
-                oDim.setLabel(oChartItem.getLabel());
-                oDim.setRole(oChartItem.getRole() ? oChartItem.getRole() : "category");
+                oDim.setLabel(oItem.getLabel());
+                oDim.setRole(oItem.getRole() ? oItem.getRole() : "category");
             }
 
             var aVisibleDimension = this._getChart(oChart).getVisibleDimensions();
             aVisibleDimension.splice(iIndex, 0, sInnerDimName); //Insert Item without deleting existing dimension
             this._getChart(oChart).setVisibleDimensions(aVisibleDimension);
 
-        } else if (oChartItem.getType() === "aggregatable") {
-            this.createInnerMeasure(oChart, oChartItem);
+        } else if (oItem.getType() === "aggregatable") {
+            this.createInnerMeasure(oChart, oItem);
             var aVisibleMeasures = this._getChart(oChart).getVisibleMeasures();
-            aVisibleMeasures.splice(iIndex, 0, this._getAggregatedMeasureNameForMDCItem(oChartItem));
+            aVisibleMeasures.splice(iIndex, 0, this._getAggregatedMeasureNameForMDCItem(oItem));
             this._getChart(oChart).setVisibleMeasures(aVisibleMeasures);
         }
 
         //Update coloring and semantical patterns on Item change
-        this._prepareColoringForItem(oChartItem).then(function(){
+        this._prepareColoringForItem(oItem).then(function(){
             this._updateColoring(oChart, this._getChart(oChart).getVisibleDimensions(), this._getChart(oChart).getVisibleMeasures());
         }.bind(this));
 
@@ -502,15 +502,15 @@ sap.ui.define([
      * Removes an item (in case of sap.chart.Chart a measure/dimension) from the inner chart.
      * This function is called by MDC chart on a change of the <code>Items</code> aggregation.
      * @param {sap.ui.mdc.Chart} oChart MDC chart to remove the item from
-     * @param {sap.ui.mdc.chart.Item} oChartItem Item to remove from the inner chart
+     * @param {sap.ui.mdc.chart.Item} oItem Item to remove from the inner chart
      *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartDelegate.removeItemFromInnerChart = function (oChart, oChartItem) {
-        if (oChartItem.getType() === "groupable" && this._getChart(oChart).getVisibleDimensions().includes(this.getInternalChartNameFromPropertyNameAndKind(oChartItem.getName(), "groupable", oChart))) {
-            var sInnerDimName = this.getInternalChartNameFromPropertyNameAndKind(oChartItem.getName(), "groupable", oChart);
+    ChartDelegate.removeItemFromInnerChart = function (oChart, oItem) {
+        if (oItem.getType() === "groupable" && this._getChart(oChart).getVisibleDimensions().includes(this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart))) {
+            var sInnerDimName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart);
 
             var aNewVisibleDimensions = this._getChart(oChart).getVisibleDimensions().filter(function (e) {
                 return e !== sInnerDimName;
@@ -522,20 +522,20 @@ sap.ui.define([
 
             this._getChart(oChart).setVisibleDimensions(aNewVisibleDimensions);
 
-            //this._getChart(oChart).removeDimension(this._getChart(oChart).getDimensionByName(oChartItem.getName()));
+            //this._getChart(oChart).removeDimension(this._getChart(oChart).getDimensionByName(oChartItem.getPropertyKey()));
 
-        } else if (oChartItem.getType() === "aggregatable" && this._getChart(oChart).getVisibleMeasures().includes(this._getAggregatedMeasureNameForMDCItem(oChartItem))) {
+        } else if (oItem.getType() === "aggregatable" && this._getChart(oChart).getVisibleMeasures().includes(this._getAggregatedMeasureNameForMDCItem(oItem))) {
             var aNewVisibleMeasures = [];
 
             oChart.getItems().filter(function(oItem) {return oItem.getType() === "aggregatable";})
-            .filter(function(oItem){ return oItem !== oChartItem;})
+            .filter(function(item){ return item !== oItem;})
             .forEach(function(oItem){
                 aNewVisibleMeasures.push(this._getAggregatedMeasureNameForMDCItem(oItem));
             }.bind(this));
 
             this._getChart(oChart).setVisibleMeasures(aNewVisibleMeasures);
 
-            this._getChart(oChart).removeMeasure(this._getChart(oChart).getMeasureByName(this._getAggregatedMeasureNameForMDCItem(oChartItem)));
+            this._getChart(oChart).removeMeasure(this._getChart(oChart).getMeasureByName(this._getAggregatedMeasureNameForMDCItem(oItem)));
         }
 
         //Update coloring and semantical patterns on Item change
@@ -583,10 +583,10 @@ sap.ui.define([
             var aPropPromises = [];
 
             oChart.getItems().forEach(function(oMDCItem){
-                var bIsComplete = oMDCItem.getName() && oMDCItem.getLabel() && oMDCItem.getType() && oMDCItem.getRole();
+                var bIsComplete = oMDCItem.getPropertyKey() && oMDCItem.getLabel() && oMDCItem.getType() && oMDCItem.getRole();
 
                 if (!bIsComplete) {
-                    aPropPromises.push(this._getPropertyInfosByName(oMDCItem.getName(), oChart).then(function(oPropertyInfo){
+                    aPropPromises.push(this._getPropertyInfosByName(oMDCItem.getPropertyKey(), oChart).then(function(oPropertyInfo){
                         oMDCItem.setLabel(oPropertyInfo.label);
 
                         if (oPropertyInfo.groupable) {
@@ -733,16 +733,16 @@ sap.ui.define([
             oChart.getItems().forEach(function (oItem, iIndex) {
 
                 //Uses excact mdc chart item id
-                aPropPromises.push(this._getPropertyInfosByName( oItem.getName(), oChart).then(function(oPropertyInfo){
+                aPropPromises.push(this._getPropertyInfosByName( oItem.getPropertyKey(), oChart).then(function(oPropertyInfo){
                     //Skip a Item if there is no property representing the Item inside the backend
                     if (!oPropertyInfo){
-                        Log.error("sap.ui.mdc.Chart: Item " + oItem.getName() + " has no property info representing it in the metadata. Make sure the name is correct and the metadata is defined correctly. Skipping the item!");
+                        Log.error("sap.ui.mdc.Chart: Item " + oItem.getPropertyKey() + " has no property info representing it in the metadata. Make sure the name is correct and the metadata is defined correctly. Skipping the item!");
                         return;
                     }
 
                     switch (oItem.getType()) {
                         case "groupable":
-                            aVisibleDimensions.push(this.getInternalChartNameFromPropertyNameAndKind(oItem.getName(), "groupable", oChart));
+                            aVisibleDimensions.push(this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart));
 
                             this._addInnerDimension(oChart, oItem, oPropertyInfo);
                             break;
@@ -865,12 +865,12 @@ sap.ui.define([
     ChartDelegate._prepareColoringForItem = function(oItem) {
         //COLORING
         return this._addCriticality(oItem).then(function(){
-            this._getState(oItem.getParent()).aInSettings.push(oItem.getName());
+            this._getState(oItem.getParent()).aInSettings.push(oItem.getPropertyKey());
 
             if (oItem.getType() === "aggregatable") {
 
                 //Uses excact MDC CHart Item name
-                this._getPropertyInfosByName(oItem.getName(), oItem.getParent()).then(function (oPropertyInfo) {
+                this._getPropertyInfosByName(oItem.getPropertyKey(), oItem.getParent()).then(function (oPropertyInfo) {
                     this._getAdditionalColoringMeasuresForItem(oPropertyInfo).forEach(function(oMeasure){
 
                         if (this._getState(oItem.getParent()).aColMeasures && this._getState(oItem.getParent()).aColMeasures.indexOf(oMeasure) == -1) {
@@ -910,7 +910,7 @@ sap.ui.define([
     ChartDelegate._addCriticality = function (oItem) {
 
         //Uses excact MDC chart item name to idenfiy property
-        return this._getPropertyInfosByName(oItem.getName(), oItem.getParent()).then(function (oPropertyInfo) {
+        return this._getPropertyInfosByName(oItem.getPropertyKey(), oItem.getParent()).then(function (oPropertyInfo) {
 
             if (oPropertyInfo.criticality || (oPropertyInfo.datapoint && oPropertyInfo.datapoint.criticality)){
                 var oColorings = this._getState(oItem.getParent()).oColorings || {
@@ -933,7 +933,7 @@ sap.ui.define([
                         };
                     }
 
-                    var sDimName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getName(), "groupable", oItem.getParent());
+                    var sDimName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oItem.getParent());
                     oColorings.Criticality.DimensionValues[sDimName] = mChartCrit;
 
                 } else {
@@ -943,7 +943,7 @@ sap.ui.define([
                         mChartCrit[sKey] = mCrit[sKey];
                     }
 
-                    var sMeasureName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getName(), "aggregatable", oItem.getParent());
+                    var sMeasureName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "aggregatable", oItem.getParent());
                     oColorings.Criticality.MeasureValues[sMeasureName] = mChartCrit;
                 }
 
@@ -1365,18 +1365,18 @@ sap.ui.define([
     /**
      * Creates and adds a dimension for the inner chart for a given MDC chart item.
      * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
-     * @param {sap.ui.mdc.chart.Item} oChartItem MDC chart item to be added to the inner chart
+     * @param {sap.ui.mdc.chart.Item} oItem MDC chart item to be added to the inner chart
      *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartDelegate.createInnerDimension = function (oChart, oChartItem) {
+    ChartDelegate.createInnerDimension = function (oChart, oItem) {
         //TODO: Check for Hierachy and Time
         //TODO: Check for role annotation
 
-        this._getPropertyInfosByName(oChartItem.getName(), oChart).then(function(oPropInfo){
-            this._addInnerDimension(oChart, oChartItem, oPropInfo);
+        this._getPropertyInfosByName(oItem.getPropertyKey(), oChart).then(function(oPropInfo){
+            this._addInnerDimension(oChart, oItem, oPropInfo);
         }.bind(this));
 
 
@@ -1385,16 +1385,16 @@ sap.ui.define([
     /**
      * Creates and adds a measure for the inner chart for given MDC chart item.
      * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
-     * @param {sap.ui.mdc.chart.Item} oChartItem MDC chart item to be added to the inner chart
+     * @param {sap.ui.mdc.chart.Item} oItem MDC chart item to be added to the inner chart
      *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartDelegate.createInnerMeasure = function (oChart, oChartItem) {
+    ChartDelegate.createInnerMeasure = function (oChart, oItem) {
 
-        this._getPropertyInfosByName(oChartItem.getName(), oChart).then(function(oPropInfo){
-            this._addInnerMeasure(oChart, oChartItem, oPropInfo);
+        this._getPropertyInfosByName(oItem.getPropertyKey(), oChart).then(function(oPropInfo){
+            this._addInnerMeasure(oChart, oItem, oPropInfo);
         }.bind(this));
     };
 
@@ -1409,11 +1409,11 @@ sap.ui.define([
     /**
      * @private
      */
-    ChartDelegate.innerDimensionFactory = function (oChart, oChartItem, oPropertyInfo) {
+    ChartDelegate.innerDimensionFactory = function (oChart, oItem, oPropertyInfo) {
         var oDimension = new Dimension({
-            name: this.getInternalChartNameFromPropertyNameAndKind(oChartItem.getName(), "groupable", oChart),
-            role: oChartItem.getRole() ? oChartItem.getRole() : "category",
-            label: oChartItem.getLabel()
+            name: this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart),
+            role: oItem.getRole() ? oItem.getRole() : "category",
+            label: oItem.getLabel()
         });
 
         if (oPropertyInfo.textProperty){
@@ -1443,7 +1443,7 @@ sap.ui.define([
         var propertyPath = oPropertyInfo.propertyPath;
 
         var oMeasureSettings = {
-            name: this._getAggregatedMeasureNameForMDCItem(oChartItem),//aggregationMethod + oItem.getName() under normal circumstances
+            name: this._getAggregatedMeasureNameForMDCItem(oChartItem),//aggregationMethod + oItem.getPropertyKey() under normal circumstances
             label: oChartItem.getLabel(),
             role: oChartItem.getRole() ? oChartItem.getRole() : "axis1"
         };
@@ -1665,8 +1665,8 @@ sap.ui.define([
 
         aSorterProperties.forEach(function (oSortProp) {
 
-            var oMDCItem = oChart.getItems().find(function (oProp) {
-                return oProp.getName() === oSortProp.name;
+            var oMDCItem = oChart.getItems().find(function (oItem) {
+                return oItem.getPropertyKey() === oSortProp.name;
             });
 
             //Ignore not visible Items
@@ -1690,8 +1690,8 @@ sap.ui.define([
 
     };
 
-    ChartDelegate._getAggregatedMeasureNameForMDCItem = function(oMDCItem){
-        return this.getInternalChartNameFromPropertyNameAndKind(oMDCItem.getName(), "aggregatable", oMDCItem.getParent());
+    ChartDelegate._getAggregatedMeasureNameForMDCItem = function(oItem){
+        return this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "aggregatable", oItem.getParent());
     };
 
     /**
