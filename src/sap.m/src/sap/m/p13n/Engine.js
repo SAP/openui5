@@ -51,6 +51,7 @@ sap.ui.define([
 	 * Can be used in combination with <code>sap.ui.fl.variants.VariantManagement</code> to persist a state in variants using <code>sap.ui.fl</code> capabilities.</li>
 	 *
 	 * @class
+	 * @see {@link topic:75c08fdebf784575947927e052712bab Personalization}
 	 * @alias sap.m.p13n.Engine
 	 * @extends sap.m.p13n.modules.AdaptationProvider
 	 * @author SAP SE
