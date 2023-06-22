@@ -92,7 +92,8 @@ sap.ui.define([
 			function wrapCallback() {
 				var oFocusedElement = document.activeElement,
 					oSpan = document.createElement("span"),
-					oStaticUiAreaDomRef = sap.ui.getCore().getStaticAreaRef();
+					oStaticUiAreaDomRef = sap.ui.getCore().getStaticAreaRef(),
+					args = arguments;
 
 				oSpan.setAttribute("tabindex", 0);
 				oSpan.setAttribute("id", "sap-ui-shortcut-focus");
@@ -107,16 +108,17 @@ sap.ui.define([
 
 				// set focus on span to enforce blur - e.g. data of input field needs to get peristed
 				oSpan.focus();
+				// setting back the focus async ensures that also a fieldGroupChange happens
+				setTimeout(function() {
+					// restore old focus
+					oFocusedElement.focus();
 
-				// restore old focus
-				oFocusedElement.focus();
+					// cleanup DOM
+					oStaticUiAreaDomRef.removeChild(oSpan);
 
-				// cleanup DOM
-				oStaticUiAreaDomRef.removeChild(oSpan);
-
-				// trigger callback
-				fnCallback.apply(null, arguments);
-
+					// trigger callback
+					fnCallback.apply(null, args);
+				});
 			}
 
 			var oDelegate = {};

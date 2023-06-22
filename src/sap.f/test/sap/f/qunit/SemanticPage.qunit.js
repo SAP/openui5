@@ -1368,12 +1368,14 @@ function (
 				bubbles: true, key: "S", shiftKey: true, ctrlKey: !bMacOS, metaKey: bMacOS
 			}));
 
-			// Assert
-			assert.strictEqual(oActionSheet.isOpen(), true, "Share menu is shown");
+			setTimeout(function() {
+				// Assert
+				assert.strictEqual(oActionSheet.isOpen(), true, "Share menu is shown");
 
-			// Clean up
-			this.oSemanticPage.destroy();
-			done();
+				// Clean up
+				this.oSemanticPage.destroy();
+				done();
+			}.bind(this));
 		}.bind(this)});
 	});
 });
