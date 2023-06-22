@@ -19,23 +19,16 @@
 		},
 		"config": {
 			"sample": {
+				"stretch": true,
 				"files": [
-					"V.view.xml",
+					"localService/mockdata/Employees.json",
+					"localService/response/ODataErrorResponse.json",
+					"localService/metadata.xml",
+					"localService/mockserver.js",
 					"C.controller.js",
+					"V.view.xml",
 					"manifest.json"
 				]
-			}
-		},
-		"models": {
-			"": {
-				"type": "sap.ui.model.json.JSONModel"
-			},
-			"musicService": {
-				"type": "sap.ui.model.odata.v4.ODataModel",
-				"settings": {
-					"serviceUrl": "https://odatav4server.internal.cfapps.sap.hana.ondemand.com/music/",
-					"synchronizationMode": "None"
-				}
 			}
 		}
 	}
