@@ -10,9 +10,7 @@
     <m:Page showHeader="false">
         <UploadSetTable
             id="UploadSetTable"
-            fileTypes="txt,doc,png,pdf"
             maxFileNameLength="60"
-            mediaTypes="text/plain,application/msword,image/png,application/pdf"
             uploadUrl="/uploadFiles"
             multiple="false"
             items="{path: '/items', templateShareable: false}"
@@ -26,6 +24,7 @@
             uploadButtonInvisible="true"
             instantUpload="true"
             customDropFilesHandler=".selectedFilesFromHandler"
+            inset="true"
         >
             <!-- ToolBar for Table -->
             <headerToolbar>
@@ -126,6 +125,7 @@
                     mediaType="{mediaType}"
                     url="{url}"
                     type="Navigation"
+                    highlight="{=${uploadState} === 'Complete' ? 'Indication05' : null }"
                 >
                 <cells>
                 
