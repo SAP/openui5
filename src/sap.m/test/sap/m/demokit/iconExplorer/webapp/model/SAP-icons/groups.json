@@ -133,7 +133,8 @@
 				{ "name" : "male" },
 				{ "name" : "biometric-face" },
 				{ "name" : "biometric-thumb" },
-				{ "name" : "people-connected" }
+				{ "name" : "people-connected" },
+				{ "name" : "accessibility" }
 			]
 		},
 		{
@@ -245,7 +246,8 @@
 				{ "name" : "lead" },
 				{ "name" : "batch-payments" },
 				{ "name" : "wallet" },
-				{ "name" : "receipt" }
+				{ "name" : "receipt" },
+				{ "name" : "currency" }
 			]
 		},
 		{
@@ -875,7 +877,8 @@
 				{ "name" : "appear-offline" },
 				{ "name" : "validate" },
 				{ "name" : "information" },
-				{ "name" : "in-progress" }
+				{ "name" : "in-progress" },
+				{ "name" : "high-priority" }
 			]
 		},
 		{
@@ -909,7 +912,9 @@
 				{ "name" : "check-availability" },
 				{ "name" : "accelerated" },
 				{ "name" : "workflow-tasks" },
-				{ "name" : "select-appointments" }
+				{ "name" : "select-appointments" },
+				{ "name" : "add-calendar" },
+				{ "name" : "time-off" }
 			]
 		},
 		{
@@ -1200,7 +1205,8 @@
 				{ "name" : "qr-code" },
 				{ "name" : "cloud-check" },
 				{ "name" : "enablement" },
-				{ "name" : "map-fill" }
+				{ "name" : "map-fill" },
+				{ "name" : "bell-2" }
 			]
 		},
 		{

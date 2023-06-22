@@ -728,6 +728,9 @@ sap.ui.define([
 				'non-binary': 0xe29d,
 				'female': 0xe29e,
 				'male': 0x1e29f,
+				'bell-2': 0xe2a0,
+				'accessibility': 0xe2a1,
+				'high-priority': 0xe2a2,
 				'gender-male-and-female': 0x1e300,
 				'rotate': 0xe301,
 				'locate-me-2': 0xe302,
@@ -739,7 +742,10 @@ sap.ui.define([
 				'people-connected': 0xe308,
 				'light-mode': 0xe309,
 				'dark-mode': 0xe30a,
-				'select-appointments': 0x1e30b
+				'select-appointments': 0x1e30b,
+				'time-off': 0xe30c,
+				'add-calendar': 0xe30d,
+				'currency': 0xe30e
 			}
 		};
 

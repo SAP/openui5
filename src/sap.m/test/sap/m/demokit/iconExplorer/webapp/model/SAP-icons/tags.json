@@ -6829,5 +6829,70 @@
 			"select",
 			"choose"
 		]
+	},
+	"accessibility": {
+		"tags": [
+			"user",
+			"person",
+			"accessible",
+			"accessibility",
+			"inclusive",
+			"inclusion",
+			"people"
+		]
+	},
+	"add-calendar": {
+		"tags": [
+			"appointment",
+			"vacation",
+			"leave",
+			"request",
+			"add",
+			"plus",
+			"calendar"
+		]
+	},
+	"bell-2": {
+		"tags": [
+			"bell",
+			"alarm",
+			"notify",
+			"alerts",
+			"full",
+			"filled"
+		]
+	},
+	"currency": {
+		"tags": [
+			"money",
+			"bills",
+			"currency",
+			"payment",
+			"cash"
+		]
+	},
+	"high-priority": {
+		"tags": [
+			"warning",
+			"critical",
+			"message",
+			"alert",
+			"status",
+			"!",
+			"notification",
+			"exclamation"
+		]
+	},
+	"time-off": {
+		"tags": [
+			"holiday",
+			"vacation",
+			"leave",
+			"request",
+			"out-of-office",
+			"out",
+			"appointment",
+			"calendar"
+		]
 	}
 }
