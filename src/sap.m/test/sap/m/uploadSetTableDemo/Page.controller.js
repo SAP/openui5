@@ -102,7 +102,7 @@ sap.ui.define([
 						"documentType": oSelectedDoumentMap && oSelectedDoumentMap.key ? oSelectedDoumentMap.value : "Invoice"
 					}
 				);
-				oModel.setProperty("/items", oData);
+				oModel.refresh(true);
 				setTimeout(function() {
 					MessageToast.show("Document Added");
 				}, 1000);
