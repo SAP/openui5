@@ -18,10 +18,13 @@ sap.ui.define([
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustratedMessage",
 	"sap/m/IllustratedMessageSize",
-	"sap/m/upload/UploaderTableItem"
+	"sap/m/upload/UploaderTableItem",
+	"sap/ui/core/dnd/DragDropInfo",
+	"sap/ui/core/dnd/DropInfo",
+	"sap/ui/core/dnd/DragInfo"
 ], function (Table, ToolbarSpacer, UploadSetTableRenderer, FileUploader,
     UploadSetToolbarPlaceholder, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetTableItem, deepEqual, Log, Library, IllustratedMessageType,
-	IllustratedMessage, IllustratedMessageSize, Uploader) {
+	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo) {
     "use strict";
 
 	/**
@@ -103,7 +106,15 @@ sap.ui.define([
 				 * Defines whether the upload process should be triggered as soon as the file is added.<br>
 				 * If set to <code>false</code>, no upload is triggered when a file is added.
 				 */
-				instantUpload: {type: "boolean", defaultValue: true}
+				instantUpload: {type: "boolean", defaultValue: true},
+				/**
+				 * Function callback invoked with dropped files, by the control to provide custom handling for drag and drop of files into the control area
+				 */
+				customDropFilesHandler: {type: "function", defaultValue: null},
+				/**
+				 * Defines whether the upload action is allowed.
+				 */
+				uploadEnabled: {type: "boolean", defaultValue: true}
             },
             aggregations: {
                 headerToolbar : {
@@ -301,6 +312,37 @@ sap.ui.define([
 						 */
 						item: {type: "sap.m.upload.UploadSetTableItem"}
 					}
+				},
+				/**
+				 * This event is fired when the user starts dragging an uploaded item.
+				 * @event
+				 * @param {sap.ui.base.Event} oControlEvent
+				 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+				 * @param {object} oControlEvent.getParameters
+				 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element that will be dragged
+				 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
+				 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+				 * @public
+				 * @since 1.99
+				 */
+				itemDragStart: {
+				},
+
+				/**
+				 * This event is fired when an uploaded item is dropped on the new list position.
+				 * @event
+				 * @param {sap.ui.base.Event} oControlEvent
+				 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+				 * @param {object} oControlEvent.getParameters
+				 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
+				 * @param {sap.ui.core.Element} oControlEvent.getParameters.draggedControl The element being dragged
+				 * @param {sap.ui.core.Element} oControlEvent.getParameters.droppedControl The element being dropped
+				 * @param {sap.ui.core.dnd.RelativeDropPosition} oControlEvent.getParameters.dropPosition The calculated position of the drop action relative to the <code>droppedControl</code>.
+				 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+				 * @public
+				 * @since 1.99
+				 */
+				 itemDrop: {
 				}
 			}
         },
@@ -315,6 +357,7 @@ sap.ui.define([
 
     UploadSetTable.prototype.init = function () {
         Table.prototype.init.call(this);
+		this._setDragDropConfig();
         this._filesTobeUploaded = [];
     };
 
@@ -432,6 +475,14 @@ sap.ui.define([
 		return this;
 	};
 
+	UploadSetTable.prototype.setUploadEnabled = function (bEnable) {
+		if (bEnable !== this.getUploadEnabled()) {
+			this.getDefaultFileUploader().setEnabled(bEnable);
+			this.setProperty("uploadEnabled", bEnable, false);
+		}
+		return this;
+	};
+
 	/* ============== */
 	/* Public methods */
 	/* ============== */
@@ -450,7 +501,7 @@ sap.ui.define([
 				buttonText: sTooltip,
 				tooltip: sTooltip,
 				iconOnly: false,
-				enabled: true,
+				enabled: this.getUploadEnabled(),
 				icon: "",
 				iconFirst: false,
 				style: "Transparent",
@@ -542,6 +593,12 @@ sap.ui.define([
 	 * @public
 	 */
 	UploadSetTable.prototype.uploadItems = function(aItemTobeUploaded) {
+
+		if (!this.getUploadEnabled()) {
+			Log.warning("Upload is currently disabled for this upload set with Table.");
+			return;
+		}
+
 		if (!Array.isArray(aItemTobeUploaded)) {
 			return;
 		}
@@ -745,6 +802,93 @@ sap.ui.define([
 				} else {
 					buttonRef.removeStyleClass("sapMUSTFileUploaderVisibility");
 				}
+			}
+		}
+	};
+
+	UploadSetTable.prototype._setDragDropConfig = function () {
+		var oDragDropConfig = new DragDropInfo({
+			sourceAggregation: "items",
+			targetAggregation: "items",
+			dragStart: [this._onDragStartItem, this],
+			drop: [this._onDropItem, this]
+		});
+		var oDropConfig = new DropInfo({
+			targetAggregation: "",
+			dropEffect:"Move",
+			dropPosition:"OnOrBetween",
+			dragEnter: [this._onDragEnterFile, this],
+			drop: [this._onDropFile, this]
+		});
+		this.addDragDropConfig(oDragDropConfig);
+		this.addDragDropConfig(oDropConfig);
+	};
+
+	UploadSetTable.prototype._onDragStartItem = function (oEvent) {
+		this.fireItemDragStart(oEvent);
+	};
+
+	UploadSetTable.prototype._onDropItem = function (oEvent) {
+		this.fireItemDrop(oEvent);
+	};
+
+	UploadSetTable.prototype._onDragEnterFile = function (oEvent) {
+		var oDragSession = oEvent.getParameter("dragSession");
+		var oDraggedControl = oDragSession.getDragControl();
+		this._oDragIndicator = true;
+		if (oDraggedControl) {
+			oEvent.preventDefault();
+		}
+	};
+
+	// Drag and drop of files implmentation subject to change depending on the thr UX feedback for folder upload scenarios and warning message display scenarios
+	UploadSetTable.prototype._onDropFile = function (oEvent) {
+		this._oDragIndicator = false;
+		oEvent.preventDefault();
+		if (this.getUploadEnabled()) {
+			var aItems = oEvent.getParameter("browserEvent").dataTransfer.files;
+
+			// handlding multiple property drag & drop scenarios
+			if (aItems && aItems.length && aItems.length > 1 && !this.getMultiple()) {
+				// logging the message currently will display message box with UX improvements feedback.
+				Log.warning("Multiple files upload is retsricted for this multiple property set");
+				return;
+			}
+
+
+			if (aItems && aItems.length) {
+				var oFileUploaderInstance = this.getDefaultFileUploader();
+						if (oFileUploaderInstance && oFileUploaderInstance._areFilesAllowed && oFileUploaderInstance._areFilesAllowed(aItems)) {
+							var aFiles = [];
+
+							// Need to explicitly copy the file list, FileUploader deliberately resets its form completely
+							// along with 'files' parameter when it (mistakenly) thinks that all is done.
+							for (var i = 0; i < aItems.length; i++) {
+								aFiles.push(aItems[i]);
+							}
+
+							var selectedFiles = [];
+							aFiles.forEach(function (oFile) {
+								var oItem = new UploadSetTableItem({
+									uploadState: UploadState.Ready
+								});
+								oItem._setFileObject(oFile);
+								oItem.setFileName(oFile.name);
+								selectedFiles.push(oItem);
+								/* fire the beforeInitiatingUpload to support use case for non instant uploads,
+								where additional item properties can be set by the consumer of the control */
+								this.fireBeforeInitiatingItemUpload({item: oItem});
+								if (this.getInstantUpload() && !this.getCustomDropFilesHandler()) {
+									this._uploadItemIfGoodToGo(oItem);
+								}
+							}.bind(this));
+
+							// fire the fncallback stored set through customDropFileHandler invocation
+							// this would be use for the consumers to get the files dropped into the area and to have custom inputs taken for each file dropped.
+							if (this.getCustomDropFilesHandler()) {
+								this.getCustomDropFilesHandler()({selectedItems: selectedFiles});
+							}
+						}
 			}
 		}
 	};
