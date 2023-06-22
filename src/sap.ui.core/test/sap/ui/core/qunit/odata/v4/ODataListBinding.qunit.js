@@ -3900,14 +3900,25 @@ sap.ui.define([
 				SyncPromise.resolve());
 
 		oBinding.iCurrentEnd = iCurrentEnd;
-		this.mock(oContext).expects("destroy").exactly(iCurrentEnd ? 0 : 1)
-			.withExactArgs();
+		if (!iCurrentEnd) {
+			oBinding.mPreviousContextsByPath = {
+				"/EMPLOYEES($uid=id-1-24)" : oContext,
+				"/EMPLOYEES('1')" : "~otherContext~"
+			};
+		}
+		this.mock(oContext).expects("destroy").exactly(iCurrentEnd ? 0 : 1).withExactArgs();
 
 		// code under test
 		oBinding.destroyLater(oContext);
 
-		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES($uid=id-1-24)"],
-			iCurrentEnd ? oContext : undefined);
+		if (!iCurrentEnd) {
+			assert.deepEqual(oBinding.mPreviousContextsByPath, {
+				"/EMPLOYEES('1')" : "~otherContext~"
+			});
+		} else {
+			assert.strictEqual(
+				oBinding.mPreviousContextsByPath["/EMPLOYEES($uid=id-1-24)"], oContext);
+		}
 	});
 });
 
@@ -10448,6 +10459,88 @@ sap.ui.define([
 			// code under test
 			oBinding.checkDeepCreate();
 		}, new Error("Invalid path 'SO_2_SOITEM/SOITEM_2_SCHDL' in deep create"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onKeepAliveChanged: remove from cache", function () {
+		var oBinding = this.bindList("/SalesOrderList"),
+			oContext = {
+				isDeleted : function () {},
+				isEffectivelyKeptAlive : function () {},
+				getPath : function () {}
+			};
+
+		oBinding.mPreviousContextsByPath = {
+			"/SalesOrderList('1')" : "~" // would actually be the context
+		};
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("getPath").twice()
+			.withExactArgs().returns("/SalesOrderList('1')");
+		this.mock(oContext).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
+		this.mock(_Helper).expects("getRelativePath")
+			.withExactArgs("/SalesOrderList('1')", "/SalesOrderList").returns("('1')");
+		this.mock(oBinding.oCache).expects("removeKeptElement").withExactArgs("('1')");
+		this.mock(oBinding).expects("destroyLater").withExactArgs(sinon.match.same(oContext));
+
+		// code under test
+		oBinding.onKeepAliveChanged(oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onKeepAliveChanged: deleted", function () {
+		var oBinding = this.bindList("/SalesOrderList"),
+			oContext = {
+				isDeleted : function () {}
+			};
+
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(true);
+		this.mock(_Helper).expects("getRelativePath").never();
+		this.mock(oBinding.oCache).expects("removeKeptElement").never();
+		this.mock(oBinding).expects("destroyLater").never();
+
+		// code under test
+		oBinding.onKeepAliveChanged(oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onKeepAliveChanged: in the binding's collection", function () {
+		var oBinding = this.bindList("/SalesOrderList"),
+			oContext = {
+				isDeleted : function () {},
+				getPath : function () {}
+			};
+
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/SalesOrderList('1')");
+		this.mock(_Helper).expects("getRelativePath").never();
+		this.mock(oBinding.oCache).expects("removeKeptElement").never();
+		this.mock(oBinding).expects("destroyLater").never();
+
+		// code under test
+		oBinding.onKeepAliveChanged(oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onKeepAliveChanged: effectively kept alive", function () {
+		var oBinding = this.bindList("/SalesOrderList"),
+			oContext = {
+				isDeleted : function () {},
+				isEffectivelyKeptAlive : function () {},
+				getPath : function () {}
+			};
+
+		oBinding.mPreviousContextsByPath = {
+			"/SalesOrderList('1')" : oContext
+		};
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/SalesOrderList('1')");
+		this.mock(oContext).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		this.mock(_Helper).expects("getRelativePath").never();
+		this.mock(oBinding.oCache).expects("removeKeptElement").never();
+		this.mock(oBinding).expects("destroyLater").never();
+
+		// code under test
+		oBinding.onKeepAliveChanged(oContext);
 	});
 });
 

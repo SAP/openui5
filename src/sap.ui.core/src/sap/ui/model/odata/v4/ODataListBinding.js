@@ -1176,6 +1176,7 @@ sap.ui.define([
 			this.mPreviousContextsByPath[oContext.getPath()] = oContext;
 		} else {
 			// There seems to be no listener (iCurrentEnd is set by #getContexts), destroy now
+			delete this.mPreviousContextsByPath[oContext.getPath()];
 			oContext.destroy();
 		}
 	};
@@ -2990,6 +2991,24 @@ sap.ui.define([
 					return that.oHeaderContext.checkUpdateInternal();
 				}).catch(this.oModel.getReporter());
 			}
+		}
+	};
+
+	/**
+	 * Notification from a context that its effective keep-alive status changed.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext - The context
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.onKeepAliveChanged = function (oContext) {
+		if (!oContext.isDeleted() // data of a deleted context must remain for the exclusion filter
+				&& oContext.getPath() in this.mPreviousContextsByPath
+				&& !oContext.isEffectivelyKeptAlive()) {
+			this.oCache.removeKeptElement(
+				_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())
+			);
+			this.destroyLater(oContext);
 		}
 	};
 
