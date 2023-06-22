@@ -17,7 +17,7 @@ sap.ui.define([
 					async : true
 				},
 				autoWait : true,
-				timeout : 30 // BCP: 2270085466
+				timeout : 45 // BCP: 2270085466
 			});
 		}
 	});
