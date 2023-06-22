@@ -71,8 +71,8 @@ sap.ui.define([
 					defaultValue: ""
 				},
 				illustrationType: {
-					type: "sap.m.IllustratedMessageType",
-					defaultValue: IllustratedMessageType.ErrorScreen
+					type: "string",
+					defaultValue: "ErrorScreen"
 				},
 				illustrationSize: {
 					type: "sap.m.IllustratedMessageSize",
@@ -133,7 +133,7 @@ sap.ui.define([
 	/**
 	 * @param {object} mSettings Message settings
 	 * @param {sap.ui.integration.CardBlockingMessageType} mSettings.type The type of the message
-	 * @param {sap.m.IllustratedMessageType} [mSettings.illustrationType] Illustration type
+	 * @param {string} [mSettings.illustrationType] Illustration type
 	 * @param {sap.m.IllustratedMessageSize} [mSettings.illustrationSize] Illustration size
 	 * @param {string} [mSettings.title] Message title
 	 * @param {string} [mSettings.description] Message description

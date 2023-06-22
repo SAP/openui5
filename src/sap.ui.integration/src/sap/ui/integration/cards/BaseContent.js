@@ -412,7 +412,7 @@ sap.ui.define([
 	 * Show 'No Data' blocking message in the content. If there is configuration in the manifest, it will be applied.
 	 * @protected
 	 * @param {object} oSettings 'No Data' settings
-	 * @param {sap.m.IllustratedMessageType} oSettings.illustrationType Illustration type
+	 * @param {sap.m.IllustratedMessageType|string} oSettings.illustrationType Illustration type
 	 * @param {sap.m.IllustratedMessageSize} [oSettings.illustrationSize=sap.m.IllustratedMessageSize.Auto] Illustration size
 	 * @param {string} oSettings.title Title
 	 * @param {string} [oSettings.description] Description
@@ -424,7 +424,7 @@ sap.ui.define([
 
 		var oMessageSettings = {
 			type: CardBlockingMessageType.NoData,
-			illustrationType: IllustratedMessageType[oNoDataConfiguration.type] || oSettings.illustrationType,
+			illustrationType: IllustratedMessageType[oNoDataConfiguration.type] || oNoDataConfiguration.type || oSettings.illustrationType,
 			illustrationSize: IllustratedMessageSize[oNoDataConfiguration.size] || oSettings.illustrationSize,
 			title: oNoDataConfiguration.title || oSettings.title,
 			description: oNoDataConfiguration.description || oSettings.description
