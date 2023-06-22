@@ -6,13 +6,13 @@
     xmlns:core="sap.ui.core"
     xmlns="sap.m.upload"
 >
-<m:App id="app" >
+<m:App id="app">
     <m:Page showHeader="false">
         <UploadSetTable
             id="UploadSetTable"
-            fileTypes="txt,doc,png,pdf,docx"
+            fileTypes="txt,doc,png,pdf"
             maxFileNameLength="60"
-            mediaTypes="text/plain,application/msword,image/png,application/pdf,application/docx"
+            mediaTypes="text/plain,application/msword,image/png,application/pdf"
             uploadUrl="/uploadFiles"
             multiple="false"
             items="{path: '/items', templateShareable: false}"
@@ -25,6 +25,7 @@
             noDataDescription="Drag and Drop files here to upload"
             uploadButtonInvisible="true"
             instantUpload="true"
+            customDropFilesHandler=".selectedFilesFromHandler"
         >
             <!-- ToolBar for Table -->
             <headerToolbar>
