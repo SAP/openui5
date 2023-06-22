@@ -812,7 +812,7 @@ sap.ui.define([
 			sandbox.restore();
 			this.oAppComponent.destroy();
 			FlexState.rebuildFilteredResponse(this.sReference);
-			FlexState.resetFakeStandardVariants(this.sReference, sComponentId);
+			FlexState.clearRuntimeSteadyObjects(this.sReference, sComponentId);
 		}
 	}, function() {
 		QUnit.test("when a fake standard variant is added", function(assert) {
@@ -822,7 +822,7 @@ sap.ui.define([
 				"then initially no variants flex objects are part of the flex state"
 			);
 
-			FlexState.addFakeStandardVariantToExternalData(this.sReference, sComponentId, this.oVariant);
+			FlexState.addRuntimeSteadyObject(this.sReference, sComponentId, this.oVariant);
 			var aFlexObjects = FlexState.getFlexObjectsDataSelector().get({reference: this.sReference});
 			assert.strictEqual(
 				aFlexObjects.length,
@@ -837,8 +837,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the fake standard variants are reset", function(assert) {
-			FlexState.addFakeStandardVariantToExternalData(this.sReference, sComponentId, this.oVariant);
-			FlexState.resetFakeStandardVariants(this.sReference, sComponentId);
+			FlexState.addRuntimeSteadyObject(this.sReference, sComponentId, this.oVariant);
+			FlexState.clearRuntimeSteadyObjects(this.sReference, sComponentId);
 			assert.strictEqual(
 				FlexState.getFlexObjectsDataSelector().get({reference: this.sReference}).length,
 				0,
@@ -857,8 +857,8 @@ sap.ui.define([
 					id: "bar",
 					reference: this.sReference
 				});
-				FlexState.addFakeStandardVariantToExternalData(this.sReference, sComponentId, this.oVariant);
-				FlexState.addFakeStandardVariantToExternalData(this.sReference, sComponentId2, oVariant2);
+				FlexState.addRuntimeSteadyObject(this.sReference, sComponentId, this.oVariant);
+				FlexState.addRuntimeSteadyObject(this.sReference, sComponentId2, oVariant2);
 
 				FlexState.rebuildFilteredResponse(this.sReference);
 				assert.strictEqual(
@@ -867,7 +867,7 @@ sap.ui.define([
 					"then only one fake variant is available"
 				);
 
-				FlexState.resetFakeStandardVariants(this.sReference, sComponentId2);
+				FlexState.clearRuntimeSteadyObjects(this.sReference, sComponentId2);
 				oAppComponent2.destroy();
 			}.bind(this));
 		});

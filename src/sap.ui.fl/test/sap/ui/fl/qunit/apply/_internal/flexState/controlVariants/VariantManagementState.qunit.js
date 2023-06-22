@@ -62,10 +62,9 @@ sap.ui.define([
 			var oStandardVariant = createVariant({
 				fileName: sStandardVariantReference
 			});
-			VariantManagementState.addFakeStandardVariant(
+			VariantManagementState.addRuntimeSteadyObject(
 				sReference,
 				sComponentId,
-				sVariantManagementReference,
 				oStandardVariant
 			);
 			return oStandardVariant;
@@ -83,7 +82,7 @@ sap.ui.define([
 
 	function cleanup() {
 		FlexState.clearState();
-		FlexState.resetFakeStandardVariants(sReference, sComponentId);
+		FlexState.clearRuntimeSteadyObjects(sReference, sComponentId);
 		// TODO: Check if this is an issue in prod
 		VariantManagementState.getVariantManagementMap().clearCachedResult();
 		VariantManagementState.resetCurrentVariantReferences();
@@ -558,7 +557,7 @@ sap.ui.define([
 				var oVariant = createVariant({
 					fileName: sVariantManagementReference
 				});
-				VariantManagementState.addFakeStandardVariant(sReference, sComponentId, sVariantManagementReference, oVariant);
+				VariantManagementState.addRuntimeSteadyObject(sReference, sComponentId, oVariant);
 
 				var oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
 
@@ -584,7 +583,7 @@ sap.ui.define([
 				var oVariant = createVariant({
 					fileName: sVariantManagementReference
 				});
-				VariantManagementState.addFakeStandardVariant(sReference, sComponentId, sVariantManagementReference, oVariant);
+				VariantManagementState.addRuntimeSteadyObject(sReference, sComponentId, oVariant);
 
 				var oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
 
@@ -594,87 +593,11 @@ sap.ui.define([
 					"then the standard variant is initially added to the vm state"
 				);
 
-				VariantManagementState.clearFakeStandardVariants(sReference, sComponentId);
+				VariantManagementState.clearRuntimeSteadyObjects(sReference, sComponentId);
 				assert.strictEqual(
 					VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference],
 					undefined,
 					"then the standard variant gets cleared"
-				);
-			});
-		});
-
-		QUnit.test("when a second fake variant is added for the same reference", function(assert) {
-			return FlexState.initialize({
-				componentId: sComponentId,
-				reference: sReference
-			})
-			.then(function() {
-				VariantManagementState.addFakeStandardVariant(
-					sReference,
-					sComponentId,
-					sVariantManagementReference,
-					createVariant({
-						fileName: sVariantManagementReference
-					})
-				);
-				VariantManagementState.addFakeStandardVariant(
-					sReference,
-					sComponentId,
-					sVariantManagementReference,
-					createVariant({
-						fileName: sVariantManagementReference + "-duplicate"
-					})
-				);
-
-				var oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
-
-				assert.strictEqual(
-					oVariantManagementState[sVariantManagementReference].variants.length,
-					1,
-					"then the standard variant is only added once"
-				);
-				assert.strictEqual(
-					oVariantManagementState[sVariantManagementReference].defaultVariant,
-					sVariantManagementReference,
-					"then the first variant is kept as the default"
-				);
-			});
-		});
-
-		QUnit.test("when a fake variant is added for the same reference but different vm", function(assert) {
-			return FlexState.initialize({
-				componentId: sComponentId,
-				reference: sReference
-			})
-			.then(function() {
-				VariantManagementState.addFakeStandardVariant(
-					sReference,
-					sComponentId,
-					sVariantManagementReference,
-					createVariant({
-						fileName: sVariantManagementReference
-					})
-				);
-				VariantManagementState.addFakeStandardVariant(
-					sReference,
-					sComponentId,
-					"secondVM",
-					createVariant({
-						fileName: "secondVM",
-						variantManagementReference: "secondVM"
-					})
-				);
-
-				var oVMMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
-				assert.strictEqual(
-					oVMMap[sVariantManagementReference].defaultVariant,
-					sVariantManagementReference,
-					"then the default variant is set"
-				);
-				assert.strictEqual(
-					oVMMap.secondVM.defaultVariant,
-					"secondVM",
-					"then the default variant is set for the second vm"
 				);
 			});
 		});
@@ -732,10 +655,9 @@ sap.ui.define([
 					fileName: "customVariantForSecondVM"
 				})
 			]);
-			VariantManagementState.addFakeStandardVariant(
+			VariantManagementState.addRuntimeSteadyObject(
 				sReference,
 				sComponentId,
-				"secondVM",
 				createVariant({
 					fileName: "secondVM",
 					variantManagementReference: "secondVM"
@@ -1043,10 +965,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when retrieving a list of variant management references", function(assert) {
-			VariantManagementState.addFakeStandardVariant(
+			VariantManagementState.addRuntimeSteadyObject(
 				sReference,
 				sComponentId,
-				"someOtherVM",
 				createVariant({
 					fileName: "someOtherVM",
 					variantManagementReference: "someOtherVM"
@@ -1064,10 +985,9 @@ sap.ui.define([
 		beforeEach: function() {
 			return initializeFlexStateWithStandardVariant()
 			.then(function() {
-				VariantManagementState.addFakeStandardVariant(
+				VariantManagementState.addRuntimeSteadyObject(
 					sReference,
 					sComponentId,
-					"someOtherVM",
 					createVariant({
 						fileName: "someOtherVM",
 						variantManagementReference: "someOtherVM"

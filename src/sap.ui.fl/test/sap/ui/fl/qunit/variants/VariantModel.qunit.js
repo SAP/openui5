@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
+	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
@@ -42,6 +43,7 @@ sap.ui.define([
 	ComponentContainer,
 	Manifest,
 	UIComponent,
+	ResourceModel,
 	Reverter,
 	URLHandler,
 	VariantUtil,
@@ -227,7 +229,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			FlexState.clearState();
-			FlexState.resetFakeStandardVariants("MyComponent", "RTADemoAppMD");
+			FlexState.clearRuntimeSteadyObjects("MyComponent", "RTADemoAppMD");
 			VariantManagementState.getVariantManagementMap().clearCachedResult();
 			VariantManagementState.resetCurrentVariantReferences();
 			sandbox.restore();
@@ -237,7 +239,10 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when initializing a variant model instance", function(assert) {
 			assert.ok(URLHandler.initialize.calledOnce, "then URLHandler.initialize() called once");
-			assert.ok(URLHandler.initialize.calledWith({model: this.oModel}), "then URLHandler.initialize() called with the the VariantModel");
+			assert.ok(
+				URLHandler.initialize.calledWith({model: this.oModel}),
+				"then URLHandler.initialize() called with the the VariantModel"
+			);
 
 			var oVMData = this.oModel.getData()[sVMReference];
 			assert.strictEqual(oVMData.currentVariant, "variant1", "the currentVariant was set");
@@ -247,7 +252,11 @@ sap.ui.define([
 			assert.strictEqual(oVMData.modified, false, "the modified flag was set");
 
 			oVMData.variants.forEach(function(oVariantEntry) {
-				assert.strictEqual(oVariantEntry.originalExecuteOnSelect, oVariantEntry.executeOnSelect, "the originalExecuteOnSelect was set");
+				assert.strictEqual(
+					oVariantEntry.originalExecuteOnSelect,
+					oVariantEntry.executeOnSelect,
+					"the originalExecuteOnSelect was set"
+				);
 				assert.strictEqual(oVariantEntry.originalFavorite, oVariantEntry.favorite, "the originalFavorite was set");
 				assert.strictEqual(oVariantEntry.originalTitle, oVariantEntry.title, "the originalTitle was set");
 				assert.strictEqual(oVariantEntry.originalVisible, oVariantEntry.visible, "the originalVisible was set");
@@ -258,7 +267,7 @@ sap.ui.define([
 		QUnit.test("when destroy() is called", function(assert) {
 			assert.ok(this.oDataSelectorUpdateSpy.calledWith(this.oModel.fnUpdateListener), "the update listener was added");
 			var oRemoveSpy = sandbox.spy(VariantManagementState.getVariantManagementMap(), "removeUpdateListener");
-			var oClearSpy = sandbox.spy(VariantManagementState, "clearFakeStandardVariants");
+			var oClearSpy = sandbox.spy(VariantManagementState, "clearRuntimeSteadyObjects");
 			this.oModel.destroy();
 			assert.ok(oClearSpy.calledOnce, "then fake standard variants were reset");
 			assert.ok(oRemoveSpy.calledWith(this.oModel.fnUpdateListener), "the update listener was removed");
@@ -371,7 +380,11 @@ sap.ui.define([
 
 			var oVariantEntry = oVMData.variants[2];
 			assert.strictEqual(oVariantEntry.executeOnSelect, false, "then executeOnSelect was updated");
-			assert.strictEqual(oVariantEntry.originalExecuteOnSelect, oVariantEntry.executeOnSelect, "then originalExecuteOnSelect was set");
+			assert.strictEqual(
+				oVariantEntry.originalExecuteOnSelect,
+				oVariantEntry.executeOnSelect,
+				"then originalExecuteOnSelect was set"
+			);
 			assert.strictEqual(oVariantEntry.favorite, true, "then favorite was updated");
 			assert.strictEqual(oVariantEntry.originalFavorite, oVariantEntry.favorite, "then originalFavorite was set");
 			assert.strictEqual(oVariantEntry.title, "variant B1", "then title was updated");
@@ -398,22 +411,23 @@ sap.ui.define([
 					return undefined;
 				}
 			});
-			this.oModel.getData()[sVMReference]._isEditable = true;
+			var oVMData = this.oModel.getData()[sVMReference];
+			oVMData._isEditable = true;
 			this.oModel.setModelPropertiesForControl(sVMReference, false, oDummyControl);
-			assert.ok(this.oModel.getData()[sVMReference].variantsEditable, "the parameter variantsEditable is initially true");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[4].rename, false, "user variant cannot renamed by default");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[4].remove, false, "user variant cannot removed by default");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[4].change, false, "user variant cannot changed by default");
+			assert.ok(oVMData.variantsEditable, "the parameter variantsEditable is initially true");
+			assert.strictEqual(oVMData.variants[4].rename, false, "user variant cannot renamed by default");
+			assert.strictEqual(oVMData.variants[4].remove, false, "user variant cannot removed by default");
+			assert.strictEqual(oVMData.variants[4].change, false, "user variant cannot changed by default");
 			setTimeout(function() {
-				assert.notOk(this.oModel.getData()[sVMReference].variants[4].rename, "user variant can not be renamed after flp setting is received");
-				assert.notOk(this.oModel.getData()[sVMReference].variants[4].remove, "user variant can not be removed after flp setting is received");
-				assert.notOk(this.oModel.getData()[sVMReference].variants[4].change, "user variant can not be changed after flp setting is received");
+				assert.notOk(oVMData.variants[4].rename, "user variant can not be renamed after flp setting is received");
+				assert.notOk(oVMData.variants[4].remove, "user variant can not be removed after flp setting is received");
+				assert.notOk(oVMData.variants[4].change, "user variant can not be changed after flp setting is received");
 				fnDone();
-			}.bind(this), 0);
+			}, 0);
 			this.oModel.setModelPropertiesForControl(sVMReference, true, oDummyControl);
-			assert.notOk(this.oModel.getData()[sVMReference].variantsEditable, "the parameter variantsEditable is set to false for bDesignTimeMode = true");
+			assert.notOk(oVMData.variantsEditable, "the parameter variantsEditable is set to false for bDesignTimeMode = true");
 			this.oModel.setModelPropertiesForControl(sVMReference, false, oDummyControl);
-			assert.ok(this.oModel.getData()[sVMReference].variantsEditable, "the parameter variantsEditable is set to true for bDesignTimeMode = false");
+			assert.ok(oVMData.variantsEditable, "the parameter variantsEditable is set to true for bDesignTimeMode = false");
 			Settings.getInstanceOrUndef.restore();
 		});
 
@@ -435,38 +449,51 @@ sap.ui.define([
 					return true;
 				}
 			});
-			this.oModel.getData()[sVMReference]._isEditable = true;
+			var oVMData = this.oModel.getData()[sVMReference];
+			oVMData._isEditable = true;
 			this.oModel.setModelPropertiesForControl(sVMReference, false, oDummyControl);
-			assert.strictEqual(this.oModel.getData()[sVMReference].variantsEditable, true, "the parameter variantsEditable is true");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[2].rename, true, "a public view editor can renamed its own PUBLIC variant");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[2].remove, true, "a public view editor can removed its own PUBLIC variant");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[2].change, true, "a public view editor can changed its own PUBLIC variant");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[3].rename, true, "a public view editor can renamed another users PUBLIC variant in case the user cannot be determined");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[3].remove, true, "a public view editor can removed another users PUBLIC variant in case the user cannot be determined");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[3].change, true, "a public view editor can changed another users PUBLIC variant in case the user cannot be determined");
+			assert.strictEqual(oVMData.variantsEditable, true, "the parameter variantsEditable is true");
+			assert.strictEqual(oVMData.variants[2].rename, true, "a public view editor can renamed its own PUBLIC variant");
+			assert.strictEqual(oVMData.variants[2].remove, true, "a public view editor can removed its own PUBLIC variant");
+			assert.strictEqual(oVMData.variants[2].change, true, "a public view editor can changed its own PUBLIC variant");
+			assert.strictEqual(
+				oVMData.variants[3].rename,
+				true,
+				"a public view editor can renamed another users PUBLIC variant in case the user cannot be determined"
+			);
+			assert.strictEqual(
+				oVMData.variants[3].remove,
+				true,
+				"a public view editor can removed another users PUBLIC variant in case the user cannot be determined"
+			);
+			assert.strictEqual(
+				oVMData.variants[3].change,
+				true,
+				"a public view editor can changed another users PUBLIC variant in case the user cannot be determined"
+			);
 
 			sUserId = "OtherPerson";
 			this.oModel.setModelPropertiesForControl(sVMReference, false, oDummyControl);
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[3].rename, false, "a public view editor cannot renamed another users PUBLIC variant");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[3].remove, false, "a public view editor cannot removed another users PUBLIC variant");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[3].change, false, "a public view editor cannot changed another users PUBLIC variant");
+			assert.strictEqual(oVMData.variants[3].rename, false, "a public view editor cannot renamed another users PUBLIC variant");
+			assert.strictEqual(oVMData.variants[3].remove, false, "a public view editor cannot removed another users PUBLIC variant");
+			assert.strictEqual(oVMData.variants[3].change, false, "a public view editor cannot changed another users PUBLIC variant");
 
 			bIsKeyUser = true;
 			bIsPublicFlVariantEnabled = false;
 			this.oModel.setModelPropertiesForControl(sVMReference, false, oDummyControl);
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[3].rename, true, "a key user can renamed another users PUBLIC variant");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[3].remove, true, "a key user can removed another users PUBLIC variant");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[3].change, true, "a key user can changed another users PUBLIC variant");
+			assert.strictEqual(oVMData.variants[3].rename, true, "a key user can renamed another users PUBLIC variant");
+			assert.strictEqual(oVMData.variants[3].remove, true, "a key user can removed another users PUBLIC variant");
+			assert.strictEqual(oVMData.variants[3].change, true, "a key user can changed another users PUBLIC variant");
 
 			bIsKeyUser = false;
 			sUserId = "Me";
 			this.oModel.setModelPropertiesForControl(sVMReference, false, oDummyControl);
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[3].rename, false, "a end user cannot renamed its own users PUBLIC variant");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[3].remove, false, "a end user cannot removed its own users PUBLIC variant");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[3].change, false, "a end user cannot changed its own users PUBLIC variant");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[4].rename, true, "a end user can renamed its own users variant");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[4].remove, true, "a end user can removed its own users variant");
-			assert.strictEqual(this.oModel.getData()[sVMReference].variants[4].change, true, "a end user can changed its own users variant");
+			assert.strictEqual(oVMData.variants[3].rename, false, "a end user cannot renamed its own users PUBLIC variant");
+			assert.strictEqual(oVMData.variants[3].remove, false, "a end user cannot removed its own users PUBLIC variant");
+			assert.strictEqual(oVMData.variants[3].change, false, "a end user cannot changed its own users PUBLIC variant");
+			assert.strictEqual(oVMData.variants[4].rename, true, "a end user can renamed its own users variant");
+			assert.strictEqual(oVMData.variants[4].remove, true, "a end user can removed its own users variant");
+			assert.strictEqual(oVMData.variants[4].change, true, "a end user can changed its own users variant");
 
 			Settings.getInstanceOrUndef.restore();
 		});
@@ -474,11 +501,23 @@ sap.ui.define([
 		QUnit.test("when calling 'setModelPropertiesForControl' and variant management control has property editable=false", function(assert) {
 			this.oModel.getData()[sVMReference]._isEditable = false;
 			this.oModel.setModelPropertiesForControl(sVMReference, false, oDummyControl);
-			assert.strictEqual(this.oModel.getData()[sVMReference].variantsEditable, false, "the parameter variantsEditable is initially false");
+			assert.strictEqual(
+				this.oModel.getData()[sVMReference].variantsEditable,
+				false,
+				"the parameter variantsEditable is initially false"
+			);
 			this.oModel.setModelPropertiesForControl(sVMReference, true, oDummyControl);
-			assert.strictEqual(this.oModel.getData()[sVMReference].variantsEditable, false, "the parameter variantsEditable stays false for bDesignTimeMode = true");
+			assert.strictEqual(
+				this.oModel.getData()[sVMReference].variantsEditable,
+				false,
+				"the parameter variantsEditable stays false for bDesignTimeMode = true"
+			);
 			this.oModel.setModelPropertiesForControl(sVMReference, false, oDummyControl);
-			assert.strictEqual(this.oModel.getData()[sVMReference].variantsEditable, false, "the parameter variantsEditable stays false for bDesignTimeMode = false");
+			assert.strictEqual(
+				this.oModel.getData()[sVMReference].variantsEditable,
+				false,
+				"the parameter variantsEditable stays false for bDesignTimeMode = false"
+			);
 		});
 
 		QUnit.test("when calling 'setModelPropertiesForControl' with updateVariantInURL = true", function(assert) {
@@ -509,7 +548,11 @@ sap.ui.define([
 					// second URLHandler.update() call with designTime mode being set from true -> false
 					mExpectedParameters.parameters = ["currentHash1", "currentHash2"];
 				}
-				assert.strictEqual(mPropertyBag.model._bDesignTimeMode, iUpdateCallCount === 0, "then model's _bDesignTime property was set before URLHandler.update() was called");
+				assert.strictEqual(
+					mPropertyBag.model._bDesignTimeMode,
+					iUpdateCallCount === 0,
+					"then model's _bDesignTime property was set before URLHandler.update() was called"
+				);
 
 				assert.deepEqual(mPropertyBag, mExpectedParameters, "then URLHandler.update() called with the correct parameters");
 				iUpdateCallCount++;
@@ -531,8 +574,16 @@ sap.ui.define([
 			var fnDone = assert.async();
 			this.oModel.oData[sVMReference].currentVariant = "variant0";
 			sandbox.stub(this.oModel, "updateCurrentVariant").callsFake(function(mPropertyBag) {
-				assert.strictEqual(mPropertyBag.variantManagementReference, sVMReference, "the correct variant management reference was passed");
-				assert.strictEqual(mPropertyBag.newVariantReference, this.oModel.oData[sVMReference].defaultVariant, "the correct variant reference was passed");
+				assert.strictEqual(
+					mPropertyBag.variantManagementReference,
+					sVMReference,
+					"the correct variant management reference was passed"
+				);
+				assert.strictEqual(
+					mPropertyBag.newVariantReference,
+					this.oModel.oData[sVMReference].defaultVariant,
+					"the correct variant reference was passed"
+				);
 				return Promise.resolve().then(fnDone);
 			}.bind(this));
 			this.oModel.switchToDefaultForVariant("variant0");
@@ -557,8 +608,16 @@ sap.ui.define([
 
 			sandbox.stub(this.oModel, "updateCurrentVariant").callsFake(function(mPropertyBag) {
 				var iIndex = aVariantManagementReferences.indexOf(mPropertyBag.variantManagementReference);
-				assert.strictEqual(mPropertyBag.variantManagementReference, aVariantManagementReferences[iIndex], "the correct variant management reference was passed");
-				assert.strictEqual(mPropertyBag.newVariantReference, this.oModel.oData[aVariantManagementReferences[iIndex]].defaultVariant, "the correct variant reference was passed");
+				assert.strictEqual(
+					mPropertyBag.variantManagementReference,
+					aVariantManagementReferences[iIndex],
+					"the correct variant management reference was passed"
+				);
+				assert.strictEqual(
+					mPropertyBag.newVariantReference,
+					this.oModel.oData[aVariantManagementReferences[iIndex]].defaultVariant,
+					"the correct variant reference was passed"
+				);
 				aVariantManagementReferences.splice(iIndex, 1);
 				if (aVariantManagementReferences.length === 0) {
 					fnDone();
@@ -589,7 +648,11 @@ sap.ui.define([
 
 		QUnit.test("when calling 'getVariantTitle'", function(assert) {
 			var sPropertyValue = this.oModel.getVariantTitle("variant1", sVMReference);
-			assert.strictEqual(sPropertyValue, this.oModel.oData[sVMReference].variants[2].title, "then the correct title value is returned");
+			assert.strictEqual(
+				sPropertyValue,
+				this.oModel.oData[sVMReference].variants[2].title,
+				"then the correct title value is returned"
+			);
 		});
 
 		[
@@ -709,22 +772,40 @@ sap.ui.define([
 
 				var oChange = this.oModel.addVariantChange(sVMReference, oTestParams.inputParams);
 				if (oTestParams.textKey) {
-					assert.strictEqual(oChange.getText(oTestParams.textKey), oTestParams.inputParams.title, "then the new change created with the new title");
+					assert.strictEqual(
+						oChange.getText(oTestParams.textKey),
+						oTestParams.inputParams.title,
+						"then the new change created with the new title"
+					);
 				}
 				if (oTestParams.expectedChangeContent) {
 					assert.deepEqual(oChange.getContent(), oTestParams.expectedChangeContent, "the change content was set");
 				}
 				if (oTestParams.variantCheck) {
-					assert.deepEqual(oVariantInstance[oTestParams.variantCheck.functionName](), oTestParams.variantCheck.returnValue, "the variant was updated");
+					assert.deepEqual(
+						oVariantInstance[oTestParams.variantCheck.functionName](),
+						oTestParams.variantCheck.returnValue, "the variant was updated"
+					);
 				}
 				if (oTestParams.inputParams.adaptationId) {
 					assert.strictEqual(oChange.getAdaptationId(), oTestParams.inputParams.adaptationId);
 				} else {
 					assert.strictEqual(oChange.getAdaptationId(), "id_12345", "then the new change created with the current adaptationId");
 				}
-				assert.strictEqual(oChange.getChangeType(), oTestParams.inputParams.changeType, "then the new change created with 'setTitle' as changeType");
-				assert.strictEqual(oChange.getFileType(), oTestParams.fileType, "then the new change created with 'ctrl_variant_change' as fileType");
-				assert.ok(fnAddDirtyChangeStub.calledWith(oChange), "then 'FlexController.addDirtyChange called with the newly created change");
+				assert.strictEqual(
+					oChange.getChangeType(),
+					oTestParams.inputParams.changeType,
+					"then the new change created with 'setTitle' as changeType"
+				);
+				assert.strictEqual(
+					oChange.getFileType(),
+					oTestParams.fileType,
+					"then the new change created with 'ctrl_variant_change' as fileType"
+				);
+				assert.ok(
+					fnAddDirtyChangeStub.calledWith(oChange),
+					"then 'FlexController.addDirtyChange called with the newly created change"
+				);
 			});
 		});
 
@@ -805,8 +886,16 @@ sap.ui.define([
 			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
 			var oCallVariantSwitchListenersStub = sandbox.stub(this.oModel, "callVariantSwitchListeners");
 
-			assert.strictEqual(this.oModel.oData[sVMReference].currentVariant, "variant1", "then initially current variant was correct before updating");
-			assert.strictEqual(this.oModel.oData[sVMReference].originalCurrentVariant, "variant1", "then initially original current variant was correct before updating");
+			assert.strictEqual(
+				this.oModel.oData[sVMReference].currentVariant,
+				"variant1",
+				"then initially current variant was correct before updating"
+			);
+			assert.strictEqual(
+				this.oModel.oData[sVMReference].originalCurrentVariant,
+				"variant1",
+				"then initially original current variant was correct before updating"
+			);
 
 			this.oModel.oData[sVMReference].updateVariantInURL = true;
 			return this.oModel.updateCurrentVariant({
@@ -823,7 +912,10 @@ sap.ui.define([
 					modifier: JsControlTreeModifier,
 					reference: this.oModel.sFlexReference
 				}), "then ChangePersistence.loadSwitchChangesMapForComponent() called with correct parameters");
-				assert.ok(oSetVariantSwitchPromiseStub.calledBefore(Switcher.switchVariant), "the switch variant promise was set before switching");
+				assert.ok(
+					oSetVariantSwitchPromiseStub.calledBefore(Switcher.switchVariant),
+					"the switch variant promise was set before switching"
+				);
 				assert.strictEqual(oCallVariantSwitchListenersStub.callCount, 1, "the listeners were called");
 			}.bind(this));
 		});
@@ -846,13 +938,24 @@ sap.ui.define([
 					modifier: JsControlTreeModifier,
 					reference: this.oModel.sFlexReference
 				}), "then ChangePersistence.loadSwitchChangesMapForComponent() called with correct parameters");
-				assert.ok(oSetVariantSwitchPromiseStub.calledBefore(Switcher.switchVariant), "the switch variant promise was set before switching");
+				assert.ok(
+					oSetVariantSwitchPromiseStub.calledBefore(Switcher.switchVariant),
+					"the switch variant promise was set before switching"
+				);
 			}.bind(this));
 		});
 
 		QUnit.test("when calling 'updateCurrentVariant' twice without waiting for the first one to be finished", function(assert) {
-			assert.strictEqual(this.oModel.oData[sVMReference].currentVariant, "variant1", "then initially current variant was correct before updating");
-			assert.strictEqual(this.oModel.oData[sVMReference].originalCurrentVariant, "variant1", "then initially original current variant was correct before updating");
+			assert.strictEqual(
+				this.oModel.oData[sVMReference].currentVariant,
+				"variant1",
+				"then initially current variant was correct before updating"
+			);
+			assert.strictEqual(
+				this.oModel.oData[sVMReference].originalCurrentVariant,
+				"variant1",
+				"then initially original current variant was correct before updating"
+			);
 
 			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
 
@@ -880,14 +983,26 @@ sap.ui.define([
 			.then(this.oModel._oVariantSwitchPromise)
 			.then(function() {
 				assert.strictEqual(oSwitchVariantStub.callCount, 2, "then Switcher.switchVariant() was called twice");
-				assert.strictEqual(oSetVariantSwitchPromiseStub.callCount, 2, "then variant switch promise was set twice inside FlexController");
+				assert.strictEqual(
+					oSetVariantSwitchPromiseStub.callCount,
+					2,
+					"then variant switch promise was set twice inside FlexController"
+				);
 			});
 		});
 
 		QUnit.test("when calling 'updateCurrentVariant' twice without waiting for the first one to be failed and finished", function(assert) {
 			assert.expect(5);
-			assert.strictEqual(this.oModel.oData[sVMReference].currentVariant, "variant1", "then initially current variant was correct before updating");
-			assert.strictEqual(this.oModel.oData[sVMReference].originalCurrentVariant, "variant1", "then initially original current variant was correct before updating");
+			assert.strictEqual(
+				this.oModel.oData[sVMReference].currentVariant,
+				"variant1",
+				"then initially current variant was correct before updating"
+			);
+			assert.strictEqual(
+				this.oModel.oData[sVMReference].originalCurrentVariant,
+				"variant1",
+				"then initially original current variant was correct before updating"
+			);
 
 			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
 			var SwitchVariantStub = sandbox.stub(Switcher, "switchVariant")
@@ -916,7 +1031,11 @@ sap.ui.define([
 				appComponent: this.oModel.oAppComponent
 			}).then(function() {
 				assert.strictEqual(SwitchVariantStub.callCount, 2, "then Switcher.switchVariant() was called twice");
-				assert.strictEqual(oSetVariantSwitchPromiseStub.callCount, 2, "then variant switch promise was set twice inside FlexController");
+				assert.strictEqual(
+					oSetVariantSwitchPromiseStub.callCount,
+					2,
+					"then variant switch promise was set twice inside FlexController"
+				);
 			});
 		});
 
@@ -930,13 +1049,13 @@ sap.ui.define([
 				layer: Layer.BASE
 			};
 
-			var oAddFakeVariantStub = sandbox.stub(VariantManagementState, "addFakeStandardVariant");
+			var oaddRuntimeSteadyObjectStub = sandbox.stub(VariantManagementState, "addRuntimeSteadyObject");
 			var oCreateVariantStub = sandbox.stub(FlexObjectFactory, "createFlVariant").returns("variant");
 			this.oModel.setData({});
 			this.oModel._ensureStandardVariantExists("mockVariantManagement");
 
-			assert.strictEqual(oAddFakeVariantStub.callCount, 1, "a variant was added");
-			assert.deepEqual(oAddFakeVariantStub.firstCall.args[3], "variant", "the standard variant was added correctly");
+			assert.strictEqual(oaddRuntimeSteadyObjectStub.callCount, 1, "a variant was added");
+			assert.deepEqual(oaddRuntimeSteadyObjectStub.firstCall.args[2], "variant", "the standard variant was added correctly");
 			assert.strictEqual(oCreateVariantStub.callCount, 1, "a variant was created");
 			assert.deepEqual(oCreateVariantStub.firstCall.args[0], oExpectedVariant, "the standard variant was created correctly");
 		});
@@ -983,7 +1102,10 @@ sap.ui.define([
 						"then variant added to VariantModel"
 					);
 					assert.strictEqual(this.oModel.oData[sVMReference].variants[5].author, bVendorLayer ? "SAP" : "test user");
-					assert.strictEqual(aChanges[0].getId(), oVariantData.instance.getId(), "then the returned variant is the duplicate variant");
+					assert.strictEqual(
+						aChanges[0].getId(), oVariantData.instance.getId(),
+						"then the returned variant is the duplicate variant"
+					);
 				}.bind(this));
 			});
 		});
@@ -1021,7 +1143,11 @@ sap.ui.define([
 				assert.strictEqual(aChanges[0].getChangeType(), "setFavorite", "with changeType 'setFavorite'");
 				assert.deepEqual(aChanges[0].getContent(), {favorite: true}, "and favorite set to true");
 				assert.strictEqual(aChanges[1].getLayer(), Layer.PUBLIC, "then the second change is a public layer change");
-				assert.strictEqual(aChanges[1].getId(), oVariantData.instance.getId(), "then the returned variant is the duplicate variant");
+				assert.strictEqual(
+					aChanges[1].getId(),
+					oVariantData.instance.getId(),
+					"then the returned variant is the duplicate variant"
+				);
 			}.bind(this));
 		});
 
@@ -1063,7 +1189,10 @@ sap.ui.define([
 					appComponent: mPropertyBag.component
 				}, "then updateCurrentVariant() called with the correct parameters");
 				assert.ok(fnDeleteChangeStub.calledTwice, "then ChangePersistence.deleteChange called twice");
-				assert.ok(fnDeleteChangeStub.calledWith(oChangeInVariant), "then ChangePersistence.deleteChange called for change in variant");
+				assert.ok(
+					fnDeleteChangeStub.calledWith(oChangeInVariant),
+					"then ChangePersistence.deleteChange called for change in variant"
+				);
 				assert.ok(fnDeleteChangeStub.calledWith(oVariant), "then ChangePersistence.deleteChange called for variant");
 			});
 		});
@@ -1118,7 +1247,8 @@ sap.ui.define([
 			var oFakeComponentContainerPromise = {property: "fake"};
 			oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 
-			var oOpenManagementDialogStub = sandbox.stub(oVariantManagement, "openManagementDialog").callsFake(oVariantManagement.fireManage);
+			var oOpenManagementDialogStub = sandbox.stub(oVariantManagement, "openManagementDialog")
+			.callsFake(oVariantManagement.fireManage);
 			var oVariantInstance = createVariant(this.oModel.oData[sVMReference].variants[1]);
 			sandbox.stub(this.oModel, "getVariant").returns({instance: oVariantInstance});
 
@@ -1175,7 +1305,10 @@ sap.ui.define([
 					originalDefaultVariant: "variant1",
 					layer: Layer.CUSTOMER
 				}, "the first change is correct");
-				assert.ok(oOpenManagementDialogStub.calledWith(true, sDummyClass, oFakeComponentContainerPromise), "then openManagementControl is called with the right parameters");
+				assert.ok(
+					oOpenManagementDialogStub.calledWith(true, sDummyClass, oFakeComponentContainerPromise),
+					"then openManagementControl is called with the right parameters"
+				);
 				oVariantManagement.destroy();
 			});
 		});
@@ -1306,7 +1439,11 @@ sap.ui.define([
 			return this.oModel._handleSaveEvent(oEvent)
 			.then(function() {
 				var sNewVariantReference = oCreateDefaultFileNameSpy.getCall(0).returnValue;
-				assert.strictEqual(oCreateDefaultFileNameSpy.getCall(0).args[0], "flVariant", "then the file type was passed to sap.ui.fl.Utils.createDefaultFileName");
+				assert.strictEqual(
+					oCreateDefaultFileNameSpy.getCall(0).args[0],
+					"flVariant",
+					"then the file type was passed to sap.ui.fl.Utils.createDefaultFileName"
+				);
 				assert.ok(oCopyVariantSpy.calledOnce, "then copyVariant() was called once");
 				assert.deepEqual(oCopyVariantSpy.lastCall.args[0], {
 					appComponent: this.oComponent,
@@ -1322,13 +1459,27 @@ sap.ui.define([
 					variantManagementReference: sVMReference
 				}, "then copyVariant() was called with the right parameters");
 
-				assert.strictEqual(oAddVariantChangeSpy.callCount, 2, "then addVariantChange() was called twice; for setDefault and setExecuteOnSelect");
+				assert.strictEqual(
+					oAddVariantChangeSpy.callCount,
+					2,
+					"then addVariantChange() was called twice; for setDefault and setExecuteOnSelect"
+				);
 				assert.strictEqual(oSaveDirtyChangesStub.callCount, 1, "then dirty changes were saved");
-				assert.strictEqual(oSaveDirtyChangesStub.args[0][2].length, 6, "then six dirty changes were saved (new variant, 3 copied ctrl changes, setDefault change, setExecuteOnSelect change");
+				assert.strictEqual(
+					oSaveDirtyChangesStub.args[0][2].length,
+					6,
+					"then six dirty changes were saved (new variant, 3 copied ctrl changes, setDefault change, setExecuteOnSelect change"
+				);
 				assert.strictEqual(oSaveDirtyChangesStub.args[0][2][4].getChangeType(), "setDefault", "the last change was 'setDefault'");
-				assert.ok(oDeleteChangeSpy.calledBefore(oSaveDirtyChangesStub), "the changes were deleted from default variant before the copied variant was saved");
+				assert.ok(
+					oDeleteChangeSpy.calledBefore(oSaveDirtyChangesStub),
+					"the changes were deleted from default variant before the copied variant was saved"
+				);
 				aChanges.forEach(function(oDirtyChange) {
-					assert.ok(oDeleteChangeSpy.calledWith(oDirtyChange), "then dirty changes from source variant were deleted from the persistence");
+					assert.ok(
+						oDeleteChangeSpy.calledWith(oDirtyChange),
+						"then dirty changes from source variant were deleted from the persistence"
+					);
 				});
 				this.oModel.getData()[sVMReference].variants.forEach(function(oVariant) {
 					if (oVariant.key === sCopyVariantName) {
@@ -1374,7 +1525,11 @@ sap.ui.define([
 			return this.oModel._handleSaveEvent(oEvent)
 			.then(function() {
 				var sNewVariantReference = oCreateDefaultFileNameSpy.getCall(0).returnValue;
-				assert.strictEqual(oCreateDefaultFileNameSpy.getCall(0).args[0], "flVariant", "then the file type was passed to sap.ui.fl.Utils.createDefaultFileName");
+				assert.strictEqual(
+					oCreateDefaultFileNameSpy.getCall(0).args[0],
+					"flVariant",
+					"then the file type was passed to sap.ui.fl.Utils.createDefaultFileName"
+				);
 				assert.ok(oCopyVariantSpy.calledOnce, "then copyVariant() was called once");
 				assert.deepEqual(oCopyVariantSpy.lastCall.args[0], {
 					appComponent: this.oComponent,
@@ -1549,7 +1704,11 @@ sap.ui.define([
 			return this.oModel._handleSaveEvent(oEvent)
 			.then(function() {
 				var sNewVariantReference = oCreateDefaultFileNameSpy.getCall(0).returnValue;
-				assert.strictEqual(oCreateDefaultFileNameSpy.getCall(0).args[0], "flVariant", "then the file type was passed to sap.ui.fl.Utils.createDefaultFileName");
+				assert.strictEqual(
+					oCreateDefaultFileNameSpy.getCall(0).args[0],
+					"flVariant",
+					"then the file type was passed to sap.ui.fl.Utils.createDefaultFileName"
+				);
 				assert.ok(oCopyVariantSpy.calledOnce, "then copyVariant() was called once");
 				assert.deepEqual(oCopyVariantSpy.lastCall.args[0], {
 					appComponent: this.oComponent,
@@ -1567,10 +1726,20 @@ sap.ui.define([
 
 				assert.ok(oAddVariantChangeSpy.notCalled, "then no new changes were created");
 				assert.strictEqual(oSaveDirtyChangesStub.callCount, 1, "then dirty changes were saved");
-				assert.strictEqual(oSaveDirtyChangesStub.args[0][2].length, 4, "then six dirty changes were saved (new variant, 3 copied ctrl changes");
-				assert.ok(oDeleteChangeSpy.calledBefore(oSaveDirtyChangesStub), "the changes were deleted from default variant before the copied variant was saved");
+				assert.strictEqual(
+					oSaveDirtyChangesStub.args[0][2].length,
+					4,
+					"then six dirty changes were saved (new variant, 3 copied ctrl changes"
+				);
+				assert.ok(
+					oDeleteChangeSpy.calledBefore(oSaveDirtyChangesStub),
+					"the changes were deleted from default variant before the copied variant was saved"
+				);
 				aChanges.forEach(function(oDirtyChange) {
-					assert.ok(oDeleteChangeSpy.calledWith(oDirtyChange), "then dirty changes from source variant were deleted from the persistence");
+					assert.ok(
+						oDeleteChangeSpy.calledWith(oDirtyChange),
+						"then dirty changes from source variant were deleted from the persistence"
+					);
 				});
 				this.oModel.getData()[sVMReference].variants.forEach(function(oVariant) {
 					if (oVariant.key === sCopyVariantName) {
@@ -1660,14 +1829,28 @@ sap.ui.define([
 						role: ["testRole"]
 					}
 				}, "then copyVariant() was called with the right parameters");
-				assert.strictEqual(oAddVariantChangeSpy.callCount, 2, "then addVariantChange() was called twice; for setDefault and setExecuteOnSelect");
+				assert.strictEqual(
+					oAddVariantChangeSpy.callCount,
+					2,
+					"then addVariantChange() was called twice; for setDefault and setExecuteOnSelect"
+				);
 				assert.strictEqual(oSaveDirtyChangesStub.callCount, 0, "then dirty changes were not saved");
-				assert.strictEqual(aDirtyChanges.length, 6, "then six dirty changes were created (new variant, 3 copied ctrl changes, setDefault change, setExecuteOnSelect change");
+				assert.strictEqual(
+					aDirtyChanges.length,
+					6,
+					"then six dirty changes were created (new variant, 3 copied ctrl changes, setDefault change, setExecuteOnSelect change"
+				);
 				assert.strictEqual(aDirtyChanges[4].getChangeType(), "setDefault", "the last change was 'setDefault'");
 				assert.strictEqual(aDirtyChanges[0].getLayer(), Layer.CUSTOMER, "the ctrl change has the correct layer");
-				assert.ok(oDeleteChangeSpy.calledBefore(oSaveDirtyChangesStub), "the changes were deleted from default variant before the copied variant was saved");
+				assert.ok(
+					oDeleteChangeSpy.calledBefore(oSaveDirtyChangesStub),
+					"the changes were deleted from default variant before the copied variant was saved"
+				);
 				aChanges.forEach(function(oDirtyChange) {
-					assert.ok(oDeleteChangeSpy.calledWith(oDirtyChange), "then dirty changes from source variant were deleted from the persistence");
+					assert.ok(
+						oDeleteChangeSpy.calledWith(oDirtyChange),
+						"then dirty changes from source variant were deleted from the persistence"
+					);
 				});
 				oVariantManagement.destroy();
 			}.bind(this));
@@ -1704,7 +1887,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'getVariant' without a variant management reference", function(assert) {
-			assert.deepEqual(this.oModel.getVariant("variant0"), this.oModel.oData[sVMReference].variants[1], "the default Variant is returned");
+			assert.deepEqual(
+				this.oModel.getVariant("variant0"),
+				this.oModel.oData[sVMReference].variants[1],
+				"the default Variant is returned"
+			);
 		});
 
 		QUnit.test("when 'getCurrentControlVariantIds' is called to get all current variant references", function(assert) {
@@ -1813,7 +2000,7 @@ sap.ui.define([
 
 			sandbox.stub(this.oModel, "getVariant").returns(this.oSourceVariant);
 			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([oChange0, oChange1]);
-			sandbox.stub(VariantManagementState, "clearFakeStandardVariants");
+			sandbox.stub(VariantManagementState, "clearRuntimeSteadyObjects");
 
 			return this.oModel.initialize();
 		},
@@ -1845,8 +2032,16 @@ sap.ui.define([
 			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variantReference", "the variantReference is correct");
 			assert.strictEqual(oDuplicateVariant.controlChanges.length, 2, "both changes were copied");
-			assert.strictEqual(oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName, "change0", "the sourceChangeFileName is correct");
-			assert.strictEqual(oDuplicateVariant.controlChanges[1].getSupportInformation().sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+			assert.strictEqual(
+				oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName,
+				"change0",
+				"the sourceChangeFileName is correct"
+			);
+			assert.strictEqual(
+				oDuplicateVariant.controlChanges[1].getSupportInformation().sourceChangeFileName,
+				"change1",
+				"the sourceChangeFileName is correct"
+			);
 			assert.notEqual(oDuplicateVariant.controlChanges[0].getId(), "change0", "the fileName is different from the source");
 			assert.notEqual(oDuplicateVariant.controlChanges[1].getId(), "change1", "the fileName is different from the source");
 		});
@@ -1873,7 +2068,11 @@ sap.ui.define([
 			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variant0", "the variantReference is correct");
 			assert.strictEqual(oDuplicateVariant.controlChanges.length, 1, "one change was copied");
-			assert.strictEqual(oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+			assert.strictEqual(
+				oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName,
+				"change1",
+				"the sourceChangeFileName is correct"
+			);
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from PUBLIC layer referencing a USER layer variant", function(assert) {
@@ -1897,7 +2096,11 @@ sap.ui.define([
 			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variantReference", "the variantReference is correct");
 			assert.strictEqual(oDuplicateVariant.controlChanges.length, 1, "one change was copied");
-			assert.strictEqual(oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+			assert.strictEqual(
+				oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName,
+				"change1",
+				"the sourceChangeFileName is correct"
+			);
 			assert.strictEqual(oDuplicateVariant.controlChanges[0].getLayer(), Layer.PUBLIC, "the layer is correct");
 		});
 
@@ -1922,7 +2125,11 @@ sap.ui.define([
 			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variant0", "the variantReference is correct");
 			assert.strictEqual(oDuplicateVariant.controlChanges.length, 1, "one change was copied");
-			assert.strictEqual(oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+			assert.strictEqual(
+				oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName,
+				"change1",
+				"the sourceChangeFileName is correct"
+			);
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from PUBLIC layer referencing a USER layer variant, that references a PUBLIC layer variant", function(assert) {
@@ -1956,71 +2163,78 @@ sap.ui.define([
 			assert.strictEqual(oDuplicateVariant.instance.getId(), "newVariant", "the id is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getLayer(), Layer.PUBLIC, "the layer is correct");
 			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
-			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "publicVariantReference", "the variantReference is correct");
+			assert.strictEqual(
+				oDuplicateVariant.instance.getVariantReference(),
+				"publicVariantReference",
+				"the variantReference is correct"
+			);
 			assert.strictEqual(oDuplicateVariant.controlChanges.length, 1, "one change was copied");
-			assert.strictEqual(oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+			assert.strictEqual(
+				oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName,
+				"change1",
+				"the sourceChangeFileName is correct"
+			);
 		});
 	});
 
 	QUnit.module("Given a VariantModel with no data and a VariantManagement control", {
-		before: function() {
+		beforeEach: function() {
 			return FlexState.initialize({
 				reference: "MyComponent",
 				componentId: "RTADemoAppMD",
 				componentData: {},
 				manifest: {}
-			});
-		},
-		beforeEach: function() {
-			var oManifestObj = {
-				"sap.app": {
-					id: "MyComponent",
-					applicationVersion: {
-						version: "1.2.3"
+			})
+			.then(function() {
+				var oManifestObj = {
+					"sap.app": {
+						id: "MyComponent",
+						applicationVersion: {
+							version: "1.2.3"
+						}
 					}
-				}
-			};
-			var oManifest = new Manifest(oManifestObj);
-			this.oVMReference = "varMgmtRef1";
-			this.oVariantManagement = new VariantManagement(this.oVMReference);
-			var oComponent = {
-				name: "MyComponent",
-				getId: function() {
-					return "RTADemoAppMD";
-				},
-				getManifest: function() {
-					return oManifest;
-				},
-				getLocalId: function(sId) {
-					if (sId === this.oVariantManagement.getId()) {
-						return this.oVMReference;
-					}
-					return null;
-				}.bind(this)
-			};
+				};
+				var oManifest = new Manifest(oManifestObj);
+				this.sVMReference = "varMgmtRef1";
+				this.oVariantManagement = new VariantManagement(this.sVMReference);
+				var oComponent = {
+					name: "MyComponent",
+					getId: function() {
+						return "RTADemoAppMD";
+					},
+					getManifest: function() {
+						return oManifest;
+					},
+					getLocalId: function(sId) {
+						if (sId === this.oVariantManagement.getId()) {
+							return this.sVMReference;
+						}
+						return null;
+					}.bind(this)
+				};
 
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("MyComponent");
-			this.fnGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
-			this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
-			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves();
-			this.oRegisterControlStub = sandbox.stub(URLHandler, "registerControl");
+				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("MyComponent");
+				this.fnGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+				this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
+				this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves();
+				this.oRegisterControlStub = sandbox.stub(URLHandler, "registerControl");
 
-			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
+				sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 
-			this.oModel = new VariantModel({}, {
-				flexController: this.oFlexController,
-				appComponent: oComponent
-			});
+				this.oModel = new VariantModel({}, {
+					flexController: this.oFlexController,
+					appComponent: oComponent
+				});
 
-			return this.oModel.initialize();
+				return this.oModel.initialize();
+			}.bind(this));
 		},
 		afterEach: function() {
 			sandbox.restore();
 			this.oModel.destroy();
 			this.oVariantManagement.destroy();
+			this.oModel.oChangePersistence.removeDirtyChanges();
 			FlexControllerFactory._instanceCache = {};
-		},
-		after: function() {
 			FlexState.clearState();
 		}
 	}, function() {
@@ -2033,14 +2247,24 @@ sap.ui.define([
 		QUnit.test("when calling 'setModel' of VariantManagement control", function(assert) {
 			var fnRegisterToModelSpy = sandbox.spy(this.oModel, "registerToModel");
 			sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves("foo");
-			sandbox.stub(this.oModel, "getVariantManagementReferenceForControl").returns(this.oVMReference);
+			sandbox.stub(this.oModel, "getVariantManagementReferenceForControl").returns(this.sVMReference);
 			this.oVariantManagement.setExecuteOnSelectionForStandardDefault(true);
 			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 
-			assert.ok(fnRegisterToModelSpy.calledOnce, "then registerToModel called once, when VariantManagement control setModel is called");
-			assert.ok(fnRegisterToModelSpy.calledWith(this.oVariantManagement), "then registerToModel called with VariantManagement control");
-			assert.ok(this.oModel.oData[this.oVMReference].init, "the init flag is set");
-			assert.strictEqual(this.oModel.oData[this.oVMReference].showExecuteOnSelection, false, "showExecuteOnSelection is set to false");
+			assert.ok(
+				fnRegisterToModelSpy.calledOnce,
+				"then registerToModel called once, when VariantManagement control setModel is called"
+			);
+			assert.ok(
+				fnRegisterToModelSpy.calledWith(this.oVariantManagement),
+				"then registerToModel called with VariantManagement control"
+			);
+			assert.ok(this.oModel.oData[this.sVMReference].init, "the init flag is set");
+			assert.strictEqual(
+				this.oModel.oData[this.sVMReference].showExecuteOnSelection,
+				false,
+				"showExecuteOnSelection is set to false"
+			);
 			return this.oModel._oVariantSwitchPromise.then(function(sValue) {
 				assert.strictEqual(sValue, "foo", "the initial changes promise was added to the variant switch promise");
 			});
@@ -2055,7 +2279,7 @@ sap.ui.define([
 					variants: [
 						{
 							author: VariantUtil.DEFAULT_AUTHOR,
-							key: this.oVMReference,
+							key: this.sVMReference,
 							layer: Layer.VENDOR,
 							title: "Standard",
 							favorite: true,
@@ -2066,7 +2290,7 @@ sap.ui.define([
 				}
 			};
 			this.oModel.setData(oData);
-			this.oModel.waitForVMControlInit(this.oVMReference).then(function() {
+			this.oModel.waitForVMControlInit(this.sVMReference).then(function() {
 				assert.ok(true, "the function resolves");
 				fnDone();
 			});
@@ -2081,7 +2305,7 @@ sap.ui.define([
 					variants: [
 						{
 							author: VariantUtil.DEFAULT_AUTHOR,
-							key: this.oVMReference,
+							key: this.sVMReference,
 							layer: Layer.VENDOR,
 							title: "Standard",
 							favorite: true,
@@ -2093,17 +2317,17 @@ sap.ui.define([
 			};
 			this.oModel.setData(oData);
 			this.oModel.registerToModel(this.oVariantManagement);
-			return this.oModel.waitForVMControlInit(this.oVMReference).then(function() {
+			return this.oModel.waitForVMControlInit(this.sVMReference).then(function() {
 				assert.ok(true, "the function resolves");
 			});
 		});
 
 		QUnit.test("when waitForVMControlInit is called before the control is initialized and with no variant data yet", function(assert) {
 			var oStandardVariant = {
-				currentVariant: this.oVMReference,
-				originalCurrentVariant: this.oVMReference,
-				defaultVariant: this.oVMReference,
-				originalDefaultVariant: this.oVMReference,
+				currentVariant: this.sVMReference,
+				originalCurrentVariant: this.sVMReference,
+				defaultVariant: this.sVMReference,
+				originalDefaultVariant: this.sVMReference,
 				showExecuteOnSelection: false,
 				init: true,
 				modified: false,
@@ -2115,7 +2339,7 @@ sap.ui.define([
 					change: false,
 					remove: false,
 					rename: false,
-					key: this.oVMReference,
+					key: this.sVMReference,
 					title: "Standard",
 					originalTitle: "Standard",
 					favorite: true,
@@ -2130,9 +2354,14 @@ sap.ui.define([
 					originalContexts: {}
 				}]
 			};
-			var oReturnPromise = this.oModel.waitForVMControlInit(this.oVMReference).then(function() {
-				assert.ok(this.oModel.oData[this.oVMReference].variants, "the variant structure was added");
-				assert.strictEqual(this.oModel.oData[this.oVMReference].variants[0].key, this.oVMReference, oStandardVariant, "the standard variant is properly set");
+			var oReturnPromise = this.oModel.waitForVMControlInit(this.sVMReference).then(function() {
+				assert.ok(this.oModel.oData[this.sVMReference].variants, "the variant structure was added");
+				assert.strictEqual(
+					this.oModel.oData[this.sVMReference].variants[0].key,
+					this.sVMReference,
+					oStandardVariant,
+					"the standard variant is properly set"
+				);
 			}.bind(this));
 			this.oModel.registerToModel(this.oVariantManagement);
 
@@ -2159,7 +2388,11 @@ sap.ui.define([
 
 		QUnit.test("when calling 'getVariantManagementReferenceForControl' with a variant management control where app component couldn't be retrieved", function(assert) {
 			this.fnGetAppComponentForControlStub.returns(null);
-			assert.strictEqual(this.oModel.getVariantManagementReferenceForControl(this.oVariantManagement), this.oVariantManagement.getId(), "then control's id is returned");
+			assert.strictEqual(
+				this.oModel.getVariantManagementReferenceForControl(this.oVariantManagement),
+				this.oVariantManagement.getId(),
+				"then control's id is returned"
+			);
 		});
 
 		QUnit.test("when calling 'getVariantManagementReferenceForControl' with a variant management control with no app component prefix", function(assert) {
@@ -2171,7 +2404,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'getVariantManagementReferenceForControl' with a variant management control with an app component prefix", function(assert) {
-			assert.strictEqual(this.oModel.getVariantManagementReferenceForControl(this.oVariantManagement), this.oVMReference, "then the local id of the control is returned");
+			assert.strictEqual(
+				this.oModel.getVariantManagementReferenceForControl(this.oVariantManagement),
+				this.sVMReference,
+				"then the local id of the control is returned"
+			);
 		});
 
 		QUnit.test("when 'save' event event is triggered from a variant management control for a new variant", function(assert) {
@@ -2204,7 +2441,11 @@ sap.ui.define([
 				this.oModel._oVariantSwitchPromise.then(function() {
 					// resolved when variant model is not busy anymore
 					assert.ok(fnSwitchPromiseStub.calledOnce, "then first the previous variant switch was performed completely");
-					assert.ok(this.oFlexController.saveSequenceOfDirtyChanges.getCall(0).args[0][0].getName(), "variant created title", "then the required variant change was saved");
+					assert.ok(
+						this.oFlexController.saveSequenceOfDirtyChanges.getCall(0).args[0][0].getName(),
+						"variant created title",
+						"then the required variant change was saved"
+					);
 					fnDone();
 				}.bind(this));
 			}.bind(this));
@@ -2241,7 +2482,11 @@ sap.ui.define([
 				this.oModel._oVariantSwitchPromise.then(function() {
 					// resolved when variant model is not busy anymore
 					assert.ok(fnSwitchPromiseStub.calledOnce, "then first the previous variant switch was performed completely");
-					assert.deepEqual(this.oFlexController.saveSequenceOfDirtyChanges.getCall(0).args[0], [oDirtyChange1, oDirtyChange2], "then the control changes inside the variant were saved");
+					assert.deepEqual(
+						this.oFlexController.saveSequenceOfDirtyChanges.getCall(0).args[0],
+						[oDirtyChange1, oDirtyChange2],
+						"then the control changes inside the variant were saved"
+					);
 					fnDone();
 				}.bind(this));
 			}.bind(this));
@@ -2257,6 +2502,73 @@ sap.ui.define([
 				overwrite: true,
 				def: false
 			});
+		});
+
+		function createTranslationVariants(sTitleBinding) {
+			return [createVariant({
+				author: VariantUtil.DEFAULT_AUTHOR,
+				key: this.sVMReference,
+				layer: Layer.VENDOR,
+				variantManagementReference: this.sVMReference,
+				title: "Default",
+				favorite: true,
+				visible: true,
+				executeOnSelect: false
+			}), createVariant({
+				author: VariantUtil.DEFAULT_AUTHOR,
+				key: "translatedVariant",
+				layer: Layer.VENDOR,
+				title: sTitleBinding, // key chosen arbitrarily
+				variantManagementReference: this.sVMReference,
+				favorite: true,
+				visible: true,
+				executeOnSelect: false
+			})];
+		}
+
+		QUnit.test("when there is a variant with a resource model key as its title", function(assert) {
+			var oResourceModel = new ResourceModel({bundleUrl: oResourceBundle.oUrlInfo.url});
+			this.oVariantManagement.setModel(oResourceModel, "i18n");
+			var sTitleBinding = "{i18n>VARIANT_MANAGEMENT_AUTHOR}";
+			stubFlexObjectsSelector(createTranslationVariants.call(this, sTitleBinding));
+			this.oModel.registerToModel(this.oVariantManagement);
+			return this.oModel.waitForVMControlInit(this.sVMReference).then(function() {
+				assert.strictEqual(
+					this.oModel.getData()[this.sVMReference].variants[1].title,
+					oResourceBundle.getText("VARIANT_MANAGEMENT_AUTHOR"),
+					"then the text is resolved"
+				);
+				assert.strictEqual(
+					this.oModel.oChangePersistence.getDirtyChanges().length,
+					0,
+					"and no dirty change was added for the title resolution"
+				);
+			}.bind(this));
+		});
+
+		QUnit.test("when there is a variant with a resource model key as its title but the model was not yet set", function(assert) {
+			var fnDone = assert.async();
+			var oResourceModel = new ResourceModel({bundleUrl: oResourceBundle.oUrlInfo.url});
+			this.oVariantManagement.setModel(oResourceModel, "i18n");
+			var sTitleBinding = "{anotherResourceModel>VARIANT_MANAGEMENT_AUTHOR}";
+			stubFlexObjectsSelector(createTranslationVariants.call(this, sTitleBinding));
+			this.oModel.registerToModel(this.oVariantManagement);
+			this.oVariantManagement.attachModelContextChange(function() {
+				assert.strictEqual(
+					this.oModel.getData()[this.sVMReference].variants[1].title,
+					oResourceBundle.getText("VARIANT_MANAGEMENT_AUTHOR"),
+					"when the model is set, the text gets resolved"
+				);
+				fnDone();
+			}.bind(this));
+			return this.oModel.waitForVMControlInit(this.sVMReference).then(function() {
+				assert.strictEqual(
+					this.oModel.getData()[this.sVMReference].variants[1].title,
+					"{anotherResourceModel>VARIANT_MANAGEMENT_AUTHOR}",
+					"before the model is set, the string is not resolved yet"
+				);
+				this.oVariantManagement.setModel(oResourceModel, "anotherResourceModel");
+			}.bind(this));
 		});
 	});
 
@@ -2422,7 +2734,10 @@ sap.ui.define([
 			var oVMControl = oCore.byId(sVMControlId);
 
 			this.oVariantModel.oData[this.sVMReference].modified = true;
-			var aMockDirtyChanges = [FlexObjectFactory.createFromFileContent({fileName: "dirtyChange1"}), FlexObjectFactory.createFromFileContent({fileName: "dirtyChange2"})];
+			var aMockDirtyChanges = [
+				FlexObjectFactory.createFromFileContent({fileName: "dirtyChange1"}),
+				FlexObjectFactory.createFromFileContent({fileName: "dirtyChange2"})
+			];
 			VariantManagementState.getControlChangesForVariant.returns(aMockDirtyChanges);
 			this.oVariantModel.oChangePersistence.getDirtyChanges.returns(aMockDirtyChanges);
 
@@ -2447,7 +2762,10 @@ sap.ui.define([
 					assert.ok(Reverter.revertMultipleChanges.notCalled, "then variant was not reverted explicitly");
 
 					aMockDirtyChanges.forEach(function(oDirtyChange) {
-						assert.ok(this.oVariantModel.oFlexController.deleteChange.calledWith(oDirtyChange), "then a dirty change was deleted from the persistence");
+						assert.ok(
+							this.oVariantModel.oFlexController.deleteChange.calledWith(oDirtyChange),
+							"then a dirty change was deleted from the persistence"
+						);
 					}.bind(this));
 					fnDone();
 				}.bind(this));
@@ -2464,7 +2782,10 @@ sap.ui.define([
 			var sVMControlId = this.oComp.createId(this.sVMReference);
 			var oVMControl = oCore.byId(sVMControlId);
 
-			var aMockDirtyChanges = [FlexObjectFactory.createFromFileContent({fileName: "dirtyChange1"}), FlexObjectFactory.createFromFileContent({fileName: "dirtyChange2"})];
+			var aMockDirtyChanges = [
+				FlexObjectFactory.createFromFileContent({fileName: "dirtyChange1"}),
+				FlexObjectFactory.createFromFileContent({fileName: "dirtyChange2"})
+			];
 			VariantManagementState.getControlChangesForVariant.returns(aMockDirtyChanges);
 			this.oVariantModel.oChangePersistence.getDirtyChanges.returns(aMockDirtyChanges);
 
@@ -2472,10 +2793,21 @@ sap.ui.define([
 			oVMControl.attachEventOnce("select", function() {
 				this.oVariantModel._oVariantSwitchPromise.then(function() {
 					assert.strictEqual(oCallListenerStub.callCount, 1, "the listeners are notified");
-					assert.strictEqual(oCallListenerStub.lastCall.args[0], this.sVMReference, "the function is called with the correct parameters");
-					assert.strictEqual(oCallListenerStub.lastCall.args[1], "variant1", "the function is called with the correct parameters");
+					assert.strictEqual(
+						oCallListenerStub.lastCall.args[0],
+						this.sVMReference,
+						"the function is called with the correct parameters"
+					);
+					assert.strictEqual(
+						oCallListenerStub.lastCall.args[1],
+						"variant1",
+						"the function is called with the correct parameters"
+					);
 					assert.ok(this.oVariantModel.updateCurrentVariant.notCalled, "then variant switch was not performed");
-					assert.ok(this.oVariantModel.oFlexController.deleteChange.notCalled, "then dirty changes were not deleted from the persistence");
+					assert.ok(
+						this.oVariantModel.oFlexController.deleteChange.notCalled,
+						"then dirty changes were not deleted from the persistence"
+					);
 					fnDone();
 				}.bind(this));
 			}.bind(this));
@@ -2492,7 +2824,10 @@ sap.ui.define([
 			var oCallListenerStub = sandbox.stub(this.oVariantModel, "callVariantSwitchListeners");
 
 			this.oVariantModel.oData[this.sVMReference].modified = true;
-			var aMockDirtyChanges = [FlexObjectFactory.createFromFileContent({fileName: "dirtyChange1"}), FlexObjectFactory.createFromFileContent({fileName: "dirtyChange2"})];
+			var aMockDirtyChanges = [
+				FlexObjectFactory.createFromFileContent({fileName: "dirtyChange1"}),
+				FlexObjectFactory.createFromFileContent({fileName: "dirtyChange2"})
+			];
 			VariantManagementState.getControlChangesForVariant.returns(aMockDirtyChanges);
 			this.oVariantModel.oChangePersistence.getDirtyChanges.returns(aMockDirtyChanges);
 
@@ -2500,8 +2835,16 @@ sap.ui.define([
 			oVMControl.attachEventOnce("select", function() {
 				this.oVariantModel._oVariantSwitchPromise.then(function() {
 					assert.strictEqual(oCallListenerStub.callCount, 1, "the listeners are notified");
-					assert.strictEqual(oCallListenerStub.lastCall.args[0], this.sVMReference, "the function is called with the correct parameters");
-					assert.strictEqual(oCallListenerStub.lastCall.args[1], "variant1", "the function is called with the correct parameters");
+					assert.strictEqual(
+						oCallListenerStub.lastCall.args[0],
+						this.sVMReference,
+						"the function is called with the correct parameters"
+					);
+					assert.strictEqual(
+						oCallListenerStub.lastCall.args[1],
+						"variant1",
+						"the function is called with the correct parameters"
+					);
 					assert.ok(this.oVariantModel.updateCurrentVariant.notCalled, "then variant switch was not performed");
 					// the order of the changes should be reversed on revertMultipleChanges (change2, change1)
 					assert.ok(Reverter.revertMultipleChanges.calledWith(aMockDirtyChanges.reverse(), {
@@ -2511,7 +2854,10 @@ sap.ui.define([
 					}), "then variant was reverted in correct order");
 
 					aMockDirtyChanges.forEach(function(oDirtyChange) {
-						assert.ok(this.oVariantModel.oFlexController.deleteChange.calledWith(oDirtyChange), "then a dirty change was deleted from the persistence");
+						assert.ok(
+							this.oVariantModel.oFlexController.deleteChange.calledWith(oDirtyChange),
+							"then a dirty change was deleted from the persistence"
+						);
 					}.bind(this));
 
 					fnDone();
@@ -2728,7 +3074,11 @@ sap.ui.define([
 			]).then(function() {
 				assert.strictEqual(fnCallback1.callCount, 1, "the callback was called");
 				assert.strictEqual(fnCallback1.lastCall.args[0].executeOnSelect, false, "the flag to apply automatically is not set");
-				assert.strictEqual(fnCallback1.lastCall.args[0].originalExecuteOnSelect, false, "the flag to apply automatically is not set");
+				assert.strictEqual(
+					fnCallback1.lastCall.args[0].originalExecuteOnSelect,
+					false,
+					"the flag to apply automatically is not set"
+				);
 				assert.strictEqual(fnCallback2.callCount, 0, "the callback was not called");
 			});
 		});
@@ -2813,8 +3163,15 @@ sap.ui.define([
 		QUnit.test("when calling getUShellService", function(assert) {
 			assert.strictEqual(this.oModel.getUShellService("UserInfo"), "UserInfo", "the UserInfo service was loaded");
 			assert.strictEqual(this.oModel.getUShellService("URLParsing"), "URLParsing", "the URLParsing service was loaded");
-			assert.strictEqual(this.oModel.getUShellService("CrossApplicationNavigation"), "CrossApplicationNavigation", "the CrossApplicationNavigation service was loaded");
-			assert.strictEqual(this.oModel.getUShellService("ShellNavigation"), "ShellNavigation", "the ShellNavigation service was loaded");
+			assert.strictEqual(
+				this.oModel.getUShellService("CrossApplicationNavigation"),
+				"CrossApplicationNavigation", "the CrossApplicationNavigation service was loaded"
+			);
+			assert.strictEqual(
+				this.oModel.getUShellService("ShellNavigation"),
+				"ShellNavigation",
+				"the ShellNavigation service was loaded"
+			);
 			assert.notOk(this.oModel.getUShellService("UnknownService"), "the UnknownService service was not loaded");
 		});
 	});

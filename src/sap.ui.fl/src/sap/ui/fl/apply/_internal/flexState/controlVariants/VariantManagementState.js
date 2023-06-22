@@ -316,29 +316,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * Wrapper to add a fake standard variant for a variant management if none exists yet.
+	 * Wrapper to add a runtime-steady object - that survives the invalidation of the FlexState
+	 * For example: a fake standard variant for a variant management if none exists yet.
 	 *
 	 * @param {string} sReference - Flex reference of the app
 	 * @param {string} sComponentId - ID of the component
-	 * @param {string} sVMReference - Variant management reference
-	 * @param {object} oStandardVariantInstance - Variant instance
+	 * @param {object} oFlexObject - Flex object to be added as runtime-steady
 	 *
 	 */
-	VariantManagementState.addFakeStandardVariant = function(sReference, sComponentId, sVMReference, oStandardVariantInstance) {
-		var oVariantsMap = this.getVariantManagementMap().get({ reference: sReference });
-		if (!oVariantsMap[sVMReference]) {
-			FlexState.addFakeStandardVariantToExternalData(sReference, sComponentId, oStandardVariantInstance);
-		}
+	VariantManagementState.addRuntimeSteadyObject = function(sReference, sComponentId, oFlexObject) {
+		FlexState.addRuntimeSteadyObject(sReference, sComponentId, oFlexObject);
 	};
 
 	/**
-	 * Wrapper to reset the fake standard variants for all variant management controls of the given component.
+	 * Wrapper to clear the runtime-steady objects for the given component.
 	 *
 	 * @param {string} sReference - Flex reference of the app
 	 * @param {string} sComponentId - ID of the component
 	 */
-	VariantManagementState.clearFakeStandardVariants = function(sReference, sComponentId) {
-		FlexState.resetFakeStandardVariants(sReference, sComponentId);
+	VariantManagementState.clearRuntimeSteadyObjects = function(sReference, sComponentId) {
+		FlexState.clearRuntimeSteadyObjects(sReference, sComponentId);
 	};
 
 	/**
