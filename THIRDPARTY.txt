@@ -460,12 +460,6 @@ Contained in: src/sap.ui.webc.main/src/sap/ui/webc/main/thirdparty/*.*
 
 Outside of Libraries:
 
-Component: LESS, version: 1.6.3
-Copyright: 2009-2014, Alexis Sellier <self@cloudhead.net>
-License: Apache-2.0
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
-Contained in: src/testsuite-utils/src/main/resources/META-INF/less/less.js
-
 Component: JSDoc 3, version: 3.6.7
 Copyright: 2011-present Michael Mathews micmath@gmail.com and the contributors to JSDoc
 License: Apache-2.0
