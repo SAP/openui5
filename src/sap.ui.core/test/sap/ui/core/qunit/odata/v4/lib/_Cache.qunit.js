@@ -11801,6 +11801,22 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache#removeKeptElement", function (assert) {
+		var oCache = this.createCache("Employees");
+
+		oCache.aElements.$byPredicate = {
+			"('foo')" : "~foo~",
+			"('bar')" : "~bar~"
+		};
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
+
+		// code under test
+		oCache.removeKeptElement("('foo')");
+
+		assert.deepEqual(oCache.aElements.$byPredicate, {"('bar')" : "~bar~"});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("CollectionCache#doReplaceWith: no old element", function (assert) {
 		var oCache = this.createCache("Employees"),
 			oElement = {};

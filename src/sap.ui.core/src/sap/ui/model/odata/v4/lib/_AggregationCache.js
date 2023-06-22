@@ -39,6 +39,7 @@ sap.ui.define([
 	 *   Whether a grand total is needed
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._AggregationCache
+	 * @borrows sap.ui.model.odata.v4.lib._CollectionCache#removeKeptElement as #removeKeptElement
 	 * @constructor
 	 * @extends sap.ui.model.odata.v4.lib._Cache
 	 * @private
@@ -71,6 +72,7 @@ sap.ui.define([
 			});
 		}
 		this.oFirstLevel = this.createGroupLevelCache(null, bHasGrandTotal || !!fnLeaves);
+		this.removeKeptElement = this.oFirstLevel.removeKeptElement; // @borrows ...
 		this.oGrandTotalPromise = undefined;
 		if (bHasGrandTotal) {
 			this.oGrandTotalPromise = new SyncPromise(function (resolve) {

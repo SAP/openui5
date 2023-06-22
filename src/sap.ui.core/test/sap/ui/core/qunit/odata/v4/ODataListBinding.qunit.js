@@ -3641,6 +3641,48 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("destroyPreviousContexts: cache & hidden context", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oContext1 = {
+				iIndex : undefined,
+				destroy : function () {},
+				isDeleted : function () {},
+				isKeepAlive : function () {},
+				isTransient : function () {}
+			},
+			oContext2 = {
+				iIndex : 0,
+				destroy : function () {},
+				isDeleted : function () {},
+				isKeepAlive : function () {},
+				isTransient : function () {}
+			};
+
+		oBinding.mPreviousContextsByPath = {
+			p1 : oContext1,
+			p2 : oContext2,
+			p3 : "~oContext3~"
+		};
+		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oContext1).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext1).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext1).expects("destroy").withExactArgs();
+		this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oContext2).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext2).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext2).expects("destroy").withExactArgs();
+		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs().returns("/EMPLOYEES");
+		this.mock(_Helper).expects("getRelativePath")
+			.withExactArgs("p1", "/EMPLOYEES").returns("relative/path");
+		this.mock(oBinding.oCache).expects("removeKeptElement").withExactArgs("relative/path");
+
+		// code under test
+		oBinding.destroyPreviousContexts(["p1", "p2"]);
+
+		assert.deepEqual(oBinding.mPreviousContextsByPath, {p3 : "~oContext3~"});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("destroyPreviousContexts: binding already destroyed", function (assert) {
 		var oBinding = this.bindList("relative");
 
@@ -3650,6 +3692,34 @@ sap.ui.define([
 		oBinding.destroyPreviousContexts();
 
 		assert.strictEqual(oBinding.mPreviousContextsByPath, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("destroyPreviousContextsLater", function () {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding),
+			oModelMock = this.mock(this.oModel),
+			aPaths = ["path"],
+			oTaskExpectation;
+
+		// mock early to catch even the function created using bind()
+		oBindingMock.expects("destroyPreviousContexts").never();
+		oModelMock.expects("addPrerenderingTask").never();
+
+		// code under test
+		oBinding.destroyPreviousContextsLater([]);
+
+		oTaskExpectation = oModelMock.expects("addPrerenderingTask")
+			.withExactArgs(sinon.match.func);
+
+		// code under test
+		oBinding.destroyPreviousContextsLater(aPaths);
+
+		oBindingMock.expects("destroyPreviousContexts")
+			.on(oBinding).withExactArgs(sinon.match.same(aPaths));
+
+		// code under test - callback function
+		oTaskExpectation.args[0][0]();
 	});
 
 	//*********************************************************************************************
@@ -9451,6 +9521,80 @@ sap.ui.define([
 			oBinding.getKeepAlivePredicates(), // code under test
 			["('0')", "('2')", "('4')"]
 		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onKeepAliveChanged: remove from cache", function () {
+		var oBinding = this.bindList("/SalesOrderList"),
+			oContext = {
+				isDeleted : function () {},
+				isKeepAlive : function () {},
+				getPath : function () {}
+			};
+
+		oBinding.mPreviousContextsByPath = {
+			"/SalesOrderList('1')" : "~" // would actually be the context
+		};
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("getPath").twice()
+			.withExactArgs().returns("/SalesOrderList('1')");
+		this.mock(oContext).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oBinding).expects("destroyPreviousContextsLater")
+			.withExactArgs(["/SalesOrderList('1')"]);
+
+		// code under test
+		oBinding.onKeepAliveChanged(oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onKeepAliveChanged: deleted", function () {
+		var oBinding = this.bindList("/SalesOrderList"),
+			oContext = {
+				isDeleted : function () {}
+			};
+
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(true);
+		this.mock(oBinding).expects("destroyPreviousContextsLater").never();
+
+		// code under test
+		oBinding.onKeepAliveChanged(oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onKeepAliveChanged: in the binding's collection", function () {
+		var oBinding = this.bindList("/SalesOrderList"),
+			oContext = {
+				isDeleted : function () {},
+				getPath : function () {}
+			};
+
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/SalesOrderList('1')");
+		this.mock(oBinding).expects("destroyPreviousContextsLater").never();
+
+		// code under test
+		oBinding.onKeepAliveChanged(oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onKeepAliveChanged: kept alive", function () {
+		var oBinding = this.bindList("/SalesOrderList"),
+			oContext = {
+				isDeleted : function () {},
+				isKeepAlive : function () {},
+				getPath : function () {}
+			};
+
+		oBinding.mPreviousContextsByPath = {
+			"/SalesOrderList('1')" : oContext
+		};
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/SalesOrderList('1')");
+		this.mock(oContext).expects("isKeepAlive").withExactArgs().returns(true);
+		this.mock(oBinding).expects("destroyPreviousContextsLater").never();
+
+		// code under test
+		oBinding.onKeepAliveChanged(oContext);
 	});
 });
 

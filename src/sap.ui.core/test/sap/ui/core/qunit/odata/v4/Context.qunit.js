@@ -1113,6 +1113,7 @@ sap.ui.define([
 		var oBinding = {
 				checkSuspended : function () {},
 				lockGroup : function () {},
+				onKeepAliveChanged : function () {},
 				mParameters : {}
 			},
 			aBindings = [
@@ -3635,8 +3636,10 @@ sap.ui.define([
 		var done = assert.async(),
 			oBinding = {
 				checkKeepAlive : function () {},
-				fetchIfChildCanUseCache : function () {}
+				fetchIfChildCanUseCache : function () {},
+				onKeepAliveChanged : function () {}
 			},
+			oBindingMock = this.mock(oBinding),
 			oError = new Error(),
 			oMetaModel = {
 				fetchObject : function () {
@@ -3657,8 +3660,11 @@ sap.ui.define([
 
 		this.mock(oContext).expects("isTransient").exactly(4).withExactArgs().returns(false);
 		this.mock(_Helper).expects("getPredicateIndex").exactly(4).withExactArgs("/path");
-		this.mock(oBinding).expects("checkKeepAlive").exactly(4)
-			.withExactArgs(sinon.match.same(oContext));
+		oBindingMock.expects("checkKeepAlive").exactly(4).withExactArgs(sinon.match.same(oContext));
+		oBindingMock.expects("onKeepAliveChanged").withExactArgs(sinon.match.same(oContext))
+			.callsFake(function () {
+				assert.strictEqual(oContext.bKeepAlive, "bTrueOrFalse");
+			});
 
 		// code under test
 		oContext.setKeepAlive("bTrueOrFalse");
@@ -3666,6 +3672,7 @@ sap.ui.define([
 		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
 
 		oContext.fnOnBeforeDestroy = "foo";
+		oBindingMock.expects("onKeepAliveChanged").withExactArgs(sinon.match.same(oContext));
 
 		// code under test
 		oContext.setKeepAlive(false, "fnOnBeforeDestroy", true);
@@ -3676,16 +3683,18 @@ sap.ui.define([
 		this.mock(oMetaModel).expects("fetchObject")
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")
 			.resolves("path/to/messages");
-		this.mock(oBinding).expects("fetchIfChildCanUseCache")
+		oBindingMock.expects("fetchIfChildCanUseCache")
 			.withExactArgs(sinon.match.same(oContext), "path/to/messages", {})
 			.resolves("/reduced/path");
 		this.mock(oContext).expects("fetchValue").withExactArgs("/reduced/path")
 			.rejects(oError);
+		oBindingMock.expects("onKeepAliveChanged").withExactArgs(sinon.match.same(oContext));
 
 		// code under test
 		oContext.setKeepAlive(true, "fnOnBeforeDestroy", true);
 		assert.strictEqual(oContext.isKeepAlive(), true);
 		assert.strictEqual(oContext.fnOnBeforeDestroy, "fnOnBeforeDestroy");
+		oBindingMock.expects("onKeepAliveChanged").withExactArgs(sinon.match.same(oContext));
 
 		oContext.bDeleted = true;
 
@@ -3773,7 +3782,8 @@ sap.ui.define([
 	QUnit.test("setKeepAlive: missing messages annotation", function (assert) {
 		var done = assert.async(),
 			oBinding = {
-				checkKeepAlive : function () {}
+				checkKeepAlive : function () {},
+				onKeepAliveChanged : function () {}
 			},
 			oMetaModel = {
 				fetchObject : function () {}
@@ -3798,6 +3808,7 @@ sap.ui.define([
 		this.mock(oMetaModel).expects("fetchObject")
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")
 			.resolves(undefined);
+		this.mock(oBinding).expects("onKeepAliveChanged").withExactArgs(sinon.match.same(oContext));
 
 		// code under test
 		oContext.setKeepAlive(true, "fnOnBeforeDestroy", true);
@@ -3808,7 +3819,8 @@ sap.ui.define([
 		var done = assert.async(),
 			oBinding = {
 				checkKeepAlive : function () {},
-				fetchIfChildCanUseCache : function () {}
+				fetchIfChildCanUseCache : function () {},
+				onKeepAliveChanged : function () {}
 			},
 			oError = new Error(),
 			oMetaModel = {
@@ -3836,6 +3848,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("fetchIfChildCanUseCache")
 			.withExactArgs(sinon.match.same(oContext), "path/to/messages", {})
 			.rejects(oError);
+		this.mock(oBinding).expects("onKeepAliveChanged").withExactArgs(sinon.match.same(oContext));
 
 		// code under test
 		oContext.setKeepAlive(true, "fnOnBeforeDestroy", true);

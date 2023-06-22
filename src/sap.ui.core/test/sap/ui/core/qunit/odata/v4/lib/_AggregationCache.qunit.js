@@ -284,7 +284,9 @@ sap.ui.define([
 			aAllProperties = [],
 			oCache,
 			oEnhanceCacheWithGrandTotalExpectation,
-			oFirstLevelCache = {},
+			oFirstLevelCache = {
+				removeKeptElement : "~removeKeptElement~"
+			},
 			oGetDownloadUrlExpectation,
 			oGrandTotal = {},
 			oGrandTotalCopy = {},
@@ -360,6 +362,8 @@ sap.ui.define([
 		assert.strictEqual(oCache.aElements.$count, undefined);
 		assert.strictEqual(oCache.aElements.$created, 0);
 		assert.strictEqual(oCache.oFirstLevel, oFirstLevelCache);
+		assert.strictEqual(oCache.removeKeptElement, oFirstLevelCache.removeKeptElement,
+			"@borrows ...");
 		if (bCountLeaves) {
 			assert.strictEqual(oCache.mQueryOptions.$$leaves, true);
 			assert.ok(oCache.oLeavesPromise instanceof SyncPromise);

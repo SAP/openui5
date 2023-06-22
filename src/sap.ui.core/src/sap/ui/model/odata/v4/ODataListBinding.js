@@ -1129,7 +1129,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.destroyPreviousContexts = function (aPathsToDelete) {
-		var mPreviousContextsByPath = this.mPreviousContextsByPath;
+		var mPreviousContextsByPath = this.mPreviousContextsByPath,
+			that = this;
 
 		if (mPreviousContextsByPath) { // binding may have been destroyed already
 			(aPathsToDelete || Object.keys(mPreviousContextsByPath)).forEach(function (sPath) {
@@ -1141,11 +1142,33 @@ sap.ui.define([
 					} else {
 						if (!oContext.isTransient()) {
 							oContext.destroy();
+							if (oContext.iIndex === undefined && that.oCache) {
+								// was kept alive (or deleted)
+								that.oCache.removeKeptElement(
+									_Helper.getRelativePath(sPath, that.oHeaderContext.getPath()));
+							}
 						}
 						delete mPreviousContextsByPath[sPath];
 					}
 				}
 			});
+		}
+	};
+
+	/**
+	 * Removes and destroys the contexts with the given paths from mPreviousContextsByPaths in a
+	 * prerendering task.
+	 *
+	 * @param {string[]} aPathsToDelete
+	 *   Only contexts with paths in this list except kept-alive and pending deletes are removed and
+	 *   destroyed (transient contexts are removed only)
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.destroyPreviousContextsLater = function (aPathsToDelete) {
+		if (aPathsToDelete.length) {
+			this.oModel.addPrerenderingTask(
+				this.destroyPreviousContexts.bind(this, aPathsToDelete));
 		}
 	};
 
@@ -2755,6 +2778,21 @@ sap.ui.define([
 					return that.oHeaderContext.checkUpdateInternal();
 				}).catch(this.oModel.getReporter());
 			}
+		}
+	};
+
+	/**
+	 * Notification from a context that its effective keep-alive status changed.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext - The context
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.onKeepAliveChanged = function (oContext) {
+		if (!oContext.isDeleted() // data of a deleted context must remain for the exclusion filter
+				&& oContext.getPath() in this.mPreviousContextsByPath
+				&& !oContext.isKeepAlive()) {
+			this.destroyPreviousContextsLater([oContext.getPath()]);
 		}
 	};
 

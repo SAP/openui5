@@ -1654,6 +1654,7 @@ sap.ui.define([
 
 		this.bKeepAlive = bKeepAlive;
 		this.fnOnBeforeDestroy = bKeepAlive ? fnOnBeforeDestroy : undefined;
+		this.oBinding.onKeepAliveChanged(this);
 	};
 
 	/**
