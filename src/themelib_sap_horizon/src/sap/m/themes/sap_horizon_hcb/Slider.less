@@ -28,7 +28,8 @@
 	top: -.0625rem;
 }
 
-.sapMSliderInner:not(.sapMSliderInnerDisabled):hover > .sapMSliderHandle {
+.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderProgress:hover ~ .sapMSliderHandle,
+.sapMSliderHandle:hover {
 	background: @sapUiSliderHoverHandleBackground;
 	border-color: @sapUiSliderHoverHandleBorderColor;
 	box-shadow: @sapUiContentSelectedShadow;

@@ -25,22 +25,23 @@
 
 	.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle {
 		&:hover {
-			background-color: fade(@sapUiButtonHoverBackground, 25);
+			background-color: transparent;
 			border-color: @sapUiButtonHoverBorderColor;
 		}
 
 		&:active {
-			background: fade(@sapUiButtonActiveBackground, 25);
+			background: transparent;
 			border-color: @sapUiButtonActiveBorderColor;
 		}
 
 		&.sapMSliderHandlePressed {
-			background: fade(@sapUiButtonActiveBackground, 25);
+			background: transparent;
 			border-color: @sapUiButtonActiveBorderColor;
 		}
 	}
 
-	.sapMSliderInner:not(.sapMSliderInnerDisabled):hover > .sapMSliderHandle {
+	.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderProgress:hover ~ .sapMSliderHandle,
+	.sapMSliderHandle:hover {
 		background-color: fade(@sapUiButtonHoverBackground, 25);
 		border-color: @sapUiButtonHoverBorderColor;
 	}
