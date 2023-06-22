@@ -1304,7 +1304,7 @@ sap.ui.define([
 						"HTTP request was not processed because the previous request failed");
 					oError.cause = oCause;
 					oError.$reported = true; // do not create a message for this error
-					vRequest.$reject(oError);
+					reject(oError, vRequest); // Note: vRequest may well be a change set
 				} else if (vResponse.status >= 400) {
 					vResponse.getResponseHeader = getResponseHeader;
 					// Note: vRequest is an array in case a change set fails, hence url and

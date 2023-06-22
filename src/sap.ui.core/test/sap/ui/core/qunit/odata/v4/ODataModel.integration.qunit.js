@@ -2295,6 +2295,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// verify that error responses are processed correctly for change sets
+	//
+	// ...even if 1st change set fails and 2nd contains more than one request (BCP: 2380075648)
 	QUnit.test("error response: $batch w/ change set (framework test)", function (assert) {
 		var oModel = this.createSalesOrdersModel(),
 			sView = '\
@@ -2310,12 +2312,13 @@ sap.ui.define([
 		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
 				value : [
 					{SalesOrderID : "1", Note : "Note 1"},
-					{SalesOrderID : "2", Note : "Note 2"}
+					{SalesOrderID : "2", Note : "Note 2"},
+					{SalesOrderID : "3", Note : "Note 3"}
 				]
 			})
 			.expectRequest("BusinessPartnerList('1')/CompanyName", {value : "SAP SE"})
-			.expectChange("id", ["1", "2"])
-			.expectChange("note", ["Note 1", "Note 2"])
+			.expectChange("id", ["1", "2", "3"])
+			.expectChange("note", ["Note 1", "Note 2", "Note 3"])
 			.expectChange("name", "SAP SE");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -2332,9 +2335,11 @@ sap.ui.define([
 			that.oLogMock.expects("error")
 				.withArgs("Failed to update path /SalesOrderList('2')/Note");
 			that.oLogMock.expects("error")
+				.withArgs("Failed to update path /SalesOrderList('3')/Note");
+			that.oLogMock.expects("error")
 				.withArgs("Failed to read path /BusinessPartnerList('1')/CompanyName");
 
-			that.expectChange("note", ["Note 1 changed", "Note 2 changed"])
+			that.expectChange("note", ["Note 1 changed", "Note 2 changed", "Note 3 changed"])
 				.expectRequest({
 					changeSetNo : 1,
 					method : "PATCH",
@@ -2342,10 +2347,16 @@ sap.ui.define([
 					payload : {Note : "Note 1 changed"}
 				}, oError)
 				.expectRequest({
-					changeSetNo : 1,
+					changeSetNo : 2,
 					method : "PATCH",
 					url : "SalesOrderList('2')",
 					payload : {Note : "Note 2 changed"}
+				}) // no response required
+				.expectRequest({
+					changeSetNo : 2,
+					method : "PATCH",
+					url : "SalesOrderList('3')",
+					payload : {Note : "Note 3 changed"}
 				}) // no response required
 				.expectRequest("BusinessPartnerList('1')/CompanyName") // no response required
 				.expectChange("name", null)
@@ -2363,7 +2374,9 @@ sap.ui.define([
 				}]);
 
 			aTableRows[0].getCells()[1].getBinding("value").setValue("Note 1 changed");
+			oModel.submitBatch(oModel.getGroupId()); // close 1st change set
 			aTableRows[1].getCells()[1].getBinding("value").setValue("Note 2 changed");
+			aTableRows[2].getCells()[1].getBinding("value").setValue("Note 3 changed");
 			that.oView.byId("name").getBinding("text").refresh();
 
 			return that.waitForChanges(assert);

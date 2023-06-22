@@ -1361,7 +1361,11 @@ sap.ui.define([
 			}), "Products", true)
 			.throws(oError);
 
-		return Promise.all([oGetProductsPromise, oRequestor.processBatch("groupId")]);
+		return Promise.all([
+			oGetProductsPromise,
+			// code under test
+			oRequestor.processBatch("groupId")
+		]);
 	});
 
 	//*********************************************************************************************
@@ -2087,7 +2091,11 @@ sap.ui.define([
 				.withExactArgs(aExpectedRequests, "groupId")
 				.resolves([createResponse(oFixture.mProductsResponse)]);
 
-			return Promise.all([oGetProductsPromise, oRequestor.processBatch("groupId")]);
+			return Promise.all([
+				oGetProductsPromise,
+				// code under test
+				oRequestor.processBatch("groupId")
+			]);
 		});
 	});
 
@@ -2111,7 +2119,11 @@ sap.ui.define([
 		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
 			.resolves([createResponse(oResponse)]);
 
-		return Promise.all([oGetProductsPromise, oRequestor.processBatch("groupId")]);
+		return Promise.all([
+			oGetProductsPromise,
+			// code under test
+			oRequestor.processBatch("groupId")
+		]);
 	});
 
 	//*********************************************************************************************
@@ -2125,7 +2137,11 @@ sap.ui.define([
 		this.mock(oRequestor).expects("reportHeaderMessages")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
-		return Promise.all([oRequestPromise, oRequestor.processBatch("groupId")]);
+		return Promise.all([
+			oRequestPromise,
+			// code under test
+			oRequestor.processBatch("groupId")
+		]);
 	});
 
 	//*********************************************************************************************
@@ -2139,8 +2155,11 @@ sap.ui.define([
 		this.mock(oRequestor).expects("reportHeaderMessages")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
-		return Promise.all([oRequestPromise, oRequestor.processBatch("groupId")])
-			.then(function (aResults) {
+		return Promise.all([
+			oRequestPromise,
+			// code under test
+			oRequestor.processBatch("groupId")
+		]).then(function (aResults) {
 				assert.deepEqual(aResults[0], {"@odata.etag" : "ETag"});
 			});
 	});
@@ -2156,8 +2175,11 @@ sap.ui.define([
 		this.mock(oRequestor).expects("reportHeaderMessages")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
-		return Promise.all([oRequestPromise, oRequestor.processBatch("groupId")])
-			.then(function (aResults) {
+		return Promise.all([
+			oRequestPromise,
+			// code under test
+			oRequestor.processBatch("groupId")
+		]).then(function (aResults) {
 				assert.deepEqual(aResults[0], {});
 			});
 	});
@@ -2267,7 +2289,7 @@ sap.ui.define([
 
 		aPromises.push(oRequestor.request("GET", "fail", this.createGroupLock())
 			.then(unexpected, function (oResultError) {
-				assertError(oResultError, oError.error.message);
+				assertError(oResultError);
 			}));
 
 		aPromises.push(oRequestor.request("GET", "ok", this.createGroupLock())
@@ -2281,6 +2303,70 @@ sap.ui.define([
 
 		this.mock(oRequestor).expects("sendBatch").resolves(aBatchResult); // arguments don't matter
 
+		// code under test
+		aPromises.push(oRequestor.processBatch("groupId").then(function (oResult) {
+			assert.deepEqual(oResult, undefined);
+		}));
+
+		return Promise.all(aPromises);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("processBatch(...): failure followed by another change set", function (assert) {
+		var oError = {error : {message : "404 Not found"}},
+			aBatchResult = [{
+				getResponseHeader : function () {
+					return "application/json";
+				},
+				headers : {"Content-Type" : "application/json"},
+				responseText : JSON.stringify(oError),
+				status : 404,
+				statusText : "Not found"
+			}],
+			aPromises = [],
+			oRequestor = _Requestor.create("/", oModelInterface);
+
+		function unexpected() {
+			assert.ok(false);
+		}
+
+		function assertError(oResultError) {
+			assert.ok(oResultError instanceof Error);
+			assert.deepEqual(oResultError.error, oError.error);
+			assert.strictEqual(oResultError.message, oError.error.message);
+			assert.strictEqual(oResultError.status, 404);
+			assert.strictEqual(oResultError.statusText, "Not found");
+		}
+
+		aPromises.push(oRequestor.request("PATCH", "fail", this.createGroupLock())
+			.then(unexpected, function (oResultError) {
+				assertError(oResultError);
+			}));
+
+		oRequestor.addChangeSet("groupId");
+
+		// Note: "If-Match" : {} prevents merging of PATCH requests
+		aPromises.push(oRequestor.request("PATCH", "n/a", this.createGroupLock(), {"If-Match" : {}})
+			.then(unexpected, function (oResultError) {
+				assert.ok(oResultError instanceof Error);
+				assert.strictEqual(oResultError.message,
+					"HTTP request was not processed because the previous request failed");
+				assert.strictEqual(oResultError.$reported, true);
+				assertError(oResultError.cause);
+			}));
+
+		aPromises.push(oRequestor.request("PATCH", "n/a", this.createGroupLock(), {"If-Match" : {}})
+			.then(unexpected, function (oResultError) {
+				assert.ok(oResultError instanceof Error);
+				assert.strictEqual(oResultError.message,
+					"HTTP request was not processed because the previous request failed");
+				assert.strictEqual(oResultError.$reported, true);
+				assertError(oResultError.cause);
+			}));
+
+		this.mock(oRequestor).expects("sendBatch").resolves(aBatchResult); // arguments don't matter
+
+		// code under test
 		aPromises.push(oRequestor.processBatch("groupId").then(function (oResult) {
 			assert.deepEqual(oResult, undefined);
 		}));
