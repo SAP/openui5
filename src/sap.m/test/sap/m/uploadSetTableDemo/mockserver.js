@@ -1,10 +1,10 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon",
 	"require",
-	"sap/base/util/UriParameters"
-], function (ManagedObject, jQuery, sinon, require, UriParameters) {
+	"sap/base/util/UriParameters",
+	'sap/base/util/uid'
+], function (ManagedObject, sinon, require, UriParameters, uid) {
 	"use strict";
 
 	// mockserver to intercept the XMLHTTP requests and respond with custom data
@@ -31,7 +31,6 @@ sap.ui.define([
 			fServer.respondWith("POST", RegExp("/uploadFiles","i"), function (xhr) {
 				// intercepting the request body sent to the request and extracting the details for the mocked response.
 				var oFile = xhr.requestBody ? xhr.requestBody.file : null;
-				var url = URL.createObjectURL(oFile);
 				var aAdditionalFileInfo = xhr.requestBody ? xhr.requestBody.additionalFileInfo : '[]';
 				try {
 					aAdditionalFileInfo = JSON.parse(aAdditionalFileInfo);
@@ -39,7 +38,21 @@ sap.ui.define([
 					aAdditionalFileInfo = [];
 				}
 
+				function _getUrlFromParam (aParams) {
+					var sUrl;
+					if (aParams && aParams.length > 0) {
+						aParams.filter(function (oObj) {
+							if (oObj.key === 'url'){
+								sUrl = oObj.value;
+							}
+						});
+					}
+					return sUrl;
+				}
+				var url = _getUrlFromParam(aAdditionalFileInfo) || URL.createObjectURL(oFile);
+
 				var reponseObject = {
+					id: uid(),
 					fileName: oFile && oFile.name ? oFile.name : "",
 					fileUrl: url,
 					fileSize: oFile && oFile.size ? oFile.size : 0,

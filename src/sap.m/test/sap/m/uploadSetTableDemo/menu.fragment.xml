@@ -5,14 +5,14 @@
 		<MenuItem text="Add">
 			<items>
 				<MenuItem text="Document from SAP System"/>
-				<MenuItem text="URL"/>
+				<MenuItem text="URL" press="openAddOrEditDialog"/>
 				<MenuItem text="New Folder"/>
 				<MenuItem text="Document Without File"/>
 			</items>
 		</MenuItem>
 		<MenuItem text="Remove"/>
 		<MenuItem text="Rename"/>
-		<MenuItem text="Edit URL"/>
+		<MenuItem id="editUrlButton" text="Edit URL" enabled="false" press="onEditUrl"/>
 		<MenuItem text="Link To" startsSection="true"/>
 		<MenuItem text="Copy To"/>
 		<MenuItem text="Move To"/>
