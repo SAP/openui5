@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Popup",
-	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/base/util/Deferred",
 	"sap/ui/events/isMouseEventDelayed",
 	"sap/ui/Device",
@@ -14,14 +14,12 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Button",
 	"sap/m/Text",
-	"sap/ui/core/FocusHandler",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Configuration"
+	"sap/ui/events/KeyCodes"
 ], function(
 	Popup,
-	Log,
+	Localization,
 	Deferred,
 	isMouseEventDelayed,
 	Device,
@@ -33,11 +31,9 @@ sap.ui.define([
 	Panel,
 	Button,
 	Text,
-	FocusHandler,
 	ResizeHandler,
 	containsOrEquals,
-	KeyCodes,
-	Configuration
+	KeyCodes
 ){
 	"use strict";
 
@@ -2621,7 +2617,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RTL with 'my' set to 'CenterBottom', changing position again after popup is opened should work", function(assert) {
-		var oStub = sinon.stub(Core.getConfiguration(), "getRTL").callsFake(function() {
+		var oStub = sinon.stub(Localization, "getRTL").callsFake(function() {
 			return true;
 		});
 
@@ -2846,7 +2842,7 @@ sap.ui.define([
 		oPopup2.destroy();
 	});
 
-	if (!Configuration.getRTL()) {
+	if (!Localization.getRTL()) {
 		// The test checks for "right" CSS proprety explicitly which isn't set in RTL mode
 		QUnit.test("Align the popup correctly in cases where position is more precisely than one pixel", function(assert){
 			var done = assert.async();
@@ -3306,7 +3302,7 @@ sap.ui.define([
 		return pPromise;
 	});
 
-	if (!Configuration.getRTL()) {
+	if (!Localization.getRTL()) {
 		// in RTL mode, the "top" CSS between blocklayer and within area has a difference of "0.5px", need further debug
 		// to check what causes the "0.5px"
 		// The test is currently disabled in RTL mode
