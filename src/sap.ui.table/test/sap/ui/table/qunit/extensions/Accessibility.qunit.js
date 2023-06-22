@@ -1594,7 +1594,7 @@ sap.ui.define([
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 		$Elem = getCell(0, 1, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
-		assert.strictEqual($Elem.attr("aria-owns"), sTableId + "-rowselecthdr0 " + sTableId + "-rows-row0-col0 " + sTableId + "-rowact0", "aria-owns");
+		assert.strictEqual($Elem.attr("aria-owns"), sTableId + "-rowsel0 " + sTableId + "-rows-row0-col0 " + sTableId + "-rowact0", "aria-owns");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 		$Elem = getCell(1, 0, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
@@ -1602,7 +1602,7 @@ sap.ui.define([
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 		$Elem = getCell(1, 1, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
-		assert.strictEqual($Elem.attr("aria-owns"), sTableId + "-rowselecthdr1 " + sTableId + "-rows-row1-col0 " + sTableId + "-rowact1", "aria-owns");
+		assert.strictEqual($Elem.attr("aria-owns"), sTableId + "-rowsel1 " + sTableId + "-rows-row1-col0 " + sTableId + "-rowact1", "aria-owns");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
