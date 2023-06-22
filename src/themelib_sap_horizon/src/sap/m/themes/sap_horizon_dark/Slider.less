@@ -18,6 +18,11 @@
 	}
 }
 
+.sapMSlider {
+	display: flex;
+	align-items: center;
+}
+
 .sapMSliderInner .sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):after {
 	font-family: SAP-icons;
 	content: "\e29c";
@@ -37,7 +42,8 @@
 	}
 }
 
-.sapMSliderInner:not(.sapMSliderInnerDisabled):not(.sapMSliderPressed):hover>.sapMSliderHandle {
+.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderProgress:hover ~ .sapMSliderHandle,
+.sapMSliderHandle:hover {
 	&:not(:focus) {
 		border-color: @sapUiSliderHoverHandleBorderColor;
 		background: @sapUiSliderHoverHandleBackground;
