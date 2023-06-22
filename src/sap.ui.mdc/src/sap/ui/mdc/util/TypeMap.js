@@ -70,14 +70,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets a BaseType and an optional model- or scenario-specific configuration method for a given sap.ui.model.SimpleType ObjectPath string
+	 * Sets a BaseType and an optional model- or scenario-specific configuration method for a given {@link sap.ui.model.SimpleType} ObjectPath string
 	 *
 	 * As default <code>string</code> is returned.
 	 *
 	 * @final
-	 * @param {string} sType Objectpath string for sap.ui.model.SimpleType
+	 * @param {string} sType Objectpath string for {@link sap.ui.model.SimpleType}
 	 * @param {sap.ui.mdc.enums.BaseType|function} vBaseType BaseType fitting the given sType or method returning a BaseType based on type configuration
-	 * @param {function} [fnOptions] Optional customizing method for formatoptions and constraints. See <code>sap.ui.mdc.DefaultTypeMap</code> for examples.
+	 * @param {function} [fnOptions] Optional customizing method for formatoptions and constraints. See {@link sap.ui.mdc.DefaultTypeMap} for examples.
 	 * @public
 	 */
 	TypeMap.set = function (sType, vBaseType, fnOptions) {
@@ -85,10 +85,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Allows alternative identifiers for Types, such as "Boolean" for "sap.ui.model.type.Boolean"
+	 * Allows alternative identifiers for Types, such as "Boolean" for "{@link sap.ui.model.type.Boolean}"
 	 *
 	 * @final
-	 * @param {string} sType Objectpath string for sap.ui.model.SimpleType
+	 * @param {string} sType Objectpath string for {@link sap.ui.model.SimpleType}
 	 * @param {string} sAlias Alternative identifier for sType
 	 * @public
 	 */
@@ -99,8 +99,8 @@ sap.ui.define([
 	/**
 	 * Returns the <code>sap.ui.mdc.enums.BaseType</code> or a method to resolve the BaseType dynamically for the given type
 	 *
-	 * @param {string} sType Objectpath string for sap.ui.model.SimpleType
-	 * @returns {sap.ui.mdc.enums.BaseType|function} BaseType configured for the sap.ui.model.SimpleType or function to resolve BaseType based on configuration
+	 * @param {string} sType Objectpath string for {@link sap.ui.model.SimpleType}
+	 * @returns {sap.ui.mdc.enums.BaseType|function} BaseType configured for the {@link sap.ui.model.SimpleType} or function to resolve BaseType based on configuration
 	 * @private
 	 */
 	TypeMap._getBaseType = function (sType) {
@@ -109,9 +109,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the optional customizing method configured for a sap.ui.model.SimpleType
+	 * Returns the optional customizing method configured for a {@link sap.ui.model.SimpleType}
 	 *
-	 * @param {string} sType Objectpath string for sap.ui.model.SimpleType
+	 * @param {string} sType Objectpath string for {@link sap.ui.model.SimpleType}
 	 * @returns {function} Method for model-specific type configuration. See <code>sap.ui.mdc.DefaultTypeMap</code> for examples.
 	 * @private
 	 */
@@ -124,7 +124,7 @@ sap.ui.define([
 	 * Returns the ObjectPath string for a given type alias.
 	 *
 	 * @param {string} sAlias Identifier for a configured Type Alias
-	 * @returns {string} Objectpath string for sap.ui.model.SimpleType
+	 * @returns {string} Objectpath string for {@link sap.ui.model.SimpleType}
 	 * @private
 	 */
 	TypeMap._getClass = function (sAlias) {
@@ -172,7 +172,7 @@ sap.ui.define([
 
 	/**
 	 * @final
-	 * @param {string} sType Given type string or sap.ui.model.SimpleType
+	 * @param {string} sType Given type string or {@link sap.ui.model.SimpleType}
 	 * @param {object} oFormatOptions Used <code>FormatOptions</code>
 	 * @param {object} oConstraints Used <code>Constraints</code>
 	 * @returns {sap.ui.mdc.enums.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
@@ -185,7 +185,7 @@ sap.ui.define([
 
 	/**
 	 * @final
-	 * @param {sap.ui.model.SimpleType} oType Given type string or sap.ui.model.SimpleType
+	 * @param {sap.ui.model.SimpleType} oType Given type string or {@link sap.ui.model.SimpleType}
 	 * @returns {string} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
 	 * @public
 	 */
