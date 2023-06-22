@@ -1614,7 +1614,11 @@ sap.ui.define([
 				assert.ok(oSetVariantPropertiesSpy.notCalled, "SetVariantProperties is not called");
 				assert.ok(oSaveDirtyChangesStub.calledOnce, "SaveAll is called");
 				oVariantManagement.destroy();
-			});
+				assert.notOk(
+					this.oModel.getData()[sVMReference].modified,
+					"then the modified flag is reset"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("when calling '_handleSaveEvent' on a USER variant with setDefault, executeOnSelect and public boxes checked", function(assert) {
