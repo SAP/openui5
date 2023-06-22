@@ -323,6 +323,34 @@ sap.ui.define([
 			}
 			var oUploadSetTableItem = clickedControl;
 			UploadSetTableItem.openPreview(oUploadSetTableItem);
+		},
+		onViewDetails: function(oEvent) {
+			var clickedControl = oEvent.getSource();
+			var oListItem = null;
+
+			// Traverse up the control hierarchy to find the ColumnListItem
+			while (clickedControl && !(clickedControl instanceof UploadSetTableItem)) {
+				clickedControl = clickedControl.getParent();
+			}
+			if (clickedControl instanceof UploadSetTableItem) {
+				oListItem = clickedControl;
+				Fragment.load({
+					name: "sap.m.uploadSetTableDemo.FileDetails",
+					id: this.getView().getId() + "-file-details-dialog",
+					controller: this
+				})
+					.then(function(oPopover) {
+						this._fileDetailsFragment = oPopover;
+						this.getView().addDependent(oPopover);
+						// oPopover.setModel(oModel);
+						oPopover.setBindingContext(oListItem.getBindingContext());
+						oPopover.open();
+					}.bind(this));
+			}
+		},
+		onViewDetailsClose: function() {
+			this._fileDetailsFragment.destroy();
+			this._fileUploadFragment = null;
 		}
 	});
 });
