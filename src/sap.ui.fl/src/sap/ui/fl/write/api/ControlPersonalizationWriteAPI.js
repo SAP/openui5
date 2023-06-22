@@ -116,13 +116,14 @@ sap.ui.define([
 			);
 			var oAppComponent = Utils.getAppComponentForControl(oReferenceControl);
 			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oReferenceControl});
-			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
 			var oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 			var sLayer = Layer.USER;
 			var aSuccessfulChanges = [];
 
 			function createChanges() {
 				var aChanges = [];
+				var aChangesToBeAdded = [];
 				return mPropertyBag.changes.reduce(function(pPromise, oPersonalizationChange) {
 					return pPromise
 					.then(function() {
@@ -134,7 +135,11 @@ sap.ui.define([
 						if (!oPersonalizationChange.transient && !mPropertyBag.ignoreVariantManagement) {
 							// check for preset variantReference
 							if (!oPersonalizationChange.changeSpecificData.variantReference) {
-								var sVariantManagementReference = getRelevantVariantManagementReference(oAppComponent, oPersonalizationChange.selectorControl, mPropertyBag.useStaticArea);
+								var sVariantManagementReference = getRelevantVariantManagementReference(
+									oAppComponent,
+									oPersonalizationChange.selectorControl,
+									mPropertyBag.useStaticArea
+								);
 								if (sVariantManagementReference) {
 									var sCurrentVariantReference = oVariantModel.oData[sVariantManagementReference].currentVariant;
 									oPersonalizationChange.changeSpecificData.variantReference = sCurrentVariantReference;
@@ -145,7 +150,10 @@ sap.ui.define([
 							delete oPersonalizationChange.changeSpecificData.variantReference;
 						}
 
-						oPersonalizationChange.changeSpecificData = Object.assign(oPersonalizationChange.changeSpecificData, {developerMode: false, layer: sLayer});
+						oPersonalizationChange.changeSpecificData = Object.assign(
+							oPersonalizationChange.changeSpecificData,
+							{developerMode: false, layer: sLayer}
+						);
 						return ChangesWriteAPI.create({
 							changeSpecificData: oPersonalizationChange.changeSpecificData,
 							selector: oPersonalizationChange.selectorControl
@@ -153,7 +161,7 @@ sap.ui.define([
 					})
 					.then(function(oCreatedChange) {
 						if (!oPersonalizationChange.transient) {
-							oCreatedChange = oFlexController.addPreparedChange(oCreatedChange, oAppComponent);
+							aChangesToBeAdded.push(oCreatedChange);
 						}
 
 						aChanges.push({
@@ -162,11 +170,15 @@ sap.ui.define([
 						});
 					})
 					.catch(function(oError) {
-						Log.error("A Change was not added successfully. Reason: ", oError.message);
+						Log.error("A Change was not created successfully. Reason: ", oError.message);
 					});
 				}, Promise.resolve())
 				.then(function() {
+					oChangePersistence.addChanges(aChangesToBeAdded, oAppComponent);
 					return aChanges;
+				})
+				.catch(function(oError) {
+					Log.error("Changes were not added successfully. Reason: ", oError.message);
 				});
 			}
 
@@ -188,7 +200,7 @@ sap.ui.define([
 						}
 					})
 					.catch(function(oError) {
-						oFlexController.deleteChange(oChange.changeInstance, oAppComponent);
+						oChangePersistence.deleteChange(oChange.changeInstance);
 						Log.error("A Change was not applied successfully. Reason: ", oError.message);
 					});
 				}, Promise.resolve());

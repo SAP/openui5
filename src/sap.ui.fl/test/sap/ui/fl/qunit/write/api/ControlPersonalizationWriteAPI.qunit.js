@@ -183,8 +183,9 @@ sap.ui.define([
 					}
 				};
 
+				this.oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oComp);
 				this.fnLogErrorStub = sandbox.stub(Log, "error");
-				this.fnAddPreparedChangeSpy = sandbox.spy(this.oFlexController, "addPreparedChange");
+				this.fnAddChangesSpy = sandbox.spy(this.oChangePersistence, "addChanges");
 				this.fnApplyChangeSpy = sandbox.spy(ChangesWriteAPI, "apply");
 
 				// registration is triggered by instantiation of XML View above
@@ -223,7 +224,7 @@ sap.ui.define([
 			})
 			.then(function(aSuccessfulChanges) {
 				assert.equal(this.fnLogErrorStub.callCount, 0, "no errors occurred");
-				assert.equal(this.fnAddPreparedChangeSpy.callCount, 2, "FlexController.addPreparedChange has been called twice");
+				assert.equal(this.fnAddChangesSpy.lastCall.args[0].length, 2, "ChangePersistence.addChanges was called with both changes");
 				assert.equal(this.fnApplyChangeSpy.callCount, 2, "ChangesWriteAPI.apply has been called twice");
 				assert.deepEqual(aSuccessfulChanges[0].getSelector(), {
 					id: "mockview--ObjectPageLayout",
@@ -241,9 +242,9 @@ sap.ui.define([
 			var fnApplyChangeStub = sandbox.stub(ChangesWriteAPI, "apply")
 			.callsFake(function() {
 				assert.strictEqual(
-					this.fnAddPreparedChangeSpy.callCount,
+					this.fnAddChangesSpy.lastCall.args[0].length,
 					2,
-					"Both changes have been created and added before one is applied"
+					"both changes have been created and added before one is applied"
 				);
 				return {success: true};
 			}.bind(this));
@@ -253,7 +254,7 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.ok(
-					this.fnAddPreparedChangeSpy.calledBefore(fnApplyChangeStub),
+					this.fnAddChangesSpy.calledBefore(fnApplyChangeStub),
 					"then the changes are created before they are applied"
 				);
 				assert.strictEqual(fnApplyChangeStub.callCount, 2, "ChangesWriteAPI.apply has been called twice");
@@ -269,11 +270,11 @@ sap.ui.define([
 			.then(function(aSuccessfulChanges) {
 				assert.equal(this.fnLogErrorStub.callCount, 2, "two errors occurred");
 				assert.equal(this.fnLogErrorStub.args[0][0],
-					"A Change was not added successfully. Reason: ", "then the correct error was logged");
+					"A Change was not created successfully. Reason: ", "then the correct error was logged");
 				assert.equal(this.fnLogErrorStub.args[0][1],
 					"No changeSpecificData available", "then the correct error was logged");
 				assert.equal(this.fnLogErrorStub.args[1][0],
-					"A Change was not added successfully. Reason: ", "then the correct error was logged");
+					"A Change was not created successfully. Reason: ", "then the correct error was logged");
 				assert.equal(this.fnLogErrorStub.args[1][1],
 					"No valid changeType", "then the correct error was logged");
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "ChangesWriteAPI.apply was called once");
@@ -292,7 +293,7 @@ sap.ui.define([
 			})
 			.then(function(aSuccessfulChanges) {
 				assert.equal(this.fnLogErrorStub.callCount, 1, "one error occurred");
-				assert.equal(this.fnLogErrorStub.args[0][0], "A Change was not added successfully. Reason: ",
+				assert.equal(this.fnLogErrorStub.args[0][0], "A Change was not created successfully. Reason: ",
 					"then the correct error was logged");
 				assert.equal(
 					this.fnLogErrorStub.args[0][1],
@@ -318,7 +319,7 @@ sap.ui.define([
 
 		QUnit.test("when calling 'add' with two valid variant changes, but one of them couldn't be applied", function(assert) {
 			var sErrorText = "My test error";
-			var fnDeleteChangeStub = sandbox.stub(this.oFlexController, "deleteChange");
+			var fnDeleteChangeStub = sandbox.stub(this.oChangePersistence, "deleteChange");
 			this.fnApplyChangeSpy.restore();
 			var oApplyStub = sandbox.stub(ChangesWriteAPI, "apply").callsFake(function(mPropertyBag) {
 				if (mPropertyBag.change.getChangeType() === "rename") {
@@ -348,15 +349,19 @@ sap.ui.define([
 			.then(function(aSuccessfulChanges) {
 				assert.equal(this.fnLogErrorStub.callCount, 0, "no error occurred");
 				assert.equal(this.fnApplyChangeSpy.callCount, 4, "ChangesWriteAPI.apply has been called four times");
-				assert.equal(this.fnAddPreparedChangeSpy.callCount, 4, "FlexController.addPreparedChange has been called four times");
+				assert.equal(
+					this.fnAddChangesSpy.lastCall.args[0].length,
+					4,
+					"ChangePersistence.addChanges has been called once with the four changes"
+				);
 				assert.strictEqual(aSuccessfulChanges.length, 4, "then all passed change contents were applied successfully");
-				assert.equal(this.fnAddPreparedChangeSpy.getCall(0).args[0].getVariantReference(), "mockVariantReference",
+				assert.equal(this.fnAddChangesSpy.lastCall.args[0][0].getVariantReference(), "mockVariantReference",
 					"first change belongs to the preset variant reference");
-				assert.equal(this.fnAddPreparedChangeSpy.getCall(1).args[0].getVariantReference(), "mockview--VariantManagement1",
+				assert.equal(this.fnAddChangesSpy.lastCall.args[0][1].getVariantReference(), "mockview--VariantManagement1",
 					"second change belongs to VariantManagement1");
-				assert.equal(this.fnAddPreparedChangeSpy.getCall(2).args[0].getVariantReference(), "mockview--VariantManagement1",
+				assert.equal(this.fnAddChangesSpy.lastCall.args[0][2].getVariantReference(), "mockview--VariantManagement1",
 					"third change belongs to VariantManagement1");
-				assert.equal(this.fnAddPreparedChangeSpy.getCall(3).args[0].getVariantReference(), "mockview--VariantManagement2",
+				assert.equal(this.fnAddChangesSpy.lastCall.args[0][3].getVariantReference(), "mockview--VariantManagement2",
 					"fourth change belongs to VariantManagement2");
 			}.bind(this));
 		});
@@ -379,19 +384,19 @@ sap.ui.define([
 			.then(function() {
 				assert.equal(this.fnLogErrorStub.callCount, 0, "no error occurred");
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "ChangesWriteAPI.apply has been called once");
-				assert.equal(this.fnAddPreparedChangeSpy.callCount, 1, "FlexController.addPreparedChange has been called once");
-				assert.deepEqual(this.fnAddPreparedChangeSpy.getCall(0).args[0].getSelector().id, "mockview--Button",
-					"FlexController.addPreparedChange was called with the correct renamed element");
-				assert.deepEqual(this.fnAddPreparedChangeSpy.getCall(0).args[0].getChangeType(), oChangeData.changeSpecificData.changeType,
-					"FlexController.addPreparedChange was called with the correct change type");
+				assert.equal(this.fnAddChangesSpy.callCount, 1, "ChangePersistence.addChanges has been called once");
+				assert.deepEqual(this.fnAddChangesSpy.lastCall.args[0][0].getSelector().id, "mockview--Button",
+					"ChangePersistence.addChanges was called with the correct renamed element");
+				assert.deepEqual(this.fnAddChangesSpy.lastCall.args[0][0].getChangeType(), oChangeData.changeSpecificData.changeType,
+					"ChangePersistence.addChanges was called with the correct change type");
 				assert.deepEqual(
-					this.fnAddPreparedChangeSpy.getCall(0).args[0].getTexts().newText.value, oChangeData.changeSpecificData.value,
-					"FlexController.addPreparedChange was called with the correct value"
+					this.fnAddChangesSpy.lastCall.args[0][0].getTexts().newText.value, oChangeData.changeSpecificData.value,
+					"ChangePersistence.addChanges was called with the correct value"
 				);
-				assert.notOk(this.fnAddPreparedChangeSpy.getCall(0).args[0].getVariantReference(),
-					"FlexController.addPreparedChange was called for a change without variant management");
-				assert.deepEqual(this.fnAddPreparedChangeSpy.getCall(0).args[1], this.oComp,
-					"FlexController.addPreparedChange was called with the correct component");
+				assert.notOk(this.fnAddChangesSpy.lastCall.args[0][0].getVariantReference(),
+					"ChangePersistence.addChanges was called for a change without variant management");
+				assert.deepEqual(this.fnAddChangesSpy.lastCall.args[1], this.oComp,
+					"ChangePersistence.addChanges was called with the correct component");
 			}.bind(this));
 		});
 
@@ -443,7 +448,7 @@ sap.ui.define([
 			})
 			.then(function(aSuccessfulChanges) {
 				assert.equal(this.fnLogErrorStub.callCount, 0, "no errors occurred");
-				assert.equal(this.fnAddPreparedChangeSpy.callCount, 0, "FlexController.addPreparedChange has not been called");
+				assert.equal(this.fnAddChangesSpy.callCount, 0, "ChangePersistence.addChanges has not been called");
 				assert.deepEqual(aSuccessfulChanges, [], "the function resolves with an empty array");
 			}.bind(this));
 		});
@@ -466,7 +471,11 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.equal(this.fnLogErrorStub.callCount, 0, "no error occurred");
-				assert.ok(this.fnAddPreparedChangeSpy.notCalled, "FlexController.addPreparedChange has not been called");
+				assert.strictEqual(
+					this.fnAddChangesSpy.lastCall.args[0].length,
+					0,
+					"ChangePersistence.addChanges is called with an empty array"
+				);
 			}.bind(this));
 		});
 

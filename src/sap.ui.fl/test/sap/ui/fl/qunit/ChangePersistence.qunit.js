@@ -1835,16 +1835,33 @@ sap.ui.define([
 			};
 
 			var oAddDirtyChangeSpy = sandbox.spy(this.oChangePersistence, "addDirtyChange");
-			var oAddRunTimeCreatedChangeAndUpdateDependenciesSpy = sandbox.stub(this.oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
+			var oAddRunTimeCreatedChangeAndUpdateDependenciesSpy =
+				sandbox.stub(this.oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
 
 			var newChange1 = this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
 			var newChange2 = this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
 			var newChange3 = this.oChangePersistence.addChange(oChangeContent3, this._oComponentInstance);
 
-			assert.deepEqual(oAddDirtyChangeSpy.getCall(0).args[0], oChangeContent1, "then addDirtyChange called with the change content 1");
-			assert.deepEqual(oAddDirtyChangeSpy.getCall(1).args[0], oChangeContent2, "then addDirtyChange called with the change content 2");
-			assert.deepEqual(oAddDirtyChangeSpy.getCall(2).args[0], oChangeContent3, "then addDirtyChange called with the change content 3");
-			assert.equal(oAddRunTimeCreatedChangeAndUpdateDependenciesSpy.callCount, 3, "_addRunTimeCreatedChangeAndUpdateDependencies is called three times");
+			assert.deepEqual(
+				oAddDirtyChangeSpy.getCall(0).args[0],
+				oChangeContent1,
+				"then addDirtyChange called with the change content 1"
+			);
+			assert.deepEqual(
+				oAddDirtyChangeSpy.getCall(1).args[0],
+				oChangeContent2,
+				"then addDirtyChange called with the change content 2"
+			);
+			assert.deepEqual(
+				oAddDirtyChangeSpy.getCall(2).args[0],
+				oChangeContent3,
+				"then addDirtyChange called with the change content 3"
+			);
+			assert.equal(
+				oAddRunTimeCreatedChangeAndUpdateDependenciesSpy.callCount,
+				3,
+				"_addRunTimeCreatedChangeAndUpdateDependencies is called three times"
+			);
 			aChanges = this.oChangePersistence._aDirtyChanges;
 			var mChangesEntries = this.oChangePersistence._mChangesEntries;
 			assert.ok(aChanges);
@@ -1855,6 +1872,63 @@ sap.ui.define([
 			assert.strictEqual(mChangesEntries.Gizorillus2, newChange2);
 			assert.strictEqual(aChanges[2], newChange3);
 			assert.strictEqual(mChangesEntries.Gizorillus3, newChange3);
+		});
+
+		QUnit.test("When call addChanges with 3 changes, 3 new changes are returned and the dependencies map also got updated", function(assert) {
+			var aChangeContents = [{
+				fileName: "Gizorillus1",
+				layer: Layer.VENDOR,
+				fileType: "change",
+				changeType: "addField",
+				selector: {id: "control1"},
+				content: {},
+				originalLanguage: "DE"
+			},
+			{
+				fileName: "Gizorillus2",
+				layer: Layer.VENDOR,
+				fileType: "change",
+				changeType: "removeField",
+				selector: {id: "control1"},
+				content: {},
+				originalLanguage: "DE"
+			},
+			{
+				fileName: "Gizorillus3",
+				layer: Layer.VENDOR,
+				fileType: "change",
+				changeType: "addField",
+				selector: {id: "control1"},
+				content: {},
+				originalLanguage: "DE"
+			}];
+
+			var oAddDirtyChangesSpy = sandbox.spy(this.oChangePersistence, "addDirtyChanges");
+			var oAddRunTimeCreatedChangeAndUpdateDependenciesSpy
+				= sandbox.stub(this.oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
+
+			var aNewChanges = this.oChangePersistence.addChanges(aChangeContents, this._oAppComponentInstance);
+
+			assert.deepEqual(
+				oAddDirtyChangesSpy.getCall(0).args[0],
+				aChangeContents,
+				"then addDirtyChanges called with the change content array"
+			);
+			assert.equal(
+				oAddRunTimeCreatedChangeAndUpdateDependenciesSpy.callCount,
+				3,
+				"_addRunTimeCreatedChangeAndUpdateDependencies is called three times"
+			);
+			var aChanges = this.oChangePersistence._aDirtyChanges;
+			var mChangesEntries = this.oChangePersistence._mChangesEntries;
+			assert.ok(aChanges);
+			assert.strictEqual(aChanges.length, 3);
+			assert.strictEqual(aChanges[0], aNewChanges[0]);
+			assert.strictEqual(mChangesEntries.Gizorillus1, aNewChanges[0]);
+			assert.strictEqual(aChanges[1], aNewChanges[1]);
+			assert.strictEqual(mChangesEntries.Gizorillus2, aNewChanges[1]);
+			assert.strictEqual(aChanges[2], aNewChanges[2]);
+			assert.strictEqual(mChangesEntries.Gizorillus3, aNewChanges[2]);
 		});
 
 		QUnit.test("Shall add propagation listener on the app component if an embedded component is passed", function(assert) {

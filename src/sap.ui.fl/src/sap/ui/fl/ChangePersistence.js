@@ -461,6 +461,12 @@ sap.ui.define([
 		});
 	};
 
+	function finalizeChangeCreation(oChange, oAppComponent) {
+		this._addRunTimeCreatedChangeAndUpdateDependencies(oAppComponent, oChange);
+		this._mChangesEntries[oChange.getId()] = oChange;
+		this._addPropagationListener(oAppComponent);
+	}
+
 	/**
 	 * Adds a new change and returns the id of the new change.
 	 *
@@ -471,20 +477,35 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.addChange = function(vChange, oAppComponent) {
 		var oChange = this.addDirtyChange(vChange);
-		this._addRunTimeCreatedChangeAndUpdateDependencies(oAppComponent, oChange);
-		this._mChangesEntries[oChange.getId()] = oChange;
-		this._addPropagationListener(oAppComponent);
+		finalizeChangeCreation.call(this, oChange, oAppComponent);
 		return oChange;
+	};
+
+	/**
+	 * Adds new changes and returns the ids of the new changes.
+	 *
+	 * @param {object[]} aChanges - Array with complete and finalized JSON object representation the file content of the changes or Change instances
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} the newly created changes
+	 * @public
+	 */
+	ChangePersistence.prototype.addChanges = function(aChanges, oAppComponent) {
+		var aNewChanges = this.addDirtyChanges(aChanges);
+		aNewChanges.forEach(function(oChange) {
+			finalizeChangeCreation.call(this, oChange, oAppComponent);
+		}.bind(this));
+		return aNewChanges;
 	};
 
 	/**
 	 * Adds a new dirty change.
 	 *
 	 * @param {object} vChange - JSON object of change or change object
+	 * @param {boolean} [bSkipAddToState] - If set to true, the change won't be added to the FlexState
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} The prepared change object
 	 * @public
 	 */
-	ChangePersistence.prototype.addDirtyChange = function(vChange) {
+	ChangePersistence.prototype.addDirtyChange = function(vChange, bSkipAddToState) {
 		var oNewChange;
 		if (typeof vChange.isA === "function" && vChange.isA("sap.ui.fl.apply._internal.flexObjects.FlexObject")) {
 			oNewChange = vChange;
@@ -495,9 +516,26 @@ sap.ui.define([
 		// don't add the same change twice
 		if (this._aDirtyChanges.indexOf(oNewChange) === -1) {
 			this._aDirtyChanges.push(oNewChange);
-			FlexState.addDirtyFlexObject(this._mComponent.name, oNewChange);
+			if (!bSkipAddToState) {
+				FlexState.addDirtyFlexObject(this._mComponent.name, oNewChange);
+			}
 		}
 		return oNewChange;
+	};
+
+	/**
+	 * Adds new dirty changes.
+	 *
+	 * @param {object[]} aChanges - JSON objects of changes or change objects
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} The prepared change objects
+	 * @public
+	 */
+	ChangePersistence.prototype.addDirtyChanges = function(aChanges) {
+		var aNewChanges = aChanges.map(function(oChange) {
+			return this.addDirtyChange(oChange, true);
+		}.bind(this));
+		FlexState.addDirtyFlexObjects(this._mComponent.name, aNewChanges);
+		return aNewChanges;
 	};
 
 	/**
@@ -853,8 +891,9 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange the change to be deleted
 	 * @param {boolean} [bRunTimeCreatedChange] set if the change was created at runtime
+	 * @param {boolean} [bSkipRemoveFromFlexState] set if the change should not be removed from the FlexState
 	 */
-	ChangePersistence.prototype.deleteChange = function(oChange, bRunTimeCreatedChange) {
+	ChangePersistence.prototype.deleteChange = function(oChange, bRunTimeCreatedChange, bSkipRemoveFromFlexState) {
 		var nIndexInDirtyChanges = this._aDirtyChanges.indexOf(oChange);
 
 		if (nIndexInDirtyChanges > -1) {
@@ -862,7 +901,9 @@ sap.ui.define([
 				return;
 			}
 			this._aDirtyChanges.splice(nIndexInDirtyChanges, 1);
-			FlexState.removeDirtyFlexObject(this._mComponent.name, oChange);
+			if (!bSkipRemoveFromFlexState) {
+				FlexState.removeDirtyFlexObject(this._mComponent.name, oChange);
+			}
 			this._deleteChangeInMap(oChange, bRunTimeCreatedChange);
 			return;
 		}
@@ -870,6 +911,22 @@ sap.ui.define([
 		oChange.markForDeletion();
 		this.addDirtyChange(oChange);
 		this._deleteChangeInMap(oChange, bRunTimeCreatedChange);
+	};
+
+	/**
+	 * Prepares multiple changes to be deleted with the next call to
+	 * @see {ChangePersistence#saveDirtyChanges};
+	 *
+	 * Removal from the FlexState happens in one go to trigger only one invalidation.
+	 *
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges the changes to be deleted
+	 * @param {boolean} [bRunTimeCreatedChanges] set if the change was created at runtime
+	 */
+	ChangePersistence.prototype.deleteChanges = function(aChanges, bRunTimeCreatedChanges) {
+		aChanges.forEach(function(oChange) {
+			this.deleteChange(oChange, bRunTimeCreatedChanges, true);
+		}.bind(this));
+		FlexState.removeDirtyFlexObjects(this._mComponent.name, aChanges);
 	};
 
 	ChangePersistence.prototype.removeChange = function(oChange) {
@@ -993,11 +1050,11 @@ sap.ui.define([
 			return bChangeValid;
 		});
 
+		FlexState.removeDirtyFlexObjects(this._mComponent.name, aChangesToBeRemoved);
 		aChangesToBeRemoved.forEach(function(oChange) {
 			var nIndex = aDirtyChanges.indexOf(oChange);
 			aDirtyChanges.splice(nIndex, 1);
-			FlexState.removeDirtyFlexObject(this._mComponent.name, oChange);
-		}.bind(this));
+		});
 
 		return Promise.resolve(aChangesToBeRemoved);
 	};

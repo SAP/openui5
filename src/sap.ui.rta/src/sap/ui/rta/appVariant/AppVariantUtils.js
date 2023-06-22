@@ -332,13 +332,10 @@ sap.ui.define([
 	};
 
 	AppVariantUtils.addChangesToPersistence = function(aAllInlineChanges, vSelector) {
-		aAllInlineChanges.forEach(function(oChange) {
-			return PersistenceWriteAPI.add({
-				change: oChange,
-				selector: vSelector
-			});
+		PersistenceWriteAPI.add({
+			flexObjects: aAllInlineChanges,
+			selector: vSelector
 		});
-
 		return Promise.resolve();
 	};
 

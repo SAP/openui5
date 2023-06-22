@@ -302,7 +302,6 @@ sap.ui.define([
 	 * Otherwise it will be marked for deletion.
 	 *
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - the change to be deleted
-	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
 	 */
 	FlexController.prototype.deleteChange = function(oChange) {
 		this._oChangePersistence.deleteChange(oChange);

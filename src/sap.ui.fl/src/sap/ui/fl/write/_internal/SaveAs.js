@@ -153,13 +153,15 @@ sap.ui.define([
 	}
 
 	function _deleteDescrChangesFromPersistence(vSelector) {
+		var aChangesToBeDeleted = [];
 		// In case of app variant, both persistences hold descriptor changes and have to be removed from one of the persistences
 		_getDirtyDescrChanges(vSelector).forEach(function(oChange) {
 			if (DescriptorChangeTypes.getChangeTypes().includes(oChange.getChangeType())) {
-				// In case there are UI changes, they will be sent to the backend in the last resolved promise and will be removed from the persistence
-				ChangesController.getFlexControllerInstance(vSelector)._oChangePersistence.deleteChange(oChange);
+				// If there are UI changes, they are sent to the backend in the last resolved promise and removed from the persistence
+				aChangesToBeDeleted.push(oChange);
 			}
 		});
+		ChangesController.getFlexControllerInstance(vSelector)._oChangePersistence.deleteChanges(aChangesToBeDeleted);
 	}
 
 	function _addPackageAndTransport(oAppVariant, mPropertyBag) {
