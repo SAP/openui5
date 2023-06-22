@@ -67,7 +67,7 @@ sap.ui.define([
 				width: "70%",
 				tooltip: "{$field>/tooltip}",
 				autocomplete: false,
-				fieldGroupIds: [oContentFactory.getField().getId()], // use FieldGroup to fire change only if focus leaved complete Field
+				fieldGroupIds: { path: "$field>/fieldGroupIds", formatter: _setFieldGroupIds }, // use FieldGroup to fire change only if focus leaved complete Field
 				ariaDescribedBy: [sInvisibleTextId],
 				change: oContentFactory.getHandleContentChange(),
 				liveChange: oContentFactory.getHandleContentLiveChange()
@@ -123,7 +123,7 @@ sap.ui.define([
 				showValueHelp: false,
 				width: "70%",
 				tooltip: "{$field>/tooltip}",
-				fieldGroupIds: [oContentFactory.getField().getId()], // use FieldGroup to fire change only if focus leaved complete Field
+				fieldGroupIds: { path: "$field>/fieldGroupIds", formatter: _setFieldGroupIds }, // use FieldGroup to fire change only if focus leaved complete Field
 				ariaDescribedBy: [sInvisibleTextId],
 				tokens: { path: "$field>/conditions", template: oToken, filters: [oFilter] },
 				dependents: [oToken], // to destroy it if MultiInput is destroyed
@@ -174,7 +174,7 @@ sap.ui.define([
 					width: "30%",
 					tooltip: "{$field>/tooltip}",
 					autocomplete: false,
-					fieldGroupIds: [oContentFactory.getField().getId()], // use FieldGroup to fire change only if focus leaved complete Field
+					fieldGroupIds: { path: "$field>/fieldGroupIds", formatter: _setFieldGroupIds }, // use FieldGroup to fire change only if focus leaved complete Field
 					ariaDescribedBy: [sInvisibleTextId],
 					change: oContentFactory.getHandleContentChange(),
 					liveChange: oContentFactory.getHandleContentLiveChange(),
@@ -246,6 +246,24 @@ sap.ui.define([
 		} else {
 			return "";
 		}
+
+	}
+
+	function _setFieldGroupIds(aFieldGroupIds) { // gets FieldGroupIds from Field
+
+		var oField = this.getParent();
+
+		if (oField) {
+			aFieldGroupIds.push(oField.getId()); // use Field Id as FieldGroup of Field
+		} else {
+			// parent not already assigned, determine ID from own ID
+			var sId = this.getId();
+			var iIndex = sId.lastIndexOf("-inner");
+			sId = sId.slice(0, iIndex);
+			aFieldGroupIds.push(sId); // use Field Id as FieldGroup of Field
+		}
+
+		return aFieldGroupIds;
 
 	}
 

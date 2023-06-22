@@ -166,6 +166,7 @@ sap.ui.define([
 				showValueHelp: "{$field>/_fieldHelpEnabled}",
 				ariaAttributes: "{$field>/_ariaAttributes}",
 				width: "100%",
+				// fieldGroupIds: are taken from parent if not automatically set (see Element.prototype._getFieldGroupIds) -> so no binding needed
 				tooltip: "{$field>/tooltip}",
 				autocomplete: false,
 				change: oContentFactory.getHandleContentChange(),
@@ -211,6 +212,7 @@ sap.ui.define([
 				valueHelpIconSrc: oContentFactory.getFieldHelpIcon(),
 				ariaAttributes: "{$field>/_ariaAttributes}",
 				width: "100%",
+				// fieldGroupIds: are taken from parent if not automatically set (see Element.prototype._getFieldGroupIds) -> so no binding needed
 				tooltip: "{$field>/tooltip}",
 				tokens: { path: "$field>/conditions", template: oToken },
 				dependents: [oToken], // to destroy it if MultiInput is destroyed
@@ -249,6 +251,7 @@ sap.ui.define([
 				valueStateText: "{$field>/valueStateText}",
 				width: "100%",
 				rows: 4,
+				// fieldGroupIds: are taken from parent if not automatically set (see Element.prototype._getFieldGroupIds) -> so no binding needed
 				tooltip: "{$field>/tooltip}",
 				change: oContentFactory.getHandleContentChange(),
 				liveChange: oContentFactory.getHandleContentLiveChange()
@@ -275,6 +278,7 @@ sap.ui.define([
 				textDirection: "{$field>/textDirection}",
 				wrapping: "{$field>/multipleLines}",
 				width: "100%",
+				// fieldGroupIds: are taken from parent if not automatically set (see Element.prototype._getFieldGroupIds) -> so no binding needed
 				tooltip: "{$field>/tooltip}",
 				emptyIndicatorMode: EmptyIndicatorMode.Auto
 			});
@@ -296,6 +300,7 @@ sap.ui.define([
 				text: { path: "$field>/conditions", type: oConditionsType },
 				textAlign: "{$field>/textAlign}",
 				textDirection: "{$field>/textDirection}",
+				// fieldGroupIds: are taken from parent if not automatically set (see Element.prototype._getFieldGroupIds) -> so no binding needed
 				tooltip: "{$field>/tooltip}",
 				emptyIndicatorMode: EmptyIndicatorMode.Auto
 			});
@@ -327,6 +332,7 @@ sap.ui.define([
 				emptyIndicatorMode: EmptyIndicatorMode.Auto,
 				renderMode: TokenizerRenderMode.Narrow,
 				width: "100%",
+				// fieldGroupIds: are taken from parent if not automatically set (see Element.prototype._getFieldGroupIds) -> so no binding needed
 				tooltip: "{$field>/tooltip}",
 				tokens: { path: "$field>/conditions", template: oToken },
 				dependents: [oToken] // to destroy it if Control is destroyed
