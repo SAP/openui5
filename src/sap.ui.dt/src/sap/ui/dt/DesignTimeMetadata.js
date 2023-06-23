@@ -151,6 +151,7 @@ function(
 				return DOMUtil.getDomRefForCSSSelector(oElementDomRef, vDomRef);
 			}
 		}
+		return undefined;
 	};
 
 	/**
@@ -271,6 +272,7 @@ function(
 		if (oLibResourceBundle && oLibResourceBundle.hasText(sKey)) {
 			return oLibResourceBundle.getText(sKey, aArgs);
 		}
+		return undefined;
 	};
 
 	/**
@@ -301,6 +303,7 @@ function(
 		if (fnResponsibleElement) {
 			return fnResponsibleElement(oElement);
 		}
+		return undefined;
 	};
 
 	/**

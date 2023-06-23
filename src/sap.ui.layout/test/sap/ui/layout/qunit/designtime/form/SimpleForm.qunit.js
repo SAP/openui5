@@ -387,7 +387,7 @@ sap.ui.define([
 				xmlView: buildXMLForSimpleForm(),
 				jsOnly: true,
 				action: {
-					name: "Remove",
+					name: "remove",
 					control: function(oView) {
 						return getGroup(getSimpleForm(oView));
 					},
