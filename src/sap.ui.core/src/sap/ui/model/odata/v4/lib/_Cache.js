@@ -3364,20 +3364,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the element with the given predicate from $byPredicate of the cache's element list.
-	 *
-	 * @param {string} sPredicate - The predicate
-	 * @throws {Error}
-	 *   If the cache is shared
-	 *
-	 * @public
-	 */
-	_CollectionCache.prototype.removeKeptElement = function (sPredicate) {
-		this.checkSharedRequest();
-		delete this.aElements.$byPredicate[sPredicate];
-	};
-
-	/**
 	 * Requests the elements in the given range and places them into the aElements list. Calculates
 	 * the key predicates for all entities in the result before the promise is resolved. While the
 	 * request is running, all indices in this range contain the Promise.

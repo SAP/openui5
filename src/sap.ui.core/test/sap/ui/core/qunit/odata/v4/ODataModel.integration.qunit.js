@@ -43665,9 +43665,6 @@ sap.ui.define([
 	// requested.
 	//
 	// Do likewise for selection which implicitly keeps alive (JIRA: CPOUI5ODATAV4-2053).
-	//
-	// If a hidden context loses its keepAlive status, remove its data from the cache.
-	// BCP: 002075129400004414772023
 [false, true].forEach(function (bImplicitly) {
 	var sTitle = "CPOUI5ODATAV4-488: Refresh w/" + (bImplicitly ? " implicitly" : "")
 			+ " kept-alive context";
@@ -43830,18 +43827,6 @@ sap.ui.define([
 				that.waitForChanges(assert, "Step 3: request side effects with kept contexts")
 			]);
 		}).then(function () {
-			that.oView.byId("objectPage").setBindingContext(null);
-			// code under test (BCP: 002075129400004414772023)
-			oKeptContext.setKeepAlive(false);
-			if (bImplicitly) {
-				oKeptContext.setSelected(false);
-			}
-
-			that.oLogMock.expects("error")
-				.withArgs("Failed to drill-down into ('1'), invalid segment: ('1')");
-
-			assert.strictEqual(oKeptContext.getValue(), undefined, "entity data is deleted");
-
 			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '2' or SalesOrderID eq '4'"
 					+ "&$select=GrossAmount,SalesOrderID&$top=2", {
 					value : [{
@@ -43855,6 +43840,10 @@ sap.ui.define([
 				.expectChange("grossAmount", ["149.40", "789.40"])
 				.expectChange("objectPageGrossAmount", null)
 				.expectChange("objectPageNote", null);
+
+			that.oView.byId("objectPage").setBindingContext(null);
+			oKeptContext.setKeepAlive(false);
+			oKeptContext.setSelected(false);
 
 			return Promise.all([
 				// code under test
@@ -45140,100 +45129,6 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
-
-	//*********************************************************************************************
-	// Scenario: Flexible Column Layout, ODataModel#getKeepAliveContext
-	// Object page requests a kept-alive context. The context's keep-alive status is removed, either
-	// still in the temporary binding or hidden in the $$getKeepAliveContext binding. Later a
-	// kept-alive context for the same path is requested; its data must be read from the server
-	// again.
-	// BCP: 441477 / 2023 (002075129400004414772023)
-[false, true].forEach(function (bTemporary) {
-	var sTitle = "BCP: 441477 / 2023: getKeepAliveContext, temporary=" + bTemporary;
-
-	QUnit.test(sTitle, function (assert) {
-		var oContext,
-			oListBinding,
-			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
-			oObjectPage,
-			sView = '\
-<Table id="list" growing="true" growingThreshold="1"\
-		items="{path : \'/Artists\', parameters : {$$getKeepAliveContext : true},\
-			suspended : true}">\
-	<Text id="listName" text="{Name}"/>\
-</Table>\
-<FlexBox id="objectPage">\
-	<Text id="name" text="{Name}"/>\
-</FlexBox>',
-			that = this;
-
-		this.expectChange("listName", [])
-			.expectChange("name");
-
-		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("Artists(ArtistID='3',IsActiveEntity=false)"
-					+ "?$select=ArtistID,IsActiveEntity,Name", {
-					ArtistID : "3",
-					IsActiveEntity : false,
-					Name : "The Beatles"
-				})
-				.expectChange("name", "The Beatles");
-
-			oContext = oModel.getKeepAliveContext("/Artists(ArtistID='3',IsActiveEntity=false)");
-			oObjectPage = that.oView.byId("objectPage");
-			oObjectPage.setBindingContext(oContext);
-
-			return that.waitForChanges(assert, "1st getKeepAliveContext");
-		}).then(function () {
-			if (!bTemporary) {
-				that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name"
-						+ "&$skip=0&$top=1", {
-						value : [{
-							ArtistID : "1",
-							IsActiveEntity : true,
-							Name : "The Who"
-						}]
-					})
-					.expectChange("listName", ["The Who"]);
-
-				oListBinding = that.oView.byId("list").getBinding("items");
-				oListBinding.resume();
-
-				return that.waitForChanges(assert, "transfer to the list");
-			}
-		}).then(function () {
-			if (!bTemporary) {
-				assert.deepEqual(oListBinding.getAllCurrentContexts().map(getPath), [
-					"/Artists(ArtistID='1',IsActiveEntity=true)",
-					"/Artists(ArtistID='3',IsActiveEntity=false)" // now hidden in the list :-)
-				]);
-			}
-
-			that.expectChange("name", null);
-
-			// code under test
-			oContext.setKeepAlive(false);
-
-			// enforce a rerendering which destroys the context if not in the temporary binding
-			oObjectPage.setBindingContext(null);
-
-			return that.waitForChanges(assert, "setKeepAlive(false)");
-		}).then(function () {
-			that.expectRequest("Artists(ArtistID='3',IsActiveEntity=false)"
-					+ "?$select=ArtistID,IsActiveEntity,Name", {
-					ArtistID : "3",
-					IsActiveEntity : false,
-					Name : "The Beatles *"
-				})
-				.expectChange("name", "The Beatles *");
-
-			oContext = oModel.getKeepAliveContext("/Artists(ArtistID='3',IsActiveEntity=false)");
-			oObjectPage.setBindingContext(oContext);
-
-			return that.waitForChanges(assert, "2nd getKeepAliveContext");
-		});
-	});
-});
 
 	//*********************************************************************************************
 	// Scenario: List report with absolute binding, object page with a late property. Ensure that
