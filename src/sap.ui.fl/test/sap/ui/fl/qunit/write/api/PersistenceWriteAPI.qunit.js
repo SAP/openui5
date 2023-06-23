@@ -281,12 +281,14 @@ sap.ui.define([
 			var oFlexInfo = {
 				isResetEnabled: true
 			};
-			var oPersistenceWriteGetFlexInfoStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves(new Promise(function(resolve) {
-				// Delay resolution to simulate a slow call
-				setTimeout(function() {
-					resolve(oFlexInfo);
-				}, 0);
-			}));
+			var oPersistenceWriteGetFlexInfoStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").callsFake(function() {
+				return new Promise(function(resolve) {
+					// Delay resolution to simulate a slow call
+					setTimeout(function() {
+						resolve(oFlexInfo);
+					}, 0);
+				});
+			});
 			var mPropertyBag = { foo: "bar" };
 			return PersistenceWriteAPI.save(mPropertyBag).then(function(oFlexObject) {
 				assert.equal(oFlexObjectStateSaveStub.callCount, 1, "the FlexObjectState save method was called");
