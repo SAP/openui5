@@ -1173,6 +1173,8 @@ function(
 			decorative: false,
 			press: function () {
 				if (that.getValue() !== "") {
+					that.setValue("");
+
 					that.fireChange({
 						value: ""
 					});
@@ -1180,8 +1182,6 @@ function(
 					that.fireLiveChange({
 						value: ""
 					});
-
-					that.setValue("");
 
 					that._bClearButtonPressed = true;
 
