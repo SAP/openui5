@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	Control,
 	UIComponent,
@@ -41,7 +42,8 @@ sap.ui.define([
 	Utils,
 	Layer,
 	JSONModel,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -497,7 +499,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("persistAll", function(assert) {
-			var oPersistStub = sandbox.stub(CompVariantState, "persist");
+			var oPersistStub = sandbox.stub(CompVariantState, "persist")
+			.callsFake(FlQUnitUtils.resolveWithDelayedCallWhichMustNotBeInParallel(assert));
 			sandbox.stub(FlexState, "getCompVariantsMap").returns({
 				persistencyKey1: {},
 				persistencyKey2: {},
