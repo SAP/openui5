@@ -710,7 +710,7 @@ sap.ui.define([
 			}
 		}.bind(this));
 
-		this._announce(this._getResourceTextMDC("chart.PERSONALIZATION_DIALOG_REMOVE_ENTRY_ANNOUNCE")); //this._getRemoveButtonAnnouncementText());
+		this._announce(this._getResourceTextMDC("chart.PERSONALIZATION_DIALOG_REMOVE_ENTRY_ANNOUNCE"));
 
 		this._getP13nModel().setProperty("/items", aItems);
 		this._refreshP13nModel();
