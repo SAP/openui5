@@ -20,13 +20,13 @@
 			"unix"
 		],
 		"max-len": [
-			"warn",
+			"error",
 			{"code": 120, "ignoreUrls": true, "ignoreRegExpLiterals": true}
 		],
 		"no-console": "off",
 		"no-loop-func": "warn",
 		"no-prototype-builtins": "off",
-		"no-unused-vars": "warn",
+		"no-unused-vars": "error",
 		"no-var": "error",
 		"space-infix-ops": "error",
 		"quotes": [
