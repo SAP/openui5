@@ -229,6 +229,7 @@
 								text="{/text/previewUrlMessage}" textAlign="Center" visible="{= !${/previewUrl/value} }" />
 							<util:IFrame
 									id="sapUiRtaAddIFrameDialog_PreviewFrame"
+									height="100%"
 									title="{/text/previewFrameLabel}"
 									class="sapUiRtaAddIFrameDialogPreviewFrame"
 									visible="{= !!${/previewUrl/value} }"/>
