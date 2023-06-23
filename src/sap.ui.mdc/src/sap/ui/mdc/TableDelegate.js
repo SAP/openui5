@@ -437,6 +437,36 @@ sap.ui.define([
 		return [];
 	};
 
+	function setSelectedResponsiveTableConditions (oTable, aContexts) {
+		var aContextPaths = aContexts.map(function (oContext) {
+			return oContext.getPath();
+		});
+		oTable._oTable.removeSelections(true);
+		oTable._oTable.setSelectedContextPaths(aContextPaths);
+		oTable._oTable.getItems().forEach(function (oItem) {
+			var sPath = oItem.getBindingContextPath();
+			if (sPath && aContextPaths.indexOf(sPath) > -1) {
+				oItem.setSelected(true);
+			}
+		});
+	}
+
+	/**
+	 * Provides the possibility to set a selection state for the MDC table programmatically
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {array<sap.ui.model.Context>} aContexts The set of contexts which should be flagged as selected
+	 * @private
+ 	 * @throws {Error} When the delegate cannot support the table/select configuration.
+	 */
+	TableDelegate.setSelectedContexts = function (oTable, aContexts) {
+		if (oTable._isOfType(TableType.ResponsiveTable)) {
+			setSelectedResponsiveTableConditions(oTable, aContexts);
+		} else {
+			throw Error("Unsupported operation: TableDelegate does not support #setSelectedContexts for the given TableType");
+		}
+	};
+
 	/**
 	 * Clears the selection.
 	 *

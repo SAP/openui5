@@ -144,6 +144,15 @@ sap.ui.define([
 		this.fireSelectionChange(); // TODO: Only fire the event if the selection state has really changed!
 	};
 
+	ODataV4Selection.prototype.setSelectedContexts = function(aContexts) {
+		this.clearSelection();
+		var aNextContexts = this.getSelectionMode() === SelectionMode.Single ? aContexts.slice(0, 1) : aContexts;
+		aNextContexts.forEach(function(oContext) {
+			oContext.setSelected(true); // TODO: Handle illegal contexts?
+		});
+		this.fireSelectionChange(); // TODO: Only fire the event if the selection state has really changed!
+	};
+
 	function extendLastSelectionTo(oPlugin, oRow) {
 		if (!oPlugin._oRangeSelectionStartContext) {
 			return;

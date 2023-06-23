@@ -4090,6 +4090,43 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("_setSelectedContexts", function(assert) {
+		return this.oTable.initialized().then(() => {
+			this.oTable.setType(new ResponsiveTableType());
+			return this.oTable._fullyInitialized().then(() => {
+				const oDelegate = this.oTable.getControlDelegate();
+				sinon.spy(oDelegate, "setSelectedContexts");
+				const aContexts = [];
+				this.oTable._setSelectedContexts(aContexts);
+				assert.ok(oDelegate.setSelectedContexts.calledWith(this.oTable, aContexts), "Calls Delegate.setSelectedContexts with correct parameters");
+				oDelegate.setSelectedContexts.restore();
+			});
+		});
+	});
+
+	QUnit.test("_bindingChange", function (assert) {
+		sinon.spy(this.oTable, "fireEvent");
+		return this.oTable._fullyInitialized().then(() => {
+			this.oTable._onBindingChange();
+			assert.ok(this.oTable.fireEvent.calledWith("_bindingChange"), "Table fires expected event '_bindingChange'");
+			this.oTable.fireEvent.restore();
+		});
+	});
+
+	QUnit.test("_setInternalProperty", function(assert) {
+		return this.oTable._fullyInitialized().then(() => {
+			const oInnerTable = this.oTable._oTable;
+			const oInnerTableMetadata = oInnerTable.getMetadata();
+			sinon.spy(oInnerTableMetadata, "getProperty");
+			sinon.spy(oInnerTable, "setSelectionBehavior");
+			this.oTable._setInternalProperty("selectionBehavior", "Row");
+			assert.ok(oInnerTableMetadata.getProperty.calledWithExactly("selectionBehavior"), "Determines mutator using metadata.");
+			assert.ok(oInnerTable.setSelectionBehavior.calledWith("Row"), "Inner control's property mutator called correctly.");
+			oInnerTableMetadata.getProperty.restore();
+			oInnerTable.setSelectionBehavior.restore();
+		});
+	});
+
 	QUnit.module("Inbuilt filter initialization", {
 		createTable: function(mSettings) {
 			this.oTable = new Table(mSettings);

@@ -2,6 +2,7 @@
 sap.ui.define([
 	"../../table/QUnitUtils",
 	"../../util/createAppEnvironment",
+	"sap/ui/mdc/TableDelegate",
 	"sap/ui/mdc/odata/v4/TableDelegate",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
@@ -25,6 +26,7 @@ sap.ui.define([
 ], function(
 	TableQUnitUtils,
 	createAppEnvironment,
+	BaseTableDelegate,
 	TableDelegate,
 	Table,
 	GridTableType,
@@ -145,6 +147,44 @@ sap.ui.define([
 		return sType === "QuickAction" ? aQuickActions : aQuickActions[0];
 	}
 
+	function initTableForSelection (mSettings, fnBeforeInit) {
+		if (this.oTable) {
+			this.oTable.destroy();
+		}
+
+		this.oTable = new Table(Object.assign({
+			delegate: {
+				name: "odata.v4.TestDelegate",
+				payload: {
+					collectionPath: "/Products"
+				}
+			},
+			columns: [
+				new Column({
+					propertyKey: "Name",
+					header: new Text({
+						text: "Column A"
+					}),
+					template: new Text({
+						text: "{Name}"
+					})
+				})
+			],
+			models: new ODataModel({
+				serviceUrl: "/MyService/"
+			})
+		}, mSettings));
+
+		if (fnBeforeInit) {
+			fnBeforeInit(this.oTable);
+		}
+
+		this.oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		return this.oTable.initialized();
+	}
+
 	QUnit.module("Initialization of selection", {
 		before: function() {
 			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
@@ -161,43 +201,7 @@ sap.ui.define([
 		after: function() {
 			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
-		initTable: function(mSettings, fnBeforeInit) {
-			if (this.oTable) {
-				this.oTable.destroy();
-			}
-
-			this.oTable = new Table(Object.assign({
-				delegate: {
-					name: "odata.v4.TestDelegate",
-					payload: {
-						collectionPath: "/Products"
-					}
-				},
-				columns: [
-					new Column({
-						propertyKey: "Name",
-						header: new Text({
-							text: "Column A"
-						}),
-						template: new Text({
-							text: "{Name}"
-						})
-					})
-				],
-				models: new ODataModel({
-					serviceUrl: "/MyService/"
-				})
-			}, mSettings));
-
-			if (fnBeforeInit) {
-				fnBeforeInit(this.oTable);
-			}
-
-			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
-
-			return this.oTable.initialized();
-		}
+		initTable: initTableForSelection
 	});
 
 	QUnit.test("GridTableType", function(assert) {
@@ -1784,5 +1788,59 @@ sap.ui.define([
 		}).then(function() {
 			return fnTest(TableType.ResponsiveTable, false);
 		});
+	});
+
+	QUnit.test("setSelectedContexts", function (assert) {
+
+		const initTable = () => {
+			return initTableForSelection.call(this, {
+				selectionMode: TableSelectionMode.Single,
+				type: new GridTableType()
+			}).then((oTable) => new Promise((resolve) => {
+				oTable.attachEventOnce("_bindingChange", function () {
+					resolve(oTable);
+				});
+			}));
+		};
+
+		const testSelection = (oTable) => {
+			assert.ok(!oTable.getSelectedContexts().length, "No contexts are selected");
+			const oRowBinding = oTable.getRowBinding();
+			const oNextSelectedContext = oRowBinding.getAllCurrentContexts ? oRowBinding.getAllCurrentContexts()[1] : oRowBinding.getContexts()[1];
+			assert.ok(oNextSelectedContext, "A context is available for selection");
+			const aNextSelectedContexts = [oNextSelectedContext];
+			oTable._setSelectedContexts(aNextSelectedContexts);
+			return new Promise((resolve) => { setTimeout(resolve, 0); }).then(() => {
+				assert.ok(oTable.getSelectedContexts().indexOf(oNextSelectedContext) >= 0, "getSelectedContexts() changed successfully.");
+			});
+		};
+
+		return [
+			(oTable) => {
+				assert.ok(oTable._oTable.getPlugins().find((oPlugin) => oPlugin.isA("sap.ui.table.plugins.ODataV4Selection")), "sap.ui.table.plugins.ODataV4Selection configuration found.");
+				return testSelection(oTable);
+			},
+			(oTable) => {
+				oTable._enableV4LegacySelection();
+				return new Promise((resolve) => { setTimeout(resolve, 50); }).then(() => {
+					assert.ok(oTable._oTable.getPlugins().find((oPlugin) => oPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin")), "sap.ui.table.plugins.MultiSelectionPlugin configuration found.");
+					return testSelection(oTable);
+				});
+			},
+			(oTable) => {
+				sinon.stub(oTable._oTable, "getPlugins").returns([]);
+				assert.throws(() => oTable._setSelectedContexts([]), function (oError) {
+					return oError instanceof Error && oError.message === "Unsupported operation: TableDelegate does not support #setSelectedContexts for the given Table configuration";
+				}, "_setSelectedContexts throws expected error on unsupported table configuration.");
+				oTable._oTable.getPlugins.restore();
+			},
+			(oTable) => {
+				sinon.stub(oTable, "_isOfType").returns(false);
+				assert.throws(() => oTable._setSelectedContexts([]), function (oError) {
+					return oError instanceof Error && oError.message === "Unsupported operation: TableDelegate does not support #setSelectedContexts for the given TableType";
+				}, "_setSelectedContexts throws expected error on unsupported table types.");
+				oTable._isOfType.restore();
+			}
+		].reduce((oAccumulator, fnCallback) => (oAccumulator.then((oTable) => initTable().then(fnCallback))), Promise.resolve());
 	});
 });
