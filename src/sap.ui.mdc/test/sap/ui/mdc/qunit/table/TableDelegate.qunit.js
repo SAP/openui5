@@ -386,7 +386,7 @@ sap.ui.define([
 			return TableQUnitUtils.waitForBindingUpdate(oTable);
 		}).then(function() {
 			var aSorter = [new Sorter("Name_Path", true)];
-			aExpectedFilter = [FilterUtil.getFilterInfo(oTable.getControlDelegate().getTypeUtil(), oTable.getConditions(), oTable.getPropertyHelper().getProperties()).filters];
+			aExpectedFilter = [FilterUtil.getFilterInfo(oTable.getControlDelegate().getTypeMap(), oTable.getConditions(), oTable.getPropertyHelper().getProperties()).filters];
 			var oBindingInfo = {};
 
 			assert.deepEqual(oTable._oTable.getBindingInfo("rows").sorter, aSorter, "Correct sorter assigned");
