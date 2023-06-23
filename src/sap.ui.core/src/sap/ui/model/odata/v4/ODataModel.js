@@ -351,7 +351,6 @@ sap.ui.define([
 		this.oInterface = {
 			fetchEntityContainer : this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
 			fetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
-			fireMessageChange : this.fireMessageChange.bind(this),
 			fireDataReceived : this.fireDataReceived.bind(this),
 			fireDataRequested : this.fireDataRequested.bind(this),
 			fireSessionTimeout : function () {
@@ -370,7 +369,10 @@ sap.ui.define([
 				}
 			},
 			reportStateMessages : this.reportStateMessages.bind(this),
-			reportTransitionMessages : this.reportTransitionMessages.bind(this)
+			reportTransitionMessages : this.reportTransitionMessages.bind(this),
+			updateMessages : function (aOldMessages, aNewMessages) {
+				MessageManager.updateMessages(aOldMessages, aNewMessages);
+			}
 		};
 		this.oRequestor = _Requestor.create(this.sServiceUrl, this.oInterface, this.mHeaders,
 			mUriParameters, sODataVersion);
@@ -1706,10 +1708,6 @@ sap.ui.define([
 		}
 	};
 
-	ODataModel.prototype.fireMessageChange = function (mParameters) {
-		MessageManager.updateMessages(mParameters.oldMessages, mParameters.newMessages);
-	};
-
 	/**
 	 * Returns the model's bindings.
 	 *
@@ -2406,7 +2404,7 @@ sap.ui.define([
 			});
 		});
 		if (aNewMessages.length || aOldMessages.length) {
-			this.fireMessageChange({newMessages : aNewMessages, oldMessages : aOldMessages});
+			MessageManager.updateMessages(aOldMessages, aNewMessages);
 		}
 	};
 
@@ -2425,12 +2423,10 @@ sap.ui.define([
 		var that = this;
 
 		if (aMessages && aMessages.length) {
-			this.fireMessageChange({
-				newMessages : aMessages.map(function (oMessage) {
-					oMessage.transition = true;
-					return that.createUI5Message(oMessage, sResourcePath);
-				})
-			});
+			MessageManager.updateMessages(undefined, aMessages.map(function (oMessage) {
+				oMessage.transition = true;
+				return that.createUI5Message(oMessage, sResourcePath);
+			}));
 		}
 	};
 

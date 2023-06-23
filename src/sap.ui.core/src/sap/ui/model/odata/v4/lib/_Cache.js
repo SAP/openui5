@@ -187,7 +187,7 @@ sap.ui.define([
 				_Helper.removeByPath(that.mChangeRequests, sEntityPath, oRequestPromise);
 
 				if (aMessages.length) {
-					oModelInterface.fireMessageChange({newMessages : aMessages});
+					oModelInterface.updateMessages(undefined, aMessages);
 				}
 
 				delete oEntity["@$ui5.context.isDeleted"];
@@ -238,7 +238,7 @@ sap.ui.define([
 			aMessages = oModelInterface.getMessagesByPath(
 				_Helper.buildPath("/", that.sResourcePath, sEntityPath), true);
 
-			oModelInterface.fireMessageChange({oldMessages : aMessages});
+			oModelInterface.updateMessages(aMessages);
 
 			oEntity["@$ui5.context.isDeleted"] = true;
 			if (Array.isArray(vCacheData)) {

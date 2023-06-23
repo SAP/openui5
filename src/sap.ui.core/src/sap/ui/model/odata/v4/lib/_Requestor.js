@@ -2223,8 +2223,6 @@ sap.ui.define([
 	 * @param {function} oModelInterface.fetchMetadata
 	 *   A function that returns a SyncPromise which resolves with the metadata instance for a
 	 *   given meta path
-	 * @param {function} oModelInterface.fireMessageChange
-	 *   A function that fires the 'messageChange' event for the given messages
 	 * @param {function} oModelInterface.fireDataReceived
 	 *   A function that fires the 'dataReceived' event at the model with an optional parameter
 	 *   <code>oError</code>
@@ -2256,6 +2254,10 @@ sap.ui.define([
 	 *   A function to report OData state messages
 	 * @param {function} oModelInterface.reportTransitionMessages
 	 *   A function to report OData transition messages
+	 * @param {function(sap.ui.core.message.Message[],sap.ui.core.message.Message[]):void} oModelInterface.updateMessages
+	 *   A function to report messages to the MessageManager, expecting two arrays of
+	 *   {sap.ui.core.message.Message} as parameters. The first array should be the old messages and
+	 *   the second array the new messages.
 	 * @param {object} [mHeaders={}]
 	 *   Map of default headers; may be overridden with request-specific headers; certain
 	 *   OData V4 headers are predefined, but may be overridden by the default or
