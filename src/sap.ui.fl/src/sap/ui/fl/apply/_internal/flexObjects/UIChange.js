@@ -70,6 +70,13 @@ sap.ui.define([
 				},
 
 				/**
+				 * Whether the change is related to the standard variant, if variant dependent
+				 */
+				isChangeOnStandardVariant: {
+					type: "boolean"
+				},
+
+				/**
 				 * Indicates if the UIChange is saved to a variant
 				 */
 				savedToVariant: {
@@ -107,7 +114,8 @@ sap.ui.define([
 			selector: "selector",
 			dependentSelectors: "dependentSelector",
 			jsOnly: "jsOnly",
-			variantReference: "variantReference"
+			variantReference: "variantReference",
+			isChangeOnStandardVariant: "isChangeOnStandardVariant"
 		});
 	};
 

@@ -469,7 +469,19 @@ sap.ui.define([
 				fileName: "customVariant"
 			})],
 			responseKey: "variants",
-			testName: "custom variant"
+			testName: "a custom variant",
+			expectedVMReferences: [sVariantManagementReference],
+			expectedVariantsCount: 2
+		},
+		{
+			flexObjects: [createVariant({
+				variantReference: "someDeletedVariant",
+				fileName: "customVariant"
+			})],
+			responseKey: "variants",
+			testName: "a custom variant based on a deleted variant",
+			expectedVMReferences: [sVariantManagementReference],
+			expectedVariantsCount: 2
 		},
 		{
 			flexObjects: [
@@ -478,21 +490,56 @@ sap.ui.define([
 					fileName: "customVariant"
 				}),
 				createVariant({
-					variantReference: "secondVariant",
+					variantManagementReference: "secondVariant",
 					fileName: "customVariant2"
 				})
 			],
 			responseKey: "variants",
-			testName: "multiple custom variants"
+			testName: "multiple custom variants for different vm controls",
+			expectedVMReferences: [sVariantManagementReference, "secondVariant"],
+			expectedVariantsCount: 2
 		},
 		{
 			flexObjects: [FlexObjectFactory.createUIChange({
-				id: "someUIChange",
-				layer: Layer.CUSTOMER,
-				variantReference: sStandardVariantReference
+				variantReference: sVariantManagementReference,
+				id: "someUIChange"
 			})],
 			responseKey: "variantDependentControlChanges",
-			testName: "a UI change depending on the standard variant"
+			testName: "a UI change on the standard variant (legacy)",
+			expectedVMReferences: [sVariantManagementReference],
+			expectedVariantsCount: 1
+		},
+		{
+			flexObjects: [FlexObjectFactory.createUIChange({
+				variantReference: "id_1000000000000_123_flVariant",
+				id: "someUIChange"
+			})],
+			responseKey: "variantDependentControlChanges",
+			testName: "a UI change on a deleted non-standard variant (legacy)",
+			expectedVMReferences: [],
+			expectedVariantsCount: 0
+		},
+		{
+			flexObjects: [FlexObjectFactory.createUIChange({
+				variantReference: sVariantManagementReference,
+				id: "someUIChange",
+				isChangeOnStandardVariant: true
+			})],
+			responseKey: "variantDependentControlChanges",
+			testName: "a UI change on the standard variant",
+			expectedVMReferences: [sVariantManagementReference],
+			expectedVariantsCount: 1
+		},
+		{
+			flexObjects: [FlexObjectFactory.createUIChange({
+				variantReference: sVariantManagementReference,
+				id: "someUIChange",
+				isChangeOnStandardVariant: false
+			})],
+			responseKey: "variantDependentControlChanges",
+			testName: "a UI change on a deleted non-standard variant",
+			expectedVMReferences: [],
+			expectedVariantsCount: 0
 		},
 		{
 			flexObjects: [FlexObjectFactory.createUIChange({
@@ -503,7 +550,9 @@ sap.ui.define([
 				selector: { id: sStandardVariantReference}
 			})],
 			responseKey: "variantChanges",
-			testName: "a variant change (e.g. setTitle)"
+			testName: "a variant change (e.g. setTitle)",
+			expectedVMReferences: [],
+			expectedVariantsCount: 0
 		}].forEach(function(oTestInput) {
 			var sName = "when the storageResponse contains " + oTestInput.testName;
 			QUnit.test(sName, function(assert) {
@@ -532,18 +581,25 @@ sap.ui.define([
 				.then(function() {
 					var oVariantsMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
 					assert.ok(oInitialPrepareSpy.calledOnce, "then the initial prepare function is called");
+					var aVMRs = oTestInput.expectedVMReferences || [sVariantManagementReference];
 					assert.strictEqual(
-						oVariantsMap[sVariantManagementReference].variants[0].key,
-						sStandardVariantReference,
-						"then the standard variant is automatically added based on the existing variant"
+						Object.keys(oVariantsMap).length,
+						aVMRs.length,
+						"then the proper amount of variant management instances is created"
 					);
-					if (oTestInput.flexObjects.length === 2) {
+					// eslint-disable-next-line max-nested-callbacks
+					aVMRs.forEach(function(sVMR) {
 						assert.strictEqual(
-							oVariantsMap.secondVariant.variants[0].key,
-							"secondVariant",
+							oVariantsMap[sVMR].variants[0].key,
+							sVMR,
 							"then the standard variant is automatically added based on the existing variant"
 						);
-					}
+						assert.strictEqual(
+							oVariantsMap[sVMR].variants.length,
+							oTestInput.expectedVariantsCount,
+							"then the correct amount of variants is created"
+						);
+					});
 				});
 			});
 		});
@@ -599,6 +655,43 @@ sap.ui.define([
 					undefined,
 					"then the standard variant gets cleared"
 				);
+			});
+		});
+
+		QUnit.test("when there are changes referencing a deleted variant", function(assert) {
+			var sDeletedVariant = "deletedVariantRef";
+			var oUIChange = FlexObjectFactory.createUIChange({
+				id: "someUIChange",
+				layer: Layer.CUSTOMER,
+				variantReference: sDeletedVariant
+			});
+			var oSetTitleChange = FlexObjectFactory.createUIChange({
+				variantReference: sVariantManagementReference,
+				id: "someVariantChange",
+				fileType: "ctrl_variant_change",
+				changeType: "setTitle",
+				selector: { id: sDeletedVariant}
+			});
+			var oSetDefaultChange = FlexObjectFactory.createUIChange({
+				id: "setDefaultVariantChange",
+				layer: Layer.CUSTOMER,
+				changeType: "setDefault",
+				fileType: "ctrl_variant_management_change",
+				selector: {
+					id: sVariantManagementReference
+				},
+				content: {
+					defaultVariant: "anotherCustomVariant"
+				}
+			});
+			stubFlexObjectsSelector([oUIChange, oSetTitleChange, oSetDefaultChange]);
+			return FlexState.initialize({
+				componentId: sComponentId,
+				reference: sReference
+			})
+			.then(function() {
+				var oVariantMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+				assert.deepEqual(oVariantMap, {}, "no variant entry was created");
 			});
 		});
 	});
