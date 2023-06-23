@@ -21,8 +21,11 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/m/TableRenderer", "sap/m/Table"
 	 * @param {sap.m.upload.UploadSetTable} oControl an object representation of the control that should be rendered.
 	 */
 	UploadSetTableRenderer.render = function (oRm, oControl) {
-		oControl.addStyleClass("sapMUST");
+		oRm.openStart("div",oControl);
+		oRm.class("sapMUST");
+		oRm.openEnd();
 		TableRenderer.render.apply(this,arguments);
+		oRm.close("div");
 	};
 
 	return UploadSetTableRenderer;
