@@ -11,7 +11,7 @@
 			</items>
 		</MenuItem>
 		<MenuItem text="Remove"/>
-		<MenuItem text="Rename"/>
+		<MenuItem id="renameButton" enabled="false" press="onRenameDocument" text="Rename"/>
 		<MenuItem id="editUrlButton" text="Edit URL" enabled="false" press="onEditUrl"/>
 		<MenuItem text="Link To" startsSection="true"/>
 		<MenuItem text="Copy To"/>

@@ -25,9 +25,18 @@ sap.ui.define([
 			this.documentTypes = this.getFileCategories();
 
 			this._oFilesTobeuploaded = [];
-
+			this.loadOverflowMenu();
 			var oMockServer = new MockServer();
 			oMockServer.init();
+		},
+		loadOverflowMenu: function () {
+			Fragment.load({
+				id: this.getView().getId(),
+				name: "sap.m.uploadSetTableDemo.menu",
+				controller: this
+			}).then(function(oMenu) {
+				this._oMenuFragment = oMenu;
+			}.bind(this));
 		},
 		onPersoButtonPressed: function () {
 			// personalization code
@@ -43,6 +52,7 @@ sap.ui.define([
 			var oChangeStatusBtn = this.byId("changeStatusButton");
 			var oCreateRevisionBtn = this.byId("createRevisionButton");
 			var oEditUrlBtn = this.byId("editUrlButton");
+			var oRenameBtn = this.byId("renameButton");
 
 			if (aSelectedItems.length > 0) {
 				oDownloadBtn.setEnabled(true);
@@ -55,7 +65,9 @@ sap.ui.define([
 			}
 			if (aSelectedItems.length === 1){
 				oEditUrlBtn.setEnabled(true);
+				oRenameBtn.setEnabled(true);
 			} else {
+				oRenameBtn.setEnabled(false);
 				oEditUrlBtn.setEnabled(false);
 			}
 		},
@@ -310,23 +322,8 @@ sap.ui.define([
 			}
 		},
 		onOverflowPress: function(oEvent) {
-			var oButton = oEvent.getSource(),
-			oView = this.getView();
-
-			// create menu
-			if (!this._oMenuFragment) {
-				this._oMenuFragment = Fragment.load({
-					id: oView.getId(),
-					name: "sap.m.uploadSetTableDemo.menu",
-					controller: this
-				}).then(function(oMenu) {
-					oMenu.openBy(oButton);
-							this._oMenuFragment = oMenu;
-							return this._oMenuFragment;
-				}.bind(this));
-			} else {
-				this._oMenuFragment.openBy(oButton);
-			}
+			var oButton = oEvent.getSource();
+			this._oMenuFragment.openBy(oButton);
 		},
 		openPreview: function(oEvent) {
 			var clickedControl = oEvent.getSource();
@@ -442,11 +439,11 @@ sap.ui.define([
 								item = obj;
 							}
 						});
-						oData[iUpdateIndex] = Object.assign(item, {
+						oData[iUpdateIndex] = Object.assign(item, !this.bRenameDocument ? {
 							fileName: sName,
-							url: sUrl,
-							documentType: sDocType
-						});
+							url:  sUrl,
+							documentType:  sDocType
+						} : { fileName: sName });
 						oModel.setProperty("/items", oData);
 						this.oWarningMessageDialog.close();
 						this.closeAddViaUrlFragment();
@@ -468,6 +465,9 @@ sap.ui.define([
 				} else {
 					MessageToast.show("No Changes found");
 				}
+				return;
+			} else if (this.bRenameDocument) {
+				this.showEditConfirmation();
 				return;
 			}
 			var oValidateObject = this._validateAddOrEditUrlDialog(),
@@ -501,15 +501,27 @@ sap.ui.define([
 					this._addViaUrlFragment = oPopover;
 					this.getView().addDependent(oPopover);
 					// if edit is clicked
-					var fileInfo = this.oEditDocumentInfo;
-					if (this.bEditDocument && fileInfo) {
+					var editFileInfo = this.oEditDocumentInfo;
+					var renameFileInfo = this.oRenameDocumentInfo;
+					if (this.bEditDocument && this.oEditDocumentInfo) {
 						sap.ui.getCore().byId('addViaUrlDialog--addViaUrlDialog').setTitle("Edit URL");
 						sap.ui.getCore().byId('addViaUrlDialog--addDocumentBtn').setText("Apply");
-						sap.ui.getCore().byId('addViaUrlDialog--urlInput').setValue(fileInfo.url);
-						sap.ui.getCore().byId('addViaUrlDialog--nameInput').setValue(fileInfo.name);
-						sap.ui.getCore().byId('addViaUrlDialog--docTypeCombobox').setValue(fileInfo.docType);
+						sap.ui.getCore().byId('addViaUrlDialog--urlInput').setValue(editFileInfo.url);
+						sap.ui.getCore().byId('addViaUrlDialog--nameInput').setValue(editFileInfo.name);
+						sap.ui.getCore().byId('addViaUrlDialog--docTypeCombobox').setValue(editFileInfo.docType);
 						sap.ui.getCore().byId('addViaUrlDialog--urlInputLabel').setRequired(false);
 						sap.ui.getCore().byId('addViaUrlDialog--docTypeComboboxLabel').setRequired(false);
+						sap.ui.getCore().byId('addViaUrlDialog--urlInput').setVisible(true);
+						sap.ui.getCore().byId('addViaUrlDialog--docTypeCombobox').setVisible(true);
+
+					}
+					if (this.bRenameDocument && renameFileInfo) {
+						sap.ui.getCore().byId('addViaUrlDialog--addViaUrlDialog').setTitle("Rename");
+						sap.ui.getCore().byId('addViaUrlDialog--addViaUrlDialog').setContentHeight("7rem");
+						sap.ui.getCore().byId('addViaUrlDialog--addDocumentBtn').setText("Apply");
+						sap.ui.getCore().byId('addViaUrlDialog--nameInput').setValue(renameFileInfo.name);
+						sap.ui.getCore().byId('addViaUrlDialog--urlInput').setVisible(false);
+						sap.ui.getCore().byId('addViaUrlDialog--docTypeCombobox').setVisible(false);
 					}
 					oPopover.open();
 				}.bind(this));
@@ -520,6 +532,8 @@ sap.ui.define([
 		closeAddViaUrlFragment: function () {
 			this.bEditDocument = false;
 			this.oEditDocumentInfo = null;
+			this.bRenameDocument = false;
+			this.oRenameDocumentInfo = null;
 			this._addViaUrlFragment.destroy();
 			this._addViaUrlFragment = null;
 		},
@@ -535,6 +549,17 @@ sap.ui.define([
 				url: sUrl,
 				name: sName,
 				docType: sDocType
+			 };
+			 this.openAddOrEditDialog();
+		},
+		onRenameDocument: function() {
+			var oUploadSet = this.byId("UploadSetTable"),
+			 oBidningContextObject = oUploadSet.getSelectedItems()[0].getBindingContext().getObject(),
+			 sName = oBidningContextObject.fileName;
+
+			 this.bRenameDocument = true;
+			 this.oRenameDocumentInfo = {
+				name: sName
 			 };
 			 this.openAddOrEditDialog();
 		}
