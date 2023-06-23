@@ -179,6 +179,16 @@ sap.ui.define([
 			oModel.setProperty("/adaptations", aContextBasedAdaptations);
 			oModel.setProperty("/allAdaptations", aAdaptations);
 			oModel.setProperty("/count", aContextBasedAdaptations.length);
+
+			// update displayed adaptation
+			var oDisplayedAdaptation = oModel.getProperty("/displayedAdaptation");
+			var oCorrespondingAdaptation = aAdaptations.find(function(oAdaptation) {
+				return !!oDisplayedAdaptation && oAdaptation.id === oDisplayedAdaptation.id;
+			});
+			if (oCorrespondingAdaptation) {
+				oDisplayedAdaptation = Object.assign({}, oCorrespondingAdaptation);
+				oModel.setProperty("/displayedAdaptation", oDisplayedAdaptation);
+			}
 			oModel.updateBindings(true);
 		};
 		oModel.insertAdaptation = function(oNewAdaptation) {
@@ -209,9 +219,12 @@ sap.ui.define([
 		};
 		oModel.updateAdaptationContent = function(oContextBasedAdaptation) {
 			var aAdaptations = oModel.getProperty("/allAdaptations");
-			var iIndex = oModel.getProperty("/displayedAdaptation").rank - 1;
-			aAdaptations[iIndex].title = oContextBasedAdaptation.title;
-			aAdaptations[iIndex].contexts = oContextBasedAdaptation.contexts;
+			var oAdaptationForUpdate = aAdaptations.find(function(oAdaptation) {
+				return oContextBasedAdaptation.adaptationId === oAdaptation.id;
+			});
+			oAdaptationForUpdate.title = oContextBasedAdaptation.title;
+			oAdaptationForUpdate.contexts = oContextBasedAdaptation.contexts;
+			var iIndex = oAdaptationForUpdate.rank - 1;
 			if (iIndex !== oContextBasedAdaptation.priority) {
 				var aDisplayedAdaptation = aAdaptations.splice(iIndex, 1);
 				aAdaptations.splice(oContextBasedAdaptation.priority, 0, aDisplayedAdaptation[0]);

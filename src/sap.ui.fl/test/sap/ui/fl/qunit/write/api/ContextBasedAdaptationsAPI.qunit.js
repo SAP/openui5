@@ -649,6 +649,20 @@ sap.ui.define([
 			assert.deepEqual(oModel.getData(), oExpectedFilledData, "then the adaptations model is updated correctly");
 		});
 
+		QUnit.test("when a list of adaptations is initialized and later the displayed adaptation is moved to another rank (reorder)", function(assert) {
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations, this.oExpectedFilledData.allAdaptations[0], true);
+			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
+			var oExpectedDisplayedAdaptation = deepClone(this.oExpectedFilledData.adaptations[0]);
+			oExpectedDisplayedAdaptation.rank = 2;
+			var aReorderAdaptations = [
+				this.oExpectedFilledData.adaptations[1],
+				this.oExpectedFilledData.adaptations[0],
+				this.oDefaultAdaptation
+			];
+			oModel.updateAdaptations(aReorderAdaptations);
+			assert.deepEqual(oModel.getProperty("/displayedAdaptation"), oExpectedDisplayedAdaptation, "then the adaptations model is updated correctly");
+		});
+
 		QUnit.test("when a list of adaptations is initialized and later the displayed adaptation is switched", function(assert) {
 			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations, this.oExpectedFilledData.allAdaptations[0], true);
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
@@ -683,10 +697,9 @@ sap.ui.define([
 				contextBasedAdaptationsEnabled: true
 			};
 			var oContextBasedAdaptation = {
-				title: "DLM Main Pilot",
-				contexts: {
-					role: ["MAIN_PILOT"]
-				},
+				adaptationId: oUpdatedAdaptation.id,
+				title: oUpdatedAdaptation.title,
+				contexts: oUpdatedAdaptation.contexts,
 				priority: 0
 			};
 			oModel.switchDisplayedAdaptation("id-1591275572835-1");
