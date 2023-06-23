@@ -49,6 +49,7 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinit
 		return Promise.resolve(
 			{
 				IMType: "SimpleError",
+				IMTntType: "tnt-Tools",
 				IMTitle: "No Data",
 				IMDescription: "Test",
 				IMSize: "Auto"
