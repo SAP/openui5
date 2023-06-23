@@ -73,7 +73,7 @@ sap.ui.define([
 	var TextDirection = coreLibrary.TextDirection;
 
 	/**
-	 * Modules for {@link sap.ui.mdc.Field Field} and {@link sap.ui.mdc.FilterField FilterField}
+	 * Modules for {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField}, and {@link sap.ui.mdc.FilterField FilterField}
 	 * @namespace
 	 * @name sap.ui.mdc.field
 	 * @since 1.58.0
@@ -87,7 +87,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>FieldBase</code> control is the base class for the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField}
+	 * The <code>FieldBase</code> control is the base class for the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField},
 	 * and {@link sap.ui.mdc.FilterField FilterField} controls.
 	 * It must not be used stand-alone.
 	 *
@@ -1019,10 +1019,14 @@ sap.ui.define([
 
 	/**
 	 * Here inheriting controls need to fire the control-specific change event.
+	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions Current conditions after change
+	 * @param {boolean} bValid If <code>false</code>, the user input is not valid and leads to an error
+	 * @param {any} vWrongValue wrong user input (only set if known)
+	 * @param {Promise} oPromise <code>Promise</code> that is resolved if the changed value is determined, as user might enter some description, and the key neeeds to be determined via back-end request.
 	 * @protected
 	 */
 	FieldBase.prototype.fireChangeEvent = function(aConditions, bValid, vWrongValue, oPromise) {
-		// to be implemented by Filed and FilterField
+		// to be implemented by Field and FilterField
 	};
 
 	function _handleEnter(oEvent) {

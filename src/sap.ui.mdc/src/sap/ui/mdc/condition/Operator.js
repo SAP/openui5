@@ -89,7 +89,7 @@ sap.ui.define([
 		 * @param {function} [oConfiguration.validate] Function to validate condition
 		 * @param {function} [oConfiguration.getModelFilter] Function create filter for a condition
 		 * @param {function} [oConfiguration.isEmpty] Function to check if condition is empty
-		 * @param {function} [oConfiguration.createControl] Function to create a control to be used in {@link sap.ui.mdc.valuehelp.base.DefineConditionPanel DefineConditionPanel}
+		 * @param {function} [oConfiguration.createControl] Function to create a control to be used in {@link sap.ui.mdc.valuehelp.content.Conditions Conditions}
 		 * @param {function} [oConfiguration.getCheckValue] Function to get the value for condition compare
 		 * @param {function} [oConfiguration.getValues] Function to get the real values without operator symbol
 		 * @param {function} [oConfiguration.checkValidated] Function to check if a condition is validated (sets the <code>validated</code> property)

@@ -171,6 +171,11 @@ sap.ui.define([
 	// <!-- TypeUtil functionality -->
 
 	/**
+	 * To determine which internal controls to render, the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField},
+	 * or {@link sap.ui.mdc.FilterField FilterField} controls need to know if the type represents a date, a number, or another {@link sap.ui.mdc.enums.BaseType BaseType}.
+	 *
+	 * As default, <code>String</code> is returned.
+	 *
 	 * @final
 	 * @param {string} sType Given type string or {@link sap.ui.model.SimpleType}
 	 * @param {object} oFormatOptions Used <code>FormatOptions</code>
@@ -184,9 +189,10 @@ sap.ui.define([
 	};
 
 	/**
+	 * Convenience method to retrieve the <code>BaseType</code> for a given {@link sap.ui.model.SimpleType SimpleType}.
 	 * @final
 	 * @param {sap.ui.model.SimpleType} oType Given type string or {@link sap.ui.model.SimpleType}
-	 * @returns {string} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
+	 * @returns {sap.ui.mdc.enums.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
 	 * @public
 	 */
 	TypeMap.getBaseTypeForType = function(oType) {
@@ -194,6 +200,7 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the data type class name for a given name or alias.
 	 * @final
 	 * @param {string} sType Given model specific type
 	 * @returns {string} Data type name
@@ -204,6 +211,9 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a data type class based on a given name.
+	 *
+	 * <b>Note:</b> The module of the data type needs to be loaded before.
 	 * @final
 	 * @param {string} sDataType Class path as string where each name is separated by '.'
 	 * @returns {sap.ui.model.SimpleType} creates returns a dataType class
@@ -218,6 +228,8 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a data type instance based on a given object path, <code>FormatOptions</code>, and <code>Constraints</code>.
+	 *
 	 * @final
 	 * @param {string} sDataType Class path as string where each name is separated by '.'
 	 * @param {object} [oFormatOptions] formatoptions for the dataType
@@ -236,6 +248,7 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a type mapping configuration object for a given type string or {@link sap.ui.model.SimpleType SimpleType}.
 	 * @final
 	 * @param {string|sap.ui.model.SimpleType} vType Given dataType as string or type
 	 * @param {object} [oFormatOptions] formatoptions for the given dataType
@@ -253,6 +266,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * Converts a value into a string using a designated type.
+	 *
+	 * The value is not checked for validity. The used values must be compatible with the used basic type.
+	 *
+	 * <b>Note:</b> Number types are not converted, the number conversion is done by the SAPUI5 Flexibility handling.
 	 * @final
 	 * @param {object} vValue typed value
 	 * @param {string|sap.ui.model.SimpleType} vType Data type considered for conversion
@@ -291,6 +309,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * Converts a string into a type-based value.
+	 *
+	 * The value is not checked for validity. The used values must be compatible with the used basic type.
+	 *
+	 * <b>Note:</b> Number types are not converted, the number conversion is done by the SAPUI5 Flexibility handling.
 	 * @final
 	 * @param {string} vValue externalized value
 	 * @param {string|sap.ui.model.SimpleType} vType Data type considered for conversion

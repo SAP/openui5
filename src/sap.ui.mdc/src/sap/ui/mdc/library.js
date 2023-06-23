@@ -1243,6 +1243,16 @@
 	 * @namespace
 	 * @name sap.ui.mdc.enum
 	 * @since 1.74.0
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums}
+	 */
+
+	/**
+	 * Enumerations for <code>sap.ui.mdc</code> library
+	 * @namespace
+	 * @name sap.ui.mdc.enums
+	 * @since 1.74.0
 	 * @public
 	 */
 
@@ -1255,10 +1265,19 @@
 	 */
 
 	/**
+	 * Modules for {@link sap.ui.mdc.FilterBar FilterBar}
 	 * @namespace
 	 * @name sap.ui.mdc.filterbar
 	 * @public
 	 * @since 1.112.0
+	 */
+
+	/**
+	 * Utilities for <code>sap.ui.mdc</code> library
+	 * @namespace
+	 * @name sap.ui.mdc.util
+	 * @since 1.74.0
+	 * @public
 	 */
 
 	/**

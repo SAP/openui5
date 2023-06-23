@@ -590,9 +590,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the conditions that are selecatble from list content.
+	 * Gets the conditions that are selectable from list content.
 	 *
-	 * This are validated conditions as other conditions are shown on the {@link sap.ui.mdc.valuehelp.base.DefineConditionPanel DefineConditionPanel}
+	 * These are validated conditions as other conditions are shown in the {@link sap.ui.mdc.valuehelp.content.Conditions Conditions}.
 	 * @returns {sap.ui.base.ManagedObject.AggregationBindingInfo} ListBindingInfo
 	 * @protected
 	 */
