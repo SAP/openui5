@@ -1,5 +1,5 @@
 ---
-specVersion: "2.0"
+specVersion: "3.0"
 type: theme-library
 metadata:
   name: themelib_sap_fiori_3

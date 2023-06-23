@@ -1,5 +1,5 @@
 ---
-specVersion: "2.6"
+specVersion: "3.0"
 type: library
 metadata:
   name: sap.ui.integration

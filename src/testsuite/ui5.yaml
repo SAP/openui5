@@ -1,5 +1,5 @@
 ---
-specVersion: "2.0"
+specVersion: "3.0"
 type: application
 metadata:
   name: openui5-testsuite
@@ -29,7 +29,7 @@ server:
         report-dir: "../../tmp/coverage-reports"
 
 ---
-specVersion: "2.0"
+specVersion: "3.0"
 kind: extension
 type: server-middleware
 metadata:
