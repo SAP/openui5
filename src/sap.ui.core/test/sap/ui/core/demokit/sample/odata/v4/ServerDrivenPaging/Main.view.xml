@@ -6,7 +6,7 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<IconTabBar select=".onTabSelect">
 		<items>
-			<IconTabFilter id="list" text="m.Table">
+			<IconTabFilter id="list" key="m" text="m.Table">
 				<Table id="businessPartnerList" growing="true" growingThreshold="21">
 					<headerToolbar>
 						<Toolbar>
@@ -27,7 +27,7 @@
 					</columns>
 				</Table>
 			</IconTabFilter>
-			<IconTabFilter id="table" text="table.Table">
+			<IconTabFilter id="table" key="table" text="table.Table">
 				<t:Table ariaLabelledBy="title" id="businessPartnerTable" selectionMode="None"
 						visibleRowCount="21">
 					<t:extension>
