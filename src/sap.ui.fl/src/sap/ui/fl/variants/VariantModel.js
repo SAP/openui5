@@ -1184,7 +1184,15 @@ sap.ui.define([
 
 			if (mParameters.overwrite) {
 				// handle triggered "Save" button
-				return this.oFlexController.saveSequenceOfDirtyChanges(this._getDirtyChangesFromVariantChanges(aSourceVariantChanges), oAppComponent);
+				return this.oFlexController.saveSequenceOfDirtyChanges(
+					this._getDirtyChangesFromVariantChanges(aSourceVariantChanges),
+					oAppComponent
+				)
+				.then(function(oResponse) {
+					// TODO: as soon as the invalidation is done automatically this can be removed
+					this.invalidateMap();
+					return oResponse;
+				}.bind(this));
 			}
 
 			var sVariantLayer = mParameters.layer || (mParameters.public ? Layer.PUBLIC : Layer.USER);
