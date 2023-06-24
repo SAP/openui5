@@ -7,10 +7,10 @@
 				<MenuItem text="Document from SAP System"/>
 				<MenuItem text="URL" press="openAddOrEditDialog"/>
 				<MenuItem text="New Folder"/>
-				<MenuItem text="Document Without File"/>
+				<MenuItem text="Document Without File" press=".openDocumentWithoutFileDialog" />
 			</items>
 		</MenuItem>
-		<MenuItem text="Remove"/>
+		<MenuItem id="removeDocumentButton" text="Remove" press=".onRemoveButtonFromMenuDocumentHandler" enabled="false" />
 		<MenuItem id="renameButton" enabled="false" press="onRenameDocument" text="Rename"/>
 		<MenuItem id="editUrlButton" text="Edit URL" enabled="false" press="onEditUrl"/>
 		<MenuItem text="Link To" startsSection="true"/>

@@ -637,6 +637,30 @@ sap.ui.define([
 		return iFileSize;
 	};
 
+	/**
+	 * API to upload File via URL
+	 * @param {string} sName file name to be set for the file to be uploaded.
+	 * @param {sap.ui.core.Item[]} aHeaders addition headers to be set
+	 * @public
+	 */
+	UploadSetTable.prototype.uploadItemViaUrl = function (sName, aHeaders) {
+		var oFileObject = new File([new Blob([])], sName);
+		// resetting custom callback
+		this._fnSelectedItemsCallback = null;
+		this._processSelectedFileObjects([oFileObject], aHeaders);
+	};
+
+	/**
+	 * API to upload Item without file
+	 * @param {sap.ui.core.Item[]} aHeaders addition headers to be set
+	 * @public
+	 */
+	UploadSetTable.prototype.uploadItemWithoutFile = function (aHeaders) {
+		var oFileObject = new File([new Blob([])], '-');
+		this._fnSelectedItemsCallback = null;
+		this._processSelectedFileObjects([oFileObject], aHeaders);
+	};
+
 	/* ============== */
 	/* Private methods */
 	/* ============== */
@@ -665,12 +689,7 @@ sap.ui.define([
 		}
     };
 
-	UploadSetTable.prototype.uploadItemViaUrl = function (sName, aAdditionalInfo) {
-		var oFileObject = new File([new Blob([])], sName);
-		this._processSelectedFileObjects([oFileObject], aAdditionalInfo);
-	};
-
-    UploadSetTable.prototype._processSelectedFileObjects = function (oFiles, additionalParams) {
+    UploadSetTable.prototype._processSelectedFileObjects = function (oFiles, aHeaders) {
         var aFiles = [];
 
 		// Need to explicitly copy the file list, FileUploader deliberately resets its form completely
@@ -687,27 +706,13 @@ sap.ui.define([
 			oItem._setFileObject(oFile);
 			oItem.setFileName(oFile.name);
 			selectedFiles.push(oItem);
-			// if url is passed, add it in UploadSetTableItem.
-			function _getUrlFromParam (oParams) {
-				var sUrl = '';
-				if (oParams.length > 0) {
-					oParams.filter(function (oObj) {
-						if (oObj.key === 'url'){
-							sUrl = oObj.value;
-						}
-					});
-				}
-				return sUrl;
+
+			if (aHeaders && aHeaders.length) {
+				aHeaders.forEach(function(oHeader){
+					oItem.addHeaderField(oHeader);
+				});
 			}
-			if (Array.isArray(additionalParams) && additionalParams.length > 0) {
-				var sUrl = _getUrlFromParam(additionalParams);
-				if (sUrl){
-					oItem.setUrl(sUrl);
-				}
-				oItem.setAdditionalFileInfo(additionalParams);
-			}
-			/* fire the beforeInitiatingUpload to support use case for non instant uploads,
-			where additional item properties can be set by the consumer of the control */
+
 			this.fireBeforeInitiatingItemUpload({item: oItem});
 			if (this.getInstantUpload() && !this._fnSelectedItemsCallback) {
 				this._uploadItemIfGoodToGo(oItem);
@@ -717,6 +722,7 @@ sap.ui.define([
 		// fire the fncallback stored set through fileSelectionHandler invocation
 		if (this._fnSelectedItemsCallback) {
 			this._fnSelectedItemsCallback({selectedItems: selectedFiles});
+			this._fnSelectedItemsCallback = null;
 		}
 
     };

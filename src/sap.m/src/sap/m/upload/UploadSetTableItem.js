@@ -70,11 +70,7 @@ sap.ui.define([
 		        /**
 				 * State of the item relevant to its upload process.
 				 */
-				uploadState: {type: "sap.m.UploadState", defaultValue: null},
-				/**
-				 * For additional file relayed info to be retained for each item
-				 */
-				additionalFileInfo: {type: "array", defaultValue: []}
+				uploadState: {type: "sap.m.UploadState", defaultValue: null}
             },
 			aggregations: {
 				/**

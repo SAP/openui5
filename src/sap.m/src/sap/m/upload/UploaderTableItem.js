@@ -168,7 +168,6 @@ sap.ui.define([
 	Uploader.prototype.uploadItem = function (oItem, aHeaderFields) {
 		var oXhr = new window.XMLHttpRequest(),
 			oFile = oItem.getFileObject(),
-			aAdditionalFileInfo = oItem.getAdditionalFileInfo(),
 			that = this,
 			oRequestHandler = {
 				xhr: oXhr,
@@ -176,13 +175,6 @@ sap.ui.define([
 			},
 			sHttpRequestMethod = this.getHttpRequestMethod(),
 			sUploadUrl = oItem.getUploadUrl() || this.getUploadUrl();
-
-		try {
-			aAdditionalFileInfo = JSON.stringify(aAdditionalFileInfo);
-		} catch (error) {
-			// if unable to parse send empty job
-			aAdditionalFileInfo = "{}";
-		}
 
 		oXhr.open(sHttpRequestMethod, sUploadUrl, true);
 
@@ -221,7 +213,6 @@ sap.ui.define([
 				oFormData.append(name, oFile);
 			}
 			oFormData.append("_charset_", "UTF-8");
-			oFormData.append("additionalFileInfo", aAdditionalFileInfo);
 			oFile = oFormData;
 
 			this._mRequestHandlers[oItem.getId()] = oRequestHandler;
@@ -229,7 +220,7 @@ sap.ui.define([
 			this.fireUploadStarted({item: oItem});
 		} else {
 			this._mRequestHandlers[oItem.getId()] = oRequestHandler;
-			oXhr.send({file: oFile, additionalFileInfo: aAdditionalFileInfo});
+			oXhr.send(oFile);
 			this.fireUploadStarted({item: oItem});
 		}
 

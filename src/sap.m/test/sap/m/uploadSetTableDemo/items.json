@@ -127,6 +127,18 @@
 			"lastModifiedBy": "Jane Burns",
 			"lastmodified": "10/03/21, 10:03:00 PM",
 			"documentType": "Attachment"
+		},
+		{
+			"id": "23004578",
+			"fileName": "Sample Zip File.zip",
+			"mediaType": "application/zip",
+			"url": "/test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/sample-zip-file.zip",
+			"revision": "00",
+			"status": "In work",
+			"fileSize": 42000,
+			"lastModifiedBy": "Jane Burns",
+			"lastmodified": "10/03/22, 10:20:00 PM",
+			"documentType": "Attachment"
 		}
 	]
 }

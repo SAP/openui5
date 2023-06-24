@@ -12,21 +12,23 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Text",
 	"sap/ui/core/library",
-	'sap/base/util/uid'
-], function (Controller, JSONModel, UploadSetTable, UploadSetTableItem, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, coreLibrary, uid) {
+	"sap/ui/core/Item"
+], function (Controller, JSONModel, UploadSetTable, UploadSetTableItem, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, coreLibrary, CoreItem) {
 	"use strict";
 
 	return Controller.extend("sap.m.uploadSetTableDemo.Page", {
 		onInit: function () {
 			var sPath = sap.ui.require.toUrl("sap/m/uploadSetTableDemo/items.json");
 
-			this.getView().setModel(new JSONModel(sPath));
+			var oModel = new JSONModel(sPath);
+			this.getView().setModel(oModel);
 
 			this.documentTypes = this.getFileCategories();
 
 			this._oFilesTobeuploaded = [];
 			this.loadOverflowMenu();
 			var oMockServer = new MockServer();
+			oMockServer.oModel = oModel;
 			oMockServer.init();
 		},
 		loadOverflowMenu: function () {
@@ -53,6 +55,7 @@ sap.ui.define([
 			var oCreateRevisionBtn = this.byId("createRevisionButton");
 			var oEditUrlBtn = this.byId("editUrlButton");
 			var oRenameBtn = this.byId("renameButton");
+			var oRemoveDocumentBtn = this.byId("removeDocumentButton");
 
 			if (aSelectedItems.length > 0) {
 				oDownloadBtn.setEnabled(true);
@@ -66,9 +69,11 @@ sap.ui.define([
 			if (aSelectedItems.length === 1){
 				oEditUrlBtn.setEnabled(true);
 				oRenameBtn.setEnabled(true);
+				oRemoveDocumentBtn.setEnabled(true);
 			} else {
 				oRenameBtn.setEnabled(false);
 				oEditUrlBtn.setEnabled(false);
+				oRemoveDocumentBtn.setEnabled(false);
 			}
 		},
 		// Download files handler
@@ -76,44 +81,29 @@ sap.ui.define([
 			var oUploadSet = this.byId("UploadSetTable");
 			oUploadSet.downloadItems(oUploadSet.getSelectedItems());
 		},
+		onBeforeInitiatingItemUpload: function(oEvent) {
+			var oUploadSetTableInstance = this.byId("UploadSetTable");
+			var oItem = oEvent.getParameter("item");
+			var aSelectedItems = oUploadSetTableInstance.getSelectedItems();
+			var bEmptyFileSelected = aSelectedItems && aSelectedItems.length === 1 && aSelectedItems[0].getFileName() == "-" ? true : false;
+			if (bEmptyFileSelected) {
+				var oContext = aSelectedItems[0].getBindingContext();
+				var data = oContext && oContext.getObject ? oContext.getObject() : {};
+				oItem.addHeaderField(new CoreItem(
+					{
+						key: "existingDocumentID",
+						text: data ? data.id : ""
+					}
+				));
+			}
+		},
 		// UploadCompleted event handler
 		onUploadCompleted: function(oEvent) {
 			var oModel = this.getView().getModel();
-			var oData = oModel.getProperty("/items");
-
-			var oItem = oEvent.getParameter("item");
 			var iResponseStatus = oEvent.getParameter("status");
-			var sResponseText = oEvent.getParameter("responseText");
-			var oResponseBody = null;
-			// try catch block to perform response parsing
-			try {
-				oResponseBody = sResponseText ? JSON.parse(sResponseText) : null;
-			} catch (error) {
-				oResponseBody = null;
-			}
-			// extracting additional file info
-			var aAdditionalInfo = oResponseBody && oResponseBody.additionalFileInfo ? oResponseBody.additionalFileInfo : [];
-			var oSelectedDoumentMap = aAdditionalInfo.find(function(oInfo) {
-				return oInfo.key === "documentType";
-			});
 
 			// check for upload is sucess
 			if (iResponseStatus === 201) {
-				oData.unshift(
-					{
-						"id": uid(),
-						"fileName": oItem.getFileName(),
-						"mediaType": oItem.getMediaType(),
-						"url": oResponseBody ? oResponseBody.fileUrl : "",
-						"uploadState": "Complete",
-						"revision": "00",
-						"status": "In work",
-						"fileSize": oResponseBody && oResponseBody.fileSize ? oResponseBody.fileSize : 0,
-						"lastModifiedBy": "Jane Burns",
-						"lastmodified": "10/03/21, 10:03:00 PM",
-						"documentType": oSelectedDoumentMap && oSelectedDoumentMap.key ? oSelectedDoumentMap.value : "Invoice"
-					}
-				);
 				oModel.refresh(true);
 				setTimeout(function() {
 					MessageToast.show("Document Added");
@@ -136,6 +126,7 @@ sap.ui.define([
 		},
 		removeItem: function(oItem) {
 			var oModel = this.getView().getModel();
+			var oUploadSet = this.byId("UploadSetTable");
 			MessageBox.warning(
 				"Are you sure you want to remove the document" + " " + oItem.getFileName() + " " + "?",
 				{
@@ -154,6 +145,9 @@ sap.ui.define([
 							var data = oModel.getProperty("/items");
 							data.splice(index, 1);
 							oModel.refresh(true);
+							if (oUploadSet && oUploadSet.removeSelections) {
+								oUploadSet.removeSelections();
+							}
 						}
 					}
 				}
@@ -163,7 +157,8 @@ sap.ui.define([
 			return [
 				{categoryId: "Invoice", categoryText: "Invoice"},
 				{categoryId: "Specification", categoryText: "Specification"},
-				{categoryId: "Attachment", categoryText: "Attachment"}
+				{categoryId: "Attachment", categoryText: "Attachment"},
+				{categoryId: "Legal Document", categoryText: "Legal Document"}
 			];
 		},
 		openFileUploadDialog: function(oItems) {
@@ -263,13 +258,11 @@ sap.ui.define([
 			if (oSelectedItems && oSelectedItems.length) {
 				oSelectedItems.forEach(function(oItem) {
 					var oItemToUploadRef = oItem.itemInstance;
-					var oSelectedDocumentType = {
+					// setting the header field for custom document type selected
+					oItemToUploadRef.addHeaderField(new CoreItem({
 						key: "documentType",
-						value: oItem.fileCategorySelected
-					};
-					oItemToUploadRef.setAdditionalFileInfo(oItemToUploadRef.getAdditionalFileInfo().concat([
-						oSelectedDocumentType
-					]));
+						text: oItem.fileCategorySelected
+					}));
 					aFileToBeUploaded.push(oItemToUploadRef);
 				});
 			}
@@ -282,7 +275,16 @@ sap.ui.define([
 		},
 		uploadFilesHandler: function() {
 			var oUploadSetTableInstance = this.byId("UploadSetTable");
-			oUploadSetTableInstance.fileSelectionHandler(this.selectedFilesFromHandler.bind(this));
+
+			var aSelectedItems = oUploadSetTableInstance.getSelectedItems();
+			var oSelectedItem = aSelectedItems && aSelectedItems.length == 1 ? aSelectedItems[0] : null;
+			var bEmptyFileSelected = oSelectedItem && oSelectedItem.getFileName && oSelectedItem.getFileName() === "-";
+
+			if (bEmptyFileSelected) {
+				oUploadSetTableInstance.fileSelectionHandler(this.updateEmptyDocument.bind(this));
+			} else {
+				oUploadSetTableInstance.fileSelectionHandler(this.selectedFilesFromHandler.bind(this));
+			}
 		},
 		selectedFilesFromHandler: function(oItems) {
 			this.openFileUploadDialog(oItems);
@@ -478,13 +480,13 @@ sap.ui.define([
 			if (!bHasError) {
 				setTimeout(function(){
 					var oUploadSetTableInstance = this.byId("UploadSetTable");
-					oUploadSetTableInstance.uploadItemViaUrl(sName, [{
-						key: 'url',
-						value: sUrl
-					},{
-						key: 'docType',
-						value: sDocType
-					}]);
+					oUploadSetTableInstance.uploadItemViaUrl(sName, [ new CoreItem({
+						key: 'documentUrl',
+						text: sUrl
+					}), new CoreItem({
+						key: 'documentType',
+						text: sDocType
+					})]);
 					this._addViaUrlFragment.destroy();
 					this._addViaUrlFragment = null;
 				}.bind(this), 1000);
@@ -562,6 +564,68 @@ sap.ui.define([
 				name: sName
 			 };
 			 this.openAddOrEditDialog();
+		},
+		updateEmptyDocument: function(oItem) {
+			var aSelectedItems = oItem.selectedItems;
+			var oUploadSetTableInstance = this.byId("UploadSetTable");
+			if (aSelectedItems && aSelectedItems.length === 1) {
+				var aFileToBeUploaded = [aSelectedItems[0]];
+				oUploadSetTableInstance.uploadItems(aFileToBeUploaded);
+			}
+		},
+		addEmptyDocument: function() {
+			var oUploadSetTableInstance = this.byId("UploadSetTable");
+			var oData = this._documentWithoutFileFragment.getModel().getData();
+
+			var oHeader = new CoreItem({
+				key: "documentType",
+				text: oData.fileCategorySelected
+			});
+
+			// Invoking public API which creates and uploads document without file and passing optonal additionalparams to be set for the item
+			oUploadSetTableInstance.uploadItemWithoutFile([oHeader]);
+			this.closeDocumentWithoutFileUplaodFragment();
+		},
+		openDocumentWithoutFileDialog: function() {
+
+			var oModel = new JSONModel({
+				"types": this.documentTypes,
+				"fileCategorySelected": this.documentTypes[0].categoryId
+			});
+			if (!this._documentWithoutFileFragment) {
+				Fragment.load({
+					name: "sap.m.uploadSetTableDemo.DocumentWithoutFileDialog",
+					id: this.getView().getId() + "-document-without-file-dialog",
+					controller: this
+				})
+					.then(function(oPopover) {
+						this._documentWithoutFileFragment = oPopover;
+						this.getView().addDependent(oPopover);
+						oPopover.setModel(oModel);
+						oPopover.open();
+					}.bind(this));
+			} else {
+				this._documentWithoutFileFragment.setModel(oModel);
+				this._documentWithoutFileFragment.open();
+			}
+		},
+		closeDocumentWithoutFileUplaodFragment: function() {
+			this._documentWithoutFileFragment.destroy();
+			this._documentWithoutFileFragment = null;
+			this._oFilesTobeuploaded = [];
+		},
+		isSameFileNameCheckSectionVisible: function(sSameFileNameAllowed, aItems) {
+			if (sSameFileNameAllowed && aItems &&  aItems.length) {
+				return true;
+			}
+			return false;
+		},
+		onRemoveButtonFromMenuDocumentHandler: function(oEvent) {
+			var oUploadSet = this.byId("UploadSetTable");
+			var aSelectedItems = oUploadSet && oUploadSet.getSelectedItems ? oUploadSet.getSelectedItems() : [];
+			if (aSelectedItems && aSelectedItems.length == 1) {
+				this.removeItem(aSelectedItems[0]);
+			}
 		}
 	});
 });

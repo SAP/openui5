@@ -25,6 +25,7 @@
             instantUpload="true"
             customDropFilesHandler=".selectedFilesFromHandler"
             inset="true"
+            beforeInitiatingItemUpload="onBeforeInitiatingItemUpload"
         >
             <!-- ToolBar for Table -->
             <headerToolbar>

@@ -10,7 +10,10 @@ sap.ui.define([
 	// mockserver to intercept the XMLHTTP requests and respond with custom data
 	return ManagedObject.extend("sap.m.uploadSetTableDemo.mockServer", {
 		started: null,
+		oModel: null,
 		init: function () {
+
+			var that = this;
 
 			var fServer = sinon.fakeServer.create();
 				fServer.autoRespond = true;
@@ -30,38 +33,91 @@ sap.ui.define([
 			 */
 			fServer.respondWith("POST", RegExp("/uploadFiles","i"), function (xhr) {
 				// intercepting the request body sent to the request and extracting the details for the mocked response.
-				var oFile = xhr.requestBody ? xhr.requestBody.file : null;
-				var aAdditionalFileInfo = xhr.requestBody ? xhr.requestBody.additionalFileInfo : '[]';
-				try {
-					aAdditionalFileInfo = JSON.parse(aAdditionalFileInfo);
-				} catch (error) {
-					aAdditionalFileInfo = [];
+				var oFile = xhr.requestBody ? xhr.requestBody : null;
+				var aRequestArray = [];
+				var requestHeaders = xhr.requestHeaders || {};
+				// extract request headers
+				for (var key in requestHeaders) {
+					if (requestHeaders.hasOwnProperty(key)) {
+					  var newObj = {};
+					  newObj[key] = requestHeaders[key];
+					  aRequestArray.push(newObj);
+					}
 				}
 
-				function _getUrlFromParam (aParams) {
-					var sUrl;
-					if (aParams && aParams.length > 0) {
-						aParams.filter(function (oObj) {
-							if (oObj.key === 'url'){
-								sUrl = oObj.value;
-							}
-						});
-					}
-					return sUrl;
+				var iExistingDocumentId = requestHeaders.existingDocumentID;
+				var data = that.oModel && that.oModel.getData ? that.oModel.getData() : {};
+				var oExistingfileObjectData = null;
+
+				if (data && data.items && iExistingDocumentId) {
+					oExistingfileObjectData = data.items.find(function(item){
+						return item.id === iExistingDocumentId;
+					});
 				}
-				var url = _getUrlFromParam(aAdditionalFileInfo) || URL.createObjectURL(oFile);
+
+				// if uploading document via URL then set the URL set by the user to the document else simulate creating the URL with file object.
+				var url = requestHeaders && requestHeaders.documentUrl ? requestHeaders.documentUrl : URL.createObjectURL(oFile);
+				var fileId = uid(); // generating random id
+
+				if (fileId) {
+					fileId = fileId.split("-")[1]; // extracting the timestamp for the ID
+				}
 
 				var reponseObject = {
-					id: uid(),
+					id: fileId ? fileId : uid(),
 					fileName: oFile && oFile.name ? oFile.name : "",
 					fileUrl: url,
 					fileSize: oFile && oFile.size ? oFile.size : 0,
 					fileType: oFile && oFile.type ? oFile.type : "",
-					additionalFileInfo: aAdditionalFileInfo
+					documentType: requestHeaders && requestHeaders.documentType ? requestHeaders.documentType : null
 				};
+
+				// Updating the model simulating the backend process
+				if (!oExistingfileObjectData) {
+					that._updateModelWithData(reponseObject, null, "Create", oFile, url, data);
+				} else {
+					//this scenario is to simulate the upload of the empty document.
+					that._updateModelWithData(reponseObject, oExistingfileObjectData, "update", oFile, url, data);
+				}
+
 				return xhr.respond(201, { "Content-Type": "application/json" },
 				JSON.stringify(reponseObject));
 			});
+		},
+		_updateModelWithData: function(oResponse, oExistingModelDataToUpdate, sMode, oFile, sUrl, oData) {
+			switch (sMode) {
+
+				case "Create":
+					this.oModel.getProperty("/items").unshift(
+						{
+							"id": oResponse && oResponse.id ? oResponse.id : uid(), // generate random id if no id sent from response.
+							"fileName": oResponse.fileName,
+							"mediaType": oResponse.fileType,
+							"url": oResponse.fileUrl,
+							"uploadState": "Complete",
+							"revision": "00",
+							"status": "In work",
+							"fileSize": oResponse.fileSize,
+							"lastModifiedBy": "Jane Burns",
+							"lastmodified": "10/03/21, 10:03:00 PM",
+							"documentType": oResponse && oResponse.documentType ? oResponse.documentType : "Invoice"
+						}
+					);
+					break;
+
+				case "update":
+					if (oExistingModelDataToUpdate) {
+						oExistingModelDataToUpdate.fileName = oFile && oFile.name ? oFile.name : "";
+						oExistingModelDataToUpdate.url = sUrl;
+						oExistingModelDataToUpdate.fileSize = oFile && oFile.size ? oFile.size : 0;
+						oExistingModelDataToUpdate.mediaType = oFile && oFile.type ? oFile.type : "";
+						this.oModel.setData(oData);
+					}
+					break;
+
+				default:
+					break;
+			}
 		}
 	});
 }, true);

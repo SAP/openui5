@@ -2,7 +2,7 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" templateShareable="false" class="sapUiTinyMarginTop">
   <Dialog title="Add Document by Upload" contentWidth="34rem" contentHeight="18rem" class="sapUiSmallMargin">
     <content>
-      <Toolbar height="auto" class="sapUiTinyMargin" style="Clear" visible="{/sameFileNameFound}">
+      <Toolbar height="auto" class="sapUiTinyMargin" style="Clear" visible="{parts: ['/sameFileNameFound', '/selectedItems'], formatter: '.isSameFileNameCheckSectionVisible'}">
         <VBox>
         <Text text="Do you want to replace the existing document or create a copy of it?" />
         <VBox class="sapUiTinyMarginTop">
@@ -17,7 +17,7 @@
         </VBox>
         </VBox> 
       </Toolbar>
-      <Toolbar class="sapUiTinyMargin" style="Clear" visible="{=${/sameFileNameFound} === false}">
+      <Toolbar class="sapUiTinyMargin" style="Clear" visible="{= !${/sameFileNameFound}}">
         <Title text="Documents" />
         <ToolbarSpacer />
         <Button text="Browse" press=".uploadFilesHandler" />
