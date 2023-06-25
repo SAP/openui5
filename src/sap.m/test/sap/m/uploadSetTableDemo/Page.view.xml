@@ -5,9 +5,15 @@
     xmlns:m="sap.m"
     xmlns:core="sap.ui.core"
     xmlns="sap.m.upload"
+    xmlns:vm="sap.ui.fl.variants"
+    xmlns:sap.ui.fl="sap.ui.fl"
+    xmlns:sap.ui.dt="sap.ui.dt"
 >
 <m:App id="app">
     <m:Page showHeader="false">
+         <m:HBox class="sapUiSmallMarginTop">
+            <!-- <vm:VariantManagement for="UploadSetTable" id="uploadSetVariant" class="sapUiMediumMarginBegin" titleStyle="H3" /> -->
+        </m:HBox>
         <UploadSetTable
             id="UploadSetTable"
             maxFileNameLength="60"
@@ -20,6 +26,7 @@
             uploadCompleted="onUploadCompleted"
             afterItemRemoved="onAfterItemRemoved"
             noDataText="No documents available"
+            sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex"
             noDataDescription="Drag and Drop files here to upload"
             uploadButtonInvisible="true"
             instantUpload="true"
@@ -71,6 +78,7 @@
                         enabled="false"
                         press="onCreateRevision"
                     />
+
                     <m:ToggleButton icon="sap-icon://overflow" press="onOverflowPress"/>
                     <m:ToolbarSeparator />
                     <m:Button
@@ -148,7 +156,19 @@
                         </m:VBox>
                     </m:HBox>
                     <m:Text text="{id}" />
-                    <m:Link text="{revision}" />
+                    <m:HBox>
+                        <m:Link text="{revision}"                             
+                                press="getFileVersion"/>
+
+                        <m:ObjectStatus
+                            class="sapUiTinyMarginBegin"
+						    text="New Available"
+                            inverted="true"
+			                active="false"
+			                state="Information"
+                            visible="{= ${isLatestVersion} === true ? false : true}"
+                        />                   
+                    </m:HBox>
                     <m:Text text="{status}" />
                     <m:Text text="{parts: ['fileSize'], formatter: '.getFileSizeWithUnits'}" />
                     <m:VBox>
