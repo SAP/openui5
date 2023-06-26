@@ -199,6 +199,7 @@ sap.ui.define([
 	QUnit.test("setText and enableFormattedText", function (oAssert) {
 		// Arrange
 		var sTestString = "<strong>Warning:</strong> something went wrong",
+			sTestStringSanitized = "<strong style=\"position: static !important;\">Warning:</strong> something went wrong",
 			oFormattedText;
 
 		// Act
@@ -213,7 +214,7 @@ sap.ui.define([
 			"Internal sap.m.FormattedText is initiated and attached to the _formattedText hidden aggregation");
 		oAssert.ok(oFormattedText.getDomRef(),
 			"sap.m.FormattedText should be rendered in the DOM by the MessageStrip control");
-		oAssert.strictEqual(this.oMessageStrip.$().find(CLASS_FORMATTED_TEXT).html(), sTestString,
+		oAssert.strictEqual(this.oMessageStrip.$().find(CLASS_FORMATTED_TEXT).html(), sTestStringSanitized,
 			"Rendered HTML should match passed test string");
 		oAssert.strictEqual(oFormattedText.getHtmlText(), sTestString,
 			"Test string is propagated to the internal sap.m.FormattedText control");
