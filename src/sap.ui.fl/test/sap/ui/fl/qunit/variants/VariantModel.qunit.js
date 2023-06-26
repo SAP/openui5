@@ -1065,27 +1065,15 @@ sap.ui.define([
 				sandbox.stub(Settings, "getInstanceOrUndef").returns({
 					getUserId: function() {return "test user";}
 				});
-				var oVariantData = {
-					instance: createVariant({
-						fileName: "variant0",
-						variantManagementReference: sVMReference,
-						variantReference: "",
-						reference: "Dummy",
-						layer: Layer.CUSTOMER,
-						title: "Text for TextDemo",
-						author: "test user"
-					}),
-					controlChanges: [],
-					variantChanges: {}
-				};
-				sandbox.stub(this.oModel, "_duplicateVariant").returns(oVariantData);
 				sandbox.stub(JsControlTreeModifier, "getSelector").returns({id: sVMReference});
 				sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange").returnsArg(0);
 
 				var mPropertyBag = {
+					sourceVariantReference: sVMReference,
 					variantManagementReference: sVMReference,
 					appComponent: this.oComponent,
 					generator: "myFancyGenerator",
+					newVariantReference: "variant0",
 					layer: bVendorLayer ? Layer.VENDOR : Layer.CUSTOMER
 				};
 				sandbox.stub(this.oModel, "updateCurrentVariant").resolves();
@@ -1099,11 +1087,14 @@ sap.ui.define([
 							remove: true,
 							sharing: this.oModel.sharing.PUBLIC
 						},
-						"then variant added to VariantModel"
+						"then the variant was added to VariantModel"
 					);
-					assert.strictEqual(this.oModel.oData[sVMReference].variants[5].author, bVendorLayer ? "SAP" : "test user");
 					assert.strictEqual(
-						aChanges[0].getId(), oVariantData.instance.getId(),
+						aChanges[0].getSupportInformation().user, bVendorLayer ? "SAP" : "test user",
+						"then the author is set correctly"
+					);
+					assert.strictEqual(
+						aChanges[0].getId(), "variant0",
 						"then the returned variant is the duplicate variant"
 					);
 				}.bind(this));

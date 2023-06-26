@@ -604,7 +604,8 @@ sap.ui.define([
 			adaptationId: mPropertyBag.adaptationId,
 			reference: oSourceVariant.getFlexObjectMetadata().reference,
 			generator: mPropertyBag.generator,
-			variantManagementReference: mPropertyBag.variantManagementReference
+			variantManagementReference: mPropertyBag.variantManagementReference,
+			user: mPropertyBag.layer === Layer.VENDOR ? "SAP" : Settings.getInstanceOrUndef().getUserId()
 		};
 		if (mPropertyBag.currentVariantComparison === 1) {
 			// in case a user variant should be saved as a PUBLIC variant, but refers to a PUBLIC variant,
@@ -700,10 +701,6 @@ sap.ui.define([
 	VariantModel.prototype.copyVariant = function(mPropertyBag) {
 		var oDuplicateVariantData = this._duplicateVariant(mPropertyBag);
 		oDuplicateVariantData.generator = mPropertyBag.generator;
-		var sAuthor = Settings.getInstanceOrUndef().getUserId() ? Settings.getInstanceOrUndef().getUserId() : undefined;
-		if (mPropertyBag.layer === Layer.VENDOR) {
-			sAuthor = "SAP";
-		}
 
 		this.oData[mPropertyBag.variantManagementReference].variants.push({
 			key: oDuplicateVariantData.instance.getId(),
@@ -712,8 +709,7 @@ sap.ui.define([
 			remove: true,
 			sharing: mPropertyBag.layer === Layer.USER
 				? this.sharing.PRIVATE
-				: this.sharing.PUBLIC,
-			author: sAuthor
+				: this.sharing.PUBLIC
 		});
 
 		var aChanges = [];
