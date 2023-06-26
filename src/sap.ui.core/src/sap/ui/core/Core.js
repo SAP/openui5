@@ -260,6 +260,12 @@ sap.ui.define([
 			this.bInitialized = false;
 
 			/**
+			 * Whether the core is ready
+			 * @private
+			 */
+			this.bReady = false;
+
+			/**
 			 * Available plugins in the order of registration.
 			 * @private
 			 */
@@ -1117,6 +1123,7 @@ sap.ui.define([
 		this._executeOnInit();
 		this._setupRootComponent(); // @legacy-relevant: private API for 2 deprecated concepts "rootComponent" & "sap.ui.app.Application"
 		this.pReady.resolve();
+		this.bReady = true;
 	};
 
 	/**
@@ -1164,7 +1171,7 @@ sap.ui.define([
 	 */
 	Core.prototype.attachInitEvent = function (fnFunction) {
 		assert(typeof fnFunction === "function", "fnFunction must be a function");
-		if (!this.isInitialized()) {
+		if (!this.bReady) {
 			this.pReady.promise.then(fnFunction);
 		}
 	};
@@ -2983,7 +2990,7 @@ sap.ui.define([
 	 */
 	Core.prototype.ready = function(fnReady) {
 		if (fnReady) {
-			if (this.bInitialized) {
+			if (this.bReady) {
 				fnReady();
 			} else {
 				this.pReady.promise.then(fnReady);
