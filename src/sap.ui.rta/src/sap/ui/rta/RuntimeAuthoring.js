@@ -1608,6 +1608,9 @@ sap.ui.define([
 					}
 
 					RtaAppVariantFeature.isManifestSupported().then(function(bResult) {
+						if (FlexUtils.isVariantByStartupParameter(this.getRootControlInstance())) {
+							bResult = false;
+						}
 						this._oToolbarControlsModel.setProperty("/appVariantMenu/saveAs/enabled", bResult);
 						this._oToolbarControlsModel.setProperty("/appVariantMenu/overview/enabled", bResult);
 						this._oToolbarControlsModel.setProperty("/appVariantMenu/manageApps/enabled", bResult);
