@@ -586,6 +586,16 @@ sap.ui.define([
 			}.bind(this)
 		};
 		this._oList.addDelegate(this._oListEventDelegate);
+		if (this._bItemRemoved) {
+			this._bItemRemoved = false;
+			var aList = this.getList();
+			var aListItems = aList.getItems();
+			if (aListItems.length > 0) {
+				aListItems[0].focus();
+			} else {
+				aList.getDomRef().querySelector(".sapMUCNoDataPage").focus();
+			}
+		}
 	};
 
 	/**
@@ -1505,6 +1515,7 @@ sap.ui.define([
 		this.removeIncompleteItem(this._oItemToBeDeleted);
 		this.fireAfterItemRemoved({item: this._oItemToBeDeleted});
 		this._oItemToBeDeleted = null;
+		this._bItemRemoved = true;
 	};
 
 	UploadSet.prototype._handleTerminateRequest = function (event, oItem) {

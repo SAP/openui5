@@ -877,6 +877,34 @@ sap.ui.define([
 		assert.ok(this.oUploadSet._oUploadButton && !this.oUploadSet._oUploadButton.getVisible(), "Upload button on illustrated message section is hidden when uploadButtonInvisible is set to true");
 	});
 
+	QUnit.test("Test to check focus update on delete item", function(assert){
+		//arrange
+		var oItemsList = this.oUploadSet.getItems();
+		this.oUploadSet._oItemToBeDeleted = oItemsList[0];
+		var fnDone = assert.async();
+		var iState = 0;
+
+		var afterRenderDelegate = {
+			onAfterRendering: function () {
+				if ( iState == 0 ) {
+					iState++;
+					assert.equal(this.oUploadSet._bItemRemoved, false, "_bItemRemoved flag is reset to false");
+					assert.equal(document.activeElement,  this.oUploadSet.getList().getItems()[0].getDomRef(), "Focus is set correctly");
+					this.oUploadSet._oItemToBeDeleted = oItemsList[1];
+					this.oUploadSet._handleClosedDeleteDialog("OK");
+				} else {
+					assert.equal(this.oUploadSet._bItemRemoved, false, "_bItemRemoved flag is reset to false");
+					assert.equal(document.activeElement,  this.oUploadSet.getList().getDomRef().querySelector(".sapMUCNoDataPage"), "Focus is set correctly");
+					this.oUploadSet.removeEventDelegate(afterRenderDelegate);
+					fnDone();
+				}
+			}.bind(this)
+
+		};
+		this.oUploadSet.addEventDelegate(afterRenderDelegate);
+		this.oUploadSet._handleClosedDeleteDialog("OK");
+	});
+
 	QUnit.module("UploadSet general functionality", {
 		beforeEach: function () {
 			this.oUploadSet = new UploadSet("uploadSet", {
