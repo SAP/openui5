@@ -1201,4 +1201,70 @@ sap.ui.define([
 		Device.system.phone = bOriginSystemPhone;
 	});
 
+	QUnit.module("Security");
+
+	QUnit.test("Sanitize CSS position", function (assert) {
+		var oList = new List(),
+			oFeedListItem = new FeedListItem({
+				sender: "George Washington",
+				info: "Reply",
+				timestamp: "March 04 2013",
+				text: "Lorem ipsum dolor sit amet, <strong class=\"malicious\" style=\"position: absolute !important\">consetetur</strong> sadipscing elitr, <a class=\"malicious\" href=\"https://sap.com\" style=\"position: fixed !important\">sed diam nonumy</a> eirmod tempor invidunt ut labore." +
+						"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore." +
+						"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore." +
+						"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore." +
+						"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore." +
+						"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore." +
+						"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore." +
+						"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore." +
+						"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore." +
+						"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore." +
+						"Lorem ipsum dolor sit amet, <strong class=\"malicious\" style=\"position: absolute !important\">consetetur</strong> sadipscing elitr, <a class=\"malicious\" href=\"https://sap.com\" style=\"position: fixed !important\">sed diam nonumy</a> eirmod tempor invidunt ut labore."
+			}),
+			aMaliciousNodes;
+
+		// Arrange
+		oList.addItem(oFeedListItem);
+
+		oList.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Assert
+		aMaliciousNodes = oFeedListItem.getDomRef().querySelectorAll(".malicious"); // find all "malicious" links
+
+		assert.strictEqual(aMaliciousNodes.length, 2, "there are 2 'malicious' nodes");
+		assert.strictEqual(aMaliciousNodes[0].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the first 'malicious' node");
+		assert.strictEqual(aMaliciousNodes[1].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the second 'malicious' node");
+
+		// Act - toggle to full text
+		oFeedListItem._toggleTextExpanded();
+		oCore.applyChanges();
+
+		// Assert
+		aMaliciousNodes = oFeedListItem.getDomRef().querySelectorAll(".malicious"); // find all "malicious" links
+
+		assert.strictEqual(aMaliciousNodes.length, 4, "there are 4 'malicious' nodes");
+		assert.strictEqual(aMaliciousNodes[0].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the first 'malicious' node");
+		assert.strictEqual(aMaliciousNodes[1].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the second 'malicious' node");
+		assert.strictEqual(aMaliciousNodes[2].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the third 'malicious' node");
+		assert.strictEqual(aMaliciousNodes[3].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the fourth 'malicious' node");
+
+		// Act - toggle back to short text
+		oFeedListItem._toggleTextExpanded();
+		oCore.applyChanges();
+
+		// Assert
+		aMaliciousNodes = oFeedListItem.getDomRef().querySelectorAll(".malicious"); // find all "malicious" links
+
+		assert.strictEqual(aMaliciousNodes.length, 2, "there are 2 'malicious' nodes");
+		assert.strictEqual(aMaliciousNodes[0].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the first 'malicious' node");
+		assert.strictEqual(aMaliciousNodes[1].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the second 'malicious' node");
+
+		// Cleanup
+		oFeedListItem.destroy();
+		oList.destroy();
+		oFeedListItem = null;
+		oList = null;
+	});
+
 });
