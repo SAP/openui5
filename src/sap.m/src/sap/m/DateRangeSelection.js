@@ -924,6 +924,28 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Handle when escape is pressed. Escaping unsaved input will restore
+	 * the last valid value. If the value cannot be parsed into a date
+	 * range, the input will be cleared.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	DateRangeSelection.prototype.onsapescape = function(oEvent) {
+		var sLastValue = this.getLastValue(),
+			aDates = this._parseValue(this._getInputValue(), true),
+			sValueFormatInputDate = this._formatValue(aDates[0], aDates[1], true);
+
+		if (sValueFormatInputDate !== sLastValue) {
+			oEvent.setMarked();
+			oEvent.preventDefault();
+
+			this.updateDomValue(sLastValue);
+			this.onValueRevertedByEscape(sLastValue, sValueFormatInputDate);
+		}
+	};
+
 	//Support of two date range version of Calendar added into original DatePicker's version
 	DateRangeSelection.prototype._fillDateRange = function(){
 
