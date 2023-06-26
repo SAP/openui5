@@ -2,6 +2,8 @@
  * ${copyright}
  */
 
+/*global NodeFilter*/
+
 // Provides control sap.m.FormattedText.
 sap.ui.define([
 	'./library',
@@ -82,7 +84,6 @@ function(
 					 *	<li><code>li</code></li>
 					 * </ul>
 					 * <p><code>style, dir</code> and <code>target</code> attributes are allowed.
-					 * <p>The <code>class</code> attribute is allowed, but its value is sanitized to contain only supported CSS classes, see {@link topic:91a4946b0dcf4356aaaedc4e502864f4 List of Supported CSS Classes}.
 					 * <p>If <code>target</code> is not set, links open in a new window by default.
 					 * <p>Only safe <code>href</code> attributes can be used. See {@link module:sap/base/security/URLListValidator URLListValidator}.
 					 *
@@ -189,46 +190,6 @@ function(
 		};
 
 		/**
-		 * Sanitizes the value of an HTMLElement's style attribute.
-		 * @param {string} a semicolon-separated list of css rules
-		 * @returns {string} the sanitized value
-		 * @private
-		 */
-		function sanitizeCSSStyles(value) {
-			var fnParseCssDeclarations = window['parseCssDeclarations'];
-
-			if (!fnParseCssDeclarations) {
-				return null;
-			}
-			var sanitizedDeclarations = [];
-			fnParseCssDeclarations(
-				value,
-				{
-				declaration: function (property, tokens) {
-					var normProp = property.toLowerCase();
-					if (normProp == "position") {
-						return;
-					}
-					sanitizedDeclarations.push(property + ': ' + tokens.join(' '));
-				}
-			});
-			return sanitizedDeclarations.length > 0 ? sanitizedDeclarations.join('; ') + ";" : null;
-		}
-
-		/**
-		 * Sanitizes the externally-specified css classes.
-		 * @param {string} sClasses a space-separated list of css classes
-		 * @returns {string} the filtered classes
-		 * @private
-		 */
-		function sanitizeCSSClasses(sClasses) {
-			return sClasses.split(" ").filter(function(sClass) {
-				// allow only the supported theming classes
-				return sClass.trim().startsWith("sapTheme");
-			}).join(" ");
-		}
-
-		/**
 		 * Sanitizes attributes on an HTML tag.
 		 *
 		 * @param {string} tagName An HTML tag name in lower case
@@ -268,17 +229,14 @@ function(
 						addTarget = false;
 					}
 				}
+
 				if (attr == "target") { // a::target already exists
 					addTarget = false;
 				}
-				if (attr == "style") {
-					attribs[i + 1] = sanitizeCSSStyles(value);
-				}
 
-				// filter the externally-defined classes and
-				// add the required UI5 classes
-				if (attr.toLowerCase() == "class") {
-					attribs[i + 1] = (cssClass + " " + sanitizeCSSClasses(value)).trim();
+				// add UI5 classes to the user defined
+				if (cssClass && attr.toLowerCase() == "class") {
+					attribs[i + 1] = cssClass + " " + value;
 					cssClass = "";
 				}
 			}
@@ -333,12 +291,46 @@ function(
 
 		FormattedText.prototype.onAfterRendering = function () {
 			this.$().find('a').on("click", openLink);
+			this.getDomRef && this._sanitizeCSSPosition(this.getDomRef());
 		};
 
 		FormattedText.prototype.onBeforeRendering = function () {
 			this.$().find('a').off("click", openLink);
 		};
 
+		/**
+		 * Adds CSS static position to provided DOM reference internal HTML nodes.
+		 *
+		 * @param {Element} oDomRef DOM reference that should be sanitized
+		 * @private
+		 */
+		FormattedText.prototype._sanitizeCSSPosition = function(oDomRef) {
+
+			if (!oDomRef) {
+				return;
+			}
+
+			var oWalker = document.createTreeWalker(
+					oDomRef,
+					NodeFilter.SHOW_ELEMENT
+				),
+				oCurrentNode = oWalker.nextNode();
+
+			while (oCurrentNode) {
+				oCurrentNode.style.setProperty("position", "static", "important");
+				oCurrentNode = oWalker.nextNode();
+			}
+		};
+
+		/**
+		 * Returns the HTML that should be displayed.
+		 *
+		 * IMPORTANT NOTE: When a HTML returned by this method is being placed in the page DOM, ALWAYS call _sanitizeCSSPosition
+		 * after it is rendered on the page DOM in order to sanitize the CSS position!
+		 *
+		 * @return {string} HTML that should be rendered
+		 * @private
+		 */
 		FormattedText.prototype._getDisplayHtml = function (){
 			var sText = this.getHtmlText(),
 				sAutoGenerateLinkTags = this.getConvertLinksToAnchorTags();

@@ -65,22 +65,22 @@ sap.ui.define([
 		$a = oFT.$().find("span");
 		assert.ok(!$a.attr("id"), "id is not rendered");
 		assert.ok(!$a.attr("href"), "span::href is not rendered");
-		assert.strictEqual($a.attr("class"), "", "a::class is not rendered");
+		assert.strictEqual($a.attr("class"), "aaa", "a::class is rendered");
 		assert.strictEqual($a[0].style.color, "red", "a::style is rendered");
 		assert.ok(!$a.attr("target"), "span::target is not rendered");
-		setText('<span style="word-wrap: break-word;">' + sFT + '</span>');
+		setText('<span style="overflow-wrap: break-word;">' + sFT + '</span>');
 		$span = oFT.$().find("span");
-		assert.strictEqual($span[0].getAttribute("style"), "word-wrap: break-word;", "styles are properly semicolon separated");
-		setText('<span style="word-wrap: break-word; color:red;">' + sFT + '</span>');
+		assert.strictEqual($span[0].getAttribute("style"), "overflow-wrap: break-word; position: static !important;", "styles are properly semicolon separated");
+		setText('<span style="overflow-wrap: break-word; color: red;">' + sFT + '</span>');
 		$span = oFT.$().find("span");
-		assert.strictEqual($span[0].getAttribute("style"), "word-wrap: break-word; color: red;", "styles are properly semicolon separated");
+		assert.strictEqual($span[0].getAttribute("style"), "overflow-wrap: break-word; color: red; position: static !important;", "styles are properly semicolon separated");
 		setText('<span style="padding-inline-start: 15px; margin-block-start: 0px">' + sFT + '</span>');
 		$span = oFT.$().find("span");
-		assert.strictEqual($span[0].getAttribute("style"), "padding-inline-start: 15px; margin-block-start: 0px;", "styles are preserved");
+		assert.strictEqual($span[0].getAttribute("style"), "padding-inline-start: 15px; margin-block-start: 0px; position: static !important;", "styles are properly semicolon separated");
 		setText('<a style="color:red;position:absolute;">"' + sFT + '</a>');
-		assert.strictEqual($a[0].style.position, "", "inline style for position is removed");
+		assert.strictEqual($a[0].style.position, "static", "inline style for position is set to 'static'");
 		setText('<a style="position:fixed;">"' + sFT + '</a>');
-		assert.strictEqual($a[0].style.position, "", "inline style for position is removed");
+		assert.strictEqual($a[0].style.position, "static", "inline style for position is set to 'static'");
 	});
 
 	QUnit.test("css classes", function(assert) {
@@ -91,15 +91,15 @@ sap.ui.define([
 
 		setText("<h6 class='abc'>" + sFT + "</h6>");
 		$a = oFT.$().find("h6");
-		assert.strictEqual($a.attr("class"), "sapMTitle sapMTitleStyleH6", "h6::class is rendered correctly");
+		assert.strictEqual($a.attr("class"), "sapMTitle sapMTitleStyleH6 abc", "h6::class is rendered correctly");
 
 		setText('<a id="AAA" class="abc" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</a>');
 		$a = oFT.$().find("a");
-		assert.strictEqual($a.attr("class"), "sapMLnk", "a::class is rendered correctly");
+		assert.strictEqual($a.attr("class"), "sapMLnk abc", "a::class is rendered correctly");
 
 		setText('<a class="abc sapThemeText-asColor" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</a>');
 		$a = oFT.$().find("a");
-		assert.strictEqual($a.attr("class"), "sapMLnk sapThemeText-asColor", "a::class is rendered correctly");
+		assert.strictEqual($a.attr("class"), "sapMLnk abc sapThemeText-asColor", "a::class is rendered correctly");
 	});
 
 	QUnit.module("_setUseLimitedRenderingRules restricted method", {
