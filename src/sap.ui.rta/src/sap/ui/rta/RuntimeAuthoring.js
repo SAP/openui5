@@ -453,7 +453,7 @@ sap.ui.define([
 			}
 
 			return this._loadUShellServicesPromise
-			.then(initVersioning.bind(this, bIsAutomaticRestart))
+			.then(initVersioning.bind(this))
 			.then(initContextBasedAdaptations.bind(this, bIsAutomaticRestart))
 			/*
 			 Check if the application has personalized changes and reload without them;
@@ -666,6 +666,7 @@ sap.ui.define([
 			if (!bSkipRestart) {
 				ReloadManager.handleUrlParametersOnExit(oReloadInfo);
 			}
+			VersionsAPI.clearInstances();
 		}.bind(this))
 		.catch(function(vError) {
 			if (!bUserCancelled) {
@@ -1449,13 +1450,9 @@ sap.ui.define([
 
 	/**
 	 * Inits version models. Clears old state if RTA is starting from end user mode (no switch)
-	 * @param {boolean} bIsAutomaticRestart - If true this is not an RTA start but a reload due to version/adaptation switch
 	 * @returns {Promise<void>} - Promise
 	 */
-	function initVersioning(bIsAutomaticRestart) {
-		if (!bIsAutomaticRestart) {
-			VersionsAPI.clearInstances();
-		}
+	function initVersioning() {
 		return VersionsAPI.initialize({
 			control: this.getRootControlInstance(),
 			layer: this.getLayer()
