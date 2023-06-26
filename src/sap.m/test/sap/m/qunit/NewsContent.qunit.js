@@ -50,7 +50,7 @@ sap.ui.define([
 		//Assert
 		assert.equal(this.oNewsContent.getProperty("contentText"), "My <u>new</u> Text", "ContentText text has HTML");
 		assert.equal(this.oNewsContent._oContentText.getHtmlText(), "My <u>new</u> Text", "Inner text has HTML");
-		assert.equal(document.getElementById("news-cnt-content-text").innerHTML, "My <u>new</u> Text", "Inner text is parsed in DOM");
+		assert.equal(document.getElementById("news-cnt-content-text").innerHTML, "My <u style=\"position: static !important;\">new</u> Text", "Inner text is parsed in DOM");
 	});
 
 	QUnit.test("HTML Subheader", function(assert) {
@@ -60,7 +60,7 @@ sap.ui.define([
 		//Assert
 		assert.equal(this.oNewsContent.getProperty("subheader"), "My <u>new</u> Text", "Subheader text has HTML");
 		assert.equal(this.oNewsContent._oSubHeaderText.getHtmlText(), "My <u>new</u> Text", "Inner text has HTML");
-		assert.equal(document.getElementById("news-cnt-subheader-text").innerHTML, "My <u>new</u> Text", "Inner text is parsed in DOM");
+		assert.equal(document.getElementById("news-cnt-subheader-text").innerHTML, "My <u style=\"position: static !important;\">new</u> Text", "Inner text is parsed in DOM");
 	});
 
 	QUnit.module("Functional tests", {
