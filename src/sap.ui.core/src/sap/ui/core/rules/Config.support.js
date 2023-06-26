@@ -407,8 +407,8 @@ sap.ui.define([
 
 			Object.keys(mComponents).forEach(function(sComponentId) {
 				var oManifest = mComponents[sComponentId].getManifest(),
-					mDataSources = oManifest['sap.app'].dataSources,
-					mModels = oManifest['sap.ui5'].models || {};
+					mDataSources = oManifest['sap.app'] && oManifest['sap.app'].dataSources || {},
+					mModels = oManifest['sap.ui5'] && oManifest['sap.ui5'].models || {};
 
 				Object.keys(mModels).forEach(function(sModel) {
 					var mDataSource,
