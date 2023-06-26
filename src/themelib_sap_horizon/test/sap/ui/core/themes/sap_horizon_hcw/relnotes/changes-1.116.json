@@ -3,6 +3,70 @@
     "date": "June 2023",
     "notes": [
       {
+        "id": "7243a6b8d2823773c2b79dfc329c9f096fa70f9d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: add styling for disabled calendar items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004533342023"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370019139"
+          }
+        ]
+      },
+      {
+        "id": "e9e77d4026a172f48246c219ea789b6093dc4ae7",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.05 and v4.17"
+      },
+      {
+        "id": "35e4a71d63bf267127bb5dc30197758dbd78e9a6",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Visual adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370046711"
+          }
+        ]
+      },
+      {
+        "id": "f574cf7c765b4706d997871a237dfe8d59ab2a60",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: Icons are visible on focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011581"
+          }
+        ]
+      },
+      {
+        "id": "8b5ae0812ca6cf07b82c62f5b090311773af6bd1",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Focus outline is now solid",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011593"
+          }
+        ]
+      },
+      {
+        "id": "73033e04a9ba07be96d845575a477db2b5708690",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: fix contrast ratio of semantic text in overflow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370037163"
+          }
+        ]
+      },
+      {
         "id": "5a960a10c744bf1e3642c856ea374d60c5b5fe06",
         "type": "FIX",
         "text": " sap.m.Select: Icon and text centered",

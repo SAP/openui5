@@ -3,6 +3,17 @@
     "date": "June 2023",
     "notes": [
       {
+        "id": "fa3d276ac722778f9ace4a6cf3d8460c89686955",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveFlowLayout: Sample contrast is appropriate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011594"
+          }
+        ]
+      },
+      {
         "id": "9a496e640bb851bd9bf4d680fd95c28a94b7ba04",
         "type": "FIX",
         "text": " sap.ui.layout.DynamicSideContent: fixed getScrollDelegate method",

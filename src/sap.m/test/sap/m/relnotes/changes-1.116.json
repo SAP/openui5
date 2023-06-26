@@ -3,6 +3,77 @@
     "date": "June 2023",
     "notes": [
       {
+        "id": "e9e77d4026a172f48246c219ea789b6093dc4ae7",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.05 and v4.17"
+      },
+      {
+        "id": "35e4a71d63bf267127bb5dc30197758dbd78e9a6",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Visual adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370046711"
+          }
+        ]
+      },
+      {
+        "id": "fa9f7301bb81ef791357222a8639b5419d305b86",
+        "type": "FIX",
+        "text": " sap.m.Input: Clear icon press value update corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380069145"
+          }
+        ]
+      },
+      {
+        "id": "33f145f78e2a02fa368dd8284b4e2c4f07b5a380",
+        "type": "FIX",
+        "text": " sap.m Date & Time controls: changed the default placeholder text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "07d0873787894e01d013f91d959e48a05b526edd",
+        "type": "FIX",
+        "text": " sap.m Date & Time controls: changed the default placeholder text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "8b07c488f21f948db972b12a3d0036a6d93db201",
+        "type": "FIX",
+        "text": " sap.m.Select: Redundant truncation removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380073850"
+          }
+        ]
+      },
+      {
+        "id": "1e35ba238fe2f63368dcad38a20397cc8a2a60bb",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: Negate Space press while holding Shift",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011638"
+          }
+        ]
+      },
+      {
         "id": "5a960a10c744bf1e3642c856ea374d60c5b5fe06",
         "type": "FIX",
         "text": " sap.m.Select: Icon and text centered",
@@ -10,6 +81,17 @@
           {
             "type": "BCP",
             "reference": "2380061756"
+          }
+        ]
+      },
+      {
+        "id": "2dd7a3b4332a462ab61530a6042ba296d8ee529f",
+        "type": "FIX",
+        "text": " ResponsiveTable - ACC: \"No Columns\" message is now read out",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370070105"
           }
         ]
       },
