@@ -410,7 +410,7 @@ sap.ui.define([
 
         var oChangeContent = oContent;
 
-        oChangeContent.value = !!this.getChangeOperations()["add"];
+        oChangeContent.value = (sOperation == this.getChangeOperations()["add"]);
         oChangeContent.targetAggregation = this.getTargetAggregation();
 
         var oAddRemoveChange = {

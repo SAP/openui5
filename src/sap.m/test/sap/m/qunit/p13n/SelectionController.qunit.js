@@ -392,8 +392,21 @@ sap.ui.define([
 		data.changedState  = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}];
 		aChanges = this.oSelectionController.getArrayDeltaChanges(data);
 		assert.equal(aChanges.length, 1, "Returned value is an array of change objects");
+	});
 
-//-----------------------------------------------------------------------
+	QUnit.test("check 'getArrayDeltaChanges (moving)'", function(assert){
+
+		var aChanges;
+		var oAdaptationControl = this.oSelectionController.getAdaptationControl();
+
+		var data = {
+			control: oAdaptationControl,
+			deltaAttributes: ["key", "name"],
+			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"},
+			existingState:  [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}],  // is state
+			changedState:   [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}]   // target state
+		};
+
 		// moving
 		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}];
 		data.changedState  = [{"name":"F","key":"F"},{"name":"E","key":"E"},{"name":"D","key":"D"},{"name":"C","key":"C"},{"name":"B","key":"B"},{"name":"A","key":"A"}];
@@ -430,8 +443,6 @@ sap.ui.define([
 		//move B:4
 		//[{{"name":"F","key":"F"}, {"name":"E","key":"E"},{"name":"D","key":"D"}, {"name":"C","key":"C"}, {"name":"B","key":"B"}, {"name":"A","key":"A"}]
 
-
-//-----------------------------------------------------------------------
 		// moving
 		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}];
 		data.changedState  = [{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"F","key":"F"},{"name":"D","key":"D"},{"name":"A","key":"A"},{"name":"E","key":"E"}];
@@ -452,7 +463,7 @@ sap.ui.define([
 		//[{"name":"B","key":"B"},{"name":"F","key":"F"}, {"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"A","key":"A"},{"name":"E","key":"E"}]
 
 
-//-----------------------------------------------------------------------
+		//-----------------------------------------------------------------------
 		// moving
 		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}];
 		data.changedState  = [{"name":"F","key":"F"},{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"}];
@@ -464,7 +475,7 @@ sap.ui.define([
 		assert.equal(aChanges[0].changeSpecificData.content.key, "F", "Returned the expected name");
 		assert.equal(aChanges[0].changeSpecificData.content.index, 0, "Returned the expected index");
 
-//-----------------------------------------------------------------------
+		//-----------------------------------------------------------------------
 		// moving
 		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}];
 		data.changedState  = [{"name":"B","key":"B"},{"name":"F","key":"F"},{"name":"A","key":"A"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"}];
@@ -480,7 +491,7 @@ sap.ui.define([
 		assert.equal(aChanges[1].changeSpecificData.content.key, "A", "Returned the expected name");
 		assert.equal(aChanges[1].changeSpecificData.content.index, 3, "Returned the expected index");
 
-//-----------------------------------------------------------------------
+		//-----------------------------------------------------------------------
 		// moving
 		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"}];
 		data.changedState  =  [{"name":"C","key":"C"},{"name":"B","key":"B"},{"name":"A","key":"A"},{"name":"D","key":"D"}];
@@ -496,7 +507,21 @@ sap.ui.define([
 		assert.equal(aChanges[1].changeSpecificData.content.key, "B", "Returned the expected name");
 		assert.equal(aChanges[1].changeSpecificData.content.index, 1, "Returned the expected index");
 
-//-----------------------------------------------------------------------
+	});
+
+	QUnit.test("check 'getArrayDeltaChanges (moving)'", function(assert){
+
+		var aChanges;
+		var oAdaptationControl = this.oSelectionController.getAdaptationControl();
+
+		var data = {
+			control: oAdaptationControl,
+			deltaAttributes: ["key", "name"],
+			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"},
+			existingState:  [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}],  // is state
+			changedState:   [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}]   // target state
+		};
+
 		// adding removing moving
 		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"}];
 		data.changedState  =  [{"name":"D","key":"D"},{"name":"A","key":"A"},{"name":"F","key":"F"}];
@@ -519,7 +544,7 @@ sap.ui.define([
 		assert.equal(aChanges[3].changeSpecificData.content.key, "F", "Returned the expected name");
 		assert.equal(aChanges[3].changeSpecificData.content.index, 2, "Returned the expected index");
 
-//-----------------------------------------------------------------------
+		//-----------------------------------------------------------------------
 		// adding removing moving
 		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"}];
 		data.changedState  = [{"name":"D","key":"D"},{"name":"F","key":"F"}, {"name":"A","key":"A"}];
@@ -544,7 +569,7 @@ sap.ui.define([
 		assert.equal(aChanges[3].changeSpecificData.content.index, 1, "Returned the expected index");
 		//[{"name":"D","key":D"},{"name":"F","key":"F"},{"name":A","key":A"}];
 
-//-----------------------------------------------------------------------
+		//-----------------------------------------------------------------------
 		// moving
 		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}];
 		data.changedState  = [{"name":"A","key":"A"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"F","key":"F"},{"name":"B","key":"B"},{"name":"E","key":"E"}];
@@ -565,7 +590,21 @@ sap.ui.define([
 		//[{"name":"A","key":"A"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"},{"name":"B","key":"B"},{"name":"E","key":"E"},];
 
 
-		//-----------------------------------------------------------------------
+	});
+
+	QUnit.test("check 'getArrayDeltaChanges (adding/deleting moving up&down)'", function(assert){
+
+		var aChanges;
+		var oAdaptationControl = this.oSelectionController.getAdaptationControl();
+
+		var data = {
+			control: oAdaptationControl,
+			deltaAttributes: ["key", "name"],
+			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"},
+			existingState:  [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}],  // is state
+			changedState:   [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}]   // target state
+		};
+
 		//adding/deleting moving up&down
 		data.existingState = [{"name":"title","key":"title"},{"name":"descr","key":"descr"},{"name":"author_ID","key":"author_ID"},{"name":"price","key":"price"},{"name":"stock","key":"stock"},{"name":"genre_code","key":"genre_code"},{"name":"subgenre_code","key":"subgenre_code"}];
 		data.changedState = [{"key":"genre_code","name":"genre_code","visible":true,"label":"Genre","tooltip":""},{"key":"stock","name":"stock","visible":true,"label":"Stock","tooltip":""},{"key":"price","name":"price","visible":true,"label":"Price","tooltip":""},{"key":"language_code","name":"language_code","visible":true,"label":"Language","tooltip":""},{"key":"metricsSyllables","name":"metricsSyllables","visible":true,"label":"Syllables","tooltip":""},{"key":"subgenre_code","name":"subgenre_code","visible":true,"label":"Sub Genre","tooltip":""},{"key":"author_ID","name":"author_ID","visible":true,"label":"Author ID","tooltip":""},{"key":"published","name":"published","visible":true,"label":"Published","tooltip":""},{"key":"modifiedAt","name":"modifiedAt","visible":true,"label":"Changed On","tooltip":""},{"key":"descr","name":"descr","visible":true,"label":"Description","tooltip":""},{"key":"metricsSentences","name":"metricsSentences","visible":true,"label":"Sentences","tooltip":""},{"key":"ID","name":"ID","visible":true,"label":"Book ID","tooltip":""},{"key":"metricsCharacters","name":"metricsCharacters","visible":true,"label":"Characters","tooltip":""},{"key":"classification_code","name":"classification_code","visible":true,"label":"Classification","tooltip":""},{"key":"createdAt","name":"createdAt","visible":true,"label":"Created On","tooltip":""},{"key":"currency_code","name":"currency_code","visible":true,"label":"Currency","tooltip":""},{"key":"detailgenre_code","name":"detailgenre_code","visible":true,"label":"DetailGenre","tooltip":""},{"key":"title","name":"title","visible":true,"label":"Title","tooltip":""}];
@@ -677,8 +716,21 @@ sap.ui.define([
         // {"name":"descr","key":"descr"},{"key":"metricsSentences","name":"metricsSentences"},{"key":"ID","name":"ID"}, {"key":"metricsCharacters","name":"metricsCharacters"}, {"key":"classification_code","name":"classification_code"}, 13
         // {"key":"createdAt","name":"createdAt"}, {"key":"currency_code","name":"currency_code"}, {"key":"detailgenre_code","name":"detailgenre_code"}, {"name":"title","key":"title"}];
 
-		//-----------------------------------------------------------------------
-		//adding/deleting with delta attributes
+	});
+
+	QUnit.test("check 'getArrayDeltaChanges (adding/deleting with deltaAttributes)'", function(assert){
+
+		var aChanges;
+		var oAdaptationControl = this.oSelectionController.getAdaptationControl();
+
+		var data = {
+			control: oAdaptationControl,
+			deltaAttributes: ["key", "name"],
+			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"},
+			existingState:  [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}],  // is state
+			changedState:   [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}]   // target state
+		};
+
 		data.existingState = [{"name":"A","key":"A", descending:true, position:0},{"name":"B","key":"B",descending:true, position:1}];
 		data.changedState  = [{"name":"B","key":"B", descending:false, sorted:true}];
 		data.deltaAttributes = ["key", "name", "descending"];
@@ -697,6 +749,37 @@ sap.ui.define([
 		assert.equal(aChanges[2].changeSpecificData.content.key, "B", "Returned the expected name");
 		assert.equal(aChanges[2].changeSpecificData.content.index, 0, "Returned the expected index");
 		assert.equal(aChanges[2].changeSpecificData.content.descending, false, "Returned the descending info");
+
+	});
+
+	QUnit.test("check value to be true/false on add/remove", function(assert){
+
+		var aChanges;
+		var oAdaptationControl = this.oSelectionController.getAdaptationControl();
+
+		var data = {
+			control: oAdaptationControl,
+			deltaAttributes: ["key", "name"],
+			changeOperations: {add: "addItem", remove: "removeItem", move: "moveItem"},
+			existingState:  [{"name":"A","key":"A"},{"name":"B","key":"B"}],  // is state
+			changedState:   [{"name":"B","key":"B"}]   // target state
+		};
+
+		aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+		assert.equal(aChanges.length, 1, "One remove change");
+		assert.equal(aChanges[0].changeSpecificData.content.value, false, "Value is set to false");
+
+		data = {
+			control: oAdaptationControl,
+			deltaAttributes: ["key", "name"],
+			changeOperations: {add: "addItem", remove: "removeItem", move: "moveItem"},
+			existingState:  [{"name":"A","key":"A"}],  // is state
+			changedState:   [{"name":"A","key":"A"},{"name":"B","key":"B"}]   // target state
+		};
+
+		aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+		assert.equal(aChanges.length, 1, "One add change");
+		assert.equal(aChanges[0].changeSpecificData.content.value, true, "Value is set to true");
 
 	});
 
