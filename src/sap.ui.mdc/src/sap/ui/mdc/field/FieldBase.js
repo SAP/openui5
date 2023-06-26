@@ -1529,8 +1529,9 @@ sap.ui.define([
 		var oParent = this.getParent();
 
 		if (oParent && oParent.enhanceAccessibilityState) {
-			// use Field as control, but aria properties of rendered inner control.
-			oParent.enhanceAccessibilityState(this, mAriaProps);
+			// use aria properties of rendered inner control. Also use inner control as aria properties (labelledby) might depent on the control.
+			// Field itself renders no aria properties.
+			oParent.enhanceAccessibilityState(oElement, mAriaProps);
 		}
 
 	};
