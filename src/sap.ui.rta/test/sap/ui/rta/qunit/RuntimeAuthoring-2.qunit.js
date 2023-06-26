@@ -626,6 +626,7 @@ sap.ui.define([
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(false);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
+			sandbox.stub(FlexUtils, "isVariantByStartupParameter").returns(false);
 
 			return this.oRta.start().then(function() {
 				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
@@ -642,6 +643,23 @@ sap.ui.define([
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantFeature, "isOverviewExtended").returns(true);
 			sandbox.stub(AppVariantFeature, "isManifestSupported").resolves(false);
+			sandbox.stub(FlexUtils, "isVariantByStartupParameter").returns(false);
+
+			return this.oRta.start().then(function() {
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), true, "then the 'AppVariant Overview' Menu Button is visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
+			}.bind(this));
+		});
+
+		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP) developer but uses a pseudo sap-app-id", function(assert) {
+			stubToolbarButtonsVisibility(true, true);
+			sandbox.stub(AppVariantFeature, "isOverviewExtended").returns(true);
+			sandbox.stub(AppVariantFeature, "isManifestSupported").resolves(true);
+			sandbox.stub(FlexUtils, "isVariantByStartupParameter").returns(true);
 
 			return this.oRta.start().then(function() {
 				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
@@ -790,6 +808,7 @@ sap.ui.define([
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
+			sandbox.stub(FlexUtils, "isVariantByStartupParameter").returns(false);
 			sandbox.stub(FlexUtils, "getUShellService")
 			.callThrough()
 			.withArgs("AppLifeCycle")
