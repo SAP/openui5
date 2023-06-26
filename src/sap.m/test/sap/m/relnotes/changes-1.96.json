@@ -1594,5 +1594,21 @@
         ]
       }
     ]
+  },
+  "1.96.21": {
+    "date": "June 2023",
+    "notes": [
+      {
+        "id": "96845418e72cefd91c70ca5f95e01835673aade1",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: documentation extension",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004628532023"
+          }
+        ]
+      }
+    ]
   }
 }
