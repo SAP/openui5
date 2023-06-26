@@ -3,6 +3,17 @@
     "date": "June 2023",
     "notes": [
       {
+        "id": "1281bdc4379f11f6f66108376c2edb78db5c5597",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Show overflow to support horizon outlines / shadows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380053119"
+          }
+        ]
+      },
+      {
         "id": "fa3d276ac722778f9ace4a6cf3d8460c89686955",
         "type": "FIX",
         "text": " sap.ui.layout.ResponsiveFlowLayout: Sample contrast is appropriate",

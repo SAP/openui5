@@ -3,6 +3,21 @@
     "date": "June 2023",
     "notes": [
       {
+        "id": "667f1b33bc3c450b72df9355741f1e1f9609eb40",
+        "type": "FIX",
+        "text": " Core.attachInitEvent not working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380078824"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380078825"
+          }
+        ]
+      },
+      {
         "id": "e9e77d4026a172f48246c219ea789b6093dc4ae7",
         "type": "FEATURE",
         "text": " sap.ui.core.IconPool: Update icon font v5.05 and v4.17"

@@ -3,6 +3,17 @@
     "date": "June 2023",
     "notes": [
       {
+        "id": "92fa373ce1c99a5615b69e14d3b0aa95f20df40d",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: escaping in Date & Time Pickers now closes dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370035278"
+          }
+        ]
+      },
+      {
         "id": "e9e77d4026a172f48246c219ea789b6093dc4ae7",
         "type": "FEATURE",
         "text": " sap.ui.core.IconPool: Update icon font v5.05 and v4.17"
