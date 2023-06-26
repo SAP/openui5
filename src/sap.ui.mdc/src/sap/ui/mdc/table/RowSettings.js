@@ -8,9 +8,9 @@ sap.ui.define([
 ], function(Element) {
 	"use strict";
 	/**
-	 * Constructor for new RowSettings.
+	 * Constructor for new <code>RowSettings</code>.
 	 *
-	 * Caution: Only use bindings which are bound against the rows, as working functionalities cannot be ensured for other binding types.
+	 * <b>Note:</b> Only use bindings that are bound against the rows, as working functionality cannot be ensured for other binding types.
 	 *
 	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
