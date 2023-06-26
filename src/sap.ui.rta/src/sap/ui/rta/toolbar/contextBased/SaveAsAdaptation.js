@@ -163,6 +163,7 @@ sap.ui.define([
 		oContextBasedAdaptation.priority = getAdaptationPriority.call(this);
 		var oRtaInformation = this.getToolbar().getRtaInformation();
 		if (this._bIsEditMode) {
+			oContextBasedAdaptation.adaptationId = this._mEditProperties.adaptationId;
 			ContextBasedAdaptationsAPI.update({
 				control: oRtaInformation.rootControl,
 				layer: oRtaInformation.flexSettings.layer,
