@@ -61,5 +61,31 @@ sap.ui.define([], function() {
 		return oRequireStub;
 	};
 
+	/**
+	 * Returns a stub handler to be used with callsFake
+	 * It will return a promise which will resolve after a timeout of 0
+	 * This ensures that all microtasks like resolved promise handlers would be processed before
+	 * and allows testing that the result is properly awaited
+	 * Additionally it does not allow concurrent calls while the promise has not resolved
+	 *
+	 * @param {object} assert - QUnit Assert
+	 * @param {any} [result] - Optional result to resolve with
+	 * @returns {function} The stub function
+	 */
+	FlQUnitUtils.resolveWithDelayedCallWhichMustNotBeInParallel = function(assert, result) {
+		var inProgress = false;
+		return function() {
+			return new Promise(function(resolve) {
+				// Delay resolution to simulate a slow call
+				assert.notOk(inProgress, "Should not do concurrent calls but wait for each other");
+				inProgress = true;
+				setTimeout(function() {
+					inProgress = false;
+					resolve(result);
+				}, 0);
+			});
+		};
+	};
+
 	return FlQUnitUtils;
 });

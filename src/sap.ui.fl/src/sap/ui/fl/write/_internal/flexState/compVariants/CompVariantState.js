@@ -911,13 +911,14 @@ sap.ui.define([
 	 */
 	CompVariantState.persistAll = function(sReference) {
 		var mCompEntities = _omit(FlexState.getCompVariantsMap(sReference), "_getOrCreate", "_initialize");
-		 var aPromises = Object.keys(mCompEntities).map(function(sPersistencyKey) {
-			return CompVariantState.persist({
+		// Calls must be done sequentially because the backend can't do this in parallel
+		// and first call might create draft which requires other parameters for following calls
+		return Object.keys(mCompEntities).reduce(function(oPromise, sPersistencyKey) {
+			return oPromise.then(CompVariantState.persist.bind(undefined, {
 				reference: sReference,
 				persistencyKey: sPersistencyKey
-			});
-		});
-		return Promise.all(aPromises);
+			}));
+		}, Promise.resolve());
 	};
 
 	/**
