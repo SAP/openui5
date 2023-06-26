@@ -607,6 +607,7 @@ sap.ui.define([
 
 			sResponseBody = '{"@odata.context": "' + getBaseUrl(oXhr.url)
 				+ '$metadata#People/$entity",';
+			oUser.HomeAddress = oUser.HomeAddress || null; // prevents drillDown errors
 			sResponseBody += JSON.stringify(oUser).slice(1);
 
 			// The response to POST requests is http 201 (Created)
