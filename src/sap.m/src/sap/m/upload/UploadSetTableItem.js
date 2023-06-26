@@ -8,31 +8,9 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/m/upload/UploadSetTableItemRenderer",
 	"sap/base/Log",
-	"sap/m/library",
 	"sap/m/upload/FilePreviewDialog"
-], function (ColumnListItem, IconPool, UploadSetTableItemRenderer, Log, MobileLibrary, FilePreviewDialog) {
+], function (ColumnListItem, IconPool, UploadSetTableItemRenderer, Log, FilePreviewDialog) {
     "use strict";
-
-	/**
-	 * Integrated media types.
-	 * @enum {string}
-	 * @private
-	 * @alias sap.m.IntegratedMediaType
-	 */
-	var IntegratedMediaType = {
-		"msword": "application/msword",
-		"vnd.google-apps.document": "application/vnd.google-apps.document",
-		"vnd.openxmlformats-officedocument.wordprocessingml.document": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-		"msexcel": "application/msexcel",
-		"vnd.ms-excel": "application/vnd.ms-excel",
-		"vnd.google-apps.spreadsheet": "application/vnd.google-apps.spreadsheet",
-		"vnd.openxmlformats-officedocument.spreadsheetml.sheet": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-		"mspowerpoint": "application/mspowerpoint",
-		"vnd.ms-powerpoint": "application/vnd.ms-powerpoint",
-		"vnd.google-apps.presentation": "application/vnd.google-apps.presentation",
-		"vnd.openxmlformats-officedocument.presentationml.presentation": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-		"vnd.openxmlformats-officedocument.presentationml.slideshow": "application/vnd.openxmlformats-officedocument.presentationml.slideshow"
-	};
 
 	/**
 	 * Constructor for a new UploadSetTableItem.
@@ -147,7 +125,7 @@ sap.ui.define([
 	 * @public
 	 */
 	UploadSetTableItem.openPreview = function (oItem) {
-		oItem._handleFileNamePressed();
+		oItem._previewCarousel();
 	};
 
 	/**
@@ -178,34 +156,9 @@ sap.ui.define([
 		return this._isRestricted();
 	};
 
-	/* ============== */
-	/* Event handlers */
-	/* ============== */
-
-	UploadSetTableItem.prototype._handleFileNamePressed = function () {
-		if (this._isIntegratedDocument()) {
-			this._previewIntegratedDocument();
-		} else {
-			this._previewCarousel();
-		}
-	};
-
 	/* =============== */
 	/* Private methods */
 	/* =============== */
-
-	UploadSetTableItem.prototype._isIntegratedDocument = function () {
-		var sMediaType = this.getMediaType();
-		if (!sMediaType) {
-			return false;
-		}
-
-		if (Object.values(IntegratedMediaType).indexOf(sMediaType.toLowerCase()) > -1) {
-			return true;
-		}
-
-		return false;
-	};
 
 	/**
 	 * Previews file in a dialog with carousel.
@@ -213,13 +166,6 @@ sap.ui.define([
 	UploadSetTableItem.prototype._previewCarousel = function () {
 		var filePreviewDialog = new FilePreviewDialog(this);
 		filePreviewDialog.open();
-	};
-
-	/**
-	 * Previews file in a new tab.
-	 */
-	UploadSetTableItem.prototype._previewIntegratedDocument = function () {
-		MobileLibrary.URLHelper.redirect(this.getUrl(), true);
 	};
 
 	UploadSetTableItem._getIconByMimeType = function(sMimeType, fileName) {
