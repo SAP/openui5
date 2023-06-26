@@ -6,19 +6,15 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
-	'sap/ui/core/ResizeHandler',
 	"sap/ui/core/theming/Parameters",
 	'sap/ui/core/Icon',
-	'sap/ui/core/delegate/ScrollEnablement',
 	"./SideNavigationRenderer"
 ],
 	function(
 		library,
 		Control,
-		ResizeHandler,
 		Parameters,
 		Icon,
-		ScrollEnablement,
 		SideNavigationRenderer
 	) {
 		'use strict';
@@ -80,15 +76,7 @@ sap.ui.define([
 					/**
 					 * Defines the content inside the footer.
 					 */
-					footer: {type: 'sap.tnt.NavigationList', multiple: false},
-					/**
-					 * The top arrow, used for scrolling throw items when SideNavigation is collapsed.
-					 */
-					_topArrowControl: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
-					/**
-					 * The bottom arrow, used for scrolling throw items when SideNavigation is collapsed.
-					 */
-					_bottomArrowControl: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
+					footer: {type: 'sap.tnt.NavigationList', multiple: false}
 				},
 				associations: {
 					/**
@@ -117,11 +105,6 @@ sap.ui.define([
 		});
 
 		SideNavigation.prototype.init = function () {
-			this._scroller = new ScrollEnablement(this, this.getId() + "-Flexible-Content", {
-				horizontal: false,
-				vertical: true
-			});
-
 			// Define group for F6 handling
 			this.data('sap-ui-fastnavgroup', 'true', true);
 		};
@@ -193,9 +176,6 @@ sap.ui.define([
 				if (fixedItemAggregation) {
 					fixedItemAggregation.setExpanded(isExpanded);
 				}
-			} else {
-				// hide scroller during collapsing animation
-				this._scroller.setVertical(false);
 			}
 
 			that._hasActiveAnimation = true;
@@ -239,16 +219,10 @@ sap.ui.define([
 				if (this.getAggregation('fixedItem')) {
 					this.getAggregation('fixedItem').setExpanded(isExpanded);
 				}
-
-				// enable back the scroller after collapsing animation
-				this._scroller.setVertical(true);
 			}
 
 			this.$().css('width', '');
 			this._hasActiveAnimation = false;
-
-			// wait for any re-rendering after the animation, before calling toggle arrows
-			setTimeout(this._toggleArrows.bind(this), 0);
 		};
 
 		SideNavigation.prototype._initThemeParams = function() {
@@ -273,19 +247,9 @@ sap.ui.define([
 				this.setSelectedItem(selectedItem);
 			}
 
-			this._deregisterControl();
-
 			if (!this._mThemeParams) {
 				this._initThemeParams();
 			}
-		};
-
-		/**
-		 * @private
-		 */
-		SideNavigation.prototype.onAfterRendering = function () {
-			this._ResizeHandler = ResizeHandler.register(this.getDomRef(), this._toggleArrows.bind(this));
-			this._toggleArrows();
 		};
 
 		/**
@@ -371,13 +335,7 @@ sap.ui.define([
 		 * @private
 		 */
 		SideNavigation.prototype.exit = function () {
-			if (this._scroller) {
-				this._scroller.destroy();
-				this._scroller = null;
-			}
-
 			this._mThemeParams = null;
-			this._deregisterControl();
 		};
 
 		/**
@@ -394,104 +352,6 @@ sap.ui.define([
 			});
 		};
 
-		/**
-		 * @private
-		 */
-		SideNavigation.prototype._deregisterControl = function () {
-			if (this._ResizeHandler) {
-				ResizeHandler.deregister(this._ResizeHandler);
-				this._ResizeHandler = null;
-			}
-		};
-
-		/**
-		 * Returns the sap.ui.core.Icon control used to display the group icon.
-		 * @returns {sap.ui.core.Icon}
-		 * @private
-		 */
-		SideNavigation.prototype._getTopArrowControl = function () {
-			var iconControl = this.getAggregation('_topArrowControl');
-			var that = this;
-
-			if (!iconControl) {
-				iconControl = new Icon({
-					src: 'sap-icon://navigation-up-arrow',
-					noTabStop: true,
-					useIconTooltip: false,
-					tooltip: '',
-					press: this._arrowPress.bind(that)
-				}).addStyleClass('sapTntSideNavigationScrollIcon sapTntSideNavigationScrollIconUp');
-				this.setAggregation("_topArrowControl", iconControl, true);
-			}
-
-			return iconControl;
-		};
-
-		/**
-		 * Returns the sap.ui.core.Icon control used to display the group icon.
-		 * @returns {sap.ui.core.Icon}
-		 * @private
-		 */
-		SideNavigation.prototype._getBottomArrowControl = function () {
-			var iconControl = this.getAggregation('_bottomArrowControl');
-			var that = this;
-
-			if (!iconControl) {
-				iconControl = new Icon({
-					src: 'sap-icon://navigation-down-arrow',
-					noTabStop: true,
-					useIconTooltip: false,
-					tooltip: '',
-					press: this._arrowPress.bind(that)
-				}).addStyleClass('sapTntSideNavigationScrollIcon sapTntSideNavigationScrollIconDown');
-
-				this.setAggregation("_bottomArrowControl", iconControl, true);
-			}
-
-			return iconControl;
-		};
-
-		SideNavigation.prototype._toggleArrows = function () {
-			var domRef = this.getDomRef();
-
-			if (!domRef) {
-				return;
-			}
-
-			var scrollContainerWrapper = this.$('Flexible')[0];
-			var scrollContainerContent = this.$('Flexible-Content')[0];
-			var isAsideExpanded = this.getExpanded();
-
-			if (this._hasActiveAnimation) {
-				domRef.querySelector('.sapTntSideNavigationScrollIconUp').style.display = 'none';
-				domRef.querySelector('.sapTntSideNavigationScrollIconDown').style.display = 'none';
-				return;
-			}
-
-			if ((scrollContainerContent.offsetHeight > scrollContainerWrapper.offsetHeight) && !isAsideExpanded) {
-				domRef.querySelector('.sapTntSideNavigationScrollIconUp').style.display = 'block';
-				domRef.querySelector('.sapTntSideNavigationScrollIconDown').style.display = 'block';
-
-				domRef.querySelector('.sapTntSideNavigationScrollIconDown').classList.remove('sapTntSideNavigationScrollIconDisabled');
-			} else {
-				domRef.querySelector('.sapTntSideNavigationScrollIconUp').style.display = 'none';
-				domRef.querySelector('.sapTntSideNavigationScrollIconDown').style.display = 'none';
-			}
-		};
-
-		SideNavigation.prototype._arrowPress = function (event) {
-			event.preventDefault();
-
-			var source = event.getSource().getDomRef();
-			var isDirectionForward = source.classList.contains('sapTntSideNavigationScrollIconDown') ? true : false;
-
-			var $container = this.$('Flexible');
-
-			var step = isDirectionForward ? 40 : -40;
-			$container[0].scrollTop += step;
-		};
-
 		return SideNavigation;
-
 	}
 );

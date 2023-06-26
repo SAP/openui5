@@ -6,23 +6,35 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	'./library',
+	'sap/ui/core/Core',
 	'sap/ui/core/Element',
 	'sap/ui/core/Control',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/Popup',
 	'sap/m/Popover',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/InvisibleText',
+	"./NavigationListItem",
 	"./NavigationListRenderer",
+	"sap/m/Menu",
+	"sap/m/MenuItem",
 	"sap/base/Log"
 ],
 	function(
 		jQuery,
 		library,
+		Core,
 		Element,
 		Control,
+		ResizeHandler,
+		Popup,
 		Popover,
 		ItemNavigation,
 		InvisibleText,
+		NavigationListItem,
 		NavigationListRenderer,
+		Menu,
+		MenuItem,
 		Log
 	) {
 		"use strict";
@@ -71,7 +83,12 @@ sap.ui.define([
 					/**
 					 * The items displayed in the list.
 					 */
-					items: {type: "sap.tnt.NavigationListItem", multiple: true, singularName: "item"}
+					items: {type: "sap.tnt.NavigationListItem", multiple: true, singularName: "item"},
+
+					/**
+					 * The overflow item.
+					 */
+					_overflowItem: {type: "sap.tnt.NavigationListItem", multiple: false, visibility: "hidden"}
 				},
 				associations: {
 					/**
@@ -130,6 +147,7 @@ sap.ui.define([
 		 * Called before the control is rendered.
 		 */
 		NavigationList.prototype.onBeforeRendering = function () {
+			this._deregisterResizeHandler();
 
 			// make sure the initial selected item (if any) is correct
 			var selectedKey = this.getSelectedKey();
@@ -142,6 +160,198 @@ sap.ui.define([
 		NavigationList.prototype.onAfterRendering = function () {
 			this._itemNavigation.setRootDomRef(this.getDomRef());
 			this._itemNavigation.setItemDomRefs(this._getDomRefs());
+
+			if (this.getExpanded()) {
+				return;
+			}
+
+			// clear the vertical scroll when collapsed
+			this.getDomRef().scrollTop = 0;
+			this._resizeListenerId = ResizeHandler.register(this.getDomRef().parentNode, this._resize.bind(this));
+
+			if (Core.isThemeApplied()) {
+				this._updateOverflowItems();
+			} else {
+				Core.attachThemeChanged(this._handleThemeLoad, this);
+			}
+		};
+
+		NavigationList.prototype._deregisterResizeHandler = function () {
+			if (this._resizeListenerId) {
+				ResizeHandler.deregister(this._resizeListenerId);
+				this._resizeListenerId = null;
+			}
+		};
+
+		NavigationList.prototype._handleThemeLoad = function () {
+			this._updateOverflowItems();
+			Core.detachThemeChanged(this._handleThemeLoad, this);
+		};
+
+		NavigationList.prototype._resize = function () {
+			this._updateOverflowItems();
+		};
+
+		NavigationList.prototype._updateOverflowItems = function () {
+			var domRef = this.getDomRef(),
+				computedStyle,
+				items,
+				overflowItem,
+				selectedItem,
+				listHeight,
+				itemsHeight = 0;
+
+			if (this.getExpanded() || !domRef) {
+				return;
+			}
+
+			items = domRef.querySelectorAll("li:not(.sapTnTNavLIOverflow)");
+			overflowItem = domRef.querySelector(".sapTnTNavLIOverflow");
+
+			if (!overflowItem) {
+				return;
+			}
+
+			overflowItem.classList.add("sapTnTNavLIHiddenItem");
+
+			items.forEach(function (item) {
+				item.classList.remove("sapTnTNavLIHiddenItem");
+				itemsHeight += item.offsetHeight;
+			});
+
+			computedStyle = window.getComputedStyle(domRef);
+			listHeight = domRef.offsetHeight - parseFloat(computedStyle.paddingTop) - parseFloat(computedStyle.paddingBottom);
+
+			if (listHeight >= itemsHeight) {
+				return;
+			}
+
+			overflowItem.classList.remove("sapTnTNavLIHiddenItem");
+			itemsHeight = overflowItem.offsetHeight;
+
+			selectedItem = domRef.querySelector(".sapTntNavLIItemSelected");
+			if (selectedItem) {
+				selectedItem = selectedItem.parentNode;
+				itemsHeight += selectedItem.offsetHeight;
+				computedStyle = window.getComputedStyle(selectedItem);
+				itemsHeight += parseFloat(computedStyle.marginTop) + parseFloat(computedStyle.marginBottom);
+			}
+
+			items.forEach(function (item) {
+				if (item === selectedItem) {
+					return;
+				}
+
+				itemsHeight += item.offsetHeight;
+				computedStyle = window.getComputedStyle(item);
+				itemsHeight += parseFloat(computedStyle.marginTop) + parseFloat(computedStyle.marginBottom);
+
+				if (itemsHeight >= listHeight) {
+					item.classList.add("sapTnTNavLIHiddenItem");
+				}
+			});
+		};
+
+		NavigationList.prototype._getOverflowItem = function () {
+			var overflowItem = this.getAggregation("_overflowItem");
+			if (!overflowItem) {
+				overflowItem = new NavigationListItem({
+					text: Core.getLibraryResourceBundle("sap.tnt").getText("NAVIGATION_LIST_NAVIGATION_OVERFLOW"),
+					icon: "sap-icon://overflow",
+					selectable: false,
+					select: this._overflowPress.bind(this)
+				});
+
+				overflowItem._isOverflow = true;
+
+				this.setAggregation("_overflowItem", overflowItem);
+			}
+
+			return overflowItem;
+		};
+
+		NavigationList.prototype._overflowPress = function (event) {
+			var menu = this._createOverflowMenu();
+			menu.openBy(event.getSource(), false, Popup.Dock.EndCenter);
+		};
+
+		NavigationList.prototype._createOverflowMenu = function () {
+			var menu = new Menu({
+				items: this._createNavigationMenuItems(),
+				itemSelected: function (event) {
+					var selectedItem = event.getParameter("item"),
+						selectedItemDomRef;
+
+					this._selectItem({
+						item: selectedItem._navItem
+					});
+
+					selectedItemDomRef = this.getDomRef().querySelector(".sapTntNavLIItemSelected");
+
+					if (selectedItemDomRef) {
+						selectedItemDomRef.parentNode.focus();
+					}
+
+					menu.close();
+					menu.destroy();
+				}.bind(this)
+			});
+
+			menu.addStyleClass("sapTntNavLIMenu");
+
+			// override this method, so we can have a selection
+			// on a menu item with subitems
+			menu._handleMenuItemSelect = function(oEvent) {
+				var oUnfdItem = oEvent.getParameter("item"),
+					oMenuItem;
+
+				if (!oUnfdItem) {
+					return;
+				}
+
+				oMenuItem = this._findMenuItemByUnfdMenuItem(oUnfdItem);
+
+				if (oMenuItem) {
+					this.fireItemSelected({item: oMenuItem});
+				}
+			}.bind(menu);
+
+			this.addDependent(menu);
+
+			return menu;
+		};
+
+		NavigationList.prototype._createNavigationMenuItems = function () {
+			var items = this.getItems(),
+				menuItems = [];
+
+			items.forEach(function (item) {
+				if (!item.getVisible() || !item.getDomRef().classList.contains("sapTnTNavLIHiddenItem")) {
+					return;
+				}
+
+				var menuItem = new MenuItem({
+					icon: item.getIcon(),
+					text: item.getText(),
+					enabled: item.getEnabled()
+				});
+				menuItem._navItem = item;
+
+				item.getItems().forEach(function (subItem) {
+					var subMenuItem = new MenuItem({
+						icon: subItem.getIcon(),
+						text: subItem.getText(),
+						enabled: subItem.getEnabled()
+					});
+					subMenuItem._navItem = subItem;
+
+					menuItem.addItem(subMenuItem);
+				});
+
+				menuItems.push(menuItem);
+			});
+
+			return menuItems;
 		};
 
 		NavigationList.prototype._updateNavItems = function () {
@@ -153,10 +363,10 @@ sap.ui.define([
 		 * @private
 		 */
 		NavigationList.prototype._getDomRefs = function () {
-
 			var domRefs = [],
 				items = this.getItems(),
-				isExpanded = this.getExpanded();
+				isExpanded = this.getExpanded(),
+				overflowItemDomRef = this.getAggregation("_overflowItem").getDomRef();
 
 			for (var i = 0; i < items.length; i++) {
 				if (isExpanded) {
@@ -164,6 +374,10 @@ sap.ui.define([
 				} else {
 					domRefs.push(items[i].getDomRef());
 				}
+			}
+
+			if (!isExpanded && overflowItemDomRef) {
+				domRefs.push(overflowItemDomRef);
 			}
 
 			return domRefs;
@@ -210,6 +424,8 @@ sap.ui.define([
 			if (this._popover) {
 				this._popover.destroy();
 			}
+
+			this._deregisterResizeHandler();
 		};
 
 		/**
@@ -305,6 +521,9 @@ sap.ui.define([
 			if (typeof selectedItem !== 'string' && !isNavigationListItem) {
 				Log.warning('Type of selectedItem association should be string or instance of sap.tnt.NavigationListItem. New value was not set.');
 				this.setAssociation('selectedItem', null, true);
+
+				this._updateOverflowItems();
+
 				return this;
 			}
 
@@ -322,6 +541,9 @@ sap.ui.define([
 			if (navigationListItem) {
 				navigationListItem._select();
 				this._selectedItem = navigationListItem;
+
+				this._updateOverflowItems();
+
 				return this;
 			}
 

@@ -231,7 +231,7 @@ sap.ui.define([
 			},
 			{
 				title: 'Card Actions',
-				icon: 'action',
+				icon: 'sap-icon://action',
 				target: 'learnDetail',
 				key: 'actions',
 				items: [

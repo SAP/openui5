@@ -27,12 +27,7 @@ sap.ui.define([
 	SideNavigationRenderer.render = function (rm, control) {
 		this.startSideNavigation(rm, control);
 
-		this.renderArrowUp(rm, control);
-
 		this.renderItem(rm, control);
-
-		this.renderArrowDown(rm, control);
-
 		this.renderFixedItem(rm, control);
 
 		this.renderFooter(rm, control);
@@ -81,23 +76,12 @@ sap.ui.define([
 		rm.close('div');
 	};
 
-	SideNavigationRenderer.renderArrowUp = function (rm, control){
-
-		rm.renderControl(control._getTopArrowControl());
-	};
-
-	SideNavigationRenderer.renderArrowDown = function (rm, control){
-
-		rm.renderControl(control._getBottomArrowControl());
-	};
-
 	SideNavigationRenderer.renderItem = function (rm, control) {
 		var itemAggregation = control.getAggregation('item');
 
 		rm.openStart('div', control.getId() + '-Flexible');
 		rm.attr('tabindex', '-1');
 		rm.class('sapTntSideNavigationFlexible');
-		rm.class('sapTntSideNavigationVerticalScrolling');
 		rm.openEnd();
 
 		rm.openStart('div', control.getId() + '-Flexible-Content');

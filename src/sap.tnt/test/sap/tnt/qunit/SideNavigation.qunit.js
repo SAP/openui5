@@ -38,6 +38,8 @@ sap.ui.define([
 	QUnit.test('SetExpanded true', function (assert) {
 		var oRB = Core.getLibraryResourceBundle("sap.tnt");
 
+		this.sideNavigation.getItem().addItem(new NavigationListItem({ text: "Text"}));
+		this.sideNavigation.getFixedItem().addItem(new NavigationListItem({ text: "Fixed Text"}));
 		this.sideNavigation.setExpanded(true);
 
 		this.clock.tick(1000);
@@ -64,6 +66,8 @@ sap.ui.define([
 		var done = assert.async();
 
 		// act
+		this.sideNavigation.getItem().addItem(new NavigationListItem({ text: "Text"}));
+		this.sideNavigation.getFixedItem().addItem(new NavigationListItem({ text: "Fixed Text"}));
 		this.sideNavigation.setExpanded(false);
 
 		setTimeout(function() {
@@ -77,10 +81,17 @@ sap.ui.define([
 				assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUBAR"), 'ul should have aria-roledescription "Navigation list menu bar"');
 			});
 
-			this.sideNavigation.$().find('.sapTntNavLIGroup.sapTntNavLIItem').each(function (index, item) {
-				assert.strictEqual(item.getAttribute('role'), 'menuitem', 'li should have role "menuitem"');
-				assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM"), 'ul should have aria-roledescription "Navigation list menu item"');
+			this.sideNavigation.$().find('li:not(.sapTnTNavLIOverflow)').each(function (index, item) {
+				assert.strictEqual(item.getAttribute('role'), 'menuitemradio', 'li should have role "menuitemradio"');
+				assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM"), 'li should have aria-roledescription "Navigation list menu item"');
 			});
+
+			this.sideNavigation.$().find('li.sapTnTNavLIOverflow').each(function (index, item) {
+				assert.strictEqual(item.getAttribute('role'), 'menuitem', 'li should have role "menuitem"');
+				assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM"), 'li should have aria-roledescription "Navigation list menu item"');
+				assert.ok(item.classList.contains("sapTnTNavLIHiddenItem"), 'overflow item is hidden');
+			});
+
 			done();
 		}.bind(this), 1000);
 	});

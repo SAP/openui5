@@ -4,11 +4,11 @@
 
 // Provides control sap.tnt.NavigationListItem.
 sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core/Icon',
-		'./NavigationList', 'sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/ui/events/KeyCodes", "sap/ui/core/library",
+		'sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/ui/events/KeyCodes", "sap/ui/core/library",
 		// jQuery Plugin "addAriaLabelledBy"
 		"sap/ui/util/openWindow", "sap/ui/util/defaultLinkTypes", "sap/ui/dom/jquery/Aria"],
 	function(jQuery, library, Core, Item, Icon,
-			 NavigationList, InvisibleText, Renderer, IconPool, KeyCodes, coreLibrary, openWindow, defaultLinkTypes) {
+			 InvisibleText, Renderer, IconPool, KeyCodes, coreLibrary, openWindow, defaultLinkTypes) {
 		"use strict";
 
 
@@ -61,6 +61,15 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 					 * @since 1.52
 					 */
 					visible : {type : "boolean", group : "Appearance", defaultValue : true},
+
+					/**
+					 * Specifies if the item can be selected.
+					 *
+					 * @since 1.116
+					 * @experimental Since 1.116. Disclaimer: this property is in a beta state
+					 * - incompatible API changes may be done before its official public release.
+					 */
+					selectable : {type : "boolean", group : "Behavior", defaultValue : true},
 
 					/**
 					 * Defines the link target URI. Supports standard hyperlink behavior. If a JavaScript action should be triggered,
@@ -242,7 +251,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 		 * @private
 		 */
 		NavigationListItem.prototype.createPopupList = function () {
-
 			var newSubItems = [],
 				list = this.getNavigationList(),
 				selectedItem = list.getSelectedItem(),
@@ -261,6 +269,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 						text: subItem.getText(),
 						textDirection: subItem.getTextDirection(),
 						enabled: subItem.getEnabled(),
+						selectable: subItem.getSelectable(),
 						href: subItem.getHref(),
 						target: subItem.getTarget(),
 						tooltip: subItem.getTooltip()
@@ -278,6 +287,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 			var newGroup = new NavigationListItem({
 				expanded: true,
 				hasExpander: false,
+				selectable: this.getSelectable(),
 				key: this.getId(),
 				text: this.getText(),
 				enabled: this.getEnabled(),
@@ -288,7 +298,9 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 				items: newSubItems
 			});
 
-			var navList = new NavigationList({
+			var navigationListClass = list.getMetadata().getClass().prototype.constructor;
+
+			var navList = new navigationListClass({
 				itemSelect: this.onPopupItemSelect.bind(this),
 				items: [
 					newGroup
@@ -333,7 +345,9 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 
 			this.fireSelect(params);
 
-			navList._selectItem(params);
+			if (this.getSelectable()) {
+				navList._selectItem(params);
+			}
 
 			this._openUrl();
 		};
@@ -531,11 +545,11 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 				text = this.getText(),
 				href = this.getHref(),
 				target = this.getTarget(),
+				selectable = this.getSelectable(),
 				tooltip,
 				ariaProps = {
 					level: '1',
 					role: 'treeitem',
-					selected: false,
 					roledescription: this._resourceBundleTNTLib.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE_ITEM")
 				},
 				expanderVisible = this.getItems().length > 0 && this.getHasExpander();
@@ -549,10 +563,13 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 			rm.class("sapTntNavLIItem");
 			rm.class("sapTntNavLIGroup");
 
-			if (control._selectedItem === this) {
-				ariaProps.selected = true;
-
-				rm.class("sapTntNavLIItemSelected");
+			if (selectable) {
+				if (control._selectedItem === this) {
+					ariaProps.selected = true;
+					rm.class("sapTntNavLIItemSelected");
+				} else {
+					ariaProps.selected = false;
+				}
 			}
 
 			if (!this.getEnabled()) {
@@ -637,9 +654,9 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 				expanded = this.getExpanded(),
 				isListExpanded = this._isListExpanded(),
 				tooltip,
+				selectable = this.getSelectable(),
 				ariaProps = {
-					role: 'menuitemradio',
-					checked: false,
+					role: selectable ? 'menuitemradio' : 'menuitem',
 					roledescription: this._resourceBundleTNTLib.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM")
 				};
 
@@ -664,8 +681,15 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 					ariaProps.haspopup = "tree";
 				}
 
-				if (control._selectedItem === this) {
-					ariaProps.checked = true;
+				if (this._isOverflow) {
+					rm.class("sapTnTNavLIOverflow");
+					rm.class("sapTnTNavLIHiddenItem");
+					rm.attr("tabindex", "-1");
+					ariaProps.haspopup = "menu";
+				}
+
+				if (selectable) {
+					ariaProps.checked = control._selectedItem === this;
 				}
 
 				// ARIA
@@ -708,14 +732,13 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 		 * @private
 		 */
 		NavigationListItem.prototype.renderSecondLevelNavItem = function (rm, control) {
-
 			var group = this.getParent(),
 				href = this.getHref(),
 				target = this.getTarget(),
+				selectable = this.getSelectable(),
 				ariaProps = {
 					role: 'treeitem',
 					level: '2',
-					selected: false,
 					roledescription: this._resourceBundleTNTLib.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE_ITEM")
 				};
 
@@ -723,10 +746,13 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 			rm.class("sapTntNavLIItem");
 			rm.class("sapTntNavLIGroupItem");
 
-			if (control._selectedItem === this) {
-				ariaProps.selected = true;
-
-				rm.class("sapTntNavLIItemSelected");
+			if (selectable) {
+				if (control._selectedItem === this) {
+					ariaProps.selected = true;
+					rm.class("sapTntNavLIItemSelected");
+				} else {
+					ariaProps.selected = false;
+				}
 			}
 
 			if (!this.getEnabled() || !group.getEnabled()) {
