@@ -1933,8 +1933,14 @@ sap.ui.define([
 	 *   batch request
 	 * @param {boolean} [mParameters.inactive]
 	 *   Whether the created context is inactive. An inactive context will only be sent to the
-	 *   server after the first property update. From then on it behaves like any other created
-	 *   context.
+	 *   server when it has become active after a property update. From then on it behaves like any
+	 *   other created context.<br>
+	 *   When a property update happens on an inactive context, the
+	 *   {@link sap.ui.model.odata.v2.ODataListBinding#event:createActivate 'createActivate'} event
+	 *   is fired, and the context becomes active, unless the event handler prevents this. While
+	 *   inactive, the context does not count as a
+	 *   {@link sap.ui.model.odata.v2.ODataModel#hasPendingChanges pending change} and does not
+	 *   contribute to the {@link #getCount count}.
 	 * @param {function} [mParameters.success]
 	 *   The success callback function
 	 * @returns {sap.ui.model.odata.v2.Context}
