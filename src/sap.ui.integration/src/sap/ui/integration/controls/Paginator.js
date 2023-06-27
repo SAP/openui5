@@ -54,7 +54,6 @@ sap.ui.define([
 				pageNumber: {type: "int", defaultValue: 0},
 				pageCount: {type: "int", defaultValue: 0},
 				pageSize: {type: "int", defaultValue: 0},
-
 				totalCount: {type: "int"},
 				skip: {type: "int"}
 			},
@@ -66,7 +65,6 @@ sap.ui.define([
 				animationComplete: {}
 			}
 		},
-
 		renderer: PaginatorRenderer
 	});
 
@@ -79,7 +77,8 @@ sap.ui.define([
 			card: oCard,
 			totalCount: oConfig.totalCount,
 			pageSize: oConfig.pageSize,
-			skip: oConfig.skip
+			skip: oConfig.skip,
+			visible: oConfig.visible
 		});
 	};
 

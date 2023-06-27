@@ -181,7 +181,8 @@ sap.ui.define([
 			oMicrochart = new Microchart({
 				valueColor: oChartSettings.color,
 				displayValue: oChartSettings.displayValue,
-				chart: oChart
+				chart: oChart,
+				visible: oChartSettings.visible
 			});
 		}
 
@@ -203,7 +204,8 @@ sap.ui.define([
 
 			oMicrochart = new Microchart({
 				displayValue: oChartSettings.displayValue,
-				chart: oChart
+				chart: oChart,
+				visible: oChartSettings.visible
 			});
 		}
 

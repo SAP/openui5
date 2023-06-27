@@ -30,7 +30,7 @@ sap.ui.define([
 			sTextBetweenNumbers;
 
 		// If there is only one page - do not render the indicator
-		if (iPageCount <= 1) {
+		if (iPageCount <= 1 || !oControl.getVisible()) {
 			InvisibleRenderer.render(oRm, oControl, oControl.TagName);
 			return;
 		}

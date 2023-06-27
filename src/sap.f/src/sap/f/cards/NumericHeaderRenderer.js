@@ -117,7 +117,7 @@ sap.ui.define([], function () {
 			oRm.renderControl(oTitle);
 		}
 
-		if (sStatus) {
+		if (sStatus && oNumericHeader.getStatusVisible()) {
 			oRm.openStart("span", oNumericHeader.getId() + "-status")
 				.class("sapFCardStatus");
 

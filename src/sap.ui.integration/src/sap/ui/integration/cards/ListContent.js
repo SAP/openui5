@@ -298,6 +298,7 @@ sap.ui.define([
 			mSettings = {
 				title: mItem.title && (mItem.title.value || mItem.title),
 				description: mItem.description && (mItem.description.value || mItem.description),
+				descriptionVisible: mItem.description ? mItem.description.visible : undefined,
 				highlight: mItem.highlight,
 				highlightText: mItem.highlightText,
 				info: mItem.info && mItem.info.value,
@@ -394,7 +395,8 @@ sap.ui.define([
 				chart: oChart.getChart(),
 				colorsLoad: function () {
 					this.fireEvent(LEGEND_COLORS_LOAD);
-				}.bind(this)
+				}.bind(this),
+				visible: oChartSettings.visible
 			});
 
 			oLegend.initItemsTitles(oChartSettings.bars, this.getBindingContext().getPath());

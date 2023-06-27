@@ -42,6 +42,55 @@
 			<br />
 				Pagination can be handled either client side or server side.
 			</p>
+
+			<h2 id="properties">Paginator Properties</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>pageSize</td>
+						<td>int</td>
+						<td></td>
+						<td>Yes</td>
+						<td>Number of the items in one page.</td>
+						<td>1.39.0</td>
+						<td>1.99</td>
+					</tr>
+					<tr>
+						<td>totalCount</td>
+						<td>int</td>
+						<td></td>
+						<td>No</td>
+						<td>
+							The total number of the items. Set this only for server-side pagination.
+						</td>
+						<td>1.39.0</td>
+						<td>1.99</td>
+					</tr>
+					<tr>
+						<td>visible</td>
+						<td>boolean</td>
+						<td>true</td>
+						<td>No</td>
+						<td>
+							Determines whether the paginator is visible.
+							<br>
+							<b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.56.0</td>
+						<td>1.116</td>
+					</tr>
+				</table>
+			</div>
+
 			<h2 id="clientSide">
 				Client-Side Pagination
 			</h2>

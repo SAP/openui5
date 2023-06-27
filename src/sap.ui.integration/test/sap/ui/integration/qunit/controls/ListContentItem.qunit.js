@@ -48,15 +48,22 @@ sap.ui.define([
 		// assert
 		assert.ok(oLCI.$().hasClass("sapUiIntLCITwoLines"), "'sapUiIntLCITwoLines' class should be present.");
 
+		oLCI.setDescriptionVisible(false);
+		Core.applyChanges();
+
+		// assert
+		assert.ok(oLCI.$().hasClass("sapUiIntLCIOneLine"), "'sapUiIntLCIOneLine' class should be present.");
+
 		// clean up
 		oLCI.destroy();
 	});
 
 	QUnit.test("Content layout when there are title and chart", function (assert) {
 		// arrange
+		var oMicrochart = new Microchart();
 		var oLCI = new ListContentItem({
 			title: "This is title",
-			microchart: new Microchart()
+			microchart:oMicrochart
 		});
 
 		oLCI.placeAt(DOM_RENDER_LOCATION);
@@ -64,6 +71,13 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oLCI.$().hasClass("sapUiIntLCITwoLines"), "'sapUiIntLCITwoLines' class should be present.");
+
+		oMicrochart.setVisible(false);
+		oLCI.invalidate();
+		Core.applyChanges();
+
+		// assert
+		assert.ok(oLCI.$().hasClass("sapUiIntLCIOneLine"), "'sapUiIntLCIOneLine' class should be present.");
 
 		// clean up
 		oLCI.destroy();

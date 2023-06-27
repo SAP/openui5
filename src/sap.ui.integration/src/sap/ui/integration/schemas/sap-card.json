@@ -220,6 +220,10 @@
                   "$ref": "#/definitions/simpleBinding"
                 }
               ]
+            },
+            "visible": {
+              "description": "Represents the visibility of the paginator",
+              "$ref": "#/definitions/visibility"
             }
           }
         },
@@ -2588,6 +2592,10 @@
               "$ref": "#/definitions/statusTextFormatter"
             }
           ]
+        },
+        "visible": {
+          "description": "Represents the visibility of the status text",
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -2875,6 +2883,10 @@
         "value": {
           "type": "string",
           "description": "The value of the field"
+        },
+        "visible": {
+          "description": "Represents the visibility of the field",
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -3476,6 +3488,10 @@
           "items": {
             "$ref": "#/definitions/Microchart.Bullet.Threshold"
           }
+        },
+        "visible": {
+          "description": "Represents the visibility of the chart",
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -3541,6 +3557,10 @@
           "items": {
             "$ref": "#/definitions/Microchart.StackedBar.Bar"
           }
+        },
+        "visible": {
+          "description": "Represents the visibility of the chart bar",
+          "$ref": "#/definitions/visibility"
         }
       }
     },

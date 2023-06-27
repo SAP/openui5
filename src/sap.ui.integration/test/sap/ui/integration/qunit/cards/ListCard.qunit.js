@@ -94,7 +94,10 @@ sap.ui.define([
 				},
 				"item": {
 					"title": "{Name}",
-					"description": "{Description}",
+					"description": {
+						"value": "{Description}",
+						"visible": "{Visibility}"
+					},
 					"highlight": "{state}",
 					"highlightText": "{state}",
 					"info": {
@@ -889,13 +892,30 @@ sap.ui.define([
 			var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
 			Core.applyChanges();
 
-			assert.equal(oListItem1.$().find(".sapUiIntLCIInfo").length, 0, "Info is not visible");
+			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIInfo").length, 0, "Info is not visible");
 
 			done();
 		}.bind(this));
 
 		// Act
 		this.oCard.setManifest(oManifest);
+	});
+
+	QUnit.test("Description visible property", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[3];
+			Core.applyChanges();
+
+			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIDescription").length, 0, "Description is not visible");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_ListCard);
 	});
 
 	QUnit.test("List Card - attributes", function (assert) {
@@ -1676,7 +1696,6 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-
 	QUnit.test("StackedBar MicroCharts sizes are equal", function (assert) {
 		testMicrochartCreation(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
 			var $charts = this.oCard.$().find(".sapUiIntMicrochartChart"),
@@ -1701,6 +1720,46 @@ sap.ui.define([
 
 				done();
 			}, 100);
+		}.bind(this));
+	});
+
+	QUnit.test("Visibility of MicroChart", function (assert) {
+		var oManifest = {
+			"sap.app": {
+				"id": "oManifest_ListCard_StackedBarMicrochartVisibility"
+			},
+			"sap.card": {
+				"type": "List",
+				"content": {
+					"data": {
+						"json": {
+							"chartVisible": false
+						}
+					},
+					"item": {
+						"title": "{Year}",
+						"chart": {
+							"type": "StackedBar",
+							"visible": "{chartVisible}",
+							"bars": [
+								{
+									"value": "{Notebook17}"
+								}
+							]
+						}
+					}
+				}
+			}
+		};
+
+		testMicrochartCreation(assert, this.oCard, oManifest, function (done) {
+			var oMicrochart = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getMicrochart();
+			var oLegend = this.oCard.getCardContent().getAggregation("_legend");
+
+			assert.strictEqual(oMicrochart.getVisible(), false, "Visibility is correctly resolved.");
+			assert.strictEqual(oLegend.getVisible(), false, "Visibility is correctly resolved.");
+
+			done();
 		}.bind(this));
 	});
 

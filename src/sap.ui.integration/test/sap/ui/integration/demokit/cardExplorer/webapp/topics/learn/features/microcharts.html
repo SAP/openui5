@@ -35,6 +35,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -42,16 +43,17 @@
 					</tr>
 					<tr>
 						<td>type</td>
-						<td>Bullet, StackedBar</td>
+						<td>"Bullet", "StackedBar"</td>
+						<td></td>
 						<td>Yes</td>
-						<td>Specifies one of the available microchart types. See details for every different type below.
-						</td>
+						<td>Specifies one of the available microchart types. See details for every different type below.</td>
 						<td>1.24</td>
 						<td>1.80</td>
 					</tr>
 					<tr>
 						<td>displayValue</td>
 						<td>string</td>
+						<td></td>
 						<td>No</td>
 						<td>The value, which is displayed next to the chart.</td>
 						<td>1.24</td>
@@ -60,10 +62,20 @@
 					<tr>
 						<td>maxValue</td>
 						<td>float</td>
+						<td></td>
 						<td>No</td>
 						<td>The maximum value.</td>
 						<td>1.24</td>
 						<td>1.80</td>
+					</tr>
+					<tr>
+						<td>visible</td>
+						<td>boolean</td>
+						<td>true</td>
+						<td>No</td>
+						<td>Visibility of the microchart.</td>
+						<td>1.56.0</td>
+						<td>1.116</td>
 					</tr>
 				</table>
 			</div>
