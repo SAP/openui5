@@ -819,7 +819,7 @@ sap.ui.define([
 				);
 				assert.strictEqual(
 					oIframeURL.searchParams.get("version"),
-					sap.ui.version,
+					Core.getConfiguration().getVersion().toString(),
 					"then the proper version is passed"
 				);
 				assert.strictEqual(
