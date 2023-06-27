@@ -12,8 +12,18 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Text",
 	"sap/ui/core/library",
-	"sap/ui/core/Item"
-], function (Controller, JSONModel, UploadSetTable, UploadSetTableItem, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, coreLibrary, CoreItem) {
+	"sap/ui/core/Item",
+	"./GraphUtil",
+	"sap/m/p13n/Engine",
+    "sap/m/p13n/SelectionController",
+    "sap/m/p13n/SortController",
+    "sap/m/p13n/GroupController",
+    "sap/m/p13n/MetadataHelper",
+    "sap/ui/model/Sorter",
+	"sap/base/util/deepExtend",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function (Controller, JSONModel, UploadSetTable, UploadSetTableItem, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, coreLibrary, CoreItem, graphUtil, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, deepExtend, Filter, FilterOperator) {
 	"use strict";
 
 	return Controller.extend("sap.m.uploadSetTableDemo.Page", {
@@ -22,14 +32,43 @@ sap.ui.define([
 
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
+			this.oUploadSetTable = this.byId("UploadSetTable");
+
+			var oStatusData = this._getStatusEnum();
+			this.getView().setModel(new JSONModel(oStatusData),"Status");
 
 			this.documentTypes = this.getFileCategories();
+			this.graphUtil = graphUtil;
 
 			this._oFilesTobeuploaded = [];
+			this._oFileRevisionMapping = {};
+			this._oRevisedVersions = {};
+
 			this.loadOverflowMenu();
 			var oMockServer = new MockServer();
 			oMockServer.oModel = oModel;
 			oMockServer.init();
+			this._registerForPersonalization();
+			this.getView().getModel().attachRequestCompleted(function(){
+				this._initializeGraph();
+			}.bind(this));
+		},
+		_initializeGraph: function(){
+			var oModel = this.getView().getModel();
+			var oData = oModel.getProperty("/items");
+			oData.forEach(function(oVal){
+				this._oFileRevisionMapping[oVal.id] = oVal.revision;
+			}.bind(this));
+			//For versioning of files we will connect them
+			var aEdgeList = oData.map(function(oVal){
+				return {
+					node1: oVal.id,
+					node2: oVal.parentId
+				};
+			}).filter(function(oVal){
+				return oVal.node2 && oVal.node2 !== "";
+			});
+			this.adjList = this.graphUtil.generateGraph(aEdgeList,oData,"id");
 		},
 		loadOverflowMenu: function () {
 			Fragment.load({
@@ -40,9 +79,103 @@ sap.ui.define([
 				this._oMenuFragment = oMenu;
 			}.bind(this));
 		},
-		onPersoButtonPressed: function () {
-			// personalization code
+		_registerForPersonalization:function() {
+            var oUploadSetTable = this.oUploadSetTable;
+            var aMetaData = [{key: "fileName",label: "File Name",path:"fileName", sortable: true, groupable: false},
+                             {key: "id", label: "ID",path: "id", sortable: false, groupable: false},
+                             {key: "revision", label: "Revision", path: "revision", sortable: true, groupable: true},
+                             {key: "status", label: "Status", path: "status", sortable: true, groupable: true},
+                             {key: "fileSize", label: "File Size", path: "fileSize", sortable:false, groupable:false},
+                             {key: "lastModified", label: "Last Modified", path: "lastModifiedBy", sortable:true, groupable: true},
+                             {key: "actionButton", label: "Action Button", sortable: false,groupable: false}
+							 ];
+
+			this.oMetadataHelper = new MetadataHelper(aMetaData);
+            //Register for p13n
+            //Singleton instance of Engine
+            Engine.getInstance().register(oUploadSetTable, {
+                helper: this.oMetadataHelper,
+                controller: {
+                    Columns: new SelectionController({
+                        targetAggregation: "columns",
+                        control: oUploadSetTable
+                    }),
+                    Sorter: new SortController({
+                        control: oUploadSetTable
+                    }),
+                    Groups: new GroupController({
+                        control: oUploadSetTable
+                    })
+                }
+            });
+            //attaching state change for working on new states
+            Engine.getInstance().attachStateChange(this.handleStateChange.bind(this));
+
+        },
+		_getStatusEnum: function(){
+			return {
+				"statuses": ["In work", "Approved", "Rejected"]
+			 };
 		},
+        onPersoButtonPressed: function (oEvent) {
+            // personalization code
+
+            //var oUploadSetTable = this.oUploadSetTable;
+            //Singleton instance of Engine class
+            // Engine.getInstance().show(oUploadSetTable, ["Columns", "Sorter", "Groups"],{
+            //     contentHeight: "35rem",
+            //     contentWidth: "32rem",
+            //     source: oUploadSetTable
+            // });
+        },
+
+        handleStateChange: function(oEvent) {
+            var oState = oEvent.getParameter("state");
+            //If no state is present
+            if (!oState){
+                return;
+            }
+
+            var aSorter = [];
+
+            oState.Sorter.forEach(function(oSorter) {
+                if (typeof oSorter !== "object") {
+                    return;
+                }
+                aSorter.push(new Sorter(this.oMetadataHelper.getProperty(oSorter.key).path, oSorter.descending));
+            }.bind(this));
+
+            oState.Groups.forEach(function(oGroup) {
+				if (typeof oGroup !== "object") {
+                    return;
+                }
+                var oExistingSorter = aSorter.find(function(oSorter) {
+                    return oSorter.sPath === oGroup.key;
+                });
+                if (oExistingSorter){
+                    oExistingSorter.vGroup = true;
+                } else {
+                    aSorter.push(new Sorter(this.oMetadataHelper.getProperty(oGroup.key).path, false, true));
+                }
+            }.bind(this));
+            //Setting visibility of all cols as false
+            this.oUploadSetTable.getColumns().forEach(function(oCol) {
+                oCol.setVisible(false);
+            });
+
+            oState.Columns.forEach(function(oProp, iIndex) {
+                if (oProp && oProp.key) {
+                    var oCol = this.byId(oProp.key);
+                    //Setting visibilty of column to true based on personalization
+                    oCol.setVisible(true);
+					//Setting ordering of column based on personalization
+                    oCol.setOrder(iIndex);
+                }
+            }.bind(this));
+			//Sorting/Grouping the items based on the condition
+            this.oUploadSetTable.getBinding("items").sort(aSorter);
+            this.oUploadSetTable.invalidate();
+        },
 		getIconSrc: function(mediaType, thumbnailUrl) {
 			return UploadSetTable.getIconForFileType(mediaType, thumbnailUrl);
 		},
@@ -59,21 +192,21 @@ sap.ui.define([
 
 			if (aSelectedItems.length > 0) {
 				oDownloadBtn.setEnabled(true);
-				oChangeStatusBtn.setEnabled(true);
-				oCreateRevisionBtn.setEnabled(true);
 			} else {
 				oDownloadBtn.setEnabled(false);
-				oChangeStatusBtn.setEnabled(false);
-				oCreateRevisionBtn.setEnabled(false);
 			}
 			if (aSelectedItems.length === 1){
 				oEditUrlBtn.setEnabled(true);
+				oChangeStatusBtn.setEnabled(true);
 				oRenameBtn.setEnabled(true);
 				oRemoveDocumentBtn.setEnabled(true);
+				oCreateRevisionBtn.setEnabled(true);
 			} else {
 				oRenameBtn.setEnabled(false);
+				oChangeStatusBtn.setEnabled(false);
 				oEditUrlBtn.setEnabled(false);
 				oRemoveDocumentBtn.setEnabled(false);
+				oCreateRevisionBtn.setEnabled(false);
 			}
 		},
 		// Download files handler
@@ -152,6 +285,13 @@ sap.ui.define([
 					}
 				}
 			);
+			var sId = oItem.getBindingContext().getObject().id;
+			//Removing all nodes to the connected component
+			this.graphUtil.removeConnectedComponent(sId,this.adjList,{});
+			delete this._oFileRevisionMapping[sId];
+			delete this._oRevisedVersions[sId];
+
+
 		},
 		getFileCategories: function() {
 			return [
@@ -289,11 +429,230 @@ sap.ui.define([
 		selectedFilesFromHandler: function(oItems) {
 			this.openFileUploadDialog(oItems);
 		},
+		_openChangeStatusDialog: function(oModel,sModelName){
+			if (!this._oChangeStatusDialog) {
+				Fragment.load({
+					name: "sap.m.uploadSetTableDemo.ChangeStatus",
+					id: this.getView().getId() + "-change-status",
+					controller: this
+				})
+					.then(function(oPopover) {
+						this._oChangeStatusDialog = oPopover;
+						this.getView().addDependent(oPopover);
+						oPopover.setModel(oModel,sModelName);
+						oPopover.open();
+					}.bind(this));
+			} else {
+				this._oChangeStatusDialog.setModel(oModel,sModelName);
+				this._oChangeStatusDialog.open();
+			}
+		},
 		onChangeStatus: function() {
 			// Change status handling code
+			var aSelectedItems = this.oUploadSetTable.getSelectedItems();
+			if (!aSelectedItems || aSelectedItems.length !== 1){
+				return;
+			}
+			var sStatusSelectedItem = aSelectedItems[0].getBindingContext().getObject().status;
+			var oModel = this.getView().getModel("Status");
+			var aStatuses = oModel.getProperty("/statuses");
+
+			var aStatusData = aStatuses.map(function(oVal){
+				if (oVal === sStatusSelectedItem){
+					return {
+						status: oVal,
+						selected: true,
+						text: ""
+					};
+				}
+				return {
+					status: oVal,
+					selected: false,
+					text: "Document will be locked"
+				};
+			});
+
+			var oJSONModel = new JSONModel(aStatusData);
+			this._openChangeStatusDialog(oJSONModel,"Status");
+
+		},
+		closeChangeStatusFragment: function(){
+			this._oChangeStatusDialog.destroy();
+			this._oChangeStatusDialog = null;
+		},
+		sortTable: function(oDialogTable){
+			oDialogTable.getBinding("items").sort(new Sorter("revision",false,false,function(a,b){
+				var oValA = parseInt(a);
+				var oValB = parseInt(b);
+				if (oValA < oValB) {
+					return -1;
+				  } else if (oValA > oValB) {
+					return 1;
+				  } else {
+					return 0;
+				  }
+			}),new Sorter("creationTimeStamp"));
+		},
+		_openRevisionDialog:function(oModel,oCustomData){
+			if (!this._oChangeStatusDialog) {
+				Fragment.load({
+					name: "sap.m.uploadSetTableDemo.FileRevision",
+					id: this.getView().getId() + "-revision",
+					controller: this
+				})
+					.then(function(oPopover) {
+						this._oRevisionDialog = oPopover;
+						this.getView().addDependent(oPopover);
+						oPopover.setModel(oModel);
+						oPopover.open();
+						oPopover.addCustomData(oCustomData);
+						var oDialogTable = sap.ui.core.Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
+						this.sortTable(oDialogTable);
+
+
+					}.bind(this));
+			} else {
+				this._oRevisionDialog.setModel(oModel);
+				this._oRevisionDialog.open();
+				this._oRevisionDialog.add(oCustomData);
+				var oDialogTable = sap.ui.core.Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
+				this.sortTable(oDialogTable);
+			}
+		},
+		closeRevisionDialog: function(){
+			this._oRevisionDialog.destroy();
+			this._oRevisionDialog = null;
+		},
+		replaceVersionHandler: function(oEvent){
+			var sId = this._oRevisionDialog.data("itemId");
+			var oTableItem = this.oUploadSetTable.getItems().filter(function(oVal){
+				return oVal.getBindingContext().getObject().id === sId;
+			});
+
+			this._oRevisedVersions[sId] = oTableItem[0].getBindingContext().getObject();
+			var oModel = this.getView().getModel();
+			var sPath = oTableItem[0].getBindingContext().sPath;
+			if (sPath.split("/")[2]) {
+				var index = sPath.split("/")[2];
+				var data = oModel.getProperty("/items");
+				var oDialogTable = sap.ui.core.Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
+				data[index] = oDialogTable.getSelectedItem().getBindingContext().getObject();
+				oModel.refresh(true);
+			}
+			this.closeRevisionDialog();
+			MessageToast.show("Version Replaced");
+
+		},
+		onAddVersion: function(){
+			var oDialogTable = sap.ui.core.Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
+			var oSelectedItem = oDialogTable.getSelectedItem();
+			if (oSelectedItem){
+				var oData = deepExtend({},oSelectedItem.getBindingContext().getObject());
+				var iRevision = parseInt(oData.revision) + 1;
+				var sId = oData.id;
+				oData.isActive = false;
+				oData.id = (parseInt(oData.id) + parseInt(Math.random() * 100000)).toString();
+				oData.status = "In work";
+				oData.isLatestVersion = true;
+				oData.revision = iRevision <= 9 ? "0".concat(iRevision) : iRevision.toString();
+				oData.creationTimeStamp = Date.now();
+				oData.isCurrent = false;
+				this.adjList[oData.id] = [];
+				this._oFileRevisionMapping[oData.id] = oData.revision;
+				this._oRevisedVersions[oData.id] = oData;
+				oDialogTable.getModel().setProperty(oSelectedItem.getBindingContext().getPath() + "/isLatestVersion",false);
+				this.graphUtil.addEdge(this.adjList,oData.id,sId);
+				oDialogTable.getModel().getProperty("/").push(oData);
+				oDialogTable.getModel().refresh();
+			}
 		},
 		onCreateRevision: function() {
 			// Revision Creation handling code
+			//We have to add a new item with revised version
+			var aSelectedItems = this.oUploadSetTable.getSelectedItems();
+			if (aSelectedItems && aSelectedItems.length){
+				var oModel = this.getView().getModel();
+				aSelectedItems.forEach(function(oItem){
+					var sPath = oItem.getBindingContext().sPath;
+					var oData = deepExtend({},oModel.getProperty(sPath));
+					var iRevision = parseInt(oData.revision) + 1;
+					var sId = oData.id;
+					oData.isActive = false;
+					oData.id = (parseInt(oData.id) + parseInt(Math.random() * 100000)).toString();
+					oData.status = "In work";
+					oData.isLatestVersion = true;
+					oData.revision = iRevision <= 9 ? "0".concat(iRevision) : iRevision.toString();
+					oData.creationTimeStamp = Date.now();
+					// oModel.getData().items.push(oData);
+					// oModel.refresh(true);
+					this.adjList[oData.id] = [];
+					this._oFileRevisionMapping[oData.id] = oData.revision;
+					this._oRevisedVersions[oData.id] = oData;
+					oModel.setProperty(sPath + "/isLatestVersion",false);
+					this.graphUtil.addEdge(this.adjList,oData.id,sId);
+				}.bind(this));
+			}
+			MessageToast.show("Revision Created");
+		},
+		getFileVersion: function(oEvent){
+			var oCurrentItem = oEvent.getSource().getParent().getParent();
+			if (oCurrentItem){
+				var sId = oCurrentItem.getBindingContext().getObject().id;
+				var aConnectedComponent = [];
+				var oConnectedIds = {};
+				//Getting all the subversions
+				this.graphUtil.getConditionalNeigbours(sId,this.adjList,{},aConnectedComponent,function(source,dest){
+					return parseInt(this._oFileRevisionMapping[source]) < parseInt(this._oFileRevisionMapping[dest]);
+				}.bind(this));
+				//Getting parent versions
+				this.graphUtil.getConditionalNeigbours(sId,this.adjList,{},aConnectedComponent,function(source,dest){
+					return parseInt(this._oFileRevisionMapping[source]) > parseInt(this._oFileRevisionMapping[dest]);
+				}.bind(this));
+				aConnectedComponent.forEach(function(oVal,iIndex){
+					oConnectedIds[oVal] = iIndex;
+				});
+				var oData = this.getView().getModel().getProperty("/items");
+				//Adding items from the table for the version
+				//Setting deep copy
+				var aJsonData = oData.filter(function(oVal){
+					return oConnectedIds[oVal.id];
+				}).map(function(oVal){
+					return deepExtend({},oVal);
+				});
+
+				aJsonData[0].isCurrent = true;
+				aJsonData[0].isSelected = true;
+				aJsonData[0].creationTimeStamp = Date.now();
+				delete this._oRevisedVersions[aJsonData[0].id];
+				var oCustomData = new sap.ui.core.CustomData({
+					key: "itemId",
+					value: aJsonData[0].id
+				});
+				//Other versions of the file
+				for (var sKey in oConnectedIds){
+					if (this._oRevisedVersions[sKey]){
+						this._oRevisedVersions[sKey].isCurrent = false;
+						this._oRevisedVersions[sKey].isSelected = false;
+						aJsonData.push(this._oRevisedVersions[sKey]);
+					}
+				}
+				var oJsonModel = new JSONModel(aJsonData);
+				this._openRevisionDialog(oJsonModel,oCustomData);
+			}
+		},
+		handleChangeStatusConfirm: function(oEvent){
+			var oModel = this.getView().getModel();
+			var aSelectedItems = this.oUploadSetTable.getSelectedItems();
+			if (!aSelectedItems || aSelectedItems.length !== 1){
+				return;
+			}
+			var sSelectedStatus = this._oChangeStatusDialog.getModel("Status").getProperty("/").filter(function(oVal){
+				return oVal.selected;
+			})[0].status;
+			//Modifying the status of the selected item
+			oModel.setProperty(aSelectedItems[0].getBindingContext().getPath() + "/status",sSelectedStatus);
+			//Closing the Status fragment
+			this.closeChangeStatusFragment();
 		},
 		getFileSizeWithUnits: function(iFileSize) {
 			return UploadSetTable.getFileSizeWithUnits(iFileSize);
@@ -530,6 +889,17 @@ sap.ui.define([
 			} else {
 				this._addViaUrlFragment.open();
 			}
+		},
+		onFilterFiles: function(oEvent){
+			var aFilter = [];
+			var sQuery = oEvent.getParameter("query");
+			if (sQuery) {
+				aFilter.push(new Filter("revision", FilterOperator.Contains, sQuery));
+			}
+			// filter binding
+			var oTable = sap.ui.core.Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
+			var oBinding = oTable.getBinding("items");
+			oBinding.filter(aFilter);
 		},
 		closeAddViaUrlFragment: function () {
 			this.bEditDocument = false;

@@ -3,7 +3,8 @@
 		"id": "sap.m.uploadSetTableDemo",
 		"applicationVersion": {
 			"version": "1.0.0"
-		}
+		},
+		"type": "application"
 	},
 	"sap.ui5": {
 		"rootView": {
