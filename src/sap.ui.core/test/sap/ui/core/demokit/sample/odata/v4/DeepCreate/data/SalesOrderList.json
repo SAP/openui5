@@ -1,0 +1,62 @@
+{
+	"@odata.context" : "$metadata#SalesOrderList(CurrencyCode,GrossAmount,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName))",
+	"@odata.metadataEtag" : "W/\"20230620150020\"",
+	"@odata.count" : "5",
+	"value" : [
+		{
+			"@odata.etag" : "W/\"20230621220000.0000000 \"",
+			"SalesOrderID" : "0500000000",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "25867.03",
+			"SO_2_BP" : {
+				"@odata.etag" : "W/\"20230310101009.0000000 \"",
+				"BusinessPartnerID" : "0100000001",
+				"CompanyName" : "Becker Berlin"
+			}
+		},
+		{
+			"@odata.etag" : "W/\"20230621220000.0000000 \"",
+			"SalesOrderID" : "0500000001",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "14602.49",
+			"SO_2_BP" : {
+				"@odata.etag" : "W/\"20230310101009.0000000 \"",
+				"BusinessPartnerID" : "0100000006",
+				"CompanyName" : "Asia High tech"
+			}
+		},
+		{
+			"@odata.etag" : "W/\"20230621220000.0000000 \"",
+			"SalesOrderID" : "0500000002",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "5631.08",
+			"SO_2_BP" : {
+				"@odata.etag" : "W/\"20230310101009.0000000 \"",
+				"BusinessPartnerID" : "0100000011",
+				"CompanyName" : "Alpine Systems"
+			}
+		},
+		{
+			"@odata.etag" : "W/\"20230621220000.0000000 \"",
+			"SalesOrderID" : "0500000003",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "1704.04",
+			"SO_2_BP" : {
+				"@odata.etag" : "W/\"20230310101009.0000000 \"",
+				"BusinessPartnerID" : "0100000013",
+				"CompanyName" : "HEPA Tec"
+			}
+		},
+		{
+			"@odata.etag" : "W/\"20230621220000.0000000 \"",
+			"SalesOrderID" : "0500000004",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "761.24",
+			"SO_2_BP" : {
+				"@odata.etag" : "W/\"20230310101009.0000000 \"",
+				"BusinessPartnerID" : "0100000013",
+				"CompanyName" : "HEPA Tec"
+			}
+		}
+	]
+}

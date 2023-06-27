@@ -1,0 +1,134 @@
+{
+	"_version" : "1.115.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "Demo Application for Deep Create",
+		"dataSources" : {
+			"default" : {
+				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
+				"type" : "OData"
+			}
+		},
+		"id" : "sap.ui.core.sample.odata.v4.DeepCreate",
+		"title" : "Deep Create Application",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"config" : {
+			"sample" : {
+				"files" : [
+					"Component.js",
+					"ListReport.controller.js",
+					"ListReport.view.xml",
+					"Main.controller.js",
+					"Main.view.xml",
+					"manifest.json",
+					"NotFound.view.xml",
+					"ObjectPage.controller.js",
+					"ObjectPage.view.xml",
+					"README.html",
+					"SandboxModel.js",
+					"data/metadata.xml",
+					"data/POST-SalesOrderList.json",
+					"data/SalesOrderList('0500000000').json",
+					"data/SalesOrderList('0500000000')-SO_2_SOITEM.json",
+					"data/SalesOrderList('0500000001').json",
+					"data/SalesOrderList('0500000007')-SO_2_BP.json",
+					"data/SalesOrderList.json",
+					"data/VH_CurrencyCode.json",
+					"data/VH_CurrencyCode.xml",
+					"data/VH_ProductID.json",
+					"data/VH_ProductID.xml",
+					"../../../common/Controller.js",
+					"../../../common/SandboxModelHelper.js",
+					"../../../common/ValueHelp.js"
+				]
+			}
+		},
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.115.0",
+			"libs" : {
+				"sap.m" : {},
+				"sap.ui.layout" : {}
+			}
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"settings" : {
+					"autoExpandSelect" : true,
+					"earlyRequests" : true,
+					"updateGroupId" : "UpdateGroup"
+				},
+				"type" : "sap.ui.core.sample.odata.v4.DeepCreate.SandboxModel",
+				"uriSettingName" : "serviceUrl"
+			}
+		},
+		"rootView" : {
+			"async" : true,
+			"type" : "XML",
+			"viewName" : "sap.ui.core.sample.odata.v4.DeepCreate.Main"
+		},
+		"routing" : {
+			"config" : {
+				"async" : true,
+				"bypassed": {
+					"target": "notFound"
+				},
+				"controlAggregation" : "pages",
+				"controlId" : "app",
+				"path" : "sap.ui.core.sample.odata.v4.DeepCreate",
+				"routerClass" : "sap.m.routing.Router",
+				"type" : "View",
+				"viewType" : "XML"
+			},
+			"routes" : [{
+				"name" : "listReport",
+				"pattern" : "",
+				"target" : ["listReport"]
+			}, {
+				"name" : "objectPage",
+				"pattern" : "id={id}",
+				"target" : ["objectPage"]
+			}, {
+				"name" : "create",
+				"pattern" : "create",
+				"target" : ["objectPage"]
+			}],
+			"targets" : {
+				"listReport" : {
+					"id" : "listReport",
+					"level" : 1,
+					"name" : "ListReport"
+				},
+				"objectPage" : {
+					"id" : "objectPage",
+					"level" : 1,
+					"name" : "ObjectPage"
+				},
+				"notFound": {
+					"id": "notFound",
+					"name": "NotFound",
+					"transition": "show"
+				}
+			}
+		}
+	}
+}

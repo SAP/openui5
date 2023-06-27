@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+		   xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common" />
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="SAP__measures" />
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core" />
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="SAP__capabilities" />
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="SAP__aggregation" />
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Validation.V1" Alias="SAP__validation" />
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList" />
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="SAP__UI" />
+	</edmx:Reference>
+	<edmx:Reference Uri="../../../../default/sap/zui5_epm_sample/0002/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.default.zui5_epm_sample.v0002"
+					  Alias="SAP__ParentService" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.f4.h_tcurc-sh.v0001" Alias="SAP__self">
+			<EntityType Name="H_TCURC_SH">
+				<Key>
+					<PropertyRef Name="WAERS" />
+				</Key>
+				<Property Name="WAERS" Type="Edm.String" Nullable="false" MaxLength="5" />
+				<Property Name="LTEXT" Type="Edm.String" Nullable="false" MaxLength="40" />
+				<Property Name="CURRDEC" Type="Edm.Byte" Nullable="false" />
+			</EntityType>
+			<EntityType Name="TCURC_CT">
+				<Key>
+					<PropertyRef Name="WAERS" />
+				</Key>
+				<Property Name="WAERS" Type="Edm.String" Nullable="false" MaxLength="5" />
+				<Property Name="LTEXT" Type="Edm.String" Nullable="false" MaxLength="40" />
+				<Property Name="CURRDEC" Type="Edm.Byte" Nullable="false" />
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="H_TCURC_SH_Set"
+						   EntityType="com.sap.gateway.f4.h_tcurc-sh.v0001.H_TCURC_SH" />
+				<EntitySet Name="TCURC_CT_Set"
+						   EntityType="com.sap.gateway.f4.h_tcurc-sh.v0001.TCURC_CT" />
+			</EntityContainer>
+			<Annotations Target="SAP__self.Container/H_TCURC_SH_Set">
+				<Annotation Term="SAP__capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="FilterExpressionRestrictions">
+							<Collection>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="WAERS" />
+									<PropertyValue Property="AllowedExpressions"
+												   String="MultiValue" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__ParentService.SalesOrder/CurrencyCode">
+				<Annotation Term="SAP__common.ValueListMapping">
+					<Record>
+						<PropertyValue Property="CollectionPath" String="H_TCURC_SH_Set" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="SAP__common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="CurrencyCode" />
+									<PropertyValue Property="ValueListProperty" String="WAERS" />
+								</Record>
+								<Record Type="SAP__common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="LTEXT" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.H_TCURC_SH/WAERS">
+				<Annotation Term="SAP__common.UnitSpecificScale" Path="CURRDEC" />
+				<Annotation Term="SAP__common.ValueListMapping">
+					<Record>
+						<PropertyValue Property="CollectionPath" String="TCURC_CT_Set" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="SAP__common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="WAERS" />
+									<PropertyValue Property="ValueListProperty" String="WAERS" />
+								</Record>
+								<Record Type="SAP__common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="LTEXT" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/TCURC_CT_Set">
+				<Annotation Term="SAP__capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="FilterExpressionRestrictions">
+							<Collection>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="WAERS" />
+									<PropertyValue Property="AllowedExpressions"
+												   String="MultiValue" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.TCURC_CT/WAERS">
+				<Annotation Term="SAP__common.UnitSpecificScale" Path="CURRDEC" />
+			</Annotations>
+			<Annotations Target="SAP__self.Container">
+				<Annotation Term="SAP__capabilities.FilterFunctions">
+					<Collection>
+						<String>eq</String>
+						<String>ne</String>
+						<String>gt</String>
+						<String>ge</String>
+						<String>lt</String>
+						<String>le</String>
+						<String>and</String>
+						<String>or</String>
+						<String>contains</String>
+						<String>startswith</String>
+						<String>endswith</String>
+						<String>any</String>
+						<String>all</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

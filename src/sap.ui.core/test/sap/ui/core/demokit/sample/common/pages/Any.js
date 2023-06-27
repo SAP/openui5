@@ -180,7 +180,7 @@ sap.ui.define([
 				cleanUp : function (sControlId) {
 					this.waitFor({
 						controlType : "sap.m.Table",
-						autoWait : false,
+						autoWait : true, // wait for still running POST requests (Context#created)
 						id : sControlId,
 						success : function (oTable) {
 							var aCreatedEntityPaths = Opa.getContext().aCreatedEntityPaths || [],
