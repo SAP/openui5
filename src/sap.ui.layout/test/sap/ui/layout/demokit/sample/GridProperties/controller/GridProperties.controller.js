@@ -1,5 +1,5 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(Controller) {
+sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/mvc/Controller'],
+	function(Element, Controller) {
 		'use strict';
 
 		return Controller.extend('sap.ui.layout.GridProperties.controller.GridProperties', {
