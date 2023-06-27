@@ -5206,4 +5206,39 @@ sap.ui.define([
 			}));
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("setCount", function () {
+		var oHelperMock = this.mock(_Helper);
+
+		oHelperMock.expects("updateExisting")
+			.withExactArgs("~mChangeListeners~", "~sPath~", "~aCollection~", {$count : 42});
+
+		// code under test
+		_Helper.setCount("~mChangeListeners~", "~sPath~", "~aCollection~", 42);
+
+		oHelperMock.expects("updateExisting")
+			.withExactArgs("~mChangeListeners~", "~sPath~", "~aCollection~", {$count : 23});
+
+		// code under test
+		_Helper.setCount("~mChangeListeners~", "~sPath~", "~aCollection~", "23");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addToCount", function () {
+		var aCollection = [];
+
+		aCollection.$count = 42;
+
+		this.mock(_Helper).expects("setCount")
+			.withExactArgs("~mChangeListeners~", "~sPath~", aCollection, 41);
+
+		// code under test
+		_Helper.addToCount("~mChangeListeners~", "~sPath~", aCollection, -1);
+
+		delete aCollection.$count;
+
+		// code under test
+		_Helper.addToCount("~mChangeListeners~", "~sPath~", aCollection, 1);
+	});
 });
