@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v1/descending-stacked-bars", "./v2/descending-stacked-bars"], function (_exports, _Theme, _descendingStackedBars, _descendingStackedBars2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "descending-stacked-bars";
-  const pathData = "M185.5 0v146h-109V0h109zm37 245V99h109v146h-109zm255 47h-109V146h109v146zm-292-109v146h-109V183h109zm37 255V292h109v146h-109zm146 0V329h109v109h-109zm-183-72v72h-109v-72h109zM2.5 480h508v32H2.5v-32z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "business-suite";
-  const packageName = "@ui5/webcomponents-icons-business-suite";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _descendingStackedBars.accData;
+    }
   });
-  var _default = "descending-stacked-bars";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _descendingStackedBars.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _descendingStackedBars.pathData : _descendingStackedBars2.pathData;
+  _exports.pathData = pathData;
+  var _default = "business-suite/descending-stacked-bars";
   _exports.default = _default;
 });

@@ -41,6 +41,16 @@ sap.ui.define([
 	 *
 	 * <br>
 	 * <br>
+	 * <h3>CSS Shadow Parts</h3>
+	 *
+	 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/::part CSS Shadow Parts} allow developers to style elements inside the Shadow DOM. <br>
+	 * The <code>sap.ui.webc.main.CheckBox</code> exposes the following CSS Shadow Parts:
+	 * <ul>
+	 *     <li>root - Used to style the outermost wrapper of the <code>sap.ui.webc.main.CheckBox</code></li>
+	 * </ul>
+	 *
+	 * <br>
+	 * <br>
 	 * <h3>Keyboard Handling</h3>
 	 *
 	 * The user can use the following keyboard shortcuts to toggle the checked state of the <code>sap.ui.webc.main.CheckBox</code>.
@@ -69,7 +79,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the accessible aria name of the component.
+				 * Defines the accessible ARIA name of the component.
 				 */
 				accessibleName: {
 					type: "string",
@@ -102,7 +112,7 @@ sap.ui.define([
 				/**
 				 * Defines whether the component is displayed as partially checked. <br>
 				 * <br>
-				 * <b>Note:</b> The indeterminate state can be set only programatically and can’t be achieved by user interaction and the resulting visual state depends on the values of the <code>indeterminate</code> and <code>checked</code> properties:
+				 * <b>Note:</b> The indeterminate state can be set only programmatically and can’t be achieved by user interaction and the resulting visual state depends on the values of the <code>indeterminate</code> and <code>checked</code> properties:
 				 * <ul>
 				 *     <li> If the component is checked and indeterminate, it will be displayed as partially checked
 				 *     <li> If the component is checked and it is not indeterminate, it will be displayed as checked
@@ -130,7 +140,7 @@ sap.ui.define([
 				/**
 				 * Defines whether the component is read-only. <br>
 				 * <br>
-				 * <b>Note:</b> A red-only component is not editable, but still provides visual feedback upon user interaction.
+				 * <b>Note:</b> A read-only component is not editable, but still provides visual feedback upon user interaction.
 				 */
 				readonly: {
 					type: "boolean",

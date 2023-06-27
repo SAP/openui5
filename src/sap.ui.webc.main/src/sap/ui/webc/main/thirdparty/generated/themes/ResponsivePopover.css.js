@@ -8,12 +8,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   _parametersBundle = _interopRequireDefault(_parametersBundle);
   _parametersBundle2 = _interopRequireDefault(_parametersBundle2);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  (0, _Themes.registerThemePropertiesLoader)("@ui5/webcomponents-theming", "sap_fiori_3", () => _parametersBundle.default);
-  (0, _Themes.registerThemePropertiesLoader)("@ui5/webcomponents", "sap_fiori_3", () => _parametersBundle2.default);
-  var _default = {
+  (0, _Themes.registerThemePropertiesLoader)("@ui5/webcomponents-theming", "sap_fiori_3", async () => _parametersBundle.default);
+  (0, _Themes.registerThemePropertiesLoader)("@ui5/webcomponents", "sap_fiori_3", async () => _parametersBundle2.default);
+  const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/ResponsivePopover.css",
-    content: ":host{--_ui5_input_width:100%;min-width:6.25rem;min-height:2rem}:host([opened]){display:inline-block}.ui5-responsive-popover-header{height:var(--_ui5-responsive_popover_header_height);display:flex;justify-content:space-between;align-items:center;width:100%}.ui5-responsive-popover-header-text{width:calc(100% - var(--_ui5_button_base_min_width))}.ui5-responsive-popover-header-no-title{justify-content:flex-end}"
+    content: ":host {\n\t--_ui5_input_width: 100%;\n\tmin-width: 6.25rem;\n\tmin-height: 2rem;\n}\n\n:host([opened]) {\n\tdisplay: inline-block;\n}\n\n.ui5-responsive-popover-header {\n\theight: var(--_ui5-responsive_popover_header_height);\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n\twidth:100%;\n}\n\n.ui5-responsive-popover-header-text {\n\twidth: calc(100% - var(--_ui5_button_base_min_width));\n}\n\n.ui5-responsive-popover-header-no-title {\n\tjustify-content: flex-end;\n}\n"
   };
+  var _default = styleData;
   _exports.default = _default;
 });

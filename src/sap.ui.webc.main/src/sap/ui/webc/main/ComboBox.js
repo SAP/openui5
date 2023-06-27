@@ -13,6 +13,7 @@ sap.ui.define([
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
+	var ComboBoxFilter = library.ComboBoxFilter;
 
 	/**
 	 * Constructor for a new <code>ComboBox</code>.
@@ -30,8 +31,10 @@ sap.ui.define([
 	 * It is commonly used to enable users to select an option from a predefined list.
 	 *
 	 * <h3>Structure</h3> The <code>sap.ui.webc.main.ComboBox</code> consists of the following elements:
+	 *
+	 *
 	 * <ul>
-	 *     <li> Input field - displays the selected option or a custom user entry. Users can type to narrow down the list or enter their own value.
+	 *     <li> Input field - displays the selected option or a custom user entry. Users can type to narrow down the list or enter their own value.</li>
 	 *     <li> Drop-down arrow - expands\collapses the option list.</li>
 	 *     <li> Option list - the list of available options.</li>
 	 * </ul>
@@ -74,7 +77,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the accessible aria name of the component.
+				 * Defines the accessible ARIA name of the component.
 				 */
 				accessibleName: {
 					type: "string"
@@ -94,11 +97,11 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the filter type of the component. Available options are: <code>StartsWithPerTerm</code>, <code>StartsWith</code> and <code>Contains</code>.
+				 * Defines the filter type of the component. Available options are: <code>StartsWithPerTerm</code>, <code>StartsWith</code>, <code>Contains</code> and <code>None</code>.
 				 */
 				filter: {
-					type: "string",
-					defaultValue: "StartsWithPerTerm"
+					type: "sap.ui.webc.main.ComboBoxFilter",
+					defaultValue: ComboBoxFilter.StartsWithPerTerm
 				},
 
 				/**
@@ -193,7 +196,7 @@ sap.ui.define([
 				 */
 				icon: {
 					type: "sap.ui.webc.main.IIcon",
-					multiple: false,
+					multiple: true,
 					slot: "icon"
 				},
 
@@ -247,7 +250,7 @@ sap.ui.define([
 						 * item to be selected.
 						 */
 						item: {
-							type: "HTMLElement"
+							type: "sap.ui.webc.main.IComboBoxItem"
 						}
 					}
 				}

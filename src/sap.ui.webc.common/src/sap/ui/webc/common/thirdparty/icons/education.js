@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/education", "./v4/education"], function (_exports, _Theme, _education, _education2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/education", "./v5/education"], function (_exports, _Theme, _education, _education2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _education.pathData : _education2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _education.pathData : _education2.pathData;
   _exports.pathData = pathData;
   var _default = "education";
   _exports.default = _default;

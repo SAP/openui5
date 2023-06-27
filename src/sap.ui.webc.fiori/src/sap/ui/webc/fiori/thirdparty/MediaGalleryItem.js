@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/main/thirdparty/Icon", "sap/ui/webc/common/thirdparty/icons/background", "./types/MediaGalleryItemLayout", "./generated/templates/MediaGalleryItemTemplate.lit", "./generated/themes/MediaGalleryItem.css"], function (_exports, _UI5Element, _LitRenderer, _Keys, _Device, _Icon, _background, _MediaGalleryItemLayout, _MediaGalleryItemTemplate, _MediaGalleryItem) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/main/thirdparty/Icon", "sap/ui/webc/common/thirdparty/icons/background", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "./types/MediaGalleryItemLayout", "./generated/themes/MediaGalleryItem.css", "./generated/templates/MediaGalleryItemTemplate.lit"], function (_exports, _UI5Element, _LitRenderer, _Keys, _Device, _Icon, _background, _customElement, _property, _slot, _MediaGalleryItemLayout, _MediaGalleryItem, _MediaGalleryItemTemplate) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -8,137 +8,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _UI5Element = _interopRequireDefault(_UI5Element);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _Icon = _interopRequireDefault(_Icon);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
   _MediaGalleryItemLayout = _interopRequireDefault(_MediaGalleryItemLayout);
-  _MediaGalleryItemTemplate = _interopRequireDefault(_MediaGalleryItemTemplate);
   _MediaGalleryItem = _interopRequireDefault(_MediaGalleryItem);
+  _MediaGalleryItemTemplate = _interopRequireDefault(_MediaGalleryItemTemplate);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-media-gallery-item",
-    managedSlots: true,
-    properties: /** @lends sap.ui.webcomponents.fiori.MediaGalleryItem.prototype */{
-      /**
-       * Defines the selected state of the component.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      selected: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the component is in disabled state.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Determines the layout of the item container.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>Square</code></li>
-       * <li><code>Wide</code></li>
-       * </ul>
-       *
-       * @type {MediaGalleryItemLayout}
-       * @defaultvalue "Square"
-       * @public
-       */
-      layout: {
-        type: _MediaGalleryItemLayout.default,
-        defaultValue: _MediaGalleryItemLayout.default.Square
-      },
-      /**
-       * @private
-       */
-      _interactive: {
-        type: Boolean
-      },
-      /**
-       * @private
-       */
-      _square: {
-        type: Boolean
-      },
-      /**
-       * @private
-       */
-      _contentImageNotFound: {
-        type: Boolean
-      },
-      /**
-       * @private
-       */
-      _thumbnailNotFound: {
-        type: Boolean
-      },
-      /**
-       * @private
-       */
-      _thumbnailDesign: {
-        type: Boolean
-      },
-      /**
-       * Indicates whether the element is focused.
-       *
-       * @private
-       */
-      focused: {
-        type: Boolean
-      },
-      /**
-       * @private
-       */
-      _tabIndex: {
-        type: String,
-        defaultValue: undefined
-      },
-      /**
-       * @private
-       */
-      contentHeight: {
-        type: String,
-        noAttribute: true,
-        defaultValue: ""
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.fiori.MediaGalleryItem.prototype */{
-      /**
-       * Defines the content of the component.
-       *
-       * @type {HTMLElement}
-       * @slot content
-       * @public
-       */
-      "default": {
-        propertyName: "content",
-        type: HTMLElement
-      },
-      /**
-       * Defines the content of the thumbnail.
-       *
-       * @type {HTMLElement}
-       * @slot
-       * @public
-       */
-      "thumbnail": {
-        type: HTMLElement
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
   /**
    * @class
    * <h3 class="comment-api-title">Overview</h3>
@@ -162,14 +45,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.fiori.MediaGalleryItem
-   * @extends sap.ui.webcomponents.base.UI5Element
+   * @alias sap.ui.webc.fiori.MediaGalleryItem
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-media-gallery-item
    * @public
-   * @implements sap.ui.webcomponents.fiori.IMediaGalleryItem
+   * @implements sap.ui.webc.fiori.IMediaGalleryItem
    * @since 1.1.0
    */
-  class MediaGalleryItem extends _UI5Element.default {
+  let MediaGalleryItem = class MediaGalleryItem extends _UI5Element.default {
     constructor() {
       super();
       this._monitoredContent = null;
@@ -180,23 +63,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._interactive = !(0, _Device.isPhone)();
       this._square = true;
     }
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _MediaGalleryItem.default;
-    }
-    static get template() {
-      return _MediaGalleryItemTemplate.default;
-    }
     get _thumbnail() {
-      return this.thumbnail.length && this.thumbnail[0];
+      return this.thumbnail.length ? this.thumbnail[0] : null;
     }
     get _content() {
-      return this.content.length && this.content[0];
+      return this.content.length ? this.content[0] : null;
     }
     get _isThubmnailAvailable() {
       return this._thumbnail && !this._thumbnailNotFound;
@@ -210,7 +81,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get _useContent() {
       return !this._useThumbnail && this._isContentAvailable;
     }
-    get tabIndex() {
+    get effectiveTabIndex() {
       return this.disabled ? undefined : this._tabIndex;
     }
     get _showBackgroundIcon() {
@@ -232,14 +103,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _monitorLoadingError() {
       let callback, success;
       if (this._thumbnailDesign && this.thumbnail.length && this._monitoredThumbnail !== this._thumbnail) {
-        this._thumbnailNotFound = undefined; // reset flag
-        callback = this._updateThumbnailLoaded;
+        this._thumbnailNotFound = false; // reset flag
+        callback = this._updateThumbnailLoaded.bind(this);
         success = this._attachListeners(this._thumbnail, callback);
         success && (this._monitoredThumbnail = this._thumbnail);
       }
       if (!this._useThumbnail && this.content.length && this._monitoredContent !== this._content) {
-        this._contentImageNotFound = undefined; // reset flag
-        callback = this._updateContentImageLoaded;
+        this._contentImageNotFound = false; // reset flag
+        callback = this._updateContentImageLoaded.bind(this);
         success = this._attachListeners(this._content, callback);
         success && (this._monitoredContent = this._content);
       }
@@ -248,17 +119,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const isImg = element.tagName === "IMG",
         img = isImg ? element : element.querySelector("img");
       if (img) {
-        callback.call(this, img);
+        callback(img);
         img.addEventListener("error", () => {
           if (this.contains(img)) {
             // img still belongs to us
-            callback.call(this, img);
+            callback(img);
           }
         });
         img.addEventListener("load", () => {
           if (this.contains(img)) {
             // img still belongs to us
-            callback.call(this, img);
+            callback(img);
           }
         });
         return true;
@@ -270,16 +141,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _updateThumbnailLoaded(image) {
       this._thumbnailNotFound = image.naturalHeight === 0 && image.naturalWidth === 0;
     }
-    _onkeydown(event) {
-      if ((0, _Keys.isSpace)(event)) {
-        event.preventDefault();
+    _onkeydown(e) {
+      if ((0, _Keys.isSpace)(e)) {
+        e.preventDefault();
       }
-      if ((0, _Keys.isEnter)(event)) {
+      if ((0, _Keys.isEnter)(e)) {
         this._fireItemClick();
       }
     }
-    _onkeyup(event) {
-      if ((0, _Keys.isSpace)(event)) {
+    _onkeyup(e) {
+      if ((0, _Keys.isSpace)(e)) {
         this._fireItemClick();
       }
     }
@@ -294,10 +165,51 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         item: this
       });
     }
-    static get dependencies() {
-      return [_Icon.default];
-    }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MediaGalleryItem.prototype, "selected", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MediaGalleryItem.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)({
+    type: _MediaGalleryItemLayout.default,
+    defaultValue: _MediaGalleryItemLayout.default.Square
+  })], MediaGalleryItem.prototype, "layout", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MediaGalleryItem.prototype, "_interactive", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MediaGalleryItem.prototype, "_square", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MediaGalleryItem.prototype, "_contentImageNotFound", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MediaGalleryItem.prototype, "_thumbnailNotFound", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MediaGalleryItem.prototype, "_thumbnailDesign", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MediaGalleryItem.prototype, "focused", void 0);
+  __decorate([(0, _property.default)()], MediaGalleryItem.prototype, "_tabIndex", void 0);
+  __decorate([(0, _property.default)({
+    noAttribute: true
+  })], MediaGalleryItem.prototype, "contentHeight", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement,
+    "default": true
+  })], MediaGalleryItem.prototype, "content", void 0);
+  __decorate([(0, _slot.default)()], MediaGalleryItem.prototype, "thumbnail", void 0);
+  MediaGalleryItem = __decorate([(0, _customElement.default)({
+    tag: "ui5-media-gallery-item",
+    renderer: _LitRenderer.default,
+    styles: _MediaGalleryItem.default,
+    template: _MediaGalleryItemTemplate.default,
+    dependencies: [_Icon.default]
+  })], MediaGalleryItem);
   MediaGalleryItem.define();
   var _default = MediaGalleryItem;
   _exports.default = _default;

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/feedback", "./v4/feedback"], function (_exports, _Theme, _feedback, _feedback2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/feedback", "./v5/feedback"], function (_exports, _Theme, _feedback, _feedback2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _feedback.pathData : _feedback2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _feedback.pathData : _feedback2.pathData;
   _exports.pathData = pathData;
   var _default = "feedback";
   _exports.default = _default;

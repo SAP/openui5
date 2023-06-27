@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/question-mark", "./v4/question-mark"], function (_exports, _Theme, _questionMark, _questionMark2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/question-mark", "./v5/question-mark"], function (_exports, _Theme, _questionMark, _questionMark2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _questionMark.pathData : _questionMark2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _questionMark.pathData : _questionMark2.pathData;
   _exports.pathData = pathData;
   var _default = "question-mark";
   _exports.default = _default;

@@ -1,28 +1,47 @@
-sap.ui.define(["exports", "./DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
    * Different calendar types.
+   *
+   * @readonly
+   * @enum {string}
+   * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.base.types.CalendarType
    */
-  const CalendarTypes = {
-    Gregorian: "Gregorian",
-    Islamic: "Islamic",
-    Japanese: "Japanese",
-    Buddhist: "Buddhist",
-    Persian: "Persian"
-  };
-  class CalendarType extends _DataType.default {
-    static isValid(value) {
-      return !!CalendarTypes[value];
-    }
-  }
-  CalendarType.generateTypeAccessors(CalendarTypes);
+  var CalendarType;
+  (function (CalendarType) {
+    /**
+     * @public
+     * @type {Gregorian}
+     */
+    CalendarType["Gregorian"] = "Gregorian";
+    /**
+     * @public
+     * @type {Islamic}
+     */
+    CalendarType["Islamic"] = "Islamic";
+    /**
+     * @public
+     * @type {Japanese}
+     */
+    CalendarType["Japanese"] = "Japanese";
+    /**
+     * @public
+     * @type {Buddhist}
+     */
+    CalendarType["Buddhist"] = "Buddhist";
+    /**
+     * @public
+     * @type {Persian}
+     */
+    CalendarType["Persian"] = "Persian";
+  })(CalendarType || (CalendarType = {}));
   var _default = CalendarType;
   _exports.default = _default;
 });

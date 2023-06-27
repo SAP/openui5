@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/templates/ProductSwitchTemplate.lit", "./generated/i18n/i18n-defaults", "./generated/themes/ProductSwitch.css"], function (_exports, _i18nBundle, _UI5Element, _ItemNavigation, _ResizeHandler, _Integer, _LitRenderer, _Keys, _ProductSwitchTemplate, _i18nDefaults, _ProductSwitch) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/templates/ProductSwitchTemplate.lit", "./generated/i18n/i18n-defaults", "./generated/themes/ProductSwitch.css"], function (_exports, _i18nBundle, _UI5Element, _ItemNavigation, _property, _slot, _customElement, _ResizeHandler, _Integer, _LitRenderer, _Keys, _ProductSwitchTemplate, _i18nDefaults, _ProductSwitch) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -7,44 +7,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
   _ItemNavigation = _interopRequireDefault(_ItemNavigation);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
+  _customElement = _interopRequireDefault(_customElement);
   _ResizeHandler = _interopRequireDefault(_ResizeHandler);
   _Integer = _interopRequireDefault(_Integer);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _ProductSwitchTemplate = _interopRequireDefault(_ProductSwitchTemplate);
   _ProductSwitch = _interopRequireDefault(_ProductSwitch);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-product-switch",
-    properties: /** @lends sap.ui.webcomponents.fiori.ProductSwitch.prototype */{
-      /**
-       * Indicates how many columns are displayed.
-       * @private
-       */
-      desktopColumns: {
-        type: _Integer.default
-      }
-    },
-    managedSlots: true,
-    slots: /** @lends sap.ui.webcomponents.fiori.ProductSwitch.prototype */{
-      /**
-       * Defines the items of the <code>ui5-product-switch</code>.
-       *
-       * @type {sap.ui.webcomponents.fiori.IProductSwitchItem[]}
-       * @slot items
-       * @public
-       */
-      "default": {
-        propertyName: "items",
-        type: HTMLElement
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var ProductSwitch_1;
   /**
    * @class
    * <h3 class="comment-api-title">Overview</h3>
@@ -72,14 +51,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/
    * <code>import "@ui5/webcomponents-fiori/dist/ProductSwitchItem.js";</code> (for <code>ui5-product-switch-item</code>)
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.fiori.ProductSwitch
-   * @extends sap.ui.webcomponents.base.UI5Element
+   * @alias sap.ui.webc.fiori.ProductSwitch
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-product-switch
-   * @appenddocs ProductSwitchItem
+   * @appenddocs sap.ui.webc.fiori.ProductSwitchItem
    * @public
    * @since 1.0.0-rc.5
    */
-  class ProductSwitch extends _UI5Element.default {
+  let ProductSwitch = ProductSwitch_1 = class ProductSwitch extends _UI5Element.default {
     constructor() {
       super();
       this._currentIndex = 0;
@@ -88,18 +67,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/
         rowSize: this._rowSize,
         getItemsCallback: () => this.items
       });
-    }
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _ProductSwitch.default;
-    }
-    static get template() {
-      return _ProductSwitchTemplate.default;
+      this._handleResizeBound = this._handleResize.bind(this);
     }
     static get ROW_MIN_WIDTH() {
       return {
@@ -108,13 +76,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/
       };
     }
     static async onDefine() {
-      ProductSwitch.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents-fiori");
+      ProductSwitch_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents-fiori");
     }
     get _ariaLabelText() {
-      return ProductSwitch.i18nBundle.getText(_i18nDefaults.PRODUCT_SWITCH_CONTAINER_LABEL);
+      return ProductSwitch_1.i18nBundle.getText(_i18nDefaults.PRODUCT_SWITCH_CONTAINER_LABEL);
     }
     onEnterDOM() {
-      this._handleResizeBound = this._handleResize.bind(this);
       _ResizeHandler.default.register(document.body, this._handleResizeBound);
     }
     onExitDOM() {
@@ -133,14 +100,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/
         this._setRowSize(4);
       }
     }
-    handleProductSwitchItemClick(event) {
+    handleProductSwitchItemClick(e) {
       this.items.forEach(item => {
         item.selected = false;
       });
-      event.target.selected = true;
+      e.target.selected = true;
     }
-    _onfocusin(event) {
-      const target = event.target;
+    _onfocusin(e) {
+      const target = e.target;
       this._itemNavigation.setCurrentItem(target);
       this._currentIndex = this.items.indexOf(target);
     }
@@ -148,27 +115,40 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/
       this._rowSize = size;
       this._itemNavigation.setRowSize(size);
     }
-    _onkeydown(event) {
-      if ((0, _Keys.isDown)(event)) {
-        this._handleDown(event);
-      } else if ((0, _Keys.isUp)(event)) {
-        this._handleUp(event);
+    _onkeydown(e) {
+      if ((0, _Keys.isDown)(e)) {
+        this._handleDown(e);
+      } else if ((0, _Keys.isUp)(e)) {
+        this._handleUp(e);
       }
     }
-    _handleDown(event) {
+    _handleDown(e) {
       const itemsLength = this.items.length;
       if (this._currentIndex + this._rowSize > itemsLength) {
         // border reached, do nothing
-        event.stopPropagation();
+        e.stopPropagation();
       }
     }
-    _handleUp(event) {
+    _handleUp(e) {
       if (this._currentIndex - this._rowSize < 0) {
         // border reached, do nothing
-        event.stopPropagation();
+        e.stopPropagation();
       }
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    validator: _Integer.default
+  })], ProductSwitch.prototype, "desktopColumns", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement,
+    "default": true
+  })], ProductSwitch.prototype, "items", void 0);
+  ProductSwitch = ProductSwitch_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-product-switch",
+    renderer: _LitRenderer.default,
+    styles: _ProductSwitch.default,
+    template: _ProductSwitchTemplate.default
+  })], ProductSwitch);
   ProductSwitch.define();
   var _default = ProductSwitch;
   _exports.default = _default;

@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v1/draw-freehand", "./v2/draw-freehand"], function (_exports, _Theme, _drawFreehand, _drawFreehand2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "draw-freehand";
-  const pathData = "M507 0v72h-72V0h72zm-69 100L101 447l-32-36L405 64zM77 440v72H5v-72h72z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "business-suite";
-  const packageName = "@ui5/webcomponents-icons-business-suite";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _drawFreehand.accData;
+    }
   });
-  var _default = "draw-freehand";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _drawFreehand.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _drawFreehand.pathData : _drawFreehand2.pathData;
+  _exports.pathData = pathData;
+  var _default = "business-suite/draw-freehand";
   _exports.default = _default;
 });

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/clinical-order", "./v4/clinical-order"], function (_exports, _Theme, _clinicalOrder, _clinicalOrder2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/clinical-order", "./v5/clinical-order"], function (_exports, _Theme, _clinicalOrder, _clinicalOrder2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _clinicalOrder.pathData : _clinicalOrder2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _clinicalOrder.pathData : _clinicalOrder2.pathData;
   _exports.pathData = pathData;
   var _default = "clinical-order";
   _exports.default = _default;

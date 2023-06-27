@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/bubble-chart", "./v4/bubble-chart"], function (_exports, _Theme, _bubbleChart, _bubbleChart2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/bubble-chart", "./v5/bubble-chart"], function (_exports, _Theme, _bubbleChart, _bubbleChart2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _bubbleChart.pathData : _bubbleChart2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _bubbleChart.pathData : _bubbleChart2.pathData;
   _exports.pathData = pathData;
   var _default = "bubble-chart";
   _exports.default = _default;

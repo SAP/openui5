@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "line-chart-time-axis";
+  var _default = "SAP-icons-v5/line-chart-time-axis";
   _exports.default = _default;
 });

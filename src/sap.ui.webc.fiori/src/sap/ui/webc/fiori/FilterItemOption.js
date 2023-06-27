@@ -43,7 +43,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines whether the option is selected
+				 * Defines if the component is selected.
 				 */
 				selected: {
 					type: "boolean",

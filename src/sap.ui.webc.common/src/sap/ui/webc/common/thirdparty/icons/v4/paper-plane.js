@@ -6,13 +6,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "paper-plane";
-  const pathData = "M495.033 31.938q7.985 0 12.476 5.988T512 48.904q0 2.995-.998 5.989L361.294 472.078q-2.994 10.979-15.968 10.979-6.987 0-10.979-3.993L218.573 373.271l-69.863 61.88q-4.99 4.99-10.979 4.99-3.992 0-10.48-3.993t-6.487-12.975v-1.996l10.979-126.752L5.988 180.647Q0 175.657 0 168.671q0-1.997 1.497-7.985t12.476-8.982L491.04 32.936q.998-.998 3.992-.998zm-358.3 221.567L461.099 74.854 51.9 176.655zM467.088 75.852L182.643 295.423 338.34 437.146zM207.595 364.288l-40.92-36.927-28.944 90.822z";
+  const pathData = "M494.98 31.928q7.982 0 13.47 7.483t2.494 15.465L361.28 471.936q-2.993 10.976-15.964 10.976-6.984 0-10.975-3.991l-115.74-105.762-69.842 61.86q-8.98 7.982-18.957 2.495t-8.98-16.463l10.975-126.714L6.082 180.593Q-1.9 173.609.594 164.13t13.47-12.472L490.989 32.926q.997-.998 3.99-.998zm-358.193 221.5L461.056 74.832 51.978 176.601zm70.84 110.751l-40.908-36.917-28.934 90.796zM467.043 75.83l-284.36 219.505 155.65 141.681z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
   const accData = null;
   _exports.accData = accData;
-  const collection = "SAP-icons";
+  const collection = "SAP-icons-v4";
   const packageName = "@ui5/webcomponents-icons";
   (0, _Icons.registerIcon)(name, {
     pathData,
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "paper-plane";
+  var _default = "SAP-icons-v4/paper-plane";
   _exports.default = _default;
 });

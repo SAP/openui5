@@ -6,13 +6,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "basket";
-  const pathData = "M174 85q-1-3-1-5 0-4 2-8.5t8-6.5q4-2 7-2t7.5 2.5T204 74l66 180q1 3 1 5 0 4-2.5 9t-8.5 7q-3 1-5 1-4 0-9-2t-7-9zm306 139q17 0 24.5 11t7.5 20q0 6-2 12l-78 171q-7 19-23.5 30.5T372 480H141q-20 0-36.5-11.5T81 438L2 267q-2-6-2-11 0-10 7.5-21T32 224h134q7 7 13 12 5 5 9 10t4 10q0 26 19 45t45 19q27 0 45.5-19t18.5-45q0-5 4-10t9-10l14-12h133zm-14 64H347q-11 28-35 46t-56 18q-31 0-55.5-18T166 288H47l63 137v1l1 1q3 9 11.5 15t18.5 6h231q10 0 18-6t12-15v-1z";
+  const pathData = "M173.749 84.982q-2-5.999.5-11.997t8.498-7.999q6.999-3 12.997 0t7.999 8.998l65.986 179.962q2 6.999-1 12.998t-8.998 7.998-12.498-.5-8.498-9.498zm305.935 138.97q16.997 0 26.495 13.498t3.499 29.494l-77.984 170.963q-6.998 18.996-23.495 30.494t-36.492 11.498H140.756q-19.996 0-36.492-11.498t-23.495-30.494L1.785 266.944q-4.999-15.997 4-29.494t25.994-13.497h133.972q6.998 6.998 12.997 11.997 4.999 4.999 8.998 9.998t4 9.998q0 25.994 18.995 44.99t44.99 18.996q26.995 0 45.491-18.996t18.496-44.99q0-5 4-9.998t8.997-9.998l13.997-11.997h132.972zm-13.997 63.987H346.712q-10.997 27.994-34.992 45.99t-55.988 17.997q-30.994 0-55.489-17.997t-34.492-45.99H46.776l62.987 136.971v1l1 1q2.999 8.998 11.497 14.997t18.496 5.998h230.951q9.998 0 17.996-5.998t11.998-14.997v-1z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
   const accData = null;
   _exports.accData = accData;
-  const collection = "SAP-icons";
+  const collection = "SAP-icons-v4";
   const packageName = "@ui5/webcomponents-icons";
   (0, _Icons.registerIcon)(name, {
     pathData,
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "basket";
+  var _default = "SAP-icons-v4/basket";
   _exports.default = _default;
 });

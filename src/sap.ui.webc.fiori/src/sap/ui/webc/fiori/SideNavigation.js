@@ -104,7 +104,7 @@ sap.ui.define([
 						 * the clicked item.
 						 */
 						item: {
-							type: "HTMLElement"
+							type: "sap.ui.webc.fiori.ISideNavigationItem|sap.ui.webc.fiori.ISideNavigationSubItem"
 						}
 					}
 				}

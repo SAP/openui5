@@ -18,13 +18,11 @@ sap.ui.define(["exports", "../generated/AssetParameters"], function (_exports, _
     if (locale === "zh_HK") {
       return "zh_TW";
     }
-
     // if there are multiple segments (separated by underscores), remove the last one
     const p = locale.lastIndexOf("_");
     if (p >= 0) {
       return locale.slice(0, p);
     }
-
     // for any language but the default, fallback to the default first before falling back to the 'raw' language (empty string)
     return locale !== _AssetParameters.DEFAULT_LOCALE ? _AssetParameters.DEFAULT_LOCALE : "";
   };

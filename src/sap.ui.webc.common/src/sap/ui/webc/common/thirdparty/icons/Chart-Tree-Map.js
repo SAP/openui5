@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/Chart-Tree-Map", "./v4/Chart-Tree-Map"], function (_exports, _Theme, _ChartTreeMap, _ChartTreeMap2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/Chart-Tree-Map", "./v5/Chart-Tree-Map"], function (_exports, _Theme, _ChartTreeMap, _ChartTreeMap2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _ChartTreeMap.pathData : _ChartTreeMap2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _ChartTreeMap.pathData : _ChartTreeMap2.pathData;
   _exports.pathData = pathData;
   var _default = "Chart-Tree-Map";
   _exports.default = _default;

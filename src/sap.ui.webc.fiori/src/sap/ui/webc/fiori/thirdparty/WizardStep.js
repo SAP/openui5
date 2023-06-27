@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], function (_exports, _UI5Element) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property"], function (_exports, _UI5Element, _customElement, _property) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,116 +6,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-wizard-step",
-    properties: /** @lends sap.ui.webcomponents.fiori.WizardStep.prototype */{
-      /**
-       * Defines the <code>titleText</code> of the step.
-       * <br><br>
-       *
-       * <b>Note:</b> The text is displayed in the <code>ui5-wizard</code> navigation header.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      titleText: {
-        type: String
-      },
-      /**
-       * Defines the <code>subtitleText</code> of the step.
-       * <br><br>
-       *
-       * <b>Note:</b> the text is displayed in the <code>ui5-wizard</code> navigation header.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      subtitleText: {
-        type: String
-      },
-      /**
-       * Defines the <code>icon</code> of the step.
-       * <br><br>
-       *
-       * <b>Note:</b> The icon is displayed in the <code>ui5-wizard</code> navigation header.
-       * <br><br>
-       *
-       * The SAP-icons font provides numerous options.
-       * See all the available icons in the <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" class="api-table-content-cell-link">Icon Explorer</ui5-link>.
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      icon: {
-        type: String
-      },
-      /**
-       * Defines if the step is <code>disabled</code>. When disabled the step is displayed,
-       * but the user can't select the step by clicking or navigate to it with scrolling.
-       * <br><br>
-       *
-       * <b>Note:</b> Step can't be <code>selected</code> and <code>disabled</code> at the same time.
-       * In this case the <code>selected</code> property would take precedence.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Defines the step's <code>selected</code> state - the step that is currently active.
-       * <br><br>
-       *
-       * <b>Note:</b> Step can't be <code>selected</code> and <code>disabled</code> at the same time.
-       * In this case the <code>selected</code> property would take precedence.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      selected: {
-        type: Boolean
-      },
-      /**
-       * When <code>branching</code> is enabled a dashed line would be displayed after the step,
-       * meant to indicate that the next step is not yet known and depends on user choice in the current step.
-       * <br><br>
-       *
-       * <b>Note:</b> It is recommended to use <code>branching</code> on the last known step
-       * and later add new steps when it becomes clear how the wizard flow should continue.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      branching: {
-        type: Boolean
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.fiori.WizardStep.prototype */{
-      /**
-       * Defines the step content.
-       * @type {Node[]}
-       * @slot
-       * @public
-       */
-      "default": {
-        type: Node
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.fiori.WizardStep.prototype */{}
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
   /**
    * @class
    *
@@ -138,18 +38,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.fiori.WizardStep
-   * @extends UI5Element
+   * @alias sap.ui.webc.fiori.WizardStep
+   * @extends sap.ui.webc.base.UI5Element
+   * @abstract
    * @tagname ui5-wizard-step
    * @since 1.0.0-rc.10
-   * @implements sap.ui.webcomponents.fiori.IWizardStep
+   * @implements sap.ui.webc.fiori.IWizardStep
    * @public
    */
-  class WizardStep extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-  }
+  let WizardStep = class WizardStep extends _UI5Element.default {};
+  __decorate([(0, _property.default)()], WizardStep.prototype, "titleText", void 0);
+  __decorate([(0, _property.default)()], WizardStep.prototype, "subtitleText", void 0);
+  __decorate([(0, _property.default)()], WizardStep.prototype, "icon", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], WizardStep.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], WizardStep.prototype, "selected", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], WizardStep.prototype, "branching", void 0);
+  WizardStep = __decorate([(0, _customElement.default)("ui5-wizard-step")], WizardStep);
   WizardStep.define();
   var _default = WizardStep;
   _exports.default = _default;

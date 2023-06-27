@@ -96,7 +96,8 @@ sap.ui.define([
 				 * <b>Note:</b> You should import the desired icon first, then use its name as "icon". <br>
 				 * <br>
 				 * import "@ui5/webcomponents-icons/dist/{icon_name}.js" <br>
-				 * <pre>&lt;ui5-avatar icon="employee"></pre>
+				 * <pre>&lt;ui5-avatar icon="employee"></pre> <br>
+				 * <b>Note:</b> If no icon or an empty one is provided, by default the "employee" icon should be displayed.
 				 *
 				 * See all the available icons in the {@link demo:sap/m/demokit/iconExplorer/webapp/index.html Icon Explorer}.
 				 */
@@ -107,7 +108,7 @@ sap.ui.define([
 
 				/**
 				 * Defines the displayed initials. <br>
-				 * Up to two Latin letters can be displayed as initials.
+				 * Up to three Latin letters can be displayed as initials.
 				 */
 				initials: {
 					type: "string",
@@ -155,6 +156,25 @@ sap.ui.define([
 			},
 			defaultAggregation: "image",
 			aggregations: {
+
+				/**
+				 * Defines the optional badge that will be used for visual affordance. <b>Note:</b> While the slot allows for custom badges, to achieve the Fiori design, please use <code>sap.ui.webc.main.Badge</code> with <code>sap.ui.webc.main.Icon</code> in the corresponding <code>icon</code> slot, without text nodes. <br>
+				 * <br>
+				 * Example: <br>
+				 * <br>
+				 * &lt;ui5-avatar><br>
+				 * &lt;ui5-badge slot="badge"><br>
+				 * &lt;ui5-icon slot="icon" name="employee">&lt;/ui5-icon><br>
+				 * &lt;/ui5-badge><br>
+				 * &lt;/ui5-avatar> <br>
+				 * <br>
+				 * <ui5-avatar initials="AB" color-scheme="Accent1"> <ui5-badge slot="badge"> <ui5-icon slot="icon" name="accelerated"></ui5-icon> </ui5-badge> </ui5-avatar>
+				 */
+				badge: {
+					type: "sap.ui.core.Control",
+					multiple: false,
+					slot: "badge"
+				},
 
 				/**
 				 * Receives the desired <code>&lt;img&gt;</code> tag

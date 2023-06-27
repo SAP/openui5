@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "media-reverse";
-  const pathData = "M438 42q7 5 8.5 11.5T448 71v370q0 20-17 32-9 6-20 6-10 0-18-5L98 289q-19-11-19-29 0-8 5.5-16.5T98 230L393 46q14-9 27-9 5 0 9.5 1t8.5 4zm-64 96L186 256l188 118V138z";
+  const pathData = "M391.5 480q-8 0-15-4l-269-199q-11-6-11-21 0-13 11-21l269-198q13-8 26-2 14 8 14 23v397q0 15-14 23-6 2-11 2zm-227-224l202 148V108z";
   _exports.pathData = pathData;
   const ltr = true;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "media-reverse";
+  var _default = "SAP-icons-v5/media-reverse";
   _exports.default = _default;
 });

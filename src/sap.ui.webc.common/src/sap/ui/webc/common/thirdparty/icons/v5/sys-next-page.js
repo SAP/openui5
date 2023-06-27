@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "sys-next-page";
+  var _default = "SAP-icons-v5/sys-next-page";
   _exports.default = _default;
 });

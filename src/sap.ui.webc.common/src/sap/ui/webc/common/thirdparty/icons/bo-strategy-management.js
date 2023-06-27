@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/bo-strategy-management", "./v4/bo-strategy-management"], function (_exports, _Theme, _boStrategyManagement, _boStrategyManagement2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/bo-strategy-management", "./v5/bo-strategy-management"], function (_exports, _Theme, _boStrategyManagement, _boStrategyManagement2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _boStrategyManagement.pathData : _boStrategyManagement2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _boStrategyManagement.pathData : _boStrategyManagement2.pathData;
   _exports.pathData = pathData;
   var _default = "bo-strategy-management";
   _exports.default = _default;

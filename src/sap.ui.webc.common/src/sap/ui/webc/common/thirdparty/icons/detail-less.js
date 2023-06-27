@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/detail-less", "./v4/detail-less"], function (_exports, _Theme, _detailLess, _detailLess2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/detail-less", "./v5/detail-less"], function (_exports, _Theme, _detailLess, _detailLess2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _detailLess.pathData : _detailLess2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _detailLess.pathData : _detailLess2.pathData;
   _exports.pathData = pathData;
   var _default = "detail-less";
   _exports.default = _default;

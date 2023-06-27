@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "multiple-line-chart";
+  var _default = "SAP-icons-v5/multiple-line-chart";
   _exports.default = _default;
 });

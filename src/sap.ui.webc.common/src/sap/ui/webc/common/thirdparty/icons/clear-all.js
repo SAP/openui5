@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/clear-all", "./v4/clear-all"], function (_exports, _Theme, _clearAll, _clearAll2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/clear-all", "./v5/clear-all"], function (_exports, _Theme, _clearAll, _clearAll2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _clearAll.pathData : _clearAll2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _clearAll.pathData : _clearAll2.pathData;
   _exports.pathData = pathData;
   var _default = "clear-all";
   _exports.default = _default;

@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "timesheet";
+  var _default = "SAP-icons-v5/timesheet";
   _exports.default = _default;
 });

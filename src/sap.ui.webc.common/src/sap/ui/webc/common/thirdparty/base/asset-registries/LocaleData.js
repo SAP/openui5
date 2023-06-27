@@ -17,17 +17,11 @@ sap.ui.define(["exports", "../locale/languageChange", "../locale/getLocale", "..
     "ji": "yi",
     "in": "id"
   };
-  const DEV_MODE = false;
   const _showAssetsWarningOnce = localeId => {
     if (warningShown) {
       return;
     }
-    if (!DEV_MODE) {
-      console.warn(`[LocaleData] Supported locale "${localeId}" not configured, import the "Assets.js" module from the webcomponents package you are using.`); /* eslint-disable-line */
-    } else {
-      console.warn(`[LocaleData] Note: in dev mode, CLDR assets might be disabled for performance reasons. Try running "ENABLE_CLDR=1 yarn start" to test CLDR assets.`); /* eslint-disable-line */
-    }
-
+    console.warn(`[LocaleData] Supported locale "${localeId}" not configured, import the "Assets.js" module from the webcomponents package you are using.`); /* eslint-disable-line */
     warningShown = true;
   };
   const calcLocale = (language, region, script) => {
@@ -45,13 +39,11 @@ sap.ui.define(["exports", "../locale/languageChange", "../locale/getLocale", "..
         region = "TW";
       }
     }
-
     // Special case 3: for Serbian, there are cyrillic and latin scripts, "sh" and "sr-latn" map to "latin", "sr" maps to cyrillic.
     if (language === "sh" || language === "sr" && script === "Latn") {
       language = "sr";
       region = "Latn";
     }
-
     // try language + region
     let localeId = `${language}_${region}`;
     if (_AssetParameters.SUPPORTED_LOCALES.includes(localeId)) {
@@ -59,12 +51,10 @@ sap.ui.define(["exports", "../locale/languageChange", "../locale/getLocale", "..
         // supported and has loader
         return localeId;
       }
-
       // supported, no loader - fallback to default and warn
       _showAssetsWarningOnce(localeId);
       return _AssetParameters.DEFAULT_LOCALE;
     }
-
     // not supported, try language only
     localeId = language;
     if (_AssetParameters.SUPPORTED_LOCALES.includes(localeId)) {
@@ -72,21 +62,17 @@ sap.ui.define(["exports", "../locale/languageChange", "../locale/getLocale", "..
         // supported and has loader
         return localeId;
       }
-
       // supported, no loader - fallback to default and warn
       _showAssetsWarningOnce(localeId);
       return _AssetParameters.DEFAULT_LOCALE;
     }
-
     // not supported - fallback to default locale
     return _AssetParameters.DEFAULT_LOCALE;
   };
-
   // internal set data
   const setLocaleData = (localeId, content) => {
     localeDataMap.set(localeId, content);
   };
-
   // external getSync
   const getLocaleData = localeId => {
     // if there is no loader, the default fallback was fetched and a warning was given - use default locale instead
@@ -99,37 +85,37 @@ sap.ui.define(["exports", "../locale/languageChange", "../locale/getLocale", "..
     }
     return content;
   };
-
   // load bundle over the network once
   _exports.getLocaleData = getLocaleData;
   const _loadCldrOnce = localeId => {
-    const loadCldr = loaders.get(localeId);
     if (!cldrPromises.get(localeId)) {
+      const loadCldr = loaders.get(localeId);
+      if (!loadCldr) {
+        throw new Error(`CLDR data for locale ${localeId} is not loaded!`);
+      }
       cldrPromises.set(localeId, loadCldr(localeId));
     }
     return cldrPromises.get(localeId);
   };
-
   // external getAsync
   const fetchCldr = async (language, region, script) => {
     const localeId = calcLocale(language, region, script);
-
     // reuse OpenUI5 CLDR if present
-    const OpenUI5Support = (0, _FeaturesRegistry.getFeature)("OpenUI5Support");
-    if (OpenUI5Support) {
-      const cldrContent = OpenUI5Support.getLocaleDataObject();
+    const openUI5Support = (0, _FeaturesRegistry.getFeature)("OpenUI5Support");
+    if (openUI5Support) {
+      const cldrContent = openUI5Support.getLocaleDataObject();
       if (cldrContent) {
         // only if openui5 actually returned valid content
         setLocaleData(localeId, cldrContent);
         return;
       }
     }
-
     // fetch it
     try {
       const cldrContent = await _loadCldrOnce(localeId);
       setLocaleData(localeId, cldrContent);
-    } catch (e) {
+    } catch (error) {
+      const e = error;
       if (!reportedErrors.has(e.message)) {
         reportedErrors.add(e.message);
         console.error(e.message); /* eslint-disable-line */
@@ -140,13 +126,12 @@ sap.ui.define(["exports", "../locale/languageChange", "../locale/getLocale", "..
   const registerLocaleDataLoader = (localeId, loader) => {
     loaders.set(localeId, loader);
   };
-
   // register default loader for "en" from ui5 CDN (dev workflow without assets)
   _exports.registerLocaleDataLoader = registerLocaleDataLoader;
-  registerLocaleDataLoader("en", async runtimeLocaleId => {
-    return (await fetch(`https://ui5.sap.com/1.103.0/resources/sap/ui/core/cldr/en.json`)).json();
+  registerLocaleDataLoader("en", async () => {
+    const cldrContent = await fetch(`https://sdk.openui5.org/1.103.0/resources/sap/ui/core/cldr/en.json`);
+    return cldrContent.json();
   });
-
   // When the language changes dynamically (the user calls setLanguage),
   // re-fetch the required CDRD data.
   (0, _languageChange.attachLanguageChange)(() => {

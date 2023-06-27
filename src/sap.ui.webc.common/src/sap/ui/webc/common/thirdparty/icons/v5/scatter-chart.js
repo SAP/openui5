@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "scatter-chart";
+  var _default = "SAP-icons-v5/scatter-chart";
   _exports.default = _default;
 });

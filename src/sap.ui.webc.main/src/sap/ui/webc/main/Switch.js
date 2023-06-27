@@ -60,7 +60,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Sets the accessible aria name of the component.
+				 * Sets the accessible ARIA name of the component.
 				 *
 				 * <b>Note</b>: We recommend that you set an accessibleNameRef pointing to an external label or at least an <code>accessibleName</code>. Providing an <code>ariaLabelledBy</code> or an <code>accessibleName</code> is mandatory in the cases when <code>textOn</code> and <code>textOff</code> properties aren't set.
 				 */

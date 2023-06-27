@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/types/Float", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/icons/source-code", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/themes/SliderBase.css"], function (_exports, _UI5Element, _LitRenderer, _Float, _Integer, _ResizeHandler, _Device, _sourceCode, _Keys, _SliderBase) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/types/Float", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/icons/direction-arrows", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/themes/SliderBase.css"], function (_exports, _UI5Element, _customElement, _property, _event, _LitRenderer, _Float, _Integer, _ResizeHandler, _Device, _directionArrows, _Keys, _SliderBase) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,144 +6,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _Float = _interopRequireDefault(_Float);
   _Integer = _interopRequireDefault(_Integer);
   _ResizeHandler = _interopRequireDefault(_ResizeHandler);
   _SliderBase = _interopRequireDefault(_SliderBase);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    properties: /** @lends sap.ui.webcomponents.main.SliderBase.prototype */{
-      /**
-       * Defines the minimum value of the slider.
-       *
-       * @type {Float}
-       * @defaultvalue 0
-       * @public
-       */
-      min: {
-        type: _Float.default,
-        defaultValue: 0
-      },
-      /**
-       * Defines the maximum value of the slider.
-       *
-       * @type {Float}
-       * @defaultvalue 100
-       * @public
-       */
-      max: {
-        type: _Float.default,
-        defaultValue: 100
-      },
-      /**
-       * Defines the size of the slider's selection intervals (e.g. min = 0, max = 10, step = 5 would result in possible selection of the values 0, 5, 10).
-       * <br><br>
-       * <b>Note:</b> If set to 0 the slider handle movement is disabled. When negative number or value other than a number, the component fallbacks to its default value.
-       *
-       * @type {Integer}
-       * @defaultvalue 1
-       * @public
-       */
-      step: {
-        type: _Float.default,
-        defaultValue: 1
-      },
-      /**
-       * Displays a label with a value on every N-th step.
-       * <br><br>
-       * <b>Note:</b> The step and tickmarks properties must be enabled.
-       * Example - if the step value is set to 2 and the label interval is also specified to 2 - then every second
-       * tickmark will be labelled, which means every 4th value number.
-       *
-       * @type {Integer}
-       * @defaultvalue 0
-       * @public
-       */
-      labelInterval: {
-        type: _Integer.default,
-        defaultValue: 0
-      },
-      /**
-       * Enables tickmarks visualization for each step.
-       * <br><br>
-       * <b>Note:</b> The step must be a positive number.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      showTickmarks: {
-        type: Boolean
-      },
-      /**
-       * Enables handle tooltip displaying the current value.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      showTooltip: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the slider is in disabled state.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Defines the accessible aria name of the component.
-       *
-       * @type {string}
-       * @defaultvalue: ""
-       * @public
-       * @since 1.4.0
-       */
-      accessibleName: {
-        type: String
-      },
-      /**
-       * @private
-       */
-      _tooltipVisibility: {
-        type: String,
-        defaultValue: "hidden"
-      },
-      _labelsOverlapping: {
-        type: Boolean
-      },
-      _hiddenTickmarks: {
-        type: Boolean
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.SliderBase.prototype */{
-      /**
-       * Fired when the value changes and the user has finished interacting with the slider.
-       *
-       * @event
-       * @public
-      */
-      change: {},
-      /**
-       * Fired when the value changes due to user interaction that is not yet finished - during mouse/touch dragging.
-       *
-       * @event
-       * @public
-      */
-      input: {}
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var SliderBase_1;
   /**
    * @class
    *
@@ -152,49 +31,39 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.SliderBase
-   * @extends sap.ui.webcomponents.base.UI5Element
+   * @alias sap.ui.webc.main.SliderBase
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-slider
    * @public
    */
-  class SliderBase extends _UI5Element.default {
+  let SliderBase = SliderBase_1 = class SliderBase extends _UI5Element.default {
     constructor() {
       super();
+      this.notResized = false;
+      this._isUserInteraction = false;
+      this._isInnerElementFocusing = false;
+      this._labelWidth = 0;
       this._resizeHandler = this._handleResize.bind(this);
       this._moveHandler = this._handleMove.bind(this);
       this._upHandler = this._handleUp.bind(this);
       this._stateStorage = {
-        step: null,
-        min: null,
-        max: null,
-        labelInterval: null
+        step: undefined,
+        min: undefined,
+        max: undefined,
+        labelInterval: undefined
       };
-      const handleTouchStartEvent = event => {
-        this._onmousedown(event);
+      const handleTouchStartEvent = e => {
+        this._onmousedown(e);
       };
       this._ontouchstart = {
         handleEvent: handleTouchStartEvent,
         passive: true
       };
     }
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _SliderBase.default;
-    }
-    static get UP_EVENTS() {
-      return ["mouseup", "touchend"];
-    }
-    static get MOVE_EVENT_MAP() {
-      return {
-        mousedown: "mousemove",
-        touchstart: "touchmove"
-      };
-    }
+    _handleMove(e) {} // eslint-disable-line
+    _handleUp() {}
+    _onmousedown(e) {} // eslint-disable-line
+    _handleActionKeyPress(e) {} // eslint-disable-line
     static get ACTION_KEYS() {
       return [_Keys.isLeft, _Keys.isRight, _Keys.isUp, _Keys.isDown, _Keys.isLeftCtrl, _Keys.isRightCtrl, _Keys.isUpCtrl, _Keys.isDownCtrl, _Keys.isPlus, _Keys.isMinus, _Keys.isHome, _Keys.isEnd, _Keys.isPageUp, _Keys.isPageDown, _Keys.isEscape];
     }
@@ -221,7 +90,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       _ResizeHandler.default.register(this, this._resizeHandler);
     }
     onExitDOM() {
-      _ResizeHandler.default.deregister(this, this._handleResize);
+      _ResizeHandler.default.deregister(this, this._resizeHandler);
     }
     onAfterRendering() {
       // Only call if the resize is triggered by a state changes other than
@@ -230,56 +99,41 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this._resizeHandler();
       }
     }
-
     /** Shows the tooltip(s) if the <code>showTooltip</code> property is set to true
      *
      * @private
      */
-    _onmouseover(event) {
+    _onmouseover() {
       if (this.showTooltip) {
-        this._tooltipVisibility = SliderBase.TOOLTIP_VISIBILITY.VISIBLE;
+        this._tooltipVisibility = SliderBase_1.TOOLTIP_VISIBILITY.VISIBLE;
       }
     }
-
     /**
      * Hides the tooltip(s) if the <code>showTooltip</code> property is set to true
      *
      * @private
      */
-    _onmouseout(event) {
+    _onmouseout() {
       if (this.showTooltip && !this.shadowRoot.activeElement) {
-        this._tooltipVisibility = SliderBase.TOOLTIP_VISIBILITY.HIDDEN;
+        this._tooltipVisibility = SliderBase_1.TOOLTIP_VISIBILITY.HIDDEN;
       }
     }
-
-    /**
-     * Sets initial value when the component is focused in, can be restored with ESC key
-     *
-     * @private
-     */
-    _setInitialValue(valueType, value) {
-      this[`_${valueType}Initial`] = value;
-    }
-    _getInitialValue(valueType) {
-      return this[`_${valueType}Initial`];
-    }
-    _onkeydown(event) {
+    _onkeydown(e) {
       if (this.disabled || this._effectiveStep === 0) {
         return;
       }
-      if (SliderBase._isActionKey(event)) {
-        event.preventDefault();
+      if (SliderBase_1._isActionKey(e)) {
+        e.preventDefault();
         this._isUserInteraction = true;
-        this._handleActionKeyPress(event);
+        this._handleActionKeyPress(e);
       }
     }
-    _onkeyup(event) {
+    _onkeyup() {
       if (this.disabled) {
         return;
       }
       this._isUserInteraction = false;
     }
-
     /**
      * Flags if an inner element is currently being focused
      *
@@ -288,7 +142,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _preserveFocus(isFocusing) {
       this._isInnerElementFocusing = isFocusing;
     }
-
     /**
      * Return if an inside element within the component is currently being focused
      *
@@ -297,34 +150,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _isFocusing() {
       return this._isInnerElementFocusing;
     }
-
     /**
      * Prevent focus out when inner element within the component is currently being in process of focusing in.
-     * In theory this can be achieved either if the shadow root is focusable and 'delegatesFocus' attribute of
-     * the .attachShadow() customElement method is set to true, or if we forward it manually.
-    	 * As we use lit-element as base of our core UI5 element class that 'delegatesFocus' property is not set to 'true' and
-     * we have to manage the focus here. If at some point in the future this changes, the focus delegating logic could be
-     * removed as it will become redundant.
-     *
-     * When we manually set the focus on mouseDown to the first focusable element inside the shadowDom,
-     * that inner focus (shadowRoot.activeElement) is set a moment before the global document.activeElement
-     * is set to the customElement (ui5-slider) causing a 'race condition'.
-     *
-     * In order for a element within the shadowRoot to be focused, the global document.activeElement MUST be the parent
-     * customElement of the shadow root, in our case the ui5-slider component. Because of that after our focusin of the handle,
-     * a focusout event fired by the browser immidiatly after, resetting the focus. Focus out must be manually prevented
-     * in both initial focusing and switching the focus between inner elements of the component cases.
-    	 * Note: If we set the focus to the handle with a timeout or a bit later in time, on a mouseup or click event it will
-     * work fine and we will avoid the described race condition as our host customElement will be already finished focusing.
-     * However, that does not work for us as we need the focus to be set to the handle exactly on mousedown,
-     * because of the nature of the component and its available drag interactions.
      *
      * @private
      */
     _preventFocusOut() {
       this.focusInnerElement();
     }
-
     /**
      * Manages the focus between the component's inner elements
      * @protected
@@ -332,7 +165,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     focusInnerElement() {
       this.focus();
     }
-
     /**
      * Handle the responsiveness of the Slider's UI elements when resizing
      *
@@ -342,17 +174,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (!this.showTickmarks) {
         return;
       }
-
       // Mark resizing to avoid unneccessary calls to that function after rendering
       this.notResized = false;
-
       // Convert the string represented calculation expression to a normal one
       // Check the distance  in pixels exist between every tickmark
       const spaceBetweenTickmarks = this._spaceBetweenTickmarks();
-
       // If the pixels between the tickmarks are less than 8 only the first and the last one should be visible
       // In such case the labels must correspond to the tickmarks, only the first and the last one should exist.
-      if (spaceBetweenTickmarks < SliderBase.MIN_SPACE_BETWEEN_TICKMARKS) {
+      if (spaceBetweenTickmarks < SliderBase_1.MIN_SPACE_BETWEEN_TICKMARKS) {
         this._hiddenTickmarks = true;
         this._labelsOverlapping = true;
       } else {
@@ -361,13 +190,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (this.labelInterval <= 0 || this._hiddenTickmarks) {
         return;
       }
-
       // Check if there are any overlapping labels.
       // If so - only the first and the last one should be visible
       const labelItems = this.shadowRoot.querySelectorAll(".ui5-slider-labels li");
       this._labelsOverlapping = [...labelItems].some(label => label.scrollWidth > label.clientWidth);
     }
-
     /**
      * Called when the user starts interacting with the slider.
      * After a down event on the slider root, listen for move events on window, so the slider value
@@ -375,74 +202,73 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      *
      * @protected
      */
-    handleDownBase(event) {
+    handleDownBase(e) {
       const min = this._effectiveMin;
       const max = this._effectiveMax;
       const domRect = this.getBoundingClientRect();
       const directionStart = this.directionStart;
       const step = this._effectiveStep;
-      const newValue = SliderBase.getValueFromInteraction(event, step, min, max, domRect, directionStart);
-
+      const newValue = SliderBase_1.getValueFromInteraction(e, step, min, max, domRect, directionStart);
       // Mark start of a user interaction
       this._isUserInteraction = true;
+      window.addEventListener("mouseup", this._upHandler);
+      window.addEventListener("touchend", this._upHandler);
       // Only allow one type of move event to be listened to (the first one registered after the down event)
-      this._moveEventType = !this._moveEventType ? SliderBase.MOVE_EVENT_MAP[event.type] : this._moveEventType;
-      SliderBase.UP_EVENTS.forEach(upEventType => window.addEventListener(upEventType, this._upHandler));
-      window.addEventListener(this._moveEventType, this._moveHandler);
-      this._handleFocusOnMouseDown(event);
+      if ((0, _Device.supportsTouch)() && e instanceof TouchEvent) {
+        window.addEventListener("touchmove", this._moveHandler);
+      } else {
+        window.addEventListener("mousemove", this._moveHandler);
+      }
+      this._handleFocusOnMouseDown(e);
       return newValue;
     }
-
     /**
      * Forward the focus to an inner inner part within the component on press
      *
      * @private
      */
-    _handleFocusOnMouseDown(event) {
+    _handleFocusOnMouseDown(e) {
       const focusedElement = this.shadowRoot.activeElement;
-      if (!focusedElement || focusedElement !== event.target) {
+      if (!focusedElement || focusedElement !== e.target) {
         this._preserveFocus(true);
         this.focusInnerElement();
       }
     }
-
     /**
      * Called when the user finish interacting with the slider
      * Fires an <code>change</code> event indicating a final value change, after user interaction is finished.
      *
      * @protected
      */
-    handleUpBase(valueType) {
-      SliderBase.UP_EVENTS.forEach(upEventType => window.removeEventListener(upEventType, this._upHandler));
-      window.removeEventListener(this._moveEventType, this._moveHandler);
-      this._moveEventType = null;
+    handleUpBase() {
+      window.removeEventListener("mouseup", this._upHandler);
+      window.removeEventListener("touchend", this._upHandler);
+      // Only one of the following was attached, but it's ok to remove both as there is no error
+      window.removeEventListener("mousemove", this._moveHandler);
+      window.removeEventListener("touchmove", this._moveHandler);
       this._isUserInteraction = false;
       this._preserveFocus(false);
     }
-
     /**
-     * Updates value property of the component that has been changed due to a user action.
+     * Updates state storage for the value-related property
      * Fires an <code>input</code> event indicating a value change via interaction that is not yet finished.
      *
      * @protected
      */
-    updateValue(valueType, value) {
-      this[valueType] = value;
+    updateStateStorageAndFireInputEvent(valueType) {
       this.storePropertyState(valueType);
       if (this._isUserInteraction) {
         this.fireEvent("input");
       }
     }
-
     /**
      * Goes through the key shortcuts available for the component and returns 'true' if the event is triggered by one.
      *
      * @private
      */
-    static _isActionKey(event) {
-      return this.ACTION_KEYS.some(actionKey => actionKey(event));
+    static _isActionKey(e) {
+      return this.ACTION_KEYS.some(actionKey => actionKey(e));
     }
-
     /**
      * Locks the given value between min and max boundaries based on slider properties
      *
@@ -452,19 +278,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       value = Math.min(Math.max(value, min), max);
       return value;
     }
-
     /**
      * Sets the slider value from an event
      *
      * @protected
      */
-    static getValueFromInteraction(event, stepSize, min, max, boundingClientRect, directionStart) {
-      const pageX = this.getPageXValueFromEvent(event);
+    static getValueFromInteraction(e, stepSize, min, max, boundingClientRect, directionStart) {
+      const pageX = this.getPageXValueFromEvent(e);
       const value = this.computedValueFromPageX(pageX, min, max, boundingClientRect, directionStart);
       const steppedValue = this.getSteppedValue(value, stepSize, min);
       return this.clipValue(steppedValue, min, max);
     }
-
     /**
      * "Stepify" the raw value - calculate the new value depending on the specified step property
      *
@@ -475,27 +299,26 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (stepSize === 0 || stepModuloValue === 0) {
         return value;
       }
-
       // Clip (snap) the new value to the nearest step
       value = stepModuloValue * 2 >= stepSize ? value + stepSize - stepModuloValue : value - stepModuloValue;
-
       // If the step value is not a round number get its precision
-      const stepPrecision = SliderBase._getDecimalPrecisionOfNumber(stepSize);
-      return value.toFixed(stepPrecision);
+      const stepPrecision = SliderBase_1._getDecimalPrecisionOfNumber(stepSize);
+      return Number(value.toFixed(stepPrecision));
     }
-
     /**
      * Gets pageX value from event on user interaction with the Slider
      *
      * @protected
      */
-    static getPageXValueFromEvent(event) {
-      if (event.targetTouches && event.targetTouches.length > 0) {
-        return event.targetTouches[0].pageX;
+    static getPageXValueFromEvent(e) {
+      if ((0, _Device.supportsTouch)() && e instanceof TouchEvent) {
+        if (e.targetTouches && e.targetTouches.length > 0) {
+          return e.targetTouches[0].pageX;
+        }
+        return 0;
       }
-      return event.pageX;
+      return e.pageX; // MouseEvent
     }
-
     /**
      * Computes the new value (in %) from the pageX position of the cursor.
      * Returns the value rounded to a precision of at most 2 digits after decimal point.
@@ -510,7 +333,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       // Fit (map) the complete percentage between the min/max value range
       return min + percentageComplete * (max - min);
     }
-
     /**
      * Calculates the precision (decimal places) of a number, returns 0 if integer
      * Handles scientific notation cases.
@@ -521,53 +343,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         return 0;
       }
       const match = String(value).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
+      if (!match || match.length < 2) {
+        return 0;
+      }
       return Math.max(0, (match[1] ? match[1].length : 0) - (match[2] ? Number(match[2]) : 0));
     }
-
-    /**
-     * Normalize current properties, update the previously stored state.
-     *
-     * @protected
-     */
-    syncUIAndState(...values) {
-      // Validate step and update the stored state for the step property.
-      if (this.isPropertyUpdated("step")) {
-        this._validateStep(this.step);
-        this.storePropertyState("step");
-      }
-
-      // Recalculate the tickmarks and labels and update the stored state.
-      if (this.isPropertyUpdated("min", "max", ...values)) {
-        this.storePropertyState("min", "max");
-
-        // Here the value props are changed programatically (not by user interaction)
-        // and it won't be "stepified" (rounded to the nearest step). 'Clip' them within
-        // min and max bounderies and update the previous state reference.
-        values.forEach(valueType => {
-          const normalizedValue = SliderBase.clipValue(this[valueType], this._effectiveMin, this._effectiveMax);
-          this.updateValue(valueType, normalizedValue);
-          this.storePropertyState(valueType);
-        });
-      }
-
-      // Labels must be updated if any of the min/max/step/labelInterval props are changed
-      if (this.labelInterval && this.showTickmarks) {
-        this._createLabels();
-      }
-
-      // Update the stored state for the labelInterval, if changed
-      if (this.isPropertyUpdated("labelInterval")) {
-        this.storePropertyState("labelInterval");
-      }
-    }
-
     /**
      * In order to always keep the visual UI representation and the internal
      * state in sync, the component has a 'state storage' that is updated when the
      * current state is changed due to a user action.
      *
      * Check if the previously saved state is outdated. That would mean
-     * a property has been changed programatically because the previous state
+     * a property has been changed programmatically because the previous state
      * is always updated in the interaction handlers.
      *
      * Will return true if any of the properties is not equal to its previously
@@ -578,46 +365,41 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     isCurrentStateOutdated() {
       return Object.entries(this._stateStorage).some(([propName, propValue]) => this[propName] !== propValue);
     }
-
     /**
      * Returns the last stored value of a property
      *
      * @protected
      */
-    getStoredPropertyState(property) {
-      return this._stateStorage[property];
+    getStoredPropertyState(prop) {
+      return this._stateStorage[prop];
     }
-
     /**
      * Check if one or more properties have been updated compared to their last
      * saved values in the state storage.
      *
      * @protected
      */
-    isPropertyUpdated(...properties) {
-      return properties.some(prop => this.getStoredPropertyState(prop) !== this[prop]);
+    isPropertyUpdated(...props) {
+      return props.some(prop => this.getStoredPropertyState(prop) !== this[prop]);
     }
-
     /**
      * Updates the previously saved in the _stateStorage values of one or more properties.
      *
      * @protected
      */
     storePropertyState(...props) {
-      props.forEach(property => {
-        this._stateStorage[property] = this[property];
+      props.forEach(prop => {
+        this._stateStorage[prop] = this[prop];
       });
     }
-
     /**
      * Returns the start side of a direction - left for LTR, right for RTL
      */
     get directionStart() {
       return this.effectiveDir === "rtl" ? "right" : "left";
     }
-
     /**
-     * Calculates the labels amout, width and text and creates them
+     * Calculates the labels amount, width and text and creates them
      *
      * @private
      */
@@ -628,7 +410,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const labelInterval = this.labelInterval;
       const step = this._effectiveStep;
       const newNumberOfLabels = (this._effectiveMax - this._effectiveMin) / (step * labelInterval);
-
       // If the required labels are already rendered
       if (newNumberOfLabels === this._oldNumberOfLabels) {
         return;
@@ -636,10 +417,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._oldNumberOfLabels = newNumberOfLabels;
       this._labelWidth = 100 / newNumberOfLabels;
       this._labelValues = [];
-
       // If the step value is not a round number get its precision
-      const stepPrecision = SliderBase._getDecimalPrecisionOfNumber(step);
-
+      const stepPrecision = SliderBase_1._getDecimalPrecisionOfNumber(step);
       // numberOfLabels below can be float so that the "distance betweenlabels labels"
       // calculation to be precize (exactly the same as the distance between the tickmarks).
       // That's ok as the loop stop condition is set to an integer, so it will practically
@@ -650,41 +429,38 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this._labelValues.push(labelItemNumber);
       }
     }
-    _handleActionKeyPressBase(event, affectedValue) {
-      const isUpAction = SliderBase._isIncreaseValueAction(event);
-      const isBigStep = SliderBase._isBigStepAction(event);
-      const currentValue = this[affectedValue];
+    _handleActionKeyPressBase(e, affectedPropName) {
+      const isUpAction = SliderBase_1._isIncreaseValueAction(e);
+      const isBigStep = SliderBase_1._isBigStepAction(e);
+      const currentValue = this[affectedPropName];
       const min = this._effectiveMin;
       const max = this._effectiveMax;
-
       // We need to take into consideration the effective direction of the slider - rtl or ltr.
       // While in ltr, the left arrow key decreases the value, in rtl it should actually increase it.
       let step = this.effectiveDir === "rtl" ? -this._effectiveStep : this._effectiveStep;
-
       // If the action key corresponds to a long step and the slider has more than 10 normal steps,
       // make a jump of 1/10th of the Slider's length, otherwise just use the normal step property.
       step = isBigStep && (max - min) / step > 10 ? (max - min) / 10 : step;
-      if ((0, _Keys.isEnd)(event)) {
+      if ((0, _Keys.isEnd)(e)) {
         return max - currentValue;
       }
-      if ((0, _Keys.isHome)(event)) {
+      if ((0, _Keys.isHome)(e)) {
         return (currentValue - min) * -1;
       }
       return isUpAction ? step : step * -1;
     }
-    static _isDecreaseValueAction(event) {
-      return (0, _Keys.isDown)(event) || (0, _Keys.isDownCtrl)(event) || (0, _Keys.isLeft)(event) || (0, _Keys.isLeftCtrl)(event) || (0, _Keys.isMinus)(event) || (0, _Keys.isPageDown)(event);
+    static _isDecreaseValueAction(e) {
+      return (0, _Keys.isDown)(e) || (0, _Keys.isDownCtrl)(e) || (0, _Keys.isLeft)(e) || (0, _Keys.isLeftCtrl)(e) || (0, _Keys.isMinus)(e) || (0, _Keys.isPageDown)(e);
     }
-    static _isIncreaseValueAction(event) {
-      return (0, _Keys.isUp)(event) || (0, _Keys.isUpCtrl)(event) || (0, _Keys.isRight)(event) || (0, _Keys.isRightCtrl)(event) || (0, _Keys.isPlus)(event) || (0, _Keys.isPageUp)(event);
+    static _isIncreaseValueAction(e) {
+      return (0, _Keys.isUp)(e) || (0, _Keys.isUpCtrl)(e) || (0, _Keys.isRight)(e) || (0, _Keys.isRightCtrl)(e) || (0, _Keys.isPlus)(e) || (0, _Keys.isPageUp)(e);
     }
-    static _isBigStepAction(event) {
-      return (0, _Keys.isDownCtrl)(event) || (0, _Keys.isUpCtrl)(event) || (0, _Keys.isLeftCtrl)(event) || (0, _Keys.isRightCtrl)(event) || (0, _Keys.isPageUp)(event) || (0, _Keys.isPageDown)(event);
+    static _isBigStepAction(e) {
+      return (0, _Keys.isDownCtrl)(e) || (0, _Keys.isUpCtrl)(e) || (0, _Keys.isLeftCtrl)(e) || (0, _Keys.isRightCtrl)(e) || (0, _Keys.isPageUp)(e) || (0, _Keys.isPageDown)(e);
     }
     get _tickmarksCount() {
       return (this._effectiveMax - this._effectiveMin) / this._effectiveStep;
     }
-
     /**
      * Calculates space between tickmarks
      *
@@ -693,7 +469,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _spaceBetweenTickmarks() {
       return this.getBoundingClientRect().width / this._tickmarksCount;
     }
-
     /**
      * Notify in case of a invalid step value type
      *
@@ -708,7 +483,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         console.warn("The 'step' property must be a positive float number. The provided negative number has been converted to its positve equivalent"); // eslint-disable-line
       }
 
-      if (typeof step !== "number" || Number.isNaN(step)) {
+      if (Number.isNaN(step)) {
         console.warn("The 'step' property must be a positive float number. It has been set to its default value of 1"); // eslint-disable-line
       }
     }
@@ -716,7 +491,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get _labels() {
       return this._labelValues || [];
     }
-
     /**
      * Normalizes a new <code>step</code> property value.
      * If tickmarks are enabled recreates them according to it.
@@ -728,7 +502,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (step < 0) {
         step = Math.abs(step);
       }
-      if (typeof step !== "number" || Number.isNaN(step)) {
+      if (Number.isNaN(step)) {
         step = 1;
       }
       return step;
@@ -739,13 +513,64 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get _effectiveMax() {
       return Math.max(this.min, this.max);
     }
-    get tabIndex() {
+    get _tabIndex() {
       return this.disabled ? "-1" : "0";
     }
     get _ariaLabelledByHandleRefs() {
       return [`${this._id}-accName`, `${this._id}-sliderDesc`].join(" ").trim();
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    validator: _Float.default,
+    defaultValue: 0
+  })], SliderBase.prototype, "min", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Float.default,
+    defaultValue: 100
+  })], SliderBase.prototype, "max", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Float.default,
+    defaultValue: 1
+  })], SliderBase.prototype, "step", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: 0
+  })], SliderBase.prototype, "labelInterval", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], SliderBase.prototype, "showTickmarks", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], SliderBase.prototype, "showTooltip", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], SliderBase.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)()], SliderBase.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: "hidden"
+  })], SliderBase.prototype, "_tooltipVisibility", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], SliderBase.prototype, "_labelsOverlapping", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], SliderBase.prototype, "_hiddenTickmarks", void 0);
+  SliderBase = SliderBase_1 = __decorate([(0, _customElement.default)({
+    renderer: _LitRenderer.default,
+    styles: _SliderBase.default
+  })
+  /**
+   * Fired when the value changes and the user has finished interacting with the slider.
+   *
+   * @event sap.ui.webc.main.SliderBase#change
+   * @public
+   */, (0, _event.default)("change")
+  /**
+   * Fired when the value changes due to user interaction that is not yet finished - during mouse/touch dragging.
+   *
+   * @event sap.ui.webc.main.SliderBase#input
+   * @public
+   */, (0, _event.default)("input")], SliderBase);
   var _default = SliderBase;
   _exports.default = _default;
 });

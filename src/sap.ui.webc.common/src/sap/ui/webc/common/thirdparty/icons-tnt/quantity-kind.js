@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v2/quantity-kind", "./v3/quantity-kind"], function (_exports, _Theme, _quantityKind, _quantityKind2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "quantity-kind";
-  const pathData = "M35 45q7-13 22-13h397q11 0 18.5 7t7.5 18v398q0 11-7.5 18t-18.5 7H121q-11 0-18-7t-7-18V143L36 71q-9-14-1-26zm89 83h100v32h-96v32h96v32h-96v32h96v32h-96v32h96v32h-96v32h96v32h-96v32h320V64H68z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "tnt";
-  const packageName = "@ui5/webcomponents-icons-tnt";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _quantityKind.accData;
+    }
   });
-  var _default = "quantity-kind";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _quantityKind.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _quantityKind.pathData : _quantityKind2.pathData;
+  _exports.pathData = pathData;
+  var _default = "tnt/quantity-kind";
   _exports.default = _default;
 });

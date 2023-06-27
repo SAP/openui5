@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "positive";
-  const pathData = "M416.5 0q34 0 57 22.5t23 57.5v320q0 34-23 57t-57 23h-321q-34 0-57-23t-23-57V80q0-35 23-57.5T95.5 0h321zm26 80q0-12-7-19.5t-19-7.5h-321q-12 0-19 7.5t-7 19.5v320q0 12 7 19.5t19 7.5h321q12 0 19-7.5t7-19.5V80zm-107 133q12 0 19.5 7.5t7.5 19.5-7.5 19-19.5 7h-53v54q0 12-7.5 19.5t-19.5 7.5-19-7.5-7-19.5v-54h-54q-26 0-26-26 0-12 7-19.5t19-7.5h54v-53q0-12 7-19.5t19-7.5 19.5 7.5 7.5 19.5v53h53z";
+  const pathData = "M405 32q32 0 53.5 21.5T480 107v298q0 32-21.5 53.5T405 480H107q-32 0-53.5-21.5T32 405V107q0-32 21.5-53.5T107 32h298zm25 75q0-25-25-25H107q-25 0-25 25v298q0 25 25 25h298q25 0 25-25V107zm-99 124q25 0 25 25t-25 25h-50v50q0 25-25 25t-25-25v-50h-50q-11 0-17.5-7t-6.5-18 6.5-18 17.5-7h50v-50q0-25 25-25t25 25v50h50z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "positive";
+  var _default = "SAP-icons-v5/positive";
   _exports.default = _default;
 });

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/folder-full", "./v4/folder-full"], function (_exports, _Theme, _folderFull, _folderFull2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/folder-full", "./v5/folder-full"], function (_exports, _Theme, _folderFull, _folderFull2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _folderFull.pathData : _folderFull2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _folderFull.pathData : _folderFull2.pathData;
   _exports.pathData = pathData;
   var _default = "folder-full";
   _exports.default = _default;

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/customer-briefing", "./v4/customer-briefing"], function (_exports, _Theme, _customerBriefing, _customerBriefing2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/customer-briefing", "./v5/customer-briefing"], function (_exports, _Theme, _customerBriefing, _customerBriefing2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _customerBriefing.pathData : _customerBriefing2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _customerBriefing.pathData : _customerBriefing2.pathData;
   _exports.pathData = pathData;
   var _default = "customer-briefing";
   _exports.default = _default;

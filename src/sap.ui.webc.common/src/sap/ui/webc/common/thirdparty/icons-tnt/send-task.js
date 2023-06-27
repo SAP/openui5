@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v2/send-task", "./v3/send-task"], function (_exports, _Theme, _sendTask, _sendTask2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "send-task";
-  const pathData = "M489 479q-2 1-9 1H32q-2 0-12-2l167-155-25-22q-62 56-94.5 86T20 430L0 448V128q0-5 1-6l253 211 257-213q1 2 1 8v320q0 5-1 6L347 302l-26 21zM23 98q8-2 9-2h448q6 0 7 1L254 290z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "tnt";
-  const packageName = "@ui5/webcomponents-icons-tnt";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _sendTask.accData;
+    }
   });
-  var _default = "send-task";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _sendTask.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _sendTask.pathData : _sendTask2.pathData;
+  _exports.pathData = pathData;
+  var _default = "tnt/send-task";
   _exports.default = _default;
 });

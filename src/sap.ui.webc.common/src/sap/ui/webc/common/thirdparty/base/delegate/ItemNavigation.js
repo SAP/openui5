@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/NavigationMode", "../types/ItemNavigationBehavior"], function (_exports, _Keys, _getActiveElement, _NavigationMode, _ItemNavigationBehavior) {
+sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/NavigationMode", "../types/ItemNavigationBehavior", "../UI5Element"], function (_exports, _Keys, _getActiveElement, _NavigationMode, _ItemNavigationBehavior, _UI5Element) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -46,7 +46,7 @@ sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/Navig
     /**
      *
      * @param rootWebComponent the component to operate on (component that slots or contains within its shadow root the items the user navigates among)
-     * @param options Object with configuration options:
+     * @param {ItemNavigationOptions} options Object with configuration options:
      *  - currentIndex: the index of the item that will be initially selected (from which navigation will begin)
      *  - navigationMode (Auto|Horizontal|Vertical): whether the items are displayed horizontally (Horizontal), vertically (Vertical) or as a matrix (Auto) meaning the user can navigate in both directions (up/down and left/right)
      *  - rowSize: tells how many items per row there are when the items are not rendered as a flat list but rather as a matrix. Relevant for navigationMode=Auto
@@ -57,11 +57,7 @@ sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/Navig
      *  - getItemsCallback: function that, when called, returns an array with all items the user can navigate among
      *  - affectedPropertiesNames: a list of metadata properties on the root component which, upon user navigation, will be reassigned by address thus causing the root component to invalidate
      */
-    constructor(rootWebComponent, options = {}) {
-      this._setRootComponent(rootWebComponent);
-      this._initOptions(options);
-    }
-    _setRootComponent(rootWebComponent) {
+    constructor(rootWebComponent, options) {
       if (!rootWebComponent.isUI5Element) {
         throw new Error("The root web component must be a UI5 Element instance");
       }
@@ -70,8 +66,6 @@ sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/Navig
       this.rootWebComponent._onComponentStateFinalized = () => {
         this._init();
       };
-    }
-    _initOptions(options) {
       if (typeof options.getItemsCallback !== "function") {
         throw new Error("getItemsCallback is required");
       }
@@ -83,7 +77,6 @@ sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/Navig
       this._affectedPropertiesNames = options.affectedPropertiesNames || [];
       this._skipItemsSize = options.skipItemsSize || null;
     }
-
     /**
      * Call this method to set a new "current" (selected) item in the item navigation
      * Note: the item passed to this function must be one of the items, returned by the getItemsCallback function
@@ -100,7 +93,6 @@ sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/Navig
       this._currentIndex = currentItemIndex;
       this._applyTabIndex();
     }
-
     /**
      * Call this method to dynamically change the row size
      *
@@ -237,7 +229,6 @@ sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/Navig
       }
       this._handlePageDownFlat();
     }
-
     /**
      * Handles PAGE_UP in a flat list-like structure, both vertically and horizontally.
      */
@@ -245,6 +236,7 @@ sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/Navig
       if (this._skipItemsSize === null) {
         // Move the focus to the very top (as Home).
         this._currentIndex -= this._currentIndex;
+        return;
       }
       if (this._currentIndex + 1 > this._skipItemsSize) {
         // When there are more than "skipItemsSize" number of items to the top,
@@ -255,7 +247,6 @@ sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/Navig
         this._currentIndex -= this._currentIndex;
       }
     }
-
     /**
      * Handles PAGE_DOWN in a flat list-like structure, both vertically and horizontally.
      */
@@ -263,6 +254,7 @@ sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/Navig
       if (this._skipItemsSize === null) {
         // Move the focus to the very bottom (as End).
         this._currentIndex = this._getItems().length - 1;
+        return;
       }
       const currentToEndRange = this._getItems().length - this._currentIndex - 1;
       if (currentToEndRange > this._skipItemsSize) {
@@ -289,7 +281,9 @@ sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/Navig
     _focusCurrentItem() {
       const currentItem = this._getCurrentItem();
       if (currentItem) {
-        currentItem.focus();
+        currentItem.focus({
+          focusVisible: true
+        });
       }
     }
     _canNavigate() {
@@ -300,9 +294,8 @@ sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/Navig
     _getCurrentItem() {
       const items = this._getItems();
       if (!items.length) {
-        return null;
+        return;
       }
-
       // normalize the index
       while (this._currentIndex >= items.length) {
         this._currentIndex -= this._rowSize;
@@ -314,13 +307,16 @@ sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/Navig
       if (!currentItem) {
         return;
       }
-      if (currentItem.isUI5Element) {
+      if ((0, _UI5Element.instanceOfUI5Element)(currentItem)) {
         return currentItem.getFocusDomRef();
       }
-      if (!this.rootWebComponent.getDomRef()) {
+      const currentItemDOMRef = this.rootWebComponent.getDomRef();
+      if (!currentItemDOMRef) {
         return;
       }
-      return this.rootWebComponent.getDomRef().querySelector(`#${currentItem.id}`);
+      if (currentItem.id) {
+        return currentItemDOMRef.querySelector(`#${currentItem.id}`);
+      }
     }
   }
   var _default = ItemNavigation;

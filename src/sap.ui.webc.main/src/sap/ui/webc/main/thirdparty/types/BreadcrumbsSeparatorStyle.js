@@ -1,70 +1,58 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * @lends sap.ui.webcomponents.main.types.BreadcrumbsSeparatorStyle.prototype
+   * Different Breadcrumbs separator styles.
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.main.types.BreadcrumbsSeparatorStyle
    */
-  const SeparatorTypes = {
+  var BreadcrumbsSeparatorStyle;
+  (function (BreadcrumbsSeparatorStyle) {
     /**
      * The separator appears as "/".
      * @public
      * @type {Slash}
      */
-    Slash: "Slash",
+    BreadcrumbsSeparatorStyle["Slash"] = "Slash";
     /**
      * The separator appears as "\".
      * @public
      * @type {BackSlash}
      */
-    BackSlash: "BackSlash",
+    BreadcrumbsSeparatorStyle["BackSlash"] = "BackSlash";
     /**
      * The separator appears as "\\".
      * @public
      * @type {DoubleBackSlash}
      */
-    DoubleBackSlash: "DoubleBackSlash",
+    BreadcrumbsSeparatorStyle["DoubleBackSlash"] = "DoubleBackSlash";
     /**
      * The separator appears as ">>".
      * @public
      * @type {DoubleGreaterThan}
      */
-    DoubleGreaterThan: "DoubleGreaterThan",
+    BreadcrumbsSeparatorStyle["DoubleGreaterThan"] = "DoubleGreaterThan";
     /**
-     * The separator appears as "//".
+     * The separator appears as "//" .
      * @public
      * @type {DoubleSlash}
      */
-    DoubleSlash: "DoubleSlash",
+    BreadcrumbsSeparatorStyle["DoubleSlash"] = "DoubleSlash";
     /**
      * The separator appears as ">".
      * @public
      * @type {GreaterThan}
      */
-    GreaterThan: "GreaterThan"
-  };
-
-  /**
-   * @class
-   * Different types of <code>Breadcrumbs</code> separator.
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.main.types.BreadcrumbsSeparatorStyle
-   * @public
-   * @enum {string}
-   */
-  class BreadcrumbsSeparatorStyle extends _DataType.default {
-    static isValid(value) {
-      return !!SeparatorTypes[value];
-    }
-  }
-  BreadcrumbsSeparatorStyle.generateTypeAccessors(SeparatorTypes);
+    BreadcrumbsSeparatorStyle["GreaterThan"] = "GreaterThan";
+  })(BreadcrumbsSeparatorStyle || (BreadcrumbsSeparatorStyle = {}));
   var _default = BreadcrumbsSeparatorStyle;
   _exports.default = _default;
 });

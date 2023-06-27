@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/subway-train", "./v4/subway-train"], function (_exports, _Theme, _subwayTrain, _subwayTrain2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/subway-train", "./v5/subway-train"], function (_exports, _Theme, _subwayTrain, _subwayTrain2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _subwayTrain.pathData : _subwayTrain2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _subwayTrain.pathData : _subwayTrain2.pathData;
   _exports.pathData = pathData;
   var _default = "subway-train";
   _exports.default = _default;

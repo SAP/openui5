@@ -1,70 +1,58 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * @lends sap.ui.webcomponents.main.types.TitleLevel.prototype
+   * Different types of Title level.
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.main.types.TitleLevel
    */
-  const TitleLevels = {
+  var TitleLevel;
+  (function (TitleLevel) {
     /**
      * Renders <code>h1</code> tag.
      * @public
      * @type {H1}
      */
-    H1: "H1",
+    TitleLevel["H1"] = "H1";
     /**
      * Renders <code>h2</code> tag.
      * @public
      * @type {H2}
      */
-    H2: "H2",
+    TitleLevel["H2"] = "H2";
     /**
      * Renders <code>h3</code> tag.
      * @public
      * @type {H3}
      */
-    H3: "H3",
+    TitleLevel["H3"] = "H3";
     /**
      * Renders <code>h4</code> tag.
      * @public
      * @type {H4}
      */
-    H4: "H4",
+    TitleLevel["H4"] = "H4";
     /**
      * Renders <code>h5</code> tag.
      * @public
      * @type {H5}
      */
-    H5: "H5",
+    TitleLevel["H5"] = "H5";
     /**
      * Renders <code>h6</code> tag.
      * @public
      * @type {H6}
      */
-    H6: "H6"
-  };
-
-  /**
-   * @class
-   * Defines the <code>ui5-title</code> level
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.main.types.TitleLevel
-   * @public
-   * @enum {string}
-   */
-  class TitleLevel extends _DataType.default {
-    static isValid(value) {
-      return !!TitleLevels[value];
-    }
-  }
-  TitleLevel.generateTypeAccessors(TitleLevels);
+    TitleLevel["H6"] = "H6";
+  })(TitleLevel || (TitleLevel = {}));
   var _default = TitleLevel;
   _exports.default = _default;
 });

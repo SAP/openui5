@@ -12,7 +12,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _exports.ltr = ltr;
   const accData = null;
   _exports.accData = accData;
-  const collection = "SAP-icons";
+  const collection = "SAP-icons-v4";
   const packageName = "@ui5/webcomponents-icons";
   (0, _Icons.registerIcon)(name, {
     pathData,
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "screen-split-two";
+  var _default = "SAP-icons-v4/screen-split-two";
   _exports.default = _default;
 });

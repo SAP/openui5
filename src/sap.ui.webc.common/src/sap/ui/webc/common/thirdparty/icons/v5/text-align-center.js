@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "text-align-center";
+  var _default = "SAP-icons-v5/text-align-center";
   _exports.default = _default;
 });

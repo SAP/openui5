@@ -13,17 +13,19 @@ sap.ui.define(["exports", "../Device", "../EventProvider", "../animations/scroll
   class ScrollEnablement extends _EventProvider.default {
     constructor(containerComponent) {
       super();
+      this.supportsTouch = (0, _Device.supportsTouch)();
       this.containerComponent = containerComponent;
       this.mouseMove = this.ontouchmove.bind(this);
       this.mouseUp = this.ontouchend.bind(this);
       this.touchStart = this.ontouchstart.bind(this);
       this.supportsTouch = (0, _Device.supportsTouch)();
-
       // On Android devices touchmove is thrown one more time than neccessary (together with touchend)
       // so we have to cache the previus coordinates in order to provide correct parameters in the
       // event for Android
-      this.cachedValue = {};
-
+      this.cachedValue = {
+        dragX: 0,
+        dragY: 0
+      };
       // In components like Carousel you need to know if the user has clicked on something or swiped
       // in order to throw the needed event or not
       this.startX = 0;
@@ -50,7 +52,6 @@ sap.ui.define(["exports", "../Device", "../EventProvider", "../animations/scroll
     get scrollContainer() {
       return this._container;
     }
-
     /**
      * Scrolls the container to the left/top position, retrying retryCount times, if the container is not yet painted
      *
@@ -62,7 +63,6 @@ sap.ui.define(["exports", "../Device", "../EventProvider", "../animations/scroll
      */
     async scrollTo(left, top, retryCount = 0, retryInterval = 0) {
       let containerPainted = this.scrollContainer.clientHeight > 0 && this.scrollContainer.clientWidth > 0;
-
       /* eslint-disable no-loop-func, no-await-in-loop */
       while (!containerPainted && retryCount > 0) {
         await new Promise(resolve => {
@@ -74,7 +74,6 @@ sap.ui.define(["exports", "../Device", "../EventProvider", "../animations/scroll
         });
       }
       /* eslint-disable no-loop-func, no-await-in-loop */
-
       this._container.scrollLeft = left;
       this._container.scrollTop = top;
     }
@@ -84,11 +83,9 @@ sap.ui.define(["exports", "../Device", "../EventProvider", "../animations/scroll
         this._container.scrollTop += dy;
         return;
       }
-      return (0, _scroll.default)({
-        element: this._container,
-        dx,
-        dy
-      });
+      if (this._container) {
+        return (0, _scroll.default)(this._container, dx, dy);
+      }
     }
     getScrollLeft() {
       return this._container.scrollLeft;
@@ -96,14 +93,21 @@ sap.ui.define(["exports", "../Device", "../EventProvider", "../animations/scroll
     getScrollTop() {
       return this._container.scrollTop;
     }
-    _isTouchInside(touch) {
+    _isTouchInside(event) {
+      let touch = null;
+      if (this.supportsTouch && event instanceof TouchEvent) {
+        touch = event.touches[0];
+      }
       const rect = this._container.getBoundingClientRect();
-      const x = this.supportsTouch ? touch.clientX : touch.x;
-      const y = this.supportsTouch ? touch.clientY : touch.y;
+      const x = this.supportsTouch ? touch.clientX : event.x;
+      const y = this.supportsTouch ? touch.clientY : event.y;
       return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
     }
     ontouchstart(event) {
-      const touch = this.supportsTouch ? event.touches[0] : null;
+      let touch = null;
+      if (this.supportsTouch && event instanceof TouchEvent) {
+        touch = event.touches[0];
+      }
       if (!this.supportsTouch) {
         document.addEventListener("mouseup", this.mouseUp, {
           passive: true
@@ -116,9 +120,15 @@ sap.ui.define(["exports", "../Device", "../EventProvider", "../animations/scroll
         this.startX = touch.pageX;
         this.startY = touch.pageY;
       }
-      this._prevDragX = this.supportsTouch ? touch.pageX : event.x;
-      this._prevDragY = this.supportsTouch ? touch.pageY : event.y;
-      this._canScroll = this._isTouchInside(this.supportsTouch ? touch : event);
+      if (this.supportsTouch && event instanceof TouchEvent) {
+        this._prevDragX = touch.pageX;
+        this._prevDragY = touch.pageY;
+      }
+      if (event instanceof MouseEvent) {
+        this._prevDragX = event.x;
+        this._prevDragY = event.y;
+      }
+      this._canScroll = this._isTouchInside(event);
     }
     ontouchmove(event) {
       if (!this._canScroll) {
@@ -158,7 +168,6 @@ sap.ui.define(["exports", "../Device", "../EventProvider", "../animations/scroll
       const useCachedValues = dragX === this._prevDragX;
       const _dragX = useCachedValues ? this.cachedValue.dragX : dragX;
       // const _dragY = useCachedValues ? this.cachedValue.dragY : dragY; add if needed
-
       this.fireEvent(touchEndEventName, {
         isLeft: _dragX < this._prevDragX,
         isRight: _dragX > this._prevDragX
@@ -166,9 +175,7 @@ sap.ui.define(["exports", "../Device", "../EventProvider", "../animations/scroll
       this._prevDragX = dragX;
       this._prevDragY = dragY;
       if (!this.supportsTouch) {
-        document.removeEventListener("mousemove", this.mouseMove, {
-          passive: true
-        });
+        document.removeEventListener("mousemove", this.mouseMove);
         document.removeEventListener("mouseup", this.mouseUp);
       }
     }

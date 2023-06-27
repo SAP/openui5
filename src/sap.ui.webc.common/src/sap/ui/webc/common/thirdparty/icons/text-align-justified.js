@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/text-align-justified", "./v4/text-align-justified"], function (_exports, _Theme, _textAlignJustified, _textAlignJustified2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/text-align-justified", "./v5/text-align-justified"], function (_exports, _Theme, _textAlignJustified, _textAlignJustified2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _textAlignJustified.pathData : _textAlignJustified2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _textAlignJustified.pathData : _textAlignJustified2.pathData;
   _exports.pathData = pathData;
   var _default = "text-align-justified";
   _exports.default = _default;

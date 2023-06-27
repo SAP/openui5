@@ -10,7 +10,6 @@ sap.ui.define(["exports", "../config/RTL"], function (_exports, _RTL) {
     const doc = window.document;
     const dirValues = ["ltr", "rtl"]; // exclude "auto" and "" from all calculations
     const locallyAppliedDir = getComputedStyle(element).getPropertyValue(GLOBAL_DIR_CSS_VAR);
-
     // In that order, inspect the CSS Var (for modern browsers), the element itself, html and body (for IE fallback)
     if (dirValues.includes(locallyAppliedDir)) {
       return locallyAppliedDir;
@@ -24,7 +23,6 @@ sap.ui.define(["exports", "../config/RTL"], function (_exports, _RTL) {
     if (dirValues.includes(doc.body.dir)) {
       return doc.body.dir;
     }
-
     // Finally, check the configuration for explicitly set RTL or language-implied RTL
     return (0, _RTL.getRTL)() ? "rtl" : undefined;
   };

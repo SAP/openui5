@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "./generated/templates/BarTemplate.lit", "./types/BarDesign", "./generated/themes/Bar.css"], function (_exports, _UI5Element, _LitRenderer, _ResizeHandler, _BarTemplate, _BarDesign, _Bar) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "./types/BarDesign", "./generated/templates/BarTemplate.lit", "./generated/themes/Bar.css"], function (_exports, _UI5Element, _customElement, _property, _slot, _LitRenderer, _ResizeHandler, _BarDesign, _BarTemplate, _Bar) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,87 +6,22 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _ResizeHandler = _interopRequireDefault(_ResizeHandler);
-  _BarTemplate = _interopRequireDefault(_BarTemplate);
   _BarDesign = _interopRequireDefault(_BarDesign);
+  _BarTemplate = _interopRequireDefault(_BarTemplate);
   _Bar = _interopRequireDefault(_Bar);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-bar",
-    managedSlots: true,
-    fastNavigation: true,
-    properties: /** @lends sap.ui.webcomponents.fiori.Bar.prototype */{
-      /**
-       * Defines the component's design.
-       *
-       * <br><br>
-       * <b>Note:</b>
-       * Available options are:
-       * <ul>
-       * <li><code>Header</code></li>
-       * <li><code>Subheader</code></li>
-       * <li><code>Footer</code></li>
-       * <li><code>FloatingFooter</code></li>
-       * </ul>
-       *
-       * @type {BarDesign}
-       * @defaultvalue "Header"
-       * @public
-       */
-      design: {
-        type: _BarDesign.default,
-        defaultValue: _BarDesign.default.Header
-      },
-      /**
-       * Defines if the component middle area needs to be centered between start and end area
-       * @type {boolean}
-       * @private
-       */
-      _shrinked: {
-        type: Boolean
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.fiori.Bar.prototype */{
-      /**
-       * Defines the content at the start of the bar
-       * @type {HTMLElement[]}
-       * @slot
-       * @public
-       */
-      startContent: {
-        type: HTMLElement
-      },
-      /**
-       * Defines the content in the middle of the bar
-       * @type {HTMLElement[]}
-       * @slot middleContent
-       * @public
-       */
-      "default": {
-        type: HTMLElement,
-        propertyName: "middleContent"
-      },
-      /**
-       * Defines the content at the end of the bar
-       * @type {HTMLElement[]}
-       * @slot
-       * @public
-       */
-      endContent: {
-        type: HTMLElement
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.fiori.Bar.prototype */{
-      //
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
   /**
    * @class
    *
@@ -128,26 +63,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.fiori.Bar
-   * @implements sap.ui.webcomponents.fiori.IBar
-   * @extends UI5Element
+   * @alias sap.ui.webc.fiori.Bar
+   * @implements sap.ui.webc.fiori.IBar
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-bar
    * @public
    * @since 1.0.0-rc.11
    */
-  class Bar extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _Bar.default;
-    }
-    static get template() {
-      return _BarTemplate.default;
-    }
+  let Bar = class Bar extends _UI5Element.default {
     get accInfo() {
       return {
         "label": this.design
@@ -160,15 +83,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     handleResize() {
       const bar = this.getDomRef();
       const barWidth = bar.offsetWidth;
-      this._shrinked = Array.from(bar.children).some(element => {
-        return barWidth / 3 < element.offsetWidth;
+      const needShrinked = Array.from(bar.children).some(child => {
+        return child.offsetWidth > barWidth / 3;
       });
+      bar.classList.toggle("ui5-bar-root-shrinked", needShrinked);
     }
     get classes() {
       return {
         root: {
-          "ui5-bar-root": true,
-          "ui5-bar-root-shrinked": this._shrinked
+          "ui5-bar-root": true
         }
       };
     }
@@ -178,11 +101,38 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     onEnterDOM() {
       _ResizeHandler.default.register(this, this._handleResizeBound);
+      this.getDomRef().querySelectorAll(".ui5-bar-content-container").forEach(child => {
+        _ResizeHandler.default.register(child, this._handleResizeBound);
+      }, this);
     }
     onExitDOM() {
       _ResizeHandler.default.deregister(this, this._handleResizeBound);
+      this.getDomRef().querySelectorAll(".ui5-bar-content-container").forEach(child => {
+        _ResizeHandler.default.deregister(child, this._handleResizeBound);
+      }, this);
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: _BarDesign.default,
+    defaultValue: _BarDesign.default.Header
+  })], Bar.prototype, "design", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement
+  })], Bar.prototype, "startContent", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement,
+    "default": true
+  })], Bar.prototype, "middleContent", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement
+  })], Bar.prototype, "endContent", void 0);
+  Bar = __decorate([(0, _customElement.default)({
+    tag: "ui5-bar",
+    fastNavigation: true,
+    renderer: _LitRenderer.default,
+    styles: _Bar.default,
+    template: _BarTemplate.default
+  })], Bar);
   Bar.define();
   var _default = Bar;
   _exports.default = _default;

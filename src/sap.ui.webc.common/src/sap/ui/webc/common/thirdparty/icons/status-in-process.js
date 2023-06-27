@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/status-in-process", "./v4/status-in-process"], function (_exports, _Theme, _statusInProcess, _statusInProcess2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/status-in-process", "./v5/status-in-process"], function (_exports, _Theme, _statusInProcess, _statusInProcess2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _statusInProcess.pathData : _statusInProcess2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _statusInProcess.pathData : _statusInProcess2.pathData;
   _exports.pathData = pathData;
   var _default = "status-in-process";
   _exports.default = _default;

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/customize", "./v4/customize"], function (_exports, _Theme, _customize, _customize2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/customize", "./v5/customize"], function (_exports, _Theme, _customize, _customize2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _customize.pathData : _customize2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _customize.pathData : _customize2.pathData;
   _exports.pathData = pathData;
   var _default = "customize";
   _exports.default = _default;

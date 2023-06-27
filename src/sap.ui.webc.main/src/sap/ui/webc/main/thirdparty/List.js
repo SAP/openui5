@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/base/util/TabbableElements", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/types/NavigationMode", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/util/debounce", "sap/ui/webc/common/thirdparty/base/util/isElementInView", "./types/ListMode", "./types/ListGrowingMode", "./types/ListSeparators", "./BusyIndicator", "./generated/templates/ListTemplate.lit", "./generated/themes/List.css", "./generated/themes/BrowserScrollbar.css", "./generated/i18n/i18n-defaults"], function (_exports, _UI5Element, _LitRenderer, _ResizeHandler, _ItemNavigation, _Render, _TabbableElements, _Keys, _Integer, _NavigationMode, _AriaLabelHelper, _i18nBundle, _debounce, _isElementInView, _ListMode, _ListGrowingMode, _ListSeparators, _BusyIndicator, _ListTemplate, _List, _BrowserScrollbar, _i18nDefaults) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/types/NavigationMode", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/util/getNormalizedTarget", "sap/ui/webc/common/thirdparty/base/util/getEffectiveScrollbarStyle", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/util/debounce", "sap/ui/webc/common/thirdparty/base/util/isElementInView", "./types/ListMode", "./types/ListGrowingMode", "./types/ListSeparators", "./BusyIndicator", "./generated/templates/ListTemplate.lit", "./generated/themes/List.css", "./generated/themes/BrowserScrollbar.css", "./generated/i18n/i18n-defaults"], function (_exports, _UI5Element, _LitRenderer, _ResizeHandler, _ItemNavigation, _property, _event, _customElement, _slot, _Render, _Keys, _Integer, _NavigationMode, _AriaLabelHelper, _getNormalizedTarget, _getEffectiveScrollbarStyle, _i18nBundle, _debounce, _isElementInView, _ListMode, _ListGrowingMode, _ListSeparators, _BusyIndicator, _ListTemplate, _List, _BrowserScrollbar, _i18nDefaults) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -9,8 +9,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _ResizeHandler = _interopRequireDefault(_ResizeHandler);
   _ItemNavigation = _interopRequireDefault(_ItemNavigation);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
+  _customElement = _interopRequireDefault(_customElement);
+  _slot = _interopRequireDefault(_slot);
   _Integer = _interopRequireDefault(_Integer);
   _NavigationMode = _interopRequireDefault(_NavigationMode);
+  _getNormalizedTarget = _interopRequireDefault(_getNormalizedTarget);
+  _getEffectiveScrollbarStyle = _interopRequireDefault(_getEffectiveScrollbarStyle);
   _debounce = _interopRequireDefault(_debounce);
   _isElementInView = _interopRequireDefault(_isElementInView);
   _ListMode = _interopRequireDefault(_ListMode);
@@ -21,330 +27,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _List = _interopRequireDefault(_List);
   _BrowserScrollbar = _interopRequireDefault(_BrowserScrollbar);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // Styles
-
-  // Texts
-
-  const INFINITE_SCROLL_DEBOUNCE_RATE = 250; // ms
-
-  const PAGE_UP_DOWN_SIZE = 10;
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-list",
-    managedSlots: true,
-    fastNavigation: true,
-    slots: /** @lends sap.ui.webcomponents.main.List.prototype */{
-      /**
-       * Defines the component header.
-       * <br><br>
-       * <b>Note:</b> When <code>header</code> is set, the
-       * <code>headerText</code> property is ignored.
-       *
-       * @type {HTMLElement[]}
-       * @slot
-       * @public
-       */
-      header: {
-        type: HTMLElement
-      },
-      /**
-       * Defines the items of the component.
-       * <br><br>
-       * <b>Note:</b> Use <code>ui5-li</code>, <code>ui5-li-custom</code>, and <code>ui5-li-groupheader</code> for the intended design.
-       *
-       * @type {sap.ui.webcomponents.main.IListItem[]}
-       * @slot items
-       * @public
-       */
-      "default": {
-        propertyName: "items",
-        type: HTMLElement
-      }
-    },
-    properties: /** @lends sap.ui.webcomponents.main.List.prototype */{
-      /**
-       * Defines the component header text.
-       * <br><br>
-       * <b>Note:</b> If <code>header</code> is set this property is ignored.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      headerText: {
-        type: String
-      },
-      /**
-       * Defines the footer text.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      footerText: {
-        type: String
-      },
-      /**
-       * Determines whether the component is indented.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      indent: {
-        type: Boolean
-      },
-      /**
-       * Defines the mode of the component.
-       * <br><br>
-       * <b>Note:</b> Available options are <code>None</code>, <code>SingleSelect</code>, <code>SingleSelectBegin</code>,
-       * <code>SingleSelectEnd</code>, <code>MultiSelect</code>, and <code>Delete</code>.
-       *
-       * @type {ListMode}
-       * @defaultvalue "None"
-       * @public
-       */
-      mode: {
-        type: _ListMode.default,
-        defaultValue: _ListMode.default.None
-      },
-      /**
-       * Defines the text that is displayed when the component contains no items.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      noDataText: {
-        type: String
-      },
-      /**
-       * Defines the item separator style that is used.
-       * <br><br>
-       * <b>Notes:</b>
-       * <ul>
-       * <li>Avalaible options are <code>All</code>, <code>Inner</code>, and <code>None</code>.</li>
-       * <li>When set to <code>None</code>, none of the items are separated by horizontal lines.</li>
-       * <li>When set to <code>Inner</code>, the first item doesn't have a top separator and the last
-       * item doesn't have a bottom separator.</li>
-       * </ul>
-       *
-       * @type {ListSeparators}
-       * @defaultvalue "All"
-       * @public
-       */
-      separators: {
-        type: _ListSeparators.default,
-        defaultValue: _ListSeparators.default.All
-      },
-      /**
-       * Defines whether the component will have growing capability either by pressing a <code>More</code> button,
-       * or via user scroll. In both cases <code>load-more</code> event is fired.
-       * <br><br>
-       *
-       * Available options:
-       * <br><br>
-       * <code>Button</code> - Shows a <code>More</code> button at the bottom of the list,
-       * pressing of which triggers the <code>load-more</code> event.
-       * <br>
-       * <code>Scroll</code> - The <code>load-more</code> event is triggered when the user scrolls to the bottom of the list;
-       * <br>
-       * <code>None</code> (default) - The growing is off.
-       * <br><br>
-       *
-       * <b>Restrictions:</b> <code>growing="Scroll"</code> is not supported for Internet Explorer,
-       * on IE the component will fallback to <code>growing="Button"</code>.
-       * @type {ListGrowingMode}
-       * @defaultvalue "None"
-       * @since 1.0.0-rc.13
-       * @public
-       */
-      growing: {
-        type: _ListGrowingMode.default,
-        defaultValue: _ListGrowingMode.default.None
-      },
-      /**
-       * Defines if the component would display a loading indicator over the list.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       * @since 1.0.0-rc.6
-       */
-      busy: {
-        type: Boolean
-      },
-      /**
-       * Defines the delay in milliseconds, after which the busy indicator will show up for this component.
-       *
-       * @type {Integer}
-       * @defaultValue 1000
-       * @public
-       */
-      busyDelay: {
-        type: _Integer.default,
-        defaultValue: 1000
-      },
-      /**
-       * Defines the accessible name of the component.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      accessibleName: {
-        type: String
-      },
-      /**
-       * Defines the IDs of the elements that label the input.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      accessibleNameRef: {
-        type: String,
-        defaultValue: ""
-      },
-      /**
-       * Defines the accessible role of the component.
-       * <br><br>
-       * @public
-       * @type {string}
-       * @defaultvalue "list"
-       * @since 1.0.0-rc.15
-       */
-      accessibleRole: {
-        type: String,
-        defaultValue: "list"
-      },
-      /**
-       * Defines if the entire list is in view port.
-       * @private
-       */
-      _inViewport: {
-        type: Boolean
-      },
-      /**
-       * Defines the active state of the <code>More</code> button.
-       * @private
-       */
-      _loadMoreActive: {
-        type: Boolean
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.List.prototype */{
-      /**
-       * Fired when an item is activated, unless the item's <code>type</code> property
-       * is set to <code>Inactive</code>.
-       *
-       * @event sap.ui.webcomponents.main.List#item-click
-       * @allowPreventDefault
-       * @param {HTMLElement} item The clicked item.
-       * @public
-       */
-      "item-click": {
-        detail: {
-          item: {
-            type: HTMLElement
-          }
-        }
-      },
-      /**
-       * Fired when the <code>Close</code> button of any item is clicked
-       * <br><br>
-       * <b>Note:</b> This event is only applicable to list items that can be closed (such as notification list items),
-       * not to be confused with <code>item-delete</code>.
-       *
-       * @event sap.ui.webcomponents.main.List#item-close
-       * @param {HTMLElement} item the item about to be closed.
-       * @public
-       * @since 1.0.0-rc.8
-       */
-      "item-close": {
-        detail: {
-          item: {
-            type: HTMLElement
-          }
-        }
-      },
-      /**
-       * Fired when the <code>Toggle</code> button of any item is clicked.
-       * <br><br>
-       * <b>Note:</b> This event is only applicable to list items that can be toggled (such as notification group list items).
-       *
-       * @event sap.ui.webcomponents.main.List#item-toggle
-       * @param {HTMLElement} item the toggled item.
-       * @public
-       * @since 1.0.0-rc.8
-       */
-      "item-toggle": {
-        detail: {
-          item: {
-            type: HTMLElement
-          }
-        }
-      },
-      /**
-       * Fired when the Delete button of any item is pressed.
-       * <br><br>
-       * <b>Note:</b> A Delete button is displayed on each item,
-       * when the component <code>mode</code> property is set to <code>Delete</code>.
-       *
-       * @event sap.ui.webcomponents.main.List#item-delete
-       * @param {HTMLElement} item the deleted item.
-       * @public
-       */
-      "item-delete": {
-        detail: {
-          item: {
-            type: HTMLElement
-          }
-        }
-      },
-      /**
-       * Fired when selection is changed by user interaction
-       * in <code>SingleSelect</code>, <code>SingleSelectBegin</code>, <code>SingleSelectEnd</code> and <code>MultiSelect</code> modes.
-       *
-       * @event sap.ui.webcomponents.main.List#selection-change
-       * @param {Array} selectedItems An array of the selected items.
-       * @param {Array} previouslySelectedItems An array of the previously selected items.
-       * @public
-       */
-      "selection-change": {
-        detail: {
-          selectedItems: {
-            type: Array
-          },
-          previouslySelectedItems: {
-            type: Array
-          },
-          selectionComponentPressed: {
-            type: Boolean
-          } // protected, indicates if the user used the selection components to change the selection
-        }
-      },
-
-      /**
-       * Fired when the user scrolls to the bottom of the list.
-       * <br><br>
-       * <b>Note:</b> The event is fired when the <code>growing='Scroll'</code> property is enabled.
-       *
-       * @event sap.ui.webcomponents.main.List#load-more
-       * @public
-       * @since 1.0.0-rc.6
-       */
-      "load-more": {}
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var List_1;
+  const INFINITE_SCROLL_DEBOUNCE_RATE = 250; // ms
+  const PAGE_UP_DOWN_SIZE = 10;
   /**
    * @class
    *
@@ -406,57 +98,32 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.List
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.List
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-list
-   * @appenddocs StandardListItem CustomListItem GroupHeaderListItem
+   * @appenddocs sap.ui.webc.main.StandardListItem sap.ui.webc.main.CustomListItem sap.ui.webc.main.GroupHeaderListItem
    * @public
    */
-  class List extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _ListTemplate.default;
-    }
-    static get styles() {
-      return [_BrowserScrollbar.default, _List.default];
-    }
+  let List = List_1 = class List extends _UI5Element.default {
     static async onDefine() {
-      List.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
-    }
-    static get dependencies() {
-      return [_BusyIndicator.default];
+      List_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
     constructor() {
       super();
-      this.initItemNavigation();
-
-      // Stores the last focused item within the internal ul element.
       this._previouslyFocusedItem = null;
-
       // Indicates that the List is forwarding the focus before or after the internal ul.
       this._forwardingFocus = false;
-      this._previouslySelectedItem = null;
-
       // Indicates that the List has already subscribed for resize.
       this.resizeListenerAttached = false;
-
       // Indicates if the IntersectionObserver started observing the List
       this.listEndObserved = false;
-      this.addEventListener("ui5-_press", this.onItemPress.bind(this));
-      this.addEventListener("ui5-close", this.onItemClose.bind(this));
-      this.addEventListener("ui5-toggle", this.onItemToggle.bind(this));
-      this.addEventListener("ui5-_focused", this.onItemFocused.bind(this));
-      this.addEventListener("ui5-_forward-after", this.onForwardAfter.bind(this));
-      this.addEventListener("ui5-_forward-before", this.onForwardBefore.bind(this));
-      this.addEventListener("ui5-_selection-requested", this.onSelectionRequested.bind(this));
-      this.addEventListener("ui5-_focus-requested", this.focusUploadCollectionItem.bind(this));
+      this._itemNavigation = new _ItemNavigation.default(this, {
+        skipItemsSize: PAGE_UP_DOWN_SIZE,
+        navigationMode: _NavigationMode.default.Vertical,
+        getItemsCallback: () => this.getEnabledItems()
+      });
       this._handleResize = this.checkListInViewport.bind(this);
-
+      this._handleResize = this.checkListInViewport.bind(this);
       // Indicates the List bottom most part has been detected by the IntersectionObserver
       // for the first time.
       this.initialIntersection = true;
@@ -499,7 +166,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this.shadowRoot.querySelector(".ui5-list-end-marker");
     }
     get hasData() {
-      return this.getSlottedNodes("items").length !== 0;
+      return this.getItems().length !== 0;
     }
     get showNoDataText() {
       return !this.hasData && this.noDataText;
@@ -531,15 +198,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     get ariaLabelModeText() {
       if (this.isMultiSelect) {
-        return List.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_MULTISELECTABLE);
+        return List_1.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_MULTISELECTABLE);
       }
       if (this.isSingleSelect) {
-        return List.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_SELECTABLE);
+        return List_1.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_SELECTABLE);
       }
       if (this.isDelete) {
-        return List.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_DELETABLE);
+        return List_1.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_DELETABLE);
       }
-      return undefined;
+      return "";
     }
     get grows() {
       return this.growing !== _ListGrowingMode.default.None;
@@ -551,7 +218,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this.growing === _ListGrowingMode.default.Button;
     }
     get _growingButtonText() {
-      return List.i18nBundle.getText(_i18nDefaults.LOAD_MORE_TEXT);
+      return List_1.i18nBundle.getText(_i18nDefaults.LOAD_MORE_TEXT);
     }
     get busyIndPosition() {
       if (!this.grows) {
@@ -566,23 +233,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-    initItemNavigation() {
-      this._itemNavigation = new _ItemNavigation.default(this, {
-        skipItemsSize: PAGE_UP_DOWN_SIZE,
-        // PAGE_UP and PAGE_DOWN will skip trough 10 items
-        navigationMode: _NavigationMode.default.Vertical,
-        getItemsCallback: () => this.getEnabledItems()
-      });
+    get classes() {
+      return {
+        root: {
+          "ui5-list-root": true,
+          "ui5-content-native-scrollbars": (0, _getEffectiveScrollbarStyle.default)()
+        }
+      };
     }
     prepareListItems() {
-      const slottedItems = this.getSlottedNodes("items");
+      const slottedItems = this.getItemsForProcessing();
       slottedItems.forEach((item, key) => {
         const isLastChild = key === slottedItems.length - 1;
         const showBottomBorder = this.separators === _ListSeparators.default.All || this.separators === _ListSeparators.default.Inner && !isLastChild;
-        item._mode = this.mode;
+        if (item.hasConfigurableMode) {
+          item._mode = this.mode;
+        }
         item.hasBorder = showBottomBorder;
       });
-      this._previouslySelectedItem = null;
     }
     async observeListEnd() {
       if (!this.listEndObserved) {
@@ -609,24 +277,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       });
     }
-
     /*
     * ITEM SELECTION BASED ON THE CURRENT MODE
     */
-    onSelectionRequested(event) {
+    onSelectionRequested(e) {
       const previouslySelectedItems = this.getSelectedItems();
       let selectionChange = false;
       this._selectionRequested = true;
-      if (this[`handle${this.mode}`]) {
-        selectionChange = this[`handle${this.mode}`](event.detail.item, event.detail.selected);
+      if (this.mode !== _ListMode.default.None && this[`handle${this.mode}`]) {
+        selectionChange = this[`handle${this.mode}`](e.detail.item, !!e.detail.selected);
       }
       if (selectionChange) {
-        this.fireEvent("selection-change", {
+        const changePrevented = !this.fireEvent("selection-change", {
           selectedItems: this.getSelectedItems(),
           previouslySelectedItems,
-          selectionComponentPressed: event.detail.selectionComponentPressed,
-          key: event.detail.key
-        });
+          selectionComponentPressed: e.detail.selectionComponentPressed,
+          targetItem: e.detail.item,
+          key: e.detail.key
+        }, true);
+        if (changePrevented) {
+          this._revertSelection(previouslySelectedItems);
+        }
       }
     }
     handleSingleSelect(item) {
@@ -654,6 +325,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.fireEvent("item-delete", {
         item
       });
+      return true;
     }
     deselectSelectedItems() {
       this.getSelectedItems().forEach(item => {
@@ -661,39 +333,58 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       });
     }
     getSelectedItems() {
-      return this.getSlottedNodes("items").filter(item => item.selected);
+      return this.getItems().filter(item => item.selected);
     }
     getEnabledItems() {
-      return this.getSlottedNodes("items").filter(item => !item.disabled);
+      return this.getItems().filter(item => !item.disabled);
     }
-    _onkeydown(event) {
-      if ((0, _Keys.isTabNext)(event)) {
-        this._handleTabNext(event);
+    getItems() {
+      return this.getSlottedNodes("items");
+    }
+    getItemsForProcessing() {
+      return this.getItems();
+    }
+    _revertSelection(previouslySelectedItems) {
+      this.getItems().forEach(item => {
+        const oldSelection = previouslySelectedItems.indexOf(item) !== -1;
+        const multiSelectCheckBox = item.shadowRoot.querySelector(".ui5-li-multisel-cb");
+        const singleSelectRadioButton = item.shadowRoot.querySelector(".ui5-li-singlesel-radiobtn");
+        item.selected = oldSelection;
+        if (multiSelectCheckBox) {
+          multiSelectCheckBox.checked = oldSelection;
+        } else if (singleSelectRadioButton) {
+          singleSelectRadioButton.checked = oldSelection;
+        }
+      });
+    }
+    _onkeydown(e) {
+      if ((0, _Keys.isTabNext)(e)) {
+        this._handleTabNext(e);
       }
     }
-    _onLoadMoreKeydown(event) {
-      if ((0, _Keys.isSpace)(event)) {
-        event.preventDefault();
+    _onLoadMoreKeydown(e) {
+      if ((0, _Keys.isSpace)(e)) {
+        e.preventDefault();
         this._loadMoreActive = true;
       }
-      if ((0, _Keys.isEnter)(event)) {
+      if ((0, _Keys.isEnter)(e)) {
         this._onLoadMoreClick();
         this._loadMoreActive = true;
       }
-      if ((0, _Keys.isTabNext)(event)) {
+      if ((0, _Keys.isTabNext)(e)) {
         this.focusAfterElement();
       }
-      if ((0, _Keys.isTabPrevious)(event)) {
+      if ((0, _Keys.isTabPrevious)(e)) {
         if (this.getPreviouslyFocusedItem()) {
           this.focusPreviouslyFocusedItem();
         } else {
           this.focusFirstItem();
         }
-        event.preventDefault();
+        e.preventDefault();
       }
     }
-    _onLoadMoreKeyup(event) {
-      if ((0, _Keys.isSpace)(event)) {
+    _onLoadMoreKeyup(e) {
+      if ((0, _Keys.isSpace)(e)) {
         this._onLoadMoreClick();
       }
       this._loadMoreActive = false;
@@ -713,19 +404,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     loadMore() {
       this.fireEvent("load-more");
     }
-
     /*
     * KEYBOARD SUPPORT
     */
-    _handleTabNext(event) {
-      // If forward navigation is performed, we check if the List has headerToolbar.
-      // If yes - we check if the target is at the last tabbable element of the headerToolbar
-      // to forward correctly the focus to the selected, previously focused or to the first list item.
+    _handleTabNext(e) {
       let lastTabbableEl;
-      const target = this.getNormalizedTarget(event.target);
-      if (this.headerToolbar) {
-        lastTabbableEl = this.getHeaderToolbarLastTabbableElement();
-      }
+      const target = (0, _getNormalizedTarget.default)(e.target);
       if (!lastTabbableEl) {
         return;
       }
@@ -737,18 +421,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         } else {
           this.focusFirstItem();
         }
-        event.stopImmediatePropagation();
-        event.preventDefault();
+        e.stopImmediatePropagation();
+        e.preventDefault();
       }
     }
-    _onfocusin(event) {
-      const target = this.getNormalizedTarget(event.target);
+    _onfocusin(e) {
+      const target = (0, _getNormalizedTarget.default)(e.target);
       // If the focusin event does not origin from one of the 'triggers' - ignore it.
       if (!this.isForwardElement(target)) {
-        event.stopImmediatePropagation();
+        e.stopImmediatePropagation();
         return;
       }
-
       // The focus arrives in the List for the first time.
       // If there is selected item - focus it or focus the first item.
       if (!this.getPreviouslyFocusedItem()) {
@@ -757,55 +440,56 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         } else {
           this.focusFirstItem();
         }
-        event.stopImmediatePropagation();
+        e.stopImmediatePropagation();
         return;
       }
-
       // The focus returns to the List,
       // focus the first selected item or the previously focused element.
       if (!this.getForwardingFocus()) {
         if (this.growsWithButton && this.isForwardAfterElement(target)) {
           this.focusGrowingButton();
-          event.stopImmediatePropagation();
+          e.stopImmediatePropagation();
           return;
         }
         this.focusPreviouslyFocusedItem();
-        event.stopImmediatePropagation();
+        e.stopImmediatePropagation();
       }
       this.setForwardingFocus(false);
     }
-    isForwardElement(node) {
-      const nodeId = node.id;
+    isForwardElement(element) {
+      const elementId = element.id;
       const beforeElement = this.getBeforeElement();
-      if (this._id === nodeId || beforeElement && beforeElement.id === nodeId) {
+      if (this._id === elementId || beforeElement && beforeElement.id === elementId) {
         return true;
       }
-      return this.isForwardAfterElement(node);
+      return this.isForwardAfterElement(element);
     }
-    isForwardAfterElement(node) {
-      const nodeId = node.id;
+    isForwardAfterElement(element) {
+      const elementId = element.id;
       const afterElement = this.getAfterElement();
-      return afterElement && afterElement.id === nodeId;
+      return afterElement && afterElement.id === elementId;
     }
-    onItemFocused(event) {
-      const target = event.target;
+    onItemFocused(e) {
+      const target = e.target;
+      e.stopPropagation();
       this._itemNavigation.setCurrentItem(target);
       this.fireEvent("item-focused", {
         item: target
       });
       if (this.mode === _ListMode.default.SingleSelectAuto) {
+        const detail = {
+          item: target,
+          selectionComponentPressed: false,
+          selected: true,
+          key: e.detail.key
+        };
         this.onSelectionRequested({
-          detail: {
-            item: target,
-            selectionComponentPressed: false,
-            selected: true,
-            key: event.detail.key
-          }
+          detail
         });
       }
     }
-    onItemPress(event) {
-      const pressedItem = event.detail.item;
+    onItemPress(e) {
+      const pressedItem = e.detail.item;
       if (!this.fireEvent("item-click", {
         item: pressedItem
       }, true)) {
@@ -813,42 +497,43 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       if (!this._selectionRequested && this.mode !== _ListMode.default.Delete) {
         this._selectionRequested = true;
+        const detail = {
+          item: pressedItem,
+          selectionComponentPressed: false,
+          selected: !pressedItem.selected,
+          key: e.detail.key
+        };
         this.onSelectionRequested({
-          detail: {
-            item: pressedItem,
-            selectionComponentPressed: false,
-            selected: !pressedItem.selected,
-            key: event.detail.key
-          }
+          detail
         });
       }
       this._selectionRequested = false;
     }
-
-    // This is applicable to NoficationListItem
-    onItemClose(event) {
+    // This is applicable to NotificationListItem
+    onItemClose(e) {
       this.fireEvent("item-close", {
-        item: event.detail.item
+        item: e.detail.item
       });
     }
-    onItemToggle(event) {
+    onItemToggle(e) {
       this.fireEvent("item-toggle", {
-        item: event.detail.item
+        item: e.detail.item
       });
     }
-    onForwardBefore(event) {
-      this.setPreviouslyFocusedItem(event.target);
+    onForwardBefore(e) {
+      this.setPreviouslyFocusedItem(e.target);
       this.focusBeforeElement();
-      event.stopImmediatePropagation();
+      e.stopPropagation();
     }
-    onForwardAfter(event) {
-      this.setPreviouslyFocusedItem(event.target);
+    onForwardAfter(e) {
+      this.setPreviouslyFocusedItem(e.target);
       if (!this.growsWithButton) {
         this.focusAfterElement();
       } else {
         this.focusGrowingButton();
-        event.preventDefault();
+        e.preventDefault();
       }
+      e.stopPropagation();
     }
     focusBeforeElement() {
       this.setForwardingFocus(true);
@@ -867,7 +552,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     getGrowingButton() {
       return this.shadowRoot.querySelector(`#${this._id}-growing-btn`);
     }
-
     /**
      * Focuses the first list item and sets its tabindex to "0" via the ItemNavigation
      * @protected
@@ -892,7 +576,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         firstSelectedItem.focus();
       }
     }
-
     /**
      * Focuses a list item and sets its tabindex to "0" via the ItemNavigation
      * @protected
@@ -902,9 +585,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._itemNavigation.setCurrentItem(item);
       item.focus();
     }
-    focusUploadCollectionItem(event) {
+    onFocusRequested(e) {
       setTimeout(() => {
-        this.setPreviouslyFocusedItem(event.target);
+        this.setPreviouslyFocusedItem(e.target);
         this.focusPreviouslyFocusedItem();
       }, 0);
     }
@@ -921,10 +604,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this._previouslyFocusedItem;
     }
     getFirstItem(filter) {
-      const slottedItems = this.getSlottedNodes("items");
+      const slottedItems = this.getItems();
       let firstItem = null;
       if (!filter) {
-        return !!slottedItems.length && slottedItems[0];
+        return slottedItems.length ? slottedItems[0] : null;
       }
       for (let i = 0; i < slottedItems.length; i++) {
         if (filter(slottedItems[i])) {
@@ -946,16 +629,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       return this._beforeElement;
     }
-    getHeaderToolbarLastTabbableElement() {
-      return (0, _TabbableElements.getLastTabbableElement)(this.headerToolbar.getDomRef()) || this.headerToolbar.getDomRef();
-    }
-    getNormalizedTarget(target) {
-      let focused = target;
-      if (target.shadowRoot && target.shadowRoot.activeElement) {
-        focused = target.shadowRoot.activeElement;
-      }
-      return focused;
-    }
     getIntersectionObserver() {
       if (!this.growingIntersectionObserver) {
         this.growingIntersectionObserver = new IntersectionObserver(this.onInteresection.bind(this), {
@@ -966,7 +639,169 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       return this.growingIntersectionObserver;
     }
-  }
+  };
+  __decorate([(0, _property.default)()], List.prototype, "headerText", void 0);
+  __decorate([(0, _property.default)()], List.prototype, "footerText", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], List.prototype, "indent", void 0);
+  __decorate([(0, _property.default)({
+    type: _ListMode.default,
+    defaultValue: _ListMode.default.None
+  })], List.prototype, "mode", void 0);
+  __decorate([(0, _property.default)()], List.prototype, "noDataText", void 0);
+  __decorate([(0, _property.default)({
+    type: _ListSeparators.default,
+    defaultValue: _ListSeparators.default.All
+  })], List.prototype, "separators", void 0);
+  __decorate([(0, _property.default)({
+    type: _ListGrowingMode.default,
+    defaultValue: _ListGrowingMode.default.None
+  })], List.prototype, "growing", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], List.prototype, "busy", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: 1000
+  })], List.prototype, "busyDelay", void 0);
+  __decorate([(0, _property.default)()], List.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: ""
+  })], List.prototype, "accessibleNameRef", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: "list"
+  })], List.prototype, "accessibleRole", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: undefined,
+    noAttribute: true
+  })], List.prototype, "accessibleRoleDescription", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], List.prototype, "_inViewport", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], List.prototype, "_loadMoreActive", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement,
+    "default": true
+  })], List.prototype, "items", void 0);
+  __decorate([(0, _slot.default)()], List.prototype, "header", void 0);
+  List = List_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-list",
+    fastNavigation: true,
+    renderer: _LitRenderer.default,
+    template: _ListTemplate.default,
+    styles: [_BrowserScrollbar.default, _List.default],
+    dependencies: [_BusyIndicator.default]
+  })
+  /**
+   * Fired when an item is activated, unless the item's <code>type</code> property
+   * is set to <code>Inactive</code>.
+   *
+   * @event sap.ui.webc.main.List#item-click
+   * @allowPreventDefault
+   * @param {HTMLElement} item The clicked item.
+   * @public
+   */, (0, _event.default)("item-click", {
+    detail: {
+      item: {
+        type: HTMLElement
+      }
+    }
+  })
+  /**
+   * Fired when the <code>Close</code> button of any item is clicked
+   * <br><br>
+   * <b>Note:</b> This event is only applicable to list items that can be closed (such as notification list items),
+   * not to be confused with <code>item-delete</code>.
+   *
+   * @event sap.ui.webc.main.List#item-close
+   * @param {HTMLElement} item the item about to be closed.
+   * @public
+   * @since 1.0.0-rc.8
+   */, (0, _event.default)("item-close", {
+    detail: {
+      item: {
+        type: HTMLElement
+      }
+    }
+  })
+  /**
+   * Fired when the <code>Toggle</code> button of any item is clicked.
+   * <br><br>
+   * <b>Note:</b> This event is only applicable to list items that can be toggled (such as notification group list items).
+   *
+   * @event sap.ui.webc.main.List#item-toggle
+   * @param {HTMLElement} item the toggled item.
+   * @public
+   * @since 1.0.0-rc.8
+   */, (0, _event.default)("item-toggle", {
+    detail: {
+      item: {
+        type: HTMLElement
+      }
+    }
+  })
+  /**
+   * Fired when the Delete button of any item is pressed.
+   * <br><br>
+   * <b>Note:</b> A Delete button is displayed on each item,
+   * when the component <code>mode</code> property is set to <code>Delete</code>.
+   *
+   * @event sap.ui.webc.main.List#item-delete
+   * @param {HTMLElement} item the deleted item.
+   * @public
+   */, (0, _event.default)("item-delete", {
+    detail: {
+      item: {
+        type: HTMLElement
+      }
+    }
+  })
+  /**
+   * Fired when selection is changed by user interaction
+   * in <code>SingleSelect</code>, <code>SingleSelectBegin</code>, <code>SingleSelectEnd</code> and <code>MultiSelect</code> modes.
+   *
+   * @event sap.ui.webc.main.List#selection-change
+   * @allowPreventDefault
+   * @param {Array} selectedItems An array of the selected items.
+   * @param {Array} previouslySelectedItems An array of the previously selected items.
+   * @public
+   */, (0, _event.default)("selection-change", {
+    detail: {
+      selectedItems: {
+        type: Array
+      },
+      previouslySelectedItems: {
+        type: Array
+      },
+      targetItem: {
+        type: HTMLElement
+      },
+      selectionComponentPressed: {
+        type: Boolean
+      } // protected, indicates if the user used the selection components to change the selection
+    }
+  })
+  /**
+   * Fired when the user scrolls to the bottom of the list.
+   * <br><br>
+   * <b>Note:</b> The event is fired when the <code>growing='Scroll'</code> property is enabled.
+   *
+   * @event sap.ui.webc.main.List#load-more
+   * @public
+   * @since 1.0.0-rc.6
+   */, (0, _event.default)("load-more")
+  /**
+   * @private
+   */, (0, _event.default)("item-focused", {
+    detail: {
+      item: {
+        type: HTMLElement
+      }
+    }
+  })], List);
   List.define();
   var _default = List;
   _exports.default = _default;

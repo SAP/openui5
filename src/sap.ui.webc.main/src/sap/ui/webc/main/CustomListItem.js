@@ -53,6 +53,13 @@ sap.ui.define([
 				},
 
 				/**
+				 * The navigated state of the list item. If set to <code>true</code>, a navigation indicator is displayed at the end of the list item.
+				 */
+				navigated: {
+					type: "boolean"
+				},
+
+				/**
 				 * Defines the selected state of the <code>ListItem</code>.
 				 */
 				selected: {
@@ -61,9 +68,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the visual indication and behavior of the list items. Available options are <code>Active</code> (by default), <code>Inactive</code> and <code>Detail</code>. <br>
+				 * Defines the visual indication and behavior of the list items. Available options are <code>Active</code> (by default), <code>Inactive</code>, <code>Detail</code> and <code>Navigation</code>. <br>
 				 * <br>
-				 * <b>Note:</b> When set to <code>Active</code>, the item will provide visual response upon press and hover, while with type <code>Inactive</code> and <code>Detail</code> - will not.
+				 * <b>Note:</b> When set to <code>Active</code> or <code>Navigation</code>, the item will provide visual response upon press and hover, while with type <code>Inactive</code> and <code>Detail</code> - will not.
 				 */
 				type: {
 					type: "sap.ui.webc.main.ListItemType",
@@ -79,6 +86,15 @@ sap.ui.define([
 				content: {
 					type: "sap.ui.core.Control",
 					multiple: true
+				},
+
+				/**
+				 * Defines the delete button, displayed in "Delete" mode. <b>Note:</b> While the slot allows custom buttons, to match design guidelines, please use the <code>sap.ui.webc.main.Button</code> component. <b>Note:</b> When the slot is not present, a built-in delete button will be displayed.
+				 */
+				deleteButton: {
+					type: "sap.ui.webc.main.IButton",
+					multiple: false,
+					slot: "deleteButton"
 				}
 			},
 			events: {

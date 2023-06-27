@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/per-diem", "./v4/per-diem"], function (_exports, _Theme, _perDiem, _perDiem2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/per-diem", "./v5/per-diem"], function (_exports, _Theme, _perDiem, _perDiem2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _perDiem.pathData : _perDiem2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _perDiem.pathData : _perDiem2.pathData;
   _exports.pathData = pathData;
   var _default = "per-diem";
   _exports.default = _default;

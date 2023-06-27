@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/media-pause", "./v4/media-pause"], function (_exports, _Theme, _mediaPause, _mediaPause2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/media-pause", "./v5/media-pause"], function (_exports, _Theme, _mediaPause, _mediaPause2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _mediaPause.pathData : _mediaPause2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _mediaPause.pathData : _mediaPause2.pathData;
   _exports.pathData = pathData;
   var _default = "media-pause";
   _exports.default = _default;

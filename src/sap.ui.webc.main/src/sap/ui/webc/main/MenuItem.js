@@ -48,6 +48,39 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Defines the accessible ARIA name of the component.
+				 */
+				accessibleName: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
+				 * Defines the <code>additionalText</code>, displayed in the end of the menu item. <b>Note:</b> The additional text would not be displayed if the item has a submenu.
+				 */
+				additionalText: {
+					type: "string"
+				},
+
+				/**
+				 * Defines the delay in milliseconds, after which the busy indicator will be displayed inside the corresponding ui5-menu popover.
+				 *
+				 * Note: If set to <code>true</code> a <code>sap.ui.webc.main.BusyIndicator</code> component will be displayed into the related one to the current <code>sap.ui.webc.main.MenuItem</code> sub-menu popover.
+				 */
+				busy: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
+				 * Defines the delay in milliseconds, after which the busy indicator will be displayed inside the corresponding ui5-menu popover.
+				 */
+				busyDelay: {
+					type: "int",
+					defaultValue: 1000
+				},
+
+				/**
 				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
 				enabled: {

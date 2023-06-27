@@ -1,47 +1,34 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
    * Different types of AvatarShape.
-   * @lends sap.ui.webcomponents.main.types.AvatarShape.prototype
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.main.types.AvatarShape
    */
-  const AvatarShapes = {
+  var AvatarShape;
+  (function (AvatarShape) {
     /**
      * Circular shape.
      * @public
      * @type {Circle}
      */
-    Circle: "Circle",
+    AvatarShape["Circle"] = "Circle";
     /**
      * Square shape.
      * @public
      * @type {Square}
      */
-    Square: "Square"
-  };
-
-  /**
-   * @class
-   * Different types of AvatarShape.
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.main.types.AvatarShape
-   * @public
-   * @enum {string}
-   */
-  class AvatarShape extends _DataType.default {
-    static isValid(value) {
-      return !!AvatarShapes[value];
-    }
-  }
-  AvatarShape.generateTypeAccessors(AvatarShapes);
+    AvatarShape["Square"] = "Square";
+  })(AvatarShape || (AvatarShape = {}));
   var _default = AvatarShape;
   _exports.default = _default;
 });

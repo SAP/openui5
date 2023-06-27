@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/away", "./v4/away"], function (_exports, _Theme, _away, _away2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/away", "./v5/away"], function (_exports, _Theme, _away, _away2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _away.pathData : _away2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _away.pathData : _away2.pathData;
   _exports.pathData = pathData;
   var _default = "away";
   _exports.default = _default;

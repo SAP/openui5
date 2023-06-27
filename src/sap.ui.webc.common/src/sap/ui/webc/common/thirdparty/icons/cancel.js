@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/cancel", "./v4/cancel"], function (_exports, _Theme, _cancel, _cancel2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/cancel", "./v5/cancel"], function (_exports, _Theme, _cancel, _cancel2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _cancel.pathData : _cancel2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _cancel.pathData : _cancel2.pathData;
   _exports.pathData = pathData;
   var _default = "cancel";
   _exports.default = _default;

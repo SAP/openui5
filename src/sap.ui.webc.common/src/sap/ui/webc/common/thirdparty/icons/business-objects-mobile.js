@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/business-objects-mobile", "./v4/business-objects-mobile"], function (_exports, _Theme, _businessObjectsMobile, _businessObjectsMobile2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/business-objects-mobile", "./v5/business-objects-mobile"], function (_exports, _Theme, _businessObjectsMobile, _businessObjectsMobile2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _businessObjectsMobile.pathData : _businessObjectsMobile2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _businessObjectsMobile.pathData : _businessObjectsMobile2.pathData;
   _exports.pathData = pathData;
   var _default = "business-objects-mobile";
   _exports.default = _default;

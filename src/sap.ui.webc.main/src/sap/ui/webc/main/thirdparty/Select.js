@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/util/InvisibleMessage", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/icons/slim-arrow-down", "sap/ui/webc/common/thirdparty/icons/error", "sap/ui/webc/common/thirdparty/icons/alert", "sap/ui/webc/common/thirdparty/icons/sys-enter-2", "sap/ui/webc/common/thirdparty/icons/information", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/icons/decline", "./generated/i18n/i18n-defaults", "./Option", "./Label", "./ResponsivePopover", "./Popover", "./List", "./StandardListItem", "./Icon", "./Button", "./generated/templates/SelectTemplate.lit", "./generated/templates/SelectPopoverTemplate.lit", "./generated/themes/Select.css", "./generated/themes/ResponsivePopoverCommon.css", "./generated/themes/ValueStateMessage.css", "./generated/themes/SelectPopover.css"], function (_exports, _UI5Element, _LitRenderer, _Keys, _InvisibleMessage, _Integer, _FeaturesRegistry, _AriaLabelHelper, _ValueState, _slimArrowDown, _error, _alert, _sysEnter, _information, _Device, _i18nBundle, _decline, _i18nDefaults, _Option, _Label, _ResponsivePopover, _Popover, _List, _StandardListItem, _Icon, _Button, _SelectTemplate, _SelectPopoverTemplate, _Select, _ResponsivePopoverCommon, _ValueStateMessage, _SelectPopover) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/util/InvisibleMessage", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/icons/slim-arrow-down", "sap/ui/webc/common/thirdparty/icons/error", "sap/ui/webc/common/thirdparty/icons/alert", "sap/ui/webc/common/thirdparty/icons/sys-enter-2", "sap/ui/webc/common/thirdparty/icons/information", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/types/InvisibleMessageMode", "./List", "./generated/i18n/i18n-defaults", "./Option", "./Label", "./ResponsivePopover", "./Popover", "./StandardListItem", "./Icon", "./Button", "./generated/templates/SelectTemplate.lit", "./generated/templates/SelectPopoverTemplate.lit", "./generated/themes/Select.css", "./generated/themes/ResponsivePopoverCommon.css", "./generated/themes/ValueStateMessage.css", "./generated/themes/SelectPopover.css"], function (_exports, _UI5Element, _customElement, _property, _event, _slot, _LitRenderer, _Keys, _InvisibleMessage, _FeaturesRegistry, _AriaLabelHelper, _ValueState, _slimArrowDown, _error, _alert, _sysEnter, _information, _Device, _i18nBundle, _decline, _Integer, _InvisibleMessageMode, _List, _i18nDefaults, _Option, _Label, _ResponsivePopover, _Popover, _StandardListItem, _Icon, _Button, _SelectTemplate, _SelectPopoverTemplate, _Select, _ResponsivePopoverCommon, _ValueStateMessage, _SelectPopover) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,15 +6,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
+  _slot = _interopRequireDefault(_slot);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _InvisibleMessage = _interopRequireDefault(_InvisibleMessage);
-  _Integer = _interopRequireDefault(_Integer);
   _ValueState = _interopRequireDefault(_ValueState);
+  _Integer = _interopRequireDefault(_Integer);
+  _InvisibleMessageMode = _interopRequireDefault(_InvisibleMessageMode);
+  _List = _interopRequireDefault(_List);
   _Option = _interopRequireDefault(_Option);
   _Label = _interopRequireDefault(_Label);
   _ResponsivePopover = _interopRequireDefault(_ResponsivePopover);
   _Popover = _interopRequireDefault(_Popover);
-  _List = _interopRequireDefault(_List);
   _StandardListItem = _interopRequireDefault(_StandardListItem);
   _Icon = _interopRequireDefault(_Icon);
   _Button = _interopRequireDefault(_Button);
@@ -25,192 +30,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _ValueStateMessage = _interopRequireDefault(_ValueStateMessage);
   _SelectPopover = _interopRequireDefault(_SelectPopover);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Templates
-
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-select",
-    languageAware: true,
-    managedSlots: true,
-    slots: /** @lends sap.ui.webcomponents.main.Select.prototype */{
-      /**
-       * Defines the component options.
-       *
-       * <br><br>
-       * <b>Note:</b> Only one selected option is allowed.
-       * If more than one option is defined as selected, the last one would be considered as the selected one.
-       *
-       * <br><br>
-       * <b>Note:</b> Use the <code>ui5-option</code> component to define the desired options.
-       * @type {sap.ui.webcomponents.main.ISelectOption[]}
-       * @slot options
-       * @public
-       */
-      "default": {
-        propertyName: "options",
-        type: HTMLElement,
-        invalidateOnChildChange: true
-      },
-      /**
-       * Defines the value state message that will be displayed as pop up under the component.
-       * <br><br>
-       *
-       * <b>Note:</b> If not specified, a default text (in the respective language) will be displayed.
-       * <br>
-       * <b>Note:</b> The <code>valueStateMessage</code> would be displayed,
-       * when the component is in <code>Information</code>, <code>Warning</code> or <code>Error</code> value state.
-       * @type {HTMLElement[]}
-       * @since 1.0.0-rc.9
-       * @slot
-       * @public
-       */
-      valueStateMessage: {
-        type: HTMLElement
-      },
-      /**
-       * The slot is used to render native <code>input</code> HTML element within Light DOM to enable form submit,
-       * when <code>name</code> property is set.
-       * @type {HTMLElement[]}
-       * @slot
-       * @private
-       */
-      formSupport: {
-        type: HTMLElement
-      }
-    },
-    properties: /** @lends sap.ui.webcomponents.main.Select.prototype */{
-      /**
-       * Defines whether the component is in disabled state.
-       * <br><br>
-       * <b>Note:</b> A disabled component is noninteractive.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Determines the name with which the component will be submitted in an HTML form.
-       * The value of the component will be the value of the currently selected <code>ui5-option</code>.
-       *
-       * <br><br>
-       * <b>Important:</b> For the <code>name</code> property to have effect, you must add the following import to your project:
-       * <code>import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";</code>
-       *
-       * <br><br>
-       * <b>Note:</b> When set, a native <code>input</code> HTML element
-       * will be created inside the <code>ui5-select</code> so that it can be submitted as
-       * part of an HTML form. Do not use this property unless you need to submit a form.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      name: {
-        type: String
-      },
-      /**
-       * Defines the value state of the component.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>None</code></li>
-       * <li><code>Error</code></li>
-       * <li><code>Warning</code></li>
-       * <li><code>Success</code></li>
-       * <li><code>Information</code></li>
-       * </ul>
-       *
-       * @type {ValueState}
-       * @defaultvalue "None"
-       * @public
-       */
-      valueState: {
-        type: _ValueState.default,
-        defaultValue: _ValueState.default.None
-      },
-      /**
-       * Defines whether the component is required.
-       *
-       * @since 1.0.0-rc.9
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      required: {
-        type: Boolean
-      },
-      /**
-       * Defines the accessible aria name of the component.
-       *
-       * @type {string}
-       * @since 1.0.0-rc.9
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      accessibleName: {
-        type: String
-      },
-      /**
-       * Receives id(or many ids) of the elements that label the select.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      accessibleNameRef: {
-        type: String,
-        defaultValue: ""
-      },
-      _text: {
-        type: String,
-        noAttribute: true
-      },
-      _iconPressed: {
-        type: Boolean,
-        noAttribute: true
-      },
-      /**
-       * @private
-       */
-      opened: {
-        type: Boolean
-      },
-      _listWidth: {
-        type: _Integer.default,
-        defaultValue: 0,
-        noAttribute: true
-      },
-      /**
-       * @private
-       */
-      focused: {
-        type: Boolean
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.Select.prototype */{
-      /**
-       * Fired when the selected option changes.
-       *
-       * @event
-       * @param {HTMLElement} selectedOption the selected option.
-       * @public
-       */
-      change: {
-        detail: {
-          selectedOption: {}
-        }
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var Select_1;
   /**
    * @class
    *
@@ -237,32 +64,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * <code>import "@ui5/webcomponents/dist/Option";</code> (comes with <code>ui5-select</code>)
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.Select
-   * @extends sap.ui.webcomponents.base.UI5Element
+   * @alias sap.ui.webc.main.Select
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-select
-   * @appenddocs Option
+   * @appenddocs sap.ui.webc.main.Option
    * @public
    * @since 0.8.0
    */
-  class Select extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _SelectTemplate.default;
-    }
-    static get staticAreaTemplate() {
-      return _SelectPopoverTemplate.default;
-    }
-    static get styles() {
-      return _Select.default;
-    }
-    static get staticAreaStyles() {
-      return [_ResponsivePopoverCommon.default, _ValueStateMessage.default, _SelectPopover.default];
-    }
+  let Select = Select_1 = class Select extends _UI5Element.default {
     constructor() {
       super();
       this._syncedOptions = [];
@@ -271,11 +80,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._escapePressed = false;
       this._lastSelectedOption = null;
       this._typedChars = "";
-      this._typingTimeoutID = -1;
     }
     onBeforeRendering() {
       this._syncSelection();
       this._enableFormSupport();
+      this.style.setProperty("--_ui5-input-icons-count", `${this.iconsCount}`);
     }
     onAfterRendering() {
       this.toggleValueStatePopover(this.shouldOpenValueStateMessagePopover);
@@ -299,11 +108,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const staticAreaItem = await this.getStaticAreaItemDomRef();
       return staticAreaItem.querySelector("[ui5-responsive-popover]");
     }
-
     /**
-     * Currently selected option.
+     * Currently selected <code>ui5-option</code> element.
      * @readonly
-     * @type { sap.ui.webcomponents.main.ISelectOption }
+     * @type {sap.ui.webc.main.ISelectOption}
+     * @name sap.ui.webc.main.Select.prototype.selectedOption
      * @public
      */
     get selectedOption() {
@@ -353,7 +162,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           stableDomRef: opt.stableDomRef
         };
       });
-      if (lastSelectedOptionIndex > -1 && !syncOpts[lastSelectedOptionIndex].disabled) {
+      if (lastSelectedOptionIndex > -1) {
         syncOpts[lastSelectedOptionIndex].selected = true;
         syncOpts[lastSelectedOptionIndex]._focused = true;
         options[lastSelectedOptionIndex].selected = true;
@@ -375,50 +184,49 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._syncedOptions = syncOpts;
     }
     _enableFormSupport() {
-      const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
-      if (FormSupport) {
-        FormSupport.syncNativeHiddenInput(this, (element, nativeInput) => {
-          nativeInput.disabled = element.disabled;
-          nativeInput.value = element._currentlySelectedOption ? element._currentlySelectedOption.value : "";
+      const formSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
+      if (formSupport) {
+        formSupport.syncNativeHiddenInput(this, (element, nativeInput) => {
+          const selectElement = element;
+          nativeInput.disabled = !!element.disabled;
+          nativeInput.value = selectElement._currentlySelectedOption ? selectElement._currentlySelectedOption.value : "";
         });
       } else if (this.name) {
         console.warn(`In order for the "name" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`); // eslint-disable-line
       }
     }
 
-    _onkeydown(event) {
-      const isTab = (0, _Keys.isTabNext)(event) || (0, _Keys.isTabPrevious)(event);
+    _onkeydown(e) {
+      const isTab = (0, _Keys.isTabNext)(e) || (0, _Keys.isTabPrevious)(e);
       if (isTab && this.responsivePopover && this.responsivePopover.opened) {
         this.responsivePopover.close();
       }
-      if ((0, _Keys.isShow)(event)) {
-        event.preventDefault();
+      if ((0, _Keys.isShow)(e)) {
+        e.preventDefault();
         this._toggleRespPopover();
-      } else if ((0, _Keys.isSpace)(event)) {
-        event.preventDefault();
-      } else if ((0, _Keys.isEscape)(event) && this._isPickerOpen) {
+      } else if ((0, _Keys.isSpace)(e)) {
+        e.preventDefault();
+      } else if ((0, _Keys.isEscape)(e) && this._isPickerOpen) {
         this._escapePressed = true;
-      } else if ((0, _Keys.isHome)(event)) {
-        this._handleHomeKey(event);
-      } else if ((0, _Keys.isEnd)(event)) {
-        this._handleEndKey(event);
-      } else if ((0, _Keys.isEnter)(event)) {
+      } else if ((0, _Keys.isHome)(e)) {
+        this._handleHomeKey(e);
+      } else if ((0, _Keys.isEnd)(e)) {
+        this._handleEndKey(e);
+      } else if ((0, _Keys.isEnter)(e)) {
         this._handleSelectionChange();
-      } else if ((0, _Keys.isUp)(event) || (0, _Keys.isDown)(event)) {
-        this._handleArrowNavigation(event);
+      } else if ((0, _Keys.isUp)(e) || (0, _Keys.isDown)(e)) {
+        this._handleArrowNavigation(e);
       }
     }
-    _handleKeyboardNavigation(event) {
-      if ((0, _Keys.isEnter)(event)) {
+    _handleKeyboardNavigation(e) {
+      if ((0, _Keys.isEnter)(e)) {
         return;
       }
-      const typedCharacter = event.key.toLowerCase();
+      const typedCharacter = e.key.toLowerCase();
       this._typedChars += typedCharacter;
-
       // We check if we have more than one characters and they are all duplicate, we set the
       // text to be the last input character (typedCharacter). If not, we set the text to be
       // the whole input string.
-
       const text = /^(.)\1+$/i.test(this._typedChars) ? typedCharacter : this._typedChars;
       clearTimeout(this._typingTimeoutID);
       this._typingTimeoutID = setTimeout(() => {
@@ -443,19 +251,19 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const optionsAfterSelected = orderedOptions.splice(this._selectedIndex + 1, orderedOptions.length - this._selectedIndex);
       const optionsBeforeSelected = orderedOptions.splice(0, orderedOptions.length - 1);
       orderedOptions = optionsAfterSelected.concat(optionsBeforeSelected);
-      return orderedOptions.find(option => option.textContent.toLowerCase().startsWith(text));
+      return orderedOptions.find(option => (option.textContent || "").toLowerCase().startsWith(text));
     }
-    _handleHomeKey(event) {
-      event.preventDefault();
+    _handleHomeKey(e) {
+      e.preventDefault();
       this._changeSelectedItem(this._selectedIndex, 0);
     }
-    _handleEndKey(event) {
+    _handleEndKey(e) {
       const lastIndex = this._filteredItems.length - 1;
-      event.preventDefault();
+      e.preventDefault();
       this._changeSelectedItem(this._selectedIndex, lastIndex);
     }
-    _onkeyup(event) {
-      if ((0, _Keys.isSpace)(event)) {
+    _onkeyup(e) {
+      if ((0, _Keys.isSpace)(e)) {
         if (this._isPickerOpen) {
           this._handleSelectionChange();
         } else {
@@ -471,25 +279,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._selectedIndex = index;
       this._filteredItems[index].selected = true;
     }
-
     /**
      * The user clicked on an item from the list
      * @private
      */
-    _handleItemPress(event) {
-      const item = event.detail.selectedItems[0];
+    _handleItemPress(e) {
+      const item = e.detail.item;
       const selectedItemIndex = this._getSelectedItemIndex(item);
       this._handleSelectionChange(selectedItemIndex);
     }
-    _itemMousedown(event) {
+    _itemMousedown(e) {
       // prevent actual focus of items
-      event.preventDefault();
+      e.preventDefault();
     }
-    _onclick(event) {
+    _onclick() {
       this.getFocusDomRef().focus();
       this._toggleRespPopover();
     }
-
     /**
      * The user selected an item with Enter or Space
      * @private
@@ -498,11 +304,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._select(index);
       this._toggleRespPopover();
     }
-    _handleArrowNavigation(event) {
+    _handleArrowNavigation(e) {
       let nextIndex = -1;
       const currentIndex = this._selectedIndex;
-      const isDownKey = (0, _Keys.isDown)(event);
-      event.preventDefault();
+      const isDownKey = (0, _Keys.isDown)(e);
+      e.preventDefault();
       if (isDownKey) {
         nextIndex = this._getNextOptionIndex();
       } else {
@@ -537,14 +343,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _beforeOpen() {
       this._selectedIndexBeforeOpen = this._selectedIndex;
       this._lastSelectedOption = this._filteredItems[this._selectedIndex];
-      this.focused = false;
     }
     _afterOpen() {
       this.opened = true;
+      this.fireEvent("open");
+      this.itemSelectionAnnounce();
     }
     _afterClose() {
       this.opened = false;
-      this.focused = true;
       this._iconPressed = false;
       this._listWidth = 0;
       if (this._escapePressed) {
@@ -554,26 +360,50 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this._fireChangeEvent(this._filteredItems[this._selectedIndex]);
         this._lastSelectedOption = this._filteredItems[this._selectedIndex];
       }
+      this.fireEvent("close");
     }
     _fireChangeEvent(selectedOption) {
-      this.fireEvent("change", {
+      const changePrevented = !this.fireEvent("change", {
         selectedOption
-      });
-
+      }, true);
       //  Angular two way data binding
       this.selectedItem = selectedOption.textContent;
       this.fireEvent("selected-item-changed");
+      if (changePrevented) {
+        this.selectedItem = this._lastSelectedOption.textContent;
+        this._select(this._selectedIndexBeforeOpen);
+      }
     }
     get valueStateTextMappings() {
       return {
-        "Success": Select.i18nBundle.getText(_i18nDefaults.VALUE_STATE_SUCCESS),
-        "Information": Select.i18nBundle.getText(_i18nDefaults.VALUE_STATE_INFORMATION),
-        "Error": Select.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR),
-        "Warning": Select.i18nBundle.getText(_i18nDefaults.VALUE_STATE_WARNING)
+        [_ValueState.default.Success]: Select_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_SUCCESS),
+        [_ValueState.default.Information]: Select_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_INFORMATION),
+        [_ValueState.default.Error]: Select_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR),
+        [_ValueState.default.Warning]: Select_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_WARNING)
+      };
+    }
+    get valueStateTypeMappings() {
+      return {
+        [_ValueState.default.Success]: Select_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_TYPE_SUCCESS),
+        [_ValueState.default.Information]: Select_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_TYPE_INFORMATION),
+        [_ValueState.default.Error]: Select_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_TYPE_ERROR),
+        [_ValueState.default.Warning]: Select_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_TYPE_WARNING)
       };
     }
     get valueStateText() {
-      return this.valueStateTextMappings[this.valueState];
+      let valueStateText;
+      if (this.shouldDisplayDefaultValueStateMessage) {
+        valueStateText = this.valueStateDefaultText;
+      } else {
+        valueStateText = this.valueStateMessageText.map(el => el.textContent).join(" ");
+      }
+      return `${this.valueStateTypeText} ${valueStateText}`;
+    }
+    get valueStateDefaultText() {
+      return this.valueState !== _ValueState.default.None ? this.valueStateTextMappings[this.valueState] : "";
+    }
+    get valueStateTypeText() {
+      return this.valueState !== _ValueState.default.None ? this.valueStateTypeMappings[this.valueState] : "";
     }
     get hasValueState() {
       return this.valueState !== _ValueState.default.None;
@@ -585,19 +415,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this.disabled || undefined;
     }
     get _headerTitleText() {
-      return Select.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS_TITLE);
-    }
-    get _currentSelectedItem() {
-      return this.shadowRoot.querySelector(`#${this._filteredItems[this._selectedIndex]._id}-li`);
+      return Select_1.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS_TITLE);
     }
     get _currentlySelectedOption() {
       return this._filteredItems[this._selectedIndex];
     }
-    get tabIndex() {
+    get _effectiveTabIndex() {
       return this.disabled || this.responsivePopover // Handles focus on Tab/Shift + Tab when the popover is opened
       && this.responsivePopover.opened ? "-1" : "0";
     }
-
     /**
     * This method is relevant for sap_horizon theme only
     */
@@ -609,6 +435,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         Information: "information"
       };
       return this.valueState !== _ValueState.default.None ? iconPerValueState[this.valueState] : "";
+    }
+    get iconsCount() {
+      return this.selectedOptionIcon ? 2 : 1;
     }
     get classes() {
       return {
@@ -645,7 +474,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this.getSlottedNodes("valueStateMessage").map(el => el.cloneNode(true));
     }
     get shouldDisplayDefaultValueStateMessage() {
-      return !this.valueStateMessage.length && this.hasValueStateText;
+      return !this.valueStateMessageText.length && this.hasValueStateText;
     }
     get hasValueStateText() {
       return this.hasValueState && this.valueState !== _ValueState.default.Success;
@@ -654,7 +483,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this.focused && this.hasValueStateText && !this._iconPressed && !this._isPickerOpen && !this._isPhone;
     }
     get _ariaRoleDescription() {
-      return Select.i18nBundle.getText(_i18nDefaults.SELECT_ROLE_DESCRIPTION);
+      return Select_1.i18nBundle.getText(_i18nDefaults.SELECT_ROLE_DESCRIPTION);
     }
     get _isPhone() {
       return (0, _Device.isPhone)();
@@ -665,20 +494,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     itemSelectionAnnounce() {
       let text;
       const optionsCount = this._filteredItems.length;
-      const itemPositionText = Select.i18nBundle.getText(_i18nDefaults.LIST_ITEM_POSITION, this._selectedIndex + 1, optionsCount);
+      const itemPositionText = Select_1.i18nBundle.getText(_i18nDefaults.LIST_ITEM_POSITION, this._selectedIndex + 1, optionsCount);
       if (this.focused && this._currentlySelectedOption) {
         text = `${this._currentlySelectedOption.textContent} ${this._isPickerOpen ? itemPositionText : ""}`;
-        (0, _InvisibleMessage.default)(text, "Polite");
+        (0, _InvisibleMessage.default)(text, _InvisibleMessageMode.default.Polite);
       }
     }
     async openValueStatePopover() {
-      this.popover = await this._getPopover();
-      if (this.popover) {
-        this.popover.showAt(this);
+      this.valueStatePopover = await this._getPopover();
+      if (this.valueStatePopover) {
+        this.valueStatePopover.showAt(this);
       }
     }
     closeValueStatePopover() {
-      this.popover && this.popover.close();
+      this.valueStatePopover && this.valueStatePopover.close();
     }
     toggleValueStatePopover(open) {
       if (open) {
@@ -694,13 +523,85 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const staticAreaItem = await this.getStaticAreaItemDomRef();
       return staticAreaItem.querySelector("[ui5-popover]");
     }
-    static get dependencies() {
-      return [_Option.default, _Label.default, _ResponsivePopover.default, _Popover.default, _List.default, _StandardListItem.default, _Icon.default, _Button.default];
-    }
     static async onDefine() {
-      Select.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      Select_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Select.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)()], Select.prototype, "name", void 0);
+  __decorate([(0, _property.default)({
+    type: _ValueState.default,
+    defaultValue: _ValueState.default.None
+  })], Select.prototype, "valueState", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Select.prototype, "required", void 0);
+  __decorate([(0, _property.default)()], Select.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)()], Select.prototype, "accessibleNameRef", void 0);
+  __decorate([(0, _property.default)({
+    type: String,
+    noAttribute: true
+  })], Select.prototype, "_text", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], Select.prototype, "_iconPressed", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Select.prototype, "opened", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: 0,
+    noAttribute: true
+  })], Select.prototype, "_listWidth", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Select.prototype, "focused", void 0);
+  __decorate([(0, _slot.default)({
+    "default": true,
+    type: HTMLElement,
+    invalidateOnChildChange: true
+  })], Select.prototype, "options", void 0);
+  __decorate([(0, _slot.default)()], Select.prototype, "formSupport", void 0);
+  __decorate([(0, _slot.default)()], Select.prototype, "valueStateMessage", void 0);
+  Select = Select_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-select",
+    languageAware: true,
+    renderer: _LitRenderer.default,
+    template: _SelectTemplate.default,
+    staticAreaTemplate: _SelectPopoverTemplate.default,
+    styles: _Select.default,
+    staticAreaStyles: [_ResponsivePopoverCommon.default, _ValueStateMessage.default, _SelectPopover.default],
+    dependencies: [_Option.default, _Label.default, _ResponsivePopover.default, _Popover.default, _List.default, _StandardListItem.default, _Icon.default, _Button.default]
+  })
+  /**
+   * Fired when the selected option changes.
+   *
+   * @event sap.ui.webc.main.Select#change
+   * @allowPreventDefault
+   * @param {HTMLElement} selectedOption the selected option.
+   * @public
+   */, (0, _event.default)("change", {
+    detail: {
+      selectedOption: {
+        type: HTMLElement
+      }
+    }
+  })
+  /**
+   * Fired after the component's dropdown menu opens.
+   *
+   * @event sap.ui.webc.main.Select#open
+   * @public
+   */, (0, _event.default)("open")
+  /**
+   * Fired after the component's dropdown menu closes.
+   *
+   * @event sap.ui.webc.main.Select#close
+   * @public
+   */, (0, _event.default)("close")], Select);
   Select.define();
   var _default = Select;
   _exports.default = _default;

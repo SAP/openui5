@@ -17,7 +17,7 @@ sap.ui.define(["exports", "./CalendarDate"], function (_exports, _CalendarDate) 
    * @param minDate minimum date to enforce
    * @param maxDate maximum date to enforce
    */
-  const modifyDateBy = (date, amount, unit, minDate = null, maxDate = null) => {
+  const modifyDateBy = (date, amount, unit, minDate, maxDate) => {
     const newDate = new _CalendarDate.default(date);
     if (unit === "day") {
       newDate.setDate(date.getDate() + amount);

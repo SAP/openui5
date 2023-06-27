@@ -37,9 +37,17 @@ sap.ui.define([
 			tag: "ui5-tab-separator-ui5",
 			interfaces: [
 				"sap.ui.webc.main.ITab"
-			]
+			],
+			methods: ["getTabInStripDomRef"]
 		}
 	});
+
+	/**
+	 * Returns the DOM reference of the separator that is placed in the header. <b>Note:</b> Tabs and separators, placed in the <code>subTabs</code> slot of other tabs are not shown in the header. Calling this method on such tabs or separators will return <code>null</code>.
+	 * @public
+	 * @name sap.ui.webc.main.TabSeparator#getTabInStripDomRef
+	 * @function
+	 */
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

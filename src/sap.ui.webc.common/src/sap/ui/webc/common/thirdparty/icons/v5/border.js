@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "border";
-  const pathData = "M415.5-1q35 0 58 23t23 58v320q0 34-23 57t-58 23h-320q-34 0-57-23t-23-57V80q0-35 23-58t57-23h320zm27 81q0-12-7.5-19.5T415.5 53h-320q-12 0-19.5 7.5T68.5 80v320q0 12 7.5 19.5t19.5 7.5h320q12 0 19.5-7.5t7.5-19.5V80z";
+  const pathData = "M391 480H121q-37 0-63.5-26T31 390V121q0-38 26.5-64T121 31h270q37 0 63 26t26 64v269q0 38-26 64t-63 26zM121 82q-16 0-27 11.5T83 121v269q0 16 11 27.5t27 11.5h270q16 0 27-11.5t11-27.5V121q0-16-11-27.5T391 82H121z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "border";
+  var _default = "SAP-icons-v5/border";
   _exports.default = _default;
 });

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/util/PopupUtils", "./types/ToastPlacement", "./generated/templates/ToastTemplate.lit", "./generated/themes/Toast.css"], function (_exports, _Integer, _UI5Element, _LitRenderer, _PopupUtils, _ToastPlacement, _ToastTemplate, _Toast) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/util/PopupUtils", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "./types/ToastPlacement", "./generated/templates/ToastTemplate.lit", "./generated/themes/Toast.css"], function (_exports, _Integer, _UI5Element, _LitRenderer, _PopupUtils, _customElement, _property, _ToastPlacement, _ToastTemplate, _Toast) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -8,104 +8,22 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
   _Integer = _interopRequireDefault(_Integer);
   _UI5Element = _interopRequireDefault(_UI5Element);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
   _ToastPlacement = _interopRequireDefault(_ToastPlacement);
   _ToastTemplate = _interopRequireDefault(_ToastTemplate);
   _Toast = _interopRequireDefault(_Toast);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // Styles
-
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+  };
   // Constants
   const MIN_DURATION = 500;
   const MAX_DURATION = 1000;
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-toast",
-    properties: /** @lends sap.ui.webcomponents.main.Toast.prototype */{
-      /**
-       * Defines the duration in milliseconds for which component
-       * remains on the screen before it's automatically closed.
-       * <br><br>
-       * <b>Note:</b> The minimum supported value is <code>500</code> ms
-       * and even if a lower value is set, the duration would remain <code>500</code> ms.
-       *
-       * @type {Integer}
-       * @defaultvalue 3000
-       * @public
-       */
-      duration: {
-        type: _Integer.default,
-        defaultValue: 3000
-      },
-      /**
-       * Defines the placement of the component.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>TopStart</code></li>
-       * <li><code>TopCenter</code></li>
-       * <li><code>TopEnd</code></li>
-       * <li><code>MiddleStart</code></li>
-       * <li><code>MiddleCenter</code></li>
-       * <li><code>MiddleEnd</code></li>
-       * <li><code>BottomStart</code></li>
-       * <li><code>BottomCenter</code></li>
-       * <li><code>BottomEnd</code></li>
-       * </ul>
-       *
-       * @type {ToastPlacement}
-       * @defaultvalue "BottomCenter"
-       * @public
-       */
-      placement: {
-        type: _ToastPlacement.default,
-        defaultValue: _ToastPlacement.default.BottomCenter
-      },
-      /**
-       * Indicates whether the component is open (visible).
-       * @type {boolean}
-       * @private
-       */
-      open: {
-        type: Boolean
-      },
-      /**
-       * Indicates whether the component is hovered.
-       * @type {boolean}
-       * @private
-       */
-      hover: {
-        type: Boolean
-      },
-      /**
-       * Indicates whether the component DOM is rendered.
-       * @type {boolean}
-       * @private
-       */
-      domRendered: {
-        type: Boolean
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.main.Toast.prototype */{
-      /**
-       * Defines the text of the component.
-       * <br><br>
-       * <b>Note:</b> Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.
-       *
-       * @type {Node[]}
-       * @slot
-       * @public
-       */
-      "default": {
-        type: Node
-      }
-    }
-  };
-
   /**
    * @class
    *
@@ -137,24 +55,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.Toast
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.Toast
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-toast
    * @public
    * @since 1.0.0-rc.6
    */
-  class Toast extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _Toast.default;
-    }
-    static get template() {
-      return _ToastTemplate.default;
+  let Toast = class Toast extends _UI5Element.default {
+    constructor() {
+      super();
+      this._reopen = false;
     }
     onAfterRendering() {
       if (this._reopen) {
@@ -162,7 +72,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         this._initiateOpening();
       }
     }
-
     /**
      * Shows the component.
      * @public
@@ -179,7 +88,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         this._initiateOpening();
       }
     }
-
     /**
      * If the minimum duration is lower than 500ms, we force
      * it to be 500ms, as described in the documentation.
@@ -207,7 +115,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
     }
     _initiateOpening() {
       this.domRendered = true;
-      requestAnimationFrame(_ => {
+      requestAnimationFrame(() => {
         this.open = true;
       });
     }
@@ -224,7 +132,30 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
     _onmouseleave() {
       this.hover = false;
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: 3000
+  })], Toast.prototype, "duration", void 0);
+  __decorate([(0, _property.default)({
+    type: _ToastPlacement.default,
+    defaultValue: _ToastPlacement.default.BottomCenter
+  })], Toast.prototype, "placement", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Toast.prototype, "open", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Toast.prototype, "hover", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Toast.prototype, "domRendered", void 0);
+  Toast = __decorate([(0, _customElement.default)({
+    tag: "ui5-toast",
+    renderer: _LitRenderer.default,
+    styles: _Toast.default,
+    template: _ToastTemplate.default
+  })], Toast);
   Toast.define();
   var _default = Toast;
   _exports.default = _default;

@@ -57,10 +57,11 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the accessible aria name of the component.
+				 * Defines the accessible ARIA name of the component.
 				 */
 				accessibleName: {
-					type: "string"
+					type: "string",
+					defaultValue: ""
 				},
 
 				/**
@@ -179,6 +180,7 @@ sap.ui.define([
 				 * Fired when the selected option changes.
 				 */
 				change: {
+					allowPreventDefault: true,
 					parameters: {
 						/**
 						 * the selected option.
@@ -187,6 +189,20 @@ sap.ui.define([
 							type: "HTMLElement"
 						}
 					}
+				},
+
+				/**
+				 * Fired after the component's dropdown menu closes.
+				 */
+				close: {
+					parameters: {}
+				},
+
+				/**
+				 * Fired after the component's dropdown menu opens.
+				 */
+				open: {
+					parameters: {}
 				}
 			},
 			getters: ["selectedOption"]
@@ -194,7 +210,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * Returns the currently selected option.
+	 * Returns the currently selected <code>ui5-option</code> element.
 	 * @public
 	 * @name sap.ui.webc.main.Select#getSelectedOption
 	 * @function

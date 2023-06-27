@@ -58,7 +58,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the accessible aria name of the component.
+				 * Defines the accessible ARIA name of the component.
 				 */
 				accessibleName: {
 					type: "string"
@@ -80,7 +80,6 @@ sap.ui.define([
 				/**
 				 * Enables the component to automatically grow and shrink dynamically with its content. <br>
 				 * <br>
-				 * <b>Note:</b> If set to <code>true</code>, the CSS <code>height</code> property is ignored.
 				 */
 				growing: {
 					type: "boolean",

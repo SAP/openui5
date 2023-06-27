@@ -6,12 +6,12 @@
  * Initialization Code and shared classes of library sap.ui.webc.main
  */
 sap.ui.define([
-		"sap/ui/core/Lib",
 		"sap/ui/webc/common/library",
+		"sap/ui/core/Lib",
 		"./thirdparty/Assets",
 		"./library.config"
 	], // library dependency
-	function(Library, commonLibrary) {
+	function(commonLibrary, Library) {
 
 		"use strict";
 
@@ -37,6 +37,7 @@ sap.ui.define([
 				"sap.ui.webc.main.IBreadcrumbsItem",
 				"sap.ui.webc.main.IButton",
 				"sap.ui.webc.main.ICalendarDate",
+				"sap.ui.webc.main.ICardHeader",
 				"sap.ui.webc.main.IColorPaletteItem",
 				"sap.ui.webc.main.IComboBoxItem",
 				"sap.ui.webc.main.IIcon",
@@ -59,14 +60,18 @@ sap.ui.define([
 				"sap.ui.webc.main.AvatarGroupType",
 				"sap.ui.webc.main.AvatarShape",
 				"sap.ui.webc.main.AvatarSize",
+				"sap.ui.webc.main.BackgroundDesign",
+				"sap.ui.webc.main.BorderDesign",
 				"sap.ui.webc.main.BreadcrumbsDesign",
 				"sap.ui.webc.main.BreadcrumbsSeparatorStyle",
 				"sap.ui.webc.main.BusyIndicatorSize",
 				"sap.ui.webc.main.ButtonDesign",
 				"sap.ui.webc.main.CalendarSelectionMode",
 				"sap.ui.webc.main.CarouselArrowsPlacement",
-				"sap.ui.webc.main.GrowingMode",
+				"sap.ui.webc.main.CarouselPageIndicatorStyle",
+				"sap.ui.webc.main.ComboBoxFilter",
 				"sap.ui.webc.main.HasPopup",
+				"sap.ui.webc.main.IconDesign",
 				"sap.ui.webc.main.InputType",
 				"sap.ui.webc.main.LinkDesign",
 				"sap.ui.webc.main.ListGrowingMode",
@@ -78,10 +83,14 @@ sap.ui.define([
 				"sap.ui.webc.main.PopoverHorizontalAlign",
 				"sap.ui.webc.main.PopoverPlacementType",
 				"sap.ui.webc.main.PopoverVerticalAlign",
+				"sap.ui.webc.main.PopupAccessibleRole",
 				"sap.ui.webc.main.Priority",
+				"sap.ui.webc.main.SegmentedButtonMode",
 				"sap.ui.webc.main.SemanticColor",
 				"sap.ui.webc.main.SwitchDesign",
+				"sap.ui.webc.main.TabContainerBackgroundDesign",
 				"sap.ui.webc.main.TabLayout",
+				"sap.ui.webc.main.TableColumnPopinDisplay",
 				"sap.ui.webc.main.TableGrowingMode",
 				"sap.ui.webc.main.TableMode",
 				"sap.ui.webc.main.TableRowType",
@@ -163,7 +172,8 @@ sap.ui.define([
 				"sap.ui.webc.main.ToggleButton",
 				"sap.ui.webc.main.Token",
 				"sap.ui.webc.main.Tree",
-				"sap.ui.webc.main.TreeItem"
+				"sap.ui.webc.main.TreeItem",
+				"sap.ui.webc.main.TreeItemCustom"
 			],
 			elements: [],
 			extensions: {
@@ -279,6 +289,16 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 */
+
+		/**
+		 * Interface for components that may be slotted inside <code>ui5-card</code> as header
+		 *
+		 * @name sap.ui.webc.main.ICardHeader
+		 * @interface
+		 * @public
+		 * @since 1.115.0
+		 * @experimental Since 1.115.0 This API is experimental and might change significantly.
 		 */
 
 		/**
@@ -530,13 +550,13 @@ sap.ui.define([
 		thisLib.AvatarGroupType = {
 
 			/**
-			 * The avatars are displayed as partially overlapped on top of each other and the entire group has one click/tap area.
+			 * The avatars are displayed as partially overlapped on top of each other and the entire group has one click or tap area.
 			 * @public
 			 */
 			Group: "Group",
 
 			/**
-			 * The avatars are displayed side-by-side and each avatar has its own click/tap area.
+			 * The avatars are displayed side-by-side and each avatar has its own click or tap area.
 			 * @public
 			 */
 			Individual: "Individual"
@@ -610,7 +630,61 @@ sap.ui.define([
 
 
 		/**
-		 * Different types of <code>Breadcrumbs</code>.
+		 * Defines background designs.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.115.0
+		 * @experimental Since 1.115.0 This API is experimental and might change significantly.
+		 */
+		thisLib.BackgroundDesign = {
+
+			/**
+			 * A solid background color dependent on the theme.
+			 * @public
+			 */
+			Solid: "Solid",
+
+			/**
+			 * A translucent background depending on the opacity value of the theme.
+			 * @public
+			 */
+			Translucent: "Translucent",
+
+			/**
+			 * Transparent background.
+			 * @public
+			 */
+			Transparent: "Transparent"
+		};
+
+
+		/**
+		 * Defines border designs.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.115.0
+		 * @experimental Since 1.115.0 This API is experimental and might change significantly.
+		 */
+		thisLib.BorderDesign = {
+
+			/**
+			 * Specifies no border.
+			 * @public
+			 */
+			None: "None",
+
+			/**
+			 * A solid border color dependent on the theme.
+			 * @public
+			 */
+			Solid: "Solid"
+		};
+
+
+		/**
+		 * Different Breadcrumbs designs.
 		 *
 		 * @enum {string}
 		 * @public
@@ -634,7 +708,7 @@ sap.ui.define([
 
 
 		/**
-		 * Different types of <code>Breadcrumbs</code> separator.
+		 * Different Breadcrumbs separator styles.
 		 *
 		 * @enum {string}
 		 * @public
@@ -662,7 +736,7 @@ sap.ui.define([
 			DoubleGreaterThan: "DoubleGreaterThan",
 
 			/**
-			 * The separator appears as "//".
+			 * The separator appears as "//" .
 			 * @public
 			 */
 			DoubleSlash: "DoubleSlash",
@@ -682,7 +756,7 @@ sap.ui.define([
 
 
 		/**
-		 * Different types of BusyIndicator.
+		 * Different BusyIndicator sizes.
 		 *
 		 * @enum {string}
 		 * @public
@@ -712,7 +786,7 @@ sap.ui.define([
 
 
 		/**
-		 * Different types of Button.
+		 * Different Button designs.
 		 *
 		 * @enum {string}
 		 * @public
@@ -760,7 +834,7 @@ sap.ui.define([
 
 
 		/**
-		 * Different date selection modes for <code>ui5-calendar</code>.
+		 * Different Calendar selection mode.
 		 *
 		 * @enum {string}
 		 * @public
@@ -790,7 +864,7 @@ sap.ui.define([
 
 
 		/**
-		 * Different types of Arrow Placement for <code>ui5-carousel</code>.
+		 * Different Carousel arrows placement.
 		 *
 		 * @enum {string}
 		 * @public
@@ -814,32 +888,62 @@ sap.ui.define([
 
 
 		/**
-		 * Defines the growing mode of the component.
+		 * Different Carousel page indicator styles.
 		 *
 		 * @enum {string}
 		 * @public
-		 * @since 1.92.0
-		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @since 1.115.0
+		 * @experimental Since 1.115.0 This API is experimental and might change significantly.
 		 */
-		thisLib.GrowingMode = {
+		thisLib.CarouselPageIndicatorStyle = {
 
 			/**
-			 * Component's <code>load-more</code> is fired upon pressing a "More" button. at the bottom.
+			 * The page indicator will be visualized as dots if there are fewer than 9 pages. If there are more pages, the page indicator will switch to displaying the current page and the total number of pages. (e.g. X of Y)
 			 * @public
 			 */
-			Button: "Button",
+			Default: "Default",
 
 			/**
-			 * Component's growing is not enabled.
+			 * The page indicator will display the current page and the total number of pages. (e.g. X of Y)
+			 * @public
+			 */
+			Numeric: "Numeric"
+		};
+
+
+		/**
+		 * Different filtering types of the ComboBox.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.115.0
+		 * @experimental Since 1.115.0 This API is experimental and might change significantly.
+		 */
+		thisLib.ComboBoxFilter = {
+
+			/**
+			 * Defines contains filtering.
+			 * @public
+			 */
+			Contains: "Contains",
+
+			/**
+			 * Removes any filtering applied while typing
 			 * @public
 			 */
 			None: "None",
 
 			/**
-			 * Component's <code>load-more</code> is fired upon scroll.
+			 * Defines filtering by starting symbol of item's text.
 			 * @public
 			 */
-			Scroll: "Scroll"
+			StartsWith: "StartsWith",
+
+			/**
+			 * Defines filtering by first symbol of each word of item's text.
+			 * @public
+			 */
+			StartsWithPerTerm: "StartsWithPerTerm"
 		};
 
 
@@ -886,7 +990,67 @@ sap.ui.define([
 
 
 		/**
-		 * Defines input types
+		 * Different Icon semantic designs.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.115.0
+		 * @experimental Since 1.115.0 This API is experimental and might change significantly.
+		 */
+		thisLib.IconDesign = {
+
+			/**
+			 * Contrast design
+			 * @public
+			 */
+			Contrast: "Contrast",
+
+			/**
+			 * Critical design
+			 * @public
+			 */
+			Critical: "Critical",
+
+			/**
+			 * Default design (brand design)
+			 * @public
+			 */
+			Default: "Default",
+
+			/**
+			 * info type
+			 * @public
+			 */
+			Information: "Information",
+
+			/**
+			 * Negative design
+			 * @public
+			 */
+			Negative: "Negative",
+
+			/**
+			 * Neutral design
+			 * @public
+			 */
+			Neutral: "Neutral",
+
+			/**
+			 * Design that indicates an icon which isn't interactive
+			 * @public
+			 */
+			NonInteractive: "NonInteractive",
+
+			/**
+			 * Positive design
+			 * @public
+			 */
+			Positive: "Positive"
+		};
+
+
+		/**
+		 * Different input types.
 		 *
 		 * @enum {string}
 		 * @public
@@ -934,7 +1098,7 @@ sap.ui.define([
 
 
 		/**
-		 * Different types of Button.
+		 * Different link designs.
 		 *
 		 * @enum {string}
 		 * @public
@@ -964,7 +1128,7 @@ sap.ui.define([
 
 
 		/**
-		 * Defines the growing mode, used in the <code>ui5-list</code>.
+		 * Different list growing modes.
 		 *
 		 * @enum {string}
 		 * @public
@@ -974,7 +1138,7 @@ sap.ui.define([
 		thisLib.ListGrowingMode = {
 
 			/**
-			 * Component's <code>load-more</code> is fired upon pressing a "More" button. at the bottom.
+			 * Component's "load-more" is fired upon pressing a "More" button. at the bottom.
 			 * @public
 			 */
 			Button: "Button",
@@ -986,7 +1150,7 @@ sap.ui.define([
 			None: "None",
 
 			/**
-			 * Component's <code>load-more</code> is fired upon scroll.
+			 * Component's "load-more" is fired upon scroll.
 			 * @public
 			 */
 			Scroll: "Scroll"
@@ -994,7 +1158,7 @@ sap.ui.define([
 
 
 		/**
-		 * Different types of ListItem.
+		 * Different list item types.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1019,12 +1183,18 @@ sap.ui.define([
 			 * Indicates the list item does not have any active feedback when item is pressed.
 			 * @public
 			 */
-			Inactive: "Inactive"
+			Inactive: "Inactive",
+
+			/**
+			 * Enables the type of navigation, which is specified to add an arrow at the end of the items and fires navigate-click event.
+			 * @public
+			 */
+			Navigation: "Navigation"
 		};
 
 
 		/**
-		 * Defines the type of <code>ui5-list</code>.
+		 * Different list modes.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1078,7 +1248,7 @@ sap.ui.define([
 
 
 		/**
-		 * Defines which separator style will be applied for the list items.
+		 * Different types of list items separators.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1094,7 +1264,7 @@ sap.ui.define([
 			All: "All",
 
 			/**
-			 * Separators between the items. <b>Note:</b> This enumeration depends on the theme.
+			 * Separators between the items. Note: This enumeration depends on the theme.
 			 * @public
 			 */
 			Inner: "Inner",
@@ -1108,7 +1278,7 @@ sap.ui.define([
 
 
 		/**
-		 * Defines different types of MessageStrip.
+		 * MessageStrip designs.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1144,7 +1314,7 @@ sap.ui.define([
 
 
 		/**
-		 * Available Panel Accessible Landmark Roles.
+		 * Panel accessible roles.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1154,19 +1324,19 @@ sap.ui.define([
 		thisLib.PanelAccessibleRole = {
 
 			/**
-			 * Represents the ARIA role <code>complementary</code>. A section of the page, designed to be complementary to the main content at a similar level in the DOM hierarchy.
+			 * Represents the ARIA role "complementary". A section of the page, designed to be complementary to the main content at a similar level in the DOM hierarchy.
 			 * @public
 			 */
 			Complementary: "Complementary",
 
 			/**
-			 * Represents the ARIA role <code>Form</code>. A landmark region that contains a collection of items and objects that, as a whole, create a form.
+			 * Represents the ARIA role "Form". A landmark region that contains a collection of items and objects that, as a whole, create a form.
 			 * @public
 			 */
 			Form: "Form",
 
 			/**
-			 * Represents the ARIA role <code>Region</code>. A section of a page, that is important enough to be included in a page summary or table of contents.
+			 * Represents the ARIA role "Region". A section of a page, that is important enough to be included in a page summary or table of contents.
 			 * @public
 			 */
 			Region: "Region"
@@ -1174,7 +1344,7 @@ sap.ui.define([
 
 
 		/**
-		 * Defines the horizontal alignment of <code>ui5-popover</code>
+		 * Popover horizontal align types.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1184,25 +1354,25 @@ sap.ui.define([
 		thisLib.PopoverHorizontalAlign = {
 
 			/**
-			 * Popover is centered
+			 * Popover is centered.
 			 * @public
 			 */
 			Center: "Center",
 
 			/**
-			 * Popover opens on the left side of the target
+			 * Popover is aligned with the left side of the target. When direction is RTL, it is right aligned.
 			 * @public
 			 */
 			Left: "Left",
 
 			/**
-			 * Popover opens on the right side of the target
+			 * Popover is aligned with the right side of the target. When direction is RTL, it is left aligned.
 			 * @public
 			 */
 			Right: "Right",
 
 			/**
-			 * Popover is stretched
+			 * Popover is stretched.
 			 * @public
 			 */
 			Stretch: "Stretch"
@@ -1210,7 +1380,7 @@ sap.ui.define([
 
 
 		/**
-		 * Types for the placement of Popover control.
+		 * Popover placement types.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1246,7 +1416,7 @@ sap.ui.define([
 
 
 		/**
-		 * Types for the placement of message Popover control.
+		 * Popover vertical align types.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1278,6 +1448,36 @@ sap.ui.define([
 			 * @public
 			 */
 			Top: "Top"
+		};
+
+
+		/**
+		 * Popup accessible roles.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.115.0
+		 * @experimental Since 1.115.0 This API is experimental and might change significantly.
+		 */
+		thisLib.PopupAccessibleRole = {
+
+			/**
+			 * Represents the ARIA role "alertdialog".
+			 * @public
+			 */
+			AlertDialog: "AlertDialog",
+
+			/**
+			 * Represents the ARIA role "dialog".
+			 * @public
+			 */
+			Dialog: "Dialog",
+
+			/**
+			 * Represents no ARIA role.
+			 * @public
+			 */
+			None: "None"
 		};
 
 
@@ -1318,7 +1518,31 @@ sap.ui.define([
 
 
 		/**
-		 * Defines the semantic color
+		 * Different SegmentedButton modes.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.115.0
+		 * @experimental Since 1.115.0 This API is experimental and might change significantly.
+		 */
+		thisLib.SegmentedButtonMode = {
+
+			/**
+			 * Multiple items can be selected at a time. All items can be deselected.
+			 * @public
+			 */
+			MultiSelect: "MultiSelect",
+
+			/**
+			 * There is always one selected. Selecting one deselects the previous one.
+			 * @public
+			 */
+			SingleSelect: "SingleSelect"
+		};
+
+
+		/**
+		 * Different types of SemanticColor.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1360,7 +1584,7 @@ sap.ui.define([
 
 
 		/**
-		 * Defines input types
+		 * Different types of Switch designs.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1384,7 +1608,37 @@ sap.ui.define([
 
 
 		/**
-		 * Different types of Tab layouts.
+		 * Background design for the header and content of TabContainer.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.115.0
+		 * @experimental Since 1.115.0 This API is experimental and might change significantly.
+		 */
+		thisLib.TabContainerBackgroundDesign = {
+
+			/**
+			 * A Solid background color.
+			 * @public
+			 */
+			Solid: "Solid",
+
+			/**
+			 * A Translucent background color.
+			 * @public
+			 */
+			Translucent: "Translucent",
+
+			/**
+			 * A Transparent background color.
+			 * @public
+			 */
+			Transparent: "Transparent"
+		};
+
+
+		/**
+		 * Tab layout of TabContainer.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1394,13 +1648,13 @@ sap.ui.define([
 		thisLib.TabLayout = {
 
 			/**
-			 * Inline type, the tab <code>main text</code> and <code>additionalText</code> are displayed horizotally.
+			 * Inline type, the tab "main text" and "additionalText" are displayed horizotally.
 			 * @public
 			 */
 			Inline: "Inline",
 
 			/**
-			 * Standard type, the tab <code>main text</code> and <code>additionalText</code> are displayed vertically.
+			 * Standard type, the tab "main text" and "additionalText" are displayed vertically.
 			 * @public
 			 */
 			Standard: "Standard"
@@ -1408,7 +1662,31 @@ sap.ui.define([
 
 
 		/**
-		 * Defines the growing mode, used in the <code>ui5-table</code>.
+		 * Table cell popin display.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.115.0
+		 * @experimental Since 1.115.0 This API is experimental and might change significantly.
+		 */
+		thisLib.TableColumnPopinDisplay = {
+
+			/**
+			 * default type
+			 * @public
+			 */
+			Block: "Block",
+
+			/**
+			 * inline type (the title and value are displayed on the same line)
+			 * @public
+			 */
+			Inline: "Inline"
+		};
+
+
+		/**
+		 * Different table growing modes.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1418,19 +1696,19 @@ sap.ui.define([
 		thisLib.TableGrowingMode = {
 
 			/**
-			 * Component's <code>load-more</code> is fired upon pressing a "More" button. at the bottom.
+			 * Component <code>load-more</code> is fired upon pressing a "More" button at the bottom.
 			 * @public
 			 */
 			Button: "Button",
 
 			/**
-			 * Component's growing is not enabled.
+			 * Component growing is not enabled.
 			 * @public
 			 */
 			None: "None",
 
 			/**
-			 * Component's <code>load-more</code> is fired upon scroll.
+			 * Component <code>load-more</code> is fired upon scroll.
 			 * @public
 			 */
 			Scroll: "Scroll"
@@ -1438,7 +1716,7 @@ sap.ui.define([
 
 
 		/**
-		 * Defines the type of <code>ui5-table</code>.
+		 * Different table modes.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1468,7 +1746,7 @@ sap.ui.define([
 
 
 		/**
-		 * Different types of TableRow.
+		 * Different table row types.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1492,7 +1770,7 @@ sap.ui.define([
 
 
 		/**
-		 * Different types of overflow modes.
+		 * Tabs overflow mode in TabContainer.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1516,7 +1794,7 @@ sap.ui.define([
 
 
 		/**
-		 * Defines the <code>ui5-title</code> level
+		 * Different types of Title level.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1564,7 +1842,7 @@ sap.ui.define([
 
 
 		/**
-		 * Defines where the <code>ui5-toast</code> will be placed.
+		 * Toast placement.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1574,55 +1852,55 @@ sap.ui.define([
 		thisLib.ToastPlacement = {
 
 			/**
-			 * <code>ui5-toast</code> is placed at the <code>BottomCenter</code> position of its container. Default placement (no selection)
+			 * Toast is placed at the <code>BottomCenter</code> position of its container. Default placement (no selection)
 			 * @public
 			 */
 			BottomCenter: "BottomCenter",
 
 			/**
-			 * <code>ui5-toast</code> is placed at the <code>BottomEnd</code> position of its container.
+			 * Toast is placed at the <code>BottomEnd</code> position of its container.
 			 * @public
 			 */
 			BottomEnd: "BottomEnd",
 
 			/**
-			 * <code>ui5-toast</code> is placed at the <code>BottomStart</code> position of its container.
+			 * Toast is placed at the <code>BottomStart</code> position of its container.
 			 * @public
 			 */
 			BottomStart: "BottomStart",
 
 			/**
-			 * <code>ui5-toast</code> is placed at the <code>MiddleCenter</code> position of its container.
+			 * Toast is placed at the <code>MiddleCenter</code> position of its container.
 			 * @public
 			 */
 			MiddleCenter: "MiddleCenter",
 
 			/**
-			 * <code>ui5-toast</code> is placed at the <code>MiddleEnd</code> position of its container.
+			 * Toast is placed at the <code>MiddleEnd</code> position of its container.
 			 * @public
 			 */
 			MiddleEnd: "MiddleEnd",
 
 			/**
-			 * <code>ui5-toast</code> is placed at the <code>MiddleStart</code> position of its container.
+			 * Toast is placed at the <code>MiddleStart</code> position of its container.
 			 * @public
 			 */
 			MiddleStart: "MiddleStart",
 
 			/**
-			 * <code>ui5-toast</code> is placed at the <code>TopCenter</code> position of its container.
+			 * Toast is placed at the <code>TopCenter</code> position of its container.
 			 * @public
 			 */
 			TopCenter: "TopCenter",
 
 			/**
-			 * <code>ui5-toast</code> is placed at the <code>TopEnd</code> position of its container.
+			 * Toast is placed at the <code>TopEnd</code> position of its container.
 			 * @public
 			 */
 			TopEnd: "TopEnd",
 
 			/**
-			 * <code>ui5-toast</code> is placed at the <code>TopStart</code> position of its container.
+			 * Toast is placed at the <code>TopStart</code> position of its container.
 			 * @public
 			 */
 			TopStart: "TopStart"
@@ -1630,7 +1908,7 @@ sap.ui.define([
 
 
 		/**
-		 * Defines how the text of a component will be displayed when there is not enough space.
+		 * Different types of wrapping.
 		 *
 		 * @enum {string}
 		 * @public

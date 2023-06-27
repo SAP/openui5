@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/types/AnimationMode", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/config/AnimationMode", "sap/ui/webc/common/thirdparty/base/i18nBundle", "./Icon", "./generated/templates/ProgressIndicatorTemplate.lit", "./generated/i18n/i18n-defaults", "./generated/themes/ProgressIndicator.css"], function (_exports, _UI5Element, _LitRenderer, _AnimationMode, _ValueState, _Integer, _AnimationMode2, _i18nBundle, _Icon, _ProgressIndicatorTemplate, _i18nDefaults, _ProgressIndicator) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/types/AnimationMode", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/config/AnimationMode", "sap/ui/webc/common/thirdparty/base/i18nBundle", "./Icon", "./generated/i18n/i18n-defaults", "./generated/templates/ProgressIndicatorTemplate.lit", "./generated/themes/ProgressIndicator.css"], function (_exports, _UI5Element, _customElement, _property, _LitRenderer, _AnimationMode, _ValueState, _Integer, _AnimationMode2, _i18nBundle, _Icon, _i18nDefaults, _ProgressIndicatorTemplate, _ProgressIndicator) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,6 +6,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _AnimationMode = _interopRequireDefault(_AnimationMode);
   _ValueState = _interopRequireDefault(_ValueState);
@@ -14,91 +16,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _ProgressIndicatorTemplate = _interopRequireDefault(_ProgressIndicatorTemplate);
   _ProgressIndicator = _interopRequireDefault(_ProgressIndicator);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-progress-indicator",
-    properties: /** @lends sap.ui.webcomponents.main.ProgressIndicator.prototype */{
-      /**
-       * Defines whether component is in disabled state.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the component value is shown.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      hideValue: {
-        type: Boolean
-      },
-      /**
-       * Specifies the numerical value in percent for the length of the component.
-       *
-       * <b>Note:</b>
-       * If a value greater than 100 is provided, the percentValue is set to 100. In other cases of invalid value, percentValue is set to its default of 0.
-       * @type {Integer}
-       * @defaultvalue 0
-       * @public
-       */
-      value: {
-        type: _Integer.default,
-        defaultValue: 0
-      },
-      /**
-       * Specifies the text value to be displayed in the bar.
-       *
-       * <b>Note:</b>
-       * <ul>
-       * <li>If there is no value provided or the value is empty, the default percentage value is shown.</li>
-       * <li>If <code>hideValue</code> property is <code>true</code> both the <code>displayValue</code> and <code>value</code> property values are not shown.</li>
-       * </ul>
-       *
-       * @type {string}
-       * @public
-       */
-      displayValue: {
-        type: String
-      },
-      /**
-       * Defines the value state of the component.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>None</code></li>
-       * <li><code>Error</code></li>
-       * <li><code>Warning</code></li>
-       * <li><code>Success</code></li>
-       * <li><code>Information</code></li>
-       * </ul>
-       *
-       * @type {ValueState}
-       * @defaultvalue "None"
-       * @public
-       */
-      valueState: {
-        type: _ValueState.default,
-        defaultValue: _ValueState.default.None
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.main.ProgressIndicator.prototype */{
-      //
-    },
-    events: /** @lends sap.ui.webcomponents.main.ProgressIndicator.prototype */{
-      //
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var ProgressIndicator_1;
   /**
    * @class
    *
@@ -115,28 +40,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.ProgressIndicator
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.ProgressIndicator
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-progress-indicator
    * @public
    * @since 1.0.0-rc.8
    */
-  class ProgressIndicator extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _ProgressIndicator.default;
-    }
-    static get template() {
-      return _ProgressIndicatorTemplate.default;
-    }
-    static get dependencies() {
-      return [_Icon.default];
-    }
+  let ProgressIndicator = ProgressIndicator_1 = class ProgressIndicator extends _UI5Element.default {
     constructor() {
       super();
       this._previousValue = 0;
@@ -148,10 +58,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     valueStateTextMappings() {
       return {
-        "Error": ProgressIndicator.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR),
-        "Warning": ProgressIndicator.i18nBundle.getText(_i18nDefaults.VALUE_STATE_WARNING),
-        "Success": ProgressIndicator.i18nBundle.getText(_i18nDefaults.VALUE_STATE_SUCCESS),
-        "Information": ProgressIndicator.i18nBundle.getText(_i18nDefaults.VALUE_STATE_INFORMATION)
+        "Error": ProgressIndicator_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR),
+        "Warning": ProgressIndicator_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_WARNING),
+        "Success": ProgressIndicator_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_SUCCESS),
+        "Information": ProgressIndicator_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_INFORMATION)
       };
     }
     valueStateIconMappings() {
@@ -208,9 +118,31 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this.disabled || undefined;
     }
     static async onDefine() {
-      ProgressIndicator.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      ProgressIndicator_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], ProgressIndicator.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], ProgressIndicator.prototype, "hideValue", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: 0
+  })], ProgressIndicator.prototype, "value", void 0);
+  __decorate([(0, _property.default)()], ProgressIndicator.prototype, "displayValue", void 0);
+  __decorate([(0, _property.default)({
+    type: _ValueState.default,
+    defaultValue: _ValueState.default.None
+  })], ProgressIndicator.prototype, "valueState", void 0);
+  ProgressIndicator = ProgressIndicator_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-progress-indicator",
+    renderer: _LitRenderer.default,
+    styles: _ProgressIndicator.default,
+    template: _ProgressIndicatorTemplate.default,
+    dependencies: [_Icon.default]
+  })], ProgressIndicator);
   ProgressIndicator.define();
   var _default = ProgressIndicator;
   _exports.default = _default;

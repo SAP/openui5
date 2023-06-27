@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/types/NavigationMode", "./generated/i18n/i18n-defaults", "./generated/templates/TimelineTemplate.lit", "./TimelineItem", "./generated/themes/Timeline.css", "./types/TimelineLayout"], function (_exports, _UI5Element, _i18nBundle, _LitRenderer, _Keys, _ItemNavigation, _NavigationMode, _i18nDefaults, _TimelineTemplate, _TimelineItem, _Timeline, _TimelineLayout) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/types/NavigationMode", "sap/ui/webc/common/thirdparty/base/MarkedEvents", "./generated/i18n/i18n-defaults", "./generated/templates/TimelineTemplate.lit", "./TimelineItem", "./generated/themes/Timeline.css", "./types/TimelineLayout"], function (_exports, _UI5Element, _customElement, _property, _slot, _i18nBundle, _LitRenderer, _Keys, _ItemNavigation, _NavigationMode, _MarkedEvents, _i18nDefaults, _TimelineTemplate, _TimelineItem, _Timeline, _TimelineLayout) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,6 +6,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _ItemNavigation = _interopRequireDefault(_ItemNavigation);
   _NavigationMode = _interopRequireDefault(_NavigationMode);
@@ -14,67 +17,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _Timeline = _interopRequireDefault(_Timeline);
   _TimelineLayout = _interopRequireDefault(_TimelineLayout);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+  };
+  var Timeline_1;
   const SHORT_LINE_WIDTH = "ShortLineWidth";
   const LARGE_LINE_WIDTH = "LargeLineWidth";
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-timeline",
-    languageAware: true,
-    managedSlots: true,
-    properties: /** @lends sap.ui.webcomponents.fiori.Timeline.prototype */{
-      /**
-       * Defines the items orientation.
-       *
-       * <br><br>
-       * <b>Note:</b>
-       * Available options are:
-       * <ul>
-      	* <li><code>Vertical</code></li>
-      	* <li><code>Horizontal</code></li>
-       * </ul>
-       *
-       * @type {TimelineLayout}
-       * @defaultvalue "Vertical"
-       * @since 1.0.0-rc.15
-       * @public
-       */
-      layout: {
-        type: _TimelineLayout.default,
-        defaultValue: _TimelineLayout.default.Vertical
-      },
-      /**
-       * Defines the accessible aria name of the component.
-       *
-       * @type {string}
-       * @defaultvalue: ""
-       * @public
-       * @since 1.2.0
-       */
-      accessibleName: {
-        type: String
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.fiori.Timeline.prototype */{
-      /**
-       * Determines the content of the <code>ui5-timeline</code>.
-       *
-       * @type {sap.ui.webcomponents.fiori.ITimelineItem[]}
-       * @slot items
-       * @public
-       */
-      "default": {
-        propertyName: "items",
-        type: HTMLElement,
-        individualSlots: true
-      }
-    }
-  };
-
   /**
    * @class
    *
@@ -88,47 +40,32 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.fiori.Timeline
-   * @extends UI5Element
+   * @alias sap.ui.webc.fiori.Timeline
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-timeline
-   * @appenddocs TimelineItem
+   * @appenddocs sap.ui.webc.fiori.TimelineItem
    * @public
    * @since 0.8.0
    */
-  class Timeline extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get styles() {
-      return _Timeline.default;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _TimelineTemplate.default;
-    }
+  let Timeline = Timeline_1 = class Timeline extends _UI5Element.default {
     constructor() {
       super();
       this._itemNavigation = new _ItemNavigation.default(this, {
         getItemsCallback: () => this.items
       });
     }
-    static get dependencies() {
-      return [_TimelineItem.default];
-    }
     static async onDefine() {
-      Timeline.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents-fiori");
+      Timeline_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents-fiori");
     }
     get ariaLabel() {
-      return this.accessibleName ? `${Timeline.i18nBundle.getText(_i18nDefaults.TIMELINE_ARIA_LABEL)} ${this.accessibleName}` : Timeline.i18nBundle.getText(_i18nDefaults.TIMELINE_ARIA_LABEL);
+      return this.accessibleName ? `${Timeline_1.i18nBundle.getText(_i18nDefaults.TIMELINE_ARIA_LABEL)} ${this.accessibleName}` : Timeline_1.i18nBundle.getText(_i18nDefaults.TIMELINE_ARIA_LABEL);
     }
-    _onfocusin(event) {
-      const target = event.target;
+    _onfocusin(e) {
+      const target = e.target;
       this._itemNavigation.setCurrentItem(target);
     }
     onBeforeRendering() {
-      this._itemNavigation.navigationMode = this.layout === _TimelineLayout.default.Horizontal ? _NavigationMode.default.Horizontal : _NavigationMode.default.Vertical;
+      this._itemNavigation._navigationMode = this.layout === _TimelineLayout.default.Horizontal ? _NavigationMode.default.Horizontal : _NavigationMode.default.Vertical;
       for (let i = 0; i < this.items.length; i++) {
         this.items[i].layout = this.layout;
         if (this.items[i + 1] && !!this.items[i + 1].icon) {
@@ -138,31 +75,51 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       }
     }
-    _onkeydown(event) {
-      if ((0, _Keys.isTabNext)(event)) {
-        if (!event.target.nameClickable || event.isMarked === "link") {
-          this._handleTabNextOrPrevious(event, (0, _Keys.isTabNext)(event));
+    _onkeydown(e) {
+      const target = e.target;
+      if ((0, _Keys.isTabNext)(e)) {
+        if (!target.nameClickable || (0, _MarkedEvents.getEventMark)(e) === "link") {
+          this._handleTabNextOrPrevious(e, (0, _Keys.isTabNext)(e));
         }
-      } else if ((0, _Keys.isTabPrevious)(event)) {
-        this._handleTabNextOrPrevious(event);
+      } else if ((0, _Keys.isTabPrevious)(e)) {
+        this._handleTabNextOrPrevious(e);
       }
     }
-    _handleTabNextOrPrevious(event, isNext) {
-      const nextTargetIndex = isNext ? this.items.indexOf(event.target) + 1 : this.items.indexOf(event.target) - 1;
+    _handleTabNextOrPrevious(e, isNext) {
+      const target = e.target;
+      const nextTargetIndex = isNext ? this.items.indexOf(target) + 1 : this.items.indexOf(target) - 1;
       const nextTarget = this.items[nextTargetIndex];
       if (!nextTarget) {
         return;
       }
       if (nextTarget.nameClickable && !isNext) {
-        event.preventDefault();
-        nextTarget.shadowRoot.querySelector("[ui5-link]").focus();
+        e.preventDefault();
+        nextTarget.focusLink();
         return;
       }
-      event.preventDefault();
+      e.preventDefault();
       nextTarget.focus();
       this._itemNavigation.setCurrentItem(nextTarget);
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: _TimelineLayout.default,
+    defaultValue: _TimelineLayout.default.Vertical
+  })], Timeline.prototype, "layout", void 0);
+  __decorate([(0, _property.default)()], Timeline.prototype, "accessibleName", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement,
+    individualSlots: true,
+    "default": true
+  })], Timeline.prototype, "items", void 0);
+  Timeline = Timeline_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-timeline",
+    languageAware: true,
+    renderer: _LitRenderer.default,
+    styles: _Timeline.default,
+    template: _TimelineTemplate.default,
+    dependencies: [_TimelineItem.default]
+  })], Timeline);
   Timeline.define();
   var _default = Timeline;
   _exports.default = _default;

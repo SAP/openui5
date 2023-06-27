@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "zoom-out";
-  const pathData = "M313.5 199q13 0 20.5 8t7.5 21q0 28-28 28h-170q-29 0-29-28 0-13 7.5-21t21.5-8h170zm190 264q8 9 8 20.5t-8 19.5q-8 9-19.5 9t-20.5-9l-96-96q-62 48-139 48-47 0-88.5-18t-72-48.5-48.5-72-18-88.5 18-88.5 48.5-72T140 19t88.5-18T317 19t72 48.5 48.5 72 18 88.5q0 77-48 139zm-446-235q0 35 13.5 66t37 54 54.5 36.5 66 13.5 66-13.5 54-36.5 36.5-54 13.5-66-13.5-66-36.5-54-54-36.5-66-13.5-66 13.5T108 108t-37 54-13.5 66z";
+  const pathData = "M16 208q0-44 16-82t44.5-66T143 16t81-16q44 0 82 16t66 44 44 66 16 82q0 37-11.5 69.5T389 336l100 100q7 7 7 18t-7 18.5-18 7.5-18-7L353 373q-26 20-59 31.5T224 416q-43 0-81-16t-66.5-44T32 290t-16-82zm52 0q0 33 12 61.5t33 50 49.5 33.5 61.5 12 61.5-12 50-33.5 33.5-50 12-61.5-12-61.5-33.5-50-50-33.5T224 51t-61.5 12T113 96.5t-33 50T68 208zm70 26q-11 0-18.5-7.5T112 208t7.5-18.5T138 182h173q11 0 18 7.5t7 18.5-7 18.5-18 7.5H138z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
@@ -21,6 +21,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "zoom-out";
+  var _default = "SAP-icons-v5/zoom-out";
   _exports.default = _default;
 });

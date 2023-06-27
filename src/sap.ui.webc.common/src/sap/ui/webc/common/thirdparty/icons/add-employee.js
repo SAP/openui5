@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/add-employee", "./v4/add-employee"], function (_exports, _Theme, _addEmployee, _addEmployee2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/add-employee", "./v5/add-employee"], function (_exports, _Theme, _addEmployee, _addEmployee2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _addEmployee.pathData : _addEmployee2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _addEmployee.pathData : _addEmployee2.pathData;
   _exports.pathData = pathData;
   var _default = "add-employee";
   _exports.default = _default;

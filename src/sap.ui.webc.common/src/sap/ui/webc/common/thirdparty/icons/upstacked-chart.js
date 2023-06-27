@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/upstacked-chart", "./v4/upstacked-chart"], function (_exports, _Theme, _upstackedChart, _upstackedChart2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/upstacked-chart", "./v5/upstacked-chart"], function (_exports, _Theme, _upstackedChart, _upstackedChart2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _upstackedChart.pathData : _upstackedChart2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _upstackedChart.pathData : _upstackedChart2.pathData;
   _exports.pathData = pathData;
   var _default = "upstacked-chart";
   _exports.default = _default;

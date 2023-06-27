@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "batch-payments";
-  const pathData = "M442.5 1q29 0 49 20t20 50v279q0 29-20 49t-49 20h-279q-30 0-50-20t-20-49V71q0-30 20-50t50-20h279zm23 70q0-23-23-23h-279q-23 0-23 23v279q0 23 23 23h279q23 0 23-23V71zm-70 395q23 0 23 23t-23 23h-325q-30 0-50-20t-20-49V117q0-11 6.5-17t17.5-6q10 0 16.5 6t6.5 17v326q0 23 23 23h325zm-104-302q-12 0-12 11 0 12 12 12h23q24 0 41 17t17 41q0 21-13.5 36.5T325.5 301v25q0 11-6 17.5t-17 6.5-17-6.5-6-17.5v-23h-23q-23 0-23-23t23-23h58q11 0 11-12 0-11-11-11h-23q-25 0-41.5-17t-16.5-42q0-20 13-36t33-19V94q0-23 23-23t23 23v23h24q11 0 17 6.5t6 17.5q0 23-23 23h-58z";
+  const pathData = "M480 229q14 8 23 21.5t9 30.5v6.5l-2 6.5-43 126q-10 27-33 43.5T382 480H88q-24 0-40-16t-18-39L0 154q0-24 17-41t40-17h39v-7q0-11 7.5-18t18.5-7h134l126-31q2-1 6-1 8 0 15.5 5.5T413 51l3 13h39q11 0 18 7t7 18v140zm-183 41q1 0 1.5-.5t1.5-.5l39-39q6-6 17-6h73v-64q-18-2-30.5-14.5T384 115H192q-2 18-14.5 30.5T147 160v96q17 0 31 14h119zM57 147q-2 0-4 2t-2 5l19 171 9-19q7-14 17-21V147H57zm279 61q0 20-14 34t-34 14-34-14-14-34 14-34 34-14 34 14 14 34zM136 320q-8 0-10 7l-44 94q0 1-.5 1.5T81 424q0 5 7 5h294q27 0 37-26l42-123q0-6-7-6h-84q-2 0-2.5.5t-1.5.5l-37 37q-8 8-22 8H136z";
   _exports.pathData = pathData;
   const ltr = true;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "batch-payments";
+  var _default = "SAP-icons-v5/batch-payments";
   _exports.default = _default;
 });

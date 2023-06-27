@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/responsive", "./v4/responsive"], function (_exports, _Theme, _responsive, _responsive2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/responsive", "./v5/responsive"], function (_exports, _Theme, _responsive, _responsive2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _responsive.pathData : _responsive2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _responsive.pathData : _responsive2.pathData;
   _exports.pathData = pathData;
   var _default = "responsive";
   _exports.default = _default;

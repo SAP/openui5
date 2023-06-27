@@ -5,110 +5,111 @@ sap.ui.define(["exports"], function (_exports) {
     value: true
   });
   _exports.isUpShiftCtrl = _exports.isUpShift = _exports.isUpCtrl = _exports.isUpAlt = _exports.isUp = _exports.isTabPrevious = _exports.isTabNext = _exports.isSpaceShift = _exports.isSpaceCtrl = _exports.isSpace = _exports.isShow = _exports.isShift = _exports.isRightShiftCtrl = _exports.isRightShift = _exports.isRightCtrl = _exports.isRight = _exports.isPlus = _exports.isPageUpShiftCtrl = _exports.isPageUpShift = _exports.isPageUpAlt = _exports.isPageUp = _exports.isPageDownShiftCtrl = _exports.isPageDownShift = _exports.isPageDownAlt = _exports.isPageDown = _exports.isMinus = _exports.isLeftShiftCtrl = _exports.isLeftShift = _exports.isLeftCtrl = _exports.isLeft = _exports.isInsertShift = _exports.isInsertCtrl = _exports.isHomeShift = _exports.isHomeCtrl = _exports.isHome = _exports.isF7 = _exports.isF6Previous = _exports.isF6Next = _exports.isF4Shift = _exports.isF4 = _exports.isEscape = _exports.isEnterShift = _exports.isEnter = _exports.isEndShift = _exports.isEndCtrl = _exports.isEnd = _exports.isDownShiftCtrl = _exports.isDownShift = _exports.isDownCtrl = _exports.isDownAlt = _exports.isDown = _exports.isDeleteShift = _exports.isDelete = _exports.isCtrlV = _exports.isCtrlA = _exports.isBackSpace = void 0;
-  const KeyCodes = {
-    BACKSPACE: 8,
-    TAB: 9,
-    ENTER: 13,
-    SHIFT: 16,
-    CONTROL: 17,
-    ALT: 18,
-    BREAK: 19,
-    CAPS_LOCK: 20,
-    ESCAPE: 27,
-    SPACE: 32,
-    PAGE_UP: 33,
-    PAGE_DOWN: 34,
-    END: 35,
-    HOME: 36,
-    ARROW_LEFT: 37,
-    ARROW_UP: 38,
-    ARROW_RIGHT: 39,
-    ARROW_DOWN: 40,
-    PRINT: 44,
-    INSERT: 45,
-    DELETE: 46,
-    DIGIT_0: 48,
-    DIGIT_1: 49,
-    DIGIT_2: 50,
-    DIGIT_3: 51,
-    DIGIT_4: 52,
-    DIGIT_5: 53,
-    DIGIT_6: 54,
-    DIGIT_7: 55,
-    DIGIT_8: 56,
-    DIGIT_9: 57,
-    A: 65,
-    B: 66,
-    C: 67,
-    D: 68,
-    E: 69,
-    F: 70,
-    G: 71,
-    H: 72,
-    I: 73,
-    J: 74,
-    K: 75,
-    L: 76,
-    M: 77,
-    N: 78,
-    O: 79,
-    P: 80,
-    Q: 81,
-    R: 82,
-    S: 83,
-    T: 84,
-    U: 85,
-    V: 86,
-    W: 87,
-    X: 88,
-    Y: 89,
-    Z: 90,
-    WINDOWS: 91,
-    CONTEXT_MENU: 93,
-    TURN_OFF: 94,
-    SLEEP: 95,
-    NUMPAD_0: 96,
-    NUMPAD_1: 97,
-    NUMPAD_2: 98,
-    NUMPAD_3: 99,
-    NUMPAD_4: 100,
-    NUMPAD_5: 101,
-    NUMPAD_6: 102,
-    NUMPAD_7: 103,
-    NUMPAD_8: 104,
-    NUMPAD_9: 105,
-    NUMPAD_ASTERISK: 106,
-    NUMPAD_PLUS: 107,
-    NUMPAD_MINUS: 109,
-    NUMPAD_COMMA: 110,
-    NUMPAD_SLASH: 111,
-    F1: 112,
-    F2: 113,
-    F3: 114,
-    F4: 115,
-    F5: 116,
-    F6: 117,
-    F7: 118,
-    F8: 119,
-    F9: 120,
-    F10: 121,
-    F11: 122,
-    F12: 123,
-    NUM_LOCK: 144,
-    SCROLL_LOCK: 145,
-    OPEN_BRACKET: 186,
-    PLUS: 187,
-    COMMA: 188,
-    SLASH: 189,
-    DOT: 190,
-    PIPE: 191,
-    SEMICOLON: 192,
-    MINUS: 219,
-    GREAT_ACCENT: 220,
-    EQUALS: 221,
-    SINGLE_QUOTE: 222,
-    BACKSLASH: 226
-  };
+  var KeyCodes;
+  (function (KeyCodes) {
+    KeyCodes[KeyCodes["BACKSPACE"] = 8] = "BACKSPACE";
+    KeyCodes[KeyCodes["TAB"] = 9] = "TAB";
+    KeyCodes[KeyCodes["ENTER"] = 13] = "ENTER";
+    KeyCodes[KeyCodes["SHIFT"] = 16] = "SHIFT";
+    KeyCodes[KeyCodes["CONTROL"] = 17] = "CONTROL";
+    KeyCodes[KeyCodes["ALT"] = 18] = "ALT";
+    KeyCodes[KeyCodes["BREAK"] = 19] = "BREAK";
+    KeyCodes[KeyCodes["CAPS_LOCK"] = 20] = "CAPS_LOCK";
+    KeyCodes[KeyCodes["ESCAPE"] = 27] = "ESCAPE";
+    KeyCodes[KeyCodes["SPACE"] = 32] = "SPACE";
+    KeyCodes[KeyCodes["PAGE_UP"] = 33] = "PAGE_UP";
+    KeyCodes[KeyCodes["PAGE_DOWN"] = 34] = "PAGE_DOWN";
+    KeyCodes[KeyCodes["END"] = 35] = "END";
+    KeyCodes[KeyCodes["HOME"] = 36] = "HOME";
+    KeyCodes[KeyCodes["ARROW_LEFT"] = 37] = "ARROW_LEFT";
+    KeyCodes[KeyCodes["ARROW_UP"] = 38] = "ARROW_UP";
+    KeyCodes[KeyCodes["ARROW_RIGHT"] = 39] = "ARROW_RIGHT";
+    KeyCodes[KeyCodes["ARROW_DOWN"] = 40] = "ARROW_DOWN";
+    KeyCodes[KeyCodes["PRINT"] = 44] = "PRINT";
+    KeyCodes[KeyCodes["INSERT"] = 45] = "INSERT";
+    KeyCodes[KeyCodes["DELETE"] = 46] = "DELETE";
+    KeyCodes[KeyCodes["DIGIT_0"] = 48] = "DIGIT_0";
+    KeyCodes[KeyCodes["DIGIT_1"] = 49] = "DIGIT_1";
+    KeyCodes[KeyCodes["DIGIT_2"] = 50] = "DIGIT_2";
+    KeyCodes[KeyCodes["DIGIT_3"] = 51] = "DIGIT_3";
+    KeyCodes[KeyCodes["DIGIT_4"] = 52] = "DIGIT_4";
+    KeyCodes[KeyCodes["DIGIT_5"] = 53] = "DIGIT_5";
+    KeyCodes[KeyCodes["DIGIT_6"] = 54] = "DIGIT_6";
+    KeyCodes[KeyCodes["DIGIT_7"] = 55] = "DIGIT_7";
+    KeyCodes[KeyCodes["DIGIT_8"] = 56] = "DIGIT_8";
+    KeyCodes[KeyCodes["DIGIT_9"] = 57] = "DIGIT_9";
+    KeyCodes[KeyCodes["A"] = 65] = "A";
+    KeyCodes[KeyCodes["B"] = 66] = "B";
+    KeyCodes[KeyCodes["C"] = 67] = "C";
+    KeyCodes[KeyCodes["D"] = 68] = "D";
+    KeyCodes[KeyCodes["E"] = 69] = "E";
+    KeyCodes[KeyCodes["F"] = 70] = "F";
+    KeyCodes[KeyCodes["G"] = 71] = "G";
+    KeyCodes[KeyCodes["H"] = 72] = "H";
+    KeyCodes[KeyCodes["I"] = 73] = "I";
+    KeyCodes[KeyCodes["J"] = 74] = "J";
+    KeyCodes[KeyCodes["K"] = 75] = "K";
+    KeyCodes[KeyCodes["L"] = 76] = "L";
+    KeyCodes[KeyCodes["M"] = 77] = "M";
+    KeyCodes[KeyCodes["N"] = 78] = "N";
+    KeyCodes[KeyCodes["O"] = 79] = "O";
+    KeyCodes[KeyCodes["P"] = 80] = "P";
+    KeyCodes[KeyCodes["Q"] = 81] = "Q";
+    KeyCodes[KeyCodes["R"] = 82] = "R";
+    KeyCodes[KeyCodes["S"] = 83] = "S";
+    KeyCodes[KeyCodes["T"] = 84] = "T";
+    KeyCodes[KeyCodes["U"] = 85] = "U";
+    KeyCodes[KeyCodes["V"] = 86] = "V";
+    KeyCodes[KeyCodes["W"] = 87] = "W";
+    KeyCodes[KeyCodes["X"] = 88] = "X";
+    KeyCodes[KeyCodes["Y"] = 89] = "Y";
+    KeyCodes[KeyCodes["Z"] = 90] = "Z";
+    KeyCodes[KeyCodes["WINDOWS"] = 91] = "WINDOWS";
+    KeyCodes[KeyCodes["CONTEXT_MENU"] = 93] = "CONTEXT_MENU";
+    KeyCodes[KeyCodes["TURN_OFF"] = 94] = "TURN_OFF";
+    KeyCodes[KeyCodes["SLEEP"] = 95] = "SLEEP";
+    KeyCodes[KeyCodes["NUMPAD_0"] = 96] = "NUMPAD_0";
+    KeyCodes[KeyCodes["NUMPAD_1"] = 97] = "NUMPAD_1";
+    KeyCodes[KeyCodes["NUMPAD_2"] = 98] = "NUMPAD_2";
+    KeyCodes[KeyCodes["NUMPAD_3"] = 99] = "NUMPAD_3";
+    KeyCodes[KeyCodes["NUMPAD_4"] = 100] = "NUMPAD_4";
+    KeyCodes[KeyCodes["NUMPAD_5"] = 101] = "NUMPAD_5";
+    KeyCodes[KeyCodes["NUMPAD_6"] = 102] = "NUMPAD_6";
+    KeyCodes[KeyCodes["NUMPAD_7"] = 103] = "NUMPAD_7";
+    KeyCodes[KeyCodes["NUMPAD_8"] = 104] = "NUMPAD_8";
+    KeyCodes[KeyCodes["NUMPAD_9"] = 105] = "NUMPAD_9";
+    KeyCodes[KeyCodes["NUMPAD_ASTERISK"] = 106] = "NUMPAD_ASTERISK";
+    KeyCodes[KeyCodes["NUMPAD_PLUS"] = 107] = "NUMPAD_PLUS";
+    KeyCodes[KeyCodes["NUMPAD_MINUS"] = 109] = "NUMPAD_MINUS";
+    KeyCodes[KeyCodes["NUMPAD_COMMA"] = 110] = "NUMPAD_COMMA";
+    KeyCodes[KeyCodes["NUMPAD_SLASH"] = 111] = "NUMPAD_SLASH";
+    KeyCodes[KeyCodes["F1"] = 112] = "F1";
+    KeyCodes[KeyCodes["F2"] = 113] = "F2";
+    KeyCodes[KeyCodes["F3"] = 114] = "F3";
+    KeyCodes[KeyCodes["F4"] = 115] = "F4";
+    KeyCodes[KeyCodes["F5"] = 116] = "F5";
+    KeyCodes[KeyCodes["F6"] = 117] = "F6";
+    KeyCodes[KeyCodes["F7"] = 118] = "F7";
+    KeyCodes[KeyCodes["F8"] = 119] = "F8";
+    KeyCodes[KeyCodes["F9"] = 120] = "F9";
+    KeyCodes[KeyCodes["F10"] = 121] = "F10";
+    KeyCodes[KeyCodes["F11"] = 122] = "F11";
+    KeyCodes[KeyCodes["F12"] = 123] = "F12";
+    KeyCodes[KeyCodes["NUM_LOCK"] = 144] = "NUM_LOCK";
+    KeyCodes[KeyCodes["SCROLL_LOCK"] = 145] = "SCROLL_LOCK";
+    KeyCodes[KeyCodes["OPEN_BRACKET"] = 186] = "OPEN_BRACKET";
+    KeyCodes[KeyCodes["PLUS"] = 187] = "PLUS";
+    KeyCodes[KeyCodes["COMMA"] = 188] = "COMMA";
+    KeyCodes[KeyCodes["SLASH"] = 189] = "SLASH";
+    KeyCodes[KeyCodes["DOT"] = 190] = "DOT";
+    KeyCodes[KeyCodes["PIPE"] = 191] = "PIPE";
+    KeyCodes[KeyCodes["SEMICOLON"] = 192] = "SEMICOLON";
+    KeyCodes[KeyCodes["MINUS"] = 219] = "MINUS";
+    KeyCodes[KeyCodes["GREAT_ACCENT"] = 220] = "GREAT_ACCENT";
+    KeyCodes[KeyCodes["EQUALS"] = 221] = "EQUALS";
+    KeyCodes[KeyCodes["SINGLE_QUOTE"] = 222] = "SINGLE_QUOTE";
+    KeyCodes[KeyCodes["BACKSLASH"] = 226] = "BACKSLASH";
+  })(KeyCodes || (KeyCodes = {}));
   const isEnter = event => (event.key ? event.key === "Enter" : event.keyCode === KeyCodes.ENTER) && !hasModifierKeys(event);
   _exports.isEnter = isEnter;
   const isEnterShift = event => (event.key ? event.key === "Enter" : event.keyCode === KeyCodes.ENTER) && checkModifierKeys(event, false, false, true);
@@ -218,7 +219,7 @@ sap.ui.define(["exports"], function (_exports) {
   _exports.isF4Shift = isF4Shift;
   const isF6Next = event => (event.key ? event.key === "F6" : event.keyCode === KeyCodes.F6) && checkModifierKeys(event, false, false, false) || (event.key ? event.key === "ArrowDown" || event.key === "Down" : event.keyCode === KeyCodes.ARROW_DOWN) && checkModifierKeys(event, true, true, false);
   _exports.isF6Next = isF6Next;
-  const isF6Previous = event => (event.key ? event.key === "F6" : event.keyCode === KeyCodes.F6) && checkModifierKeys(event, false, false, true) || (event.key ? event.key === "ArrowUp" || event.key === "Up" : event.keyCode === KeyCodes.ARROW_Up) && checkModifierKeys(event, true, true, false);
+  const isF6Previous = event => (event.key ? event.key === "F6" : event.keyCode === KeyCodes.F6) && checkModifierKeys(event, false, false, true) || (event.key ? event.key === "ArrowUp" || event.key === "Up" : event.keyCode === KeyCodes.ARROW_UP) && checkModifierKeys(event, true, true, false);
   _exports.isF6Previous = isF6Previous;
   const isF7 = event => (event.key ? event.key === "F7" : event.keyCode === KeyCodes.F7) && !hasModifierKeys(event);
   _exports.isF7 = isF7;
@@ -233,6 +234,5 @@ sap.ui.define(["exports"], function (_exports) {
   _exports.isCtrlV = isCtrlV;
   const hasModifierKeys = event => event.shiftKey || event.altKey || getCtrlKey(event);
   const getCtrlKey = event => !!(event.metaKey || event.ctrlKey); // double negation doesn't have effect on boolean but ensures null and undefined are equivalent to false.
-
   const checkModifierKeys = (event, bCtrlKey, bAltKey, bShiftKey) => event.shiftKey === bShiftKey && event.altKey === bAltKey && getCtrlKey(event) === bCtrlKey;
 });

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], function (_exports, _UI5Element) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot"], function (_exports, _UI5Element, _customElement, _property, _slot) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,100 +6,49 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  /**
-  * @public
-  */
-  const metadata = {
-    tag: "ui5-breadcrumbs-item",
-    managedSlots: true,
-    properties: /** @lends sap.ui.webcomponents.main.BreadcrumbsItem.prototype */{
-      /**
-       * Defines the link href.
-       * <br><br>
-       * <b>Note:</b> Standard hyperlink behavior is supported.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      href: {
-        type: String
-      },
-      /**
-       * Defines the link target.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>_self</code></li>
-       * <li><code>_top</code></li>
-       * <li><code>_blank</code></li>
-       * <li><code>_parent</code></li>
-       * <li><code>_search</code></li>
-       * </ul>
-       * <br><br>
-       * <b>Note:<b> This property must only be used when the <code>href</code> property is set.
-       *
-       * @type {string}
-       * @defaultvalue undefined
-       * @public
-       */
-      target: {
-        type: String,
-        defaultValue: undefined
-      },
-      /**
-       * Defines the accessible aria name of the item.
-       *
-       * @type {string}
-       * @defaultvalue undefined
-       * @public
-       */
-      accessibleName: {
-        type: String
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.main.BreadcrumbsItem.prototype */{
-      /**
-       * Defines the text of the component.
-       * <br><br>
-       * <b>Note:</b> Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.
-       *
-       * @type {Node[]}
-       * @slot
-       * @public
-       */
-      "default": {
-        type: Node
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.BreadcrumbsItem.prototype */{}
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
   /**
    * @class
    *
    * <h3 class="comment-api-title">Overview</h3>
    *
-   * The <code>ui5-breadcrumbs-item</code> component defines the content of an item in <code>ui5-breadcumbs</code>.
+   * The <code>ui5-breadcrumbs-item</code> component defines the content of an item in <code>ui5-breadcrumbs</code>.
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.BreadcrumbsItem
-   * @extends sap.ui.webcomponents.base.UI5Element
+   * @alias sap.ui.webc.main.BreadcrumbsItem
+   * @extends sap.ui.webc.base.UI5Element
+   * @abstract
    * @tagname ui5-breadcrumbs-item
-   * @implements sap.ui.webcomponents.main.IBreadcrumbsItem
+   * @implements sap.ui.webc.main.IBreadcrumbsItem
    * @public
    * @since 1.0.0-rc.15
    */
-  class BreadcrumbsItem extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
+  let BreadcrumbsItem = class BreadcrumbsItem extends _UI5Element.default {
     get stableDomRef() {
       return this.getAttribute("stable-dom-ref") || `${this._id}-stable-dom-ref`;
     }
-  }
+  };
+  __decorate([(0, _property.default)()], BreadcrumbsItem.prototype, "href", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: undefined
+  })], BreadcrumbsItem.prototype, "target", void 0);
+  __decorate([(0, _property.default)()], BreadcrumbsItem.prototype, "accessibleName", void 0);
+  __decorate([(0, _slot.default)({
+    type: Node,
+    "default": true
+  })], BreadcrumbsItem.prototype, "text", void 0);
+  BreadcrumbsItem = __decorate([(0, _customElement.default)("ui5-breadcrumbs-item")], BreadcrumbsItem);
   BreadcrumbsItem.define();
   var _default = BreadcrumbsItem;
   _exports.default = _default;

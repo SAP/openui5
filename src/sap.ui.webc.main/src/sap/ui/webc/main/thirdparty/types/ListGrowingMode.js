@@ -1,53 +1,41 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * @lends sap.ui.webcomponents.main.types.ListGrowingMode.prototype
+   * Different list growing modes.
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.main.types.ListGrowingMode
    */
-  const ListGrowingModes = {
+  var ListGrowingMode;
+  (function (ListGrowingMode) {
     /**
-     * Component's <code>load-more</code> is fired upon pressing a "More" button.
+     * Component's "load-more" is fired upon pressing a "More" button.
      * at the bottom.
      * @public
      * @type {Button}
      */
-    Button: "Button",
+    ListGrowingMode["Button"] = "Button";
     /**
-     * Component's <code>load-more</code> is fired upon scroll.
+     * Component's "load-more" is fired upon scroll.
      * @public
      * @type {Scroll}
      */
-    Scroll: "Scroll",
+    ListGrowingMode["Scroll"] = "Scroll";
     /**
      * Component's growing is not enabled.
      * @public
      * @type {None}
      */
-    None: "None"
-  };
-
-  /**
-   * @class
-   * Defines the growing mode, used in the <code>ui5-list</code>.
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.main.types.ListGrowingMode
-   * @public
-   * @enum {string}
-   */
-  class ListGrowingMode extends _DataType.default {
-    static isValid(value) {
-      return !!ListGrowingModes[value];
-    }
-  }
-  ListGrowingMode.generateTypeAccessors(ListGrowingModes);
+    ListGrowingMode["None"] = "None";
+  })(ListGrowingMode || (ListGrowingMode = {}));
   var _default = ListGrowingMode;
   _exports.default = _default;
 });

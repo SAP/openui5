@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "master-task-triangle-2";
+  var _default = "SAP-icons-v5/master-task-triangle-2";
   _exports.default = _default;
 });

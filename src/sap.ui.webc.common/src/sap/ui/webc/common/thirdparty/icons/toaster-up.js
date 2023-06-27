@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/toaster-up", "./v4/toaster-up"], function (_exports, _Theme, _toasterUp, _toasterUp2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/toaster-up", "./v5/toaster-up"], function (_exports, _Theme, _toasterUp, _toasterUp2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _toasterUp.pathData : _toasterUp2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _toasterUp.pathData : _toasterUp2.pathData;
   _exports.pathData = pathData;
   var _default = "toaster-up";
   _exports.default = _default;

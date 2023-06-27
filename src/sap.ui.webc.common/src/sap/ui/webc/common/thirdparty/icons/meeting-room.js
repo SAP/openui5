@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/meeting-room", "./v4/meeting-room"], function (_exports, _Theme, _meetingRoom, _meetingRoom2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/meeting-room", "./v5/meeting-room"], function (_exports, _Theme, _meetingRoom, _meetingRoom2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _meetingRoom.pathData : _meetingRoom2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _meetingRoom.pathData : _meetingRoom2.pathData;
   _exports.pathData = pathData;
   var _default = "meeting-room";
   _exports.default = _default;

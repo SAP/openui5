@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/vds-file", "./v4/vds-file"], function (_exports, _Theme, _vdsFile, _vdsFile2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/vds-file", "./v5/vds-file"], function (_exports, _Theme, _vdsFile, _vdsFile2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _vdsFile.pathData : _vdsFile2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _vdsFile.pathData : _vdsFile2.pathData;
   _exports.pathData = pathData;
   var _default = "vds-file";
   _exports.default = _default;

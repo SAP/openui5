@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/webc/main/Tree",
 	"sap/ui/webc/main/Button",
-	"sap/ui/webc/main/TreeItem"
-], function(createAndAppendDiv, Core, Tree, Button, TreeItem) {
+	"sap/ui/webc/main/TreeItem",
+	"sap/ui/webc/main/TreeItemCustom"
+], function(createAndAppendDiv, Core, Tree, Button, TreeItem, TreeItemCustom) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
@@ -45,220 +46,487 @@ sap.ui.define([
 						additionalText: "Some text...",
 						icon: "employee",
 						text: "Some text...",
+						deleteButton: new Button({
+							icon: "employee",
+							text: "Some text...",
+							click: function(oEvent) {
+								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							}
+						}),
 						items: [
 							new TreeItem({
 								additionalText: "Some text...",
 								icon: "employee",
 								text: "Some text...",
+								deleteButton: new Button({
+									icon: "employee",
+									text: "Some text...",
+									click: function(oEvent) {
+										// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+									}
+								}),
 								items: [
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new TreeItemCustom({
+										icon: "employee",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItemCustom with parameters: ", oEvent.getParameters());
+										}
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text..."
-									}),
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
 									})
-								]
+								],
+								detailClick: function(oEvent) {
+									// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new TreeItemCustom({
+								icon: "employee",
+								content: [
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								deleteButton: new Button({
+									icon: "employee",
+									text: "Some text...",
+									click: function(oEvent) {
+										// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+									}
+								}),
+								items: [
+									new TreeItem({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new TreeItemCustom({
+										icon: "employee",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItemCustom with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new TreeItem({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								detailClick: function(oEvent) {
+									// console.log("Event detailClick fired for TreeItemCustom with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new TreeItem({
 								additionalText: "Some text...",
 								icon: "employee",
 								text: "Some text...",
+								deleteButton: new Button({
+									icon: "employee",
+									text: "Some text...",
+									click: function(oEvent) {
+										// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+									}
+								}),
 								items: [
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new TreeItemCustom({
+										icon: "employee",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItemCustom with parameters: ", oEvent.getParameters());
+										}
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text..."
-									}),
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
 									})
-								]
-							}),
-							new TreeItem({
-								additionalText: "Some text...",
-								icon: "employee",
-								text: "Some text...",
-								items: [
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									}),
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									}),
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									})
-								]
+								],
+								detailClick: function(oEvent) {
+									// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+								}
 							})
-						]
+						],
+						detailClick: function(oEvent) {
+							// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+						}
+					}),
+					new TreeItemCustom({
+						icon: "employee",
+						content: [
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							})
+						],
+						deleteButton: new Button({
+							icon: "employee",
+							text: "Some text...",
+							click: function(oEvent) {
+								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							}
+						}),
+						items: [
+							new TreeItem({
+								additionalText: "Some text...",
+								icon: "employee",
+								text: "Some text...",
+								deleteButton: new Button({
+									icon: "employee",
+									text: "Some text...",
+									click: function(oEvent) {
+										// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+									}
+								}),
+								items: [
+									new TreeItem({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new TreeItemCustom({
+										icon: "employee",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItemCustom with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new TreeItem({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								detailClick: function(oEvent) {
+									// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new TreeItemCustom({
+								icon: "employee",
+								content: [
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								deleteButton: new Button({
+									icon: "employee",
+									text: "Some text...",
+									click: function(oEvent) {
+										// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+									}
+								}),
+								items: [
+									new TreeItem({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new TreeItemCustom({
+										icon: "employee",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItemCustom with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new TreeItem({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								detailClick: function(oEvent) {
+									// console.log("Event detailClick fired for TreeItemCustom with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new TreeItem({
+								additionalText: "Some text...",
+								icon: "employee",
+								text: "Some text...",
+								deleteButton: new Button({
+									icon: "employee",
+									text: "Some text...",
+									click: function(oEvent) {
+										// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+									}
+								}),
+								items: [
+									new TreeItem({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new TreeItemCustom({
+										icon: "employee",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItemCustom with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new TreeItem({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								detailClick: function(oEvent) {
+									// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+								}
+							})
+						],
+						detailClick: function(oEvent) {
+							// console.log("Event detailClick fired for TreeItemCustom with parameters: ", oEvent.getParameters());
+						}
 					}),
 					new TreeItem({
 						additionalText: "Some text...",
 						icon: "employee",
 						text: "Some text...",
+						deleteButton: new Button({
+							icon: "employee",
+							text: "Some text...",
+							click: function(oEvent) {
+								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							}
+						}),
 						items: [
 							new TreeItem({
 								additionalText: "Some text...",
 								icon: "employee",
 								text: "Some text...",
+								deleteButton: new Button({
+									icon: "employee",
+									text: "Some text...",
+									click: function(oEvent) {
+										// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+									}
+								}),
 								items: [
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new TreeItemCustom({
+										icon: "employee",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItemCustom with parameters: ", oEvent.getParameters());
+										}
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text..."
-									}),
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
 									})
-								]
+								],
+								detailClick: function(oEvent) {
+									// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new TreeItemCustom({
+								icon: "employee",
+								content: [
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								deleteButton: new Button({
+									icon: "employee",
+									text: "Some text...",
+									click: function(oEvent) {
+										// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+									}
+								}),
+								items: [
+									new TreeItem({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new TreeItemCustom({
+										icon: "employee",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItemCustom with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new TreeItem({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								detailClick: function(oEvent) {
+									// console.log("Event detailClick fired for TreeItemCustom with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new TreeItem({
 								additionalText: "Some text...",
 								icon: "employee",
 								text: "Some text...",
+								deleteButton: new Button({
+									icon: "employee",
+									text: "Some text...",
+									click: function(oEvent) {
+										// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+									}
+								}),
 								items: [
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new TreeItemCustom({
+										icon: "employee",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItemCustom with parameters: ", oEvent.getParameters());
+										}
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text..."
-									}),
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										detailClick: function(oEvent) {
+											// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+										}
 									})
-								]
-							}),
-							new TreeItem({
-								additionalText: "Some text...",
-								icon: "employee",
-								text: "Some text...",
-								items: [
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									}),
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									}),
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									})
-								]
+								],
+								detailClick: function(oEvent) {
+									// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+								}
 							})
-						]
-					}),
-					new TreeItem({
-						additionalText: "Some text...",
-						icon: "employee",
-						text: "Some text...",
-						items: [
-							new TreeItem({
-								additionalText: "Some text...",
-								icon: "employee",
-								text: "Some text...",
-								items: [
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									}),
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									}),
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									})
-								]
-							}),
-							new TreeItem({
-								additionalText: "Some text...",
-								icon: "employee",
-								text: "Some text...",
-								items: [
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									}),
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									}),
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									})
-								]
-							}),
-							new TreeItem({
-								additionalText: "Some text...",
-								icon: "employee",
-								text: "Some text...",
-								items: [
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									}),
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									}),
-									new TreeItem({
-										additionalText: "Some text...",
-										icon: "employee",
-										text: "Some text..."
-									})
-								]
-							})
-						]
+						],
+						detailClick: function(oEvent) {
+							// console.log("Event detailClick fired for TreeItem with parameters: ", oEvent.getParameters());
+						}
 					})
 				],
 				itemClick: function(oEvent) {

@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "navigation-up-arrow";
-  const pathData = "M156.5 340q-9 9-22 9-11 0-22-9-9-11-9-22 0-13 9-22l124-124q11-9 22-9 13 0 22 9l124 124q9 9 9 22 0 11-9 22-9 9-22 9-11 0-22-9l-102-103z";
+  const pathData = "M156.5 340q-9 9-22 9-11 0-22-9-9-11-9-22 0-13 9-22l124-124q11-9 22-9 13 0 22 9l124 124q9 9 9 22 0 11-9 22-10 9-22 9-13 0-22-9l-102-103z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "navigation-up-arrow";
+  var _default = "SAP-icons-v5/navigation-up-arrow";
   _exports.default = _default;
 });

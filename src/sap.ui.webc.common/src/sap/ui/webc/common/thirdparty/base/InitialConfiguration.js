@@ -1,25 +1,27 @@
-sap.ui.define(["exports", "./thirdparty/merge", "./FeaturesRegistry", "./generated/AssetParameters"], function (_exports, _merge, _FeaturesRegistry, _AssetParameters) {
+sap.ui.define(["exports", "./thirdparty/merge", "./FeaturesRegistry", "./generated/AssetParameters", "./validateThemeRoot", "./types/AnimationMode"], function (_exports, _merge, _FeaturesRegistry, _AssetParameters, _validateThemeRoot, _AnimationMode) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.getTheme = _exports.getRTL = _exports.getNoConflict = _exports.getLanguage = _exports.getFormatSettings = _exports.getFetchDefaultLanguage = _exports.getCalendarType = _exports.getAnimationMode = void 0;
+  _exports.getTimezone = _exports.getThemeRoot = _exports.getTheme = _exports.getRTL = _exports.getNoConflict = _exports.getLanguage = _exports.getFormatSettings = _exports.getFetchDefaultLanguage = _exports.getCalendarType = _exports.getAnimationMode = void 0;
   _merge = _interopRequireDefault(_merge);
+  _validateThemeRoot = _interopRequireDefault(_validateThemeRoot);
+  _AnimationMode = _interopRequireDefault(_AnimationMode);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   let initialized = false;
   let initialConfig = {
-    animationMode: "full",
+    animationMode: _AnimationMode.default.Full,
     theme: _AssetParameters.DEFAULT_THEME,
-    rtl: null,
-    language: null,
-    calendarType: null,
+    themeRoot: undefined,
+    rtl: undefined,
+    language: undefined,
+    timezone: undefined,
+    calendarType: undefined,
     noConflict: false,
-    // no URL
     formatSettings: {},
     fetchDefaultLanguage: false
   };
-
   /* General settings */
   const getAnimationMode = () => {
     initConfiguration();
@@ -31,6 +33,11 @@ sap.ui.define(["exports", "./thirdparty/merge", "./FeaturesRegistry", "./generat
     return initialConfig.theme;
   };
   _exports.getTheme = getTheme;
+  const getThemeRoot = () => {
+    initConfiguration();
+    return initialConfig.themeRoot;
+  };
+  _exports.getThemeRoot = getThemeRoot;
   const getRTL = () => {
     initConfiguration();
     return initialConfig.rtl;
@@ -40,7 +47,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./FeaturesRegistry", "./generat
     initConfiguration();
     return initialConfig.language;
   };
-
   /**
    * Returns if the default language, that is inlined at build time,
    * should be fetched over the network instead.
@@ -56,12 +62,25 @@ sap.ui.define(["exports", "./thirdparty/merge", "./FeaturesRegistry", "./generat
     initConfiguration();
     return initialConfig.noConflict;
   };
+  /**
+   * Get the configured calendar type
+   * @returns { String } the name of the configured calendar type
+   */
   _exports.getNoConflict = getNoConflict;
   const getCalendarType = () => {
     initConfiguration();
     return initialConfig.calendarType;
   };
+  /**
+   * Returns the configured IANA timezone ID.
+   * @returns { String } the configured IANA timezone ID, e.g. "America/New_York"
+   */
   _exports.getCalendarType = getCalendarType;
+  const getTimezone = () => {
+    initConfiguration();
+    return initialConfig.timezone;
+  };
+  _exports.getTimezone = getTimezone;
   const getFormatSettings = () => {
     initConfiguration();
     return initialConfig.formatSettings;
@@ -72,7 +91,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./FeaturesRegistry", "./generat
   booleanMapping.set("false", false);
   const parseConfigurationScript = () => {
     const configScript = document.querySelector("[data-ui5-config]") || document.querySelector("[data-id='sap-ui-config']"); // for backward compatibility
-
     let configJSON;
     if (configScript) {
       try {
@@ -88,7 +106,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./FeaturesRegistry", "./generat
   };
   const parseURLParameters = () => {
     const params = new URLSearchParams(window.location.search);
-
     // Process "sap-*" params first
     params.forEach((value, key) => {
       const parts = key.split("sap-").length;
@@ -97,7 +114,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./FeaturesRegistry", "./generat
       }
       applyURLParam(key, value, "sap");
     });
-
     // Process "sap-ui-*" params
     params.forEach((value, key) => {
       if (!key.startsWith("sap-ui")) {
@@ -106,7 +122,11 @@ sap.ui.define(["exports", "./thirdparty/merge", "./FeaturesRegistry", "./generat
       applyURLParam(key, value, "sap-ui");
     });
   };
-  const normalizeParamValue = (param, value) => {
+  const normalizeThemeRootParamValue = value => {
+    const themeRoot = value.split("@")[1];
+    return (0, _validateThemeRoot.default)(themeRoot);
+  };
+  const normalizeThemeParamValue = (param, value) => {
     if (param === "theme" && value.includes("@")) {
       // the theme parameter might have @<URL-TO-THEME> in the value - strip this
       return value.split("@")[0];
@@ -119,28 +139,31 @@ sap.ui.define(["exports", "./thirdparty/merge", "./FeaturesRegistry", "./generat
     if (booleanMapping.has(value)) {
       value = booleanMapping.get(lowerCaseValue);
     }
-    value = normalizeParamValue(param, value);
-    initialConfig[param] = value;
+    if (param === "theme") {
+      initialConfig.theme = normalizeThemeParamValue(param, value);
+      if (value && value.includes("@")) {
+        initialConfig.themeRoot = normalizeThemeRootParamValue(value);
+      }
+    } else {
+      initialConfig[param] = value;
+    }
   };
   const applyOpenUI5Configuration = () => {
-    const OpenUI5Support = (0, _FeaturesRegistry.getFeature)("OpenUI5Support");
-    if (!OpenUI5Support || !OpenUI5Support.isLoaded()) {
+    const openUI5Support = (0, _FeaturesRegistry.getFeature)("OpenUI5Support");
+    if (!openUI5Support || !openUI5Support.isLoaded()) {
       return;
     }
-    const OpenUI5Config = OpenUI5Support.getConfigurationSettingsObject();
+    const OpenUI5Config = openUI5Support.getConfigurationSettingsObject();
     initialConfig = (0, _merge.default)(initialConfig, OpenUI5Config);
   };
   const initConfiguration = () => {
-    if (initialized) {
+    if (typeof document === "undefined" || initialized) {
       return;
     }
-
     // 1. Lowest priority - configuration script
     parseConfigurationScript();
-
     // 2. URL parameters overwrite configuration script parameters
     parseURLParameters();
-
     // 3. If OpenUI5 is detected, it has the highest priority
     applyOpenUI5Configuration();
     initialized = true;

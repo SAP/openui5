@@ -6,7 +6,7 @@
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	xmlns="sap.m">
 	<main:Button text="Button1" id="button1"></main:Button>
-	<main:Panel id="Panel1">
+	<main:Panel id="Panel1" headerText="Panel Header">
 		<main:List headerText="Custom Content">
 			<main:CustomListItem id="ListItem1">
 				<HBox>

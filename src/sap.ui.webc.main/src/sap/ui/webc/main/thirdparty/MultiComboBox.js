@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/icons/slim-arrow-down", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/icons/multiselect-all", "sap/ui/webc/common/thirdparty/icons/not-editable", "sap/ui/webc/common/thirdparty/icons/error", "sap/ui/webc/common/thirdparty/icons/alert", "sap/ui/webc/common/thirdparty/icons/sys-enter-2", "sap/ui/webc/common/thirdparty/icons/information", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "./MultiComboBoxItem", "./MultiComboBoxGroupItem", "./Tokenizer", "./Token", "./Icon", "./Popover", "./ResponsivePopover", "./List", "./StandardListItem", "./ToggleButton", "./Filters", "./Button", "./generated/i18n/i18n-defaults", "./generated/templates/MultiComboBoxTemplate.lit", "./generated/templates/MultiComboBoxPopoverTemplate.lit", "./generated/themes/MultiComboBox.css", "./generated/themes/ResponsivePopoverCommon.css", "./generated/themes/ValueStateMessage.css", "./generated/themes/Suggestions.css", "./generated/themes/MultiComboBoxPopover.css"], function (_exports, _UI5Element, _LitRenderer, _ResizeHandler, _ValueState, _Keys, _Integer, _slimArrowDown, _Device, _i18nBundle, _decline, _multiselectAll, _notEditable, _error, _alert, _sysEnter, _information, _FeaturesRegistry, _AriaLabelHelper, _MultiComboBoxItem, _MultiComboBoxGroupItem, _Tokenizer, _Token, _Icon, _Popover, _ResponsivePopover, _List, _StandardListItem, _ToggleButton, Filters, _Button, _i18nDefaults, _MultiComboBoxTemplate, _MultiComboBoxPopoverTemplate, _MultiComboBox, _ResponsivePopoverCommon, _ValueStateMessage, _Suggestions, _MultiComboBoxPopover) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/icons/slim-arrow-down", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/icons/multiselect-all", "sap/ui/webc/common/thirdparty/icons/not-editable", "sap/ui/webc/common/thirdparty/icons/error", "sap/ui/webc/common/thirdparty/icons/alert", "sap/ui/webc/common/thirdparty/icons/sys-enter-2", "sap/ui/webc/common/thirdparty/icons/information", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "./MultiComboBoxItem", "./MultiComboBoxGroupItem", "./GroupHeaderListItem", "./Tokenizer", "./Token", "./Icon", "./Popover", "./ResponsivePopover", "./List", "./StandardListItem", "./ToggleButton", "./Filters", "./Button", "./generated/i18n/i18n-defaults", "./generated/templates/MultiComboBoxTemplate.lit", "./generated/templates/MultiComboBoxPopoverTemplate.lit", "./generated/themes/MultiComboBox.css", "./generated/themes/ResponsivePopoverCommon.css", "./generated/themes/ValueStateMessage.css", "./generated/themes/Suggestions.css", "./generated/themes/MultiComboBoxPopover.css", "./types/ComboBoxFilter"], function (_exports, _UI5Element, _customElement, _property, _slot, _event, _LitRenderer, _ResizeHandler, _ValueState, _Keys, _Integer, _slimArrowDown, _Device, _i18nBundle, _decline, _multiselectAll, _notEditable, _error, _alert, _sysEnter, _information, _FeaturesRegistry, _AriaLabelHelper, _MultiComboBoxItem, _MultiComboBoxGroupItem, _GroupHeaderListItem, _Tokenizer, _Token, _Icon, _Popover, _ResponsivePopover, _List, _StandardListItem, _ToggleButton, Filters, _Button, _i18nDefaults, _MultiComboBoxTemplate, _MultiComboBoxPopoverTemplate, _MultiComboBox, _ResponsivePopoverCommon, _ValueStateMessage, _Suggestions, _MultiComboBoxPopover, _ComboBoxFilter) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,13 +6,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
+  _event = _interopRequireDefault(_event);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _ResizeHandler = _interopRequireDefault(_ResizeHandler);
   _ValueState = _interopRequireDefault(_ValueState);
   _Integer = _interopRequireDefault(_Integer);
   _MultiComboBoxItem = _interopRequireDefault(_MultiComboBoxItem);
   _MultiComboBoxGroupItem = _interopRequireDefault(_MultiComboBoxGroupItem);
-  _Tokenizer = _interopRequireDefault(_Tokenizer);
+  _GroupHeaderListItem = _interopRequireDefault(_GroupHeaderListItem);
+  _Tokenizer = _interopRequireWildcard(_Tokenizer);
   _Token = _interopRequireDefault(_Token);
   _Icon = _interopRequireDefault(_Icon);
   _Popover = _interopRequireDefault(_Popover);
@@ -29,281 +34,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _ValueStateMessage = _interopRequireDefault(_ValueStateMessage);
   _Suggestions = _interopRequireDefault(_Suggestions);
   _MultiComboBoxPopover = _interopRequireDefault(_MultiComboBoxPopover);
+  _ComboBoxFilter = _interopRequireDefault(_ComboBoxFilter);
   function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
   function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Templates
-
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-multi-combobox",
-    languageAware: true,
-    managedSlots: true,
-    slots: /** @lends sap.ui.webcomponents.main.MultiComboBox.prototype */{
-      /**
-       * Defines the component items.
-       *
-       * @type {sap.ui.webcomponents.main.IMultiComboBoxItem[]}
-       * @slot items
-       * @public
-       */
-      "default": {
-        propertyName: "items",
-        type: HTMLElement,
-        invalidateOnChildChange: true
-      },
-      /**
-      * Defines the icon to be displayed in the component.
-      *
-      * @type {sap.ui.webcomponents.main.IIcon}
-      * @slot
-      * @public
-      * @since 1.0.0-rc.9
-      */
-      icon: {
-        type: HTMLElement
-      },
-      /**
-       * Defines the value state message that will be displayed as pop up under the component.
-       * <br><br>
-       *
-       * <b>Note:</b> If not specified, a default text (in the respective language) will be displayed.
-       * <br>
-       * <b>Note:</b> The <code>valueStateMessage</code> would be displayed,
-       * when the component is in <code>Information</code>, <code>Warning</code> or <code>Error</code> value state.
-       * @type {HTMLElement[]}
-       * @since 1.0.0-rc.9
-       * @slot
-       * @public
-       */
-      valueStateMessage: {
-        type: HTMLElement
-      }
-    },
-    properties: /** @lends sap.ui.webcomponents.main.MultiComboBox.prototype */{
-      /**
-       * Defines the value of the component.
-       * <br><br>
-       * <b>Note:</b> The property is updated upon typing.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      value: {
-        type: String,
-        defaultValue: ""
-      },
-      /**
-       * Defines whether the value will be autcompleted to match an item
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       * @since 1.4.0
-       */
-      noTypeahead: {
-        type: Boolean
-      },
-      /**
-       * Defines a short hint intended to aid the user with data entry when the
-       * component has no value.
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      placeholder: {
-        type: String,
-        defaultValue: ""
-      },
-      /**
-       * Defines if the user input will be prevented, if no matching item has been found
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      allowCustomValues: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the component is in disabled state.
-       * <br><br>
-       * <b>Note:</b> A disabled component is completely noninteractive.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Defines the value state of the component.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>None</code></li>
-       * <li><code>Error</code></li>
-       * <li><code>Warning</code></li>
-       * <li><code>Success</code></li>
-       * <li><code>Information</code></li>
-       * </ul>
-       *
-       * @type {ValueState}
-       * @defaultvalue "None"
-       * @public
-       */
-      valueState: {
-        type: _ValueState.default,
-        defaultValue: _ValueState.default.None
-      },
-      /**
-       * Defines whether the component is read-only.
-       * <br><br>
-       * <b>Note:</b> A read-only component is not editable,
-       * but still provides visual feedback upon user interaction.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      readonly: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the component is required.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       * @since 1.0.0-rc.5
-       */
-      required: {
-        type: Boolean
-      },
-      /**
-       * Defines the filter type of the component.
-       * Available options are: <code>StartsWithPerTerm</code>, <code>StartsWith</code>, <code>Contains</code> and <code>None</code>.
-       *
-       * @type {string}
-       * @defaultvalue "StartsWithPerTerm"
-       * @public
-       */
-      filter: {
-        type: String,
-        defaultValue: "StartsWithPerTerm"
-      },
-      /**
-       * Indicates whether the dropdown is open. True if the dropdown is open, false otherwise.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @readonly
-       * @since 1.0.0-rc.5
-       * @public
-       */
-      open: {
-        type: Boolean
-      },
-      /**
-       * Defines the accessible aria name of the component.
-       *
-       * @type {string}
-       * @defaultvalue: ""
-       * @public
-       * @since 1.4.0
-       */
-      accessibleName: {
-        type: String,
-        defaultValue: undefined
-      },
-      /**
-       * Receives id(or many ids) of the elements that label the component.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       * @since 1.4.0
-       */
-      accessibleNameRef: {
-        type: String,
-        defaultValue: ""
-      },
-      _filteredItems: {
-        type: Object
-      },
-      filterSelected: {
-        type: Boolean
-      },
-      focused: {
-        type: Boolean
-      },
-      _tokenizerFocused: {
-        type: Boolean
-      },
-      _iconPressed: {
-        type: Boolean,
-        noAttribute: true
-      },
-      _inputWidth: {
-        type: _Integer.default,
-        noAttribute: true
-      },
-      _listWidth: {
-        type: _Integer.default,
-        defaultValue: 0,
-        noAttribute: true
-      },
-      _performingSelectionTwice: {
-        type: Boolean
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.MultiComboBox.prototype */{
-      /**
-       * Fired when the input operation has finished by pressing Enter or on focusout.
-       *
-       * @event
-       * @public
-       */
-      change: {},
-      /**
-       * Fired when the value of the component changes at each keystroke.
-       *
-       * @event
-       * @public
-       */
-      input: {},
-      /**
-       * Fired when the dropdown is opened or closed.
-       *
-       * @event sap.ui.webcomponents.main.MultiComboBox#open-change
-       * @since 1.0.0-rc.5
-       * @public
-       */
-      "open-change": {},
-      /**
-       * Fired when selection is changed by user interaction
-       * in <code>SingleSelect</code> and <code>MultiSelect</code> modes.
-       *
-       * @event sap.ui.webcomponents.main.MultiComboBox#selection-change
-       * @param {Array} items an array of the selected items.
-       * @public
-       */
-      "selection-change": {
-        detail: {
-          items: {
-            type: Array
-          }
-        }
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var MultiComboBox_1;
   /**
    * @class
    *
@@ -316,8 +58,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * <h3>Structure</h3>
    * The <code>ui5-multi-combobox</code> consists of the following elements:
    * <ul>
-   * <li> Tokenizer - a list of tokens with selected options.
-   * <li> Input field - displays the selected option/s as token/s. Users can type to filter the list.
+   * <li> Tokenizer - a list of tokens with selected options.</li>
+   * <li> Input field - displays the selected option/s as token/s. Users can type to filter the list.</li>
    * <li> Drop-down arrow - expands\collapses the option list.</li>
    * <li> Option list - the list of available options.</li>
    * </ul>
@@ -355,45 +97,26 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.MultiComboBox
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.MultiComboBox
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-multi-combobox
    * @public
-   * @appenddocs MultiComboBoxItem MultiComboBoxGroupItem
+   * @appenddocs sap.ui.webc.main.MultiComboBoxItem sap.ui.webc.main.MultiComboBoxGroupItem
    * @since 0.11.0
    */
-  class MultiComboBox extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _MultiComboBoxTemplate.default;
-    }
-    static get staticAreaTemplate() {
-      return _MultiComboBoxPopoverTemplate.default;
-    }
-    static get styles() {
-      return _MultiComboBox.default;
-    }
-    static get staticAreaStyles() {
-      return [_ResponsivePopoverCommon.default, _ValueStateMessage.default, _Suggestions.default, _MultiComboBoxPopover.default];
-    }
-    static get dependencies() {
-      return [_MultiComboBoxItem.default, _MultiComboBoxGroupItem.default, _Tokenizer.default, _Token.default, _Icon.default, _ResponsivePopover.default, _Popover.default, _List.default, _StandardListItem.default, _ToggleButton.default, _Button.default];
-    }
+  let MultiComboBox = MultiComboBox_1 = class MultiComboBox extends _UI5Element.default {
     constructor() {
       super();
       this._filteredItems = [];
       this.selectedValues = [];
+      this._itemsBeforeOpen = [];
       this._inputLastValue = "";
       this._valueBeforeOpen = "";
       this._deleting = false;
       this._validationTimeout = null;
       this._handleResizeBound = this._handleResize.bind(this);
       this.valueBeforeAutoComplete = "";
+      this._lastValue = "";
       this.currentItemIdx = -1;
       this.FormSupport = undefined;
     }
@@ -410,21 +133,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.fireEvent("change");
     }
     togglePopover() {
-      this.allItemsPopover.toggle(this);
+      this.allItemsPopover?.toggle(this);
     }
     togglePopoverByDropdownIcon() {
       this._shouldFilterItems = false;
-      this.allItemsPopover.toggle(this);
+      this.allItemsPopover?.toggle(this);
     }
     _showFilteredItems() {
       this.filterSelected = true;
       this._showMorePressed = true;
       this.togglePopover();
     }
-    filterSelectedItems(event) {
-      this.filterSelected = event.target.pressed;
+    filterSelectedItems(e) {
+      this.filterSelected = e.target.pressed;
       const selectedItems = this._filteredItems.filter(item => item.selected);
-      this.selectedItems = this.items.filter((item, idx, allItems) => MultiComboBox._groupItemFilter(item, ++idx, allItems, selectedItems) || selectedItems.indexOf(item) !== -1);
+      this.selectedItems = this.items.filter((item, idx, allItems) => MultiComboBox_1._groupItemFilter(item, ++idx, allItems, selectedItems) || selectedItems.indexOf(item) !== -1);
     }
     get _showAllItemsButtonPressed() {
       return this.filterSelected;
@@ -432,8 +155,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get _inputDom() {
       return this.shadowRoot.querySelector("#ui5-multi-combobox-input");
     }
-    _inputLiveChange(event) {
-      const input = event.target;
+    _inputLiveChange(e) {
+      const input = e.target;
       const value = input.value;
       const filteredItems = this._filterItems(value);
       const oldValueState = this.valueState;
@@ -447,7 +170,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       if (!filteredItems.length && value && !this.allowCustomValues) {
         input.value = this.valueBeforeAutoComplete || this._inputLastValue;
-        this.valueState = "Error";
+        this.valueState = _ValueState.default.Error;
         this._shouldAutocomplete = false;
         this._resetValueState(oldValueState);
         return;
@@ -457,18 +180,19 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._filteredItems = filteredItems;
       if (!(0, _Device.isPhone)()) {
         if (filteredItems.length === 0) {
-          this.allItemsPopover.close();
+          this.allItemsPopover?.close();
         } else {
-          this.allItemsPopover.showAt(this);
+          this.allItemsPopover?.showAt(this);
         }
       }
       this.fireEvent("input");
     }
-    _tokenDelete(event) {
-      const token = event.detail.ref;
+    _tokenDelete(e) {
+      const token = e.detail.ref;
       const deletingItem = this.items.find(item => item._id === token.getAttribute("data-ui5-id"));
       deletingItem.selected = false;
       this._deleting = true;
+      this._preventTokenizerToggle = true;
       this.fireSelectionChange();
     }
     get _getPlaceholder() {
@@ -478,28 +202,30 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this.placeholder;
     }
     _handleArrowLeft() {
-      const cursorPosition = this.getDomRef().querySelector(`input`).selectionStart;
-      const isTextSelected = this.getDomRef().querySelector(`input`).selectionEnd - cursorPosition > 0;
+      const inputDomRef = this._inputDom;
+      const cursorPosition = inputDomRef.selectionStart || 0;
+      const isTextSelected = (inputDomRef.selectionEnd || 0) - cursorPosition > 0;
       if (cursorPosition === 0 && !isTextSelected) {
         this._tokenizer._focusLastToken();
       }
     }
-    _tokenizerFocusOut(event) {
+    _tokenizerFocusOut(e) {
       this._tokenizerFocused = false;
       const tokensCount = this._tokenizer.tokens.length;
       const selectedTokens = this._selectedTokensCount;
       const lastTokenBeingDeleted = tokensCount - 1 === 0 && this._deleting;
       const allTokensAreBeingDeleted = selectedTokens === tokensCount && this._deleting;
-      if (!event.relatedTarget || !event.relatedTarget.hasAttribute("ui5-token")) {
+      const relatedTarget = e.relatedTarget;
+      if (!relatedTarget || !relatedTarget.hasAttribute("ui5-token")) {
         this._tokenizer.tokens.forEach(token => {
           token.selected = false;
         });
-        this._tokenizer.scrollToStart();
+        this._tokenizer.expanded = this._preventTokenizerToggle ? this._tokenizer.expanded : false;
       }
       if (allTokensAreBeingDeleted || lastTokenBeingDeleted) {
         setTimeout(() => {
           if (!(0, _Device.isPhone)()) {
-            this.shadowRoot.querySelector("input").focus();
+            this._inputDom.focus();
           }
           this._deleting = false;
         }, 0);
@@ -509,41 +235,45 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._tokenizerFocused = true;
       this.focused = false;
     }
-    async _onkeydown(event) {
-      const isArrowDownCtrl = (0, _Keys.isDownCtrl)(event);
-      if ((0, _Keys.isShow)(event) && !this.disabled) {
-        this._handleShow(event);
+    _onkeydown(e) {
+      const isArrowDownCtrl = (0, _Keys.isDownCtrl)(e);
+      if ((0, _Keys.isShow)(e) && !this.disabled) {
+        this._handleShow(e);
         return;
       }
-      if ((0, _Keys.isDownShift)(event) || (0, _Keys.isUpShift)(event)) {
-        event.preventDefault();
+      if ((0, _Keys.isDownShift)(e) || (0, _Keys.isUpShift)(e)) {
+        e.preventDefault();
         return;
       }
-      if ((0, _Keys.isUp)(event) || (0, _Keys.isDown)(event) || (0, _Keys.isUpCtrl)(event) || isArrowDownCtrl) {
-        this._handleArrowNavigation(event, isArrowDownCtrl);
+      if ((0, _Keys.isUp)(e) || (0, _Keys.isDown)(e) || (0, _Keys.isUpCtrl)(e) || isArrowDownCtrl) {
+        this._handleArrowNavigation(e, isArrowDownCtrl);
         return;
       }
-
       // CTRL + Arrow Down navigation is performed by the ItemNavigation module of the List,
       // here we only implement the text selection of the selected item
-      if (isArrowDownCtrl && !this.allItemsPopover.opened) {
+      if (isArrowDownCtrl && !this.allItemsPopover?.opened) {
         setTimeout(() => this._inputDom.setSelectionRange(0, this._inputDom.value.length), 0);
       }
-      if ((0, _Keys.isLeftCtrl)(event) || (0, _Keys.isRightCtrl)(event)) {
-        this._handleArrowCtrl(event);
+      if ((0, _Keys.isLeftCtrl)(e) || (0, _Keys.isRightCtrl)(e)) {
+        this._handleArrowCtrl(e);
         return;
       }
-      if ((0, _Keys.isCtrlV)(event) || (0, _Keys.isInsertShift)(event)) {
-        this._handlePaste(event);
+      if ((0, _Keys.isCtrlV)(e) || (0, _Keys.isInsertShift)(e)) {
+        this._handlePaste();
         return;
       }
-      if ((0, _Keys.isSpaceShift)(event)) {
-        event.preventDefault();
+      if ((0, _Keys.isSpaceShift)(e)) {
+        e.preventDefault();
       }
-      this[`_handle${event.key}`] && this[`_handle${event.key}`](event);
-      this._shouldAutocomplete = !this.noTypeahead && !((0, _Keys.isBackSpace)(event) || (0, _Keys.isDelete)(event) || (0, _Keys.isEscape)(event) || (0, _Keys.isEnter)(event));
+      if (e.key === "ArrowLeft" || e.key === "Show" || e.key === "PageUp" || e.key === "PageDown" || e.key === "Backspace" || e.key === "Escape" || e.key === "Home" || e.key === "End" || e.key === "Tab" || e.key === "ArrowDown" || e.key === "Enter") {
+        this[`_handle${e.key}`](e);
+      }
+      this._shouldAutocomplete = !this.noTypeahead && !((0, _Keys.isBackSpace)(e) || (0, _Keys.isDelete)(e) || (0, _Keys.isEscape)(e) || (0, _Keys.isEnter)(e));
     }
-    async _handlePaste(event) {
+    async _handlePaste() {
+      if (this.readonly) {
+        return;
+      }
       const pastedText = await navigator.clipboard.readText();
       if (!pastedText) {
         return;
@@ -561,7 +291,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.fireEvent("input");
       }
     }
-    _handleShow(event) {
+    _handleShow(e) {
       const items = this.items;
       const selectedItem = this._getSelectedItems()[0];
       const focusedToken = this._tokenizer.tokens.find(token => token.focused);
@@ -569,7 +299,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const matchingItem = this.items.find(item => item.text.localeCompare(value, undefined, {
         sensitivity: "base"
       }) === 0);
-      event.preventDefault();
+      e.preventDefault();
       if (this.readonly) {
         return;
       }
@@ -583,27 +313,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       if (selectedItem && !focusedToken) {
         this._itemToFocus = selectedItem;
-      } else if (focusedToken && event.target === focusedToken) {
+      } else if (focusedToken && e.target === focusedToken) {
         this._itemToFocus = items.find(item => item.text === focusedToken.text);
       } else {
         this._itemToFocus = items[0];
       }
     }
-    _handlePageUp(event) {
-      event.preventDefault();
+    _handlePageUp(e) {
+      e.preventDefault();
     }
-    _handlePageDown(event) {
-      event.preventDefault();
+    _handlePageDown(e) {
+      e.preventDefault();
     }
-    _handleBackspace(event) {
-      if (event.target.value === "") {
-        event.preventDefault();
+    _handleBackspace(e) {
+      if (e.target.value === "") {
+        e.preventDefault();
         this._tokenizer._focusLastToken();
       }
     }
-    _handleEscape(event) {
+    _handleEscape() {
       const innerInput = this._innerInput;
-      const isAutoCompleted = innerInput.selectionEnd - innerInput.selectionStart > 0;
+      const isAutoCompleted = (innerInput.selectionEnd || 0) - (innerInput.selectionStart || 0) > 0;
       if (isAutoCompleted) {
         this.value = this.valueBeforeAutoComplete;
       }
@@ -611,26 +341,26 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.value = this._lastValue;
       }
     }
-    _handleHome(event) {
-      const shouldFocusToken = this._isFocusInside && event.target.selectionStart === 0 && this._tokenizer.tokens.length > 0;
+    _handleHome(e) {
+      const shouldFocusToken = this._isFocusInside && e.target.selectionStart === 0 && this._tokenizer.tokens.length > 0;
       if (shouldFocusToken) {
-        event.preventDefault();
+        e.preventDefault();
         this._tokenizer.tokens[0].focus();
       }
     }
-    _handleEnd(event) {
+    _handleEnd(e) {
       const tokens = this._tokenizer.tokens;
       const lastTokenIdx = tokens.length - 1;
-      const shouldFocusInput = event.target === tokens[lastTokenIdx] && tokens[lastTokenIdx] === this.shadowRoot.activeElement;
+      const shouldFocusInput = e.target === tokens[lastTokenIdx] && tokens[lastTokenIdx] === this.shadowRoot.activeElement;
       if (shouldFocusInput) {
-        event.preventDefault();
+        e.preventDefault();
         this._inputDom.focus();
       }
     }
-    _handleTab(event) {
-      this.allItemsPopover.close();
+    _handleTab() {
+      this.allItemsPopover?.close();
     }
-    _handleSelectAll(event) {
+    _handleSelectAll() {
       const filteredItems = this._filteredItems;
       const allItemsSelected = filteredItems.every(item => item.selected);
       filteredItems.forEach(item => {
@@ -638,61 +368,61 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       });
       this.fireSelectionChange();
     }
-    _onValueStateKeydown(event) {
-      const isArrowDown = (0, _Keys.isDown)(event);
-      const isArrowUp = (0, _Keys.isUp)(event);
-      if ((0, _Keys.isTabNext)(event) || (0, _Keys.isTabPrevious)(event)) {
-        this._onItemTab(event);
+    _onValueStateKeydown(e) {
+      const isArrowDown = (0, _Keys.isDown)(e);
+      const isArrowUp = (0, _Keys.isUp)(e);
+      if ((0, _Keys.isTabNext)(e) || (0, _Keys.isTabPrevious)(e)) {
+        this._onItemTab();
         return;
       }
-      event.preventDefault();
-      if (isArrowDown || (0, _Keys.isDownCtrl)(event)) {
-        this._handleArrowDown(event);
+      e.preventDefault();
+      if (isArrowDown || (0, _Keys.isDownCtrl)(e)) {
+        this._handleArrowDown();
       }
-      if (isArrowUp || (0, _Keys.isUpCtrl)(event)) {
+      if (isArrowUp || (0, _Keys.isUpCtrl)(e)) {
         this._shouldAutocomplete = true;
         this._inputDom.focus();
       }
     }
-    async _onItemKeydown(event) {
-      const isFirstItem = this.list.items[0] === event.target;
-      const isArrowUp = (0, _Keys.isUp)(event) || (0, _Keys.isUpCtrl)(event);
+    async _onItemKeydown(e) {
+      const isFirstItem = this.list?.items[0] === e.target;
+      const isArrowUp = (0, _Keys.isUp)(e) || (0, _Keys.isUpCtrl)(e);
       if (this.hasValueStateMessage && !this.valueStateHeader) {
         await this._setValueStateHeader();
       }
-      if ((0, _Keys.isTabNext)(event) || (0, _Keys.isTabPrevious)(event)) {
-        this._onItemTab(event);
+      if ((0, _Keys.isTabNext)(e) || (0, _Keys.isTabPrevious)(e)) {
+        this._onItemTab();
         return;
       }
-      if ((0, _Keys.isHomeCtrl)(event)) {
-        this.list._itemNavigation._handleHome(event);
-        this.list.items[this.list._itemNavigation._currentIndex].focus();
+      if ((0, _Keys.isHomeCtrl)(e)) {
+        this.list?._itemNavigation._handleHome();
+        this.list?.items[this.list?._itemNavigation._currentIndex].focus();
       }
-      if ((0, _Keys.isEndCtrl)(event)) {
-        this.list._itemNavigation._handleEnd(event);
-        this.list.items[this.list._itemNavigation._currentIndex].focus();
+      if ((0, _Keys.isEndCtrl)(e)) {
+        this.list?._itemNavigation._handleEnd();
+        this.list?.items[this.list?._itemNavigation._currentIndex].focus();
       }
-      event.preventDefault();
-      if ((0, _Keys.isDownShift)(event) || (0, _Keys.isUpShift)(event)) {
-        this._handleItemRangeSelection(event);
+      e.preventDefault();
+      if ((0, _Keys.isDownShift)(e) || (0, _Keys.isUpShift)(e)) {
+        this._handleItemRangeSelection(e);
         return;
       }
-      if ((0, _Keys.isUpCtrl)(event) && !isFirstItem) {
-        this.list._itemNavigation._handleUp(event);
-        this.list.items[this.list._itemNavigation._currentIndex].focus();
+      if ((0, _Keys.isUpCtrl)(e) && !isFirstItem) {
+        this.list?._itemNavigation._handleUp();
+        this.list?.items[this.list?._itemNavigation._currentIndex].focus();
       }
-      if ((0, _Keys.isDownCtrl)(event)) {
-        this.list._itemNavigation._handleDown(event);
-        this.list.items[this.list._itemNavigation._currentIndex].focus();
+      if ((0, _Keys.isDownCtrl)(e)) {
+        this.list?._itemNavigation._handleDown();
+        this.list?.items[this.list?._itemNavigation._currentIndex].focus();
       }
-      if ((0, _Keys.isShow)(event)) {
+      if ((0, _Keys.isShow)(e)) {
         this.togglePopover();
       }
-      if ((0, _Keys.isCtrlA)(event)) {
-        this._handleSelectAll(event);
+      if ((0, _Keys.isCtrlA)(e)) {
+        this._handleSelectAll();
         return;
       }
-      if ((isArrowUp && isFirstItem || (0, _Keys.isHome)(event)) && this.valueStateHeader) {
+      if ((isArrowUp && isFirstItem || (0, _Keys.isHome)(e)) && this.valueStateHeader) {
         this.valueStateHeader.focus();
       }
       if (!this.valueStateHeader && isFirstItem && isArrowUp) {
@@ -700,25 +430,25 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this._shouldAutocomplete = true;
       }
     }
-    _handleArrowCtrl(event) {
+    _handleArrowCtrl(e) {
       const input = this._inputDom;
-      const isArrowLeft = (0, _Keys.isLeftCtrl)(event);
+      const isArrowLeft = (0, _Keys.isLeftCtrl)(e);
       if (isArrowLeft && input.selectionStart === 0 && input.selectionEnd === 0) {
-        event.preventDefault();
+        e.preventDefault();
       }
-      if (isArrowLeft && input.selectionEnd - input.selectionStart > 0) {
+      if (isArrowLeft && (input.selectionEnd || 0) - (input.selectionStart || 0) > 0) {
         input.setSelectionRange(0, 0);
       }
     }
-    _onItemTab(event) {
+    _onItemTab() {
       this._inputDom.focus();
-      this.allItemsPopover.close();
+      this.allItemsPopover?.close();
     }
-    async _handleArrowNavigation(event, isDownControl) {
-      const isArrowDown = isDownControl || (0, _Keys.isDown)(event);
+    async _handleArrowNavigation(e, isDownControl) {
+      const isArrowDown = isDownControl || (0, _Keys.isDown)(e);
       const hasSuggestions = this.items.length;
-      const isOpen = this.allItemsPopover.opened;
-      event.preventDefault();
+      const isOpen = this.allItemsPopover?.opened;
+      e.preventDefault();
       if (this.hasValueStateMessage && !this.valueStateHeader) {
         await this._setValueStateHeader();
       }
@@ -728,34 +458,34 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         return;
       }
       if (isArrowDown && hasSuggestions) {
-        this._handleArrowDown(event);
+        this._handleArrowDown();
       }
       if (!isArrowDown && !isOpen && !this.readonly) {
         this._navigateToPrevItem();
       }
     }
-    _handleArrowDown(event) {
-      const isOpen = this.allItemsPopover.opened;
-      const firstListItem = this.list.items[0];
+    _handleArrowDown() {
+      const isOpen = this.allItemsPopover?.opened;
+      const firstListItem = this.list?.items[0];
       if (isOpen) {
-        this.list._itemNavigation.setCurrentItem(firstListItem);
+        firstListItem && this.list?._itemNavigation.setCurrentItem(firstListItem);
         this.value = this.valueBeforeAutoComplete || this.value;
-        firstListItem.focus();
+        firstListItem?.focus();
       } else if (!this.readonly) {
         this._navigateToNextItem();
       }
     }
-    _handleItemRangeSelection(event) {
+    _handleItemRangeSelection(e) {
       const items = this.items;
-      const listItems = this.list.items;
-      const currentItemIdx = listItems.indexOf(event.target);
+      const listItems = this.list?.items;
+      const currentItemIdx = listItems?.indexOf(e.target) || -1;
       const nextItemIdx = currentItemIdx + 1;
       const prevItemIdx = currentItemIdx - 1;
-      if ((0, _Keys.isDownShift)(event) && items[nextItemIdx]) {
+      if ((0, _Keys.isDownShift)(e) && items[nextItemIdx]) {
         items[nextItemIdx].selected = items[currentItemIdx].selected;
         items[nextItemIdx].focus();
       }
-      if ((0, _Keys.isUpShift)(event) && items[prevItemIdx]) {
+      if ((0, _Keys.isUpShift)(e) && items[prevItemIdx]) {
         items[prevItemIdx].selected = items[currentItemIdx].selected;
         items[prevItemIdx].focus();
       }
@@ -813,7 +543,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     _handleEnter() {
       const lowerCaseValue = this.value.toLowerCase();
-      const matchingItem = this.items.find(item => item.text.toLowerCase() === lowerCaseValue);
+      const matchingItem = this.items.find(item => item.text.toLowerCase() === lowerCaseValue && !item.isGroupItem);
       const oldValueState = this.valueState;
       const innerInput = this._innerInput;
       if (this.FormSupport) {
@@ -824,7 +554,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           if (this._validationTimeout) {
             return;
           }
-          this.valueState = "Error";
+          this.valueState = _ValueState.default.Error;
           this._performingSelectionTwice = true;
           this._resetValueState(oldValueState, () => {
             this._performingSelectionTwice = false;
@@ -835,7 +565,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           this.fireSelectionChange();
         }
         innerInput.setSelectionRange(matchingItem.text.length, matchingItem.text.length);
-        this.allItemsPopover.close();
+        this.allItemsPopover?.close();
       }
     }
     _resetValueState(valueState, callback) {
@@ -845,51 +575,50 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         callback && callback();
       }, 2000);
     }
-    _onTokenizerKeydown(event) {
-      const isCtrl = !!(event.metaKey || event.ctrlKey);
-      if ((0, _Keys.isRight)(event)) {
-        const lastTokenIndex = this._tokenizer.tokens.length - 1;
-        if (event.target === this._tokenizer.tokens[lastTokenIndex]) {
+    _onTokenizerKeydown(e) {
+      const isCtrl = !!(e.metaKey || e.ctrlKey);
+      if ((0, _Keys.isRight)(e)) {
+        const lastTokenIndex = this._tokenizer.tokens.length - this._tokenizer.overflownTokens.length - 1;
+        if (e.target === this._tokenizer.tokens[lastTokenIndex]) {
           setTimeout(() => {
-            this.shadowRoot.querySelector("input").focus();
+            this._inputDom.focus();
           }, 0);
         }
       }
-      if (isCtrl && ["c", "x"].includes(event.key.toLowerCase()) || (0, _Keys.isDeleteShift)(event) || (0, _Keys.isInsertCtrl)(event)) {
-        event.preventDefault();
-        const isCut = event.key.toLowerCase() === "x" || (0, _Keys.isDeleteShift)(event);
+      if (isCtrl && ["c", "x"].includes(e.key.toLowerCase()) || (0, _Keys.isDeleteShift)(e) || (0, _Keys.isInsertCtrl)(e)) {
+        e.preventDefault();
+        const isCut = e.key.toLowerCase() === "x" || (0, _Keys.isDeleteShift)(e);
         const selectedTokens = this._tokenizer.tokens.filter(token => token.selected);
         if (isCut) {
-          const cutResult = this._tokenizer._fillClipboard("cut", selectedTokens);
+          const cutResult = this._tokenizer._fillClipboard(_Tokenizer.ClipboardDataOperation.cut, selectedTokens);
           selectedTokens.forEach(token => {
-            this._tokenizer._tokenDelete(event, token);
+            this._tokenizer.deleteToken(token);
           });
           this.focus();
           return cutResult;
         }
-        return this._tokenizer._fillClipboard("copy", selectedTokens);
+        return this._tokenizer._fillClipboard(_Tokenizer.ClipboardDataOperation.copy, selectedTokens);
       }
-      if ((0, _Keys.isCtrlV)(event) || (0, _Keys.isInsertShift)(event)) {
-        this._handlePaste(event);
+      if ((0, _Keys.isCtrlV)(e) || (0, _Keys.isInsertShift)(e)) {
+        this._handlePaste();
       }
-      if ((0, _Keys.isHome)(event)) {
-        this._handleHome(event);
+      if ((0, _Keys.isHome)(e)) {
+        this._handleHome(e);
       }
-      if ((0, _Keys.isEnd)(event)) {
-        this._handleEnd(event);
+      if ((0, _Keys.isEnd)(e)) {
+        this._handleEnd(e);
       }
-      if ((0, _Keys.isShow)(event) && !this.readonly && !this.disabled) {
-        this._handleShow(event);
+      if ((0, _Keys.isShow)(e) && !this.readonly && !this.disabled) {
+        this._preventTokenizerToggle = true;
+        this._handleShow(e);
       }
     }
     _filterItems(str) {
       const itemsToFilter = this.items.filter(item => !item.isGroupItem);
       const filteredItems = (Filters[this.filter] || Filters.StartsWithPerTerm)(str, itemsToFilter, "text");
-
       // Return the filtered items and their group items
-      return this.items.filter((item, idx, allItems) => MultiComboBox._groupItemFilter(item, ++idx, allItems, filteredItems) || filteredItems.indexOf(item) !== -1);
+      return this.items.filter((item, idx, allItems) => MultiComboBox_1._groupItemFilter(item, ++idx, allItems, filteredItems) || filteredItems.indexOf(item) !== -1);
     }
-
     /**
      * Returns true if the group header should be shown (if there is a filtered suggestion item for this group item)
      *
@@ -910,9 +639,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (!(0, _Device.isPhone)() && !this._isOpenedByKeyboard) {
         this._innerInput.focus();
       } else if (this._isOpenedByKeyboard) {
-        this._itemToFocus.focus();
+        this._itemToFocus?.focus();
       } else {
-        this.allItemsPopover.focus();
+        this.allItemsPopover?.focus();
       }
       this._isOpenedByKeyboard = false;
     }
@@ -925,18 +654,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.selectedValues = this.items.filter(item => item.selected);
       return this.selectedValues;
     }
-    _listSelectionChange(event) {
+    _listSelectionChange(e) {
       // sync list items and cb items
-      this.syncItems(event.target.items);
-
+      this.syncItems(e.target.items);
       // don't call selection change right after selection as user can cancel it on phone
       if (!(0, _Device.isPhone)()) {
         this.fireSelectionChange();
       }
-      if (!event.detail.selectionComponentPressed && !(0, _Keys.isSpace)(event.detail) && !(0, _Keys.isSpaceCtrl)(event.detail)) {
-        this.allItemsPopover.close();
+      // casted to KeyboardEvent since isSpace and isSpaceCtrl accepts KeyboardEvent only
+      const castedEvent = {
+        key: e.detail.key
+      };
+      if (!e.detail.selectionComponentPressed && !(0, _Keys.isSpace)(castedEvent) && !(0, _Keys.isSpaceCtrl)(castedEvent)) {
+        this.allItemsPopover?.close();
         this.value = "";
-
         // if the item (not checkbox) is clicked, call the selection change
         if ((0, _Device.isPhone)()) {
           this.fireSelectionChange();
@@ -968,10 +699,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     async _getList() {
       const staticAreaItem = await this.getStaticAreaItemDomRef();
       this.list = staticAreaItem.querySelector(".ui5-multi-combobox-all-items-list");
+      return this.list;
     }
-    _click(event) {
+    _click() {
       if ((0, _Device.isPhone)() && !this.readonly && !this._showMorePressed && !this._deleting) {
-        this.allItemsPopover.showAt(this);
+        this.allItemsPopover?.showAt(this);
       }
       this._showMorePressed = false;
     }
@@ -982,6 +714,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       this._toggle();
       this._iconPressed = false;
+      this._preventTokenizerToggle = false;
       this.filterSelected = false;
     }
     _beforeOpen() {
@@ -994,7 +727,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._valueBeforeOpen = this.value;
       if (this.filterSelected) {
         const selectedItems = this._filteredItems.filter(item => item.selected);
-        this.selectedItems = this.items.filter((item, idx, allItems) => MultiComboBox._groupItemFilter(item, ++idx, allItems, selectedItems) || selectedItems.indexOf(item) !== -1);
+        this.selectedItems = this.items.filter((item, idx, allItems) => MultiComboBox_1._groupItemFilter(item, ++idx, allItems, selectedItems) || selectedItems.indexOf(item) !== -1);
       }
     }
     _handleTypeAhead(item, filterValue) {
@@ -1023,7 +756,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     onBeforeRendering() {
       const input = this._innerInput;
-      const autoCompletedChars = input && input.selectionEnd - input.selectionStart;
+      const autoCompletedChars = input && (input.selectionEnd || 0) - (input.selectionStart || 0);
       const value = input && input.value;
       this.FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
       this._inputLastValue = value;
@@ -1034,18 +767,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.items.forEach(item => {
         item._getRealDomRef = () => this.allItemsPopover.querySelector(`*[data-ui5-stable=${item.stableDomRef}]`);
       });
+      this.tokenizerAvailable = this._getSelectedItems().length > 0;
+      this.style.setProperty("--_ui5-input-icons-count", `${this.iconsCount}`);
       if (!input || !value) {
         return;
       }
-
       // Typehead causes issues on Android devices, so we disable it for now
       // If there is already a selection the autocomplete has already been performed
       if (this._shouldAutocomplete && !(0, _Device.isAndroid)() && !autoCompletedChars) {
         const item = this._getFirstMatchingItem(value);
-
         // Keep the original typed in text intact
         this.valueBeforeAutoComplete = value;
-        this._handleTypeAhead(item, value);
+        item && this._handleTypeAhead(item, value);
       }
       if (this._shouldFilterItems) {
         this._filteredItems = this._filterItems(this._shouldAutocomplete || !!autoCompletedChars ? this.valueBeforeAutoComplete : value);
@@ -1059,6 +792,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.toggle(this.shouldDisplayOnlyValueStateMessage);
       this.storeResponsivePopoverWidth();
       this._deleting = false;
+      // force resize of the tokenizer on invalidation
+      this._tokenizer._handleResize();
     }
     get _isPhone() {
       return (0, _Device.isPhone)();
@@ -1080,7 +815,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     handleCancel() {
       this._itemsBeforeOpen.forEach(item => {
-        item.ref.selected = item.selected;
+        if (item.ref instanceof _MultiComboBoxItem.default) {
+          item.ref.selected = item.selected;
+        }
       });
       this.togglePopover();
       this.value = this._valueBeforeOpen;
@@ -1092,17 +829,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.togglePopover();
     }
     async openPopover() {
-      const popover = await this._getPopover();
-      if (popover) {
-        popover.showAt(this);
-      }
+      (await this._getPopover())?.showAt(this);
     }
     _forwardFocusToInner() {
       this._innerInput.focus();
     }
     async closePopover() {
-      const popover = await this._getPopover();
-      popover && popover.close();
+      (await this._getPopover())?.close();
     }
     async _getPopover() {
       const staticAreaItem = await this.getStaticAreaItemDomRef();
@@ -1119,24 +852,25 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get _tokenizer() {
       return this.shadowRoot.querySelector("[ui5-tokenizer]");
     }
-    inputFocusIn(event) {
+    inputFocusIn(e) {
       if (!(0, _Device.isPhone)() || this.readonly) {
         this.focused = true;
+        this._tokenizer.expanded = true;
       } else {
         this._innerInput.blur();
       }
-      if (!(0, _Device.isPhone)() && (event.relatedTarget && event.relatedTarget.tagName !== "UI5-STATIC-AREA-ITEM" || !event.relatedTarget)) {
+      if (!(0, _Device.isPhone)() && (e.relatedTarget?.tagName !== "UI5-STATIC-AREA-ITEM" || !e.relatedTarget)) {
         this._innerInput.setSelectionRange(0, this.value.length);
       }
       this._lastValue = this.value;
       this.valueBeforeAutoComplete = "";
     }
-    inputFocusOut(event) {
-      if (!this.shadowRoot.contains(event.relatedTarget) && !this._deleting) {
+    inputFocusOut(e) {
+      if (!this.shadowRoot.contains(e.relatedTarget) && !this._deleting) {
         this.focused = false;
-
+        this._tokenizer.expanded = this.open;
         // remove the value if user focus out the input and focus is not going in the popover
-        if (!(0, _Device.isPhone)() && !this.allowCustomValues && this.staticAreaItem !== event.relatedTarget) {
+        if (!(0, _Device.isPhone)() && !this.allowCustomValues && this.staticAreaItem !== e.relatedTarget) {
           this.value = "";
         }
       }
@@ -1159,15 +893,30 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get hasValueStateMessage() {
       return this.hasValueState && this.valueState !== _ValueState.default.Success;
     }
-    get valueStateText() {
-      let key = this.valueState;
-      if (this._performingSelectionTwice) {
-        key = "Error_Selection";
+    get ariaValueStateHiddenText() {
+      if (!this.hasValueState) {
+        return;
       }
-      return this.valueStateTextMappings[key];
+      let text = "";
+      if (this.valueState !== _ValueState.default.None) {
+        text = this.valueStateTypeMappings[this.valueState];
+      }
+      if (this.shouldDisplayDefaultValueStateMessage) {
+        return `${text} ${this.valueStateDefaultText || ""}`;
+      }
+      return `${text}`.concat(" ", this.valueStateMessageText.map(el => el.textContent).join(" "));
+    }
+    get valueStateDefaultText() {
+      if (this.valueState === _ValueState.default.None) {
+        return "";
+      }
+      if (this._performingSelectionTwice) {
+        return MultiComboBox_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR_ALREADY_SELECTED);
+      }
+      return this.valueStateTextMappings[this.valueState];
     }
     get valueStateTextId() {
-      return this.hasValueState ? `${this._id}-valueStateDesc` : undefined;
+      return this.hasValueState ? `ui5-multi-combobox-valueStateDesc` : undefined;
     }
     get valueStateMessageText() {
       return this.getSlottedNodes("valueStateMessage").map(el => el.cloneNode(true));
@@ -1175,18 +924,19 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get ariaLabelText() {
       return (0, _AriaLabelHelper.getEffectiveAriaLabelText)(this);
     }
-
     /**
      * This method is relevant for sap_horizon theme only
      */
     get _valueStateMessageIcon() {
-      const iconPerValueState = {
-        Error: "error",
-        Warning: "alert",
-        Success: "sys-enter-2",
-        Information: "information"
-      };
-      return this.valueState !== _ValueState.default.None ? iconPerValueState[this.valueState] : "";
+      if (this.valueState === _ValueState.default.None) {
+        return "";
+      }
+      return {
+        [_ValueState.default.Error]: "error",
+        [_ValueState.default.Warning]: "alert",
+        [_ValueState.default.Success]: "sys-enter-2",
+        [_ValueState.default.Information]: "information"
+      }[this.valueState];
     }
     get _tokensCountText() {
       if (!this._tokenizer) {
@@ -1195,7 +945,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this._tokenizer._tokensCountText();
     }
     get _tokensCountTextId() {
-      return `${this._id}-hiddenText-nMore`;
+      return "ui5-multi-combobox-hiddenText-nMore";
     }
     get _selectedTokensCount() {
       return this._tokenizer.tokens.filter(token => token.selected).length;
@@ -1209,44 +959,64 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get shouldDisplayOnlyValueStateMessage() {
       return this.focused && !this.readonly && this.hasValueStateMessage && !this._iconPressed;
     }
+    get valueStateTypeMappings() {
+      return {
+        [_ValueState.default.Success]: MultiComboBox_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_TYPE_SUCCESS),
+        [_ValueState.default.Information]: MultiComboBox_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_TYPE_INFORMATION),
+        [_ValueState.default.Error]: MultiComboBox_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_TYPE_ERROR),
+        [_ValueState.default.Warning]: MultiComboBox_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_TYPE_WARNING)
+      };
+    }
     get valueStateTextMappings() {
       return {
-        "Success": MultiComboBox.i18nBundle.getText(_i18nDefaults.VALUE_STATE_SUCCESS),
-        "Error": MultiComboBox.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR),
-        "Error_Selection": MultiComboBox.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR_ALREADY_SELECTED),
-        "Warning": MultiComboBox.i18nBundle.getText(_i18nDefaults.VALUE_STATE_WARNING),
-        "Information": MultiComboBox.i18nBundle.getText(_i18nDefaults.VALUE_STATE_INFORMATION)
+        [_ValueState.default.Success]: MultiComboBox_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_SUCCESS),
+        [_ValueState.default.Error]: MultiComboBox_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR),
+        [_ValueState.default.Warning]: MultiComboBox_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_WARNING),
+        [_ValueState.default.Information]: MultiComboBox_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_INFORMATION)
       };
     }
     get _innerInput() {
       if ((0, _Device.isPhone)()) {
-        if (this.allItemsPopover && this.allItemsPopover.opened) {
+        if (this.allItemsPopover?.opened) {
           return this.allItemsPopover.querySelector("input");
         }
       }
-      return this.getDomRef() ? this.getDomRef().querySelector("#ui5-multi-combobox-input") : null;
+      return this._inputDom;
     }
     get _headerTitleText() {
-      return MultiComboBox.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS_TITLE);
+      return MultiComboBox_1.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS_TITLE);
     }
     get _iconAccessibleNameText() {
-      return MultiComboBox.i18nBundle.getText(_i18nDefaults.SELECT_OPTIONS);
+      return MultiComboBox_1.i18nBundle.getText(_i18nDefaults.SELECT_OPTIONS);
     }
     get _dialogOkButton() {
-      return MultiComboBox.i18nBundle.getText(_i18nDefaults.MULTICOMBOBOX_DIALOG_OK_BUTTON);
+      return MultiComboBox_1.i18nBundle.getText(_i18nDefaults.MULTICOMBOBOX_DIALOG_OK_BUTTON);
     }
     get _tokenizerExpanded() {
-      return (this._isFocusInside || this.open) && !this.readonly;
+      if ((0, _Device.isPhone)() || this.readonly) {
+        return false;
+      }
+      if (this._preventTokenizerToggle) {
+        return this._tokenizer.expanded;
+      }
+      const isCurrentlyExpanded = this._tokenizer?.expanded;
+      const shouldBeExpanded = this.focused || this.open || isCurrentlyExpanded;
+      return shouldBeExpanded;
     }
     get _valueStatePopoverHorizontalAlign() {
       return this.effectiveDir !== "rtl" ? "Left" : "Right";
+    }
+    get iconsCount() {
+      const slottedIconsCount = this.icon?.length || 0;
+      const arrowDownIconsCount = this.readonly ? 0 : 1;
+      return slottedIconsCount + arrowDownIconsCount;
     }
     get classes() {
       return {
         popover: {
           "ui5-multi-combobox-all-items-responsive-popover": true,
-          "ui5-suggestions-popover": !this.isPhone,
-          "ui5-suggestions-popover-with-value-state-header": !this.isPhone && this.hasValueStateMessage
+          "ui5-suggestions-popover": true,
+          "ui5-suggestions-popover-with-value-state-header": this.hasValueStateMessage
         },
         popoverValueState: {
           "ui5-valuestatemessage-root": true,
@@ -1262,7 +1032,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const remSizeIxPx = parseInt(getComputedStyle(document.documentElement).fontSize);
       return {
         popoverValueStateMessage: {
-          "width": `${this._listWidth}px`,
+          "width": `${this._listWidth || 0}px`,
           "display": this._listWidth === 0 ? "none" : "inline-block"
         },
         popoverHeader: {
@@ -1275,9 +1045,124 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       };
     }
     static async onDefine() {
-      MultiComboBox.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      MultiComboBox_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-  }
+  };
+  __decorate([(0, _property.default)()], MultiComboBox.prototype, "value", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MultiComboBox.prototype, "noTypeahead", void 0);
+  __decorate([(0, _property.default)()], MultiComboBox.prototype, "placeholder", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MultiComboBox.prototype, "allowCustomValues", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MultiComboBox.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)({
+    type: _ValueState.default,
+    defaultValue: _ValueState.default.None
+  })], MultiComboBox.prototype, "valueState", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MultiComboBox.prototype, "readonly", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MultiComboBox.prototype, "required", void 0);
+  __decorate([(0, _property.default)({
+    type: _ComboBoxFilter.default,
+    defaultValue: _ComboBoxFilter.default.StartsWithPerTerm
+  })], MultiComboBox.prototype, "filter", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MultiComboBox.prototype, "open", void 0);
+  __decorate([(0, _property.default)()], MultiComboBox.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)()], MultiComboBox.prototype, "accessibleNameRef", void 0);
+  __decorate([(0, _property.default)({
+    type: Object,
+    noAttribute: true,
+    multiple: true
+  })], MultiComboBox.prototype, "_filteredItems", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MultiComboBox.prototype, "filterSelected", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MultiComboBox.prototype, "focused", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], MultiComboBox.prototype, "_tokenizerFocused", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], MultiComboBox.prototype, "_iconPressed", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    noAttribute: true
+  })], MultiComboBox.prototype, "_inputWidth", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    noAttribute: true,
+    defaultValue: 0
+  })], MultiComboBox.prototype, "_listWidth", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], MultiComboBox.prototype, "_performingSelectionTwice", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MultiComboBox.prototype, "tokenizerAvailable", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement,
+    "default": true,
+    invalidateOnChildChange: true
+  })], MultiComboBox.prototype, "items", void 0);
+  __decorate([(0, _slot.default)()], MultiComboBox.prototype, "icon", void 0);
+  __decorate([(0, _slot.default)()], MultiComboBox.prototype, "valueStateMessage", void 0);
+  MultiComboBox = MultiComboBox_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-multi-combobox",
+    languageAware: true,
+    renderer: _LitRenderer.default,
+    template: _MultiComboBoxTemplate.default,
+    staticAreaTemplate: _MultiComboBoxPopoverTemplate.default,
+    styles: _MultiComboBox.default,
+    staticAreaStyles: [_ResponsivePopoverCommon.default, _ValueStateMessage.default, _Suggestions.default, _MultiComboBoxPopover.default],
+    dependencies: [_MultiComboBoxItem.default, _MultiComboBoxGroupItem.default, _Tokenizer.default, _Token.default, _Icon.default, _ResponsivePopover.default, _Popover.default, _List.default, _StandardListItem.default, _GroupHeaderListItem.default, _ToggleButton.default, _Button.default]
+  })
+  /**
+   * Fired when the input operation has finished by pressing Enter or on focusout.
+   *
+   * @event sap.ui.webc.main.MultiComboBox#change
+   * @public
+   */, (0, _event.default)("change")
+  /**
+   * Fired when the value of the component changes at each keystroke.
+   *
+   * @event sap.ui.webc.main.MultiComboBox#input
+   * @public
+   */, (0, _event.default)("input")
+  /**
+   * Fired when the dropdown is opened or closed.
+   *
+   * @event sap.ui.webc.main.MultiComboBox#open-change
+   * @since 1.0.0-rc.5
+   * @public
+   */, (0, _event.default)("open-change")
+  /**
+   * Fired when selection is changed by user interaction
+   * in <code>SingleSelect</code> and <code>MultiSelect</code> modes.
+   *
+   * @event sap.ui.webc.main.MultiComboBox#selection-change
+   * @param {Array} items an array of the selected items.
+   * @public
+   */, (0, _event.default)("selection-change", {
+    detail: {
+      items: {
+        type: Array
+      }
+    }
+  })], MultiComboBox);
   MultiComboBox.define();
   var _default = MultiComboBox;
   _exports.default = _default;

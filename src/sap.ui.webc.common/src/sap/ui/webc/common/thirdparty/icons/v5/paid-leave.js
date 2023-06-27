@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "paid-leave";
+  var _default = "SAP-icons-v5/paid-leave";
   _exports.default = _default;
 });

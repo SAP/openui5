@@ -10,6 +10,7 @@ sap.ui.define([
 ], function(WebComponent, library) {
 	"use strict";
 
+	var TabContainerBackgroundDesign = library.TabContainerBackgroundDesign;
 	var TabLayout = library.TabLayout;
 	var TabsOverflowMode = library.TabsOverflowMode;
 
@@ -70,11 +71,27 @@ sap.ui.define([
 				},
 
 				/**
+				 * Sets the background color of the Tab Container's content as <code>Solid</code>, <code>Transparent</code>, or <code>Translucent</code>.
+				 */
+				contentBackgroundDesign: {
+					type: "sap.ui.webc.main.TabContainerBackgroundDesign",
+					defaultValue: TabContainerBackgroundDesign.Solid
+				},
+
+				/**
 				 * Defines whether the tabs are in a fixed state that is not expandable/collapsible by user interaction.
 				 */
 				fixed: {
 					type: "boolean",
 					defaultValue: false
+				},
+
+				/**
+				 * Sets the background color of the Tab Container's header as <code>Solid</code>, <code>Transparent</code>, or <code>Translucent</code>.
+				 */
+				headerBackgroundDesign: {
+					type: "sap.ui.webc.main.TabContainerBackgroundDesign",
+					defaultValue: TabContainerBackgroundDesign.Solid
 				},
 
 				/**
@@ -100,7 +117,7 @@ sap.ui.define([
 				 *
 				 * <br>
 				 * <br>
-				 * <b>Note:</b> The content and the <code>additionalText</code> would be displayed vertically by defualt, but when set to <code>Inline</code>, they would be displayed horizontally.
+				 * <b>Note:</b> The content and the <code>additionalText</code> would be displayed vertically by default, but when set to <code>Inline</code>, they would be displayed horizontally.
 				 *
 				 * <br>
 				 * <br>
@@ -116,7 +133,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the overflow mode of the tab strip. If you have a large number of tabs, only the tabs that can fit on screen will be visible. All other tabs that can 't fit on the screen are available in an overflow tab "More".
+				 * Defines the overflow mode of the header (the tab strip). If you have a large number of tabs, only the tabs that can fit on screen will be visible. All other tabs that can 't fit on the screen are available in an overflow tab "More".
 				 *
 				 * <br>
 				 * <br>
@@ -180,6 +197,7 @@ sap.ui.define([
 				 * Fired when a tab is selected.
 				 */
 				tabSelect: {
+					allowPreventDefault: true,
 					parameters: {
 						/**
 						 * The selected <code>tab</code>.
@@ -189,7 +207,7 @@ sap.ui.define([
 						},
 
 						/**
-						 * The selected <code>tab</code> index.
+						 * The selected <code>tab</code> index in the flattened array of all tabs and their subTabs, provided by the <code>allItems</code> getter.
 						 */
 						tabIndex: {
 							type: "int"
@@ -197,9 +215,27 @@ sap.ui.define([
 					}
 				}
 			},
+			getters: ["allItems"],
 			designtime: "sap/ui/webc/main/designtime/TabContainer.designtime"
 		}
 	});
+
+	/**
+		* Returns all slotted tabs and their subTabs in a flattened array. The order of tabs is depth-first. For example, given the following slotted elements: <pre><code>
+	&lt;ui5-tabcontainer&gt;
+		&lt;ui5-tab id="First" text="First"&gt;
+			...
+			&lt;ui5-tab slot="subTabs" id="Nested" text="Nested"&gt;...&lt;/ui5-tab&gt;
+		&lt;/ui5-tab&gt;
+		&lt;ui5-tab id="Second" text="Second"&gt;...&lt;/ui5-tab&gt;
+		&lt;ui5-tab-separator id="sep"&gt;&lt;/ui5-tab-separator&gt;
+		&lt;ui5-tab id="Third" text="Third"&gt;...&lt;/ui5-tab&gt;
+	&lt;/ui5-tabcontainer&gt;
+</code></pre> Calling <code>allItems</code> on this TabContainer will return the instances in the following order: <code>[ ui5-tab#First, ui5-tab#Nested, ui5-tab#Second, ui5-tab-separator#sep, ui5-tab#Third ]</code>
+		* @public
+		* @name sap.ui.webc.main.TabContainer#getAllItems
+		* @function
+		*/
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v2/auto-layout", "./v3/auto-layout"], function (_exports, _Theme, _autoLayout, _autoLayout2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "auto-layout";
-  const pathData = "M32 288V32h208v256H32zm240-64h208v256H272V224zM480 32v160H272V32h208zM32 320h208v160H32V320z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "tnt";
-  const packageName = "@ui5/webcomponents-icons-tnt";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _autoLayout.accData;
+    }
   });
-  var _default = "auto-layout";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _autoLayout.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _autoLayout.pathData : _autoLayout2.pathData;
+  _exports.pathData = pathData;
+  var _default = "tnt/auto-layout";
   _exports.default = _default;
 });

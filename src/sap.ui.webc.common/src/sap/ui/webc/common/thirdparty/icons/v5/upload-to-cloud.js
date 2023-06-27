@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "upload-to-cloud";
+  var _default = "SAP-icons-v5/upload-to-cloud";
   _exports.default = _default;
 });

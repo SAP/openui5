@@ -78,10 +78,11 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the accessible aria name of the component.
+				 * Defines the accessible ARIA name of the component.
 				 */
 				accessibleName: {
-					type: "string"
+					type: "string",
+					defaultValue: undefined
 				},
 
 				/**

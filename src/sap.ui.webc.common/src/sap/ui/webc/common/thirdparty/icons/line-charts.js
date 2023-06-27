@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/line-charts", "./v4/line-charts"], function (_exports, _Theme, _lineCharts, _lineCharts2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/line-charts", "./v5/line-charts"], function (_exports, _Theme, _lineCharts, _lineCharts2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _lineCharts.pathData : _lineCharts2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _lineCharts.pathData : _lineCharts2.pathData;
   _exports.pathData = pathData;
   var _default = "line-charts";
   _exports.default = _default;

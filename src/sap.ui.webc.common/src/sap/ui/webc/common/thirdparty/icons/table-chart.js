@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/table-chart", "./v4/table-chart"], function (_exports, _Theme, _tableChart, _tableChart2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/table-chart", "./v5/table-chart"], function (_exports, _Theme, _tableChart, _tableChart2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _tableChart.pathData : _tableChart2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _tableChart.pathData : _tableChart2.pathData;
   _exports.pathData = pathData;
   var _default = "table-chart";
   _exports.default = _default;

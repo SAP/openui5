@@ -8,11 +8,12 @@ sap.ui.define(["exports", "./escapeRegex", "sap/base/security/encodeXML"], funct
   _escapeRegex = _interopRequireDefault(_escapeRegex);
   _encodeXML = _interopRequireDefault(_encodeXML);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+  // @ts-ignore
+
   // utility to replace all occurances of a string
   function replaceAll(text, find, replace, caseInsensitive) {
-    return text.replace(new RegExp((0, _escapeRegex.default)(find), `${caseInsensitive ? "i" : ""}g`), replace);
+    return text.replaceAll(new RegExp((0, _escapeRegex.default)(find), `${caseInsensitive ? "i" : ""}g`), replace);
   }
-
   /**
    * Generate markup for a raw string where a particular text is wrapped with some tag, by default `<b>` (bold) tag.
    * All inputs to this function are considered literal text, and special characters will always be escaped.
@@ -41,7 +42,7 @@ sap.ui.define(["exports", "./escapeRegex", "sap/base/security/encodeXML"], funct
     let result = (0, _encodeXML.default)(replaceAll(text, textToHighlight, match => `${openToken}${match}${closeToken}`, true));
     // now replace the open and close tokens with the markup that we expect
     [[openToken, "<b>"], [closeToken, "</b>"]].forEach(([find, replace]) => {
-      result = replaceAll(result, find, replace);
+      result = replaceAll(result, find, replace, false);
     });
     return result;
   }

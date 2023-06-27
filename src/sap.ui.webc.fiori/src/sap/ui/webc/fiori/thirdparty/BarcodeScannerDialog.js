@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/main/thirdparty/Dialog", "sap/ui/webc/main/thirdparty/Button", "sap/ui/webc/main/thirdparty/BusyIndicator", "sap/ui/webc/fiori/lib/zxing", "./generated/templates/BarcodeScannerDialogTemplate.lit", "./generated/themes/BarcodeScannerDialog.css", "./generated/i18n/i18n-defaults"], function (_exports, _UI5Element, _LitRenderer, _i18nBundle, _Dialog, _Button, _BusyIndicator, _zxing, _BarcodeScannerDialogTemplate, _BarcodeScannerDialog, _i18nDefaults) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/main/thirdparty/Dialog", "sap/ui/webc/main/thirdparty/Button", "sap/ui/webc/main/thirdparty/BusyIndicator", "sap/ui/webc/fiori/lib/zxing", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "./generated/i18n/i18n-defaults", "./generated/templates/BarcodeScannerDialogTemplate.lit", "./generated/themes/BarcodeScannerDialog.css"], function (_exports, _UI5Element, _LitRenderer, _i18nBundle, _Dialog, _Button, _BusyIndicator, ZXing, _customElement, _property, _event, _i18nDefaults, _BarcodeScannerDialogTemplate, _BarcodeScannerDialog) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -10,15 +10,33 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _Dialog = _interopRequireDefault(_Dialog);
   _Button = _interopRequireDefault(_Button);
   _BusyIndicator = _interopRequireDefault(_BusyIndicator);
+  ZXing = _interopRequireWildcard(ZXing);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
   _BarcodeScannerDialogTemplate = _interopRequireDefault(_BarcodeScannerDialogTemplate);
   _BarcodeScannerDialog = _interopRequireDefault(_BarcodeScannerDialog);
+  function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+  function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // Styles
-
-  // Texts
-
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+  };
+  var BarcodeScannerDialog_1;
+  // some tools handle named exports from UMD files and the window object is not assigned but the imports work (vitejs)
+  // other tools do not handle named exports (they are undefined after the import), but the window global is assigned and can be used (web dev server)
+  const effectiveZXing = {
+    ...ZXing,
+    ...window.ZXing
+  };
+  const {
+    BrowserMultiFormatReader,
+    NotFoundException
+  } = effectiveZXing;
   const defaultMediaConstraints = {
     audio: false,
     video: {
@@ -31,62 +49,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       facingMode: "environment"
     }
   };
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-barcode-scanner-dialog",
-    languageAware: true,
-    slots: /** @lends sap.ui.webcomponents.fiori.BarcodeScannerDialog.prototype */{},
-    properties: /** @lends sap.ui.webcomponents.fiori.BarcodeScannerDialog.prototype */{
-      /**
-       * Indicates whether a loading indicator should be displayed in the dialog.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @private
-       */
-      loading: {
-        type: Boolean
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.fiori.BarcodeScannerDialog.prototype */{
-      /**
-       * Fires when the scan is completed successfuuly.
-       *
-       * @event sap.ui.webcomponents.fiori.BarcodeScannerDialog#scan-success
-       * @param {string} text the scan result as string
-       * @param {Object} rawBytes the scan result as a Uint8Array
-       * @public
-       */
-      "scan-success": {
-        detail: {
-          text: {
-            type: String
-          },
-          rawBytes: {
-            type: Object
-          }
-        }
-      },
-      /**
-       * Fires when the scan fails with error.
-       *
-       * @event sap.ui.webcomponents.fiori.BarcodeScannerDialog#scan-error
-       * @param {string} message the error message
-       * @public
-       */
-      "scan-error": {
-        detail: {
-          message: {
-            type: String
-          }
-        }
-      }
-    }
-  };
-
   /**
    * @class
    *
@@ -106,41 +68,25 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.fiori.BarcodeScannerDialog
-   * @extends UI5Element
+   * @alias sap.ui.webc.fiori.BarcodeScannerDialog
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-barcode-scanner-dialog
    * @public
    * @since 1.0.0-rc.15
    */
-  class BarcodeScannerDialog extends _UI5Element.default {
+  let BarcodeScannerDialog = BarcodeScannerDialog_1 = class BarcodeScannerDialog extends _UI5Element.default {
     constructor() {
       super();
-      this._codeReader = new _zxing.BrowserMultiFormatReader();
-    }
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return null;
-    }
-    static get staticAreaTemplate() {
-      return _BarcodeScannerDialogTemplate.default;
-    }
-    static get styles() {
-      return null;
-    }
-    static get staticAreaStyles() {
-      return [_BarcodeScannerDialog.default];
+      this._codeReader = new BrowserMultiFormatReader();
     }
     static async onDefine() {
-      BarcodeScannerDialog.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents-fiori");
+      BarcodeScannerDialog_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents-fiori");
     }
-
     /**
      * Shows a dialog with the camera videostream. Starts a scan session.
+     * @method
+     * @name sap.ui.webc.fiori.BarcodeScannerDialog#show
+     * @returns {void}
      * @public
      */
     show() {
@@ -162,20 +108,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.loading = false;
       });
     }
-
     /**
      * Closes the dialog and the scan session.
+     * @method
+     * @name sap.ui.webc.fiori.BarcodeScannerDialog#close
+     * @returns {void}
      * @public
      */
     close() {
       this._closeDialog();
       this.loading = false;
     }
-
     /**
      *  PRIVATE METHODS
      */
-
     _hasGetUserMedia() {
       return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
     }
@@ -195,21 +141,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.dialog.show();
     }
     _closeDialog() {
-      if (this._isOpen) {
+      if (this.dialog && this.dialog.opened) {
         this.dialog.close();
       }
     }
     _startReader() {
-      this._decodeFromCamera(null);
+      this._decodeFromCamera();
     }
     async _resetReader() {
       const videoElement = await this._getVideoElement();
       videoElement.pause();
       this._codeReader.reset();
     }
-    async _decodeFromCamera(cameraId) {
+    async _decodeFromCamera() {
       const videoElement = await this._getVideoElement();
-      this._codeReader.decodeFromVideoDevice(cameraId, videoElement, (result, err) => {
+      this._codeReader.decodeFromVideoDevice(null, videoElement, (result, err) => {
         this.loading = false;
         if (result) {
           this.fireEvent("scan-success", {
@@ -217,28 +163,63 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
             rawBytes: result.getRawBytes()
           });
         }
-        if (err && !(err instanceof _zxing.NotFoundException)) {
+        if (err && !(err instanceof NotFoundException)) {
           this.fireEvent("scan-error", {
-            message: err
+            message: err.message
           });
         }
       }).catch(err => this.fireEvent("scan-error", {
-        message: err
+        message: err.message
       }));
     }
-    get _isOpen() {
-      return !!this.dialog && this.dialog.opened;
-    }
     get _cancelButtonText() {
-      return BarcodeScannerDialog.i18nBundle.getText(_i18nDefaults.BARCODE_SCANNER_DIALOG_CANCEL_BUTTON_TXT);
+      return BarcodeScannerDialog_1.i18nBundle.getText(_i18nDefaults.BARCODE_SCANNER_DIALOG_CANCEL_BUTTON_TXT);
     }
     get _busyIndicatorText() {
-      return BarcodeScannerDialog.i18nBundle.getText(_i18nDefaults.BARCODE_SCANNER_DIALOG_LOADING_TXT);
+      return BarcodeScannerDialog_1.i18nBundle.getText(_i18nDefaults.BARCODE_SCANNER_DIALOG_LOADING_TXT);
     }
-    static get dependencies() {
-      return [_Dialog.default, _BusyIndicator.default, _Button.default];
+  };
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], BarcodeScannerDialog.prototype, "loading", void 0);
+  BarcodeScannerDialog = BarcodeScannerDialog_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-barcode-scanner-dialog",
+    languageAware: true,
+    renderer: _LitRenderer.default,
+    staticAreaTemplate: _BarcodeScannerDialogTemplate.default,
+    staticAreaStyles: [_BarcodeScannerDialog.default],
+    dependencies: [_Dialog.default, _BusyIndicator.default, _Button.default]
+  })
+  /**
+   * Fires when the scan is completed successfuuly.
+   *
+   * @event sap.ui.webc.fiori.BarcodeScannerDialog#scan-success
+   * @param {string} text the scan result as string
+   * @param {Object} rawBytes the scan result as a Uint8Array
+   * @public
+   */, (0, _event.default)("scan-success", {
+    detail: {
+      text: {
+        type: String
+      },
+      rawBytes: {
+        type: Object
+      }
     }
-  }
+  })
+  /**
+   * Fires when the scan fails with error.
+   *
+   * @event sap.ui.webc.fiori.BarcodeScannerDialog#scan-error
+   * @param {string} message the error message
+   * @public
+   */, (0, _event.default)("scan-error", {
+    detail: {
+      message: {
+        type: String
+      }
+    }
+  })], BarcodeScannerDialog);
   BarcodeScannerDialog.define();
   var _default = BarcodeScannerDialog;
   _exports.default = _default;

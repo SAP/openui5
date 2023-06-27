@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/vertical-bullet-chart", "./v4/vertical-bullet-chart"], function (_exports, _Theme, _verticalBulletChart, _verticalBulletChart2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/vertical-bullet-chart", "./v5/vertical-bullet-chart"], function (_exports, _Theme, _verticalBulletChart, _verticalBulletChart2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _verticalBulletChart.pathData : _verticalBulletChart2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _verticalBulletChart.pathData : _verticalBulletChart2.pathData;
   _exports.pathData = pathData;
   var _default = "vertical-bullet-chart";
   _exports.default = _default;

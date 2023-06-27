@@ -21,6 +21,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "sort-descending";
+  var _default = "SAP-icons-v5/sort-descending";
   _exports.default = _default;
 });

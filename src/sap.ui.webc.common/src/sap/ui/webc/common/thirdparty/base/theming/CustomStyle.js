@@ -8,21 +8,20 @@ sap.ui.define(["exports", "../Render", "../getSharedResource", "../EventProvider
   _getSharedResource = _interopRequireDefault(_getSharedResource);
   _EventProvider = _interopRequireDefault(_EventProvider);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  const eventProvider = (0, _getSharedResource.default)("CustomStyle.eventProvider", new _EventProvider.default());
+  const getEventProvider = () => (0, _getSharedResource.default)("CustomStyle.eventProvider", new _EventProvider.default());
   const CUSTOM_CSS_CHANGE = "CustomCSSChange";
   const attachCustomCSSChange = listener => {
-    eventProvider.attachEvent(CUSTOM_CSS_CHANGE, listener);
+    getEventProvider().attachEvent(CUSTOM_CSS_CHANGE, listener);
   };
   _exports.attachCustomCSSChange = attachCustomCSSChange;
   const detachCustomCSSChange = listener => {
-    eventProvider.detachEvent(CUSTOM_CSS_CHANGE, listener);
+    getEventProvider().detachEvent(CUSTOM_CSS_CHANGE, listener);
   };
   _exports.detachCustomCSSChange = detachCustomCSSChange;
   const fireCustomCSSChange = tag => {
-    return eventProvider.fireEvent(CUSTOM_CSS_CHANGE, tag);
+    return getEventProvider().fireEvent(CUSTOM_CSS_CHANGE, tag);
   };
-  const customCSSFor = (0, _getSharedResource.default)("CustomStyle.customCSSFor", {});
-
+  const getCustomCSSFor = () => (0, _getSharedResource.default)("CustomStyle.customCSSFor", {});
   // Listen to the eventProvider, in case other copies of this CustomStyle module fire this
   // event, and this copy would therefore need to reRender the ui5 webcomponents; but
   // don't reRender if it was this copy that fired the event to begin with.
@@ -35,6 +34,7 @@ sap.ui.define(["exports", "../Render", "../getSharedResource", "../EventProvider
     }
   });
   const addCustomCSS = (tag, css) => {
+    const customCSSFor = getCustomCSSFor();
     if (!customCSSFor[tag]) {
       customCSSFor[tag] = [];
     }
@@ -54,6 +54,7 @@ sap.ui.define(["exports", "../Render", "../getSharedResource", "../EventProvider
   };
   _exports.addCustomCSS = addCustomCSS;
   const getCustomCSS = tag => {
+    const customCSSFor = getCustomCSSFor();
     return customCSSFor[tag] ? customCSSFor[tag].join("") : "";
   };
   _exports.getCustomCSS = getCustomCSS;

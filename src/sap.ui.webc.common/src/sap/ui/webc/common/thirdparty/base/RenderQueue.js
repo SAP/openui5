@@ -39,7 +39,6 @@ sap.ui.define(["exports"], function (_exports) {
     isAdded(webComponent) {
       return this.lookup.has(webComponent);
     }
-
     /**
      * Processes the whole queue by executing the callback on each component,
      * while also imposing restrictions on how many times a component may be processed.

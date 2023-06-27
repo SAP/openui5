@@ -1,13 +1,10 @@
-sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/StringHelper", "./util/SlotsHelper", "./CustomElementsScopeUtils"], function (_exports, _DataType, _isDescendantOf, _StringHelper, _SlotsHelper, _CustomElementsScopeUtils) {
+sap.ui.define(["exports", "./util/StringHelper", "./util/SlotsHelper", "./CustomElementsScopeUtils"], function (_exports, _StringHelper, _SlotsHelper, _CustomElementsScopeUtils) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  _isDescendantOf = _interopRequireDefault(_isDescendantOf);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
    *
    * @class
@@ -23,7 +20,6 @@ sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/S
       }
       const initialState = {};
       const slotsAreManaged = this.slotsAreManaged();
-
       // Initialize properties
       const props = this.getProperties();
       for (const propName in props) {
@@ -45,7 +41,6 @@ sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/S
           initialState[propName] = propDefaultValue;
         }
       }
-
       // Initialize slots
       if (slotsAreManaged) {
         const slots = this.getSlots();
@@ -58,64 +53,50 @@ sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/S
       this._initialState = initialState;
       return initialState;
     }
-
     /**
-     * Only intended for use by UI5Element.js
-     * @protected
+     * Validates the property's value and returns it if correct
+     * or returns the default value if not.
+     * <b>Note:</b> Only intended for use by UI5Element.js
+     * @public
      */
     static validatePropertyValue(value, propData) {
       const isMultiple = propData.multiple;
-      if (isMultiple) {
+      if (isMultiple && value) {
         return value.map(propValue => validateSingleProperty(propValue, propData));
       }
       return validateSingleProperty(value, propData);
     }
-
     /**
-     * Only intended for use by UI5Element.js
-     * @protected
+     * Validates the slot's value and returns it if correct
+     * or throws an exception if not.
+     * <b>Note:</b> Only intended for use by UI5Element.js
+     * @pubic
      */
     static validateSlotValue(value, slotData) {
       return validateSingleSlot(value, slotData);
     }
-
     /**
      * Returns the tag of the UI5 Element without the scope
      * @public
      */
     getPureTag() {
-      return this.metadata.tag;
+      return this.metadata.tag || "";
     }
-
     /**
      * Returns the tag of the UI5 Element
      * @public
      */
     getTag() {
       const pureTag = this.metadata.tag;
+      if (!pureTag) {
+        return "";
+      }
       const suffix = (0, _CustomElementsScopeUtils.getEffectiveScopingSuffixForTag)(pureTag);
       if (!suffix) {
         return pureTag;
       }
       return `${pureTag}-${suffix}`;
     }
-
-    /**
-     * Used to get the tag we need to register for backwards compatibility
-     * @public
-     */
-    getAltTag() {
-      const pureAltTag = this.metadata.altTag;
-      if (!pureAltTag) {
-        return;
-      }
-      const suffix = (0, _CustomElementsScopeUtils.getEffectiveScopingSuffixForTag)(pureAltTag);
-      if (!suffix) {
-        return pureAltTag;
-      }
-      return `${pureAltTag}-${suffix}`;
-    }
-
     /**
      * Determines whether a property should have an attribute counterpart
      * @public
@@ -126,7 +107,6 @@ sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/S
       const propData = this.getProperties()[propName];
       return propData.type !== Object && !propData.noAttribute && !propData.multiple;
     }
-
     /**
      * Returns an array with the properties of the UI5 Element (in camelCase)
      * @public
@@ -135,24 +115,14 @@ sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/S
     getPropertiesList() {
       return Object.keys(this.getProperties());
     }
-
     /**
      * Returns an array with the attributes of the UI5 Element (in kebab-case)
      * @public
      * @returns {string[]}
      */
     getAttributesList() {
-      return this.getPropertiesList().filter(this.hasAttribute, this).map(_StringHelper.camelToKebabCase);
+      return this.getPropertiesList().filter(this.hasAttribute.bind(this)).map(_StringHelper.camelToKebabCase);
     }
-
-    /**
-     * Returns an object with key-value pairs of slots and their metadata definitions
-     * @public
-     */
-    getSlots() {
-      return this.metadata.slots || {};
-    }
-
     /**
      * Determines whether this UI5 Element has a default slot of type Node, therefore can slot text
      * @returns {boolean}
@@ -161,7 +131,6 @@ sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/S
       const defaultSlot = this.getSlots().default;
       return defaultSlot && defaultSlot.type === Node;
     }
-
     /**
      * Determines whether this UI5 Element supports any slots
      * @public
@@ -169,15 +138,13 @@ sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/S
     hasSlots() {
       return !!Object.entries(this.getSlots()).length;
     }
-
     /**
      * Determines whether this UI5 Element supports any slots with "individualSlots: true"
      * @public
      */
     hasIndividualSlots() {
-      return this.slotsAreManaged() && Object.entries(this.getSlots()).some(([_slotName, slotData]) => slotData.individualSlots);
+      return this.slotsAreManaged() && Object.values(this.getSlots()).some(slotData => slotData.individualSlots);
     }
-
     /**
      * Determines whether this UI5 Element needs to invalidate if children are added/removed/changed
      * @public
@@ -185,7 +152,6 @@ sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/S
     slotsAreManaged() {
       return !!this.metadata.managedSlots;
     }
-
     /**
      * Determines whether this control supports F6 fast navigation
      * @public
@@ -193,23 +159,36 @@ sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/S
     supportsF6FastNavigation() {
       return !!this.metadata.fastNavigation;
     }
-
     /**
      * Returns an object with key-value pairs of properties and their metadata definitions
      * @public
      */
     getProperties() {
-      return this.metadata.properties || {};
+      if (!this.metadata.properties) {
+        this.metadata.properties = {};
+      }
+      return this.metadata.properties;
     }
-
     /**
      * Returns an object with key-value pairs of events and their metadata definitions
      * @public
      */
     getEvents() {
-      return this.metadata.events || {};
+      if (!this.metadata.events) {
+        this.metadata.events = {};
+      }
+      return this.metadata.events;
     }
-
+    /**
+     * Returns an object with key-value pairs of slots and their metadata definitions
+     * @public
+     */
+    getSlots() {
+      if (!this.metadata.slots) {
+        this.metadata.slots = {};
+      }
+      return this.metadata.slots;
+    }
     /**
      * Determines whether this UI5 Element has any translatable texts (needs to be invalidated upon language change)
      * @returns {boolean}
@@ -217,7 +196,6 @@ sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/S
     isLanguageAware() {
       return !!this.metadata.languageAware;
     }
-
     /**
      * Determines whether this UI5 Element has any theme dependant carachteristics.
      * @returns {boolean}
@@ -225,7 +203,6 @@ sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/S
     isThemeAware() {
       return !!this.metadata.themeAware;
     }
-
     /**
      * Matches a changed entity (property/slot) with the given name against the "invalidateOnChildChange" configuration
      * and determines whether this should cause and invalidation
@@ -237,17 +214,14 @@ sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/S
      */
     shouldInvalidateOnChildChange(slotName, type, name) {
       const config = this.getSlots()[slotName].invalidateOnChildChange;
-
       // invalidateOnChildChange was not set in the slot metadata - by default child changes do not affect the component
       if (config === undefined) {
         return false;
       }
-
       // The simple format was used: invalidateOnChildChange: true/false;
       if (typeof config === "boolean") {
         return config;
       }
-
       // The complex format was used: invalidateOnChildChange: { properties, slots }
       if (typeof config === "object") {
         // A property was changed
@@ -256,31 +230,26 @@ sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/S
           if (config.properties === undefined) {
             return false;
           }
-
           // The config object has the short format: properties: true/false
           if (typeof config.properties === "boolean") {
             return config.properties;
           }
-
           // The config object has the complex format: properties: [...]
           if (Array.isArray(config.properties)) {
             return config.properties.includes(name);
           }
           throw new Error("Wrong format for invalidateOnChildChange.properties: boolean or array is expected");
         }
-
         // A slot was changed
         if (type === "slot") {
           // The config object does not have a slots field
           if (config.slots === undefined) {
             return false;
           }
-
           // The config object has the short format: slots: true/false
           if (typeof config.slots === "boolean") {
             return config.slots;
           }
-
           // The config object has the complex format: slots: [...]
           if (Array.isArray(config.slots)) {
             return config.slots.includes(name);
@@ -293,23 +262,29 @@ sap.ui.define(["exports", "./types/DataType", "./util/isDescendantOf", "./util/S
   }
   const validateSingleProperty = (value, propData) => {
     const propertyType = propData.type;
+    let propertyValidator = propData.validator;
+    if (propertyType && propertyType.isDataTypeClass) {
+      propertyValidator = propertyType;
+    }
+    if (propertyValidator) {
+      return propertyValidator.isValid(value) ? value : propData.defaultValue;
+    }
+    if (!propertyType || propertyType === String) {
+      return typeof value === "string" || typeof value === "undefined" || value === null ? value : value.toString();
+    }
     if (propertyType === Boolean) {
       return typeof value === "boolean" ? value : false;
-    }
-    if (propertyType === String) {
-      return typeof value === "string" || typeof value === "undefined" || value === null ? value : value.toString();
     }
     if (propertyType === Object) {
       return typeof value === "object" ? value : propData.defaultValue;
     }
-    if ((0, _isDescendantOf.default)(propertyType, _DataType.default)) {
-      return propertyType.isValid(value) ? value : propData.defaultValue;
-    }
+    // Check if "value" is part of the enum (propertyType) values and return the defaultValue if not found.
+    return value in propertyType ? value : propData.defaultValue;
   };
   const validateSingleSlot = (value, slotData) => {
-    value && (0, _SlotsHelper.getSlottedElements)(value).forEach(el => {
+    value && (0, _SlotsHelper.getSlottedNodes)(value).forEach(el => {
       if (!(el instanceof slotData.type)) {
-        throw new Error(`${el} is not of type ${slotData.type}`);
+        throw new Error(`The element is not of type ${slotData.type.toString()}`);
       }
     });
     return value;

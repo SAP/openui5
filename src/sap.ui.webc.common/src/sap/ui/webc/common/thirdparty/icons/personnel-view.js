@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/personnel-view", "./v4/personnel-view"], function (_exports, _Theme, _personnelView, _personnelView2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/personnel-view", "./v5/personnel-view"], function (_exports, _Theme, _personnelView, _personnelView2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _personnelView.pathData : _personnelView2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _personnelView.pathData : _personnelView2.pathData;
   _exports.pathData = pathData;
   var _default = "personnel-view";
   _exports.default = _default;

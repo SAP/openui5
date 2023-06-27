@@ -24,7 +24,11 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * The <code>sap.ui.webc.main.Label</code> is a component used to represent a label, providing valuable information to the user. Usually it is placed next to a value holder, such as a text field. It informs the user about what data is displayed or expected in the value holder. <br>
+	 * The <code>sap.ui.webc.main.Label</code> is a component used to represent a label for elements like input, textarea, select. <br>
+	 * <br>
+	 * The <code>for</code> property of the <code>sap.ui.webc.main.Label</code> must be the same as the id attribute of the related input element.<br>
+	 * <br>
+	 * Screen readers read out the label, when the user focuses the labelled control. <br>
 	 * <br>
 	 * The <code>sap.ui.webc.main.Label</code> appearance can be influenced by properties, such as <code>required</code> and <code>wrappingType</code>. The appearance of the Label can be configured in a limited way by using the design property. For a broader choice of designs, you can use custom styles.
 	 *
@@ -50,7 +54,7 @@ sap.ui.define([
 				/**
 				 * Defines whether an asterisk character is added to the component text. <br>
 				 * <br>
-				 * <b>Note:</b> Usually indicates that user input is required.
+				 * <b>Note:</b> Usually indicates that user input (bound with the <code>for</code> property) is required. In that case the <code>required</> property of the corresponding input should also be set.
 				 */
 				required: {
 					type: "boolean",

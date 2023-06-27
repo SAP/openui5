@@ -6,13 +6,13 @@ sap.ui.define(["exports"], function (_exports) {
   });
   _exports.default = void 0;
   const VersionInfo = {
-    version: "1.5.0",
+    version: "1.14.2",
     major: 1,
-    minor: 5,
-    patch: 0,
+    minor: 14,
+    patch: 2,
     suffix: "",
     isNext: false,
-    buildTime: 1656937916
+    buildTime: 1686557318
   };
   var _default = VersionInfo;
   _exports.default = _default;

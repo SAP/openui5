@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "media-pause";
-  const pathData = "M384.5 32q14 0 23 9t9 23v384q0 14-9 23t-23 9h-32q-14 0-23-9t-9-23V64q0-14 9-23t23-9h32zm-224 0q14 0 23 9t9 23v384q0 14-9 23t-23 9h-32q-14 0-23-9t-9-23V64q0-14 9-23t23-9h32z";
+  const pathData = "M390 32q11 0 18.5 7t7.5 18v397q0 11-7.5 18.5T390 480h-33q-11 0-18.5-7.5T331 454V57q0-11 7.5-18t18.5-7h33zm-234 0q11 0 18 7t7 18v397q0 11-7 18.5t-18 7.5h-34q-11 0-18.5-7.5T96 454V57q0-11 7.5-18t18.5-7h34z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "media-pause";
+  var _default = "SAP-icons-v5/media-pause";
   _exports.default = _default;
 });

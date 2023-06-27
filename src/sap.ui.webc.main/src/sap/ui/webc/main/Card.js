@@ -21,13 +21,9 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * The <code>sap.ui.webc.main.Card</code> is a component that represents information in the form of a tile with separate header and content areas. The content area of a <code>sap.ui.webc.main.Card</code> can be arbitrary HTML content. The header can be used through slot <code>header</code>. For which there is a <code>sap.ui.webc.main.CardHeader</code> component to achieve the card look and fill.
+	 * The <code>sap.ui.webc.main.Card</code> is a component that represents information in the form of a tile with separate header and content areas. The content area of a <code>sap.ui.webc.main.Card</code> can be arbitrary HTML content. The header can be used through slot <code>header</code>. For which there is a <code>sap.ui.webc.main.CardHeader</code> component to achieve the card look and feel.
 	 *
 	 * Note: We recommend the usage of <code>sap.ui.webc.main.CardHeader</code> for the header slot, so advantage can be taken for keyboard handling, styling and accessibility.
-	 *
-	 * <h3>CSS Shadow Parts</h3>
-	 *
-	 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/::part CSS Shadow Parts} allow developers to style elements inside the Shadow DOM.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -85,7 +81,7 @@ sap.ui.define([
 				 * <b>Note:</b> Use <code>sap.ui.webc.main.CardHeader</code> for the intended design.
 				 */
 				header: {
-					type: "sap.ui.core.Control",
+					type: "sap.ui.webc.main.ICardHeader",
 					multiple: true,
 					slot: "header"
 				}

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sound-loud", "./v4/sound-loud"], function (_exports, _Theme, _soundLoud, _soundLoud2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/sound-loud", "./v5/sound-loud"], function (_exports, _Theme, _soundLoud, _soundLoud2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _soundLoud.pathData : _soundLoud2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _soundLoud.pathData : _soundLoud2.pathData;
   _exports.pathData = pathData;
   var _default = "sound-loud";
   _exports.default = _default;

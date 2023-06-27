@@ -5,16 +5,14 @@ sap.ui.define(["exports"], function (_exports) {
     value: true
   });
   _exports.default = void 0;
+  const MAX_DEPTH_INHERITED_CLASSES = 10; // TypeScript complains about Infinity and big numbers
   const getStylesString = styles => {
     if (Array.isArray(styles)) {
-      return flatten(styles.filter(style => !!style)).map(style => {
+      return styles.filter(style => !!style).flat(MAX_DEPTH_INHERITED_CLASSES).map(style => {
         return typeof style === "string" ? style : style.content;
       }).join(" ");
     }
     return typeof styles === "string" ? styles : styles.content;
-  };
-  const flatten = arr => {
-    return arr.reduce((acc, val) => acc.concat(Array.isArray(val) ? flatten(val) : val), []);
   };
   var _default = getStylesString;
   _exports.default = _default;

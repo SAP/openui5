@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/types/Float", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "./generated/templates/StepInputTemplate.lit", "./generated/i18n/i18n-defaults", "sap/ui/webc/common/thirdparty/icons/less", "sap/ui/webc/common/thirdparty/icons/add", "./Icon", "./Input", "./types/InputType", "./generated/themes/StepInput.css"], function (_exports, _UI5Element, _Keys, _i18nBundle, _ValueState, _AriaLabelHelper, _FeaturesRegistry, _Float, _Integer, _LitRenderer, _StepInputTemplate, _i18nDefaults, _less, _add, _Icon, _Input, _InputType, _StepInput) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/types/Float", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "./generated/templates/StepInputTemplate.lit", "./generated/i18n/i18n-defaults", "sap/ui/webc/common/thirdparty/icons/less", "sap/ui/webc/common/thirdparty/icons/add", "./Icon", "./Input", "./types/InputType", "./generated/themes/StepInput.css"], function (_exports, _UI5Element, _customElement, _property, _slot, _event, _Keys, _i18nBundle, _ValueState, _AriaLabelHelper, _FeaturesRegistry, _Float, _Integer, _LitRenderer, _StepInputTemplate, _i18nDefaults, _less, _add, _Icon, _Input, _InputType, _StepInput) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,6 +6,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
+  _event = _interopRequireDefault(_event);
   _ValueState = _interopRequireDefault(_ValueState);
   _Float = _interopRequireDefault(_Float);
   _Integer = _interopRequireDefault(_Integer);
@@ -16,266 +20,19 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _InputType = _interopRequireDefault(_InputType);
   _StepInput = _interopRequireDefault(_StepInput);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-step-input",
-    managedSlots: true,
-    properties: /** @lends sap.ui.webcomponents.main.StepInput.prototype */{
-      /**
-       * Defines a value of the component.
-       *
-       * @type {Float}
-       * @defaultvalue 0
-       * @public
-       */
-      value: {
-        type: _Float.default,
-        defaultValue: 0
-      },
-      /**
-       * Defines a minimum value of the component.
-       *
-       * @type {Float}
-       * @public
-       */
-      min: {
-        type: _Float.default
-      },
-      /**
-       * Defines a maximum value of the component.
-       *
-       * @type {Float}
-       * @public
-       */
-      max: {
-        type: _Float.default
-      },
-      /**
-       * Defines a step of increasing/decreasing the value of the component.
-       *
-       * @type {Float}
-       * @defaultvalue 1
-       * @public
-       */
-      step: {
-        type: _Float.default,
-        defaultValue: 1
-      },
-      /**
-       * Defines the value state of the component.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>None</code></li>
-       * <li><code>Error</code></li>
-       * <li><code>Warning</code></li>
-       * <li><code>Success</code></li>
-       * <li><code>Information</code></li>
-       * </ul>
-       *
-       * @type {ValueState}
-       * @defaultvalue "None"
-       * @public
-       */
-      valueState: {
-        type: _ValueState.default,
-        defaultValue: _ValueState.default.None
-      },
-      /**
-       * Defines whether the component is required.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      required: {
-        type: Boolean
-      },
-      /**
-       * Determines whether the component is displayed as disabled.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Determines whether the component is displayed as read-only.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      readonly: {
-        type: Boolean
-      },
-      /**
-       * Defines a short hint, intended to aid the user with data entry when the
-       * component has no value.
-       *
-       * <br><br>
-       * <b>Note:</b> When no placeholder is set, the format pattern is displayed as a placeholder.
-       * Passing an empty string as the value of this property will make the component appear empty - without placeholder or format pattern.
-       *
-       * @type {string}
-       * @defaultvalue undefined
-       * @public
-       */
-      placeholder: {
-        type: String,
-        defaultValue: undefined
-      },
-      /**
-       * Determines the name with which the component will be submitted in an HTML form.
-       *
-       * <br><br>
-       * <b>Important:</b> For the <code>name</code> property to have effect, you must add the following import to your project:
-       * <code>import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";</code>
-       *
-       * <br><br>
-       * <b>Note:</b> When set, a native <code>input</code> HTML element
-       * will be created inside the component so that it can be submitted as
-       * part of an HTML form. Do not use this property unless you need to submit a form.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      name: {
-        type: String
-      },
-      /**
-       * Determines the number of digits after the decimal point of the component.
-       *
-       * @type {Integer}
-       * @defaultvalue 0
-       * @public
-       */
-      valuePrecision: {
-        type: _Integer.default,
-        defaultValue: 0
-      },
-      /**
-       * Defines the accessible aria name of the component.
-       *
-       * @type {string}
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      accessibleName: {
-        type: String
-      },
-      /**
-       * Receives id(or many ids) of the elements that label the component.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      accessibleNameRef: {
-        type: String,
-        defaultValue: ""
-      },
-      _decIconDisabled: {
-        type: Boolean,
-        noAttribute: true
-      },
-      _incIconDisabled: {
-        type: Boolean,
-        noAttribute: true
-      },
-      /**
-       * @type {boolean}
-       * @private
-       */
-      focused: {
-        type: Boolean
-      },
-      _inputFocused: {
-        type: Boolean,
-        noAttribute: true
-      },
-      _previousValue: {
-        type: _Float.default,
-        noAttribute: true
-      },
-      _previousValueState: {
-        type: String,
-        noAttribute: true,
-        defaultValue: ""
-      },
-      _waitTimeout: {
-        type: _Float.default,
-        noAttribute: true
-      },
-      _speed: {
-        type: _Float.default,
-        noAttribute: true
-      },
-      _btnDown: {
-        type: Boolean,
-        noAttribute: true
-      },
-      _spinTimeoutId: {
-        type: _Integer.default,
-        noAttribute: true
-      },
-      _spinStarted: {
-        type: Boolean,
-        noAttribute: true
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.main.StepInput.prototype */{
-      /**
-       * Defines the value state message that will be displayed as pop up under the component.
-       * <br><br>
-       *
-       * <b>Note:</b> If not specified, a default text (in the respective language) will be displayed.
-       * <br>
-       * <b>Note:</b> The <code>valueStateMessage</code> would be displayed,
-       * when the component is in <code>Information</code>, <code>Warning</code> or <code>Error</code> value state.
-       * @type {HTMLElement}
-       * @slot
-       * @public
-       */
-      valueStateMessage: {
-        type: HTMLElement
-      },
-      /**
-       * The slot is used to render native <code>input</code> HTML element within Light DOM to enable form submit,
-       * when <code>name</code> property is set.
-       * @type {HTMLElement[]}
-       * @slot
-       * @private
-       */
-      formSupport: {
-        type: HTMLElement
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.StepInput.prototype */{
-      /**
-       * Fired when the input operation has finished by pressing Enter or on focusout.
-       *
-       * @event
-       * @public
-      */
-      change: {}
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var StepInput_1;
   // Spin variables
   const INITIAL_WAIT_TIMEOUT = 500; // milliseconds
   const ACCELERATION = 0.8;
   const MIN_WAIT_TIMEOUT = 50; // milliseconds
   const INITIAL_SPEED = 120; // milliseconds
-
   /**
    * @class
    *
@@ -317,48 +74,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.StepInput
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.StepInput
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-step-input
    * @since 1.0.0-rc.13
    * @public
    */
-  class StepInput extends _UI5Element.default {
-    constructor() {
-      super();
-    }
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _StepInput.default;
-    }
-    static get template() {
-      return _StepInputTemplate.default;
-    }
-    static get dependencies() {
-      return [_Icon.default, _Input.default];
-    }
+  let StepInput = StepInput_1 = class StepInput extends _UI5Element.default {
     static async onDefine() {
-      StepInput.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      StepInput_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
     get type() {
       return _InputType.default.Number;
     }
-
     // icons-related
-
     get decIconTitle() {
-      return StepInput.i18nBundle.getText(_i18nDefaults.STEPINPUT_DEC_ICON_TITLE);
+      return StepInput_1.i18nBundle.getText(_i18nDefaults.STEPINPUT_DEC_ICON_TITLE);
     }
     get decIconName() {
       return "less";
     }
     get incIconTitle() {
-      return StepInput.i18nBundle.getText(_i18nDefaults.STEPINPUT_INC_ICON_TITLE);
+      return StepInput_1.i18nBundle.getText(_i18nDefaults.STEPINPUT_INC_ICON_TITLE);
     }
     get incIconName() {
       return "add";
@@ -393,9 +130,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (this._previousValue === undefined) {
         this._previousValue = this.value;
       }
-      const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
-      if (FormSupport) {
-        FormSupport.syncNativeHiddenInput(this);
+      const formSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
+      if (formSupport) {
+        formSupport.syncNativeHiddenInput(this);
       } else if (this.name) {
         console.warn(`In order for the "name" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`); // eslint-disable-line
       }
@@ -416,6 +153,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     _onInputFocusIn() {
       this._inputFocused = true;
+      if (this.value !== this._previousValue) {
+        this._previousValue = this.value;
+      }
     }
     _onInputFocusOut() {
       this._inputFocused = false;
@@ -426,10 +166,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._incIconDisabled = this.max !== undefined && this.value >= this.max;
     }
     _validate() {
-      if (this._previousValueState === "") {
-        this._previousValueState = this.valueState !== "" ? this.valueState : _ValueState.default.None;
+      if (this._initialValueState === undefined) {
+        this._initialValueState = this.valueState;
       }
-      this.valueState = this.min !== undefined && this.value < this.min || this.max !== undefined && this.value > this.max ? _ValueState.default.Error : this._previousValueState;
+      this.valueState = this.min !== undefined && this.value < this.min || this.max !== undefined && this.value > this.max ? _ValueState.default.Error : this._initialValueState;
     }
     _preciseValue(value) {
       const pow = 10 ** this.valuePrecision;
@@ -443,7 +183,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         });
       }
     }
-
     /**
      * Value modifier - modifies the value of the component, validates the new value and enables/disables increment and
      * decrement buttons according to the value and min/max values (if set). Fires <code>change</code> event when requested
@@ -451,7 +190,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @param {Float} modifier modifies the value of the component with the given modifier (positive or negative)
      * @param {boolean} fireChangeEvent if <code>true</code>, fires <code>change</code> event when the value is changed
      */
-    _modifyValue(modifier, fireChangeEvent) {
+    _modifyValue(modifier, fireChangeEvent = false) {
       let value;
       this.value = this._preciseValue(parseFloat(this.input.value));
       value = this.value + modifier;
@@ -475,19 +214,19 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       }
     }
-    _incValue(event) {
-      if (this._incIconClickable && event.isTrusted && !this.disabled && !this.readonly) {
+    _incValue(e) {
+      if (this._incIconClickable && e.isTrusted && !this.disabled && !this.readonly) {
         this._modifyValue(this.step, true);
         this._previousValue = this.value;
       }
     }
-    _decValue(event) {
-      if (this._decIconClickable && event.isTrusted && !this.disabled && !this.readonly) {
+    _decValue(e) {
+      if (this._decIconClickable && e.isTrusted && !this.disabled && !this.readonly) {
         this._modifyValue(-this.step, true);
         this._previousValue = this.value;
       }
     }
-    _onInputChange(event) {
+    _onInputChange() {
       if (this.input.value === "") {
         this.input.value = this.min || 0;
       }
@@ -505,36 +244,36 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _onfocusout() {
       this.focused = false;
     }
-    _onkeydown(event) {
+    _onkeydown(e) {
       let preventDefault = true;
       if (this.disabled || this.readonly) {
         return;
       }
-      if ((0, _Keys.isEnter)(event)) {
+      if ((0, _Keys.isEnter)(e)) {
         this._onInputChange();
         return;
       }
-      if ((0, _Keys.isUp)(event)) {
+      if ((0, _Keys.isUp)(e)) {
         // step up
         this._modifyValue(this.step);
-      } else if ((0, _Keys.isDown)(event)) {
+      } else if ((0, _Keys.isDown)(e)) {
         // step down
         this._modifyValue(-this.step);
-      } else if ((0, _Keys.isEscape)(event)) {
+      } else if ((0, _Keys.isEscape)(e)) {
         // return previous value
         this.value = this._previousValue;
         this.input.value = this.value.toFixed(this.valuePrecision);
-      } else if (this.max !== undefined && ((0, _Keys.isPageUpShift)(event) || (0, _Keys.isUpShiftCtrl)(event))) {
+      } else if (this.max !== undefined && ((0, _Keys.isPageUpShift)(e) || (0, _Keys.isUpShiftCtrl)(e))) {
         // step to max
         this._modifyValue(this.max - this.value);
-      } else if (this.min !== undefined && ((0, _Keys.isPageDownShift)(event) || (0, _Keys.isDownShiftCtrl)(event))) {
+      } else if (this.min !== undefined && ((0, _Keys.isPageDownShift)(e) || (0, _Keys.isDownShiftCtrl)(e))) {
         // step to min
         this._modifyValue(this.min - this.value);
-      } else if (!(0, _Keys.isUpCtrl)(event) && !(0, _Keys.isDownCtrl)(event) && !(0, _Keys.isUpShift)(event) && !(0, _Keys.isDownShift)(event)) {
+      } else if (!(0, _Keys.isUpCtrl)(e) && !(0, _Keys.isDownCtrl)(e) && !(0, _Keys.isUpShift)(e) && !(0, _Keys.isDownShift)(e)) {
         preventDefault = false;
       }
       if (preventDefault) {
-        event.preventDefault();
+        e.preventDefault();
       }
     }
     _decSpin() {
@@ -547,7 +286,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this._spinValue(true, true);
       }
     }
-
     /**
      * Calculates the time which should be waited until _spinValue function is called.
      */
@@ -556,13 +294,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._waitTimeout = this._waitTimeout - this._speed < MIN_WAIT_TIMEOUT ? MIN_WAIT_TIMEOUT : this._waitTimeout - this._speed;
       return this._waitTimeout;
     }
-
     /**
      * Called when the increment or decrement button is pressed and held to set new value.
      * @param {boolean} increment - is this the increment button or not so the values should be spin accordingly up or down
      * @param {boolean} resetVariables - whether to reset the spin-related variables or not
      */
-    _spinValue(increment, resetVariables) {
+    _spinValue(increment, resetVariables = false) {
       if (resetVariables) {
         this._waitTimeout = INITIAL_WAIT_TIMEOUT;
         this._speed = INITIAL_SPEED;
@@ -582,7 +319,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       }, this._calcWaitTimeout());
     }
-
     /**
     * Resets spin process
     */
@@ -591,7 +327,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._btnDown = false;
       this._spinStarted = false;
     }
-
     /**
     * Resets spin process when mouse outs + or - buttons
     */
@@ -601,7 +336,100 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this._fireChangeEvent();
       }
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    validator: _Float.default,
+    defaultValue: 0
+  })], StepInput.prototype, "value", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Float.default
+  })], StepInput.prototype, "min", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Float.default
+  })], StepInput.prototype, "max", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Float.default,
+    defaultValue: 1
+  })], StepInput.prototype, "step", void 0);
+  __decorate([(0, _property.default)({
+    type: _ValueState.default,
+    defaultValue: _ValueState.default.None
+  })], StepInput.prototype, "valueState", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], StepInput.prototype, "required", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], StepInput.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], StepInput.prototype, "readonly", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: undefined
+  })], StepInput.prototype, "placeholder", void 0);
+  __decorate([(0, _property.default)()], StepInput.prototype, "name", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: 0
+  })], StepInput.prototype, "valuePrecision", void 0);
+  __decorate([(0, _property.default)()], StepInput.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: ""
+  })], StepInput.prototype, "accessibleNameRef", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], StepInput.prototype, "_decIconDisabled", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], StepInput.prototype, "_incIconDisabled", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], StepInput.prototype, "focused", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], StepInput.prototype, "_inputFocused", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Float.default,
+    noAttribute: true
+  })], StepInput.prototype, "_previousValue", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Float.default,
+    noAttribute: true
+  })], StepInput.prototype, "_waitTimeout", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Float.default,
+    noAttribute: true
+  })], StepInput.prototype, "_speed", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], StepInput.prototype, "_btnDown", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    noAttribute: true
+  })], StepInput.prototype, "_spinTimeoutId", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], StepInput.prototype, "_spinStarted", void 0);
+  __decorate([(0, _slot.default)()], StepInput.prototype, "valueStateMessage", void 0);
+  __decorate([(0, _slot.default)()], StepInput.prototype, "formSupport", void 0);
+  StepInput = StepInput_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-step-input",
+    renderer: _LitRenderer.default,
+    styles: _StepInput.default,
+    template: _StepInputTemplate.default,
+    dependencies: [_Icon.default, _Input.default]
+  })
+  /**
+   * Fired when the input operation has finished by pressing Enter or on focusout.
+   *
+   * @event sap.ui.webc.main.StepInput#change
+   * @public
+   */, (0, _event.default)("change")], StepInput);
   StepInput.define();
   var _default = StepInput;
   _exports.default = _default;

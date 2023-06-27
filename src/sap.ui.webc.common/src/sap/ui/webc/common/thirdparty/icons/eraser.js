@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/eraser", "./v4/eraser"], function (_exports, _Theme, _eraser, _eraser2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/eraser", "./v5/eraser"], function (_exports, _Theme, _eraser, _eraser2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _eraser.pathData : _eraser2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _eraser.pathData : _eraser2.pathData;
   _exports.pathData = pathData;
   var _default = "eraser";
   _exports.default = _default;

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/Keys", "./Label", "./RadioButtonGroup", "./types/WrappingType", "./generated/templates/RadioButtonTemplate.lit", "./generated/i18n/i18n-defaults", "./generated/themes/RadioButton.css"], function (_exports, _Device, _FeaturesRegistry, _UI5Element, _LitRenderer, _i18nBundle, _ValueState, _AriaLabelHelper, _Keys, _Label, _RadioButtonGroup, _WrappingType, _RadioButtonTemplate, _i18nDefaults, _RadioButton) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/Keys", "./Label", "./RadioButtonGroup", "./types/WrappingType", "./generated/templates/RadioButtonTemplate.lit", "./generated/i18n/i18n-defaults", "./generated/themes/RadioButton.css"], function (_exports, _Device, _FeaturesRegistry, _UI5Element, _property, _customElement, _slot, _event, _LitRenderer, _i18nBundle, _ValueState, _AriaLabelHelper, _Keys, _Label, _RadioButtonGroup, _WrappingType, _RadioButtonTemplate, _i18nDefaults, _RadioButton) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,6 +6,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _property = _interopRequireDefault(_property);
+  _customElement = _interopRequireDefault(_customElement);
+  _slot = _interopRequireDefault(_slot);
+  _event = _interopRequireDefault(_event);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _ValueState = _interopRequireDefault(_ValueState);
   _Label = _interopRequireDefault(_Label);
@@ -14,212 +18,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
   _RadioButtonTemplate = _interopRequireDefault(_RadioButtonTemplate);
   _RadioButton = _interopRequireDefault(_RadioButton);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // i18n
-
-  // Styles
-
-  let isGlobalHandlerAttached = false;
-  let activeRadio = null;
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-radio-button",
-    altTag: "ui5-radiobutton",
-    languageAware: true,
-    properties: /** @lends sap.ui.webcomponents.main.RadioButton.prototype */{
-      /**
-       * Defines whether the component is disabled.
-       * <br><br>
-       * <b>Note:</b> A disabled component is completely noninteractive.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the component is read-only.
-       * <br><br>
-       * <b>Note:</b> A read-only component is not editable,
-       * but still provides visual feedback upon user interaction.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      readonly: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the component is checked or not.
-       * <br><br>
-       * <b>Note:</b> The property value can be changed with user interaction,
-       * either by clicking/tapping on the component,
-       * or by using the Space or Enter key.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      checked: {
-        type: Boolean
-      },
-      /**
-       * Defines the text of the component.
-       *
-       * @type  {string}
-       * @defaultvalue ""
-       * @public
-       */
-      text: {
-        type: String
-      },
-      /**
-       * Defines the value state of the component.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>None</code></li>
-       * <li><code>Error</code></li>
-       * <li><code>Warning</code></li>
-       * <li><code>Success</code></li>
-       * <li><code>Information</code></li>
-       * </ul>
-       *
-       * @type {ValueState}
-       * @defaultvalue "None"
-       * @public
-       */
-      valueState: {
-        defaultValue: _ValueState.default.None,
-        type: _ValueState.default
-      },
-      /**
-       * Defines the name of the component.
-       * Radio buttons with the same <code>name</code> will form a radio button group.
-       *
-       * <br><br>
-       * <b>Note:</b>
-       * The selection can be changed with <code>ARROW_UP/DOWN</code> and <code>ARROW_LEFT/RIGHT</code> keys between radio buttons in same group.
-       *
-       * <br><br>
-       * <b>Note:</b>
-       * Only one radio button can be selected per group.
-       *
-       * <br><br>
-       * <b>Important:</b> For the <code>name</code> property to have effect when submitting forms, you must add the following import to your project:
-       * <code>import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";</code>
-       *
-       * <br><br>
-       * <b>Note:</b> When set, a native <code>input</code> HTML element
-       * will be created inside the component so that it can be submitted as
-       * part of an HTML form.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      name: {
-        type: String
-      },
-      /**
-       * Defines the form value of the component.
-       * When a form with a radio button group is submitted, the group's value
-       * will be the value of the currently selected radio button.
-       * <br>
-       * <b>Important:</b> For the <code>value</code> property to have effect, you must add the following import to your project:
-       * <code>import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";</code>
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      value: {
-        type: String
-      },
-      /**
-       * Defines whether the component text wraps when there is not enough space.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>None</code> - The text will be truncated with an ellipsis.</li>
-       * <li><code>Normal</code> - The text will wrap. The words will not be broken based on hyphenation.</li>
-       * </ul>
-       *
-       * @type {WrappingType}
-       * @defaultvalue "None"
-       * @public
-       */
-      wrappingType: {
-        type: _WrappingType.default,
-        defaultValue: _WrappingType.default.None
-      },
-      /**
-       * Defines the accessible name of the component.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @private
-       * @since 1.0.0-rc.16
-       */
-      accessibleName: {
-        type: String
-      },
-      /**
-       * Defines the IDs of the elements that label the component.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       * @since 1.1.0
-       */
-      accessibleNameRef: {
-        type: String
-      },
-      _tabIndex: {
-        type: String,
-        defaultValue: "-1",
-        noAttribute: true
-      },
-      /**
-       * Defines the active state (pressed or not) of the component.
-       * @private
-       */
-      active: {
-        type: Boolean
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.main.RadioButton.prototype */{
-      /**
-       * The slot is used to render native <code>input</code> HTML element within Light DOM to enable form submit,
-       * when <code>name</code> property is set.
-       * @type {HTMLElement[]}
-       * @slot
-       * @private
-       */
-      formSupport: {
-        type: HTMLElement
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.RadioButton.prototype */{
-      /**
-       * Fired when the component checked state changes.
-       *
-       * @event
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      change: {}
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var RadioButton_1;
+  let isGlobalHandlerAttached = false;
+  let activeRadio;
   /**
    * @class
    *
@@ -248,12 +56,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.RadioButton
-   * @extends sap.ui.webcomponents.base.UI5Element
+   * @alias sap.ui.webc.main.RadioButton
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-radio-button
    * @public
    */
-  class RadioButton extends _UI5Element.default {
+  let RadioButton = RadioButton_1 = class RadioButton extends _UI5Element.default {
     constructor() {
       super();
       this._deactivate = () => {
@@ -266,33 +74,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         isGlobalHandlerAttached = true;
       }
     }
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _RadioButtonTemplate.default;
-    }
-    static get styles() {
-      return _RadioButton.default;
-    }
-    static get dependencies() {
-      return [_Label.default];
-    }
     static async onDefine() {
-      RadioButton.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      RadioButton_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
     onBeforeRendering() {
       this.syncGroup();
       this._enableFormSupport();
     }
-    syncGroup() {
+    onExitDOM() {
+      this.syncGroup(true);
+    }
+    syncGroup(forceRemove) {
       const oldGroup = this._name;
       const currentGroup = this.name;
       const oldChecked = this._checked;
       const currentChecked = this.checked;
+      if (forceRemove) {
+        _RadioButtonGroup.default.removeFromGroup(this, oldGroup);
+      }
       if (currentGroup !== oldGroup) {
         if (oldGroup) {
           // remove the control from the previous group
@@ -312,11 +111,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       this._checked = this.checked;
     }
     _enableFormSupport() {
-      const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
-      if (FormSupport) {
-        FormSupport.syncNativeHiddenInput(this, (element, nativeInput) => {
-          nativeInput.disabled = element.disabled || !element.checked;
-          nativeInput.value = element.checked ? element.value : "";
+      const formSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
+      if (formSupport) {
+        formSupport.syncNativeHiddenInput(this, (element, nativeInput) => {
+          nativeInput.value = element.value;
+          nativeInput.type = "radio";
+          nativeInput.checked = element.checked;
         });
       } else if (this.value) {
         console.warn(`In order for the "value" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`); // eslint-disable-line
@@ -326,40 +126,41 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     _onclick() {
       return this.toggle();
     }
-    _handleDown(event) {
+    _handleDown(e) {
       const currentGroup = this.name;
       if (!currentGroup) {
         return;
       }
-      event.preventDefault();
+      e.preventDefault();
       _RadioButtonGroup.default.selectNextItem(this, currentGroup);
     }
-    _handleUp(event) {
+    _handleUp(e) {
       const currentGroup = this.name;
       if (!currentGroup) {
         return;
       }
-      event.preventDefault();
+      e.preventDefault();
       _RadioButtonGroup.default.selectPreviousItem(this, currentGroup);
     }
-    _onkeydown(event) {
-      if ((0, _Keys.isSpace)(event)) {
+    _onkeydown(e) {
+      if ((0, _Keys.isSpace)(e)) {
         this.active = true;
-        return event.preventDefault();
+        return e.preventDefault();
       }
-      if ((0, _Keys.isEnter)(event)) {
+      if ((0, _Keys.isEnter)(e)) {
         this.active = true;
         return this.toggle();
       }
-      if ((0, _Keys.isDown)(event) || (0, _Keys.isRight)(event)) {
-        this._handleDown(event);
+      const isRTL = this.effectiveDir === "rtl";
+      if ((0, _Keys.isDown)(e) || !isRTL && (0, _Keys.isRight)(e) || isRTL && (0, _Keys.isLeft)(e)) {
+        this._handleDown(e);
       }
-      if ((0, _Keys.isUp)(event) || (0, _Keys.isLeft)(event)) {
-        this._handleUp(event);
+      if ((0, _Keys.isUp)(e) || !isRTL && (0, _Keys.isLeft)(e) || isRTL && (0, _Keys.isRight)(e)) {
+        this._handleUp(e);
       }
     }
-    _onkeyup(event) {
-      if ((0, _Keys.isSpace)(event)) {
+    _onkeyup(e) {
+      if ((0, _Keys.isSpace)(e)) {
         this.toggle();
       }
       this.active = false;
@@ -390,41 +191,40 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     canToggle() {
       return !(this.disabled || this.readonly || this.checked);
     }
-    valueStateTextMappings() {
-      return {
-        "Error": RadioButton.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR),
-        "Warning": RadioButton.i18nBundle.getText(_i18nDefaults.VALUE_STATE_WARNING),
-        "Success": RadioButton.i18nBundle.getText(_i18nDefaults.VALUE_STATE_SUCCESS),
-        "Information": RadioButton.i18nBundle.getText(_i18nDefaults.VALUE_STATE_INFORMATION)
-      };
-    }
     get classes() {
       return {
-        main: {},
         inner: {
           "ui5-radio-inner--hoverable": !this.disabled && !this.readonly && (0, _Device.isDesktop)()
         }
       };
     }
-    get ariaReadonly() {
-      return this.readonly ? "true" : undefined;
-    }
-    get ariaDisabled() {
-      return this.disabled ? "true" : undefined;
+    get effectiveAriaDisabled() {
+      return this.disabled ? "true" : null;
     }
     get ariaLabelText() {
       return [(0, _AriaLabelHelper.getEffectiveAriaLabelText)(this), this.text].filter(Boolean).join(" ");
     }
-    get ariaDescribedBy() {
+    get effectiveAriaDescribedBy() {
       return this.hasValueState ? `${this._id}-descr` : undefined;
     }
     get hasValueState() {
       return this.valueState !== _ValueState.default.None;
     }
     get valueStateText() {
-      return this.valueStateTextMappings()[this.valueState];
+      switch (this.valueState) {
+        case _ValueState.default.Error:
+          return RadioButton_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR);
+        case _ValueState.default.Warning:
+          return RadioButton_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_WARNING);
+        case _ValueState.default.Success:
+          return RadioButton_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_SUCCESS);
+        case _ValueState.default.Information:
+          return RadioButton_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_INFORMATION);
+        default:
+          return "";
+      }
     }
-    get tabIndex() {
+    get effectiveTabIndex() {
       const tabindex = this.getAttribute("tabindex");
       if (this.disabled) {
         return "-1";
@@ -437,7 +237,55 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     get strokeWidth() {
       return this.valueState === "None" ? "1" : "2";
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], RadioButton.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], RadioButton.prototype, "readonly", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], RadioButton.prototype, "required", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], RadioButton.prototype, "checked", void 0);
+  __decorate([(0, _property.default)()], RadioButton.prototype, "text", void 0);
+  __decorate([(0, _property.default)({
+    type: _ValueState.default,
+    defaultValue: _ValueState.default.None
+  })], RadioButton.prototype, "valueState", void 0);
+  __decorate([(0, _property.default)()], RadioButton.prototype, "name", void 0);
+  __decorate([(0, _property.default)()], RadioButton.prototype, "value", void 0);
+  __decorate([(0, _property.default)({
+    type: _WrappingType.default,
+    defaultValue: _WrappingType.default.None
+  })], RadioButton.prototype, "wrappingType", void 0);
+  __decorate([(0, _property.default)()], RadioButton.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)()], RadioButton.prototype, "accessibleNameRef", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: "-1",
+    noAttribute: true
+  })], RadioButton.prototype, "_tabIndex", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], RadioButton.prototype, "active", void 0);
+  __decorate([(0, _slot.default)()], RadioButton.prototype, "formSupport", void 0);
+  RadioButton = RadioButton_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-radio-button",
+    languageAware: true,
+    renderer: _LitRenderer.default,
+    template: _RadioButtonTemplate.default,
+    styles: _RadioButton.default,
+    dependencies: [_Label.default]
+  })
+  /**
+   * Fired when the component checked state changes.
+   *
+   * @event sap.ui.webc.main.RadioButton#change
+   * @public
+   * @since 1.0.0-rc.15
+   */, (0, _event.default)("change")], RadioButton);
   RadioButton.define();
   var _default = RadioButton;
   _exports.default = _default;

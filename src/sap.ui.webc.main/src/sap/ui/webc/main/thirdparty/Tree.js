@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "./TreeItem", "./List", "./TreeListItem", "./types/ListMode", "./generated/templates/TreeTemplate.lit", "./generated/themes/Tree.css"], function (_exports, _UI5Element, _LitRenderer, _TreeItem, _List, _TreeListItem, _ListMode, _TreeTemplate, _Tree) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "./TreeItem", "./TreeItemCustom", "./TreeList", "./types/ListMode", "./generated/templates/TreeTemplate.lit", "./generated/themes/Tree.css"], function (_exports, _UI5Element, _customElement, _property, _slot, _event, _LitRenderer, _AriaLabelHelper, _TreeItem, _TreeItemCustom, _TreeList, _ListMode, _TreeTemplate, _Tree) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,239 +6,25 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
+  _event = _interopRequireDefault(_event);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _TreeItem = _interopRequireDefault(_TreeItem);
-  _List = _interopRequireDefault(_List);
-  _TreeListItem = _interopRequireDefault(_TreeListItem);
+  _TreeItemCustom = _interopRequireDefault(_TreeItemCustom);
+  _TreeList = _interopRequireDefault(_TreeList);
   _ListMode = _interopRequireDefault(_ListMode);
   _TreeTemplate = _interopRequireDefault(_TreeTemplate);
   _Tree = _interopRequireDefault(_Tree);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-tree",
-    properties: /** @lends sap.ui.webcomponents.main.Tree.prototype */{
-      /**
-       * Defines the mode of the component. Since the tree uses a <code>ui5-list</code> to display its structure,
-       * the tree modes are exactly the same as the list modes, and are all applicable.
-       *
-       * <br><br>
-       * <b>Note:</b>
-       *
-       * <ul>
-       * <li><code>None</code></li>
-       * <li><code>SingleSelect</code></li>
-       * <li><code>SingleSelectBegin</code></li>
-       * <li><code>SingleSelectEnd</code></li>
-       * <li><code>MultiSelect</code></li>
-       * <li><code>Delete</code></li>
-       * </ul>
-       *
-       * @public
-       * @type {ListMode}
-       * @defaultValue "None"
-       */
-      mode: {
-        type: _ListMode.default,
-        defaultValue: _ListMode.default.None
-      },
-      /**
-       * Defines the text that is displayed when the component contains no items.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      noDataText: {
-        type: String
-      },
-      /**
-       * Defines the component header text.
-       * <br><br>
-       * <b>Note:</b> If the <code>header</code> slot is set, this property is ignored.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      headerText: {
-        type: String
-      },
-      /**
-       * Defines the component footer text.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      footerText: {
-        type: String
-      },
-      /**
-       * An array, containing a flat structure of list items to render
-       *
-       * @private
-       */
-      _listItems: {
-        type: Object,
-        multiple: true
-      },
-      /**
-       * Shows the toggle button at the end, rather than at the beginning of the items
-       *
-       * @protected
-       * @since 1.0.0-rc.8
-       */
-      _toggleButtonEnd: {
-        type: Boolean
-      },
-      /**
-       * Represents the tree in a very minimal state - icons only with no text and no toggle buttons
-       *
-       * @protected
-       * @since 1.0.0-rc.8
-       */
-      _minimal: {
-        type: Boolean
-      }
-    },
-    managedSlots: true,
-    slots: /** @lends sap.ui.webcomponents.main.Tree.prototype */{
-      /**
-       * Defines the items of the component. Tree items may have other tree items as children.
-       * <br><br>
-       * <b>Note:</b> Use <code>ui5-tree-item</code> for the intended design.
-       *
-       * @type {sap.ui.webcomponents.main.ITreeItem[]}
-       * @slot items
-       * @public
-       */
-      "default": {
-        type: HTMLElement,
-        propertyName: "items",
-        invalidateOnChildChange: true
-      },
-      /**
-       * Defines the component header.
-       * <br><br>
-       * <b>Note:</b> When the <code>header</code> slot is set, the
-       * <code>headerText</code> property is ignored.
-       *
-       * @type {HTMLElement[]}
-       * @slot
-       * @public
-       */
-      header: {
-        type: HTMLElement
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.Tree.prototype */{
-      /**
-       * Fired when a tree item is expanded or collapsed.
-       * <i>Note:</i> You can call <code>preventDefault()</code> on the event object to suppress the event, if needed.
-       * This may be handy for example if you want to dynamically load tree items upon the user expanding a node.
-       * Even if you prevented the event's default behavior, you can always manually call <code>toggle()</code> on a tree item.
-       *
-       * @event sap.ui.webcomponents.main.Tree#item-toggle
-       * @param {HTMLElement} item the toggled item.
-       * @allowPreventDefault
-       * @public
-       */
-      "item-toggle": {
-        detail: {
-          item: {
-            type: HTMLElement
-          }
-        }
-      },
-      /**
-       * Fired when the mouse cursor enters the tree item borders.
-       * @event sap.ui.webcomponents.main.Tree#item-mouseover
-       * @param {HTMLElement} item the hovered item.
-       * @since 1.0.0-rc.16
-       * @public
-       */
-      "item-mouseover": {
-        detail: {
-          item: {
-            type: HTMLElement
-          }
-        }
-      },
-      /**
-       * Fired when the mouse cursor leaves the tree item borders.
-       * @event sap.ui.webcomponents.main.Tree#item-mouseout
-       * @param {HTMLElement} item the hovered item.
-       * @since 1.0.0-rc.16
-       * @public
-       */
-      "item-mouseout": {
-        detail: {
-          item: {
-            type: HTMLElement
-          }
-        }
-      },
-      /**
-       * Fired when a tree item is activated.
-       *
-       * @event sap.ui.webcomponents.main.Tree#item-click
-       * @allowPreventDefault
-       * @param {HTMLElement} item The clicked item.
-       * @public
-       */
-      "item-click": {
-        detail: {
-          item: {
-            type: HTMLElement
-          }
-        }
-      },
-      /**
-       * Fired when the Delete button of any tree item is pressed.
-       * <br><br>
-       * <b>Note:</b> A Delete button is displayed on each item,
-       * when the component <code>mode</code> property is set to <code>Delete</code>.
-       *
-       * @event sap.ui.webcomponents.main.Tree#item-delete
-       * @param {HTMLElement} item the deleted item.
-       * @public
-       */
-      "item-delete": {
-        detail: {
-          item: {
-            type: HTMLElement
-          }
-        }
-      },
-      /**
-       * Fired when selection is changed by user interaction
-       * in <code>SingleSelect</code>, <code>SingleSelectBegin</code>, <code>SingleSelectEnd</code> and <code>MultiSelect</code> modes.
-       *
-       * @event sap.ui.webcomponents.main.Tree#selection-change
-       * @param {Array} selectedItems An array of the selected items.
-       * @param {Array} previouslySelectedItems An array of the previously selected items.
-       * @public
-       */
-      "selection-change": {
-        detail: {
-          selectedItems: {
-            type: Array
-          },
-          previouslySelectedItems: {
-            type: Array
-          }
-        }
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
   /**
    * @class
    *
@@ -285,60 +71,52 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.Tree
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.Tree
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-tree
-   * @appenddocs TreeItem
+   * @appenddocs sap.ui.webc.main.TreeItem sap.ui.webc.main.TreeItemCustom
    * @public
    * @since 1.0.0-rc.8
    */
-  class Tree extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _Tree.default;
-    }
-    static get template() {
-      return _TreeTemplate.default;
-    }
-    static get dependencies() {
-      return [_List.default, _TreeListItem.default, _TreeItem.default];
-    }
+  let Tree = class Tree extends _UI5Element.default {
     onBeforeRendering() {
-      this._listItems = [];
-      buildTree(this, 1, this._listItems);
+      this._prepareTreeItems();
+    }
+    onAfterRendering() {
+      // Note: this is a workaround for the problem that the list cannot invalidate itself when its only physical child is a slot (and the list items are inside the slot)
+      // This code should be removed once a framework-level fix is implemented
+      this.shadowRoot.querySelector("[ui5-tree-list]").onBeforeRendering();
     }
     get list() {
       return this.getDomRef();
     }
     get _role() {
-      return "tree";
+      return this._minimal ? "menubar" : "tree";
     }
-    _onListItemStepIn(event) {
-      const listItem = event.detail.item;
-      const treeItem = listItem.treeItem;
+    get _label() {
+      return (0, _AriaLabelHelper.getEffectiveAriaLabelText)(this);
+    }
+    get _hasHeader() {
+      return !!this.header.length;
+    }
+    _onListItemStepIn(e) {
+      const treeItem = e.detail.item;
       if (treeItem.items.length > 0) {
         const firstChild = treeItem.items[0];
-        const firstChildListItem = this.list.getSlottedNodes("items").find(li => li.treeItem === firstChild);
+        const firstChildListItem = this._getListItemForTreeItem(firstChild);
         firstChildListItem && this.list.focusItem(firstChildListItem);
       }
     }
-    _onListItemStepOut(event) {
-      const listItem = event.detail.item;
-      const treeItem = listItem.treeItem;
+    _onListItemStepOut(e) {
+      const treeItem = e.detail.item;
       if (treeItem.parentElement !== this) {
         const parent = treeItem.parentElement;
-        const parentListItem = this.list.getSlottedNodes("items").find(li => li.treeItem === parent);
+        const parentListItem = this._getListItemForTreeItem(parent);
         parentListItem && this.list.focusItem(parentListItem);
       }
     }
-    _onListItemToggle(event) {
-      const listItem = event.detail.item;
-      const treeItem = listItem.treeItem;
+    _onListItemToggle(e) {
+      const treeItem = e.detail.item;
       const defaultPrevented = !this.fireEvent("item-toggle", {
         item: treeItem
       }, true);
@@ -346,37 +124,40 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         treeItem.toggle();
       }
     }
-    _onListItemClick(event) {
-      const listItem = event.detail.item;
-      const treeItem = listItem.treeItem;
+    _onListItemClick(e) {
+      const treeItem = e.detail.item;
       if (!this.fireEvent("item-click", {
         item: treeItem
       }, true)) {
-        event.preventDefault();
+        e.preventDefault();
       }
     }
-    _onListItemDelete(event) {
-      const listItem = event.detail.item;
-      const treeItem = listItem.treeItem;
+    _onListItemDelete(e) {
+      const treeItem = e.detail.item;
       this.fireEvent("item-delete", {
         item: treeItem
       });
     }
-    _onListItemMouseOver(event) {
-      const treeItem = event.target.treeItem;
-      this.fireEvent("item-mouseover", {
-        item: treeItem
-      });
+    _onListItemMouseOver(e) {
+      const target = e.target;
+      if (this._isInstanceOfTreeItemBase(target)) {
+        this.fireEvent("item-mouseover", {
+          item: target
+        });
+      }
     }
-    _onListItemMouseOut(event) {
-      const treeItem = event.target.treeItem;
-      this.fireEvent("item-mouseout", {
-        item: treeItem
-      });
+    _onListItemMouseOut(e) {
+      const target = e.target;
+      if (this._isInstanceOfTreeItemBase(target)) {
+        this.fireEvent("item-mouseout", {
+          item: target
+        });
+      }
     }
-    _onListSelectionChange(event) {
-      const previouslySelectedItems = event.detail.previouslySelectedItems.map(item => item.treeItem);
-      const selectedItems = event.detail.selectedItems.map(item => item.treeItem);
+    _onListSelectionChange(e) {
+      const previouslySelectedItems = e.detail.previouslySelectedItems;
+      const selectedItems = e.detail.selectedItems;
+      const targetItem = e.detail.targetItem;
       previouslySelectedItems.forEach(item => {
         item.selected = false;
       });
@@ -385,10 +166,22 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       });
       this.fireEvent("selection-change", {
         previouslySelectedItems,
-        selectedItems
+        selectedItems,
+        targetItem
       });
     }
-
+    _prepareTreeItems() {
+      // set level to tree items
+      this.walk((item, level, index) => {
+        const parent = item.parentNode;
+        const ariaSetSize = parent && parent.children.length || this.items.length;
+        item.setAttribute("level", level.toString());
+        item._toggleButtonEnd = this._toggleButtonEnd;
+        item._minimal = this._minimal;
+        item._setsize = ariaSetSize;
+        item._posinset = index + 1;
+      });
+    }
     /**
      * Returns the corresponding list item for a given tree item
      *
@@ -396,38 +189,170 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @protected
      */
     _getListItemForTreeItem(item) {
-      return this.list.items.find(listItem => listItem.treeItem === item);
+      return this.getItems().find(listItem => listItem === item);
     }
-
+    /**
+     * Returns the a flat array of all tree items
+     * @protected
+     * @returns {Array}
+     */
+    getItems() {
+      return this.list.getItems();
+    }
+    /**
+     * Focus a tree item by its index in the flat array of all tree items
+     * @protected
+     * @param index
+     */
+    focusItemByIndex(index) {
+      const item = this.getItems()[index];
+      item && this.list.focusItem(item);
+    }
     /**
      * Perform Depth-First-Search walk on the tree and run a callback on each node
      *
      * @public
-     * @param {function} callback function to execute on each node of the tree with 2 arguments: the node and the level
+     * @param {function} callback function to execute on each node of the tree with 3 arguments: the node, the level and the index
      */
     walk(callback) {
       walkTree(this, 1, callback);
     }
-  }
+    _isInstanceOfTreeItemBase(object) {
+      return "isTreeItem" in object;
+    }
+  };
+  __decorate([(0, _property.default)({
+    type: _ListMode.default,
+    defaultValue: _ListMode.default.None
+  })], Tree.prototype, "mode", void 0);
+  __decorate([(0, _property.default)()], Tree.prototype, "noDataText", void 0);
+  __decorate([(0, _property.default)()], Tree.prototype, "headerText", void 0);
+  __decorate([(0, _property.default)()], Tree.prototype, "footerText", void 0);
+  __decorate([(0, _property.default)()], Tree.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)()], Tree.prototype, "accessibleNameRef", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: undefined,
+    noAttribute: true
+  })], Tree.prototype, "accessibleRoleDescription", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Tree.prototype, "_toggleButtonEnd", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Tree.prototype, "_minimal", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement,
+    invalidateOnChildChange: true,
+    "default": true
+  })], Tree.prototype, "items", void 0);
+  __decorate([(0, _slot.default)()], Tree.prototype, "header", void 0);
+  Tree = __decorate([(0, _customElement.default)({
+    tag: "ui5-tree",
+    renderer: _LitRenderer.default,
+    styles: _Tree.default,
+    template: _TreeTemplate.default,
+    dependencies: [_TreeList.default, _TreeItem.default, _TreeItemCustom.default]
+  })
+  /**
+   * Fired when a tree item is expanded or collapsed.
+   * <i>Note:</i> You can call <code>preventDefault()</code> on the event object to suppress the event, if needed.
+   * This may be handy for example if you want to dynamically load tree items upon the user expanding a node.
+   * Even if you prevented the event's default behavior, you can always manually call <code>toggle()</code> on a tree item.
+   *
+   * @event sap.ui.webc.main.Tree#item-toggle
+   * @param {HTMLElement} item the toggled item.
+   * @allowPreventDefault
+   * @public
+   */, (0, _event.default)("item-toggle", {
+    detail: {
+      item: {
+        type: HTMLElement
+      }
+    }
+  })
+  /**
+   * Fired when the mouse cursor enters the tree item borders.
+   * @event sap.ui.webc.main.Tree#item-mouseover
+   * @param {HTMLElement} item the hovered item.
+   * @since 1.0.0-rc.16
+   * @public
+   */, (0, _event.default)("item-mouseover", {
+    detail: {
+      item: {
+        type: HTMLElement
+      }
+    }
+  })
+  /**
+   * Fired when the mouse cursor leaves the tree item borders.
+   * @event sap.ui.webc.main.Tree#item-mouseout
+   * @param {HTMLElement} item the hovered item.
+   * @since 1.0.0-rc.16
+   * @public
+   */, (0, _event.default)("item-mouseout", {
+    detail: {
+      item: {
+        type: HTMLElement
+      }
+    }
+  })
+  /**
+   * Fired when a tree item is activated.
+   *
+   * @event sap.ui.webc.main.Tree#item-click
+   * @allowPreventDefault
+   * @param {HTMLElement} item The clicked item.
+   * @public
+   */, (0, _event.default)("item-click", {
+    detail: {
+      item: {
+        type: HTMLElement
+      }
+    }
+  })
+  /**
+   * Fired when the Delete button of any tree item is pressed.
+   * <br><br>
+   * <b>Note:</b> A Delete button is displayed on each item,
+   * when the component <code>mode</code> property is set to <code>Delete</code>.
+   *
+   * @event sap.ui.webc.main.Tree#item-delete
+   * @param {HTMLElement} item the deleted item.
+   * @public
+   */, (0, _event.default)("item-delete", {
+    detail: {
+      item: {
+        type: HTMLElement
+      }
+    }
+  })
+  /**
+   * Fired when selection is changed by user interaction
+   * in <code>SingleSelect</code>, <code>SingleSelectBegin</code>, <code>SingleSelectEnd</code> and <code>MultiSelect</code> modes.
+   *
+   * @event sap.ui.webc.main.Tree#selection-change
+   * @param {Array} selectedItems An array of the selected items.
+   * @param {Array} previouslySelectedItems An array of the previously selected items.
+   * @param {HTMLElement} targetItem The item triggering the event.
+   * @public
+   */, (0, _event.default)("selection-change", {
+    detail: {
+      selectedItems: {
+        type: Array
+      },
+      previouslySelectedItems: {
+        type: Array
+      },
+      targetItem: {
+        type: HTMLElement
+      }
+    }
+  })], Tree);
   const walkTree = (el, level, callback) => {
-    el.items.forEach(item => {
-      callback(item, level);
+    el.items.forEach((item, index) => {
+      callback(item, level, index);
       if (item.items.length > 0) {
         walkTree(item, level + 1, callback);
-      }
-    });
-  };
-  const buildTree = (el, level, result) => {
-    el.items.forEach((item, index) => {
-      const listItem = {
-        treeItem: item,
-        size: el.items.length,
-        posinset: index + 1,
-        level
-      };
-      result.push(listItem);
-      if (item.expanded && item.items.length > 0) {
-        buildTree(item, level + 1, result);
       }
     });
   };

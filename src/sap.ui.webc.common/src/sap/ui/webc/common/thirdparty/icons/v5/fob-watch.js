@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "fob-watch";
+  var _default = "SAP-icons-v5/fob-watch";
   _exports.default = _default;
 });

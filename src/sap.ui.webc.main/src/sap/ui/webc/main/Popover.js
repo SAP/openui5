@@ -13,6 +13,7 @@ sap.ui.define([
 	var PopoverHorizontalAlign = library.PopoverHorizontalAlign;
 	var PopoverPlacementType = library.PopoverPlacementType;
 	var PopoverVerticalAlign = library.PopoverVerticalAlign;
+	var PopupAccessibleRole = library.PopupAccessibleRole;
 
 	/**
 	 * Constructor for a new <code>Popover</code>.
@@ -68,7 +69,20 @@ sap.ui.define([
 				 */
 				accessibleName: {
 					type: "string",
-					defaultValue: ""
+					defaultValue: undefined
+				},
+
+				/**
+				 * Allows setting a custom role. Available options are:
+				 * <ul>
+				 *     <li><code>Dialog</code></li>
+				 *     <li><code>None</code></li>
+				 *     <li><code>AlertDialog</code></li>
+				 * </ul>
+				 */
+				accessibleRole: {
+					type: "sap.ui.webc.main.PopupAccessibleRole",
+					defaultValue: PopupAccessibleRole.Dialog
 				},
 
 				/**
@@ -225,7 +239,7 @@ sap.ui.define([
 			associations: {
 
 				/**
-				 * Defines the opener id of the element that the popover is shown at
+				 * Defines the ID or DOM Reference of the element that the popover is shown at
 				 */
 				opener: {
 					type: "sap.ui.core.Control",
@@ -313,7 +327,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Hides the block layer (for modal popups only)
+	 * Closes the popup.
 	 * @public
 	 * @name sap.ui.webc.main.Popover#close
 	 * @function

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/types/Integer", "./generated/templates/TableColumnTemplate.lit", "./generated/themes/TableColumn.css"], function (_exports, _UI5Element, _LitRenderer, _Integer, _TableColumnTemplate, _TableColumn) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/types/Integer", "./generated/templates/TableColumnTemplate.lit", "./types/TableColumnPopinDisplay", "./generated/themes/TableColumn.css"], function (_exports, _UI5Element, _LitRenderer, _customElement, _property, _Integer, _TableColumnTemplate, _TableColumnPopinDisplay, _TableColumn) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -7,81 +7,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
   _Integer = _interopRequireDefault(_Integer);
   _TableColumnTemplate = _interopRequireDefault(_TableColumnTemplate);
+  _TableColumnPopinDisplay = _interopRequireDefault(_TableColumnPopinDisplay);
   _TableColumn = _interopRequireDefault(_TableColumn);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
-  const metadata = {
-    tag: "ui5-table-column",
-    slots: /** @lends sap.ui.webcomponents.main.TableColumn.prototype */{
-      /**
-       * Defines the content of the column header.
-       *
-       * @type {Node[]}
-       * @slot
-       * @public
-       */
-      "default": {
-        type: Node
-      }
-    },
-    properties: /** @lends sap.ui.webcomponents.main.TableColumn.prototype */{
-      /**
-       * Defines the minimum table width required to display this column. By default it is always displayed.
-       * <br><br>
-       * The responsive behavior of the <code>ui5-table</code> is determined by this property. As an example, by setting
-       * <code>minWidth</code> property to <code>400</code> sets the minimum width to 400 pixels, and	shows this column on tablet (and desktop) but hides it on mobile.
-       * <br>
-       * For further responsive design options, see <code>demandPopin</code> property.
-       *
-       * @type {Integer}
-       * @defaultvalue Infinity
-       * @public
-       */
-      minWidth: {
-        type: _Integer.default,
-        defaultValue: Infinity
-      },
-      /**
-       * The text for the column when it pops in.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      popinText: {
-        type: String
-      },
-      /**
-       * According to your <code>minWidth</code> settings, the component can be hidden
-       * in different screen sizes.
-       * <br><br>
-       * Setting this property to <code>true</code>, shows this column as pop-in instead of hiding it.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      demandPopin: {
-        type: Boolean
-      },
-      /**
-       * @private
-       */
-      first: {
-        type: Boolean
-      },
-      /**
-       * @private
-       */
-      last: {
-        type: Boolean
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
   /**
    * @class
    *
@@ -101,26 +40,37 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.TableColumn
-   * @extends sap.ui.webcomponents.base.UI5Element
+   * @alias sap.ui.webc.main.TableColumn
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-table-column
-   * @implements sap.ui.webcomponents.main.ITableColumn
+   * @implements sap.ui.webc.main.ITableColumn
    * @public
    */
-  class TableColumn extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get styles() {
-      return _TableColumn.default;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _TableColumnTemplate.default;
-    }
-  }
+  let TableColumn = class TableColumn extends _UI5Element.default {};
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: Infinity
+  })], TableColumn.prototype, "minWidth", void 0);
+  __decorate([(0, _property.default)()], TableColumn.prototype, "popinText", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], TableColumn.prototype, "demandPopin", void 0);
+  __decorate([(0, _property.default)({
+    type: _TableColumnPopinDisplay.default,
+    defaultValue: _TableColumnPopinDisplay.default.Block
+  })], TableColumn.prototype, "popinDisplay", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], TableColumn.prototype, "first", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], TableColumn.prototype, "last", void 0);
+  TableColumn = __decorate([(0, _customElement.default)({
+    tag: "ui5-table-column",
+    styles: _TableColumn.default,
+    renderer: _LitRenderer.default,
+    template: _TableColumnTemplate.default
+  })], TableColumn);
   TableColumn.define();
   var _default = TableColumn;
   _exports.default = _default;

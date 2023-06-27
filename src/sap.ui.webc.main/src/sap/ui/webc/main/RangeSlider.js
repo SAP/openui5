@@ -41,6 +41,16 @@ sap.ui.define([
 	 *
 	 * <h3>Responsive Behavior</h3> You can move the currently selected range by clicking on it and dragging it along the interval.
 	 *
+	 * <h3>CSS Shadow Parts</h3>
+	 *
+	 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/::part CSS Shadow Parts} allow developers to style elements inside the Shadow DOM. <br>
+	 * The <code>sap.ui.webc.main.RangeSlider</code> exposes the following CSS Shadow Parts:
+	 * <ul>
+	 *     <li>progress-container - Used to style the progress container(the horizontal bar which visually represents the range between the minimum and maximum value) of the <code>sap.ui.webc.main.RangeSlider</code>.</li>
+	 *     <li>progress-bar - Used to style the progress bar, which shows the progress of the <code>sap.ui.webc.main.RangeSlider</code>.</li>
+	 *     <li>handle - Used to style the handles of the <code>sap.ui.webc.main.RangeSlider</code>.</li>
+	 * </ul>
+	 *
 	 * <h3>Keyboard Handling</h3>
 	 *
 	 *
@@ -74,7 +84,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the accessible aria name of the component.
+				 * Defines the accessible ARIA name of the component.
 				 */
 				accessibleName: {
 					type: "string"

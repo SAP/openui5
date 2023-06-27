@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/internet-browser", "./v4/internet-browser"], function (_exports, _Theme, _internetBrowser, _internetBrowser2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/internet-browser", "./v5/internet-browser"], function (_exports, _Theme, _internetBrowser, _internetBrowser2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _internetBrowser.pathData : _internetBrowser2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _internetBrowser.pathData : _internetBrowser2.pathData;
   _exports.pathData = pathData;
   var _default = "internet-browser";
   _exports.default = _default;

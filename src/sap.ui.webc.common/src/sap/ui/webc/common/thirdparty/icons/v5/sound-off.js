@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "sound-off";
+  var _default = "SAP-icons-v5/sound-off";
   _exports.default = _default;
 });

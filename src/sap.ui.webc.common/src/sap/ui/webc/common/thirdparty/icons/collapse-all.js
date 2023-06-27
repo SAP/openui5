@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/collapse-all", "./v4/collapse-all"], function (_exports, _Theme, _collapseAll, _collapseAll2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/collapse-all", "./v5/collapse-all"], function (_exports, _Theme, _collapseAll, _collapseAll2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _collapseAll.pathData : _collapseAll2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _collapseAll.pathData : _collapseAll2.pathData;
   _exports.pathData = pathData;
   var _default = "collapse-all";
   _exports.default = _default;

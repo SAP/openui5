@@ -91,11 +91,20 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * If you wish to nest menus, you can pass inner menu items to the default slot.
+				 * Defines nested items by passing <code>sap.ui.webc.fiori.SideNavigationSubItem</code> to the default slot.
 				 */
 				items: {
 					type: "sap.ui.webc.fiori.ISideNavigationSubItem",
 					multiple: true
+				}
+			},
+			events: {
+
+				/**
+				 * Fired when the component is activated either with a click/tap or by using the Enter or Space key.
+				 */
+				click: {
+					parameters: {}
 				}
 			},
 			designtime: "sap/ui/webc/fiori/designtime/SideNavigationItem.designtime"

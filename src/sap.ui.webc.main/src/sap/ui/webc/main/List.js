@@ -318,6 +318,7 @@ sap.ui.define([
 				 * Fired when selection is changed by user interaction in <code>SingleSelect</code>, <code>SingleSelectBegin</code>, <code>SingleSelectEnd</code> and <code>MultiSelect</code> modes.
 				 */
 				selectionChange: {
+					allowPreventDefault: true,
 					parameters: {
 						/**
 						 * An array of the selected items.

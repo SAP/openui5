@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "locate-me";
-  const pathData = "M503.045 9q14 14 6 31l-179 454q-8 17-26 17-8 0-15.5-4t-9.5-13l-74-187-187-74q-9-2-13-9.5t-4-16.5q0-8 4-15.5t13-9.5l454-179q17-8 31 6zm-71 71l-326 127 130 52q5 2 10 6t7 11l51 130z";
+  const pathData = "M299 480q-8 0-14.5-4t-9.5-12l-65-164-162-65q-16-6-16-24 0-17 16-24L445 34q6-2 10-2 10 0 17.5 7.5T480 57q0 6-2 10L323 464q-6 16-24 16z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "locate-me";
+  var _default = "SAP-icons-v5/locate-me";
   _exports.default = _default;
 });

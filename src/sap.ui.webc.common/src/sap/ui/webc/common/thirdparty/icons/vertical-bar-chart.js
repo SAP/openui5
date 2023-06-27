@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/vertical-bar-chart", "./v4/vertical-bar-chart"], function (_exports, _Theme, _verticalBarChart, _verticalBarChart2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/vertical-bar-chart", "./v5/vertical-bar-chart"], function (_exports, _Theme, _verticalBarChart, _verticalBarChart2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _verticalBarChart.pathData : _verticalBarChart2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _verticalBarChart.pathData : _verticalBarChart2.pathData;
   _exports.pathData = pathData;
   var _default = "vertical-bar-chart";
   _exports.default = _default;

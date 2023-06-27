@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/qr-code", "./v4/qr-code"], function (_exports, _Theme, _qrCode, _qrCode2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/qr-code", "./v5/qr-code"], function (_exports, _Theme, _qrCode, _qrCode2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _qrCode.pathData : _qrCode2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _qrCode.pathData : _qrCode2.pathData;
   _exports.pathData = pathData;
   var _default = "qr-code";
   _exports.default = _default;

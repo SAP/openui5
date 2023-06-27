@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/horizontal-stacked-chart", "./v4/horizontal-stacked-chart"], function (_exports, _Theme, _horizontalStackedChart, _horizontalStackedChart2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/horizontal-stacked-chart", "./v5/horizontal-stacked-chart"], function (_exports, _Theme, _horizontalStackedChart, _horizontalStackedChart2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _horizontalStackedChart.pathData : _horizontalStackedChart2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _horizontalStackedChart.pathData : _horizontalStackedChart2.pathData;
   _exports.pathData = pathData;
   var _default = "horizontal-stacked-chart";
   _exports.default = _default;

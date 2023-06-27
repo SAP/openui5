@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/i18n/i18n-defaults", "./Input", "./Popover", "./Icon", "./generated/templates/FileUploaderTemplate.lit", "./generated/templates/FileUploaderPopoverTemplate.lit", "./generated/themes/FileUploader.css", "./generated/themes/ResponsivePopoverCommon.css", "./generated/themes/ValueStateMessage.css"], function (_exports, _UI5Element, _ValueState, _FeaturesRegistry, _LitRenderer, _i18nBundle, _Keys, _i18nDefaults, _Input, _Popover, _Icon, _FileUploaderTemplate, _FileUploaderPopoverTemplate, _FileUploader, _ResponsivePopoverCommon, _ValueStateMessage) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/MarkedEvents", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/i18n/i18n-defaults", "./Input", "./Popover", "./Icon", "./generated/templates/FileUploaderTemplate.lit", "./generated/templates/FileUploaderPopoverTemplate.lit", "./generated/themes/FileUploader.css", "./generated/themes/ResponsivePopoverCommon.css", "./generated/themes/ValueStateMessage.css"], function (_exports, _UI5Element, _customElement, _property, _event, _slot, _ValueState, _FeaturesRegistry, _LitRenderer, _i18nBundle, _MarkedEvents, _Keys, _i18nDefaults, _Input, _Popover, _Icon, _FileUploaderTemplate, _FileUploaderPopoverTemplate, _FileUploader, _ResponsivePopoverCommon, _ValueStateMessage) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,6 +6,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
+  _slot = _interopRequireDefault(_slot);
   _ValueState = _interopRequireDefault(_ValueState);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _Input = _interopRequireDefault(_Input);
@@ -17,181 +21,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _ResponsivePopoverCommon = _interopRequireDefault(_ResponsivePopoverCommon);
   _ValueStateMessage = _interopRequireDefault(_ValueStateMessage);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-file-uploader",
-    languageAware: true,
-    properties: /** @lends sap.ui.webcomponents.main.FileUploader.prototype */{
-      /**
-       * Comma-separated list of file types that the component should accept.
-       * <br><br>
-       * <b>Note:</b> Please make sure you are adding the <code>.</code> in front on the file type, e.g. <code>.png</code> in case you want to accept png's only.
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      accept: {
-        type: String
-      },
-      /**
-       * If set to "true", the input field of component will not be rendered. Only the default slot that is passed will be rendered.
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      hideInput: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the component is in disabled state.
-       * <br><br>
-       * <b>Note:</b> A disabled component is completely noninteractive.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Allows multiple files to be chosen.
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      multiple: {
-        type: Boolean
-      },
-      /**
-       * Determines the name with which the component will be submitted in an HTML form.
-       *
-       * <br><br>
-       * <b>Important:</b> For the <code>name</code> property to have effect, you must add the following import to your project:
-       * <code>import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";</code>
-       *
-       * <br><br>
-       * <b>Note:</b> When set, a native <code>input</code> HTML element
-       * will be created inside the component so that it can be submitted as
-       * part of an HTML form. Do not use this property unless you need to submit a form.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      name: {
-        type: String
-      },
-      /**
-       * Defines a short hint intended to aid the user with data entry when the component has no value.
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      placeholder: {
-        type: String
-      },
-      /**
-       * Defines the name/names of the file/files to upload.
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      value: {
-        type: String
-      },
-      /**
-       * Defines the value state of the component.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>None</code></li>
-       * <li><code>Error</code></li>
-       * <li><code>Warning</code></li>
-       * <li><code>Success</code></li>
-       * <li><code>Information</code></li>
-       * </ul>
-       *
-       * @type {ValueState}
-       * @defaultvalue "None"
-       * @public
-       */
-      valueState: {
-        type: _ValueState.default,
-        defaultValue: _ValueState.default.None
-      },
-      /**
-       * @private
-       */
-      focused: {
-        type: Boolean
-      }
-    },
-    managedSlots: true,
-    slots: /** @lends sap.ui.webcomponents.main.FileUploader.prototype */{
-      /**
-       * By default the component contains a single input field. With this slot you can pass any content that you wish to add. See the samples for more information.
-       *
-       * @type {HTMLElement[]}
-       * @slot content
-       * @public
-       */
-      "default": {
-        propertyName: "content",
-        type: HTMLElement
-      },
-      /**
-       * Defines the value state message that will be displayed as pop up under the component.
-       * <br><br>
-       *
-       * <b>Note:</b> If not specified, a default text (in the respective language) will be displayed.
-       * <br>
-       * <b>Note:</b> The <code>valueStateMessage</code> would be displayed,
-       * when the component is in <code>Information</code>, <code>Warning</code> or <code>Error</code> value state.
-       * @type {HTMLElement[]}
-       * @since 1.0.0-rc.9
-       * @slot
-       * @public
-       */
-      valueStateMessage: {
-        type: HTMLElement
-      },
-      /**
-       * The slot is used to render native <code>input</code> HTML element within Light DOM to enable form submit,
-       * when <code>name</code> property is set.
-       * @type {HTMLElement[]}
-       * @slot
-       * @private
-       */
-      formSupport: {
-        type: HTMLElement
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.FileUploader.prototype */{
-      /**
-       * Event is fired when the value of the file path has been changed.
-       * <b>Note:</b> Keep in mind that because of the HTML input element of type file, the event is also fired in Chrome browser when the Cancel button of the uploads window is pressed.
-       *
-       * @event
-       * @param {FileList} files The current files.
-       * @public
-       */
-      change: {
-        detail: {
-          files: {
-            type: FileList
-          }
-        }
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var FileUploader_1;
   /**
    * @class
    *
@@ -215,32 +52,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @constructor
    * @since 1.0.0-rc.6
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.FileUploader
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.FileUploader
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-file-uploader
    * @public
    */
-  class FileUploader extends _UI5Element.default {
+  let FileUploader = FileUploader_1 = class FileUploader extends _UI5Element.default {
     static get formAssociated() {
       return true;
-    }
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _FileUploader.default;
-    }
-    static get template() {
-      return _FileUploaderTemplate.default;
-    }
-    static get staticAreaTemplate() {
-      return _FileUploaderPopoverTemplate.default;
-    }
-    static get staticAreaStyles() {
-      return [_ResponsivePopoverCommon.default, _ValueStateMessage.default];
     }
     constructor() {
       super();
@@ -256,21 +75,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         item.classList.remove("ui5_hovered");
       });
     }
-    _onclick(event) {
-      if (event.isMarked === "button") {
-        this._input.click(event);
+    _onclick(e) {
+      if ((0, _MarkedEvents.getEventMark)(e) === "button") {
+        this._input.click();
       }
     }
-    _onkeydown(event) {
-      if ((0, _Keys.isEnter)(event)) {
-        this._input.click(event);
-        event.preventDefault();
+    _onkeydown(e) {
+      if ((0, _Keys.isEnter)(e)) {
+        this._input.click();
+        e.preventDefault();
       }
     }
-    _onkeyup(event) {
-      if ((0, _Keys.isSpace)(event)) {
-        this._input.click(event);
-        event.preventDefault();
+    _onkeyup(e) {
+      if ((0, _Keys.isSpace)(e)) {
+        this._input.click();
+        e.preventDefault();
       }
     }
     _onfocusin() {
@@ -279,18 +98,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _onfocusout() {
       this.focused = false;
     }
-
     /**
      * FileList of all selected files.
      * @readonly
-     * @type { FileList }
+     * @type {FileList}
      * @public
+     * @name sap.ui.webc.main.FileUploader.prototype.files
      */
     get files() {
       if (this._input) {
         return this._input.files;
       }
-      return FileUploader._emptyFilesList;
+      return FileUploader_1._emptyFilesList;
     }
     onBeforeRendering() {
       this._enableFormSupport();
@@ -302,13 +121,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.toggleValueStatePopover(this.shouldOpenValueStateMessagePopover);
     }
     _enableFormSupport() {
-      const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
-      if (FormSupport) {
+      const formSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
+      if (formSupport) {
         if (this._canUseNativeFormSupport) {
           this._setFormValue();
         } else {
-          FormSupport.syncNativeFileInput(this, (element, nativeInput) => {
-            nativeInput.disabled = element.disabled;
+          formSupport.syncNativeFileInput(this, (element, nativeInput) => {
+            nativeInput.disabled = !!element.disabled;
           }, this._onChange.bind(this));
         }
       } else if (this.name) {
@@ -316,21 +135,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
 
-    _onChange(event) {
-      this._updateValue(event.target.files);
+    _onChange(e) {
+      const changedFiles = e.target.files;
+      this._updateValue(changedFiles);
       this.fireEvent("change", {
-        files: event.target.files
+        files: changedFiles
       });
     }
     _updateValue(files) {
-      this.value = Array.from(files).reduce((acc, currFile) => {
+      this.value = Array.from(files || []).reduce((acc, currFile) => {
         return `${acc}"${currFile.name}" `;
       }, "");
     }
     _setFormValue() {
       const formData = new FormData();
-      for (let i = 0; i < this.files.length; i++) {
-        formData.append(this.name, this.files[i]);
+      if (this.files) {
+        for (let i = 0; i < this.files.length; i++) {
+          formData.append(this.name, this.files[i]);
+        }
       }
       this._internals.setFormValue(formData);
     }
@@ -357,7 +179,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const staticAreaItem = await this.getStaticAreaItemDomRef();
       return staticAreaItem.querySelector(".ui5-valuestatemessage-popover");
     }
-
     /**
      * in case when the component is not placed in the DOM, return empty FileList, like native input would do
      * @private
@@ -370,13 +191,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this.emptyInput.files;
     }
     get browseText() {
-      return FileUploader.i18nBundle.getText(_i18nDefaults.FILEUPLOAD_BROWSE);
+      return FileUploader_1.i18nBundle.getText(_i18nDefaults.FILEUPLOAD_BROWSE);
     }
     get titleText() {
-      return FileUploader.i18nBundle.getText(_i18nDefaults.FILEUPLOADER_TITLE);
+      return FileUploader_1.i18nBundle.getText(_i18nDefaults.FILEUPLOADER_TITLE);
     }
     get _canUseNativeFormSupport() {
-      return this._internals && this._internals.setFormValue;
+      return !!(this._internals && this._internals.setFormValue);
     }
     get _keepInputInShadowDOM() {
       // only put input in the light dom when ui5-file-uploader is placed inside form and there is no support for form elements
@@ -385,20 +206,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get _input() {
       return this.shadowRoot.querySelector("input[type=file]") || this.querySelector("input[type=file][data-ui5-form-support]");
     }
-
-    /**
-     * Determines input helper type in forms.
-     * @private
-     */
-    get _type() {
-      return "file";
-    }
     get valueStateTextMappings() {
       return {
-        "Success": FileUploader.i18nBundle.getText(_i18nDefaults.VALUE_STATE_SUCCESS),
-        "Information": FileUploader.i18nBundle.getText(_i18nDefaults.VALUE_STATE_INFORMATION),
-        "Error": FileUploader.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR),
-        "Warning": FileUploader.i18nBundle.getText(_i18nDefaults.VALUE_STATE_WARNING)
+        "Success": FileUploader_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_SUCCESS),
+        "Information": FileUploader_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_INFORMATION),
+        "Error": FileUploader_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR),
+        "Warning": FileUploader_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_WARNING)
       };
     }
     get valueStateText() {
@@ -419,7 +232,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get shouldOpenValueStateMessagePopover() {
       return this.focused && this.hasValueStateText && !this.hideInput;
     }
-
     /**
      * This method is relevant for sap_horizon theme only
      */
@@ -453,13 +265,60 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get ui5Input() {
       return this.shadowRoot.querySelector(".ui5-file-uploader-input");
     }
-    static get dependencies() {
-      return [_Input.default, _Popover.default, _Icon.default];
-    }
     static async onDefine() {
-      FileUploader.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      FileUploader_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-  }
+  };
+  __decorate([(0, _property.default)()], FileUploader.prototype, "accept", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], FileUploader.prototype, "hideInput", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], FileUploader.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], FileUploader.prototype, "multiple", void 0);
+  __decorate([(0, _property.default)()], FileUploader.prototype, "name", void 0);
+  __decorate([(0, _property.default)()], FileUploader.prototype, "placeholder", void 0);
+  __decorate([(0, _property.default)()], FileUploader.prototype, "value", void 0);
+  __decorate([(0, _property.default)({
+    type: _ValueState.default,
+    defaultValue: _ValueState.default.None
+  })], FileUploader.prototype, "valueState", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], FileUploader.prototype, "focused", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement,
+    "default": true
+  })], FileUploader.prototype, "content", void 0);
+  __decorate([(0, _slot.default)()], FileUploader.prototype, "valueStateMessage", void 0);
+  __decorate([(0, _slot.default)()], FileUploader.prototype, "formSupport", void 0);
+  FileUploader = FileUploader_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-file-uploader",
+    languageAware: true,
+    renderer: _LitRenderer.default,
+    styles: _FileUploader.default,
+    template: _FileUploaderTemplate.default,
+    staticAreaTemplate: _FileUploaderPopoverTemplate.default,
+    staticAreaStyles: [_ResponsivePopoverCommon.default, _ValueStateMessage.default],
+    dependencies: [_Input.default, _Popover.default, _Icon.default]
+  })
+  /**
+   * Event is fired when the value of the file path has been changed.
+   * <b>Note:</b> Keep in mind that because of the HTML input element of type file, the event is also fired in Chrome browser when the Cancel button of the uploads window is pressed.
+   *
+   * @event sap.ui.webc.main.FileUploader#change
+   * @param {FileList} files The current files.
+   * @public
+   */, (0, _event.default)("change", {
+    detail: {
+      files: {
+        type: FileList
+      }
+    }
+  })], FileUploader);
   FileUploader.define();
   var _default = FileUploader;
   _exports.default = _default;

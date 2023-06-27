@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/measurement-document", "./v4/measurement-document"], function (_exports, _Theme, _measurementDocument, _measurementDocument2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/measurement-document", "./v5/measurement-document"], function (_exports, _Theme, _measurementDocument, _measurementDocument2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _measurementDocument.pathData : _measurementDocument2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _measurementDocument.pathData : _measurementDocument2.pathData;
   _exports.pathData = pathData;
   var _default = "measurement-document";
   _exports.default = _default;

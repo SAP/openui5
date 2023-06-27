@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/pie-chart", "./v4/pie-chart"], function (_exports, _Theme, _pieChart, _pieChart2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/pie-chart", "./v5/pie-chart"], function (_exports, _Theme, _pieChart, _pieChart2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _pieChart.pathData : _pieChart2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _pieChart.pathData : _pieChart2.pathData;
   _exports.pathData = pathData;
   var _default = "pie-chart";
   _exports.default = _default;

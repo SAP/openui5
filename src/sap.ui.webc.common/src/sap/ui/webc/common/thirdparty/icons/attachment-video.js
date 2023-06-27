@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/attachment-video", "./v4/attachment-video"], function (_exports, _Theme, _attachmentVideo, _attachmentVideo2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/attachment-video", "./v5/attachment-video"], function (_exports, _Theme, _attachmentVideo, _attachmentVideo2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _attachmentVideo.pathData : _attachmentVideo2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _attachmentVideo.pathData : _attachmentVideo2.pathData;
   _exports.pathData = pathData;
   var _default = "attachment-video";
   _exports.default = _default;

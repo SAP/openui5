@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/copy", "./v4/copy"], function (_exports, _Theme, _copy, _copy2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/copy", "./v5/copy"], function (_exports, _Theme, _copy, _copy2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _copy.pathData : _copy2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _copy.pathData : _copy2.pathData;
   _exports.pathData = pathData;
   var _default = "copy";
   _exports.default = _default;

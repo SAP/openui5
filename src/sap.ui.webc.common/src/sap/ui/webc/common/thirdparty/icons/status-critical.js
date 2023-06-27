@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/status-critical", "./v4/status-critical"], function (_exports, _Theme, _statusCritical, _statusCritical2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/status-critical", "./v5/status-critical"], function (_exports, _Theme, _statusCritical, _statusCritical2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _statusCritical.pathData : _statusCritical2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _statusCritical.pathData : _statusCritical2.pathData;
   _exports.pathData = pathData;
   var _default = "status-critical";
   _exports.default = _default;

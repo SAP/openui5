@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/download", "./v4/download"], function (_exports, _Theme, _download, _download2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/download", "./v5/download"], function (_exports, _Theme, _download, _download2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _download.pathData : _download2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _download.pathData : _download2.pathData;
   _exports.pathData = pathData;
   var _default = "download";
   _exports.default = _default;

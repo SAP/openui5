@@ -4,6 +4,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/lit-html/static", "./Cu
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
+  _exports.LitStatic = void 0;
   Object.defineProperty(_exports, "getCustomElementsScopingRules", {
     enumerable: true,
     get: function () {
@@ -40,9 +41,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/lit-html/static", "./Cu
       return _CustomElementsScopeUtils.shouldScopeCustomElement;
     }
   });
-  (0, _FeaturesRegistry.registerFeature)("LitStatic", {
-    html: _static.html,
-    svg: _static.svg,
-    unsafeStatic: _static.unsafeStatic
-  });
+  class LitStatic {}
+  _exports.LitStatic = LitStatic;
+  LitStatic.html = _static.html;
+  LitStatic.svg = _static.svg;
+  LitStatic.unsafeStatic = _static.unsafeStatic;
+  (0, _FeaturesRegistry.registerFeature)("LitStatic", LitStatic);
 });

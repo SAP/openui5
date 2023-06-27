@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/base/animations/slideDown", "sap/ui/webc/common/thirdparty/base/animations/slideUp", "sap/ui/webc/common/thirdparty/base/types/AnimationMode", "sap/ui/webc/common/thirdparty/base/config/AnimationMode", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/MediaRange", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/icons/slim-arrow-up", "sap/ui/webc/common/thirdparty/icons/slim-arrow-down", "./generated/i18n/i18n-defaults", "./Button", "./Icon", "./List", "./ResponsivePopover", "./types/TabContainerTabsPlacement", "./types/SemanticColor", "./generated/templates/TabContainerTemplate.lit", "./generated/templates/TabContainerPopoverTemplate.lit", "./generated/themes/TabContainer.css", "./generated/themes/ResponsivePopoverCommon.css", "./types/TabLayout", "./types/TabsOverflowMode"], function (_exports, _UI5Element, _LitRenderer, _ResizeHandler, _Render, _slideDown, _slideUp, _AnimationMode, _AnimationMode2, _ItemNavigation, _Keys, _MediaRange, _i18nBundle, _slimArrowUp, _slimArrowDown, _i18nDefaults, _Button, _Icon, _List, _ResponsivePopover, _TabContainerTabsPlacement, _SemanticColor, _TabContainerTemplate, _TabContainerPopoverTemplate, _TabContainer, _ResponsivePopoverCommon, _TabLayout, _TabsOverflowMode) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/base/animations/slideDown", "sap/ui/webc/common/thirdparty/base/animations/slideUp", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/types/AnimationMode", "sap/ui/webc/common/thirdparty/base/config/AnimationMode", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/MediaRange", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/icons/slim-arrow-up", "sap/ui/webc/common/thirdparty/icons/slim-arrow-down", "./generated/i18n/i18n-defaults", "./Button", "./Icon", "./List", "./ResponsivePopover", "./types/TabContainerTabsPlacement", "./types/SemanticColor", "./types/TabContainerBackgroundDesign", "./types/TabLayout", "./types/TabsOverflowMode", "./generated/templates/TabContainerTemplate.lit", "./generated/templates/TabContainerPopoverTemplate.lit", "./generated/themes/TabContainer.css", "./generated/themes/ResponsivePopoverCommon.css"], function (_exports, _UI5Element, _customElement, _event, _property, _slot, _LitRenderer, _ResizeHandler, _Render, _slideDown, _slideUp, _Integer, _AnimationMode, _AnimationMode2, _ItemNavigation, _Keys, _MediaRange, _i18nBundle, _slimArrowUp, _slimArrowDown, _i18nDefaults, _Button, _Icon, _List, _ResponsivePopover, _TabContainerTabsPlacement, _SemanticColor, _TabContainerBackgroundDesign, _TabLayout, _TabsOverflowMode, _TabContainerTemplate, _TabContainerPopoverTemplate, _TabContainer, _ResponsivePopoverCommon) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,10 +6,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _event = _interopRequireDefault(_event);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _ResizeHandler = _interopRequireDefault(_ResizeHandler);
   _slideDown = _interopRequireDefault(_slideDown);
   _slideUp = _interopRequireDefault(_slideUp);
+  _Integer = _interopRequireDefault(_Integer);
   _AnimationMode = _interopRequireDefault(_AnimationMode);
   _ItemNavigation = _interopRequireDefault(_ItemNavigation);
   _MediaRange = _interopRequireDefault(_MediaRange);
@@ -19,237 +24,25 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _ResponsivePopover = _interopRequireDefault(_ResponsivePopover);
   _TabContainerTabsPlacement = _interopRequireDefault(_TabContainerTabsPlacement);
   _SemanticColor = _interopRequireDefault(_SemanticColor);
+  _TabContainerBackgroundDesign = _interopRequireDefault(_TabContainerBackgroundDesign);
+  _TabLayout = _interopRequireDefault(_TabLayout);
+  _TabsOverflowMode = _interopRequireDefault(_TabsOverflowMode);
   _TabContainerTemplate = _interopRequireDefault(_TabContainerTemplate);
   _TabContainerPopoverTemplate = _interopRequireDefault(_TabContainerPopoverTemplate);
   _TabContainer = _interopRequireDefault(_TabContainer);
   _ResponsivePopoverCommon = _interopRequireDefault(_ResponsivePopoverCommon);
-  _TabLayout = _interopRequireDefault(_TabLayout);
-  _TabsOverflowMode = _interopRequireDefault(_TabsOverflowMode);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Templates
-
-  // Styles
-
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+  };
+  var TabContainer_1;
   const tabStyles = [];
   const staticAreaTabStyles = [];
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-tabcontainer",
-    languageAware: true,
-    managedSlots: true,
-    fastNavigation: true,
-    slots: /** @lends sap.ui.webcomponents.main.TabContainer.prototype */{
-      /**
-       * Defines the tabs.
-       * <br><br>
-       * <b>Note:</b> Use <code>ui5-tab</code> and <code>ui5-tab-separator</code> for the intended design.
-       *
-       * @type {sap.ui.webcomponents.main.ITab[]}
-       * @public
-       * @slot items
-       */
-      "default": {
-        propertyName: "items",
-        type: HTMLElement,
-        individualSlots: true,
-        invalidateOnChildChange: {
-          properties: true,
-          slots: false
-        }
-      },
-      /**
-       * Defines the button which will open the overflow menu. If nothing is provided to this slot,
-       * the default button will be used.
-       *
-       * @type {sap.ui.webcomponents.main.IButton}
-       * @public
-       * @slot
-       * @since 1.0.0-rc.9
-       */
-      overflowButton: {
-        type: HTMLElement
-      },
-      /**
-       * Defines the button which will open the start overflow menu if available. If nothing is provided to this slot,
-       * the default button will be used.
-       *
-       * @type {sap.ui.webcomponents.main.IButton}
-       * @public
-       * @slot
-       * @since 1.1.0
-       */
-      startOverflowButton: {
-        type: HTMLElement
-      }
-    },
-    properties: /** @lends sap.ui.webcomponents.main.TabContainer.prototype */{
-      /**
-       * Defines whether the tabs are in a fixed state that is not
-       * expandable/collapsible by user interaction.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      fixed: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the tab content is collapsed.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      collapsed: {
-        type: Boolean
-      },
-      /**
-       * Defines the placement of the tab strip relative to the actual tabs' content.
-       * <br><br>
-       * <b>Note:</b> By default the tab strip is displayed above the tabs' content area and this is the recommended
-       * layout for most scenarios. Set to <code>Bottom</code> only when the component is at the
-       * bottom of the page and you want the tab strip to act as a menu.
-       *
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>Top</code></li>
-       * <li><code>Bottom</code></li>
-       * </ul>
-       *
-       * @type {TabContainerTabsPlacement}
-       * @defaultvalue "Top"
-       * @since 1.0.0-rc.7
-       * @private
-       */
-      tabsPlacement: {
-        type: _TabContainerTabsPlacement.default,
-        defaultValue: _TabContainerTabsPlacement.default.Top
-      },
-      /**
-       * Defines whether the overflow select list is displayed.
-       * <br><br>
-       * The overflow select list represents a list, where all tabs are displayed
-       * so that it's easier for the user to select a specific tab.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       * @deprecated Since the introduction of TabsOverflowMode overflows will always be visible if there is not enough space for all tabs,
-       * all hidden tabs are moved to a select list in the respective overflows and are accessible via the overflowButton and / or startOverflowButton
-       */
-      showOverflow: {
-        type: Boolean
-      },
-      /**
-       * Defines the alignment of the content and the <code>additionalText</code> of a tab.
-       *
-       * <br><br>
-       * <b>Note:</b>
-       * The content and the <code>additionalText</code> would be displayed vertically by defualt,
-       * but when set to <code>Inline</code>, they would be displayed horizontally.
-       *
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>Standard</code></li>
-       * <li><code>Inline</code></li>
-       * </ul>
-       *
-       * @type {TabLayout}
-       * @defaultvalue "Standard"
-       * @public
-       */
-      tabLayout: {
-        type: String,
-        defaultValue: _TabLayout.default.Standard
-      },
-      /**
-       * Defines the overflow mode of the tab strip. If you have a large number of tabs, only the tabs that can fit on screen will be visible.
-       * All other tabs that can 't fit on the screen are available in an overflow tab "More".
-       *
-       * <br><br>
-       * <b>Note:</b>
-       * Only one overflow at the end would be displayed by default,
-       * but when set to <code>StartAndEnd</code>, there will be two overflows on both ends, and tab order will not change on tab selection.
-       *
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>End</code></li>
-       * <li><code>StartAndEnd</code></li>
-       * </ul>
-       *
-       * @type {TabsOverflowMode}
-       * @defaultvalue "End"
-       * @since 1.1.0
-       * @public
-       */
-      tabsOverflowMode: {
-        type: _TabsOverflowMode.default,
-        defaultValue: _TabsOverflowMode.default.End
-      },
-      /**
-       * Defines the current media query size.
-       *
-       * @type {string}
-       * @private
-       */
-      mediaRange: {
-        type: String
-      },
-      _selectedTab: {
-        type: Object
-      },
-      _animationRunning: {
-        type: Boolean,
-        noAttribute: true
-      },
-      _contentCollapsed: {
-        type: Boolean,
-        noAttribute: true
-      },
-      _startOverflowText: {
-        type: String,
-        noAttribute: true,
-        defaultValue: "0"
-      },
-      _endOverflowText: {
-        type: String,
-        noAttribute: true,
-        defaultValue: "More"
-      },
-      _overflowItems: {
-        type: Object,
-        multiple: true
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.TabContainer.prototype */{
-      /**
-       * Fired when a tab is selected.
-       *
-       * @event sap.ui.webcomponents.main.TabContainer#tab-select
-       * @param {HTMLElement} tab The selected <code>tab</code>.
-       * @param {Integer} tabIndex The selected <code>tab</code> index.
-       * @public
-       */
-      "tab-select": {
-        detail: {
-          tab: {
-            type: HTMLElement
-          },
-          tabIndex: {
-            type: Number
-          }
-        }
-      }
-    }
-  };
-
+  const PAGE_UP_DOWN_SIZE = 5;
   /**
    * @class
    *
@@ -299,31 +92,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.TabContainer
-   * @extends sap.ui.webcomponents.base.UI5Element
-   * @appenddocs Tab TabSeparator
+   * @alias sap.ui.webc.main.TabContainer
+   * @extends sap.ui.webc.base.UI5Element
+   * @appenddocs sap.ui.webc.main.Tab sap.ui.webc.main.TabSeparator
    * @tagname ui5-tabcontainer
    * @public
    */
-  class TabContainer extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get styles() {
-      return [tabStyles, _TabContainer.default];
-    }
-    static get staticAreaStyles() {
-      return [_ResponsivePopoverCommon.default, staticAreaTabStyles];
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _TabContainerTemplate.default;
-    }
-    static get staticAreaTemplate() {
-      return _TabContainerPopoverTemplate.default;
-    }
+  let TabContainer = TabContainer_1 = class TabContainer extends _UI5Element.default {
     static registerTabStyles(styles) {
       tabStyles.push(styles);
     }
@@ -332,26 +107,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     constructor() {
       super();
-      this._handleResize = this._handleResize.bind(this);
-
+      this._handleResizeBound = this._handleResize.bind(this);
       // Init ItemNavigation
       this._itemNavigation = new _ItemNavigation.default(this, {
-        getItemsCallback: () => this._getFocusableTabs()
+        getItemsCallback: () => this._getFocusableRefs(),
+        skipItemsSize: PAGE_UP_DOWN_SIZE
       });
     }
     onBeforeRendering() {
-      // update selected tab
       this._allItemsAndSubItems = this._getAllSubItems(this.items);
-      if (this._allItemsAndSubItems.length) {
-        const selectedTabs = this._allItemsAndSubItems.filter(tab => tab.selected);
-        if (selectedTabs.length) {
-          this._selectedTab = selectedTabs[0];
-        } else {
-          this._selectedTab = this._allItemsAndSubItems[0];
-          this._selectedTab._selected = true;
-        }
+      if (!this._allItemsAndSubItems.length) {
+        return;
       }
-      this._setItemsExternalProperties(this.items);
+      // update selected tab
+      const selectedTabs = this._allItemsAndSubItems.filter(tab => tab.selected);
+      if (selectedTabs.length) {
+        this._selectedTab._selected = false;
+        this._selectedTab = selectedTabs[0];
+      } else {
+        this._selectedTab = this._allItemsAndSubItems[0];
+        this._selectedTab._selected = true;
+      }
+      this._setItemsPrivateProperties(this.items);
       if (!this._animationRunning) {
         this._contentCollapsed = this.collapsed;
       }
@@ -361,52 +138,64 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
 
     onAfterRendering() {
-      this.items.forEach(item => {
-        item._tabInStripDomRef = this.getDomRef().querySelector(`*[data-ui5-stable="${item.stableDomRef}"]`);
-      });
+      if (!this.items.length) {
+        return;
+      }
+      this._setItemsForStrip();
+      if (!this.shadowRoot.contains(document.activeElement)) {
+        const focusStart = this._getRootTab(this._selectedTab);
+        this._itemNavigation.setCurrentItem(focusStart);
+      }
     }
     onEnterDOM() {
-      _ResizeHandler.default.register(this._getHeader(), this._handleResize);
+      _ResizeHandler.default.register(this._getHeader(), this._handleResizeBound);
     }
     onExitDOM() {
-      _ResizeHandler.default.deregister(this._getHeader(), this._handleResize);
+      _ResizeHandler.default.deregister(this._getHeader(), this._handleResizeBound);
     }
-    async _handleResize() {
+    _handleResize() {
       if (this.responsivePopover && this.responsivePopover.opened) {
         this.responsivePopover.close();
       }
-      this._updateMediaRange();
-      await (0, _Render.renderFinished)(); // await the tab container to have rendered its representation of tabs
-      this._setItemsForStrip();
+      this._width = this.offsetWidth;
+      this._updateMediaRange(this._width);
     }
-    _updateMediaRange() {
-      this.mediaRange = _MediaRange.default.getCurrentRange(_MediaRange.default.RANGESETS.RANGE_4STEPS, this.getDomRef().offsetWidth);
+    _updateMediaRange(width) {
+      this.mediaRange = _MediaRange.default.getCurrentRange(_MediaRange.default.RANGESETS.RANGE_4STEPS, width);
     }
-    _setItemsExternalProperties(items) {
-      items.filter(item => !item.isSeparator).forEach((item, index, arr) => {
-        item._isInline = this.tabLayout === _TabLayout.default.Inline;
-        item._mixedMode = this.mixedMode;
-        item._posinset = index + 1;
-        item._setsize = arr.length;
-        item._getTabContainerHeaderItemCallback = _ => this.getDomRef().querySelector(`#${item._id}`);
-        item._itemSelectCallback = this._onItemSelect.bind(this);
-        item._getRealDomRef = () => this.getDomRef().querySelector(`*[data-ui5-stable=${item.stableDomRef}]`);
-        item._realTab = this._selectedTab;
-        item._isTopLevelTab = this.items.some(i => i === item);
-        walk(items, tab => {
-          tab._realTab = item._realTab;
+    _setItemsPrivateProperties(items) {
+      // set real dom ref to all items, then return only the tabs for further processing
+      const allTabs = items.filter(item => {
+        item._getElementInStrip = () => this.getDomRef().querySelector(`#${item._id}`);
+        return !item.isSeparator;
+      });
+      allTabs.forEach((tab, index, arr) => {
+        tab._isInline = this.tabLayout === _TabLayout.default.Inline;
+        tab._mixedMode = this.mixedMode;
+        tab._posinset = index + 1;
+        tab._setsize = arr.length;
+        tab._realTab = this._selectedTab;
+        tab._isTopLevelTab = items.some(i => i === tab);
+        walk(items, _tab => {
+          _tab._realTab = tab._realTab;
         });
       });
     }
-    async _onTabStripClick(event) {
-      const tab = getTab(event.target);
+    _onHeaderFocusin(e) {
+      const tab = getTab(e.target);
+      if (tab) {
+        this._itemNavigation.setCurrentItem(tab._realTab);
+      }
+    }
+    async _onTabStripClick(e) {
+      const tab = getTab(e.target);
       if (!tab || tab._realTab.disabled) {
         return;
       }
-      event.preventDefault();
-      event.stopPropagation();
-      if (event.target.hasAttribute("ui5-button")) {
-        this._onTabExpandButtonClick(event);
+      e.stopPropagation();
+      e.preventDefault();
+      if (e.target.hasAttribute("ui5-button")) {
+        this._onTabExpandButtonClick(e);
         return;
       }
       if (!tab._realTab._hasOwnContent && tab._realTab.tabs.length) {
@@ -416,26 +205,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         if (this.responsivePopover.opened) {
           this.responsivePopover.close();
         } else {
-          this._setInitialFocus(this._getSelectedInPopover());
+          this._setPopoverInitialFocus();
         }
-        this.responsivePopover.showAt(tab);
+        this.responsivePopover.showAt(tab._realTab.getTabInStripDomRef());
         return;
       }
       this._onHeaderItemSelect(tab);
     }
-    async _onTabExpandButtonClick(event) {
-      event.stopPropagation();
-      event.preventDefault();
-      let button = event.target;
+    async _onTabExpandButtonClick(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      let button = e.target;
       let tabInstance = button.tab;
       if (tabInstance) {
-        tabInstance.focus();
+        tabInstance.focus({
+          focusVisible: true
+        });
       }
-      if (event.type === "keydown" && !event.target._realTab.isSingleClickArea) {
-        button = event.target.querySelectorAll(".ui5-tab-expand-button")[0];
-        tabInstance = event.target._realTab;
+      if (e.type === "keydown" && !e.target._realTab.isSingleClickArea) {
+        button = e.target.querySelectorAll(".ui5-tab-expand-button")[0];
+        tabInstance = e.target._realTab;
       }
-
       // if clicked between the expand button and the tab
       if (!tabInstance) {
         this._onHeaderItemSelect(button.parentElement);
@@ -444,54 +234,60 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._overflowItems = tabInstance.subTabs;
       this._addStyleIndent(this._overflowItems);
       this.responsivePopover = await this._respPopover();
-      if (this.responsivePopover.opened) {
+      if (this.responsivePopover.isOpen()) {
         this.responsivePopover.close();
       } else {
-        this._setInitialFocus(this._getSelectedInPopover());
+        this._setPopoverInitialFocus();
       }
       this.responsivePopover.showAt(button);
     }
-    _setInitialFocus(selectedInPopover) {
-      if (selectedInPopover.length) {
-        this.responsivePopover.initialFocus = selectedInPopover[0].id;
-      } else {
-        this.responsivePopover.initialFocus = this.responsivePopover.content[0].items.filter(item => item.classList.contains("ui5-tab-overflow-item"))[0].id;
-      }
+    _setPopoverInitialFocus() {
+      const selectedTabInOverflow = this._getSelectedTabInOverflow();
+      const tab = selectedTabInOverflow || this._getFirstFocusableItemInOverflow();
+      this.responsivePopover.initialFocus = `${tab._realTab._id}-li`;
     }
-    _onTabStripKeyDown(event) {
-      const tab = getTab(event.target);
+    _getSelectedTabInOverflow() {
+      return this.responsivePopover.content[0].items.find(item => {
+        return item._realTab && item._realTab.selected;
+      });
+    }
+    _getFirstFocusableItemInOverflow() {
+      return this.responsivePopover.content[0].items.find(item => item.classList.contains("ui5-tab-overflow-item"));
+    }
+    _onTabStripKeyDown(e) {
+      const tab = getTab(e.target);
       if (!tab || tab._realTab.disabled) {
         return;
       }
-      if ((0, _Keys.isEnter)(event)) {
+      if ((0, _Keys.isEnter)(e)) {
         if (tab._realTab.isSingleClickArea) {
-          this._onTabStripClick(event);
+          this._onTabStripClick(e);
         } else {
           this._onHeaderItemSelect(tab);
         }
       }
-      if ((0, _Keys.isSpace)(event)) {
-        event.preventDefault(); // prevent scrolling
+      if ((0, _Keys.isSpace)(e)) {
+        e.preventDefault(); // prevent scrolling
       }
 
-      if ((0, _Keys.isDown)(event)) {
+      if ((0, _Keys.isDown)(e) || (0, _Keys.isUp)(e)) {
         if (tab._realTab.requiresExpandButton) {
-          this._onTabExpandButtonClick(event);
+          this._onTabExpandButtonClick(e);
         }
         if (tab._realTab.isSingleClickArea) {
-          this._onTabStripClick(event);
+          this._onTabStripClick(e);
         }
       }
     }
-    _onTabStripKeyUp(event) {
-      const tab = getTab(event.target);
+    _onTabStripKeyUp(e) {
+      const tab = getTab(e.target);
       if (!tab || tab._realTab.disabled) {
         return;
       }
-      if ((0, _Keys.isSpace)(event)) {
-        event.preventDefault();
+      if ((0, _Keys.isSpace)(e)) {
+        e.preventDefault();
         if (tab._realTab.isSingleClickArea) {
-          this._onTabStripClick(event);
+          this._onTabStripClick(e);
         } else {
           this._onHeaderItemSelect(tab);
         }
@@ -499,22 +295,42 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     _onHeaderItemSelect(tab) {
       if (!tab.hasAttribute("disabled")) {
-        this._onItemSelect(tab);
-        if (!this.isModeStartAndEnd) {
-          this._setItemsForStrip();
-        }
+        this._onItemSelect(tab.id);
       }
     }
-    async _onOverflowListItemClick(event) {
-      event.preventDefault(); // cancel the item selection
-      const {
-        item
-      } = event.detail;
-      this._onItemSelect(item);
-      await this.responsivePopover.close();
-      this._setItemsForStrip();
+    async _onOverflowListItemClick(e) {
+      e.preventDefault(); // cancel the item selection
+      this._onItemSelect(e.detail.item.id.slice(0, -3)); // strip "-li" from end of id
+      this.responsivePopover.close();
+      await (0, _Render.renderFinished)();
       const selectedTopLevel = this._getRootTab(this._selectedTab);
-      selectedTopLevel.focus();
+      selectedTopLevel.getTabInStripDomRef().focus({
+        focusVisible: true
+      });
+    }
+    /**
+     * Returns all slotted tabs and their subTabs in a flattened array.
+     * The order of tabs is depth-first. For example, given the following slotted elements:
+     * <pre><code>
+     * 	&lt;ui5-tabcontainer&gt;
+     * 		&lt;ui5-tab id="First" text="First"&gt;
+     * 			...
+     * 			&lt;ui5-tab slot="subTabs" id="Nested" text="Nested"&gt;...&lt;/ui5-tab&gt;
+     * 		&lt;/ui5-tab&gt;
+     * 		&lt;ui5-tab id="Second" text="Second"&gt;...&lt;/ui5-tab&gt;
+     * 		&lt;ui5-tab-separator id="sep"&gt;&lt;/ui5-tab-separator&gt;
+     * 		&lt;ui5-tab id="Third" text="Third"&gt;...&lt;/ui5-tab&gt;
+     * 	&lt;/ui5-tabcontainer&gt;
+     * </code></pre>
+     * Calling <code>allItems</code> on this TabContainer will return the instances in the following order:
+     * <code>[ ui5-tab#First, ui5-tab#Nested, ui5-tab#Second, ui5-tab-separator#sep, ui5-tab#Third ]</code>
+     * @public
+     * @readonly
+     * @name sap.ui.webc.main.TabContainer.prototype.allItems
+     * @returns {sap.ui.webc.main.ITab[]}
+     */
+    get allItems() {
+      return this._getAllSubItems(this.items);
     }
     _getAllSubItems(items, result = [], level = 1) {
       items.forEach(item => {
@@ -528,36 +344,36 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       });
       return result;
     }
-    _onItemSelect(target) {
-      const selectedIndex = findIndex(this._allItemsAndSubItems, item => item.__id === target.id);
-      const selectedTabIndex = findIndex(this._allItemsAndSubItems, item => item.__id === target.id);
-      const selectedTab = this._allItemsAndSubItems[selectedIndex];
-
-      // update selected items
+    _onItemSelect(selectedTabId) {
+      const previousTab = this._selectedTab;
+      const selectedTabIndex = this._allItemsAndSubItems.findIndex(item => item.__id === selectedTabId);
+      const selectedTab = this._allItemsAndSubItems[selectedTabIndex];
+      const selectionSuccessful = this.selectTab(selectedTab, selectedTabIndex);
+      if (!selectionSuccessful) {
+        return;
+      }
+      // update selected property on all items
       this._allItemsAndSubItems.forEach((item, index) => {
-        const selected = selectedIndex === index;
+        const selected = selectedTabIndex === index;
         item.selected = selected;
         if (item._selected) {
           item._selected = false;
         }
       });
       if (this.fixed) {
-        this.selectTab(selectedTab, selectedTabIndex);
         return;
       }
-      if (!this.animate) {
-        this.toggle(selectedTab);
-        this.selectTab(selectedTab, selectedTabIndex);
-        return;
+      if (!this.shouldAnimate) {
+        this.toggle(selectedTab, previousTab);
+      } else {
+        this.toggleAnimated(selectedTab, previousTab);
       }
-      this.toggleAnimated(selectedTab);
-      this.selectTab(selectedTab, selectedTabIndex);
     }
-    async toggleAnimated(selectedTab) {
+    async toggleAnimated(selectedTab, previousTab) {
       const content = this.shadowRoot.querySelector(".ui5-tc__content");
       let animationPromise = null;
       this._animationRunning = true;
-      if (selectedTab === this._selectedTab) {
+      if (selectedTab === previousTab) {
         // click on already selected tab - animate both directions
         this.collapsed = !this.collapsed;
         animationPromise = this.collapsed ? this.slideContentUp(content) : this.slideContentDown(content);
@@ -570,68 +386,65 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._contentCollapsed = this.collapsed;
       this._animationRunning = false;
     }
-    toggle(selectedTab) {
-      if (selectedTab === this._selectedTab) {
+    toggle(selectedTab, previousTab) {
+      if (selectedTab === previousTab) {
         this.collapsed = !this.collapsed;
       } else {
         this.collapsed = false;
       }
     }
+    /**
+     * Fires the <code>tab-select</code> event and changes the internal reference for the currently selected tab.
+     * If the event is prevented, the current tab is not changed.
+     * @private
+     *
+     * @param {sap.ui.webc.main.ITab} selectedTab selected tab instance
+     * @param {number} selectedTabIndex selected tab index for an array containing all tabs and sub tabs. <b>Note:</b> Use the method <code>allTabs</code> to get this array.
+     * @returns {boolean} true if the tab selection is successful, false if it was prevented
+     */
     selectTab(selectedTab, selectedTabIndex) {
-      // select the tab
-      this._selectedTab = selectedTab;
-      this.fireEvent("tab-select", {
+      if (!this.fireEvent("tab-select", {
         tab: selectedTab,
         tabIndex: selectedTabIndex
-      });
+      }, true)) {
+        return false;
+      }
+      // select the tab
+      this._selectedTab = selectedTab;
+      return true;
     }
     slideContentDown(element) {
-      return (0, _slideDown.default)({
-        element
-      }).promise();
+      return (0, _slideDown.default)(element).promise();
     }
     slideContentUp(element) {
-      return (0, _slideUp.default)({
-        element
-      }).promise();
+      return (0, _slideUp.default)(element).promise();
     }
-    async _onOverflowClick(event) {
-      if (event.target.classList.contains("ui5-tc__overflow")) {
+    async _onOverflowClick(e) {
+      if (e.target.classList.contains("ui5-tc__overflow")) {
         // the empty area in the overflow was clicked
         return;
       }
-      const overflow = event.currentTarget;
+      const overflow = e.currentTarget;
       const isEndOverflow = overflow.classList.contains("ui5-tc__overflow--end");
-      const isStartOverflow = overflow.classList.contains("ui5-tc__overflow--start");
-      const items = [];
       const overflowAttr = isEndOverflow ? "end-overflow" : "start-overflow";
-      this._overflowItems = [];
-      this.items.forEach(item => {
-        if (item.getTabInStripDomRef() && item.getTabInStripDomRef().hasAttribute(overflowAttr)) {
-          items.push(item);
-        }
+      this._overflowItems = this.items.filter(item => {
+        const stripRef = item.getTabInStripDomRef();
+        return stripRef && stripRef.hasAttribute(overflowAttr);
       });
-      let button;
+      this._addStyleIndent(this._overflowItems);
+      let opener;
       if (isEndOverflow) {
-        button = this.overflowButton[0] || overflow.querySelector("[ui5-button]");
-        this._overflowItems = items;
-        this._addStyleIndent(this._overflowItems);
-      }
-      if (isStartOverflow) {
-        button = this.startOverflowButton[0] || overflow.querySelector("[ui5-button]");
-        this._overflowItems = items;
-        this._addStyleIndent(this._overflowItems);
+        opener = this.overflowButton[0] || this._getEndOverflowBtnDOM();
+      } else {
+        opener = this.startOverflowButton[0] || this._getStartOverflowBtnDOM();
       }
       this.responsivePopover = await this._respPopover();
       if (this.responsivePopover.opened) {
         this.responsivePopover.close();
       } else {
-        this.responsivePopover.initialFocus = this.responsivePopover.content[0].items.filter(item => item.classList.contains("ui5-tab-overflow-item"))[0].id;
-        await this.responsivePopover.showAt(button);
+        this._setPopoverInitialFocus();
+        this.responsivePopover.showAt(opener);
       }
-    }
-    _getSelectedInPopover() {
-      return this.responsivePopover.content[0].items.filter(item => item._realTab && item._realTab.selected);
     }
     _addStyleIndent(tabs) {
       const extraIndent = this._getAllSubItems(tabs).filter(tab => !tab.isSeparator).some(tab => tab.design !== _SemanticColor.default.Default && tab.design !== _SemanticColor.default.Neutral);
@@ -646,11 +459,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         };
       });
     }
-    async _onOverflowKeyDown(event) {
-      const isEndOverflow = event.currentTarget.classList.contains("ui5-tc__overflow--end");
-      const isStartOverflow = event.currentTarget.classList.contains("ui5-tc__overflow--start");
-      if ((0, _Keys.isDown)(event) || isStartOverflow && (0, _Keys.isLeft)(event) || isEndOverflow && (0, _Keys.isRight)(event)) {
-        await this._onOverflowClick(event);
+    async _onOverflowKeyDown(e) {
+      const overflow = e.currentTarget;
+      const isEndOverflow = overflow.classList.contains("ui5-tc__overflow--end");
+      const isStartOverflow = overflow.classList.contains("ui5-tc__overflow--start");
+      if ((0, _Keys.isDown)(e) || isStartOverflow && (0, _Keys.isLeft)(e) || isEndOverflow && (0, _Keys.isRight)(e)) {
+        e.stopPropagation();
+        e.preventDefault();
+        await this._onOverflowClick(e);
       }
     }
     _setItemsForStrip() {
@@ -660,11 +476,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         return;
       }
       const itemsDomRefs = this.items.map(item => item.getTabInStripDomRef());
-
       // make sure the overflows are hidden
       this._getStartOverflow().setAttribute("hidden", "");
       this._getEndOverflow().setAttribute("hidden", "");
-
       // show all tabs
       for (let i = 0; i < itemsDomRefs.length; i++) {
         itemsDomRefs[i].removeAttribute("hidden");
@@ -676,7 +490,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       });
       const hasOverflow = tabStrip.offsetWidth < allItemsWidth;
       if (!hasOverflow) {
-        this._closeRespPopover();
         return;
       }
       if (this.isModeStartAndEnd) {
@@ -685,8 +498,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       } else {
         this._updateEndOverflow(itemsDomRefs);
       }
-      this._itemNavigation._init();
-      this._itemNavigation.setCurrentItem(this._getRootTab(this._selectedTab));
     }
     _getRootTab(tab) {
       while (tab.hasAttribute("ui5-tab")) {
@@ -720,7 +531,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const hasEndOverflow = this._hasEndOverflow(containerWidth, itemsDomRefs, selectedItemIndexAndWidth);
       let firstVisible;
       let lastVisible;
-
       // has "end", but no "start" overflow
       if (!hasStartOverflow) {
         // show "end" overflow
@@ -734,7 +544,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
         return;
       }
-
       // has "start", but no "end" overflow
       if (!hasEndOverflow) {
         // show "start" overflow
@@ -748,7 +557,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
         return;
       }
-
       // show "start" overflow
       this._getStartOverflow().removeAttribute("hidden");
       // show "end" overflow
@@ -775,7 +583,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         leftItemsWidth += this._getItemWidth(itemsDomRefs[i]);
       }
       let hasStartOverflow = containerWidth < leftItemsWidth + selectedItemIndexAndWidth.width;
-
       // if there is no "start" overflow, it has "end" overflow
       // check it again with the "end" overflow
       if (!hasStartOverflow) {
@@ -795,7 +602,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         rightItemsWidth += this._getItemWidth(itemsDomRefs[i]);
       }
       let hasEndOverflow = containerWidth < rightItemsWidth + selectedItemIndexAndWidth.width;
-
       // if there is no "end" overflow, it has "start" overflow
       // check it again with the "start" overflow
       if (!hasEndOverflow) {
@@ -820,7 +626,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         width += this._getItemWidth(selectedSeparator);
       }
       itemsDomRefs.splice(index, 1);
-
       // if previous item is a separator - remove it
       if (selectedSeparator) {
         itemsDomRefs.splice(index - 1, 1);
@@ -846,8 +651,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       return lastVisible;
     }
-    _findLastVisibleItem(itemsDomRefs, containerWidth, selectedItemWidth, startIndex) {
-      startIndex = startIndex || 0;
+    _findLastVisibleItem(itemsDomRefs, containerWidth, selectedItemWidth, startIndex = 0) {
       let lastVisibleIndex = startIndex - 1;
       let index = startIndex;
       for (; index < itemsDomRefs.length; index++) {
@@ -858,7 +662,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         selectedItemWidth += itemWidth;
         lastVisibleIndex = index;
       }
-
       // if prev item is separator - hide it
       const prevItem = itemsDomRefs[index - 1];
       if (prevItem && prevItem.isSeparator) {
@@ -883,41 +686,40 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._startOverflowText = `+${startOverflowItemsCount}`;
       this._endOverflowText = `+${endOverflowItemsCount}`;
     }
-    async _closeRespPopover() {
-      this.responsivePopover = await this._respPopover();
-      this.responsivePopover.close();
-    }
-    _getFocusableTabs() {
+    _getFocusableRefs() {
       if (!this.getDomRef()) {
         return [];
       }
-      const focusableTabs = [];
+      const focusableRefs = [];
       if (!this._getStartOverflow().hasAttribute("hidden")) {
-        if (this._getCustomStartOverflowBtnDOM()) {
-          focusableTabs.push(this._getCustomStartOverflowBtnDOM());
-        } else {
-          focusableTabs.push(this._getStartOverflowBtnDOM());
-        }
+        focusableRefs.push(this.startOverflowButton[0] || this._getStartOverflowBtnDOM());
       }
       this._getTabs().forEach(tab => {
-        if (tab.getTabInStripDomRef() && !tab.getTabInStripDomRef().hasAttribute("hidden")) {
-          focusableTabs.push(tab);
+        const ref = tab.getTabInStripDomRef();
+        const focusable = ref && !ref.hasAttribute("hidden");
+        if (focusable) {
+          focusableRefs.push(tab);
         }
       });
       if (!this._getEndOverflow().hasAttribute("hidden")) {
-        if (this._getCustomEndOverflowBtnDOM()) {
-          focusableTabs.push(this._getCustomEndOverflowBtnDOM());
-        } else {
-          focusableTabs.push(this._getEndOverflowBtnDOM());
-        }
+        focusableRefs.push(this.overflowButton[0] || this._getEndOverflowBtnDOM());
       }
-      return focusableTabs;
+      return focusableRefs;
     }
     _getHeader() {
       return this.shadowRoot.querySelector(`#${this._id}-header`);
     }
     _getTabs() {
       return this.items.filter(item => !item.isSeparator);
+    }
+    get hasSubTabs() {
+      const tabs = this._getTabs();
+      for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].subTabs.length > 0) {
+          return true;
+        }
+      }
+      return false;
     }
     _getTabStrip() {
       return this.shadowRoot.querySelector(`#${this._id}-tabStrip`);
@@ -928,14 +730,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _getEndOverflow() {
       return this.shadowRoot.querySelector(".ui5-tc__overflow--end");
     }
-    _getCustomStartOverflowBtnDOM() {
-      return this.shadowRoot.querySelector("slot[name=startOverflowButton]");
-    }
     _getStartOverflowBtnDOM() {
       return this._getStartOverflow().querySelector("[ui5-button]");
-    }
-    _getCustomEndOverflowBtnDOM() {
-      return this.shadowRoot.querySelector("slot[name=overflowButton]");
     }
     _getEndOverflowBtnDOM() {
       return this._getEndOverflow().querySelector("[ui5-button]");
@@ -943,6 +739,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     async _respPopover() {
       const staticAreaItem = await this.getStaticAreaItemDomRef();
       return staticAreaItem.querySelector(`#${this._id}-overflowMenu`);
+    }
+    async _closeRespPopover() {
+      this.responsivePopover = await this._respPopover();
+      this.responsivePopover.close();
     }
     get classes() {
       return {
@@ -980,13 +780,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this.tabLayout === _TabLayout.default.Standard;
     }
     get previousIconACCName() {
-      return TabContainer.i18nBundle.getText(_i18nDefaults.TABCONTAINER_PREVIOUS_ICON_ACC_NAME);
+      return TabContainer_1.i18nBundle.getText(_i18nDefaults.TABCONTAINER_PREVIOUS_ICON_ACC_NAME);
     }
     get nextIconACCName() {
-      return TabContainer.i18nBundle.getText(_i18nDefaults.TABCONTAINER_NEXT_ICON_ACC_NAME);
+      return TabContainer_1.i18nBundle.getText(_i18nDefaults.TABCONTAINER_NEXT_ICON_ACC_NAME);
     }
     get overflowMenuTitle() {
-      return TabContainer.i18nBundle.getText(_i18nDefaults.TABCONTAINER_OVERFLOW_MENU_TITLE);
+      return TabContainer_1.i18nBundle.getText(_i18nDefaults.TABCONTAINER_OVERFLOW_MENU_TITLE);
     }
     get tabsAtTheBottom() {
       return this.tabsPlacement === _TabContainerTabsPlacement.default.Bottom;
@@ -995,21 +795,121 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this.tabsAtTheBottom ? "slim-arrow-up" : "slim-arrow-down";
     }
     get overflowButtonText() {
-      return TabContainer.i18nBundle.getText(_i18nDefaults.TABCONTAINER_END_OVERFLOW);
+      return TabContainer_1.i18nBundle.getText(_i18nDefaults.TABCONTAINER_END_OVERFLOW);
     }
     get popoverCancelButtonText() {
-      return TabContainer.i18nBundle.getText(_i18nDefaults.TABCONTAINER_POPOVER_CANCEL_BUTTON);
+      return TabContainer_1.i18nBundle.getText(_i18nDefaults.TABCONTAINER_POPOVER_CANCEL_BUTTON);
     }
-    get animate() {
+    get accInvisibleText() {
+      return TabContainer_1.i18nBundle.getText(_i18nDefaults.TABCONTAINER_SUBTABS_DESCRIPTION);
+    }
+    get tablistAriaDescribedById() {
+      return this.hasSubTabs ? `${this._id}-invisibleText` : undefined;
+    }
+    get shouldAnimate() {
       return (0, _AnimationMode2.getAnimationMode)() !== _AnimationMode.default.None;
     }
-    static get dependencies() {
-      return [_Button.default, _Icon.default, _List.default, _ResponsivePopover.default];
-    }
     static async onDefine() {
-      TabContainer.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      TabContainer_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], TabContainer.prototype, "fixed", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], TabContainer.prototype, "collapsed", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], TabContainer.prototype, "showOverflow", void 0);
+  __decorate([(0, _property.default)({
+    type: _TabLayout.default,
+    defaultValue: _TabLayout.default.Standard
+  })], TabContainer.prototype, "tabLayout", void 0);
+  __decorate([(0, _property.default)({
+    type: _TabsOverflowMode.default,
+    defaultValue: _TabsOverflowMode.default.End
+  })], TabContainer.prototype, "tabsOverflowMode", void 0);
+  __decorate([(0, _property.default)({
+    type: _TabContainerBackgroundDesign.default,
+    defaultValue: _TabContainerBackgroundDesign.default.Solid
+  })], TabContainer.prototype, "headerBackgroundDesign", void 0);
+  __decorate([(0, _property.default)({
+    type: _TabContainerBackgroundDesign.default,
+    defaultValue: _TabContainerBackgroundDesign.default.Solid
+  })], TabContainer.prototype, "contentBackgroundDesign", void 0);
+  __decorate([(0, _property.default)({
+    type: _TabContainerTabsPlacement.default,
+    defaultValue: _TabContainerTabsPlacement.default.Top
+  })], TabContainer.prototype, "tabsPlacement", void 0);
+  __decorate([(0, _property.default)()], TabContainer.prototype, "mediaRange", void 0);
+  __decorate([(0, _property.default)({
+    type: Object
+  })], TabContainer.prototype, "_selectedTab", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], TabContainer.prototype, "_animationRunning", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], TabContainer.prototype, "_contentCollapsed", void 0);
+  __decorate([(0, _property.default)({
+    noAttribute: true,
+    defaultValue: "0"
+  })], TabContainer.prototype, "_startOverflowText", void 0);
+  __decorate([(0, _property.default)({
+    noAttribute: true,
+    defaultValue: "More"
+  })], TabContainer.prototype, "_endOverflowText", void 0);
+  __decorate([(0, _property.default)({
+    type: Object,
+    multiple: true
+  })], TabContainer.prototype, "_overflowItems", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    noAttribute: true
+  })], TabContainer.prototype, "_width", void 0);
+  __decorate([(0, _slot.default)({
+    "default": true,
+    type: HTMLElement,
+    individualSlots: true,
+    invalidateOnChildChange: {
+      properties: true,
+      slots: false
+    }
+  })], TabContainer.prototype, "items", void 0);
+  __decorate([(0, _slot.default)()], TabContainer.prototype, "overflowButton", void 0);
+  __decorate([(0, _slot.default)()], TabContainer.prototype, "startOverflowButton", void 0);
+  TabContainer = TabContainer_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-tabcontainer",
+    languageAware: true,
+    fastNavigation: true,
+    styles: [tabStyles, _TabContainer.default],
+    staticAreaStyles: [_ResponsivePopoverCommon.default, staticAreaTabStyles],
+    renderer: _LitRenderer.default,
+    template: _TabContainerTemplate.default,
+    staticAreaTemplate: _TabContainerPopoverTemplate.default,
+    dependencies: [_Button.default, _Icon.default, _List.default, _ResponsivePopover.default]
+  })
+  /**
+   * Fired when a tab is selected.
+   *
+   * @event sap.ui.webc.main.TabContainer#tab-select
+   * @param {HTMLElement} tab The selected <code>tab</code>.
+   * @param {Integer} tabIndex The selected <code>tab</code> index in the flattened array of all tabs and their subTabs, provided by the <code>allItems</code> getter.
+   * @public
+   * @allowPreventDefault
+   */, (0, _event.default)("tab-select", {
+    detail: {
+      tab: {
+        type: HTMLElement
+      },
+      tabIndex: {
+        type: Number
+      }
+    }
+  })], TabContainer);
   const isTabDiv = el => el.localName === "div" && el.getAttribute("role") === "tab";
   const getTab = el => {
     while (el) {
@@ -1019,15 +919,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       el = el.parentElement;
     }
     return false;
-  };
-  const findIndex = (arr, predicate) => {
-    for (let i = 0; i < arr.length; i++) {
-      const result = predicate(arr[i]);
-      if (result) {
-        return i;
-      }
-    }
-    return -1;
   };
   const walk = (tabs, callback) => {
     [...tabs].forEach(tab => {

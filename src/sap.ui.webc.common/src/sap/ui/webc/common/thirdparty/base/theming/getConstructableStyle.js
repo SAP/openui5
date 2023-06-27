@@ -11,7 +11,6 @@ sap.ui.define(["exports", "./getEffectiveStyle", "./CustomStyle"], function (_ex
   (0, _CustomStyle.attachCustomCSSChange)(tag => {
     constructableStyleMap.delete(`${tag}_normal`); // there is custom CSS only for the component itself, not for its static area part
   });
-
   /**
    * Returns (and caches) a constructable style sheet for a web component class
    * Note: Chrome

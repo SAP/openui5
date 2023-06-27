@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "heart";
+  var _default = "SAP-icons-v5/heart";
   _exports.default = _default;
 });

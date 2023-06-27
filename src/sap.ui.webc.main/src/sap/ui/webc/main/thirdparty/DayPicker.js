@@ -1,10 +1,13 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale", "sap/ui/webc/common/thirdparty/base/config/FormatSettings", "sap/ui/webc/common/thirdparty/localization/getCachedLocaleDataInstance", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/localization/dates/CalendarDate", "sap/ui/webc/common/thirdparty/localization/dates/calculateWeekNumber", "sap/ui/webc/common/thirdparty/base/types/CalendarType", "./types/CalendarSelectionMode", "./CalendarPart", "./generated/templates/DayPickerTemplate.lit", "./generated/i18n/i18n-defaults", "./generated/themes/DayPicker.css"], function (_exports, _getLocale, _FormatSettings, _getCachedLocaleDataInstance, _Keys, _Integer, _CalendarDate, _calculateWeekNumber, _CalendarType, _CalendarSelectionMode, _CalendarPart, _DayPickerTemplate, _i18nDefaults, _DayPicker) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/locale/getLocale", "sap/ui/webc/common/thirdparty/base/config/FormatSettings", "sap/ui/webc/common/thirdparty/localization/getCachedLocaleDataInstance", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/localization/dates/CalendarDate", "sap/ui/webc/common/thirdparty/localization/dates/calculateWeekNumber", "sap/ui/webc/common/thirdparty/base/types/CalendarType", "./types/CalendarSelectionMode", "./CalendarPart", "./generated/i18n/i18n-defaults", "./generated/templates/DayPickerTemplate.lit", "./generated/themes/DayPicker.css"], function (_exports, _customElement, _property, _event, _getLocale, _FormatSettings, _getCachedLocaleDataInstance, _Keys, _Integer, _CalendarDate, _calculateWeekNumber, _CalendarType, _CalendarSelectionMode, _CalendarPart, _i18nDefaults, _DayPickerTemplate, _DayPicker) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
   _getLocale = _interopRequireDefault(_getLocale);
   _getCachedLocaleDataInstance = _interopRequireDefault(_getCachedLocaleDataInstance);
   _Integer = _interopRequireDefault(_Integer);
@@ -16,131 +19,37 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
   _DayPickerTemplate = _interopRequireDefault(_DayPickerTemplate);
   _DayPicker = _interopRequireDefault(_DayPicker);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-daypicker",
-    properties: /** @lends sap.ui.webcomponents.main.DayPicker.prototype */{
-      /**
-       * An array of UTC timestamps representing the selected date or dates depending on the capabilities of the picker component.
-       * @type {Array}
-       * @public
-       */
-      selectedDates: {
-        type: _Integer.default,
-        multiple: true,
-        compareValues: true
-      },
-      /**
-       * Defines the type of selection used in the day picker component.
-       * Accepted property values are:<br>
-       * <ul>
-       * <li><code>CalendarSelectionMode.Single</code> - enables a single date selection.(default value)</li>
-       * <li><code>CalendarSelectionMode.Range</code> - enables selection of a date range.</li>
-       * <li><code>CalendarSelectionMode.Multiple</code> - enables selection of multiple dates.</li>
-       * </ul>
-       * @type {CalendarSelectionMode}
-       * @defaultvalue "Single"
-       * @public
-       */
-      selectionMode: {
-        type: _CalendarSelectionMode.default,
-        defaultValue: _CalendarSelectionMode.default.Single
-      },
-      /**
-       * Defines the visibility of the week numbers column.
-       * <br><br>
-       *
-       * <b>Note:<b> For calendars other than Gregorian,
-       * the week numbers are not displayed regardless of what is set.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       * @since 1.0.0-rc.8
-       */
-      hideWeekNumbers: {
-        type: Boolean
-      },
-      /**
-       * @type {Object}
-       * @private
-       */
-      _weeks: {
-        type: Object,
-        multiple: true
-      },
-      _dayNames: {
-        type: Object,
-        multiple: true
-      },
-      /**
-       * When set, the component will skip all work in onBeforeRendering and will not automatically set the focus on itself
-       * @type {boolean}
-       * @private
-       */
-      _hidden: {
-        type: Boolean,
-        noAttribute: true
-      },
-      /**
-       * When selectionMode="Range" and the first day in the range is selected, this is the currently hovered (when using mouse) or focused (when using keyboard) day by the user
-       * @private
-       */
-      _secondTimestamp: {
-        type: String
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.DayPicker.prototype */{
-      /**
-       * Fired when the selected date(s) change
-       * @public
-       * @event
-       */
-      change: {},
-      /**
-       * Fired when the timestamp changes (user navigates with the keyboard) or clicks with the mouse
-       * @public
-       * @event
-       */
-      navigate: {}
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
+  var DayPicker_1;
   const isBetween = (x, num1, num2) => x > Math.min(num1, num2) && x < Math.max(num1, num2);
   const DAYS_IN_WEEK = 7;
-
   /**
    * @class
    *
-   * Represents one month view inside a calendar.
+   * Represents the days inside a single month view of the <code>ui5-calendar</code> component.
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.DayPicker
-   * @extends CalendarPart
+   * @alias sap.ui.webc.main.DayPicker
+   * @extends sap.ui.webc.main.CalendarPart
    * @tagname ui5-daypicker
    * @public
    */
-  class DayPicker extends _CalendarPart.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get template() {
-      return _DayPickerTemplate.default;
-    }
-    static get styles() {
-      return _DayPicker.default;
-    }
+  let DayPicker = DayPicker_1 = class DayPicker extends _CalendarPart.default {
     onBeforeRendering() {
       const localeData = (0, _getCachedLocaleDataInstance.default)((0, _getLocale.default)());
       this._buildWeeks(localeData);
       this._buildDayNames(localeData);
     }
-
     /**
-     * Builds the _weeks object that represents the month
-     * @param localeData
+     * Builds the "_weeks" object that represents the month.
+     * @param { LocaleData }localeData
      * @private
      */
     _buildWeeks(localeData) {
@@ -151,21 +60,19 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
       this._weeks = [];
       const firstDayOfWeek = this._getFirstDayOfWeek();
       const monthsNames = localeData.getMonths("wide", this._primaryCalendarType);
-      const secondaryMonthsNames = this.hasSecondaryCalendarType && localeData.getMonths("wide", this.secondaryCalendarType);
-      const nonWorkingDayLabel = DayPicker.i18nBundle.getText(_i18nDefaults.DAY_PICKER_NON_WORKING_DAY);
-      const todayLabel = DayPicker.i18nBundle.getText(_i18nDefaults.DAY_PICKER_TODAY);
+      const secondaryMonthsNames = this.hasSecondaryCalendarType ? localeData.getMonths("wide", this.secondaryCalendarType) : [];
+      const nonWorkingDayLabel = DayPicker_1.i18nBundle.getText(_i18nDefaults.DAY_PICKER_NON_WORKING_DAY);
+      const todayLabel = DayPicker_1.i18nBundle.getText(_i18nDefaults.DAY_PICKER_TODAY);
       const tempDate = this._getFirstDay(); // date that will be changed by 1 day 42 times
       const todayDate = _CalendarDate.default.fromLocalJSDate(new Date(), this._primaryCalendarType); // current day date - calculate once
       const calendarDate = this._calendarDate; // store the _calendarDate value as this getter is expensive and degrades IE11 perf
       const minDate = this._minDate; // store the _minDate (expensive getter)
       const maxDate = this._maxDate; // store the _maxDate (expensive getter)
-
-      const tempSecondDate = this.hasSecondaryCalendarType && this._getSecondaryDay(tempDate);
+      const tempSecondDate = this.hasSecondaryCalendarType ? this._getSecondaryDay(tempDate) : undefined;
       let week = [];
       for (let i = 0; i < DAYS_IN_WEEK * 6; i++) {
         // always show 6 weeks total, 42 days to avoid jumping
         const timestamp = tempDate.valueOf() / 1000; // no need to round because CalendarDate does it
-
         let dayOfTheWeek = tempDate.getDay() - firstDayOfWeek;
         if (dayOfTheWeek < 0) {
           dayOfTheWeek += DAYS_IN_WEEK;
@@ -180,14 +87,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
         const isFirstDayOfWeek = tempDate.getDay() === firstDayOfWeek;
         const nonWorkingAriaLabel = isWeekend ? `${nonWorkingDayLabel} ` : "";
         const todayAriaLabel = isToday ? `${todayLabel} ` : "";
-        const ariaLabel = this.hasSecondaryCalendarType ? `${todayAriaLabel}${nonWorkingAriaLabel}${monthsNames[tempDate.getMonth()]} ${tempDate.getDate()}, ${tempDate.getYear()}; ${secondaryMonthsNames[tempSecondDate.getMonth()]} ${tempSecondDate.getDate()}, ${tempSecondDate.getYear()}` : `${todayAriaLabel}${nonWorkingAriaLabel}${monthsNames[tempDate.getMonth()]} ${tempDate.getDate()}, ${tempDate.getYear()}`;
+        const tempSecondDateNumber = tempSecondDate ? tempSecondDate.getDate() : "";
+        const tempSecondYearNumber = tempSecondDate ? tempSecondDate.getYear() : "";
+        const secondaryMonthsNamesString = secondaryMonthsNames.length > 0 ? secondaryMonthsNames[tempSecondDate.getMonth()] : "";
+        const ariaLabel = this.hasSecondaryCalendarType ? `${todayAriaLabel}${nonWorkingAriaLabel}${monthsNames[tempDate.getMonth()]} ${tempDate.getDate()}, ${tempDate.getYear()}; ${secondaryMonthsNamesString} ${tempSecondDateNumber}, ${tempSecondYearNumber}` : `${todayAriaLabel}${nonWorkingAriaLabel}${monthsNames[tempDate.getMonth()]} ${tempDate.getDate()}, ${tempDate.getYear()}`;
         const day = {
           timestamp: timestamp.toString(),
           focusRef: isFocused,
           _tabIndex: isFocused ? "0" : "-1",
           selected: isSelected,
           day: tempDate.getDate(),
-          secondDay: this.hasSecondaryCalendarType && tempSecondDate.getDate(),
+          secondDay: this.hasSecondaryCalendarType ? tempSecondDate.getDate() : undefined,
           _isSecondaryCalendarType: this.hasSecondaryCalendarType,
           classes: `ui5-dp-item ui5-dp-wday${dayOfTheWeek}`,
           ariaLabel,
@@ -233,15 +143,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
           week = [];
         }
         tempDate.setDate(tempDate.getDate() + 1);
-        if (this.hasSecondaryCalendarType) {
+        if (this.hasSecondaryCalendarType && tempSecondDate) {
           tempSecondDate.setDate(tempSecondDate.getDate() + 1);
         }
       }
     }
-
     /**
-     * Builds the dayNames object (header of the month)
-     * @param localeData
+     * Builds the dayNames object (header of the month).
+     * @param { LocaleData } localeData
      * @private
      */
     _buildDayNames(localeData) {
@@ -256,7 +165,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
       this._dayNames = [];
       this._dayNames.push({
         classes: "ui5-dp-dayname",
-        name: DayPicker.i18nBundle.getText(_i18nDefaults.DAY_PICKER_WEEK_NUMBER_TEXT)
+        name: DayPicker_1.i18nBundle.getText(_i18nDefaults.DAY_PICKER_WEEK_NUMBER_TEXT)
       });
       for (let i = 0; i < DAYS_IN_WEEK; i++) {
         dayOfTheWeek = i + this._getFirstDayOfWeek();
@@ -287,26 +196,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
     _onfocusout() {
       this._autoFocus = false;
     }
-
     /**
-     * Tells if the day is selected (dark blue)
-     * @param timestamp
-     * @returns {boolean}
+     * Tells if the day is selected (dark blue).
+     * @param { number } timestamp
+     * @returns { boolean }
      * @private
      */
     _isDaySelected(timestamp) {
       if (this.selectionMode === _CalendarSelectionMode.default.Single) {
         return timestamp === this.selectedDates[0];
       }
-
       // Multiple, Range
       return this.selectedDates.includes(timestamp);
     }
-
     /**
-     * Tells if the day is inside a selection range (light blue)
-     * @param timestamp
-     * @returns {*}
+     * Tells if the day is inside a selection range (light blue).
+     * @param { number } timestamp
+     * @returns { boolean }
      * @private
      */
     _isDayInsideSelectionRange(timestamp) {
@@ -314,24 +220,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
       if (this.selectionMode !== _CalendarSelectionMode.default.Range || !this.selectedDates.length) {
         return false;
       }
-
       // Only one date selected - the user is hovering with the mouse or navigating with the keyboard to select the second one
       if (this.selectedDates.length === 1 && this._secondTimestamp) {
         return isBetween(timestamp, this.selectedDates[0], this._secondTimestamp);
       }
-
       // Two dates selected - stable range
       return isBetween(timestamp, this.selectedDates[0], this.selectedDates[1]);
     }
-
     /**
-     * Selects/deselects a day
-     * @param event
-     * @param isShift true if the user did Click+Shift or Enter+Shift (but not Space+Shift)
+     * Selects/deselects a day.
+     * @param { Event} e
+     * @param { boolean} isShift true if the user did Click+Shift or Enter+Shift (but not Space+Shift)
      * @private
      */
-    _selectDate(event, isShift) {
-      const target = event.target;
+    _selectDate(e, isShift) {
+      const target = e.target;
       if (!this._isDayPressed(target)) {
         return;
       }
@@ -354,29 +257,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
         dates: this.selectedDates
       });
     }
-
     /**
-     * Selects/deselects the whole row (week)
-     * @param event
+     * Selects/deselects the whole row (week).
      * @private
      */
-    _selectWeek(event) {
+    _selectWeek() {
       this._weeks.forEach(week => {
-        const dayInThisWeek = week.findIndex(item => {
+        const _week = week;
+        const dayInThisWeek = _week.findIndex(item => {
           const date = _CalendarDate.default.fromTimestamp(parseInt(item.timestamp) * 1000);
           return date.getMonth() === this._calendarDate.getMonth() && date.getDate() === this._calendarDate.getDate();
         }) !== -1;
         if (dayInThisWeek) {
           // The current day is in this week
-          const notAllDaysOfThisWeekSelected = week.some(item => item.timestamp && !this.selectedDates.includes(parseInt(item.timestamp)));
+          const notAllDaysOfThisWeekSelected = _week.some(item => item.timestamp && !this.selectedDates.includes(parseInt(item.timestamp)));
           if (notAllDaysOfThisWeekSelected) {
             // even if one day is not selected, select the whole week
-            week.filter(item => item.timestamp).forEach(item => {
+            _week.filter(item => item.timestamp).forEach(item => {
               this._addTimestampToSelection(parseInt(item.timestamp));
             });
           } else {
             // only if all days of this week are selected, deselect them
-            week.filter(item => item.timestamp).forEach(item => {
+            _week.filter(item => item.timestamp).forEach(item => {
               this._removeTimestampFromSelection(parseInt(item.timestamp));
             });
           }
@@ -402,10 +304,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
     _removeTimestampFromSelection(timestamp) {
       this.selectedDates = this.selectedDates.filter(value => value !== timestamp);
     }
-
     /**
-     * When at least one day is selected and the user pressed shift
-     * @param timestamp
+     * Called when at least one day is selected and the user presses "Shift".
+     * @param { number } timestamp
      * @private
      */
     _multipleSelection(timestamp) {
@@ -440,51 +341,51 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
         startDate.setDate(startDate.getDate() + 1);
       }
     }
-
     /**
-     * Set the hovered day as the _secondTimestamp
-     * @param event
+     * Set the hovered day as the "_secondTimestamp".
+     * @param { MouseEvent } e
      * @private
      */
-    _onmouseover(event) {
-      const hoveredItem = event.target.closest(".ui5-dp-item");
+    _onmouseover(e) {
+      const target = e.target;
+      const hoveredItem = target.closest(".ui5-dp-item");
       if (hoveredItem && this.selectionMode === _CalendarSelectionMode.default.Range && this.selectedDates.length === 1) {
         this._secondTimestamp = this._getTimestampFromDom(hoveredItem);
       }
     }
-    _onkeydown(event) {
+    _onkeydown(e) {
       let preventDefault = true;
-      if ((0, _Keys.isEnter)(event) || (0, _Keys.isEnterShift)(event)) {
-        this._selectDate(event, (0, _Keys.isEnterShift)(event));
-      } else if ((0, _Keys.isSpace)(event) || (0, _Keys.isSpaceShift)(event)) {
-        event.preventDefault();
-      } else if ((0, _Keys.isLeft)(event)) {
+      if ((0, _Keys.isEnter)(e) || (0, _Keys.isEnterShift)(e)) {
+        this._selectDate(e, (0, _Keys.isEnterShift)(e));
+      } else if ((0, _Keys.isSpace)(e) || (0, _Keys.isSpaceShift)(e)) {
+        e.preventDefault();
+      } else if ((0, _Keys.isLeft)(e)) {
         this._modifyTimestampBy(-1, "day");
-      } else if ((0, _Keys.isRight)(event)) {
+      } else if ((0, _Keys.isRight)(e)) {
         this._modifyTimestampBy(1, "day");
-      } else if ((0, _Keys.isUp)(event)) {
+      } else if ((0, _Keys.isUp)(e)) {
         this._modifyTimestampBy(-7, "day");
-      } else if ((0, _Keys.isDown)(event)) {
+      } else if ((0, _Keys.isDown)(e)) {
         this._modifyTimestampBy(7, "day");
-      } else if ((0, _Keys.isPageUp)(event)) {
+      } else if ((0, _Keys.isPageUp)(e)) {
         this._modifyTimestampBy(-1, "month");
-      } else if ((0, _Keys.isPageDown)(event)) {
+      } else if ((0, _Keys.isPageDown)(e)) {
         this._modifyTimestampBy(1, "month");
-      } else if ((0, _Keys.isPageUpShift)(event) || (0, _Keys.isPageUpAlt)(event)) {
+      } else if ((0, _Keys.isPageUpShift)(e) || (0, _Keys.isPageUpAlt)(e)) {
         this._modifyTimestampBy(-1, "year");
-      } else if ((0, _Keys.isPageDownShift)(event) || (0, _Keys.isPageDownAlt)(event)) {
+      } else if ((0, _Keys.isPageDownShift)(e) || (0, _Keys.isPageDownAlt)(e)) {
         this._modifyTimestampBy(1, "year");
-      } else if ((0, _Keys.isPageUpShiftCtrl)(event)) {
+      } else if ((0, _Keys.isPageUpShiftCtrl)(e)) {
         this._modifyTimestampBy(-10, "year");
-      } else if ((0, _Keys.isPageDownShiftCtrl)(event)) {
+      } else if ((0, _Keys.isPageDownShiftCtrl)(e)) {
         this._modifyTimestampBy(10, "year");
-      } else if ((0, _Keys.isHome)(event) || (0, _Keys.isEnd)(event)) {
-        this._onHomeOrEnd((0, _Keys.isHome)(event));
-      } else if ((0, _Keys.isHomeCtrl)(event)) {
+      } else if ((0, _Keys.isHome)(e) || (0, _Keys.isEnd)(e)) {
+        this._onHomeOrEnd((0, _Keys.isHome)(e));
+      } else if ((0, _Keys.isHomeCtrl)(e)) {
         const tempDate = new _CalendarDate.default(this._calendarDate, this._primaryCalendarType);
         tempDate.setDate(1); // Set the first day of the month
         this._setTimestamp(tempDate.valueOf() / 1000);
-      } else if ((0, _Keys.isEndCtrl)(event)) {
+      } else if ((0, _Keys.isEndCtrl)(e)) {
         const tempDate = new _CalendarDate.default(this._calendarDate, this._primaryCalendarType);
         tempDate.setMonth(tempDate.getMonth() + 1);
         tempDate.setDate(0); // Set the last day of the month (0th day of next month)
@@ -493,100 +394,95 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
         preventDefault = false;
       }
       if (preventDefault) {
-        event.preventDefault();
+        e.preventDefault();
       }
     }
-    _onkeyup(event) {
+    _onkeyup(e) {
       // Even if Space+Shift was pressed, ignore the shift unless in Multiple selection
-      if ((0, _Keys.isSpace)(event) || (0, _Keys.isSpaceShift)(event) && this.selectionMode !== _CalendarSelectionMode.default.Multiple) {
-        this._selectDate(event, false);
-      } else if ((0, _Keys.isSpaceShift)(event)) {
-        this._selectWeek(event);
+      if ((0, _Keys.isSpace)(e) || (0, _Keys.isSpaceShift)(e) && this.selectionMode !== _CalendarSelectionMode.default.Multiple) {
+        this._selectDate(e, false);
+      } else if ((0, _Keys.isSpaceShift)(e)) {
+        this._selectWeek();
       }
     }
-
     /**
-     * Click is the same as Enter: Click+Shift has the same effect as Enter+Shift
-     * @param event
+     * Click is the same as "Enter".
+     * <b>Note:</b> "Click+Shift" has the same effect as "Enter+Shift".
+     * @param { MouseEvent } e
      * @private
      */
-    _onclick(event) {
-      this._selectDate(event, event.shiftKey);
+    _onclick(e) {
+      this._selectDate(e, e.shiftKey);
     }
-
     /**
-     * One Home or End, move the focus to the first or last item in the row
-     * @param homePressed
+     * Called upon "Home" or "End" - moves the focus to the first or last item in the row.
+     * @param { boolean } homePressed
      * @private
      */
     _onHomeOrEnd(homePressed) {
       this._weeks.forEach(week => {
-        const dayInThisWeek = week.findIndex(item => {
+        const _week = week;
+        const dayInThisWeek = _week.findIndex(item => {
           const date = _CalendarDate.default.fromTimestamp(parseInt(item.timestamp) * 1000);
           return date.getMonth() === this._calendarDate.getMonth() && date.getDate() === this._calendarDate.getDate();
         }) !== -1;
         if (dayInThisWeek) {
           // The current day is in this week
           const index = homePressed ? 1 : 7; // select the first (if Home) or last (if End) day of the week
-          this._setTimestamp(parseInt(week[index].timestamp));
+          this._setTimestamp(parseInt(_week[index].timestamp));
         }
       });
     }
-
     /**
-     * Called from Calendar.js
+     * Called by the Calendar component.
      * @protected
+     * @returns { boolean }
      */
     _hasPreviousPage() {
       return !(this._calendarDate.getMonth() === this._minDate.getMonth() && this._calendarDate.getYear() === this._minDate.getYear());
     }
-
     /**
-     * Called from Calendar.js
+     * Called by the Calendar component.
      * @protected
+     * @returns { boolean }
      */
     _hasNextPage() {
       return !(this._calendarDate.getMonth() === this._maxDate.getMonth() && this._calendarDate.getYear() === this._maxDate.getYear());
     }
-
     /**
-     * Called from Calendar.js
-     * Same as PageUp
+     * Called by the Calendar component.
+     * <b>Note:</b> same as for "PageUp"
      * @protected
      */
     _showPreviousPage() {
       this._modifyTimestampBy(-1, "month");
     }
-
     /**
-     * Called from Calendar.js
-     * Same as PageDown
+     * Called by the Calendar component.
+     * <b>Note:</b> same as for "PageDown"
      * @protected
      */
     _showNextPage() {
       this._modifyTimestampBy(1, "month");
     }
-
     /**
-     * Modifies the timestamp by a certain amount of days/months/years
-     * @param amount
-     * @param unit
+     * Modifies the timestamp by a certain amount of days/months/years.
+     * @param { number } amount
+     * @param { string } unit
      * @private
      */
     _modifyTimestampBy(amount, unit) {
       // Modify the current timestamp
       this._safelyModifyTimestampBy(amount, unit);
       this._updateSecondTimestamp();
-
       // Notify the calendar to update its timestamp
       this.fireEvent("navigate", {
         timestamp: this.timestamp
       });
     }
-
     /**
-     * Sets the timestamp to an absolute value
-     * @param value
+     * Sets the timestamp to an absolute value.
+     * @param { number } value
      * @private
      */
     _setTimestamp(value) {
@@ -596,13 +492,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
         timestamp: this.timestamp
       });
     }
-
     /**
-     * During range selection, when the user is navigating with the keyboard, the currently focused day is considered the "second day"
+     * During range selection, when the user is navigating with the keyboard,
+     * the currently focused day is considered the "second day".
      * @private
      */
     _updateSecondTimestamp() {
-      if (this.selectionMode === _CalendarSelectionMode.default.Range && this.selectedDates.length === 1) {
+      if (this.selectionMode === _CalendarSelectionMode.default.Range && (this.selectedDates.length === 1 || this.selectedDates.length === 2)) {
         this._secondTimestamp = this.timestamp;
       }
     }
@@ -632,7 +528,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
     _getFirstDay() {
       let daysFromPreviousMonth;
       const firstDayOfWeek = this._getFirstDayOfWeek();
-
       // determine weekday of first day in month
       const firstDay = new _CalendarDate.default(this._calendarDate, this._primaryCalendarType);
       firstDay.setDate(1);
@@ -664,7 +559,47 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
     get ariaRoledescription() {
       return this.hasSecondaryCalendarType ? `${this._primaryCalendarType} calendar with secondary ${this.secondaryCalendarType} calendar` : `${this._primaryCalendarType} calendar`;
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    multiple: true,
+    compareValues: true
+  })], DayPicker.prototype, "selectedDates", void 0);
+  __decorate([(0, _property.default)({
+    type: _CalendarSelectionMode.default,
+    defaultValue: _CalendarSelectionMode.default.Single
+  })], DayPicker.prototype, "selectionMode", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], DayPicker.prototype, "hideWeekNumbers", void 0);
+  __decorate([(0, _property.default)({
+    type: Object,
+    multiple: true
+  })], DayPicker.prototype, "_weeks", void 0);
+  __decorate([(0, _property.default)({
+    type: Object,
+    multiple: true
+  })], DayPicker.prototype, "_dayNames", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], DayPicker.prototype, "_hidden", void 0);
+  __decorate([(0, _property.default)()], DayPicker.prototype, "_secondTimestamp", void 0);
+  DayPicker = DayPicker_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-daypicker",
+    styles: _DayPicker.default,
+    template: _DayPickerTemplate.default
+  })
+  /**
+   * Fired when the selected date(s) change
+   * @public
+   * @event sap.ui.webc.main.DayPicker#change
+   */, (0, _event.default)("change")
+  /**
+   * Fired when the timestamp changes (user navigates with the keyboard) or clicks with the mouse
+   * @public
+   * @event sap.ui.webc.main.DayPicker#navigate
+   */, (0, _event.default)("navigate")], DayPicker);
   DayPicker.define();
   var _default = DayPicker;
   _exports.default = _default;

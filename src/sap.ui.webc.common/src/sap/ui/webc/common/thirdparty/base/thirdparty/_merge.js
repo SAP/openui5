@@ -8,7 +8,7 @@ sap.ui.define(["exports", "./isPlainObject"], function (_exports, _isPlainObject
   _isPlainObject = _interopRequireDefault(_isPlainObject);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   var oToken = Object.create(null);
-  var fnMerge = function () {
+  var fnMerge = function (arg1, arg2, arg3, arg4) {
     var src,
       copyIsArray,
       copy,

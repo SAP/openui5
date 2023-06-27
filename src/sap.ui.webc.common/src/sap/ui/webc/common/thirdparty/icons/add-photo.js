@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/add-photo", "./v4/add-photo"], function (_exports, _Theme, _addPhoto, _addPhoto2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/add-photo", "./v5/add-photo"], function (_exports, _Theme, _addPhoto, _addPhoto2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _addPhoto.pathData : _addPhoto2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _addPhoto.pathData : _addPhoto2.pathData;
   _exports.pathData = pathData;
   var _default = "add-photo";
   _exports.default = _default;

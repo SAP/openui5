@@ -67,6 +67,13 @@ sap.ui.define([
 								}
 							})
 						],
+						deleteButton: new Button({
+							icon: "employee",
+							text: "Some text...",
+							click: function(oEvent) {
+								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							}
+						}),
 						detailClick: function(oEvent) {
 							// console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
 						}
@@ -78,6 +85,36 @@ sap.ui.define([
 						additionalText: "Some text...",
 						icon: "employee",
 						text: "Some text...",
+						deleteButton: new Button({
+							icon: "employee",
+							text: "Some text...",
+							click: function(oEvent) {
+								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							}
+						}),
+						imageContent: [
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							})
+						],
 						detailClick: function(oEvent) {
 							// console.log("Event detailClick fired for StandardListItem with parameters: ", oEvent.getParameters());
 						}

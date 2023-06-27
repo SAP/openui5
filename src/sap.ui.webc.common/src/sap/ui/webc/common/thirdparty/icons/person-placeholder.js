@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/person-placeholder", "./v4/person-placeholder"], function (_exports, _Theme, _personPlaceholder, _personPlaceholder2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/person-placeholder", "./v5/person-placeholder"], function (_exports, _Theme, _personPlaceholder, _personPlaceholder2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _personPlaceholder.pathData : _personPlaceholder2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _personPlaceholder.pathData : _personPlaceholder2.pathData;
   _exports.pathData = pathData;
   var _default = "person-placeholder";
   _exports.default = _default;

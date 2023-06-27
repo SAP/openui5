@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/feeder-arrow", "./v4/feeder-arrow"], function (_exports, _Theme, _feederArrow, _feederArrow2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/feeder-arrow", "./v5/feeder-arrow"], function (_exports, _Theme, _feederArrow, _feederArrow2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _feederArrow.pathData : _feederArrow2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _feederArrow.pathData : _feederArrow2.pathData;
   _exports.pathData = pathData;
   var _default = "feeder-arrow";
   _exports.default = _default;

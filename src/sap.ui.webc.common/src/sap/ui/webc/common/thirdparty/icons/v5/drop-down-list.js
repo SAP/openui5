@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "drop-down-list";
+  var _default = "SAP-icons-v5/drop-down-list";
   _exports.default = _default;
 });

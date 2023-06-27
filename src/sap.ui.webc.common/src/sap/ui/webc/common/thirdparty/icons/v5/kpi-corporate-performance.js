@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "kpi-corporate-performance";
-  const pathData = "M454.5 192q16 0 26 11.5t10 27.5q0 19-13 28.5t-30 9.5l-110 92q0 15-11.5 25.5T299.5 397q-19 0-29-13.5t-9-30.5l-90-110h-5l-84 67q-2 15-12.5 25t-25.5 10q-16 0-27-11t-11-27q0-20 14-29t31-9l82-66q0-17 11.5-28t26.5-11q19 0 28.5 13.5t10.5 30.5l91 112h6l109-92q0-15 11.5-25.5t26.5-10.5zm44-158q8 8 8 18t-8 18l-102 102q-8 8-18 8t-18-8l-51-51q-8-8-8-18t8-18 18-8 18 8l33 33 84-84q8-8 18-8t18 8zm-44 299q26 0 26 25v77q0 32-22 54t-55 22h-306q-32 0-54-22t-22-54q0-26 25-26 26 0 26 26 0 25 25 25h306q26 0 26-25v-77q0-25 25-25zm-408-128q-25 0-25-25v-51q0-33 22-55t54-22h128q25 0 25 26 0 25-25 25h-128q-25 0-25 26v51q0 25-26 25z";
+  const pathData = "M285 321q1-1 5-1 10 0 17 4l109-81v-3q0-20 14-34t34-14 34 14 14 34-14 34-34 14q-10 0-17-4l-109 81v3q0 20-14 34t-34 14-34-14-14-34q0-8 3-15l-78-98q-2 1-5 1-8 0-14-3l-51 43q1 3 1 8 0 20-14 34t-34 14-34-14-14-34 14-34 34-14q5 0 13 2l52-44q-1-2-1-7 0-19 14-33t34-14 34 14 14 34q0 7-3 15zm201 31q11 0 18.5 7.5T512 378v44q0 38-26 64t-64 26H90q-19 0-35.5-7T26 486.5t-19-26T0 430q0-17 7.5-25t18.5-8 18 7.5 7 19.5q0 15 11 26t28 11h332q17 0 28-11t11-28v-44q0-11 7-18.5t18-7.5zM26 192q-11 0-18.5-7.5T0 166v-44q0-38 26-64t64-26h140q11 0 18.5 7.5T256 58t-7.5 18-18.5 7H90q-17 0-28 11t-11 28v44q0 11-7 18.5T26 192zm301-92q-7-7-7-17 0-11 8-19 9-7 18-7 11 0 18 9l28 30 75-87q8-9 19-9t18.5 7.5T512 26q0 10-6 16l-94 109q-7 9-19 9-13 0-19-8z";
   _exports.pathData = pathData;
   const ltr = true;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "kpi-corporate-performance";
+  var _default = "SAP-icons-v5/kpi-corporate-performance";
   _exports.default = _default;
 });

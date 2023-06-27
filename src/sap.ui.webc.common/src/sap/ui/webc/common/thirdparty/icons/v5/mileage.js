@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "mileage";
+  var _default = "SAP-icons-v5/mileage";
   _exports.default = _default;
 });

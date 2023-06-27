@@ -48,14 +48,16 @@ sap.ui.define([
 				 * <b>Note:</b> A read-only component can not be deleted or selected, but still provides visual feedback upon user interaction.
 				 */
 				readonly: {
-					type: "boolean"
+					type: "boolean",
+					defaultValue: false
 				},
 
 				/**
 				 * Defines whether the component is selected or not.
 				 */
 				selected: {
-					type: "boolean"
+					type: "boolean",
+					defaultValue: false
 				},
 
 				/**
@@ -73,7 +75,7 @@ sap.ui.define([
 				 */
 				closeIcon: {
 					type: "sap.ui.webc.main.IIcon",
-					multiple: false,
+					multiple: true,
 					slot: "closeIcon"
 				}
 			},

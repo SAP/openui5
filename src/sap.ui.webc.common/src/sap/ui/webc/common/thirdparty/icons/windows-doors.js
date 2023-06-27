@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/windows-doors", "./v4/windows-doors"], function (_exports, _Theme, _windowsDoors, _windowsDoors2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/windows-doors", "./v5/windows-doors"], function (_exports, _Theme, _windowsDoors, _windowsDoors2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _windowsDoors.pathData : _windowsDoors2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _windowsDoors.pathData : _windowsDoors2.pathData;
   _exports.pathData = pathData;
   var _default = "windows-doors";
   _exports.default = _default;

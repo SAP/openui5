@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "subway-train";
+  var _default = "SAP-icons-v5/subway-train";
   _exports.default = _default;
 });

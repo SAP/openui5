@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sorting-ranking", "./v4/sorting-ranking"], function (_exports, _Theme, _sortingRanking, _sortingRanking2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/sorting-ranking", "./v5/sorting-ranking"], function (_exports, _Theme, _sortingRanking, _sortingRanking2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _sortingRanking.pathData : _sortingRanking2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _sortingRanking.pathData : _sortingRanking2.pathData;
   _exports.pathData = pathData;
   var _default = "sorting-ranking";
   _exports.default = _default;

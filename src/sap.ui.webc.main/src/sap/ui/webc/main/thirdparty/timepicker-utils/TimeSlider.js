@@ -27,7 +27,7 @@ sap.ui.define(["exports"], function (_exports) {
     }
     if (config.minHour === 1) {
       for (let i = 0; i < hoursValueArray.length; i++) {
-        const tempValue = hoursValueArray[i] * 1 + 1;
+        const tempValue = parseInt(hoursValueArray[i]) + 1;
         if (tempValue.toString().length === 1) {
           hoursValueArray[i] = `0${tempValue.toString()}`;
         } else {
@@ -47,7 +47,11 @@ sap.ui.define(["exports"], function (_exports) {
   };
   _exports.getSeconds = getSeconds;
   const getHoursConfigByFormat = type => {
-    const config = {};
+    const config = {
+      minHour: 0,
+      maxHour: 0,
+      isTwelveHoursFormat: false
+    };
     if (type === "hour0_23") {
       config.minHour = 0;
       config.maxHour = 23;
@@ -70,7 +74,6 @@ sap.ui.define(["exports"], function (_exports) {
   _exports.getHoursConfigByFormat = getHoursConfigByFormat;
   const getTimeControlsByFormat = (formatArray, hoursConfig) => {
     const timeControls = [false, false, false, false]; // hours, minutes, seconds and am/pm
-
     for (let i = 0; i < formatArray.length; i++) {
       if (hoursConfig.maxHour !== 0) {
         timeControls[0] = true;

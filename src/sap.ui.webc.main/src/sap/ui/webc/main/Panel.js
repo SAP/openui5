@@ -74,7 +74,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the accessible aria name of the component.
+				 * Defines the accessible ARIA name of the component.
 				 */
 				accessibleName: {
 					type: "string",
@@ -82,7 +82,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Sets the accessible aria role of the component. Depending on the usage, you can change the role from the default <code>Form</code> to <code>Region</code> or <code>Complementary</code>.
+				 * Sets the accessible ARIA role of the component. Depending on the usage, you can change the role from the default <code>Form</code> to <code>Region</code> or <code>Complementary</code>.
 				 */
 				accessibleRole: {
 					type: "sap.ui.webc.main.PanelAccessibleRole",

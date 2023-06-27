@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/bbyd-dashboard", "./v4/bbyd-dashboard"], function (_exports, _Theme, _bbydDashboard, _bbydDashboard2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/bbyd-dashboard", "./v5/bbyd-dashboard"], function (_exports, _Theme, _bbydDashboard, _bbydDashboard2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _bbydDashboard.pathData : _bbydDashboard2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _bbydDashboard.pathData : _bbydDashboard2.pathData;
   _exports.pathData = pathData;
   var _default = "bbyd-dashboard";
   _exports.default = _default;

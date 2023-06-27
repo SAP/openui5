@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/checklist", "./v4/checklist"], function (_exports, _Theme, _checklist, _checklist2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/checklist", "./v5/checklist"], function (_exports, _Theme, _checklist, _checklist2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _checklist.pathData : _checklist2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _checklist.pathData : _checklist2.pathData;
   _exports.pathData = pathData;
   var _default = "checklist";
   _exports.default = _default;

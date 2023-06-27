@@ -1,70 +1,58 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * @lends sap.ui.webcomponents.main.types.InputType.prototype
+   * Different input types.
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.main.types.InputType
    */
-  const InputTypes = {
+  var InputType;
+  (function (InputType) {
     /**
      * Defines a one-line text input field:
      * @public
      * @type {Text}
      */
-    Text: "Text",
+    InputType["Text"] = "Text";
     /**
      * Used for input fields that must contain an e-mail address.
      * @public
      * @type {Email}
      */
-    Email: "Email",
+    InputType["Email"] = "Email";
     /**
      * Defines a numeric input field.
      * @public
      * @type {Number}
      */
-    Number: "Number",
+    InputType["Number"] = "Number";
     /**
      * Defines a password field.
      * @public
      * @type {Password}
      */
-    Password: "Password",
+    InputType["Password"] = "Password";
     /**
      * Used for input fields that should contain a telephone number.
      * @public
      * @type {Tel}
      */
-    Tel: "Tel",
+    InputType["Tel"] = "Tel";
     /**
      * Used for input fields that should contain a URL address.
      * @public
      * @type {URL}
      */
-    URL: "URL"
-  };
-
-  /**
-   * @class
-   * Defines input types
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.main.types.InputType
-   * @public
-   * @enum {string}
-   */
-  class InputType extends _DataType.default {
-    static isValid(value) {
-      return !!InputTypes[value];
-    }
-  }
-  InputType.generateTypeAccessors(InputTypes);
+    InputType["URL"] = "URL";
+  })(InputType || (InputType = {}));
   var _default = InputType;
   _exports.default = _default;
 });

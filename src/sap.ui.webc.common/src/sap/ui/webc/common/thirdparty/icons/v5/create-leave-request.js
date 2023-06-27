@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "create-leave-request";
+  var _default = "SAP-icons-v5/create-leave-request";
   _exports.default = _default;
 });

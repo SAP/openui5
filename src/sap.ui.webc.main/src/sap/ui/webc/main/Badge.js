@@ -71,7 +71,7 @@ sap.ui.define([
 				 */
 				icon: {
 					type: "sap.ui.webc.main.IIcon",
-					multiple: false,
+					multiple: true,
 					slot: "icon"
 				}
 			},

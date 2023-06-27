@@ -44,7 +44,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Represents the "additionalText" text, which is displayed in the tab.
+				 * Represents the "additionalText" text, which is displayed in the tab. In the cases when in the same time there are tabs with icons and tabs without icons, if a tab has no icon the "additionalText" is displayed larger.
 				 */
 				additionalText: {
 					type: "string",
@@ -139,7 +139,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * Returns the DOM reference of the tab that is placed in the header. <b>Note:</b> If you need a DOM ref to the tab content please use the <code>getDomRef</code> method.
+	 * Returns the DOM reference of the tab that is placed in the header. <b>Note:</b> Tabs, placed in the <code>subTabs</code> slot of other tabs are not shown in the header. Calling this method on such tabs will return <code>null</code>. <b>Note:</b> If you need a DOM ref to the tab content please use the <code>getDomRef</code> method.
 	 * @public
 	 * @name sap.ui.webc.main.Tab#getTabInStripDomRef
 	 * @function

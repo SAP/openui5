@@ -1,35 +1,37 @@
-sap.ui.define(["exports"], function (_exports) {
+sap.ui.define(["exports", "../UI5Element"], function (_exports, _UI5Element) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.setResizeHandlerUnobserveFn = _exports.setResizeHandlerObserveFn = _exports.default = void 0;
+  _exports.default = void 0;
   let resizeObserver;
   const observedElements = new Map();
   const getResizeObserver = () => {
     if (!resizeObserver) {
       resizeObserver = new window.ResizeObserver(entries => {
-        entries.forEach(entry => {
-          const callbacks = observedElements.get(entry.target);
-          callbacks.forEach(callback => callback());
+        window.requestAnimationFrame(() => {
+          entries.forEach(entry => {
+            const callbacks = observedElements.get(entry.target);
+            // Callbacks could be async and we need to handle returned promises to comply with the eslint "no-misused-promises" rule.
+            // Although Promise.all awaits all, we don't await the additional task after calling the callbacks and should not make any difference.
+            callbacks && Promise.all(callbacks.map(callback => callback()));
+          });
         });
       });
     }
     return resizeObserver;
   };
-  let observe = (element, callback) => {
+  const observe = (element, callback) => {
     const callbacks = observedElements.get(element) || [];
-
     // if no callbacks have been added for this element - start observing it
     if (!callbacks.length) {
       getResizeObserver().observe(element);
     }
-
     // save the callbacks in an array
     observedElements.set(element, [...callbacks, callback]);
   };
-  let unobserve = (element, callback) => {
+  const unobserve = (element, callback) => {
     const callbacks = observedElements.get(element) || [];
     if (callbacks.length === 0) {
       return;
@@ -42,7 +44,6 @@ sap.ui.define(["exports"], function (_exports) {
       observedElements.set(element, filteredCallbacks);
     }
   };
-
   /**
    * Allows to register/deregister resize observers for a DOM element
    *
@@ -57,16 +58,16 @@ sap.ui.define(["exports"], function (_exports) {
      * @param {*} callback Callback to be executed
      */
     static register(element, callback) {
-      if (element.isUI5Element) {
-        element = element.getDomRef();
+      let effectiveElement = element;
+      if ((0, _UI5Element.instanceOfUI5Element)(effectiveElement)) {
+        effectiveElement = effectiveElement.getDomRef();
       }
-      if (element instanceof HTMLElement) {
-        observe(element, callback);
+      if (effectiveElement instanceof HTMLElement) {
+        observe(effectiveElement, callback);
       } else {
         console.warn("Cannot register ResizeHandler for element", element); // eslint-disable-line
       }
     }
-
     /**
      * @static
      * @public
@@ -74,36 +75,17 @@ sap.ui.define(["exports"], function (_exports) {
      * @param {*} callback Callback to be removed
      */
     static deregister(element, callback) {
-      if (element.isUI5Element) {
-        element = element.getDomRef();
+      let effectiveElement = element;
+      if ((0, _UI5Element.instanceOfUI5Element)(effectiveElement)) {
+        effectiveElement = effectiveElement.getDomRef();
       }
-      if (element instanceof HTMLElement) {
-        unobserve(element, callback);
+      if (effectiveElement instanceof HTMLElement) {
+        unobserve(effectiveElement, callback);
       } else {
         console.warn("Cannot deregister ResizeHandler for element", element); // eslint-disable-line
       }
     }
   }
-
-  /**
-   * Set a function to be executed whenever a DOM node needs to be observed for size change.
-   * @public
-   * @param fn
-   */
-  const setResizeHandlerObserveFn = fn => {
-    observe = fn;
-  };
-
-  /**
-   * Set a function to be executed whenever a DOM node needs to no longer be observed for size changes
-   * @public
-   * @param fn
-   */
-  _exports.setResizeHandlerObserveFn = setResizeHandlerObserveFn;
-  const setResizeHandlerUnobserveFn = fn => {
-    unobserve = fn;
-  };
-  _exports.setResizeHandlerUnobserveFn = setResizeHandlerUnobserveFn;
   var _default = ResizeHandler;
   _exports.default = _default;
 });

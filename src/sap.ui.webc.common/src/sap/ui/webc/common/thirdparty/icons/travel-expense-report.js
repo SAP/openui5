@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/travel-expense-report", "./v4/travel-expense-report"], function (_exports, _Theme, _travelExpenseReport, _travelExpenseReport2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/travel-expense-report", "./v5/travel-expense-report"], function (_exports, _Theme, _travelExpenseReport, _travelExpenseReport2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _travelExpenseReport.pathData : _travelExpenseReport2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _travelExpenseReport.pathData : _travelExpenseReport2.pathData;
   _exports.pathData = pathData;
   var _default = "travel-expense-report";
   _exports.default = _default;

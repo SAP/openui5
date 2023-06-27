@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "../util/detectNavigatorLanguage", "../config/Language", "./Locale"], function (_exports, _detectNavigatorLanguage, _Language, _Locale) {
+sap.ui.define(["exports", "../util/detectNavigatorLanguage", "../config/Language", "./Locale", "../generated/AssetParameters"], function (_exports, _detectNavigatorLanguage, _Language, _Locale, _AssetParameters) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -23,8 +23,8 @@ sap.ui.define(["exports", "../util/detectNavigatorLanguage", "../config/Language
     } catch (e) {
       // ignore
     }
+    return new _Locale.default(_AssetParameters.DEFAULT_LOCALE);
   };
-
   /**
    * Returns the locale based on the parameter or configured language Configuration#getLanguage
    * If no language has been configured - a new locale based on browser language is returned
@@ -33,8 +33,9 @@ sap.ui.define(["exports", "../util/detectNavigatorLanguage", "../config/Language
     if (lang) {
       return convertToLocaleOrNull(lang);
     }
-    if ((0, _Language.getLanguage)()) {
-      return getLocaleInstance((0, _Language.getLanguage)());
+    const configLanguage = (0, _Language.getLanguage)();
+    if (configLanguage) {
+      return getLocaleInstance(configLanguage);
     }
     return convertToLocaleOrNull((0, _detectNavigatorLanguage.default)());
   };

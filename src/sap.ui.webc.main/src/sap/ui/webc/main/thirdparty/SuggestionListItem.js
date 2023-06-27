@@ -1,38 +1,22 @@
-sap.ui.define(["exports", "./StandardListItem", "./generated/templates/SuggestionListItemTemplate.lit"], function (_exports, _StandardListItem, _SuggestionListItemTemplate) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/slot", "./StandardListItem", "./generated/templates/SuggestionListItemTemplate.lit"], function (_exports, _customElement, _slot, _StandardListItem, _SuggestionListItemTemplate) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
+  _customElement = _interopRequireDefault(_customElement);
+  _slot = _interopRequireDefault(_slot);
   _StandardListItem = _interopRequireDefault(_StandardListItem);
   _SuggestionListItemTemplate = _interopRequireDefault(_SuggestionListItemTemplate);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-li-suggestion-item",
-    managedSlots: true,
-    slots: /** @lends sap.ui.webcomponents.main.SuggestionListItem.prototype */{
-      /**
-       * Defines a description that can contain HTML.
-       * <b>Note:</b> If not specified, the <code>description</code> property will be used.
-       * <br>
-       * @type {HTMLElement}
-       * @since 1.0.0-rc.8
-       * @slot
-       * @public
-       */
-      richDescription: {
-        type: HTMLElement
-      },
-      "default": {
-        propertyName: "titleText"
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
   /**
    * @class
    * The <code>ui5-li-suggestion-item</code> represents the suggestion item in the <code>ui5-input</code>
@@ -51,19 +35,13 @@ sap.ui.define(["exports", "./StandardListItem", "./generated/templates/Suggestio
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.SuggestionListItem
-   * @extends StandardListItem
+   * @alias sap.ui.webc.main.SuggestionListItem
+   * @extends sap.ui.webc.main.StandardListItem
    * @tagname ui5-li-suggestion-item
    */
-  class SuggestionListItem extends _StandardListItem.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get template() {
-      return _SuggestionListItemTemplate.default;
-    }
-    onBeforeRendering(...params) {
-      super.onBeforeRendering(...params);
+  let SuggestionListItem = class SuggestionListItem extends _StandardListItem.default {
+    onBeforeRendering() {
+      super.onBeforeRendering();
       this.hasTitle = !!this.titleText.length;
     }
     get effectiveTitle() {
@@ -72,7 +50,21 @@ sap.ui.define(["exports", "./StandardListItem", "./generated/templates/Suggestio
     get hasDescription() {
       return this.richDescription.length || this.description;
     }
-  }
+    get groupItem() {
+      return false;
+    }
+  };
+  __decorate([(0, _slot.default)({
+    type: HTMLElement
+  })], SuggestionListItem.prototype, "richDescription", void 0);
+  __decorate([(0, _slot.default)({
+    type: Node,
+    "default": true
+  })], SuggestionListItem.prototype, "titleText", void 0);
+  SuggestionListItem = __decorate([(0, _customElement.default)({
+    tag: "ui5-li-suggestion-item",
+    template: _SuggestionListItemTemplate.default
+  })], SuggestionListItem);
   SuggestionListItem.define();
   var _default = SuggestionListItem;
   _exports.default = _default;

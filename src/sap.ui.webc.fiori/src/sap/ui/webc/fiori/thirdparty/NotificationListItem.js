@@ -1,10 +1,14 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/main/thirdparty/types/Priority", "sap/ui/webc/main/thirdparty/Button", "sap/ui/webc/main/thirdparty/BusyIndicator", "sap/ui/webc/main/thirdparty/Link", "sap/ui/webc/main/thirdparty/Icon", "sap/ui/webc/main/thirdparty/Popover", "sap/ui/webc/main/thirdparty/types/WrappingType", "./NotificationListItemBase", "./generated/i18n/i18n-defaults", "./generated/templates/NotificationListItemTemplate.lit", "./generated/themes/NotificationListItem.css"], function (_exports, _Keys, _ResizeHandler, _Priority, _Button, _BusyIndicator, _Link, _Icon, _Popover, _WrappingType, _NotificationListItemBase, _i18nDefaults, _NotificationListItemTemplate, _NotificationListItem) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/MarkedEvents", "sap/ui/webc/main/thirdparty/types/Priority", "sap/ui/webc/main/thirdparty/Button", "sap/ui/webc/main/thirdparty/BusyIndicator", "sap/ui/webc/main/thirdparty/Link", "sap/ui/webc/main/thirdparty/Icon", "sap/ui/webc/main/thirdparty/Popover", "sap/ui/webc/main/thirdparty/types/WrappingType", "./NotificationListItemBase", "sap/ui/webc/common/thirdparty/icons/overflow", "sap/ui/webc/common/thirdparty/icons/decline", "./generated/i18n/i18n-defaults", "./generated/templates/NotificationListItemTemplate.lit", "./generated/themes/NotificationListItem.css"], function (_exports, _Keys, _customElement, _property, _slot, _event, _ResizeHandler, _MarkedEvents, _Priority, _Button, _BusyIndicator, _Link, _Icon, _Popover, _WrappingType, _NotificationListItemBase, _overflow, _decline, _i18nDefaults, _NotificationListItemTemplate, _NotificationListItem) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
+  _event = _interopRequireDefault(_event);
   _ResizeHandler = _interopRequireDefault(_ResizeHandler);
   _Priority = _interopRequireDefault(_Priority);
   _Button = _interopRequireDefault(_Button);
@@ -17,101 +21,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
   _NotificationListItemTemplate = _interopRequireDefault(_NotificationListItemTemplate);
   _NotificationListItem = _interopRequireDefault(_NotificationListItem);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Texts
-
-  // Templates
-
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-li-notification",
-    languageAware: true,
-    managedSlots: true,
-    properties: /** @lends sap.ui.webcomponents.fiori.NotificationListItem.prototype */{
-      /**
-       * Defines if the <code>titleText</code> and <code>description</code> should wrap,
-       * they truncate by default.
-       *
-       * <br><br>
-       * <b>Note:</b> by default the <code>titleText</code> and <code>decription</code>,
-       * and a <code>ShowMore/Less</code> button would be displayed.
-       * @type {WrappingType}
-       * @defaultvalue "None"
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      wrappingType: {
-        type: _WrappingType.default,
-        defaultValue: _WrappingType.default.None
-      },
-      /**
-       * Defines the state of the <code>titleText</code> and <code>description</code>,
-       * if less or more information is displayed.
-       * @private
-       */
-      _showMorePressed: {
-        type: Boolean
-      },
-      /**
-       * Defines the visibility of the <code>showMore</code> button.
-       * @private
-       */
-      _showMore: {
-        type: Boolean
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.fiori.NotificationListItem.prototype */{
-      /**
-       * Defines the avatar, displayed in the <code>ui5-li-notification</code>.
-       *
-       * <br><br>
-       * <b>Note:</b> Consider using the <code>ui5-avatar</code> to display icons, initials or images.
-       * <br>
-       * <b>Note:</b>In order to be complaint with the UX guidlines and for best experience,
-       * we recommend using avatars with 2rem X 2rem in size (32px X 32px). In case you are using the <code>ui5-avatar</code>
-       * you can set its <code>size</code> property to <code>XS</code> to get the required size - <code>&lt;ui5-avatar size="XS">&lt;/ui5-avatar></code>.
-       *
-       * @type {sap.ui.webcomponents.main.IAvatar}
-       * @slot
-       * @public
-       */
-      avatar: {
-        type: HTMLElement
-      },
-      /**
-       * Defines the elements, displayed in the footer of the of the component.
-       * @type {HTMLElement[]}
-       * @slot
-       * @public
-       */
-      footnotes: {
-        type: HTMLElement,
-        individualSlots: true
-      },
-      /**
-       * Defines the content of the <code>ui5-li-notification</code>,
-       * usually a description of the notification.
-       *
-       * <br><br>
-       * <b>Note:</b> Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.
-       *
-       * @type {Node[]}
-       * @slot description
-       * @public
-       */
-      "default": {
-        propertyName: "description",
-        type: Node
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.fiori.NotificationListItem.prototype */{
-      _press: {}
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var NotificationListItem_1;
   /**
    * @class
    *
@@ -150,44 +67,29 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
    * <code>import "@ui5/webcomponents/dist/NotificationAction.js";</code> (optional)
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.fiori.NotificationListItem
-   * @extends NotificationListItemBase
+   * @alias sap.ui.webc.fiori.NotificationListItem
+   * @extends sap.ui.webc.fiori.NotificationListItemBase
    * @tagname ui5-li-notification
-   * @appenddocs NotificationAction
+   * @appenddocs sap.ui.webc.fiori.NotificationAction
    * @since 1.0.0-rc.8
-   * @implements sap.ui.webcomponents.fiori.INotificationListItem, sap.ui.webcomponents.main.IListItem
+   * @implements sap.ui.webc.fiori.INotificationListItem, sap.ui.webc.main.IListItem
    * @public
    */
-  class NotificationListItem extends _NotificationListItemBase.default {
+  let NotificationListItem = NotificationListItem_1 = class NotificationListItem extends _NotificationListItemBase.default {
     constructor() {
       super();
-
       // the titleText overflow height
       this._titleTextOverflowHeight = 0;
-
       // the description overflow height
       this._descOverflowHeight = 0;
-
       // the resize handler
-      this.onResizeBind = this.onResize.bind(this);
-    }
-    static get metadata() {
-      return metadata;
-    }
-    static get styles() {
-      return _NotificationListItem.default;
-    }
-    static get template() {
-      return _NotificationListItemTemplate.default;
-    }
-    static get dependencies() {
-      return [_Button.default, _Icon.default, _BusyIndicator.default, _Link.default, _Popover.default];
+      this._onResizeBound = this.onResize.bind(this);
     }
     onEnterDOM() {
-      _ResizeHandler.default.register(this, this.onResizeBind);
+      _ResizeHandler.default.register(this, this._onResizeBound);
     }
     onExitDOM() {
-      _ResizeHandler.default.deregister(this, this.onResizeBind);
+      _ResizeHandler.default.deregister(this, this._onResizeBound);
     }
     get hasDesc() {
       return !!this.description.length;
@@ -197,15 +99,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
     }
     get showMoreText() {
       if (this._showMorePressed) {
-        return NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_SHOW_LESS);
+        return NotificationListItem_1.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_SHOW_LESS);
       }
-      return NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_SHOW_MORE);
+      return NotificationListItem_1.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_SHOW_MORE);
     }
     get overflowBtnAccessibleName() {
-      return NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_OVERLOW_BTN_TITLE);
+      return NotificationListItem_1.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_OVERLOW_BTN_TITLE);
     }
     get closeBtnAccessibleName() {
-      return NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_CLOSE_BTN_TITLE);
+      return NotificationListItem_1.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_CLOSE_BTN_TITLE);
     }
     get hideShowMore() {
       if (this.wrappingType === _WrappingType.default.None && this._showMore) {
@@ -264,56 +166,54 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
     }
     get priorityText() {
       if (this.priority === _Priority.default.High) {
-        return NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_HIGH_PRIORITY_TXT);
+        return NotificationListItem_1.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_HIGH_PRIORITY_TXT);
       }
       if (this.priority === _Priority.default.Medium) {
-        return NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_MEDIUM_PRIORITY_TXT);
+        return NotificationListItem_1.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_MEDIUM_PRIORITY_TXT);
       }
       if (this.priority === _Priority.default.Low) {
-        return NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_LOW_PRIORITY_TXT);
+        return NotificationListItem_1.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_LOW_PRIORITY_TXT);
       }
       return "";
     }
     get accInvisibleText() {
-      const notificationText = NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_TXT);
-      const readText = this.read ? NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_READ) : NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_UNREAD);
+      const notificationText = NotificationListItem_1.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_TXT);
+      const readText = this.read ? NotificationListItem_1.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_READ) : NotificationListItem_1.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_UNREAD);
       const priorityText = this.priorityText;
       return `${notificationText} ${readText} ${priorityText}`;
     }
-
     /**
      * Event handlers
      */
-    _onclick(event) {
-      this.fireItemPress(event);
+    _onclick(e) {
+      this.fireItemPress(e);
     }
-    _onShowMoreClick(event) {
-      event.preventDefault();
+    _onShowMoreClick(e) {
+      e.preventDefault();
       this._showMorePressed = !this._showMorePressed;
     }
-    _onkeydown(event) {
-      super._onkeydown(event);
-      if ((0, _Keys.isEnter)(event)) {
-        this.fireItemPress(event);
+    _onkeydown(e) {
+      super._onkeydown(e);
+      if ((0, _Keys.isEnter)(e)) {
+        this.fireItemPress(e);
       }
     }
-    _onkeyup(event) {
-      super._onkeyup(event);
-      const space = (0, _Keys.isSpace)(event);
-      if (space && event.isMarked === "link") {
-        this._onShowMoreClick(event);
+    _onkeyup(e) {
+      super._onkeyup(e);
+      const space = (0, _Keys.isSpace)(e);
+      if (space && (0, _MarkedEvents.getEventMark)(e) === "link") {
+        this._onShowMoreClick(e);
         return;
       }
       if (space) {
-        this.fireItemPress(event);
+        this.fireItemPress(e);
       }
     }
-
     /**
      * Private
      */
-    fireItemPress(event) {
-      if (event.isMarked === "button" || event.isMarked === "link") {
+    fireItemPress(e) {
+      if ((0, _MarkedEvents.getEventMark)(e) === "button" || (0, _MarkedEvents.getEventMark)(e) === "link") {
         return;
       }
       this.fireEvent("_press", {
@@ -340,7 +240,33 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
       }
       this._showMore = false;
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: _WrappingType.default,
+    defaultValue: _WrappingType.default.None
+  })], NotificationListItem.prototype, "wrappingType", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], NotificationListItem.prototype, "_showMorePressed", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], NotificationListItem.prototype, "_showMore", void 0);
+  __decorate([(0, _slot.default)()], NotificationListItem.prototype, "avatar", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement,
+    individualSlots: true
+  })], NotificationListItem.prototype, "footnotes", void 0);
+  __decorate([(0, _slot.default)({
+    type: Node,
+    "default": true
+  })], NotificationListItem.prototype, "description", void 0);
+  NotificationListItem = NotificationListItem_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-li-notification",
+    languageAware: true,
+    styles: _NotificationListItem.default,
+    template: _NotificationListItemTemplate.default,
+    dependencies: [_Button.default, _Icon.default, _BusyIndicator.default, _Link.default, _Popover.default]
+  }), (0, _event.default)("_press")], NotificationListItem);
   NotificationListItem.define();
   var _default = NotificationListItem;
   _exports.default = _default;

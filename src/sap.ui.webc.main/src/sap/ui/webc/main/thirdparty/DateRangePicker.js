@@ -1,45 +1,27 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/localization/dates/CalendarDate", "sap/ui/webc/common/thirdparty/localization/dates/modifyDateBy", "sap/ui/webc/common/thirdparty/localization/dates/getTodayUTCTimestamp", "./generated/i18n/i18n-defaults", "./generated/themes/DateRangePicker.css", "./DatePicker"], function (_exports, _Render, _CalendarDate, _modifyDateBy, _getTodayUTCTimestamp, _i18nDefaults, _DateRangePicker, _DatePicker) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/localization/dates/CalendarDate", "sap/ui/webc/common/thirdparty/localization/dates/modifyDateBy", "sap/ui/webc/common/thirdparty/localization/dates/getTodayUTCTimestamp", "./generated/i18n/i18n-defaults", "./generated/themes/DateRangePicker.css", "./DatePicker", "./types/CalendarPickersMode"], function (_exports, _customElement, _property, _Render, _CalendarDate, _modifyDateBy, _getTodayUTCTimestamp, _i18nDefaults, _DateRangePicker, _DatePicker, _CalendarPickersMode) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
   _CalendarDate = _interopRequireDefault(_CalendarDate);
   _modifyDateBy = _interopRequireDefault(_modifyDateBy);
   _getTodayUTCTimestamp = _interopRequireDefault(_getTodayUTCTimestamp);
   _DateRangePicker = _interopRequireDefault(_DateRangePicker);
   _DatePicker = _interopRequireDefault(_DatePicker);
+  _CalendarPickersMode = _interopRequireDefault(_CalendarPickersMode);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-daterange-picker",
-    properties: /** @lends sap.ui.webcomponents.main.DateRangePicker.prototype */{
-      /**
-       * Determines the symbol which separates the dates.
-       * If not supplied, the default time interval delimiter for the current locale will be used.
-       *
-       * @type {string}
-       * @public
-       */
-      delimiter: {
-        type: String,
-        defaultValue: "-"
-      },
-      /**
-       * The first date in the range during selection (this is a temporary value, not the first date in the value range)
-       * @private
-       */
-      _tempValue: {
-        type: String
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var DateRangePicker_1;
   /**
    * @class
    *
@@ -73,41 +55,35 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.DateRangePicker
-   * @extends DatePicker
+   * @alias sap.ui.webc.main.DateRangePicker
+   * @extends sap.ui.webc.main.DatePicker
    * @tagname ui5-daterange-picker
    * @since 1.0.0-rc.8
    * @public
    */
-  class DateRangePicker extends _DatePicker.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get styles() {
-      return [_DatePicker.default.styles, _DateRangePicker.default];
-    }
+  let DateRangePicker = DateRangePicker_1 = class DateRangePicker extends _DatePicker.default {
     constructor() {
       super();
       this._prevDelimiter = null;
     }
-
     /**
      * <b>Note:</b> The getter method is inherited and not supported. If called it will return an empty value.
      *
      * @readonly
-     * @type { Date }
+     * @type {Date}
      * @public
+     * @name sap.ui.webc.main.DateRangePicker.prototype.dateValue
      */
     get dateValue() {
       return null;
     }
-
     /**
      * <b>Note:</b> The getter method is inherited and not supported. If called it will return an empty value.
      *
      * @readonly
-     * @type { Date }
+     * @type {Date}
      * @public
+     * @name sap.ui.webc.main.DateRangePicker.prototype.dateValueUTC
      */
     get dateValueUTC() {
       return null;
@@ -121,7 +97,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
     get _tempTimestamp() {
       return this._tempValue && this.getFormat().parse(this._tempValue, true).getTime() / 1000;
     }
-
     /**
      * Required by DatePicker.js
      * @override
@@ -129,7 +104,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
     get _calendarSelectionMode() {
       return "Range";
     }
-
     /**
      * Required by DatePicker.js - set the calendar focus on the first selected date (or today if not set)
      * @override
@@ -137,7 +111,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
     get _calendarTimestamp() {
       return this._tempTimestamp || this._startDateTimestamp || (0, _getTodayUTCTimestamp.default)(this._primaryCalendarType);
     }
-
     /**
      * Required by DatePicker.js
      * @override
@@ -151,29 +124,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
       }
       return [];
     }
-
     /**
      * Returns the start date of the currently selected range as JavaScript Date instance.
      *
      * @readonly
-     * @type { Date }
+     * @type {Date}
      * @public
+     * @name sap.ui.webc.main.DateRangePicker.prototype.startDateValue
      */
     get startDateValue() {
       return _CalendarDate.default.fromTimestamp(this._startDateTimestamp * 1000).toLocalJSDate();
     }
-
     /**
      * Returns the end date of the currently selected range as JavaScript Date instance.
      *
      * @readonly
-     * @type { Date }
+     * @type {Date}
      * @public
+     * @name sap.ui.webc.main.DateRangePicker.prototype.endDateValue
      */
     get endDateValue() {
       return _CalendarDate.default.fromTimestamp(this._endDateTimestamp * 1000).toLocalJSDate();
     }
-
     /**
      * @override
      */
@@ -181,19 +153,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
       return this.placeholder !== undefined ? this.placeholder : `${this._displayFormat} ${this._effectiveDelimiter} ${this._displayFormat}`;
     }
     get dateAriaDescription() {
-      return DateRangePicker.i18nBundle.getText(_i18nDefaults.DATERANGE_DESCRIPTION);
+      return DateRangePicker_1.i18nBundle.getText(_i18nDefaults.DATERANGE_DESCRIPTION);
     }
-
     /**
      * @override
      */
-    async _onInputSubmit(event) {
+    async _onInputSubmit() {
       const input = this._getInput();
       const caretPos = input.getCaretPosition();
       await (0, _Render.renderFinished)();
       input.setCaretPosition(caretPos); // Return the caret on the previous position after rendering
     }
-
     /**
      * @override
      */
@@ -201,7 +171,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
       this._tempValue = ""; // reset _tempValue on popover close
       super.onResponsivePopoverAfterClose();
     }
-
     /**
      * @override
      */
@@ -209,14 +178,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
       const parts = this._splitValueByDelimiter(value);
       return parts.length <= 2 && parts.every(dateString => super.isValid(dateString)); // must be at most 2 dates and each must be valid
     }
-
     /**
      * @override
      */
     isInValidRange(value) {
       return this._splitValueByDelimiter(value).every(dateString => super.isInValidRange(dateString));
     }
-
     /**
      * Extract both dates as timestamps, flip if necessary, and build (which will use the desired format so we enforce the format too)
      * @override
@@ -230,7 +197,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
       }
       return this._buildValue(firstDateTimestamp, lastDateTimestamp);
     }
-
     /**
      * @override
      */
@@ -245,11 +211,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
         this._tempValue = values[0];
         return;
       }
-      const newValue = this._buildValue(...event.detail.dates); // the value will be normalized so we don't need to order them here
+      const newValue = this._buildValue(event.detail.dates[0], event.detail.dates[1]); // the value will be normalized so we don't need to order them here
       this._updateValueAndFireEvents(newValue, true, ["change", "value-changed"]);
       this.closePicker();
     }
-
     /**
      * @override
      */
@@ -259,10 +224,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
         return super._modifyDateValue(amount, unit);
       }
       const input = this._getInput();
-      let caretPos = input.getCaretPosition();
+      let caretPos = input.getCaretPosition(); // caret position is always number for input of type text;
       let newValue;
       if (caretPos <= this.value.indexOf(this._effectiveDelimiter)) {
-        // The user is focusing the first date -> change it and keep the seoond date
+        // The user is focusing the first date -> change it and keep the second date
         const startDateModified = (0, _modifyDateBy.default)(_CalendarDate.default.fromTimestamp(this._startDateTimestamp * 1000), amount, unit, this._minDate, this._maxDate);
         const newStartDateTimestamp = startDateModified.valueOf() / 1000;
         if (newStartDateTimestamp > this._endDateTimestamp) {
@@ -285,17 +250,22 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
     }
 
     get _effectiveDelimiter() {
-      return this.delimiter || this.constructor.getMetadata().getProperties().delimiter.defaultValue; // treat empty string as the default value
+      const ctor = this.constructor;
+      return this.delimiter || ctor.getMetadata().getProperties().delimiter.defaultValue;
     }
-
     _splitValueByDelimiter(value) {
       const valuesArray = [];
       const partsArray = value.split(this._prevDelimiter || this._effectiveDelimiter);
-      valuesArray[0] = partsArray.slice(0, partsArray.length / 2).join(this._effectiveDelimiter);
-      valuesArray[1] = partsArray.slice(partsArray.length / 2).join(this._effectiveDelimiter);
+      // if format successfully parse the value, the value contains only single date
+      if (this.getFormat().parse(value)) {
+        valuesArray[0] = partsArray.join(this._effectiveDelimiter);
+        valuesArray[1] = "";
+      } else {
+        valuesArray[0] = partsArray.slice(0, partsArray.length / 2).join(this._effectiveDelimiter);
+        valuesArray[1] = partsArray.slice(partsArray.length / 2).join(this._effectiveDelimiter);
+      }
       return valuesArray;
     }
-
     /**
      * Returns a UTC timestamp, representing the first date in the value string or undefined if the value is empty
      * @private
@@ -305,9 +275,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
         return undefined;
       }
       const dateStrings = this._splitValueByDelimiter(value); // at least one item guaranteed due to the checks above (non-empty and valid)
-      return this.getFormat().parse(dateStrings[0], true).getTime() / 1000;
+      const parsedDate = this.getFormat().parse(dateStrings[0], true);
+      return parsedDate.getTime() / 1000;
     }
-
     /**
      * Returns a UTC timestamp, representing the last date in the value string or undefined if the value is empty or there is just one date
      * @private
@@ -318,11 +288,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
       }
       const dateStrings = this._splitValueByDelimiter(value);
       if (dateStrings[1]) {
-        return this.getFormat().parse(dateStrings[1], true).getTime() / 1000;
+        const parsedDate = this.getFormat().parse(dateStrings[1], true);
+        return parsedDate.getTime() / 1000;
       }
       return undefined;
     }
-
     /**
      * Builds a string value out of two UTC timestamps - this method is the counterpart to _extractFirstTimestamp/_extractLastTimestamp
      * @private
@@ -339,7 +309,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/w
       }
       return "";
     }
-  }
+    /**
+     * @override
+     */
+    get _calendarPickersMode() {
+      return _CalendarPickersMode.default.DAY_MONTH_YEAR;
+    }
+  };
+  __decorate([(0, _property.default)({
+    defaultValue: "-"
+  })], DateRangePicker.prototype, "delimiter", void 0);
+  __decorate([(0, _property.default)()], DateRangePicker.prototype, "_tempValue", void 0);
+  DateRangePicker = DateRangePicker_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-daterange-picker",
+    styles: [_DatePicker.default.styles, _DateRangePicker.default]
+  })], DateRangePicker);
   DateRangePicker.define();
   var _default = DateRangePicker;
   _exports.default = _default;

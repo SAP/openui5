@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/screen-split-one", "./v4/screen-split-one"], function (_exports, _Theme, _screenSplitOne, _screenSplitOne2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/screen-split-one", "./v5/screen-split-one"], function (_exports, _Theme, _screenSplitOne, _screenSplitOne2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _screenSplitOne.pathData : _screenSplitOne2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _screenSplitOne.pathData : _screenSplitOne2.pathData;
   _exports.pathData = pathData;
   var _default = "screen-split-one";
   _exports.default = _default;

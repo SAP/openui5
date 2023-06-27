@@ -7,7 +7,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/renderer/LitRender
   _exports.default = void 0;
   /* eslint no-unused-vars: 0 */
 
-  const block0 = (context, tags, suffix) => (0, _LitRenderer.html)`<div class="${(0, _LitRenderer.classMap)(context.classes.root)}" aria-label="${(0, _LitRenderer.ifDefined)(context.accInfo.label)}" role="toolbar" part="bar"><div class="ui5-bar-content-container ui5-bar-startcontent-container"><slot name="startContent"></slot></div><div class="ui5-bar-content-container ui5-bar-midcontent-container"><slot></slot></div><div class="ui5-bar-content-container ui5-bar-endcontent-container"><slot name="endContent"></slot></div></div>`;
+  function block0(context, tags, suffix) {
+    return (0, _LitRenderer.html)`<div class="${(0, _LitRenderer.classMap)(this.classes.root)}" aria-label="${(0, _LitRenderer.ifDefined)(this.accInfo.label)}" role="toolbar" part="bar"><div class="ui5-bar-content-container ui5-bar-startcontent-container"><slot name="startContent"></slot></div><div class="ui5-bar-content-container ui5-bar-midcontent-container"><slot></slot></div><div class="ui5-bar-content-container ui5-bar-endcontent-container"><slot name="endContent"></slot></div></div>`;
+  }
   var _default = block0;
   _exports.default = _default;
 });

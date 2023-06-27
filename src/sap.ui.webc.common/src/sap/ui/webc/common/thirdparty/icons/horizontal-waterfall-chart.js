@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/horizontal-waterfall-chart", "./v4/horizontal-waterfall-chart"], function (_exports, _Theme, _horizontalWaterfallChart, _horizontalWaterfallChart2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/horizontal-waterfall-chart", "./v5/horizontal-waterfall-chart"], function (_exports, _Theme, _horizontalWaterfallChart, _horizontalWaterfallChart2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _horizontalWaterfallChart.pathData : _horizontalWaterfallChart2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _horizontalWaterfallChart.pathData : _horizontalWaterfallChart2.pathData;
   _exports.pathData = pathData;
   var _default = "horizontal-waterfall-chart";
   _exports.default = _default;

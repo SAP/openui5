@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v2/parallel-gateway", "./v3/parallel-gateway"], function (_exports, _Theme, _parallelGateway, _parallelGateway2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "parallel-gateway";
-  const pathData = "M255.5 1l256 255-256 254-254-254zm-199 255l199 199 200-199-200-200zm81 16v-32h102V138h32v102h102v32h-102v102h-32V272h-102z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "tnt";
-  const packageName = "@ui5/webcomponents-icons-tnt";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _parallelGateway.accData;
+    }
   });
-  var _default = "parallel-gateway";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _parallelGateway.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _parallelGateway.pathData : _parallelGateway2.pathData;
+  _exports.pathData = pathData;
+  var _default = "tnt/parallel-gateway";
   _exports.default = _default;
 });

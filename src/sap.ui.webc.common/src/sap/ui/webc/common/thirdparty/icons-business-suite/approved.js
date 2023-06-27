@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v1/approved", "./v2/approved"], function (_exports, _Theme, _approved, _approved2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "approved";
-  const pathData = "M460.5 0v512h-408V0h408zm-35 35h-339v445h339V35zm-48 125l-121 240-120-120 25-48 76 62 93-182z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "business-suite";
-  const packageName = "@ui5/webcomponents-icons-business-suite";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _approved.accData;
+    }
   });
-  var _default = "approved";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _approved.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _approved.pathData : _approved2.pathData;
+  _exports.pathData = pathData;
+  var _default = "business-suite/approved";
   _exports.default = _default;
 });

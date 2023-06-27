@@ -1,38 +1,19 @@
-sap.ui.define(["exports", "../generated/AssetParameters"], function (_exports, _AssetParameters) {
+sap.ui.define(["exports", "../generated/AssetParameters", "../theming/ThemeRegistered"], function (_exports, _AssetParameters, _ThemeRegistered) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.registerThemePropertiesLoader = _exports.registerThemeProperties = _exports.isThemeRegistered = _exports.getThemeProperties = _exports.getRegisteredPackages = void 0;
+  _exports.registerThemePropertiesLoader = _exports.isThemeRegistered = _exports.getThemeProperties = _exports.getRegisteredPackages = void 0;
   const themeStyles = new Map();
   const loaders = new Map();
   const registeredPackages = new Set();
   const registeredThemes = new Set();
-
-  /**
-   * Used to provide CSS Vars for a specific theme for a specific package.
-   * The CSS Vars can be passed directly as a string (containing them), as an object with a "_" property(containing them in the "_" property), or as a URL.
-   * This URL must point to a JSON file, containing a "_" property.
-   *
-   * Example usage:
-   *  1) Pass the CSS Vars as a string directly.
-   *  registerThemeProperties("my-package", "my_theme", ":root{--var1: red;}");
-   *
-   * @public
-   * @param packageName - the NPM package for which CSS Vars are registered
-   * @param themeName - the theme which the CSS Vars implement
-   * @param style - the style content directly
-   * @deprecated
-   */
-  const registerThemeProperties = (_packageName, _themeName, _style) => {
-    throw new Error("`registerThemeProperties` has been depracated. Use `registerThemePropertiesLoader` instead.");
-  };
-  _exports.registerThemeProperties = registerThemeProperties;
   const registerThemePropertiesLoader = (packageName, themeName, loader) => {
     loaders.set(`${packageName}/${themeName}`, loader);
     registeredPackages.add(packageName);
     registeredThemes.add(themeName);
+    (0, _ThemeRegistered.fireThemeRegistered)(themeName);
   };
   _exports.registerThemePropertiesLoader = registerThemePropertiesLoader;
   const getThemeProperties = async (packageName, themeName) => {
@@ -59,11 +40,12 @@ sap.ui.define(["exports", "../generated/AssetParameters"], function (_exports, _
     let data;
     try {
       data = await loader(themeName);
-    } catch (e) {
+    } catch (error) {
+      const e = error;
       console.error(packageName, e.message); /* eslint-disable-line */
       return;
     }
-    const themeProps = data._ || data;
+    const themeProps = data._ || data; // Refactor: remove _ everywhere
     themeStyles.set(`${packageName}_${themeName}`, themeProps);
     return themeProps;
   };

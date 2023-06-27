@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "chevron-phase";
-  const pathData = "M506.5 257q4 5 4 14t-4 14l-86 131q-24 33-64 33h-330q-15 0-22-12-4-5-4-11 0-8 5-16l92-138-92-138q-5-10-5-16t3-12q9-12 23-12h330q19 0 36 8t28 25zm-51 13l-76-118q-6-9-16-9h-289l77 114q4 5 4 14t-4 14l-77 113h284q6 0 11-3t10-8z";
+  const pathData = "M356 449H26q-15 0-23-15-3-6-3-13t4-15l93-149L4 108Q0 98 0 93q0-7 3-14 8-14 23-14h330q42 0 65 37l87 140q4 5 4 15t-4 15l-87 140q-23 37-65 37zM74 394h282q15 0 22-13l77-124-77-124q-7-13-22-13H74l76 122q4 5 4 15t-4 15z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "chevron-phase";
+  var _default = "SAP-icons-v5/chevron-phase";
   _exports.default = _default;
 });

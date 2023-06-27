@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/collections-management", "./v4/collections-management"], function (_exports, _Theme, _collectionsManagement, _collectionsManagement2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/collections-management", "./v5/collections-management"], function (_exports, _Theme, _collectionsManagement, _collectionsManagement2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _collectionsManagement.pathData : _collectionsManagement2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _collectionsManagement.pathData : _collectionsManagement2.pathData;
   _exports.pathData = pathData;
   var _default = "collections-management";
   _exports.default = _default;

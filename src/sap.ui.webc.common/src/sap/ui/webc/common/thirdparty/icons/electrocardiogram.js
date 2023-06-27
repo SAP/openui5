@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/electrocardiogram", "./v4/electrocardiogram"], function (_exports, _Theme, _electrocardiogram, _electrocardiogram2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/electrocardiogram", "./v5/electrocardiogram"], function (_exports, _Theme, _electrocardiogram, _electrocardiogram2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _electrocardiogram.pathData : _electrocardiogram2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _electrocardiogram.pathData : _electrocardiogram2.pathData;
   _exports.pathData = pathData;
   var _default = "electrocardiogram";
   _exports.default = _default;

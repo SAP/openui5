@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/business-by-design", "./v4/business-by-design"], function (_exports, _Theme, _businessByDesign, _businessByDesign2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/business-by-design", "./v5/business-by-design"], function (_exports, _Theme, _businessByDesign, _businessByDesign2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _businessByDesign.pathData : _businessByDesign2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _businessByDesign.pathData : _businessByDesign2.pathData;
   _exports.pathData = pathData;
   var _default = "business-by-design";
   _exports.default = _default;

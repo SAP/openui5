@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/slim-arrow-left", "./v4/slim-arrow-left"], function (_exports, _Theme, _slimArrowLeft, _slimArrowLeft2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/slim-arrow-left", "./v5/slim-arrow-left"], function (_exports, _Theme, _slimArrowLeft, _slimArrowLeft2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _slimArrowLeft.pathData : _slimArrowLeft2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _slimArrowLeft.pathData : _slimArrowLeft2.pathData;
   _exports.pathData = pathData;
   var _default = "slim-arrow-left";
   _exports.default = _default;

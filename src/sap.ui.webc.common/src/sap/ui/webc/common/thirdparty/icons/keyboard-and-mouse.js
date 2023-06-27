@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/keyboard-and-mouse", "./v4/keyboard-and-mouse"], function (_exports, _Theme, _keyboardAndMouse, _keyboardAndMouse2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/keyboard-and-mouse", "./v5/keyboard-and-mouse"], function (_exports, _Theme, _keyboardAndMouse, _keyboardAndMouse2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _keyboardAndMouse.pathData : _keyboardAndMouse2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _keyboardAndMouse.pathData : _keyboardAndMouse2.pathData;
   _exports.pathData = pathData;
   var _default = "keyboard-and-mouse";
   _exports.default = _default;

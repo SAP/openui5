@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/bell", "./v4/bell"], function (_exports, _Theme, _bell, _bell2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/bell", "./v5/bell"], function (_exports, _Theme, _bell, _bell2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _bell.pathData : _bell2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _bell.pathData : _bell2.pathData;
   _exports.pathData = pathData;
   var _default = "bell";
   _exports.default = _default;

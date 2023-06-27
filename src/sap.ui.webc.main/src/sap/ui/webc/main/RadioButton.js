@@ -56,6 +56,14 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Defines the accessible ARIA name of the component.
+				 */
+				accessibleName: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Defines whether the component is checked or not. <br>
 				 * <br>
 				 * <b>Note:</b> The property value can be changed with user interaction, either by clicking/tapping on the component, or by using the Space or Enter key.
@@ -105,6 +113,14 @@ sap.ui.define([
 				 * <b>Note:</b> A read-only component is not editable, but still provides visual feedback upon user interaction.
 				 */
 				readonly: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
+				 * Defines whether the component is required.
+				 */
+				required: {
 					type: "boolean",
 					defaultValue: false
 				},

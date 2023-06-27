@@ -62,7 +62,9 @@ sap.ui.define([
 				"sap.ui.webc.fiori.SideContentPosition",
 				"sap.ui.webc.fiori.SideContentVisibility",
 				"sap.ui.webc.fiori.TimelineLayout",
-				"sap.ui.webc.fiori.UploadState"
+				"sap.ui.webc.fiori.UploadState",
+				"sap.ui.webc.fiori.ViewSettingsDialogMode",
+				"sap.ui.webc.fiori.WizardContentLayout"
 			],
 			controls: [
 				"sap.ui.webc.fiori.Bar",
@@ -262,7 +264,7 @@ sap.ui.define([
 		 */
 
 		/**
-		 * Different types of Bar.
+		 * Different types of Bar design
 		 *
 		 * @enum {string}
 		 * @public
@@ -298,7 +300,7 @@ sap.ui.define([
 
 
 		/**
-		 * undefined
+		 * Different types of FCLLayout.
 		 *
 		 * @enum {string}
 		 * @public
@@ -308,7 +310,7 @@ sap.ui.define([
 		thisLib.FCLLayout = {
 
 			/**
-				 * Desktop: -/-/100 only the End column is displayed Tablet: -/-/100 only the End column is displayed Phone: -/-/100 only the End column is displayed
+				 * Desktop: -- -- 100 only the End column is displayed Tablet: -- -- 100 only the End column is displayed Phone: -- -- 100 only the End column is displayed
 
 Use to display a detail-detail page only, when the user should focus entirely on it.
 				 * @public
@@ -316,7 +318,7 @@ Use to display a detail-detail page only, when the user should focus entirely on
 			EndColumnFullScreen: "EndColumnFullScreen",
 
 			/**
-				 * Desktop: -/100/- only the Mid column is displayed Tablet: -/100/- only the Mid column is displayed Phone: -/100/- only the Mid column is displayed
+				 * Desktop: -- 100 -- only the Mid column is displayed Tablet: -- 100 -- only the Mid column is displayed Phone: -- 100 -- only the Mid column is displayed
 
 Use to display a detail page only, when the user should focus entirely on it.
 				 * @public
@@ -330,7 +332,7 @@ Use to display a detail page only, when the user should focus entirely on it.
 			OneColumn: "OneColumn",
 
 			/**
-				 * Desktop: 25/25/50 Start, Mid and End (expanded) columns are displayed Tablet: 0/33/67 Mid and End (expanded) columns are displayed, Start is accessible by layout arrows Phone: -/-/100 (only the End column is displayed)
+				 * Desktop: 25 - 25 - 50 Start, Mid and End (expanded) columns are displayed Tablet: 0 - 33 - 67 Mid and End (expanded) columns are displayed, Start is accessible by layout arrows Phone: -- -- 100 (only the End column is displayed)
 
 Use to display all three pages (list, detail, detail-detail) when the user should focus on the detail-detail.
 				 * @public
@@ -338,7 +340,7 @@ Use to display all three pages (list, detail, detail-detail) when the user shoul
 			ThreeColumnsEndExpanded: "ThreeColumnsEndExpanded",
 
 			/**
-				 * Desktop: 25/50/25 Start, Mid (expanded) and End columns are displayed Tablet: 0/67/33 Mid (expanded) and End columns are displayed, Start is accessible by a layout arrow Phone: -/-/100 only the End column is displayed
+				 * Desktop: 25 - 50 - 25 Start, Mid (expanded) and End columns are displayed Tablet: 0 - 67 - 33 Mid (expanded) and End columns are displayed, Start is accessible by a layout arrow Phone: -- -- 100 only the End column is displayed
 
 Use to display all three pages (list, detail, detail-detail) when the user should focus on the detail.
 				 * @public
@@ -346,7 +348,7 @@ Use to display all three pages (list, detail, detail-detail) when the user shoul
 			ThreeColumnsMidExpanded: "ThreeColumnsMidExpanded",
 
 			/**
-				 * Desktop: 33/67/0 Start and Mid (expanded) columns are displayed, End is accessible by a layout arrow Tablet: 33/67/0 Start and Mid (expanded) columns are displayed, End is accessible by a layout arrow Phone: -/-/100 only the End column is displayed
+				 * Desktop: 33 - 67 - 0 Start and Mid (expanded) columns are displayed, End is accessible by a layout arrow Tablet: 33 - 67 - 0 Start and Mid (expanded) columns are displayed, End is accessible by a layout arrow Phone: -- -- 100 only the End column is displayed
 
 Use to display the list and detail pages when the user should focus on the detail. The detail-detail is still loaded and easily accessible with a layout arrow.
 				 * @public
@@ -354,7 +356,7 @@ Use to display the list and detail pages when the user should focus on the detai
 			ThreeColumnsMidExpandedEndHidden: "ThreeColumnsMidExpandedEndHidden",
 
 			/**
-				 * Desktop: 67/33/0 Start (expanded) and Mid columns are displayed, End is accessible by layout arrows Tablet: 67/33/0 Start (expanded) and Mid columns are displayed, End is accessible by layout arrows Phone: -/-/100 only the End column is displayed
+				 * Desktop: 67 - 33 - 0 Start (expanded) and Mid columns are displayed, End is accessible by layout arrows Tablet: 67 - 33 - 0 Start (expanded) and Mid columns are displayed, End is accessible by layout arrows Phone: -- -- 100 only the End column is displayed
 
 Use to display the list and detail pages when the user should focus on the list. The detail-detail is still loaded and easily accessible with layout arrows.
 				 * @public
@@ -362,7 +364,7 @@ Use to display the list and detail pages when the user should focus on the list.
 			ThreeColumnsStartExpandedEndHidden: "ThreeColumnsStartExpandedEndHidden",
 
 			/**
-				 * Desktop: 33/67/- Start and Mid (expanded) columns are displayed Tablet: 33/67/- Start and Mid (expanded) columns are displayed Phone: -/100/- only the Mid column is displayed
+				 * Desktop: 33 - 67 - -- Start and Mid (expanded) columns are displayed Tablet: 33 - 67 - -- Start and Mid (expanded) columns are displayed Phone: -- 100 -- only the Mid column is displayed
 
 Use to display both a list and a detail page when the user should focus on the detail page.
 				 * @public
@@ -370,7 +372,7 @@ Use to display both a list and a detail page when the user should focus on the d
 			TwoColumnsMidExpanded: "TwoColumnsMidExpanded",
 
 			/**
-				 * Desktop: 67/33/- Start (expanded) and Mid columns are displayed Tablet: 67/33/- Start (expanded) and Mid columns are displayed Phone: -/100/- only the Mid column is displayed
+				 * Desktop: 67 - 33 - -- Start (expanded) and Mid columns are displayed Tablet: 67 - 33 - -- Start (expanded) and Mid columns are displayed Phone: -- 100 -- only the Mid column is displayed
 
 Use to display both a list and a detail page when the user should focus on the list page.
 				 * @public
@@ -442,6 +444,12 @@ Use to display both a list and a detail page when the user should focus on the l
 			AddColumn: "AddColumn",
 
 			/**
+			 * "Add Dimensions" illustration type.
+			 * @public
+			 */
+			AddDimensions: "AddDimensions",
+
+			/**
 			 * "Add People" illustration type.
 			 * @public
 			 */
@@ -508,10 +516,22 @@ Use to display both a list and a detail page when the user should focus on the l
 			NoActivities: "NoActivities",
 
 			/**
+			 * "No Columns Set" illustration type.
+			 * @public
+			 */
+			NoColumnsSet: "NoColumnsSet",
+
+			/**
 			 * "No Data" illustration type.
 			 * @public
 			 */
 			NoData: "NoData",
+
+			/**
+			 * "No Dimensions Set" illustration type.
+			 * @public
+			 */
+			NoDimensionsSet: "NoDimensionsSet",
 
 			/**
 			 * "No Entries" illustration type.
@@ -722,6 +742,12 @@ Use to display both a list and a detail page when the user should focus on the l
 			 * @public
 			 */
 			SuccessScreen: "SuccessScreen",
+
+			/**
+			 * "Survey" illustration type.
+			 * @public
+			 */
+			Survey: "Survey",
 
 			/**
 			 * "Tent" illustration type.
@@ -961,7 +987,13 @@ Use to display both a list and a detail page when the user should focus on the l
 			 * "Upload Collection" illustration type.
 			 * @public
 			 */
-			UploadCollection: "UploadCollection"
+			UploadCollection: "UploadCollection",
+
+			/**
+			 * "Upload To Cloud" illustration type.
+			 * @public
+			 */
+			UploadToCloud: "UploadToCloud"
 		};
 
 
@@ -1068,7 +1100,7 @@ Use to display both a list and a detail page when the user should focus on the l
 
 
 		/**
-		 * undefined
+		 * Available Page Background Design.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1200,7 +1232,7 @@ Use to display both a list and a detail page when the user should focus on the l
 
 
 		/**
-		 * Different types of Timeline.
+		 * Available Timeline layout orientation
 		 *
 		 * @enum {string}
 		 * @public
@@ -1224,7 +1256,7 @@ Use to display both a list and a detail page when the user should focus on the l
 
 
 		/**
-		 * undefined
+		 * Different types of UploadState.
 		 *
 		 * @enum {string}
 		 * @public
@@ -1256,6 +1288,54 @@ Use to display both a list and a detail page when the user should focus on the l
 			 * @public
 			 */
 			Uploading: "Uploading"
+		};
+
+
+		/**
+		 * Different types of Bar.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.115.0
+		 * @experimental Since 1.115.0 This API is experimental and might change significantly.
+		 */
+		thisLib.ViewSettingsDialogMode = {
+
+			/**
+			 * Filter type
+			 * @public
+			 */
+			Filter: "Filter",
+
+			/**
+			 * Default type
+			 * @public
+			 */
+			Sort: "Sort"
+		};
+
+
+		/**
+		 * Enumeration for different content layouts of the <code>ui5-wizard</code>.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 */
+		thisLib.WizardContentLayout = {
+
+			/**
+			 * Display the content of the <code>ui5-wizard</code> as multiple steps in a scroll section.
+			 * @public
+			 */
+			MultipleSteps: "MultipleSteps",
+
+			/**
+			 * Display the content of the <code>ui5-wizard</code> as single step.
+			 * @public
+			 */
+			SingleStep: "SingleStep"
 		};
 
 		return thisLib;

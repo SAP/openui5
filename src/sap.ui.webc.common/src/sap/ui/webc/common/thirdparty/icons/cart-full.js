@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/cart-full", "./v4/cart-full"], function (_exports, _Theme, _cartFull, _cartFull2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/cart-full", "./v5/cart-full"], function (_exports, _Theme, _cartFull, _cartFull2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _cartFull.pathData : _cartFull2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _cartFull.pathData : _cartFull2.pathData;
   _exports.pathData = pathData;
   var _default = "cart-full";
   _exports.default = _default;

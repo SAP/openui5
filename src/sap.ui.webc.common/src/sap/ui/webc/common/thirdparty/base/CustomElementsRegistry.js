@@ -1,18 +1,17 @@
-sap.ui.define(["exports", "./util/setToArray", "./getSharedResource", "./Runtimes"], function (_exports, _setToArray, _getSharedResource, _Runtimes) {
+sap.ui.define(["exports", "./getSharedResource", "./Runtimes"], function (_exports, _getSharedResource, _Runtimes) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.registerTag = _exports.recordTagRegistrationFailure = _exports.isTagRegistered = _exports.getAllRegisteredTags = void 0;
-  _setToArray = _interopRequireDefault(_setToArray);
   _getSharedResource = _interopRequireDefault(_getSharedResource);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   const Tags = (0, _getSharedResource.default)("Tags", new Map());
   const Definitions = new Set();
-  let Failures = {};
+  let Failures = new Map();
   let failureTimeout;
-  const UNKNOWN_RUNTIME = "unknown";
+  const UNKNOWN_RUNTIME = -1;
   const registerTag = tag => {
     Definitions.add(tag);
     Tags.set(tag, (0, _Runtimes.getCurrentRuntimeIndex)());
@@ -23,7 +22,7 @@ sap.ui.define(["exports", "./util/setToArray", "./getSharedResource", "./Runtime
   };
   _exports.isTagRegistered = isTagRegistered;
   const getAllRegisteredTags = () => {
-    return (0, _setToArray.default)(Definitions);
+    return [...Definitions.values()];
   };
   _exports.getAllRegisteredTags = getAllRegisteredTags;
   const recordTagRegistrationFailure = tag => {
@@ -32,12 +31,14 @@ sap.ui.define(["exports", "./util/setToArray", "./getSharedResource", "./Runtime
       tagRegRuntimeIndex = UNKNOWN_RUNTIME; // If the tag is taken, but not registered in Tags, then a version before 1.1.0 defined it => use the "unknown" key
     }
 
-    Failures[tagRegRuntimeIndex] = Failures[tagRegRuntimeIndex] || new Set();
-    Failures[tagRegRuntimeIndex].add(tag);
+    if (!Failures.has(tagRegRuntimeIndex)) {
+      Failures.set(tagRegRuntimeIndex, new Set());
+    }
+    Failures.get(tagRegRuntimeIndex).add(tag);
     if (!failureTimeout) {
       failureTimeout = setTimeout(() => {
         displayFailedRegistrations();
-        Failures = {};
+        Failures = new Map();
         failureTimeout = undefined;
       }, 1000);
     }
@@ -51,7 +52,7 @@ sap.ui.define(["exports", "./util/setToArray", "./getSharedResource", "./Runtime
     if (allRuntimes.length > 1) {
       message = `${message}\nLoading order (versions before 1.1.0 not listed): ${allRuntimes.map(runtime => `\n${runtime.description}`).join("")}`;
     }
-    Object.keys(Failures).forEach(otherRuntimeIndex => {
+    [...Failures.keys()].forEach(otherRuntimeIndex => {
       let comparison;
       let otherRuntime;
       if (otherRuntimeIndex === UNKNOWN_RUNTIME) {
@@ -72,7 +73,7 @@ sap.ui.define(["exports", "./util/setToArray", "./getSharedResource", "./Runtime
       } else {
         compareWord = "the same";
       }
-      message = `${message}\n\n"${currentRuntime.description}" failed to define ${Failures[otherRuntimeIndex].size} tag(s) as they were defined by a runtime of ${compareWord} version "${otherRuntime.description}": ${(0, _setToArray.default)(Failures[otherRuntimeIndex]).sort().join(", ")}.`;
+      message = `${message}\n\n"${currentRuntime.description}" failed to define ${Failures.get(otherRuntimeIndex).size} tag(s) as they were defined by a runtime of ${compareWord} version "${otherRuntime.description}": ${[...Failures.get(otherRuntimeIndex)].sort().join(", ")}.`;
       if (comparison > 0) {
         message = `${message}\nWARNING! If your code uses features of the above web components, unavailable in ${otherRuntime.description}, it might not work as expected!`;
       } else {

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/commission-check", "./v4/commission-check"], function (_exports, _Theme, _commissionCheck, _commissionCheck2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/commission-check", "./v5/commission-check"], function (_exports, _Theme, _commissionCheck, _commissionCheck2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _commissionCheck.pathData : _commissionCheck2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _commissionCheck.pathData : _commissionCheck2.pathData;
   _exports.pathData = pathData;
   var _default = "commission-check";
   _exports.default = _default;

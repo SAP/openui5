@@ -1,127 +1,44 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/util/clamp", "sap/ui/webc/common/thirdparty/base/Keys", "./Popup", "sap/ui/webc/common/thirdparty/icons/resize-corner", "./Icon", "./generated/templates/DialogTemplate.lit", "./generated/themes/BrowserScrollbar.css", "./generated/themes/PopupsCommon.css", "./generated/themes/Dialog.css"], function (_exports, _Device, _clamp, _Keys, _Popup, _resizeCorner, _Icon, _DialogTemplate, _BrowserScrollbar, _PopupsCommon, _Dialog) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/util/clamp", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/i18nBundle", "./Popup", "./Icon", "sap/ui/webc/common/thirdparty/icons/resize-corner", "sap/ui/webc/common/thirdparty/icons/error", "sap/ui/webc/common/thirdparty/icons/alert", "sap/ui/webc/common/thirdparty/icons/sys-enter-2", "sap/ui/webc/common/thirdparty/icons/information", "./generated/i18n/i18n-defaults", "./generated/templates/DialogTemplate.lit", "./generated/themes/BrowserScrollbar.css", "./generated/themes/PopupsCommon.css", "./generated/themes/Dialog.css", "./types/PopupAccessibleRole"], function (_exports, _Device, _customElement, _slot, _property, _clamp, _Keys, _ValueState, _i18nBundle, _Popup, _Icon, _resizeCorner, _error, _alert, _sysEnter, _information, _i18nDefaults, _DialogTemplate, _BrowserScrollbar, _PopupsCommon, _Dialog, _PopupAccessibleRole) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
+  _customElement = _interopRequireDefault(_customElement);
+  _slot = _interopRequireDefault(_slot);
+  _property = _interopRequireDefault(_property);
   _clamp = _interopRequireDefault(_clamp);
+  _ValueState = _interopRequireDefault(_ValueState);
   _Popup = _interopRequireDefault(_Popup);
   _Icon = _interopRequireDefault(_Icon);
   _DialogTemplate = _interopRequireDefault(_DialogTemplate);
   _BrowserScrollbar = _interopRequireDefault(_BrowserScrollbar);
   _PopupsCommon = _interopRequireDefault(_PopupsCommon);
   _Dialog = _interopRequireDefault(_Dialog);
+  _PopupAccessibleRole = _interopRequireDefault(_PopupAccessibleRole);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // Styles
-
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+  };
+  var Dialog_1;
   /**
    * Defines the step size at which this component would change by when being dragged or resized with the keyboard.
    */
   const STEP_SIZE = 16;
-
   /**
-   * @public
+   * Defines the icons corresponding to the dialog's state.
    */
-  const metadata = {
-    tag: "ui5-dialog",
-    slots: /** @lends sap.ui.webcomponents.main.Dialog.prototype */{
-      /**
-       * Defines the header HTML Element.
-       * <br><br>
-       * <b>Note:</b> If <code>header</code> slot is provided, the labelling of the dialog is a responsibility of the application developer.
-       * <code>accessibleName</code> should be used.
-       *
-       * @type {HTMLElement[]}
-       * @slot
-       * @public
-       */
-      header: {
-        type: HTMLElement
-      },
-      /**
-       * Defines the footer HTML Element.
-       *
-       * @type {HTMLElement[]}
-       * @slot
-       * @public
-       */
-      footer: {
-        type: HTMLElement
-      }
-    },
-    properties: /** @lends sap.ui.webcomponents.main.Dialog.prototype */{
-      /**
-       * Defines the header text.
-       * <br><br>
-       * <b>Note:</b> If <code>header</code> slot is provided, the <code>headerText</code> is ignored.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      headerText: {
-        type: String
-      },
-      /**
-       * Determines whether the component should be stretched to fullscreen.
-       * <br><br>
-       * <b>Note:</b> The component will be stretched to approximately
-       * 90% of the viewport.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      stretch: {
-        type: Boolean
-      },
-      /**
-       * Determines whether the component is draggable.
-       * If this property is set to true, the Dialog will be draggable by its header.
-       * <br><br>
-       * <b>Note:</b> The component can be draggable only in desktop mode.
-       * @type {boolean}
-       * @defaultvalue false
-       * @since 1.0.0-rc.9
-       * @public
-       */
-      draggable: {
-        type: Boolean
-      },
-      /**
-       * Configures the component to be resizable.
-       * If this property is set to true, the Dialog will have a resize handle in its bottom right corner in LTR languages.
-       * In RTL languages, the resize handle will be placed in the bottom left corner.
-       * <br><br>
-       * <b>Note:</b> The component can be resizable only in desktop mode.
-       * <br>
-       * <b>Note:</b> Upon resizing, externally defined height and width styling will be ignored.
-       * @type {boolean}
-       * @defaultvalue false
-       * @since 1.0.0-rc.10
-       * @public
-       */
-      resizable: {
-        type: Boolean
-      },
-      /**
-       * @private
-       */
-      onPhone: {
-        type: Boolean
-      },
-      /**
-       * @private
-       */
-      onDesktop: {
-        type: Boolean
-      }
-    }
+  const ICON_PER_STATE = {
+    [_ValueState.default.Error]: "error",
+    [_ValueState.default.Warning]: "alert",
+    [_ValueState.default.Success]: "sys-enter-2",
+    [_ValueState.default.Information]: "information"
   };
-
   /**
    * @class
    * <h3 class="comment-api-title">Overview</h3>
@@ -133,7 +50,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
    * The dialog combines concepts known from other technologies where the windows have
    * names such as dialog box, dialog window, pop-up, pop-up window, alert box, or message box.
    * <br><br>
-   * The <code>ui5-dialog</code> is modal, which means that user action is required before returning to the parent window is possible.
+   * The <code>ui5-dialog</code> is modal, which means that an user action is required before it is possible to return to the parent window.
+   * To open multiple dialogs, each dialog element should be separate in the markup. This will ensure the correct modal behavior. Avoid nesting dialogs within each other.
    * The content of the <code>ui5-dialog</code> is fully customizable.
    *
    * <h3>Structure</h3>
@@ -169,71 +87,80 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.Dialog
-   * @extends Popup
+   * @alias sap.ui.webc.main.Dialog
+   * @extends sap.ui.webc.main.Popup
    * @tagname ui5-dialog
    * @public
    */
-  class Dialog extends _Popup.default {
+  let Dialog = Dialog_1 = class Dialog extends _Popup.default {
     constructor() {
       super();
-      this._screenResizeHandler = this._center.bind(this);
+      this._draggedOrResized = false;
+      this._revertSize = () => {
+        Object.assign(this.style, {
+          top: "",
+          left: "",
+          width: "",
+          height: ""
+        });
+      };
+      this._screenResizeHandler = this._screenResize.bind(this);
       this._dragMouseMoveHandler = this._onDragMouseMove.bind(this);
       this._dragMouseUpHandler = this._onDragMouseUp.bind(this);
       this._resizeMouseMoveHandler = this._onResizeMouseMove.bind(this);
       this._resizeMouseUpHandler = this._onResizeMouseUp.bind(this);
+      this._dragStartHandler = this._handleDragStart.bind(this);
     }
-    static get metadata() {
-      return metadata;
-    }
-    static get dependencies() {
-      return [_Icon.default];
-    }
-    static get template() {
-      return _DialogTemplate.default;
-    }
-    static get styles() {
-      return [_BrowserScrollbar.default, _PopupsCommon.default, _Dialog.default];
+    static async onDefine() {
+      Dialog_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
     static _isHeader(element) {
       return element.classList.contains("ui5-popup-header-root") || element.getAttribute("slot") === "header";
     }
-
     /**
      * Shows the dialog.
      *
-     * @param {boolean} preventInitialFocus Prevents applying the focus inside the popup
+     * @param {boolean} [preventInitialFocus=false] Prevents applying the focus inside the popup
+     * @public
+     * @method
+     * @name sap.ui.webc.main.Dialog#show
      * @async
      * @returns {Promise} Resolves when the dialog is open
-     * @public
      */
     async show(preventInitialFocus = false) {
       await super._open(preventInitialFocus);
     }
     get isModal() {
-      // Required by Popup.js
       return true;
     }
     get shouldHideBackdrop() {
-      // Required by Popup.js
       return false;
     }
     get _ariaLabelledBy() {
-      // Required by Popup.js
       let ariaLabelledById;
       if (this.headerText !== "" && !this._ariaLabel) {
         ariaLabelledById = "ui5-popup-header-text";
       }
       return ariaLabelledById;
     }
-    get _ariaModal() {
-      // Required by Popup.js
-      return true;
+    get ariaRoleDescriptionHeaderText() {
+      return this.resizable || this.draggable ? Dialog_1.i18nBundle.getText(_i18nDefaults.DIALOG_HEADER_ARIA_ROLE_DESCRIPTION) : undefined;
+    }
+    get effectiveAriaDescribedBy() {
+      return this.resizable || this.draggable ? `${this._id}-descr` : undefined;
+    }
+    get ariaDescribedByHeaderTextResizable() {
+      return Dialog_1.i18nBundle.getText(_i18nDefaults.DIALOG_HEADER_ARIA_DESCRIBEDBY_RESIZABLE);
+    }
+    get ariaDescribedByHeaderTextDraggable() {
+      return Dialog_1.i18nBundle.getText(_i18nDefaults.DIALOG_HEADER_ARIA_DESCRIBEDBY_DRAGGABLE);
+    }
+    get ariaDescribedByHeaderTextDraggableAndResizable() {
+      return Dialog_1.i18nBundle.getText(_i18nDefaults.DIALOG_HEADER_ARIA_DESCRIBEDBY_DRAGGABLE_RESIZABLE);
     }
     get _displayProp() {
       return "flex";
     }
-
     /**
      * Determines if the header should be shown.
      */
@@ -261,11 +188,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       }
       return minHeight;
     }
+    get hasValueState() {
+      return this.state !== _ValueState.default.None;
+    }
+    get _dialogStateIcon() {
+      return ICON_PER_STATE[this.state];
+    }
+    get _role() {
+      if (this.accessibleRole === _PopupAccessibleRole.default.None) {
+        return undefined;
+      }
+      if (this.state === _ValueState.default.Error || this.state === _ValueState.default.Warning) {
+        return _PopupAccessibleRole.default.AlertDialog.toLowerCase();
+      }
+      return this.accessibleRole.toLowerCase();
+    }
     _show() {
       super._show();
       this._center();
     }
     onBeforeRendering() {
+      super.onBeforeRendering();
       this._isRTL = this.effectiveDir === "rtl";
       this.onPhone = (0, _Device.isPhone)();
       this.onDesktop = (0, _Device.isDesktop)();
@@ -280,20 +223,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     onEnterDOM() {
       super.onEnterDOM();
       this._attachScreenResizeHandler();
+      this.addEventListener("dragstart", this._dragStartHandler);
     }
     onExitDOM() {
       super.onExitDOM();
       this._detachScreenResizeHandler();
+      this.removeEventListener("dragstart", this._dragStartHandler);
     }
-
     /**
      * @override
      */
     _resize() {
       super._resize();
-      if (this._screenResizeHandlerAttached) {
+      if (!this._draggedOrResized) {
         this._center();
       }
+    }
+    _screenResize() {
+      this._center();
     }
     _attachScreenResizeHandler() {
       if (!this._screenResizeHandlerAttached) {
@@ -316,25 +263,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         left: `${Math.round(width / 2)}px`
       });
     }
-    _revertSize() {
-      Object.assign(this.style, {
-        top: "",
-        left: "",
-        width: "",
-        height: ""
-      });
-      this.removeEventListener("ui5-before-close", this._revertSize);
-    }
-
     /**
      * Event handlers
      */
-    _onDragMouseDown(event) {
+    _onDragMouseDown(e) {
       // allow dragging only on the header
-      if (!this._movable || !this.draggable || !Dialog._isHeader(event.target)) {
+      if (!this._movable || !this.draggable || !Dialog_1._isHeader(e.target)) {
         return;
       }
-      event.preventDefault();
+      e.preventDefault();
       const {
         top,
         left
@@ -349,14 +286,19 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         width: `${Math.round(Number.parseFloat(width) * 100) / 100}px`,
         height: `${Math.round(Number.parseFloat(height) * 100) / 100}px`
       });
-      this._x = event.clientX;
-      this._y = event.clientY;
+      this._x = e.clientX;
+      this._y = e.clientY;
+      this._draggedOrResized = true;
       this._attachMouseDragHandlers();
     }
-    _onDragMouseMove(event) {
-      event.preventDefault();
-      const calcX = this._x - event.clientX;
-      const calcY = this._y - event.clientY;
+    _onDragMouseMove(e) {
+      e.preventDefault();
+      const {
+        clientX,
+        clientY
+      } = e;
+      const calcX = this._x - clientX;
+      const calcY = this._y - clientY;
       const {
         left,
         top
@@ -365,48 +307,49 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         left: `${Math.floor(left - calcX)}px`,
         top: `${Math.floor(top - calcY)}px`
       });
-      this._x = event.clientX;
-      this._y = event.clientY;
+      this._x = clientX;
+      this._y = clientY;
     }
     _onDragMouseUp() {
-      this._x = null;
-      this._y = null;
+      delete this._x;
+      delete this._y;
       this._detachMouseDragHandlers();
     }
-    _onDragOrResizeKeyDown(event) {
-      if (!this._movable || !Dialog._isHeader(event.target)) {
+    _onDragOrResizeKeyDown(e) {
+      if (!this._movable || !Dialog_1._isHeader(e.target)) {
         return;
       }
-      if (this.draggable && [_Keys.isUp, _Keys.isDown, _Keys.isLeft, _Keys.isRight].some(key => key(event))) {
-        this._dragWithEvent(event);
+      if (this.draggable && [_Keys.isUp, _Keys.isDown, _Keys.isLeft, _Keys.isRight].some(key => key(e))) {
+        this._dragWithEvent(e);
         return;
       }
-      if (this.resizable && [_Keys.isUpShift, _Keys.isDownShift, _Keys.isLeftShift, _Keys.isRightShift].some(key => key(event))) {
-        this._resizeWithEvent(event);
+      if (this.resizable && [_Keys.isUpShift, _Keys.isDownShift, _Keys.isLeftShift, _Keys.isRightShift].some(key => key(e))) {
+        this._resizeWithEvent(e);
       }
     }
-    _dragWithEvent(event) {
+    _dragWithEvent(e) {
       const {
         top,
         left,
         width,
         height
       } = this.getBoundingClientRect();
-      let newPos, posDirection;
+      let newPos = 0;
+      let posDirection = "top";
       switch (true) {
-        case (0, _Keys.isUp)(event):
+        case (0, _Keys.isUp)(e):
           newPos = top - STEP_SIZE;
           posDirection = "top";
           break;
-        case (0, _Keys.isDown)(event):
+        case (0, _Keys.isDown)(e):
           newPos = top + STEP_SIZE;
           posDirection = "top";
           break;
-        case (0, _Keys.isLeft)(event):
+        case (0, _Keys.isLeft)(e):
           newPos = left - STEP_SIZE;
           posDirection = "left";
           break;
-        case (0, _Keys.isRight)(event):
+        case (0, _Keys.isRight)(e):
           newPos = left + STEP_SIZE;
           posDirection = "left";
           break;
@@ -414,9 +357,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       newPos = (0, _clamp.default)(newPos, 0, posDirection === "left" ? window.innerWidth - width : window.innerHeight - height);
       this.style[posDirection] = `${newPos}px`;
     }
-    _resizeWithEvent(event) {
-      this._detachScreenResizeHandler();
-      this.addEventListener("ui5-before-close", this._revertSize);
+    _resizeWithEvent(e) {
+      this._draggedOrResized = true;
+      this.addEventListener("ui5-before-close", this._revertSize, {
+        once: true
+      });
       const {
           top,
           left
@@ -428,16 +373,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       let width = Number.parseFloat(style.width),
         height = Number.parseFloat(style.height);
       switch (true) {
-        case (0, _Keys.isUpShift)(event):
+        case (0, _Keys.isUpShift)(e):
           height -= STEP_SIZE;
           break;
-        case (0, _Keys.isDownShift)(event):
+        case (0, _Keys.isDownShift)(e):
           height += STEP_SIZE;
           break;
-        case (0, _Keys.isLeftShift)(event):
+        case (0, _Keys.isLeftShift)(e):
           width -= STEP_SIZE;
           break;
-        case (0, _Keys.isRightShift)(event):
+        case (0, _Keys.isRightShift)(e):
           width += STEP_SIZE;
           break;
       }
@@ -449,7 +394,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       });
     }
     _attachMouseDragHandlers() {
-      this._detachScreenResizeHandler();
       window.addEventListener("mousemove", this._dragMouseMoveHandler);
       window.addEventListener("mouseup", this._dragMouseUpHandler);
     }
@@ -457,11 +401,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       window.removeEventListener("mousemove", this._dragMouseMoveHandler);
       window.removeEventListener("mouseup", this._dragMouseUpHandler);
     }
-    _onResizeMouseDown(event) {
+    _onResizeMouseDown(e) {
       if (!this._movable || !this.resizable) {
         return;
       }
-      event.preventDefault();
+      e.preventDefault();
       const {
         top,
         left
@@ -471,8 +415,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         height,
         minWidth
       } = window.getComputedStyle(this);
-      this._initialX = event.clientX;
-      this._initialY = event.clientY;
+      this._initialX = e.clientX;
+      this._initialY = e.clientY;
       this._initialWidth = Number.parseFloat(width);
       this._initialHeight = Number.parseFloat(height);
       this._initialTop = top;
@@ -483,13 +427,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         top: `${top}px`,
         left: `${left}px`
       });
+      this._draggedOrResized = true;
       this._attachMouseResizeHandlers();
     }
-    _onResizeMouseMove(event) {
+    _onResizeMouseMove(e) {
       const {
         clientX,
         clientY
-      } = event;
+      } = e;
       let newWidth, newLeft;
       if (this._isRTL) {
         newWidth = (0, _clamp.default)(this._initialWidth - (clientX - this._initialX), this._minWidth, this._initialLeft + this._initialWidth);
@@ -515,17 +460,51 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       delete this._cachedMinHeight;
       this._detachMouseResizeHandlers();
     }
+    _handleDragStart(e) {
+      if (this.draggable) {
+        e.preventDefault();
+      }
+    }
     _attachMouseResizeHandlers() {
-      this._detachScreenResizeHandler();
       window.addEventListener("mousemove", this._resizeMouseMoveHandler);
       window.addEventListener("mouseup", this._resizeMouseUpHandler);
-      this.addEventListener("ui5-before-close", this._revertSize);
+      this.addEventListener("ui5-before-close", this._revertSize, {
+        once: true
+      });
     }
     _detachMouseResizeHandlers() {
       window.removeEventListener("mousemove", this._resizeMouseMoveHandler);
       window.removeEventListener("mouseup", this._resizeMouseUpHandler);
     }
-  }
+  };
+  __decorate([(0, _property.default)()], Dialog.prototype, "headerText", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Dialog.prototype, "stretch", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Dialog.prototype, "draggable", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Dialog.prototype, "resizable", void 0);
+  __decorate([(0, _property.default)({
+    type: _ValueState.default,
+    defaultValue: _ValueState.default.None
+  })], Dialog.prototype, "state", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Dialog.prototype, "onPhone", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Dialog.prototype, "onDesktop", void 0);
+  __decorate([(0, _slot.default)()], Dialog.prototype, "header", void 0);
+  __decorate([(0, _slot.default)()], Dialog.prototype, "footer", void 0);
+  Dialog = Dialog_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-dialog",
+    template: _DialogTemplate.default,
+    styles: [_BrowserScrollbar.default, _PopupsCommon.default, _Dialog.default],
+    dependencies: [_Icon.default]
+  })], Dialog);
   Dialog.define();
   var _default = Dialog;
   _exports.default = _default;

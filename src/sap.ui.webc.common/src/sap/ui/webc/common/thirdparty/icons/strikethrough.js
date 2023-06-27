@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/strikethrough", "./v4/strikethrough"], function (_exports, _Theme, _strikethrough, _strikethrough2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/strikethrough", "./v5/strikethrough"], function (_exports, _Theme, _strikethrough, _strikethrough2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _strikethrough.pathData : _strikethrough2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _strikethrough.pathData : _strikethrough2.pathData;
   _exports.pathData = pathData;
   var _default = "strikethrough";
   _exports.default = _default;

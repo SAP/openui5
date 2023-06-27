@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/signature", "./v4/signature"], function (_exports, _Theme, _signature, _signature2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/signature", "./v5/signature"], function (_exports, _Theme, _signature, _signature2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _signature.pathData : _signature2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _signature.pathData : _signature2.pathData;
   _exports.pathData = pathData;
   var _default = "signature";
   _exports.default = _default;

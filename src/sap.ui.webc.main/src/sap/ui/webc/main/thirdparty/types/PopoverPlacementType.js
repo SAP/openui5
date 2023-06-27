@@ -1,58 +1,46 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * @lends sap.ui.webcomponents.main.types.PopoverPlacementType.prototype
+   * Popover placement types.
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.main.types.PopoverPlacementType
    */
-  const PopoverPlacementTypes = {
+  var PopoverPlacementType;
+  (function (PopoverPlacementType) {
     /**
      * Popover will be placed at the left side of the reference element.
      * @public
      * @type {Left}
      */
-    Left: "Left",
+    PopoverPlacementType["Left"] = "Left";
     /**
      * Popover will be placed at the right side of the reference element.
      * @public
      * @type {Right}
      */
-    Right: "Right",
+    PopoverPlacementType["Right"] = "Right";
     /**
      * Popover will be placed at the top of the reference element.
      * @public
      * @type {Top}
      */
-    Top: "Top",
+    PopoverPlacementType["Top"] = "Top";
     /**
      * Popover will be placed at the bottom of the reference element.
      * @public
      * @type {Bottom}
      */
-    Bottom: "Bottom"
-  };
-
-  /**
-   * @class
-   * Types for the placement of Popover control.
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.main.types.PopoverPlacementType
-   * @public
-   * @enum {string}
-   */
-  class PopoverPlacementType extends _DataType.default {
-    static isValid(value) {
-      return !!PopoverPlacementTypes[value];
-    }
-  }
-  PopoverPlacementType.generateTypeAccessors(PopoverPlacementTypes);
+    PopoverPlacementType["Bottom"] = "Bottom";
+  })(PopoverPlacementType || (PopoverPlacementType = {}));
   var _default = PopoverPlacementType;
   _exports.default = _default;
 });

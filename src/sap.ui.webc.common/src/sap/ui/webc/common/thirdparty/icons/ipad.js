@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/ipad", "./v4/ipad"], function (_exports, _Theme, _ipad, _ipad2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/ipad", "./v5/ipad"], function (_exports, _Theme, _ipad, _ipad2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _ipad.pathData : _ipad2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _ipad.pathData : _ipad2.pathData;
   _exports.pathData = pathData;
   var _default = "ipad";
   _exports.default = _default;

@@ -8,12 +8,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   _parametersBundle = _interopRequireDefault(_parametersBundle);
   _parametersBundle2 = _interopRequireDefault(_parametersBundle2);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  (0, _Themes.registerThemePropertiesLoader)("@ui5/webcomponents-theming", "sap_fiori_3", () => _parametersBundle.default);
-  (0, _Themes.registerThemePropertiesLoader)("@ui5/webcomponents-fiori", "sap_fiori_3", () => _parametersBundle2.default);
-  var _default = {
+  (0, _Themes.registerThemePropertiesLoader)("@ui5/webcomponents-theming", "sap_fiori_3", async () => _parametersBundle.default);
+  (0, _Themes.registerThemePropertiesLoader)("@ui5/webcomponents-fiori", "sap_fiori_3", async () => _parametersBundle2.default);
+  const styleData = {
     packageName: "@ui5/webcomponents-fiori",
     fileName: "themes/DynamicSideContent.css",
-    content: ":host{display:block;width:100%;height:100%;position:relative}.ui5-dsc-root{width:100%;height:100%;position:relative;overflow-x:hidden;overflow-y:auto;display:flex}.ui5-dsc-main,.ui5-dsc-side{display:inline;position:relative;overflow-x:hidden;overflow-y:auto;box-sizing:border-box;flex:none}.ui5-dsc-root>aside[class^=ui5-dsc-span],.ui5-dsc-root>div[class^=ui5-dcs-span]{overflow:auto}.ui5-dsc-main.ui5-dsc-span-fixed{width:calc(100% - 21.25rem)}.ui5-dsc-side.ui5-dsc-span-fixed{width:21.25rem}.ui5-dsc-root>.ui5-dsc-span-0{display:none}.ui5-dsc-root>.ui5-dsc-span-3{width:25%}.ui5-dsc-root>.ui5-dsc-span-4{width:33.333%}.ui5-dsc-root>.ui5-dsc-span-6{width:50%}.ui5-dsc-root>.ui5-dsc-span-8{width:66.666%}.ui5-dsc-root>.ui5-dsc-span-9{width:75%}.ui5-dsc-root>.ui5-dsc-span-12{width:100%}"
+    content: ":host {\n\tdisplay: block;\n\twidth: 100%;\n\theight: 100%;\n\tposition: relative;\n}\n\n.ui5-dsc-root {\n\twidth: 100%;\n\theight: 100%;\n\tposition: relative;\n\toverflow-x: hidden;\n\toverflow-y: auto;\n\tdisplay: flex;\n}\n\n.ui5-dsc-main,\n.ui5-dsc-side {\n\tdisplay: inline;\n\tposition: relative;\n\toverflow-x: hidden;\n\toverflow-y: auto;\n\tbox-sizing: border-box;\n\tflex: none;\n}\n\n.ui5-dsc-root > div[class^=\"ui5-dcs-span\"],\n.ui5-dsc-root > aside[class^=\"ui5-dsc-span\"] {\n\toverflow: auto;\n}\n\n.ui5-dsc-main.ui5-dsc-span-fixed {\n\twidth: calc(100% - 21.25rem);\n}\n\n.ui5-dsc-side.ui5-dsc-span-fixed {\n\twidth: 21.25rem;\n}\n\n.ui5-dsc-root > .ui5-dsc-span-0 {\n\tdisplay: none;\n}\n\n.ui5-dsc-root > .ui5-dsc-span-3 {\n\twidth: 25%;\n}\n\n.ui5-dsc-root > .ui5-dsc-span-4 {\n\twidth: 33.333%;\n}\n\n.ui5-dsc-root > .ui5-dsc-span-6 {\n\twidth: 50%;\n}\n\n.ui5-dsc-root > .ui5-dsc-span-8 {\n\twidth: 66.666%;\n}\n\n.ui5-dsc-root > .ui5-dsc-span-9 {\n\twidth: 75%;\n}\n\n.ui5-dsc-root > .ui5-dsc-span-12 {\n\twidth: 100%;\n}"
   };
+  var _default = styleData;
   _exports.default = _default;
 });

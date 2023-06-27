@@ -17,6 +17,13 @@ sap.ui.define([
 				items: [
 					new Avatar({
 						icon: "employee",
+						badge: new Button({
+							icon: "employee",
+							text: "Some text...",
+							click: function(oEvent) {
+								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							}
+						}),
 						image: new Button({
 							icon: "employee",
 							text: "Some text...",
@@ -30,6 +37,13 @@ sap.ui.define([
 					}),
 					new Avatar({
 						icon: "employee",
+						badge: new Button({
+							icon: "employee",
+							text: "Some text...",
+							click: function(oEvent) {
+								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							}
+						}),
 						image: new Button({
 							icon: "employee",
 							text: "Some text...",
@@ -43,6 +57,13 @@ sap.ui.define([
 					}),
 					new Avatar({
 						icon: "employee",
+						badge: new Button({
+							icon: "employee",
+							text: "Some text...",
+							click: function(oEvent) {
+								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							}
+						}),
 						image: new Button({
 							icon: "employee",
 							text: "Some text...",

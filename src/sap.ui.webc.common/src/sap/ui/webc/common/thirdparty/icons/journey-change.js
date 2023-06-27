@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/journey-change", "./v4/journey-change"], function (_exports, _Theme, _journeyChange, _journeyChange2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/journey-change", "./v5/journey-change"], function (_exports, _Theme, _journeyChange, _journeyChange2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _journeyChange.pathData : _journeyChange2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _journeyChange.pathData : _journeyChange2.pathData;
   _exports.pathData = pathData;
   var _default = "journey-change";
   _exports.default = _default;

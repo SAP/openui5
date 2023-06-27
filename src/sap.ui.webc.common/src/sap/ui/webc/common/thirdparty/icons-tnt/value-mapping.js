@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v2/value-mapping", "./v3/value-mapping"], function (_exports, _Theme, _valueMapping, _valueMapping2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "value-mapping";
-  const pathData = "M346 300v30h120V180H316V0h180v480H316V300h30zM16 0h180v210h-30v-30H46v150h150v150H16V0zm30 360v90h120v-90H46zm300 90h120v-90H346v90zM46 150h120V60H46v90zm300-90v90h120V60H346zM196 312l-90-72h210v-40l90 70H196v42z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "tnt";
-  const packageName = "@ui5/webcomponents-icons-tnt";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _valueMapping.accData;
+    }
   });
-  var _default = "value-mapping";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _valueMapping.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _valueMapping.pathData : _valueMapping2.pathData;
+  _exports.pathData = pathData;
+  var _default = "tnt/value-mapping";
   _exports.default = _default;
 });

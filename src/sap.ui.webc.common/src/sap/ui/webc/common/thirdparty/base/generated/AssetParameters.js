@@ -4,7 +4,7 @@ sap.ui.define(["exports"], function (_exports) {
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.SUPPORTED_LOCALES = _exports.DEFAULT_THEME = _exports.DEFAULT_LOCALE = _exports.DEFAULT_LANGUAGE = void 0;
+  _exports.SUPPORTED_THEMES = _exports.SUPPORTED_LOCALES = _exports.DEFAULT_THEME = _exports.DEFAULT_LOCALE = _exports.DEFAULT_LANGUAGE = void 0;
   const assetParameters = {
     "themes": {
       "default": "sap_fiori_3",
@@ -21,6 +21,8 @@ sap.ui.define(["exports"], function (_exports) {
   };
   const DEFAULT_THEME = assetParameters.themes.default;
   _exports.DEFAULT_THEME = DEFAULT_THEME;
+  const SUPPORTED_THEMES = assetParameters.themes.all;
+  _exports.SUPPORTED_THEMES = SUPPORTED_THEMES;
   const DEFAULT_LANGUAGE = assetParameters.languages.default;
   _exports.DEFAULT_LANGUAGE = DEFAULT_LANGUAGE;
   const DEFAULT_LOCALE = assetParameters.locales.default;

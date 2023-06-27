@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "column-chart-dual-axis";
+  var _default = "SAP-icons-v5/column-chart-dual-axis";
   _exports.default = _default;
 });

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/resize-horizontal", "./v4/resize-horizontal"], function (_exports, _Theme, _resizeHorizontal, _resizeHorizontal2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/resize-horizontal", "./v5/resize-horizontal"], function (_exports, _Theme, _resizeHorizontal, _resizeHorizontal2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _resizeHorizontal.pathData : _resizeHorizontal2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _resizeHorizontal.pathData : _resizeHorizontal2.pathData;
   _exports.pathData = pathData;
   var _default = "resize-horizontal";
   _exports.default = _default;

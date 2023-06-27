@@ -6,13 +6,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "program-triangles-2";
-  const pathData = "M147 293H48q-14 0-24.5-6.5t-17-17-7-17-.5-7.5q0-12 6-23l97-196q7-13 19-19.5T146 0t24.5 6.5T189 26l64 128-15 31q-41 6-60 45zm359 2q5 10 5 21 0 2-.5 9.5t-7 17.5-17.5 16.5-24 6.5h-63l-68-136q-18-35-53-44l43-87q7-13 19-19.5t25-6.5 24.5 6.5T408 99zM397 441q5 10 5 20 0 2-1 10t-7.5 18-17 16.5T352 512H158q-14 0-25-6.5T116 489t-7-17.5-1-9.5q0-10 6-21l97-195q7-14 19-20.5t25.5-6.5 24.5 6.5 18 20.5z";
+  const pathData = "M397.429 441q6 12 4.5 25t-8 23-17 16.5-24.5 6.5h-194q-14 0-25-6.5t-17-16.5-7.5-22.5 5.5-25.5l97-195q7-14 19-20.5t25.5-6.5 24.5 6.5 18 20.5zm109-146q6 12 5 25t-7.5 23-17.5 16.5-24 6.5h-63l-68-136q-18-35-53-44l43-87q7-13 19-19.5t25-6.5 24.5 6.5 18.5 19.5zm-359-2h-99q-14 0-24.5-6.5t-17-17-7-23 5.5-24.5l97-196q7-13 19-19.5t25-6.5 24.5 6.5 18.5 19.5l64 128-15 31q-41 6-60 45z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
   const accData = null;
   _exports.accData = accData;
-  const collection = "SAP-icons";
+  const collection = "SAP-icons-v4";
   const packageName = "@ui5/webcomponents-icons";
   (0, _Icons.registerIcon)(name, {
     pathData,
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "program-triangles-2";
+  var _default = "SAP-icons-v4/program-triangles-2";
   _exports.default = _default;
 });

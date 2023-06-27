@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/status-completed", "./v4/status-completed"], function (_exports, _Theme, _statusCompleted, _statusCompleted2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/status-completed", "./v5/status-completed"], function (_exports, _Theme, _statusCompleted, _statusCompleted2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _statusCompleted.pathData : _statusCompleted2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _statusCompleted.pathData : _statusCompleted2.pathData;
   _exports.pathData = pathData;
   var _default = "status-completed";
   _exports.default = _default;

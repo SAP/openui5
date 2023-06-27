@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/role", "./v4/role"], function (_exports, _Theme, _role, _role2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/role", "./v5/role"], function (_exports, _Theme, _role, _role2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _role.pathData : _role2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _role.pathData : _role2.pathData;
   _exports.pathData = pathData;
   var _default = "role";
   _exports.default = _default;

@@ -10,6 +10,8 @@ sap.ui.define([
 ], function(WebComponent, library) {
 	"use strict";
 
+	var WizardContentLayout = library.WizardContentLayout;
+
 	/**
 	 * Constructor for a new <code>Wizard</code>.
 	 *
@@ -26,13 +28,22 @@ sap.ui.define([
 	 * <h3>Structure</h3>
 	 * <h4>Navigation area</h4> The top most area of the <code>sap.ui.webc.fiori.Wizard</code> is occupied by the navigation area. It shows the sequence of steps, where the recommended number of steps is between 3 and 8 steps.
 	 * <ul>
-	 *     <li> Steps can have different visual representations - numbers or icons.
+	 *     <li> Steps can have different visual representations - numbers or icons.</li>
 	 *     <li> Steps might have labels for better readability - titleText and subTitleText.</li>
 	 *     <li> Steps are defined by using the <code>sap.ui.webc.fiori.WizardStep</code> as slotted element within the <code>sap.ui.webc.fiori.Wizard</code>.</li>
 	 * </ul>
 	 *
 	 * <b>Note:</b> If no selected step is defined, the first step will be auto selected. <br>
 	 * <b>Note:</b> If multiple selected steps are defined, the last step will be selected.
+	 *
+	 * <h3>CSS Shadow Parts</h3>
+	 *
+	 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/::part CSS Shadow Parts} allow developers to style elements inside the Shadow DOM. <br>
+	 * The <code>sap.ui.webc.fiori.Wizard</code> exposes the following CSS Shadow Parts:
+	 * <ul>
+	 *     <li>navigator - Used to style the progress navigator of the <code>sap.ui.webc.fiori.Wizard</code>.</li>
+	 *     <li>step-content - Used to style a <code>sap.ui.webc.fiori.WizardStep</code> container.</li>
+	 * </ul>
 	 *
 	 * <h3>Keyboard Handling</h3> The user can navigate using the following keyboard shortcuts: <br>
 	 *
@@ -90,6 +101,14 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Defines how the content of the <code>sap.ui.webc.fiori.Wizard</code> would be visualized.
+				 */
+				contentLayout: {
+					type: "sap.ui.webc.fiori.WizardContentLayout",
+					defaultValue: WizardContentLayout.MultipleSteps
+				},
+
+				/**
 				 * Defines the height of the control
 				 */
 				height: {
@@ -121,14 +140,14 @@ sap.ui.define([
 						 * The new step.
 						 */
 						step: {
-							type: "HTMLElement"
+							type: "sap.ui.webc.fiori.IWizardStep"
 						},
 
 						/**
 						 * The previous step.
 						 */
 						previousStep: {
-							type: "HTMLElement"
+							type: "sap.ui.webc.fiori.IWizardStep"
 						},
 
 						/**

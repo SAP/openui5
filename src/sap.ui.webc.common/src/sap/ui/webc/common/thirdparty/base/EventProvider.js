@@ -34,7 +34,6 @@ sap.ui.define(["exports"], function (_exports) {
         eventRegistry.delete(eventName);
       }
     }
-
     /**
      * Fires an event and returns the results of all event listeners as an array.
      *
@@ -49,10 +48,9 @@ sap.ui.define(["exports"], function (_exports) {
         return [];
       }
       return eventListeners.map(fn => {
-        return fn.call(this, data); // eslint-disable-line
+        return fn.call(this, data);
       });
     }
-
     /**
      * Fires an event and returns a promise that will resolve once all listeners have resolved.
      *

@@ -14,13 +14,29 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oBadge = new Badge({
 				text: "Some text...",
-				icon: new Icon({
-					color: "blue",
-					name: "add",
-					click: function(oEvent) {
-						// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
-					}
-				})
+				icon: [
+					new Icon({
+						color: "blue",
+						name: "add",
+						click: function(oEvent) {
+							// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+						}
+					}),
+					new Icon({
+						color: "blue",
+						name: "add",
+						click: function(oEvent) {
+							// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+						}
+					}),
+					new Icon({
+						color: "blue",
+						name: "add",
+						click: function(oEvent) {
+							// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+						}
+					})
+				]
 			});
 			this.oBadge.placeAt("uiArea");
 			Core.applyChanges();

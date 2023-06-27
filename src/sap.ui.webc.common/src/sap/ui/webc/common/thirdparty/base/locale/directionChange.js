@@ -9,7 +9,6 @@ sap.ui.define(["exports", "../EventProvider"], function (_exports, _EventProvide
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   const eventProvider = new _EventProvider.default();
   const DIR_CHANGE = "directionChange";
-
   /**
    * Attach a callback that will be executed whenever the application calls the "applyDirection" function
    * @public
@@ -18,7 +17,6 @@ sap.ui.define(["exports", "../EventProvider"], function (_exports, _EventProvide
   const attachDirectionChange = listener => {
     eventProvider.attachEvent(DIR_CHANGE, listener);
   };
-
   /**
    * Detach a callback that was passed with "attachDirectionChange"
    * @public
@@ -30,7 +28,7 @@ sap.ui.define(["exports", "../EventProvider"], function (_exports, _EventProvide
   };
   _exports.detachDirectionChange = detachDirectionChange;
   const fireDirectionChange = () => {
-    return eventProvider.fireEvent(DIR_CHANGE);
+    return eventProvider.fireEvent(DIR_CHANGE, undefined);
   };
   _exports.fireDirectionChange = fireDirectionChange;
 });

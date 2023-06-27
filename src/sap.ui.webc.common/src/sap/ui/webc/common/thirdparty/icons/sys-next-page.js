@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sys-next-page", "./v4/sys-next-page"], function (_exports, _Theme, _sysNextPage, _sysNextPage2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/sys-next-page", "./v5/sys-next-page"], function (_exports, _Theme, _sysNextPage, _sysNextPage2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _sysNextPage.pathData : _sysNextPage2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _sysNextPage.pathData : _sysNextPage2.pathData;
   _exports.pathData = pathData;
   var _default = "sys-next-page";
   _exports.default = _default;

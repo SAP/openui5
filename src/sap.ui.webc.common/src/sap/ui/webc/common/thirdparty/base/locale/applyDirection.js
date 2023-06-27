@@ -7,9 +7,10 @@ sap.ui.define(["exports", "../Render", "./directionChange"], function (_exports,
   _exports.default = void 0;
   /**
    * Re-renders all RTL-aware UI5 Elements.
-   * Call this method whenever you change the "dir" property anywhere in your HTML page
-   * Example: document.body.dir = "rtl"; applyDirection();
    *
+   * <b>Note:</b> Call this method whenever you change the "dir" property anywhere in your HTML page.
+   * <b>Example:</b> <code>document.body.dir = "rtl"; applyDirection();</code>
+   * @public
    * @returns {Promise<void>}
    */
   const applyDirection = async () => {

@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "physical-activity";
+  var _default = "SAP-icons-v5/physical-activity";
   _exports.default = _default;
 });

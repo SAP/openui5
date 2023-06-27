@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "signature";
+  var _default = "SAP-icons-v5/signature";
   _exports.default = _default;
 });

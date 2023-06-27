@@ -128,6 +128,8 @@ sap.ui.define([
 
 				/**
 				 * Determines the maximum date available for selection.
+				 *
+				 * <b>Note:</b> If the formatPattern property is not set, the maxDate value must be provided in the ISO date format (YYYY-MM-dd).
 				 */
 				maxDate: {
 					type: "string",
@@ -136,6 +138,8 @@ sap.ui.define([
 
 				/**
 				 * Determines the minimum date available for selection.
+				 *
+				 * <b>Note:</b> If the formatPattern property is not set, the minDate value must be provided in the ISO date format (YYYY-MM-dd).
 				 */
 				minDate: {
 					type: "string",
@@ -175,7 +179,7 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * Defines the selected date or dates (depending on the <code>selectionMode</code> property) for this calendar as instances of <code>sap.ui.webc.main.CalendarDate</code>
+				 * Defines the selected date or dates (depending on the <code>selectionMode</code> property) for this calendar as instances of <code>sap.ui.webc.main.CalendarDate</code>.
 				 */
 				dates: {
 					type: "sap.ui.webc.main.ICalendarDate",

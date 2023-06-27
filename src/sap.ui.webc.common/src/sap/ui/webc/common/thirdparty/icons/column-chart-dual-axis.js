@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/column-chart-dual-axis", "./v4/column-chart-dual-axis"], function (_exports, _Theme, _columnChartDualAxis, _columnChartDualAxis2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/column-chart-dual-axis", "./v5/column-chart-dual-axis"], function (_exports, _Theme, _columnChartDualAxis, _columnChartDualAxis2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _columnChartDualAxis.pathData : _columnChartDualAxis2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _columnChartDualAxis.pathData : _columnChartDualAxis2.pathData;
   _exports.pathData = pathData;
   var _default = "column-chart-dual-axis";
   _exports.default = _default;

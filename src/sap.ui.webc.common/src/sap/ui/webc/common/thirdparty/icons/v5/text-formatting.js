@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "text-formatting";
+  var _default = "SAP-icons-v5/text-formatting";
   _exports.default = _default;
 });

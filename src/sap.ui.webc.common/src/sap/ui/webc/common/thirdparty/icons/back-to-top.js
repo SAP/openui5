@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/back-to-top", "./v4/back-to-top"], function (_exports, _Theme, _backToTop, _backToTop2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/back-to-top", "./v5/back-to-top"], function (_exports, _Theme, _backToTop, _backToTop2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _backToTop.pathData : _backToTop2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _backToTop.pathData : _backToTop2.pathData;
   _exports.pathData = pathData;
   var _default = "back-to-top";
   _exports.default = _default;

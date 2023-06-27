@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/crop", "./v4/crop"], function (_exports, _Theme, _crop, _crop2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/crop", "./v5/crop"], function (_exports, _Theme, _crop, _crop2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _crop.pathData : _crop2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _crop.pathData : _crop2.pathData;
   _exports.pathData = pathData;
   var _default = "crop";
   _exports.default = _default;

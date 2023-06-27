@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "color-fill";
-  const pathData = "M416 0q35 0 57.5 23T496 80v320q0 34-22.5 57T416 480H96q-34 0-57-23t-23-57V80q0-34 23-57T96 0h320z";
+  const pathData = "M391 480H121q-37 0-63.5-26T31 390V121q0-38 26.5-64T121 31h270q37 0 63 26t26 64v269q0 38-26 64t-63 26z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "color-fill";
+  var _default = "SAP-icons-v5/color-fill";
   _exports.default = _default;
 });

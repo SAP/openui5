@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/key-user-settings", "./v4/key-user-settings"], function (_exports, _Theme, _keyUserSettings, _keyUserSettings2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/key-user-settings", "./v5/key-user-settings"], function (_exports, _Theme, _keyUserSettings, _keyUserSettings2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _keyUserSettings.pathData : _keyUserSettings2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _keyUserSettings.pathData : _keyUserSettings2.pathData;
   _exports.pathData = pathData;
   var _default = "key-user-settings";
   _exports.default = _default;

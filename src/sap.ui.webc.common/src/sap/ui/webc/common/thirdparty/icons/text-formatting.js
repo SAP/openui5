@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/text-formatting", "./v4/text-formatting"], function (_exports, _Theme, _textFormatting, _textFormatting2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/text-formatting", "./v5/text-formatting"], function (_exports, _Theme, _textFormatting, _textFormatting2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _textFormatting.pathData : _textFormatting2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _textFormatting.pathData : _textFormatting2.pathData;
   _exports.pathData = pathData;
   var _default = "text-formatting";
   _exports.default = _default;

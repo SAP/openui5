@@ -1,33 +1,35 @@
-sap.ui.define(["exports", "./DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * Enumeration for different mode behaviors of the <code>InvisibleMessage</code>.
-   * @private
+   * Enumeration for different mode behaviors of the InvisibleMessage.
+   *
+   * @readonly
+   * @enum {string}
+   * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.base.types.InvisibleMessageMode
    */
-  const InvisibleMessageModes = {
+  var InvisibleMessageMode;
+  (function (InvisibleMessageMode) {
     /**
-        * Indicates that updates to the region should be presented at the next graceful opportunity,
-        * such as at the end of reading the current sentence, or when the user pauses typing.
-        */
-    Polite: "Polite",
+     * Indicates that updates to the region should be presented at the next graceful opportunity,
+     * such as at the end of reading the current sentence, or when the user pauses typing.
+     * @public
+     * @type {Polite}
+     */
+    InvisibleMessageMode["Polite"] = "Polite";
     /**
-        * Indicates that updates to the region have the highest priority and should be presented to the user immediately.
-        */
-    Assertive: "Assertive"
-  };
-  class InvisibleMessageMode extends _DataType.default {
-    static isValid(value) {
-      return !!InvisibleMessageModes[value];
-    }
-  }
-  InvisibleMessageMode.generateTypeAccessors(InvisibleMessageModes);
-  var _default = InvisibleMessageModes;
+     * Indicates that updates to the region have the highest priority and should be presented to the user immediately.
+     * @public
+     * @type {Assertive}
+     */
+    InvisibleMessageMode["Assertive"] = "Assertive";
+  })(InvisibleMessageMode || (InvisibleMessageMode = {}));
+  var _default = InvisibleMessageMode;
   _exports.default = _default;
 });

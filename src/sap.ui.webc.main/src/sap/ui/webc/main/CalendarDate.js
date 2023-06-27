@@ -43,7 +43,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * The date formatted according to the <code>formatPattern</code> property of the <code>sap.ui.webc.main.Calendar</code> that hosts the component
+				 * The date formatted according to the <code>formatPattern</code> property of the <code>sap.ui.webc.main.Calendar</code> that hosts the component.
 				 */
 				value: {
 					type: "string"

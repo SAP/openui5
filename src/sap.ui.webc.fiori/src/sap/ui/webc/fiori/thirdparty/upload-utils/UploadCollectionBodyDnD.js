@@ -15,7 +15,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/EventProvider", ".
    */
 
   const draggingFiles = event => {
-    return Array.from(event.dataTransfer.types).includes("Files");
+    return event.dataTransfer && Array.from(event.dataTransfer.types).includes("Files");
   };
   _exports.draggingFiles = draggingFiles;
   const eventProvider = new _EventProvider.default();
@@ -38,7 +38,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/EventProvider", ".
       });
     }
   };
-  const ondrop = event => {
+  const ondrop = () => {
     eventProvider.fireEvent(EVENT, {
       mode: _UploadCollectionDnDMode.default.None
     });

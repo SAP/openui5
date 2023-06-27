@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/marketing-campaign", "./v4/marketing-campaign"], function (_exports, _Theme, _marketingCampaign, _marketingCampaign2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/marketing-campaign", "./v5/marketing-campaign"], function (_exports, _Theme, _marketingCampaign, _marketingCampaign2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _marketingCampaign.pathData : _marketingCampaign2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _marketingCampaign.pathData : _marketingCampaign2.pathData;
   _exports.pathData = pathData;
   var _default = "marketing-campaign";
   _exports.default = _default;

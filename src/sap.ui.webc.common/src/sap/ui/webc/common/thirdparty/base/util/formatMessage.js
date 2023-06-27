@@ -18,7 +18,8 @@ sap.ui.define(["exports"], function (_exports) {
       }
 
       if ($3) {
-        return String(values[parseInt($3)]);
+        const ind = typeof $3 === "string" ? parseInt($3) : $3;
+        return String(values[ind]);
       }
       throw new Error(`[i18n]: pattern syntax error at pos ${offset}`);
     });
