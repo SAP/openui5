@@ -2615,6 +2615,28 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Fires the initial ready event of the card and of the host if any.
+	 * This ready event is fired only once and will not be fired consecutively, even if the card is fully refreshed.
+	 * @private
+	 */
+	Card.prototype._fireInitialized = function () {
+		if (this._bInitializedFired) {
+			return;
+		}
+
+		var oHostInstance = this.getHostInstance();
+
+		this.fireEvent("_initialized");
+		this._bInitializedFired = true;
+
+		if (oHostInstance) {
+			oHostInstance.fireCardInitialized({
+				card: this
+			});
+		}
+	};
+
 	Card.prototype._fireDataChange = function () {
 		this.fireEvent("_dataChange");
 		this.scheduleFireStateChanged();
@@ -2630,6 +2652,7 @@ sap.ui.define([
 		this._setActionButtonsEnabled(true);
 		this._validateContentControls(false, true);
 		this.fireEvent("_ready");
+		this._fireInitialized();
 		this.scheduleFireStateChanged();
 	};
 

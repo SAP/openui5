@@ -15,7 +15,8 @@ sap.ui.define([
 
 	var oContextsManifest = {
 		"sap.app": {
-			"id": "test2"
+			"id": "test2",
+			"type": "card"
 		},
 		"sap.card": {
 			"type": "List",
@@ -54,6 +55,7 @@ sap.ui.define([
 			};
 
 			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources",
 				manifest: oContextsManifest,
 				host: this.oHost
 			});
@@ -85,6 +87,78 @@ sap.ui.define([
 
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+	});
+
+	QUnit.module("Events", {
+		beforeEach: function () {
+			this.oHost = new Host();
+		},
+		afterEach: function () {
+			this.oHost.destroy();
+			this.oHost = null;
+		}
+	});
+
+	QUnit.test("Context values", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oHost = this.oHost,
+			oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources",
+				dataMode: "Active",
+				manifest: {
+					"sap.app": {
+						"id": "test4",
+						"type": "card"
+					},
+					"sap.card": {
+						"type": "List",
+						"data": {
+							"request": {
+								"url": "items.json"
+							}
+						},
+						"header": {
+							"title": "{context>/sap.sample/user/name/value}",
+							"subTitle": "{{parameters.userId}}"
+						},
+						"content": {
+							"data": {
+								"path": "/"
+							},
+							"item": {
+								"title": "{Name}"
+							}
+						}
+					}
+				},
+				host: oHost
+			}),
+			iCounter = 0;
+
+		oHost.attachCardInitialized(function (oEvent) {
+			// Assert
+			assert.ok(true, "cardInitialized is fired.");
+			assert.strictEqual(oEvent.getParameter("card"), oCard, "The passed card is correct.");
+			iCounter++;
+		});
+
+		oCard.attachEventOnce("_ready", function () {
+			oCard.attachEventOnce("_ready", function () {
+				// Assert
+				assert.strictEqual(iCounter, 1, "The cardInitialized is fired only once even if refresh() is called.");
+				done();
+			});
+
+			// Act
+			oCard.refresh();
+			oCard.startManifestProcessing();
+			Core.applyChanges();
+		});
+
+		// Act
+		oCard.startManifestProcessing();
 		Core.applyChanges();
 	});
 });

@@ -169,6 +169,20 @@ sap.ui.define([
 					},
 
 					/**
+					 * Fired when the card is initially ready for the first time.
+					 * Will not be fired for consecutive refreshes or data changes.
+					 * @experimental since 1.116
+					 */
+					cardInitialized: {
+						parameters: {
+							/**
+							 * The card.
+							 */
+							card: { type: "sap.ui.core.Control" }
+						}
+					},
+
+					/**
 					 * Fired when a message from channels like navigator.serviceWorker is received.
 					 * @experimental since 1.91
 					 */
