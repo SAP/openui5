@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -16,6 +17,7 @@ sap.ui.define([
 	Core,
 	FlexObjectFactory,
 	States,
+	Settings,
 	Layer,
 	sinon
 ) {
@@ -59,6 +61,11 @@ sap.ui.define([
 
 	QUnit.module("UIChange Creation", {
 		beforeEach: function() {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				getUserId: function() {
+					return "userId";
+				}
+			});
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -66,7 +73,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("FlexObjectFactory.createUIChange and set/reset revert data", function(assert) {
 			var oUIChange = FlexObjectFactory.createUIChange(Object.assign({generator: "sap.ui.rta.command"}, oFileContent));
-			var oExpectedFileContent = Object.assign({}, oFileContent, {dependentSelector: {}});
+			var oExpectedFileContent = Object.assign({}, oFileContent, { dependentSelector: {} });
+			oExpectedFileContent.support.user = "userId";
 			assert.strictEqual(oUIChange.getApplyState(), States.ApplyState.INITIAL, "the apply state is set to initial");
 			assert.deepEqual(oUIChange.getSelector(), {id: "bar", idIsLocal: true}, "the selector is part of the instance");
 			assert.deepEqual(oUIChange.getDependentSelectors(), {}, "the dependent selector cannot be set initially via this function");
@@ -81,6 +89,16 @@ sap.ui.define([
 			oUIChange.resetRevertData();
 			assert.strictEqual(oUIChange.hasRevertData(), false, "revert data not available anymore");
 			assert.strictEqual(oUIChange.getRevertData(), null, "revert data not available anymore");
+		});
+
+		QUnit.test("FlexObjectFactory.createUIChange in developer layer", function(assert) {
+			var oUIChange = FlexObjectFactory.createUIChange(Object.assign({}, oFileContent, {layer: Layer.CUSTOMER_BASE}));
+			assert.notOk(oUIChange.getSupportInformation().user, "no user is set");
+		});
+
+		QUnit.test("FlexObjectFactory.createUIChange in customer layer and user already set", function(assert) {
+			var oUIChange = FlexObjectFactory.createUIChange(Object.assign({}, oFileContent, {user: "myFancyUser"}));
+			assert.strictEqual(oUIChange.getSupportInformation().user, "myFancyUser", "the user is set correctly");
 		});
 
 		QUnit.test("FlexObjectFactory.createFromFileContent", function(assert) {

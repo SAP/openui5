@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
@@ -26,6 +27,7 @@ sap.ui.define([
 	FlVariant,
 	States,
 	UIChange,
+	Settings,
 	Layer,
 	LayerUtils,
 	Utils
@@ -55,8 +57,12 @@ sap.ui.define([
 	}
 
 	function createBasePropertyBag(mProperties) {
-		var sChangeType = mProperties.type || mProperties.changeType;
-		var sFileName = mProperties.fileName || mProperties.id || Utils.createDefaultFileName(sChangeType);
+		const sChangeType = mProperties.type || mProperties.changeType;
+		const sFileName = mProperties.fileName || mProperties.id || Utils.createDefaultFileName(sChangeType);
+		const sUser = mProperties.user ||
+			(!LayerUtils.isDeveloperLayer(mProperties.layer)
+				? Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().getUserId()
+				: undefined);
 		return {
 			id: sFileName,
 			adaptationId: mProperties.adaptationId,
@@ -74,7 +80,7 @@ sap.ui.define([
 				sourceSystem: mProperties.sourceSystem,
 				sourceClient: mProperties.sourceClient,
 				originalLanguage: mProperties.originalLanguage,
-				user: mProperties.user
+				user: sUser
 			},
 			flexObjectMetadata: {
 				changeType: sChangeType,

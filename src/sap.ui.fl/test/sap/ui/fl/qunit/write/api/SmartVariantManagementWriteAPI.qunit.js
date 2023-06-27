@@ -48,6 +48,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	var oControl;
+	var sReference = "odata.app";
 
 	QUnit.module("SmartVariantManagementWriteAPI", {
 		afterEach: function() {
@@ -55,6 +56,7 @@ sap.ui.define([
 			if (oControl) {
 				oControl.destroy();
 			}
+			FlexState.clearState(sReference);
 			delete Settings._instance;
 			delete Settings._oLoadSettingsPromise;
 		}
@@ -118,7 +120,6 @@ sap.ui.define([
 
 				var oMockResponse = testData.mockedResponse || {};
 				var oCompVariantStateStub = sandbox.stub(CompVariantState, testData.compVariantStateFunctionName).returns(oMockResponse);
-				var sReference = "the.app.id";
 				var oGetFlexReferenceForControlStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 
 				var oResponse = SmartVariantManagementWriteAPI[testData.apiFunctionName](mPropertyBag);
@@ -139,7 +140,6 @@ sap.ui.define([
 
 		QUnit.test("when removeVariant is called", function(assert) {
 			var mPropertyBag = {};
-			var sReference = "the.app.id";
 			var oGetFlexReferenceForControlStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			var oCompVariantStateRemoveVariantStub = sandbox.stub(CompVariantState, "removeVariant").resolves();
 
@@ -360,7 +360,6 @@ sap.ui.define([
 			}
 		}].forEach(function(testData) {
 			QUnit.test("When updateVariant is called, " + testData.details, function(assert) {
-				var sReference = "odata.app";
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 				var oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
@@ -409,12 +408,7 @@ sap.ui.define([
 					componentId: oAppComponent.getId(),
 					manifest: {},
 					componentData: {}
-				}).then(FlexState.update.bind(undefined, {
-					reference: sReference,
-					componentId: oAppComponent.getId(),
-					manifest: {},
-					componentData: {}
-				})).then(SmartVariantManagementApplyAPI.loadVariants.bind(undefined, {
+				}).then(SmartVariantManagementApplyAPI.loadVariants.bind(undefined, {
 					control: oControl,
 					standardVariant: {
 						name: "sStandardVariantTitle"
@@ -671,7 +665,6 @@ sap.ui.define([
 			}
 		}].forEach(function(testData) {
 			QUnit.test("When updateVariant is called with adaptationId, " + testData.details, function(assert) {
-				var sReference = "odata.app";
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 				var oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
@@ -732,12 +725,6 @@ sap.ui.define([
 					manifest: {},
 					componentData: {}
 				})
-				.then(FlexState.update.bind(undefined, {
-					reference: sReference,
-					componentId: oAppComponent.getId(),
-					manifest: {},
-					componentData: {}
-				}))
 				.then(SmartVariantManagementApplyAPI.loadVariants.bind(undefined, {
 					control: oControl,
 					standardVariant: {
@@ -783,7 +770,6 @@ sap.ui.define([
 			expectedChange: true
 		}].forEach(function(oTestData) {
 			QUnit.test("When updateVariant is called " + oTestData.testDetails, function(assert) {
-				var sReference = "odata.app";
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 				var oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
@@ -820,10 +806,10 @@ sap.ui.define([
 				sandbox.stub(Settings, "getInstanceOrUndef").returns({
 					isVersioningEnabled: function() {
 						return false;
-					}
+					},
+					getUserId: function() {}
 				});
-
-				return FlexState.update({
+				return FlexState.initialize({
 					reference: sReference,
 					componentId: oAppComponent.getId(),
 					manifest: {},
@@ -1096,7 +1082,6 @@ sap.ui.define([
 			}
 		}].forEach(function(testData) {
 			QUnit.test("When updateVariant is called with " + testData.details, function(assert) {
-				var sReference = "an.app";
 				testData.propertyBag.reference = sReference;
 				testData.propertyBag.persistencyKey = sPersistencyKey;
 				oControl = new Control("controlId1");
@@ -1279,7 +1264,6 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Given a variant was removed", function(assert) {
-			var sReference = "an.app";
 			var sPersistencyKey = "persistency.key";
 			oControl = new Control("controlId1");
 			oControl.getPersistencyKey = function() {
@@ -1351,7 +1335,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given a variant with adaptation id was removed", function(assert) {
-			var sReference = "an.app";
 			var sPersistencyKey = "persistency.key";
 			oControl = new Control("controlId2");
 			oControl.getPersistencyKey = function() {
@@ -1437,7 +1420,6 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("discardVariantContent function calls CompVariantState.discardVariantContent", function(assert) {
-			var sReference = "an.app";
 			var sPersistencyKey = "persistency.key";
 			oControl = new Control("controlId1");
 			oControl.getPersistencyKey = function() {

@@ -602,9 +602,11 @@ sap.ui.define([
 			adaptationId: mPropertyBag.adaptationId,
 			reference: oSourceVariant.getFlexObjectMetadata().reference,
 			generator: mPropertyBag.generator,
-			variantManagementReference: mPropertyBag.variantManagementReference,
-			user: mPropertyBag.layer === Layer.VENDOR ? "SAP" : Settings.getInstanceOrUndef().getUserId()
+			variantManagementReference: mPropertyBag.variantManagementReference
 		};
+		if (mPropertyBag.layer === Layer.VENDOR) {
+			mProperties.user = "SAP";
+		}
 		if (mPropertyBag.currentVariantComparison === 1) {
 			// in case a user variant should be saved as a PUBLIC variant, but refers to a PUBLIC variant,
 			// the references dependencies must be followed one more time
