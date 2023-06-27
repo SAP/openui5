@@ -226,6 +226,10 @@ sap.ui.define([
 					reject(_createError(xhr, _getTextFromResourceBundle("MSG_NETWORK_ERROR")));
 				};
 
+				xhr.addEventListener("error", function() {
+					reject(_createError(xhr, _getTextFromResourceBundle("MSG_NETWORK_ERROR")));
+				});
+
 				if (mPropertyBag && mPropertyBag.payload) {
 					xhr.send(mPropertyBag.payload);
 				} else {
