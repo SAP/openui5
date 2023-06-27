@@ -154,7 +154,6 @@ sap.ui.define([
 					+ ", " + oContext.getProperty("SO_2_BP/CompanyName"));
 			}).catch(function (oError) {
 				if (!oError.canceled) {
-					MessageBox.error("" + oError);
 					throw oError; // unexpected error
 				}
 			});
@@ -274,7 +273,7 @@ sap.ui.define([
 			this.setSalesOrderBindingContext(null); // hide the object page
 			this.aDeletedSalesOrders.push(oContext);
 			this.updateUndoButton();
-			oContext.delete().catch(function (oError) {
+			oContext.delete().catch(function () { // canceled or error already reported
 				var oItem;
 
 				if (!oSalesOrderTable.getSelectedItem()) {
@@ -286,10 +285,6 @@ sap.ui.define([
 						that.setSalesOrderBindingContext(oContext); // show the object page again
 					}
 				}
-				if (!oError.canceled) {
-					MessageToast.show("Could not delete sales order "
-						+ oContext.getProperty("SalesOrderID"));
-				}
 			}).finally(function () {
 				that.aDeletedSalesOrders.splice(that.aDeletedSalesOrders.indexOf(oContext), 1);
 				that.updateUndoButton();
@@ -297,15 +292,8 @@ sap.ui.define([
 		},
 
 		onDeleteSalesOrderLineItem : function () {
-			var oContext = this.byId("SO_2_SOITEM").getSelectedItem().getBindingContext();
-
-			oContext.delete().catch(function (oError) {
-				if (!oError.canceled) {
-					MessageToast.show("Could not delete line item "
-						+ oContext.getProperty("ItemPosition") + " of sales order "
-						+ oContext.getProperty("SalesOrderID"));
-				}
-			});
+			this.byId("SO_2_SOITEM").getSelectedItem().getBindingContext().delete()
+				.catch(function () { /* canceled or error already reported */ });
 		},
 
 		onDeleteSalesOrderSchedules : function () {
@@ -328,13 +316,13 @@ sap.ui.define([
 			// removing schedule(s) implicitly removes items
 			// -> remove context of dependent bindings and hide details
 			this.setSalesOrderLineItemBindingContext();
-			this.requestSideEffects(sGroupId, "SO_2_SOITEM");
+			aPromises.push(this.requestSideEffects(sGroupId, "SO_2_SOITEM"));
 
 			Promise.all(aPromises).then(function () {
 				oTable.removeSelections();
 				oUiModel.setProperty("/bScheduleSelected", false);
 				MessageBox.success("Deleted " + aPromises.length + " sales order schedule(s)");
-			});
+			}, function () { /* error already reported */ });
 		},
 
 		onExecuteSimulateDiscount : function () {
