@@ -228,6 +228,34 @@ function(
 	 */
 	Link.prototype.onBeforeRendering = function() {};
 
+	Link.prototype.onAfterRendering = function() {
+		if (Device.system.phone || Device.system.tablet) {
+			var oAnchorElement = this.getDomRef();
+			// TODO: Adjust sap.m.internal.ObjectMarkerCustomLink rendering part of the sap.m.ObjectMarker implementation
+			if (!oAnchorElement) {
+				return;
+			}
+			oAnchorElement.removeEventListener("click", this._onClick);
+			if (oAnchorElement.getAttribute("href") == "#") {
+				oAnchorElement.addEventListener("click", this._onClick);
+			}
+		}
+	};
+
+	Link.prototype.exit = function() {
+		if (Device.system.phone || Device.system.tablet) {
+			var oAnchorElement = this.getDomRef();
+			if (!oAnchorElement) {
+				return;
+			}
+			oAnchorElement.removeEventListener("click", this._onClick);
+		}
+	};
+
+	Link.prototype._onClick = function(oEvent) {
+		oEvent.preventDefault();
+	};
+
 	/**
 	 * Handle the key down event for SPACE
 	 * SHIFT or ESCAPE on pressed SPACE cancels the action
