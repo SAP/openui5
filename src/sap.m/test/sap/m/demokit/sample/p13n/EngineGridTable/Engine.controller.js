@@ -85,7 +85,7 @@ sap.ui.define([
 				});
 				oState.Sorter.push({
 					key: sAffectedProperty,
-					descending:  sSortOrder === tableLibrary.SortOrder.Descending
+					descending: sSortOrder === tableLibrary.SortOrder.Descending
 				});
 
 				//3) Apply the modified personalization state to persist it in the VariantManagement
