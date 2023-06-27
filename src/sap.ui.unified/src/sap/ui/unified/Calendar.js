@@ -2092,7 +2092,7 @@ sap.ui.define([
 			oFocusedDate = this._getFocusedDate(),
 			oFocusMonthDelegate = {
 				onAfterRendering: function() {
-					this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex());
+					this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex(), undefined, true);
 					this.removeDelegate(oFocusMonthDelegate);
 				}
 			},
