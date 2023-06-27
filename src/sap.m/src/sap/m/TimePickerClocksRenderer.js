@@ -22,8 +22,6 @@ sap.ui.define([], function() {
 	TimePickerClocksRenderer.render = function(oRm, oControl) {
 		oRm.openStart("div", oControl); // outer wrapper
 		oRm.class("sapMTPClocksContainer");
-//		oRm.attr("role", "application");
-//		oRm.attr("aria-roledescription", oControl._getAriaRoleDescription());
 		oRm.openEnd();
 
 		this.renderButtons(oRm, oControl);
@@ -41,34 +39,29 @@ sap.ui.define([], function() {
 	TimePickerClocksRenderer.renderButtons = function(oRm, oControl) {
 		var aButtons = oControl.getAggregation("_buttons"),
 			oSegButton = oControl.getAggregation("_buttonAmPm"),
-			aSeparators = oControl._getTimeSeparators(oControl._getDisplayFormatPattern()),
-			sSeparator,
+			aSeparators = aButtons && aButtons.length ? Array(aButtons.length - 1).fill(":") : [],
 			iIndex;
 
 		if (aButtons) {
 
 			if (oSegButton) {
 				aButtons.push(oSegButton);
+				aSeparators.push(" ");
 			}
 			oRm.openStart("div"); // buttons wrapper
 			oRm.class("sapMTPCButtons");
 			oRm.attr("dir", "ltr");
 			oRm.openEnd();
 
-			// render buttons and separators
-			for (iIndex = 0; iIndex < aSeparators.length; iIndex++) {
-				if (iIndex > 0 || aSeparators[iIndex] !== "") {
-					sSeparator = aSeparators[iIndex];
-					if (sSeparator === undefined) {
-						sSeparator = "";
-					}
+			for (iIndex = 0; iIndex < aButtons.length; iIndex++) {
+				oRm.renderControl(aButtons[iIndex]);
+				if (aSeparators[iIndex]) {
 					oRm.openStart("span");
 					oRm.attr("aria-hidden", "true");
 					oRm.openEnd();
-					oRm.text(sSeparator);
+					oRm.text(aSeparators[iIndex]);
 					oRm.close("span");
 				}
-				aButtons[iIndex] && oRm.renderControl(aButtons[iIndex]);
 			}
 
 			oRm.renderControl(oControl._getCurrentTimeButton());
