@@ -486,7 +486,7 @@ sap.ui.define([
 		var sURLPart2 = "SV_4MANxRymEIl9K06";
 		var sURL = sURLPart1 + sURLPart2;
 		var oUrlParams = new URLSearchParams();
-		oUrlParams.set("version", sap.ui.version);
+		oUrlParams.set("version", Core.getConfiguration().getVersion().toString());
 		oUrlParams.set("feature", (sConnector === "KeyUserConnector" ? "BTP" : "ABAP"));
 
 		var oFeedbackDialogModel = new JSONModel({
