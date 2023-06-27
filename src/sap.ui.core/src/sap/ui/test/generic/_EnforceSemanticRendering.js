@@ -6,8 +6,6 @@
 sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 	"use strict";
 
-	var Object_hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
-
 	/**
 	 * @namespace
 	 * @private
@@ -45,7 +43,7 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 									var oRenderer = ControlClass.getMetadata().getRenderer();
 
 									if (oRenderer) {
-										oInfo.version = Object_hasOwn(oRenderer, "apiVersion") ? oRenderer.apiVersion : 1;
+										oInfo.version = Object.hasOwn(oRenderer, "apiVersion") ? oRenderer.apiVersion : 1;
 
 										if (aExcludes.includes(sClass)) {
 											if (oInfo.version == 1) {

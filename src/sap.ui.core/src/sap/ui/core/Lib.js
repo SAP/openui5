@@ -213,7 +213,7 @@ sap.ui.define([
 		if (oObject && typeof oObject === 'object' && !Object.isFrozen(oObject)) {
 			Object.freeze(oObject);
 			for (var sKey in oObject) {
-				if (oObject.hasOwnProperty(sKey)) {
+				if (Object.hasOwn(oObject, sKey)) {
 					deepFreeze(oObject[sKey]);
 				}
 			}
