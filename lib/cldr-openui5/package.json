@@ -15,7 +15,6 @@
     "npm": ">=9"
   },
   "devDependencies": {
-    "eslint": "^8.40.0",
     "extend": "^2.0.0",
     "json2json": "^0.2.4",
     "mocha": "^10.2.0",
