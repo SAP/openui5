@@ -478,7 +478,7 @@ sap.ui.define([
 
 					// open
 					oDialog.open();
-				});
+				}.bind(this));
 			},
 
 			handleListFilter: function (oEvent) {
