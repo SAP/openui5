@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/core/dnd/DragInfo",
 	"sap/m/Panel",
 	"sap/m/library",
-	"sap/ui/thirdparty/jquery"
-], function(qutils, createAndAppendDiv, Link, Text, KeyCodes, coreLibrary, Core, DragInfo, Panel, mobileLibrary, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/Device"
+], function(qutils, createAndAppendDiv, Link, Text, KeyCodes, coreLibrary, Core, DragInfo, Panel, mobileLibrary, jQuery, Device) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -585,19 +586,22 @@ sap.ui.define([
 	QUnit.test("Prevent navigation", function(assert) {
 		// Prepare
 		var oLink = new Link({text: "text"}),
-			oFakeEvent = {preventDefault: function() {}},
+			oClickEvent = new Event("click", {bubbles: true, cancelable: true}),
 			oPressSpy = this.spy(oLink, "firePress"),
-			oPreventDefaultSpy = this.spy(oFakeEvent, "preventDefault");
+			oPreventDefaultSpy = this.spy(oClickEvent, "preventDefault");
+
+		var oDeviceStub = this.stub(Device, "system").value({ phone: true });
 
 		oLink.placeAt("qunit-fixture");
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerEvent("click", oLink.getId(), oFakeEvent);
+		oLink.getDomRef().dispatchEvent(oClickEvent);
 
 		// Assert
 		assert.ok(oPressSpy.calledOnce, "Press event still fired");
-		assert.ok(oPreventDefaultSpy.calledOnce, "Default action is prevented");
+		// The event is prevented twice due to the native event handling and simulated event handling
+		assert.ok(oPreventDefaultSpy.calledTwice, "Default action is prevented");
 
 		// Clean
 		oPreventDefaultSpy.resetHistory();
@@ -607,13 +611,14 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerEvent("click", oLink.getId(), oFakeEvent);
+		oLink.getDomRef().dispatchEvent(oClickEvent);
 
 		// Assert
 		assert.ok(oPreventDefaultSpy.notCalled, "Navigation would not be prevented");
 
 		// Clean
 		oLink.destroy();
+		oDeviceStub.restore();
 	});
 
 	QUnit.test("The press event is prevented even if the link's DOM is moved into the static area", function(assert) {
