@@ -7,7 +7,6 @@ sap.ui.define([
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/m/library',
-	'sap/ui/table/library',
 	'sap/base/util/restricted/_throttle',
 	'sap/ui/mdc/util/Common',
 	'sap/base/Log',
@@ -19,7 +18,6 @@ sap.ui.define([
 	loadModules,
 	ValueHelpSelectionType,
 	mLibrary,
-	uiTableLibrary,
 	throttle,
 	Common,
 	Log,
@@ -31,10 +29,6 @@ sap.ui.define([
 
 	var ListMode = mLibrary.ListMode;
 	var Sticky = mLibrary.Sticky;
-
-	var UITableVisibleRowCountMode = uiTableLibrary.VisibleRowCountMode;
-	var UITableSelectionMode = uiTableLibrary.SelectionMode;
-	var UITableSelectionBehavior = uiTableLibrary.SelectionBehavior;
 
 	var _getMDCTableType = function(oTable) {
 		var sType, oType = sType = oTable && oTable.getType();
@@ -208,6 +202,13 @@ sap.ui.define([
 				}
 			},
 			adjustTable: function () {
+				// lazy dependency to sap.ui.table library
+				// as the oInnerTable exists already, probing access to the library module should be enough
+				var uiTableLibrary = sap.ui.require("sap/ui/table/library");
+				var UITableVisibleRowCountMode = uiTableLibrary.VisibleRowCountMode;
+				var UITableSelectionMode = uiTableLibrary.SelectionMode;
+				var UITableSelectionBehavior = uiTableLibrary.SelectionBehavior;
+
 				var oRowMode = oInnerTable.getRowMode();
 				if (!oRowMode) {
 					oInnerTable.setVisibleRowCountMode(UITableVisibleRowCountMode.Auto);
