@@ -738,6 +738,7 @@ sap.ui.define([
 		assert.equal(oField._oContentFactory._oConditionType.getFormatOptions().valueType.getFormatOptions().strictParsing, true, "strictParsing set to true on internal type");
 		assert.equal(oField._oContentFactory._oUnitConditionsType.getFormatOptions().valueType.getFormatOptions().showNumber, false, "showNumber set to false on internal unit type");
 		assert.equal(oField._oContentFactory._oUnitConditionsType.getFormatOptions().valueType.getFormatOptions().strictParsing, true, "strictParsing set to true on internal unit type");
+		assert.deepEqual(oField.getAccessibilityInfo(), {children: [oContent1, oContent2]}, "accessibility info returned both controls as children");
 
 		var oSuggestControl = oField.getControlForSuggestion();
 		assert.equal(oSuggestControl, oContent2, "Unit control is used for suggestion");
