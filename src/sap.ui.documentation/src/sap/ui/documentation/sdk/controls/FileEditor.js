@@ -341,7 +341,6 @@ sap.ui.define(
 		};
 
 		FileEditor.prototype._onFileSwitch = function(oEvent) {
-			this._bFileSwitched = true;
 			this._update();
 		};
 
@@ -353,8 +352,7 @@ sap.ui.define(
 			if (this._bPreventLiveChange) {
 				return;
 			}
-			if (this._bFileSwitched && oEvent.getParameter("value") === "") {
-				this._bFileSwitched = false;
+			if (oEvent.getParameter("value") === "") {
 				return;
 			}
 			if (this._bClearButtonPressed && oEvent.getParameter("value") === "") {
@@ -367,7 +365,7 @@ sap.ui.define(
 			var oCurrentFile = aFiles.find(function(oFile) {
 				return oFile.key === oCurrentKey;
 			});
-			if (oCurrentFile.content === oEvent.getParameter("value")) {
+			if (!oCurrentFile || oCurrentFile.content === oEvent.getParameter("value")) {
 				return;
 			}
 
