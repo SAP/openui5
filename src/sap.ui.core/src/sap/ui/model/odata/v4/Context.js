@@ -131,9 +131,11 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.checkUpdate = function () {
-		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding.checkUpdate();
-		});
+		if (this.oModel) { // might have already been destroyed
+			this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+				oDependentBinding.checkUpdate();
+			});
+		}
 	};
 
 	/**
