@@ -55,7 +55,9 @@ sap.ui.define([
 		}, true)
 		.then(function(oCreatedFilterField) {
 			oFilterField = oCreatedFilterField;
-			oModifier.setAssociation(oFilterField, "valueHelp", JSONFilterBarDelegate._createValueHelp(sName, oView, sViewId));
+			if (sName === "name" || sName === "range") {
+				oModifier.setAssociation(oFilterField, "valueHelp", JSONFilterBarDelegate._createValueHelp(sName, oView, sViewId));
+			}
 			if (oProperty.filterOperators) {
 				if (oFilterBar.getId) {
 					return oModifier.setProperty(oFilterField, "operators", oProperty.filterOperators);

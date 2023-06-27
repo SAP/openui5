@@ -13,7 +13,10 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 						"webapp/index.html",
 						"webapp/manifest.json",
 						"webapp/delegate/JSONFilterBarDelegate.js",
-						"webapp/delegate/JSONTableDelegate.js"
+						"webapp/delegate/JSONTableDelegate.js",
+						"webapp/view/Mountains.view.xml",
+						"webapp/view/fragment/NameValueHelp.fragment.xml",
+						"webapp/view/fragment/RangeValueHelp.fragment.xml"
 					]
 				}
 			}
