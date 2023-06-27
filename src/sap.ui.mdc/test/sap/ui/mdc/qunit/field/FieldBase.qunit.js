@@ -699,7 +699,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		assert.ok(iCalled >= 1, "enhanceAccessibilityState called on Parent");
-		assert.equal(sId, "F1", "enhanceAccessibilityState called for Field");
+		assert.equal(sId, "F1-inner", "enhanceAccessibilityState called for inner control");
 		delete oParent.enhanceAccessibilityState;
 
 	});
