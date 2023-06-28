@@ -11,13 +11,14 @@ sap.ui.define([
 	'sap/ui/core/UIArea',
 	'sap/ui/core/Element',
 	'sap/ui/core/Configuration',
+	'sap/ui/core/Lib',
 	'sap/ui/core/Rendering',
 	'sap/ui/core/RenderManager',
 	'sap/ui/core/Theming',
 	'sap/ui/core/theming/ThemeManager',
 	'sap/ui/qunit/utils/createAndAppendDiv',
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Configuration, Rendering, RenderManager, Theming, ThemeManager, createAndAppendDiv, nextUIUpdate) {
+], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Configuration, Library, Rendering, RenderManager, Theming, ThemeManager, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	var privateLoaderAPI = sap.ui.loader._;
@@ -598,10 +599,10 @@ sap.ui.define([
 	QUnit.module("loadLibrary", {
 		beforeEach: function(assert) {
 			assert.notOk(Configuration.getDebug(), "debug mode must be deactivated to properly test library loading");
-			this.oConfigurationGetPreloadStub = this.stub(Configuration, "getPreload").returns("sync");
+			this.oLibraryGetPreloadStub = this.stub(Library, "getPreloadMode").returns("sync");
 		},
 		afterEach: function(assert) {
-			this.oConfigurationGetPreloadStub.restore();
+			this.oLibraryGetPreloadStub.restore();
 			delete window.testlibs;
 		}
 	});

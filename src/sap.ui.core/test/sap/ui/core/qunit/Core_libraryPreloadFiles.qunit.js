@@ -2,8 +2,8 @@
 sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
-], function(ObjectPath, jQuery, Configuration) {
+	"sap/ui/core/Lib"
+], function(ObjectPath, jQuery, Library) {
 	"use strict";
 
 	var privateLoaderAPI = sap.ui.loader._;
@@ -50,7 +50,7 @@ sap.ui.define([
 		assert.ok(EXPECTATIONS[cfgLibraryPreloadFiles], "[precondition] configured variants should be described in EXPECTATIONS");
 
 		// sync or async both activate the preload
-		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
+		this.oLibraryGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("sync");
 
 		this.spy(privateLoaderAPI, 'loadJSResourceAsync');
 		this.spy(XMLHttpRequest.prototype, 'open');
@@ -106,7 +106,7 @@ sap.ui.define([
 			});
 
 		}).finally(function () {
-			this.oConfigurationGetPreloadStub.restore();
+			this.oLibraryGetPreloadStub.restore();
 		}.bind(this));
 
 	});

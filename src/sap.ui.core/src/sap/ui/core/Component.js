@@ -504,6 +504,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Currently active preload mode for components or falsy value.
+	 *
+	 * @returns {string} component preload mode
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.ui.fl
+	 * @experimental Might change completely.
+	 * @since 1.120.0
+	 */
+	Component.getComponentPreloadMode = function() {
+		return BaseConfig.get({
+			name: "sapUiXxComponentPreload",
+			type: BaseConfig.Type.String,
+			external: true
+		}) || Library.getPreloadMode();
+	};
+
+	/**
 	 * Returns the metadata for the Component class.
 	 *
 	 * @return {sap.ui.core.ComponentMetadata} Metadata for the Component class.
@@ -2846,7 +2863,7 @@ sap.ui.define([
 			sName = oConfig.name,
 			sUrl = oConfig.url,
 			oConfiguration = Configuration,
-			bComponentPreload = /^(sync|async)$/.test(oConfiguration.getComponentPreload()),
+			bComponentPreload = /^(sync|async)$/.test(Component.getComponentPreloadMode()),
 			vManifest = oConfig.manifest,
 			bManifestFirst,
 			sManifestUrl,

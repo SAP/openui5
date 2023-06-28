@@ -1474,7 +1474,7 @@ sap.ui.define([
 			}
 		});
 
-		var bPreload = Configuration.getPreload() === 'sync' || Configuration.getPreload() === 'async',
+		var bPreload = Library.getPreloadMode() === 'sync' || Library.getPreloadMode() === 'async',
 			bRequire = !mOptions.preloadOnly;
 
 		if (!mOptions.sync) {
@@ -1726,6 +1726,40 @@ sap.ui.define([
 			type: BaseConfig.Type.Boolean,
 			external: true
 		});
+	};
+
+
+
+	/**
+	 * Currently active preload mode for libraries or falsy value.
+	 *
+	 * @returns {string} preload mode
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 * @since 1.120.0
+	 */
+	Library.getPreloadMode = function() {
+		// if debug sources are requested, then the preload feature must be deactivated
+		if (Configuration.getDebug() === true) {
+			return "";
+		}
+		// determine preload mode (e.g. resolve default or auto)
+		let sPreloadMode = BaseConfig.get({
+			name: "sapUiPreload",
+			type: BaseConfig.Type.String,
+			defaultValue: "auto",
+			external: true
+		});
+		// when the preload mode is 'auto', it will be set to 'async' or 'sync' for optimized sources
+		// depending on whether the ui5loader is configured async
+		if ( sPreloadMode === "auto" ) {
+			if (window["sap-ui-optimized"]) {
+				sPreloadMode = sap.ui.loader.config().async ? "async" : "sync";
+			} else {
+				sPreloadMode = "";
+			}
+		}
+		return sPreloadMode;
 	};
 
 	return Library;

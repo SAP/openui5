@@ -8,12 +8,15 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/support/library",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib"
 ], function(
 	jQuery,
 	SupportLib,
 	XMLView,
-	Configuration) {
+	Configuration,
+	Library
+) {
 	"use strict";
 
 	// shortcuts
@@ -64,7 +67,7 @@ sap.ui.define([
 			return;
 		}
 
-		var vPreloadMode = Configuration.getPreload(),
+		var vPreloadMode = Library.getPreloadMode(),
 			bLoaderIsAsync = sap.ui.loader.config().async;
 
 		var sDetails = "It is recommended to use the configuration option " +
