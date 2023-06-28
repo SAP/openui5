@@ -1815,6 +1815,7 @@ sap.ui.define([
 
 		this.bKeepAlive = bKeepAlive;
 		this.fnOnBeforeDestroy = bKeepAlive ? fnOnBeforeDestroy : undefined;
+		this.oBinding.onKeepAliveChanged(this);
 	};
 
 	/**
@@ -1926,6 +1927,7 @@ sap.ui.define([
 			throw new Error("Must not select a deleted entity: " + this);
 		}
 		this.bSelected = bSelected;
+		this.oBinding.onKeepAliveChanged(this); // selected contexts are effectively kept alive
 	};
 
 	/**

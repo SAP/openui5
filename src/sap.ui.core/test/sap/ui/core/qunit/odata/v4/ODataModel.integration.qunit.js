@@ -44134,6 +44134,9 @@ sap.ui.define([
 	//     still unresolved. The object page must be useable nevertheless. In the end resolve the
 	//     list and see that it is in sync with the object page.
 	//     JIRA: CPOUI5ODATAV4-1407
+	//
+	//     Reset the keep-alive status and request the active entity again in this scenario.
+	//     BCP: 441477 / 2023 (002075129400004414772023)
 	// Steps:
 	// (1) and (2) initialization in different order
 	// (3) edit action
@@ -44453,6 +44456,10 @@ sap.ui.define([
 			return that.waitForChanges(assert, "(6) cancel");
 		}).then(function () {
 			if (oFixture.list === 7) {
+				oActiveContext.setKeepAlive(false);
+				oActiveContext = that.oModel.getKeepAliveContext(
+					"/Artists(ArtistID='A1',IsActiveEntity=true)", true,
+					{$$patchWithoutSideEffects : true});
 				initializeList(6);
 			}
 
@@ -44889,6 +44896,180 @@ sap.ui.define([
 				+ oListBinding));
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Flexible Column Layout, ODataModel#getKeepAliveContext
+	// Object page requests a kept-alive context. The context's keep-alive status is removed, either
+	// still in the temporary binding or hidden in the $$getKeepAliveContext binding. Later a
+	// kept-alive context for the same path is requested; its data must be read from the server
+	// again.
+	// BCP: 441477 / 2023 (002075129400004414772023)
+[false, true].forEach(function (bTemporary) {
+	var sTitle = "BCP: 441477 / 2023: getKeepAliveContext, temporary=" + bTemporary;
+
+	QUnit.test(sTitle, function (assert) {
+		var oContext,
+			oListBinding,
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			oObjectPage,
+			sView = '\
+<Table id="list" growing="true" growingThreshold="1"\
+		items="{path : \'/Artists\', parameters : {$$getKeepAliveContext : true},\
+			suspended : true}">\
+	<Text id="listName" text="{Name}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Text id="name" text="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("listName", [])
+			.expectChange("name");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='3',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Name", {
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "The Beatles"
+				})
+				.expectChange("name", "The Beatles");
+
+			oContext = oModel.getKeepAliveContext("/Artists(ArtistID='3',IsActiveEntity=false)");
+			oObjectPage = that.oView.byId("objectPage");
+			oObjectPage.setBindingContext(oContext);
+
+			return that.waitForChanges(assert, "1st getKeepAliveContext");
+		}).then(function () {
+			if (!bTemporary) {
+				that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name"
+						+ "&$skip=0&$top=1", {
+						value : [{
+							ArtistID : "1",
+							IsActiveEntity : true,
+							Name : "The Who"
+						}]
+					})
+					.expectChange("listName", ["The Who"]);
+
+				oListBinding = that.oView.byId("list").getBinding("items");
+				oListBinding.resume();
+
+				return that.waitForChanges(assert, "transfer to the list");
+			}
+		}).then(function () {
+			if (!bTemporary) {
+				assert.strictEqual(oContext.getBinding(), oListBinding, "transferred to the list");
+			}
+
+			that.expectChange("name", null);
+
+			oObjectPage.setBindingContext(null); // unbind before destruction
+
+			// code under test
+			oContext.setKeepAlive(false);
+
+			return that.waitForChanges(assert, "setKeepAlive(false)");
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='3',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Name", {
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "The Beatles *"
+				})
+				.expectChange("name", "The Beatles *");
+
+			oContext = oModel.getKeepAliveContext("/Artists(ArtistID='3',IsActiveEntity=false)");
+			oObjectPage.setBindingContext(oContext);
+
+			return that.waitForChanges(assert, "2nd getKeepAliveContext");
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Flexible Column Layout, ODataModel#getKeepAliveContext
+	// Object page requests a hidden kept-alive context for a list with data. The context's
+	// keep-alive status is removed. Later the entity is changed on the server and then loaded via
+	// paging, it must show the new data.
+	// BCP: 441477 / 2023 (002075129400004414772023)
+[false, true].forEach(function (bETag) {
+	var sTitle = "BCP: 441477 / 2023: getKeepAliveContext & paging, eTag=" + bETag;
+
+	QUnit.test(sTitle, function (assert) {
+		var oContext,
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			oObjectPage,
+			sView = '\
+<Table id="list" growing="true" growingThreshold="1" \
+		items="{path : \'/Artists\', parameters : {$$getKeepAliveContext : true}}">\
+	<Text id="listName" text="{Name}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Text id="name" text="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name"
+				+ "&$skip=0&$top=1", {
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : true,
+					Name : "The Who"
+				}]
+			})
+			.expectChange("listName", ["The Who"])
+			.expectChange("name");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oResponse = {
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "The Beatles"
+				};
+
+			if (bETag) {
+				oResponse["@odata.etag"] = "etag1";
+			}
+			that.expectRequest("Artists(ArtistID='3',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Name",
+					oResponse)
+				.expectChange("name", "The Beatles");
+
+			oContext = oModel.getKeepAliveContext("/Artists(ArtistID='3',IsActiveEntity=false)");
+			oObjectPage = that.oView.byId("objectPage");
+			oObjectPage.setBindingContext(oContext);
+
+			return that.waitForChanges(assert, "getKeepAliveContext");
+		}).then(function () {
+			that.expectChange("name", null);
+
+			oObjectPage.setBindingContext(null); // unbind before destruction
+
+			// code under test
+			oContext.setKeepAlive(false);
+
+			return that.waitForChanges(assert, "setKeepAlive(false)");
+		}).then(function () {
+			var oResponse = {
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "The Beatles *"
+				};
+
+			if (bETag) {
+				oResponse["@odata.etag"] = "etag2";
+			}
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name&$skip=1&$top=1",
+					{value : [oResponse]})
+				.expectChange("listName", [, "The Beatles *"]);
+
+			that.oView.byId("list").requestItems();
+
+			return that.waitForChanges(assert, "request more items");
+		});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: List report with absolute binding, object page with a late property. Ensure that
