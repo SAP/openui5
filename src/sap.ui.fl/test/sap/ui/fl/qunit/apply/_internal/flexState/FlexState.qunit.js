@@ -168,6 +168,40 @@ sap.ui.define([
 				);
 			});
 		});
+
+		QUnit.test("When the storage response includes variants that reference an unavailable parent variant", function(assert) {
+			sandbox.stub(Loader, "loadFlexData").resolves(merge(
+				{},
+				mEmptyResponse,
+				{
+					changes: {
+						variants: [{
+							// Same id but belongs to a different vm
+							variantReference: "someOtherVmReference",
+							variantManagementReference: "someOtherVmReference",
+							fileType: "ctrl_variant",
+							fileName: "someOtherVariant"
+						}, {
+							variantReference: "someOtherVariant",
+							variantManagementReference: "vmReference",
+							fileType: "ctrl_variant",
+							fileName: "customVariant"
+						}]
+					}
+				}
+			));
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			})
+			.then(function() {
+				assert.strictEqual(
+					FlexState.getFlexObjectsDataSelector().get({reference: sReference})[1].getVariantReference(),
+					"vmReference",
+					"then the variant reference is changed to the standard variant"
+				);
+			});
+		});
 	});
 
 	QUnit.module("FlexState with loadFlexData, callPrepareFunction and filtering stubbed", {

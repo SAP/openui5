@@ -125,6 +125,42 @@ sap.ui.define([
 		flexObjects: {}
 	};
 
+	function prepareChangeDefinitions(sStorageResponseKey, vStorageResponsePart) {
+		var fnPreparation = {
+			comp: function() {
+				return Object.values(vStorageResponsePart).reduce(function(aChangeDefinitions, oChangeDefinition) {
+					return aChangeDefinitions.concat(oChangeDefinition);
+				}, []);
+			},
+			variants: function() {
+				return vStorageResponsePart.map(function(oVariant) {
+					var bParentVariantExists = (
+						oVariant.variantReference === oVariant.variantManagementReference
+						|| vStorageResponsePart.some(function(oOtherVariant) {
+							return (
+								oOtherVariant.variantManagementReference === oVariant.variantManagementReference
+								&& oOtherVariant.fileName === oVariant.variantReference
+							);
+						})
+					);
+					// If the parent variant no longer exists, change the reference to the standard variant
+					if (!bParentVariantExists) {
+						return Object.assign(
+							{},
+							oVariant,
+							{ variantReference: oVariant.variantManagementReference }
+						);
+					}
+					return oVariant;
+				});
+			}
+		}[sStorageResponseKey];
+		if (fnPreparation) {
+			return fnPreparation();
+		}
+		return Array.isArray(vStorageResponsePart) ? vStorageResponsePart : [];
+	}
+
 	function enhancePropertyBag(mPropertyBag) {
 		var oComponent = Component.get(mPropertyBag.componentId);
 		mPropertyBag.componentData = mPropertyBag.componentData || (oComponent && oComponent.getComponentData()) || {};
@@ -135,17 +171,9 @@ sap.ui.define([
 	function createFlexObjects(oStorageResponse) {
 		var aFlexObjects = [];
 		each(oStorageResponse.changes, function(sKey, vValue) {
-			if (Array.isArray(vValue)) {
-				vValue.forEach(function(oChangeDef) {
-					aFlexObjects.push(FlexObjectFactory.createFromFileContent(oChangeDef, null, true));
-				});
-			} else if (sKey === "comp") {
-				each(vValue, function(sKey, vValue) {
-					vValue.forEach(function(oChangeDef) {
-						aFlexObjects.push(FlexObjectFactory.createFromFileContent(oChangeDef, null, true));
-					});
-				});
-			}
+			prepareChangeDefinitions(sKey, vValue).forEach(function(oChangeDef) {
+				aFlexObjects.push(FlexObjectFactory.createFromFileContent(oChangeDef, null, true));
+			});
 		});
 		return aFlexObjects;
 	}
@@ -245,13 +273,9 @@ sap.ui.define([
 		var aChangeDefinitions = [];
 
 		each(oStorageResponse.changes, function(sKey, vValue) {
-			if (Array.isArray(vValue)) {
-				aChangeDefinitions = aChangeDefinitions.concat(vValue);
-			} else if (sKey === "comp") {
-				each(vValue, function(sKey, vValue) {
-					aChangeDefinitions = aChangeDefinitions.concat(vValue);
-				});
-			}
+			prepareChangeDefinitions(sKey, vValue).forEach(function(oChangeDef) {
+				aChangeDefinitions.push(oChangeDef);
+			});
 		});
 
 		_mInstances[sReference].runtimePersistence = Object.assign(oRuntimePersistence, {
