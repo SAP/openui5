@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Core"
