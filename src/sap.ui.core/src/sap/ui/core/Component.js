@@ -455,25 +455,30 @@ sap.ui.define([
 	function getCustomizingComponent(vObject) {
 		var oComponent, sComponentId;
 
-		if (!Configuration.getDisableCustomizing()) {
-			if (typeof vObject === "string") {
-				sComponentId = vObject;
-			} else if (vObject && typeof vObject.isA === "function" && !vObject.isA("sap.ui.core.Component")) {
-				sComponentId = Component.getOwnerIdFor(vObject);
-			} else {
-				oComponent = vObject;
-			}
+		/**
+		 * deprecated as of Version 1.120
+		 */
+		if (BaseConfig.get({name: "sapUiXxDisableCustomizing", type: BaseConfig.Type.Boolean})) {
+			return oComponent;
+		}
 
-			if (sComponentId) {
-				oComponent = Component.get(sComponentId);
-			}
+		if (typeof vObject === "string") {
+			sComponentId = vObject;
+		} else if (vObject && typeof vObject.isA === "function" && !vObject.isA("sap.ui.core.Component")) {
+			sComponentId = Component.getOwnerIdFor(vObject);
+		} else {
+			oComponent = vObject;
+		}
 
-			if (oComponent) {
-				if (oComponent.getExtensionComponent) {
-					oComponent = oComponent.getExtensionComponent();
-					if (!oComponent) {
-						throw new Error("getExtensionComponent() must return an instance.");
-					}
+		if (sComponentId) {
+			oComponent = Component.get(sComponentId);
+		}
+
+		if (oComponent) {
+			if (oComponent.getExtensionComponent) {
+				oComponent = oComponent.getExtensionComponent();
+				if (!oComponent) {
+					throw new Error("getExtensionComponent() must return an instance.");
 				}
 			}
 		}

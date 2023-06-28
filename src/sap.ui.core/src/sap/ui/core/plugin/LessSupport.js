@@ -4,6 +4,8 @@
 
 /**
  * FEATURE TO INCREASE DEVELOPMENT EXPERIENCE! NO PRODUCTIVE USAGE ALLOWED!
+ * @fileoverview
+ * @deprecated As of version 1.120
  */
 (function() {
 	"use strict";

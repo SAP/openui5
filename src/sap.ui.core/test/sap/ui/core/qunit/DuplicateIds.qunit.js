@@ -7,6 +7,9 @@ sap.ui.define([
 	var oListItem;
 	var oListItem2;
 
+	/**
+	 * @deprecated As of Version 1.120.
+	 */
 	// check default settings
 	QUnit.test("Default Settings", function(assert) {
 		assert.expect(1);

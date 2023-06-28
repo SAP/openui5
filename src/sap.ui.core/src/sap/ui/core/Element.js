@@ -216,13 +216,16 @@ sap.ui.define([
 				oldElement.destroy();
 			} else {
 				var sMsg = "adding element with duplicate id '" + sId + "'";
-				// duplicate ID detected => fail or at least log a warning
-				if (Configuration.getNoDuplicateIds()) {
-					Log.error(sMsg);
-					throw new Error("Error: " + sMsg);
-				} else {
+				/**
+				 * duplicate ID detected => fail or at least log a warning
+				 * @deprecated As of Version 1.120.
+				 */
+				if (!Configuration.getNoDuplicateIds()) {
 					Log.warning(sMsg);
+					return;
 				}
+				Log.error(sMsg);
+				throw new Error("Error: " + sMsg);
 			}
 		}
 	});

@@ -420,6 +420,9 @@ sap.ui.define([
 			}
 			sap.ui.loader.config({paths: paths});
 
+			/**
+			 * @deprecated As of Version 1.120
+			 */
 			Configuration.setCore(this);
 
 			/**
@@ -511,7 +514,10 @@ sap.ui.define([
 				this.aLibs.unshift("sap.ui.core");
 			}
 
-			// enable LessSupport if specified in configuration
+			/**
+			 * enable LessSupport if specified in configuration
+			 * @deprecated As of Version 1.120
+			 */
 			if (BaseConfig.get({name: "sapUiXxLesssupport", type: BaseConfig.Type.Boolean}) && !this.aModules.includes("sap.ui.core.plugin.LessSupport")) {
 				Log.info("Including LessSupport into declared modules");
 				this.aModules.push("sap.ui.core.plugin.LessSupport");
@@ -1123,6 +1129,9 @@ sap.ui.define([
 
 		Measurement.end("coreInit");
 
+		/**
+		 * @deprecated As of Version 1.120.
+		 */
 		this._setBodyAccessibilityRole();
 
 		var sWaitForTheme = getWaitForTheme();
@@ -1257,6 +1266,9 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @deprecated As of Version 1.120.
+	 */
 	Core.prototype._setBodyAccessibilityRole = function() {
 		var body = document.body;
 
@@ -1281,6 +1293,9 @@ sap.ui.define([
 		Log.info("Plugins started",null,METHOD);
 
 		this._executeOnInit();
+		/**
+		 * @deprecated As of Version 1.120.
+		 */
 		this._setupRootComponent(); // @legacy-relevant: private API for 2 deprecated concepts "rootComponent" & "sap.ui.app.Application"
 		this.pReady.resolve();
 		this.bReady = true;
@@ -1409,6 +1424,7 @@ sap.ui.define([
 	 *
 	 * @return {sap.ui.core.Configuration} the Configuration of the current Core.
 	 * @public
+	 * @deprecated As of Version 1.120. Please see {@link sap.ui.core.Configuration Configuration} for the corrsponding replacements.
 	 */
 	Core.prototype.getConfiguration = function () {
 		return Configuration;
