@@ -202,7 +202,6 @@ sap.ui.define([
 		}
 	});
 
-
 	QUnit.test('When the _mRuleSets is set', function (assert) {
 		// arrange
 		var testValue = "test";
@@ -345,6 +344,28 @@ sap.ui.define([
 
 		ObjectPath.get.restore();
 		Log.error.restore();
+	});
+
+	QUnit.test("_fetchRuleSet twice for the same library with rulesets as array", function (assert) {
+		// Arrange
+		sinon.stub(ObjectPath, "get", function (sLibName) {
+			return {
+				library: {
+					support: createRuleSetObject("sap.test", "validRule", 1)
+				}
+			};
+		});
+		sinon.spy(RuleSetLoader, "_createRuleSet");
+
+		// Act
+		RuleSetLoader._fetchRuleSet("sap.test");
+		RuleSetLoader._fetchRuleSet("sap.test");
+
+		//Assert
+		assert.strictEqual(RuleSetLoader._createRuleSet.callCount, 1, "Should have created the ruleset only once");
+
+		ObjectPath.get.restore();
+		RuleSetLoader._createRuleSet.restore();
 	});
 
 	QUnit.test("fetchNonLoadedRuleSets", function (assert) {

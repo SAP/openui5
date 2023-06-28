@@ -126,7 +126,7 @@ function (Log, VersionInfo, ManagedObject, Core, Element, Component, Analyzer, C
 		this._oCoreFacade = CoreFacade(Core);
 		this._oExecutionScope = null;
 		this._createElementSpies();
-		Core.attachLibraryChanged(RuleSetLoader._onLibraryChanged);
+		Core.attachLibraryChanged(RuleSetLoader._onLibraryChanged.bind(RuleSetLoader));
 
 		// Make sure that we load UI frame, when no parameter supplied
 		// but tools is required to load, or when parameter is there
