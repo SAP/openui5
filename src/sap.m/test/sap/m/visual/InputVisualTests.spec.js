@@ -53,6 +53,8 @@ describe("sap.m.InputVisualTests", function() {
 			oInput.click();
 
 			browser.actions().sendKeys("A").perform();
+			//wait until popover opens
+			browser.sleep(1000);
 			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
