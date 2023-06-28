@@ -246,7 +246,6 @@ sap.ui.define([
 					function fnReturnOverlay() {
 						return oOverlay;
 					}
-					this.oDesignTime.addPlugin(this.oPlugin);
 					this.oPlugin.registerElementOverlay(oOverlay);
 					return DtUtil.waitForSynced(this.oDesignTime, fnReturnOverlay)();
 				}.bind(this))
@@ -278,7 +277,6 @@ sap.ui.define([
 				}
 			}, ON_SIBLING)
 			.then(function(oOverlay) {
-				this.oDesignTime.addPlugin(this.oPlugin);
 				this.oPlugin.registerElementOverlay(oOverlay);
 				return DtUtil.waitForSynced(this.oDesignTime, function() {
 					return oOverlay;
@@ -304,7 +302,6 @@ sap.ui.define([
 				}
 			}, ON_SIBLING)
 			.then(function(oOverlay) {
-				this.oDesignTime.addPlugin(this.oPlugin);
 				this.oPlugin.registerElementOverlay(oOverlay);
 				return DtUtil.waitForSynced(this.oDesignTime, function() {
 					return oOverlay;
@@ -323,7 +320,6 @@ sap.ui.define([
 				noName: true
 			}, ON_SIBLING)
 			.then(function(oOverlay) {
-				this.oDesignTime.addPlugin(this.oPlugin);
 				this.oPlugin.registerElementOverlay(oOverlay);
 				return DtUtil.waitForSynced(this.oDesignTime, function() {
 					return oOverlay;
@@ -354,7 +350,6 @@ sap.ui.define([
 				}
 			}, ON_SIBLING)
 			.then(function(oOverlay) {
-				this.oDesignTime.addPlugin(this.oPlugin);
 				this.oPlugin.registerElementOverlay(oOverlay);
 				return DtUtil.waitForSynced(this.oDesignTime, function() {
 					return oOverlay;
@@ -1478,9 +1473,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'getActions' is called multiple times without invalidate", function(assert) {
-			var oGetRevealActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getRevealActions");
-			var oGetAddActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getAddViaDelegateActions");
-
 			return createOverlayWithAggregationActions.call(this,
 				{
 					add: {
@@ -1496,6 +1488,8 @@ sap.ui.define([
 				ON_SIBLING
 			)
 			.then(function(oOverlay) {
+				var oGetRevealActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getRevealActions");
+				var oGetAddActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getAddViaDelegateActions");
 				return AdditionalElementsActionExtractor.getActions(true, oOverlay, this.oPlugin, false)
 				.then(function() {
 					assert.equal(oGetRevealActionsSpy.callCount, 1, "the reveal action was calculated once");
@@ -1512,9 +1506,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'getActions' is called multiple times with invalidate", function(assert) {
-			var oGetRevealActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getRevealActions");
-			var oGetAddActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getAddViaDelegateActions");
-
 			return createOverlayWithAggregationActions.call(this,
 				{
 					add: {
@@ -1530,6 +1521,8 @@ sap.ui.define([
 				ON_SIBLING
 			)
 			.then(function(oOverlay) {
+				var oGetRevealActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getRevealActions");
+				var oGetAddActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getAddViaDelegateActions");
 				return AdditionalElementsActionExtractor.getActions(true, oOverlay, this.oPlugin, true)
 				.then(function() {
 					assert.equal(oGetRevealActionsSpy.callCount, 1, "the reveal action was calculated once");
@@ -1896,6 +1889,7 @@ sap.ui.define([
 			sandbox.restore();
 			this.oButton.destroy();
 			this.oDesignTime.destroy();
+			this.oPlugin.destroy();
 		}
 	}, function() {
 		QUnit.test("when the control gets destroyed during isEditable", function(assert) {
@@ -2019,7 +2013,11 @@ sap.ui.define([
 		this.oDialog = this.oPlugin.getDialog();
 
 		// simulate dialog closed with OK/CANCEL
-		this.fnDialogOpen = sandbox.stub(this.oDialog, "open").returns(oDialogReturnValue);
+		this.fnDialogOpen = sandbox.stub(this.oDialog, "open").callsFake(function() {
+			return this.oDialog._oDialogPromise.then(function() {
+				return oDialogReturnValue;
+			});
+		}.bind(this));
 	}
 
 	function enhanceForResponsibleElement(mActions) {
@@ -2159,6 +2157,7 @@ sap.ui.define([
 		}.bind(this))
 		.then(function() {
 			oCore.applyChanges();
+			this.oDesignTime.addPlugin(this.oPlugin);
 			switch (sOverlayType) {
 				case ON_SIBLING :
 					return this.oSiblingOverlay;
