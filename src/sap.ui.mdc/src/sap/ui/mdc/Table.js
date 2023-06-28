@@ -2635,9 +2635,9 @@ sap.ui.define([
 	/**
 	 * Static method for checking and wrapping binding event listeners
 	 *
-	 * @param {object} oBindingInfo - the bindingInfo (or binding parameter) instance
-	 * @param {object} sEventName - the event name
-	 * @param {object} fHandler - the handler to be called internally
+	 * @param {object} oBindingInfo The <code>bindingInfo</code> (or binding parameter) instance
+	 * @param {object} sEventName The event name
+	 * @param {object} fHandler The handler that is called internally
 	 * @private
 	 */
 	Table._addBindingListener = function(oBindingInfo, sEventName, fHandler) {
