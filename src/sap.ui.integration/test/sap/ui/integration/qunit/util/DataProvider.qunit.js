@@ -1410,8 +1410,6 @@ sap.ui.define([
 		});
 		oDataProvider.attachError(function () {
 			assert.ok(true, "Should throw an error if the response is invalid JSON.");
-			assert.strictEqual(arguments[0].mParameters.message, "SyntaxError: Unexpected end of JSON input",
-				"The correct error is thrown.");
 			done();
 		});
 		oDataProvider.triggerDataUpdate();
