@@ -24,8 +24,6 @@ sap.ui.define([
 	 *  sap.ui.core.RenderManager RenderManager} API documentation for detailed information
 	 */
 
-	var Object_hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
-
 	/**
 	 * Creates a new metadata object for a UIElement subclass.
 	 *
@@ -130,7 +128,7 @@ sap.ui.define([
 		this._sVisibility = oStaticInfo.visibility || "public";
 
 		// remove renderer stuff before calling super.
-		var vRenderer = Object_hasOwn(oClassInfo, "renderer") ? (oClassInfo.renderer || "") : undefined;
+		var vRenderer = Object.hasOwn(oClassInfo, "renderer") ? (oClassInfo.renderer || "") : undefined;
 		delete oClassInfo.renderer;
 
 		ManagedObjectMetadata.prototype.applySettings.call(this, oClassInfo);

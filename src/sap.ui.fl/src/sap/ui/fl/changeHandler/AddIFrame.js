@@ -97,7 +97,7 @@ sap.ui.define([
 		var oAppComponent = mPropertyBag.appComponent;
 		// Required settings
 		["targetAggregation", "baseId", "url"].forEach(function(sRequiredProperty) {
-			if (!Object.prototype.hasOwnProperty.call(oSpecificChangeInfo.content, sRequiredProperty)) {
+			if (!Object.hasOwn(oSpecificChangeInfo.content, sRequiredProperty)) {
 				throw new Error("Attribute missing from the change specific content '" + sRequiredProperty + "'");
 			}
 		});

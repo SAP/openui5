@@ -106,8 +106,8 @@ sap.ui.define([
 				var iOwnSettings = 0;
 
 				function hasOwnMethod(obj, name) {
-					return Object.prototype.hasOwnProperty.call(obj, name)
-						|| Object.prototype.hasOwnProperty.call(Class.prototype, name)
+					return Object.hasOwn(obj, name)
+						|| Object.hasOwn(Class.prototype, name)
 						|| bForceTest4AllMethods;
 				}
 

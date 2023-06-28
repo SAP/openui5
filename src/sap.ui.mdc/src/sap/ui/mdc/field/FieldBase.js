@@ -3493,7 +3493,7 @@ sap.ui.define([
 
 		// as bound propertys are never initial even if there is no existing binding right now check the binding too
 		if (this.isBound(sPropertyName) && !this.getBinding(sPropertyName)) {
-			return !Object.prototype.hasOwnProperty.call(this.mProperties, sPropertyName);
+			return !Object.hasOwn(this.mProperties, sPropertyName);
 		} else {
 			return this.isPropertyInitial(sPropertyName);
 		}

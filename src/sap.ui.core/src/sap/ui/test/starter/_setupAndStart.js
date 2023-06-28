@@ -16,9 +16,6 @@ sap.ui.define([
 ], function(UriParameters, fetch, utils) {
 	"use strict";
 
-	// shortcut for Object.prototype.hasOwnProperty.call(obj, prop)
-	var Object_hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
-
 	function makeArray(arg) {
 		return Array.isArray(arg) ? arg : [arg];
 	}
@@ -34,7 +31,7 @@ sap.ui.define([
 	function copyFiltered(target, source, filter) {
 		if ( source ) {
 			for ( var key in source ) {
-				if ( Object_hasOwn(filter, key) ) {
+				if ( Object.hasOwn(filter, key) ) {
 					target[key] = source[key];
 				}
 			}
@@ -124,7 +121,7 @@ sap.ui.define([
 		var version = componentConfig.version || null;
 
 		while ( typeof version !== "object" ) {
-			if ( !Object_hasOwn(versionsMap, version) ) {
+			if ( !Object.hasOwn(versionsMap, version) ) {
 				throw new TypeError("unsupported " + componentName + " version " + componentConfig.version);
 			}
 			version = versionsMap[version];

@@ -605,7 +605,7 @@ function (Log, VersionInfo, ManagedObject, Core, Element, Component, Analyzer, C
 
 		var copyElementsFromCoreObject = function (coreObject, elemNames) {
 			for (var i in coreObject) {
-				if (Object.prototype.hasOwnProperty.call(coreObject,i)) {
+				if (Object.hasOwn(coreObject,i)) {
 					var element = coreObject[i];
 					var elementCopy = {
 						content: [],

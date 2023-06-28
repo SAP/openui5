@@ -34,7 +34,7 @@ sap.ui.define([
 			}
 
 			if (oCapabilities && oCapabilities.apiVersion === 1) {
-				var iApiVersion = Object.prototype.hasOwnProperty.call(oRenderer, "apiVersion") ? oRenderer.apiVersion : 1;
+				var iApiVersion = Object.hasOwn(oRenderer, "apiVersion") ? oRenderer.apiVersion : 1;
 				if (iApiVersion !== oCapabilities.apiVersion) {
 					assert.ok(false, "The option 'apiVersion' for control '" + sControlName + "' is set to '1', but its renderer is configured with apiVersion 2.");
 				} else {
@@ -51,7 +51,7 @@ sap.ui.define([
 		 */
 		testControl: function(oClassInfo, assert) {
 			var oRenderer = oClassInfo.fnClass.getMetadata().getRenderer(),
-				iApiVersion = Object.prototype.hasOwnProperty.call(oRenderer, "apiVersion") ? oRenderer.apiVersion : 1;
+				iApiVersion = Object.hasOwn(oRenderer, "apiVersion") ? oRenderer.apiVersion : 1;
 			assert.notEqual(iApiVersion, 1, "Semantic Rendering enabled for control " + oClassInfo.className);
 		}
 	});

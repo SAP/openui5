@@ -121,7 +121,7 @@ sap.ui.define([
 
 		function printProperties(printObject, sPrintHeader) {
 			for (var property in printObject) {
-				if (printObject.hasOwnProperty(property)) {
+				if (Object.hasOwn(printObject, property)) {
 					var value = printObject[property];
 					if (typeof value !== 'function') {
 						if (sPrintHeader) {

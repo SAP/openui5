@@ -70,7 +70,7 @@ sap.ui.define([
 				sPathSegment = aPaths[i];
 
 				// Prevent access to native properties
-				oObject = oObject.hasOwnProperty(sPathSegment) ? oObject[sPathSegment] : undefined;
+				oObject = Object.hasOwn(oObject, sPathSegment) ? oObject[sPathSegment] : undefined;
 
 				// Only continue with lookup if the value is an object.
 				// Accessing properties of other types is not allowed!
@@ -105,7 +105,7 @@ sap.ui.define([
 		if (oObject && typeof oObject === 'object' && !Object.isFrozen(oObject)) {
 			Object.freeze(oObject);
 			for (var sKey in oObject) {
-				if (oObject.hasOwnProperty(sKey)) {
+				if (Object.hasOwn(oObject, sKey)) {
 					deepFreeze(oObject[sKey]);
 				}
 			}
@@ -859,7 +859,7 @@ sap.ui.define([
 	 */
 	Manifest.processObject = function (oObject, fnCallback) {
 		for (var sKey in oObject) {
-			if (!oObject.hasOwnProperty(sKey)) {
+			if (!Object.hasOwn(oObject, sKey)) {
 				continue;
 			}
 			var vValue = oObject[sKey];

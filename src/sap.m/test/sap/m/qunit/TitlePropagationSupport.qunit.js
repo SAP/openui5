@@ -48,9 +48,9 @@ sap.ui.define([
 		TitlePropagationSupport.call(TestObject.prototype, "", function () {return this.getId();});
 
 		// Assert
-		assert.notOk(TestObject.prototype.hasOwnProperty("_initTitlePropagationSupport"),
+		assert.notOk(Object.hasOwn(TestObject.prototype, "_initTitlePropagationSupport"),
 				"Private method _initTitlePropagationSupport was not added to control");
-		assert.notOk(TestObject.prototype.hasOwnProperty("_propagateTitleIdToChildControl"),
+		assert.notOk(Object.hasOwn(TestObject.prototype, "_propagateTitleIdToChildControl"),
 				"Private method _propagateTitleIdToChildControl was not added to control");
 		assert.strictEqual(TestObject.aDelegates, undefined, "No delegates added to control");
 	});

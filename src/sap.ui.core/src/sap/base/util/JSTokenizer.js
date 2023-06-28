@@ -273,7 +273,7 @@ sap.ui.define([], function() {
 				}
 				this.white();
 				this.next(':');
-				if (Object.hasOwnProperty.call(object, key)) {
+				if (Object.hasOwn(object, key)) {
 					this.error('Duplicate key "' + key + '"');
 				}
 				object[key] = this.value();
