@@ -414,8 +414,8 @@ sap.ui.define([
 			// The following 4 values are the margins which are used to avoid making the popover very near to the border of the screen
 			this._marginTop = 48; //This is the default value, and dynamic calculation will be done in afterRendering
 
-			this._marginLeft = 10;
-			this._marginRight = 10;
+			this._marginLeft = 16;
+			this._marginRight = 16;
 			this._marginBottom = 10;
 
 			// By design Popover's min sizes are:
@@ -1900,7 +1900,7 @@ sap.ui.define([
 				iMaxContentWidth = this._getMaxContentWidth(oPosParams),
 				iMaxContentHeight = this._getMaxContentHeight(oPosParams);
 
-			//make sure iMaxContentHeight is NEVER less than 0
+				//make sure iMaxContentHeight is NEVER less than 0
 			iMaxContentHeight = Math.max(iMaxContentHeight, 0);
 
 			oCSS["max-width"] = iMaxContentWidth + "px";
@@ -2170,8 +2170,8 @@ sap.ui.define([
 				this._atPositions = ["center top", "end center", "center bottom", "begin center"];
 			} else {
 				this._marginTop = 0;
-				this._marginLeft = 0;
-				this._marginRight = 0;
+				this._marginLeft = 16;
+				this._marginRight = 16;
 				this._marginBottom = 0;
 
 				this._arrowOffset = 0;
