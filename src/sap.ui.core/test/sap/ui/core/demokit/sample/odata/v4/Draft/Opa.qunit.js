@@ -11,7 +11,8 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/Draft/pages/Main",
 		"sap/ui/test/opaQunit",
-		"sap/ui/test/TestUtils"
+		"sap/ui/test/TestUtils",
+		"sap/ui/core/sample/odata/v4/Draft/SandboxModel" // preload only
 	], function (Helper, Any, Main, opaTest, TestUtils) {
 		/*
 		 * The actual test run.

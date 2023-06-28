@@ -13,7 +13,8 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/pages/Main",
 		"sap/ui/test/opaQunit",
-		"sap/ui/test/TestUtils"
+		"sap/ui/test/TestUtils",
+		"sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/SandboxModel" // preload only
 	], function (Log, library, Helper, Any, Main, opaTest, TestUtils) {
 		var MessageType = library.MessageType; // shortcut for sap.ui.core.MessageType
 

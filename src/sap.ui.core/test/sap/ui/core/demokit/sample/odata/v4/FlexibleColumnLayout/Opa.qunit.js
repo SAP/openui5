@@ -18,7 +18,8 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/FlexibleColumnLayout/pages/Main",
 		"sap/ui/test/opaQunit",
-		"sap/ui/test/TestUtils"
+		"sap/ui/test/TestUtils",
+		"sap/ui/core/sample/odata/v4/FlexibleColumnLayout/SandboxModel" // preload only
 	], function (Helper, Any, Main, opaTest, TestUtils) {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.FlexibleColumnLayout");
 

@@ -16,7 +16,8 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderCreate.qunit",
 		"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderCreateMultiple.qunit",
 		"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderCreateRelative.qunit",
-		"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderWriteNonDeferredGroup.qunit"
+		"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderWriteNonDeferredGroup.qunit",
+		"sap/ui/core/sample/odata/v4/SalesOrders/SandboxModel" // preload only
 	], function () {
 		QUnit.start();
 	});

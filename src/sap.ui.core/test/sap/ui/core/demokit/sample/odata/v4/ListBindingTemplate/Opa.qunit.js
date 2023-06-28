@@ -9,7 +9,8 @@ sap.ui.getCore().attachInit(function () {
 	sap.ui.require([
 		"sap/ui/core/sample/common/Helper",
 		"sap/ui/core/sample/common/pages/Any",
-		"sap/ui/test/opaQunit"
+		"sap/ui/test/opaQunit",
+		"sap/ui/core/sample/odata/v4/ListBindingTemplate/SandboxModel" // preload only
 	], function (Helper, Any, opaTest) {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.ListBindingTemplate");
 

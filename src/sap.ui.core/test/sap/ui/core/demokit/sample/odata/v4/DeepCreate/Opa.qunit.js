@@ -11,7 +11,8 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/sample/odata/v4/DeepCreate/pages/Main",
 		"sap/ui/test/Opa",
 		"sap/ui/test/opaQunit",
-		"sap/ui/test/TestUtils"
+		"sap/ui/test/TestUtils",
+		"sap/ui/core/sample/odata/v4/DeepCreate/SandboxModel" // preload only
 	], function (Helper, Any, Main, Opa, opaTest, TestUtils) {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.DeepCreate");
 

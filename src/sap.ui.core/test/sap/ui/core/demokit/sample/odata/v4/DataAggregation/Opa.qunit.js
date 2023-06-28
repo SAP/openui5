@@ -10,7 +10,8 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/sample/common/Helper",
 		"sap/ui/core/sample/odata/v4/DataAggregation/tests/expandPageCollapse",
 		"sap/ui/core/sample/odata/v4/DataAggregation/tests/filter",
-		"sap/ui/test/opaQunit"
+		"sap/ui/test/opaQunit",
+		"sap/ui/core/sample/odata/v4/DataAggregation/SandboxModel" // preload only
 	], function (Helper, expandPageCollapse, filter, opaTest) {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.DataAggregation");
 

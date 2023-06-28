@@ -12,7 +12,8 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/sample/odata/v4/Products/pages/Main",
 		"sap/base/Log",
 		"sap/ui/test/opaQunit",
-		"sap/ui/test/TestUtils"
+		"sap/ui/test/TestUtils",
+		"sap/ui/core/sample/odata/v4/Products/SandboxModel" // preload only
 	], function (Helper, Any, Main, Log, opaTest, TestUtils) {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.Products");
 
