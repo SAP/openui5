@@ -16,6 +16,8 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.v4.ODataBinding";
 
+	function mustBeMocked() { throw new Error("Must be mocked"); }
+
 	/**
 	 * Returns a function which must not be called. Use as a replacment for
 	 * {@link sap.ui.model.odata.v4.ODataModel#getReporter} in cases where that reporter must not be
@@ -518,7 +520,7 @@ sap.ui.define([
 			bIgnoreTransient = false,
 			oTemplate = {
 				mParameters : {},
-				isRoot : function () { throw new Error("must be mocked"); }
+				isRoot : mustBeMocked
 			},
 			oWithCachePromise = {unwrap : function () {}};
 

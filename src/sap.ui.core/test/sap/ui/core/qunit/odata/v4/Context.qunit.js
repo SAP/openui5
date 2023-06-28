@@ -12,6 +12,8 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.v4.Context";
 
+	function mustBeMocked() { throw new Error("Must be mocked"); }
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.Context", {
 		beforeEach : function () {
@@ -1987,7 +1989,7 @@ sap.ui.define([
 				isResolved : function () { return true; }
 			},
 			oMetaModel = {
-				getObject : function () { assert.ok(false, "use only when mocked"); }
+				getObject : mustBeMocked
 			},
 			oModel = {
 				getMetaModel : function () { return oMetaModel; }
@@ -3867,9 +3869,7 @@ sap.ui.define([
 			oBindingMock = this.mock(oBinding),
 			oError = new Error(),
 			oMetaModel = {
-				fetchObject : function () {
-					assert.ok(false); // use only when mocked
-				}
+				fetchObject : mustBeMocked
 			},
 			oModel = {
 				bAutoExpandSelect : true,
@@ -4221,7 +4221,7 @@ sap.ui.define([
 	QUnit.test("isEffectivelyKeptAlive: implicitly", function (assert) {
 		var oBinding = {
 				getHeaderContext : function () {},
-				isRelative : function () { throw new Error("must be mocked"); },
+				isRelative : mustBeMocked,
 				onKeepAliveChanged : function () {},
 				mParameters : {}
 			},

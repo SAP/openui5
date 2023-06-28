@@ -19,7 +19,7 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.lib._Requestor",
 		oModelInterface = {
 			fetchMetadata : function () {
-				throw new Error("Do not call me!");
+				throw new Error("Must be mocked");
 			},
 			fireSessionTimeout : function () {},
 			getGroupProperty : defaultGetGroupProperty,
@@ -4868,7 +4868,7 @@ sap.ui.define([
 				$resolve : function () {}
 			}, { // [8] different owner -> no merge
 				url : "EntitySet1('42')?foo=bar",
-				$mergeRequests : function () { throw new Error("Do not call!"); },
+				// $mergeRequests : {}, // do not call
 				$metaPath : "/EntitySet1",
 				$owner : "different",
 				$queryOptions : {$select : ["p8"]}
