@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/base/util/merge",
 	"sap/base/util/isPlainObject",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/UriParameters"
 ], function(
 	BaseObject,
 	DataType,
 	Core,
 	merge,
 	isPlainObject,
-	Log
+	Log,
+	UriParameters
 ) {
 	"use strict";
 
@@ -274,10 +276,20 @@ sap.ui.define([
 		var bValidationEnabled = !(window['sap-ui-mdc-config'] && window['sap-ui-mdc-config'].disableStrictPropertyInfoValidation) &&
 								 !(window.top['sap-ui-mdc-config'] && window.top['sap-ui-mdc-config'].disableStrictPropertyInfoValidation);
 
-		if (bValidationEnabled &&
+		//Check if:
+		//1. validation in general is enabled
+		//2. check that we're not in any library that is allowed to bypass (fe & df)
+		//3. Check if the explicit enablement via url param is activated --> overrules the first to conditions
+		if (
+			(
+				bValidationEnabled &&
 				!("sap.fe.core" in mLoadedLibraries
 				|| "sap.fe.macros" in mLoadedLibraries
-				|| "sap.sac.df" in mLoadedLibraries)) {
+				|| "sap.sac.df" in mLoadedLibraries)
+			)
+				||
+				(UriParameters.fromQuery(window.location.search).get("sap-ui-xx-enableStrictPropertyValidation") == "true")
+			) {
 			throwInvalidPropertyError(sMessage, oAdditionalInfo);
 		}
 
