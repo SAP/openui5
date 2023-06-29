@@ -347,20 +347,44 @@ sap.ui.define([
 		oFieldEdit.setDisplay(FieldDisplay.Description);
 		oFieldDisplay.setDisplay(FieldDisplay.Description);
 		oFieldEdit.setAdditionalValue("");
-		oFieldDisplay.setAdditionalValue("");
+		oFieldDisplay.setAdditionalValue(null);
 		oCore.applyChanges();
 		var aConditions = oFieldEdit.getConditions();
 		assert.notEqual(aConditions[0].values[1], "", "Conditions not updated syncronously");
 
 		setTimeout(function() { // async set of condition
 			setTimeout(function() { // model update
+				aConditions = oFieldEdit.getConditions();
+				assert.deepEqual(aConditions[0].values[1], "", "Conditions additionalValue");
 				aContent = oFieldEdit.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
 				assert.equal(oContent.getValue(), "Test", "Value set on Input control");
+				aConditions = oFieldDisplay.getConditions();
+				assert.equal(aConditions[0].values.length, 1, "Conditions has no additionalValue part");
 				aContent = oFieldDisplay.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
 				assert.equal(oContent.getText(), "Test", "Text set on Text control");
-				fnDone();
+
+				// change between "" and null should not lead to an update as output is the same
+				oFieldEdit.setAdditionalValue(null);
+				oFieldDisplay.setAdditionalValue("");
+				oCore.applyChanges();
+
+				setTimeout(function() { // async set of condition
+					setTimeout(function() { // model update
+						aConditions = oFieldEdit.getConditions();
+						assert.deepEqual(aConditions[0].values[1], "", "Conditions not updated");
+						aContent = oFieldEdit.getAggregation("_content");
+						oContent = aContent && aContent.length > 0 && aContent[0];
+						assert.equal(oContent.getValue(), "Test", "Value set on Input control");
+						aConditions = oFieldDisplay.getConditions();
+						assert.equal(aConditions[0].values.length, 1, "Conditions not updated");
+						aContent = oFieldDisplay.getAggregation("_content");
+						oContent = aContent && aContent.length > 0 && aContent[0];
+						assert.equal(oContent.getText(), "Test", "Text set on Text control");
+						fnDone();
+					}, 0);
+				}, 0);
 			}, 0);
 		}, 0);
 

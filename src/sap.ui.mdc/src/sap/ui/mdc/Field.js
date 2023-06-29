@@ -348,8 +348,8 @@ sap.ui.define([
 		} else {
 			var oCurrentCondition = aConditions[0];
 			var vOldValue = oCurrentCondition && oCurrentCondition.values[0];
-			var sOldAdditionalValue = oCurrentCondition && oCurrentCondition.values[1] ? oCurrentCondition.values[1] : null; // to compare with default value
-			if (!oCurrentCondition || oCurrentCondition.operator !== "EQ" || !_compareValues.call(this, vOldValue, vValue) || sOldAdditionalValue !== vAdditionalValue) {
+			var vOldAdditionalValue = oCurrentCondition && oCurrentCondition.values[1] ? oCurrentCondition.values[1] : null; // to compare with default value
+			if (!oCurrentCondition || oCurrentCondition.operator !== "EQ" || !_compareValues.call(this, vOldValue, vValue) || !_compareAdditionalValues.call(this, vAdditionalValue, vOldAdditionalValue)) {
 				var oDelegate = this.getControlDelegate();
 				var oNextCondition = oDelegate.createCondition(this, this, [vValue, vAdditionalValue], oCurrentCondition);
 				if (!Condition.compareConditions(oCurrentCondition, oNextCondition)) { // We do a full comparison here as FilterOperatorUtils.compareConditions may ignore text changes
@@ -413,6 +413,22 @@ sap.ui.define([
 			if ((vCustomUnit1 || vCustomUnit2) && !bUpdateCheck) {
 				this._bUnitSet = true;
 			}
+		}
+
+		return bEqual;
+
+	}
+
+	function _compareAdditionalValues(vValue1, vValue2, bUpdateCheck) {
+
+		var bEqual = vValue1 === vValue2;
+
+		if (!bEqual && (vValue1 === null || vValue1 === undefined || vValue1 === "") && (vValue2 === null || vValue2 === undefined || vValue2 === "")) {
+			// in the moment there is no real data type support for additionalValue, normally only String types are used.
+			// As, depending on the data type configuration a "" can be converted into null or vice versa it needs to be handed both as initial.
+			// In case of wrong user input with disabled ValueHelp input validation no addtitionalValue is added at all, so if set to "" by model it is no change.
+			// TODO: This logic needs to be adopted if there is a real data type support like for value.
+			bEqual = true;
 		}
 
 		return bEqual;
@@ -526,7 +542,7 @@ sap.ui.define([
 			// to run not in V4 update issues if data not already loaded
 			this.setProperty("value", vValue, true);
 		}
-		if (vAdditionalValue !== vOldAdditionalValue && !_checkAdditionalValueOneWay.call(this)) {
+		if (!_compareAdditionalValues.call(this, vAdditionalValue, vOldAdditionalValue, true) && !_checkAdditionalValueOneWay.call(this)) {
 			// to run not in V4 update issues if data not already loaded
 			// do not update property in OneWay mode to keep in sync with model
 			this.setProperty("additionalValue", vAdditionalValue, true);
