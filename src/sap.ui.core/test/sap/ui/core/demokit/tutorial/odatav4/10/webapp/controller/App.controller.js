@@ -46,12 +46,7 @@ sap.ui.define([
 			var oList = this.byId("peopleList"),
 				oBinding = oList.getBinding("items"),
 				// Create a new entry through the table's list binding
-				oContext = oBinding.create({
-					UserName : "",
-					FirstName : "",
-					LastName : "",
-					Age : "18"
-				});
+				oContext = oBinding.create({Age : "18"});
 
 			this._setUIChanges(true);
 			this.getView().getModel("appView").setProperty("/usernameEmpty", true);
@@ -299,10 +294,10 @@ sap.ui.define([
 			}
 
 			oOldContext = oDetailArea.getBindingContext();
-			if (oOldContext) {
+			if (oOldContext && !oOldContext.isTransient()) {
 				oOldContext.setKeepAlive(false);
 			}
-			if (oUserContext) {
+			if (oUserContext && !oUserContext.isTransient()) {
 				oUserContext.setKeepAlive(true,
 					// hide details if kept entity was refreshed but does not exist any more
 					this._setDetailArea.bind(this));
