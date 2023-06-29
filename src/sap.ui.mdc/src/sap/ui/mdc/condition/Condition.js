@@ -18,6 +18,8 @@ sap.ui.define([
 		};
 
 		/**
+		 * Modules to handle conditions used in {@link sap.ui.mdc.FilterField FilterField},
+		 * {@link sap.ui.mdc.FilterBar FilterBar}, or {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.
 		 * @namespace
 		 * @name sap.ui.mdc.condition
 		 * @since 1.61.0
@@ -26,7 +28,7 @@ sap.ui.define([
 
 		/**
 		 * Utilities to create conditions to be used in {@link sap.ui.mdc.FilterField FilterField},
-		 * {@link sap.ui.mdc.FilterBar FilterBar} or {@link sap.ui.mdc.condition.ConditionModel ConditionModel}
+		 * {@link sap.ui.mdc.FilterBar FilterBar}, or {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.
 		 *
 		 * @namespace
 		 * @author SAP SE
@@ -48,8 +50,8 @@ sap.ui.define([
 				 * @property {any[]} values Array of values of the condition. Depending on the <code>operator</code>, this contains one or more entries. The entries are sored in internal format regarding the used data type.
 				 * @property {object} [inParameters] In parameters of the condition. For each field path, a value is stored. (It is obsolete and only filled for conditions stored on old user-variants.)
 				 * @property {object} [outParameters] Out parameters of the condition. For each field path, a value is stored. (It is obsolete and only filled for conditions stored on old user-variants.)
-				 * @property {boolean} [isEmpty] If set, the condition is empty (used as dummy condition in {@link sap.ui.mdc.valuehelp.base.DefineConditionPanel DefineConditionPanel})
-				 * @property {sap.ui.mdc.enums.ConditionValidated} validated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the value help) and not shown in the {@link sap.ui.mdc.valuehelp.base.DefineConditionPanel DefineConditionPanel} control
+				 * @property {boolean} [isEmpty] If set, the condition is empty (used as initially empty condition in {@link sap.ui.mdc.valuehelp.content.Conditions Conditions})
+				 * @property {sap.ui.mdc.enums.ConditionValidated} validated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the value help) and not shown in the {@link sap.ui.mdc.valuehelp.content.Conditions Conditions} content
 				 * @property {object} [payload] Payload of the condition. Set by application. Data needs to be stringified. (as stored and loaded in variants)
 				 * @public
 				 */
@@ -87,7 +89,7 @@ sap.ui.define([
 				 * @param {any[]} aValues Array of values for the condition
 				 * @param {object} [oInParameters] In parameters of the condition. (Do not use it for new conditions, use payload instead.)
 				 * @param {object} [oOutParameters] Out parameters of the condition. (Do not use it for new conditions, use payload instead.)
-				 * @param {sap.ui.mdc.enums.ConditionValidated} sValidated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the field help) and not shown in the <code>DefineConditionPanel</code> control
+				 * @param {sap.ui.mdc.enums.ConditionValidated} sValidated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the field help) and not shown in the {@link sap.ui.mdc.valuehelp.content.Conditions Conditions} content
 				 * @param {object} [oPayload] Payload of the condition
 				 * @returns {sap.ui.mdc.condition.ConditionObject} The new condition object with the given operator and values
 				 * @public
@@ -110,7 +112,7 @@ sap.ui.define([
 				/**
 				 * Compares two conditions in detail
 				 *
-				 * Opposed to <code>FilterOperatorUtil.compareConditions</code> this comparison checks the whole condition object for equality except the {@link sap.ui.mdc.valuehelp.base.DefineConditionPanel DefineConditionPanel} specific <code>isEmpty</code> flag.
+				 * Opposed to <code>FilterOperatorUtil.compareConditions</code> this comparison checks the whole condition object for equality except the {@link sap.ui.mdc.valuehelp.content.Conditions Conditions} specific <code>isEmpty</code> flag.
 				 *
 				 * @param {undefined|sap.ui.mdc.condition.ConditionObject} oCondition1 Condition to check
 				 * @param {undefined|sap.ui.mdc.condition.ConditionObject} oCondition2 Condition to check
