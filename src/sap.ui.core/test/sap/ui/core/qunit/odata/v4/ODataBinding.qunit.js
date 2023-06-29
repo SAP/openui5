@@ -1079,6 +1079,7 @@ sap.ui.define([
 		return oBinding.oCachePromise.then(function () {
 			assert.strictEqual(oBinding.oCachePromise.getResult(), oNewCache);
 			assert.strictEqual(oBinding.sReducedPath, "/resolved/path");
+			assert.strictEqual(oBinding.oFetchCacheCallToken, undefined, "cleaned up");
 		});
 	});
 
@@ -1148,6 +1149,7 @@ sap.ui.define([
 			return oBinding.oCachePromise.then(function (oCache0) {
 				assert.strictEqual(oCache0, oCache);
 				assert.strictEqual(oBinding.sReducedPath, "/resolved/path");
+				assert.strictEqual(oBinding.oFetchCacheCallToken, undefined, "cleaned up");
 			});
 		});
 	});
@@ -1341,6 +1343,8 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.oCache, null);
 		assert.strictEqual(oBinding.sReducedPath, "~sReducedPath~", "unchanged");
+		assert.deepEqual(oBinding.oFetchCacheCallToken, {oOldCache : undefined},
+			"no old cache kept");
 	});
 
 	//*********************************************************************************************
