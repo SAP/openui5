@@ -117,7 +117,7 @@
 							</CheckBox>
 							<ToolbarSpacer />
 							<Button
-								text="Clear all changes"
+								text="{i18n>SAMPLE_RESET_CHANGES}"
 								type="Emphasized"
 								press="onClearButtonPressed" />
 							<ToolbarSpacer />
