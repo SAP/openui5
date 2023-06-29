@@ -3360,7 +3360,7 @@ sap.ui.define([
 				if (typeof fnMethod === "string" || fnMethod instanceof String) {
 					fnMethod = this[fnMethod];
 				}
-				fnMethod.apply(this, [oLastItem._oUploadCollectionItem] || []);
+				fnMethod.apply(this, [oLastItem._oUploadCollectionItem]);
 			}.bind(this), UploadCollection._resizeTimeoutInterval);
 			/* eslint-enable no-loop-func */
 		}

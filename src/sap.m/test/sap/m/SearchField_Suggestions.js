@@ -98,7 +98,7 @@ sap.ui.define([
 
 	function doSuggest(event) {
 		onSuggest(event);
-		// eslint-disable-next-line no-constant-condition
+		// eslint-disable-next-line no-constant-condition, no-constant-binary-expression
 		if (true || event.getSource() === barSearchField || event.getParameter("suggestValue")){
 			event.getSource().suggest();
 		}
