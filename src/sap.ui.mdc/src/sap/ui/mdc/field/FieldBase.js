@@ -1558,10 +1558,12 @@ sap.ui.define([
 	FieldBase.prototype.getAccessibilityInfo = function() {
 
 		var aContent = this.getCurrentContent();
-		if (aContent.length > 0 && aContent[0].getAccessibilityInfo) {
-			return aContent[0].getAccessibilityInfo(); // TODO: unit field
+		if (aContent.length === 1 && aContent[0].getAccessibilityInfo) {
+			return aContent[0].getAccessibilityInfo(); // use accessibility info of content field
+		} else if (aContent.length > 0) {
+			return {children: aContent}; // for unit fields (or if no accessibility info) just provide content controls
 		} else {
-			// content not known
+			// content not known (should not be called before content exist)
 			return {};
 		}
 
