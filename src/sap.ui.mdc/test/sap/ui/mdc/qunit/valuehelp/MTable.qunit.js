@@ -330,6 +330,7 @@ sap.ui.define([
 
 		sinon.spy(oListBinding, "filter");
 		oMTable.onBeforeShow(); // filtering should happen only if open
+		oMTable._bContentBound = true;
 
 		var fnDone = assert.async();
 		setTimeout( function(){ // as waiting for onBeforeShow-Promise
@@ -400,6 +401,7 @@ sap.ui.define([
 		oListBinding.suspend(); // check for resuming
 
 		oMTable.setFilterFields("$search");
+		oMTable._bContentBound = true;
 		oMTable.setFilterValue("X");
 		assert.ok(ValueHelpDelegateV4.updateBinding.called, "ValueHelpDelegateV4.updateBinding called");
 		assert.ok(ValueHelpDelegateV4.updateBinding.calledWith(undefined/*no parent provided*/, oListBinding), "ValueHelpDelegateV4.updateBinding called parameters");
