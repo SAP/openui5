@@ -13,10 +13,11 @@ sap.ui.define([
 		onInit: function() {
 			var oMultiInput = this.byId('tokenUpdateMI');
 
-			oMultiInput.addValidator(this._multiInputValidator);
+			oMultiInput.addValidator(this._multiInputValidator.bind(oMultiInput));
 		},
 
 		_multiInputValidator: function(args) {
+
 			switch (args.text) {
 				case "c":
 				case "d":
@@ -43,7 +44,7 @@ sap.ui.define([
 				default:
 			}
 
-			return MultiInput.WaitForAsyncValidation;
+			return this.getWaitForAsyncValidation();
 		},
 
 		_onTokenChange: function() {
