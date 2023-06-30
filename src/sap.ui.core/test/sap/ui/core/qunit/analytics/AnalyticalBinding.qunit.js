@@ -2231,6 +2231,7 @@ sap.ui.define([
 
 			assert.ok(oBinding.bApplySortersToGroups, "constructor sets bApplySortersToGroups");
 			assert.ok("sLastAutoExpandMode" in oBinding, "sLastAutoExpandMode defined");
+			assert.deepEqual(oBinding.aSorter, []);
 			assert.strictEqual(oBinding.sLastAutoExpandMode, undefined);
 
 			oBinding.bApplySortersToGroups = bApplySortersToGroups;
@@ -2266,6 +2267,33 @@ sap.ui.define([
 				done();
 			}, [], undefined, true);
 		}, [], undefined, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("constructor, this.aSorter: sorter parameter is no array", function (assert) {
+		var done = assert.async(),
+			oSorter = {};
+
+		// code under test
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			assert.strictEqual(oBinding.aSorter.length, 1);
+			assert.strictEqual(oBinding.aSorter[0], oSorter);
+
+			done();
+		}, [], undefined, true, oSorter);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("constructor, this.aSorter: sorter parameter is array", function (assert) {
+		var done = assert.async(),
+			aSorter = [];
+
+		// code under test
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			assert.strictEqual(oBinding.aSorter, aSorter);
+
+			done();
+		}, [], undefined, true, aSorter);
 	});
 
 	//*********************************************************************************************
