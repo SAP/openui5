@@ -426,7 +426,7 @@ sap.ui.define([
 
 		var _getFilterValue = function(oItem, sPath) {
 			var oBindingContext = oItem.isA("sap.ui.model.Context") ? oItem : this._getListItemBindingContext(oItem);
-			return oBindingContext.getProperty(sPath);
+			return oBindingContext && oBindingContext.getProperty(sPath);
 		}.bind(this);
 
 		var aInParameters;
