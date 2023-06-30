@@ -64,6 +64,7 @@ sap.ui.define([
 					},
 					fireDataReceived : mustBeMocked,
 					fireDataRequested : function () {},
+					getReporter : mustBeMocked,
 					getMessagesByPath : function () { return []; },
 					reportError : mustBeMocked,
 					reportStateMessages : mustBeMocked,
@@ -477,6 +478,8 @@ sap.ui.define([
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(aCacheData[1], "transient").callThrough();
 		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(aCacheData[1], "upsert").returns(undefined);
+		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(aCacheData[1], "transientPredicate").callThrough();
 		this.oModelInterfaceMock.expects("getMessagesByPath")
 			.withExactArgs("/" + oCache.sResourcePath + (sPath ? "/" + sPath : "") + "('1')", true)
@@ -729,6 +732,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement), "transient").returns("updateGroup");
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oElement), "transientPredicate").returns("($uid=1)");
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "upsert").returns(undefined);
 		this.mock(this.oRequestor).expects("removePost").never();
 		oRemoveElementExpectation = this.mock(oCache).expects("removeElement")
 			.withExactArgs(1, "($uid=1)", sinon.match.same(aElements), "SO_2_SOITEM");
@@ -744,6 +749,41 @@ sap.ui.define([
 		assert.deepEqual(aPostBodyCollection, ["~a~", "~c~"]);
 		assert.ok(fnReject.calledOnce);
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bGroupLock) {
+	QUnit.test(`_Cache#_delete: upserted entity, bGroupLock=${bGroupLock}`, function (assert) {
+		const oCache = new _Cache(this.oRequestor, "SalesOrderList");
+		const oGroupLock = {
+			unlock : mustBeMocked
+		};
+		const oParent = {
+			entity : "~entity~"
+		};
+
+		oCache.fetchValue = mustBeMocked;
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to")
+			.returns(SyncPromise.resolve(oParent));
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~entity~", "predicate")
+			.returns(undefined);
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~entity~", "transient")
+			.returns(undefined);
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~entity~", "transientPredicate")
+			.returns(undefined);
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~entity~", "upsert")
+			.returns(true);
+		this.mock(oGroupLock).expects("unlock").exactly(bGroupLock ? 1 : 0).withExactArgs();
+		this.mock(oCache).expects("resetChangesForPath").withExactArgs("path/to/entity");
+		this.mock(this.oRequestor).expects("request").never();
+
+		// code under test
+		const oPromise = oCache._delete(bGroupLock && oGroupLock, "edit/url", "path/to/entity");
+
+		assert.ok(oPromise.isFulfilled());
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("Cache#addDeleted", function (assert) {
@@ -2479,11 +2519,24 @@ sap.ui.define([
 		bCanceled : false,
 		sEntityPath : "('42')/path/to/unread/entity",
 		$cached : true // #fetchValue for _GroupLock.$cached fails with oError.$cached === true
+	}, {
+		bCanceled : false,
+		sEntityPath : "('42')/path/to/upsertable/entity",
+		bUpsert : true
+	}, {
+		bCanceled : true,
+		sEntityPath : "('42')/path/to/upsertable/entity",
+		bUpsert : true
+	}, {
+		bCanceled : false,
+		sEntityPath : "('42')/path/to/upsertable/entity",
+		bUpsert : true,
+		bReleaseCache : true
 	}].forEach(function (oFixture) {
 		var bCanceled = oFixture.bCanceled,
 			sEntityPath = oFixture.sEntityPath,
 			sTitle = "_Cache#update: " + (bCanceled ? "canceled" : "success")
-				+ ", entity path: " + sEntityPath;
+				+ ", entity path: " + sEntityPath + ", bReleaseCache=" + oFixture.bReleaseCache;
 
 		QUnit.test(sTitle, function (assert) {
 			var mQueryOptions = {},
@@ -2500,13 +2553,15 @@ sap.ui.define([
 				oEntityMatcher = sinon.match.same(oEntity),
 				fnError = this.spy(),
 				oError = new Error(),
-				iExpectedCalls = oFixture.$$patchWithoutSideEffects ? 0 : 1,
+				bPatchWithoutSideEffects = oFixture.$$patchWithoutSideEffects || oFixture.bUpsert,
+				iExpectedCalls = bPatchWithoutSideEffects ? 0 : 1,
 				oFetchCachedError = new Error("Unexpected request: GET ..."),
 				oFetchValueExpectation,
 				sFullPath = "path/to/entity/Address/City",
 				oGroupLock = {getGroupId : function () {}},
 				oHelperMock = this.mock(_Helper),
 				oOldData = {},
+				oParent = {entity : null, foo : "bar"},
 				oPatchResult = {
 					"@odata.etag" : 'W/"20010101000000.0000000"',
 					foo : "bar",
@@ -2524,7 +2579,8 @@ sap.ui.define([
 				that = this;
 
 			oError.canceled = bCanceled;
-			oCache.fetchValue = function () {};
+			oCache.fetchValue = mustBeMocked;
+			oCache.requestUpsertedEntity = mustBeMocked;
 			oFetchValueExpectation = oCacheMock.expects("fetchValue")
 				.withExactArgs(sinon.match.same(_GroupLock.$cached), sEntityPath);
 			if (oFixture.$cached) {
@@ -2532,6 +2588,11 @@ sap.ui.define([
 				oFetchCachedError.$cached = true;
 				oFetchValueExpectation.throws(oFetchCachedError);
 				oEntityMatcher = {"@odata.etag" : "*"};
+			} else if (oFixture.bUpsert) {
+				oFetchValueExpectation.returns(SyncPromise.resolve(null));
+				oEntityMatcher = {"@$ui5._" : {upsert : true}};
+				oCacheMock.expects("getValue").withExactArgs("('42')/path/to/upsertable")
+					.returns(oParent);
 			} else {
 				oFetchValueExpectation.returns(SyncPromise.resolve(oEntity));
 			}
@@ -2548,9 +2609,10 @@ sap.ui.define([
 				.withExactArgs(["Address", "City"], "Walldorf")
 				.returns(oUpdateData);
 			oHelperMock.expects("makeUpdateData")
-				.withExactArgs(["Address", "City"], oFixture.$cached ? undefined : "Heidelberg")
+				.withExactArgs(["Address", "City"],
+					oFixture.$cached || oFixture.bUpsert ? undefined : "Heidelberg")
 				.returns(oOldData);
-			oHelperMock.expects("updateAll")
+			const oUpdateAllExpectation = oHelperMock.expects("updateAll")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 					oEntityMatcher, sinon.match.same(oUpdateData));
 			this.oRequestorMock.expects("relocateAll")
@@ -2558,12 +2620,18 @@ sap.ui.define([
 			oHelperMock.expects("buildPath")
 				.withExactArgs("original/resource/path", oFixture.sEntityPath)
 				.returns("~");
+			const mExpectedHeaders = {"If-Match" : oEntityMatcher};
+			if (bPatchWithoutSideEffects) {
+				mExpectedHeaders.Prefer = "return=minimal";
+				if (oFixture.bUpsert) {
+					mExpectedHeaders["If-None-Match"] = "*";
+				}
+			}
 			oRequestCall = this.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", "/~/BusinessPartnerList('0')?foo=bar",
-					sinon.match.same(oGroupLock), Object.assign({"If-Match" : oEntityMatcher},
-						oFixture.$$patchWithoutSideEffects && {Prefer : "return=minimal"}),
-					sinon.match.same(oUpdateData), sinon.match.func, sinon.match.func, undefined,
-					"~", undefined, undefined, undefined, sinon.match.func)
+					sinon.match.same(oGroupLock), mExpectedHeaders, sinon.match.same(oUpdateData),
+					sinon.match.func, sinon.match.func, undefined, "~", undefined, undefined,
+					undefined, sinon.match.func)
 				.returns(oPatchPromise);
 			oHelperMock.expects("addByPath")
 				.withExactArgs(sinon.match.same(oCache.mChangeRequests), sFullPath,
@@ -2588,19 +2656,32 @@ sap.ui.define([
 				oUpdateExistingCall = oHelperMock.expects("updateExisting")
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 						oEntityMatcher,
-						oFixture.$$patchWithoutSideEffects
-						? {"@odata.etag" : oPatchResult["@odata.etag"]}
-						: sinon.match.same(oPatchResult));
+						bPatchWithoutSideEffects
+							? {"@odata.etag" : oPatchResult["@odata.etag"]}
+							: sinon.match.same(oPatchResult));
 				oUnlockCall = that.mock(oRequestLock).expects("unlock").withExactArgs();
 			}, function () {
+				if (oFixture.bUpsert) {
+					// onCancel must not depend on the annotation
+					_Helper.deletePrivateAnnotation(oParent.entity, "upsert");
+				}
 				oCacheMock.expects("visitResponse").never();
 				oHelperMock.expects("removeByPath").twice()
 					.withExactArgs(sinon.match.same(oCache.mChangeRequests), sFullPath,
 						sinon.match.same(oPatchPromise));
-				oHelperMock.expects("updateExisting")
+
+				oCacheMock.expects("getValue").exactly(oFixture.bUpsert ? 1 : 0)
+					.withExactArgs("('42')/path/to/upsertable")
+					.returns(oParent);
+				oHelperMock.expects("updateAll").exactly(oFixture.bUpsert ? 1 : 0)
+					.withExactArgs(sinon.match.same(oCache.mChangeListeners),
+						"('42')/path/to/upsertable", sinon.match.same(oParent), {entity : null});
+				oHelperMock.expects("updateExisting").exactly(oFixture.bUpsert ? 0 : 1)
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 						oEntityMatcher, sinon.match.same(oOldData));
-				oRequestCall.args[0][6](); // call onCancel
+
+				// code under test - call onCancel
+				oRequestCall.args[0][6]();
 			});
 
 			// code under test
@@ -2614,6 +2695,10 @@ sap.ui.define([
 					if (oUpdateExistingCall.called) {
 						sinon.assert.callOrder(oUpdateExistingCall, oUnlockCall);
 					}
+					if (oFixture.bUpsert) {
+						assert.strictEqual(oParent.entity, oUpdateAllExpectation.args[0][2]);
+						assert.notOk(_Helper.hasPrivateAnnotation(oParent.entity, "upsert"));
+					}
 				}, function (oResult) {
 					assert.notOk(fnError.called);
 					assert.strictEqual(bCanceled, true);
@@ -2624,6 +2709,17 @@ sap.ui.define([
 				assert.deepEqual(oCache.oPromise.getResult(), {"@odata.etag" : "*"});
 			}
 
+			if (oFixture.bReleaseCache) {
+				oCache.iActiveUsages = 0;
+			}
+			const fnReporter = sinon.spy();
+			if (oFixture.bUpsert && !oFixture.bReleaseCache) {
+				this.mock(oCache.oRequestor.getModelInterface()).expects("getReporter")
+					.withExactArgs().returns(fnReporter);
+				oCacheMock.expects("requestUpsertedEntity")
+					.withExactArgs(sinon.match.same(oGroupLock), oFixture.sEntityPath)
+					.returns(SyncPromise.reject("~error~"));
+			}
 			this.mock(this.oRequestor).expects("lockGroup")
 				.withExactArgs("group", sinon.match.same(oCache), true)
 				.returns(oRequestLock);
@@ -2634,6 +2730,9 @@ sap.ui.define([
 			oRequestCall.args[0][5](); // call onSubmit
 
 			assert.ok(fnPatchSent.calledOnceWithExactly(), "patchSent handler called once");
+			if (oFixture.bUpsert && !oFixture.bReleaseCache) {
+				sinon.assert.calledWithExactly(fnReporter, "~error~");
+			}
 
 			return oCacheUpdatePromise;
 		});
@@ -11523,6 +11622,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache#requestUpsertedEntity", function (assert) {
+		const oCache = this.createCache("Employees");
+		const oGroupLock = {
+			getUnlockedCopy : mustBeMocked
+		};
+
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns("~unlockedCopy~");
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("('key')/path/to/entity")
+			.returns("metapath/to/entity");
+		this.mock(oCache).expects("requestSideEffects")
+			.withExactArgs("~unlockedCopy~", ["metapath/to/entity"], ["('key')"], true)
+			.returns("~promise~");
+
+		assert.strictEqual(
+			// code under test
+			oCache.requestUpsertedEntity(oGroupLock, "('key')/path/to/entity"),
+			"~promise~");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("SingleCache", function (assert) {
 		var oCache,
 			mQueryOptions = {};
@@ -12775,6 +12894,26 @@ sap.ui.define([
 		oCache.buildOriginalResourcePath("~oRootEntity~", "~mTypeForMetaPath~", undefined);
 
 		assert.strictEqual(oCache.sOriginalResourcePath, "original/resource/path");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache#requestUpsertedEntity", function (assert) {
+		const oCache = this.createSingle("Employees('42')");
+		const oGroupLock = {
+			getUnlockedCopy : mustBeMocked
+		};
+
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns("~unlockedCopy~");
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("path/to/entity")
+			.returns("metapath/to/entity");
+		this.mock(oCache).expects("requestSideEffects")
+			.withExactArgs("~unlockedCopy~", ["metapath/to/entity"])
+			.returns("~promise~");
+
+		assert.strictEqual(
+			// code under test
+			oCache.requestUpsertedEntity(oGroupLock, "path/to/entity"),
+			"~promise~");
 	});
 
 	//*********************************************************************************************
