@@ -706,10 +706,11 @@ sap.ui.define([
 		assert.equal(isValidated, false, "token not validated");
 
 		var fAsyncValidateCallback;
+		var that = this.multiInput1;
 		this.multiInput1.removeAllValidators();
 		this.multiInput1.addValidator(function(args) {
 			fAsyncValidateCallback = args.asyncCallback;
-			return MultiInput.WaitForAsyncValidation;
+			return that.getWaitForAsyncValidation();
 		});
 
 		tokenText = "TestToken4";
@@ -804,10 +805,12 @@ sap.ui.define([
 
 
 		var fAsyncValidateCallback;
+		var that = this.multiInput1;
+
 		this.multiInput1.removeAllValidators();
 		this.multiInput1.addValidator(function(args){
 			fAsyncValidateCallback = args.asyncCallback;
-			return MultiInput.WaitForAsyncValidation;
+			return that.getWaitForAsyncValidation();
 		});
 		tokenText = "TestToken4";
 		this.multiInput1.setValue(tokenText);

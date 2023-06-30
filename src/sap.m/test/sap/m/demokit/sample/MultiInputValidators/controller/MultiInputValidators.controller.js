@@ -46,15 +46,15 @@ sap.ui.define([
 					},
 					title: "add Token"
 					});
-				  return MultiInput.WaitForAsyncValidation;
-			});
+					return oMultiInput2.getWaitForAsyncValidation();
+				});
 
 			var oMultiInput3 = oView.byId("multiInput3");
 			var fValidator = function(args){
 				window.setTimeout(function(){
 					args.asyncCallback(new Token({text: args.text}));
 				},500);
-				return MultiInput.WaitForAsyncValidation;
+				return oMultiInput3.getWaitForAsyncValidation();
 			};
 
 			oMultiInput3.addValidator(fValidator);

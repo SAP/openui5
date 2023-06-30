@@ -101,7 +101,7 @@
 							},
 							title: "add Token"
 						});
-						return MultiInput.WaitForAsyncValidation;
+						return oMultiInputCustomValidator.getWaitForAsyncValidation();
 					});
 
 					// MultiInput - tokens get validated asynchronously after 500ms + 500ms
@@ -116,7 +116,7 @@
 						window.setTimeout(function(){
 							args.asyncCallback(new Token({text: args.text}));
 						},500);
-						return MultiInput.WaitForAsyncValidation;
+						return oMultiInputCustomAsyncValidator.WaitForAsyncValidation;
 					};
 					oMultiInputCustomAsyncValidator.addValidator(fValidator);
 					oMultiInputCustomAsyncValidator.addValidator(fValidator);
@@ -419,7 +419,7 @@
 							},
 							title: "add Token"
 						});
-						return sap.m.MultiInput.WaitForAsyncValidation;
+						return oMultiLineMultiInput.getWaitForAsyncValidation();
 					});
 
 					// MultiInput in a SimpleForm

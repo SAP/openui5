@@ -1380,6 +1380,17 @@ function(
 		TokensChanged: "tokensChanged"
 	};
 
+	/**
+	 *
+	 * @return {string} Indicates should token validator wait for asynchronous validation
+	 * @public
+	 * @function
+	 */
+	MultiInput.prototype.getWaitForAsyncValidation = function() {
+		return MultiInput.WaitForAsyncValidation;
+	};
+
+
 	MultiInput.WaitForAsyncValidation = "sap.m.MultiInput.WaitForAsyncValidation";
 
 	/**
@@ -1860,7 +1871,7 @@ function(
 				return null;
 			}
 
-			if (oToken === MultiInput.WaitForAsyncValidation) {
+			if (oToken === this.getWaitForAsyncValidation()) {
 				return null;
 			}
 		}
