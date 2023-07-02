@@ -170,6 +170,17 @@ sap.ui.define([
 		assert.strictEqual(this.oPanel.$().attr("role"), "complementary", "should set the role attribute in the DOM to complementary");
 	});
 
+	QUnit.test("Default Panel stickyHeader", function (assert) {
+		assert.strictEqual(this.oPanel.getStickyHeader(), false, "should be false");
+	});
+
+	QUnit.test("Call to setStickyHeader() with boolean value true", function (assert) {
+		this.oPanel.setStickyHeader(true);
+		oCore.applyChanges();
+
+		assert.strictEqual(this.oPanel.getStickyHeader(), true, "should set the stickyHeader property to true");
+	});
+
 	QUnit.module("Events", {
 		createPanel: function (options) {
 			this.oPanel = new Panel({
@@ -345,7 +356,8 @@ sap.ui.define([
 				content: [
 					new Text({text: "This is a Text control"}),
 					new Button({text: "Click me"})
-				]
+				],
+				stickyHeader: true
 			});
 
 			this.oPanel.placeAt("qunit-fixture");
@@ -534,6 +546,12 @@ sap.ui.define([
 
 		// cleanup
 		oPanel.destroy();
+	});
+
+	QUnit.test("Panel with sticky header should have sapMPanelStickyHeadingDiv class", function(assert) {
+		var $panel = this.oPanel.$();
+
+		assert.ok(jQuery(".sapMPanelHeadingDiv", $panel).hasClass("sapMPanelStickyHeadingDiv"), "should have sapMPanelStickyHeadingDiv class present on first header");
 	});
 
 	QUnit.module("Computed styles", {
