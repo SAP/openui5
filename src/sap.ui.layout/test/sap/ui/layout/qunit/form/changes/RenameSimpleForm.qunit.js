@@ -1,5 +1,6 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/ui/layout/library",
 	"sap/ui/layout/changeHandler/RenameSimpleForm",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
+	layoutLibrary,
 	RenameSimpleForm,
 	SimpleForm,
 	JsControlTreeModifier,
@@ -23,6 +25,8 @@ sap.ui.define([
 	FlexTestAPI
 ) {
 	"use strict";
+
+	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	QUnit.module("using sap.ui.layout.changeHandler.RenameSimpleForm with a new change format", {
 		beforeEach: function () {
@@ -47,7 +51,8 @@ sap.ui.define([
 					this.oLabel0, this.oInput0,
 					this.oLabel1, this.oInput1,
 					this.oLabel2, this.oInput2
-				]
+				],
+				layout: SimpleFormLayout.ColumnLayout
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
 			this.oSimpleForm.setModel(this.oModel);
@@ -97,7 +102,7 @@ sap.ui.define([
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
 		var oXmlString =
 		"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:layout='sap.ui.layout' xmlns='sap.m'>" +
-		"<layout:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+		"<layout:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm' layout='ColumnLayout'>" +
 		"<layout:content>" +
 		"<Title id='component---Title0' text='oldTitle' />" +
 		"<Label id='component---Label0' text='oldLabel0' />" +

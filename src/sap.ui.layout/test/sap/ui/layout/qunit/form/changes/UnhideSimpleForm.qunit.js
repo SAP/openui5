@@ -1,5 +1,6 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/ui/layout/library",
 	"sap/ui/layout/changeHandler/UnhideSimpleForm",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
+	layoutLibrary,
 	UnhideSimpleForm,
 	SimpleForm,
 	JsControlTreeModifier,
@@ -22,6 +24,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	QUnit.module("using sap.ui.layout.changeHandler.UnhideSimpleForm with legacy change format", {
 		beforeEach: function () {
@@ -33,7 +36,8 @@ sap.ui.define([
 
 			this.oSimpleForm = new SimpleForm({
 				id : "SimpleForm", title : "Simple Form",
-				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
+				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1],
+				layout: SimpleFormLayout.ColumnLayout
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
 
@@ -76,7 +80,7 @@ sap.ui.define([
 	QUnit.test("when calling applyChange with XmlTreeModifier and a legacy change", function (assert) {
 		var oXmlString =
 		"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:form='sap.ui.layout.form' xmlns='sap.m'>" +
-			"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+			"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm' layout='ColumnLayout'>" +
 				"<form:content>" +
 					"<Title id='Title0' text='Title 0' visible='true' />" +
 					"<Label id='Label0' text='Label 0' visible='false' />" +
@@ -115,7 +119,8 @@ sap.ui.define([
 
 			this.oSimpleForm = new SimpleForm({
 				id : "component---SimpleForm", title : "Simple Form",
-				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1, this.oLabel2, this.oInput2]
+				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1, this.oLabel2, this.oInput2],
+				layout: SimpleFormLayout.ColumnLayout
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
 
@@ -162,7 +167,7 @@ sap.ui.define([
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
 		var oXmlString =
 		"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:form='sap.ui.layout.form' xmlns='sap.m'>" +
-			"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+			"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm' layout='ColumnLayout'>" +
 				"<form:content>" +
 					"<Title id='component---Title0' text='Title 0' visible='true' />" +
 					"<Label id='component---Label0' text='Label 0' visible='false' />" +
