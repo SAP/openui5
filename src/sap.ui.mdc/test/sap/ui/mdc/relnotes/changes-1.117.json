@@ -1,0 +1,23 @@
+{
+  "1.117.0": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "b0e41ec5293ad68d67569c4fae0743dac7be0b68",
+        "type": "FIX",
+        "text": " Field: handle \"\" and null as \"not set\" for additionalValue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380082386"
+          }
+        ]
+      },
+      {
+        "id": "8eb71499ce982bc101274c7bd4fb296cba489311",
+        "type": "FIX",
+        "text": " Field with unit: unit part not announced if inside table"
+      }
+    ]
+  }
+}

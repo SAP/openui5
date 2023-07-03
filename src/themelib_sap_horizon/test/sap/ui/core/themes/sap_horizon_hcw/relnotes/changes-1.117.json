@@ -1,0 +1,18 @@
+{
+  "1.117.0": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "bd915a0abaaff4b38754ce41977d4d1bac377790",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Align calendar header in horizon theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370070377"
+          }
+        ]
+      }
+    ]
+  }
+}

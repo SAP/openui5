@@ -1,0 +1,33 @@
+{
+  "1.117.0": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "841d7284020a4462b2e3c28b844ad827bde9b653",
+        "type": "FIX",
+        "text": " sap.m.Link. prevent default behavior on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006450822022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400004774092023"
+          }
+        ]
+      },
+      {
+        "id": "172b1a608ce08711b56023f9fc5bd5fcd4a4d8ff",
+        "type": "FIX",
+        "text": " sap.m Popover: Content width is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380025108"
+          }
+        ]
+      }
+    ]
+  }
+}
