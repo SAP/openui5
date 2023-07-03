@@ -166,9 +166,16 @@ sap.ui.define([
 		});
 	}
 
+	/**
+	 * @deprecated As of version 1.93
+	 */
 	fnParamerizedTest(SimpleFormLayout.ResponsiveLayout);
+	/**
+	 * @deprecated As of version 1.67.0
+	 */
 	fnParamerizedTest(SimpleFormLayout.GridLayout);
 	fnParamerizedTest(SimpleFormLayout.ResponsiveGridLayout);
+	fnParamerizedTest(SimpleFormLayout.ColumnLayout);
 
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";

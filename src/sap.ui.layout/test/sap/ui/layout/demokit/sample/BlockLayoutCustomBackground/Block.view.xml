@@ -57,7 +57,7 @@
 					<f:SimpleForm
 						editable="true"
 						backgroundDesign="Transparent"
-						layout="GridLayout">
+						layout="ResponsiveGridLayout">
 						<Label text="sap.m.Input" />
 						<Input type="Text" placeholder="Enter Name ..." />
 						<Label text="sap.m.TextArea" />

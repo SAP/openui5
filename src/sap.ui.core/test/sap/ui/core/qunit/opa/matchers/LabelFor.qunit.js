@@ -7,11 +7,13 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/m/App",
 	"sap/m/Page",
+	"sap/ui/layout/library",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/m/Link"
-], function (LabelFor, Input, Label, Button, ResourceModel, App, Page, SimpleForm, Link) {
+], function (LabelFor, Input, Label, Button, ResourceModel, App, Page, layoutLibrary, SimpleForm, Link) {
 	"use strict";
 
+	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 	var BUNDLE_URL = "test-resources/sap/ui/core/qunit/opa/fixture/I18NText.properties";
 
 	QUnit.module("LabelFor", {
@@ -41,7 +43,8 @@ sap.ui.define([
 					new Label({id: "form_label", text: "form input", labelFor: this.oFormInput}),
 					this.oFormInput
 
-				]
+				],
+				layout: SimpleFormLayout.ColumnLayout
 			});
 
 			this.oButton = new Button({id: "button", text: "Button"});

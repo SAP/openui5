@@ -30,7 +30,7 @@ function(
 
 	var XML_VIEW =
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:form="sap.ui.layout.form">' +
-			'<form:SimpleForm id="testComponent---myView--myForm">' +
+			'<form:SimpleForm id="testComponent---myView--myForm" layout="ColumnLayout">' +
 				'<Title id="testComponent---myView--myGroup" />' +
 				'<Input id="testComponent---myView--myGroupElement" />' +
 			'</form:SimpleForm>' +

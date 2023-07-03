@@ -81,7 +81,7 @@
 			</l:BlockLayoutRow>
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell title="75% width cell" width="3">
-					<form:SimpleForm editable="true" backgroundDesign="Transparent">
+					<form:SimpleForm editable="true" backgroundDesign="Transparent" layout="ResponsiveGridLayout">
 						<Label text="Name on card" required="true" />
 						<Input value="{/CreditCard/Name}" liveChange="checkCreditCardStep" valueLiveUpdate="true" />
 						<Label text="Card number" />

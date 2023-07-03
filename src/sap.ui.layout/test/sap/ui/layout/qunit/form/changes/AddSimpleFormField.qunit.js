@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/m/Toolbar",
 	"sap/ui/core/mvc/View",
+	"sap/ui/layout/library",
 	"sap/ui/layout/changeHandler/AddSimpleFormField",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -14,6 +15,7 @@ sap.ui.define([
 	Title,
 	Toolbar,
 	View,
+	layoutLibrary,
 	AddFieldChangeHandler,
 	SimpleForm,
 	JsControlTreeModifier,
@@ -23,6 +25,8 @@ sap.ui.define([
 	FlexTestAPI
 ) {
 	"use strict";
+
+	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	QUnit.module("AddField for SimpleForm", {
 		beforeEach: function () {
@@ -41,9 +45,12 @@ sap.ui.define([
 
 	QUnit.test('Add smart field to SimpleForm in different positions', function (assert) {
 		var oTitle = new Title("NewGroup");
-		this.oSimpleForm = new SimpleForm("simpleForm", {content : [
-			oTitle
-		]});
+		this.oSimpleForm = new SimpleForm("simpleForm", {
+			content : [
+				oTitle
+			],
+			layout: SimpleFormLayout.ColumnLayout
+		});
 		var oView = new View({content : [
 			this.oSimpleForm
 		]});
@@ -156,9 +163,12 @@ sap.ui.define([
 		this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
 		this.oInput0 = new Input({id : "Input0"});
 
-		this.oSimpleForm = new SimpleForm("simpleForm", {content : [
-			this.oToolbar, this.oLabel0, this.oInput0
-		]});
+		this.oSimpleForm = new SimpleForm("simpleForm", {
+			content : [
+				this.oToolbar, this.oLabel0, this.oInput0
+			],
+			layout: SimpleFormLayout.ColumnLayout
+		});
 		var oView = new View({content : [
 			this.oSimpleForm
 		]});
@@ -202,9 +212,12 @@ sap.ui.define([
 		this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
 		this.oInput0 = new Input({id : "Input0"});
 
-		this.oSimpleForm = new SimpleForm("simpleForm", {content : [
-			this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
-		]});
+		this.oSimpleForm = new SimpleForm("simpleForm", {
+			content : [
+				this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
+			],
+			layout: SimpleFormLayout.ColumnLayout
+		});
 
 		var oView = new View({content : [
 			this.oSimpleForm
@@ -249,9 +262,12 @@ sap.ui.define([
 		this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
 		this.oInput0 = new Input({id : "Input0"});
 
-		this.oSimpleForm = new SimpleForm("simpleForm", {content : [
-			this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
-		]});
+		this.oSimpleForm = new SimpleForm("simpleForm", {
+			content : [
+				this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
+			],
+			layout: SimpleFormLayout.ColumnLayout
+		});
 
 		var oView = new View({content : [
 			this.oSimpleForm
@@ -296,9 +312,12 @@ sap.ui.define([
 		this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
 		this.oInput0 = new Input({id : "Input0"});
 
-		this.oSimpleForm = new SimpleForm("simpleForm", {content : [
-			this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
-		]});
+		this.oSimpleForm = new SimpleForm("simpleForm", {
+			content : [
+				this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
+			],
+			layout: SimpleFormLayout.ColumnLayout
+		});
 
 		var oView = new View({content : [
 			this.oSimpleForm
@@ -338,9 +357,12 @@ sap.ui.define([
 		this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
 		this.oInput0 = new Input({id : "Input0"});
 
-		this.oSimpleForm = new SimpleForm("simpleForm", {content : [
-			this.oLabel0, this.oInput0
-		]});
+		this.oSimpleForm = new SimpleForm("simpleForm", {
+			content : [
+				this.oLabel0, this.oInput0
+			],
+			layout: SimpleFormLayout.ColumnLayout
+		});
 
 		var oView = new View({content : [
 			this.oSimpleForm
@@ -403,7 +425,7 @@ sap.ui.define([
 		var sSmartFieldLabelId = "SmartFieldLabel";
 		var oXmlString =
 			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:smartfield='sap.ui.comp.smartfield' xmlns:form='sap.ui.layout.form' xmlns:core='sap.ui.core'>" +
-				"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+				"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm' layout='ColumnLayout'>" +
 					"<form:content>" +
 						'<core:Title id="' + sTitleId + '"/>' +
 						'<smartfield:SmartLabel id="' + sSmartFieldLabelId + '" labelFor="' + sSmartFieldId  + '"/>' +
@@ -454,7 +476,7 @@ sap.ui.define([
 		var sSmartFieldLabelId = "SmartFieldLabel";
 		var oXmlString =
 			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:smartfield='sap.ui.comp.smartfield' xmlns:form='sap.ui.layout.form' xmlns:core='sap.ui.core'>" +
-				"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+				"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm' layout='ColumnLayout'>" +
 					"<form:content>" +
 						'<core:Title id="' + sTitleId + '"/>' +
 						'<smartfield:SmartLabel id="' + sSmartFieldLabelId + '" labelFor="' + sSmartFieldId  + '"/>' +
@@ -506,7 +528,7 @@ sap.ui.define([
 		var sSmartFieldLabelId2 = "SmartFieldLabel2";
 		var oXmlString =
 			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:smartfield='sap.ui.comp.smartfield' xmlns:form='sap.ui.layout.form' xmlns:core='sap.ui.core'>" +
-				"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+				"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm' layout='ColumnLayout'>" +
 					"<form:content>" +
 						'<core:Title id="' + sTitleId + '"/>' +
 						'<smartfield:SmartLabel id="' + sSmartFieldLabelId + '" labelFor="' + sSmartFieldId  + '"/>' +
