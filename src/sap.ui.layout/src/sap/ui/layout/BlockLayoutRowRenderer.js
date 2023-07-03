@@ -55,6 +55,9 @@ sap.ui.define(['./library'],
 			});
 
 			switch (sLayoutBackground) {
+				/**
+				 * @deprecated since 1.50
+				 */
 				case BlockBackgroundType.Mixed:
 					if (aAccentedCells.length > 0) {
 						oBlockLayoutRow._processMixedCellStyles(aAccentedCells[aAccentedCells.length - 1], aContent);

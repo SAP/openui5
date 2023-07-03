@@ -381,6 +381,9 @@ sap.ui.define([
 		oBlockLayout.destroy();
 	});
 
+	/**
+	 * @deprecated since 1.50
+	 */
 	QUnit.test("Mixed BlockLayout with an accent cell", function (assert) {
 		jQuery("#qunit-fixture").width(1200);
 		var oCell1 = new BlockLayoutCell({width: 1}),
