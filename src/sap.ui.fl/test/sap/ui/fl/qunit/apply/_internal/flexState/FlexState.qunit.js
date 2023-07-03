@@ -133,6 +133,37 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("When multiple FlexObjects are added and removed together", function(assert) {
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			})
+			.then(function() {
+				var aDummyFlexObjects = [{ test: "test" }, { test2: "test2" }];
+				FlexState.addDirtyFlexObjects(sReference, aDummyFlexObjects);
+				assert.deepEqual(
+					FlexState.getFlexObjectsDataSelector().get({reference: sReference}),
+					aDummyFlexObjects,
+					"then the flexObjects are added to the selector"
+				);
+				assert.strictEqual(
+					this.oCheckUpdateSelectorStub.callCount,
+					2,
+					"then the selector is updated only once after initialize"
+				);
+				FlexState.removeDirtyFlexObjects(sReference, aDummyFlexObjects);
+				assert.notOk(
+					FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0],
+					"then the flexObjects are removed from the selector"
+				);
+				assert.strictEqual(
+					this.oCheckUpdateSelectorStub.callCount,
+					3,
+					"then the selector is called only once more during the removal"
+				);
+			}.bind(this));
+		});
+
 		QUnit.test("When data from the storage response is loaded", function(assert) {
 			sandbox.stub(Loader, "loadFlexData").resolves(merge(
 				{},

@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/SmartBusinessWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ChangesController,
+	ManifestUtils,
 	SmartBusinessWriteAPI,
 	Layer,
 	Settings,
@@ -39,6 +41,7 @@ sap.ui.define([
 
 	QUnit.module("Given SmartBusinessWriteAPI", {
 		beforeEach: function() {
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
 			this.oDescrChangeSpecificData1 = {
 				changeType: "appdescr_ovp_addNewCard",
 				content: {

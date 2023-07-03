@@ -125,7 +125,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when two commands get undone, redone and saved while the element of one command is not available", function(assert) {
 			var oInput3 = new Input("input3");
-			var oDeleteChangeSpy = sandbox.spy(PersistenceWriteAPI, "remove");
+			var oRemoveChangeSpy = sandbox.spy(PersistenceWriteAPI, "remove");
 			var oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
 			var oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
 			var oSettingsCommand2;
@@ -150,17 +150,17 @@ sap.ui.define([
 				// simulate command having no app component
 				sandbox.stub(oSettingsCommand2, "getAppComponent");
 				assert.equal(oAddChangeSpy.callCount, 2, "until now 2 changes got added");
-				assert.equal(oDeleteChangeSpy.callCount, 0, "until now no changes got deleted");
+				assert.equal(oRemoveChangeSpy.callCount, 0, "until now no changes got deleted");
 				return this.oCommandStack.undo();
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(oDeleteChangeSpy.callCount, 0, "no change without app component got deleted");
+				assert.equal(oRemoveChangeSpy.callCount, 0, "no change without app component got deleted");
 				return this.oCommandStack.undo();
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(oDeleteChangeSpy.callCount, 1, "2. change got deleted");
+				assert.equal(oRemoveChangeSpy.callCount, 1, "2. change got deleted");
 				return this.oCommandStack.redo();
 			}.bind(this))
 
@@ -168,7 +168,7 @@ sap.ui.define([
 
 			.then(function() {
 				assert.equal(oAddChangeSpy.callCount, 3, "only one more change got added");
-				assert.equal(oDeleteChangeSpy.callCount, 1, "only one change got deleted");
+				assert.equal(oRemoveChangeSpy.callCount, 1, "only one change got deleted");
 
 				return this.oSerializer.saveCommands({saveAsDraft: false});
 			}.bind(this))
@@ -200,7 +200,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(oAddChangeSpy.callCount, 0, "no change got added");
+				assert.equal(oAddChangeSpy.lastCall.args[0].flexObjects.length, 0, "no change got added");
 			})
 
 			.then(this.oSerializer.saveCommands.bind(this.oSerializer, {saveAsDraft: false}))

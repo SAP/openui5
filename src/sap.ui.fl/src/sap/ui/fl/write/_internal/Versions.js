@@ -149,9 +149,7 @@ sap.ui.define([
 		var aChangePersistences = oDirtyChangeInfo.changePersistences;
 		aChangePersistences.forEach(function(oChangePersistence) {
 			aDirtyChanges = oChangePersistence.getDirtyChanges().concat();
-			aDirtyChanges.forEach(function(oChange) {
-				oChangePersistence.deleteChange(oChange, true);
-			});
+			oChangePersistence.deleteChanges(aDirtyChanges, true);
 		});
 		return aDirtyChanges.length > 0;
 	}

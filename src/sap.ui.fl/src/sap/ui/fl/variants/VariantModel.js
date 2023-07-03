@@ -144,9 +144,7 @@ sap.ui.define([
 			return undefined;
 		})
 		.then(function() {
-			aVariantDirtyChanges.forEach(function(oChange) {
-				mPropertyBag.model.oFlexController.deleteChange(oChange);
-			});
+			mPropertyBag.model.oChangePersistence.deleteChanges(aVariantDirtyChanges);
 		});
 	}
 
@@ -576,9 +574,9 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving when all changes are applied
 	 */
 	VariantModel.prototype.addAndApplyChangesOnVariant = function(aChanges) {
+		this.oChangePersistence.addChanges(aChanges, this.oAppComponent);
 		return aChanges.reduce(function(oPreviousPromise, oChange) {
 			return oPreviousPromise.then(function() {
-				this.oFlexController.addPreparedChange(oChange, this.oAppComponent);
 				var oControl = Core.byId(JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), this.oAppComponent));
 				return this.oFlexController.applyChange(oChange, oControl);
 			}.bind(this));
@@ -729,9 +727,9 @@ sap.ui.define([
 		}
 
 		// sets copied variant and associated changes as dirty
-		[oDuplicateVariantData.instance].concat(oDuplicateVariantData.controlChanges).forEach(function(oChange) {
-			aChanges.push(this.oChangePersistence.addDirtyChange(oChange));
-		}.bind(this));
+		aChanges = aChanges.concat(
+			this.oChangePersistence.addDirtyChanges([oDuplicateVariantData.instance].concat(oDuplicateVariantData.controlChanges))
+		);
 
 		return this.updateCurrentVariant({
 			variantManagementReference: mPropertyBag.variantManagementReference,
@@ -755,9 +753,7 @@ sap.ui.define([
 			newVariantReference: mPropertyBag.sourceVariantReference,
 			appComponent: mPropertyBag.component
 		}).then(function() {
-			aChangesToBeDeleted.forEach(function(oChange) {
-				this.oChangePersistence.deleteChange(oChange);
-			}.bind(this));
+			this.oChangePersistence.deleteChanges(aChangesToBeDeleted);
 		}.bind(this));
 	};
 
@@ -920,6 +916,21 @@ sap.ui.define([
 		this.oChangePersistence.addDirtyChange(oChange);
 
 		return oChange;
+	};
+
+	/**
+	 * Sets the variant properties and adds variant changes
+	 * @param {string} sVariantManagementReference - Variant management reference
+	 * @param {object[]} aChangePropertyMaps - Array of property maps optionally including the adaptation ID
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Created Change objects
+	 */
+	VariantModel.prototype.addVariantChanges = function(sVariantManagementReference, aChangePropertyMaps) {
+		var aChanges = aChangePropertyMaps.map(function(mProperties) {
+			return this.createVariantChange(sVariantManagementReference, mProperties);
+		}.bind(this));
+		this.oChangePersistence.addDirtyChanges(aChanges);
+
+		return aChanges;
 	};
 
 	/**
@@ -1128,8 +1139,8 @@ sap.ui.define([
 			var aChanges = [];
 			aConfigurationChangesContent.forEach(function(oChangeProperties) {
 				oChangeProperties.appComponent = this.oAppComponent;
-				aChanges.push(this.addVariantChange(oData.variantManagementReference, oChangeProperties));
 			}.bind(this));
+			aChanges = aChanges.concat(this.addVariantChanges(oData.variantManagementReference, aConfigurationChangesContent));
 			this.oChangePersistence.saveDirtyChanges(this.oAppComponent, false, aChanges);
 		};
 	};
@@ -1209,6 +1220,7 @@ sap.ui.define([
 
 			return this.copyVariant(mPropertyBag)
 			.then(function(aCopiedVariantDirtyChanges) {
+				var aNewChangeInfos = [];
 				if (bSetDefault) {
 					var mPropertyBagSetDefault = {
 						changeType: "setDefault",
@@ -1218,8 +1230,7 @@ sap.ui.define([
 						layer: sVariantChangeLayer,
 						variantManagementReference: sVariantManagementReference
 					};
-					var oSetDefaultChange = this.addVariantChange(sVariantManagementReference, mPropertyBagSetDefault);
-					aCopiedVariantDirtyChanges.push(oSetDefaultChange);
+					aNewChangeInfos.push(mPropertyBagSetDefault);
 				}
 				if (bSetExecuteOnSelect) {
 					var mPropertyBagSetExecute = {
@@ -1230,10 +1241,10 @@ sap.ui.define([
 						layer: sVariantChangeLayer,
 						variantManagementReference: sVariantManagementReference
 					};
-					var oSetExecuteChange = this.addVariantChange(sVariantManagementReference, mPropertyBagSetExecute);
-					aCopiedVariantDirtyChanges.push(oSetExecuteChange);
+					aNewChangeInfos.push(mPropertyBagSetExecute);
 				}
-				aNewVariantDirtyChanges = aCopiedVariantDirtyChanges;
+				var aNewChanges = this.addVariantChanges(sVariantManagementReference, aNewChangeInfos);
+				aNewVariantDirtyChanges = aCopiedVariantDirtyChanges.concat(aNewChanges);
 				// unsaved changes on the source variant are removed before copied variant changes are saved
 				return eraseDirtyChanges({
 					changes: aSourceVariantChanges,
@@ -1241,7 +1252,13 @@ sap.ui.define([
 					vReference: sSourceVariantReference,
 					model: this
 				})
-				.then(handleDirtyChanges.bind(this, this.oFlexController, aCopiedVariantDirtyChanges, sVariantManagementReference, oAppComponent));
+				.then(handleDirtyChanges.bind(
+					this,
+					this.oFlexController,
+					aNewVariantDirtyChanges,
+					sVariantManagementReference,
+					oAppComponent
+				));
 			}.bind(this));
 		}.bind(this, sVMReference, oAppComponent, mParameters), this)
 		.then(function() {

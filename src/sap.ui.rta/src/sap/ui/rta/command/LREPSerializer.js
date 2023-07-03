@@ -74,7 +74,8 @@ sap.ui.define([
 		this.getCommandStack().removeCommandExecutionHandler(this._fnHandleCommandExecuted);
 	};
 	LREPSerializer.prototype._isPersistedChange = function(oPreparedChange) {
-		return !!this.getCommandStack()._aPersistedChanges && this.getCommandStack()._aPersistedChanges.indexOf(oPreparedChange.getId()) !== -1;
+		return !!this.getCommandStack()._aPersistedChanges
+			&& this.getCommandStack()._aPersistedChanges.indexOf(oPreparedChange.getId()) !== -1;
 	};
 
 	LREPSerializer.prototype.handleCommandExecuted = function(oEvent) {
@@ -84,8 +85,9 @@ sap.ui.define([
 				// _lastPromise chain must not be interrupted
 			}).then(function() {
 				var aCommands = this.getCommandStack().getSubCommands(oParams.command);
+				var oAppComponent;
+				var aFlexObjects = [];
 				if (oParams.undo) {
-					var aRemovePromises = [];
 					aCommands.forEach(function(oCommand) {
 						// for revertable changes which don't belong to LREP (variantSwitch) or runtime only changes
 						if (!(oCommand instanceof FlexCommand || oCommand instanceof AppDescriptorCommand)
@@ -93,12 +95,18 @@ sap.ui.define([
 							return;
 						}
 						var oChange = oCommand.getPreparedChange();
-						var oAppComponent = oCommand.getAppComponent();
+						oAppComponent = oCommand.getAppComponent();
 						if (oAppComponent) {
-							aRemovePromises.push(PersistenceWriteAPI.remove({change: oChange, selector: oAppComponent}));
+							aFlexObjects.push(oChange);
 						}
 					});
-					return Promise.all(aRemovePromises);
+					if (oAppComponent) {
+						return PersistenceWriteAPI.remove({
+							flexObjects: aFlexObjects,
+							selector: oAppComponent
+						});
+					}
+					return Promise.resolve();
 				}
 				var aDescriptorCreateAndAdd = [];
 				aCommands.forEach(function(oCommand) {
@@ -107,18 +115,20 @@ sap.ui.define([
 						return;
 					}
 					if (oCommand instanceof FlexCommand) {
-						var oAppComponent = oCommand.getAppComponent();
+						oAppComponent = oCommand.getAppComponent();
 						if (oAppComponent) {
 							var oPreparedChange = oCommand.getPreparedChange();
 							if (!this._isPersistedChange(oPreparedChange)) {
-								PersistenceWriteAPI.add({change: oCommand.getPreparedChange(), selector: oAppComponent});
+								aFlexObjects.push(oCommand.getPreparedChange());
 							}
 						}
 					} else if (oCommand instanceof AppDescriptorCommand) {
 						aDescriptorCreateAndAdd.push(oCommand.createAndStoreChange());
 					}
 				}.bind(this));
-
+				if (oAppComponent) {
+					PersistenceWriteAPI.add({flexObjects: aFlexObjects, selector: oAppComponent});
+				}
 				return Promise.all(aDescriptorCreateAndAdd);
 			}.bind(this));
 			return this._lastPromise;

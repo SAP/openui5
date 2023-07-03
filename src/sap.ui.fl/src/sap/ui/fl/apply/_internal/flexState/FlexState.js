@@ -708,6 +708,14 @@ sap.ui.define([
 		}
 	};
 
+	FlexState.addDirtyFlexObjects = function(sReference, aFlexObjects) {
+		if (aFlexObjects.length > 0 && _mInstances[sReference]) {
+			_mInstances[sReference].runtimePersistence.flexObjects =
+				_mInstances[sReference].runtimePersistence.flexObjects.concat(aFlexObjects);
+			oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
+		}
+	};
+
 	FlexState.removeDirtyFlexObject = function(sReference, oFlexObject) {
 		// FIXME: Currently called from the ChangePersistence which might be
 		// independent of FlexState in some test cases
@@ -717,6 +725,21 @@ sap.ui.define([
 			var aFlexObjects = _mInstances[sReference].runtimePersistence.flexObjects;
 			var iIndex = aFlexObjects.indexOf(oFlexObject);
 			aFlexObjects.splice(iIndex, 1);
+			oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
+		}
+	};
+
+	FlexState.removeDirtyFlexObjects = function(sReference, aFlexObjects) {
+		// FIXME: Currently called from the ChangePersistence which might be
+		// independent of FlexState in some test cases
+		// Once the ChangePersistence is no longer used
+		// make sure to remove the safeguard
+		if (_mInstances[sReference]) {
+			var aCurrentFlexObjects = _mInstances[sReference].runtimePersistence.flexObjects;
+			aFlexObjects.forEach(function(oFlexObject) {
+				var iIndex = aCurrentFlexObjects.indexOf(oFlexObject);
+				aCurrentFlexObjects.splice(iIndex, 1);
+			});
 			oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
 		}
 	};

@@ -97,14 +97,17 @@ sap.ui.define([
 			var oRevertStub = sandbox.stub(ChangesWriteAPI, "revert").resolves();
 			return LocalResetAPI.resetChanges(aNestedChanges, this.oComponent)
 			.then(function() {
-				assert.strictEqual(oRemoveStub.callCount, 2, "Then all changes are removed");
+				assert.ok(
+					oRemoveStub.calledWith({flexObjects: aNestedChanges.reverse(), selector: this.oComponent}),
+					"Then all changes are removed"
+				);
 				assert.strictEqual(oRevertStub.callCount, 2, "Then all changes are reverted");
 				assert.strictEqual(
 					oRevertStub.firstCall.args[0].change.getId(),
 					"foo2",
 					"then the changes are reverted in the correct order"
 				);
-			});
+			}.bind(this));
 		});
 
 		QUnit.test("when a reset is restored", function(assert) {
@@ -113,7 +116,7 @@ sap.ui.define([
 			});
 			sandbox.stub(PersistenceWriteAPI, "remove").callsFake(function(aArguments) {
 				// Simulate deletion to validate that the state is restored
-				this.oChangePersistence.deleteChange(aArguments.change);
+				this.oChangePersistence.deleteChanges(aArguments.flexObjects);
 				return Promise.resolve();
 			}.bind(this));
 			sandbox.stub(ChangesWriteAPI, "revert").resolves();
@@ -123,7 +126,10 @@ sap.ui.define([
 				var oApplyStub = sandbox.stub(ChangesWriteAPI, "apply").resolves();
 
 				return LocalResetAPI.restoreChanges(aNestedChanges, this.oComponent).then(function() {
-					assert.strictEqual(oAddStub.callCount, 2, "Then all changes are added again");
+					assert.ok(
+						oAddStub.calledWith({flexObjects: aNestedChanges, selector: this.oComponent}),
+						"Then all changes are added again"
+					);
 					assert.strictEqual(oApplyStub.callCount, 2, "Then all changes are applied again");
 					assert.strictEqual(
 						oApplyStub.firstCall.args[0].change.getId(),

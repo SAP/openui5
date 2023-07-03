@@ -131,11 +131,13 @@ sap.ui.define([
 	 */
 	ControlVariantSaveAs.prototype.undo = function() {
 		if (this._oVariantChange) {
+			var aChangesToBeDeleted = [];
 			this._aPreparedChanges.forEach(function(oChange) {
 				if (oChange.getFileType() === "ctrl_variant_management_change") {
-					this.oModel.oFlexController.deleteChange(oChange);
+					aChangesToBeDeleted.push(oChange);
 				}
-			}.bind(this));
+			});
+			this.oModel.oChangePersistence.deleteChanges(aChangesToBeDeleted);
 
 			var mPropertyBag = {
 				variant: this._oVariantChange,

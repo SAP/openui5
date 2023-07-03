@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/_internal/FlexInfoSession",
+	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings"
@@ -33,6 +34,7 @@ sap.ui.define([
 	Storage,
 	FeaturesAPI,
 	FlexInfoSession,
+	ChangePersistenceFactory,
 	Layer,
 	LayerUtils,
 	Settings
@@ -254,65 +256,102 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds a change to the flex persistence.
-	 * If it's a descriptor change, a transport request is set.
+	 * Adds flexObjects to the flex persistence.
+	 * If there is a descriptor change, a transport request is set.
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} mPropertyBag.change - Change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} mPropertyBag.flexObjects - Array of flexObjects
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} [mPropertyBag.change] - FlexObject instance
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} The change instance
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[] | sap.ui.fl.apply._internal.flexObjects.FlexObject} An array of flexObjects or a single flexObject (depending on the input)
 	 *
 	 * @private
 	 * @ui5-restricted
 	 */
 	PersistenceWriteAPI.add = function(mPropertyBag) {
-		if (isDescriptorChange(mPropertyBag.change)) {
-			return mPropertyBag.change.store();
-		}
 		var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
-		return ChangesController.getFlexControllerInstance(oAppComponent).addPreparedChange(mPropertyBag.change, oAppComponent);
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
+
+		function addSingleFlexObject(oFlexObject) {
+			if (isDescriptorChange(oFlexObject)) {
+				return oFlexObject.store();
+			}
+			return oChangePersistence.addChange(oFlexObject, oAppComponent);
+		}
+
+		if (mPropertyBag.change && mPropertyBag.flexObjects) {
+			throw new Error("Using 'flexObjects' and 'change' properties together not supported. Please use the 'flexObjects' property.");
+		}
+
+		if (mPropertyBag.change) {
+			return addSingleFlexObject(mPropertyBag.change);
+		}
+
+		var bHasDescriptorChanges = mPropertyBag.flexObjects.some(function(oFlexObject) {
+			return isDescriptorChange(oFlexObject);
+		});
+
+		if (bHasDescriptorChanges) {
+			// if the flexObjects array has descriptor changes we add every change individually
+			return mPropertyBag.flexObjects.map(addSingleFlexObject);
+		}
+
+		return oChangePersistence.addChanges(mPropertyBag.flexObjects, oAppComponent);
 	};
 
 	/**
-	 * Removes a change from from the applied changes on a control and from the flex persistence map.
+	 * Removes changes from the applied flexObjects on a control and from the flex persistence map.
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} mPropertyBag.change - Change to be removed
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} mPropertyBag.flexObjects - Array of flexObjects to be removed
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} [mPropertyBag.change] - FlexObject to be removed
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
-	 * @returns {Promise} resolves when changes are removed
+	 * @returns {Promise} resolves when flexObjects are removed
 	 * @private
 	 * @ui5-restricted
 	 */
 	PersistenceWriteAPI.remove = function(mPropertyBag) {
-		var oFlexController;
-		var oAppComponent;
 		return Promise.resolve()
 		.then(function() {
+			if (mPropertyBag.change && mPropertyBag.flexObjects) {
+				return Promise.reject(
+					new Error("Using 'flexObjects' and 'change' properties together not supported. Please use the 'flexObjects' property.")
+				);
+			}
 			if (!mPropertyBag.selector) {
 				return Promise.reject(
 					new Error("An invalid selector was passed so change could not be removed with id: " + mPropertyBag.change.getId()));
 			}
-			oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
+			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
 			if (!oAppComponent) {
 				return Promise.reject(
 					new Error("Invalid application component for selector, change could not be removed with id: "
 					+ mPropertyBag.change.getId()));
 			}
-			// descriptor change
-			if (isDescriptorChange(mPropertyBag.change)) {
-				var oDescriptorFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
-				oDescriptorFlexController.deleteChange(mPropertyBag.change);
-				return undefined;
+
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
+
+			function destroyAppliedCustomData(oFlexObject) {
+				var oElement = JsControlTreeModifier.bySelector(oFlexObject.getSelector(), oAppComponent);
+				if (oElement) {
+					FlexCustomData.destroyAppliedCustomData(oElement, oFlexObject, JsControlTreeModifier);
+				}
 			}
-			var oElement = JsControlTreeModifier.bySelector(mPropertyBag.change.getSelector(), oAppComponent);
-			oFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
-			// remove custom data for flex change
-			if (oElement) {
-				FlexCustomData.destroyAppliedCustomData(oElement, mPropertyBag.change, JsControlTreeModifier);
+
+			if (mPropertyBag.change) {
+				if (!isDescriptorChange(mPropertyBag.change)) {
+					destroyAppliedCustomData(mPropertyBag.change);
+				}
+				return oChangePersistence.deleteChange(mPropertyBag.change);
 			}
-			// delete from flex persistence map
-			oFlexController.deleteChange(mPropertyBag.change);
-			return undefined;
+
+			mPropertyBag.flexObjects.forEach(function(oFlexObject) {
+				if (!isDescriptorChange(oFlexObject)) {
+					destroyAppliedCustomData(oFlexObject);
+				}
+			});
+
+			return oChangePersistence.deleteChanges(mPropertyBag.flexObjects);
 		});
 	};
 
