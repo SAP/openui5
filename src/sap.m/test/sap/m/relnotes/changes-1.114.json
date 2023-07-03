@@ -294,5 +294,54 @@
         ]
       }
     ]
+  },
+  "1.114.1": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "4dcda44087a8ccac1649a9bda3d330ac015cd41d",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004628532023"
+          }
+        ]
+      },
+      {
+        "id": "7937b0497ba36a324ed22b9dcb801d5280823076",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fix missing Popover menu button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370027326"
+          }
+        ]
+      },
+      {
+        "id": "5affdc2f7d405482732cf665a6d6ab83e1edaed5",
+        "type": "FIX",
+        "text": " sap.m.Input: Correct after open flag",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380053379"
+          }
+        ]
+      },
+      {
+        "id": "1d43e06cab1ef9b33fd96363cf1ac652e19d051b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: removed transparent background in Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004385772023"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1,0 +1,22 @@
+{
+  "1.114.1": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "92c83b374821aa3714a333668aa4e88ce219ddea",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: prevent scrolling on focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001889832023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002028376700053150452023"
+          }
+        ]
+      }
+    ]
+  }
+}
