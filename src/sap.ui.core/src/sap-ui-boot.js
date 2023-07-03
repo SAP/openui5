@@ -2,9 +2,18 @@
  * ${copyright}
  */
 
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the Core tests must not yet introduce dependencies to this module.
+/**
+ * IMPORTANT: This is a private module, its API must not be used in production and is
+ * subject to change.
+ *
+ * It may be used to experiment with an alternative bootstrap of a UI5 application.
+ *
+ * Currently, it does not fully recreate the environment of the regular UI5 bootstrap
+ * (<code>sap-ui-core.js</code>), but only a subset as required by UI5 Controls
+ * (<code>sap.m</code>) or UI5 Web Components.
+ *
+ * @private
+ * @experimental
  */
 
 /*global document, sap */
