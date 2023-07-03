@@ -68,9 +68,10 @@ sap.ui.define([
 			var oMsgStrp = this.oPlugin._oMessageStrip;
 			assert.equal(oMsgStrp.getText(), "New Message");
 			assert.equal(oMsgStrp.getType(), "Error");
+			assert.ok(this.oList.getAriaLabelledBy().includes(oMsgStrp.getId()));
 
-			this.oPlugin.setEnabled(false);
-			assert.notOk(this.oPlugin._oMessageStrip);
+			this.oPlugin.showMessage("");
+			assert.notOk(this.oList.getAriaLabelledBy().includes(oMsgStrp.getId()));
 
 			done();
 		}.bind(this));
@@ -84,6 +85,11 @@ sap.ui.define([
 			var oMsgStrp = this.oPlugin._oMessageStrip;
 			assert.equal(oMsgStrp.getText(), "Error Message Text");
 			assert.equal(oMsgStrp.getType(), "Error");
+
+			this.oPlugin.setEnabled(false);
+			assert.notOk(this.oPlugin._oMessageStrip);
+			assert.notOk(this.oList.getAriaLabelledBy().includes(oMsgStrp.getId()));
+
 			done();
 		}.bind(this));
 	});
@@ -252,8 +258,10 @@ sap.ui.define([
 
 		this.oPromise.then(function() {
 			var oMsgStrip = this.oPlugin._oMessageStrip;
+			assert.ok(oControl.getAriaLabelledBy().includes(oMsgStrip.getId()));
 			this.oPlugin.attachClose(function() {
 				assert.strictEqual(document.activeElement, oControl.getItems()[0].getDomRef(), "Focus is on the parent of the message Strip");
+				assert.notOk(oControl.getAriaLabelledBy().includes(oMsgStrip.getId()));
 				done();
 			});
 			setTimeout(function() {
