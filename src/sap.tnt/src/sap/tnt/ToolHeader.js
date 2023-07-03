@@ -32,14 +32,17 @@ sap.ui.define([
 	 * @class
 	 *
 	 * The ToolHeader control is a horizontal container that is most
-	 * commonly used to display buttons, labels, and other various input controls.
+	 * commonly used to display buttons, texts, and other various input controls.
 	 * <h3>Overview</h3>
 	 * The ToolHeader control is based on {@link sap.m.OverflowToolbar}. It contains clearly structured menus of commands that are available across the various apps within the same tool layout.
 	 * <h3>Usage</h3>
 	 * <ul>
+	 * <li>This control is specialized for administrative applications. For other types of applications use: {@link sap.m.Shell}</li>
 	 * <li>If an app implements side navigation in addition to the tool header menu, the menu icon must be the first item on the left-hand side of the tool header.</li>
 	 * <li>The app menu and the side navigation must not have any dependencies and must work independently.</li>
 	 * </ul>
+	 * <h4>Horizon theme specifics</h4>
+	 * Only the following controls are supported: sap.m.Button, sap.m.Image, sap.m.Title, sap.m.Text, sap.m.SearchField, sap.m.Avatar.
 	 * <h4>Fiori 3 theme specifics</h4>
 	 * In Fiori 3 Default theme the ToolHeader is with dark design unlike most of the other controls. This defines the usage of limited controls inside it, which will result in good design combination.<br/>
 	 * The ToolHeader stylizes the contained controls with the Shell color parameters, to match the dark design requirement. However, that's not a dark theme.<br/><br/>
@@ -124,7 +127,6 @@ sap.ui.define([
 	* @public
 	* @since 1.34
 	* @alias sap.tnt.ToolHeader
-	* @see {@link fiori:https://experience.sap.com/fiori-design-web/tool-header/ Tool Header}
 	*/
 	var ToolHeader = OverflowToolbar.extend("sap.tnt.ToolHeader", /** @lends sap.tnt.ToolHeader.prototype */ {
 		metadata: {

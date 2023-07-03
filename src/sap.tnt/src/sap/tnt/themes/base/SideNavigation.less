@@ -5,9 +5,15 @@
 
 @_sap_tnt_SideNavigation_Width: 15rem;
 @_sap_tnt_SideNavigation_CollapsedWidth: 3rem;
+@_sap_tnt_SideNavigation_NavigationSeparatorMargin: 0.25rem 0.875rem 0.25rem 0.875rem;
+@_sap_tnt_SideNavigation_NavigationSeparatorMarginCollapsed: 0.25rem 0.5rem 0.25rem 0.5rem;
 @_sap_tnt_SideNavigation_NavigationSeparatorBackgroundColor: @sapUiGroupContentBorderColor;
+@_sap_tnt_SideNavigation_NavigationSeparatorRadius: unset;
 @_sap_tnt_SideNavigation_NavigationSeparatorHeight: 1px;
 @_sap_tnt_SideNavigation_TriangleColor: @sapUiContentIconColor;
+@_sap_tnt_SideNavigation_BorderRadius: 0;
+@_sap_tnt_SideNavigation_PhoneBorderRadius: 0;
+@_sap_tnt_SideNavigation_BoxShadow: none;
 
 .sapTntSideNavigation {
   display: flex;
@@ -17,10 +23,16 @@
   overflow: hidden;
   background: @sapUiListBackground;
   border-right: 1px solid @sapUiGroupContentBorderColor;
+	box-shadow: @_sap_tnt_SideNavigation_BoxShadow;
+	border-radius: @_sap_tnt_SideNavigation_BorderRadius;
+	width: @_sap_tnt_SideNavigation_Width;
 }
 
-.sapTntSideNavigation {
-  width: @_sap_tnt_SideNavigation_Width;
+html.sap-phone,
+html.sap-tablet:not(html.sap-combi) {
+	.sapTntSideNavigation {
+		border-radius: @_sap_tnt_SideNavigation_PhoneBorderRadius;
+	}
 }
 
 .sapTntSideNavigation.sapTntSideNavigationNotExpandedWidth {
@@ -33,12 +45,7 @@
 		display: none;
 	}
 	.sapTntSideNavigationSeparator {
-		margin: 0.25rem 0.5rem 0.25rem 0.5rem;
-	}
-
-	.sapTntSideNavigationFlexible {
-		padding-right: @_sap_tnt_SideNavigation_CollapsedWidth;
-		width: 6rem;
+		margin: @_sap_tnt_SideNavigation_NavigationSeparatorMarginCollapsed;
 	}
 
 	.sapTnTNavLINotExpandedTriangle:not(.sapTntNavLIItemDisabled):after {
@@ -66,10 +73,11 @@
 }
 
 .sapTntSideNavigationSeparator {
-	margin: 0.25rem 0.875rem 0.25rem 0.875rem;
+	margin: @_sap_tnt_SideNavigation_NavigationSeparatorMargin;
 	height: @_sap_tnt_SideNavigation_NavigationSeparatorHeight;
 	min-height: @_sap_tnt_SideNavigation_NavigationSeparatorHeight;
 	background-color: @_sap_tnt_SideNavigation_NavigationSeparatorBackgroundColor;
+	border-radius: @_sap_tnt_SideNavigation_NavigationSeparatorRadius;
 }
 
 .sapTntSideNavigationFixed {
@@ -125,18 +133,18 @@
 
 .sapUiSizeCompact {
 
-  .sapTntSideNavigationNotExpanded {
+	.sapTntSideNavigationNotExpanded {
 
-    .sapTntSideNavigationSeparator {
-     	margin: 0.25rem 0.5rem 0.25rem 0.5rem;
-    }
-  }
+		.sapTntSideNavigationSeparator {
+			margin: @_sap_tnt_SideNavigation_NavigationSeparatorMarginCollapsed;
+		}
+	}
 
-  .sapTntSideNavigationSeparator {
-	margin: 0.25rem 0.5rem 0.25rem 0.5rem;
-  }
+	.sapTntSideNavigationSeparator {
+		margin: @_sap_tnt_SideNavigation_NavigationSeparatorMarginCollapsed;
+	}
 
-  .sapTntSideNavigationScrollIcon {
-    padding: 0.5rem 0;
-  }
+	.sapTntSideNavigationScrollIcon {
+		padding: 0.5rem 0;
+	}
 }

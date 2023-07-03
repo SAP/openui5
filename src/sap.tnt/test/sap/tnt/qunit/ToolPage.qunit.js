@@ -46,6 +46,9 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
 
+	// shortcut for sap.m.PageBackgroundDesign
+	var PageBackgroundDesign = mobileLibrary.PageBackgroundDesign;
+
 	// create and add app
 	var oApp = new App("myApp", {initialPage: "toolPage"});
 	oApp.placeAt("qunit-fixture");
@@ -529,14 +532,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("header", function (assert) {
-		assert.strictEqual(this.toolPage.$().find("header").length, 1, "header is rendered");
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 1, "header is rendered");
 	});
 
 	QUnit.test("header and subheader", function (assert) {
 		this.toolPage.setSubHeader(new ToolHeader());
 		Core.applyChanges();
 
-		assert.strictEqual(this.toolPage.$().find("header").length, 2, "header and subheader are rendered");
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 2, "header and subheader are rendered");
 	});
 
 	QUnit.test("set subheader visibility to true|false", function (assert) {
@@ -545,16 +548,16 @@ sap.ui.define([
 		this.toolPage.setSubHeader(oToolHeader);
 		Core.applyChanges();
 
-		assert.strictEqual(this.toolPage.$().find("header").length, 2, "header and subheader are rendered");
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 2, "header and subheader are rendered");
 
 		oToolHeader.setVisible(false);
 		Core.applyChanges();
 
-		assert.strictEqual(this.toolPage.$().find("header").length, 1, "subheader is not rendered");
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 1, "subheader is not rendered");
 
 		oToolHeader.setVisible(true);
 		Core.applyChanges();
-		assert.strictEqual(this.toolPage.$().find("header").length, 2, "header and subheader are rendered");
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 2, "header and subheader are rendered");
 	});
 
 	QUnit.test("set side navigation visibility to true|false", function (assert) {
@@ -610,6 +613,33 @@ sap.ui.define([
 		// Reset sinon spy
 		this.toolPage.setSideExpanded.restore();
 		this.toolPage._updateLastMediaQuery.restore();
+	});
+
+	QUnit.test("#setContentBackgroundDesign() to 'Solid'", function (assert) {
+		// Act
+		this.toolPage.setContentBackgroundDesign(PageBackgroundDesign.Solid);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.toolPage.$("main").hasClass("sapTntToolPageMainBackground-Solid"), "Correct class for Solid Background should be set");
+	});
+
+	QUnit.test("#setContentBackgroundDesign() to 'Transparent'", function (assert) {
+		// Act
+		this.toolPage.setContentBackgroundDesign(PageBackgroundDesign.Transparent);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.toolPage.$("main").hasClass("sapTntToolPageMainBackground-Transparent"), "Correct class for Transparent Background should be set");
+	});
+
+	QUnit.test("#setContentBackgroundDesign() to 'List'", function (assert) {
+		// Act
+		this.toolPage.setContentBackgroundDesign(PageBackgroundDesign.List);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.toolPage.$("main").hasClass("sapTntToolPageMainBackground-List"), "Correct class for List Background should be set");
 	});
 
 	QUnit.module("Media handling", {
