@@ -304,7 +304,7 @@ function(
 	};
 
 	Link.prototype.onAfterRendering = function() {
-		if (!Device.system.desktop) {
+		if (Device.system.phone || Device.system.tablet) {
 			var oAnchorElement = this.getDomRef();
 			// TODO: Adjust sap.m.internal.ObjectMarkerCustomLink rendering part of the sap.m.ObjectMarker implementation
 			if (!oAnchorElement) {
@@ -318,7 +318,7 @@ function(
 	};
 
 	Link.prototype.exit = function() {
-		if (!Device.system.desktop) {
+		if (Device.system.phone || Device.system.tablet) {
 			var oAnchorElement = this.getDomRef();
 			if (!oAnchorElement) {
 				return;
