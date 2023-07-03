@@ -76,6 +76,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 	var sVMReference = "variantMgmtId1";
+	const sReference = "MyComponent";
 	sinon.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 	sinon.stub(BusyIndicator, "show");
 	sinon.stub(BusyIndicator, "hide");
@@ -88,7 +89,7 @@ sap.ui.define([
 	function createVariant(mVariantProperties) {
 		return FlexObjectFactory.createFlVariant({
 			id: mVariantProperties.fileName || mVariantProperties.key,
-			reference: mVariantProperties.reference || "MyComponent",
+			reference: mVariantProperties.reference || sReference,
 			layer: mVariantProperties.layer,
 			user: mVariantProperties.author,
 			variantReference: mVariantProperties.variantReference,
@@ -110,14 +111,14 @@ sap.ui.define([
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach() {
 			return FlexState.initialize({
-				reference: "MyComponent",
+				reference: sReference,
 				componentId: "RTADemoAppMD",
 				componentData: {},
 				manifest: {}
 			}).then(function() {
 				var oManifestObj = {
 					"sap.app": {
-						id: "MyComponent",
+						id: sReference,
 						applicationVersion: {
 							version: "1.2.3"
 						}
@@ -126,7 +127,7 @@ sap.ui.define([
 				var oManifest = new Manifest(oManifestObj);
 
 				this.oComponent = {
-					name: "MyComponent",
+					name: sReference,
 					getId() {
 						return "RTADemoAppMD";
 					},
@@ -235,9 +236,8 @@ sap.ui.define([
 		},
 		afterEach() {
 			FlexState.clearState();
-			FlexState.clearRuntimeSteadyObjects("MyComponent", "RTADemoAppMD");
-			VariantManagementState.getVariantManagementMap().clearCachedResult();
-			VariantManagementState.resetCurrentVariantReference();
+			FlexState.clearRuntimeSteadyObjects(sReference, "RTADemoAppMD");
+			VariantManagementState.resetCurrentVariantReference(sReference);
 			sandbox.restore();
 			this.oModel.destroy();
 			delete this.oFlexController;
@@ -283,7 +283,7 @@ sap.ui.define([
 				})
 			);
 			VariantManagementState.setCurrentVariant({
-				reference: "MyComponent",
+				reference: sReference,
 				vmReference: sVMReference,
 				newVReference: "variant0"
 			});
@@ -1010,7 +1010,7 @@ sap.ui.define([
 		QUnit.test("when calling '_ensureStandardVariantExists'", function(assert) {
 			var oExpectedVariant = {
 				id: "mockVariantManagement",
-				reference: "MyComponent",
+				reference: sReference,
 				user: VariantUtil.DEFAULT_AUTHOR,
 				variantManagementReference: "mockVariantManagement",
 				variantName: oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
@@ -1070,7 +1070,6 @@ sap.ui.define([
 					fileName: "variant0",
 					variantManagementReference: sVMReference,
 					variantReference: "",
-					reference: "Dummy",
 					layer: Layer.PUBLIC,
 					title: "Text for TextDemo",
 					author: ""
@@ -1825,7 +1824,7 @@ sap.ui.define([
 
 			// Copy a variant from the CUSTOMER layer
 			VariantManagementState.setCurrentVariant({
-				reference: "MyComponent",
+				reference: sReference,
 				vmReference: sVMReference,
 				newVReference: "variant0"
 			});
@@ -2189,7 +2188,7 @@ sap.ui.define([
 	QUnit.module("Given a VariantModel with no data and a VariantManagement control", {
 		beforeEach() {
 			return FlexState.initialize({
-				reference: "MyComponent",
+				reference: sReference,
 				componentId: "RTADemoAppMD",
 				componentData: {},
 				manifest: {}
@@ -2197,7 +2196,7 @@ sap.ui.define([
 			.then(function() {
 				var oManifestObj = {
 					"sap.app": {
-						id: "MyComponent",
+						id: sReference,
 						applicationVersion: {
 							version: "1.2.3"
 						}
@@ -2207,7 +2206,7 @@ sap.ui.define([
 				this.sVMReference = "varMgmtRef1";
 				this.oVariantManagement = new VariantManagement(this.sVMReference);
 				var oComponent = {
-					name: "MyComponent",
+					name: sReference,
 					getId() {
 						return "RTADemoAppMD";
 					},
@@ -2222,7 +2221,7 @@ sap.ui.define([
 					}.bind(this)
 				};
 
-				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("MyComponent");
+				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 				this.fnGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 				this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
 				this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves();

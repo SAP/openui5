@@ -98,7 +98,7 @@ sap.ui.define([
 	function cleanup() {
 		FlexState.clearState();
 		FlexState.clearRuntimeSteadyObjects(sReference, sComponentId);
-		VariantManagementState.getVariantManagementMap().clearCachedResult();
+		VariantManagementState.getVariantManagementMap().clearCachedResult({ reference: sReference });
 		VariantManagementState.resetCurrentVariantReference(sReference);
 		sandbox.restore();
 	}
@@ -493,6 +493,100 @@ sap.ui.define([
 				oVMData.variants[2].favorite,
 				"then the default variant is still a favorite"
 			);
+		});
+	});
+
+	QUnit.module("VariantsMapSelector.checkInvalidation", {
+		async beforeEach() {
+			this.oStandardVariant = await initializeFlexStateWithStandardVariant();
+		},
+		afterEach() {
+			cleanup();
+		}
+	}, function() {
+		QUnit.test("when updateInfo is missing", function(assert) {
+			const oDataSelector = VariantManagementState.getVariantManagementMap();
+			const oClearCacheSpy = sandbox.spy(oDataSelector, "_clearCache");
+			oDataSelector.checkUpdate({ reference: sReference });
+			assert.strictEqual(oClearCacheSpy.callCount, 1, "then the update happend");
+		});
+
+		QUnit.test("when updateType 'addFlexObject' with variant related updated object is provided", function(assert) {
+			const oUIChange = FlexObjectFactory.createUIChange({
+				id: "someVariantChange",
+				layer: Layer.CUSTOMER,
+				variantReference: sStandardVariantReference,
+				fileType: "ctrl_variant_change"
+			});
+			const oDataSelector = VariantManagementState.getVariantManagementMap();
+			const oClearCacheSpy = sandbox.spy(oDataSelector, "_clearCache");
+			oDataSelector.checkUpdate(
+				{ reference: sReference },
+				[{ type: "addFlexObject", updatedObject: oUIChange }]
+			);
+			assert.strictEqual(oClearCacheSpy.callCount, 1, "then the cache has been invalidated");
+		});
+
+		QUnit.test("when updateType 'addFlexObject' without an updated object is provided", function(assert) {
+			const oDataSelector = VariantManagementState.getVariantManagementMap();
+			const oClearCacheSpy = sandbox.spy(oDataSelector, "_clearCache");
+			oDataSelector.checkUpdate(
+				{ reference: sReference },
+				[{ type: "addFlexObject" }]
+			);
+			assert.strictEqual(oClearCacheSpy.callCount, 0, "then the cache has not been invalidated");
+		});
+
+		QUnit.test("when updateTypes 'addFlexObject' & 'removeFlexObject' with variant object as updated object is provided", function(assert) {
+			const oCompVariant = createVariant({
+				id: "someCompVariant",
+				layer: Layer.CUSTOMER
+			});
+			const oDataSelector = VariantManagementState.getVariantManagementMap();
+			const oClearCacheSpy = sandbox.spy(oDataSelector, "_clearCache");
+			oDataSelector.checkUpdate(
+				{ reference: sReference },
+				[
+					{ type: "addFlexObject", updatedObject: oCompVariant },
+					{ type: "removeFlexObject", updatedObject: oCompVariant }
+				]
+			);
+			assert.strictEqual(oClearCacheSpy.callCount, 1, "then the cache has been invalidated");
+		});
+
+		QUnit.test("when valid and invalid updateInfos are provided", function(assert) {
+			const oUIChangeWithoutVariantReference = FlexObjectFactory.createUIChange({
+				id: "someUIChange",
+				layer: Layer.CUSTOMER,
+				fileType: "change"
+			});
+			const oDataSelector = VariantManagementState.getVariantManagementMap();
+			const oClearCacheSpy = sandbox.spy(oDataSelector, "_clearCache");
+			oDataSelector.checkUpdate(
+				{ reference: sReference },
+				[
+					{ type: "removeFlexObject", updatedObject: oUIChangeWithoutVariantReference},
+					{ type: "anotherType", updatedObject: oUIChangeWithoutVariantReference}
+				]
+			);
+			assert.strictEqual(oClearCacheSpy.callCount, 1, "then the cache has been invalidated");
+		});
+
+		QUnit.test("when just invalid updateInfos are provided", function(assert) {
+			const oUIChangeWithoutVariantReference = FlexObjectFactory.createUIChange({
+				id: "someUIChange",
+				layer: Layer.CUSTOMER
+			});
+			const oDataSelector = VariantManagementState.getVariantManagementMap();
+			const oClearCacheSpy = sandbox.spy(oDataSelector, "_clearCache");
+			oDataSelector.checkUpdate(
+				{ reference: sReference },
+				[
+					{ type: "justAnotherType", updatedObject: oUIChangeWithoutVariantReference },
+					{ type: "anotherType" }
+				]
+			);
+			assert.strictEqual(oClearCacheSpy.callCount, 0, "then the cache has not been invalidated");
 		});
 	});
 
@@ -1317,6 +1411,10 @@ sap.ui.define([
 			);
 		});
 
+		function includesSelector(aArguments, sId) {
+			return aArguments.some((oArgument) => oArgument.selector === sId);
+		}
+
 		QUnit.test("when calling waitForInitialVariantChanges", function(assert) {
 			var oFlexControllerStub = {
 				waitForChangesToBeApplied: sandbox.stub().resolves("foo")
@@ -1343,17 +1441,11 @@ sap.ui.define([
 				);
 				var aArguments = oFlexControllerStub.waitForChangesToBeApplied.lastCall.args[0];
 				assert.ok(
-					aArguments.some(
-						function(oArgument) {
-							return oArgument.selector === "someId";
-						}),
+					includesSelector(aArguments, "someId"),
 					"then the first selector was passed"
 				);
 				assert.ok(
-					aArguments.some(
-						function(oArgument) {
-							return oArgument.selector === "someOtherId";
-						}),
+					includesSelector(aArguments, "someOtherId"),
 					"then the second selector was passed"
 				);
 			});
@@ -1381,6 +1473,7 @@ sap.ui.define([
 		beforeEach() {
 		},
 		afterEach() {
+			cleanup();
 			sandbox.restore();
 		}
 	}, function() {

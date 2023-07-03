@@ -636,7 +636,10 @@ sap.ui.define([
 		_mExternalData.flexObjects[sReference] ||= {};
 		_mExternalData.flexObjects[sReference][sComponentId] ||= [];
 		_mExternalData.flexObjects[sReference][sComponentId].push(oFlexObject);
-		oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
+		oFlexObjectsDataSelector.checkUpdate(
+			{ reference: sReference },
+			[{ type: "addFlexObject", updatedObject: oFlexObject }]
+		);
 	};
 
 	/**
@@ -689,7 +692,10 @@ sap.ui.define([
 		// make sure to remove the safeguard
 		if (!bFlexObjectsOverAdaptationLayer && _mInstances[sReference]) {
 			_mInstances[sReference].runtimePersistence.flexObjects.push(oFlexObject);
-			oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
+			oFlexObjectsDataSelector.checkUpdate(
+				{ reference: sReference },
+				[{ type: "addFlexObject", updatedObject: oFlexObject }]
+			);
 		}
 	};
 
@@ -707,7 +713,12 @@ sap.ui.define([
 		if (aFlexObjects.length > 0 && _mInstances[sReference]) {
 			_mInstances[sReference].runtimePersistence.flexObjects =
 				_mInstances[sReference].runtimePersistence.flexObjects.concat(aFlexObjects);
-			oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
+			oFlexObjectsDataSelector.checkUpdate(
+				{ reference: sReference },
+				aFlexObjects.map(function(oFlexObject) {
+					return { type: "addFlexObject", updatedObject: oFlexObject };
+				})
+			);
 		}
 	};
 
@@ -720,7 +731,10 @@ sap.ui.define([
 			var aFlexObjects = _mInstances[sReference].runtimePersistence.flexObjects;
 			var iIndex = aFlexObjects.indexOf(oFlexObject);
 			aFlexObjects.splice(iIndex, 1);
-			oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
+			oFlexObjectsDataSelector.checkUpdate(
+				{ reference: sReference },
+				[{ type: "removeFlexObject", updatedObject: oFlexObject }]
+			);
 		}
 	};
 
@@ -735,7 +749,12 @@ sap.ui.define([
 				var iIndex = aCurrentFlexObjects.indexOf(oFlexObject);
 				aCurrentFlexObjects.splice(iIndex, 1);
 			});
-			oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
+			oFlexObjectsDataSelector.checkUpdate(
+				{ reference: sReference },
+				aFlexObjects.map(function(oFlexObject) {
+					return { type: "addFlexObject", updatedObject: oFlexObject };
+				})
+			);
 		}
 	};
 

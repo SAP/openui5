@@ -923,6 +923,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("new change is updated (e.g. after a save)", function(assert) {
+			var oDataSelectorUpdateSpy;
 			return FlexState.initialize({
 				reference: sReference,
 				componentId: this.sComponentId
@@ -956,7 +957,7 @@ sap.ui.define([
 						}
 					}
 				));
-				this.oDataSelectorUpdateSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
+				oDataSelectorUpdateSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
 				return FlexState.update({
 					reference: sReference,
 					componentId: this.sComponentId,
@@ -973,11 +974,12 @@ sap.ui.define([
 					"supportUser",
 					"then the change is updated with the additional information from the backend"
 				);
-				assert.ok(this.oDataSelectorUpdateSpy.calledOnce, "then the data selector update was called");
-			}.bind(this));
+				assert.strictEqual(oDataSelectorUpdateSpy.callCount, 1, "then the data selector update was called");
+			});
 		});
 
 		QUnit.test("new comp variant change gets updated", function(assert) {
+			var oDataSelectorUpdateSpy;
 			return FlexState.initialize({
 				reference: sReference,
 				componentId: this.sComponentId
@@ -1016,7 +1018,7 @@ sap.ui.define([
 						}
 					}
 				));
-				this.oDataSelectorUpdateSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
+				oDataSelectorUpdateSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
 				return FlexState.update({
 					reference: sReference,
 					componentId: this.sComponentId,
@@ -1031,11 +1033,12 @@ sap.ui.define([
 					"supportUser",
 					"then the new change is updated with the additional information from the backend"
 				);
-				assert.ok(this.oDataSelectorUpdateSpy.calledOnce, "then the data selector update was called");
+				assert.strictEqual(oDataSelectorUpdateSpy.callCount, 1, "then the data selector update was called");
 			}.bind(this));
 		});
 
 		QUnit.test("A flex object is deleted", function(assert) {
+			var oDataSelectorUpdateSpy;
 			// Get initial comp variant changes
 			this.oLoadFlexDataStub.resolves(merge(
 				{},
@@ -1075,7 +1078,7 @@ sap.ui.define([
 				componentId: this.sComponentId
 			})
 			.then(function() {
-				this.oDataSelectorUpdateSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
+				oDataSelectorUpdateSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
 				// Change1 is deleted (no longer in storage response)
 				this.oLoadFlexDataStub.resolves(merge(
 					{},
@@ -1115,11 +1118,12 @@ sap.ui.define([
 					1,
 					"then one flex object was deleted"
 				);
-				assert.ok(this.oDataSelectorUpdateSpy.calledOnce, "then the data selector update was called");
+				assert.strictEqual(oDataSelectorUpdateSpy.callCount, 1, "then the data selector update was called");
 			}.bind(this));
 		});
 
 		QUnit.test("no update required (nothing changed)", function(assert) {
+			var oDataSelectorUpdateSpy;
 			// Get initial comp variant changes
 			this.oLoadFlexDataStub.resolves(merge(
 				{},
@@ -1159,7 +1163,7 @@ sap.ui.define([
 				componentId: this.sComponentId
 			})
 			.then(function() {
-				this.oDataSelectorUpdateSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
+				oDataSelectorUpdateSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
 				// nothing changes - same data is returned from the storage
 				return FlexState.update({
 					reference: sReference,
@@ -1175,7 +1179,7 @@ sap.ui.define([
 					2,
 					"then both objects are still in the persistence"
 				);
-				assert.ok(this.oDataSelectorUpdateSpy.notCalled, "then the data selector update was not called");
+				assert.strictEqual(oDataSelectorUpdateSpy.callCount, 0, "then the data selector update was not called");
 			}.bind(this));
 		});
 
