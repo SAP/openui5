@@ -128,27 +128,6 @@
 			"rules": {
 				"max-len": "off"
 			}
-		},
-		{
-			"files": [
-				"test/sap/ui/core/loader/fixture/make.js",
-				"test/sap/ui/core/qunit/test/starter/find/*.js",
-				"test/sap/ui/core/qunit/testdata/libraries/make.js"
-			],
-			"parserOptions": {
-				"ecmaVersion": 6
-			}
-		},
-		{
-			"files": [
-				"src/ui5loader.js"
-			],
-			"env": {
-				"es2022": true
-			},
-			"parserOptions": {
-				"ecmaVersion": 2022
-			}
 		}
 	]
 }

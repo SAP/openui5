@@ -3,9 +3,6 @@
 		"node": true,
 		"browser": false
 	},
-	"parserOptions": {
-		"ecmaVersion": 2021
-	},
 	"rules": {
 		"strict": ["error", "never"],
 		"no-console": "off"

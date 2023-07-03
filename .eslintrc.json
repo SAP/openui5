@@ -2,10 +2,10 @@
 	"root": true,
 	"env": {
 		"browser": true,
-		"es6": true
+		"es2022": true
 	},
 	"parserOptions": {
-		"ecmaVersion": 5,
+		"ecmaVersion": 2022,
 		"sourceType": "script"
 	},
 	"globals": {
@@ -67,6 +67,7 @@
 		"no-alert": "error",
 		"no-caller": "error",
 		"no-case-declarations": "error",
+		"no-constant-binary-expression": "error",
 		"no-constructor-return": "error",
 		"no-div-regex": "error",
 		"no-empty-pattern": "error",
@@ -101,8 +102,9 @@
 		"no-unused-labels": "error",
 		"no-useless-catch": "error",
 		"no-void": "error",
-		"no-warning-comments": "warn",
+		"no-warning-comments": ["warn", {"location": "anywhere"}],
 		"no-with": "error",
+		"prefer-object-has-own": "error",
 		"radix": ["error", "as-needed"],
 		"require-await": "error",
 		"wrap-iife": ["error", "any"],
@@ -164,8 +166,11 @@
 		"no-const-assign": "error",
 		"no-dupe-class-members": "error",
 		"no-duplicate-imports": "error",
+		"no-empty-static-block": "error",
+		"no-new-native-nonconstructor": "error",
 		"no-new-symbol": "error",
 		"no-this-before-super": "error",
+		"no-unused-private-class-members": "error",
 		"no-useless-computed-key": "error",
 		"no-useless-rename": "error",
 		"prefer-const": "error",
@@ -184,6 +189,7 @@
 		"arrow-body-style": "off",
 		"class-methods-use-this": "off",
 		"lines-between-class-members": "off",
+		"logical-assignment-operators": "off",
 		"max-classes-per-file": "off",
 		"no-await-in-loop": "off",
 		"no-multi-str": "off", // Enable when template literals (ES6 syntax) can be used
