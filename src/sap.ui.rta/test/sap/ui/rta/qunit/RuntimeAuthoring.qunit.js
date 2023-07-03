@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/Layer",
 	"sap/ui/qunit/QUnitUtils",
@@ -39,6 +40,7 @@ sap.ui.define([
 	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
+	VersionsAPI,
 	Versions,
 	Layer,
 	QUnitUtils,
@@ -481,6 +483,7 @@ sap.ui.define([
 		QUnit.test("when stopping rta with versioning enabled, existing changes and pressing cancel on the dialog,", function(assert) {
 			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
 			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+			var oVersionsClearInstances = sandbox.spy(VersionsAPI, "clearInstances");
 
 			return this.oRta.stop(false)
 			.then(function() {
@@ -500,11 +503,13 @@ sap.ui.define([
 			.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 			.then(function(iNumOfChanges) {
 				assert.equal(iNumOfChanges, 0, "there is no change written");
+				assert.equal(oVersionsClearInstances.callCount, 0, "do not clear version model instances");
 			});
 		});
 
 		QUnit.test("when stopping rta with saving changes", function(assert) {
 			var oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
+			var oVersionsClearInstances = sandbox.spy(VersionsAPI, "clearInstances");
 			var oSerializeToLrepSpy = sandbox.spy(this.oRta, "_serializeToLrep");
 			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox")
 			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
@@ -519,6 +524,7 @@ sap.ui.define([
 			}.bind(this))
 			.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 			.then(function(iNumberOfChanges) {
+				assert.equal(oVersionsClearInstances.callCount, 1, "clear version model instances");
 				assert.strictEqual(iNumberOfChanges, 1, "then the change is written");
 				var mPropertyBag = {
 					oComponent: oComp,
