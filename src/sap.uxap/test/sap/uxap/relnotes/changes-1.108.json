@@ -99,5 +99,21 @@
         ]
       }
     ]
+  },
+  "1.108.17": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "9cc1ee80752af7e67d53d0038b0f54933e8f7f43",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Flickering prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370028396"
+          }
+        ]
+      }
+    ]
   }
 }

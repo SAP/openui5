@@ -967,5 +967,43 @@
         ]
       }
     ]
+  },
+  "1.108.17": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "b6edb733a94f9996986cd56ac73ca3704771dda8",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004628532023"
+          }
+        ]
+      },
+      {
+        "id": "220251630e5472875add8e78ca91ac49d807b97e",
+        "type": "FIX",
+        "text": " For redundant delimiter then status or attribute visibility set to false",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380079267"
+          }
+        ]
+      },
+      {
+        "id": "88632effb3da52cdf0259df1f73cb9eabff3e078",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: documentation extension",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004628532023"
+          }
+        ]
+      }
+    ]
   }
 }
