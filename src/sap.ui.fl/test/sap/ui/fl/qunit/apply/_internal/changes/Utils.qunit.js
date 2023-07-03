@@ -158,7 +158,7 @@ sap.ui.define([
 			this.oChange = new UIChange({});
 			this.oGetChangesFromMapStub = sandbox.stub(FlUtils, "getChangeFromChangesMap").returns(this.oChange);
 			this.oModifier = {
-				bySelector: function() {}
+				bySelector: function() { return "foo"; }
 			};
 		},
 		afterEach: function() {
@@ -184,6 +184,11 @@ sap.ui.define([
 		QUnit.test("with change deleted from the changes map (e.g. after condensing)", function(assert) {
 			this.oGetChangesFromMapStub.returns(undefined);
 			assert.equal(ChangeUtils.checkIfDependencyIsStillValid({}, this.oModifier, {}, ""), false, "the dependency is not valid anymore");
+		});
+
+		QUnit.test("with an unavailable control", function(assert) {
+			sandbox.stub(this.oModifier, "bySelector").returns(undefined);
+			assert.equal(ChangeUtils.checkIfDependencyIsStillValid({}, this.oModifier, {}, ""), true, "the dependency is still valid");
 		});
 	});
 
