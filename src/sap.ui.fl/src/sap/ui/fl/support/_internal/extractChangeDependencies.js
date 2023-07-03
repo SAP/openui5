@@ -51,7 +51,7 @@ sap.ui.define([
 				aDependencies: []
 			};
 
-			if (oChange._aDependentSelectorList) {
+			if (oChange._aDependentSelectorList && oAppComponent) {
 				oChange._aDependentSelectorList.forEach(function(oSelector) {
 					var mControlData = {
 						bPresent: !!JsControlTreeModifier.bySelector(oSelector, oAppComponent),
