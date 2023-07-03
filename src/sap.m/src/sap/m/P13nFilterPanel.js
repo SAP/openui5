@@ -494,48 +494,33 @@ sap.ui.define([
 			}
 			aKeyFields = [];
 			sModelName = (this.getBindingInfo("items") || {}).model;
-			var fGetValueOfProperty = function (sName, oContext, oItem) {
-				var oBinding = oItem.getBinding(sName),
-					oMetadata = oItem.getMetadata(),
-					vPropertyValue = oMetadata.hasProperty(sName) ? oMetadata.getProperty(sName).get(oItem) : oMetadata.getAggregation(sName).get(oItem),
-					vContextValue;
 
-				if (oBinding && oContext) {
-					vContextValue =  oContext.getObject()[oBinding.getPath()];
-					if (sName === "text") {
-						return vContextValue || vContextValue === "" ? vContextValue : vPropertyValue;
-					} else {
-						return vContextValue;
-					}
-				}
-				return vPropertyValue;
-			};
-			this.getItems().forEach(function(oItem_) {
-				var oContext = oItem_.getBindingContext(sModelName),
+            this.getItems().forEach(function(oItem) {
+				var oContext = oItem.getBindingContext(sModelName),
 					oField,
 					bNullable,
 					oFieldExclude;
 
 				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
-				if (oItem_.getBinding("key")) {
-					oContext.getObject()[oItem_.getBinding("key").getPath()] = oItem_.getKey();
+				if (oItem.getBinding("key")) {
+					oContext.getObject()[oItem.getBinding("key").getPath()] = oItem.getKey();
 				}
 				aKeyFields.push(oField = {
-					key: oItem_.getColumnKey(),
-					text: fGetValueOfProperty("text", oContext, oItem_),
-					tooltip: fGetValueOfProperty("tooltip", oContext, oItem_),
-					maxLength: fGetValueOfProperty("maxLength", oContext, oItem_),
-					type: fGetValueOfProperty("type", oContext, oItem_),
-					typeInstance: fGetValueOfProperty("typeInstance", oContext, oItem_),
-					formatSettings: fGetValueOfProperty("formatSettings", oContext, oItem_),
-					precision: fGetValueOfProperty("precision", oContext, oItem_),
-					scale: fGetValueOfProperty("scale", oContext, oItem_),
-					isDefault: fGetValueOfProperty("isDefault", oContext, oItem_),
-					values: fGetValueOfProperty("values", oContext, oItem_)
+					key: oItem.getColumnKey(),
+					text: oItem.getText(),
+					tooltip: oItem.getTooltip(),
+					maxLength: oItem.getMaxLength(),
+					type: oItem.getType(),
+					typeInstance: oItem.getTypeInstance(),
+					formatSettings: oItem.getFormatSettings(),
+					precision: oItem.getPrecision(),
+					scale: oItem.getScale(),
+					isDefault: oItem.getIsDefault(),
+					values: oItem.getValues()
 				});
 
 				if (bEnableEmptyOperations) {
-					bNullable = oItem_.getNullable();
+					bNullable = oItem.getNullable();
 
 					// Copy the oField object and add it to the exclude array - we need this only when exclude
 					// operations are enabled
@@ -559,21 +544,21 @@ sap.ui.define([
 
 			var aConditions = [];
 			sModelName = (this.getBindingInfo("filterItems") || {}).model;
-			this.getFilterItems().forEach(function(oFilterItem_) {
+			this.getFilterItems().forEach(function(oFilterItem) {
 
 				// the "filterItems" aggregation data - obtained via getFilterItems() - has the old state !
-				var oContext = oFilterItem_.getBindingContext(sModelName);
+				var oContext = oFilterItem.getBindingContext(sModelName);
 				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
-				if (oFilterItem_.getBinding("key") && oContext) {
-					oContext.getObject()[oFilterItem_.getBinding("key").getPath()] = oFilterItem_.getKey();
+				if (oFilterItem.getBinding("key") && oContext) {
+					oContext.getObject()[oFilterItem.getBinding("key").getPath()] = oFilterItem.getKey();
 				}
 				aConditions.push({
-					key: oFilterItem_.getKey(),
-					keyField: fGetValueOfProperty("columnKey", oContext, oFilterItem_),
-					operation: fGetValueOfProperty("operation", oContext, oFilterItem_),
-					value1: fGetValueOfProperty("value1", oContext, oFilterItem_),
-					value2: fGetValueOfProperty("value2", oContext, oFilterItem_),
-					exclude: fGetValueOfProperty("exclude", oContext, oFilterItem_)
+					key: oFilterItem.getKey(),
+					keyField: oFilterItem.getColumnKey(),
+					operation: oFilterItem.getOperation(),
+					value1: oFilterItem.getValue1(),
+					value2: oFilterItem.getValue2(),
+					exclude: oFilterItem.getExclude()
 				});
 			});
 			this.setConditions(aConditions);
