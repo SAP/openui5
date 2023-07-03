@@ -522,4 +522,40 @@ sap.ui.define([
 		// Assert
 		assert.equal(this.oFP.getKeyFields()[0].text, "Name",  "Text property is correctly returned");
 	});
+
+    QUnit.module("Generic");
+
+    QUnit.test("BCP: 2380085111 formatted 'type' property is extracted from P13nItem", function (assert) {
+        // Arrange
+        var oModel = new JSONModel({type: "string"}),
+            oPanel = new P13nFilterPanel({
+                items: [
+                    new P13nItem({
+                        columnKey: "Key",
+                        text: "Text",
+                        type: {
+                            path: "/type",
+                            formatter: function (sType) {
+                                return "MyCustomFormattedValueOfType=" + sType;
+                            }
+                        }
+                    })
+                ]
+            }),
+            oKF;
+
+        oPanel.setModel(oModel);
+
+        // Act
+        oPanel.onBeforeRendering();
+
+        // Assert
+        oKF = oPanel.getKeyFields()[0];
+        assert.strictEqual(oKF.type, "MyCustomFormattedValueOfType=string", "Formatted value is taken into account");
+
+
+        // Cleanup
+        oPanel.destroy();
+        oModel.destroy();
+    });
 });
