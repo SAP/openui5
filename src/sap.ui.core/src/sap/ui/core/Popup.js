@@ -28,10 +28,11 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/base/util/each",
 	"sap/base/util/deepExtend",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/events/isMouseEventDelayed",
 	"sap/ui/base/EventProvider",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/jqueryui/jquery-ui-position",
 	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
 	"sap/ui/dom/jquery/Focusable", // jQuery Plugin "firstFocusableDomRef"
 	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
@@ -58,10 +59,11 @@ sap.ui.define([
 	extend,
 	each,
 	deepExtend,
-	jQuery,
 	F6Navigation,
 	isMouseEventDelayed,
-	EventProvider
+	EventProvider,
+	jQuery
+	//jquery-ui-position
 	//control
 	//Focusable
 	//rect
