@@ -276,43 +276,16 @@ sap.ui.define([
 		createOrDeleteContent: function(oEvent) {
 			var oTargetControl = oEvent.getSource();
 			sap.ui.require([
-				"sap/ui/core/mvc/XMLView",
-				"sap/m/Dialog",
 				"sap/ui/comp/smartform/SmartForm",
 				"sap/ui/comp/smartform/Group",
 				"sap/ui/comp/smartform/GroupElement",
 				"sap/ui/comp/smartfield/SmartField"
 			], function(
-				XMLView,
-				Dialog,
 				SmartForm,
 				Group,
 				GroupElement,
 				SmartField
 			) {
-				var oComponent = this.getOwnerComponent();
-				oComponent.runAsOwner(function() {
-					if (!this._oDialog || !oCore.byId(this._oDialog.getId())) {
-						this._oDialogForm = new XMLView(
-							this.getView().createId("SmartFormDialog"),
-							{
-								viewName: "sap.ui.rta.test.Popup"
-							}
-						);
-
-						this._oDialog = new Dialog({
-							id: oComponent.createId("SmartFormDialog"),
-							showHeader: false,
-							content: this._oDialogForm
-						});
-						this.getView().addDependent(this._oDialog);
-
-						this._oDialog.addStyleClass("sapUiNoContentPadding");
-						this._oDialog.addStyleClass("sapUiSizeCompact");
-					}
-					this._oDialog.open();
-				}.bind(this));
-
 				if (this.byId("newForm")) {
 					this.byId("newForm").destroy();
 				} else {
