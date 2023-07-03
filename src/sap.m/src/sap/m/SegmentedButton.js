@@ -4,6 +4,7 @@
 
 // Provides control sap.m.SegmentedButton.
 sap.ui.define([
+	'sap/ui/core/Lib',
 	'./library',
 	'./Button',
 	'./SegmentedButtonItem',
@@ -17,6 +18,7 @@ sap.ui.define([
 	'./SegmentedButtonRenderer'
 ],
 function(
+	Library,
 	library,
 	Button,
 	SegmentedButtonItem,
@@ -946,7 +948,7 @@ function(
 	 * @protected
 	 */
 	 SegmentedButton.prototype.getAccessibilityInfo = function() {
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oResourceBundle = Library.getResourceBundleFor("sap.m"),
 			oSelectedItem = this.getItems().find(function(oItem) {
 				return oItem.getId() === this.getSelectedItem();
 			}.bind(this));

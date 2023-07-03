@@ -5,6 +5,7 @@
 // Provides control sap.m.Input.
 sap.ui.define([
 	'./InputBase',
+	'sap/ui/core/Element',
 	'sap/ui/core/Item',
 	'sap/ui/core/Core',
 	'sap/ui/core/LabelEnablement',
@@ -36,10 +37,12 @@ sap.ui.define([
 	"./InputRenderer",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/core/Lib",
 	"sap/ui/dom/jquery/selectText" // provides jQuery.fn.selectText
 ],
 function(
 	InputBase,
+	Element,
 	Item,
 	Core,
 	LabelEnablement,
@@ -70,7 +73,8 @@ function(
 	selectionRange,
 	InputRenderer,
 	ManagedObject,
-	ManagedObjectObserver
+	ManagedObjectObserver,
+	Library
 ) {
 	"use strict";
 	// shortcut for sap.m.ListType
@@ -598,7 +602,7 @@ function(
 		// TypeAhead's suggested text. It's always executed in the context of the "root" Input and never in the Dialog's instance!
 		this._sProposedItemText = null;
 
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = Library.getResourceBundleFor("sap.m");
 
 		// Instantiate the SuggestionsPopover only for the main input.
 		// If there's a Dialog where the Input gets duplicated, we should not recreate the Popover.
@@ -922,7 +926,7 @@ function(
 	Input.prototype.setSelectedItem = function(oItem) {
 
 		if (typeof oItem === "string") {
-			oItem = sap.ui.getCore().byId(oItem);
+			oItem = Element.registry.get(oItem);
 		}
 
 		if (oItem !== null && !(oItem instanceof Item)) {
@@ -1098,7 +1102,7 @@ function(
 	Input.prototype.setSelectedRow = function(oListItem) {
 
 		if (typeof oListItem === "string") {
-			oListItem = sap.ui.getCore().byId(oListItem);
+			oListItem = Element.registry.get(oListItem);
 		}
 
 		if (oListItem !== null && !(oListItem instanceof ColumnListItem)) {
@@ -1481,7 +1485,7 @@ function(
 		var oSuggPopover = this._getSuggestionsPopover(),
 			oPopup = oSuggPopover && oSuggPopover.getPopover(),
 			bIsPopover = oPopup && oPopup.isA("sap.m.Popover"),
-			oFocusedControl = oEvent.relatedControlId && sap.ui.getCore().byId(oEvent.relatedControlId),
+			oFocusedControl = oEvent.relatedControlId && Element.registry.get(oEvent.relatedControlId),
 			oFocusDomRef = oFocusedControl && oFocusedControl.getFocusDomRef(),
 			bFocusInPopup = oPopup
 				&& oFocusDomRef

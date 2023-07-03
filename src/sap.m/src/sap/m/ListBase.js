@@ -4,6 +4,8 @@
 
 // Provides control sap.m.ListBase.
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/ui/core/Core",
@@ -23,10 +25,13 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/InvisibleMessage",
 	"sap/m/table/Util",
+	"sap/ui/core/Lib",
 	"sap/ui/dom/jquery/Selectors", // jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Aria" // jQuery Plugin "addAriaLabelledBy", "removeAriaLabelledBy"
 ],
 function(
+	Localization,
+	ControlBehavior,
 	KeyCodes,
 	Device,
 	Core,
@@ -45,7 +50,8 @@ function(
 	jQuery,
 	Log,
 	InvisibleMessage,
-	Util
+	Util,
+	Library
 ) {
 	"use strict";
 
@@ -848,7 +854,7 @@ function(
 
 		// return no data text from resource bundle when there is no custom
 		var sNoDataText = this.getProperty("noDataText");
-		sNoDataText = sNoDataText || Core.getLibraryResourceBundle("sap.m").getText("LIST_NO_DATA");
+		sNoDataText = sNoDataText || Library.getResourceBundleFor("sap.m").getText("LIST_NO_DATA");
 		return sNoDataText;
 	};
 
@@ -1537,7 +1543,7 @@ function(
 			// announce the selection state changes
 			// but only announce if the document.activeElement is the listItem control, else selection control should announce the selection change
 			if (this.getAriaRole() === "list" && document.activeElement === oListItem.getDomRef()) {
-				var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+				var oResourceBundle = Library.getResourceBundleFor("sap.m");
 				InvisibleMessage.getInstance().announce(bSelected ? oResourceBundle.getText("LIST_ITEM_SELECTED") : oResourceBundle.getText("LIST_ITEM_NOT_SELECTED"), "Assertive");
 			}
 		}
@@ -1865,7 +1871,7 @@ function(
 	// Swipe from the end to the begin - right to left in LTR and left to right in RTL languages.
 	ListBase.prototype.onswipeleft = function(oEvent) {
 
-		var bRtl = Core.getConfiguration().getRTL();
+		var bRtl = Localization.getRTL();
 		var exceptDirection = bRtl ? SwipeDirection.EndToBegin : SwipeDirection.BeginToEnd;
 		var swipeDirection = this.getSwipeDirection();
 
@@ -1885,7 +1891,7 @@ function(
 
 	// Swipe from the begin to the end - left to right in LTR and right to left in RTL languages.
 	ListBase.prototype.onswiperight = function(oEvent) {
-		var bRtl = Core.getConfiguration().getRTL();
+		var bRtl = Localization.getRTL();
 		var exceptDirection = bRtl ? SwipeDirection.BeginToEnd : SwipeDirection.EndToBegin;
 		var swipeDirection = this.getSwipeDirection();
 
@@ -1973,7 +1979,7 @@ function(
 	};
 
 	ListBase.prototype.getAccessibilityType = function() {
-		return Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LIST");
+		return Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_LIST");
 	};
 
 	ListBase.prototype.getAccessibilityStates = function() {
@@ -1984,7 +1990,7 @@ function(
 		var sStates = "",
 			mMode = ListMode,
 			sMode = this.getMode(),
-			oBundle = Core.getLibraryResourceBundle("sap.m");
+			oBundle = Library.getResourceBundleFor("sap.m");
 
 		if (LabelEnablement.isRequired(this)) {
 			sStates += oBundle.getText("LIST_REQUIRED") + " ";
@@ -2052,7 +2058,7 @@ function(
 		this._handleStickyItemFocus(oItem.getDomRef());
 
 		if (oItem !== oFocusedControl ||
-			!Core.getConfiguration().getAccessibility()) {
+			!ControlBehavior.isAccessibilityEnabled()) {
 			return;
 		}
 
@@ -2064,7 +2070,7 @@ function(
 		} else {
 			// prepare the announcement for the screen reader
 			var oAccInfo = oItem.getAccessibilityInfo(),
-				oBundle = Core.getLibraryResourceBundle("sap.m"),
+				oBundle = Library.getResourceBundleFor("sap.m"),
 				sDescription = oItem.isGroupHeader() ? "" : oAccInfo.type + " . ";
 
 			if (this.isA("sap.m.Table")) {

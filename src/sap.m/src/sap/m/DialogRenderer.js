@@ -5,8 +5,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/Device",
 	"sap/ui/core/library",
-	"sap/ui/core/Core"
-], function (library, Device, coreLibrary, Core) {
+	"sap/ui/core/Lib"
+], function (library, Device, coreLibrary, Library) {
 	"use strict";
 
 	// shortcut for sap.m.DialogType
@@ -178,7 +178,7 @@ sap.ui.define([
 					oRM.attr("tabindex", 0)
 						.accessibilityState(oHeader, {
 							role: "group",
-							roledescription: Core.getLibraryResourceBundle("sap.m").getText("DIALOG_HEADER_ARIA_ROLE_DESCRIPTION"),
+							roledescription: Library.getResourceBundleFor("sap.m").getText("DIALOG_HEADER_ARIA_ROLE_DESCRIPTION"),
 							describedby: { value: oDialog.getId() + "-ariaDescribedbyText", append: true }
 						});
 				}

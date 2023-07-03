@@ -4,15 +4,15 @@
 
 sap.ui.define([
 	"sap/ui/Device",
-	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/Lib"
 ],
 	function(
 	Device,
-	Core,
 	InvisibleText,
-	coreLibrary
+	coreLibrary,
+	Library
 ) {
 	"use strict";
 
@@ -41,7 +41,7 @@ sap.ui.define([
 			return;
 		}
 
-		var sPlaceholder = oSF.getPlaceholder() || Core.getLibraryResourceBundle("sap.m").getText("FACETFILTER_SEARCH", undefined, true),
+		var sPlaceholder = oSF.getPlaceholder() || Library.getResourceBundleFor("sap.m").getText("FACETFILTER_SEARCH", undefined, true),
 			sValue = oSF.getValue(),
 			sWidth = oSF.getProperty("width"),
 			sId = oSF.getId(),

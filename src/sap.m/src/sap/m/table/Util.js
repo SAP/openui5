@@ -5,11 +5,12 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Core",
+	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
 	"sap/m/IllustratedMessage",
 	"sap/m/Button",
 	"sap/ui/core/InvisibleMessage"
-], function(MLibrary, Core, ThemeParameters, IllustratedMessage, Button, InvisibleMessage) {
+], function(MLibrary, Core, Theming, ThemeParameters, IllustratedMessage, Button, InvisibleMessage) {
 	"use strict";
 	/*global Intl*/
 
@@ -50,7 +51,7 @@ sap.ui.define([
 			return sDefaultFont;
 		};
 
-		Core.attachThemeChanged(fnSetDefaultFont);
+		Theming.attachApplied(fnSetDefaultFont);
 
 		return function(sText, sFont) {
 			oCanvasContext.font = sFont || sDefaultFont || fnSetDefaultFont();
@@ -76,7 +77,7 @@ sap.ui.define([
 		var oUTCDate = new Date(Date.UTC.apply(0, aDateParameters));
 		var oLocalDate = new (Function.prototype.bind.apply(Date, [null].concat(aDateParameters)))();
 		var mNumericLimits = { Byte: 3, SByte: 3, Int16: 5, Int32: 9, Int64: 12, Single: 6, Float: 12, Double: 13, Decimal: 15, Integer: 9 };
-		Core.attachThemeChanged(function() { fBooleanWidth = 0; });
+		Theming.attachApplied(function() { fBooleanWidth = 0; });
 
 		return function(oType, mSettings) {
 
@@ -173,7 +174,7 @@ sap.ui.define([
 			return sRequiredFont;
 		};
 
-		Core.attachThemeChanged(function() {
+		Theming.attachApplied(function() {
 			sHeaderFont = "";
 			sRequiredFont = "";
 		});

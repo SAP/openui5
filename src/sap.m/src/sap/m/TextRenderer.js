@@ -8,13 +8,13 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/m/HyphenationSupport',
 	'./library',
-	'sap/ui/core/Core'
+	"sap/ui/core/Lib"
 ], function(
 	Renderer,
 	coreLibrary,
 	HyphenationSupport,
 	mobileLibrary,
-	Core
+	Library
 ) {
 		"use strict";
 
@@ -28,7 +28,7 @@ sap.ui.define([
 		var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
 		// shortcut for library resource bundle
-		var oRb = Core.getLibraryResourceBundle("sap.m");
+		var oRb = Library.getResourceBundleFor("sap.m");
 
 		/**
 		 * Text renderer.

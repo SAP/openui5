@@ -618,11 +618,6 @@ sap.ui.define([
 			var sParamName, fnAsyncCallback, bAsync, aNames, iIndex;
 			var findRegisteredCallback = function (oCallbackInfo) { return oCallbackInfo.callback === fnAsyncCallback; };
 
-			if (!Core.isInitialized()) {
-				Log.warning("Called sap.ui.core.theming.Parameters.get() before core has been initialized. " +
-					"Consider using the API only when required, e.g. onBeforeRendering.");
-			}
-
 			if (!sTheme) {
 				sTheme = Theming.getTheme();
 			}

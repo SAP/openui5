@@ -5,6 +5,8 @@
 // Provides class sap.m.GrowingEnablement
 sap.ui.define([
 	'sap/ui/base/Object',
+	'sap/ui/core/Lib',
+	'sap/ui/core/RenderManager', // Future TODO: replace the creation of new RenderManager instance
 	'sap/ui/core/format/NumberFormat',
 	'sap/m/library',
 	'sap/ui/model/ChangeReason',
@@ -13,11 +15,12 @@ sap.ui.define([
 	'sap/ui/core/HTML',
 	'sap/m/CustomListItem',
 	'sap/base/security/encodeXML',
-	'sap/ui/core/Core',
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		BaseObject,
+		Library,
+		RenderManager,
 		NumberFormat,
 		library,
 		ChangeReason,
@@ -26,7 +29,6 @@ sap.ui.define([
 		HTML,
 		CustomListItem,
 		encodeXML,
-		Core,
 		jQuery
 	) {
 	"use strict";
@@ -262,7 +264,7 @@ sap.ui.define([
 			var sTriggerID = this._oControl.getId() + "-trigger",
 				sTriggerText = this._oControl.getGrowingTriggerText();
 
-			sTriggerText = sTriggerText || Core.getLibraryResourceBundle("sap.m").getText("LOAD_MORE_DATA");
+			sTriggerText = sTriggerText || Library.getResourceBundleFor("sap.m").getText("LOAD_MORE_DATA");
 			this._oControl.addNavSection(sTriggerID);
 
 			if (this._oTrigger) {
@@ -536,7 +538,7 @@ sap.ui.define([
 				}
 			}
 
-			this._oRM = this._oRM || Core.createRenderManager();
+			this._oRM = this._oRM || new RenderManager(); // Future TODO: replace the creation of new RenderManager instance
 			for (var i = 0; i < iLength; i++) {
 				this._oRM.renderControl(this._aChunk[i]);
 			}
@@ -833,7 +835,7 @@ sap.ui.define([
 					oControl.$("triggerList").css("display", "none");
 					oControl.$("listUl").removeClass("sapMListHasGrowing");
 				} else {
-					var oBundle = Core.getLibraryResourceBundle("sap.m");
+					var oBundle = Library.getResourceBundleFor("sap.m");
 					if (bLengthFinal) {
 						oControl.$("triggerInfo").css("display", "block").text(this._getListItemInfo());
 						var aCounts = this._getItemCounts();

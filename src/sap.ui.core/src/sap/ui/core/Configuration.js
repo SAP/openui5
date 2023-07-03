@@ -1315,16 +1315,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Gets if the hyphenation has to be forced to use only browser-native or only third-party.
-		 *
-		 * @returns {string} empty string, "native" or "thirdparty"
-		 * @private
-		 */
-		getHyphenation : function() {
-			return Configuration.getValue("xx-hyphenation");
-		},
-
-		/**
 		 * Returns the list of active terminologies defined via the Configuration.
 		 *
 		 * @returns {string[]|undefined} if no active terminologies are set, the default value <code>undefined</code> is returned.

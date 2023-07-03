@@ -7,9 +7,11 @@ sap.ui.define([
 	'./Label',
 	'./library',
 	'sap/ui/core/Control',
+	'sap/ui/core/Element',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/AccessKeysEnablement',
 	'sap/ui/core/library',
+	'sap/ui/core/Lib',
 	'./CheckBoxRenderer',
 	'sap/ui/events/KeyCodes',
 	'sap/ui/core/LabelEnablement',
@@ -19,9 +21,11 @@ sap.ui.define([
 		Label,
 		library,
 		Control,
+		Element,
 		EnabledPropagator,
 		AccessKeysEnablement,
 		coreLibrary,
+		Library,
 		CheckBoxRenderer,
 		KeyCodes,
 		LabelEnablement,
@@ -364,7 +368,7 @@ sap.ui.define([
 	};
 
 	CheckBox.prototype.getFormattedState = function() {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Library.getResourceBundleFor("sap.m");
 
 		return this.getSelected() ? oBundle.getText("ACC_CTR_STATE_CHECKED") : oBundle.getText("ACC_CTR_STATE_NOT_CHECKED");
 	};
@@ -552,7 +556,7 @@ sap.ui.define([
 
 		if (aLabelIds.length > 0) {
 			aLabelIds.forEach(function (sLabelId) {
-				sap.ui.getCore().byId(sLabelId).addEventDelegate({
+				Element.registry.get(sLabelId).addEventDelegate({
 					ontap: function () {
 						that._fnLabelTapHandler();
 					}
@@ -568,7 +572,7 @@ sap.ui.define([
 	 * The object contains the accessibility information of <code>sap.m.CheckBox</code>
 	 */
 	CheckBox.prototype.getAccessibilityInfo = function() {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oBundle = Library.getResourceBundleFor("sap.m"),
 			sText = this.getText();
 		return {
 			role: "checkbox",

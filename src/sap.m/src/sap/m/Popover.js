@@ -492,7 +492,7 @@ sap.ui.define([
 				},
 				onAfterRendering: function () {
 					if (this._sFocusControlId && !containsOrEquals(this.getDomRef(), document.activeElement)) {
-						sap.ui.getCore().byId(this._sFocusControlId).focus();
+						Element.registry.get(this._sFocusControlId).focus();
 					}
 				}
 			};
@@ -1129,7 +1129,7 @@ sap.ui.define([
 
 			// Set focus to the first visible focusable element
 			var sFocusId = this._getInitialFocusId(),
-			oControl = sap.ui.getCore().byId(sFocusId),
+			oControl = Element.registry.get(sFocusId),
 			oDomById = (sFocusId ? window.document.getElementById(sFocusId) : null);
 			if (oControl && oControl.getFocusDomRef()){
 				oControl.getFocusDomRef().focus();
@@ -2327,7 +2327,7 @@ sap.ui.define([
 			if (this.isOpen()) {
 				//restore the focus after rendering when popover is already open
 				var sFocusId = this._getInitialFocusId(),
-				oControl = sap.ui.getCore().byId(sFocusId),
+				oControl = Element.registry.get(sFocusId),
 				oDomById = (sFocusId ? window.document.getElementById(sFocusId) : null);
 				if (oControl && oControl.getFocusDomRef()){
 					oControl.getFocusDomRef().focus();
@@ -2563,7 +2563,7 @@ sap.ui.define([
 
 		Popover.prototype.setLeftButton = function (vButton) {
 			if (!(vButton instanceof Button)) {
-				vButton = sap.ui.getCore().byId(vButton);
+				vButton = Element.registry.get(vButton);
 			}
 
 			//setting leftButton also sets the beginButton
@@ -2573,7 +2573,7 @@ sap.ui.define([
 
 		Popover.prototype.setRightButton = function (vButton) {
 			if (!(vButton instanceof Button)) {
-				vButton = sap.ui.getCore().byId(vButton);
+				vButton = Element.registry.get(vButton);
 			}
 
 			//setting rightButton also sets the endButton
