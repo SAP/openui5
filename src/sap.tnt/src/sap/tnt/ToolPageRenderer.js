@@ -26,58 +26,57 @@ sap.ui.define([
 			.class("sapTntToolPage")
 			.openEnd();
 
-		this.renderHeaderWrapper(oRM, oControl);
+		this.renderHeader(oRM, oControl);
 
-		this.renderContentWrapper(oRM, oControl);
+		this.renderContent(oRM, oControl);
 
 		oRM.close("div");
 	};
 
-	ToolPageRenderer.renderHeaderWrapper = function (oRM, oControl) {
+	ToolPageRenderer.renderHeader = function (oRM, oControl) {
 		var oHeader = oControl.getHeader(),
 			oSubHeader = oControl.getSubHeader();
 
 		if (oHeader || oSubHeader) {
 			oRM.openStart("div")
-				.class("sapTntToolPageHeaderWrapper")
-				.openEnd();
+				.class("sapTntToolPageHeaderWrapper");
+
+			if (oHeader && oSubHeader) {
+				oRM.class("sapTntToolPageHeaderWithSubHeaderWrapper");
+			}
+
+			oRM.openEnd();
+			oRM.openStart("header").openEnd();
 		}
 
 		if (oHeader) {
-			oRM.openStart("header").openEnd();
+			oRM.openStart("div", oControl.getId() + "-header")
+				.class("sapTntToolPageHeader")
+				.openEnd();
 
-				oRM.openStart("div", oControl.getId() + "-header")
-					.class("sapTntToolPageHeader")
-					.openEnd();
+			oRM.renderControl(oHeader);
 
-				oRM.renderControl(oHeader);
-
-				oRM.close("div");
-
-			oRM.close("header");
+			oRM.close("div");
 		}
 
 		if (oSubHeader && oSubHeader.getVisible()) {
-			oRM.openStart("header").openEnd();
+			oRM.openStart("div", oControl.getId() + "-subHeader")
+				.class("sapTntToolPageHeader")
+				.openEnd();
 
-				oRM.openStart("div", oControl.getId() + "-subHeader")
-					.class("sapTntToolPageHeader")
-					.openEnd();
+			oRM.renderControl(oSubHeader);
 
-				oRM.renderControl(oSubHeader);
-
-				oRM.close("div");
-
-			oRM.close("header");
+			oRM.close("div");
 		}
 
 		if (oHeader || oSubHeader) {
+			oRM.close("header");
 			oRM.close("div");
 		}
 
 	};
 
-	ToolPageRenderer.renderContentWrapper = function (oRM, oControl) {
+	ToolPageRenderer.renderContent = function (oRM, oControl) {
 		oRM.openStart("div").class("sapTntToolPageContentWrapper");
 
 		if (!Device.system.desktop || !oControl.getSideExpanded()) {
@@ -126,7 +125,10 @@ sap.ui.define([
 			return;
 		}
 
-		oRM.openStart("div", oControl.getId() + "-main").class("sapTntToolPageMain").openEnd();
+		oRM.openStart("div", oControl.getId() + "-main")
+			.class("sapTntToolPageMain")
+			.class("sapTntToolPageMainBackground-" + oControl.getContentBackgroundDesign())
+			.openEnd();
 
 			oRM.openStart("div").class("sapTntToolPageMainContent").openEnd();
 

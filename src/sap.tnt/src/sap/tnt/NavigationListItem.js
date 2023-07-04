@@ -106,7 +106,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 
 		NavigationListItem.expandIcon = 'sap-icon://navigation-right-arrow';
 		NavigationListItem.collapseIcon = 'sap-icon://navigation-down-arrow';
-
+		NavigationListItem.selectionIndicatorIcon = 'sap-icon://circle-task-2';
 
 		NavigationListItem._getInvisibleText = function() {
 			if (!this._invisibleText) {
@@ -521,7 +521,8 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 					role: 'treeitem',
 					selected: false,
 					roledescription: this._resourceBundleTNTLib.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE_ITEM")
-				};
+				},
+				expanderVisible = this.getItems().length > 0 && this.getHasExpander();
 
 			rm.openStart("div");
 
@@ -540,6 +541,10 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 
 			if (!isListExpanded && this._hasSelectedChild(control._selectedItem)) {
 				rm.class("sapTntNavLIItemSelected");
+			}
+
+			if (expanderVisible) {
+				rm.class("sapTntNavLIItemWithExpander");
 			}
 
 			// checking if there are items level 2 in the NavigationListItem
@@ -588,10 +593,11 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 
 			if (control.getExpanded()) {
 				var expandIconControl = this._getExpandIconControl();
-				expandIconControl.setVisible(this.getItems().length > 0 && this.getHasExpander());
+				expandIconControl.setVisible(expanderVisible);
 				expandIconControl.setSrc(this.getExpanded() ? NavigationListItem.collapseIcon : NavigationListItem.expandIcon);
 				expandIconControl.setTooltip(this._getExpandIconTooltip(!this.getExpanded()));
 				this._renderText(rm);
+				rm.icon(NavigationListItem.selectionIndicatorIcon, ["sapTntNavLISelectionIndicator"]);
 				rm.renderControl(expandIconControl);
 			}
 
@@ -736,8 +742,8 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 
 			rm.openEnd();
 
-
 			this._renderText(rm);
+			rm.icon("sap-icon://circle-task-2", ["sapTntNavLISelectionIndicator"]);
 
 			rm.close('a');
 
