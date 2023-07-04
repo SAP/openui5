@@ -53,6 +53,8 @@ sap.ui.define([
 		return "API";
 	}
 
+	function mustBeMocked() { throw new Error("Must be mocked"); }
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Cache", {
 		beforeEach : function () {
@@ -1126,14 +1128,10 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "TEAMS"),
 			oDeletePromise = {/* no $isKeepAlive */},
 			oPatchPromise1 = {
-				$isKeepAlive : function () {
-					throw "I should be mocked before being called!";
-				}
+				$isKeepAlive : mustBeMocked
 			},
 			oPatchPromise2 = {
-				$isKeepAlive : function () {
-					throw "I should be mocked before being called!";
-				}
+				$isKeepAlive : mustBeMocked
 			};
 
 		oCache.mChangeRequests = {

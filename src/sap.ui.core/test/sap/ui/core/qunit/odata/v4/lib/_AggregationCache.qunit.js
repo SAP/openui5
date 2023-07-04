@@ -69,6 +69,8 @@ sap.ui.define([
 		});
 	}
 
+	function mustBeMocked() { throw new Error("Must be mocked"); }
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._AggregationCache", {
 		beforeEach : function () {
@@ -79,7 +81,7 @@ sap.ui.define([
 			this.oRequestor = {
 				buildQueryString : function () { return ""; },
 				getServiceUrl : function () { return "/~/"; },
-				request : function () { throw new Error("must be mocked"); }
+				request : mustBeMocked
 			};
 
 			// avoid trouble when creating 1st level cache, or with #getDownloadUrl's callback

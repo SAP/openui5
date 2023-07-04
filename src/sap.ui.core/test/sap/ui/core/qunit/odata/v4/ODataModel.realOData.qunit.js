@@ -190,9 +190,6 @@ sap.ui.define([
 			"TEAMS('TEAM_01')/Name" : {message : {value : "Business Suite"}}
 		},
 		oModelInterface = {
-			fetchMetadata : function () {
-				throw new Error("Do not call me!");
-			},
 			fireSessionTimeout : function () {},
 			getGroupProperty : defaultGetGroupProperty,
 			isIgnoreETag : function () {},

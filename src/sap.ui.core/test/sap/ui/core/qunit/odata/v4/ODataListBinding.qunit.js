@@ -81,6 +81,8 @@ sap.ui.define([
 		return bDrillDown ? oData.value : oData;
 	}
 
+	function mustBeMocked() { throw new Error("Must be mocked"); }
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataListBinding", {
 		beforeEach : function () {
@@ -6514,15 +6516,15 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oAggregationCache = {
-				addKeptElement : function () { throw new Error("must be mocked"); }
+				addKeptElement : mustBeMocked
 			},
 			oAggregationCacheMock = this.mock(oAggregationCache),
 			oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
 			oCache = { // #setLateQueryOptions must not be called
-				getValue : function () { throw new Error("must be mocked"); },
+				getValue : mustBeMocked,
 				registerChangeListener : function () {},
-				setActive : function () { throw new Error("must be mocked"); }
+				setActive : mustBeMocked
 			},
 			oCacheMock = this.mock(oCache),
 			oGetExpectation,
