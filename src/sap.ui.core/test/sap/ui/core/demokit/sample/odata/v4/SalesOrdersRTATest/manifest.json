@@ -1,4 +1,22 @@
 {
+	"_version" : "1.8.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"id" : "sap.ui.core.sample.odata.v4.SalesOrdersRTATest",
+		"title" : "EPM Sales Orders (RTA Test)",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
 	"sap.ui5" : {
 		"extends" : {
 			"component" : "sap.ui.core.sample.odata.v4.SalesOrders",
