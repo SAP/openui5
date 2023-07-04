@@ -198,6 +198,17 @@ sap.ui.define([
 		assert.strictEqual(this.ddr._oInput.getValue(), "", "The set empty value is the correct value");
 	});
 
+	QUnit.test("Setting tooltip", function(assert) {
+		// arrange
+		var sTooltip = "Select a year range";
+
+		// act
+		this.ddr.setTooltip(sTooltip);
+
+		// assert
+		assert.strictEqual(this.ddr._oInput.getTooltip(), sTooltip, "The tooltip is set to the inner input field");
+	});
+
 	QUnit.test("Date ranges are handled properly", function(assert) {
 		// arrange
 		var oDDR = new DynamicDateRange(),

@@ -568,6 +568,18 @@ sap.ui.define([
 			return this;
 		};
 
+		/**
+		 * Sets the tooltip for the <code>DynamicDateRange</code>.
+		 * @param {sap.ui.core.TooltipBase|string} vTooltip The tooltip that should be shown.
+		 * @returns {this} Reference to <code>this</code> for method chaining
+		 * @public
+		 * @override
+		 */
+		DynamicDateRange.prototype.setTooltip = function(vTooltip) {
+			this._oInput.setTooltip(vTooltip);
+			return Control.prototype.setTooltip.apply(this, arguments);
+		};
+
 		DynamicDateRange.prototype.onBeforeRendering = function() {
 			this._updateInputValue(this.getValue());
 			this._oInput.setEditable(this.getEditable());
