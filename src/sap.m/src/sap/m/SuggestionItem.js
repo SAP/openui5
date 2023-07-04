@@ -124,7 +124,9 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/core/IconPool'],
 
 		if (sDescription) {
 			oRM.text(sSeparator);
-			oRM.openStart("i").openEnd();
+			oRM.openStart("i")
+				.class("sapMSFSItemDescr")
+				.openEnd();
 			renderItemText(oRM, sDescription, sSearch);
 			oRM.close("i");
 		}
