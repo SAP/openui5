@@ -241,11 +241,17 @@
   		case "Function":
   		case "Symbol":
   			return type.toLowerCase();
+  		// ### BEGIN MODIFIED BY SAP
+  		default:
+  			return _typeof(obj);
+  		// ### END MODIFIED BY SAP
   	}
 
-  	if ((typeof obj === "undefined" ? "undefined" : _typeof(obj)) === "object") {
-  		return "object";
-  	}
+  	// ### BEGIN MODIFIED BY SAP
+  	//if ((typeof obj === "undefined" ? "undefined" : _typeof(obj)) === "object") {
+  	//	return "object";
+  	//}
+  	// ### BEGIN MODIFIED BY SAP
   }
 
   // Safe object type checking

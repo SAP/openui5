@@ -183,7 +183,7 @@
             <pattern>sap/ui/thirdparty/qunit.css</pattern>
             <pattern>sap/ui/thirdparty/qunit.js</pattern>
         </lib>
-        <lib name="qunit-2" displayName="QUnit 2" npmName="n/a" version="2.3.2" hash="0fc7923d362acc8a91a6b849fcc978ee" homepage="https://qunitjs.com" id="73555000106100006951">
+        <lib name="qunit-2" displayName="QUnit 2" npmName="n/a" version="2.3.2" hash="38899a9d9321402ff815cff5682e8e5b" homepage="https://qunitjs.com" id="73555000106100006951">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>jQuery Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/qunit-2.css</pattern>
