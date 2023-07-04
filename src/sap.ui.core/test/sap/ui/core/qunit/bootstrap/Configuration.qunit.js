@@ -1,7 +1,5 @@
 /*global QUnit, sinon */
-QUnit.config.autostart = false;
-QUnit.config.reorder = false;
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/core/CalendarType',
 	'sap/ui/core/Configuration',
 	'sap/ui/core/Core',
@@ -13,7 +11,7 @@ sap.ui.require([
 	'sap/base/config',
 	'sap/base/Log',
 	"sap/base/config/GlobalConfigurationProvider",
-	'sap/routing/HistoryUtils',
+	'../routing/HistoryUtils',
 	'sap/ui/base/config/URLConfigurationProvider',
 	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
 ], function(CalendarType, Configuration, Core, CalendarWeekNumbering, TimezoneUtil, Locale, Interface, Theming, BaseConfig, Log,
@@ -54,7 +52,7 @@ sap.ui.require([
 	QUnit.module("Basic");
 
 	QUnit.test("Constructor", function(assert) {
-		var oLogSpy = sinon.spy(Log, "error");
+		var oLogSpy = sinon.stub(Log, "error");
 		var oConfiguration1 = new Configuration();
 		var oConfiguration2 = new Configuration();
 		var sExpectedErrorText = "Configuration is designed as a singleton and should not be created manually! " +
@@ -81,8 +79,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("LegacyDateCalendarCustomizing", function(assert) {
-		var oCfg = new Configuration(),
-			oFormatSettings = oCfg.getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 
 		var aData = [{
 			"dateFormat": "A",
@@ -170,15 +167,13 @@ sap.ui.require([
 	});
 
 	QUnit.test("getter and setter for option calendarWeekNumbering", function(assert) {
-		var oConfiguration = new Configuration();
+		assert.strictEqual(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.Default);
 
-		assert.strictEqual(oConfiguration.getCalendarWeekNumbering(), CalendarWeekNumbering.Default);
-
-		assert.ok(oConfiguration.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601), oConfiguration);
-		assert.strictEqual(oConfiguration.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601);
+		assert.ok(Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601), Configuration);
+		assert.strictEqual(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601);
 
 		assert.throws(function() {
-			oConfiguration.setCalendarWeekNumbering("invalid");
+			Configuration.setCalendarWeekNumbering("invalid");
 		}, new TypeError("Unsupported Enumeration value for calendarWeekNumbering, valid values are: "
 				+ "Default, ISO_8601, MiddleEastern, WesternTraditional"));
 	});
@@ -1180,6 +1175,11 @@ sap.ui.require([
 
 	QUnit.module("ThemeRoot Validation");
 
+	// determine the default port depending on the protocol of the current page
+	const defaultPort = window.location.protocol === "https" ? 443 : 80;
+	const origin = window.location.origin;
+	const originWithoutProtocol = origin.replace(window.location.protocol, "");
+
 	[
 		{
 			caption: "Relative URL, All Origins",
@@ -1222,8 +1222,8 @@ sap.ui.require([
 		},
 		{
 			caption: "Absolute URL, Same Domain",
-			theme: "custom@" + location.origin + "/theming/custom-theme/",
-			allowedOrigins: location.origin,
+			theme: `custom@${origin}/theming/custom-theme/`,
+			allowedOrigins: origin,
 			expectedThemeRoot: "/theming/custom-theme/UI5/"
 		},
 		{
@@ -1253,7 +1253,7 @@ sap.ui.require([
 		},
 		{
 			caption: "Absolute URL with same protocol and themeRoot has default port, Valid",
-			theme: "custom@//example.com:80/theming/custom-theme/",
+			theme: `custom@//example.com:${defaultPort}/theming/custom-theme/`,
 			allowedOrigins: "example.com",
 			expectedThemeRoot: "//example.com/theming/custom-theme/UI5/",
 			noProtocol: true
@@ -1261,7 +1261,7 @@ sap.ui.require([
 		{
 			caption: "Absolute URL with same protocol and allowedThemeOrigin has default port, Valid",
 			theme: "custom@//example.com/theming/custom-theme/",
-			allowedOrigins: "example.com:80",
+			allowedOrigins: `example.com:${defaultPort}`,
 			expectedThemeRoot: "//example.com/theming/custom-theme/UI5/",
 			noProtocol: true
 		},
@@ -1276,14 +1276,14 @@ sap.ui.require([
 			caption: "Absolute URL with same protocol and themeRoot has custom port, not valid",
 			theme: "custom@//example.com:8080/theming/custom-theme/",
 			allowedOrigins: "example.com",
-			expectedThemeRoot: location.origin.replace(location.protocol, "") + "/theming/custom-theme/UI5/",
+			expectedThemeRoot: `${originWithoutProtocol}/theming/custom-theme/UI5/`,
 			noProtocol: true
 		},
 		{
 			caption: "Absolute URL with same protocol and allowedThemeOrigin has custom port, not valid",
 			theme: "custom@//example.com/theming/custom-theme/",
 			allowedOrigins: "example.com:8080",
-			expectedThemeRoot: location.origin.replace(location.protocol, "") + "/theming/custom-theme/UI5/",
+			expectedThemeRoot: `${originWithoutProtocol}/theming/custom-theme/UI5/`,
 			noProtocol: true
 		}
 	].forEach(function(oSetup) {
@@ -1306,36 +1306,39 @@ sap.ui.require([
 		});
 	});
 
-	/*
-	 * SAP strives to replace insensitive terms with inclusive language.
-	 * Since APIs cannot be renamed or immediately removed for compatibility reasons, this API has been deprecated.
-	*/
-	QUnit.module("Deprecated / legacy configuration options", {
+	QUnit.module("Allowlist configuration options", {
 		beforeEach: function() {
+			/**
+			 * @deprecated Since 1.85.0.
+			 */
 			delete window["sap-ui-config"]["whitelistservice"];
 			delete window["sap-ui-config"]["allowlistservice"];
 			delete window["sap-ui-config"]["frameoptionsconfig"];
 		},
 		afterEach: function() {
+			/**
+			 * @deprecated Since 1.85.0.
+			 */
 			delete window["sap-ui-config"]["whitelistservice"];
 			delete window["sap-ui-config"]["allowlistservice"];
 			delete window["sap-ui-config"]["frameoptionsconfig"];
 			if (this.oMetaWhiteList) {
-				if (this.oMetaWhiteList.parentNode) {
-					this.oMetaWhiteList.parentNode.removeChild(this.oMetaWhiteList);
-				}
+				this.oMetaWhiteList.remove();
 				this.oMetaWhiteList = null;
 			}
 			if (this.oMetaAllowList) {
-				if (this.oMetaAllowList.parentNode) {
-					this.oMetaAllowList.parentNode.removeChild(this.oMetaAllowList);
-				}
+				this.oMetaAllowList.remove();
 				this.oMetaAllowList = null;
 			}
 		}
 	});
 
 	// Whitelist service only
+	// SAP strives to replace insensitive terms with inclusive language.
+	// Since APIs cannot be renamed or immediately removed for compatibility reasons, this API has been deprecated.
+	/**
+	 * @deprecated Since 1.85.0.
+	 */
 	QUnit.test("whitelistService", function(assert) {
 		var SERVICE_URL = "/service/url/from/config";
 		window["sap-ui-config"]["whitelistservice"] = SERVICE_URL;
@@ -1344,6 +1347,9 @@ sap.ui.require([
 		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
 	});
 
+	/**
+	 * @deprecated Since 1.85.0.
+	 */
 	QUnit.test("sap.whitelistService meta tag", function(assert) {
 		var SERVICE_URL = "/service/url/from/meta";
 		this.oMetaWhiteList = document.createElement('meta');
@@ -1356,6 +1362,9 @@ sap.ui.require([
 		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
 	});
 
+	/**
+	 * @deprecated Since 1.85.0.
+	 */
 	QUnit.test("frameOptionsConfig.whitelist", function(assert) {
 		var LIST = "example.com";
 		window["sap-ui-config"]["frameoptionsconfig"] = {
@@ -1371,8 +1380,11 @@ sap.ui.require([
 		var SERVICE_URL = "/service/url/from/config";
 		window["sap-ui-config"]["allowlistservice"] = SERVICE_URL;
 		Configuration.setCore();
-		assert.equal(Configuration.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
 		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
+		/**
+		 * @deprecated Since 1.85.0.
+		 */
+		assert.equal(Configuration.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
 	});
 
 	QUnit.test("sap.allowlistService meta tag", function(assert) {
@@ -1383,8 +1395,11 @@ sap.ui.require([
 		document.head.appendChild(this.oMetaWhiteList);
 
 		Configuration.setCore();
-		assert.equal(Configuration.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
 		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
+		/**
+		 * @deprecated Since 1.85.0.
+		 */
+		assert.equal(Configuration.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
 	});
 
 	QUnit.test("frameOptionsConfig.allowlist", function(assert) {
@@ -1393,11 +1408,19 @@ sap.ui.require([
 			allowlist: LIST
 		};
 		Configuration.setCore();
-		assert.equal(Configuration.getValue("frameOptionsConfig").whitelist, undefined, "Deprecated frameOptionsConfig.whitelist should not be set");
 		assert.equal(Configuration.getValue("frameOptionsConfig").allowlist, LIST, "Successor frameOptionsConfig.allowlist should be set");
+		/**
+		 * @deprecated Since 1.85.0.
+		 */
+		assert.equal(Configuration.getValue("frameOptionsConfig").whitelist, undefined, "Deprecated frameOptionsConfig.whitelist should not be set");
 	});
 
 	// AllowList mixed with WhiteList Service (AllowList should be preferred)
+	// SAP strives to replace insensitive terms with inclusive language.
+	// Since APIs cannot be renamed or immediately removed for compatibility reasons, this API has been deprecated.
+	/**
+	 * @deprecated Since 1.85.0.
+	 */
 	QUnit.test("whitelistService mixed with allowlistService", function(assert) {
 		var SERVICE_URL = "/service/url/from/config";
 		window["sap-ui-config"]["whitelistservice"] = SERVICE_URL;
@@ -1407,6 +1430,9 @@ sap.ui.require([
 		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
 	});
 
+	/**
+	 * @deprecated Since 1.85.0.
+	 */
 	QUnit.test("sap.whitelistService mixed with sap.allowlistService meta tag", function(assert) {
 		var SERVICE_URL = "/service/url/from/meta";
 		this.oMetaWhiteList = document.createElement('meta');
@@ -1424,6 +1450,9 @@ sap.ui.require([
 		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
 	});
 
+	/**
+	 * @deprecated Since 1.85.0.
+	 */
 	QUnit.test("frameOptionsConfig.whitelist mixed with frameoptions.allowlist", function(assert) {
 		var LIST = "example.com";
 		window["sap-ui-config"]["frameoptionsconfig"] = {
@@ -1526,6 +1555,4 @@ sap.ui.require([
 
 		delete window["sap-ui-config"].securitytokenhandlers;
 	});
-
-	QUnit.start();
 });
