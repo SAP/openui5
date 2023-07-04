@@ -54,7 +54,7 @@
 			displayOnly="true"
 			wrapping="true"
 			text="Labels are used as titles [long test word] forsinglecontrolsorgroups of controls. Label appearance can be influenced by properties" />
-		<Input />
+		<Input id="containerInput"/>
 	</Panel>
 
 	<MessageStrip
