@@ -206,6 +206,11 @@
 		width: 1.875rem;
 	}
 
+	.sapMSFB.sapMSFBA {
+		background: none;
+		box-shadow: none;
+	}
+
 	.sapMSFSSI {
 		display: inline;
 	}
@@ -236,6 +241,11 @@
 		line-height: 1.25rem;
 	}
 
+	.sapMSFR::after {
+		border: @sapUiButtonBorderWidth solid @sapUiButtonBorderColor;
+		margin-top: 0.5625rem;
+	}
+
 	.sapMSFS {
 		width: 1.625rem;
 		border: none;
@@ -249,8 +259,9 @@
 		box-shadow: none;
 		line-height: 1.25rem;
 	}
-	
+
 	.sapMSFS:active::after,
+	.sapMSFS.sapMSFBA::after,
 	.sapMSFR:active::after {
 		background: @sapActiveColor;
 		color: @sapContent_IconColor;
@@ -264,6 +275,10 @@
 		margin-top: 0.625rem;
 	}
 
+	.sapMSFR:hover::after {
+		margin-top: 0.5625rem;
+	}
+
 	.sapMSFB.sapMSFR:not(:last-child):hover {
 		border: none;
 	}
@@ -271,15 +286,26 @@
 	.sapMSFB:hover {
 		border: none;
 	}
+
+	.sapMSFVal.sapMFocus .sapMSFF {
+		outline: none;
+
+		.sapMSFS.sapMSFB::after {
+			outline: @sapUiContentFocusWidth solid @sapUiContentFocusColor;
+		}
+	}
 }
 
 html.sap-desktop .sapTntToolHeader .sapMFocus > .sapMSFF::before {
-	border: none;
+	display: none;
 }
 
-html.sap-desktop .sapTntToolHeader .sapMFocus .sapMSFF {
-	outline: @sapContent_FocusWidth solid @sapContent_FocusColor;
-	border: none;
+html.sap-desktop .sapTntToolHeader .sapMSF:not(.sapMSFDisabled) {
+	&:not(.sapMFocus):hover .sapMSFF,
+	&.sapMFocus:not(.sapMSFVal) .sapMSFF {
+		outline: @sapUiContentFocusWidth solid @sapUiContentFocusColor;
+		border-color: transparent;
+	}
 }
 
 .sapUiSizeCompact {
@@ -298,21 +324,31 @@ html.sap-desktop .sapTntToolHeader .sapMFocus .sapMSFF {
 			width: 1.5rem;
 		}
 
+		.sapMSFR {
+			width: 1.5625rem;
+		}
+
 		.sapMSFF  .sapMSFSSI:before {
 			margin-top: 0.5rem;
 		}
 	}
 
 	.sapMSFS:hover::after,
-	.sapMSFR:hover::after,
-	.sapMSFS:active::after,
-	.sapMSFR:active::after {
+	.sapMSFS:active::after {
 		margin-top: 0.375rem;
 	}
 
-	.sapMSFS::after,
-	.sapMSFR::after {
+	.sapMSFR:hover::after,
+	.sapMSFR:active::after {
+		margin-top: 0.3125rem;
+	}
+
+	.sapMSFS::after {
 		margin-top: 0.375rem;
+	}
+
+	.sapMSFR::after {
+		margin-top: 0.3125rem;
 	}
 }
 
