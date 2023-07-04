@@ -721,9 +721,10 @@ sap.ui.define([
 				fileType: "ctrl_variant_change",
 				generator: mPropertyBag.generator,
 				layer: Layer.USER,
+				reference: this.sFlexReference,
 				content: {favorite: true}
 			};
-			aChanges.push(this.oFlexController.createBaseChange(oChangeProperties, mPropertyBag.appComponent));
+			aChanges.push(FlexObjectFactory.createUIChange(oChangeProperties));
 		}
 
 		// sets copied variant and associated changes as dirty
@@ -865,14 +866,13 @@ sap.ui.define([
 	VariantModel.prototype.createVariantChange = function(sVariantManagementReference, mPropertyBag) {
 		var mAdditionalChangeContent = this.setVariantProperties(sVariantManagementReference, mPropertyBag);
 
-		var mNewChangeData = {};
+		var mNewChangeData = {
+			changeType: mPropertyBag.changeType,
+			layer: mPropertyBag.layer,
+			generator: mPropertyBag.generator,
+			reference: this.sFlexReference
+		};
 
-		// create new change object
-		mNewChangeData.changeType = mPropertyBag.changeType;
-		mNewChangeData.layer = mPropertyBag.layer;
-		mNewChangeData.generator = mPropertyBag.generator;
-
-		// add adaptationId
 		if (mPropertyBag.adaptationId !== undefined) {
 			mNewChangeData.adaptationId = mPropertyBag.adaptationId;
 		} else {
@@ -894,7 +894,7 @@ sap.ui.define([
 			mNewChangeData.selector = JsControlTreeModifier.getSelector(mPropertyBag.variantReference, mPropertyBag.appComponent);
 		}
 
-		var oChange = this.oFlexController.createBaseChange(mNewChangeData, mPropertyBag.appComponent);
+		var oChange = FlexObjectFactory.createUIChange(mNewChangeData);
 		// update change with additional content
 		oChange.setContent(mAdditionalChangeContent);
 		if (mPropertyBag.changeType === "setTitle") {

@@ -39,6 +39,7 @@ sap.ui.define([
 				idIsLocal: true
 			}
 		},
+		packageName: "$TMP",
 		originalLanguage: "EN",
 		projectId: "sap.ui.demoapps.rta.fiorielements",
 		layer: Layer.CUSTOMER,

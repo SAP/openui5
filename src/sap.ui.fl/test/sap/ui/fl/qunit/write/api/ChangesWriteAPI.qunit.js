@@ -2,15 +2,15 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/mvc/View",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
 	"sap/ui/core/Element",
-	"sap/ui/core/Manifest",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
-	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/registry/Settings",
@@ -20,20 +20,20 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Log,
+	View,
 	JsControlTreeModifier,
 	Component,
 	Element,
-	Manifest,
 	ManifestUtils,
 	DescriptorChangeTypes,
 	Applier,
 	Reverter,
-	FlexObjectFactory,
+	States,
 	ChangesController,
 	DescriptorChangeFactory,
 	Settings,
@@ -43,14 +43,15 @@ sap.ui.define([
 	ContextBasedAdaptationsAPI,
 	Layer,
 	FlexUtils,
-	JSONModel,
 	sinon,
-	Core
+	Core,
+	RtaQunitUtils
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 	var sReturnValue = "returnValue";
+	var oComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Control---demo--test");
 
 	function mockFlexController(oControl, oReturn) {
 		sandbox.stub(ChangesController, "getFlexControllerInstance")
@@ -64,60 +65,24 @@ sap.ui.define([
 		.returns(oReturn);
 	}
 
-	function getMethodStub(aArguments, vReturnValue) {
-		var fnPersistenceStub = sandbox.stub();
-		fnPersistenceStub
-		.throws("invalid parameters for flex persistence function")
-		.withArgs.apply(fnPersistenceStub, aArguments)
-		.returns(vReturnValue);
-		return fnPersistenceStub;
-	}
-
-	function createAppComponent() {
-		var oDescriptor = {
-			"sap.app": {
-				id: "reference.app",
-				applicationVersion: {
-					version: "1.2.3"
-				}
-			}
-		};
-
-		var oManifest = new Manifest(oDescriptor);
-		var oAppComponent = {
-			name: "testComponent",
-			getManifest: function() {
-				return oManifest;
-			},
-			getId: function() {
-				return "Control---demo--test";
-			},
-			getLocalId: function() {
-				return;
-			}
-		};
-
-		return oAppComponent;
-	}
-
 	QUnit.module("Given ChangesWriteAPI", {
 		beforeEach: function() {
 			this.vSelector = {
-				elementId: "selector",
-				elementType: "sap.ui.core.Control",
-				appComponent: createAppComponent()
+				id: "selector",
+				controlType: "sap.ui.core.Control",
+				appComponent: oComponent
 			};
 			this.aObjectsToDestroy = [];
+			sandbox.stub(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId").returns("adaptationId");
 		},
 		afterEach: function() {
-			delete this.vSelector;
 			sandbox.restore();
-			this.aObjectsToDestroy.forEach(function(oObject) {oObject.destroy();});
+			this.aObjectsToDestroy.forEach((oObject) => {oObject.destroy();});
 		}
 	}, function() {
 		QUnit.test("when create is called for a descriptor change", function(assert) {
-			var sChangeType = DescriptorChangeTypes.getChangeTypes()[0];
-			var mPropertyBag = {
+			const sChangeType = DescriptorChangeTypes.getChangeTypes()[0];
+			const mPropertyBag = {
 				selector: this.vSelector,
 				changeSpecificData: {
 					changeType: sChangeType,
@@ -140,64 +105,120 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns(mPropertyBag.selector.appComponent.getManifest());
 
 			return ChangesWriteAPI.create(mPropertyBag)
-			.then(function(oChange) {
-				assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
+			.then((oChange) => {
+				assert.strictEqual(
+					oChange._oInlineChange._getChangeType(), sChangeType,
+					"then the correct descriptor change type was created"
+				);
 			});
 		});
 
 		QUnit.test("when create is called for a ControllerExtensionChange", function(assert) {
-			var oCreateCEStub = sandbox.stub(FlexObjectFactory, "createControllerExtensionChange").returns("foobar");
-			var mPropertyBag = {
+			const mPropertyBag = {
 				changeSpecificData: {
 					changeType: "codeExt",
 					foo: "bar"
 				}
 			};
-			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), "foobar", "the function returns the result of createControllerExtensionChange");
-			assert.strictEqual(oCreateCEStub.callCount, 1, "the factory function was called");
-			assert.deepEqual(oCreateCEStub.lastCall.args[0], mPropertyBag.changeSpecificData, "the changeSpecificData were passed");
+			return ChangesWriteAPI.create(mPropertyBag).then((oFlexObject) => {
+				assert.strictEqual(oFlexObject.getChangeType(), "codeExt", "the correct change was created");
+			});
 		});
 
-		QUnit.test("when create is called with a control or selector object and no context-based adaptation model exists", function(assert) {
-			var mPropertyBag = {
-				changeSpecificData: {type: "changeSpecificData"},
-				selector: {type: "control"}
+		QUnit.test("when create is called and no change handler is available", function(assert) {
+			const mPropertyBag = {
+				changeSpecificData: {type: "changeSpecificData", name: "foo", layer: Layer.CUSTOMER},
+				selector: this.vSelector
 			};
-			var fnPersistenceStub = getMethodStub(mPropertyBag.changeSpecificData, sReturnValue);
-			var fnComponentStub = getMethodStub(mPropertyBag.changeSpecificData, "componentName");
-
-			mockFlexController(mPropertyBag.selector, { createChangeWithControlSelector: fnPersistenceStub, getComponentName: fnComponentStub });
-
-			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
+			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").rejects(Error("no CHandler"));
+			return ChangesWriteAPI.create(mPropertyBag).catch((oError) => {
+				assert.strictEqual(oError.message, "no CHandler", "no flex object is created");
+			});
 		});
 
-		QUnit.test("when create is called with an extension point selector and no context-based adaptation model exists", function(assert) {
-			var mPropertyBag = {
-				changeSpecificData: {type: "changeSpecificData"},
-				selector: {
-					name: "extension point",
-					view: {type: "control"}
-				}
-			};
-			var fnPersistenceStub = getMethodStub(mPropertyBag.changeSpecificData, sReturnValue);
-			var fnComponentStub = getMethodStub(mPropertyBag.changeSpecificData, "componentName");
+		[true, false].forEach((bCBA) => {
+			const sName = "when create is called ";
+			const sCBASuffix = bCBA ? " and ContextBasedAdaptations available" : "";
 
-			mockFlexController(mPropertyBag.selector.view, { createChangeWithExtensionPointSelector: fnPersistenceStub, getComponentName: fnComponentStub });
+			QUnit.test(sName + "with a control or selector object" + sCBASuffix, function(assert) {
+				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
+				const oControl = new Element("controlId");
+				const mPropertyBag = {
+					changeSpecificData: {changeType: "changeSpecificData", name: "foo", layer: Layer.CUSTOMER},
+					selector: oControl
+				};
+				this.aObjectsToDestroy.push(oControl);
+				const oGetChangeHandlerStub = sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
+					completeChangeContent: function(oFlexObject, oChangeSpecificData) {
+						oFlexObject.setContent(oChangeSpecificData.name);
+					}
+				});
+				return ChangesWriteAPI.create(mPropertyBag).then((oFlexObject) => {
+					assert.strictEqual(oFlexObject.getState(), States.LifecycleState.NEW, "the flexObject has the correct state");
+					assert.strictEqual(oFlexObject.getContent(), "foo", "the change handler was called to complete the content");
+					assert.deepEqual(oGetChangeHandlerStub.lastCall.args, [
+						"changeSpecificData",
+						"sap.ui.core.Element",
+						mPropertyBag.selector,
+						JsControlTreeModifier,
+						Layer.CUSTOMER
+					], "the properties were correctly passed");
+				});
+			});
 
-			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
-		});
+			QUnit.test(sName + "with an extension point selector" + sCBASuffix, function(assert) {
+				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
+				const mPropertyBag = {
+					changeSpecificData: {changeType: "addXMLAtExtensionPoint", name: "foo"},
+					selector: {
+						name: "extensionPointName",
+						view: new View("viewId")
+					}
+				};
+				this.aObjectsToDestroy.push(mPropertyBag.selector.view);
+				const oGetChangeHandlerStub = sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
+					completeChangeContent: function(oFlexObject, oChangeSpecificData) {
+						oFlexObject.setContent(oChangeSpecificData.name);
+					}
+				});
+				return ChangesWriteAPI.create(mPropertyBag).then((oFlexObject) => {
+					assert.strictEqual(oFlexObject.getState(), States.LifecycleState.NEW, "the flexObject has the correct state");
+					assert.strictEqual(oFlexObject.getContent(), "foo", "the change handler was called to complete the content");
+					assert.strictEqual(oGetChangeHandlerStub.lastCall.args[0], "addXMLAtExtensionPoint", "the changeType is passed");
+					assert.strictEqual(oGetChangeHandlerStub.lastCall.args[4], Layer.CUSTOMER, "the layer is passed");
+					assert.strictEqual(
+						ContextBasedAdaptationsAPI.getDisplayedAdaptationId.callCount, bCBA ? 1 : 0,
+						"the CBA API is called only if needed"
+					);
+					assert.strictEqual(
+						oFlexObject.getAdaptationId(), bCBA ? "adaptationId" : undefined,
+						"the adaptation Id is added to the change if needed"
+					);
+				});
+			});
 
-		QUnit.test("when create is called with a component and no context-based adaptation model exists", function(assert) {
-			var mPropertyBag = {
-				changeSpecificData: {type: "changeSpecificData"},
-				selector: new Component()
-			};
-			this.aObjectsToDestroy.push(mPropertyBag.selector);
-			var fnPersistenceStub = getMethodStub([mPropertyBag.changeSpecificData, mPropertyBag.selector], sReturnValue);
-			var fnComponentStub = getMethodStub(mPropertyBag.changeSpecificData, "componentName");
+			QUnit.test(sName + "with a component + sCBASuffix", function(assert) {
+				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
+				const mPropertyBag = {
+					changeSpecificData: {changeType: "changeSpecificData"},
+					selector: new Component()
+				};
+				this.aObjectsToDestroy.push(mPropertyBag.selector);
+				const oGetChangeHandlerStub = sandbox.stub(ChangeHandlerStorage, "getChangeHandler");
 
-			mockFlexController(mPropertyBag.selector, { createBaseChange: fnPersistenceStub, getComponentName: fnComponentStub });
-			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
+				return ChangesWriteAPI.create(mPropertyBag).then((oFlexObject) => {
+					assert.strictEqual(oFlexObject.getState(), States.LifecycleState.NEW, "the flexObject has the correct state");
+					assert.strictEqual(oGetChangeHandlerStub.callCount, 0, "the change handler is not involved here");
+					assert.strictEqual(
+						ContextBasedAdaptationsAPI.getDisplayedAdaptationId.callCount, bCBA ? 1 : 0,
+						"the CBA API is called only if needed"
+					);
+					assert.strictEqual(
+						oFlexObject.getAdaptationId(), bCBA ? "adaptationId" : undefined,
+						"the adaptation Id is added to the change if needed"
+					);
+				});
+			});
 		});
 
 		QUnit.test("when create is called for a descriptor change and the create promise is rejected", function(assert) {
@@ -225,6 +246,14 @@ sap.ui.define([
 				assert.equal(oCreateChangeStub.callCount, 0, "the create new function was not called");
 				assert.equal(oError.message, "myError", "the function rejects with the error");
 				assert.equal(oErrorLogStub.callCount, 1, "the error was logged");
+			});
+		});
+
+		QUnit.test("when apply is called without element", function(assert) {
+			return ChangesWriteAPI.apply({
+				element: "notAnElement"
+			}).catch((sErrorText) => {
+				assert.strictEqual(sErrorText, "Please provide an Element", "the function rejects with an error text");
 			});
 		});
 
@@ -456,96 +485,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given ChangesWriteAPI in an app with adaptationId", {
-		beforeEach: function() {
-			this.vSelector = {
-				elementId: "selector",
-				elementType: "sap.ui.core.Control",
-				appComponent: createAppComponent()
-			};
-			this.aObjectsToDestroy = [];
-			sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
-			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(new JSONModel(
-				{
-					displayedAdaptation: {
-						id: "id12345_123"
-					}
-				}
-			));
-		},
-		afterEach: function() {
-			delete this.vSelector;
-			sandbox.restore();
-			this.aObjectsToDestroy.forEach(function(oObject) {oObject.destroy();});
-		}
-	}, function() {
-		QUnit.test("when create is called for a ControllerExtensionChange", function(assert) {
-			var oGetAdaptationIdSpy = sandbox.spy(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId");
-			var oCreateCEStub = sandbox.stub(FlexObjectFactory, "createControllerExtensionChange").returns("foobar");
-			var mPropertyBag = {
-				changeSpecificData: {
-					changeType: "codeExt",
-					foo: "bar"
-				}
-			};
-			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), "foobar", "the function returns the result of createControllerExtensionChange");
-			assert.strictEqual(oCreateCEStub.callCount, 1, "the factory function was called");
-			assert.deepEqual(oCreateCEStub.lastCall.args[0], mPropertyBag.changeSpecificData, "the changeSpecificData were passed");
-			assert.strictEqual(oGetAdaptationIdSpy.callCount, 0, "then getDisplayedAdaptationId has not been called");
-		});
-
-		QUnit.test("when create is called with a control or selector object and a context-based adaptation model exists", function(assert) {
-			var oGetAdaptationIdSpy = sandbox.spy(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId");
-			var mPropertyBag = {
-				changeSpecificData: {
-					type: "changeSpecificData",
-					layer: Layer.CUSTOMER
-				},
-				selector: {type: "control"}
-			};
-			var fnPersistenceStub = getMethodStub(mPropertyBag.changeSpecificData, sReturnValue);
-			var fnComponentStub = getMethodStub(mPropertyBag.changeSpecificData, "componentName");
-
-			mockFlexController(mPropertyBag.selector, { createChangeWithControlSelector: fnPersistenceStub, getComponentName: fnComponentStub });
-
-			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
-			assert.ok(oGetAdaptationIdSpy.calledOnce, "then getDisplayedAdaptationId has been called once");
-		});
-
-		QUnit.test("when create is called with an extension point selector and no context-based adaptation model exists", function(assert) {
-			var oGetAdaptationIdSpy = sandbox.spy(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId");
-			var mPropertyBag = {
-				changeSpecificData: {type: "changeSpecificData"},
-				selector: {
-					name: "extension point",
-					view: {type: "control"}
-				}
-			};
-			var fnPersistenceStub = getMethodStub(mPropertyBag.changeSpecificData, sReturnValue);
-			var fnComponentStub = getMethodStub(mPropertyBag.changeSpecificData, "componentName");
-
-			mockFlexController(mPropertyBag.selector.view, { createChangeWithExtensionPointSelector: fnPersistenceStub, getComponentName: fnComponentStub });
-
-			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
-			assert.ok(oGetAdaptationIdSpy.calledOnce, "then getDisplayedAdaptationId has been called once");
-		});
-
-		QUnit.test("when create is called with a component and no context-based adaptation model exists", function(assert) {
-			var oGetAdaptationIdSpy = sandbox.spy(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId");
-			var mPropertyBag = {
-				changeSpecificData: {type: "changeSpecificData"},
-				selector: new Component()
-			};
-			this.aObjectsToDestroy.push(mPropertyBag.selector);
-			var fnPersistenceStub = getMethodStub([mPropertyBag.changeSpecificData, mPropertyBag.selector], sReturnValue);
-			var fnComponentStub = getMethodStub(mPropertyBag.changeSpecificData, "componentName");
-
-			mockFlexController(mPropertyBag.selector, { createBaseChange: fnPersistenceStub, getComponentName: fnComponentStub });
-			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
-			assert.ok(oGetAdaptationIdSpy.calledOnce, "then getDisplayedAdaptationId has been called once");
-		});
-	});
-
 	QUnit.module("Given ChangesWriteAPI for smart business", {
 		beforeEach: function() {
 			this.vSelector = {
@@ -676,6 +615,8 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
+		oComponent._restoreGetAppComponentStub();
+		oComponent.destroy();
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

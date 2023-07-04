@@ -132,6 +132,7 @@ sap.ui.define([
 	};
 
 	FlexObjectFactory.createUIChange = function(mPropertyBag) {
+		mPropertyBag.packageName = mPropertyBag.packageName || "$TMP";
 		var mProperties = createBasePropertyBag(mPropertyBag);
 		if (!mProperties.layer) {
 			mProperties.layer = mPropertyBag.isUserDependent ? Layer.USER : LayerUtils.getCurrentLayer();
