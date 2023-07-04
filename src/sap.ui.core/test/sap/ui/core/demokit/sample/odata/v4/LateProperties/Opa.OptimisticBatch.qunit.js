@@ -12,7 +12,8 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/LateProperties/pages/Main",
 		"sap/ui/model/odata/v4/ODataModel",
-		"sap/ui/test/opaQunit"
+		"sap/ui/test/opaQunit",
+		"sap/ui/core/sample/odata/v4/LateProperties/SandboxModel" // preload only
 	], function (Log, CacheManager, Any, Main, ODataModel, opaTest) {
 		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 			oSkipPromise = new Promise(function (fnResolve) {

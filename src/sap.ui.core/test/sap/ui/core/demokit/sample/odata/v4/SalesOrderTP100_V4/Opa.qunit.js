@@ -10,7 +10,8 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/sample/common/Helper",
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/SalesOrderTP100_V4/pages/Main",
-		"sap/ui/test/opaQunit"
+		"sap/ui/test/opaQunit",
+		"sap/ui/core/sample/odata/v4/SalesOrderTP100_V4/SandboxModel" // preload only
 	], function (Helper, Any, Main, opaTest) {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrderTP100_V4");
 
