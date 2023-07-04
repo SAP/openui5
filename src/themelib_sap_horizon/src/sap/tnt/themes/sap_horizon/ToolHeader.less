@@ -195,24 +195,52 @@
 	.sapMSF {
 		height: 2.5rem;
 		padding-top: 0px;
+
+		&:not(.sapMSFVal) .sapMSFS {
+			pointer-events: none;
+		}
 	}
 
 	.sapMSF .sapMSFF {
 		border-radius: 2rem;
 		height: 2.5rem;
+		background-color: @sapUiShellInteractiveBackground;
+
+		&:hover {
+			background: @sapUiShellHoverBackground;
+			box-shadow: 0 0 0.125rem 0 fade(@sapUiContentShadowColor, 16), 0 0.5rem 1rem 0 fade(@sapUiContentShadowColor, 16);
+		}
+
+		.sapMSFI {
+			color: @sapUiShellTextColor;
+		}
+	}
+
+	.sapMSF.sapMFocus .sapMSFF {
+		background: @sapUiShellActiveBackground;
 	}
 
 	.sapMSFB {
-		line-height: 2.5rem;
-		width: 1.875rem;
+		width: 2rem;
+		height: 2rem;
+		margin-top: 0.25rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.sapMSFB.sapMSFBA {
+		background: none;
+		box-shadow: none;
 	}
 
 	.sapMSFSSI {
 		display: inline;
 	}
 
-	.sapMSFF  .sapMSFSSI:before {
+	.sapMSFF .sapMSFSSI:before {
 		content: "\e00d";
+		color: @sapUiContentNonInteractiveIconColor;
 		display: block;
 		font-style: normal;
 		width: 1rem;
@@ -233,12 +261,11 @@
 		height: 1.25rem;
 		border-radius: 0.75rem;
 		font-size: 0.75rem;
-		margin-top: 0.625rem;
 		line-height: 1.25rem;
 	}
 
 	.sapMSFS {
-		width: 1.625rem;
+		margin-right: 0.25rem;
 		border: none;
 	}
 
@@ -252,17 +279,28 @@
 	}
 
 	.sapMSFS:active::after,
+	.sapMSFS.sapMSFBA::after,
 	.sapMSFR:active::after {
 		background: @sapActiveColor;
 		color: @sapContent_IconColor;
-		margin-top: 0.625rem;
 	}
 
 	.sapMSFS:hover::after,
 	.sapMSFR:hover::after {
 		background: @sapHoverColor;
 		color: @sapContent_IconColor;
-		margin-top: 0.625rem;
+	}
+
+	.sapMSFVal.sapMFocus .sapMSFF {
+		box-shadow: 0 0 0.125rem 0 fade(@sapUiContentShadowColor, 16), 0 0.5rem 1rem 0 fade(@sapUiContentShadowColor, 16);
+
+		&::before {
+			display: none;
+		}
+
+		.sapMSFS.sapMSFB::after {
+			outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		}
 	}
 }
 
@@ -270,7 +308,6 @@
 	.sapTntToolHeader {
 		.sapMSF {
 			height: 2rem;
-			padding-top: 1px;
 		}
 
 		.sapMSF .sapMSFF {
@@ -278,25 +315,18 @@
 		}
 
 		.sapMSFB {
-			line-height: 2rem;
-			width: 1.5rem;
+			margin-top: 0.1875rem;
+			width: 1.625rem;
+			height: 1.625rem;
 		}
 
-		.sapMSFF  .sapMSFSSI:before {
+		.sapMSFS {
+			margin-right: 0.1875rem;
+		}
+
+		.sapMSFF .sapMSFSSI:before {
 			margin-top: 0.5rem;
 		}
-	}
-
-	.sapMSFS:hover::after,
-	.sapMSFR:hover::after,
-	.sapMSFS:active::after,
-	.sapMSFR:active::after {
-		margin-top: 0.375rem;
-	}
-
-	.sapMSFS::after,
-	.sapMSFR::after {
-		margin-top: 0.375rem;
 	}
 }
 
