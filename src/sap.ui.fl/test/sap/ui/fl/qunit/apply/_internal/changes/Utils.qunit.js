@@ -158,7 +158,7 @@ sap.ui.define([
 			this.oChange = new UIChange({});
 			sandbox.stub(FlUtils, "getChangeFromChangesMap").returns(this.oChange);
 			this.oModifier = {
-				bySelector: function() {}
+				bySelector: function() { return "foo"; }
 			};
 		},
 		afterEach: function() {
@@ -178,6 +178,11 @@ sap.ui.define([
 
 		QUnit.test("with change neither being applied not already applied", function(assert) {
 			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(false);
+			assert.equal(ChangeUtils.checkIfDependencyIsStillValid({}, this.oModifier, {}, ""), true, "the dependency is still valid");
+		});
+
+		QUnit.test("with an unavailable control", function(assert) {
+			sandbox.stub(this.oModifier, "bySelector").returns(undefined);
 			assert.equal(ChangeUtils.checkIfDependencyIsStillValid({}, this.oModifier, {}, ""), true, "the dependency is still valid");
 		});
 	});
