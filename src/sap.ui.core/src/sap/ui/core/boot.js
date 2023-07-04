@@ -9,12 +9,14 @@
  * @ui5-restricted sap.ui.core
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/base/config/_Configuration",
 	"sap/base/util/Deferred",
 	"sap/ui/core/boot/initDOM",
 	"sap/ui/core/boot/loadManifest",
 	"sap/ui/core/boot/onInit"
 ], function(
+	Log,
 	_Configuration,
 	Deferred,
 	initDOM,
@@ -22,6 +24,13 @@ sap.ui.define([
 	/* onInit --> register app resources early */
 ) {
 	"use strict";
+
+	// increase log level to ensure the warning will be locked
+	var iLogLevel = Log.getLevel();
+	Log.setLevel(Log.Level.WARNING);
+	Log.warning("sap-ui-boot.js: This is a private module, its API must not be used in production and is subject to change!");
+	// reset log level to old value
+	Log.setLevel(iLogLevel);
 
 	// ready state
 	var bReady = false;
