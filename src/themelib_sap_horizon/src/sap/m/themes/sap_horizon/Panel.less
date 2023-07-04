@@ -4,7 +4,7 @@
 /* ================================== */
 
 .sapMPanel {
-	min-height: 2.5rem;
+	min-height: 2.75rem;
 	border-radius: @sapElement_BorderCornerRadius;
 
 	.sapMPanelWrappingDiv:not(.sapMPanelWrappingDivExpanded),
@@ -75,9 +75,15 @@
 	width: 2.25rem;
 }
 
-.sapUiSizeCompact .sapMPanelWrappingDiv .sapUiIcon {
-	width: 2rem;
+.sapUiSizeCompact {
+	.sapMPanel {
+		min-height: 2.5rem;
+	}
+	.sapMPanelWrappingDiv .sapUiIcon {
+		width: 2rem;
+	}
 }
+
 .sapMPanel.sapMPanelExpandable .sapMPanelWrappingDivTb {
 	& .sapMPanelHeaderTB {
 		border-top-left-radius: 0;
