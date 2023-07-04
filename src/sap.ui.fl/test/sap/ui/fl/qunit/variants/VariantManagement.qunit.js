@@ -297,10 +297,12 @@ sap.ui.define([
 
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
-			assert.equal(this._oVM.oVariantInvisibleText.getText(), "View Standard.");
+			var oFLRB = oCore.getLibraryResourceBundle("sap.ui.fl");
+			var sStandardText = oFLRB.getText("STANDARD_VARIANT_TITLE");
+			assert.equal(this._oVM.oVariantInvisibleText.getText(), this.oVariantManagement._oRb.getText("VARIANT_MANAGEMENT_SEL_VARIANT", sStandardText));
 
 			this.oVariantManagement.setCurrentVariantKey("2");
-			assert.equal(this._oVM.oVariantInvisibleText.getText(), "View Two.");
+			assert.equal(this._oVM.oVariantInvisibleText.getText(), this.oVariantManagement._oRb.getText("VARIANT_MANAGEMENT_SEL_VARIANT", "Two"));
 
 			oConfiguration.setLanguage(sLanguage);
 		});
