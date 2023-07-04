@@ -35,8 +35,9 @@ builder:
               - "!sap/ui/webc/fiori/designtime/"
               - "!sap/ui/webc/fiori/**/*.designtime.js"
               - "!sap/ui/webc/fiori/**/*.support.js"
-              - "!sap/ui/webc/fiori/thirdparty/messagebundle*.js"
-              - "!sap/ui/webc/fiori/thirdparty/generated/themes/*/*.js"
+              - "!sap/ui/webc/fiori/thirdparty/generated/assets/**/*.js"
+              - "!sap/ui/webc/fiori/thirdparty/generated/themes/**/parameters-bundle.css.js"
+              - "!sap/ui/webc/fiori/thirdparty/illustrations/**/*.js"
             resolve: false
             resolveConditional: false
             renderer: true

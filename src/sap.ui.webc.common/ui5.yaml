@@ -38,18 +38,22 @@ builder:
               - "sap/ui/webc/common/thirdparty/icons/AllIcons.js"
               - "sap/ui/webc/common/thirdparty/icons/Assets.js"
               - "sap/ui/webc/common/thirdparty/icons/generated/**/*.js"
+              - "!sap/ui/webc/common/thirdparty/icons/generated/assets/i18n/*.js"
               - "sap/ui/webc/common/thirdparty/icons/json-imports/**/*.js"
               - "!sap/ui/webc/common/thirdparty/icons-tnt/**/*.js"
               - "sap/ui/webc/common/thirdparty/icons-tnt/AllIcons.js"
               - "sap/ui/webc/common/thirdparty/icons-tnt/Assets.js"
               - "sap/ui/webc/common/thirdparty/icons-tnt/generated/**/*.js"
+              - "!sap/ui/webc/common/thirdparty/icons-tnt/generated/assets/i18n/*.js"
               - "sap/ui/webc/common/thirdparty/icons-tnt/json-imports/**/*.js"
               - "!sap/ui/webc/common/thirdparty/icons-business-suite/**/*.js"
               - "sap/ui/webc/common/thirdparty/icons-business-suite/AllIcons.js"
               - "sap/ui/webc/common/thirdparty/icons-business-suite/Assets.js"
               - "sap/ui/webc/common/thirdparty/icons-business-suite/generated/**/*.js"
+              - "!sap/ui/webc/common/thirdparty/icons-business-suite/generated/assets/i18n/*.js"
               - "sap/ui/webc/common/thirdparty/icons-business-suite/json-imports/**/*.js"
-              - "!sap/ui/webc/common/thirdparty/theming/generated/themes/*/*.js"
+              - "!sap/ui/webc/common/thirdparty/theming/generated/themes/**/parameters-bundle.css.js"
+              - "!sap/ui/webc/common/thirdparty/theming/generated/assets/**/*.js"
             resolve: false
             resolveConditional: false
             renderer: true
