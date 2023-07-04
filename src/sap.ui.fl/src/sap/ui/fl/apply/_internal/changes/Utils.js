@@ -105,6 +105,11 @@ sap.ui.define([
 		checkIfDependencyIsStillValid: function(oAppComponent, oModifier, mChangesMap, sChangeId) {
 			var oChange = FlUtils.getChangeFromChangesMap(mChangesMap.mChanges, sChangeId);
 			var oControl = oModifier.bySelector(oChange.getSelector(), oAppComponent);
+			// if the control is currently not available,
+			// the change is also not applied anymore and the dependency is still valid
+			if (!oControl) {
+				return true;
+			}
 			return FlexCustomData.hasChangeApplyFinishedCustomData(oControl, oChange, oModifier)
 				.then(isDependencyStillValid.bind(null, oChange));
 		}

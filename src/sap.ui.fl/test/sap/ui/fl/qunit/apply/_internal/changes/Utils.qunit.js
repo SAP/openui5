@@ -178,6 +178,11 @@ sap.ui.define([
 			sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData").returns(false);
 			assert.equal(ChangeUtils.checkIfDependencyIsStillValidSync({}, this.oModifier, {}, ""), true, "the dependency is still valid");
 		});
+
+		QUnit.test("with an unavailable control", function(assert) {
+			sandbox.stub(this.oModifier, "bySelector").returns(undefined);
+			assert.equal(ChangeUtils.checkIfDependencyIsStillValid({}, this.oModifier, {}, ""), true, "the dependency is still valid");
+		});
 	});
 
 	QUnit.done(function() {
