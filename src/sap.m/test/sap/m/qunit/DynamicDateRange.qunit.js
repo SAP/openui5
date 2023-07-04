@@ -105,6 +105,15 @@ sap.ui.define([
 		);
 	});
 
+	QUnit.test("Native autocomplete is swiched off", function(assert) {
+		// prepare
+		var oInput = this.ddr._oInput;
+		var oInputDom = oInput.getDomRef().querySelector("input");
+
+		// assert
+		assert.strictEqual(oInputDom.getAttribute("autocomplete"), "off", "The autocomplete is off");
+	});
+
 	QUnit.module("basic functionality", {
 		beforeEach: function() {
 			this.ddr = new DynamicDateRange();
