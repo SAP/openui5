@@ -41,18 +41,19 @@ sap.ui.define(["sap/ui/core/library", "sap/base/Log", "sap/ui/core/LabelEnableme
 
 			aMessages.forEach(function(oMessage) {
 				if (aLabels && aLabels.length > 0) {
-				// we simply take the first label text and ignore all others
+					// we simply take the first label text and ignore all others
 					var oLabel = sap.ui.getCore().byId(sLabelId);
-					if (oLabel.getMetadata().isInstanceOf("sap.ui.core.Label") && oLabel.getText && oMessage.getAdditionalText() !== oLabel.getText()) {
-						oMessage.setAdditionalText(oLabel.getText());
-						bForceUpdate = true;
+					if (oLabel.getMetadata().isInstanceOf("sap.ui.core.Label") && oLabel.getText) {
+						if (oMessage.getAdditionalText() !== oLabel.getText()) {
+							oMessage.setAdditionalText(oLabel.getText());
+							bForceUpdate = true;
+						}
 					} else {
 						Log.warning(
 							"sap.ui.core.message.Message: Can't create labelText." +
 							"Label with id " + sLabelId + " is no valid sap.ui.core.Label.",
 							this
 						);
-
 					}
 				}
 				if (oMessage.getControlId() !== this.getId()){
