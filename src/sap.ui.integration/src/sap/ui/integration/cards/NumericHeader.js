@@ -147,7 +147,7 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	NumericHeader.prototype._isInteractive = function () {
+	NumericHeader.prototype.isInteractive = function () {
 		return this.getInteractive();
 	};
 

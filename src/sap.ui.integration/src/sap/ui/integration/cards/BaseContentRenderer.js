@@ -41,8 +41,8 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 			.class(sClass)
 			.class("sapFCardBaseContent");
 
-		if (oCardContent.hasListeners("press")) {
-			oRm.class("sapFCardClickable");
+		if (oCardContent.isInteractive()) {
+			oRm.class("sapFCardSectionClickable");
 		}
 
 		if (bIsCardValid && oCard.getHeight() === "auto") { // if there is no height specified the default value is "auto"
