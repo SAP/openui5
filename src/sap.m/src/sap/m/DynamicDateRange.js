@@ -1783,6 +1783,10 @@ sap.ui.define([
 		DynamicDateRangeInputRenderer.apiVersion = 2;
 
 		DynamicDateRangeInputRenderer.writeInnerAttributes = function(oRm, oControl) {
+			if (oControl.getShowSuggestion() || oControl.getShowValueStateMessage()) {
+				oRm.attr("autocomplete", "off");
+			}
+
 			var oDynamicDateRange = oControl._getControlOrigin ? oControl._getControlOrigin() : null,
 				mAccAttributes = this.getAccessibilityState(oControl);
 
