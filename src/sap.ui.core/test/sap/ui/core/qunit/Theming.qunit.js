@@ -16,7 +16,7 @@ sap.ui.define([
 	var oURLConfigurationProviderStub,
 		mConfigStubValues,
 		mEventCalls,
-		bThemeManagerActive = !!globalThis["sap-ui-test-config"].themeManagerActive;
+		bThemeManagerNotActive = !!globalThis["sap-ui-test-config"].themeManagerNotActive;
 
 	function checkChange(oEvent) {
 		mEventCalls.aChange.push(BaseEvent.getParameters(oEvent));
@@ -62,7 +62,7 @@ sap.ui.define([
 			});
 			Theming.attachChange(checkChange);
 			Theming.attachApplied(checkApplied);
-			if (bThemeManagerActive) {
+			if (bThemeManagerNotActive) {
 				assert.strictEqual(mEventCalls.aApplied[0].theme, Theming.getTheme(), "In case there is no ThemeManager, the applied event should be called immediately.");
 				mEventCalls.aApplied.pop();
 			}
@@ -75,7 +75,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getTheme", function (assert) {
-		assert.expect(bThemeManagerActive ? 28 : 27);
+		assert.expect(bThemeManagerNotActive ? 28 : 27);
 
 		mConfigStubValues = {
 			"sapTheme": "sap_test_theme_1",
@@ -202,14 +202,28 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("setThemeRoot - Initial 'string' value must be overridable by API", function(assert) {
+		var sThemeName = "sap_initialThemeRoot";
+		var sInitialThemeRoot = "/somewhere/outside";
+
+		assert.strictEqual(Theming.getThemeRoot(sThemeName), sInitialThemeRoot, "ThemeRoot for '" + sThemeName + "' should return the expected themeRoot '" + sInitialThemeRoot + "'");
+
+		// Regression test: must not fail when initial theme-root is given only as a string, e.g.
+		//                  themeRoots: {
+		//                      "sap_initialThemeRoot": "/somewhere/outside"
+		//                  }
+		Theming.setThemeRoot(sThemeName, "https://back/inside");
+	});
+
 	QUnit.test("isApplied", function(assert) {
 		assert.ok(Theming.isApplied(), "Theming should be applied.");
 
 		Theming.setTheme("sap_test_theme_5");
-		assert.strictEqual(Theming.isApplied(), bThemeManagerActive, "'true' if ThemeManager is active; else 'false'");
+		assert.strictEqual(Theming.isApplied(), bThemeManagerNotActive, "'true' if ThemeManager is active; else 'false'");
 
 		return themeApplied().then(function() {
 			assert.ok(Theming.isApplied(), "Theming should be applied.");
 		});
 	});
+
 });
