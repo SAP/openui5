@@ -4488,6 +4488,12 @@ sap.ui.define([
 		assert.throws(function () {
 			this.oMetaModel.attachRequestSent();
 		}, new Error("Unsupported event 'requestSent': v4.ODataMetaModel#attachEvent"));
+
+		this.mock(MetaModel.prototype).expects("attachEvent").on(this.oMetaModel)
+			.withExactArgs("messageChange", "~oData~", "~fnFunction~", "~oListener~");
+
+		// code under test
+		this.oMetaModel.attachEvent("messageChange", "~oData~", "~fnFunction~", "~oListener~");
 	});
 
 	//*********************************************************************************************
