@@ -5,12 +5,14 @@ sap.ui.define([
 	"../library",
 	"../utils/TableUtils",
 	"sap/ui/core/Element",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/Device"
 ], function(
 	library,
 	TableUtils,
 	Element,
-	jQuery
+	jQuery,
+	Device
 ) {
 	"use strict";
 
@@ -644,6 +646,18 @@ sap.ui.define([
 		var oDomRef = oTable.getDomRef();
 		oDomRef.querySelector(".sapUiTableCtrlBefore").setAttribute("tabindex", bHasRows ? "0" : "-1");
 		oDomRef.querySelector(".sapUiTableCtrlAfter").setAttribute("tabindex", bHasRows ? "0" : "-1");
+
+		// In Safari, minWidths do not work for td's, so the width property needs to be set on the table.
+		// This does not work, when the table is in AutoRowMode and has many columns with only minWidth.
+		// The width of the content table is overwritten due to a second rerendering triggered in here.
+		// Therefore, the width is set of the content table is set back to be the same as the header table.
+		// BCP: 2380079867
+		if (Device.browser.safari) {
+			var oHdrCol = oDomRef.querySelector("#" + oTable.getId() + "-header");
+			var oHdrCnt = oDomRef.querySelector("#" + oTable.getId() + "-table");
+
+			oHdrCnt.style.width = oHdrCol.style.width;
+		}
 	};
 
 	/**
