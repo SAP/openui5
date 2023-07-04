@@ -734,7 +734,7 @@ sap.ui.define([
 		// independent of FlexState in some test cases
 		// Once the ChangePersistence is no longer used
 		// make sure to remove the safeguard
-		if (_mInstances[sReference]) {
+		if (_mInstances[sReference] && aFlexObjects.length > 0) {
 			var aCurrentFlexObjects = _mInstances[sReference].runtimePersistence.flexObjects;
 			aFlexObjects.forEach(function(oFlexObject) {
 				var iIndex = aCurrentFlexObjects.indexOf(oFlexObject);
