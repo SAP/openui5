@@ -114,15 +114,23 @@ sap.ui.define([
 			}
 		}
 
+		const aAdditionalSelects = [];
 		// check additionally selected properties, no new dimensions and new measures or
 		// associated properties for new dimensions or measures are allowed
-		for (i = 0, n = aSelect.length; i < n; i++) {
+		for (i = 0; i < aSelect.length; i += 1) {
 			sPropertyName = aSelect[i];
 
 			oDimension = oBinding.oAnalyticalQueryResult.findDimensionByPropertyName(sPropertyName);
-			if (oDimension && oBinding.oDimensionDetailsSet[oDimension.getName()] === undefined) {
-				logUnsupportedPropertyInSelect(oBinding.sPath, sPropertyName, oDimension);
-				bError = true;
+			if (oDimension) {
+				const oDimensionDetails = oBinding.oDimensionDetailsSet[oDimension.getName()];
+				if (oDimensionDetails === undefined) {
+					logUnsupportedPropertyInSelect(oBinding.sPath, sPropertyName, oDimension);
+					bError = true;
+				} else {
+					// eslint-disable-next-line no-use-before-define
+					AnalyticalBinding._updateDimensionDetailsTextProperty(oDimension, sPropertyName, oDimensionDetails);
+					continue;
+				}
 			}
 
 			oMeasure = oBinding.oAnalyticalQueryResult.findMeasureByPropertyName(sPropertyName);
@@ -130,8 +138,9 @@ sap.ui.define([
 				logUnsupportedPropertyInSelect(oBinding.sPath, sPropertyName, oMeasure);
 				bError = true;
 			}
+			aAdditionalSelects.push(sPropertyName);
 		}
-		return bError ? [] : aSelect;
+		return bError ? [] : aAdditionalSelects;
 	}
 
 	/**
@@ -1356,10 +1365,7 @@ sap.ui.define([
 				if (oDimension.getName() == aColumns[i].name) {
 					oDimensionDetails.keyPropertyName = aColumns[i].name;
 				}
-				var oTextProperty = oDimension.getTextProperty();
-				if (oTextProperty && oTextProperty.name == aColumns[i].name) {
-					oDimensionDetails.textPropertyName = aColumns[i].name;
-				}
+				AnalyticalBinding._updateDimensionDetailsTextProperty(oDimension, aColumns[i].name, oDimensionDetails);
 				if (oDimension.findAttributeByName(aColumns[i].name)) {
 					oDimensionDetails.aAttributeName.push(aColumns[i].name);
 				}
@@ -4920,6 +4926,23 @@ sap.ui.define([
 		// property for the measure and not the measure itself has been added as column. In that
 		// case request the total for the corresponding measure.
 		return !!oAnalyticalInfo && oAnalyticalInfo.total == false;
+	};
+
+	/**
+	 * Updates the dimension details text property with the given property name in case it is the given dimension's
+	 * text property.
+	 *
+	 * @param {object} oDimension The dimension
+	 * @param {string} sPropertyName The property name
+	 * @param {object} oDimensionDetails The dimension details
+	 *
+	 * @private
+	 */
+	AnalyticalBinding._updateDimensionDetailsTextProperty = function (oDimension, sPropertyName, oDimensionDetails) {
+		const oTextProperty = oDimension.getTextProperty();
+		if (oTextProperty && oTextProperty.name === sPropertyName) {
+			oDimensionDetails.textPropertyName = sPropertyName;
+		}
 	};
 
 	AnalyticalBinding.Logger = oLogger;
