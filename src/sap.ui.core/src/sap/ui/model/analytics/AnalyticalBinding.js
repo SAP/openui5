@@ -281,6 +281,9 @@ sap.ui.define([
 			this.aApplicationFilter = this._convertDeprecatedFilterObjects(aFilters);
 			this.aControlFilter = undefined;
 			this.aSorter = aSorter ? aSorter : [];
+			if (!Array.isArray(this.aSorter)) {
+				this.aSorter = [this.aSorter];
+			}
 			this.aMaxAggregationLevel = [];
 			this.aAggregationLevel = [];
 			this.oPendingRequests = {};

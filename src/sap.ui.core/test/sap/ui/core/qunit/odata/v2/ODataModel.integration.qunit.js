@@ -8372,6 +8372,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return aItems;
 		}
+		this.oLogMock.expects("warning")
+			.withExactArgs("Applying sorters to groups is only possible with auto expand mode 'Sequential';"
+				+ " current mode is: Bundled",
+				"/Items", "sap.ui.model.analytics.AnalyticalBinding", undefined)
+			.atLeast(1);
 
 		this.expectRequest({
 				encodeRequestUri : false,
