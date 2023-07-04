@@ -14,12 +14,13 @@ sap.ui.define([
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/core/Title",
 	"sap/ui/core/date/UI5Date",
+	"sap/ui/layout/form/ColumnLayout",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
 ], function (UriParameters, Button, mobileLibrary, Dialog, Input, Label, MessageToast, Text,
-		Controller, Title, UI5Date, SimpleForm, Sorter, ODataModel, TestUtils) {
+		Controller, Title, UI5Date, _ColumnLayout, SimpleForm, Sorter, ODataModel, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
