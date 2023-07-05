@@ -3251,6 +3251,9 @@ sap.ui.define([
 			.returns(oFixture.iStatus === 204
 				? Promise.resolve()
 				: Promise.reject(oError));
+		this.mock(oModel).expects("reportError").exactly(bSuccess ? 0 : 1)
+			.withExactArgs("Failed to delete " + sCanonicalPath, sClassName,
+				sinon.match.same(oError));
 		this.mock(aAllBindings[0]).expects("onDelete").exactly(bInAllBindings ? 1 : 0)
 			.withExactArgs(sCanonicalPath);
 		this.mock(aAllBindings[1]).expects("onDelete").exactly(bInAllBindings ? 1 : 0)

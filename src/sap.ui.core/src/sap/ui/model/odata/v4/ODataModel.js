@@ -1543,6 +1543,7 @@ sap.ui.define([
 			).catch(function (oError) {
 				if (bRejectIfNotFound
 						|| !(oError.status === 404 || bInAllBindings && oError.status === 412)) {
+					that.reportError("Failed to delete " + aResults[0], sClassName, oError);
 					throw oError;
 				} // else: map 404/412 to 204
 			}).then(function () {

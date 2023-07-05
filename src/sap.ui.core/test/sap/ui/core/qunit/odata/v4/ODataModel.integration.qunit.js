@@ -52643,7 +52643,25 @@ sap.ui.define([
 					headers : {"If-Match" : "ETag"},
 					method : "DELETE",
 					url : "Artists(ArtistID='42',IsActiveEntity=false)"
-				});
+				}, undefined, {
+					"sap-messages" : JSON.stringify([{
+						code : "foo-42",
+						message : "What a nice name!",
+						numericSeverity : 2,
+						target : "Name"
+					}])
+				})
+				.expectMessages([{
+					message : sMessage1,
+					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+					type : "Success"
+				}, {
+					code : "foo-42",
+					message : "What a nice name!",
+					persistent : true,
+					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+					type : "Information"
+				}]);
 
 			return Promise.all([
 				// code under test
@@ -52661,6 +52679,40 @@ sap.ui.define([
 			return that.waitForChanges(assert, "show active");
 		}).then(function () {
 			return that.checkValueState(assert, that.oView.byId("name"), "None", "");
+		}).then(function () {
+			that.oLogMock.expects("error")
+				.withArgs("Failed to delete /Artists(ArtistID='42',IsActiveEntity=false)");
+			that.expectRequest({
+					headers : {"If-Match" : "ETag"},
+					method : "DELETE",
+					url : "Artists(ArtistID='42',IsActiveEntity=false)"
+				}, createErrorInsideBatch({target : "ArtistID"}))
+				.expectMessages([{
+					message : sMessage1,
+					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+					type : "Success"
+				}, {
+					code : "foo-42",
+					message : "What a nice name!",
+					persistent : true,
+					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+					type : "Information"
+				}, {
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					target : "/Artists(ArtistID='42',IsActiveEntity=false)/ArtistID",
+					technical : true,
+					type : "Error"
+				}]);
+
+			return Promise.all([
+				// code under test
+				oModel.delete(oDraftContext).then(mustFail(assert), function (oError) {
+					assert.strictEqual(oError.message, "Request intentionally failed");
+				}),
+				that.waitForChanges(assert, "delete again")
+			]);
 		}).then(function () {
 			that.expectMessages([]);
 
