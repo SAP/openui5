@@ -46,13 +46,13 @@ sap.ui.define([
 
 			this.oSimpleForm = new SimpleForm({
 				id : "component---SimpleForm", title : "Simple Form",
+				layout: SimpleFormLayout.ColumnLayout,
 				content : [
 					this.oTitle0,
 					this.oLabel0, this.oInput0,
 					this.oLabel1, this.oInput1,
 					this.oLabel2, this.oInput2
-				],
-				layout: SimpleFormLayout.ColumnLayout
+				]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
 			this.oSimpleForm.setModel(this.oModel);

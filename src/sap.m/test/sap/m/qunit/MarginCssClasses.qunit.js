@@ -74,7 +74,8 @@ sap.ui.define([
 		"            <f:SimpleForm" +
 		"                id=\"simpleForm\"" +
 		"                minWidth=\"1024\"" +
-		"                maxContainerCols=\"2\">" +
+		"                maxContainerCols=\"2\"" +
+		"                layout=\"ResponsiveGridLayout\" >" +
 		"                <f:title>" +
 		"                    <core:Title text=\"A Form\" />" +
 		"                </f:title>" +

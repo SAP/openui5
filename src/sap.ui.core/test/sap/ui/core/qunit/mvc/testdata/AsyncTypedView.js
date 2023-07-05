@@ -26,6 +26,7 @@ sap.ui.define([
 				});
 				var oForm = new SimpleForm({
 					id: this.createId("Layout"),
+					layout: SimpleFormLayout.ColumnLayout,
 					content: [
 						new Label({
 							text: "Product"
@@ -75,8 +76,7 @@ sap.ui.define([
 							text: "hide details...",
 							press: oController.hideMore
 						})
-					],
-					layout: SimpleFormLayout.ColumnLayout
+					]
 				});
 
 				res([oImg, oForm]);

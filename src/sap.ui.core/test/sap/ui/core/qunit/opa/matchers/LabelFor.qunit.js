@@ -38,13 +38,12 @@ sap.ui.define([
 			this.oFormInput = new Input({id: "form_input"});
 			this.oForm = new SimpleForm({
 				id: "form",
+				layout: SimpleFormLayout.ColumnLayout,
 				content:
 				[
 					new Label({id: "form_label", text: "form input", labelFor: this.oFormInput}),
 					this.oFormInput
-
-				],
-				layout: SimpleFormLayout.ColumnLayout
+				]
 			});
 
 			this.oButton = new Button({id: "button", text: "Button"});

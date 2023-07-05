@@ -46,10 +46,10 @@ sap.ui.define([
 	QUnit.test('Add smart field to SimpleForm in different positions', function (assert) {
 		var oTitle = new Title("NewGroup");
 		this.oSimpleForm = new SimpleForm("simpleForm", {
+			layout: SimpleFormLayout.ColumnLayout,
 			content : [
 				oTitle
-			],
-			layout: SimpleFormLayout.ColumnLayout
+			]
 		});
 		var oView = new View({content : [
 			this.oSimpleForm
@@ -164,10 +164,10 @@ sap.ui.define([
 		this.oInput0 = new Input({id : "Input0"});
 
 		this.oSimpleForm = new SimpleForm("simpleForm", {
+			layout: SimpleFormLayout.ColumnLayout,
 			content : [
 				this.oToolbar, this.oLabel0, this.oInput0
-			],
-			layout: SimpleFormLayout.ColumnLayout
+			]
 		});
 		var oView = new View({content : [
 			this.oSimpleForm
@@ -213,10 +213,10 @@ sap.ui.define([
 		this.oInput0 = new Input({id : "Input0"});
 
 		this.oSimpleForm = new SimpleForm("simpleForm", {
+			layout: SimpleFormLayout.ColumnLayout,
 			content : [
 				this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
-			],
-			layout: SimpleFormLayout.ColumnLayout
+			]
 		});
 
 		var oView = new View({content : [
@@ -263,10 +263,10 @@ sap.ui.define([
 		this.oInput0 = new Input({id : "Input0"});
 
 		this.oSimpleForm = new SimpleForm("simpleForm", {
+			layout: SimpleFormLayout.ColumnLayout,
 			content : [
 				this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
-			],
-			layout: SimpleFormLayout.ColumnLayout
+			]
 		});
 
 		var oView = new View({content : [
@@ -313,10 +313,10 @@ sap.ui.define([
 		this.oInput0 = new Input({id : "Input0"});
 
 		this.oSimpleForm = new SimpleForm("simpleForm", {
+			layout: SimpleFormLayout.ColumnLayout,
 			content : [
 				this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
-			],
-			layout: SimpleFormLayout.ColumnLayout
+			]
 		});
 
 		var oView = new View({content : [
@@ -358,10 +358,10 @@ sap.ui.define([
 		this.oInput0 = new Input({id : "Input0"});
 
 		this.oSimpleForm = new SimpleForm("simpleForm", {
+			layout: SimpleFormLayout.ColumnLayout,
 			content : [
 				this.oLabel0, this.oInput0
-			],
-			layout: SimpleFormLayout.ColumnLayout
+			]
 		});
 
 		var oView = new View({content : [
