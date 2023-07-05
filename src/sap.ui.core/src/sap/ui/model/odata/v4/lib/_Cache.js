@@ -28,20 +28,6 @@ sap.ui.define([
 		rSegmentWithPredicate = /^([^(]*)(\(.*\))$/;
 
 	/**
-	 * Adds the given delta to the collection's $count if there is one.
-	 *
-	 * @param {object} mChangeListeners A map of change listeners by path
-	 * @param {string} sPath The path of the collection in the cache (as used by change listeners)
-	 * @param {array} aCollection The collection
-	 * @param {number} iDelta The delta
-	 */
-	function addToCount(mChangeListeners, sPath, aCollection, iDelta) {
-		if (aCollection.$count !== undefined) {
-			setCount(mChangeListeners, sPath, aCollection, aCollection.$count + iDelta);
-		}
-	}
-
-	/**
 	 * Returns <code>true</code> if <code>sRequestPath</code> is a sub-path of <code>sPath</code>.
 	 *
 	 * @param {string} sRequestPath The request path
@@ -50,26 +36,6 @@ sap.ui.define([
 	 */
 	function isSubPath(sRequestPath, sPath) {
 		return sPath === "" || sRequestPath === sPath || sRequestPath.startsWith(sPath + "/");
-	}
-
-	/**
-	 * Sets the collection's $count: a number representing the sum of the element count on
-	 * server-side and the number of transient elements created on the client. It may be
-	 * <code>undefined</code>, but not <code>Infinity</code>.
-	 *
-	 * @param {object} mChangeListeners A map of change listeners by path
-	 * @param {string} sPath The path of the collection in the cache (as used by change listeners)
-	 * @param {array} aCollection The collection
-	 * @param {string|number} vCount The count
-	 */
-	function setCount(mChangeListeners, sPath, aCollection, vCount) {
-		// Note: @odata.count is of type Edm.Int64, represented as a string in OData responses;
-		// $count should be a number and the loss of precision is acceptable
-		if (typeof vCount === "string") {
-			vCount = parseInt(vCount);
-		}
-		// Note: this relies on $count being present as an own property of aCollection
-		_Helper.updateExisting(mChangeListeners, sPath, aCollection, {$count : vCount});
 	}
 
 	//*********************************************************************************************
@@ -194,7 +160,7 @@ sap.ui.define([
 				if (Array.isArray(vCacheData)) {
 					iIndex = oDeleted.index;
 					if (iIndex !== undefined) {
-						addToCount(that.mChangeListeners, sParentPath, vCacheData, 1);
+						_Helper.addToCount(that.mChangeListeners, sParentPath, vCacheData, 1);
 					}
 					iDeletedIndex = vCacheData.$deleted.indexOf(oDeleted);
 					that.adjustIndexes(sParentPath, vCacheData, iIndex, 1, iDeletedIndex);
@@ -562,7 +528,7 @@ sap.ui.define([
 				if (!sPath) {
 					that.iActiveElements -= 1;
 				}
-				addToCount(that.mChangeListeners, sPath, aCollection, -1);
+				_Helper.addToCount(that.mChangeListeners, sPath, aCollection, -1);
 			}
 			delete aCollection.$byPredicate[sTransientPredicate];
 			that.adjustIndexes(sPath, aCollection, iIndex, -1);
@@ -685,7 +651,7 @@ sap.ui.define([
 			if (!sPath) {
 				this.iActiveElements += 1;
 			}
-			addToCount(this.mChangeListeners, sPath, aCollection, 1);
+			_Helper.addToCount(this.mChangeListeners, sPath, aCollection, 1);
 		}
 
 		if (bAtEndOfCreated) {
@@ -1702,7 +1668,7 @@ sap.ui.define([
 		}
 		if (iIndex >= 0) {
 			aElements.splice(iIndex, 1);
-			addToCount(this.mChangeListeners, sPath, aElements, -1);
+			_Helper.addToCount(this.mChangeListeners, sPath, aElements, -1);
 			if (sTransientPredicate) {
 				aElements.$created -= 1;
 				if (!sPath) {
@@ -1841,7 +1807,7 @@ sap.ui.define([
 				}).then(function (oResult) {
 					var iCount = parseInt(oResult["@odata.count"]) + that.iActiveElements;
 
-					setCount(that.mChangeListeners, "", that.aElements, iCount);
+					_Helper.setCount(that.mChangeListeners, "", that.aElements, iCount);
 					that.iLimit = iCount;
 					return iCount;
 				});
@@ -2287,7 +2253,7 @@ sap.ui.define([
 					oUpdateData["@$ui5.context.isInactive"] = false;
 					_Helper.deletePrivateAnnotation(oEntity, "initialData");
 					that.iActiveElements += 1;
-					addToCount(that.mChangeListeners, "", that.aElements, 1);
+					_Helper.addToCount(that.mChangeListeners, "", that.aElements, 1);
 				}
 			}
 			// write the changed value into the cache
@@ -2377,7 +2343,7 @@ sap.ui.define([
 			aNestedCacheEntities.$count = undefined; // so that setCount always fires a change event
 			aNestedCacheEntities.$created = 0;
 			aNestedCacheEntities.$byPredicate = {};
-			setCount(that.mChangeListeners, sCollectionPath, aNestedCacheEntities,
+			_Helper.setCount(that.mChangeListeners, sCollectionPath, aNestedCacheEntities,
 				aNestedCreatedEntities.length);
 			// build the next level
 			Object.keys(mSelectForMetaPath).forEach(function (sMetaPath) {
@@ -2558,15 +2524,16 @@ sap.ui.define([
 				if (Array.isArray(vPropertyValue)) {
 					vPropertyValue.$created = 0; // number of (client-side) created elements
 					// compute count
-					vPropertyValue.$count = undefined; // see setCount
 					sCount = oInstance[sProperty + "@odata.count"];
 					// Note: ignore change listeners, because any change listener that is already
 					// registered, is still waiting for its value and gets it via fetchValue
 					if (sCount) {
-						setCount({}, "", vPropertyValue, sCount);
+						vPropertyValue.$count = parseInt(sCount);
 					} else if (!oInstance[sProperty + "@odata.nextLink"]) {
 						// Note: This relies on the fact that $skip/$top is not used on nested lists
-						setCount({}, "", vPropertyValue, vPropertyValue.length);
+						vPropertyValue.$count = vPropertyValue.length;
+					} else {
+						vPropertyValue.$count = undefined; // see _Helper.setCount
 					}
 					visitArray(vPropertyValue, sPropertyMetaPath, sPropertyPath,
 						buildContextUrl(sContextUrl, oInstance[sProperty + "@odata.context"]));
@@ -2626,7 +2593,7 @@ sap.ui.define([
 		this.sContext = undefined; // the "@odata.context" from the responses
 		this.aElements = []; // the available elements
 		this.aElements.$byPredicate = {};
-		this.aElements.$count = undefined; // see setCount
+		this.aElements.$count = undefined; // see _Helper.setCount
 		// number of all (client-side) created elements (active or inactive)
 		this.aElements.$created = 0;
 		this.aElements.$tail = undefined; // promise for a read w/o $top
@@ -3007,7 +2974,7 @@ sap.ui.define([
 			}
 		}
 		if (iLimit !== -1) {
-			setCount(this.mChangeListeners, "", this.aElements,
+			_Helper.setCount(this.mChangeListeners, "", this.aElements,
 				iLimit !== undefined ? iLimit + this.iActiveElements : undefined);
 		}
 
@@ -3634,7 +3601,7 @@ sap.ui.define([
 		this.sContext = undefined;
 		this.aElements.length = this.aElements.$created = iCreated;
 		this.aElements.$byPredicate = {};
-		this.aElements.$count = undefined; // needed for setCount()
+		this.aElements.$count = undefined; // needed for _Helper.setCount
 		this.iLimit = Infinity;
 
 		Object.keys(mChangeListeners).forEach(function (sPath) {

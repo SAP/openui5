@@ -108,6 +108,22 @@ sap.ui.define([
 		},
 
 		/**
+		 * Adds the given delta to the collection's $count if there is one. Notifies the listeners.
+		 *
+		 * @param {object} mChangeListeners A map of change listeners by path
+		 * @param {string} sPath The path of the collection in the cache
+		 * @param {array} aCollection The collection
+		 * @param {number} iDelta The delta
+		 *
+		 * @public
+		 */
+		addToCount : function (mChangeListeners, sPath, aCollection, iDelta) {
+			if (aCollection.$count !== undefined) {
+				_Helper.setCount(mChangeListeners, sPath, aCollection, aCollection.$count + iDelta);
+			}
+		},
+
+		/**
 		 * Adds the given paths to $select of the given query options.
 		 *
 		 * @param {object} mQueryOptions The query options
@@ -2411,6 +2427,29 @@ sap.ui.define([
 			} else {
 				delete oObject[sAnnotation];
 			}
+		},
+
+		/**
+		 * Sets the collection's $count: a number representing the sum of the element count on
+		 * server-side and the number of transient elements created on the client. It may be
+		 * <code>undefined</code>, but not <code>Infinity</code>. Notifies the listeners. Requires
+		 * that <code>$count</code> exists as an own property of the collection.
+		 *
+		 * @param {object} mChangeListeners A map of change listeners by path
+		 * @param {string} sPath The path of the collection in the cache
+		 * @param {object[]} aCollection The collection
+		 * @param {string|number} vCount The count
+		 *
+		 * @public
+		 */
+		setCount : function (mChangeListeners, sPath, aCollection, vCount) {
+			// Note: @odata.count is of type Edm.Int64, represented as a string in OData responses;
+			// $count should be a number and the loss of precision is acceptable
+			if (typeof vCount === "string") {
+				vCount = parseInt(vCount);
+			}
+			// Note: this relies on $count being present as an own property of aCollection
+			_Helper.updateExisting(mChangeListeners, sPath, aCollection, {$count : vCount});
 		},
 
 		/**
