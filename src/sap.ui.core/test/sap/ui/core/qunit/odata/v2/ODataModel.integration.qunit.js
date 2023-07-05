@@ -9217,6 +9217,137 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 
+	//*****************************************************************************************************************
+	// Scenario: Sequential mode: Sorting by text properties that are only additionally selected is possible.
+	// JIRA:CPOUI5MODELS-1311
+	QUnit.test("AnalyticalBinding: sort additional selected text properties (Sequential)", function (assert) {
+		const oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS");
+		const sView = '\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode"/>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="Customer" template="Customer"/>\
+	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
+		template="AmountInCompanyCodeCurrency"/>\
+</t:AnalyticalTable>';
+
+		return this.createView(assert, sView, oModel).then(() => {
+			this.expectHeadRequest()
+				.expectRequest({ // count request
+					encodeRequestUri : false,
+					requestUri : "Items?$select=CompanyCode,Customer&$top=0&$inlinecount=allpages"
+				}, {__count : "20", results : []})
+				.expectRequest({ // first level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+					+ "$select=CompanyCode,CompanyName,AmountInCompanyCodeCurrency,Currency&"
+					+ "$orderby=CompanyName%20desc,CompanyCode%20asc&$top=14&$inlinecount=allpages"
+				}, {
+					results : [
+						Object.assign(getFarCustomerLineItem("A0"), {CompanyName: "A0Name"}),
+						Object.assign(getFarCustomerLineItem("A1"), {CompanyName: "A1Name"}),
+						Object.assign(getFarCustomerLineItem("A2"), {CompanyName: "A2Name"}),
+						Object.assign(getFarCustomerLineItem("A3"), {CompanyName: "A2Name"})
+					]
+				})
+				.expectRequest({ // grand total request
+					encodeRequestUri : false,
+					requestUri : "Items?$select=AmountInCompanyCodeCurrency,Currency&$top=100&$inlinecount=allpages"
+				}, {
+					__count : 1,
+					results : [{
+						__metadata : {uri : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items(grandTotal)"},
+						AmountInCompanyCodeCurrency : "140",
+						Currency : "USD"
+					}]
+				});
+
+			// bind it lately, otherwise the binding is constructed without the analytical info and the select parameter
+			// is ignored
+			this.oView.byId("table").bindRows({
+				path : "/Items",
+				parameters : {
+					autoExpandMode : "Sequential",
+					numberOfExpandedLevels : 0,
+					provideGrandTotals : false,
+					select : "CompanyCode,AmountInCompanyCodeCurrency,Currency,Customer,CompanyName",
+					useBatchRequests : true
+				},
+				sorter : [new Sorter("CompanyName", true)]
+			});
+
+			return this.waitForChanges(assert);
+		});
+	});
+
+	//*****************************************************************************************************************
+	// Scenario: Bundled mode: Sorting by text properties that are only additionally selected is possible.
+	// JIRA:CPOUI5MODELS-1311
+	QUnit.test("AnalyticalBinding: sort additional selected text properties (Bundled)", function (assert) {
+		const oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS");
+		const sView = '\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode"/>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="Customer" template="Customer"/>\
+	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
+		template="AmountInCompanyCodeCurrency"/>\
+</t:AnalyticalTable>';
+
+		return this.createView(assert, sView, oModel).then(() => {
+			this.expectHeadRequest()
+				.expectRequest({ // count request
+					encodeRequestUri : false,
+					requestUri : "Items?$select=CompanyCode,Customer&$top=0&$inlinecount=allpages"
+				}, {__count : "20", results : []})
+				.expectRequest({ // first level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+					+ "$select=CompanyCode,CompanyName,AmountInCompanyCodeCurrency,Currency&"
+					+ "$orderby=CompanyName%20desc,CompanyCode%20asc&$top=7"
+				}, {
+					results : [
+						Object.assign(getFarCustomerLineItem("A0"), {CompanyName: "A0Name"}),
+						Object.assign(getFarCustomerLineItem("A1"), {CompanyName: "A1Name"}),
+						Object.assign(getFarCustomerLineItem("A2"), {CompanyName: "A2Name"}),
+						Object.assign(getFarCustomerLineItem("A3"), {CompanyName: "A2Name"})
+					]
+				})
+				.expectRequest({ // leaf level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+					+ "$select=CompanyCode,CompanyName,Customer,AmountInCompanyCodeCurrency,Currency&"
+					+ "$orderby=CompanyName%20desc,CompanyCode%20asc&$top=12"
+				}, {
+					results : [
+						Object.assign(getFarCustomerLineItem("A0"), {CompanyName: "A0Name"}),
+						Object.assign(getFarCustomerLineItem("A1"), {CompanyName: "A1Name"}),
+						Object.assign(getFarCustomerLineItem("A2"), {CompanyName: "A2Name"}),
+						Object.assign(getFarCustomerLineItem("A3"), {CompanyName: "A2Name"})
+					]
+				});
+
+			this.oLogMock.expects("warning")
+				.withExactArgs("Applying sorters to groups is only possible with auto expand mode 'Sequential';"
+					+ " current mode is: Bundled",
+					"/Items", "sap.ui.model.analytics.AnalyticalBinding", undefined)
+				.atLeast(1);
+
+			// bind it lately, otherwise the binding is constructed without the analytical info and the select parameter
+			// is ignored
+			this.oView.byId("table").bindRows({
+				path : "/Items",
+				parameters : {
+					numberOfExpandedLevels : 1,
+					provideGrandTotals : false,
+					select : "CompanyCode,AmountInCompanyCodeCurrency,Currency,Customer,CompanyName",
+					useBatchRequests : true
+				},
+				sorter : [new Sorter("CompanyName", true)]
+			});
+
+			return this.waitForChanges(assert);
+		});
+	});
+
 	//*********************************************************************************************
 	// Scenario: If a request for an AnalyticalBinding is cancelled because the analytical info has
 	// been updated before the request was processed, a "dataReceived" event has to be fired. Table
