@@ -15,8 +15,8 @@ sap.ui.define([
 			this.oInput = new Input("myInput");
 			this.oText = new Text("myText");
 			this.oForm = new SimpleForm("myForm", {
-				content: [this.oInput, this.oText],
-				layout: SimpleFormLayout.ColumnLayout
+				layout: SimpleFormLayout.ColumnLayout,
+				content: [this.oInput, this.oText]
 			});
 			this.oForm.placeAt("qunit-fixture");
 			this.oEditableMatcher = new _Editable();
