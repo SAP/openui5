@@ -1839,7 +1839,6 @@ sap.ui.define([
 			mAccessibilityState.roledescription = oResourceBundle.getText("ACC_CTR_TYPE_DYNAMIC_DATE_RANGE");
 			mAccessibilityState.role = this.getAriaRole();
 			mAccessibilityState.haspopup = coreLibrary.aria.HasPopup.ListBox.toLowerCase();
-			mAccessibilityState.autocomplete = "list";
 			mAccessibilityState.controls = oDynamicDateRange._oPopup && oDynamicDateRange._oPopup.getDomRef() ?
 				oDynamicDateRange._oPopup.getDomRef().id : undefined;
 
