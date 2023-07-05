@@ -426,8 +426,14 @@ sap.ui.define([
 					 * @since 1.111.0
 					 */
 
-					calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
+					calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
 
+					/**
+					 * Specifies whether clear icon is shown.
+					 * Pressing the icon will clear input's value and fire the liveChange event.
+					 * @since 1.117
+					 */
+					showClearIcon: { type: "boolean", defaultValue: false }
 				},
 				aggregations: {
 					/**
@@ -578,6 +584,19 @@ sap.ui.define([
 		DynamicDateRange.prototype.setTooltip = function(vTooltip) {
 			this._oInput.setTooltip(vTooltip);
 			return Control.prototype.setTooltip.apply(this, arguments);
+		};
+
+		/**
+		 * Sets the showClearIcon for the <code>DynamicDateRange</code>.
+		 * @param {boolean} bShowClearIcon Whether to show clear icon.
+		 * @returns {this} Reference to <code>this</code> for method chaining
+		 * @public
+		 * @override
+		 */
+		DynamicDateRange.prototype.setShowClearIcon = function(bShowClearIcon) {
+			this.setProperty("showClearIcon", bShowClearIcon);
+			this._oInput.setShowClearIcon(bShowClearIcon);
+			return this;
 		};
 
 		DynamicDateRange.prototype.onBeforeRendering = function() {

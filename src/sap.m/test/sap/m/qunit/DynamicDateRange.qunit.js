@@ -1242,6 +1242,36 @@ sap.ui.define([
 		oDynamicDateRange.destroy();
 	});
 
+	QUnit.module("Clear Icon", {
+		beforeEach: function() {
+			this.oDDR = new DynamicDateRange({});
+			this.oDDR.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oDDR.destroy();
+		}
+	});
+
+	QUnit.test("showClearIcon property is propagated to the inner Input", function (assert){
+		// Assert
+		assert.equal(this.oDDR.getShowClearIcon(), this.oDDR._oInput.getShowClearIcon(), "showClearIcon property is in sync initially");
+
+		// Act
+		this.oDDR.setShowClearIcon(true);
+		oCore.applyChanges();
+
+		// Assert
+		assert.equal(this.oDDR.getShowClearIcon(), this.oDDR._oInput.getShowClearIcon(), "showClearIcon property is properly propagated");
+
+		// Act
+		this.oDDR.setShowClearIcon(false);
+		oCore.applyChanges();
+
+		// Assert
+		assert.equal(this.oDDR.getShowClearIcon(), this.oDDR._oInput.getShowClearIcon(), "showClearIcon property is properly propagated");
+	});
+
 	QUnit.module("Misc", {
 		beforeEach: function() {
 			this.ddr = new DynamicDateRange();
