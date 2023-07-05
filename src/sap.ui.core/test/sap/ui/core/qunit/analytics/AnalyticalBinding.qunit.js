@@ -1770,6 +1770,40 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("prepareLevelMembersQueryRequest: calls _mergeAndAddSorters", function (assert) {
+		var done = assert.async();
+		setupAnalyticalBinding(2, {noPaging: true, numberOfExpandedLevels: 2}, function (oBinding) {
+			var oMergeAndAddSortersSpy = sinon.spy(oBinding, "_mergeAndAddSorters");
+			function fnChangeHandler() {
+				oBinding.detachChange(fnChangeHandler);
+				// 3x, once for each level
+				assert.strictEqual(oMergeAndAddSortersSpy.callCount, 3);
+				var aCall1Args = oMergeAndAddSortersSpy.firstCall.args;
+				var oCostCenterSorter = new Sorter("CostCenter");
+				assert.deepEqual(aCall1Args[0], [oCostCenterSorter]);
+				assert.ok(aCall1Args[1] instanceof odata4analytics.SortExpression);
+
+				var aCall2Args = oMergeAndAddSortersSpy.secondCall.args;
+				var oCostElementSorter = new Sorter("CostElement");
+				assert.deepEqual(aCall2Args[0], [oCostCenterSorter, oCostElementSorter]);
+				assert.ok(aCall2Args[1] instanceof odata4analytics.SortExpression);
+
+				var aCall3Args = oMergeAndAddSortersSpy.thirdCall.args;
+				var oCurrencySorter = new Sorter("Currency");
+				assert.deepEqual(aCall3Args[0], [oCostCenterSorter, oCostElementSorter, oCurrencySorter]);
+				assert.ok(aCall3Args[1] instanceof odata4analytics.SortExpression);
+
+				oMergeAndAddSortersSpy.restore();
+				done();
+			}
+			oBinding.attachChange(fnChangeHandler);
+
+			// code under test
+			oBinding.getContexts(0, 20, 10);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_prepareTotalSizeQueryRequest: hierarchy dimensions tests", function (assert) {
 		var done = assert.async();
 
@@ -2622,73 +2656,6 @@ sap.ui.define([
 
 				assert.strictEqual(oBinding.sLastAutoExpandMode, sExpectedLastAutoExpandMode);
 
-				done();
-			}, [], undefined, true);
-		});
-	});
-
-	//*********************************************************************************************
-	[true, false].forEach(function (bApplySortersToGroups) {
-		QUnit.test("_addSorters: " + bApplySortersToGroups, function (assert) {
-			var done = assert.async();
-
-			setupAnalyticalBinding(2, {}, function (oBinding) {
-				var oBindingMock = sinon.mock(oBinding),
-					aGroupingSorters = [{
-						sPath : "fooGrouping", bDescending : false
-					}, {
-						sPath : "barGrouping", bDescending : false
-					}],
-					oSortExpression = { addSorter : function () {} },
-					oSortExpressionMock = sinon.mock(oSortExpression),
-					// from aSorter - bIgnoreIfAlreadySorted has to be false always
-					oExpectation0 = oSortExpressionMock.expects("addSorter")
-						.withExactArgs("fooExternal", odata4analytics.SortOrder.Descending,
-							false),
-					oExpectation1 = oSortExpressionMock.expects("addSorter")
-						.withExactArgs("barExternal", odata4analytics.SortOrder.Ascending,
-							false),
-					oExpectation2 = oSortExpressionMock.expects("addSorter")
-						.withExactArgs("fooGrouping", odata4analytics.SortOrder.Descending,
-							false),
-					// from aGroupingSorters - must not overwrite sort order of aSorter properties
-					oExpectation3 = oSortExpressionMock.expects("addSorter")
-						.withExactArgs("fooGrouping", odata4analytics.SortOrder.Ascending,
-							bApplySortersToGroups),
-					oExpectation4 = oSortExpressionMock.expects("addSorter")
-						.withExactArgs("barGrouping", odata4analytics.SortOrder.Ascending,
-							bApplySortersToGroups);
-
-				oBinding.aSorter = [{
-					sPath : "fooExternal", bDescending : true
-				}, {
-					sPath : "barExternal", bDescending : false
-				}, {
-					sPath : "fooGrouping", bDescending : true
-				}];
-				oBindingMock.expects("_canApplySortersToGroups")
-					.withExactArgs()
-					.returns(bApplySortersToGroups);
-
-				// code under test
-				oBinding._addSorters(oSortExpression, aGroupingSorters);
-
-				assert.ok(oExpectation0.calledBefore(oExpectation1),
-					"aSorter: fooExternal before barExternal");
-				assert.ok(oExpectation1.calledBefore(oExpectation2),
-					"aSorter: barExternal before barExternal");
-				assert.ok(oExpectation3.calledBefore(oExpectation4),
-					"fooGrouping before barGrouping");
-				if (bApplySortersToGroups) {
-					assert.ok(oExpectation2.calledBefore(oExpectation3),
-						"aSorters before aGroupingSorters");
-				} else {
-					assert.ok(oExpectation4.calledBefore(oExpectation0),
-						"aGroupingSorters before aSorters");
-				}
-
-				oBindingMock.verify();
-				oSortExpressionMock.verify();
 				done();
 			}, [], undefined, true);
 		});
@@ -4184,5 +4151,111 @@ sap.ui.define([
 		AnalyticalBinding._updateDimensionDetailsTextProperty(oDimension, "~propertyName", oDimensionDetails);
 
 		assert.strictEqual(oDimensionDetails.textPropertyName, "~propertyName");
+	});
+
+	//*********************************************************************************************
+[
+	{descending : true, sortOrder : odata4analytics.SortOrder.Descending},
+	{descending : false, sortOrder : odata4analytics.SortOrder.Ascending}
+].forEach(function (oFixture) {
+	QUnit.test("_addSorter", function (assert) {
+		var oSortExpression = {addSorter: function () {}};
+		this.mock(oSortExpression).expects("addSorter")
+			.withExactArgs("~path", sinon.match.same(oFixture.sortOrder), "~bIgnoreIfAlreadySorted");
+		var oSorter = {bDescending : oFixture.descending, sPath : "~path"};
+
+		// code under test
+		AnalyticalBinding._addSorter(oSorter, oSortExpression, "~bIgnoreIfAlreadySorted");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_mergeAndAddSorters", function (assert) {
+		var oAnalyticalBindingMock = this.mock(AnalyticalBinding);
+		// add oApplicationSorter0 and oGroupingSorter0 due to same path
+		var oApplicationSorter0 = {sPath : "~path0"};
+		oAnalyticalBindingMock.expects("_addSorter")
+			.withExactArgs(sinon.match.same(oApplicationSorter0), "~oSortExpression");
+		var oGroupingSorter0 = {sPath : "~path0"};
+		oAnalyticalBindingMock.expects("_addSorter")
+			.withExactArgs(sinon.match.same(oGroupingSorter0), "~oSortExpression", true);
+
+		// add oApplicationSorter1 and oGroupingSorter1 due to textPropertyName
+		var oApplicationSorter1 = {sPath : "~path1"};
+		oAnalyticalBindingMock.expects("_addSorter")
+			.withExactArgs(sinon.match.same(oApplicationSorter1), "~oSortExpression");
+		var oGroupingSorter1 = {sPath : "~dimensionPath1"};
+		oAnalyticalBindingMock.expects("_addSorter")
+			.withExactArgs(sinon.match.same(oGroupingSorter1), "~oSortExpression", true);
+
+		// only add oGroupingSorter2
+		var oGroupingSorter2 = {sPath : "~dimensionPath2"};
+		oAnalyticalBindingMock.expects("_addSorter")
+			.withExactArgs(sinon.match.same(oGroupingSorter2), "~oSortExpression", true);
+
+		// add the rest of application sorters at the end
+		var oApplicationSorter2 = {sPath : "~path2"};
+		oAnalyticalBindingMock.expects("_addSorter")
+			.withExactArgs(sinon.match.same(oApplicationSorter2), "~oSortExpression", true);
+		var oApplicationSorter3 = {sPath : "~path3"};
+		oAnalyticalBindingMock.expects("_addSorter")
+			.withExactArgs(sinon.match.same(oApplicationSorter3), "~oSortExpression", true);
+		var oBinding = {
+			oDimensionDetailsSet : {
+				"~dimensionPath1" : {textPropertyName : "~path1"},
+				"~dimensionPath2" : {textPropertyName : "~foo"}
+			},
+			aSorter : [oApplicationSorter0, oApplicationSorter1, oApplicationSorter2, oApplicationSorter3]
+		};
+
+		// code under test
+		AnalyticalBinding.prototype._mergeAndAddSorters.call(oBinding,
+			[oGroupingSorter0, oGroupingSorter1, oGroupingSorter2], "~oSortExpression");
+
+		assert.deepEqual(oBinding.aSorter,
+			[oApplicationSorter0, oApplicationSorter1, oApplicationSorter2, oApplicationSorter3]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_addSorters: cannot apply sorters to groups", function (assert) {
+		var oBinding = {
+			_canApplySortersToGroups : function () {},
+			_mergeAndAddSorters : function () {}
+		};
+		var oBindingMock = this.mock(oBinding);
+		oBindingMock.expects("_canApplySortersToGroups").withExactArgs().returns(false);
+		oBindingMock.expects("_mergeAndAddSorters").withExactArgs("~aGroupingSorters", "~oSortExpression");
+
+		// code under test
+		AnalyticalBinding.prototype._addSorters.call(oBinding, "~oSortExpression", "~aGroupingSorters");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_addSorters: can apply sorters to groups", function (assert) {
+		var oApplicationSorter0 = {sPath : "~path0"};
+		var oApplicationSorter1 = {sPath : "~path1"};
+		var oBinding = {
+			aSorter : [oApplicationSorter0, oApplicationSorter1],
+			_canApplySortersToGroups : function () {},
+			_mergeAndAddSorters : function () {}
+		};
+		var oBindingMock = this.mock(oBinding);
+		oBindingMock.expects("_canApplySortersToGroups").withExactArgs().returns(true);
+		var oAnalyticalBindingMock = this.mock(AnalyticalBinding);
+		oAnalyticalBindingMock.expects("_addSorter")
+			.withExactArgs(sinon.match.same(oApplicationSorter0), "~oSortExpression");
+		oAnalyticalBindingMock.expects("_addSorter")
+			.withExactArgs(sinon.match.same(oApplicationSorter1), "~oSortExpression");
+		var oGroupingSorter0 = {sPath : "~path0"};
+		oAnalyticalBindingMock.expects("_addSorter")
+			.withExactArgs(sinon.match.same(oGroupingSorter0), "~oSortExpression", true);
+		var oGroupingSorter1 = {sPath : "~path1"};
+		oAnalyticalBindingMock.expects("_addSorter")
+			.withExactArgs(sinon.match.same(oGroupingSorter1), "~oSortExpression", true);
+		oBindingMock.expects("_mergeAndAddSorters").never();
+
+		// code under test
+		AnalyticalBinding.prototype._addSorters.call(oBinding, "~oSortExpression",
+			[oGroupingSorter0, oGroupingSorter1]);
 	});
 });
