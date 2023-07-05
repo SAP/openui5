@@ -1973,9 +1973,9 @@ sap.ui.define([
 		oPopover._adaptPositionParams();
 
 		assert.equal(oPopover._marginTop, 0, "_marginTop should be 0");
-		assert.equal(oPopover._marginRight, 16, "_marginRight should be 0");
+		assert.equal(oPopover._marginRight, 0, "_marginRight should be 0");
 		assert.equal(oPopover._marginBottom, 0, "_marginBttom should be 0");
-		assert.equal(oPopover._marginLeft, 16, "_marginLeft should be 0");
+		assert.equal(oPopover._marginLeft, 0, "_marginLeft should be 0");
 		assert.equal(oPopover._arrowOffset, 0, "_arrowoffset should be 0");
 		assert.deepEqual(oPopover._offsets, ["0 0", "0 0", "0 0", "0 0"], "offsets should be correct according the arrowOffset");
 		assert.deepEqual(oPopover._myPositions, ["begin bottom", "begin center", "begin top", "end center"], "myPositions should be correct");

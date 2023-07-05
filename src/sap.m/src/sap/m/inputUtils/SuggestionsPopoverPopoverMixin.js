@@ -37,6 +37,10 @@ sap.ui.define([
 							that._getValueStateHeader().removeStyleClass("sapMPseudoFocus");
 							that.setValueStateActiveState(false);
 						}
+					},
+					afterOpen: function () {
+						// Subtract the side margins of the suggestions popover from the dynamic Popover's content width to avoid overflow
+						this.getDomRef("cont").style.maxWidth = parseInt(this.getDomRef("cont").style.maxWidth) - 32 + "px";
 					}
 				});
 
