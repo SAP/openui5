@@ -336,6 +336,7 @@ sap.ui.define([], function () {
 	 * @constructor
 	 */
 	function _FilterParser() {
+		_Parser.apply(this, arguments);
 	}
 
 	_FilterParser.prototype = Object.create(_Parser.prototype);
@@ -419,6 +420,7 @@ sap.ui.define([], function () {
 	 * @constructor
 	 */
 	function _KeyPredicateParser() {
+		_Parser.apply(this, arguments);
 	}
 
 	_KeyPredicateParser.prototype = Object.create(_Parser.prototype);
@@ -461,6 +463,7 @@ sap.ui.define([], function () {
 	 * @constructor
 	 */
 	function _SystemQueryOptionParser() {
+		_Parser.apply(this, arguments);
 	}
 
 	_SystemQueryOptionParser.prototype = Object.create(_Parser.prototype);
