@@ -223,14 +223,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("overflow button", function (assert) {
-
 		var overflowButton = this.toolHeader.$('overflowButton');
+		var overflowButtonClone = this.toolHeader.$('overflowButtonClone');
+
 		assert.ok(overflowButton.length > 0, "Overflow button is rendered");
+		assert.ok(overflowButtonClone.length > 0, "Overflow button clone is rendered");
 	});
 
 	QUnit.test("overflow popover", function (assert) {
 		assert.ok(jQuery('.sapMOTAPopover').length == 0, "Popover is not rendered");
-
 
 		var overflowButton = this.toolHeader.$('overflowButton');
 		overflowButton.trigger('tap');

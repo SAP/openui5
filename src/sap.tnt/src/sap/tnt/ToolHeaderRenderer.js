@@ -3,11 +3,18 @@
  */
 
 sap.ui.define([
+	"sap/m/library",
 	"sap/ui/core/Renderer",
 	"sap/m/OverflowToolbarRenderer",
 	"sap/m/BarInPageEnabler"
-], function (Renderer, OverflowToolbarRenderer, BarInPageEnabler) {
+], function (library,
+			 Renderer,
+			 OverflowToolbarRenderer,
+			 BarInPageEnabler) {
 	"use strict";
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
 	/**
 	 * ToolHeaderRenderer renderer.
@@ -18,24 +25,49 @@ sap.ui.define([
 	ToolHeaderRenderer.apiVersion = 2;
 
 	ToolHeaderRenderer.renderBarContent = function (oRM, oToolbar) {
-		var bOverflowToolbarRendered = false,
+		var bOverflowButtonRendered = false,
 			bIsUtilitySeparator;
 
-		oToolbar._getVisibleContent().forEach(function (oControl) {
+		if (oToolbar.getActive()) {
+			oRM.renderControl(oToolbar._getActiveButton());
+		}
+
+		oToolbar._getVisibleContent().forEach(function(oControl) {
+			BarInPageEnabler.addChildClassTo(oControl, oToolbar);
 
 			bIsUtilitySeparator = oControl.isA("sap.tnt.ToolHeaderUtilitySeparator");
 
-			if (!bOverflowToolbarRendered && bIsUtilitySeparator && oToolbar._getOverflowButtonNeeded()) {
-				ToolHeaderRenderer.renderOverflowButton(oRM, oToolbar);
-				bOverflowToolbarRendered = true;
+			if (bIsUtilitySeparator && !bOverflowButtonRendered) {
+				this._renderOverflowButton(oRM, oToolbar);
+				bOverflowButtonRendered = true;
 			}
 
-			BarInPageEnabler.addChildClassTo(oControl, oToolbar);
-			oRM.renderControl(oControl);
-		});
+			if (oToolbar._getControlPriority(oControl) !== OverflowToolbarPriority.AlwaysOverflow) {
+				oRM.renderControl(oControl);
+			}
+		}.bind(this));
 
-		if (!bOverflowToolbarRendered && oToolbar._getOverflowButtonNeeded()) {
-			ToolHeaderRenderer.renderOverflowButton(oRM, oToolbar);
+		if (bOverflowButtonRendered) {
+			return;
+		}
+
+		this._renderOverflowButton(oRM, oToolbar);
+	};
+
+	ToolHeaderRenderer._renderOverflowButton = function (oRM, oToolbar) {
+		var bHasAlwaysOverflowVisibleContent  = oToolbar.getContent().some(function (oControl) {
+				return oControl.getVisible() && oToolbar._getControlPriority(oControl) === OverflowToolbarPriority.AlwaysOverflow;
+			}),
+			bHasAnyVisibleContent = oToolbar.getContent().some(function (oControl) {
+				return oControl.getVisible();
+			});
+
+		if (bHasAlwaysOverflowVisibleContent || oToolbar._getOverflowButtonNeeded()) {
+			OverflowToolbarRenderer.renderOverflowButton(oRM, oToolbar);
+		}
+
+		if (bHasAnyVisibleContent) {
+			OverflowToolbarRenderer.renderOverflowButtonClone(oRM, oToolbar);
 		}
 	};
 
