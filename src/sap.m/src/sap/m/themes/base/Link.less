@@ -14,25 +14,31 @@
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
 	cursor: pointer;
+
+	&:visited {
+		color: @sapUiLinkVisitedColor;
+	}
+
+	&:not(.sapMLnkDsbl) {
+		&:active {
+			color: @sapUiLinkActiveColor;
+			text-decoration: @sapUiLinkActiveTextDecoration;
+		}
+	}
 }
 
-.sapMLnk:visited {
-	color: @sapUiLinkVisitedColor;
-}
+html.sap-desktop .sapMLnk:not(.sapMLnkDsbl) {
+	&:focus {
+		outline: 1px dotted @sapUiContentFocusColor;
+		outline-offset: -1px;
+		text-decoration: underline;
+	}
 
-.sapMLnk:active:not(.sapMLnkDsbl):not(.sapMLnkSubtle),
-.sapMLnk:focus:not(.sapMLnkDsbl):not(.sapMLnkSubtle) {
-	color: @sapUiLinkActiveColor;
-}
+	&:hover:not(:active):not(:focus) {
+		color: @sapUiLinkHoverColor;
+		text-decoration: @sapUiLinkHoverTextDecoration;
+	}
 
-html.sap-desktop .sapMLnk:hover:not(:focus):not(.sapMLnkDsbl):not(.sapMLnkSubtle) {
-	color: @sapUiLinkHoverColor;
-	text-decoration: @sapUiLinkHoverTextDecoration;
-}
-
-.sapMLnk:active:not(.sapMLnkDsbl):not(.sapMLnkSubtle),
-html.sap-desktop .sapMLnk:active:hover:not(.sapMLnkDsbl):not(.sapMLnkSubtle) {
-	text-decoration: @sapUiLinkActiveTextDecoration;
 }
 
 .sapUiInverted-CTX .sapUiLnk {
@@ -72,16 +78,6 @@ html.sap-desktop .sapMLnk:active:hover:not(.sapMLnkDsbl):not(.sapMLnkSubtle) {
 .sapMFT .sapMLnk,
 .sapMFT .sapMTitle .sapMLnk {
 	vertical-align: top;
-}
-
-/* Global focus offset */
-html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
-}
-
-html.sap-desktop .sapMLnk:focus:not(:active):not(.sapMLnkDsbl) {
-	text-decoration: underline;
 }
 
 /* Link focus offset and visualization in sap.ui.table.* tables */

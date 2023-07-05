@@ -21,6 +21,29 @@
 .sapMLnk.sapMLnkSubtle {
 	color: @sapUiLinkSubtleColor;
 	text-decoration: underline;
+
+	&:not(.sapMLnkDsbl) {
+		&:active {
+			color: @sapUiLinkSubtleColor;
+		}
+	}
+}
+
+html.sap-desktop .sapMLnk:not(.sapMLnkDsbl) {
+	&:focus {
+		outline: 0.125rem dotted @sapUiContentFocusColor;
+
+		&:hover:not(:active) {
+			text-decoration: none;
+		}
+	}
+
+	&.sapMLnkSubtle {
+		&:hover:not(:active):not(:focus) {
+			color: @sapUiLinkSubtleColor;
+			text-decoration: none;
+		}
+	}
 }
 
 .sapMLnk:not(.sapMLnkDsbl) {
@@ -35,13 +58,4 @@
 
 .sapMListTblRow.sapMLIBSelected .sapMLnk:not(.sapMLnkDsbl) {
 	text-shadow: @sapUiContentTextShadow;
-}
-
-html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
-}
-
-html.sap-desktop .sapMLnk:hover:not(:active):not(.sapMLnkDsbl).sapMLnkSubtle,
-html.sap-desktop .sapMLnk:focus:hover:not(:active):not(.sapMLnkDsbl) {
-	text-decoration: none;
 }
