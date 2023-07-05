@@ -543,10 +543,13 @@ sap.ui.define([
 						oError.canceled = true;
 						throw oError;
 					}
+					that.oFetchCacheCallToken = undefined; // cleanup
 					return that.createAndSetCache(mQueryOptions, sResourcePath, oContext,
 						sGroupId, oCallToken.oOldCache);
 				});
 			}
+
+			oCallToken.oOldCache = undefined; // cleanup own token only
 			if (oCache) {
 				oCache.setActive(false);
 			}
