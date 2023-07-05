@@ -119,10 +119,12 @@ sap.ui.define([
 			// in case of "Original App" and "Draft" no timestamp is set
 			return "";
 		}
-
+		if (sTimeStamp.indexOf("Z") === -1) {
+			sTimeStamp = sTimeStamp + "Z";
+		}
 		return DateFormat.getInstance({
 			format: "yMMMdjm"
-		}).format(new Date(sTimeStamp + "Z"));
+		}).format(new Date(sTimeStamp));
 	}
 
 	function getGroupHeaderFactory(oGroup) {
