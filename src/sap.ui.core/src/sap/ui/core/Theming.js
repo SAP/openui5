@@ -212,6 +212,14 @@ sap.ui.define([
 			}
 
 			mNewThemeRoots[sThemeName] = mNewThemeRoots[sThemeName] || {};
+
+			// Normalize theme-roots to an object in case it was initially given as a string.
+			// We only check newThemeRoots, since both old and new are identical at this point.
+			if (typeof mNewThemeRoots[sThemeName] === "string") {
+				mNewThemeRoots[sThemeName] = { "": mNewThemeRoots[sThemeName]};
+				mOldThemeRoots[sThemeName] = { "": mOldThemeRoots[sThemeName]};
+			}
+
 			if (aLibraryNames) {
 				// registration of URL for several libraries
 				for (var i = 0; i < aLibraryNames.length; i++) {
