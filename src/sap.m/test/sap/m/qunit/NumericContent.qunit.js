@@ -3,13 +3,17 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/GenericTile",
 	"sap/m/NumericContent",
+	"sap/m/Table",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/ui/model/json/JSONModel",
 	"sap/m/TileContent",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/ResizeHandler",
 	"sap/m/library",
 	"sap/ui/util/Mobile",
 	"sap/ui/core/Core"
-], function (jQuery, GenericTile, NumericContent, TileContent, TooltipBase, ResizeHandler, library, Mobile, oCore) {
+], function (jQuery, GenericTile, NumericContent, Table, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, Mobile, oCore) {
 	"use strict";
 
 	var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
@@ -165,6 +169,54 @@ sap.ui.define([
 		this.oNumericContent.setIndicator();
 		// Assert
 		fnAssert("sap-icon://none", DeviationIndicator.None);
+	});
+
+	QUnit.module("Rendering test - sap.m.NumericContent inside sap.m.Table");
+
+	QUnit.test("Numeric content inside sap.m.Table", function(assert) {
+		var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData({
+					numbers: [
+						{
+						   number1: "12"
+						},
+						{
+							number1: "14"
+						}]
+				});
+
+				var oTable = new sap.m.Table("idRandomDataTable", {
+					headerToolbar: new sap.m.Toolbar({
+						content: [new sap.m.Label({
+							text: "Test"
+						}), new sap.m.ToolbarSpacer({}), new sap.m.Button("idPersonalizationButton", {
+							icon: "sap-icon://person-placeholder"
+						})]
+					}),
+
+					columns: [new sap.m.Column({
+						width: "2em",
+						header: new sap.m.Label({
+							text: "Number1"
+						})
+
+					})]
+
+				});
+
+				oTable.setModel(oModel);
+
+				oTable.bindItems("/numbers", new sap.m.ColumnListItem({
+
+					cells: [new sap.m.NumericContent({
+						value: "{number1}"
+					})]
+
+				}));
+		oTable.setWidth("320px");
+		oTable.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		assert.equal(oTable.mAggregations.items[0].mAggregations.cells[0].$("value").hasClass("sapMNCValue"), true , "Success");
 	});
 
 	QUnit.module("Rendering test - sap.m.NumericContent inside sap.m.GenericTile");
