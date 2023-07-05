@@ -3,18 +3,18 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/HTML",
-	"sap/ui/richtexteditor/RichTextEditor",
 	"sap/m/Button",
 	"sap/m/Image",
 	"sap/m/PDFViewer",
 	"sap/m/Dialog",
 	"sap/m/IllustratedMessage",
 	"sap/m/IllustratedMessageType",
-	"sap/m/Carousel"
-], function (Element, HTML, RichTextEditor, Button, Image,
-			PDFViewer, Dialog, IllustratedMessage, IllustratedMessageType, Carousel) {
+	"sap/m/Carousel",
+	"sap/base/Log"
+], function (Core, Element, HTML, Button, Image, PDFViewer, Dialog, IllustratedMessage, IllustratedMessageType, Carousel, Log) {
 	"use strict";
 
 	// get resource translation bundle;
@@ -53,22 +53,54 @@ sap.ui.define([
 			if (!oPreviewItem) {
 				return;
 			}
-			var aItems = oPreviewItem.getParent().getAggregation("items");
-			if (!aItems || aItems.length === 0 ) {
-				return;
-			}
-			var oCarousel = this._createCarousel(oPreviewItem, aItems);
-			this._oDialog = this._createDialog(oCarousel, aItems);
+			this._oPreviewItem = oPreviewItem;
+			this._oRichTextEditor = null;
+			this._oDialog = null;
 		},
 
 		/**
      * Opens the {@link sap.m.upload.FilePreviewDialog}.
      */
 		open: function () {
-			if (!this._oDialog) {
-				return;
-			}
-			this._oDialog.open();
+			this._loadRichTextEditorDependency()
+				.then(function(oRichTextEditor){
+					this._oRichTextEditor = oRichTextEditor;
+				}.bind(this))
+				.catch(function(error) {
+					Log.error(error);
+				})
+				.finally(function() {
+					var aItems = this._oPreviewItem.getParent().getAggregation("items");
+					if (!aItems || aItems.length === 0 ) {
+						return;
+					}
+					var oCarousel = this._createCarousel(this._oPreviewItem, aItems);
+					this._oDialog = this._createDialog(oCarousel, aItems);
+					if (this._oDialog) {
+						this._oDialog.open();
+					}
+				}.bind(this));
+		},
+
+		/**
+		 * Dynamically require RichTextEditor Control
+		 * @return {Promise} Promise that resolves on sucessful load of RichTextEditor control
+		 * @private
+		 */
+		_loadRichTextEditorDependency: function() {
+			return new Promise(function (resolve, reject) {
+				Core.loadLibrary("sap.ui.richtexteditor", { async: true })
+					.then(function() {
+						sap.ui.require(["sap/ui/richtexteditor/RichTextEditor"], function(richTextEditor) {
+							resolve(richTextEditor);
+						}, function (error) {
+							reject(error);
+						});
+					})
+					.catch(function () {
+						reject("RichTextEditor Control not available.");
+					});
+			});
 		},
 
 		/**
@@ -81,9 +113,16 @@ sap.ui.define([
      */
 		_createCarousel: function (oPreviewItem, aItems) {
 			var sActivePageId = "";
+			var that = this;
 			var aPages = aItems.map(function(oItem) {
 				var sMediaType = oItem.getMediaType();
-				var oPage = null;
+
+				var oPage = new IllustratedMessage({
+					illustrationType: IllustratedMessageType.NoData,
+					title: oItem.getFileName(),
+					description: "No preview available for this file.",
+					enableVerticalResponsiveness: true
+				});
 
 				switch (sMediaType.toLowerCase()) {
 					case PreviewableMediaType.Png:
@@ -96,17 +135,19 @@ sap.ui.define([
 						break;
 					}
 					case PreviewableMediaType.Txt: {
-						var oRequest = new XMLHttpRequest();
-						oRequest.open("GET", oItem.getUrl(), false);
-						oRequest.send(null);
-						var sText = oRequest.responseText;
+						if (that._oRichTextEditor) {
+							var oRequest = new XMLHttpRequest();
+							oRequest.open("GET", oItem.getUrl(), false);
+							oRequest.send(null);
+							var sText = oRequest.responseText;
 
-						oPage = new RichTextEditor({
-							height: "100%",
-							width: "100%",
-							value: sText,
-							editable: false
-						});
+							oPage = new that._oRichTextEditor({
+								height: "100%",
+								width: "100%",
+								value: sText,
+								editable: false
+							});
+						}
 						break;
 					}
 					case PreviewableMediaType.Pdf:
@@ -126,15 +167,8 @@ sap.ui.define([
 						});
 						break;
 					}
-					default : {
-						oPage = new IllustratedMessage({
-							illustrationType: IllustratedMessageType.NoData,
-							title: oItem.getFileName(),
-							description: "No preview available for this file.",
-							enableVerticalResponsiveness: true
-						});
+					default:
 						break;
-					}
 				}
 
 				sActivePageId = oItem.getId() === oPreviewItem.getId() ? oPage.getId() : sActivePageId;
