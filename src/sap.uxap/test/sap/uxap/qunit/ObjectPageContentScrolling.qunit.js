@@ -1427,6 +1427,35 @@ function(Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, Object
 		}.bind(this));
 	});
 
+	QUnit.module("No visible section", {
+		beforeEach: function (assert) {
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 1);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("_shouldAllowScrolling checks if visible sections exist", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oSpy = this.spy(oObjectPage, "_shouldAllowScrolling"),
+			done = assert.async();
+		this.oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// Setup
+			oSpy.resetHistory();
+			oObjectPage._bAllContentFitsContainer = true;
+
+			// Act:
+			oObjectPage.getSections()[0].destroy();
+			// call synchronously to speed up the test
+			oObjectPage._requestAdjustLayout(true);
+			assert.ok(oSpy.calledOnce, "check for scrolling is requested");
+			assert.ok(oSpy.returned(true), "result is correct");
+			done();
+		});
+		helpers.renderObject(this.oObjectPage);
+	});
+
 	function isObjectPageHeaderStickied(oObjectPage) {
 		var oHeaderTitle = oObjectPage.getDomRef("headerTitle");
 		var oHeaderContent = oObjectPage.getDomRef("headerContent");
