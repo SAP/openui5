@@ -519,7 +519,7 @@ sap.ui.define([
 
 			oDate.setDate(1);
 			oDate.setMonth(iMonth);
-			oDate.setYear(iYear);
+			oDate.setFullYear(iYear);
 			oControl.addSelectedDate(new DateRange({
 				startDate: oDate
 			}));

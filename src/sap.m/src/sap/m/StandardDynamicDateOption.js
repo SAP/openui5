@@ -709,7 +709,7 @@ sap.ui.define([
 				case "SPECIFICMONTHINYEAR":
 					var oDate = new UniversalDate();
 					oDate.setMonth(oValue.values[0]);
-					oDate.setYear(oValue.values[1]);
+					oDate.setFullYear(oValue.values[1]);
 					oDate = UniversalDateUtils.getMonthStartDate(oDate);
 					return UniversalDateUtils.getRange(0, "MONTH", oDate);
 				case "DATE":
