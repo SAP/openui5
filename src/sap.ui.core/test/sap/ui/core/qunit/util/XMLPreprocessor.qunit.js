@@ -15,11 +15,13 @@ sap.ui.define([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
 	"sap/ui/model/json/JSONModel",
+	// explicit import for type Boolean to resolve import issues with legacy-free UI5
+	"sap/ui/model/type/Boolean",
 	"sap/ui/performance/Measurement",
 	"sap/ui/util/XMLHelper"
 ], function (Log, ObjectPath, BindingParser, ManagedObject, SyncPromise, Component,
 		XMLTemplateProcessor, UI5Date, XMLPreprocessor, BindingMode, ChangeReason, Context,
-		JSONModel, Measurement, XMLHelper) {
+		JSONModel, _Boolean, Measurement, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint consistent-this: 0, max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";
