@@ -4,7 +4,7 @@
 /* ================================== */
 
 .sapMPanel {
-	min-height: 2.5rem;
+	min-height: 2.75rem;
 	border-radius: @sapElement_BorderCornerRadius;
 
 	.sapMPanelWrappingDiv:not(.sapMPanelWrappingDivExpanded),
@@ -62,6 +62,10 @@
 	border-bottom: none;
 }
 
+.sapMPanelContent {
+	padding: 0.625rem 1rem;
+}
+
 .sapMPanel .sapMPanelHdr {
 	line-height: 2.75rem;
 	height: 2.75rem;
@@ -71,14 +75,19 @@
 	width: 2.25rem;
 }
 
-.sapUiSizeCompact .sapMPanelWrappingDiv .sapUiIcon {
-	width: 2rem;
+.sapUiSizeCompact {
+	.sapMPanel {
+		min-height: 2.5rem;
+	}
+	.sapMPanelWrappingDiv .sapUiIcon {
+		width: 2rem;
+	}
 }
 
 .sapMPanel.sapMPanelExpandable .sapMPanelWrappingDivTb {
 	& .sapMPanelHeaderTB {
 		border-top-left-radius: 0;
-		margin-left: 2.25rem;
+		margin-left: 2.75rem;
 		padding-left: 0.25rem;
 	}
 

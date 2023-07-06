@@ -656,7 +656,7 @@ sap.ui.define([
 		assert.equal($toolbar.css("border-bottom-width"), "0px", "toolbar border should be 0px");
 	});
 
-	QUnit.test("Expandable panel with headerToolbar - toolbar child should have margin-left: 2.5rem", function(assert) {
+	QUnit.test("Expandable panel with headerToolbar - toolbar child should have margin-left: 3rem", function(assert) {
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
 		oCore.applyChanges();
@@ -664,7 +664,7 @@ sap.ui.define([
 		var fontSize = parseInt(jQuery("body").css("font-size"));
 		var $toolbar = this.oPanel.$().find(".sapMTB");
 
-		assert.equal(parseInt($toolbar.css("margin-left")), 2.5 * fontSize, "toolbar margin-left should be " + (2.5 * fontSize) + "px");
+		assert.equal(parseInt($toolbar.css("margin-left")), 3 * fontSize, "toolbar margin-left should be " + (3 * fontSize) + "px");
 	});
 
 	QUnit.test("Expandable panel with headerToolbar - first toolbar child should not have margin-left", function(assert) {
