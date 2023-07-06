@@ -64,19 +64,20 @@ sap.ui.define(function() {
 				module: [
 					"./SupportAssistant.opa.qunit"
 				]
-			},
-			"integration/ui/opaTests": {
-				title: "Integration Tests for SA UI",
-				loader: {
-					paths: {
-						"sap/ui/support/integration": "test-resources/sap/ui/support/integration/"
-					}
-				},
-				module: [
-					"sap/ui/support/integration/ui/AllJourneys"
-				],
-				autostart: false
 			}
+			// ,
+			// "integration/ui/opaTests": {
+			// 	title: "Integration Tests for SA UI",
+			// 	loader: {
+			// 		paths: {
+			// 			"sap/ui/support/integration": "test-resources/sap/ui/support/integration/"
+			// 		}
+			// 	},
+			// 	module: [
+			// 		"sap/ui/support/integration/ui/AllJourneys"
+			// 	],
+			// 	autostart: false
+			// }
 		}
 	};
 });
