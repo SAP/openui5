@@ -137,23 +137,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Determines if the passed change is related to control variants.
-		 * @see sap.ui.fl.variants.VariantManagement
-		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange Change object
-		 * @returns {boolean} If the passed change is a variant management change
-		 * @name sap.ui.fl.Utils.isChangeRelatedToVariants
-		 *
-		 * @private
-		 * @ui5-restricted sap.ui.fl.ChangePersistence
-		 */
-		isChangeRelatedToVariants: function(oChange) {
-			return oChange.getFileType() === "ctrl_variant_change"
-				|| oChange.getFileType() === "ctrl_variant_management_change"
-				|| oChange.getFileType() === "ctrl_variant"
-				|| oChange.getVariantReference();
-		},
-
-		/**
 		 * Returns the Component that belongs to given control. If the control has no component, it walks up the control tree in order to find a
 		 * control having one.
 		 *
