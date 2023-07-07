@@ -800,7 +800,6 @@ sap.ui.define([
 		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
 	});
 
-
 	QUnit.test("bring Drop here illustrated message, when Dragged into target area", function(assert) {
 		var oTargetDomRef = this.oUploadSet.getList().getDomRef();
 		oTargetDomRef.focus();
@@ -877,107 +876,293 @@ sap.ui.define([
 		assert.equal(this.oUploadSet.getMultiple(), true, "Multiple property should be set to true");
 	});
 
-	QUnit.test("Drag and drop of multiple files with multiple property", function(assert) {
-
+	QUnit.test("Test if upload is disabled, on drop file code isn't executed", function(assert) {
 		// arrange
-		var oDataTransfer = new DataTransfer();
-		function webkitGetAsEntry() {
-			return {
-				isFile: true,
-				isDirectory:false
-			};
-		}
-		var oFileItem1 = new File([new Blob([])], "sample Drop File.txt", {type: "text/plain"} );
-
-		var oFileItem2 = new File([new Blob([])], "sample Drop File.txtSample Drop File 2.txt", {type: "text/plain"} );
-		oDataTransfer.items.add(oFileItem1);
-		oDataTransfer.items.add(oFileItem2);
-
-		for (var i = 0; i < oDataTransfer.items.length; i++) {
-			var oItemPrototype = Object.getPrototypeOf(oDataTransfer.items[i]);
-			oItemPrototype.webkitGetAsEntry = webkitGetAsEntry;
-		}
-
 		var oEvent = new EventBase("drop", {}, { // using BaseEvent to create sample drop event to simulate drag and drop
+			browserEvent: {}
+		});
+		this.spy(oEvent, "getParameter");
+		this.oUploadSet.setUploadEnabled(false);
+
+		// act
+		this.oUploadSet._onDropFile(oEvent);
+
+		// assert
+		assert.ok(oEvent.getParameter.notCalled, "Code din't get executed");
+	});
+
+	function getDragAndPropEvent(isFileEntries) {
+		var oDataTransfer = {items: []};
+
+		if (isFileEntries && isFileEntries.length) {
+			isFileEntries.forEach(function(isFile) {
+				oDataTransfer.items.push({
+					isFile: isFile,
+					webkitGetAsEntry: function() {
+						return {
+							isFile: this.isFile,
+							isDirectory: !this.isFile,
+							file: function(callback) {
+								callback(this.isFile ? "file" : "directory");
+							}
+						};
+					}
+				});
+			});
+		}
+
+		return new EventBase("drop", {}, { // using BaseEvent to create sample drop event to simulate drag and drop
 			browserEvent: {
 				dataTransfer: oDataTransfer
 			}
 		});
+	}
 
-		this.stub(this.oUploadSet, "_getFilesFromDataTransferItems").callsFake(function() {
-			// creating fake function since this function makes xhr call to upload files
-			return new Promise(function(resolve, reject){
-				resolve(true);
-			});
+	[
+		{
+			message: "Two files",
+			dropContent: [true, true],
+			multiple: false,
+			directory: false,
+			errorMessage: "UPLOADCOLLECTION_MULTIPLE_FALSE"
+		},
+		{
+			message: "One file and one directory",
+			dropContent: [true, false],
+			multiple: false,
+			directory: false,
+			errorMessage: "UPLOADCOLLECTION_MULTIPLE_FALSE"
+		},
+		{
+			message: "One file and one directory",
+			dropContent: [true, false],
+			multiple: true,
+			directory: false,
+			errorMessage: "UPLOAD_SET_DIRECTORY_FALSE"
+		},
+		{
+			message: "One file and one directory",
+			dropContent: [true, false],
+			multiple: true,
+			directory: true,
+			errorMessage: "UPLOAD_SET_DIRECTORY_FALSE"
+		},
+		{
+			message: "One directory",
+			dropContent: [false],
+			multiple: true,
+			directory: false,
+			errorMessage: "UPLOAD_SET_DIRECTORY_FALSE"
+		},
+		{
+			message: "One file",
+			dropContent: [true],
+			multiple: false,
+			directory: true,
+			errorMessage: "UPLOAD_SET_DROP_DIRECTORY"
+		},
+		{
+			message: "One file and one directory",
+			dropContent: [true, false],
+			multiple: false,
+			directory: true,
+			errorMessage: "UPLOAD_SET_DROP_DIRECTORY"
+		}
+	].forEach(function(data) {
+		QUnit.test(data.message + ", multiple - " + data.multiple + ", directory - " + data.directory, function (assert) {
+			// arrange
+			var oEvent = getDragAndPropEvent(data.dropContent);
+			this.oUploadSet.setDirectory(data.directory);
+			this.oUploadSet.setMultiple(data.multiple);
+			this.spy(this.oUploadSet, "_getFilesFromDataTransferItems");
+			this.spy(this.oUploadSet._oRb, "getText");
+			this.stub(MessageBox, "error");
+
+			// act
+			this.oUploadSet._onDropFile(oEvent);
+
+			// assert
+			assert.ok(this.oUploadSet._getFilesFromDataTransferItems.notCalled, "Multiple files are not uploaded");
+			assert.ok(this.oUploadSet._oRb.getText.calledOnce, "Get error text had been called 1 time");
+			assert.ok(this.oUploadSet._oRb.getText.firstCall.calledWith(data.errorMessage), "Get correct error text");
+			assert.ok(MessageBox.error.calledOnce, "Set error message had been called 1 time");
+
+			MessageBox.error.reset();
 		});
-		this.stub(MessageBox, "error").returns("Dummy Error message");
-
-		// act
-		this.oUploadSet._onDropFile(oEvent); // method invoked on uploadSet when dropping files to upload
-
-		// assert
-		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.notCalled, "Multiple files are not uploaded with multiple property set to false");
-
-		// act
-		this.oUploadSet.setMultiple(true);
-
-		this.oUploadSet._onDropFile(oEvent); // method invoked on uploadSet when dropping files to upload
-
-		// assert
-		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.called, "Multiple files are uploaded with multiple property set to true");
-
 	});
 
-	QUnit.test("Test for eliminating non file types passed along with valid file types", function(assert) {
-
+	QUnit.test("Drop no files or directories", function(assert) {
 		// arrange
-		var oDataTransferEliminateTypes = new DataTransfer();
-		function nativeWebkitGetAsEntry() {
-			return this.kind && this.kind == "file" ?
-				{
-					isFile: true,
-					isDirectory: false
-				} :
-				null;
-		}
-		var oFileItem1 = new File([new Blob([])], "sample Drop File.txt", {type: "text/plain"} );
-
-		var oFileItem2 = new File([new Blob([])], "sample Drop File.txtSample Drop File 2.txt", {type: "text/plain"} );
-		oDataTransferEliminateTypes.items.add(oFileItem1);
-		oDataTransferEliminateTypes.items.add(oFileItem2);
-
-		// creating non file type
-		oDataTransferEliminateTypes.items.add("sample file 3", "string");
-
-		for (var i = 0; i < oDataTransferEliminateTypes.items.length; i++) {
-			var oItemPrototype = Object.getPrototypeOf(oDataTransferEliminateTypes.items[i]);
-			oItemPrototype.webkitGetAsEntry = nativeWebkitGetAsEntry;
-		}
-
-		var oEvent = new EventBase("drop", {}, { // using BaseEvent to create sample drop event to simulate drag and drop
-			browserEvent: {
-				dataTransfer: oDataTransferEliminateTypes
-			}
-		});
-		var oItems = oEvent.getParameter("browserEvent").dataTransfer.items;
-		oItems = Array.from(oItems);
-		oItems.pop();
-
-		this.stub(this.oUploadSet, "_getFilesFromDataTransferItems").callsFake(function(oItems) {
-			// creating fake function since this function makes xhr call to upload files
-			return new Promise(function(resolve, reject){
-				resolve(true);
-			});
-		});
-		this.stub(MessageBox, "error").returns("Dummy Error message");
+		var oEvent = getDragAndPropEvent();
+		this.oUploadSet.setDirectory(false);
+		this.oUploadSet.setMultiple(false);
+		this.spy(this.oUploadSet, "_getFilesFromDataTransferItems");
+		this.spy(this.oUploadSet._oRb, "getText");
+		this.stub(MessageBox, "error");
 
 		// act
-		this.oUploadSet.setMultiple(true);
-		this.oUploadSet._onDropFile(oEvent); // method invoked on uploadSet when dropping files to upload
+		this.oUploadSet._onDropFile(oEvent);
 
 		// assert
-		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.calledWithExactly(oItems), "Non file types are eliminated when files are drag and dropped");
+		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.notCalled, "Multiple files are not uploaded");
+		assert.ok(this.oUploadSet._oRb.getText.notCalled, "Get error text is not called");
+		assert.ok(MessageBox.error.notCalled, "Set error message is not called");
+		MessageBox.error.reset();
+	});
 
+	QUnit.test("Drop multiple files, but webkitGetAsEntry return null", function(assert) {
+		// arrange
+		var oEvent = getDragAndPropEvent([true, true]);
+		var oItems = oEvent.getParameter("browserEvent").dataTransfer.items;
+		oItems[0].webkitGetAsEntry = function() { return null;};
+		oItems[1].webkitGetAsEntry = function() { return null;};
+		this.oUploadSet.setDirectory(false);
+		this.oUploadSet.setMultiple(false);
+		this.spy(this.oUploadSet, "_getFilesFromDataTransferItems");
+		this.spy(this.oUploadSet._oRb, "getText");
+		this.stub(MessageBox, "error");
+
+		// act
+		this.oUploadSet._onDropFile(oEvent);
+
+		// assert
+		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.notCalled, "Multiple files are not uploaded");
+		assert.ok(this.oUploadSet._oRb.getText.notCalled, "Get error text is not called");
+		assert.ok(MessageBox.error.notCalled, "Set error message is not called");
+		MessageBox.error.reset();
+	});
+
+	QUnit.test("Drop multiple files", function(assert) {
+		// arrange
+		var that = this,
+			oEvent = getDragAndPropEvent([true, true]);
+		this.oUploadSet.setDirectory(false);
+		this.oUploadSet.setMultiple(true);
+		this.spy(this.oUploadSet, "_getFilesFromDataTransferItems");
+		var done = assert.async();
+		this.stub(this.oUploadSet, "_processNewFileObjects").callsFake(function() {
+			assert.ok(that.oUploadSet._processNewFileObjects.called, "Upload files called");
+			assert.ok(that.oUploadSet._processNewFileObjects.firstCall.calledWithExactly(["file", "file"]), "To upload passed two files");
+			done();
+		});
+
+		// act
+		this.oUploadSet._onDropFile(oEvent);
+
+		// assert
+		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.called, "Retrieve files for upload");
+	});
+
+	QUnit.test("Drop multiple files, file loading throw error", function(assert) {
+		// arrange
+		var oEvent = getDragAndPropEvent([true, true]);
+		var oItems = oEvent.getParameter("browserEvent").dataTransfer.items;
+		oItems[1].webkitGetAsEntry = function() {
+			return {
+				isFile: this.isFile,
+				isDirectory: !this.isFile,
+				file: function(_resolve, reject) {
+					reject("error loading file");
+				}
+			};
+		};
+		this.oUploadSet.setDirectory(false);
+		this.oUploadSet.setMultiple(true);
+		this.spy(this.oUploadSet, "_getFilesFromDataTransferItems");
+		this.spy(this.oUploadSet, "_processNewFileObjects");
+
+		// act
+		assert.throws(this.oUploadSet._onDropFile(oEvent), "Error is thrown");
+
+		// assert
+		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.called, "Retrieve files for upload");
+		assert.ok(this.oUploadSet._processNewFileObjects.notCalled, "File upload is not triggered");
+	});
+
+	QUnit.test("Drop directory with two files", function(assert) {
+		// arrange
+		var that = this,
+			oEvent = getDragAndPropEvent([false]);
+		var oItems = oEvent.getParameter("browserEvent").dataTransfer.items;
+		oItems[0].webkitGetAsEntry = function() {
+				return {
+					isFile: this.isFile,
+					isDirectory: !this.isFile,
+					createReader: function() {
+						return {
+							readEntries: function(caller) {
+								var aDataTransferItems = getDragAndPropEvent([true, true]).getParameter("browserEvent").dataTransfer.items;
+								caller(aDataTransferItems.map(function(entry) { return entry.webkitGetAsEntry();}));
+							}
+						};
+					}
+				};
+			};
+		this.oUploadSet.setDirectory(true);
+		this.oUploadSet.setMultiple(true);
+		this.spy(this.oUploadSet, "_getFilesFromDataTransferItems");
+		var done = assert.async();
+		this.stub(this.oUploadSet, "_processNewFileObjects").callsFake(function() {
+			assert.ok(that.oUploadSet._processNewFileObjects.called, "Upload files called");
+			assert.ok(that.oUploadSet._processNewFileObjects.firstCall.calledWithExactly(["file", "file"]), "To upload passed two files");
+			done();
+		});
+
+		// act
+		this.oUploadSet._onDropFile(oEvent);
+
+		// assert
+		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.called, "Retrieve files for upload");
+	});
+
+	QUnit.test("Drop directory with not files", function(assert) {
+		// arrange
+		var oEvent = getDragAndPropEvent([false]);
+		var oItems = oEvent.getParameter("browserEvent").dataTransfer.items;
+		oItems[0].webkitGetAsEntry = function() {
+				return {
+					isFile: this.isFile,
+					isDirectory: !this.isFile,
+					createReader: function() {
+						return {
+							readEntries: function(caller) {
+								caller([]);
+							}
+						};
+					}
+				};
+			};
+		this.oUploadSet.setDirectory(true);
+		this.oUploadSet.setMultiple(true);
+		this.spy(this.oUploadSet, "_getFilesFromDataTransferItems");
+		this.spy(this.oUploadSet, "_processNewFileObjects");
+
+		// act
+		this.oUploadSet._onDropFile(oEvent);
+
+		// assert
+		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.called, "Retrieve files for upload");
+		assert.ok(this.oUploadSet._processNewFileObjects.notCalled, "File upload is not triggered");
+	});
+
+	QUnit.test("webkitGetAsEntry return object that don't have isFile and isDirectory flags set to true", function(assert) {
+		// arrange
+		var oEvent = getDragAndPropEvent([false]);
+		var oItems = oEvent.getParameter("browserEvent").dataTransfer.items;
+		oItems[0].webkitGetAsEntry = function() {
+				return {};
+			};
+		this.oUploadSet.setDirectory(true);
+		this.oUploadSet.setMultiple(true);
+		this.spy(this.oUploadSet, "_getFilesFromDataTransferItems");
+		this.spy(this.oUploadSet, "_processNewFileObjects");
+
+		// act
+		this.oUploadSet._onDropFile(oEvent);
+
+		// assert
+		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.called, "Retrieve files for upload");
+		assert.ok(this.oUploadSet._processNewFileObjects.notCalled, "File upload is not triggered");
 	});
 
 	QUnit.test("Test for MultiSelect in pending upload (not supported)", function(assert) {
@@ -1281,47 +1466,6 @@ sap.ui.define([
 
 		//assert
 		assert.ok(oFileUploaderChangeSpy.notCalled, "Directory uploads aborted with restrited file types");
-	});
-
-	QUnit.test("Drag and drop of directory files with directory property", function(assert) {
-
-		// arrange
-		var oDataTransfer = new DataTransfer();
-		oDataTransfer.items.add(new File([new Blob([])], "sample Drop File" ));
-
-		function webkitGetAsEntry() {
-			return {
-				isFile: false,
-				isDirectory:true
-			};
-		}
-
-		var oItemPrototype = Object.getPrototypeOf(oDataTransfer.items[0]);
-
-		oItemPrototype.webkitGetAsEntry = webkitGetAsEntry;
-
-		var oEvent = new EventBase("drop", {}, { // using BaseEvent to create sample drop event to simulate drag and drop
-			browserEvent: {
-				dataTransfer: oDataTransfer
-			}
-		});
-
-		this.stub(this.oUploadSet, "_getFilesFromDataTransferItems").callsFake(function() {
-			// creating fake function since this function makes xhr call to upload files
-			return new Promise(function(resolve, reject){
-				resolve(true);
-			});
-		});
-		this.stub(MessageBox, "error").returns("Dummy Error message");
-
-		// act
-		this.oUploadSet.setDirectory(true);
-
-		this.oUploadSet._onDropFile(oEvent); // method invoked on uploadSet when dropping files to upload
-
-		// assert
-		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.called, "Directory files are uploaded with directory property set to true");
-
 	});
 
 	return Core.loadLibrary("sap.suite.ui.commons", { async: true })

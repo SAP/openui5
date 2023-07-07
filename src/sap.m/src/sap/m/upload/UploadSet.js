@@ -957,56 +957,54 @@ sap.ui.define([
 		this._oDragIndicator = false;
 		this._getIllustratedMessage();
 		oEvent.preventDefault();
-		if (this.getUploadEnabled()) {
-			var oItems = oEvent.getParameter("browserEvent").dataTransfer.items;
-			oItems = Array.from(oItems);
+		if (!this.getUploadEnabled()) {
+			return;
+		}
+		var oItems = oEvent.getParameter("browserEvent").dataTransfer.items;
+		oItems = Array.from(oItems);
 
-			// Filtering out only webkitentries (files/folders system entries) by excluding non file / directory types.
-			oItems = oItems.filter(function(item){
-				return item.webkitGetAsEntry() ? true : false;
-			});
-			var aEntryTypes = oItems.map(function (oEntry) {
-				var oWebKitEntry = oEntry.webkitGetAsEntry();
-				return {
-					entryType: oWebKitEntry && oWebKitEntry.isFile ? 'File' : 'Directory'
-				};
-			});
-			// handlding multiple property drag & drop scenarios
-			if (oItems && oItems.length > 1 && !this.getMultiple() && !this.getDirectory()) {
-				// Handling drag and drop of multiple files to upload with multiple property set
-				var sMessage = this._oRb.getText("UPLOADCOLLECTION_MULTIPLE_FALSE");
-				Log.warning("Multiple files upload is retsricted for this multiple property set");
-				MessageBox.error(sMessage);
-				return;
-			} else if (oItems && oItems.length > 1 && this.getMultiple() && !isFileOrFolderEntry('File', aEntryTypes)) {
-				var sMessageDropFilesOnly = this._oRb.getText("UPLOAD_SET_DIRECTORY_FALSE");
-				Log.warning("Multiple files upload is retsricted, drag & drop only files");
-				MessageBox.error(sMessageDropFilesOnly);
-				return;
-			}
+		// Filtering out only webkitentries (files/folders system entries) by excluding non file / directory types.
+		oItems = oItems.filter(function(item){
+			return item.webkitGetAsEntry() ? true : false;
+		});
+		var aEntryTypes = oItems.map(function (oEntry) {
+			var oWebKitEntry = oEntry.webkitGetAsEntry();
+			return {
+				entryType: oWebKitEntry && oWebKitEntry.isFile ? 'File' : 'Directory'
+			};
+		});
+		// handlding multiple property drag & drop scenarios
+		if (oItems && oItems.length > 1 && !this.getMultiple() && !this.getDirectory()) {
+			// Handling drag and drop of multiple files to upload with multiple property set
+			var sMessage = this._oRb.getText("UPLOADCOLLECTION_MULTIPLE_FALSE");
+			Log.warning("Multiple files upload is retsricted for this multiple property set");
+			MessageBox.error(sMessage);
+			return;
+		} else if (oItems && oItems.length > 1 && this.getMultiple() && !isFileOrFolderEntry('File', aEntryTypes)) {
+			var sMessageDropFilesOnly = this._oRb.getText("UPLOAD_SET_DIRECTORY_FALSE");
+			Log.warning("Multiple files upload is retsricted, drag & drop only files");
+			MessageBox.error(sMessageDropFilesOnly);
+			return;
+		}
 
-			// handling directory property drag & drop scenarios
-			if (oItems && !this.getDirectory() && isFileOrFolderEntry('Directory', aEntryTypes)) {
-				var sMessageDirectory = this._oRb.getText("UPLOAD_SET_DIRECTORY_FALSE");
-				Log.warning("Directory of files upload is retsricted for this directory property set");
-				MessageBox.error(sMessageDirectory);
-				return;
-			} else if (oItems && this.getDirectory() && !isFileOrFolderEntry('Directory', aEntryTypes)) {
-				var sMessageDragDropDirectory = this._oRb.getText("UPLOAD_SET_DROP_DIRECTORY");
-				Log.warning("Directory of files upload is retsricted, drag & drop only directories here.");
-				MessageBox.error(sMessageDragDropDirectory);
-				return;
-			}
-			if (oItems && oItems.length) {
-				this._getFilesFromDataTransferItems(oItems).then(function (oFiles) {
-					if (oFiles && oFiles.length) {
-						var oFileUploaderInstance = this.getDefaultFileUploader();
-						if (oFileUploaderInstance && oFileUploaderInstance._areFilesAllowed && oFileUploaderInstance._areFilesAllowed(oFiles)) {
-							this._processNewFileObjects(oFiles);
-						}
-					}
-				}.bind(this));
-			}
+		// handling directory property drag & drop scenarios
+		if (oItems && oItems.length && !this.getDirectory() && isFileOrFolderEntry('Directory', aEntryTypes)) {
+			var sMessageDirectory = this._oRb.getText("UPLOAD_SET_DIRECTORY_FALSE");
+			Log.warning("Directory of files upload is retsricted for this directory property set");
+			MessageBox.error(sMessageDirectory);
+			return;
+		} else if (oItems && oItems.length && this.getDirectory() && !isFileOrFolderEntry('Directory', aEntryTypes)) {
+			var sMessageDragDropDirectory = this._oRb.getText("UPLOAD_SET_DROP_DIRECTORY");
+			Log.warning("Directory of files upload is retsricted, drag & drop only directories here.");
+			MessageBox.error(sMessageDragDropDirectory);
+			return;
+		}
+		if (oItems && oItems.length) {
+			this._getFilesFromDataTransferItems(oItems).then(function (oFiles) {
+				if (oFiles && oFiles.length) {
+					this._processNewFileObjects(oFiles);
+				}
+			}.bind(this));
 		}
 
 		function isFileOrFolderEntry(sType, aEntries) {
