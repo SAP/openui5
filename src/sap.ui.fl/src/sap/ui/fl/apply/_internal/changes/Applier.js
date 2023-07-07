@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/strings/formatMessage",
 	"sap/ui/core/Element",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils"
 ], function(
 	Log,
+	formatMessage,
 	Element,
 	JsControlTreeModifier,
 	FlexCustomData,
@@ -22,6 +24,20 @@ sap.ui.define([
 	"use strict";
 
 	var oLastPromise = (FlUtils.FakePromise ? new FlUtils.FakePromise() : Promise.resolve());
+
+	/**
+	 * Formats the log message by replacing placeholders with values and logging the message.
+	 *
+	 * @param {string} sLogType - Logging type to be used. Possible values: info | warning | debug | error
+	 * @param {array.<string>} aMessageComponents - Individual parts of the message text
+	 * @param {array.<any>} aValuesToInsert - The values to be used instead of the placeholders in the message
+	 * @param {string} [sCallStack] - Passes the callstack to the logging function
+	 */
+	function formatAndLogMessage(sLogType, aMessageComponents, aValuesToInsert, sCallStack) {
+		var sLogMessage = aMessageComponents.join(" ");
+		sLogMessage = formatMessage(sLogMessage, aValuesToInsert);
+		Log[sLogType](sLogMessage, sCallStack || "");
+	}
 
 	function checkControlAndDependentSelectorControls(oChange, mPropertyBag) {
 		var oSelector = oChange.getSelector && oChange.getSelector();
@@ -143,14 +159,14 @@ sap.ui.define([
 		var sCustomDataIdentifier = FlexCustomData.getCustomDataIdentifier(false, bErrorOccurred, bXmlModifier);
 		switch (sCustomDataIdentifier) {
 			case FlexCustomData.notApplicableChangesCustomDataKey:
-				FlUtils.formatAndLogMessage(
+				formatAndLogMessage(
 					"info",
 					[sLogMessage, oError.message],
 					[sChangeId]
 				);
 				break;
 			case FlexCustomData.failedChangesCustomDataKeyXml:
-				FlUtils.formatAndLogMessage(
+				formatAndLogMessage(
 					"warning",
 					[sLogMessage, "Merge error detected while processing the XML tree."],
 					[sChangeId],
@@ -158,7 +174,7 @@ sap.ui.define([
 				);
 				break;
 			case FlexCustomData.failedChangesCustomDataKeyJs:
-				FlUtils.formatAndLogMessage(
+				formatAndLogMessage(
 					"error",
 					[sLogMessage, "Merge error detected while processing the JS control tree."],
 					[sChangeId],

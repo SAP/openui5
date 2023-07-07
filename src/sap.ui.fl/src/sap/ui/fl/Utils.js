@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/base/strings/formatMessage",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/uid",
@@ -18,7 +17,6 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/Configuration"
 ], function(
-	formatMessage,
 	ObjectPath,
 	isPlainObject,
 	uid,
@@ -70,20 +68,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	var Utils = {
-		/**
-		 * Formats the log message by replacing placeholders with values and logging the message.
-		 *
-		 * @param {string} sLogType - Logging type to be used. Possible values: info | warning | debug | error
-		 * @param {array.<string>} aMessageComponents - Individual parts of the message text
-		 * @param {array.<any>} aValuesToInsert - The values to be used instead of the placeholders in the message
-		 * @param {string} [sCallStack] - Passes the callstack to the logging function
-		 */
-		formatAndLogMessage: function(sLogType, aMessageComponents, aValuesToInsert, sCallStack) {
-			var sLogMessage = aMessageComponents.join(" ");
-			sLogMessage = formatMessage(sLogMessage, aValuesToInsert);
-			Log[sLogType](sLogMessage, sCallStack || "");
-		},
-
 		isVariantByStartupParameter: function(oControl) {
 			// determine UI5 component out of given control
 			if (oControl) {
