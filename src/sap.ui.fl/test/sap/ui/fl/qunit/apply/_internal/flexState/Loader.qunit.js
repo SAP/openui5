@@ -23,6 +23,12 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
+	var oComponentData = {
+		startupParameters: {
+			hcpApplicationId: ["siteId"]
+		}
+	};
+
 	QUnit.module("Loader", {
 		beforeEach: function() {
 			this.oRawManifest = {
@@ -93,7 +99,6 @@ sap.ui.define([
 			};
 			this.oLoadFlexDataStub = sandbox.stub(ApplyStorage, "loadFlexData").resolves(this.oFlexDataResponse);
 			this.oCompleteFlexDataStub = sandbox.stub(ApplyStorage, "completeFlexData").resolves("complete");
-			this.oGetSiteIdStub = sandbox.stub(Utils, "getSiteIdByComponentData").returns("siteId");
 			this.oGetBaseCompNameStub = sandbox.stub(ManifestUtils, "getBaseComponentNameFromManifest").returns("baseName");
 			this.oGetCacheKeyStub = sandbox.stub(ManifestUtils, "getCacheKeyFromAsyncHints").returns("cacheKey");
 		},
@@ -106,7 +111,7 @@ sap.ui.define([
 				manifest: this.oManifest,
 				otherValue: "a",
 				reference: "reference",
-				componentData: {},
+				componentData: oComponentData,
 				version: Version.Number.Draft,
 				allContexts: true,
 				adaptationId: "id_1234"
@@ -128,7 +133,7 @@ sap.ui.define([
 				assert.equal(oResult.changes, this.oFlexDataResponse, "the Loader loads data");
 				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the Storage.loadFlexData was called");
 				assert.equal(this.oCompleteFlexDataStub.callCount, 0, "the Storage.completeFlexData was not called");
-				assert.equal(this.oGetSiteIdStub.callCount, 1, "the siteId was retrieved from the Utils");
+				assert.equal(this.oLoadFlexDataStub.getCall(0).args[0].siteId, "siteId", "the siteId was retrieved from the Utils");
 				assert.equal(this.oGetBaseCompNameStub.callCount, 1, "the name was retrieved from the Utils");
 				assert.equal(this.oGetCacheKeyStub.callCount, 1, "the cache key was retrieved from the Utils");
 				var mPassedPropertyBag = this.oLoadFlexDataStub.firstCall.args[0];
@@ -141,7 +146,7 @@ sap.ui.define([
 				manifest: this.oManifest,
 				otherValue: "a",
 				reference: "reference",
-				componentData: {}
+				componentData: oComponentData
 			};
 
 			var oExpectedProperties = {
@@ -160,7 +165,7 @@ sap.ui.define([
 				assert.equal(oResult.changes, this.oFlexDataResponse, "the Loader tries to load data");
 				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the Storage.loadFlexData was called");
 				assert.equal(this.oCompleteFlexDataStub.callCount, 0, "the Storage.completeFlexData was not called");
-				assert.equal(this.oGetSiteIdStub.callCount, 1, "the siteId was retrieved from the Utils");
+				assert.equal(this.oLoadFlexDataStub.getCall(0).args[0].siteId, "siteId", "the siteId was retrieved from the Utils");
 				assert.equal(this.oGetBaseCompNameStub.callCount, 1, "the name was retrieved from the Utils");
 				assert.equal(this.oGetCacheKeyStub.callCount, 1, "the cache key was retrieved from the Utils");
 				assert.deepEqual(this.oLoadFlexDataStub.firstCall.args[0], oExpectedProperties, "the first argument are the properties");
@@ -179,7 +184,7 @@ sap.ui.define([
 					manifest: oTestData.manifest,
 					otherValue: "a",
 					reference: "reference",
-					componentData: {}
+					componentData: oComponentData
 				};
 
 				return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
@@ -234,7 +239,7 @@ sap.ui.define([
 				manifest: Object.assign({}, this.oManifest),
 				otherValue: "a",
 				reference: "reference",
-				componentData: {}
+				componentData: oComponentData
 			};
 
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
@@ -295,7 +300,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				manifest: this.oManifest,
 				reference: "test.app",
-				componentData: {},
+				componentData: oComponentData,
 				partialFlexData: {changes: [{partial: "something"}]}
 			};
 
@@ -317,7 +322,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				manifest: this.oManifest,
 				reference: "test.app",
-				componentData: {},
+				componentData: oComponentData,
 				asyncHints: {
 					requests: [{
 						name: "sap.ui.fl.changes",
@@ -343,7 +348,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				manifest: this.oManifest,
 				reference: "test.app",
-				componentData: {},
+				componentData: oComponentData,
 				reInitialize: true,
 				asyncHints: {
 					requests: [{
@@ -383,7 +388,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				manifest: this.oManifest,
 				reference: "test.app",
-				componentData: {}
+				componentData: oComponentData
 			};
 
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {

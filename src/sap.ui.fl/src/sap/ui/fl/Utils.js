@@ -107,21 +107,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the siteId of a component when you already have the component data.
-		 *
-		 * @param {object} oComponentData - Component data
-		 * @returns {string} siteId - that represent the found siteId
-		 * @function
-		 * @name sap.ui.fl.Utils.getSiteIdByComponentData
-		 *
-		 * @private
-		 * @ui5-restricted sap.ui.fl.apply._internal.flexState.Loader
-		 */
-		getSiteIdByComponentData: function(oComponentData) {
-			return getStartUpParameter(oComponentData, "hcpApplicationId");
-		},
-
-		/**
 		 * Indicates if the property value represents a binding
 		 *
 		 * @param {object} vPropertyValue - Property value

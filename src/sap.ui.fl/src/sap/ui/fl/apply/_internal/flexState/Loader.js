@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/initial/_internal/Storage",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/initial/_internal/Storage"
 ], function(
 	ManagedObject,
 	ManifestUtils,
-	ApplyStorage,
-	Utils
+	ApplyStorage
 ) {
 	"use strict";
 
@@ -87,6 +85,14 @@ sap.ui.define([
 		};
 	}
 
+	function getSideId(oComponentData) {
+		if (oComponentData
+			&& oComponentData.startupParameters
+			&& Array.isArray(oComponentData.startupParameters.hcpApplicationId)) {
+			return oComponentData.startupParameters.hcpApplicationId[0];
+		}
+	}
+
 	/**
 	 * Class for loading Flex Data from the backend via the Connectors.
 	 *
@@ -136,7 +142,7 @@ sap.ui.define([
 				reference: mPropertyBag.reference,
 				componentName: sComponentName,
 				cacheKey: sCacheKey,
-				siteId: Utils.getSiteIdByComponentData(mPropertyBag.componentData),
+				siteId: getSideId(mPropertyBag.componentData),
 				appDescriptor: mPropertyBag.manifest.getRawJson ? mPropertyBag.manifest.getRawJson() : mPropertyBag.manifest,
 				version: mPropertyBag.version,
 				allContexts: mPropertyBag.allContexts,
