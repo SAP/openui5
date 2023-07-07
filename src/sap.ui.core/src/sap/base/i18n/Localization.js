@@ -429,7 +429,7 @@ sap.ui.define([
 					external: true
 				})) {
 				oWritableConfig.set("sapLanguage", sSAPLogonLanguage);
-				oWritableConfig.set("sapUiLanguage", oLanguageTag.toString());
+				oWritableConfig.set("sapUiLanguage", sLanguage);
 				mChanges = {};
 				mChanges.language = Localization.getLanguageTag().toString();
 				var bRtl = Localization.getRTL();
