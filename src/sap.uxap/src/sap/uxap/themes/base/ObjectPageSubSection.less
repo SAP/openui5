@@ -20,14 +20,12 @@
 
 .sapUxAPObjectPageSubSectionHeader {
 	height: auto;
-	overflow: auto;
 	word-wrap: break-word;
 	padding: 0 2.25rem 0 3rem
 }
 
 .sapUxAPObjectPageSubSectionHeaderTitle {
 	white-space: normal;
-	float: left;
 	line-height: 3rem;
 	color: @sapUiGroupTitleTextColor;
 	font-size: @sapMFontHeader4Size;
@@ -175,6 +173,11 @@ Doing so will result in less generated CSS, as well as less future maintanance i
 	.sapUxAPBlockBase {
 		margin-bottom: 1rem;
 	}
+}
+
+.sapUxAPObjectPageSubSectionFitContainer {
+	display: flex;
+	flex-direction: column;
 }
 
 .sapUxAPObjectPageSubSectionFitContainer .sapUxAPBlockContainer .sapUxAPBlockBase {

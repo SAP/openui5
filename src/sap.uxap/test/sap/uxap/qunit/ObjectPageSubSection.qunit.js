@@ -1467,7 +1467,7 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 			//check
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
 				iOffsetTop = library.Utilities.getChildPosition(oSubSection.$(), oPage._$contentContainer).top,
-				iOffsetBottom = oPage._$contentContainer[0].getBoundingClientRect().bottom - oSubSection.getDomRef().getBoundingClientRect().bottom,
+				iOffsetBottom = oPage.getDomRef().getBoundingClientRect().bottom - oSubSection.getDomRef().getBoundingClientRect().bottom,
 				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop - iOffsetBottom),
 				iSubSectionHeight = Math.round(oSubSection.$().outerHeight() + parseInt(oSection.$().css("marginTop")));
 			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
@@ -1495,7 +1495,7 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 			//check
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
 				iOffsetTop = library.Utilities.getChildPosition(oSubSection.$(), oPage._$contentContainer).top,
-				iOffsetBottom = oPage._$contentContainer[0].getBoundingClientRect().bottom - oSubSection.getDomRef().getBoundingClientRect().bottom,
+				iOffsetBottom = oPage.getDomRef().getBoundingClientRect().bottom - oSubSection.getDomRef().getBoundingClientRect().bottom,
 				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop - iOffsetBottom),
 				iSubSectionHeight = Math.round(oSubSection.$().outerHeight() + parseInt(oSection.$().css("marginTop")));
 			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
@@ -1527,7 +1527,7 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 			//check
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
 				iOffsetTop = library.Utilities.getChildPosition(oSubSection.$(), oPage._$contentContainer).top,
-				iOffsetBottom = oPage._$contentContainer[0].getBoundingClientRect().bottom - oSubSection.getDomRef().getBoundingClientRect().bottom,
+				iOffsetBottom = oPage.getDomRef().getBoundingClientRect().bottom - oSubSection.getDomRef().getBoundingClientRect().bottom,
 				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop - iOffsetBottom),
 				iSubSectionHeight = Math.round(oSubSection.$().outerHeight() + parseInt(oSection.$().css("marginTop")));
 			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
@@ -1550,7 +1550,7 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 			//check
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
 				iOffsetTop = library.Utilities.getChildPosition(oSubSection.$(), oPage._$contentContainer).top,
-				iOffsetBottom = oPage._$contentContainer[0].getBoundingClientRect().bottom - oSubSection.getDomRef().getBoundingClientRect().bottom,
+				iOffsetBottom = oPage.getDomRef().getBoundingClientRect().bottom - oSubSection.getDomRef().getBoundingClientRect().bottom,
 				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop - iOffsetBottom);
 
 			oSubSection.getDomRef().style.paddingTop = "20px";
@@ -1560,6 +1560,28 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 			done();
 
 		}, this);
+	});
+
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection with title to fit the container", function (assert) {
+		var oSection = this.oObjectPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			done = assert.async();
+
+		//setup: make the subSection fit its container and ensure it has a title
+		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+		oSubSection.setTitle("some title");
+		//allow [by UX rule] the above title to render by making the subSection non-first:
+		oSection.insertSubSection(new ObjectPageSubSectionClass({ // insert subsection above
+			blocks: [new Text({text: "block content"})]
+		}));
+
+		var oStub = this.stub(oSubSection, "_setHeight").callsFake(function() {
+			ObjectPageSubSectionClass.prototype._setHeight.apply(this, arguments);
+			assert.strictEqual(oSubSection.getDomRef().scrollHeight, oSubSection.getDomRef().offsetHeight,
+				"no scrollable content");
+				oStub.restore();
+			done();
+		});
 	});
 
 	QUnit.test("single subSection with sapUxAPObjectPageSubSectionFitContainer no scrolling", function (assert) {
