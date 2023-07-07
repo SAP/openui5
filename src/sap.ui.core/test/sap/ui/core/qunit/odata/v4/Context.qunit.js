@@ -1512,6 +1512,11 @@ sap.ui.define([
 
 		// code under test
 		oContext.checkUpdate();
+
+		oContext.oModel = undefined;
+
+		// code under test
+		oContext.checkUpdate();
 	});
 
 	//*********************************************************************************************

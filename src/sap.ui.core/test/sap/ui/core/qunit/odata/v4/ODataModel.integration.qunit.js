@@ -19237,6 +19237,72 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Deferred delete in a nested list w/o cache. Filter in the parent list, so that the
+	// parent entity drops out. Then submit or reset (canceling the delete).
+	// BCP: 2380081607
+[false, true].forEach(function (bReset) {
+	QUnit.test("ODLB: no cache, deferred delete, parent lost, reset=" + bReset, function (assert) {
+		var oDeletePromise,
+			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			sView = '\
+<Table id="teams" items="{/TEAMS}">\
+	<Text id="team" text="{Team_Id}"/>\
+	<Table items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : true}">\
+		<Text id="employee" text="{ID}"/>\
+	</Table>\
+</Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Team_Id&$expand=TEAM_2_EMPLOYEES($select=ID)"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					Team_Id : "TEAM_1",
+					TEAM_2_EMPLOYEES : [{ID : "1"}, {ID : "2"}]
+				}]
+			})
+			.expectChange("team", ["TEAM_1"])
+			.expectChange("employee", ["1", "2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("employee", ["2"]);
+
+			oDeletePromise = that.oView.byId("teams").getItems()[0].getCells()[1]
+				.getBinding("items").getCurrentContexts()[0].delete();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("TEAMS?$select=Team_Id&$expand=TEAM_2_EMPLOYEES($select=ID)"
+					+ "&$filter=Team_Id ne '1'&$skip=0&$top=100", {value : []});
+
+			that.oView.byId("teams").getBinding("items")
+				.filter(new Filter("Team_Id", FilterOperator.NE, "1"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			if (bReset) {
+				that.expectCanceledError("Failed to delete /TEAMS('TEAM_1')/TEAM_2_EMPLOYEES('1')",
+					"Request canceled: DELETE EMPLOYEES('1'); group: update");
+
+				oModel.resetChanges();
+			} else {
+				that.expectRequest("DELETE EMPLOYEES('1')");
+			}
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oDeletePromise.then(function () {
+					assert.notOk(bReset);
+				}, function (oError) {
+					assert.ok(bReset);
+					assert.ok(oError.canceled);
+				}),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: Create and persist two contexts using "end of start". Delete one via API group and
 	// the other one via $auto (to see that we must react on the last deletion). Create a third
 	// context before submitting the deferred deletion. See that this context is inserted at the end
