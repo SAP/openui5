@@ -140,8 +140,8 @@ sap.ui.define([
 	 * <li>[End] - set the expanded side panel width to the maximum value defined in <code>sidePanelMaxWidth</code> property</li>
 	 * <li>[Enter] - set the expanded side panel width to the default value defined in <code>sidePanelWidth</code> property</li>
 	 * <li>[Shift]+[F10] or [Context menu] - show the resize context menu</li>
-	 * <li>[Arrow Left] / [Arrow Right] - increase/decrease the width of the expanded side panel with the regular step</li>
-	 * <li>[Shift] + [Arrow Left] / [Arrow Right] - increase/decrease the width of the expanded side panel with the larger step</li>
+	 * <li>[Arrow Left] or [Arrow Up] / [Arrow Right] or [Arrow Down] - increase/decrease the width of the expanded side panel with the regular step</li>
+	 * <li>[Shift] + [Arrow Left] or [Shift] + [Arrow Up] / [Shift] + [Arrow Right] or [Shift] + [Arrow Down] - increase/decrease the width of the expanded side panel with the larger step</li>
 	 * </ul>
 	 *
  	 * @extends sap.ui.core.Control
@@ -528,9 +528,11 @@ sap.ui.define([
 					this._setSidePanelResizePosition(SIDE_PANEL_POSITION_MIN_WIDTH);
 					break;
 				case KeyCodes.ARROW_LEFT:
+				case KeyCodes.ARROW_UP:
 					this._moveSidePanelResizePositionWith(oEvent.shiftKey ? this.getSidePanelResizeLargerStep() : this.getSidePanelResizeStep());
 					break;
 				case KeyCodes.ARROW_RIGHT:
+				case KeyCodes.ARROW_DOWN:
 					this._moveSidePanelResizePositionWith(oEvent.shiftKey ? -this.getSidePanelResizeLargerStep() : -this.getSidePanelResizeStep());
 					break;
 				case KeyCodes.F10:
