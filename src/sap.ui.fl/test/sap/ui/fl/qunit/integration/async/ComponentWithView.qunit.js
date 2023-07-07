@@ -348,7 +348,7 @@ sap.ui.define([
 						return [];
 					}
 				})
-				.onSecondCall().returns({
+				.returns({
 					getCurrentControlVariantIds: function() {
 						return ["currentVariantReferenceChanged"];
 					},

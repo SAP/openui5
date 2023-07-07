@@ -502,13 +502,21 @@ sap.ui.define([
 
 		/** Returns <code>true</code> if the passed component is an embedded component.
 		 * @param {sap.ui.core.Component} oComponent - Component instance
-		 * @returns {boolean} <code>true</code> if the passed component is of type "component"
+		 * @returns {boolean} <code>true</code> if the passed component is of type "component" and has a parent app component
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 */
 		isEmbeddedComponent: function(oComponent) {
-			return oComponent instanceof Component && getComponentType(oComponent.getManifestObject()) === "component";
+			var oAppComponent = Utils.getAppComponentForControl(oComponent);
+			return !!(
+				oComponent instanceof Component
+				&& getComponentType(oComponent.getManifestObject()) === "component"
+				// Some embedded components might not have an app component
+				// e.g. sap.ushell.plugins.rta, sap.ushell.plugins.rta-personalize
+				&& oAppComponent
+				&& Utils.isApplicationComponent(oAppComponent)
+			);
 		},
 
 		/**

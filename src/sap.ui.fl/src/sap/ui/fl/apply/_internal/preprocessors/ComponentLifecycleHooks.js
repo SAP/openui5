@@ -145,18 +145,15 @@ sap.ui.define([
 			return oReturnPromise;
 		} else if (Utils.isEmbeddedComponent(oComponent)) {
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
-			// Some embedded components might not have an app component, e.g. sap.ushell.plugins.rta, sap.ushell.plugins.rta-personalize
-			if (oAppComponent && Utils.isApplicationComponent(oAppComponent)) {
-				// once the VModel is set to the outer component it also has to be set to any embedded component
-				if (ComponentLifecycleHooks._componentInstantiationPromises.has(oAppComponent)) {
-					return ComponentLifecycleHooks._componentInstantiationPromises.get(oAppComponent).then(function() {
-						var oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
-						oComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
-					});
-				}
-				oEmbeddedComponentsPromises[oAppComponent.getId()] = oEmbeddedComponentsPromises[oAppComponent.getId()] || [];
-				oEmbeddedComponentsPromises[oAppComponent.getId()].push(oComponent);
+			// once the VModel is set to the outer component it also has to be set to any embedded component
+			if (ComponentLifecycleHooks._componentInstantiationPromises.has(oAppComponent)) {
+				return ComponentLifecycleHooks._componentInstantiationPromises.get(oAppComponent).then(function() {
+					var oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
+					oComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
+				});
 			}
+			oEmbeddedComponentsPromises[oAppComponent.getId()] = oEmbeddedComponentsPromises[oAppComponent.getId()] || [];
+			oEmbeddedComponentsPromises[oAppComponent.getId()].push(oComponent);
 			return Promise.resolve();
 		}
 		return Promise.resolve();

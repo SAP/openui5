@@ -59,6 +59,16 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns a promise that resolves to the variant model once it is available
+		 *
+		 * @param {object} oAppComponent - Application component
+		 * @returns {Promise} Promise resolving to the Variant Model
+		 */
+		getVariantModel: function(oAppComponent) {
+			return waitForVariantModel(oAppComponent);
+		},
+
+		/**
 		 * Clears URL technical parameter <code>sap-ui-fl-control-variant-id</code> for control variants.
 		 * Use this method in case you normally want the variant parameter in the URL, but have a few special navigation patterns where you want to clear it.
 		 * If you don't want that parameter in general, set the <code>updateVariantInURL</code> parameter on your variant management control to <code>false</code>. SAP Fiori elements use this method.
