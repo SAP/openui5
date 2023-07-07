@@ -3156,7 +3156,7 @@
 	 * @param {string} [sModuleName] ID of the module in simplified resource name syntax.
 	 *        When omitted, the loader determines the ID from the request.
 	 * @param {string[]} [aDependencies] List of dependencies of the module
-	 * @param {function(...any):any|any} vFactory The module export value or a function that calculates that value
+	 * @param {function|any} vFactory The module export value or a function that calculates that value
 	 * @param {boolean} [bExport] Whether an export to global names is required - should be used by SAP-owned code only
 	 * @since 1.27.0
 	 * @public
@@ -3221,7 +3221,7 @@
 	 * Relative module names are not supported.
 	 *
 	 * @param {string|string[]} vDependencies Dependency (dependencies) to resolve
-	 * @param {function(...any)} [fnCallback] Callback function to execute after resolving an array of dependencies
+	 * @param {function} [fnCallback] Callback function to execute after resolving an array of dependencies
 	 * @param {function(Error)} [fnErrback] Callback function to execute if an error was detected while loading the
 	 *                      dependencies or executing the factory function. Note that due to browser restrictions
 	 *                      not all errors will be reported via this callback. In general, module loading is
