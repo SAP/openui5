@@ -73,7 +73,6 @@ sap.ui.define(['sap/ui/core/Renderer', './DateTimeFieldRenderer', 'sap/ui/core/l
 			var mAccessibilityState = DateTimeFieldRenderer.getAccessibilityState.apply(this, arguments);
 
 			mAccessibilityState["roledescription"] = oControl._oResourceBundle.getText("ACC_CTR_TYPE_TIMEINPUT");
-			mAccessibilityState["autocomplete"] = "none";
 			mAccessibilityState["haspopup"] = coreLibrary.aria.HasPopup.Dialog.toLowerCase();
 			mAccessibilityState["disabled"] = null; // aria-disabled not needed if there's already a native 'disabled' attribute
 			if (oControl._isMobileDevice()) {
