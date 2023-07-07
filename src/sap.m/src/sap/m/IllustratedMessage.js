@@ -354,7 +354,9 @@ sap.ui.define([
 			return this;
 		}
 
-		this._updateInternalIllustrationSetAndType(sValue);
+		if (typeof sValue === 'string') {
+			this._updateInternalIllustrationSetAndType(sValue);
+		}
 
 		return this.setProperty("illustrationType", sValue);
 	};

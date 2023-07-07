@@ -179,6 +179,10 @@ function (
 		assert.ok(fnUpdateInternalSpy.calledWithExactly(sNewType),
 			"_updateInternalIllustrationSetAndType called with the new IllustratedMessageType.UnableToLoad illustrationType");
 
+		// Act
+		this.oIllustratedMessage.setIllustrationType(undefined);
+		assert.ok(fnUpdateInternalSpy.calledOnce, "_updateInternalIllustrationSetAndType isn't called second time if the type isn't string");
+
 		this.oIllustratedMessage.setIllustrationType("sapIllus-Connection");
 		Core.applyChanges();
 
