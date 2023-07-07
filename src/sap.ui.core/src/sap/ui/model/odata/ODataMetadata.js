@@ -7,6 +7,7 @@
 // Provides class sap.ui.model.odata.ODataMetadata
 sap.ui.define([
 	"./_ODataMetaModelUtils",
+	"./AnnotationParser",
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/each",
@@ -18,7 +19,7 @@ sap.ui.define([
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/thirdparty/datajs"
 ],
-	function(Utils, assert, Log, each, extend, isEmptyObject, uid, EventProvider, Configuration,
+	function(Utils, AnnotationParser, assert, Log, each, extend, isEmptyObject, uid, EventProvider, Configuration,
 		CacheManager, OData) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0*/
@@ -30,7 +31,7 @@ sap.ui.define([
 	 * Constructor for a new ODataMetadata.
 	 *
 	 * @param {string} sMetadataURI needs the correct metadata uri including $metadata
-	 * @param {object} [mParams] optional map of parameters.
+	 * @param {object} mParams map of parameters.
 	 * @param {boolean} [mParams.async=true] request is per default async
 	 * @param {string} [mParams.user] <b>Deprecated</b> for security reasons. Use strong server side
 	 *   authentication instead. UserID for the service.
@@ -38,6 +39,9 @@ sap.ui.define([
 	 *   side authentication instead. Password for the service.
 	 * @param {object} [mParams.headers] (optional) map of custom headers which should be set with the request.
 	 * @param {string} [mParams.cacheKey] (optional) A valid cache key
+	 * @param {string} [mParams.metadata] The metadata XML as string as provided in a back-end response; the
+	 *   <code>sMetadataURI</code> parameter is ignored if this parameter is set, and there is no request for the
+	 *   metadata.
 	 *
 	 * @class
 	 * Implementation to access OData metadata
@@ -65,6 +69,7 @@ sap.ui.define([
 			this.sPassword = mParams.password;
 			this.mHeaders = mParams.headers;
 			this.sCacheKey = mParams.cacheKey;
+			this.sMetadata = mParams.metadata;
 			this.oLoadEvent = null;
 			this.oFailedEvent = null;
 			this.oMetadata = null;
@@ -187,7 +192,10 @@ sap.ui.define([
 		// request the metadata of the service
 		var that = this;
 		sUrl = sUrl || this.sUrl;
-		var oRequest = this._createRequest(sUrl);
+
+		if (!this.sMetadata) {
+			var oRequest = this._createRequest(sUrl);
+		}
 
 		return new Promise(function(resolve, reject) {
 			var oRequestHandle;
@@ -248,6 +256,17 @@ sap.ui.define([
 					that.bFailed = true;
 					that.oFailedEvent = setTimeout(that.fireFailed.bind(that, mParams), 0);
 				}
+			}
+
+			if (that.sMetadata) { // response available synchronously
+				const oResponse = {
+					headers : {"Content-Type" : "application/xml"},
+					body : that.sMetadata
+				};
+				// trigger response processing in datajs: this sets the parsed response to oResponse.data
+				OData.metadataHandler.read(oResponse, /*oDatajsContext*/ {});
+				_handleSuccess(oResponse.data, oResponse);
+				return;
 			}
 
 			// execute the request
@@ -1835,6 +1854,21 @@ sap.ui.define([
 				&& oExtension.namespace === sSAPAnnotationNamespace
 				&& oExtension.value === "false";
 		});
+	};
+
+	/**
+	 * Returns the annotations for the given metadata string.
+	 *
+	 * @param {string} sMetadata The service metadata string in XML format as contained in the service's $metadata
+	 * @returns {object} The annotation object
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.core.util.MockServerAnnotationsHandler
+	 */
+	ODataMetadata.getServiceAnnotations = function (sMetadata) {
+		const oMetadata = new ODataMetadata(undefined, {metadata : sMetadata});
+		const oXMLDoc = new DOMParser().parseFromString(sMetadata, 'application/xml');
+		return AnnotationParser.parse(oMetadata, oXMLDoc);
 	};
 
 	return ODataMetadata;

@@ -4,9 +4,10 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/odata/_ODataMetaModelUtils",
+	"sap/ui/model/odata/AnnotationParser",
 	"sap/ui/model/odata/ODataMetadata",
 	"sap/ui/thirdparty/datajs"
-], function (Log, _ODataMetaModelUtils, ODataMetadata, OData) {
+], function (Log, _ODataMetaModelUtils, AnnotationParser, ODataMetadata, OData) {
 	/*global QUnit, sinon*/
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
@@ -90,6 +91,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("constructor: with predefined metadata", function (assert) {
+		const pMetadataLoaded = Promise.resolve();
+		this.mock(ODataMetadata.prototype).expects("_loadMetadata").withExactArgs().returns(pMetadataLoaded);
+
+		// code under test
+		const oMetadata = new ODataMetadata("~url", {metadata : "~metadata"});
+
+		assert.strictEqual(oMetadata.sMetadata, "~metadata");
+
+		return pMetadataLoaded;
+	});
+
+	//*********************************************************************************************
 [true, false].forEach(function (bReject) {
 	var sTitle = "loaded returns " + ( bReject ? "pLoadedWithReject" : "pLoaded" );
 
@@ -139,6 +153,28 @@ sap.ui.define([
 		// code under test
 		return this.oMetadata._loadMetadata(undefined, /*bSuppressEvents*/true).catch(function () {
 			oODataMock.restore();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_loadMetadata: process metadata from string", function (assert) {
+		this.oMetadata.sMetadata = "~XMLmetadata"; // metadata constructed from string
+		const oMetadataMock = this.mock(this.oMetadata);
+		oMetadataMock.expects("_createRequest").never();
+		const oResponse = {
+			headers : {"Content-Type" : "application/xml"},
+			body : "~XMLmetadata"
+		};
+		this.mock(OData.metadataHandler).expects("read").withExactArgs(oResponse, {}).callsFake((oResponse) => {
+			oResponse.data = {dataServices : {}};
+		});
+		oMetadataMock.expects("_handleLoaded")
+			.withExactArgs({dataServices : {}}, {metadataString : "~XMLmetadata"} ,true).callThrough();
+
+		// code under test
+		return this.oMetadata._loadMetadata(undefined, /*bSuppressEvents*/true).then((mParams) => {
+			assert.strictEqual(mParams.metadataString, "~XMLmetadata");
+			assert.deepEqual(this.oMetadata.oMetadata, {dataServices : {}});
 		});
 	});
 
@@ -586,4 +622,27 @@ sap.ui.define([
 		assert.strictEqual(this.oMetadata._isAddressable(oEntityType), oFixture.result);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getServiceAnnotations", function (assert) {
+		const pMetadataLoaded = Promise.resolve();
+		this.mock(ODataMetadata.prototype).expects("_loadMetadata")
+			.withExactArgs()
+			.callsFake(function () {
+				assert.strictEqual(this.sMetadata, "~XMLmetadata");
+				this.oMetadata = "~JSONmetadata";
+				return pMetadataLoaded;
+			});
+		this.mock(DOMParser.prototype).expects("parseFromString")
+			.withExactArgs("~XMLmetadata", "application/xml")
+			.returns("~oXMLDoc");
+		this.mock(AnnotationParser).expects("parse")
+			.withExactArgs(sinon.match((oMetadata) => oMetadata.oMetadata === "~JSONmetadata"), "~oXMLDoc")
+			.returns("~oAnnotations");
+
+		// code under test
+		assert.strictEqual(ODataMetadata.getServiceAnnotations("~XMLmetadata"), "~oAnnotations");
+
+		return pMetadataLoaded;
+	});
 });
