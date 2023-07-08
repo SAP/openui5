@@ -31,6 +31,7 @@ sap.ui.define([
 			type: "sap.ui.layout.form.SimpleForm",
 			create: function () {
 				return new SimpleForm({
+					layout: SimpleFormLayout.ColumnLayout,
 					toolbar: new Toolbar({
 						content : [
 							new Button({text: "Button"})
@@ -563,8 +564,12 @@ sap.ui.define([
 			});
 		}
 
+		/**
+		 * @deprecated As of version 1.67.0
+		 */
 		fnParameterizedTest(SimpleFormLayout.GridLayout);
 		fnParameterizedTest(SimpleFormLayout.ResponsiveGridLayout);
+		fnParameterizedTest(SimpleFormLayout.ColumnLayout);
 	});
 
 });

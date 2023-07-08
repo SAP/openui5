@@ -19,7 +19,7 @@
 							<m:Button text="To Detail" press="toDetail"/>
 						</actions>
 						<blocks>
-							<form:SimpleForm editable="false">
+							<form:SimpleForm editable="false" layout="ColumnLayout">
 								<m:Label text="Content"/>
 								<m:Text text="some content goes here..."/>
 							</form:SimpleForm>

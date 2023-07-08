@@ -19,7 +19,7 @@
 		</subHeader>
 
 		<content>
-			<form:SimpleForm editable="true" width="40rem">
+			<form:SimpleForm editable="true" width="40rem" layout="ColumnLayout">
 				<core:Title text="Cards loading will take random time in the given interval." />
 				<Label text="Minimum loading time" />
 				<Input id="loadingMinSeconds" width="8rem" type="Number" description="seconds" />

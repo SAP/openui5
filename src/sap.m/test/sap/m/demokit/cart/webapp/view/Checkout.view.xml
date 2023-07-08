@@ -744,7 +744,9 @@
 							</List>
 						</content>
 					</Panel>
-					<form:SimpleForm ariaLabelledBy="totalPriceTitle">
+					<form:SimpleForm
+						layout="ResponsiveGridLayout"
+						ariaLabelledBy="totalPriceTitle">
 						<form:toolbar>
 							<Toolbar id="toolbarTotalPrice">
 								<ToolbarSpacer/>

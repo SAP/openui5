@@ -4,9 +4,10 @@
 		controllerName="sap.m.sample.ColorPalette.ColorPalette"
 		xmlns="sap.m">
 	<form:SimpleForm
-			maxContainerCols="3"
 			editable="true"
-			backgroundDesign="Transparent">
+			backgroundDesign="Transparent"
+			singleContainerFullSize="true"
+			layout="ResponsiveGridLayout">
 		<form:toolbar>
 			<Toolbar>
 				<Title text="Color Palette in a Form"/>

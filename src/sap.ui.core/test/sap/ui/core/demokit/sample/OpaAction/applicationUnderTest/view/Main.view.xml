@@ -73,6 +73,7 @@
 					editable="true"
 					title="Address"
 					class="editableForm"
+					layout="ColumnLayout"
 					id="myForm">
 				<Label text="Name" />
 				<Input showSuggestion="true">

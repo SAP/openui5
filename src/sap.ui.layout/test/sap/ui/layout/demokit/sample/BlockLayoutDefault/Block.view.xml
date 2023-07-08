@@ -6,7 +6,8 @@
 	xmlns:form="sap.ui.layout.form">
 	<form:SimpleForm
 		editable="true"
-		backgroundDesign="Transparent">
+		backgroundDesign="Transparent"
+		layout="ColumnLayout">
 		<Label text="Parent width" />
 		<Slider id="widthSlider" value="100" liveChange=".onSliderMoved" />
 		<Label id="backgroundLabel" text="Background" />
