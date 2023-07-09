@@ -72,7 +72,8 @@
 								icon="sap-icon://credit-card">
 							<MessageStrip text="Enter at least 3 symbols for credit card name." />
 							<form:SimpleForm
-									editable="true">
+									editable="true"
+									layout="ResponsiveGridLayout">
 								<Label text="Name on card" required="true" />
 								<Input value="{/CreditCard/Name}" liveChange="checkCreditCardStep" valueLiveUpdate="true" />
 								<Label text="Card number"/>
@@ -118,7 +119,8 @@
 								icon="sap-icon://money-bills">
 							<MessageStrip text="Enter at least 3 symbols for first name." />
 							<form:SimpleForm
-									editable="true">
+									editable="true"
+									layout="ResponsiveGridLayout">
 								<Label text="First Name" required="true" />
 								<Input value="{/CashOnDelivery/FirstName}" liveChange="checkCashOnDeliveryStep" valueLiveUpdate="true" />
 								<Label text="Last Name" />
@@ -138,7 +140,8 @@
 								icon="sap-icon://sales-quote">
 							<MessageStrip text="Enter at least 3 symbols for each required field" />
 							<form:SimpleForm
-									editable="true">
+									editable="true"
+									layout="ResponsiveGridLayout">
 								<Label text="Delivery address is different" />
 								<CheckBox
 										selected="{/differentDeliveryAddress}"
@@ -161,7 +164,8 @@
 								nextStep="DeliveryTypeStep"
 								icon="sap-icon://sales-quote">
 							<form:SimpleForm
-									editable="true">
+									editable="true"
+									layout="ResponsiveGridLayout">
 								<Label text="Address" />
 								<Input />
 								<Label text="City" />

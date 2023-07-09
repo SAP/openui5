@@ -64,7 +64,6 @@
 					<ObjectPageSubSection>
 						<blocks>
 							<form:SimpleForm
-								maxContainerCols="2"
 								editable="false"
 								layout="ResponsiveGridLayout"
 								labelSpanL="12"

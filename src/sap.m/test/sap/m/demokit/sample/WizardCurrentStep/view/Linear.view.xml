@@ -38,7 +38,9 @@
 					text="Validation in the wizard is controlled by calling the validateStep(Step) and invalidateStep(Step) methods "
 					showIcon="true"/>
 			<Text text="Cras tellus leo, volutpat vitae ullamcorper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien et viverra imperdiet, orci erat porttitor nulla, eget commodo metus nibh nec ipsum. Aliquam lacinia euismod metus, sollicitudin pellentesque purus volutpat eget. Pellentesque egestas erat quis eros convallis mattis. Mauris hendrerit sapien a malesu corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien	corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien	"/>
-			<form:SimpleForm editable="true">
+			<form:SimpleForm
+					editable="true"
+					layout="ResponsiveGridLayout">
 				<Label text="Name" required="true"/>
 				<Input valueStateText="Enter 6 symbols or more"
 						valueState="{/productNameState}" id="ProductName"
@@ -72,7 +74,8 @@
 					showIcon="true"/>
 			<Text text="Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec ppellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien	corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien	"/>
 			<form:SimpleForm
-					editable="true">
+					editable="true"
+					layout="ResponsiveGridLayout">
 				<Label text="Cover photo"/>
 				<u:FileUploader
 						width="400px"
@@ -106,15 +109,16 @@
 					text="You can use the wizard previousStep() and nextStep() methods to navigate from step to step without validation. Also you can use the GoToStep(step) method to scroll programmatically to previously visited steps."
 					showIcon="true"/>
 			<form:SimpleForm
-					editable="true">
+					editable="true"
+					layout="ResponsiveGridLayout">
 				<Label text="Price"/>
 				<Input value="{/productPrice}"/>
-				<Label text="Discoung group"/>
+				<Label text="Discount group"/>
 				<MultiComboBox>
-					<core:Item key="Children" text="Kids"/>
-					<core:Item key="Children" text="Teens"/>
-					<core:Item key="Children" text="Adults"/>
-					<core:Item key="Children" text="Old people"/>
+					<core:Item key="Kids" text="Kids"/>
+					<core:Item key="Teens" text="Teens"/>
+					<core:Item key="Adults" text="Adults"/>
+					<core:Item key="Elderly" text="Elderly"/>
 				</MultiComboBox>
 				<Label text=" VAT is included"/>
 				<CheckBox selected="{/productVAT}"/>

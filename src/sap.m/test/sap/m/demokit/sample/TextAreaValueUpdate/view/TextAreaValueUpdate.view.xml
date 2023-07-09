@@ -3,7 +3,7 @@
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<form:SimpleForm editable="true">
+	<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
 		<Label text="ValueLiveUpdate"/>
 		<Switch state="{/ValueLiveUpdate}"/>
 		<Label text="Type here"/>

@@ -8,8 +8,6 @@
 		<content>
 			<VBox fitContainer="true">
 				<f:SimpleForm id="SimpleFormDisplay480"
-					minWidth="1024"
-					maxContainerCols="2"
 					editable="false"
 					layout="ResponsiveGridLayout"
 					title="Address"

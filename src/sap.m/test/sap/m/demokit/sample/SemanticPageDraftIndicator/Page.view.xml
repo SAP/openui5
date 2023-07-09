@@ -33,7 +33,7 @@
 						<ObjectHeader title="Type something in the field, the Draft Indicator will be displayed in the footer"
 							intro="this is just a simulation of how the DraftIndicator will work"
 							responsive="true"/>
-						<form:SimpleForm editable="true">
+						<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
 							<Label text="Type here"/>
 							<Input id="TypeHere" liveChange="handleLiveChange"/>
 						</form:SimpleForm>

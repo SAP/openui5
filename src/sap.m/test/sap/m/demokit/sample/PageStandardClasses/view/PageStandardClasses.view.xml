@@ -37,8 +37,6 @@
 						key="info"
 						text="Info">
 						<f:SimpleForm
-							minWidth="1024"
-							maxContainerCols="2"
 							layout="ResponsiveGridLayout" >
 							<f:title>
 								<core:Title text="A Form" />
@@ -61,8 +59,7 @@
 				</items>
 			</IconTabBar>
 			<f:SimpleForm
-				minWidth="1024"
-				maxContainerCols="2"
+				layout="ResponsiveGridLayout"
 				class="sapUiForceWidthAuto sapUiResponsiveMargin" >
 				<f:title>
 					<core:Title text="A Form" />

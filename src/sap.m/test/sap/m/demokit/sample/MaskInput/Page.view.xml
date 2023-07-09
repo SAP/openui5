@@ -6,7 +6,7 @@
 	<App>
 		<Page showHeader="false">
 
-			<form:SimpleForm title="Generic Mask Input" editable="true">
+			<form:SimpleForm title="Generic Mask Input" editable="true" layout="ColumnLayout">
 
 				<Label text="Unique ID" />
 				<MaskInput mask="~~~~~~~~~~" placeholderSymbol="_" placeholder="All characters allowed">
@@ -27,7 +27,7 @@
 
 			</form:SimpleForm>
 
-			<form:SimpleForm title="Possible usages (may require additional coding)" editable="true">
+			<form:SimpleForm title="Possible usages (may require additional coding)" editable="true" layout="ColumnLayout">
 
 				<Label text="Serial number" />
 				<MaskInput mask="CCCC-CCCC-CCCC-CCCC-CCCC" placeholderSymbol="_" placeholder="Enter digits and capital letters" showClearIcon="{/showClearIcon}">
