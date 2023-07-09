@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/m/InputBase",
+	"sap/m/Input",
 	"sap/m/Link",
 	"sap/ui/base/Event",
 	"sap/base/Log",
@@ -43,6 +44,7 @@ sap.ui.define([
 	Core,
 	coreLibrary,
 	InputBase,
+	Input,
 	Link,
 	Event,
 	Log,
@@ -6433,6 +6435,29 @@ sap.ui.define([
 		//assert
 		assert.strictEqual(aTokens.length, 1 , "The dialog is closed and the value is tokenized");
 		assert.strictEqual(aTokens[0].getText(), "Item 1" , "The correct item is selected");
+
+		//clean up
+		oMultiComboBox.close();
+		this.clock.tick(nPopoverAnimationTick);
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("If_handleInputFocusOut oEvent is missing the logic should be fullfiled", function(assert) {
+		//arrange
+		this.stub(Device, "system").value({
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		var oEvent,
+			oMultiComboBox = new MultiComboBox();
+		this.stub(oMultiComboBox, "getPickerTextField").returns(new Input());
+
+		oMultiComboBox._handleInputFocusOut(oEvent);
+
+		//assert
+		assert.strictEqual(oMultiComboBox.bOkButtonPressed, undefined , "The Ok button is undefined since there was no oEvent");
+		assert.strictEqual(oMultiComboBox._bIsPasteEvent, null, "The logic of the function is fullfiled");
 
 		//clean up
 		oMultiComboBox.destroy();
