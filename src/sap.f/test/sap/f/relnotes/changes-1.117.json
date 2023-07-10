@@ -1,0 +1,18 @@
+{
+  "1.117.0": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "a84e4163012dec8ac3c26a338c44cc00f0ca38db",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: fixed accessibility issues",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370073643"
+          }
+        ]
+      }
+    ]
+  }
+}

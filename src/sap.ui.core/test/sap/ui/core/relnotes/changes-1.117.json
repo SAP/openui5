@@ -1,0 +1,40 @@
+{
+  "1.117.0": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "9d62c0557f64264db1a73b5ac65ed6d6841286a5",
+        "type": "FIX",
+        "text": " base/Localization: setLanguage shouldn't change '_' to '-'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380086486"
+          }
+        ]
+      },
+      {
+        "id": "340da24686201e8f179f5bb908ac8fe67e92c9d7",
+        "type": "FIX",
+        "text": " Theming: Make setThemeRoot more robust",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380086664"
+          }
+        ]
+      },
+      {
+        "id": "7c822b5dd4c806dc2cfb38bad963d9fdb5c00f5e",
+        "type": "FIX",
+        "text": " core/message/MessageMixin: no warning when label text isn't changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380083086"
+          }
+        ]
+      }
+    ]
+  }
+}

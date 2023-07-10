@@ -3,6 +3,136 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "bbcec2cf7bd0fbdaea18bf0bd21476ea620e96a7",
+        "type": "FIX",
+        "text": " sap.ui.core.IconPool: correction for icon 'slim-arrow-up' for theme 'horizon'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380087196"
+          }
+        ]
+      },
+      {
+        "id": "8843278fb98c9496ac668317195f8b4b4f48dd93",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Fixed hard error on invalid property entry",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380086687"
+          }
+        ]
+      },
+      {
+        "id": "33630b534ff2397cc35b92dc5e6c8d84b071785f",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: added clearIcon feature",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380087797"
+          }
+        ]
+      },
+      {
+        "id": "fbc8a0d94320ffb70920cadfb5aa63c312ba564f",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Replace deprecated method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380087420"
+          }
+        ]
+      },
+      {
+        "id": "d562b628a0a38e2db2a0c292b708b65801246b01",
+        "type": "FIX",
+        "text": " sap.m.Select: Initial line-height fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "5905398"
+          }
+        ]
+      },
+      {
+        "id": "1208137a5ffd198f67269f0f9560fa0c63deb0e6",
+        "type": "FIX",
+        "text": " sap.m Popover: Content width adjustment fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380088430"
+          }
+        ]
+      },
+      {
+        "id": "0a63c13d74e75eafbd7dad376f0d41f136ba437a",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: remove inaccurate aria attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370074479"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380066856"
+          }
+        ]
+      },
+      {
+        "id": "f21322ab4c2c3fcc30ef4f715071edd0ee091356",
+        "type": "FIX",
+        "text": " FilePreviewDialog: Load RichTextEditor dependency dynamically, handle case when not available",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380082617"
+          }
+        ]
+      },
+      {
+        "id": "159e1d23186c3e8c6a049b23a60fb768546ec654",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: enable the tooltip setter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370072331"
+          }
+        ]
+      },
+      {
+        "id": "4bbe707233934aba0dd8b79d48d4d3117d1f79a4",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: switch off native autocomplete",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380055784"
+          }
+        ]
+      },
+      {
+        "id": "1e18c84848e90da8887291236761a9f933a3da4d",
+        "type": "FIX",
+        "text": " P13nFilterPanel: ignores formatter for the P13nItem type property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380085111"
+          }
+        ]
+      },
+      {
+        "id": "9a895479461d1f15cb580c78013e71ea7b9f6d43",
+        "type": "FIX",
+        "text": " sap.m.Input: Visual test enhancement"
+      },
+      {
         "id": "841d7284020a4462b2e3c28b844ad827bde9b653",
         "type": "FIX",
         "text": " sap.m.Link. prevent default behavior on mobile",

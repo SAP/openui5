@@ -3,6 +3,17 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "bbcec2cf7bd0fbdaea18bf0bd21476ea620e96a7",
+        "type": "FIX",
+        "text": " sap.ui.core.IconPool: correction for icon 'slim-arrow-up' for theme 'horizon'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380087196"
+          }
+        ]
+      },
+      {
         "id": "bd915a0abaaff4b38754ce41977d4d1bac377790",
         "type": "FIX",
         "text": "sap.ui.unified.Calendar: Align calendar header in horizon theme",
