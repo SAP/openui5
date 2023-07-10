@@ -4,9 +4,12 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/model/json/JSONModel"
-], function (Formatter, Fragment, Controller, Filter, FilterOperator, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/m/library"
+], function (Formatter, Fragment, Controller, Filter, FilterOperator, JSONModel, library) {
 	"use strict";
+
+	const SelectDialogInitialFocus = library.SelectDialogInitialFocus;
 
 	return Controller.extend("sap.m.sample.TableSelectDialogGrowing.C", {
 
@@ -31,10 +34,11 @@ sap.ui.define([
 					return oDialog;
 				});
 			}
-			this._pDialog.then(function(oDialog){
+			this._pDialog.then(function(oDialog) {
 				// Set growing if required
 				var bGrowing = !!oButton.data("growing");
 				oDialog.setGrowing(bGrowing);
+				oDialog.setInitialFocus(bGrowing ? SelectDialogInitialFocus.SearchField : SelectDialogInitialFocus.List);
 				oDialog.open();
 			});
 		},

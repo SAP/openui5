@@ -48,6 +48,9 @@ sap.ui.define([
 	// shortcut for sap.m.TitleAlignment
 	var TitleAlignment = mobileLibrary.TitleAlignment;
 
+	// shortcut for sap.m.SelectDialogInitialFocus
+	var SelectDialogInitialFocus = mobileLibrary.SelectDialogInitialFocus;
+
 	var aSearchEvents = [];
 	var aLiveChangeEvents = [];
 
@@ -960,7 +963,7 @@ sap.ui.define([
 		assert.strictEqual(this.oTableSelectDialog._oTable.getItemsContainerDomRef().firstChild, document.activeElement, 'The table should be focused even if there are no items in the table');
 	});
 
-	QUnit.test("InitialFocus when there are rows in the TableSelectDialog's table", function (assert){
+	QUnit.test("InitialFocus when there are rows in the TableSelectDialog's table", function (assert) {
 		// Arrange
 		var oSystem = {
 			desktop: true,
@@ -1002,6 +1005,29 @@ sap.ui.define([
 
 		}.bind(this));
 		this.clock.tick(500);
+	});
+
+	QUnit.test("Custom initial focus", function (assert) {
+		// Arrange
+		var oSystem = {
+			desktop: true,
+			phone: false,
+			tablet: false
+		};
+
+		this.stub(Device, "system", oSystem);
+		this.oTableSelectDialog.setModel(oModel);
+		this.oTableSelectDialog.bindAggregation("items", "/navigation", template);
+		this.oTableSelectDialog.setInitialFocus(SelectDialogInitialFocus.SearchField);
+
+		// Act
+		this.oTableSelectDialog.open();
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(this.oTableSelectDialog._oSearchField.getFocusDomRef(), document.activeElement, 'Search field is focused');
+
+		this.oTableSelectDialog.setInitialFocus(SelectDialogInitialFocus.List);
 	});
 
 	/********************************************************************************/

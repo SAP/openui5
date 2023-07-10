@@ -43,6 +43,7 @@ sap.ui.define([
 		"use strict";
 
 		var TitleAlignment = mobileLibrary.TitleAlignment;
+		var SelectDialogInitialFocus = mobileLibrary.SelectDialogInitialFocus;
 
 		function generateData() {
 			return {
@@ -1468,6 +1469,32 @@ sap.ui.define([
 			}.bind(this));
 
 			this.oSelectDialog.open();
+			this.clock.tick(350);
+		});
+
+		QUnit.test("Custom initial focus", function (assert) {
+			// Arrange
+			var oSystem = {
+				desktop: true,
+				phone: false,
+				tablet: false
+			};
+
+			this.stub(Device, "system").value(oSystem);
+
+			// Act
+			this.oSelectDialog.setInitialFocus(SelectDialogInitialFocus.SearchField);
+			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
+
+			this.oSelectDialog.open();
+			this.clock.tick(500);
+
+			// Assert
+			assert.strictEqual(this.oSelectDialog._oSearchField.getFocusDomRef(), document.activeElement, 'Search field is focused');
+
+			// Clean up
+			this.oSelectDialog.setInitialFocus(SelectDialogInitialFocus.List);
+			this.oSelectDialog._oDialog.close();
 			this.clock.tick(350);
 		});
 
