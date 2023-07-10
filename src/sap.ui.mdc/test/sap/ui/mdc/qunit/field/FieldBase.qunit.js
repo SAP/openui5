@@ -3283,6 +3283,24 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("showValueStateMessage - should adjust according to ValueHelp opening state", function (assert) {
+		var oContent = oField.getCurrentContent()[0];
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
+
+		sinon.stub(oFieldHelp, "shouldOpenOnFocus").returns(true);
+		sinon.spy(oFieldHelp, "toggleOpen");
+		sinon.stub(oFieldHelp, "isOpen").callsFake(function() {
+			return this.toggleOpen.called;
+		});
+
+		assert.ok(oContent.getShowValueStateMessage(), "showValueStateMessage is enabled as the ValueHelp is closed.");
+		oField.focus();
+		oFieldHelp.fireOpened();
+		assert.notOk(oContent.getShowValueStateMessage(), "showValueStateMessage is disabled as the ValueHelp is opened.");
+		oFieldHelp.fireClosed();
+		assert.ok(oContent.getShowValueStateMessage(), "showValueStateMessage is enabled as the ValueHelp is closed.");
+	});
+
 	QUnit.test("shouldOpenOnFocus - FieldHelp should open on focus", function (assert) {
 
 		var oFieldHelp = oCore.byId(oField.getValueHelp());
