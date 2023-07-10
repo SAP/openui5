@@ -143,9 +143,6 @@ sap.ui.define(function() {
 				title: "Test Page for ui5loader config option 'amd' with activated debug mode"
 			},
 			privateAPIs: {
-				qunit: {
-					seed: Math.random()
-				},
 				bootCore: false
 			},
 			/*

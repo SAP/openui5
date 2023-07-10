@@ -3,7 +3,7 @@
 	"use strict";
 	QUnit.config.reorder = false; // ## remove
 	QUnit.config.autostart = false;
-	QUnit.config.seed = Math.random();
+
 	if ( QUnit.urlParams["rtf"] || QUnit.urlParams["repeat-to-failure"]) {
 		QUnit.done(function(results) {
 			if (results.failed === 0) {
