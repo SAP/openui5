@@ -1960,5 +1960,58 @@
         ]
       }
     ]
+  },
+  "1.84.37": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "0137bdf0ccc154abdc8ec4c9e643d28390a022f3",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default behavior on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006450822022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400004774092023"
+          }
+        ]
+      },
+      {
+        "id": "49dc16fcdb5e7327db3becda37babf262d18067a",
+        "type": "FIX",
+        "text": " For redundant delimiter then status or attribute visibility set to false",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380079267"
+          }
+        ]
+      },
+      {
+        "id": "f9227abfabe0add2b71f1c822a95da34edb4ccac",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: documentation extension",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004628532023"
+          }
+        ]
+      },
+      {
+        "id": "904ce0b98b77d0b70c0c8c3f11ce55ee37c84bba",
+        "type": "FIX",
+        "text": " sap.m.Select: Announce the new value with InvisibleMessage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280161061"
+          }
+        ]
+      }
+    ]
   }
 }

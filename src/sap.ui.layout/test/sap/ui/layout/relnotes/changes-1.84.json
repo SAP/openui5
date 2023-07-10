@@ -63,5 +63,21 @@
         ]
       }
     ]
+  },
+  "1.84.37": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "89587682530c5ddcbbe99bdb0ea2f7f53671796e",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: fixed getScrollDelegate method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370031057"
+          }
+        ]
+      }
+    ]
   }
 }
