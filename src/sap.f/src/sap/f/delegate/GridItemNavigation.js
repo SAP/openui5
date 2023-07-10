@@ -6,18 +6,21 @@ sap.ui.define([
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	"sap/f/library"
+	"sap/f/library",
+	"sap/f/GridNavigationMatrix"
 ], function (
 	Element,
 	ItemNavigation,
 	KeyCodes,
 	Log,
-	library
+	library,
+	GridNavigationMatrix
 ) {
 	"use strict";
 
 	// shortcut for sap.f.NavigationDirection
-	var NavigationDirection = library.NavigationDirection;
+	const NavigationDirection = library.NavigationDirection;
+	const PAGE_SIZE = 10;
 
 	/**
 	 * Constructor for a new <code>sap.f.delegate.GridItemNavigation</code>.
@@ -39,20 +42,22 @@ sap.ui.define([
 	 */
 	var GridItemNavigation = ItemNavigation.extend("sap.f.delegate.GridItemNavigation");
 
-	GridItemNavigation.prototype.resetFocusPosition = function () {
-		this._mCurrentPosition = null;
-	};
-
+	/**
+	 * @override
+	 */
 	GridItemNavigation.prototype.onfocusin = function (oEvent) {
 		ItemNavigation.prototype.onfocusin.call(this, oEvent);
 
-		var aMatrix = this._getGridInstance().getNavigationMatrix();
+		const aMatrix = this._getGridInstance().getNavigationMatrix();
 
 		if (aMatrix && oEvent.target === this.oDomRef) {
 			this._mCurrentPosition = this._findPositionInMatrix(aMatrix, this.getItemDomRefs().indexOf(this.iFocusedIndex));
 		}
 	};
 
+	/**
+	 * @override
+	 */
 	GridItemNavigation.prototype.onsapfocusleave = function (oEvent) {
 		ItemNavigation.prototype.onsapfocusleave.call(this, oEvent);
 
@@ -61,54 +66,61 @@ sap.ui.define([
 		}
 	};
 
-	GridItemNavigation.prototype.ontap = function (oEvent) {
-		// reset focus position when navigation is performed without keyboard
-		this.resetFocusPosition();
-	};
-
 	/**
-	 * Handles the onsapnext event
-	 * Sets the focus to the next item
-	 *
-	 * @param {jQuery.Event} oEvent the browser event
-	 * @private
+	 * @override
 	 */
 	GridItemNavigation.prototype.onsapnext = function (oEvent) {
 		this._moveFocus(oEvent);
 	};
 
 	/**
-	 * Handles the onsapprevious event
-	 * Sets the focus to the previous item
-	 *
-	 * @param {jQuery.Event} oEvent the browser event
-	 * @private
+	 * @override
 	 */
 	GridItemNavigation.prototype.onsapprevious = function (oEvent) {
 		this._moveFocus(oEvent);
 	};
 
+	/**
+	 * @override
+	 */
+	GridItemNavigation.prototype.onsappageup = function(oEvent) {
+		this._moveFocus(oEvent);
+	};
+
+	/**
+	 * @override
+	 */
+	GridItemNavigation.prototype.onsappagedown = function (oEvent) {
+		this._moveFocus(oEvent);
+	};
+
+	GridItemNavigation.prototype.resetFocusPosition = function () {
+		this._mCurrentPosition = null;
+	};
+
+	GridItemNavigation.prototype.ontap = function () {
+		// reset focus position when navigation is performed without keyboard
+		this.resetFocusPosition();
+	};
+
 	GridItemNavigation.prototype._moveFocus = function (oEvent) {
-		var aItemDomRefs = this.getItemDomRefs(),
-			oCurrentItem = oEvent.target,
-			aMatrix,
-			oStartPosition;
+		const oCurrentItem = oEvent.target;
 
 		// only react on events of the domrefs
-		if (aItemDomRefs.indexOf(oEvent.target) === -1) {
+		if (this.getItemDomRefs().indexOf(oCurrentItem) === -1) {
 			return;
 		}
 
 		oEvent.preventDefault();
 
-		aMatrix = this._getGridInstance().getNavigationMatrix();
+		const aMatrix = this._getGridInstance().getNavigationMatrix();
 
 		if (!aMatrix) {
 			// grid control is not rendered or theme is not applied yet
 			return;
 		}
 
-		oStartPosition = this._findPositionInMatrix(aMatrix, oCurrentItem);
+		const oStartPosition = this._findPositionInMatrix(aMatrix, oCurrentItem);
 
 		if (!this._mCurrentPosition) {
 			this._mCurrentPosition = {
@@ -130,133 +142,142 @@ sap.ui.define([
 			case KeyCodes.ARROW_LEFT:
 				this._moveFocusLeft(oStartPosition, aMatrix, oCurrentItem, oEvent);
 				break;
+			case KeyCodes.PAGE_DOWN:
+				this._moveFocusDown(oStartPosition, aMatrix, oCurrentItem, oEvent, PAGE_SIZE);
+				break;
+			case KeyCodes.PAGE_UP:
+				this._moveFocusUp(oStartPosition, aMatrix, oCurrentItem, oEvent, PAGE_SIZE);
+				break;
 			default:
 				break;
 		}
-
-		Log.info("Grid matrix position: (" + oStartPosition.row + ", " + oStartPosition.column + ")");
 	};
 
-	GridItemNavigation.prototype._moveFocusDown = function (oStartPosition, aMatrix, oCurrentItem, oEvent) {
+	GridItemNavigation.prototype._moveFocusDown = function (oStartPosition, aMatrix, oCurrentItem, oEvent, iMinSkipRows = 1) {
+		const oPosition = {
+			row: oStartPosition.row,
+			column: this._mCurrentPosition.column
+		};
+		const oNextItemPosition = { ...oPosition };
+		let oNextFocusItem = aMatrix[oNextItemPosition.row][oNextItemPosition.column];
 
-		var aItemDomRefs = this.getItemDomRefs(),
-			oNextFocusItem;
+		while (
+			oPosition.row < aMatrix.length - 1
+			&& (oNextFocusItem === oCurrentItem || oPosition.row - oStartPosition.row < iMinSkipRows)
+		) {
+			oPosition.row += 1;
 
-		oStartPosition.column = this._mCurrentPosition.column;
-
-		while (oStartPosition.row < aMatrix.length &&
-			(aMatrix[oStartPosition.row][oStartPosition.column] === oCurrentItem || aMatrix[oStartPosition.row][oStartPosition.column] === false)) {
-			oStartPosition.row += 1;
+			if (aMatrix[oPosition.row][oPosition.column] !== GridNavigationMatrix.EMPTY_CELL) {
+				oNextFocusItem = aMatrix[oPosition.row][oPosition.column];
+				oNextItemPosition.row = oPosition.row;
+			}
 		}
 
-		if (oStartPosition.row >= aMatrix.length) {
+		if (oNextFocusItem === oCurrentItem) {
 			this._onBorderReached(oEvent);
 			return;
 		}
 
-		oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
-		if (oNextFocusItem) {
-			this._mCurrentPosition = oStartPosition;
-			this.focusItem(aItemDomRefs.indexOf(oNextFocusItem), oEvent);
-		} else {
-			this._onBorderReached(oEvent);
-		}
+		this._mCurrentPosition = oNextItemPosition;
+		this.focusItem(this.getItemDomRefs().indexOf(oNextFocusItem), oEvent);
+		Log.info("Grid matrix position: (" + this._mCurrentPosition.row + ", " + this._mCurrentPosition.column + ")");
 	};
 
 	GridItemNavigation.prototype._moveFocusRight = function (oStartPosition, aMatrix, oCurrentItem, oEvent) {
-		var aItemDomRefs = this.getItemDomRefs(),
-			oNextFocusItem;
-
 		oStartPosition.row = this._mCurrentPosition.row;
+		let oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
 
-		while (oStartPosition.column < aMatrix[oStartPosition.row].length &&
-			(aMatrix[oStartPosition.row][oStartPosition.column] === oCurrentItem || aMatrix[oStartPosition.row][oStartPosition.column] === false)) {
+		while (
+			oStartPosition.column < aMatrix[oStartPosition.row].length - 1
+			&& oNextFocusItem === oCurrentItem
+		) {
 			oStartPosition.column += 1;
+
+			if (aMatrix[oStartPosition.row][oStartPosition.column] !== GridNavigationMatrix.EMPTY_CELL) {
+				oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
+			}
 		}
 
-		if (oStartPosition.column >= aMatrix[oStartPosition.row].length) {
+		if (oNextFocusItem === oCurrentItem) {
 			this._onBorderReached(oEvent);
 			return;
 		}
 
-		oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
-		if (oNextFocusItem) {
-			this._mCurrentPosition = oStartPosition;
-			this.focusItem(aItemDomRefs.indexOf(oNextFocusItem), oEvent);
-		} else {
-			this._onBorderReached(oEvent);
-		}
+		this._mCurrentPosition = oStartPosition;
+		this.focusItem(this.getItemDomRefs().indexOf(oNextFocusItem), oEvent);
+		Log.info("Grid matrix position: (" + this._mCurrentPosition.row + ", " + this._mCurrentPosition.column + ")");
 	};
 
-	GridItemNavigation.prototype._moveFocusUp = function (oStartPosition, aMatrix, oCurrentItem, oEvent) {
-		var aItemDomRefs = this.getItemDomRefs(),
-			oNextFocusItem;
+	GridItemNavigation.prototype._moveFocusUp = function (oStartPosition, aMatrix, oCurrentItem, oEvent, iMinSkipRows = 1) {
+		const oPosition = {
+			row: oStartPosition.row,
+			column: this._mCurrentPosition.column
+		};
+		const oNextItemPosition = { ...oPosition };
+		let oNextFocusItem = aMatrix[oNextItemPosition.row][oNextItemPosition.column];
 
-		oStartPosition.column = this._mCurrentPosition.column;
+		while (
+			oPosition.row > 0
+			&& (oNextFocusItem === oCurrentItem || oStartPosition.row - oPosition.row < iMinSkipRows)
+		) {
+			oPosition.row -= 1;
 
-		while (oStartPosition.row >= 0 &&
-			(aMatrix[oStartPosition.row][oStartPosition.column] === oCurrentItem || aMatrix[oStartPosition.row][oStartPosition.column] === false)) {
-			oStartPosition.row -= 1;
+			if (aMatrix[oPosition.row][oPosition.column] !== GridNavigationMatrix.EMPTY_CELL) {
+				oNextFocusItem = aMatrix[oPosition.row][oPosition.column];
+				oNextItemPosition.row = oPosition.row;
+			}
 		}
 
-		if (oStartPosition.row < 0) {
+		if (oNextFocusItem === oCurrentItem) {
 			this._onBorderReached(oEvent);
 			return;
 		}
 
-		oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
-		if (oNextFocusItem) {
-
-			// move to the upper top row index
-			while (oStartPosition.row > 0 && aMatrix[oStartPosition.row - 1][oStartPosition.column] === oNextFocusItem) {
-				oStartPosition.row -= 1;
-			}
-
-			this._mCurrentPosition = oStartPosition;
-			this.focusItem(aItemDomRefs.indexOf(oNextFocusItem), oEvent);
-		} else {
-			this._onBorderReached(oEvent);
+		// move to the upper top row index
+		while (oNextItemPosition.row > 0 && aMatrix[oNextItemPosition.row - 1][oNextItemPosition.column] === oNextFocusItem) {
+			oNextItemPosition.row -= 1;
 		}
+
+		this._mCurrentPosition = oNextItemPosition;
+		this.focusItem(this.getItemDomRefs().indexOf(oNextFocusItem), oEvent);
+		Log.info("Grid matrix position: (" + this._mCurrentPosition.row + ", " + this._mCurrentPosition.column + ")");
 	};
 
 	GridItemNavigation.prototype._moveFocusLeft = function (oStartPosition, aMatrix, oCurrentItem, oEvent) {
-		var aItemDomRefs = this.getItemDomRefs(),
-			oNextFocusItem;
-
 		oStartPosition.row = this._mCurrentPosition.row;
+		let oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
 
-		while (oStartPosition.column >= 0 &&
-			(aMatrix[oStartPosition.row][oStartPosition.column] === oCurrentItem || aMatrix[oStartPosition.row][oStartPosition.column] === false)) {
+		while (
+			oStartPosition.column > 0
+			&& oNextFocusItem === oCurrentItem
+		) {
 			oStartPosition.column -= 1;
+
+			if (aMatrix[oStartPosition.row][oStartPosition.column] !== GridNavigationMatrix.EMPTY_CELL) {
+				oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
+			}
 		}
 
-		if (oStartPosition.column < 0) {
+		if (oNextFocusItem === oCurrentItem) {
 			this._onBorderReached(oEvent);
 			return;
 		}
 
-		oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
-		if (oNextFocusItem) {
-
-			// move to the most left column index
-			while (oStartPosition.column > 0 && aMatrix[oStartPosition.row][oStartPosition.column - 1] === oNextFocusItem) {
-				oStartPosition.column -= 1;
-			}
-
-			this._mCurrentPosition = oStartPosition;
-			this.focusItem(aItemDomRefs.indexOf(oNextFocusItem), oEvent);
-		} else {
-			this._onBorderReached(oEvent);
+		// move to the most left column index
+		while (oStartPosition.column > 0 && aMatrix[oStartPosition.row][oStartPosition.column - 1] === oNextFocusItem) {
+			oStartPosition.column -= 1;
 		}
+
+		this._mCurrentPosition = oStartPosition;
+		this.focusItem(this.getItemDomRefs().indexOf(oNextFocusItem), oEvent);
+		Log.info("Grid matrix position: (" + this._mCurrentPosition.row + ", " + this._mCurrentPosition.column + ")");
 	};
 
 	GridItemNavigation.prototype._findPositionInMatrix = function (aMatrix, oItem) {
-
-		var oMatrixPositions = null;
+		let oMatrixPositions = null;
 
 		aMatrix.some(function (aInnerRow, iColumnIndex) {
-
-			var iRowIndex = aInnerRow.indexOf(oItem);
+			const iRowIndex = aInnerRow.indexOf(oItem);
 
 			if (iRowIndex !== -1) {
 				oMatrixPositions = {};
@@ -266,11 +287,12 @@ sap.ui.define([
 			}
 			return false;
 		});
+
 		return oMatrixPositions;
 	};
 
 	GridItemNavigation.prototype._onBorderReached = function (oEvent) {
-		var sDirection;
+		let sDirection;
 
 		switch (oEvent.keyCode) {
 			case KeyCodes.ARROW_RIGHT:
@@ -280,9 +302,11 @@ sap.ui.define([
 				sDirection = NavigationDirection.Left;
 				break;
 			case KeyCodes.ARROW_DOWN:
+			case KeyCodes.PAGE_DOWN:
 				sDirection = NavigationDirection.Down;
 				break;
 			case KeyCodes.ARROW_UP:
+			case KeyCodes.PAGE_UP:
 				sDirection = NavigationDirection.Up;
 				break;
 		}
@@ -296,8 +320,8 @@ sap.ui.define([
 	};
 
 	GridItemNavigation.prototype.focusItemByDirection = function (oGrid, sDirection, iRow, iColumn) {
-		var oCurrentItem,
-			aMatrix = oGrid.getNavigationMatrix(),
+		const aMatrix = oGrid.getNavigationMatrix();
+		let oCurrentItem,
 			aRow,
 			iRowIndex,
 			iColIndex;
