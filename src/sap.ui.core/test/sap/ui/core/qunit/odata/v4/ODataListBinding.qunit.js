@@ -1254,10 +1254,6 @@ sap.ui.define([
 				{$$operationMode : OperationMode.Client});
 		}, new Error("Unsupported operation mode: Client"));
 		assert.throws(function () {
-			this.bindList("/EMPLOYEES", undefined, new Sorter("ID"), undefined,
-				{$$operationMode : OperationMode.Auto});
-		}, new Error("Unsupported operation mode: Auto"));
-		assert.throws(function () {
 			this.bindList("/EMPLOYEES", undefined, new Sorter("ID"));
 		}, new Error("Unsupported operation mode: undefined"));
 	});
@@ -1291,10 +1287,6 @@ sap.ui.define([
 			this.bindList("/EMPLOYEES", undefined, undefined, new Filter("ID", "eq", 42),
 				{$$operationMode : OperationMode.Client});
 		}, new Error("Unsupported operation mode: Client"));
-		assert.throws(function () {
-			this.bindList("/EMPLOYEES", undefined, undefined, new Filter("ID", "eq", 42),
-				{$$operationMode : OperationMode.Auto});
-		}, new Error("Unsupported operation mode: Auto"));
 		assert.throws(function () {
 			this.bindList("/EMPLOYEES", undefined, undefined, new Filter("ID", "eq", 42));
 		}, new Error("Unsupported operation mode: undefined"));
