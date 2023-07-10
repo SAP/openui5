@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/format/DateFormat"
-], function (Configuration, Locale, LocaleData, UI5Date, DateFormat) {
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/format/TimezoneUtil"
+], function (Configuration, Locale, LocaleData, UI5Date, DateFormat, TimezoneUtil) {
 		"use strict";
 
 		var sDefaultTimezone = Configuration.getTimezone();
@@ -1006,6 +1007,26 @@ sap.ui.define([
 			});
 		});
 
+		//*********************************************************************************************
+		QUnit.test("parse, find the longest match for symbol 'V'", function (assert) {
+			const oFormat = {
+					oLocaleData : {getTimezoneTranslations() {}}
+				};
+			const oTimezoneUtilMock = this.mock(TimezoneUtil);
+
+			this.mock(oFormat.oLocaleData).expects("getTimezoneTranslations").withExactArgs().returns({});
+
+			oTimezoneUtilMock.expects("isValidTimezone").withExactArgs("~Timezone7").returns(false);
+			oTimezoneUtilMock.expects("isValidTimezone").withExactArgs("~Timezone").returns(true);
+
+			// code under test
+			const oTimezoneParsed = DateFormat.prototype.oSymbols.V.parse("~Timezone7", {digits : 2}, oFormat);
+
+			assert.strictEqual(oTimezoneParsed.timezone, "~Timezone");
+			assert.strictEqual(oTimezoneParsed.length, 9);
+		});
+
+		//*********************************************************************************************
 		QUnit.test("format and parse with show timezone and show time is set to false", function (assert) {
 			var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({showTime: false}),
 				sFormatted;
