@@ -720,14 +720,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setYear()", function (assert) {
-		var oUI5Date = {_setParts: function () {}};
+[
+	{iYear : 0, iResultingYear : 1900},
+	{iYear : -1, iResultingYear : -1},
+	{iYear : 9.9, iResultingYear : 1909},
+	{iYear : 99, iResultingYear : 1999},
+	{iYear : 100, iResultingYear : 100}
+].forEach(function (oFixture) {
+	QUnit.test("setYear(" + oFixture.iYear + ")", function (assert) {
+		var oUI5Date = {
+				_setParts : function () {
+			}},
+			oUI5DateMock = this.mock(oUI5Date);
 
-		this.mock(oUI5Date).expects("_setParts").withExactArgs(["year"], [1942]).returns("~newTimeStamp");
+		oUI5DateMock.expects("_setParts").withExactArgs(["year"], [oFixture.iResultingYear])
+			.returns("~TimeStamp");
 
 		// code under test
-		assert.strictEqual(UI5Date.prototype.setYear.call(oUI5Date, 42), "~newTimeStamp");
+		assert.strictEqual(UI5Date.prototype.setYear.call(oUI5Date, oFixture.iYear), "~TimeStamp");
 	});
+});
 
 	//*********************************************************************************************
 [
