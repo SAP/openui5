@@ -2520,6 +2520,8 @@ sap.ui.define([
 											An already open typeahead content will consult showTypeahead again on any every filtervalue update and eventually close.
 										*/
 										oFieldHelp.open(true);
+									} else {
+										_setShowValueStateMessage.call(this, false);
 									}
 									_setAriaAttributes.call(this, true);
 									delete this._vLiveChangeValue;
@@ -2737,12 +2739,19 @@ sap.ui.define([
 					oContent.bValueHelpRequested = false; // TODO: need API
 				}
 			}
-			if (oContent && oContent.closeValueStateMessage && oContent.setShowValueStateMessage) { // on after opened it looks very delayed
-				oContent.closeValueStateMessage(); // close valueState-message as it is shown inside popover and it should not appear twice if popover opens above field
-				oContent.setShowValueStateMessage(false); // to prevent reopen on rerendering
-			}
 		}
 
+	}
+
+	function _setShowValueStateMessage (bValue) {
+		this.getCurrentContent().forEach(function (oContent) {
+			if (oContent.closeValueStateMessage && !bValue) {
+				oContent.closeValueStateMessage(); // close valueState-message as it is shown inside popover and it should not appear twice if popover opens above field
+			}
+			if (oContent.setShowValueStateMessage) { // on after opened it looks very delayed
+				oContent.setShowValueStateMessage(bValue); // to prevent reopen on rerendering
+			}
+		});
 	}
 
 	function _handleFieldHelpSelect(oEvent) {
@@ -3001,10 +3010,7 @@ sap.ui.define([
 				this._oManagedObjectModel.checkUpdate(true); // forces update of value property via binding to conditions
 			}
 		}
-
-		if (oContent && oContent.setShowValueStateMessage) {
-			oContent.setShowValueStateMessage(true); // to show it again if needed (disabled while opening)
-		}
+		_setShowValueStateMessage.call(this, true);
 
 		_setAriaAttributes.call(this, false);
 
@@ -3018,6 +3024,8 @@ sap.ui.define([
 	function _handleFieldHelpOpened(oEvent) {
 
 		_setAriaAttributes.call(this, true);
+		_setShowValueStateMessage.call(this, false);
+
 		// close ValueState message on opening, because opened is sometimes very delayed what would lead to strange effect
 
 	}
