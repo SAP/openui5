@@ -312,7 +312,9 @@ function(
 
 			var oWalker = document.createTreeWalker(
 					oDomRef,
-					NodeFilter.SHOW_ELEMENT
+					NodeFilter.SHOW_ELEMENT,
+					null,
+					false
 				),
 				oCurrentNode = oWalker.nextNode();
 

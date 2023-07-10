@@ -70,17 +70,33 @@ sap.ui.define([
 		assert.ok(!$a.attr("target"), "span::target is not rendered");
 		setText('<span style="overflow-wrap: break-word;">' + sFT + '</span>');
 		$span = oFT.$().find("span");
-		assert.strictEqual($span[0].getAttribute("style"), "overflow-wrap: break-word; position: static !important;", "styles are properly semicolon separated");
+		assert.ok(styleContains($span[0].getAttribute("style"), ["overflow-wrap: break-word", "position: static !important"]), "styles are properly semicolon separated 1");
 		setText('<span style="overflow-wrap: break-word; color: red;">' + sFT + '</span>');
 		$span = oFT.$().find("span");
-		assert.strictEqual($span[0].getAttribute("style"), "overflow-wrap: break-word; color: red; position: static !important;", "styles are properly semicolon separated");
+		assert.ok(styleContains($span[0].getAttribute("style"), ["overflow-wrap: break-word", "color: red", "position: static !important"]), "styles are properly semicolon separated 2");
 		setText('<span style="padding-inline-start: 15px; margin-block-start: 0px">' + sFT + '</span>');
 		$span = oFT.$().find("span");
-		assert.strictEqual($span[0].getAttribute("style"), "padding-inline-start: 15px; margin-block-start: 0px; position: static !important;", "styles are properly semicolon separated");
+		assert.ok(styleContains($span[0].getAttribute("style"), ["padding-inline-start: 15px", "margin-block-start: 0px", "position: static !important"]), "styles are properly semicolon separated 1");
 		setText('<a style="color:red;position:absolute;">"' + sFT + '</a>');
 		assert.strictEqual($a[0].style.position, "static", "inline style for position is set to 'static'");
 		setText('<a style="position:fixed;">"' + sFT + '</a>');
 		assert.strictEqual($a[0].style.position, "static", "inline style for position is set to 'static'");
+
+		// checks if CSS properties given in aContent are all presented in sStyle string
+		// made because some browsers (like IE) change order of the properties
+		function styleContains(sStyle, aContent) {
+			var aStyle = sStyle.replace(/;\s/g, ";").substr(0, sStyle.length - 1).split(";"),
+				iIndex,
+				iMatch = 0;
+
+			aStyle.pop(); // remove the last empty element
+
+			for (iIndex = 0; iIndex < aContent.length; iIndex++) {
+				aStyle.indexOf(aContent[iIndex]) != -1 && iMatch++;
+			}
+
+			return iMatch === aStyle.length;
+		}
 	});
 
 	QUnit.test("css classes", function(assert) {
