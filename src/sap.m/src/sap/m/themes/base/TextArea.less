@@ -3,10 +3,16 @@
 /* Base theme                      */
 /* =============================== */
 
-@_sapMTextAreaPadding: 0.625rem 0.75rem;
-@_sapMTextAreaPadding_Compact: 0.1875rem 0.5rem;
-@_sapMTextAreaValueStatePadding: 0.5625rem 0.6875rem;
-@_sapMTextAreaValueStatePadding_Compact: 0.125rem 0.4375rem;
+@_sapMTextAreaPadding: 0.4375rem 0.5625rem;
+@_sapMTextAreaPadding_Compact: 0.125rem 0.4375rem;
+@_sapMTextAreaReadonlyPadding: 0.4375rem 0.5625rem;
+@_sapMTextAreaReadonlyPadding_Compact: 0.125rem 0.4375rem;
+@_sapMTextAreaValueStateSuccessPadding: 0.4375rem 0.5625rem;
+@_sapMTextAreaValueStateSuccessPadding_Compact: 0.125rem 0.4375rem;
+@_sapMTextAreaValueStateInformationPadding: 0.375rem 0.5rem;
+@_sapMTextAreaValueStateInformationPadding_Compact: 0.0625rem 0.375rem;
+@_sapMTextAreaValueStateErrorWarningPadding: 0.375rem 0.5rem;
+@_sapMTextAreaValueStateErrorWarningPadding_Compact: 0.0625rem 0.375rem;
 
 /* uses sapMInputBase styles */
 
@@ -65,7 +71,6 @@
 	visibility: hidden;
 	word-break: break-word;
 	font-size: @sapFontSize;
-	padding: @_sapMTextAreaPadding;
 }
 
 .sapMInputBase.sapMTextArea {
@@ -75,14 +80,39 @@
 
 	.sapMTextAreaInner {
 		line-height: 1.4;
-		padding: @_sapMTextAreaPadding;
 		-webkit-overflow-scrolling: touch; /* IOS only */
+	}
+
+	&.sapMInputBaseReadonly .sapMInputBaseReadonlyWrapper {
+		background-image: none;
 	}
 }
 
-.sapMInputBase.sapMTextArea .sapMInputBaseContentWrapperState {
+.sapMInputBase.sapMTextArea {
 	.sapMTextAreaInner, .sapMTextAreaMirror {
-		padding: @_sapMTextAreaValueStatePadding;
+		padding: @_sapMTextAreaPadding;
+	}
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperError,
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperWarning {
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaValueStateErrorWarningPadding;
+		}
+	}
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperSuccess {
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaValueStateSuccessPadding;
+		}
+	}
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperInformation {
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaValueStateInformationPadding;
+		}
+	}
+}
+
+.sapMInputBase.sapMTextArea.sapMInputBaseReadonly {
+	.sapMTextAreaInner, .sapMTextAreaMirror {
+		padding: @_sapMTextAreaReadonlyPadding;
 	}
 }
 
@@ -109,15 +139,31 @@
 			padding-top: 0.3125rem;
 		}
 	}
+	.sapMInputBase.sapMTextArea.sapMInputBaseReadonly {
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaReadonlyPadding_Compact;
+		}
+	}
 }
 
 .sapUiSizeCompact .sapMInputBase.sapMTextArea {
 	.sapMTextAreaInner, .sapMTextAreaMirror {
 		padding: @_sapMTextAreaPadding_Compact;
 	}
-	.sapMInputBaseContentWrapperState {
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperError,
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperWarning {
 		.sapMTextAreaInner, .sapMTextAreaMirror {
-			padding: @_sapMTextAreaValueStatePadding_Compact;
+			padding: @_sapMTextAreaValueStateErrorWarningPadding_Compact;
+		}
+	}
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperSuccess {
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaValueStateSuccessPadding_Compact;
+		}
+	}
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperInformation {
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaValueStateInformationPadding_Compact;
 		}
 	}
 }
@@ -134,7 +180,7 @@ html.sap-tablet, html.sap-phone {
 	}
 }
 
-html.sap-desktop:not(.sapUiNativeScrollbars) .sapMTextArea .sapMInputBaseContentWrapper ::-webkit-scrollbar {
+html.sap-desktop:not(.sapUiNativeScrollbars) .sapMTextArea .sapMInputBaseContentWrapper:not(.sapMInputBaseReadonlyWrapper) ::-webkit-scrollbar {
 	background: @sapUiFieldBackgroundStyle;
 	background-color: @sapUiScrollBarTrackColor;
 }
@@ -157,11 +203,6 @@ html.sap-desktop:not(.sapUiNativeScrollbars) .sapMTextArea {
 
 	.sapMInputBaseContentWrapperSuccess ::-webkit-scrollbar {
 		background: @sapUiFieldSuccessBackgroundStyle;
-		background-color: @sapUiScrollBarTrackColor;
-	}
-
-	.sapMInputBaseReadonlyWrapper ::-webkit-scrollbar {
-		background: @sapField_ReadOnly_BackgroundStyle;
 		background-color: @sapUiScrollBarTrackColor;
 	}
 }
