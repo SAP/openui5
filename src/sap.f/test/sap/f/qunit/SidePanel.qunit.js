@@ -553,6 +553,18 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth, "Side panel width is decreased with regular step when Arrow Right is pressed");
 
+		// Act (Arrow Up)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_UP);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth + iStep, "Side panel width is increased with regular step when Arrow Up is pressed");
+
+		// Act (Arrow Right)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_DOWN);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth, "Side panel width is decreased with regular step when Arrow Down is pressed");
+
 		// Act (Shift + Arrow Left)
 		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_LEFT, true);
 
@@ -564,6 +576,18 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth, "Side panel width is decreased with larger step when Shift + Arrow Right is pressed");
+
+		// Act (Shift + Arrow Up)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_UP, true);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth + iLargerStep, "Side panel width is increased with larger step when Shift + Arrow Up is pressed");
+
+		// Act (Shift + Arrow Down)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_DOWN, true);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth, "Side panel width is decreased with larger step when Shift + Arrow Down is pressed");
 
 		// Act (Home)
 		qutils.triggerKeydown(oResizeBar, KeyCodes.HOME);
@@ -665,7 +689,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oResizeBar.getAttribute("aria-orientation"), "vertical", "Side panel resize bar has proper aria-orientation");
-		assert.strictEqual(oResizeBar.getAttribute("aria-roledescription"), "splitter separator", "Side panel resize bar has proper aria-roledescription");
+		assert.strictEqual(oResizeBar.getAttribute("aria-roledescription"), "splitter", "Side panel resize bar has proper aria-roledescription");
 		assert.ok(oResizeBar.getAttribute("aria-valuenow"), "Side panel resize bar has aria-valuenow attribute");
 		assert.ok(oResizeBar.getAttribute("aria-valuemin"), "Side panel resize bar has aria-valuemin attribute");
 		assert.ok(oResizeBar.getAttribute("aria-valuemax"), "Side panel resize bar has aria-valuemax attribute");
