@@ -9,10 +9,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/Version",
 	"sap/ui/support/library",
-	"sap/ui/support/supportRules/Storage",
-	"sap/ui/support/supportRules/Constants"
+	"sap/ui/support/supportRules/Storage"
 ],
-function (Log, Version, library, storage, constants) {
+function (Log, Version, library, storage) {
 	"use strict";
 
 	/**
@@ -214,6 +213,31 @@ function (Log, Version, library, storage, constants) {
 	RuleSet.prototype.removeRule = function (oRule) {
 		if (this._mRules[oRule.id]) {
 			delete this._mRules[oRule.id];
+		}
+	};
+
+	/**
+	 * Merge the rules (or array of rules) of another RuleSet, into this RuleSet.
+	 * @public
+	 * @param {sap.ui.support.RuleSet|sap.ui.support.RuleConfiguration[]} vRuleSetOrRules Rules to be merged
+	 */
+	RuleSet.prototype.mergeRuleSet = function (vRuleSetOrRules) {
+		var aRules = vRuleSetOrRules;
+
+		if (vRuleSetOrRules instanceof RuleSet) {
+			aRules = vRuleSetOrRules.getRules();
+		}
+
+		for (var i = 0; i < aRules.length; i++) {
+			var vRule = aRules[i];
+
+			if (Array.isArray(vRule)) {
+				for (var k = 0; k < vRule.length; k++) {
+					this.addRule(vRule[k]);
+				}
+			} else {
+				this.addRule(vRule);
+			}
 		}
 	};
 
