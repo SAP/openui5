@@ -729,7 +729,7 @@ sap.ui.define([
 	 * method then adds a transient entity to the parent's navigation property, which is sent with
 	 * the payload of the parent entity. Such a nested context cannot be inactive.
 	 *
-	 * <b>Beware:</b> After a succesful creation of the main entity the context returned for a
+	 * <b>Note:</b> After a succesful creation of the main entity the context returned for a
 	 * nested entity is no longer valid. Do not use the
 	 * {@link sap.ui.model.odata.v4.Context#created created} promise of such a context! New contexts
 	 * are created for the nested collection because it is not possible to reliably assign the
@@ -751,8 +751,12 @@ sap.ui.define([
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
 	 * @param {boolean} [bSkipRefresh]
-	 *   Whether an automatic refresh of the created entity will be skipped; ignored within a deep
-	 *   create (when the binding's parent context is transient)
+	 *   Whether an automatic refresh of the created entity will be skipped.
+	 *   <br>
+	 *   <b>Note:</b> Do not use this parameter for a deep create. It leads to multiple single row
+	 *   requests if the POST response did not supply all properties of the nested list. If it is
+	 *   not set, the model checks whether all required properties and child entities are available
+	 *   on the client and requests only data that is missing.
 	 * @param {boolean} [bAtEnd]
 	 *   Whether the entity is inserted at the end of the list. Supported since 1.66.0.
 	 *   Since 1.99.0 the first insertion determines the overall position of created contexts
