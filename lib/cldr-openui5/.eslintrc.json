@@ -1,42 +1,28 @@
 {
-	"root": true,
 	"env": {
 		"node": true,
-		"browser": false,
-		"es2022": true
+		"browser": false
 	},
 	"parserOptions": {
 		"sourceType": "module"
 	},
-	"extends": ["eslint:recommended"],
 	"rules": {
 		"indent": [
 			"error",
 			"tab",
 			{"SwitchCase": 1}
 		],
-		"linebreak-style": [
-			"error",
-			"unix"
-		],
 		"max-len": [
 			"error",
 			{"code": 120, "ignoreUrls": true, "ignoreRegExpLiterals": true}
 		],
 		"no-console": "off",
-		"no-loop-func": "warn",
 		"no-prototype-builtins": "off",
-		"no-unused-vars": "error",
 		"no-var": "error",
-		"space-infix-ops": "error",
 		"quotes": [
 			"error",
 			"double",
 			{"allowTemplateLiterals": true}
-		],
-		"semi": [
-			"error",
-			"always"
 		],
 		"strict": [
 			"error",
