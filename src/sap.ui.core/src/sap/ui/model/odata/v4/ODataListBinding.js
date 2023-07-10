@@ -2453,14 +2453,20 @@ sap.ui.define([
 	 * Additionally, you must be aware of server-driven paging and be ready to send a follow-up
 	 * request if the response contains <code>@odata.nextlink</code>.
 	 *
+	 * The URL cannot be determined synchronously in all cases; use {@link #requestDownloadUrl} to
+	 * allow for asynchronous determination then.
+	 *
 	 * @returns {string}
 	 *   The download URL
 	 * @throws {Error}
-	 *   If the binding is unresolved or if the URL determination is not finished yet
+	 *   If the binding is unresolved or if the URL cannot be determined synchronously (either due
+	 *   to a pending metadata request or because the <code>autoExpandSelect</code> parameter at the
+	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor model} is used and the binding has been
+	 *   newly created and is thus still automatically generating its $select and $expand system
+	 *   query options from the binding hierarchy)
 	 *
 	 * @function
 	 * @public
-	 * @see #requestDownloadUrl
 	 * @since 1.74.0
 	 */
 	ODataListBinding.prototype.getDownloadUrl = _Helper.createGetMethod("fetchDownloadUrl", true);
