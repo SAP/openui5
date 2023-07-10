@@ -29,10 +29,13 @@ sap.ui.define([
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustratedMessageSize",
 	"sap/ui/core/Core",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/m/Menu",
+	"sap/m/MenuItem",
+	"sap/m/MenuButton"
 ], function (Control, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar,
 			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod,
-			DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder, IllustratedMessage,IllustratedMessageType, IllustratedMessageSize, Core, InvisibleText) {
+			DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder, IllustratedMessage,IllustratedMessageType, IllustratedMessageSize, Core, InvisibleText, Menu, MenuItem, MenuButton) {
 	"use strict";
 
 	/**
@@ -596,6 +599,10 @@ sap.ui.define([
 				aList.getDomRef().querySelector(".sapMUCNoDataPage").focus();
 			}
 		}
+
+		if (this.getCloudFilePickerEnabled()) {
+			this._oFileUploader.addStyleClass("sapMUSTFileUploaderVisibility");
+		}
 	};
 
 	/**
@@ -673,26 +680,61 @@ sap.ui.define([
 
 	UploadSet.prototype.getToolbar = function () {
 		if (!this._oToolbar) {
+			var oUploader = this.getCloudFilePickerEnabled() ? this._getCloudFilePicker() : this.getDefaultFileUploader();
 			this._oToolbar = this.getAggregation("toolbar");
 			if (!this._oToolbar) {
 				this._oToolbar = new OverflowToolbar(this.getId() + "-toolbar", {
-					content: [this._oNumberOfAttachmentsTitle, new ToolbarSpacer(), this.getDefaultFileUploader(), this._getCloudFilePicker()]
+					content: [this._oNumberOfAttachmentsTitle, new ToolbarSpacer(), oUploader]
 				});
 				this._iFileUploaderPH = 2;
 				this.addDependent(this._oToolbar);
 			} else {
 				this._iFileUploaderPH = this._getFileUploaderPlaceHolderPosition(this._oToolbar);
 				if (this._oToolbar && this._iFileUploaderPH > -1) {
-					this._setFileUploaderInToolbar(this.getDefaultFileUploader());
+					this._setFileUploaderInToolbar(oUploader);
 				} else if (this._oToolbar) {
 					// fallback position to add file uploader control if UploadSetToolbarPlaceHolder instance not found
-					this._oToolbar.addContent(this.getDefaultFileUploader());
+					this._oToolbar.addContent(oUploader);
 				}
-				this._oToolbar.addContent(this._getCloudFilePicker());
+			}
+			if (this.getCloudFilePickerEnabled()) {
+				this._oToolbar.addContent(this.getDefaultFileUploader());
 			}
 		}
 
 		return this._oToolbar;
+	};
+
+
+	UploadSet.prototype._openFileUploaderPicker = function () {
+		this._oFileUploader.oFileUpload.click();
+	};
+
+	UploadSet.prototype._openCloudFilePicker = function () {
+		this._invokeCloudFilePicker();
+	};
+
+	UploadSet.prototype._itemSelectedCallback = function (oEvent) {
+		var oItem = oEvent.getParameter("item");
+		// eslint-disable-next-line default-case
+		switch (oItem.getText()) {
+			case this.getCloudFilePickerButtonText() ? this.getCloudFilePickerButtonText() : this._oRb.getText("UPLOAD_SET_DEFAULT_CFP_BUTTON_TEXT"):
+				this._oMenuButton
+					.detachEvent("defaultAction", this._openFileUploaderPicker.bind(this))
+					.attachEvent("defaultAction", this._openCloudFilePicker.bind(this));
+
+				this._openCloudFilePicker();
+				this._oMenuButton.setText(oItem.getText());
+				break;
+			case this._oRb.getText("UPLOAD_SET_DEFAULT_LFP_BUTTON_TEXT"):
+				this._oMenuButton
+					.detachEvent("defaultAction", this._openCloudFilePicker.bind(this))
+					.attachEvent("defaultAction", this._openFileUploaderPicker.bind(this));
+
+				this._openFileUploaderPicker();
+				this._oMenuButton.setText(oItem.getText());
+				break;
+		}
 	};
 
 	// Functions returns sNoDataText which is combination of Title and Description from the IllustratedMessage
@@ -1954,18 +1996,31 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns CloudFile picker button
-	 * @return {sap.m.Button} CloudPicker button
+	 * Returns CloudFile picker menu button
+	 * @return {sap.m.MenuButton} CloudPicker & LocalFileUpload Menu button
 	 * @private
 	 */
-	 UploadSet.prototype._getCloudFilePicker = function() {
+	UploadSet.prototype._getCloudFilePicker = function () {
 		if (this.getCloudFilePickerEnabled()) {
-			return new Button({
-				text:  this.getCloudFilePickerButtonText() ? this.getCloudFilePickerButtonText() :  this._oRb.getText("UPLOAD_SET_DEFAULT_CFP_BUTTON_TEXT"),
-				press: [this._invokeCloudFilePicker, this]
+			this._oMenuButton = new MenuButton({
+				text: this._oRb.getText("UPLOAD_SET_DEFAULT_LFP_BUTTON_TEXT"),
+				buttonMode: sap.m.MenuButtonMode.Split,
+				menu: this._getMenuButtonItems(),
+				defaultAction: this._openFileUploaderPicker.bind(this)
 			});
+			return this._oMenuButton;
 		}
 		return null;
+	};
+
+	UploadSet.prototype._getMenuButtonItems = function () {
+		return new Menu({
+			items: [
+				new MenuItem({ text: this._oRb.getText("UPLOAD_SET_DEFAULT_LFP_BUTTON_TEXT") }),
+				new MenuItem({ text: this.getCloudFilePickerButtonText() ? this.getCloudFilePickerButtonText() : this._oRb.getText("UPLOAD_SET_DEFAULT_CFP_BUTTON_TEXT") })
+			],
+			itemSelected: this._itemSelectedCallback.bind(this)
+		});
 	};
 
 	/**
