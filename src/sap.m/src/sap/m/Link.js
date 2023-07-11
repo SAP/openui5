@@ -483,16 +483,21 @@ function(
 			sSubtleInfo = this.getSubtle() ? oResourceBundle.getText("LINK_SUBTLE") : "",
 			sText = this.getText(),
 			sDescription = sText,
-			sAccessibleRole = this.getAccessibleRole();
+			sAccessibleRole = this.getAccessibleRole(),
+			sType;
 
 		if (sText) {
+			sType = sAccessibleRole === LinkAccessibleRole.Default
+				? oResourceBundle.getText("ACC_CTR_TYPE_LINK")
+				: oResourceBundle.getText("ACC_CTR_TYPE_BUTTON");
+
 			sEmphasizedInfo && (sDescription += " " + sEmphasizedInfo);
 			sSubtleInfo && (sDescription += " " + sSubtleInfo);
 		}
 
 		return {
 			role: sAccessibleRole === LinkAccessibleRole.Default ? "link" : sAccessibleRole,
-			type: sText ? oResourceBundle.getText("ACC_CTR_TYPE_LINK") : undefined,
+			type: sType,
 			description: sDescription,
 			focusable: this.getEnabled(),
 			enabled: this.getEnabled()
