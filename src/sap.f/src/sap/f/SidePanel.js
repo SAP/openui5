@@ -666,7 +666,17 @@ sap.ui.define([
 	};
 
 	SidePanel.prototype._focusMain = function() {
-		this._oPreviousFocusedMainElement && this._oPreviousFocusedMainElement.focus();
+		if (this._oPreviousFocusedMainElement) {
+			this._oPreviousFocusedMainElement.focus();
+		} else {
+			var oMainContent = this.getMainContent();
+			for (let i = 0; i < oMainContent.length; ++i) {
+				if (oMainContent[i].isFocusable()) {
+					oMainContent[i].focus();
+					break;
+				}
+			}
+		}
 	};
 
 	SidePanel.prototype._focusSideContent = function() {
