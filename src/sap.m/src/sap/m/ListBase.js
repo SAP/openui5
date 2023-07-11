@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/core/LabelEnablement",
 	"sap/ui/core/delegate/ItemNavigation",
 	"./library",
+	"sap/ui/core/library",
 	"./InstanceManager",
 	"./GrowingEnablement",
 	"./GroupHeaderListItem",
@@ -41,6 +42,7 @@ function(
 	LabelEnablement,
 	ItemNavigation,
 	library,
+	coreLibrary,
 	InstanceManager,
 	GrowingEnablement,
 	GroupHeaderListItem,
@@ -83,6 +85,9 @@ function(
 	// shortcut for sap.m.MultiSelectMode
 	var MultiSelectMode = library.MultiSelectMode;
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
 	/**
 	 * Constructor for a new ListBase.
 	 *
@@ -122,9 +127,26 @@ function(
 
 				/**
 				 * Defines the header text that appears in the control.
-				 * <b>Note:</b> If <code>headerToolbar</code> aggregation is set, then this property is ignored.
+				 * <b>Note:</b>
+				 * If the <code>headerToolbar</code> aggregation is set, then this property is ignored.
+				 * If this is the case, use, for example, a <code>sap.m.Title</code> control in the toolbar to define a header.
 				 */
 				headerText : {type : "string", group : "Misc", defaultValue : null},
+
+				/**
+				 * Defines the semantic header level of the header text (see {@link #getHeaderText headerText} property}).
+				 * This information is, for example, used by assistive technologies, such as screenreaders, to create a hierarchical site
+				 * map for faster navigation.
+				 * Depending on this setting, either the ARIA equivalent of an HTML h1-h6 element is used or, when using the
+				 * <code>Auto</code> level, no explicit level information is used.
+				 *
+				 * <b>Note:</b>
+				 * If the <code>headerToolbar</code> aggregation is set, then this property is ignored.
+				 * If this is the case, use, for example, a <code>sap.m.Title</code> control in the toolbar to define a header.
+				 *
+				 * @since 1.117.0
+				 */
+				headerLevel : {type : "sap.ui.core.TitleLevel", group : "Misc", defaultValue : TitleLevel.Auto},
 
 				/**
 				 * Defines the header style of the control. Possible values are <code>Standard</code> and <code>Plain</code>.

@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", "./ListItemBaseRenderer"],
-	function(library, Device, InvisibleText, ListItemBaseRenderer) {
+sap.ui.define(["sap/m/library", "sap/ui/core/library", "sap/ui/Device", "sap/ui/core/InvisibleText", "./ListItemBaseRenderer"],
+	function(library, coreLibrary, Device, InvisibleText, ListItemBaseRenderer) {
 	"use strict";
 
 
@@ -14,6 +14,9 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 
 	// shortcut for sap.m.ToolbarDesign
 	var ToolbarDesign = library.ToolbarDesign;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 
 	/**
@@ -99,10 +102,15 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 			oHeaderTBar.addStyleClass("sapMTBHeader-CTX");
 			rm.renderControl(oHeaderTBar);
 		} else if (sHeaderText) {
-			rm.openStart("header", oControl.getId("header"));
+			rm.openStart("div", oControl.getId("header"));
+			rm.attr("role", "heading");
+			var sHeaderLevel = oControl.getHeaderLevel();
+			if (sHeaderLevel != TitleLevel.Auto) {
+				rm.attr("aria-level", sHeaderLevel[sHeaderLevel.length - 1]);
+			}
 			rm.class("sapMListHdr").class("sapMListHdrText").openEnd();
 			rm.text(sHeaderText);
-			rm.close("header");
+			rm.close("div");
 		}
 
 		// render info bar

@@ -4,6 +4,7 @@
 	xmlns="sap.m">
 	<List
 		headerText="Products"
+		headerLevel="H2"
 		items="{
 			path: '/ProductCollection'
 		}" >
