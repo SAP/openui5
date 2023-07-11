@@ -507,6 +507,19 @@ sap.ui.define([
 
 			assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
 
+			/**
+			 * @deprecated Since version 1.36
+			 *
+			 * Repeat the test a second time for the legacy values of PlacementType
+			 */
+			if (placement.includes("Preferred")) {
+				const legacyPlacement = placement.replace("Preferred", "Prefered");
+				oPopover3.setPlacement(legacyPlacement);
+				oPopover3._calcPlacement();
+
+				assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
+			}
+
 			stubOpenByRef.restore();
 			stubOffset.restore();
 			stubOffsetTop.restore();
@@ -518,19 +531,13 @@ sap.ui.define([
 		testCase(450, 50, 500, PlacementType.Vertical, PlacementType.Top);
 
 		// Preferred Top
-		testCase(400, 50, 500, PlacementType.VerticalPreferedTop, PlacementType.Top); // You have enough space to the Top and Top space is greater than the Bottom space
 		testCase(400, 50, 500, PlacementType.VerticalPreferredTop, PlacementType.Top); // You have enough space to the Top and Top space is greater than the Bottom space
-		testCase(150, 50, 500, PlacementType.VerticalPreferedTop, PlacementType.Top); // You have enough space to the Top but Top space is smaller than the Bottom space
 		testCase(150, 50, 500, PlacementType.VerticalPreferredTop, PlacementType.Top); // You have enough space to the Top but Top space is smaller than the Bottom space
-		testCase(40, 50, 500, PlacementType.VerticalPreferedTop, PlacementType.Bottom); // You do not have enough space at the preferred position, so the position with more space is used
 		testCase(40, 50, 500, PlacementType.VerticalPreferredTop, PlacementType.Bottom); // You do not have enough space at the preferred position, so the position with more space is used
 
 		// Preferred Bottom
-		testCase(100, 50, 500, PlacementType.VerticalPreferedBottom, PlacementType.Bottom); // You have enough space to the Bottom and Bottom space is greater than the Top space
 		testCase(100, 50, 500, PlacementType.VerticalPreferredBottom, PlacementType.Bottom); // You have enough space to the Bottom and Bottom space is greater than the Top space
-		testCase(350, 50, 500, PlacementType.VerticalPreferedBottom, PlacementType.Bottom); // You have enough space to the Bottom but Bottom space is smaller than the Bottom space
 		testCase(350, 50, 500, PlacementType.VerticalPreferredBottom, PlacementType.Bottom); // You have enough space to the Bottom but Bottom space is smaller than the Bottom space
-		testCase(450, 50, 500, PlacementType.VerticalPreferedBottom, PlacementType.Top); // You do not have enough space at the preferred position, so the position with more space is used
 		testCase(450, 50, 500, PlacementType.VerticalPreferredBottom, PlacementType.Top); // You do not have enough space at the preferred position, so the position with more space is used
 	});
 
