@@ -2227,12 +2227,13 @@ sap.ui.define([
 			name: "timezoneID",
 			format: function(oField, oDate, bUTC, oFormat, sTimezone) {
 				// Only VV is supported
-				// The IANA timezone ID
+				// The IANA time zone ID
 				// e.g. America/New_York
 				// @see http://www.unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns
 				if (!bUTC && oField.digits === 2) {
-					// fallback for unknown but valid IANA timezone IDs (IANA is a living standard and the browser might support more, while the CLDR data is fixed)
-					// such that the user can see, that there is no translation
+					// fallback for unknown but valid IANA time zone IDs (IANA is a living standard and the browser
+					// might support more, while the CLDR data is fixed) such that the user can see, that there is no
+					// translation
 					return oFormat.oLocaleData.getTimezoneTranslations()[sTimezone] || sTimezone;
 				}
 				return "";
@@ -2243,11 +2244,11 @@ sap.ui.define([
 					length: 0
 				};
 
-				// VV - The long IANA timezone ID
+				// VV - The long IANA time zone ID
 				if (oPart.digits === 2) {
 					var mTimezoneTranslations = oFormat.oLocaleData.getTimezoneTranslations();
 
-					// shortcut, first try the timezone parameter
+					// shortcut, first try the time zone parameter
 					if (sValue === mTimezoneTranslations[sTimezone]) {
 						return {
 							timezone: sTimezone,
@@ -2256,7 +2257,8 @@ sap.ui.define([
 					}
 
 					var aTimezoneTranslations = Object.values(mTimezoneTranslations);
-					var oTimezoneResult = oParseHelper.findEntry(sValue, aTimezoneTranslations, oFormat.oLocaleData.sCLDRLocaleId);
+					var oTimezoneResult = oParseHelper.findEntry(sValue, aTimezoneTranslations,
+							oFormat.oLocaleData.sCLDRLocaleId);
 					if (oTimezoneResult.index !== -1) {
 						return {
 							timezone: Object.keys(mTimezoneTranslations)[oTimezoneResult.index],
@@ -2264,16 +2266,15 @@ sap.ui.define([
 						};
 					}
 
-					// fallback for unknown but valid IANA timezone IDs (IANA is a living
-					// standard and the browser might support more, while the CLDR data is fixed)
-					// such that the user can see, that there is no translation
+					// fallback for IANA time zone IDs
 					var sCurrentValue = "";
-					for (var i = 0; i < sValue.length; i++) {
-						sCurrentValue += sValue[i];
-
+					// find the longest valid time zone ID at the beginning of sValue
+					for (var i = sValue.length; i > 0; i -= 1) {
+						sCurrentValue = sValue.slice(0, i);
 						if (TimezoneUtil.isValidTimezone(sCurrentValue)) {
 							oTimezoneParsed.timezone = sCurrentValue;
 							oTimezoneParsed.length = sCurrentValue.length;
+							break;
 						}
 					}
 				}
