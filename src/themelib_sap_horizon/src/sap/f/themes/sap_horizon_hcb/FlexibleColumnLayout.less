@@ -5,18 +5,30 @@
 
 // Cozy mode
 .sapFFCL > {
+	&.sapFFCLBackgroundDesignSolid {
+		background: @sapUiContentForegroundColor;
+	}
+
+	&.sapFFCLBackgroundDesignTranslucent {
+		background: @sapUiBaseBG;
+	}
+
+	&.sapFFCLBackgroundDesignTransparent {
+		background: @sapUiBaseBG;
+	}
+
 	& > .sapFFCLColumnMid.sapFFCLColumnActive {
-		border-left: 1px solid @sapUiGroupContentBorderColor;
-		border-right: 1px solid @sapUiGroupContentBorderColor;
+		border-left: 0.0625rem solid @sapUiGroupContentBorderColor;
+		border-right: 0.0625rem solid @sapUiGroupContentBorderColor;
 	}
 
 	& > .sapFFCLColumnActive.sapFFCLColumnLastActive {
 		border-right: none;
-		border-left: 1px solid @sapUiGroupContentBorderColor;
+		border-left: 0.0625rem solid @sapUiGroupContentBorderColor;
 	}
 
 	& > .sapFFCLColumnActive.sapFFCLColumnFirstActive {
-		border-right: 1px solid @sapUiGroupContentBorderColor;
+		border-right: 0.0625rem solid @sapUiGroupContentBorderColor;
 		border-left: none;
 	}
 
@@ -24,16 +36,12 @@
 		border-right: none;
 		border-left: none;
 	}
-
-	&.sapFFCLBackgroundDesign {
-		background: @sapUiBaseBG;
-	}
 }
 
 .sapFFCL {
 	.sapFFCLNavigationButton {
 		.sapMBtnInner {
-			border: 1px solid @sapUiButtonBorderColor;
+			border: 0.0625rem solid @sapUiButtonBorderColor;
 
 			.sapMBtnIcon {
 				width: auto;
