@@ -569,7 +569,14 @@ sap.ui.define([
 				copyProvider: {
 					type: "sap.m.plugins.CopyProvider",
 					multiple: false
-				}
+				},
+
+				/**
+				 * Defines the context menu for the table rows.
+				 *
+				 * @since 1.118
+				 */
+				contextMenu : {type : "sap.ui.core.IContextMenu", multiple : false}
 			},
 			associations: {
 				/**
@@ -657,6 +664,26 @@ sap.ui.define([
 						data: {
 							type: "string[][]"
 						}
+					}
+				},
+				/**
+				 * This event is fired when the user requests the context menu for the table.
+				 * @since 1.117
+				 */
+				beforeOpenContextMenu: {
+					allowPreventDefault: true,
+					parameters: {
+						/**
+						 * The binding context
+						 */
+						bindingContext: {
+							type: "sap.ui.model.Context"
+						},
+						/**
+						 * The column used for the context menu
+						 * <b>Note:</b> The column parameter can be empty when opened in a popin area for responsiveTable type.
+						*/
+						column: {type: "sap.ui.mdc.table.Column"}
 					}
 				}
 			}
@@ -881,6 +908,46 @@ sap.ui.define([
 		}
 	};
 
+	Table.prototype.setContextMenu = function(oContextMenu) {
+		this._oContextMenu = this.validateAggregation("contextMenu", oContextMenu, false);
+
+		if (!this._oTable) {
+			return this;
+		}
+
+		this._oTable.setAggregation("contextMenu", oContextMenu, true);
+
+		if (!oContextMenu) {
+			this._oTable.detachBeforeOpenContextMenu(this._onBeforeOpenContextMenu, this);
+			return this;
+		}
+
+		if (!this._oTable.hasListeners("beforeOpenContextMenu")) {
+			this._oTable.attachBeforeOpenContextMenu(this._onBeforeOpenContextMenu, this);
+		}
+
+		return this;
+	};
+
+	Table.prototype._onBeforeOpenContextMenu = function(oEvent) {
+		var oEventParameters = this._getType().getContextMenuParameters(oEvent);
+		this.fireBeforeOpenContextMenu(oEventParameters);
+	};
+
+	Table.prototype.getContextMenu = function() {
+		return (this._oContextMenu && !this._oContextMenu.isDestroyed()) ? this._oContextMenu : null;
+	};
+
+	Table.prototype.destroyContextMenu = function() {
+		if (this._oTable) {
+			this._oTable.destroyContextMenu();
+		} else if (this._oContextMenu) {
+			this._oContextMenu.destroy();
+		}
+		this._oContextMenu = null;
+		return this;
+	};
+
 	/**
 	 * Scrolls the table to the row with the given index. Depending on the table type, this might cause additional requests. If the given index is -1,
 	 * it will scroll to the end of the table based on the length of the underlying binding. If the length is not final, it will only scroll to the
@@ -938,6 +1005,11 @@ sap.ui.define([
 			var vNoData = this.getNoData();
 			this.setNoData();
 			this._vNoData = vNoData;
+
+			// store and remove the contextMenu otherwise it gets destroyed
+			var oContextMenu = this.getContextMenu();
+			this.setContextMenu();
+			this._oContextMenu = oContextMenu;
 
 			this._oTable.destroy("KeepDom");
 			this._oTable = null;
@@ -1398,8 +1470,9 @@ sap.ui.define([
 	Table.prototype.destroyNoData = function() {
 		if (this._oTable) {
 			this._oTable.destroyNoData(true);
-			this._vNoData = null;
 		}
+
+		this._vNoData = null;
 		return this;
 	};
 
@@ -2202,6 +2275,10 @@ sap.ui.define([
 			this.setNoData(this.getNoData());
 		}
 
+		if (this.getContextMenu()) {
+			this.setContextMenu(this.getContextMenu());
+		}
+
 		if (this.isFilteringEnabled()) {
 			insertFilterInfoBar(this);
 		}
@@ -2729,6 +2806,7 @@ sap.ui.define([
 		this._oToolbar = null;
 		this._oTitle = null;
 		this._vNoData = null;
+		this._oContextMenu = null;
 		this._oNumberFormatInstance = null;
 
 		aToolBarBetweenAggregations.forEach(function(sAggregationName) {

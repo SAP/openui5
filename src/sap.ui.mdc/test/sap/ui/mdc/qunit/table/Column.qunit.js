@@ -108,6 +108,7 @@ sap.ui.define([
 			assert.strictEqual(oColumnHeaderLabel.getWrapping(), true, "wrapping set on label control according to headerVisible");
 			assert.ok(!oColumnHeaderLabel.getWidth(), "width set on label control according to headerVisible");
 			assert.strictEqual(this.oColumn.getInnerColumn().getPopinDisplay(), "Inline", "popinDisplay is Inline for the inner column");
+			assert.strictEqual(this.oColumn.getId() + "-innerColumn", this.oColumn.getInnerColumn().getId(), "Inner column set with ID of column with `innercolumn` suffix");
 			assert.ok(oColumnHeaderLabel.getTooltip() === "Tooltip1", "tooltip set also on column label");
 
 			this.oColumn.setHeader("Text2");
@@ -192,6 +193,7 @@ sap.ui.define([
 			assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "no wrapping set on label control");
 			assert.strictEqual(oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to headerVisible");
 			assert.strictEqual(this.oColumn.getInnerColumn().getTooltip(), "Tooltip2", "tooltip forwarded to inner column control");
+			assert.strictEqual(this.oColumn.getId() + "-innerColumn", this.oColumn.getInnerColumn().getId(), "Inner column set with ID of column with `innercolumn` suffix");
 			assert.ok(!oColumnHeaderLabel.getTooltip(), "no tooltip on column label");
 			assert.strictEqual(oColumnHeaderLabel.getRequired(), true, "required set on label control according to required");
 

@@ -403,6 +403,17 @@ sap.ui.define([
 		return this._oShowDetailsButton;
 	};
 
+	ResponsiveTableType.prototype.getContextMenuParameters = function(oEvent) {
+		var oListItem = oEvent.getParameter("listItem");
+		var oInnerColumn = oEvent.getParameter("column");
+		var oMDCColumn = Core.byId(oInnerColumn.getId().replace(/\-innerColumn$/, ""));
+
+		return {
+			bindingContext: oListItem.getBindingContext(this.getInnerTable().getBindingInfo("items").model),
+			column: oMDCColumn
+		};
+	};
+
 	/**
 	 * Helper function to get the importance of the columns to be hidden based on <code>Table</code> configuration.
 	 *
