@@ -17,13 +17,24 @@
 	 *  - ui5loader-autoconfig.js
 	 */
 
-	/*global globalThis, document, jQuery, sap, window */
+	/*global define */
 	"use strict";
 
 	/** BaseConfiguration */
 	var ui5loader = globalThis.sap && globalThis.sap.ui && globalThis.sap.ui.loader;
-	/** sap/base/strings/_camelize */
-	function _camelize() {
+
+	if (ui5loader == null) {
+		throw new Error("ui5loader-autoconfig.js: ui5loader is needed, but could not be found");
+	}
+
+	const origDefine = globalThis.define;
+	globalThis.define = function define(moduleId, dependencies, callback) {
+		const imports = dependencies.map((dep) => sap.ui.require(dep));
+		const moduleExport = callback(...imports);
+		ui5loader._.defineModuleSync(`${moduleId}.js`, moduleExport);
+	};
+
+	define("sap/base/strings/_camelize", [], function () {
 		var rCamelCase = /[-\.]([a-z0-9])/ig;
 		var fnCamelize = function (sString) {
 			var sNormalizedString = sString.replace( rCamelCase, function( sMatch, sChar ) {
@@ -32,10 +43,11 @@
 			if (/^[a-z][A-Za-z0-9]*$/.test(sNormalizedString)) {
 				return sNormalizedString;
 			}
+			return undefined;
 		};
 
-		ui5loader._.defineModuleSync("sap/base/strings/_camelize.js", fnCamelize);
-	}
+		return fnCamelize;
+	});
 
 	/* helper for finding the bootstrap tag */
 	function getBootstrapTag() {
@@ -138,13 +150,15 @@
 		}
 	}
 
-	/** sap/base/config/GlobalConfigurationProvider */
-	function _GlobalConfigurationProvider() {
+	_createGlobalConfig();
+
+	define("sap/base/config/GlobalConfigurationProvider", [
+		"sap/base/strings/_camelize"
+	], function (camelize) {
 		var oConfig;
 		var rAlias = /^(sapUiXx|sapUi|sap)((?:[A-Z0-9][a-z]*)+)$/; //for getter
 		var mFrozenProperties = Object.create(null);
 		var bFrozen = false;
-		var camelize = sap.ui.require("sap/base/strings/_camelize");
 
 		function createConfig() {
 			oConfig = Object.create(null);
@@ -207,14 +221,14 @@
 
 		createConfig();
 
-		ui5loader._.defineModuleSync("sap/base/config/GlobalConfigurationProvider.js", GlobalConfigurationProvider);
-	}
+		return GlobalConfigurationProvider;
+	});
 
-	/** sap/ui/core/config/BootstrapConfigurationProvider */
-	function _BootstrapConfigurationProvider() {
+	define("sap/ui/core/config/BootstrapConfigurationProvider", [
+		"sap/base/strings/_camelize"
+	], function(camelize) {
 		var oConfig = Object.create(null);
 		var rAlias = /^(sapUiXx|sapUi|sap)((?:[A-Z0-9][a-z]*)+)$/; //for getter
-		var camelize = sap.ui.require("sap/base/strings/_camelize");
 
 		var bootstrap = getBootstrapTag();
 		if (bootstrap.tag) {
@@ -249,13 +263,13 @@
 			get: get
 		};
 
-		ui5loader._.defineModuleSync("sap/ui/core/config/BootstrapConfigurationProvider.js", BootstrapConfigurationProvider);
-	}
+		return BootstrapConfigurationProvider;
+	});
 
-	/** sap/ui/base/config/URLConfigurationProvider */
-	function _URLConfigurationProvider() {
+	define("sap/ui/base/config/URLConfigurationProvider", [
+		"sap/base/strings/_camelize"
+	], function(camelize) {
 		var oConfig = Object.create(null);
-		var camelize = sap.ui.require("sap/base/strings/_camelize");
 
 		if (globalThis.location) {
 			oConfig = Object.create(null);
@@ -285,13 +299,13 @@
 			get: get
 		};
 
-		ui5loader._.defineModuleSync("sap/ui/base/config/URLConfigurationProvider.js", URLConfigurationProvider);
-	}
+		return URLConfigurationProvider;
+	});
 
-	/** sap/ui/base/config/MetaConfigurationProvider */
-	function _MetaConfigurationProvider() {
+	define("sap/ui/base/config/MetaConfigurationProvider", [
+		"sap/base/strings/_camelize"
+	], function (camelize) {
 		var oConfig = Object.create(null);
-		var camelize = sap.ui.require("sap/base/strings/_camelize");
 
 		if (globalThis.document) {
 			oConfig = Object.create(null);
@@ -321,12 +335,13 @@
 			get: get
 		};
 
-		ui5loader._.defineModuleSync("sap/ui/base/config/MetaConfigurationProvider.js", MetaConfigurationProvider);
-	}
+		return MetaConfigurationProvider;
+	});
 
-	/** sap/base/config/_Configuration */
-	function _Configuration() {
-		var aProvider = [sap.ui.require("sap/base/config/GlobalConfigurationProvider")];
+	define("sap/base/config/_Configuration", [
+		"sap/base/config/GlobalConfigurationProvider"
+	], function _Configuration(GlobalConfigurationProvider) {
+		var aProvider = [GlobalConfigurationProvider];
 		var mUrlParamOptions = {
 			name: "sapUiIgnoreUrlParams",
 			type: "boolean"
@@ -637,8 +652,10 @@
 			}
 		};
 
-		ui5loader._.defineModuleSync("sap/base/config/_Configuration.js", Configuration);
-	}
+		return Configuration;
+	});
+
+	globalThis.define = origDefine;
 
 	function _setupConfiguration() {
 		var BaseConfiguration = sap.ui.require('sap/base/config/_Configuration');
@@ -649,13 +666,6 @@
 	}
 
 	/** init configuration */
-	_camelize();
-	_createGlobalConfig();
-	_GlobalConfigurationProvider();
-	_BootstrapConfigurationProvider();
-	_MetaConfigurationProvider();
-	_URLConfigurationProvider();
-	_Configuration();
 	_setupConfiguration();
 
 	var BaseConfig = sap.ui.require("sap/base/config/_Configuration");
@@ -674,14 +684,11 @@
 			bNojQuery = /sap-ui-core-nojQuery\.js(?:[?#]|$)/.test(sUrl);
 			return true;
 		}
+		return false;
 	}
 
 	function ensureSlash(path) {
 		return path && path[path.length - 1] !== '/' ? path + '/' : path;
-	}
-
-	if (ui5loader == null) {
-		throw new Error("ui5loader-autoconfig.js: ui5loader is needed, but could not be found");
 	}
 
 	// Prefer script tags which have the sap-ui-bootstrap ID
