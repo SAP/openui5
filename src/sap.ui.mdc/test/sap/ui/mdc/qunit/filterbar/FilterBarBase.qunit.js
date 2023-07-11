@@ -747,7 +747,7 @@ sap.ui.define([
             this.oFilterBarBase._onModifications().then(function() {
                 assert.equal(oFilterField1.getValueState(), "None");
                 assert.equal(oFilterField2.getValueState(), "Error");
-                assert.equal(oFilterField2.getValueStateText(), this.oFilterBarBase._oRb.getText("filterbar.REQUIRED_FILTER_VALUE_MISSING"));
+                assert.equal(oFilterField2.getValueStateText(), this.oFilterBarBase._getRequiredFilterFieldValueText(oFilterField2));
 
 
                 //Check required field in error state
@@ -768,7 +768,7 @@ sap.ui.define([
                     assert.equal(oFilterField1.getValueState(), "Error");
                     assert.equal(oFilterField1.getValueStateText(), "Some Error Text");
                     assert.equal(oFilterField2.getValueState(), "Error");
-                    assert.equal(oFilterField2.getValueStateText(), this.oFilterBarBase._oRb.getText("filterbar.REQUIRED_FILTER_VALUE_MISSING"));
+                    assert.equal(oFilterField2.getValueStateText(), this.oFilterBarBase._getRequiredFilterFieldValueText(oFilterField2));
                     done();
                 }.bind(this));
             }.bind(this));

@@ -923,13 +923,20 @@ sap.ui.define([
 
 		return vRetErrorState;
 	};
+	FilterBarBase.prototype._getRequiredFilterFieldValueText = function(oFilterField) {
+		if (oFilterField) {
+			return this._oRb.getText("filterbar.REQUIRED_FILTER_VALUE_MISSING", [oFilterField.getLabel()]);
+		} else {
+			return "";
+		}
+	};
 
 	FilterBarBase.prototype._recheckMissingRequiredFields = function() {
 		this.getFilterItems().forEach(function(oFilterField) {
 			var aReqFiltersWithoutValue;
 			if (oFilterField) {
 				if ((oFilterField.getValueState() !== ValueState.None) &&
-					(oFilterField.getValueStateText() === this._oRb.getText("filterbar.REQUIRED_FILTER_VALUE_MISSING"))) {
+					(oFilterField.getValueStateText() === this._getRequiredFilterFieldValueText(oFilterField))) {
 
 					if (!aReqFiltersWithoutValue) {
 						aReqFiltersWithoutValue = FilterUtil.getRequiredFieldNamesWithoutValues(this);
@@ -952,7 +959,7 @@ sap.ui.define([
 			if (oFilterField) {
 				if (oFilterField.getValueState() === ValueState.None) {
 					oFilterField.setValueState(ValueState.Error);
-					oFilterField.setValueStateText(this._oRb.getText("filterbar.REQUIRED_FILTER_VALUE_MISSING"));
+					oFilterField.setValueStateText(this._getRequiredFilterFieldValueText(oFilterField));
 				}
 			} else {
 				Log.error("Mandatory filter field '" + sName + "' not visible on FilterBarBase has no value.");
@@ -969,7 +976,7 @@ sap.ui.define([
 
 		this.getFilterItems().some(function(oFilterField) {
 			if (oFilterField && (oFilterField.getValueState() !== ValueState.None)) {
-				if (oFilterField.getValueStateText() !== this._oRb.getText("filterbar.REQUIRED_FILTER_VALUE_MISSING")) {
+				if (oFilterField.getValueStateText() !== this._getRequiredFilterFieldValueText(oFilterField)) {
 					vRetErrorState = FilterBarValidationStatus.FieldInErrorState;
 				}
 			}
