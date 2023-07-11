@@ -5,7 +5,7 @@
 	var privateLoaderAPI = sap.ui.loader._;
 
 	QUnit.config.autostart = false;
-	QUnit.config.seed = Math.random();
+
 	if ( QUnit.urlParams["rtf"] || QUnit.urlParams["repeat-to-failure"]) {
 		QUnit.done(function(results) {
 			if (results.failed === 0) {
