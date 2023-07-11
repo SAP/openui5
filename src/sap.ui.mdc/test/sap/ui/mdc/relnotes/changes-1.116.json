@@ -1,7 +1,18 @@
 {
   "1.116.0": {
-    "date": "June 2023",
+    "date": "July 2023",
     "notes": [
+      {
+        "id": "443e44c872f57748cad3e7eaf594d09b235cfcfb",
+        "type": "FIX",
+        "text": " sap.ui.mdc: make dependency to sap.ui.table a lazy dependency",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380079428"
+          }
+        ]
+      },
       {
         "id": "1281bdc4379f11f6f66108376c2edb78db5c5597",
         "type": "FIX",
@@ -10,6 +21,17 @@
           {
             "type": "BCP",
             "reference": "2380053119"
+          }
+        ]
+      },
+      {
+        "id": "b5aa2675b2b6c45106469ef4424f1315377b9a30",
+        "type": "FIX",
+        "text": " Field: only render aria-labelledby if control supports it",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370069381"
           }
         ]
       },

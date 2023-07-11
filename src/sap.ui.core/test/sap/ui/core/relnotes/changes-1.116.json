@@ -1,7 +1,18 @@
 {
   "1.116.0": {
-    "date": "June 2023",
+    "date": "July 2023",
     "notes": [
+      {
+        "id": "a68d9078b156f2d1b3a1fa2bb50d8f3fc1699813",
+        "type": "FIX",
+        "text": " Theming: Make setThemeRoot more robust",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380086664"
+          }
+        ]
+      },
       {
         "id": "667f1b33bc3c450b72df9355741f1e1f9609eb40",
         "type": "FIX",

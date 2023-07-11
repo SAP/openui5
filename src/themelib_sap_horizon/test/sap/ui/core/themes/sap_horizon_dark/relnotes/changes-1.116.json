@@ -1,7 +1,18 @@
 {
   "1.116.0": {
-    "date": "June 2023",
+    "date": "July 2023",
     "notes": [
+      {
+        "id": "a87bc9d82bb3e05e09f058f707b81f970eac90c4",
+        "type": "FIX",
+        "text": " sap.ui.core.IconPool: correction for icon 'slim-arrow-up' for theme 'horizon'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380087196"
+          }
+        ]
+      },
       {
         "id": "7243a6b8d2823773c2b79dfc329c9f096fa70f9d",
         "type": "FIX",

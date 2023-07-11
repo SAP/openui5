@@ -1,7 +1,53 @@
 {
   "1.116.0": {
-    "date": "June 2023",
+    "date": "July 2023",
     "notes": [
+      {
+        "id": "a87bc9d82bb3e05e09f058f707b81f970eac90c4",
+        "type": "FIX",
+        "text": " sap.ui.core.IconPool: correction for icon 'slim-arrow-up' for theme 'horizon'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380087196"
+          }
+        ]
+      },
+      {
+        "id": "3af655c53d78dc3205254f2ea5b4750c962d0911",
+        "type": "FIX",
+        "text": " sap.m.Link. prevent default behavior on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006450822022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400004774092023"
+          }
+        ]
+      },
+      {
+        "id": "c8a6233c6c84092c31eb8f6d27888c8d55f29640",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed"
+      },
+      {
+        "id": "cab0a079d3a1070ab5d2b142c839eb470fe1b690",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Fixed separators between buttons in value help dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380046177"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380074182"
+          }
+        ]
+      },
       {
         "id": "92fa373ce1c99a5615b69e14d3b0aa95f20df40d",
         "type": "FIX",

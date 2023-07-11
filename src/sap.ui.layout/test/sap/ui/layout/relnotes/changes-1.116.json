@@ -1,7 +1,12 @@
 {
   "1.116.0": {
-    "date": "June 2023",
+    "date": "July 2023",
     "notes": [
+      {
+        "id": "eb5b2f4b6feb9b21bfde9bfa2c5cfe2634791197",
+        "type": "FIX",
+        "text": " sap.ui.layout (sample): fix GridProperties.controller.js"
+      },
       {
         "id": "1281bdc4379f11f6f66108376c2edb78db5c5597",
         "type": "FIX",
