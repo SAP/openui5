@@ -86,7 +86,7 @@ sap.ui.define([
 			var aSorter = [];
 			oState.Sorter.forEach(function(oSorter) {
 				aSorter.push(new Sorter(this.oMetadataHelper.getProperty(oSorter.key).path, oSorter.descending));
-			});
+			}.bind(this));
 
 			oState.Groups.forEach(function(oGroup) {
 				var oExistingSorter = aSorter.find(function(oSorter){

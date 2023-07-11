@@ -161,7 +161,7 @@ sap.ui.define([
                         property: sAffectedProperty,
                         operation: sOperation,
                         key: oChange.getRevertData().key,
-                        value: oChange.getRevertData().value,
+                        value: oChange.getRevertData(),
                         propertyBag: mPropertyBag
                     };
 
