@@ -527,11 +527,16 @@ sap.ui.define([
 		 * @private
 		 */
 		getTimezoneTranslations: function() {
-			this.mTimezoneTranslations = this.mTimezoneTranslations ||
-				_resolveTimezoneTranslationStructure(this._get("timezoneNames"));
+			var sLocale = this.oLocale.toString();
+			var mTranslations = LocaleData._mTimezoneTranslations[sLocale];
+
+			if (!mTranslations) {
+				LocaleData._mTimezoneTranslations[sLocale] = mTranslations =
+					_resolveTimezoneTranslationStructure(this._get("timezoneNames"));
+			}
 
 			// retrieve a copy such that the original object won't be modified.
-			return Object.assign({}, this.mTimezoneTranslations);
+			return Object.assign({}, mTranslations);
 		},
 
 		/**
@@ -2595,6 +2600,9 @@ sap.ui.define([
 	};
 
 	LocaleData._cldrLocales = _cldrLocales;
+	// maps a locale to a map of time zone translations, which maps an IANA time zone ID to the translated time zone
+	// name
+	LocaleData._mTimezoneTranslations = {};
 
 	return LocaleData;
 

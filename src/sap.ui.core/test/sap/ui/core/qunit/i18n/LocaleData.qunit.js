@@ -660,7 +660,15 @@ sap.ui.define([
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 	});
 
-	QUnit.module("sap.ui.core.LocaleData");
+	QUnit.module("sap.ui.core.LocaleData", {
+		beforeEach: function () {
+			LocaleData._mTimezoneTranslations = {};
+		},
+		after: function () {
+			// Make sure that the translation cache is deleted to reduce the memory consumption after the test
+			LocaleData._mTimezoneTranslations = {};
+		}
+	});
 
 	QUnit.test("getCurrencySymbols", function(assert) {
 		Configuration.getFormatSettings().addCustomCurrencies({
@@ -714,18 +722,8 @@ sap.ui.define([
 		"Etc/Zulu"
 	];
 
-	QUnit.test("getTimezoneTranslations ensure bijective mapping / consistency", function(assert) {
-		aLanguages.forEach(function (sLocale) {
-			var oLocaleData = new LocaleData(new Locale(sLocale));
-			var mTimezoneTranslations = oLocaleData.getTimezoneTranslations();
-
-			assert.equal(Object.values(mTimezoneTranslations).length, new Set(Object.values(mTimezoneTranslations)).size, sLocale + ": values must be unique");
-			assert.equal(Object.keys(mTimezoneTranslations).length, new Set(Object.keys(mTimezoneTranslations)).size, sLocale + ": keys must be unique");
-		});
-	});
-
 	aLanguages.forEach(function (sLocale) {
-		QUnit.test("getTimezoneTranslations for " + sLocale, function(assert) {
+		QUnit.test("getTimezoneTranslations for " + sLocale + " and ensure bijective mapping", function(assert) {
 			var oLocaleData = new LocaleData(new Locale(sLocale));
 			var mTimezoneTranslations = oLocaleData.getTimezoneTranslations();
 
@@ -737,12 +735,14 @@ sap.ui.define([
 					assert.ok(sTranslationCldr, sLocale + ": translation expected for " + sTimezoneId);
 				}
 			});
+
+			assert.strictEqual(Object.values(mTimezoneTranslations).length,
+				new Set(Object.values(mTimezoneTranslations)).size, sLocale + ": values must be unique");
 		});
 	});
 
 	QUnit.test("getTimezoneTranslations generic structure test", function(assert) {
 		var oLocaleData = new LocaleData(new Locale("de"));
-		delete oLocaleData.mTimezoneNames;
 		var oStubIsValidTimezone = this.stub(TimezoneUtil, 'isValidTimezone').returns(true);
 		var oStubGet = this.stub(oLocaleData, '_get');
 		oStubGet.withArgs("timezoneNames").returns({
@@ -815,6 +815,41 @@ sap.ui.define([
 
 		oStubGet.restore();
 		oStubIsValidTimezone.restore();
+	});
+
+	QUnit.test("getTimezoneTranslations", function(assert) {
+		var oLocaleData = new LocaleData(new Locale("de"));
+
+		this.mock(oLocaleData).expects("_get").withExactArgs("timezoneNames").returns({"~Key": "~ValueDe"});
+
+		// code under test: get "de" time zone translations and cache them globally
+		var mTranslations = oLocaleData.getTimezoneTranslations();
+
+		assert.deepEqual(mTranslations, {"~Key": "~ValueDe"});
+
+		// code under test: get "de" time zone translations from cache; same locale data instance
+		var mTranslations1 = oLocaleData.getTimezoneTranslations();
+
+		assert.deepEqual(mTranslations1, {"~Key": "~ValueDe"});
+		assert.notStrictEqual(mTranslations !== mTranslations1);
+
+		oLocaleData = new LocaleData(new Locale("en"));
+
+		this.mock(oLocaleData).expects("_get").withExactArgs("timezoneNames").returns({"~Key": "~ValueEn"});
+
+		// code under test: get "en" time zone translations and cache them globally; don't overwrite "de" translations
+		mTranslations = oLocaleData.getTimezoneTranslations();
+
+		assert.deepEqual(mTranslations, {"~Key": "~ValueEn"});
+
+		oLocaleData = new LocaleData(new Locale("de"));
+
+		this.mock(oLocaleData).expects("_get").never();
+
+		// code under test: get "de" time zone translations from cache; different locale data instance
+		mTranslations = oLocaleData.getTimezoneTranslations();
+
+		assert.deepEqual(mTranslations, {"~Key": "~ValueDe"});
 	});
 
 	QUnit.test("getLenientNumberSymbols", function(assert) {
