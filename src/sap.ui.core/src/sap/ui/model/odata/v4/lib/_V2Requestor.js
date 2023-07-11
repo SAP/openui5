@@ -758,7 +758,7 @@ sap.ui.define([
 
 		// only if all (nested) query options are processed, all selects are known
 		aSelects = Object.keys(mSelects);
-		if (aSelects.length > 0) {
+		if (aSelects.length) {
 			if (!mQueryOptions.$select) {
 				aSelects.push("*");
 			}

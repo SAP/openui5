@@ -29,6 +29,7 @@ sap.ui.define([
 		this.mAggregatedQueryOptions = {};
 		// whether the aggregated query options are processed the first time
 		this.bAggregatedQueryOptionsInitial = true;
+		this.mCanUseCachePromiseByChildPath = {};
 		// auto-$expand/$select: promises to wait until child bindings have provided
 		// their path and query options
 		this.aChildCanUseCachePromises = [];
@@ -213,7 +214,7 @@ sap.ui.define([
 	 * @param {object} mQueryOptions - The query options to be merged
 	 * @param {string} sBaseMetaPath - This binding's meta path
 	 * @param {boolean} bCacheImmutable - Whether the cache of this binding is immutable
-	 * @param {boolean} bIsProperty - Whether the child is a property binding
+	 * @param {boolean} [bIsProperty] - Whether the child is a property binding
 	 * @returns {boolean} Whether the query options can be fulfilled by this binding
 	 *
 	 * @private
@@ -227,14 +228,19 @@ sap.ui.define([
 		/*
 		 * Recursively merges the given query options into the given aggregated query options.
 		 *
-		 * @param {object} mAggregatedQueryOptions The aggregated query options
-		 * @param {object} mQueryOptions0 The query options to merge into the aggregated query
-		 *   options
-		 * @param {string} sMetaPath The meta path for the current $expand
-		 * @param {boolean} [bInsideExpand] Whether the given query options are inside a $expand
-		 * @param {boolean} [bAdd] Whether to add the given query options because they are in a
-		 * $expand that has not been aggregated yet
-		 * @returns {boolean} Whether the query options can be fulfilled by this binding
+		 * @param {object} mAggregatedQueryOptions
+		 *   The aggregated query options
+		 * @param {object} mQueryOptions0
+		 *   The query options to merge into the aggregated query options
+		 * @param {string} [sMetaPath]
+		 *   The meta path for the current $expand (only used if cache is immutable)
+		 * @param {boolean} [bInsideExpand]
+		 *   Whether the given query options are inside a $expand
+		 * @param {boolean} [bAdd]
+		 *   Whether to add the given query options because they are in a $expand that has not been
+		 *   aggregated yet
+		 * @returns {boolean}
+		 *   Whether the query options can be fulfilled by this binding
 		 */
 		function merge(mAggregatedQueryOptions, mQueryOptions0, sMetaPath, bInsideExpand, bAdd) {
 			/*
@@ -304,10 +310,13 @@ sap.ui.define([
 		}
 
 		if (merge(mAggregatedQueryOptionsClone, mQueryOptions, sBaseMetaPath)) {
-			if (!bCacheImmutable) {
-				this.mAggregatedQueryOptions = mAggregatedQueryOptionsClone;
-			} else {
+			if (bCacheImmutable) {
 				this.mLateQueryOptions = mAggregatedQueryOptionsClone;
+			} else {
+				this.mAggregatedQueryOptions = mAggregatedQueryOptionsClone;
+				if (this.mLateQueryOptions) {
+					merge(this.mLateQueryOptions, mQueryOptions);
+				}
 			}
 			return true;
 		}
@@ -658,14 +667,14 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   A context of this binding which is the direct or indirect parent of the child binding.
 	 *   Initially it is the child binding's parent context (See
-	 *   {@link sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache}). When a binding
-	 *   delegates up to its parent binding, it passes its own parent context adjusting
+	 *   {@link sap.ui.model.odata.v4.ODataBinding#fetchOrGetQueryOptionsForOwnCache}). When a
+	 *   binding delegates up to its parent binding, it passes its own parent context adjusting
 	 *   <code>sChildPath</code> accordingly.
 	 * @param {string} sChildPath
 	 *   The child binding's binding path relative to <code>oContext</code>
-	 * @param {object|sap.ui.base.SyncPromise} vChildQueryOptions
-	 *   The child binding's (aggregated) query options or a promise resolving with them
-	 * @param {boolean} bIsProperty
+	 * @param {object|sap.ui.base.SyncPromise} [vChildQueryOptions={}]
+	 *   The child binding's (aggregated) query options (if any) or a promise resolving with them
+	 * @param {boolean} [bIsProperty]
 	 *   Whether the child is a property binding
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolved with the reduced path for the child binding if the child binding can use
@@ -680,7 +689,7 @@ sap.ui.define([
 		// getBaseForPathReduction must be called early, because the (virtual) parent context may be
 		// lost again when the path is needed
 		var sBaseForPathReduction = this.getBaseForPathReduction(),
-			sBaseMetaPath = _Helper.getMetaPath(oContext.getPath()),
+			sBaseMetaPath,
 			bCacheImmutable,
 			oCanUseCachePromise,
 			// whether this binding is an operation or depends on one
@@ -735,6 +744,23 @@ sap.ui.define([
 			return SyncPromise.resolve(sResolvedChildPath);
 		}
 
+		oCanUseCachePromise = this.mCanUseCachePromiseByChildPath[sChildPath];
+		if (oCanUseCachePromise && bIsProperty) {
+			return oCanUseCachePromise.then(function (sOldReducedPath) {
+				if (!sOldReducedPath) {
+					return undefined;
+				}
+				// Note: sResolvedChildPath could be "/SalesOrderList('42')/SO_2_SOITEM/0/Note"
+				// w/ index (thus getMetaPath helps), but getStrippedMetaPath makes no difference
+				if (!sChildPath.includes("/")
+					|| _Helper.getMetaPath(sOldReducedPath)
+						=== _Helper.getMetaPath(sResolvedChildPath)) {
+					return sResolvedChildPath;
+				}
+				return oMetaModel.getReducedPath(sResolvedChildPath, sBaseForPathReduction);
+			});
+		}
+
 		// Note: this.oCachePromise exists for all bindings except operation bindings; it might
 		// become pending again
 		bCacheImmutable = this.oCachePromise.isRejected()
@@ -742,16 +768,17 @@ sap.ui.define([
 			|| oContext.isKeepAlive() // kept-alive contexts have no index when not in aContexts
 			|| this.oCache === null
 			|| this.oCache && this.oCache.hasSentRequest();
+		sBaseMetaPath = _Helper.getMetaPath(oContext.getPath());
 		aPromises = [
-			this.doFetchQueryOptions(this.oContext),
+			this.doFetchOrGetQueryOptions(this.oContext),
 			// After access to complete meta path of property, the metadata of all prefix paths
 			// is loaded so that synchronous access in wrapChildQueryOptions via getObject is
-			// possible
+			// possible - as well as #getReducedPath
 			fetchPropertyAndType(),
 			vChildQueryOptions
 		];
 		oCanUseCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
-			var mChildQueryOptions = aResult[2],
+			var mChildQueryOptions = aResult[2] || {},
 				mWrappedChildQueryOptions,
 				mLocalQueryOptions = aResult[0],
 				oProperty = aResult[1],
@@ -772,7 +799,7 @@ sap.ui.define([
 				that.bHasPathReductionToParent = true;
 				return that.oContext.getBinding().fetchIfChildCanUseCache(that.oContext,
 					_Helper.getRelativePath(sResolvedChildPath, that.oContext.getPath()),
-					vChildQueryOptions);
+					mChildQueryOptions, bIsProperty);
 			}
 
 			if (bDependsOnOperation || sReducedChildMetaPath === "$count"
@@ -821,8 +848,8 @@ sap.ui.define([
 				if (that.oCache) {
 					that.oCache.setLateQueryOptions(that.mLateQueryOptions);
 				} else if (that.oCache === null) {
-					return that.oContext.getBinding().fetchIfChildCanUseCache(that.oContext,
-						that.sPath, SyncPromise.resolve(that.mLateQueryOptions))
+					return that.oContext.getBinding()
+						.fetchIfChildCanUseCache(that.oContext, that.sPath, that.mLateQueryOptions)
 						.then(function (sPath) {
 							return sPath && sReducedPath;
 						});
@@ -830,6 +857,9 @@ sap.ui.define([
 			}
 			return sReducedPath;
 		});
+		if (bIsProperty && !oContext.getPath().includes("($uid=")) {
+			this.mCanUseCachePromiseByChildPath[sChildPath] = oCanUseCachePromise;
+		}
 		this.aChildCanUseCachePromises.push(oCanUseCachePromise);
 		this.oCachePromise = SyncPromise.all([this.oCachePromise, oCanUseCachePromise])
 			.then(function (aResult) {
@@ -855,6 +885,7 @@ sap.ui.define([
 			that.oModel.reportError(that + ": Failed to enhance query options for "
 				+ "auto-$expand/$select for child " + sChildPath, sClassName, oError);
 		});
+
 		return oCanUseCachePromise;
 	};
 
@@ -978,7 +1009,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.getQueryOptionsForPath = function (sPath, oContext) {
-		if (Object.keys(this.mParameters).length) {
+		if (!_Helper.isEmptyObject(this.mParameters)) {
 			// binding has parameters -> all query options need to be defined at the binding
 			return _Helper.getQueryOptionsForPath(this.getQueryOptionsFromParameters(), sPath);
 		}
@@ -1007,8 +1038,8 @@ sap.ui.define([
 	 * @function
 	 * @name sap.ui.model.odata.v4.ODataParentBinding.getQueryOptionsFromParameters
 	 * @private
-	 * @see sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache
-	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchQueryOptions
+	 * @see sap.ui.model.odata.v4.ODataBinding#fetchOrGetQueryOptionsForOwnCache
+	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchOrGetQueryOptions
 	 */
 
 	/**

@@ -9,7 +9,6 @@ sap.ui.define([
 	"./lib/_Helper",
 	"sap/base/assert",
 	"sap/base/Log",
-	"sap/base/util/isEmptyObject",
 	"sap/base/util/JSTokenizer",
 	"sap/base/util/ObjectPath",
 	"sap/ui/base/ManagedObject",
@@ -41,11 +40,11 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/thirdparty/URI"
-], function (AnnotationHelper, ValueListType, _Helper, assert, Log, isEmptyObject, JSTokenizer,
-		ObjectPath, ManagedObject, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
-		BaseContext, ContextBinding, MetaModel, PropertyBinding, OperationMode, Boolean, Byte,
-		EdmDate, DateTimeOffset, Decimal, Double, Guid, Int16, Int32, Int64, Raw, SByte, Single,
-		Stream, String, TimeOfDay, URI) {
+], function (AnnotationHelper, ValueListType, _Helper, assert, Log, JSTokenizer, ObjectPath,
+		ManagedObject, SyncPromise, BindingMode, ChangeReason, ClientListBinding, BaseContext,
+		ContextBinding, MetaModel, PropertyBinding, OperationMode, Boolean, Byte, EdmDate,
+		DateTimeOffset, Decimal, Double, Guid, Int16, Int32, Int64, Raw, SByte, Single, Stream,
+		String, TimeOfDay, URI) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
@@ -1627,7 +1626,7 @@ sap.ui.define([
 			}
 
 			if (mFormatOptions) {
-				if (isEmptyObject(mFormatOptions)) {
+				if (_Helper.isEmptyObject(mFormatOptions)) {
 					mFormatOptions = undefined;
 				} else if ("parseKeepsEmptyString" in mFormatOptions
 						&& oProperty.$Type !== "Edm.String") {
@@ -3271,7 +3270,7 @@ sap.ui.define([
 
 				// Each reference must have contributed at least one qualifier. So if oValueListInfo
 				// is empty, there cannot have been a reference.
-				if (isEmptyObject(oValueListInfo)) {
+				if (_Helper.isEmptyObject(oValueListInfo)) {
 					throw new Error("No annotation '" + sValueListReferences.slice(1) + "' for "
 						+ sPropertyPath);
 				}
