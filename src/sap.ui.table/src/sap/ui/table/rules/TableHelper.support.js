@@ -10,6 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	var Severity = SupportLib.Severity;
+	var Audiences = SupportLib.Audiences; // Control, Internal, Application
 
 	var TableSupportHelper = {
 		DOCU_REF: "https://ui5.sap.com/",
@@ -36,6 +37,10 @@ sap.ui.define([
 		normalizeRule: function(oRuleDef) {
 			if (oRuleDef.id && oRuleDef.id !== "") {
 				oRuleDef.id = "gridTable" + oRuleDef.id;
+			}
+
+			if (!oRuleDef.audiences) {
+				oRuleDef.audiences = [Audiences.Application];
 			}
 
 			return oRuleDef;
