@@ -175,6 +175,34 @@
 					"maxItems": 1
 				}
 			}
+		},
+		"hiddenIconWithSrc": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.hiddenIconWithSrc",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"json": {
+						"iconVisible": true
+					}
+				},
+				"configuration": {
+					"parameters": {
+						"iconSrc": {
+							"value": "SRC_FOR_HIDDEN_ICON"
+						}
+					}
+				},
+				"header": {
+					"title": "Card header icon should be hidden",
+					"icon": {
+						"src": "{parameters>/iconSrc/value}",
+						"visible": "{iconVisible}"
+					}
+				}
+			}
 		}
 	},
 	"splitter": {
@@ -1108,7 +1136,7 @@
 				}
 			}
 		}
-	
+
 	},
 	"manifestTests": {
 		"manifest": {
@@ -2693,7 +2721,7 @@
 					]
 				}
 			}
-		}	
+		}
 	},
 	"filters": {
 		"filter": {

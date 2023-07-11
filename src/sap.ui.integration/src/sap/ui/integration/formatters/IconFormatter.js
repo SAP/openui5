@@ -27,6 +27,14 @@ sap.ui.define([
 	});
 
 	/**
+	 * Use that value for icon src to determine if the icon should be hidden.
+	 * @const
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 */
+	IconFormatter.SRC_FOR_HIDDEN_ICON = "SRC_FOR_HIDDEN_ICON";
+
+	/**
 	 * Format relative icon sources to be relative to the provided sap.app/id.
 	 *
 	 * @private
@@ -36,6 +44,10 @@ sap.ui.define([
 	IconFormatter.prototype.formatSrc = function (sUrl) {
 		if (!sUrl) {
 			return sUrl;
+		}
+
+		if (sUrl === IconFormatter.SRC_FOR_HIDDEN_ICON) {
+			return IconFormatter.SRC_FOR_HIDDEN_ICON;
 		}
 
 		if (sUrl.startsWith("data:") || IconPool.isIconURI(sUrl)) {

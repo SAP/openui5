@@ -26,7 +26,8 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/IllustratedMessageType",
-	"sap/m/IllustratedMessageSize"
+	"sap/m/IllustratedMessageSize",
+	"sap/ui/integration/formatters/IconFormatter"
 ],
 	function (
 		Card,
@@ -54,7 +55,8 @@ sap.ui.define([
 		HBox,
 		JSONModel,
 		IllustratedMessageType,
-		IllustratedMessageSize
+		IllustratedMessageSize,
+		IconFormatter
 	) {
 		"use strict";
 
@@ -1716,7 +1718,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("header icon when visible property is set to false", function (assert) {
+		QUnit.test("Header icon when visible property is set to false", function (assert) {
 			// Arrange
 			var done = assert.async();
 
@@ -1753,7 +1755,7 @@ sap.ui.define([
 		});
 
 
-		QUnit.test("header icon when visible property is not set", function (assert) {
+		QUnit.test("Header icon when visible property is not set", function (assert) {
 			// Arrange
 			var done = assert.async();
 
@@ -1783,8 +1785,7 @@ sap.ui.define([
 			});
 		});
 
-
-		QUnit.test("hidden header icon if visible property is set to true", function (assert) {
+		QUnit.test("Hidden header icon if visible property is set to true", function (assert) {
 			// Arrange
 			var done = assert.async();
 
@@ -1820,7 +1821,49 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("header status text when visible property is set to false", function (assert) {
+		QUnit.test("Header icon not visible when src set to IconFormatter.SRC_FOR_HIDDEN_ICON", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.notOk(this.oCard.getCardHeader().shouldShowIcon(), "Card Header icon should not be shown.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.hiddenIconWithSrc"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": {
+							"iconVisible": true
+						}
+					},
+					"configuration": {
+						"parameters": {
+							"iconSrc": {
+								"value": "SRC_FOR_HIDDEN_ICON"
+							}
+						}
+					},
+					"header": {
+						"title": "Card header icon should be hidden",
+						"icon": {
+							"src": "{parameters>/iconSrc/value}",
+							"visible": "{iconVisible}"
+						}
+					}
+				}
+			});
+		});
+
+		QUnit.test("Header status text when visible property is set to false", function (assert) {
 			// Arrange
 			var done = assert.async();
 
@@ -1854,7 +1897,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("header status when visible property is set to true", function (assert) {
+		QUnit.test("Header status when visible property is set to true", function (assert) {
 			// Arrange
 			var done = assert.async();
 

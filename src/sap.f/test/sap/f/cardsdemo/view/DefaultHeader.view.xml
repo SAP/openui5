@@ -61,6 +61,11 @@
 				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="320px"
 				class="sapUiSmallMargin" />
+			<w:Card
+				manifest="{manifests>/defaultHeader/hiddenIconWithSrc}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="320px"
+				class="sapUiSmallMargin" />
 		</Panel>
 	</Page>
 </mvc:View>

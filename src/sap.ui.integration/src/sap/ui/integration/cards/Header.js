@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/LoadingProvider",
-	"sap/ui/integration/util/Utils"
+	"sap/ui/integration/util/Utils",
+	"sap/ui/integration/formatters/IconFormatter"
 ], function (
 	Core,
 	JSONModel,
@@ -22,7 +23,8 @@ sap.ui.define([
 	BindingHelper,
 	BindingResolver,
 	LoadingProvider,
-	Utils
+	Utils,
+	IconFormatter
 ) {
 	"use strict";
 
@@ -148,6 +150,13 @@ sap.ui.define([
 			this._oActions.destroy();
 			this._oActions = null;
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	Header.prototype.shouldShowIcon = function () {
+		return this.getIconVisible() && this.getIconSrc() !== IconFormatter.SRC_FOR_HIDDEN_ICON;
 	};
 
 	/**
