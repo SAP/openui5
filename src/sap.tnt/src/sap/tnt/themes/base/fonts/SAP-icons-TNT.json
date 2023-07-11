@@ -232,5 +232,19 @@
   "map-all-fields":"0xe091",
   "process-package":"0xe092",
   "process-kpis":"0xe093",
-  "insights":"0xe094"
+  "insights":"0xe094",
+  "escalation-boundary-interrupting": "0xe095",
+  "escalation-boundary-non-interrupting": "0xe096",
+  "escalation-throwing": "0xe097",
+  "solution": "0xe098",
+  "binary": "0xe099",
+  "uuid": "0xe09A",
+  "github": "0xe09B",
+  "robot": "0xe09C",
+  "string": "0xe09D",
+  "boolean": "0xe09E",
+  "array": "0xe09F",
+  "any": "0xe101",
+  "integer": "0xe102",
+  "float": "0xe103"
 }

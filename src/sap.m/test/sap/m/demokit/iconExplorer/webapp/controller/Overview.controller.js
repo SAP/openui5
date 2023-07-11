@@ -355,8 +355,8 @@ sap.ui.define([
 			var oConfigs = this.getOwnerComponent()._oFontConfigs;
 			var sDownloadURI = oConfigs[sFontName].downloadURI || oConfigs[sFontName].fontURI;
 
-			if (oCore.getConfiguration().getTheme() === "sap_horizon") {
-				sDownloadURI = oConfigs[sFontName].downloadURIV5 || sDownloadURI;
+			if (oCore.getConfiguration().getTheme().startsWith("sap_horizon")) {
+				sDownloadURI = oConfigs[sFontName].downloadURIForHorizon || sDownloadURI;
 			}
 
 			mobileLibrary.URLHelper.redirect(sDownloadURI + sFontName + ".ttf");
