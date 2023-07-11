@@ -3819,7 +3819,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("doFetchQueryOptions", function (assert) {
+	QUnit.test("doFetchOrGetQueryOptions", function (assert) {
 		var oBinding = this.bindContext("foo"),
 			oContext = {},
 			oPromise = {};
@@ -3829,7 +3829,7 @@ sap.ui.define([
 			.returns(oPromise);
 
 		// code under test
-		assert.strictEqual(oBinding.doFetchQueryOptions(oContext), oPromise);
+		assert.strictEqual(oBinding.doFetchOrGetQueryOptions(oContext), oPromise);
 	});
 
 	//*********************************************************************************************
@@ -3875,6 +3875,7 @@ sap.ui.define([
 			.callsFake(function () {
 				assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
 				assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
+				assert.deepEqual(oBinding.mCanUseCachePromiseByChildPath, {});
 			});
 		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
 			.returns([oDependent0, oDependent1]);
@@ -3886,6 +3887,7 @@ sap.ui.define([
 			.withExactArgs({reason : sinon.match.same(sResumeChangeReason)});
 		oBinding.mAggregatedQueryOptions = {$select : ["Team_Id"]};
 		oBinding.bAggregatedQueryOptionsInitial = false;
+		oBinding.mCanUseCachePromiseByChildPath = "~mCanUseCachePromiseByChildPath~";
 
 		// code under test
 		oBinding.resumeInternal(bCheckUpdate);

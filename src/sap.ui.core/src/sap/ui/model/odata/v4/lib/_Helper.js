@@ -1838,6 +1838,10 @@ sap.ui.define([
 				&& !mParameters.$$aggregation.hierarchyQualifier;
 		},
 
+		// Trampoline property to allow for mocking function module in unit tests.
+		// @see sap.base.util.isEmptyObject
+		isEmptyObject : isEmptyObject,
+
 		/**
 		 * Returns whether the given property is missing in vEntityOrCollection. This is the case if
 		 * there is no value for it. It is not missing if a parent has a <code>null</code> value. In
@@ -2724,7 +2728,7 @@ sap.ui.define([
 				}
 			}
 			if (!oProperty || oProperty.$kind === "Property") {
-				if (Object.keys(mChildQueryOptions).length > 0) {
+				if (!isEmptyObject(mChildQueryOptions)) {
 					Log.error("Failed to enhance query options for auto-$expand/$select as the"
 							+ " child binding has query options, but its path '" + sChildMetaPath
 							+ "' points to a structural property",

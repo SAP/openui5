@@ -1306,7 +1306,7 @@ sap.ui.define([
 		this.oBinding.checkSuspended();
 
 		return Promise.all(aPaths.map(function (sPath) {
-			return that.oBinding.fetchIfChildCanUseCache(that, sPath, SyncPromise.resolve({}))
+			return that.oBinding.fetchIfChildCanUseCache(that, sPath, undefined, true)
 				.then(function (sReducedPath) {
 					if (sReducedPath) {
 						return that.fetchPrimitiveValue(sReducedPath, bExternalFormat);
@@ -1807,7 +1807,7 @@ sap.ui.define([
 				if (!sMessagesPath) {
 					throw new Error("Missing @com.sap.vocabularies.Common.v1.Messages");
 				}
-				return that.oBinding.fetchIfChildCanUseCache(that, sMessagesPath, {});
+				return that.oBinding.fetchIfChildCanUseCache(that, sMessagesPath, undefined, true);
 			}).then(function (sReducedPath) {
 				return that.fetchValue(sReducedPath);
 			}).catch(this.oModel.getReporter());

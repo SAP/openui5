@@ -3,7 +3,6 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/base/util/isEmptyObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Cache",
@@ -11,8 +10,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor"
-], function (Log, isEmptyObject, SyncPromise, ODataUtils, _Cache, _GroupLock, _Helper, _Parser,
-		_Requestor) {
+], function (Log, SyncPromise, ODataUtils, _Cache, _GroupLock, _Helper, _Parser, _Requestor) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Cache",
@@ -4577,11 +4575,23 @@ sap.ui.define([
 	//*********************************************************************************************
 [undefined, "$auto.heroes"].forEach(function (sGroupId) {
 	[false, true].forEach(function (bDataReceivedFails) {
-		var sTitle = "Cache#fetchLateProperty: $select, group=" + sGroupId
-			+ (bDataReceivedFails ? ", fireDataReceived fails" : "");
+		[false, true].forEach(function (bHasLateQueryOptions) {
+			var sTitle = "Cache#fetchLateProperty: $select, group=" + sGroupId
+				+ (bDataReceivedFails ? ", fireDataReceived fails" : "")
+				+ ", has late query options: " + bHasLateQueryOptions;
 
 	QUnit.test(sTitle, function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Employees('31')", {}),
+		var oCache = new _Cache(this.oRequestor, "Employees('31')", {
+				$apply : "A.P.P.L.E.", // ignored
+				$count : true, // ignored
+				$expand : "~expand~",
+				$filter : "age gt 40", // ignored
+				$orderby : "TEAM_ID desc", // ignored
+				$search : "OR", // ignored
+				$select : "~select~",
+				foo : "bar", // ignored
+				"sap-client" : "123" // ignored
+			}),
 			oData = {
 				foo : {
 					bar : "baz"
@@ -4596,9 +4606,6 @@ sap.ui.define([
 			oPromise,
 			sRequestedPropertyPath = "foo/bar/baz",
 			oRequestGroupLock = {},
-			mQueryOptions = {
-				$select : [sRequestedPropertyPath]
-			},
 			mQueryOptionsForPath = {},
 			mTypeForMetaPath = {
 				"~2~" : {}
@@ -4609,27 +4616,30 @@ sap.ui.define([
 		if (sGroupId) {
 			_Helper.setPrivateAnnotation(oEntity, "groupId", sGroupId);
 		}
-		oCache.mLateQueryOptions = {};
+		if (bHasLateQueryOptions) {
+			oCache.mLateQueryOptions = {};
+		}
 		oHelperMock.expects("getMetaPath").withExactArgs("").returns("~resMetaPath~");
 		this.mock(oCache).expects("fetchTypes")
 			.withExactArgs().returns(SyncPromise.resolve(mTypeForMetaPath));
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath, "~resMetaPath~")
 			.returns("~metaPath~");
 		oHelperMock.expects("getQueryOptionsForPath")
-			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), "")
+			.withExactArgs(bHasLateQueryOptions ? sinon.match.same(oCache.mLateQueryOptions) : {
+				$select : "~select~",
+				$expand : "~expand~"
+			}, "")
 			.returns(mQueryOptionsForPath);
 		oHelperMock.expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(mQueryOptionsForPath), [sRequestedPropertyPath],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				"~metaPath~")
-			.returns(mQueryOptions);
+			.returns("~mQueryOptions~"); // no $expand here, simplifies visitQueryOptions!
 		oHelperMock.expects("buildPath").withExactArgs("~metaPath~", undefined).returns("~2~");
 		this.oRequestorMock.expects("fetchType").never();
-		oHelperMock.expects("buildPath")
-			.withExactArgs(oCache.sResourcePath, "")
-			.returns("~/");
+		oHelperMock.expects("buildPath").withExactArgs(oCache.sResourcePath, "").returns("~/");
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs("~metaPath~", sinon.match.same(mQueryOptions), false, true)
+			.withExactArgs("~metaPath~", "~mQueryOptions~", false, true)
 			.returns("?$select=~metaPath~");
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("~metaPath~", sinon.match.same(oCache.mQueryOptions), true)
@@ -4641,7 +4651,7 @@ sap.ui.define([
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "~/?~", sinon.match.same(oRequestGroupLock), undefined,
 				undefined, sinon.match.func, undefined, "~metaPath~", undefined, false,
-				sinon.match.same(mQueryOptions))
+				"~mQueryOptions~")
 			.callsFake(function () {
 				var fnOnSubmit = arguments[5];
 
@@ -4679,6 +4689,7 @@ sap.ui.define([
 			assert.strictEqual(oError, "~oError~");
 		});
 	});
+		});
 	});
 });
 
@@ -9492,7 +9503,7 @@ sap.ui.define([
 				return oParam === oEntityDataCleaned;
 			}
 			oEntityDataCleaned = oParam;
-			return isEmptyObject(oParam);
+			return _Helper.isEmptyObject(oParam);
 		}
 
 		oCallbacksMock.expects("errorCallback").never();

@@ -8,10 +8,9 @@ sap.ui.define([
 	"./_Helper",
 	"./_Requestor",
 	"sap/base/Log",
-	"sap/base/util/isEmptyObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/ODataUtils"
-], function (_GroupLock, _Helper, _Requestor, Log, isEmptyObject, SyncPromise, ODataUtils) {
+], function (_GroupLock, _Helper, _Requestor, Log, SyncPromise, ODataUtils) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
@@ -1036,7 +1035,7 @@ sap.ui.define([
 			}
 		}
 
-		if (!this.mLateQueryOptions) {
+		if (!(this.mLateQueryOptions || this.mQueryOptions && this.mQueryOptions.$select)) {
 			return false; // no autoExpandSelect
 		}
 
@@ -1049,10 +1048,15 @@ sap.ui.define([
 		aUpdateProperties = [sRequestedPropertyPath];
 
 		sFullResourceMetaPath = _Helper.buildPath(this.sMetaPath, sResourceMetaPath);
+		mQueryOptions = this.mLateQueryOptions
+			|| { // ensure that $select precedes $expand in the resulting query
+				$select : this.mQueryOptions.$select,
+				$expand : this.mQueryOptions.$expand
+			};
 		// sRequestedPropertyPath is also a metapath because the binding does not accept a path with
 		// a collection-valued navigation property for a late property
 		mQueryOptions = _Helper.intersectQueryOptions(
-			_Helper.getQueryOptionsForPath(this.mLateQueryOptions, sResourcePath),
+			_Helper.getQueryOptionsForPath(mQueryOptions, sResourcePath),
 			[sRequestedPropertyPath], this.oRequestor.getModelInterface().fetchMetadata,
 			sFullResourceMetaPath);
 		if (!mQueryOptions) {
@@ -1325,7 +1329,7 @@ sap.ui.define([
 	/**
 	 * Returns this cache's query options.
 	 *
-	 * @returns {object} The query options
+	 * @returns {object|undefined} The query options, if any
 	 *
 	 * @public
 	 * @see #setQueryOptions
@@ -1371,7 +1375,7 @@ sap.ui.define([
 	 * @see #registerChangeListener
 	 */
 	_Cache.prototype.hasChangeListeners = function () {
-		return !isEmptyObject(this.mChangeListeners);
+		return !_Helper.isEmptyObject(this.mChangeListeners);
 	};
 
 	/**
@@ -4069,7 +4073,7 @@ sap.ui.define([
 		if (oData) {
 			sHttpMethod = oData["X-HTTP-Method"] || sHttpMethod;
 			delete oData["X-HTTP-Method"];
-			if (this.oRequestor.isActionBodyOptional() && !Object.keys(oData).length) {
+			if (this.oRequestor.isActionBodyOptional() && _Helper.isEmptyObject(oData)) {
 				oData = undefined;
 			}
 		}

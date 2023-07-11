@@ -636,7 +636,7 @@ sap.ui.define([
 					&& !oOperationMetadata.$ReturnType.$Type.startsWith("Edm.")) {
 				sMetaPath += "/$Type";
 			}
-		} else if (Object.keys(mParameters).length) {
+		} else if (!_Helper.isEmptyObject(mParameters)) {
 			throw new Error("Unsupported parameters for navigation property");
 		}
 
@@ -790,9 +790,9 @@ sap.ui.define([
 
 	/**
 	 * @override
-	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchQueryOptions
+	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchOrGetQueryOptions
 	 */
-	ODataContextBinding.prototype.doFetchQueryOptions = function (oContext) {
+	ODataContextBinding.prototype.doFetchOrGetQueryOptions = function (oContext) {
 		return this.fetchResolvedQueryOptions(oContext);
 	};
 
@@ -1580,6 +1580,7 @@ sap.ui.define([
 		if (bParentHasChanges || sResumeChangeReason) {
 			this.mAggregatedQueryOptions = {};
 			this.bAggregatedQueryOptionsInitial = true;
+			this.mCanUseCachePromiseByChildPath = {};
 			this.removeCachesAndMessages("");
 			this.fetchCache(this.oContext);
 		}

@@ -346,7 +346,7 @@ sap.ui.define([
 			sApply = _AggregationHelper.buildApply(mParameters.$$aggregation).$apply;
 		}
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
-		this.oQueryOptionsPromise = undefined; // @see #doFetchQueryOptions
+		this.oQueryOptionsPromise = undefined; // @see #doFetchOrGetQueryOptions
 		this.mParameters = mParameters; // store mParameters at binding after validation
 		if (sApply) {
 			this.mQueryOptions.$apply = sApply;
@@ -1263,9 +1263,9 @@ sap.ui.define([
 
 	/**
 	 * @override
-	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchQueryOptions
+	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchOrGetQueryOptions
 	 */
-	ODataListBinding.prototype.doFetchQueryOptions = function (oContext) {
+	ODataListBinding.prototype.doFetchOrGetQueryOptions = function (oContext) {
 		// Note: an absolute binding needs no parent context :-)
 		var sMetaPath = oContext && _Helper.getMetaPath(oContext.getPath()),
 			that = this;
@@ -2780,7 +2780,7 @@ sap.ui.define([
 	ODataListBinding.prototype.inheritQueryOptions = function (mQueryOptions, oContext) {
 		var mInheritedQueryOptions;
 
-		if (!Object.keys(this.mParameters).length) {
+		if (_Helper.isEmptyObject(this.mParameters)) {
 			// mix-in inherited static query options
 			mInheritedQueryOptions = this.getQueryOptionsForPath("", oContext);
 			if (mQueryOptions.$orderby && mInheritedQueryOptions.$orderby) {
@@ -2855,7 +2855,7 @@ sap.ui.define([
 		// When suspended it matches if it already has contexts. Then its getKeepAliveContext fails.
 		return this.mParameters.$$getKeepAliveContext && this.getResolvedPath() === sPath
 			&& (!this.isRootBindingSuspended() || this.aContexts.length
-				|| Object.keys(this.mPreviousContextsByPath).length);
+				|| !_Helper.isEmptyObject(this.mPreviousContextsByPath));
 	};
 
 	/**
@@ -3965,6 +3965,7 @@ sap.ui.define([
 					if (this.mParameters.$$aggregation) {
 						_AggregationHelper.setPath(this.mParameters.$$aggregation, sResolvedPath);
 					} else if (this.bHasPathReductionToParent && this.oModel.bAutoExpandSelect) {
+						this.mCanUseCachePromiseByChildPath = {};
 						this.sChangeReason = "AddVirtualContext"; // JIRA: CPOUI5ODATAV4-848
 					}
 					if (oContext.getBinding
