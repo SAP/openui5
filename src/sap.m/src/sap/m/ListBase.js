@@ -262,17 +262,20 @@ function(
 
 				/**
 				 * Defines the multi-selection mode for the control.
-				 * If this property is set to the <code>Default</code> value, the <code>sap.m.Table</code> control renders
-				 * the Select All checkbox in the column header, otherwise the Deselect All icon is rendered.
-				 * The Select All checkbox allows the user to select all the items in the control, and
-				 * the Deselect All icon deselects the items.
-				 * If the property is set to <code>ClearAll</code>, then selecting items via the <code>selectAll</code> method is not possible. See {@link #selectAll selectAll} for more details.
+				 *
+				 * If the property is set to <code>ClearAll</code>, then selecting items via the
+				 * keyboard shortcut <i>CTRL + A</i> and via the <code>selectAll</code> method is not possible.
+				 * See {@link #selectAll selectAll} for more details.
+				 * A selection of multiple items is still possible using the range selection feature.
+				 * For more information about the range selection, see {@link topic:8a0d4efa29d44ef39219c18d832012da Keyboard Handling for Item Selection}.
+				 *
+				 * <b>Only relevant for <code>sap.m.Table</code>:</b>
+				 * If <code>ClearAll</code> is set, the table renders a Deselect All icon in the column header,
+				 * otherwise a Select All checkbox is shown. The Select All checkbox allows the user to select all the
+				 * items in the control, and the Deselect All icon deselects the items.
 				 *
 				 * <b>Note:</b> This property must be used with the <code>MultiSelect</code> mode.
-				 * If this property is set to <code>ClearAll</code>, then a selection of multiple items is still possible
-				 * via the range selection feature except <i>CTRL + A</i>.
-				 * Additionally, the <i>CTRL + SHIFT + A</i> key combination can be used for deselecting all the items.
-				 * For details on the range selection, please see {@link topic:8a0d4efa29d44ef39219c18d832012da Keyboard Handling for Item Selection}.
+				 *
 				 * @since 1.93
 				 */
 				multiSelectMode : {type: "sap.m.MultiSelectMode", group: "Behavior", defaultValue: MultiSelectMode.Default}
