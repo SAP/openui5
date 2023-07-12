@@ -10,10 +10,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/merge",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/integration/editor/EditorResourceBundles",
-	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/theming/Parameters",
-	"sap/ui/dom/includeStylesheet",
 	"sap/ui/integration/library",
 	"sap/ui/integration/designtime/editor/CardPreview"
 ], function (
@@ -24,10 +20,6 @@ sap.ui.define([
 	JSONModel,
 	merge,
 	ResourceModel,
-	EditorResourceBundles,
-	LoaderExtensions,
-	Parameters,
-	includeStylesheet,
 	library,
 	CardPreview
 ) {

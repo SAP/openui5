@@ -16,8 +16,6 @@ sap.ui.define([
 	"sap/ui/integration/util/Destinations",
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/m/Label",
-	"sap/m/Title",
-	"sap/m/Panel",
 	"sap/m/HBox",
 	"sap/m/VBox",
 	"sap/ui/core/Icon",
@@ -41,10 +39,7 @@ sap.ui.define([
 	"./Settings",
 	"sap/m/FlexItemData",
 	"sap/m/FlexBox",
-	"sap/m/Button",
-	"sap/m/OverflowToolbar",
-	"sap/m/IconTabBar",
-	"sap/m/IconTabFilter"
+	"sap/m/Button"
 ], function (
 	Control,
 	Core,
@@ -59,8 +54,6 @@ sap.ui.define([
 	Destinations,
 	DataProviderFactory,
 	Label,
-	Title,
-	Panel,
 	HBox,
 	VBox,
 	Icon,
@@ -84,10 +77,7 @@ sap.ui.define([
 	Settings,
 	FlexItemData,
 	FlexBox,
-	Button,
-	OverflowToolbar,
-	IconTabBar,
-	IconTabFilter
+	Button
 ) {
 	"use strict";
 

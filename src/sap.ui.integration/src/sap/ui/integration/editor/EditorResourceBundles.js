@@ -4,9 +4,8 @@
 
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/base/util/LoaderExtensions",
 	"sap/base/i18n/ResourceBundle"
-], function (ManagedObject, LoaderExtensions, ResourceBundle) {
+], function (ManagedObject, ResourceBundle) {
 	"use strict";
 
 	/**
