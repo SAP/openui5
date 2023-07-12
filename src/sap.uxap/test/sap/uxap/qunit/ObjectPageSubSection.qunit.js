@@ -18,8 +18,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/Panel",
-	"sap/m/Text"],
-function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text) {
+	"sap/m/Text",
+	"sap/ui/core/HTML"],
+function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, HTML) {
 	"use strict";
 
 	var TitleLevel = coreLibrary.TitleLevel;
@@ -1793,7 +1794,7 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 		// Setup: content height is bigger than page height
 		oSubSection.removeAllBlocks();
 		oQunitFixtureElement.style.height = sPageHeight;
-		oSubSection.addBlock(new sap.ui.core.HTML({content: '<div style="min-height:' + sPageContentHeight + '"></div>'}));
+		oSubSection.addBlock(new HTML({content: '<div style="min-height:' + sPageContentHeight + '"></div>'}));
 
 		//act
 		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);

@@ -192,7 +192,8 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchIt
 
 			assert.equal($Item.attr("aria-checked"), "true", "aria-checked is correctly set");
 
-			this.oProductSwitch.rerender();
+			this.oProductSwitch.invalidate();
+			Core.applyChanges();
 
 			assert.equal($Item.attr("aria-checked"), "true", "aria-checked is still correctly set");
 		});

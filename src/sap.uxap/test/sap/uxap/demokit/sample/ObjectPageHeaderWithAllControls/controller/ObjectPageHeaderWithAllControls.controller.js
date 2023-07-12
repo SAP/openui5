@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/Controller",
-	"sap/m/MessageToast"
-], function (JSONModel, Controller, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/ui/core/Fragment"
+], function (JSONModel, Controller, MessageToast, Fragment) {
 	"use strict";
 
 	return Controller.extend("sap.uxap.sample.ObjectPageHeaderWithAllControls.controller.ObjectPageHeaderWithAllControls", {
@@ -27,31 +28,45 @@ sap.ui.define([
 			return "formatted link";
 		},
 		_getResponsivePopover: function () {
-			if (!this._oPopover) {
-				this._oPopover = sap.ui.xmlfragment("sap.uxap.sample.ObjectPageHeaderWithAllControls.view.Popover", this);
-				this.getView().addDependent(this._oPopover);
+			if (!this._oPopoverPromise) {
+				this._oPopoverPromise = Fragment.load({
+					id: this.getView().getId(),
+					name: "sap.uxap.sample.ObjectPageHeaderWithAllControls.view.Popover",
+					controller: this
+				}).then(function (oPopover) {
+					this.getView().addDependent(oPopover);
+					return oPopover;
+				}.bind(this));
 			}
-			return this._oPopover;
+			return this._oPopoverPromise;
 		},
 		handleTitleSelectorPress: function (oEvent) {
-			var oPopOver = this._getResponsivePopover();
-			oPopOver.openBy(oEvent.getParameter("domRef"));
-			oPopOver.setModel(oEvent.getSource().getModel());
+			this._getResponsivePopover().then(function (oPopOver) {
+				oPopOver.openBy(oEvent.getParameter("domRef"));
+				oPopOver.setModel(oEvent.getSource().getModel());
+			});
 		},
 		handleItemSelect: function (oEvent) {
 			this._oPopover.close();
 		},
 		_getResponsivePopoverLock: function () {
 			if (!this._oPopoverLock) {
-				this._oPopoverLock = sap.ui.xmlfragment("sap.uxap.sample.ObjectPageHeaderWithAllControls.view.PopoverLock", this);
-				this.getView().addDependent(this._oPopover);
+				this._oPopoverLock = Fragment.load({
+					id: this.getView().getId(),
+					name: "sap.uxap.sample.ObjectPageHeaderWithAllControls.view.PopoverLock",
+					controller: this
+				}).then(function (oPopover) {
+					this.getView().addDependent(oPopover);
+					return oPopover;
+				}.bind(this));
 			}
 			return this._oPopoverLock;
 		},
 		handleMarkLockedPress: function (oEvent) {
-			var oPopoverLock = this._getResponsivePopoverLock();
-			oPopoverLock.openBy(oEvent.getParameter("domRef"));
-			oPopoverLock.setModel(oEvent.getSource().getModel());
+			this._getResponsivePopoverLock().then(function (oPopoverLock) {
+				oPopoverLock.openBy(oEvent.getParameter("domRef"));
+				oPopoverLock.setModel(oEvent.getSource().getModel());
+			});
 		},
 		handleLink1Press: function (oEvent) {
 			var msg = 'Page 1 a very long link clicked';

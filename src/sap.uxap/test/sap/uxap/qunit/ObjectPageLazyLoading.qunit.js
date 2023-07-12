@@ -379,7 +379,7 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 				oObjectPage._triggerVisibleSubSectionsEvents(); // enable early lazy loading
 				iExpectedLazyLoadingDelay = 0; // expect very small delay
 				window["qunit-fixture"].style.display = "none";
-				oObjectPage.rerender();
+				oObjectPage.invalidate();
 
 
 

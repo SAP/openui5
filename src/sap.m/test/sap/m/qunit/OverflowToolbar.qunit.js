@@ -3306,7 +3306,8 @@ sap.ui.define([
 
 		// act - overvlow button has been focused, then invalidate the toolbar.
 		this.oOTBOverflowed.sFocusedChildControlId = oOverflowButton.getId();
-		this.oOTBOverflowed.rerender();
+		this.oOTBOverflowed.invalidate();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Focus should move on last child after toolbar expanding", function (assert) {

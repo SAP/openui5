@@ -373,7 +373,7 @@ function (
 	QUnit.test("DynamicPage headerExpanded=false and no content renders header correctly snapped", function (assert) {
 		// setup
 		var oHeaderElement;
-		this.oDynamicPage.rerender();
+		this.oDynamicPage.invalidate();
 		Core.applyChanges();
 		// assert
 
@@ -517,7 +517,8 @@ function (
 			});
 		this.stub(this.oDynamicPageNoTitle, "getHeaderExpanded").returns(false);
 
-		this.oDynamicPageNoTitle.rerender();
+		this.oDynamicPageNoTitle.invalidate();
+		Core.applyChanges();
 
 		assert.ok(true, "No error is thrown");
 	});
@@ -763,7 +764,6 @@ function (
 				oDynamicPage.getDomRef().style.height = (iHeightBeforeResize / 2) + "px";
 				oSpy.resetHistory();
 				oDynamicPage.invalidate();
-				oDynamicPage.rerender();
 				oDynamicPage.removeEventDelegate(this);
 			}
 		});
@@ -1515,7 +1515,8 @@ function (
 		oUtil.renderObject(this.oDynamicPage);
 
 		//Act - simulating invalidation of DynamicPage and rerendering
-		this.oDynamicPage.rerender();
+		this.oDynamicPage.invalidate();
+		Core.applyChanges();
 
 		oTogglePinButtonVisibilitySpy = this.spy(this.oDynamicPage, "_togglePinButtonVisibility");
 
@@ -1988,7 +1989,8 @@ function (
 
 		// Act
 		this.oDynamicPage._pin(true); // forcing user interaction in order to change the headerPinned property
-		this.oDynamicPage.rerender(); //rerender while header is pinned
+		this.oDynamicPage.invalidate(); //rerender while header is pinned
+		Core.applyChanges();
 
 		// Assert
 		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The header is in the Header wrapper when pinned");
@@ -2050,7 +2052,8 @@ function (
 		oDynamicPage.setHeaderExpanded(false);
 		oDynamicPage.$wrapper.scrollTop(iExpectedScrollPosition);
 		//act
-		oDynamicPage.rerender();
+		oDynamicPage.invalidate();
+		Core.applyChanges();
 
 		//assert
 		assert.ok(oDynamicPage.$wrapper.scrollTop, iExpectedScrollPosition,
@@ -2067,7 +2070,8 @@ function (
 
 		//act
 		oDynamicPage.toggleStyleClass("sapMNavItemHidden", true);
-		oDynamicPage.rerender();
+		oDynamicPage.invalidate();
+		Core.applyChanges();
 		oDynamicPage.toggleStyleClass("sapMNavItemHidden", false);
 
 		//assert
@@ -2383,7 +2387,8 @@ function (
 			done = assert.async();
 
 		// Act
-		this.oDynamicPage.rerender();
+		this.oDynamicPage.invalidate();
+		Core.applyChanges();
 
 		//Assert
 		setTimeout(function() {

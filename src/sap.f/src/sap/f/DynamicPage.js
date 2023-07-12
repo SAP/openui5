@@ -2227,7 +2227,7 @@ sap.ui.define([
 			// => the header will be removed from DOM
 			// but no afterRendering event will be fired (framework-specific behavior)
 			// so we need to reflect the removal of the header height from now
-			oHeader.rerender(); // force the DOM update
+			oHeader.invalidate(); // force the DOM update
 			// update according to the latest header height
 			this._updateTitlePositioning();
 		}

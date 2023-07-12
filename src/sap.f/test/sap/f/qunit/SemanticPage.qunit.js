@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/m/Text",
 	"sap/m/VBox",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/f/semantic/SemanticPage"
 ],
 function (
 	SemanticUtil,
@@ -31,7 +32,8 @@ function (
 	InvisibleText,
 	Text,
 	VBox,
-	Device
+	Device,
+	SemanticPage
 ) {
 	"use strict";
 
@@ -169,7 +171,7 @@ function (
 
 	QUnit.test("test SemanticPage clone", function(assert) {
 		//Arrange
-		var oStub = this.stub(sap.f.semantic.SemanticPage.prototype, "setContent"),
+		var oStub = this.stub(SemanticPage.prototype, "setContent"),
 			oText = new Text({ text: "yo"});
 
 		this.oSemanticPage._getPage().setContent(oText);

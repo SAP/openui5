@@ -553,7 +553,8 @@ function(Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, Object
 				assert.ok(oScrollSpy.calledWithMatch(iExpectedScrollPositionAfterRerender), "scroll position is preserved");
 				done();
 			});
-			oObjectPage.rerender();
+			oObjectPage.invalidate();
+			Core.applyChanges();
 		}, 1000); //dom calc delay
 	});
 
@@ -1245,7 +1246,8 @@ function(Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, Object
 			var iScrollTopBefore = oObjectPageLayout.getDomRef().scrollTop;
 
 			// act
-			oFirstSection.rerender();
+			oFirstSection.invalidate();
+			Core.applyChanges();
 			oObjectPageLayout._moveAnchorBarToContentArea();
 
 			assert.strictEqual(oObjectPageLayout.getDomRef().scrollTop, iScrollTopBefore, "scrollTop is preserved");

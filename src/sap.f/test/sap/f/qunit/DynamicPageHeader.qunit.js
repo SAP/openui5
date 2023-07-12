@@ -181,8 +181,9 @@ function (
 		this.oDynamicPage._pin();
 
 		// Act: re-render the Title and Header
-		oDynamicPageTitle.rerender();
-		oDynamicPageHeader.rerender();
+		oDynamicPageTitle.invalidate();
+		oDynamicPageHeader.invalidate();
+		Core.applyChanges();
 		$oCollapseButton = oCollapseButton.$();
 		$oExpandButton = oExpandButton.$();
 

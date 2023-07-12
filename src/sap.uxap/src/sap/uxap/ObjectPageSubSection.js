@@ -746,7 +746,7 @@ sap.ui.define([
 			this._switchSubSectionMode(sMode);
 
 			if (this._bRenderedFirstTime) {
-				this.rerender();
+				this.invalidate();
 			}
 		}
 		return this;

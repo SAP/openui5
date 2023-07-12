@@ -437,7 +437,8 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCore, jQuer
 		assert.strictEqual(iSumOfContentWidths, iContainerWidth + 1, "sum of the widths of the children exceeds the container width by 1");
 
 		this.oStandardBreadCrumbsControl._resetControl();
-		this.oStandardBreadCrumbsControl.rerender();
+		this.oStandardBreadCrumbsControl.invalidate();
+		oCore.applyChanges();
 
 		assert.equal(this.oStandardBreadCrumbsControl._getSelect().getVisible(), false, "select is not shown");
 	});
