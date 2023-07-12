@@ -4,8 +4,7 @@
 sap.ui.define([
 	"sap/ui/integration/Extension",
 	"sap/base/Log"
-], function (BaseExtension,
-			 Log) {
+], function (BaseExtension, Log) {
 	"use strict";
 
 	/**

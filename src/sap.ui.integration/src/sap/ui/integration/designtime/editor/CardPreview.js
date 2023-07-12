@@ -10,10 +10,9 @@ sap.ui.define([
 	"sap/m/ToggleButton",
 	"./Card",
 	"sap/ui/core/Core",
-	"sap/ui/dom/includeStylesheet",
-	"sap/ui/integration/util/CardMerger"
+	"sap/ui/dom/includeStylesheet"
 ], function (
-	library, Control, HBox, Image, ToggleButton, Card, Core, includeStylesheet, CardMerger
+	library, Control, HBox, Image, ToggleButton, Card, Core, includeStylesheet
 ) {
 	"use strict";
 
