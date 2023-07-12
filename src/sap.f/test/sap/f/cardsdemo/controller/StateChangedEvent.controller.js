@@ -62,7 +62,8 @@ sap.ui.define([
 			this._setModel({
 				manifests: aManifests,
 				selectedKey: aManifests[1].key,
-				selectedManifest: aManifests[1].path
+				selectedManifest: aManifests[1].path,
+				messageStripVisible: false
 			});
 
 			this._oSkeletonCard.setManifest(aManifests[1].path);
@@ -304,7 +305,18 @@ sap.ui.define([
 		onSimulateSubmit: function () {
 			this._oSkeletonCard.triggerAction({ type: Submit });
 			this.byId("demoCard").triggerAction({ type: Submit });
-		}
+		},
 
+		onShowMessage: function () {
+			this._oSkeletonCard.showMessage("This is a demo message.", "Warning");
+			this.byId("demoCard").showMessage("This is a demo message.", "Warning");
+			this._getModel().setProperty("/messageStripVisible", true);
+		},
+
+		onHideMessage: function () {
+			this._oSkeletonCard.hideMessage();
+			this.byId("demoCard").hideMessage();
+			this._getModel().setProperty("/messageStripVisible", false);
+		}
 	});
 });

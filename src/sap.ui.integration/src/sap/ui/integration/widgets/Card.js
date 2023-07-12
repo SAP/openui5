@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/ui/integration/model/ObservableModel",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/integration/model/ContextModel",
-	"sap/base/util/LoaderExtensions",
 	"sap/f/CardBase",
 	"sap/f/library",
 	"sap/ui/integration/library",
@@ -30,6 +29,7 @@ sap.ui.define([
 	"sap/ui/integration/util/HeaderFactory",
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/util/BindingResolver",
+	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/ErrorHandler",
 	"sap/ui/integration/formatters/IconFormatter",
 	"sap/ui/integration/cards/filters/FilterBarFactory",
@@ -59,7 +59,6 @@ sap.ui.define([
 	ObservableModel,
 	ResourceModel,
 	ContextModel,
-	LoaderExtensions,
 	CardBase,
 	fLibrary,
 	library,
@@ -68,6 +67,7 @@ sap.ui.define([
 	HeaderFactory,
 	ContentFactory,
 	BindingResolver,
+	BindingHelper,
 	ErrorHandler,
 	IconFormatter,
 	FilterBarFactory,
@@ -551,6 +551,7 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#refresh as refresh
 		 * @borrows sap.ui.integration.widgets.Card#refreshData as refreshData
 		 * @borrows sap.ui.integration.widgets.Card#showMessage as showMessage
+		 * @borrows sap.ui.integration.widgets.Card#hideMessage as hideMessage
 		 * @borrows sap.ui.integration.widgets.Card#getBaseUrl as getBaseUrl
 		 * @borrows sap.ui.integration.widgets.Card#getRuntimeUrl as getRuntimeUrl
 		 * @borrows sap.ui.integration.widgets.Card#getTranslatedText as getTranslatedText
@@ -1291,6 +1292,7 @@ sap.ui.define([
 		this._oIntegrationRb = null;
 		this._aActiveLoadingProviders = null;
 		this._oContentMessage = null;
+		this._oMessage = null;
 		clearTimeout(this._iFireStateChangedCallId);
 
 		if (this._oActionsToolbar) {
@@ -1473,6 +1475,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 */
+	Card.prototype.extendStaticConfiguration = function (oConfig) {
+		if (this._oMessage) {
+			oConfig.messageStrip = BindingResolver.resolveValue(this._oMessage, this);
+		}
+	};
+
+	/**
 	 * Resolves the destination and returns its URL.
 	 * @public
 	 * @param {string} sKey The destination's key used in the configuration.
@@ -1508,6 +1520,29 @@ sap.ui.define([
 
 		if (oContent && oContent.isA("sap.ui.integration.cards.BaseContent")) {
 			oContent.showMessage(sMessage, sType);
+			this._oMessage = {
+				text: sMessage,
+				type: sType
+			};
+			this.scheduleFireStateChanged();
+		} else {
+			Log.error("'showMessage' cannot be used before the card instance is ready. Consider using the event 'manifestApplied' event.", "sap.ui.integration.widgets.Card");
+		}
+	};
+
+	/**
+	 * Hides the message previously shown by showMessage.
+	 *
+	 * @public
+	 * @experimental As of version 1.117
+	 */
+	Card.prototype.hideMessage = function () {
+		var oContent = this.getCardContent();
+
+		if (oContent && oContent.isA("sap.ui.integration.cards.BaseContent")) {
+			oContent.hideMessage();
+			this._oMessage = null;
+			this.scheduleFireStateChanged();
 		} else {
 			Log.error("'showMessage' cannot be used before the card instance is ready. Consider using the event 'manifestApplied' event.", "sap.ui.integration.widgets.Card");
 		}

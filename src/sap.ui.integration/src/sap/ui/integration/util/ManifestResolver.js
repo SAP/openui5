@@ -117,9 +117,13 @@ sap.ui.define([
 						message: oContentMessage
 					};
 				} else if (oContext.getStaticConfiguration) {
-					oSubConfig = oContext.getStaticConfiguration();
+					oSubConfig = oContext.getStaticConfiguration(Utils.getNestedPropertyValue(oManifest, sManifestPath));
 				} else {
 					oSubConfig = Utils.getNestedPropertyValue(oManifest, sManifestPath);
+				}
+
+				if (oContext.extendStaticConfiguration) {
+					oContext.extendStaticConfiguration(oSubConfig);
 				}
 
 				if (oSubConfig.data) {

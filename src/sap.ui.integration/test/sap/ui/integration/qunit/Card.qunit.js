@@ -1460,6 +1460,30 @@ sap.ui.define([
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 		});
 
+		QUnit.test("Any messages are removed after calling hideMessage", function (assert) {
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			oCard.attachManifestApplied(function () {
+				oCard.attachEventOnce("stateChanged", function () {
+					oCard.attachEventOnce("stateChanged", function () {
+						var oContent = oCard.getCardContent(),
+							oMessageContainer = oContent.getAggregation("_messageContainer"),
+							aMessages = oMessageContainer.getItems();
+
+							assert.strictEqual(aMessages.length, 0, "There are no messages after hideMessage().");
+							done();
+						});
+					oCard.hideMessage();
+				});
+
+				// Act
+				oCard.showMessage();
+			});
+
+			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+		});
+
 		QUnit.module("Default Header", {
 			beforeEach: function () {
 				this.oCard = new Card({

@@ -2725,4 +2725,77 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	QUnit.module("Resolve show/hide message");
+
+	QUnit.test("Show message and hide message is working", function (assert) {
+		var done = assert.async(),
+			oCard = new SkeletonCard({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/",
+				manifest: {
+					"sap.app": {
+						"id": "manifestResolver.test.card.showMessage",
+						"type": "card",
+						"i18n": {
+							"bundleUrl": "i18n/i18n.properties",
+							"supportedLocales": [""],
+							"fallbackLocale": ""
+						}
+					},
+					"sap.card": {
+						"type": "Object",
+						"header": {
+							"title": "Test show message"
+						},
+						"content": {
+							"groups": [
+								{
+									"items": []
+								}
+							]
+						}
+					}
+				}
+			}),
+			oExpectedMessage = {
+				text: "Test message.",
+				type: "Error"
+			};
+
+		var fnCheckMessage = function () {
+			return oCard.resolveManifest().then(function (oResolvedManifest) {
+				var oMessage = oResolvedManifest["sap.card"].messageStrip;
+				assert.deepEqual(oMessage, oExpectedMessage, "Message strip is resolved as expected.");
+			});
+		};
+
+		var fnCheckMessageIsHidden = function () {
+			return oCard.resolveManifest().then(function (oResolvedManifest) {
+				var oMessage = oResolvedManifest["sap.card"].messageStrip;
+				assert.notOk(oMessage, "Message strip is hidden.");
+				oCard.destroy();
+				done();
+			});
+		};
+
+		oCard.attachEventOnce("stateChanged", function () {
+			oCard.attachEventOnce("stateChanged", function () {
+				// Assert - show message
+				fnCheckMessage().then(function () {
+					// Act - hide message
+					oCard.hideMessage();
+				});
+
+				oCard.attachEventOnce("stateChanged", function () {
+					// Assert - hide message
+					fnCheckMessageIsHidden();
+				});
+			});
+
+			// Act - show message
+			oCard.showMessage("{i18n>testMessage}", "Error");
+		});
+
+		oCard.startManifestProcessing();
+	});
 });
