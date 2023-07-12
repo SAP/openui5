@@ -328,7 +328,7 @@ function(
 			}
 			oEvent.preventDefault();
 			var oLink = Core.byId(oEvent.currentTarget.id);
-			if (oLink && oLink.isA('sap.m.Link') && oLink.getAccessibleRole() === library.LinkAccessibleRole.Button) {
+			if (oLink && oLink.isA('sap.m.Link') && (oLink.getAccessibleRole() === library.LinkAccessibleRole.Button || !oLink.getHref())) {
 				return;
 			}
 			openWindow(oEvent.currentTarget.href, oEvent.currentTarget.target);
