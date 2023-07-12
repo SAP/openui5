@@ -90,20 +90,21 @@ sap.ui.define([
 
                             sAffectedAggregation = oChange.getContent().targetAggregation;
 
-                            var sOldValue = sOperation !== "add";
+                            var oRevertData = {
+                                key: oChange.getContent().key
+                            };
+                            oRevertData.value = sOperation !== "add";
 
+                            var aCurrentState;
                             if (sOperation === "move") {
-                                var aCurrentState = Engine.getInstance().getController(oControl, oChange.getChangeType()).getCurrentState();
+                                aCurrentState = Engine.getInstance().getController(oControl, oChange.getChangeType()).getCurrentState();
                                 var oFound = aCurrentState.find(function(oItem, iIndex){
                                     if (oItem.key === oChange.getContent().key) {
                                         return oItem;
                                     }
                                 });
-                                sOldValue = {
-                                    key: oChange.getContent().key,
-                                    index: aCurrentState.indexOf(oFound),
-                                    targetAggregation: oChange.getContent().targetAggregation
-                                };
+                                oRevertData.targetAggregation = oChange.getContent().targetAggregation;
+                                oRevertData.index = aCurrentState.indexOf(oFound);
                             }
 
                             if (oPriorAggregationConfig
@@ -112,19 +113,17 @@ sap.ui.define([
                                 && oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().key]
                                 && oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().key][sAffectedProperty]
                                 ){
-                                    sOldValue = oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().key][sAffectedProperty];
+                                    oRevertData.value = oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().key][sAffectedProperty];
                             }
 
-                            oChange.setRevertData({
-                                key: oChange.getContent().key,
-                                value: sOldValue
-                            });
+                            oChange.setRevertData(oRevertData);
 
                             var oConfig = {
                                 property: sAffectedProperty,
                                 key: oChange.getContent().key,
                                 value: oChange.getContent(),
                                 operation: sOperation,
+                                changeType: oChange.getChangeType(),
                                 propertyBag: mPropertyBag
                             };
 
@@ -160,6 +159,7 @@ sap.ui.define([
                         },
                         property: sAffectedProperty,
                         operation: sOperation,
+                        changeType: oChange.getChangeType(),
                         key: oChange.getRevertData().key,
                         value: oChange.getRevertData(),
                         propertyBag: mPropertyBag

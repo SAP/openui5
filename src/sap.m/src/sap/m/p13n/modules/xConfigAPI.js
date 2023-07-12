@@ -209,6 +209,32 @@ sap.ui.define([
 
 			switch (oModificationPayload.operation) {
 				case "move":
+					Object.entries(oConfig.aggregations[sAggregationName]).forEach((aEntry) => {
+						if (
+							aEntry[0] !== sPropertyInfoKey &&
+							aEntry[1].position !== undefined
+						){
+							var newIndex = vValue.index;
+							var currentState = oModificationPayload.currentState;
+							var currentItemState = currentState?.find((item) => item.key == sPropertyInfoKey);
+							var currentItemIndex = currentState?.indexOf(currentItemState);
+
+							//In case of move changes, we also need to ensure that existing xConfig position changes
+							//are adapted accordingly to avoid index mismatches
+
+							if (newIndex < aEntry[1].position) {
+								aEntry[1].position++;
+							}
+
+							if (newIndex > aEntry[1].position && currentItemIndex < aEntry[1].position) {
+								aEntry[1].position--;
+							}
+
+							if (aEntry[1].position == newIndex) {
+								currentItemIndex > aEntry[1].position ? aEntry[1].position++ : aEntry[1].position--;
+							}
+						}
+					});
 					oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue.index;
 					break;
 				case "remove":

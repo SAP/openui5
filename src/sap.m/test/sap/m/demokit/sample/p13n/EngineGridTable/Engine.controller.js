@@ -6,8 +6,9 @@ sap.ui.define([
 	'sap/m/p13n/SortController',
 	'sap/m/p13n/GroupController',
 	'sap/m/p13n/MetadataHelper',
+	'sap/ui/model/Sorter',
 	'sap/ui/table/library'
-], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, tableLibrary) {
+], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, tableLibrary) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.p13n.EngineGridTable.Page", {
@@ -34,10 +35,10 @@ sap.ui.define([
 			var oTable = this.byId("persoTable");
 
 			this.oMetadataHelper = new MetadataHelper([
-				{key: "firstName", label: "First Name", path: "firstName"},
-				{key: "lastName", label: "Last Name", path: "lastName"},
-				{key: "city", label: "City", path: "city"},
-				{key: "size", label: "Size", path: "size"}
+				{key: "firstName_col", label: "First Name", path: "firstName"},
+				{key: "lastName_col", label: "Last Name", path: "lastName"},
+				{key: "city_col", label: "City", path: "city"},
+				{key: "size_col", label: "Size", path: "size"}
 			]);
 
 			Engine.getInstance().register(oTable, {
@@ -69,17 +70,27 @@ sap.ui.define([
 			});
 		},
 
-		onSort: function(oEvt) {
-
+		onColumnHeaderItemPress: function(oEvt) {
 			var oTable = this.byId("persoTable");
-			var sAffectedProperty = oEvt.getParameter("column").getSortProperty();
+			var sPanel = oEvt.getSource().getIcon().indexOf("sort") >= 0 ? "Sorter" : "Columns";
+
+			Engine.getInstance().show(oTable, [sPanel], {
+				contentHeight: "35rem",
+				contentWidth: "32rem",
+				source: oTable
+			});
+		},
+
+		onSort: function(oEvt) {
+			var oTable = this.byId("persoTable");
+			var sAffectedProperty = this._getKey(oEvt.getParameter("column"));
 			var sSortOrder = oEvt.getParameter("sortOrder");
 
 			//Apply the state programatically on sorting through the column menu
 			//1) Retrieve the current personalization state
 			Engine.getInstance().retrieveState(oTable).then(function(oState){
 
-				//2) Modify the existing personalization state
+				//2) Modify the existing personalization state --> clear all sorters before
 				oState.Sorter.forEach(function(oSorter){
 					oSorter.sorted = false;
 				});
@@ -93,6 +104,24 @@ sap.ui.define([
 			});
 		},
 
+		onColumnMove: function(oEvt) {
+			var oTable = this.byId("persoTable");
+			var oAffectedColumn = oEvt.getParameter("column");
+			var iNewPos = oEvt.getParameter("newPos");
+			var sKey = this._getKey(oAffectedColumn);
+			oEvt.preventDefault();
+
+			Engine.getInstance().retrieveState(oTable).then(function(oState){
+
+				var oCol = oState.Columns.find(function(oColumn) {
+					return oColumn.key === sKey;
+				}) || {key: sKey};
+				oCol.position = iNewPos;
+
+				Engine.getInstance().applyState(oTable, {Columns: [oCol]});
+			});
+		},
+
 		_getKey: function(oControl) {
 			return this.getView().getLocalId(oControl.getId());
 		},
@@ -101,9 +130,11 @@ sap.ui.define([
 			var oTable = this.byId("persoTable");
 			var oState = oEvt.getParameter("state");
 
-			oTable.getColumns().forEach(function(oColumn, iIndex){
+			oTable.getColumns().forEach(function(oColumn){
 				oColumn.setVisible(false);
+				oColumn.setSorted(false);
 			});
+
 			oState.Columns.forEach(function(oProp, iIndex){
 				var oCol = this.byId(oProp.key);
 				oCol.setVisible(true);
@@ -112,11 +143,14 @@ sap.ui.define([
 				oTable.insertColumn(oCol, iIndex);
 			}.bind(this));
 
-			oTable.sort();
+			var aSorter = [];
 			oState.Sorter.forEach(function(oSorter) {
-				oTable.sort(this.byId(oSorter.key), oSorter.descending ? tableLibrary.SortOrder.Descending : tableLibrary.SortOrder.Ascending, false);
+				var oColumn = this.byId(oSorter.key);
+				oColumn.setSorted(true);
+				oColumn.setSortOrder(oSorter.descending ? tableLibrary.SortOrder.Descending : tableLibrary.SortOrder.Ascending);
+				aSorter.push(new Sorter(this.oMetadataHelper.getProperty(oSorter.key).path, oSorter.descending));
 			}.bind(this));
-
+			oTable.getBinding("rows").sort(aSorter);
 		}
 	});
 });
