@@ -65,5 +65,16 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Creates or returns an instance of the FlexController for the specified selector.
+	 *
+	 * @param {sap.ui.fl.Selector} oSelector - Selector object
+	 * @returns {sap.ui.fl.FlexController} instance
+	 */
+	FlexControllerFactory.createForSelector = function(oSelector) {
+		var sComponentName = ManifestUtils.getFlexReferenceForSelector(oSelector);
+		return FlexControllerFactory.create(sComponentName);
+	};
+
 	return FlexControllerFactory;
 }, true);

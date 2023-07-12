@@ -5,9 +5,9 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/Cache",
+	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
@@ -16,9 +16,9 @@ sap.ui.define([
 	UIComponent,
 	VariantUtils,
 	FlexState,
-	ChangesController,
 	FlexRuntimeInfoAPI,
 	Cache,
+	FlexControllerFactory,
 	Layer,
 	Utils,
 	sinon
@@ -28,7 +28,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	function mockFlexController(oControl, oReturn) {
-		sandbox.stub(ChangesController, "getFlexControllerInstance")
+		sandbox.stub(FlexControllerFactory, "createForSelector")
 		.withArgs(oControl)
 		.returns(oReturn);
 	}

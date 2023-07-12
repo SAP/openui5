@@ -4,9 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -14,9 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils"
 ], function(
 	Core,
-	ChangesController,
 	FlexObjectState,
-	FlexState,
 	ManifestUtils,
 	Storage,
 	ChangePersistenceFactory,

@@ -5,11 +5,11 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/ChangesController"
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
 ], function(
 	UI2PersonalizationState,
 	FlexState,
-	ChangesController
+	ManifestUtils
 ) {
 	"use strict";
 
@@ -39,9 +39,7 @@ sap.ui.define([
 	 	 * @ui5-restricted
 		 */
 		load: function(mPropertyBag) {
-			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
-
-			mPropertyBag.reference = oFlexController.getComponentName();
+			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 
 			if (
 				!mPropertyBag.reference

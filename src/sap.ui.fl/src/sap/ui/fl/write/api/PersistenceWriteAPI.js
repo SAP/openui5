@@ -8,36 +8,38 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
-	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/_internal/FlexInfoSession",
 	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/fl/Utils"
 ], function(
 	includes,
 	_omit,
 	Log,
 	JsControlTreeModifier,
 	FlexCustomData,
-	ChangesController,
 	DescriptorChangeTypes,
 	ManifestUtils,
+	Settings,
 	Condenser,
 	FlexObjectState,
 	Storage,
 	FeaturesAPI,
 	FlexInfoSession,
 	ChangePersistenceFactory,
+	FlexControllerFactory,
 	Layer,
 	LayerUtils,
-	Settings
+	Utils
 ) {
 	"use strict";
 
@@ -228,8 +230,8 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	PersistenceWriteAPI.reset = function(mPropertyBag) {
-		var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
-		var oFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
+		var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
+		var oFlexController = FlexControllerFactory.createForSelector(oAppComponent);
 		var aArguments = [mPropertyBag.layer, mPropertyBag.generator, oAppComponent, mPropertyBag.selectorIds, mPropertyBag.changeTypes];
 		return oFlexController.resetChanges.apply(oFlexController, aArguments);
 	};
@@ -250,9 +252,8 @@ sap.ui.define([
 	 */
 	PersistenceWriteAPI.publish = function(mPropertyBag) {
 		mPropertyBag.styleClass = mPropertyBag.styleClass || "";
-		var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
-		return ChangesController.getFlexControllerInstance(oAppComponent)
-		._oChangePersistence.transportAllUIChanges({}, mPropertyBag.styleClass, mPropertyBag.layer, mPropertyBag.appVariantDescriptors);
+		return ChangePersistenceFactory.getChangePersistenceForControl(Utils.getAppComponentForSelector(mPropertyBag.selector))
+		.transportAllUIChanges({}, mPropertyBag.styleClass, mPropertyBag.layer, mPropertyBag.appVariantDescriptors);
 	};
 
 	/**
@@ -269,8 +270,9 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	PersistenceWriteAPI.add = function(mPropertyBag) {
-		var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
+		var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
+		var sFlexReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
 
 		function addSingleFlexObject(oFlexObject) {
 			if (isDescriptorChange(oFlexObject)) {
@@ -322,7 +324,7 @@ sap.ui.define([
 				return Promise.reject(
 					new Error("An invalid selector was passed so change could not be removed with id: " + mPropertyBag.change.getId()));
 			}
-			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
+			var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
 			if (!oAppComponent) {
 				return Promise.reject(
 					new Error("Invalid application component for selector, change could not be removed with id: "
@@ -406,7 +408,7 @@ sap.ui.define([
 			if (!mPropertyBag.selector) {
 				throw Error("An invalid selector was passed");
 			}
-			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
+			var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
 			if (!oAppComponent) {
 				throw Error("Invalid application component for selector");
 			}

@@ -9,10 +9,10 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
@@ -23,10 +23,10 @@ sap.ui.define([
 	VariantManagementState,
 	FlexState,
 	ManifestUtils,
-	ChangesController,
 	ControlVariantApplyAPI,
 	CompVariantState,
 	Versions,
+	FlexControllerFactory,
 	ChangePersistenceFactory,
 	LayerUtils,
 	Utils
@@ -83,8 +83,7 @@ sap.ui.define([
 
 	function getChangePersistence(mPropertyBag) {
 		if (!mPropertyBag.reference) {
-			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
-			mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
+			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 		}
 		return ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
 	}
@@ -151,7 +150,7 @@ sap.ui.define([
 	}
 
 	function saveChangePersistenceEntities(mPropertyBag, oAppComponent) {
-		var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
+		var oFlexController = FlexControllerFactory.createForSelector(mPropertyBag.selector);
 
 		return oFlexController.saveAll(
 			oAppComponent,
@@ -215,8 +214,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if dirty flex objects exist
 	 */
 	FlexObjectState.hasDirtyFlexObjects = function(mPropertyBag) {
-		var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
-		var sReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
+		var sReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 		if (ChangePersistenceFactory.getChangePersistenceForComponent(sReference).getDirtyChanges().length > 0) {
 			return true;
 		}
@@ -240,7 +238,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
 	 */
 	FlexObjectState.saveFlexObjects = function(mPropertyBag) {
-		var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
+		var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
 		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
 		return saveCompEntities(mPropertyBag)
 		.then(saveChangePersistenceEntities.bind(this, mPropertyBag, oAppComponent))

@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
-	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/api/UI2PersonalizationWriteAPI",
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/Utils",
@@ -12,7 +11,6 @@ sap.ui.define([
 ], function(
 	ManifestUtils,
 	UI2PersonalizationState,
-	ChangesController,
 	UI2PersonalizationWriteAPI,
 	Manifest,
 	FlexUtils,
@@ -74,13 +72,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("create is called and complains about missing component name", function(assert) {
-			var fnMockedFlexController = {
-				getComponentName: function() {
-					return;
-				}
-			};
-
-			sandbox.stub(ChangesController, "getFlexControllerInstance").returns(fnMockedFlexController);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForSelector");
 
 			return UI2PersonalizationWriteAPI.create({
 				selector: this.oAppComponent,
@@ -160,13 +152,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("deletePersonalization is called and complains about missing component name", function(assert) {
-			var fnMockedFlexController = {
-				getComponentName: function() {
-					return;
-				}
-			};
-
-			sandbox.stub(ChangesController, "getFlexControllerInstance").returns(fnMockedFlexController);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForSelector");
 
 			return UI2PersonalizationWriteAPI.deletePersonalization({
 				selector: this.oAppComponent,
