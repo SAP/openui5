@@ -266,7 +266,9 @@ sap.ui.define([
 
 			var oDomRef = this.getDomRef();
 			window.customElements.whenDefined(oDomRef.localName).then(function() {
-				oDomRef.attachInvalidate(this.__onInvalidationBound);
+				if (typeof oDomRef.attachInvalidate === "function") {
+					oDomRef.attachInvalidate(this.__onInvalidationBound);
+				}
 
 				if (oDomRef._individualSlot) {
 					this.__slot = oDomRef._individualSlot; // If the component creates individual slots for children, f.e. columns-3 or default-1, update the __slot property, otherwise RenderManager will set the normal slot name, f.e. columns or ""
