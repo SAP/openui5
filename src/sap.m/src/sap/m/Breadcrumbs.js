@@ -5,6 +5,8 @@
 // Provides control sap.m.Breadcrumbs.
 sap.ui.define([
 	"sap/ui/core/Control",
+	"sap/ui/dom/units/Rem",
+	"sap/ui/core/theming/Parameters",
 	"sap/ui/util/openWindow",
 	"sap/m/Text",
 	"sap/m/Link",
@@ -20,6 +22,8 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText'
 ], function(
 	Control,
+	Rem,
+	Parameters,
 	openWindow,
 	Text,
 	Link,
@@ -182,8 +186,19 @@ sap.ui.define([
 		}
 
 		this._configureKeyboardHandling();
+		this._setMinWidth();
 
 		this.bRenderingPhase = false;
+	};
+
+	Breadcrumbs.prototype._setMinWidth = function () {
+		var oCurrentLocation = this._getCurrentLocation(),
+			sWidth = oCurrentLocation.$().width();
+
+		// When in OFT, set min-width=width of the currentLocationText, so that it won't be truncated too much, before going into the overflow menu
+		if (this.$().hasClass("sapMTBShrinkItem") && parseInt(sWidth) > Rem.toPx(Parameters.get("_sap_m_Toolbar_ShrinkItem_MinWidth"))) {
+			this.$().css("min-width", oCurrentLocation.$().width());
+		}
 	};
 
 	Breadcrumbs.prototype.onThemeChanged = function () {

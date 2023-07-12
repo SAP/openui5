@@ -4,13 +4,14 @@ sap.ui.define([
 	"sap/ui/core/theming/Parameters",
 	"sap/m/Breadcrumbs",
 	"sap/m/Link",
+	"sap/m/OverflowToolbar",
 	"sap/m/Text",
 	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
 ],
-function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCore, jQuery, Device) {
+function(DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, Text, library, oCore, jQuery, Device) {
 	"use strict";
 	var oFactory, helpers;
 
@@ -338,6 +339,20 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCore, jQuer
 		}
 	});
 
+	QUnit.test("Breadcrumbs in OverflowToolbar", function (assert) {
+		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4, "Loooooooooooooooooooooooooong current location text");
+		var oOFT = new OverflowToolBar({
+				content: [this.oStandardBreadCrumbsControl]
+			}),
+			sMinWidth;
+		helpers.renderObject(oOFT);
+
+		sMinWidth = this.oStandardBreadCrumbsControl.$().css("min-width");
+		assert.ok(parseInt(sMinWidth) > DomUnitsRem.toPx(Parameters.get("_sap_m_Toolbar_ShrinkItem_MinWidth")),
+			"Min-width is bigger than the standart 2.5rem/40px width of OFT's shrikable items");
+	});
+
+
 	QUnit.test("Only links", function (assert) {
 		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4);
 		helpers.renderObject(this.oStandardBreadCrumbsControl);
@@ -408,6 +423,7 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCore, jQuer
 
 		this.stub(this.oStandardBreadCrumbsControl, "$").callsFake(function() {
 			return {
+				"hasClass": function(){ return false; },
 				"outerWidth": function(){ return 208;}
 			};
 		});
