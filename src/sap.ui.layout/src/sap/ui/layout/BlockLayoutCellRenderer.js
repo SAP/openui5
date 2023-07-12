@@ -123,10 +123,6 @@ sap.ui.define(['./library', 'sap/ui/core/library', "sap/base/Log"],
 				rm.class("sapUiBlockCellCenteredContent");
 			}
 
-			if (bHasTitle) {
-				rm.attr("aria-labelledby", this.getTitleId(blockLayoutCell));
-			}
-
 			rm.openEnd();
 
 			if (bHasTitle) {
