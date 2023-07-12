@@ -4,15 +4,17 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer"
 ], function(
 	Input,
 	Component,
 	ManifestUtils,
-	FlexControllerFactory,
 	States,
+	ChangesWriteAPI,
+	PersistenceWriteAPI,
 	Layer
 ) {
 	"use strict";
@@ -61,14 +63,24 @@ sap.ui.define([
 			// simulate no component loaded callback (no loaded fl library)
 			Component._fnLoadComponentCallback = undefined;
 
-			// create a hide control change
-			var oFlexController = FlexControllerFactory.create(sFlexReference);
-			return oFlexController.addChange(oChangeContent, oInitialFieldInstance)
-			.then(function(oChange) {
-				return oFlexController.applyChange(oChange, oInitialFieldInstance);
+			var oChange;
+			return ChangesWriteAPI.create({
+				changeSpecificData: oChangeContent, selector: oInitialFieldInstance
 			})
-
-			.then(function(oChange) {
+			.then(function(oCreatedChange) {
+				oChange = oCreatedChange;
+				return ChangesWriteAPI.apply({
+					change: oChange,
+					element: oInitialFieldInstance
+				});
+			})
+			.then(function() {
+				return PersistenceWriteAPI.add({
+					flexObjects: [oChange],
+					selector: oInitialFieldInstance
+				});
+			})
+			.then(function() {
 				assert.deepEqual(oInitialFieldInstance.getVisible(), false, "the label is hidden");
 
 				// simulate an event destroying the field
