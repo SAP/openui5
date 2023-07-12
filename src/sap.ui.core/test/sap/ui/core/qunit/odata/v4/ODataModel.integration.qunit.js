@@ -19442,6 +19442,7 @@ sap.ui.define([
 		}).then(function (aResult) {
 			oPromise = aResult[0].delete(); // delete the RVC
 
+			// It's not possible to synchronously reset after delete, so wait a short moment.
 			return that.waitForChanges(assert, "deferred delete");
 		}).then(function () {
 			that.expectCanceledError(
