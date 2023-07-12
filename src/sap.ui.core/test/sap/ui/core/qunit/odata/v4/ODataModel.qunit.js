@@ -84,8 +84,8 @@ sap.ui.define([
 			return new ODataModel({useBatch : true});
 		}, new Error("Unsupported parameter: useBatch"));
 		assert.throws(function () {
-			return new ODataModel({operationMode : OperationMode.Auto, serviceUrl : "/foo/"});
-		}, new Error("Unsupported operation mode: Auto"), "Unsupported OperationMode");
+			return new ODataModel({operationMode : OperationMode.Client, serviceUrl : "/foo/"});
+		}, new Error("Unsupported operation mode: Client"), "Unsupported OperationMode");
 
 		this.mock(ODataModel.prototype).expects("initializeSecurityToken").never();
 		this.mock(_Requestor.prototype).expects("sendOptimisticBatch").never();
