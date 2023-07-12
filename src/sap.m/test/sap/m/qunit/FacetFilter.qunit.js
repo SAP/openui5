@@ -996,7 +996,7 @@ sap.ui.define([
 		assert.ok(oButton, "Popover OK button should be created and added to the popover footer");
 		assert.ok(oToolbarSpacer, "sap.m.ToolbarSpacer is added as a first element in the footer content");
 		assert.ok(oButton.getText(), "Button text should be set");
-		assert.ok(oButton.getTooltip(), "Button tooltip should be set");
+		assert.notOk(oButton.getTooltip(), "Button tooltip should not be set because is same at text of button");
 
 		oButton.firePress();
 		oPopover.attachEventOnce("afterOpen", function() {

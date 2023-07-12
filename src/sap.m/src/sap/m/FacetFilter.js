@@ -1647,7 +1647,6 @@ sap.ui.define([
 				beginButton : new Button({
 					text : this._bundle.getText("FACETFILTER_ACCEPT"),
 					type: ButtonType.Emphasized,
-					tooltip:this._bundle.getText("FACETFILTER_ACCEPT"),
 					press : function() {
 
 						that._closeDialog();
@@ -2078,7 +2077,6 @@ sap.ui.define([
 		if (!oFooter) {
 			oButton = new Button({
 				text: this._bundle.getText("FACETFILTER_ACCEPT"),
-				tooltip: this._bundle.getText("FACETFILTER_ACCEPT"),
 				press: function() {
 					this._closePopover();
 				}.bind(this)
