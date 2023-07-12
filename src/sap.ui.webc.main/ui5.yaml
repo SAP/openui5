@@ -34,8 +34,8 @@ builder:
               - "!sap/ui/webc/main/designtime/"
               - "!sap/ui/webc/main/**/*.designtime.js"
               - "!sap/ui/webc/main/**/*.support.js"
-              - "!sap/ui/webc/main/thirdparty/messagebundle*.js"
-              - "!sap/ui/webc/main/thirdparty/generated/themes/*/*.js"
+              - "!sap/ui/webc/main/thirdparty/generated/assets/**/*.js"
+              - "!sap/ui/webc/main/thirdparty/generated/themes/**/parameters-bundle.css.js"
             resolve: false
             resolveConditional: false
             renderer: true
