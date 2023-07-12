@@ -1,16 +1,18 @@
-/* global QUnit, sinon */
+/* global QUnit */
 sap.ui.define([
 	"sap/m/p13n/PersistenceProvider",
 	"sap/m/p13n/enum/PersistenceMode",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/StaticArea"
-], function (PersistenceProvider, mode, oCore, Control, StaticArea) {
+], function (PersistenceProvider, mode, Core, Control, StaticArea) {
 	"use strict";
 
 	QUnit.module("PersistenceProvider tests (generic)", {
 		beforeEach: function(){
 			this.oPP = new PersistenceProvider();
+			this.oPP.placeAt("qunit-fixture");
+			Core.applyChanges();
 		},
 		afterEach: function(){
 			this.oPP.destroy();
@@ -37,63 +39,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("instantiate PersistenceProvider", function(assert){
-		assert.ok(this.oPP, "Silent VM is instanciable");
-	});
-
-	QUnit.test("PersistenceProvider is placed in the static area", function(assert){
-		var aStaticAreaContent = StaticArea.getUIArea().getContent();
-
-		assert.ok(aStaticAreaContent[0].getContent()[0].isA("sap.ui.fl.variants.VariantManagement"), "VM has been placed in the static area");
-	});
-
-	QUnit.test("PersistenceProvider is wrapped by a container that sets aria-hidden after rendering", function(assert){
-		var done = assert.async();
-		var aStaticAreaContent = StaticArea.getUIArea().getContent();
-
-		this.oPP.onAfterRendering = function() {
-			assert.equal(aStaticAreaContent[0].getDomRef().getAttribute("aria-hidden"), "true", "accWrapper container sets aria-hidden attribute");
-			done();
-		};
-	});
-
-	QUnit.test("PersistenceProvider created an inner fl.VariantManagement", function(assert){
-		assert.ok(oCore.byId(this.oPP.getId() + "--vm"), "VM created");
-	});
-
-	QUnit.test("inner VM cleanup", function(assert){
-		this.oPP.destroy();
-		assert.ok(!this.oPP._oVM, "Inner VM cleaned up");
-	});
-
-	QUnit.test("Check triggers for reinitalization in transient mode", function(assert){
-
-		var oTransientVM = oCore.byId(this.oPP.getId() + "--vm");
-		var oReinitializationSpy = sinon.spy(oTransientVM, "reinitialize");
-		var oUpdateModelSpy = sinon.spy(oTransientVM, "setModel");
-		this.oPP.reinitialize();
-
-		assert.ok(oReinitializationSpy.calledOnce);
-		assert.ok(oUpdateModelSpy.calledOnce);
-	});
-
-	QUnit.test("When the type s set to transient, the for association needs to be propagated to the inner VM", function(assert){
-
-		var oInnerVM = this.oPP._oWrapper.getContent()[0];
-
-		//Check empty for association in beginning
-		assert.deepEqual(this.oPP.getFor(), [], "The for association has not yet been proivided");
-		assert.deepEqual(oInnerVM.getFor(), [], "The for association has not yet been provdided (propagation to VM)");
-
-		//Check propagation after adding it on the outer PersistenceProvider
-		var oMyTestControl = new Control("myTestControl");
-		this.oPP.addFor(oMyTestControl);
-		assert.deepEqual(this.oPP.getFor(), ["myTestControl"], "The for association has been proivided");
-		assert.deepEqual(oInnerVM.getFor(), ["myTestControl"], "The for association has not yet been propagated to the inner VM");
-
-		//Check propagation after removing it on the outer PersistenceProvider
-		this.oPP.removeFor(oMyTestControl);
-		assert.deepEqual(this.oPP.getFor(), [], "The for association has been proivided");
-		assert.deepEqual(oInnerVM.getFor(), [], "The for association has not yet been propagated to the inner VM");
+		assert.ok(this.oPP, "Transient PP is instanciable");
+		assert.equal(this.oPP.getMode(), mode.Transient, "Correct mode provided");
 	});
 
 	QUnit.module("PersistenceProvider tests (global)", {
@@ -108,13 +55,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("PersistenceProvider NOT is placed in the static area", function(assert){
-		var aStaticAreaContent = StaticArea.getUIArea().getContent();
-
-		assert.equal(aStaticAreaContent.length, 0, "No VM in static area");
-	});
-
-	QUnit.test("PersistenceProvider did not create an inner fl.VariantManagement", function(assert){
-		assert.ok(!this.oPP._oVM, "No VM created");
+		assert.ok(this.oPP, "Global PP is instanciable");
+		assert.equal(this.oPP.getMode(), mode.Global, "Correct mode provided");
 	});
 
 });

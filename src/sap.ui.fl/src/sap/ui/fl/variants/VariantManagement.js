@@ -794,21 +794,6 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * Reinitializes the inner model registration. This is necessary when using a session dependent <code>VariantManagement</code>
-	 * control that may be used across the lifecycle of more than one application.
-	 *
-	 * Since the <code>VariantModel</code> is being recreated depending on the lifecycle of the application,
-	 * we need to ensure that when navigating into an application upon reusing the VM control, the latest context
-	 * should be used.
-	 *
-	 * @ui-restricted sap.ui.mdc
-	 */
-	VariantManagement.prototype.reinitialize = function() {
-		this.oContext = null;
-		this._setModel();
-	};
-
 	VariantManagement.prototype._setModel = function() {
 		this._setBindingContext();
 	};

@@ -118,12 +118,16 @@ sap.ui.define([
 			return pWriteAPI;
 		},
 
-		handleChanges: function (aChanges, bIgnoreVM, bUseStaticArea) {
+		handleChanges: function (aChanges, bIgnoreVM, bTransient) {
+
+			if (bTransient) {
+				aChanges.forEach((oChange) => {oChange.transient = true;});
+			}
+
 			return FlexUtil._requireWriteAPI().then(function(ControlPersonalizationWriteAPI){
 				return ControlPersonalizationWriteAPI.add({
 					changes: aChanges,
-					ignoreVariantManagement: bIgnoreVM,
-					useStaticArea: bUseStaticArea
+					ignoreVariantManagement: bIgnoreVM
 				});
 			});
 		},

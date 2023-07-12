@@ -79,18 +79,6 @@ sap.ui.define([
 			oDefaultProvider.addFor(vElement);
 		}
 
-		var oProvider = this._mDefaultProviders[sPersistenceMode];
-
-		var fnAttachVariantModel = function(){
-			var oModel = oElement.getModel(ControlVariantApplyAPI.getVariantModelName());
-			if (oModel) {
-				oProvider.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
-				oElement.detachEvent("modelContextChange", fnAttachVariantModel);
-			}
-		};
-
-		oElement.attachEvent("modelContextChange", fnAttachVariantModel);
-
 		return oDefaultProvider;
 	};
 
