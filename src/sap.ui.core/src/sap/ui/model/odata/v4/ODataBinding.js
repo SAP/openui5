@@ -396,17 +396,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook method for {@link #fetchQueryOptionsForOwnCache} to determine the query options for this
-	 * binding.
+	 * Hook method for {@link #fetchOrGetQueryOptionsForOwnCache} to determine the query options for
+	 * this binding.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used for a relative binding
-	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving with the binding's query options
+	 * @returns {object|undefined|sap.ui.base.SyncPromise}
+	 *   The binding's query options (if any) or a promise resolving with them
 	 *
 	 * @abstract
 	 * @function
-	 * @name sap.ui.model.odata.v4.ODataBinding#doFetchQueryOptions
+	 * @name sap.ui.model.odata.v4.ODataBinding#doFetchOrGetQueryOptions
 	 * @private
 	 */
 
@@ -463,7 +463,7 @@ sap.ui.define([
 		}
 
 		aPromises = [
-			this.fetchQueryOptionsForOwnCache(oContext, bIgnoreParentCache),
+			this.fetchOrGetQueryOptionsForOwnCache(oContext, bIgnoreParentCache),
 			this.oModel.oRequestor.ready()
 		];
 		this.mCacheQueryOptions = undefined;
@@ -507,51 +507,79 @@ sap.ui.define([
 	 * @param {boolean} [bIgnoreParentCache]
 	 *   Whether the query options of the parent cache shall be ignored and own query options are
 	 *   determined (see {@link #fetchCache})
-	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving with an object having two properties:
+	 * @returns {object|sap.ui.base.SyncPromise}
+	 *   An object having two properties (or a promise resolving with it):
 	 *   {object} mQueryOptions - The query options to create the cache for this binding or
 	 *     <code>undefined</code> if no cache is to be created
 	 *   {string} sReducedPath - The binding's absolute, reduced path in the cache hierarchy
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.fetchQueryOptionsForOwnCache = function (oContext, bIgnoreParentCache) {
+	ODataBinding.prototype.fetchOrGetQueryOptionsForOwnCache = function (oContext,
+			bIgnoreParentCache) {
 		var bHasNonSystemQueryOptions,
-			oQueryOptionsPromise,
+			vQueryOptions, // {object|undefined|sap.ui.base.SyncPromise}
 			sResolvedPath = this.oModel.resolve(this.sPath, oContext),
 			that = this;
 
 		/*
-		 * Wraps the given query options (promise) and adds sResolvedPath so that it can be returned
-		 * by fetchQueryOptionsForOwnCache.
+		 * Wraps the given query options and adds sReducedPath to create a result for
+		 * #fetchOrGetQueryOptionsForOwnCache.
 		 *
-		 * @param {object|sap.ui.base.SyncPromise} vQueryOptions
-		 *   The query options (promise)
+		 * @param {object} [mQueryOptions]
+		 *   Map of query options, or <code>undefined</code>
+		 * @param {boolean} [bDropEmptyObject]
+		 *   Whether an empty query options object should be replaced by <code>undefined</code>
 		 * @param {string} [sReducedPath=sResolvedPath]
 		 *   The reduced path
-		 * @returns {sap.ui.base.SyncPromise}
-		 *   A promise to be returned by fetchQueryOptionsForOwnCache
+		 * @returns {object}
+		 *   A result for #fetchOrGetQueryOptionsForOwnCache
 		 */
-		function wrapQueryOptions(vQueryOptions, sReducedPath) {
-			return SyncPromise.resolve(vQueryOptions).then(function (mQueryOptions) {
-				return {
-					mQueryOptions : mQueryOptions,
-					sReducedPath : sReducedPath || sResolvedPath
-				};
-			});
+		function _wrapQueryOptions(mQueryOptions, bDropEmptyObject, sReducedPath) {
+			if (bDropEmptyObject && mQueryOptions && _Helper.isEmptyObject(mQueryOptions)) {
+				mQueryOptions = undefined;
+			}
+			return {
+				mQueryOptions : mQueryOptions,
+				sReducedPath : sReducedPath || sResolvedPath
+			};
+		}
+
+		/*
+		 * Waits for <code>vQueryOptions</code> (if needed) and then creates a result for
+		 * #fetchOrGetQueryOptionsForOwnCache.
+		 *
+		 * @param {boolean} [bDropEmptyObject]
+		 *   Whether an empty query options object should be replaced by <code>undefined</code>
+		 * @param {string} [sReducedPath=sResolvedPath]
+		 *   The reduced path
+		 * @returns {object|sap.ui.base.SyncPromise}
+		 *   A result for #fetchOrGetQueryOptionsForOwnCache
+		 */
+		function wrapQueryOptions(bDropEmptyObject, sReducedPath) {
+			if (vQueryOptions instanceof SyncPromise) {
+				if (vQueryOptions.isPending()) {
+					return vQueryOptions.then(function (mQueryOptions) {
+						return _wrapQueryOptions(mQueryOptions, bDropEmptyObject, sReducedPath);
+					});
+				}
+				vQueryOptions = vQueryOptions.getResult();
+			}
+
+			return _wrapQueryOptions(vQueryOptions, bDropEmptyObject, sReducedPath);
 		}
 
 		if (this.oOperation // operation binding manages its cache on its own
 			|| this.bRelative && !oContext // unresolved binding
 			|| this.isMeta()) {
-			return wrapQueryOptions(undefined);
+			return _wrapQueryOptions();
 		}
 
 		// auto-$expand/$select and binding is a parent binding, so that it needs to wait until all
 		// its child bindings know via the corresponding promise in this.aChildCanUseCachePromises
 		// if they can use the parent binding's cache
 		// With $$aggregation, no auto-$expand/$select is needed
-		oQueryOptionsPromise = this.doFetchQueryOptions(oContext);
+		vQueryOptions = this.doFetchOrGetQueryOptions(oContext);
 		if (this.oModel.bAutoExpandSelect && this.aChildCanUseCachePromises
 				&& !_Helper.isDataAggregation(this.mParameters)) {
 			// For auto-$expand/$select, wait for query options of dependent bindings:
@@ -559,8 +587,8 @@ sap.ui.define([
 			// query options promise to this binding via fetchIfChildCanUseCache.
 			// The aggregated query options of this binding and its dependent bindings are available
 			// in that.mAggregatedQueryOptions once all these promises are fulfilled.
-			oQueryOptionsPromise = SyncPromise.all([
-				oQueryOptionsPromise,
+			vQueryOptions = SyncPromise.all([
+				vQueryOptions,
 				Promise.resolve().then(function () {
 					return SyncPromise.all(that.aChildCanUseCachePromises);
 				})
@@ -574,7 +602,7 @@ sap.ui.define([
 		// parent cache is ignored or (quasi-)absolute binding
 		if (bIgnoreParentCache || !this.bRelative || !oContext.fetchValue) {
 			// the binding shall create its own cache
-			return wrapQueryOptions(oQueryOptionsPromise);
+			return wrapQueryOptions();
 		}
 
 		// auto-$expand/$select: Use parent binding's cache if possible
@@ -584,28 +612,27 @@ sap.ui.define([
 					return sKey[0] !== "$" || sKey[1] === "$";
 				});
 			if (bHasNonSystemQueryOptions) {
-				return wrapQueryOptions(oQueryOptionsPromise);
+				return wrapQueryOptions();
 			}
 			return oContext.getBinding()
-				.fetchIfChildCanUseCache(oContext, that.sPath, oQueryOptionsPromise,
+				.fetchIfChildCanUseCache(oContext, that.sPath, vQueryOptions,
 					!this.mParameters) // duck typing for property binding
 				.then(function (sReducedPath) {
-					return wrapQueryOptions(sReducedPath ? undefined : oQueryOptionsPromise,
-						sReducedPath);
+					if (sReducedPath) {
+						vQueryOptions = undefined;
+					}
+					return wrapQueryOptions(false, sReducedPath);
 				});
 		}
 
 		// relative list or context binding with parameters which are not query options
 		// (such as $$groupId)
-		if (this.mParameters && Object.keys(this.mParameters).length) {
-			return wrapQueryOptions(oQueryOptionsPromise);
+		if (this.mParameters && !_Helper.isEmptyObject(this.mParameters)) {
+			return wrapQueryOptions();
 		}
 
 		// relative binding which may have query options from UI5 filter or sorter objects
-		return oQueryOptionsPromise.then(function (mQueryOptions) {
-			return wrapQueryOptions(
-				Object.keys(mQueryOptions).length ? mQueryOptions : undefined);
-		});
+		return wrapQueryOptions(true);
 	};
 
 	/**
