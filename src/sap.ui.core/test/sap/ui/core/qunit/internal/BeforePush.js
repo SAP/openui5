@@ -51,6 +51,20 @@
 			"Only realOData" : {realOData : true}
 		};
 
+	// adds buttons for all the actions to the corresponding <div>
+	function actions(mActions) {
+		if (!mActions) {
+			return;
+		}
+		const oDiv = document.getElementById("actions");
+		for (const [sTitle, fnAction] of Object.entries(mActions)) {
+			const oButton = document.createElement("button");
+			oButton.innerText = sTitle;
+			oButton.onclick = fnAction.bind(null, setStatus);
+			oDiv.appendChild(oButton);
+		}
+	}
+
 	// returns an array of tests according to the given flags
 	function filterTests(mTests, bIntegration, bRealOData) {
 		var sUnwanted = bIntegration ? "full" : "integration",
@@ -482,6 +496,7 @@
 		setTitle(mParameters.team);
 		sap.ui.require([sTestsScript], function (oConfig) {
 			if (mParameters.variants) {
+				actions(oConfig.actions);
 				variants();
 				showApps(oConfig.apps);
 				return;
