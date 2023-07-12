@@ -535,6 +535,18 @@ sap.ui.define([
 		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), this.oUploadSet._oInvisibleText.getId(), "AriaLabelledBy is set correctly.");
 	});
 
+	QUnit.test("No data rendering - with user specified no data illustration type", function(assert) {
+		//Arrange
+		this.oUploadSet.setProperty("noDataIllustrationType", IllustratedMessageType.SuccessBalloon);
+		this.oUploadSet.unbindAggregation("items");
+		var oIllustratedMessage = this.oUploadSet._getIllustratedMessage();
+
+		oCore.applyChanges();
+		//Assert
+		assert.equal(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.SuccessBalloon, "The custom illustrated message type is rendred");
+		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), this.oUploadSet._oInvisibleText.getId(), "AriaLabelledBy is set correctly.");
+	});
+
 	QUnit.test("No data rendering - with user specified no data text", function(assert) {
 		//Arrange
 		this.oUploadSet.setNoDataText("myNoDataText");
