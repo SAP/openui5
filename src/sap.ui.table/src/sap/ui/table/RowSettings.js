@@ -67,7 +67,10 @@ sap.ui.define([
 				 *
 				 * @since 1.72
 				 */
-				navigated: {type: "boolean", group: "Appearance", defaultValue: false}
+				navigated: {type: "boolean", group: "Appearance", defaultValue: false},
+
+				// the text to be shown in the browser tooltip. If not set, default SAP tooltip is applied. If set to empty string, no tooltip is shown.
+				title: {type: "string", defaultValue: ""}
 			}
 		}
 	});
@@ -177,6 +180,24 @@ sap.ui.define([
 
 		return this;
 	};
+
+	// set title property to the control and title attribute to the highlight div
+	RowSettings.prototype.setTitle = function (sTitle) {
+        	var oRow;
+        	var oHighlightElement;
+        	this.setProperty("title", sTitle, true);
+        	oRow = this._getRow();
+        	if (!oRow) {
+            		return this;
+        	}
+        	oHighlightElement = oRow.getDomRef("highlight");
+        	if (!oHighlightElement) {
+            		return this;
+        	}
+        	oHighlightElement.title = sTitle;
+
+        	return this;
+    	};
 
 	/**
 	 * Gets the css class name representation for the current highlight state.
