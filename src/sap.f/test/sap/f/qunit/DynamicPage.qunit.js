@@ -493,6 +493,33 @@ function (
 			"The expanded header in content does not have solid background");
 	});
 
+
+	QUnit.test("Visibility of DynamicPageTitle taken in account by parent", function (assert) {
+
+		// Arrange
+		var done = assert.async(),
+			oDynamicPage = this.oDynamicPage,
+			oDynamicPageTitle = oDynamicPage.getTitle(),
+			oStub = sinon.spy(this.oDynamicPage, "invalidate");
+
+
+		//Act
+
+		this.oDynamicPage._snapHeader(true);
+		oDynamicPageTitle.setVisible(false);
+		Core.applyChanges();
+		setTimeout(function() {
+
+			// Assert
+			assert.equal(this.oDynamicPage.$().find(".sapFDynamicPageContentWrapper").css("paddingTop"), "0px");
+
+			// Clean up
+			oStub.restore();
+			oDynamicPageTitle.setVisible(true);
+			done();
+		}.bind(this));
+	});
+
 	QUnit.module("DynamicPage - Rendering - No Title", {
 		beforeEach: function () {
 			this.oDynamicPageNoTitle = oFactory.getDynamicPageNoTitle();
