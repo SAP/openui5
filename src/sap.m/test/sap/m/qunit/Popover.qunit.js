@@ -768,11 +768,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Add right button", function (assert){
+		var oInserAggregationSpy = this.spy(oPopover._internalHeader.insertAggregation);
 		oPopover.setEndButton(oEndButton);
 		oCore.applyChanges();
 		assert.ok(document.getElementById("endButton"), "EndButton should be rendered");
 		assert.ok(oEndButton.$().closest("#" + oPopover.getId() + "-intHeader-BarRight")[0], "EndButton is set in the right side of the bar");
 
+		assert.notOk(oInserAggregationSpy.called, "insert aggregation should not be called");
 		if (!Device.support.touch) {
 			assert.equal(oEndButton.getFocusDomRef(), document.activeElement, "endButton should be focused, when beginButton is disabled");
 		}
