@@ -458,48 +458,67 @@ sap.ui.define([
 			}
 		};
 
-		/**
-		 * Returns a scroll helper object used to handle scrolling.
-		 * @public
-		 * @param {sap.ui.core.Control} oControl The control instance that requested the scroll helper
-		 * @returns {sap.ui.core.delegate.ScrollEnablement} The scroll helper instance
-		 * @since 1.78
-		 */
 		DynamicSideContent.prototype.getScrollDelegate = function (oControl) {
-			var oControlInQuestion = oControl,
-				oContainerOfDSC = this.getParent(),
-				sBreakpoint = this._getBreakPointFromWidth(),
+			var oContainerOfDSC = this.getParent(),
+				oControlParent = oControl.getParent(),
+				sParentAggregation = oControl.sParentAggregationName,
 				bMCVisible = this.getShowMainContent() && this._MCVisible,
 				bSCVisible = this.getShowSideContent() && this._SCVisible;
 
-			//for cases with main and side content - one above the other - use the scroll delegate of the parent container
-			if (sBreakpoint && sBreakpoint !== L && sBreakpoint !== XL ) {
-				// check whether the control is in visible aggregation; if not - don't get its scrollDelegate
-				if (oControlInQuestion &&
-					((oControlInQuestion.sParentAggregationName === "sideContent" && !bSCVisible) ||
-						(oControlInQuestion.sParentAggregationName === "mainContent" && !bMCVisible)) ){
-					return;
-				} else {
-					while (oContainerOfDSC && (!oContainerOfDSC.getScrollDelegate || !oContainerOfDSC.getScrollDelegate())) {
-						oContainerOfDSC = oContainerOfDSC.getParent();
-					}
+			// Find aggregation in which effectively is placed the oControl even if it is not directly placed in main or side content
+			while (oControlParent && oControlParent.getId() !== this.getId()) {
+				sParentAggregation = oControlParent.sParentAggregationName;
+				oControlParent = oControlParent.getParent();
+			}
+
+			// for cases with main and side content - one above the other - use the scroll delegate of the parent container
+			// otherwise use the scroll delegate of the container where the control is placed
+
+			if (!oControl) {
+				return;
+			} else if ((sParentAggregation === "sideContent" && !bSCVisible) || (sParentAggregation === "mainContent" && !bMCVisible)) {
+				return;
+			} else if (!this._isContentOnFullHeight(sParentAggregation)) {
+				while (oContainerOfDSC && (!oContainerOfDSC.getScrollDelegate || !oContainerOfDSC.getScrollDelegate())) {
+					oContainerOfDSC = oContainerOfDSC.getParent();
+				}
+				if (oContainerOfDSC) {
 					return oContainerOfDSC.getScrollDelegate();
 				}
 			}
 
+			this._initScrolling();
+
 			if (this._oMCScroller && this._oSCScroller) {
-				while (oControlInQuestion && oControlInQuestion.getId() !== this.getId()) {
-					if (oControlInQuestion.sParentAggregationName === "mainContent" && bMCVisible) {
+				while (oControl && oControl.getId() !== this.getId()) {
+					if (oControl.sParentAggregationName === "mainContent" && bMCVisible) {
 						return this._oMCScroller;
 					}
-					if (oControlInQuestion.sParentAggregationName === "sideContent" && bSCVisible) {
+					if (oControl.sParentAggregationName === "sideContent" && bSCVisible) {
 						return this._oSCScroller;
 					}
-					oControlInQuestion = oControlInQuestion.getParent();
+					oControl = oControl.getParent();
 				}
 			}
 
 			return;
+		};
+
+		/**
+		 * Determines whether the provided content aggregation (main or side) takes full height of the DynamicSideContent.
+		 * @private
+		 * @param {string} sContentName The name of the content aggregation
+		 * @returns {boolean} whether the content aggregation takes the full height
+		 */
+		DynamicSideContent.prototype._isContentOnFullHeight = function(sContentName) {
+			var	bMCVisible = this.getShowMainContent() && this._MCVisible,
+				bSCVisible = this.getShowSideContent() && this._SCVisible,
+				mcSpan = this.getProperty("mcSpan"),
+				scSpan = this.getProperty("scSpan"),
+				bMainContentOnFullHeight = (sContentName === "mainContent" && bMCVisible && ((mcSpan === SPAN_SIZE_12 && !bSCVisible) || mcSpan !== SPAN_SIZE_12)),
+				bSideContentOnFullHeight = (sContentName === "sideContent" && bSCVisible && ((scSpan === SPAN_SIZE_12 && !bMCVisible) || scSpan !== SPAN_SIZE_12));
+
+			return bMainContentOnFullHeight || bSideContentOnFullHeight;
 		};
 
 		/**
