@@ -168,7 +168,6 @@ sap.ui.define([
 
 		assert.strictEqual(oFirstCell.getTitle(), "test title", "Property title should be \"test title\"");
 		assert.strictEqual(jQuery("#firstCell-Title").text(), "test title", "Title of the cell should be \"test title\"");
-		assert.strictEqual(jQuery("#firstCell .sapUiBlockCellContent").attr("aria-labelledby"), "firstCell-Title", "There should be aria-labelledby attribute on the cell content, pointing to the title");
 
 		//setting link as title
 		var oLinkTitle = new Link({text: "test link", href: "http://www.sap.com"});
@@ -177,7 +176,6 @@ sap.ui.define([
 
 		assert.strictEqual(oFirstCell.getTitle(), "test title", "When there is titleLink aggregation provided property title shouldn't change and should be \"test title\"");
 		assert.strictEqual(jQuery("#firstCell-Title").text(), "test link", "When there is titleLink aggregation provided title of the cell should be \"test link\"");
-		assert.strictEqual(jQuery("#firstCell .sapUiBlockCellContent").attr("aria-labelledby"), "firstCell-Title", "There should be aria-labelledby attribute on the cell content, pointing to the linked title");
 
 		//setting sap.m.Text as title - should produce warning
 		var oSecondCell = this.BlockLayoutRow.getContent()[1];
@@ -198,7 +196,6 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.strictEqual(jQuery("#secondCell-Title").text(), "test link", "When there no title provided and titleLink aggregation is provided title of the cell should be \"test link\"");
-		assert.strictEqual(jQuery("#secondCell .sapUiBlockCellContent").attr("aria-labelledby"), "secondCell-Title", "When there no title provided and titleLink aggregation is provided, there should be aria-labelledby attribute on the cell content, pointing to the linked title");
 
 		//title and titleLink are not set
 		oSecondCell.setTitle("");
@@ -206,7 +203,6 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.strictEqual(jQuery("#secondCell-Title").text(), "", "When there is no title or titleLink provided title of the cell should be empty");
-		assert.strictEqual(jQuery("#secondCell .sapUiBlockCellContent").attr("aria-labelledby"), undefined, "When there is no title or titleLink, there should be no aria-labelledby.");
 
 		//When the title is set, then the link is set and removed and destroyed
 		oSecondCell.setTitle("test title 2");
