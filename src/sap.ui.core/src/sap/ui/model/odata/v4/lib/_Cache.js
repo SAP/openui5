@@ -458,7 +458,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a transient entity, inserts it in the list and adds a POST request to the batch
+	 * Creates a transient entity, inserts it into the list, and adds a POST request to the batch
 	 * group with the given ID. If the POST request failed, <code>fnErrorCallback</code> is called
 	 * with an Error object, the POST request is automatically added again to the same batch
 	 * group (for SubmitMode.API) or parked (for SubmitMode.Auto or SubmitMode.Direct). Parked POST
@@ -472,8 +472,8 @@ sap.ui.define([
 	 *   The collection's path within the cache (as used by change listeners)
 	 * @param {string} sTransientPredicate
 	 *   A (temporary) key predicate for the transient entity: "($uid=...)"
-	 * @param {string} [oEntityData={}]
-	 *   The initial entity data
+	 * @param {object} oEntityData
+	 *   The initial entity data, already cloned and cleaned of client-side annotations
 	 * @param {boolean} bAtEndOfCreated
 	 *   Whether the newly created entity should be inserted after previously created entities or at
 	 *   the front of the list.
@@ -635,9 +635,6 @@ sap.ui.define([
 				+ "' does not reference a collection");
 		}
 
-		// clone data to avoid modifications outside the cache
-		// remove any property starting with "@$ui5."
-		oEntityData = _Helper.publicClone(oEntityData, true) || {};
 		oPostBody = _Helper.clone(oEntityData);
 		// keep post body separate to allow local property changes in the cache
 		_Helper.setPrivateAnnotation(oEntityData, "postBody", oPostBody);

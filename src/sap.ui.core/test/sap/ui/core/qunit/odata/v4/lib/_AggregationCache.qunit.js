@@ -3244,6 +3244,37 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("addElements: transientPredicate", function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X"
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, oAggregation),
+			aElements = [{},, {}],
+			oElement = {"@$ui5._" : {transientPredicate : "$uid=id-1-23"}};
+
+		oCache.aElements = aElements.slice();
+		oCache.aElements.$byPredicate = {};
+		this.mock(_AggregationHelper).expects("beforeOverwritePlaceholder").never();
+		this.mock(_Helper).expects("updateNonExisting").never();
+		this.mock(oCache).expects("hasPendingChangesForPath").never();
+
+		// code under test
+		oCache.addElements(oElement, 1, "~parent~", 42);
+
+		assert.strictEqual(oCache.aElements[0], aElements[0]);
+		assert.strictEqual(oCache.aElements[1], oElement);
+		assert.strictEqual(oCache.aElements[2], aElements[2]);
+		assert.deepEqual(oCache.aElements.$byPredicate, {
+			"$uid=id-1-23" : oElement
+		});
+		assert.deepEqual(oCache.aElements, [
+			{},
+			{"@$ui5._" : {index : 42, parent : "~parent~", transientPredicate : "$uid=id-1-23"}},
+			{}
+		]);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("refreshKeptElements", function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "X"
@@ -3685,5 +3716,116 @@ sap.ui.define([
 		assert.strictEqual(aResult.length, 2);
 		assert.strictEqual(aResult[0], aElements[0]);
 		assert.strictEqual(aResult[1], aElements[2]);
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bHasGroupLevelCache) {
+	QUnit.test("create: already has group level cache: " + bHasGroupLevelCache, function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+				$ParentNavigationProperty : "myParent",
+				hierarchyQualifier : "X"
+			});
+		const oGroupLevelCache = {
+				create : mustBeMocked
+			};
+		const oParentNode = {
+				"@$ui5._" : {cache : bHasGroupLevelCache ? oGroupLevelCache : undefined},
+				"@$ui5.node.level" : 23
+			};
+		oCache.aElements = ["0", "1", oParentNode, "3", "4"];
+		oCache.aElements.$byPredicate = {"('42')" : oParentNode};
+		oCache.aElements.$count = 5;
+		this.mock(oCache).expects("createGroupLevelCache").exactly(bHasGroupLevelCache ? 0 : 1)
+			.withExactArgs(sinon.match.same(oParentNode)).returns(oGroupLevelCache);
+		this.mock(_Helper).expects("updateAll").exactly(bHasGroupLevelCache ? 0 : 1)
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('42')",
+				sinon.match.same(oParentNode), {"@$ui5.node.isExpanded" : true});
+		const oEntityData = {
+				"@$ui5.node.parent" : "Foo('42')",
+				bar : "~bar~",
+				foo : "~foo~"
+			};
+		const oPostBody = {};
+		this.mock(oGroupLevelCache).expects("create")
+			.withExactArgs("~oGroupLock~", "~oPostPathPromise~", "~sPath~", "~sTransientPredicate~",
+				{bar : "~bar~", foo : "~foo~"},
+				false, "~fnErrorCallback~", "~fnSubmitCallback~")
+			.callsFake(() => {
+				if (!bHasGroupLevelCache) {
+					assert.strictEqual(_Helper.getPrivateAnnotation(oParentNode, "cache"),
+						oGroupLevelCache);
+				}
+				_Helper.setPrivateAnnotation(oEntityData, "postBody", oPostBody);
+				return new SyncPromise(function (resolve) {
+					setTimeout(function () {
+						_Helper.setPrivateAnnotation(oEntityData, "predicate", "('ABC')");
+						resolve();
+					});
+				});
+			});
+		this.mock(oCache).expects("addElements")
+			.withExactArgs(sinon.match.same(oEntityData), 3, sinon.match.same(oGroupLevelCache), 0)
+			.callsFake(function () {
+				assert.deepEqual(oCache.aElements, ["0", "1", oParentNode, null, "3", "4"]);
+			});
+
+		// code under test
+		const oResult = oCache.create("~oGroupLock~", "~oPostPathPromise~", "~sPath~",
+			"~sTransientPredicate~", oEntityData, /*bAtEndOfCreated*/false, "~fnErrorCallback~",
+			"~fnSubmitCallback~");
+
+		assert.deepEqual(oPostBody, {"myParent@odata.bind" : "Foo('42')"});
+		assert.deepEqual(oEntityData, {
+			"@$ui5._" : {postBody : oPostBody},
+			"@$ui5.node.level" : 24,
+			bar : "~bar~",
+			foo : "~foo~"
+		});
+		assert.strictEqual(oCache.aElements.$count, 6);
+		assert.strictEqual(oResult.isPending(), true);
+
+		return oResult.then(function (oEntityData0) {
+			assert.strictEqual(oEntityData0, oEntityData);
+			assert.deepEqual(oCache.aElements.$byPredicate, {
+				"('42')" : oParentNode,
+				"('ABC')" : oEntityData
+			});
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("create: expandTo > 1", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+				expandTo : 2,
+				hierarchyQualifier : "X"
+			});
+		this.mock(oCache).expects("createGroupLevelCache").never();
+		this.mock(_Helper).expects("updateAll").never();
+		this.mock(oCache).expects("addElements").never();
+
+		assert.throws(function () {
+			oCache.create();
+		}, new Error("Unsupported expandTo: 2"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("create: bAtEndOfCreated, collapsed parent", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+				hierarchyQualifier : "X"
+			});
+		this.mock(oCache).expects("createGroupLevelCache").never();
+		this.mock(_Helper).expects("updateAll").never();
+		this.mock(oCache).expects("addElements").never();
+
+		assert.throws(function () {
+			oCache.create(null, null, "", "", null, /*bAtEndOfCreated*/true);
+		}, new Error("Unsupported bAtEndOfCreated"));
+
+		oCache.aElements.$byPredicate["('42')"] = {"@$ui5.node.isExpanded" : false};
+
+		assert.throws(function () {
+			oCache.create(null, null, "", "", {"@$ui5.node.parent" : "Foo('42')"});
+		}, new Error("Unsupported collapsed parent: Foo('42')"));
 	});
 });

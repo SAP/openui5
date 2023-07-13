@@ -850,6 +850,9 @@ sap.ui.define([
 				aSegments = sPath.split("/");
 				sPath = aSegments.pop();
 				oObject = _Helper.drillDown(oObject, aSegments);
+				if (!oObject) {
+					return;
+				}
 			}
 			delete oObject[sPath];
 		},

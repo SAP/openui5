@@ -1087,9 +1087,12 @@ sap.ui.define([
 			}, mFixture.mQueryOptions),
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
-		this.mock(oAggregation).expects("$fetchMetadata").withExactArgs(
-				"/meta/@Org.OData.Aggregation.V1.RecursiveHierarchy#X/NodeProperty/$PropertyPath")
-			.returns(SyncPromise.resolve("aNodeID"));
+		this.mock(oAggregation).expects("$fetchMetadata")
+			.withExactArgs("/meta/@Org.OData.Aggregation.V1.RecursiveHierarchy#X")
+			.returns(SyncPromise.resolve({
+				NodeProperty : {$PropertyPath : "aNodeID"},
+				ParentNavigationProperty : {$NavigationPropertyPath : "aParentNavigation"}
+			}));
 
 		// code under test
 		assert.deepEqual(_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions), {
@@ -1100,6 +1103,7 @@ sap.ui.define([
 
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
 		assert.strictEqual(oAggregation.$NodeProperty, "aNodeID");
+		assert.strictEqual(oAggregation.$ParentNavigationProperty, "aParentNavigation");
 	});
 });
 
@@ -1135,7 +1139,7 @@ sap.ui.define([
 			oSyncPromise = new SyncPromise(function () {});
 
 		this.mock(oAggregation).expects("$fetchMetadata").withExactArgs("/meta/path"
-				+ "/@Org.OData.Aggregation.V1.RecursiveHierarchy#X/NodeProperty/$PropertyPath")
+				+ "/@Org.OData.Aggregation.V1.RecursiveHierarchy#X")
 			.returns(oSyncPromise);
 		this.mock(oSyncPromise).expects("isFulfilled").returns(false);
 		this.mock(oSyncPromise).expects("getResult").never();
@@ -1188,6 +1192,7 @@ sap.ui.define([
 
 		if (bStored) {
 			oAggregation.$NodeProperty = "SomeNodeID";
+			oAggregation.$ParentNavigationProperty = "SomeParentNavigation";
 		}
 		if (bAllLevels) {
 			iExpectedLevels = 999;
@@ -1205,9 +1210,12 @@ sap.ui.define([
 				oAggregation.$LimitedDescendantCountProperty = "LtdDescendant_Count";
 			}
 		}
-		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1).withExactArgs(
-				"/meta/@Org.OData.Aggregation.V1.RecursiveHierarchy#X/NodeProperty/$PropertyPath")
-			.returns(SyncPromise.resolve("SomeNodeID"));
+		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1)
+			.withExactArgs("/meta/@Org.OData.Aggregation.V1.RecursiveHierarchy#X")
+			.returns(SyncPromise.resolve({
+				NodeProperty : {$PropertyPath : "SomeNodeID"},
+				ParentNavigationProperty : {$NavigationPropertyPath : "SomeParentNavigation"}
+			}));
 		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1)
 			.withExactArgs("/meta/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#X")
 			.returns(SyncPromise.resolve({
@@ -1221,7 +1229,8 @@ sap.ui.define([
 			$fetchMetadata : oAggregation.$fetchMetadata, // remember the mock(!)
 			$metaPath : "/meta",
 			$path : "/Foo",
-			$NodeProperty : "SomeNodeID"
+			$NodeProperty : "SomeNodeID",
+			$ParentNavigationProperty : "SomeParentNavigation"
 		}, oExpectedAggregation);
 
 		assert.deepEqual(
@@ -1281,9 +1290,12 @@ sap.ui.define([
 			}, mFixture.mQueryOptions),
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
-		oAggregationMock.expects("$fetchMetadata").withExactArgs("/meta/path"
-				+ "/@Org.OData.Aggregation.V1.RecursiveHierarchy#XYZ/NodeProperty/$PropertyPath")
-			.returns(SyncPromise.resolve("myID"));
+		oAggregationMock.expects("$fetchMetadata")
+			.withExactArgs("/meta/path/@Org.OData.Aggregation.V1.RecursiveHierarchy#XYZ")
+			.returns(SyncPromise.resolve({
+				NodeProperty : {$PropertyPath : "myID"},
+				ParentNavigationProperty : {$NavigationPropertyPath : "myParentNavigation"}
+			}));
 		oAggregationMock.expects("$fetchMetadata")
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#XYZ")
 			.returns(SyncPromise.resolve({
@@ -1300,6 +1312,7 @@ sap.ui.define([
 
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
 		assert.strictEqual(oAggregation.$NodeProperty, "myID");
+		assert.strictEqual(oAggregation.$ParentNavigationProperty, "myParentNavigation");
 	});
 });
 

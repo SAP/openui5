@@ -738,7 +738,8 @@
 			},
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker" : {
 				"@Org.OData.Aggregation.V1.RecursiveHierarchy#OrgChart": {
-					"NodeProperty": {"$PropertyPath": "ID"}
+					"NodeProperty": {"$PropertyPath": "ID"},
+					"ParentNavigationProperty" : {"$NavigationPropertyPath": "EMPLOYEE_2_MANAGER"}
 				},
 				"@com.sap.vocabularies.Common.v1.Messages": {
 					"$Path": "__CT__FAKE__Message/__FAKE__Messages"

@@ -168,6 +168,7 @@
 			<EntityContainer Name="Container">
 				<EntitySet Name="EntitiesWithComplexKey" EntityType="special.cases.EntityWithComplexKey"/>
 				<EntitySet Name="Artists" EntityType="special.cases.ArtistsType">
+					<NavigationPropertyBinding Path="_Friend" Target="Artists"/>
 					<NavigationPropertyBinding Path="BestFriend" Target="Artists"/>
 					<NavigationPropertyBinding Path="SiblingEntity" Target="Artists" />
 				</EntitySet>
@@ -306,6 +307,7 @@
 				<Annotation Qualifier="OrgChart" Term="Org.OData.Aggregation.V1.RecursiveHierarchy">
 					<Record>
 						<PropertyValue Property="NodeProperty" PropertyPath="_/NodeID"/>
+						<PropertyValue Property="ParentNavigationProperty" NavigationPropertyPath="BestFriend"/>
 					</Record>
 				</Annotation>
 				<Annotation Qualifier="OrgChart" Term="com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy">
