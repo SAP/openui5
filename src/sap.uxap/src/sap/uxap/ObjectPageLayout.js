@@ -1237,7 +1237,7 @@ sap.ui.define([
 		}
 		// enable scrolling in non-fullscreen-mode only
 		// (to avoid any scrollbar appearing even for an instance while we snap/unsnap header)
-		this._toggleScrolling(!this._bAllContentFitsContainer || !this._getFirstVisibleSubSection()._hasRestrictedHeight());
+		this._toggleScrolling(this._shouldAllowScrolling());
 
 		this._registerOnContentResize();
 
@@ -1284,6 +1284,10 @@ sap.ui.define([
 		if (this._$opWrapper.length) {
 			this._$opWrapper.get(0).style.overflowY = bEnable ? "auto" : "hidden";
 		}
+	};
+
+	ObjectPageLayout.prototype._shouldAllowScrolling = function () {
+		return !this._bAllContentFitsContainer || !this._getFirstVisibleSubSection()?._hasRestrictedHeight();
 	};
 
 	/**
@@ -2684,7 +2688,7 @@ sap.ui.define([
 		// => wrong section may have been selected in <code>_updateSelectionOnScroll</code>
 		// => update the selection using the newly updated DOM positions and the current scrollTop
 		this._updateSelectionOnScroll(this._$opWrapper.scrollTop());
-		this._toggleScrolling(!this._bAllContentFitsContainer || !this._getFirstVisibleSubSection()._hasRestrictedHeight());
+		this._toggleScrolling(this._shouldAllowScrolling());
 
 		return true; // return success flag
 	};
