@@ -474,7 +474,7 @@ sap.ui.define([
 	_Requestor.prototype.checkForOpenRequests = function () {
 		var that = this;
 
-		if (Object.keys(this.mRunningChangeRequests).length // running change requests
+		if (!_Helper.isEmptyObject(this.mRunningChangeRequests) // running change requests
 			|| Object.keys(this.mBatchQueue).some(function (sGroupId) { // pending requests
 				return that.mBatchQueue[sGroupId].some(function (vRequest) {
 					return Array.isArray(vRequest) ? vRequest.length : true;

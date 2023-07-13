@@ -2102,22 +2102,19 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("doFetchQueryOptions", function (assert) {
-		var oBinding = this.oModel.bindProperty("path", undefined, {custom : "foo"}),
-			oPromise;
+	QUnit.test("doFetchOrGetQueryOptions", function (assert) {
+		var oBinding = this.oModel.bindProperty("path", undefined, {custom : "foo"});
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 
 		// code under test
-		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), {custom : "foo"});
+		assert.deepEqual(oBinding.doFetchOrGetQueryOptions(), {custom : "foo"});
 
 		oBinding = this.oModel.bindProperty("path", undefined, {custom : "foo"});
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
 
 		// code under test
-		oPromise = oBinding.doFetchQueryOptions();
-
-		assert.deepEqual(oPromise.getResult(), {});
+		assert.deepEqual(oBinding.doFetchOrGetQueryOptions(), undefined);
 	});
 
 	//*********************************************************************************************

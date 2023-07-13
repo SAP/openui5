@@ -95,7 +95,7 @@ sap.ui.define([
 				this.mQueryOptions = this.oModel.buildQueryOptions(_Helper.clone(mParameters),
 					/*bSystemQueryOptionsAllowed*/sPath.endsWith("$count"));
 				this.vValue = undefined;
-				// BEWARE: #doFetchQueryOptions uses #isRoot which relies on this.oContext!
+				// BEWARE: #doFetchOrGetQueryOptions uses #isRoot which relies on this.oContext!
 				this.fetchCache(oContext);
 				oModel.bindingCreated(this);
 			},
@@ -392,10 +392,10 @@ sap.ui.define([
 
 	/**
 	 * @override
-	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchQueryOptions
+	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchOrGetQueryOptions
 	 */
-	ODataPropertyBinding.prototype.doFetchQueryOptions = function () {
-		return this.isRoot() ? SyncPromise.resolve(this.mQueryOptions) : SyncPromise.resolve({});
+	ODataPropertyBinding.prototype.doFetchOrGetQueryOptions = function () {
+		return this.isRoot() ? this.mQueryOptions : undefined;
 	};
 
 	/**

@@ -6428,17 +6428,17 @@ sap.ui.define([
 						{reason : "refresh"}],
 					["ContextBinding: /SalesOrderList('0500000001')", "change",
 						{reason : "refresh"}],
-					["ContextBinding: /SalesOrderList('0500000001')", "dataRequested"],
 					["ListBinding: /SalesOrderList('0500000001')|SO_2_SOITEM", "dataRequested"],
+					["ContextBinding: /SalesOrderList('0500000001')", "dataRequested"],
 					["ContextBinding: /SalesOrderList('0500000001')", "dataReceived", {data : {}}],
-					["PropertyBinding: /SalesOrderList('0500000001')|Note", "change",
-						{reason : "refresh"}],
 					["ListBinding: /SalesOrderList('0500000001')|SO_2_SOITEM", "change",
 						{reason : "change"}],
 					["ListBinding: /SalesOrderList('0500000001')|SO_2_SOITEM", "dataReceived",
 						{data : {}}],
 					["PropertyBinding: /SalesOrderList('0500000001')/SO_2_SOITEM|$count", "change",
 						{reason : "change"}],
+					["PropertyBinding: /SalesOrderList('0500000001')|Note", "change",
+						{reason : "refresh"}],
 					["PropertyBinding: /SalesOrderList('0500000001')/SO_2_SOITEM/2[2]|ItemPosition",
 						"change", {reason : "change"}]
 				])
@@ -6468,8 +6468,11 @@ sap.ui.define([
 	// do not recompute "static" information in vain.
 	// BCP: 156484 / 2023 (002075129500001564842023)
 	QUnit.test("BCP: 156484 / 2023 - improve performance of ODPrB#setContext", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
-			fnSpy = this.spy(ODataMetaModel.prototype, "fetchUI5Type"),
+		var fnSpy_ODMM_fetchUI5Type = this.spy(ODataMetaModel.prototype, "fetchUI5Type"),
+			fnSpy_ODMM_getReducedPath = this.spy(ODataMetaModel.prototype, "getReducedPath"),
+			fnSpy_ODLB_doFetchOrGetQueryOptions
+				= this.spy(ODataListBinding.prototype, "doFetchOrGetQueryOptions"),
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" visibleRowCount="3">\
 	<Text id="id" text="{ID}"/>\
@@ -6512,7 +6515,10 @@ sap.ui.define([
 			.expectChange("lastModifiedAt", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			assert.strictEqual(fnSpy.callCount, 6, "initial #fetchUI5Type"); // was: 12
+			assert.strictEqual(fnSpy_ODMM_fetchUI5Type.callCount, 6, // was: 12
+				"initial #fetchUI5Type");
+			assert.strictEqual(fnSpy_ODMM_getReducedPath.callCount, 3); // was: 12
+			assert.strictEqual(fnSpy_ODLB_doFetchOrGetQueryOptions.callCount, 4); // was: 13
 
 			that.expectChange("id", [, "1", "2", "3"])
 				.expectChange("name", [, "Jonathan Smith", "Peter Burke", "Carla Blue"])
@@ -6522,7 +6528,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "scroll down 1x");
 		}).then(function () {
-			assert.strictEqual(fnSpy.callCount, 6, "no more #fetchUI5Type");
+			assert.strictEqual(fnSpy_ODMM_fetchUI5Type.callCount, 6, "no more #fetchUI5Type");
+			assert.strictEqual(fnSpy_ODMM_getReducedPath.callCount, 3); // was: 21
+			assert.strictEqual(fnSpy_ODLB_doFetchOrGetQueryOptions.callCount, 4); // was: 22
 
 			that.expectChange("id", [,,, "3", "4", "5"])
 				.expectChange("name", [,,, "Carla Blue", "John Field", "Susan Bay"])
@@ -6532,7 +6540,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "scroll down 2x");
 		}).then(function () {
-			assert.strictEqual(fnSpy.callCount, 6, "no more #fetchUI5Type");
+			assert.strictEqual(fnSpy_ODMM_fetchUI5Type.callCount, 6, "no more #fetchUI5Type");
+			assert.strictEqual(fnSpy_ODMM_getReducedPath.callCount, 3); // was: 31
+			assert.strictEqual(fnSpy_ODLB_doFetchOrGetQueryOptions.callCount, 4); // was: 30
 		});
 	});
 
@@ -21962,16 +21972,16 @@ sap.ui.define([
 			.expectChange("currency");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
-					+ "?$select=Price,PublicationID&$skip=0&$top=5", {
-					value : []
-				})
-				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
 					+ "?$select=ArtistID,IsActiveEntity,Name,defaultChannel", {
 					ArtistID : "42",
 					IsActiveEntity : true,
 					Name : "Hour Frustrated",
 					defaultChannel : "Channel 1"
+				})
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=5", {
+					value : []
 				})
 				.expectChange("name", "Hour Frustrated");
 
@@ -21982,19 +21992,19 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
-					+ "?$select=Price,PublicationID&$skip=0&$top=5", {
-					value : [{
-						Price : "9.99",
-						PublicationID : "42-0"
-					}]
-				})
-				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
 					+ "?$select=ArtistID,IsActiveEntity,Name,defaultChannel", {
 					ArtistID : "42",
 					IsActiveEntity : true,
 					Name : "Hour Frustrated again",
 					defaultChannel : "Channel 2"
+				})
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=5", {
+					value : [{
+						Price : "9.99",
+						PublicationID : "42-0"
+					}]
 				})
 				.expectChange("name", "Hour Frustrated again")
 				.expectChange("price", ["9.99"])
@@ -22016,19 +22026,19 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
-					+ "?$select=Price,PublicationID&$skip=0&$top=5", {
-					value : [{
-						Price : "10.99",
-						PublicationID : "42-0"
-					}]
-				})
-				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
 					+ "?$select=ArtistID,IsActiveEntity,Name,defaultChannel", {
 					ArtistID : "42",
 					IsActiveEntity : true,
 					Name : "Hour Frustrated again and again",
 					defaultChannel : "Channel 3"
+				})
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=5", {
+					value : [{
+						Price : "10.99",
+						PublicationID : "42-0"
+					}]
 				})
 				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication('42-0')"
 					+ "?$select=CurrencyCode", {CurrencyCode : "USD"})
@@ -30268,6 +30278,46 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show that a property binding for the first element of an expanded collection works
+	// w/o sending own requests, even if system query options are present for that expand.
+	// BCP: 2280025746
+	QUnit.test("BCP: 2280025746", function (assert) {
+		var sView = '\
+<Table items="{path : \'/SalesOrderList\', parameters : {\
+		$expand : {\
+			SO_2_SOITEM : {\
+				$count : true,\
+				$filter : \'Note ne \\\'\\\'\',\
+				$levels : 1,\
+				$orderby : \'ItemPosition\',\
+				$search : \'covfefe\'\
+			}\
+		}\
+	}}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="item0Note" text="{SO_2_SOITEM/0/Note}"/>\
+</Table>';
+
+		this.expectRequest("SalesOrderList?$expand=SO_2_SOITEM($count=true;$filter=Note ne ''"
+				+ ";$levels=1;$orderby=ItemPosition;$search=covfefe;$select=ItemPosition,Note"
+				+ ",SalesOrderID)&$select=SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					SalesOrderID : "1",
+					SO_2_SOITEM : [{
+						"@odata.count" : "1",
+						ItemPosition : "10",
+						Note : "covfefe",
+						SalesOrderID : "1"
+					}]
+				}]
+			})
+			.expectChange("id", ["1"])
+			.expectChange("item0Note", ["covfefe"]);
+
+		return this.createView(assert, sView, createSalesOrdersModel({autoExpandSelect : true}));
 	});
 
 	//*********************************************************************************************

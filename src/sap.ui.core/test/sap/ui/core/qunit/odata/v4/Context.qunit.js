@@ -3,12 +3,11 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/base/util/isEmptyObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (Log, isEmptyObject, SyncPromise, BaseContext, Context, _Helper) {
+], function (Log, SyncPromise, BaseContext, Context, _Helper) {
 	"use strict";
 
 	//*********************************************************************************************
@@ -664,14 +663,10 @@ sap.ui.define([
 
 		oBindingMock.expects("checkSuspended").withExactArgs();
 		oBindingMock.expects("fetchIfChildCanUseCache")
-			.withExactArgs(oContext, "bar", sinon.match(function (oPromise) {
-				return oPromise.isFulfilled() && isEmptyObject(oPromise.getResult());
-			}))
+			.withExactArgs(oContext, "bar", undefined, true)
 			.resolves("/resolved/bar"); // no need to return a SyncPromise
 		oBindingMock.expects("fetchIfChildCanUseCache")
-			.withExactArgs(oContext, "baz", sinon.match(function (oPromise) {
-				return oPromise.isFulfilled() && isEmptyObject(oPromise.getResult());
-			}))
+			.withExactArgs(oContext, "baz", undefined, true)
 			.resolves("/resolved/baz"); // no need to return a SyncPromise
 		oContextMock.expects("fetchValue")
 			.withExactArgs("/resolved/bar", null, undefined)
@@ -700,9 +695,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("fetchIfChildCanUseCache")
-			.withExactArgs(oContext, "bar", sinon.match(function (oPromise) {
-				return oPromise.isFulfilled() && isEmptyObject(oPromise.getResult());
-			}))
+			.withExactArgs(oContext, "bar", undefined, true)
 			.resolves(undefined); // no need to return a SyncPromise
 		this.mock(oContext).expects("fetchValue").never();
 		this.oLogMock.expects("error").withExactArgs("Not a valid property path: bar", undefined,
@@ -726,9 +719,7 @@ sap.ui.define([
 			oContext = Context.create(oModel, oBinding, "/foo", 1);
 
 		this.mock(oBinding).expects("fetchIfChildCanUseCache")
-			.withExactArgs(oContext, "bar", sinon.match(function (oPromise) {
-				return oPromise.isFulfilled() && isEmptyObject(oPromise.getResult());
-			}))
+			.withExactArgs(oContext, "bar", undefined, true)
 			.resolves("/resolved/path"); // no need to return a SyncPromise
 		this.mock(oContext).expects("fetchValue")
 			.withExactArgs("/resolved/path", null, undefined)
@@ -768,9 +759,7 @@ sap.ui.define([
 			oSyncPromiseValue = SyncPromise.resolve(1234);
 
 		this.mock(oBinding).expects("fetchIfChildCanUseCache")
-			.withExactArgs(oContext, "bar", sinon.match(function (oPromise) {
-				return oPromise.isFulfilled() && isEmptyObject(oPromise.getResult());
-			}))
+			.withExactArgs(oContext, "bar", undefined, true)
 			.resolves("/resolved/path"); // no need to return a SyncPromise
 		this.mock(oContext).expects("fetchValue").withExactArgs("/resolved/path", null, undefined)
 			.returns(oSyncPromiseValue);
@@ -3129,7 +3118,7 @@ sap.ui.define([
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")
 			.returns("path/to/messages");
 		this.mock(oBinding).expects("fetchIfChildCanUseCache")
-			.withExactArgs(sinon.match.same(oContext), "path/to/messages", {})
+			.withExactArgs(sinon.match.same(oContext), "path/to/messages", undefined, true)
 			.resolves("/reduced/path");
 		this.mock(oContext).expects("fetchValue").withExactArgs("/reduced/path")
 			.rejects(oError);
@@ -3292,7 +3281,7 @@ sap.ui.define([
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")
 			.returns("path/to/messages");
 		this.mock(oBinding).expects("fetchIfChildCanUseCache")
-			.withExactArgs(sinon.match.same(oContext), "path/to/messages", {})
+			.withExactArgs(sinon.match.same(oContext), "path/to/messages", undefined, true)
 			.rejects(oError);
 
 		// code under test
