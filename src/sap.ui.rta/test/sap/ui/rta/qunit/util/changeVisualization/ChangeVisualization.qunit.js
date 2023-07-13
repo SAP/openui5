@@ -422,6 +422,40 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("With changes that have no selector", async function(assert) {
+			const oMockChange1 = createMockChange("changeWithNoSelectorFunction");
+			oMockChange1.getSelector = undefined;
+			const oMockChange2 = createMockChange("changeWithUndefinedSelector");
+			sandbox.stub(oMockChange2, "getSelector").returns(undefined);
+			const oMockChange3 = createMockChange("changeWithEmptySelector");
+			sandbox.stub(oMockChange3, "getSelector").returns({});
+			this.aMockChanges = [oMockChange1, oMockChange2, oMockChange3];
+
+			prepareChanges(this.aMockChanges);
+			await startVisualization(this.oRta);
+
+			Core.applyChanges();
+			const oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+			this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
+			await oOpenPopoverPromise;
+
+			const aVisualizationData = this.oRta.getToolbar().getModel("visualizationModel").getData();
+			const sHiddenChangesInfo = oRtaResourceBundle.getText(
+				"MSG_CHANGEVISUALIZATION_HIDDEN_CHANGES_INFO",
+				[this.aMockChanges.length]
+			);
+			assert.strictEqual(
+				aVisualizationData.sortedChanges.relevantHiddenChanges.length,
+				3,
+				"then the changes are in the relevantHiddenChanges category"
+			);
+			assert.strictEqual(
+				sHiddenChangesInfo,
+				aVisualizationData.popupInfoMessage,
+				"then the changes are displayed as not visualized correctly "
+			);
+		});
+
 		QUnit.test("With one change belonging to other category - Check if Menu is bound correctly to the model", function(assert) {
 			this.aMockChanges.push(createMockChange("testAddColumn", "addColumn", "Comp1---idMain1--lb1"));
 			prepareChanges(this.aMockChanges);

@@ -5,12 +5,12 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Fragment",
+	"sap/base/util/isEmptyObject",
 	"sap/base/util/restricted/_difference",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
@@ -24,12 +24,12 @@ sap.ui.define([
 ], function(
 	Core,
 	Fragment,
+	isEmptyObject,
 	difference,
 	deepEqual,
 	JsControlTreeModifier,
 	Control,
 	OverlayRegistry,
-	OverlayUtil,
 	ElementUtil,
 	PersistenceWriteAPI,
 	Layer,
@@ -404,7 +404,7 @@ sap.ui.define([
 			return sCommand;
 		}
 
-		if (!oChange.getSelector || !oChange.getSelector()) {
+		if (!oChange.getSelector || !oChange.getSelector() || isEmptyObject(oChange.getSelector())) {
 			return false;
 		}
 
