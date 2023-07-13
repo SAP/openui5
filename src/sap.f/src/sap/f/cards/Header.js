@@ -237,6 +237,14 @@ sap.ui.define([
 	};
 
 	/**
+	 * @protected
+	 * @returns {boolean} If the icon should be shown.
+	 */
+	Header.prototype.shouldShowIcon = function () {
+		return this.getIconVisible();
+	};
+
+	/**
 	 * This method is a hook for the RenderManager that gets called
 	 * during the rendering of child Controls. It allows to add,
 	 * remove and update existing accessibility attributes (ARIA) of
