@@ -5241,4 +5241,124 @@ sap.ui.define([
 		// code under test
 		_Helper.addToCount("~mChangeListeners~", "~sPath~", aCollection, 1);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("updateNestedCreates: no deep create", function (assert) {
+		assert.strictEqual(
+			// code under test - not even a nested ODLB
+			_Helper.updateNestedCreates("~mChangeListeners~", "~mQueryOptions~", "path/to/entity"),
+			false);
+
+		assert.strictEqual(
+			// code under test - no nested create in foo
+			_Helper.updateNestedCreates("~mChangeListeners~", "~mQueryOptions~", "path/to/entity",
+				{/*oCacheEntity*/}, {/*oCreatedEntity*/}, {foo : "~$select~"}),
+			false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateNestedCreates", function (assert) {
+		var oCacheEntity = {
+				nested1 : ["n/a"],
+				nested2 : ["n/a"],
+				nested3 : ["n/a"]
+			},
+			oCreatedEntity = {
+				nested1 : ["~created11~", "~created12~"],
+				nested2 : ["~created21~"]
+			},
+			oHelperMock = this.mock(_Helper),
+			mSelectForMetaPath = {
+				nested1 : "~$select1~",
+				"nested1/foo" : "~$select1foo~",
+				"nested1/bar" : "~$select1bar~",
+				nested2 : undefined,
+				"nested2/foo" : "~$select2foo~",
+				nested3 : "~$select3~"
+			};
+
+		oHelperMock.expects("updateNestedCreates")
+			.withExactArgs("~mChangeListeners~", "~mQueryOptions~", "path/to/entity",
+				sinon.match.same(oCacheEntity), sinon.match.same(oCreatedEntity),
+				sinon.match.same(mSelectForMetaPath))
+			.callThrough(); // initial call
+		oCacheEntity.nested1.$postBodyCollection = "~postBodyCollection1~";
+		// nested1
+		oHelperMock.expects("setCount")
+			.withExactArgs("~mChangeListeners~", "path/to/entity/nested1",
+				sinon.match(function (aEntities) { return aEntities === oCacheEntity.nested1; }),
+				2)
+			.callsFake(function () {
+				assert.strictEqual(oCacheEntity.nested1.$count, undefined);
+				assert.ok("$count" in oCacheEntity.nested1);
+			});
+		// created11
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs("~created11~", "predicate").returns("~predicate11~");
+		oHelperMock.expects("updateSelected")
+			.withExactArgs({}, "path/to/entity/nested1~predicate11~", {}, "~created11~",
+				"~$select1~", undefined, true)
+			.callsFake(function () {
+				arguments[2].origin = "~created11~";
+			});
+		oHelperMock.expects("updateNestedCreates")
+			.withExactArgs("~mChangeListeners~", "~mQueryOptions~",
+				"path/to/entity/nested1~predicate11~", {origin : "~created11~"},
+				"~created11~", {foo : "~$select1foo~", bar : "~$select1bar~"});
+		// created12
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs("~created12~", "predicate").returns("~predicate12~");
+		oHelperMock.expects("updateSelected")
+			.withExactArgs({}, "path/to/entity/nested1~predicate12~", {}, "~created12~",
+				"~$select1~", undefined, true)
+			.callsFake(function () {
+				arguments[2].origin = "~created12~";
+			});
+		oHelperMock.expects("updateNestedCreates")
+			.withExactArgs("~mChangeListeners~", "~mQueryOptions~",
+				"path/to/entity/nested1~predicate12~", {origin : "~created12~"},
+				"~created12~", {foo : "~$select1foo~", bar : "~$select1bar~"});
+		// nested2
+		oHelperMock.expects("getQueryOptionsForPath")
+			.withExactArgs("~mQueryOptions~", "path/to/entity/nested2")
+			.returns({$select : "~$select2~"});
+		oHelperMock.expects("setCount")
+			.withExactArgs("~mChangeListeners~", "path/to/entity/nested2",
+				sinon.match(function (aEntities) { return aEntities === oCacheEntity.nested2; }),
+				1);
+		// created21
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs("~created21~", "predicate").returns("~predicate21~");
+		oHelperMock.expects("updateSelected")
+			.withExactArgs({}, "path/to/entity/nested2~predicate21~", {}, "~created21~",
+				"~$select2~", undefined, true)
+			.callsFake(function () {
+				arguments[2].origin = "~created21~";
+			});
+		oHelperMock.expects("updateNestedCreates")
+			.withExactArgs("~mChangeListeners~", "~mQueryOptions~",
+				"path/to/entity/nested2~predicate21~", {origin : "~created21~"},
+				"~created21~", {foo : "~$select2foo~"});
+
+		assert.strictEqual(
+			// code under test
+			_Helper.updateNestedCreates("~mChangeListeners~", "~mQueryOptions~", "path/to/entity",
+				oCacheEntity, oCreatedEntity, mSelectForMetaPath),
+			true);
+
+		assert.deepEqual(oCacheEntity, {
+			nested1 : [{origin : "~created11~"}, {origin : "~created12~"}],
+			nested2 : [{origin : "~created21~"}]
+		});
+		assert.strictEqual(oCacheEntity.nested1.$created, 0);
+		assert.deepEqual(oCacheEntity.nested1.$byPredicate, {
+			"~predicate11~" : {origin : "~created11~"},
+			"~predicate12~" : {origin : "~created12~"}
+		});
+		assert.strictEqual(oCacheEntity.nested2.$created, 0);
+		assert.deepEqual(oCacheEntity.nested2.$byPredicate, {
+			"~predicate21~" : {origin : "~created21~"}
+		});
+		assert.notOk("$postBodyCollection" in oCacheEntity.nested1);
+	});
 });

@@ -592,7 +592,8 @@ sap.ui.define([
 					+ " succeeded. Do not use this promise.");
 				_Helper.setPrivateAnnotation(oEntityData, "deepCreate",
 					// update properties from collections in a deep create
-					that.updateNestedCreates(sResultingPath, oEntityData, oCreatedEntity,
+					_Helper.updateNestedCreates(that.mChangeListeners, that.mQueryOptions,
+						sResultingPath, oEntityData, oCreatedEntity,
 						_Helper.getPrivateAnnotation(oEntityData, "select"))
 				);
 				_Helper.deletePrivateAnnotation(oEntityData, "select");
@@ -2294,79 +2295,6 @@ sap.ui.define([
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return patch(oGroupLock);
 		});
-	};
-
-	/**
-	 * Creates key predicates and rebuilds the nested entity collections after a deep create (in the
-	 * assumption that the response may differ significantly from the request regarding order and
-	 * count).
-	 *
-	 * @param {string} sPath - The path of the created entity within the cache
-	 * @param {object} oCacheEntity - The entity in the cache
-	 * @param {object} oCreatedEntity - The created entity from the response
-	 * @param {object} mSelectForMetaPath
-	 *   A map of $select properties per meta path of the nested collections
-	 * @returns {boolean} Whether there actually was a deep create
-	 *
-	 * @private
-	 */
-	_Cache.prototype.updateNestedCreates = function (sPath, oCacheEntity, oCreatedEntity,
-			mSelectForMetaPath) {
-		var bDeepCreate = false,
-			that = this;
-
-		if (!mSelectForMetaPath) { // no nested collections -> no deep create
-			return false;
-		}
-
-		Object.keys(mSelectForMetaPath).filter(function (sMetaPath) {
-			return !sMetaPath.includes("/"); // only look at the direct descendants
-		}).forEach(function (sSegment) {
-			var sCollectionPath = sPath + "/" + sSegment,
-				aNestedCacheEntities,
-				aNestedCreatedEntities = oCreatedEntity[sSegment],
-				sPrefix = sSegment + "/",
-				aSelect,
-				mSelectForChildMetaPath = {};
-
-			if (!aNestedCreatedEntities) { // create not called in this nested collection
-				// #addTransientEntity added this in preparation of a deep create
-				delete oCacheEntity[sSegment];
-				return;
-			}
-
-			aSelect = mSelectForMetaPath[sSegment]
-				|| _Helper.getQueryOptionsForPath(that.mQueryOptions, sCollectionPath).$select;
-			// rebuild the collection from the response only taking the selected properties
-			oCacheEntity[sSegment] = aNestedCacheEntities
-				= new Array(aNestedCreatedEntities.length);
-			aNestedCacheEntities.$count = undefined; // so that setCount always fires a change event
-			aNestedCacheEntities.$created = 0;
-			aNestedCacheEntities.$byPredicate = {};
-			_Helper.setCount(that.mChangeListeners, sCollectionPath, aNestedCacheEntities,
-				aNestedCreatedEntities.length);
-			// build the next level
-			Object.keys(mSelectForMetaPath).forEach(function (sMetaPath) {
-				if (sMetaPath.startsWith(sPrefix)) {
-					mSelectForChildMetaPath[sMetaPath.slice(sPrefix.length)]
-						= mSelectForMetaPath[sMetaPath];
-				}
-			});
-			aNestedCreatedEntities.forEach(function (oCreatedChildEntity, i) {
-				var sPredicate = _Helper.getPrivateAnnotation(oCreatedChildEntity, "predicate");
-
-				aNestedCacheEntities.$byPredicate[sPredicate] = aNestedCacheEntities[i] = {};
-				// no change events, the listeners are recreated anyway
-				_Helper.updateSelected({}, sCollectionPath + sPredicate, aNestedCacheEntities[i],
-					oCreatedChildEntity, aSelect, /*fnCheckKeyPredicate*/undefined, true);
-				that.updateNestedCreates(sCollectionPath + sPredicate, aNestedCacheEntities[i],
-					oCreatedChildEntity, mSelectForChildMetaPath);
-			});
-
-			bDeepCreate = true;
-		});
-
-		return bDeepCreate;
 	};
 
 	/**
