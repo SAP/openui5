@@ -40,11 +40,13 @@ sap.ui.define([
 
 			sinon.stub(Controller.prototype, "getOwnerComponent").returns(this.oComponentStub);
 			sinon.stub(Controller.prototype, "getView").returns(this.oViewStub);
+			sinon.stub(AppController.prototype, "_initThemePicker").returns(true);
 		},
 
 		afterEach : function () {
 			Controller.prototype.getOwnerComponent.restore();
 			Controller.prototype.getView.restore();
+			AppController.prototype._initThemePicker.restore();
 
 			this.oViewStub.destroy();
 			this.oComponentStub.destroy();

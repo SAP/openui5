@@ -1,9 +1,9 @@
 sap.ui.define([
 	"sap/m/Label",
-	"sap/m/library",
 	"sap/m/MessageToast",
 	"sap/m/ToggleButton",
 	"sap/ui/Device",
+	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/IconPool",
@@ -17,10 +17,10 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/controller/util/ThemePicker"
 ], function(
 	Label,
-	mobileLibrary,
 	MessageToast,
 	ToggleButton,
 	Device,
+	Core,
 	Element,
 	Fragment,
 	IconPool,
@@ -52,7 +52,7 @@ sap.ui.define([
 		onInit : function () {
 			var oViewModel,
 				oTagModel,
-				oComponent = this;
+				sThemeKey = ThemePicker._oConfigUtil.getCookieValue("appearance") || "light";
 
 			this._oPreviousQueryContext = {};
 			this._oCurrentQueryContext = null;
@@ -61,10 +61,30 @@ sap.ui.define([
 			oViewModel = new JSONModel({
 				growingThreshold : 200,
 				iconFilterCount: this.getResourceBundle().getText("overviewTabAllInitial"),
+				allIconsCount: 99,
 				overviewNoDataText : this.getResourceBundle().getText("overviewNoDataText"),
+				SelectedCopyMode: "uri",
+				SelectedTheme: sThemeKey,
+				CopyModeCollection: [
+					{
+						"CopyModeId": "uri",
+						"Name": "URI"
+					},
+					{
+						"CopyModeId": "sym",
+						"Name": "Symbol"
+					},
+					{
+						"CopyModeId": "uni",
+						"Name": "Unicode"
+					}
+				],
 				fontName: "",
 				iconPath : "",
-				busy : true
+				busy : true,
+				getSomeResultsVisible: false,
+				noResultsVisible: false,
+				contentVisible: false
 			});
 			this.setModel(oViewModel, "view");
 
@@ -75,8 +95,6 @@ sap.ui.define([
 			// register to both new and legacy pattern to not break bookmarked URLs
 			this.getRouter().getRoute("legacy").attachPatternMatched(this._updateUI, this);
 			this.getRouter().getRoute("overview").attachPatternMatched(this._updateUI, this);
-
-			ThemePicker.init(oComponent);
 		},
 
 		/**
@@ -123,8 +141,8 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onChangeFont : function(oEvent) {
-			var oListItem = oEvent.getParameter("listItem"),
-				sSelectedFont = oListItem.getCustomData()[0].getValue();
+			var oListItem = oEvent.getParameter("selectedItem"),
+				sSelectedFont = oListItem.getKey();
 
 			this.getModel("view").setProperty("/busy", true, null, true);
 			this.getRouter().navTo("overview", {
@@ -133,18 +151,31 @@ sap.ui.define([
 				},
 				fontName: sSelectedFont
 			});
-			this.byId("selectFont").close();
 		},
 
-		handleMenuItemClick: function (oEvent) {
-			var sTargetText = oEvent.getParameter("item").getKey();
+		handleThemeSelection: function (oEvent) {
+			var sTargetText = oEvent.getParameter("selectedItem").getKey();
 			if (ThemePicker._getTheme()[sTargetText]) {
-				this._updateAppearance(sTargetText);
+				ThemePicker._updateAppearance(sTargetText);
 			}
 		},
 
 		handleCopyToClipboardClick: function (oEvent) {
-			this._onCopyIconToClipboard(oEvent.getSource().getParent().getParent().getItems()[0].getSrc());
+			var oParent = oEvent.getSource().getParent(),
+				// Depending where we press the copy button (from the Grid or Detail fragment), the
+				// drill-down for the icon src is different
+				sIconURI = oParent.getParent().getItems()[0].getSrc ? // Grid fragment
+				oParent.getParent().getItems()[0].getSrc() : // Grid fragment
+				oParent.getCells()[0].getSrc(), // Detail fragment
+				sSelectedCopyMode = this.getModel("view").getProperty("/SelectedCopyMode");
+
+			if (sSelectedCopyMode === "uri") {
+				this._onCopyCodeToClipboard(sIconURI);
+			} else if (sSelectedCopyMode === "sym") {
+				this._onCopyIconToClipboard(sIconURI);
+			} else if (sSelectedCopyMode === "uni") {
+				this._onCopyUnicodeToClipboard(sIconURI.substr(sIconURI.lastIndexOf("/") + 1, sIconURI.length - 1));
+			}
 		},
 
 		/**
@@ -153,22 +184,28 @@ sap.ui.define([
 		 * @public
 		 */
 		onUpdateFinished : function () {
+			var oResultItemsBinding = this.byId("results").getBinding(this._sAggregationName),
+				iFilteredIcons = oResultItemsBinding.getLength(),
+				iAllIcons = oResultItemsBinding.oList.length;
+
 			function getRootControl(oEvent) {
-				if (oEvent.srcControl.getMetadata().getName().search("CustomListItem") >= 0) {
-					// keyboard event, get child
-					return oEvent.srcControl.getContent()[0];
-				} else if (oEvent.srcControl.getMetadata().getName().search("VerticalLayout") >= 0) {
-					// layout clicked, just return it
-					return oEvent.srcControl;
-				} else {
-					// inner control clicked, return parent
-					return oEvent.srcControl.getParent();
-				}
+				return Core.byId(oEvent.currentTarget.id);
 			}
 			// show total count of items
-			this.getModel("view").setProperty("/iconFilterCount", this.byId("results").getBinding(this._sAggregationName).getLength(), null, true);
-			// register press callback for grid and visual mode
-			if (this._oCurrentQueryContext.tab === "grid" || this._oCurrentQueryContext.tab === "visual") {
+			this.getModel("view").setProperty("/iconFilterCount", iFilteredIcons, null, true);
+			this.getModel("view").setProperty("/allIconsCount", iAllIcons, null, true);
+
+			if (this._oCurrentQueryContext.tab !== "favorites") {
+				this.getModel("view").setProperty("/getSomeResultsVisible", iFilteredIcons === iAllIcons, null, true);
+				this.getModel("view").setProperty("/contentVisible", iFilteredIcons > 0 && iFilteredIcons !== iAllIcons, null, true);
+			} else {
+				this.getModel("view").setProperty("/getSomeResultsVisible", false, null, true);
+				this.getModel("view").setProperty("/contentVisible", iFilteredIcons > 0, null, true);
+			}
+			this.getModel("view").setProperty("/noResultsVisible", iFilteredIcons === 0, null, true);
+
+			// register press callback for grid
+			if (this._oCurrentQueryContext.tab === "grid") {
 				if (!this._oPressLayoutCellDelegate) {
 					this._oPressLayoutCellDelegate = {
 						// tap: set selected and hoverable class
@@ -193,7 +230,7 @@ sap.ui.define([
 							if (!this._sNormalIconColor) {
 								this._sNormalIconColor = Element.closestTo(oRoot.$().find(".sapUiIcon")[0]).getColor();
 							}
-							oRoot.$().find(".sapUiVltCell > .sapUiIcon").control().forEach(function (oIcon) {
+							oRoot.$().find(".sapMFlexItem > .sapUiIcon").control().forEach(function (oIcon) {
 								oIcon.setColor(Parameters.get("sapUiTextInverted"));
 							});
 						}.bind(this),
@@ -202,7 +239,7 @@ sap.ui.define([
 							var oRoot = getRootControl(oEvent);
 
 							oRoot.removeStyleClass("sapMLIBActive");
-							oRoot.$().find(".sapUiVltCell > .sapUiIcon").control().forEach(function (oIcon) {
+							oRoot.$().find(".sapMFlexItem > .sapUiIcon").control().forEach(function (oIcon) {
 								oIcon.setColor(this._sNormalIconColor);
 							}.bind(this));
 						}.bind(this)
@@ -237,13 +274,13 @@ sap.ui.define([
 		/**
 		 * Event handler for changing the icon browse mode.
 		 * We update the hash in case a new tab is selected.
-		 * @param {sap.ui.base.Event} oEvent the tabSelect event of the IconTabBar
+		 * @param {sap.ui.base.Event} oEvent the selectionChange event of the SegmentedButton
 		 */
-		onTabSelect : function (oEvent){
-			if (oEvent.getParameter("selectedKey") === "all") {
+		onSegmentSelected : function (oEvent){
+			if (oEvent.getParameter("item").getKey() === "all") {
 				this._updateHash("reset", "all");
 			} else {
-				this._updateHash("tab", oEvent.getParameter("selectedKey"));
+				this._updateHash("tab", oEvent.getParameter("item").getKey());
 			}
 		},
 
@@ -313,13 +350,9 @@ sap.ui.define([
 		 * @public
 		 */
 		onCopyCodeToClipboard: function () {
-			var sString = this.byId("previewCopyCode").getValue(),
-				oResourceBundle = this.getResourceBundle(),
-				sSuccessText, sExceptionText;
+			var sIconSrc = this.byId("previewCopyCode").getValue();
 
-			sSuccessText = oResourceBundle.getText("previewCopyToClipboardSuccess", [sString]);
-			sExceptionText = oResourceBundle.getText("previewCopyToClipboardFail", [sString]);
-			this._copyStringToClipboard(sString, sSuccessText, sExceptionText);
+			this._onCopyCodeToClipboard(sIconSrc);
 		},
 
 		/**
@@ -327,14 +360,9 @@ sap.ui.define([
 		 * @public
 		 */
 		onCopyUnicodeToClipboard: function () {
-			var oResourceBundle = this.getResourceBundle(),
-				sSuccessText, sExceptionText,
-				sIconName = this.byId("preview").getBindingContext().getObject().name,
-				sString = this.getModel().getUnicodeHTML(sIconName);
-			sString = sString.substring(2, sString.length - 1);
-			sSuccessText = oResourceBundle.getText("previewCopyUnicodeToClipboardSuccess", [sString]);
-			sExceptionText = oResourceBundle.getText("previewCopyUnicodeToClipboardFail", [sString]);
-			this._copyStringToClipboard(sString, sSuccessText, sExceptionText);
+			var sIconName = this.byId("preview").getBindingContext().getObject().name;
+
+			this._onCopyUnicodeToClipboard(sIconName);
 		},
 
 		/**
@@ -342,37 +370,9 @@ sap.ui.define([
 		 * @public
 		 */
 		onCopyIconToClipboard: function () {
-			var sString = this.byId("previewCopyCode").getValue();
+			var sIconSrc = this.byId("previewCopyCode").getValue();
 
-			this._onCopyIconToClipboard(sString);
-		},
-
-		/**
-		 * Shows a random icon in the preview pane
-		 * @public
-		 */
-		onSurpriseMe: function () {
-			var sFontName = this.getModel("view").getProperty("/fontName"),
-				aIcons = this.getModel().getProperty("/" + sFontName + "/groups/0/icons"),
-				oRandomItem = aIcons[Math.floor(Math.random() * aIcons.length)];
-
-			this._updateHash("icon", oRandomItem.name);
-		},
-
-		/**
-		 * Downloads the icon font relatively from the UI5 delivery
-		 * @public
-		 */
-		onDownload: function () {
-			var sFontName = this.getModel("view").getProperty("/fontName");
-			var oConfigs = this.getOwnerComponent()._oFontConfigs;
-			var sDownloadURI = oConfigs[sFontName].downloadURI || oConfigs[sFontName].fontURI;
-
-			if (Theming.getTheme().startsWith("sap_horizon")) {
-				sDownloadURI = oConfigs[sFontName].downloadURIForHorizon || sDownloadURI;
-			}
-
-			mobileLibrary.URLHelper.redirect(sDownloadURI + sFontName + ".ttf");
+			this._onCopyIconToClipboard(sIconSrc);
 		},
 
 		/* =========================================================== */
@@ -381,17 +381,46 @@ sap.ui.define([
 
 		/**
 		 * Copies the icon to the clipboard and displays a message
+		 * @param {string} iconSrc the icon source string that has to be copied to the clipboard
+		 * @private
+		 */
+		_onCopyIconToClipboard: function (iconSrc) {
+			var	oResourceBundle = this.getResourceBundle(),
+				sSuccessText, sExceptionText,
+				sIcon = this.getModel().getUnicode(iconSrc);
+
+			sSuccessText = oResourceBundle.getText("previewCopyToClipboardSuccess", [iconSrc]);
+			sExceptionText = oResourceBundle.getText("previewCopyToClipboardFail", [iconSrc]);
+			this._copyStringToClipboard(sIcon, sSuccessText, sExceptionText);
+		},
+
+		/**
+		 * Copies the unicode part from the input field to the clipboard and displays a message
 		 * @param {string} iconName the icon name string that has to be copied to the clipboard
 		 * @private
 		 */
-		_onCopyIconToClipboard: function (iconName) {
-			var	oResourceBundle = this.getResourceBundle(),
+		_onCopyUnicodeToClipboard: function (iconName) {
+			var oResourceBundle = this.getResourceBundle(),
 				sSuccessText, sExceptionText,
-				sIcon = this.getModel().getUnicode(iconName);
+				sString = this.getModel().getUnicodeHTML(iconName);
+			sString = sString.substring(2, sString.length - 1);
+			sSuccessText = oResourceBundle.getText("previewCopyUnicodeToClipboardSuccess", [sString]);
+			sExceptionText = oResourceBundle.getText("previewCopyUnicodeToClipboardFail", [sString]);
+			this._copyStringToClipboard(sString, sSuccessText, sExceptionText);
+		},
 
-			sSuccessText = oResourceBundle.getText("previewCopyToClipboardSuccess", [iconName]);
-			sExceptionText = oResourceBundle.getText("previewCopyToClipboardFail", [iconName]);
-			this._copyStringToClipboard(sIcon, sSuccessText, sExceptionText);
+		/**
+		 * Copies the value of the code input field to the clipboard and displays a message
+		 * @param {string} iconSrc the icon source string that has to be copied to the clipboard
+		 * @private
+		 */
+		_onCopyCodeToClipboard: function (iconSrc) {
+			var oResourceBundle = this.getResourceBundle(),
+				sSuccessText, sExceptionText;
+
+			sSuccessText = oResourceBundle.getText("previewCopyToClipboardSuccess", [iconSrc]);
+			sExceptionText = oResourceBundle.getText("previewCopyToClipboardFail", [iconSrc]);
+			this._copyStringToClipboard(iconSrc, sSuccessText, sExceptionText);
 		},
 
 		/**
@@ -413,21 +442,6 @@ sap.ui.define([
 			} catch (oException) {
 				MessageToast.show(exceptionText);
 			}
-		},
-
-
-		/**
-		 * Updates the appearance of the Demo Kit depending of the incoming appearance keyword.
-		 * If the keyword is "auto" the appearance will be updated to light or dark depending on the
-		 * user's OS settings.
-		 * @param {string} sKey the appearance keyword
-		 * @param {object} oComponent the component where the theme will be changed
-		 * @private
-		 */
-
-		_updateAppearance: function(sKey) {
-			var oComponent = this;
-			ThemePicker._updateAppearance(sKey, oComponent);
 		},
 
 		/**
@@ -483,7 +497,7 @@ sap.ui.define([
 			}
 
 			// check tab value against an allowlist
-			var aValidKeys = ["details", "grid", "visual", "favorites"];
+			var aValidKeys = ["details", "grid", "favorites"];
 			if (aValidKeys.indexOf(oQuery.tab) < 0) {
 				oQuery.tab = "grid";
 			}
@@ -524,12 +538,7 @@ sap.ui.define([
 					this.getModel().setFont(sFontName);
 					oViewModel.setProperty("/busy", false, null, true);
 				}
-
-				// tab
-				if (!this.byId("iconTabBar")) {
-					return;
-				}
-				this.byId("iconTabBar").setSelectedKey(oQuery.tab);
+				this.byId("layoutSelectionSB").setSelectedKey(oQuery.tab);
 				if (bTabChanged) {
 					var oResultContainer = this.byId("resultContainer");
 
@@ -540,7 +549,7 @@ sap.ui.define([
 					this._resultsLoaded = Promise.resolve(this._resultsLoaded)
 						.catch(function() {})
 						.then(function() {
-							oResultContainer.destroyContent();
+							oResultContainer.getContent()[1] && oResultContainer.getContent()[1].destroy();
 							// load the fragment only now
 							return Fragment.load({
 								id: this.getView().getId(),
@@ -553,7 +562,7 @@ sap.ui.define([
 						});
 
 					var bCategoriesVisible = !(Device.system.phone || oQuery.tab == "favorites");
-					this.byId("categorySelection").setVisible(bCategoriesVisible);
+					this.byId("categorySelectionContainer").setVisible(bCategoriesVisible);
 				}
 
 				this._resultsLoaded.then(function() {
@@ -561,15 +570,11 @@ sap.ui.define([
 					if (oQuery.icon && bIconChanged) {
 						this._previewIcon(oQuery.icon);
 						this.byId("preview").setVisible(true);
-						if (this.byId("preview").getLayoutData().getSize() === "0px") {
-							this.byId("preview").getLayoutData().setSize("350px");
-						}
 					} else if (!oQuery.icon) {
 						if (bInitial) {
 							this._previewIcon("sap-ui5");
 						}
 						this.byId("preview").setVisible(false);
-						this.byId("preview").getLayoutData().setSize("0px");
 					}
 
 					// category

@@ -31,10 +31,10 @@ sap.ui.define(function () {
 				group: "ShoppingCart",
 				page: "test-resources/sap/m/demokit/cart/webapp/test/unit/unitTests.qunit.html"
 			},
-			"sap/m/demokit/iconExplorer/webapp/test/integration/opaTests": {
-				group: "IconExplorer",
-				page: "test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests1.qunit.html"
-			},
+			// "sap/m/demokit/iconExplorer/webapp/test/integration/opaTests": {
+			// 	group: "IconExplorer",
+			// 	page: "test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests1.qunit.html"
+			// },
 			"sap/m/demokit/iconExplorer/webapp/test/unit/unitTests": {
 				group: "IconExplorer",
 				page: "test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"

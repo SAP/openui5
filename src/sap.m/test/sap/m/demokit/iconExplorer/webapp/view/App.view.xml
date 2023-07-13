@@ -2,10 +2,14 @@
 	controllerName="sap.ui.demo.iconexplorer.controller.App"
 	displayBlock="true"
 	height="100%"
+	xmlns:core="sap.ui.core"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-	<App id="app"
-		busy="{view>/busy}"
-		busyIndicatorDelay="{view>/delay}"
-		class="sapUiDemoIconExplorer"/>
+	<VBox renderType="Bare">
+		<App id="app"
+			busy="{view>/busy}"
+			busyIndicatorDelay="{view>/delay}"
+			class="sapUiDemoIconExplorer"/>
+		<core:Fragment id="footerFragment" fragmentName="sap.ui.demo.iconexplorer.view.browse.Footer" type="XML" />
+	</VBox>
 </mvc:View>
