@@ -4905,20 +4905,24 @@ sap.ui.define([
 	thisLib.MultiSelectMode = {
 
 		/**
-		 * Renders the <code>selectAll</code> checkbox (default behavior).
+		 * The Select All functionality is available (default behavior).
+		 * For a <code>sap.m.Table</code>, a Select All checkbox is rendered.
 		 * @public
 		 */
 		Default: "Default",
 
 		/**
-		 * Renders the <code>clearAll</code> icon.
+		 * The Select All functionality is not available. Instead, it is only possible to remove the selection of all items.
+		 * For a <code>sap.m.Table</code>, a Deselect All icon is rendered.
 		 * @public
 		 */
 		ClearAll: "ClearAll",
 
 		/**
-		 * Renders the <code>selectAll</code> checkbox with warning popover.
-		 * Available only for sap.m.Table control
+		 * The Select All functionality is available.
+		 * For a <code>sap.m.Table</code>, a Select All checkbox
+		 * with a warning popover is rendered if not all items could be selected (for example, because of growing).
+		 *
 		 * @public
 		 * @since 1.109
 		 */
