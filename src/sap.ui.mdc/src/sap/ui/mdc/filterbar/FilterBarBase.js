@@ -227,19 +227,21 @@ sap.ui.define([
 				 * <b>Note</b>: This event should never be executed programmatically. It is triggered internally by the filter bar after a <code>triggerSearch</code> has been executed
 				 */
 				search: {
-					/**
-					 * Indicates the initial reason for the search. This can either be:<br>
-					 * <ul>
-					 *     <li><code>{@link sap.ui.mdc.enums.ReasonMode.Variant}</code>: Search is triggered based on variant settings</li>
-					 *     <li><code>{@link sap.ui.mdc.enums.ReasonMode.Enter}</code>: Search is triggered based on pressing Enter in a filter field</li>
-					 *     <li><code>{@link sap.ui.mdc.enums.ReasonMode.Go}</code>: Search is triggered based on pressing the Go button</li>
-					 *     <li><code>{@link sap.ui.mdc.enums.ReasonMode.Unclear}</code>: Any other reasons for the search</li>
-					 * </ul>
-					 *
-					 * @since 1.111.0
-					 */
-					reason: {
-						type: "sap.ui.mdc.enums.ReasonMode"
+					parameters: {
+						/**
+						 * Indicates the initial reason for the search. This can either be:<br>
+						 * <ul>
+						 *     <li><code>{@link sap.ui.mdc.enums.ReasonMode.Variant}</code>: Search is triggered based on variant settings</li>
+						 *     <li><code>{@link sap.ui.mdc.enums.ReasonMode.Enter}</code>: Search is triggered based on pressing Enter in a filter field</li>
+						 *     <li><code>{@link sap.ui.mdc.enums.ReasonMode.Go}</code>: Search is triggered based on pressing the Go button</li>
+						 *     <li><code>{@link sap.ui.mdc.enums.ReasonMode.Unclear}</code>: Any other reasons for the search</li>
+						 * </ul>
+						 *
+						 * @since 1.111.0
+						 */
+						reason: {
+							type: "sap.ui.mdc.enums.ReasonMode"
+						}
 					}
 				},
 
