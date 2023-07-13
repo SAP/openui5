@@ -89,6 +89,11 @@ sap.ui.define([
 				 */
 				noDataDescription: {type: "string", defaultValue: null},
 				/**
+				 * Determines which illustration type is displayed when the control holds no data.
+				 * @since 1.117
+				 */
+				noDataIllustrationType: {type: "sap.m.IllustratedMessageType", group: "Appearance", defaultValue: IllustratedMessageType.NoData},
+				/**
 				 * Defines custom text for the drag and drop text label.
 				 */
 				dragDropText: {type: "string", defaultValue: null},
@@ -167,7 +172,7 @@ sap.ui.define([
 				  * @since 1.107
 				  */
 				 directory: {type: "boolean", group: "Behavior", defaultValue: false}
-				},
+			},
 			defaultAggregation: "items",
 			aggregations: {
 				/**
@@ -518,7 +523,7 @@ sap.ui.define([
 		this._oInvisibleText = new InvisibleText();
 		this._oInvisibleText.toStatic();
 		var oIllustratedMessage = new IllustratedMessage({
-				illustrationType: IllustratedMessageType.NoData,
+				illustrationType: this.getNoDataIllustrationType(),
 				illustrationSize: IllustratedMessageSize.Auto,
 				title: this.getNoDataText(),
 				description: this.getNoDataDescription()
@@ -985,7 +990,7 @@ sap.ui.define([
 				oAggregation.setDescription(this.getDragDropDescription());
 				oAggregation.removeAllAdditionalContent();
 			} else {
-				oAggregation.setIllustrationType(IllustratedMessageType.NoData);
+				oAggregation.setIllustrationType(this.getNoDataIllustrationType());
 				oAggregation.setTitle(this.getNoDataText());
 				oAggregation.setDescription(this.getNoDataDescription());
 				oAggregation.addAdditionalContent(this.getUploadButtonForIllustratedMessage());
