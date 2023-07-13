@@ -366,6 +366,7 @@ function(
 	};
 
 	FeedListItem.prototype.onAfterRendering = function() {
+		var oFormattedText = this.getAggregation("_text");
 		if (document.getElementById(this.getAggregation("_actionButton"))) {
 			document.getElementById(this.getAggregation("_actionButton").getId()).setAttribute("aria-haspopup", "menu");
 		}
@@ -381,6 +382,8 @@ function(
 				return $RealText;
 			}
 		});
+
+		oFormattedText && oFormattedText._sanitizeCSSPosition(this.getDomRef()); // perform CSS position sanitize
 	};
 
 	FeedListItem.prototype.exit = function() {
@@ -601,6 +604,8 @@ function(
 		var $threeDots = this.$("threeDots");
 		var sMoreLabel = FeedListItem._sTextShowMore;
 		var sLessLabel = FeedListItem._sTextShowLess;
+		var oFormattedText = this.getAggregation("_text");
+
 		if (this.getMoreLabel()) {
 			sMoreLabel = this.getMoreLabel();
 		}
@@ -609,12 +614,14 @@ function(
 		}
 		if (this._bTextExpanded) {
 			$text.html(this._sShortText.replace(/&#xa;/g, "<br>"));
+			oFormattedText._sanitizeCSSPosition($text[0]); // perform CSS position sanitize
 			$threeDots.text(" ... ");
 			this._oLinkExpandCollapse.setText(sMoreLabel);
 			this._bTextExpanded = false;
 			this._clearEmptyTagsInCollapsedText();
 		} else {
 			$text.html(this._sFullText.replace(/&#xa;/g, "<br>"));
+			oFormattedText._sanitizeCSSPosition($text[0]); // perform CSS position sanitize
 			$threeDots.text("  ");
 			this._oLinkExpandCollapse.setText(sLessLabel);
 			this._bTextExpanded = true;
