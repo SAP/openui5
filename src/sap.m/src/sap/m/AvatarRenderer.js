@@ -31,7 +31,8 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		 */
 		AvatarRenderer.render = function (oRm, oAvatar) {
 
-			var sInitials = oAvatar.getInitials(),
+			var bEnabled = oAvatar.getEnabled(),
+				sInitials = oAvatar.getInitials(),
 				sActualDisplayType = oAvatar._getActualDisplayType(),
 				sImageFallbackType = oAvatar._getImageFallbackType(),
 				sDisplaySize = oAvatar.getDisplaySize(),
@@ -55,16 +56,21 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			oRm.class(sAvatarClass + sDisplaySize);
 			oRm.class(sAvatarClass + sActualDisplayType);
 			oRm.class(sAvatarClass + sDisplayShape);
-			if (oAvatar.hasListeners("press")) {
-				oRm.class("sapMPointer");
-				oRm.class(sAvatarClass + "Focusable");
-				oRm.attr("role", "button");
-				oRm.attr("tabindex", 0);
-			} else if (oAvatar.getDecorative()) {
-				oRm.attr("role", "presentation");
-				oRm.attr("aria-hidden", "true");
+			if (bEnabled) {
+				if (oAvatar.hasListeners("press")) {
+					oRm.class("sapMPointer");
+					oRm.class(sAvatarClass + "Focusable");
+					oRm.attr("role", "button");
+					oRm.attr("tabindex", 0);
+				} else if (oAvatar.getDecorative()) {
+					oRm.attr("role", "presentation");
+					oRm.attr("aria-hidden", "true");
+				} else {
+					oRm.attr("role", "img");
+				}
 			} else {
-				oRm.attr("role", "img");
+				oRm.attr("disabled", "disabled");
+				oRm.class("sapMAvatarDisabled");
 			}
 			if (oAvatar.getShowBorder()) {
 				oRm.class("sapFAvatarBorder");
