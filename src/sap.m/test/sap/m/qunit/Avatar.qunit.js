@@ -36,7 +36,8 @@ sap.ui.define([
 		sDefaultIconRendered = "Avatar is a default icon",
 		sPreAvatarFitType = "Avatar's image fit type is ",
 		// shortcut for sap.m.AvatarColor
-		AvatarColor = library.AvatarColor;
+		AvatarColor = library.AvatarColor,
+		ValueState = coreLibrary.ValueState;
 
 	function createAvatar(oProps, sId) {
 		var oAvatarProps = {};
@@ -767,6 +768,25 @@ sap.ui.define([
 			oCore.applyChanges();
 		},
 		afterEach: teardownFunction
+	});
+
+	QUnit.test("badgeValueState applies correct css classes to the Avatar", function(assert) {
+		//setup
+		this.oAvatar.attachPress(function () {});
+		this.oAvatar.setBadgeIcon("sap-icon://zoom-in");
+		oCore.applyChanges();
+
+		//assert
+		Object.keys(ValueState).forEach(function(val){
+			this.oAvatar.setBadgeValueState(val);
+			oCore.applyChanges();
+			assert.ok(this.oAvatar.hasStyleClass('sapFAvatar' + val), 'The avatar has the ' + val + ' class');
+			Object.keys(ValueState).forEach(function(nestedVal){
+				if (nestedVal !== val) {
+					assert.notOk(this.oAvatar.hasStyleClass('sapFAvatar' + nestedVal), "The avatar doesn't have the + " + nestedVal + " class");
+				}
+			}.bind(this));
+		}.bind(this));
 	});
 
 	QUnit.test("Affordance is rendered when press event is attached", function(assert) {
