@@ -8,9 +8,9 @@ sap.ui.define([
 	"use strict";
 
     /**
+     * @class
      * The <code>MetadataHelper</code> entity offers utility functionality for providing service metadata during the <code>Engine#register</code> process.
      *
-     * @class
 	 * @author SAP SE
 	 * @public
 	 * @alias sap.m.p13n.MetadataHelper

@@ -31,6 +31,7 @@ sap.ui.define([
 
 	/**
 	 *
+	 * @class
 	 * The <code>Engine</code> entity offers personalization capabilities by registering a control instance for modification, such as:
 	 *
 	 * <ul>
@@ -50,7 +51,6 @@ sap.ui.define([
 	 *
 	 * Can be used in combination with <code>sap.ui.fl.variants.VariantManagement</code> to persist a state in variants using <code>sap.ui.fl</code> capabilities.</li>
 	 *
-	 * @class
 	 * @see {@link topic:75c08fdebf784575947927e052712bab Personalization}
 	 * @alias sap.m.p13n.Engine
 	 * @extends sap.m.p13n.modules.AdaptationProvider
@@ -80,6 +80,20 @@ sap.ui.define([
 			this.stateHandlerRegistry = StateHandlerRegistry.getInstance();
 		}
 	});
+
+	/**
+	 * The <code>sap.m.p13n</code> namespace offers generic personalization capabilites.
+	 * Personalization currently supports, for example, defining the order of columns in a table and their visibility, sorting, and grouping. To enable this, the personalization engine can be used.
+	 * @namespace
+	 * @name sap.m.p13n
+	 * @public
+	 */
+
+	/**
+	 * @namespace
+	 * @name sap.m.p13n.MetadataHelper
+	 * @public
+	 */
 
 	/**
 	 *

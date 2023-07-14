@@ -3,6 +3,15 @@
  */
 sap.ui.define(function () {
     "use strict";
+
+	/**
+	 * Enumerations for p13n enum artifacts
+	 * @namespace
+	 * @name sap.m.p13n.enum
+	 * @private
+	 * @ui5-restricted sap.m.p13n
+	 */
+
     /**
      * Enumeration of the preferred persistence mode for personalization changes.
      *
