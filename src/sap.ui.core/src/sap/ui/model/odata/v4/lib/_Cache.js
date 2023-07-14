@@ -578,24 +578,25 @@ sap.ui.define([
 						// contexts still use the transient predicate to access the data
 					} // else: transient element was not kept by #reset, leave it like that!
 				}
+				_Helper.cancelNestedCreates(oEntityData, "Deep create of " + sPostPath
+					+ " succeeded. Do not use this promise.");
 				// update the cache with the POST response
-				aSelect = _Helper.getQueryOptionsForPath(
-					that.mLateQueryOptions || that.mQueryOptions, sPath
-				).$select;
 				sResultingPath = _Helper.buildPath(sPath, sPredicate || sTransientPredicate);
-				// update selected properties (incl. single-valued navigation properties), ETags,
-				// and predicates
+				// check for a deep create and update the created nested collections
+				const bDeepCreate = _Helper.updateNestedCreates(that.mChangeListeners,
+					that.mQueryOptions, sResultingPath, oEntityData, oCreatedEntity,
+					_Helper.getPrivateAnnotation(oEntityData, "select"));
+				if (!bDeepCreate) { // after a deep create the complete response is accepted
+					aSelect = _Helper.getQueryOptionsForPath(
+						that.mLateQueryOptions || that.mQueryOptions, sPath
+					).$select;
+				}
+				// update selected properties (or in case of a deep create all of them incl.
+				// single-valued navigation properties), ETags, and predicates
 				_Helper.updateSelected(that.mChangeListeners, sResultingPath, oEntityData,
 					oCreatedEntity, aSelect, /*fnCheckKeyPredicate*/ undefined,
 					/*bOkIfMissing*/ true);
-				_Helper.cancelNestedCreates(oEntityData, "Deep create of " + sPostPath
-					+ " succeeded. Do not use this promise.");
-				_Helper.setPrivateAnnotation(oEntityData, "deepCreate",
-					// update properties from collections in a deep create
-					_Helper.updateNestedCreates(that.mChangeListeners, that.mQueryOptions,
-						sResultingPath, oEntityData, oCreatedEntity,
-						_Helper.getPrivateAnnotation(oEntityData, "select"))
-				);
+				_Helper.setPrivateAnnotation(oEntityData, "deepCreate", bDeepCreate);
 				_Helper.deletePrivateAnnotation(oEntityData, "select");
 
 				that.removePendingRequest();

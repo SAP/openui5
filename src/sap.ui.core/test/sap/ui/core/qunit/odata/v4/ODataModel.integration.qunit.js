@@ -28920,8 +28920,7 @@ sap.ui.define([
 				undefined, undefined, {$$updateGroupId : "doNotSubmit"}).create();
 			oCreationRowContext.setProperty("Price", "47"); // BCP: 2270087626
 
-			that.expectChange("price", null) // timing issue, #setProperty is too slow :-(
-				.expectChange("price", "47")
+			that.expectChange("price", "47")
 				.expectChange("artistName", "The Beatles (modified)");
 
 			oCreationRow.setBindingContext(oCreationRowContext);
@@ -49761,6 +49760,7 @@ sap.ui.define([
 	// The response has fewer nested entities in different order (CPOUI5ODATAV4-2079)
 	// Nested entities via initial data and via #create (CPOUI5ODATAV4-2036)
 	// Optimize the refresh after create w/o bSkipRefresh (CPOUI5ODATAV4-2048)
+	// Accept the complete response, not only $select (esp. GrossAmount) (CPOUI5ODATAV4-1977)
 [false, true].forEach(function (bSkipRefresh) {
 	var sTitle = "CPOUI5ODATAV4-1973: Deep create, nested ODLB w/o cache, bSkipRefresh="
 			+ bSkipRefresh;
@@ -49878,22 +49878,23 @@ sap.ui.define([
 					}
 				}, {
 					"@odata.etag" : "etag",
+					GrossAmount : "128.97",
 					SalesOrderID : "new",
 					SO_2_SOITEM : [{
 						"@odata.etag" : "etag10",
-						GrossAmount : "42.99", // excess property
+						GrossAmount : "41.99",
 						ItemPosition : "0010",
 						Note : "AAA",
 						SalesOrderID : "new"
 					}, {
 						"@odata.etag" : "etag20",
-						GrossAmount : "42.99", // excess property
+						GrossAmount : "42.99",
 						ItemPosition : "0020",
 						Note : "CCC",
 						SalesOrderID : "new"
 					}, {
 						"@odata.etag" : "etag30",
-						GrossAmount : "42.99", // excess property
+						GrossAmount : "43.99",
 						ItemPosition : "0030",
 						Note : "BBB",
 						SalesOrderID : "new"
@@ -49921,8 +49922,8 @@ sap.ui.define([
 				that.waitForChanges(assert, "submit POST")
 			].flat());
 		}).then(function () {
-			var aContexts = oItemsBinding.getAllCurrentContexts();
-
+			assert.strictEqual(oCreatedOrderContext.getProperty("GrossAmount"), "128.97");
+			const aContexts = oItemsBinding.getAllCurrentContexts();
 			assert.deepEqual(aContexts.map(getPath), [
 				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0010')",
 				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0020')",
@@ -49930,16 +49931,19 @@ sap.ui.define([
 			]);
 			assert.deepEqual(aContexts.map(getObject), [{
 				"@odata.etag" : "etag10",
+				GrossAmount : "41.99",
 				ItemPosition : "0010",
 				Note : "AAA",
 				SalesOrderID : "new"
 			}, {
 				"@odata.etag" : "etag20",
+				GrossAmount : "42.99",
 				ItemPosition : "0020",
 				Note : "CCC",
 				SalesOrderID : "new"
 			}, {
 				"@odata.etag" : "etag30",
+				GrossAmount : "43.99",
 				ItemPosition : "0030",
 				Note : "BBB",
 				SalesOrderID : "new"
@@ -49982,6 +49986,8 @@ sap.ui.define([
 	// response, and the item a $expand to the Product. Also check that the
 	// @$ui5.context.isTransient annotation fires all change events.
 	// CPOUI5ODATAV4-2048
+	//
+	// Accept the complete response, not only $select (esp. GrossAmount) (CPOUI5ODATAV4-1977)
 [false, true].forEach(function (bSkipRefresh) {
 	var sTitle = "CPOUI5ODATAV4-2033: Deep create, nested ODLB w/ own cache, bSkipRefresh="
 			+ bSkipRefresh;
@@ -50120,22 +50126,23 @@ sap.ui.define([
 					}
 				}, {
 					"@odata.etag" : "etag",
+					GrossAmount : "128.97",
 					SalesOrderID : "new",
 					SO_2_SOITEM : [{
 						"@odata.etag" : "etag10",
-						GrossAmount : "42.99", // excess property
+						GrossAmount : "41.99",
 						ItemPosition : "0010",
 						Note : "BBB",
 						SalesOrderID : "new"
 					}, {
 						"@odata.etag" : "etag20",
-						GrossAmount : "42.99", // excess property
+						GrossAmount : "42.99",
 						ItemPosition : "0020",
 						Note : "additional",
 						SalesOrderID : "new"
 					}, {
 						"@odata.etag" : "etag30",
-						GrossAmount : "42.99", // excess property
+						GrossAmount : "43.99",
 						ItemPosition : "0030",
 						Note : "AAA",
 						SalesOrderID : "new"
@@ -50253,8 +50260,8 @@ sap.ui.define([
 				that.waitForChanges(assert, "submit -> success")
 			]);
 		}).then(function () {
-			var aContexts = oItemsBinding.getAllCurrentContexts();
-
+			assert.strictEqual(oCreatedOrderContext.getProperty("GrossAmount"), "128.97");
+			const aContexts = oItemsBinding.getAllCurrentContexts();
 			assert.strictEqual(oCreatedOrderContext.getValue("@$ui5.context.isTransient"), false);
 			assert.strictEqual(oCreatedOrderContext.getValue("SO_2_BP/BusinessPartnerID"), "BP");
 			assert.deepEqual(aContexts.map(getPath), [
@@ -50265,6 +50272,7 @@ sap.ui.define([
 			assert.deepEqual(aContexts.map(getObject), [{
 				"@odata.etag" : "etag10",
 				ItemPosition : "0010",
+				GrossAmount : "41.99",
 				Note : "BBB",
 				SalesOrderID : "new",
 				SOITEM_2_PRODUCT : {
@@ -50275,6 +50283,7 @@ sap.ui.define([
 			}, {
 				"@odata.etag" : "etag20",
 				ItemPosition : "0020",
+				GrossAmount : "42.99",
 				Note : "additional",
 				SalesOrderID : "new",
 				SOITEM_2_PRODUCT : {
@@ -50285,6 +50294,7 @@ sap.ui.define([
 			}, {
 				"@odata.etag" : "etag30",
 				ItemPosition : "0030",
+				GrossAmount : "43.99",
 				Note : "AAA",
 				SalesOrderID : "new",
 				SOITEM_2_PRODUCT : {
@@ -50473,6 +50483,8 @@ sap.ui.define([
 	// (5) Delete the second employee
 	// (6) Submit; the number of equipment items changes for each employee
 	// JIRA: CPOUI5ODATAV4-1976
+	//
+	// Accept the complete response, not only $select (esp. EmployeeId) (CPOUI5ODATAV4-1977)
 [false, true].forEach(function (bOwnRequest) {
 	["Table", "t:Table"].forEach(function (sTable) {
 		var sTitle = "CPOUI5ODATAV4-1976: Deep create, nested list in nested list, $$ownRequest="
@@ -50639,11 +50651,13 @@ sap.ui.define([
 						EMPLOYEE_2_EQUIPMENTS : [{
 							"@odata.etag" : "etag.P1",
 							Category : "C",
+							EmployeeId : "E1",
 							ID : 1,
 							Name : "P1"
 						}, {
 							"@odata.etag" : "etag.P2",
 							Category : "C",
+							EmployeeId : "E1",
 							ID : 2,
 							Name : "P2"
 						}]
@@ -50654,6 +50668,7 @@ sap.ui.define([
 						EMPLOYEE_2_EQUIPMENTS : [{
 							"@odata.etag" : "etag.F1",
 							Category : "C",
+							EmployeeId : "E2",
 							ID : 3,
 							Name : "F1"
 						}]
@@ -50691,17 +50706,20 @@ sap.ui.define([
 			assert.deepEqual(aEquipmentsBindings[0].getAllCurrentContexts().map(getObject), [{
 				"@odata.etag" : "etag.P1",
 				Category : "C",
+				EmployeeId : "E1",
 				ID : 1,
 				Name : "P1"
 			}, {
 				"@odata.etag" : "etag.P2",
 				Category : "C",
+				EmployeeId : "E1",
 				ID : 2,
 				Name : "P2"
 			}]);
 			assert.deepEqual(aEquipmentsBindings[1].getAllCurrentContexts().map(getObject), [{
 				"@odata.etag" : "etag.F1",
 				Category : "C",
+				EmployeeId : "E2",
 				ID : 3,
 				Name : "F1"
 			}]);
@@ -50709,6 +50727,127 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Deep create, nested single entity incl. recursion.
+	// Create an employee with a nested team (one property via initial data, another one set
+	// afterward) with a nested manager. See that the complete response is accepted, not only
+	// $select (esp. Name, MEMBER_COUNT)
+	// JIRA: CPOUI5ODATAV4-1977
+	QUnit.test("CPOUI5ODATAV4-1977: Deep create, nested single entity", function (assert) {
+		let oBinding;
+		let oCreatedContext;
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"});
+		const sView = `
+<Table id="employees" items="{/EMPLOYEES}">
+	<Text id="id" text="{ID}"/>
+	<Text id="teamId" text="{EMPLOYEE_2_TEAM/Team_Id}"/>
+	<Input id="teamName" value="{EMPLOYEE_2_TEAM/Name}"/>
+	<Input id="manager" value="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/ID}"/>
+	<Text id="managerTeamId" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}"/>
+</Table>`;
+		const that = this;
+
+		this.expectRequest("EMPLOYEES?$select=ID&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id"
+				+ ";$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))&$skip=0&$top=100", {
+				value : [{
+					ID : "E1",
+					EMPLOYEE_2_TEAM : {
+						Name : "Team 1",
+						Team_Id : "T1",
+						TEAM_2_MANAGER : {
+							ID : "M1",
+							TEAM_ID : "T1"
+						}
+					}
+				}]
+			})
+			.expectChange("id", ["E1"])
+			.expectChange("teamId", ["T1"])
+			.expectChange("teamName", ["Team 1"])
+			.expectChange("manager", ["M1"])
+			.expectChange("managerTeamId", ["T1"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("id", ["", "E1"])
+				.expectChange("teamId", ["Tnew", "T1"])
+				.expectChange("teamName", ["", "Team 1"])
+				.expectChange("manager", [null, "M1"])
+				.expectChange("managerTeamId", [null, "T1"]);
+
+			oBinding = that.oView.byId("employees").getBinding("items");
+			// code under test
+			// bSkipRefresh not needed due to deep create
+			oCreatedContext = oBinding.create({EMPLOYEE_2_TEAM : {Team_Id : "Tnew"}});
+
+			return that.waitForChanges(assert, "create employee");
+		}).then(function () {
+			that.expectChange("teamName", ["Team 2"])
+				.expectChange("manager", ["M2"]);
+
+			oCreatedContext.setProperty("EMPLOYEE_2_TEAM/Name", "Team 2");
+			oCreatedContext.setProperty("EMPLOYEE_2_TEAM/TEAM_2_MANAGER/ID", "M2");
+
+			return that.waitForChanges(assert, "patch transient");
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "EMPLOYEES",
+					payload : {
+						EMPLOYEE_2_TEAM : {
+							Name : "Team 2",
+							Team_Id : "Tnew",
+							TEAM_2_MANAGER : {
+								ID : "M2"
+							}
+						}
+					}
+				}, {
+					"@odata.etag" : "etagE2",
+					ID : "E2",
+					Name : "Peter Burke",
+					EMPLOYEE_2_TEAM : {
+						"@odata.etag" : "etagT2",
+						MEMBER_COUNT : 1,
+						Name : "Team 2 (from server)",
+						Team_Id : "T2",
+						TEAM_2_MANAGER : {
+							"@odata.etag" : "etagM2",
+							ID : "M2",
+							TEAM_ID : "T2"
+						}
+					}
+				})
+				.expectChange("id", ["E2"])
+				.expectChange("teamId", ["T2"])
+				.expectChange("teamName", ["Team 2 (from server)"])
+				.expectChange("managerTeamId", ["T2"]);
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oCreatedContext.created(),
+				that.waitForChanges(assert, "submit")
+			]);
+		}).then(function () {
+			assert.deepEqual(oCreatedContext.getObject(), {
+				"@$ui5.context.isTransient" : false,
+				"@odata.etag" : "etagE2",
+				ID : "E2",
+				Name : "Peter Burke",
+				EMPLOYEE_2_TEAM : {
+					"@odata.etag" : "etagT2",
+					MEMBER_COUNT : 1,
+					Name : "Team 2 (from server)",
+					Team_Id : "T2",
+					TEAM_2_MANAGER : {
+						"@odata.etag" : "etagM2",
+						ID : "M2",
+						TEAM_ID : "T2"
+					}
+				}
+			});
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: A deep create of a sales order with items is tried, but there is an ODCB w/o path

@@ -2715,9 +2715,15 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates key predicates and rebuilds the nested entity collections after a deep create (in
-		 * the assumption that the response may differ significantly from the request regarding
-		 * order and count).
+		 * Determines whether the response is a deep create response. Copies nested collections from
+		 * the response into the target object and adjusts their additional properties ($count,
+		 * $created, $byPredicate). Single nested entities are not copied here, assuming that they
+		 * are updated together with the top-level entity (because with a deep create all properties
+		 * incl. single-valued navigation properties are accepted).
+		 *
+		 * Note that this completely recreates nested collections destroying the previous transient
+		 * elements. This is because the response may differ significantly from the request
+		 * regarding order and count.
 		 *
 		 * @param {object} mChangeListeners - A map of change listeners by path
 		 * @param {object} mQueryOptions - The query options
@@ -2733,55 +2739,53 @@ sap.ui.define([
 		 */
 		updateNestedCreates : function (mChangeListeners, mQueryOptions, sPath, oTargetEntity,
 				oCreatedEntity, mSelectForMetaPath) {
-			var bDeepCreate = false;
+			let bDeepCreate = false;
 
-			if (!mSelectForMetaPath) { // no nested collections -> no deep create
-				return false;
-			}
+			// single-valued
+			const mQueryOptionsForEntity = _Helper.getQueryOptionsForPath(mQueryOptions, sPath);
+			Object.keys(mQueryOptionsForEntity.$expand || {}).forEach(function (sExpandPath) {
+				const oNestedTargetEntity = _Helper.drillDown(oTargetEntity, sExpandPath);
+				// sent and single-valued
+				if (oNestedTargetEntity && !Array.isArray(oNestedTargetEntity)) {
+					bDeepCreate = true; // they are updated with the top-level entity
+				}
+			});
 
-			Object.keys(mSelectForMetaPath).filter(function (sMetaPath) {
+			// collection-valued
+			Object.keys(mSelectForMetaPath || {}).filter(function (sMetaPath) {
 				return !sMetaPath.includes("/"); // only look at the direct descendants
 			}).forEach(function (sSegment) {
-				var sCollectionPath = sPath + "/" + sSegment,
-					aNestedTargetEntities,
-					aNestedCreatedEntities = oCreatedEntity[sSegment],
-					sPrefix = sSegment + "/",
-					aSelect,
-					mSelectForChildMetaPath = {};
-
+				const aNestedCreatedEntities = oCreatedEntity[sSegment];
 				if (!aNestedCreatedEntities) { // create not called in this nested collection
 					// #addTransientEntity added this in preparation of a deep create
 					delete oTargetEntity[sSegment];
 					return;
 				}
 
-				aSelect = mSelectForMetaPath[sSegment]
-					|| _Helper.getQueryOptionsForPath(mQueryOptions, sCollectionPath).$select;
-				// rebuild the collection from the response only taking the selected properties
-				oTargetEntity[sSegment] = aNestedTargetEntities
-					= new Array(aNestedCreatedEntities.length);
-				aNestedTargetEntities.$count = undefined; // -> setCount always fires a change event
-				aNestedTargetEntities.$created = 0;
-				aNestedTargetEntities.$byPredicate = {};
-				_Helper.setCount(mChangeListeners, sCollectionPath, aNestedTargetEntities,
+				// copy the collection into the target entity and set the additional properties
+				oTargetEntity[sSegment] = aNestedCreatedEntities;
+				aNestedCreatedEntities.$count = undefined; // -> setCount must fire a change event
+				aNestedCreatedEntities.$created = 0;
+				aNestedCreatedEntities.$byPredicate = {};
+				const sCollectionPath = sPath + "/" + sSegment;
+				_Helper.setCount(mChangeListeners, sCollectionPath, aNestedCreatedEntities,
 					aNestedCreatedEntities.length);
 				// build the next level
+				const mSelectForChildMetaPath = {};
+				const sPrefix = sSegment + "/";
 				Object.keys(mSelectForMetaPath).forEach(function (sMetaPath) {
 					if (sMetaPath.startsWith(sPrefix)) {
 						mSelectForChildMetaPath[sMetaPath.slice(sPrefix.length)]
 							= mSelectForMetaPath[sMetaPath];
 					}
 				});
-				aNestedCreatedEntities.forEach(function (oCreatedChildEntity, i) {
-					var sPredicate = _Helper.getPrivateAnnotation(oCreatedChildEntity, "predicate");
-
-					aNestedTargetEntities.$byPredicate[sPredicate] = aNestedTargetEntities[i] = {};
-					// no change events, the listeners are recreated anyway
-					_Helper.updateSelected({}, sCollectionPath + sPredicate,
-						aNestedTargetEntities[i], oCreatedChildEntity, aSelect,
-						/*fnCheckKeyPredicate*/undefined, true);
+				aNestedCreatedEntities.forEach(function (oCreatedChildEntity) {
+					const sPredicate
+						= _Helper.getPrivateAnnotation(oCreatedChildEntity, "predicate");
+					aNestedCreatedEntities.$byPredicate[sPredicate] = oCreatedChildEntity;
+					// recurse for $count, $byPredicate of nested collections
 					_Helper.updateNestedCreates(mChangeListeners, mQueryOptions,
-						sCollectionPath + sPredicate, aNestedTargetEntities[i], oCreatedChildEntity,
+						sCollectionPath + sPredicate, oCreatedChildEntity, oCreatedChildEntity,
 						mSelectForChildMetaPath);
 				});
 

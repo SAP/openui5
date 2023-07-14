@@ -738,6 +738,13 @@ sap.ui.define([
 	 * of <code>Error</code>, even if the deep create succeeds. This error always has the property
 	 * <code>canceled</code> with the value <code>true</code>.
 	 *
+	 * Since 1.117.0 deep create also supports single-valued navigation properties; no API call is
+	 * required in this case. Simply bind properties of the related entity relative to a transient
+	 * context. An update to the property adds it to the POST request of the parent entity, and by
+	 * this the create becomes deep.
+	 *
+	 * <b>Note</b>: Deep create for single-valued navigation properties is <b>experimental</b>.
+	 *
 	 * Deep create requires the <code>autoExpandSelect</code> parameter at the
 	 * {@link sap.ui.model.odata.v4.ODataModel#constructor model}. The refresh after a deep create
 	 * is optimized. Only the (navigation) properties missing from the POST response are actually
