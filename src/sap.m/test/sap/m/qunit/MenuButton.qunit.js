@@ -1291,22 +1291,27 @@ sap.ui.define([
 	QUnit.module("Other");
 
 	QUnit.test("Focus is returned back the the opener DOM ref, when the menu is closed with F4", function(assert) {
-		//arrange
+		// arrange
 		var oMenu = new UnifiedMenu(),
 			oMenuItem = new UnifiedMenuItemBase();
 
 		oMenuItem.setParent(oMenu);
-		oMenu.bOpen = true;
+		oMenu.open(true);
+		oCore.applyChanges();
 
-		//act
+		assert.ok(oMenu.isOpen(), "Menu has been opened by keyboard");
+
+		// act
 		oMenuItem.onsapshow({
 			preventDefault: function() {}
 		});
 
-		//assert
-		assert.equal(oMenu.bIgnoreOpenerDOMRef, undefined , "Focused is returned to the opener DOM ref");
+		oCore.applyChanges();
 
-		//clean
+		// assert
+		assert.equal(oMenu.bIgnoreOpenerDOMRef, false , "Focused is returned to the opener DOM ref");
+
+		// clean
 		oMenu.destroy();
 		oMenuItem.destroy();
 	});

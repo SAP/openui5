@@ -260,6 +260,19 @@ sap.ui.define([
 		};
 
 		/**
+		 * Returns whether the <code>Menu</code> is currently open.
+		 * @returns {boolean} true if menu is open
+		 * @public
+		 */
+		Menu.prototype.isOpen = function() {
+			if (Device.system.phone) {
+				return this._getDialog() && this._getDialog().isOpen();
+			} else {
+				return this._getVisualParent() && this._getVisualParent().isOpen();
+			}
+		};
+
+		/**
 		 * Creates the dialog that contains the actual menu for mobile.
 		 * @private
 		 */

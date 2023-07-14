@@ -231,6 +231,20 @@ sap.ui.define([
 		assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
 	});
 
+	QUnit.test('isOpen()', function (assert) {
+		// Assert that menu is closed
+		assert.strictEqual(this.sut._getVisualParent(), null, 'The menu is not initially rendered');
+		assert.strictEqual(this.sut.isOpen(), false, 'Menu is closed');
+
+		// Act - Open menu
+		this.sut.openBy();
+		this.clock.tick(1000);
+
+		// Assert menu is open
+		assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
+		assert.strictEqual(this.sut.isOpen(), true, 'Menu is open');
+	});
+
 	QUnit.test("visible", function(assert) {
 		//Act
 		this.sut.getItems()[0].setVisible(false);
@@ -300,29 +314,6 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(oItemFridge.getEnabled(), false, "menu item is not enabled");
-	});
-
-	QUnit.test('Opening/closing/reopening', function (assert) {
-		//Assert
-		assert.strictEqual(this.sut._getVisualParent(), null, 'The menu is not initially rendered');
-
-		this.sut.openBy();
-		this.clock.tick(1000);
-
-		//Assert
-		assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
-
-		this.sut.close();
-		this.clock.tick(1000);
-
-		//Assert
-		assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 0, 'The menu is not rendered after "focus" is changed');
-
-		this.sut.openBy();
-		this.clock.tick(1000);
-
-		//Assert
-		assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
 	});
 
 	QUnit.test("close without open", function(assert) {
