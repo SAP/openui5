@@ -3242,7 +3242,15 @@ sap.ui.define([
 		var bSelectAll = oEvent.getParameter("selectAll");
 		var iRowIndex = this._iSourceRowIndex !== undefined ? this._iSourceRowIndex : oSelectionPlugin.getSelectedIndex();
 
-		this.setProperty("selectedIndex", oSelectionPlugin.getSelectedIndex(), true);
+		/*
+		* @UI5_V2_DEPRECATION_CHECK
+		* selectedIndex Property is deprecated
+		* Once the deprecated code is removed the following 3 lines of code will become obsolete.
+		*/
+		if (this.getMetadata().hasProperty("selectedIndex")) {
+			this.setProperty("selectedIndex", oSelectionPlugin.getSelectedIndex(), true);
+		}
+
 		this.fireRowSelectionChange({
 			rowIndex: iRowIndex,
 			rowContext: this.getContextByIndex(iRowIndex),
