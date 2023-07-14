@@ -757,6 +757,116 @@ sap.ui.define([
 		assert.ok(oCell.get(0) === document.activeElement, "Focus set");
 	});
 
+	QUnit.test("scrollTableToIndex", function(assert) {
+		var oRowsUpdatedSpy = sinon.spy();
+		oTable.attachRowsUpdated(oRowsUpdatedSpy);
+
+		return TableUtils.scrollTableToIndex(oTable, 5, false).then(function() {
+			assert.equal(oTable.getFirstVisibleRow(), 4, "table is scrolled to the correct position");
+			assert.ok(oRowsUpdatedSpy.calledOnce, "rowsUpdated event is fired");
+			oRowsUpdatedSpy.resetHistory();
+
+			return TableUtils.scrollTableToIndex(oTable, 5, true);
+		}).then(function() {
+			assert.equal(oTable.getFirstVisibleRow(), 4, "table scroll position is already correct");
+			assert.ok(oRowsUpdatedSpy.notCalled, "rowsUpdated event is not fired"); // the table didn't scroll
+
+			return TableUtils.scrollTableToIndex(oTable, 0, true);
+		}).then(function() {
+			assert.equal(oTable.getFirstVisibleRow(), 0, "table is scrolled to the correct position");
+			assert.ok(oRowsUpdatedSpy.calledOnce, "rowsUpdated event is fired");
+			oRowsUpdatedSpy.resetHistory();
+
+			return TableUtils.scrollTableToIndex(oTable, 10, false);
+		}).then(function() {
+			assert.equal(oTable.getFirstVisibleRow(), 5, "table is scrolled to the end"); // the table has 3 visible rows and 8 rows in total
+			assert.ok(oRowsUpdatedSpy.calledOnce, "rowsUpdated event is fired");
+
+			return Promise.resolve();
+		});
+	});
+
+	QUnit.test("showNotificationPopoverAtIndex", function(assert) {
+		var oAfterOpenSpy = sinon.spy();
+		var oOpenSpy;
+
+		assert.notOk(oTable._oNotificationPopover, "the notification popover is not initialized");
+
+		return TableUtils.showNotificationPopoverAtIndex(oTable, 0, 3).then(function() {
+			assert.ok(oTable._oNotificationPopover, "the notification popover is initialized");
+			assert.equal(oTable._oNotificationPopover.getContent()[0].getText(), TableUtils.getResourceText("TBL_SELECT_LIMIT", [3]),
+				"the notification message is correct");
+
+			oOpenSpy = sinon.spy(oTable._oNotificationPopover, "openBy");
+			oTable._oNotificationPopover.attachAfterOpen(oAfterOpenSpy);
+			oTable._oNotificationPopover.close();
+
+			return TableUtils.showNotificationPopoverAtIndex(oTable, 1, 5);
+		}).then(function() {
+			assert.equal(oTable._oNotificationPopover.getContent()[0].getText(), TableUtils.getResourceText("TBL_SELECT_LIMIT", [5]),
+				"the notification message is correct");
+			oOpenSpy.calledOnceWithExactly(oTable.getRows()[1].getDomRefs().rowSelector, "the popover is opened by the correct element");
+			assert.ok(oAfterOpenSpy.calledOnce, "the afterOpen event is fired");
+
+			oTable._oNotificationPopover.close();
+			oAfterOpenSpy.resetHistory();
+			oOpenSpy.resetHistory();
+
+			return TableUtils.showNotificationPopoverAtIndex(oTable, 2, 3);
+		}).then(function() {
+			assert.equal(oTable._oNotificationPopover.getContent()[0].getText(), TableUtils.getResourceText("TBL_SELECT_LIMIT", [3]),
+				"the notification message is correct");
+			oOpenSpy.calledOnceWithExactly(oTable.getRows()[2].getDomRefs().rowSelector);
+			assert.ok(oAfterOpenSpy.calledOnce, "the popover is opened by the correct element");
+
+			oTable._oNotificationPopover.close();
+		});
+	});
+
+	QUnit.test("loadContexts", function(assert) {
+		var oFakeBinding = {
+			limit: 2,
+			length: 8,
+			loadedContexts: [],
+			getLength: function() {
+				return this.length;
+			},
+			getContexts: function(iStartIndex, iLength, iThreshold, bKeepCurrent) {
+				this.loadedContexts = this.loadedContexts.filter(function(item) {
+					return Boolean(item);
+				});
+				var iLoadedContextsCount = this.loadedContexts.length;
+				for (var j = Math.max(iLoadedContextsCount, iStartIndex); j < Math.min(this.length, iLength); j++) {
+					if (j < iLoadedContextsCount + this.limit) {
+						this.loadedContexts.push({});
+					} else {
+						this.loadedContexts.push(undefined);
+					}
+				}
+				return this.loadedContexts;
+			},
+			attachEventOnce: function(sEvent, fn) {
+				fn();
+			}
+		};
+
+		var oGetContextsSpy = sinon.spy(oFakeBinding, "getContexts");
+		var oAttachEventSpy = sinon.spy(oFakeBinding, "attachEventOnce");
+
+		return TableUtils.loadContexts(oFakeBinding, 0, 2).then(function(aContexts) {
+			assert.ok(oGetContextsSpy.calledOnceWithExactly(0, 2, 0, true), "Binding#getContexts is called once with the correct parameters");
+			assert.ok(oAttachEventSpy.notCalled, "requested contexts are available, so no dataReceived event listener is attached");
+			assert.equal(aContexts.length, 2, "the method resolves with 2 contexts");
+			oGetContextsSpy.resetHistory();
+			return TableUtils.loadContexts(oFakeBinding, 0, 7);
+		}).then(function(aContexts) {
+			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts is called thrice");
+			assert.ok(oGetContextsSpy.alwaysCalledWith(0, 7, 0, true), "with the correct parameters");
+			assert.ok(oAttachEventSpy.callCount === 2 && oAttachEventSpy.alwaysCalledWith("dataReceived"), "dataReceived event listener is attached twice");
+			assert.equal(aContexts.length, 7, "the method resolves with 7 contexts");
+		});
+	});
+
 	QUnit.test("getFocusedItemInfo", function(assert) {
 		var oCell = getCell(1, 1, true);
 		var oInfo = TableUtils.getFocusedItemInfo(oTable);
