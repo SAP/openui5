@@ -317,8 +317,12 @@
 					height: "100%",
 					horizontal: false,
 					content: [
-						new sap.m.Text({
-							text: 'This is the first page'
+						new sap.m.CheckBox("compactMode", {
+							text: "Compact Mode",
+							selected: false,
+							select: function () {
+								jQuery("body").toggleClass("sapUiSizeCompact");
+							}
 						})
 					]
 				}),

@@ -354,7 +354,7 @@ sap.ui.define([
 				},
 				content: list,
 				ariaLabelledBy: InvisibleText.getStaticId("sap.tnt", "NAVIGATION_LIST_DIALOG_TITLE")
-			}).addStyleClass('sapContrast sapContrastPlus');
+			}).addStyleClass('sapContrast sapContrastPlus sapTntNavLIPopover');
 
 			popover._adaptPositionParams = this._adaptPopoverPositionParams;
 
