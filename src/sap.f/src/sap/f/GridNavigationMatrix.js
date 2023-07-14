@@ -6,7 +6,11 @@
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
 
-sap.ui.define([], function () {
+sap.ui.define([
+	"sap/ui/core/Configuration"
+], function (
+	Configuration
+) {
 	"use strict";
 
 	return {
@@ -19,18 +23,19 @@ sap.ui.define([], function () {
 		 * @returns {Array.<Array.<HTMLElement>>} The matrix
 		 */
 		create: function (oGridDomRef, aItemsDomRefs) {
-			var mGridStyles = window.getComputedStyle(oGridDomRef);
+			const mGridStyles = window.getComputedStyle(oGridDomRef);
 
-			var oLayoutSizes = {
+			const oLayoutSizes = {
 				columns: mGridStyles.gridTemplateColumns.split(/\s+/),
 				rows: mGridStyles.gridTemplateRows.split(/\s+/),
 				rowGap: parseFloat(mGridStyles.rowGap),
 				columnGap: parseFloat(mGridStyles.columnGap),
 				paddingTop: parseFloat(mGridStyles.paddingTop),
-				paddingLeft: parseFloat(mGridStyles.paddingLeft)
+				paddingLeft: parseFloat(mGridStyles.paddingLeft),
+				paddingRight: parseFloat(mGridStyles.paddingRight)
 			};
 
-			var aMatrix = Array.from(
+			const aMatrix = Array.from(
 				new Array(oLayoutSizes.rows.length),
 				function () {
 					return new Array(oLayoutSizes.columns.length).fill(this.EMPTY_CELL);
@@ -38,7 +43,7 @@ sap.ui.define([], function () {
 			);
 
 			aItemsDomRefs.forEach(function (oItemDomRef) {
-				var oPos = this._getPosition(oGridDomRef, oItemDomRef, oLayoutSizes);
+				const oPos = this._getPosition(oGridDomRef, oItemDomRef, oLayoutSizes);
 
 				this._addToMatrix(aMatrix, oPos, oItemDomRef);
 			}.bind(this));
@@ -47,10 +52,10 @@ sap.ui.define([], function () {
 		},
 
 		_getPosition: function (oGridDomRef, oItemDomRef, oLayoutSizes) {
-			var oGridRect = oGridDomRef.getBoundingClientRect(),
-				oItemRect = oItemDomRef.getBoundingClientRect(),
-				oGridRow = this._getGridRow(oGridRect, oItemRect, oLayoutSizes),
-				oGridCol = this._getGridCol(oGridRect, oItemRect, oLayoutSizes);
+			const oGridRect = oGridDomRef.getBoundingClientRect();
+			const oItemRect = oItemDomRef.getBoundingClientRect();
+			const oGridRow = this._getGridRow(oGridRect, oItemRect, oLayoutSizes);
+			const oGridCol = this._getGridCol(oGridRect, oItemRect, oLayoutSizes);
 
 			return {
 				xFrom: oGridRow.start,
@@ -61,14 +66,13 @@ sap.ui.define([], function () {
 		},
 
 		_getGridRow: function (oGridRect, oItemRect, oLayoutSizes) {
-			var iStartRow = -1,
+			let iStartRow = -1,
 				iEndRow = 0,
-				fSumRows = 0,
-				i,
-				fTopOffsetInGrid = oItemRect.top - oGridRect.top - oLayoutSizes.paddingTop,
-				fBottomOffsetInGrid = fTopOffsetInGrid + oItemRect.height;
+				fSumRows = 0;
+			const fTopOffsetInGrid = oItemRect.top - oGridRect.top - oLayoutSizes.paddingTop;
+			const fBottomOffsetInGrid = fTopOffsetInGrid + oItemRect.height;
 
-			for (i = 0; i < oLayoutSizes.rows.length; i++) {
+			for (let i = 0; i < oLayoutSizes.rows.length; i++) {
 				fSumRows += parseFloat(oLayoutSizes.rows[i]);
 
 				if (iStartRow === -1 && fTopOffsetInGrid < fSumRows) {
@@ -90,25 +94,51 @@ sap.ui.define([], function () {
 		},
 
 		_getGridCol: function (oGridRect, oItemRect, oLayoutSizes) {
-			var iStartCol = -1,
-				iEndCol = 0,
+			let iStartCol,
+				iEndCol,
 				fSumCols = 0,
-				i,
-				fLeftOffsetInGrid = oItemRect.left - oGridRect.left - oLayoutSizes.paddingLeft,
+				fLeftOffsetInGrid,
+				fRightOffsetInGrid;
+
+			if (Configuration.getRTL()) {
+				iEndCol = -1;
+				iStartCol = oLayoutSizes.columns.length - 1;
+				fRightOffsetInGrid = oGridRect.right - oLayoutSizes.paddingRight - oItemRect.right;
+				fLeftOffsetInGrid = fRightOffsetInGrid + oItemRect.width;
+
+				for (let i = oLayoutSizes.columns.length; i > 0; i--) {
+					fSumCols += parseFloat(oLayoutSizes.columns[i - 1]);
+
+					if (iEndCol === -1 && fRightOffsetInGrid < fSumCols) {
+						iEndCol = i;
+					}
+
+					fSumCols += oLayoutSizes.columnGap;
+
+					if (Math.round(fLeftOffsetInGrid) <= Math.round(fSumCols)) {
+						iStartCol = i - 1;
+						break;
+					}
+				}
+			} else {
+				iStartCol = -1;
+				iEndCol = 0;
+				fLeftOffsetInGrid = oItemRect.left - oGridRect.left - oLayoutSizes.paddingLeft;
 				fRightOffsetInGrid = fLeftOffsetInGrid + oItemRect.width;
 
-			for (i = 0; i < oLayoutSizes.columns.length; i++) {
-				fSumCols += parseFloat(oLayoutSizes.columns[i]);
+				for (let i = 0; i < oLayoutSizes.columns.length; i++) {
+					fSumCols += parseFloat(oLayoutSizes.columns[i]);
 
-				if (iStartCol === -1 && fLeftOffsetInGrid < fSumCols) {
-					iStartCol = i;
-				}
+					if (iStartCol === -1 && fLeftOffsetInGrid < fSumCols) {
+						iStartCol = i;
+					}
 
-				fSumCols += oLayoutSizes.columnGap;
+					fSumCols += oLayoutSizes.columnGap;
 
-				if (Math.round(fRightOffsetInGrid) <= Math.round(fSumCols)) {
-					iEndCol = i + 1;
-					break;
+					if (Math.round(fRightOffsetInGrid) <= Math.round(fSumCols)) {
+						iEndCol = i + 1;
+						break;
+					}
 				}
 			}
 
@@ -119,10 +149,8 @@ sap.ui.define([], function () {
 		},
 
 		_addToMatrix: function (aMatrix, oPosition, oDomRef) {
-			var iRow, iCol;
-
-			for (iRow = oPosition.xFrom; iRow < oPosition.xTo; iRow++) {
-				for (iCol = oPosition.yFrom; iCol < oPosition.yTo; iCol++) {
+			for (let iRow = oPosition.xFrom; iRow < oPosition.xTo; iRow++) {
+				for (let iCol = oPosition.yFrom; iCol < oPosition.yTo; iCol++) {
 					aMatrix[iRow][iCol] = oDomRef;
 				}
 			}
