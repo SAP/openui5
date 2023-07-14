@@ -9,9 +9,10 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/base/util/merge",
 	"sap/ui/core/Core",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"sap/ui/integration/formatters/IconFormatter"
 ], function (
-	VizBase, Select, ListItem, JSONModel, IconPool, merge, Core, deepClone
+	VizBase, Select, ListItem, JSONModel, IconPool, merge, Core, deepClone, IconFormatter
 ) {
 	"use strict";
 
@@ -79,7 +80,7 @@ sap.ui.define([
 			icon: "",
 			text: oResourceBundle.getText("EDITOR_ICON_NONE"),
 			tooltip: "",
-			key: "",
+			key: IconFormatter.SRC_FOR_HIDDEN_ICON,
 			enabled: true
 		}, {
 			icon: "sap-icon://upload",

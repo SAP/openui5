@@ -13,9 +13,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/i18n/ResourceBundle",
 	"qunit/designtime/EditorQunitUtils",
-	"sap/ui/core/date/UI5Date"
-
-
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/integration/formatters/IconFormatter"
 ], function (
 	merge,
 	x,
@@ -30,7 +29,8 @@ sap.ui.define([
 	KeyCodes,
 	ResourceBundle,
 	EditorQunitUtils,
-	UI5Date
+	UI5Date,
+	IconFormatter
 ) {
 	"use strict";
 
@@ -755,7 +755,7 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					var oSelect = oField.getAggregation("_field").getAggregation("_control");
 					setTimeout(function () {
-						assert.ok(oSelect.getItemByKey("").getEnabled(), "Icon: item none is enabled");
+						assert.ok(oSelect.getItemByKey(IconFormatter.SRC_FOR_HIDDEN_ICON).getEnabled(), "Icon: item none is enabled");
 						assert.ok(!oSelect.getItemByKey("file").getEnabled(), "Icon: item file is disabled");
 						assert.ok(!oSelect.getItemByKey("selected").getEnabled(), "Icon: item selected is disabled");
 						resolve();
@@ -775,7 +775,7 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					var oSelect = oField.getAggregation("_field").getAggregation("_control");
 					setTimeout(function () {
-						assert.ok(!oSelect.getItemByKey("").getEnabled(), "Icon: item none is disabled");
+						assert.ok(!oSelect.getItemByKey(IconFormatter.SRC_FOR_HIDDEN_ICON).getEnabled(), "Icon: item none is disabled");
 						assert.ok(oSelect.getItemByKey("file").getEnabled(), "Icon: item file is enabled");
 						assert.ok(!oSelect.getItemByKey("selected").getEnabled(), "Icon: item selected is disabled");
 						resolve();
@@ -795,7 +795,7 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					var oSelect = oField.getAggregation("_field").getAggregation("_control");
 					setTimeout(function () {
-						assert.ok(!oSelect.getItemByKey("").getEnabled(), "Icon: item none is disabled");
+						assert.ok(!oSelect.getItemByKey(IconFormatter.SRC_FOR_HIDDEN_ICON).getEnabled(), "Icon: item none is disabled");
 						assert.ok(!oSelect.getItemByKey("file").getEnabled(), "Icon: item file is disabled");
 						assert.ok(!oSelect.getItemByKey("selected").getEnabled(), "Icon: item selected git sis disabled");
 						resolve();

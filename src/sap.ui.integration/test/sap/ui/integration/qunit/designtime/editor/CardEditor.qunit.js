@@ -1613,6 +1613,126 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Special cases", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("1 icon parameter as value (as json)", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/iconWithPreview",
+						"type": "List",
+						"configuration": {
+							"parameters": {}
+						},
+						"header": {
+							"title": "Icon Card",
+							"icon": {
+								"src": "sap-icon://add-document"
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							wait().then(function () {
+								assert.ok(cardPreview._oCardPreview.getCardHeader().shouldShowIcon(), "Preview Header icon is not hidden");
+								resolve();
+							});
+						}
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 icon parameter with select NONE as value (as json)", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/iconWithPreview",
+						"type": "List",
+						"configuration": {
+							"parameters": {}
+						},
+						"header": {
+							"title": "Icon Card",
+							"icon": {
+								"src": "sap-icon://add-document"
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
+					var oSelect = oField.getAggregation("_field").getAggregation("_control");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							wait().then(function () {
+								oSelect.setSelectedIndex(0);
+								oSelect.fireChange({ selectedItem: oSelect.getItems()[0] });
+								oSelect.focus();
+								wait().then(function () {
+									assert.ok(!cardPreview._oCardPreview.getCardHeader().shouldShowIcon(), "Preview Header icon is hidden after selecing 'None'");
+									resolve();
+								});
+							});
+						}
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
 	QUnit.done(function () {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
