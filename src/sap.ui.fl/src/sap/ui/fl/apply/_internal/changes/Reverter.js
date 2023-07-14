@@ -4,11 +4,13 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/Utils"
 ], function(
 	Log,
+	Applier,
 	FlexCustomData,
 	Utils,
 	FlUtils
@@ -117,8 +119,12 @@ sap.ui.define([
 				return revertAndDeleteChangeOnControl(oChange, oControl, mRevertProperties, mPropertyBag);
 			});
 		});
-
-		return FlUtils.execPromiseQueueSequentially(aPromiseStack);
+		const pReturn = FlUtils.execPromiseQueueSequentially(aPromiseStack);
+		// reverting a change might trigger the propagation listener and the applyAllChangesForControl functionality
+		// this needs to wait for the whole revert to be done so that the persistence is cleaned up and
+		// a reverted change is not applied again
+		Applier.addPreConditionForInitialChangeApplying(pReturn);
+		return pReturn;
 	};
 
 	return Reverter;

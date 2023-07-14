@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
+	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
@@ -15,6 +16,7 @@ sap.ui.define([
 	Text,
 	JsControlTreeModifier,
 	Control,
+	Applier,
 	ChangeUtils,
 	FlexCustomData,
 	Reverter,
@@ -214,6 +216,7 @@ sap.ui.define([
 			};
 			this.oLogStub = sandbox.stub(Log, "warning");
 			this.oDestroyCustomDataStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData").resolves();
+			this.oAddPreConStub = sandbox.stub(Applier, "addPreConditionForInitialChangeApplying");
 			sandbox.stub(Reverter, "revertChangeOnControl")
 			.onCall(0).resolves(false)
 			.onCall(1).resolves(true)
@@ -227,6 +230,7 @@ sap.ui.define([
 		QUnit.test("with applied changes and one unapplied and one pointing to an unavailable control", function(assert) {
 			var aChanges = [this.oChange, this.oAppliedChange0, this.oFailingChange, this.oAppliedChange1];
 			return Reverter.revertMultipleChanges(aChanges, this.mPropertyBag).then(function() {
+				assert.ok(this.oAddPreConStub.called, "the promise was set to the applier");
 				assert.equal(this.oDeleteChangeInMapStub.callCount, 2, "deleteChangeInMap was called for both applied changes");
 				assert.equal(this.oDeleteChangeInMapStub.firstCall.args[0].getId(), this.oAppliedChange0.getId(), "the first change was reverted first");
 				assert.equal(this.oDeleteChangeInMapStub.secondCall.args[0].getId(), this.oAppliedChange1.getId(), "the second change was reverted second");
