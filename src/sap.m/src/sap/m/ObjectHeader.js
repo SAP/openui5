@@ -672,6 +672,8 @@ sap.ui.define([
 	 * @public
 	 * @param {boolean} bMarked visibility of the marker
 	 * @returns {this} this pointer for chaining
+	 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregation.
+	 * Add {@link sap.m.ObjectMarker} with type <code>sap.m.ObjectMarkerType.Favorite</code>.
 	 */
 	ObjectHeader.prototype.setMarkFavorite = function (bMarked) {
 		return this._setOldMarkers(ObjectMarkerType.Favorite, bMarked);
@@ -683,6 +685,8 @@ sap.ui.define([
 	 * @public
 	 * @param {boolean} bMarked visibility of the marker
 	 * @returns {this} this pointer for chaining
+	 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregation.
+	 * Add {@link sap.m.ObjectMarker} with type <code>sap.m.ObjectMarkerType.Flagged</code>.
 	 */
 	ObjectHeader.prototype.setMarkFlagged = function (bMarked) {
 		return this._setOldMarkers(ObjectMarkerType.Flagged, bMarked);
@@ -694,6 +698,7 @@ sap.ui.define([
 	 * @public
 	 * @param {boolean} bMarked visibility of all markers
 	 * @returns {this} this pointer for chaining
+	 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregationv.
 	 */
 	ObjectHeader.prototype.setShowMarkers = function (bMarked) {
 		var sMarkerType,
