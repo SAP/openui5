@@ -117,7 +117,7 @@ sap.ui.define([
 		this._oCard = null;
 	};
 
-	/**
+	/*
 	 * See generated JSDoc
 	 */
 	Extension.prototype.setActions = function (aActions) {
