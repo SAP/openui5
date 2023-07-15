@@ -70,7 +70,7 @@ sap.ui.define([
 	 * The file will be loaded, when a lazy dependency to the library is encountered.
 	 * @private
 	 */
-	 var oLibraryWithBundleInfo = new Set([
+	var oLibraryWithBundleInfo = new Set([
 		"sap.suite.ui.generic.template",
 		"sap.ui.comp",
 		"sap.ui.layout",
@@ -109,7 +109,7 @@ sap.ui.define([
 	 * @param {string} sURL URL from which the bundle has been loaded
 	 *
 	 * @private
-	*/
+	 */
 	function registerPreloadedModules(oData, sURL) {
 		var modules = oData.modules,
 			fnUI5ToRJS = function(sName) {
@@ -257,7 +257,7 @@ sap.ui.define([
 		return aPreloadLibCSS;
 	}
 
-	/*
+	/**
 	 * Create an instance that represents a library with the given name.
 	 *
 	 * <h3>Note</h3>
@@ -284,8 +284,8 @@ sap.ui.define([
 	 * @alias sap.ui.core.Lib
 	 * @extends sap.ui.base.BaseObject
 	 * @since 1.110
-	 * @private
 	 * @hideconstructor
+	 * @private
 	 * @ui5-restricted sap.ui.core
 	 */
 	var Library = BaseObject.extend("sap.ui.core.Lib", /** @lends sap.ui.core.Lib.prototype */ {
@@ -378,8 +378,9 @@ sap.ui.define([
 		 *  controls); names are in dot notation (e.g. "sap.ui.core.Item")
 		 * @param {boolean} [mSettings.noLibraryCSS=false] Indicates whether the library doesn't provide/use theming.
 		 *  When set to true, no library.css will be loaded for this library
-		 * @param {object} [oLibInfo.extensions] Potential extensions of the library metadata; structure not defined by
-		 *  the UI5 core framework.
+		 * @param {Object<string,any>} [mSettings.extensions] A map of potential extensions of the library metadata; structure not defined by
+		 *  the UI5 core framework. Keys should be qualified names derived from the namespace of the code that introduces the feature, e.g.
+		 *  <code>""sap.ui.support"</code> is used for the support rule metadata of a library.
 		 * @returns {sap.ui.core.Lib} The library instance
 		 * @private
 		 */
@@ -1071,7 +1072,7 @@ sap.ui.define([
 	 * library, {@link #.load} can be used directly without calling this method in advance.
 	 *
 	 * @param {string} sName The name of the library
-	 * @returns {Promise<module:sap/ui/core/Lib>|undefined} Either an instance of the library or <code>undefined</code>
+	 * @returns {Promise<sap.ui.core.Lib>|undefined} Either an instance of the library or <code>undefined</code>
 	 * @public
 	 */
 	Library.get = function(sName) {
@@ -1088,7 +1089,7 @@ sap.ui.define([
 	 * @param {string} sName The name of the library
 	 * @param {boolean} bCreate Whether to create an instance for the library when there's no instance saved in the
 	 *  cache under the given <code>sName</code>
-	 * @returns {Promise<module:sap/ui/core/Lib>|undefined} Either an instance of the library or <code>undefined</code>
+	 * @returns {Promise<sap.ui.core.Lib>|undefined} Either an instance of the library or <code>undefined</code>
 	 * @private
 	 */
 	Library._get = function(sName, bCreate) {
@@ -1431,7 +1432,7 @@ sap.ui.define([
 	 * @param {object} mOptions The options object that contains the following properties
 	 * @param {string} mOptions.name The name of the library
 	 * @param {string} [mOptions.url] URL to load the library from
-	 * @returns {Promise<module:sap/ui/core/Lib>} A promise that resolves with the library instance after the loading of
+	 * @returns {Promise<sap.ui.core.Lib>} A promise that resolves with the library instance after the loading of
 	 *  the library is finished
 	 * @public
 	 */
@@ -1465,14 +1466,14 @@ sap.ui.define([
 	 *
 	 * @param {object[]|object} vLibConfigs An array of objects for libraries or a single object for one library
 	 *  which contain the following properties
-	 * @param {string} oLibConfig.name The name of the library
-	 * @param {string} [oLibConfig.url] URL to load the library from
-	 * @param {boolean} [oLibConfig.json] Whether to load the library's preload bundle in JSON format
+	 * @param {string} vLibConfigs.name The name of the library
+	 * @param {string} [vLibConfigs.url] URL to load the library from
+	 * @param {boolean} [vLibConfigs.json] Whether to load the library's preload bundle in JSON format
 	 * @param {object} [mOptions] The options object that contains the following properties
 	 * @param {boolean} [mOptions.sync] Whether to load the preload bundle(s) in sync mode
 	 * @param {boolean} [mOptions.preloadOnly] Whether to skip executing the entry module(s) after preloading the
 	 *  library/libraries
-	 * @return {Promise<Array<module:sap/ui/core/Lib>>|Array<module:sap/ui/core/Lib>} A promise that resolves with an
+	 * @return {Promise<Array<sap.ui.core.Lib>>|Array<sap.ui.core.Lib>} A promise that resolves with an
 	 *  array of library instances in async mode or an array of library instances in sync mode
 	 * @private
 	 */
