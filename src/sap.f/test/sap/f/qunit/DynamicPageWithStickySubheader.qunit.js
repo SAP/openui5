@@ -346,7 +346,8 @@ sap.ui.define([
 			assert.ok(oIconTabBar._getStickySubheaderSticked(), "Sticky content is in sticky area");
 
 			//Act: rerender
-			oIconTabBar.rerender();
+			oIconTabBar.invalidate();
+			Core.applyChanges();
 
 			// Check
 			assert.ok(oIconTabBar._getStickySubheaderSticked(), "Sticky content is still in sticky area");

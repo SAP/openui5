@@ -682,7 +682,7 @@ sap.ui.define([
 
 		oMultiSelectAction.removeEventDelegate(oDelegate);
 
-		oSemanticPage.rerender();
+		oSemanticPage.invalidate();
 		Core.applyChanges();
 
 		assert.strictEqual(callback.calledOnce, true, "delegate is called only once");

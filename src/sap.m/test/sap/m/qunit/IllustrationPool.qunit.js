@@ -2,14 +2,14 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/m/IllustrationPool",
-	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/StaticArea"
 ],
 function (
 	Log,
 	IllustrationPool,
-	Core,
-	jQuery
+	jQuery,
+	StaticArea
 ) {
 	"use strict";
 
@@ -181,7 +181,7 @@ function (
 		var	fnLoadAssetSpy = this.spy(IllustrationPool, "loadAsset");
 
 		// Act Remove the Illustration Pool's DOM Ref from the Static Area
-		Core.getStaticAreaRef().removeChild(IllustrationPool._getDOMPool());
+		StaticArea.getDomRef().removeChild(IllustrationPool._getDOMPool());
 
 		// Assert
 		assert.notOk(jQuery("#" + SAP_ILLUSTRATION_POOL_ID)[0],
@@ -191,7 +191,7 @@ function (
 		IllustrationPool._getDOMPool();
 
 		// Assert
-		assert.ok(jQuery(Core.getStaticAreaRef()).children("#" + SAP_ILLUSTRATION_POOL_ID)[0],
+		assert.ok(jQuery(StaticArea.getDomRef()).children("#" + SAP_ILLUSTRATION_POOL_ID)[0],
 			"Illustration Pool's DOM Ref is created anew and it's a child of the Static Area");
 		assert.ok(fnLoadAssetSpy.calledOnce, "loadAsset is called once when we are creating the Illustration Pool's DOM Ref");
 		assert.ok(fnLoadAssetSpy.calledWithExactly(SAP_ILLUSTRATION_SET_NAME + SAP_ILLUSTRATION_PATTERNS_NAME),

@@ -38,7 +38,10 @@ sap.ui.define([
 
 	createAndAppendDiv("content").style.height = "100%";
 
-
+	function invalidate(oControl) {
+		oControl.invalidate();
+		Core.applyChanges();
+	}
 
 	Mobile.init();
 
@@ -1168,20 +1171,20 @@ sap.ui.define([
 				nc.to("page3", "baseSlide");
 
 				window.setTimeout(function(){
-					nc.rerender(); // force rerendering during navigation()
+					invalidate(nc); // force rerendering during navigation()
 
 					window.setTimeout(function(){
 						nc.back(); // to page2
 						nc.back(); // to initial page 1
 
 						window.setTimeout(function(){ // now be really nasty while the back navigations should happen
-							nc.rerender();
+							invalidate(nc);
 							window.setTimeout(function(){
-								nc.rerender();
+								invalidate(nc);
 								window.setTimeout(function(){
 									nc.invalidate();
 									window.setTimeout(function(){
-										nc.rerender();
+										invalidate(nc);
 
 										window.setTimeout(function(){
 											assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
@@ -1231,21 +1234,21 @@ sap.ui.define([
 				nc.to("page3", "baseSlide");
 
 				window.setTimeout(function(){
-					page1.rerender(); // force rerendering during navigation()
-					page2.rerender(); // force rerendering during navigation()
+					invalidate(page1); // force rerendering during navigation()
+					invalidate(page2); // force rerendering during navigation()
 
 					window.setTimeout(function(){
 						nc.back(); // to page2
 						nc.back(); // to initial page 1
 
 						window.setTimeout(function(){ // now be really nasty while the back navigations should happen
-							nc.rerender();
+							invalidate(nc);
 							window.setTimeout(function(){
-								page1.rerender();
+								invalidate(page1);
 								window.setTimeout(function(){
 									page2.invalidate();
 									window.setTimeout(function(){
-										page2.rerender();
+										invalidate(page2);
 
 										window.setTimeout(function(){
 											assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
@@ -1293,20 +1296,20 @@ sap.ui.define([
 				nc.to("page3");
 
 				window.setTimeout(function(){
-					nc.rerender(); // force rerendering during navigation()
+					invalidate(nc); // force rerendering during navigation()
 
 					window.setTimeout(function(){
 						nc.back(); // to page2
 						nc.back(); // to initial page 1
 
 						window.setTimeout(function(){ // now be really nasty while the back navigations should happen
-							nc.rerender();
+							invalidate(nc);
 							window.setTimeout(function(){
-								nc.rerender();
+								invalidate(nc);
 								window.setTimeout(function(){
 									nc.invalidate();
 									window.setTimeout(function(){
-										nc.rerender();
+										invalidate(nc);
 
 										window.setTimeout(function(){
 											assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
@@ -1356,21 +1359,21 @@ sap.ui.define([
 				nc.to("page3");
 
 				window.setTimeout(function(){
-					page1.rerender(); // force rerendering during navigation()
-					page2.rerender(); // force rerendering during navigation()
+					invalidate(page1); // force rerendering during navigation()
+					invalidate(page2); // force rerendering during navigation()
 
 					window.setTimeout(function(){
 						nc.back(); // to page2
 						nc.back(); // to initial page 1
 
 						window.setTimeout(function(){ // now be really nasty while the back navigations should happen
-							nc.rerender();
+							invalidate(nc);
 							window.setTimeout(function(){
-								page1.rerender();
+								invalidate(page1);
 								window.setTimeout(function(){
 									page2.invalidate();
 									window.setTimeout(function(){
-										page2.rerender();
+										invalidate(page2);
 
 										window.setTimeout(function(){
 											assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
@@ -1417,20 +1420,20 @@ sap.ui.define([
 				nc.to("page3", "fade");
 
 				window.setTimeout(function(){
-					nc.rerender(); // force rerendering during navigation()
+					invalidate(nc); // force rerendering during navigation()
 
 					window.setTimeout(function(){
 						nc.back(); // to page2
 						nc.back(); // to initial page 1
 
 						window.setTimeout(function(){ // now be really nasty while the back navigations should happen
-							nc.rerender();
+							invalidate(nc);
 							window.setTimeout(function(){
-								nc.rerender();
+								invalidate(nc);
 								window.setTimeout(function(){
 									nc.invalidate();
 									window.setTimeout(function(){
-										nc.rerender();
+										invalidate(nc);
 
 										window.setTimeout(function(){
 											assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
@@ -1480,21 +1483,21 @@ sap.ui.define([
 				nc.to("page3", "fade");
 
 				window.setTimeout(function(){
-					page1.rerender(); // force rerendering during navigation()
-					page2.rerender(); // force rerendering during navigation()
+					invalidate(page1); // force rerendering during navigation()
+					invalidate(page2); // force rerendering during navigation()
 
 					window.setTimeout(function(){
 						nc.back(); // to page2
 						nc.back(); // to initial page 1
 
 						window.setTimeout(function(){ // now be really nasty while the back navigations should happen
-							nc.rerender();
+							invalidate(nc);
 							window.setTimeout(function(){
-								page1.rerender();
+								invalidate(page1);
 								window.setTimeout(function(){
 									page2.invalidate();
 									window.setTimeout(function(){
-										page2.rerender();
+										invalidate(page2);
 
 										window.setTimeout(function(){
 											assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
@@ -1542,20 +1545,20 @@ sap.ui.define([
 				nc.to("page3", "flip");
 
 				window.setTimeout(function(){
-					nc.rerender(); // force rerendering during navigation()
+					invalidate(nc); // force rerendering during navigation()
 
 					window.setTimeout(function(){
 						nc.back(); // to page2
 						nc.back(); // to initial page 1
 
 						window.setTimeout(function(){ // now be really nasty while the back navigations should happen
-							nc.rerender();
+							invalidate(nc);
 							window.setTimeout(function(){
-								nc.rerender();
+								invalidate(nc);
 								window.setTimeout(function(){
 									nc.invalidate();
 									window.setTimeout(function(){
-										nc.rerender();
+										invalidate(nc);
 
 										window.setTimeout(function(){
 											assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
@@ -1605,21 +1608,21 @@ sap.ui.define([
 				nc.to("page3", "flip");
 
 				window.setTimeout(function(){
-					page1.rerender(); // force rerendering during navigation()
-					page2.rerender(); // force rerendering during navigation()
+					invalidate(page1); // force rerendering during navigation()
+					invalidate(page2); // force rerendering during navigation()
 
 					window.setTimeout(function(){
 						nc.back(); // to page2
 						nc.back(); // to initial page 1
 
 						window.setTimeout(function(){ // now be really nasty while the back navigations should happen
-							nc.rerender();
+							invalidate(nc);
 							window.setTimeout(function(){
-								page1.rerender();
+								invalidate(page1);
 								window.setTimeout(function(){
 									page2.invalidate();
 									window.setTimeout(function(){
-										page2.rerender();
+										invalidate(page2);
 
 										window.setTimeout(function(){
 											assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
@@ -1667,20 +1670,20 @@ sap.ui.define([
 				nc.to("page3", "door");
 
 				window.setTimeout(function(){
-					nc.rerender(); // force rerendering during navigation()
+					invalidate(nc); // force rerendering during navigation()
 
 					window.setTimeout(function(){
 						nc.back(); // to page2
 						nc.back(); // to initial page 1
 
 						window.setTimeout(function(){ // now be really nasty while the back navigations should happen
-							nc.rerender();
+							invalidate(nc);
 							window.setTimeout(function(){
-								nc.rerender();
+								invalidate(nc);
 								window.setTimeout(function(){
 									nc.invalidate();
 									window.setTimeout(function(){
-										nc.rerender();
+										invalidate(nc);
 
 										window.setTimeout(function(){
 											assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
@@ -1730,21 +1733,21 @@ sap.ui.define([
 				nc.to("page3", "door");
 
 				window.setTimeout(function(){
-					page1.rerender(); // force rerendering during navigation()
-					page2.rerender(); // force rerendering during navigation()
+					invalidate(page1); // force rerendering during navigation()
+					invalidate(page2); // force rerendering during navigation()
 
 					window.setTimeout(function(){
 						nc.back(); // to page2
 						nc.back(); // to initial page 1
 
 						window.setTimeout(function(){ // now be really nasty while the back navigations should happen
-							nc.rerender();
+							invalidate(nc);
 							window.setTimeout(function(){
-								page1.rerender();
+								invalidate(page1);
 								window.setTimeout(function(){
 									page2.invalidate();
 									window.setTimeout(function(){
-										page2.rerender();
+										invalidate(page2);
 
 										window.setTimeout(function(){
 											assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");

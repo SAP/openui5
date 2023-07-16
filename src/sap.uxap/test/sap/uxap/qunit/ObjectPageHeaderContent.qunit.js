@@ -45,7 +45,8 @@ function (jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLay
 
 		assert.ok(aEditHeaderBtn.length === 1, "button is rendered inside the HeaderContent");
 
-		oPl.rerender();
+		oPl.invalidate();
+		Core.applyChanges();
 		aEditHeaderBtn = oPl._getHeaderContent().$().find('#UxAP-ObjectPageHeaderContent--ObjectPageLayout-OPHeaderContent-editHeaderBtn');
 
 		assert.ok(aEditHeaderBtn.length === 1, "button is rendered inside the HeaderContent after rerender");

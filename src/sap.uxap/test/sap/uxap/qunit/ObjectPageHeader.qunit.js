@@ -996,7 +996,8 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 
 		oHeader.addEventDelegate(oDelegate);
 		// Act: rerender the header while hidden
-		oHeader.rerender();
+		oHeader.invalidate();
+		Core.applyChanges();
 	});
 
 	QUnit.module("Breadcrumbs rendering", {

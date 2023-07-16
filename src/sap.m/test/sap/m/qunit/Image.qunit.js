@@ -110,7 +110,8 @@ sap.ui.define([
 
 		aTestInputValues.forEach(function(sTestValue, iIndex) {
 			oImage.setBackgroundPosition(sTestValue);
-			oImage.rerender();
+			oImage.invalidate();
+			Core.applyChanges();
 
 			// Assert
 			var oImageDom = oImage.getDomRef();
@@ -137,7 +138,8 @@ sap.ui.define([
 
 		aTestInputValues.forEach(function(sTestValue, iIndex) {
 			oImage.setBackgroundSize(sTestValue);
-			oImage.rerender();
+			oImage.invalidate();
+			Core.applyChanges();
 
 			// Assert
 			var oImageDom = oImage.getDomRef();
@@ -162,7 +164,8 @@ sap.ui.define([
 
 		aTestInputValues.forEach(function(sTestValue, iIndex) {
 			oImage.setBackgroundRepeat(sTestValue);
-			oImage.rerender();
+			oImage.invalidate();
+			Core.applyChanges();
 
 			// Assert
 			var oImageDom = oImage.getDomRef();
@@ -1129,7 +1132,8 @@ sap.ui.define([
 		oImage.$().on("load", function() {
 			assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
 			assert.equal(oLoadSpy.callCount, 1, "load event handler is called");
-			oImage.rerender();
+			oImage.invalidate();
+			Core.applyChanges();
 			oImage.$().on("load", function() {
 				assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
 				assert.equal(oLoadSpy.callCount, 2, "load event handler is called again");

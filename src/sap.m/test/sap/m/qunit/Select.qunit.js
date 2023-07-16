@@ -4938,7 +4938,7 @@ sap.ui.define([
 			this.clock.tick(500);
 
 			// act
-			oSelect.rerender();
+			oSelect.invalidate();
 			Core.applyChanges();
 
 			// assert
@@ -8864,7 +8864,8 @@ sap.ui.define([
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 			// act
-			oSelect.rerender();
+			oSelect.invalidate();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(fnFireChangeSpy.callCount, 0);
@@ -8893,7 +8894,8 @@ sap.ui.define([
 
 			// act
 			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-			oSelect.rerender();
+			oSelect.invalidate();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(fnFireChangeSpy.callCount, 0);
@@ -8992,7 +8994,7 @@ sap.ui.define([
 			oSelect.focus();
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-			oSelect.rerender();
+			oSelect.invalidate();
 			Core.applyChanges();
 
 			// act
@@ -10023,7 +10025,8 @@ sap.ui.define([
 			assert.strictEqual(oIconOnlySelect.getFocusDomRef().getAttribute('aria-activedescendant'), oItemB.getId(),
 				"Correct aria-activedescendant value");
 
-			oIconOnlySelect.rerender();
+			oIconOnlySelect.invalidate();
+			Core.applyChanges();
 
 			assert.strictEqual(oIconOnlySelect.getFocusDomRef().getAttribute('aria-activedescendant'), oItemB.getId(),
 				"Correct aria-activedescendant value");

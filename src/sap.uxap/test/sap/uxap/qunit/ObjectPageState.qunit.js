@@ -165,7 +165,7 @@ function (
 			oPage1.attachEventOnce("onAfterRenderingDOMReady", function() {
 				toggleHidden(true); // show page
 			});
-			oPage1.rerender();
+			oPage1.invalidate();
 		});
 	});
 
@@ -663,7 +663,7 @@ function (
 			// Act
 			oCacheDomElementsSpy.resetHistory();
 			oObtainLayoutSpy.resetHistory();
-			oObjectPage.rerender(); // after rerender the old cached references will no longer be valid
+			oObjectPage.invalidate(); // after rerender the old cached references will no longer be valid
 		});
 	});
 

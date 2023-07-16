@@ -7,6 +7,7 @@ sap.ui.define([
 	'./library',
 	"sap/ui/core/Configuration",
 	'sap/ui/core/Control',
+	"sap/ui/core/Core",
 	'sap/ui/core/RenderManager',
 	'./NavContainerRenderer',
 	"sap/ui/thirdparty/jquery",
@@ -16,6 +17,7 @@ sap.ui.define([
 	library,
 	Configuration,
 	Control,
+	Core,
 	RenderManager,
 	NavContainerRenderer,
 	jQuery,
@@ -1839,7 +1841,8 @@ sap.ui.define([
 			this._fireAdaptableContentChange(oPage);
 			if (this.getDomRef()) {
 				this._ensurePageStackInitialized();
-				this.rerender();
+				this.invalidate();
+				Core.applyChanges();
 			}
 		}
 
@@ -1859,7 +1862,8 @@ sap.ui.define([
 			this._fireAdaptableContentChange(oPage);
 			if (this.getDomRef()) {
 				this._ensurePageStackInitialized();
-				this.rerender();
+				this.invalidate();
+				Core.applyChanges();
 			}
 		}
 

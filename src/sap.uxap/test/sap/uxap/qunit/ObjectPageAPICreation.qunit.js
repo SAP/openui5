@@ -859,7 +859,8 @@ function (
 			});
 
 			// act: rerender
-			oObjectPage.rerender();
+			oObjectPage.invalidate();
+			Core.applyChanges();
 		});
 
 		helpers.renderObject(oObjectPage);
@@ -1507,7 +1508,8 @@ function (
 				};
 
 				sectionIsSelected(oPage, assert, oExpected);
-				oPage.rerender();
+				oPage.invalidate();
+				Core.applyChanges();
 				sectionIsSelected(oPage, assert, oExpected);
 				done();
 			};
