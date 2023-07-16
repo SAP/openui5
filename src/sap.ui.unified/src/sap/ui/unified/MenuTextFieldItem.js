@@ -147,8 +147,6 @@ sap.ui.define([
 		if (oInfo.bAccessible) {
 			rm.accessibilityState(oItem, {
 				disabled: null, // Prevent aria-disabled as a disabled attribute is enough
-				multiline: false,
-				autocomplete: "none",
 				describedby: oItem._fnInvisibleDescriptionFactory(oInfo).getId(),
 				labelledby: itemId + "-lbl"
 			});
