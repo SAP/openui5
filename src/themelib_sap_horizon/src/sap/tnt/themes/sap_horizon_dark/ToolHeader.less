@@ -195,6 +195,10 @@
 	.sapMSF {
 		height: 2.5rem;
 		padding-top: 0px;
+
+		&:not(.sapMSFVal) .sapMSFS {
+			pointer-events: none;
+		}
 	}
 
 	.sapMSF .sapMSFF {
@@ -229,7 +233,7 @@
 		display: inline;
 	}
 
-	.sapMSFF  .sapMSFSSI:before {
+	.sapMSFF .sapMSFSSI:before {
 		content: "\e00d";
 		color: @sapUiContentNonInteractiveIconColor;
 		display: block;
@@ -275,14 +279,12 @@
 	.sapMSFR:active::after {
 		background: @sapActiveColor;
 		color: @sapContent_IconColor;
-		margin-top: 0.625rem;
 	}
 
 	.sapMSFS:hover::after,
 	.sapMSFR:hover::after {
 		background: @sapHoverColor;
 		color: @sapContent_IconColor;
-		margin-top: 0.625rem;
 	}
 
 	.sapMSFVal.sapMFocus .sapMSFF {
@@ -314,21 +316,14 @@
 			width: 1.5rem;
 		}
 
-		.sapMSFF  .sapMSFSSI:before {
+		.sapMSFF .sapMSFSSI:before {
 			margin-top: 0.5rem;
 		}
-	}
 
-	.sapMSFS:hover::after,
-	.sapMSFR:hover::after,
-	.sapMSFS:active::after,
-	.sapMSFR:active::after {
-		margin-top: 0.375rem;
-	}
-
-	.sapMSFS::after,
-	.sapMSFR::after {
-		margin-top: 0.375rem;
+		.sapMSFS::after,
+		.sapMSFR::after {
+			margin-top: 0.375rem;
+		}
 	}
 }
 
