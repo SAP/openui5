@@ -182,8 +182,11 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.Carousel} oCarousel the control being rendered
-	 * @param {Array} mSettings.iPages
+	 * @param {object} mSettings
+	 * @param {int} mSettings.iPageCount
+	 * @param {int} mSettings.iIndex
 	 * @param {boolean} mSettings.bBottom
+	 * @param {sap.m.CarouselArrowsPlacement} mSettings.sArrowsPlacement
 	 * @param {boolean} mSettings.bShowPageIndicator
 	 * @private
 	 */
