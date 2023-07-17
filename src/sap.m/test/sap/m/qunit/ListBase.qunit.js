@@ -387,6 +387,7 @@ sap.ui.define([
 			assert.ok(oProperties.inset, 'Property "inset" exists');
 			assert.ok(oProperties.visible, 'Property "visible" exists');
 			assert.ok(oProperties.headerText, 'Property "headerText" exists');
+			assert.ok(oProperties.headerLevel, 'Property "headerText" exists');
 			assert.ok(oProperties.footerText, 'Property "footerText" exists');
 			assert.ok(oProperties.mode, 'Property "mode" exists');
 			assert.ok(oProperties.width, 'Property "width" exists');
@@ -521,6 +522,7 @@ sap.ui.define([
 					assert.strictEqual(oList.getInset(), false, 'The default value of property "inset" should be "false" on ' + oList + sAddText);
 					assert.strictEqual(oList.getVisible(), true, 'The default value of property "visible" should be "true" on ' + oList + sAddText);
 					assert.strictEqual(oList.getHeaderText(), "", 'The default value of property "headerText" should be "" on ' + oList + sAddText);
+					assert.strictEqual(oList.getHeaderLevel(), coreLibrary.TitleLevel.Auto, 'The default value of property "headerLevel" should be "Auto" on ' + oList + sAddText);
 					assert.strictEqual(oList.getFooterText(), "", 'The default value of property "footerText" should be "" on ' + oList + sAddText);
 					assert.strictEqual(oList.getMode(), library.ListMode.None, 'The default value of property "mode" should be "' + library.ListMode.None + '" on ' + oList + sAddText);
 					assert.strictEqual(oList.getWidth(), "100%", 'The default value of property "width" should be "100%" on ' + oList + sAddText);
@@ -668,6 +670,35 @@ sap.ui.define([
 
 			assert.ok(oToolbar.hasStyleClass("sapMTBHeader-CTX"), "Toolbar has style class sapMTBHeader-CTX");
 			assert.ok(oToolbar.hasStyleClass("sapMListHdrTBar"), "Toolbar has style class sapMListHdrTBar");
+
+			// cleanup
+			oPage.removeAllContent();
+		});
+
+		QUnit.test("Header Text & Header Level", function(assert) {
+			oList.setHeaderText("Header Text");
+
+			// add item to page & render
+			oPage.addContent(oList);
+			Core.applyChanges();
+
+			assert.ok(oList.$("header").hasClass("sapMListHdr"), "Header has style class sapMListHdr");
+			assert.ok(oList.$("header").hasClass("sapMListHdrText"), "Header has style class sapMListHdrText");
+			assert.strictEqual(oList.$("header").text(), "Header Text", "Header contains the header text");
+			assert.strictEqual(oList.$("header").attr("role"), "heading", "Header has ARIA role heading");
+			assert.ok(!oList.$("header").attr("aria-level"),  "Header has no ARIA level");
+
+			oList.setHeaderLevel(coreLibrary.TitleLevel.H3);
+			Core.applyChanges();
+			assert.strictEqual(oList.$("header").attr("aria-level"), "3", "Header has ARIA level 3");
+
+			oList.setHeaderLevel(coreLibrary.TitleLevel.H1);
+			Core.applyChanges();
+			assert.strictEqual(oList.$("header").attr("aria-level"), "1", "Header has ARIA level 1");
+
+			oList.setHeaderLevel(coreLibrary.TitleLevel.Auto);
+			Core.applyChanges();
+			assert.ok(!oList.$("header").attr("aria-level"),  "Header has no ARIA level");
 
 			// cleanup
 			oPage.removeAllContent();
