@@ -821,9 +821,12 @@ sap.ui.define([
 				if (this._bHadFocus) {
 					this._bHadFocus = false;
 					jQuery(this._oControl.getNavigationRoot()).trigger("focus");
-				} else if (oTriggerDomRef && oTriggerDomRef.contains(document.activeElement)) {
+				} else if (!this._iFocusTimer && oTriggerDomRef && oTriggerDomRef.contains(document.activeElement)) {
 					var oFocusTarget = aItems[this._iLastItemsCount] || aItems[iItemsLength - 1] || oControl;
-					oFocusTarget && setTimeout(oFocusTarget.focus.bind(oFocusTarget));
+					this._iFocusTimer = setTimeout(function() {
+						this._iFocusTimer = 0;
+						oFocusTarget.focus();
+					}.bind(this));
 				}
 
 				// show, update or hide the growing button
