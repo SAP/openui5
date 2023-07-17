@@ -78,6 +78,7 @@ customConfiguration:
           - "!**/HTMLSanitizer.js"
           - "!**/sanitizeHTML.js"
           - "!**/URLListValidator.js"
+          - "!**/api.json"
       # theming
       '@ui5/webcomponents-theming':
         aliases:
