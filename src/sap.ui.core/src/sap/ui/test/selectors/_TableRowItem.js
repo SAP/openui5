@@ -22,6 +22,7 @@ sap.ui.define([
 
         /**
          * @param {object} oControl the control for which to generate a selector
+         * @param {object} mSelectorParts Options object
          * @param {object} mSelectorParts.table unique selector for the control's table
          * @param {object} mSelectorParts.relative selector for the control that is unique in the row subtree
          * @returns {object} a plain object representation of a control. Contains unique selector within row, row binding path and table selector
