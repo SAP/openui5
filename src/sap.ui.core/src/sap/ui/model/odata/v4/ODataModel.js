@@ -1208,7 +1208,7 @@ sap.ui.define([
 	 *   <li> It must not contain control characters.
 	 * </ul>
 	 *
-	 * @param {object} [mHeaders]
+	 * @param {Object<string|undefined>} [mHeaders]
 	 *   Map of HTTP header names to their values
 	 * @throws {Error}
 	 *   If <code>mHeaders</code> contains unsupported headers, the same header occurs more than

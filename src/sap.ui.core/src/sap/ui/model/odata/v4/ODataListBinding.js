@@ -765,7 +765,7 @@ sap.ui.define([
 	 * pending, and no other modification (including collapse of some ancestor node) must happen
 	 * while this creation is pending!
 	 *
-	 * @param {object} [oInitialData={}]
+	 * @param {Object<any>} [oInitialData={}]
 	 *   The initial data for the created entity
 	 * @param {boolean} [bSkipRefresh]
 	 *   Whether an automatic refresh of the created entity will be skipped.
