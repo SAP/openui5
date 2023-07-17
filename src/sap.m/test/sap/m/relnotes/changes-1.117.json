@@ -3,6 +3,98 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "2af8989c90f6318b8bb352922361d0719d6e22fd",
+        "type": "FEATURE",
+        "text": " We now allow setting a custom illustration when there is no data available in the Uploadset control"
+      },
+      {
+        "id": "9598c6d169bad545bfa59527248ccb76e3842886",
+        "type": "FIX",
+        "text": " ListBase: Improve documentation of property  multiSelectMode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380084728"
+          }
+        ]
+      },
+      {
+        "id": "38b17be787b038992d74169b4a4e8fd353d7d31e",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: remove duplicate tooltips.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370012604"
+          }
+        ]
+      },
+      {
+        "id": "cfed1f5da88be68074cc29ec0ca72b4e5f1320fd",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: Now works correct with TimeOfDay",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380083594"
+          }
+        ]
+      },
+      {
+        "id": "7bf3def9ca363e16b7db0f9468cfd658096f87fa",
+        "type": "FEATURE",
+        "text": " sap.m.Avatar: New 'enabled' property"
+      },
+      {
+        "id": "d68284bc0a81716a665f0e205f303b51a71a68b0",
+        "type": "FIX",
+        "text": " sap.m.Link: improve the accessibility info",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380078166"
+          }
+        ]
+      },
+      {
+        "id": "778b38b5d82c24e2b8904ba704e52c6bf5b9dcc2",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: remove redundant navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380058391"
+          }
+        ]
+      },
+      {
+        "id": "606a6813c04af0618a092a314459df429bb1f2bb",
+        "type": "FEATURE",
+        "text": " We've now implemented UploadSet to use MenuButton for file selections"
+      },
+      {
+        "id": "f7dad49a7e622cbf6b0c04753663d745296b8d4a",
+        "type": "FIX",
+        "text": " sap.m.Link: fix broken fiori 3 themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380084008"
+          }
+        ]
+      },
+      {
+        "id": "ee27de0e53df31164164e44331e5b42fcf699e92",
+        "type": "FIX",
+        "text": " sap.m.ExpandableText: More/Less texts are now changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380075776"
+          }
+        ]
+      },
+      {
         "id": "bbcec2cf7bd0fbdaea18bf0bd21476ea620e96a7",
         "type": "FIX",
         "text": " sap.ui.core.IconPool: correction for icon 'slim-arrow-up' for theme 'horizon'",
@@ -10,6 +102,17 @@
           {
             "type": "BCP",
             "reference": "2380087196"
+          }
+        ]
+      },
+      {
+        "id": "880bd5df1e14a5db991717d5e7857dd2840ca19e",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: strings from data are no longer resolved as binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280173642"
           }
         ]
       },
@@ -65,6 +168,17 @@
           {
             "type": "BCP",
             "reference": "2380088430"
+          }
+        ]
+      },
+      {
+        "id": "84e3f6bef8ae7996c46647c1b07f10e087624b48",
+        "type": "FIX",
+        "text": " VariantManagement: add text-shadow to title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370048472"
           }
         ]
       },

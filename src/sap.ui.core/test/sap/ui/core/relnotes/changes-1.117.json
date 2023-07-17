@@ -3,6 +3,17 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "156ac9219e6bbd7fe18b1bdf1c51c4a84cee3bbe",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UI5Date#setYear: behave like Date#setYear",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380087420"
+          }
+        ]
+      },
+      {
         "id": "9d62c0557f64264db1a73b5ac65ed6d6841286a5",
         "type": "FIX",
         "text": " base/Localization: setLanguage shouldn't change '_' to '-'",

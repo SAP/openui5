@@ -3,6 +3,17 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "2348e7899d61560966dd671a7d8dcd65068439e8",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Navigation with page up and page down arrow keys now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380073517"
+          }
+        ]
+      },
+      {
         "id": "a84e4163012dec8ac3c26a338c44cc00f0ca38db",
         "type": "FIX",
         "text": " sap.f.SidePanel: fixed accessibility issues",

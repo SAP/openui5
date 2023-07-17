@@ -3,6 +3,28 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "e55c6b23477f0669fcbc2fe2ce77981b44162905",
+        "type": "FIX",
+        "text": " MDC: Rearranged FieldBase QUnit tests to avoid issues with focus testing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380093610"
+          }
+        ]
+      },
+      {
+        "id": "ad539a23e605a1fea9b1a729fd8376ba47a82d26",
+        "type": "FIX",
+        "text": " MDC: FieldBase should only modify showValueStateMessage when ValueHelp is actually open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380082386"
+          }
+        ]
+      },
+      {
         "id": "b0e41ec5293ad68d67569c4fae0743dac7be0b68",
         "type": "FIX",
         "text": " Field: handle \"\" and null as \"not set\" for additionalValue",

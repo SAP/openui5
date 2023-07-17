@@ -3,6 +3,38 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "7bf3def9ca363e16b7db0f9468cfd658096f87fa",
+        "type": "FEATURE",
+        "text": " sap.m.Avatar: New 'enabled' property"
+      },
+      {
+        "id": "4063b56e7a2e762d3a8930eab302c76dda6d5103",
+        "type": "FEATURE",
+        "text": " sap.tnt.ToolHeader: SearchField focus is now on the search button when there is value on Horizon themes"
+      },
+      {
+        "id": "53ab83c5753938aa72bfda20524842ba1559a050",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Color high-contrast time markers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370019053"
+          }
+        ]
+      },
+      {
+        "id": "f7dad49a7e622cbf6b0c04753663d745296b8d4a",
+        "type": "FIX",
+        "text": " sap.m.Link: fix broken fiori 3 themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380084008"
+          }
+        ]
+      },
+      {
         "id": "bbcec2cf7bd0fbdaea18bf0bd21476ea620e96a7",
         "type": "FIX",
         "text": " sap.ui.core.IconPool: correction for icon 'slim-arrow-up' for theme 'horizon'",
