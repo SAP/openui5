@@ -115,8 +115,11 @@ sap.ui.define([
 		}
 	}
 
-	// make _AggregationCache a _Cache
+	// make _AggregationCache a _Cache, but actively disinherit some critical methods
 	_AggregationCache.prototype = Object.create(_Cache.prototype);
+	_AggregationCache.prototype._delete = null;
+	_AggregationCache.prototype.addTransientCollection = null;
+	_AggregationCache.prototype.getAndRemoveValue = null;
 
 	/**
 	 * Copies the given elements from a cache read into <code>this.aElements</code>.
