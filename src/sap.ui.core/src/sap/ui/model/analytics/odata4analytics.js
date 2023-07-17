@@ -277,8 +277,6 @@ sap.ui.define([
 			//check if a model is given, or we need to create one from the service URI
 			if (oModelReference.oModel) {
 				this._oModel = oModelReference.oModel;
-				// find out which model version we are running
-				this._iVersion = AnalyticalVersionInfo.getVersion(this._oModel);
 				checkForMetadata();
 			}
 			/** @deprecated As of version 1.94.0 */
@@ -288,14 +286,12 @@ sap.ui.define([
 					ODataModelClass = sap.ui.require("sap/ui/model/odata/v2/ODataModel") ||
 						sap.ui.requireSync("sap/ui/model/odata/v2/ODataModel"); // legacy-relevant: fallback for missing dependency
 					this._oModel = new ODataModelClass(oModelReference.sServiceURI);
-					this._iVersion = AnalyticalVersionInfo.V2;
 					checkForMetadata();
 				} else {
 					//default is V1 Model
 					ODataModelClass = sap.ui.require("sap/ui/model/odata/ODataModel") ||
 						sap.ui.requireSync("sap/ui/model/odata/ODataModel"); // legacy-relevant: fallback for missing dependency
 					this._oModel = new ODataModelClass(oModelReference.sServiceURI);
-					this._iVersion = AnalyticalVersionInfo.V1;
 					checkForMetadata();
 				}
 			}

@@ -1846,7 +1846,6 @@ sap.ui.define([
 		assert.strictEqual(oModel._mParameter, mParameter);
 		assert.deepEqual(oModel._oActivatedWorkarounds, {});
 		assert.strictEqual(oModel._oModel, oODataModel);
-		assert.strictEqual(oModel._iVersion, oFixture.iVersion);
 	});
 	});
 });
