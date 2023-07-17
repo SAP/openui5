@@ -71,43 +71,57 @@
 						id="page1"
 						horizontal="false"
 						vertical="true"
-						height="100%">
+						height="100%"
+						class="sapUiContentPadding">
 						<Text text="Home" />
 					</ScrollContainer>
 					<ScrollContainer
 						id="page2"
 						horizontal="false"
 						vertical="true"
-						height="100%">
+						height="100%"
+						class="sapUiContentPadding">
 						<Text text="Applications" />
 					</ScrollContainer>
 					<ScrollContainer
 						id="page3"
 						horizontal="false"
 						vertical="true"
-						height="100%">
+						height="100%"
+						class="sapUiContentPadding">
 						<Text text="Users and Groups" />
 					</ScrollContainer>
 					<ScrollContainer
 						id="page4"
 						horizontal="false"
 						vertical="true"
-						height="100%">
+						height="100%"
+						class="sapUiContentPadding">
 						<Text text="Identity" />
 					</ScrollContainer>
 					<ScrollContainer
 							id="page5"
 							horizontal="false"
 							vertical="true"
-							height="100%">
+							height="100%"
+							class="sapUiContentPadding">
 						<Text text="Provisioning" />
 					</ScrollContainer>
 					<ScrollContainer
 							id="page6"
 							horizontal="false"
 							vertical="true"
-							height="100%">
+							height="100%"
+							class="sapUiContentPadding">
 						<Text text="Monitoring" />
+					</ScrollContainer>
+					<ScrollContainer
+							id="page7"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+						<Text text="Resources" />
 					</ScrollContainer>
 				</pages>
 			</NavContainer>
