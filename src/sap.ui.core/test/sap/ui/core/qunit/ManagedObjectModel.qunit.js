@@ -1002,16 +1002,54 @@ sap.ui.define([
 		this.spy(oBinding3, "checkUpdate");
 		var fnDone = assert.async();
 		oModel.checkUpdate(true, true, fnFilter);
-		oModel.checkUpdate(false, true, fnFilter); // to test foceUpdate wins
+		oModel.checkUpdate(false, true, fnFilter); // to test forceUpdate wins
 		setTimeout(function() { // wait for Model update
 			assert.equal(aTrueBindings.length, 1, "The test is called an delivers true for one binding");
 			assert.deepEqual(aTrueBindings[0], oBinding1, "And this is exactly the first binding");
-			assert.ok(oBinding1.checkUpdate.calledWith(true), "chechUpdate called as forced");
-			assert.ok(oBinding1.checkUpdate.calledOnce, "chechUpdate called only once");
-			assert.notOk(oBinding2.checkUpdate.called, "chechUpdate not called on other Binding");
-			assert.notOk(oBinding3.checkUpdate.called, "chechUpdate not called on other Binding");
+			assert.ok(oBinding1.checkUpdate.calledWith(true), "checkUpdate called as forced");
+			assert.ok(oBinding1.checkUpdate.calledOnce, "checkUpdate called only once");
+			assert.notOk(oBinding2.checkUpdate.called, "checkUpdate not called on other Binding");
+			assert.notOk(oBinding3.checkUpdate.called, "checkUpdate not called on other Binding");
 			fnDone();
 		}, 0);
+	});
+
+	QUnit.test("Check Update with different binding test function async", function (assert) {
+		var aTrueBindings = [];
+		var oModel = this.oManagedObjectModel;
+		var oBinding1 = oModel.bindProperty("/value");
+		var oBinding2 = oModel.bindProperty("/stringValue");
+		var oBinding3 = oModel.bindProperty("/floatValue");
+		oModel.addBinding(oBinding1);
+		oModel.addBinding(oBinding2);
+		oModel.addBinding(oBinding3);
+
+		assert.equal(oModel.getBindings().length, 3, "There are three bindings");
+
+		var fnFilter1 = function (oBinding) {
+			if (oBinding == oBinding1) {
+				aTrueBindings.push(oBinding);
+				return true;
+			}
+			return false;
+		};
+		var fnFilter2 = function (oBinding) {
+			if (oBinding == oBinding2) {
+				aTrueBindings.push(oBinding);
+				return true;
+			}
+			return false;
+		};
+
+		this.spy(oBinding1, "checkUpdate");
+		this.spy(oBinding2, "checkUpdate");
+		this.spy(oBinding3, "checkUpdate");
+		oModel.checkUpdate(true, true, fnFilter1);
+		oModel.checkUpdate(true, true, fnFilter2);
+		oModel.checkUpdate(false, false, fnFilter2);
+		assert.ok(oBinding1.checkUpdate.calledOnce, "checkUpdate called only once");
+		assert.ok(oBinding2.checkUpdate.calledOnce, "checkUpdate called only once");
+		assert.ok(oBinding3.checkUpdate.calledOnce, "checkUpdate called only once");
 	});
 
 	QUnit.test("ManagedObject Model - handle object properties", function(assert) {

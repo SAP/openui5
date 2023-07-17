@@ -1014,12 +1014,13 @@ sap.ui.define([
 			return;
 		}
 		bForceUpdate = this.bForceUpdate || bForceUpdate;
-		fnFilter = !this.fnFilter || this.fnFilter === fnFilter ? fnFilter : undefined; // if different filter set use no filter
 
 		if (this.sUpdateTimer) {
 			clearTimeout(this.sUpdateTimer);
 			this.sUpdateTimer = null;
 			this.bForceUpdate = undefined;
+
+			fnFilter = this.fnFilter === fnFilter ? fnFilter : undefined; // if different filter or no filter set -> use no filter
 			this.fnFilter = undefined;
 		}
 		var aBindings = this.aBindings.slice(0);
