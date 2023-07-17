@@ -356,7 +356,7 @@ sap.ui.define([
 	 * @param {string} sMessage The message.
 	 * @param {sap.ui.core.MessageType} sType Type of the message.
 	 * @private
-	 * @ui5-restricted
+	 * @ui5-restricted sap.ui.integration
 	 */
 	BaseContent.prototype.showMessage = function (sMessage, sType) {
 		var oMessagePopup = this._getMessageContainer();
@@ -379,6 +379,17 @@ sap.ui.define([
 		} else {
 			InvisibleMessage.getInstance().announce(sMessage, InvisibleMessageMode.Polite);
 		}
+	};
+
+	/**
+	 * Hides the message previously shown by showMessage.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 */
+	BaseContent.prototype.hideMessage = function () {
+		var oMessagePopup = this._getMessageContainer();
+		oMessagePopup.destroyItems();
 	};
 
 	BaseContent.prototype.showBlockingMessage = function (mSettings) {

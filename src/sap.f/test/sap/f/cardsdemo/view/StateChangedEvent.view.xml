@@ -25,6 +25,10 @@
 				</Select>
 				<Button text="Refresh Card" press=".onRefresh" type="Emphasized" />
 				<Button text="Refresh Card Data" press=".onRefreshData" />
+				<Button text="Show Message" press=".onShowMessage"
+					visible="{= !${stateChangedEventPage>/messageStripVisible}}" />
+				<Button text="Hide Message" press=".onHideMessage"
+					visible="{= !!${stateChangedEventPage>/messageStripVisible}}" />
 
 				<Button text="Previous Page" press=".onPreviousPage"
 					visible="{= ${stateChangedEventPage>/selectedKey} === 'filter' }" />
