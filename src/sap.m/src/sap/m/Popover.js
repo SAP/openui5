@@ -2545,17 +2545,13 @@ sap.ui.define([
 
 			this._createInternalHeader();
 
-			//this is used in the getAggregation method
+			// this is used in the getAggregation method
 			this._endButton = oButton;
 
+			this._internalHeader.removeContentRight(oOldEndButton);
+
 			if (oButton) {
-				if (oOldEndButton) {
-					this._internalHeader.removeAggregation("contentRight", oOldEndButton, true);
-				}
-				this._internalHeader.insertAggregation("contentRight", oButton, 1, true);
-				this._internalHeader.invalidate();
-			} else {
-				this._internalHeader.removeContentRight(oOldEndButton);
+				this._internalHeader.addContentRight(oButton);
 			}
 
 			return this;
