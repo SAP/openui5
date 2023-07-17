@@ -634,6 +634,7 @@ function(
 
 	// this gets called only with oData Model when first load or filter/sort
 	ListBase.prototype.refreshItems = function(sReason) {
+		this._bRefreshItems = true;
 		if (this._oGrowingDelegate) {
 			// inform growing delegate to handle
 			this._oGrowingDelegate.refreshItems(sReason);
@@ -1630,6 +1631,7 @@ function(
 			oEvent.ctrlKey ||
 			oEvent.altKey ||
 			oEvent.metaKey ||
+			oEvent.code == "Tab" ||
 			this.getMode() !== ListMode.MultiSelect ||
 			!oItem.isSelectable() ||
 			oEvent.which === KeyCodes.F6) {
