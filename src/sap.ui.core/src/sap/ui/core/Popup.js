@@ -3227,7 +3227,7 @@ sap.ui.define([
 	 * @param {object}
 	 *            mParameters contain all necessary parameters
 	 * @param {object}
-	 *            mParameter.that is the control that calls this function.
+	 *            mParameters.that is the control that calls this function.
 	 *            Needed for debug logging info
 	 * @param {object}
 	 *            mParameters.event is the event that is being forwarded
