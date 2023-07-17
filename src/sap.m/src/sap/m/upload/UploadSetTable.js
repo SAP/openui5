@@ -23,10 +23,16 @@ sap.ui.define([
 	"sap/ui/core/dnd/DropInfo",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/m/upload/FilePreviewDialog",
+	"sap/ui/base/Event",
+	"sap/m/Dialog",
+	"sap/m/Label",
+	"sap/m/Input",
+	"sap/m/MessageBox",
+	"sap/m/Button",
 	"sap/ui/base/Event"
 ], function (Table, ToolbarSpacer, UploadSetTableRenderer, FileUploader,
     UploadSetToolbarPlaceholder, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetTableItem, deepEqual, Log, Library, IllustratedMessageType,
-	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo, FilePreviewDialog, Event) {
+	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo, FilePreviewDialog, Event, Dialog, Label, Input, MessageBox, Button, EventBase) {
     "use strict";
 
 	/**
@@ -162,7 +168,7 @@ sap.ui.define([
 				/**
 				 * The event is triggered when the file name is changed.
 				 */
-				fileRenamed: {
+				itemRenamed: {
 					parameters: {
 						/**
 						 * The renamed UI element as an UploadSetTableItem.
@@ -675,6 +681,18 @@ sap.ui.define([
 		return oItem;
 	};
 
+	/**
+	 * API to rename the document of an item.
+	 * @param {sap.m.upload.UploadSetTableItem} oItem, target item.
+	 * @public
+	 */
+	UploadSetTable.prototype.renameItem = function (oItem) {
+		if (oItem && oItem instanceof UploadSetTableItem) {
+			const oDialog = this._getFileRenameDialog(oItem);
+			oDialog.open();
+		}
+	};
+
 	/* ============== */
 	/* Private methods */
 	/* ============== */
@@ -962,6 +980,155 @@ sap.ui.define([
 			this._filePreviewDialogControl.setShowCarouselArrows(this.getShowCarouselArrows());
 			aitems.forEach((item) => this._filePreviewDialogControl.insertAddDiitionalFooterButton(item));
 			this._filePreviewDialogControl.open();
+		}
+	};
+
+	/**
+	* Internal API return the dialog for document rename.
+	* @param {sap.m.upload.UploadSetTableItem} oItem item to be renamed.
+	* @private
+	* @returns {sap.m.Dialog} oDialog, created dialog instance
+	*/
+	UploadSetTable.prototype._getFileRenameDialog = function(oItem) {
+		const oSplit = UploadSetTableItem._splitFileName(oItem.getFileName());
+		let iMaxLength = this.getMaxFileNameLength();
+		const iFileExtensionLength = oSplit.extension ? oSplit.extension.length + 1 : 0;
+			iMaxLength = iMaxLength ? iMaxLength : 0;
+		let iNameMaxLength = iMaxLength - iFileExtensionLength;
+		    iNameMaxLength = iNameMaxLength < 0 ? 0 : iNameMaxLength;
+
+		// Input field
+		const oInput = new Input({
+			type: Library.InputType.Text,
+			value: oSplit.name,
+			width: "90%",
+			maxLength: iNameMaxLength,
+			liveChange: [this._handleItemNameValidation, this]
+		});
+		oInput.addStyleClass("sapUiTinyMarginTop");
+		oInput.addStyleClass("sapUiSmallMarginBegin");
+		// Label for Input
+		const oLabel = new Label({
+			text: this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_INPUT_LABEL"),
+			labelFor: oInput.getId()
+		});
+		oLabel.addStyleClass("sapUiSmallMarginTop");
+		oLabel.addStyleClass("sapUiSmallMarginBegin");
+		oLabel.addStyleClass("sapUiSmallMarginEnd");
+		// Dialog creation
+		var oDialog = new Dialog({
+			title: this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_DIALOG_TEXT"),
+			contentWidth: "22.5rem",
+			contentHeight: "12rem",
+			content: [oLabel,oInput],
+			beginButton: new Button({
+				type: Library.ButtonType.Emphasized,
+				text: this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_APPLY_BUTTON_TEXT"),
+				press: this._handleItemRenameConfirmation.bind(this),
+				enabled: oInput.getValueState() !== "Error"
+			}),
+			endButton: new Button({
+				text: this._oRb.getText("UPLOADSET_WITH_TABLE_CANCELBUTTON_TEXT"),
+				press: this._handleItemRenameCancel.bind(this)
+			}),
+			customData: {
+				key: "item",
+				value: oItem
+			},
+			afterClose: function () {
+				oDialog.destroy();
+			}
+		});
+
+		return oDialog;
+	};
+
+	/**
+	* Handler for item rename cancel operation.
+	* @param {object} oEvent cancel button click event.
+	* @private
+	*/
+	UploadSetTable.prototype._handleItemRenameCancel = function(oEvent) {
+		const oDialog = oEvent.getSource().getParent();
+		const oInput = oDialog.getContent()[1];
+		const oItem = oDialog && oDialog.data ? oDialog.data().item : null;
+		const oSplit = UploadSetTableItem._splitFileName(oItem.getFileName());
+		// Check if there are changes made to the existing file name.
+		if (oItem && oInput && oSplit.name !== oInput.getValue()) {
+			MessageBox.warning(this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_DISCARD_POPUP_CHANGES_TEXT"), {
+				actions: [this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_SAVE_BUTTON_TEXT"), this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_DISCARD_CHANGES_BUTTON_TEXT")],
+				emphasizedAction: this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_SAVE_BUTTON_TEXT"),
+				onClose: (sAction) => {
+					if (sAction !== this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_SAVE_BUTTON_TEXT")) {
+						oDialog.close();
+					} else {
+						// fire beginbutton event to save the filename
+						var oBeginButton = oDialog.getBeginButton();
+						var oEvent = new EventBase("click", oBeginButton);
+						oBeginButton.firePress(oEvent);
+					}
+				}
+			});
+		} else {
+			oDialog.close();
+		}
+	};
+
+	/**
+	* Handler for item rename confirm operation.
+	* @param {object} oEvent confirm button click event.
+	* @private
+	*/
+	UploadSetTable.prototype._handleItemRenameConfirmation = function(oEvent) {
+		const oDialog = oEvent.getSource().getParent();
+		const oInput = oDialog.getContent()[1];
+		if (oInput && oInput.getValueState() === "Error") {
+			oInput.focus(oInput);
+			oInput.setShowValueStateMessage(true);
+			return;
+		}
+		const oItem = oDialog && oDialog.data ? oDialog.data().item : null;
+		const oSplit = UploadSetTableItem._splitFileName(oItem.getFileName());
+		// update only if there is change
+		if (oItem && oSplit.name !== oInput.getValue()) {
+			if (oSplit && oSplit.extension) {
+				oItem.setFileName(oInput.getValue() + "." + oSplit.extension);
+			} else {
+				oItem.setFileName(oInput.getValue());
+			}
+			oDialog.close();
+			this.fireItemRenamed({item: oItem});
+		} else {
+			oDialog.close();
+		}
+	};
+
+	/**
+	* Handler for file name validation.
+	* @param {object} oEvent Input keyevent.
+	* @private
+	*/
+	UploadSetTable.prototype._handleItemNameValidation = function(oEvent) {
+		const oInput = oEvent.getSource();
+		let sValue = oInput.getValue();
+		sValue = sValue.trim();
+
+		// empty file validation
+		if (sValue === "") {
+			oInput.setProperty("valueState", "Error", true);
+			oInput.setValueStateText(this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_EMPTY_NAME_VALIDATION_ERROR_MESSAGE"));
+			oInput.setShowValueStateMessage(true);
+			return;
+		}
+
+		const oCharacterRegex = new RegExp(/[@#$]/);
+		if (oCharacterRegex.test(sValue)) {
+			oInput.setShowValueStateMessage(true);
+			oInput.setProperty("valueState", "Error", true);
+			oInput.setValueStateText(this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_SPLC_VALIDATION_ERROR_MESSAGE", '@#$'));
+		} else {
+			oInput.setShowValueStateMessage(false);
+			oInput.setProperty("valueState", "None", true);
 		}
 	};
 

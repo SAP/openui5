@@ -31,6 +31,7 @@
             beforeInitiatingItemUpload="onBeforeInitiatingItemUpload"
             beforeUploadStarts="onBeforeUploadStarts"
             itemValidationHandler=".itemValidationCallback"
+            itemRenamed="onDocumentRenamedSuccess"
         >
             <!-- ToolBar for Table -->
             <headerToolbar>
