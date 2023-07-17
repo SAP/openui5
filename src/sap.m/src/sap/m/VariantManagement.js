@@ -2376,21 +2376,21 @@ sap.ui.define([
 				}
 			}.bind(this));
 
-			this._getDeletedItems().some(function(sItemKey) {
-				if (sItemKey === this.getSelectedKey()) {
-					var sKey = this.getStandardVariantKey();
+			// this._getDeletedItems().some(function(sItemKey) {
+			// 	if (sItemKey === this.getSelectedKey()) {
+			// 		var sKey = this.getStandardVariantKey();
 
-					this.setModified(false);
-					this.setSelectedKey(sKey);
+			// 		this.setModified(false);
+			// 		this.setSelectedKey(sKey);
 
-					this.fireSelect({
-						key: sKey
-					});
-					return true;
-				}
+			// 		this.fireSelect({
+			// 			key: sKey
+			// 		});
+			// 		return true;
+			// 	}
 
-				return false;
-			}.bind(this));
+			// 	return false;
+			// }.bind(this));
 		}
 
 		if (this._getRenamedItems().indexOf(this.getSelectedKey()) >= 0) {
