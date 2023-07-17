@@ -33,7 +33,7 @@ sap.ui.define([
 
 		/**
 		 * Returns the extension point information by view ID.
-		 * @param {string} mPropertyBag - Object with parameters as properties
+		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} mPropertyBag.viewId - ID of the view
 		 * @returns {object} map of extension points
 		 */

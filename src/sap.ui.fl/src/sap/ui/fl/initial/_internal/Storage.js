@@ -118,7 +118,7 @@ sap.ui.define([
 	/**
 	 * Provides the flex bundle data for a given application based on the application reference and its version.
 	 *
-	 * @param {map} mPropertyBag properties needed by the connectors
+	 * @param {object} mPropertyBag properties needed by the connectors
 	 * @param {string} mPropertyBag.reference reference of the application for which the flex data is requested
 	 * @param {object} mPropertyBag.partialFlexData contains partial FlexState
 	 * @param {string} [mPropertyBag.componentName] componentName of the application which may differ from the reference in case of an app variant
@@ -136,7 +136,7 @@ sap.ui.define([
 	/**
 	 * Provides the flex data for a given application based on the configured connectors, the application reference and its version.
 	 *
-	 * @param {map} mPropertyBag properties needed by the connectors
+	 * @param {object} mPropertyBag properties needed by the connectors
 	 * @param {string} mPropertyBag.reference reference of the application for which the flex data is requested
 	 * @param {string} [mPropertyBag.componentName] componentName of the application which may differ from the reference in case of an app variant
 	 * @param {string} [mPropertyBag.cacheKey] cacheKey which can be used to etag / cachebuster the request
