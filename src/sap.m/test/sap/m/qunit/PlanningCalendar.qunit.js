@@ -1790,6 +1790,7 @@ sap.ui.define([
 		assert.equal(oRowHeader.getTitle(), "Test", "row header Title");
 		assert.equal(oRowHeader.getDescription(), "Test", "row header Text");
 		assert.equal(oRowHeader.getIcon(), "sap-icon://sap-ui5", "row header icon");
+		assert.equal(oRowHeader.getAvatar().getSrc(), "sap-icon://sap-ui5", "row header avatar icon");
 	});
 
 	QUnit.test("Row header icon", function(assert) {
@@ -1799,10 +1800,12 @@ sap.ui.define([
 		oRow.setIcon("sap-icon://sap-ui5");
 		Core.applyChanges();
 
+		assert.strictEqual(oRowHeader.getAvatar().getSrc(), oRow.getIcon(), "row header icon is sync with Avatar img");
+
 		oRow.setIcon("../../ui/unified/images/m_01.png");
 		Core.applyChanges();
 
-		assert.ok(oRowHeader.getDomRef().querySelector("img"), "row header icon is set to an image");
+		assert.strictEqual(oRowHeader.getAvatar().getSrc(), oRow.getIcon(), "row header icon is sync with Avatar img");
 	});
 
 	QUnit.test("specialDates in relative period not rendered", function(assert){
