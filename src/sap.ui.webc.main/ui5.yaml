@@ -55,6 +55,7 @@ customConfiguration:
           - "!test/"
           - "!**/*-static.js"
           - "!**/api.json"
+          - "!**/custom-elements.json"
         outputPath: "src/sap/ui/webc/main/thirdparty/" # where to create the UI5 controls
         generation: # if set, control wrappers will be generated
           suffix: "-ui5"
