@@ -1498,10 +1498,10 @@ sap.ui.define([
 	 *   If <code>true</code>, deletion fails if the entity does not exist (HTTP status code 404 or
 	 *   412 due to the <code>If-Match: *</code> header); otherwise we assume that it has already
 	 *   been deleted by someone else and report success
-	 * @returns {Promise}
-	 *   A promise resolving when the delete succeeded, and rejecting with an instance of Error
-	 *   otherwise. In the latter case the HTTP status code of the response is given in the error's
-	 *   property <code>status</code>.
+	 * @returns {Promise<void>}
+	 *   A promise resolving without a defined result when the delete succeeded, and rejecting with
+	 *   an instance of Error otherwise. In the latter case the HTTP status code of the response is
+	 *   given in the error's property <code>status</code>.
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> the path does not start with a '/',
@@ -2520,7 +2520,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oEntityContext
 	 *   A context in this model which must point to a non-contained OData entity
-	 * @returns {Promise}
+	 * @returns {Promise<string>}
 	 *   A promise which is resolved with the canonical path (e.g. "/SalesOrderList('0500000000')")
 	 *   in case of success, or rejected with an instance of <code>Error</code> in case of failure,
 	 *   e.g. when the given context does not point to an entity

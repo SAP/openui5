@@ -246,7 +246,7 @@ sap.ui.define([
 			 *   "14.5.12 Expression edm:Path" and "14.5.13 Expression edm:PropertyPath" where it
 			 *   might be used as a first segment (since 1.71.0). This does not apply to annotations
 			 *   on a parameter (since 1.76.0).
-			 * @returns {string|Promise}
+			 * @returns {string|Promise<string>}
 			 *   A data binding, or a fixed text, or a sequence thereof, or a <code>Promise</code>
 			 *   resolving with that string, for example if not all type information is already
 			 *   available
@@ -432,7 +432,7 @@ sap.ui.define([
 			 * @param {string} oDetails.schemaChildName
 			 *   The qualified name of the schema child where the computed annotation has been
 			 *   found, for example "name.space.EntityType"
-			 * @returns {sap.ui.model.odata.v4.ValueListType|Promise}
+			 * @returns {sap.ui.model.odata.v4.ValueListType|Promise<sap.ui.model.odata.v4.ValueListType>}
 			 *   The type of the value list or a <code>Promise</code> resolving with the type of the
 			 *   value list or rejected, if the property cannot be found in the metadata
 			 * @throws {Error}
@@ -486,7 +486,7 @@ sap.ui.define([
 			 * @param {string} oDetails.schemaChildName
 			 *   The qualified name of the schema child where the computed annotation has been
 			 *   found, for example "name.space.EntityType"
-			 * @returns {boolean|Promise}
+			 * @returns {boolean|Promise<boolean>}
 			 *   <code>true</code> if the given path ends with "$count" or with a multi-valued
 			 *   structural or navigation property, <code>false</code> otherwise. If
 			 *   <code>oDetails.$$valueAsPromise</code> is <code>true</code> a <code>Promise</code>
@@ -546,7 +546,7 @@ sap.ui.define([
 			 * @param {sap.ui.model.Context} oDetails.context
 			 *   Points to the given raw value, that is
 			 *   <code>oDetails.context.getProperty("") === vRawValue</code>
-			 * @returns {string|Promise|undefined}
+			 * @returns {string|Promise<string|undefined>|undefined}
 			 *   A data binding or a fixed text or a sequence thereof or <code>undefined</code>. If
 			 *   <code>oDetails.$$valueAsPromise</code> is <code>true</code> a <code>Promise</code>
 			 *   may be returned resolving with the value for the label.

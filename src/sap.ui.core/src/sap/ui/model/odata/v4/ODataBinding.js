@@ -1362,7 +1362,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used
-	 * @returns {Promise}
+	 * @returns {Promise<void>}
 	 *   A promise which resolves without a defined result when the refresh is finished and rejects
 	 *   with an instance of <code>Error</code> if the refresh failed
 	 * @throws {Error}
@@ -1390,7 +1390,7 @@ sap.ui.define([
 	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}. Resets also
 	 * invalid user input.
 	 *
-	 * @returns {Promise}
+	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result as soon as all changes in the binding
 	 *   itself and all dependent bindings are canceled (since 1.72.0)
 	 * @throws {Error} If
