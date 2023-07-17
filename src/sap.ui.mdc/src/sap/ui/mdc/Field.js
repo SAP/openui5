@@ -522,7 +522,7 @@ sap.ui.define([
 		var vOldValue = this.getValue();
 		var vOldAdditionalValue = this.getAdditionalValue();
 
-		if (aConditions.length === 0 && vOldValue === null && vOldAdditionalValue === null) {
+		if (aConditions.length === 0 && _isValueNull(vOldValue) && _isValueNull(vOldAdditionalValue)) {
 			// Field initialized from setter -> cannot have a condition -> no update needed
 			return;
 		}
@@ -590,6 +590,26 @@ sap.ui.define([
 		return false; // Field cannot be a searchField (not supported for the moment)
 
 	};
+
+	function _isValueNull(vValue) {
+
+		var bNull = false;
+
+		if (vValue === null) {
+			bNull = true;
+		} else if (Array.isArray(vValue)) {
+			bNull = true;
+			for (var i = 0; i < vValue.length; i++) {
+				if (vValue[i] !== null) {
+					bNull = false;
+					break;
+				}
+			}
+		}
+
+		return bNull;
+
+	}
 
 	/**
 	 * Sets a new value for property {@link #getConditions conditions}.
