@@ -103,7 +103,8 @@ sap.ui.define([
 					},
 					hasPersoConnector: function() {
 						return false;
-					}
+					},
+					getUserId: function() {}
 				});
 			}.bind(this));
 		},

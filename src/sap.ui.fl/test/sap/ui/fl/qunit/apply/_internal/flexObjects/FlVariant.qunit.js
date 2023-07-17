@@ -1,13 +1,11 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Core,
 	ControlVariantUtils,
 	FlexObjectFactory,
 	FlVariant,
