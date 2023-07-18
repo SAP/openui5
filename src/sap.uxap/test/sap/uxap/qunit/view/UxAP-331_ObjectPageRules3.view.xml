@@ -15,7 +15,7 @@
 					  upperCaseAnchorBar="false">
 
 		<headerTitle>
-			<ObjectPageDynamicHeaderTitle primaryArea="Left">
+			<ObjectPageDynamicHeaderTitle>
 				<breadcrumbs>
 					<m:Breadcrumbs>
 						<m:Link text='Page 1'/>

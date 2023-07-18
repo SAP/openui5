@@ -4,8 +4,6 @@ sap.ui.define([
 ], function (Controller, fioriLibrary) {
 	"use strict";
 
-	var DynamicPageTitleArea = fioriLibrary.DynamicPageTitleArea;
-
 	return Controller.extend("sap.tnt.sample.InfoLabelInDynamicPage.C", {
 
 		getPage: function () {
@@ -14,8 +12,9 @@ sap.ui.define([
 
 		toggleAreaPriority: function () {
 			var oTitle = this.getPage().getTitle(),
-				sNewPrimaryArea = oTitle.getPrimaryArea() === DynamicPageTitleArea.Begin ? DynamicPageTitleArea.Middle : DynamicPageTitleArea.Begin;
-			oTitle.setPrimaryArea(sNewPrimaryArea);
+				sDefaultShrinkRatio = oTitle.getMetadata().getProperty("areaShrinkRatio").getDefaultValue(),
+				sNewShrinkRatio = oTitle.getAreaShrinkRatio() === sDefaultShrinkRatio ? "1.6:1:1.6" : sDefaultShrinkRatio;
+			oTitle.setAreaShrinkRatio(sNewShrinkRatio);
 		},
 
 		onToggleFooter: function () {
