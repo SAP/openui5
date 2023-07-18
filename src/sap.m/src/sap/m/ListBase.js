@@ -1336,7 +1336,6 @@ function(
 
 	// fire updateFinished event delayed to make sure rendering phase is done
 	ListBase.prototype._fireUpdateFinished = function(oInfo) {
-		this._hideBusyIndicator();
 		setTimeout(function() {
 			this._bItemNavigationInvalidated = true;
 			this.fireUpdateFinished({
