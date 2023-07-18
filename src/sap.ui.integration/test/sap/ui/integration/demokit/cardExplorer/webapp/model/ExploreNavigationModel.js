@@ -945,7 +945,7 @@ sap.ui.define([
 								]
 							},
 							{
-								title: 'Media, header at bottom',
+								title: 'Media, Header at Bottom',
 								key: 'mediaBottom',
 								files: [
 									{
@@ -976,7 +976,7 @@ sap.ui.define([
 								]
 							},
 							{
-								title: 'Buy bus ticket',
+								title: 'Buy Bus Ticket',
 								key: 'busTicket',
 								files: [
 									{
@@ -1033,7 +1033,7 @@ sap.ui.define([
 								]
 							},
 							{
-								title: 'Trigger action',
+								title: 'Trigger Action',
 								key: 'triggerAction',
 								files: [
 									{
@@ -1107,6 +1107,81 @@ sap.ui.define([
 										url: '/samples/component/noDataMessage/View.view.xml',
 										name: 'View.view.xml',
 										key: 'View.view.xml'
+									}
+								]
+							},
+							{
+								title: 'Request Data',
+								key: 'requestData',
+								mockServer: true,
+								files: [
+									{
+										url: '/samples/component/requestData/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/component/requestData/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/component/requestData/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									},
+									{
+										url: '/samples/component/requestData/Main.controller.js',
+										name: 'Main.controller.js',
+										key: 'Main.controller.js'
+									}
+								]
+							},
+							{
+								title: 'Component Preload',
+								key: 'componentPreload',
+								mockServer: true,
+								isPreloadProject: true,
+								files: [
+									{
+										url: '/samples/component/componentPreload/ui5.yaml',
+										name: 'ui5.yaml',
+										key: 'ui5.yaml'
+									},
+									{
+										url: '/samples/component/componentPreload/package.json',
+										name: 'package.json',
+										key: 'package.json'
+									},
+									{
+										url: '/samples/component/componentPreload/card/manifest.json',
+										name: 'card/manifest.json',
+										key: 'card/manifest.json'
+									},
+									{
+										url: '/samples/component/componentPreload/card/Component.js',
+										name: 'card/Component.js',
+										key: 'card/Component.js'
+									},
+									{
+										url: '/samples/component/componentPreload/card/View.view.xml',
+										name: 'card/View.view.xml',
+										key: 'card/View.view.xml'
+									},
+									{
+										url: '/samples/component/componentPreload/card/Main.controller.js',
+										name: 'card/Main.controller.js',
+										key: 'card/Main.controller.js'
+									},
+									{
+										url: '/samples/component/componentPreload/card/Image.png',
+										name: 'card/Image.png',
+										key: 'card/Image.png'
+									},
+									{
+										url: '/samples/component/componentPreload/card/dt/Configuration.js',
+										name: 'card/dt/Configuration.js',
+										key: 'card/dt/Configuration.js'
 									}
 								]
 							}

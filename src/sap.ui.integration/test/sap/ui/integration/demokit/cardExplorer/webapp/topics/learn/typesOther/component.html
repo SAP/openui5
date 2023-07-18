@@ -21,26 +21,36 @@
 				This allows great flexibility and as such, the developer is responsible to follow the guidelines to achieve
 				consistent user experience.
 			</p>
+
 			<h2 id="usage">Usage</h2>
 			<ul>
 				<li>Use this card type only if there is no other card type which can fulfill your requirements.</li>
 				<li>The component in the card must be simple. The card should be used only to navigate to an application
 					where the actual work can be done.</li>
 			</ul>
+
 			<h2 id="lifeCycleAndApi">Component lifecycle and API</h2>
 			<ul>
-				<li>Inside the Component.js file of your Component card, you can use the lifecycle method
-					<code>onCardReady(oCard)</code> to access the card itself. Check this <a
-						href="../../../index.html#/explore/component/advanced" target="_parent">Advanced component
-						example</a>.</li>
-				<li>Inside <code>onCardReady(oCard)</code> you can access public methods of the card like
-					<code>oCard.getParameters()</code>, <code>oCard.getManifestEntry()</code> and others. Here is the <a
-						data-demokit-href="#/api/sap.ui.integration.widgets.Card" target="_blank">Card API reference</a>.</li>
-				<li>For working with SAP Cloud Platform Destinations, check the documentation about <a
-						href="../../../index.html#/learn/features/destinations" target="_parent">Destinations</a> and
-					also this <a href="../../../index.html#/explore/destinations/component" target="_parent">Component
-						Card Destinations Sample</a>.</li>
+				<li>
+					Inside the Component.js file of your Component Card, you can use the lifecycle method <code>onCardReady(oCard)</code> to access the card itself.
+					Check this <a href="../../../index.html#/explore/component/advanced" target="_parent">Advanced component example</a>.
+				</li>
+				<li>
+					Inside <code>onCardReady(oCard)</code> you can access public methods of the card like
+					<code>oCard.getParameters()</code>, <code>oCard.getManifestEntry()</code> and others.
+					Here is the <a data-demokit-href="#/api/sap.ui.integration.widgets.Card" target="_blank">Card API reference</a>.
+				</li>
+				<li>
+					For working with SAP BTP Destinations, check the documentation about
+					<a href="../../../index.html#/learn/features/destinations" target="_parent">Destinations</a>
+					and also this <a href="../../../index.html#/explore/destinations/component" target="_parent">Component Card Destinations Sample</a>.
+				</li>
+				<li>
+					For requesting data, use the card method <code>card.request(...)</code>.
+					Check the <a href="../../../index.html#/explore/component/requestData" target="_parent">Request Data example</a>.
+				</li>
 			</ul>
+
 			<h2 id="properties">Properties</h2>
 			<p>The Component Card allows configuration of the content.</p>
 			<div class="tableWrapper">
@@ -63,9 +73,15 @@
 					</tr>
 				</table>
 			</div>
-			<h2 id="example">Example</h2>
-			<p>Create a card manifest and include the manifest for the component in the same file:
+
+			<h2 id="componentPreload">Component Preload</h2>
+			<p>
+				For production environments all the resources of the card should be packed into one single file called Component-preload.js.
+				For instructions how to build it read <a href="../../../index.html#/learn/bundle/componentPreload" target="_parent">Component Preload</a>.
 			</p>
+			
+			<h2 id="example">Example</h2>
+			<p>Create the manifest file. It is the same for the card and the component</p>
 			<pre class="lang-json">{
 	"sap.card": {
 		"type": "Component",
@@ -74,9 +90,9 @@
 			"subTitle": "Buy a single drive ticket for a date"
 		}
 	},
-
 	"sap.app": {
 		"id": "sap.myapp.bookingComponent",
+		"type": "Card",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}

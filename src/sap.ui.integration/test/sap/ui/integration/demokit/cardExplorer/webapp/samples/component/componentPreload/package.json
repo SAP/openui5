@@ -1,0 +1,17 @@
+{
+	"name": "component-card-preload-sample",
+	"version": "1.0.0",
+	"description": "Component Card Preload",
+	"author": "SAP SE (https://www.sap.com)",
+	"license": "Apache-2.0",
+	"keywords": [
+		"card",
+		"ui5"
+	],
+	"scripts": {
+		"build": "ui5 build"
+	},
+	"devDependencies": {
+		"@ui5/cli": "^3.3.2"
+	}
+}

@@ -269,7 +269,14 @@ sap.ui.define([
 				title: 'Card Bundle',
 				icon: 'sap-icon://attachment-zip-file',
 				target: 'learnDetail',
-				key: 'bundle'
+				key: 'bundle',
+				items: [
+					{
+						title: 'Component Preload',
+						target: 'learnDetail',
+						key: 'componentPreload'
+					}
+				]
 			},
 			{
 				title: 'Card Formatters',

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Sizing</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1 id="preload">
+				Component Preload
+			</h1>
+			<p>
+				The Component Cards include multiple files - Component.js, View.view.xml, Main.controller.js, and others.
+				For productive environments they should all be bundled into one single file called Component-preload.js.
+			</p>
+			<p>
+				The recommended way to generate Component-preload.js is to use the <a href="https://sap.github.io/ui5-tooling" target="_blank" rel="noopener noreferrer">UI5 Tooling</a>.
+				To generate the bundle, follow these steps:
+			</p>
+			<ol>
+				<li>Initiate an NPM project with <code>npm init</code></li>
+				<li>Add dev dependency to the UI5 Tooling - <code>npm install @ui5/cli --save-dev</code></li>
+				<li>
+					Add build script into the generated "package.json" file -
+					<pre class="lang-json">
+"scripts": {
+	"build": "ui5 build"
+}
+</pre>
+				</li>
+				<li>Put all card files into a folder called "card"</li>
+				<li>
+					Create ui5.yaml and configure it how to find the "card" folder
+					<pre class="lang-yaml">
+specVersion: "3.0"
+type: application
+metadata:
+  name: your-project-name
+resources:
+  configuration:
+    paths:
+      webapp: card
+</pre>
+				</li>
+				<li>
+					<p>Finally, the folder structure should look like this:</p>
+					<pre class="lang-plaintext">
+yourCardPackage
+|--  card
+|	|--  dt
+|		|--  Configuration.js
+|	|--  i18n
+|		|--  messagebundle.properties
+|		|--  messagebundle_en.properties
+|		|--  messagebundle_de.properties
+|	|--  images
+|		|-- Image.png
+|	|--  manifest.json
+|	|--  Component.js
+|	|--  View.view.xml
+|	|--  Main.controller.js
+|--  ui5.yaml
+|--  package.json
+</pre>
+				</li>
+				<li>
+					Execute <code>npm build</code>. This will generate "dist" folder, which contains the production-ready Component-preload.js and
+					the rest of the files that are not part of it, like images.
+				</li>
+			</ol>
+			<p>
+				<b>Note:</b> By default, the UI5 Tooling also includes the "dt" folder into the Component-preload.js.
+				As it is used only during card configuration, you have to remove the "dt" folder.
+			</p>
+			<pre class="lang-yaml">
+builder:
+  componentPreload:
+    excludes:
+      - "your/component/card/dt/*"
+</pre>
+			<p>
+				There are many options provided by the UI5 Tooling that the card developer should use to create the most optimal preload for his card.
+				For more information, see <a href="https://sap.github.io/ui5-tooling/stable/pages/Configuration" rel="noopener noreferrer" target="_blank">UI5 Tooling - Configuration</a> section.
+			</p>
+
+			<h2 id="example">Example</h2>
+			<a class="try-button" href="../../../index.html#/explore/component/componentPreload" target="_parent">Try it Out</a>
+		</div>
+	</div>
+</body>
+
+</html>
