@@ -17,8 +17,10 @@
 				<Property Name="AccountingDocumentItem" Type="Edm.String" MaxLength="3" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:label="Line Item" sap:creatable="false" sap:updatable="false"/>
 				<Property Name="AmountInCompanyCodeCurrency" Type="Edm.String" MaxLength="5" sap:aggregation-role="measure" sap:display-format="UpperCase" sap:label="Amount" sap:creatable="false" sap:unit="Currency" sap:updatable="false"/>
 				<Property Name="CompanyCode" Type="Edm.String" MaxLength="4" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:text="CompanyName" sap:label="Company Code" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+				<Property Name="CompanyName" Type="Edm.String" MaxLength="25" sap:unicode="false" sap:label="Company Name" sap:quickinfo="Name of Company Code or Company" sap:creatable="false" sap:updatable="false" />
 				<Property Name="Currency" Type="Edm.String" MaxLength="5" sap:semantics="currency-code" sap:aggregation-role="dimension" sap:label="Currency"/>
 				<Property Name="Customer" Type="Edm.String" MaxLength="10" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:text="CustomerName" sap:label="Customer" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+				<Property Name="CustomerName" Type="Edm.String" MaxLength="80" sap:unicode="false" sap:label="Customer Name" sap:creatable="false" sap:updatable="false" />
 				<Property Name="GeneratedID" Type="Edm.String" Nullable="false" sap:aggregation-role="dimension" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
 				<!-- property with sap:value-list but no value list provided in separate load -->
 				<Property Name="Invalid" Type="Edm.String" sap:value-list="standard"/>

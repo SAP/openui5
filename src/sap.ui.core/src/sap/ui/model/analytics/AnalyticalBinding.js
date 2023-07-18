@@ -2291,6 +2291,7 @@ sap.ui.define([
 			var aAggregationLevel = that.aMaxAggregationLevel.slice(0, iChildGroupToLevel + 1);
 			oAnalyticalQueryRequest.setAggregationLevel(aAggregationLevel);
 
+			const aGroupingSorters = [];
 			for (var l = 0; l < aAggregationLevel.length; l++) {
 				var oDimensionDetails = that.oDimensionDetailsSet[aAggregationLevel[l]];
 				var bIncludeText = (oDimensionDetails.textPropertyName != undefined);
@@ -2299,7 +2300,7 @@ sap.ui.define([
 
 				// define a default sort order in case no sort criteria have been provided externally
 				if (oDimensionDetails.grouped) {
-					oAnalyticalQueryRequest.getSortExpression().addSorter(aAggregationLevel[l], odata4analytics.SortOrder.Ascending);
+					aGroupingSorters.push(new Sorter(aAggregationLevel[l]));
 				}
 			}
 
@@ -2357,12 +2358,7 @@ sap.ui.define([
 			}
 
 			// (6) set sort order
-			var oSorter = oAnalyticalQueryRequest.getSortExpression();
-			for (var k = 0; k < that.aSorter.length; k++) {
-				if (that.aSorter[k]) {
-					oSorter.addSorter(that.aSorter[k].sPath, that.aSorter[k].bDescending ? odata4analytics.SortOrder.Descending : odata4analytics.SortOrder.Ascending);
-				}
-			}
+			that._mergeAndAddSorters(aGroupingSorters, oAnalyticalQueryRequest.getSortExpression());
 
 			// (7) set result page boundaries
 			if (iLength == 0) {
@@ -4746,7 +4742,7 @@ sap.ui.define([
 					bIncludeFormattedValue, bIncludeUnitProperty);
 		}
 
-		// add the sorters
+		// add the sorters, no need to merge with grouping sorters as no grouping is used
 		var oSortExpression = oAnalyticalQueryRequest.getSortExpression();
 		oSortExpression.clear();
 		for (var i = 0; i < this.aSorter.length; i++) {
@@ -4844,24 +4840,69 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalBinding.prototype._addSorters = function (oSortExpression, aGroupingSorters) {
-		var bCanApplySortersToGroups = this._canApplySortersToGroups(),
-			aSorters = bCanApplySortersToGroups
-				? this.aSorter
-				: [].concat(aGroupingSorters).concat(this.aSorter);
-
-		function addSorter(bIgnoreIfAlreadySorted, oSorter) {
-			oSortExpression.addSorter(oSorter.sPath,
-				oSorter.bDescending
-					? odata4analytics.SortOrder.Descending
-					: odata4analytics.SortOrder.Ascending,
-				bIgnoreIfAlreadySorted);
+		if (this._canApplySortersToGroups()) {
+			this.aSorter.forEach((oApplicationSorter) => {
+				AnalyticalBinding._addSorter(oApplicationSorter, oSortExpression);
+			});
+			aGroupingSorters.forEach((oGroupingSorter) => {
+				AnalyticalBinding._addSorter(oGroupingSorter, oSortExpression, true);
+			});
+			return;
 		}
+		this._mergeAndAddSorters(aGroupingSorters, oSortExpression);
+	};
 
-		aSorters.forEach(addSorter.bind(null, false));
-		if (bCanApplySortersToGroups) {
-			// grouping sorters must not overwrite sort order
-			aGroupingSorters.forEach(addSorter.bind(null, true));
-		}
+	/**
+	 * Adds the given sorter to the given sort expression. If the parameter <code>bIgnoreIfAlreadySorted</code> is set
+	 * to <code>true</code> the sorter is not added to the sort expression if it is already contained in the sort
+	 * expression.
+	 *
+	 * @param {sap.ui.model.Sorter} oSorter
+	 *   The sorter to add
+	 * @param {sap.ui.model.analytics.odata4analytics.SortExpression} oSortExpression
+	 *   The sort expression to which the given sorter is added
+	 * @param {boolean} [bIgnoreIfAlreadySorted=false]
+	 *   If there is already a sorter for that property, ignore this call
+	 *
+	 * @private
+	 */
+	AnalyticalBinding._addSorter = function (oSorter, oSortExpression, bIgnoreIfAlreadySorted) {
+		oSortExpression.addSorter(oSorter.sPath,
+			oSorter.bDescending
+				? odata4analytics.SortOrder.Descending
+				: odata4analytics.SortOrder.Ascending,
+			bIgnoreIfAlreadySorted);
+	};
+
+	/**
+	 * Merges the given grouping sorters with this binding's application sorters and adds them to the given
+	 * sort expression.
+	 *
+	 * @param {sap.ui.model.Sorter[]} aGroupingSorters
+	 *   The grouping sorters to add to the given sort expression
+	 * @param {sap.ui.model.analytics.odata4analytics.SortExpression} oSortExpression
+	 *   The sort expression to which the given grouping sorters as well as this binding's application sorters are added
+	 *
+	 * @private
+	 */
+	AnalyticalBinding.prototype._mergeAndAddSorters = function (aGroupingSorters, oSortExpression) {
+		const aApplicationSorters = this.aSorter.slice();
+		aGroupingSorters.forEach((oGroupingSorter) => {
+			const sDimensionName = oGroupingSorter.sPath;
+			for (let i = 0; i < aApplicationSorters.length; i += 1) {
+				const oApplicationSorter = aApplicationSorters[i];
+				const sPath = oApplicationSorter.sPath;
+				if (sPath === sDimensionName || this.oDimensionDetailsSet[sDimensionName].textPropertyName === sPath) {
+					AnalyticalBinding._addSorter(oApplicationSorter, oSortExpression);
+					aApplicationSorters.splice(i, 1);
+					break;
+				}
+			}
+			AnalyticalBinding._addSorter(oGroupingSorter, oSortExpression, true);
+		});
+		aApplicationSorters.forEach((oApplicationSorter) => {
+			AnalyticalBinding._addSorter(oApplicationSorter, oSortExpression, true);
+		});
 	};
 
 	/**
