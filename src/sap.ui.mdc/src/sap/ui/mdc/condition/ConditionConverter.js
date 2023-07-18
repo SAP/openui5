@@ -40,7 +40,7 @@ sap.ui.define([
 			 *
 			 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
 			 * @param {sap.ui.model.SimpleType|sap.ui.mdc.TypeConfig} vType given dataType mapping configuration
-			 * @param {sap.ui.mdc.util.TypeMap} oTypeUtil delegate dependent <code>TypeMap</code> implementation
+			 * @param {module:sap/ui/mdc/util/TypeMap} oTypeUtil delegate dependent <code>TypeMap</code> implementation
 			 * @returns {sap.ui.mdc.condition.ConditionObject} stringified condition
 			 * @private
 			 * @ui5-restricted sap.ui.mdc
@@ -84,7 +84,7 @@ sap.ui.define([
 			 *
 			 * @param {sap.ui.mdc.condition.ConditionObject} oCondition stringified condition
 			 * @param {sap.ui.model.SimpleType|sap.ui.mdc.TypeConfig} vType given dataType mapping configuration
-			 * @param {sap.ui.mdc.util.TypeMap} oTypeUtil delegate dependent <code>TypeMap</code> implementation
+			 * @param {module:sap/ui/mdc/util/TypeMap} oTypeUtil delegate dependent <code>TypeMap</code> implementation
 			 * @returns {sap.ui.mdc.condition.ConditionObject} condition
 			 * @private
 			 * @ui5-restricted sap.ui.mdc

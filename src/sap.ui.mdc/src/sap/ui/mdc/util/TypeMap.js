@@ -58,7 +58,7 @@ sap.ui.define([
 
 	/*
 	* As derived typemaps want to act as singletons with separate data-sets, we provide a context based cache for each map's internal data.
-	* Please also see <code>sap.ui.mdc.util.TypeMap.import</code>
+	* Please also see <code>module:sap/ui/mdc/util/TypeMap.import</code>
 	*/
 	TypeMap._getMap = function () {
 		var oMap = _cache.get(this);
@@ -147,7 +147,7 @@ sap.ui.define([
 	 * Imports a TypeMap's data into another TypeMap
 	 *
 	 * @final
-	 * @param {sap.ui.mdc.util.TypeMap} oTypeMap TypeMap to import
+	 * @param {module:sap/ui/mdc/util/TypeMap} oTypeMap TypeMap to import
 	 * @public
 	 */
 	TypeMap.import = function (oTypeMap) {

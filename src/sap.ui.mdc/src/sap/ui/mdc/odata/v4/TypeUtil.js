@@ -14,7 +14,7 @@ sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enums/BaseType',	'sap/ba
 	 * @private
 	 * @experimental As of version 1.79
 	 * @since 1.79.0
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.BaseDelegate.getTypeMap}
+	 * @deprecated since 1.115.0 - please see {@link module:sap/ui/mdc/BaseDelegate.getTypeMap}
 	 * @alias sap.ui.mdc.odata.v4.TypeUtil
 	 * @ui5-restricted sap.ui.mdc
 	 */

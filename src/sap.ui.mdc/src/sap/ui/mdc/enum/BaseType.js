@@ -19,7 +19,7 @@ sap.ui.define(function() {
 	 * @alias sap.ui.mdc.enum.BaseType
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.BaseType}
+	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.BaseType}
 	 */
 	var BaseType = {
 		/**

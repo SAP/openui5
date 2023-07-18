@@ -112,8 +112,8 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * Loads and initializes the delegate module related to the enhanced control.
 	 *
 	 * @protected
-	 * @param {sap.ui.mdc.BaseDelegate} [oPreloadedModule] Preloaded delegate module
-	 * @returns {Promise<sap.ui.mdc.BaseDelegate>} Returns a <code>Promise</code> that resolves the delegate module, if available
+	 * @param {module:sap/ui/mdc/BaseDelegate} [oPreloadedModule] Preloaded delegate module
+	 * @returns {Promise<module:sap/ui/mdc/BaseDelegate>} Returns a <code>Promise</code> that resolves the delegate module, if available
 	 */
 	DelegateMixin.initControlDelegate = function (oPreloadedModule) {
 
@@ -162,9 +162,9 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * Returns the <code>typeUtil</code> made available by a delegate module.
 	 *
 	 * @protected
-	 * @returns {sap.ui.mdc.util.TypeUtil|sap.ui.mdc.util.TypeMap} <code>TypeUtil</code> object
+	 * @returns {sap.ui.mdc.util.TypeUtil|module:sap/ui/mdc/util/TypeMap} <code>TypeUtil</code> object
 	 * @throws Throws an error if the delegate module is not available
- 	 * @deprecated (since 1.115.0) - please see {@link #getTypeMap}
+ 	 * @deprecated since 1.115.0 - please see {@link #getTypeMap}
 	 */
 	DelegateMixin.getTypeUtil = function () {
 		return this.getTypeMap();
@@ -173,7 +173,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	/**
 	 * Returns the <code>TypeMap</code> made available by a delegate module.
 	 *
-	 * @returns {sap.ui.mdc.util.TypeMap} <code>TypeMap</code> object
+	 * @returns {module:sap/ui/mdc/util/TypeMap} <code>TypeMap</code> object
 	 * @throws Throws an error if the delegate module is not available
 	 * @public
 	 */
@@ -191,7 +191,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	/**
 	 * Returns the delegate instance, if available.
 	 *
-	 * @returns {sap.ui.mdc.BaseDelegate} <code>typeUtil</code> made available by a delegate module
+	 * @returns {module:sap/ui/mdc/BaseDelegate} <code>typeUtil</code> made available by a delegate module
 	 * @throws Throws an error if the delegate module is not available
 	 * @public
 	 */
@@ -212,7 +212,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * <b>Note:</b> <code>initControlDelegate</code> must be called to start the delegate initialization
 	 *
 	 * @protected
-	 * @returns {Promise<sap.ui.mdc.BaseDelegate>} Returns a <code>Promise</code> reflecting the delegate initialization
+	 * @returns {Promise<module:sap/ui/mdc/BaseDelegate>} Returns a <code>Promise</code> reflecting the delegate initialization
 	 * @throws Throws an error if the delegate module is not available
 	 */
 	DelegateMixin.awaitControlDelegate = function () {

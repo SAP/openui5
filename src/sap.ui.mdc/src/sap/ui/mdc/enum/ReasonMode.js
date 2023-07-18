@@ -15,7 +15,7 @@ sap.ui.define(function() {
 	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.111.0
 	 * @alias sap.ui.mdc.enum.ReasonMode
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.ReasonMode}
+	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.ReasonMode}
 	 */
 	var ReasonMode = {
 		/**

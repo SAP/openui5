@@ -13,7 +13,7 @@ sap.ui.define(function() {
 	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.87
 	 * @alias sap.ui.mdc.enum.ContentMode
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.ContentMode}
+	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.ContentMode}
 	 */
 	var ContentMode = {
 		/**

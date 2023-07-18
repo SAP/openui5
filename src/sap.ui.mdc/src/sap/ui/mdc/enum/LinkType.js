@@ -13,7 +13,7 @@ sap.ui.define(function() {
 	 * @alias sap.ui.mdc.enum.LinkType
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.LinkType}
+	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.LinkType}
 	 */
 	var LinkType = {
 		/**

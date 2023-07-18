@@ -1192,7 +1192,7 @@ sap.ui.define([
 
 	/**
 	 * Gets the currently used content controls.
-	 * @returns {sap.ui.core.Conterol[]} Array of content controls
+	 * @returns {sap.ui.core.Control[]} Array of content controls
 	 * @protected
 	 */
 	FieldBase.prototype.getCurrentContent = function() {

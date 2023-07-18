@@ -620,7 +620,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the <code>sap.ui.core.ScrollEnablement</code> delegate which is used with this control.
+	 * Returns the <code>sap.ui.core.delegate.ScrollEnablement</code> delegate which is used with this control.
 	 *
 	 * @public
 	 * @returns {sap.ui.core.delegate.ScrollEnablement} The scroll delegate instance

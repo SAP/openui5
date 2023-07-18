@@ -50,7 +50,7 @@ sap.ui.define([
 	* @since 1.114.0
 	* @namespace
 	* @alias module:sap/ui/mdc/odata/v4/TypeMap
-	* @extends module:sap/ui/odata/TypeMap
+	* @extends module:sap/ui/mdc/odata/TypeMap
 	*/
 	var ODataV4TypeMap = Object.assign({}, ODataTypeMap);
 

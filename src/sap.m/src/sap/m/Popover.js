@@ -2614,8 +2614,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
-		 * @returns {sap.ui.core.ScrollEnablement} The scroll delegate
+		 * Returns the sap.ui.core.delegate.ScrollEnablement delegate which is used with this control.
+		 * @returns {sap.ui.core.delegate.ScrollEnablement} The scroll delegate
 		 * @private
 		 */
 		Popover.prototype.getScrollDelegate = function () {
