@@ -555,7 +555,6 @@ sap.ui.define([
 				width: "100%",
 				layoutData: new OverflowToolbarLayoutData({
 					shrinkable: true,
-					moveToOverflow: true,
 					priority: "High",
 					maxWidth: "16rem"
 				})

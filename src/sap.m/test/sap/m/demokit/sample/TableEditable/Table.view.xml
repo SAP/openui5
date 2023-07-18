@@ -69,7 +69,7 @@
 				<Button text="Order" press="onOrder">
 					<layoutData>
 						<OverflowToolbarLayoutData
-							moveToOverflow="false" />
+							priority="NeverOverflow" />
 					</layoutData>
 				</Button>
 			</OverflowToolbar>

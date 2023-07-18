@@ -382,21 +382,21 @@ sap.ui.define([
 		new ToolbarSpacer(),
 		new Button({
 			text : "REQUEST",
-			layoutData: new OverflowToolbarLayoutData({moveToOverflow: false}),
+			layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow}),
 			icon: sRequestIconURI
 		}),
 		new Button({
 			text : "RECEIPT",
-			layoutData: new OverflowToolbarLayoutData({moveToOverflow: false}),
+			layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow}),
 			icon: sReceiptIconURI
 		}),
 		new Button({
 			text : "Undo",
-			layoutData: new OverflowToolbarLayoutData({stayInOverflow: true})
+			layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow})
 		}),
 		new Button({
 			text : "Redo",
-			layoutData: new OverflowToolbarLayoutData({stayInOverflow: true})
+			layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow})
 		}),
 		new ToolbarSpacer(),
 		new Button({
@@ -436,11 +436,11 @@ sap.ui.define([
 		new ToolbarSpacer(),
 		new Button({
 			text : "BOOK NOW!",
-			layoutData: new OverflowToolbarLayoutData({moveToOverflow: false})
+			layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow})
 		}),
 		new Button({
 			text : "BOOK LATER!",
-			layoutData: new OverflowToolbarLayoutData({moveToOverflow: false})
+			layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow})
 		}),
 		new ToolbarSpacer(),
 		new Label({

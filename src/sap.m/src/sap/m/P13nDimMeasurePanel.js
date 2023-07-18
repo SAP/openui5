@@ -646,8 +646,7 @@ sap.ui.define([
 			},
 			selectionChange: jQuery.proxy(this._onChartTypeChange, this),
 			layoutData: new OverflowToolbarLayoutData({
-				moveToOverflow: false,
-				stayInOverflow: false
+				priority: OverflowToolbarPriority.NeverOverflow
 			})
 		});
 
@@ -673,8 +672,7 @@ sap.ui.define([
 						minWidth: "12.5rem",
 						maxWidth: "23.077rem",
 						shrinkable: true,
-						moveToOverflow: false,
-						stayInOverflow: false
+						priority: OverflowToolbarPriority.NeverOverflow
 					})
 				}), new Button({
 					text: {
@@ -692,7 +690,6 @@ sap.ui.define([
 					type: ButtonType.Transparent,
 					press: jQuery.proxy(this._onSwitchButtonShowSelected, this),
 					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: true,
 						priority: OverflowToolbarPriority.High
 					})
 				}), new OverflowToolbarButton({
@@ -705,7 +702,6 @@ sap.ui.define([
 					},
 					press: jQuery.proxy(this.onPressButtonMoveToTop, this),
 					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: true,
 						priority: OverflowToolbarPriority.Low,
 						group: 2
 					})
@@ -719,7 +715,6 @@ sap.ui.define([
 					},
 					press: jQuery.proxy(this.onPressButtonMoveUp, this),
 					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: true,
 						priority: OverflowToolbarPriority.High,
 						group: 1
 					})
@@ -733,7 +728,6 @@ sap.ui.define([
 					},
 					press: jQuery.proxy(this.onPressButtonMoveDown, this),
 					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: true,
 						priority: OverflowToolbarPriority.High,
 						group: 1
 					})
@@ -747,7 +741,6 @@ sap.ui.define([
 					},
 					press: jQuery.proxy(this.onPressButtonMoveToBottom, this),
 					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: true,
 						priority: OverflowToolbarPriority.Low,
 						group: 2
 					})
