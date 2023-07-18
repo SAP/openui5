@@ -54,17 +54,29 @@
 					/>
 			</template>
 		</Column>
-		<Column template="Country">
+		<Column>
 			<m:Label text="Country"/>
+			<template>
+				<m:Text text="{Country}" wrapping="false"/>
+			</template>
 		</Column>
-		<Column template="Region">
+		<Column>
 			<m:Label text="Region"/>
+			<template>
+				<m:Text text="{Region}" wrapping="false"/>
+			</template>
 		</Column>
-		<Column template="Segment">
+		<Column>
 			<m:Label text="Segment"/>
+			<template>
+				<m:Text text="{Segment}" wrapping="false"/>
+			</template>
 		</Column>
-		<Column template="AccountResponsible">
+		<Column>
 			<m:Label text="Account Responsible"/>
+			<template>
+				<m:Text text="{AccountResponsible}" wrapping="false"/>
+			</template>
 		</Column>
 		<Column hAlign="End">
 			<m:Label text="Sales Amount"/>
@@ -80,8 +92,11 @@
 				}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column template="LocalCurrency">
+		<Column>
 			<m:Label text="Local Currency"/>
+			<template>
+				<m:Text text="{LocalCurrency}" wrapping="false"/>
+			</template>
 		</Column>
 		<Column hAlign="End">
 			<template>
