@@ -374,8 +374,8 @@ sap.ui.define([
 	 * detailed reason as parameters.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters()
-	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
+	 * @param {object} oEvent.getParameters
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
 	 *   The reason for the 'change' event is
 	 *   <ul>
 	 *     <li> {@link sap.ui.model.ChangeReason.Add Add} when a new context is created,
@@ -386,7 +386,7 @@ sap.ui.define([
 	 *   </ul>
 	 *   Additionally each {@link #event:refresh 'refresh'} event is followed by a 'change' event
 	 *   repeating the change reason when the requested data is available.
-	 * @param {string} oEvent.getParameters().detailedReason
+	 * @param {string} oEvent.getParameters.detailedReason
 	 *   During automatic determination of $expand and $select, a "virtual" context is first added
 	 *   with detailed reason "AddVirtualContext" and then removed with detailed reason
 	 *   "RemoveVirtualContext" (since 1.69.0); <code>undefined</code> is used in all other cases
@@ -406,7 +406,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
-	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters().context The affected context
+	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters.context The affected context
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#createActivate
 	 * @public
@@ -421,10 +421,10 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
-	 * @param {object} oEvent.getParameters() Object containing all event parameters
-	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters().context
+	 * @param {object} oEvent.getParameters Object containing all event parameters
+	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters.context
 	 *   The context for the created entity
-	 * @param {boolean} oEvent.getParameters().success
+	 * @param {boolean} oEvent.getParameters.success
 	 *   Whether the POST was successfully processed; in case of an error, the error is already
 	 *   reported to the {@link sap.ui.core.message.MessageManager}
 	 *
@@ -440,8 +440,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
-	 * @param {object} oEvent.getParameters() Object containing all event parameters
-	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters().context
+	 * @param {object} oEvent.getParameters Object containing all event parameters
+	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters.context
 	 *   The context for the created entity
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#createSent
@@ -472,10 +472,10 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {function} oEvent.cancelBubble
 	 *   A callback function to prevent that the event is bubbled up to the model
-	 * @param {object} oEvent.getParameters()
-	 * @param {object} [oEvent.getParameters().data]
+	 * @param {object} oEvent.getParameters
+	 * @param {object} [oEvent.getParameters.data]
 	 *   An empty data object if a back-end request succeeds
-	 * @param {Error} [oEvent.getParameters().error] The error object if a back-end request failed.
+	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
 	 *   If there are multiple failed back-end requests, the error of the first one is provided.
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#dataReceived
@@ -511,8 +511,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
-	 * @param {object} oEvent.getParameters() Object containing all event parameters
-	 * @param {boolean} oEvent.getParameters().success
+	 * @param {object} oEvent.getParameters Object containing all event parameters
+	 * @param {boolean} oEvent.getParameters.success
 	 *   Whether all PATCHes are successfully processed
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#patchCompleted
@@ -542,8 +542,8 @@ sap.ui.define([
 	 * binding. Registered event handlers are called with the change reason as parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters()
-	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
+	 * @param {object} oEvent.getParameters
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
 	 *   The reason for the 'refresh' event could be
 	 *   <ul>
 	 *     <li> {@link sap.ui.model.ChangeReason.Context Context} when the binding's
