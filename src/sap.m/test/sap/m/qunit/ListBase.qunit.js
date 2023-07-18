@@ -2867,6 +2867,30 @@ sap.ui.define([
 			assert.strictEqual(oListItem.getAccessibilityInfo().description,oBundle.getText("LIST_ITEM_SELECTED") + " . " + oListItem.getHighlight() + " . " + oBundle.getText("LIST_ITEM_ACTIVE") + " . " + "Title . Description",  "Content announcement for Standard List Item with Punctuation" );
 		});
 
+		QUnit.test("ListItem aria-labelledby reference to Accessibility Text", function(assert) {
+			var oList = new List({
+				items: [
+					new StandardListItem({
+						title: "Title",
+						description: "Description",
+						ariaLabelledBy: "test"
+					})
+				]
+			});
+
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			var oItem = oList.getItems()[0];
+			var oInvisibleText = ListBase.getInvisibleText();
+
+			assert.equal(oItem.getDomRef().getAttribute("aria-labelledby"), "test", "aria-labelledby is correct");
+			oItem.$().trigger("focusin");
+			assert.equal(oItem.getDomRef().getAttribute("aria-labelledby"), "test " + oInvisibleText.getId(), "reference to invisible text is added on focusin");
+			oItem.$().trigger("focusout");
+			assert.equal(oItem.getDomRef().getAttribute("aria-labelledby"), "test", "reference to invisible text is removed on focusout");
+		});
+
 		QUnit.test("Accessibility Text for Input List Item", function(assert) {
 			var oInputListItem = new InputListItem({
 				title: "Title",

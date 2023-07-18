@@ -1328,6 +1328,15 @@ function(
 		setTimeout(oList["setItemFocusable"].bind(oList, this), 0);
 	};
 
+	ListItemBase.prototype.onfocusout = function(oEvent) {
+		if (oEvent.isMarked() || oEvent.srcControl !== this) {
+			return;
+		}
+
+		this.informList("FocusOut", oEvent.srcControl);
+		oEvent.setMarked();
+	};
+
 	// inform the list for the vertical navigation
 	ListItemBase.prototype.onsapup = function(oEvent) {
 		if (oEvent.isMarked() ||
