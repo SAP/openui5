@@ -1667,6 +1667,7 @@ sap.ui.define([
 		oPopover.attachEventOnce("afterOpen", function(oEvent) {
 			// act
 			oTargetList._handleSearchEvent(oFakeEvent);
+			oTargetList._hideBusyIndicator();
 
 			// assert
 			assert.equal(oTargetList.getBinding("items").getLength(), 3, "There three items in the list");
@@ -1681,6 +1682,7 @@ sap.ui.define([
 				}
 			};
 			oTargetList._handleSearchEvent(oFakeEvent);
+			oTargetList._hideBusyIndicator();
 
 			// assert
 			assert.equal(oTargetList.getBinding("items").getLength(), 0, "There are no items in the list");
