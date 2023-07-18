@@ -339,6 +339,7 @@ sap.ui.define([
 		MessageMixin.call(DynamicDateRange.prototype);
 
 		DynamicDateRange.prototype.init = function() {
+			var bValueHelpDecorative = !Device.support.touch || Device.system.desktop ? true : false;
 			this._oInput = new DynamicDateRangeInput(this.getId() + "-input", {
 				showValueHelp: true,
 				valueHelpIconSrc: IconPool.getIconURI("sap-icon://check-availability"),
@@ -355,7 +356,7 @@ sap.ui.define([
 				}
 			};
 
-			this._oInput._getValueHelpIcon().setDecorative(false);
+			this._oInput._getValueHelpIcon().setDecorative(bValueHelpDecorative);
 
 			this._oInput.addDelegate(this._onBeforeInputRenderingDelegate, this);
 
