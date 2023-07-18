@@ -873,6 +873,8 @@ sap.ui.define([
 		// act
 		oBtn.getLayoutData().setMinWidth(sLastMinWidth);
 
+		Core.applyChanges();
+
 		// assert
 		assert.strictEqual(oBtn.getDomRef().style.minWidth, sLastMinWidth, "After layout data changes min width is set on the DOM.");
 		assert.strictEqual(fnRerenderSpy.callCount, 1, "Toolbar is rerendered because of the layoutData changes.");
@@ -901,6 +903,8 @@ sap.ui.define([
 			minWidth : sMinWidth,
 			shrinkable : true
 		}));
+
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oBtn.getDomRef().style.minWidth, sMinWidth, "After layout data is set minWidth applied to the DOM.");

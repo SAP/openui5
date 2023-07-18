@@ -329,6 +329,9 @@ sap.ui.define([
 		assert.ok(jQuery("#myPage-title").hasClass("sapF2AdaptedTitle"), "title is adapted");
 	});
 
+	/**
+	 * @deprecated since 1.112
+	 */
 	QUnit.test("MessagePage title is adapted when bMoveTitle=true", function(assert) {
 		var oAdaptOptions = {bMoveTitle: true};
 		this.oMessagePage = new MessagePage("messagePage", {
@@ -719,6 +722,9 @@ sap.ui.define([
 		assert.strictEqual(oBackButton.getId(), sExpectedBackButtonId, "back button is correct");
 	});
 
+	/**
+	 * @deprecated since 1.112
+	 */
 	QUnit.test("Nested messagePage with empty header is ignored", function(assert) {
 
 		var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},

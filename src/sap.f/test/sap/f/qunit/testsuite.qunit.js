@@ -245,6 +245,9 @@ sap.ui.define(function () {
 			// Designtime tests:
 			// -------------------------------------------------------------------------------
 
+			/**
+			 * @deprecated since 1.73
+			 */
 			"Designtime-Avatar": {
 				group: "Designtime",
 				sinon: false,
