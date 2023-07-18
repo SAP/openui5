@@ -370,10 +370,10 @@ sap.ui.define([
     };
 
     /**
-     * This function returns an UI which is then shown inside the p13n Items panel.
+     * This function returns a UI which is then shown inside the p13n Items panel.
      * Depending on which chart is used, the panel might offer different functionality.
      * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
-     * @returns {sap.core.Control} Adaptation UI to be used
+     * @returns {sap.ui.core.Control} Adaptation UI to be used
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -440,7 +440,7 @@ sap.ui.define([
 
     /**
      * Creates a Sorter for a given property.
-     * @param {sap.ui.mdc.Chart.Item} oMDCItem MDC item to create a sorter for
+     * @param {sap.ui.mdc.chart.Item} oMDCItem MDC item to create a sorter for
      * @param {object} oSortProperty Sorting information
      * @returns {sap.ui.model.Sorter} Sorter for given item
      *
@@ -560,7 +560,7 @@ sap.ui.define([
      * @param {string} sPropertyName Name of the property added
      * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart to add the property to
      * @param {object} mPropertyBag Property bag containing useful information about the change
-     * @param {strring} sRole New role for given item (if available)
+     * @param {string} sRole New role for given item (if available)
      * @returns {Promise} Promise that resolves with new MDC chart item as parameter
      *
      * @experimental
@@ -852,7 +852,7 @@ sap.ui.define([
     /**
      * Returns the instance of the inner chart for a given MDC chart.
      * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
-     * @returns {sap.ui.Control} Inner chart instance
+     * @returns {sap.ui.core.Control} Inner chart instance
      *
      * @experimental
      * @private
@@ -864,8 +864,8 @@ sap.ui.define([
 
     /**
      * Prepares the internal vizFrame coloring for given MDC chart Item.
-     * @param {sa.ui.mdc.chart.Item} oItem item to prepare coloring for
-     * @returns {Promise} resolved, once coloring is rpepared
+     * @param {sap.ui.mdc.chart.Item} oItem item to prepare coloring for
+     * @returns {Promise} resolved, once coloring is prepared
      *
      * @experimental
      * @private

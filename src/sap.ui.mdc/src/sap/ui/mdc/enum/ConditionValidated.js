@@ -21,7 +21,7 @@ sap.ui.define(function() {
 	 * @alias sap.ui.mdc.enum.ConditionValidated
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.ConditionValidated}
+	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.ConditionValidated}
 	 */
 	var ConditionValidated = {
 		/**

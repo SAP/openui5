@@ -72,8 +72,8 @@ sap.ui.define([
 				 * Conditions of the value help.
 				 *
 				 * <b>Note:</b> This property must not be set from outside, it must only be used by the corresponding container.
-				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 				 * @private
+				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 				 * @experimental: Do not use - this property is only for internal usage
 				 */
 				conditions: { // TODO: only internal? make restricted?
@@ -85,8 +85,8 @@ sap.ui.define([
 				 * Value for filtering ($search).
 				 *
 				 * <b>Note:</b> This property must not be set from outside, it must only be used by the corresponding container.
-				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 				 * @private
+				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 				 * @experimental: Do not use - this property is only for internal usage
 				 */
 				filterValue: { // TODO: how to hide? Or how to access from ValueHelp?
@@ -98,8 +98,8 @@ sap.ui.define([
 				 * Internal configuration.
 				 *
 				 * <b>Note:</b> This property must not be set from outside, it must only be used by the corresponding container.
-				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 				 * @private
+				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 				 * @experimental: Do not use - this property is only for internal usage
 				 */
 				config: {
@@ -122,8 +122,8 @@ sap.ui.define([
 				 * Content control that is put inside the parent container
 				 *
 				 * <b>Note:</b> This aggregation must not be set from outside, it must only be used by the corresponding container.
-				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 				 * @private
+				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 				 * @experimental: Do not use - this aggregation is only for internal usage
 				 */
 				displayContent: {
@@ -337,8 +337,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
-	 * @returns {sap.ui.core.ScrollEnablement} The scroll enablement delegate
+	 * Returns the sap.ui.core.delegate.ScrollEnablement delegate which is used with this control.
+	 * @returns {sap.ui.core.delegate.ScrollEnablement} The scroll enablement delegate
 	 * @private
 	 */
 	Content.prototype.getScrollDelegate = function() {
@@ -517,7 +517,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the used <code>ValueHelpDelegate</code>.
-	 * @returns {sap.ui.mdc.BaseDelegate} <code>Delegate</code> module
+	 * @returns {module:sap/ui/mdc/BaseDelegate} <code>Delegate</code> module
 	 * @throws Throws an error if the delegate module is not available
 	 * @protected
 	 */

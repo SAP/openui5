@@ -576,8 +576,8 @@ function(
 		};
 
 		/**
-		 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
-		 * @returns {sap.ui.core.ScrollEnablement} The scroll enablement delegate
+		 * Returns the sap.ui.core.delegate.ScrollEnablement delegate which is used with this control.
+		 * @returns {sap.ui.core.delegate.ScrollEnablement} The scroll enablement delegate
 		 * @private
 		 */
 		Page.prototype.getScrollDelegate = function () {

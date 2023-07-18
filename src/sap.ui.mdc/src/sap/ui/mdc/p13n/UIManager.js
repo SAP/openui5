@@ -466,7 +466,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 *
-	 * @param {sap.ui.mdc.AdaptationProvider} oAdaptationProvider
+	 * @param {sap.m.p13n.modules.AdaptationProvider|sap.ui.mdc.p13n.AdaptationProvider} oAdaptationProvider
 	 */
 	 UIManager._checkValidInterface = function(oAdaptationProvider) {
 		if (!oAdaptationProvider || !(oAdaptationProvider.isA("sap.ui.mdc.p13n.AdaptationProvider") || oAdaptationProvider.isA("sap.m.p13n.modules.AdaptationProvider")) ){

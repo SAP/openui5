@@ -123,8 +123,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
-		 * @rerurns {sap.ui.core.ScrollEnablementDelegate} The scroll delegate instance
+		 * Returns the sap.ui.core.delegate.ScrollEnablement delegate which is used with this control.
+		 * @rerurns {sap.ui.core.delegate.ScrollEnablementDelegate} The scroll delegate instance
 		 * @private
 		 */
 		ScrollContainer.prototype.getScrollDelegate = function () {

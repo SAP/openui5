@@ -13,7 +13,7 @@ sap.ui.define(function() {
 	 * @ui5-restricted sap.fe
 	 * @since 1.48.1
 	 * @alias sap.ui.mdc.enum.EditMode
- 	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.FieldEditMode}
+ 	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.FieldEditMode}
 	 */
 	var EditMode = {
 		/**

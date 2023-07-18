@@ -1618,7 +1618,7 @@ function(
 		};
 
 		/**
-		 * Returns the <code>sap.ui.core.ScrollEnablement</code> delegate which is used with this control.
+		 * Returns the <code>sap.ui.core.delegate.ScrollEnablement</code> delegate which is used with this control.
 		 *
 		 * @private
 		 */

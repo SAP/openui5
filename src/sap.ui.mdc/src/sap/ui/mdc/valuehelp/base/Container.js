@@ -47,8 +47,8 @@ sap.ui.define([
 				/**
 				 * This property may be used by <code>FilterableListContents</code> to share basic search states in collective search scenarios.
 				 *
-				 * @ui5-restricted
 				 * @private
+				 * @ui5-restricted
 				 * @experimental: Do not use - this property is only for internal usage
 				 */
 				localFilterValue: {
@@ -635,7 +635,7 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
 	 *
-	 * @returns {sap.ui.mdc.BaseDelegate} <code>Delegate</code> module
+	 * @returns {module:sap/ui/mdc/BaseDelegate} <code>Delegate</code> module
 	 * @throws Throws an error if the delegate module is not available
 	 *
 	 * @private
@@ -739,9 +739,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
+	 * Returns the sap.ui.core.delegate.ScrollEnablement delegate which is used with this control.
 	 * @param {int} iMaxConditions maximal conditions allowed (as <code>ValueHelp</code> might not be connected to a field)
-	 * @returns {sap.ui.core.ScrollEnablement} The scroll enablement delegate
+	 * @returns {sap.ui.core.delegate.ScrollEnablement} The scroll enablement delegate
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
 	 */

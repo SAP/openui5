@@ -118,7 +118,7 @@ sap.ui.define([
 	/**
 	 * Returns the content of the popover.
 	 * @param {Function} [fnGetAutoClosedControl] Function returning the <code>Popover</code> control that is created in <code>createPopover</code>
-	 * @returns {Promise<sap.ui.Control>} <code>Promise</code> with a popover content of type sap.ui.Control as result
+	 * @returns {Promise<sap.ui.core.Control>} <code>Promise</code> with a popover content of type sap.ui.Control as result
 	 * @public
 	 */
 	FieldInfoBase.prototype.getContent = function(fnGetAutoClosedControl) {

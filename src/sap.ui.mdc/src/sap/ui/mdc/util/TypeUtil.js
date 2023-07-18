@@ -26,7 +26,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @experimental As of version 1.79
 	 * @since 1.79.0
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.BaseDelegate.getTypeMap}
+	 * @deprecated since 1.115.0 - please see {@link module:sap/ui/mdc/BaseDelegate.getTypeMap}
 	 * @alias sap.ui.mdc.util.TypeUtil
 	 */
 	var TypeUtil = {

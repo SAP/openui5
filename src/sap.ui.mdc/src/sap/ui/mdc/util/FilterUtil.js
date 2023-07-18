@@ -117,7 +117,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 				/**
 				 * Creates the filter statements based on the externalize conditions.<br>
 				 *
-				 * @param {sap.ui.mdc.Control|sap.ui.mdc.util.TypeMap} vTypeProvider the MDC control instance or <code>TypeMap</code>
+				 * @param {sap.ui.mdc.Control|module:sap/ui/mdc/util/TypeMap} vTypeProvider the MDC control instance or <code>TypeMap</code>
 				 * @param {map} mConditionsPerKey - map with externalized conditions
 				 * @param {array} aPropertiesMetadata - array with all the property metadata
 				 * @param {array} aIgnoreProperties - an array of property names which should be not considered for filtering

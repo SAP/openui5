@@ -811,7 +811,7 @@ sap.ui.define([
 	/**
 	 * Returns the clipboard settings for a column.
 	 *
-	 * @param {sap.ui.mdc.Column} oColumn The column for which to get the clipboard settings
+	 * @param {sap.ui.mdc.table.Column} oColumn The column for which to get the clipboard settings
 	 * @returns {sap.m.plugins.CopyProvider.ColumnClipboardSettings} Clipboard setting object for the provided column.
 	 * @private
 	 * @ui5-restricted sap.m.plugins.CopyProvider
