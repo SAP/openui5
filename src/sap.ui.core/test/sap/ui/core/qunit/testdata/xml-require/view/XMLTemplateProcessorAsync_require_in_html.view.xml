@@ -1,0 +1,36 @@
+<mvc:View xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:helper="testdata.xml-require.helper"
+	displayBlock="true"
+	core:require="{
+		Box:'sap/ui/core/BusyIndicator',
+		OwnHelper:'sap/m/MessageBox'
+	}">
+		<html:div>
+			<Button id="button" text="button" press="Box.show(100)" />
+			<html:div core:require="{ OwnHelper:'testdata/xml-require/helper/Formatter' }">
+				<Button id="nestedButton"
+					text="{
+						value: 'nested button',
+						formatter: 'OwnHelper.groupA.upperCase'
+					}"
+					press="Box.show(100)" />
+			</html:div>
+		</html:div>
+		<Panel>
+			<html:div core:require="{ OwnHelper:'testdata/xml-require/helper/OutputText' }">
+				<Button id="buttonInPanel" text="{
+					value: 'Click Me',
+					formatter: 'OwnHelper.format'
+				}" press="Box.show(100)"/>
+				<html:div core:require="{ OwnHelper:'testdata/xml-require/helper/Formatter' }">
+					<Button id="nestedButtonInPanel" text="{
+						value: 'ok',
+						formatter: 'OwnHelper.groupA.upperCase'
+					}" press="Box.show(100)"/>
+				</html:div>
+			</html:div>
+		</Panel>
+</mvc:View>
