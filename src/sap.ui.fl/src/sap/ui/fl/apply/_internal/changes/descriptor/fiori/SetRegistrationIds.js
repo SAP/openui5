@@ -16,7 +16,8 @@ sap.ui.define([
 	 *
 	 * Only available during build time {@link sap.ui.fl.apply._internal.changes.descriptor.RegistrationBuild}.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.fiori.SetRegistrationIds
+	 * @namespace
+	 * @alias sap.ui.fl.apply._internal.changes.descriptor.fiori.SetRegistrationIds
 	 * @version ${version}
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal
@@ -27,6 +28,7 @@ sap.ui.define([
 		 * Method to apply the <code>appdescr_app_setRegistrationIds</code> change to the manifest.
 		 * @param {object} oManifest - Original manifest
 		 * @param {sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange} oChange - Change with type <code>appdescr_fiori_setRegistrationIds</code>
+		 * @param {object} oChange.content - Details of the change
 		 * @param {Array} oChange.content.registrationIds - Registration ID
 		 * @returns {object} Updated manifest with changed registrationIds
 		 *

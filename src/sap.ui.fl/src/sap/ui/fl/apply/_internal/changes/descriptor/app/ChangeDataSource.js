@@ -35,6 +35,7 @@ sap.ui.define([
 		 *
 		 * @param {object} oManifest - Original manifest
 		 * @param {sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange} oChange - Change with type <code>appdescr_app_changeDataSource</code>
+		 * @param {object} oChange.content - Details of the change
 		 * @param {string} oChange.content.dataSourceId - ID of <code>sap.app/dataSource</code> that is being changed
 		 * @param {object|array} oChange.content.entityPropertyChange - Entity property change or an array of multiple entity property changes
 		 * @param {string} oChange.content.entityPropertyChange.propertyPath - Path to the property which should be changed (allowed values: <code>uri</code> and <code>settings/maxAge</code>)

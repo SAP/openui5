@@ -30,7 +30,8 @@ sap.ui.define([
 	*
 	* Available for build {@link sap.ui.fl.apply._internal.changes.descriptor.RegistrationBuild}.
 	*
-	* @namespace sap.ui.fl.apply._internal.changes.descriptor.app.AddNewInbound
+	* @namespace
+	* @alias sap.ui.fl.apply._internal.changes.descriptor.app.AddNewInbound
 	* @version ${version}
 	* @private
 	* @ui5-restricted sap.ui.fl.apply._internal
@@ -42,6 +43,7 @@ sap.ui.define([
 		*
 		* @param {object} oManifest - Original manifest
 		* @param {sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange} oChange - Change with type <code>appdescr_app_addNewInbound</code>
+		* @param {object} oChange.content - Details of the change
 		* @param {object} oChange.content.inbound - Inbound <code>content.inbound</code> that is being added
 		* @returns {object} Updated manifest with new inbound <code>sap.app/crossNavigation/inbounds/<new_inbound_id></code>
 		*

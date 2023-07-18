@@ -26,6 +26,7 @@ sap.ui.define([
 		 * Method to apply the <code>appdescr_ovp_removeCard</code> change to the manifest.
 		 * @param {object} oManifest - Original manifest
 		 * @param {sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange} oChange - Change made by key user
+		 * @param {object} oChange.content - Details of the change
 		 * @param {string} oChange.content.cardID - ID of the card to be deleted
 		 * @returns {object} Updated manifest
 		 * @private

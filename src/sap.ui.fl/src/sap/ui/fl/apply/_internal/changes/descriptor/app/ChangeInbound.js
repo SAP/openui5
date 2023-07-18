@@ -21,7 +21,8 @@ sap.ui.define([
 	*
 	* Available for both runtime and build {@link sap.ui.fl.apply._internal.changes.descriptor.RegistrationBuild}.
 	*
-	* @namespace sap.ui.fl.apply._internal.changes.descriptor.app.ChangeInbound
+	* @namespace
+	* @alias sap.ui.fl.apply._internal.changes.descriptor.app.ChangeInbound
 	* @version ${version}
 	* @private
 	* @ui5-restricted sap.ui.fl.apply._internal
@@ -33,6 +34,7 @@ sap.ui.define([
 		 *
 		 * @param {object} oManifest - Original manifest
 		 * @param {sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange} oChange - Change with type <code>appdescr_app_changeInbound</code>
+		 * @param {object} oChange.content - Details of the change
 		 * @param {string} oChange.content.inboundId - ID of <code>sap.app/crossNavigation/inbounds/inbound</code> that is being changed
 		 * @param {object|array} oChange.content.entityPropertyChange - Entity property change or an array of multiple entity property changes
 		 * @param {string} oChange.content.entityPropertyChange.propertyPath - Path to the property which should be changed. Supported properties: <code>title</code>,<code>subTitle</code> and <code>icon</code>

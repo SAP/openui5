@@ -170,7 +170,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Retrieves the associated flex persistence
 	 * @param {string} [mPropertyBag.layer] - Specifies a single layer for loading change; if this parameter is set, the max layer filtering is not applied
-	 * @param {string} [mPropertyBar.currentLayer] - Specifies a single layer to filtering changes (without filtering ctrl variant changes)
+	 * @param {string} [mPropertyBag.currentLayer] - Specifies a single layer to filtering changes (without filtering ctrl variant changes)
 	 * @param {boolean} [mPropertyBag.invalidateCache] - Flag if the cache should be invalidated
 	 * @param {boolean} [mPropertyBag.includeCtrlVariants] - Flag if control variant changes should be included
 	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Flag if dirty UI changes should be included

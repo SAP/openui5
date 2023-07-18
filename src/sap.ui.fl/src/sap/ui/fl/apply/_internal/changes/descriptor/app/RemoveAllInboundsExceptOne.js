@@ -40,7 +40,8 @@ sap.ui.define([
      *
      * Available for build {@link sap.ui.fl.apply._internal.changes.descriptor.RegistrationBuild}.
      *
-     * @namespace sap.ui.fl.apply._internal.changes.descriptor.app.RemoveAllInboundsExceptOne
+     * @namespace
+	 * @alias sap.ui.fl.apply._internal.changes.descriptor.app.RemoveAllInboundsExceptOne
      * @version ${version}
      * @private
      * @ui5-restricted sap.ui.fl.apply._internal
@@ -52,6 +53,7 @@ sap.ui.define([
 		 *
 		 * @param {object} oManifest - Original manifest
 		 * @param {sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange} oChange - Change with type <code>appdescr_app_removeAllInboundsExceptOne</code>
+		 * @param {object} oChange.content - Details of the change
 		 * @param {object} oChange.content.inboundId - Inbound ID <code>content.inboundId</code> that is to be preserved
 		 * @returns {object} Manifest with all removed inbounds expect one <code>sap.app/crossNavigation/inbounds/<spared_inbound_id></code>
 		 *

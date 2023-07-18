@@ -84,12 +84,12 @@ sap.ui.define([
 	 *
 	 * @param {object} mMenuItem json object with the menu item settings
 	 * @param {string} mMenuItem.id id, which corresponds to the text key
-	 * @param {string} mMenuItems.text menu item text (translated)
-	 * @param {string} mMenuItems.icon a icon for the menu item
+	 * @param {string} mMenuItem.text menu item text (translated)
+	 * @param {string} mMenuItem.icon a icon for the menu item
 	 * @param {function} mMenuItem.handler event handler if menu is selected, the element for which the menu was opened is passed to the handler
-	 * @param {function} mMenuItem.startSection? function to determine if a new section should be started, the element for which the menu was opened
+	 * @param {function} [mMenuItem.startSection] function to determine if a new section should be started, the element for which the menu was opened
 	 *        is passed to the handler, default false
-	 * @param {function} mMenuItem.enabled? function to determine if the menu entry should be enabled, the element for which the menu should be opened
+	 * @param {function} [mMenuItem.enabled] function to determine if the menu entry should be enabled, the element for which the menu should be opened
 	 *        is passed, default true
 	 * @param {boolean} bRetrievedFromPlugin flag to mark if a menu item was retrieved from a plugin (in runtime)
 	 * @param {boolean} bPersistOneTime flag to mark that the Button persist the next Menu clearing

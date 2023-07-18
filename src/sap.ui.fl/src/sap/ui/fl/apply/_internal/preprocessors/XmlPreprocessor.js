@@ -22,7 +22,7 @@ sap.ui.define([
 	/**
 	 * The implementation of the <code>XmlPreprocessor</code> for the SAPUI5 flexibility services that can be hooked in the <code>View</code> life cycle.
 	 *
-	 * @name sap.ui.fl.apply._internal.preprocessors.XmlPreprocessor
+	 * @alias sap.ui.fl.apply._internal.preprocessors.XmlPreprocessor
 	 * @class
 	 * @constructor
 	 * @author SAP SE
@@ -37,7 +37,7 @@ sap.ui.define([
 	 * @param {Node} oView - XML node of the view to process
 	 * @param {object} mProperties - Property Bag
 	 * @param {string} mProperties.componentId - ID of the component creating the view
-	 * @param {string} mPropertyBag.id - ID of the processed view
+	 * @param {string} mProperties.id - ID of the processed view
 	 * @returns {Promise.<Node>|Node} Result of the processing, promise if executed asynchronously
 	 *
 	 * @public

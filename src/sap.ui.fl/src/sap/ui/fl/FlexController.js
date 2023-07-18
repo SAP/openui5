@@ -380,7 +380,7 @@ sap.ui.define([
 	 *
 	 * also used by OVP!
 	 *
-	 * @param {map} mPropertyBag - (optional) contains additional data that are needed for reading of changes
+	 * @param {object} mPropertyBag - (optional) contains additional data that are needed for reading of changes
 	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to the current running component
 	 * @param {string} [mPropertyBag.siteId] ID of the site belonging to the current running component
 	 * @param {boolean} bInvalidateCache - (optional) should the cache be invalidated

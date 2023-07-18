@@ -168,7 +168,7 @@ sap.ui.define([
 	/**
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
-	 * @param {map} mPropertyBag Contains additional data needed for reading changes
+	 * @param {object} mPropertyBag Contains additional data needed for reading changes
 	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to the current running component
 	 * @param {string} [mPropertyBag.siteId] ID of the site belonging to the current running component
 	 * @param {string} [mPropertyBag.currentLayer] Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
@@ -394,7 +394,7 @@ sap.ui.define([
 
 	/**
 	 * Getter for the private aggregation containing sap.ui.fl.apply._internal.flexObjects.FlexObject objects mapped by their selector ids.
-	 * @return {map} mChanges mapping with changes sorted by their selector ids
+	 * @return {Object<string,object>} mChanges mapping with changes sorted by their selector ids
 	 * @public
 	 */
 	ChangePersistence.prototype.getChangesMapForComponent = function() {
@@ -403,7 +403,7 @@ sap.ui.define([
 
 	/**
 	 * Returns all changes that are currently loaded for the component.
-	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
+	 * @param {object} mPropertyBag - Contains additional data needed for reading changes
 	 * @param {string} [mPropertyBag.layer] - Specifies a single layer for loading changes
 	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Whether dirty changes of the current session should be included
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of changes
@@ -446,7 +446,7 @@ sap.ui.define([
 	 * view1
 	 * view1--view2--view3
 	 *
-	 * @param {map} mPropertyBag contains additional data that are needed for reading of changes
+	 * @param {object} mPropertyBag contains additional data that are needed for reading of changes
 	 * @param {string} mPropertyBag.viewId - id of the view
 	 * @param {string} mPropertyBag.name - name of the view
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component for the view
