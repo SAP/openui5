@@ -184,6 +184,7 @@
 	background-color: @sapUiListHoverBackground;
 }
 
+.sapTntNavLIItem:not(.sapTntNavLIItemDisabled).sapTntNavLIActive,
 .sapTntNavLI .sapTntNavLIGroup.sapTntNavLIItem:not(.sapTntNavLIItemDisabled):active,
 .sapTntNavLI .sapTntNavLIGroupItem.sapTntNavLIItem:not(.sapTntNavLIItemDisabled):active{
 	background-color: @sapUiListActiveBackground;
@@ -196,7 +197,6 @@
 		color: @sapUiListActiveTextColor;
 	}
 }
-
 
 .sapTntNavLISelectionIndicator {
 	display: @_sap_tnt_NavigationList_SelectionIndicatorDisplay;
