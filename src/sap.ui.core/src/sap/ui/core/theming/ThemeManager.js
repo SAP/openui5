@@ -47,16 +47,15 @@ sap.ui.define([
 	var _sThemeCheckId;
 
 	/**
-	 * Creates a new ThemeManager object.
-	 *
-	 * @class Helper class used by the UI5 Core to check whether the themes are applied correctly.
+	 * Helper class used by the UI5 Core to check whether the themes are applied correctly.
 	 *
 	 * It could happen that e.g. in onAfterRendering not all themes are available. In these cases the
 	 * check waits until the CSS is applied and fires an onThemeChanged event.
 	 *
-	 * @extends sap.ui.base.BaseObject
+	 * @namespace
 	 * @author SAP SE
 	 * @private
+	 * @ui5-restricted sap.ui.core
 	 * @alias sap.ui.core.theming.ThemeManager
 	 */
 	var ThemeManager = {

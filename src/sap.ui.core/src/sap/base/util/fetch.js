@@ -40,7 +40,7 @@ sap.ui.define([], function () {
 	 * 	<li>The <code>text()</code> method returns a promise that resolves with the XHR response text as String</li>
 	 * </ul>
 	 *
-	 * In case of a response to a synchronous <code>sap.base.util.syncFetch</code> request,
+	 * In case of a response to a synchronous <code>module:sap/base/util/syncFetch</code> request,
 	 * all methods will return the XHR response directly, according to the respective output format.
 	 *
 	 *
@@ -48,7 +48,7 @@ sap.ui.define([], function () {
 	 * @param {Promise|sap.ui.base.SyncPromise} PromiseImpl A Promise for asynchronous requests, and
 	 *                                          an <code>sap.ui.base.SyncPromise</code> for synchronous requests.
 	 * @interface
-	 * @alias sap.base.util.SimpleResponse
+	 * @alias module:sap/base/util/SimpleResponse
 	 * @private
 	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */
@@ -92,7 +92,7 @@ sap.ui.define([], function () {
 
 	/**
 	 * Performs an asynchronous XMLHttpRequest (XHR) with the provided resource URL and request settings.
-	 * It returns a Promise that resolves with an <code>sap.base.util.SimpleResponse</code> object, which is
+	 * It returns a Promise that resolves with an <code>module:sap/base/util/SimpleResponse</code> object, which is
 	 * a simplified implementation of the global Response interface, representing the response of the XHR.
 	 *
 	 * If the request encounters network failures, the returned promise will be rejected with a <code>TypeError</code>.
@@ -118,7 +118,7 @@ sap.ui.define([], function () {
 	 * @param  {Headers|object} [init.headers] A Headers object or an object with key/value pairs containing the request headers
 	 * @param  {string} [init.method='GET'] The request method, e.g. 'GET', 'POST'
 	 * @param  {AbortSignal} [init.signal] An AbortSignal object instance which allows to abort the request
-	 * @return {Promise<sap.base.util.SimpleResponse>} Returns a Promise resolving with <code>sap.base.util.SimpleResponse</code>
+	 * @return {Promise<module:sap/base/util/SimpleResponse>} Returns a Promise resolving with a <code>SimpleResponse</code>
 	 *
 	 * @alias module:sap/base/util/fetch
 	 * @private

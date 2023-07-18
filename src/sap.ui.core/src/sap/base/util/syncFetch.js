@@ -22,7 +22,7 @@ sap.ui.define([
 
 	/**
 	 * Performs a synchronous XMLHttpRequest (XHR) with the provided resource URL and request settings.
-	 * It returns a <code>sap.base.util.SimpleResponse</code> object, which is
+	 * It returns a <code>module:sap/base/util/SimpleResponse</code> object, which is
 	 * a simplified implementation of the global Response interface, representing the response of the XHR.
 	 *
 	 * If the request encounters network failures, this method will throw a <code>TypeError</code>.
@@ -45,7 +45,7 @@ sap.ui.define([
 	 * @param  {Headers|object} [init.headers] A Headers object or an object with key/value pairs containing the request headers
 	 * @param  {string} [init.method='GET'] The request method, e.g. 'GET', 'POST'
 	 * @param  {AbortSignal} [init.signal] An AbortSignal object instance which allows to abort the request
-	 * @return {sap.base.util.SimpleResponse} Returns a <code>sap.base.util.SimpleResponse</code> response object
+	 * @return {module:sap/base/util/SimpleResponse} Returns a <code>SimpleResponse</code> response object
 	 *
 	 * @alias module:sap/base/util/syncFetch
 	 * @private

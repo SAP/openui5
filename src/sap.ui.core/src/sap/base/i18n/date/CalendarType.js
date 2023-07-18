@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides type sap.base.i18n.date.CalendarType.
+// Provides type module:sap/base/i18n/date/CalendarType.
 sap.ui.define([], function() {
 	"use strict";
 

@@ -282,7 +282,7 @@ sap.ui.define([
 	 * @param {string} mSettings.name Name of the library; when given it must match the name by which the library has been loaded
 	 * @class
 	 * @alias sap.ui.core.Lib
-	 * @extends sap.ui.base.BaseObject
+	 * @extends sap.ui.base.Object
 	 * @since 1.110
 	 * @hideconstructor
 	 * @private
@@ -1677,7 +1677,7 @@ sap.ui.define([
 	 * Guesses if the given bundleUrl is pointing to a library's ResourceBundle and adapts the given bundle definition accordingly
 	 * based on the inferred library's manifest.
 	 *
-	 * @param {module:sap/base/i18n/ResourceBundle.Configuration} mParams Map containing the arguments of the sap.base.i18n.ResourceBundle.create call
+	 * @param {module:sap/base/i18n/ResourceBundle.Configuration} mParams Map containing the arguments of the <code>ResourceBundle.create</code> call
 	 * @returns {module:sap/base/i18n/ResourceBundle.Configuration} mParams The enriched config object
 	 * @private
 	 */

@@ -9,7 +9,7 @@ sap.ui.define([
 
 	/**
 	 * Allows to perform an synchronous or asynchronous XMLHttpRequest (XHR) with the provided resource URL and request settings.
-	 * It returns a Promise resolving with an <code>sap.base.util.SimpleResponse</code> object, which is
+	 * It returns a Promise resolving with an <code>module:sap/base/util/SimpleResponse</code> object, which is
 	 * a simplified implementation of the global Response interface, representing the response of the XHR.
 	 * It returns a <code>sap.ui.base.SyncPromise</code>, if the parameter <code>bSync</code> is set to 'true'.
 	 *
@@ -34,7 +34,7 @@ sap.ui.define([
 	 * @param  {string} [init.method='GET'] The request method, e.g. 'GET', 'POST'
 	 * @param  {AbortSignal} [init.signal] An AbortSignal object instance which allows to abort the request
 	 * @param  {boolean} [bSync=false] Performs a synchronous XMLHttpRequest if set to 'true'
-	 * @return {Promise<sap.base.util.SimpleResponse>|sap.ui.base.SyncPromise<sap.base.util.SimpleResponse>} Returns a Promise or SyncPromise resolving with an <code>sap.base.util.SimpleResponse</code> object
+	 * @return {Promise<module:sap/base/util/SimpleResponse>|sap.ui.base.SyncPromise<module:sap/base/util/SimpleResponse>} Returns a Promise or SyncPromise resolving with a <code>SimpleResponse</code> object
 	 *
 	 * @alias module:sap/base/util/mixedFetch
 	 * @private

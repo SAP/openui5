@@ -228,7 +228,7 @@ sap.ui.define([
 		/**
 		 * Returns the internal rendering Logger.
 		 *
-		 * @returns {sap.base.Log} The Rendering logger
+		 * @returns {module:sap/base/Log} The Rendering logger
 		 * @private
 		 */
 		getLogger: function() {
