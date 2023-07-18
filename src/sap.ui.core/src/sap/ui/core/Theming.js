@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/base/Eventing",
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/ui/core/theming/ThemeHelper"
 ], function(
 	assert,
 	BaseConfig,
@@ -18,7 +19,8 @@ sap.ui.define([
 	Eventing,
 	Log,
 	Localization,
-	deepEqual
+	deepEqual,
+	ThemeHelper
 ) {
 	"use strict";
 
@@ -53,10 +55,12 @@ sap.ui.define([
 				external: true
 			});
 
-			// empty string is a valid value wrt. the <String> type
-			// this is a semantic check if we need to default to a valid theme
+			// Empty string is a valid value wrt. the <String> type.
+			// An empty string is equivalent to "no theme given" here.
+			// We apply the default, but also automatically detect the dark mode.
 			if (sTheme === "") {
-				sTheme = "base";
+				const mDefaultThemeInfo = ThemeHelper.getDefaultThemeInfo();
+				sTheme = `${mDefaultThemeInfo.DEFAULT_THEME}${mDefaultThemeInfo.DARK_MODE ? "_dark" : ""}`;
 			}
 
 			// It's only possible to provide a themeroot via theme parameter using
@@ -71,7 +75,11 @@ sap.ui.define([
 					Theming.setThemeRoot(sTheme, sThemeRoot);
 				}
 			}
-			return normalizeTheme(sTheme, Theming.getThemeRoot(sTheme));
+
+			// validate theme and fallback to the fixed default, in case the configured theme is not valid
+			sTheme = ThemeHelper.validateAndFallbackTheme(sTheme, Theming.getThemeRoot(sTheme));
+
+			return sTheme;
 		},
 
 		/**
@@ -85,6 +93,7 @@ sap.ui.define([
 				if (sTheme.indexOf("@") !== -1) {
 					throw new TypeError("Providing a theme root as part of the theme parameter is not allowed.");
 				}
+
 				var bFireChange = !mChanges;
 				mChanges = mChanges || {};
 				var sOldTheme = Theming.getTheme();
@@ -444,13 +453,6 @@ sap.ui.define([
 		} catch (e) {
 			// malformed URL are also not accepted
 		}
-	}
-
-	function normalizeTheme(sTheme, sThemeBaseUrl) {
-		if ( sTheme && sThemeBaseUrl == null && sTheme.match(/^sap_corbu$/i) ) {
-			return "sap_fiori_3";
-		}
-		return sTheme;
 	}
 
 	Eventing.apply(Theming);
