@@ -302,32 +302,25 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._checkDateSelected = function(oDay) {
-			var oSelectedDate = this.getAggregation("selectedDates");
-			if (!oSelectedDate) {
-				return;
+			var aSelectedDate = this.getAggregation("selectedDates");
+			var oRange;
+			var oStartDate;
+			var oEndDate;
+			if (!aSelectedDate) {
+				return false;
 			}
 
-			 var oTimeStamp = oDay.toUTCJSDate().getTime();
-			 var oUTCDate = UI5Date.getInstance(Date.UTC(0, 0, 1));
-			 for (var i = 0; i < oSelectedDate.length; i++){
-				var oRange = oSelectedDate[i];
-				var oStartDate = oRange.getStartDate();
-				var oStartTimeStamp = CalendarUtils.MAX_MILLISECONDS; //max date
-				if (oStartDate) {
-					oUTCDate.setUTCFullYear(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate());
-					oStartTimeStamp = oUTCDate.getTime();
-				}
-				var oEndDate = oRange.getEndDate();
-				var oEndTimeStamp = -CalendarUtils.MAX_MILLISECONDS; //min date
-				if (oEndDate) {
-					oUTCDate.setUTCFullYear(oEndDate.getFullYear(), oEndDate.getMonth(), oEndDate.getDate());
-					oEndTimeStamp = oUTCDate.getTime();
-				}
+			for (var i = 0; i < aSelectedDate.length; i++) {
+				oRange = aSelectedDate[i];
 
-				if ((oTimeStamp === oStartTimeStamp && !oEndDate) || (oTimeStamp >= oStartTimeStamp && oTimeStamp <= oEndTimeStamp)) {
+				oStartDate = oRange.getStartDate() && CalendarDate.fromLocalJSDate(oRange.getStartDate());
+				oEndDate = oRange.getEndDate() && CalendarDate.fromLocalJSDate(oRange.getEndDate());
+
+				if (oStartDate && oDay.isSame(oStartDate) || (oStartDate && oEndDate && oDay.isSameOrAfter(oStartDate) && oDay.isSameOrBefore(oEndDate))) {
 					return true;
 				}
 			}
+
 			return false;
 		};
 
@@ -576,25 +569,18 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._toggleMarkCell = function (oTarget, oDay) {
-			// must be converted to UTC date because in this view full day is selected/unselected;
-			var oUTCDate = UI5Date.getInstance(Date.UTC(0, 0, 1));
-			oUTCDate.setUTCFullYear(oDay.getFullYear(), oDay.getMonth(), oDay.getDate());
-			oUTCDate.setMinutes(0, 0, 0);
-
 			if (oTarget && !oTarget.classList.contains("sapMSPCMonthDaySelected")) {
-				this.addAggregation("selectedDates", new DateRange({startDate: oUTCDate}));
+				this.addAggregation("selectedDates", new DateRange({startDate: UI5Date.getInstance(oDay)}));
 			} else {
 				var aSelectedDates = this.getAggregation("selectedDates");
 
 				if (!aSelectedDates) {
-					return this;
+					return;
 				}
 
 				for (var i = 0; i < aSelectedDates.length; i++){
-					var oUTCStartDate = UI5Date.getInstance(Date.UTC(0, 0, 1));
-					var oSlectStartDate = aSelectedDates[i].getStartDate();
-					oUTCStartDate.setUTCFullYear(oSlectStartDate.getFullYear(), oSlectStartDate.getMonth(), oSlectStartDate.getDate());
-					if (oUTCStartDate.getTime() === oUTCDate.getTime()) {
+					var oSelectStartDate = aSelectedDates[i].getStartDate();
+					if (CalendarDate.fromLocalJSDate(oSelectStartDate).isSame(CalendarDate.fromLocalJSDate(oDay))) {
 						this.removeAggregation("selectedDates", i);
 						break;
 					}
