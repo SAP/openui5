@@ -112,7 +112,7 @@
 															<mdc:Table id="FH1-Dialog-MDCTable--default"
 																autoBindOnInit="false"
 																width="100%"
-																selectionMode="Single"
+																selectionMode="SingleMaster"
 																p13nMode="Sort"
 																delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
 																threshold="50"
@@ -233,7 +233,7 @@
 													<mdc:Table id="FHGenre-MDCTable"
 														autoBindOnInit="false"
 														width="100%"
-														selectionMode="Single"
+														selectionMode="SingleMaster"
 														p13nMode="Sort"
 														delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Genres", "$select": ["classification_code"]\}\}'
 														threshold="50"
@@ -337,7 +337,7 @@
 													<mdc:Table id="FHSubGenre-MDCTable"
 														autoBindOnInit="false"
 														width="100%"
-														selectionMode="Single"
+														selectionMode="SingleMaster"
 														p13nMode="Sort"
 														delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "SubGenres", "$select": ["classification_code", "genre_code"]\}\}'
 														threshold="50"

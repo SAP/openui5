@@ -18,6 +18,8 @@ sap.ui.define([
 ], function (Controller, ConditionModel, JSONModel, Dialog, Button, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Filter, UriParameters, URI, Fragment, oCore, ValueHelpDelegate) {
 	"use strict";
 
+	window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
+
 	function _updateParams(mParams) {
 		var uri = URI(document.location.href);
 		Object.keys(mParams).forEach(function (sKey) {

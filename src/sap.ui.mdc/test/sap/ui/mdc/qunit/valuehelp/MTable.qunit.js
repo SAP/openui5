@@ -365,11 +365,9 @@ sap.ui.define([
 		var oInPromise = Promise.resolve({inValue: [oCondition]});
 		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
-		oMTable.onBeforeShow(true); // to trigger filtering
-		assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable), "ValueHelpDelegate.getFilterConditions called");
-
 		var fnDone = assert.async();
-		oInPromise.then(function() {
+		oMTable.onBeforeShow(true).then(function() {
+			assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable), "ValueHelpDelegate.getFilterConditions called");
 			oMTable.onShow(true); // to trigger filtering
 			// compare arguments of filter as Filter object is changed during filtering
 			assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");

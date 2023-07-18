@@ -34,7 +34,7 @@ sap.ui.define([
 				path: sProp,
 				sortable: true,
 				text: undefined,
-				typeConfig: TestTableDelegate.getTypeMap().getTypeConfig("String"),
+				dataType: "String",
 				unit: undefined
 			};
 		}));

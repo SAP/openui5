@@ -347,7 +347,10 @@ sap.ui.define([
 		Container.prototype.handleSelect.apply(this, arguments);
 
 		if (this.getProperty("_quickSelectEnabled") && this.isSingleSelect()) {
-			if (oEvent.getParameter("type") === "Add") {
+			var aEventConditions = oEvent.getParameter("conditions");
+			var bPositiveType = [ValueHelpSelectionType.Set, ValueHelpSelectionType.Add].indexOf(oEvent.getParameter("type")) !== -1;
+			var iLength = aEventConditions && aEventConditions.length;
+			if (bPositiveType && iLength) {
 				this.fireConfirm({close: true});
 			}
 		}

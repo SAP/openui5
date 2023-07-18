@@ -118,11 +118,12 @@ sap.ui.define([
 	function _updateSelection () {
 		if (this._oTable) {
 			var aItems = this._oTable.getItems();
-			var aConditions = this.getSelectableConditions();
+			var aConditions = this.getConditions();
 			var bHideSelection = this.isSingleSelect() && !FilterableListContent.prototype.isSingleSelect.apply(this); // if table is in single selection but Field allows multiple values, don't select items
 
 			aItems.forEach(function(oItem) {
-				var bSelected = bHideSelection ? false : this._isItemSelected(oItem, aConditions);
+				var oItemContext = this._getListItemBindingContext(oItem);
+				var bSelected = bHideSelection ? false : this._isContextSelected(oItemContext, aConditions);
 				oItem.setSelected(bSelected);
 				if (this._oTable.indexOfItem(oItem) === this._iNavigateIndex) {
 					oItem.addStyleClass("sapMLIBFocused").addStyleClass("sapMListFocus");
@@ -132,6 +133,25 @@ sap.ui.define([
 			}.bind(this));
 		}
 	}
+
+	MTable.prototype.onBeforeShow = function(bInitial) {
+		if (bInitial) {
+			return Promise.resolve(FilterableListContent.prototype.onBeforeShow.apply(this,arguments)).then(function () {
+				var oListBinding = this.getListBinding();
+				var oListBindingInfo = this.getListBindingInfo();
+				var bBindingSuspended = oListBinding && oListBinding.isSuspended();
+				var bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
+
+				if ((bBindingSuspended || bBindingWillBeSuspended) && !this.isTypeahead()) { // in dialog case do not resume suspended table on opening
+					return undefined;
+				}
+				return this.applyFilters();
+			}.bind(this));
+		}
+		return undefined;
+	};
+
+
 	MTable.prototype.applyFilters = function() {
 
 		if (this._iNavigateIndex >= 0) { // initialize navigation

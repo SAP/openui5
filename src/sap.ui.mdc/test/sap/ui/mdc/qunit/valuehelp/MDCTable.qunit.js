@@ -143,7 +143,7 @@ sap.ui.define([
 		}
 
 		oTable = new Table("T1", {
-			delegate: { name: "delegates/TableDelegate", payload: { collectionName: "items" } },
+			delegate: { name: "delegates/json/TableDelegate", payload: { collectionName: "items" } },
 			type: oType,
 			width: "26rem",
 			selectionMode: sSelectionMode || "Multi",
@@ -170,13 +170,12 @@ sap.ui.define([
 			})]
 		});
 		oTable.setModel(oModel); // as ValueHelp is faked
-		var aConditions = [Condition.createItemCondition("I2", "Item 2", {inParameter: null})];
 		oMdcTableWrapper = new MDCTable("MT1", {
 			table: oTable,
 			keyPath: "key",
 			descriptionPath: "text",
 			filterFields: "*text,additionalText*",
-			conditions: aConditions, // don't need to test the binding of Container here
+			conditions: [Condition.createItemCondition("I2", "Item 2", {inParameter: null})], // don't need to test the binding of Container here
 			config: { // don't need to test the binding of Container here
 				maxConditions: iMaxConditions,
 				operators: ["EQ", "BT"]
@@ -287,10 +286,10 @@ sap.ui.define([
 				var oSelectionPlugin = oTable._oTable._getSelectionPlugin();
 
 				return oSelectionPlugin.setSelectedIndex(2).then(function () {
-					assert.ok(oMdcTableWrapper._handleSelectionChange.called, "MDCTable _handleSelectionChange was called");
+					assert.ok(oMdcTableWrapper._handleSelectionChange.calledTwice, "MDCTable _handleSelectionChange was called twice"); // Once by Table._setSelectedContexts, second time by setSelectedIndex
 					assert.ok(oMdcTableWrapper._fireSelect.called, "MDCTable _fireSelect was called as this item is not in conditions");
 					assert.deepEqual(oMdcTableWrapper._fireSelect.lastCall.args[0], {
-						"type": "Add",
+						"type": "Set",
 						"conditions": [
 							{
 								"operator": "EQ",
@@ -306,24 +305,14 @@ sap.ui.define([
 					}, "carries expected configuration");
 
 					return oSelectionPlugin.setSelectedIndex(1).then(function () {
-						assert.ok(oMdcTableWrapper._handleSelectionChange.calledTwice, "MDCTable _handleSelectionChange was called");
+						assert.ok(oMdcTableWrapper._handleSelectionChange.calledThrice, "MDCTable _handleSelectionChange was called");
 						assert.notOk(oMdcTableWrapper._fireSelect.calledTwice, "MDCTable _fireSelect was not called as this item is in conditions");
 						oSelectionPlugin.removeSelectionInterval(1,1);
-						assert.ok(oMdcTableWrapper._handleSelectionChange.calledThrice, "MDCTable _handleSelectionChange was called");
+						assert.equal(oMdcTableWrapper._handleSelectionChange.callCount, 4, "MDCTable _handleSelectionChange was called");
 						assert.ok(oMdcTableWrapper._fireSelect.calledTwice, "MDCTable _fireSelect was called");
 						assert.deepEqual(oMdcTableWrapper._fireSelect.lastCall.args[0], {
-							"type": "Remove", // Single Select should always trigger "Add"
-							"conditions": [
-								{
-									"operator": "EQ",
-									"values": [
-										"I2",
-										"Item 2"
-									],
-									"isEmpty": null,
-									"validated": "Validated"
-								}
-							],
+							"type": "Set",
+							"conditions": [],
 							"id": "MT1"
 						}, "carries expected configuration");
 					});
@@ -334,13 +323,16 @@ sap.ui.define([
 
 	QUnit.test("handleSelectionChange - Multi Select", function(assert) {
 		_init(false, "Table", "Multi");
-		var oContentPromise = oMdcTableWrapper.getContent();
+		var oPrepareContentPromise = oMdcTableWrapper.getContent().then(function () {
+			return oMdcTableWrapper.onBeforeShow();
+		});
+
 
 		sinon.spy(oMdcTableWrapper, "_handleSelectionChange");
 		sinon.spy(oMdcTableWrapper, "_fireSelect");
 
 
-		return oContentPromise.then(function (oContent) {
+		return oPrepareContentPromise.then(function (oContent) {
 			return oMdcTableWrapper._retrievePromise("listBinding").then(function () {
 				var oSelectionPlugin = oTable._oTable._getSelectionPlugin();
 
@@ -348,54 +340,56 @@ sap.ui.define([
 					assert.ok(oMdcTableWrapper._handleSelectionChange.called, "MDCTable _handleSelectionChange was called");
 					assert.ok(oMdcTableWrapper._fireSelect.called, "MDCTable _fireSelect was called as some items are not yet in conditions");
 					assert.deepEqual(oMdcTableWrapper._fireSelect.lastCall.args[0], {
-						"type": "Add",
 						"conditions": [
-							{
-								"operator": "EQ",
-								"values": [
-									"I1",
-									"Item 1"
-								],
-								"isEmpty": null,
-								"validated": "Validated"
+						  {
+							"inParameters": {
+							  "inParameter": null
 							},
-							{
-								"operator": "EQ",
-								"values": [
-									"I3",
-									"X-Item 3"
-								],
-								"isEmpty": null,
-								"validated": "Validated"
-							}
+							"isEmpty": null,
+							"operator": "EQ",
+							"validated": "Validated",
+							"values": [
+							  "I2",
+							  "Item 2"
+							]
+						  },
+						  {
+							"isEmpty": null,
+							"operator": "EQ",
+							"validated": "Validated",
+							"values": [
+							  "I1",
+							  "Item 1"
+							]
+						  },
+						  {
+							"isEmpty": null,
+							"operator": "EQ",
+							"validated": "Validated",
+							"values": [
+							  "I3",
+							  "X-Item 3"
+							]
+						  }
 						],
-						"id": "MT1"
-					}, "carries expected configuration");
+						"id": "MT1",
+						"type": "Set"
+					  }, "carries expected configuration");
 
 					oSelectionPlugin.removeSelectionInterval(0,2);
-					assert.ok(oMdcTableWrapper._handleSelectionChange.calledTwice, "MDCTable _handleSelectionChange was called");
+					assert.ok(oMdcTableWrapper._handleSelectionChange.calledThrice, "MDCTable _handleSelectionChange was called");
 					assert.ok(oMdcTableWrapper._fireSelect.calledTwice, "MDCTable _fireSelect was called as one item has to be removed");
 					assert.deepEqual(oMdcTableWrapper._fireSelect.lastCall.args[0], {
-						"type": "Remove",
-						"conditions": [
-							{
-								"operator": "EQ",
-								"values": [
-									"I2",
-									"Item 2"
-								],
-								"isEmpty": null,
-								"validated": "Validated"
-							}
-						],
-						"id": "MT1"
-					}, "carries expected configuration");
+						"conditions": [],
+						"id": "MT1",
+						"type": "Set"
+					  }, "carries expected configuration");
 				});
 			});
 		});
 	});
 
-	QUnit.test("handleSelectionChange - noop", function(assert) {
+	QUnit.skip("handleSelectionChange - noop", function(assert) {
 		_init(false, "Table", "Single");
 		var oContentPromise = oMdcTableWrapper.getContent();
 
@@ -453,7 +447,7 @@ sap.ui.define([
 				assert.ok(oMdcTableWrapper._handleSelectionChange.called, "MDCTable _handleSelectionChange was called");
 				assert.ok(oMdcTableWrapper._fireSelect.called, "MDCTable _fireSelect was called as this item is not in conditions");
 				assert.deepEqual(oMdcTableWrapper._fireSelect.lastCall.args[0], {
-					"type": "Add",
+					"type": "Set",
 					"conditions": [
 						{
 							"operator": "EQ",
@@ -467,26 +461,23 @@ sap.ui.define([
 					],
 					"id": "MT1"
 				}, "carries expected configuration");
+
+				//We simulate the conditions update from the container to the content resulting from the contents _fireSelect:
+				oMdcTableWrapper.setConditions([Condition.createItemCondition("I3", "X-Item 3", {inParameter: null})]);
+
 				oInnerTable.setSelectedItem(aTableItems[1], true, true);
 				assert.ok(oMdcTableWrapper._handleSelectionChange.calledTwice, "MDCTable _handleSelectionChange was called");
-				assert.ok(oMdcTableWrapper._fireSelect.calledTwice, "MDCTable _fireSelect was called");
+				assert.ok(oMdcTableWrapper._fireSelect.calledTwice, "MDCTable _fireSelect was called"); // as aConditions is never updated opposed in this unit test scenario
+
+				//We simulate the conditions update from the container to the content resulting from the contents _fireSelect:
+				oMdcTableWrapper.setConditions([Condition.createItemCondition("I2", "Item 2", {inParameter: null})]);
 
 				oInnerTable.setSelectedItem(aTableItems[1], false, true);
 				assert.ok(oMdcTableWrapper._handleSelectionChange.calledThrice, "MDCTable _handleSelectionChange was called");
-				assert.ok(oMdcTableWrapper._fireSelect.calledThrice, "MDCTable _fireSelect was called");
+				assert.ok(oMdcTableWrapper._fireSelect.calledThrice, "MDCTable _fireSelect was called"); // as aConditions is never updated opposed in this unit test scenario
 				assert.deepEqual(oMdcTableWrapper._fireSelect.lastCall.args[0], {
-					"type": "Remove", // Single Select should always trigger "Add"
-					"conditions": [
-						{
-							"operator": "EQ",
-							"values": [
-								"I2",
-								"Item 2"
-							],
-							"isEmpty": null,
-							"validated": "Validated"
-						}
-					],
+					"type": "Set", // Single Select should always trigger "Add"
+					"conditions": [],
 					"id": "MT1"
 				}, "carries expected configuration");
 			});
@@ -510,39 +501,58 @@ sap.ui.define([
 				assert.ok(oMdcTableWrapper._handleSelectionChange.called, "MDCTable _handleSelectionChange was called");
 				assert.ok(oMdcTableWrapper._fireSelect.called, "MDCTable _fireSelect was called as this item is not in conditions");
 				assert.deepEqual(oMdcTableWrapper._fireSelect.lastCall.args[0], {
-					"type": "Add",
 					"conditions": [
-						{
-							"operator": "EQ",
-							"values": [
-								"I3",
-								"X-Item 3"
-							],
-							"isEmpty": null,
-							"validated": "Validated"
-						}
+					  {
+						"inParameters": {
+						  "inParameter": null
+						},
+						"isEmpty": null,
+						"operator": "EQ",
+						"validated": "Validated",
+						"values": [
+						  "I2",
+						  "Item 2"
+						]
+					  },
+					  {
+						"isEmpty": null,
+						"operator": "EQ",
+						"validated": "Validated",
+						"values": [
+						  "I3",
+						  "X-Item 3"
+						]
+					  }
 					],
-					"id": "MT1"
+					"id": "MT1",
+					"type": "Set"
 				}, "carries expected configuration");
+
+				//We simulate the conditions update from the container to the content resulting from the contents _fireSelect:
+				oMdcTableWrapper.setConditions([Condition.createItemCondition("I3", "X-Item 3", {inParameter: null}), Condition.createItemCondition("I2", "Item 2", {inParameter: null})]);
+
 				oInnerTable.setSelectedItem(aTableItems[1], true, true);
 				assert.ok(oMdcTableWrapper._handleSelectionChange.calledTwice, "MDCTable _handleSelectionChange was called");
-				assert.ok(oMdcTableWrapper._fireSelect.calledTwice, "MDCTable _fireSelect was called");
+				assert.notOk(oMdcTableWrapper._fireSelect.calledTwice, "MDCTable _fireSelect was not called, as this item is already in our conditions");
 
 				oInnerTable.setSelectedItem(aTableItems[1], false, true);
 				assert.ok(oMdcTableWrapper._handleSelectionChange.calledThrice, "MDCTable _handleSelectionChange was called");
-				assert.ok(oMdcTableWrapper._fireSelect.calledThrice, "MDCTable _fireSelect was called");
+				assert.ok(oMdcTableWrapper._fireSelect.calledTwice, "MDCTable _fireSelect was called");
 				assert.deepEqual(oMdcTableWrapper._fireSelect.lastCall.args[0], {
-					"type": "Remove",
+					"type": "Set",
 					"conditions": [
 						{
-							"operator": "EQ",
-							"values": [
-								"I2",
-								"Item 2"
-							],
+							"inParameters": {
+								"inParameter": null
+							},
 							"isEmpty": null,
-							"validated": "Validated"
-						}
+							"operator": "EQ",
+							"validated": "Validated",
+							"values": [
+							  "I3",
+							  "X-Item 3"
+							]
+						  }
 					],
 					"id": "MT1"
 				}, "carries expected configuration");

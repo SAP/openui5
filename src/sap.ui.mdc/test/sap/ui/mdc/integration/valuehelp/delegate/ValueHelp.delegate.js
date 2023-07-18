@@ -58,40 +58,32 @@ sap.ui.define([
 		}) : true;
 	};
 
-	ValueHelpDelegate.isFilterableListItemSelected = function (oValueHelp, oContent, oItem, aConditions) {
-		var sModelName = oContent.getListBindingInfo().model;
+	ValueHelpDelegate.findConditionsForContext = function (oValueHelp, oContent, oContext, aConditions) {
 		var bSelectionConsidersList = oContent.getModel("settings").getProperty("/selectionConsidersList");
 		var bSelectionConsidersPayload = oContent.getModel("settings").getProperty("/selectionConsidersPayload");
-
-
-		var oContext = oItem && oItem.getBindingContext(sModelName);
-		for (var i = 0; i < aConditions.length; i++) {
-			var oCondition = aConditions[i];
-			if (ODataV4ValueHelpDelegate.isFilterableListItemSelected(oValueHelp, oContent, oItem, [oCondition])) { // TODO: check for specific EQ operator
-				var oCurrentListPayload = oCondition.payload && oCondition.payload[oContent.getId()];
+		return BaseValueHelpDelegate.findConditionsForContext.apply(this, arguments).filter(function (oCondition) {
+			var oCurrentListPayload = oCondition.payload && oCondition.payload[oContent.getId()];
 				if (bSelectionConsidersList) {
 					var aPayloadKeys = oCondition.payload && Object.keys(oCondition.payload);
 					if (aPayloadKeys.length && !oCurrentListPayload) {	// if other payload identifier exists we skip this entry
-						continue;
+						return false;
 					}
 				}
-
 				if (bSelectionConsidersPayload && !_isMatchingPayloadEntry(oContext, bSelectionConsidersList ? [oCurrentListPayload] : Object.values(oCondition.payload))) {	// only consider this lists payload, if selected "by payload key"
-					continue;
+					return false;
 				}
-
 				return true;
-			}
-		}
-
-		return false;
+		});
 	};
 
-	function _addContext(oContext, sProperty, oStore) {
-		var vProp = oContext.getProperty(sProperty);
-			if (vProp) {
-				oStore[sProperty] = vProp;
+	function _addContexts(oContext, aContextProperties, oStore) {
+		var oObject = oContext.getObject();
+		for (var index = 0; index < aContextProperties.length; index++) {
+			var sProperty = aContextProperties[index];
+			if (typeof oObject[sProperty] !== 'undefined') {
+				oStore[sProperty] = oObject[sProperty];
 			}
+		}
 	}
 
 	ValueHelpDelegate.createConditionPayload = function (oValueHelp, oContent, aValues, vContext) {
@@ -101,8 +93,7 @@ sap.ui.define([
 
 		if (vContext) {
 			var oEntry = {};
-			_addContext(vContext, "salesOrganization", oEntry);
-			_addContext(vContext, "distributionChannel", oEntry);
+			_addContexts(vContext, ["salesOrganization", "distributionChannel"], oEntry);
 			if (Object.keys(oEntry).length) {
 				oConditionPayload[sIdentifier].push(oEntry);
 			}

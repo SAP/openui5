@@ -945,7 +945,7 @@
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="FH_Books2-MTable-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 									<vhfb:filterItems>
-										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="ID" conditions="{$filters>/conditions/ID}" propertyKey="ID"dataType="Edm.Int32" dataTypeFormatOptions='\{"groupingEnabled": false\}'/>
+										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="ID" conditions="{$filters>/conditions/ID}" propertyKey="ID" dataType="Edm.Int32" dataTypeFormatOptions='\{"groupingEnabled": false\}'/>
 									</vhfb:filterItems>
 									<vhfb:filterItems>
 										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions="{$filters>/conditions/title}" propertyKey="title"/>

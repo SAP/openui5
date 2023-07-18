@@ -11,7 +11,9 @@ sap.ui.define([
 	'sap/m/p13n/enum/PersistenceMode',
 	'sap/m/p13n/Engine',
 	'sap/base/util/merge',
-	'sap/ui/mdc/p13n/StateUtil'
+	'sap/ui/mdc/p13n/StateUtil',
+	'sap/ui/mdc/condition/FilterOperatorUtil',
+	'sap/base/Log'
 ], function(
 	loadModules,
 	ListContent,
@@ -21,7 +23,9 @@ sap.ui.define([
 	PersistenceMode,
 	Engine,
 	merge,
-	StateUtil
+	StateUtil,
+	FilterOperatorUtil,
+	Log
 ) {
 	"use strict";
 
@@ -230,15 +234,35 @@ sap.ui.define([
 		return oConditionPayload;
 	};
 
-	/**
-	 * Checks if an item is selected.
-	 * @param {sap.ui.core.Element} oItem Entry of a given list
-	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions current conditions
-	 * @returns {boolean} True, if item is selected
-	 */
-	FilterableListContent.prototype._isItemSelected = function (oItem, aConditions) {
+	FilterableListContent.prototype._isContextSelected = function (oContext, aConditions) {
+		return !!oContext && !!this._findConditionsForContext(oContext, aConditions).length;
+	};
+
+	FilterableListContent.prototype._findConditionsForContext = function (oContext, aConditions) {
 		var oDelegate = this.isValueHelpDelegateInitialized() && this.getValueHelpDelegate();
-		return oDelegate ? oDelegate.isFilterableListItemSelected(this.getValueHelpInstance(), this, oItem, aConditions) : false;
+		if (oContext && oDelegate) {
+			// <!-- Support for deprecated delegate method isFilterableListItemSelected
+			if (oDelegate.isFilterableListItemSelected) {
+				Log.warning("MDC.ValueHelp", "Delegate method 'isFilterableListItemSelected' is deprecated, please implement 'findConditionsForContext' instead.");
+
+				var bRepresentsConditions = oDelegate.isFilterableListItemSelected(this.getValueHelpInstance(), this, { getBindingContext: function () {
+					return oContext; // Dirty way to simulate listitem.getBindingContext()
+				} }, aConditions);
+
+				if (bRepresentsConditions) {
+					var oValues = this.getItemFromContext(oContext);
+					var oContextCondition = oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
+
+					return aConditions.filter(function (oCondition) {
+						return FilterOperatorUtil.compareConditions(oCondition, oContextCondition);
+					});
+				}
+				return [];
+			}
+			// -->
+			return oDelegate.findConditionsForContext(this.getValueHelpInstance(), this, oContext, aConditions);
+		}
+		return [];
 	};
 
 	/**
@@ -480,20 +504,6 @@ sap.ui.define([
 		}
 	};
 
-	FilterableListContent.prototype._applyFiltersIfNecessary = function () {
-		var oListBinding = this.getListBinding();
-		var oListBindingInfo = this.getListBindingInfo();
-		var bBindingSuspended = oListBinding && oListBinding.isSuspended();
-		var bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
-
-		if ((bBindingSuspended || bBindingWillBeSuspended) && !this.isTypeahead()) { // in dialog case do not resume suspended table on opening
-			return undefined;
-		}
-
-		// apply filters before opening
-		return this.applyFilters();
-	};
-
 	/**
 	 * Executes logic before content is shown.
 	 * @param {boolean} bInitial If <code>true</code> this is the first time the content is shown
@@ -518,9 +528,7 @@ sap.ui.define([
 						}
 					}.bind(this))).then(function (oStateDiff) {
 						return StateUtil.applyExternalState(oFilterBar, oStateDiff);
-					}).then(this._applyFiltersIfNecessary.bind(this));
-				} else {
-					return this._applyFiltersIfNecessary();
+					});
 				}
 			}.bind(this));
 		}

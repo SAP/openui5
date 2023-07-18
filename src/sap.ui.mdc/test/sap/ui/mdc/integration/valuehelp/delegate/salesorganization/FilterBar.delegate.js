@@ -36,7 +36,7 @@ sap.ui.define([
 				path: sProp,
 				sortable: true,
 				text: undefined,
-				typeConfig: FB0Delegate.getTypeMap().getTypeConfig("String"),
+				dataType: "String",
 				unit: undefined
 			};
 		}));
