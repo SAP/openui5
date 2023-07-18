@@ -206,6 +206,7 @@
 .sapFAvatarFocusable.sapMAvatarPressed {
 	background-color: @sapUiButtonSelectedBackground;
 	color: @sapUiButtonSelectedTextColor;
+	outline-offset: 0.0625rem;
 
 	&:hover {
 		background-color: @sapUiButtonSelectedHoverBackground;
@@ -215,21 +216,15 @@
 	.sapUiRespGrid & {
 		z-index: 100;
 	}
-
-    &.sapFAvatarSquare {
-        outline-offset: 0.0625rem;
-    }
 }
 
 .sapFAvatarFocusable:focus {
 	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: 0.0625rem;
+
 	.sapUiRespGrid & {
 		z-index: 100;
 	}
-
-    &.sapFAvatarSquare {
-        outline-offset: 0.0625rem;
-    }
 }
 
 html:not(.sap-desktop) .sapFAvatarFocusable.sapMAvatarPressed {
