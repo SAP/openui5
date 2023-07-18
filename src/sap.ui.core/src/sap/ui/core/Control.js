@@ -976,6 +976,9 @@ sap.ui.define([
 	 * @returns {this} <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.core, sap.m, sap.viz
+	 * @deprecated since version 1.69, the blocked property is deprecated.
+	 * There is no accessibility support for this property.
+	 * Blocked controls should not be used inside Controls, which rely on keyboard navigation, e.g. List controls.
 	 */
 	Control.prototype.setBlocked = function(bBlocked, sBlockedSection /* this is an internal parameter to apply partial blocking for a specific section of the control */) {
 		//If the new state is already set, we don't need to do anything
