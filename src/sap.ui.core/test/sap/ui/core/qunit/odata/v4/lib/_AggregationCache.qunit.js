@@ -375,6 +375,9 @@ sap.ui.define([
 		// "super" call
 		assert.ok(oCache instanceof _AggregationCache, "module value is c'tor function");
 		assert.ok(oCache instanceof _Cache, "_AggregationCache is a _Cache");
+		assert.strictEqual(oCache._delete, null, "disinherit");
+		assert.strictEqual(oCache.addTransientCollection, null, "disinherit");
+		assert.strictEqual(oCache.getAndRemoveValue, null, "disinherit");
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.sResourcePath, sResourcePath);
 		assert.strictEqual(oCache.mQueryOptions, mQueryOptions);
