@@ -173,7 +173,7 @@ sap.ui.define([
 		 * If the control has no component, it walks up the control tree in order to find a control having one.
 		 *
 		 * @param {sap.ui.base.ManagedObject} oControl - Managed object instance
-		 * @returns {sap.ui.core.Component} component instance if found or null
+		 * @returns {sap.ui.core.Component} Component instance if found or undefined
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 */
@@ -204,6 +204,20 @@ sap.ui.define([
 			}
 
 			return oComponent;
+		},
+
+		/**
+		 * Returns the component that belongs to the passed selector whose type is "application".
+		 * If the control has no component, it walks up the control tree in order to find a control having one.
+		 * This does not work if called with a {@link sap.ui.fl.ComponentSelector}
+		 *
+		 * @param {sap.ui.fl.Selector} oSelector - Selector object
+		 * @returns {sap.ui.core.Component} Component instance if found or undefined
+		 * @private
+		 * @ui5-restricted sap.ui.fl
+		 */
+		getAppComponentForSelector: function(oSelector) {
+			return oSelector.appComponent || Utils.getAppComponentForControl(oSelector);
 		},
 
 		/**

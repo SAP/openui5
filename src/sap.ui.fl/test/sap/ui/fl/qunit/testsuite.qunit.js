@@ -469,12 +469,6 @@ sap.ui.define([
 					}
 				}
 			},
-			"apply/_internal/ChangesController": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/ChangesController"]
-				}
-			},
 			"apply/_internal/preprocessors/ComponentLifecycleHooks": {
 				group: "Apply Internal",
 				coverage: {
@@ -539,13 +533,13 @@ sap.ui.define([
 			"write/api/AppVariantWriteAPI": {
 				group: "Write API",
 				coverage: {
-					only: ["sap/ui/fl/write/api/AppVariantWriteAPI", "sap/ui/fl/apply/_internal/ChangesController"]
+					only: ["sap/ui/fl/write/api/AppVariantWriteAPI"]
 				}
 			},
 			"write/api/ChangesWriteAPI": {
 				group: "Write API",
 				coverage: {
-					only: ["sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/fl/apply/_internal/ChangesController"]
+					only: ["sap/ui/fl/write/api/ChangesWriteAPI"]
 				}
 			},
 			"write/api/ContextBasedAdaptationsAPI": {
@@ -590,7 +584,7 @@ sap.ui.define([
 			"write/api/PersistenceWriteAPI": {
 				group: "Write API",
 				coverage: {
-					only: ["sap/ui/fl/write/api/PersistenceWriteAPI", "sap/ui/fl/apply/_internal/ChangesController"]
+					only: ["sap/ui/fl/write/api/PersistenceWriteAPI"]
 				}
 			},
 			"write/api/ReloadInfoAPI": {

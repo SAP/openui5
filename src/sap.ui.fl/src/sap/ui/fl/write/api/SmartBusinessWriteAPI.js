@@ -3,21 +3,21 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/apply/_internal/ChangesController",
-	"sap/ui/fl/write/_internal/SaveAs",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/fl/write/_internal/SaveAs",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI"
 ], function(
+	ManifestUtils,
+	Settings,
 	AppVariantFactory,
-	PersistenceWriteAPI,
-	ChangesWriteAPI,
-	ChangesController,
-	SaveAs,
 	LrepConnector,
-	Settings
+	SaveAs,
+	ChangesWriteAPI,
+	PersistenceWriteAPI
 ) {
 	"use strict";
 
@@ -41,9 +41,7 @@ sap.ui.define([
 			appId: mPropertyBag.appId
 		};
 
-		var oDescriptorFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
-
-		mPropertyBag.id = oDescriptorFlexController.getComponentName();
+		mPropertyBag.id = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 		// Pass a flag to know which consumer is calling SaveAs handler
 		mPropertyBag.isForSmartBusiness = true;
 	}
@@ -95,8 +93,7 @@ sap.ui.define([
 				return Promise.reject("App variant ID must be provided");
 			}
 
-			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
-			mPropertyBag.reference = oFlexController.getComponentName();
+			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 
 			// Pass a flag to determine the consumer who is calling SaveAs handler
 			mPropertyBag.isForSmartBusiness = true;

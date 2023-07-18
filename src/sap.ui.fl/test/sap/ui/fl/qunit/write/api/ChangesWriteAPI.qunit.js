@@ -11,13 +11,13 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
+	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
@@ -34,13 +34,13 @@ sap.ui.define([
 	Applier,
 	Reverter,
 	States,
-	ChangesController,
 	DescriptorChangeFactory,
 	Settings,
 	ChangeHandlerStorage,
 	AppVariantInlineChangeFactory,
 	ChangesWriteAPI,
 	ContextBasedAdaptationsAPI,
+	FlexControllerFactory,
 	Layer,
 	FlexUtils,
 	sinon,
@@ -54,12 +54,7 @@ sap.ui.define([
 	var oComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Control---demo--test");
 
 	function mockFlexController(oControl, oReturn) {
-		sandbox.stub(ChangesController, "getFlexControllerInstance")
-		.throws("invalid parameters for flex persistence function")
-		.withArgs(oControl)
-		.returns(oReturn);
-
-		sandbox.stub(ChangesController, "getAppComponentForSelector")
+		sandbox.stub(FlexControllerFactory, "createForSelector")
 		.throws("invalid parameters for flex persistence function")
 		.withArgs(oControl)
 		.returns(oReturn);
@@ -335,7 +330,7 @@ sap.ui.define([
 			};
 			var oAppComponent = {type: "appComponent"};
 
-			sandbox.stub(ChangesController, "getAppComponentForSelector")
+			sandbox.stub(FlexUtils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.element)
 			.returns(oAppComponent);
 
@@ -359,6 +354,7 @@ sap.ui.define([
 				change: {type: "change"},
 				element: null
 			};
+			sandbox.stub(FlexUtils, "getAppComponentForSelector");
 
 			var mRevertSettings = {
 				modifier: JsControlTreeModifier,
@@ -382,7 +378,7 @@ sap.ui.define([
 			};
 			var oAppComponent = {type: "appComponent"};
 
-			sandbox.stub(ChangesController, "getAppComponentForSelector")
+			sandbox.stub(FlexUtils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.element)
 			.returns(oAppComponent);
 
@@ -411,7 +407,7 @@ sap.ui.define([
 			};
 			var oAppComponent = {type: "appComponent"};
 
-			sandbox.stub(ChangesController, "getAppComponentForSelector")
+			sandbox.stub(FlexUtils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.element)
 			.returns(oAppComponent);
 
@@ -445,7 +441,7 @@ sap.ui.define([
 			};
 			var oAppComponent = {type: "appComponent"};
 
-			sandbox.stub(ChangesController, "getAppComponentForSelector")
+			sandbox.stub(FlexUtils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.element)
 			.returns(oAppComponent);
 

@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
@@ -18,7 +17,6 @@ sap.ui.define([
 	JsControlTreeModifier,
 	VariantUtils,
 	ManifestUtils,
-	ChangesController,
 	FlexControllerFactory,
 	Layer,
 	Utils
@@ -126,7 +124,7 @@ sap.ui.define([
 				aComplexSelectors = mPropertyBag.complexSelectors;
 				oFirstElement = mPropertyBag.complexSelectors[0].selector;
 			}
-			return ChangesController.getFlexControllerInstance(oFirstElement).waitForChangesToBeApplied(aComplexSelectors);
+			return FlexControllerFactory.createForSelector(oFirstElement).waitForChangesToBeApplied(aComplexSelectors);
 		},
 
 		/**

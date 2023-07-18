@@ -20,10 +20,6 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("shall provide an API to create a FlexController", function(assert) {
-			assert.strictEqual(typeof FlexControllerFactory.create, "function");
-		});
-
 		QUnit.test("shall create a new FlexController", function(assert) {
 			assert.ok(FlexControllerFactory.create("myComponent"));
 		});
@@ -59,6 +55,16 @@ sap.ui.define([
 			FlexControllerFactory.createForControl(oMockControl);
 
 			assert.ok(FlexControllerFactory.create.calledWith(sMockComponentName), "then FlexController created with the correct component name");
+		});
+
+		QUnit.test("when createForSelector is called", function(assert) {
+			sandbox.stub(ManifestUtils, "getFlexReferenceForSelector").returns("myFancyFlexReference");
+			sandbox.stub(FlexControllerFactory, "create");
+			FlexControllerFactory.createForSelector("foo");
+			assert.ok(
+				FlexControllerFactory.create.calledWith("myFancyFlexReference"),
+				"the create function was properly called"
+			);
 		});
 	});
 

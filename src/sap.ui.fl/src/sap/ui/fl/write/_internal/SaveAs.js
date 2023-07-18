@@ -3,27 +3,27 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
-	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
-	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
-	"sap/ui/fl/apply/_internal/ChangesController",
-	"sap/ui/fl/Utils",
-	"sap/base/Log",
-	"sap/ui/fl/Layer",
-	"sap/base/util/merge",
 	"sap/base/util/restricted/_omit",
-	"sap/ui/fl/registry/Settings"
+	"sap/base/util/merge",
+	"sap/base/Log",
+	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils"
 ], function(
-	AppVariantFactory,
-	DescriptorChangeTypes,
-	AppVariantInlineChangeFactory,
-	ChangesController,
-	Utils,
-	Log,
-	Layer,
-	merge,
 	_omit,
-	Settings
+	merge,
+	Log,
+	DescriptorChangeTypes,
+	Settings,
+	AppVariantFactory,
+	AppVariantInlineChangeFactory,
+	FlexControllerFactory,
+	Layer,
+	Utils
 ) {
 	"use strict";
 
@@ -133,7 +133,7 @@ sap.ui.define([
 	}
 
 	function _getDirtyDescrChanges(vSelector) {
-		var oFlexControllerPersistence = ChangesController.getFlexControllerInstance(vSelector)._oChangePersistence;
+		var oFlexControllerPersistence = FlexControllerFactory.createForSelector(vSelector)._oChangePersistence;
 		if (!oFlexControllerPersistence) {
 			return [];
 		}
@@ -143,7 +143,7 @@ sap.ui.define([
 	}
 
 	function _getDirtyChanges(vSelector) {
-		var oFlexControllerPersistence = ChangesController.getFlexControllerInstance(vSelector)._oChangePersistence;
+		var oFlexControllerPersistence = FlexControllerFactory.createForSelector(vSelector)._oChangePersistence;
 		if (!oFlexControllerPersistence) {
 			return [];
 		}
@@ -161,7 +161,7 @@ sap.ui.define([
 				aChangesToBeDeleted.push(oChange);
 			}
 		});
-		ChangesController.getFlexControllerInstance(vSelector)._oChangePersistence.deleteChanges(aChangesToBeDeleted);
+		FlexControllerFactory.createForSelector(vSelector)._oChangePersistence.deleteChanges(aChangesToBeDeleted);
 	}
 
 	function _addPackageAndTransport(oAppVariant, mPropertyBag) {
@@ -220,12 +220,12 @@ sap.ui.define([
 				oAppVariantResultClosure = merge({}, oResult);
 				_deleteDescrChangesFromPersistence(mPropertyBag.selector);
 
-				var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
+				var oFlexController = FlexControllerFactory.createForSelector(mPropertyBag.selector);
 
 				var aUIChanges = _getDirtyChanges(mPropertyBag.selector); // after removing descr changes, all remaining dirty changes are UI changes
 				if (aUIChanges.length) {
 					// Save the dirty UI changes to backend => firing PersistenceWriteApi.save
-					return oFlexController.saveAll(ChangesController.getAppComponentForSelector(mPropertyBag.selector), true)
+					return oFlexController.saveAll(Utils.getAppComponentForSelector(mPropertyBag.selector), true)
 					.catch(function(oError) {
 						// Delete the inconsistent app variant if the UI changes failed to save
 						return this.deleteAppVariant({

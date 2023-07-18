@@ -3,11 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/base/util/restricted/_omit",
+	"sap/base/util/includes",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
+	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/Applier",
@@ -15,19 +16,19 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
-	"sap/ui/fl/Utils",
-	"sap/ui/core/Core"
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/Utils"
 ], function(
-	includes,
 	_omit,
+	includes,
 	Log,
 	JsControlTreeModifier,
 	Component,
+	Core,
 	Element,
 	DescriptorChangeTypes,
 	Applier,
@@ -35,13 +36,12 @@ sap.ui.define([
 	FlexObjectFactory,
 	States,
 	ManifestUtils,
-	ChangesController,
 	DescriptorChangeFactory,
 	ChangeHandlerStorage,
 	ContextBasedAdaptationsAPI,
 	AppVariantInlineChangeFactory,
-	Utils,
-	Core
+	FlexControllerFactory,
+	Utils
 ) {
 	"use strict";
 
@@ -127,8 +127,8 @@ sap.ui.define([
 			return Promise.resolve(FlexObjectFactory.createControllerExtensionChange(mPropertyBag.changeSpecificData));
 		}
 
-		const oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector.view || mPropertyBag.selector);
-		const sReference = oAppComponent.appId || ManifestUtils.getFlexReferenceForControl(oAppComponent);
+		const oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector.view || mPropertyBag.selector);
+		const sReference = mPropertyBag.selector.appId || ManifestUtils.getFlexReferenceForControl(oAppComponent);
 		mPropertyBag.appComponent = oAppComponent;
 		mPropertyBag.changeSpecificData.reference = sReference;
 
@@ -184,8 +184,8 @@ sap.ui.define([
 			return Promise.reject("Please provide an Element");
 		}
 
-		var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.element);
-		mPropertyBag.appComponent = ChangesController.getAppComponentForSelector(mPropertyBag.element);
+		var oFlexController = FlexControllerFactory.createForSelector(mPropertyBag.element);
+		mPropertyBag.appComponent = Utils.getAppComponentForSelector(mPropertyBag.element);
 		if (!mPropertyBag.modifier) {
 			mPropertyBag.modifier = JsControlTreeModifier;
 		}
@@ -226,11 +226,8 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	ChangesWriteAPI.revert = function(mPropertyBag) {
-		var oAppComponent;
+		var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.element || {});
 		var aResults = [];
-		if (mPropertyBag.element instanceof Element) {
-			oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.element);
-		}
 		var mRevertSettings = {
 			modifier: JsControlTreeModifier,
 			appComponent: oAppComponent

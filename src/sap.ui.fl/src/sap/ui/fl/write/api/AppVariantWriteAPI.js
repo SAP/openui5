@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/SaveAs",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/_internal/Versions"
 ], function(
-	ChangesController,
+	ManifestUtils,
 	SaveAs,
 	LrepConnector,
 	FeaturesAPI,
@@ -22,8 +22,7 @@ sap.ui.define([
 			return Promise.reject("Layer must be provided");
 		}
 
-		var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
-		mPropertyBag.reference = oFlexController.getComponentName();
+		mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 		mPropertyBag.url = "/sap/bc/lrep";
 		// Since this method is only called for Save As App Variant scenario on ABAP platform, the direct usage of write LrepConnector is triggered.
 		return LrepConnector.appVariant[sFunctionName](mPropertyBag);
@@ -59,8 +58,7 @@ sap.ui.define([
 			if (!mPropertyBag.id) {
 				return Promise.reject("App variant ID must be provided");
 			}
-			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
-			mPropertyBag.reference = oFlexController.getComponentName();
+			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 			return FeaturesAPI.isVersioningEnabled(mPropertyBag.layer)
 			.then(function(bVersioningEnabled) {
 				if (bVersioningEnabled) {
@@ -84,8 +82,7 @@ sap.ui.define([
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}
-			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
-			mPropertyBag.id = oFlexController.getComponentName();
+			mPropertyBag.id = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 
 			return SaveAs.deleteAppVariant(mPropertyBag);
 		},

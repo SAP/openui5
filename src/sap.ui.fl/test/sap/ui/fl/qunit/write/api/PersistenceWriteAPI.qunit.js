@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
@@ -20,6 +19,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/FlexInfoSession",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/ChangePersistence",
+	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
@@ -35,7 +35,6 @@ sap.ui.define([
 	FlexState,
 	ManifestUtils,
 	FlexObjectFactory,
-	ChangesController,
 	Settings,
 	Condenser,
 	FlexObjectState,
@@ -45,6 +44,7 @@ sap.ui.define([
 	FlexInfoSession,
 	ChangePersistenceFactory,
 	ChangePersistence,
+	FlexControllerFactory,
 	Layer,
 	Utils,
 	sinon,
@@ -58,7 +58,7 @@ sap.ui.define([
 	var sReturnValue = "returnValue";
 
 	function mockFlexController(oControl, oReturn) {
-		sandbox.stub(ChangesController, "getFlexControllerInstance")
+		sandbox.stub(FlexControllerFactory, "createForSelector")
 		.throws("invalid parameters for flex persistence function")
 		.withArgs(oControl)
 		.returns(oReturn);
@@ -347,7 +347,7 @@ sap.ui.define([
 
 			var oAppComponent = {id: "appComponent"};
 
-			sandbox.stub(ChangesController, "getAppComponentForSelector")
+			sandbox.stub(Utils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.selector)
 			.returns(oAppComponent);
 
@@ -370,12 +370,6 @@ sap.ui.define([
 				selector: this.vSelector
 			};
 
-			var oAppComponent = { id: "appComponent" };
-
-			sandbox.stub(ChangesController, "getAppComponentForSelector")
-			.withArgs(mPropertyBag.selector)
-			.returns(oAppComponent);
-
 			var fnPersistenceStub = getMethodStub([
 				{},
 				mPropertyBag.styleClass,
@@ -383,10 +377,11 @@ sap.ui.define([
 				mPropertyBag.appVariantDescriptors
 			], Promise.resolve(sReturnValue));
 
-			mockFlexController(oAppComponent, { _oChangePersistence: { transportAllUIChanges: fnPersistenceStub } });
+			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl")
+			.withArgs(this.oAppComponent)
+			.returns({transportAllUIChanges: fnPersistenceStub});
 
-			return PersistenceWriteAPI.publish(mPropertyBag)
-			.then(function(sValue) {
+			return PersistenceWriteAPI.publish(mPropertyBag).then((sValue) => {
 				assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
 			});
 		});
@@ -398,12 +393,6 @@ sap.ui.define([
 				selector: this.vSelector
 			};
 
-			var oAppComponent = { id: "appComponent" };
-
-			sandbox.stub(ChangesController, "getAppComponentForSelector")
-			.withArgs(mPropertyBag.selector)
-			.returns(oAppComponent);
-
 			var fnPersistenceStub = getMethodStub([
 				{},
 				"",
@@ -411,10 +400,11 @@ sap.ui.define([
 				mPropertyBag.appVariantDescriptors
 			], Promise.resolve(sReturnValue));
 
-			mockFlexController(oAppComponent, { _oChangePersistence: { transportAllUIChanges: fnPersistenceStub } });
+			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl")
+			.withArgs(this.oAppComponent)
+			.returns({transportAllUIChanges: fnPersistenceStub});
 
-			return PersistenceWriteAPI.publish(mPropertyBag)
-			.then(function(sValue) {
+			return PersistenceWriteAPI.publish(mPropertyBag).then((sValue) => {
 				assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
 			});
 		});
@@ -570,7 +560,7 @@ sap.ui.define([
 			var oAppComponent = {id: "appComponent"};
 
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
-			sandbox.stub(ChangesController, "getAppComponentForSelector")
+			sandbox.stub(Utils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.selector)
 			.returns(oAppComponent);
 
@@ -617,7 +607,7 @@ sap.ui.define([
 			var oAppComponent = {id: "appComponent"};
 
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
-			sandbox.stub(ChangesController, "getAppComponentForSelector")
+			sandbox.stub(Utils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.selector)
 			.returns(oAppComponent);
 
@@ -772,7 +762,7 @@ sap.ui.define([
 			var oAppComponent = {id: "appComponent"};
 
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
-			sandbox.stub(ChangesController, "getAppComponentForSelector")
+			sandbox.stub(Utils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.selector)
 			.returns(oAppComponent);
 

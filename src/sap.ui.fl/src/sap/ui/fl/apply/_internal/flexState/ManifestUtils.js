@@ -85,11 +85,12 @@ function(
 
 		getFlexReference: getFlexReference,
 
-		/** Determines the flex reference for a given control by
+		/**
+		 * Determines the flex reference for a given control by
 		 * identifying the application component and analyzing the manifest of this component.
 		 *
 		 * @param {sap.ui.core.Control} oControl - Control for the application determination
-		 * @return {string} Reference of the application
+		 * @returns {string} Reference of the application
 		 */
 		getFlexReferenceForControl: function(oControl) {
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
@@ -97,6 +98,21 @@ function(
 				manifest: oAppComponent.getManifestObject(),
 				componentData: oAppComponent.getComponentData()
 			});
+		},
+
+		/**
+		 * Determines the flex reference for a given {@link sap.ui.fl.Selector} by
+		 * identifying the application component and analyzing the manifest of this component.
+		 * In case of a {@link sap.ui.fl.ComponentSelector} the appId is taken as is.
+		 *
+		 * @param {sap.ui.fl.Selector} oSelector - Selector object
+		 * @returns {string} Reference of the application
+		 */
+		getFlexReferenceForSelector: function(oSelector) {
+			if (oSelector.appId) {
+				return oSelector.appId;
+			}
+			return ManifestUtils.getFlexReferenceForControl(oSelector.appComponent || oSelector);
 		},
 
 		getOvpEntry: function(oManifest) {

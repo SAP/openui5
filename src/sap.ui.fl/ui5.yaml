@@ -41,7 +41,6 @@ builder:
               - sap/ui/fl/variants/VariantManagement.js
               - sap/ui/fl/util/ManagedObjectModel.js
               - sap/ui/fl/apply/_internal/DelegateMediator.js
-              - sap/ui/fl/apply/_internal/ChangesController.js
               - sap/ui/fl/apply/api/DelegateMediatorAPI.js
               - sap/ui/fl/apply/api/FlexRuntimeInfoAPI.js
               - sap/ui/fl/library-dbg.support.js

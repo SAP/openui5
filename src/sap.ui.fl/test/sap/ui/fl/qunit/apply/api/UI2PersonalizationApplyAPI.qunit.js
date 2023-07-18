@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
 	"sap/ui/fl/apply/api/UI2PersonalizationApplyAPI",
-	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -12,7 +11,6 @@ sap.ui.define([
 ], function(
 	UI2PersonalizationState,
 	UI2PersonalizationApplyAPI,
-	ChangesController,
 	Manifest,
 	FlexUtils,
 	FlexState,
@@ -72,13 +70,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("load is called and complains about missing component name", function(assert) {
-			var fnMockedFlexController = {
-				getComponentName: function() {
-					return;
-				}
-			};
-
-			sandbox.stub(ChangesController, "getFlexControllerInstance").returns(fnMockedFlexController);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForSelector");
 
 			return UI2PersonalizationApplyAPI.load({
 				selector: this.oAppComponent,
