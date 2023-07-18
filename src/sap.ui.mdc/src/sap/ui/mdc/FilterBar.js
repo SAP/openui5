@@ -214,6 +214,7 @@ sap.ui.define([
 			return this.getEngine().uimanager.show(this, "Item", {
 				reset: function(){
 					this.getEngine().reset(this);
+					this._getConditionModel().checkUpdate(true);
 			}.bind(this)
 		})
 		.then(function(oPopup){
