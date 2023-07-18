@@ -45,9 +45,8 @@ sap.ui.define([
 			this._oRevisedVersions = {};
 
 			this.loadOverflowMenu();
-			var oMockServer = new MockServer();
-			oMockServer.oModel = oModel;
-			oMockServer.init();
+			this.oMockServer = new MockServer();
+			this.oMockServer.oModel = oModel;
 			this._registerForPersonalization();
 			this.getView().getModel().attachRequestCompleted(function(){
 				this._initializeGraph();
@@ -242,6 +241,8 @@ sap.ui.define([
 					MessageToast.show("Document Added");
 				}, 1000);
 			}
+			// This code block is only for demonstration purpose to simulate XHR requests, hence restoring the server to not fake the xhr requests.
+			this.oMockServer.restore();
 		},
 		onRemoveHandler: function(oEvent) {
 			var clickedControl = oEvent.getSource();
@@ -691,8 +692,7 @@ sap.ui.define([
 			while (clickedControl && !(clickedControl instanceof UploadSetTableItem)) {
 				clickedControl = clickedControl.getParent();
 			}
-			var oUploadSetTableItem = clickedControl;
-			UploadSetTableItem.openPreview(oUploadSetTableItem);
+			clickedControl.openPreview();
 		},
 		onViewDetails: function(oEvent) {
 			var clickedControl = oEvent.getSource();
@@ -996,6 +996,10 @@ sap.ui.define([
 			if (aSelectedItems && aSelectedItems.length == 1) {
 				this.removeItem(aSelectedItems[0]);
 			}
+		},
+		onBeforeUploadStarts: function() {
+			// This code block is only for demonstration purpose to simulate XHR requests, hence starting the mockserver.
+			this.oMockServer.start();
 		}
 	});
 });

@@ -33,6 +33,7 @@
             customDropFilesHandler=".selectedFilesFromHandler"
             inset="true"
             beforeInitiatingItemUpload="onBeforeInitiatingItemUpload"
+            beforeUploadStarts="onBeforeUploadStarts"
         >
             <!-- ToolBar for Table -->
             <headerToolbar>
@@ -135,6 +136,7 @@
                     url="{url}"
                     type="Navigation"
                     highlight="{=${uploadState} === 'Complete' ? 'Indication05' : null }"
+                    previewable="{previewable}"
                 >
                 <cells>
                 
@@ -190,6 +192,9 @@
                 </cells>
                 </UploadSetTableItem>
             </items>
+            <previewDialogAdditionalFooterButtons>
+                <m:Button text="Check-Out" press=".onCheckOutClick" />
+            </previewDialogAdditionalFooterButtons>
         </UploadSetTable>
     </m:Page>
 </m:App>

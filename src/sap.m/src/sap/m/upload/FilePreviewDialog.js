@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/m/IllustratedMessageType",
 	"sap/m/Carousel",
 	"sap/base/Log"
-], function (Core, Element, HTML, Button, Image, PDFViewer, Dialog, IllustratedMessage, IllustratedMessageType, Carousel, Log) {
+], function (Core, Element, HTML, Button, Image, PDFViewer, Dialog,
+		IllustratedMessage, IllustratedMessageType, Carousel, Log) {
 	"use strict";
 
 	// get resource translation bundle;
@@ -35,7 +36,8 @@ sap.ui.define([
 		Mpeg: "video/mpeg",
 		Mp4: "video/mp4",
 		Quicktime: "video/quicktime",
-		MsVideo: "video/x-msvideo"
+		MsVideo: "video/x-msvideo",
+		Vds: "model/vnd.sap.vds"
 	};
 
 	/**
@@ -48,38 +50,72 @@ sap.ui.define([
    * @name sap.m.upload.FilePreviewDialog
    */
 	var FilePreviewDialog = Element.extend("sap.m.upload.FilePreviewDialog", {
-
-		constructor: function (oPreviewItem) {
-			if (!oPreviewItem) {
-				return;
+		library: "sap.m",
+		metadata: {
+			properties: {
+				/**
+				Current item being previwed in the carousel dialog.
+				*/
+				previewItem: {type: "sap.m.upload.UploadSetTableItem", defaultValue: null},
+				/**
+				 * Items set to build the preview Carousel.
+				 * */
+				items: {type: "sap.m.upload.UploadSetTableItem[]", defaultValue: []}
+			},
+			aggregations: {
+				/**
+				 * Custom buttons, to be displayed in the preview dialog footer.
+				 */
+				additionalFooterButtons: {type: "sap.m.Button", multiple: true}
 			}
-			this._oPreviewItem = oPreviewItem;
+		},
+
+		init: function () {
 			this._oRichTextEditor = null;
 			this._oDialog = null;
+			this._oViewer = null;
+			this._oContentResource = null;
 		},
 
 		/**
-     * Opens the {@link sap.m.upload.FilePreviewDialog}.
-     */
-		open: function () {
-			this._loadRichTextEditorDependency()
-				.then(function(oRichTextEditor){
-					this._oRichTextEditor = oRichTextEditor;
-				}.bind(this))
-				.catch(function(error) {
-					Log.error(error);
-				})
-				.finally(function() {
-					var aItems = this._oPreviewItem.getParent().getAggregation("items");
-					if (!aItems || aItems.length === 0 ) {
-						return;
-					}
-					var oCarousel = this._createCarousel(this._oPreviewItem, aItems);
-					this._oDialog = this._createDialog(oCarousel, aItems);
-					if (this._oDialog) {
-						this._oDialog.open();
-					}
-				}.bind(this));
+		 * Opens the {@link sap.m.upload.FilePreviewDialog}.
+	 	*/
+		open: async function () {
+			var aItems = this.getItems();
+			if (aItems?.length && this.getPreviewItem()) {
+				this._oCarousel = await this._createCarousel();
+				if (!this._oDialog) {
+					this._oDialog = this._createDialog();
+				} else {
+					// set title of the dialog to the current previewable item filename.
+					this._oDialog.setTitle(this.getPreviewItem()?.getFileName() || "");
+					// remove all the existing content and set the new content on the dialog
+					this._oDialog.removeAllContent();
+					this._oDialog.insertContent(this._oCarousel);
+				}
+				this._oDialog.open();
+			}
+		},
+
+		/**
+		 * Dynamically require Vds Viewer Control
+		 * @return {Promise} Promise that resolves on sucessful load of Viewer control
+		 * @private
+		 */
+		_loadVkDependency: function() {
+			return new Promise(function (resolve, reject) {
+				Core.loadLibrary("sap.ui.vk", { async: true })
+					.then(function() {
+						sap.ui.require(["sap/ui/vk/Viewer", "sap/ui/vk/ContentResource"], function(viewer, contentResource) {
+							resolve({ viewer, contentResource});
+						}, function (error) {
+							reject(error);
+						});
+					})
+					.catch(function () {
+						reject("sap.ui.vk.Viewer Control not available.");
+					});
+			});
 		},
 
 		/**
@@ -104,94 +140,172 @@ sap.ui.define([
 		},
 
 		/**
-     * Creates a {@link sap.m.Carousel} of uploaded files.
-     *
-		 * @param {sap.m.upload.UploadSetTableItem} oPreviewItem The initial active UploadSetTableItem to be previewed.
-		 * @param {array} aItems The collection of UploadSetTableItems to be included in the Carousel.
-		 * @return {sap.m.Carousel} The {@link sap.m.Carousel} control.
-     * @private
-     */
-		_createCarousel: function (oPreviewItem, aItems) {
+		 * Creates an illustrated message for when no preview is available
+		 * @param {string} sFileName The name of the file to be previewed
+		 * @return {sap.m.IllustratedMessage} An illustrated message instance
+		 * @private
+		 */
+		_createIllustratedMessage: function (sFileName) {
+			const oIllustratedMessage = new IllustratedMessage({
+				illustrationType: IllustratedMessageType.NoData,
+				title: sFileName,
+				description: "No preview available for this file.",
+				enableVerticalResponsiveness: true
+			});
+			return oIllustratedMessage;
+		},
+
+		/**
+		 * Creates a viewer for .vds files
+		 * @param {sap.m.upload.UploadSetTableItem} oItem The UploadSetTableItem to be previewed
+		 * @return {sap.ui.vk.Viewer} A vds viewer instance or undefined if dependency unavailable
+		 * @private
+		 */
+		_createVdsViewer: async function (oItem) {
+			if (!this.oViewer || !this._oContentResource) {
+				try {
+					const oVkDependency = await this._loadVkDependency();
+					this._oViewer = oVkDependency.viewer;
+					this._oContentResource = oVkDependency.contentResource;
+				} catch (error) {
+					Log.error(error);
+					return null;
+				}
+			}
+
+			const oVdsViewer = new this._oViewer({
+				contentResources: [
+					new this._oContentResource({
+						source: oItem.getUrl(),
+						sourceType: "vds"
+					})
+				]
+			});
+
+			return oVdsViewer;
+		},
+
+		/**
+		 * Creates a rich text viewer
+		 * @param {sap.m.upload.UploadSetTableItem} oItem The UploadSetTableItem to be previewed
+		 * @return {sap.ui.richtexteditor.RichTextEditor} A rich text editor instance or undefined if dependency unavailable
+		 * @private
+		 */
+		_createRichTextEditor: async function (oItem) {
+			if (!this._oRichTextEditor) {
+				try {
+					const oRichTextEditor = await this._loadRichTextEditorDependency();
+					this._oRichTextEditor = oRichTextEditor;
+				} catch (error) {
+					Log.error(error);
+					return null;
+				}
+			}
+
+			const oRte = new this._oRichTextEditor({
+				height: "100%",
+				width: "100%",
+				editable: false,
+				busy: true
+			});
+
+			oRte.attachReady(function () {
+				oRte.setBusy(false);
+			});
+
+			const oRequest = new XMLHttpRequest();
+			oRequest.open("GET", oItem.getUrl(), false);
+			oRequest.send(null);
+			const sText = oRequest.responseText;
+			oRte.setValue(sText);
+
+			return oRte;
+		},
+
+		/**
+     	* Creates a {@link sap.m.Carousel} of uploaded files.
+		* @return {sap.m.Carousel} The {@link sap.m.Carousel} control.
+     	* @private
+     	*/
+		_createCarousel: async function () {
+			const oPreviewItem = this.getPreviewItem();
+			const aItems = this.getItems();
 			var sActivePageId = "";
-			var that = this;
-			var aPages = aItems.map(function(oItem) {
+			var aPagePromises = aItems.map(async (oItem) => {
 				var sMediaType = oItem.getMediaType();
 
-				var oPage = new IllustratedMessage({
-					illustrationType: IllustratedMessageType.NoData,
-					title: oItem.getFileName(),
-					description: "No preview available for this file.",
-					enableVerticalResponsiveness: true
-				});
+				var sFileName = oItem.getFileName();
+				var oPage = this._createIllustratedMessage(sFileName);
 
-				switch (sMediaType.toLowerCase()) {
-					case PreviewableMediaType.Png:
-					case PreviewableMediaType.Bmp:
-					case PreviewableMediaType.Jpeg:
-					case PreviewableMediaType.Gif: {
-						oPage = new Image({
-							src: oItem.getUrl()
-						});
-						break;
-					}
-					case PreviewableMediaType.Txt: {
-						if (that._oRichTextEditor) {
-							var oRequest = new XMLHttpRequest();
-							oRequest.open("GET", oItem.getUrl(), false);
-							oRequest.send(null);
-							var sText = oRequest.responseText;
-
-							oPage = new that._oRichTextEditor({
-								height: "100%",
-								width: "100%",
-								value: sText,
-								editable: false
+				if (oItem.getPreviewable()) {
+					switch (sMediaType?.toLowerCase()) {
+						case PreviewableMediaType.Png:
+						case PreviewableMediaType.Bmp:
+						case PreviewableMediaType.Jpeg:
+						case PreviewableMediaType.Gif: {
+							oPage = new Image({
+								src: oItem.getUrl()
 							});
+							break;
 						}
-						break;
+						case PreviewableMediaType.Txt: {
+							const oRte = await this._createRichTextEditor(oItem);
+							if (oRte) {
+								oPage = oRte;
+							}
+							break;
+						}
+						case PreviewableMediaType.Pdf:
+						case PreviewableMediaType.ChromePdf: {
+							oPage = new PDFViewer({
+								source: oItem.getUrl(),
+								showDownloadButton: false
+							});
+							oPage.setBusy(true);
+							break;
+						}
+						case PreviewableMediaType.Mpeg:
+						case PreviewableMediaType.Mp4:
+						case PreviewableMediaType.Quicktime:
+						case PreviewableMediaType.MsVideo: {
+							oPage = new HTML({
+								content: "<video controls width='100%' height='100%' src='" + oItem.getUrl() + "'>"
+							});
+							break;
+						}
+						case PreviewableMediaType.Tiff:
+						case PreviewableMediaType.Vds: {
+							const oVdsViewer = await this._createVdsViewer(oItem);
+							if (oVdsViewer) {
+								oPage = oVdsViewer;
+							}
+							break;
+						}
+						default:
+							break;
 					}
-					case PreviewableMediaType.Pdf:
-					case PreviewableMediaType.ChromePdf: {
-						oPage = new PDFViewer({
-							source: oItem.getUrl(),
-							showDownloadButton: false
-						});
-						break;
-					}
-					case PreviewableMediaType.Mpeg:
-					case PreviewableMediaType.Mp4:
-					case PreviewableMediaType.Quicktime:
-					case PreviewableMediaType.MsVideo: {
-						oPage = new HTML({
-							content: "<video controls width='100%' height='100%' src='" + oItem.getUrl() + "'>"
-						});
-						break;
-					}
-					default:
-						break;
 				}
 
-				sActivePageId = oItem.getId() === oPreviewItem.getId() ? oPage.getId() : sActivePageId;
+				sActivePageId = oItem?.getId() === oPreviewItem?.getId() ? oPage?.getId() : sActivePageId;
 
 				return oPage;
 			});
 
-			var oCarousel = new Carousel({
+			const aPages = await Promise.all(aPagePromises);
+
+			const oCarousel = new Carousel({
 				showPageIndicator: true,
 				pages: [
 					aPages
 				],
 				activePage: sActivePageId,
 				height: "85vh",
-				pageChanged: function(oEvent) {
+				pageChanged: (oEvent) => {
 					var iIndex = aPages.findIndex(function(oPage) {
 						return oPage.sId === oEvent.getParameter("newActivePageId");
 					});
 					var sNewDialogTitle = aItems[iIndex].getFileName();
-					oEvent
-						.getSource()
-						.getParent()
-						.setProperty("title", sNewDialogTitle);
+					this._oDialog.setTitle(sNewDialogTitle);
 				}
 			});
 
@@ -199,26 +313,24 @@ sap.ui.define([
 		},
 
 		/**
-     * Creates a {@link sap.m.Dialog} with {@link sap.m.Carousel} for previewing uploaded files.
-     *
-		 * @param {sap.m.Carousel} oCarousel The Carousel control.
-		 * @param {array} aItems The collection of UploadSetTableItems included in the Carousel.
-		 * @return {sap.m.Dialog} The {@link sap.m.Dialog} control.
-     * @private
-     */
-		_createDialog: function(oCarousel, aItems) {
+	 	* Creates a {@link sap.m.Dialog} with {@link sap.m.Carousel} for previewing uploaded files.
+		* @return {sap.m.Dialog} The {@link sap.m.Dialog} control.
+	 	* @private
+		*/
+		_createDialog: function() {
 			var that = this;
-			var oActiveItem = this._getActiveUploadSetTableItem(oCarousel, aItems);
+			var oActiveItem = this._getActiveUploadSetTableItem();
 			var oDialog = new Dialog({
 				title: oActiveItem.getFileName(),
-				content: oCarousel,
+				content: that._oCarousel,
 				horizontalScrolling: true,
 				verticalScrolling: true,
 				buttons: [
+					that.getAdditionalFooterButtons(),
 					new Button({
 						text: oLibraryResourceBundle.getText("UPLOAD_SET_TABLE_FILE_PREVIEW_DIALOG_DOWNLOAD"),
 						press: function () {
-							that._getActiveUploadSetTableItem(oCarousel, aItems).download(true);
+							that._getActiveUploadSetTableItem().download(true);
 						}
 					}),
 					new Button({
@@ -234,20 +346,17 @@ sap.ui.define([
 		},
 
 		/**
-     * Creates a {@link sap.m.Carousel} of uploaded files.
-     *
-		 * @param {sap.m.Carousel} oCarousel The Carousel control.
-		 * @param {array} aItems The collection of UploadSetTableItems included in the Carousel.
-		 * @return {sap.m.upload.UploadSetTableItem} The currently active UploadSetTableItem.
-     * @private
-     */
-		_getActiveUploadSetTableItem: function (oCarousel, aItems) {
-			var sActivePageId = oCarousel.getActivePage();
-			var aPages = oCarousel.getPages();
+     	* Creates a {@link sap.m.Carousel} of uploaded files.
+		* @return {sap.m.upload.UploadSetTableItem} The currently active UploadSetTableItem.
+     	* @private
+     	*/
+		_getActiveUploadSetTableItem: function () {
+			var sActivePageId = this._oCarousel.getActivePage();
+			var aPages = this._oCarousel.getPages();
 			var iIndex = aPages.findIndex(function (oPage) {
 				return oPage.sId === sActivePageId;
 			});
-			return aItems[iIndex];
+			return this.getItems()[iIndex];
 		}
 	});
 

@@ -321,8 +321,7 @@ sap.ui.define([
 			while (clickedControl && !(clickedControl instanceof UploadSetTableItem)) {
 				clickedControl = clickedControl.getParent();
 			}
-			var oUploadSetTableItem = clickedControl;
-			UploadSetTableItem.openPreview(oUploadSetTableItem);
+			clickedControl.openPreview();
 		}
 	});
 });

@@ -131,6 +131,7 @@
                     fileName="{fileName}"
                     mediaType="{mediaType}"
                     url="{url}"
+                    previewable="{previewable}"
                     type="Navigation"
                 >
                 <cells>
@@ -175,6 +176,9 @@
                 </cells>
                 </UploadSetTableItem>
             </items>
+            <previewDialogAdditionalFooterButtons>
+                <m:Button text="Check-Out" />
+            </previewDialogAdditionalFooterButtons>
         </UploadSetTable>
     </m:Page>
 </mvc:View>

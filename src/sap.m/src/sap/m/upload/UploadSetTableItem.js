@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/ui/core/IconPool",
 	"sap/m/upload/UploadSetTableItemRenderer",
-	"sap/base/Log",
-	"sap/m/upload/FilePreviewDialog"
-], function (ColumnListItem, IconPool, UploadSetTableItemRenderer, Log, FilePreviewDialog) {
+	"sap/base/Log"
+], function (ColumnListItem, IconPool, UploadSetTableItemRenderer, Log) {
     "use strict";
 
 	/**
@@ -27,37 +26,41 @@ sap.ui.define([
 	 * @alias sap.m.upload.UploadSetTableItem
 	 */
     var UploadSetTableItem = ColumnListItem.extend("sap.m.upload.UploadSetTableItem", {
-        metadata: {
-            properties: {
-                /**
-				 * Specifies the name of the uploaded file.
-				 */
-				fileName: {type: "string", defaultValue: null},
-				/**
-				 * Specifies the MIME type of the file.
-				 */
-                mediaType: {type: "string", defaultValue: null},
-				/**
-				 * Specifies the URL where the file is located.
-				 */
-				url: {type: "string", defaultValue: null},
-				/**
-				 * URL where the uploaded files will be stored. If empty, uploadUrl from the uploader is considered.
-				 */
-				uploadUrl: {type: "string", defaultValue: null},
-		        /**
-				 * State of the item relevant to its upload process.
-				 */
-				uploadState: {type: "sap.m.UploadState", defaultValue: null}
-            },
-			aggregations: {
-				/**
-				 * Header fields to be included in the header section of an XMLHttpRequest (XHR) request
-				 */
-				headerFields: {type: "sap.ui.core.Item", multiple: true, singularName: "headerField"}
-			}
-        },
-		render: UploadSetTableItemRenderer
+			metadata: {
+				properties: {
+					/**
+					 * Specifies the name of the uploaded file.
+					 */
+					fileName: {type: "string", defaultValue: null},
+					/**
+					 * Specifies the MIME type of the file.
+					 */
+					mediaType: {type: "string", defaultValue: null},
+					/**
+					 * Specifies the URL where the file is located.
+					 */
+					url: {type: "string", defaultValue: null},
+					/**
+					 * URL where the uploaded files will be stored. If empty, uploadUrl from the uploader is considered.
+					 */
+					uploadUrl: {type: "string", defaultValue: null},
+					/**
+					 * State of the item relevant to its upload process.
+					 */
+					uploadState: {type: "sap.m.UploadState", defaultValue: null},
+					/**
+					 * Specifies whether the item can be previewed.
+					 */
+					previewable: {type: "boolean", defaultValue: true}
+				},
+				aggregations: {
+					/**
+					 * Header fields to be included in the header section of an XMLHttpRequest (XHR) request
+					 */
+					headerFields: {type: "sap.ui.core.Item", multiple: true, singularName: "headerField"}
+				}
+			},
+			render: UploadSetTableItemRenderer
     });
 
 	/* ================== */
@@ -121,11 +124,10 @@ sap.ui.define([
 
 	/**
 	 * Previews pressed file.
-	 * @param {sap.m.upload.UploadSetTableItem} oItem The pressed UploadSetTableItem.
 	 * @public
 	 */
-	UploadSetTableItem.openPreview = function (oItem) {
-		oItem._previewCarousel();
+	UploadSetTableItem.prototype.openPreview = function () {
+		this.getParent()?._openFilePreview(this);
 	};
 
 	/**
@@ -159,14 +161,6 @@ sap.ui.define([
 	/* =============== */
 	/* Private methods */
 	/* =============== */
-
-	/**
-	 * Previews file in a dialog with carousel.
-	 */
-	UploadSetTableItem.prototype._previewCarousel = function () {
-		var filePreviewDialog = new FilePreviewDialog(this);
-		filePreviewDialog.open();
-	};
 
 	UploadSetTableItem._getIconByMimeType = function(sMimeType, fileName) {
 

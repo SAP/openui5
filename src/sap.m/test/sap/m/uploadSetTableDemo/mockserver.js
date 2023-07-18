@@ -11,18 +11,56 @@ sap.ui.define([
 	return ManagedObject.extend("sap.m.uploadSetTableDemo.mockServer", {
 		started: null,
 		oModel: null,
+		server: null,
 		init: function () {
+		},
+		_updateModelWithData: function(oResponse, oExistingModelDataToUpdate, sMode, oFile, sUrl, oData) {
+			switch (sMode) {
 
+				case "Create":
+					this.oModel.getProperty("/items").unshift(
+						{
+							"id": oResponse && oResponse.id ? oResponse.id : uid(), // generate random id if no id sent from response.
+							"fileName": oResponse.fileName,
+							"mediaType": oResponse.fileType,
+							"url": oResponse.fileUrl,
+							"uploadState": "Complete",
+							"revision": "00",
+							"status": "In work",
+							"fileSize": oResponse.fileSize,
+							"lastModifiedBy": "Jane Burns",
+							"lastmodified": "10/03/21, 10:03:00 PM",
+							"documentType": oResponse && oResponse.documentType ? oResponse.documentType : "Invoice"
+						}
+					);
+					break;
+
+				case "update":
+					if (oExistingModelDataToUpdate) {
+						oExistingModelDataToUpdate.fileName = oFile && oFile.name ? oFile.name : "";
+						oExistingModelDataToUpdate.url = sUrl;
+						oExistingModelDataToUpdate.fileSize = oFile && oFile.size ? oFile.size : 0;
+						oExistingModelDataToUpdate.mediaType = oFile && oFile.type ? oFile.type : "";
+						this.oModel.setData(oData);
+					}
+					break;
+
+				default:
+					break;
+			}
+		},
+		start: function() {
+			this.server = sinon.fakeServer.create();
 			var that = this;
 
-			var fServer = sinon.fakeServer.create();
-				fServer.autoRespond = true;
-				fServer.xhr.useFilters = true;
+			this.server = sinon.fakeServer.create();
+				this.server.autoRespond = true;
+				this.server.xhr.useFilters = true;
 
 				/**
 				 * Adding filters to only intercept and fake "/upload" API requests and to ignore other requests
 				 */
-				fServer.xhr.addFilter(function (method, url) {
+				this.server.xhr.addFilter(function (method, url) {
 					// whenever this returns true the request will not faked
 					return !url.match(/\/uploadFiles/); // request url's not matching path "/upload" will be ignored
 				});
@@ -31,7 +69,7 @@ sap.ui.define([
 			 * Intercepting file upload requests for the purpose of mocking the response.
 			 * Please note this is mocked response to simulate sucessful file uploads and the structure of the response is for demonstration purpose.
 			 */
-			fServer.respondWith("POST", RegExp("/uploadFiles","i"), function (xhr) {
+			this.server.respondWith("POST", RegExp("/uploadFiles","i"), function (xhr) {
 				// intercepting the request body sent to the request and extracting the details for the mocked response.
 				var oFile = xhr.requestBody ? xhr.requestBody : null;
 				var aRequestArray = [];
@@ -84,40 +122,8 @@ sap.ui.define([
 				JSON.stringify(reponseObject));
 			});
 		},
-		_updateModelWithData: function(oResponse, oExistingModelDataToUpdate, sMode, oFile, sUrl, oData) {
-			switch (sMode) {
-
-				case "Create":
-					this.oModel.getProperty("/items").unshift(
-						{
-							"id": oResponse && oResponse.id ? oResponse.id : uid(), // generate random id if no id sent from response.
-							"fileName": oResponse.fileName,
-							"mediaType": oResponse.fileType,
-							"url": oResponse.fileUrl,
-							"uploadState": "Complete",
-							"revision": "00",
-							"status": "In work",
-							"fileSize": oResponse.fileSize,
-							"lastModifiedBy": "Jane Burns",
-							"lastmodified": "10/03/21, 10:03:00 PM",
-							"documentType": oResponse && oResponse.documentType ? oResponse.documentType : "Invoice"
-						}
-					);
-					break;
-
-				case "update":
-					if (oExistingModelDataToUpdate) {
-						oExistingModelDataToUpdate.fileName = oFile && oFile.name ? oFile.name : "";
-						oExistingModelDataToUpdate.url = sUrl;
-						oExistingModelDataToUpdate.fileSize = oFile && oFile.size ? oFile.size : 0;
-						oExistingModelDataToUpdate.mediaType = oFile && oFile.type ? oFile.type : "";
-						this.oModel.setData(oData);
-					}
-					break;
-
-				default:
-					break;
-			}
+		restore: function() {
+			this.server.restore();
 		}
 	});
 }, true);

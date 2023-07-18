@@ -4,13 +4,13 @@
 
 // Provides control sap.m.upload.UploadSetTable.
 sap.ui.define([
-    "sap/m/Table",
-    "sap/m/ToolbarSpacer",
-    "sap/m/upload/UploadSetTableRenderer",
-    "sap/ui/unified/FileUploader",
-    "sap/m/upload/UploadSetToolbarPlaceholder",
-    "sap/m/upload/UploaderHttpRequestMethod",
-    "sap/m/OverflowToolbar",
+	"sap/m/Table",
+	"sap/m/ToolbarSpacer",
+	"sap/m/upload/UploadSetTableRenderer",
+	"sap/ui/unified/FileUploader",
+	"sap/m/upload/UploadSetToolbarPlaceholder",
+	"sap/m/upload/UploaderHttpRequestMethod",
+	"sap/m/OverflowToolbar",
 	"sap/m/upload/UploadSetTableItem",
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
@@ -21,10 +21,11 @@ sap.ui.define([
 	"sap/m/upload/UploaderTableItem",
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/dnd/DropInfo",
-	"sap/ui/core/dnd/DragInfo"
+	"sap/ui/core/dnd/DragInfo",
+	"sap/m/upload/FilePreviewDialog"
 ], function (Table, ToolbarSpacer, UploadSetTableRenderer, FileUploader,
     UploadSetToolbarPlaceholder, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetTableItem, deepEqual, Log, Library, IllustratedMessageType,
-	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo) {
+	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo, FilePreviewDialog) {
     "use strict";
 
 	/**
@@ -42,16 +43,15 @@ sap.ui.define([
 	 * @internal
 	 * @alias sap.m.upload.UploadSetTable
 	 */
-
-    var UploadSetTable = Table.extend("sap.m.upload.UploadSetTable", {
-        library: "sap.m",
-        metadata: {
-            properties: {
+	var UploadSetTable = Table.extend("sap.m.upload.UploadSetTable", {
+		library: "sap.m",
+		metadata: {
+			properties: {
 				/**
 				 * Allowed file types for files to be uploaded.
 				 * <br>If this property is not set, any file can be uploaded.
 				 */
-                fileTypes: {type: "string[]", defaultValue: null},
+				fileTypes: {type: "string[]", defaultValue: null},
 				/**
 				 * Maximum length of names of files to be uploaded.
 				 * <br>If set to <code>null</code> or <code>0</code>, any files can be uploaded,
@@ -88,7 +88,7 @@ sap.ui.define([
 				 * URL where the uploaded files will be stored.
 				 */
 				uploadUrl: {type: "string", defaultValue: null},
-				 /**
+				/**
 				 * HTTP request method chosen for file upload.
 				 */
 				httpRequestMethod: {type: "sap.m.upload.UploaderHttpRequestMethod", defaultValue: UploaderHttpRequestMethod.Post},
@@ -115,12 +115,12 @@ sap.ui.define([
 				 * Defines whether the upload action is allowed.
 				 */
 				uploadEnabled: {type: "boolean", defaultValue: true}
-            },
-            aggregations: {
-                headerToolbar : {
-                    type: "sap.m.OverflowToolbar",
-                    multiple: false
-                },
+			},
+			aggregations: {
+				headerToolbar : {
+					type: "sap.m.OverflowToolbar",
+					multiple: false
+				},
 				/**
 				 * Defines the uploader to be used. If not specified, the default implementation is used.
 				 */
@@ -128,10 +128,14 @@ sap.ui.define([
 				/**
 				 * Header fields to be included in the header section of an XHR request.
 				 */
-				headerFields: {type: "sap.ui.core.Item", multiple: true, singularName: "headerField"}
-            },
+				headerFields: {type: "sap.ui.core.Item", multiple: true, singularName: "headerField"},
+				/**
+				 * Additional buttons for the file preview dialog footer.
+				 */
+				previewDialogAdditionalFooterButtons: {type: "sap.m.Button", multiple: true}
+			},
 			defaultAggregation : "items",
-            events: {
+			events: {
 				/**
 				 * The event is triggered when the file name is changed.
 				 */
@@ -177,11 +181,11 @@ sap.ui.define([
 						item: {type: "sap.m.upload.UploadSetTableItem"},
 						/**
 						 * Response message which comes from the server.
-					 	*
-					 	* On the server side this response has to be put within the &quot;body&quot; tags of the response
-					 	* document of the iFrame. It can consist of a return code and an optional message. This does not
-					 	* work in cross-domain scenarios.
-					 	*/
+						*
+						* On the server side this response has to be put within the &quot;body&quot; tags of the response
+						* document of the iFrame. It can consist of a return code and an optional message. This does not
+						* work in cross-domain scenarios.
+						*/
 						response : {type : "string"},
 						/**
 						 * ReadyState of the XHR request.
@@ -190,30 +194,29 @@ sap.ui.define([
 						 * to true. This property is not supported by Internet Explorer 9.
 						 */
 						readyState : {type : "string"},
-
 						/**
-					 	* Status of the XHR request.
-					 	*
-					 	* Required for receiving a <code>status</code> is to set the property <code>sendXHR</code> to true.
-					 	* This property is not supported by Internet Explorer 9.
-					 	*/
+						* Status of the XHR request.
+						*
+						* Required for receiving a <code>status</code> is to set the property <code>sendXHR</code> to true.
+						* This property is not supported by Internet Explorer 9.
+						*/
 						status : {type : "string"},
 						/**
-					 	* Http-Response which comes from the server.
-					 	*
-					 	* Required for receiving <code>responseXML</code> is to set the property <code>sendXHR</code> to true.
+						* Http-Response which comes from the server.
 						*
-					 	* This property is not supported by Internet Explorer 9.
-					 	*/
+						* Required for receiving <code>responseXML</code> is to set the property <code>sendXHR</code> to true.
+						*
+						* This property is not supported by Internet Explorer 9.
+						*/
 						responseXML : {type : "string"},
 						/**
-					 	* Http-Response which comes from the server.
-					 	*
-					 	* Required for receiving <code>responseText</code> is to set the property <code>sendXHR</code> to true.
+						* Http-Response which comes from the server.
 						*
-					 	* This property is not supported by Internet Explorer 9.
-					 	*/
-						 responseText : {type : "string"},
+						* Required for receiving <code>responseText</code> is to set the property <code>sendXHR</code> to true.
+						*
+						* This property is not supported by Internet Explorer 9.
+						*/
+						responseText : {type : "string"},
 						/**
 						* Http-Response-Headers which come from the server.
 						*
@@ -221,8 +224,8 @@ sap.ui.define([
 						* object, with the property value reflecting the header-field's content.
 						*
 						* Required for receiving <code>headers</code> is to set the property <code>sendXHR</code> to true.
-					 	* This property is not supported by Internet Explorer 9.
-					 	*/
+						* This property is not supported by Internet Explorer 9.
+						*/
 						headers : {type : "object"}
 					}
 				},
@@ -300,7 +303,6 @@ sap.ui.define([
 						item: {type: "object"}
 					}
 				},
-
 				/**
 				 * This event is fired when a file that is selected to be uploaded and just before initiating the file upload process
 				 * Use this event to set additional info dynamically specific for each item before upload process is initiated
@@ -327,7 +329,6 @@ sap.ui.define([
 				 */
 				itemDragStart: {
 				},
-
 				/**
 				 * This event is fired when an uploaded item is dropped on the new list position.
 				 * @event
@@ -342,12 +343,12 @@ sap.ui.define([
 				 * @public
 				 * @since 1.99
 				 */
-				 itemDrop: {
+				itemDrop: {
 				}
 			}
-        },
-        renderer: UploadSetTableRenderer
-    });
+		},
+		renderer: UploadSetTableRenderer
+	});
 
 	var UploadState = Library.UploadState;
 
@@ -359,6 +360,7 @@ sap.ui.define([
         Table.prototype.init.call(this);
 		this._setDragDropConfig();
         this._filesTobeUploaded = [];
+		this._filePreviewDialogControl = null;
     };
 
 	UploadSetTable.prototype.onBeforeRendering = function() {
@@ -920,6 +922,29 @@ sap.ui.define([
 							}
 						}
 			}
+		}
+	};
+
+	/**
+	* Opens preview of the item pressed.
+	* @param {sap.m.upload.UploadSetTableItem} oItem item to be previewed.
+	* @private
+	*/
+	UploadSetTable.prototype._openFilePreview = function (oItem) {
+		var aitems = this.getPreviewDialogAdditionalFooterButtons();
+		if (!this._filePreviewDialogControl) {
+			this._filePreviewDialogControl = new FilePreviewDialog({
+				previewItem: oItem,
+				items: this.getItems(),
+				additionalFooterButtons: this.getPreviewDialogAdditionalFooterButtons()
+			});
+			this.addDependent(this._filePreviewDialogControl);
+			this._filePreviewDialogControl.open();
+		} else {
+			this._filePreviewDialogControl.setPreviewItem(oItem);
+			this._filePreviewDialogControl.setItems(this.getItems());
+			aitems.forEach((item) => this._filePreviewDialogControl.insertAddDiitionalFooterButton(item));
+			this._filePreviewDialogControl.open();
 		}
 	};
 
