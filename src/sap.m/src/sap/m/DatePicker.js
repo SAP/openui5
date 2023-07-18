@@ -404,7 +404,7 @@ sap.ui.define([
 			id: this.getId() + "-icon",
 			src: this.getIconSrc(),
 			noTabStop: true,
-			decorative: false,
+			decorative: !Device.support.touch || Device.system.desktop ? true : false,
 			useIconTooltip: false,
 			alt: oResourceBundle.getText("OPEN_PICKER_TEXT")
 		});

@@ -1395,14 +1395,26 @@ sap.ui.define([
 
 	QUnit.test("icon is properly configured", function (assert) {
 		// arrange
-		var oIcon = new DynamicDateRange().getAggregation("_input").getAggregation("_endIcon")[0];
+		var oIconOne = new DynamicDateRange().getAggregation("_input").getAggregation("_endIcon")[0];
 
 		// act
 		// assert
-		assert.notOk(oIcon.getTooltip(), "icon has no tooltip");
-		assert.notOk(oIcon.getDecorative(), "icon isn't decorative");
-		assert.notOk(oIcon.getUseIconTooltip(), "icon doesn't have default tooltip");
-		assert.strictEqual(oIcon.getAlt(), oCore.getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON") , "icon alt is present");
+		assert.notOk(oIconOne.getTooltip(), "icon has no tooltip");
+		assert.ok(oIconOne.getDecorative(), "icon is decorative");
+		assert.notOk(oIconOne.getUseIconTooltip(), "icon doesn't have default tooltip");
+		assert.strictEqual(oIconOne.getAlt(), oCore.getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON") , "icon alt is present");
+
+		// arrange
+		var oTouchStub = this.stub(Device, "support").value({touch: true});
+		var oDeviceStub = this.stub(Device, "system").value({phone: true});
+		var oIconTwo = new DynamicDateRange().getAggregation("_input").getAggregation("_endIcon")[0];
+
+		// assert
+		assert.notOk(oIconTwo.getDecorative(), "icon is not decorative");
+
+		// clean
+		oTouchStub.restore();
+		oDeviceStub.restore();
 	});
 
 	QUnit.test("DynamicDateRange.toDates method with timezones", function(assert) {

@@ -2047,8 +2047,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("Increment/Decrement button", function (assert) {
-		assert.strictEqual(this.stepInput._getDecrementButton().getDecorative(), false, "Decrement icon isn't decorative");
-		assert.strictEqual(this.stepInput._getIncrementButton().getDecorative(), false, "Increment icon isn't decorative");
+		// assert
+		assert.ok(this.stepInput._getDecrementButton().getDecorative(), "Decrement icon is decorative");
+		assert.ok(this.stepInput._getIncrementButton().getDecorative(), "Increment icon is decorative");
+
+		// arrange
+		var oTouchStub = this.stub(Device, "support").value({touch: true});
+		var oDeviceStub = this.stub(Device, "system").value({phone: true});
+		var oStepInput = new StepInput();
+
+		// assert
+		assert.notOk(oStepInput._getDecrementButton().getDecorative(), "Decrement icon isn't decorative");
+		assert.notOk(oStepInput._getIncrementButton().getDecorative(), "Increment icon isn't decorative");
+
+		// clean
+		oTouchStub.restore();
+		oDeviceStub.restore();
 	});
 
 	QUnit.module("binding", {
