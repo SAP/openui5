@@ -28,6 +28,7 @@
 				"sap/ui/layout/form/Form",
 				"sap/ui/layout/form/FormContainer",
 				"sap/ui/layout/form/FormElement",
+				"sap/ui/layout/form/SemanticFormElement",
 				"sap/ui/layout/form/ColumnLayout",
 				"sap/ui/layout/form/ColumnElementData",
 				"sap/ui/layout/form/ColumnContainerData",
@@ -52,6 +53,7 @@
 					Form,
 					FormContainer,
 					FormElement,
+					SemanticFormElement,
 					ColumnLayout,
 					ColumnElementData,
 					ColumnContainerData,
@@ -71,6 +73,18 @@
 					) {
 				"use strict";
 
+				// TODO: Fake iSematicFormContent on controls until it is official supported
+				var myTypeCheck = function(vTypeName) {
+					if (vTypeName === "sap.ui.core.ISemanticFormContent") {
+						return true;
+					} else {
+						return this.getMetadata().isA(vTypeName);
+					}
+				};
+				Input.prototype.isA = myTypeCheck;
+				Link.prototype.isA = myTypeCheck;
+				Link.prototype.getFormRenderAsControl = function() {return true; };
+
 				var InputType = MLib.InputType;
 				var BackgroundDesign = LayoutLib.BackgroundDesign;
 
@@ -78,12 +92,12 @@
 							title : "Person",
 							formElements : [
 								new FormElement({label: "Name", fields: [new Input({value:"Max Mustermann", required: true})]}),
-								new FormElement({label: new Label({text:"Street/ No."}),
-																fields: [new Input({value:"Musterweg"}),
-																         new Input({value:"10", layoutData: new ColumnElementData({cellsSmall: 2, cellsLarge: 1})})]}),
-								new FormElement({label: "PostCode / City",
-																fields: [new Input({value:"12345", layoutData: new ColumnElementData({cellsSmall: 3, cellsLarge: 2})}),
-																         new Input({value:"Musterstadt"})]})
+								new FormElement({label: new Label({text:"Street / No."}),
+												 fields: [new Input({value:"Musterweg"}),
+												          new Input({value:"10", layoutData: new ColumnElementData({cellsSmall: 2, cellsLarge: 1})})]}),
+								new SemanticFormElement({fieldLabels: [new Label({text:"PostCode"}), new Label({text:"City"})],
+														 fields: [new Input({value:"12345", layoutData: new ColumnElementData({cellsSmall: 3, cellsLarge: 2})}),
+														          new Input({value:"Musterstadt", layoutData: new ColumnElementData({cellsSmall: 8, cellsLarge: 5})})]})
 								]
 						});
 
@@ -98,7 +112,7 @@
 					formElements : [
 						new FormElement({label: "Phone", fields: [new Input({value:"0123456789", type: InputType.Tel})]}),
 						new FormElement({label: "Mail", fields: [new Input({value:"max@mustermann.de", type: InputType.Email})]}),
-						new FormElement({label: "Web", fields: [new Input({value:"http://www.mustermann.de", type: InputType.Url})]})
+						new SemanticFormElement({label: "Web", fields: [new Input({value:"http://www.mustermann.de", type: InputType.Url}), new Input({value:"http://www.mustermann.com", type: InputType.Url})]})
 						]
 				});
 
@@ -106,8 +120,10 @@
 							title : new Title({text : "Person"}),
 							formElements : [
 								new FormElement({label: "Name", fields: [new Text({text:"Max Mustermann"})]}),
-								new FormElement({label: new Label({text:"Street/ No."}), fields: [new Text({text:"Musterweg 10"})]}),
-								new FormElement({label: "PostCode / City", fields: [new Text({text:"12345 Musterstadt"})]})
+								new FormElement({label: new Label({text:"Street / No."}), fields: [new Text({text:"Musterweg 10"})]}),
+								new SemanticFormElement({fieldLabels: [new Label({text:"PostCode"}), new Label({text:"City"})],
+														 fields: [new Input({value:"12345", layoutData: new ColumnElementData({cellsSmall: 3, cellsLarge: 2})}),
+														          new Input({value:"Musterstadt"})]})
 								]
 						});
 
@@ -116,7 +132,7 @@
 					formElements : [
 						new FormElement({label: "Phone", fields: [new Text({text:"0123456789"})]}),
 						new FormElement({label: "Mail", fields: [new Link({text:"max@mustermann.de", href : "mailto:max@mustermann.de"})]}),
-						new FormElement({label: "Web", fields: [new Link({text:"http://www.mustermann.de", href : "http://www.mustermann.de"})]})
+						new SemanticFormElement({label: "Web", fields: [new Link({text:"http://www.mustermann.de", href : "http://www.mustermann.de"}), new Link({text:"http://www.mustermann.com", href : "http://www.mustermann.com"})]})
 						]
 				});
 

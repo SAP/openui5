@@ -310,17 +310,33 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bEditable Editable state of the <code>Form</code>
 	 * @protected
-	 * @restricted sap.ui.layout.form.FormContainer
+	 * @ui5-restricted sap.ui.layout.form.FormContainer
 	 * @since 1.74.0
 	 */
 	FormElement.prototype._setEditable = function(bEditable) {
 
-		var bOldEditable = this.getProperty("_editable");
+		var bOldEditable = this._getEditable();
 		this.setProperty("_editable", bEditable, true); // do not invalidate whole FormElement
 
 		if (bEditable !== bOldEditable) {
 			this.invalidateLabel();
 		}
+
+	};
+
+	/**
+	 * Gets the editable state of the <code>FormElement</code>.
+	 *
+	 * This must only be called from the <code>Form</code> and its <code>FormLayout</code>.
+	 *
+	 * @returns {boolean} Editable state of the <code>Form</code>
+	 * @protected
+	 * @ui5-restricted sap.ui.layout.form.FormLayout
+	 * @since 1.117.0
+	 */
+	FormElement.prototype._getEditable = function() {
+
+		return this.getProperty("_editable");
 
 	};
 
@@ -451,7 +467,7 @@ sap.ui.define([
 			}
 
 			var oFormElement = this.getParent();
-			return !oFormElement.getProperty("_editable");
+			return !oFormElement._getEditable();
 		}
 
 		return false;

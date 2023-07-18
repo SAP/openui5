@@ -120,7 +120,11 @@ sap.ui.define([
 		var aElements = oContainer.getVisibleFormElements();
 		for (var i = 0; i < aElements.length; i++) {
 			var oElement = aElements[i];
-			this.renderElement(oRm, oLayout, oElement);
+			if (oElement.isA("sap.ui.layout.form.SemanticFormElement") && !oElement._getEditable()) {
+				this.renderSemanticElement(oRm, oLayout, oElement);
+			} else {
+				this.renderElement(oRm, oLayout, oElement);
+			}
 
 			if (Device.browser.chrome && i < oOptions.XL.Size - 1 && aElements.length > 1 && aElements.length <= oOptions.XL.Size) {
 				// in Chrome columns are not filled properly for less elements -> an invisible dummy DIV helps
@@ -149,15 +153,7 @@ sap.ui.define([
 
 		if (oLabel) {
 			oOptions = oLayout._getFieldSize(oLabel);
-			oRm.openStart("div")
-				.class("sapUiFormElementLbl")
-				.class("sapUiFormCLCellsS" + oOptions.S.Size)
-				.class("sapUiFormCLCellsL" + oOptions.L.Size)
-				.openEnd();
-
-			oRm.renderControl(oLabel);
-
-			oRm.close("div");
+			_renderLabel(oRm, oLabel, oOptions);
 		}
 
 		var aFields = oElement.getFieldsForRendering();
@@ -193,6 +189,67 @@ sap.ui.define([
 		oRm.close("div");
 
 	};
+
+	ColumnLayoutRenderer.renderSemanticElement = function(oRm, oLayout, oElement){
+
+		var oLabel = oElement.getLabelControl();
+		var oOptions;
+		var iColumns = 12;
+		var iSizeS = iColumns;
+		var iSizeL = iColumns;
+
+		oRm.openStart("div", oElement);
+		oRm.class("sapUiFormCLElement").class("sapUiFormCLSemanticElement");
+		if (oElement.getTooltip_AsString()) {
+			oRm.attr('title', oElement.getTooltip_AsString());
+		}
+		oRm.openEnd();
+
+		if (oLabel) {
+			oOptions = oLayout._getFieldSize(oLabel);
+			_renderLabel(oRm, oLabel, oOptions);
+			if (oOptions.S.Size < iSizeS) {
+				iSizeS = iSizeS - oOptions.S.Size;
+			}
+			if (oOptions.L.Size < iSizeL) {
+				iSizeL = iSizeL - oOptions.L.Size;
+			}
+		}
+
+		oRm.openStart("div");
+		oRm.class("sapUiFormCLCellsS" + iSizeS);
+		oRm.class("sapUiFormCLCellsL" + iSizeL);
+		oRm.openEnd();
+
+		var aFields = oElement.getFieldsForRendering();
+		if (aFields && aFields.length > 0) {
+			for (var k = 0, kl = aFields.length; k < kl; k++) {
+				var oField = aFields[k];
+				if (!oField.isA("sap.ui.core.IFormContent") || !oField.isA("sap.ui.core.ISemanticFormContent")) {
+					throw new Error(oField + " is not a valid Form content! Only use valid content in " + oLayout);
+				}
+				oRm.renderControl(oField);
+			}
+		}
+
+		oRm.close("div");
+		oRm.close("div");
+
+	};
+
+	function _renderLabel(oRm, oLabel, oOptions) {
+
+		oRm.openStart("div")
+			.class("sapUiFormElementLbl")
+			.class("sapUiFormCLCellsS" + oOptions.S.Size)
+			.class("sapUiFormCLCellsL" + oOptions.L.Size)
+			.openEnd();
+
+		oRm.renderControl(oLabel);
+
+		oRm.close("div");
+
+	}
 
 	return ColumnLayoutRenderer;
 

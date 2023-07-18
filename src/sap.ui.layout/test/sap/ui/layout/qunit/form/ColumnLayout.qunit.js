@@ -12,12 +12,14 @@ sap.ui.define([
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
+	"sap/ui/layout/form/SemanticFormElement",
 	"sap/ui/layout/form/ColumnElementData",
 	"sap/ui/layout/form/ColumnContainerData",
 	"sap/ui/core/Title",
 	"sap/m/Toolbar",
 	"sap/m/Label",
 	"sap/m/Text",
+	"sap/m/Link",
 	"sap/ui/core/Core"
 ],
 	function(
@@ -27,12 +29,14 @@ sap.ui.define([
 		Form,
 		FormContainer,
 		FormElement,
+		SemanticFormElement,
 		ColumnElementData,
 		ColumnContainerData,
 		Title,
 		Toolbar,
 		Label,
 		Text,
+		Link,
 		oCore
 	) {
 	"use strict";
@@ -996,6 +1000,67 @@ sap.ui.define([
 		}
 
 		oStub.restore();
+	});
+
+	var myTypeCheck = function(vTypeName) {
+		if (vTypeName === "sap.ui.core.ISemanticFormContent") {
+			return true;
+		} else {
+			return this.getMetadata().isA(vTypeName);
+		}
+	};
+	Link.prototype.isA = myTypeCheck;
+
+	QUnit.module("semantic element rendering", {
+		beforeEach: function() {
+			Link.prototype.getFormRenderAsControl = function() {return true;}; // TODO: remove after Link supports this
+			Link.prototype.getFormObservingProperties = function() {return ["text"];};
+			oColumnLayout = new ColumnLayout("CL1");
+			oLabel1 = new Label("L1", {text: "Label 1"});
+			oField1 = new Link("Link1", {text: "Text 1"});
+			oField2 = new Link("Link2", {text: "Text2"});
+			oFormElement1 = new SemanticFormElement("FE1",{
+				label: oLabel1,
+				fields: [oField1, oField2]
+			});
+			oFormContainer1 = new FormContainer("FC1",{
+				formElements: [ oFormElement1 ]
+			});
+			var aFormContainers = [oFormContainer1];
+
+			oForm = new Form("F1", {
+				layout: oColumnLayout,
+				editable: false,
+				formContainers: aFormContainers
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			delete Link.prototype.getFormRenderAsControl;
+			delete Link.prototype.getFormObservingProperties;
+			afterTest();
+		}
+	});
+
+	QUnit.test("renderControlsForSemanticElement", function(assert) {
+		assert.ok(oColumnLayout.renderControlsForSemanticElement(), "control rendering supported");
+	});
+
+	QUnit.test("rendering", function(assert) {
+		var $Element = jQuery("#FE1");
+		var aChildren = $Element.children();
+		assert.equal(aChildren.length, 2, "Element has 2 child nodes");
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "Link1", 12, false, 0, 8, false, 0);
+
+		var aContent = jQuery(aChildren[1]).children();
+		assert.equal(aContent.length, 3, "Cell has 3 content nodes");
+		assert.equal(aContent[0].id, "Link1", "Link is first content");
+		assert.equal(aContent[1].id, "FE1-delimiter-0", "Delemiter is second content");
+		assert.equal(aContent[2].id, "Link2", "Link is third content");
+
+		assert.ok(jQuery("#Link1").attr("style").indexOf("100%") > 0 && jQuery("#Link1").attr("style").indexOf("max-width") >= 0, "Control max-width set to 100%");
+		assert.ok(jQuery("#Link2").attr("style").indexOf("100%") > 0 && jQuery("#Link2").attr("style").indexOf("max-width") >= 0, "Control max-width set to 100%");
 	});
 
 });

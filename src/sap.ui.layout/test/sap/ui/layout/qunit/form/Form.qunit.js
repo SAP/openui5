@@ -787,4 +787,8 @@ sap.ui.define([
 		oFieldAfter.destroy();
 	});
 
+	QUnit.test("renderControlsForSemanticElement", function(assert) {
+		assert.notOk(oFormLayout.renderControlsForSemanticElement(), "no control rendering supported");
+	});
+
 });
