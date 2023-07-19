@@ -279,32 +279,16 @@ sap.ui.define([
 		 */
 		getCurrentLanguage: function() {
 			var sLanguage = Configuration.getLanguage();
-			return Utils.convertBrowserLanguageToISO639_1(sLanguage);
-		},
-
-		/**
-		 * Converts the browser language into a 2-character ISO 639-1 language. If the browser language is in format RFC4646, the first part will be
-		 * used: For example en-us will be converted to EN. If the browser language already is in ISO 639-1, it will be returned after an upper case
-		 * conversion: For example de will be converted to DE.
-		 *
-		 * @function
-		 * @name sap.ui.fl.Utils.convertBrowserLanguageToISO639_1
-		 * @param {string} sBrowserLanguage - Language in RFC4646
-		 * @returns {string} Language in ISO 639-1. Empty string if conversion was not successful
-		 *
-		 * @private
-		 */
-		convertBrowserLanguageToISO639_1: function(sBrowserLanguage) {
-			if (!sBrowserLanguage || typeof sBrowserLanguage !== "string") {
+			if (!sLanguage || typeof sLanguage !== "string") {
 				return "";
 			}
 
-			var nIndex = sBrowserLanguage.indexOf("-");
-			if ((nIndex < 0) && (sBrowserLanguage.length <= 2)) {
-				return sBrowserLanguage.toUpperCase();
+			var nIndex = sLanguage.indexOf("-");
+			if ((nIndex < 0) && (sLanguage.length <= 2)) {
+				return sLanguage.toUpperCase();
 			}
 			if (nIndex > 0 && nIndex <= 2) {
-				return sBrowserLanguage.substring(0, nIndex).toUpperCase();
+				return sLanguage.substring(0, nIndex).toUpperCase();
 			}
 
 			return "";
