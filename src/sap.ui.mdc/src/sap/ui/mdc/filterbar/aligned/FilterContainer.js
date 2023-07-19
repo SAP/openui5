@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/mdc/filterbar/IFilterContainer', 'sap/ui/layout/AlignedFlowLayout'
-], function(IFilterContainer, AlignedFlowLayout) {
+	'sap/ui/mdc/filterbar/IFilterContainer', 'sap/ui/layout/AlignedFlowLayout',	"sap/ui/layout/VerticalLayout", "sap/ui/layout/HorizontalLayout", "sap/m/Text", "sap/ui/core/Configuration"
+], function(IFilterContainer, AlignedFlowLayout, VerticalLayout, HorizontalLayout, Text, Configuration) {
 	"use strict";
 	/**
 	 * Constructor for a new filterBar/aligned/FilterContainer.
@@ -22,9 +22,30 @@ sap.ui.define([
 		IFilterContainer.prototype.init.apply(this, arguments);
 		this.oLayout = new AlignedFlowLayout();
 	};
+	FilterContainer.prototype.exit = function() {
+		IFilterContainer.prototype.exit.apply(this, arguments);
+		if (this._oButtonsLayout){
+			this._oButtonsLayout = null;
+		}
+	};
 
 	FilterContainer.prototype.addButton = function(oControl) {
-		this.oLayout.addEndContent(oControl);
+		if (!this._oButtonsLayout) {
+			this._oButtonsLayout = new VerticalLayout();
+
+			if (Configuration.getRTL()) {
+				this._oButtonsLayout.addStyleClass("sapUiMdcFilterBarBaseFloatLeft");
+			} else {
+				this._oButtonsLayout.addStyleClass("sapUiMdcFilterBarBaseFloatRight");
+			}
+
+			this._oButtonsLayout.addContent(new Text());
+			this._oButtonsLayout.addContent(new HorizontalLayout());
+
+			this.oLayout.addEndContent(this._oButtonsLayout);
+		}
+
+		this._oButtonsLayout.getContent()[1].addContent(oControl);
 	};
 
 	FilterContainer.prototype.insertFilterField = function(oControl, iIndex) {
