@@ -916,11 +916,11 @@ sap.ui.define([
 	 *   The path of the requested property relative to oResource; this property is requested from
 	 *   the server. For annotations, except client annotations, the annotated property is requested
 	 *   from the server.
-	 * @returns {Promise|boolean}
-	 *   A promise resolving w/o any result if the requested property is an expected late property,
-	 *   or a <code>boolean</code> value if it is not; it rejects with an error if the GET request
-	 *   failed, or if the key predicate or the ETag has changed. The returned <code>boolean</code>
-	 *   value tells if the issue can be safely ignored.
+	 * @returns {Promise<void>|boolean}
+	 *   A promise which is resolved without a defined result if the requested property is an
+	 *   expected late property, or a <code>boolean</code> value if it is not; it is rejected with
+	 *   an error if the GET request failed, or if the key predicate or the ETag has changed. The
+	 *   returned <code>boolean</code> value tells if the issue can be safely ignored.
 	 *
 	 * @private
 	 */
@@ -3157,9 +3157,9 @@ sap.ui.define([
 	 *   no longer exist after refresh; the index is undefined for a non-created element
 	 * @param {boolean} [bDropApply]
 	 *   Whether to drop the "$apply" system query option from the resulting GET
-	 * @returns {Promise|undefined}
-	 *   A promise resolving without a defined result, or rejecting with an error if the refresh
-	 *   fails, or <code>undefined</code> if there are no kept-alive elements.
+	 * @returns {Promise<void>|undefined}
+	 *   A promise which is resolved without a defined result, or rejected with an error if the
+	 *   refresh fails, or <code>undefined</code> if there are no kept-alive elements.
 	 * @throws {Error}
 	 *   If the cache is shared
 	 *
@@ -3288,8 +3288,8 @@ sap.ui.define([
 	 * @param {function} [fnDataRequested]
 	 *   The function is called when the back-end requests have been sent.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the request is finished and rejecting in
-	 *   case of error
+	 *   A promise which is resolved without a defined result when the request is finished and
+	 *   rejected in case of error
 	 * @throws {Error}
 	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
@@ -3354,9 +3354,9 @@ sap.ui.define([
 	 *   in this case
 	 * @param {boolean} bWithMessages
 	 *   Whether the "@com.sap.vocabularies.Common.v1.Messages" path is treated specially
-	 * @returns {Promise|sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
-	 *   effects fails
+	 * @returns {Promise<void>|sap.ui.base.SyncPromise}
+	 *   A promise which is resolved without a defined result, or rejected with an error if loading
+	 *   of side effects fails
 	 * @throws {Error}
 	 *   If group ID is '$cached' (the error has a property <code>$cached = true</code> then) or if
 	 *   the cache is shared
@@ -3996,8 +3996,8 @@ sap.ui.define([
 	 * @param {string} [sResourcePath=this.sResourcePath]
 	 *   A resource path relative to the service URL; it must not contain a query string
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
-	 *   effects fails.
+	 *   A promise which is resolved without a defined result, or rejected with an error if loading
+	 *   of side effects fails.
 	 * @throws {Error} If the side effects require a $expand, if group ID is '$cached' (the error
 	 *   has a property <code>$cached = true</code> then), or if the cache is shared
 	 *

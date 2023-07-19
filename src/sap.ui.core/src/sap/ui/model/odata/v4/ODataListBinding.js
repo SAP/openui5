@@ -3209,8 +3209,8 @@ sap.ui.define([
 	 * @param {string} sGroupId
 	 *   The effective group ID
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result, or rejecting with an error if the refresh
-	 *   fails.
+	 *   A promise which is resolved without a defined result, or rejected with an error if the
+	 *   refresh fails.
 	 *
 	 * @private
 	 */

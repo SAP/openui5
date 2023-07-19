@@ -457,9 +457,10 @@ sap.ui.define([
 	 * parent context changed.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the check is finished, or rejecting in
-	 *   case of an error
-	 * @throws {Error} If called with parameters
+	 *   A promise which is resolved without a defined result when the check is finished, or
+	 *   rejected in case of an error
+	 * @throws {Error}
+	 *   If called with parameters
 	 *
 	 * @private
 	 */
@@ -1255,8 +1256,8 @@ sap.ui.define([
 	 *   The context for which to request side effects; if this parameter is missing or if it is the
 	 *   header context of a list binding, the whole binding is affected
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
-	 *   effects fails
+	 *   A promise which is resolved without a defined result, or rejected with an error if loading
+	 *   of side effects fails
 	 * @throws {Error}
 	 *   If this binding does not use own data service requests or if the binding's root binding is
 	 *   suspended and the given group ID is not the binding's group
@@ -1410,7 +1411,8 @@ sap.ui.define([
 	 * Note: Some API calls are not allowed as long as the binding is in suspended mode, hence the
 	 * returned promise can be used to get the point in time when these APIs can be called again.
 	 *
-	 * @returns {Promise} A promise which is resolved when the binding is resumed.
+	 * @returns {Promise<void>}
+	 *   A promise which is resolved without a defined result when the binding is resumed.
 	 * @throws {Error}
 	 *   If this binding is relative to an {@link sap.ui.model.odata.v4.Context} or if it is an
 	 *   operation binding or if it is not suspended

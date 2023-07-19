@@ -1499,9 +1499,9 @@ sap.ui.define([
 	 *   412 due to the <code>If-Match: *</code> header); otherwise we assume that it has already
 	 *   been deleted by someone else and report success
 	 * @returns {Promise<void>}
-	 *   A promise resolving without a defined result when the delete succeeded, and rejecting with
-	 *   an instance of Error otherwise. In the latter case the HTTP status code of the response is
-	 *   given in the error's property <code>status</code>.
+	 *   A promise which is resolved without a defined result when the delete succeeded, or rejected
+	 *   with an instance of Error otherwise. In the latter case the HTTP status code of the
+	 *   response is given in the error's property <code>status</code>.
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> the path does not start with a '/',
@@ -2565,8 +2565,8 @@ sap.ui.define([
 	 *   The absolute paths to request side effects for; each path must not start with the fully
 	 *   qualified container name.
 	 * @returns {sap.ui.base.SyncPromise|undefined}
-	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
-	 *   effects fails, or <code>undefined</code> if there is nothing to do
+	 *   A promise which is resolved without a defined result, or rejected with an error if loading
+	 *   of side effects fails, or <code>undefined</code> if there is nothing to do
 	 *
 	 * @private
 	 */
@@ -2784,8 +2784,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   A valid group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}.
-	 * @returns {Promise<undefined>}
-	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
+	 * @returns {Promise<void>}
+	 *   A promise which is resolved without a defined result on the outcome of the HTTP request, or
 	 *   rejected with an error if the batch request itself fails
 	 * @throws {Error}
 	 *   If the given group ID is not a valid group ID or has
@@ -2852,10 +2852,12 @@ sap.ui.define([
 	/**
 	 * Cleans up the optimistic batch cache to a given point in time.
 	 *
-	 * @param {Date} [dOlderThan] The point in time from which on older cache entries are deleted.
-	 *   If not supplied, all optimistic batch entries are deleted.
-	 * @returns {Promise} A promise resolving without a defined result, or rejecting with an error
-	 *   if deletion fails.
+	 * @param {Date} [dOlderThan]
+	 *   The point in time from which on older cache entries are deleted. If not supplied, all
+	 *   optimistic batch entries are deleted.
+	 * @returns {Promise<void>}
+	 *   A promise which is resolved without a defined result, or rejected with an error if
+	 *   deletion fails.
 	 *
 	 * @experimental As of version 1.102.0
 	 * @private

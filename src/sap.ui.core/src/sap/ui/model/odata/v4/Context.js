@@ -142,7 +142,7 @@ sap.ui.define([
 	 * Updates all dependent bindings of this context.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the update is finished
+	 *   A promise which is resolved without a defined result when the update is finished
 	 * @private
 	 */
 	Context.prototype.checkUpdateInternal = function () {
@@ -196,10 +196,11 @@ sap.ui.define([
 	 * details.
 	 *
 	 * @returns {Promise<void>|undefined}
-	 *   A promise that is resolved without data when the entity represented by this context has
-	 *   been created in the back end. It is rejected with an <code>Error</code> instance where
-	 *   <code>oError.canceled === true</code> if the transient entity is deleted before it is
-	 *   created in the back end, for example via {@link sap.ui.model.odata.v4.Context#delete},
+	 *   A promise which is resolved without a defined result when the entity represented by this
+	 *   context has been created in the back end. It is rejected with an <code>Error</code>
+	 *   instance where <code>oError.canceled === true</code> if the transient entity is deleted
+	 *   before it is created in the back end, for example via
+	 *   {@link sap.ui.model.odata.v4.Context#delete},
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#resetChanges} or
 	 *   {@link sap.ui.model.odata.v4.ODataModel#resetChanges}, and for all nested contexts within a
 	 *   deep create. It is rejected with an <code>Error</code> instance without
@@ -252,8 +253,8 @@ sap.ui.define([
 	 *   {@link #replaceWith} where it is known that the count remains unchanged (since 1.97.0).
 	 *   Since 1.98.0, this is implied if a <code>null</code> group ID is used.
 	 * @returns {Promise<void>}
-	 *   A promise which is resolved without a result in case of success, or rejected with an
-	 *   instance of <code>Error</code> in case of failure, for example if:
+	 *   A promise which is resolved without a defined result in case of success, or rejected with
+	 *   an instance of <code>Error</code> in case of failure, for example if:
 	 *   <ul>
 	 *     <li> the given context does not point to an entity,
 	 *     <li> the deletion on the server fails,
@@ -1356,8 +1357,8 @@ sap.ui.define([
 	 * @param {boolean} [bAllowRemoval]
 	 *   Allows to remove the context
 	 * @returns {Promise<void>}
-	 *   A promise which resolves without a defined result when the refresh is finished and rejects
-	 *   with an instance of <code>Error</code> if the refresh failed
+	 *   A promise which is resolved without a defined result when the refresh is finished, or
+	 *   rejected with an error if the refresh failed
 	 * @throws {Error}
 	 *   See {@link #refresh} for details
 	 *
@@ -1465,11 +1466,11 @@ sap.ui.define([
 	 *   specified, make sure that {@link #requestSideEffects} is called after the corresponding
 	 *   updates have been successfully processed by the server and that there are no pending
 	 *   changes for the affected properties.
-	 * @returns {Promise<undefined>}
-	 *   Promise resolved with <code>undefined</code>, or rejected with an error if loading of side
-	 *   effects fails. Use it to set fields affected by side effects to read-only before
-	 *   {@link #requestSideEffects} and make them editable again when the promise resolves; in the
-	 *   error handler, you can repeat the loading of side effects.
+	 * @returns {Promise<void>}
+	 *   A promise which is resolved without a defined result, or rejected with an error if
+	 *   loading of side effects fails. Use it to set fields affected by side effects to read-only
+	 *   before {@link #requestSideEffects} and make them editable again when the promise resolves;
+	 *   in the error handler, you can repeat the loading of side effects.
 	 *   <br>
 	 *   The promise is rejected if the call wants to refresh a whole list binding (via header
 	 *   context or an absolute path), but the deletion of a row context (see {@link #delete}) is
@@ -1618,8 +1619,8 @@ sap.ui.define([
 	 * @param {string} sGroupId
 	 *   The effective group ID
 	 * @returns {sap.ui.base.SyncPromise|undefined}
-	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
-	 *   effects fails, or <code>undefined</code> if there is nothing to do
+	 *   A promise which is resolved without a defined result, or rejected with an error if loading
+	 *   of side effects fails, or <code>undefined</code> if there is nothing to do
 	 *
 	 * @private
 	 */
@@ -1889,9 +1890,9 @@ sap.ui.define([
 	 *   binding sending the request. When the response for this request is received, a
 	 *   'patchCompleted' with a boolean parameter 'success' is fired.
 	 * @returns {Promise<void>}
-	 *   A promise which is resolved without a result in case of success, or rejected with an
-	 *   instance of <code>Error</code> in case of failure, for example if the annotation belongs to
-	 *   the read-only namespace "@$ui5.*". With <code>bRetry</code> it is only rejected with an
+	 *   A promise which is resolved without a defined result in case of success, or rejected with
+	 *   an instance of <code>Error</code> in case of failure, for example if the annotation belongs
+	 *   to the read-only namespace "@$ui5.*". With <code>bRetry</code> it is only rejected with an
 	 *   <code>Error</code> instance where <code>oError.canceled === true</code> when the entity has
 	 *   been deleted while the request was pending or the property has been reset via the methods
 	 *   <ul>
