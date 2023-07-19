@@ -241,7 +241,7 @@ sap.ui.define([
 				} else if (vDeleteProperty) {
 					// set to null and notify listeners
 					_Helper.updateExisting(that.mChangeListeners, sParentPath,
-						vCacheData, _Cache.makeUpdateData([vDeleteProperty], null));
+						vCacheData, _Helper.makeUpdateData([vDeleteProperty], null));
 				} else { // deleting at root level
 					oEntity["$ui5.deleted"] = true;
 				}
@@ -1952,7 +1952,7 @@ sap.ui.define([
 		return this.fetchValue(_GroupLock.$cached, sEntityPath, null, null, true)
 			.then(function (oEntity) {
 				_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity,
-					_Cache.makeUpdateData(sPropertyPath.split("/"), vValue, bUpdating));
+					_Helper.makeUpdateData(sPropertyPath.split("/"), vValue, bUpdating));
 			});
 	};
 
@@ -2088,7 +2088,7 @@ sap.ui.define([
 				bSkip,
 				sTransientGroup,
 				sUnitOrCurrencyValue,
-				oUpdateData = _Cache.makeUpdateData(aPropertyPath, vValue);
+				oUpdateData = _Helper.makeUpdateData(aPropertyPath, vValue);
 
 			/*
 			 * Synchronous callback to cancel the PATCH request so that it is really gone when
@@ -2244,7 +2244,7 @@ sap.ui.define([
 			}
 			// remember the old value
 			oOldData
-				= _Cache.makeUpdateData(aPropertyPath, _Helper.drillDown(oEntity, aPropertyPath));
+				= _Helper.makeUpdateData(aPropertyPath, _Helper.drillDown(oEntity, aPropertyPath));
 
 			oPostBody = _Helper.getPrivateAnnotation(oEntity, "postBody");
 			if (oPostBody) {
@@ -2271,7 +2271,7 @@ sap.ui.define([
 				} else {
 					// some servers need unit and currency information
 					_Helper.merge(sTransientGroup ? oPostBody : oUpdateData,
-						_Cache.makeUpdateData(aUnitOrCurrencyPath, sUnitOrCurrencyValue));
+						_Helper.makeUpdateData(aUnitOrCurrencyPath, sUnitOrCurrencyValue));
 				}
 			}
 			if (sTransientGroup) {
@@ -4379,40 +4379,6 @@ sap.ui.define([
 			iIndex = aElements.indexOf(aElements.$byPredicate[sKeyPredicate]);
 		}
 		return iIndex;
-	};
-
-	/**
-	 * Makes an object that has the given value exactly at the given property path allowing to use
-	 * the result in _Helper.updateExisting().
-	 *
-	 * Examples:
-	 * <ul>
-	 *   <li> ["Age"], 42 -> {Age: 42}
-	 *   <li> ["Address", "City"], "Walldorf" -> {Address: {City: "Walldorf"}}
-	 * </ul>
-	 *
-	 * @param {string[]} aPropertyPath
-	 *   The property path split into an array of segments
-	 * @param {any} vValue
-	 *   The property value
-	 * @param {boolean} [bUpdating]
-	 *   Whether the given property will not be overwritten by a creation POST(+GET) response
-	 * @returns {object}
-	 *   The resulting object
-	 *
-	 * @private
-	 */
-	_Cache.makeUpdateData = function (aPropertyPath, vValue, bUpdating) {
-		return aPropertyPath.reduceRight(function (vValue0, sSegment) {
-			var oResult = {};
-
-			oResult[sSegment] = vValue0;
-			if (bUpdating) {
-				oResult[sSegment + "@$ui5.updating"] = true;
-				bUpdating = false;
-			}
-			return oResult;
-		}, vValue);
 	};
 
 	return _Cache;

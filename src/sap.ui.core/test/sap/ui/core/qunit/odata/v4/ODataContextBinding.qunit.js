@@ -4950,7 +4950,7 @@ sap.ui.define([
 
 		if (oFixture.name) {
 			oBinding.oOperation.bAction = true;
-			this.mock(_Cache).expects("makeUpdateData")
+			this.mock(_Helper).expects("makeUpdateData")
 				.withExactArgs(oFixture.update, "bar")
 				.returns(oUpdateValue);
 			this.mock(_Helper).expects("updateAll")
@@ -4974,7 +4974,7 @@ sap.ui.define([
 			oUpdateValue = {};
 
 		oBinding.oOperation.bAction = true;
-		this.mock(_Cache).expects("makeUpdateData").withExactArgs(["foo"], "bar")
+		this.mock(_Helper).expects("makeUpdateData").withExactArgs(["foo"], "bar")
 			.returns(oUpdateValue);
 		this.mock(_Helper).expects("updateAll")
 			.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), "",

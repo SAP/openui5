@@ -2119,6 +2119,40 @@ sap.ui.define([
 				.replace(rEscapedCloseBracket, ")");
 		},
 
+		/**
+		 * Makes an object that has the given value exactly at the given property path allowing to
+		 * use the result in _Helper.updateExisting().
+		 *
+		 * Examples:
+		 * <ul>
+		 *   <li> ["Age"], 42 -> {Age: 42}
+		 *   <li> ["Address", "City"], "Walldorf" -> {Address: {City: "Walldorf"}}
+		 * </ul>
+		 *
+		 * @param {string[]} aPropertyPath
+		 *   The property path split into an array of segments
+		 * @param {any} vValue
+		 *   The property value
+		 * @param {boolean} [bUpdating]
+		 *   Whether the given property will not be overwritten by a creation POST(+GET) response
+		 * @returns {object}
+		 *   The resulting object
+		 *
+		 * @public
+		 */
+		makeUpdateData : function (aPropertyPath, vValue, bUpdating) {
+			return aPropertyPath.reduceRight(function (vValue0, sSegment) {
+				var oResult = {};
+
+				oResult[sSegment] = vValue0;
+				if (bUpdating) {
+					oResult[sSegment + "@$ui5.updating"] = true;
+					bUpdating = false;
+				}
+				return oResult;
+			}, vValue);
+		},
+
 		// Trampoline property to allow for mocking function module in unit tests.
 		// @see sap.base.util.merge
 		merge : merge,

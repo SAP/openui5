@@ -5361,4 +5361,22 @@ sap.ui.define([
 		});
 		assert.notOk("$postBodyCollection" in oCacheEntity.nested1);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("makeUpdateData", function (assert) {
+		assert.deepEqual(_Helper.makeUpdateData(["Age"], 42), {Age : 42});
+		assert.deepEqual(_Helper.makeUpdateData(["Address", "City"], "Walldorf"),
+			{Address : {City : "Walldorf"}});
+		assert.deepEqual(_Helper.makeUpdateData(["Age"], 42, /*bUpdating*/true), {
+			Age : 42,
+			"Age@$ui5.updating" : true
+		});
+		assert.deepEqual(_Helper.makeUpdateData(["Address", "City"], "Walldorf", /*bUpdating*/true),
+			{
+				Address : {
+					City : "Walldorf",
+					"City@$ui5.updating" : true
+				}
+			});
+	});
 });

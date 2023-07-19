@@ -263,7 +263,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to/entity", null, null, true)
 			.returns(SyncPromise.resolve(oEntityPromise));
 		oEntityPromise.then(function () {
-			that.mock(_Cache).expects("makeUpdateData")
+			that.mock(_Helper).expects("makeUpdateData")
 				.withExactArgs(["Address", "City"], "Walldorf", "~bUpdating~")
 				.returns(oUpdateData);
 			that.mock(_Helper).expects("updateAll")
@@ -569,7 +569,7 @@ sap.ui.define([
 			this.oModelInterfaceMock.expects("updateMessages")
 				.withExactArgs("~aMessages~");
 		}
-		this.mock(_Cache).expects("makeUpdateData").withExactArgs(["EMPLOYEE_2_TEAM"], null)
+		this.mock(_Helper).expects("makeUpdateData").withExactArgs(["EMPLOYEE_2_TEAM"], null)
 			.returns(oUpdateData);
 		this.mock(_Helper).expects("updateExisting")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "EQUIPMENT_2_EMPLOYEE",
@@ -2239,7 +2239,6 @@ sap.ui.define([
 				fnPatchSent = this.spy(),
 				oRequestCall,
 				oRequestLock = {unlock : function () {}},
-				oStaticCacheMock = this.mock(_Cache),
 				mTypeForMetaPath = {},
 				oUnlockCall,
 				oUpdateData = {},
@@ -2267,10 +2266,10 @@ sap.ui.define([
 				.withExactArgs("/BusinessPartnerList", sinon.match.same(mQueryOptions), true)
 				.returns("?foo=bar");
 			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("group");
-			oStaticCacheMock.expects("makeUpdateData")
+			oHelperMock.expects("makeUpdateData")
 				.withExactArgs(["Address", "City"], "Walldorf")
 				.returns(oUpdateData);
-			oStaticCacheMock.expects("makeUpdateData")
+			oHelperMock.expects("makeUpdateData")
 				.withExactArgs(["Address", "City"], oFixture.$cached ? undefined : "Heidelberg")
 				.returns(oOldData);
 			oHelperMock.expects("updateAll")
@@ -2411,7 +2410,6 @@ sap.ui.define([
 					oPatchResult = {},
 					oPatchPromise = Promise.resolve(oPatchResult),
 					oPostBody = {},
-					oStaticCacheMock = this.mock(_Cache),
 					oUnitUpdateData = {},
 					oUpdateData = {};
 
@@ -2424,9 +2422,9 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to/entity")
 					.returns(SyncPromise.resolve(oEntity));
 				this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("group");
-				this.mock(_Helper).expects("deleteUpdating")
+				oHelperMock.expects("deleteUpdating")
 					.withExactArgs("ProductInfo/Amount", sinon.match.same(oEntity));
-				oStaticCacheMock.expects("makeUpdateData")
+				oHelperMock.expects("makeUpdateData")
 					.withExactArgs(["ProductInfo", "Amount"], "123")
 					.returns(oUpdateData);
 				oHelperMock.expects("updateAll")
@@ -2436,7 +2434,7 @@ sap.ui.define([
 					oHelperMock.expects("updateAll").withExactArgs({}, "path/to/entity",
 						sinon.match.same(oPostBody), sinon.match.same(oUpdateData));
 				}
-				oStaticCacheMock.expects("makeUpdateData")
+				oHelperMock.expects("makeUpdateData")
 					.withExactArgs(["ProductInfo", "Amount"], "123")
 					.returns("n/a"); // not used in this test
 				oCacheMock.expects("getValue")
@@ -2449,10 +2447,10 @@ sap.ui.define([
 						oCache.toString(),
 						sClassName);
 				} else {
-					oStaticCacheMock.expects("makeUpdateData")
+					oHelperMock.expects("makeUpdateData")
 						.withExactArgs(["ProductInfo", "Pricing", "Currency"], sUnitOrCurrencyValue)
 						.returns(oUnitUpdateData);
-					this.mock(_Helper).expects("merge")
+					oHelperMock.expects("merge")
 						.withExactArgs(sinon.match.same(bTransient ? oPostBody : oUpdateData),
 							sinon.match.same(oUnitUpdateData));
 				}
@@ -2555,7 +2553,6 @@ sap.ui.define([
 				oRequestCall2,
 				oRequestLock0 = {unlock : function () {}},
 				oRequestLock1 = {unlock : function () {}},
-				oStaticCacheMock = this.mock(_Cache),
 				sUnitOrCurrencyPath,
 				oUnlockCall,
 				that = this;
@@ -2566,10 +2563,10 @@ sap.ui.define([
 					.returns(SyncPromise.resolve(oEntity));
 				oHelperMock.expects("buildPath").withExactArgs(sEntityPath, "Address/" + sProperty)
 					.returns(sEntityPath + "/Address/" + sProperty);
-				oStaticCacheMock.expects("makeUpdateData")
+				oHelperMock.expects("makeUpdateData")
 					.withExactArgs(["Address", sProperty], sNewValue)
 					.returns("~oUpdateData~" + iIndex);
-				oStaticCacheMock.expects("makeUpdateData")
+				oHelperMock.expects("makeUpdateData")
 					.withExactArgs(["Address", sProperty], sOldValue)
 					.returns("~oOldData~" + iIndex);
 				that.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("group");
@@ -2752,7 +2749,6 @@ sap.ui.define([
 			oPatchPromise0 = bError ? Promise.reject(oError) : Promise.resolve({}),
 			oPatchPromise1 = Promise.resolve(oPatchPromise0),
 			fnPatchSent = function () {},
-			oStaticCacheMock = this.mock(_Cache),
 			oRequestCall,
 			oRequestLock = {unlock : function () {}},
 			mTypeForMetaPath = {},
@@ -2766,10 +2762,10 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(oEntity));
 		oCacheMock.expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
-		oStaticCacheMock.expects("makeUpdateData")
+		oHelperMock.expects("makeUpdateData")
 			.withExactArgs(["Address", "City"], "Walldorf")
 			.returns("~oUpdateData~");
-		oStaticCacheMock.expects("makeUpdateData")
+		oHelperMock.expects("makeUpdateData")
 			.withExactArgs(["Address", "City"], "Heidelberg")
 			.returns("~oOldData~");
 		oHelperMock.expects("updateAll")
@@ -11348,11 +11344,11 @@ sap.ui.define([
 			},
 			oError = new Error(),
 			oGroupLock = {},
+			oHelperMock = this.mock(_Helper),
 			oOldData = {Foo : "Bar"},
 			oPatchPromise1 = Promise.reject(oError),
 			oPatchPromise2 = Promise.reject(oError),
 			oPromise = Promise.resolve(oEntity),
-			oStaticCacheMock = this.mock(_Cache),
 			that = this;
 
 		function unexpected() {
@@ -11376,13 +11372,13 @@ sap.ui.define([
 
 			assert.strictEqual(oCache.hasPendingChangesForPath(""), false);
 			that.mock(oGroupLock0).expects("getGroupId").withExactArgs().returns("updateGroup");
-			oStaticCacheMock.expects("makeUpdateData")
+			oHelperMock.expects("makeUpdateData")
 				.withExactArgs(["Note"], "foo")
 				.returns({Note : "foo"});
-			oStaticCacheMock.expects("makeUpdateData")
+			oHelperMock.expects("makeUpdateData")
 				.withExactArgs(["Note"], "Some Note")
 				.returns({Note : "Some Note"});
-			that.mock(_Helper).expects("updateNonExisting")
+			oHelperMock.expects("updateNonExisting")
 				.withExactArgs({Note : "Some Note"}, sinon.match.same(oOldData))
 				.returns("~merged~");
 			that.oRequestorMock.expects("request")
@@ -11396,10 +11392,10 @@ sap.ui.define([
 					return oPatchPromise1;
 				});
 			that.mock(oGroupLock1).expects("getGroupId").withExactArgs().returns("updateGroup");
-			oStaticCacheMock.expects("makeUpdateData")
+			oHelperMock.expects("makeUpdateData")
 				.withExactArgs(["Foo"], "baz")
 				.returns({Foo : "baz"});
-			oStaticCacheMock.expects("makeUpdateData")
+			oHelperMock.expects("makeUpdateData")
 				.withExactArgs(["Foo"], "Bar")
 				.returns(oOldData);
 			that.oRequestorMock.expects("request")
@@ -12542,24 +12538,6 @@ sap.ui.define([
 	//  data for this row, removeElement gets -1 and fails. replaceElement could simply ignore it.
 	//  Use aReadRequests and adjustIndexes instead?
 	// A: requestSideEffects now waits for pending DELETE and POST requests :-)
-
-	//*********************************************************************************************
-	QUnit.test("makeUpdateData", function (assert) {
-		assert.deepEqual(_Cache.makeUpdateData(["Age"], 42), {Age : 42});
-		assert.deepEqual(_Cache.makeUpdateData(["Address", "City"], "Walldorf"),
-			{Address : {City : "Walldorf"}});
-		assert.deepEqual(_Cache.makeUpdateData(["Age"], 42, /*bUpdating*/true), {
-				Age : 42,
-				"Age@$ui5.updating" : true
-			});
-		assert.deepEqual(_Cache.makeUpdateData(["Address", "City"], "Walldorf", /*bUpdating*/true),
-			{
-				Address : {
-					City : "Walldorf",
-					"City@$ui5.updating" : true
-				}
-			});
-	});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bExists) {
