@@ -74,7 +74,7 @@ sap.ui.define([
 		oTable.addColumn(new Column({
 			label: new Label({text: "Image"}),
 			width: "75px",
-			template: "dummy"
+			template: new Label({text: "{dummy}"})
 		}));
 		return oTable;
 	}
@@ -168,28 +168,28 @@ sap.ui.define([
 			this.oColumn = new AnalyticalColumn({
 				label: new Label({text: "Last Name"}),
 				width: "200px",
-				template: "dummy"
+				template: new Label({text: "{dummy}"})
 			});
 
 			this.oTable.addColumn(this.oColumn);
 			this.oTable.addColumn(new AnalyticalColumn({
 				label: new Label({text: "First Name"}),
 				width: "100px",
-				template: "dummy"
+				template: new Label({text: "{dummy}"})
 			}));
 			this.oTable.addColumn(new AnalyticalColumn({
 				label: new Label({text: "Checked"}),
 				width: "75px",
-				template: "dummy"
+				template: new Label({text: "{dummy}"})
 			}));
 			this.oTable.addColumn(new AnalyticalColumn({
 				label: new Label({text: "Web Site"}),
-				template: "dummy"
+				template: new Label({text: "{dummy}"})
 			}));
 			this.oTable.addColumn(new AnalyticalColumn({
 				label: new Label({text: "Image"}),
 				width: "75px",
-				template: "dummy"
+				template: new Label({text: "{dummy}"})
 			}));
 
 			this.oDesignTime = new DesignTime({

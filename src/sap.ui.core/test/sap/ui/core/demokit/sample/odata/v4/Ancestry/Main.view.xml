@@ -18,23 +18,41 @@
 					value="{ui>/sFilter}" width="40%"/>
 			</m:Toolbar>
 		</extension>
-		<Column template="id">
+		<Column>
 			<m:Label text="ID"/>
+			<template>
+				<m:Text text="{id}" wrapping="false"/>
+			</template>
 		</Column>
-		<Column template="my_parent_id">
+		<Column>
 			<m:Label text="Parent's ID"/>
+			<template>
+				<m:Text text="{my_parent_id}" wrapping="false"/>
+			</template>
 		</Column>
-		<Column template="first_name">
+		<Column>
 			<m:Label text="First Name"/>
+			<template>
+				<m:Text text="{first_name}" wrapping="false"/>
+			</template>
 		</Column>
-		<Column template="last_name">
+		<Column>
 			<m:Label text="Last Name"/>
+			<template>
+				<m:Text text="{last_name}" wrapping="false"/>
+			</template>
 		</Column>
-		<Column template="date_of_birth">
+		<Column>
 			<m:Button icon="{ui>/sIcon}" iconFirst="false" press="onSort" text="Date Of Birth"/>
+			<template>
+				<m:Text text="{date_of_birth}" wrapping="false"/>
+			</template>
 		</Column>
-		<Column template="hobby">
+		<Column>
 			<m:Label text="Hobby"/>
+			<template>
+				<m:Text text="{hobby}" wrapping="false"/>
+			</template>
 		</Column>
 	</TreeTable>
 

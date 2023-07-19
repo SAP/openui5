@@ -736,9 +736,9 @@ sap.ui.define([
 			threshold: 5,
 			visibleRowCount: 5,
 			columns: [
-				{ template: "ProductId" },
-				{ template: "Name" },
-				{ template: "Category" }
+				new GridColumn({ template: new Text({text: "{ProductId}"}) }),
+				new GridColumn({ template: new Text({text: "{Name}"}) }),
+				new GridColumn({ template: new Text({text: "{Category}"}) })
 			],
 			rows: "{/Products}",
 			models: new ODataModel(sServiceURI, true),
