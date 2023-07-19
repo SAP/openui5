@@ -514,10 +514,17 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 	background: @sapUiBaseBG;
 }
 
+// Arrows over content
 .sapMCrsl .sapMCrslHud.sapMCrslLeftmost .sapMCrslArrow.sapMCrslPrev,
 .sapMCrsl .sapMCrslHud.sapMCrslRightmost .sapMCrslArrow.sapMCrslNext {
 	opacity: 0;
 	display: none;
+}
+
+// Arrows in the Page Indicator area
+.sapMCrsl .sapMCrslArrow.sapMCrslLeftmost.sapMCrslPrev,
+.sapMCrsl .sapMCrslArrow.sapMCrslRightmost.sapMCrslNext {
+	opacity: 0;
 }
 
 .sapMCrslHud .sapMCrslPrev {
