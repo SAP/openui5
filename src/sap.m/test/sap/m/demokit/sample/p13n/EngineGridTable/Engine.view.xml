@@ -3,45 +3,54 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.ui.table"
     xmlns:m="sap.m"
-    xmlns:ce="sap.ui.codeeditor"
+    xmlns:columnmenu="sap.m.table.columnmenu"
     xmlns:sap.ui.fl="sap.ui.fl"
     xmlns:sap.ui.dt="sap.ui.dt"
     xmlns:vm="sap.ui.fl.variants"
-    xmlns:dnd="sap.ui.core.dnd"
-    class="sapUiContentPadding"
     controllerName="sap.m.sample.p13n.EngineGridTable.Engine">
 
-    <m:VBox class="sapUiSmallMargin" width="50%" alignItems="Start">
-        <Table id="persoTable" sort="onSort" enableColumnReordering="false" sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex" rows="{/items}">
+    <m:Page showHeader="false">
+        <Table id="persoTable" sort="onSort" columnMove="onColumnMove" visibleRowCountMode="Auto" ariaLabelledBy="title" sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex" rows="{/items}">
             <extension>
-                <m:OverflowToolbar style="Clear">
+                <m:OverflowToolbar>
                     <m:Title id="title" text="Persons"/>
                     <m:ToolbarSeparator/>
                     <vm:VariantManagement for="persoTable"/>
                     <m:ToolbarSpacer/>
-                     <m:Button icon="sap-icon://action-settings" press="openPersoDialog"/>
+                    <m:Button icon="sap-icon://action-settings" press="openPersoDialog"/>
                 </m:OverflowToolbar>
             </extension>
+            <dependents>
+                <columnmenu:Menu id="menu">
+                    <columnmenu:items>
+                        <columnmenu:ActionItem icon="sap-icon://sort" label="Sort" press="onColumnHeaderItemPress"/>
+                        <columnmenu:ActionItem icon="sap-icon://table-column" label="Columns" press="onColumnHeaderItemPress"/>
+                    </columnmenu:items>
+                </columnmenu:Menu>
+            </dependents>
+            <noData>
+                <m:IllustratedMessage enableVerticalResponsiveness="true"/>
+            </noData>
             <columns>
-                <Column id="firstName" sortProperty="firstName" width="11rem">
+                <Column id="firstName_col" sortProperty="firstName" width="11rem" headerMenu="menu">
                     <m:Label text="First Name" />
                     <template>
                         <m:Text text="{firstName}"/>
                     </template>
                 </Column>
-                <Column id="lastName" sortProperty="lastName" width="11rem">
+                <Column id="lastName_col" sortProperty="lastName" width="11rem" headerMenu="menu">
                     <m:Label text="Last Name" />
                     <template>
                         <m:Text text="{lastName}"/>
                     </template>
                 </Column>
-                <Column id="city" sortProperty="city" width="11rem">
+                <Column id="city_col" sortProperty="city" width="11rem" headerMenu="menu">
                     <m:Label text="City" />
                     <template>
                         <m:Text text="{city}"/>
                     </template>
                 </Column>
-                <Column id="size" sortProperty="size" width="11rem" visible="false">
+                <Column id="size_col" sortProperty="size" width="11rem" visible="false" headerMenu="menu">
                     <m:Label text="Size" />
                     <template>
                         <m:Text text="{size}"/>
@@ -50,6 +59,6 @@
             </columns>
         </Table>
 
-    </m:VBox>
+    </m:Page>
 
 </mvc:View>

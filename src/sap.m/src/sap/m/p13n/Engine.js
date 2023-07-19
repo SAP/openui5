@@ -706,6 +706,7 @@ sap.ui.define([
 
 		var oControl = Engine.getControlInstance(vControl);
 		var oRegistryEntry = this._getRegistryEntry(vControl);
+		mEnhanceConfig.currentState = Engine.getInstance().getController(oControl, mEnhanceConfig.changeType)?.getCurrentState();
 
 		return xConfigAPI.enhanceConfig(oControl, mEnhanceConfig)
 			.then(function (oConfig) {
