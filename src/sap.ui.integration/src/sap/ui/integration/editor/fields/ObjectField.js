@@ -411,6 +411,7 @@ sap.ui.define([
 					oColumnSettings.label = "{i18n>" + oColumnSettings.label.substring(2, oColumnSettings.label.length - 1);
 				}
 				oColumnSettings.tooltip = oColumnSettings.label;
+				oColumnSettings.label = new Label({text: oColumnSettings.label});
 
 				var sCellType = oProperty.cell && oProperty.cell.type ? oProperty.cell.type : oProperty.type || "Text";
 				var oCellTemplate;
