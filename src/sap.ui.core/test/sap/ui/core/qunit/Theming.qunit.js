@@ -1,11 +1,13 @@
 /* global QUnit, sinon, globalThis */
 
 sap.ui.define([
+	"sap/base/config",
 	"sap/base/Event",
 	"sap/ui/base/config/URLConfigurationProvider",
 	"sap/ui/core/Theming",
 	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function (
+	BaseConfig,
 	BaseEvent,
 	URLConfigurationProvider,
 	Theming,
@@ -76,21 +78,24 @@ sap.ui.define([
 
 	QUnit.test("getTheme", function (assert) {
 		assert.expect(bThemeManagerNotActive ? 28 : 27);
-
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapTheme": "sap_test_theme_1",
 			"sapUiTheme": "sap_test_theme_2"
 		};
 		// sapTheme should be first
 		return fnAssert("sap_test_theme_1").then(function() {
+			BaseConfig._.invalidate();
 			mConfigStubValues["sapTheme"] = undefined;
 			// if there is no sapTheme sapUiTheme should be used
 			return fnAssert("sap_test_theme_2");
 		}).then(function() {
+			BaseConfig._.invalidate();
 			mConfigStubValues["sapUiTheme"] = undefined;
 			// use default value 'base' in case there is no theming parameter at all
 			return fnAssert("base");
 		}).then(function() {
+			BaseConfig._.invalidate();
 			mConfigStubValues["sapTheme"] = "sap_test_theme_3@/sap/test/themeroot";
 			// first call with themeroot should trigger a change event for the implicit setThemeRoot call
 			return fnAssert("sap_test_theme_3", [{
@@ -105,6 +110,7 @@ sap.ui.define([
 			return fnAssert("sap_test_theme_3");
 		}).then(function() {
 			// third call with identical theme but different themeroot should trigger a change event for the implicit setThemeRoot call
+			BaseConfig._.invalidate();
 			mConfigStubValues["sapTheme"] = "sap_test_theme_3@/sap/different/test/themeroot";
 			return fnAssert("sap_test_theme_3", [{
 				themeRoots: {
@@ -115,10 +121,12 @@ sap.ui.define([
 			}]);
 		}).then(function() {
 			// sap_corbu theme should be normalized to sap_fiori_3 theme
+			BaseConfig._.invalidate();
 			mConfigStubValues["sapTheme"] = "sap_corbu";
 			return fnAssert("sap_fiori_3");
 		}).then(function() {
 			// sap_corbu theme with specific themeroots should not be normalized and themeroots for sap_corbu should trigger a change event
+			BaseConfig._.invalidate();
 			mConfigStubValues["sapTheme"] = "sap_corbu@/sap/test/themeroot";
 			return fnAssert("sap_corbu", [{
 				themeRoots: {

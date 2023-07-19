@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/base/config",
 	"sap/base/Log",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/util/deepExtend",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/model/xml/XMLModel",
 	"sap/ui/test/v2models/parent/CustomModel"
 ], function(
+	BaseConfig,
 	Log,
 	ResourceBundle,
 	deepExtend,
@@ -44,6 +46,7 @@ sap.ui.define([
 
 	var Helper = {
 		spyModels: function() {
+			BaseConfig._.invalidate();
 			this.modelSpy = {
 				odata: sinon.spy(sap.ui.model.odata, "ODataModel"),
 				odataV2: sinon.spy(sap.ui.model.odata.v2, "ODataModel"),
@@ -66,7 +69,7 @@ sap.ui.define([
 		},
 		stubGetUriParameters: function(mMockParams) {
 			var sSAPLanguage = Configuration.getSAPLogonLanguage();
-
+			BaseConfig._.invalidate();
 			this.oConfigurationStub = sinon.stub(URLConfigurationProvider, 'get');
 			this.oConfigurationStub.withArgs('sapLanguage').returns(mMockParams && mMockParams.sapLanguage || sSAPLanguage);
 			this.oConfigurationStub.withArgs('sapClient').returns(mMockParams && mMockParams.sapClient || 'foo');
@@ -2587,7 +2590,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.v2.ODataModel (with cacheTokens)", {
 		beforeEach: function() {
 			bindHelper.apply(this);
-
+			BaseConfig._.invalidate();
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 		},

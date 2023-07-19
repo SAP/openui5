@@ -416,16 +416,15 @@ sap.ui.define([
 		setLanguage : function (sLanguage, sSAPLogonLanguage) {
 			var oLanguageTag = createLanguageTag(sLanguage),
 				bOldRTL = Localization.getRTL();
-
 			check(oLanguageTag, "Configuration.setLanguage: sLanguage must be a valid BCP47 language tag");
 			check(sSAPLogonLanguage == null || (typeof sSAPLogonLanguage === 'string' && /^[A-Z0-9]{2,2}$/i.test(sSAPLogonLanguage)),
 				"Configuration.setLanguage: sSAPLogonLanguage must be null or be a string of length 2, consisting of digits and latin characters only");
 
+			sSAPLogonLanguage = sSAPLogonLanguage || "";
 			if ( oLanguageTag.toString() != Localization.getLanguageTag().toString() ||
 				sSAPLogonLanguage !== oWritableConfig.get({
 					name: "sapLanguage",
 					type: BaseConfig.Type.String,
-					defaultValue: undefined,
 					external: true
 				})) {
 				oWritableConfig.set("sapLanguage", sSAPLogonLanguage);
@@ -542,7 +541,7 @@ sap.ui.define([
 				defaultValue: oWritableConfig.get({
 					name: "sapUiRtl",
 					type: BaseConfig.Type.Boolean,
-					defaultValue: impliesRTL(Localization.getLanguageTag()),
+					defaultValue: function() { return impliesRTL(Localization.getLanguageTag()); },
 					external:true
 				})
 			});

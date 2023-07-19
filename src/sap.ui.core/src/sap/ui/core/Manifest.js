@@ -794,7 +794,7 @@ sap.ui.define([
 			}
 		}
 		if (!oManifestUrl.hasQuery("sap-client")) {
-			var sValue = BaseConfig.get({name: "sapClient", type:BaseConfig.Type.String});
+			var sValue = BaseConfig.get({name: "sapClient", type:BaseConfig.Type.String, external: true});
 			if (sValue) {
 				oManifestUrl.addQuery("sap-client", sValue);
 			}

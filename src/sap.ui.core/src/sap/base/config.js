@@ -34,6 +34,7 @@ sap.ui.define([
 				var rValidKey = /^[a-z][A-Za-z0-9]*$/;
 				if (rValidKey.test(sName)) {
 					oProvider.set(sName, vValue);
+					_Configuration._.invalidate();
 				} else {
 					throw new TypeError(
 						"Invalid configuration key '" + sName + "'!"

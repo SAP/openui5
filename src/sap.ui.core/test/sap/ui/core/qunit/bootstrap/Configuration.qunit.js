@@ -755,6 +755,7 @@ sap.ui.define([
 			{ param: '4', expected: '4' }
 		].forEach(function (data) {
 			// setup
+			BaseConfig._.invalidate();
 			oStub && oStub.restore();
 			oStub = sinon.stub(URLConfigurationProvider, "get");
 			oStub.callsFake(function(key) {
@@ -786,6 +787,7 @@ sap.ui.define([
 
 	QUnit.test("Read calendarWeekNumbering from URL", function(assert) {
 		// setup
+		BaseConfig._.invalidate();
 		var	oStub = sinon.stub(URLConfigurationProvider, "get");
 		oStub.callsFake(function(key) {
 			if (key === "sapUiCalendarWeekNumbering") {
@@ -813,6 +815,7 @@ sap.ui.define([
 
 	QUnit.test("Read calendarWeekNumbering from URL - empty string leads to default value", function(assert) {
 		// setup
+		BaseConfig._.invalidate();
 		var	oStub = sinon.stub(URLConfigurationProvider, "get");
 		oStub.callsFake(function(key) {
 			if (key === "sapUiCalendarWeekNumbering") {
@@ -848,6 +851,7 @@ sap.ui.define([
 	QUnit.module("Timezone", {
 		beforeEach: function(assert) {
 			Configuration.setLanguage("en");
+			BaseConfig._.invalidate();
 		}
 	});
 
@@ -907,6 +911,7 @@ sap.ui.define([
 	QUnit.module("[Legacy] Animation & AnimationMode interaction", {
 		beforeEach: function() {
 			this.mParams = {};
+			BaseConfig._.invalidate();
 			this.oGlobalConfigStub = sinon.stub(GlobalConfigurationProvider, "get");
 			this.oGlobalConfigStub.callsFake(function(sKey) {
 				if (this.mParams[sKey] !== undefined) {
@@ -949,6 +954,7 @@ sap.ui.define([
 	QUnit.test("Valid animation modes from enumeration & side-effect on 'animation' setting", function(assert) {
 		for (var sAnimationModeKey in AnimationMode) {
 			if (AnimationMode.hasOwnProperty(sAnimationModeKey)) {
+				BaseConfig._.invalidate();
 				var sAnimationMode = AnimationMode[sAnimationModeKey];
 				this.mParams.sapUiAnimation = false;
 				this.mParams.sapUiAnimationMode = sAnimationMode;
@@ -965,6 +971,7 @@ sap.ui.define([
 	QUnit.module("AnimationMode initial setting evaluation", {
 		beforeEach: function() {
 			this.mParams = {};
+			BaseConfig._.invalidate();
 			this.oGlobalConfigStub = sinon.stub(GlobalConfigurationProvider, "get");
 			this.oGlobalConfigStub.callsFake(function(sKey) {
 				if (this.mParams[sKey] !== undefined) {
@@ -1001,6 +1008,7 @@ sap.ui.define([
 	QUnit.test("Valid animation modes from enumeration", function(assert) {
 		for (var sAnimationModeKey in AnimationMode) {
 			if (AnimationMode.hasOwnProperty(sAnimationModeKey)) {
+				BaseConfig._.invalidate();
 				var sAnimationMode = AnimationMode[sAnimationModeKey];
 				/**
 				 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
@@ -1288,6 +1296,7 @@ sap.ui.define([
 		}
 	].forEach(function(oSetup) {
 		QUnit.test(oSetup.caption, function(assert) {
+			BaseConfig._.invalidate();
 			var oStub = sinon.stub(BaseConfig, "get");
 			oStub.callsFake(function(mParameters) {
 				switch (mParameters.name) {

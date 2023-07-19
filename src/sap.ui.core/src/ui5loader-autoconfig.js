@@ -159,6 +159,7 @@
 		var rAlias = /^(sapUiXx|sapUi|sap)((?:[A-Z0-9][a-z]*)+)$/; //for getter
 		var mFrozenProperties = Object.create(null);
 		var bFrozen = false;
+		var Configuration;
 
 		function createConfig() {
 			oConfig = Object.create(null);
@@ -186,6 +187,7 @@
 		function freeze() {
 			if (!bFrozen) {
 				createConfig();
+				Configuration._.invalidate();
 				bFrozen = true;
 			}
 		}
@@ -213,10 +215,15 @@
 			}
 		}
 
+		function setConfiguration(Config) {
+			Configuration = Config;
+		}
+
 		var GlobalConfigurationProvider = {
 			get: get,
 			set: set,
-			freeze: freeze
+			freeze: freeze,
+			setConfiguration: setConfiguration
 		};
 
 		createConfig();
@@ -341,6 +348,9 @@
 	define("sap/base/config/_Configuration", [
 		"sap/base/config/GlobalConfigurationProvider"
 	], function _Configuration(GlobalConfigurationProvider) {
+		var rValidKey = /^[a-z][A-Za-z0-9]*$/;
+		var rXXAlias = /^(sapUi(?!Xx))(.*)$/;
+		var mCache = Object.create(null);
 		var aProvider = [GlobalConfigurationProvider];
 		var mUrlParamOptions = {
 			name: "sapUiIgnoreUrlParams",
@@ -444,6 +454,7 @@
 		function registerProvider(oProvider) {
 			if (aProvider.indexOf(oProvider) === -1) {
 				aProvider.push(oProvider);
+				invalidate();
 				bGlobalIgnoreExternal = get(mUrlParamOptions);
 			}
 		}
@@ -569,7 +580,7 @@
 		 * @param {object} mOptions The options object that contains the following properties
 		 * @param {string} mOptions.name Name of the configuration parameter. Must start with 'sapUi/sapUiXx' prefix followed by letters only. The name must be camel-case
 		 * @param {sap.base.config.Type|object<string, string>|function} mOptions.type Type of the configuration parameter. This argument can be a <code>sap.base.config.Type</code>, object or function.
-		 * @param {any} [mOptions.defaultValue=undefined] Default value of the configuration parameter corresponding to the given type.
+		 * @param {any} [mOptions.defaultValue=undefined] Default value of the configuration parameter corresponding to the given type or a function returning the default value.
 		 * @param {boolean} [mOptions.external=false] Whether external (e.g. url-) parameters should be included or not
 		 * @param {boolean} [mOptions.freeze=false] Freezes parameter and parameter can't be changed afterwards.
 		 * @returns {any} Value of the configuration parameter
@@ -578,45 +589,60 @@
 		 * @ui5-restricted sap.ui.core.Core, jquery.sap.global
 		 */
 		function get(mOptions) {
-			mOptions = Object.assign({}, mOptions);
-			var vValue;
-
-			var rValidKey = /^[a-z][A-Za-z0-9]*$/;
-			var rXXAlias = /^(sapUi(?!Xx))(.*)$/; //for getter
-			var bIgnoreExternal = bGlobalIgnoreExternal || !mOptions.external;
-			var sName = mOptions.name;
-			var vMatch = sName.match(rXXAlias);
-			var vDefaultValue = mOptions.hasOwnProperty("defaultValue") ? mOptions.defaultValue : mInternalDefaultValues[mOptions.type];
-
-			if (typeof mOptions.name !== "string" || !rValidKey.test(sName)) {
+			if (typeof mOptions.name !== "string" || !rValidKey.test(mOptions.name)) {
 				throw new TypeError(
-					"Invalid configuration key '" + sName + "'!"
+					"Invalid configuration key '" + mOptions.name + "'!"
 				);
 			}
-
+			var sCacheKey = mOptions.name;
 			if (mOptions.provider) {
-				vValue = mOptions.provider.get(sName, mOptions.freeze);
+				sCacheKey += "-" + mOptions.provider.getId();
 			}
-			if (vValue === undefined) {
-				for (var i = aProvider.length - 1; i >= 0; i--) {
-					if (!aProvider[i].external || !bIgnoreExternal) {
-						vValue = aProvider[i].get(sName, mOptions.freeze);
-						if (vValue !== undefined) {
-							break;
+			if (!(sCacheKey in mCache)) {
+				mOptions = Object.assign({}, mOptions);
+				var vValue;
+
+				var bIgnoreExternal = bGlobalIgnoreExternal || !mOptions.external;
+				var sName = mOptions.name;
+				var vMatch = sName.match(rXXAlias);
+				var vDefaultValue = mOptions.hasOwnProperty("defaultValue") ? mOptions.defaultValue : mInternalDefaultValues[mOptions.type];
+
+				if (mOptions.provider) {
+					vValue = mOptions.provider.get(sName, mOptions.freeze);
+				}
+				if (vValue === undefined) {
+					for (var i = aProvider.length - 1; i >= 0; i--) {
+						if (!aProvider[i].external || !bIgnoreExternal) {
+							vValue = aProvider[i].get(sName, mOptions.freeze);
+							if (vValue !== undefined) {
+								break;
+							}
 						}
 					}
 				}
+				if (vValue !== undefined) {
+					vValue = convertToType(vValue, mOptions.type, mOptions.name);
+				} else if (vMatch && vMatch[1] === "sapUi") {
+					mOptions.name = vMatch[1] + "Xx" + vMatch[2];
+					vValue = get(mOptions);
+				}
+				if (vValue === undefined) {
+					if (typeof vDefaultValue === 'function') {
+						vDefaultValue = vDefaultValue();
+					}
+					vValue = vDefaultValue;
+				}
+				mCache[sCacheKey] = vValue;
 			}
-			if (vValue !== undefined) {
-				vValue = convertToType(vValue, mOptions.type, mOptions.name);
-			} else if (vMatch && vMatch[1] === "sapUi") {
-				mOptions.name = vMatch[1] + "Xx" + vMatch[2];
-				return get(mOptions);
+			var vCachedValue = mCache[sCacheKey];
+			if (typeof mOptions.type !== 'function' && (mOptions.type === TypeEnum.StringArray || mOptions.type === TypeEnum.Object)) {
+				vCachedValue = deepClone(vCachedValue);
 			}
-			if (typeof mOptions.type !== 'function' && (Array.isArray(vValue) || typeof vValue === "object")) {
-				vValue = deepClone(vValue);
-			}
-			return vValue !== undefined ? vValue : vDefaultValue;
+			return vCachedValue;
+		}
+
+		function invalidate() {
+			mCache = Object.create(null);
 		}
 
 		/**
@@ -631,6 +657,7 @@
 					var rValidKey = /^[a-z][A-Za-z0-9]*$/;
 					if (rValidKey.test(sName)) {
 						oProvider.set(sName, vValue);
+						invalidate();
 					} else {
 						throw new TypeError(
 							"Invalid configuration key '" + sName + "'!"
@@ -648,9 +675,13 @@
 			registerProvider: registerProvider,
 			Type: TypeEnum,
 			_: {
-				checkEnum: checkEnum
+				checkEnum: checkEnum,
+				invalidate: invalidate
 			}
 		};
+
+		//forward Configuration to Global provider to invalidate the cache when freezing
+		GlobalConfigurationProvider.setConfiguration(Configuration);
 
 		return Configuration;
 	});

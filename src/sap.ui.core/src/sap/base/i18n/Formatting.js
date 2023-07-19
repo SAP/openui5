@@ -175,7 +175,7 @@ sap.ui.define([
 			return oWritableConfig.get({
 				name: "sapUiFormatLocale",
 				type: function(sFormatLocale) {return new LanguageTag(sFormatLocale);},
-				defaultValue: fallback(this),
+				defaultValue: fallback.bind(Formatting, this),
 				external: true
 			});
 		},
@@ -229,6 +229,7 @@ sap.ui.define([
 		},
 
 		_set : function(sKey, oValue) {
+			BaseConfig._.invalidate();
 			var oOldValue = mSettings[sKey];
 			if ( oValue != null ) {
 				mSettings[sKey] = oValue;
@@ -592,7 +593,6 @@ sap.ui.define([
 			var sLegacyDateFormat = oWritableConfig.get({
 				name: "sapUiLegacyDateFormat",
 				type: BaseConfig.Type.String,
-				defaultValue: undefined,
 				external: true
 			});
 			return sLegacyDateFormat ? sLegacyDateFormat.toUpperCase() : undefined;
@@ -644,7 +644,6 @@ sap.ui.define([
 			var sLegacyTimeFormat = oWritableConfig.get({
 				name: "sapUiLegacyTimeFormat",
 				type: BaseConfig.Type.String,
-				defaultValue: undefined,
 				external: true
 			});
 			return sLegacyTimeFormat ? sLegacyTimeFormat.toUpperCase() : undefined;
@@ -698,7 +697,6 @@ sap.ui.define([
 			var sLegacyNumberFormat = oWritableConfig.get({
 				name: "sapUiLegacyNumberFormat",
 				type: BaseConfig.Type.String,
-				defaultValue: undefined,
 				external: true
 			});
 			return sLegacyNumberFormat ? sLegacyNumberFormat.toUpperCase() : undefined;
@@ -897,9 +895,10 @@ sap.ui.define([
 				sCalendarType = oWritableConfig.get({
 					name: "sapUiCalendarType",
 					type: BaseConfig.Type.String,
-					defaultValue: null,
 					external: true
 				});
+
+			sCalendarType = sCalendarType || null;
 
 			if (sCalendarType) {
 				for (sName in CalendarType) {
