@@ -68,10 +68,23 @@ sap.ui.define([
 			afterNavigate: this._afterNavigate.bind(this)
 		};
 
+		this._oNavContainerDelegate = {
+			onAfterRendering: function () {
+				if (!this.getShowVerticalScrollBar()) {
+					this.addStyleClass("sapMQuickViewCardNoScroll");
+				} else {
+					this.removeStyleClass("sapMQuickViewCardNoScroll");
+				}
+				this._oNavContainer.removeEventDelegate(this._oNavContainerDelegate);
+			}.bind(this)
+		};
+
 		this._oNavContainer = new NavContainer(oNavConfig);
 	};
 
 	QuickViewCard.prototype.onBeforeRendering = function() {
+		this._oNavContainer.addEventDelegate(this._oNavContainerDelegate, this);
+
 		this._initPages();
 	};
 
