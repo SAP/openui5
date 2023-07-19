@@ -105,7 +105,9 @@ sap.ui.define([
 
 		var aContent = [oRowContent];
 		if (oItem.name) {
-			aContent.push(this._createFactoryControl(oItem));
+			var oFilterItem = this._createFactoryControl(oItem);
+			aContent.push(oFilterItem);
+			this._setLabelForOnBox(oFilterItem, oRowContent);
 		}
 		return new Grid({
 			containerQuery: true,
