@@ -1303,9 +1303,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the VM Control fires the manage event in Personalization mode with dirty VM changes and UI Changes", function(assert) {
-			var oVariantManagement = new VariantManagement(sVMReference);
+			const oVariantManagement = new VariantManagement(sVMReference);
 			oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
-			var oVariantInstance = createVariant(this.oModel.getData()[sVMReference].variants[1]);
+			const oVariantInstance = createVariant(this.oModel.getData()[sVMReference].variants[1]);
 			sandbox.stub(this.oModel, "getVariant").returns({instance: oVariantInstance});
 
 			this.oModel.getData()[sVMReference].variants[1].title = "test";
@@ -1313,16 +1313,46 @@ sap.ui.define([
 			this.oModel.getData()[sVMReference].variants[1].visible = false;
 			this.oModel.getData()[sVMReference].defaultVariant = "variant0";
 
-			var oAddVariantChangesSpy = sandbox.spy(this.oModel, "addVariantChanges");
-			var oSaveDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges");
+			const oUpdateVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant");
+			const oAddVariantChangesSpy = sandbox.spy(this.oModel, "addVariantChanges");
+			const oSaveDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges");
 
 			oVariantManagement.fireManage(null, {variantManagementReference: sVMReference});
-			var aArgs = oSaveDirtyChangesStub.lastCall.args;
+			assert.strictEqual(oUpdateVariantStub.callCount, 0, "the variant was not switched");
+			const aArgs = oSaveDirtyChangesStub.lastCall.args;
 			assert.strictEqual(aArgs[0], this.oComponent, "the app component was passed");
 			assert.strictEqual(aArgs[1], false, "the second parameter is false");
 			assert.deepEqual(aArgs[2].length, 4, "an array with 4 changes was passed");
 			assert.strictEqual(oAddVariantChangesSpy.lastCall.args[1].length, 4, "4 changes were added");
 			oVariantManagement.destroy();
+		});
+
+		QUnit.test("when the VM Control fires the manage event in Personalization mode with deleting the current variant", function(assert) {
+			const done = assert.async();
+			const oVariantManagement = new VariantManagement(sVMReference);
+			oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
+			const oVariantInstance = createVariant(this.oModel.getData()[sVMReference].variants[2]);
+			sandbox.stub(this.oModel, "getVariant").returns({instance: oVariantInstance});
+
+			this.oModel.getData()[sVMReference].variants[2].visible = false;
+
+			const oUpdateVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant");
+			const oAddVariantChangesSpy = sandbox.spy(this.oModel, "addVariantChanges");
+			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").callsFake((oAppComponent, bSkipUpdateCache, aChanges) => {
+				assert.strictEqual(oUpdateVariantStub.callCount, 1, "the variant was switched");
+				assert.deepEqual(oUpdateVariantStub.lastCall.args[0], {
+					variantManagementReference: sVMReference,
+					newVariantReference: sVMReference
+				}, "the correct variant was switched to");
+				assert.strictEqual(oAppComponent, this.oComponent, "the app component was passed");
+				assert.strictEqual(bSkipUpdateCache, false, "the second parameter is false");
+				assert.deepEqual(aChanges.length, 1, "an array with 1 change was passed");
+				assert.strictEqual(oAddVariantChangesSpy.lastCall.args[1].length, 1, "1 changes were added");
+				oVariantManagement.destroy();
+				done();
+			});
+
+			oVariantManagement.fireManage(null, {variantManagementReference: sVMReference});
 		});
 
 		QUnit.test("when calling '_initializeManageVariantsEvents'", function(assert) {

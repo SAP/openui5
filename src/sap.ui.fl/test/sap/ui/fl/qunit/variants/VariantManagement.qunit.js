@@ -916,6 +916,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking _handleManageSavePressed; deleted item is selected", function(assert) {
+			oModel.fnManageClick = function() {
+				this.oVariantManagement.setCurrentVariantKey(this.oVariantManagement.getStandardVariantKey());
+			}.bind(this);
+
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this.oVariantManagement.attachManage(function() {

@@ -64,13 +64,29 @@ sap.ui.define([
 	 * @public
 	 * @returns {Promise} Returns resolve after execution
 	 */
-	ControlVariantConfigure.prototype.execute = function() {
+	ControlVariantConfigure.prototype.execute = async function() {
 		var oVariantManagementControl = this.getControl();
 		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
 		this.oModel = this.oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
 
 		this._aPreparedChanges = [];
+		if (this.getChanges().some((oChange) => {
+			if (
+				oChange.visible === false
+				&& oChange.variantReference === this.oModel.getCurrentVariantReference(this.sVariantManagementReference)
+			) {
+				this._sOldVReference = oChange.variantReference;
+				return true;
+			}
+			return false;
+		})) {
+			await this.oModel.updateCurrentVariant({
+				variantManagementReference: this.sVariantManagementReference,
+				newVariantReference: this.sVariantManagementReference
+			});
+		}
+
 		this.getChanges().forEach(function(mChangeProperties) {
 			mChangeProperties.appComponent = this.oAppComponent;
 			mChangeProperties.generator = rtaLibrary.GENERATOR_NAME;
@@ -105,6 +121,15 @@ sap.ui.define([
 		}.bind(this));
 
 		this._aPreparedChanges = null;
+		if (this._sOldVReference) {
+			return this.oModel.updateCurrentVariant({
+				variantManagementReference: this.sVariantManagementReference,
+				newVariantReference: this._sOldVReference
+			}).then(() => {
+				delete this._sOldVReference;
+			});
+		}
+
 		return Promise.resolve();
 	};
 

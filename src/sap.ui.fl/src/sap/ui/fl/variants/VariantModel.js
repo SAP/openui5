@@ -1134,16 +1134,29 @@ sap.ui.define([
 		};
 
 		this.fnManageClick = function(oEvent, oData) {
-			if (!this.oFlexController || !this.getData()) {
-				return;
-			}
-			var aConfigurationChangesContent = this.collectModelChanges(oData.variantManagementReference, Layer.USER);
-			var aChanges = [];
-			aConfigurationChangesContent.forEach(function(oChangeProperties) {
-				oChangeProperties.appComponent = this.oAppComponent;
-			}.bind(this));
-			aChanges = aChanges.concat(this.addVariantChanges(oData.variantManagementReference, aConfigurationChangesContent));
-			this.oChangePersistence.saveDirtyChanges(this.oAppComponent, false, aChanges);
+			(async () => {
+				if (!this.oFlexController || !this.getData()) {
+					return;
+				}
+				var aConfigurationChangesContent = this.collectModelChanges(oData.variantManagementReference, Layer.USER);
+
+				if (aConfigurationChangesContent.some((oChange) => {
+					return oChange.visible === false
+					&& oChange.variantReference === this.getCurrentVariantReference(oData.variantManagementReference);
+				})) {
+					await this.updateCurrentVariant({
+						variantManagementReference: oData.variantManagementReference,
+						newVariantReference: oData.variantManagementReference
+					});
+				}
+
+				var aChanges = [];
+				aConfigurationChangesContent.forEach(function(oChangeProperties) {
+					oChangeProperties.appComponent = this.oAppComponent;
+				}.bind(this));
+				aChanges = aChanges.concat(this.addVariantChanges(oData.variantManagementReference, aConfigurationChangesContent));
+				this.oChangePersistence.saveDirtyChanges(this.oAppComponent, false, aChanges);
+			})();
 		};
 	};
 

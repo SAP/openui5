@@ -21,95 +21,162 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
-	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Dummy");
+	const sandbox = sinon.createSandbox();
+	const oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Dummy");
 
-	QUnit.module("ControlVariantConfigure", {
-		beforeEach: function() {
-			return FlexTestAPI.createVariantModel({
-				data: {},
+	QUnit.module("ControlVariantConfigure, when calling command factory for configure and undo", {
+		beforeEach: async function() {
+			this.oModel = await FlexTestAPI.createVariantModel({
+				data: {
+					variantMgmtId1: {
+						currentVariant: "variant1",
+						defaultVariant: "variantMgmtId1",
+						variants: [
+							{
+								key: "variant0",
+								layer: Layer.CUSTOMER,
+								title: "1"
+							},
+							{
+								key: "variantMgmtId1",
+								layer: Layer.CUSTOMER,
+								title: "2"
+							},
+							{
+								key: "variant1",
+								layer: Layer.CUSTOMER,
+								title: "3"
+							}
+						]
+					}
+				},
 				appComponent: oMockedAppComponent
-			}).then(function(oInitializedModel) {
-				this.oModel = oInitializedModel;
-				this.oVariantManagement = new VariantManagement("variantMgmtId1");
-				sandbox.stub(oMockedAppComponent, "getModel").returns(this.oModel);
-				this.oAddVariantChangeStub = sandbox.stub(this.oModel, "addVariantChange").returnsArg(1);
-				this.oDeleteVariantChangeStub = sandbox.stub(this.oModel, "deleteVariantChange");
-			}.bind(this));
+			});
+			this.oVariantManagement = new VariantManagement("variantMgmtId1");
+			sandbox.stub(oMockedAppComponent, "getModel").returns(this.oModel);
+			this.oAddVariantChangeStub = sandbox.stub(this.oModel, "addVariantChange").returnsArg(1);
+			this.oDeleteVariantChangeStub = sandbox.stub(this.oModel, "deleteVariantChange");
+			this.oSwitchStub = sandbox.stub(this.oModel, "updateCurrentVariant").resolves();
 		},
 		afterEach: function() {
+			this.oVariantManagement.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when calling command factory for configure and undo with setTitle, setFavorite setVisible and setDefault changes", function(assert) {
-			var oTitleChange = {
+		QUnit.test("with setTitle, setFavorite, setVisible and setDefault changes", async function(assert) {
+			const oTitleChange = {
 				changeType: "setTitle",
 				layer: Layer.CUSTOMER,
 				originalTitle: "variant A",
 				title: "test",
 				variantReference: "variant0"
 			};
-			var oTitleUndoChange = Object.assign({}, oTitleChange, {generator: rtaLibrary.GENERATOR_NAME, originalTitle: "test", title: "variant A"});
-			var oFavoriteChange = {
+			const oTitleUndoChange = Object.assign({}, oTitleChange, {generator: rtaLibrary.GENERATOR_NAME, originalTitle: "test", title: "variant A"});
+			const oFavoriteChange = {
 				changeType: "setFavorite",
 				favorite: false,
 				layer: Layer.CUSTOMER,
 				originalFavorite: true,
 				variantReference: "variant0"
 			};
-			var oFavoriteUndoChange = Object.assign({}, oFavoriteChange, {generator: rtaLibrary.GENERATOR_NAME, originalFavorite: false, favorite: true});
-			var oVisibleChange = {
+			const oFavoriteUndoChange = Object.assign({}, oFavoriteChange, {generator: rtaLibrary.GENERATOR_NAME, originalFavorite: false, favorite: true});
+			const oVisibleChange = {
 				changeType: "setVisible",
 				layer: Layer.CUSTOMER,
 				variantReference: "variant0",
 				visible: false
 			};
-			var oVisibleUndoChange = Object.assign({}, oVisibleChange, {generator: rtaLibrary.GENERATOR_NAME, visible: true});
-			var oContextsChange = {
+			const oVisibleUndoChange = Object.assign({}, oVisibleChange, {generator: rtaLibrary.GENERATOR_NAME, visible: true});
+			const oContextsChange = {
 				changeType: "setContexts",
 				layer: Layer.CUSTOMER,
 				variantReference: "variant0",
 				contexts: {role: ["ROLE1", "ROLE2"], country: ["DE", "IT"]},
 				originalContexts: {role: ["OGROLE1", "OGROLE2"], country: ["OR"]}
 			};
-			var oContextsUndoChange = Object.assign({}, oContextsChange, {generator: rtaLibrary.GENERATOR_NAME, originalContexts: {role: ["ROLE1", "ROLE2"], country: ["DE", "IT"]}, contexts: {role: ["OGROLE1", "OGROLE2"], country: ["OR"]}});
-			var oDefaultChange = {
+			const oContextsUndoChange = Object.assign({}, oContextsChange, {generator: rtaLibrary.GENERATOR_NAME, originalContexts: {role: ["ROLE1", "ROLE2"], country: ["DE", "IT"]}, contexts: {role: ["OGROLE1", "OGROLE2"], country: ["OR"]}});
+			const oDefaultChange = {
 				changeType: "setDefault",
 				defaultVariant: "variantMgmtId1",
 				layer: Layer.CUSTOMER,
 				originalDefaultVariant: "variant0",
 				variantManagementReference: "variantMgmtId1"
 			};
-			var oDefaultUndoChange = Object.assign({}, oDefaultChange, {generator: rtaLibrary.GENERATOR_NAME, originalDefaultVariant: "variantMgmtId1", defaultVariant: "variant0"});
-			var aChanges = [oTitleChange, oFavoriteChange, oVisibleChange, oContextsChange, oDefaultChange];
-			var oConfigureCommand;
-			return CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
+			const oDefaultUndoChange = Object.assign({}, oDefaultChange, {generator: rtaLibrary.GENERATOR_NAME, originalDefaultVariant: "variantMgmtId1", defaultVariant: "variant0"});
+			const aChanges = [oTitleChange, oFavoriteChange, oVisibleChange, oContextsChange, oDefaultChange];
+
+			const oConfigureCommand = await CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
 				control: this.oVariantManagement,
 				changes: aChanges
-			}, {}, {layer: Layer.CUSTOMER})
+			}, {}, {layer: Layer.CUSTOMER});
 
-			.then(function(oCommand) {
-				oConfigureCommand = oCommand;
+			await oConfigureCommand.execute();
 
-				return oConfigureCommand.execute();
-			}).then(function() {
-				assert.strictEqual(this.oAddVariantChangeStub.callCount, 5, "5 changes got added");
-				var aPreparedChanges = oConfigureCommand.getPreparedChange();
-				assert.deepEqual(aPreparedChanges, aChanges, "all changes are saved in the command");
-				aPreparedChanges.forEach(function(oChange) {
-					assert.equal(oChange.generator, rtaLibrary.GENERATOR_NAME, "the generator was correctly set");
-				});
+			assert.strictEqual(this.oAddVariantChangeStub.callCount, 5, "5 changes got added");
+			const aPreparedChanges = oConfigureCommand.getPreparedChange();
+			assert.deepEqual(aPreparedChanges, aChanges, "all changes are saved in the command");
+			aPreparedChanges.forEach(function(oChange) {
+				assert.equal(oChange.generator, rtaLibrary.GENERATOR_NAME, "the generator was correctly set");
+			});
+			assert.strictEqual(this.oSwitchStub.callCount, 0, "the variant was not switched");
 
-				return oConfigureCommand.undo();
-			}.bind(this)).then(function() {
-				assert.strictEqual(this.oDeleteVariantChangeStub.callCount, 5, "all changes got removed");
-				assert.deepEqual(_omit(this.oDeleteVariantChangeStub.getCall(0).args[1], "appComponent"), oTitleUndoChange, "the change was correctly removed");
-				assert.deepEqual(_omit(this.oDeleteVariantChangeStub.getCall(1).args[1], "appComponent"), oFavoriteUndoChange, "the change was correctly removed");
-				assert.deepEqual(_omit(this.oDeleteVariantChangeStub.getCall(2).args[1], "appComponent"), oVisibleUndoChange, "the change was correctly removed");
-				assert.deepEqual(_omit(this.oDeleteVariantChangeStub.getCall(3).args[1], "appComponent"), oContextsUndoChange, "the change was correctly removed");
-				assert.deepEqual(_omit(this.oDeleteVariantChangeStub.getCall(4).args[1], "appComponent"), oDefaultUndoChange, "the change was correctly removed");
-				assert.notOk(oConfigureCommand.getPreparedChange(), "the prepared changes got removed");
-			}.bind(this));
+			await oConfigureCommand.undo();
+
+			assert.strictEqual(this.oDeleteVariantChangeStub.callCount, 5, "all changes got removed");
+			assert.deepEqual(
+				_omit(this.oDeleteVariantChangeStub.getCall(0).args[1], "appComponent"), oTitleUndoChange,
+				"the change was correctly removed"
+			);
+			assert.deepEqual(
+				_omit(this.oDeleteVariantChangeStub.getCall(1).args[1], "appComponent"), oFavoriteUndoChange,
+				"the change was correctly removed"
+			);
+			assert.deepEqual(
+				_omit(this.oDeleteVariantChangeStub.getCall(2).args[1], "appComponent"), oVisibleUndoChange,
+				"the change was correctly removed"
+			);
+			assert.deepEqual(
+				_omit(this.oDeleteVariantChangeStub.getCall(3).args[1], "appComponent"), oContextsUndoChange,
+				"the change was correctly removed"
+			);
+			assert.deepEqual(
+				_omit(this.oDeleteVariantChangeStub.getCall(4).args[1], "appComponent"), oDefaultUndoChange,
+				"the change was correctly removed"
+			);
+			assert.notOk(oConfigureCommand.getPreparedChange(), "the prepared changes got removed");
+			assert.strictEqual(this.oSwitchStub.callCount, 0, "the variant was not switched");
+		});
+
+		QUnit.test("with deleting the current variant", async function(assert) {
+			const oVisibleChange = {
+				changeType: "setVisible",
+				layer: Layer.CUSTOMER,
+				variantReference: "variant1",
+				visible: false
+			};
+
+			const oConfigureCommand = await CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
+				control: this.oVariantManagement,
+				changes: [oVisibleChange]
+			}, {}, {layer: Layer.CUSTOMER});
+
+			await oConfigureCommand.execute();
+
+			assert.strictEqual(this.oAddVariantChangeStub.callCount, 1, "1 change got added");
+			assert.strictEqual(this.oSwitchStub.callCount, 1, "the variant was switched");
+			assert.deepEqual(this.oSwitchStub.lastCall.args[0], {
+				variantManagementReference: "variantMgmtId1",
+				newVariantReference: "variantMgmtId1"
+			}, "the correct variant was switched to");
+
+			await oConfigureCommand.undo();
+
+			assert.strictEqual(this.oDeleteVariantChangeStub.callCount, 1, "all changes got removed");
+			assert.strictEqual(this.oSwitchStub.callCount, 2, "the variant was switched again");
+			assert.deepEqual(this.oSwitchStub.lastCall.args[0], {
+				variantManagementReference: "variantMgmtId1",
+				newVariantReference: "variant1"
+			}, "the correct variant was switched to");
 		});
 	});
 
