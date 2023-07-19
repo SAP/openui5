@@ -106,7 +106,7 @@ sap.ui.define(['./TileRenderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/R
 			/* WAI ARIA for infoState */
 			if (infoState != ValueState.None) {
 				rm.accessibilityState(oTile, {
-					ariaDescribedBy: {
+					describedBy: {
 						value: oTile.getId() + "-sapSRH",
 						append: true
 					}
