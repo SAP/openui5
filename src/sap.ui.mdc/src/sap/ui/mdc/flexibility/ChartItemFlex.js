@@ -19,8 +19,8 @@ sap.ui.define([
 				.then(function(oFoundItem) {
 					if (!oFoundItem) {
 						return Promise.all([
-							oModifier.getProperty(oItem, "key"),
-							oModifier.getProperty(oItem, "name") // for chart remake
+							oModifier.getProperty(oItem, "propertyKey"),
+							oModifier.getProperty(oItem, "key")
 						])
 						.then(function(aProperties) {
 							if (aProperties[0] === sName || aProperties[1] === sName) {
