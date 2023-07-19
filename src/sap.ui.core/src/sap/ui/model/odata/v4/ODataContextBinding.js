@@ -762,7 +762,7 @@ sap.ui.define([
 	ODataContextBinding.prototype.doSetProperty = function (sPath, vValue, oGroupLock) {
 		if (this.oOperation && (sPath === "$Parameter" || sPath.startsWith("$Parameter/"))) {
 			_Helper.updateAll(this.oOperation.mChangeListeners, "", this.oOperation.mParameters,
-				_Cache.makeUpdateData(sPath.split("/").slice(1), vValue));
+				_Helper.makeUpdateData(sPath.split("/").slice(1), vValue));
 			this.oOperation.bAction = undefined; // "not yet executed"
 			if (oGroupLock) {
 				oGroupLock.unlock();
