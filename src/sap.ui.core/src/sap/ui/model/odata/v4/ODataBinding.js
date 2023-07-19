@@ -558,7 +558,7 @@ sap.ui.define([
 		 */
 		function wrapQueryOptions(bDropEmptyObject, sReducedPath) {
 			if (vQueryOptions instanceof SyncPromise) {
-				if (vQueryOptions.isPending()) {
+				if (!vQueryOptions.isFulfilled()) {
 					return vQueryOptions.then(function (mQueryOptions) {
 						return _wrapQueryOptions(mQueryOptions, bDropEmptyObject, sReducedPath);
 					});
