@@ -558,6 +558,7 @@ sap.ui.define([
 		NavigationList.prototype._openPopover = function (source, list) {
 
 			var that = this;
+			var $sourceItem = source.$().find(".sapTntNavLIItem").addClass("sapTntNavLIActive");
 			var selectedItem = list.getSelectedItem();
 			if (selectedItem && list.isGroupSelected) {
 				selectedItem = null;
@@ -572,6 +573,7 @@ sap.ui.define([
 					if (that._popover) {
 						that._popover.destroy();
 						that._popover = null;
+						$sourceItem.removeClass("sapTntNavLIActive");
 					}
 				},
 				content: list,
@@ -579,7 +581,6 @@ sap.ui.define([
 			}).addStyleClass('sapContrast sapContrastPlus');
 
 			popover._adaptPositionParams = this._adaptPopoverPositionParams;
-
 			popover.openBy(source);
 		};
 
