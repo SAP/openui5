@@ -684,6 +684,32 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("fetchOrGetQueryOptionsForOwnCache: promise rejected", function (assert) {
+		var oBinding = new ODataBinding({
+				doFetchOrGetQueryOptions : function () {},
+				oModel : {resolve : function () {}},
+				sPath : "/absolute",
+				bRelative : false
+			}),
+			oContext = {},
+			oError = new Error();
+
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs("/absolute", sinon.match.same(oContext))
+			.returns("/resolved/path");
+		this.mock(oBinding).expects("doFetchOrGetQueryOptions")
+			.withExactArgs(sinon.match.same(oContext))
+			.returns(SyncPromise.reject(oError));
+
+		// code under test
+		oBinding.fetchOrGetQueryOptionsForOwnCache(oContext).then(function () {
+			assert.ok(false, "unexpected success");
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
+	});
+
+	//*********************************************************************************************
 	[
 		{sPath : "unresolvedRelative", bRelative : true},
 		{oOperation : {}, sPath : "operation"},
