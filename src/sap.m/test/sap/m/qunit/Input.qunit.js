@@ -4645,7 +4645,9 @@ sap.ui.define([
 	QUnit.test("General - aria-haspopup should be correctly applied", async function(assert) {
 		//Arrange
 		var oInputWithoutSuggestions = new Input({}),
-			oInputWithSuggestions =  new Input({showSuggestion: true});
+			oInputWithSuggestions =  new Input({showSuggestion: true}),
+			oDisabledInputWithSuggestions =  new Input({showSuggestion: true, enabled: false}),
+			oReadonlyInputWithSuggestions =  new Input({showSuggestion: true, editable: false});
 
 		oInputWithoutSuggestions.placeAt("content");
 		oInputWithSuggestions.placeAt("content");
@@ -4653,6 +4655,8 @@ sap.ui.define([
 
 		//Assert
 		assert.strictEqual(oInputWithoutSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
+		assert.strictEqual(oDisabledInputWithSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be present on a disabled input.");
+		assert.strictEqual(oReadonlyInputWithSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be present on a readonly input.");
 		assert.strictEqual(oInputWithSuggestions._$input.attr("aria-haspopup"), "listbox", "aria-haspopup should have value 'listbox'.");
 
 		//Act
