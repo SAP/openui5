@@ -142,6 +142,16 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"ResetJourney": {
+				group: "Table/FilterBar UI Tests",
+				autostart: false,
+				module: "./OpaTests/P13nOpa.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
+			},
 			"PersonalizationChart": {
 				group: "Chart UI Test",
 				autostart: false,

@@ -200,6 +200,12 @@ sap.ui.define([
 			this._oPopup.openBy(oSource);
 		}
 
+		var oResetBtn = this.getResetButton();
+
+		if (oResetBtn) {
+			oResetBtn.setEnabled(mSettings?.enableReset);
+		}
+
 		this._bIsOpen = true;
 	};
 
@@ -217,6 +223,11 @@ sap.ui.define([
 			oBindingInfo = {
 				parts: oPanelTitleBindingInfo.parts
 			};
+		}
+		if (oPanel.attachChange instanceof Function) {
+			oPanel.attachChange((oEvt) => {
+				this.getResetButton()?.setEnabled(true);
+			});
 		}
 		this._getContainer().addView(new AbstractContainerItem({
 			key: sKey || oPanel.getId(),
@@ -256,6 +267,17 @@ sap.ui.define([
 	 */
 	Popup.prototype.getPanels = function() {
 		return this._aPanels;
+	};
+
+	/**
+	 * Getter for the inner <code>Reset</code> button control.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @returns {sap.m.Button} The reset button instance
+	 */
+	Popup.prototype.getResetButton = function() {
+		return sap.ui.getCore().byId(this.getId() + "-resetBtn");
 	};
 
 	Popup.prototype._createContainer = function(mDialogSettings) {
@@ -380,10 +402,11 @@ sap.ui.define([
 					MessageBox.warning(sResetText, {
 						actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 						emphasizedAction: MessageBox.Action.OK,
-						onClose: function (sAction) {
+						onClose: (sAction) => {
 							if (sAction === MessageBox.Action.OK) {
 								// --> focus "OK" button after 'reset' has been triggered
 								oDialog.getButtons()[0].focus();
+								oEvt.getSource().setEnabled(false);
 								fnReset(oControl);
 							}
 						}

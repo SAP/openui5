@@ -12,7 +12,8 @@ sap.ui.define([
 	"./Util",
 	"sap/ui/Device",
 	"./waitForP13nButtonWithMatchers",
-	"./waitForP13nDialog"
+	"./waitForP13nDialog",
+	"./waitForButtonInDialog"
 ], function(
 	Opa5,
 	Ancestor,
@@ -23,7 +24,8 @@ sap.ui.define([
 	Util,
 	Device,
 	waitForP13nButtonWithMatchers,
-	waitForP13nDialog
+	waitForP13nDialog,
+	waitForButtonInDialog
 ) {
 	"use strict";
 

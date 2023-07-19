@@ -908,6 +908,9 @@ sap.ui.define([
 			})
 		});
 
+		//fire also the BasePanel event to ensure sap.m.p13n.UIManager works as expected
+		this.fireChange();
+
 	};
 
 	ChartItemPanel.prototype.onChangeOfRole = function (oEvent) {

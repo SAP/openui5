@@ -54,6 +54,13 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: true
                 }
+            },
+            events: {
+                /**
+				 * This event is fired if any change has been made within the <code>AdaptFiltersPanel</code> control.
+				 */
+				change: {
+				}
             }
         },
 		renderer: {
@@ -72,6 +79,7 @@ sap.ui.define([
             content: new SelectionPanel(this.getId() + "-listView", {
                 activeColumn: this._getResourceText("p13nDialog.LIST_VIEW_ACTIVE"),
                 change: function(oEvt) {
+                    this.fireChange();
                     this.getP13nModel().setProperty("/items", oEvt.getSource().getP13nData());
                 }.bind(this)
             })
@@ -81,6 +89,7 @@ sap.ui.define([
             key: this.GROUP_KEY,
             content: new GroupView(this.getId() + "-groupView", {
                 change: function(oEvt) {
+                    this.fireChange();
                     this.getP13nModel().setProperty("/itemsGrouped", oEvt.getSource().getP13nData());
                 }.bind(this)
             })

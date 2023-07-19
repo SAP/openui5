@@ -211,7 +211,15 @@ sap.ui.define([
 	 * @returns {Promise<sap.m.p13n.Popup>} Promise resolving in the <code>sap.m.p13n.Popup</code> instance
 	 */
 	Engine.prototype.show = function (oControl, vPanelKeys, mSettings) {
-		return this.uimanager.show(oControl, vPanelKeys, mSettings);
+		return this.getModificationHandler(oControl).hasChanges({selector: oControl}).then((enableReset) => {
+			return enableReset;
+		})
+		.catch((oError) => {
+			return false;
+		})
+		.then(function(enableReset){
+			return this.uimanager.show(oControl, vPanelKeys, {...mSettings, enableReset});
+		}.bind(this));
 	};
 
 	/**
@@ -1190,9 +1198,13 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.Control} vControl The registered control instance.
 	 * @param {string} sKey The registered key to get the corresponding controller.
+	 * @param {boolean} bModified Determines whether changes have been triggered while the dialog has been opened
 	 */
-	Engine.prototype.setActiveP13n = function (vControl, sKey) {
-		this._getRegistryEntry(vControl).activeP13n = sKey;
+	Engine.prototype.setActiveP13n = function (vControl, sKey, bModified) {
+		this._getRegistryEntry(vControl).activeP13n = sKey ? {
+			usedControllers: sKey,
+			modified: bModified
+		} : null;
 	};
 
 	/**
