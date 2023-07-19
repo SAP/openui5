@@ -2146,6 +2146,23 @@ sap.ui.define([
 			// trigger shift keydown so that oList._mRangeSelectionIndex object is available
 			qutils.triggerKeydown(document.activeElement, "", true, false, false);
 			assert.ok(oList._mRangeSelection, "Range selection mode enabled");
+
+			// when the range selection is started the tab key should exit from the range selection
+			qutils.triggerEvent("keydown", document.activeElement, {code: "Tab"});
+			assert.notOk(oList._mRangeSelection, "Range selection is cleared when tab is pressed");
+			oList.getVisibleItems()[0].setSelected(false);
+			fnFireSelectionChangeEvent.resetHistory();
+
+			// select the item again
+			oList.getVisibleItems()[0].focus();
+			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
+			Core.applyChanges();
+			assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
+
+			// trigger shift keydown so that oList._mRangeSelectionIndex object is available
+			qutils.triggerKeydown(document.activeElement, "", true, false, false);
+			assert.ok(oList._mRangeSelection, "Range selection mode enabled");
+
 			// trigger SHIFT + Arrow Down to perform range selection
 			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
 			Core.applyChanges();
