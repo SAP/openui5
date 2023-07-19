@@ -1,0 +1,14 @@
+/******************************************************************
+	Style used by flex support chrome extension  - base Theme
+*******************************************************************/
+.sapUiFlexibilitySupportExtension_Selected {
+	box-shadow: @sapUiUx3ToolPopupShadow;
+	&:after {
+		content: " ";
+		background: @sapUiMessageSuccessBorderColor;
+		opacity: 0.40;
+		border-radius: @sapUiButtonBorderCornerRadius;
+		outline: 0.125rem solid @sapUiSelected; //1px
+		outline-offset: -0.125rem; //1px
+	}
+}
