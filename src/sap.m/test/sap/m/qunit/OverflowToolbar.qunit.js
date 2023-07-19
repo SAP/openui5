@@ -111,7 +111,7 @@ sap.ui.define([
 			}),
 			new Button({
 				text: "2 Record",
-				layoutData: bWithLayout ? new OverflowToolbarLayoutData({stayInOverflow: true}) : undefined
+				layoutData: bWithLayout ? new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow}) : undefined
 			}),
 			new Button({
 				text: "3 Play"
@@ -121,7 +121,7 @@ sap.ui.define([
 			}),
 			new Button({
 				text: "5 Stop",
-				layoutData: bWithLayout ? new OverflowToolbarLayoutData({moveToOverflow: false}) : undefined
+				layoutData: bWithLayout ? new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow}) : undefined
 			}),
 			new Button({
 				text: "6 Rewind"
@@ -463,7 +463,7 @@ sap.ui.define([
 		var aDefaultContent = [
 					getButton('1'),
 					getButton('2'),
-					new Button({text: "3", width: "100px", layoutData: new OverflowToolbarLayoutData({stayInOverflow: true})}),
+					new Button({text: "3", width: "100px", layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow})}),
 					getButton('4'),
 					getButton('5')
 				],
@@ -488,7 +488,7 @@ sap.ui.define([
 					getButton('2'),
 					getButton('3'),
 					getButton('4'),
-					new Button({text: "5", width: "100px", layoutData: new OverflowToolbarLayoutData({moveToOverflow: false})})
+					new Button({text: "5", width: "100px", layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow})})
 				],
 				oOverflowTB = createOverflowToolbar({
 					width: "600px"
@@ -1969,7 +1969,7 @@ sap.ui.define([
 		spy = this.spy(OverflowToolbar.prototype, "onLayoutDataChange");
 
 		oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
-		aContent[5].setLayoutData(new OverflowToolbarLayoutData({stayInOverflow: true}));
+		aContent[5].setLayoutData(new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow}));
 		this.clock.tick(1000);
 
 		assert.strictEqual(spy.callCount, 1, "Layout recalculation triggered");
@@ -2026,7 +2026,7 @@ sap.ui.define([
 		assert.strictEqual(spyResizeHandler.callCount, 4, "For every resize/change, _setControlsOverflowAndShrinking is called");
 
 		// Change the layout of a button - the cache should be invalidated
-		aDefaultContent[1].setLayoutData(new OverflowToolbarLayoutData({stayInOverflow: true}));
+		aDefaultContent[1].setLayoutData(new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow}));
 		this.clock.tick(1000);
 
 		assert.strictEqual(spyCache.callCount, 3, "When the layout of a control is changed, the cache is recalculated");
@@ -2095,7 +2095,7 @@ sap.ui.define([
 					new Text({text: "Label2", width: "100px"}),
 					new Button({text: "1", width: "100px"}),
 					new Button({text: "2", width: "100px"}),
-					new Button({text: "3", width: "100px", layoutData: new OverflowToolbarLayoutData({stayInOverflow: true})}),
+					new Button({text: "3", width: "100px", layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow})}),
 					new Button({text: "4", width: "100px"}),
 					new Button({text: "5", width: "100px"})
 				],
@@ -2312,7 +2312,7 @@ sap.ui.define([
 		});
 
 		// Act
-		oLayoutData.setPriority("AlwaysOverflow");
+		oLayoutData.setPriority(OverflowToolbarPriority.AlwaysOverflow);
 
 		// Assert
 		assert.strictEqual(oSpyInvalidate.callCount, 1, "Invalidate is called");
