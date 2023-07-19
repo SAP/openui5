@@ -455,12 +455,12 @@ sap.ui.define([
 	 * the entity is also available.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters()
-	 * @param {object} [oEvent.getParameters().data]
+	 * @param {object} oEvent.getParameters
+	 * @param {object} [oEvent.getParameters.data]
 	 *   An empty data object if a back-end request succeeds
-	 * @param {Error} [oEvent.getParameters().error]
+	 * @param {Error} [oEvent.getParameters.error]
 	 *   The error object if a back-end request failed.
-	 * @param {string} [oEvent.getParameters().path]
+	 * @param {string} [oEvent.getParameters.path]
 	 *   The absolute path to the entity which caused the event. The path is only provided for
 	 *   additional property requests; for other requests it is <code>undefined</code>.
 	 *
@@ -497,8 +497,8 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters()
-	 * @param {string} [oEvent.getParameters().path]
+	 * @param {object} oEvent.getParameters
+	 * @param {string} [oEvent.getParameters.path]
 	 *   The absolute path to the entity which caused the event. The path is only provided for
 	 *   additional property requests; for other requests it is <code>undefined</code>.
 	 *
@@ -526,20 +526,20 @@ sap.ui.define([
 	 * not user input.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters()
-	 * @param {sap.ui.model.Context} [oEvent.getParameters().context]
+	 * @param {object} oEvent.getParameters
+	 * @param {sap.ui.model.Context} [oEvent.getParameters.context]
 	 *   The property binding's {@link sap.ui.model.Binding#getContext context}, if available
-	 * @param {string} oEvent.getParameters().path
+	 * @param {string} oEvent.getParameters.path
 	 *   The property binding's {@link sap.ui.model.Binding#getPath path}
-	 * @param {Promise} [oEvent.getParameters().promise]
+	 * @param {Promise} [oEvent.getParameters.promise]
 	 *   A promise on the outcome of the PATCH request, much like
 	 *   {@link sap.ui.model.odata.v4.Context#setProperty} provides it for
 	 *   <code>bRetry === true</code>; missing in case there is no PATCH
-	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
 	 *   The reason for the property change: always <code>sap.ui.model.ChangeReason.Binding</code>
-	 * @param {string} oEvent.getParameters().resolvedPath
+	 * @param {string} oEvent.getParameters.resolvedPath
 	 *   The property binding's {@link sap.ui.model.Binding#getResolvedPath resolved path}
-	 * @param {any} oEvent.getParameters().value
+	 * @param {any} oEvent.getParameters.value
 	 *   The property binding's new
 	 *   {@link sap.ui.model.odata.v4.ODataPropertyBinding#getValue value}
 	 *
