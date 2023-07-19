@@ -535,7 +535,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given setDefault is called twice", function(assert) {
+		QUnit.test("Given setDefault is called twice and adaptationId is not provided", function(assert) {
 			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isVersioningEnabled: function() {
@@ -559,6 +559,7 @@ sap.ui.define([
 			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId1, "the change content is correct");
 			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "one entity for persistencyKeys is present");
 			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is set to CUSTOMER");
+			assert.notOk(oChange.getAdaptationId(), "the change does not contain adaptation id");
 
 			var oChange2 = CompVariantState.setDefault({
 				reference: sComponentId,
@@ -571,6 +572,53 @@ sap.ui.define([
 			assert.strictEqual(oChange, oChange2, "it is still the same change object");
 			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "still one entity for persistencyKeys is present");
 			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is still set to CUSTOMER");
+			assert.notOk(oChange.getAdaptationId(), "the change does not contain adaptation id");
+		});
+
+		QUnit.test("Given setDefault is called twice with adaptationId", function(assert) {
+			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isVersioningEnabled: function() {
+					return false;
+				}
+			});
+
+			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariant, undefined,
+				"no defaultVariant change is set under the persistencyKey");
+			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 0, "no entities are present");
+
+			var oChange = CompVariantState.setDefault({
+				reference: sComponentId,
+				defaultVariantId: this.sVariantId1,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.CUSTOMER,
+				changeSpecificData: {
+					adaptationId: "test-AdaptationId2"
+				}
+			});
+			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId1);
+			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants.length, 1, "the change was stored into the map");
+			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[0], oChange, "the change is set under the persistencyKey");
+			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId1, "the change content is correct");
+			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "one entity for persistencyKeys is present");
+			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is set to CUSTOMER");
+			assert.strictEqual(oChange.getAdaptationId(), "test-AdaptationId2", "the change contains correct adaptation id");
+
+			var oChange2 = CompVariantState.setDefault({
+				reference: sComponentId,
+				defaultVariantId: this.sVariantId2,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.CUSTOMER,
+				changeSpecificData: {
+					adaptationId: "test-AdaptationId2"
+				}
+			});
+			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId2, "the change content was updated");
+			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[0], oChange2, "the change is set under the persistencyKey");
+			assert.strictEqual(oChange, oChange2, "it is still the same change object");
+			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "still one entity for persistencyKeys is present");
+			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is still set to CUSTOMER");
+			assert.strictEqual(oChange.getAdaptationId(), "test-AdaptationId2", "the change still contains correct adaptation id");
 		});
 
 		QUnit.test("Given setDefault is called once for USER layer and once for CUSTOMER layer", function(assert) {
