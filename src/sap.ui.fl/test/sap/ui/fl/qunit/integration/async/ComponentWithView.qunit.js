@@ -88,7 +88,7 @@ sap.ui.define([
 						isAtoEnabled: false,
 						isProductiveSystem: false
 					},
-					etag: "MYETAG"
+					cacheKey: "MYETAG"
 				})
 			);
 		},
