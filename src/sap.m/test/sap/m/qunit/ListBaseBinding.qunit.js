@@ -149,6 +149,10 @@ sap.ui.define([
 				}
 			});
 
+		oList.attachEventOnce("updateFinished", function() {
+			assert.ok(oList.getBusy(), "List is still busy in the updateFinishedEvent");
+		});
+
 		// when initial binding is completed
 		oList.done(function () {
 			oMockServer.stop();
