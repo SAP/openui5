@@ -6,14 +6,12 @@
 	xmlns:form="sap.ui.layout.form"
 	height="100%">
 	<Page>
-		<form:SimpleForm editable="true" width="420px" layout="ResponsiveGridLayout">
-			<VBox>
-				<Label text="Illustration Size:"/>
-				<Select change="onSelectSize" items="{/sizeTypes}">
-					<core:Item key="{key}" text="{text}"/>
-				</Select>
-				<Text text="{= ${/sSelectedSize} === 'Auto' ? 'IllustratedMessage will choose its size automatically according to its parent container width.' : 'Forced State. IllustratedMessage will keep its size even if the parent container width is changed.'}" />
-			</VBox>
+		<form:SimpleForm editable="true" width="420px">
+			<Label text="Illustration Size:"/>
+			<Select change="onSelectSize" items="{/sizeTypes}">
+				<core:Item key="{key}" text="{text}"/>
+			</Select>
+			<Text text="{= ${/sSelectedSize} === 'Auto' ? 'IllustratedMessage will choose its size automatically according to its parent container width.' : 'Forced State. IllustratedMessage will keep its size even if the parent container width is changed.'}" />
 		</form:SimpleForm>
 
 		<IllustratedMessage

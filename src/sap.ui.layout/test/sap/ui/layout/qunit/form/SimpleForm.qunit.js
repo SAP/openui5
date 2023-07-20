@@ -114,13 +114,13 @@ sap.ui.define([
 
 	function asyncLayoutTest(assert, sLayout, fnTest) {
 		if (oFormLayout) {
-			fnTest(assert);
+			fnTest(assert, sLayout);
 		} else {
 			// wait until Layout is loaded
 			var fnDone = assert.async();
 			sap.ui.require([sLayout], function() {
 				oFormLayout = oForm.getLayout();
-				fnTest(assert);
+				fnTest(assert, sLayout);
 				fnDone();
 			});
 		}
@@ -131,8 +131,10 @@ sap.ui.define([
 		afterEach: afterTest
 	});
 
-	function layoutAfterRendering(assert) {
-		assert.ok(oFormLayout, "FormLayout is created after rendering if no Layout is set");
+	function usedLayout(assert, sLayout) {
+		assert.ok(oFormLayout, "FormLayout is created");
+		var sName = sLayout.replace(/\//g, ".");
+		assert.ok(oFormLayout && oFormLayout.isA(sName), "Right FormLayout used");
 		assert.equal(oFormLayout.getId(), "SF1--Layout", "Stable ID of FormLayout");
 	}
 
@@ -141,7 +143,7 @@ sap.ui.define([
 		assert.ok(oForm, "internal Form is created");
 		assert.equal(oForm.getId(), "SF1--Form", "Stable ID of Form");
 		assert.notOk(oFormLayout, "no FormLayout is created before rendering if no Layout is set");
-		assert.equal(oSimpleForm.getLayout(), library.form.SimpleFormLayout.ResponsiveLayout, "ResponsiveLayout is default");
+		assert.equal(oSimpleForm.getLayout(), library.form.SimpleFormLayout.ResponsiveGridLayout, "ResponsiveGridLayout is default");
 		var aContent = oSimpleForm.getContent();
 		assert.equal(aContent.length, 0, "SimpleForm has no content");
 		var aFormContainers = oForm.getFormContainers();
@@ -151,7 +153,12 @@ sap.ui.define([
 		oCore.applyChanges();
 		oFormLayout = oForm.getLayout();
 
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", layoutAfterRendering);
+		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", usedLayout);
+	});
+
+	QUnit.test("DefaultLayout explicit set", function(assert) {
+		oSimpleForm.setLayout(oSimpleForm.getLayout());
+		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", usedLayout);
 	});
 
 	QUnit.test("width", function(assert) {
@@ -1555,12 +1562,8 @@ sap.ui.define([
 		afterEach: afterTest
 	});
 
-	function RlUsedLayout(assert) {
-		assert.ok(oFormLayout.isA("sap.ui.layout.form.ResponsiveLayout"), "ResponsiveLayout used");
-	}
-
 	QUnit.test("used Layout", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlUsedLayout);
+		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", usedLayout);
 	});
 
 	function defaultLayoutDataOnContent(assert) {
@@ -1950,12 +1953,8 @@ sap.ui.define([
 		afterEach: afterTest
 	});
 
-	function RGlUsedLayout(assert) {
-		assert.ok(oFormLayout.isA("sap.ui.layout.form.ResponsiveGridLayout"), "ResponsiveGridLayout used");
-	}
-
 	QUnit.test("used Layout", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", RGlUsedLayout);
+		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", usedLayout);
 	});
 
 	function RGlNoDefaultLayoutData(assert) {
@@ -2095,12 +2094,8 @@ sap.ui.define([
 		afterEach: afterTest
 	});
 
-	function ClUsedLayout(assert) {
-		assert.ok(oFormLayout.isA("sap.ui.layout.form.ColumnLayout"), "ColumnLayout used");
-	}
-
 	QUnit.test("used Layout", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", ClUsedLayout);
+		asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", usedLayout);
 	});
 
 	function ClNoDefaultLayoutData(assert) {
