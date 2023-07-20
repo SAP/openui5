@@ -36,12 +36,16 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 
 	PanelRenderer.startPanel = function (oRm, oControl) {
 		var bIsExpandable = oControl.getExpandable(),
+			bIsStickyPanel = oControl.getStickyHeader(),
 			oAccAttributes = {
 				role: oControl.getAccessibleRole().toLowerCase()
 			};
 
 		oRm.openStart("div", oControl);
 		oRm.class("sapMPanel");
+		if (bIsStickyPanel) {
+			oRm.class("sapMPanelHasStickyHeader");
+		}
 
 		if (bIsExpandable) {
 			oRm.class("sapMPanelExpandable");
@@ -65,11 +69,16 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 	PanelRenderer.renderHeader = function (oRm, oControl) {
 		var bIsExpandable = oControl.getExpandable(),
 			bIsExpanded = oControl.getExpanded(),
+			bIsStickyPanel = oControl.getStickyHeader(),
 			oHeaderTBar = oControl.getHeaderToolbar(),
 			sHeaderClass;
 
 		oRm.openStart("div");
 		oRm.class("sapMPanelHeadingDiv");
+
+		if (bIsStickyPanel) {
+			oRm.class("sapMPanelStickyHeadingDiv");
+		}
 
 		if (!oHeaderTBar) {
 			oRm.attr('role', 'heading');

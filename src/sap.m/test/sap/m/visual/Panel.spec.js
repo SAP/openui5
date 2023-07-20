@@ -61,4 +61,11 @@ describe("sap.m.Panel", function() {
 	it("should show Panel with a button not expanded", function() {
 		expect(takeScreenshot(element(by.id("panel16")))).toLookAs("panel-not-expanded2");
 	});
+
+	it('should show Panel sticky header properly', function () {
+		browser.executeScript(function() { // scroll page down
+			document.getElementById("page-cont").scrollTop = 250;
+		});
+		expect(takeScreenshot(element(by.id("panel3")))).toLookAs('panel-sticky-header');
+	});
 });

@@ -10,6 +10,13 @@
 	position: relative;
 }
 
+.sapMPanel.sapMPanelHasStickyHeader{
+	display: flex;
+	flex-direction: column;
+	overflow: initial;
+	position: static;
+}
+
 .sapMPanelHdr {
 	box-sizing: border-box;
 	white-space: nowrap;
@@ -50,6 +57,13 @@
 .sapUiSizeCompact .sapMPanel .sapMPanelHdr {
 	line-height: 2rem;
 	height: 2rem;
+}
+
+.sapMPanelStickyHeadingDiv {
+	position: sticky;
+	top: 0;
+	z-index: 4; /* The z-index of the Table sticky header is 3, so we need bigger one to make the Panel header on top*/
+	background-color: @sapUiBaseBG;
 }
 
 .sapMPanelContent {
