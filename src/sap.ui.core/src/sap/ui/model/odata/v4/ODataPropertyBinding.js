@@ -558,7 +558,7 @@ sap.ui.define([
 	 *   The value of the parameter <code>autoExpandSelect</code> for value list models created by
 	 *   this method. If the value list model is this binding's model, this flag has no effect.
 	 *   Supported since 1.68.0
-	 * @returns {Promise}
+	 * @returns {Promise<Object<object>>}
 	 *   See {@link sap.ui.model.odata.v4.ODataMetaModel#requestValueListInfo}
 	 * @throws {Error}
 	 *   If the binding is unresolved (see {@link sap.ui.model.Binding#isResolved})
@@ -579,7 +579,7 @@ sap.ui.define([
 	/**
 	 * Determines which type of value list exists for this property.
 	 *
-	 * @returns {Promise}
+	 * @returns {Promise<sap.ui.model.odata.v4.ValueListType>}
 	 *   A promise that is resolved with the type of the value list. It is rejected if the property
 	 *   cannot be found in the metadata.
 	 * @throws {Error}

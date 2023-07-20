@@ -2739,7 +2739,7 @@ sap.ui.define([
 	 * parameter <code>supportReferences</code> of
 	 * {@link sap.ui.model.odata.v4.ODataModel#constructor}).
 	 *
-	 * @returns {Promise}
+	 * @returns {Promise<object>}
 	 *   A promise which is resolved with the OData metadata as a "JSON" object as soon as it is
 	 *   available.
 	 *
@@ -2986,7 +2986,7 @@ sap.ui.define([
 	 *   Optional (binding) parameters; if they are given, <code>oContext</code> cannot be omitted
 	 * @param {object} [mParameters.scope]
 	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
-	 * @returns {Promise}
+	 * @returns {Promise<any>}
 	 *   A promise which is resolved with the requested metadata value as soon as it is available;
 	 *   it is rejected if the requested metadata cannot be loaded
 	 *
@@ -3008,7 +3008,7 @@ sap.ui.define([
 	 *   Type-specific format options, since 1.81.0. The boolean format option
 	 *   "parseKeepsEmptyString" applies to {@link sap.ui.model.odata.type.String} only and is
 	 *   ignored for all other types. All other format options are passed "as is".
-	 * @returns {Promise}
+	 * @returns {Promise<sap.ui.model.odata.type.ODataType>}
 	 *   A promise that gets resolved with the corresponding UI5 type from
 	 *   {@link sap.ui.model.odata.type}; if no specific type can be
 	 *   determined, a warning is logged and {@link sap.ui.model.odata.type.Raw} is used
@@ -3119,7 +3119,7 @@ sap.ui.define([
 	 *   Context to resolve "14.5.12 Expression edm:Path" references contained in a
 	 *   "com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers" annotation. Supported since
 	 *   1.84.0
-	 * @returns {Promise}
+	 * @returns {Promise<Object<object>>}
 	 *   A promise which is resolved with a map of qualifier to value list mapping objects
 	 *   structured as defined by <code>com.sap.vocabularies.Common.v1.ValueListType</code>;
 	 *   the map entry with key "" represents the mapping without qualifier. Each entry has an
@@ -3341,7 +3341,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPropertyPath
 	 *   An absolute path to an OData property within the OData data model
-	 * @returns {Promise}
+	 * @returns {Promise<sap.ui.model.odata.v4.ValueListType>}
 	 *   A promise that is resolved with the type of the value list, a constant of the enumeration
 	 *   {@link sap.ui.model.odata.v4.ValueListType}. The promise is rejected if the property cannot
 	 *   be found in the metadata.

@@ -251,7 +251,7 @@ sap.ui.define([
 	 *   Whether not to request the new count from the server; useful in case of
 	 *   {@link #replaceWith} where it is known that the count remains unchanged (since 1.97.0).
 	 *   Since 1.98.0, this is implied if a <code>null</code> group ID is used.
-	 * @returns {Promise}
+	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure, for example if:
 	 *   <ul>
@@ -1260,7 +1260,7 @@ sap.ui.define([
 	 * Note: For a transient context (see {@link #isTransient}) a wrong path is returned unless all
 	 * key properties are available within the initial data.
 	 *
-	 * @returns {Promise}
+	 * @returns {Promise<string>}
 	 *   A promise which is resolved with the canonical path (e.g. "/SalesOrderList('0500000000')")
 	 *   in case of success, or rejected with an instance of <code>Error</code> in case of failure,
 	 *   e.g. if the given context does not point to an entity
@@ -1287,7 +1287,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sPath=""]
 	 *   A path relative to this context
-	 * @returns {Promise}
+	 * @returns {Promise<any>}
 	 *   A promise on the requested value
 	 * @throws {Error}
 	 *   If the context's root binding is suspended, or if the context is a header context and the
@@ -1316,7 +1316,7 @@ sap.ui.define([
 	 * @param {boolean} [bExternalFormat]
 	 *   If <code>true</code>, the values are returned in external format using UI5 types for the
 	 *   given property paths that format corresponding to the properties' EDM types and constraints
-	 * @returns {Promise}
+	 * @returns {Promise<any>}
 	 *   A promise on the requested value or values; it is rejected if a value is not primitive or
 	 *   if the context is a header context and a path is not "$count"
 	 * @throws {Error}
@@ -1355,7 +1355,7 @@ sap.ui.define([
 	 *   The group ID to be used
 	 * @param {boolean} [bAllowRemoval]
 	 *   Allows to remove the context
-	 * @returns {Promise}
+	 * @returns {Promise<void>}
 	 *   A promise which resolves without a defined result when the refresh is finished and rejects
 	 *   with an instance of <code>Error</code> if the refresh failed
 	 * @throws {Error}
@@ -1690,7 +1690,7 @@ sap.ui.define([
 	 * context which is currently {@link #delete deleted} on the client, but not yet on the server,
 	 * this method cancels the deletion and restores the context.
 	 *
-	 * @returns {Promise}
+	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result as soon as all changes in the context
 	 *   and its current dependent bindings are canceled
 	 * @throws {Error} If
@@ -1888,7 +1888,7 @@ sap.ui.define([
 	 *   Each time the PATCH request is sent to the server, a 'patchSent' event is fired on the
 	 *   binding sending the request. When the response for this request is received, a
 	 *   'patchCompleted' with a boolean parameter 'success' is fired.
-	 * @returns {Promise}
+	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure, for example if the annotation belongs to
 	 *   the read-only namespace "@$ui5.*". With <code>bRetry</code> it is only rejected with an

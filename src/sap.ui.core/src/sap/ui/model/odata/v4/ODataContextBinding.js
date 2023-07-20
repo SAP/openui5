@@ -835,7 +835,7 @@ sap.ui.define([
 	 *   currently if it is {@link sap.ui.model.odata.v4.Context#isKeepAlive kept alive}. If the
 	 *   parent context has requested messages when it was kept alive, they will be inherited if the
 	 *   $$inheritExpandSelect binding parameter is set to <code>true</code>. Since 1.97.0.
-	 * @returns {Promise}
+	 * @returns {Promise<sap.ui.model.odata.v4.Context|undefined>}
 	 *   A promise that is resolved without data or with a return value context when the operation
 	 *   call succeeded, or rejected with an <code>Error</code> instance <code>oError</code> in case
 	 *   of failure, for instance if the operation metadata is not found, if overloading is not
