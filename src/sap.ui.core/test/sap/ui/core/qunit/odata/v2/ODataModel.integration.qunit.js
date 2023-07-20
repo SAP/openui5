@@ -8348,10 +8348,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 <t:AnalyticalTable id="table" rows="{path : \'/Items\',\
 		parameters : {useBatchRequests : true}, sorter : {path : \'AccountingDocumentItem\', descending : true}}"\
 		threshold="10" visibleRowCount="2">\
-	<t:AnalyticalColumn grouped="true" leadingProperty="AccountingDocumentItem"\
-		template="AccountingDocumentItem"/>\
-	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
-		template="AmountInCompanyCodeCurrency"/>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="AccountingDocumentItem">\
+		<Label text="AccountingDocumentItem"/>\
+		<t:template><Text wrapping="false" text="{AccountingDocumentItem}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text wrapping="false" text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
 </t:AnalyticalTable>',
 			that = this;
 
@@ -8481,14 +8485,26 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
 			sView = '\
 <t:AnalyticalTable id="table" threshold="6" visibleRowCount="4">\
-	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode"/>\
-	<t:AnalyticalColumn grouped="true" leadingProperty="Customer" template="Customer"/>\
-	<t:AnalyticalColumn grouped="true" leadingProperty="AccountingDocument"\
-		template="AccountingDocument"/>\
-	<t:AnalyticalColumn grouped="false" leadingProperty="AccountingDocumentItem"\
-		template="AccountingDocumentItem"/>\
-	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
-		template="AmountInCompanyCodeCurrency"/>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
+		<Label text="CompanyCode"/>\
+		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="Customer">\
+		<Label text="Customer"/>\
+		<t:template><Text wrapping="false" text="{Customer}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="AccountingDocument">\
+		<Label text="AccountingDocument"/>\
+		<t:template><Text wrapping="false" text="{AccountingDocument}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="AccountingDocumentItem">\
+		<Label text="AccountingDocumentItem"/>\
+		<t:template><Text wrapping="false" text="{AccountingDocumentItem}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text wrapping="false" text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
 </t:AnalyticalTable>',
 			that = this;
 
@@ -8695,12 +8711,22 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
 			sView = '\
 <t:AnalyticalTable id="table" threshold="1" visibleRowCount="4">\
-	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode"/>\
-	<t:AnalyticalColumn grouped="true" leadingProperty="Customer" template="Customer"/>\
-	<t:AnalyticalColumn grouped="true" leadingProperty="AccountingDocument"\
-		template="AccountingDocument"/>\
-	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
-		template="AmountInCompanyCodeCurrency"/>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
+		<Label text="CompanyCode"/>\
+		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="Customer">\
+		<Label text="Customer"/>\
+		<t:template><Text wrapping="false" text="{Customer}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="AccountingDocument">\
+		<Label text="AccountingDocument"/>\
+		<t:template><Text wrapping="false" text="{AccountingDocument}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text wrapping="false" text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
 </t:AnalyticalTable>',
 			that = this;
 
@@ -8842,12 +8868,22 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
 			sView = '\
 <t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
-	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode"/>\
-	<t:AnalyticalColumn grouped="true" leadingProperty="Customer" template="Customer"/>\
-	<t:AnalyticalColumn grouped="true" leadingProperty="AccountingDocument"\
-		template="AccountingDocument"/>\
-	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
-		template="AmountInCompanyCodeCurrency"/>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
+		<Label text="CompanyCode"/>\
+		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="Customer">\
+		<Label text="Customer"/>\
+		<t:template><Text wrapping="false" text="{Customer}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="AccountingDocument">\
+		<Label text="AccountingDocument"/>\
+		<t:template><Text wrapping="false" text="{AccountingDocument}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text wrapping="false" text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
 </t:AnalyticalTable>',
 			that = this;
 
@@ -8959,12 +8995,22 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
 			sView = '\
 <t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
-	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode"/>\
-	<t:AnalyticalColumn grouped="false" leadingProperty="Customer" template="Customer"/>\
-	<t:AnalyticalColumn grouped="false" leadingProperty="AccountingDocument"\
-		template="AccountingDocument"/>\
-	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
-		template="AmountInCompanyCodeCurrency"/>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
+		<Label text="CompanyCode"/>\
+		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="Customer">\
+		<Label text="Customer"/>\
+		<t:template><Text wrapping="false" text="{Customer}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="AccountingDocument">\
+		<Label text="AccountingDocument"/>\
+		<t:template><Text wrapping="false" text="{AccountingDocument}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text wrapping="false" text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
 </t:AnalyticalTable>',
 			that = this;
 
@@ -9154,10 +9200,18 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
 			sView = '\
 <t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
-	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode"/>\
-	<t:AnalyticalColumn grouped="false" leadingProperty="Customer" template="Customer"/>\
-	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
-		template="AmountInCompanyCodeCurrency"/>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
+		<Label text="CompanyCode"/>\
+		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="Customer">\
+		<Label text="Customer"/>\
+		<t:template><Text wrapping="false" text="{Customer}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text wrapping="false" text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
 </t:AnalyticalTable>',
 		that = this;
 
@@ -9362,9 +9416,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
 			sView = '\
 <t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
-	<t:AnalyticalColumn grouped="false" leadingProperty="CompanyCode" template="CompanyCode"/>\
-	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
-		template="AmountInCompanyCodeCurrency"/>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="CompanyCode">\
+		<Label text="CompanyCode"/>\
+		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text wrapping="false" text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
 </t:AnalyticalTable>',
 			that = this;
 
