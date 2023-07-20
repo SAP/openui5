@@ -582,6 +582,32 @@ sap.ui.define([
 			);
 		});
 
+		QUnit.test("When a ChangeIndicator is created on an initially narrow overlay that later increases in height", function(assert) {
+			var mPayload = {
+				originalLabel: "BeforeValue",
+				newLabel: "AfterValue"
+			};
+
+			this.oChangeIndicator.getModel().setData({
+				changes: [
+					createMockChange("someChangeId", this.oButton.getId(), "remove", "remove", mPayload)
+				]
+			});
+
+			assert.ok(
+				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorVerticallyCentered"),
+				"then the indicator is vertically centered before the element has changed its height"
+			);
+
+			this.oButtonOverlay.getDomRef().style.height = "100px";
+			oCore.applyChanges();
+
+			assert.notOk(
+				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorVerticallyCentered"),
+				"then the styleClass was deleted after the element changed its height"
+			);
+		});
+
 		QUnit.test("when a change indicator is hidden", function(assert) {
 			sandbox.stub(DateFormat, "getDateTimeInstance")
 			.callThrough()
