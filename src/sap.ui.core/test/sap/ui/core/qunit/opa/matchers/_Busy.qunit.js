@@ -2,10 +2,12 @@
 sap.ui.define([
 	'sap/ui/test/matchers/_Busy',
 	'sap/m/Button',
+	'sap/m/Dialog',
 	'sap/m/Toolbar',
 	'sap/m/Page',
-	'sap/m/VBox'
-], function (_Busy, Button, Toolbar, Page, VBox) {
+	'sap/m/VBox',
+	"sap/ui/core/mvc/XMLView"
+], function (_Busy, Button, Dialog, Toolbar, Page, VBox, XMLView) {
 	"use strict";
 
 	QUnit.module("_Busy", {
@@ -101,5 +103,73 @@ sap.ui.define([
 			oContainer.destroy();
 			fnDone();
 		});
+
+		QUnit.test("Should not block Dialog, when parent is ComponentContainer, placed in Busy control/view", function (assert) {
+			// Arrange
+			var oDialog = new Dialog(),
+				oVBox = new VBox(),
+				oBusy = new _Busy(),
+				fnDone = assert.async();
+
+			var oXmlString = [
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
+				'</mvc:View>'
+			];
+
+			XMLView.create({
+				id: "comp---view",
+				definition: oXmlString
+			}).then(function (oView) {
+
+				sap.ui.define("my2/Component", [
+					"sap/ui/core/UIComponent"
+				], function(UIComponent) {
+
+					return UIComponent.extend("my2.Component", {
+
+						metadata: {
+							manifest: {}
+						},
+
+						createContent: function() {
+							return oView;
+						}
+
+					});
+				});
+
+				sap.ui.require([
+					"my2/Component", "sap/ui/core/ComponentContainer"
+				], function(MyComponent, ComponentContainer) {
+
+					var oContainer = new ComponentContainer({
+						//name: "my"
+						component: new MyComponent()
+					});
+
+					oVBox.addItem(oContainer);
+					oVBox.placeAt("qunit-fixture");
+					oView.addDependent(oDialog);
+					sap.ui.getCore().applyChanges();
+
+					// Assert
+					assert.strictEqual(oBusy.isMatching(oDialog), false, "Button is not busy");
+
+					// Act
+					oVBox.setBusy(true);
+					oDialog.open();
+
+					// Assert
+					assert.strictEqual(oBusy.isMatching(oDialog), false, "Button is not busy");
+
+					// Clean up
+					oContainer.destroy();
+					fnDone();
+				});
+
+			});
+
+		});
+
 	});
 });
