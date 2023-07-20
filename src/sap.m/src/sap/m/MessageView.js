@@ -894,7 +894,7 @@ sap.ui.define([
 			if (iCount > 0) {
 				oButton = new Button(this.getId() + "-" + sListName, {
 					text: sListName == "all" ? this._oResourceBundle.getText(sBundleText) : iCount,
-					tooltip: this._oResourceBundle.getText(sBundleText),
+					tooltip: sListName === "all" ? "" : this._oResourceBundle.getText(sBundleText),
 					icon: ICONS[sListName],
 					press: pressClosure(sListName)
 				}).addStyleClass(CSS_CLASS + "Btn" + sListName.charAt(0).toUpperCase() + sListName.slice(1));
