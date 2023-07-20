@@ -211,9 +211,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.m.p13n.Popup>} Promise resolving in the <code>sap.m.p13n.Popup</code> instance
 	 */
 	Engine.prototype.show = function (oControl, vPanelKeys, mSettings) {
-		return this.getModificationHandler(oControl).hasChanges({selector: oControl}).then((enableReset) => {
-			return enableReset;
-		})
+		return this.hasChanges(oControl)
 		.catch((oError) => {
 			return false;
 		})
@@ -246,6 +244,27 @@ sap.ui.define([
 	 */
 	Engine.prototype.detachStateChange = function (fnStateEventHandler) {
 		return this.stateHandlerRegistry.detachChange(fnStateEventHandler);
+	};
+
+	/**
+	 * Check if there are changes for a given control instance
+	 *
+	 * @private
+         * @ui5-restricted sap.m, sap.ui.mdc
+         *
+	 * @param {sap.ui.core.Control} control The control instance
+	 * @param {string} key The affected controller key
+	 * @returns {Promise<boolean>} A Promise that resolves if the given control instance has applied changes
+	 */
+	Engine.prototype.hasChanges = function(control, key) {
+		const changeOperations = this.getController(control, key)?.getChangeOperations();
+		let changeTypes;
+		if (changeOperations) {
+			changeTypes = Object.values(changeOperations);
+		}
+		return this.getModificationHandler(control).hasChanges({selector: control, changeTypes}).then((enableReset) => {
+			return enableReset;
+		});
 	};
 
 	/**
