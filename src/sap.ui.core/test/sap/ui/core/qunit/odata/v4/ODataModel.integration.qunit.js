@@ -5233,7 +5233,9 @@ sap.ui.define([
 			return Promise.all([
 				Promise.resolve().then(function () {
 					// code under test
-					oTable.destroy();
+					// Note: oTable.destroy(); not allowed for direct children of XMLView!
+					that.oView.destroy();
+					delete that.oView;
 				}),
 				that.waitForChanges(assert)
 			]);
