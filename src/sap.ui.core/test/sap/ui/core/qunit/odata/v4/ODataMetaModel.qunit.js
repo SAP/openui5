@@ -5251,7 +5251,7 @@ sap.ui.define([
 		// Note: "ab-CD" is derived from Configuration#getLanguageTag here, not from mHeaders!
 		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined,
-				{"sap-language" : "~sLanguage~"});
+				{"sap-language" : "~sLanguage~"}, undefined);
 
 		// code under test
 		oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata",
@@ -5292,7 +5292,7 @@ sap.ui.define([
 			.withArgs(false + "/Foo1/ValueListService/").callThrough();
 		// observe metadataUrlParams NOT being passed along
 		this.mock(_MetadataRequestor).expects("create")
-			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined, {});
+			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined, {}, undefined);
 
 		// code under test
 		oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata",

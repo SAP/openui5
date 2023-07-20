@@ -85,7 +85,8 @@ sap.ui.define([
 			sharedRequests : true,
 			supportReferences : true,
 			synchronizationMode : true,
-			updateGroupId : true
+			updateGroupId : true,
+			withCredentials : true
 		},
 		// system query options allowed in mParameters
 		aSystemQueryOptions = ["$apply", "$count", "$expand", "$filter", "$orderby", "$search",
@@ -172,12 +173,16 @@ sap.ui.define([
 		 *   (Controls synchronization between different bindings which refer to the same data for
 		 *   the case data changes in one binding. Must be set to 'None' which means bindings are
 		 *   not synchronized at all; all other values are not supported and lead to an error.)
-		 *   <b>deprecated:</b> As of version 1.110.0, this parameter is optional; see also
+		 *   <b>deprecated:</b> As of Version 1.110.0, this parameter is optional; see also
 		 *   {@link topic:648e360fa22d46248ca783dc6eb44531 Data Reuse}
 		 * @param {string} [mParameters.updateGroupId]
 		 *   The group ID that is used for update requests. If no update group ID is specified,
 		 *   <code>mParameters.groupId</code> is used. Valid update group IDs are
 		 *   <code>undefined</code>, '$auto', '$direct' or an application group ID.
+		 * @param {boolean} [mParameters.withCredentials]
+		 *   Whether the XMLHttpRequest is called with <code>withCredentials</code>, so that user
+		 *   credentials are included in cross-origin requests by the browser (@experimental as of
+		 *   Version 1.117.0)
 		 * @throws {Error} If an unsupported synchronization mode is given, if the given service
 		 *   root URL does not end with a forward slash, if an unsupported parameter is given, if
 		 *   OData system query options or parameter aliases are specified as parameters, if an
@@ -345,7 +350,8 @@ sap.ui.define([
 		mQueryParams = Object.assign({}, mUriParameters, mParameters.metadataUrlParams);
 		this.oMetaModel = new ODataMetaModel(
 			_MetadataRequestor.create(this.mMetadataHeaders, sODataVersion,
-				mParameters.ignoreAnnotationsFromMetadata, mQueryParams),
+				mParameters.ignoreAnnotationsFromMetadata, mQueryParams,
+				mParameters.withCredentials),
 			this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 			mParameters.supportReferences, mQueryParams["sap-language"]);
 		this.oInterface = {
@@ -375,7 +381,7 @@ sap.ui.define([
 			}
 		};
 		this.oRequestor = _Requestor.create(this.sServiceUrl, this.oInterface, this.mHeaders,
-			mUriParameters, sODataVersion);
+			mUriParameters, sODataVersion, mParameters.withCredentials);
 		this.changeHttpHeaders(mParameters.httpHeaders);
 		this.bEarlyRequests = mParameters.earlyRequests;
 		if (this.bEarlyRequests) {
