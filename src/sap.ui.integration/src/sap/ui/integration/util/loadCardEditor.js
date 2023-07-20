@@ -1,7 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(function () {
+sap.ui.define(['sap/ui/dom/includeScript'],
+function (includeScript) {
 	"use strict";
 
 	function loadCardEditor() {
@@ -28,7 +29,7 @@ sap.ui.define(function () {
 	 * @public
 	 */
 	return function () {
-		return sap.ui.loader._.loadJSResourceAsync("sap-ui-integration-cardEditor.js")
+		return includeScript("sap-ui-integration-cardEditor.js")
 			.then(loadCardEditor)
 			.catch(loadCardEditor);
 	};
