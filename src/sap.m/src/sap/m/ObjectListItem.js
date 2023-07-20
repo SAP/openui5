@@ -501,6 +501,8 @@ function(
 		 * @public
 		 * @param {boolean} bMarked the new value
 		 * @returns {this} this pointer for chaining
+		 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregation.
+		 * Add {@link sap.m.ObjectMarker} with type <code>sap.m.ObjectMarkerType.Favorite</code>.
 		 */
 		ObjectListItem.prototype.setMarkFavorite = function (bMarked) {
 			return this._setOldMarkers(ObjectMarkerType.Favorite, bMarked);
@@ -512,17 +514,21 @@ function(
 		 * @public
 		 * @param {boolean} bMarked the new value
 		 * @returns {this} this pointer for chaining
+		 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregation.
+		 * Add {@link sap.m.ObjectMarker} with type <code>sap.m.ObjectMarkerType.Flagged</code>.
 		 */
 		ObjectListItem.prototype.setMarkFlagged = function (bMarked) {
 			return this._setOldMarkers(ObjectMarkerType.Flagged, bMarked);
 		};
 
 		/**
-		 * Sets the visibility value of the Favorite marker.
+		 * Sets the visibility value of the Locked marker.
 		 * @override
 		 * @public
 		 * @param {boolean} bMarked the new value
 		 * @returns {this} this pointer for chaining
+		 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregation.
+		 * Add {@link sap.m.ObjectMarker} with type <code>sap.m.ObjectMarkerType.Locked</code>.
 		 */
 		ObjectListItem.prototype.setMarkLocked = function (bMarked) {
 			return this._setOldMarkers(ObjectMarkerType.Locked, bMarked);
@@ -534,6 +540,7 @@ function(
 		 * @public
 		 * @param {boolean} bMarked the new value
 		 * @returns {this} this pointer for chaining
+		 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregation.
 		 */
 		ObjectListItem.prototype.setShowMarkers = function (bMarked) {
 			var sMarkerType;
