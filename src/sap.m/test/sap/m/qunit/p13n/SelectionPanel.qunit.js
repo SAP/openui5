@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/Input",
 	"sap/base/util/merge",
-	"sap/m/library"
-], function(SelectionPanel, VBox, sinon, oCore, Input, merge, mLibrary) {
+	"sap/m/library",
+	"sap/ui/model/json/JSONModel"
+], function(SelectionPanel, VBox, sinon, oCore, Input, merge, mLibrary, JSONModel) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
@@ -503,6 +504,35 @@ sap.ui.define([
 		aItems.forEach(function(oItem){
 			assert.equal(oItem.getType(), ListType.Inactive, "The list item is set to inactive");
 		});
+
+	});
+
+	QUnit.test("Check fieldColumn can by dynamically updated", function(assert){
+
+		const oSelectionPanel = new SelectionPanel();
+
+		assert.equal(oSelectionPanel.getFieldColumn(), "Field", "The default has been provided");
+
+		oSelectionPanel.setFieldColumn("Test");
+		assert.equal(oSelectionPanel.getFieldColumn(), "Test", "The updated text has been set");
+
+	});
+
+	QUnit.test("Check fieldColumn can be bound", function(assert){
+
+		const testText = "Test 2";
+
+		const oModel = new JSONModel({
+			panelText: testText
+		});
+
+		const oSelectionPanel = new SelectionPanel({
+			fieldColumn: "{testP13nModel>/panelText}"
+		});
+
+		oSelectionPanel.setModel(oModel, "testP13nModel");
+
+		assert.equal(oSelectionPanel.getFieldColumn(), testText, "The updated text has been set");
 
 	});
 });

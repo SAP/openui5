@@ -200,7 +200,11 @@ sap.ui.define([
 		return this;
 	};
 
-
+	SelectionPanel.prototype.setFieldColumn = function(sFieldColumn) {
+		this.setProperty("fieldColumn", sFieldColumn);
+		this._displayColumns();
+		return this;
+	};
 
 	SelectionPanel.prototype.setShowHeader = function(bShowHeader) {
 		if (bShowHeader){
