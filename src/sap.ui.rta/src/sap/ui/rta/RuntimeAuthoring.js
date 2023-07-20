@@ -129,7 +129,8 @@ sap.ui.define([
 			// ---- control specific ----
 			library: "sap.ui.rta",
 			associations: {
-				/** The root control which the runtime authoring should handle. Can only be sap.ui.core.Control or sap.ui.core.UIComponent */
+				/** The root control which the runtime authoring should handle.
+				 * Can only be sap.ui.core.Control or sap.ui.core.UIComponent */
 				rootControl: {
 					type: "sap.ui.base.ManagedObject"
 				}
@@ -315,7 +316,7 @@ sap.ui.define([
 		bCreateGetter = typeof bCreateGetter === "undefined" ? true : !!bCreateGetter;
 		if (!(sName in this._dependents)) {
 			if (sName && bCreateGetter) {
-				this["get" + capitalize(sName, 0)] = this.getDependent.bind(this, sName);
+				this[`get${capitalize(sName, 0)}`] = this.getDependent.bind(this, sName);
 			}
 			this._dependents[sName || oObject.getId()] = oObject;
 		} else {
@@ -399,11 +400,16 @@ sap.ui.define([
 			mFlexSettings.layer = sUriLayer.toUpperCase();
 		}
 
-		// TODO: this will lead to incorrect information if this function is first called with scenario or baseId and then called again without.
+		// TODO: this will lead to incorrect information if this function is first called
+		// with scenario or baseId and then called again without.
 		if (mFlexSettings.scenario || mFlexSettings.baseId) {
-			var sLRepRootNamespace = FlexUtils.buildLrepRootNamespace(mFlexSettings.baseId, mFlexSettings.scenario, mFlexSettings.projectId);
+			var sLRepRootNamespace = FlexUtils.buildLrepRootNamespace(
+				mFlexSettings.baseId,
+				mFlexSettings.scenario,
+				mFlexSettings.projectId
+			);
 			mFlexSettings.rootNamespace = sLRepRootNamespace;
-			mFlexSettings.namespace = sLRepRootNamespace + "changes/";
+			mFlexSettings.namespace = `${sLRepRootNamespace}changes/`;
 		}
 
 		Utils.setRtaStyleClassName(mFlexSettings.layer);
@@ -411,7 +417,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks the uri parameters for "sap-ui-layer" and returns either the current layer or the layer from the uri parameter, if there is one
+	 * Checks the uri parameters for "sap-ui-layer" and returns either the current layer
+	 * or the layer from the uri parameter, if there is one
 	 *
 	 * @returns {string} The layer after checking the uri parameters
 	 * @private
@@ -536,8 +543,14 @@ sap.ui.define([
 			.then(onStackModified.bind(this))
 			.then(function() {
 				// Resolve the CSS variable set in themes/base/OverlayWithScrollbar.css
-				Overlay.getOverlayContainer().get(0).style.setProperty("--sap-ui-rta-scrollbar-scrollWidth", DOMUtil.getScrollbarWidth() + "px");
-				Overlay.getOverlayContainer().get(0).style.setProperty("--sap-ui-rta-scrollbar-scrollWidthPlusTwo", DOMUtil.getScrollbarWidth() + 2 + "px");
+				Overlay.getOverlayContainer().get(0).style.setProperty(
+					"--sap-ui-rta-scrollbar-scrollWidth",
+					`${DOMUtil.getScrollbarWidth()}px`
+				);
+				Overlay.getOverlayContainer().get(0).style.setProperty(
+					"--sap-ui-rta-scrollbar-scrollWidthPlusTwo",
+					`${DOMUtil.getScrollbarWidth() + 2}px`
+				);
 				return oDesignTimePromise;
 			})
 			.then(function() {
@@ -932,7 +945,8 @@ sap.ui.define([
 	 * @ui5-restricted Visual Editor
 	 */
 	RuntimeAuthoring.prototype.condenseAndSaveChanges = function(/* aChanges */) {
-		// for now there is no functionality to only consider passed changes during condensing, so the standard save functionality is triggered
+		// for now there is no functionality to only consider passed changes during condensing,
+		// so the standard save functionality is triggered
 		return this._serializeToLrep.apply(this, arguments);
 	};
 
@@ -1005,9 +1019,11 @@ sap.ui.define([
 	}
 
 	/**
-	 * Checks the publish button, draft buttons(activate and delete) and app variant support (i.e. Save As and Overview of App Variants) availability
-	 * The publish button shall not be available if the system is productive and if a merge error occurred during merging changes into the view on startup
-	 * The app variant support shall not be available if the system is productive and if the platform is not enabled (See Feature.js) to show the app variant tooling
+	 * Checks the publish button, draft buttons(activate and delete) and app variant support (i.e.
+	 * Save As and Overview of App Variants) availability. The publish button shall not be available
+	 * if the system is productive and if a merge error occurred during merging changes into the view on startup
+	 * The app variant support shall not be available if the system is productive and if the platform is not enabled
+	 * (See Feature.js) to show the app variant tooling.
 	 * The app variant support shall also not be available if the current app is a home page
 	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
 	 *
@@ -1049,8 +1065,8 @@ sap.ui.define([
 		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		Log.error("Failed to transfer changes", sErrorMessage);
-		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
-				+ oTextResources.getText("MSG_ERROR_REASON", sErrorMessage);
+		var sMsg = `${oTextResources.getText("MSG_LREP_TRANSFER_ERROR")}
+			${oTextResources.getText("MSG_ERROR_REASON", sErrorMessage)}`;
 		MessageBox.error(sMsg, {
 			styleClass: Utils.getRtaStyleClassName()
 		});
@@ -1058,8 +1074,6 @@ sap.ui.define([
 
 	/**
 	 * Adapt the enablement of undo/redo/reset button
-	 *
-	 * @returns {Promise} Resolves as soon as the MessageBox is closed
 	 */
 	function onStackModified() {
 		var oCommandStack = this.getCommandStack();
@@ -1105,7 +1119,10 @@ sap.ui.define([
 			this._oToolbarControlsModel.setProperty("/redo/enabled", bCanRedo);
 			this._oToolbarControlsModel.setProperty("/save/enabled", bCanSave);
 			this._oToolbarControlsModel.setProperty("/restore/enabled", this.bInitialResetEnabled || bCanSave || bWasSaved);
-			this._oToolbarControlsModel.setProperty("/translation/enabled", this.bPersistedDataTranslatable || bTranslationRelevantDirtyChange);
+			this._oToolbarControlsModel.setProperty(
+				"/translation/enabled",
+				this.bPersistedDataTranslatable || bTranslationRelevantDirtyChange
+			);
 		}
 		this.fireUndoRedoStackModified();
 	}
@@ -1328,7 +1345,9 @@ sap.ui.define([
 			var sAdaptationId = this._oContextBasedAdaptationsModel.deleteAdaptation();
 			switchAdaptation.call(this, sAdaptationId);
 			Measurement.end("onCBADeleteAdaptation");
-			Measurement.getActive() && Log.info("onCBADeleteAdaptation: " + Measurement.getMeasurement("onCBADeleteAdaptation").time + " ms");
+			if (Measurement.getActive()) {
+				Log.info(`onCBADeleteAdaptation: ${Measurement.getMeasurement("onCBADeleteAdaptation").time} ms`);
+			}
 		}.bind(this)).catch(function(oError) {
 			BusyIndicator.hide();
 			Log.error(oError.stack);
@@ -1375,11 +1394,13 @@ sap.ui.define([
 		.then(function() {
 			fnCallback();
 			Measurement.end("onCBASwitchAdaptation");
-			Measurement.getActive() && Log.info("onCBASwitchAdaptation: " + Measurement.getMeasurement("onCBASwitchAdaptation").time + " ms");
+			if (Measurement.getActive()) {
+				Log.info(`onCBASwitchAdaptation: ${Measurement.getMeasurement("onCBASwitchAdaptation").time} ms`);
+			}
 		})
 		.catch(function(oError) {
 			Utils.showMessageBox("error", "MSG_SWITCH_ADAPTATION_FAILED", {error: oError});
-			Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
+			Log.error(`sap.ui.rta: ${oError.stack || oError.message || oError}`);
 		});
 	}
 
@@ -1404,7 +1425,7 @@ sap.ui.define([
 		.then(fnCallback)
 		.catch(function(oError) {
 			Utils.showMessageBox("error", "MSG_SWITCH_VERSION_FAILED", {error: oError});
-			Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
+			Log.error(`sap.ui.rta: ${oError.stack || oError.message || oError}`);
 		});
 	}
 
@@ -1535,7 +1556,8 @@ sap.ui.define([
 				var oUriParameters = UriParameters.fromURL(window.location.href);
 				// the "Visualization" tab should not be visible if the "fiori-tools-rta-mode" URL-parameter is set to any value but "false"
 				var bVisualizationButtonVisible;
-				bVisualizationButtonVisible = !oUriParameters.has("fiori-tools-rta-mode") || oUriParameters.get("fiori-tools-rta-mode") === "false";
+				bVisualizationButtonVisible = !oUriParameters.has("fiori-tools-rta-mode")
+					|| oUriParameters.get("fiori-tools-rta-mode") === "false";
 				var bFeedbackButtonVisible = Core.getConfiguration().getFlexibilityServices().some(function(oFlexibilityService) {
 					return oFlexibilityService.connector !== "LocalStorageConnector";
 				});
@@ -1635,8 +1657,9 @@ sap.ui.define([
 
 	/**
 	 * Delete all changes for current layer and root control's component.
-	 * In case of Base Applications (no App Variants) the App Descriptor Changes and UI Changes are saved in different Flex Persistence instances,
-	 * the changes for both places will be deleted. For App Variants all the changes are saved in one place.
+	 * In case of Base Applications (no App Variants) the App Descriptor Changes and UI Changes are saved
+	 * in different Flex Persistence instances, the changes for both places will be deleted. For App Variants
+	 * all the changes are saved in one place.
 	 *
 	 * @returns {Promise} Resolves when change persistence is reset
 	 */
@@ -1734,7 +1757,10 @@ sap.ui.define([
 
 		scheduleOnCreatedAndVisible.call(this, sNewControlID, function(oElementOverlay) {
 			// get container of the new control for rename
-			var sNewContainerID = this.getPluginManager().getPlugin("createContainer").getCreatedContainerId(vAction, oElementOverlay.getElement().getId());
+			var sNewContainerID = this.getPluginManager().getPlugin("createContainer").getCreatedContainerId(
+				vAction,
+				oElementOverlay.getElement().getId()
+			);
 			var oContainerElementOverlay = OverlayRegistry.getOverlay(sNewContainerID);
 			if (oContainerElementOverlay) {
 				if (sNewContainerName) {
@@ -1784,7 +1810,7 @@ sap.ui.define([
 				return this.getCommandStack().pushAndExecute(oCommand)
 				// Error handling when a command fails is done in the Stack
 				.catch(function(oError) {
-					if (oError && oError.message && oError.message.indexOf("The following Change cannot be applied because of a dependency") > -1) {
+					if (oError?.message?.indexOf?.("The following Change cannot be applied because of a dependency") > -1) {
 						Utils.showMessageBox("error", "MSG_DEPENDENCY_ERROR", {error: oError});
 					}
 					Log.error("sap.ui.rta:", oError.message, oError.stack);
@@ -1897,7 +1923,11 @@ sap.ui.define([
 							if (!isPlainObject(oService)) {
 								throw DtUtil.createError(
 									"RuntimeAuthoring#startService",
-									DtUtil.printf("Invalid service format. Service should return simple javascript object after initialization. Service name = '{0}'", sName),
+									DtUtil.printf(
+										"Invalid service format. "
+										+ "Service should return simple javascript object after initialization. Service name = '{0}'",
+										sName
+									),
 									"sap.ui.rta"
 								);
 							}

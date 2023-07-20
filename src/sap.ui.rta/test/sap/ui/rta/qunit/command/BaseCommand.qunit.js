@@ -121,7 +121,7 @@ sap.ui.define([
 			})
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -148,7 +148,7 @@ sap.ui.define([
 			})
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 	});
@@ -219,7 +219,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -234,7 +234,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -269,7 +269,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -323,7 +323,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -338,7 +338,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -353,7 +353,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -371,7 +371,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -432,7 +432,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 	});
@@ -500,7 +500,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		},
 		afterEach: function() {
@@ -533,7 +533,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -558,7 +558,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 	});
@@ -679,7 +679,7 @@ sap.ui.define([
 			.then(this.stack.pushAndExecute.bind(this.stack, this.command2))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		},
 		afterEach: function() {
@@ -711,7 +711,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -737,7 +737,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -771,7 +771,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -845,7 +845,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -872,7 +872,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -966,7 +966,7 @@ sap.ui.define([
 			})
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -1075,7 +1075,7 @@ sap.ui.define([
 			})
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 	});
@@ -1486,19 +1486,19 @@ sap.ui.define([
 				var oItem;
 				if (oContext.getProperty("text1").charAt(5) % 2 === 0) {
 					oItem = new CustomListItem(sId, {
-						content: new VBox(sId + "--vbox", {
+						content: new VBox(`${sId}--vbox`, {
 							items: [
-								new Text(sId + "--text1", {text: "{text1}"}),
-								new Text(sId + "--text2", {text: "{text2}"})
+								new Text(`${sId}--text1`, {text: "{text1}"}),
+								new Text(`${sId}--text2`, {text: "{text2}"})
 							]
 						})
 					});
 				} else {
 					oItem = new CustomListItem(sId, {
-						content: new VBox(sId + "--vbox", {
+						content: new VBox(`${sId}--vbox`, {
 							items: [
-								new Button(sId + "--button1", {text: "{text1}"}),
-								new Button(sId + "--button2", {text: "{text2}"})
+								new Button(`${sId}--button1`, {text: "{text1}"}),
+								new Button(`${sId}--button2`, {text: "{text2}"})
 							]
 						})
 					});

@@ -148,7 +148,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent - Event object
 	 */
 	Base.prototype.eventHandler = function(sEventName, oEvent) {
-		this["fire" + sEventName](oEvent.getParameters());
+		this[`fire${sEventName}`](oEvent.getParameters());
 	};
 
 	/**
@@ -246,7 +246,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Base.prototype.getControl = function(sName) {
-		return sap.ui.getCore().byId("sapUiRta_" + sName);
+		return sap.ui.getCore().byId(`sapUiRta_${sName}`);
 	};
 
 	/**

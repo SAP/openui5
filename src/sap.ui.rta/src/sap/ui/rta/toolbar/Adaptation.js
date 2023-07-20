@@ -146,11 +146,11 @@ sap.ui.define([
 
 	Adaptation.prototype.adjustToolbarSectionWidths = function() {
 		// The middle section (switcher) is used as base for the other calculations
-		this.getControl(Adaptation.MIDDLE_SECTION).setWidth((this._iSwitcherToolbarWidth) + "px");
+		this.getControl(Adaptation.MIDDLE_SECTION).setWidth(`${this._iSwitcherToolbarWidth}px`);
 		[Adaptation.LEFT_SECTION, Adaptation.RIGHT_SECTION].forEach(function(sSectionName) {
 			this.getControl(sSectionName).getDomRef().style.setProperty(
 				"width",
-				"calc(50% - " + Math.ceil(this._iSwitcherToolbarWidth / 2) + "px)",
+				`calc(50% - ${Math.ceil(this._iSwitcherToolbarWidth / 2)}px)`,
 				"important"
 			);
 		}.bind(this));
@@ -244,7 +244,7 @@ sap.ui.define([
 		var oButton = oEvent.getSource();
 		if (!this._oActionsMenuFragment) {
 			return Fragment.load({
-				id: this.getId() + "_actionsMenu_fragment",
+				id: `${this.getId()}_actionsMenu_fragment`,
 				name: "sap.ui.rta.toolbar.ActionsMenu",
 				controller: {
 					openDownloadTranslationDialog: onOpenDownloadTranslationDialog.bind(this),
@@ -301,7 +301,7 @@ sap.ui.define([
 	Adaptation.prototype.buildControls = function() {
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.Adaptation",
-			id: this.getId() + "_fragment",
+			id: `${this.getId()}_fragment`,
 			controller: {
 				activate: this._openVersionTitleDialog.bind(this),
 				discardDraft: this.eventHandler.bind(this, "DiscardDraft"),
@@ -380,7 +380,7 @@ sap.ui.define([
 		})
 		.finally(function() {
 			Measurement.end("onCBAMigration");
-			Measurement.getActive() && Log.info("onCBAMigration: " + Measurement.getMeasurement("onCBAMigration").time + " ms");
+			Measurement.getActive() && Log.info(`onCBAMigration: ${Measurement.getMeasurement("onCBAMigration").time} ms`);
 			BusyIndicator.hide();
 		})
 		.then(Utils.showMessageBox.bind(undefined, "information", "DAC_DIALOG_MIGRATION_SUCCESSFULL_DESCRIPTION", {
@@ -409,7 +409,7 @@ sap.ui.define([
 			return ContextBasedAdaptationsAPI.canMigrate({ control: oRtaInformation.rootControl, layer: oRtaInformation.flexSettings.layer });
 		}).then(function(bCanMigrate) {
 			Measurement.end("onCBACanMigrate");
-			Measurement.getActive() && Log.info("onCBACanMigrate: " + Measurement.getMeasurement("onCBACanMigrate").time + " ms");
+			Measurement.getActive() && Log.info(`onCBACanMigrate: ${Measurement.getMeasurement("onCBACanMigrate").time} ms`);
 			if (bCanMigrate) {
 				confirmMigration.call(this, oRtaInformation);
 			} else {
@@ -430,7 +430,7 @@ sap.ui.define([
 	function handleError(oError) {
 		if (oError !== "cancel") {
 			Utils.showMessageBox("error", "MSG_LREP_TRANSFER_ERROR", {error: oError});
-			Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
+			Log.error(`sap.ui.rta: ${oError.stack || oError.message || oError}`);
 		}
 	}
 
@@ -473,7 +473,7 @@ sap.ui.define([
 	}
 
 	Adaptation.prototype.getControl = function(sName) {
-		var oControl = sap.ui.getCore().byId(this.getId() + "_fragment--sapUiRta_" + sName);
+		var oControl = sap.ui.getCore().byId(`${this.getId()}_fragment--sapUiRta_${sName}`);
 		// Control is inside the ActionsMenu
 		if (!oControl && this._oActionsMenuFragment) {
 			oControl = sap.ui.getCore().byId(this._oActionsMenuFragment.getId().replace("sapUiRta_actions", "sapUiRta_") + sName);
@@ -504,7 +504,7 @@ sap.ui.define([
 		oUrlParams.set("feature", (sConnector === "KeyUserConnector" ? "BTP" : "ABAP"));
 
 		var oFeedbackDialogModel = new JSONModel({
-			url: sURL + "?" + oUrlParams.toString()
+			url: `${sURL}?${oUrlParams.toString()}`
 		});
 
 		return Fragment.load({

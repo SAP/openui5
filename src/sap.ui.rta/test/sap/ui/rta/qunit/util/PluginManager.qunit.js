@@ -116,7 +116,7 @@ function(
 			Object.keys(oPlugins).forEach(function(sPluginName) {
 				if (oPlugins[sPluginName].attachElementModified) {
 					assert.ok(oPlugins[sPluginName].mEventRegistry.elementModified,
-						"then '" + sPluginName + "' plugin attached a handler function for the elmenetModified event");
+						`then '${sPluginName}' plugin attached a handler function for the elmenetModified event`);
 				}
 			});
 			assert.strictEqual(this.oPluginManager.getPlugins().settings.getCommandStack().id,
@@ -140,7 +140,7 @@ function(
 			Object.keys(oPlugins).forEach(function(sPluginName) {
 				if (oPlugins[sPluginName].attachElementModified) {
 					assert.ok(oPlugins[sPluginName].mEventRegistry.elementModified,
-						"then '" + sPluginName + "' plugin attached a handler function for the elmenetModified event");
+						`then '${sPluginName}' plugin attached a handler function for the elmenetModified event`);
 				}
 			});
 			assert.strictEqual(this.oPluginManager.getPlugins().settings.getCommandStack().id,

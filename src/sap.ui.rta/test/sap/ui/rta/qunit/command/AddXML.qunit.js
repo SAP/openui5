@@ -116,12 +116,12 @@ sap.ui.define([
 			})
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
 		["not-adaptable", null].forEach(function(vAction) {
-			var sTitle = "when the action is disabled in the designtime via " + vAction;
+			var sTitle = `when the action is disabled in the designtime via ${vAction}`;
 			QUnit.test(sTitle, function(assert) {
 				var oNewDesigntime = new ElementDesignTimeMetadata({
 					data: {
@@ -144,7 +144,7 @@ sap.ui.define([
 				}, oNewDesigntime)
 
 				.then(function(oAddXmlCommand) {
-					assert.ok(oAddXmlCommand, "then command is still available with " + vAction + " in the designtime");
+					assert.ok(oAddXmlCommand, `then command is still available with ${vAction} in the designtime`);
 				});
 			});
 		});
@@ -201,7 +201,7 @@ sap.ui.define([
 			})
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 	});

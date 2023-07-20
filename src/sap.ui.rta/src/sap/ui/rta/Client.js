@@ -349,7 +349,7 @@ sap.ui.define([
 										event: sEventName
 									}
 								})).then(function(mResponse) {
-									this._mEventHandlerIds[sServiceName + "," + sEventName] = mResponse.id;
+									this._mEventHandlerIds[`${sServiceName},${sEventName}`] = mResponse.id;
 
 									// Use case when detach happens before we received response from RTA instance
 									this._checkIfEventAlive(sServiceName, sEventName);
@@ -403,7 +403,7 @@ sap.ui.define([
 
 	Client.prototype._checkIfEventAlive = function(sServiceName, sEventName) {
 		var oEventProvider = this._oServiceEventBus.getChannel(sServiceName);
-		var sEventHandlerId = this._mEventHandlerIds[sServiceName + "," + sEventName];
+		var sEventHandlerId = this._mEventHandlerIds[`${sServiceName},${sEventName}`];
 
 		if (
 			(!oEventProvider || !oEventProvider.hasListeners(sEventName))

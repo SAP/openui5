@@ -100,7 +100,7 @@ sap.ui.define([
 				assert.strictEqual(oRestoreChangesStub.args[0][0], aChanges, "...with the correct array of changes");
 			})
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 

@@ -119,7 +119,7 @@ sap.ui.define([
 
 	function cleanInfoSessionStorage() {
 		var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oComp});
-		window.sessionStorage.removeItem("sap.ui.fl.info." + sFlexReference);
+		window.sessionStorage.removeItem(`sap.ui.fl.info.${sFlexReference}`);
 	}
 
 	QUnit.module("Given that RTA gets started in FLP", {

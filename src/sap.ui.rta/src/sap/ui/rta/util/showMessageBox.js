@@ -23,7 +23,7 @@ sap.ui.define([
 	}
 
 	function isLink(sText) {
-		var oRegex = new RegExp("^" + sLinkRegex + "$");
+		var oRegex = new RegExp(`^${sLinkRegex}$`);
 		return Array.isArray(oRegex.exec(sText));
 	}
 

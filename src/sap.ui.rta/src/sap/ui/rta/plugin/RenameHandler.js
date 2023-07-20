@@ -146,7 +146,7 @@ sap.ui.define([
 			_oWrapperDomRef.classList.add("sapUiRtaEditableField");
 			_oWrapperDomRef.style.whiteSpace = "nowrap";
 			_oWrapperDomRef.style.overflow = "hidden";
-			_oWrapperDomRef.style.width = "calc(100% - (" + iWidthDifference + "px))";
+			_oWrapperDomRef.style.width = `calc(100% - (${iWidthDifference}px))`;
 			oOverlayForWrapper.getDomRef().append(_oWrapperDomRef);
 			var _oEditableFieldDomRef = document.createElement("div");
 			_oEditableFieldDomRef.setAttribute("contentEditable", "true");

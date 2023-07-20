@@ -239,7 +239,7 @@ sap.ui.define([
 				// unsupported: check existence of the property also in the navigation target
 				return (
 					sBindingPath === oModelProperty.bindingPath
-						|| sBindingPath.startsWith(oModelProperty.bindingPath + "/")
+						|| sBindingPath.startsWith(`${oModelProperty.bindingPath}/`)
 				);
 			});
 		})

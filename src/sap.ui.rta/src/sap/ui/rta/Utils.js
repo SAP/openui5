@@ -375,7 +375,7 @@ function(
 	 * @private
 	 */
 	Utils.createFieldLabelId = function(oParentControl, sEntityType, sBindingPath) {
-		return (oParentControl.getId() + "_" + sEntityType + "_" + sBindingPath).replace("/", "_");
+		return (`${oParentControl.getId()}_${sEntityType}_${sBindingPath}`).replace("/", "_");
 	};
 
 	/**

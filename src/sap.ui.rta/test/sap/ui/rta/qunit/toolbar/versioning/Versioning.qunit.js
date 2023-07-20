@@ -97,13 +97,13 @@ sap.ui.define([
 	}, function() {
 		[0, 1, 2].forEach(function(iVersionIndex) {
 			var sName = "when the VersionHistory is opened and a version is selected: ";
-			sName += iVersionIndex ? "Draft" : "active Version" + iVersionIndex;
+			sName += iVersionIndex ? "Draft" : `active Version${iVersionIndex}`;
 			QUnit.test(sName, function(assert) {
 				var done = assert.async();
 
 				// eslint-disable-next-line max-nested-callbacks
 				this.oToolbar.attachEventOnce("switchVersion", function(oEvent) {
-					assert.strictEqual(oEvent.getParameter("version"), "" + (iVersionIndex || Version.Number.Draft), "the event was fired with the correct parameter");
+					assert.strictEqual(oEvent.getParameter("version"), `${iVersionIndex || Version.Number.Draft}`, "the event was fired with the correct parameter");
 					done();
 				});
 				this.oToolbar.showVersionHistory(this.oEvent).then(function() {

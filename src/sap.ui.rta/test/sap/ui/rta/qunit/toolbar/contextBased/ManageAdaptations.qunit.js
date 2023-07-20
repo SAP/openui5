@@ -35,7 +35,7 @@ sap.ui.define([
 	var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 	function getControl(oToolbar, sControlID) {
-		return oToolbar.getControl("manageAdaptationDialog--" + sControlID);
+		return oToolbar.getControl(`manageAdaptationDialog--${sControlID}`);
 	}
 
 	function getAdaptationTitle(oTableListItem) {

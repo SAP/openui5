@@ -113,7 +113,7 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 5) {
 					assert.equal(this.oContextMenuControl.getItems().length, 5, "5 Menu Items are available");
@@ -143,7 +143,7 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 5) {
 					assert.equal(this.oContextMenuControl.getItems().length, 5, "5 Menu items are available");
@@ -206,7 +206,7 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupOverlay, sinon).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
@@ -245,7 +245,7 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay1, sinon).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
@@ -273,7 +273,7 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay1, sinon).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
@@ -300,7 +300,7 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay, sinon).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
@@ -326,7 +326,7 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay, sinon).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
@@ -352,7 +352,7 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay, sinon).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 2) {
 					assert.equal(this.oContextMenuControl.getItems().length, 2, "2 Menu Items are available");
@@ -427,7 +427,7 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFormElementOverlay).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 5) {
 					assert.equal(this.oContextMenuControl.getItems().length, 5, "5 Menu Items are available");
@@ -499,7 +499,7 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFormContainerOverlay).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 5) {
 					assert.equal(this.oContextMenuControl.getItems().length, 5, "5 Menu Items are available");
@@ -643,7 +643,7 @@ sap.ui.define([
 				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (oContextMenuControl.getItems().length === 5) {
 					assert.equal(oContextMenuControl.getItems().length, 5, " and 5 Menu Items are available");
@@ -674,7 +674,7 @@ sap.ui.define([
 				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (oContextMenuControl.getItems().length === 5) {
 					assert.equal(oContextMenuControl.getItems().length, 5, " and 5 Menu Items are available");
@@ -705,7 +705,7 @@ sap.ui.define([
 				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (oContextMenuControl.getItems().length === 5) {
 					assert.equal(oContextMenuControl.getItems().length, 5, " and 5 Menu Items are available");
@@ -789,7 +789,7 @@ sap.ui.define([
 				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (oContextMenuControl.getItems().length === 2) {
 					assert.equal(oContextMenuControl.getItems().length, 2, " and 2 Menu Items are available");

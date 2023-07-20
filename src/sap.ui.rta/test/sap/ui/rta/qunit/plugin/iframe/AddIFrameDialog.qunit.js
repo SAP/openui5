@@ -221,7 +221,7 @@ sap.ui.define([
 			this.oAddIFrameDialog.attachOpened(function() {
 				var mHashmap = AddIFrameDialogController.prototype._buildParameterHashMap(mParameters);
 				mParameters.parameters.forEach(function(oParam) {
-					assert.strictEqual(oParam.value, mHashmap[oParam.key], "Found " + oParam.key);
+					assert.strictEqual(oParam.value, mHashmap[oParam.key], `Found ${oParam.key}`);
 				});
 				clickOnCancel();
 			}, this);
@@ -234,7 +234,7 @@ sap.ui.define([
 					this.oAddIFrameDialog._oJSONModel = createJSONModel();
 					this.oController = new AddIFrameDialogController(this.oAddIFrameDialog._oJSONModel);
 					this.oAddIFrameDialog._oJSONModel.getData()[sFieldName].valueState = ValueState.Error;
-					assert.strictEqual(this.oController._areAllValueStateNones(), false, "Detected " + sFieldName + " field's error value state");
+					assert.strictEqual(this.oController._areAllValueStateNones(), false, `Detected ${sFieldName} field's error value state`);
 				}, this);
 				clickOnCancel();
 			}, this);
@@ -271,7 +271,7 @@ sap.ui.define([
 			this.oAddIFrameDialog.attachOpened(function() {
 				var oData = this.oAddIFrameDialog._oJSONModel.getData();
 				Object.keys(mParameters).forEach(function(sFieldName) {
-					assert.strictEqual(oData[sFieldName].value, mParameters[sFieldName], sFieldName + " is imported correctly");
+					assert.strictEqual(oData[sFieldName].value, mParameters[sFieldName], `${sFieldName} is imported correctly`);
 				});
 				clickOnCancel();
 			}, this);
@@ -422,7 +422,7 @@ sap.ui.define([
 			return this.oAddIFrameDialog.open().then(function(mSettings) {
 				assert.strictEqual(mSettings.frameUrl, "https://www.sap.com/index.html", "Setting for frameUrl is correct");
 				aNumericInputFields.forEach(function(sFieldName) {
-					assert.strictEqual(mSettings[sFieldName], 100, "Setting for " + sFieldName + " is correct");
+					assert.strictEqual(mSettings[sFieldName], 100, `Setting for ${sFieldName} is correct`);
 				});
 				assert.strictEqual(mSettings.frameWidthUnit, "rem", "Setting for frameWidthUnit is correct");
 				assert.strictEqual(mSettings.frameHeightUnit, "vh", "Setting for frameHeightUnit is correct");
@@ -430,14 +430,14 @@ sap.ui.define([
 		});
 
 		aImportTestData.forEach(function(mData, iIndex) {
-			QUnit.test("When existing settings are passed to the dialog then they should be imported correctly, part " + (iIndex + 1), function(assert) {
+			QUnit.test(`When existing settings are passed to the dialog then they should be imported correctly, part ${iIndex + 1}`, function(assert) {
 				this.oAddIFrameDialog.attachOpened(function() {
 					var oData = this.oAddIFrameDialog._oJSONModel.getData();
 					Object.keys(mData.expectedResults).forEach(function(sFieldName) {
 						if (Array.isArray(oData[sFieldName])) {
-							assert.deepEqual(oData[sFieldName], mData.expectedResults[sFieldName], sFieldName + " is imported correctly");
+							assert.deepEqual(oData[sFieldName], mData.expectedResults[sFieldName], `${sFieldName} is imported correctly`);
 						} else {
-							assert.strictEqual(oData[sFieldName].value, mData.expectedResults[sFieldName], sFieldName + " is imported correctly");
+							assert.strictEqual(oData[sFieldName].value, mData.expectedResults[sFieldName], `${sFieldName} is imported correctly`);
 						}
 					});
 					clickOnCancel();

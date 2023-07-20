@@ -709,7 +709,7 @@ sap.ui.define([
 		QUnit.test("when enabling restart", function(assert) {
 			var sLayer = "LAYER";
 			RuntimeAuthoring.enableRestart(sLayer, {});
-			var sRestartingComponent = window.sessionStorage.getItem("sap.ui.rta.restart." + sLayer);
+			var sRestartingComponent = window.sessionStorage.getItem(`sap.ui.rta.restart.${sLayer}`);
 			assert.ok(RuntimeAuthoring.needsRestart(sLayer), "then restart is needed");
 			assert.equal(sRestartingComponent, "fixture.application", "and the component ID is set");
 		});
@@ -974,12 +974,12 @@ sap.ui.define([
 			});
 			var oFlexInfoResponse = {allContextsProvided: true, isResetEnabled: false, isPublishEnabled: false};
 			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oComp});
-			window.sessionStorage.setItem("sap.ui.fl.info." + sFlexReference, JSON.stringify(oFlexInfoResponse));
+			window.sessionStorage.setItem(`sap.ui.fl.info.${sFlexReference}`, JSON.stringify(oFlexInfoResponse));
 
 			return this.oRta.restore().then(function() {
 				assert.strictEqual(oRemoveStub.callCount, 1, "the command stack was cleared");
 				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
-				var sFlexInfoFromSession = window.sessionStorage.getItem("sap.ui.fl.info." + sFlexReference);
+				var sFlexInfoFromSession = window.sessionStorage.getItem(`sap.ui.fl.info.${sFlexReference}`);
 				assert.equal(sFlexInfoFromSession, null, "then flex info from session storage is null");
 			}.bind(this));
 		});
@@ -1001,7 +1001,7 @@ sap.ui.define([
 
 		QUnit.test("when calling restore and there is an error", function(assert) {
 			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oComp});
-			var sInfoSessionName = "sap.ui.fl.info." + sFlexReference;
+			var sInfoSessionName = `sap.ui.fl.info.${sFlexReference}`;
 			var oFlexInfoResponse = {allContextsProvided: true, isResetEnabled: false, isPublishEnabled: false};
 			window.sessionStorage.setItem(sInfoSessionName, JSON.stringify(oFlexInfoResponse));
 
@@ -1018,7 +1018,7 @@ sap.ui.define([
 
 		QUnit.test("when calling restore and reset is cancelled", function(assert) {
 			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oComp});
-			var sInfoSessionName = "sap.ui.fl.info." + sFlexReference;
+			var sInfoSessionName = `sap.ui.fl.info.${sFlexReference}`;
 			var oFlexInfoResponse = {allContextsProvided: true, isResetEnabled: false, isPublishEnabled: false};
 			window.sessionStorage.setItem(sInfoSessionName, JSON.stringify(oFlexInfoResponse));
 

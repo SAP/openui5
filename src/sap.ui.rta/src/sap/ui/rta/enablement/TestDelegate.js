@@ -81,7 +81,7 @@ function(
 					return mPropertyBag.modifier.createControl("sap.m.Label", // for V4/FIHR | for v2 it should be smart label
 						mPropertyBag.appComponent,
 						mPropertyBag.view,
-						mPropertyBag.labelFor + "-label",
+						`${mPropertyBag.labelFor}-label`,
 						{
 							labelFor: mPropertyBag.labelFor,
 							text: mPropertyBag.bindingPath
@@ -111,7 +111,7 @@ function(
 							mPropertyBag.view,
 							mPropertyBag.fieldSelector,
 							{
-								text: "{" + mPropertyBag.bindingPath + "}"
+								text: `{${mPropertyBag.bindingPath}}`
 							}
 						)
 					];
@@ -119,7 +119,7 @@ function(
 						var mValueHelpSelector = merge(
 							{},
 							mPropertyBag.fieldSelector,
-							{ id: mPropertyBag.fieldSelector.id + "-" + mPropertyBag.payload.valueHelpId }
+							{ id: `${mPropertyBag.fieldSelector.id}-${mPropertyBag.payload.valueHelpId}` }
 						);
 						aPromises.push(mPropertyBag.modifier.createControl("sap.ui.core.Element",
 							mPropertyBag.appComponent,

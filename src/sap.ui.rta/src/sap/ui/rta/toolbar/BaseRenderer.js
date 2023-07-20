@@ -18,10 +18,10 @@ function(
 
 	BaseRenderer.render = function(oRM, oControl) {
 		oRM.class("sapUiRtaToolbar");
-		oRM.class("color_" + oControl.getColor());
+		oRM.class(`color_${oControl.getColor()}`);
 
 		// setting type if exists
-		oControl.type && oRM.class("type_" + oControl.type);
+		oControl.type && oRM.class(`type_${oControl.type}`);
 
 		// setting z-index if exists
 		var iZIndex = oControl.getZIndex();

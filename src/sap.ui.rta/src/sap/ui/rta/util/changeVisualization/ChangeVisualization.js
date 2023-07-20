@@ -314,12 +314,12 @@ sap.ui.define([
 	};
 
 	ChangeVisualization.prototype._getChangeCategoryLabel = function(sChangeCategoryName, iChangesCount) {
-		var sLabelKey = "TXT_CHANGEVISUALIZATION_OVERVIEW_" + sChangeCategoryName.toUpperCase();
+		var sLabelKey = `TXT_CHANGEVISUALIZATION_OVERVIEW_${sChangeCategoryName.toUpperCase()}`;
 		return this._oTextBundle.getText(sLabelKey, [iChangesCount]);
 	};
 
 	ChangeVisualization.prototype._getChangeCategoryButton = function(sChangeCategoryName) {
-		var sButtonKey = "BTN_CHANGEVISUALIZATION_OVERVIEW_" + sChangeCategoryName.toUpperCase();
+		var sButtonKey = `BTN_CHANGEVISUALIZATION_OVERVIEW_${sChangeCategoryName.toUpperCase()}`;
 		return this._oTextBundle.getText(sButtonKey);
 	};
 
@@ -646,7 +646,7 @@ sap.ui.define([
 			selectChange: this.selectChange.bind(this)
 		});
 		oChangeIndicator.setModel(this._oChangeVisualizationModel);
-		oChangeIndicator.bindElement("/content/" + sSelectorId);
+		oChangeIndicator.bindElement(`/content/${sSelectorId}`);
 		oChangeIndicator.setModel(this.getModel("i18n"), "i18n");
 		this._oChangeIndicatorRegistry.registerChangeIndicator(sSelectorId, oChangeIndicator);
 	};

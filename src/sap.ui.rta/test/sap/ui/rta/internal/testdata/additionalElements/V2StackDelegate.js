@@ -109,7 +109,7 @@ sap.ui.define([
 					// deep properties, could get multiple-level deep
 					mProp.properties = mComplexType.property.map(function(mComplexProperty) {
 						var mInnerProp = enrichProperty(mComplexProperty, mODataEntity, oElement, sAggregationName);
-						mInnerProp.bindingPath = mProperty.name + "/" + mComplexProperty.name;
+						mInnerProp.bindingPath = `${mProperty.name}/${mComplexProperty.name}`;
 						mInnerProp.referencedComplexPropertyName = mProp.label || mProp.name;
 						return mInnerProp;
 					})
@@ -230,7 +230,7 @@ sap.ui.define([
 			return mPropertyBag.modifier.createControl("sap.ui.comp.smartfield.SmartLabel",
 				mPropertyBag.appComponent,
 				mPropertyBag.view,
-				mPropertyBag.labelFor + "-label",
+				`${mPropertyBag.labelFor}-label`,
 				{ labelFor: mPropertyBag.labelFor, text: mPropertyBag.bindingPath },
 				ASYNC
 			);
@@ -242,7 +242,7 @@ sap.ui.define([
 				mPropertyBag.appComponent,
 				mPropertyBag.view,
 				mPropertyBag.fieldSelector,
-				{value: "{" + mPropertyBag.bindingPath + "}"},
+				{value: `{${mPropertyBag.bindingPath}}`},
 				ASYNC
 			).then(function(oSmartField) {
 				return {
@@ -270,7 +270,7 @@ sap.ui.define([
 				oVBox = oCreatedVBox;
 				var mFieldPropertyBag = Object.assign({}, mPropertyBag);
 				var mSmartFieldSelector = Object.assign({}, mPropertyBag.fieldSelector);
-				mSmartFieldSelector.id = mSmartFieldSelector.id + "-field";
+				mSmartFieldSelector.id = `${mSmartFieldSelector.id}-field`;
 				mFieldPropertyBag.fieldSelector = mSmartFieldSelector;
 				return Delegate.createControlForProperty(mFieldPropertyBag).then(function(mField) {
 					// labelFor prop

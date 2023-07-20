@@ -539,7 +539,7 @@ sap.ui.define([
 				var sAggregationName = mElementsWithAggregation.aggregation;
 				var sDisplayText = getMenuItemText(bOverlayIsSibling, sAggregationName, aElementOverlays);
 				var oItem = {
-					id: sPluginId + "_" + iPosition,
+					id: `${sPluginId}_${iPosition}`,
 					text: sDisplayText,
 					enabled: function(aElementOverlays) {
 						return this.isEnabled(aElementOverlays, bOverlayIsSibling, sAggregationName);

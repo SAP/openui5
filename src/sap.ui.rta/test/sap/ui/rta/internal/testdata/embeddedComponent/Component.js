@@ -36,7 +36,7 @@ sap.ui.define([
 			});
 			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test/variantManagement");
 
-			oMockServer.simulate(this._sResourcePath + "/mockserver/metadata.xml", this._sResourcePath + "/mockserver");
+			oMockServer.simulate(`${this._sResourcePath}/mockserver/metadata.xml`, `${this._sResourcePath}/mockserver`);
 			oMockServer.start();
 
 			return sURL;

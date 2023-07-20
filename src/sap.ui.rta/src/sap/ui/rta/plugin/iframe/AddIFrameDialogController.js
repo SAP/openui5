@@ -249,14 +249,14 @@ sap.ui.define([
 				if (sFieldName === "title" && !bAsContainer) {
 					return true;
 				}
-				var sValuePath = "/" + sFieldName + "/value";
+				var sValuePath = `/${sFieldName}/value`;
 				var sValueState;
 				if (oJSONModel.getProperty(sValuePath).trim() === "") {
 					sValueState = ValueState.Error;
 				} else {
 					sValueState = ValueState.None;
 				}
-				oJSONModel.setProperty(sValuePath + "State", sValueState);
+				oJSONModel.setProperty(`${sValuePath}State`, sValueState);
 				return bAllValid && sValueState === ValueState.None;
 			}, true);
 		},
@@ -286,7 +286,7 @@ sap.ui.define([
 					if (sFieldName === "frameWidth" || sFieldName === "frameHeight") {
 						this._importIFrameSize(sFieldName, mSettings[sFieldName]);
 					} else {
-						this._oJSONModel.setProperty("/" + sFieldName + "/value", mSettings[sFieldName]);
+						this._oJSONModel.setProperty(`/${sFieldName}/value`, mSettings[sFieldName]);
 					}
 				}, this);
 			}
@@ -301,8 +301,8 @@ sap.ui.define([
 		_importIFrameSize: function(sFieldName, sSize) {
 			var aResults = sSize.split(/(px|rem|%|vh)/);
 			if (aResults.length >= 2) {
-				this._oJSONModel.setProperty("/" + sFieldName + "/value", parseFloat(aResults[0]));
-				this._oJSONModel.setProperty("/" + sFieldName + "Unit/value", aResults[1]);
+				this._oJSONModel.setProperty(`/${sFieldName}/value`, parseFloat(aResults[0]));
+				this._oJSONModel.setProperty(`/${sFieldName}Unit/value`, aResults[1]);
 			}
 		},
 

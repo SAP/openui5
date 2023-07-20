@@ -120,7 +120,7 @@ sap.ui.define([
 			return "";
 		}
 		if (sTimeStamp.indexOf("Z") === -1) {
-			sTimeStamp = sTimeStamp + "Z";
+			sTimeStamp = `${sTimeStamp}Z`;
 		}
 		return DateFormat.getInstance({
 			format: "yMMMdjm"
@@ -129,7 +129,9 @@ sap.ui.define([
 
 	function getGroupHeaderFactory(oGroup) {
 		return new GroupHeaderListItem({
-			title: oGroup.key ? this.oTextResources.getText("TIT_VERSION_HISTORY_PUBLISHED") : this.oTextResources.getText("TIT_VERSION_HISTORY_UNPUBLISHED"),
+			title: oGroup.key
+				? this.oTextResources.getText("TIT_VERSION_HISTORY_PUBLISHED")
+				: this.oTextResources.getText("TIT_VERSION_HISTORY_UNPUBLISHED"),
 			upperCase: false,
 			visible: this.getToolbar().getModel("versions").getProperty("/publishVersionVisible")
 		}).addStyleClass("sapUiRtaVersionHistoryGrouping").addStyleClass("sapUiRtaVersionHistory");
@@ -194,7 +196,7 @@ sap.ui.define([
 		if (!this._oVersionHistoryDialogPromise) {
 			this._oVersionHistoryDialogPromise = Fragment.load({
 				name: "sap.ui.rta.toolbar.versioning.VersionHistory",
-				id: this.getToolbar().getId() + "_fragment--sapUiRta_versionHistoryDialog",
+				id: `${this.getToolbar().getId()}_fragment--sapUiRta_versionHistoryDialog`,
 				controller: {
 					formatVersionTitle: formatVersionTitle.bind(this),
 					formatVersionTimeStamp: formatVersionTimeStamp,
@@ -232,7 +234,7 @@ sap.ui.define([
 		if (!this._oActivateVersionDialogPromise) {
 			this._oActivateVersionDialogPromise = Fragment.load({
 				name: "sap.ui.rta.toolbar.versioning.VersionTitleDialog",
-				id: this.getToolbar().getId() + "_fragment--sapUiRta_activateVersionDialog",
+				id: `${this.getToolbar().getId()}_fragment--sapUiRta_activateVersionDialog`,
 				controller: {
 					onConfirmVersioningDialog: function() {
 						var sVersionTitle = this.getToolbar().getControl("activateVersionDialog--versionTitleInput").getValue();

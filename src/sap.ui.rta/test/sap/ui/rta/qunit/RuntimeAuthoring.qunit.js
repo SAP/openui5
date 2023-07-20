@@ -77,7 +77,7 @@ sap.ui.define([
 
 	function cleanInfoSessionStorage() {
 		var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oComp});
-		window.sessionStorage.removeItem("sap.ui.fl.info." + sFlexReference);
+		window.sessionStorage.removeItem(`sap.ui.fl.info.${sFlexReference}`);
 	}
 
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available together with a CommandStack with changes...", {

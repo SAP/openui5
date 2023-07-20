@@ -211,7 +211,7 @@ sap.ui.define([
 			var sPath = "sap/ui/rta/service/ControllerExtension";
 			sandbox.stub(this.oViewOverlay.getDesignTimeMetadata(), "getControllerExtensionTemplate").returns(sPath);
 
-			server.respondWith(sap.ui.require.toUrl(sPath) + "-dbg.js", [200, {"Content-Type": "html/text"}, "abc"]);
+			server.respondWith(`${sap.ui.require.toUrl(sPath)}-dbg.js`, [200, {"Content-Type": "html/text"}, "abc"]);
 			return this.oControllerExtension.getTemplate(this.oView.getId()).then(function(sTemplate) {
 				assert.equal(sTemplate, "abc", "the service returned the template");
 			});
@@ -220,8 +220,8 @@ sap.ui.define([
 		QUnit.test("with a template available, but no debug sources", function(assert) {
 			var sPath = "sap/ui/rta/service/ControllerExtension";
 			sandbox.stub(this.oViewOverlay.getDesignTimeMetadata(), "getControllerExtensionTemplate").returns(sPath);
-			server.respondWith(sap.ui.require.toUrl(sPath) + "-dbg.js", [404, {}, ""]);
-			server.respondWith(sap.ui.require.toUrl(sPath) + ".js", [200, {"Content-Type": "html/text"}, "def"]);
+			server.respondWith(`${sap.ui.require.toUrl(sPath)}-dbg.js`, [404, {}, ""]);
+			server.respondWith(`${sap.ui.require.toUrl(sPath)}.js`, [200, {"Content-Type": "html/text"}, "def"]);
 
 			return this.oControllerExtension.getTemplate(this.oView.getId()).then(function(sTemplate) {
 				assert.equal(sTemplate, "def", "the service returned the template");
@@ -239,8 +239,8 @@ sap.ui.define([
 
 		QUnit.test("with template available that can't be found", function(assert) {
 			sandbox.stub(this.oViewOverlay.getDesignTimeMetadata(), "getControllerExtensionTemplate").returns("undefined");
-			server.respondWith(sap.ui.require.toUrl("undefined") + "-dbg.js", [404, {}, ""]);
-			server.respondWith(sap.ui.require.toUrl("undefined") + ".js", [404, {}, ""]);
+			server.respondWith(`${sap.ui.require.toUrl("undefined")}-dbg.js`, [404, {}, ""]);
+			server.respondWith(`${sap.ui.require.toUrl("undefined")}.js`, [404, {}, ""]);
 
 			return this.oControllerExtension.getTemplate(this.oView.getId())
 			.then(function() {

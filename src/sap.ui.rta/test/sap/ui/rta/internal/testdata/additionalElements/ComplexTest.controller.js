@@ -30,8 +30,8 @@ sap.ui.define([
 			});
 			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test/additionalElements");
 
-			oMockServer.simulate(this._sResourcePath + "/mockserver/metadata.xml", {
-				sMockdataBaseUrl: this._sResourcePath + "/mockserver",
+			oMockServer.simulate(`${this._sResourcePath}/mockserver/metadata.xml`, {
+				sMockdataBaseUrl: `${this._sResourcePath}/mockserver`,
 				bGenerateMissingMockData: true
 			});
 

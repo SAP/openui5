@@ -65,7 +65,7 @@ sap.ui.define([
 			if (sTrimmedId[sTrimmedId.length - 1] === ".") {
 				sTrimmedId = sTrimmedId + sGuidString;
 			} else {
-				sTrimmedId = sTrimmedId + "." + sGuidString;
+				sTrimmedId = `${sTrimmedId}.${sGuidString}`;
 			}
 
 			return this.trimIdIfRequired(sTrimmedId);
@@ -80,7 +80,7 @@ sap.ui.define([
 		var aIdStrings = sBaseAppID.split(".");
 
 		if (aIdStrings[0] !== "customer") {
-			aIdStrings[0] = "customer." + aIdStrings[0];
+			aIdStrings[0] = `customer.${aIdStrings[0]}`;
 		}
 
 		var bRegFound = false;
@@ -96,7 +96,7 @@ sap.ui.define([
 
 		sChangedId = aIdStrings.join(".");
 		if (!bRegFound) {
-			sChangedId = sChangedId + "." + uid().replace(/-/g, "_");
+			sChangedId = `${sChangedId}.${uid().replace(/-/g, "_")}`;
 		}
 
 		sChangedId = this.trimIdIfRequired(sChangedId);
@@ -122,7 +122,7 @@ sap.ui.define([
 	};
 
 	AppVariantUtils.prepareTextsChange = function(sPropertyName, sPropertyValue) {
-		var sComment = "New " + sPropertyName + " entered by a key user via RTA tool";
+		var sComment = `New ${sPropertyName} entered by a key user via RTA tool`;
 		return this.getInlineChangeInput(sPropertyValue, sComment);
 	};
 
@@ -192,7 +192,7 @@ sap.ui.define([
 	};
 
 	AppVariantUtils.getInboundPropertiesKey = function(sAppVariantId, sCurrentRunningInboundId, sPropertyName) {
-		return sAppVariantId + "_sap.app.crossNavigation.inbounds." + sCurrentRunningInboundId + "." + sPropertyName;
+		return `${sAppVariantId}_sap.app.crossNavigation.inbounds.${sCurrentRunningInboundId}.${sPropertyName}`;
 	};
 
 	AppVariantUtils.getInlineChangeForInboundPropertySaveAs = function(sCurrentRunningInboundId, sAppVariantId) {
@@ -243,8 +243,8 @@ sap.ui.define([
 			oProperty.content.inbound[sCurrentRunningInboundId] = {
 				semanticObject: oParsedHash.semanticObject,
 				action: oParsedHash.action,
-				title: "{{" + sInboundTitleKey + "}}",
-				subTitle: "{{" + sInboundSubTitleKey + "}}",
+				title: `{{${sInboundTitleKey}}}`,
+				subTitle: `{{${sInboundSubTitleKey}}}`,
 				icon: oAppVariantSpecificData.icon,
 				signature: {
 					parameters: {
@@ -299,11 +299,11 @@ sap.ui.define([
 			}, {
 				propertyPath: "title",
 				operation: "UPSERT",
-				propertyValue: "{{" + sInboundTitleKey + "}}"
+				propertyValue: `{{${sInboundTitleKey}}}`
 			}, {
 				propertyPath: "subTitle",
 				operation: "UPSERT",
-				propertyValue: "{{" + sInboundSubTitleKey + "}}"
+				propertyValue: `{{${sInboundSubTitleKey}}}`
 			}, {
 				propertyPath: "icon",
 				operation: "UPSERT",
@@ -414,7 +414,7 @@ sap.ui.define([
 		} else if (oError.userMessage) {
 			sErrorMessage = oError.userMessage;
 		} else if (oError.iamAppId) {
-			sErrorMessage = "IAM App Id: " + oError.iamAppId;
+			sErrorMessage = `IAM App Id: ${oError.iamAppId}`;
 		} else {
 			sErrorMessage = oError.stack || oError.message || oError.status || oError;
 		}
@@ -424,10 +424,10 @@ sap.ui.define([
 
 	AppVariantUtils.buildErrorInfo = function(sMessageKey, oError, sAppVariantId) {
 		var sErrorMessage = this._getErrorMessageText(oError);
-		var sMessage = AppVariantUtils.getText(sMessageKey) + "\n\n";
+		var sMessage = `${AppVariantUtils.getText(sMessageKey)}\n\n`;
 
 		if (sAppVariantId) {
-			sMessage += AppVariantUtils.getText("MSG_APP_VARIANT_ID", sAppVariantId) + "\n";
+			sMessage += `${AppVariantUtils.getText("MSG_APP_VARIANT_ID", sAppVariantId)}\n`;
 		}
 
 		sMessage += AppVariantUtils.getText("MSG_TECHNICAL_ERROR", sErrorMessage);
@@ -449,8 +449,8 @@ sap.ui.define([
 		var sOverviewList = bSaveAsTriggeredFromRtaToolbar ? "" : "_OVERVIEW_LIST";
 		var sText = bIsS4HanaCloud ? undefined : sAppVariantId;
 
-		var sMessage = AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_MESSAGE") + "\n\n";
-		sMessage += AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_" + sSystemTag + "_MESSAGE" + sOverviewList, sText);
+		var sMessage = `${AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_MESSAGE")}\n\n`;
+		sMessage += AppVariantUtils.getText(`SAVE_APP_VARIANT_SUCCESS_S4HANA_${sSystemTag}_MESSAGE${sOverviewList}`, sText);
 
 		return {
 			text: sMessage,
@@ -561,7 +561,7 @@ sap.ui.define([
 				}
 			})
 			.catch(function(vError) {
-				throw new Error("Error navigating to FLP Homepage: " + vError);
+				throw new Error(`Error navigating to FLP Homepage: ${vError}`);
 			});
 		}
 		return Promise.resolve();

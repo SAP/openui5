@@ -196,7 +196,7 @@ sap.ui.define([
 			.map(function(oAction, iIndex) {
 				var oParentMenuItem = Object.assign({
 					action: oAction,
-					id: "CTX_CREATE_CHILD_IFRAME_" + oAction.aggregation.toUpperCase(),
+					id: `CTX_CREATE_CHILD_IFRAME_${oAction.aggregation.toUpperCase()}`,
 					rank: iBaseRank + 10 * iIndex
 				}, getCommonProperties.call(this, oAction.aggregation));
 

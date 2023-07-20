@@ -106,7 +106,7 @@ sap.ui.define([
 		this.getChanges().forEach(function(mChangeProperties, index) {
 			mPropertyBag = {};
 			Object.keys(mChangeProperties).forEach(function(sProperty) {
-				var sOriginalProperty = "original" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1);
+				var sOriginalProperty = `original${sProperty.charAt(0).toUpperCase()}${sProperty.substr(1)}`;
 				if (sProperty === "visible") {
 					mPropertyBag[sProperty] = true; /* visibility of the variant always set back to true on undo */
 				} else if (mChangeProperties[sOriginalProperty]) {

@@ -260,17 +260,17 @@ sap.ui.define([
 					oAction.name[1]
 				);
 				assert.ok(oAddAction,
-					"the " + oAction[0] + " via " + oAction.name[1] + " action is available in the designtime"
+					`the ${oAction[0]} via ${oAction.name[1]} action is available in the designtime`
 				);
 			} else if (oAction.name === "createContainer" || oAction.name === "addIFrame") {
 				assert.ok(oAggregationDesignTimeMetadata.getAction(oAction.name, oControl),
-					"the " + oAction.name + "action is available in the calculated designtime metadata during execution");
+					`the ${oAction.name}action is available in the calculated designtime metadata during execution`);
 			} else if (oAction.name === "move") {
 				assert.ok(oElementDesignTimeMetadata.getAction(oAction.name, oMovedElement),
-					"the " + oAction.name + "action is available in the calculated designtime metadata during execution");
+					`the ${oAction.name}action is available in the calculated designtime metadata during execution`);
 			} else {
 				assert.ok(oElementDesignTimeMetadata.getAction(oAction.name, oControl),
-					"the " + oAction.name + "action is available in the calculated designtime metadata during execution");
+					`the ${oAction.name}action is available in the calculated designtime metadata during execution`);
 			}
 		}
 
@@ -301,11 +301,11 @@ sap.ui.define([
 				var oControlOverlay = OverlayRegistry.getOverlay(oControlWithDesigntimeActionDefinition || oTargetControl);
 				if (!oControlOverlay) {
 					throw new Error(
-						"The provided control " + oTargetControl.getId() + "does not have any overlay existing during test execution. "
-						+ "With this testsetup it is no possible to check for designtime action definition. In some cases it is not "
-						+ "possible to identify the control with the designtime metadata automatically just by the given 'action.control'. "
-						+ "In this case please provide the 'action.designtimeActionControl' property with a valid control containing "
-						+ "the designtime metadata definition for this check."
+						`The provided control ${oTargetControl.getId()}does not have any overlay existing during test execution. `
+						+ `With this testsetup it is no possible to check for designtime action definition. In some cases it is not `
+						+ `possible to identify the control with the designtime metadata automatically just by the given 'action.control'. `
+						+ `In this case please provide the 'action.designtimeActionControl' property with a valid control containing `
+						+ `the designtime metadata definition for this check.`
 					);
 				}
 				oElementDesignTimeMetadata = oControlOverlay.getDesignTimeMetadata();
@@ -391,8 +391,8 @@ sap.ui.define([
 			.then(function(oCommand) {
 				assert.ok(
 					oCommand,
-					"then the registration for action to change type, the registration for change and " +
-					"control type to change handler is available and " + mOptions.action.name + " is a valid action"
+					`then the registration for action to change type, the registration for change and ` +
+					`control type to change handler is available and ${mOptions.action.name} is a valid action`
 				);
 				return oCommand;
 			})
@@ -583,7 +583,7 @@ sap.ui.define([
 
 		// XML View checks
 		if (!mOptions.jsOnly) {
-			QUnit.module(sMsg + " on async views", {
+			QUnit.module(`${sMsg} on async views`, {
 				before: function(assert) {
 					this.hookContext = {};
 					return mOptions.before.call(this.hookContext, assert);

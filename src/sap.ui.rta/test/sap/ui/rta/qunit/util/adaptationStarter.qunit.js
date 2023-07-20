@@ -46,7 +46,7 @@ sap.ui.define([
 			assert.strictEqual(
 				stubbedMessageCall.args[0].mAggregations.content.map(function(item, index) {
 					if (index === 1) {
-						return "[" + item.getText() + "]" + "(" + item.getHref() + ")";
+						return `[${item.getText()}]` + `(${item.getHref()})`;
 					}
 					return item.getText();
 				}).join(""),

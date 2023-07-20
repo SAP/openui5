@@ -156,7 +156,7 @@ sap.ui.define([
 		var bIsEditable = oOverlay.getEditableByPlugins().indexOf(this._retrievePluginName(bOverlayIsSibling)) > -1;
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
-		var sId = oOverlay.getId() + "-AddButton";
+		var sId = `${oOverlay.getId()}-AddButton`;
 		var oHtmlButtonOuter = document.createElement("div");
 		oHtmlButtonOuter.classList.add("sapUiRtaPersAddIconOuter");
 		oHtmlButtonOuter.setAttribute("draggable", "true");

@@ -211,17 +211,17 @@ sap.ui.define([
 				var bFirstCall = true;
 				var bIsAvailable = true;
 				sandbox.stub(this.oCreateContainer, "isAvailable").callsFake(function(aElementOverlays, bOverlayIsSibling) {
-					assert.equal(bOverlayIsSibling, bFirstCall, "the 'available' function calls isAvailable with bOverlayIsSibling = " + bFirstCall);
+					assert.equal(bOverlayIsSibling, bFirstCall, `the 'available' function calls isAvailable with bOverlayIsSibling = ${bFirstCall}`);
 					assert.deepEqual(aElementOverlays[0].getId(), this.oFormOverlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
 					bFirstCall = false;
 					return bIsAvailable;
 				}.bind(this));
 				sandbox.stub(this.oCreateContainer, "handleCreate").callsFake(function(bOverlayIsSibling, oElementOverlay) {
-					assert.equal(bOverlayIsSibling, bCheckValue, "the 'handleCreate' function is called with bOverlayIsSibling = " + bCheckValue);
+					assert.equal(bOverlayIsSibling, bCheckValue, `the 'handleCreate' function is called with bOverlayIsSibling = ${bCheckValue}`);
 					assert.deepEqual(oElementOverlay.getId(), this.oFormOverlay.getId(), "the 'handleCreate' function is called with the correct overlay");
 				}.bind(this));
 				sandbox.stub(this.oCreateContainer, "isEnabled").callsFake(function(aElementOverlays, bOverlayIsSibling) {
-					assert.equal(bOverlayIsSibling, bCheckValue, "the 'enabled' function calls isEnabled with bOverlayIsSibling = " + bCheckValue);
+					assert.equal(bOverlayIsSibling, bCheckValue, `the 'enabled' function calls isEnabled with bOverlayIsSibling = ${bCheckValue}`);
 					assert.deepEqual(aElementOverlays[0].getId(), this.oFormOverlay.getId(), "the 'enabled' function calls isEnabled with the correct overlay");
 				}.bind(this));
 
