@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Recursive Hierarchy Maintenance</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Recursive Hierarchy Maintenance</h1>
+		<h2>DESCRIPTION</h2>
+		Test maintenance of a recursive hierarchy, as well as editing of nodes.
+		<h2>PREPARATION</h2>
+
+		To check console errors open the developer tools before starting the application and check
+		with each step, that there are no errors and warnings. Ignore initial message bundle errors.
+
+		<h3>Testing with mock data</h3>
+		Start the Recursive Hierarchy application URL (adjust host and port if necessary):
+		<ul>
+			<li> local:
+				<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.RecursiveHierarchy&expandTo=1&visibleRowCount=10">
+					http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.RecursiveHierarchy&expandTo=1&visibleRowCount=10
+				</a>
+			</li>
+		</ul>
+
+		<h2>REALIZE and CHECK</h2>
+		<h3>First Page</h3>
+		<ul>
+			<li><b>Check:</b> The table should have the following content (empty lines not shown):
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+						<th>"Create New Child" enabled</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Expand</td><td>0</td><td></td><td>Alpha</td><td>60</td><td>-</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Expand 0 (Alpha)</h3>
+		<ul>
+			<li>Click on the expand button in the row 0 (Alpha).</li>
+			<li><b>Check:</b> The table should have the following content (empty lines not shown):
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+						<th>"Create New Child" enabled</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha</td><td>60</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>1</td><td>0</td><td>Beta</td><td>55</td><td>-</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa</td><td>56</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda</td><td>57</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>4</td><td>0</td><td>Mu</td><td>58</td><td>-</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>5</td><td>0</td><td>Xi</td><td>59</td><td>-</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Create New Child of 0 (Alpha)</h3>
+		<ul>
+			<li>Click on the "Create New Child" button in the row 0 (Alpha).</li>
+			<li><b>Check:</b> The table should have the following content (empty lines not shown):
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+						<th>"Create New Child" enabled</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha</td><td>60</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>6</td><td>0</td><td></td><td>54</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>1</td><td>0</td><td>Beta</td><td>55</td><td>-</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa</td><td>56</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda</td><td>57</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>4</td><td>0</td><td>Mu</td><td>58</td><td>-</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>5</td><td>0</td><td>Xi</td><td>59</td><td>-</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Edit New Child's Name</h3>
+		<ul>
+			<li>Enter "First new child" as name of the newly created node with ID 6.</li>
+			<li><b>Check:</b> The table should have the following content (empty lines not shown):
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+						<th>"Create New Child" enabled</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha</td><td>60</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>6</td><td>0</td><td>First new child #0+1</td><td>154</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>1</td><td>0</td><td>Beta</td><td>55</td><td>-</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa</td><td>56</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda</td><td>57</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>4</td><td>0</td><td>Mu</td><td>58</td><td>-</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>5</td><td>0</td><td>Xi</td><td>59</td><td>-</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Create New Child of 2 (Kappa)</h3>
+		<ul>
+			<li>Click on the "Create New Child" button in the row 2 (Kappa).</li>
+			<li><b>Check:</b> The table should have the following content (empty lines not shown):
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+						<th>"Create New Child" enabled</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha</td><td>60</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>6</td><td>0</td><td>First new child #0+1</td><td>154</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>1</td><td>0</td><td>Beta</td><td>55</td><td>-</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>2</td><td>0</td><td>Kappa</td><td>56</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2.1</td><td>2</td><td></td><td>55</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda</td><td>57</td><td>&#x2713;</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>4</td><td>0</td><td>Mu</td><td>58</td><td>-</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>5</td><td>0</td><td>Xi</td><td>59</td><td>-</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+	</body>
+</html>

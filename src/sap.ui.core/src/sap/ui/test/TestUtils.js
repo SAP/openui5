@@ -336,8 +336,9 @@ sap.ui.define([
 		 *    response(s) objects in the response property. If no match for a request was found in
 		 *    the normal fixture, the regular expressions are checked. The response object looks
 		 *    exactly the same as in the fixture and may additionally contain a method
-		 *    <code>buildResponse(aMatch, oResponse)</code> which gets passed the match object and
-		 *    the response to allow modification before sending.
+		 *    <code>buildResponse(aMatch, oResponse, oRequest)</code> which gets passed the match
+		 *    object, the response, and the request in order to allow modification of the response
+		 *   before sending.
 		 * @param {string} [sServiceUrl]
 		 *   The service URL which determines a prefix for all requests the fake server responds to;
 		 *   it responds with an error for requests not given in the fixture, except DELETE, MERGE,
@@ -584,7 +585,7 @@ sap.ui.define([
 					oResponse = aResponses[0];
 					if (typeof oResponse.buildResponse === "function") {
 						oResponse = merge({}, oResponse);
-						oResponse.buildResponse(oMatch.match, oResponse);
+						oResponse.buildResponse(oMatch.match, oResponse, oRequest);
 					}
 					if (oMatch.responses.length > 1) {
 						iAlternative = oMatch.responses.indexOf(oResponse);

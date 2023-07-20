@@ -4,8 +4,9 @@
 sap.ui.define([
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/SandboxModel",
 	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press"
-], function (SandboxModel, Opa5, Press) {
+], function (SandboxModel, Opa5, EnterText, Press) {
 	"use strict";
 
 	var mIcon2DrillState = {
@@ -103,17 +104,49 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
+				createNewChild : function (iRow, sComment) {
+					this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						errorMessage : `Could not create new child below row ${iRow}`,
+						id : bTreeTable ? /createInTreeTable/ : /create/,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === iRow;
+						},
+						success : function () {
+							Opa5.assert.ok(true,
+								`Create new child below row ${iRow}. ${sComment}`);
+						},
+						viewName : sViewName
+					});
+				},
+				editName : function (iRow, sName, sComment) {
+					this.waitFor({
+						actions : new EnterText({clearTextFirst : true, text : sName}),
+						controlType : "sap.m.Input",
+						errorMessage : `Could not edit name in row ${iRow}`,
+						id : bTreeTable ? /nameInTreeTable/ : /name/,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === iRow;
+						},
+						success : function () {
+							Opa5.assert.ok(true,
+								`Entered name in row ${iRow} as "${sName}". ${sComment}`);
+						},
+						viewName : sViewName
+					});
+				},
 				scrollToRow : function (iRow, sComment) {
 					this.waitFor({
 						actions : function (oTable) {
 							oTable.setFirstVisibleRow(iRow);
 						},
 						controlType : getTableType(),
-						errorMessage : "Could not select row: " + iRow,
+						errorMessage : "Could not select row " + iRow,
 						id : getTableId(),
 						success : function (oTable) {
 							Opa5.assert.strictEqual(oTable.getFirstVisibleRow(), iRow,
-								"Scrolled table to row: " + iRow + ". " + sComment);
+								"Scrolled table to row " + iRow + ". " + sComment);
 						},
 						viewName : sViewName
 					});
@@ -143,7 +176,7 @@ sap.ui.define([
 							errorMessage : "Could not toggle Expand Button in row " + iRow,
 							id : getTableId(),
 							success : function () {
-								Opa5.assert.ok(true, "Toggle Expand Button in row: " + iRow
+								Opa5.assert.ok(true, "Toggle Expand Button in row " + iRow
 									+ ". " + sComment);
 							},
 							viewName : sViewName
@@ -158,7 +191,7 @@ sap.ui.define([
 								return oControl.getBindingContext().getIndex() === iRow;
 							},
 							success : function () {
-								Opa5.assert.ok(true, "Toggle Expand Button in row: " + iRow
+								Opa5.assert.ok(true, "Toggle Expand Button in row " + iRow
 									+ ". " + sComment);
 							},
 							viewName : sViewName
