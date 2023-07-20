@@ -25,7 +25,7 @@ sap.ui.define([
 			// Stub ODataMetadata so that the constructor can be called w/o cachekey
 			// With cachekey also the CacheManager needs to be stubbed.
 			oLoadMetadataStub.callsFake(function () {
-				return new Promise(function () {});
+				return Promise.resolve();
 			});
 			this.sUrl = "/some/url";
 			this.oMetadata = new ODataMetadata(this.sUrl, {});
@@ -137,8 +137,13 @@ sap.ui.define([
 		});
 
 		// code under test
-		return this.oMetadata._loadMetadata(undefined, /*bSuppressEvents*/true).catch(function () {
-			oODataMock.restore();
+		return this.oMetadata._loadMetadata(undefined, /*bSuppressEvents*/true).catch(function (oResult) {
+			assert.strictEqual(oResult.message, "Message");
+			assert.strictEqual(oResult.request, "Request");
+			assert.strictEqual(oResult.response, oError.response);
+			assert.strictEqual(oResult.responseText, "Response body");
+			assert.strictEqual(oResult.statusCode, 503);
+			assert.strictEqual(oResult.statusText, "Status text");
 		});
 	});
 
