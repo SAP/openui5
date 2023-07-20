@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"./mockserver/mockServer",
-	"require"
-], function (MobileLibrary, Uploader, Controller, Item, JSONModel, ODataModel, MockServer, require) {
+	"require",
+	"sap/m/ObjectStatus"
+], function (MobileLibrary, Uploader, Controller, Item, JSONModel, ODataModel, MockServer, require,ObjectStatus) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadSetCloudUpload.Page", {
@@ -31,6 +32,7 @@ sap.ui.define([
 					confirmButtonText: oUploadSet._oRb.getText("SELECT_PICKER_TITLE_TEXT"),
 					title: oUploadSet._oRb.getText("SELECT_PICKER_TITLE_TEXT"),
 					fileNameMandatory: true,
+					filePickerType: "Upload",
 					enableDuplicateCheck:oUploadSet.getSameFilenameAllowed(),
 					select: oUploadSet._onCloudPickerFileChange.bind(oUploadSet)
 				});
@@ -45,6 +47,14 @@ sap.ui.define([
 
 				return oCloudPickerInstance;
 			};
+		},
+		beforeUpload: function(oEvent) {
+			var oItem = oEvent.getParameter("item");
+			if (oItem.getUploadType() === "Cloud") {
+				oItem.addMarkerAsStatus(
+					new ObjectStatus({ text: "Managed By Google", icon:"sap-icon://share-2",state:"Indication07"})
+				);
+			}
 		}
 	});
 });

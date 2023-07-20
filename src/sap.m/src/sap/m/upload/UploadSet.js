@@ -38,6 +38,8 @@ sap.ui.define([
 			DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder, IllustratedMessage,IllustratedMessageType, IllustratedMessageSize, Core, InvisibleText, Menu, MenuItem, MenuButton) {
 	"use strict";
 
+	var UploadType = Library.UploadType;
+
 	/**
 	 * Constructor for a new UploadSet.
 	 *
@@ -2116,6 +2118,7 @@ sap.ui.define([
 			oItem = new UploadSetItem({
 				uploadState: UploadState.Ready
 			});
+			oItem._setUploadType(UploadType.Cloud);
 			if (oFileShareProperties && oFileShareProperties !== null) {
 				// invoked and each selected file to map the fileshare properties to uploadsetItem to be uploaded
 				this._mapFileShareItemToUploadSetItem(oItem, oFileShareProperties);

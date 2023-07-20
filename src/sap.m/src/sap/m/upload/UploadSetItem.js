@@ -24,6 +24,8 @@ sap.ui.define([
 			 HBox) {
 	"use strict";
 
+	var UploadType = MobileLibrary.UploadType;
+
 	/**
 	 * Constructor for a new UploadSetItem.
 	 *
@@ -122,6 +124,15 @@ sap.ui.define([
 					singularName: "status"
 				},
 				/**
+				 * Statuses of the item, but it would be appearing in the markers section
+				 * @since 1.117
+				 */
+				markersAsStatus: {
+					type: "sap.m.ObjectStatus",
+					multiple: true,
+					singularName: "markerAsStatus"
+				},
+				/**
 				 * Header fields to be included in the header section of an XMLHttpRequest (XHR) request
 				 * @since 1.90
 				 */
@@ -181,6 +192,7 @@ sap.ui.define([
 				oRm.openStart("div").class("sapMUSTextInnerContainer").openEnd();
 				oRm.renderControl(oItem._bInEditMode ? oItem._getFileNameEdit() : oItem._getFileNameLink());
 				oItem._renderMarkers(oRm);
+				oItem._renderMarkersAsStatus(oRm);
 				oRm.close("div");
 
 				oItem._renderAttributes(oRm);
@@ -237,6 +249,9 @@ sap.ui.define([
 		this._bNameLengthRestricted = false;
 		this._bSizeRestricted = false;
 		this._bMediaTypeRestricted = false;
+
+		//Deafult upload type
+		this._sUploadType = UploadType.Native;
 	};
 
 	/* ===================== */
@@ -475,6 +490,20 @@ sap.ui.define([
 	 */
 	UploadSetItem.prototype.getEditState = function () {
 		return this._bInEditMode;
+	};
+
+	/**
+	 * Returns the upload type of the item
+	 * The method by default returns Native
+	 * It is recommended to use this method, when the user has uploded the instance
+	 *
+	 * @public
+	 * @since 1.117.0
+	 * @returns {sap.m.UploadType} edit state of uploadSetItem
+	 *
+	 */
+	UploadSetItem.prototype.getUploadType = function () {
+		return this._sUploadType;
 	};
 
 	/* ============== */
@@ -731,6 +760,17 @@ sap.ui.define([
 		return this._bContainsError;
 	};
 
+	/**
+	 * Sets the upload type
+	 *@param {string} sType indicates the type of the upload
+	 * @private
+	 * @since 1.117
+	 *
+	 */
+	UploadSetItem.prototype._setUploadType = function (sType) {
+		this._sUploadType = sType;
+	};
+
 	UploadSetItem.prototype._setContainsError = function (bContainsError) {
 		this._bContainsError = bContainsError;
 	};
@@ -909,6 +949,16 @@ sap.ui.define([
 			oRm.openStart("div").class("sapMUSObjectMarkerContainer").openEnd();
 			this.getMarkers().forEach(function (oMarker) {
 				oRm.renderControl(oMarker.addStyleClass("sapMUCObjectMarker"));
+			});
+			oRm.close("div");
+		}
+	};
+
+	UploadSetItem.prototype._renderMarkersAsStatus = function (oRm) {
+		if (this.getMarkersAsStatus().length > 0) {
+			oRm.openStart("div").class("sapMUSObjectMarkersAsStatusContainer").openEnd();
+			this.getMarkersAsStatus().forEach(function (oStatus) {
+				oRm.renderControl(oStatus.addStyleClass("sapMUCObjectMarkersAsStatus"));
 			});
 			oRm.close("div");
 		}

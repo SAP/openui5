@@ -25,7 +25,8 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.m.ListMode
-	var ListMode = Library.ListMode;
+	var ListMode = Library.ListMode,
+		UploadType = Library.UploadType;
 
 	function getData() {
 		return {
@@ -86,6 +87,29 @@ sap.ui.define([
 			assert.ok(!progressBox.getVisible(), "progress bar is not visible for the uploaded state");
 			done();
 		});
+	});
+
+	QUnit.test("Test for checking if the upload type is of Native by default", function (assert) {
+		//arrange
+		var oItem = this.oUploadSet.getItems()[0];
+		assert.equal(oItem.getUploadType(), UploadType.Native ,"Upload type is returning as Native as expected");
+	});
+
+	QUnit.test("Test for checking if the upload type is of Native when uploaded by the user", function (assert) {
+		this.oUploadSet.attachEventOnce("beforeUploadStarts",function(oEvent){
+			var oItem = oEvent.getParameter("item");
+			assert.equal(oItem.getUploadType(),UploadType.Native,"Upload type is returning as Native as expected");
+		});
+
+		var file = new File(["foo"], "foo.txt", {
+			type: "text/plain"
+		  });
+		var oFiles = {
+			0: file,
+			length: 1
+		};
+
+		this.oUploadSet._processNewFileObjects(oFiles);
 	});
 
 	QUnit.test("Events beforeItemAdded and afterItemAdded are called at proper time and with correct parameters, prevent default applies.", function (assert) {
@@ -2248,10 +2272,11 @@ sap.ui.define([
 			var done = assert.async();
 
 			this.oUploadSet.attachEventOnce("uploadCompleted",function(oEvent){
+				var oItem = oEvent.getParameter("item");
 				//Assert
-				assert.ok(oEvent.getParameter("item"), "item param present");
-				var addedItem = oEvent.getParameter("item");
-				assert.ok(addedItem && addedItem.getFileName() === 'Test File.txt', "File selected from cloud uploaded");
+				assert.ok(oItem, "item param present");
+				assert.ok(oItem && oItem.getFileName() === 'Test File.txt', "File selected from cloud uploaded");
+				assert.equal(oItem.getUploadType(),UploadType.Cloud,"Item has been uploaded from cloud");
 				done();
 			});
 		});
