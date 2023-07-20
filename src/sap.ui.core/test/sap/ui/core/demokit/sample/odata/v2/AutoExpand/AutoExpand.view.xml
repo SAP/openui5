@@ -18,11 +18,30 @@
 			reloadSingleUnitMeasures : false
 		}}" threshold="5" title="Auto-Expanded Analytical Table" visibleRowCount="5" >
 		<columns>
-			<AnalyticalColumn leadingProperty="CustomerName" template="CustomerName" />
-			<AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode" />
-			<AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"
-				template="AmountInCompanyCodeCurrency" />
-			<AnalyticalColumn leadingProperty="CompanyCodeCurrency" template="CompanyCodeCurrency" />
+			<AnalyticalColumn leadingProperty="CustomerName">
+				<m:Label text="Customer Name"/>
+				<template>
+					<m:Text text="{CustomerName}" wrapping="false" />
+				</template>
+			</AnalyticalColumn>
+			<AnalyticalColumn grouped="true" leadingProperty="CompanyCode">
+				<m:Label text="Company Code"/>
+				<template>
+					<m:Text text="{CompanyCode}" wrapping="false" />
+				</template>
+			</AnalyticalColumn>
+			<AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">
+				<m:Label text="Amount In Company Code Currency"/>
+				<template>
+					<m:Text text="{AmountInCompanyCodeCurrency}" wrapping="false" />
+				</template>
+			</AnalyticalColumn>
+			<AnalyticalColumn leadingProperty="CompanyCodeCurrency">
+				<m:Label text="Company Code Currency"/>
+				<template>
+					<m:Text text="{CompanyCodeCurrency}" wrapping="false" />
+				</template>
+			</AnalyticalColumn>
 		</columns>
 	</AnalyticalTable>
 </mvc:View>

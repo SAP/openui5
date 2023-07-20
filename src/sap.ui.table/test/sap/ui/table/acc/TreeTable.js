@@ -5,8 +5,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Column",
 	"sap/ui/table/library",
-	"sap/ui/table/TreeTable"
-], function(deepExtend, Button, Toolbar, JSONModel, Column, tableLibrary, TreeTable) {
+	"sap/ui/table/TreeTable",
+	"sap/m/Text",
+	"sap/m/Label"
+], function(deepExtend, Button, Toolbar, JSONModel, Column, tableLibrary, TreeTable, Text, Label) {
 	"use strict";
 
 	var SelectionMode = tableLibrary.SelectionMode;
@@ -164,8 +166,8 @@ sap.ui.define([
 	var oTable = new TreeTable({
 		expandFirstLevel: true,
 		columns: [
-			new Column({label: "Alfa", template: "name", filterProperty: "name", sortProperty: "name"}),
-			new Column({label: "Bravo", template: "description", sortProperty: "description"})
+			new Column({label: new Label({text: "Alfa"}), template: new Text({text: "{name}", wrapping: false}), filterProperty: "name", sortProperty: "name"}),
+			new Column({label: new Label({text: "Bravo"}), template: new Text({text: "{description}", wrapping: false}), sortProperty: "description"})
 		]
 	});
 

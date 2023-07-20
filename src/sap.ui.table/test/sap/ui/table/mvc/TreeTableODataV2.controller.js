@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Dialog",
 	"sap/m/Text",
+	"sap/m/Label",
 	"sap/m/TextArea",
 	"sap/m/Button",
 	"sap/m/MessagePopover",
@@ -21,7 +22,7 @@ sap.ui.define([
     "sap/base/security/encodeXML",
     "sap/ui/core/syncStyleClass",
 	"sap/ui/core/Fragment"
-], function(Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button, MessagePopover, MessageItem, oCore,
+], function(Controller, MessageToast, JSONModel, Dialog, Text, Label, TextArea, Button, MessagePopover, MessageItem, oCore,
 			tableLibrary, MockServer, Filter, TreeTable, Column, ODataModel, HTML, Measurement, uid, encodeXML, syncStyleClass, Fragment) {
 	"use strict";
 
@@ -215,8 +216,8 @@ sap.ui.define([
 			var aProperties = sSelectProperties.split(",");
 			aProperties.forEach(function(sProperty) {
 				oTable.addColumn(new Column({
-					label: sProperty,
-					template: "odata>" + sProperty,
+					label: new Label({text: sProperty}),
+					template: new Text({text: "{odata>" + sProperty + "}", wrapping: false}),
 					sortProperty: sProperty,
 					filterProperty: sProperty
 				}));

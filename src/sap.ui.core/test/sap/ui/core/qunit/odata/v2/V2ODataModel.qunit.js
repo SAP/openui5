@@ -7290,7 +7290,7 @@ sap.ui.define([
 								]
 							},
 							columns : [
-								{label: "ProductID", template: "ProductID"}
+								new Column({label: new Label({text: "ProductID"}), template: new Label({text: "{ProductID}"})})
 							]
 						})
 					]

@@ -65,8 +65,11 @@
 					visible="{ui>/bRealOData}" width="50%" search="onFilterGrid"/>
 			</Toolbar>
 		</table:extension>
-		<table:Column template="Region">
+		<table:Column>
 			<Label text="Region"/>
+			<table:template>
+				<Text text="{Region}"/>
+			</table:template>
 		</table:Column>
 		<table:Column hAlign="End">
 			<Label text="Amount Per Sale"/>
