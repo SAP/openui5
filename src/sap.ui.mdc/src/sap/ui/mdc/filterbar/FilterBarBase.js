@@ -704,15 +704,20 @@ sap.ui.define([
 		return oConditionExternal;
 	};
 
-	FilterBarBase.prototype._toInternal = function(oProperty, oCondition) {
-		var oConditionInternal = merge({}, oCondition);
-		oConditionInternal = ConditionConverter.toType(oConditionInternal, oProperty.typeConfig.typeInstance, this.getTypeMap());
+		FilterBarBase.prototype._toInternal = function(oProperty, oCondition) {
+			var oConditionInternal = merge({}, oCondition);
+			try {
+				oConditionInternal = ConditionConverter.toType(oConditionInternal, oProperty.typeConfig.typeInstance, this.getTypeMap());
 
-		this. _convertInOutParameters(oCondition, oConditionInternal, "inParameters", ConditionConverter.toType);
-		this. _convertInOutParameters(oCondition, oConditionInternal, "outParameters", ConditionConverter.toType);
+				this._convertInOutParameters(oCondition, oConditionInternal, "inParameters", ConditionConverter.toType);
+				this._convertInOutParameters(oCondition, oConditionInternal, "outParameters", ConditionConverter.toType);
 
-		return oConditionInternal;
-	};
+				return oConditionInternal;
+			} catch (ex) {
+				Log.error(ex.message);
+				return {};
+			}
+		};
 
 	FilterBarBase.prototype._convertInOutParameters = function(oCondition, oConditionConverted, sParameterName, fnConverter) {
 		if (oCondition[sParameterName] && (Object.keys(oCondition[sParameterName]).length > 0)) {
