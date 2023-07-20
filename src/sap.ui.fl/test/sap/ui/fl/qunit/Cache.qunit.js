@@ -34,7 +34,8 @@ sap.ui.define([
 					standardVariant: [],
 					defaultVariant: []
 				}
-			})
+			}),
+			cacheKey: "foo"
 		};
 	}
 
@@ -405,6 +406,7 @@ sap.ui.define([
 
 	QUnit.module("getCacheKey", {
 		beforeEach: function() {
+			this.oEntry = _createEntryMap({something: "1"});
 			this.oGetStorageResponseStub = sandbox.stub(FlexState, "getStorageResponse").resolves(this.oEntry);
 		},
 		afterEach: function() {
@@ -448,39 +450,16 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("getCacheKey is called and cache entry and current variant ids are available", function(assert) {
-			sandbox.stub(Utils, "isApplicationComponent").returns(true);
-			var sControlVariantId1 = "id_1541412437845_176_Copy";
-			var sControlVariantId2 = "id_1541412437845_186_Copy";
-			var sCacheKeyResult = "<NoTag-" + sControlVariantId1 + "-" + sControlVariantId2 + ">";
-			var mComponentMock = {
-				name: sComponentName
-			};
-			var oAppComponentMock = {
-				getModel: function() {
-					return {
-						getCurrentControlVariantIds: function() {
-							return [sControlVariantId1, sControlVariantId2];
-						},
-						getVariantManagementControlIds: function() {
-							return [];
-						}
-					};
-				}
-			};
-			var oEntry = _createEntryMap({something: "1"});
-			this.oGetStorageResponseStub.resolves(oEntry);
+		QUnit.test("getCacheKey with no backend response", async function(assert) {
+			this.oGetStorageResponseStub.resolves(undefined);
 
-			return Cache.getCacheKey(mComponentMock, oAppComponentMock)
-			.then(function(sCacheKey) {
-				assert.ok(sCacheKey, "then cachekey is returned");
-				assert.equal(sCacheKey, sCacheKeyResult, "then cachekey is extended by control variant id");
-			});
+			const sCacheKey = await Cache.getCacheKey({name: "foobar"}, "appComponent");
+			assert.strictEqual(sCacheKey, Cache.NOTAG, "then cacheKey returns <NoTag>");
 		});
 
 		QUnit.test("getCacheKey is called and cache entry, etag, and current variant management-id are available", function(assert) {
 			sandbox.stub(Utils, "isApplicationComponent").returns(true);
-			// etag is returned from backend with double quotes and possibly also with W/ value at the begining
+			// etag is returned from backend with double quotes and possibly also with W/ value at the beginning
 			// returned cacheKey shouldn't contain this chars 'W/"abc123"' --> 'abc123'
 			var sEtag = 'W/"abc123"';
 			var sControlVariantId = "id_1541412437845_176_Copy";
@@ -500,13 +479,11 @@ sap.ui.define([
 					};
 				}
 			};
-			var oWrappedChangeFileContentMock = { cacheKey: sEtag };
-			this.oGetStorageResponseStub.resolves(oWrappedChangeFileContentMock);
+			this.oEntry.cacheKey = sEtag;
 
 			return Cache.getCacheKey(mComponentMock, oAppComponentMock)
 			.then(function(sCacheKey) {
-				assert.ok(sCacheKey, "then cachekey is returned");
-				assert.equal(sCacheKey, sCacheKeyResult, "then cachekey is trimmed and extended by control variant id");
+				assert.equal(sCacheKey, sCacheKeyResult, "then cache key is trimmed and extended by control variant id");
 			});
 		});
 
@@ -514,7 +491,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "isEmbeddedComponent").returns(true);
 			var sControlVariantId1 = "myStandardVariant";
 			var sControlVariantId2 = "myCustomVariant";
-			var sCacheKeyResult = "<NoTag-" + sControlVariantId2 + ">";
+			var sCacheKeyResult = "foo-" + sControlVariantId2;
 			var mComponentMock = {
 				name: sComponentName
 			};
@@ -530,8 +507,6 @@ sap.ui.define([
 					};
 				}
 			};
-			var oEntry = _createEntryMap({something: "1"});
-			this.oGetStorageResponseStub.resolves(oEntry);
 
 			return Cache.getCacheKey(mComponentMock, oAppComponentMock)
 			.then(function(sCacheKey) {
@@ -556,9 +531,6 @@ sap.ui.define([
 				.callThrough();
 			});
 
-			var oEntry = _createEntryMap({something: "1"});
-			this.oGetStorageResponseStub.resolves(oEntry);
-
 			var oGetCacheKeyPromise = Cache.getCacheKey({ name: sComponentName }, oAppComponent);
 			return oGetVariantModelPromise
 			.then(function() {
@@ -578,7 +550,7 @@ sap.ui.define([
 			.then(function(sCacheKey) {
 				assert.strictEqual(
 					sCacheKey,
-					"<NoTag-" + sControlVariantId + ">",
+					"foo-" + sControlVariantId,
 					"then the control variant ids are appended to the cache key"
 				);
 			});
@@ -592,8 +564,6 @@ sap.ui.define([
 			var mComponentMock = {
 				name: sComponentName
 			};
-			var oEntry = _createEntryMap({something: "1"});
-			this.oGetStorageResponseStub.resolves(oEntry);
 
 			return Cache.getCacheKey(mComponentMock)
 			.then(function(sCacheKey) {

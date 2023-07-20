@@ -63,13 +63,11 @@ function(
 		return ObjectPath.get(vPath, mStorageResponse);
 	}
 
-	function _concatControlVariantIdWithCacheKey(sCacheKey, sControlVariantIds) {
+	function concatControlVariantIdWithCacheKey(sCacheKey, sControlVariantIds) {
 		if (!sControlVariantIds) {
 			return sCacheKey;
 		}
-		return sCacheKey === Cache.NOTAG ?
-			sCacheKey.replace(/>$/, "".concat("-", sControlVariantIds, ">")) :
-			sCacheKey.concat("-", sControlVariantIds);
+		return sCacheKey.concat("-", sControlVariantIds);
 	}
 
 	function _trimEtag(sCacheKey) {
@@ -127,26 +125,18 @@ function(
 	 * @ui5-restricted sap.ui.fl
 	 *
 	 */
-	Cache.getCacheKey = function(mComponent, oAppComponent) {
+	Cache.getCacheKey = async function(mComponent, oAppComponent) {
+		let sCacheKey = Cache.NOTAG;
 		if (!mComponent || !mComponent.name || !oAppComponent) {
 			Log.warning("Not all parameters were passed to determine a flexibility cache key.");
-			return Promise.resolve(Cache.NOTAG);
-		}
-		return this.getChangesFillingCache(mComponent)
-		.then(function(oWrappedChangeFileContent) {
+		} else {
+			const oWrappedChangeFileContent = await this.getChangesFillingCache(mComponent);
 			if (oWrappedChangeFileContent && oWrappedChangeFileContent.cacheKey) {
-				return _trimEtag(oWrappedChangeFileContent.cacheKey);
-			}
+				sCacheKey = _trimEtag(oWrappedChangeFileContent.cacheKey);
 
-			return Cache.NOTAG;
-		})
-		.then(function(sCacheKey) {
-			if (
-				Utils.isApplicationComponent(oAppComponent)
-				|| Utils.isEmbeddedComponent(oAppComponent)
-			) {
 				// Concat current control variant ids to cache key
-				return ControlVariantApplyAPI.getVariantModel(oAppComponent).then(function(oVariantModel) {
+				if (Utils.isApplicationComponent(oAppComponent) || Utils.isEmbeddedComponent(oAppComponent)) {
+					const oVariantModel = await ControlVariantApplyAPI.getVariantModel(oAppComponent);
 					// If there are no changes, the standard variant is created after the variant management control is instantiated
 					// When the cache key is calculated before this happens, the standard variant id is unknown
 					// To avoid inconsistencies between page load and navigation scenarios, all standard variants are filtered
@@ -158,12 +148,12 @@ function(
 						// For now rely on the fact that standard variants have the same name as the vm control
 						return !aVariantManagementControlIds.includes(sVariantId);
 					});
-					return _concatControlVariantIdWithCacheKey(sCacheKey, aCurrentControlVariantIds.join("-"));
-				});
+					sCacheKey = concatControlVariantIdWithCacheKey(sCacheKey, aCurrentControlVariantIds.join("-"));
+				}
 			}
-			// Component will not receive a variant model
-			return sCacheKey;
-		});
+		}
+
+		return sCacheKey;
 	};
 
 	/**
