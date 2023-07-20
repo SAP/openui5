@@ -7778,6 +7778,9 @@ sap.ui.define([
 			sGroupId = "group";
 
 		oBinding.iCurrentEnd = 42;
+		this.mock(_Helper).expects("isDataAggregation").withExactArgs(oBinding.mParameters)
+			.returns(false);
+		this.mock(_AggregationHelper).expects("isAffected").never();
 		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs(sGroupId).returns(false);
 		oCacheMock.expects("getPendingRequestsPromise").withExactArgs().returns(null);
 
@@ -7804,6 +7807,9 @@ sap.ui.define([
 			sGroupId = "group",
 			oGroupLock = {};
 
+		this.mock(_Helper).expects("isDataAggregation").withExactArgs(oBinding.mParameters)
+			.returns(false);
+		this.mock(_AggregationHelper).expects("isAffected").never();
 		oCacheMock.expects("isDeletingInOtherGroup").never();
 		oCacheMock.expects("getPendingRequestsPromise").withExactArgs().returns(null);
 		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
@@ -7828,6 +7834,9 @@ sap.ui.define([
 			oBinding = bindList(this, "/Set"),
 			oContext = bHeader ? oBinding.getHeaderContext() : undefined;
 
+		this.mock(_Helper).expects("isDataAggregation").withExactArgs(oBinding.mParameters)
+			.returns(false);
+		this.mock(_AggregationHelper).expects("isAffected").never();
 		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs("group").returns(true);
 		oCacheMock.expects("getPendingRequestsPromise").never();
 		oCacheMock.expects("requestSideEffects").never();
@@ -7851,6 +7860,9 @@ sap.ui.define([
 			}),
 			oPromise;
 
+		this.mock(_Helper).expects("isDataAggregation").withExactArgs(oBinding.mParameters)
+			.returns(false);
+		this.mock(_AggregationHelper).expects("isAffected").never();
 		oCacheMock.expects("isDeletingInOtherGroup").never();
 		oCacheMock.expects("getPendingRequestsPromise").twice().withExactArgs()
 			.returns(oPendingRequestsPromise);
@@ -7946,6 +7958,9 @@ sap.ui.define([
 		oCanceledError.canceled = true;
 		oBinding.iCurrentEnd = 6;
 
+		this.mock(_Helper).expects("isDataAggregation").withExactArgs(oBinding.mParameters)
+			.returns(false);
+		this.mock(_AggregationHelper).expects("isAffected").never();
 		oCacheMock.expects("isDeletingInOtherGroup").exactly(bHeader && bHasCache ? 1 : 0)
 			.withExactArgs(sGroupId).returns(false);
 		oCacheMock.expects("getPendingRequestsPromise").exactly(bHasCache ? 1 : 0).withExactArgs()
@@ -8001,6 +8016,9 @@ sap.ui.define([
 			sGroupId = "group";
 
 		oBinding.iCurrentEnd = 8;
+		this.mock(_Helper).expects("isDataAggregation").withExactArgs(oBinding.mParameters)
+			.returns(false);
+		this.mock(_AggregationHelper).expects("isAffected").never();
 		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs(sGroupId).returns(false);
 		oCacheMock.expects("getPendingRequestsPromise").withExactArgs().returns(null);
 		this.mock(oBinding).expects("keepOnlyVisibleContexts").withExactArgs()
@@ -8028,6 +8046,9 @@ sap.ui.define([
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oBinding = bindList(this, "/Set");
 
+		this.mock(_Helper).expects("isDataAggregation").withExactArgs(oBinding.mParameters)
+			.returns(false);
+		this.mock(_AggregationHelper).expects("isAffected").never();
 		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs("group").returns(false);
 		oCacheMock.expects("getPendingRequestsPromise").withExactArgs().returns(null);
 		this.mock(oBinding).expects("lockGroup").never();
@@ -8049,15 +8070,15 @@ sap.ui.define([
 				+ bHeaderContext;
 
 		QUnit.test(sTitle, function (assert) {
-		var oBinding = this.bindList("/Set", undefined, undefined, undefined, {
-				$$aggregation : {} // Note: no hierarchyQualifier!
-			}),
+		var oBinding = this.bindList("/Set"),
 			oContext = bHeaderContext ? oBinding.getHeaderContext() : undefined,
 			aFilters = [],
 			aPaths = [],
 			oPromise,
 			oRefreshPromise = {};
 
+		this.mock(_Helper).expects("isDataAggregation").withExactArgs(oBinding.mParameters)
+			.returns(true);
 		this.mock(oBinding.oCache).expects("requestSideEffects").never();
 		this.mock(oBinding.aFilters).expects("concat").withExactArgs(oBinding.aApplicationFilters)
 			.returns(aFilters);
@@ -8083,10 +8104,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects with $$aggregation and row context", function (assert) {
-		var oBinding = this.bindList("/Set", undefined, undefined, undefined, {
-				$$aggregation : {} // Note: no hierarchyQualifier!
-			});
+		var oBinding = this.bindList("/Set");
 
+		this.mock(_Helper).expects("isDataAggregation").withExactArgs(oBinding.mParameters)
+			.returns(true);
 		this.mock(oBinding.oCache).expects("requestSideEffects").never();
 		this.mock(oBinding).expects("refreshInternal").never();
 		this.mock(_AggregationHelper).expects("isAffected").never();
@@ -8094,8 +8115,7 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			oBinding.requestSideEffects("group", [/*aPaths*/], {/*oContext*/});
-		}, new Error(
-			"Must not request side effects for a context of a binding with $$aggregation"));
+		}, new Error("Must not request side effects when using data aggregation"));
 	});
 
 	//*********************************************************************************************
