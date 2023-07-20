@@ -740,6 +740,9 @@ sap.ui.define([
 			MessageItem: {
 				title: "QUnit Page for sap.m.MessageItem"
 			},
+			/**
+			 * @deprecated since 1.112
+			 */
 			MessagePage: {
 				title: "QUnit Page for sap.m.MessagePage in Responsive mode",
 				sinon: {
