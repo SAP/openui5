@@ -38,7 +38,6 @@
 							<form:label>
 								<Label id="saveAdaptation-title-label"
 									text="{i18n>APP_DIALOG_TITLE_TEXT}"
-									textAlign="Left"
 									required="true">
 								</Label>
 							</form:label>
@@ -53,7 +52,6 @@
 							<form:label>
 								<Label id="saveAdaptation-rank-label"
 									text="{i18n>CLM_HEADER_PRIORITY}"
-									textAlign="Left"
 									required="true">
 								</Label>
 							</form:label>
