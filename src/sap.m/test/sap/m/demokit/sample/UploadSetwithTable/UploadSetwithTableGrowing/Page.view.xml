@@ -70,7 +70,7 @@
                     </m:SearchField>
 
                     <m:ToolbarSeparator />
-                    <UploadSetToolbarPlaceholder />
+                    <ActionsPlaceholder placeholderFor="UploadButtonPlaceholder" />
                     <m:Button
                         id="downloadSelectedButton"
                         text="Download"
@@ -137,37 +137,37 @@
 
             <!-- Columns for UploadSetwithTable -->
             <columns>
-                <m:Column id="fileName" importance="High">
-                    <m:header>
+                <Column id="fileName" importance="High">
+                    <header>
                         <m:Label text="File Name" />
-                    </m:header>
-                </m:Column>
-                <m:Column id="id">
-                    <m:header>
+                    </header>
+                </Column>
+                <Column id="id">
+                    <header>
                         <m:Label text="ID" />
-                    </m:header>
-                </m:Column>
-                <m:Column id="revision">
-                    <m:header>
+                    </header>
+                </Column>
+                <Column id="revision">
+                    <header>
                         <m:Label text="Revision" />
-                    </m:header>
-                </m:Column>
-                <m:Column id="status">
-                    <m:header>
+                    </header>
+                </Column>
+                <Column id="status">
+                    <header>
                         <m:Label text="Status" />
-                    </m:header>
-                </m:Column>
-                <m:Column id="fileSize">
-                    <m:header>
+                    </header>
+                </Column>
+                <Column id="fileSize">
+                    <header>
                         <m:Label text="File Size" />
-                    </m:header>
-                </m:Column>
-                <m:Column id="lastModified">
-                    <m:header>
+                    </header>
+                </Column>
+                <Column id="lastModified">
+                    <header>
                         <m:Label text="Last Modified" />
-                    </m:header>
-                </m:Column>
-                <m:Column id="actionButton" importance="High" />
+                    </header>
+                </Column>
+                <Column id="actionButton" importance="High" />
             </columns>
 
             <!-- Items aggregation with template UploadSetwithTableItem definition for each row -->

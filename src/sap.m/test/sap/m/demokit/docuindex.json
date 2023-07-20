@@ -544,7 +544,8 @@
 				"sap.m.sample.UploadSetwithTable.UploadSetwithTableSimple",
 				"sap.m.sample.UploadSetwithTable.UploadSetwithTableFileUploads",
 				"sap.m.sample.UploadSetwithTable.UploadSetwithTableFilePreview",
-				"sap.m.sample.UploadSetwithTable.UploadSetwithTableGrowing"
+				"sap.m.sample.UploadSetwithTable.UploadSetwithTableGrowing",
+				"sap.m.sample.UploadSetwithTable.UploadSetwithTablePersonalization"
 			]
 		},
 		{
@@ -3569,6 +3570,11 @@
 			"id": "sap.m.sample.UploadSetwithTable.UploadSetwithTableGrowing",
 			"name": "UploadSet With Table - Growing & Selection modes",
 			"description": "The growing feature helps if the content is not being displayed at once. It paginates the content into smaller pages that are displayed one after another. Random access to the pages (e.g jumping to the end) is not possible. Depending on the model, the content is loaded on demand (OData) or it is shown on demand (JSON). This example also demonstrates modes of the control (e.g. None, SingleSelect, MultiSelect, Delete)."
+		},
+		{
+			"id": "sap.m.sample.UploadSetwithTable.UploadSetwithTablePersonalization",
+			"name": "UploadSet With Table - Personalization and Variant management",
+			"description": "This example showcases personalization and variant management for UploadSetwithTable."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",

@@ -103,6 +103,7 @@ sap.ui.define([
 			"sap.m.EmptyIndicatorMode",
 			"sap.m.FacetFilterListDataType",
 			"sap.m.FacetFilterType",
+			"sap.m.FilterPanelField",
 			"sap.m.FlexAlignContent",
 			"sap.m.FlexAlignItems",
 			"sap.m.FlexAlignSelf",
@@ -187,7 +188,8 @@ sap.ui.define([
 			"sap.m.plugins.CopyPreference",
 			"sap.m.semantic.SemanticRuleSetType",
 			"sap.m.table.columnmenu.Category",
-			"sap.m.upload.UploaderHttpRequestMethod"
+			"sap.m.upload.UploaderHttpRequestMethod",
+			"sap.m.UploadSetwithTableActionPlaceHolder"
 		],
 		interfaces: [
 			"sap.m.IBar",
@@ -621,7 +623,8 @@ sap.ui.define([
 				},
 				"sap.m.ObjectHeader": {
 					"moveControls": "default"
-				}
+				},
+				"sap.m.upload.UploadSetwithTable":"sap/m/upload/p13n/flexibility/UploadSetwithTable"
 			},
 			//Configuration used for rule loading of Support Assistant
 			"sap.ui.support": {
@@ -664,6 +667,31 @@ sap.ui.define([
 		Translucent : "Translucent"
 
 	};
+
+	/**
+	*  Defines the placeholder type for the control to be replaced.
+	*
+	* @enum {string}
+	* @public
+	* @since 1.120
+	*/
+	thisLib.UploadSetwithTableActionPlaceHolder = {
+	   /**
+		* Placeholder for variant management.
+		* @public
+		*/
+	   VariantManagementPlaceholder: "VariantManagementPlaceholder",
+	   /**
+		* Placeholder for personalization settings button.
+		* @public
+		*/
+	   PersonalizationSettingsPlaceholder: "PersonalizationSettingsPlaceholder",
+	   /**
+		* Placeholder for upload button control.
+		* @public
+		*/
+	   UploadButtonPlaceholder : "UploadButtonPlaceholder"
+   };
 
 	/**
 	 * Types of state of {@link sap.m.BadgeEnabler} to expose its current state.
@@ -5981,6 +6009,22 @@ sap.ui.define([
 		},
 		bFinal: true
 	});
+
+	/**
+	 * An object type that represents sap.m.upload.FilterPanel fields properties.
+	 * @typedef {object}
+	 * @public
+	 * @property {string} label field name.
+	 * @property {string} path model path.
+	 */
+	thisLib.FilterPanelField = DataType.createType("sap.m.FilterPanelField", {
+		isValid: function (oValue) {
+			var aValueKeys = Object.keys(oValue);
+			return ["label", "path"].every(function (sKey) {
+				return aValueKeys.indexOf(sKey) !== -1;
+			});
+		}
+	}, "object");
 
 	/* Android browsers do not scroll a focused input into the view correctly after resize */
 	if (Device.os.android) {

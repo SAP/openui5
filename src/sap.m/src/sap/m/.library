@@ -106,6 +106,8 @@
                 <module>sap/m/upload/UploadSetwithTableItem</module>
                 <module>sap/m/upload/UploaderTableItem</module>
                 <module>sap/m/upload/FilePreviewDialog</module>
+                <module>sap/m/upload/Column</module>
+                <module>sap/m/upload/ActionsPlaceholder</module>
             </modules>
         </component>
         <component>

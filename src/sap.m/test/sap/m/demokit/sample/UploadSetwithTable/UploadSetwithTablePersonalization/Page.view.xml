@@ -1,6 +1,6 @@
 <mvc:View
     height="100%"
-    controllerName="sap.m.sample.UploadSetwithTable.UploadSetwithTableSimple.Page"
+    controllerName="sap.m.sample.UploadSetwithTable.UploadSetwithTablePersonalization.Page"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:m="sap.m"
     xmlns:core="sap.ui.core"
@@ -24,7 +24,8 @@
             beforeUploadStarts="onBeforeUploadStarts"
             selectionChange="onSelectionChange"
             itemRenamed="onDocumentRenamedSuccess"
-            uploadCompleted="onUploadCompleted" >
+            uploadCompleted="onUploadCompleted"
+            enableVariantManagement="true" >
             <!-- ToolBar for UploadSetwithTable -->
             <headerToolbar>
                 <m:OverflowToolbar>
@@ -32,6 +33,8 @@
                         text="{/documentTableTitle} ({= ${/items}.length})"
                         level="H2"
                     />
+                    <m:ToolbarSeparator />
+                    <ActionsPlaceholder placeholderFor="VariantManagementPlaceholder" />
                     <m:ToolbarSpacer />
                     <m:SearchField
                         width="20%"
@@ -106,42 +109,44 @@
                             />
                         </m:layoutData>
                     </m:Button>
+                     <ActionsPlaceholder placeholderFor="PersonalizationSettingsPlaceholder" />
                 </m:OverflowToolbar>
             </headerToolbar>
 
             <!-- Columns for UploadSetwithTable -->
-            <columns>
-                <Column id="fileName" importance="High">
+             <columns>
+                <!-- Use sap.m.upload.Column to define personalization settings instead of sap.m.Column -->
+                <Column id="fileName" columnPersonalizationText="File Name" path="fileName" importance="High">
                     <header>
                         <m:Label text="File Name" />
                     </header>
                 </Column>
-                <Column id="id">
+                <Column id="id" columnPersonalizationText="ID">
                     <header>
                         <m:Label text="ID" />
                     </header>
                 </Column>
-                <Column id="revision">
+                <Column id="revision" columnPersonalizationText="Revision" path="revision">
                     <header>
                         <m:Label text="Revision" />
                     </header>
                 </Column>
-                <Column id="status">
+                <Column id="status" columnPersonalizationText="Status" path="status">
                     <header>
                         <m:Label text="Status" />
                     </header>
                 </Column>
-                <Column id="fileSize">
+                <Column id="fileSize" columnPersonalizationText="File Size" path="fileSize">
                     <header>
                         <m:Label text="File Size" />
                     </header>
                 </Column>
-                <Column id="lastModified">
+                <Column id="lastModified" columnPersonalizationText="Last Modified" path="lastModifiedBy">
                     <header>
                         <m:Label text="Last Modified" />
                     </header>
                 </Column>
-                <Column id="actionButton" importance="High" />
+                <Column id="actionButton" columnPersonalizationText="Action Button"/>
             </columns>
 
             <!-- Items aggregation with template UploadSetwithTableItem definition for each row -->
