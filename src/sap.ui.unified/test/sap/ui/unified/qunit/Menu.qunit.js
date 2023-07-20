@@ -158,9 +158,9 @@ sap.ui.define([
 	};
 	var checkMenusClosed = function(sText, assert){
 		sText = sText ? " (" + sText + ")" : "";
-		assert.ok(!oRootMenu.bOpen, "Rootmenu closed" + sText);
-		assert.ok(!oSubMenu.bOpen, "Submenu closed" + sText);
-		assert.ok(!oSpecialMenu.bOpen, "Menu with special items closed" + sText);
+		assert.ok(!oRootMenu.isOpen(), "Rootmenu closed" + sText);
+		assert.ok(!oSubMenu.isOpen(), "Submenu closed" + sText);
+		assert.ok(!oSpecialMenu.isOpen(), "Menu with special items closed" + sText);
 	};
 
 	var closeAllMenusAndCheck = function(assert){
@@ -173,7 +173,7 @@ sap.ui.define([
 	var openMenu = function(oMenu, bWithMouse, assert){
 		var oDomRef = jQuery("#qunit-fixture").get(0);
 		oMenu.open(!bWithMouse, oDomRef, Dock.LeftTop, Dock.LeftTop, oDomRef, "5 5");
-		assert.ok(oMenu.bOpen, "Menu opened");
+		assert.ok(oMenu.isOpen(), "Menu opened");
 	};
 
 	var openRootMenu = function(bWithMouse, assert){
@@ -580,8 +580,8 @@ sap.ui.define([
 		qutils.triggerKeydown("menu5", "ARROW_DOWN");
 		checkFocusedItem("item5", assert);
 		qutils.triggerKeydown("menu3", "ARROW_LEFT");
-		assert.ok(oRootMenu.bOpen, "Rootmenu not closed after Arrow Left");
-		assert.ok(!oSubMenu.bOpen, "Submenu closed after Arrow Left");
+		assert.ok(oRootMenu.isOpen(), "Rootmenu not closed after Arrow Left");
+		assert.ok(!oSubMenu.isOpen(), "Submenu closed after Arrow Left");
 		checkHoveredItem("item5", undefined, assert);
 		checkFocusedItem("item5", assert);
 		closeAllMenusAndCheck(assert);
@@ -601,8 +601,8 @@ sap.ui.define([
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		qutils.triggerKeydown("menu2", "ARROW_RIGHT");
 		qutils.triggerKeydown("menu3", "ESCAPE");
-		assert.ok(oRootMenu.bOpen, "Rootmenu not closed after Escape");
-		assert.ok(!oSubMenu.bOpen, "Submenu closed after Escape");
+		assert.ok(oRootMenu.isOpen(), "Rootmenu not closed after Escape");
+		assert.ok(!oSubMenu.isOpen(), "Submenu closed after Escape");
 		assert.ok(!lastSelectedItemId, "No Event triggered on Escape");
 		checkHoveredItem("item5", undefined, assert);
 		checkFocusedItem("item5", assert);
@@ -720,13 +720,13 @@ sap.ui.define([
 			qutils.triggerEvent("mousemove", "item7", {});
 			checkHoveredItem("item7", undefined, assert);
 			checkFocusedItem("item7", assert);
-			assert.ok(oRootMenu.bOpen, "Rootmenu open");
-			assert.ok(!oSubMenu.bOpen, "Submenu not yet open");
+			assert.ok(oRootMenu.isOpen(), "Rootmenu open");
+			assert.ok(!oSubMenu.isOpen(), "Submenu not yet open");
 			setTimeout(function(){
 				checkHoveredItem("item7", undefined, assert);
 				checkFocusedItem("item7", assert);
-				assert.ok(oRootMenu.bOpen, "Rootmenu open");
-				assert.ok(oSubMenu.bOpen, "Submenu open");
+				assert.ok(oRootMenu.isOpen(), "Rootmenu open");
+				assert.ok(oSubMenu.isOpen(), "Submenu open");
 				checkMenuFocusing();
 				closeAllMenusAndCheck(assert);
 				done();
@@ -750,8 +750,8 @@ sap.ui.define([
 				checkHoveredItem("item7", undefined, assert);
 				checkFocusedItem("item7", assert);
 				checkHoveredItem(null, oSubMenu, assert);
-				assert.ok(oRootMenu.bOpen, "Rootmenu open");
-				assert.ok(oSubMenu.bOpen, "Submenu open");
+				assert.ok(oRootMenu.isOpen(), "Rootmenu open");
+				assert.ok(oSubMenu.isOpen(), "Submenu open");
 				qutils.triggerEvent("mousemove", "item8", {});
 				setTimeout(function(){
 					checkHoveredItem("item8", oSubMenu, assert);
@@ -770,8 +770,8 @@ sap.ui.define([
 			checkHoveredItem(null, undefined, assert);
 			qutils.triggerEvent("click", "item7", {});
 			checkHoveredItem(null, oSubMenu, assert);
-			assert.ok(oRootMenu.bOpen, "Rootmenu open");
-			assert.ok(oSubMenu.bOpen, "Submenu open");
+			assert.ok(oRootMenu.isOpen(), "Rootmenu open");
+			assert.ok(oSubMenu.isOpen(), "Submenu open");
 			qutils.triggerEvent("click", "item8", {});
 			assert.equal(lastSelectedItemId, "item8", "Event triggered on item:");
 			closeAllMenusAndCheck(assert);
@@ -812,7 +812,7 @@ sap.ui.define([
 		checkFocusedItem("item5", assert);
 		qutils.triggerEvent("click", "item5", {});
 		assert.equal(lastSelectedItemId, null, "No Event triggered on disabled item:");
-		assert.ok(oRootMenu.bOpen, "Rootmenu still open");
+		assert.ok(oRootMenu.isOpen(), "Rootmenu still open");
 		closeAllMenusAndCheck(assert);
 	});
 
@@ -825,17 +825,17 @@ sap.ui.define([
 			qutils.triggerEvent("mousemove", "item7", {});
 			setTimeout(function(){
 				checkHoveredItem("item7", undefined, assert);
-				assert.ok(oRootMenu.bOpen, "Rootmenu open");
-				assert.ok(oSubMenu.bOpen, "Submenu open");
+				assert.ok(oRootMenu.isOpen(), "Rootmenu open");
+				assert.ok(oSubMenu.isOpen(), "Submenu open");
 				qutils.triggerEvent("mousemove", "item10", {});
 				setTimeout(function(){
 					checkHoveredItem("item10", oSubMenu, assert);
 					checkFocusedItem("item10", assert);
 					qutils.triggerEvent("click", "item10", {});
 					assert.equal(lastSelectedItemId, null, "Event not triggered on disabled item:");
-					assert.ok(oRootMenu.bOpen, "Rootmenu still open");
-					assert.ok(oSubMenu.bOpen, "Submenu still open");
-					assert.ok(!oSubSubMenu.bOpen, "SubSubmenu not open");
+					assert.ok(oRootMenu.isOpen(), "Rootmenu still open");
+					assert.ok(oSubMenu.isOpen(), "Submenu still open");
+					assert.ok(!oSubSubMenu.isOpen(), "SubSubmenu not open");
 					closeAllMenusAndCheck(assert);
 					done();
 				}, DELAY_SUBMENU_TIMER);
@@ -848,14 +848,14 @@ sap.ui.define([
 			checkHoveredItem(null, undefined, assert);
 			qutils.triggerEvent("click", "item7", {});
 			checkHoveredItem(null, oSubMenu, assert);
-			assert.ok(oRootMenu.bOpen, "Rootmenu open");
-			assert.ok(oSubMenu.bOpen, "Submenu open");
+			assert.ok(oRootMenu.isOpen(), "Rootmenu open");
+			assert.ok(oSubMenu.isOpen(), "Submenu open");
 			lastSelectedItemId = null;
 			qutils.triggerEvent("click", "item10", {});
 			assert.equal(lastSelectedItemId, null, "Event not triggered on disabled item:");
-			assert.ok(oRootMenu.bOpen, "Rootmenu still open");
-			assert.ok(oSubMenu.bOpen, "Submenu still open");
-			assert.ok(!oSubSubMenu.bOpen, "SubSubmenu not open");
+			assert.ok(oRootMenu.isOpen(), "Rootmenu still open");
+			assert.ok(oSubMenu.isOpen(), "Submenu still open");
+			assert.ok(!oSubSubMenu.isOpen(), "SubSubmenu not open");
 			closeAllMenusAndCheck(assert);
 		});
 	}
@@ -1384,7 +1384,7 @@ sap.ui.define([
 		var oMenu = new Menu({tooltip: "a tooltip"});
 		var fnEventHandler = function (oEvent) {
 			oMenu.openAsContextMenu(oEvent, jQuery("#qunit-fixture").get(0));
-			assert.ok(oMenu.bOpen, "Menu opened");
+			assert.ok(oMenu.isOpen(), "Menu opened");
 		};
 		jQuery("#qunit-fixture").on("contextmenu", fnEventHandler);
 		jQuery("#qunit-fixture").trigger("contextmenu");
