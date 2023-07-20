@@ -843,13 +843,17 @@ sap.ui.define([
 			return oPromise.then(function step(vValue, bAgain) {
 				var vIndex, aMatches, oParentValue;
 
+				if (vValue === undefined) {
+					// already knowing there is nothing, but unable to stop the reduce loop early
+					return undefined;
+				}
 				if (sSegment === "$count") {
 					return Array.isArray(vValue) ? vValue.$count : invalidSegment(sSegment);
 				}
-				if (vValue === undefined || vValue === null) {
-					// already beyond the valid data: an unresolved navigation property or a
-					// property of a complex type which is null
-					return undefined;
+				if (vValue === null) {
+					// a complex or navigation property is null -> treat it as transient
+					bTransient = true;
+					return missingValue({}, sSegment, i + 1);
 				}
 				if (typeof vValue !== "object" || sSegment === "@$ui5._"
 					|| Array.isArray(vValue) && (sSegment[0] === "$" || sSegment === "length")) {
