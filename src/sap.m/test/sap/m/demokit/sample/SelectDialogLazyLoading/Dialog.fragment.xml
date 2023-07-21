@@ -3,6 +3,7 @@
 	xmlns:core="sap.ui.core">
 	<SelectDialog
 		id="mySelectDialog"
+		initialFocus="SearchField"
 		noDataText="No Products Found"
 		title="Select Product"
 		search=".onSearch"

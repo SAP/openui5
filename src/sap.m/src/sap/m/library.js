@@ -2555,6 +2555,28 @@ sap.ui.define([
 	}, DataType.getType("string"));
 
 	/**
+	 * Defines the control that will receive the initial focus in the
+	 * <code>sap.m.SelectDialog</code> or <code>sap.m.TableSelectDialog</code>.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.117.0
+	 */
+	thisLib.SelectDialogInitialFocus = {
+		/**
+		 * Content list.
+		 * @public
+		 */
+		List: "List",
+
+		/**
+		 * SearchField control
+		 * @public
+		 */
+		SearchField: "SearchField"
+	};
+
+	/**
 	 * A subset of input types that fits to a simple API returning one string.
 	 *
 	 * Not available on purpose: button, checkbox, hidden, image, password, radio, range, reset, search, submit.
