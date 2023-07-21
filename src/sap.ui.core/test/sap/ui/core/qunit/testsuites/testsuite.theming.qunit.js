@@ -85,7 +85,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			"Theming": {
 				title: "sap.ui.core.Theming",
 				ui5: {
-					theme: undefined,
+					theme: "",
 					themeRoots: {
 						"sap_initialThemeRoot": "/somewhere/outside"
 					}
@@ -97,7 +97,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			"ThemingWoThemeManager": {
 				title: "sap.ui.core.Theming w/o sap.ui.core.theming.ThemeManager",
 				ui5: {
-					theme: undefined,
+					theme: "",
 					themeRoots: {
 						"sap_initialThemeRoot": "/somewhere/outside"
 					}
