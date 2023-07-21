@@ -17,25 +17,29 @@
 
         <columns>
 
-            <Column label="Description">
+            <Column>
+                <m:Label text="Description"/>
                 <template>
                     <m:Text text="{Description}" wrapping="false" />
                 </template>
             </Column>
 
-            <Column label="HierarchyLevel">
+            <Column>
+                <m:Label text="HierarchyLevel"/>
                 <template>
                     <m:Text text="{HierarchyLevel}" wrapping="false" />
                 </template>
             </Column>
 
-            <Column label="NodeID">
+            <Column>
+                <m:Label text="NodeID"/>
                 <template>
                     <m:Text text="{NodeID}" wrapping="false" />
                 </template>
             </Column>
 
-            <Column label="ParentNodeID">
+            <Column>
+                <m:Label text="ParentNodeID"/>
                 <template>
                     <m:Text text="{ParentNodeID}" wrapping="false" />
                 </template>

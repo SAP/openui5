@@ -9278,10 +9278,18 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		const oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS");
 		const sView = '\
 <t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
-	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode"/>\
-	<t:AnalyticalColumn grouped="false" leadingProperty="Customer" template="Customer"/>\
-	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
-		template="AmountInCompanyCodeCurrency"/>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
+		<Label text="CompanyCode"/>\
+		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="Customer">\
+		<Label text="Customer"/>\
+		<t:template><Text wrapping="false" text="{Customer}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text wrapping="false" text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
 </t:AnalyticalTable>';
 
 		return this.createView(assert, sView, oModel).then(() => {
@@ -9340,10 +9348,18 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		const oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS");
 		const sView = '\
 <t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
-	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode"/>\
-	<t:AnalyticalColumn grouped="false" leadingProperty="Customer" template="Customer"/>\
-	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
-		template="AmountInCompanyCodeCurrency"/>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
+		<Label text="CompanyCode"/>\
+		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="Customer">\
+		<Label text="Customer"/>\
+		<t:template><Text wrapping="false" text="{Customer}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text wrapping="false" text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
 </t:AnalyticalTable>';
 
 		return this.createView(assert, sView, oModel).then(() => {
