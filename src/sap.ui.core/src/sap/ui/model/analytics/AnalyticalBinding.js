@@ -2,13 +2,12 @@
  * ${copyright}
  */
 
-// Disable some ESLint rules. camelcase (some "_" in names to indicate indexed variables (like in math)), valid-jsdoc (not completed yet)
-// All other warnings, errors should be resolved
-/*eslint camelcase:0, valid-jsdoc:0, no-warning-comments:0, max-len:0 */
+// Disable some ESLint rules. camelcase (some "_" in names to indicate indexed variables (like in math)),
+// valid-jsdoc (not completed yet)
+/*eslint camelcase:0, valid-jsdoc:0, max-len:0 */
 
 // Provides class sap.ui.model.odata.ODataListBinding
 sap.ui.define([
-	"./AnalyticalVersionInfo",
 	"./BatchResponseCollector",
 	"./odata4analytics",
 	"sap/base/Log",
@@ -27,9 +26,9 @@ sap.ui.define([
 	"sap/ui/model/TreeBinding",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/ODataUtils"
-], function(AnalyticalVersionInfo, BatchResponseCollector, odata4analytics, Log, deepExtend, each,
-		extend, isEmptyObject, uid, ChangeReason, Filter, FilterOperator, FilterProcessor,
-		FilterType, Sorter, TreeAutoExpandMode, TreeBinding, CountMode, ODataUtils) {
+], function(BatchResponseCollector, odata4analytics, Log, deepExtend, each, extend, isEmptyObject, uid,
+		ChangeReason, Filter, FilterOperator, FilterProcessor, FilterType, Sorter, TreeAutoExpandMode,
+		TreeBinding, CountMode, ODataUtils) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.analytics.AnalyticalBinding",
@@ -358,9 +357,9 @@ sap.ui.define([
 			}
 
 			// detect ODataModel version
-			this.iModelVersion = AnalyticalVersionInfo.getVersion(this.oModel);
+			this.iModelVersion = AnalyticalBinding._getModelVersion(this.oModel);
 			if (this.iModelVersion === null) {
-				oLogger.error("The AnalyticalBinding does not support Models other than sap.ui.model.odata.ODataModel version 1 or 2.");
+				oLogger.error("The AnalyticalBinding does not support the given model");
 				return;
 			}
 
@@ -1569,6 +1568,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the version of the given OData model if the model is supported.
+	 *
+	 * @param {sap.ui.model.Model} oModel The OData model
+	 * @returns {number|null}
+	 *   The version of the OData model, e.g. <code>2</code>, or <code>null</code> if the model is not supported
+	 * @private
+	 */
+	AnalyticalBinding._getModelVersion = function (oModel) {
+		const sModelName = oModel.getMetadata().getName();
+		let iVersion = sModelName === "sap.ui.model.odata.v2.ODataModel" ? 2 : null;
+
+		/** @deprecated As of version 1.48.0 */
+		if (sModelName === "sap.ui.model.odata.ODataModel") {
+			iVersion = 1;
+		}
+		return iVersion;
+	};
+
+	/**
 	 * @private
 	 */
 	AnalyticalBinding.prototype._getContextsForParentContext = function(oParentContext, iStartIndex, iLength,
@@ -2740,10 +2758,12 @@ sap.ui.define([
 				   where the set of all operations included in the batch request becomes known and this condition can be checked. */
 				this._registerNewRequest(oRequestDetails.sRequestId);
 
-				if (this.iModelVersion === AnalyticalVersionInfo.V1) {
+				/** @deprecated As of version 1.48.0 */
+				if (this.iModelVersion === 1) {
 					//V1 - use createBatchOperation
 					aBatchQueryRequest.push(this.oModel.createBatchOperation(sPath.replace(/\ /g, "%20"), "GET"));
-				} else if (this.iModelVersion === AnalyticalVersionInfo.V2) {
+				}
+				if (this.iModelVersion === 2) {
 					var aUrlParameters = this._getQueryODataRequestOptions(oAnalyticalQueryRequest,
 							oRequestDetails.bIsLeafGroupsRequest,  {encode: true});
 					if (this.sCustomParams) {
@@ -2773,7 +2793,8 @@ sap.ui.define([
 			// fire events to indicate sending of a new request
 			this.fireDataRequested();
 
-			if (this.iModelVersion === AnalyticalVersionInfo.V1) {
+			/** @deprecated As of version 1.48.0 */
+			if (this.iModelVersion === 1) {
 				this.oModel.addBatchReadOperations(aBatchQueryRequest);
 				oBatchRequestHandle = this.oModel.submitBatch(fnSuccess, fnError, true, true);
 
@@ -2781,7 +2802,8 @@ sap.ui.define([
 					info: "",
 					infoObject : {}
 				});
-			} else {
+			}
+			if (this.iModelVersion === 2) {
 				// fake a uniform request handle, so the original code works with the v2 ODataModel
 				// the v2 model does not return an overall request handle for the batch request
 				oBatchRequestHandle = {
@@ -2863,18 +2885,15 @@ sap.ui.define([
 				}
 			}
 
-			// determine the logical success status: true iff all operations succeeded
-			var bOverallSuccess = true;
-			var aBatchErrors;
-
 			// raise event here since there is no separate fnCompleted handler for batch requests
 			that.fireDataReceived({data: oData});
 
-			//check for possible V1 errors
-			var oV1Errors = {};
-			if (that.iModelVersion === AnalyticalVersionInfo.V1) {
+			/** @deprecated As of version 1.48.0 */
+			if (that.iModelVersion === 1) {
+				let bOverallSuccess = true; // determine the logical success status: true iff all operations succeeded
+				let oV1Errors = {}; // check for possible V1 errors
 				// retrieve the errors from the model and reset the success flag
-				aBatchErrors = that.oModel._getBatchErrors(oData);
+				const aBatchErrors = that.oModel._getBatchErrors(oData);
 				if (aBatchErrors.length > 0) {
 					bOverallSuccess = false;
 					oV1Errors = that.oModel._handleError(aBatchErrors[0]);
@@ -2912,9 +2931,9 @@ sap.ui.define([
 				return;
 			}
 
-			var oV1Error = oError;
-			if (that.iModelVersion === AnalyticalVersionInfo.V1) {
-				oV1Error = that.oModel._handleError(oError);
+			/** @deprecated As of version 1.48.0 */
+			if (that.iModelVersion === 1) {
+				oError = that.oModel._handleError(oError);
 			}
 
 			// fire event to indicate completion of request
@@ -2922,13 +2941,13 @@ sap.ui.define([
 				info: "",
 				infoObject : {},
 				success: false,
-				errorobject: oV1Error});
+				errorobject: oError});
 
-			// Legacy Code: Unsure if this is need for OData V1 Model...
-			if (that.iModelVersion === AnalyticalVersionInfo.V1) {
-				that.oModel.fireRequestFailed(oV1Error);
+			/** @deprecated As of version 1.48.0 */
+			if (that.iModelVersion === 1) {
+				// Legacy Code: Unsure if this is need for OData V1 Model...
+				that.oModel.fireRequestFailed(oError);
 			}
-
 			that.fireDataReceived();
 		}
 	};
@@ -2990,10 +3009,12 @@ sap.ui.define([
 		oLogger.debug("AnalyticalBinding: executing query request");
 
 		var iRequestHandleId = this._getIdForNewRequestHandle();
-		if (this.iModelVersion === AnalyticalVersionInfo.V1) {
+		/** @deprecated As of version 1.48.0 */
+		if (this.iModelVersion === 1) {
 			//trigger data loading, the request handle is registered during the fnHandleUpdate callback, used by the V1 model
 			this.oModel._loadData(sPath, aParam, fnSuccess, fnError, false, fnUpdateHandle, fnCompleted);
-		} else {
+		}
+		if (this.iModelVersion === 2) {
 			if (this.sCustomParams) {
 				aParam.push(this.sCustomParams);
 			}
@@ -3037,7 +3058,7 @@ sap.ui.define([
 			// with ODataModel V2, the completed function is not called by the model anymore
 			// the correct moment to clean up is after the success handler
 			// the error handler takes care of this itself
-			if (that.iModelVersion === AnalyticalVersionInfo.V2) {
+			if (that.iModelVersion === 2) {
 				fnCompleted(oData);
 			}
 		}
@@ -4610,7 +4631,7 @@ sap.ui.define([
 	 * @public
 	 */
 	AnalyticalBinding.prototype.refresh = function(bForceUpdate) {
-		// apply is used here to be compatible to ODataModel v1, where the signature is like the private _refresh()
+		// use apply as refresh may be called with more parameters
 		AnalyticalBinding.prototype._refresh.apply(this, arguments);
 	};
 

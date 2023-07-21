@@ -9,13 +9,11 @@
 
 // Provides API for analytical extensions in OData service metadata
 sap.ui.define([
-	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator',
-	'sap/ui/model/Sorter',
-	'./AnalyticalVersionInfo',
-	"sap/base/security/encodeURL"
-],
-	function(Filter, FilterOperator, Sorter, AnalyticalVersionInfo, encodeURL) {
+	"sap/base/security/encodeURL",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter"
+], function(encodeURL, Filter, FilterOperator, Sorter) {
 	"use strict";
 
 	/**
@@ -281,7 +279,7 @@ sap.ui.define([
 			}
 			/** @deprecated As of version 1.94.0 */
 			if (oModelReference.sServiceURI) {
-				if (mParameter && mParameter.modelVersion === AnalyticalVersionInfo.V2) {
+				if (mParameter && mParameter.modelVersion === 2) {
 					// Check if the user wants a V2 model
 					ODataModelClass = sap.ui.require("sap/ui/model/odata/v2/ODataModel") ||
 						sap.ui.requireSync("sap/ui/model/odata/v2/ODataModel"); // legacy-relevant: fallback for missing dependency

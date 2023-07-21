@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/model/analytics/odata4analytics",
 	"sap/ui/model/analytics/AnalyticalBinding",
 	"sap/ui/model/analytics/AnalyticalTreeBindingAdapter",
-	"sap/ui/model/analytics/AnalyticalVersionInfo",
 	"sap/ui/model/analytics/BatchResponseCollector",
 	"sap/ui/model/analytics/ODataModelAdapter",
 	"sap/ui/model/ChangeReason",
@@ -18,7 +17,6 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/TreeAutoExpandMode",
 	"sap/ui/model/odata/CountMode",
-	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
@@ -30,10 +28,9 @@ sap.ui.define([
 	"sap/ui/core/qunit/analytics/TBA_Batch_ExpandCollapseToggle",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Filter",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Sort"
-], function (Log, deepExtend, extend, odata4analytics, AnalyticalBinding,
-		AnalyticalTreeBindingAdapter, AnalyticalVersionInfo, BatchResponseCollector,
-		ODataModelAdapter, ChangeReason, Filter, FilterOperator, FilterProcessor, Sorter,
-		TreeAutoExpandMode, CountMode, ODataModelV1, ODataUtils, ODataModelV2, o4aFakeService) {
+], function (Log, deepExtend, extend, odata4analytics, AnalyticalBinding, AnalyticalTreeBindingAdapter,
+		BatchResponseCollector, ODataModelAdapter, ChangeReason, Filter, FilterOperator, FilterProcessor, Sorter,
+		TreeAutoExpandMode, CountMode, ODataUtils, ODataModelV2, o4aFakeService) {
 	/*global QUnit, sinon */
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
@@ -298,36 +295,33 @@ sap.ui.define([
 			+ "P_CostCenterTo='999-9999')/Results",
 		sPathHierarchy = "/TypeWithHierarchiesResults";
 
-	/*
-	 * If <code>iVersion !== 1 && !fnODataV2Callback</code>, a <code>Promise</code> is returned that
-	 * resolves with the new binding as soon as metadata has been loaded.
+	/**
+	 * Applies the ODataModelAdapter to the given OData model and creates a new AnalyticalBinding
+	 * with the given parameters, analytical info, binding path, sorters and filters.
+	 *
+	 * @param {sap.ui.model.Model} oModel
+	 *   The OData model
+	 * @param {object} [mParameters={}]
+	 *   The Analytical binding parameters
+	 * @param {object[]} [aAnalyticalInfo]
+	 *   The array of the analytical columns to be used; by default CostCenter (grouped), CostElement (grouped),
+	 *   Currency (grouped) and ActualCosts (with total)
+	 * @param {string} [sBindingPath="/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results"]
+	 *   The binding path
+	 * @param {sap.ui.model.Sorter[]} [aSorters=[]]
+	 *   The array of sorters
+	 * @param {sap.ui.model.Filter[]} [aFilters=[]]
+	 *   The array of filters
+	 * @returns {sap.ui.model.analytics.AnalyticalBinding}
+	 *   The analytical binding
 	 */
-	function setupAnalyticalBinding(iVersion, mParameters, fnODataV2Callback, aAnalyticalInfo,
-			sBindingPath, bSkipInitialize, aSorters, aFilters) {
-		var oBinding,
-			oModel;
-
+	function applyAdapterAndCreateBinding(oModel, mParameters, aAnalyticalInfo, sBindingPath, aSorters, aFilters) {
 		mParameters = mParameters || {};
 		aAnalyticalInfo = aAnalyticalInfo
 			|| [oCostCenterGrouped, oCostElementGrouped, oCurrencyGrouped, oActualCostsTotal];
 
-		if (iVersion === 1) {
-			oModel = new ODataModelV1(sServiceURL, {
-				defaultCountMode : CountMode.Inline,
-				json: true,
-				tokenHandling: false
-			});
-
-		} else {
-			oModel = new ODataModelV2(sServiceURL, {
-				defaultCountMode : CountMode.Inline,
-				tokenHandling: false,
-				json: true
-			});
-		}
-
 		ODataModelAdapter.apply(oModel);
-		oBinding = new AnalyticalBinding(oModel, sBindingPath || sPath, null, aSorters || [],
+		const oBinding = new AnalyticalBinding(oModel, sBindingPath || sPath, null, aSorters || [],
 			aFilters || [], /*mParameters*/ {
 				analyticalInfo : aAnalyticalInfo,
 				autoExpandMode : mParameters.autoExpandMode,
@@ -345,21 +339,51 @@ sap.ui.define([
 		);
 		AnalyticalTreeBindingAdapter.apply(oBinding);
 
-		//V1 => synchronous metadata, initialize the binding directly
-		if (iVersion === 1) {
-			if (!bSkipInitialize) {
-				oBinding.initialize();
-			}
-			return {
-				binding : oBinding,
-				model : oModel};
-		} else if (fnODataV2Callback) {
+		return oBinding;
+	}
+
+	/**
+	 * Creates an OData V2 model and an analytical binding instance.
+	 * If a callback function is given, it is called when the metadata are loaded and the binding is
+	 * initialized. If no callback function is given, a Promise is returned that resolves with the
+	 * new binding as soon as metadata has been loaded.
+	 *
+	 * @param {object} [mParameters={}]
+	 *   The Analytical binding parameters
+	 * @param {function} [fnODataV2Callback]
+	 *   The function which is called when the metadata is loaded and the binding is initialized
+	 * @param {object[]} [aAnalyticalInfo]
+	 *   The array of the analytical columns to be used; by default CostCenter (grouped), CostElement (grouped),
+	 *   Currency (grouped) and ActualCosts (with total)
+	 * @param {string} [sBindingPath="/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results"]
+	 *   The binding path
+	 * @param {boolean} [bSkipInitialize=false]
+	 *   Whether to skip the binding intialization
+	 * @param {sap.ui.model.Sorter[]} [aSorters=[]]
+	 *   The array of sorters
+	 * @param {sap.ui.model.Filter[]} [aFilters=[]]
+	 *   The array of filters
+	 * @returns {undefined|Promise}
+	 *   <code>undefined</code> if a callback function is given; otherwise a Promise which resolves
+	 *   with the new analytial binding instance
+	 */
+	function setupAnalyticalBinding(mParameters, fnODataV2Callback, aAnalyticalInfo,
+			sBindingPath, bSkipInitialize, aSorters, aFilters) {
+		const oModel = new ODataModelV2(sServiceURL, {
+			defaultCountMode : CountMode.Inline,
+			tokenHandling: false,
+			json: true
+		});
+		const oBinding = applyAdapterAndCreateBinding(oModel, mParameters, aAnalyticalInfo, sBindingPath,
+			aSorters, aFilters);
+		if (fnODataV2Callback) {
 			oModel.attachMetadataLoaded(function () {
 				if (!bSkipInitialize) {
 					oBinding.initialize();
 				}
 				fnODataV2Callback(oBinding, oModel);
 			});
+			return undefined;
 		} else {
 			return oModel.metadataLoaded().then(function () {
 				if (!bSkipInitialize) {
@@ -368,6 +392,31 @@ sap.ui.define([
 				return oBinding;
 			});
 		}
+	}
+
+	/**
+	 * Creates an OData V1 model and an analytical binding instance.
+	 *
+	 * @returns {object}
+	 *   An object with the properties <code>binding</code> containing the analytical binding instance
+	 *   and <code>model</code> containing the OData V1 model.
+	 * @deprecated As of version 1.48.0
+	 */
+	function setupAnalyticalBindingV1() {
+		const ODataModelV1Class = sap.ui.require("sap/ui/model/odata/ODataModel") ||
+				sap.ui.requireSync("sap/ui/model/odata/ODataModel"); // legacy-relevant: fallback for missing dependency
+		const oModel = new ODataModelV1Class(sServiceURL, {
+			defaultCountMode : CountMode.Inline,
+			json: true,
+			tokenHandling: false
+		});
+		const oBinding = applyAdapterAndCreateBinding(oModel);
+		// V1 => synchronous metadata, initialize the binding directly
+		oBinding.initialize();
+		return {
+			binding : oBinding,
+			model : oModel
+		};
 	}
 
 	//*********************************************************************************************
@@ -393,7 +442,7 @@ sap.ui.define([
 		}
 	});
 
-	/** @deprecated As of version 1.20.0 */
+	/** @deprecated As of version 1.48.0 */
 	QUnit.test("Eventing - ODataModel V1 - DataRequested and DataReceived", function (assert) {
 		var done = assert.async(),
 			oBinding,
@@ -408,8 +457,7 @@ sap.ui.define([
 		// 	.withExactArgs("EventProvider sap.ui.model.odata.ODataModel "
 		// 		+ "path /$metadata should be absolute if no Context is set");
 
-
-		oSetupBinding = setupAnalyticalBinding(1, {});
+		oSetupBinding = setupAnalyticalBindingV1();
 		oBinding = oSetupBinding.binding;
 		oModel = oSetupBinding.model;
 
@@ -477,7 +525,7 @@ sap.ui.define([
 	QUnit.test("Eventing - ODataModel V2 - DataRequested and DataReceived", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {}, function (oBinding, oModel) {
+		setupAnalyticalBinding({}, function (oBinding, oModel) {
 			var oRequestedSpy = sinon.spy(oBinding, 'fireDataRequested'),
 				oReceivedSpy = sinon.spy(oBinding, 'fireDataReceived'),
 				oRequestSentSpy = sinon.spy(oModel, 'fireRequestSent'),
@@ -572,7 +620,7 @@ sap.ui.define([
 			done = assert.async(),
 			that = this;
 
-		setupAnalyticalBinding(2, {}, function (oBinding, oModel) {
+		setupAnalyticalBinding({}, function (oBinding, oModel) {
 			oModel.attachBatchRequestCompleted(function () {
 				iCount += 1;
 				if (iCount === 1) {
@@ -603,7 +651,7 @@ sap.ui.define([
 			],
 			done = assert.async();
 
-		setupAnalyticalBinding(2, {noPaging: true, numberOfExpandedLevels: 2},
+		setupAnalyticalBinding({noPaging: true, numberOfExpandedLevels: 2},
 			function (oBinding, oModel) {
 				oModel.attachBatchRequestCompleted(function () {
 					done();
@@ -622,7 +670,7 @@ sap.ui.define([
 				+ ",P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
 			done = assert.async();
 
-		setupAnalyticalBinding(2, {useBatchRequests: false}, function (oBinding, oModel) {
+		setupAnalyticalBinding({useBatchRequests: false}, function (oBinding, oModel) {
 			sinon.stub(oModel, "read", function (sPath) {
 				assert.strictEqual(sPath, sExpectedPath, "percent encoding of space done");
 
@@ -638,7 +686,7 @@ sap.ui.define([
 	QUnit.test("No Paging Option - Normal Use Case", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {noPaging: true}, function (oBinding, oModel) {
+		setupAnalyticalBinding({noPaging: true}, function (oBinding, oModel) {
 
 			oBinding.attachChange(fnChangeHandler1);
 			oBinding.getContexts(0, 20, 10);
@@ -674,7 +722,7 @@ sap.ui.define([
 	QUnit.test("No Paging Option - Auto Expand (NO multi-unit)", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {noPaging: true, numberOfExpandedLevels: 2}, function (oBinding) {
+		setupAnalyticalBinding({noPaging: true, numberOfExpandedLevels: 2}, function (oBinding) {
 
 			oBinding.attachChange(fnChangeHandler1);
 			oBinding.getContexts(0, 20, 10);
@@ -713,7 +761,7 @@ sap.ui.define([
 	QUnit.test("selectionChanged event with selectAll and collapse", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {noPaging: true, numberOfExpandedLevels: 2}, function (oBinding) {
+		setupAnalyticalBinding({noPaging: true, numberOfExpandedLevels: 2}, function (oBinding) {
 
 			oBinding.attachChange(fnChangeHandler1);
 			oBinding.getContexts(0, 20, 10);
@@ -761,7 +809,7 @@ sap.ui.define([
 	QUnit.test("selectionChanged event with collapse: deselect lead selection", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {noPaging: true, numberOfExpandedLevels: 2}, function (oBinding) {
+		setupAnalyticalBinding({noPaging: true, numberOfExpandedLevels: 2}, function (oBinding) {
 
 			oBinding.attachChange(fnChangeHandler1);
 			oBinding.getContexts(0, 20, 10);
@@ -806,7 +854,7 @@ sap.ui.define([
 	QUnit.test("Check if custom URL parameters are attached", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {
+		setupAnalyticalBinding({
 				custom: {
 					"search": "ABTestString"
 				}
@@ -846,7 +894,7 @@ sap.ui.define([
 	QUnit.test("getDownloadURL: Check if custom URL parameters are attached", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {
+		setupAnalyticalBinding({
 				custom: {
 					"search": "ABTestString"
 				}
@@ -866,7 +914,7 @@ sap.ui.define([
 	QUnit.test("getDownloadURL: replace spaces with %20", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {
+		setupAnalyticalBinding({
 				custom: {
 					"search": "AB Test String"
 				}
@@ -936,7 +984,7 @@ sap.ui.define([
 		QUnit.test("filter operators: " + oFixture.filters[0].sOperator, function (assert) {
 			var done = assert.async();
 
-			setupAnalyticalBinding(2, {}, function (oBinding) {
+			setupAnalyticalBinding({}, function (oBinding) {
 					var sURL = oBinding.getDownloadUrl(),
 						sFilterPart = sURL.slice(sURL.lastIndexOf("=") + 1);
 
@@ -954,7 +1002,7 @@ sap.ui.define([
 	QUnit.test("filter operators: combine all", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 				var sExpectedFilterPart = "("
 						+ "endswith(CostCenter,%271%27)%20"
 						+ "or%20not%20endswith(CostCenter,%271%27)%20"
@@ -1037,7 +1085,7 @@ sap.ui.define([
 			// $select of excel download urls
 			var done = assert.async();
 
-			setupAnalyticalBinding(2, {select : oFixture.select}, function (oBinding, oModel) {
+			setupAnalyticalBinding({select : oFixture.select}, function (oBinding, oModel) {
 				var sURL = oBinding.getDownloadUrl();
 
 				assert.strictEqual(sURL,
@@ -1053,7 +1101,7 @@ sap.ui.define([
 	QUnit.test("getGroupName: group by a dimension that is not in UI", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 
 			var oContext = {
 					getProperty : function () {}
@@ -1082,7 +1130,7 @@ sap.ui.define([
 	QUnit.test("getGroupName: dimension with text and empty label", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 
 			var oContext = {
 					getProperty : function () {}
@@ -1120,7 +1168,7 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var done = assert.async();
 
-			setupAnalyticalBinding(2, {}, function (oBinding) {
+			setupAnalyticalBinding({}, function (oBinding) {
 
 				var oContext = {
 						getProperty : function () {}
@@ -1550,7 +1598,7 @@ sap.ui.define([
 				+ "ActualCosts,Currency",
 			sExpectedSelect = "$select=" + sSelects;
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			var oAnalyticalQueryRequest = {
 					getFilterExpression : function () {
 						return {
@@ -1721,6 +1769,33 @@ sap.ui.define([
 		oFilterExpressionMock.verify();
 	});
 
+
+	//*********************************************************************************************
+[
+	{sName: "sap.ui.model.odata.v2.ODataModel", iVersion: 2},
+	{sName: "~other~", iVersion: null}
+].forEach((oFixture) => {
+	QUnit.test(`_getModelVersion(${oFixture.sName}): ${oFixture.iVersion}`, function (assert) {
+		const oModel = {getMetadata() {}};
+		const oMetadata = {getName() {}};
+		this.mock(oModel).expects("getMetadata").returns(oMetadata);
+		this.mock(oMetadata).expects("getName").returns(oFixture.sName);
+
+		// code under test
+		assert.strictEqual(AnalyticalBinding._getModelVersion(oModel), oFixture.iVersion);
+	});
+});
+	/** @deprecated As of version 1.48.0 */
+	QUnit.test("_getModelVersion(sap.ui.model.odata.ODataModel): 1", function (assert) {
+		const oModel = {getMetadata() {}};
+		const oMetadata = {getName() {}};
+		this.mock(oModel).expects("getMetadata").returns(oMetadata);
+		this.mock(oMetadata).expects("getName").returns("sap.ui.model.odata.ODataModel");
+
+		// code under test
+		assert.strictEqual(AnalyticalBinding._getModelVersion(oModel), 1);
+	});
+
 	//*********************************************************************************************
 	QUnit.test("_prepareGroupMembersAutoExpansionQueryRequest-prepareLevelMembersQueryRequest:"
 			+ " calls _getHierarchyLevelFiltersAndAddRecursiveHierarchy and"
@@ -1728,7 +1803,7 @@ sap.ui.define([
 		function (assert) {
 			var done = assert.async();
 
-			setupAnalyticalBinding(2, {noPaging: true, numberOfExpandedLevels: 2},
+			setupAnalyticalBinding({noPaging: true, numberOfExpandedLevels: 2},
 				function (oBinding) {
 					var oAnalyticalBindingMock = sinon.mock(AnalyticalBinding),
 						oBindingMock = sinon.mock(oBinding),
@@ -1768,7 +1843,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("prepareLevelMembersQueryRequest: calls _mergeAndAddSorters", (assert) => {
 		const done = assert.async();
-		setupAnalyticalBinding(2, {noPaging: true, numberOfExpandedLevels: 2}, (oBinding) => {
+		setupAnalyticalBinding({noPaging: true, numberOfExpandedLevels: 2}, (oBinding) => {
 			const oMergeAndAddSortersSpy = sinon.spy(oBinding, "_mergeAndAddSorters");
 			function fnChangeHandler() {
 				oBinding.detachChange(fnChangeHandler);
@@ -1803,7 +1878,7 @@ sap.ui.define([
 	QUnit.test("_prepareTotalSizeQueryRequest: hierarchy dimensions tests", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			var oAnalyticalBindingMock = sinon.mock(AnalyticalBinding),
 				oBindingMock = sinon.mock(oBinding),
 				oQueryResultRequestMock = sinon.mock(odata4analytics.QueryResultRequest.prototype),
@@ -1839,7 +1914,7 @@ sap.ui.define([
 	QUnit.test("_prepareGroupMembersQueryRequest: hierarchy dimensions tests", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			var oAnalyticalBindingMock = sinon.mock(AnalyticalBinding),
 				oBindingMock = sinon.mock(oBinding),
 				aHierarchyLevelFilters = [];
@@ -2126,7 +2201,7 @@ sap.ui.define([
 			var done = assert.async(),
 				that = this;
 
-			setupAnalyticalBinding(2, {}, function (oBinding) {
+			setupAnalyticalBinding({}, function (oBinding) {
 				if (oFixture.message) {
 					that.oLogMock.expects("isLoggable")
 						.withExactArgs(Log.Level.INFO)
@@ -2167,7 +2242,7 @@ sap.ui.define([
 		QUnit.test("updateAnalyticalInfo: hierarchy dimensions - errors - " + i, function (assert) {
 			var done = assert.async();
 
-			setupAnalyticalBinding(2, {}, function (oBinding) {
+			setupAnalyticalBinding({}, function (oBinding) {
 				assert.throws(function () {
 					// code under test
 					oBinding.updateAnalyticalInfo(oFixture.analyticalInfo);
@@ -2182,7 +2257,7 @@ sap.ui.define([
 		var done = assert.async(),
 			aInitialColumns = [];
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			var aInitialColumnsAfterUpdate = [];
 
 			assert.strictEqual(oBinding.isInitial(), true);
@@ -2223,7 +2298,7 @@ sap.ui.define([
 			}],
 			that = this;
 
-		return setupAnalyticalBinding(2, {}, /*fnODataV2Callback*/null, aInitialColumns)
+		return setupAnalyticalBinding({}, /*fnODataV2Callback*/null, aInitialColumns)
 		.then(function (oBinding) {
 			var mAnalyticalInfoByProperty = deepExtend({}, oBinding.mAnalyticalInfoByProperty),
 				iAnalyticalInfoVersionNumber = oBinding.iAnalyticalInfoVersionNumber,
@@ -2290,7 +2365,7 @@ sap.ui.define([
 	QUnit.test("bApplySortersToGroups: Constructor and initialization", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			var bApplySortersToGroups = {/* true or false */};
 
 			assert.ok(oBinding.bApplySortersToGroups, "constructor sets bApplySortersToGroups");
@@ -2322,9 +2397,9 @@ sap.ui.define([
 		var done = assert.async();
 
 		// code under test
-		setupAnalyticalBinding(2, {}, function (oBinding0) {
+		setupAnalyticalBinding({}, function (oBinding0) {
 			// code under test
-			setupAnalyticalBinding(2, {}, function (oBinding1) {
+			setupAnalyticalBinding({}, function (oBinding1) {
 				assert.notStrictEqual(oBinding0._iId, oBinding1._iId, "Different IDs");
 				assert.ok(oBinding0._iId < oBinding1._iId, "ID increases with new instances");
 
@@ -2334,12 +2409,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("constructor: calls AnalyticalBinding._getModelVersion", function (assert) {
+		const done = assert.async();
+		const oGetModelVersionSpy = this.spy(AnalyticalBinding, "_getModelVersion");
+
+		// code under test
+		setupAnalyticalBinding({}, (_oBinding, oModel) => {
+			// once applying the adapter and once in constructor
+			assert.strictEqual(oGetModelVersionSpy.callCount, 2);
+			assert.ok(oGetModelVersionSpy.firstCall.calledWithExactly(sinon.match.same(oModel)));
+			assert.ok(oGetModelVersionSpy.secondCall.calledWithExactly(sinon.match.same(oModel)));
+			done();
+		}, [], undefined, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("constructor: unsupported model", function (assert) {
+		this.mock(AnalyticalBinding.prototype).expects("_convertDeprecatedFilterObjects").withExactArgs(undefined);
+		const oModel = {createCustomParams() {}};
+		this.mock(oModel).expects("createCustomParams").withExactArgs({custom: undefined});
+		this.mock(AnalyticalBinding).expects("_getModelVersion").withExactArgs(sinon.match.same(oModel)).returns(null);
+		this.oLogMock.expects("error").withExactArgs("The AnalyticalBinding does not support the given model");
+
+		// code under test
+		const oBinding = new AnalyticalBinding(oModel, "path",/*oContext*/undefined, /*aSorter*/undefined,
+			/*aFilters*/undefined, /*mParameters*/{});
+
+		assert.strictEqual(oBinding.aAllDimensionSortedByName, undefined);
+		assert.strictEqual(oBinding.aInitialAnalyticalInfo, undefined);
+		assert.strictEqual(oBinding.aAllDimensionSortedByName, undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("constructor, this.aSorter: sorter parameter is no array", function (assert) {
 		var done = assert.async(),
 			oSorter = {};
 
 		// code under test
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			assert.strictEqual(oBinding.aSorter.length, 1);
 			assert.strictEqual(oBinding.aSorter[0], oSorter);
 
@@ -2353,7 +2460,7 @@ sap.ui.define([
 			aSorter = [];
 
 		// code under test
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			assert.strictEqual(oBinding.aSorter, aSorter);
 
 			done();
@@ -2366,7 +2473,7 @@ sap.ui.define([
 
 		// with default columns:
 		// [oCostCenterGrouped, oCostElementGrouped, oCurrencyGrouped, oActualCostsTotal]
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			var bApplySortersToGroups = {/* true or false */},
 				oColumn;
 
@@ -2419,14 +2526,14 @@ sap.ui.define([
 				sinon.match((oDimensionDetails) => (oDimensionDetails.name === "CostElement"))
 			);
 
-		return setupAnalyticalBinding(2, {}, undefined, [oCostElementGrouped, oCostElementText]);
+		return setupAnalyticalBinding({}, undefined, [oCostElementGrouped, oCostElementText]);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("filter: resets bApplySortersToGroups", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			var oBindingMock = sinon.mock(oBinding);
 
 			oBindingMock.expects("_fireRefresh").withExactArgs(sinon.match(function (mParameters) {
@@ -2457,7 +2564,7 @@ sap.ui.define([
 			done = assert.async(),
 			bIncludeOrigin = {/*true or false*/};
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			var oCombinedFilterMock = sinon.mock(oCombinedFilter),
 				oFilterProcessorMock = sinon.mock(FilterProcessor);
 
@@ -2548,7 +2655,7 @@ sap.ui.define([
 				function (assert) {
 			var done = assert.async();
 
-			setupAnalyticalBinding(2, {}, function (oBinding) {
+			setupAnalyticalBinding({}, function (oBinding) {
 
 				if (oFixture.controlFilter) {
 					oBinding.filter(oFixture.controlFilter);
@@ -2623,7 +2730,7 @@ sap.ui.define([
 			var done = assert.async(),
 				that = this;
 
-			setupAnalyticalBinding(2, {}, function (oBinding) {
+			setupAnalyticalBinding({}, function (oBinding) {
 				var sOldLastAutoExpandMode = {/* any string different to the current mode */},
 					sExpectedLastAutoExpandMode = "sLastAutoExpandMode" in oFixture
 						? oFixture.sLastAutoExpandMode
@@ -2661,7 +2768,7 @@ sap.ui.define([
 	QUnit.test("_prepareGroupMembersQueryRequest: calls _addSorters", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			var oBindingMock = sinon.mock(oBinding),
 				oSortExpressionMock = sinon.mock(odata4analytics.SortExpression.prototype);
 
@@ -2704,7 +2811,7 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var done = assert.async();
 
-			setupAnalyticalBinding(2, {provideGrandTotals : false}, function (oBinding) {
+			setupAnalyticalBinding({provideGrandTotals : false}, function (oBinding) {
 				var oBindingMock = sinon.mock(oBinding),
 					oQueryResultRequestSpy = sinon.spy(odata4analytics.QueryResultRequest.prototype,
 						"setMeasures");
@@ -2735,7 +2842,7 @@ sap.ui.define([
 			+ " have been applyed to groups", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			var bApplySortersToGroups = {/* true or false*/},
 				oBindingMock = sinon.mock(oBinding),
 				oData = {
@@ -2779,7 +2886,7 @@ sap.ui.define([
 			+ " have *not* been applyed to groups", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			var oBindingMock = sinon.mock(oBinding),
 				oData = {
 					"__count" : "2",
@@ -2831,7 +2938,7 @@ sap.ui.define([
 			+ " have been applyed to groups", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			var bApplySortersToGroups = {/* true or false*/},
 				oBindingMock = sinon.mock(oBinding),
 				oData = {
@@ -2876,7 +2983,7 @@ sap.ui.define([
 			+ " group different to null", function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			var bApplySortersToGroups = {/* true or false*/},
 				oBindingMock = sinon.mock(oBinding),
 				oData = {
@@ -2931,7 +3038,7 @@ sap.ui.define([
 			function (assert) {
 		var done = assert.async();
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			var oExpectedMultiUnitEntry = {
 					oEntry: {
 						"ActualCosts" : null,
@@ -2987,7 +3094,7 @@ sap.ui.define([
 		QUnit.test("setContext: " + JSON.stringify(oFixture), function (assert) {
 			var done = assert.async();
 
-			setupAnalyticalBinding(2, {}, function (oBinding, oModel) {
+			setupAnalyticalBinding({}, function (oBinding, oModel) {
 				var bApplySortersToGroups = {/* true or false*/},
 					oBindingMock = sinon.mock(oBinding),
 					oDataState = {},
@@ -3064,7 +3171,7 @@ sap.ui.define([
 			var done = assert.async(),
 			that = this;
 
-			setupAnalyticalBinding(2, {}, function (oBinding) {
+			setupAnalyticalBinding({}, function (oBinding) {
 				oBinding.bApplySortersToGroups = oFixture.bApplySortersToGroups;
 				that.oLogMock.expects("warning")
 					.withExactArgs(oFixture.sWarning, sPath)
@@ -3301,7 +3408,7 @@ sap.ui.define([
 	QUnit.test("_prepareGroupMembersAutoExpansionQueryRequest/prepareLevelMembersQueryRequest:"
 			+ " Allow expansion of all dimensions", function (assert) {
 
-		return setupAnalyticalBinding(2, {
+		return setupAnalyticalBinding({
 					autoExpandMode : "Bundled",
 					numberOfExpandedLevels : 2,
 					useBatchRequests : true,
@@ -3440,7 +3547,7 @@ sap.ui.define([
 		var done = assert.async(),
 			that = this;
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		setupAnalyticalBinding({}, function (oBinding) {
 			// that.oLogMock cannot be used as it mocks AnalyticalBinding.Logger which is not used
 			// in sap.ui.model.analytics.AnalyticalTreeBindingAdapter
 			that.mock(Log).expects("warning")
@@ -3847,18 +3954,21 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// BCP: 2380036006 fire data received also in error case and updated analytical info
-	QUnit.test("_executeBatchRequest: ensure dataReceived event in error case", function (assert) {
-		var oSetupExpectation,
-			oAnalyticalQueryRequest = {
+	QUnit.test("_executeBatchRequest: error cases", function (assert) {
+		const oAnalyticalQueryRequest = {
 				getURIQueryOptionValue: function () {},
 				getURIToQueryResultEntries: function () {}
 			},
 			oError = {statusText: "abort"},
-			oModel = {read: function () {}},
+			oModel = {
+				fireRequestCompleted() {},
+				read: function () {}
+			},
+			oModelMock = this.mock(oModel),
 			oBinding = {
 				iAnalyticalInfoVersionNumber: 1,
 				oModel: oModel,
-				iModelVersion: AnalyticalVersionInfo.V2,
+				iModelVersion: 2,
 				_getIdForNewRequestHandle: function () {},
 				_getQueryODataRequestOptions: function () {},
 				_isRequestPending: function () {},
@@ -3867,6 +3977,7 @@ sap.ui.define([
 				fireDataReceived: function () {},
 				fireDataRequested: function () {}
 			},
+			oBindingMock = this.mock(oBinding),
 			aRequestDetails = [{
 				oAnalyticalQueryRequest: oAnalyticalQueryRequest,
 				bIsLeafGroupsRequest: "~isLeafGroupsRequest",
@@ -3879,21 +3990,21 @@ sap.ui.define([
 		this.mock(oAnalyticalQueryRequest).expects("getURIToQueryResultEntries")
 			.withExactArgs()
 			.returns("~path");
-		this.mock(oBinding).expects("_isRequestPending").withExactArgs("~requestId").returns(false);
-		this.mock(oBinding).expects("_registerNewRequest").withExactArgs("~requestId");
-		this.mock(oBinding).expects("_getQueryODataRequestOptions")
+		oBindingMock.expects("_isRequestPending").withExactArgs("~requestId").returns(false);
+		oBindingMock.expects("_registerNewRequest").withExactArgs("~requestId");
+		oBindingMock.expects("_getQueryODataRequestOptions")
 			.withExactArgs(sinon.match.same(oAnalyticalQueryRequest), "~isLeafGroupsRequest", {encode: true})
 			.returns("~urlParameters");
 		this.mock(oModel).expects("read").withExactArgs("/~path", {
-					success: sinon.match.func,
-					error: sinon.match.func,
-					context: undefined,
-					urlParameters: "~urlParameters"
+				success: sinon.match.func,
+				error: sinon.match.func,
+				context: undefined,
+				urlParameters: "~urlParameters"
 			})
 			.returns("~requestHandle");
-		this.mock(oBinding).expects("_getIdForNewRequestHandle").withExactArgs().returns("~newHandle");
-		this.mock(oBinding).expects("fireDataRequested").withExactArgs();
-		oSetupExpectation = this.mock(BatchResponseCollector.prototype).expects("setup")
+		oBindingMock.expects("_getIdForNewRequestHandle").withExactArgs().returns("~newHandle");
+		oBindingMock.expects("fireDataRequested").withExactArgs();
+		const oSetupExpectation = this.mock(BatchResponseCollector.prototype).expects("setup")
 			.withExactArgs({
 				executedRequests: [sinon.match.same(aRequestDetails[0])],
 				binding: sinon.match.same(oBinding),
@@ -3906,10 +4017,48 @@ sap.ui.define([
 		AnalyticalBinding.prototype._executeBatchRequest.call(oBinding, aRequestDetails);
 
 		oBinding.iAnalyticalInfoVersionNumber = 2; // new analytical info causes abort of pending requests
-		this.mock(oBinding).expects("fireDataReceived").withExactArgs();
+		oBindingMock.expects("fireDataReceived").withExactArgs();
 
-		// code under test - simulate abort and call error handler
+		// code under test - simulate abort; different iAnalyticalInfoVersionNumber
 		oSetupExpectation.args[0][0].error(oError);
+
+		oBinding.iAnalyticalInfoVersionNumber = 1; // same iAnalyticalInfoVersionNumber
+		oModelMock.expects("fireRequestCompleted").withExactArgs({
+			async : true,
+			errorobject: sinon.match.same(oError),
+			info: "",
+			infoObject : {},
+			success: false,
+			type : "POST",
+			url : ""
+		});
+		oBindingMock.expects("fireDataReceived").withExactArgs();
+
+		// code under test - simulate abort error in V2 case; same iAnalyticalInfoVersionNumber
+		oSetupExpectation.args[0][0].error(oError);
+		/** @deprecated As of version 1.48.0 */
+		((() => {
+			oModelMock.restore();
+			oModel._handleError = () => {};
+			oModel.fireRequestFailed = () => {};
+			oBinding.iModelVersion = 1;
+			const oV1ModelMock = this.mock(oModel);
+			oV1ModelMock.expects("_handleError").withExactArgs(sinon.match.same(oError)).returns("~oError0");
+			oV1ModelMock.expects("fireRequestCompleted").withExactArgs({
+				async : true,
+				errorobject: "~oError0",
+				info: "",
+				infoObject : {},
+				success: false,
+				type : "POST",
+				url : ""
+			});
+			oV1ModelMock.expects("fireRequestFailed").withExactArgs("~oError0");
+			oBindingMock.expects("fireDataReceived").withExactArgs();
+
+			// code under test - simulate abort error in V1 case; same iAnalyticalInfoVersionNumber
+			oSetupExpectation.args[0][0].error(oError);
+		})());
 	});
 
 	//*********************************************************************************************
