@@ -24565,8 +24565,8 @@ sap.ui.define([
 			return that.oView.byId("table").getItems()[0].getBindingContext()
 				.requestSideEffects([{$PropertyPath : "Country"}])
 				.then(mustFail(assert), function (oError) {
-					assert.strictEqual(oError.message, "Must not request side effects for a context"
-						+ " of a binding with $$aggregation");
+					assert.strictEqual(oError.message,
+						"Must not request side effects when using data aggregation");
 				});
 		});
 	});

@@ -3599,10 +3599,9 @@ sap.ui.define([
 			});
 		}
 
-		if (this.mParameters.$$aggregation && !this.mParameters.$$aggregation.hierarchyQualifier) {
+		if (_Helper.isDataAggregation(this.mParameters)) {
 			if (bSingle) {
-				throw new Error(
-					"Must not request side effects for a context of a binding with $$aggregation");
+				throw new Error("Must not request side effects when using data aggregation");
 			}
 
 			if (_AggregationHelper.isAffected(this.mParameters.$$aggregation,
