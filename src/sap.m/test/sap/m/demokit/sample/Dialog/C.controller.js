@@ -155,8 +155,7 @@ sap.ui.define([
 			if (!this.oEscapePreventDialog) {
 				this.oEscapePreventDialog = new Dialog({
 					title: "Dialog with prevent close",
-					content: new Text({ text: "Try to close this Dialog with the Escape key" }),
-					type: DialogType.Message,
+					content: new Text({ text: "Try to close this Dialog with the Escape key" }).addStyleClass("sapUiSmallMargin"),
 					buttons: [
 						new Button({
 							text: "Simply close",
