@@ -160,6 +160,10 @@ sap.ui.define([
 		assert.notOk(oCore.byId("F1--Grid"), "no Main Grid");
 	});
 
+	QUnit.test("renderControlsForSemanticElement", function(assert) {
+		assert.notOk(oResponsiveGridLayout.renderControlsForSemanticElement(), "no control rendering supported");
+	});
+
 	QUnit.module("inner Grid", {
 		beforeEach: initTestTwoContainers,
 		afterEach: afterTest

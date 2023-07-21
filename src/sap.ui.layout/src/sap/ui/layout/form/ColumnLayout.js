@@ -679,6 +679,12 @@ sap.ui.define([
 
 	};
 
+	ColumnLayout.prototype.renderControlsForSemanticElement = function() {
+
+		return true;
+
+	};
+
 	return ColumnLayout;
 
 });

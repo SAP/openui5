@@ -124,7 +124,11 @@ sap.ui.define([
 		var aElements = oContainer.getVisibleFormElements();
 		for (var j = 0, jl = aElements.length; j < jl; j++) {
 			var oElement = aElements[j];
-			this.renderElement(rm, oLayout, oElement);
+			if (oElement.isA("sap.ui.layout.form.SemanticFormElement") && !oElement._getEditable()) {
+				this.renderSemanticElement(rm, oLayout, oElement);
+			} else {
+				this.renderElement(rm, oLayout, oElement);
+			}
 		}
 
 		if (bExpandable) {
@@ -157,6 +161,13 @@ sap.ui.define([
 			}
 		}
 		rm.close("div");
+
+	};
+
+	FormLayoutRenderer.renderSemanticElement = function(rm, oLayout, oElement){
+
+		// just render like standard Element as default
+		this.renderElement(rm, oLayout, oElement);
 
 	};
 
