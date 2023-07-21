@@ -1,11 +1,13 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/base/config",
 	"jquery.sap.global", // provides jQuery.sap.Version
 	"sap/base/config/GlobalConfigurationProvider",
 	"sap/ui/core/Core",
 	"sap/ui/core/Configuration"
 ], function(
+	BaseConfig,
 	jQuery,
 	GlobalConfigurationProvider,
 	Core,
@@ -64,6 +66,7 @@ sap.ui.define([
 		});
 
 		function checkCompat(oConf, sText, sExp1, sExp2){
+			BaseConfig._.invalidate();
 			mConfigStubValues = oConf;
 			var dflt = jQuery.sap.Version(sExp1).toString();
 			assert.equal(Configuration.getCompatibilityVersion("").toString(), dflt, sText + ": Default (feature='')");

@@ -7,6 +7,8 @@ sap.ui.define(['sap/base/assert', 'sap/ui/base/Object', "sap/base/i18n/Localizat
 	function(assert, BaseObject, Localization, LanguageTag) {
 	"use strict";
 
+	var mCache = Object.create(null);
+
 	/**
 	 * Creates an instance of the Locale.
 	 *
@@ -197,7 +199,8 @@ sap.ui.define(['sap/base/assert', 'sap/ui/base/Object', "sap/base/i18n/Localizat
 
 	Locale._getCoreLocale = function(oLocale) {
 		if (oLocale instanceof LanguageTag) {
-			oLocale = new Locale(oLocale);
+			oLocale = mCache[oLocale.toString()] || new Locale(oLocale);
+			mCache[oLocale.toString()] = oLocale;
 		}
 		return oLocale;
 	};

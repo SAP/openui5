@@ -1,5 +1,6 @@
 /* global QUnit, sinon */
 sap.ui.define([
+	"sap/base/config",
 	"sap/base/Log",
 	"sap/base/i18n/LanguageTag",
 	"sap/base/i18n/Formatting",
@@ -7,6 +8,7 @@ sap.ui.define([
 	"sap/base/i18n/date/CalendarWeekNumbering",
 	"sap/ui/base/config/URLConfigurationProvider"
 ], function(
+	BaseConfig,
 	Log,
 	LanguageTag,
 	Formatting,
@@ -39,26 +41,26 @@ sap.ui.define([
 
 	QUnit.test("getLanguageTag", function(assert) {
 		assert.expect(4);
-
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapLanguage": "en"
 		};
 		assert.deepEqual(Formatting.getLanguageTag(), new LanguageTag("en"),
 			"getLanguageTag should return new 'sap/base/i18n/LanguageTag' derived from Localization.getLanguageTag in case no LanguageTag is set");
-
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiFormatLocale": "de"
 		};
 		assert.deepEqual(Formatting.getLanguageTag(), new LanguageTag("de"),
 			"getLanguageTag should return new 'sap/base/i18n/LanguageTag' for LanguageTag 'de'");
-
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapLanguage": "de",
 			"sapUiCalendarWeekNumbering": CalendarWeekNumbering.ISO_8601
 		};
 		assert.deepEqual(Formatting.getLanguageTag(), new LanguageTag("de-x-sapufmt"),
 			"getLanguageTag should return new 'sap/base/i18n/LanguageTag' for LanguageTag 'de-x-sapufmt'");
-
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapLanguage": "de-x-aa",
 			"sapUiCalendarWeekNumbering": CalendarWeekNumbering.ISO_8601
@@ -70,7 +72,7 @@ sap.ui.define([
 	QUnit.test("getLegacyDateFormat", function(assert) {
 		assert.expect(2);
 		assert.strictEqual(Formatting.getLegacyDateFormat(), "2", "getLegacyDateFormat should return '2' as provided by URL");
-
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiLegacyDateFormat": "a"
 		};
@@ -81,7 +83,7 @@ sap.ui.define([
 		assert.expect(2);
 
 		assert.strictEqual(Formatting.getLegacyTimeFormat(), "3", "getLegacyTimeFormat should return '3' as provided by URL");
-
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiLegacyTimeFormat": "0"
 		};
@@ -92,7 +94,7 @@ sap.ui.define([
 		assert.expect(2);
 
 		assert.strictEqual(Formatting.getLegacyNumberFormat(), "X", "getLegacyNumberFormat should return 'Y' as provided by URL");
-
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiLegacyNumberFormat": "y"
 		};
@@ -103,7 +105,7 @@ sap.ui.define([
 		assert.expect(2);
 
 		assert.strictEqual(Formatting.getTrailingCurrencyCode(), true, "getTrailingCurrencyCode should return 'true' in case no trailingCurrencyCode was provided");
-
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiTrailingCurrencyCode": false
 		};
@@ -114,12 +116,12 @@ sap.ui.define([
 		assert.expect(3);
 
 		assert.strictEqual(Formatting.getCalendarWeekNumbering(), CalendarWeekNumbering.Default, "getCalendarWeekNumbering should return default 'Default' in case no calendarWeekNumbering was provided");
-
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiCalendarWeekNumbering": CalendarWeekNumbering.MiddleEastern
 		};
 		assert.strictEqual(Formatting.getCalendarWeekNumbering(), CalendarWeekNumbering.MiddleEastern, "getCalendarWeekNumbering should return expected value 'MiddleEastern'");
-
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiCalendarWeekNumbering": "invalidCalendarWeekNumbering"
 		};
@@ -131,12 +133,12 @@ sap.ui.define([
 		oSinonSandbox.spy(Log, "warning");
 
 		assert.strictEqual(Formatting.getCalendarType(), CalendarType.Gregorian, "getCalendarType should return default 'Gregorian' in case no calendarType was provided");
-
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiCalendarType": CalendarType.Japanese
 		};
 		assert.strictEqual(Formatting.getCalendarType(), CalendarType.Japanese, "getCalendarType should return expected value 'Japanese'");
-
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiCalendarType": "invalidCalendarType"
 		};
@@ -144,7 +146,7 @@ sap.ui.define([
 		assert.ok(Log.warning.calledOnceWithExactly("Parameter 'calendarType' is set to invalidCalendarType which" +
 			" isn't a valid value and therefore ignored. The calendar type is determined from format setting and current locale"),
 			"Warning logged for invalid value of parameter 'calendarType'");
-
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiLegacyDateFormat": "a"
 		};

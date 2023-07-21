@@ -1,6 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/base/config",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/CalendarTimeInterval",
 	"sap/ui/unified/CalendarLegend",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date"
-], function(qutils, CalendarTimeInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary, DateFormat, KeyCodes, jQuery, oCore, UI5Date) {
+], function(BaseConfig, qutils, CalendarTimeInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary, DateFormat, KeyCodes, jQuery, oCore, UI5Date) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -1217,17 +1218,16 @@ sap.ui.define([
 		var oCTI = new CalendarTimeInterval("customDataCTI",{
 				intervalMinutes: 60
 			}),
-			oTimesRow = oCore.byId("customDataCTI").getAggregation("timesRow"),
-			oCustomData = oCore.getConfiguration().getFormatSettings().getCustomLocaleData();
+			oTimesRow = oCore.byId("customDataCTI").getAggregation("timesRow");
 
-		oCustomData["timeFormats-short"] = "HHmm";
+		oCore.getConfiguration().getFormatSettings().setTimePattern("short", "HHmm");
 		oTimesRow._oFormatTime = undefined;
 
 		// assert
 		assert.strictEqual(oTimesRow._getFormatTime().oFormatOptions["pattern"], "H", "The custom data's format is respected - H");
 
 		// act
-		oCustomData["timeFormats-short"] = "stringWithAcceptableLetterAtTheEndk";
+		oCore.getConfiguration().getFormatSettings().setTimePattern("short", "stringWithAcceptableLetterAtTheEndk");
 		oTimesRow._oFormatTime = undefined;
 
 		// assert

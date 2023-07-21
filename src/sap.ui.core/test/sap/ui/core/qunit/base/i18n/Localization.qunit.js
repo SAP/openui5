@@ -1,11 +1,13 @@
 /* global QUnit, sinon, globalThis */
 sap.ui.define([
+	"sap/base/config",
 	"sap/base/Log",
 	"sap/base/i18n/LanguageTag",
 	"sap/base/i18n/Localization",
 	"sap/base/i18n/date/TimezoneUtils",
 	"sap/ui/base/config/URLConfigurationProvider"
 ], function(
+	BaseConfig,
 	Log,
 	LanguageTag,
 	Localization,
@@ -25,6 +27,7 @@ sap.ui.define([
 	QUnit.module("Localization getter", {
 		beforeEach: function() {
 			mConfigStubValues = {};
+			BaseConfig._.invalidate();
 			oSinonSandbox = sinon.createSandbox();
 			oSinonSandbox.stub(globalThis.navigator, "languages").value(["en"]);
 			oSinonSandbox.spy(Log, "warning");
@@ -41,6 +44,7 @@ sap.ui.define([
 	QUnit.test("getLanguageTag, getLanguage and getSAPLogonLanguage", function(assert) {
 		assert.expect(31);
 		function fnAssert(mTestOptions) {
+			BaseConfig._.invalidate();
 			var sSAPLogonLanguage = mTestOptions.SAPLogonLanguage || mTestOptions.language.toUpperCase();
 			var sLanguageTag = mTestOptions.languageTag || mTestOptions.language;
 			var sPreferredCalendarType = mTestOptions.preferredCalendarType || "Gregorian";
@@ -108,17 +112,20 @@ sap.ui.define([
 		oSinonSandbox.stub(TimezoneUtils, "getLocalTimezone").returns("defaultTimezone");
 		assert.strictEqual(Localization.getTimezone(), "defaultTimezone", "getTimezone should return 'defaultTimezone' in case no timezone is set via provider");
 
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapTimezone": "Europe/Berlin",
 			"sapUiTimezone": "Europe/Paris"
 		};
 		assert.strictEqual(Localization.getTimezone(), "Europe/Berlin", "getTimezone should return 'Europe/Berlin'");
 
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiTimezone": "Europe/Paris"
 		};
 		assert.strictEqual(Localization.getTimezone(), "Europe/Paris", "getTimezone should return 'Europe/Paris'");
 
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiTimezone": "notExistingTimezone"
 		};
@@ -133,12 +140,14 @@ sap.ui.define([
 		assert.expect(3);
 		assert.strictEqual(Localization.getRTL(), false, "getRTL should return 'false' derived from the locale since 'rtl' was not set via provider.");
 
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapRtl": false,
 			"sapUiRtl": true
 		};
 		assert.strictEqual(Localization.getRTL(), false, "getRTL should return 'false' derived from parameter 'sapRtl'.");
 
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiRtl": true
 		};
@@ -149,12 +158,15 @@ sap.ui.define([
 		assert.expect(3);
 		assert.deepEqual(Localization.getSupportedLanguages(), [], "getSupportedLanguages should return '[]'");
 
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiXxSupportedLanguages": ['*']
 		};
 		assert.deepEqual(Localization.getSupportedLanguages(), [], "getSupportedLanguages should return '[]'");
 
 		oSinonSandbox.stub(Localization, "getLanguagesDeliveredWithCore").returns(["languages", "delivered", "with", "core"]);
+
+		BaseConfig._.invalidate();
 		mConfigStubValues = {
 			"sapUiXxSupportedLanguages": ['default']
 		};
