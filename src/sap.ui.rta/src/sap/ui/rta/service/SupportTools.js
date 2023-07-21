@@ -101,6 +101,9 @@ sap.ui.define([
 	 */
 	function getOverlayInfo(oRta, mPayload) {
 		var oOverlay = Core.byId(mPayload.overlayId);
+		if (!oOverlay) {
+			return;
+		}
 		var oElement = oOverlay.getElement();
 
 		// remove previous selection highlighting on clicking in the app
@@ -179,7 +182,7 @@ sap.ui.define([
 			content: {
 				overlayId: oOverlay.getId()
 			}
-		}, "*");
+		});
 
 		// remove previous selection highlighting
 		removeSelectionHighlight();
@@ -222,7 +225,7 @@ sap.ui.define([
 					id: oOverlay.getId(),
 					parentId: sParentId,
 					elementId: oOverlay.getElement().getId(),
-					visible: oOverlay.getSelectable(),
+					visible: oOverlay.getSelectable() && oOverlay.isVisible(),
 					idNum: parseInt(oOverlay.getId().replace("__overlay", "")),
 					children: aChildren,
 					hasParent: sParentId !== undefined
@@ -273,7 +276,7 @@ sap.ui.define([
 			type: "rtaStopped",
 			id: "ui5FlexibilitySupport.submodules.overlayInfo",
 			content: {}
-		}, "*");
+		});
 	}
 
 	/*
@@ -286,7 +289,7 @@ sap.ui.define([
 			type: "rtaStarted",
 			id: "ui5FlexibilitySupport.submodules.overlayInfo",
 			content: {}
-		}, "*");
+		});
 	}
 
 	/*
