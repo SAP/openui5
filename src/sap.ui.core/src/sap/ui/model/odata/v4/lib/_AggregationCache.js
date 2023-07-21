@@ -796,9 +796,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the requests with;
 	 *   {@link sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy} still needs to be called!
-	 * @returns {Promise|undefined}
-	 *   A promise resolving without a defined result when the read is finished, or rejecting in
-	 *   case of an error; <code>undefined</code> in case no count needs to be read
+	 * @returns {Promise<void>|undefined}
+	 *   A promise which is resolved without a defined result when the read is finished, or
+	 *   rejected in case of an error; <code>undefined</code> in case no count needs to be read
 	 * @throws {Error}
 	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
@@ -849,8 +849,8 @@ sap.ui.define([
 	 *   The function is called just before a back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the read is finished, or rejecting in
-	 *   case of an error
+	 *   A promise which is resolved without a defined result when the read is finished, or
+	 *   rejected in case of an error
 	 * @throws {Error} If given index or length is less than 0
 	 *
 	 * @private
@@ -921,8 +921,8 @@ sap.ui.define([
 	 *   The function is called just before a back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the read is finished, or rejecting in
-	 *   case of an error
+	 *   A promise which is resolved without a defined result when the read is finished, or
+	 *   rejected in case of an error
 	 * @throws {Error} If index of placeholder at start of gap is less than 0, or if end of gap is
 	 *   before start
 	 *

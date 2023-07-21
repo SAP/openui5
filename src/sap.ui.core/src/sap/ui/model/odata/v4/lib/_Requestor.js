@@ -1544,8 +1544,9 @@ sap.ui.define([
 	 * @param {string} [sOldSecurityToken]
 	 *   Security token that caused a 403. A new token is only fetched if the old one is still
 	 *   current.
-	 * @returns {Promise}
-	 *   A promise that will be resolved (with no result) once the CSRF token has been refreshed.
+	 * @returns {Promise<void>}
+	 *   A promise which is resolved without a defined result once the CSRF token has been
+	 *   refreshed.
 	 *
 	 * @public
 	 */

@@ -1457,8 +1457,8 @@ sap.ui.define([
 	 * @param {boolean} [bKeepCacheOnError]
 	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the refresh is finished if the context is
-	 *   this binding's return value context; <code>null</code> otherwise
+	 *   A promise which is resolved without a defined result when the refresh is finished and if
+	 *   the context is this binding's return value context; <code>null</code> otherwise
 	 *
 	 * @private
 	 */

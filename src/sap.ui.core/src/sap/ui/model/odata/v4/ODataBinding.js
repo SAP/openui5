@@ -87,7 +87,7 @@ sap.ui.define([
 	 * @param {boolean} [sPathPrefix]
 	 *   If supplied, only caches having a resource path starting with <code>sPathPrefix</code> are
 	 *   reset
-	 * @returns {Promise}
+	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result as soon as all changes in the binding
 	 *   itself and all dependent bindings are canceled
 	 * @throws {Error}
@@ -307,8 +307,8 @@ sap.ui.define([
 	 * @param {boolean} [bForceUpdate]
 	 *   Whether the change event is fired in any case (only allowed for property bindings)
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the check is finished, or rejecting in
-	 *   case of an error
+	 *   A promise which is resolved without a defined result when the check is finished, or
+	 *   rejected in case of an error
 	 * @throws {Error} If called with illegal parameters
 	 *
 	 * @abstract
@@ -1256,8 +1256,8 @@ sap.ui.define([
 	 * @param {boolean} [bKeepCacheOnError]
 	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the refresh is finished; it is rejected
-	 *   when the refresh fails; the promise is resolved immediately on a suspended binding
+	 *   A promise which is resolved without a defined result when the refresh is finished, or
+	 *   rejected when the refresh fails; the promise is resolved immediately on a suspended binding
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended and a group ID different from the binding's
 	 *   group ID is given
@@ -1327,8 +1327,8 @@ sap.ui.define([
 	 * @param {string[]} aAbsolutePaths
 	 *   The absolute paths to request side effects for
 	 * @returns {sap.ui.base.SyncPromise|undefined}
-	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
-	 *   effects fails, or <code>undefined</code> if there is nothing to do
+	 *   A promise which is resolved without a defined result, or rejected with an error if loading
+	 *   of side effects fails, or <code>undefined</code> if there is nothing to do
 	 *
 	 * @private
 	 */
@@ -1363,8 +1363,8 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used
 	 * @returns {Promise<void>}
-	 *   A promise which resolves without a defined result when the refresh is finished and rejects
-	 *   with an instance of <code>Error</code> if the refresh failed
+	 *   A promise which is resolved without a defined result when the refresh is finished, or
+	 *   rejected with an error if the refresh failed
 	 * @throws {Error}
 	 *   See {@link #refresh} for details
 	 *
@@ -1492,8 +1492,9 @@ sap.ui.define([
 	 * @param {string} sGroupId
 	 *   The group ID for missing properties requests
 	 * @returns {sap.ui.base.SyncPromise|undefined}
-	 *   A promise that resolves when the update is finished and rejects with an error if something
-	 *   went wrong; or <code>undefined</code> if there is no need to wait
+	 *   A promise which is resolved without a defined result when the update is finished, or
+	 *   rejected with an error if something went wrong; or <code>undefined</code> if there is no
+	 *   need to wait
 	 *
 	 * @abstract
 	 * @function
