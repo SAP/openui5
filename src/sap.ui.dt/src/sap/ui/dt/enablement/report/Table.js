@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/Button",
 	"sap/m/SearchField",
+	"sap/m/Label",
 	"sap/m/Text",
 	"sap/m/RatingIndicator",
 	"./TableRenderer"
@@ -24,6 +25,7 @@ sap.ui.define([
 	ToolbarSpacer,
 	Button,
 	SearchField,
+	Label,
 	Text,
 	RatingIndicator,
 	TableRenderer
@@ -214,7 +216,7 @@ sap.ui.define([
 		 */
 		_createColumn: function(sId, sColumnText, oTemplate) {
 			return new Column(this.getId() + "--table-column-" + sId, {
-				label: sColumnText,
+				label: new Label({text: sColumnText}),
 				width: "13em",
 				template: oTemplate
 			});
