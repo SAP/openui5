@@ -149,7 +149,8 @@ sap.ui.define([
 				disabled: null, // Prevent aria-disabled as a disabled attribute is enough
 				multiline: false,
 				autocomplete: "none",
-				describedby: itemId + "-lbl " + oItem._fnInvisibleDescriptionFactory(oInfo).getId()
+				describedby: oItem._fnInvisibleDescriptionFactory(oInfo).getId(),
+				labelledby: itemId + "-lbl"
 			});
 		}
 		rm.voidEnd().close("div").close("div");

@@ -1233,8 +1233,9 @@ sap.ui.define([
 		// act
 		oMenu.open();
 		oInputFields = oMenu.getDomRef().querySelectorAll("input");
-		sCountDescriptionOne = document.getElementById(oInputFields[0].getAttribute("aria-describedby").split(" ")[1]).innerText;
-		sCountDescriptionTwo = document.getElementById(oInputFields[1].getAttribute("aria-describedby").split(" ")[1]).innerText;
+
+		sCountDescriptionOne = document.getElementById(oInputFields[0].getAttribute("aria-describedby")).innerText;
+		sCountDescriptionTwo = document.getElementById(oInputFields[1].getAttribute("aria-describedby")).innerText;
 
 		// assert
 		assert.strictEqual(sCountDescriptionOne, "1 of 2 Type in text", "Proper description text is referenced");
