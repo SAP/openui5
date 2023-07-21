@@ -94,6 +94,7 @@ sap.ui.define([
 				 * irrespective of whether a <code>width</code> is reached or the available parents width is reached.
 				 *
 				 * <b>Note:</b> This property is only used if a <code>ResponsiveLayout</code> is used as a layout.
+				 * @deprecated As of version 1.93, use another <code>Layout</code>
 				 */
 				minWidth : {type : "int", group : "Appearance", defaultValue : -1},
 
@@ -123,6 +124,7 @@ sap.ui.define([
 				 * Specifies the min-width in pixels of the label in all form rows.
 				 *
 				 * <b>Note:</b> This property is only used if a <code>ResponsiveLayout</code> is used as a layout.
+				 * @deprecated As of version 1.93, use another <code>Layout</code>
 				 */
 				labelMinWidth : {type : "int", group : "Misc", defaultValue : 192},
 
