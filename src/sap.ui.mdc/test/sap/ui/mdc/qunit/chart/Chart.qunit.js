@@ -331,7 +331,7 @@ sap.ui.define([
 			var done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var oMDCItem = new Item("testItem1", { name: "testName", role: "testRole" });
+				var oMDCItem = new Item("testItem1", { propertyKey: "testName", role: "testRole" });
 				this.oMDCChart.insertItem(oMDCItem, 0);
 
 				var aVisibleItems = this.oMDCChart._getVisibleProperties();
@@ -365,13 +365,13 @@ sap.ui.define([
 
 			this.oMDCChart.initialized().then(function () {
 				//Arrange
-				var oMockItem = new Item({ name: "testName", label: "testLabel", type: "groupable", role: "category" });
+				var oMockItem = new Item({ propertyKey: "testName", label: "testLabel", type: "groupable", role: "category" });
 				var oMockChange = { mutation: "insert", child: oMockItem };
 				var oMockBreadcrumbs = { updateDrillBreadcrumbs: function () { } };
 				this.oMDCChart._oBreadcrumbs = oMockBreadcrumbs;
 
-				this.oMDCChart.addItem(new Item({ name: "testName1", label: "testLabel1", type: "groupable", role: "category" }));
-				this.oMDCChart.addItem(new Item({ name: "testName2", label: "testLabel2", type: "aggregatable", role: "category" }));
+				this.oMDCChart.addItem(new Item({ propertyKey: "testName1", label: "testLabel1", type: "groupable", role: "category" }));
+				this.oMDCChart.addItem(new Item({ propertyKey: "testName2", label: "testLabel2", type: "aggregatable", role: "category" }));
 				this.oMDCChart.addItem(oMockItem);
 
 				var oInsertItemSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "insertItemToInnerChart");
@@ -772,7 +772,7 @@ sap.ui.define([
 			this.oMDCChart.removeAllItems();
 			this.oMDCChart.addStyleClass("sapUiMDCChartGrid");
 			this.oMDCChart._checkStyleClassesForDimensions();
-			this.oMDCChart.addItem(new Item({ name: "Test1", type: "groupable" }));
+			this.oMDCChart.addItem(new Item({ propertyKey: "Test1", type: "groupable" }));
 
 			var addStyleClassSpy = sinon.spy(this.oMDCChart, "addStyleClass");
 			var removeStyleClassSpy = sinon.spy(this.oMDCChart, "removeStyleClass");
