@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/calendar/CalendarDate",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/m/LinkAccessibleRole"
 ], function(
 	qutils,
 	SinglePlanningCalendar,
@@ -26,7 +27,8 @@ sap.ui.define([
 	UI5Date,
 	DateRange,
 	CalendarDate,
-	KeyCodes
+	KeyCodes,
+	LinkAccessibleRole
 ) {
 		"use strict";
 
@@ -125,6 +127,7 @@ sap.ui.define([
 			oLink.firePress();
 
 			// assert
+			assert.strictEqual(oLink.getAccessibleRole(), LinkAccessibleRole.Button, "The link has proper accessible role");
 			assert.ok(oMorePressSpy.calledOnce, "an event is fired");
 			assert.ok(oMorePressSpy.calledWithMatch("moreLinkPress", { date: o2Aug2018_00_00 }), "its the right event + parameters");
 		});
