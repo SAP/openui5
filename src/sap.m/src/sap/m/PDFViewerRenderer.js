@@ -87,7 +87,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/security/URLListValida
 			 * case: if "Always download pdf's" option is enabled in browser setting.. in that
 			 * case display error content (to retain control behaviour)
 			 */
-			if (!oControl._isDisplayTypeLink() && !this._isPdfPluginEnabled()) {
+			if (!oControl._isDisplayTypeLink() && !this._isPdfPluginEnabled() && Device.system.desktop) {
 				this.renderErrorContent(oRm, oControl);
 			} else if (oControl._isEmbeddedModeAllowed() && this._isPdfPluginEnabled()) {
 				this.renderPdfContent(oRm, oControl);
