@@ -506,14 +506,14 @@ function(
     });
 
     // QUnit.test("getSorterForItem", function(assert) {
-    //     var oAggrItem = new Item("aggrItem", {name: "Item1", type: "aggregatable"});
-    //     var oGroupItem = new Item("groupItem", {name: "Item2", type: "groupable"});
+    //     var oAggrItem = new Item("aggrItem", {propertyKey: "Item1", type: "aggregatable"});
+    //     var oGroupItem = new Item("groupItem", {propertyKey: "Item2", type: "groupable"});
 
     //     this.oMDCChart.addItem(oAggrItem);
     //     this.oMDCChart.addItem(oGroupItem);
 
     //     var oAggrSorter = ChartDelegate.getSorterForItem(oAggrItem, {descending: true});
-    //     var oGroupSorter = ChartDelegate.getSorterForItem(oGroupItem, {name: "Item2", descending: true});
+    //     var oGroupSorter = ChartDelegate.getSorterForItem(oGroupItem, {propertyKey: "Item2", descending: true});
     //     assert.ok(oAggrSorter, "Sorter returned");
     //     assert.ok(oGroupSorter, "Sorter returned");
 
@@ -524,8 +524,8 @@ function(
         assert.ok(this.oInnerChart.getVisibleDimensions().length === 0, "Visible dimensions are empty");
         assert.ok(this.oInnerChart.getVisibleMeasures().length === 0, "Visible dimensions are empty");
 
-        var oAggrItem = new Item("aggrItem", {name: "Item1", type: "aggregatable", label: "Label"});
-        var oGroupItem = new Item("groupItem", {name: "Item2", type: "groupable", label: "Label"});
+        var oAggrItem = new Item("aggrItem", {propertyKey: "Item1", type: "aggregatable", label: "Label"});
+        var oGroupItem = new Item("groupItem", {propertyKey: "Item2", type: "groupable", label: "Label"});
 
         this.oMDCChart.addItem(oAggrItem);
         this.oMDCChart.addItem(oGroupItem);
@@ -587,9 +587,9 @@ function(
 
     QUnit.test("getDrillableItems", function(assert) {
 
-        var oAggrItem = new Item("aggrItem", {name: "Item1", type: "aggregatable"});
-        var oGroupItem = new Item("groupItem1", {name: "Item2", type: "groupable"});
-        var oGroupItem2 = new Item("groupItem2", {name: "Item3", type: "groupable"});
+        var oAggrItem = new Item("aggrItem", {propertyKey: "Item1", type: "aggregatable"});
+        var oGroupItem = new Item("groupItem1", {propertyKey: "Item2", type: "groupable"});
+        var oGroupItem2 = new Item("groupItem2", {propertyKey: "Item3", type: "groupable"});
 
         this.oMDCChart.addItem(oAggrItem);
         this.oMDCChart.addItem(oGroupItem);
@@ -617,8 +617,8 @@ function(
         assert.ok(!ChartDelegate._getState(this.oMDCChart).toolbarUpdateRequested, "Request not set");
 
         //MDC Chart with items should result in request being set
-        var oAggrItem = new Item("aggrItem", {name: "Item1", type: "aggregatable"});
-        var oGroupItem = new Item("groupItem", {name: "Item2", type: "groupable"});
+        var oAggrItem = new Item("aggrItem", {propertyKey: "Item1", type: "aggregatable"});
+        var oGroupItem = new Item("groupItem", {propertyKey: "Item2", type: "groupable"});
 
         this.oMDCChart.addItem(oAggrItem);
         this.oMDCChart.addItem(oGroupItem);
@@ -689,10 +689,10 @@ function(
         var oSetVisibleDimensionSpy = sinon.spy(oInnerChartMock, "setVisibleDimensions");
         var oSetVisibleMeasuresSpy = sinon.spy(oInnerChartMock, "setVisibleMeasures");
 
-        var oDim = new Item({name: "Dimension1", type: "groupable"});
-        var oMeas1 = new Item({name: "Measure1", type: "aggregatable"});
-        var oMeas2 = new Item({name: "Measure2", type: "aggregatable"});
-        var oMeas3 = new Item({name: "Measure3", type: "aggregatable"});
+        var oDim = new Item({propertyKey: "Dimension1", type: "groupable"});
+        var oMeas1 = new Item({propertyKey: "Measure1", type: "aggregatable"});
+        var oMeas2 = new Item({propertyKey: "Measure2", type: "aggregatable"});
+        var oMeas3 = new Item({propertyKey: "Measure3", type: "aggregatable"});
 
         this.oMDCChart.addItem(oDim);
         this.oMDCChart.addItem(oMeas3);
@@ -731,8 +731,8 @@ function(
     QUnit.test("checkAndUpdateMDCItems", function(assert) {
         var done = assert.async();
 
-        var oDim = new Item({name: "Dimension1", type: "groupable", label: "Dim1"});
-        var oMeas = new Item({name: "Measure1", type: "aggregatable"});
+        var oDim = new Item({propertyKey: "Dimension1", type: "groupable", label: "Dim1"});
+        var oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
 
         this.oMDCChart.addItem(oDim);
         this.oMDCChart.addItem(oMeas);
@@ -825,8 +825,8 @@ function(
         var oInnerChartMock = {getVisibleDimensions: function(){return ["Dimension3", "Dimension1", "Dimension2"];}, getVisibleMeasures: function(){return ["Measure3", "Measure1", "Measure2"];}, setVisibleDimensions: function(){},
                                 setVisibleMeasures: function(){}, getMeasureByName: function(){}, removeMeasure: function(){}, addDimension: function(){}, setInResultDimensions: function(){}};
 
-        var oDim = new Item({name: "Dimension1", type: "groupable", label: "Dim1"});
-        var oMeas = new Item({name: "Measure1", type: "aggregatable"});
+        var oDim = new Item({propertyKey: "Dimension1", type: "groupable", label: "Dim1"});
+        var oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
 
         this.oMDCChart.addItem(oDim);
         this.oMDCChart.addItem(oMeas);
@@ -892,7 +892,7 @@ function(
         //sandbox.stub(ChartDelegate, "_addCriticality").returns(Promise.resolve());
         ChartDelegate._setState(this.oMDCChart, { aInSettings: [], aColMeasures : [] });
 
-        var oMeas = new Item({name: "Measure1", type: "aggregatable"});
+        var oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
         this.oMDCChart.addItem(oMeas);
 
         ChartDelegate._prepareColoringForItem(oMeas).then(function(){
@@ -940,8 +940,8 @@ function(
         var oColorSpy = sinon.spy(oInnerChartMock, "setColorings");
         var oActiveColorSpy = sinon.spy(oInnerChartMock, "setActiveColoring");
 
-        var oMeas = new Item({name: "Measure1", type: "aggregatable"});
-        var oDim = new Item({name: "Dimension1", type: "groupable", label: "Dim1"});
+        var oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
+        var oDim = new Item({propertyKey: "Dimension1", type: "groupable", label: "Dim1"});
         this.oMDCChart.addItem(oMeas);
         this.oMDCChart.addItem(oDim);
 
@@ -1009,7 +1009,7 @@ function(
         var oColorSpy = sinon.spy(oInnerChartMock, "setColorings");
         var oActiveColorSpy = sinon.spy(oInnerChartMock, "setActiveColoring");
 
-        var oMeas = new Item({name: "Measure1", type: "aggregatable"});
+        var oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
         this.oMDCChart.addItem(oMeas);
 
         var oCorrectColorConfig = {
@@ -1056,7 +1056,7 @@ function(
 
         ChartDelegate._setState(this.oMDCChart, { innerChart: oInnerChartMock});
 
-        var oMeas = new Item({name: "Measure1", type: "aggregatable"});
+        var oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
         this.oMDCChart.addItem(oMeas);
 
         ChartDelegate._updateSemanticalPattern(this.oMDCChart);
@@ -1205,7 +1205,7 @@ function(
                 textFormatter: "abc"
             };
 
-            ChartDelegate._addInnerMeasure(this.oMDCChart, new Item({name: "test1", type: "aggregatable", label: "Label1"}), oMockProps);
+            ChartDelegate._addInnerMeasure(this.oMDCChart, new Item({propertyKey: "test1", type: "aggregatable", label: "Label1"}), oMockProps);
             assert.ok(oSpy.calledOnce, "Measure added");
 
             done();
@@ -1227,7 +1227,7 @@ function(
                 textFormatter: "abc"
             };
 
-            ChartDelegate._addInnerDimension(this.oMDCChart, new Item({name: "test1", type: "groupable", label: "Label1"}), oMockProps);
+            ChartDelegate._addInnerDimension(this.oMDCChart, new Item({propertyKey: "test1", type: "groupable", label: "Label1"}), oMockProps);
             assert.ok(oSpy.calledOnce, "Dimension added");
             assert.equal(oSpy.getCall(0).args[0].getName(), "test1", "Correct name for dimension");
             assert.equal(oSpy.getCall(0).args[0].getLabel(), "Label1", "Correct label added");
@@ -1275,8 +1275,8 @@ function(
 
     QUnit.test("getSorters", function(assert) {
         this.oMDCChart.setSortConditions({sorters: [{name: "Test1", descending: true}, {name: "Test2", descending: false}, {name: "Test3", descending: true}]});
-        var oDim = new Item({name: "Test1", type: "groupable"});
-        var oMeas = new Item({name: "Test2", type: "aggregatable"});
+        var oDim = new Item({propertyKey: "Test1", type: "groupable"});
+        var oMeas = new Item({propertyKey: "Test2", type: "aggregatable"});
         this.oMDCChart.addItem(oDim);
         this.oMDCChart.addItem(oMeas);
 
@@ -1292,7 +1292,7 @@ function(
     });
 
     QUnit.test("getAggregatedMeasureNameForMDCItem", function(assert) {
-        var oMeas = new Item({name: "Test1"});
+        var oMeas = new Item({propertyKey: "Test1"});
 
         assert.equal(ChartDelegate._getAggregatedMeasureNameForMDCItem(oMeas), "Test1", "Should just return name in standard implementation");
     });
