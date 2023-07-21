@@ -209,7 +209,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("DisplayTypes tests", function (assert) {
-		assert.expect(10);
+		assert.expect(11);
 		var done = assert.async();
 		var sTitle = "My Title";
 
@@ -219,6 +219,10 @@ sap.ui.define([
 
 		var fnIsContentDisplayed = function () {
 			return jQuery(".sapMPDFViewerContent").length === 1 || jQuery(".sapMPDFViewerEmbeddedContent").length === 1;
+		};
+
+		var fnIsErrorContentDisplayed = function () {
+			return jQuery(".sapMPDFViewerEmbeddedContent").length === 1;
 		};
 
 		var fnCheckControlStructure = function () {
@@ -244,6 +248,14 @@ sap.ui.define([
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Auto);
 			oPdfViewer.rerender();
 			assert.notOk(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is not displayed in Auto mode");
+
+			Device.system.desktop = false;
+			Device.system.phone = true;
+			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
+			TestUtils.rerender();
+			assert.ok(!fnIsErrorContentDisplayed(), "Error Content is not displayed in Mobile and Embedded mode");
+			Device.system.desktop = true;
+			Device.system.phone = false;
 
 			done();
 		};
