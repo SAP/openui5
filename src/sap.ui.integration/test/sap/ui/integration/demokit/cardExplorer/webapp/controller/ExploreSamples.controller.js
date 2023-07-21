@@ -27,10 +27,7 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Popover",
 	"sap/m/Select",
-	"sap/m/VBox",
-	"sap/m/HBox",
-	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/designtime/editor/CardEditor"
+	"sap/m/HBox"
 ], function (
 	BaseController,
 	Constants,
@@ -60,12 +57,12 @@ sap.ui.define([
 	Panel,
 	Popover,
 	Select,
-	VBox,
-	HBox,
-	Card,
-	CardEditor
+	HBox
 ) {
 	"use strict";
+
+	// Lazy dependencies from sap.ui.integration lib
+	var CardEditor, Card;
 
 	var SAMPLE_CHANGED_ERROR = "Sample changed",
 	oConfigurationCardMFChangesforAdmin = {},
@@ -832,7 +829,10 @@ sap.ui.define([
 		_loadConfigurationEditor: function () {
 			if (!this._pLoadConfigurationEditor) {
 				this._pLoadConfigurationEditor = new Promise(function (resolve, reject) {
-					sap.ui.require(["sap/ui/integration/designtime/editor/CardEditor"], resolve, reject);
+					sap.ui.require(["sap/ui/integration/designtime/editor/CardEditor"], function (_CardEditor) {
+						CardEditor = _CardEditor;
+						resolve();
+					}, reject);
 				});
 			}
 
@@ -1120,6 +1120,8 @@ sap.ui.define([
 					.then(function (aArgs) {
 						var oCard = aArgs[0],
 							oHost = aArgs[1];
+
+						Card = oCard.getMetadata().getClass();
 
 						if (oSample.cache) {
 							oHost.useExperimentalCaching();
