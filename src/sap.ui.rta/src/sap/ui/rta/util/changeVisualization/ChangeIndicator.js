@@ -173,6 +173,8 @@ sap.ui.define([
 		// the indicator should be centered only if the element has a small enough height to improve the design and visibility
 		if (iOverlayHeight < iIndicatorHeight * 5) {
 			oIndicator.addStyleClass("sapUiRtaChangeIndicatorVerticallyCentered");
+		} else {
+			oIndicator.removeStyleClass("sapUiRtaChangeIndicatorVerticallyCentered");
 		}
 	}
 
