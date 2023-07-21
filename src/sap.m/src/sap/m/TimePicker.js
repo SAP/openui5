@@ -29,7 +29,8 @@ sap.ui.define([
 	'./Button',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Core"
 ],
 function(
 	InputBase,
@@ -57,7 +58,8 @@ function(
 	Button,
 	jQuery,
 	Configuration,
-	UI5Date
+	UI5Date,
+	Core
 ) {
 		"use strict";
 
@@ -2307,13 +2309,11 @@ function(
 				}
 			}
 
-			jQuery.extend(true, oInfo, {
-				role: oRenderer.getAriaRole(this),
-				type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"),
-				description: [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim(),
-				autocomplete: "none",
-				haspopup: true
-			});
+			oInfo.role = oRenderer.getAriaRole(this);
+			oInfo.type = Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT");
+			oInfo.description = [sValue || this._getPlaceholder(), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
+			oInfo.autocomplete = "none";
+			oInfo.haspopup = true;
 
 			return oInfo;
 		};
