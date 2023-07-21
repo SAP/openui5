@@ -24,7 +24,7 @@ sap.ui.define([
 
 	/**
 	 * Returns a writable base configuration instance
-	 * @returns {sap.base.config} The writable base configuration
+	 * @returns {module:sap/base/config} The writable base configuration
 	 */
 	_Configuration.getWritableInstance = function() {
 		var oProvider = new MemoryConfigurationProvider();

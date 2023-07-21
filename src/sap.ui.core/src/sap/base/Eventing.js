@@ -17,7 +17,7 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 * @param {sap.base.Event} fnEventClass The Event class
+	 * @param {module:sap/base/Event} fnEventClass The Event class
 	 * @mixin module:sap/base/Eventing
 	 * @private
 	 * @ui5-restricted sap.ui.core sap/base/i18n sap/ui/base/EventProvider
@@ -239,7 +239,7 @@ sap.ui.define([
 	 * As the callers are limited and known and for performance reasons the internal event registry
 	 * is returned. It contains more information than necessary, but needs no expensive conversion.
 	 *
-	 * @param {sap.base.Eventing} oEventing The event provider to get the registered events for
+	 * @param {module:sap/base/Eventing} oEventing The event provider to get the registered events for
 	 * @return {object} the list of events currently having listeners attached
 	 * @name module:sap/base/Eventing.getEventList
 	 * @function
@@ -256,7 +256,7 @@ sap.ui.define([
 	 * Returns true if function and listener object both match the corresponding parameters of
 	 * at least one listener registered for the named event.
 	 *
-	 * @param {sap.base.Eventing}
+	 * @param {module:sap/base/Eventing}
 	 *            oEventing The event provider to get the registered events for
 	 * @param {string}
 	 *            sType The type of the event to check listeners for
@@ -291,7 +291,7 @@ sap.ui.define([
 	 * structured, this can be overwritten to make the object hierarchy visible to the Eventing and
 	 * enables the use of event bubbling within this object hierarchy.
 	 *
-	 * @return {sap.base.Eventing|null} The parent event provider
+	 * @return {module:sap/base/Eventing|null} The parent event provider
 	 * @name module:sap/base/Eventing#getEventingParent
 	 * @function
 	 * @protected
@@ -305,7 +305,6 @@ sap.ui.define([
 	 *
 	 * The object must not be used anymore after destroy was called.
 	 *
-	 * @see sap.base.Object#destroy
 	 * @name module:sap/base/Eventing#destroy
 	 * @function
 	 * @public

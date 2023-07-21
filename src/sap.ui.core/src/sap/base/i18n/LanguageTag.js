@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-//Provides the LanguageTag object sap.base.i18n.LanguageTag
+//Provides the LanguageTag object module:sap/base/i18n/LanguageTag
 sap.ui.define([
 ], function(
 ) {

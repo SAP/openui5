@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides type sap.ui.core.AnimationMode.
+// Provides type module:sap/ui/core/AnimationMode.
 sap.ui.define([], function() {
 	"use strict";
 

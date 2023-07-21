@@ -87,7 +87,7 @@ sap.ui.define([
 		/**
 		 * Returns the current animation mode.
 		 *
-		 * @return {sap.ui.core.AnimationMode} The current animationMode
+		 * @return {module:sap/ui/core/AnimationMode} The current animationMode
 		 * @public
 		 */
 		getAnimationMode: function() {
@@ -123,7 +123,7 @@ sap.ui.define([
 		 * If the <code>animationMode</code> is <code>AnimationMode.none</code> the old
 		 * <code>animation</code> property is set to <code>false</code>, otherwise it is set to <code>true</code>.
 		 *
-		 * @param {sap.ui.core.AnimationMode} sAnimationMode A valid animation mode
+		 * @param {module:sap/ui/core/AnimationMode} sAnimationMode A valid animation mode
 		 * @throws {Error} If the provided <code>sAnimationMode</code> does not exist, an error is thrown
 		 * @public
 		 */

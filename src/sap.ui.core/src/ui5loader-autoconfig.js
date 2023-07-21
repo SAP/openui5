@@ -369,7 +369,7 @@
 
 		/**
 		 * @enum {string}
-		 * @alias sap.base.config.Type
+		 * @alias module:sap/base/config.Type
 		 * @private
 		 */
 		var TypeEnum = {
@@ -579,7 +579,7 @@
 		 * @function
 		 * @param {object} mOptions The options object that contains the following properties
 		 * @param {string} mOptions.name Name of the configuration parameter. Must start with 'sapUi/sapUiXx' prefix followed by letters only. The name must be camel-case
-		 * @param {sap.base.config.Type|object<string, string>|function} mOptions.type Type of the configuration parameter. This argument can be a <code>sap.base.config.Type</code>, object or function.
+		 * @param {module:sap/base/config.Type|object<string, string>|function} mOptions.type Type of the configuration parameter. This argument can be a <code>module:sap/base/config.Type</code>, object or function.
 		 * @param {any} [mOptions.defaultValue=undefined] Default value of the configuration parameter corresponding to the given type or a function returning the default value.
 		 * @param {boolean} [mOptions.external=false] Whether external (e.g. url-) parameters should be included or not
 		 * @param {boolean} [mOptions.freeze=false] Freezes parameter and parameter can't be changed afterwards.
@@ -647,7 +647,7 @@
 
 		/**
 		 * Returns a writable base configuration instance
-		 * @returns {sap.base.config._Configuration} The writable base configuration
+		 * @returns {module:sap/base/config/_Configuration} The writable base configuration
 		 */
 		function getWritableBootInstance() {
 			var oProvider = aProvider[0];

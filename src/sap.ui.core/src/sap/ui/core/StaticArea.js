@@ -111,7 +111,7 @@ sap.ui.define([
 	 * It can be used e.g. for hiding elements like Popup, Shadow, Blocklayer etc.
 	 * If it is not yet available, a DIV element is created and appended to the body.
 	 *
-	 * @returns {ELement} the root DOM element of the static, hidden area
+	 * @returns {Element} the root DOM element of the static, hidden area
 	 * @throws {Error} if the document is not ready yet
 	 *
 	 * @private

@@ -126,7 +126,7 @@ sap.ui.define([
 	 *
 	 * As of 3/2013 config is true for all locales/regions supported by UI5.
 	 *
-	 * @param {sap.base.i18n.LanguageTag} oLanguageTag LanguageTag to check
+	 * @param {module:sap/base/i18n/LanguageTag} oLanguageTag LanguageTag to check
 	 * @returns {boolean} <code>true</code> if <code>vLanguage</code> implies RTL,
 	 *  otherwise <code>false</code>
 	 * @private
@@ -170,7 +170,7 @@ sap.ui.define([
 	 * or, throws an error for non BCP-47 compliant languages.
 	 *
 	 * @param {string} sLanguage A BCP-47 compliant language
-	 * @return {sap.base.i18n.LanguageTag} The resulting LanguageTag
+	 * @returns {module:sap/base/i18n/LanguageTag} The resulting LanguageTag
 	 * @throws {TypeError} Throws a TypeError for unknown languages
 	 * @private
 	 */
@@ -239,7 +239,7 @@ sap.ui.define([
 
 		/**
 		 * Attaches the <code>fnFunction</code> event handler to the {@link #event:change change} event
-		 * of <code>sap.base.i18n.Localization</code>.
+		 * of <code>module:sap/base/i18n/Localization</code>.
 		 *
 		 * @param {function} fnFunction
 		 *   The function to be called when the event occurs
@@ -252,7 +252,7 @@ sap.ui.define([
 
 		/**
 		 * Detaches event handler <code>fnFunction</code> from the {@link #event:change change} event of
-		 * this <code>sap.base.i18n.Localization</code>.
+		 * this <code>module:sap/base/i18n/Localization</code>.
 		 *
 		 * @param {function} fnFunction Function to be called when the event occurs
 		 * @private
@@ -288,9 +288,9 @@ sap.ui.define([
 		 * </pre>
 		 *
 		 * For a normalized BCP47 tag, call {@link #getLanguageTag} or call {@link #getLanguageTag} to get a
-		 * {@link sap.base.i18n.LanguageTag LanguageTag} object matching the language.
+		 * {@link module:sap/base/i18n/LanguageTag LanguageTag} object matching the language.
 		 *
-		 * @return {string} Language string as configured
+		 * @returns {string} Language string as configured
 		 * @public
 		 */
 		getLanguage : function () {
@@ -475,12 +475,12 @@ sap.ui.define([
 		 * {@link topic:6c9e61dc157a40c19460660ece8368bc Dates, Times, Timestamps, and Time Zones}.
 		 *
 		 * When the timezone has changed, the Core will fire its
-		 * {@link sap.base.i18n.Localization#event:change change} event.
+		 * {@link module:sap/base/i18n/Localization#event:change change} event.
 		 *
 		 * @param {string|null} [sTimezone] IANA timezone ID, e.g. "America/New_York". Use <code>null</code> to reset the timezone to the browser's local timezone.
 		 *   An invalid IANA timezone ID will fall back to the browser's timezone.
 		 * @public
-		 * @return {this} <code>this</code> to allow method chaining
+		 * @returns {this} <code>this</code> to allow method chaining
 		 * @since 1.99.0
 		 */
 		setTimezone : function (sTimezone) {
@@ -503,7 +503,7 @@ sap.ui.define([
 		 *
 		 * The LanguageTag is derived from the {@link #getLanguage language} property.
 		 *
-		 * @return {sap.base.i18n.LanguageTag} The LanguageTag
+		 * @returns {module:sap/base/i18n/LanguageTag} The LanguageTag
 		 * @public
 		 */
 		getLanguageTag : function () {
@@ -529,7 +529,7 @@ sap.ui.define([
 		 * If no mode has been explicitly set (neither <code>true</code> nor <code>false</code>),
 		 * the mode is derived from the current language setting.
 		 *
-		 * @return {boolean} whether the page uses the RTL text direction
+		 * @returns {boolean} whether the page uses the RTL text direction
 		 * @public
 		 */
 		getRTL : function () {
@@ -562,7 +562,7 @@ sap.ui.define([
 		 * <b>Note</b>: See documentation of {@link #setLanguage} for restrictions.
 		 *
 		 * @param {boolean|null} bRTL new character orientation mode or <code>null</code>
-		 * @return {this} <code>this</code> to allow method chaining
+		 * @returns {this} <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setRTL : function(bRTL) {
@@ -596,7 +596,7 @@ sap.ui.define([
 		 * supported by the default set of SAP languages. config method has no knowledge
 		 * about the concrete languages of any given backend system.
 		 *
-		 * @param {sap.base.i18n.LanguageTag} oLanguageTag The Locale to calculate the SAPLogonLanguage
+		 * @param {module:sap/base/i18n/LanguageTag} oLanguageTag The Locale to calculate the SAPLogonLanguage
 		 * @returns {string} a language code that should
 		 * @private
 		 * @ui5-restricted sap.ui.core
@@ -631,7 +631,7 @@ sap.ui.define([
 		 * It will be returned in uppercase.
 		 * e.g. "EN", "DE"
 		 *
-		 * @return {string} The SAP logon language code for the current language
+		 * @returns {string} The SAP logon language code for the current language
 		 * @public
 		 */
 		getSAPLogonLanguage : function () {
@@ -656,7 +656,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * @returns {sap.base.i18n.date.CalendarType} The preferred Calendar type.
+		 * @returns {module:sap/base/i18n/date/CalendarType} The preferred Calendar type.
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 */
@@ -672,7 +672,7 @@ sap.ui.define([
 		 *
 		 * Might return undefined if the information is not available.
 		 *
-		 * @return {array|undefined} List of Languages delivered with core
+		 * @returns {string[]|undefined} List of Languages delivered with core
 		 * @experimental
 		 */
 		getLanguagesDeliveredWithCore : function() {
@@ -680,7 +680,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * @return {array} List of supported languages
+		 * @returns {string[]} List of supported languages
 		 * @experimental
 		 */
 		getSupportedLanguages : function() {

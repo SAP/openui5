@@ -267,7 +267,7 @@ sap.ui.define([
 		 *
 		 * @name sap.ui.core.Theming#applied
 		 * @event
-		 * @param {sap.base.Event} oEvent
+		 * @param {module:sap/base/Event} oEvent
 		 * @param {sap.ui.base.EventProvider} oEvent.target
 		 * @param {string} oEvent.theme Theme name
 		 * @public
@@ -319,11 +319,11 @@ sap.ui.define([
 		 *
 		 * @name module:sap/ui/core/Theming.change
 		 * @event
-		 * @param {sap.base.Event} oEvent
+		 * @param {module:sap/base/Event} oEvent
 		 * @param {sap.ui.base.EventProvider} oEvent.target
 		 * @param {object} oEvent.theme theme object
-		 * @param {object} oEvent.theme.new new theme name
-		 * @param {object} oEvent.theme.old old theme name
+		 * @param {string} oEvent.theme.new new theme name
+		 * @param {string} oEvent.theme.old old theme name
 		 * @param {object} oEvent.themeroots themeroots object
 		 * @param {object} oEvent.themeroots.new new themeroots
 		 * @param {object} oEvent.themeroots.old old themeroots

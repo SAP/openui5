@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-// Provides class sap.base.Event
+// Provides class module:sap/base/Event
 sap.ui.define(["sap/base/assert"],
 	function(assert) {
 	"use strict";
@@ -13,7 +13,7 @@ sap.ui.define(["sap/base/assert"],
 	 * @class Creates an event with the given <code>sType</code>, linked to the provided <code>oTarget</code> and enriched with the <code>oParameters</code>.
 	 *
 	 * @param {string} sType The type of the event
-	 * @param {sap.base.Eventing} oTarget Target of the event
+	 * @param {module:sap/base/Eventing} oTarget Target of the event
 	 * @param {object} oParameters Parameters for this event. The parameters will be accessible as properties of the Event instance.
 	 *
 	 * @author SAP SE
@@ -91,7 +91,7 @@ sap.ui.define(["sap/base/assert"],
 
 	/**
 	 * Returns the event parameters as map
-	 * @param {sap.base.Event} oEvent The event object to retrieve the parameters
+	 * @param {module:sap/base/Event} oEvent The event object to retrieve the parameters
 	 * @returns {object} Map of event parameters
 	 * @private
 	 * @ui5-restricted sap/base/i18n sap.ui.core

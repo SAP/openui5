@@ -1053,7 +1053,7 @@ sap.ui.define([
 
 		/**
 		 * Creates and returns a spy for <code>XMLHttpRequest.prototype.open</code> which is
-		 * used in {@link sap.base.util.fetch}.
+		 * used in {@link module:sap/base/util/fetch}.
 		 *
 		 * @param {object} oSandbox
 		 *   a Sinon sandbox as created using <code>sinon.sandbox.create()</code>
