@@ -313,14 +313,25 @@ sap.ui.define([
 	};
 
 	CarouselRenderer._renderArrow = function (oRM, oCarousel, sDirection) {
-		var sShort = sDirection.slice(0, 4);
+		var sShort = sDirection.slice(0, 4),
+			bLoop = oCarousel.getLoop(),
+			bFirstPageIsActive = oCarousel._aAllActivePagesIndexes[0] === 0,
+			bLastPageIsActive = oCarousel._aAllActivePagesIndexes[oCarousel._aAllActivePagesIndexes.length - 1] === oCarousel.getPages().length - 1;
 
 		oRM.openStart("span", oCarousel.getId() + "-arrow-" + sDirection)
 			.class("sapMCrslArrow")
 			.class("sapMCrsl" + capitalize(sShort))
 			.attr("data-slide", sShort)
-			.attr("title", oResourceBundle.getText("PAGINGBUTTON_" + sDirection.toUpperCase()))
-			.openEnd();
+			.attr("title", oResourceBundle.getText("PAGINGBUTTON_" + sDirection.toUpperCase()));
+
+		// Hide unneeded arrow when we are on the first or last page and "loop" property is set to false
+		if (bFirstPageIsActive && sDirection === "previous" && !bLoop) {
+			oRM.class("sapMCrslLeftmost");
+		} else if (bLastPageIsActive && sDirection !== "previous" && !bLoop) {
+			oRM.class("sapMCrslRightmost");
+		}
+
+		oRM.openEnd();
 
 		oRM.openStart("div").class("sapMCrslArrowInner").openEnd();
 

@@ -484,7 +484,7 @@ sap.ui.define([
 			"'2 of 3' should be shown when  _getPageIndicatorText is called with 3, total pages are 6 and number of pages to show is 4");
 	});
 
-	QUnit.test("#_adjustHUDVisibility(1) with maximum number of pages to be shown", function (assert) {
+	QUnit.test("#_adjustArrowsVisibility() with maximum number of pages to be shown", function (assert) {
 		// Set up
 		var iPagesToShow = 6;
 
@@ -494,7 +494,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Act
-		this.oCarousel._adjustHUDVisibility(1);
+		this.oCarousel._adjustArrowsVisibility();
 
 		// Assert
 		assert.strictEqual(this.oCarousel.$('hud').length, 0, "Hud arrows are not rendered");
@@ -1913,6 +1913,29 @@ sap.ui.define([
 		// assert
 		assert.notOk(this.oCarousel.$("hud").hasClass(Carousel._LEFTMOST_CLASS), "Left arrow should be visible");
 		assert.ok(this.oCarousel.$("hud").hasClass(Carousel._RIGHTMOST_CLASS), "Right arrow should be hidden");
+	});
+
+	QUnit.test("Arrows in the Page Indicator area visibility when multiple pages are displayed", function (assert) {
+		this.oCarousel.setArrowsPlacement("PageIndicator");
+		Core.applyChanges();
+
+		// assert
+		assert.ok(this.oCarousel.$("arrow-previous").hasClass(Carousel._LEFTMOST_CLASS), "Left arrow should be hidden");
+		assert.notOk(this.oCarousel.$("arrow-next").hasClass(Carousel._RIGHTMOST_CLASS), "Right arrow should be visible");
+
+		// act
+		this.oCarousel.setActivePage("page4");
+
+		// assert
+		assert.notOk(this.oCarousel.$("arrow-previous").hasClass(Carousel._LEFTMOST_CLASS), "Left arrow should be visible");
+		assert.notOk(this.oCarousel.$("arrow-next").hasClass(Carousel._RIGHTMOST_CLASS), "Right arrow should be visible");
+
+		// act
+		this.oCarousel.setActivePage("page9");
+
+		// assert
+		assert.notOk(this.oCarousel.$("arrow-previous").hasClass(Carousel._LEFTMOST_CLASS), "Left arrow should be visible");
+		assert.ok(this.oCarousel.$("arrow-next").hasClass(Carousel._RIGHTMOST_CLASS), "Right arrow should be hidden");
 	});
 
 	QUnit.test("setActivePage() leads to 'pageChanged' event when multiple pages are displayed", function (assert) {
