@@ -17,7 +17,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var MPopover, MLibrary, Toolbar, ToolbarSpacer, ValueStateHeader;
+	var MPopover, MLibrary, Toolbar, ToolbarSpacer, ValueStateHeader, InvisibleText;
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -124,13 +124,15 @@ sap.ui.define([
 				"sap/m/library",
 				"sap/m/Toolbar",
 				"sap/m/ToolbarSpacer",
-				"sap/m/ValueStateHeader"
+				"sap/m/ValueStateHeader",
+				"sap/ui/core/InvisibleText"
 			]).then(function (aLoaded) {
 				MPopover = aLoaded[0];
 				MLibrary = aLoaded[1];
 				Toolbar = aLoaded[2];
 				ToolbarSpacer = aLoaded[3];
 				ValueStateHeader = aLoaded[4];
+				InvisibleText = aLoaded[5];
 
 				var oValueStateHeader = new ValueStateHeader();
 				fUpdateValueHelpHeader(this.getControl(), oValueStateHeader);
@@ -146,6 +148,9 @@ sap.ui.define([
 					afterClose: this.handleClosed.bind(this),
 					customHeader: oValueStateHeader
 				}).addStyleClass("sapMdcValueHelpPopover").addStyleClass("sapMComboBoxBasePicker").addStyleClass("sapMComboBoxBasePicker-CTX"); // to have a ComboBox popup
+
+				this._oInvisibleText = new InvisibleText({text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("valuehelp.POPOVER_AVALIABLE_VALUES")}).toStatic();
+				oPopover.addAriaLabelledBy(this._oInvisibleText);
 
 				if (oValueStateHeader) {
 					oValueStateHeader.setPopup(oPopover);
@@ -460,6 +465,11 @@ sap.ui.define([
 				this._oCurrentContent.destroy();
 			}
 			this._oCurrentContent = null;
+		}
+
+		if (this._oInvisibleText) {
+			this._oInvisibleText.destroy();
+			delete this._oInvisibleText;
 		}
 
 		Container.prototype.exit.apply(this, arguments);
