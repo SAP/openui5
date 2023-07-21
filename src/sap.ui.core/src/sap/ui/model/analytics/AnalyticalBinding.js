@@ -235,7 +235,8 @@ sap.ui.define([
 	 * @param {array} [aFilters=null]
 	 *   An array of predefined filters
 	 * @param {object} [mParameters=null]
-	 *   A map containing additional binding parameters
+	 *   A map containing additional binding parameters; for the <code>AnalyticalBinding</code> this
+	 *   parameter is mandatory
 	 * @param {sap.ui.model.TreeAutoExpandMode} [mParameters.autoExpandMode=sap.ui.model.TreeAutoExpandMode.Bundled]
 	 *   The auto expand mode; applying sorters to groups is only possible in auto expand mode
 	 *   {@link sap.ui.model.TreeAutoExpandMode.Sequential}
@@ -282,7 +283,7 @@ sap.ui.define([
 
 			this.aAdditionalSelects = [];
 			// attribute members for addressing the requested entity set
-			this.sEntitySetName = (mParameters && mParameters.entitySet) ? mParameters.entitySet : undefined;
+			this.sEntitySetName = mParameters.entitySet ? mParameters.entitySet : undefined;
 			// attribute members for maintaining aggregated OData requests
 			this.bArtificalRootContext = false;
 			// Note: aApplicationFilter is used by sap.ui.comp.smarttable.SmartTable
@@ -297,12 +298,12 @@ sap.ui.define([
 			this.oPendingRequests = {};
 			this.oPendingRequestHandle = [];
 			this.oGroupedRequests = {};
-			this.bUseBatchRequests = (mParameters && mParameters.useBatchRequests === true) ? true : false;
-			this.bProvideTotalSize = (mParameters && mParameters.provideTotalResultSize === false) ? false : true;
-			this.bProvideGrandTotals = (mParameters && mParameters.provideGrandTotals === false) ? false : true;
-			this.bReloadSingleUnitMeasures = (mParameters && mParameters.reloadSingleUnitMeasures === false) ? false : true;
-			this.bUseAcceleratedAutoExpand = (mParameters && mParameters.useAcceleratedAutoExpand === false) ? false : true;
-			this.bNoPaging = (mParameters && mParameters.noPaging === true) ? true : false;
+			this.bUseBatchRequests = mParameters.useBatchRequests === true;
+			this.bProvideTotalSize = mParameters.provideTotalResultSize !== false;
+			this.bProvideGrandTotals = mParameters.provideGrandTotals !== false;
+			this.bReloadSingleUnitMeasures = mParameters.reloadSingleUnitMeasures !== false;
+			this.bUseAcceleratedAutoExpand = mParameters.useAcceleratedAutoExpand !== false;
+			this.bNoPaging = mParameters.noPaging === true;
 
 			iInstanceCount += 1;
 			this._iId = iInstanceCount;
@@ -343,12 +344,10 @@ sap.ui.define([
 			this.aBatchRequestQueue = [];
 
 			// considering different count mode settings
-			if (mParameters && mParameters.countMode == CountMode.None) {
+			if (mParameters.countMode == CountMode.None) {
 				oLogger.fatal("requested count mode is ignored; OData requests will include"
 					+ " $inlinecount options");
-			} else if (mParameters
-					&& (mParameters.countMode == CountMode.Request
-						|| mParameters.countMode == CountMode.Both)) {
+			} else if (mParameters.countMode == CountMode.Request || mParameters.countMode == CountMode.Both) {
 				oLogger.warning("default count mode is ignored; OData requests will include"
 					+ " $inlinecount options");
 			} else if (this.oModel.sDefaultCountMode == CountMode.Request) {
@@ -369,7 +368,7 @@ sap.ui.define([
 			//Some setup steps have to be deferred, until the metadata was loaded by the model:
 			// - updateAnalyticalInfo, the parameters given in the constructor are kept though
 			// - fetch the oAnalyticalQueryResult
-			this.aInitialAnalyticalInfo = (mParameters == undefined ? [] : mParameters.analyticalInfo);
+			this.aInitialAnalyticalInfo = mParameters.analyticalInfo;
 
 			//this flag indicates if the analytical binding was initialized via initialize(), called either via bindAggregation or the Model
 			this.bInitial = true;
