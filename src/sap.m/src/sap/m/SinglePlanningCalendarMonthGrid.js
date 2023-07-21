@@ -385,30 +385,26 @@ sap.ui.define([
 
 		SinglePlanningCalendarMonthGrid.prototype._rangeSelection = function(oStartDate) {
 			var oCurrentDate = UI5Date.getInstance(CalendarDate.fromLocalJSDate(oStartDate));
-			var iDay;
 			var oTarget;
 			var i;
 			var _bSelectWeek = false;
 
 			for (i = 0; i < 7; i++) {
-				iDay = oStartDate.getDate() + i;
-				oCurrentDate.setDate(iDay);
 				if (!this._checkDateSelected(CalendarDate.fromLocalJSDate(oCurrentDate))) {
 					_bSelectWeek = true;
 					break;
 				}
+				oCurrentDate.setDate(oCurrentDate.getDate() + 1);
 			}
 
 			oCurrentDate = UI5Date.getInstance(CalendarDate.fromLocalJSDate(oStartDate));
 
 			for (i = 0; i < 7; i++) {
-				iDay = oStartDate.getDate() + i;
-				oCurrentDate.setDate(iDay);
 				oTarget = document.querySelector('[sap-ui-date="' + oCurrentDate.getTime() + '"]');
-				if (_bSelectWeek && oTarget && oTarget.classList.contains("sapMSPCMonthDaySelected")){
-					continue;
+				if (!(_bSelectWeek && oTarget && oTarget.classList.contains("sapMSPCMonthDaySelected"))){
+					this._toggleMarkCell(oTarget, oCurrentDate);
 				}
-				this._toggleMarkCell(oTarget, oCurrentDate);
+				oCurrentDate.setDate(oCurrentDate.getDate() + 1);
 			}
 		};
 
@@ -493,7 +489,7 @@ sap.ui.define([
 				oStartDate = UI5Date.getInstance(oDate.getUTCFullYear(), oStartDate.getUTCMonth(), oStartDate.getUTCDate());
 				this._toggleMarkCell(oTarget, oStartDate);
 
-			} else if (this._bCurrentWeekSelection && this.getAggregation("selectedDates")){
+			} else if (this._bCurrentWeekSelection && SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode()){
 				this._bCurrentWeekSelection = false;
 				var iFirstDayOfWeek;
 				var oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(Configuration.getFormatSettings().getFormatLocale().toString()));
@@ -526,6 +522,8 @@ sap.ui.define([
 				oTarget = oEvent.target,
 				bIsCell = oTarget && oTarget.classList.contains("sapMSPCMonthDay"),
 				bIsLink = oTarget && oTarget.classList.contains("sapMLnk"),
+				bWeekNumberSelect = oTarget && oTarget.classList.contains("sapMSPCMonthWeekNumber"),
+				oFirstSiblingElement = bWeekNumberSelect && oEvent.originalEvent.target.nextSibling.children[0],
 				iTimestamp,
 				oStartDate,
 				oEndDate;
@@ -548,6 +546,19 @@ sap.ui.define([
 					appointment: undefined,
 					appointments: this._toggleAppointmentSelection(undefined, true)
 				});
+			} else if (bWeekNumberSelect) {
+				iTimestamp = parseInt(oFirstSiblingElement.getAttribute("sap-ui-date"));
+				oStartDate = UI5Date.getInstance(iTimestamp);
+				oStartDate = UI5Date.getInstance(oStartDate.getUTCFullYear(), oStartDate.getUTCMonth(), oStartDate.getUTCDate());
+
+				oEndDate = UI5Date.getInstance(oStartDate);
+				oEndDate.setDate(oEndDate.getDate() + 6);
+
+				this._bCurrentWeekSelection = true;
+				this._bMultiDateSelect = false;
+				this._handelMultiDateSelection(oTarget, oStartDate, oEndDate, oEvent);
+				this.fireEvent("selectDate", {startDate: oStartDate, endDate: oEndDate});
+
 			} else if (oSrcControl && oSrcControl.isA("sap.ui.unified.CalendarAppointment")) {
 				// add suffix in appointment
 				if (oTarget.parentElement && oTarget.parentElement.getAttribute("id")) {
