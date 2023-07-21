@@ -194,6 +194,14 @@
 	.sapMSF {
 		height: 2.5rem;
 		padding-top: 0px;
+
+		&:not(.sapMSFVal) .sapMSFS {
+			pointer-events: none;
+
+			&::after {
+				border-color: transparent;
+			}
+		}
 	}
 
 	.sapMSF .sapMSFF {
@@ -202,15 +210,24 @@
 	}
 
 	.sapMSFB {
-		line-height: 2.5rem;
-		width: 1.875rem;
+		width: 2rem;
+		height: 2rem;
+		margin-top: 0.1875rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.sapMSFB.sapMSFBA {
+		background: none;
+		box-shadow: none;
 	}
 
 	.sapMSFSSI {
 		display: inline;
 	}
 
-	.sapMSFF  .sapMSFSSI:before {
+	.sapMSFF .sapMSFSSI:before {
 		content: "\e00d";
 		display: block;
 		font-style: normal;
@@ -218,7 +235,7 @@
 		height: 1rem;
 		font-family: 'SAP-icons';
 		margin-right: 0.375rem;
-		margin-top: 0.75rem;
+		margin-top: 0.6875rem;
 	}
 
 	.sapMSFS::after {
@@ -226,18 +243,18 @@
 	}
 
 	.sapMSFR::after,
-	.sapMSFS::after  {
+	.sapMSFS::after {
 		display: block;
 		width: 1.25rem;
 		height: 1.25rem;
 		border-radius: 0.75rem;
 		font-size: 0.75rem;
-		margin-top: 0.625rem;
 		line-height: 1.25rem;
+		border: @sapUiButtonBorderWidth solid @sapUiButtonBorderColor;
 	}
 
 	.sapMSFS {
-		width: 1.625rem;
+		margin-right: 0.1875rem;
 		border: none;
 	}
 
@@ -251,17 +268,16 @@
 	}
 
 	.sapMSFS:active::after,
+	.sapMSFS.sapMSFBA::after,
 	.sapMSFR:active::after {
 		background: @sapActiveColor;
 		color: @sapContent_IconColor;
-		margin-top: 0.625rem;
 	}
 
 	.sapMSFS:hover::after,
 	.sapMSFR:hover::after {
 		background: @sapHoverColor;
 		color: @sapContent_IconColor;
-		margin-top: 0.625rem;
 	}
 
 	.sapMSFB.sapMSFR:not(:last-child):hover {
@@ -271,22 +287,34 @@
 	.sapMSFB:hover {
 		border: none;
 	}
+
+	.sapMSFVal.sapMFocus .sapMSFF {
+		outline: none;
+
+		.sapMSFS.sapMSFB::after {
+			border-color: transparent;
+			outline: @sapUiContentFocusWidth solid @sapUiContentFocusColor;
+			outline-offset: -0.0625rem;
+		}
+	}
 }
 
 html.sap-desktop .sapTntToolHeader .sapMFocus > .sapMSFF::before {
-	border: none;
+	display: none;
 }
 
-html.sap-desktop .sapTntToolHeader .sapMFocus .sapMSFF {
-	outline: @sapContent_FocusWidth solid @sapContent_FocusColor;
-	border: none;
+html.sap-desktop .sapTntToolHeader .sapMSF:not(.sapMSFDisabled) {
+	&:not(.sapMFocus):hover .sapMSFF,
+	&.sapMFocus:not(.sapMSFVal) .sapMSFF {
+		outline: @sapUiContentFocusWidth solid @sapUiContentFocusColor;
+		border-color: transparent;
+	}
 }
 
 .sapUiSizeCompact {
 	.sapTntToolHeader {
 		.sapMSF {
 			height: 2rem;
-			padding-top: 1px;
 		}
 
 		.sapMSF .sapMSFF {
@@ -294,25 +322,18 @@ html.sap-desktop .sapTntToolHeader .sapMFocus .sapMSFF {
 		}
 
 		.sapMSFB {
-			line-height: 2rem;
-			width: 1.5rem;
+			margin-top: 0.125rem;
+			width: 1.625rem;
+			height: 1.625rem;
 		}
 
-		.sapMSFF  .sapMSFSSI:before {
-			margin-top: 0.5rem;
+		.sapMSFS {
+			margin-right: 0.125rem;
 		}
-	}
 
-	.sapMSFS:hover::after,
-	.sapMSFR:hover::after,
-	.sapMSFS:active::after,
-	.sapMSFR:active::after {
-		margin-top: 0.375rem;
-	}
-
-	.sapMSFS::after,
-	.sapMSFR::after {
-		margin-top: 0.375rem;
+		.sapMSFF .sapMSFSSI:before {
+			margin-top: 0.4375rem;
+		}
 	}
 }
 
