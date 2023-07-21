@@ -1557,6 +1557,9 @@ sap.ui.define([
 		assert.equal(oSimpleForm.indexOfContent(oField3), 6, "Index of Field3");
 	});
 
+	/**
+	 * @deprecated as of version 1.93 ResponsiveLayout is deprecated, so test should only be executed if still available
+	 */
 	QUnit.module("ResponsiveLayout", {
 		beforeEach: initTestWithContentRL,
 		afterEach: afterTest
