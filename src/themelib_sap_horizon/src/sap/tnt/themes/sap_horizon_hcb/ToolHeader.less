@@ -210,8 +210,12 @@
 	}
 
 	.sapMSFB {
-		line-height: 2.5rem;
-		width: 1.875rem;
+		width: 2rem;
+		height: 2rem;
+		margin-top: 0.1875rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.sapMSFB.sapMSFBA {
@@ -245,14 +249,12 @@
 		height: 1.25rem;
 		border-radius: 0.75rem;
 		font-size: 0.75rem;
-		margin-top: 0.625rem;
 		line-height: 1.25rem;
 		border: @sapUiButtonBorderWidth solid @sapUiButtonBorderColor;
-		margin-top: 0.5rem;
 	}
 
 	.sapMSFS {
-		width: 1.625rem;
+		margin-right: 0.1875rem;
 		border: none;
 	}
 
@@ -313,7 +315,6 @@ html.sap-desktop .sapTntToolHeader .sapMSF:not(.sapMSFDisabled) {
 	.sapTntToolHeader {
 		.sapMSF {
 			height: 2rem;
-			padding-top: 1px;
 		}
 
 		.sapMSF .sapMSFF {
@@ -321,21 +322,17 @@ html.sap-desktop .sapTntToolHeader .sapMSF:not(.sapMSFDisabled) {
 		}
 
 		.sapMSFB {
-			line-height: 2rem;
-			width: 1.5rem;
+			margin-top: 0.125rem;
+			width: 1.625rem;
+			height: 1.625rem;
 		}
 
-		.sapMSFR {
-			width: 1.5625rem;
+		.sapMSFS {
+			margin-right: 0.125rem;
 		}
 
 		.sapMSFF .sapMSFSSI:before {
 			margin-top: 0.4375rem;
-		}
-
-		.sapMSFR::after,
-		.sapMSFS::after {
-			margin-top: 0.25rem;
 		}
 	}
 }
