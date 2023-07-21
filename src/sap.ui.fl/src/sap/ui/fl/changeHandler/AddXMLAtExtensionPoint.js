@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/changeHandler/BaseAddXml"
+	"sap/ui/fl/changeHandler/BaseAddXml",
+	"sap/ui/fl/write/api/ExtensionPointRegistryAPI"
 ], function(
-	BaseAddXml
+	BaseAddXml,
+	ExtensionPointRegistryAPI
 ) {
 	"use strict";
 
@@ -66,7 +68,7 @@ sap.ui.define([
 					+ "'). Multiple Extension-points with the same name in one view are not supported!");
 			}
 			(mExtensionPointInfo.defaultContent || []).forEach(function(vControl) {
-				// Remove default implementation of extension points in async apply (xml-preprocessing) and create (via action handler) sceanrios
+				// Remove default implementation of extension points in async apply (xml-preprocessing) and create (via action handler) scenarios
 				if (vControl) {
 					oModifier.destroy(vControl);
 				}
@@ -84,6 +86,11 @@ sap.ui.define([
 				// Confirm with ready function in sync apply scenario (preprocessing with JSView)
 				mExtensionPointInfo.ready(aNewControls);
 			}
+			ExtensionPointRegistryAPI.addCreatedControlsToExtensionPointInfo({
+				name: oSelector.name,
+				viewId: oModifier.getId(oView),
+				createdControlsIds: aNewControls.map((oNewControl) => oModifier.getId(oNewControl))
+			});
 			return true;
 		});
 	};

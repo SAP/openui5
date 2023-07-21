@@ -3,11 +3,9 @@
  */
 sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Utils"
 ], function(
 	ManagedObjectObserver,
-	JsControlTreeModifier,
 	FlUtils
 ) {
 	"use strict";
@@ -54,6 +52,12 @@ sap.ui.define([
 					if (Array.isArray(oExtensionPoint.defaultContent)) {
 						oExtensionPoint.defaultContent = oExtensionPoint.defaultContent.filter(function(oContent) {
 							return oContent.getId() !== oEvent.child.getId();
+						});
+					}
+					// If element being removed was added to the extension point, also clear it from the registry
+					if (Array.isArray(oExtensionPoint.createdControls)) {
+						oExtensionPoint.createdControls = oExtensionPoint.createdControls.filter(function(sCreatedControlId) {
+							return sCreatedControlId !== oEvent.child.getId();
 						});
 					}
 					if (oExtensionPoint.aggregation.indexOf(oEvent.child.getId()) < oExtensionPoint.index) {
@@ -125,7 +129,7 @@ sap.ui.define([
 	 * @param {Object} mExtensionPointInfo.targetControl - Parent control of the extension point
 	 * @param {string} mExtensionPointInfo.aggregationName - Name of the aggregation where the extension point is located
 	 * @param {number} mExtensionPointInfo.index - Index of the extension point
-	 * @param {Array} mExtensionPointInfo.defaultContent - Array of control IDs, which belong to the default aggregation
+	 * @param {Array} mExtensionPointInfo.defaultContent - Array of controls which belong to the default aggregation
 	 */
 	ExtensionPointRegistry.registerExtensionPoint = function(mExtensionPointInfo) {
 		var oParent = mExtensionPointInfo.targetControl;
@@ -176,6 +180,24 @@ sap.ui.define([
 		mObservers = {};
 		mExtensionPointsByParent = {};
 		mExtensionPointsByViewId = {};
+	};
+
+	/**
+	 * Adds an array of created controls in an extension points so they
+	 * can be distinguished from other controls in the same aggregation
+	 *
+	 * @param {string} sExtensionPointName - Name of the extension point
+	 * @param {Object} sViewId - View Id
+	 * @param {string[]} aCreatedControlsIds - IDs of the created controls
+	 */
+	ExtensionPointRegistry.addCreatedControls = function(sExtensionPointName, sViewId, aCreatedControlsIds) {
+		if (
+			mExtensionPointsByViewId[sViewId] &&
+			mExtensionPointsByViewId[sViewId][sExtensionPointName]
+		) {
+			var aExistingCreatedControls = mExtensionPointsByViewId[sViewId][sExtensionPointName].createdControls || [];
+			mExtensionPointsByViewId[sViewId][sExtensionPointName].createdControls = aExistingCreatedControls.concat(aCreatedControlsIds);
+		}
 	};
 
 	return ExtensionPointRegistry;

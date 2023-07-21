@@ -50,6 +50,21 @@ sap.ui.define([
 		 */
 		getExtensionPointInfoByParentId: function(mPropertyBag) {
 			return ExtensionPointRegistry.getExtensionPointInfoByParentId(mPropertyBag.parentId);
+		},
+
+		/**
+		 * Adds the ids of controls created in an extension point to the registry.
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {string} mPropertyBag.name - Name of the extension point
+		 * @param {object} mPropertyBag.viewId - ID of the view
+		 * @param {string[]} mPropertyBag.createdControlsIds - Array with the IDs of the created controls
+		 */
+		addCreatedControlsToExtensionPointInfo: function(mPropertyBag) {
+			ExtensionPointRegistry.addCreatedControls(
+				mPropertyBag.name,
+				mPropertyBag.viewId,
+				mPropertyBag.createdControlsIds
+			);
 		}
 	};
 
