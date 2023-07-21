@@ -92,6 +92,9 @@ sap.ui.define([
 			itemId = oItem.getId();
 
 		rm.openStart("li", oItem);
+		if (oItem.getVisible()) {
+			rm.attr("tabindex", "0");
+		}
 		rm.class("sapUiMnuItm").class("sapUiMnuTfItm");
 
 		if (oInfo.iItemNo == 1) {
@@ -106,15 +109,12 @@ sap.ui.define([
 			rm.class("sapUiMnuItmSepBefore");
 		}
 
-		if (!bIsEnabled) {
-			rm.attr("disabled", "disabled");
-		}
-
 		// ARIA
 		if (oInfo.bAccessible) {
 			rm.attr("role", "menuitem");
 			rm.attr("aria-posinset", oInfo.iItemNo);
 			rm.attr("aria-setsize", oInfo.iTotalItems);
+			rm.attr("aria-disabled", !bIsEnabled);
 		}
 
 		rm.openEnd();
@@ -176,10 +176,10 @@ sap.ui.define([
 	};
 
 	MenuTextFieldItem.prototype.focus = function(oMenu){
-		if (this.getVisible()) {
+		if (this.getVisible() && this.getEnabled()) {
 			this.$("tf").get(0).focus();
 		} else {
-			oMenu.focus();
+			this.$().trigger("focus");
 		}
 	};
 

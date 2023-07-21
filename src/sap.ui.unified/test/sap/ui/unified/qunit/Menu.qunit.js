@@ -1189,8 +1189,7 @@ sap.ui.define([
 		assert.notOk($menuItem.attr("disabled"), "Disabled MenuItem has a disabled attribute");
 		assert.ok($menuItem.attr("aria-disabled"), "Disabled MenuItem doesn't have aria-disabled");
 
-		assert.ok($menuTextFieldItem.attr("disabled"), "Disabled MenuItemTextField has a disabled attribute");
-		assert.notOk($menuTextFieldItem.attr("aria-disabled"), "Disabled MenuItemTextField doesn't have aria-disabled");
+		assert.ok($menuTextFieldItem.attr("aria-disabled"), "Disabled MenuItemTextField doesn't have aria-disabled");
 
 		assert.ok($menuTextFieldItemInput.attr("disabled"), "Disabled MenuItemTextField's input has a disabled attribute");
 		assert.notOk($menuTextFieldItemInput.attr("aria-disabled"), "Disabled MenuItemTextField's input doesn't have aria-disabled");
