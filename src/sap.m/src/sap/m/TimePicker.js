@@ -2302,6 +2302,8 @@ function(
 			var oRenderer = this.getRenderer();
 			var oInfo = DateTimeField.prototype.getAccessibilityInfo.apply(this, arguments);
 			var sValue = this.getValue() || "";
+			var sRequired = this.getRequired() ? Core.getLibraryResourceBundle("sap.m").getText("ELEMENT_REQUIRED") : '';
+
 			if (this._bValid) {
 				var oDate = this.getDateValue();
 				if (oDate) {
@@ -2311,7 +2313,7 @@ function(
 
 			oInfo.role = oRenderer.getAriaRole(this);
 			oInfo.type = Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT");
-			oInfo.description = [sValue || this._getPlaceholder(), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
+			oInfo.description = [sValue || this._getPlaceholder(), oRenderer.getDescribedByAnnouncement(this), sRequired].join(" ").trim();
 			oInfo.autocomplete = "none";
 			oInfo.haspopup = true;
 

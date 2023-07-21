@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Core",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
 ],
@@ -35,7 +36,8 @@ sap.ui.define([
 		Log,
 		assert,
 		Configuration,
-		UI5Date
+		UI5Date,
+		Core
 	) {
 	"use strict";
 
@@ -1082,14 +1084,16 @@ sap.ui.define([
 		var oRenderer = this.getRenderer();
 		var oInfo = DatePicker.prototype.getAccessibilityInfo.apply(this, arguments);
 		var sValue = this.getValue() || "";
+		var sRequired = this.getRequired() ? Core.getLibraryResourceBundle("sap.m").getText("ELEMENT_REQUIRED") : '';
+
 		if (this._bValid) {
 			var oDate = this.getDateValue();
 			if (oDate) {
 				sValue = this._formatValue(oDate, this.getSecondDateValue());
 			}
 		}
-		oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT");
-		oInfo.description = [sValue || this._getPlaceholder(), oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
+		oInfo.type = Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT");
+		oInfo.description = [sValue || this._getPlaceholder(), oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this), sRequired].join(" ").trim();
 		return oInfo;
 	};
 

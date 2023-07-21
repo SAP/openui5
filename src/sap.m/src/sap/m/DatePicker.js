@@ -33,6 +33,7 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarUtils",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/Core",
 	"sap/ui/dom/jquery/cursorPos"
 ],
 	function(
@@ -63,7 +64,8 @@ sap.ui.define([
 		Configuration,
 		CalendarUtils,
 		UI5Date,
-		CalendarWeekNumbering
+		CalendarWeekNumbering,
+		Core
 	) {
 	"use strict";
 
@@ -1445,6 +1447,8 @@ sap.ui.define([
 		var oRenderer = this.getRenderer();
 		var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
 		var sValue = this.getValue() || "";
+		var sRequired = this.getRequired() ? Core.getLibraryResourceBundle("sap.m").getText("ELEMENT_REQUIRED") : '';
+
 		if (this._bValid) {
 			var oDate = this.getDateValue();
 			if (oDate) {
@@ -1452,7 +1456,7 @@ sap.ui.define([
 			}
 		}
 		oInfo.type = oResourceBundle.getText("ACC_CTR_TYPE_DATEINPUT");
-		oInfo.description = [sValue || this._getPlaceholder(), oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
+		oInfo.description = [sValue || this._getPlaceholder(), oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this), sRequired].join(" ").trim();
 		return oInfo;
 	};
 
