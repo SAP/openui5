@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/UriParameters",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/mvc/View",
 	"sap/base/util/restricted/_omit",
@@ -32,6 +33,7 @@ sap.ui.define([
 	Log,
 	isEmptyObject,
 	UriParameters,
+	Configuration,
 	Manifest,
 	View,
 	_omit,
@@ -90,11 +92,15 @@ sap.ui.define([
 			assert.equal(sClient, "123");
 		});
 
-		QUnit.test("convertBrowserLanguageToISO639_1 shall return the ISO 639-1 language of a RFC4646 language", function(assert) {
-			assert.equal(Utils.convertBrowserLanguageToISO639_1("en-us"), "EN");
-			assert.equal(Utils.convertBrowserLanguageToISO639_1("de"), "DE");
-			assert.equal(Utils.convertBrowserLanguageToISO639_1(""), "");
-			assert.equal(Utils.convertBrowserLanguageToISO639_1("hkjhkashik"), "");
+		QUnit.test("getCurrentLanguage shall return the ISO 639-1 language of a RFC4646 language", function(assert) {
+			var oGetLanguageStub = sandbox.stub(Configuration, "getLanguage").returns("en-US");
+			assert.equal(Utils.getCurrentLanguage("en-us"), "EN");
+			oGetLanguageStub.returns("de");
+			assert.equal(Utils.getCurrentLanguage("de"), "DE");
+			oGetLanguageStub.returns("");
+			assert.equal(Utils.getCurrentLanguage(""), "");
+			oGetLanguageStub.returns("hkjhkashik");
+			assert.equal(Utils.getCurrentLanguage("hkjhkashik"), "");
 		});
 
 		QUnit.test("isBinding shall return false if the property is null", function(assert) {
