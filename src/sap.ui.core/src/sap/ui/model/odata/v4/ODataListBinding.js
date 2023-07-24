@@ -748,6 +748,16 @@ sap.ui.define([
 	 * the case if the complete collection has been read or if the system query option
 	 * <code>$count</code> is <code>true</code> and the binding has processed at least one request.
 	 *
+	 * Creating a new child beneath an existing and visible parent node (which must either be a leaf
+	 * or expanded, but not collapsed) is supported (@experimental as of version 1.117.0) in case of
+	 * a recursive hierarchy (see {@link #setAggregation}). The parent node must be identified via a
+	 * {@link sap.ui.model.odata.v4.Context} instance given as
+	 * <code>oInitialData["@$ui5.node.parent"]</code>. <code>oAggregation.expandTo</code> (see
+	 * {@link #setAggregation}) must be one, <code>bSkipRefresh</code> must be set, but both
+	 * <code>bAtEnd</code> and <code>bInactive</code> must not be set. No other creation must be
+	 * pending, and no other modification (including collapse of some ancestor node) must happen
+	 * while this creation is pending!
+	 *
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
 	 * @param {boolean} [bSkipRefresh]
@@ -800,17 +810,22 @@ sap.ui.define([
 	 *     <li> an automatic refresh of the created entity cannot be performed and
 	 *       <code>bSkipRefresh</code> is missing. This could be caused by a side-effects refresh
 	 *       happening in parallel to creation (error thrown since 1.114.0; previously failed
-	 *       without an adequate error message).
+	 *       without an adequate error message),
+	 *     <li> the restrictions for creating in a recursive hierarchy (see above) are not met.
 	 *   </ul>
 	 * @public
 	 * @since 1.43.0
 	 */
 	ODataListBinding.prototype.create = function (oInitialData, bSkipRefresh, bAtEnd, bInactive) {
-		var oContext,
+		var oAggregation = this.mParameters.$$aggregation,
+			iChildIndex,
+			oContext,
 			oCreatePathPromise = this.fetchResourcePath(),
 			oCreatePromise,
+			oEntityData,
 			sGroupId = this.getUpdateGroupId(),
 			oGroupLock,
+			oParentContext,
 			sResolvedPath = this.getResolvedPath(),
 			sTransientPredicate = "($uid=" + _Helper.uid() + ")",
 			sTransientPath = sResolvedPath + sTransientPredicate,
@@ -821,7 +836,7 @@ sap.ui.define([
 			throw new Error("Binding is unresolved: " + this);
 		}
 		this.checkSuspended();
-		if (this.mParameters.$$aggregation) {
+		if (_Helper.isDataAggregation(this.mParameters)) {
 			throw new Error("Cannot create in " + this + " when using data aggregation");
 		}
 		if (this.isTransient()) {
@@ -844,12 +859,38 @@ sap.ui.define([
 				throw new Error("Missing $$ownRequest at " + this);
 			}
 			sGroupId = "$inactive." + sGroupId;
-		} else {
+		} else if (!oAggregation) {
 			this.iActiveContexts += 1;
 		}
 
 		if (this.bFirstCreateAtEnd === undefined) {
 			this.bFirstCreateAtEnd = bAtEnd;
+		}
+
+		// clone data to avoid modifications outside the cache
+		// remove any property starting with "@$ui5."
+		oEntityData = _Helper.publicClone(oInitialData, true) || {};
+		if (oAggregation) {
+			if (oAggregation.expandTo > 1) {
+				throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
+			}
+			if (!bSkipRefresh) {
+				throw new Error("Missing bSkipRefresh");
+			}
+			if (arguments.length > 2) {
+				throw new Error("Only the parameters oInitialData and bSkipRefresh are supported");
+			}
+			oParentContext = oInitialData["@$ui5.node.parent"];
+			iChildIndex = this.aContexts.indexOf(oParentContext) + 1;
+			if (iChildIndex <= 0) {
+				throw new Error("Invalid parent context: " + oParentContext);
+			}
+			if (oParentContext.isExpanded() === false) {
+				throw new Error("Unsupported collapsed parent: " + oParentContext);
+			}
+			oEntityData["@$ui5.node.parent"] = oParentContext.getCanonicalPath().slice(1);
+		} else {
+			this.iCreatedContexts += 1;
 		}
 
 		// only for createInCache
@@ -869,7 +910,7 @@ sap.ui.define([
 			});
 		});
 		oCreatePromise = this.createInCache(oGroupLock, oCreatePathPromise, sResolvedPath,
-			sTransientPredicate, oInitialData, this.bFirstCreateAtEnd !== bAtEnd,
+			sTransientPredicate, oEntityData, this.bFirstCreateAtEnd !== bAtEnd,
 			function (oError) { // error callback
 				that.oModel.reportError("POST on '" + oCreatePathPromise
 					+ "' failed; will be repeated automatically", sClassName, oError);
@@ -906,8 +947,8 @@ sap.ui.define([
 			throw oError;
 		});
 
-		this.iCreatedContexts += 1;
-		oContext = Context.create(this.oModel, this, sTransientPath, -this.iCreatedContexts,
+		oContext = Context.create(this.oModel, this, sTransientPath,
+			oParentContext ? iChildIndex : -this.iCreatedContexts,
 			oCreatePromise, bInactive);
 		if (this.isTransient()) {
 			oContext.created().catch(this.oModel.getReporter());
@@ -920,7 +961,15 @@ sap.ui.define([
 			} // else: context already destroyed
 		});
 
-		if (this.bFirstCreateAtEnd !== bAtEnd) {
+		if (oParentContext) {
+			this.aContexts.splice(iChildIndex, 0, oContext);
+			for (i = this.aContexts.length - 1; i > iChildIndex; i -= 1) {
+				if (this.aContexts[i]) {
+					this.aContexts[i].iIndex += 1;
+				}
+			}
+			this.iMaxLength += 1;
+		} else if (this.bFirstCreateAtEnd !== bAtEnd) {
 			this.aContexts.splice(this.iCreatedContexts - 1, 0, oContext);
 			for (i = this.iCreatedContexts - 1; i >= 0; i -= 1) {
 				this.aContexts[i].iIndex = i - this.iCreatedContexts;

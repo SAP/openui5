@@ -98,7 +98,7 @@ sap.ui.define([
 	 * @param {string} sTitle - A test title
 	 * @param {object} assert - The QUnit assert object
 	 * @param {sap.m.Table|sap.ui.table.Table} oTable - A table
-	 * @param {string[]} aExpectedPaths - List of all expected current conntext paths
+	 * @param {string[]} aExpectedPaths - List of all expected (normalized) current context paths
 	 * @param {any[][]} aExpectedContent - "Table" of expected cell contents
 	 * @param {number} [iExpectedLength=aExpectedPaths.length] - Expected length
 	 */
@@ -110,7 +110,8 @@ sap.ui.define([
 		assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
 		assert.strictEqual(oListBinding.getLength(), iExpectedLength || aExpectedPaths.length,
 			sTitle);
-		assert.deepEqual(oListBinding.getAllCurrentContexts().map(getPath), aExpectedPaths);
+		assert.deepEqual(oListBinding.getAllCurrentContexts().map(getNormalizedPath),
+			aExpectedPaths);
 
 		aExpectedContent = aExpectedContent.map(function (aTexts) {
 			return aTexts.map(function (vText) {
@@ -24719,7 +24720,7 @@ sap.ui.define([
 			that.expectChange("count", "1");
 
 			// code under test
-			that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+			that.oView.byId("count").setBindingContext(oHeaderContext);
 
 			return that.waitForChanges(assert, "$count");
 		}).then(function () {
@@ -24820,11 +24821,6 @@ sap.ui.define([
 				["", "", ""]
 			]);
 			assert.strictEqual(oListBinding.getCount(), 1, "count of nodes"); // code under test
-
-			assert.throws(function () {
-				// code under test (JIRA: CPOUI5ODATAV4-1851)
-				oListBinding.create();
-			}, new Error("Cannot create in " + oListBinding + " when using data aggregation"));
 
 			assert.throws(function () {
 				// code under test (JIRA: CPOUI5ODATAV4-1851)
@@ -25005,7 +25001,7 @@ sap.ui.define([
 			return Promise.all([
 				// code under test
 				// Note: $direct avoids "HTTP request was not processed because $batch failed"
-				oListBinding.getHeaderContext().requestSideEffects([""], "$direct")
+				oHeaderContext.requestSideEffects([""], "$direct")
 					.then(mustFail(assert), function (oError0) {
 						assert.strictEqual(oError0, oError);
 					}),
@@ -27476,6 +27472,175 @@ sap.ui.define([
 				"/EMPLOYEES('3')",
 				"/EMPLOYEES('4')",
 				"/EMPLOYEES('5')"
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show the single root node of a recursive hierarchy, which happens to be a leaf.
+	// Create two new child nodes underneath.
+	// Note: The "_Friend" navigation property is misused in order to have an artist play the role
+	// of a hierarchy directory. This way, a draft root object is available (as needed by real
+	// services).
+	// JIRA: CPOUI5ODATAV4-1592
+	QUnit.test("Recursive Hierarchy: create new children", function (assert) {
+		var oChild, oListBinding, fnRespond, oRoot, oTable;
+
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
+		const sView = `
+<t:Table id="table" rows="{path : '/Artists(ArtistID=\\\'99\\\',IsActiveEntity=false)/_Friend',
+		parameters : {
+			$$aggregation : {
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="3">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text id="name" text="{Name}"/>
+</t:Table>`;
+		const that = this;
+
+		this.expectRequest({
+				batchNo : 1,
+				url : sFriend.slice(1) + "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root" + sFriend
+					+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID',Levels=1)"
+					+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
+					+ "&$count=true&$skip=0&$top=3"
+			}, {
+				"@odata.count" : "1",
+				value : [{
+					ArtistID : "0",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						// DescendantCount : "0", // not needed w/o expandTo
+						// DistanceFromRoot : "0", // not needed w/o expandTo
+						DrillState : "leaf",
+						NodeID : "0,false"
+					}
+				}]
+			})
+			.expectChange("name", ["Alpha"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oRoot = oTable.getRows()[0].getBindingContext();
+			oListBinding = oRoot.getBinding();
+
+			checkTable("root is leaf", assert, oTable, [
+				sFriend + "(ArtistID='0',IsActiveEntity=false)"
+			], [
+				[undefined, 1, "Alpha"],
+				["", "", ""],
+				["", "", ""]
+			]);
+			assert.strictEqual(oRoot.getIndex(), 0);
+
+			assert.throws(function () {
+				// code under test (missing "@$ui5.node.parent")
+				oListBinding.create({}, /*bSkipRefresh*/true);
+			}); // TypeError: Cannot read properties of undefined (reading 'getCanonicalPath')
+
+			that.expectChange("name", [, "Beta"])
+				.expectRequest({
+					method : "POST",
+					url : sFriend.slice(1),
+					payload : {
+						"BestFriend@odata.bind" : "Artists(ArtistID='0',IsActiveEntity=false)",
+						Name : "Beta"
+					}
+				}, new Promise(function (resolve) {
+					fnRespond = resolve.bind(null, {
+						"@odata.etag" : "etag1.0",
+						ArtistID : "1",
+						IsActiveEntity : false,
+						Name : "Beta: β" // side effect
+					});
+				}));
+
+			// code under test
+			oChild = oListBinding.create({
+				"@$ui5.node.parent" : oRoot,
+				Name : "Beta"
+			}, /*bSkipRefresh*/true);
+
+			return that.waitForChanges(assert, "create 1st child");
+		}).then(function () {
+			checkTable("during creation", assert, oTable, [
+				sFriend + "(ArtistID='0',IsActiveEntity=false)",
+				sFriend + "($uid=...)"
+			], [
+				[true, 1, "Alpha"],
+				[undefined, 2, "Beta"],
+				["", "", ""]
+			]);
+			assert.strictEqual(oChild.getIndex(), 1);
+
+			that.expectChange("name", [, "Beta: β"]);
+
+			fnRespond();
+
+			return Promise.all([
+				oChild.created(),
+				that.waitForChanges(assert, "respond")
+			]);
+		}).then(function () {
+			checkTable("after creation", assert, oTable, [
+				sFriend + "(ArtistID='0',IsActiveEntity=false)",
+				sFriend + "(ArtistID='1',IsActiveEntity=false)"
+			], [
+				[true, 1, "Alpha"],
+				[undefined, 2, "Beta: β"],
+				["", "", ""]
+			]);
+			assert.strictEqual(oChild.getIndex(), 1);
+			assert.deepEqual(oChild.getObject(), {
+				"@$ui5.context.isTransient" : false,
+				"@$ui5.node.level" : 2,
+				"@odata.etag" : "etag1.0",
+				ArtistID : "1",
+				IsActiveEntity : false,
+				Name : "Beta: β"
+			});
+
+			that.expectChange("name", [, "Gamma", "Beta: β"])
+				.expectRequest({
+					method : "POST",
+					url : sFriend.slice(1),
+					payload : {
+						"BestFriend@odata.bind" : "Artists(ArtistID='0',IsActiveEntity=false)",
+						Name : "Gamma"
+					}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Gamma: γ" // side effect
+				})
+				.expectChange("name", [, "Gamma: γ"]);
+
+			// code under test
+			oChild = oListBinding.create({
+				"@$ui5.node.parent" : oRoot,
+				Name : "Gamma"
+			}, /*bSkipRefresh*/true);
+
+			assert.strictEqual(oChild.getIndex(), 1);
+
+			return Promise.all([
+				oChild.created(),
+				that.waitForChanges(assert, "create 2nd child")
+			]);
+		}).then(function () {
+			checkTable("after creation", assert, oTable, [
+				sFriend + "(ArtistID='0',IsActiveEntity=false)",
+				sFriend + "(ArtistID='2',IsActiveEntity=false)",
+				sFriend + "(ArtistID='1',IsActiveEntity=false)"
+			], [
+				[true, 1, "Alpha"],
+				[undefined, 2, "Gamma: γ"],
+				[undefined, 2, "Beta: β"]
 			]);
 		});
 	});

@@ -405,9 +405,9 @@ sap.ui.define([
 		 * Builds the value for a "$apply" system query option based on the given data aggregation
 		 * information for a recursive hierarchy. If no query options are given, only a symbolic
 		 * "$apply" is constructed to avoid timing issues with metadata. The property paths for
-		 * DistanceFromRootProperty, DrillStateProperty, LimitedDescendantCountProperty, and
-		 * NodeProperty are stored at <code>oAggregation</code> using a "$" prefix (if not already
-		 * stored).
+		 * DistanceFromRootProperty, DrillStateProperty, LimitedDescendantCountProperty,
+		 * NodeProperty, and ParentNavigationProperty are stored at <code>oAggregation</code> using
+		 * a "$" prefix (if not already stored).
 		 *
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for a recursive hierarchy; see
@@ -436,25 +436,17 @@ sap.ui.define([
 		 * @public
 		 */
 		buildApply4Hierarchy : function (oAggregation, mQueryOptions, bAllLevels) {
-			var sApply = "",
-				sHierarchyQualifier = oAggregation.hierarchyQualifier,
-				sMetaPath = oAggregation.$metaPath,
-				sNodeProperty = oAggregation.$NodeProperty,
-				sPath = oAggregation.$path,
-				mRecursiveHierarchy,
-				sSeparator = "",
-				oSyncPromise;
+			let mRecursiveHierarchy; // cache it on 1st access
 
 			function select(sProperty) {
-				var sPropertyPath;
-
 				if (mQueryOptions.$select) {
-					sPropertyPath = oAggregation["$" + sProperty];
+					let sPropertyPath = oAggregation["$" + sProperty];
 					if (!sPropertyPath) {
 						if (!mRecursiveHierarchy) {
-							mRecursiveHierarchy = oAggregation.$fetchMetadata(sMetaPath
-								+ "/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#"
-								+ sHierarchyQualifier).getResult();
+							mRecursiveHierarchy = oAggregation.$fetchMetadata(oAggregation.$metaPath
+									+ "/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#"
+									+ oAggregation.hierarchyQualifier
+								).getResult();
 						}
 
 						sPropertyPath = oAggregation["$" + sProperty]
@@ -464,14 +456,18 @@ sap.ui.define([
 				}
 			}
 
+			let sNodeProperty = oAggregation.$NodeProperty;
 			if (!sNodeProperty) {
 				sNodeProperty = "???";
 				if (mQueryOptions) {
-					oSyncPromise = oAggregation.$fetchMetadata(sMetaPath
-						+ "/@Org.OData.Aggregation.V1.RecursiveHierarchy#" + sHierarchyQualifier
-						+ "/NodeProperty/$PropertyPath");
+					const oSyncPromise = oAggregation.$fetchMetadata(oAggregation.$metaPath
+						+ "/@Org.OData.Aggregation.V1.RecursiveHierarchy#"
+						+ oAggregation.hierarchyQualifier);
 					if (oSyncPromise.isFulfilled()) {
-						sNodeProperty = oAggregation.$NodeProperty = oSyncPromise.getResult();
+						sNodeProperty = oAggregation.$NodeProperty
+							= oSyncPromise.getResult().NodeProperty.$PropertyPath;
+						oAggregation.$ParentNavigationProperty = oSyncPromise.getResult()
+							.ParentNavigationProperty.$NavigationPropertyPath;
 					}
 				}
 			}
@@ -484,7 +480,9 @@ sap.ui.define([
 				}
 			}
 
+			let sApply = "";
 			if (mQueryOptions.$filter || oAggregation.search) {
+				let sSeparator = "";
 				if (mQueryOptions.$filter) {
 					sApply = "filter(" + mQueryOptions.$filter;
 					sSeparator = ")/";
@@ -493,15 +491,15 @@ sap.ui.define([
 				if (oAggregation.search) {
 					sApply += sSeparator + "search(" + oAggregation.search;
 				}
-				sApply = "ancestors($root" + sPath
-					+ "," + sHierarchyQualifier
+				sApply = "ancestors($root" + oAggregation.$path
+					+ "," + oAggregation.hierarchyQualifier
 					+ "," + sNodeProperty
 					+ "," + sApply
 					+ "),keep start)/";
 			}
 			if (mQueryOptions.$$filterBeforeAggregate) { // children of a given parent
-				sApply += "descendants($root" + sPath + "," + sHierarchyQualifier
-					+ "," + sNodeProperty
+				sApply += "descendants($root" + oAggregation.$path
+					+ "," + oAggregation.hierarchyQualifier + "," + sNodeProperty
 					+ ",filter(" + mQueryOptions.$$filterBeforeAggregate + "),1)";
 				delete mQueryOptions.$$filterBeforeAggregate;
 				if (mQueryOptions.$orderby) {
@@ -514,8 +512,8 @@ sap.ui.define([
 					delete mQueryOptions.$orderby;
 				}
 				sApply += "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root"
-					+ (sPath || "")
-					+ ",HierarchyQualifier='" + sHierarchyQualifier
+					+ (oAggregation.$path || "")
+					+ ",HierarchyQualifier='" + oAggregation.hierarchyQualifier
 					+ "',NodeProperty='" + sNodeProperty
 					+ "',Levels=" + (bAllLevels ? 999 : oAggregation.expandTo || 1)
 					+ ")";

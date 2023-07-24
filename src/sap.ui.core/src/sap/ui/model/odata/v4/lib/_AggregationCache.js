@@ -150,7 +150,8 @@ sap.ui.define([
 		function addElement(oElement, i) {
 			var oOldElement = aElements[iOffset + i],
 				oKeptElement,
-				sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+				sPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate")
+					|| _Helper.getPrivateAnnotation(oElement, "predicate");
 
 			if (oOldElement) { // check before overwriting
 				if (oOldElement === oElement) {
@@ -294,6 +295,86 @@ sap.ui.define([
 		aElements.$count -= iCount;
 
 		return iCount;
+	};
+
+	/**
+	 * Creates a transient node with the parent identified by "@$ui5.node.parent", inserts it into
+	 * the hierarchy at the appropriate position, and adds a POST request to the batch
+	 * group with the given ID. See {@link sap.ui.model.odata.v4.lib._Cache#create} for more.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID
+	 * @param {sap.ui.base.SyncPromise} oPostPathPromise
+	 *   A SyncPromise resolving with the resource path for the POST request
+	 * @param {string} sPath
+	 *   The collection's path within the cache (as used by change listeners)
+	 * @param {string} sTransientPredicate
+	 *   A (temporary) key predicate for the transient entity: "($uid=...)"
+	 * @param {object} oEntityData
+	 *   The initial entity data, already cloned and cleaned of client-side annotations (except
+	 *   "@$ui5.node.parent" which contains the OData ID string needed for "...@odata.bind")
+	 * @param {boolean} bAtEndOfCreated
+	 *   Whether the newly created entity should be inserted after previously created entities or at
+	 *   the front of the list.
+	 * @param {function} fnErrorCallback
+	 *   A function which is called with an error object each time a POST request for the create
+	 *   fails
+	 * @param {function} fnSubmitCallback
+	 *   A function which is called just before a POST request for the create is sent
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise which is resolved with the created entity when the POST request has been
+	 *   successfully sent and the entity has been marked as non-transient
+	 * @throws {Error}
+	 *   If <code>this.oAggregation.expandTo > 1</code>, <code>bAtEndOfCreated</code> is set, or the
+	 *   parent is collapsed
+	 *
+	 * @public
+	 */
+	// @override sap.ui.model.odata.v4.lib._Cache#create
+	_AggregationCache.prototype.create = function (oGroupLock, oPostPathPromise, sPath,
+			sTransientPredicate, oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback) {
+		if (this.oAggregation.expandTo > 1) {
+			throw new Error("Unsupported expandTo: " + this.oAggregation.expandTo);
+		}
+		if (bAtEndOfCreated) {
+			throw new Error("Unsupported bAtEndOfCreated");
+		}
+
+		const aElements = this.aElements;
+		const sParentPath = oEntityData["@$ui5.node.parent"];
+		const sParentPredicate = sParentPath.slice(sParentPath.indexOf("("));
+		const oParentNode = aElements.$byPredicate[sParentPredicate];
+		if (oParentNode["@$ui5.node.isExpanded"] === false) {
+			throw new Error("Unsupported collapsed parent: " + sParentPath);
+		}
+
+		let oCache = _Helper.getPrivateAnnotation(oParentNode, "cache");
+		if (!oCache) {
+			oCache = this.createGroupLevelCache(oParentNode);
+			_Helper.setPrivateAnnotation(oParentNode, "cache", oCache);
+			_Helper.updateAll(this.mChangeListeners, sParentPredicate, oParentNode,
+				{"@$ui5.node.isExpanded" : true}); // not a leaf anymore
+		}
+
+		delete oEntityData["@$ui5.node.parent"];
+		const oResult = oCache.create(oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
+			oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback);
+		// add @odata.bind to POST body only
+		_Helper.getPrivateAnnotation(oEntityData, "postBody")
+			[this.oAggregation.$ParentNavigationProperty + "@odata.bind"] = sParentPath;
+		oEntityData["@$ui5.node.level"] = oParentNode["@$ui5.node.level"] + 1;
+
+		const iIndex = aElements.indexOf(oParentNode) + 1;
+		aElements.splice(iIndex, 0, null); // create a gap
+		this.addElements(oEntityData, iIndex, oCache, 0);
+		aElements.$count += 1;
+
+		return oResult.then(function () {
+			aElements.$byPredicate[_Helper.getPrivateAnnotation(oEntityData, "predicate")]
+				= oEntityData;
+
+			return oEntityData;
+		});
 	};
 
 	/**

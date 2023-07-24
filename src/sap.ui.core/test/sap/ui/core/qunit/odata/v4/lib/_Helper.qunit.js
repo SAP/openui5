@@ -2040,14 +2040,15 @@ sap.ui.define([
 				a : "abc",
 				qux : "qux",
 				x : "xyz"
-			};
+			},
+			oHelperMock = this.mock(_Helper);
 
 		// code under test
 		_Helper.deleteProperty(oObject, "bar");
 
 		assert.deepEqual(oObject, {foo : "foo", baz : "baz"});
 
-		this.mock(_Helper).expects("drillDown")
+		oHelperMock.expects("drillDown")
 			.withExactArgs(sinon.match.same(oObject), ["foo", "bar", "baz"])
 			.returns(oDrilledDown);
 
@@ -2055,6 +2056,17 @@ sap.ui.define([
 		_Helper.deleteProperty(oObject, "foo/bar/baz/qux");
 
 		assert.deepEqual(oDrilledDown, {a : "abc", x : "xyz"});
+
+		[undefined, null].forEach(function (vValue) {
+			oHelperMock.expects("drillDown")
+				.withExactArgs(sinon.match.same(oObject), ["qux"])
+				.returns(vValue);
+
+			// code under test
+			_Helper.deleteProperty(oObject, "qux/foo");
+
+			assert.deepEqual(oObject, {foo : "foo", baz : "baz"}, "unchanged");
+		});
 	});
 
 	//*********************************************************************************************
