@@ -1,5 +1,6 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
 	"sap/m/SinglePlanningCalendar",
 	"sap/m/SinglePlanningCalendarMonthView",
 	"sap/m/SinglePlanningCalendarMonthGrid",
@@ -10,8 +11,10 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateRange",
-	"sap/ui/unified/calendar/CalendarDate"
+	"sap/ui/unified/calendar/CalendarDate",
+	"sap/ui/events/KeyCodes"
 ], function(
+	qutils,
 	SinglePlanningCalendar,
 	SinglePlanningCalendarMonthView,
 	SinglePlanningCalendarMonthGrid,
@@ -22,7 +25,8 @@ sap.ui.define([
 	oCore,
 	UI5Date,
 	DateRange,
-	CalendarDate
+	CalendarDate,
+	KeyCodes
 ) {
 		"use strict";
 
@@ -442,6 +446,184 @@ sap.ui.define([
 			assert.notOk(oGrid.$().find('.sapMSPCMonthDay')[14].classList.contains("sapMSPCMonthDaySelected"), "cell is deselected");
 			assert.notOk(oGrid.$().find('.sapMSPCMonthDay')[17].classList.contains("sapMSPCMonthDaySelected"), "cell is deselected");
 			assert.strictEqual(oGrid.getSelectedDates().length, 0, "selectedDates is empty");
+
+			//clean up
+			oGrid.destroy();
+		});
+
+		QUnit.test("selectedDates: week selection via keyboard shortcut", function (assert){
+			// arrange
+			var iCellIndexInMiddleInWeek = 3,
+				iCellIndexEndWeek = 6,
+				i,
+				oGrid = new SinglePlanningCalendarMonthGrid({
+				startDate: UI5Date.getInstance(2022,0,1),
+				enableMultiDaySelection: true,
+				dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect
+			});
+
+			oGrid.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.strictEqual(oGrid.getSelectedDates().length, 0, "no days initially added");
+
+			// act
+			oGrid.$().find('.sapMSPCMonthDay')[iCellIndexInMiddleInWeek].focus();
+			qutils.triggerKeyboardEvent(document.activeElement, KeyCodes.SPACE, true);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.strictEqual(oGrid.getSelectedDates().length, 7, "seven days are correctly added");
+			for (i = 0; i < iCellIndexEndWeek; i++) {
+				assert.ok(oGrid.$().find('.sapMSPCMonthDay')[i].classList.contains("sapMSPCMonthDaySelected"), i + " cell is selected");
+			}
+
+			//clean up
+			oGrid.destroy();
+		});
+
+		QUnit.test("selectedDates: week deselection via keyboard shortcut", function (assert){
+			// arrange
+			var iCellIndexStartWeek = 14,
+				iCellIndexInMiddleInWeek = iCellIndexStartWeek + 3,
+				iCellIndexEndWeek = iCellIndexStartWeek + 7,
+				i,
+				oGrid = new SinglePlanningCalendarMonthGrid({
+				startDate: UI5Date.getInstance(2022,0,1),
+				enableMultiDaySelection: true,
+				dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect,
+				selectedDates: [
+					new DateRange({startDate: UI5Date.getInstance(2022, 0, 9)}),
+					new DateRange({startDate: UI5Date.getInstance(2022, 0, 10)}),
+					new DateRange({startDate: UI5Date.getInstance(2022, 0, 11)}),
+					new DateRange({startDate: UI5Date.getInstance(2022, 0, 12)}),
+					new DateRange({startDate: UI5Date.getInstance(2022, 0, 13)}),
+					new DateRange({startDate: UI5Date.getInstance(2022, 0, 14)}),
+					new DateRange({startDate: UI5Date.getInstance(2022, 0, 15)}),
+					new DateRange({startDate: UI5Date.getInstance(2022, 0, 16)}),
+					new DateRange({startDate: UI5Date.getInstance(2022, 0, 17)})
+				]
+			});
+
+			oGrid.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.strictEqual(oGrid.getSelectedDates().length, 9, "nine days were originally added");
+
+			// act
+			oGrid.$().find('.sapMSPCMonthDay')[iCellIndexInMiddleInWeek].focus();
+			qutils.triggerKeyboardEvent(document.activeElement, KeyCodes.SPACE, true);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+
+			assert.strictEqual(oGrid.getSelectedDates().length, 2, "after deselecting the week, two days must remain");
+			for (i = iCellIndexStartWeek; i < iCellIndexEndWeek; i++) {
+				assert.notOk(oGrid.$().find('.sapMSPCMonthDay')[i].classList.contains("sapMSPCMonthDaySelected"), i + " cell is not selected");
+			}
+
+			//clean up
+			oGrid.destroy();
+		});
+
+		QUnit.test("selectedDates: week selection via week number click", function (assert){
+			// arrange
+			var i,
+				iCellIndexStartWeek = 7,
+				iCellIndexEndWeek = iCellIndexStartWeek + 7,
+				$oWeekRow,
+				oFakeEvent,
+				oGrid = new SinglePlanningCalendarMonthGrid({
+				startDate: UI5Date.getInstance(2022,0,1),
+				enableMultiDaySelection: true,
+				dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect
+			});
+
+			oGrid.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			$oWeekRow = oGrid.$().find('.sapMSPCMonthWeek')[1].children;
+			oFakeEvent = {
+				target: $oWeekRow[0],
+				srcControl: oGrid,
+				metaKey: false,
+				originalEvent: {
+					type: "click",
+					target: {
+						nextSibling: $oWeekRow[1]
+					}
+				}
+			};
+
+			// assert
+			assert.strictEqual(oGrid.getSelectedDates().length, 0, "no days initially added");
+
+			//act
+			oGrid.ontap(oFakeEvent);
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.strictEqual(oGrid.getSelectedDates().length, 7, "seven days are correctly added");
+			for (i = iCellIndexStartWeek; i < iCellIndexEndWeek; i++) {
+				assert.ok(oGrid.$().find('.sapMSPCMonthDay')[i].classList.contains("sapMSPCMonthDaySelected"), i + " cell is selected");
+			}
+
+			//clean up
+			oGrid.destroy();
+		});
+
+		QUnit.test("selectedDates: week deselection via week number click", function (assert){
+				// arrange
+				var i,
+				iCellIndexStartWeek = 7,
+				iCellIndexEndWeek = iCellIndexStartWeek + 7,
+				$oWeekRow,
+				oFakeEvent,
+				oGrid = new SinglePlanningCalendarMonthGrid({
+					startDate: UI5Date.getInstance(2022,0,1),
+					enableMultiDaySelection: true,
+					dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect,
+					selectedDates: [
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 2)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 3)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 4)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 5)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 6)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 7)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 8)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 9)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 10)})
+					]
+				});
+
+			oGrid.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			$oWeekRow = oGrid.$().find('.sapMSPCMonthWeek')[1].children;
+			oFakeEvent = {
+				target: $oWeekRow[0],
+				srcControl: oGrid,
+				metaKey: false,
+				originalEvent: {
+					type: "click",
+					target: {
+						nextSibling: $oWeekRow[1]
+					}
+				}
+			};
+
+			// assert
+			assert.strictEqual(oGrid.getSelectedDates().length, 9, "nine days were originally added");
+
+			//act
+			oGrid.ontap(oFakeEvent);
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.strictEqual(oGrid.getSelectedDates().length, 2, "after deselecting the week, two days must remain");
+			for (i = iCellIndexStartWeek; i < iCellIndexEndWeek; i++) {
+				assert.notOk(oGrid.$().find('.sapMSPCMonthDay')[i].classList.contains("sapMSPCMonthDaySelected"), i + " cell is selected");
+			}
 
 			//clean up
 			oGrid.destroy();
