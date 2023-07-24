@@ -787,6 +787,9 @@ sap.ui.define([
 	FieldBase.prototype.onsapfocusleave = function(oEvent) {
 		_clearFocusTimer.call(this);
 		_clearLiveChangeTimer.call(this);
+		if (this._aAsyncChanges.length === 0 && !this._bPendingChange) {
+			this._bDirty = false; // as user might change value back to original one no change event might be fired
+		}
 	};
 
 	// fire change event only if unit and currency field are left
@@ -1011,6 +1014,9 @@ sap.ui.define([
 			}
 		}
 
+		if (this._aAsyncChanges.length === 0) {
+			this._bDirty = false; // as user might change value back to original one no change event might be fired
+		}
 		this.fireChangeEvent(aConditions, bValid, vWrongValue, oPromise);
 
 		this._bPendingChange = false;
@@ -1032,6 +1038,10 @@ sap.ui.define([
 	function _handleEnter(oEvent) {
 
 		var sEditMode = this.getEditMode();
+
+		if (this._aAsyncChanges.length === 0) {
+			this._bDirty = false; // as user might change value back to original one no change event might be fired
+		}
 
 		if (ContentFactory._getEditable(sEditMode) && (this.hasListeners("submit") || this._bPendingChange)) {
 			// collect all pending promises for ENTER, only if all resolved it's not pending. (Normally there should be only one.)
@@ -2555,6 +2565,7 @@ sap.ui.define([
 			}
 		}
 
+		this._bDirty = true;
 		this.fireLiveChange({ value: vValue, escPressed: bEscPressed, previousValue: vPreviousValue });
 
 	}
@@ -2992,6 +3003,7 @@ sap.ui.define([
 		_setAriaAttributes.call(this, bOpen, sItemId);
 
 		this._bIgnoreInputValue = false; // use value for input
+		this._bDirty = true;
 		this.fireLiveChange({ value: sNewValue });
 
 	}
@@ -3407,6 +3419,10 @@ sap.ui.define([
 
 	function _resolveAsyncChange(oChange) {
 
+		if (this._aAsyncChanges.length <= 1) { // as current async change might be still in Array
+			this._bDirty = false; // as user interaction now completed
+		}
+
 		oChange.resolve(this.getResultForChangePromise(oChange.result));
 
 	}
@@ -3423,6 +3439,10 @@ sap.ui.define([
 		}
 		if (bFound) {
 			this._aAsyncChanges.splice(i, 1);
+		}
+
+		if (this._aAsyncChanges.length === 0) {
+			this._bDirty = false; // as user interaction now completed
 		}
 
 		return bFound;
@@ -3526,6 +3546,26 @@ sap.ui.define([
 	FieldBase.prototype.isFieldDestroyed = function() {
 
 		return this.isDestroyed() || this.isDestroyStarted();
+
+	};
+
+	/**
+	 * Returns the user interaction state of the control.
+	 *
+	 * If the user starts typing or navigates via arrow keys in a value help,
+	 * the shown value might be updated. But as long as the user has not left the field or pressed the Enter key,
+	 * the current user input will not be validated or updated or an event fired.
+	 *
+	 * As long as the user is interacting with the field, this function returns <code>true</code>.
+	 * If the user interaction has been completed because the user has left the field, pressed the Enter key,
+	 * or chosen a value from the value help, the function returns <code>false</code>.
+	 * @returns {boolean} <code>true</code> if there is a pending user input
+	 * @protected
+	 * @since 1.117.0
+	 */
+	FieldBase.prototype.hasPendingUserInput = function() {
+
+		return !!this._bDirty;
 
 	};
 
