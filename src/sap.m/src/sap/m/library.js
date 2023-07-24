@@ -2771,6 +2771,7 @@ sap.ui.define([
 	/**
 	 * Defines the keyboard handling behavior of the <code>sap.m.List</code> or <code>sap.m.Table</code>.
 	 *
+	 * @deprecated Since version 1.118. This has no more effect on the keyboard handling.
 	 * @enum {string}
 	 * @public
 	 * @since 1.38.0

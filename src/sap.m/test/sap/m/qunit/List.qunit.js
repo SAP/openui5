@@ -2338,15 +2338,15 @@ sap.ui.define([
 		check("Selected + Highlight + Unread (showUnread = true) + Counter + Type (Navigation) + Content");
 
 		oItem.setType("Detail");
-		aState.splice(4, 1, oRb.getText("LIST_ITEM_DETAIL"));
+		aState.splice(4, 1);
 		check("Selected + Highlight + Unread (showUnread = true) + Counter + Type (Detail) + Content");
 
 		oItem.setType("DetailAndActive");
-		aState.splice(5, 0, oRb.getText("LIST_ITEM_ACTIVE"));
+		aState.splice(4, 0, oRb.getText("LIST_ITEM_ACTIVE"));
 		check("Selected + Highlight + Unread (showUnread = true) + Counter + Type (DetailAndActive) + Content");
 
 		sGroup = "<GROUP>";
-		aState.splice(6, 0, sGroup);
+		aState.splice(5, 0, sGroup);
 		check("Selected + Highlight + Unread (showUnread = true) + Counter + Type (DetailAndActive) + Group + Content");
 
 		//Reset

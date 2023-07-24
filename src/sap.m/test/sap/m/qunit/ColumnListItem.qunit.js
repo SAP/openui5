@@ -253,6 +253,19 @@ sap.ui.define([
 		assert.ok(sut.getCells()[0].getAriaLabelledBy().indexOf(column1Header.getId()) > -1, "expected ariaLabelledBy association found");
 		assert.ok(sut2.getCells()[0].getAriaLabelledBy().indexOf(column1Header.getId()) > -1, "expected ariaLabelledBy association found");
 
+		table.invalidate();
+		Core.applyChanges();
+
+		assert.equal(sut.getCells()[0].getAriaLabelledBy(), column1Header.getId(), "expected and the only ariaLabelledBy association found");
+		assert.equal(sut2.getCells()[0].getAriaLabelledBy(), column1Header.getId(), "expected and the only ariaLabelledBy association found");
+
+		column1.setMinScreenWidth();
+		column1.setDemandPopin();
+		Core.applyChanges();
+
+		assert.equal(sut.getCells()[0].getAriaLabelledBy().indexOf(column1Header.getId()), -1, "no ariaLabelledBy association found");
+		assert.equal(sut2.getCells()[0].getAriaLabelledBy().indexOf(column1Header.getId()), -1, "no ariaLabelledBy association found");
+
 		//Cleanup
 		table.destroy();
 	});
@@ -276,7 +289,7 @@ sap.ui.define([
 		var $cell = oCLI.getCells()[0].getDomRef();
 		var $td = $cell.parentElement;
 		assert.equal($td.getAttribute("data-sap-ui-column"), oCol.getId(), "Column id is correctly associated with cell (data-sap-ui-column)");
-		assert.equal($td.getAttribute("headers"), oCol.getId(), "Column id is correctly associated with cell (headers)");
+		assert.notOk($td.getAttribute("headers"), "There is no need for the headers attribute");
 
 		// cleanup
 		sut.destroy();

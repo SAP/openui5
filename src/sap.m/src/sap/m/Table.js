@@ -27,9 +27,6 @@ sap.ui.define([
 	"use strict";
 
 
-	// shortcut for sap.m.ListKeyboardMode
-	var ListKeyboardMode = library.ListKeyboardMode;
-
 	// shortcut for sap.m.ListGrowingDirection
 	var ListGrowingDirection = library.ListGrowingDirection;
 
@@ -258,7 +255,7 @@ sap.ui.define([
 	Table.prototype.sNavItemClass = "sapMListTblRow";
 
 	Table.prototype.init = function() {
-		this._iItemNeedsColumn = 0;
+		this._iItemNeedsTypeColumn = 0;
 		ListBase.prototype.init.call(this);
 	};
 
@@ -412,6 +409,15 @@ sap.ui.define([
 	Table.prototype.onAfterRendering = function() {
 		ListBase.prototype.onAfterRendering.call(this);
 
+		if (this.shouldRenderItems()) {
+			var oNavigationRoot = this.getNavigationRoot();
+			oNavigationRoot.setAttribute("aria-colcount", this._colHeaderAriaOwns.length);
+			oNavigationRoot.setAttribute("aria-rowcount", this.getAccessbilityPosition().setsize);
+			if (this._hasPopin) {
+				this.getDomRef("tblHeader").setAttribute("aria-owns", this._colHeaderAriaOwns.join(" "));
+			}
+		}
+
 		if (!this.isPropertyInitial("showOverlay")) {
 			this._handleOverlay();
 		}
@@ -545,7 +551,6 @@ sap.ui.define([
 	Table.prototype.selectAll = function () {
 		ListBase.prototype.selectAll.apply(this, arguments);
 		this.updateSelectAllCheckbox();
-
 		return this;
 	};
 
@@ -602,32 +607,6 @@ sap.ui.define([
 	};
 
 	/*
-	 * This hook method is called if growing feature is enabled and after new page loaded
-	 * @override
-	 */
-	Table.prototype.onBeforePageLoaded = function() {
-		if (this.getAlternateRowColors()) {
-			this._sAlternateRowColorsClass = this._getAlternateRowColorsClass();
-		}
-
-		ListBase.prototype.onBeforePageLoaded.apply(this, arguments);
-	};
-
-	/*
-	 * This hook method is called if growing feature is enabled and after new page loaded
-	 * @override
-	 */
-	Table.prototype.onAfterPageLoaded = function() {
-		this.updateSelectAllCheckbox();
-		if (this.getAlternateRowColors() && this._sAlternateRowColorsClass != this._getAlternateRowColorsClass()) {
-			var $tblBody = this.$("tblBody").removeClass(this._sAlternateRowColorsClass);
-			$tblBody.addClass(this._getAlternateRowColorsClass());
-		}
-
-		ListBase.prototype.onAfterPageLoaded.apply(this, arguments);
-	};
-
-	/*
 	 * This hook method is called from renderer to determine whether items should render or not
 	 * @override
 	 */
@@ -652,12 +631,12 @@ sap.ui.define([
 
 	// this gets called when item type column requirement is changed
 	Table.prototype.onItemTypeColumnChange = function(oItem, bNeedsTypeColumn) {
-		this._iItemNeedsColumn += (bNeedsTypeColumn ? 1 : -1);
+		this._iItemNeedsTypeColumn += (bNeedsTypeColumn ? 1 : -1);
 
 		// update type column visibility
-		if (this._iItemNeedsColumn == 1 && bNeedsTypeColumn) {
+		if (this._iItemNeedsTypeColumn == 1 && bNeedsTypeColumn) {
 			this._setTypeColumnVisibility(true);
-		} else if (this._iItemNeedsColumn == 0) {
+		} else if (this._iItemNeedsTypeColumn == 0) {
 			this._setTypeColumnVisibility(false);
 		}
 	};
@@ -685,25 +664,68 @@ sap.ui.define([
 		return this.getDomRef("tblBody");
 	};
 
+	Table.prototype.onmousedown = function() {
+		this._bMouseDown = true;
+		setTimeout(function() {
+			this._bMouseDown = false;
+		}.bind(this));
+		ListBase.prototype.onmousedown.apply(this, arguments);
+	};
+
+	Table.prototype._onItemNavigationBeforeFocus = function(oEvent) {
+		var iFocusedIndex;
+		var iForwardIndex = -1;
+		var iIndex = oEvent.getParameter("index");
+		var iColumnCount = this._colHeaderAriaOwns.length + 1;
+		var oItemNavigation = oEvent.getSource();
+
+		if (this._bMouseDown) {
+			var iRowIndex = iIndex - iIndex % iColumnCount;
+			if (this._headerHidden || iRowIndex || !this._columnHeadersActive) {
+				iForwardIndex = iRowIndex;
+			}
+		} else {
+			var oTarget = oItemNavigation.getItemDomRefs()[iIndex];
+			if (oTarget.classList.contains("sapMGHLICell")) {
+				iForwardIndex = iIndex - 1;
+				iFocusedIndex = iForwardIndex + oItemNavigation.getFocusedIndex() % iColumnCount;
+			}
+		}
+
+		if (iForwardIndex != -1) {
+			oEvent.preventDefault();
+			oEvent.getParameter("event").preventDefault();
+			oItemNavigation.setFocusedIndex(iForwardIndex);
+			oItemNavigation.getItemDomRefs()[iForwardIndex].focus();
+			iFocusedIndex && oItemNavigation.setFocusedIndex(iFocusedIndex);
+		}
+	};
+
 	/*
 	 * Sets DOM References for keyboard navigation
 	 * @override
 	 */
 	Table.prototype.setNavigationItems = function(oItemNavigation) {
-		var $Header = this.$("tblHeader").not(".sapMListTblHeaderNone");
-		var $Rows = this.$("tblBody").children(".sapMLIB");
-		var $Footer = this.$("tblFooter");
+		var oNavigationRoot = this.getNavigationRoot();
+		var aItemDomRefs = oNavigationRoot.querySelectorAll(".sapMListTblRow,.sapMGHLI,.sapMTblCellFocusable,.sapMTblItemNav");
+		oItemNavigation.setItemDomRefs(Array.from(aItemDomRefs));
 
-		var aItemDomRefs = $Header.add($Rows).add($Footer).get();
-		oItemNavigation.setItemDomRefs(aItemDomRefs);
+		var iColumns = this._colHeaderAriaOwns.length + 1;
+		var iPageSize = Math.min(this.getVisibleItems().length, this.getGrowingThreshold());
+		oItemNavigation.setTableMode(true, false);
+		oItemNavigation.setColumns(iColumns);
+		oItemNavigation.setPageSize(iPageSize * iColumns);
+
+		oItemNavigation.detachEvent("BeforeFocus", this._onItemNavigationBeforeFocus, this);
+		oItemNavigation.attachEvent("BeforeFocus", this._onItemNavigationBeforeFocus, this);
 
 		// header and footer are in the item navigation but
 		// initial focus should be at the first item row
 		if (oItemNavigation.getFocusedIndex() == -1) {
 			if (this.getGrowing() && this.getGrowingDirection() == ListGrowingDirection.Upwards) {
-				oItemNavigation.setFocusedIndex(aItemDomRefs.length - 1);
+				oItemNavigation.setFocusedIndex(aItemDomRefs.length - iColumns);
 			} else {
-				oItemNavigation.setFocusedIndex($Header[0] ? 1 : 0);
+				oItemNavigation.setFocusedIndex(this._headerHidden ? 0 : iColumns);
 			}
 		}
 	};
@@ -729,7 +751,7 @@ sap.ui.define([
 	};
 
 	Table.prototype.onColumnPress = function(oColumn) {
-		var oMenu = oColumn._getHeaderMenuInstance();
+		var oMenu = oColumn.getHeaderMenuInstance();
 		oMenu && oMenu.openBy(oColumn);
 		if (this.bActiveHeaders && !oMenu) {
 			this.fireEvent("columnPress", {
@@ -749,40 +771,9 @@ sap.ui.define([
 
 	// updates the type column visibility and sets the aria flag
 	Table.prototype._setTypeColumnVisibility = function(bVisible) {
-		this._bItemsBeingBound || jQuery(this.getTableDomRef()).toggleClass("sapMListTblHasNav", bVisible);
-	};
-
-	Table.prototype.onkeydown = function(oEvent) {
-
-
-		if (oEvent.which === KeyCodes.F2 || oEvent.which === KeyCodes.F7) {
-			// handles the F2 and F7 key on the table header row and column header,
-			// switch focus between the table header row and column header and if F2 is pressed the also switching the keyboardMode
-			var bFocusToggled = false,
-				$TblHeader = this.$("tblHeader"),
-				$Tabbables = $TblHeader.find(":sapTabbable");
-
-			if (oEvent.target.classList.contains("sapMColumnHeader")) {
-				this._iLastFocusPosOfItem = $Tabbables.length && $Tabbables.index(oEvent.target);
-				$TblHeader.trigger("focus");
-				bFocusToggled = true;
-			} else if (oEvent.target === $TblHeader[0]) {
-				var iFocusPos = this._iLastFocusPosOfItem || 0;
-				iFocusPos = $Tabbables[iFocusPos] ? iFocusPos : -1;
-				$Tabbables.eq(iFocusPos).trigger("focus");
-				bFocusToggled = true;
-			}
-
-			if (bFocusToggled) {
-				oEvent.preventDefault();
-				oEvent.setMarked();
-				if (oEvent.which === KeyCodes.F2) {
-					this.setKeyboardMode(this.getKeyboardMode() === "Edit" ? "Navigation" : "Edit");
-				}
-			}
+		if (!this._bItemsBeingBound && !this._bRendering) {
+			this.invalidate();
 		}
-
-		ListBase.prototype.onkeydown.apply(this, arguments);
 	};
 
 	// notify all columns with given action and param
@@ -841,7 +832,7 @@ sap.ui.define([
 				} else {
 					this.removeSelections(false, true);
 				}
-			}, this).setTabIndex(-1);
+			}, this);
 			this._selectAllCheckBox.useEnabledPropagator(false);
 			this.updateSelectAllCheckbox();
 		}
@@ -871,7 +862,9 @@ sap.ui.define([
 				}).length;
 
 			// set state of the checkbox by comparing item length and selected item length
-			this._selectAllCheckBox.setSelected(aItems.length > 0 && iSelectedItemCount == iSelectableItemCount);
+			var bSelected = aItems.length > 0 && iSelectedItemCount == iSelectableItemCount;
+			this.$("tblHeader").find(".sapMTblCellFocusable").addBack().attr("aria-selected", bSelected);
+			this._selectAllCheckBox.setSelected(bSelected);
 		} else if (this._clearAllButton) {
 			this._clearAllButton.toggleStyleClass("sapMTableDisableClearAll", !this.getSelectedItems().length);
 		}
@@ -920,6 +913,22 @@ sap.ui.define([
 	};
 
 	/*
+	 * Returns whether or not the type column should be rendered
+	 * @protected
+	 */
+	Table.prototype.doItemsNeedTypeColumn = function() {
+		return Boolean(this._iItemNeedsTypeColumn);
+	};
+
+	/*
+	 * Returns whether the header row is rendered or not
+	 * @protected
+	 */
+	Table.prototype.hasHeaderRow = function() {
+		return !this._headerHidden;
+	};
+
+	/*
 	 * Returns whether given event is initialized within header row or not
 	 * @protected
 	 */
@@ -939,7 +948,18 @@ sap.ui.define([
 
 	// returns accessibility role
 	Table.prototype.getAccessibilityType = function() {
-		return Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_TABLE");
+		return Library.getResourceBundleFor("sap.m").getText("TABLE_ROLE_DESCRIPTION");
+	};
+
+	Table.prototype.getAccessbilityPosition = function(oItem) {
+		var mPosition = ListBase.prototype.getAccessbilityPosition.apply(this, arguments);
+		if (oItem) {
+			mPosition.posinset += !this._headerHidden;
+		}
+		if (mPosition.setsize != -1) {
+			mPosition.setsize += !this._headerHidden + !!this._hasFooter;
+		}
+		return mPosition;
 	};
 
 	Table.prototype._setHeaderAnnouncement = function() {
@@ -998,46 +1018,23 @@ sap.ui.define([
 	};
 
 	// keyboard handling
-	Table.prototype.onsapspace = function(oEvent) {
+	Table.prototype.onsapspace = Table.prototype.onsapenter = function(oEvent) {
 		if (oEvent.isMarked()) {
 			return;
 		}
 
-		if (oEvent.target.id == this.getId("tblHeader")) {
+		if (oEvent.target.id == this.getId("tblHeader") || oEvent.target.id == this.getId("tblHeadModeCol")) {
 			// prevent from scrolling
 			oEvent.preventDefault();
-			var sMultiSelectMode = this.getMultiSelectMode();
+			oEvent.setMarked();
 
 			// toggle select all header checkbox and fire its event
+			var sMultiSelectMode = this.getMultiSelectMode();
 			if (this._selectAllCheckBox && sMultiSelectMode != "ClearAll") {
 				this._selectAllCheckBox.setSelected(!this._selectAllCheckBox.getSelected()).fireSelect();
-				oEvent.setMarked();
 			} else if (this._clearAllButton && sMultiSelectMode == "ClearAll" && !this._clearAllButton.hasStyleClass("sapMTableDisableClearAll")) {
 				this._clearAllButton.firePress();
-				oEvent.setMarked();
 			}
-		}
-	};
-
-	// Handle tab key
-	Table.prototype.onsaptabnext = function(oEvent) {
-		if (oEvent.isMarked() || this.getKeyboardMode() == ListKeyboardMode.Edit) {
-			return;
-		}
-
-		var $Row = jQuery();
-		if (jQuery(oEvent.target).closest(this.getDomRef("nodata"))[0]) {
-			$Row = this.$("nodata");
-		} else if (this.isHeaderRowEvent(oEvent)) {
-			$Row = this.$("tblHeader");
-		} else if (this.isFooterRowEvent(oEvent)) {
-			$Row = this.$("tblFooter");
-		}
-
-		var oLastTabbableDomRef = $Row.find(":sapTabbable").get(-1) || $Row[0];
-		if (oEvent.target === oLastTabbableDomRef) {
-			this.forwardTab(true);
-			oEvent.setMarked();
 		}
 	};
 
@@ -1046,21 +1043,8 @@ sap.ui.define([
 		if (oEvent.target.id === this.getId("overlay")) {
 			this._bIgnoreFocusIn = true;
 			this.$().attr("tabindex", "-1").trigger("focus").removeAttr("tabindex");
-			return;
-		}
-
-		if (oEvent.isMarked() || this.getKeyboardMode() == ListKeyboardMode.Edit) {
-			return;
-		}
-
-		var sTargetId = oEvent.target.id;
-		if (sTargetId == this.getId("nodata") ||
-			sTargetId == this.getId("tblHeader") ||
-			sTargetId == this.getId("tblFooter")) {
-			this.forwardTab(false);
-		} else if (sTargetId == this.getId("trigger")) {
-			this.focusPrevious();
-			oEvent.preventDefault();
+		} else {
+			ListBase.prototype.onsaptabprevious.apply(this, arguments);
 		}
 	};
 
@@ -1105,9 +1089,6 @@ sap.ui.define([
 	Table.prototype.onfocusin = function(oEvent) {
 		var oTarget = oEvent.target;
 		if (oTarget.id == this.getId("tblHeader")) {
-			if (!this.hasPopin() && this.shouldRenderDummyColumn()) {
-				oTarget.classList.add("sapMTableRowCustomFocus");
-			}
 			this._setHeaderAnnouncement();
 			this._setFirstLastVisibleCells(oTarget);
 		} else if (oTarget.id == this.getId("tblFooter")) {
@@ -1130,19 +1111,6 @@ sap.ui.define([
 		if (this._bCheckLastColumnWidth) {
 			this._checkLastColumnWidth();
 		}
-	};
-
-	// returns the class that should be added to tbody element
-	Table.prototype._getAlternateRowColorsClass = function() {
-		if (this.isGrouped()) {
-			return "sapMListTblAlternateRowColorsGrouped";
-		}
-
-		if (this.hasPopin()) {
-			return "sapMListTblAlternateRowColorsPopin";
-		}
-
-		return "sapMListTblAlternateRowColors";
 	};
 
 	/**
@@ -1324,6 +1292,12 @@ sap.ui.define([
 	Table.prototype._fireUpdateFinished = function(oInfo) {
 		ListBase.prototype._fireUpdateFinished.apply(this, arguments);
 
+		// after binding update we need to update the aria-rowcount
+		var oNavigationRoot = this.getNavigationRoot();
+		if (oNavigationRoot) {
+			oNavigationRoot.setAttribute("aria-rowcount", this.getAccessbilityPosition().setsize);
+		}
+
 		// fire popinChanged when visible items length become 0 from greater than 0 as a result of binding changes
 		// fire popinChanged when visible items length become greater than 0 from 0 as a result of binding changes
 		var bHasVisibleItems = Boolean(this.getVisibleItems().length);
@@ -1344,22 +1318,36 @@ sap.ui.define([
 		this._setFirstLastVisibleCells(oItem.getDomRef());
 	};
 
-	Table.prototype._setFirstLastVisibleCells = function(oDomRef) {
+	Table.prototype._setFirstLastVisibleCells = function(oDomRef, bIgnoreClassCheck) {
 		var $DomRef = jQuery(oDomRef);
-		if (!$DomRef.hasClass("sapMTableRowCustomFocus")) {
+		if (!bIgnoreClassCheck && !$DomRef.hasClass("sapMTableRowCustomFocus")) {
 			return;
 		}
 
 		$DomRef.find(".sapMTblLastVisibleCell").removeClass("sapMTblLastVisibleCell");
 		$DomRef.find(".sapMTblFirstVisibleCell").removeClass("sapMTblFirstVisibleCell");
 		for (var oFirst = oDomRef.firstChild; oFirst && !oFirst.clientWidth; oFirst = oFirst.nextSibling) {/* empty */}
-		for (var oLast = oDomRef.lastChild.previousSibling; oLast && !oLast.clientWidth; oLast = oLast.previousSibling) {/* empty */}
+		for (var oLast = oDomRef.lastChild.classList.contains("sapMListTblDummyCell") ? oDomRef.lastChild.previousSibling : oDomRef.lastChild; oLast && !oLast.clientWidth; oLast = oLast.previousSibling) {/* empty */}
 		jQuery(oFirst).addClass("sapMTblFirstVisibleCell");
 		jQuery(oLast).addClass("sapMTblLastVisibleCell");
+		var $Next = $DomRef.next();
+		if ($Next.attr("id") == $DomRef.attr("id") + "-sub") {
+			this._setFirstLastVisibleCells($Next[0], true);
+		}
 	};
 
 	Table.prototype.getAriaRole = function() {
-		return "";
+		return "grid";
+	};
+
+	Table.prototype._updateAriaRowCount = function() {
+		var oNavigationRoot = this.getNavigationRoot();
+		if (!oNavigationRoot) {
+			return;
+		}
+
+		var iAriaRowCount = this.getAccessbilityPosition().setsize;
+		oNavigationRoot.setAttribute("aria-rowcount", iAriaRowCount);
 	};
 
 	// items and groupHeader mapping is not required for the table control

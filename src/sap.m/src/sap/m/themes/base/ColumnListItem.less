@@ -26,14 +26,8 @@
 }
 
 /* adding alternating rows background color */
-/* alternating rows color for Table without popin */
-.sapMListTblAlternateRowColors > :nth-child(even),
-/* alternating rows color for Table with popins (main row "sapMListTblRow") */
-.sapMListTblAlternateRowColorsPopin > :nth-child(4n-1),
-/* alternating rows color for popin rows (popin row "sapMListTblSubRow") */
-.sapMListTblAlternateRowColorsPopin > :nth-child(4n),
-.sapMListTblAlternateRowColorsGrouped > .sapMListTblRowAlternate,
-.sapMListTblAlternateRowColorsGrouped > .sapMListTblRowAlternate + .sapMListTblSubRow {
+:nth-child(even of .sapMListTblRowAlternate),
+:nth-child(even of .sapMListTblRowAlternate) + .sapMListTblSubRow {
 	background-color: @sapUiListAlternatingBackground;
 	&.sapMLIBHoverable:hover {
 		background : @sapUiListHoverBackground;
@@ -170,6 +164,16 @@
 	.sapMLIBIconDel {
 		margin-left: 0;
 	}
+}
+
+.sapMListTblHasPopin > .sapMTableRowCustomFocus:focus .sapMLIBHighlight,
+.sapMListTblHasPopin > .sapMTableRowCustomFocus:focus .sapMLIBNavigated {
+	bottom: 0;
+}
+
+.sapMListTblHasPopin > .sapMTableRowCustomFocus:focus + .sapMListTblSubRow .sapMLIBHighlight,
+.sapMListTblHasPopin > .sapMTableRowCustomFocus:focus + .sapMListTblSubRow .sapMLIBNavigated {
+	top: 0;
 }
 
 

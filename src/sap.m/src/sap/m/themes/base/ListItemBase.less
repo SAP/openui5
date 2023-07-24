@@ -39,16 +39,18 @@
 	overflow: hidden;
 }
 
-.sapMLIBFocusable:focus {
+.sapMLIBFocusable:focus,
+.sapMTblCellFocusable:focus {
 	outline: @_sap_m_ListItemBase_Focus_Outline;
 	outline-offset: @_sap_m_ListItemBase_Focus_OffsetWithGap;
 }
 
 /* makes the focus outline visible when hightlight is used */
-.sapMLIBFocusable:focus .sapMLIBHighlight {
+.sapMLIBFocusable:focus .sapMLIBHighlight,
+.sapMLIBFocusable:focus + .sapMListTblSubRow .sapMLIBHighlight {
 	width: 0.25rem;
 	left: 2px;
-	bottom: 1px;
+	bottom: 2px;
 	top: 2px;
 }
 
@@ -319,10 +321,11 @@
 }
 
 // to make the focus outline visible when navigated=true
-.sapMLIBFocusable:focus .sapMLIBNavigated {
-	width: 0.09375rem;
+.sapMLIBFocusable:focus .sapMLIBNavigated,
+.sapMLIBFocusable:focus + .sapMListTblSubRow .sapMLIBNavigated {
+	width: 0.125rem;
 	right: 2px;
-	bottom: 1px;
+	bottom: 2px;
 	top: 2px;
 }
 
