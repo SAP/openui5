@@ -3,9 +3,123 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "47d566b3cc4d77d95870138c312e179264acdb89",
+        "type": "FEATURE",
+        "text": " SimpleForm: use ResponsiveGridLayout as default"
+      },
+      {
+        "id": "cc52d8b9e7b378fb2a2b8db923589f1837c3be22",
+        "type": "FEATURE",
+        "text": "sap.m.Panel: Panel sticky header implementation"
+      },
+      {
+        "id": "7bf72c6b65d6df5173c4111dc16b33bb11bb6638",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Arrows in the Page Indicator area are hidden when not needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380091868"
+          }
+        ]
+      },
+      {
+        "id": "6123656333911c9fa9bdebaf908dbdec12f6d2c9",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Remove tooltip from \"All\" Segmented button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380053137"
+          }
+        ]
+      },
+      {
+        "id": "5744da3af370439cbacb7524ad1de4555ec2edc2",
+        "type": "FIX",
+        "text": " sap.m.StandardTile: Fix aria-describedby attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011625"
+          }
+        ]
+      },
+      {
+        "id": "0db057118b08909f4d94bd7e769c0fcb1c5bf7c8",
+        "type": "FIX",
+        "text": " sap.m.Table: busy indicator should be visible until data received",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004282162023"
+          }
+        ]
+      },
+      {
+        "id": "d69c8ae156eaf2dca2baaed721eb7a8ae5cd3400",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: add isOpen() function"
+      },
+      {
+        "id": "c233c0783335f3e7cdbb87d227a3da96ff11cba5",
+        "type": "FIX",
+        "text": " P13nDialog: Primary action is now emphasized in warning dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380074541"
+          }
+        ]
+      },
+      {
+        "id": "f5fae32b74b3b42aedfedf3669ef5ec4757e8f12",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Error in mobile fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380088532"
+          }
+        ]
+      },
+      {
+        "id": "14b9420c4261cb385aac7c3aceaa43d0a1ce664b",
+        "type": "FEATURE",
+        "text": " sap.m.SelectDialog: Added new \"initialFocus\" property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370032471"
+          }
+        ]
+      },
+      {
+        "id": "fd4a51c71a87ec457a08dab93bbb9dca20dee719",
+        "type": "FEATURE",
+        "text": " ListBase: Option to define the header level",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380058691"
+          }
+        ]
+      },
+      {
         "id": "2af8989c90f6318b8bb352922361d0719d6e22fd",
         "type": "FEATURE",
         "text": " We now allow setting a custom illustration when there is no data available in the Uploadset control"
+      },
+      {
+        "id": "5d97d8f487638561c5871dd0f0717ed7300c74ad",
+        "type": "FIX",
+        "text": " sap.m.Popover: prevent warning log when endButton is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380083135"
+          }
+        ]
       },
       {
         "id": "9598c6d169bad545bfa59527248ccb76e3842886",
@@ -53,6 +167,17 @@
           {
             "type": "BCP",
             "reference": "2380078166"
+          }
+        ]
+      },
+      {
+        "id": "cd94c5857f69cd5416821aafb6871bb3c3c702fa",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarMonthGrid: Failing QUnit test with timezone Honolulu & Chicago",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380087440"
           }
         ]
       },

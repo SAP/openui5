@@ -1,0 +1,12 @@
+{
+  "1.117.0": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "47d566b3cc4d77d95870138c312e179264acdb89",
+        "type": "FEATURE",
+        "text": " SimpleForm: use ResponsiveGridLayout as default"
+      }
+    ]
+  }
+}

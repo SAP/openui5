@@ -3,6 +3,17 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "d10751f3eecb30e46eac12a3f0f5e7a796b5ebbb",
+        "type": "FIX",
+        "text": " sap.f.GridContainer,GridList: Keyboard navigation is now correct for RTL languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380075806"
+          }
+        ]
+      },
+      {
         "id": "2348e7899d61560966dd671a7d8dcd65068439e8",
         "type": "FIX",
         "text": " sap.f.GridContainer: Navigation with page up and page down arrow keys now works",
@@ -10,6 +21,17 @@
           {
             "type": "BCP",
             "reference": "2380073517"
+          }
+        ]
+      },
+      {
+        "id": "d4b200103c7d144de0370deeee3e99a296518fe4",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: apply focus properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370073641"
           }
         ]
       },

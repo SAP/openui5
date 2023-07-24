@@ -3,6 +3,22 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "549d3608025e7d6656ef0e86b59723572600856f",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Remove overwritten border style",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380098559"
+          }
+        ]
+      },
+      {
+        "id": "cc52d8b9e7b378fb2a2b8db923589f1837c3be22",
+        "type": "FEATURE",
+        "text": "sap.m.Panel: Panel sticky header implementation"
+      },
+      {
         "id": "7bf3def9ca363e16b7db0f9468cfd658096f87fa",
         "type": "FEATURE",
         "text": " sap.m.Avatar: New 'enabled' property"

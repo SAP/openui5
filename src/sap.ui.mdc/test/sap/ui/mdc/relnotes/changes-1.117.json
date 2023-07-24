@@ -3,6 +3,22 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "c12cc14575761ed211fa5675053fcb245f6ab4fa",
+        "type": "FEATURE",
+        "text": " Field: provide API to check for user interaction"
+      },
+      {
+        "id": "a27b7c1b7ae5dd7b95933c6f38c03368ae2552ce",
+        "type": "FIX",
+        "text": " Field: do not update unit value in error case",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380086675"
+          }
+        ]
+      },
+      {
         "id": "e55c6b23477f0669fcbc2fe2ce77981b44162905",
         "type": "FIX",
         "text": " MDC: Rearranged FieldBase QUnit tests to avoid issues with focus testing",
@@ -12,6 +28,11 @@
             "reference": "2380093610"
           }
         ]
+      },
+      {
+        "id": "633e2e0cc0e14e338b0001b76cab4361f193efc9",
+        "type": "FEATURE",
+        "text": " mdc.FilterBarBase: changing required field error text"
       },
       {
         "id": "ad539a23e605a1fea9b1a729fd8376ba47a82d26",
