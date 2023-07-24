@@ -1077,6 +1077,44 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getFormObservingProperties", function(assert) {
+
+		assert.deepEqual(oField.getFormObservingProperties(), ["conditions", "editMode"], "on editMode or condition change Semantic behavior might change");
+
+	});
+
+	QUnit.test("getFormRenderAsControl", async function(assert) {
+
+		oField.placeAt("content");
+		await nextUIUpdate();
+
+		assert.notOk(oField.getFormRenderAsControl(), "In Edit mode control rendering for SemanticFormElement in display mode is not suppored");
+
+		oField.setEditMode(FieldEditMode.Display);
+		await nextUIUpdate();
+		const aContent = oField.getAggregation("_content");
+		const oContent = aContent && aContent.length > 0 && aContent[0];
+
+		if (!oContent.getFormRenderAsControl) { // control might not implent it
+			oContent.getFormRenderAsControl = function() {};
+		}
+		sinon.stub(oContent, "getFormRenderAsControl").returns(true);
+		assert.ok(oField.getFormRenderAsControl(), "In display mode value of content control is used");
+
+		oContent.getFormRenderAsControl.returns(false);
+		assert.notOk(oField.getFormRenderAsControl(), "In display mode value of content control is used");
+
+		delete oContent.getFormRenderAsControl; // to check default
+		assert.notOk(oField.getFormRenderAsControl(), "false if control not supports it at all");
+
+		oField.addAggregation("_content", new Text()); // fake multiple content (unit)
+		assert.notOk(oField.getFormRenderAsControl(), "not supported for multiple content");
+
+		oField.destroyAggregation("_content"); // fake content not created right now
+		assert.ok(oField.getFormRenderAsControl(), "If no content right now, assume that it will be supported");
+
+	});
+
 	QUnit.test("getOverflowToolbarConfig", function(assert) {
 
 		assert.ok(oField.isA("sap.m.IOverflowToolbarContent"), "Field is sap.m.IOverflowToolbarContent");

@@ -104,6 +104,8 @@ sap.ui.define([
 	 *
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormFormattedValue as #getFormFormattedValue
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormValueProperty as #getFormValueProperty
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormObservingProperties as #getFormObservingProperties
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormRenderAsControl as #getFormRenderAsControl
 	 *
 	 * @public
 	 */
@@ -1574,6 +1576,36 @@ sap.ui.define([
 	FieldBase.prototype.getFormValueProperty = function() {
 
 		return "conditions";
+
+	};
+
+	FieldBase.prototype.getFormObservingProperties = function() {
+
+		return ["conditions", "editMode"]; // as change of editMode would lead to a control change
+
+	};
+
+	FieldBase.prototype.getFormRenderAsControl = function () {
+
+		if (this.getEditMode() === FieldEditMode.Display) {
+			// only in display mode the content controls needs to be checked
+			const aContent = this.getCurrentContent();
+			if (aContent.length === 1) {
+				// only one control, check it
+				if (aContent[0].getFormRenderAsControl) {
+					return aContent[0].getFormRenderAsControl();
+				} else {
+					return false;
+				}
+			} else if (aContent.length > 1) {
+				return false;
+			} else {
+				return true; // no content created right now, but normally the created display-content is text-based, so it can be used
+			}
+
+		} else {
+			return false; // If Field is in Edit mode but Form in Display mode render text. (EditMode of Field and Form should be in sync.)
+		}
 
 	};
 
