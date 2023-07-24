@@ -27,7 +27,7 @@ sap.ui.define([
 	var ActionArea = library.CardActionArea;
 
 	// lazy dependencies, loaded on the first attempt to create AnalyticalContent
-	var VizFrame, FeedItem, FlattenedDataset, Popover;
+	var VizFrame, FeedItem, FlattenedDataset, Popover, MeasureDefinition, DimensionDefinition;
 
 	/**
 	 * Enumeration with supported legend positions.
@@ -133,12 +133,16 @@ sap.ui.define([
 						"sap/viz/ui5/controls/VizFrame",
 						"sap/viz/ui5/controls/common/feeds/FeedItem",
 						"sap/viz/ui5/controls/Popover",
-						"sap/viz/ui5/data/FlattenedDataset"
-					], function (_VizFrame, _FeedItem, _Popover, _FlattenedDataset) {
+						"sap/viz/ui5/data/FlattenedDataset",
+						"sap/viz/ui5/data/MeasureDefinition",
+						"sap/viz/ui5/data/DimensionDefinition"
+					], function (_VizFrame, _FeedItem, _Popover, _FlattenedDataset, _MeasureDefinition, _DimensionDefinition) {
 						VizFrame = _VizFrame;
 						FeedItem = _FeedItem;
 						Popover = _Popover;
 						FlattenedDataset = _FlattenedDataset;
+						MeasureDefinition = _MeasureDefinition;
+						DimensionDefinition = _DimensionDefinition;
 						resolve();
 					}, function (sErr) {
 						reject(sErr);
@@ -337,21 +341,21 @@ sap.ui.define([
 
 		if (oConfiguration.dimensions) {
 			aDimensions = oConfiguration.dimensions.map(function (oDimension, i) {
-				return {
+				return new DimensionDefinition({
 					name: oResolvedConfiguration.dimensions[i].name || oResolvedConfiguration.dimensions[i].label, // .label for backwards compatibility
 					value: oDimension.value,
 					displayValue: oDimension.displayValue,
 					dataType: oDimension.dataType
-				};
+				});
 			});
 		}
 
 		if (oConfiguration.measures) {
 			aMeasures = oConfiguration.measures.map(function (oMeasure, i) {
-				return {
-					name: oResolvedConfiguration.measures[i].name || oResolvedConfiguration.measures[i].label, // .label for backwards compatibility
+				return new MeasureDefinition({
+					name: oResolvedConfiguration.measures[i].name || oResolvedConfiguration.measures[i].label, // .label for backwards compatibility,
 					value: oMeasure.value
-				};
+				});
 			});
 		}
 
