@@ -1315,8 +1315,8 @@ sap.ui.define([
 
 	function resolveTitleBindingsAndCreateVariantChanges(oVariantManagementControl, sVariantManagementReference) {
 		this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
-			// Find model and key from patterns like {i18n>TextKey} - only resource models are supported
-			var aMatches = oVariant.title && oVariant.title.match(/{(\w+)>(\w+)}/);
+			// Find model and key from patterns like {i18n>TextKey} or {i18n>namespace.textkey} - only resource models are supported
+			var aMatches = oVariant.title && oVariant.title.match(/{(\w+)>(\w.+)}/);
 			if (aMatches) {
 				var sModelName = aMatches[1];
 				var sKey = aMatches[2];
