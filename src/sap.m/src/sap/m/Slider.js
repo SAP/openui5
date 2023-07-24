@@ -94,7 +94,12 @@ function(
 		 * </ul>
 		 *
 		 * @extends sap.ui.core.Control
-		 * @implements sap.ui.core.IFormContent
+		 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
+		 *
+		 * @borrows sap.ui.core.ISemanticFormContent.getFormFormattedValue as #getFormFormattedValue
+		 * @borrows sap.ui.core.ISemanticFormContent.getFormValueProperty as #getFormValueProperty
+		 * @borrows sap.ui.core.ISemanticFormContent.getFormObservingProperties as #getFormObservingProperties
+		 * @borrows sap.ui.core.ISemanticFormContent.getFormRenderAsControl as #getFormRenderAsControl
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -107,7 +112,10 @@ function(
 		var Slider = Control.extend("sap.m.Slider", /** @lends sap.m.Slider.prototype */ {
 			metadata: {
 
-				interfaces: ["sap.ui.core.IFormContent"],
+				interfaces: [
+					"sap.ui.core.IFormContent",
+					"sap.ui.core.ISemanticFormContent"
+				],
 				library: "sap.m",
 				properties: {
 
@@ -1613,6 +1621,23 @@ function(
 			}
 
 			return this;
+		};
+
+		// support for SemanticFormElement
+		Slider.prototype.getFormFormattedValue = function() {
+			return this.getValue();
+		};
+
+		Slider.prototype.getFormValueProperty = function () {
+			return "value";
+		};
+
+		Slider.prototype.getFormObservingProperties = function() {
+			return ["value"];
+		};
+
+		Slider.prototype.getFormRenderAsControl = function () {
+			return false;
 		};
 
 		return Slider;

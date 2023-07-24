@@ -648,6 +648,12 @@ sap.ui.define([
 		return sText;
 	};
 
+	// support for SemanticFormElement
+	DateTimeField.prototype.getFormFormattedValue = function() {
+		var oDate = this.getDateValue();
+		return this._formatValue(oDate);
+	};
+
 	return DateTimeField;
 
 });

@@ -3567,6 +3567,21 @@ function(
 		return true;
 	};
 
+	// support for SemanticFormElement
+	Input.prototype.getFormFormattedValue = function() {
+		var sValue = this.getValue();
+		var sDescription = this.getDescription();
+
+		if (sValue && sDescription) {
+			return sValue + " " + sDescription;
+		} else {
+			return sDescription || sValue;
+		}
+	};
+
+	Input.prototype.getFormObservingProperties = function() {
+		return ["value", "description"];
+	};
 
 	return Input;
 

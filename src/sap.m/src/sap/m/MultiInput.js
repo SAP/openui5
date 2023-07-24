@@ -106,7 +106,6 @@ function(
 	* <li> You can select single tokens or a range of tokens and you can copy/cut/delete them.</li>
 	* </ul>
 	* @extends sap.m.Input
-	* @implements sap.ui.core.ISemanticFormContent
 	*
 	* @author SAP SE
 	* @version ${version}
@@ -118,9 +117,6 @@ function(
 	*/
 	var MultiInput = Input.extend("sap.m.MultiInput", /** @lends sap.m.MultiInput.prototype */ {
 		metadata: {
-			interfaces: [
-				"sap.ui.core.ISemanticFormContent"
-			],
 			library: "sap.m",
 			designtime: "sap/m/designtime/MultiInput.designtime",
 			properties: {
@@ -2100,6 +2096,10 @@ function(
 	 */
 	MultiInput.prototype.getFormValueProperty = function () {
 		return "_semanticFormValue";
+	};
+
+	MultiInput.prototype.getFormObservingProperties = function() {
+		return ["_semanticFormValue"];
 	};
 
 	/**

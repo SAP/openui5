@@ -63,7 +63,12 @@ function(
 	 * The <code>sap.m.InputBase</code> control provides a basic functionality for input controls.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IFormContent
+	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
+	 *
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormFormattedValue as #getFormFormattedValue
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormValueProperty as #getFormValueProperty
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormObservingProperties as #getFormObservingProperties
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormRenderAsControl as #getFormRenderAsControl
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -76,7 +81,10 @@ function(
 	var InputBase = Control.extend("sap.m.InputBase", /** @lends sap.m.InputBase.prototype */ {
 		metadata: {
 
-			interfaces : ["sap.ui.core.IFormContent"],
+			interfaces : [
+				"sap.ui.core.IFormContent",
+				"sap.ui.core.ISemanticFormContent"
+			],
 			library: "sap.m",
 			properties: {
 
@@ -1257,6 +1265,23 @@ function(
 	 */
 	InputBase.prototype.getLastValue = function () {
 		return this._lastValue;
+	};
+
+	// support for SemanticFormElement
+	InputBase.prototype.getFormFormattedValue = function() {
+		return this.getValue();
+	};
+
+	InputBase.prototype.getFormValueProperty = function () {
+		return "value";
+	};
+
+	InputBase.prototype.getFormObservingProperties = function() {
+		return ["value"];
+	};
+
+	InputBase.prototype.getFormRenderAsControl = function () {
+		return false;
 	};
 
 	return InputBase;

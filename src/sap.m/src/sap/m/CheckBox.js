@@ -87,6 +87,11 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent, sap.ui.core.IAccessKeySupport
 	 *
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormFormattedValue as #getFormFormattedValue
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormValueProperty as #getFormValueProperty
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormObservingProperties as #getFormObservingProperties
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormRenderAsControl as #getFormRenderAsControl
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
@@ -393,6 +398,14 @@ sap.ui.define([
 
 	CheckBox.prototype.getFormValueProperty = function () {
 		return "selected";
+	};
+
+	CheckBox.prototype.getFormObservingProperties = function() {
+		return ["selected", "displayOnly"]; // as displayOnly changes the rendering mode
+	};
+
+	CheckBox.prototype.getFormRenderAsControl = function () {
+		return this.getDisplayOnly(); // for displayOnly CheckBox, show the control
 	};
 
 	/**

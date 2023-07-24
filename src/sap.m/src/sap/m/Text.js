@@ -51,6 +51,11 @@ function(library, Localization, Control, coreLibrary, Device, HyphenationSupport
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
 	 *
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormFormattedValue as #getFormFormattedValue
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormValueProperty as #getFormValueProperty
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormObservingProperties as #getFormObservingProperties
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormRenderAsControl as #getFormRenderAsControl
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
@@ -500,6 +505,22 @@ function(library, Localization, Control, coreLibrary, Device, HyphenationSupport
 		return {
 			"main": this.getTextDomRef()
 		};
+	};
+
+	Text.prototype.getFormFormattedValue = function () {
+		return this.getText();
+	};
+
+	Text.prototype.getFormValueProperty = function () {
+		return "text";
+	};
+
+	Text.prototype.getFormObservingProperties = function() {
+		return ["text"];
+	};
+
+	Text.prototype.getFormRenderAsControl = function () {
+		return true;
 	};
 
 	// Add hyphenation to Text functionality

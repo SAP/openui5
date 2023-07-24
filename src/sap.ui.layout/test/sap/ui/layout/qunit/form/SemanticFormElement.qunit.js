@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Link",
 	"sap/m/Button", // to make FormHelper could load all modules
+	"sap/m/FeedInput", // just to test "value" fallback - should not really be supported
 	"sap/ui/core/Control",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/utils/nextUIUpdate"
@@ -26,6 +27,7 @@ sap.ui.define([
 			Text,
 			Link,
 			Button,
+			FeedInput,
 			Control,
 			jQuery,
 			nextUIUpdate
@@ -34,14 +36,14 @@ sap.ui.define([
 
 	// TODO: Fake iSematicFormContent on controls until it is official supported
 	var myTypeCheck = function(vTypeName) {
-		if (vTypeName === "sap.ui.core.ISemanticFormContent") {
+		if (vTypeName === "sap.ui.core.ISemanticFormContent" || vTypeName === "sap.ui.core.IFormContent") {
 			return true;
 		} else {
 			return this.getMetadata().isA(vTypeName);
 		}
 	};
-	Input.prototype.isA = myTypeCheck;
-	Link.prototype.isA = myTypeCheck;
+	Button.prototype.isA = myTypeCheck; // to test fallback functions (If interface functions are not implemented)
+	FeedInput.prototype.isA = myTypeCheck; // to test fallback functions (If interface functions are not implemented)
 
 	var oFormElement;
 
@@ -154,7 +156,7 @@ sap.ui.define([
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
 		var oField1 = new Input("F1", {value: "Text 1"});
-		var oField2 = new Input("F2", {value: "Text 2"});
+		var oField2 = new FeedInput("F2", {value: "Text 2"});
 		oFormElement.addField(oField1);
 		oFormElement.addField(oField2);
 		var aFields = oFormElement.getFieldsForRendering();
@@ -488,7 +490,7 @@ sap.ui.define([
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
 		var oField1 = new Input("F1", {value: "Text 1"});
-		var oField2 = new Input("F2", {value: "Text 2"});
+		var oField2 = new Input("F2", {description: "Text 2"});
 		oFormElement.addField(oField1);
 		oFormElement.addField(oField2);
 		var aFields = oFormElement.getFieldsForRendering();
@@ -505,10 +507,12 @@ sap.ui.define([
 			fnResolve = fResolve;
 		});
 
-		var oLabel = new Label("L1", {text: "Test"});
-		oFormElement.setLabel(oLabel);
-		var oField1 = new Input("F1", {value: "Text 1"});
-		var oField2 = new Input("F2", {value: "Text 2"});
+		var oLabel1 = new Label("L1", {text: "Label 1"});
+		var oLabel2 = new Label("L2", {text: "Label 2"});
+		oFormElement.addFieldLabel(oLabel1);
+		oFormElement.addFieldLabel(oLabel2);
+		var oField1 = new FeedInput("F1", {value: "Text 1"});
+		var oField2 = new Input("F2", {description: "Text 2"});
 		oFormElement.addField(oField1);
 		oFormElement.addField(oField2);
 		var aFields = oFormElement.getFieldsForRendering();
@@ -523,6 +527,10 @@ sap.ui.define([
 			oRenderControl.invalidate(); // as there is no real control tree
 			await nextUIUpdate();
 			aFields = oFormElement.getFieldsForRendering();
+			var oLabel = oFormElement.getLabelControl();
+
+			assert.ok(oLabel, "Label created");
+			assert.equal(oLabel && oLabel.getText(), "Label 1 / Label 2", "Label text");
 			assert.equal(aFields.length, 1, "1 control rendered");
 			assert.ok(aFields[0].isA("sap.m.Text"), "Text control rendered");
 			assert.equal(aFields[0].getText && aFields[0].getText(), "Text 1 / Text 2", "rendered text");
@@ -533,10 +541,10 @@ sap.ui.define([
 	QUnit.test("three fields", async function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
-		var oField1 = new Input("F1", {value: "Text 1"});
-		var oField2 = new Input("F2", {description: "Text 2"});
+		var oField1 = new FeedInput("F1", {value: "Text 1"}); // to test fallback
+		var oField2 = new Button("B1", {text: "Text 2"}); // to test fallback
 		var oField3 = new Text("F3", {text: "Text 3"});
-		oField2.getFormValueProperty = function() {return "description";};
+		oField1.getFormValueProperty = function() {return "value";};
 		oFormElement.addField(oField1);
 		oFormElement.addField(oField2);
 		oFormElement.insertField(oField3, 1);
@@ -602,7 +610,6 @@ sap.ui.define([
 		var oField1 = new Input("F1", {value: "Text 1"});
 		var oField2 = new Text("F2", {text: "Text 2"});
 		var oField3 = new Input("F3", {description: "Text 3"});
-		oField3.getFormValueProperty = function() {return "description";};
 		oFormElement.addField(oField1);
 		oFormElement.addField(oField2);
 		oFormElement.addField(oField3);
@@ -724,7 +731,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("two fields supporting control-rendring, but layout don't support it", async function(assert) {
-		Link.prototype.getFormRenderAsControl = function() {return true;};
 		sinon.stub(oFormElement, "getParent").returns({ //fake assigned to FormContainer
 			getParent: function() {
 				return {//fake assigned to Form
@@ -756,9 +762,6 @@ sap.ui.define([
 	var oFormLayout;
 	QUnit.module("display mode with control rendering", {
 		beforeEach: function() {
-			// sinon.stub(Link.prototype, "getFormRenderAsControl").returns(true);
-			Link.prototype.getFormRenderAsControl = function() {return true;}; // TODO: remove after Link supports this
-			Link.prototype.getFormObservingProperties = function() {return ["text"];};
 			oFormElement = new SemanticFormElement("FE1");
 			oFormContainer = new FormContainer("FC1", {
 				formElements: [oFormElement]
@@ -772,9 +775,6 @@ sap.ui.define([
 			oForm.setLayout(oFormLayout); // set layout after assigning FormElement to test layout observing
 		},
 		afterEach: function() {
-			// Link.prototype.getFormRenderAsControl.restore();
-			delete Link.prototype.getFormRenderAsControl;
-			delete Link.prototype.getFormObservingProperties;
 			oForm.destroy();
 			oForm = undefined;
 			oFormContainer = undefined;
@@ -816,7 +816,7 @@ sap.ui.define([
 		oFormElement.setLabel(oLabel);
 		var oField1 = new Link("F1", {text: "Text 1"});
 		var oField2 = new Link("F2", {text: "Text 2"});
-		oField2.getFormRenderAsControl = function() {return false;};
+		sinon.stub(oField2, "getFormRenderAsControl").returns(false);
 		oFormElement.addField(oField1);
 
 		await nextUIUpdate(); // to test change of renderinng mode

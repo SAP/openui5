@@ -13,7 +13,7 @@ sap.ui.require([
 	"sap/ui/layout/form/ColumnLayout",
 	"sap/ui/layout/form/ColumnElementData",
 	"sap/ui/layout/form/ColumnContainerData",
-	"sap/ui/core/Title",
+	"sap/ui/core/Element",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
 	"sap/m/Title",
@@ -25,16 +25,12 @@ sap.ui.require([
 	"sap/m/DatePicker",
 	"sap/m/RadioButtonGroup",
 	"sap/m/RadioButton",
-	"sap/m/TextArea",
 	"sap/m/Link",
 	"sap/m/ToggleButton",
-	"sap/m/Button",
-	"sap/m/Image",
 	"sap/m/CheckBox",
-	"sap/m/SegmentedButton",
-	"sap/m/SegmentedButtonItem",
 	"sap/m/Slider",
 	"sap/m/MultiInput",
+	"sap/m/MultiComboBox",
 	"sap/m/Token",
 	"sap/m/ObjectStatus",
 	"sap/ui/core/Item"
@@ -54,7 +50,7 @@ function(
 	ColumnLayout,
 	ColumnElementData,
 	ColumnContainerData,
-	Title,
+	Element,
 	Toolbar,
 	ToolbarSpacer,
 	mTitle,
@@ -66,16 +62,12 @@ function(
 	DatePicker,
 	RadioButtonGroup,
 	RadioButton,
-	TextArea,
 	Link,
 	ToggleButton,
-	Button,
-	Image,
 	CheckBox,
-	SegmentedButton,
-	SegmentedButtonItem,
 	Slider,
 	MultiInput,
+	MultiComboBox,
 	Token,
 	ObjectStatus,
 	Item
@@ -94,7 +86,8 @@ function(
 		city: "Musterstadt",
 		country: "DE",
 		countries: [{key: "GB", text: "England"}, {key: "US", text: "USA"}, {key: "DE", text: "Germany"}],
-		date: new Date(2020, 10, 4),
+		date: new Date(1950, 10, 4),
+		date2: new Date(2020, 10, 4),
 		bool: true,
 		bool2: false,
 		size: 1,
@@ -106,26 +99,6 @@ function(
 		status1: {text: "My Status 1", state: CoreLib.ValueState.Error},
 		status2: {text: "My Status 2", state: CoreLib.ValueState.Warning}
 	});
-
-	// TODO: Fake iSematicFormContent on controls until it is official supported
-	var myTypeCheck = function(vTypeName) {
-		if (vTypeName === "sap.ui.core.ISemanticFormContent") {
-			return true;
-		} else {
-			return this.getMetadata().isA(vTypeName);
-		}
-	};
-	Input.prototype.isA = myTypeCheck;
-	DatePicker.prototype.isA = myTypeCheck;
-	RadioButtonGroup.prototype.isA = myTypeCheck;
-	Slider.prototype.isA = myTypeCheck;
-	Link.prototype.isA = myTypeCheck;
-	Link.prototype.getFormRenderAsControl = function() {return true; };
-	ObjectStatus.prototype.isA = myTypeCheck;
-	ObjectStatus.prototype.getFormRenderAsControl = function() {return true; };
-	CheckBox.prototype.getFormRenderAsControl = function () {
-		return this.getDisplayOnly(); // for displayOnly CheckBox, show the control
-	};
 
 	var oLayout1 = new ColumnLayout("L1");
 	var oForm1 = new Form("F1",{
@@ -181,8 +154,9 @@ function(
 						         new Input({value: {parts: [{path: '/depth'}, {path: '/unit'}], type: new UnitType({showMeasure:false})}, description: {path: "/unit"}/*, layoutData: new ColumnElementData({cellsSmall: 11, cellsLarge: 4})*/})]
 					}),
 					new SemanticFormElement("C2FE3", {
-						label: "Date of birth",
-						fields: [new DatePicker({value: {path: "/date", type: new DateType({style: "long"})}, layoutData: new ColumnElementData({cellsSmall: 6, cellsLarge: 3})})]
+						label: "Date of birth / death",
+						fields: [new DatePicker({value: {path: "/date", type: new DateType({style: "long"})}, layoutData: new ColumnElementData({cellsSmall: 6, cellsLarge: 3})}),
+								 new DatePicker({dateValue: {path: "/date2"}, displayFormat: "long", layoutData: new ColumnElementData({cellsSmall: 6, cellsLarge: 3})})]
 					}),
 					new SemanticFormElement("C2FE4", {
 						label: "Size",
@@ -211,6 +185,19 @@ function(
 									new Token({key: "{/countries/1/key}", text: "{/countries/1/text}"})
 								],
 								showValueHelp: false
+							})
+						]
+					}),
+
+					new SemanticFormElement("C2FE7", {
+						label: "MultiComboBox",
+						fields: [
+							new MultiComboBox("MCB1", {
+								showClearIcon: true,
+								items: {
+									path: '/countries',
+									template: new Item({key: "{key}", text: "{text}"})
+								}
 							})
 						]
 					})
@@ -242,8 +229,8 @@ function(
 					new SemanticFormElement("C3FE4", {
 						fieldLabels: [new Label({text: "Check 1"}),
 									  new Label({text: "Check 2"})],
-						fields: [new CheckBox({selected: {path: "/bool"}, displayOnly: true, layoutData: new ColumnElementData({cellsSmall: 1, cellsLarge: 1})}),
-								 new CheckBox({selected: {path: "/bool2"}, displayOnly: true, layoutData: new ColumnElementData({cellsSmall: 1, cellsLarge: 1})})]
+						fields: [new CheckBox({selected: {path: "/bool"}, displayOnly: "{= !${/editMode}}", layoutData: new ColumnElementData({cellsSmall: 1, cellsLarge: 1})}),
+								 new CheckBox({selected: {path: "/bool2"}, displayOnly: "{= !${/editMode}}", layoutData: new ColumnElementData({cellsSmall: 1, cellsLarge: 1})})]
 					})
 				]
 			})
@@ -251,5 +238,9 @@ function(
 	});
 	oForm1.setModel(oModel);
 	oForm1.placeAt("content1");
+
+	var oMultiComboBox = Element.getElementById("MCB1");
+	var aItems = oMultiComboBox.getItems();
+	oMultiComboBox.setSelectedItems([aItems[0], aItems[1]]);
 
 });
