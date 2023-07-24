@@ -1568,6 +1568,17 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.MessagePage",
+		  "name": "Message Page",
+		  "category": "Display",
+		  "since": "1.28",
+		  "formFactors": "-",
+		  "samples": [
+			"sap.m.sample.MessagePage",
+			"sap.m.sample.MessagePageWithButtons"
+		  ]
+		},
+		{
 		  "id" : "sap.m.Wizard",
 		  "name" : "Wizard",
 		  "category" : "Container",

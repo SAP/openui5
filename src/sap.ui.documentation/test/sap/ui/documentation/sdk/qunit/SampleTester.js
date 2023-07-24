@@ -148,7 +148,7 @@ sap.ui.define([
 		QUnit.module(this._sLibraryName, {
 			beforeEach: function() {
 				// clear metadata cache, if ODataModel is used
-				var ODataModel = sap.ui.require("sap/ui/model/odata/ODataModel");
+				var ODataModel = sap.ui.require("sap/ui/model/odata/v2/ODataModel");
 				if ( ODataModel ) {
 					ODataModel.mServiceData = {};
 				}
@@ -299,13 +299,28 @@ sap.ui.define([
 		});
 
 		var aSamples = oExploredIndex && oExploredIndex.samples;
+		var aEntities = oExploredIndex && oExploredIndex.entities;
+
+		// entities format: {
+		//		"id": "sap.m.Button",
+		//		"samples": [sap.m.sample.Button, sap.m.sample.ButtonCustomText]
+		//	}
+		// samples format: {
+		//		"id": "sap.m.sample.Button",
+		//		"name": "Button",
+		// }
+		function hasEntity (sSampleId, aEntities) {
+			return aEntities.find(function (oEntity) {
+				return oEntity.samples && oEntity.samples.indexOf(sSampleId) > -1;
+			});
+		}
 
 		var nTestable, nTests;
 		if (aSamples) {
 			nTestable = 0;
 			nTests = 0;
 			for (var i = 0; i < aSamples.length; i++) {
-				if ( this._aExcludes.indexOf(aSamples[i].id) < 0 ) {
+				if ( this._aExcludes.indexOf(aSamples[i].id) < 0 && hasEntity(aSamples[i].id, aEntities) ) {
 					if ( nTestable % this._iModulus === this._iRemainder ) {
 						oLog.info("adding test for sample '" + aSamples[i].name + "'");
 						makeTest(aSamples[i]);
