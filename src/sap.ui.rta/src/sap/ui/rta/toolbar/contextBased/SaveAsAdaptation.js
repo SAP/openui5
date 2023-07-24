@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/rta/Utils",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/performance/Measurement"
 ], function(
 	ManagedObject,
 	Log,
@@ -25,7 +26,8 @@ sap.ui.define([
 	ContextBasedAdaptationsAPI,
 	ContextSharingAPI,
 	Utils,
-	JSONModel
+	JSONModel,
+	Measurement
 ) {
 	"use strict";
 
@@ -163,6 +165,7 @@ sap.ui.define([
 		oContextBasedAdaptation.priority = getAdaptationPriority.call(this);
 		var oRtaInformation = this.getToolbar().getRtaInformation();
 		if (this._bIsEditMode) {
+			Measurement.start("onCBAUpdateAdaptation", "Measurement of updating a context-based adaptation");
 			oContextBasedAdaptation.adaptationId = this._mEditProperties.adaptationId;
 			ContextBasedAdaptationsAPI.update({
 				control: oRtaInformation.rootControl,
@@ -173,6 +176,8 @@ sap.ui.define([
 			.then(function(oContextBasedAdaptation, oResponse) {
 				if (oResponse.status === 200) {
 					this.oAdaptationsModel.updateAdaptationContent(oContextBasedAdaptation);
+					Measurement.end("onCBAUpdateAdaptation");
+					Measurement.getActive() && Log.info("onCBAUpdateAdaptation: " + Measurement.getMeasurement("onCBAUpdateAdaptation").time + " ms");
 				}
 			}.bind(this, oContextBasedAdaptation))
 			.catch(function(oError) {
@@ -183,6 +188,7 @@ sap.ui.define([
 				Utils.showMessageBox("error", sMessage, oOptions);
 			});
 		} else {
+			Measurement.start("onCBASaveAsAdaptation", "Measurement of saving a context-based adaptation");
 			BusyIndicator.show();
 			ContextBasedAdaptationsAPI.create({
 				control: oRtaInformation.rootControl,
@@ -191,6 +197,8 @@ sap.ui.define([
 			}).then(function() {
 				BusyIndicator.hide();
 				this.getToolbar().fireEvent("switchAdaptation", {adaptationId: oContextBasedAdaptation.id, trigger: "SaveAs"});
+				Measurement.end("onCBASaveAsAdaptation");
+				Measurement.getActive() && Log.info("onCBASaveAsAdaptation: " + Measurement.getMeasurement("onCBASaveAsAdaptation").time + " ms");
 			}.bind(this)).catch(function(oError) {
 				BusyIndicator.hide();
 				Log.error(oError.stack);

@@ -1318,6 +1318,7 @@ sap.ui.define([
 	}
 
 	function deleteAdaptation() {
+		Measurement.start("onCBADeleteAdaptation", "Measurement of deleting a context-based adaptation");
 		ContextBasedAdaptationsAPI.remove({
 			control: this.getRootControlInstance(),
 			layer: this.getLayer(),
@@ -1326,6 +1327,8 @@ sap.ui.define([
 			BusyIndicator.hide();
 			var sAdaptationId = this._oContextBasedAdaptationsModel.deleteAdaptation();
 			switchAdaptation.call(this, sAdaptationId);
+			Measurement.end("onCBADeleteAdaptation");
+			Measurement.getActive() && Log.info("onCBADeleteAdaptation: " + Measurement.getMeasurement("onCBADeleteAdaptation").time + " ms");
 		}.bind(this)).catch(function(oError) {
 			BusyIndicator.hide();
 			Log.error(oError.stack);
@@ -1359,6 +1362,7 @@ sap.ui.define([
 	}
 
 	function onSwitchAdaptation(oEvent) {
+		Measurement.start("onCBASwitchAdaptation", "Measurement of switching a context-based adaptation");
 		var fnCallback = oEvent.getParameter("callback") || function() {};
 		if (oEvent.getParameter("trigger") === "SaveAs") {
 			// remove all changes from command stack when triggered from saveAs dialog as they are already saved in a new adaptation
@@ -1368,7 +1372,11 @@ sap.ui.define([
 		this._sSwitchToAdaptationId = sAdaptationId;
 		return handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "BTN_SWITCH_ADAPTATIONS",
 			switchAdaptation.bind(this, this._sSwitchToAdaptationId))
-		.then(fnCallback)
+		.then(function() {
+			fnCallback();
+			Measurement.end("onCBASwitchAdaptation");
+			Measurement.getActive() && Log.info("onCBASwitchAdaptation: " + Measurement.getMeasurement("onCBASwitchAdaptation").time + " ms");
+		})
 		.catch(function(oError) {
 			Utils.showMessageBox("error", "MSG_SWITCH_ADAPTATION_FAILED", {error: oError});
 			Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
