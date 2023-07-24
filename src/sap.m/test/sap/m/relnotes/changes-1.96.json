@@ -1610,5 +1610,73 @@
         ]
       }
     ]
+  },
+  "1.96.22": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "c6953c050cac4b3bb8bb582f541a6498ad3072f3",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004628532023"
+          }
+        ]
+      },
+      {
+        "id": "4faa51df86e384d5a0048f8058a658265af01523",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default behavior on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006450822022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400004774092023"
+          }
+        ]
+      },
+      {
+        "id": "13857283092d8c1ce0cda24d9558deca3787c21e",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: UI Adaptation now works when put in ObjectHeader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370039455"
+          },
+          {
+            "type": "BCP",
+            "reference": "002028376700050839402023"
+          }
+        ]
+      },
+      {
+        "id": "7efeaf9fc3dbc145543a19322e999a65e55ceee2",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: appointments are properly visualized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004174232023"
+          }
+        ]
+      },
+      {
+        "id": "20adbf75a385886ffeb3faff0e721ba481997dab",
+        "type": "FIX",
+        "text": " For redundant delimiter then status or attribute visibility set to false",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380079267"
+          }
+        ]
+      }
+    ]
   }
 }

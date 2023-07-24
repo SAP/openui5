@@ -78,5 +78,21 @@
         ]
       }
     ]
+  },
+  "1.96.22": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "e23337409597ad5fc22111ec75c12764b108c44d",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Items roles are adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280158404"
+          }
+        ]
+      }
+    ]
   }
 }
