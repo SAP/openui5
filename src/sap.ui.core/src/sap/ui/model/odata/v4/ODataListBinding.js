@@ -3890,7 +3890,8 @@ sap.ui.define([
 	 *   Since 1.105.0, either a recursive hierarchy or pure data aggregation is supported, but no
 	 *   mix; <code>hierarchyQualifier</code> is the leading property that decides between those two
 	 *   use cases - this is an <b>experimental API</b> and is only supported if the model uses the
-	 *   <code>autoExpandSelect</code> parameter!
+	 *   <code>autoExpandSelect</code> parameter! Since 1.117.0, it is available for read-only
+	 *   hierarchies.
 	 * @param {object} [oAggregation.aggregate]
 	 *   A map from aggregatable property names or aliases to objects containing the following
 	 *   details:
@@ -3920,9 +3921,10 @@ sap.ui.define([
 	 *   </ul>
 	 * @param {number} [oAggregation.expandTo=1]
 	 *   The number (as a positive integer) of different levels initially available without calling
-	 *   {@link sap.ui.model.odata.v4.Context#expand} (@experimental as of version 1.105.0),
-	 *   supported only if a <code>hierarchyQualifier</code> is given. Root nodes are on the first
-	 *   level. By default, only root nodes are available; they are not yet expanded.
+	 *   {@link sap.ui.model.odata.v4.Context#expand} (@experimental as of version 1.105.0;
+	 *   available for read-only hierarchies since 1.117.0), supported only if a
+	 *   <code>hierarchyQualifier</code> is given. Root nodes are on the first level. By default,
+	 *   only root nodes are available; they are not yet expanded.
 	 * @param {boolean} [oAggregation.grandTotalAtBottomOnly]
 	 *   Tells whether the grand totals for aggregatable properties are displayed at the bottom only
 	 *   (since 1.86.0); <code>true</code> for bottom only, <code>false</code> for top and bottom,
@@ -3948,10 +3950,10 @@ sap.ui.define([
 	 * @param {string} [oAggregation.hierarchyQualifier]
 	 *   The qualifier for the pair of "Org.OData.Aggregation.V1.RecursiveHierarchy" and
 	 *   "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy" annotations at this binding's
-	 *   entity type (@experimental as of version 1.105.0). If present, a recursive hierarchy
-	 *   without data aggregation is defined, and the only other supported properties are
-	 *   <code>expandTo</code> and <code>search</code>. A recursive hierarchy cannot be combined
-	 *   with:
+	 *   entity type (@experimental as of version 1.105.0; available for read-only hierarchies since
+	 *   1.117.0). If present, a recursive hierarchy without data aggregation is defined, and the
+	 *   only other supported properties are <code>expandTo</code> and <code>search</code>. A
+	 *   recursive hierarchy cannot be combined with:
 	 *   <ul>
 	 *     <li> "$search",
 	 *     <li> the <code>vGroup</code> parameter of {@link sap.ui.model.Sorter} (since 1.107.0),
