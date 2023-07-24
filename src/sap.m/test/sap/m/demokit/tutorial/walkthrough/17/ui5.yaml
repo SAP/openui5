@@ -4,7 +4,7 @@ metadata:
 type: application
 framework:
   name: OpenUI5
-  version: 1.93.0 #DependencyVersion,groupId:com.sap.openui5,artifactId:sap.ui.core#
+  version: 1.108.17 #DependencyVersion,groupId:com.sap.openui5,artifactId:sap.ui.core#
   libraries:
     - name: sap.ui.core
     - name: sap.m
