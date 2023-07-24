@@ -114,6 +114,9 @@
 	oTable1.setFixedRowCount(1);
 	oTable1.setFixedBottomRowCount(1);
 	oTable1.setEnableColumnFreeze(true);
+	/**
+	 * @deprecated As of Version 1.117
+	 */
 	oTable1.setShowColumnVisibilityMenu(true);
 	createColumns(oTable1);
 	oTable1.setModel(oModel);
@@ -124,6 +127,9 @@
 	oTable2.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
 	oTable2.setFixedColumnCount(0);
 	oTable2.setEnableColumnFreeze(true);
+	/**
+	 * @deprecated As of Version 1.117
+	 */
 	oTable2.setShowColumnVisibilityMenu(true);
 	createColumns(oTable2);
 	oTable2.setModel(oModel);

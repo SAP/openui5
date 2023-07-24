@@ -717,8 +717,15 @@ sap.ui.define([
 					if (!bHasColSpan && oColumn) {
 						var oColumnHeaderMenu = oColumn.getHeaderMenuInstance();
 						if (oColumnHeaderMenu) {
-							mAttributes["aria-haspopup"] = oColumnHeaderMenu.getAriaHasPopupType().toLowerCase();
-						} else if (oColumn._menuHasItems()) {
+							var sPopupType = oColumnHeaderMenu.getAriaHasPopupType();
+							if (sPopupType !== "None") {
+								mAttributes["aria-haspopup"] = sPopupType.toLowerCase();
+							}
+						}
+						/**
+						 * @deprecated As of Version 1.117
+						 */
+						if (!oColumnHeaderMenu && oColumn._menuHasItems()) {
 							mAttributes["aria-haspopup"] = "menu";
 						}
 					}

@@ -118,6 +118,9 @@ sap.ui.define([
 		oTable.setFooter("Footer");
 		oTable.setSelectionMode(tableLibrary.SelectionMode.MultiToggle);
 		oTable.setEnableColumnFreeze(true);
+		/**
+		 * @deprecated As of Version 1.117
+		 */
 		oTable.setShowColumnVisibilityMenu(true);
 		oTable.setColumnHeaderVisible(true);
 		createColumns(oTable);
@@ -190,25 +193,5 @@ sap.ui.define([
 		oTable.getColumns()[1].setVisible(false);
 		oCore.applyChanges();
 		assert.strictEqual(oTable.getComputedFixedColumnCount(), 3, "Hidden columns do not influence fixed column count");
-	});
-
-	QUnit.test("Unfreeze menu with multiheaders", function(assert) {
-		function hasFreezeMenuItem(iCol, unfreeze) {
-			var menu = oTable.getColumns()[iCol].getMenu();
-			menu.destroyAggregation("items", true);
-			menu._addFreezeMenuItem();
-			return menu.getItems()[0].getText() == TableUtils.getResourceBundle().getText(unfreeze ? "TBL_UNFREEZE" : "TBL_FREEZE");
-		}
-
-		assert.ok(hasFreezeMenuItem(0, true), "Column 0 has Unfreeze menu");
-		assert.ok(hasFreezeMenuItem(1, true), "Column 1 has Unfreeze menu");
-		assert.ok(hasFreezeMenuItem(2, true), "Column 2 has Unfreeze menu");
-
-		// set a single header column as the last fixed
-		oTable.setFixedColumnCount(6);
-		oCore.applyChanges();
-
-		assert.ok(hasFreezeMenuItem(0, false), "Column 0 has Freeze menu");
-		assert.ok(hasFreezeMenuItem(5, true), "Column 5 has Unfreeze menu");
 	});
 });

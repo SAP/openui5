@@ -25,19 +25,6 @@
 					<m:OverflowToolbar style="Clear">
 						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
-						<m:Label
-							text="Use headerMenu association:"
-							labelFor="switchHeaderMenu" />
-						<m:Switch
-							id="switchHeaderMenu"
-							state="false"
-							customTextOn="Yes"
-							customTextOff="No"
-							change="onSwitchHeaderMenu"/>
-						<m:ToggleButton
-							icon="sap-icon://show"
-							tooltip="Enable / Disable Visibility Menu Entries"
-							pressed="{ui>/showVisibilityMenuEntry}"/>
 						<m:ToggleButton
 							icon="sap-icon://resize-horizontal"
 							tooltip="Enable / Disable Freezing Menu Entries"
@@ -96,21 +83,6 @@
 								type: 'sap.ui.model.type.Integer'
 							}" />
 						</template>
-						<menu>
-							<u:Menu ariaLabelledBy="quantity">
-								<u:items>
-									<u:MenuItem
-										text="My custom menu entry"
-										select="onQuantityCustomItemSelect"
-										/>
-									<u:MenuItem
-										text="Sort"
-										select="onQuantitySort"
-										icon="sap-icon://sort"
-										/>
-								</u:items>
-							</u:Menu>
-						</menu>
 					</Column>
 					<Column width="9rem">
 						<m:Label text="Delivery Date" />

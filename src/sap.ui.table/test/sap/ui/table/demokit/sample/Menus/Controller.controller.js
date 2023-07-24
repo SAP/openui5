@@ -33,6 +33,8 @@ sap.ui.define([
 				enableCellFilter: false
 			}), "ui");
 
+			this.associateHeaderMenus();
+
 			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
 				var oTb = oView.byId("infobar");
 				oTb.addContent(new ToolbarSpacer());
@@ -157,37 +159,29 @@ sap.ui.define([
 			}
 		},
 
-		onSwitchHeaderMenu: function(oEvent) {
-			var bUseHeaderMenu = oEvent.getSource().getState();
+		associateHeaderMenus: function() {
+			this.oMenu = new ColumnMenu();
+			this.byId("name").setHeaderMenu(this.oMenu.getId());
+			this.byId("productId").setHeaderMenu(this.oMenu.getId());
 
-			if (bUseHeaderMenu) {
-				this.oMenu = new ColumnMenu();
-				this.byId("name").setHeaderMenu(this.oMenu.getId());
-				this.byId("productId").setHeaderMenu(this.oMenu.getId());
-
-				this.oCustomMenu = new ColumnMenu({
-					items: [
-						new ActionItem({
-							label: "My custom menu entry",
-							press: [function(oEvent) {
-								this.onQuantityCustomItemSelect(oEvent);
-							}, this]
-						}),
-						new ActionItem({
-							label: "Sort",
-							icon: "sap-icon://sort",
-							press: [function(oEvent) {
-								this.onQuantitySort(oEvent);
-							}, this]
-						})
-					]
-				});
-				this.byId("quantity").setHeaderMenu(this.oCustomMenu.getId());
-			} else {
-				this.byId("name").setHeaderMenu(null);
-				this.byId("productId").setHeaderMenu(null);
-				this.byId("quantity").setHeaderMenu(null);
-			}
+			this.oCustomMenu = new ColumnMenu({
+				items: [
+					new ActionItem({
+						label: "My custom menu entry",
+						press: [function(oEvent) {
+							this.onQuantityCustomItemSelect(oEvent);
+						}, this]
+					}),
+					new ActionItem({
+						label: "Sort",
+						icon: "sap-icon://sort",
+						press: [function(oEvent) {
+							this.onQuantitySort(oEvent);
+						}, this]
+					})
+				]
+			});
+			this.byId("quantity").setHeaderMenu(this.oCustomMenu.getId());
 		},
 
 		onExit: function() {

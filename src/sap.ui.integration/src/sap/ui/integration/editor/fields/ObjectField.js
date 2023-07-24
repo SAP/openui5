@@ -668,15 +668,9 @@ sap.ui.define([
 		var aColumns = oTable.getColumns();
 		var bHasFilter = false;
 		for (var i = 0; i < aColumns.length; i++) {
-			var oMenu = aColumns[i].getMenu();
-			var oMenuItems = oMenu.getItems();
-			if (oMenuItems.length > 0) {
-				var oFilter = oMenuItems[0];
-				var sValue = oFilter.getValue();
-				if (sValue && sValue !== "") {
-					bHasFilter = true;
-					break;
-				}
+			if (aColumns[i].getFiltered()) {
+				bHasFilter = true;
+				break;
 			}
 		}
 		oTable.getModel().setProperty("/_hasFilter", bHasFilter);

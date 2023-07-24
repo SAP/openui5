@@ -312,26 +312,40 @@ sap.ui.define([
 		assert.equal(oTable.getFirstVisibleRow(), 5, "First Visible Row correct!");
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
+	QUnit.test("Filter field in ColumnMenu", function(assert) {
+		var done = assert.async();
+		var oColFirstName = oTable.getColumns()[1];
+
+		assert.equal(oTable.getBinding().iLength, 200, "RowCount beforeFiltering ok");
+		oTable.filter(oColFirstName, "M*");
+
+		oColFirstName.attachEventOnce("columnMenuOpen", function() {
+			// check that the column menu filter input field was updated
+			var oMenu = oColFirstName.getMenu();
+			// open and close the menu to let it generate its items
+			oMenu.close();
+
+			var oFilterField = oCore.byId(oMenu.getId() + "-filter");
+			if (oFilterField) {
+				assert.equal(oFilterField.getValue(), "M*", "Filter value is M* in column menu");
+				oTable.filter(oColFirstName, "D*");
+				assert.equal(oFilterField.getValue(), "D*", "Filter value is M* in column menu");
+			}
+			done();
+		});
+
+		oColFirstName._openHeaderMenu();
+	});
+
 	QUnit.test("Filter", function(assert) {
 		var oColFirstName = oTable.getColumns()[1];
 		var oColMoney = oTable.getColumns()[7];
 
 		assert.equal(oTable.getBinding().iLength, 200, "RowCount beforeFiltering ok");
 		oTable.filter(oColFirstName, "M*");
-
-		// check that the column menu filter input field was updated
-		var oMenu = oColFirstName.getMenu();
-		// open and close the menu to let it generate its items
-		oMenu.open();
-		oMenu.close();
-
-		var oFilterField = oCore.byId(oMenu.getId() + "-filter");
-		if (oFilterField) {
-			assert.equal(oFilterField.getValue(), "M*", "Filter value is M* in column menu");
-			oTable.filter(oColFirstName, "D*");
-			assert.equal(oFilterField.getValue(), "D*", "Filter value is M* in column menu");
-		}
-
 		assert.equal(oTable.getBinding().iLength, 20, "RowCount after filtering FirstName 'M*'");
 		oTable.filter(oColFirstName, "Mo*");
 		assert.equal(oTable.getBinding().iLength, 10, "RowCount after filtering FirstName 'Mo*''");
@@ -820,6 +834,75 @@ sap.ui.define([
 			"Changing the template changed the highlight property of the template clones in the rows");
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
+	QUnit.test("ColumnMenu invalidation when localization changes", function(assert) {
+		var pAdaptLocalization;
+		var done = assert.async();
+
+		oTable.getColumns().slice(1).forEach(function(oColumn) {
+			oTable.removeColumn(oColumn);
+		});
+		oCore.applyChanges();
+
+		oTable._adaptLocalization = function(bRtlChanged, bLangChanged) {
+			pAdaptLocalization = Table.prototype._adaptLocalization.apply(this, arguments);
+			return pAdaptLocalization;
+		};
+
+		function assertLocalizationUpdates(bRTLChanged, bLanguageChanged) {
+			assert.strictEqual(oTable.getColumns()[0].getMenu()._bInvalidated, bLanguageChanged,
+				"The column menu was " + (bLanguageChanged ? "" : " not") + " invalidated");
+		}
+
+		function test(bChangeTextDirection, bChangeLanguage) {
+			var mChanges = {changes: {}};
+
+			oTable._bRtlMode = null;
+			TableUtils.Menu.openContextMenu(oTable, getCell(0, 0, null, null, oTable));
+			oTable.getColumns()[0].getMenu()._bInvalidated = false;
+
+			if (bChangeTextDirection) {
+				mChanges.changes.rtl = "";
+			}
+			if (bChangeLanguage) {
+				mChanges.changes.language = "";
+			}
+
+			oTable.onlocalizationChanged(mChanges);
+
+			var pAssert = new Promise(function(resolve) {
+				setTimeout(function() {
+					assertLocalizationUpdates(bChangeTextDirection, bChangeLanguage);
+					resolve();
+				}, 0);
+			});
+
+			return pAdaptLocalization.then(function() {
+				return pAssert;
+			}).catch(function() {
+				return pAssert;
+			});
+		}
+
+		oTable.getColumns()[0].attachEventOnce("columnMenuOpen", function() {
+			// RTL + Language
+			test(true, true).then(function() {
+				// RTL
+				return test(true, false);
+			}).then(function() {
+				// Language
+				return test(false, true);
+			}).then(function() {
+				// Other localization event
+				return test(false, false);
+			}).then(done);
+		});
+
+		oTable.getColumns()[0]._openHeaderMenu();
+	});
+
 	QUnit.test("Localization Change", function(assert) {
 		var oInvalidateSpy = sinon.spy(oTable, "invalidate");
 		var pAdaptLocalization;
@@ -860,9 +943,6 @@ sap.ui.define([
 
 			assert.strictEqual(oTable._oCellContextMenu === null, bLanguageChanged,
 				"The cell context menu was " + (bLanguageChanged ? "" : " not") + " reset");
-
-			assert.strictEqual(oTable.getColumns()[0].getMenu()._bInvalidated, bLanguageChanged,
-				"The column menu was " + (bLanguageChanged ? "" : " not") + " invalidated");
 		}
 
 		function test(bChangeTextDirection, bChangeLanguage) {
@@ -870,7 +950,6 @@ sap.ui.define([
 
 			oTable._bRtlMode = null;
 			TableUtils.Menu.openContextMenu(oTable, getCell(0, 0, null, null, oTable));
-			oTable.getColumns()[0].getMenu()._bInvalidated = false;
 			oInvalidateSpy.resetHistory();
 
 			if (bChangeTextDirection) {
@@ -896,17 +975,26 @@ sap.ui.define([
 			});
 		}
 
-		// RTL + Language
-		test(true, true).then(function() {
-			// RTL
-			return test(true, false);
-		}).then(function() {
-			// Language
-			return test(false, true);
-		}).then(function() {
-			// Other localization event
-			return test(false, false);
-		}).then(done);
+		/**
+		 * @deprecated As of Version 1.117
+		 */
+		(function() {
+			oTable.getColumns()[0].attachEventOnce("columnMenuOpen", function() {
+				// RTL + Language
+				test(true, true).then(function() {
+					// RTL
+					return test(true, false);
+				}).then(function() {
+					// Language
+					return test(false, true);
+				}).then(function() {
+					// Other localization event
+					return test(false, false);
+				}).then(done);
+			});
+
+			oTable.getColumns()[0]._openHeaderMenu();
+		}());
 	});
 
 	QUnit.test("AlternateRowColors", function(assert) {
@@ -1005,74 +1093,88 @@ sap.ui.define([
 		assert.deepEqual(aColumns[1], oColA, "The column was inserted at the correct position by index");
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.test("ColumnMenu", function(assert) {
+		var done = assert.async();
 		var oColumn = oTable.getColumns()[1];
-		var oMenu = oColumn.getMenu();
-		assert.ok(oMenu !== null, "Column menu is not null");
-		assert.ok(oMenu instanceof ColumnMenu, "Column menu is instance of sap.ui.table.ColumnMenu");
-		oMenu.open();
-		assert.ok(oMenu.getItems().length > 0, "Column menu has more than one item");
-		oMenu.close();
 
-		//Check column without sort
-		oColumn = oTable.getColumns()[5];
-		oMenu = oColumn.getMenu();
-		oMenu.open();
-		assert.equal(oMenu.getItems().length, 1, "Column menu without sort has only one filter item");
-		oMenu.close();
+		oColumn.attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oMenu = oColumn.getMenu();
+				assert.ok(oMenu !== null, "Column menu is not null");
+				assert.ok(oMenu instanceof ColumnMenu, "Column menu is instance of sap.ui.table.ColumnMenu");
+				assert.ok(oMenu.getItems().length > 0, "Column menu has more than one item");
+				oMenu.close();
 
-		//Check column without filter
-		oColumn = oTable.getColumns()[6];
-		oMenu = oColumn.getMenu();
-		oMenu.open();
-		assert.equal(oMenu.getItems().length, 2, "Column menu without filter has only two sort items");
-		oMenu.close();
+				//Check column without sort
+				oColumn = oTable.getColumns()[5];
+				oColumn._openHeaderMenu();
+				oMenu = oColumn.getMenu();
+				assert.equal(oMenu.getItems().length, 1, "Column menu without sort has only one filter item");
+				oMenu.close();
 
-		var oRemoveAggregationSpy = sinon.spy(ColumnMenu.prototype, "removeAggregation");
-		oTable.setShowColumnVisibilityMenu(true);
-		oCore.applyChanges();
-		oColumn = oTable.getColumns()[5];
-		oMenu = oColumn.getMenu();
-		oMenu.open();
-		assert.equal(oMenu.getItems().length, 2, "Column menu has one filter item and one column visibility item");
-		assert.ok(oRemoveAggregationSpy.notCalled, "Initial creation of the column visibility submenu");
-		oMenu.close();
+				//Check column without filter
+				oColumn = oTable.getColumns()[6];
+				oColumn._openHeaderMenu();
+				oMenu = oColumn.getMenu();
+				assert.equal(oMenu.getItems().length, 2, "Column menu without filter has only two sort items");
+				oMenu.close();
 
-		oColumn = oTable.getColumns()[6];
-		oMenu = oColumn.getMenu();
-		oMenu.open();
-		assert.ok(oRemoveAggregationSpy.withArgs("items", oTable._oColumnVisibilityMenuItem, true).notCalled,
-			"The items aggregation is not removed, the visibility submenu is only updated");
-		oMenu.close();
+				var oRemoveAggregationSpy = sinon.spy(ColumnMenu.prototype, "removeAggregation");
+				oTable.setShowColumnVisibilityMenu(true);
+				oCore.applyChanges();
+				oColumn = oTable.getColumns()[5];
+				oColumn._openHeaderMenu();
+				oMenu = oColumn.getMenu();
+				assert.equal(oMenu.getItems().length, 2, "Column menu has one filter item and one column visibility item");
+				assert.ok(oRemoveAggregationSpy.notCalled, "Initial creation of the column visibility submenu");
+				oMenu.close();
+
+				oColumn = oTable.getColumns()[6];
+				oColumn._openHeaderMenu();
+				oMenu = oColumn.getMenu();
+				assert.ok(oRemoveAggregationSpy.withArgs("items", oTable._oColumnVisibilityMenuItem, true).notCalled,
+					"The items aggregation is not removed, the visibility submenu is only updated");
+				oMenu.close();
+				done();
+			});
+		});
+
+		oColumn._openHeaderMenu();
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.test("ColumnMenuOpen Event", function(assert) {
+		var done = assert.async();
 		var oColumn = oTable.getColumns()[1];
-		var oMenu = oColumn.getMenu();
-		var fnHandler = function(oEvent) {
-			assert.deepEqual(oEvent.getSource(), oColumn, "Correct Event Source");
-			assert.deepEqual(oEvent.getParameter("menu"), oMenu, "Correct Column Menu Parameter");
-		};
 
-		var fnHandlerPreventDefault = function(oEvent) {
-			oEvent.preventDefault();
-		};
+		oColumn.attachEventOnce("columnMenuOpen", function(oEvent) {
+			TableQUnitUtils.wait(0).then(function() {
+				var oMenu = oColumn.getMenu();
+				assert.deepEqual(oEvent.getSource(), oColumn, "Correct Event Source");
+				assert.deepEqual(oEvent.getParameter("menu"), oMenu, "Correct Column Menu Parameter");
+				assert.equal(oMenu.getPopup().getOpenState(), CoreLibrary.OpenState.OPEN, "ColumnMenu open");
+				oMenu.close();
+				done();
+			});
+		});
 
-		oColumn.attachColumnMenuOpen(fnHandler);
-		oColumn._openMenu();
-		assert.equal(oMenu.getPopup().getOpenState(), CoreLibrary.OpenState.OPEN, "ColumnMenu open");
-		oMenu.close();
-		oColumn.detachColumnMenuOpen(fnHandler);
-
-		oColumn.attachColumnMenuOpen(fnHandlerPreventDefault);
-		oColumn._openMenu();
-		assert.equal(oMenu.getPopup().getOpenState(), CoreLibrary.OpenState.CLOSED, "PreventDefault, ColumnMenu not open");
-		oColumn.detachColumnMenuOpen(fnHandlerPreventDefault);
+		oColumn._openHeaderMenu();
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.test("ColumnVisibilityEvent", function(assert) {
-		assert.expect(4);
+		var done = assert.async();
 		oTable.setShowColumnVisibilityMenu(true);
+
+		var oColumn0 = oTable.getColumns()[0];
+		var oColumn1 = oTable.getColumns()[1];
 
 		oTable.attachColumnVisibility(function(oEvent) {
 			var oEventColumn = oEvent.getParameter("column");
@@ -1088,26 +1190,32 @@ sap.ui.define([
 
 		});
 
-		var oColumn1 = oTable.getColumns()[1];
-		var oColumn0 = oTable.getColumns()[0];
-		var oMenu = oColumn1.getMenu();
-		var sVisibilityMenuItemId = oColumn1.getMenu().getId() + "-column-visibilty";
+		oColumn1.attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var sVisibilityMenuItemId = oColumn1.getMenu().getId() + "-column-visibilty";
+				qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
+				var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
+				qutils.triggerMouseEvent(aSubmenuItems[0].$(), "click");
 
-		oMenu.open();
-		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
-		var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
-		qutils.triggerMouseEvent(aSubmenuItems[0].$(), "click");
+				assert.equal(oColumn0.getVisible(), true, "lastName column is still visible (preventDefault)");
 
-		assert.equal(oColumn0.getVisible(), true, "lastName column is still visible (preventDefault)");
+				oColumn1._openHeaderMenu();
+				qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
+				qutils.triggerMouseEvent(aSubmenuItems[1].$(), "click");
 
-		oMenu.open();
-		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
-		qutils.triggerMouseEvent(aSubmenuItems[1].$(), "click");
+				assert.equal(oColumn1.getVisible(), false, "firstName column is invisible (no preventDefault)");
+				done();
+			});
+		});
 
-		assert.equal(oColumn1.getVisible(), false, "firstName column is invisible (no preventDefault)");
+		oColumn1._openHeaderMenu();
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.test("Column Visibility Submenu: Icons, Enabled State and Accessibility", function(assert) {
+		var done = assert.async();
 		function checkSubmenuIcons(oTable, assert) {
 			var aColumns = oTable.getColumns();
 			var aVisibleColumns = oTable._getVisibleColumns();
@@ -1127,32 +1235,44 @@ sap.ui.define([
 
 		oTable.setShowColumnVisibilityMenu(true);
 		var aColumns = oTable.getColumns();
-		var oMenu = aColumns[0].getMenu();
-		oMenu.open();
-		var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
-		var aSubmenuItems = oSubmenu.getItems();
-		assert.ok(oSubmenu, "The Column Visibility Submenu exists");
-		assert.equal(aSubmenuItems.length, 8, "The Column Visibility Submenu has one item for each column");
-		checkSubmenuIcons(oTable, assert);
 
-		for (var i = 2; i < 8; i++) {
-			aColumns[i].setVisible(false);
-		}
-		oMenu.open();
-		checkSubmenuIcons(oTable, assert);
+		aColumns[0].attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oMenu = aColumns[0].getMenu();
+				oMenu.open();
+				var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
+				var aSubmenuItems = oSubmenu.getItems();
+				assert.ok(oSubmenu, "The Column Visibility Submenu exists");
+				assert.equal(aSubmenuItems.length, 8, "The Column Visibility Submenu has one item for each column");
+				checkSubmenuIcons(oTable, assert);
 
-		assert.ok(aSubmenuItems[0].getEnabled() && aSubmenuItems[1].getEnabled(), "Two visible columns left: both visibility menu items are enabled");
-		aColumns[1].setVisible(false);
-		oMenu.open();
-		aSubmenuItems = oSubmenu.getItems();
-		assert.notOk(aSubmenuItems[0].getEnabled(), "One visible column left: the corresponding menu item is disabled");
-		aColumns[1].setVisible(true);
-		oMenu.open();
-		assert.ok(aSubmenuItems[0].getEnabled() && aSubmenuItems[1].getEnabled(), "One more column made visible: both menu items are enabled");
-		oMenu.close();
+				for (var i = 2; i < 8; i++) {
+					aColumns[i].setVisible(false);
+				}
+				oMenu.open();
+				checkSubmenuIcons(oTable, assert);
+
+				assert.ok(aSubmenuItems[0].getEnabled() && aSubmenuItems[1].getEnabled(), "Two visible columns left: both visibility menu items are enabled");
+				aColumns[1].setVisible(false);
+				oMenu.open();
+				aSubmenuItems = oSubmenu.getItems();
+				assert.notOk(aSubmenuItems[0].getEnabled(), "One visible column left: the corresponding menu item is disabled");
+				aColumns[1].setVisible(true);
+				oMenu.open();
+				assert.ok(aSubmenuItems[0].getEnabled() && aSubmenuItems[1].getEnabled(), "One more column made visible: both menu items are enabled");
+				oMenu.close();
+				done();
+			});
+		});
+
+		aColumns[0]._openHeaderMenu();
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.test("Column Visibility Submenu: Add/Remove/Reorder Columns", function(assert) {
+		var done = assert.async();
 		function checkSubmenuItemsOrder(oTable, assert) {
 			var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
 			var aSubmenuItems = oSubmenu.getItems();
@@ -1171,26 +1291,37 @@ sap.ui.define([
 
 		oTable.setShowColumnVisibilityMenu(true);
 		var aColumns = oTable.getColumns();
-		var oMenu = aColumns[0].getMenu();
-		oMenu.open();
-		checkSubmenuItemsOrder(oTable, assert);
 
-		for (var i = 7; i > 0; i = i - 2) {
-			oTable.removeColumn(aColumns[i]);
-		}
-		oMenu.open();
-		checkSubmenuItemsOrder(oTable, assert);
+		aColumns[0].attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oMenu = aColumns[0].getMenu();
+				aColumns[0]._openHeaderMenu();
+				checkSubmenuItemsOrder(oTable, assert);
 
-		oTable.addColumn(aColumns[1]);
-		oTable.addColumn(aColumns[3]);
-		oTable.insertColumn(aColumns[5], 0);
-		oTable.insertColumn(aColumns[7], 3);
+				for (var i = 7; i > 0; i = i - 2) {
+					oTable.removeColumn(aColumns[i]);
+				}
+				aColumns[0]._openHeaderMenu();
+				checkSubmenuItemsOrder(oTable, assert);
 
-		oMenu.open();
-		checkSubmenuItemsOrder(oTable, assert);
-		oMenu.close();
+				oTable.addColumn(aColumns[1]);
+				oTable.addColumn(aColumns[3]);
+				oTable.insertColumn(aColumns[5], 0);
+				oTable.insertColumn(aColumns[7], 3);
+
+				aColumns[0]._openHeaderMenu();
+				checkSubmenuItemsOrder(oTable, assert);
+				oMenu.close();
+				done();
+			});
+		});
+
+		aColumns[0]._openHeaderMenu();
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.test("CustomColumnMenu", function(assert) {
 		var oCustomMenu = new Menu("custom-menu");
 		var oColumn = oTable.getColumns()[1];
@@ -1222,13 +1353,25 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Menu & initial filter: references", function(assert) {
+	/**
+	 * @deprecated As of version 1.117
+	 */
+	QUnit.test("Menu initialization", function(assert) {
+		var done = assert.async();
 		var oColumn = oTable.getColumns()[0];
-		var oMenu = oColumn.getMenu();
-		assert.ok(oMenu !== null, "Column menu is not null");
-		assert.ok(oMenu instanceof ColumnMenu, "Column menu is instance of ColumnMenu");
-		assert.ok(oMenu._oColumn instanceof Column, "Internal reference to column is set");
-		assert.ok(oMenu._oTable instanceof Table, "Internal reference to table is set");
+
+		oColumn.attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oMenu = oColumn.getMenu();
+				assert.ok(oMenu !== null, "Column menu is not null");
+				assert.ok(oMenu instanceof ColumnMenu, "Column menu is instance of ColumnMenu");
+				assert.ok(oMenu._getColumn() instanceof Column, "_getColumn returns an instance of Column");
+				assert.ok(oMenu._getTable() instanceof Table, "_getTable returns an instance of Table");
+				done();
+			});
+		});
+
+		oColumn._openHeaderMenu();
 	});
 
 	QUnit.test("After initialization", function(assert) {

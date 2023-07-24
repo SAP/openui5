@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/Column",
 	"sap/ui/table/menus/ColumnHeaderMenuAdapter",
-	"sap/ui/core/Control"
+	"sap/ui/core/Control",
+	"sap/ui/core/Icon"
 ], function(
 	TableQUnitUtils,
 	Column,
 	ColumnHeaderMenuAdapter,
-	Control
+	Control,
+	Icon
 ) {
 	"use strict";
 
@@ -56,7 +58,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMenu1 = new TestMenu();
 			this.oMenu2 = new TestMenu();
-			this.oColumn1 = new Column();
+			this.oColumn1 = new Column({template: new Icon()});
 			this.oColumn2 = new Column();
 			this.oColumn1.setHeaderMenu(this.oMenu1.getId());
 			this.oColumn2.setHeaderMenu(this.oMenu2.getId());

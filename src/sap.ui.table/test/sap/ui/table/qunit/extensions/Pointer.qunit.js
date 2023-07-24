@@ -1,15 +1,15 @@
 /*global QUnit, oTable, oTreeTable */
 
 sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
 	"sap/ui/table/extensions/Pointer",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
-	"sap/ui/table/qunit/TableQUnitUtils" // implicitly used via globals (e.g. createTables)
-], function(qutils, Device, PointerExtension, TableUtils, tableLibrary, jQuery, oCore) {
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, qutils, Device, PointerExtension, TableUtils, tableLibrary, jQuery, oCore) {
 	"use strict";
 
 	// mapping of global function calls
@@ -309,7 +309,11 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.test("Resize via Resize Button", function(assert) {
+		var done = assert.async();
 		var oColumn = this.oColumn;
 		var iWidthBeforeResize;
 
@@ -319,46 +323,53 @@ sap.ui.define([
 			var $Column = oColumn.$();
 
 			iWidthBeforeResize = oColumnDomRef.offsetWidth;
-			TableUtils.Menu.openContextMenu(oTable, oColumnDomRef);
+			oColumn._openHeaderMenu();
+			return TableQUnitUtils.wait(0).then(function() {
+				var $ResizeButton = $Column.find(".sapUiTableColResizer");
+				var $ResizeButtonOffset = $ResizeButton.offset();
+				var oResizeButton = $ResizeButton[0];
+				var iResizeHandlerTop = Math.floor($ResizeButtonOffset.top + (oResizeButton.offsetHeight / 2));
+				var iResizeButtonLeft = Math.floor($ResizeButtonOffset.left + (oResizeButton.offsetWidth / 2));
 
-			var $ResizeButton = $Column.find(".sapUiTableColResizer");
-			var $ResizeButtonOffset = $ResizeButton.offset();
-			var oResizeButton = $ResizeButton[0];
-			var iResizeHandlerTop = Math.floor($ResizeButtonOffset.top + (oResizeButton.offsetHeight / 2));
-			var iResizeButtonLeft = Math.floor($ResizeButtonOffset.left + (oResizeButton.offsetWidth / 2));
+				qutils.triggerMouseEvent($ResizeButton, "mousedown", 1, 1, iResizeButtonLeft, iResizeHandlerTop, 0);
+				qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeButtonLeft + 90, iResizeHandlerTop, 0);
+				qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeButtonLeft + 90 + 40, iResizeHandlerTop, 0);
+				qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeButtonLeft + 90 + 40, iResizeHandlerTop, 0);
 
-			qutils.triggerMouseEvent($ResizeButton, "mousedown", 1, 1, iResizeButtonLeft, iResizeHandlerTop, 0);
-			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeButtonLeft + 90, iResizeHandlerTop, 0);
-			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeButtonLeft + 90 + 40, iResizeHandlerTop, 0);
-			qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeButtonLeft + 90 + 40, iResizeHandlerTop, 0);
-
-			return new Promise(function(resolve) {
-				oTable.attachEventOnce("rowsUpdated", resolve);
+				return new Promise(function(resolve) {
+					oTable.attachEventOnce("rowsUpdated", resolve);
+				});
 			});
 		}
 
-		this.stub(Device.system, "desktop").value(false);
-		oColumn.setResizable(true);
-		oCore.applyChanges();
-
-		return new Promise(function(resolve) {
-			oTable.attachEventOnce("rowsUpdated", resolve);
-		}).then(resize).then(function() {
-			var iExpectedWidth = iWidthBeforeResize + 110;
-			assert.ok(Math.abs(oColumn.getDomRef().offsetWidth - iExpectedWidth) < 5,
-				"The column was resized to the correct width: " + iExpectedWidth);
-		}).then(function() {
-			oTable.getColumns()[0].setVisible(false);
+		oColumn.attachEventOnce("columnMenuOpen", function() {
+			oColumn.getMenu().close();
+			this.stub(Device.system, "desktop").value(false);
+			oColumn.setResizable(true);
 			oCore.applyChanges();
 
-			return new Promise(function(resolve) {
-				oTable.attachEventOnce("rowsUpdated", resolve);
+			resize().then(function() {
+				var iExpectedWidth = iWidthBeforeResize + 110;
+				assert.ok(Math.abs(oColumn.getDomRef().offsetWidth - iExpectedWidth) < 5,
+					"The column was resized to the correct width: " + iExpectedWidth);
+			}).then(function() {
+				oTable.getColumns()[0].setVisible(false);
+				oCore.applyChanges();
+
+				return new Promise(function(resolve) {
+					oTable.attachEventOnce("rowsUpdated", resolve);
+				});
+			}).then(resize).then(function() {
+				var iExpectedWidth = iWidthBeforeResize + 110;
+				assert.ok(Math.abs(oColumn.getDomRef().offsetWidth - iExpectedWidth) < 5,
+					"With invisible columns - The column was resized to the correct width: " + iExpectedWidth);
+
+				done();
 			});
-		}).then(resize).then(function() {
-			var iExpectedWidth = iWidthBeforeResize + 110;
-			assert.ok(Math.abs(oColumn.getDomRef().offsetWidth - iExpectedWidth) < 5,
-				"With invisible columns - The column was resized to the correct width: " + iExpectedWidth);
-		});
+		}.bind(this));
+
+		oColumn.setSortProperty("dummy");
+		oColumn._openHeaderMenu();
 	});
 
 	QUnit.test("Skip trigger resize when resizing already started", function(assert) {
@@ -393,101 +404,123 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.test("Column header", function(assert) {
+		var done = assert.async();
 		var oElem = getColumnHeader(0, true);
 		var oColumn = oTable.getColumns()[0];
-		var oColumnMenu = oColumn.getMenu();
 		var oContextMenuEvent = this.spy(this.oPointerExtension._delegate, "oncontextmenu");
 		var oContextMenuEventArgument;
 		var bFirstItemHovered;
 
-		// Try to open the menu with the left mouse button.
-		this.triggerMouseDownEvent(oElem, 0);
-		qutils.triggerMouseEvent(oElem, "click");
-		assert.ok(!oColumnMenu.bOpen, "Menu is closed");
-		checkFocus(oElem, assert);
-
-		// Try to open the menu with the right mouse button.
-		this.triggerMouseDownEvent(oElem, 2);
-		jQuery(oElem).trigger("contextmenu");
-		assert.ok(!oColumnMenu.bOpen, "Menu is closed");
-		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.resetHistory();
-		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
-		checkFocus(oElem, assert);
-
-		oColumn.setSortProperty("dummy");
-		assert.ok(!oColumnMenu.bOpen, "Menu is closed");
-
-		// Open the menu with the left mouse button.
-		this.triggerMouseDownEvent(oElem, 0);
-		qutils.triggerMouseEvent(oElem, "click");
-		assert.ok(oColumnMenu.bOpen, "Menu is opened");
-		bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
-		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
-
-		// Close the menu with the left mouse button.
-		this.triggerMouseDownEvent(oElem, 0);
-		qutils.triggerMouseEvent(oElem, "click");
-		assert.ok(!oColumnMenu.bOpen, "Menu is closed");
-		checkFocus(oElem, assert);
-
-		// Open the menu with the right mouse button.
-		this.triggerMouseDownEvent(oElem, 2);
-		jQuery(oElem).trigger("contextmenu");
-		assert.ok(oColumnMenu.bOpen, "Menu is opened");
-		bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
-		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
-		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.resetHistory();
-		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
-
-		// Close the menu with the right mouse button.
-		this.triggerMouseDownEvent(oElem, 2);
-		jQuery(oElem).trigger("contextmenu");
-		assert.ok(!oColumnMenu.bOpen, "Menu is closed");
-		checkFocus(oElem, assert);
-		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.resetHistory();
-		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
-
-		// Open the menu with the left mouse button.
-		this.triggerMouseDownEvent(oElem, 0);
-		qutils.triggerMouseEvent(oElem, "click");
-		assert.ok(oColumnMenu.bOpen, "Menu is opened");
-		bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
-		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
-
-		// Close the menu with the right mouse button.
-		this.triggerMouseDownEvent(oElem, 2);
-		jQuery(oElem).trigger("contextmenu");
-		assert.ok(!oColumnMenu.bOpen, "Menu is closed");
-		checkFocus(oElem, assert);
-		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.resetHistory();
-		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
-
-		oColumn.setVisible(false);
-		oCore.applyChanges();
-		oColumn = oTable.getColumns()[oTable.getColumns().length - 1];
-		oColumn.setSortProperty("dummy");
-		oElem = getColumnHeader(oTable._getVisibleColumns().indexOf(oColumn), true);
-		oColumnMenu = oColumn.getMenu();
-		this.triggerMouseDownEvent(oElem, 0);
-		qutils.triggerMouseEvent(oElem, "click");
-		assert.ok(oColumnMenu.bOpen, "Menu is opened if there are invisible columns in the aggregation before this column");
-	});
-
-	QUnit.test("Column header if first row is a summary", function(assert) {
-		return fakeSumRow(0, oTable).then(function() {
-			var oElem = getColumnHeader(0, true);
-			var oColumn = oTable.getColumns()[0];
+		oColumn.attachEventOnce("columnMenuOpen", function() {
 			var oColumnMenu = oColumn.getMenu();
+			oColumnMenu.close();
 
-			oColumn.setSortProperty("dummy");
+			// Open the menu with the left mouse button.
 			this.triggerMouseDownEvent(oElem, 0);
 			qutils.triggerMouseEvent(oElem, "click");
 			assert.ok(oColumnMenu.bOpen, "Menu is opened");
+			bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
+			assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
+
+			// Close the menu with the left mouse button.
+			this.triggerMouseDownEvent(oElem, 0);
+			qutils.triggerMouseEvent(oElem, "click");
+			assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+			checkFocus(oElem, assert);
+
+			// Open the menu with the right mouse button.
+			this.triggerMouseDownEvent(oElem, 2);
+			jQuery(oElem).trigger("contextmenu");
+			assert.ok(oColumnMenu.bOpen, "Menu is opened");
+			bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
+			assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
+			oContextMenuEventArgument = oContextMenuEvent.args[0][0];
+			oContextMenuEvent.resetHistory();
+			assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+
+			// Close the menu with the right mouse button.
+			this.triggerMouseDownEvent(oElem, 2);
+			jQuery(oElem).trigger("contextmenu");
+			assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+			checkFocus(oElem, assert);
+			oContextMenuEventArgument = oContextMenuEvent.args[0][0];
+			oContextMenuEvent.resetHistory();
+			assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+
+			// Open the menu with the left mouse button.
+			this.triggerMouseDownEvent(oElem, 0);
+			qutils.triggerMouseEvent(oElem, "click");
+			assert.ok(oColumnMenu.bOpen, "Menu is opened");
+			bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
+			assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
+
+			// Close the menu with the right mouse button.
+			this.triggerMouseDownEvent(oElem, 2);
+			jQuery(oElem).trigger("contextmenu");
+			assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+			checkFocus(oElem, assert);
+			oContextMenuEventArgument = oContextMenuEvent.args[0][0];
+			oContextMenuEvent.resetHistory();
+			assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+
+			oColumn.setVisible(false);
+			oCore.applyChanges();
+			oColumn = oTable.getColumns()[oTable.getColumns().length - 1];
+			oColumn.setSortProperty("dummy");
+			oElem = getColumnHeader(oTable._getVisibleColumns().indexOf(oColumn), true);
+			this.triggerMouseDownEvent(oElem, 0);
+			qutils.triggerMouseEvent(oElem, "click");
+			oColumnMenu = oColumn.getMenu();
+			assert.ok(oColumnMenu.bOpen, "Menu is opened if there are invisible columns in the aggregation before this column");
+
+			oColumn = oTable.getColumns()[1];
+			oElem = getColumnHeader(1, true);
+			// Try to open the menu with the left mouse button.
+			this.triggerMouseDownEvent(oElem, 0);
+			qutils.triggerMouseEvent(oElem, "click");
+			oColumnMenu = oColumn.getMenu();
+			assert.ok(!oColumnMenu, "No column menu");
+			checkFocus(oElem, assert);
+
+			// Try to open the menu with the right mouse button.
+			this.triggerMouseDownEvent(oElem, 2);
+			jQuery(oElem).trigger("contextmenu");
+			assert.ok(!oColumnMenu, "No column menu");
+			checkFocus(oElem, assert);
+
+			oContextMenuEvent.resetHistory();
+			done();
+		}.bind(this));
+
+		oColumn.setSortProperty("dummy");
+		oColumn._openHeaderMenu();
+	});
+
+	/**
+	 * @deprecated As of version 1.117
+	 */
+	QUnit.test("Column header if first row is a summary", function(assert) {
+		return fakeSumRow(0, oTable).then(function() {
+			var done = assert.async();
+			var oElem = getColumnHeader(0, true);
+			var oColumn = oTable.getColumns()[0];
+
+			oColumn.attachEventOnce("columnMenuOpen", function() {
+				var oColumnMenu = oColumn.getMenu();
+				oColumnMenu.close();
+
+				this.triggerMouseDownEvent(oElem, 0);
+				qutils.triggerMouseEvent(oElem, "click");
+				assert.ok(oColumnMenu.bOpen, "Menu is opened");
+				done();
+			}.bind(this));
+
+			oColumn.setSortProperty("dummy");
+			oColumn._openHeaderMenu();
 		}.bind(this));
 	});
 
@@ -567,6 +600,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.test("Column header", function(assert) {
 		var done = assert.async();
 		var oColumn = oTable._getVisibleColumns()[3];

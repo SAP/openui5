@@ -5094,25 +5094,32 @@ sap.ui.define([
 	 * @param {boolean} bShift Whether to simulate a pressed shift key.
 	 * @param {Object} assert QUnit assert object.
 	 * @private
+	 * @deprecated As of Version 1.117
 	 */
 	function _testColumnHeaderContextMenus(sKey, bKeyDown, bShift, assert) {
-		var oColumn = oTable.getColumns()[0];
-		oColumn.setSortProperty("dummy");
-		var oElem = checkFocus(getColumnHeader(0, true), assert);
-		var oColumnMenu = oColumn.getMenu();
+		return new Promise(function(resolve) {
+			var oColumn = oTable.getColumns()[0];
+			var oElem = checkFocus(getColumnHeader(0, true), assert);
 
-		assert.ok(!oColumnMenu.bOpen, "Menu is closed");
-		if (bKeyDown) {
-			qutils.triggerKeydown(oElem, sKey, bShift, false, false);
-		} else {
-			qutils.triggerKeyup(oElem, sKey, bShift, false, false);
-		}
-		assert.ok(oColumnMenu.bOpen, "Menu is opened");
-		var bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
-		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
-		qutils.triggerKeydown(document.activeElement, Key.ESCAPE, false, false, false);
-		assert.ok(!oColumnMenu.bOpen, "Menu is closed");
-		checkFocus(oElem, assert);
+			oColumn.attachEventOnce("columnMenuOpen", function() {
+				TableQUnitUtils.wait(0).then(function() {
+					var oColumnMenu = oColumn.getMenu();
+
+					assert.ok(oColumnMenu.bOpen, "Menu is opened");
+					var bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
+					assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
+					qutils.triggerKeydown(document.activeElement, Key.ESCAPE, false, false, false);
+					assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+					checkFocus(oElem, assert);
+
+					oColumnMenu.close();
+					return resolve();
+				});
+			});
+
+			oColumn.setSortProperty("dummy");
+			oColumn._openHeaderMenu();
+		});
 	}
 
 	QUnit.module("Interaction > Space & Enter", {
@@ -5127,9 +5134,14 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.test("On a Column Header", function(assert) {
-		_testColumnHeaderContextMenus(Key.SPACE, false, false, assert);
-		_testColumnHeaderContextMenus(Key.ENTER, false, false, assert);
+		var done = assert.async();
+		_testColumnHeaderContextMenus(Key.SPACE, false, false, assert).then(function() {
+			return _testColumnHeaderContextMenus(Key.ENTER, false, false, assert);
+		}).then(done);
 	});
 
 	QUnit.test("On SelectAll", function(assert) {
