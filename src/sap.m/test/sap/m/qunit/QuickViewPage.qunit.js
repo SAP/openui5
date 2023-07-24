@@ -34,11 +34,12 @@ sap.ui.define([
 
 	// JSON sample data
 	var mData = {
-		header  : "Employee Info",
-		title  : "John Doe",
+		header: "Employee Info",
+		title: "John Doe",
 		titleActive: false,
-		avatarSrc  : "sap-icon://person-placeholder",
+		avatarSrc: "sap-icon://person-placeholder",
 		description: "Department Manager1",
+		iconVisibility: true,
 		groups: [
 			{
 				heading: "Job",
@@ -109,7 +110,8 @@ sap.ui.define([
 			title: "{/title}",
 			description: "{/description}",
 			avatar: new Avatar({
-				src: "{/avatarSrc}"
+				src: "{/avatarSrc}",
+				visible: "{/iconVisibility}"
 			}),
 			groups: {
 				path: '/groups',
@@ -210,6 +212,16 @@ sap.ui.define([
 
 	QUnit.test("Testing if the QuickView is created", function (assert) {
 		assert.strictEqual(this.oQuickViewPage.$().length, 1, "should render");
+	});
+
+	QUnit.test("Testing if the QuickView Header is created when it is with no content", function (assert) {
+		mData.title = "";
+		mData.description = "";
+		mData.iconVisibility = false;
+		oModel.setData(mData);
+		Core.applyChanges();
+
+		assert.strictEqual(this.oQuickViewPage.$()[0].childElementCount, 1, "only the form should be rendered");
 	});
 
 	QUnit.module("Icon (deprecated)", {

@@ -24,6 +24,7 @@
 					<Avatar
 						src="{icon}"
 						displayShape="{displayShape}"
+						visible="{iconVisibility}"
 					/>
 				</avatar>
 				<QuickViewGroup heading="{heading}" elements="{path : 'elements', templateShareable : true}">

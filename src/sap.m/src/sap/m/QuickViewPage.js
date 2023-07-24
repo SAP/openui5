@@ -442,50 +442,62 @@ sap.ui.define([
 		var oAvatar = this._getAvatar(),
 			oVLayout = new VerticalLayout(),
 			oHLayout = new HorizontalLayout(),
-			sIcon = this.getIcon && this.getIcon(),
 			sTitle = this.getTitle(),
 			sDescription = this.getDescription(),
-			sTitleUrl = this.getTitleUrl();
+			sTitleUrl = this.getTitleUrl(),
+			oTitle,
+			oDescription;
 
-		if (!oAvatar && !sIcon && !sTitle && !sDescription) {
-			return null;
-		}
-
-		if (oAvatar) {
+		if (oAvatar && oAvatar.getVisible()) {
 			oHLayout.addContent(oAvatar);
 		}
 
-		var oTitle;
-
-		if (sTitleUrl) {
+		if (sTitleUrl && sTitle) {
 			oTitle = new Link({
-				text	: sTitle,
-				href	: sTitleUrl,
-				target	: "_blank"
+				text: sTitle,
+				href: sTitleUrl,
+				target: "_blank"
 			});
-		} else if (this.getCrossAppNavCallback && this.getCrossAppNavCallback()) {
+		} else if (this.getCrossAppNavCallback && this.getCrossAppNavCallback() && sTitle) {
 			oTitle = new Link({
-				text	: sTitle
+				text: sTitle
 			});
 			oTitle.attachPress(this._crossApplicationNavigation.bind(this));
-		} else {
+		} else if (sTitle) {
 			oTitle = new Title({
-				text	: sTitle,
-				level	: CoreTitleLevel.H3
+				text: sTitle,
+				level: CoreTitleLevel.H3
 			});
 		}
 
 		this.setPageTitleControl(oTitle);
 
-		var oDescription = new Text({
-			text	: sDescription
-		});
+		if (sDescription) {
+			oDescription = new Text({
+				text: sDescription
+			});
+		}
 
-		oVLayout.addContent(oTitle);
-		oVLayout.addContent(oDescription);
-		oHLayout.addContent(oVLayout);
+		if (oTitle) {
+			oVLayout.addContent(oTitle);
+		}
+		if (oDescription) {
+			oVLayout.addContent(oDescription);
+		}
 
-		return oHLayout;
+		if (oVLayout.getContent().length) {
+			oHLayout.addContent(oVLayout);
+		} else {
+			oVLayout.destroy();
+		}
+
+		if (oHLayout.getContent().length) {
+			return oHLayout;
+		}
+
+		oHLayout.destroy();
+
+		return null;
 	};
 
 	/**
@@ -503,8 +515,8 @@ sap.ui.define([
 
 		if (oGroup.getHeading()) {
 			oForm.addContent(new CoreTitle({
-				text : oGroup.getHeading(),
-				level : CoreTitleLevel.H4
+				text: oGroup.getHeading(),
+				level: CoreTitleLevel.H4
 			}));
 		}
 

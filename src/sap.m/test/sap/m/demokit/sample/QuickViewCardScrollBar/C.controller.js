@@ -47,12 +47,12 @@ sap.ui.define([
 				aPages = oModel.getProperty("/pages");
 
 			if (oEvent.getParameters().state) {
+				aPages[0].iconVisibility = true;
 				aPages[0].title = "Adventure Company";
-				aPages[0].icon = "sap-icon://building";
 				aPages[0].description = "John Doe";
 			} else {
+				aPages[0].iconVisibility = false;
 				aPages[0].title = "";
-				aPages[0].icon = "";
 				aPages[0].description = "";
 			}
 			oModel.setProperty("/pages", aPages);

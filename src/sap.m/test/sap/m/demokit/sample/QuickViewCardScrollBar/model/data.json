@@ -6,6 +6,7 @@
 			"title": "Adventure Company",
 			"titleUrl": "http://sap.com",
 			"icon": "sap-icon://building",
+			"iconVisibility": true,
 			"displayShape": "Square",
 			"description": "John Doe",
 			"groups": [
