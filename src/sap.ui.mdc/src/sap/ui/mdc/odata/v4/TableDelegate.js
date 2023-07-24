@@ -137,6 +137,42 @@ sap.ui.define([
 		});
 	}
 
+	function setSelectedGridTableConditions (oTable, aContexts) {
+
+		var oODataV4SelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
+			return oPlugin.isA("sap.ui.table.plugins.ODataV4Selection");
+		});
+
+		if (oODataV4SelectionPlugin) {
+			return oODataV4SelectionPlugin.setSelectedContexts(aContexts);
+		}
+
+		var oMultiSelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
+			return oPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin");
+		});
+
+		if (oMultiSelectionPlugin) {
+			oMultiSelectionPlugin.clearSelection();
+			return aContexts.map(function (oContext) {
+				var iContextIndex = oContext.getIndex(); // TODO: Handle undefined index?
+				return oMultiSelectionPlugin.addSelectionInterval(iContextIndex, iContextIndex);
+			});
+		}
+
+		throw Error("Unsupported operation: TableDelegate does not support #setSelectedContexts for the given Table configuration");
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	Delegate.setSelectedContexts = function (oTable, aContexts) {
+		if (oTable._isOfType(TableType.Table, true)) {
+			setSelectedGridTableConditions(oTable, aContexts);
+		} else {
+			TableDelegate.setSelectedContexts.apply(this, arguments);
+		}
+	};
+
 	/**
 	 * @inheritDoc
 	 */

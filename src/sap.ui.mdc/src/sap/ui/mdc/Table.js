@@ -863,6 +863,14 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Determine the table's type
+ 	 * @param {sap.ui.mdc.enums.TableType} sType The table type to be checked
+	 * @param {boolean} bIncludeSubTypes enable subtype check
+	 * @returns {boolean} Indicates if the table is of the given type
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
 	Table.prototype._isOfType = function(sType, bIncludeSubTypes) {
 		var oType = this._getType();
 
@@ -2542,6 +2550,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._onBindingChange = function() {
+		this.fireEvent("_bindingChange"); // consumed by sap.ui.mdc.valuehelp.content.MDCTable
+
 		this._updateExpandAllButton();
 		this._updateCollapseAllButton();
 		this._updateExportButton();
@@ -2776,6 +2786,33 @@ sap.ui.define([
 			if (oV4SelectionPlugin) {
 				oV4SelectionPlugin.destroy();
 				this.getControlDelegate().initializeSelection(this);
+			}
+		}
+	};
+
+	/**
+	 * Allows programmatic configuration of the table's selection state
+	 * @param {array<sap.ui.model.Context>} aContexts Contexts which should be selected
+	 * @ui5-restricted sap.ui.mdc
+	 * @private
+	*/
+	Table.prototype._setSelectedContexts = function (aContexts) {
+		this.getControlDelegate().setSelectedContexts(this, aContexts);
+	};
+
+	/**
+	 * Allows programmatic configuration of the inner table's properties.
+	 * @param {string} sProperty Property name to be modified
+ 	 * @param {any} vValue Value to be set
+	 * @ui5-restricted sap.ui.mdc
+	 * @private
+	*/
+	Table.prototype._setInternalProperty = function (sProperty, vValue) {
+		if (this._oTable) {
+			var oPropertyMetaData = this._oTable.getMetadata().getProperty(sProperty);
+			var sMutator = oPropertyMetaData && oPropertyMetaData._sMutator;
+			if (sMutator) {
+				this._oTable[sMutator](vValue);
 			}
 		}
 	};
