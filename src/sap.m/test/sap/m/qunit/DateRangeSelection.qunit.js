@@ -1276,6 +1276,89 @@ sap.ui.define([
 		oDSR4.destroy();
 	});
 
+	QUnit.test("value binding with timestamps", function(assert) {
+
+		var oModel = new JSONModel({
+				start: 1668038400000,
+				end: 1668470400000
+			}),
+			oDRS = new DateRangeSelection({
+				value: {
+					type: "sap.ui.model.type.DateInterval",
+					parts: [
+							{ path: "/start" },
+							{ path: "/end" }
+					],
+					formatOptions: {
+						source: {
+							pattern: "timestamp"
+						}
+					}
+				}
+			}),
+			oNormalizeResult,
+			aParseResult,
+			sDash = String.fromCharCode(8211), // Dash character (separator)
+			sDateRange = "Nov 10, 2022 " + sDash + " Nov 15, 2022";
+
+		oDRS.setModel(oModel);
+		oDRS.placeAt('qunit-fixture');
+		oCore.applyChanges();
+
+		oNormalizeResult = oDRS._normalizeDateValue(oModel.getData().start);
+		aParseResult = oDRS._parseValue(sDateRange);
+
+		//assert
+		assert.strictEqual(typeof oNormalizeResult, "object", "the value returned by _normalizeDateValue is of type object");
+		assert.strictEqual(oNormalizeResult.getTime(), oModel.getData().start, "the date returned by _normalizeDateValue is equal to the date given as timestamp");
+
+		assert.strictEqual(oDRS._formatValue(oDRS.getDateValue(), oDRS.getSecondDateValue()), sDateRange, "the value returned by _formatValue method is correct");
+		assert.strictEqual(aParseResult[0], oDRS.getDateValue().getTime(), "the first date returned by _parseValue method is correct");
+		assert.strictEqual(aParseResult[1], oDRS.getSecondDateValue().getTime(), "the second date returned by _parseValue method is correct");
+
+		//cleanup
+		oDRS.destroy();
+	});
+
+	QUnit.test("value binding with strings", function(assert) {
+
+		var oModel = new JSONModel({
+				start: '2022-11-11',
+				end: '2022-11-16'
+			}),
+			oDRS = new DateRangeSelection({
+				value: {
+					type: "sap.ui.model.type.DateInterval",
+					parts: [
+							{ path: "/start" },
+							{ path: "/end" }
+					],
+					formatOptions: {
+						source: {
+							pattern: "yyyy-MM-dd"
+						}
+					}
+				}
+			}),
+			oSpy;
+
+		oDRS.setModel(oModel);
+		oDRS.placeAt('qunit-fixture');
+		oCore.applyChanges();
+
+		// act
+		oSpy = this.spy(oDRS, "_normalizeDateValue");
+		oDRS.onChange();
+
+		//assert
+		assert.ok(true, "DateRangeSelection doesn't throw an exception");
+		assert.strictEqual(oSpy.callCount, 2, "_normalizeDateValue method is called twice when onChange method is called");
+
+		//cleanup
+		oDRS._normalizeDateValue.restore();
+		oDRS.destroy();
+	});
+
 	QUnit.module("API");
 
 	QUnit.test("setMinDate when dateValue & secondDateValue do not match the new min date", function (assert) {
