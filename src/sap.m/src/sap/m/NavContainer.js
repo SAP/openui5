@@ -1823,7 +1823,8 @@ sap.ui.define([
 	};
 
 	NavContainer.prototype.addPage = function (oPage) {
-		var aPages = this.getPages();
+		var aPages = this.getPages(),
+			rerender = this.invalidate.bind(this);
 		// Routing often adds an already existing page. ManagedObject would remove and re-add it because the order is affected,
 		// but here the order does not matter, so just ignore the call in this case.
 		if (aPages.indexOf(oPage) > -1) {
@@ -1841,8 +1842,13 @@ sap.ui.define([
 			this._fireAdaptableContentChange(oPage);
 			if (this.getDomRef()) {
 				this._ensurePageStackInitialized();
-				this.invalidate();
-				Core.applyChanges();
+
+				/**
+				 * @deprecated since 1.70
+				 */
+				rerender = this.rerender.bind(this);
+
+				rerender();
 			}
 		}
 
@@ -1850,7 +1856,8 @@ sap.ui.define([
 	};
 
 	NavContainer.prototype.insertPage = function (oPage, iIndex) {
-		var iPreviousPageCount = this.getPages().length;
+		var iPreviousPageCount = this.getPages().length,
+			rerender = this.invalidate.bind(this);
 
 		this.insertAggregation("pages", oPage, iIndex, true);
 
@@ -1862,8 +1869,13 @@ sap.ui.define([
 			this._fireAdaptableContentChange(oPage);
 			if (this.getDomRef()) {
 				this._ensurePageStackInitialized();
-				this.invalidate();
-				Core.applyChanges();
+
+				/**
+				 * @deprecated since 1.70
+				 */
+				rerender = this.rerender.bind(this);
+
+				rerender();
 			}
 		}
 
