@@ -7,8 +7,9 @@ sap.ui.define([
 	'sap/m/p13n/GroupController',
 	'sap/m/p13n/MetadataHelper',
 	'sap/ui/model/Sorter',
-	'sap/ui/table/library'
-], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, tableLibrary) {
+	'sap/ui/table/library',
+	'sap/m/table/ColumnWidthController'
+], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, tableLibrary, ColumnWidthController) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.p13n.EngineGridTable.Page", {
@@ -41,6 +42,13 @@ sap.ui.define([
 				{key: "size_col", label: "Size", path: "size"}
 			]);
 
+			this._mIntialWidth = {
+				"firstName_col": "11rem",
+				"lastName_col": "11rem",
+				"city_col": "11rem",
+				"size_col": "11rem"
+			};
+
 			Engine.getInstance().register(oTable, {
 				helper: this.oMetadataHelper,
 				controller: {
@@ -52,6 +60,9 @@ sap.ui.define([
 						control: oTable
 					}),
 					Groups: new GroupController({
+						control: oTable
+					}),
+					ColumnWidth: new ColumnWidthController({
 						control: oTable
 					})
 				}
@@ -131,9 +142,15 @@ sap.ui.define([
 			var oState = oEvt.getParameter("state");
 
 			oTable.getColumns().forEach(function(oColumn){
+
+				var sKey = this._getKey(oColumn);
+				var sColumnWidth = oState.ColumnWidth[sKey];
+
+				oColumn.setWidth(sColumnWidth || this._mIntialWidth[sKey]);
+
 				oColumn.setVisible(false);
 				oColumn.setSorted(false);
-			});
+			}.bind(this));
 
 			oState.Columns.forEach(function(oProp, iIndex){
 				var oCol = this.byId(oProp.key);
@@ -151,6 +168,19 @@ sap.ui.define([
 				aSorter.push(new Sorter(this.oMetadataHelper.getProperty(oSorter.key).path, oSorter.descending));
 			}.bind(this));
 			oTable.getBinding("rows").sort(aSorter);
+		},
+
+		onColumnResize: function(oEvt) {
+			var oColumn = oEvt.getParameter("column");
+			var sWidth = oEvt.getParameter("width");
+			var oTable = this.byId("persoTable");
+
+			var oColumnState = {};
+			oColumnState[this._getKey(oColumn)] = sWidth;
+
+			Engine.getInstance().applyState(oTable, {
+				ColumnWidth: oColumnState
+			});
 		}
 	});
 });
