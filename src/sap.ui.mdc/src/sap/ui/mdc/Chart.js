@@ -830,8 +830,11 @@ sap.ui.define([
 
         /**
          * Rebinds the inner chart instance by calling oDelegate.rebind
-         */
-        Chart.prototype._rebind = function () {
+		 *
+		 * @param {boolean} [bForceRefresh] Indicates that the binding must be refreshed regardless of any <code>bindingInfo</code> change
+		 * @private
+		 */
+        Chart.prototype._rebind = function (bForceRefresh) {
 
             if (!this._bInnerChartReady) {
                 //TODO: This can lead to a race conditition when the "Go" button is pressed while the inner chart still intializes
@@ -840,7 +843,7 @@ sap.ui.define([
 
                 //Wait with rebind until inner chart is ready
                 this.initialized().then(function () {
-                    this._rebind();
+                    this._rebind(bForceRefresh);
                 }.bind(this));
                 return;
             }
