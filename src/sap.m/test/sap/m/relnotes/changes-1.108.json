@@ -1005,5 +1005,121 @@
         ]
       }
     ]
+  },
+  "1.108.18": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "fe07e77f3d5dbfb03720884012e37c5d5703e631",
+        "type": "FIX",
+        "text": " sap.m.Label: Added selectors for simplified Chinese lang(zh-Hans) and traditional Chinese lang(zh-Hant)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280174524"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400004291262023"
+          }
+        ]
+      },
+      {
+        "id": "c8333f23d2083cacbaa24133d6f7572d20e2b5f4",
+        "type": "FIX",
+        "text": " sap.m.Select: Initial line-height fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380078133"
+          }
+        ]
+      },
+      {
+        "id": "048565155423d46bb540a9eda2d91db7c8430655",
+        "type": "FIX",
+        "text": " sap.m.Select: Redundant truncation removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380073850"
+          }
+        ]
+      },
+      {
+        "id": "52db164b38af520f9b135a0d8c55b646f110108b",
+        "type": "FIX",
+        "text": " sap.m.Select: Icon and text centered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380061756"
+          }
+        ]
+      },
+      {
+        "id": "4d6e82738d453eb8cfb7aa19b02fda38463fda3b",
+        "type": "FIX",
+        "text": " sap.m.Link: fix broken fiori 3 themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380084008"
+          }
+        ]
+      },
+      {
+        "id": "824e81ef27431ff8cc1bc77c00c48a337d0e5e5e",
+        "type": "FIX",
+        "text": " sap.m.Link: Implement Horizon theme changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "5f7511d67413955324e7d3a28032097fb231fece",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default behavior on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006450822022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400004774092023"
+          }
+        ]
+      },
+      {
+        "id": "da8a4d0f6ff1bb93e0b99c6f7ddc5002fab5bf55",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: removed transparent background in Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004385772023"
+          }
+        ]
+      },
+      {
+        "id": "8c0192166af2778fddddf20d7357a143631455e6",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: UI Adaptation now works when put in ObjectHeader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370039455"
+          },
+          {
+            "type": "BCP",
+            "reference": "002028376700050839402023"
+          }
+        ]
+      }
+    ]
   }
 }

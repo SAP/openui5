@@ -140,5 +140,21 @@
         ]
       }
     ]
+  },
+  "1.108.18": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "f7f6f4ec41505216504bbc584d2f8f80e7ad855d",
+        "type": "FIX",
+        "text": " sap.f.SemanticPage: Correct getter result",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380067826"
+          }
+        ]
+      }
+    ]
   }
 }

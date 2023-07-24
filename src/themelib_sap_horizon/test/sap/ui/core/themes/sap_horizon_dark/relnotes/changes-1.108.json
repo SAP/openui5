@@ -155,5 +155,80 @@
         ]
       }
     ]
+  },
+  "1.108.18": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "febec2977468e95e3d2760f480b9f050626f96fe",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Remove overwritten border style",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380098559"
+          }
+        ]
+      },
+      {
+        "id": "52db164b38af520f9b135a0d8c55b646f110108b",
+        "type": "FIX",
+        "text": " sap.m.Select: Icon and text centered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380061756"
+          }
+        ]
+      },
+      {
+        "id": "4d6e82738d453eb8cfb7aa19b02fda38463fda3b",
+        "type": "FIX",
+        "text": " sap.m.Link: fix broken fiori 3 themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380084008"
+          }
+        ]
+      },
+      {
+        "id": "f74d80ef201cd96a398cccffbb9885ecb1d2fe37",
+        "type": "FIX",
+        "text": " sap.m.Select: Visual alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270149476"
+          }
+        ]
+      },
+      {
+        "id": "824e81ef27431ff8cc1bc77c00c48a337d0e5e5e",
+        "type": "FIX",
+        "text": " sap.m.Link: Implement Horizon theme changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "fdcd5f667a505b4bca4f35256f6d78c9702962bf",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fixed selection of today's date in Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380068648"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380066967"
+          }
+        ]
+      }
+    ]
   }
 }
