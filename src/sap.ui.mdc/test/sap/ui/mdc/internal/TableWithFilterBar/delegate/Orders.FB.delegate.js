@@ -49,7 +49,7 @@ sap.ui.define([
 					groupLabel: "none",
 					typeConfig: {
 						baseType: "Numeric",
-						className: "Edm.In32",
+						className: "Edm.Int32",
 						typeInstance: new TypeInt32()
 					}
 				});

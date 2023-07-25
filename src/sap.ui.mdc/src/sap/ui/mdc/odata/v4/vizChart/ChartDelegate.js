@@ -1803,14 +1803,14 @@ sap.ui.define([
      * This allows formatting for axis labels of the inner sap.chart.Chart.
      * Note: As the inner chart has no association to the propertyInfo, <code>this</code> will be bound to the propertyInfo object when calling this method.
      * @param {string} sKey Key of the dimension
-     * @param {string} SDesc Description provided by the metadata
+     * @param {string} sDesc Description provided by the metadata
      * @returns {string} Label which should be shown on the chart axis
      *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartDelegate.formatText = function(sKey, SDesc) {
+    ChartDelegate.formatText = function(sKey, sDesc) {
         return sKey;
     };
 
