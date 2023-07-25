@@ -1,0 +1,86 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.ui.table"
+		xmlns:u="sap.ui.unified"
+		xmlns:plugins="sap.ui.table.plugins"
+		controllerName="sap.m.test.plugins.CellSelectorOPA.Controller"
+		xmlns:m="sap.m"
+		height="100%">
+	<m:App class="sapUiContentPadding">
+		<Table
+			id="table"
+			visibleRowCount="10"
+			rows="{path: '/ProductSet'}"
+			threshold="20"
+			enableBusyIndicator="true">
+			<plugins>
+				<plugins:MultiSelectionPlugin limit="100" enableNotification="true"/>
+			</plugins>
+			<dependents>
+				<m:plugins.CellSelector rangeLimit="100" />
+			</dependents>
+			<columns>
+				<Column
+					sortProperty="Name"
+					filterProperty="Name"
+					autoResizable="true"
+					width="11rem">
+					<m:Label text="{/#Product/Name/@sap:label}"/>
+					<template>
+						<m:Text text="{Name}" wrapping="false"/>
+					</template>
+				</Column>
+				<Column
+					sortProperty="ProductID"
+					filterProperty="ProductID"
+					autoResizable="true"
+					width="6rem">
+					<m:Label text="{/#Product/ProductID/@sap:label}"/>
+					<template>
+						<m:Text text="{ProductID}" wrapping="false"/>
+					</template>
+				</Column>
+				<Column
+					sortProperty="Category"
+					filterProperty="Category"
+					autoResizable="true"
+					width="11rem">
+					<m:Label text="{/#Product/Category/@sap:label}"/>
+					<template>
+						<m:Text text="{Category}" wrapping="false"/>
+					</template>
+				</Column>
+				<Column
+					sortProperty="SupplierName"
+					filterProperty="SupplierName"
+					autoResizable="true"
+					width="12rem">
+					<m:Label text="{/#Product/SupplierName/@sap:label}"/>
+					<template>
+						<m:Text text="{SupplierName}" wrapping="false"/>
+					</template>
+				</Column>
+				<Column
+					filterProperty="Price"
+					width="9rem">
+					<m:Label text="{/#Product/Price/@sap:label}"/>
+					<template>
+						<u:Currency value="{
+							path: 'Price',
+							type: 'sap.ui.model.type.String'
+						}" currency="{CurrencyCode}"/>
+					</template>
+				</Column>
+				<Column
+					hAlign="End"
+					autoResizable="true"
+					width="9rem">
+					<m:Label text="{/#Product/Width/@sap:label}"/>
+					<template>
+						<m:Text text="{Width}x{Height}x{Depth} {DimUnit}" wrapping="false"/>
+					</template>
+				</Column>
+			</columns>
+		</Table>
+	</m:App>
+</mvc:View>

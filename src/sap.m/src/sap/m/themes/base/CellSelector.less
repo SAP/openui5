@@ -1,116 +1,69 @@
-@_sap_m_plugins_CellSelector_ListSelectedColor: darken(@sapList_SelectionBackgroundColor, 2);
-
-@_sap_m_plugins_CellSelector_ListBackgroundColor_red: red(@_sap_m_plugins_CellSelector_ListSelectedColor);
-@_sap_m_plugins_CellSelector_ListBackgroundColor_green: green(@_sap_m_plugins_CellSelector_ListSelectedColor);
-@_sap_m_plugins_CellSelector_ListBackgroundColor_blue: blue(@_sap_m_plugins_CellSelector_ListSelectedColor);
-
-// Color Calculation: Base Color for Background is sapList_SelectionBackgroundColor. Calculated mathing color with alpha channel 0.2 with formula: color = (wanted_color - 255 + 255 * opacity) / opacity
-@_sap_m_plugins_CellSelector_Opacity: 0.3;
-@_sap_m_plugins_CellSelector_SelectionBackgroundColor_red: ((@_sap_m_plugins_CellSelector_ListBackgroundColor_red - 255 + 255 * @_sap_m_plugins_CellSelector_Opacity) / @_sap_m_plugins_CellSelector_Opacity);
-@_sap_m_plugins_CellSelector_SelectionBackgroundColor_green: ((@_sap_m_plugins_CellSelector_ListBackgroundColor_green - 255 + 255 * @_sap_m_plugins_CellSelector_Opacity) / @_sap_m_plugins_CellSelector_Opacity);
-@_sap_m_plugins_CellSelector_SelectionBackgroundColor_blue: ((@_sap_m_plugins_CellSelector_ListBackgroundColor_blue - 255 + 255 * @_sap_m_plugins_CellSelector_Opacity) / @_sap_m_plugins_CellSelector_Opacity);
-
-.colorMixin(@red; @green; @blue) when (@red > 0) and (@green > 0) and (@blue > 0) {
-	// If the calculated colors are above value 0, apply them
-	background-color: rgba(@_sap_m_plugins_CellSelector_SelectionBackgroundColor_red, @_sap_m_plugins_CellSelector_SelectionBackgroundColor_green, @_sap_m_plugins_CellSelector_SelectionBackgroundColor_blue, @_sap_m_plugins_CellSelector_Opacity);
-}
-
-.colorMixin(@red; @green; @blue) when (@red < 0), (@green < 0), (@blue < 0) {
-	// If any of the calculated colors are below 0, there is no equivalent color with an alpha channel of 0.3, apply the normal colors and give them an alpha value of 0.5 (fallback solution)
-	background-color: rgba(@_sap_m_plugins_CellSelector_ListBackgroundColor_red, @_sap_m_plugins_CellSelector_ListBackgroundColor_green, @_sap_m_plugins_CellSelector_ListBackgroundColor_blue, 0.5);
-}
-
-.sapMPluginsCellSelectorCanvas {
-	.colorMixin(@_sap_m_plugins_CellSelector_SelectionBackgroundColor_red; @_sap_m_plugins_CellSelector_SelectionBackgroundColor_green; @_sap_m_plugins_CellSelector_SelectionBackgroundColor_blue);
-	display: none;
+.sapMPluginsCellSelectorRsz {
 	position: absolute;
-	pointer-events: none;
-	border: 0.125rem solid @sapList_SelectionBorderColor;
-	box-sizing: border-box;
 	z-index: 7;
+	box-sizing: border-box;
 
-	.sapMPluginsCellSelectorEdgeWrapper {
-		position: absolute;
-		z-index: 10;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		background-clip: content-box;
-		width: 10px;
-		height: 10px;
-		pointer-events: all;
-	}
-	
-	.sapMPluginsCellSelectorEdgeWrapper:hover {
-		visibility: visible;
-		cursor: crosshair;
-		background: @sapList_SelectionBorderColor;
-		z-index: 10;
+	&.sapMPluginsVerticalBorder {
+		width: 7px;
+		margin-left: -3.5px;
+		cursor: col-resize;
 	}
 
-	.sapMPluginsCellSelectorBorderLine {
-		position: absolute;
-		pointer-events: all;
-		z-index: 8;
-		height: 10px;
-		width: 10px;
-	}
-	
-	.sapMPluginsEdgeNE {
-		top: 0;
-		right: 0;
-		margin-top: -5px;
-		margin-right: -5px;
-	}
-	
-	.sapMPluginsEdgeNW {
-		top: 0;
-		left: 0;
-		margin-top: -5px;
-		margin-left: -5px;
-	}
-	
-	.sapMPluginsEdgeSE {
-		bottom: 0;
-		right: 0;
-		margin-bottom: -5px;
-		margin-right: -5px;
-	}
-	
-	.sapMPluginsEdgeSW {
-		bottom: 0;
-		left: 0;
-		margin-bottom: -5px;
-		margin-left: -5px;
-	}
-	
-	.sapMPluginsBorderN {
+	&.sapMPluginsHorizontalBorder {
+		height: 7px;
+		margin-top: -3.5px;
 		cursor: row-resize;
-		top: 0;
-		left: 0;
+	}
+
+	&.sapMPluginsEdge {
+		height: 10px !important;
+		width: 10px !important;
 		margin-top: -5px;
-	}
-	
-	.sapMPluginsBorderE {
-		cursor: col-resize;
-		top: 0;
-		right: 0;
-		margin-right: -5px;
-	}
-	
-	.sapMPluginsBorderS {
-		cursor: row-resize;
-		bottom: 0;
-		left: 0;
-		margin-bottom: -5px;
-	}
-	
-	.sapMPluginsBorderW {
-		cursor: col-resize;
-		top: 0;
-		left: 0;
 		margin-left: -5px;
+
+		&.sapMPluginsNW {
+			cursor: nw-resize;
+		}
+
+		&.sapMPluginsSW {
+			cursor: sw-resize;
+		}
+
+		&.sapMPluginsNE {
+			cursor: ne-resize;
+		}
+
+		&.sapMPluginsSE {
+			cursor: se-resize;
+		}
 	}
-	
 }
 
+.sapMPluginsCellSelectorRsz:hover {
+	background-color: @sapList_HighlightColor;
+	opacity: 0.5;
+}
+
+.sapMPluginsCellSelectorRszActive {
+	opacity: 1 !important;
+}
+
+.sapMPluginsCellSelectorSelected {
+	background-color: @sapList_SelectionBackgroundColor;
+}
+
+.sapMPluginsCellSelectorTop {
+	border-top: 0.0625rem @sapList_SelectionBorderColor solid !important;
+}
+
+.sapMPluginsCellSelectorRight {
+	border-right: 0.0625rem @sapList_SelectionBorderColor solid !important;
+}
+
+.sapMPluginsCellSelectorBottom {
+	border-bottom: 0.0625rem @sapList_SelectionBorderColor solid !important;
+}
+
+.sapMPluginsCellSelectorLeft {
+	border-left: 0.0625rem @sapList_SelectionBorderColor solid !important;
+}

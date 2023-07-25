@@ -2301,6 +2301,14 @@ sap.ui.define([
 				title: "Test Page for sap.m.plugins.CellSelector",
 				module: "test-resources/sap/m/qunit/plugins/CellSelector.qunit"
 			},
+			"plugins/opa/CellSelector": {
+				title: "Opa tests for CellSelector",
+				module: "test-resources/sap/m/qunit/plugins/opa/CellSelector/test/CellSelectorOPA.qunit",
+				ui5: {
+					libs: ["sap.m", "sap.ui.table"],
+					language: "en"
+				}
+			},
 			"plugins/PluginBase": {
 				title: "Test Page for sap.m.plugins.PluginBase"
 			},
