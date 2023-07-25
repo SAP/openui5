@@ -413,7 +413,7 @@ sap.ui.define([
 	SidePanel.prototype.onBeforeRendering = function() {
 		var oExpandCollapseButton = this.getAggregation("_arrowButton"),
 			bActionBarExpanded = this.getActionBarExpanded(),
-			sTooltip = bActionBarExpanded ? oResourceBundle.getText("SIDEPANEL_COLLAPSE_BUTTON_TEXT") : oResourceBundle.getText("SIDEPANEL_EXPAND_BUTTON_TEXT"),
+			sTooltip = oResourceBundle.getText("SIDEPANEL_EXPAND_BUTTON_TEXT") + "/" + oResourceBundle.getText("SIDEPANEL_COLLAPSE_BUTTON_TEXT"),
 			sNextArrow;
 
 		if (SidePanelPosition.Right === this.getSidePanelPosition()) {
