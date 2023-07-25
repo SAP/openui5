@@ -3,15 +3,25 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 
-	<MessagePage
-		title="{i18n>objectTitle}"
-		text="{i18n>noObjectFoundText}"
-		icon="sap-icon://product"
-		description=""
-		id="page">
-		<customDescription>
-			<Link id="link" text="{i18n>backToWorklist}" press=".onLinkPressed" />
-		</customDescription>
-	</MessagePage>
+	<Page
+	title="{i18n>objectTitle}"
+	titleAlignment="Center"
+	id="page">
+		<HBox
+			height="100%"
+			alignItems="Center">
+			<IllustratedMessage
+				id="notFoundIllustration"
+				type="sapIllus-PageNotFound"
+				description="{i18n>noObjectFoundText}">
+				<additionalContent>
+					<Button id="link" text="{i18n>backToWorklist}" press=".onLinkPressed" />
+				</additionalContent>
+				<layoutData>
+					<FlexItemData growFactor="1"/>
+				</layoutData>
+			</IllustratedMessage>
+		</HBox>
+	</Page>
 
 </mvc:View>

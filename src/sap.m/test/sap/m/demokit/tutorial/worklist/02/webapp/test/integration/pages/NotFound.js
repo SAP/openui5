@@ -62,9 +62,15 @@ sap.ui.define([
 						viewName : "ObjectNotFound",
 						success: function (oPage) {
 							Opa5.assert.strictEqual(oPage.getTitle(), oPage.getModel("i18n").getProperty("objectTitle"), "the object text is shown as title");
-							Opa5.assert.strictEqual(oPage.getText(), oPage.getModel("i18n").getProperty("noObjectFoundText"), "the object not found text is shown");
 						},
-						errorMessage: "Did not display the object not found text"
+						errorMessage: "Did not display the object not found page"
+					}).waitFor({
+						id : "notFoundIllustration",
+						viewName : "ObjectNotFound",
+						success: function (oIllustratedMessage) {
+							Opa5.assert.strictEqual(oIllustratedMessage.getDescription(), oIllustratedMessage.getModel("i18n").getProperty("noObjectFoundText"), "the object not found text is shown");
+						},
+						errorMessage: "Did not display the object not found illustration"
 					});
 				},
 
@@ -74,9 +80,15 @@ sap.ui.define([
 						viewName : "NotFound",
 						success: function (oPage) {
 							Opa5.assert.strictEqual(oPage.getTitle(), oPage.getModel("i18n").getProperty("notFoundTitle"), "the not found title is shown as title");
-							Opa5.assert.strictEqual(oPage.getText(), oPage.getModel("i18n").getProperty("notFoundText"), "the not found text is shown");
 						},
 						errorMessage: "Did not display the object not found text"
+					}).waitFor({
+						id : "notFoundIllustration",
+						viewName : "NotFound",
+						success: function (oIllustratedMessage) {
+							Opa5.assert.strictEqual(oIllustratedMessage.getDescription(), oIllustratedMessage.getModel("i18n").getProperty("notFoundText"), "the not found text is shown");
+						},
+						errorMessage: "Did not display the object not found illustration"
 					});
 				}
 
