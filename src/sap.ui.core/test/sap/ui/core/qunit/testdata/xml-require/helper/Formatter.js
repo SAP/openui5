@@ -2,11 +2,14 @@ sap.ui.define([], function() {
 	"use strict";
 	return {
 		groupA: {
-			upperCase: function(sText) {
-				if (sText) {
-					return sText.toUpperCase();
+			upperCase: function(vText) {
+				if (Array.isArray(vText)) {
+					return vText[0].toUpperCase();
+				} else if (typeof vText === "string") {
+					return vText.toUpperCase();
+				} else {
+					return vText;
 				}
-				return sText;
 			},
 			lowerCase: function() {
 			},

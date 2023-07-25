@@ -596,6 +596,17 @@ function(
 				}
 			};
 
+		// We might have a set of already resolved "core:require" modules given from outside.
+		// This only happens when a new XMLView instance is used as a wrapper for HTML nodes, in this case
+		// the "core:require" modules need to be propagated down into the nested XMLView.
+		// We now need to merge the set of passed "core:require" modules with the ones defined on our root element,
+		// with our own modules having priority in case of duplicate aliases.
+		if (oParseConfig?.settings?.requireContext) {
+			pResultChain = pResultChain.then((mRequireContext) => {
+				return Object.assign({}, oParseConfig.settings.requireContext, mRequireContext);
+			});
+		}
+
 		bAsync = bAsync && !!oView._sProcessingMode;
 		Log.debug("XML processing mode is " + (oView._sProcessingMode || "default") + ".", "", "XMLTemplateProcessor");
 		Log.debug("XML will be processed " + (bAsync ? "asynchronously" : "synchronously") + ".", "", "XMLTemplateProcessor");
@@ -890,7 +901,8 @@ function(
 						// write attributes
 						for (i = 0; i < node.attributes.length; i++) {
 							var attr = node.attributes[i];
-							if ( attr.name !== "id" ) {
+							// id and core:require should not be output to DOM
+							if ( attr.name !== "id" && (attr.localName !== "require" || attr.namespaceURI !== CORE_NAMESPACE)) {
 								rm.attr(bXHTML ? attr.name.toLowerCase() : attr.name, attr.value);
 							}
 						}
@@ -904,6 +916,15 @@ function(
 							}
 						} else {
 							rm.openEnd();
+
+							var pSelfRequireContext = parseAndLoadRequireContext(node, bAsync);
+
+							if (pSelfRequireContext) {
+								pRequireContext = SyncPromise.all([pRequireContext, pSelfRequireContext])
+									.then(function(aContexts) {
+										return Object.assign({}, ...aContexts);
+									});
+							}
 
 							// write children
 							// For HTMLTemplateElement nodes, skip the associated DocumentFragment node
@@ -949,10 +970,11 @@ function(
 						} else {
 							// plain HTML node - create a new View control
 							// creates a view instance, but makes sure the new view receives the correct owner component
-							var fnCreateView = function (oViewClass) {
+							var fnCreateView = function (oViewClass, oRequireContext) {
 								var mViewParameters = {
 									id: id ? getId(oView, node, id) : undefined,
 									xmlNode: node,
+									requireContext: oRequireContext,
 									containingView: oView._oContainingView,
 									processingMode: oView._sProcessingMode // add processing mode, so it can be propagated to subviews inside the HTML block
 								};
@@ -967,16 +989,16 @@ function(
 								return new oViewClass(mViewParameters);
 							};
 
-							return pRequireContext.then(function() {
+							return pRequireContext.then(function(oRequireContext) {
 								if (bAsync) {
 									return new Promise(function (resolve, reject) {
 										sap.ui.require(["sap/ui/core/mvc/XMLView"], function(XMLView) {
-											resolve([fnCreateView(XMLView)]);
+											resolve([fnCreateView(XMLView, oRequireContext)]);
 										}, reject);
 									});
 								} else {
 									var XMLView = sap.ui.requireSync("sap/ui/core/mvc/XMLView"); // legacy-relevant: Sync path
-									return [fnCreateView(XMLView)];
+									return [fnCreateView(XMLView, oRequireContext)];
 								}
 							});
 						}

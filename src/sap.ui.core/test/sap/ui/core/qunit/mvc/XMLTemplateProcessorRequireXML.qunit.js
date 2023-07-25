@@ -262,6 +262,55 @@ sap.ui.define([
 				"Error message is correct");
 		}
 	}, {
+		testDescription: "Parsing core:require and forward it to XHTML",
+		viewName: ".view.XMLTemplateProcessorAsync_require_in_html",
+		settings: {
+			async: {
+				create: createView
+			}
+		},
+		runAssertions: function (oView, mSpies, assert, bAsync) {
+			var BusyIndicator = sap.ui.require("sap/ui/core/BusyIndicator");
+			var MessageBox = sap.ui.require("sap/m/MessageBox");
+
+			assert.ok(BusyIndicator, "Class is loaded");
+			assert.ok(MessageBox, "Class is loaded");
+
+			var oButton = oView.byId("button");
+			var oNestedButton = oView.byId("nestedButton");
+
+			var oBusyIndicatorShowSpy = this.spy(BusyIndicator, "show");
+
+			oButton.fireEvent("press");
+			assert.ok(oBusyIndicatorShowSpy.calledOnce, "show method is called once");
+			BusyIndicator.hide();
+			oBusyIndicatorShowSpy.resetHistory();
+
+			var sText = oNestedButton.getText();
+			assert.equal(sText, "NESTED BUTTON", "The button text is formatted to upper case");
+			oNestedButton.fireEvent("press");
+			assert.ok(oBusyIndicatorShowSpy.calledOnce, "show method is called once again");
+			BusyIndicator.hide();
+			oBusyIndicatorShowSpy.resetHistory();
+
+			var oButtonInPanel = oView.byId("buttonInPanel");
+			var oNestedButtonInPanel = oView.byId("nestedButtonInPanel");
+
+			sText = oButtonInPanel.getText();
+			assert.equal(sText, "Click Me", "The button text is formatted by the updated formatter");
+			oButtonInPanel.fireEvent("press");
+			assert.ok(oBusyIndicatorShowSpy.calledOnce, "show method is called once again");
+			BusyIndicator.hide();
+			oBusyIndicatorShowSpy.resetHistory();
+
+			sText = oNestedButtonInPanel.getText();
+			assert.equal(sText, "OK", "The button text is formatted by the updated formatter");
+			oNestedButtonInPanel.fireEvent("press");
+			assert.ok(oBusyIndicatorShowSpy.calledOnce, "show method is called once again");
+			BusyIndicator.hide();
+			oBusyIndicatorShowSpy.resetHistory();
+		}
+	}, {
 		testDescription: "Parsing core:require in fragment",
 		viewName: ".view.XMLTemplateProcessorAsync_fragment_require",
 		settings: {
@@ -561,6 +610,8 @@ sap.ui.define([
 				}, function(oError) {
 					if (oConfig.onRejection) {
 						oConfig.onRejection(assert, oError);
+					} else {
+						throw oError;
 					}
 				});
 		});
