@@ -58,19 +58,19 @@ sap.ui.define([
 					'<HBox id="hbox">' +
 						"<items>" +
 							'<Label id="label1" />' +
-							'<core:ExtensionPoint name="ExtensionPoint1" />' +
+							'<core:ExtensionPoint name="' + sExtensionPointName1 + '" />' +
 							'<Label id="label2" />' +
 						"</items>" +
 						"<dependents>" +
 							'<Label id="label3" />' +
-							'<core:ExtensionPoint name="ExtensionPoint4" />' +
+							'<core:ExtensionPoint name="' + sExtensionPointName4 + '" />' +
 						"</dependents>" +
 					"</HBox>" +
 					'<Panel id="panel">' +
 						"<content>" +
-							'<core:ExtensionPoint name="ExtensionPoint2" />' +
+							'<core:ExtensionPoint name="' + sExtensionPointName2 + '" />' +
 							'<Label id="label4" />' +
-							'<core:ExtensionPoint name="ExtensionPoint3" >' +
+							'<core:ExtensionPoint name="' + sExtensionPointName3 + '" >' +
 								'<Label id="ep3-label1" text="Extension point label1 - default content" />' +
 								'<Label id="ep3-label2" text="Extension point label2 - default content" />' +
 							"</core:ExtensionPoint>" +
@@ -169,7 +169,7 @@ sap.ui.define([
 			oLabel1.destroy();
 			oLabel2.destroy();
 		});
-		QUnit.test("given a control containing an two extension points in two aggregations", function(assert) {
+		QUnit.test("given a control containing two extension points in two aggregations", function(assert) {
 			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 			var mExtensionPointInfo1 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName1, this.oHBox, "items", 1);
 			var mExtensionPointInfo4 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName4, this.oHBox, "dependents", 1);
@@ -328,6 +328,56 @@ sap.ui.define([
 				"then the removed default control is also removed from the registry entry");
 			assert.strictEqual(mExtensionPointInfo.defaultContent[0].getId(), this.oLabel2.getId(),
 				"then the remaining control is the remaining label");
+		});
+
+		QUnit.test("when controls are added to an extension point (called by the Change Handler)", function(assert) {
+			this.oPanel = this.oXMLView.getContent()[1];
+			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
+			ExtensionPointRegistry.addCreatedControls(sExtensionPointName2, "testComponent---myView", ["newControlId"]);
+			var mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
+			assert.strictEqual(
+				mExtensionPointInfo.createdControls[0],
+				"newControlId",
+				"then the first control is added to the registry"
+			);
+			ExtensionPointRegistry.addCreatedControls(sExtensionPointName2, "testComponent---myView", ["newControlId2"]);
+			mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
+			assert.strictEqual(
+				mExtensionPointInfo.createdControls[0],
+				"newControlId",
+				"then the first control is still on the registry"
+			);
+			assert.strictEqual(
+				mExtensionPointInfo.createdControls[1],
+				"newControlId2",
+				"then the second control is added to the registry"
+			);
+		});
+
+		QUnit.test("when a previously added control is removed from the extension point", function(assert) {
+			this.oPanel = this.oXMLView.getContent()[1];
+			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
+			var oNewControl = new Label("addedLabel");
+			var oNewControl2 = new Label("addedLabel2");
+			// Simulate adding a control (via Change Handler)
+			this.oPanel.addContent(oNewControl);
+			ExtensionPointRegistry.addCreatedControls(
+				sExtensionPointName2,
+				"testComponent---myView",
+				[oNewControl.getId(), oNewControl2.getId()]
+			);
+			oNewControl.destroy();
+			var mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
+			assert.strictEqual(
+				mExtensionPointInfo.createdControls.length,
+				1,
+				"then the removed control is removed from the 'createdControls' property"
+			);
+			assert.strictEqual(
+				mExtensionPointInfo.createdControls[0],
+				"addedLabel2",
+				"then the remaining control is still on the 'createdControls' property"
+			);
 		});
 	});
 
