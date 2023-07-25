@@ -44,7 +44,8 @@ sap.ui.define([
 				}
 
 				if (oProperty.name === "ID" || oProperty.name === "author_ID") {
-					oProperty.typeConfig.typeInstance = new Int32Type({groupingEnabled: false}, {nullable: false}); // needed for Field in table
+					oProperty.dataType = "Edm.Int32";
+					oProperty.constraints = {nullable: false};
 					oProperty.formatOptions = {groupingEnabled: false}; // needed for FilterField on settings-FilterBar
 					oProperty.visualSettings = {widthCalculation: {minWidth: 15}}; // as the Name is shown too
 				} else if (oProperty.name === "descr") {

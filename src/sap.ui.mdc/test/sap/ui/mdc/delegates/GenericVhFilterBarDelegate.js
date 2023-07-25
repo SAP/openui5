@@ -51,7 +51,6 @@ sap.ui.define([
 					name: "$search",
 					label: "Search",
 					dataType: "Edm.String"
-					// typeConfig: FilterBarDelegate.getTypeMap().getTypeConfig("Edm.String", null, null)
 				});
 			}
 			fResolve(oFilterBar.__aProperties);
@@ -73,7 +72,6 @@ sap.ui.define([
 			dataType: oFF.getDataType(),
 			formatOptions: oFF.getDataTypeFormatOptions(),
 			constraints: oFF.getDataTypeConstraints(),
-			// typeConfig: this.getTypeMap().getTypeConfig(oFF.getDataType(), oFF.getDataTypeFormatOptions(), oFF.getDataTypeConstraints()),
 			required: oFF.getRequired(),
 			hiddenFilter: false,
 			visible: oFF.getVisible(),

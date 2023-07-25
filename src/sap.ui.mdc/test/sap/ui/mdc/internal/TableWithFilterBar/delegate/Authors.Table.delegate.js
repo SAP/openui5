@@ -28,7 +28,9 @@ sap.ui.define([
 			// TODO fieldHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
 			aProperties.forEach(function(oProperty){
 				if (oProperty.name === "ID") {
-					oProperty.typeConfig.typeInstance = new Int32Type({groupingEnabled: false}, {nullable: false});
+					// oProperty.dataType = new Int32Type({groupingEnabled: false}, {nullable: false});
+					oProperty.formatOptions = {groupingEnabled: false};
+					oProperty.constraints.nullable = false;
 				} else if (oProperty.name === "countryOfOrigin_code") {
 					oProperty.visualSettings = {widthCalculation: {minWidth: 15}}; // as the Name is shown
 				} else if (oProperty.name === "regionOfOrigin_code") {
