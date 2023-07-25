@@ -408,6 +408,7 @@ sap.ui.define([
 		});
 		this._oStickyHeaderObserver = null;
 		this._oHeaderObserver = null;
+		this._oTitleObserver = null;
 		this._oSubHeaderAfterRenderingDelegate = {onAfterRendering: function() {
 				this._bStickySubheaderInTitleArea = false; // reset the flag as the stickySubHeader is freshly rerendered with the iconTabBar
 				this._cacheDomElements();
@@ -429,6 +430,7 @@ sap.ui.define([
 			this._attachTitleMouseOverHandlers();
 		}
 		this._attachHeaderObserver();
+		this._attachTitleObserver();
 		this._addStickySubheaderAfterRenderingDelegate();
 		this._detachScrollHandler();
 		this._detachResizeHandlers();
@@ -485,6 +487,10 @@ sap.ui.define([
 
 		if (this._oHeaderObserver) {
 			this._oHeaderObserver.disconnect();
+		}
+
+		if (this._oTitleObserver) {
+			this._oTitleObserver.disconnect();
 		}
 
 		if (this._oStickySubheader) {
@@ -2156,7 +2162,8 @@ sap.ui.define([
 		var oTitle = this.getTitle(),
 			oHeader = this.getHeader(),
 			oContent = this.getContent(),
-			oPageChildrenAfterRenderingDelegate = {onAfterRendering: this._onChildControlAfterRendering.bind(this)};
+			oCallback = this._onChildControlAfterRendering.bind(this),
+			oPageChildrenAfterRenderingDelegate = {onAfterRendering: oCallback};
 
 		if (exists(oTitle)) {
 			oTitle.addEventDelegate(oPageChildrenAfterRenderingDelegate);
@@ -2251,6 +2258,24 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Attaches observer to the <code>DynamicPageHeader</code> visible property.
+	 * @private
+	 */
+	 DynamicPage.prototype._attachTitleObserver = function () {
+		var oTitle = this.getTitle();
+
+		if (exists(oTitle) && !this._bAlreadyAttachedTitleObserver) {
+			if (!this._oTitleObserver) {
+				this._oTitleObserver = new ManagedObjectObserver(this._onTitleFieldChange.bind(this));
+			}
+
+			this._oTitleObserver.observe(oTitle, {properties: ["visible"]});
+
+			this._bAlreadyAttachedTitleObserver = true;
+		}
+	};
+
 	DynamicPage.prototype._onHeaderFieldChange = function (oEvent) {
 
 		if ((oEvent.type === "property") && (oEvent.name === "pinnable")) {
@@ -2259,6 +2284,15 @@ sap.ui.define([
 		}
 
 		this._updateToggleHeaderVisualIndicators();
+	};
+
+	DynamicPage.prototype._onTitleFieldChange = function (oEvent) {
+
+		if ((oEvent.type === "property") && (oEvent.name === "visible")) {
+			this.invalidate();
+			return;
+		}
+
 	};
 
 	/**
