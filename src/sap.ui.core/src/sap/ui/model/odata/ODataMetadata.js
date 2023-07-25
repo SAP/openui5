@@ -1863,7 +1863,7 @@ sap.ui.define([
 	 * @returns {object} The annotation object
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.core.util.MockServerAnnotationsHandler
+	 * @ui5-restricted sap.ui.core.util.MockServer
 	 */
 	ODataMetadata.getServiceAnnotations = function (sMetadata) {
 		const oMetadata = new ODataMetadata(undefined, {metadata : sMetadata});

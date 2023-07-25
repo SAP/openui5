@@ -1,6 +1,5 @@
 sap.ui.define([
-	"sap/ui/core/util/MockServer",
-	"sap/ui/core/util/MockServerAnnotationsHandler"
+	"sap/ui/core/util/MockServer"
 ], function (MockServer) {
 	"use strict";
 
