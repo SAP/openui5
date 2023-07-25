@@ -176,6 +176,7 @@ sap.ui.define([
 			"sap.m.ToolbarDesign",
 			"sap.m.ToolbarStyle",
 			"sap.m.UploadState",
+			"sap.m.UploadType",
 			"sap.m.ValueColor",
 			"sap.m.ValueCSSColor",
 			"sap.m.VerticalPlacementType",
@@ -4730,6 +4731,25 @@ sap.ui.define([
 		 * @public
 		 */
 		Uploading: "Uploading"
+	};
+
+	/**
+	 * Type of the upload {@link sap.m.UploadSetItem}.
+	 *
+	 * @enum {string}
+	 * @public
+	 */
+	thisLib.UploadType = {
+		/**
+		 * The file has been uploaded from cloud.
+		 * @public
+		 */
+		Cloud: "Cloud",
+		/**
+		 * The file has been uploaded from your system.
+		 * @public
+		 */
+		Native: "Native"
 	};
 
 	/**

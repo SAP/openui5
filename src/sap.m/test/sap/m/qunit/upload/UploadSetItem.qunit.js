@@ -16,9 +16,10 @@ sap.ui.define([
 	"sap/m/upload/Uploader",
 	"sap/ui/core/Item",
 	"sap/ui/core/Core",
-	"sap/ui/core/Element"
+	"sap/ui/core/Element",
+	"sap/m/ObjectStatus"
 ], function (KeyCodes, UploadSet, UploadSetItem, UploadSetRenderer, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool, Uploader, Item, oCore, Element) {
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool, Uploader, Item, oCore, Element,ObjectStatus) {
 	"use strict";
 
 	function getData() {
@@ -541,6 +542,30 @@ sap.ui.define([
 		var oItem = this.oUploadSet.getItems()[0];
 		oItem._oListItem.focus();
 		assert.ok(oItem._oListItem.getDomRef().getAttribute("aria-labelledby"), "The description is being read out");
+	});
+
+	QUnit.module("UploadSetItems now accespts markersAsStatus aggregation", {
+		beforeEach: function() {
+			this.oUploadSet = new UploadSet("upload-set",{
+				items: new UploadSetItem("upload-set-item", {
+					markersAsStatus: new ObjectStatus("obj-status", {
+						text: "Managed By Google Cloud",
+						icon: "sap-icon://share-2"
+					})
+				})
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oUploadSet.destroy();
+			this.oUploadSet = null;
+		}
+	});
+
+	QUnit.test("markersAsStatus aggregation is now getting rendered", function (assert) {
+		var oUploadSetItem = this.oUploadSet.getItems()[0],
+		oMarkersAsStatus = oUploadSetItem.getMarkersAsStatus()[0];
+		assert.ok(oMarkersAsStatus.getDomRef(),"Object Status is getting rendered as expected on the first row of the uploadSetItem");
 	});
 
 	QUnit.module("UploadSetItem test attributes and statuses rendering", {
