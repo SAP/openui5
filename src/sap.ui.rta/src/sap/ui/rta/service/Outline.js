@@ -55,6 +55,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 * @property {string[]} defaultContent - List of control IDs that belong to the default content of an extension point
+	 * @property {string[]} createdControls - List of control IDs that were created in an extension point
 	 */
 
 	/**
@@ -161,8 +162,8 @@ sap.ui.define([
 			var sParentId = oData.id;
 			var sAggregationName = oData.technicalName;
 			return ExtensionPointRegistryAPI.getExtensionPointInfoByParentId({parentId: sParentId})
-			.filter(function(mExtenstionPoint) {
-				return mExtenstionPoint.aggregationName === sAggregationName;
+			.filter(function(mExtensionPoint) {
+				return mExtensionPoint.aggregationName === sAggregationName;
 			});
 		};
 
@@ -176,7 +177,8 @@ sap.ui.define([
 				extensionPointInfo: {
 					defaultContent: mExtensionPoint.defaultContent.map(function(oControl) {
 						return oControl.getId();
-					})
+					}),
+					createdControls: mExtensionPoint.createdControls || []
 				}
 			};
 		};

@@ -330,7 +330,7 @@ sap.ui.define([
 				"then the remaining control is the remaining label");
 		});
 
-		QUnit.test("when controls are added to an extension point (called by the Change Handler)", function(assert) {
+		QUnit.test("when controls are added to an extension point (e.g. called by the Change Handler)", function(assert) {
 			this.oPanel = this.oXMLView.getContent()[1];
 			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			ExtensionPointRegistry.addCreatedControls(sExtensionPointName2, "testComponent---myView", ["newControlId"]);
@@ -351,6 +351,29 @@ sap.ui.define([
 				mExtensionPointInfo.createdControls[1],
 				"newControlId2",
 				"then the second control is added to the registry"
+			);
+		});
+
+		QUnit.test("when controls are added to an extension point (e.g. called by the Change Handler) which was not registered yet", function(assert) {
+			this.oPanel = this.oXMLView.getContent()[1];
+			ExtensionPointRegistry.addCreatedControls(sExtensionPointName2, "testComponent---myView", ["newControlId", "newControlId2"]);
+			ExtensionPointRegistry.addCreatedControls(sExtensionPointName2, "testComponent---myView", ["newControlId3"]);
+			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
+			var mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
+			assert.strictEqual(
+				mExtensionPointInfo.createdControls[0],
+				"newControlId",
+				"then the first control is added to the registry"
+			);
+			assert.strictEqual(
+				mExtensionPointInfo.createdControls[1],
+				"newControlId2",
+				"then the second control is added to the registry"
+			);
+			assert.strictEqual(
+				mExtensionPointInfo.createdControls[2],
+				"newControlId3",
+				"then the third control is added to the registry"
 			);
 		});
 
