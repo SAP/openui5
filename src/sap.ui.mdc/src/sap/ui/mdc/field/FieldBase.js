@@ -1298,7 +1298,7 @@ sap.ui.define([
 		}
 
 		if (oChanges.name === "conditions") {
-			this.resetInvalidInput(true); // if conditions updated from outside parse error is obsolete. If updated from inside no parse error occurs
+			this.resetInvalidInput(!this._bKeepValueState); // if conditions updated from outside parse error is obsolete. If updated from inside no parse error occurs
 			_handleConditionsChange.call(this, oChanges.current, oChanges.old);
 
 			// try to find the corresponding async. change

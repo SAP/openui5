@@ -595,6 +595,35 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("value / additionalValue / valueState together", function(assert) {
+
+		oFieldEdit.setDisplay(FieldDisplay.DescriptionValue);
+		oCore.applyChanges();
+
+		sinon.spy(oFieldEdit, "setConditions");
+
+		oFieldEdit.setValue("Test");
+		oFieldEdit.setAdditionalValue("Hello");
+		oFieldEdit.setValueState("Error");
+
+		var fnDone = assert.async();
+		setTimeout(function() { // async set of condition
+			setTimeout(function() { // model update
+				assert.ok(oFieldEdit.setConditions.calledOnce, "Conditions are only updated once");
+				var aConditions = oFieldEdit.getConditions();
+				assert.deepEqual(aConditions[0].values[0], "Test", "Condition key");
+				assert.deepEqual(aConditions[0].values[1], "Hello", "Conditions description");
+				assert.equal(oFieldEdit.getValueState(), "Error", "ValueState set");
+				var aContent = oFieldEdit.getAggregation("_content");
+				var oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.equal(oContent.getValue(), "Hello (Test)", "Value set on Input control");
+				assert.equal(oContent.getValueState(), "Error", "ValueState set on Input control");
+				fnDone();
+			}, 0);
+		}, 0);
+
+	});
+
 	QUnit.test("textAlign", function(assert) {
 
 		oFieldEdit.setTextAlign("End");
