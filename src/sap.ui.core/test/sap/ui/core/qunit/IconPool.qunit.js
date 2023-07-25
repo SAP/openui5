@@ -1,13 +1,15 @@
 
-/* global QUnit */
+/* global sinon QUnit */
 sap.ui.define([
 	"sap/ui/core/IconPool",
+	"sap/ui/core/_IconRegistry",
 	"sap/ui/core/Icon",
+	"sap/ui/core/Theming",
 	"sap/m/Image",
 	"sap/base/Log",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/jquery"
-], function(IconPool, Icon, Image, Log, TestUtils, jQuery) {
+], function(IconPool, _IconRegistry, Icon, Theming, Image, Log, TestUtils, jQuery) {
 	"use strict";
 
 	QUnit.config.reorder = false;
@@ -185,7 +187,7 @@ sap.ui.define([
 
 		IconPool.registerFont({
 			fontFamily: sFontFamily,
-			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts")
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts/")
 		});
 
 		// insert sap-icons-TNT font
@@ -200,7 +202,7 @@ sap.ui.define([
 
 		iFontFaceCount = document.fonts.size;
 		// insert font again
-		IconPool.insertFontFaceStyle(sFontFamily, sap.ui.require.toUrl("sap/tnt/themes/base/fonts"));
+		IconPool.insertFontFaceStyle(sFontFamily, sap.ui.require.toUrl("sap/tnt/themes/base/fonts/"));
 		assert.equal(document.fonts.size, iFontFaceCount, "No new FontFace is created");
 	});
 
@@ -418,6 +420,53 @@ sap.ui.define([
 
 	QUnit.test("fontLoaded returns undefined for an invalid font", function(assert) {
 		assert.strictEqual(IconPool.fontLoaded("invalid"), undefined, "fontLoaded returns undefined");
+	});
+
+	QUnit.module("Theme dependent Icons", {});
+
+	QUnit.test("registerFont with SAP-icons-TNT (Horizon Theme)", function(assert) {
+		const oInsertFontFaceStyleSpy = sinon.spy(_IconRegistry, "insertFontFaceStyle");
+		const oGetThemeStub = sinon.stub(Theming, "getTheme").returns("sap_horizon");
+
+		IconPool.registerFont({
+			collectionName: "my-tnt-icons-horizon",
+			fontFamily: "SAP-icons-TNT",
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts/")
+		});
+
+		return IconPool.fontLoaded("my-tnt-icons-horizon").then(function() {
+			const sExpectedFontURI = sap.ui.require.toUrl("sap/tnt/themes/base/fonts/horizon/");
+			assert.ok(oInsertFontFaceStyleSpy.calledWith("SAP-icons-TNT", sExpectedFontURI, "my-tnt-icons-horizon"), "Correct font face inserted.");
+
+			// restore stubs
+			oGetThemeStub.restore();
+			oInsertFontFaceStyleSpy.restore();
+		});
+	});
+
+	QUnit.test("registerFont with SAP-icons-TNT (switching themes) ", function(assert) {
+		// set initial theme so that we enforce a theme change event
+		Theming.setTheme("sap_belize");
+
+		IconPool.registerFont({
+			collectionName: "sap-tnt-icons-horizon-2",
+			fontFamily: "SAP-icons-TNT",
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts/")
+		});
+
+		return new Promise((res, rej) => {
+			IconPool.fontLoaded("sap-tnt-icons-horizon-2").then(function() {
+				const oInsertFontFaceStyleSpy = sinon.spy(_IconRegistry, "insertFontFaceStyle");
+				const sExpectedFontURI = sap.ui.require.toUrl("sap/tnt/themes/base/fonts/horizon/");
+
+				Theming.attachApplied(() => {
+					assert.ok(oInsertFontFaceStyleSpy.calledWith("SAP-icons-TNT", sExpectedFontURI, "sap-tnt-icons-horizon-2"));
+					res();
+				});
+
+				Theming.setTheme("sap_horizon");
+			});
+		});
 	});
 
 	QUnit.module("Sync getIconInfo");

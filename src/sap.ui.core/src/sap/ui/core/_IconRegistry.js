@@ -12,9 +12,12 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/fetch",
 	"sap/base/util/syncFetch",
-	"sap/ui/core/Lib"
+	"sap/base/util/isPlainObject",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Theming",
+	"sap/ui/core/theming/ThemeHelper"
 ],
-	function(URI, ResourceBundle, Log, fetch, syncFetch, Library) {
+	function(URI, ResourceBundle, Log, fetch, syncFetch, isPlainObject, Library, Theming, ThemeHelper) {
 		"use strict";
 
 		/**
@@ -33,7 +36,6 @@ sap.ui.define([
 					fontFamily: SAP_ICON_FONT_FAMILY
 				},
 				metadataLoaded: true,
-				inserted: true,
 				deprecatedNames: new Set(["soccor", "clinical-tast-tracker"])
 			}
 		};
@@ -1037,11 +1039,13 @@ sap.ui.define([
 				Log.error("Icon font '" + sCollectionName + "' has not been registered yet.");
 				return;
 			}
-			// check if font face has already been inserted
-			if (mFontRegistry[sCollectionName].inserted) {
+
+			if (sPath == mFontRegistry[sCollectionName].currentFontURI) {
 				Log.info("The font face style of icon font '" + sCollectionName + "' was already inserted.");
 				return;
 			}
+
+			mFontRegistry[sCollectionName].currentFontURI = sPath;
 
 			oFontFace = new FontFace(sFontFace,
 				"url(" + convertUrl(sPath + sFontFace + ".woff2") + ") format('woff2')," +
@@ -1055,12 +1059,65 @@ sap.ui.define([
 			document.fonts.add(oFontFace);
 			oFontFace.load();
 
-			mFontRegistry[sCollectionName].inserted = true;
 			mFontRegistry[sCollectionName].fontFace = sFontFace;
 		};
 
+
+		// attach to theme applied event to display the correct theme dependent icon fonts
+		Theming.attachApplied(function() {
+			for (const collectionName in mFontRegistry) {
+				const oThemeConfig = mFontRegistry[collectionName].themeConfig;
+
+				if (!oThemeConfig) {
+					continue;
+				}
+
+				const oFontConfig = mFontRegistry[collectionName].config;
+				const sFontURI = getThemePath(oThemeConfig) || oFontConfig.fontURI;
+
+				_IconRegistry.insertFontFaceStyle(oFontConfig.fontFamily, sFontURI, collectionName);
+			}
+		});
+
+		function getThemePath(oConfig) {
+			let fontURI;
+
+			if (isPlainObject(oConfig)) {
+				const mPath = oConfig["path"];
+				const aThemes = [Theming.getTheme()];
+
+				const oCustomThemeMetadata = ThemeHelper.getMetadata("sap-ui-core");
+				const sParentTheme = oCustomThemeMetadata?.Extends[0];
+
+				if (sParentTheme) {
+					aThemes.push(sParentTheme);
+				}
+
+				aThemes.some((sTheme) => {
+					return Object.keys(mPath).some((key) => {
+						const rTheme = new RegExp(key);
+
+						if (rTheme.test(sTheme)) {
+							fontURI = mPath[key];
+
+							// add trailing slash if necessary for more convenience
+							if (fontURI.charAt(fontURI.length - 1) !== "/") {
+								fontURI += "/";
+							}
+
+							fontURI = sap.ui.require.toUrl(fontURI);
+							return true;
+						}
+					});
+				});
+
+
+			}
+			return fontURI;
+		}
+
 		/**
-		 * Loads the font metadata for the given collection.
+		 * Loads the font metadata for the given collection
 		 *
 		 * @param {string} collectionName the font collection name
 		 * @param {boolean} async whether the metadata is loaded async or sync
@@ -1096,11 +1153,25 @@ sap.ui.define([
 
 			// add icons to registry and insert the font style
 			function loadFont(oFontMetadata) {
-				for (var sKey in oFontMetadata) {
-					oFontMetadata[sKey] = parseInt(oFontMetadata[sKey], 16);
+				let mIcons = oFontMetadata;
+				let sFontURI = oConfig.fontURI;
+
+				if (oFontMetadata?.config && isPlainObject(oFontMetadata.config)) {
+					mFontRegistry[collectionName].themeConfig = oFontMetadata.config;
+					sFontURI = getThemePath(oFontMetadata.config) || oConfig.fontURI;
+					mIcons = oFontMetadata.icons;
+
+					if (!isPlainObject(mIcons)) {
+						Log.error(`There is something wrong with the structure of the font metadata loaded from ${sFontURI}.`);
+					}
 				}
-				mRegistry[collectionName] = oFontMetadata;
-				_IconRegistry.insertFontFaceStyle(oConfig.fontFamily, oConfig.fontURI, collectionName);
+
+				for (const sKey in mIcons) {
+					mIcons[sKey] = parseInt(mIcons[sKey], 16);
+				}
+
+				mRegistry[collectionName] = mIcons;
+				_IconRegistry.insertFontFaceStyle(oConfig.fontFamily, sFontURI, collectionName);
 				mFontRegistry[collectionName].metadataLoaded = true;
 			}
 
