@@ -5,15 +5,14 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/core/Element",
 	"sap/ui/core/Configuration",
-	"sap/base/util/fetch",
-	"sap/base/Log"
-], function (library,
-			 Element,
-			 Configuration,
-			 fetch,
-			 Log) {
+	"sap/base/util/fetch"
+], function (
+	library,
+	Element,
+	Configuration,
+	fetch
+) {
 		"use strict";
-		/*global navigator, URL*/
 
 		/**
 		 * Constructor for a new <code>Host</code>.
@@ -422,10 +421,6 @@ sap.ui.define([
 	 	 * @deprecated Since 1.113 Use Host.prototype.fetch instead.
 		 */
 		Host.prototype.modifyRequestHeaders = function (mHeaders, mSettings, oCard) {
-			if (this.bUseExperimentalCaching) {
-				return this._prepareCacheHeaders(mHeaders, mSettings);
-			}
-
 			return mHeaders;
 		};
 
@@ -443,16 +438,6 @@ sap.ui.define([
 		 * @deprecated Since 1.113 Use Host.prototype.fetch instead.
 		 */
 		Host.prototype.modifyRequest = function (mRequest, mSettings, oCard) {
-			var oUrl;
-
-			if (Configuration.getStatisticsEnabled()) {
-				oUrl = new URL(mRequest.url, window.location.href);
-
-				// add statistics parameter to every request (supported only on Gateway servers)
-				oUrl.searchParams.set("sap-statistics", "true");
-				mRequest.url = oUrl.href;
-			}
-
 			return mRequest;
 		};
 
@@ -470,17 +455,33 @@ sap.ui.define([
 		 * @returns {Promise<Response>} A <code>Promise</code> that resolves to a <code>Response</code> object.
 		 */
 		Host.prototype.fetch = function (sResource, mOptions, mRequestSettings, oCard) {
+			if (Configuration.getStatisticsEnabled()) {
+				sResource = this._addStatisticsParameter(sResource);
+			}
+
+			if (this.bUseExperimentalCaching) {
+				this._addCacheHeaders(mOptions.headers, mRequestSettings);
+			}
+
 			return fetch(sResource, mOptions);
+		};
+
+		Host.prototype._addStatisticsParameter = function (sUrl) {
+			var oUrl = new URL(sUrl, window.location.href);
+
+			// add statistics parameter to every request (supported only on Gateway servers)
+			oUrl.searchParams.set("sap-statistics", "true");
+
+			return oUrl.href;
 		};
 
 		/**
 		 * @private
-		 * @param {map} mHeaders The current map of headers.
-		 * @param {map} mSettings The map of request settings defined in the card manifest.
-		 * @returns {map} Map of http headers.
+		 * @param {Headers} mHeaders The current map of headers.
+		 * @param {map} mRequestSettings The map of request settings defined in the card manifest.
 		 */
-		Host.prototype._prepareCacheHeaders = function (mHeaders, mSettings) {
-			var oCacheSettings = mSettings.request.cache,
+		Host.prototype._addCacheHeaders = function (mHeaders, mRequestSettings) {
+			var oCacheSettings = mRequestSettings.cache,
 				aCacheControl = [];
 
 			if (oCacheSettings.enabled === false) {
@@ -496,13 +497,11 @@ sap.ui.define([
 			}
 
 			if (aCacheControl.length) {
-				mHeaders["Cache-Control"] = aCacheControl.join(", ");
+				mHeaders.set("Cache-Control", aCacheControl.join(", "));
 			}
 
-			mHeaders["x-sap-card"] = "true";
-			mHeaders["x-use-cryptocache"] = "true";
-
-			return mHeaders;
+			mHeaders.set("x-sap-card", "true");
+			mHeaders.set("x-use-cryptocache", "true");
 		};
 
 		/**
