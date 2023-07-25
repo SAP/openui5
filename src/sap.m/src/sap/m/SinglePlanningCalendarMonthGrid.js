@@ -29,7 +29,8 @@ sap.ui.define([
 	"sap/ui/core/date/CalendarUtils",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/unified/DateRange"
+	"sap/ui/unified/DateRange",
+	"sap/m/LinkAccessibleRole"
 	],
 	function (
 		Control,
@@ -57,7 +58,8 @@ sap.ui.define([
 		CalendarDateUtils,
 		Configuration,
 		UI5Date,
-		DateRange
+		DateRange,
+		LinkAccessibleRole
 	) {
 		"use strict";
 
@@ -644,6 +646,7 @@ sap.ui.define([
 					.getLibraryResourceBundle("sap.m")
 					.getText("SPC_MORE_LINK", [iAppointmentsCount.toString()]),
 				oLink = new Link({
+					accessibleRole: LinkAccessibleRole.Button,
 					text: sMore,
 					press: this._handleMorePress
 				}).addCustomData(new CustomData({
