@@ -114,6 +114,14 @@ sap.ui.define([
 		return PluginBase.prototype.destroy.call(this);
 	};
 
+	CellSelector.prototype.onBeforeRendering = function() {
+		if (this._oResizer) {
+			// remove resizer, as due to rerendering table element may be gone
+			this._oResizer.remove();
+			this._oResizer = null;
+		}
+	};
+
 	CellSelector.prototype.onAfterRendering = function() {
 		this._deregisterEvents();
 		this._registerEvents();
@@ -648,17 +656,20 @@ sap.ui.define([
 		oResizer.style.width = iDiffX <= 10 ? "" : oToRect.right - oFromRect.left + "px";
 		oResizer.style.height = iDiffX <= 10 ? oToRect.bottom - oFromRect.top + "px" : "";
 
-		oResizer.classList.toggle("sapMPluginsVerticalBorder", iDiffX <= 10);
-		oResizer.classList.toggle("sapMPluginsHorizontalBorder", iDiffY <= 10);
-		oResizer.classList.toggle("sapMPluginsEdge", iDiffX <= 10 && iDiffY <= 10);
+		const bXinRange = iDiffX <= 10, bYinRange = iDiffY <= 10;
+		oResizer.classList.toggle("sapMPluginsVerticalBorder", bXinRange);
+		oResizer.classList.toggle("sapMPluginsHorizontalBorder", bYinRange);
+		oResizer.classList.toggle("sapMPluginsEdge", bXinRange && bYinRange);
+		oResizer.classList.toggle("sapMPluginsNESW", bXinRange && bYinRange && (mFlags == 2 || mFlags == 1));
+		oResizer.classList.toggle("sapMPluginsNWSE", bXinRange && bYinRange && (mFlags == 3 || mFlags == 0));
 
 		this._oCurrentBorder = {};
-		if (iDiffX <= 10) {
+		if (bXinRange) {
 			this._oCurrentBorder.colIndex = mFlags & 1 ? mBounds.to.colIndex : mBounds.from.colIndex;
 			this._oCurrentBorder.type = DIRECTION.COL;
 		}
 
-		if (iDiffY <= 10) {
+		if (bYinRange) {
 			this._oCurrentBorder.rowIndex = (mFlags >> 1) & 1 ? mBounds.to.rowIndex : mBounds.from.rowIndex;
 			this._oCurrentBorder.type = DIRECTION.ROW;
 		}
