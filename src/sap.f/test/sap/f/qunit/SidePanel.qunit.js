@@ -658,19 +658,21 @@ sap.ui.define([
 			oOverflowItemDomRef = this.oSP.getAggregation("_overflowItem").getDomRef(),
 			aItems = this.oSP.getItems(),
 			sSPId = this.oSP.getId(),
+			oExpandCollapse = this.oSPDomRef.querySelector("#" + sSPId + "-expandCollapseButton"),
+			sTooltip = oResourceBundle.getText("SIDEPANEL_EXPAND_BUTTON_TEXT") + "/" + oResourceBundle.getText("SIDEPANEL_COLLAPSE_BUTTON_TEXT"),
 			oResizeBar;
 
 		// Assert
-		assert.strictEqual(this.oSPDomRef.querySelector("#" + sSPId + "-expandCollapseButton").getAttribute("aria-label"), oResourceBundle.getText("SIDEPANEL_EXPAND_BUTTON_TEXT"), "Expand/Collapse button has proper aria-label when the action bar is collapsed");
-		assert.strictEqual(this.oSPDomRef.querySelector("#" + sSPId + "-expandCollapseButton").getAttribute("aria-expanded"), "false", "Expand/Collapse button has proper aria-expanded attribute when the action bar is collapsed");
+		assert.strictEqual(oExpandCollapse.getAttribute("aria-label"), sTooltip, "Expand/Collapse button has proper aria-label when the action bar is collapsed");
+		assert.strictEqual(oExpandCollapse.getAttribute("aria-expanded"), "false", "Expand/Collapse button has proper aria-expanded attribute when the action bar is collapsed");
 
 		// Act - expand action bar
 		this.oSP.setActionBarExpanded(true);
 		oCore.applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oSPDomRef.querySelector("#" + sSPId + "-expandCollapseButton").getAttribute("aria-label"), oResourceBundle.getText("SIDEPANEL_COLLAPSE_BUTTON_TEXT"), "Expand/Collapse button has proper aria-label when the action bar is expanded");
-		assert.strictEqual(this.oSPDomRef.querySelector("#" + sSPId + "-expandCollapseButton").getAttribute("aria-expanded"), "true", "Expand/Collapse button has proper aria-expanded attribute when the action bar is expanded");
+		assert.strictEqual(oExpandCollapse.getAttribute("aria-label"), sTooltip, "Expand/Collapse button has proper aria-label when the action bar is expanded");
+		assert.strictEqual(oExpandCollapse.getAttribute("aria-expanded"), "true", "Expand/Collapse button has proper aria-expanded attribute when the action bar is expanded");
 
 		// Act - open side content
 		this.oSP.setSelectedItem(aItems[1].getId());
