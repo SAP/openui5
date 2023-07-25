@@ -140,7 +140,7 @@ sap.ui.define([
 		this.setProperty("_operators", ["EQ"], true);
 
 		this._oObserver.observe(this, {
-			properties: ["value", "additionalValue"]
+			properties: ["value", "additionalValue", "valueState"]
 		});
 
 	};
@@ -283,6 +283,13 @@ sap.ui.define([
 			_triggerConditionUpdate.call(this);
 		}
 
+		if (oChanges.name === "valueState") {
+			// if condition update is pending do not remove the value state later if set before from outside
+			if (this._bPendingConditionUpdate) {
+				this._bKeepValueState = true;
+			}
+		}
+
 		if (oChanges.name === "conditions") {
 			// keep value/additionalValue and conditions in sync
 			// (value must be updated if conditions are changed in async parsing too, so not in change event)
@@ -319,6 +326,7 @@ sap.ui.define([
 					_triggerConditionUpdate.call(this);
 				}
 			}.bind(this));
+			this._bPendingConditionUpdate = true;
 			return;
 		}
 
@@ -330,7 +338,6 @@ sap.ui.define([
 			this._iConditionUpdateTimer = setTimeout(function() {
 				_updateCondition.call(this, _getValue.call(this), _getAdditionalValue.call(this));
 				this._iConditionUpdateTimer = undefined;
-				this._bPendingConditionUpdate = false;
 			}.bind(this), 0);
 			this._bPendingConditionUpdate = true;
 		}
@@ -357,6 +364,9 @@ sap.ui.define([
 				}
 			}
 		}
+
+		this._bPendingConditionUpdate = false;
+		this._bKeepValueState = false;
 
 	}
 
