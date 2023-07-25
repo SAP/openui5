@@ -442,7 +442,7 @@ function(
 				id: this.getId() + "-icon",
 				src: this.getIconSrc(),
 				noTabStop: true,
-				decorative: false,
+				decorative: !Device.support.touch || Device.system.desktop ? true : false,
 				useIconTooltip: false,
 				alt: this._oResourceBundle.getText("OPEN_PICKER_TEXT")
 			});
