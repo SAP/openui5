@@ -2561,6 +2561,22 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when there is a variant with a resource model key with dots as its title", function(assert) {
+			var oResourceModel = new ResourceModel({bundleUrl: oResourceBundle.oUrlInfo.url});
+			oResourceModel._oResourceBundle.aPropertyFiles[0].mProperties["test.with.dots"] = "Text From Key With Dots";
+			this.oVariantManagement.setModel(oResourceModel, "i18n");
+			var sTitleBinding = "{i18n>test.with.dots}";
+			stubFlexObjectsSelector(createTranslationVariants.call(this, sTitleBinding));
+			this.oModel.registerToModel(this.oVariantManagement);
+			return this.oModel.waitForVMControlInit(this.sVMReference).then(function() {
+				assert.strictEqual(
+					this.oModel.getData()[this.sVMReference].variants[1].title,
+					"Text From Key With Dots",
+					"then the text is resolved"
+				);
+			}.bind(this));
+		});
+
 		QUnit.test("when there is a variant with a resource model key as its title but the model was not yet set", function(assert) {
 			var fnDone = assert.async();
 			var oResourceModel = new ResourceModel({bundleUrl: oResourceBundle.oUrlInfo.url});
