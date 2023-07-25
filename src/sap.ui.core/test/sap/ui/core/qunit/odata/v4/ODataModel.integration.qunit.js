@@ -49760,6 +49760,7 @@ sap.ui.define([
 	// Nested entities via initial data and via #create (CPOUI5ODATAV4-2036)
 	// Optimize the refresh after create w/o bSkipRefresh (CPOUI5ODATAV4-2048)
 	// Accept the complete response, not only $select (esp. GrossAmount) (CPOUI5ODATAV4-1977)
+	// Also create the product (nested single below collection) (CPOUI5ODATAV4-1977)
 [false, true].forEach(function (bSkipRefresh) {
 	var sTitle = "CPOUI5ODATAV4-1973: Deep create, nested ODLB w/o cache, bSkipRefresh="
 			+ bSkipRefresh;
@@ -49775,26 +49776,33 @@ sap.ui.define([
 	<Text id="order" text="{SalesOrderID}"/>\
 	<Table items="{path : \'SO_2_SOITEM\', templateShareable : true}">\
 		<Input id="note" value="{Note}"/>\
+		<Text id="productId" text="{SOITEM_2_PRODUCT/ProductID}"/>\
+		<Input id="productName" value="{SOITEM_2_PRODUCT/Name}"/>\
 	</Table>\
 </Table>',
 			that = this;
 
 		this.expectRequest("SalesOrderList?$select=SalesOrderID"
-				+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)&$skip=0&$top=100",
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID"
+				+ ";$expand=SOITEM_2_PRODUCT($select=Name,ProductID))&$skip=0&$top=100",
 				{value : []})
 			.expectChange("order", [])
-			.expectChange("note", []);
+			.expectChange("note", [])
+			.expectChange("productId", [])
+			.expectChange("productName", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectChange("order", [""])
-				.expectChange("note", ["A", "B"]);
+				.expectChange("note", ["A", "B"])
+				.expectChange("productId", ["", ""])
+				.expectChange("productName", ["PA", ""]);
 
 			oOrdersBinding = that.oView.byId("orders").getBinding("items");
 
 			// code under test
 			oCreatedOrderContext = oOrdersBinding.create({
 				SO_2_SOITEM : [
-					{Note : "A"},
+					{Note : "A", SOITEM_2_PRODUCT : {Name : "PA"}},
 					{Note : "B"}
 				]
 			}, bSkipRefresh);
@@ -49808,7 +49816,10 @@ sap.ui.define([
 			aContexts = oItemsBinding.getCurrentContexts();
 			assert.deepEqual(aContexts.map(getObject), [{
 				"@$ui5.context.isTransient" : true,
-				Note : "A"
+				Note : "A",
+				SOITEM_2_PRODUCT : {
+					Name : "PA"
+				}
 			}, {
 				"@$ui5.context.isTransient" : true,
 				Note : "B"
@@ -49817,19 +49828,28 @@ sap.ui.define([
 				assert.strictEqual(oContext.isTransient(), true);
 			});
 
-			that.expectChange("note", [,, "C", "D"]);
+			that.expectChange("note", [,, "C", "D"])
+				.expectChange("productId", [,, "", ""])
+				.expectChange("productName", [, "PB", "", ""]);
 
 			// code under test
+			aContexts[1].setProperty("SOITEM_2_PRODUCT/Name", "PB");
 			oItemsBinding.create({Note : "C"}, false, true); // at end
 			oItemsBinding.create({Note : "D"}, false, true); // at end
 
 			aContexts = oItemsBinding.getCurrentContexts();
 			assert.deepEqual(aContexts.map(getObject), [{
 				"@$ui5.context.isTransient" : true,
-				Note : "A"
+				Note : "A",
+				SOITEM_2_PRODUCT : {
+					Name : "PA"
+				}
 			}, {
 				"@$ui5.context.isTransient" : true,
-				Note : "B"
+				Note : "B",
+				SOITEM_2_PRODUCT : {
+					Name : "PB"
+				}
 			}, {
 				"@$ui5.context.isTransient" : true,
 				Note : "C"
@@ -49869,8 +49889,8 @@ sap.ui.define([
 					url : "SalesOrderList",
 					payload : {
 						SO_2_SOITEM : [
-							{Note : "AA"},
-							{Note : "BB"},
+							{Note : "AA", SOITEM_2_PRODUCT : {Name : "PA"}},
+							{Note : "BB", SOITEM_2_PRODUCT : {Name : "PB"}},
 							{Note : "CC"},
 							{Note : "DD"}
 						]
@@ -49884,24 +49904,37 @@ sap.ui.define([
 						GrossAmount : "41.99",
 						ItemPosition : "0010",
 						Note : "AAA",
-						SalesOrderID : "new"
+						SalesOrderID : "new",
+						SOITEM_2_PRODUCT : {
+							"@odata.etag" : "etagP1",
+							Name : "PA",
+							ProductID : "P1"
+						}
 					}, {
 						"@odata.etag" : "etag20",
 						GrossAmount : "42.99",
 						ItemPosition : "0020",
 						Note : "CCC",
-						SalesOrderID : "new"
+						SalesOrderID : "new",
+						SOITEM_2_PRODUCT : null
 					}, {
 						"@odata.etag" : "etag30",
 						GrossAmount : "43.99",
 						ItemPosition : "0030",
 						Note : "BBB",
-						SalesOrderID : "new"
+						SalesOrderID : "new",
+						SOITEM_2_PRODUCT : {
+							"@odata.etag" : "etagP2",
+							Name : "PB",
+							ProductID : "P2"
+						}
 					}]
 				})
 				// optimized refresh: even w/o bSkipRefresh nothing is requested
 				.expectChange("order", ["new"])
-				.expectChange("note", ["AAA", "CCC", "BBB"]);
+				.expectChange("note", ["AAA", "CCC", "BBB"])
+				.expectChange("productId", ["P1", , "P2"])
+				.expectChange("productName", [, "", "PB"]);
 
 			that.expectCanceledError(
 					"Deep create of SalesOrderList succeeded. Do not use this promise.")
@@ -49933,19 +49966,30 @@ sap.ui.define([
 				GrossAmount : "41.99",
 				ItemPosition : "0010",
 				Note : "AAA",
-				SalesOrderID : "new"
+				SalesOrderID : "new",
+				SOITEM_2_PRODUCT : {
+					"@odata.etag" : "etagP1",
+					Name : "PA",
+					ProductID : "P1"
+				}
 			}, {
 				"@odata.etag" : "etag20",
 				GrossAmount : "42.99",
 				ItemPosition : "0020",
 				Note : "CCC",
-				SalesOrderID : "new"
+				SalesOrderID : "new",
+				SOITEM_2_PRODUCT : null
 			}, {
 				"@odata.etag" : "etag30",
 				GrossAmount : "43.99",
 				ItemPosition : "0030",
 				Note : "BBB",
-				SalesOrderID : "new"
+				SalesOrderID : "new",
+				SOITEM_2_PRODUCT : {
+					"@odata.etag" : "etagP2",
+					Name : "PB",
+					ProductID : "P2"
+				}
 			}]);
 
 			that.expectChange("note", ["AAAA"])
@@ -50771,8 +50815,8 @@ sap.ui.define([
 			that.expectChange("id", ["", "E1"])
 				.expectChange("teamId", ["Tnew", "T1"])
 				.expectChange("teamName", ["", "Team 1"])
-				.expectChange("manager", [null, "M1"])
-				.expectChange("managerTeamId", [null, "T1"]);
+				.expectChange("manager", ["", "M1"])
+				.expectChange("managerTeamId", ["", "T1"]);
 
 			oBinding = that.oView.byId("employees").getBinding("items");
 			// code under test
