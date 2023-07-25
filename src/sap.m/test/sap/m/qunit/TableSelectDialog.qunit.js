@@ -830,7 +830,7 @@ sap.ui.define([
 		assert.equal(aItems[2].getSelected(), true, "SingleSelection: Item 2 should be selected");
 		assert.equal(aItems[3].getSelected(), false, "SingleSelection: Item 3 should not be selected");
 		assert.equal(aItems[4].getSelected(), false, "SingleSelection: Item 4 should not be selected");
-		oTable.fireSelect({ listItem : aItems[2] });
+		oTable.fireSelectionChange({ listItem : aItems[2] });
 	});
 
 	QUnit.test("TableSelectDialog1 Single Select Check Cancel", function(assert){
