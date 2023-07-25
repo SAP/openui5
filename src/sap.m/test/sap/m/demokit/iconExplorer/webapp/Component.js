@@ -1,27 +1,27 @@
 sap.ui.define([
-	"sap/ui/Device",
-	"sap/ui/VersionInfo",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/UIComponent",
+	"sap/ui/Device",
 	"sap/ui/demo/iconexplorer/model/models",
 	"sap/ui/demo/iconexplorer/model/IconModel",
 	"sap/ui/demo/iconexplorer/model/FavoriteModel",
 	"sap/ui/demo/iconexplorer/controller/ErrorHandler",
 	"sap/ui/documentation/sdk/controller/util/ConfigUtil",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/VersionInfo"
 ], function(
-	Device,
-	VersionInfo,
 	Configuration,
 	IconPool,
 	UIComponent,
+	Device,
 	models,
 	IconModel,
 	FavoriteModel,
 	ErrorHandler,
 	ConfigUtil,
-	JSONModel
+	JSONModel,
+	VersionInfo
 ) {
 	"use strict";
 
@@ -73,16 +73,10 @@ sap.ui.define([
 
 				var oTNTConfig = {
 					fontFamily: "SAP-icons-TNT",
+					fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts/"),
 					downloadURI: sLocalFontFolder,
 					downloadURIForHorizon: sap.ui.require.toUrl("sap/ui/demo/iconexplorer/fonts/sap_horizon/")
 				};
-
-				if (Configuration.getTheme().includes("sap_horizon")) {
-					oTNTConfig.fontURI = sap.ui.require.toUrl("sap/tnt/themes/base/fonts/horizon/");
-					oTNTConfig.metadataURI = sap.ui.require.toUrl("sap/tnt/themes/base/fonts/") + oTNTConfig.fontFamily + ".json";
-				} else {
-					oTNTConfig.fontURI = sap.ui.require.toUrl("sap/tnt/themes/base/fonts/");
-				}
 
 				// register TNT icon font
 				IconPool.registerFont(oTNTConfig);
