@@ -47,7 +47,9 @@ sap.ui.define(['sap/ui/core/Renderer', './DateTimeFieldRenderer', 'sap/ui/core/l
 		var mAccessibilityState = DateTimeFieldRenderer.getAccessibilityState.apply(this, arguments);
 
 		mAccessibilityState["roledescription"] = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
-		mAccessibilityState["haspopup"] = coreLibrary.aria.HasPopup.Grid.toLowerCase();
+		if (oDP.getEditable() && oDP.getEnabled()) {
+			mAccessibilityState["haspopup"] = coreLibrary.aria.HasPopup.Grid.toLowerCase();
+		}
 		// aria-disabled is not necessary if we already have a native 'disabled' attribute
 		mAccessibilityState["disabled"] = null;
 

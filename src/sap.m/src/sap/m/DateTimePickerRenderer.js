@@ -43,7 +43,9 @@ sap.ui.define([
 	DateTimePickerRenderer.getAccessibilityState = function(oDP) {
 		var mAccessibilityState = DatePickerRenderer.getAccessibilityState.apply(this, arguments);
 
-		mAccessibilityState["haspopup"] = coreLibrary.aria.HasPopup.Dialog.toLowerCase();
+		if (oDP.getEditable() && oDP.getEnabled()) {
+			mAccessibilityState["haspopup"] = coreLibrary.aria.HasPopup.Dialog.toLowerCase();
+		}
 
 		return mAccessibilityState;
 	};
