@@ -107,7 +107,8 @@ sap.ui.define([
 			this.returnMockEvent = function(iKeyCode, sId) {
 				var oMockEventTest = {
 					keyCode: iKeyCode,
-					srcControl: Core.byId(sId)
+					srcControl: Core.byId(sId),
+					preventDefault: function () {}
 				};
 
 				return oMockEventTest;

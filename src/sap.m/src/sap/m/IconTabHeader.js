@@ -1763,6 +1763,8 @@ sap.ui.define([
 		var oTab = oEvent.srcControl,
 			iTabStripEnd = this.indexOfItem(this._getItemsInStrip().pop());
 
+		oEvent.preventDefault();
+
 		this._moveTab(oTab, oEvent.keyCode, iTabStripEnd);
 		oTab.$().trigger("focus");
 	};
