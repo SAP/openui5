@@ -745,7 +745,7 @@ function(
 				&& !bIsMasterNav
 				// press isn't triggered by the showMasterButton
 				&& !containsOrEquals(this._oShowMasterBtn.getDomRef(), oEvent.target)
-				&& (!oMetaData.getEvent("tap") || !oMetaData.getEvent("press"))) {
+				&& !oMetaData.getEvent("press")) {
 			this.hideMaster();
 		}
 	};
@@ -887,14 +887,14 @@ function(
 	 * This can be used for deep-linking when the user directly reached a drilldown detail page using a bookmark and then wants to navigate up in the drilldown hierarchy.
 	 * Normally, such a back navigation would not be possible as there is no previous page in the SplitContainer's history stack.
 	 *
-	 * @param {string} sPageId
+	 * @param {string} pageId
 	 *         The ID of the control/page/screen, which is inserted into the history stack. The respective control must be aggregated by the SplitContainer, otherwise this will cause an error.
 	 * @param {string} [transitionName=slide]
 	 *         The type of the transition/animation which would have been used to navigate from the (inserted) previous page to the current page. When navigating back, the inverse animation will be applied.
 	 *         Options are "slide" (horizontal movement from the right), "baseSlide", "fade", "flip", and "show" and the names of any registered custom transitions.
-	 * @param {object} oData
+	 * @param {object} data
 	 *         This optional object can carry any payload data which would have been given to the inserted previous page if the user would have done a normal forward navigation to it.
-	 * @returns {this}
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	SplitContainer.prototype.insertPreviousPage = function(pageId, transitionName, data) {
@@ -905,8 +905,6 @@ function(
 		}
 		return this;
 	};
-
-
 
 	/**
 	 * Navigates to a given master page.
@@ -1255,7 +1253,6 @@ function(
 		return this.removeAllAggregation("detailPages", bSuppressInvalidate);
 	};
 
-
 	/**
 	 * Adds a content entity either to master area or detail area depending on the master parameter.
 	 *
@@ -1265,7 +1262,7 @@ function(
 	 *         The content entities between which this SplitContainer navigates in either master area or detail area depending on the master parameter. These can be of type sap.m.Page, sap.ui.core.mvc.View, sap.m.Carousel or any other control with fullscreen/page semantics.
 	 * @param {boolean} bMaster
 	 *         States if the page should be added to the master area. If it's set to false, the page is added to detail area.
-	 * @returns {this}
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @since 1.11.1
 	 */
@@ -1277,11 +1274,10 @@ function(
 		}
 	};
 
-
 	/**
 	 * Used to make the master page visible when in ShowHideMode and the device is in portrait mode.
 	 *
-	 * @@returns {this}
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	SplitContainer.prototype.showMaster = function() {
@@ -1332,11 +1328,10 @@ function(
 		return this;
 	};
 
-
 	/**
 	 * Used to hide the master page when in ShowHideMode and the device is in portrait mode.
 	 *
-	 * @returns {this}
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	SplitContainer.prototype.hideMaster = function() {
