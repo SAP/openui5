@@ -26,10 +26,13 @@ sap.ui.define([
 		 *   A map of query parameters as described in
 		 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}. Note that "sap-context-token"
 		 *   is deleted(!) after the first <code>read</code> for a metadata document.
+		 * @param {boolean} [bWithCredentials]
+		 *   Whether the XHR should be called with <code>withCredentials</code>
 		 * @returns {object}
 		 *   A new MetadataRequestor object
 		 */
-		create : function (mHeaders, sODataVersion, bIgnoreAnnotationsFromMetadata, mQueryParams) {
+		create : function (mHeaders, sODataVersion, bIgnoreAnnotationsFromMetadata, mQueryParams,
+			bWithCredentials) {
 			var mUrl2Promise = {},
 				sQuery = _Helper.buildQuery(mQueryParams);
 
@@ -81,10 +84,16 @@ sap.ui.define([
 						delete mUrl2Promise[sUrl];
 					} else {
 						oPromise = new Promise(function (fnResolve, fnReject) {
-							jQuery.ajax(bAnnotations ? sUrl : sUrl + sQuery, {
-								method : "GET",
-								headers : mHeaders
-							}).then(function (oData, _sTextStatus, jqXHR) {
+							const oAjaxSettings = {
+									method : "GET",
+									headers : mHeaders
+								};
+							if (bWithCredentials) {
+								oAjaxSettings.xhrFields = {withCredentials : true};
+							}
+
+							jQuery.ajax(bAnnotations ? sUrl : sUrl + sQuery, oAjaxSettings)
+							.then(function (oData, _sTextStatus, jqXHR) {
 								var sDate = jqXHR.getResponseHeader("Date"),
 									sETag = jqXHR.getResponseHeader("ETag"),
 									oJSON = {$XML : oData},

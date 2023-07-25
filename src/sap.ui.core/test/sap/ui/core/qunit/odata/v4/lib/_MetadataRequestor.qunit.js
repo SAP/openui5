@@ -109,7 +109,8 @@ sap.ui.define([
 			oJQueryMock.expects("ajax")
 				.withExactArgs(sUrl + "?...", {
 					headers : sinon.match.same(mHeaders),
-					method : "GET"
+					method : "GET",
+					xhrFields : {withCredentials : true}
 				}).returns(createMock(oExpectedXml));
 			if (sODataVersion === "4.0") {
 				this.mock(_V4MetadataConverter.prototype).expects("convertXMLMetadata").twice()
@@ -127,7 +128,9 @@ sap.ui.define([
 
 			// code under test
 			oMetadataRequestor
-				= _MetadataRequestor.create(mHeaders, sODataVersion, false, mQueryParams);
+				= _MetadataRequestor.create(mHeaders, sODataVersion,
+						/*bIgnoreAnnotationsFromMetadata*/false, mQueryParams,
+						/*bWithCredentials*/true);
 
 			// code under test
 			return oMetadataRequestor.read(sUrl).then(function (oResult) {
@@ -136,7 +139,8 @@ sap.ui.define([
 				oJQueryMock.expects("ajax")
 					.withExactArgs(sUrl, {
 						headers : sinon.match.same(mHeaders),
-						method : "GET"
+						method : "GET",
+						xhrFields : {withCredentials : true}
 					}).returns(createMock(oExpectedXml));
 
 				// code under test

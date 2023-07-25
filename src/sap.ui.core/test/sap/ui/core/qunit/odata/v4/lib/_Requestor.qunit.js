@@ -239,7 +239,8 @@ sap.ui.define([
 			oHelperMock = this.mock(_Helper),
 			mQueryParams = {},
 			oRequestor,
-			vStatistics = {};
+			vStatistics = {},
+			bWithCredentials = bStatistics; //do not increase the number of tests unnecessarily
 
 		if (bStatistics) {
 			mQueryParams["sap-statistics"] = vStatistics;
@@ -248,7 +249,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mQueryParams)).returns("?~");
 
 		// code under test
-		oRequestor = _Requestor.create(sServiceUrl, oModelInterface, mHeaders, mQueryParams);
+		oRequestor = _Requestor.create(sServiceUrl, oModelInterface, mHeaders, mQueryParams,
+			/*sODataVersion*/undefined, bWithCredentials);
 
 		assert.deepEqual(oRequestor.mBatchQueue, {});
 		assert.strictEqual(oRequestor.mHeaders, mHeaders);
@@ -264,6 +266,7 @@ sap.ui.define([
 		assert.strictEqual(oRequestor.oOptimisticBatch, null);
 		assert.strictEqual(oRequestor.isBatchSent(), false);
 		assert.ok("vStatistics" in oRequestor);
+		assert.strictEqual(oRequestor.bWithCredentials, bWithCredentials);
 
 		oHelperMock.expects("buildQuery").withExactArgs(undefined).returns("");
 
@@ -851,6 +854,20 @@ sap.ui.define([
 		]).then(function () {
 			assert.strictEqual(iHeadRequestCount, 1, "fetch HEAD only once");
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("sendRequest(), withCredentials for CORS", function (assert) {
+		var oRequestor = _Requestor.create("/", oModelInterface, /*mHeaders*/undefined,
+				/*mQueryParams*/undefined, /*sODataVersion*/undefined,
+				/*bWithCredentials*/true);
+
+		this.mock(jQuery).expects("ajax")
+			.withExactArgs("/", sinon.match({
+				xhrFields : {withCredentials : true}
+			})).returns(createMock(assert, {/*oPayload*/}, "OK"));
+
+		return oRequestor.sendRequest("GET", "");
 	});
 
 	//*********************************************************************************************

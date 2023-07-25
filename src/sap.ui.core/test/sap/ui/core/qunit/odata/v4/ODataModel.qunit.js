@@ -115,7 +115,7 @@ sap.ui.define([
 		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined, bStatistics
 				? {"sap-client" : "279", "sap-statistics" : true}
-				: {"sap-client" : "279"})
+				: {"sap-client" : "279"}, undefined)
 			.returns(oMetadataRequestor);
 		this.mock(ODataMetaModel.prototype).expects("fetchEntityContainer").withExactArgs(true);
 		this.mock(ODataModel.prototype).expects("initializeSecurityToken").withExactArgs();
@@ -162,10 +162,10 @@ sap.ui.define([
 				"sap-client" : "279",
 				"sap-context-token" : "20200716120000",
 				"sap-language" : "EN"
-			});
+			}, undefined);
 		this.mock(_Requestor).expects("create")
 			.withExactArgs(sServiceUrl, sinon.match.object, {"Accept-Language" : "ab-CD"},
-				{"sap-client" : "279", "sap-context-token" : "n/a"}, "4.0")
+				{"sap-client" : "279", "sap-context-token" : "n/a"}, "4.0", undefined)
 			.callThrough();
 
 		// code under test
@@ -229,14 +229,14 @@ sap.ui.define([
 
 			oRequestorCreateExpectation = this.mock(_Requestor).expects("create")
 				.withExactArgs(sServiceUrl, sinon.match.object, {"Accept-Language" : "ab-CD"},
-					sinon.match.object, sODataVersion)
+					sinon.match.object, sODataVersion, undefined)
 				.returns({
 					checkForOpenRequests : function () {},
 					checkHeaderNames : function () {}
 				});
 			oMetadataRequestorCreateExpectation = this.mock(_MetadataRequestor).expects("create")
 				.withExactArgs({"Accept-Language" : "ab-CD"}, sODataVersion, undefined,
-					sinon.match.object)
+					sinon.match.object, undefined)
 				.returns({});
 
 			// code under test
@@ -425,6 +425,43 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bWithCredentials) {
+	QUnit.test("Model creates _Requestor, withCredentials=" + bWithCredentials, function () {
+		this.mock(_MetadataRequestor).expects("create")
+			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0",
+				/*bIngnoreAnnotationsFromMetadata*/undefined, /*mQueryParams*/{},
+				/*bWithCredentials*/bWithCredentials);
+		this.mock(_Requestor).expects("create")
+			.withExactArgs(sServiceUrl, {
+					fetchEntityContainer : sinon.match.func,
+					fetchMetadata : sinon.match.func,
+					fireDataReceived : sinon.match.func,
+					fireDataRequested : sinon.match.func,
+					fireSessionTimeout : sinon.match.func,
+					getGroupProperty : sinon.match.func,
+					getMessagesByPath : sinon.match.func,
+					getOptimisticBatchEnabler : sinon.match.func,
+					getReporter : sinon.match.func,
+					isIgnoreETag : sinon.match.func,
+					onCreateGroup : sinon.match.func,
+					reportStateMessages : sinon.match.func,
+					reportTransitionMessages : sinon.match.func,
+					updateMessages : sinon.match.func
+				},
+				{"Accept-Language" : "ab-CD"},
+				{},
+				"4.0",
+				bWithCredentials)
+			.returns({
+				checkForOpenRequests : function () {},
+				checkHeaderNames : function () {}
+			});
+
+		this.createModel(undefined, {withCredentials : bWithCredentials});
+	});
+});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bStatistics) {
 	QUnit.test("Model creates _Requestor, sap-statistics=" + bStatistics, function (assert) {
 		var oExpectedBind0,
@@ -469,7 +506,7 @@ sap.ui.define([
 				bStatistics
 					? {"sap-client" : "123", "sap-statistics" : true}
 					: {"sap-client" : "123"},
-				"4.0")
+				"4.0", undefined)
 			.returns(oRequestor);
 		oExpectedBind0 = this.mock(ODataMetaModel.prototype.fetchEntityContainer).expects("bind")
 			.returns("~fnFetchEntityContainer~");
