@@ -3,10 +3,11 @@
  */
 
 // Provides default renderer for control sap.m.Text
-sap.ui.define([],
-	function() {
+sap.ui.define([
+	"sap/ui/core/Core"
+],
+	function(Core) {
 	"use strict";
-
 
 	/**
 	 * Text renderer.
@@ -23,7 +24,8 @@ sap.ui.define([],
 	 * @param {sap.m.Tile} oControl An object representation of the control that should be rendered
 	 */
 	TileRenderer.render = function(rm, oControl) {
-		var oTileContainer,
+		var oRB = Core.getLibraryResourceBundle("sap.m"),
+			oTileContainer,
 			aVisibleTiles;
 
 		rm.openStart("div", oControl);
@@ -53,6 +55,7 @@ sap.ui.define([],
 		rm.openEnd();
 		rm.openStart("div", oControl.getId() + "-remove");
 		rm.class(oControl.getRemovable() ? "sapMTCRemove" : "sapMTCNoRemove");
+		rm.attr("title", oRB.getText("GENERICTILE_REMOVEBUTTON_TEXT"));
 		rm.openEnd().close("div");
 		rm.openStart("div").class("sapMTileContent").openEnd();
 		this._renderContent(rm, oControl);
