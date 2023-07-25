@@ -1713,13 +1713,20 @@ sap.ui.define([
 				var aVersions = oVersionOverviewJson.patches;
 
 				return aVersions.filter(function (oVersion) {
-					var sVersionEOCP = oVersion.extended_eocp || oVersion.eocp || "",
-						iQuarter = Number(sVersionEOCP.substring(1, 2)),
-						iYear = Number(sVersionEOCP.substring(3));
-
+					var sVersionEOCP = oVersion.extended_eocp || oVersion.eocp || "";
+					// Handle the case when eocp is not defined and include it in the list
 					if (!sVersionEOCP) {
 						return true;
 					}
+					// Handle the case when eocp is not in the "quarter/year" format (e.g., "To Be Determined")
+					// Treat it as if it hasn't passed its end of cloud maintenance date and include it in the list
+					var isQuarterYearFormat = /^Q[1-4]\/\d{4}$/i.test(sVersionEOCP);
+					if (!isQuarterYearFormat) {
+						return true;
+					}
+					// Otherwise, check if the version has passed its end of cloud maintenance date
+					var iQuarter = Number(sVersionEOCP.substring(1, 2)),
+						iYear = Number(sVersionEOCP.substring(3));
 
 					return iYear > this._getCurrentYear() ||
 						iYear === this._getCurrentYear() && iQuarter >= this._getCurrentQuarter();
