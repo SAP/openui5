@@ -1555,23 +1555,31 @@ sap.ui.define([
 						mResult[oItem.manifestpath] = oItem.value;
 					}
 					if (oItem._next && (this.getAllowSettings())) {
-						var bVisibleDefault = typeof (oItem.visibleToUser) === "undefined" ? true : oItem.visibleToUser;
-						var bEditableDefault = typeof (oItem.editableToUser) === "undefined" ? true : oItem.editableToUser;
-						if (oItem._next.visible === !bVisibleDefault) {
-							mNext = mNext || {};
-							mNext[oItem._settingspath + "/visible"] = oItem._next.visible;
-						}
-						if (oItem._next.editable === !bEditableDefault) {
-							mNext = mNext || {};
-							mNext[oItem._settingspath + "/editable"] = oItem._next.editable;
-						}
-						if (oItem._next.pageAdminValues) {
-							mNext = mNext || {};
-							mNext[oItem._settingspath + "/pageAdminValues"] = oItem._next.pageAdminValues;
-						}
-						if (typeof oItem._next.allowDynamicValues === "boolean" && this.getAllowDynamicValues()) {
-							mNext = mNext || {};
-							mNext[oItem._settingspath + "/allowDynamicValues"] = oItem._next.allowDynamicValues;
+						if (oItem.type === "destination") {
+							if (oItem._next.pageAdminNewDestinationParameter) {
+								mNext = mNext || {};
+								mNext[oItem._settingspath + "/pageAdminNewDestinationParameter"] = oItem._next.pageAdminNewDestinationParameter;
+							}
+						} else {
+							var bVisibleDefault = typeof (oItem.visibleToUser) === "undefined" ? true : oItem.visibleToUser;
+							var bEditableDefault = typeof (oItem.editableToUser) === "undefined" ? true : oItem.editableToUser;
+							var bAllowDynamicValuesDefault = typeof (oItem.allowDynamicValues) === "undefined" ? true : oItem.allowDynamicValues;
+							if (oItem._next.visible === !bVisibleDefault) {
+								mNext = mNext || {};
+								mNext[oItem._settingspath + "/visible"] = oItem._next.visible;
+							}
+							if (oItem._next.editable === !bEditableDefault) {
+								mNext = mNext || {};
+								mNext[oItem._settingspath + "/editable"] = oItem._next.editable;
+							}
+							if (oItem._next.allowDynamicValues === !bAllowDynamicValuesDefault) {
+								mNext = mNext || {};
+								mNext[oItem._settingspath + "/allowDynamicValues"] = oItem._next.allowDynamicValues;
+							}
+							if (oItem._next.pageAdminValues) {
+								mNext = mNext || {};
+								mNext[oItem._settingspath + "/pageAdminValues"] = oItem._next.pageAdminValues;
+							}
 						}
 					}
 				}
@@ -1857,8 +1865,8 @@ sap.ui.define([
 		});
 	};
 
-	Editor.prototype._createDescription = function (oConfig, sItemId) {
-		var oDescIcon = new Icon(this.getId() + "_" + sItemId + "_description_icon", {
+	Editor.prototype._createDescription = function (oConfig, sParameterKey) {
+		var oDescIcon = new Icon(this.getId() + "_" + sParameterKey + "_description_icon", {
 			src: "sap-icon://message-information",
 			color: "Marker",
 			size: "12px",
@@ -1889,9 +1897,9 @@ sap.ui.define([
 		return oDescIcon;
 	};
 
-	Editor.prototype._createMessageIcon = function (oField, sItemId) {
+	Editor.prototype._createMessageIcon = function (oField, sParameterKey) {
 		var oConfig = oField.getConfiguration();
-		var oMsgIcon = new Icon(this.getId() + "_" + sItemId + "_message_icon", {
+		var oMsgIcon = new Icon(this.getId() + "_" + sParameterKey + "_message_icon", {
 			src: "sap-icon://message-information",
 			size: "12px",
 			visible: oConfig.visible,
@@ -1921,10 +1929,10 @@ sap.ui.define([
 	/**
 	 * Creates a label based on the configuration settings
 	 * @param {object} oConfig
-	 * @param {string} sItemId
+	 * @param {string} sParameterKey
 	 */
-	Editor.prototype._createLabel = function (oConfig, sItemId) {
-		var oLabel = new Label(this.getId() + "_" + sItemId + "_label", {
+	Editor.prototype._createLabel = function (oConfig, sParameterKey) {
+		var oLabel = new Label(this.getId() + "_" + sParameterKey + "_label", {
 			text: oConfig.label,
 			tooltip: oConfig.tooltip || oConfig.label,
 			//mark only fields that are required and editable,
@@ -1954,9 +1962,9 @@ sap.ui.define([
 	/**
 	 * Create the settings button
 	 */
-	 Editor.prototype._createSettingsButton = function (oField, sItemId) {
+	 Editor.prototype._createSettingsButton = function (oField, sParameterKey) {
 		var oConfig = oField.getConfiguration();
-		var oSettingsButton = new Button(this.getId() + "_" + sItemId + "_settings_btn", {
+		var oSettingsButton = new Button(this.getId() + "_" + sParameterKey + "_settings_btn", {
 			icon: "{= ${currentSettings>_hasDynamicValue} ? 'sap-icon://display-more' : 'sap-icon://enter-more'}",
 			type: "Transparent",
 			tooltip: this._oResourceBundle.getText("EDITOR_FIELD_MORE_SETTINGS"),
@@ -1990,11 +1998,10 @@ sap.ui.define([
 		var oSettingsPanel = this._getSettingsPanel(oField);
 		window.setTimeout(function () {
 			oSettingsPanel.setConfiguration(oField.getConfiguration());
-			var oPreview = this.getAggregation("_preview");
 			oSettingsPanel.open(
 				oSettingsButton,
 				oSettingsButton,
-				oPreview,
+				this,
 				oField.getHost(),
 				oField,
 				oField._applySettings.bind(oField),
@@ -2021,14 +2028,14 @@ sap.ui.define([
 	/**
 	 * Creates a Field based on the configuration settings
 	 * @param {object} oConfig
-	 * @param {string} sItemId
+	 * @param {string} sParameterKey
 	 */
-	Editor.prototype._createField = function (oConfig, sItemId) {
-		var oField = new Editor.Fields[oConfig.type](this.getId() + "_" + sItemId + "_field", {
+	Editor.prototype._createField = function (oConfig, sParameterKey) {
+		var oField = new Editor.Fields[oConfig.type](this.getId() + "_" + sParameterKey + "_field", {
 			configuration: oConfig,
 			mode: this.getMode(),
 			host: this.getHostInstance(),
-			parameterId: this.getId() + "_" + sItemId,
+			parameterKey: sParameterKey,
 			objectBindings: {
 				currentSettings: {
 					path: "currentSettings>" + oConfig._settingspath
@@ -2045,6 +2052,7 @@ sap.ui.define([
 			},
 			visible: oConfig.visible
 		});
+		oField.setAssociation("_editor", this);
 
 		this._aFieldReadyPromise.push(oField._readyPromise.then(function() {
 			// for group field, will do nothing else
@@ -2053,14 +2061,14 @@ sap.ui.define([
 					|| oConfig.validation
 					|| (oConfig.validations && oConfig.validations.length > 0)
 					|| (oConfig.values && oConfig.values.data && !oConfig.values.data.json)) {
-					var oMsgIcon = this._createMessageIcon(oField, sItemId);
+					var oMsgIcon = this._createMessageIcon(oField, sParameterKey);
 					oField.setAssociation("_messageIcon", oMsgIcon);
 				}
 				if (oConfig.description && this.getMode() !== "translation") {
-					oField._descriptionIcon = this._createDescription(oConfig, sItemId);
+					oField._descriptionIcon = this._createDescription(oConfig, sParameterKey);
 				}
 				if (oConfig._changeDynamicValues) {
-					oField._settingsButton = this._createSettingsButton(oField, sItemId);
+					oField._settingsButton = this._createSettingsButton(oField, sParameterKey);
 					oField._applyButtonStyles();
 				}
 			}
@@ -2578,9 +2586,9 @@ sap.ui.define([
 	/**
 	 * Adds an item to the _formContent aggregation based on the config settings
 	 * @param {object} oConfig
-	 * @param {string} sItemId
+	 * @param {string} sParameterKey
 	 */
-	 Editor.prototype._addItem = function (oConfig, sItemId) {
+	 Editor.prototype._addItem = function (oConfig, sParameterKey) {
 		var sMode = this.getMode();
 		//force to turn off features for settings and dynamic values and set the default if not configured
 		if (this.getAllowDynamicValues() === false || !oConfig.allowDynamicValues) {
@@ -2598,10 +2606,10 @@ sap.ui.define([
 		//display subPanel as iconTabBar or Panel
 		if (oConfig.type === "group") {
 			oConfig.expanded = oConfig.expanded !== false;
-			var oField = this._createField(oConfig, sItemId);
+			var oField = this._createField(oConfig, sParameterKey);
 			this.addAggregation("_formContent", oField);
 			if (oConfig.hint) {
-				this._addHint(oConfig.hint, this.getId() + "_" + sItemId);
+				this._addHint(oConfig.hint, this.getId() + "_" + sParameterKey);
 			}
 			return;
 		}
@@ -2652,11 +2660,11 @@ sap.ui.define([
 				//the original language field shows only a text control. If empty we show a dash to avoid empty text.
 				origLangFieldConfig.value = "-";
 			}
-			var oLabel = this._createLabel(origLangFieldConfig, sItemId);
+			var oLabel = this._createLabel(origLangFieldConfig, sParameterKey);
 			this.addAggregation("_formContent",
 				oLabel
 			);
-			var oOrigLanguageField = this._createField(origLangFieldConfig, sItemId + "_ori");
+			var oOrigLanguageField = this._createField(origLangFieldConfig, sParameterKey + "_ori");
 			oOrigLanguageField.isOrigLangField = true;
 			this.addAggregation("_formContent", oOrigLanguageField);
 
@@ -2673,7 +2681,7 @@ sap.ui.define([
 			//change the label for the translation field
 			oConfig.label = oConfig._translatedLabel || "";
 			oConfig.required = false; //translation is never required
-			var oTranslateLanguageField = this._createField(oConfig, sItemId + "_trans");
+			var oTranslateLanguageField = this._createField(oConfig, sParameterKey + "_trans");
 			//accessibility set aria-label
 			var tfDelegate = {
 				onAfterRendering: function(oEvent) {
@@ -2686,7 +2694,7 @@ sap.ui.define([
 				oTranslateLanguageField
 			);
 		} else {
-			oNewLabel = this._createLabel(oConfig, sItemId);
+			oNewLabel = this._createLabel(oConfig, sParameterKey);
 			this.addAggregation("_formContent",
 				oNewLabel
 			);
@@ -2708,7 +2716,7 @@ sap.ui.define([
 					oConfig.value = sTranslateText;
 				}
 			}
-			var oField = this._createField(oConfig, sItemId);
+			var oField = this._createField(oConfig, sParameterKey);
 			//accessibility set aria-label
 			var fDelegate = {
 				onAfterRendering: function(oEvent) {
@@ -2723,7 +2731,7 @@ sap.ui.define([
 		}
 		//add hint in the new row.
 		if (oConfig.hint && (!oConfig.cols || oConfig.cols === 2)) {
-			this._addHint(oConfig.hint, this.getId() + "_" + sItemId);
+			this._addHint(oConfig.hint, this.getId() + "_" + sParameterKey);
 		}
 		//reset the cols to original
 		oConfig.cols = oConfig.__cols;
@@ -3174,13 +3182,24 @@ sap.ui.define([
 					var aKeys = Object.keys(oChanges);
 					for (var j = 0; j < aKeys.length; j++) {
 						var vValue = oChanges[aKeys[j]];
-						// if the value of design time is object type,it should for the object field/object list field
-						// add it into designtime of settings
 						if (typeof vValue === "object") {
-							oDesigntime[aKeys[j]] = merge(oDesigntime[aKeys[j]], vValue);
-							continue;
+							// if vValue is a object type
+							if (vValue.configuration && vValue.configuration.parameterFromDestination) {
+								//if it is a parameter transformed from destination, add it into form/items as new parameter for this layer
+								var oNewParameterConfig = vValue.configuration;
+								delete oNewParameterConfig.parameterFromDestination;
+								oNewParameterConfig.value = this._manifestModel.getProperty(oNewParameterConfig.manifestpath);
+								oNewParameterConfig._settingspath = "/form/items/" + vValue.parameter;
+								this._settingsModel.setProperty(oNewParameterConfig._settingspath, oNewParameterConfig);
+							} else {
+								// else it should for the object field/object list field
+								// add it into designtime of settings
+								oDesigntime[aKeys[j]] = merge(oDesigntime[aKeys[j]], vValue);
+								continue;
+							}
+						} else {
+							this._settingsModel.setProperty(aKeys[j], vValue);
 						}
-						this._settingsModel.setProperty(aKeys[j], vValue);
 					}
 				}
 				var oAppliedLayerManifestChangeTexts = this._appliedLayerManifestChanges[i]["texts"];
@@ -3199,11 +3218,13 @@ sap.ui.define([
 					var sPath = aKeys[j],
 						vValue = oChanges[sPath];
 						sNext = sPath.substring(0, sPath.lastIndexOf("/") + 1) + "_next";
-					// if the value of design time is object type,it should for the object field/object list field
-					// add it into designtime of settings
 					if (typeof vValue === "object") {
-						oDesigntime[sPath] = merge(oDesigntime[sPath], vValue);
-						continue;
+						// if the value of design time is object type and not a parameter transformed from destination, it should for the object field/object list field
+						// add it into designtime of settings, else add it into _next property
+						if (!vValue.configuration || !vValue.configuration.parameterFromDestination) {
+							oDesigntime[sPath] = merge(oDesigntime[sPath], vValue);
+							continue;
+						}
 					}
 					if (!this._settingsModel.getProperty(sNext)) {
 						//create a _next entry if it does not exist

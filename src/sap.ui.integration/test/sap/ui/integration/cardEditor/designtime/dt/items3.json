@@ -770,6 +770,7 @@
 	},
 	"northwind.destination": {
 		"type": "destination",
-		"label": "northwind destination label defined in dt"
+		"label": "northwind destination label defined in dt",
+		"allowSettings": true
 	}
 }

@@ -61,8 +61,12 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: true
 				},
-				parameterId: {
+				parameterKey: {
 					type: "string"
+				},
+				allowPopover: {
+					type: "boolean",
+					defaultValue: true
 				}
 			},
 			aggregations: {
@@ -85,6 +89,11 @@ sap.ui.define([
 				},
 				_messageStrip: {
 					type: "sap.m.MessageStrip",
+					multiple: false,
+					visibility: "hidden"
+				},
+				_editor: {
+					type: "sap.ui.core.Control",
 					multiple: false,
 					visibility: "hidden"
 				}
@@ -527,6 +536,10 @@ sap.ui.define([
 		}
 	};
 
+	BaseField.prototype.getParameterId = function () {
+		return this.getAssociation("_editor") + "_" + this.getParameterKey();
+	};
+
 	BaseField.prototype.initEditor = function (oConfig) {
 		var oControl;
 		this._settingsModel = this.getModel("currentSettings");
@@ -663,7 +676,8 @@ sap.ui.define([
 			oConfig._hasSettings = (
 				oConfig._next.visible === !bVisibleDefault ||
 				bEditable === !bEditableDefault ||
-				oConfig._next.allowDynamicValues === !bAllowDynamicValuesDefault
+				oConfig._next.allowDynamicValues === !bAllowDynamicValuesDefault ||
+				typeof oConfig._next.pageAdminNewDestinationParameter !== "undefined"
 			);
 		} else {
 			oConfig._hasSettings = false;

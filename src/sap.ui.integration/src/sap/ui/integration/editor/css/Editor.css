@@ -374,6 +374,7 @@
 
 .sapUiIntegrationFieldSettings .SettingsPAVTable {
 	margin-left: 1rem;
+	width: calc(100% - 2rem) !important;
 }
 
 .tableHdr .sapMListTblHeaderCell {

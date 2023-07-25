@@ -149,13 +149,6 @@ sap.ui.define([
 		});
 	};
 
-	ObjectListField.prototype.addNewObject = function (oEvent) {
-		var that = this;
-		var oControl = oEvent.getSource();
-		that._newObjectTemplate._dt._uuid = Utils.generateUuidV4();
-		that.openObjectDetailsPopover(that._newObjectTemplate, oControl, "add");
-	};
-
 	ObjectListField.prototype.onSelectionColumnClick = function(oEvent) {
 		var that = this;
 		var bIsSelected = oEvent.getParameter("selected");
