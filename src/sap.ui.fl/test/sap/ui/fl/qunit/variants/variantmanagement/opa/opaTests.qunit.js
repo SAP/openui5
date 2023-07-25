@@ -4,12 +4,12 @@ QUnit.config.autostart = false;
 sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"sap/ui/fl/FakeLrepConnectorSessionStorage",
+	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"test-resources/sap/ui/fl/testutils/opa/TestLibrary"
 ], function(
 	Opa5,
 	opaTest,
-	FakeLrepConnectorSessionStorage
+	FlexTestAPI
 ) {
 	"use strict";
 
@@ -25,12 +25,12 @@ sap.ui.require([
 			iStartMyApp: function() {
 				return this.iStartMyAppInAFrame(
 					sap.ui.require.toUrl(
-						"sap/ui/fl/qunit/variants/variantmanagement/index.html"
+						"test-resources/sap/ui/fl/qunit/variants/variantmanagement/index.html"
 					)
 				);
 			},
 			iClearTheSessionLRep: function() {
-				FakeLrepConnectorSessionStorage.forTesting.synchronous.clearAll();
+				FlexTestAPI.clearStorage("SessionStorage");
 				window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
 				window.sessionStorage.removeItem("sap.ui.rta.restart.USER");
 				localStorage.clear();
