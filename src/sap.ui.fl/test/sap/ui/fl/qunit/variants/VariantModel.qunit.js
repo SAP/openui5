@@ -1107,9 +1107,10 @@ sap.ui.define([
 				controlChanges: [],
 				variantChanges: {}
 			};
+			var oAddDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChanges").returnsArg(0);
+
 			sandbox.stub(this.oModel, "_duplicateVariant").returns(oVariantData);
 			sandbox.stub(JsControlTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
-			sandbox.stub(this.oModel.oChangePersistence, "addDirtyChanges").returnsArg(0);
 			sandbox.stub(this.oModel, "updateCurrentVariant").resolves();
 
 			var mPropertyBag = {
@@ -1130,6 +1131,11 @@ sap.ui.define([
 					aChanges[1].getId(),
 					oVariantData.instance.getId(),
 					"then the returned variant is the duplicate variant"
+				);
+				assert.equal(
+					oAddDirtyChangesStub.firstCall.args[0].length,
+					2,
+					"then both changes are added as dirty changes"
 				);
 			}.bind(this));
 		});

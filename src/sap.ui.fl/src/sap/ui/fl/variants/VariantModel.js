@@ -730,8 +730,8 @@ sap.ui.define([
 		}
 
 		// sets copied variant and associated changes as dirty
-		aChanges = aChanges.concat(
-			this.oChangePersistence.addDirtyChanges([oDuplicateVariantData.instance].concat(oDuplicateVariantData.controlChanges))
+		aChanges = this.oChangePersistence.addDirtyChanges(
+			aChanges.concat([oDuplicateVariantData.instance].concat(oDuplicateVariantData.controlChanges))
 		);
 
 		return this.updateCurrentVariant({
