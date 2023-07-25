@@ -48,6 +48,7 @@ sap.ui.define([
 	'sap/m/library',
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
+	"sap/m/List",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ], function(
@@ -95,6 +96,7 @@ sap.ui.define([
 	library,
 	deepEqual,
 	Log,
+	List,
 	jQuery
 ) {
 	"use strict";
@@ -3808,9 +3810,13 @@ sap.ui.define([
 
 		oRowTimeline.setAssociation("row",  oRow.getId());
 
-		oListItem = new PlanningCalendarRowListItem(oRow.getId() + LISTITEM_SUFFIX, {
-			cells: [oRowHeader, oRowTimeline]
-		});
+		oListItem = oRowHeader.isA("sap.m.CustomListItem")
+			? new PlanningCalendarRowListItem(oRow.getId() + LISTITEM_SUFFIX, {
+				cells: [new List({items: [oRowHeader]}), oRowTimeline]
+			})
+			: new PlanningCalendarRowListItem(oRow.getId() + LISTITEM_SUFFIX, {
+				cells: [oRowHeader, oRowTimeline]
+			});
 
 		this._updateRowTimeline(oRow);
 
