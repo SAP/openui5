@@ -1721,6 +1721,7 @@ sap.ui.define([
 				// The relative path following sEntityPath (parameter re-used - encoded)
 				//sPropertyPath,
 				aSegments, // The resource path split in segments (encoded)
+				bTransient = false, // Whether the property is within a transient entity
 				oType; // The type of the data at sInstancePath
 
 			// Determines the predicate from a segment (empty string if there is none)
@@ -1730,10 +1731,10 @@ sap.ui.define([
 				return i >= 0 ? sSegment.slice(i) : "";
 			}
 
-			// Pushes a request to append the key predicate for oType and the instance at
+			// Pushes a request to append the segment with the key predicate of the instance at
 			// sInstancePath. Does not calculate it yet, because it might be replaced again later.
 			function prepareKeyPredicate(sSegment) {
-				aEditUrl.push({path : sInstancePath, prefix : sSegment, type : oType});
+				aEditUrl.push({path : sInstancePath, prefix : sSegment});
 			}
 
 			// Strips off the predicate from a segment
@@ -1741,16 +1742,6 @@ sap.ui.define([
 				var i = sSegment.indexOf("(");
 
 				return i >= 0 ? sSegment.slice(0, i) : sSegment;
-			}
-
-			// The segment is added to the edit URL; transient predicate is converted to real
-			// predicate
-			function pushToEditUrl(sSegment) {
-				if (sSegment.includes("($uid=")) {
-					prepareKeyPredicate(stripPredicate(sSegment));
-				} else {
-					aEditUrl.push(sSegment);
-				}
 			}
 
 			aSegments = sResolvedPath.slice(1).split("/");
@@ -1765,8 +1756,8 @@ sap.ui.define([
 			oType = mScope[oEntitySet.$Type];
 			sPropertyPath = "";
 			sNavigationPath = "";
-			aEditUrl = [];
-			pushToEditUrl(sFirstSegment);
+			aEditUrl = [sFirstSegment];
+			bTransient = sFirstSegment.includes("($uid=");
 			aSegments.forEach(function (sSegment) {
 				var oProperty, sPropertyName;
 
@@ -1790,7 +1781,12 @@ sap.ui.define([
 						}
 					}
 					oType = mScope[oProperty.$Type];
-					if (oProperty.$kind === "NavigationProperty") {
+					if (sSegment.includes("($uid=")) {
+						// a transient entity in a nested collection
+						sEntityPath = sInstancePath;
+						sPropertyPath = "";
+						bTransient = true;
+					} else if (!bTransient && oProperty.$kind === "NavigationProperty") {
 						if (oEntitySet.$NavigationPropertyBinding
 								&& sNavigationPath in oEntitySet.$NavigationPropertyBinding) {
 							sEntitySetName = oEntitySet.$NavigationPropertyBinding[sNavigationPath];
@@ -1806,7 +1802,7 @@ sap.ui.define([
 								prepareKeyPredicate(aEditUrl.pop());
 							}
 						} else {
-							pushToEditUrl(sSegment);
+							aEditUrl.push(sSegment);
 						}
 						sEntityPath = sInstancePath;
 						sPropertyPath = "";
@@ -1816,7 +1812,7 @@ sap.ui.define([
 				}
 			});
 
-			if (bNoEditUrl) {
+			if (bTransient || bNoEditUrl) {
 				return SyncPromise.resolve({
 					editUrl : undefined,
 					entityPath : sEntityPath,
@@ -1836,10 +1832,6 @@ sap.ui.define([
 					if (!oEntity) {
 						error("No instance to calculate key predicate at " + vSegment.path);
 					}
-					if (oEntity["@$ui5.context.isTransient"]) {
-						bNoEditUrl = true;
-						return undefined;
-					}
 					sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate");
 					if (!sPredicate) {
 						error("No key predicate known at " + vSegment.path);
@@ -1850,7 +1842,7 @@ sap.ui.define([
 				});
 			})).then(function (aFinalEditUrl) {
 				return {
-					editUrl : bNoEditUrl ? undefined : aFinalEditUrl.join("/"),
+					editUrl : aFinalEditUrl.join("/"),
 					entityPath : sEntityPath,
 					propertyPath : sPropertyPath
 				};

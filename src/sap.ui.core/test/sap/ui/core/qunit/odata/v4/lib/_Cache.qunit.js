@@ -8273,9 +8273,11 @@ sap.ui.define([
 [false, true].forEach(function (bDropTransientElement) {
 	[false, true].forEach(function (bMissingPredicate) {
 		[undefined, "~mQueryOptions~"].forEach(function (mLateQueryOptions) {
+			[false, true].forEach(function (bDeepCreate) {
 			var sTitle = "_Cache#create: bMissingPredicate: " + bMissingPredicate
 					+ ", bDropTransientElement: " + bDropTransientElement
-				+ ", mLateQueryOptions: " + mLateQueryOptions;
+				+ ", mLateQueryOptions: " + mLateQueryOptions
+				+ ", bDeepCreate: " + bDeepCreate;
 
 		if (bMissingPredicate && bDropTransientElement) {
 			return;
@@ -8284,6 +8286,7 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var oCache = new _Cache(this.oRequestor, "TEAMS", {/*mQueryOptions*/}),
 				oCacheMock = this.mock(oCache),
+				oCancelNestedExpectation,
 				aCollection = [],
 				oCountChangeListener = {onChange : function () {}},
 				oCreatePromise,
@@ -8304,7 +8307,8 @@ sap.ui.define([
 				sPredicate = "('7')",
 				sTransientPredicate = "($uid=id-1-23)",
 				oTransientPromiseWrapper,
-				mTypeForMetaPath = {};
+				mTypeForMetaPath = {},
+				oUpdateNestedExpectation;
 
 			oCache.fetchValue = function () {};
 			oCache.mLateQueryOptions = mLateQueryOptions;
@@ -8355,15 +8359,28 @@ sap.ui.define([
 					.callThrough();
 			}
 
-			oHelperMock.expects("getQueryOptionsForPath")
+			oHelperMock.expects("getQueryOptionsForPath").exactly(bDeepCreate ? 0 : 1)
 				.withExactArgs(sinon.match.same(mLateQueryOptions || oCache.mQueryOptions),
 					sPathInCache)
 				.returns({$select : aSelectForPath});
+			oCancelNestedExpectation = oHelperMock.expects("cancelNestedCreates")
+				.withExactArgs(sinon.match.same(oInitialData), "Deep create of " + sPostPath
+					+ " succeeded. Do not use this promise.");
+			oHelperMock.expects("getPrivateAnnotation")
+				.withExactArgs(sinon.match.same(oInitialData), "select")
+				.returns("~$select~");
+			oUpdateNestedExpectation = oHelperMock.expects("updateNestedCreates")
+				.withExactArgs(sinon.match.same(oCache.mChangeListeners),
+					sinon.match.same(oCache.mQueryOptions),
+					sPathInCache + (bMissingPredicate ? sTransientPredicate : sPredicate),
+					sinon.match.same(oInitialData), sinon.match.same(oPostResult),
+					"~$select~")
+				.returns(bDeepCreate);
 			oHelperMock.expects("updateSelected")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners),
 					sPathInCache + (bMissingPredicate ? sTransientPredicate : sPredicate),
 					sinon.match.same(oInitialData), sinon.match.same(oPostResult),
-					["ID", "Name"], undefined, true)
+					bDeepCreate ? undefined : aSelectForPath, undefined, true)
 				.callsFake(function () {
 					assert.strictEqual(arguments[3]["@$ui5.context.isTransient"], false);
 					arguments[2]["@$ui5.context.isTransient"] = false;
@@ -8372,21 +8389,8 @@ sap.ui.define([
 					}
 					oInitialData.ID = oPostResult.ID;
 				});
-			oHelperMock.expects("cancelNestedCreates")
-				.withExactArgs(sinon.match.same(oInitialData), "Deep create of " + sPostPath
-					+ " succeeded. Do not use this promise.");
-			oHelperMock.expects("getPrivateAnnotation")
-				.withExactArgs(sinon.match.same(oInitialData), "select")
-				.returns("~$select~");
-			oHelperMock.expects("updateNestedCreates")
-				.withExactArgs(sinon.match.same(oCache.mChangeListeners),
-					sinon.match.same(oCache.mQueryOptions),
-					sPathInCache + (bMissingPredicate ? sTransientPredicate : sPredicate),
-					sinon.match.same(oInitialData), sinon.match.same(oPostResult),
-					"~$select~")
-				.returns("~bDeepCreate~");
 			oHelperMock.expects("setPrivateAnnotation")
-				.withExactArgs(sinon.match.same(oInitialData), "deepCreate", "~bDeepCreate~")
+				.withExactArgs(sinon.match.same(oInitialData), "deepCreate", bDeepCreate)
 				.callThrough();
 			// count is already updated when creating the transient entity
 			oCache.registerChangeListener(sPathInCache + "/$count", oCountChangeListener);
@@ -8432,7 +8436,7 @@ sap.ui.define([
 					oExpectedPrivateAnnotation.predicate = sPredicate;
 				}
 				oExpectedPrivateAnnotation.transientPredicate = sTransientPredicate;
-				oExpectedPrivateAnnotation.deepCreate = "~bDeepCreate~";
+				oExpectedPrivateAnnotation.deepCreate = bDeepCreate;
 				assert.deepEqual(oEntityData, {
 					"@$ui5._" : oExpectedPrivateAnnotation,
 					"@$ui5.context.isTransient" : false,
@@ -8456,8 +8460,10 @@ sap.ui.define([
 				sinon.assert.calledOnceWithExactly(_Helper.removeByPath,
 					sinon.match.same(oCache.mPostRequests), sPathInCache,
 					sinon.match.same(oInitialData));
+				assert.ok(oCancelNestedExpectation.calledBefore(oUpdateNestedExpectation));
 			});
 		});
+			});
 		});
 	});
 });

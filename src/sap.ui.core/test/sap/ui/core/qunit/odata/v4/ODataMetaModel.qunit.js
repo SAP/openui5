@@ -3264,15 +3264,6 @@ sap.ui.define([
 			entityType : "tea_busi.TEAM",
 			predicate : "(~1)"
 		}]
-	}, { // simple entity in transient context
-		dataPath : "/TEAMS($uid=id-1-23)",
-		canonicalUrl : "/TEAMS(~1)",
-		requests : [{
-			entityType : "tea_busi.TEAM",
-			// TODO a transient entity does not necessarily have all key properties, but this is
-			//      required to create a dependent cache
-			predicate : "(~1)"
-		}]
 	}, { // simple entity by key predicate
 		dataPath : "/TEAMS('4%3D2')",
 		canonicalUrl : "/TEAMS('4%3D2')",
@@ -3498,40 +3489,15 @@ sap.ui.define([
 	}, { // entity set w/o navigation property bindings
 		path : "/ServiceGroups('42')/DefaultSystem|SystemAlias",
 		editUrl : "ServiceGroups('42')/DefaultSystem"
-	}, { // transient predicate
-		path : "/TEAMS($uid=id-1-23)|",
-		fetchPredicates : {
-			"/TEAMS($uid=id-1-23)" : "tea_busi.TEAM"
-		},
-		editUrl : "TEAMS(~0)"
-	}, { // navigation to contained entity within a collection via transient predicate
-		path : "/TEAMS($uid=id-1-23)/TEAM_2_CONTAINED_C($uid=id-1-24)|",
-		fetchPredicates : {
-			"/TEAMS($uid=id-1-23)" : "tea_busi.TEAM",
-			"/TEAMS($uid=id-1-23)/TEAM_2_CONTAINED_C($uid=id-1-24)"
-				: "tea_busi.ContainedC"
-		},
-		editUrl : "TEAMS(~0)/TEAM_2_CONTAINED_C(~1)"
-	}, { // navigation from contained to root entity, resolved via navigation property binding path
-		// via transient predicate
-		path : "/TEAMS($uid=id-1-23)/TEAM_2_CONTAINED_S/S_2_EMPLOYEE|ID",
-		fetchPredicates : {
-			"/TEAMS($uid=id-1-23)/TEAM_2_CONTAINED_S/S_2_EMPLOYEE" : "tea_busi.Worker"
-		},
-		editUrl : "EMPLOYEES(~0)"
-	}, { // decode entity set initially, with transient predicate
-		path : "/T%E2%82%ACAMS($uid=id-1-23)|Name",
-		fetchPredicates : {
-			"/T%E2%82%ACAMS($uid=id-1-23)" : "tea_busi.TEAM"
-		},
-		editUrl : "T%E2%82%ACAMS(~0)"
-	}, { // multiple navigation to root entity via transient predicates
-		path : "/T%E2%82%ACAMS($uid=id-1-23)/TEAM_2_EMPLOYEES($uid=id-2)/EMPLOYEE_2_TEAM|Name",
-		fetchPredicates : {
-			"/T%E2%82%ACAMS($uid=id-1-23)/TEAM_2_EMPLOYEES($uid=id-2)/EMPLOYEE_2_TEAM"
-				: "tea_busi.TEAM"
-		},
-		editUrl : "T%E2%82%ACAMS(~0)"
+	}, { // transient predicate at entity set
+		path : "/TEAMS($uid=id-1-23)|TEAM_2_MANAGER/ID",
+		editUrl : undefined
+	}, { // transient predicate at navigation property
+		path : "/TEAMS('1')/TEAM_2_EMPLOYEES($uid=id-1-23)|EMPLOYEE_2_CONTAINED_S/Id",
+		editUrl : undefined
+	}, { // transient predicate at transient navigation property
+		path : "/TEAMS($uid=id-1-42)/TEAM_2_EMPLOYEES($uid=id-1-23)|EMPLOYEE_2_CONTAINED_S/Id",
+		editUrl : undefined
 	}, { // instance annotation
 		path : "/TEAMS/0|Name@my.annotation",
 		fetchPredicates : {
@@ -3596,27 +3562,6 @@ sap.ui.define([
 	//TODO target URLs like
 	// "com.sap.gateway.default.iwbep.tea_busi_product.v0001.Container/Products(...)"?
 	//TODO type casts, operations?
-
-	//*********************************************************************************************
-	QUnit.test("fetchUpdateData: transient entity", function (assert) {
-		var oContext = Context.create(this.oModel, undefined, "/TEAMS($uid=id-1-23)");
-
-		this.oMetaModelMock.expects("fetchEntityContainer").twice()
-			.returns(SyncPromise.resolve(mScope));
-		// Note: we try to "calculate key predicate" because context path alone is no indication
-		// that entity is still transient!
-		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS($uid=id-1-23)")
-			.returns(SyncPromise.resolve({"@$ui5.context.isTransient" : true}));
-
-		// code under test
-		return this.oMetaModel.fetchUpdateData("Name", oContext).then(function (oResult) {
-			assert.deepEqual(oResult, {
-				editUrl : undefined,
-				entityPath : "/TEAMS($uid=id-1-23)",
-				propertyPath : "Name"
-			});
-		});
-	});
 
 	//*********************************************************************************************
 	QUnit.test("fetchUpdateData: bNoEditUrl", function (assert) {
