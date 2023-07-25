@@ -513,6 +513,183 @@ sap.ui.define([
 	 * @public
 	 */
 
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.StringExpression
+	 *
+	 * An object representing a string value.
+	 *
+	 * @property {string} String
+	 *   The string value
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.BoolExpression
+	 *
+	 * An object representing a Boolean value.
+	 *
+	 * @property {"true"|"false"} Bool
+	 *   The Boolean value
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.PropertyPathExpression
+	 *
+	 * An object representing a <code>PropertyPathExpression</code> with its corresponding value.
+	 *
+	 * @property {string} PropertyPath
+	 *   The value of the <code>PropertyPathExpression</code>
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.SimpleIdentifier
+	 *
+	 * An object representing an
+	 * {@link https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#SimpleIdentifier
+	 * OData SimpleIdentifier}
+	 * @property {string} String
+	 *   The simple identifier string
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.ValueListProperty
+	 *
+	 * An object representing a <code>ValueListProperty</code> of a
+	 * {@link https://sap.github.io/odata-vocabularies/vocabularies/Common.html#ValueListParameter ValueListParameter}.
+	 *
+	 * @property {string} String
+	 *   The value of the <code>ValueListProperty</code>
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.ValueListParameterIn
+	 *
+	 * An object representing the value list parameter type
+	 * {@link https://sap.github.io/odata-vocabularies/vocabularies/Common.html#ValueListParameterIn
+	 * ValueListParameterIn}.
+	 *
+	 * @property {sap.ui.model.odata.ODataMetaModel.PropertyPathExpression} LocalDataProperty
+	 *   An object containing the property path that is used to filter the value list with an <code>eq</code> comparison
+	 * @property {sap.ui.model.odata.ODataMetaModel.ValueListProperty} ValueListProperty
+	 *   An object containing the path to the property in the value list
+	 * @property {"com.sap.vocabularies.Common.v1.ValueListParameterIn"} RecordType
+	 *   Fully qualified name of the value list parameter type <code>ValueListParameterIn</code>
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.ValueListParameterConstant
+	 *
+	 * An object representing the value list parameter type
+	 * {@link https://sap.github.io/odata-vocabularies/vocabularies/Common.html#ValueListParameterConstant
+	 * ValueListParameterConstant}.
+	 *
+	 * @property {sap.ui.model.odata.ODataMetaModel.ValueListProperty} ValueListProperty
+	 *   An object containing the path to the property in the value list
+	 * @property {string} Constant
+	 *   A string representing a constant value that is used to filter the value list with an <code>eq</code>
+	 *   comparison, using the same representation as property default values
+	 * @property {"com.sap.vocabularies.Common.v1.ValueListParameterConstant"} RecordType
+	 *   Fully qualified name of the value list parameter type <code>ValueListParameterConstant</code>
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.ValueListParameterInOut
+	 *
+	 * An object representing the value list parameter type
+	 * {@link https://sap.github.io/odata-vocabularies/vocabularies/Common.html#ValueListParameterInOut
+	 * ValueListParameterInOut}.
+	 *
+	 * @property {sap.ui.model.odata.ODataMetaModel.PropertyPathExpression} LocalDataProperty
+	 *   An object containing the property path that is used to filter the value list with an <code>startswith</code>
+	 *   comparison and filled from the picked value list item
+	 * @property {sap.ui.model.odata.ODataMetaModel.ValueListProperty} ValueListProperty
+	 *   An object containing the path to the property in the value list
+	 * @property {"com.sap.vocabularies.Common.v1.ValueListParameterInOut"} RecordType
+	 *   Fully qualified name of the value list parameter type <code>ValueListParameterInOut</code>
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.ValueListParameterOut
+	 *
+	 * An object representing the value list parameter type
+	 * {@link https://sap.github.io/odata-vocabularies/vocabularies/Common.html#ValueListParameterOut
+	 * ValueListParameterOut}.
+	 *
+	 * @property {sap.ui.model.odata.ODataMetaModel.PropertyPathExpression} LocalDataProperty
+	 *   An object containing the path to the property that is filled from the response
+	 * @property {sap.ui.model.odata.ODataMetaModel.ValueListProperty} ValueListProperty
+	 *   An object containing the path to the property in the value list
+	 * @property {"com.sap.vocabularies.Common.v1.ValueListParameterOut"} RecordType
+	 *   Fully qualified name of the value list parameter type <code>ValueListParameterOut</code>
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.ValueListParameterDisplayOnly
+	 *
+	 * An object representing the value list parameter type
+	 * {@link https://sap.github.io/odata-vocabularies/vocabularies/Common.html#ValueListParameterDisplayOnly
+	 * ValueListParameterDisplayOnly}.
+	 *
+	 * @property {sap.ui.model.odata.ODataMetaModel.ValueListProperty} ValueListProperty
+	 *   An object containing the path to the property in the value list
+	 * @property {"com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly"} RecordType
+	 *   Fully qualified name of the value list parameter type <code>ValueListParameterDisplayOnly</code>
+	 */
+
+	/**
+	 * The alias type for the OData
+	 * {@link https://sap.github.io/odata-vocabularies/vocabularies/Common.html#ValueListParameter ValueListParameter};
+	 * this alias comprises all supported value list parameter types.
+	 *
+	 * @typedef {
+	 *   sap.ui.model.odata.ODataMetaModel.ValueListParameterIn |
+	 *   sap.ui.model.odata.ODataMetaModel.ValueListParameterConstant |
+	 *   sap.ui.model.odata.ODataMetaModel.ValueListParameterInOut |
+	 *   sap.ui.model.odata.ODataMetaModel.ValueListParameterOut |
+	 *   sap.ui.model.odata.ODataMetaModel.ValueListParameterDisplayOnly
+	 * } sap.ui.model.odata.ODataMetaModel.ValueListParameter
+	 *
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.ValueListType
+	 *
+	 * An object describing the {@link https://sap.github.io/odata-vocabularies/vocabularies/Common.html#ValueListType
+	 * ValueListType}.
+	 *
+	 * @property {sap.ui.model.odata.ODataMetaModel.StringExpression} [Label]
+	 *   A <code>StringExpression</code> object representing the <code>Label</code> property
+	 * @property {sap.ui.model.odata.ODataMetaModel.StringExpression} CollectionPath
+	 *   A <code>StringExpression</code> object representing the <code>CollectionPath</code> property
+	 * @property {sap.ui.model.odata.ODataMetaModel.StringExpression} [CollectionRoot]
+	 *   A <code>StringExpression</code> object representing the <code>CollectionRoot</code> property
+	 * @property {sap.ui.model.odata.ODataMetaModel.BoolExpression} DistinctValuesSupported
+	 *   A <code>BoolExpression</code> object representing the <code>DistinctValuesSupported</code> property
+	 * @property {sap.ui.model.odata.ODataMetaModel.BoolExpression} SearchSupported
+	 *   A <code>BoolExpression</code> object representing the <code>SearchSupported</code> property
+	 * @property {sap.ui.model.odata.ODataMetaModel.SimpleIdentifier} [PresentationVariantQualifier]
+	 *   The <code>PresentationVariantQualifier</code> property defines the identifier for an alternative representation
+	 *   of the value help, e.g. as a bar chart
+	 * @property {sap.ui.model.odata.ODataMetaModel.SimpleIdentifier} [SelectionVariantQualifier]
+	 *   The <code>SelectionVariantQualifier</code> property contains a combination of parameters and filters to query
+	 *   the value help entity set
+	 * @property {sap.ui.model.odata.ODataMetaModel.ValueListParameter[]} Parameters
+	 *   An array of parameters used to construct the value list request and consume the response properties
+	 *
+	 * @public
+	 */
+
 	var // maps the metadata URL with query parameters concatenated with the code list collection
 		// path (e.g. /foo/bar/$metadata#SAP__Currencies) to a SyncPromise resolving with the code
 		// list customizing as needed by the OData type
@@ -1529,11 +1706,11 @@ sap.ui.define([
 	 * <code>com.sap.vocabularies.Common.v1.ValueList</code> annotations.
 	 *
 	 * @param {sap.ui.model.Context} oPropertyContext
-	 *   a model context for a structural property of an entity type or a complex type, as
+	 *   A model context for a structural property of an entity type or a complex type, as
 	 *   returned by {@link #getMetaContext getMetaContext}
-	 * @returns {Promise}
-	 *   a Promise that gets resolved as soon as the value lists as well as the required model
-	 *   elements have been loaded
+	 * @returns {Promise<Object<string,sap.ui.model.odata.ODataMetaModel.ValueListType>>}
+	 *   A Promise that gets resolved into the value lists for the given context, as soon as the value lists as well as
+	 *   the required model elements have been loaded
 	 * @since 1.29.1
 	 * @public
 	 */
