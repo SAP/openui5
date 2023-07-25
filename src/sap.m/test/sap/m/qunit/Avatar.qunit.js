@@ -100,7 +100,7 @@ sap.ui.define([
 		assert.strictEqual($oAvatar.attr("role"), "button", "Aria role should be 'button'");
 	});
 
-	QUnit.test("Focus does not have outline-offset", function (assert) {
+	QUnit.test("Focus have 1px outline-offset", function (assert) {
 		// Arrange
 		var $oAvatar = this.oAvatar.$(),
 			sOffset;
@@ -110,7 +110,7 @@ sap.ui.define([
 		sOffset = $oAvatar.css("outline-offset");
 
 		// Assert
-		assert.strictEqual(sOffset, "0px", "Outline-offset is not set");
+		assert.strictEqual(sOffset, "1px", "Outline-offset is set");
 	});
 
 	QUnit.module("Rendering different sizes", {
