@@ -250,7 +250,6 @@ sap.ui.define([
 	 *			showHeader: true,
  				getFooter: function () { Promise.resolve(oFooter); },
 	 *			getContentWidth: function () { return "500px"; },
-	 			getContentHeight: function () { ... },
 	 *		}
 	 *	}
 	 * @returns {object|undefined} if available, a container configuration object is returned.
