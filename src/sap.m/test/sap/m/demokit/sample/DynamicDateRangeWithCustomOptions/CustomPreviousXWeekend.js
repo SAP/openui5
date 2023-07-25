@@ -79,6 +79,9 @@ sap.ui.define([
 			oSundayDate.setUTCDate(oSundayDate.getUTCDate() + (oLocaleData.getWeekendStart() + 1 - oSundayDate.getUTCDay()));
 
 			return [oSaturdayDate, oSundayDate];
+		},
+		getGroup() {
+			return "Custom";
 		}
 	});
 

@@ -834,6 +834,81 @@ sap.ui.define([
 		};
 
 		/**
+		 * Returns enumeration containing the current groups in <code>sap.m.DynamicDateRange</code>
+		 *
+		 * @private
+		 */
+		DynamicDateRange.prototype._getGroups = function() {
+			if (!this.oDynamicDateRangeGroups) {
+				this.oDynamicDateRangeGroups = JSON.parse(JSON.stringify(library.DynamicDateRangeGroups)); // making a copy of the object to break the reference
+			}
+
+			return this.oDynamicDateRangeGroups;
+		};
+
+		/**
+		 * Returns the header of a custom group.
+		 *
+		 * @private
+		 */
+		DynamicDateRange.prototype._getCustomGroupHeader = function(sGroupName) {
+			var oGroup = this._customGroupHeaders.find( (x) => {
+				return x.name === sGroupName;
+			});
+
+			return oGroup.header;
+		};
+
+		/**
+		 * Adds a group to the enumeration containing the current groups in <code>sap.m.DynamicDateRange</code>
+		 * @param {string} sGroupName the name that the group will be selected by.
+		 * @param {string} sGroupHeader the group header that will be presented in the list.
+		 * @returns {void}
+		 * @public
+		 * @since 1.118
+		 */
+		DynamicDateRange.prototype.addGroup = function(sGroupName, sGroupHeader) {
+			this._getGroups()[sGroupName] = Object.keys(this._getGroups()).length + 1;
+
+			if (!this._customGroupHeaders) {
+				this._customGroupHeaders = [];
+			}
+
+			this._customGroupHeaders.push({
+				name: sGroupName,
+				header: sGroupHeader
+			});
+		};
+
+		/**
+		 * Sets a new header to an existing custom group.
+		 * @param {string} sGroupName the name that the group will be selected by.
+		 * @param {string} sGroupHeader the group header that will be presented in the list.
+		 * @returns {void}
+		 * @public
+		 */
+		 DynamicDateRange.prototype.setGroupHeader = function(sGroupName, sGroupHeader) {
+			this._customGroupHeaders.find((group) => group.name === sGroupName).header = sGroupHeader;
+		};
+
+		/**
+		 * Removes all additionally added groups
+		 * @returns {void}
+		 * @public
+		 */
+		DynamicDateRange.prototype.removeCustomGroups = function() {
+			const iCountOfStandardGroups = Object.keys(library.DynamicDateRangeGroups).length;
+
+			for (const group in this._getGroups()) {
+				if (this._getGroups()[group] > iCountOfStandardGroups) {
+				  delete this._getGroups()[group];
+				}
+			}
+
+			delete this._customGroupHeaders;
+		};
+
+		/**
 		 * Returns an array of <code>sap.m.DynamicDateOptions</code> (standard and custom) instances used in the control.
 		 *
 		 * @private
@@ -1178,17 +1253,18 @@ sap.ui.define([
 
 			// get the control options' metadata
 			var aOptions = aArray;
-
 			// sort by group
 			aOptions.sort(function(a, b) {
-				var iGroupDiff = a.getGroup() - b.getGroup();
+				var iGroupA = Number(a.getGroup()) ? a.getGroup() : this._getGroups()[a.getGroup()];
+				var iGroupB = Number(b.getGroup()) ? b.getGroup() : this._getGroups()[b.getGroup()];
+				var iGroupDiff = iGroupA - iGroupB;
 
 				if (iGroupDiff) {
 					return iGroupDiff;
 				}
 
 				return aStandardOptionsKeys.indexOf(a.getKey()) - aStandardOptionsKeys.indexOf(b.getKey());
-			});
+			}.bind(this));
 
 			if (bReduce) {
 				// for last x/next x options leave only the first of each, remove the rest
@@ -1216,9 +1292,12 @@ sap.ui.define([
 			}
 
 			if (this.getEnableGroupHeaders()) {
+
 				// insert a group header string before the options from each group
 				aOptions = aOptions.reduce(function(aResult, oCurrent) {
-					var sGroupHeader = oCurrent.getGroupHeader();
+					var iGroup = Number(oCurrent.getGroup()) ? oCurrent.getGroup() : this._getGroups()[oCurrent.getGroup()];
+					var sGroupName = Object.keys(this._getGroups()).find((key) => this._getGroups()[key] === iGroup);
+					var sGroupHeader = this._customGroupHeaders ? this.getGroupHeader(sGroupName) : oCurrent.getGroupHeader();
 					if (aGroupHeaders.indexOf(sGroupHeader) === -1) {
 						aGroupHeaders.push(sGroupHeader);
 						aResult.push(sGroupHeader);
@@ -1227,10 +1306,27 @@ sap.ui.define([
 					aResult.push(oCurrent);
 
 					return aResult;
-				}, []);
+				}.bind(this), []);
 			}
 
 			return aOptions;
+		};
+
+		/**
+		 * Provides the option's group header text.
+		 *
+		 * @returns {string} A group header
+		 * @public
+		 * @since 1.118
+		 */
+		 DynamicDateRange.prototype.getGroupHeader = function(sGroupName) {
+			var iGroupId = this._getGroups()[sGroupName];
+
+			if (iGroupId >= this._getGroups()["SingleDates"] && iGroupId <= this._getGroups()["Years"]) {
+				return oResourceBundle.getText("DDR_OPTIONS_GROUP_" + iGroupId);
+			}
+
+			return this._getCustomGroupHeader(sGroupName) ;
 		};
 
 		DynamicDateRange.prototype._createListItem = function(oOption) {
