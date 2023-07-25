@@ -614,8 +614,8 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		assert.ok(document.getElementById(sId + "-state"), "Hidden state text element has been created");
-		assert.strictEqual(document.getElementById(sId + "-state").innerHTML, oObjectStatus._getStateText(ValueState.Error),
+		assert.ok(document.getElementById(sId + "-state-text"), "Hidden state text element has been created");
+		assert.strictEqual(document.getElementById(sId + "-state-text").innerHTML, oObjectStatus._getStateText(ValueState.Error),
 			"The value of the hidden state text element is proper");
 
 		//Cleanup
