@@ -53,6 +53,11 @@
 				}
 			}
 		},
+		"componentUsages": {
+			"cookieSettingsDialog": {
+				"name": "sap.ui.documentation.sdk.cookieSettingsDialog"
+			}
+		},
 		"resources": {
 			"css": [
 				{
