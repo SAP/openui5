@@ -955,7 +955,6 @@ sap.ui.define([
 						sState = ValueState.None;
 					} catch (e) {
 						sState = ValueState.Error;
-						continue;
 					}
 					if (oFilter) {
 						aFilters.push(oFilter);
