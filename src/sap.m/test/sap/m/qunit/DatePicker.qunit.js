@@ -2153,7 +2153,7 @@ sap.ui.define([
 		oInput.setValue("");
 		oInput.setEnabled(false);
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "", "Description");
+		assert.strictEqual(oInfo.description, "Placeholder", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");

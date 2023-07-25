@@ -1706,7 +1706,7 @@ sap.ui.define([
 		oInfo = this.oTP.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"), "Type");
-		assert.strictEqual(oInfo.description, "Value Placeholder", "Description");
+		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
@@ -1727,7 +1727,7 @@ sap.ui.define([
 		this.oTP.setDisplayFormat("HH-mm-ss");
 		this.oTP.setValue("10.32.30");
 		oInfo = this.oTP.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "10-32-30 Placeholder", "Description");
+		assert.strictEqual(oInfo.description, "10-32-30", "Description");
 	});
 
 	/*

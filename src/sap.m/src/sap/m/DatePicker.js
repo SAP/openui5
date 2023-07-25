@@ -1452,7 +1452,7 @@ sap.ui.define([
 			}
 		}
 		oInfo.type = oResourceBundle.getText("ACC_CTR_TYPE_DATEINPUT");
-		oInfo.description = [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
+		oInfo.description = [sValue || this._getPlaceholder(), oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
 		return oInfo;
 	};
 
