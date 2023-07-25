@@ -1397,8 +1397,6 @@ sap.ui.define([
 		assert.strictEqual(drillDown("('a')"), oData[0], "('a')");
 		assert.strictEqual(drillDown("0/foo"), oData[0].foo, "0/foo");
 		assert.strictEqual(drillDown("0/foo/bar"), oData[0].foo.bar, "0/foo/bar");
-		assert.strictEqual(drillDown("0/foo/null/invalid"), undefined,
-			"0/foo/null/invalid");
 		assert.strictEqual(drillDown("0/foo/list/$count"), oData[0].foo.list.$count,
 			"0/foo/list/$count");
 		assert.strictEqual(drillDown("('a')/foo/list('1')"), oData[0].foo.list[3],
@@ -1837,48 +1835,53 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#drillDown: transient entity, missing simple properties", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Products"),
-			oData = [{
-				"@$ui5.context.isTransient" : true
-			}],
-			oHelperMock = this.mock(_Helper);
-
+[false, true].forEach(function (bSingle) {
+	const oData = bSingle
+		? {SOITEM_2_PRODUCT : null}
+		: [{"@$ui5.context.isTransient" : true}];
+	if (!bSingle) {
 		oData.$byPredicate = {"($uid=id-1-23)" : oData[0]};
+	}
+	const sData = JSON.stringify(oData);
+	const sWhat = bSingle ? "null entity" : "transient entity";
+	const iCount = bSingle ? 1 : 2;
 
-		oHelperMock.expects("getMetaPath").twice()
-			.withExactArgs("($uid=id-1-23)/Name").returns("Name");
-		this.oModelInterfaceMock.expects("fetchMetadata").twice()
-			.withExactArgs("/Products/Name")
+	//*********************************************************************************************
+	QUnit.test(`_Cache#drillDown: ${sWhat}, missing single properties`, function (assert) {
+		const oCache = new _Cache(this.oRequestor, bSingle ? "SalesOrderItem('1')" : "Products");
+		const sPrefix = bSingle ? "SOITEM_2_PRODUCT" : "($uid=id-1-23)";
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("getMetaPath").exactly(iCount)
+			.withExactArgs(sPrefix + "/Name").returns("meta/path/Name");
+		this.oModelInterfaceMock.expects("fetchMetadata").exactly(iCount)
+			.withExactArgs(oCache.sMetaPath + "/meta/path/Name")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$Type : "Edm.String"
 			})));
-		oHelperMock.expects("getMetaPath").twice()
-			.withExactArgs("($uid=id-1-23)/Currency")
-			.returns("Currency");
-		this.oModelInterfaceMock.expects("fetchMetadata").twice()
-			.withExactArgs("/Products/Currency")
+		oHelperMock.expects("getMetaPath").exactly(iCount)
+			.withExactArgs(sPrefix + "/Currency").returns("meta/path/Currency");
+		this.oModelInterfaceMock.expects("fetchMetadata").exactly(iCount)
+			.withExactArgs(oCache.sMetaPath + "/meta/path/Currency")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$DefaultValue : "EUR",
 				$Type : "Edm.String"
 			})));
-		oHelperMock.expects("getMetaPath").twice()
-			.withExactArgs("($uid=id-1-23)/Price")
-			.returns("Price");
-		this.oModelInterfaceMock.expects("fetchMetadata").twice()
-			.withExactArgs("/Products/Price")
+		oHelperMock.expects("getMetaPath").exactly(iCount)
+			.withExactArgs(sPrefix + "/Price").returns("meta/path/Price");
+		this.oModelInterfaceMock.expects("fetchMetadata").exactly(iCount)
+			.withExactArgs(oCache.sMetaPath + "/meta/path/Price")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$DefaultValue : "0.0",
 				$Type : "Edm.Double"
 			})));
-		oHelperMock.expects("parseLiteral").twice()
-			.withExactArgs("0.0", "Edm.Double", "($uid=id-1-23)/Price")
+		oHelperMock.expects("parseLiteral").exactly(iCount)
+			.withExactArgs("0.0", "Edm.Double", sPrefix + "/Price")
 			.returns(0);
-		oHelperMock.expects("getMetaPath").twice()
-			.withExactArgs("($uid=id-1-23)/ProductID")
-			.returns("ProductID");
-		this.oModelInterfaceMock.expects("fetchMetadata").twice()
-			.withExactArgs("/Products/ProductID")
+		oHelperMock.expects("getMetaPath").exactly(iCount)
+			.withExactArgs(sPrefix + "/ProductID")
+			.returns("meta/path/ProductID");
+		this.oModelInterfaceMock.expects("fetchMetadata").exactly(iCount)
+			.withExactArgs(oCache.sMetaPath + "/meta/path/ProductID")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$DefaultValue : "",
 				$Type : "Edm.String"
@@ -1886,55 +1889,62 @@ sap.ui.define([
 
 		// code under test
 		return Promise.all([
-			oCache.drillDown(oData, "($uid=id-1-23)/Name").then(function (sValue) {
+			oCache.drillDown(oData, sPrefix + "/Name").then(function (sValue) {
 				assert.strictEqual(sValue, null);
 			}),
-			oCache.drillDown(oData, "($uid=id-1-23)/Currency").then(function (sValue) {
+			oCache.drillDown(oData, sPrefix + "/Currency").then(function (sValue) {
 				assert.strictEqual(sValue, "EUR");
 			}),
-			oCache.drillDown(oData, "($uid=id-1-23)/Price").then(function (sValue) {
+			oCache.drillDown(oData, sPrefix + "/Price").then(function (sValue) {
 				assert.strictEqual(sValue, 0);
 			}),
-			oCache.drillDown(oData, "($uid=id-1-23)/ProductID").then(function (sValue) {
+			oCache.drillDown(oData, sPrefix + "/ProductID").then(function (sValue) {
 				assert.strictEqual(sValue, "");
 			})
 		]).then(function () {
-			assert.deepEqual(oData[0], {"@$ui5.context.isTransient" : true}, "cache unchanged");
+			assert.strictEqual(JSON.stringify(oData), sData, "cache unchanged");
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#drillDown: transient entity, missing complex properties", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "BusinessPartners"),
-			oData = [{
-				"@$ui5.context.isTransient" : true
-			}];
-
-		oData.$byPredicate = {"($uid=id-1-23)" : oData[0]};
-
-		this.oModelInterfaceMock.expects("fetchMetadata").exactly(3 * 2/*steps*/)
-			.withExactArgs("/BusinessPartners/Address")
+	QUnit.test(`_Cache#drillDown: ${sWhat}, missing complex properties`, function (assert) {
+		const oCache = new _Cache(this.oRequestor,
+			bSingle ? "SalesOrders('1')" : "BusinessPartners");
+		const sPrefix = bSingle ? "SOITEM_2_PRODUCT" : "($uid=id-1-23)";
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("getMetaPath").exactly(3 * iCount/*steps*/)
+			.withExactArgs(sPrefix + "/Address").returns("meta/path/Address");
+		this.oModelInterfaceMock.expects("fetchMetadata").exactly(3 * iCount/*steps*/)
+			.withExactArgs(oCache.sMetaPath + "/meta/path/Address")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$Type : "name.space.Address"
 			})));
+		oHelperMock.expects("getMetaPath").withExactArgs(sPrefix + "/Address/City")
+			.returns("meta/path/Address/City");
 		this.oModelInterfaceMock.expects("fetchMetadata")
-			.withExactArgs("/BusinessPartners/Address/City")
+			.withExactArgs(oCache.sMetaPath + "/meta/path/Address/City")
 			.returns(SyncPromise.resolve({
 				$Type : "Edm.String"
 			}));
+		oHelperMock.expects("getMetaPath").withExactArgs(sPrefix + "/Address/unknown")
+			.returns("meta/path/Address/unknown");
 		this.oModelInterfaceMock.expects("fetchMetadata")
-			.withExactArgs("/BusinessPartners/Address/unknown")
+			.withExactArgs(oCache.sMetaPath + "/meta/path/Address/unknown")
 			.returns(SyncPromise.resolve(undefined));
 		this.oLogMock.expects("error")
-			.withExactArgs("Failed to drill-down into ($uid=id-1-23)/Address/unknown,"
-				+ " invalid segment: unknown", "/~/BusinessPartners", sClassName);
+			.withExactArgs("Failed to drill-down into " + sPrefix + "/Address/unknown,"
+				+ " invalid segment: unknown", "/~/" + oCache.sResourcePath, sClassName);
+		oHelperMock.expects("getMetaPath").withExactArgs(sPrefix + "/Address/GeoLocation")
+			.returns("meta/path/Address/GeoLocation");
 		this.oModelInterfaceMock.expects("fetchMetadata")
-			.withExactArgs("/BusinessPartners/Address/GeoLocation")
+			.withExactArgs(oCache.sMetaPath + "/meta/path/Address/GeoLocation")
 			.returns(SyncPromise.resolve({
 				$Type : "name.space.GeoLocation"
 			}));
+		oHelperMock.expects("getMetaPath").withExactArgs(sPrefix + "/Address/GeoLocation/Longitude")
+			.returns("meta/path/Address/GeoLocation/Longitude");
 		this.oModelInterfaceMock.expects("fetchMetadata")
-			.withExactArgs("/BusinessPartners/Address/GeoLocation/Longitude")
+			.withExactArgs(oCache.sMetaPath + "/meta/path/Address/GeoLocation/Longitude")
 			.returns(SyncPromise.resolve({
 				$DefaultValue : "0.0",
 				$Type : "Edm.Decimal"
@@ -1942,20 +1952,21 @@ sap.ui.define([
 
 		// code under test
 		return Promise.all([
-			oCache.drillDown(oData, "($uid=id-1-23)/Address/City").then(function (sValue) {
+			oCache.drillDown(oData, sPrefix + "/Address/City").then(function (sValue) {
 				assert.strictEqual(sValue, null);
 			}),
-			oCache.drillDown(oData, "($uid=id-1-23)/Address/unknown").then(function (sValue) {
+			oCache.drillDown(oData, sPrefix + "/Address/unknown").then(function (sValue) {
 				assert.strictEqual(sValue, undefined);
 			}),
-			oCache.drillDown(oData, "($uid=id-1-23)/Address/GeoLocation/Longitude")
+			oCache.drillDown(oData, sPrefix + "/Address/GeoLocation/Longitude")
 				.then(function (sValue) {
 					assert.strictEqual(sValue, "0.0");
 				})
 		]).then(function () {
-			assert.deepEqual(oData[0], {"@$ui5.context.isTransient" : true}, "cache unchanged");
+			assert.strictEqual(JSON.stringify(oData), sData, "cache unchanged");
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#drillDown: transient entity, navigation property", function (assert) {
@@ -1977,8 +1988,8 @@ sap.ui.define([
 			})));
 
 		// code under test
-		return oCache.drillDown(oData, "($uid=id-1-23)/SO_2_BP/Name").then(function (sValue) {
-			assert.strictEqual(sValue, undefined);
+		return oCache.drillDown(oData, "($uid=id-1-23)/SO_2_BP").then(function (oValue) {
+			assert.strictEqual(oValue, null);
 		}).then(function () {
 			assert.deepEqual(oData[0], {"@$ui5.context.isTransient" : true}, "cache unchanged");
 		});
