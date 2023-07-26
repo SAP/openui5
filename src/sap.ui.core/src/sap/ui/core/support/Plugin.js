@@ -3,11 +3,15 @@
  */
 
 // Provides class sap.ui.core.support.Plugin
-sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/util/uid"],
-	function(BaseObject, jQuery, uid) {
+sap.ui.define([
+	"sap/ui/base/Object",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/uid",
+	"sap/m/MessageBox",
+	"sap/ui/core/Lib"
+],
+	function(BaseObject, jQuery, uid, MessageBox, Library) {
 	"use strict";
-
-
 
 	/**
 	 * Creates an instance of sap.ui.core.support.Plugin.
@@ -239,6 +243,24 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/util/
 	 */
 	Plugin.prototype.isActive = function(){
 		return this._bActive;
+	};
+
+	Plugin.prototype.confirmReload = function (sParameterName, vParameterValue) {
+		MessageBox.confirm(this._getText("TechInfo.ReloadApp.ConfirmMessage"), {
+			title: this._getText("TechInfo.DebugSources.ConfirmTitle"),
+			onClose: function (oAction) {
+				if (oAction === MessageBox.Action.OK) {
+					this._oStub.sendEvent(this._oStub.getMetadata().getClass().EventType.RELOAD_WITH_PARAMETER, {
+						parameterName: sParameterName,
+						parameterValue: vParameterValue
+					});
+				}
+			}.bind(this)
+		});
+	};
+
+	Plugin.prototype._getText = function (sKey, aParameters) {
+		return Library.get("sap.ui.core").getResourceBundle().getText(sKey, aParameters);
 	};
 
 	return Plugin;

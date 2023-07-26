@@ -5,7 +5,6 @@
 sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Global',
-	'sap/ui/core/Core',
 	'sap/ui/core/Configuration',
 	'sap/ui/core/ElementMetadata',
 	"sap/base/util/LoaderExtensions",
@@ -15,7 +14,6 @@ sap.ui.define([
 	function(
 		library,
 		Global,
-		Core,
 		Configuration,
 		ElementMetadata,
 		LoaderExtensions,
@@ -90,12 +88,10 @@ sap.ui.define([
 					applicationHREF: window.location.href,
 					documentTitle: document.title,
 					documentMode: document.documentMode || '',
-					debugMode: jQuery.sap.debug(),
-					statistics: jQuery.sap.statistics()
+					debugMode: Configuration.getDebug(),
+					statistics: Configuration.getStatisticsEnabled()
 				},
-
 				configurationBootstrap: window['sap-ui-config'] || Object.create(null),
-
 				configurationComputed: {
 					theme: Configuration.getTheme(),
 					language: Configuration.getLanguage(),
@@ -109,13 +105,9 @@ sap.ui.define([
 					originInfo: Configuration.getOriginInfo(),
 					noDuplicateIds: Configuration.getNoDuplicateIds()
 				},
-
 				libraries: _getLibraries(),
-
 				loadedLibraries: _getLoadedLibraries(),
-
 				loadedModules: LoaderExtensions.getAllRequiredModules().sort(),
-
 				URLParameters: getURLParameters()
 			};
 		}

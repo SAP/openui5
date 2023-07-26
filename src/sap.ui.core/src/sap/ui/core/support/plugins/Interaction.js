@@ -4,7 +4,7 @@
 
 // Provides class sap.ui.core.support.plugins.Performance
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/core/Configuration',
 	'sap/ui/core/support/Plugin',
 	'sap/ui/core/support/controls/InteractionSlider',
 	'sap/ui/core/support/controls/InteractionTree',
@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date"
 	],
 	function(
-		jQuery,
+		Configuration,
 		Plugin,
 		InteractionSlider,
 		InteractionTree,
@@ -160,8 +160,9 @@ sap.ui.define([
 			}.bind(this));
 			this.dom("odata").checked = this._bODATA_Stats_On;
 			this.dom("odata").addEventListener("click", function(oEvent) {
-				jQuery.sap.statistics(!jQuery.sap.statistics());
-			});
+				this._bODATA_Stats_On = !this._bODATA_Stats_On;
+				this.confirmReload("sap-statistics", this._bODATA_Stats_On);
+			}.bind(this));
 
 
 			this.dom('record').dataset.state = (!this._bFesrActive) ? 'Start recording' : 'Stop recording';
@@ -184,8 +185,7 @@ sap.ui.define([
 
 		function initInApps(oSupportStub) {
 			var _bFesrActive = /sap-ui-xx-fesr=(true|x|X)/.test(window.location.search);
-			var _bODATA_Stats_On = jQuery.sap.statistics() ||
-				/sap-statistics=(true|x|X)/.test(window.location.search);
+			var _bODATA_Stats_On = Configuration.getStatisticsEnabled();
 
 			this._oStub.sendEvent(this.getId() + "SetQueryString", {"queryString": { bFesrActive: _bFesrActive,
 				bODATA_Stats_On: _bODATA_Stats_On}});
@@ -253,7 +253,6 @@ sap.ui.define([
 			this.dom("odata").checked = this._bODATA_Stats_On;
 			this.dom('record').dataset.state = (!this._bFesrActive) ? 'Start recording' : 'Stop recording';
 		};
-
 
 		/**
 		 * Handler for sapUiSupportInteractionSetMeasurements event
@@ -518,5 +517,4 @@ sap.ui.define([
 		};
 
 		return Interaction;
-
 	});
