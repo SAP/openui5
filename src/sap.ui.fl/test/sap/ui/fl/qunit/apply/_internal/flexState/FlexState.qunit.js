@@ -556,28 +556,24 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when initialize is called twice with rebuildFilteredResponse() in between", function(assert) {
-			return FlexState.initialize({
+		QUnit.test("when initialize is called twice with rebuildFilteredResponse() in between", async function(assert) {
+			await FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
-			})
-			.then(function() {
-				FlexState.getAppDescriptorChanges(sReference);
-				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was made once");
-				assert.equal(this.oFilterStub.callCount, 9, "all filterable types got filtered");
+			});
+			FlexState.getAppDescriptorChanges(sReference);
+			assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was made once");
+			assert.equal(this.oFilterStub.callCount, 9, "all filterable types got filtered");
 
-				FlexState.rebuildFilteredResponse(sReference);
-				return FlexState.getFlexObjectsFromStorageResponse(sReference);
-			}.bind(this))
-			.then(FlexState.initialize.bind(null, {
+			FlexState.rebuildFilteredResponse(sReference);
+			await FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
-			}))
-			.then(function() {
-				FlexState.getAppDescriptorChanges(sReference);
-				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 2, "the check was made again");
-				assert.equal(this.oFilterStub.callCount, 18, "everything was filtered again");
-			}.bind(this));
+			});
+
+			FlexState.getAppDescriptorChanges(sReference);
+			assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 2, "the check was made again");
+			assert.equal(this.oFilterStub.callCount, 18, "everything was filtered again");
 		});
 	});
 
@@ -1270,6 +1266,114 @@ sap.ui.define([
 				// Use assert.async instead of direct return to make sure that the promise is rejected
 				fnDone();
 			});
+		});
+	});
+
+	QUnit.module("FlexState.updateStorageResponse", {
+		beforeEach: async function() {
+			sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
+			await FlexState.initialize({
+				reference: sReference
+			});
+			this.oUIChange = FlexObjectFactory.createUIChange({
+				id: "uiChange1"
+			});
+			this.oVariantDepUIChange = FlexObjectFactory.createUIChange({
+				id: "uiChange2",
+				variantReference: "flVariant1"
+			});
+			this.oVariantChange1 = FlexObjectFactory.createUIChange({
+				id: "uiChange3",
+				fileType: "ctrl_variant_change"
+			});
+			this.oVariantChange2 = FlexObjectFactory.createUIChange({
+				id: "uiChange4",
+				fileType: "ctrl_variant_management_change"
+			});
+			this.oFlVariant = FlexObjectFactory.createFlVariant({
+				id: "flVariant1"
+			});
+			this.oCompVariant = FlexObjectFactory.createCompVariant({
+				id: "compVariant1"
+			});
+			this.oCompChange = FlexObjectFactory.createUIChange({
+				id: "uiChange5",
+				selector: {
+					persistencyKey: "foo"
+				}
+			});
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with all operations at once", async function(assert) {
+			FlexState.updateStorageResponse(sReference, [
+				{type: "add", flexObject: this.oUIChange.convertToFileContent()},
+				{type: "add", flexObject: this.oVariantChange1.convertToFileContent()},
+				{type: "add", flexObject: this.oVariantChange2.convertToFileContent()},
+				{type: "add", flexObject: this.oVariantDepUIChange.convertToFileContent()},
+				{type: "add", flexObject: this.oFlVariant.convertToFileContent()},
+				{type: "add", flexObject: this.oCompVariant.convertToFileContent()},
+				{type: "add", flexObject: this.oCompChange.convertToFileContent()},
+				{type: "ui2", newData: "ui2"}
+			]);
+			const oStorageResponse = await FlexState.getStorageResponse(sReference);
+			assert.strictEqual(oStorageResponse.changes.changes.length, 1, "UIChange was added");
+			assert.strictEqual(oStorageResponse.changes.variantDependentControlChanges.length, 1, "variant dependent UIChange was added");
+			assert.strictEqual(oStorageResponse.changes.comp.changes.length, 1, "comp change was added");
+			assert.strictEqual(oStorageResponse.changes.comp.variants.length, 1, "comp variant was added");
+			assert.strictEqual(oStorageResponse.changes.variantChanges.length, 1, "variant change was added");
+			assert.strictEqual(oStorageResponse.changes.variantManagementChanges.length, 1, "variant management change was added");
+			assert.strictEqual(oStorageResponse.changes.variants.length, 1, "fl variant was added");
+			assert.strictEqual(oStorageResponse.changes.ui2personalization, "ui2", "ui2 was set");
+
+			FlexState.rebuildFilteredResponse(sReference);
+			let aFlexObjects = FlexState.getFlexObjectsDataSelector().get({ reference: sReference });
+			assert.strictEqual(aFlexObjects.length, 7, "all flexObjects are part of the DataSelector");
+
+			this.oFlVariant.setFavorite(true);
+			this.oCompVariant.setFavorite(true);
+			this.oUIChange.setContent("foo");
+			this.oCompChange.setContent("bar");
+
+			FlexState.updateStorageResponse(sReference, [
+				{type: "update", flexObject: this.oUIChange.convertToFileContent()},
+				{type: "update", flexObject: this.oFlVariant.convertToFileContent()},
+				{type: "update", flexObject: this.oCompVariant.convertToFileContent()},
+				{type: "update", flexObject: this.oCompChange.convertToFileContent()},
+				{type: "ui2", newData: "newUi2"}
+			]);
+			assert.strictEqual(oStorageResponse.changes.ui2personalization, "newUi2", "ui2 was set");
+			FlexState.rebuildFilteredResponse(sReference);
+			aFlexObjects = FlexState.getFlexObjectsDataSelector().get({ reference: sReference });
+			assert.strictEqual(aFlexObjects.length, 7, "all flexObjects are part of the DataSelector");
+			assert.strictEqual(
+				aFlexObjects.find((oFlexObject) => oFlexObject.getId() === "uiChange1").getContent(),
+				"foo", "the content was updated"
+			);
+			assert.strictEqual(
+				aFlexObjects.find((oFlexObject) => oFlexObject.getId() === "flVariant1").getFavorite(),
+				true, "the favorite flag was updated"
+			);
+			assert.strictEqual(
+				aFlexObjects.find((oFlexObject) => oFlexObject.getId() === "compVariant1").getFavorite(),
+				true, "the favorite flag was updated"
+			);
+			assert.strictEqual(
+				aFlexObjects.find((oFlexObject) => oFlexObject.getId() === "uiChange5").getContent(),
+				"bar", "the content was updated"
+			);
+
+			FlexState.updateStorageResponse(sReference, [
+				{type: "delete", flexObject: this.oVariantDepUIChange.convertToFileContent()},
+				{type: "delete", flexObject: this.oFlVariant.convertToFileContent()},
+				{type: "delete", flexObject: this.oCompVariant.convertToFileContent()},
+				{type: "delete", flexObject: this.oCompChange.convertToFileContent()}
+			]);
+			FlexState.rebuildFilteredResponse(sReference);
+			aFlexObjects = FlexState.getFlexObjectsDataSelector().get({ reference: sReference });
+			assert.strictEqual(aFlexObjects.length, 3, "all remaining flexObjects are part of the DataSelector");
 		});
 	});
 
