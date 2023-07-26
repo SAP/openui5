@@ -3,6 +3,22 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "ea7b23a43d511e9765f77df138d15356b8fae58c",
+        "type": "FEATURE",
+        "text": " core/IconPool: Register theme dependent icons"
+      },
+      {
+        "id": "1d559122574e5e60463f10a69a50acda0776efb0",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: Support for core:require statements in XHTML",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380095467"
+          }
+        ]
+      },
+      {
         "id": "52d2f5b8319b93d263d4b351f827bde81ed04d36",
         "type": "FEATURE",
         "text": " SemanticFormElement: support rendering of Links"

@@ -25,6 +25,17 @@
         ]
       },
       {
+        "id": "0b43c3d62ce28570f0a016b646b90b3300034636",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: make disabled text field items focusable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280110553"
+          }
+        ]
+      },
+      {
         "id": "f61d6be991486ca8837947333f67e6285b2c95e8",
         "type": "FIX",
         "text": " sap.ui.unified.MonthsRowRenderer: Remove duplicate ACC info",

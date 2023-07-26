@@ -3,6 +3,17 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "c7ac4499a944d35b2e69cb43ea5714ac2de2a74b",
+        "type": "FIX",
+        "text": " Field: keep ValueState if value updated async",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380082386"
+          }
+        ]
+      },
+      {
         "id": "c12cc14575761ed211fa5675053fcb245f6ab4fa",
         "type": "FEATURE",
         "text": " Field: provide API to check for user interaction"

@@ -3,6 +3,22 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "ddc6d0fdeea0d7427d40508f36d35e74f1831013",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Adjust control's state announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011633"
+          }
+        ]
+      },
+      {
+        "id": "e1941f877b7a9c2f221b394689ae7606790dd632",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: Horizon themes updated and style parameters applied"
+      },
+      {
         "id": "549d3608025e7d6656ef0e86b59723572600856f",
         "type": "FIX",
         "text": " sap.m.InputBase: Remove overwritten border style",

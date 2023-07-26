@@ -3,6 +3,28 @@
     "date": "July 2023",
     "notes": [
       {
+        "id": "aa64ad3ec1180095b3187b96541c379f0bd22d9e",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: adjust expand/collapse button tooltip",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370073642"
+          }
+        ]
+      },
+      {
+        "id": "4f2d8328d42ad53f0fe0c643e16aae3aee2646d7",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Visibility fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003724452023"
+          }
+        ]
+      },
+      {
         "id": "d10751f3eecb30e46eac12a3f0f5e7a796b5ebbb",
         "type": "FIX",
         "text": " sap.f.GridContainer,GridList: Keyboard navigation is now correct for RTL languages",
