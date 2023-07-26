@@ -583,6 +583,8 @@ sap.ui.define([
 	 *   An object containing the path to the property in the value list
 	 * @property {"com.sap.vocabularies.Common.v1.ValueListParameterIn"} RecordType
 	 *   Fully qualified name of the value list parameter type <code>ValueListParameterIn</code>
+	 *
+	 * @public
 	 */
 
 	/**
@@ -599,6 +601,8 @@ sap.ui.define([
 	 *   comparison, using the same representation as property default values
 	 * @property {"com.sap.vocabularies.Common.v1.ValueListParameterConstant"} RecordType
 	 *   Fully qualified name of the value list parameter type <code>ValueListParameterConstant</code>
+	 *
+	 * @public
 	 */
 
 	/**
@@ -615,6 +619,8 @@ sap.ui.define([
 	 *   An object containing the path to the property in the value list
 	 * @property {"com.sap.vocabularies.Common.v1.ValueListParameterInOut"} RecordType
 	 *   Fully qualified name of the value list parameter type <code>ValueListParameterInOut</code>
+	 *
+	 * @public
 	 */
 
 	/**
@@ -630,6 +636,8 @@ sap.ui.define([
 	 *   An object containing the path to the property in the value list
 	 * @property {"com.sap.vocabularies.Common.v1.ValueListParameterOut"} RecordType
 	 *   Fully qualified name of the value list parameter type <code>ValueListParameterOut</code>
+	 *
+	 * @public
 	 */
 
 	/**
@@ -643,6 +651,8 @@ sap.ui.define([
 	 *   An object containing the path to the property in the value list
 	 * @property {"com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly"} RecordType
 	 *   Fully qualified name of the value list parameter type <code>ValueListParameterDisplayOnly</code>
+	 *
+	 * @public
 	 */
 
 	/**
@@ -657,7 +667,6 @@ sap.ui.define([
 	 *   sap.ui.model.odata.ODataMetaModel.ValueListParameterOut |
 	 *   sap.ui.model.odata.ODataMetaModel.ValueListParameterDisplayOnly
 	 * } sap.ui.model.odata.ODataMetaModel.ValueListParameter
-	 *
 	 *
 	 * @public
 	 */
