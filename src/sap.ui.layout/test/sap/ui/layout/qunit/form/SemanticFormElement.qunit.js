@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Text",
 	"sap/m/Link",
+	"sap/m/Button", // to make FormHelper could load all modules
 	"sap/ui/core/Control",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
@@ -24,6 +25,7 @@ sap.ui.define([
 			Input,
 			Text,
 			Link,
+			Button,
 			Control,
 			jQuery,
 			oCore
@@ -141,6 +143,36 @@ sap.ui.define([
 		assert.equal(aFields[1] && aFields[1].getText && aFields[1].getText(), "/", "Delimitter symbol rendered");
 		assert.equal(aFields[1] && aFields[1].getTextAlign && aFields[1].getTextAlign(), "Center", "Delimitter horizontal centered");
 		assert.ok(aFields[2] && aFields[2] === oField2, "Second field rendered");
+	});
+
+	QUnit.test("two fields - delimiter created async", function(assert) {
+		var fnResolve;
+		oFormElement._oInitPromise = new Promise(function(fResolve, fReject) { // fake async loading
+			fnResolve = fResolve;
+		});
+
+		var oLabel = new Label("L1", {text: "Test"});
+		oFormElement.setLabel(oLabel);
+		var oField1 = new Input("F1", {value: "Text 1"});
+		var oField2 = new Input("F2", {value: "Text 2"});
+		oFormElement.addField(oField1);
+		oFormElement.addField(oField2);
+		var aFields = oFormElement.getFieldsForRendering();
+		assert.equal(aFields.length, 2, "2 controls rendered");
+
+		var fnDone = assert.async();
+		fnResolve();
+
+		setTimeout(function() {
+			aFields = oFormElement.getFieldsForRendering();
+			assert.equal(aFields.length, 3, "3 controls rendered");
+			assert.equal(aFields[0], oField1, "First field rendered");
+			assert.ok(aFields[1] && aFields[1].isA("sap.m.Text"), "Delimiter rendered");
+			assert.equal(aFields[1] && aFields[1].getText && aFields[1].getText(), "/", "Delimitter symbol rendered");
+			assert.equal(aFields[1] && aFields[1].getTextAlign && aFields[1].getTextAlign(), "Center", "Delimitter horizontal centered");
+			assert.ok(aFields[2] && aFields[2] === oField2, "Second field rendered");
+			fnDone();
+		}, 0);
 	});
 
 	QUnit.test("two fields with fieldLabels", function(assert) {
@@ -465,6 +497,37 @@ sap.ui.define([
 		assert.equal(aFields.length, 1, "1 control rendered");
 		assert.ok(aFields[0].isA("sap.m.Text"), "Text control rendered");
 		assert.equal(aFields[0].getText && aFields[0].getText(), "Text 1 / Text 2", "rendered text");
+	});
+
+	QUnit.test("two fields - Text created async", function(assert) {
+		var fnResolve;
+		oFormElement._oInitPromise = new Promise(function(fResolve, fReject) { // fake async loading
+			fnResolve = fResolve;
+		});
+
+		var oLabel = new Label("L1", {text: "Test"});
+		oFormElement.setLabel(oLabel);
+		var oField1 = new Input("F1", {value: "Text 1"});
+		var oField2 = new Input("F2", {value: "Text 2"});
+		oFormElement.addField(oField1);
+		oFormElement.addField(oField2);
+		var aFields = oFormElement.getFieldsForRendering();
+		oCore.applyChanges();
+
+		assert.equal(aFields.length, 0, "No control rendered");
+
+		var fnDone = assert.async();
+		fnResolve();
+
+		setTimeout(function() {
+			oRenderControl.invalidate(); // as there is no real control tree
+			oCore.applyChanges();
+			aFields = oFormElement.getFieldsForRendering();
+			assert.equal(aFields.length, 1, "1 control rendered");
+			assert.ok(aFields[0].isA("sap.m.Text"), "Text control rendered");
+			assert.equal(aFields[0].getText && aFields[0].getText(), "Text 1 / Text 2", "rendered text");
+			fnDone();
+		}, 0);
 	});
 
 	QUnit.test("three fields", function(assert) {

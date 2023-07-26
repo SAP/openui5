@@ -372,6 +372,17 @@ sap.ui.define([
 
 	function _updateControlsForEdit() {
 
+		if (this._oInitPromise) {
+			// module needs to be loaded -> create Delemiters async
+			this._oInitPromise.then(function () {
+				delete this._oInitPromise; // not longer needed as resolved
+				if (!_renderAsText.call(this)) { // as edit mode might have changed
+					_updateControlsForEdit.call(this);
+				}
+			}.bind(this));
+			return;
+		}
+
 		var aFields = this.getFields();
 		var aDelimiters = this.getAggregation("_delimiters", []);
 		var sDelimiter = this.getDelimiter();
@@ -413,6 +424,17 @@ sap.ui.define([
 
 	function _updateControlsForDisplay(bSetTextAsync) {
 
+		if (this._oInitPromise) {
+			// module needs to be loaded -> create Delemiters async
+			this._oInitPromise.then(function () {
+				delete this._oInitPromise; // not longer needed as resolved
+				if (_renderAsText.call(this)) { // as edit mode might have changed
+					_updateControlsForDisplay.call(this);
+				}
+			}.bind(this));
+			return;
+		}
+
 		var oDisplay = this.getAggregation("_displayField");
 
 		if (oDisplay) {
@@ -428,6 +450,7 @@ sap.ui.define([
 
 	// As display text might need some logic to be determined -> determine only if really rendered and not for every update
 	function _updateDisplayText(bForce) {
+
 		var oDisplay = this.getAggregation("_displayField");
 
 		if (oDisplay && (oDisplay.getDomRef() || bForce)) { // update only if rendered (or forced on before rendering)
@@ -497,6 +520,15 @@ sap.ui.define([
 
 		if (!this.getLabel()) {
 			// only use if no Label is set on FormElement level
+			if (this._oInitPromise) {
+				// module needs to be loaded -> create Label async
+				this._oInitPromise.then(function () {
+					delete this._oInitPromise; // not longer needed as resolved
+					_updateLabelText.call(this);
+				}.bind(this));
+				return;
+			}
+
 			var aFieldLabels = this.getFieldLabels();
 			var aFields = this.getFields();
 			var aTexts = [];

@@ -119,6 +119,8 @@ sap.ui.define([
 
 	FormContainer.prototype.init = function(){
 
+		this._oInitPromise = library.form.FormHelper.init();
+
 		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
 
 		this._oObserver = new ManagedObjectObserver(this._observeChanges.bind(this));
@@ -146,9 +148,14 @@ sap.ui.define([
 
 		if (bExpandable) {
 			if (!this._oExpandButton) {
-				if (!this._bExpandButtonRequired) {
-					this._bExpandButtonRequired = true;
-					library.form.FormHelper.createButton.call(this, this.getId() + "--Exp", _handleExpButtonPress, _expandButtonCreated);
+				if (this._oInitPromise) {
+					// module needs to be loaded -> create Button async
+					this._oInitPromise.then(function () {
+						delete this._oInitPromise; // not longer needed as resolved
+						_expandButtonCreated.call(this, library.form.FormHelper.createButton(this.getId() + "--Exp", _handleExpButtonPress, this));
+					}.bind(this));
+				} else {
+					_expandButtonCreated.call(this, library.form.FormHelper.createButton(this.getId() + "--Exp", _handleExpButtonPress, this));
 				}
 			} else {
 				_setExpanderIcon.call(this);

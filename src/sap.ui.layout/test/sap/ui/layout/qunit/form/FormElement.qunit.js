@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/m/Text",
+	"sap/m/Button", // to make FormHelper could load all modules
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core"
 	],
@@ -13,6 +14,7 @@ sap.ui.define([
 			Label,
 			Input,
 			Text,
+			Button,
 			JSONModel,
 			oCore
 	) {
@@ -77,6 +79,34 @@ sap.ui.define([
 		assert.ok(oLabel, "Label control created");
 		assert.ok(oLabel instanceof Label, "Label control is sap.m.Label");
 		assert.equal(oLabel.getText(), "Test", "Label string is set on control");
+
+	});
+
+	QUnit.test("Label as String - async", function(assert) {
+		var fnResolve;
+		oFormElement._oInitPromise = new Promise(function(fResolve, fReject) { // fake async loading
+			fnResolve = fResolve;
+		});
+		oFormElement.setLabel("Test");
+		var oLabel = oFormElement.getLabelControl();
+
+		assert.equal(oFormElement.getLabel(), "Test", "Label string is assigned");
+		assert.notOk(oFormElement.getAggregation("label") instanceof Label, "Label as text entered must not be an control in aggregation");
+		assert.notOk(oLabel, "No Label control created");
+
+		var fnDone = assert.async();
+		fnResolve();
+
+		setTimeout(function() {
+			var oLabel = oFormElement.getLabelControl();
+			assert.equal(oFormElement.getLabel(), "Test", "Label string is assigned");
+			assert.notOk(oFormElement.getAggregation("label") instanceof Label, "Label as text entered must not be an control in aggregation");
+			assert.ok(oLabel, "Label control created");
+			assert.ok(oLabel instanceof Label, "Label control is sap.m.Label");
+			assert.equal(oLabel.getText(), "Test", "Label string is set on control");
+
+			fnDone();
+		}, 0);
 
 	});
 
