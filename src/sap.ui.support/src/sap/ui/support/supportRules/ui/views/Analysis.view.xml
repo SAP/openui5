@@ -104,37 +104,37 @@
 								>
 							<t:columns>
 								<t:Column id="rulesColumn"
-										  label="Rules ({/selectedRulesCount} selected)"
 										  sortProperty="name"
 										  filterProperty="name">
+									<m:Label text="Rules ({/selectedRulesCount} selected)"/>
 									<t:template>
 										<m:Text text="{ruleSets>name}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 								<t:Column id="categoriesColumn"
-										  label="Categories"
 										  width="10rem"
 										  sortProperty="categories"
 										  filterProperty="categories">
+									<m:Label text="Categories"/>
 									<t:template>
 										<m:Text text="{ruleSets>categories}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 								<t:Column id="audienceColumn"
-										  label="Audience"
 										  visible="false"
 										  sortProperty="audiences"
 										  filterProperty="audiences">
+									<m:Label text="Audience"/>
 									<t:template>
 										<m:Text text="{ruleSets>audiences}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 								<t:Column id="idsColumn"
-										  label="RuleID"
 										  width="10rem"
 										  visible="false"
 										  sortProperty="id"
 										  filterProperty="id">
+									<m:Label text="RuleID"/>
 									<t:template>
 										<m:Text text="{ruleSets>id}" wrapping="false"/>
 									</t:template>

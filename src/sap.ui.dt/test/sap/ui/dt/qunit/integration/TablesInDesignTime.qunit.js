@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/AnalyticalColumn",
 	"sap/m/Label",
+	"sap/m/Title",
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
@@ -21,6 +22,7 @@ sap.ui.define([
 	AnalyticalTable,
 	AnalyticalColumn,
 	Label,
+	Title,
 	Button,
 	JSONModel,
 	Log,
@@ -40,7 +42,9 @@ sap.ui.define([
 
 	function _createTable(oModel) {
 		var oTable = new Table({
-			title: "Table Example",
+			extension: [
+				new Title({text: "Example Table"})
+			],
 			visibleRowCount: 5,
 			width: "200px",
 			rows: "{/}"
@@ -156,7 +160,9 @@ sap.ui.define([
 			var done = assert.async();
 
 			this.oTable = new AnalyticalTable({
-				title: "Table Example",
+				extension: [
+					new Title({text: "Example Table"})
+				],
 				visibleRowCount: 5,
 				width: "200px"
 			});

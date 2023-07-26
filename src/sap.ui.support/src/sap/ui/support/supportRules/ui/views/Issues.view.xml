@@ -127,7 +127,8 @@
 							rowHeight="24"
 							visibleRowCountMode="Auto">
 						<t:columns>
-							<t:Column label="Issues" resizable="false">
+							<t:Column resizable="false">
+								<Label text="Issues"/>
 								<t:template>
 									<FormattedText htmlText="{formattedName}"/>
 								</t:template>
@@ -173,8 +174,8 @@
 								<t:Column
 									sortProperty="context/id"
 									filterProperty="context/id"
-									label="Control Id"
 									resizable="false">
+									<Label text="Control Id"/>
 									<t:template>
 										<Text text="{context/id}" wrapping="false" tooltip="{context/id}"></Text>
 									</t:template>
@@ -182,8 +183,8 @@
 								<t:Column
 									sortProperty="context/className"
 									filterProperty="context/className"
-									label="Class name"
 									resizable="false">
+									<Label text="Class name"/>
 									<t:template>
 										<Text text="{context/className}" wrapping="false" tooltip="{context/className}"></Text>
 									</t:template>
