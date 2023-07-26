@@ -18,22 +18,19 @@
             id="UploadSetTable"
             maxFileNameLength="60"
             uploadUrl="/uploadFiles"
-            multiple="false"
+            multiple="true"
             items="{path: '/items', templateShareable: false}"
             mode="MultiSelect"
             fixedLayout="false"
             selectionChange="onSelectionChange"
             uploadCompleted="onUploadCompleted"
-            afterItemRemoved="onAfterItemRemoved"
             noDataText="No documents available"
             sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex"
             noDataDescription="Drag and Drop files here to upload"
-            uploadButtonInvisible="true"
-            instantUpload="true"
-            customDropFilesHandler=".selectedFilesFromHandler"
             inset="true"
             beforeInitiatingItemUpload="onBeforeInitiatingItemUpload"
             beforeUploadStarts="onBeforeUploadStarts"
+            onItemValidationSuccess=".onItemValidationhandler"
         >
             <!-- ToolBar for Table -->
             <headerToolbar>
@@ -55,11 +52,6 @@
                         text="Advanced Search"
                     />
                     <m:ToolbarSeparator />
-                     <m:Button
-                        id="uploadButton"
-                        text="Upload"
-                        press="uploadFilesHandler"
-                    />
                     <UploadSetToolbarPlaceholder />
                     <m:Button
                         id="downloadSelectedButton"

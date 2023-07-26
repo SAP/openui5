@@ -2,22 +2,7 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" templateShareable="false" class="sapUiTinyMarginTop">
   <Dialog title="Add Document by Upload" contentWidth="34rem" contentHeight="18rem" class="sapUiSmallMargin">
     <content>
-      <Toolbar height="auto" class="sapUiTinyMargin" style="Clear" visible="{parts: ['/sameFileNameFound', '/selectedItems'], formatter: '.isSameFileNameCheckSectionVisible'}">
-        <VBox>
-        <Text text="Do you want to replace the existing document or create a copy of it?" />
-        <VBox class="sapUiTinyMarginTop">
-            <VBox>
-              <RadioButton id="choiceReplace" text="Replace" groupName="uploadChoices" select=".onChoiceChange" />
-              <Text wrapping="true" width="50%" class="sapUiMediumMarginBegin"
-              text="Use the check-out and check-in function to lock a document and work privately." /> 
-            </VBox>
-            <VBox class="sapUiTinyMarginTop">
-              <RadioButton id="choiceCopy" text="Create Copy" groupName="uploadChoices" selected="true" select=".onChoiceChange" />
-            </VBox>
-        </VBox>
-        </VBox> 
-      </Toolbar>
-      <Toolbar class="sapUiTinyMargin" style="Clear" visible="{= !${/sameFileNameFound}}">
+      <Toolbar class="sapUiTinyMargin" style="Clear">
         <Title text="Documents" />
         <ToolbarSpacer />
         <Button text="Browse" press=".uploadFilesHandler" />
@@ -44,6 +29,7 @@
               <Button type="Transparent" icon="sap-icon://decline" press=".handleRemove">
                 <customData>
                   <core:CustomData key="item" value="{itemInstance}"></core:CustomData>
+                  <core:CustomData key="reject" value="{fnReject}"></core:CustomData>
                 </customData>
               </Button>
             </cells>
