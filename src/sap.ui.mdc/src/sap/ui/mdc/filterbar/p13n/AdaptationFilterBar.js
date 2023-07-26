@@ -113,6 +113,7 @@ sap.ui.define([
 			this._updateActiveStatus(oP13nData);
 			this._oFilterBarLayout.setP13nData({items: oP13nData});
 		}
+		this.fireChange();
 		return pModification;
 	};
 
