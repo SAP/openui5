@@ -1035,7 +1035,8 @@
 		  "since": "1.16",
 		  "samples": [
 			"sap.m.sample.Panel",
-			"sap.m.sample.PanelExpanded"
+			"sap.m.sample.PanelExpanded",
+			"sap.m.sample.PanelSticky"
 		  ]
 		},
 		{
@@ -2040,6 +2041,11 @@
 		  "id": "sap.m.sample.PanelExpanded",
 		  "name": "Panel - Expand / Collapse",
 		  "description": "Panels also have the possibility to expand/collapse their content (including the infoToolbar if available). [since rel. 1.22]"
+		},
+		{
+			"id": "sap.m.sample.PanelSticky",
+			"name": "Panel - Sticky header",
+			"description": "Panels can also have a sticky header. [since rel. 1.117]"
 		},
 		{
 		  "id": "sap.m.sample.PDFViewerEmbedded",
