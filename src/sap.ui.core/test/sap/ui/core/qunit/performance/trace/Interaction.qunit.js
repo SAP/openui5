@@ -81,6 +81,11 @@ sap.ui.define([
 		this.clock = sinon.useFakeTimers();
 		window.performance.getEntriesByType = function() { return []; };
 
+		 // Call setActive after activating fakeTimers again, in order to ensure setTimeout calls triggered
+		 // by setActive are also covered by fakeTimers
+		Interaction.setActive(true);
+		this.clock.runAll();
+
 		return XMLView.create({
 			definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:fesr="http://schemas.sap.com/sapui5/extension/sap.ui.core.FESR/1">'
 			+ '          <Button id="btnWithDeclarativeSemanticAnnotation" text="Create something" fesr:press="create"/>                     '
