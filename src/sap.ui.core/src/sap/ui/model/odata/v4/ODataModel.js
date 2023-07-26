@@ -1811,7 +1811,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} [bIncludeContextId]
 	 *   Whether to include the "SAP-ContextId" header (@since 1.86.0)
-	 * @returns {object}
+	 * @returns {Object<string>}
 	 *   The map of HTTP headers
 	 *
 	 * @public

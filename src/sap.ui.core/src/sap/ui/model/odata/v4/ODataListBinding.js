@@ -2804,7 +2804,7 @@ sap.ui.define([
 	 * @param {boolean} [bWithSystemQueryOptions]
 	 *   Whether system query options should be returned as well. The parameter value
 	 *   <code>true</code> is not supported.
-	 * @returns {object} mQueryOptions
+	 * @returns {Object<any>} mQueryOptions
 	 *   The object with the query options. Query options can be provided with
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList},
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext},
@@ -4277,7 +4277,7 @@ sap.ui.define([
 	 * @param {string} [aAggregation[].as]
 	 *   Measures only: The alias, that is the name of the dynamic property used for aggregation of
 	 *   this measure; see "3.1.1 Keyword as" (since 1.55.0)
-	 * @returns {object|undefined}
+	 * @returns {{measureRangePromise: Promise<Object<{min:number,max:number}>>}|undefined}
 	 *   The return object contains a property <code>measureRangePromise</code> if and only if at
 	 *   least one measure has requested a minimum or maximum value; its value is a
 	 *   promise which resolves with the measure range map as soon as data has been received; the
