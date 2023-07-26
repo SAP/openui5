@@ -1495,6 +1495,7 @@ sap.ui.define([
 				this.oSortSpy = sinon.spy(this.oRowBinding, "sort");
 				this.oSuspendSpy = sinon.spy(this.oRowBinding, "suspend");
 				this.oResumeSpy = sinon.spy(this.oRowBinding, "resume");
+				this.oRefreshSpy = sinon.spy(this.oRowBinding, "refresh");
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -1506,6 +1507,7 @@ sap.ui.define([
 			this.oSortSpy.restore();
 			this.oSuspendSpy.restore();
 			this.oResumeSpy.restore();
+			this.oRefreshSpy.restore();
 		},
 		after: function() {
 			TableQUnitUtils.restorePropertyInfos(Table.prototype);
@@ -1669,6 +1671,14 @@ sap.ui.define([
 
 		assert.equal(this.oRebindSpy.callCount, 1, "Changing the path forces a rebind");
 		oUpdateBindingInfoStub.restore();
+	});
+
+	QUnit.test("Refresh binding", function(assert) {
+		const bForceRefresh = true;
+
+		this.oTable._rebind(bForceRefresh);
+		assert.equal(this.oRebindSpy.callCount, 0, "No rebind was performed");
+		assert.equal(this.oRefreshSpy.callCount, 1, "Binding#refresh has been called");
 	});
 
 	QUnit.module("API", {

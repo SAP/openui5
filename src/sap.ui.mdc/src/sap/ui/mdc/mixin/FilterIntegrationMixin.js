@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/base/Log"
-], function (Core, Log) {
+	"sap/base/Log",
+	"sap/ui/mdc/enums/ReasonMode"
+], function (Core, Log, ReasonMode) {
 	"use strict";
 
 	/**
@@ -35,9 +36,9 @@ sap.ui.define([
 	 *     - Notifies the control that a valid <code>filter</code> association has been provided. The provided filter instance is passed.</li>
 	 * <li><code>_onFilterRemoved(oFilter: sap.ui.mdc.IFilter)</code>
 	 *     - Notifies the control that the <code>filter</code> association has been removed. The removed filter instance is passed.</li>
-	 * <li><code>_onFiltersChanged(oEvent)</code>
-	 *     - Called when the <code>search</code> event of the filter is fired. The event object is passed.</li>
 	 * <li><code>_onFilterSearch(oEvent)</code>
+	 *     - Called when the <code>search</code> event of the filter is fired. The event object is passed.</li>
+	 * <li><code>_onFiltersChanged(oEvent)</code>
 	 *     - Called when the <code>filtersChanged</code> event of the filter is fired. The event object is passed.</li>
 	 * </ul>
 	 *
@@ -57,7 +58,7 @@ sap.ui.define([
 	/**
 	 * Set an external IFilter source to connect it with the given control instance.
 	 * @public
-	 * @param {sap.ui.mdc.IFilter} vFilter IFilter implementing instance.
+	 * @param {sap.ui.mdc.IFilter|string} vFilter IFilter implementing instance or its id.
 	 * @returns {sap.ui.mdc.Control} The MDC Control instance.
 	 */
 	FilterIntegrationMixin.setFilter = function (vFilter) {
@@ -84,8 +85,19 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Event handler that is attached to the <code>search</code>
+	 * event of the IFilter implementing instance. The handler
+	 * triggers rebind and calls the _onFilterSearch hook.
+	 *
+	 * @param {object} oEvent Event object
+	 */
 	function onSearch(oEvent) {
-		this._rebind();
+		const sReason = oEvent.getParameter('reason');
+		const oFilter = oEvent.getSource();
+		const bForceRefresh = oFilter.getLiveMode && (oFilter.getLiveMode() ? sReason === ReasonMode.Enter : sReason === ReasonMode.Go);
+
+		this._rebind(bForceRefresh);
 		if (this._onFilterSearch) {
 			this._onFilterSearch(oEvent);
 		}

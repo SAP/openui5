@@ -164,9 +164,11 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instance of the table
+	 * @param {object} [mSettings] Additional settings
+	 * @param {boolean} [mSettings.forceRefresh] Indicates that the binding has to be refreshed even if <code>oBindingInfo</code> has not been changed
 	 * @protected
 	 */
-	TableDelegate.updateBinding = function(oTable, oBindingInfo, oBinding) {
+	TableDelegate.updateBinding = function(oTable, oBindingInfo, oBinding, mSettings) {
 		this.rebind(oTable, oBindingInfo);
 	};
 

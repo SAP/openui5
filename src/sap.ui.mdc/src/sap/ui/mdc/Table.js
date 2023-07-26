@@ -2486,9 +2486,10 @@ sap.ui.define([
 	/**
 	 * Defines the rows/items aggregation binding
 	 *
+	 * @param {boolean} [bForceRefresh] Indicates that the binding must be refreshed regardless of any <code>bindingInfo</code> change
 	 * @private
 	 */
-	Table.prototype.bindRows = function() {
+	Table.prototype.bindRows = function(bForceRefresh) {
 		if (!this.isControlDelegateInitialized() || !this._oTable) {
 			return;
 		}
@@ -2520,7 +2521,7 @@ sap.ui.define([
 
 		this._oTable.setShowOverlay(false);
 		this._updateColumnsBeforeBinding();
-		this.getControlDelegate().updateBinding(this, oBindingInfo, this._bForceRebind ? null : this.getRowBinding());
+		this.getControlDelegate().updateBinding(this, oBindingInfo, this._bForceRebind ? null : this.getRowBinding(), { forceRefresh: bForceRefresh });
 		this._updateInnerTableNoData();
 		this._bForceRebind = false;
 	};
@@ -2669,13 +2670,16 @@ sap.ui.define([
 
 	/**
 	 * Rebinds the table rows.
+	 *
+	 * @param {boolean} [bForceRefresh] Indicates that the binding must be refreshed regardless of any <code>bindingInfo</code> change
+	 * @private
 	 */
-	Table.prototype._rebind = function() {
+	Table.prototype._rebind = function(bForceRefresh) {
 		// Bind the rows/items of the table, only once it is initialized.
 		if (this._bFullyInitialized) {
-			this.bindRows();
+			this.bindRows(bForceRefresh);
 		} else {
-			this._fullyInitialized().then(this._rebind.bind(this));
+			this._fullyInitialized().then(this._rebind.bind(this, bForceRefresh));
 		}
 	};
 

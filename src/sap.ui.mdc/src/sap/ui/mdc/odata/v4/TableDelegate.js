@@ -285,10 +285,12 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
 	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instance of the table
+	 * @param {object} [mSettings] Additional settings
+	 * @param {boolean} [mSettings.forceRefresh] Indicates that the binding has to be refreshed even if <code>oBindingInfo</code> has not been changed
 	 * @protected
 	 * @override
 	 */
-	Delegate.updateBinding = function(oTable, oBindingInfo, oBinding) {
+	Delegate.updateBinding = function(oTable, oBindingInfo, oBinding, mSettings) {
 		if (!oBinding || oBinding.getPath() != oBindingInfo.path) {
 			this.rebind(oTable, oBindingInfo);
 			return;
@@ -307,6 +309,10 @@ sap.ui.define([
 			oBinding.changeParameters(oBindingInfo.parameters);
 			oBinding.filter(oBindingInfo.filters, "Application");
 			oBinding.sort(oBindingInfo.sorter);
+
+			if (mSettings && mSettings.forceRefresh) {
+				oBinding.refresh();
+			}
 		} catch (e) {
 			this.rebind(oTable, oBindingInfo);
 			if (oRootBinding == oBinding) {
