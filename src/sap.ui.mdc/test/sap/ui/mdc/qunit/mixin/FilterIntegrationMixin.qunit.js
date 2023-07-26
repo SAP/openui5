@@ -183,7 +183,7 @@ sap.ui.define([
         assert.notOk(oExternalFilter.getLiveMode(), "LiveMode is not enabled on FilterBar");
         assert.ok(fnExecuteOnRebind.calledThrice, "Function _rebind was called three times");
         assert.ok(fnExecuteOnRebind.firstCall.calledWith(true), "Reason 'Go' without liveMode forces refresh");
-        assert.ok(fnExecuteOnRebind.secondCall.calledWith(false), "Without reason, no refresh is forced");
+        assert.ok(fnExecuteOnRebind.secondCall.calledWith(false), "Reason 'Enter' will not force a refresh when liveMode is set to false");
         assert.ok(fnExecuteOnRebind.thirdCall.calledWith(false), "Without reason, no refresh is forced");
     });
 
@@ -200,7 +200,7 @@ sap.ui.define([
         assert.ok(oExternalFilter.getLiveMode(), "LiveMode is enabled on FilterBar");
         assert.ok(fnExecuteOnRebind.calledThrice, "Function _rebind was called three times");
         assert.ok(fnExecuteOnRebind.firstCall.calledWith(true), "Reason 'Enter' with liveMode forces refresh");
-        assert.ok(fnExecuteOnRebind.secondCall.calledWith(false), "Reason 'Go' with liveMode forces refresh");
+        assert.ok(fnExecuteOnRebind.secondCall.calledWith(false), "Reason 'Go' will not force a refresh when liveMode is set to true");
         assert.ok(fnExecuteOnRebind.thirdCall.calledWith(false), "Without reason, no refresh is forced");
     });
 
