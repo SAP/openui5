@@ -241,7 +241,7 @@ sap.ui.define([
 			if (Array.isArray(mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER])) {
 				mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER].map(decodeURIComponent);
 				mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER].some(function(sParamDecoded, iIndex) {
-					if (oModel.getVariant(sParamDecoded, mPropertyBag.vmReference)) {
+					if (!isEmptyObject(oModel.getVariant(sParamDecoded, mPropertyBag.vmReference))) {
 						mReturnObject.index = iIndex;
 						return true;
 					}

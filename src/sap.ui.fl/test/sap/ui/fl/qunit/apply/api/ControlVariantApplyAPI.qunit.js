@@ -32,7 +32,7 @@ sap.ui.define([
 	function stubTechnicalParameterValues(aUrlTechnicalParameters) {
 		sandbox.stub(this.oModel, "getLocalId").withArgs(this.oDummyControl.getId(), this.oAppComponent).returns("variantMgmtId1");
 		sandbox.spy(URLHandler, "update");
-		sandbox.stub(this.oModel, "getVariant").withArgs("variant1", "variantMgmtId1").returns(true);
+		sandbox.stub(this.oModel, "getVariant").withArgs("variant1", "variantMgmtId1").returns({simulate: "foundVariant"});
 		sandbox.stub(hasher, "replaceHash");
 		this.fnParseShellHashStub = sandbox.stub().callsFake(function() {
 			if (!this.bCalled) {

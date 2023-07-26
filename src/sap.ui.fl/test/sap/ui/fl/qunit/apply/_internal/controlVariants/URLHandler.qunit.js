@@ -74,7 +74,11 @@ sap.ui.define([
 			assert.deepEqual(this.oModel._oHashData, oHashRegister, "then hash register object initialized");
 
 			this.oModel._oHashData.hashParams = ["expectedParameter1", "expectedParameter2"];
-			assert.deepEqual(URLHandler.getStoredHashParams({model: this.oModel}), ["expectedParameter1", "expectedParameter2"], "then expected parameters are returned");
+			assert.deepEqual(
+				URLHandler.getStoredHashParams({model: this.oModel}),
+				["expectedParameter1", "expectedParameter2"],
+				"then expected parameters are returned"
+			);
 		});
 
 		QUnit.test("when registerControl is called for a variant management control's local id", function(assert) {
@@ -86,7 +90,11 @@ sap.ui.define([
 			assert.strictEqual(aCallArgs[1].destroy, true, "then ManagedObjectObserver observers the destroy() method");
 
 			this.oModel.oComponentDestroyObserver.unobserve(this.oAppComponent, {destroy: true}); // remove component observer
-			assert.deepEqual(this.oModel._oHashData.variantControlIds, [sVariantManagementReference], "then the rendered control's local id added to the hash register");
+			assert.deepEqual(
+				this.oModel._oHashData.variantControlIds,
+				[sVariantManagementReference],
+				"then the rendered control's local id added to the hash register"
+			);
 		});
 
 		QUnit.test("when attachHandlers() is called", function(assert) {
@@ -122,7 +130,9 @@ sap.ui.define([
 			this.oModel.destroy = sandbox.stub().callsFake(function() {
 				assert.ok(true, "then the passed VariantModel is destroyed");
 			});
-			URLHandler.attachHandlers({vmReference: sVariantManagementReference, updateURL: true, model: this.oModel}); // app component's destroy handlers are attached here
+			URLHandler.attachHandlers(
+				{vmReference: sVariantManagementReference, updateURL: true, model: this.oModel}
+			); // app component's destroy handlers are attached here
 
 			var fnVariantSwitchPromiseStub = sandbox.stub();
 			this.oModel._oVariantSwitchPromise = new Promise(function(resolve) {
@@ -136,9 +146,20 @@ sap.ui.define([
 			return this.oModel._oVariantSwitchPromise.then(function() {
 				var aCallArgs = this.fnDestroyUnobserverSpy.getCall(0).args;
 				assert.equal(this.oModel.destroy.callCount, 1, "then variant model resetMap() was called");
-				assert.deepEqual(aCallArgs[0], this.oAppComponent, "then ManagedObjectObserver unobserve() was called for the AppComponent");
-				assert.strictEqual(aCallArgs[1].destroy, true, "then ManagedObjectObserver unobserve() was called for the destroy() method");
-				assert.ok(fnVariantSwitchPromiseStub.calledBefore(this.fnDestroyUnobserverSpy), "then first variant switch was resolved and then component's destroy callback was called");
+				assert.deepEqual(
+					aCallArgs[0],
+					this.oAppComponent,
+					"then ManagedObjectObserver unobserve() was called for the AppComponent"
+				);
+				assert.strictEqual(
+					aCallArgs[1].destroy,
+					true,
+					"then ManagedObjectObserver unobserve() was called for the destroy() method"
+				);
+				assert.ok(
+					fnVariantSwitchPromiseStub.calledBefore(this.fnDestroyUnobserverSpy),
+					"then first variant switch was resolved and then component's destroy callback was called"
+				);
 			}.bind(this));
 		});
 
@@ -159,7 +180,11 @@ sap.ui.define([
 
 			this.oGetUShellServiceStub.withArgs("CrossApplicationNavigation").returns({
 				toExternal: function(mParameters) {
-					assert.strictEqual(mParameters.params[URLHandler.variantTechnicalParameterName], mPropertyBag.parameters, "then correct parameters were passed to be set for the URL hash");
+					assert.strictEqual(
+						mParameters.params[URLHandler.variantTechnicalParameterName],
+						mPropertyBag.parameters,
+						"then correct parameters were passed to be set for the URL hash"
+					);
 				}
 			});
 
@@ -184,7 +209,11 @@ sap.ui.define([
 
 			this.oGetUShellServiceStub.withArgs("CrossApplicationNavigation").returns({
 				toExternal: function(mParameters) {
-					assert.strictEqual(mParameters.params[URLHandler.variantTechnicalParameterName], mPropertyBag.parameters, "then correct parameters were passed to be set for the URL hash");
+					assert.strictEqual(
+						mParameters.params[URLHandler.variantTechnicalParameterName],
+						mPropertyBag.parameters,
+						"then correct parameters were passed to be set for the URL hash"
+					);
 				}
 			});
 
@@ -210,7 +239,11 @@ sap.ui.define([
 
 			this.oGetUShellServiceStub.withArgs("CrossApplicationNavigation").returns({
 				toExternal: function(mParameters) {
-					assert.strictEqual(mParameters.params[URLHandler.variantTechnicalParameterName], mPropertyBag.parameters, "then correct parameters were passed to be set for the URL hash");
+					assert.strictEqual(
+						mParameters.params[URLHandler.variantTechnicalParameterName],
+						mPropertyBag.parameters,
+						"then correct parameters were passed to be set for the URL hash"
+					);
 				}
 			});
 
@@ -381,15 +414,35 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when 3 variant management controls are rendered", function(assert) {
 			assert.ok(this.oVariantManagement1.getResetOnContextChange(), "then by default 'resetOnContextChange' is set to true");
-			assert.ok(this.oModel._oHashData.controlPropertyObservers.length, 3, "then an observer for 'resetOnContextChange' was added for each control");
+			assert.ok(
+				this.oModel._oHashData.controlPropertyObservers.length,
+				3,
+				"then an observer for 'resetOnContextChange' was added for each control"
+			);
 		});
 
 		QUnit.test("when event 'modelContextChange' is fired on a control rendered at position 1, out of 3 controls", function(assert) {
 			this.oVariantManagement1.fireEvent("modelContextChange");
-			assert.equal(this.oSwitchToDefaultVariantStub.callCount, 3, "the VariantModel.switchToDefaultForVariantManagement() is called three times");
-			assert.equal(this.oSwitchToDefaultVariantStub.args[0][0], "variantMgmtId1", "then first VM control was reset to default variant");
-			assert.equal(this.oSwitchToDefaultVariantStub.args[1][0], "variantMgmtId2", "then second VM control was reset to default variant");
-			assert.equal(this.oSwitchToDefaultVariantStub.args[2][0], "variantMgmtId3", "then third VM control was reset to default variant");
+			assert.equal(
+				this.oSwitchToDefaultVariantStub.callCount,
+				3,
+				"the VariantModel.switchToDefaultForVariantManagement() is called three times"
+			);
+			assert.equal(
+				this.oSwitchToDefaultVariantStub.args[0][0],
+				"variantMgmtId1",
+				"then first VM control was reset to default variant"
+			);
+			assert.equal(
+				this.oSwitchToDefaultVariantStub.args[1][0],
+				"variantMgmtId2",
+				"then second VM control was reset to default variant"
+			);
+			assert.equal(
+				this.oSwitchToDefaultVariantStub.args[2][0],
+				"variantMgmtId3",
+				"then third VM control was reset to default variant"
+			);
 		});
 
 		QUnit.test("when event 'modelContextChange' is fired on a control rendered at position 1 with a URL parameter, out of 3 controls", function(assert) {
@@ -403,34 +456,71 @@ sap.ui.define([
 			});
 			sandbox.stub(this.oModel, "getVariant").callsFake(function(sVReference, sVMReference) {
 				if (sVMReference === this.oVariantManagement1.getId() && sVReference === this.oVariantManagement1.getId()) {
-					return true;
+					return {simulate: "foundVariant"};
 				}
+				return undefined;
 			}.bind(this));
 
 			this.oVariantManagement1.fireEvent("modelContextChange");
-			assert.equal(this.oSwitchToDefaultVariantStub.callCount, 2, "the VariantModel.switchToDefaultForVariantManagement() is called two times");
-			assert.equal(this.oSwitchToDefaultVariantStub.args[0][0], "variantMgmtId2", "then second VM control was reset to default variant");
-			assert.equal(this.oSwitchToDefaultVariantStub.args[1][0], "variantMgmtId3", "then third VM control was reset to default variant");
+			assert.equal(
+				this.oSwitchToDefaultVariantStub.callCount,
+				2,
+				"the VariantModel.switchToDefaultForVariantManagement() is called two times"
+			);
+			assert.equal(
+				this.oSwitchToDefaultVariantStub.args[0][0],
+				"variantMgmtId2",
+				"then second VM control was reset to default variant"
+			);
+			assert.equal(
+				this.oSwitchToDefaultVariantStub.args[1][0],
+				"variantMgmtId3",
+				"then third VM control was reset to default variant"
+			);
 		});
 
 		QUnit.test("when event 'modelContextChange' is fired on a control rendered at position 2, out of 3 controls", function(assert) {
 			assert.ok(this.oVariantManagement1.getResetOnContextChange(), "then by default 'resetOnContextChange' is set to true");
 			this.oVariantManagement2.fireEvent("modelContextChange");
-			assert.equal(this.oSwitchToDefaultVariantStub.callCount, 2, "then VariantModel.switchToDefaultForVariantManagement() is called twice");
-			assert.equal(this.oSwitchToDefaultVariantStub.args[0][0], "variantMgmtId2", "then second VM control was reset to default variant");
-			assert.equal(this.oSwitchToDefaultVariantStub.args[1][0], "variantMgmtId3", "then third VM control was reset to default variant");
+			assert.equal(
+				this.oSwitchToDefaultVariantStub.callCount,
+				2,
+				"then VariantModel.switchToDefaultForVariantManagement() is called twice"
+			);
+			assert.equal(
+				this.oSwitchToDefaultVariantStub.args[0][0],
+				"variantMgmtId2",
+				"then second VM control was reset to default variant"
+			);
+			assert.equal(
+				this.oSwitchToDefaultVariantStub.args[1][0],
+				"variantMgmtId3",
+				"then third VM control was reset to default variant"
+			);
 		});
 
 		QUnit.test("when event 'modelContextChange' is fired on a control rendered at position 3, out of 3 controls", function(assert) {
 			this.oVariantManagement3.fireEvent("modelContextChange");
-			assert.equal(this.oSwitchToDefaultVariantStub.callCount, 1, "then VariantModel.switchToDefaultForVariantManagement() is called once");
-			assert.equal(this.oSwitchToDefaultVariantStub.args[0][0], "variantMgmtId3", "then third VM control was reset to default variant");
+			assert.equal(
+				this.oSwitchToDefaultVariantStub.callCount,
+				1,
+				"then VariantModel.switchToDefaultForVariantManagement() is called once"
+			);
+			assert.equal(
+				this.oSwitchToDefaultVariantStub.args[0][0],
+				"variantMgmtId3",
+				"then third VM control was reset to default variant"
+			);
 		});
 
 		QUnit.test("when event 'modelContextChange' is fired on a control which is not there in the hash register", function(assert) {
 			this.oModel._oHashData.variantControlIds.splice(1, 1);
 			this.oVariantManagement2.fireEvent("modelContextChange");
-			assert.equal(this.oSwitchToDefaultVariantStub.callCount, 0, "then VariantModel.switchToDefaultForVariantManagement() is not called");
+			assert.equal(
+				this.oSwitchToDefaultVariantStub.callCount,
+				0,
+				"then VariantModel.switchToDefaultForVariantManagement() is not called"
+			);
 		});
 
 		QUnit.test("when event 'resetOnContextChange' is changed to false from true(default)", function(assert) {
@@ -481,7 +571,11 @@ sap.ui.define([
 			var oHash = {params: {}};
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
 			oHash.params[URLHandler.variantTechnicalParameterName] = aParametersBelongingToNoVariant;
-			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
+			assert.strictEqual(
+				fnVariantIdChangeHandler(oHash),
+				this.sDefaultStatus,
+				"then the default navigation filter status was returned"
+			);
 		});
 
 		QUnit.test("when the registered navigationFilter function is called and there are unchanged variant URL parameters", function(assert) {
@@ -497,18 +591,29 @@ sap.ui.define([
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
 			var oHash = {params: {}};
 			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
-			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
+			assert.strictEqual(
+				fnVariantIdChangeHandler(oHash),
+				this.sDefaultStatus,
+				"then the default navigation filter status was returned"
+			);
 		});
 
 		// TODO: Check this test - in real code the method "registerNavigationFilter" is never called with a second parameter
 		QUnit.test("when the registered navigationFilter function is called and there are changed variant URL parameters", function(assert) {
 			assert.expect(2);
-			var aParameterValues = [this.oModel.oData.variantMgmtId1.defaultVariant, this.oModel.oData.variantMgmtId2.defaultVariant, "otherParamValue"];
+			var aParameterValues = [
+				this.oModel.oData.variantMgmtId1.defaultVariant,
+				this.oModel.oData.variantMgmtId2.defaultVariant, "otherParamValue"
+			];
 			var mExpectedPropertyBag = {
 				model: this.oModel,
 				updateURL: true,
 				updateHashEntry: true,
-				parameters: [this.oModel.oData.variantMgmtId1.currentVariant, this.oModel.oData.variantMgmtId2.currentVariant, "otherParamValue"]
+				parameters: [
+					this.oModel.oData.variantMgmtId1.currentVariant,
+					this.oModel.oData.variantMgmtId2.currentVariant,
+					"otherParamValue"
+				]
 			};
 			sandbox.stub(URLHandler, "update").callsFake(function(mPropertyBag) {
 				assert.deepEqual(mPropertyBag, mExpectedPropertyBag, "then URLHandler.update() was called with right parameters");
@@ -517,12 +622,20 @@ sap.ui.define([
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
 			var oHash = {params: {}};
 			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
-			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
+			assert.strictEqual(
+				fnVariantIdChangeHandler(oHash),
+				this.sDefaultStatus,
+				"then the default navigation filter status was returned"
+			);
 		});
 
 		QUnit.test("when the registered navigationFilter function is called and there are two variant parameters belonging to the same variant management", function(assert) {
 			assert.expect(2);
-			var aParameterValues = [this.oModel.oData.variantMgmtId1.defaultVariant, this.oModel.oData.variantMgmtId1.currentVariant, "otherParamValue"];
+			var aParameterValues = [
+				this.oModel.oData.variantMgmtId1.defaultVariant,
+				this.oModel.oData.variantMgmtId1.currentVariant,
+				"otherParamValue"
+			];
 			var mExpectedPropertyBag = {
 				model: this.oModel,
 				updateURL: true,
@@ -536,32 +649,56 @@ sap.ui.define([
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
 			var oHash = {params: {}};
 			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
-			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
+			assert.strictEqual(
+				fnVariantIdChangeHandler(oHash),
+				this.sDefaultStatus,
+				"then the default navigation filter status was returned"
+			);
 		});
 
 		QUnit.test("when the registered navigationFilter function is called in UI Adaptation mode and there is a changed variant parameter, belonging to a variant", function(assert) {
 			assert.expect(2);
-			var aParameterValues = [this.oModel.oData.variantMgmtId1.defaultVariant, this.oModel.oData.variantMgmtId2.defaultVariant, "otherParamValue"];
+			var aParameterValues = [
+				this.oModel.oData.variantMgmtId1.defaultVariant,
+				this.oModel.oData.variantMgmtId2.defaultVariant,
+				"otherParamValue"
+			];
 			this.oModel._bDesignTimeMode = true;
 			var mExpectedPropertyBagToUpdate = {
 				model: this.oModel,
 				updateURL: !this.oModel._bDesignTimeMode,
 				updateHashEntry: true,
-				parameters: [this.oModel.oData.variantMgmtId1.currentVariant, this.oModel.oData.variantMgmtId2.currentVariant, "otherParamValue"]
+				parameters: [
+					this.oModel.oData.variantMgmtId1.currentVariant,
+					this.oModel.oData.variantMgmtId2.currentVariant,
+					"otherParamValue"
+				]
 			};
 			sandbox.stub(URLHandler, "update").callsFake(function(mPropertyBag) {
-				assert.deepEqual(mPropertyBag, mExpectedPropertyBagToUpdate, "then URLHandler.update() was called with right parameters to update hash register");
+				assert.deepEqual(
+					mPropertyBag,
+					mExpectedPropertyBagToUpdate,
+					"then URLHandler.update() was called with right parameters to update hash register"
+				);
 			});
 
 			var oHash = {params: aParameterValues};
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
 			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
-			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
+			assert.strictEqual(
+				fnVariantIdChangeHandler(oHash),
+				this.sDefaultStatus,
+				"then the default navigation filter status was returned"
+			);
 		});
 
 		QUnit.test("when the registered navigationFilter function is called in UI Adaptation mode and there is a changed variant parameter (default variant), belonging to a variant", function(assert) {
 			assert.expect(2);
-			var aParameterValues = [this.oModel.oData.variantMgmtId1.defaultVariant, this.oModel.oData.variantMgmtId2.defaultVariant, "variant3"];
+			var aParameterValues = [
+				this.oModel.oData.variantMgmtId1.defaultVariant,
+				this.oModel.oData.variantMgmtId2.defaultVariant,
+				"variant3"
+			];
 			this.oModel._bDesignTimeMode = true;
 			var mExpectedPropertyBagToUpdate = {
 				model: this.oModel,
@@ -570,13 +707,21 @@ sap.ui.define([
 				parameters: [this.oModel.oData.variantMgmtId1.currentVariant, this.oModel.oData.variantMgmtId2.currentVariant]
 			};
 			sandbox.stub(URLHandler, "update").callsFake(function(mPropertyBag) {
-				assert.deepEqual(mPropertyBag, mExpectedPropertyBagToUpdate, "then URLHandler.update() was called with right parameters to update hash register");
+				assert.deepEqual(
+					mPropertyBag,
+					mExpectedPropertyBagToUpdate,
+					"then URLHandler.update() was called with right parameters to update hash register"
+				);
 			});
 
 			var oHash = {params: aParameterValues};
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
 			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
-			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
+			assert.strictEqual(
+				fnVariantIdChangeHandler(oHash),
+				this.sDefaultStatus,
+				"then the default navigation filter status was returned"
+			);
 		});
 	});
 
@@ -618,8 +763,37 @@ sap.ui.define([
 							visible: true
 						}
 					]
+				},
+				variantMgmtId2: {
+					defaultVariant: "variant21",
+					originalDefaultVariant: "variant21",
+					variants: [
+						{
+							author: "SAP",
+							key: "variantMgmtId2",
+							layer: Layer.VENDOR,
+							title: "Standard",
+							favorite: true,
+							visible: true
+						}, {
+							author: "Me",
+							key: "variant20",
+							layer: "CUSTOMER",
+							title: "variant A",
+							favorite: true,
+							visible: true
+						}, {
+							author: "Me",
+							key: "variant21",
+							layer: "CUSTOMER",
+							title: "variant B",
+							favorite: false,
+							visible: true
+						}
+					]
 				}
-			}, {
+			},
+			{
 				flexController: oFlexController,
 				appComponent: { getId: function() { return "testid"; } }
 			});
@@ -645,7 +819,7 @@ sap.ui.define([
 			};
 
 			var aModifiedUrlTechnicalParameters = ["variant0"];
-			sandbox.stub(this.oModel, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
+			sandbox.stub(this.oModel, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns({simulate: "foundVariant"});
 			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
 				parseShellHash: function() {
 					return oParameters;
@@ -671,6 +845,45 @@ sap.ui.define([
 			}), "then URLHandler.update() called with the correct object as parameter");
 		});
 
+		QUnit.test("when called when a parameter is already present for another VM", function(assert) {
+			var aExistingParameters = ["variantMgmtId1"];
+			var sTargetVariantId = "variant20";
+			var oParameters = {
+				params: {
+				}
+			};
+			oParameters.params[URLHandler.variantTechnicalParameterName] = aExistingParameters;
+
+			sandbox.stub(this.oModel, "getVariant").withArgs("variantMgmtId1", "variantMgmtId2").returns({});
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {
+					return oParameters;
+				}
+			});
+			sandbox.spy(URLHandler, "removeURLParameterForVariantManagement");
+
+			URLHandler.updateVariantInURL({
+				vmReference: "variantMgmtId2",
+				newVReference: sTargetVariantId,
+				model: this.oModel
+			});
+			assert.ok(this.oGetUShellServiceStub.called, "then url parameters requested");
+
+			var oVariantIndexInURLReturn = {parameters: ["variantMgmtId1"], index: -1};
+			oVariantIndexInURLReturn.parameters = [aExistingParameters[0]];
+			assert.deepEqual(
+				URLHandler.removeURLParameterForVariantManagement.returnValues[0],
+				oVariantIndexInURLReturn,
+				"then URLHandler.removeURLParameterForVariantManagement() returns the correct parameters and index"
+			);
+			assert.ok(URLHandler.update.calledWithExactly({
+				parameters: [aExistingParameters[0], sTargetVariantId],
+				updateURL: true,
+				updateHashEntry: true,
+				model: this.oModel
+			}), "then URLHandler.update() called with the correct object as parameter");
+		});
+
 		QUnit.test("when called with encoded variant URL parameter for the same variant management", function(assert) {
 			var aExistingParameters = ["Dummy::'123'/'456'", "variantMgmtId1"];
 			var sTargetVariantId = "variant0";
@@ -681,7 +894,7 @@ sap.ui.define([
 				return encodeURIComponent(sExistingParameter);
 			});
 
-			sandbox.stub(this.oModel, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
+			sandbox.stub(this.oModel, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns({simulate: "foundVariant"});
 			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
 				parseShellHash: function() {
 					return oParameters;
@@ -698,7 +911,11 @@ sap.ui.define([
 
 			var oVariantIndexInURLReturn = {parameters: {}, index: 1};
 			oVariantIndexInURLReturn.parameters = [aExistingParameters[0]];
-			assert.deepEqual(URLHandler.removeURLParameterForVariantManagement.returnValues[0], oVariantIndexInURLReturn, "then URLHandler.removeURLParameterForVariantManagement() returns the correct parameters and index");
+			assert.deepEqual(
+				URLHandler.removeURLParameterForVariantManagement.returnValues[0],
+				oVariantIndexInURLReturn,
+				"then URLHandler.removeURLParameterForVariantManagement() returns the correct parameters and index"
+			);
 			assert.ok(URLHandler.update.calledWithExactly({
 				parameters: [aExistingParameters[0], sTargetVariantId],
 				updateURL: true,
@@ -753,7 +970,7 @@ sap.ui.define([
 				}
 			});
 
-			sandbox.stub(this.oModel, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
+			sandbox.stub(this.oModel, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns({simulate: "foundVariant"});
 
 			URLHandler.updateVariantInURL({
 				vmReference: "variantMgmtId1",
@@ -778,7 +995,7 @@ sap.ui.define([
 			});
 			// return parameters saved at the current index of the hash register
 			sandbox.stub(URLHandler, "getStoredHashParams").returns(["Dummy", "variantMgmtId1", "Dummy1"]);
-			sandbox.stub(this.oModel, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
+			sandbox.stub(this.oModel, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns({simulate: "foundVariant"});
 			this.oModel._bDesignTimeMode = true;
 
 			URLHandler.updateVariantInURL({
@@ -872,7 +1089,11 @@ sap.ui.define([
 					};
 				},
 				constructShellHash: function(oParsedHash) {
-					assert.deepEqual(oParsedHash.params[URLHandler.variantTechnicalParameterName], aNewParamValues, "then the new shell hash is created with the passed parameters");
+					assert.deepEqual(
+						oParsedHash.params[URLHandler.variantTechnicalParameterName],
+						aNewParamValues,
+						"then the new shell hash is created with the passed parameters"
+					);
 					assert.notOk(hasher.changed.active, "then the hasher changed events are deactivated");
 					return sConstructedHashValue;
 				}
@@ -883,7 +1104,9 @@ sap.ui.define([
 			URLHandler.update({model: this.oModel, parameters: aNewParamValues, updateURL: true, silent: true});
 
 			assert.ok(hasher.replaceHash.calledWith(sConstructedHashValue), "then hasher.replaceHash is called with the correct hash");
-			assert.ok(Log.warning.calledWith("Component instance not provided, so technical parameters in component data and browser history remain unchanged"), "then warning produced as component is invalid");
+			assert.ok(Log.warning.calledWith(
+				"Component instance not provided, so technical parameters in component data and browser history remain unchanged"
+			), "then warning produced as component is invalid");
 			assert.ok(hasher.changed.active, "then the hasher changed events are activated again");
 		});
 
@@ -915,7 +1138,11 @@ sap.ui.define([
 					};
 				},
 				constructShellHash: function(oParsedHash) {
-					assert.deepEqual(oParsedHash.params[URLHandler.variantTechnicalParameterName], aNewParamValues, "then the new shell hash is created with the passed parameters");
+					assert.deepEqual(
+						oParsedHash.params[URLHandler.variantTechnicalParameterName],
+						aNewParamValues,
+						"then the new shell hash is created with the passed parameters"
+					);
 					assert.notOk(hasher.changed.active, "then the hasher changed events are deactivated");
 					return sConstructedHashValue;
 				}
@@ -926,7 +1153,11 @@ sap.ui.define([
 			URLHandler.update({model: this.oModel, parameters: aNewParamValues, updateURL: true, silent: true});
 
 			assert.ok(hasher.replaceHash.calledWith(sConstructedHashValue), "then hasher.replaceHash is called with the correct hash");
-			assert.deepEqual(this.oModel.oAppComponent.getComponentData().technicalParameters[URLHandler.variantTechnicalParameterName], aNewParamValues, "then new parameter values were set as component's technical parameters");
+			assert.deepEqual(
+				this.oModel.oAppComponent.getComponentData().technicalParameters[URLHandler.variantTechnicalParameterName],
+				aNewParamValues,
+				"then new parameter values were set as component's technical parameters"
+			);
 			assert.ok(Log.warning.notCalled, "then no warning for invalid component was produced");
 			assert.ok(hasher.changed.active, "then the hasher changed events are activated again");
 		});
@@ -983,9 +1214,16 @@ sap.ui.define([
 
 			URLHandler.update({model: this.oModel, parameters: aNewParamValues, updateURL: true});
 
-			assert.deepEqual(this.oModel.oAppComponent.getComponentData().technicalParameters[URLHandler.variantTechnicalParameterName], aNewParamValues, "then new parameter values were set as component's technical parameters");
+			assert.deepEqual(
+				this.oModel.oAppComponent.getComponentData().technicalParameters[URLHandler.variantTechnicalParameterName],
+				aNewParamValues,
+				"then new parameter values were set as component's technical parameters"
+			);
 			assert.ok(Log.warning.notCalled, "then no warning for invalid component was produced");
-			assert.ok(oCrossAppNav.toExternal.calledWithExactly(oExpectedResult), "then the CrossAppNavigation service was called with the correct parameters");
+			assert.ok(
+				oCrossAppNav.toExternal.calledWithExactly(oExpectedResult),
+				"then the CrossAppNavigation service was called with the correct parameters"
+			);
 		});
 
 		QUnit.test("when clearAllVariantURLParameters is called without variants in the url", function(assert) {
