@@ -273,6 +273,8 @@ sap.ui.define([
 			 * Label of the column which is displayed in the column header. This aggregation is for the standard behavior,
 			 * where you only want to display one single row header. If a string is supplied, a default label control will be
 			 * created. Which control this is depends on the loaded libraries.
+			 *
+			 * <b>Note:</b> The <code>altType</code> string is deprecated as of version 1.118. Use a <code>Control</code> instead.
 			 */
 			label: {type: "sap.ui.core.Control", altTypes: ["string"], multiple: false},
 
@@ -293,6 +295,8 @@ sap.ui.define([
 			 * The set of supported controls is limited. See section "{@link topic:148892ff9aea4a18b912829791e38f3e Tables: Which One Should I
 			 * Choose?}" in the documentation for more details. While it is technically possible to also use other controls, doing so might lead to
 			 * issues with regards to scrolling, alignment, condensed mode, screen reader support, and keyboard support.
+			 *
+			 * <b>Note:</b> The <code>altType</code> string is deprecated as of version 1.118. Use a <code>Control</code> instead.
 			 */
 			template: {type: "sap.ui.core.Control", altTypes: ["string"], multiple: false},
 
@@ -439,7 +443,7 @@ sap.ui.define([
 				this.getLabel().setText(vLabel);
 				return this;
 			}
-			oLabel = library.TableHelper.createLabel({text: vLabel});
+			oLabel = TableUtils._getTableTemplateHelper().createLabel({text: vLabel});
 			_private(this).bHasDefaultLabel = true;
 		} else if (_private(this).bHasDefaultLabel) {
 			this.destroyLabel();
@@ -471,7 +475,7 @@ sap.ui.define([
 				this.getTemplate().bindProperty("text", vTemplate);
 				bNewTemplate = false;
 			} else {
-				oTemplate = library.TableHelper.createTextView().bindProperty("text", vTemplate);
+				oTemplate = TableUtils._getTableTemplateHelper().createTextView().bindProperty("text", vTemplate);
 				_private(this).bHasDefaulTemplate = true;
 			}
 		} else if (_private(this).bHasDefaulTemplate) {

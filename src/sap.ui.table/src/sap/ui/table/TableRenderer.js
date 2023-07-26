@@ -71,10 +71,17 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 			rm.class("sapUiTableRowHighlights"); // show row highlights
 		}
 
-		// This class flags whether the sap.m. library is loaded or not.
-		var sSapMTableClass = library.TableHelper.addTableClass();
-		if (sSapMTableClass) {
-			rm.class(sSapMTableClass);
+		/**
+		 * @deprecated As of version 1.118
+		 */
+		try {
+			// This class flags whether the sap.m. library is loaded or not.
+			var sSapMTableClass = TableUtils._getTableTemplateHelper(true).addTableClass();
+			if (sSapMTableClass) {
+				rm.class(sSapMTableClass);
+			}
+		} catch (e) {
+			// ignore
 		}
 
 		var oScrollExtension = oTable._getScrollExtension();
