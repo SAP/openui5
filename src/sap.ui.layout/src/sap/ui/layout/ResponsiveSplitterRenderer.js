@@ -61,7 +61,8 @@ sap.ui.define([
 
 		oRm.openStart("div")
 			.class("sapUiResponsiveSplitterPaginatorButtons")
-			.attr("role", "radiogroup")
+			.attr("role", "listbox")
+			.attr("aria-multiselectable", true)	// Still, only one item at a time can be selected. Set to 'true', as JAWS won't announce selection and root's descriptions otherwise.
 			.attr("aria-label", oResourceBundle.getText("RESPONSIVE_SPLITTER_ARIA_PAGINATOR_LABEL"));
 
 		if (aPages.length > 0) {
@@ -81,8 +82,8 @@ sap.ui.define([
 
 			oRm.class("sapUiResponsiveSplitterHiddenElement")
 				.class("sapUiResponsiveSplitterPaginatorButton")
-				.attr("role", "radio")
-				.attr("aria-checked", false)
+				.attr("role", "option")
+				.attr("aria-selected", false)
 				.openEnd()
 				.close("div");
 		}
