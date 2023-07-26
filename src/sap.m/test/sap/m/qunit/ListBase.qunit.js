@@ -439,13 +439,13 @@ sap.ui.define([
 				assert.ok(e.getParameter("selectAll"), "selectAll parameter is true when the 'ctrl+A' is pressed");
 			});
 			oList.getItems()[0].focus();
-			qutils.triggerKeydown(oList.getItems()[0].$(), KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
+			qutils.triggerEvent("keydown", document.activeElement, {code: "KeyA", ctrlKey: true});
 
 			oList.attachEventOnce("selectionChange", function(e) {
 				assert.ok(!e.getParameter("selectAll"), "selectAll parameter is false when the 'ctrl+A' is pressed again");
 			});
 			oList.getItems()[0].focus();
-			qutils.triggerKeydown(oList.getItems()[0].$(), KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
+			qutils.triggerEvent("keydown", document.activeElement, {code: "KeyA", ctrlKey: true});
 
 			var oSelectionChangeSpy = this.spy();
 			oList.attachSelectionChange(oSelectionChangeSpy);
@@ -1784,7 +1784,7 @@ sap.ui.define([
 			assert.strictEqual(fnPressSpy.callCount, 0, "Press event is not fired when enter is pressed while focus is not at the item");
 
 			oListItem2.focus();
-			qutils.triggerKeydown(document.activeElement, "F2");
+			qutils.triggerEvent("keydown", document.activeElement, {code: "KeyE", ctrlKey: true});
 			assert.strictEqual(fnDetailPressSpy.callCount, 1, "DetailPress event is called since second item has type Edit");
 
 			oList.destroy();
@@ -1814,8 +1814,8 @@ sap.ui.define([
 			oList.forwardTab = fnSpy;
 
 			// tab key
-			qutils.triggerKeydown(oInput.getFocusDomRef(), "TAB", false, false, false);
-			assert.strictEqual(fnSpy.callCount, 1, "List is informed to forward tab when tab is pressed while focus is on last tabbable item");
+			qutils.triggerKeydown(oListItem.getFocusDomRef(), "TAB", false, false, false);
+			assert.strictEqual(fnSpy.callCount, 1, "List is informed to forward tab when tab is pressed while focus is on the item");
 			assert.strictEqual(fnSpy.args[0][0], true, "Tab Forward is informed");
 			fnSpy.resetHistory();
 
@@ -2008,7 +2008,6 @@ sap.ui.define([
 			var fnDetailPressSpy = this.spy(),
 				fnItemPressSpy = this.spy(),
 				fnPressSpy = this.spy(),
-				fnOnAfterRenderingSpy = this.spy(),
 				oInput1 = new Input(),
 				oInput2 = new Input(),
 				oButton1 = new Button(),
@@ -2025,7 +2024,6 @@ sap.ui.define([
 				}),
 				oList = new List({
 					mode: "MultiSelect",
-					keyboardMode: "Navigation",
 					itemPress: fnItemPressSpy
 				}).addItem(oListItem1).addItem(oListItem2),
 				oContainer = new VBox({
@@ -2039,7 +2037,7 @@ sap.ui.define([
 			qutils.triggerKeydown(oListItem1.getFocusDomRef(), "TAB", true, false, false);
 			assert.strictEqual(document.activeElement, oList.getDomRef('before'), "Focus is forwarded before the table");
 
-			oInput1.focus();
+			oListItem1.focus();
 			qutils.triggerKeydown(document.activeElement, "TAB");
 			assert.strictEqual(document.activeElement, oList.getDomRef("after"), "Focus is forwarded after the table");
 
@@ -2055,17 +2053,9 @@ sap.ui.define([
 			qutils.triggerKeydown(document.activeElement, "ENTER");
 			assert.strictEqual(fnPressSpy.callCount, 0, "Enter has no effect");
 
-			oList.addEventDelegate({
-				onAfterRendering: fnOnAfterRenderingSpy
-			});
-			oList.setKeyboardMode("Edit");
-			Core.applyChanges();
-			assert.strictEqual(fnPressSpy.callCount, 0, "Mode change did not rerender!");
-
 			oListItem1.focus();
-			qutils.triggerKeydown(document.activeElement, "F2");
-			assert.strictEqual(fnDetailPressSpy.callCount, 1, "Keyboard mode did not change Detail press event is fired while focus is on the row");
-			assert.strictEqual(oList.getKeyboardMode(), "Edit", "Keyboard mode is still in Edit");
+			qutils.triggerEvent("keydown", document.activeElement, {code: "KeyE", ctrlKey: true});
+			assert.strictEqual(fnDetailPressSpy.callCount, 1, "Detail press event is fired while focus is on the row");
 			fnDetailPressSpy.resetHistory();
 
 			oInput1.focus();
@@ -2073,22 +2063,18 @@ sap.ui.define([
 			assert.notStrictEqual(document.activeElement, oList.getDomRef("after"), "Focus is not forwarded after the table");
 
 			oInput1.focus();
-			qutils.triggerKeydown(document.activeElement, "F2");
-			assert.strictEqual(fnDetailPressSpy.callCount, 0, "F2 switch keyboard mode and did not fire the detail event");
-			assert.strictEqual(oList.getKeyboardMode(), "Navigation", "Now keyboard mode is navigation");
+			qutils.triggerEvent("keydown", document.activeElement, {code: "F2"});
 			assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is moved to the row");
 
 			oListItem1.detachDetailPress(fnDetailPressSpy);
-			qutils.triggerKeydown(document.activeElement, "F2");
-			assert.strictEqual(oList.getKeyboardMode(), "Edit", "Now keyboard mode is Edit");
-			assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Focus is moved to the Input again");
+			qutils.triggerEvent("keydown", document.activeElement, {code: "F2"});
+			assert.strictEqual(document.activeElement, oListItem1.getModeControl().getFocusDomRef(), "Focus is moved to the Input again");
 
 			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
-			assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Focus is not moved from first input");
+			assert.strictEqual(document.activeElement, oListItem2.getModeControl().getFocusDomRef(), "Focus is moved to the next items selection control");
 
-			oInput2.focus();
 			qutils.triggerKeydown(document.activeElement, "ARROW_UP");
-			assert.strictEqual(document.activeElement, oInput2.getFocusDomRef(), "Focus is not moved from second input");
+			assert.strictEqual(document.activeElement, oListItem1.getModeControl().getFocusDomRef(), "Focus is moved to the previous items selection control");
 
 			oInput1.focus();
 			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", false, false, true);
@@ -2100,7 +2086,7 @@ sap.ui.define([
 			oInput2.setEnabled(false);
 			Core.applyChanges();
 			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", false, false, true);
-			assert.strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is moved to the item since second input is disabled");
+			assert.strictEqual(document.activeElement, oListItem2.getModeControl().getFocusDomRef(), "Focus is moved to the selection control of 2nd item since the input is disabled");
 
 			qutils.triggerKeydown(document.activeElement, "TAB", true, false, false);
 			assert.notStrictEqual(document.activeElement, oList.getItemsContainerDomRef(), "Focus is not forwarded before the table");
@@ -2108,12 +2094,10 @@ sap.ui.define([
 			oInput2.setEnabled(true);
 			Core.applyChanges();
 			oListItem2.focus();
-			qutils.triggerKeydown(document.activeElement, "F7");
-			assert.strictEqual(document.activeElement, oInput2.getFocusDomRef(), "Focus is moved to input but keyboard mode did not change with F7");
-			assert.strictEqual(oList.getKeyboardMode(), "Edit", "keyboard mode is still Edit");
+			qutils.triggerEvent("keydown", document.activeElement, {code: "F7"});
+			assert.strictEqual(document.activeElement, oListItem2.getModeControl().getFocusDomRef(), "Focus is moved to the selection control");
 
 			qutils.triggerKeydown(document.activeElement, "ENTER");
-			assert.strictEqual(oList.getKeyboardMode(), "Navigation", "Now keyboard mode is change to Navigation. Exit from edit mode.");
 			assert.strictEqual(fnItemPressSpy.callCount, 0, "Item press event is not called");
 			assert.strictEqual(fnPressSpy.callCount, 0, "Press event is not called");
 
@@ -3041,10 +3025,10 @@ sap.ui.define([
 			assert.strictEqual(oList.getSelectedItems().length, 3, "multiSelectMode: Default, selectAll API is enabled");
 			oList.removeSelections();
 			oList.getItems()[0].focus();
-			qutils.triggerKeydown(oList.getItems()[0].getDomRef(), KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
+			qutils.triggerEvent("keydown", document.activeElement, {code: "KeyA", ctrlKey: true});
 			assert.strictEqual(oList.getSelectedItems().length, 3, "multiSelectMode: Default, Items are selected when 'ctrl+A' is pressed");
 
-			qutils.triggerKeydown(oList.getItems()[0].getDomRef(), KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
+			qutils.triggerEvent("keydown", document.activeElement, {code: "KeyA", ctrlKey: true});
 			assert.notOk(oList.getSelectedItems().length, "multiSelectMode: Default, Items are deselected when 'ctrl+A' is pressed again");
 
 			oList.setMultiSelectMode("ClearAll");
@@ -3052,10 +3036,10 @@ sap.ui.define([
 			Core.applyChanges();
 
 			oList.getItems()[0].focus();
-			qutils.triggerKeydown(oList.getItems()[0].getDomRef(), KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
+			qutils.triggerEvent("keydown", document.activeElement, {code: "KeyA", ctrlKey: true});
 			assert.notOk(oList.getSelectedItems().length, "multiSelectMode: ClearAll, Items are not selected when 'ctrl+A' is pressed");
 			oList.getItems()[0].setSelected(true);
-			qutils.triggerKeydown(oList.getItems()[0].getDomRef(), KeyCodes.A, /*Shift*/true, /*Alt*/false, /*Ctrl*/true);
+			qutils.triggerEvent("keydown", document.activeElement, {code: "KeyA", ctrlKey: true, shiftKey: true});
 			assert.notOk(oList.getSelectedItems().length, "multiSelectMode: ClearAll, Items are deselected when 'ctrl+shift+A' is pressed");
 			oList.selectAll();
 			assert.notOk(oList.getSelectedItems().length, "multiSelectMode: ClearAll, selectAll API is disabled");
@@ -3122,7 +3106,7 @@ sap.ui.define([
 			aGroupHeaderListItems.forEach(function(oGroupItem) {
 				var $GroupItem = oGroupItem.$();
 				assert.strictEqual($GroupItem.attr("role"), "group", "Group header has role='group'");
-				assert.strictEqual($GroupItem.attr("aria-roledescription"), oRb.getText("LIST_ITEM_GROUP_HEADER") + " " + oRb.getText("ACC_CTR_TYPE_LISTITEM"), "correct aria-roledescription assigned");
+				assert.strictEqual($GroupItem.attr("aria-roledescription"), oRb.getText("LIST_ITEM_GROUP_HEADER"), "correct aria-roledescription assigned");
 				assert.notOk($GroupItem.attr("aria-posinset"), "aria-posinset attribute not added to groupHeader");
 				assert.notOk($GroupItem.attr("aria-setsize"), "aria-setsize attribute not added to groupHeader");
 				assert.ok($GroupItem.attr("aria-owns"), "aria-owns attribute added to Group Headers");

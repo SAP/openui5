@@ -41,7 +41,7 @@ sap.ui.define([
 				template: oTemplate,
 				templateShareable: true,
 				key: "ProductId"
-			}).setKeyboardMode(sKeyboardMode);
+			});
 		},
 
 		onEdit: function() {

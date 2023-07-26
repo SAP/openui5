@@ -48,12 +48,28 @@ sap.ui.define([
 		}
 	};
 
+	ColumnListItemRenderer.makeFocusable = function(rm) {
+		rm.attr("tabindex", "-1");
+		rm.class("sapMTblCellFocusable");
+	};
+
+	ColumnListItemRenderer.openStartGridCell = function(rm, oLI, sTag, sId, sClass) {
+		rm.openStart(sTag, sId);
+		rm.class(sClass);
+		rm.attr("role", "gridcell");
+		rm.attr("aria-colindex", oLI.aAriaOwns.push(sId));
+		this.makeFocusable(rm);
+		if (oLI.isSelectable()) {
+			rm.attr("aria-selected", oLI.getSelected());
+		}
+		return rm;
+	};
+
 	// render type highlight always within a cell
 	ColumnListItemRenderer.renderHighlight = function(rm, oLI) {
 		rm.openStart("td");
 		rm.class("sapMListTblHighlightCell");
 		rm.attr("role", "presentation");
-		rm.attr("aria-hidden", "true");
 		rm.openEnd();
 
 		// let the list item base render the highlight
@@ -66,7 +82,6 @@ sap.ui.define([
 		rm.openStart("td");
 		rm.class("sapMListTblNavigatedCell");
 		rm.attr("role", "presentation");
-		rm.attr("aria-hidden", "true");
 		rm.openEnd();
 
 		// let the list item base render the navigated state
@@ -77,11 +92,12 @@ sap.ui.define([
 
 	// render type content always within a cell
 	ColumnListItemRenderer.renderType = function(rm, oLI) {
-		rm.openStart("td");
-		rm.class("sapMListTblNavCol");
-		rm.attr("role", "presentation");
-		rm.attr("aria-hidden", "true");
-		rm.openEnd();
+		var oTable = oLI.getTable();
+		if (!oTable || !oTable.doItemsNeedTypeColumn()) {
+			return;
+		}
+
+		this.openStartGridCell(rm, oLI, "td", oLI.getId() + "-TypeCell", "sapMListTblNavCol").openEnd();
 
 		// let the list item base render the type
 		ListItemBaseRenderer.renderType.apply(this, arguments);
@@ -91,11 +107,7 @@ sap.ui.define([
 
 	// wrap mode content with a cell
 	ColumnListItemRenderer.renderModeContent = function(rm, oLI) {
-		rm.openStart("td");
-		rm.class("sapMListTblSelCol");
-		rm.attr("role", "presentation");
-		rm.attr("aria-hidden", "true");
-		rm.openEnd();
+		this.openStartGridCell(rm, oLI, "td", oLI.getId() + "-ModeCell", "sapMListTblSelCol").openEnd();
 
 		// let the list item base render the mode control
 		ListItemBaseRenderer.renderModeContent.apply(this, arguments);
@@ -109,7 +121,17 @@ sap.ui.define([
 
 	// Returns aria accessibility role
 	ColumnListItemRenderer.getAriaRole = function(oLI) {
-		return "";
+		return "row";
+	};
+
+	ColumnListItemRenderer.getAccessbilityPosition = function(oLI) {
+		var oTable = oLI.getTable();
+		if (oTable) {
+			var iRowIndex = oTable.getVisibleItems().indexOf(oLI) + oTable.hasHeaderRow() + 1;
+			return {
+				rowindex: iRowIndex
+			};
+		}
 	};
 
 	ColumnListItemRenderer.renderLIAttributes = function(rm, oLI) {
@@ -120,14 +142,12 @@ sap.ui.define([
 		}
 
 		var oTable = oLI.getTable();
-		if (oTable && oTable.getAlternateRowColors()) {
-			var iPos = oTable.indexOfItem(oLI);
-			if (iPos % 2 == 0) {
+		if (oTable) {
+			if (oTable.getAlternateRowColors()) {
 				rm.class("sapMListTblRowAlternate");
 			}
 		}
 	};
-
 
 	/**
 	 * Overwriting hook method of ListItemBase
@@ -150,65 +170,54 @@ sap.ui.define([
 		oLI._destroyClonedHeaders();
 
 		aColumns.forEach(function(oColumn, iColumnIndex) {
-			var oHeader,
-				bRenderCell = true,
-				oCell = aCells[oColumn.getInitialOrder()];
-
+			var oCell = aCells[oColumn.getInitialOrder()];
 			if (!oCell || !oColumn.getVisible() || oColumn.isHidden()) {
 				return;
 			}
 
-			rm.openStart("td", oLI.getId() + "_cell" + iColumnIndex);
-			rm.class("sapMListTblCell");
+			var aStyleClass = oColumn.getStyleClass().split(" ").filter(Boolean),
+				sCellId = oLI.getId() + "-cell" + iColumnIndex,
+				vAlign = oColumn.getVAlign();
+
+			this.openStartGridCell(rm, oLI, "td", sCellId, "sapMListTblCell");
 			rm.attr("data-sap-ui-column", oColumn.getId());
+			rm.style("text-align", oColumn.getCssAlign());
+			aStyleClass.forEach(function(sClassName) {
+				rm.class(sClassName);
+			});
+			if (vAlign != VerticalAlign.Inherit) {
+				rm.style("vertical-align", vAlign.toLowerCase());
+			}
 
-			// check column properties
-			if (oColumn) {
-				var aStyleClass = oColumn.getStyleClass().split(" ").filter(Boolean);
-				aStyleClass.forEach(function(sClassName) {
-					rm.class(sClassName);
-				});
+			// merge duplicate cells
+			if (!oTable.hasPopin() && oColumn.getMergeDuplicates()) {
+				var sFuncWithParam = oColumn.getMergeFunctionName(),
+					aFuncWithParam = sFuncWithParam.split("#"),
+					sFuncParam = aFuncWithParam[1],
+					sFuncName = aFuncWithParam[0];
 
-				// aria for virtual keyboard mode
-				oHeader = oColumn.getHeader();
-				if (oHeader) {
-					rm.attr("headers", oColumn.getId());
-				}
+				if (typeof oCell[sFuncName] != "function") {
+					Log.warning("mergeFunctionName property is defined on " + oColumn + " but this is not function of " + oCell);
+				} else if (oTable._bRendering || !oCell.bOutput) {
+					var vLastColumnValue = oColumn.getLastValue(),
+						vCellValue = oCell[sFuncName](sFuncParam);
 
-				// merge duplicate cells
-				if (!oTable.hasPopin() && oColumn.getMergeDuplicates()) {
-					var sFuncWithParam = oColumn.getMergeFunctionName(),
-						aFuncWithParam = sFuncWithParam.split("#"),
-						sFuncParam = aFuncWithParam[1],
-						sFuncName = aFuncWithParam[0];
-
-					if (typeof oCell[sFuncName] != "function") {
-						Log.warning("mergeFunctionName property is defined on " + oColumn + " but this is not function of " + oCell);
-					} else if (oTable._bRendering || !oCell.bOutput) {
-						var lastColumnValue = oColumn.getLastValue(),
-							cellValue = oCell[sFuncName](sFuncParam);
-
-						if (lastColumnValue === cellValue) {
-							// it is not necessary to render the cell content but screen readers need the content to announce it
-							bRenderCell = Core.getConfiguration().getAccessibility();
-							oCell.addStyleClass("sapMListTblCellDupCnt");
-							rm.class("sapMListTblCellDup");
-						} else {
-							oColumn.setLastValue(cellValue);
-						}
-					} else if (oCell.hasStyleClass("sapMListTblCellDupCnt")) {
+					if (vLastColumnValue === vCellValue) {
+						oCell.addStyleClass("sapMListTblCellDupCnt");
 						rm.class("sapMListTblCellDup");
+					} else {
+						oColumn.setLastValue(vCellValue);
 					}
+				} else if (oCell.hasStyleClass("sapMListTblCellDupCnt")) {
+					rm.class("sapMListTblCellDup");
 				}
-
-				oColumn.getVAlign() != "Inherit" && rm.style("vertical-align", oColumn.getVAlign().toLowerCase());
-				rm.style("text-align", oColumn.getCssAlign());
 			}
 
 			rm.openEnd();
 
-			if (bRenderCell) {
-				this.applyAriaLabelledBy(oHeader, oCell);
+			// it is not necessary to render the cell content but screen readers need the content to announce it
+			if (Core.getConfiguration().getAccessibility()) {
+				this.applyAriaLabelledBy(oColumn.getHeader(), oCell, true);
 				rm.renderControl(oCell);
 			}
 
@@ -220,19 +229,18 @@ sap.ui.define([
 		rm.openStart("td");
 		rm.class("sapMListTblDummyCell");
 		rm.attr("role", "presentation");
-		rm.attr("aria-hidden", "true");
 		rm.openEnd();
 		rm.close("td");
 	};
 
-	ColumnListItemRenderer.applyAriaLabelledBy = function(oHeader, oCell) {
-		/* add the header as an aria-labelled by association for the cells if it does not already exists */
-		/* only set the header text to the aria-labelledby association if the header is a textual control and visible */
-		if (oHeader &&
-			oHeader.getText &&
-			oHeader.getVisible() &&
-			oCell.getAriaLabelledBy &&
-			(oCell.getAriaLabelledBy() || []).indexOf(oHeader.getId()) == -1) {
+	ColumnListItemRenderer.applyAriaLabelledBy = function(oHeader, oCell, bRemove) {
+		if (!oHeader || !oHeader.getText || !oHeader.getVisible() || !oCell.getAriaLabelledBy) {
+			return;
+		}
+
+		if (bRemove) {
+			oCell.removeAriaLabelledBy(oHeader);
+		} else if (!oCell.getAriaLabelledBy().includes(oHeader.getId())) {
 			oCell.addAriaLabelledBy(oHeader);
 		}
 	};
@@ -250,10 +258,8 @@ sap.ui.define([
 		// popin row
 		rm.openStart("tr", oLI.getPopin());
 		rm.class("sapMListTblSubRow");
+		rm.attr("role", "none");
 		rm.attr("data-sap-ui-related", oLI.getId());
-		if (oLI.isSelectable()) {
-			rm.attr("aria-selected", oLI.getSelected());
-		}
 		rm.openEnd();
 
 		this.renderHighlight(rm, oLI);
@@ -261,13 +267,12 @@ sap.ui.define([
 		// cell
 		rm.openStart("td", oLI.getId() + "-subcell");
 		rm.class("sapMListTblSubRowCell");
+		rm.attr("role", "none");
 		rm.attr("colspan", oTable.getColCount() - 2 /* Highlight and Navigated cells are always rendered in popin */);
-		rm.attr("aria-labelledby", this.getAriaAnnouncement(null, "TABLE_POPIN_ROLE_DESCRIPTION"));
 		rm.openEnd();
 
 		// container
-		rm.openStart("div");
-		rm.class("sapMListTblSubCnt");
+		this.openStartGridCell(rm, oLI, "div", oLI.getId() + "-subcont", "sapMListTblSubCnt");
 		rm.class("sapMListTblSubCnt" + oTable.getPopinLayout());
 		rm.openEnd();
 
@@ -350,9 +355,11 @@ sap.ui.define([
 	 * @param {sap.m.ListItemBase} [oLI] List item
 	 */
 	ColumnListItemRenderer.addLegacyOutlineClass = function(rm, oLI) {
-		var oTable = oLI.isA("sap.m.Table") ? oLI : oLI.getTable();
-		if (oTable && !oTable.hasPopin() && oTable.shouldRenderDummyColumn()) {
-			rm.class("sapMTableRowCustomFocus");
+		var oTable = oLI.getTable();
+		if (oTable) {
+			if (oTable.hasPopin() || oTable.shouldRenderDummyColumn()) {
+				rm.class("sapMTableRowCustomFocus");
+			}
 		}
 	};
 

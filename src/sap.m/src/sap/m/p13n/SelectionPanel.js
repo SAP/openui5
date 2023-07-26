@@ -25,9 +25,6 @@ sap.ui.define([
 	// shortcut for sap.ui.core.IconColor
 	var IconColor = coreLibrary.IconColor;
 
-	// shortcut for sap.m.ListKeyboardMode
-	var ListKeyboardMode = mLibrary.ListKeyboardMode;
-
 	// shortcut for sap.m.FlexJustifyContent
 	var FlexJustifyContent = mLibrary.FlexJustifyContent;
 
@@ -304,11 +301,9 @@ sap.ui.define([
 
 		if (bShow){
 			this.removeStyleClass("SelectionPanelHover");
-			this._oListControl.setKeyboardMode(ListKeyboardMode.Edit); //--> tab through editable fields (fields shown)
 			this._addFactoryControl();
 		} else {
 			this.addStyleClass("SelectionPanelHover");
-			this._oListControl.setKeyboardMode(ListKeyboardMode.Navigation); //--> tab through list items (fields hidden)
 			this._removeFactoryControl();
 		}
 	};

@@ -541,11 +541,11 @@ sap.ui.define([
 		infoToolbar : oTableInfo,
 		swipeContent : oSwipe,
 		columns : aColumns,
-		dependents: new CopyProvider({
+		/*dependents: new CopyProvider({
 			extractData: function(oContext, oColumn) {
 				return oContext.getProperty(oColumn.data("clipboard"));
 			}
-		}),
+		}),*/
 		selectionChange : function(e) {
 			MessageToast.show("selection is changed");
 		},

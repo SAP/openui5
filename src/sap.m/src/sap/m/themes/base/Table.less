@@ -4,6 +4,7 @@
 /* ============================ */
 
 @_sap_m_Table_SelNavColWidth: 3rem;
+@_sap_m_Table_CustomFocusMargin: 1px;
 
 .sapMListTbl {
 	width: 100%;
@@ -21,14 +22,16 @@
 	display: table-row;
 }
 
-.sapMListTbl .sapMTableTH:focus,
-.sapMListTbl td:focus {
-	outline: none;
-}
-
 .sapMListTblCellNoData {
 	text-align: center;
 	white-space: pre-wrap;
+}
+
+.sapMTablePopinColumn {
+	border: 0;
+	height: 0;
+	padding: 0;
+	overflow: hidden;
 }
 
 .sapMListTblHeaderNone {
@@ -377,7 +380,7 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 	cursor: pointer;
 }
 
-.sapMColumnHeaderFocusable:focus {
+.sapMTableTH:focus {
 	outline: @_sap_m_ListItemBase_Focus_Outline;
 	outline-offset: @_sap_m_ListItemBase_Focus_OffsetWithGap;
 }
@@ -413,31 +416,46 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 		position: relative;
 	}
 
-	& > :not(.sapMListTblDummyCell:last-child) {
+	& > :not(.sapMListTblDummyCell:last-child),
+	& + .sapMListTblSubRow > .sapMListTblSubRowCell {
 		position: relative;
 	}
 
+	& + .sapMListTblSubRow > td::before,
 	& > :not(.sapMListTblDummyCell:last-child)::before {
 		content: "";
 		position: absolute;
 		left: 0;
 		right: 0;
+		z-index: 1;
 		pointer-events: none;
 		top: 1px; // mimics outline-offset: -1px
 		bottom: 1px; // mimics outline-offset: -1px
 		border-top: @_sap_m_ListItemBase_Focus_Outline;
 		border-bottom: @_sap_m_ListItemBase_Focus_Outline;
-		margin-right: 1px; // 1px is set so that the focus border is clearly visible on all sides
+		margin-right: @_sap_m_Table_CustomFocusMargin; // make the focus border clearly visible on all sides
 	}
 
-	& > .sapMTblFirstVisibleCell::before {
+	.sapMListTblHasPopin > &:not(.sapMGHLI) > :not(.sapMListTblCellNoData,.sapMListTblDummyCell:last-child)::before {
+		border-bottom: 0;
+		bottom: 0;
+	}
+
+	& + .sapMListTblSubRow > td::before {
+		border-top: 0;
+		top: 0;
+	}
+
+	& > .sapMTblFirstVisibleCell::before,
+	& + .sapMListTblSubRow > .sapMTblFirstVisibleCell::before {
 		border-left: @_sap_m_ListItemBase_Focus_Outline;
-		margin-left: 1px; // mimics outline-offset: -1px
+		margin-left: @_sap_m_Table_CustomFocusMargin; // mimics outline-offset
 	}
 
-	& > .sapMTblLastVisibleCell::before {
+	& > .sapMTblLastVisibleCell::before,
+	& + .sapMListTblSubRow > .sapMTblLastVisibleCell::before {
 		border-right: @_sap_m_ListItemBase_Focus_Outline;
-		margin-right: 1px; // 1px is set so that the focus border is clearly visible on all sides
+		margin-right: @_sap_m_Table_CustomFocusMargin; // mimics outline-offset
 	}
 }
 

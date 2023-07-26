@@ -2854,7 +2854,7 @@ sap.ui.define([
 
 		bRowSelectionChange = false;
 		aChangedRows = undefined;
-		qutils.triggerEvent("tap", "PC1-Row1-CLI_cell0");
+		qutils.triggerEvent("tap", "PC1-Row1-CLI-cell0");
 		assert.ok(bRowSelectionChange, "rowSelectionChange fired");
 		assert.equal(aChangedRows.length, 1, "one row changed");
 		assert.equal(aChangedRows[0].getId(), "PC1-Row1", "Row1 changed");
@@ -2864,7 +2864,7 @@ sap.ui.define([
 		bRowSelectionChange = false;
 		aChangedRows = undefined;
 
-		qutils.triggerEvent("tap", "PC1-Row2-CLI_cell0");
+		qutils.triggerEvent("tap", "PC1-Row2-CLI-cell0");
 		assert.ok(bRowSelectionChange, "rowSelectionChange fired");
 		assert.equal(aChangedRows.length, 2, "two row changed");
 		assert.equal(aChangedRows[0].getId(), "PC1-Row1", "Row1 changed");

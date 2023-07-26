@@ -4,6 +4,7 @@
 /* ============================ */
 
 @_sap_m_Table_SelNavColWidth: 2.75rem;
+@_sap_m_Table_CustomFocusMargin: 0px;
 
 .sapMListBGTransparent .sapMListTblHeader,
 .sapMListBGTransparent .sapMListTblFooter {
@@ -23,10 +24,6 @@
 /* make the focus visible on all sides */
 .sapMSticky .sapMLIBShowSeparator:first-child > td {
 	border-top-color: transparent;
-}
-
-.sapMTableRowCustomFocus:focus > :not(.sapMListTblDummyCell:last-child)::before {
-	margin-right: 0; // Avoid gaps in the focus viszualization between the cells
 }
 
 .sapMListTblDummyCell:last-child {

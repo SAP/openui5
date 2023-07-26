@@ -99,11 +99,10 @@ sap.ui.define([
 				new Column({header: new Label({text: "Last Name"})}),
 				new Column({header: new Label({text: "First Name"})}),
 				new Column({header: new Label({text: "Checked"})}),
-				new Column({header: new Label({text: "Web Site"})}),
+				new Column({header: new Link({text: "Web Site"}), footer: new Label({text: "Web Site Footer"})}),
 				new Column({header: new Label({text: "Rating"})}),
 				new Column({header: new Label({text: "Text Area"})})
-			],
-			keyboardMode: "Edit"
+			]
 		});
 		sut.bindItems({
 			path : "/modelData",
@@ -115,7 +114,8 @@ sap.ui.define([
 						items: {
 							path: '/modelData',
 							sorter: { path: 'name'},
-							template: new Item({key:"{lastName}", text:"{name}"})
+							template: new Item({key:"{lastName}", text:"{name}"}),
+							templateShareable: false
 						}
 					}),
 					new CheckBox({selected:"{checked}"}),
@@ -377,15 +377,15 @@ sap.ui.define([
 		var sut = createSUT(true, true);
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
-		assert.strictEqual(sut.getColCount(), 6, "highlight, 3 visible columns, navigation & navigated columns");
+		assert.strictEqual(sut.getColCount(), 5, "highlight, 3 visible columns, navigated columns");
 
 		sut.setMode("MultiSelect");
 		Core.applyChanges();
-		assert.strictEqual(sut.getColCount(), 7, "highlight, MultiSelect, 3 visible columns, navigation & navigated columns");
+		assert.strictEqual(sut.getColCount(), 6, "highlight, MultiSelect, 3 visible columns, navigated columns");
 
 		sut.getItems()[0].setType("Navigation");
 		Core.applyChanges();
-		assert.strictEqual(sut.getColCount(), 7, "highlight, MultiSelect, 3 visible columns, navigation & navigated columns");
+		assert.strictEqual(sut.getColCount(), 7, "highlight, MultiSelect, 3 visible columns, navigation, navigated columns");
 
 		sut.setFixedLayout("Strict");
 		sut.getColumns().forEach(function(oColumn) {
@@ -413,19 +413,19 @@ sap.ui.define([
 		assert.ok(sut.hasPopin(), "Table has popins");
 
 		var aVisibleColumns = sut.getColumns().filter(function(oCol) {
-			return oCol.getVisible();
+			return oCol.getVisible() && !oCol.isPopin();
 		});
-		assert.strictEqual(aVisibleColumns.length, 3, "There are 3 visible columns");
-		assert.strictEqual(parseInt(sut.getVisibleItems()[0].$Popin().find(".sapMListTblSubRowCell").attr("colspan")), 3, "Correct colspan=3 attribute set on the popin, since there are 3 visible columns");
+		assert.strictEqual(aVisibleColumns.length, 2, "There are 2 visible columns that are not in the popin area");
+		assert.strictEqual(parseInt(sut.getVisibleItems()[0].$Popin().find(".sapMListTblSubRowCell").attr("colspan")), aVisibleColumns.length, "Correct colspan=2 attribute set on the popin, since there are 2 visible columns");
 
 		// hide a column
 		sut.getColumns()[2].setVisible(false);
 		clock.tick(1);
 		aVisibleColumns = sut.getColumns().filter(function(oCol) {
-			return oCol.getVisible();
+			return oCol.getVisible() && !oCol.isPopin();
 		});
-		assert.strictEqual(aVisibleColumns.length, 2, "There are 2 visible columns");
-		assert.strictEqual(parseInt(sut.getVisibleItems()[0].$Popin().find(".sapMListTblSubRowCell").attr("colspan")), 2, "colspan=2, attribute updated correctly");
+		assert.strictEqual(aVisibleColumns.length, 1, "There is 1 visible column which is not in the popin area");
+		assert.strictEqual(parseInt(sut.getVisibleItems()[0].$Popin().find(".sapMListTblSubRowCell").attr("colspan")), aVisibleColumns.length, "colspan=1, attribute updated correctly");
 
 		clock.restore();
 		sut.destroy();
@@ -724,7 +724,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible by default");
-		assert.strictEqual(oTable.$().find("th").last().attr("aria-hidden"), "true", "Aria hidden set correctly");
+		assert.strictEqual(oTable.$().find("th").last().attr("role"), "presentation", "role=presentation is set correctly");
 
 		oTable.getItems()[0].setType("Navigation");
 		Core.applyChanges();
@@ -776,12 +776,11 @@ sap.ui.define([
 		var $oNavigatedCol = oTable.$().find(".sapMListTblNavigatedCol");
 		assert.ok($oNavigatedCol.length > 0, "Navigated column is visible");
 		assert.equal($oNavigatedCol.attr("role"), "presentation", "presentation role is set correctly");
-		assert.equal($oNavigatedCol.attr("aria-hidden"), "true", "aria-hidden attribute is set correctly");
 
 		var $oFirstItem = oFirstItem.$().find(".sapMListTblNavigatedCell");
 		assert.ok($oFirstItem.length > 0, "Navigated cell class added");
 		assert.equal($oFirstItem.attr("role"), "presentation", "presentation role is set correctly");
-		assert.equal($oFirstItem.attr("aria-hidden"), "true", "aria-hidden attribute is set correctly");
+		assert.notOk($oFirstItem.attr("aria-hidden"), "aria-hidden attribute is not set since role=presentation is enough");
 		assert.ok($oFirstItem.children().hasClass("sapMLIBNavigated"), "navigated indicator rendered");
 
 		assert.equal(oSecondItem.$().find(".sapMListTblNavigatedCell").children().length, 0, "navigated indicator not added as navigated property is not enabled for the item");
@@ -807,7 +806,7 @@ sap.ui.define([
 
 		var oNavigatedIndicator = oFirstItem.getPopin().getDomRef().childNodes[2];
 		assert.equal(oNavigatedIndicator.getAttribute("role"), "presentation", "presentation role is set correctly");
-		assert.equal(oNavigatedIndicator.getAttribute("aria-hidden"), "true", "aria-hidden attribute set correctly");
+		assert.notOk(oNavigatedIndicator.getAttribute("aria-hidden"), "aria-hidden attribute is not set since role=presentation is enough");
 		assert.ok(oNavigatedIndicator.firstChild.classList.contains("sapMLIBNavigated"), "navigated indicator also rendered in popin row");
 
 		oTable.destroy();
@@ -968,10 +967,13 @@ sap.ui.define([
 		assert.ok(sut._clearAllButton, "Table contains clear all icon button");
 		assert.ok(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is inactive by removing style class since no items selected");
 
+		this.clock = sinon.useFakeTimers();
 		var $trigger = sut.$("trigger").trigger("focus");
 		qutils.triggerKeydown($trigger, KeyCodes.ENTER);
+		this.clock.tick(1);
 		assert.notOk(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is active by adding style class after growing");
 		sut.destroy();
+		this.clock.restore();
 	});
 
 	QUnit.test("Test for multiSelectMode - space key should trigger deselectAll when trigger on the table header", function(assert) {
@@ -1056,11 +1058,9 @@ sap.ui.define([
 		Core.applyChanges();
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
-		// headers association is set on the td elements
-		assert.equal(Core.byId(sut.$().find("td.sapMListTblCell").attr("headers")), sut.getColumns()[0], "Headers attribute is set on the first cell");
-
 		// accessibility role
-		assert.equal(sut.getAccessibilityType(), oResourceBundle.getText("ACC_CTR_TYPE_TABLE"), "Accessilitiy role correctly set");
+		assert.equal(sut.getAccessibilityType(), oResourceBundle.getText("TABLE_ROLE_DESCRIPTION"), "Accessilitiy role correctly set");
+		assert.equal(sut.getFocusDomRef().getAttribute("aria-roledescription"), oResourceBundle.getText("TABLE_ROLE_DESCRIPTION"), "Accessilitiy role description correctly set");
 
 		// _setHeaderAnnouncement() test
 		var $tblHeader = sut.$("tblHeader").trigger("focus");
@@ -1068,10 +1068,10 @@ sap.ui.define([
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " Name " + oResourceBundle.getText("CONTROL_IN_COLUMN_REQUIRED") +  " . Color . Number .", "Text correctly assigned for screen reader announcement");
 		assert.ok(oColumnHeader.hasListeners("_change"), "Property change event handler is added");
 		assert.ok(oColumnHeader._isInColumnHeaderContext , "Label is marked as column header label");
-		assert.equal(oColumn.$("ah").attr("aria-describedby"), InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"), "Required state added as aria-describedby");
+		assert.equal(oColumn.$().attr("aria-describedby"), InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"), "Required state added as aria-describedby");
 
 		oColumnHeader.setRequired(false);
-		assert.notOk(oColumn.$("ah").attr("aria-describedby"), "Label is not required any more so aria-describedby is removed");
+		assert.notOk(oColumn.$().attr("aria-describedby"), "Label is not required any more so aria-describedby is removed");
 
 		oColumn.setHeader(new Label({text: "Name"}));
 		assert.notOk(oColumnHeader.hasListeners("_change"), "Property change event handler is removed from the old column header");
@@ -1133,7 +1133,7 @@ sap.ui.define([
 		var sRequired = oBundle.getText("ELEMENT_REQUIRED");
 
 		assert.strictEqual(oListItem.getContentAnnouncement(), "First Name Max " + sRequired + " . Last Name Mustermann", "Accessibility punctuation test for ColumnListItem");
-		assert.strictEqual(oListItem.getAccessibilityInfo().description, oBundle.getText("LIST_ITEM_NAVIGATION") + " . " + "First Name Max " + sRequired + " . Last Name Mustermann . " + oBundle.getText("LIST_ITEM_NOT_SELECTED"), "Accessibility punctuation test for ColumnListItem");
+		assert.strictEqual(oListItem.getAccessibilityInfo().description, oBundle.getText("LIST_ITEM_NAVIGATION") + " . " + "First Name Max " + sRequired + " . Last Name Mustermann", "Accessibility punctuation test for ColumnListItem");
 
 		oTable.getColumns()[0].setOrder(1);
 		oTable.getColumns()[1].setOrder(0);
@@ -1156,39 +1156,32 @@ sap.ui.define([
 	});
 
 	QUnit.test("ARIA Roles, Attributes, ...", function(assert) {
-		var sut = createSUT(true, false, "MultiSelect");
+		var sut = createSUT(true, true, "MultiSelect");
 		sut.addAriaLabelledBy("idTitle");
 		sut.getItems()[0].setType("Navigation");
 		sut.getItems()[0].setHighlight("Error");
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		assert.strictEqual(sut.getAriaRole(), "", "No role attribute returned for table control");
-		assert.notOk(sut.$("listUl").attr("role"), "role attribute not applied in DOM");
+		assert.strictEqual(sut.getAriaRole(), "grid", "Grid role attribute returned for table control");
+		assert.equal(sut.$("listUl").attr("role"), "grid", "grid role attribute is applied in DOM");
 
 		assert.ok(sut.$().length > 0, "Table in DOM tree");
 
-		assert.equal(sut.$().attr("role"), "application", "Container has correct ARIA role");
-
-		assert.equal(sut.$().attr("aria-labelledby"), "idTitle", "aria-labelledby - Table container");
-		assert.equal(sut.$().attr("aria-roledescription"), Core.getLibraryResourceBundle("sap.m").getText("TABLE_CONTAINER_ROLE_DESCRIPTION"),
-			"aria-roledescription - Table container");
+		assert.notOk(sut.$().attr("role"), "Container has no ARIA role");
 
 		var aLabels = sut.$("listUl").attr("aria-labelledby").split(" ");
-		assert.ok(aLabels[0] === "idTitle" && document.getElementById(aLabels[1]).innerText === Core.getLibraryResourceBundle("sap.m").getText("TABLE_ARIA_LABEL"),
-			"aria-labelledby - Table element");
-		assert.ok(!sut.$("listUl").attr("role"), "Table has no ARIA role");
+		assert.ok(aLabels[0] === "idTitle" && aLabels[1] === sut.getHeaderToolbar().getTitleId(), "aria-labelledby set correctly");
+		assert.equal(sut.$("listUl").attr("role"), "grid", "Table has the ARIA role grid");
 
 		function checkCells(sCellType) {
 			var $Scope = sCellType === "th" ? sut.$() : sut.getItems()[0].$();
 			$Scope.find(sCellType).each(function(idx, cell) {
-				var bHidden = idx < 2 || idx >= 2 + sut.getColumns().length;
+				var bHidden = idx < 1 || idx >= 3 + sut.getColumns().length;
 				if (bHidden) {
 					assert.equal(jQuery(cell).attr("role"), "presentation", sCellType + " has correct ARIA role: " + idx);
-					assert.equal(jQuery(cell).attr("aria-hidden"), "true", "Hidden " + sCellType + " has aria-hidden: " + idx);
 				} else {
-					assert.equal(jQuery(cell).attr("role") || "", sCellType === "th" ? "columnheader" : "", sCellType + " has correct ARIA role: " + idx);
-					assert.ok(!jQuery(cell).attr("aria-hidden"), "Non-Hidden " + sCellType + " has no aria-hidden: " + idx);
+					assert.equal(jQuery(cell).attr("role") || "", sCellType === "th" ? "columnheader" : "gridcell", sCellType + " has correct ARIA role: " + idx);
 				}
 			});
 		}
@@ -1200,24 +1193,23 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Test for isHeaderRowEvent and isFooterRowEvent using saptabnext", function(assert) {
+	QUnit.test("Test for saptabnext", function(assert) {
 		var sut = createSUT(true);
 		var oColumn = sut.getColumns()[0];
-		var fnIsHeaderRowEvent = sinon.spy(sut, "isHeaderRowEvent");
-		var fnIsFooterRowEvent = sinon.spy(sut, "isFooterRowEvent");
+		var fnForwardTab = sinon.spy(sut, "forwardTab");
 		oColumn.setFooter(new Label({text: "Greetings"}));
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		// saptabnext event on tblHeader
+		// forwardTab on tblHeader
 		var $tblHeader = sut.$("tblHeader").trigger("focus");
 		qutils.triggerKeydown($tblHeader, KeyCodes.TAB);
-		assert.ok(fnIsHeaderRowEvent.called, "Event was triggered on the header");
+		assert.ok(fnForwardTab.getCall(0).calledWith(true), "forwardTab is called on the header");
 
-		// saptabnext on tblFooter
+		// forwardTab on tblFooter
 		var $tblFooter = sut.$("tblFooter").trigger("focus");
 		qutils.triggerKeydown($tblFooter, KeyCodes.TAB);
-		assert.ok(fnIsFooterRowEvent.called, "Event was triggered on the footer");
+		assert.ok(fnForwardTab.getCall(1).calledWith(true), "forwardTab is called on the footer");
 
 		sut.destroy();
 	});
@@ -1241,8 +1233,9 @@ sap.ui.define([
 		var $trigger = sut.$("trigger").first();
 		assert.ok(!sut.bAnnounceDetails, "Focus is not in the table");
 
-		// shift-tab on from the trigger button
-		qutils.triggerKeydown($trigger, KeyCodes.TAB, true, false, false);
+		// shift-tab on the trigger button
+		$tblHeader.trigger("focus");
+		qutils.triggerKeydown($trigger.trigger("focus"), KeyCodes.TAB, true, false, false);
 		assert.ok(ListBase.getInvisibleText().getText().includes("Header Row"));
 		assert.equal(document.activeElement, $tblHeader[0]);
 
@@ -1260,8 +1253,8 @@ sap.ui.define([
 		Core.applyChanges();
 		assert.ok(sut.getDomRef("overlay"), "Overlay is rendered for the visible table");
 
-		sut.$("tblHeader").trigger("focus");
-		assert.ok(document.activeElement, sut.getDomRef("overlay"));
+		sut.getItems()[0].focus();
+		assert.equal(document.activeElement, sut.getDomRef("overlay"));
 
 		var fnFocusSpy = sinon.spy(jQuery.fn, "trigger");
 		qutils.triggerKeydown(sut.$("overlay"), KeyCodes.TAB, true, false, false);
@@ -1370,20 +1363,22 @@ sap.ui.define([
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		assert.ok(sut.$("tblBody").hasClass("sapMListTblAlternateRowColors"), "Alternate row color class added to tbody element of the table");
-
 		var oItem1 = sut.getItems()[0];
 		var oItem2 = sut.getItems()[1];
 		assert.ok(sut.getAlternateRowColors(), "alternateRowColors = true");
 		assert.ok(oItem1.$().hasClass("sapMListTblRowAlternate"), "Alternating class added");
-		assert.ok(!oItem2.$().hasClass("sapMListTblRowAlternate"), "Alternating class not added");
+		assert.ok(oItem2.$().hasClass("sapMListTblRowAlternate"), "Alternating class added");
+		assert.notEqual(oItem1.$().css("background-color"), oItem2.$().css("background-color"), "Background is alternating");
 
 		// alternateRowColors in popin
 		var oColumn = sut.getColumns()[1];
 		oColumn.setDemandPopin(true);
 		oColumn.setMinScreenWidth("480000px");
 		Core.applyChanges();
-		assert.ok(sut.$("tblBody").hasClass("sapMListTblAlternateRowColorsPopin"), "Popin class for alternate row colors added to tbody element of table");
+
+		assert.equal(oItem1.$().css("background-color"), oItem1.$Popin().css("background-color"), "popin and item background is same");
+		assert.equal(oItem2.$().css("background-color"), oItem2.$Popin().css("background-color"), "popin and item background is same");
+		assert.notEqual(oItem1.$().css("background-color"), oItem2.$().css("background-color"), "Background is alternating for items");
 
 		// alternate row colors when grouping is enabled
 		var oGrouping = new Sorter("name", false, function() {
@@ -1394,7 +1389,10 @@ sap.ui.define([
 		});
 		sut.getBinding("items").sort(oGrouping);
 		Core.applyChanges();
-		assert.ok(sut.$("tblBody").hasClass("sapMListTblAlternateRowColorsGrouped"), "Grouping class for alternate row colors added to tbody element of table");
+
+		oItem1 = sut.getItems()[0];
+		oItem2 = sut.getItems()[1];
+		assert.notEqual(oItem1.$().css("background-color"), oItem2.$().css("background-color"), "Background is alternating for group rows");
 
 		sut.destroy();
 	});
@@ -1849,21 +1847,21 @@ sap.ui.define([
 		assert.equal(oColumn1.$().attr("role"), "columnheader", "role=columnheader applied to the columns");
 		assert.equal(oColumn2.$().attr("role"), "columnheader", "role=columnheader applied to the columns");
 		assert.equal(oColumn3.$().attr("role"), "columnheader", "role=columnheader applied to the columns");
-		assert.ok(!oTable.getDomRef("tblFooter").getAttribute("role"), "role=columnheader is not applied to the table footer");
+		assert.equal(oTable.getDomRef("tblFooter").getAttribute("role"), "row", "role=row is applied to the table footer");
 
 		assert.ok(oHeader1.$().hasClass("sapMColumnHeaderContent"), "Content class is set for the 1st header");
 		assert.ok(oHeader2.$().hasClass("sapMColumnHeaderContent"), "Content class is set for the 2nd header");
 		assert.ok(oInvisibleHeader.$().hasClass("sapMColumnHeaderContent"), "Content class is set for the 3rd header");
 
 		assert.ok(oHeader1.$().parent().hasClass("sapMColumnHeader sapMColumnHeaderActive"), "1st Header wrapper has the correct classes");
-		assert.equal(oHeader1.$().parent().attr("aria-haspopup"), "dialog", "1st Header wrapper has the correct aria settings");
-		assert.equal(oHeader1.$().parent().attr("tabindex"), "0", "1st Header wrapper has the correct tabindex");
-		assert.equal(oHeader1.$().parent().attr("role"), "button", "1st Header wrapper has the correct role");
+		assert.equal(oHeader1.getParent().$().attr("aria-haspopup"), "dialog", "1st ColumnHeader cell has the correct aria settings");
+		assert.equal(oHeader1.getParent().$().attr("tabindex"), "-1", "1st ColumnHeader cell has the correct tabindex");
+		assert.equal(oHeader1.getParent().$().attr("role"), "columnheader", "1st ColumnHeader cell has the correct role");
 
 		assert.ok(oHeader2.$().parent().hasClass("sapMColumnHeader sapMColumnHeaderActive"), "2nd Header wrapper has the correct classes");
-		assert.equal(oHeader2.$().parent().attr("aria-haspopup"), "dialog", "2nd Header wrapper has the correct aria settings");
-		assert.equal(oHeader2.$().parent().attr("tabindex"), "0", "2nd Header wrapper has the correct tabindex");
-		assert.equal(oHeader2.$().parent().attr("role"), "button", "2nd Header wrapper has the correct role");
+		assert.equal(oHeader2.getParent().$().attr("aria-haspopup"), "dialog", "2nd ColumnHeader cell has the correct aria settings");
+		assert.equal(oHeader2.getParent().$().attr("tabindex"), "-1", "2nd ColumnHeader cell has the correct tabindex");
+		assert.equal(oHeader2.getParent().$().attr("role"), "columnheader", "2nd ColumnHeader cell has the correct role");
 
 		var $oInvisibleTextColumn = oInvisibleHeader.$().parent();
 		assert.ok($oInvisibleTextColumn.hasClass("sapMColumnHeader"), "InvisibleText header wrapper has the corrent class");
@@ -1902,13 +1900,12 @@ sap.ui.define([
 
 	QUnit.test("Active headers keyboard handling - F2 & F7", function(assert) {
 		var oTable = new Table({
-			keyboardMode: "Edit",
 			columns: [
 				new Column({
 					header: new Label({text: "Column 1"})
 				}),
 				new Column({
-					header: new Label({text: "Column 2"})
+					header: new Button({text: "Column 2"})
 				})
 			]
 		});
@@ -1918,58 +1915,42 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		// focus the first active header
-		var $TblHeader = oTable.$("tblHeader");
-		var oFirstColumnActiveHeader = $TblHeader.find(".sapMColumnHeader")[0];
-		oFirstColumnActiveHeader.focus();
+		var oTblHeader = oTable.getDomRef("tblHeader");
+		var oFirstColumnHeaderCell = oTable.getColumns()[0].getDomRef();
+		var oSecondColumnHeaderCell = oTable.getColumns()[1].getDomRef();
+		var oSecondColumnHeader = oTable.getColumns()[1].getHeader().getDomRef();
 
-		// trigger F2
-		qutils.triggerKeydown(oFirstColumnActiveHeader, KeyCodes.F2);
-		assert.strictEqual(document.activeElement, $TblHeader[0], "focus is set on the table header row");
-		assert.strictEqual(oTable.getKeyboardMode(), "Navigation", "keyboardMode changed since F2 was pressed");
+		oFirstColumnHeaderCell.focus();
+		qutils.triggerEvent("keydown", oFirstColumnHeaderCell, {code: "F2"});
+		assert.strictEqual(document.activeElement, oFirstColumnHeaderCell, "focus is not changed since the header is not editable");
 
-		// trigger F2
-		qutils.triggerKeydown(document.activeElement, KeyCodes.F2);
-		assert.strictEqual(document.activeElement, oFirstColumnActiveHeader, "focus is set on the first active column header");
-		assert.strictEqual(oTable.getKeyboardMode(), "Edit", "keyboardMode changed since F2 was pressed");
+		oSecondColumnHeaderCell.focus();
+		qutils.triggerEvent("keydown", document.activeElement, {code: "F2"});
+		assert.strictEqual(document.activeElement, oSecondColumnHeader, "focus is on the column header button");
 
-		// trigger F7
-		qutils.triggerKeydown(document.activeElement, KeyCodes.F7);
-		assert.strictEqual(document.activeElement, $TblHeader[0], "focus is set on the table header row");
-		assert.strictEqual(oTable.getKeyboardMode(), "Edit", "keyboardMode did not change since F7 was pressed");
+		qutils.triggerEvent("keydown", document.activeElement, {code: "F2"});
+		assert.strictEqual(document.activeElement, oSecondColumnHeaderCell, "focus is on the 2nd column header cell");
 
-		// trigger F7
-		qutils.triggerKeydown(document.activeElement, KeyCodes.F7);
-		assert.strictEqual(document.activeElement, oFirstColumnActiveHeader, "focus is set on the first active column header");
-		assert.strictEqual(oTable.getKeyboardMode(), "Edit", "keyboardMode did not change since F7 was pressed");
+		oTblHeader.focus();
+		qutils.triggerEvent("keydown", document.activeElement, {code: "F2"});
+		assert.strictEqual(document.activeElement, oSecondColumnHeader, "focus is on the column header button");
 
-		// set the focus on the 2nd column header
-		var oSecondColumnActiveHeader = $TblHeader.find(".sapMColumnHeader")[1];
-		oSecondColumnActiveHeader.focus();
+		qutils.triggerEvent("keydown", document.activeElement, {code: "F7"});
+		assert.strictEqual(document.activeElement, oTblHeader, "focus is set on the table header row");
 
-		// trigger F7 when focus is on second column header
-		qutils.triggerKeydown(document.activeElement, KeyCodes.F7);
-		assert.strictEqual(document.activeElement, $TblHeader[0], "focus is set on the table header row");
-		assert.strictEqual(oTable._iLastFocusPosOfItem, 1, "last focused column header position is remembered");
+		qutils.triggerEvent("keydown", document.activeElement, {code: "F7"});
+		assert.strictEqual(document.activeElement, oSecondColumnHeader, "focus is on the column header button");
 
-		// trigger F7 again to check if focus is restored on the second column header
-		qutils.triggerKeydown(document.activeElement, KeyCodes.F7);
-		assert.strictEqual(document.activeElement, oSecondColumnActiveHeader, "focus is set on the second column header");
+		qutils.triggerEvent("keydown", document.activeElement, {code: "F2"});
+		assert.strictEqual(document.activeElement, oSecondColumnHeaderCell, "focus is on the 2nd column header cell");
+
+		qutils.triggerEvent("keydown", document.activeElement, {code: "F7"});
+		assert.strictEqual(document.activeElement, oTblHeader, "focus is set on the table header row");
+
+		qutils.triggerEvent("keydown", document.activeElement, {code: "F7"});
+		assert.strictEqual(document.activeElement, oSecondColumnHeaderCell, "focus is on the 2nd column header cell");
 
 		oTable.destroy();
-	});
-
-	QUnit.test("Focusable headers", function(assert) {
-		var sut = createSUT(true);
-		sut.bFocusableHeaders = true;
-		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		var $ColumnHeaderDiv = sut.$().find(".sapMColumnHeader");
-		assert.ok($ColumnHeaderDiv.hasClass("sapMColumnHeaderFocusable"), "sapMColumnHeaderFocusable class added");
-		assert.strictEqual($ColumnHeaderDiv.attr("tabindex"), "0", "column header div is focusable");
-
-		sut.destroy();
 	});
 
 	QUnit.test("Test for ContextualWidth", function(assert) {
@@ -2496,21 +2477,6 @@ sap.ui.define([
 		clock.restore();
 	});
 
-	QUnit.test("Added Scope attribute to TH elements", function(assert) {
-		var oTable = this.oTable;
-		var oTableHeader = oTable.getDomRef("tblHeader").children;
-		var iScopeCount = 0;
-		assert.ok(oTableHeader, "Table contains th element");
-
-		Array.from(oTableHeader).forEach(function(item) {
-			assert.strictEqual(item.getAttribute("scope"), "col", "scope attribute present with value 'col' ");
-			if (item.getAttribute("scope") === "col") {
-				iScopeCount++;
-			}
-		});
-		assert.strictEqual(iScopeCount, oTableHeader.length, "Scope attribute is present in every TableHeader th element and has the value 'col'");
-	});
-
 	QUnit.test("test shouldGrowingSuppressInvalidation", function(assert) {
 		var oTable = this.oTable;
 		oTable.setGrowing(true);
@@ -2998,7 +2964,7 @@ sap.ui.define([
 		assert.ok(sut.getNoData().isA("sap.m.IllustratedMessage"), "noData aggregation is of type sap.m.IllustratedMessage");
 		assert.strictEqual($noDataText.children().get(0), Core.byId("noDataIllustratedMessage").getDomRef(), "Table's nodata-text contains figure's DOM element");
 
-		$noData.focus();
+		$noData.trigger("focus");
 		var sLabelledBy = $noData.attr("aria-labelledby");
 		assert.equal(Core.byId(sLabelledBy).getText(), "Illustrated Message Custom Title. This is a custom description.", "Accessbility text is set correctly");
 
@@ -3024,7 +2990,7 @@ sap.ui.define([
 		assert.ok(sut.getNoData().isA("sap.m.IllustratedMessage"), "noData aggregation is of type sap.m.IllustratedMessage");
 		assert.strictEqual($noDataText.children().get(0), oNoColumnsMessage.getDomRef(), "Table's nodata-text contains figure's DOM element");
 
-		$noData.focus();
+		$noData.trigger("focus");
 		var sLabelledBy = $noData.attr("aria-labelledby");
 		assert.equal(Core.byId(sLabelledBy).getText(), "Illustrated Message " + sTitle + ". " + sDescription, "Accessbility text is set correctly");
 
@@ -3051,7 +3017,7 @@ sap.ui.define([
 		var $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
 		assert.strictEqual($noDataText.text(), "No data", "Table's standard nodata-text contains correct string");
 
-		$noData.focus();
+		$noData.trigger("focus");
 		var sLabelledBy = $noData.attr("aria-labelledby");
 		assert.equal(Core.byId(sLabelledBy).getText(), "No data", "Accessbility text is set correctly");
 
@@ -3061,7 +3027,7 @@ sap.ui.define([
 		assert.strictEqual(typeof sut.getNoData(), "string", "noData aggregation is of type string");
 		assert.strictEqual($noDataText.text(), sNoData, "Table's nodata-text contains correct string");
 
-		$noData.focus();
+		$noData.trigger("focus");
 		var sLabelledBy = $noData.attr("aria-labelledby");
 		assert.equal(Core.byId(sLabelledBy).getText(), sNoData, "Accessbility text is set correctly");
 
@@ -3078,7 +3044,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		var $noData = sut.$().find("#" + sut.getId() + "-nodata");
-		$noData.focus();
+		$noData.trigger("focus");
 
 		var $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
 		assert.strictEqual($noDataText.text(), oBundle.getText("TABLE_NO_COLUMNS"), "Table's no columns nodata-text contains correct string");
@@ -3086,7 +3052,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			sut.setNoData();
-			$noData.focus();
+			$noData.trigger("focus");
 
 			var $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
 			assert.strictEqual($noDataText.text(), oBundle.getText("TABLE_NO_COLUMNS"), "Table's no columns nodata-text contains correct string");
@@ -3098,7 +3064,7 @@ sap.ui.define([
 				sut.setNoData();
 				Core.applyChanges();
 
-				$noData.focus();
+				$noData.trigger("focus");
 				var oNoColumnsMessage = sut.getAggregation("_noColumnsMessage");
 				assert.strictEqual($noDataText.children().get(0), oNoColumnsMessage.getDomRef(), "Table's nodata-text contains figure's DOM element");
 				assert.strictEqual(oInvisibleMessage.getText(), oBundle.getText("TABLE_NO_COLUMNS"), "Invisible Message is set correct.");
@@ -3128,7 +3094,7 @@ sap.ui.define([
 		assert.equal(sut.getNoData().getText(), oControl.getText(), "Table's no data aggregation has correct button text");
 		assert.strictEqual($noDataText.children().get(0), oControl.getDomRef(), "Table's nodata-text contains button's DOM element");
 
-		$noData.focus();
+		$noData.trigger("focus");
 		var sLabelledBy = $noData.attr("aria-labelledby");
 		assert.equal(Core.byId(sLabelledBy).getText(), "Button Button 1", "Accessbility text is set correctly");
 
@@ -3140,7 +3106,7 @@ sap.ui.define([
 		assert.equal(sut.getNoData().getText(), oControl.getText(), "Table's changed no data aggregation has correct text");
 		assert.strictEqual($noDataText.children().get(0), oControl.getDomRef(), "Table's changed nodata-text contains text's DOM element");
 
-		$noData.focus();
+		$noData.trigger("focus");
 		var sLabelledBy = $noData.attr("aria-labelledby");
 		assert.equal(Core.byId(sLabelledBy).getText(), "Text 1", "Accessbility text is set correctly");
 	});
@@ -3154,35 +3120,14 @@ sap.ui.define([
 		afterEach: function() {
 			this.vt.destroy();
 		},
-		testNavigationEdit: function(assert, sKey, oSourceCell, oTargetCell, sSource, sTarget, bCtrlPressed) {
-			if (bCtrlPressed == undefined) {
-				bCtrlPressed = false;
-			}
+		testNavigation: function (assert, sKey, oSourceCell, oTargetCell, sSource, sTarget, bCtrlPressed) {
 			oSourceCell.focus();
-			qutils.triggerKeydown(document.activeElement, sKey, false, false, bCtrlPressed);
+			qutils.triggerKeydown(document.activeElement, sKey, false, false, bCtrlPressed || false);
 			assert.deepEqual(
 				jQuery(document.activeElement).closest(".sapMListTblCell").get(0),
 				oTargetCell.$().closest(".sapMListTblCell").get(0),
-				"Navigation from Cell " + sSource + " to expected cell " + sTarget + " in keyboardMode Edit"
+				"Navigation from Cell " + sSource + " to expected cell " + sTarget
 			);
-		},
-		testNavigationDefault: function (assert, sKey, oSourceCell, sSource, bCtrlPressed) {
-			if (bCtrlPressed == undefined) {
-				bCtrlPressed = false;
-			}
-			oSourceCell.focus();
-			qutils.triggerKeydown(document.activeElement, sKey, false, false, bCtrlPressed);
-			assert.deepEqual(
-				jQuery(document.activeElement).closest(".sapMListTblCell").get(0),
-				oSourceCell.$().closest(".sapMListTblCell").get(0),
-				"No navigation from cell " + sSource + " in keyboardMode Navigation"
-			);
-		},
-		testNavigation: function (assert, sKey, oSourceCell, oTargetCell, sSource, sTarget, bCtrlPressed) {
-			this.vt.setKeyboardMode("Edit");
-			this.testNavigationEdit(assert, sKey, oSourceCell, oTargetCell, sSource, sTarget, bCtrlPressed);
-			this.vt.setKeyboardMode("Navigation");
-			this.testNavigationDefault(assert, sKey, oSourceCell, sSource, bCtrlPressed);
 		}
 	});
 
@@ -3396,16 +3341,6 @@ sap.ui.define([
 		}, this);
 	});
 
-	QUnit.test("AriaLabelledBy", function(assert) {
-		this.vt.getColumns().forEach(function(oColumn, iColumnIndex) {
-			assert.equal(Core.byId(this.vt.getItems()[0].getCells()[iColumnIndex].getAriaLabelledBy()[0]).getParent(), oColumn);
-			assert.equal(
-				Core.byId(this.vt.getItems()[0].getCells()[iColumnIndex].getAriaLabelledBy()[0]).getParent().getId(),
-				this.vt.getItems()[0].$().find(".sapMListTblCell").eq(iColumnIndex).attr("headers")
-			);
-		}, this);
-	});
-
 	QUnit.module("ItemNavigation", {
 		beforeEach: function() {
 			var oModel = new JSONModel({
@@ -3448,45 +3383,32 @@ sap.ui.define([
 	QUnit.test("hidden column header row should not be included in the ItemNavigation items", function(assert) {
 		var aItems = this.oTable.getItems(),
 			oFirstItem = aItems[0],
-			oLastItem = aItems[aItems.length - 1],
 			$tblHeader = this.oTable.$("tblHeader");
 
+		oFirstItem.focus();
 		assert.notOk($tblHeader.attr("tabindex"), "tabindex attribute is not added to hidden column header row");
 		assert.ok($tblHeader.hasClass("sapMListTblHeaderNone"), "invisible table header has the correct css class");
 		assert.equal($tblHeader.attr("aria-hidden"), "true", "table header has aria-hidden=true");
+		assert.notOk(this.oTable._oItemNavigation.getItemDomRefs().includes($tblHeader[0]), "column header row is not in ItemNavigation items");
 
-		oFirstItem.focus();
 		qutils.triggerKeydown(document.activeElement, "END", false, false, false);
-		Core.applyChanges();
-		assert.strictEqual(document.activeElement.getAttribute("id"), oLastItem.getId(), "Focus is set on the last item");
+		assert.strictEqual(document.activeElement, oFirstItem.$().find(".sapMTblCellFocusable").last()[0], "Focus is set on the last cell of the first row");
 
 		qutils.triggerKeydown(document.activeElement, "HOME", false, false, false);
-		Core.applyChanges();
-		assert.strictEqual(document.activeElement.getAttribute("id"), oFirstItem.getId(), "Focus is set on the last item");
+		assert.strictEqual(document.activeElement, oFirstItem.getDomRef(), "Focus is set on the first row");
 	});
 
 	QUnit.test("visible column header row should be included in the ItemNavigation items", function(assert) {
-		var aItems = this.oTable.getItems(),
-			oFirstItem = aItems[0],
-			oLastItem = aItems[aItems.length - 1],
-			$tblHeader = this.oTable.$("tblHeader");
-
 		var oColumn = this.oTable.getColumns()[1];
-		// add "header" aggregation to a column
 		oColumn.setHeader(new Text({text: "Last Name"}));
 		Core.applyChanges();
 
+		var $tblHeader = this.oTable.$("tblHeader");
+		$tblHeader.trigger("focus");
 		assert.ok($tblHeader.attr("tabindex"), "tabindex attribute is added to column header row");
 		assert.notOk($tblHeader.hasClass("sapMListTblHeaderNone"), "invisible table header css class is not assigned");
 		assert.notOk($tblHeader.attr("aria-hidden"), "aria-hidden is not assigned");
-		oFirstItem.focus();
-		qutils.triggerKeydown(document.activeElement, "END", false, false, false);
-		Core.applyChanges();
-		assert.strictEqual(document.activeElement.getAttribute("id"), oLastItem.getId(), "Focus is set on the last item");
-
-		qutils.triggerKeydown(document.activeElement, "HOME", false, false, false);
-		Core.applyChanges();
-		assert.strictEqual(document.activeElement.getAttribute("id"), this.oTable.$("tblHeader").attr("id"), "Focus is set on the last item");
+		assert.notOk(this.oTable._oItemNavigation.getItemDomRefs().indexOf($tblHeader[0]), "column header row is the first item of ItemNavigation");
 	});
 
 	QUnit.module("SelectAllLimit");
@@ -3574,8 +3496,10 @@ sap.ui.define([
 					assert.strictEqual(fnShowSelectionLimitPopoverSpy.callCount, 1, "Util#showSelectionLimitPopover is called when selectAll is triggerred");
 					qutils.triggerKeydown($trigger, KeyCodes.SPACE);
 					qutils.triggerKeyup($trigger, KeyCodes.SPACE);
-					qutils.triggerKeydown($tblHeader, KeyCodes.SPACE);
-					resolve();
+					sut.attachEventOnce("updateFinished", function(){
+						qutils.triggerKeydown($tblHeader, KeyCodes.SPACE);
+						resolve();
+					});
 				});
 			});
 		}).then(function() {
@@ -3592,5 +3516,275 @@ sap.ui.define([
 				});
 			});
 		});
+	});
+
+	QUnit.module("role=grid", {
+		before: function() {
+			this.oRB = Core.getLibraryResourceBundle("sap.m");
+		},
+		beforeEach: function() {
+			this.oTable = createVarietyTable();
+			this.oTable.placeAt("qunit-fixture");
+			Core.applyChanges();
+			this.o1stItem = this.oTable.getItems()[0];
+			this.o2ndItem = this.oTable.getItems()[1];
+			this.o3rdItem = this.oTable.getItems()[2];
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		after: function() {
+			delete this.oRB;
+		},
+		testAriaSelected: function(oDomRef) {
+			QUnit.assert.equal(oDomRef.getAttribute("aria-selected"), "true");
+		},
+		testAriaNotSelected: function(oDomRef) {
+			QUnit.assert.equal(oDomRef.getAttribute("aria-selected"), "false");
+		},
+		testHeaderCell: function(oHeaderCellDomRef, iColIndex, bSelected) {
+			var assert = QUnit.assert;
+			assert.equal(oHeaderCellDomRef.getAttribute("role"), "columnheader", oHeaderCellDomRef.id + " has the role columnheader");
+			assert.equal(oHeaderCellDomRef.getAttribute("tabindex"), "-1", oHeaderCellDomRef.id + " has tabindex=-1");
+			assert.ok(oHeaderCellDomRef.classList.contains("sapMTblCellFocusable"), "Focus class is set for the " + oHeaderCellDomRef.id);
+			assert.equal(oHeaderCellDomRef.getAttribute("aria-colindex"), iColIndex, "aria-colindex is set correctly for the " + oHeaderCellDomRef.id);
+			if (bSelected != undefined) {
+				assert.equal(oHeaderCellDomRef.getAttribute("aria-selected"), bSelected.toString(), "aria-selected is set correctly for the " + oHeaderCellDomRef.id);
+			}
+		},
+		testCell: function(oCellDomRef, iColIndex, bSelected) {
+			var assert = QUnit.assert;
+			assert.equal(oCellDomRef.getAttribute("role"), "gridcell", oCellDomRef.id + " has the role gridcell");
+			assert.equal(oCellDomRef.getAttribute("tabindex"), "-1", oCellDomRef.id + " has tabindex=-1");
+			assert.ok(oCellDomRef.classList.contains("sapMTblCellFocusable"), "Focus class is set for the " + oCellDomRef.id);
+			assert.equal(oCellDomRef.getAttribute("aria-colindex"), iColIndex, "aria-colindex is set correctly for the " + oCellDomRef.id);
+			if (bSelected != undefined) {
+				assert.equal(oCellDomRef.getAttribute("aria-selected"), bSelected.toString(), "aria-selected is set correctly for the " + oCellDomRef.id);
+			}
+		},
+		testAria: function(FORMER_COLUMN_COUNT, LATTER_COLUMN_COUNT) {
+			FORMER_COLUMN_COUNT = FORMER_COLUMN_COUNT || 0;
+			LATTER_COLUMN_COUNT = LATTER_COLUMN_COUNT || 0;
+
+			var assert = QUnit.assert;
+			var oTable = this.oTable;
+
+			var oNavigationRoot = oTable.getNavigationRoot();
+			var oTableHeaderRow = oTable.getDomRef("tblHeader");
+			var oTableFooterRow = oTable.getDomRef("tblFooter");
+			var aColumns = oTable.getColumns(true);
+			var aVisibleColumns = aColumns.filter(function(oColumn) {
+				return oColumn.getVisible();
+			});
+			var aColumnsNotInPopin = aVisibleColumns.filter(function(oColumn) {
+				return !oColumn.isHidden();
+			});
+
+			// navigation root
+			assert.equal(oNavigationRoot.getAttribute("role"), "grid", "navigation root has the correct role");
+			assert.equal(oNavigationRoot.getAttribute("aria-roledescription"), this.oRB.getText("TABLE_ROLE_DESCRIPTION"));
+			assert.equal(oNavigationRoot.getAttribute("tabindex"), "0");
+			assert.equal(oNavigationRoot.getAttribute("aria-colcount"), FORMER_COLUMN_COUNT + aVisibleColumns.length + LATTER_COLUMN_COUNT);
+			assert.equal(oNavigationRoot.getAttribute("aria-rowcount"), oTable.getItems().length + !!oTableHeaderRow + !!oTableFooterRow);
+
+			// header row
+			assert.equal(oTableHeaderRow.getAttribute("role"), "row", "header row has the correct role");
+			assert.equal(oTableHeaderRow.getAttribute("aria-rowindex"), "1");
+			assert[this.oTable.hasPopin() ? "ok" : "notOk"](oTableHeaderRow.getAttribute("aria-owns"));
+			assert.equal(oTableHeaderRow.getAttribute("tabindex"), "-1");
+			assert.ok(oTableHeaderRow.classList.contains("sapMLIBFocusable"));
+			assert.ok(oTableHeaderRow.classList.contains("sapMTableRowCustomFocus"));
+			assert.equal(oTable.getDomRef("tblHeadHighlight").getAttribute("role"), "presentation");
+			assert.equal(oTable.getDomRef("tblHeadNavigated").getAttribute("role"), "presentation");
+			aColumnsNotInPopin.forEach(function(oColumn, iIndex) {
+				this.testHeaderCell(oColumn.getDomRef(), FORMER_COLUMN_COUNT + iIndex + 1);
+			}, this);
+
+			// footer row
+			assert.equal(oTableFooterRow.getAttribute("role"), "row", "footer has the correct role");
+			assert.equal(oTableFooterRow.getAttribute("aria-rowindex"), oNavigationRoot.getAttribute("aria-rowcount"));
+			assert.notOk(oTableFooterRow.getAttribute("aria-owns"));
+			assert.equal(oTableFooterRow.getAttribute("tabindex"), "-1");
+			assert.ok(oTableFooterRow.classList.contains("sapMLIBFocusable"));
+			assert.ok(oTableFooterRow.classList.contains("sapMTableRowCustomFocus"));
+			assert.equal(oTable.getDomRef("tblFootHighlight").getAttribute("role"), "presentation");
+			assert.notOk(oTable.getDomRef("tblFootHighlight").hasAttribute("aria-hidden"));
+			assert.equal(oTable.getDomRef("tblFootNavigated").getAttribute("role"), "presentation");
+			assert.notOk(oTable.getDomRef("tblFootNavigated").hasAttribute("aria-hidden"));
+			aColumnsNotInPopin.forEach(function(oColumn, iIndex) {
+				var oColumnFooterDomRef = document.getElementById(oTable.getId() + "-tblFoot" + oColumn.getId() + "-footer");
+				this.testCell(oColumnFooterDomRef, FORMER_COLUMN_COUNT + iIndex + 1);
+			}, this);
+
+			// items
+			oTable.getItems().forEach(function(oItem) {
+				var oItemDomRef = oItem.getDomRef();
+				assert.equal(oItemDomRef.getAttribute("role"), "row");
+				assert.equal(oItemDomRef.getAttribute("tabindex"), "-1");
+				assert.ok(oItemDomRef.classList.contains("sapMLIBFocusable"));
+				assert[oTable.hasPopin() ? "ok" : "notOk"](oItemDomRef.getAttribute("aria-owns"));
+				assert.equal(oItemDomRef.getAttribute("aria-rowindex"), oTable.indexOfItem(oItem) + !!oTableHeaderRow + 1);
+				assert.equal(oItemDomRef.querySelector(".sapMListTblHighlightCell").getAttribute("role"), "presentation");
+				assert.notOk(oItemDomRef.querySelector(".sapMListTblHighlightCell").hasAttribute("aria-hidden"));
+				assert.equal(oItemDomRef.querySelector(".sapMListTblNavigatedCell").getAttribute("role"), "presentation");
+				assert.notOk(oItemDomRef.querySelector(".sapMListTblNavigatedCell").hasAttribute("aria-hidden"));
+				aColumns.forEach(function(oColumn, iIndex) {
+					if (!oColumn.isPopin() && oColumn.getVisible()) {
+						var oCellDomRef = oItem.getDomRef("cell" + iIndex);
+						this.testCell(oCellDomRef, oColumn.getIndex());
+					}
+				}, this);
+				if (oTable.hasPopin()) {
+					var oCellDomRef = oItem.getDomRef("subcont");
+					this.testCell(oCellDomRef, FORMER_COLUMN_COUNT + aColumnsNotInPopin.length + 1 + LATTER_COLUMN_COUNT);
+				}
+			}, this);
+
+			if (aColumns[2].getVisible()) {
+				assert.ok(true, "*************** testing invisible 3rd column ***************");
+				oTable.getColumns()[2].setVisible(false);
+				Core.applyChanges();
+				return this.testAria.apply(this, arguments);
+			}
+
+			if (!oTable.hasPopin()) {
+				assert.ok(true, "*************** testing table with popin ***************");
+				oTable.getColumns()[0].setDemandPopin(true);
+				oTable.getColumns()[0].setMinScreenWidth("10000px");
+				Core.applyChanges();
+				return this.testAria.apply(this, arguments);
+			}
+		}
+	});
+
+	QUnit.test("aria - default", function(assert) {
+		this.testAria();
+	});
+
+	QUnit.test("aria - selection", function(assert) {
+		this.oTable.setMode("MultiSelect");
+		Core.applyChanges();
+		this.testAria(1);
+
+		this.testHeaderCell(this.oTable.getDomRef("tblHeadModeCol"), 1, false);
+		this.testCell(this.o1stItem.getDomRef("ModeCell"), 1, false);
+		this.testCell(this.oTable.getDomRef("tblFootModeCol"), 1);
+
+		this.oTable.selectAll();
+		this.oTable.getDomRef("tblHeader").querySelectorAll(".sapMLIBFocusable,.sapMTblCellFocusable").forEach(this.testAriaSelected);
+		this.oTable.getDomRef("tblBody").querySelectorAll(".sapMLIBFocusable,.sapMTblCellFocusable").forEach(this.testAriaSelected);
+
+		this.oTable.removeSelections();
+		this.oTable.getDomRef("tblHeader").querySelectorAll(".sapMLIBFocusable,.sapMTblCellFocusable").forEach(this.testAriaNotSelected);
+		this.oTable.getDomRef("tblBody").querySelectorAll(".sapMLIBFocusable,.sapMTblCellFocusable").forEach(this.testAriaNotSelected);
+	});
+
+	QUnit.test("aria - row actions", function(assert) {
+		this.o1stItem.setType("Navigation");
+		this.oTable.setMode("Delete");
+		Core.applyChanges();
+		this.testAria(0, 2);
+
+		var iColumnsLength = this.oTable.getColumns().filter(function(oColumn) {
+			return oColumn.getVisible() && !oColumn.isPopin();
+		}).length;
+
+		this.testHeaderCell(this.oTable.getDomRef("tblHeadNav"), iColumnsLength + 1);
+		this.testCell(this.o1stItem.getDomRef("TypeCell"), iColumnsLength + 1);
+		this.testCell(this.oTable.getDomRef("tblFootNav"), iColumnsLength + 1);
+		this.testHeaderCell(this.oTable.getDomRef("tblHeadModeCol"), iColumnsLength + 2);
+		this.testCell(this.o1stItem.getDomRef("ModeCell"), iColumnsLength + 2);
+		this.testCell(this.oTable.getDomRef("tblFootModeCol"), iColumnsLength + 2);
+
+		assert.equal(this.oTable.getDomRef("tblHeadModeCol").getAttribute("aria-label"), this.oRB.getText("TABLE_ROW_ACTION"));
+		assert.equal(this.oTable.getDomRef("tblHeadModeCol").getAttribute("aria-label"), this.oRB.getText("TABLE_ROW_ACTION"));
+	});
+
+
+	QUnit.test("Up/Down/Home/End/PageUp/PageDown/AltUp/AltDown", function(assert) {
+		var oTable = this.oTable;
+
+		oTable.focus();
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the first row");
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
+		assert.equal(document.activeElement, this.o2ndItem.getFocusDomRef(), "Focus is on the second row");
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_UP");
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the first row");
+
+		qutils.triggerKeydown(document.activeElement, "PAGE_DOWN");
+		assert.equal(document.activeElement, oTable.getDomRef("tblFooter"), "Focus is on the footer row");
+
+		qutils.triggerKeydown(document.activeElement, "PAGE_UP");
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the first row");
+
+		qutils.triggerKeydown(document.activeElement, "PAGE_UP");
+		assert.equal(document.activeElement, oTable.getDomRef("tblHeader"), "Focus is on the header row");
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", false, true /* ALT */);
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the first row");
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", false, true /* ALT */);
+		assert.equal(document.activeElement, oTable.getDomRef("tblFooter"), "Focus is on the footer row");
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_UP", false, true /* ALT */);
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the fist row");
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_UP", false, true /* ALT */);
+		assert.equal(document.activeElement, oTable.getDomRef("tblHeader"), "Focus is on the header row");
+
+		qutils.triggerKeydown(document.activeElement, "TAB");
+		assert.equal(document.activeElement, oTable.getDomRef("after"), "Focus is left the table");
+	});
+
+	QUnit.test("Left/Right/Up/Down/End/Home/F2/F7/Enter", function(assert) {
+		var oTable = this.oTable;
+		var aColumns = oTable.getColumns(true);
+
+		this.oTable.focus();
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the first row");
+
+		qutils.triggerKeydown(document.activeElement, "END");
+		assert.equal(document.activeElement, this.o1stItem.$().find(".sapMTblCellFocusable").last()[0], "Focus is on the last focusable DOM node");
+
+		qutils.triggerKeydown(document.activeElement, "HOME");
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the header row");
+
+		aColumns.forEach(function(oColumn, iIndex) {
+			qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
+			assert.equal(document.activeElement, this.o1stItem.getDomRef("cell" + iIndex), "Focus is on the cell " + iIndex);
+		}, this);
+
+		aColumns.slice(0, -1).forEach(function(oColumn, iIndex) {
+			var iCellIndex = aColumns.length - iIndex - 2;
+			qutils.triggerKeydown(document.activeElement, "ARROW_LEFT");
+			assert.equal(document.activeElement, this.o1stItem.getDomRef("cell" + iCellIndex), "Focus is on the cell " + iCellIndex);
+		}, this);
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_LEFT");
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the first row");
+
+		qutils.triggerEvent("keydown", document.activeElement, {code: "F2"});
+		assert.equal(document.activeElement, this.o1stItem.getCells()[0].getFocusDomRef(), "Focus is on the first tabbable cell");
+
+		qutils.triggerEvent("keydown", document.activeElement, {code: "F2"});
+		assert.equal(document.activeElement, this.o1stItem.getDomRef("cell0"), "Focus is on the first cell");
+
+		qutils.triggerEvent("keydown", document.activeElement, {code: "Enter"});
+		assert.equal(document.activeElement, this.o1stItem.getCells()[0].getFocusDomRef(), "Focus is on the first tabbable cell again");
+
+		qutils.triggerEvent("keydown", document.activeElement, {code: "F7"});
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the first row");
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
+		qutils.triggerEvent("keydown", document.activeElement, {code: "F7"});
+		assert.equal(document.activeElement, this.o2ndItem.getCells()[0].getFocusDomRef(), "Focus is on the first tabbable cell of 2nd item");
+
+		qutils.triggerEvent("keydown", document.activeElement, {code: "F2"});
+		assert.equal(document.activeElement, this.o2ndItem.getDomRef("cell0"), "Focus is on the first cell of the 2nd item");
+
+		qutils.triggerKeydown(document.activeElement, "TAB", true);
+		assert.equal(document.activeElement, oTable.getDomRef("before"), "Focus is left the table");
 	});
 });

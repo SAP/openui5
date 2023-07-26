@@ -104,8 +104,6 @@ sap.ui.define([
 	// shortcut for sap.m.ScreenSize
 	var ScreenSize = mobileLibrary.ScreenSize;
 
-	var ListKeyboardMode = mobileLibrary.ListKeyboardMode;
-
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
@@ -1738,7 +1736,6 @@ sap.ui.define([
 				contextualWidth: "Auto",
 				fixedLayout: false,
 				growing: true,
-				keyboardMode: ListKeyboardMode.Edit,
 				columns: [
 					new Column({
 						header: new InvisibleText({
