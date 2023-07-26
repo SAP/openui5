@@ -447,7 +447,6 @@ sap.ui.define([
 
 		if (this._bFirePopinChanged) {
 			this._firePopinChangedEvent();
-			this._bFirePopinChanged = false;
 		} else {
 			var aPopins = this._getPopins();
 			if (this._aPopins && this.getVisibleItems().length) {
@@ -1403,6 +1402,8 @@ sap.ui.define([
 	};
 
 	Table.prototype._firePopinChangedEvent = function() {
+		this._bFirePopinChanged = false;
+		this._iVisibleItemsLength = this.getVisibleItems().length;
 		this.fireEvent("popinChanged", {
 			hasPopin: this.hasPopin(),
 			visibleInPopin: this._getVisiblePopin(),
@@ -1415,12 +1416,9 @@ sap.ui.define([
 
 		// fire popinChanged when visible items length become 0 from greater than 0 as a result of binding changes
 		// fire popinChanged when visible items length become greater than 0 from 0 as a result of binding changes
-		var iVisibleItemsLength = this.getVisibleItems().length;
-		if (!this._iVisibleItemsLength && iVisibleItemsLength > 0) {
-			this._iVisibleItemsLength = iVisibleItemsLength;
-			this._firePopinChangedEvent();
-		} else if (this._iVisibleItemsLength > 0 && !iVisibleItemsLength) {
-			this._iVisibleItemsLength = iVisibleItemsLength;
+		var bHasVisibleItems = Boolean(this.getVisibleItems().length);
+		var bHadVisibleItems = Boolean(this._iVisibleItemsLength);
+		if (bHasVisibleItems ^ bHadVisibleItems) {
 			this._firePopinChangedEvent();
 		}
 	};
