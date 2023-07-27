@@ -486,7 +486,7 @@ sap.ui.define([
 		//and PropertyInfo, the usage of a complex 'name' (e.g. containing '/') might be reconsidered.
 		oProperty.name = sNavigationPropertyName ? sNavigationPropertyName + "/" + sKey : sKey;
 
-		oProperty.typeConfig = ODataFilterBarDelegate.getTypeMap().getTypeConfig(oObj.$Type, oProperty.formatOptions, oProperty.constraints);
+		oProperty.dataType = oObj.$Type;
 
 		return oProperty;
 	};
@@ -601,7 +601,7 @@ sap.ui.define([
 							if (mAllowedExpressions[sKey]) {
 								var aOperators =  ODataFilterBarDelegate._getFilterOperators(mAllowedExpressions[sKey]);
 								if (aOperators) {
-									oPropertyInfo.filterOperators = aOperators;
+									//oPropertyInfo.filterOperators = aOperators;
 								}
 							}
 							oPropertyInfo.maxConditions = ODataMetaModelUtil.isMultiValueFilterExpression(mAllowedExpressions[sKey]) ? -1 : 1;

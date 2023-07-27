@@ -40,7 +40,7 @@
 						<mdc:FilterBar id="booksFilterBar" variantBackreference="IDVariantManagementOfTable"
 						filtersChanged="onFiltersChanged" search="onSearch"
 						filterConditions = '\{"stock" : [\{"operator":"BT","values":[100,50000]}]\}'
-						propertyInfo = '[\{"name": "stock", "dataType":"Edm.Int32", "maxConditions":-1, "required":false\}]'
+						propertyInfo = '[\{"name": "stock", "dataType":"Edm.Int32", "maxConditions":-1, "required":false, "label":"foo"\}]'
 						liveMode="false" delegate='\{"name": "sap/ui/v4demo/delegate/Books.FB.delegate", "payload": \{"collectionName": "Books"\}\}' p13nMode="Item,Value">
 						<mdc:dependents>
 							<mdc:ValueHelp
@@ -762,7 +762,6 @@
 								\}],
                     		"kind": "Groupable",
                     		"visible": true,
-                    		"type": "Edm.String",
 							"dataType": "String",
                     		"group": "",
                     		"groupLabel": "",
@@ -795,7 +794,6 @@
 								\}],
 							"kind": "Aggregatable",
 							"visible": true,
-							"type": "Edm.String",
 							"dataType": "String",
 							"group": "",
 							"groupLabel": "",

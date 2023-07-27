@@ -32,8 +32,6 @@ sap.ui.define([
 
 			oCore.getMessageManager().registerObject(this.getView(), true);
 
-			window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
-
 			var oCM = new ConditionModel();
 
 			this.getView().setModel(oCM, "cm");

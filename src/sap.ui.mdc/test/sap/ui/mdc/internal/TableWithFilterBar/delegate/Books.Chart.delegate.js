@@ -199,8 +199,7 @@ sap.ui.define([
                             groupable: true,
                             aggregatable: false,
                             maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
-                            sortKey: sKey,
-                            //typeConfig: this.getTypeMap().getTypeConfig(oObj.$Type, null, {}),
+                            //sortKey: sKey,
                             dataType: oObj.$Type,
                             role: ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
                             textProperty:  sTextProperty

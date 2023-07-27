@@ -29,15 +29,18 @@ sap.ui.define([
 				if (oPropertyInfo.name === "$search") {
 					bSearchExists = true;
 				} else if (oPropertyInfo.name === "OrderNo") {
-					oPropertyInfo.fieldHelp = "FH1";
 					oPropertyInfo.label = "Order Number";
 				} else if (oPropertyInfo.name === "orderTime") {
 					oPropertyInfo.label = "Order Time";
 				} else if (oPropertyInfo.name === "currency_code") {
-					oPropertyInfo.fieldHelp = "FH-Currency";
-					oPropertyInfo.display = FieldDisplay.Value; // for currencies description key is the name
 					oPropertyInfo.maxConditions = 1; // normally only one currency should be used, otherwise it makes no sense related to price
-					oPropertyInfo.filterOperators = ["EQ"]; // for currency only fixed values make sense
+				}
+
+				if (oPropertyInfo.display) {
+					delete oPropertyInfo.display;
+				}
+				if (oPropertyInfo.valueHelp) {
+					delete oPropertyInfo.valueHelp;
 				}
 
 			});
@@ -47,11 +50,7 @@ sap.ui.define([
 					name: "Items*/book_ID",
 					label: "Order w. one Item for Book (Any)",
 					groupLabel: "none",
-					typeConfig: {
-						baseType: "Numeric",
-						className: "Edm.Int32",
-						typeInstance: new TypeInt32()
-					}
+					dataType: "Edm.Int32"
 				});
 			}
 
@@ -60,18 +59,15 @@ sap.ui.define([
 					name: "Items+/book_ID",
 					label: "Order w. all Items for Book (All)",
 					groupLabel: "none",
-					typeConfig: {
-						baseType: "Numeric",
-						className: "Edm.Int32",
-						typeInstance: new TypeInt32()
-					}
+					dataType: "Edm.Int32"
 				});
 			}
 
 			if (!bSearchExists) {
 				aProperties.push({
 					  name: "$search",
-					  typeConfig: FilterBarDelegate.getTypeMap().getTypeConfig("Edm.String", null, null)
+					  label: "",
+					  dataType: "Edm.String"
 				});
 			}
 
@@ -92,18 +88,26 @@ sap.ui.define([
 
 	FilterBarOrdersSampleDelegate._createFilterField = function (oProperty, oFilterBar, mPropertyBag) {
 
-		mPropertyBag = 	{
+
+		mPropertyBag = mPropertyBag || {
 			modifier: JsControlTreeModifier,
 			view: FlUtils.getViewForControl(oFilterBar),
 			appComponent: FlUtils.getAppComponentForControl(oFilterBar)
 		};
 
-		// var oModifier = mPropertyBag.modifier;
+		var oModifier = mPropertyBag.modifier;
 		// var sName = oProperty.path || oProperty.name;
 		var oFilterFieldPromise = FilterBarDelegate._createFilterField.apply(this, arguments);
+		var oView = mPropertyBag.view ? mPropertyBag.view : FlUtils.getViewForControl(oFilterBar);
 
 		oFilterFieldPromise.then(function (oFilterField) {
-
+			if (oProperty.name === "OrderNo") {
+				oModifier.setAssociation(oFilterField, "valueHelp", oView.createId("FH1"));
+			} else if (oProperty.name === "currency_code") {
+				oModifier.setAssociation(oFilterField, "valueHelp", oView.createId("FH-Currency"));
+				oModifier.setProperty(oFilterField, "display", FieldDisplay.Value);
+				oModifier.setProperty(oFilterField, "operators", ["EQ"]);
+			}
 		});
 
 		return oFilterFieldPromise;

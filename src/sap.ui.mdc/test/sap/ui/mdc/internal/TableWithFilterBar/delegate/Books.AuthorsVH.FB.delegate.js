@@ -42,19 +42,20 @@ sap.ui.define([
 					if (oProperty.name === "$search") {
 						bSearchExists = true;
 					} else if (oProperty.name === "dateOfBirth") {
-						oProperty.fieldHelp = "FH2";
+						oProperty.valueHelp = "FH2";
 						// oProperty.maxConditions = 1;
 					}
 
-					if (oProperty.maxConditions === -1 && !oProperty.fieldHelp) {
-						oProperty.fieldHelp = "FVH_Generic_Multi";
+					if (oProperty.maxConditions === -1 && !oProperty.valueHelp) {
+						oProperty.valueHelp = "FVH_Generic_Multi";
 					}
 				});
 
 				if (!bSearchExists) {
 					aProperties.push({
+						  label: "",
 						  name: "$search",
-						  typeConfig: FilterBarDelegate.getTypeMap().getTypeConfig("Edm.String", null, null)
+						  dataType: "Edm.String"
 					});
 				}
 

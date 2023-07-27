@@ -49,8 +49,8 @@ sap.ui.define([
 
 	OrdersTableDelegate.getFilterDelegate = function() {
 		return {
-			addItem: function(sPropertyName, oTable) {
-				return OrdersFBDelegate.addItem(sPropertyName, oTable)
+			addItem: function(oTable, sPropertyName) {
+				return OrdersFBDelegate.addItem(oTable, sPropertyName)
 				.then(function(oFilterField) {
 					var oProp = oTable.getPropertyHelper().getProperty(sPropertyName);
 
