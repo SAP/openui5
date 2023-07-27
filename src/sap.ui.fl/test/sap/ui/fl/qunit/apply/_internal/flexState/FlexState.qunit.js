@@ -281,7 +281,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when initialize is called without a reference and with a componentID", function(assert) {
-			var oMockResponse = {changes: {foo: "FlexResponse"}};
+			var oMockResponse = {changes: merge(StorageUtils.getEmptyFlexDataResponse(), {foo: "FlexResponse"})};
 			this.oLoadFlexDataStub.resolves(oMockResponse);
 
 			var oExpectedResponse = Object.assign({}, oMockResponse);

@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/rta/command/AddXMLAtExtensionPoint",
 	"sap/ui/rta/command/AppDescriptorCommand",
 	"sap/ui/rta/command/CommandFactory",
@@ -23,7 +22,6 @@ sap.ui.define([
 	DesignTime,
 	Layer,
 	ManifestUtils,
-	Loader,
 	AddXMLAtExtensionPointCommand,
 	AppDescriptorCommand,
 	CommandFactory,
@@ -124,7 +122,6 @@ sap.ui.define([
 		beforeEach: function() {
 			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(true);
-			sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
 			return createBeforeEach.call(this);
 		},
 		afterEach: function() {

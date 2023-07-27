@@ -51,9 +51,8 @@ sap.ui.define([
 				flexObjects: []
 			}
 		};
-		// TODO: remove fallback to empty array and adjust tests that don't use the whole changes structure
-		var aVariantChanges = mPropertyBag.storageResponse.changes.variants || [];
-		var aRelevantVariantDependenControlChanges = (mPropertyBag.storageResponse.changes.variantDependentControlChanges || [])
+		var aVariantChanges = mPropertyBag.storageResponse.changes.variants;
+		var aRelevantVariantDependentControlChanges = (mPropertyBag.storageResponse.changes.variantDependentControlChanges)
 		.filter(function(oControlChangeObject) {
 			// Only create fake variants for standard variants and ignore other deleted variants
 			// Thus only consider changes on the standard variant
@@ -65,7 +64,7 @@ sap.ui.define([
 			// based on the variant name pattern defined in fl.Utils
 			return !/id_\d{13}_\d*_flVariant/.test(oControlChangeObject.variantReference);
 		});
-		var aRelevantFlexObjects = aVariantChanges.concat(aRelevantVariantDependenControlChanges);
+		var aRelevantFlexObjects = aVariantChanges.concat(aRelevantVariantDependentControlChanges);
 
 		aRelevantFlexObjects.forEach(function(oFlexObject) {
 			var sVariantReference = oFlexObject.fileType === "ctrl_variant"

@@ -6,20 +6,20 @@ sap.ui.define([
 	"sap/ui/core/ExtensionPoint",
 	"sap/ui/fl/write/_internal/extensionPoint/Registry",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
-	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	Component,
 	ComponentContainer,
 	ExtensionPoint,
 	ExtensionPointRegistry,
 	ExtensionPointProcessor,
-	Loader,
 	ChangePersistenceFactory,
 	AddXMLAtExtensionPoint,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 
@@ -38,13 +38,14 @@ sap.ui.define([
 	var oSpyAddXMLAtExtensionPointApply;
 	var oSpyRegisterExtensionPoint;
 
-	function createComponentAndContainer(bSync) {
+	async function createComponentAndContainer(bSync) {
 		oSpyApplyExtensionPoint = sandbox.spy(ExtensionPointProcessor, "applyExtensionPoint");
 		oSpyAddXMLAtExtensionPointApply = sandbox.spy(AddXMLAtExtensionPoint, "applyChange");
 		oSpyRegisterExtensionPoint = sandbox.spy(ExtensionPointRegistry, "registerExtensionPoint");
 
 		if (bSync) {
-			sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: createChanges("sap.ui.fl.qunit.extensionPoint.testAppLegacy")}});
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "sap.ui.fl.qunit.extensionPoint.testApp",
+				{changes: createChanges("sap.ui.fl.qunit.extensionPoint.testAppLegacy")});
 			oComponent = sap.ui.component({ // legacy-relevant: Sync creation of component
 				name: "sap.ui.fl.qunit.extensionPoint.testAppLegacy",
 				id: "sap.ui.fl.qunit.extensionPoint.testAppLegacy",
@@ -57,23 +58,21 @@ sap.ui.define([
 			return oComponent.getRootControl().byId("async").loaded();
 		}
 
-		sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: createChanges("sap.ui.fl.qunit.extensionPoint.testAppLegacy.async")}});
-		return Component.create({
+		await FlQUnitUtils.initializeFlexStateWithData(sandbox, "sap.ui.fl.qunit.extensionPoint.testApp",
+			{changes: createChanges("sap.ui.fl.qunit.extensionPoint.testAppLegacy.async")});
+		oComponent = await Component.create({
 			name: "sap.ui.fl.qunit.extensionPoint.testAppLegacy",
 			id: "sap.ui.fl.qunit.extensionPoint.testAppLegacy.async",
 			componentData: {}
-		}).then(function(_oComp) {
-			oComponent = _oComp;
-			oComponentContainer = oComponent.runAsOwner(function() {
-				return new ComponentContainer({
-					component: oComponent
-				});
-			});
-			oComponentContainer.placeAt("content");
-			return oComponent.getRootControl().loaded();
-		}).then(function() {
-			return oComponent.getRootControl().byId("async").loaded();
 		});
+		oComponentContainer = oComponent.runAsOwner(function() {
+			return new ComponentContainer({
+				component: oComponent
+			});
+		});
+		oComponentContainer.placeAt("content");
+		await oComponent.getRootControl().loaded();
+		return oComponent.getRootControl().byId("async").loaded();
 	}
 
 	function createChanges(sReference) {
@@ -117,7 +116,6 @@ sap.ui.define([
 	}
 
 	function destroyComponentAndContainer() {
-		Loader.loadFlexData.restore();
 		oComponent.destroy();
 		oComponentContainer.destroy();
 		sandbox.restore();
@@ -263,8 +261,8 @@ sap.ui.define([
 	}
 
 	QUnit.module("ExtensionPoints with sync and async view when component is created sync", {
-		before: createComponentAndContainer.bind(null, SYNC),
-		after: destroyComponentAndContainer.bind(null, SYNC)
+		beforeEach: createComponentAndContainer.bind(null, SYNC),
+		afterEach: destroyComponentAndContainer.bind(null, SYNC)
 	}, function() {
 		QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
 			check(SYNC, assert);
@@ -272,8 +270,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("ExtensionPoints with sync and async view when component is created async", {
-		before: createComponentAndContainer.bind(null, ASYNC),
-		after: destroyComponentAndContainer.bind(null, ASYNC)
+		beforeEach: createComponentAndContainer.bind(null, ASYNC),
+		afterEach: destroyComponentAndContainer.bind(null, ASYNC)
 	}, function() {
 		QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
 			check(ASYNC, assert);

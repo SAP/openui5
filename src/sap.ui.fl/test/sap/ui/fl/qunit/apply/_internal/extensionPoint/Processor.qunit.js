@@ -6,20 +6,20 @@ sap.ui.define([
 	"sap/ui/core/ExtensionPoint",
 	"sap/ui/fl/write/_internal/extensionPoint/Registry",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
-	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	Component,
 	ComponentContainer,
 	ExtensionPoint,
 	ExtensionPointRegistry,
 	ExtensionPointProcessor,
-	Loader,
 	ChangePersistenceFactory,
 	AddXMLAtExtensionPoint,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 
@@ -36,27 +36,25 @@ sap.ui.define([
 	var oSpyAddXMLAtExtensionPointApply;
 	var oSpyRegisterExtensionPoint;
 
-	function createComponentAndContainer() {
+	async function createComponentAndContainer() {
 		oSpyApplyExtensionPoint = sandbox.spy(ExtensionPointProcessor, "applyExtensionPoint");
 		oSpyAddXMLAtExtensionPointApply = sandbox.spy(AddXMLAtExtensionPoint, "applyChange");
 		oSpyRegisterExtensionPoint = sandbox.spy(ExtensionPointRegistry, "registerExtensionPoint");
-		sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: createChanges("sap.ui.fl.qunit.extensionPoint.testApp.async")}});
-		return Component.create({
+		await FlQUnitUtils.initializeFlexStateWithData(sandbox, "sap.ui.fl.qunit.extensionPoint.testApp",
+			{changes: createChanges("sap.ui.fl.qunit.extensionPoint.testApp.async")});
+		oComponent = await Component.create({
 			name: "sap.ui.fl.qunit.extensionPoint.testApp",
 			id: "sap.ui.fl.qunit.extensionPoint.testApp.async",
 			componentData: {}
-		}).then(function(_oComp) {
-			oComponent = _oComp;
-			oComponentContainer = oComponent.runAsOwner(function() {
-				return new ComponentContainer({
-					component: oComponent
-				});
-			});
-			oComponentContainer.placeAt("content");
-			return oComponent.getRootControl().loaded();
-		}).then(function() {
-			return oComponent.getRootControl().byId("async").loaded();
 		});
+		oComponentContainer = oComponent.runAsOwner(function() {
+			return new ComponentContainer({
+				component: oComponent
+			});
+		});
+		oComponentContainer.placeAt("content");
+		await oComponent.getRootControl().loaded();
+		await oComponent.getRootControl().byId("async").loaded();
 	}
 
 	function createChanges(sReference) {
@@ -93,7 +91,6 @@ sap.ui.define([
 	}
 
 	function destroyComponentAndContainer() {
-		Loader.loadFlexData.restore();
 		oComponent.destroy();
 		oComponentContainer.destroy();
 		sandbox.restore();
@@ -209,8 +206,8 @@ sap.ui.define([
 	}
 
 	QUnit.module("ExtensionPoints with async view when component is created async", {
-		before: createComponentAndContainer,
-		after: destroyComponentAndContainer
+		beforeEach: createComponentAndContainer,
+		afterEach: destroyComponentAndContainer
 	}, function() {
 		QUnit.test("When EPs and addXMLAtExtensionPoint are available in one async view", function(assert) {
 			check(assert);
