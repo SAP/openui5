@@ -423,6 +423,14 @@ sap.ui.define([
 				assert.notOk(bMoveable, "then the movedButton is not movable");
 			});
 		});
+
+		QUnit.test("when movedButton is being destroyed", function(assert) {
+			sandbox.stub(this.oMovedButton1, "isDestroyStarted").returns(true);
+			return this.oElementMover.checkMovable(this.oMovedButton1Overlay)
+			.then(function(bMoveable) {
+				assert.notOk(bMoveable, "then checkMovable returns false");
+			});
+		});
 	});
 
 	QUnit.module("Given verticalLayout with Button and another verticalLayout inside (second scenario) without relevantContainer propagation", {
