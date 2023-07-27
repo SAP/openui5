@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/util/deepClone",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"../../TestUtils"
 ], function (
 	x,
 	Editor,
@@ -18,7 +19,8 @@ sap.ui.define([
 	deepEqual,
 	deepClone,
 	MockServer,
-	Core
+	Core,
+	TestUtils
 ) {
 	"use strict";
 
@@ -119,31 +121,6 @@ sap.ui.define([
 		return oClonedValue;
 	}
 
-	function isReady(oEditor) {
-		return new Promise(function(resolve) {
-			oEditor.attachReady(function() {
-				resolve();
-			});
-		});
-	}
-
-	function openColumnMenu(oColumn) {
-		return new Promise(function(resolve) {
-			oColumn.attachEventOnce("columnMenuOpen", function() {
-				resolve();
-			});
-			oColumn._openHeaderMenu();
-		});
-	}
-
-	function tableUpdated(oField) {
-		return new Promise(function(resolve) {
-			oField.attachEventOnce("tableUpdated", function() {
-				resolve();
-			});
-		});
-	}
-
 	QUnit.module("Basic", {
 		before: function () {
 			this.oMockServer = new MockServer();
@@ -199,7 +176,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFields
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -215,14 +192,14 @@ sap.ui.define([
 			oClearFilterButton = oToolbar.getContent()[4];
 			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-			return tableUpdated(oField);
+			return TestUtils.tableUpdated(oField);
 		}).then(function() {
 			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 			assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 			oURLColumn = oTable.getColumns()[4];
 			oIntColumn = oTable.getColumns()[6];
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			oMenu = oURLColumn.getMenu();
 			oMenu.getItems()[0].setValue("https");
@@ -233,7 +210,7 @@ sap.ui.define([
 			assert.equal(oTable.getBinding().getCount(), 6, "Table: RowCount after filtering column URL with 'https'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 			// open the column filter menu, input filter value, close the menu.
-			return openColumnMenu(oIntColumn);
+			return TestUtils.openColumnMenu(oIntColumn);
 		}).then(function() {
 			oMenu = oIntColumn.getMenu();
 			oMenu.getItems()[0].setValue("4");
@@ -244,7 +221,7 @@ sap.ui.define([
 			assert.equal(oTable.getBinding().getCount(), 1, "Table: RowCount after filtering column Integer with '4'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 			// open the column filter menu, input filter value, close the menu.
-			return openColumnMenu(oIntColumn);
+			return TestUtils.openColumnMenu(oIntColumn);
 		}).then(function() {
 			oMenu.getItems()[0].setValue(">4");
 			oMenu.getItems()[0].fireSelect();
@@ -272,7 +249,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFields
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -288,7 +265,7 @@ sap.ui.define([
 			oClearFilterButton = oToolbar.getContent()[4];
 			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-			return tableUpdated(oField);
+			return TestUtils.tableUpdated(oField);
 		}).then(function() {
 			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 			assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
@@ -301,7 +278,7 @@ sap.ui.define([
 			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 			oURLColumn = oColumns[4];
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			oMenu = oURLColumn.getMenu();
 			oMenu.getItems()[0].setValue("https");
@@ -392,7 +369,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFields
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -408,7 +385,7 @@ sap.ui.define([
 			oClearFilterButton = oToolbar.getContent()[4];
 			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-			return tableUpdated(oField);
+			return TestUtils.tableUpdated(oField);
 		}).then(function() {
 			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 			assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
@@ -421,7 +398,7 @@ sap.ui.define([
 			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 			oURLColumn = oColumns[4];
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			oMenu = oURLColumn.getMenu();
 			oMenu.getItems()[0].setValue("https");
@@ -498,7 +475,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFields
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -514,7 +491,7 @@ sap.ui.define([
 			oClearFilterButton = oToolbar.getContent()[4];
 			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-			return tableUpdated(oField);
+			return TestUtils.tableUpdated(oField);
 		}).then(function() {
 			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 			assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
@@ -527,7 +504,7 @@ sap.ui.define([
 			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 			oURLColumn = oColumns[4];
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			oMenu = oURLColumn.getMenu();
 			oMenu.getItems()[0].setValue("http://");
@@ -624,7 +601,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFields
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -640,7 +617,7 @@ sap.ui.define([
 			oClearFilterButton = oToolbar.getContent()[4];
 			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-			return tableUpdated(oField);
+			return TestUtils.tableUpdated(oField);
 		}).then(function() {
 			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 			assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
@@ -653,7 +630,7 @@ sap.ui.define([
 			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 			oURLColumn = oColumns[4];
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			oMenu = oURLColumn.getMenu();
 			oMenu.getItems()[0].setValue("http://");

@@ -7,7 +7,8 @@ sap.ui.define([
 	"./../../../ContextHost",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Core",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"../../../TestUtils"
 ], function (
 	x,
 	Editor,
@@ -16,7 +17,8 @@ sap.ui.define([
 	ContextHost,
 	deepEqual,
 	Core,
-	deepClone
+	deepClone,
+	TestUtils
 ) {
 	"use strict";
 
@@ -98,23 +100,6 @@ sap.ui.define([
 		return oClonedValue;
 	}
 
-	function isReady(oEditor) {
-		return new Promise(function(resolve) {
-			oEditor.attachReady(function() {
-				resolve();
-			});
-		});
-	}
-
-	function openColumnMenu(oColumn) {
-		return new Promise(function(resolve) {
-			oColumn.attachEventOnce("columnMenuOpen", function() {
-				resolve();
-			});
-			oColumn._openHeaderMenu();
-		});
-	}
-
 	QUnit.module("CUD", {
 		beforeEach: function () {
 			this.oHost = new Host("host");
@@ -154,7 +139,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithPropertiesOnly
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -177,7 +162,7 @@ sap.ui.define([
 			oURLColumn = oTable.getColumns()[4];
 			return wait();
 		}).then(function() {
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			oTable.filter(oURLColumn, "https");
 			// check that the column menu filter input field was updated
@@ -271,7 +256,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithPropertiesOnly
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -295,7 +280,7 @@ sap.ui.define([
 			oTable.filter(oURLColumn, "https");
 			return wait();
 		}).then(function() {
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			// check that the column menu filter input field was updated
 			oMenu = oURLColumn.getMenu();
@@ -363,7 +348,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithPropertiesOnly
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -386,7 +371,7 @@ sap.ui.define([
 			oURLColumn = oTable.getColumns()[4];
 			return wait();
 		}).then(function() {
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			oTable.filter(oURLColumn, "http:");
 			// check that the column menu filter input field was updated
@@ -567,7 +552,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithPropertiesOnly
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -591,7 +576,7 @@ sap.ui.define([
 			oTable.filter(oURLColumn, "http:");
 			return wait();
 		}).then(function() {
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			// check that the column menu filter input field was updated
 			oMenu = oURLColumn.getMenu();
@@ -751,7 +736,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithPropertiesOnly
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -777,7 +762,7 @@ sap.ui.define([
 			oTable.filter(oURLColumn, "http:");
 			return wait();
 		}).then(function(){
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			// check that the column menu filter input field was updated
 			oMenu = oURLColumn.getMenu();

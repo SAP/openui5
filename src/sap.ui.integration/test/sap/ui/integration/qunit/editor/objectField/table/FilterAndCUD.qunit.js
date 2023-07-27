@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Core",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"../../TestUtils"
 ], function (
 	x,
 	Editor,
@@ -18,7 +19,8 @@ sap.ui.define([
 	deepEqual,
 	MockServer,
 	Core,
-	deepClone
+	deepClone,
+	TestUtils
 ) {
 	"use strict";
 
@@ -120,23 +122,6 @@ sap.ui.define([
 		return oClonedValue;
 	}
 
-	function isReady(oEditor) {
-		return new Promise(function(resolve) {
-			oEditor.attachReady(function() {
-				resolve();
-			});
-		});
-	}
-
-	function openColumnMenu(oColumn) {
-		return new Promise(function(resolve) {
-			oColumn.attachEventOnce("columnMenuOpen", function() {
-				resolve();
-			});
-			oColumn._openHeaderMenu();
-		});
-	}
-
 	QUnit.module("CUD", {
 		before: function () {
 			this.oMockServer = new MockServer();
@@ -192,7 +177,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return isReady(oEditor).then(function () {
+		return TestUtils.isReady(oEditor).then(function () {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -229,7 +214,7 @@ sap.ui.define([
 			oTable.filter(oKeyColumn, "new");
 			return wait();
 		}).then(function () {
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
 			oMenu = oKeyColumn.getMenu();
 			oMenu.close();
@@ -335,7 +320,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -372,7 +357,7 @@ sap.ui.define([
 			oTable.filter(oKeyColumn, "new");
 			return wait();
 		}).then(function() {
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
 			oMenu = oKeyColumn.getMenu();
 			oMenu.close();
@@ -469,7 +454,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -557,7 +542,7 @@ sap.ui.define([
 			oTable.filter(oKeyColumn, "new");
 			return wait();
 		}).then(function () {
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
 			// check that the column menu filter input field was updated
 			oMenu = oKeyColumn.getMenu();
@@ -735,7 +720,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -822,7 +807,7 @@ sap.ui.define([
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
 		}).then(function() {
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function() {
 			oMenu = oKeyColumn.getMenu();
 			oMenu.close();
@@ -974,7 +959,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -1060,7 +1045,7 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
 			oMenu = oKeyColumn.getMenu();
 			oMenu.close();
@@ -1242,7 +1227,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -1328,7 +1313,7 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
 			// check that the column menu filter input field was updated
 			oMenu = oKeyColumn.getMenu();
@@ -1505,7 +1490,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -1591,7 +1576,7 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function() {
 			// check that the column menu filter input field was updated
 			oMenu = oKeyColumn.getMenu();
@@ -1659,7 +1644,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -1745,7 +1730,7 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function() {
 			// check that the column menu filter input field was updated
 			oMenu = oKeyColumn.getMenu();
