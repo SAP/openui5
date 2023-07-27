@@ -1062,8 +1062,7 @@ sap.ui.define([
 			{scale: "day", sign: 1, pattern: "bar {0}"}
 		]);
 	});
-
-	//*********************************************************************************************
+	/** @deprecated As of version 1.113.0 */
 	QUnit.test("CustomLocaleData: getFirstDayOfWeek", function(assert) {
 		var oCustomLocaleData = LocaleData.getInstance(new Locale("en_US-x-sapufmt")),
 			oFormatSettings = Configuration.getFormatSettings();
