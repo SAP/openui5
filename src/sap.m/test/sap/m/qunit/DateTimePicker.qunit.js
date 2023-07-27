@@ -1411,6 +1411,40 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("With Bound and Configured Timezone", function(assert) {
+		// arrange
+		oCore.getConfiguration().setTimezone("Europe/London");
+
+		var oModel = new JSONModel({
+			date: UI5Date.getInstance(2023, 2, 31, 10, 32),
+			timezone: "Asia/Tokyo"
+		}),
+		oDTP = new DateTimePicker({
+			value: {
+				type: "sap.ui.model.odata.type.DateTimeWithTimezone",
+				parts: [{
+					path: "/date",
+					type: "sap.ui.model.odata.type.DateTimeOffset"
+				}, {
+					path: "/timezone",
+					type: "sap.ui.model.odata.type.String"
+				}]
+			}
+		});
+
+		oDTP.placeAt("qunit-fixture");
+		oDTP.setModel(oModel);
+
+		oCore.applyChanges();
+
+		// assert
+		assert.equal(oDTP._getInputValue(), "Mar 31, 2023, 6:32:00 PM", "correct displayed value");
+		assert.equal(oDTP.getValue(), "Mar 31, 2023, 6:32:00 PM Asia, Tokyo", "correct displayed value");
+
+		// clean
+		oDTP.destroy();
+	});
+
 	QUnit.test("measure label renders always the same UTC date and time", function(assert) {
 		// arrange
 		var oDTP = new DateTimePicker("dtp", {
