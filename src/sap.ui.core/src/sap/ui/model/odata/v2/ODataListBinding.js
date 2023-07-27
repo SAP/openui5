@@ -270,6 +270,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the context at the given index.
+	 *
+	 * @param {number} iIndex The index of the context
+	 *
+	 * @returns {sap.ui.model.odata.v2.Context|undefined}
+	 *   The context at the given index or <code>undefined</code> if no context exists at the given index
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.table
+	 */
+	ODataListBinding.prototype.getContextByIndex = function (iIndex) {
+		return this._getContexts(iIndex, 1)[0];
+	};
+
+	/**
 	 * Return contexts for the list.
 	 *
 	 * @param {int} [iStartIndex=0]

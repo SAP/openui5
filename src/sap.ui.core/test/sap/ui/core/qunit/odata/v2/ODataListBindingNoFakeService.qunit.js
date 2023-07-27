@@ -3542,4 +3542,22 @@ sap.ui.define([
 			ODataListBinding.prototype._hasTransientParentWithoutSubContexts.call(oBinding),
 			false);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getContextByIndex", function (assert) {
+		var oBinding = {
+				_getContexts : function () {}
+			},
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("_getContexts").withExactArgs(42, 1).returns([]);
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.getContextByIndex.call(oBinding, 42), undefined);
+
+		oBindingMock.expects("_getContexts").withExactArgs(77, 1).returns(["~oContext"]);
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.getContextByIndex.call(oBinding, 77), "~oContext");
+	});
 });
