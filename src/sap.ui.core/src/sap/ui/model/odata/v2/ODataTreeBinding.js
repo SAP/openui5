@@ -2633,6 +2633,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.odata.v2.ODataTreeBinding.prototype.submitChanges
+	 * @deprecated Since 1.104 use {@link sap.ui.model.odata.v2.ODataModel#submitChanges} instead
 	 * @private
 	 * @ui5-restricted
 	 */
