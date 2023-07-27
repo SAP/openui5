@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/unified/MenuItem",
 	"sap/ui/unified/MenuTextFieldItem",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(qutils, Menu, MenuItem, MenuTextFieldItem, Log, waitForThemeApplied) {
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/core/Control"
+], function(qutils, Menu, MenuItem, MenuTextFieldItem, Log, waitForThemeApplied, Control) {
 	"use strict";
 
 	try {
@@ -1127,6 +1128,7 @@ sap.ui.define([
 	QUnit.test("Destruction", function(assert) {
 		var sId = oRootMenu.getId();
 		var sSubId = oSubMenu.getId();
+		openRootMenu(true, assert);
 		var bHasPopup = !!oRootMenu.oPopup;
 		oRootMenu.destroy();
 		assert.ok(!sap.ui.getCore().byId(sId), "No Menu registered in the Core anymore");
@@ -1288,6 +1290,36 @@ sap.ui.define([
 		// cleanup
 		oMenu.destroy();
 		oOpenStub.restore();
+	});
+
+	QUnit.test("Invalidate", function(assert) {
+		// prepare
+		var oMenu = new Menu(),
+			oInvalidateSpy = this.spy(Control.prototype, "invalidate"),
+			oPopup = oMenu.getPopup(),
+			oIsOpenStub;
+
+		// act
+		oMenu.invalidate();
+
+		// assert
+		assert.notOk(oPopup.isOpen(), "Menu isn't opened");
+		assert.strictEqual(oInvalidateSpy.callCount, 0, "Control invalidation gets skipped");
+
+		// prepare
+		oIsOpenStub = this.stub(oPopup, "isOpen", function() {
+			return true;
+		});
+
+		// act
+		oMenu.invalidate();
+
+		// assert
+		assert.ok(oInvalidateSpy.calledOnce, "Control invalidation triggered");
+
+		// clean
+		oIsOpenStub.restore();
+		oInvalidateSpy.restore();
 	});
 
 	return waitForThemeApplied();
