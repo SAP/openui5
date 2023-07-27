@@ -1859,6 +1859,9 @@ sap.ui.define([
 		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlBackgroundDesign);
 	});
 
+	/**
+	 * @deprecated as of version 1.67 GridLayout is deprecated, so test should only be executed if still available
+	 */
 	QUnit.module("GridLayout", {
 		beforeEach: initTestWithContentGL,
 		afterEach: afterTest
