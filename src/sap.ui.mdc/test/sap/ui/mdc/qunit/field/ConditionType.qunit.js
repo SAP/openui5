@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/type/DateTimeWithTimezone",
 	"sap/ui/model/odata/type/DateTimeOffset",
-	"sap/base/strings/whitespaceReplacer"
+	"sap/base/strings/whitespaceReplacer",
+	"sap/base/util/deepEqual"
 ], function (
 		ConditionType,
 		Condition,
@@ -40,7 +41,8 @@ sap.ui.define([
 		StringType,
 		DateTimeWithTimezoneType,
 		DateTimeOffsetType,
-		whitespaceReplacer
+		whitespaceReplacer,
+		deepEqual
 	) {
 	"use strict";
 
@@ -765,6 +767,7 @@ sap.ui.define([
 		var oConfig = { // to compare
 			value: "Sync",
 			parsedValue: "Sync",
+			parsedDescription: undefined,
 			dataType: oValueType,
 			checkKey: true,
 			checkDescription: false,
@@ -984,6 +987,7 @@ sap.ui.define([
 			var oConfig = { // to compare
 				value: "I2",
 				parsedValue: "I2",
+				parsedDescription: "X",
 				dataType: oValueType,
 				checkKey: true,
 				checkDescription: true,
@@ -2772,6 +2776,264 @@ sap.ui.define([
 			assert.equal(aResult[0].values[0], "2", "Result 1");
 			assert.equal(aResult[1], "Text 2", "Result 2");
 			assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
+			fnDone();
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			fnDone();
+		});
+
+	});
+
+	var oAdditionalType;
+	QUnit.module("different type for description", {
+		beforeEach: function() {
+			oValueType = new IntegerType({}, {maximum: 100});
+			oAdditionalType = new DateType({pattern: "yyyy-MM-dd"}, {minimum: new Date(2000, 0, 1)});
+			oConditionType = new ConditionType({
+				valueType: oValueType,
+				additionalValueType: oAdditionalType,
+				operators: ["EQ"],
+				display: FieldDisplay.ValueDescription,
+				asyncParsing: fnAsync,
+				delegate: FieldBaseDelegate,
+				bindingContext: "BC", // just dummy to test forwarding to valueHelp
+				control: "Control" // just dummy to test forwarding to valueHelp
+			});
+
+			oValueHelp = new ValueHelp("VH1");
+			var fnGetItemsForValue = function(oConfig) {
+				if (oConfig.parsedValue === 1 && oConfig.checkKey) {
+					return Promise.resolve({key: 1, description: new Date(2023, 6, 31)});
+				} else if (deepEqual(oConfig.parsedDescription, new Date(2023, 6, 31)) && !oConfig.checkKey && oConfig.checkDescription) {
+					return Promise.resolve({key: 2, description: new Date(2023, 6, 31)});
+				}
+				return null;
+			};
+			sinon.stub(oValueHelp, "getItemForValue").callsFake(fnGetItemsForValue);
+			sinon.stub(oValueHelp, "isValidationSupported").returns(true);
+		},
+		afterEach: function() {
+			oConditionType.destroy();
+			oConditionType = undefined;
+			oValueType.destroy();
+			oValueType = undefined;
+			oAdditionalType.destroy();
+			oAdditionalType = undefined;
+			oValueHelp.destroy();
+			oValueHelp = undefined;
+			bAsyncCalled = undefined;
+		}
+	});
+
+	QUnit.test("Formatting: EQ", function(assert) {
+
+		var oCondition = Condition.createItemCondition(2, new Date(2023, 6, 31));
+		var sResult = oConditionType.formatValue(oCondition);
+		assert.equal(sResult, "2 (2023-07-31)", "Result of formatting");
+
+	});
+
+	QUnit.test("Parsing: EQ", function(assert) {
+
+		var oCondition = oConditionType.parseValue("2 (2023-07-31)");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 2, "Values length");
+		assert.equal(oCondition.values[0], 2, "Values: first entry");
+		assert.deepEqual(oCondition.values[1], new Date(2023, 6, 31), "Values: second entry");
+
+	});
+
+	QUnit.test("Parsing: invalid value", function(assert) {
+
+		var oException;
+
+		try {
+			oConditionType.parseValue("X (2023-07-31)");
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.ok(oException, "exception fired");
+
+		oException = undefined;
+		try {
+			oConditionType.parseValue("1 (x)");
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.ok(oException, "exception fired");
+
+	});
+
+	QUnit.test("Validating: invalid value", function(assert) {
+
+		var oCondition = Condition.createItemCondition(200, new Date(2023, 6, 31));
+		var oException;
+
+		try {
+			oConditionType.validateValue(oCondition);
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.ok(oException, "exception fired");
+		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
+
+		oException = undefined;
+		oCondition = Condition.createItemCondition(2, new Date(1900, 6, 31));
+		try {
+			oConditionType.validateValue(oCondition);
+		} catch (e) {
+			oException = e;
+		}
+		assert.ok(oException, "exception fired");
+		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
+
+	});
+
+	QUnit.test("Formatting: key -> description (from help)", function(assert) {
+
+		oConditionType.oFormatOptions.valueHelpID = "VH1"; // fake setting directly
+		var fnDone = assert.async();
+		var oCondition = Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.Validated);
+		var oConfig = { // to compare
+			value: 1,
+			parsedValue: 1,
+			parsedDescription: undefined,
+			dataType: oValueType,
+			checkKey: true,
+			checkDescription: false,
+			context: {inParameters: undefined, outParameters: undefined, payload: undefined},
+			bindingContext: "BC",
+			control: "Control",
+			caseSensitive: true,
+			exception: FormatException
+		};
+
+		var oPromise = oConditionType.formatValue(oCondition);
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(sDescription) {
+			assert.equal(sDescription, "1 (2023-07-31)", "Result of formatting");
+			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
+
+			fnDone();
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			fnDone();
+		});
+
+	});
+
+	QUnit.test("Parsing: description -> key", function(assert) {
+
+		oConditionType.oFormatOptions.valueHelpID = "VH1"; // fake setting directly
+		var fnDone = assert.async();
+		var oConfig = { // to compare
+			value: "2023-07-31",
+			parsedValue: undefined,
+			parsedDescription: new Date(2023, 6, 31),
+			dataType: oValueType,
+			checkKey: false,
+			checkDescription: true,
+			bindingContext: "BC",
+			control: "Control",
+			exception: ParseException
+		};
+
+		var oPromise =  oConditionType.parseValue("2023-07-31");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(oCondition) {
+			assert.ok(oCondition, "Result returned");
+			assert.equal(typeof oCondition, "object", "Result is object");
+			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.ok(Array.isArray(oCondition.values), "values are array");
+			assert.equal(oCondition.values.length, 2, "Values length");
+			assert.equal(oCondition.values[0], 2, "Values entry0");
+			assert.deepEqual(oCondition.values[1], new Date(2023, 6, 31), "Values entry1");
+			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+			assert.ok(bAsyncCalled, "asyncParsing function called");
+			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
+
+			fnDone();
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			fnDone();
+		});
+
+	});
+
+	QUnit.test("Parsing: key -> description", function(assert) {
+
+		oConditionType.oFormatOptions.valueHelpID = "VH1"; // fake setting directly
+		var fnDone = assert.async();
+		var oConfig = { // to compare
+			value: "1",
+			parsedValue: 1,
+			parsedDescription: undefined,
+			dataType: oValueType,
+			checkKey: true,
+			checkDescription: false,
+			bindingContext: "BC",
+			control: "Control",
+			exception: ParseException
+		};
+
+		var oPromise =  oConditionType.parseValue("1");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(oCondition) {
+			assert.ok(oCondition, "Result returned");
+			assert.equal(typeof oCondition, "object", "Result is object");
+			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.ok(Array.isArray(oCondition.values), "values are array");
+			assert.equal(oCondition.values.length, 2, "Values length");
+			assert.equal(oCondition.values[0], 1, "Values entry0");
+			assert.deepEqual(oCondition.values[1], new Date(2023, 6, 31), "Values entry1");
+			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+			assert.ok(bAsyncCalled, "asyncParsing function called");
+			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
+
+			fnDone();
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			fnDone();
+		});
+
+	});
+
+	QUnit.test("Parsing: key and description -> key and description", function(assert) {
+
+		oConditionType.oFormatOptions.valueHelpID = "VH1"; // fake setting directly
+		var fnDone = assert.async();
+		var oConfig = { // to compare
+			value: "1",
+			parsedValue: 1,
+			parsedDescription: new Date(2023, 6, 31),
+			dataType: oValueType,
+			checkKey: true,
+			checkDescription: true,
+			bindingContext: "BC",
+			control: "Control",
+			exception: ParseException
+		};
+
+		var oPromise =  oConditionType.parseValue("1 (2023-07-31)");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(oCondition) {
+			assert.ok(oCondition, "Result returned");
+			assert.equal(typeof oCondition, "object", "Result is object");
+			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.ok(Array.isArray(oCondition.values), "values are array");
+			assert.equal(oCondition.values.length, 2, "Values length");
+			assert.equal(oCondition.values[0], 1, "Values entry0");
+			assert.deepEqual(oCondition.values[1], new Date(2023, 6, 31), "Values entry1");
+			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+			assert.ok(bAsyncCalled, "asyncParsing function called");
+			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
+
 			fnDone();
 		}).catch(function(oError) {
 			assert.notOk(true, "Promise Catch must not be called");

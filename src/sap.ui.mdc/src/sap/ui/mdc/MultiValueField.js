@@ -152,11 +152,23 @@ sap.ui.define([
 	function _getDataType(oBindingInfo) {
 
 		// use type from item template key
-		if (oBindingInfo.template && oBindingInfo.template.mBindingInfos.key) {
-			var oKeyBindingInfo = oBindingInfo.template.mBindingInfos.key;
-			if (oKeyBindingInfo.type && (!this._oDataType || this._oDataType.getMetadata().getName() !== oKeyBindingInfo.type.getMetadata().getName())) {
-				this._oContentFactory.setDataType(oKeyBindingInfo.type);
-				this.invalidate(); // as new inner control might be needed
+		if (oBindingInfo.template) {
+			var oDataType;
+			if (oBindingInfo.template.mBindingInfos.key) {
+				var oKeyBindingInfo = oBindingInfo.template.mBindingInfos.key;
+				oDataType = this.getContentFactory().getDataType();
+				if (oKeyBindingInfo.type && (!oDataType || oDataType.getMetadata().getName() !== oKeyBindingInfo.type.getMetadata().getName())) {
+					this._oContentFactory.setDataType(oKeyBindingInfo.type);
+					this.invalidate(); // as new inner control might be needed
+				}
+			}
+			if (oBindingInfo.template.mBindingInfos.description) {
+				var oDescriptionBindingInfo = oBindingInfo.template.mBindingInfos.description;
+				oDataType = this.getContentFactory().getAdditionalDataType();
+				if (oDescriptionBindingInfo.type && (!oDataType || oDataType.getMetadata().getName() !== oDescriptionBindingInfo.type.getMetadata().getName())) {
+					this._oContentFactory.setAdditionalDataType(oDescriptionBindingInfo.type);
+					this.invalidate(); // as new inner control might be needed
+				}
 			}
 		}
 
@@ -294,7 +306,7 @@ sap.ui.define([
 
 		for (var i = 0; i < aItems.length; i++) {
 			var oItem = aItems[i];
-			var oCondition = Condition.createItemCondition(oItem.getKey(), oItem.getDescription());
+			var oCondition = Condition.createItemCondition(_getInternalValue(oItem, "key"), _getInternalValue(oItem, "description"));
 			oCondition.validated = ConditionValidated.Validated; // see every value set from outside as validated (to determine description, if needed)
 			aConditions.push(oCondition);
 		}
@@ -302,6 +314,19 @@ sap.ui.define([
 		this._bConditionsUpdateFromItems = true;
 		this.setConditions(aConditions);
 		this._bConditionsUpdateFromItems = false;
+
+	}
+
+	function _getInternalValue(oItem, sProperty) {
+
+		// as keyor description could have internally another type - use initial value of binding
+		// TODO: better logic?
+		var oBinding = oItem.getBinding(sProperty);
+		if (oBinding) {
+			return oBinding.getInternalValue();
+		} else {
+			return oItem.getProperty(sProperty);
+		}
 
 	}
 

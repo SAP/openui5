@@ -161,9 +161,13 @@ sap.ui.define([
 
 	Field.prototype.bindProperty = function(sName, oBindingInfo) {
 
+		var oDataType;
+		var aTypes;
+		var i = 0;
+
 		if (sName === "value" && !oBindingInfo.formatter) { // not if a formatter is used, as this needs to be executed
 			oBindingInfo.targetType = "raw"; // provide internal value to inner control
-			var oDataType = this.getContentFactory().getDataType();
+			oDataType = this.getContentFactory().getDataType();
 			if (oBindingInfo.type && (!oDataType ||
 				oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
 				!deepEqual(oDataType.getFormatOptions(), oBindingInfo.type.getFormatOptions()) ||
@@ -174,11 +178,30 @@ sap.ui.define([
 				this.getContentFactory().setUnitOriginalType(undefined);
 				this.getContentFactory().setIsMeasure(false);
 				if (oBindingInfo.type.isA("sap.ui.model.CompositeType") && oBindingInfo.parts) {
-					var aTypes = [];
-					for (var i = 0; i < oBindingInfo.parts.length; i++) {
+					aTypes = [];
+					for (i = 0; i < oBindingInfo.parts.length; i++) {
 						aTypes.push(oBindingInfo.parts[i].type);
 					}
 					this.getContentFactory().setCompositeTypes(aTypes);
+				}
+				this.getContentFactory().updateConditionType();
+				this.invalidate(); // as new inner control might be needed
+			}
+		} else if (sName === "additionalValue" && !oBindingInfo.formatter) { // not if a formatter is used, as this needs to be executed
+			oBindingInfo.targetType = "raw"; // provide internal value to inner control
+			oDataType = this.getContentFactory().getAdditionalDataType();
+			if (oBindingInfo.type && (!oDataType ||
+				oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
+				!deepEqual(oDataType.getFormatOptions(), oBindingInfo.type.getFormatOptions()) ||
+				!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
+				oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)) {
+				this.getContentFactory().setAdditionalDataType(oBindingInfo.type);
+				if (oBindingInfo.type.isA("sap.ui.model.CompositeType") && oBindingInfo.parts) {
+					aTypes = [];
+					for (i = 0; i < oBindingInfo.parts.length; i++) {
+						aTypes.push(oBindingInfo.parts[i].type);
+					}
+					this.getContentFactory().setAdditionalCompositeTypes(aTypes);
 				}
 				this.getContentFactory().updateConditionType();
 				this.invalidate(); // as new inner control might be needed
@@ -620,6 +643,13 @@ sap.ui.define([
 		return bNull;
 
 	}
+
+	Field.prototype.getAdditionalDataTypeConfiguration = function() {
+
+		var oBinding = this.getBinding("additionalValue");
+		return oBinding && oBinding.getType();
+
+	};
 
 	/**
 	 * Sets a new value for property {@link #getConditions conditions}.

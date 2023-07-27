@@ -282,6 +282,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "I2",
+			parsedDescription: "I2",
 			value: "I2",
 			inParameters: undefined,
 			outParameters: undefined,
@@ -308,10 +309,42 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getItemForValue - match for description", function(assert) {
+
+		var oConfig = {
+			parsedValue: undefined,
+			parsedDescription: "item 3",
+			value: "ITEM 3",
+			inParameters: undefined,
+			outParameters: undefined,
+			bindingContext: undefined,
+			checkKey: false,
+			checkDescription: true,
+			exception: ParseException
+		};
+
+		var oPromise = oFixedList.getItemForValue(oConfig);
+		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
+
+		if (oPromise) {
+			var fnDone = assert.async();
+			oPromise.then(function(oItem) {
+				assert.ok(true, "Promise Then must be called");
+				assert.deepEqual(oItem, {key: "I3", description: "item 3"}, "Item returned");
+				fnDone();
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called: " + oError);
+				fnDone();
+			});
+		}
+
+	});
+
 	QUnit.test("getItemForValue - no value for key", function(assert) {
 
 		var oConfig = {
 			parsedValue: undefined,
+			parsedDescription: undefined,
 			value: undefined,
 			inParameters: undefined,
 			outParameters: undefined,
@@ -342,6 +375,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "",
+			parsedDescription: undefined,
 			value: "",
 			inParameters: undefined,
 			outParameters: undefined,
@@ -372,6 +406,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "",
+			parsedDescription: "",
 			value: "",
 			inParameters: undefined,
 			outParameters: undefined,
@@ -402,6 +437,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: undefined,
+			parsedDescription: undefined,
 			value: "I",
 			inParameters: undefined,
 			outParameters: undefined,
@@ -433,6 +469,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: undefined,
+			parsedDescription: "I",
 			value: "I",
 			inParameters: undefined,
 			outParameters: undefined,
@@ -464,6 +501,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "I",
+			parsedDescription: undefined,
 			value: "I",
 			inParameters: undefined,
 			outParameters: undefined,

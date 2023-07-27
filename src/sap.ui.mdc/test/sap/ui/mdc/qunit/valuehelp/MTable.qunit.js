@@ -487,6 +487,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "I3",
+			parsedDescription: undefined,
 			value: "I3",
 			bindingContext: undefined,
 			checkKey: true,
@@ -542,6 +543,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "I3",
+			parsedDescription: undefined,
 			value: "I3",
 			bindingContext: "BC", // just to test if used
 			checkKey: true,
@@ -589,6 +591,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "I3",
+			parsedDescription: undefined,
 			value: "I3",
 			inParameters: undefined,
 			outParameters: undefined,
@@ -624,6 +627,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "I3",
+			parsedDescription: undefined,
 			value: "I3",
 			bindingContext: undefined,
 			checkKey: true,
@@ -678,6 +682,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "I3",
+			parsedDescription: undefined,
 			value: "I3",
 			bindingContext: {getPath: function () {return "BC";}},
 			checkKey: true,
@@ -716,6 +721,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "X",
+			parsedDescription: undefined,
 			value: "X",
 			bindingContext: undefined,
 			checkKey: true,
@@ -749,7 +755,8 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: undefined,
-			value: "x-item 3",
+			parsedDescription: "x-item 3",
+			value: "X_Item 3",
 			bindingContext: undefined,
 			checkKey: false,
 			checkDescription: true,
@@ -789,6 +796,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: undefined,
+			parsedDescription: "item 1",
 			value: "item 1",
 			bindingContext: undefined,
 			checkKey: false,
@@ -821,7 +829,8 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: undefined,
-			value: "x-item 3",
+			parsedDescription: "x-item 3",
+			value: "X-Item 3",
 			bindingContext: undefined,
 			checkKey: false,
 			checkDescription: true,
@@ -856,6 +865,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "I3",
+			parsedDescription: "I3",
 			value: "I3",
 			bindingContext: undefined,
 			checkKey: true,
@@ -888,6 +898,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "I3",
+			parsedDescription: "I3",
 			value: "I3",
 			bindingContext: undefined,
 			checkKey: true,
@@ -926,6 +937,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "I3",
+			parsedDescription: "I3",
 			value: "I3",
 			bindingContext: undefined,
 			checkKey: true,
@@ -967,6 +979,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "I1",
+			parsedDescription: undefined,
 			value: "I1",
 			context: {payload: {inValue: "b"}},
 			bindingContext: undefined,

@@ -162,6 +162,7 @@ sap.ui.define([
 		var oConfig = {
 			value: vKey,
 			parsedValue: vKey,
+			parsedDescription: undefined,
 			dataType: oType,
 			context: {inParameters: oInParameters, outParameters: oOutParameters, payload: oConditionPayload},
 			bindingContext: oBindingContext,

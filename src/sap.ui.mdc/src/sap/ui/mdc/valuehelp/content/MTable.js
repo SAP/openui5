@@ -459,8 +459,12 @@ sap.ui.define([
 		if (oConfig.checkKey && oConfig.hasOwnProperty("parsedValue")) { // empty string or false could be key too
 			aFilters.push(new Filter({ path: sKeyPath, operator: FilterOperator.EQ, value1: oConfig.parsedValue, caseSensitive: bCaseSensitive}));
 		}
-		if (oConfig.checkDescription && oConfig.value) {
-			aFilters.push(new Filter({path: sDescriptionPath, operator: FilterOperator.EQ, value1: oConfig.value, caseSensitive: bCaseSensitive}));
+		if (oConfig.checkDescription) {
+			if (oConfig.hasOwnProperty("parsedDescription") && oConfig.parsedDescription !== undefined) {
+				aFilters.push(new Filter({path: sDescriptionPath, operator: FilterOperator.EQ, value1: oConfig.parsedDescription, caseSensitive: bCaseSensitive}));
+			} else if (oConfig.value) { // TODO: do we need this fallback?
+				aFilters.push(new Filter({path: sDescriptionPath, operator: FilterOperator.EQ, value1: oConfig.value, caseSensitive: bCaseSensitive}));
+			}
 		}
 
 		var oFilter = aFilters.length > 1 ? new Filter({filters: aFilters, and: false}) : aFilters[0];

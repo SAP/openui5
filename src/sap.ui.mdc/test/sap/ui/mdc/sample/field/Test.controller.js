@@ -44,7 +44,8 @@ sap.ui.define([
 				},
 				field: {
 					value: "22134T",
-					additionalValue: null
+					additionalValue: null,
+					additionalDateValue: null
 				},
 				collectiveSearch: [
 								   {key: "1", description: "Search 1"},

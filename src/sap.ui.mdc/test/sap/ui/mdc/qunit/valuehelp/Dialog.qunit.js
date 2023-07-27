@@ -84,6 +84,7 @@ sap.ui.define([
 	var oValueHelpConfig;
 	var oModel; // to fake ManagedObjectModel of ValueHelp
 	var oType;
+	var oAdditionalType;
 
 	/* use dummy control to simulate Field */
 
@@ -113,6 +114,10 @@ sap.ui.define([
 		if (oType) {
 			oType.destroy();
 			oType = undefined;
+		}
+		if (oAdditionalType) {
+			oAdditionalType.destroy();
+			oAdditionalType = undefined;
 		}
 	};
 
@@ -236,10 +241,12 @@ sap.ui.define([
 	QUnit.module("assigned to ValueHelp", {
 		beforeEach: function() {
 			oType = new StringType();
+			oAdditionalType = new StringType();
 
 			oValueHelpConfig = {
 				maxConditions: -1,
 				dataType: oType,
+				additionalDataType: oAdditionalType,
 				operators: ["EQ", "BT"],
 				display: FieldDisplay.Description
 			};
@@ -311,6 +318,7 @@ sap.ui.define([
 				var oFormatOptions = {
 					maxConditions: -1, // as for tokens there should not be a limit on type side
 					valueType: oType,
+					additionalValueType: oAdditionalType,
 					operators: ["EQ", "BT"],
 					display: FieldDisplay.Description,
 					valueHelpID: "VH",
@@ -407,6 +415,7 @@ sap.ui.define([
 				var oFormatOptions = {
 					maxConditions: -1, // as for tokens there should not be a limit on type side
 					valueType: oType,
+					additionalValueType: oAdditionalType,
 					operators: ["EQ", "BT"],
 					display: FieldDisplay.Description,
 					valueHelpID: "VH",
@@ -527,6 +536,7 @@ sap.ui.define([
 					var oFormatOptions = {
 						maxConditions: -1, // as for tokens there should not be a limit on type side
 						valueType: oType,
+						additionalValueType: oAdditionalType,
 						operators: ["EQ", "BT"],
 						display: FieldDisplay.Description,
 						valueHelpID: "VH",
@@ -575,6 +585,7 @@ sap.ui.define([
 									oFormatOptions = {
 										maxConditions: -1, // as for tokens there should not be a limit on type side
 										valueType: oType,
+										additionalValueType: oAdditionalType,
 										operators: ["EQ", "BT", "GT", "LT"],
 										display: FieldDisplay.ValueDescription,
 										valueHelpID: "VH",

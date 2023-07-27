@@ -1,14 +1,14 @@
 
 sap.ui.define([
-    "sap/ui/mdc/field/FieldBaseDelegate",
+    "sap/ui/mdc/field/MultiValueFieldDelegate",
     'sap/ui/mdc/odata/TypeMap'
 ], function(
-    MDCFieldBaseDelegate,
+    MultiValueFieldDelegate,
     ODataTypeMap
 ) {
     "use strict";
 
-    var FieldBaseDelegate = Object.assign({}, MDCFieldBaseDelegate);
+    var FieldBaseDelegate = Object.assign({}, MultiValueFieldDelegate);
 	FieldBaseDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
     FieldBaseDelegate.getTypeMap = function (oField) {

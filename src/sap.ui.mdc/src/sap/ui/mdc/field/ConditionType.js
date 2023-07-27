@@ -58,6 +58,7 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions] Formatting options
 	 * @param {sap.ui.model.Type} [oFormatOptions.valueType] Type of the value of the condition (used for formatting, parsing and validating)
+	 * @param {sap.ui.model.Type} [oFormatOptions.additionalValueType] Type of the additionalValue (description) of the condition (used for formatting, parsing and validating)
 	 * @param {string[]} [oFormatOptions.operators] Possible operators to be used in the condition
 	 * @param {sap.ui.mdc.enums.FieldDisplay} [oFormatOptions.display] DisplayFormat used to visualize a value
 	 * @param {string} [oFormatOptions.valueHelpID] ID of the value help to determine the key and description
@@ -67,6 +68,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Type} [oFormatOptions.originalDateType] Type used on field, for example, for date types; a different type is used internally to have different <code>formatOptions</code>
 	 * @param {sap.ui.model.Type} [oFormatOptions.additionalType] additional type used on other part of a field. (For example, for unit fields.)
 	 * @param {sap.ui.model.Type[]} [oFormatOptions.compositeTypes] additional types used for parts of a <code>CompositeType</code>
+	 * @param {sap.ui.model.Type[]} [oFormatOptions.additionalCompositeTypes] additional types used for parts of a <code>CompositeType</code> (if additionalValueType is a <code>CompositeType</code>)
 	 * @param {function} [oFormatOptions.getConditions] Function to get the existing conditions of the field.
 	 * @param {function} [oFormatOptions.asyncParsing] Callback function to tell the <code>Field</code> the parsing is asynchronous.
 	 * @param {sap.ui.mdc.condition.ConditionObject} [oFormatOptions.navigateCondition] Condition of keyboard navigation. If this is filled, no real parsing is needed as the condition has already been determined and is just returned
@@ -138,6 +140,7 @@ sap.ui.define([
 		}
 
 		var oType = _getValueType.call(this);
+		var oAdditionalType = _getAdditionalValueType.call(this);
 		var bIsUnit = _isUnit(oType);
 		var bPreventGetDescription = this.oFormatOptions.preventGetDescription;
 
@@ -162,7 +165,7 @@ sap.ui.define([
 					var vKey = bIsUnit ? oCondition.values[0][1] : oCondition.values[0];
 
 					return SyncPromise.resolve().then(function() {
-						return _getDescription.call(this, vKey, oCondition, oType, oBindingContext);
+						return _getDescription.call(this, vKey, oCondition, oType, oAdditionalType, oBindingContext);
 					}.bind(this)).then(function(vDescription) { // if description needs to be requested -> return if it is resolved
 						if (vDescription) {
 							oCondition = merge({}, oCondition); // do not manipulate original object
@@ -183,7 +186,7 @@ sap.ui.define([
 								oCondition.values[1] = vDescription;
 							}
 						}
-						return _returnResult.call(this, oCondition, undefined, iCallCount, true, oType);
+						return _returnResult.call(this, oCondition, undefined, iCallCount, true, oType, oAdditionalType);
 					}.bind(this)).catch(function(oException) {
 						var oMyException;
 						if (!(oException instanceof FormatException) || !_isInvalidInputAllowed.call(this)) {
@@ -191,11 +194,11 @@ sap.ui.define([
 							oMyException = oException;
 						}
 
-						return _returnResult.call(this, oCondition, oMyException, iCallCount, true, oType);
+						return _returnResult.call(this, oCondition, oMyException, iCallCount, true, oType, oAdditionalType);
 					}.bind(this)).unwrap();
 				}
 
-				return _returnResult.call(this, oCondition, undefined, iCallCount, true, oType);
+				return _returnResult.call(this, oCondition, undefined, iCallCount, true, oType, oAdditionalType);
 			default:
 				var iIndex = _getIndexOfRawValue(sTargetType);
 				if (iIndex >= 0) {
@@ -215,7 +218,7 @@ sap.ui.define([
 
 	};
 
-	function _formatToString(oCondition, oType) {
+	function _formatToString(oCondition, oType, oAdditionalType) {
 
 		var sDisplay = _getDisplay.call(this);
 		var bIsUnit = _isUnit(oType);
@@ -229,12 +232,13 @@ sap.ui.define([
 		var bHideOperator = (this.oFormatOptions.hideOperator && oCondition.values.length === 1) || bIsUnit;
 		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 		var aCompositeTypes = _getCompositeTypes.call(this);
+		var aAdditionalCompositeTypes = _getAdditionalCompositeTypes.call(this);
 
 		if (!oOperator) {
 			throw new FormatException("No valid condition provided, Operator wrong.");
 		}
 
-		var sResult = oOperator.format(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes);
+		var sResult = oOperator.format(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes);
 		var bConvertWhitespaces = this.oFormatOptions.convertWhitespaces;
 
 		if (bConvertWhitespaces && (_getBaseType.call(this, oType) === BaseType.String || sDisplay !== FieldDisplay.Value)) {
@@ -246,7 +250,7 @@ sap.ui.define([
 
 	}
 
-	function _returnResult(oCondition, oException, iCallCount, bFormat, oType) {
+	function _returnResult(oCondition, oException, iCallCount, bFormat, oType, oAdditionalType) {
 
 		if (this._oCalls.active > 0) {
 			this._oCalls.active--;
@@ -271,7 +275,7 @@ sap.ui.define([
 		// finalize condition. If Exception occurs here just throw it
 		var vResult;
 		if (bFormat) {
-			vResult = _formatToString.call(this, oCondition, oType);
+			vResult = _formatToString.call(this, oCondition, oType, oAdditionalType);
 		} else {
 			vResult = _finishParseFromString.call(this, oCondition, oType);
 		}
@@ -416,13 +420,15 @@ sap.ui.define([
 					var oCondition;
 					var bCompositeType = _isCompositeType.call(this, oType);
 					var aCompositeTypes = _getCompositeTypes.call(this);
+					var oAdditionalType = _getAdditionalValueType.call(this);
+					var aAdditionalCompositeTypes = _getAdditionalCompositeTypes.call(this);
 					this._oCalls.active++;
 					this._oCalls.last++;
 					var iCallCount = this._oCalls.last;
 
 					if ((!bCompositeType || bIsUnit) && oOperator.validateInput && bInputValidationEnabled) {
 						// use ValueHelp to determine condition (for unit part also if composite type used)
-						oCondition = _parseDetermineKeyAndDescription.call(this, oOperator, vValue, oType, bUseDefaultOperator, bCheckForDefault, aOperators, sDisplay, true);
+						oCondition = _parseDetermineKeyAndDescription.call(this, oOperator, vValue, oType, oAdditionalType, bUseDefaultOperator, bCheckForDefault, aOperators, sDisplay, true);
 						if (oCondition instanceof Promise) {
 							return _fnReturnPromise.call(this, oCondition);
 						} else {
@@ -435,7 +441,7 @@ sap.ui.define([
 								// parse using unit part
 								oCondition = Condition.createCondition(oOperator.name, [oType.parseValue(vValue, "string", oType._aCurrentValue)], undefined, undefined, ConditionValidated.NotValidated);
 							} else {
-								oCondition = oOperator.getCondition(vValue, oType, sDisplay, bUseDefaultOperator, aCompositeTypes);
+								oCondition = oOperator.getCondition(vValue, oType, sDisplay, bUseDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes);
 							}
 						} catch (oException) {
 							var oMyException = oException;
@@ -525,7 +531,7 @@ sap.ui.define([
 
 	}
 
-	function _parseDetermineKeyAndDescription(oOperator, vValue, oType, bUseDefaultOperator, bCheckForDefault, aOperators, sDisplay, bFirstCheck) {
+	function _parseDetermineKeyAndDescription(oOperator, vValue, oType, oAdditionalType, bUseDefaultOperator, bCheckForDefault, aOperators, sDisplay, bFirstCheck) {
 
 		var vKey;
 		var vDescription;
@@ -533,6 +539,7 @@ sap.ui.define([
 		var bCheckDescription = false;
 		var vCheckValue;
 		var vCheckParsedValue;
+		var vCheckParsedDescription;
 		var oBindingContext = this.oFormatOptions.bindingContext;
 		var aValues;
 
@@ -566,7 +573,7 @@ sap.ui.define([
 
 				if (bFirstCheck && aValues[0] && aValues[1]) {
 					// key and description entered -> check now description
-					return _parseDetermineKeyAndDescription.call(this, oOperator, vValue, oType, bUseDefaultOperator, bCheckForDefault, aOperators, sDisplay, false);
+					return _parseDetermineKeyAndDescription.call(this, oOperator, vValue, oType, oAdditionalType, bUseDefaultOperator, bCheckForDefault, aOperators, sDisplay, false);
 				}
 
 				if (bCheckForDefault) {
@@ -624,26 +631,38 @@ sap.ui.define([
 			return _returnResult.call(this, oCondition, oMyException, iCallCount, false, oType);
 		};
 
-		try {
-			if (_isUnit(oType)) {
-				vCheckParsedValue = oType.parseValue(vCheckValue, "string", oType._aCurrentValue);
-				oType.validateValue(vCheckParsedValue);
-				vCheckParsedValue = vCheckParsedValue[1]; // use unit part
-			} else {
-				vCheckParsedValue = oType.parseValue(vCheckValue, "string");
-				oType.validateValue(vCheckParsedValue);
+		var fnCheckForType = function(oType, vCheckValue, bOtherCheck) {
+			var vParsedValue;
+			try {
+				if (_isUnit(oType)) {
+					vParsedValue = oType.parseValue(vCheckValue, "string", oType._aCurrentValue);
+					oType.validateValue(vParsedValue);
+					vParsedValue = vParsedValue[1]; // use unit part
+				} else {
+					vParsedValue = oType.parseValue(vCheckValue, "string");
+					oType.validateValue(vParsedValue);
+				}
+			} catch (oException) {
+				if (oException && !(bOtherCheck && (oException instanceof ParseException || oException instanceof ValidateException))) {
+					// unknown error or no search for description -> just raise it
+					throw oException;
+				}
+				vParsedValue = undefined;
 			}
-		} catch (oException) {
-			if (oException && !(bCheckDescription && (oException instanceof ParseException || oException instanceof ValidateException))) {
-				// unknown error or no search for description -> just raise it
-				throw oException;
-			}
-			bCheckKey = false; // cannot be a valid key
-			vCheckParsedValue = undefined;
+			return vParsedValue;
+		};
+
+		// check if is valid for key-type (if a key is determined use it, otherwise use checkValue)
+		vCheckParsedValue = fnCheckForType(oType, vKey || vCheckValue, bCheckDescription);
+		bCheckKey = vCheckParsedValue !== undefined; // no check if cannot be parsed
+		// check if is valid for description-type (if a description is determined use it, otherwise use checkValue)
+		if (bCheckDescription) {
+			vCheckParsedDescription = fnCheckForType(oAdditionalType, vDescription || vCheckValue, bCheckKey);
+			bCheckDescription = vCheckParsedDescription !== undefined; // no check if cannot be parsed
 		}
 
 		return SyncPromise.resolve().then(function() {
-			return _getItemForValue.call(this, vCheckValue, vCheckParsedValue, oType, oBindingContext, bCheckKey, bCheckDescription);
+			return _getItemForValue.call(this, vCheckValue, vCheckParsedValue, vCheckParsedDescription, oType, oAdditionalType, oBindingContext, bCheckKey, bCheckDescription);
 		}.bind(this)).then(function(oResult) {
 			return fnGetResult.call(this, oResult, fnSuccess);
 		}.bind(this)).catch(function(oException) {
@@ -725,6 +744,8 @@ sap.ui.define([
 		var bCompositeType = _isCompositeType.call(this, oType);
 		var aCompositeTypes = _getCompositeTypes.call(this);
 		var iCompositePart = 0;
+		var oAdditionalType = _getAdditionalValueType.call(this);
+		var aAdditionalCompositeTypes = _getAdditionalCompositeTypes.call(this);
 
 		if (oCondition === undefined || this._bDestroyed) { // if destroyed do nothing
 			return null;
@@ -784,7 +805,7 @@ sap.ui.define([
 		}
 
 		try {
-			oOperator.validate(oCondition.values, oType, aCompositeTypes, iCompositePart);
+			oOperator.validate(oCondition.values, oType, aCompositeTypes, iCompositePart, oAdditionalType, aAdditionalCompositeTypes);
 		} catch (oException) {
 			try {
 				if (oException instanceof ValidateException && oOriginalType && !bCompositeType) {
@@ -792,7 +813,7 @@ sap.ui.define([
 					// ValidateException might contain this as pattern. The user should see the pattern thats shown
 					// So try to validate date with the original type to get ValidateException with right pattern.
 					// Not for CompositeTypes as here the parts might have different configuartion what leads to different messages.
-					oOperator.validate(oCondition.values, oOriginalType, aCompositeTypes, iCompositePart);
+					oOperator.validate(oCondition.values, oOriginalType, aCompositeTypes, iCompositePart, oAdditionalType, aAdditionalCompositeTypes);
 				}
 				throw oException;
 			} catch (oException) {
@@ -820,6 +841,18 @@ sap.ui.define([
 	function _getValueType() {
 
 		var oType = this.oFormatOptions.valueType;
+		if (!oType) {
+			// no type provided -> use string type as default
+			oType = _getDefaultType.call(this);
+		}
+
+		return oType;
+
+	}
+
+	function _getAdditionalValueType() {
+
+		var oType = this.oFormatOptions.additionalValueType;
 		if (!oType) {
 			// no type provided -> use string type as default
 			oType = _getDefaultType.call(this);
@@ -885,6 +918,12 @@ sap.ui.define([
 	function _getCompositeTypes() {
 
 		return this.oFormatOptions.compositeTypes;
+
+	}
+
+	function _getAdditionalCompositeTypes() {
+
+		return this.oFormatOptions.ASdditionalCompositeTypes;
 
 	}
 
@@ -1012,7 +1051,7 @@ sap.ui.define([
 
 	}
 
-	function _getItemForValue(vValue, vParsedValue, oType, oBindingContext, bCheckKey, bCheckDescription) {
+	function _getItemForValue(vValue, vParsedValue, vParsedDescription, oType, oAdditionalType, oBindingContext, bCheckKey, bCheckDescription) {
 
 		var oValueHelp = _getValueHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
@@ -1020,6 +1059,7 @@ sap.ui.define([
 		var oConfig = {
 				value: vValue,
 				parsedValue: vParsedValue,
+				parsedDescription: vParsedDescription,
 				dataType: oType,
 				bindingContext: oBindingContext,
 				checkKey: bCheckKey,
@@ -1036,7 +1076,7 @@ sap.ui.define([
 
 	}
 
-	function _getDescription(vKey, oCondition, oType, oBindingContext) {
+	function _getDescription(vKey, oCondition, oType, oAdditionalType, oBindingContext) {
 
 		var oValueHelp = _getValueHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
@@ -1047,6 +1087,7 @@ sap.ui.define([
 			var oConfig = {
 				value: vKey,
 				parsedValue: vKey,
+				parsedDescription: undefined,
 				dataType: oType,
 				context: {inParameters: oCondition.inParameters, outParameters: oCondition.outParameters, payload: oCondition.payload},
 				bindingContext: oBindingContext,

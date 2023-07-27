@@ -189,6 +189,7 @@ sap.ui.define([
 	var oFieldEdit, oFieldDisplay;
 	var oModel;
 	var oType;
+	var oDescriptionType;
 	var oItemTemplate;
 
 	var _initModel = function() {
@@ -201,10 +202,12 @@ sap.ui.define([
 
 		oType = new IntegerType();
 		oType._bMyType = true;
+		oDescriptionType = new StringType();
+		oDescriptionType._bMyType = true;
 
 		oItemTemplate = new MultiValueFieldItem("MFI1", {
 			key: {path: "key", type: oType},
-			description: "{description}"
+			description: {path: "description", type: oDescriptionType}
 		});
 	};
 
@@ -215,6 +218,7 @@ sap.ui.define([
 		oModel = undefined;
 		oItemTemplate = undefined;
 		oType = undefined;
+		oDescriptionType = undefined;
 	};
 
 	QUnit.module("Items", {
@@ -249,6 +253,10 @@ sap.ui.define([
 		var oType = oFieldEdit._oContentFactory.getDataType();
 		assert.ok(oType.isA("sap.ui.model.type.Integer"), "used data type for Field");
 		assert.ok(oType._bMyType, "Given Type is used in Field");
+
+		oType = oFieldEdit._oContentFactory.getAdditionalDataType();
+		assert.ok(oType.isA("sap.ui.model.type.String"), "used additional data type for Field");
+		assert.ok(oType._bMyType, "Given additional Type is used in Field");
 
 	});
 

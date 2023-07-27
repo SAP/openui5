@@ -183,6 +183,32 @@
 					<mdcField:MultiValueFieldItem key="{path: 'view>date', type:'sap.ui.model.type.Date', formatOptions: {style: 'long'}}" />
 				</mdc:MultiValueField>
 
+				<m:Label text="type date as description"/>
+				<mdc:MultiValueField 
+					id="F8"
+					items="{path: 'view>/items'}"
+					display="ValueDescription"
+					delegate='\{"name": "sap/ui/mdc/sample/field/multiValueField/MultiValueFieldODataV2.delegate"\}'
+					change="handleChange"
+					liveChange="handleLiveChange"
+					valueHelp="VH-F8">
+					<mdcField:MultiValueFieldItem key="{path: 'view>ProductId', type:'sap.ui.model.type.String', constraints: {maxLength: 20}}" description="{path: 'view>Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long'}, constraints: {displayFormat: 'Date'}}" />
+					<mdc:dependents>
+						<mdc:ValueHelp id="VH-F8" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+							<mdc:typeahead>
+								<mdcValueHelp:Popover id="VH-F8-Pop">
+									<mdcValueHelpContent:FixedList id="VH-F8-FL" useFirstMatch="true" items="{path: '/ProductCollection'}" >
+										<mdcValueHelpContent:FixedListItem 
+											text="{path: 'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long'}, constraints: {displayFormat: 'Date'}}" 
+											additionalText="{path: 'ProductId', type: 'sap.ui.model.type.String', constraints: {maxLength: 20}}" 
+											key="{path: 'ProductId', type: 'sap.ui.model.type.String', constraints: {maxLength: 20}}"/>
+									</mdcValueHelpContent:FixedList>
+								</mdcValueHelp:Popover>
+							</mdc:typeahead>
+						</mdc:ValueHelp>
+					</mdc:dependents>
+				</mdc:MultiValueField>
+
 				<c:Title text="Model data"></c:Title>
 
 				<m:Label text="Items"></m:Label>

@@ -3113,6 +3113,7 @@ sap.ui.define([
 			var oConfig = { // TODO: only what is needed (also for DefineConditions and Tokenizer)
 					maxConditions: this.getMaxConditions(), // TODO: in unit case only 1?
 					dataType: oType,
+					additionalDataType: this.getContentFactory().getAdditionalDataType(),
 					operators: this.getSupportedOperators(),
 					display: bIsMeasure ? FieldDisplay.Value : this.getDisplay(),
 					delegate: this.getControlDelegate(),
@@ -3237,6 +3238,8 @@ sap.ui.define([
 			originalDateType: this.getContentFactory().getDateOriginalType() || this.getContentFactory().getUnitOriginalType(),
 			additionalType: this.getContentFactory().getUnitType(), // only set if unit or timezone
 			compositeTypes: this.getContentFactory().getCompositeTypes(), // only set if CompositeType used
+			additionalValueType: this.getContentFactory().retrieveAdditionalDataType(),
+			additionalCompositeTypes: this.getContentFactory().getAdditionalCompositeTypes(), // only set if CompositeType used
 			display: this.getContentFactory().isMeasure() ? FieldDisplay.Value : this.getDisplay(),
 			valueHelpID: this.getContentFactory().isMeasure() ? undefined : this._getValueHelp() || this._sDefaultFieldHelp,
 			operators: this.getSupportedOperators(),
@@ -3319,6 +3322,8 @@ sap.ui.define([
 			originalDateType: this.getContentFactory().getDateOriginalType() || this.getContentFactory().getUnitOriginalType(),
 			additionalType: this.getContentFactory().retrieveDataType(), // use type of measure for currentValue
 			compositeTypes: this.getContentFactory().getCompositeTypes(),
+			additionalValueType: this.getContentFactory().retrieveAdditionalDataType(),
+			additionalCompositeTypes: this.getContentFactory().getAdditionalCompositeTypes(), // only set if CompositeType used
 			display: this.getDisplay(),
 			valueHelpID: this._getValueHelp() || this._sDefaultFieldHelp,
 			operators: ["EQ"],
@@ -3566,6 +3571,23 @@ sap.ui.define([
 	FieldBase.prototype.hasPendingUserInput = function() {
 
 		return !!this._bDirty;
+
+	};
+
+	/**
+	 * Returns the configuration for the additional data type.
+	 *
+	 * In {@link sap.ui.mdc.Field Field} case it is determined from the binding of the <code>additionalValue</code>
+	 * In {@link sap.ui.mdc.MultiValueField MultiValueField} case it is determined from the binding of <code>description</code> of an item
+	 * In {@link sap.ui.mdc.FilterField FilterField} case it is provided via <code>additionalDataType</code> property.
+	 *
+	 * @returns {sap.ui.model.Type|object} return a type instance ot a configuration object
+	 * @protected
+	 * @since 1.118.0
+	 */
+	FieldBase.prototype.getAdditionalDataTypeConfiguration = function() {
+
+		return null;
 
 	};
 

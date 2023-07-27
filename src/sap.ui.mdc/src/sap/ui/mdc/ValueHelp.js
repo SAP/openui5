@@ -324,6 +324,7 @@ sap.ui.define([
 	 * @param {object} [oConfig] Configuration object that holds required data of the connected control
 	 * @param {int} [oConfig.maxConditions=-1] Maximum number of allowed conditions
 	 * @param {sap.ui.model.Type} [oConfig.dataType] Type of the key (required for condition panel)
+	 * @param {sap.ui.model.Type} [oConfig.additionalDataType] Type of the description (required for condition panel)
 	 * @param {string[]} [oConfig.operators] Possible operators to be used in the condition
 	 * @param {sap.ui.mdc.enums.FieldDisplay} [oConfig.display] Defines whether the value and/or description of the field is shown and in what order
 	 * @param {object} [oConfig.delegate] Field delegate to handle model-specific logic (required for condition panel)
@@ -765,7 +766,8 @@ sap.ui.define([
 	 * @constant
 	 * @typedef {object} sap.ui.mdc.valuehelp.base.ItemForValueConfiguration
 	 * @property {any} value Value as entered by user
-	 * @property {any} [parsedValue] Value parsed by type to fit the data type of the key
+	 * @property {any} [parsedValue] Value parsed by type of key to fit the data type of the key
+	 * @property {any} [parsedDescription] Value parsed by type of description to fit the data type of the description
 	 * @property {object} [context] Contextual information provided by condition <code>payload</code> or <code>inParameters</code>/<code>outParameters</code>. This is only filled if the description needs to be determined for an existing condition.
 	 * @property {object} [context.inParameter] In parameters of the current condition (<code>inParameters</code> are not used any longer, but it might be filled in older conditions stored in variants.)
 	 * @property {object} [context.ouParameter] Out parameters of the current condition (<code>outParameters</code> are not used any longer, but it might be filled in older conditions stored in variants.)
