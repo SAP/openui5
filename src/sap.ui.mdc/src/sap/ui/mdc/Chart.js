@@ -5,7 +5,6 @@
 sap.ui.define([
         "sap/ui/core/Core",
         "sap/ui/mdc/Control",
-        "./chart/ChartSettings",
         "./ChartRenderer",
         "sap/base/Log",
         "./chart/ChartToolbar",
@@ -29,7 +28,6 @@ sap.ui.define([
     function (
         Core,
         Control,
-        ChartSettings,
         ChartRenderer,
         Log,
         ChartToolbar,
@@ -646,7 +644,7 @@ sap.ui.define([
                 infoText: this._getFilterInfoText(),
                 press: function() {
                     this.finalizePropertyHelper().then(function(){
-                       return ChartSettings.showPanel(this, "Filter");
+                       return this.getEngine().show(this, "Filter");
                     }.bind(this)).then(function(oP13nDialog) {
 
                         oP13nDialog.attachEventOnce("afterClose", function() {
