@@ -82,12 +82,16 @@ html.sap-phone .sapMMenuLIImgThumbIcon{
 	line-height:  2.75rem;
 }
 
-html.sap-phone .sapUiSizeCozy .sapUiMnuItm {
-	.sapUiMnuItmTxt {
-		padding-left: 1rem;
+html.sap-phone .sapUiSizeCozy {
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmTxt {
+		padding-left: 3.75rem;
 	}
-	.sapUiMnuItmIco + .sapUiMnuItmTxt {
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
 		padding-left: 0;
+	}
+	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmTxt,
+	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+		padding-left: 0.875rem;
 	}
 }
 
@@ -100,6 +104,11 @@ html.sap-phone .sapUiSizeCozy .sapUiMnuItm {
 
 .sapUiSizeCompact .sapUiMnuItmR, .sapUiSizeCompact .sapUiMnuNoIco .sapUiMnuItmL {
 	width: 0.5rem;
+}
+
+.sapUiSizeCompact .sapUiMnuItmIco{
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
 }
 
 .sapUiMnu .sapUiMnuLst .sapUiMnuItm.sapUiMnuItmSubMnuOpen,
@@ -128,15 +137,48 @@ html.sap-phone .sapUiSizeCozy .sapUiMnuItm {
 html.sap-desktop,
 html.sap-tablet {
 	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmTxt {
-		padding-left: 0.75rem;
+		padding-left: 3.75rem;
+		padding-right: 3.75rem;
+	}
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+		padding-left: 0;
+	}
+}
+
+html.sap-desktop,
+html.sap-tablet {
+	.sapUiSizeCompact {
+		.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmTxt {
+			padding-left: 3rem;
+		}
+		.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+			padding-left: 0;
+		}
+		.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmTxt,
+		.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+			padding-left: 0.5rem;
+		}
+	}
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmTxt {
+		padding-left: 3.875rem;
 	}
 	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
 		padding-left: 0;
 	}
 	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmTxt,
 	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
-		padding-left: 0;
+		padding-left: 0.75rem;
 	}
+}
+
+.sapUiMnuItmIco{
+	padding-left: 0.75rem;
+	padding-right: 0.75rem;
+}
+
+.sapUiSizeCompact .sapUiMnuItmIco{
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
 }
 
 .sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemTf {
