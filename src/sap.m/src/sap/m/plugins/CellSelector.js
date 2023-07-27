@@ -144,8 +144,10 @@ sap.ui.define([
 		if (this.getControl()) {
 			this.getControl().detachEvent(this.getConfig("scrollEvent"), this._fnControlUpdate);
 			var oScrollArea = this.getControl().getDomRef(this.getConfig("scrollArea"));
-			oScrollArea.removeEventListener("mouseleave", this._fnOnMouseOut);
-			oScrollArea.removeEventListener("mouseenter", this._fnOnMouseEnter);
+			if (oScrollArea) {
+				oScrollArea.removeEventListener("mouseleave", this._fnOnMouseOut);
+				oScrollArea.removeEventListener("mouseenter", this._fnOnMouseEnter);
+			}
 		}
 		document.removeEventListener("mousemove", this._fnOnMouseMove);
 		document.removeEventListener("mouseup", this._fnOnMouseUp);
@@ -683,7 +685,9 @@ sap.ui.define([
 
 			this._oResizer.addEventListener("mousedown", this._onborderdown.bind(this));
 
-			this.getControl().getDomRef().appendChild(this._oResizer);
+			if (this.getControl().getDomRef()) {
+				this.getControl().getDomRef().appendChild(this._oResizer);
+			}
 		}
 		return this._oResizer;
 	};
