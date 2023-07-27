@@ -145,7 +145,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 			 sErrorMessage = oFilterBar.getText("filterbar.VALIDATION_ERROR");
 		 }
 
-		 if (oFilterBar.getShowMessages() && !oFilterBar._isLiveMode()) {
+		 if (oFilterBar.getShowMessages() && !oFilterBar._isLiveMode() && !oFilterBar._hasOpenMessageBox) {
 
 			 sap.ui.require(["sap/m/MessageBox", "sap/base/Log"], function (MessageBox, Log) {
 				 try {
@@ -153,9 +153,13 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 					 if (oFilterBar._bIsBeingDestroyed) {
 						 return;
 					 }
+					 oFilterBar._hasOpenMessageBox = true;
 					 MessageBox.error(sErrorMessage, {
 						 styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : "",
-						 onClose: oFilterBar.setFocusOnFirstErroneousField.bind(oFilterBar)
+						 onClose: function() {
+							 delete oFilterBar._hasOpenMessageBox;
+							 oFilterBar.setFocusOnFirstErroneousField.bind(oFilterBar);
+						 }
 					 });
 				 } catch (x) {
 					 Log.error(x.message);
