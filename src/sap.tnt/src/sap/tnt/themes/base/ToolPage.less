@@ -6,12 +6,24 @@
 /* ==========================================================================
    Variables
    ========================================================================== */
-
-@_sap_tnt_ToolPage_AsideWidth : 15rem;
-@_sap_tnt_ToolPage_AsideWidthOnTablet : 3rem;
-@_sap_tnt_ToolPage_HeaderHeight : 3rem;
 @_sap_tnt_ToolPage_AnimationDuration : 0.3s;
-@_sap_tnt_ToolPage_HeaderShadow: none;
+@_sap_tnt_ToolPage_Paddings: 0;
+@_sap_tnt_ToolPage_PaddingsTablet: 0;
+@_sap_tnt_ToolPage_PaddingsPhone: 0;
+@_sap_tnt_ToolPage_Background: darken(@sapUiBaseBG, 4);
+@_sap_tnt_ToolPage_AsideMargins: 0;
+@_sap_tnt_ToolPage_AsideMarginsPhone: 0;
+@_sap_tnt_ToolPage_ContentMargins: 0;
+@_sap_tnt_ToolPage_ContentMarginsPhone: 0;
+@_sap_tnt_ToolPage_ContentShadow: none;
+@_sap_tnt_ToolPage_ContentBackgroundStandard: none;
+@_sap_tnt_ToolPage_ContentBackgroundSolid: none;
+@_sap_tnt_ToolPage_ContentBackgroundTransparent: none;
+@_sap_tnt_ToolPage_ContentBackgroundList: none;
+@_sap_tnt_ToolPage_ContentBorderRadius: 0;
+@_sap_tnt_ToolPage_ContentBorderRadiusTabletPhone: 0;
+@_sap_tnt_ToolPage_AsideCollapsedPhoneTransform: -100%;
+@_sap_tnt_ToolPage_AsideCollapsedPhoneTransformRtl: 100%;
 
 /* ==========================================================================
    Root element
@@ -28,29 +40,16 @@
 
   box-sizing: border-box;
   overflow: hidden;
+  padding: @_sap_tnt_ToolPage_Paddings;
+  background: @_sap_tnt_ToolPage_Background;
 }
 
 /* ==========================================================================
    Header
    ========================================================================== */
-.sapTntToolPageHeader {
-  height: @_sap_tnt_ToolPage_HeaderHeight;
-}
 
 .sapTntToolPageHeaderWrapper {
-  box-shadow: @_sap_tnt_ToolPage_HeaderShadow;
   z-index: 2; // bring header above content wrapper to draw drop shadow over the content
-}
-
-/* ==========================================================================
-   Subheader
-   ========================================================================== */
-.sapTntToolPage .sapTntToolPageHeader + .sapTntToolPageHeader {
-  height: auto;
-
-  .sapTntToolHeader {
-    height: auto;
-  }
 }
 
 /* ==========================================================================
@@ -58,7 +57,7 @@
    ========================================================================== */
 .sapTntToolPageContentWrapper {
   display: flex;
-  flex-grow: 1;
+  flex: 1;
   min-height: 0; // fixes flex chrome issue
   position: relative;
 }
@@ -71,6 +70,8 @@
   flex-direction: column;
 
   will-change: transform;
+  margin: @_sap_tnt_ToolPage_AsideMargins;
+  z-index: 2;
 }
 
 .sapTntToolPageAsideContent {
@@ -80,64 +81,44 @@
   height: 100%;
 }
 
-html:not([data-sap-ui-animation='off']) .sapTntToolPageMain {
-  transition: padding-left @_sap_tnt_ToolPage_AnimationDuration, transform @_sap_tnt_ToolPage_AnimationDuration;
-}
-
 html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
   transition: transform @_sap_tnt_ToolPage_AnimationDuration;
 }
 
-.sap-desktop,
-.sap-tablet {
-  .sapTntToolPageAside {
-    width: @_sap_tnt_ToolPage_AsideWidth;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    top: 0;
-    z-index: 1;
-  }
-
-  .sapTntToolPageAside + .sapTntToolPageMain {
-    padding-left: @_sap_tnt_ToolPage_AsideWidth;
-  }
-}
-
-.sap-desktop,
-.sap-tablet {
-  .sapTntToolPageAsideCollapsed {
-    & > .sapTntToolPageAside {
-      width: @_sap_tnt_ToolPage_AsideWidthOnTablet;
-    }
-
-    & > .sapTntToolPageAside + .sapTntToolPageMain {
-      padding-left: @_sap_tnt_ToolPage_AsideWidthOnTablet;
-    }
-  }
-}
-
-.sap-phone {
-  .sapTntToolPageAside {
-    width: @_sap_tnt_ToolPage_AsideWidth;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    top: 0;
-    z-index: 1;
+html.sap-tablet:not(html.sap-combi) {
+  .sapTntToolPage {
+    padding: @_sap_tnt_ToolPage_PaddingsTablet;
   }
 
   .sapTntToolPageMain {
-    transform: translateX(@_sap_tnt_ToolPage_AsideWidth);
+    border-radius: @_sap_tnt_ToolPage_ContentBorderRadiusTabletPhone;
+  }
+}
+
+html.sap-phone {
+  .sapTntToolPage {
+    padding: @_sap_tnt_ToolPage_PaddingsPhone;
+  }
+
+  .sapTntToolPageAside {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    z-index: 4;
+
+    margin: @_sap_tnt_ToolPage_AsideMarginsPhone;
   }
 
   .sapTntToolPageAsideCollapsed {
     .sapTntToolPageAside {
-      transform: translateX(-@_sap_tnt_ToolPage_AsideWidth);
+      transform: translateX(@_sap_tnt_ToolPage_AsideCollapsedPhoneTransform);
     }
-    .sapTntToolPageMain {
-      transform: translateX(0);
-    }
+  }
+
+  .sapTntToolPageMain {
+    border-radius: @_sap_tnt_ToolPage_ContentBorderRadiusTabletPhone;
+    margin: @_sap_tnt_ToolPage_ContentMarginsPhone;
   }
 }
 
@@ -149,8 +130,27 @@ html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
   flex-direction: column;
   flex: 1;
   min-width: 0; // fixes flex chrome issue
+  overflow: hidden;
+  z-index: 3;
 
   will-change: transform;
+  margin: @_sap_tnt_ToolPage_ContentMargins;
+  box-shadow: @_sap_tnt_ToolPage_ContentShadow;
+  border-radius: @_sap_tnt_ToolPage_ContentBorderRadius;
+  background: @_sap_tnt_ToolPage_ContentBackgroundStandard;
+}
+
+.sapTntToolPageMain.sapTntToolPageMainBackground-Solid {
+  background: @_sap_tnt_ToolPage_ContentBackgroundSolid;
+}
+
+.sapTntToolPageMain.sapTntToolPageMainBackground-Transparent {
+  background: @_sap_tnt_ToolPage_ContentBackgroundTransparent;
+  box-shadow: none;
+}
+
+.sapTntToolPageMain.sapTntToolPageMainBackground-List {
+  background: @_sap_tnt_ToolPage_ContentBackgroundList;
 }
 
 .sapTntToolPageMainContent {
@@ -170,16 +170,9 @@ html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
 
 html[dir=rtl] {
   &.sap-phone {
-    .sapTntToolPageMain {
-      transform: translateX(-@_sap_tnt_ToolPage_AsideWidth);
-    }
-
     .sapTntToolPageAsideCollapsed {
       .sapTntToolPageAside {
-        transform: translateX(@_sap_tnt_ToolPage_AsideWidth);
-      }
-      .sapTntToolPageMain {
-        transform: translateX(0);
+        transform: translateX(@_sap_tnt_ToolPage_AsideCollapsedPhoneTransformRtl);
       }
     }
   }

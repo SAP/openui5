@@ -7,7 +7,16 @@ describe("sap.tnt.ToolHeader", function () {
 		expect(takeScreenshot()).toLookAs("0_initial");
 	});
 
-	it("should see shellLike toolHeader", function () {
+	it("should see Horizon theme related toolHeader", function () {
+		var toolHeader = element(by.id("horizonToolHeader"));
+		expect(takeScreenshot(toolHeader)).toLookAs("1_1_horizon");
+
+		element(by.id('toggleCompact')).click();
+		expect(takeScreenshot(toolHeader)).toLookAs("1_1_horizon_compact");
+		element(by.id('toggleCompact')).click();
+	});
+
+	it("should see shellLike toolHeader (Fiori 3 theme)", function () {
 		var toolHeader = element(by.id("shellLike"));
 		expect(takeScreenshot(toolHeader)).toLookAs("1_shell_like");
 	});

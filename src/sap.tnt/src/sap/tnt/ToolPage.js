@@ -5,12 +5,14 @@
 // Provides control sap.t.ToolPage.
 sap.ui.define([
 	"./library",
+	"sap/m/library",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/Control",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"./ToolPageRenderer"
 ], function (library,
+			 mLibrary,
 			 ManagedObjectObserver,
 			 Control,
 			 Device,
@@ -18,11 +20,14 @@ sap.ui.define([
 			 ToolPageRenderer) {
 	"use strict";
 
+	// shortcut for sap.m.PageBackgroundDesign
+	var PageBackgroundDesign = mLibrary.PageBackgroundDesign;
+
 	/**
 	 * Constructor for a new ToolPage.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no id is given
- * @param {object} [mSettings] Initial settings for the new control
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * The ToolPage is a layout control, used to create a basic tools app that has a header, side navigation and contents area.
@@ -49,7 +54,18 @@ sap.ui.define([
 				 * Indicates if the side menu is expanded.
 				 * Overrides the <code>expanded</code> property of the <code>sideContent</code> aggregation.
 				 */
-				sideExpanded: {type: "boolean", group: "Misc", defaultValue: true}
+				sideExpanded: {type: "boolean", group: "Misc", defaultValue: true},
+
+				/**
+				 * Specifies the content background design.
+				 * @public
+				 * @since 1.115
+				 */
+				contentBackgroundDesign: {
+					type: "sap.m.PageBackgroundDesign",
+					group: "Appearance",
+					defaultValue: PageBackgroundDesign.Standard
+				}
 			},
 			aggregations: {
 				/**
