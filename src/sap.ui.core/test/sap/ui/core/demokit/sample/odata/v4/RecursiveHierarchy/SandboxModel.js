@@ -5,11 +5,33 @@
 // Certain constructor parameters are taken from URL parameters. For the "non-realOData" case, a
 // mock server for the back-end requests is set up.
 sap.ui.define([
-	"sap/base/strings/escapeRegExp",
 	"sap/ui/core/sample/common/SandboxModelHelper",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (escapeRegExp, SandboxModelHelper, ODataModel) {
+], function (SandboxModelHelper, ODataModel) {
 	"use strict";
+	const SandboxModel = ODataModel.extend(
+		"sap.ui.core.sample.odata.v4.RecursiveHierarchy.SandboxModel", {
+			constructor : function (mParameters) {
+				return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters, {
+					sFilterBase : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+					mFixture : {},
+					aRegExps : [{
+						regExp : /^GET [\w\/.]+\$metadata[\w?&\-=]+sap-language=..$/,
+						response : {source : "metadata.xml"}
+					}, {
+						regExp : /^GET \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\?(.*)$/,
+						response : {buildResponse : buildGetResponse}
+					}, {
+						regExp : /^PATCH \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)$/,
+						response : {buildResponse : buildPatchResponse, code : 204}
+					}, {
+						regExp : /^POST \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES$/,
+						response : {buildResponse : buildPostResponse}
+					}],
+					sSourceBase : "sap/ui/core/sample/odata/v4/RecursiveHierarchy/data"
+				});
+			}
+		});
 
 	// IDEAS:
 	// - AGE determines sibling order (ascending), parents are older than their children
@@ -39,338 +61,381 @@ sap.ui.define([
 	// Χχ  Chi
 	// Ψψ  Psi
 	// Ωω  Omega
-	//
-	// Note:
-	// - Sometimes, you can derive the DrillState from DescendantCount and DistanceFromRoot, but at
-	//   the "edge of expansion" you cannot be certain.
-	// - When expanding, DescendantCount, DistanceFromRoot, MANAGER_ID are of no use
-	var a11Children = [{
-			AGE : 38,
-			DrillState : "leaf",
-			ID : "1.1.1",
-			MANAGER_ID : "1.1",
-			Name : "Delta"
-		}, {
-			AGE : 39,
-			DrillState : "leaf",
-			ID : "1.1.2",
-			MANAGER_ID : "1.1",
-			Name : "Epsilon"
-		}],
-		a12Children = [{
-			AGE : 31,
-			DrillState : "leaf",
-			ID : "1.2.1",
-			MANAGER_ID : "1.2",
-			Name : "Eta"
-		}, {
-			AGE : 32,
-			DrillState : "leaf",
-			ID : "1.2.2",
-			MANAGER_ID : "1.2",
-			Name : "Theta"
-		}, {
-			AGE : 33,
-			DrillState : "leaf",
-			ID : "1.2.3",
-			MANAGER_ID : "1.2",
-			Name : "Iota"
-		}],
-		a51Children = [{
-			AGE : 21,
-			DrillState : "leaf",
-			ID : "5.1.1",
-			MANAGER_ID : "5.1",
-			Name : "Pi"
-		}, {
-			AGE : 22,
-			DrillState : "leaf",
-			ID : "5.1.2",
-			MANAGER_ID : "5.1",
-			Name : "Rho"
-		}, {
-			AGE : 23,
-			DrillState : "leaf",
-			ID : "5.1.3",
-			MANAGER_ID : "5.1",
-			Name : "Sigma"
-		}, {
-			AGE : 24,
-			DrillState : "leaf",
-			ID : "5.1.4",
-			MANAGER_ID : "5.1",
-			Name : "Tau"
-		}, {
-			AGE : 25,
-			DrillState : "leaf",
-			ID : "5.1.5",
-			MANAGER_ID : "5.1",
-			Name : "Upsilon"
-		}, {
-			AGE : 26,
-			DrillState : "leaf",
-			ID : "5.1.6",
-			MANAGER_ID : "5.1",
-			Name : "Phi"
-		}, {
-			AGE : 27,
-			DrillState : "leaf",
-			ID : "5.1.7",
-			MANAGER_ID : "5.1",
-			Name : "Chi"
-		}, {
-			AGE : 28,
-			DrillState : "leaf",
-			ID : "5.1.8",
-			MANAGER_ID : "5.1",
-			Name : "Psi"
-		}, {
-			AGE : 29,
-			DrillState : "leaf",
-			ID : "5.1.9",
-			MANAGER_ID : "5.1",
-			Name : "Omega"
-		}],
-		aNodes = [{
-			AGE : 60,
-			DescendantCount : 9,
-			DistanceFromRoot : 0,
-			DrillState : "expanded",
-			ID : "0",
-			MANAGER_ID : null,
-			Name : "Alpha"
-		}, {
-			AGE : 55,
-			DescendantCount : 2,
-			DistanceFromRoot : 1,
-			DrillState : "expanded",
-			ID : "1",
-			MANAGER_ID : "0",
-			Name : "Beta"
-		}, {
-			AGE : 41,
-			DescendantCount : 0, // --> collapsed?
-			DistanceFromRoot : 2,
-			DrillState : "collapsed",
-			ID : "1.1",
-			MANAGER_ID : "1",
-			Name : "Gamma" // Delta, Epsilon
-		}, {
-			AGE : 42,
-			DescendantCount : 0, // --> collapsed?
-			DistanceFromRoot : 2,
-			DrillState : "collapsed",
-			ID : "1.2",
-			MANAGER_ID : "1",
-			Name : "Zeta" // Eta, Theta, Iota
-		}, {
-			AGE : 56,
-			DescendantCount : 0, // --> leaf
-			DistanceFromRoot : 1,
-			DrillState : "leaf",
-			ID : "2",
-			MANAGER_ID : "0",
-			Name : "Kappa"
-		}, {
-			AGE : 57,
-			DescendantCount : 0, // --> leaf
-			DistanceFromRoot : 1,
-			DrillState : "leaf",
-			ID : "3",
-			MANAGER_ID : "0",
-			Name : "Lambda"
-		}, {
-			AGE : 58,
-			DescendantCount : 1,
-			DistanceFromRoot : 1,
-			DrillState : "expanded",
-			ID : "4",
-			MANAGER_ID : "0",
-			Name : "Mu"
-		}, {
-			AGE : 41,
-			DescendantCount : 0, // --> collapsed? leaf!
-			DistanceFromRoot : 2,
-			DrillState : "leaf",
-			ID : "4.1",
-			MANAGER_ID : "4",
-			Name : "Nu"
-		}, {
-			AGE : 59,
-			DescendantCount : 1,
-			DistanceFromRoot : 1,
-			DrillState : "expanded",
-			ID : "5",
-			MANAGER_ID : "0",
-			Name : "Xi"
-		}, {
-			AGE : 41,
-			DescendantCount : 0, // collapsed
-			DistanceFromRoot : 2,
-			DrillState : "collapsed",
-			ID : "5.1",
-			MANAGER_ID : "5",
-			Name : "Omicron" // Pi, Rho, Sigma, Tau, Upsilon, Phi, Chi, Psi, Omega
-		}],
-		mNodeById = {},
-		oMockData = {
-			sFilterBase : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
-			mFixture : {
-			},
-			aRegExps : [{
-				regExp : /^GET [\w\/.]+\$metadata[\w?&\-=]+sap-language=..$/,
-				response : {source : "metadata.xml"}
-			}],
-			sSourceBase : "sap/ui/core/sample/odata/v4/RecursiveHierarchy/data"
-		},
-		iRevision = 0,
-		mRevisionOfAgeById = {},
-		SandboxModel;
+	const aOriginalData = [{
+		AGE : 60,
+		ID : "0",
+		Name : "Alpha"
+	}, {
+		AGE : 55,
+		ID : "1",
+		Name : "Beta"
+	}, {
+		AGE : 41,
+		ID : "1.1",
+		Name : "Gamma"
+	}, {
+		AGE : 38,
+		ID : "1.1.1",
+		Name : "Delta"
+	}, {
+		AGE : 39,
+		ID : "1.1.2",
+		Name : "Epsilon"
+	}, {
+		AGE : 42,
+		ID : "1.2",
+		Name : "Zeta"
+	}, {
+		AGE : 31,
+		ID : "1.2.1",
+		Name : "Eta"
+	}, {
+		AGE : 32,
+		ID : "1.2.2",
+		Name : "Theta"
+	}, {
+		AGE : 33,
+		ID : "1.2.3",
+		Name : "Iota"
+	}, {
+		AGE : 56,
+		ID : "2",
+		Name : "Kappa"
+	}, {
+		AGE : 57,
+		ID : "3",
+		Name : "Lambda"
+	}, {
+		AGE : 58,
+		ID : "4",
+		Name : "Mu"
+	}, {
+		AGE : 41,
+		ID : "4.1",
+		Name : "Nu"
+	}, {
+		AGE : 59,
+		ID : "5",
+		Name : "Xi"
+	}, {
+		AGE : 41,
+		ID : "5.1",
+		Name : "Omicron"
+	}, {
+		AGE : 21,
+		ID : "5.1.1",
+		Name : "Pi"
+	}, {
+		AGE : 22,
+		ID : "5.1.2",
+		Name : "Rho"
+	}, {
+		AGE : 23,
+		ID : "5.1.3",
+		Name : "Sigma"
+	}, {
+		AGE : 24,
+		ID : "5.1.4",
+		Name : "Tau"
+	}, {
+		AGE : 25,
+		ID : "5.1.5",
+		Name : "Upsilon"
+	}, {
+		AGE : 26,
+		ID : "5.1.6",
+		Name : "Phi"
+	}, {
+		AGE : 27,
+		ID : "5.1.7",
+		Name : "Chi"
+	}, {
+		AGE : 28,
+		ID : "5.1.8",
+		Name : "Psi"
+	}, {
+		AGE : 29,
+		ID : "5.1.9",
+		Name : "Omega"
+	}];
 
-	function countSkipTop(sRelativeUrlPrefix, aRows) {
-		oMockData.aRegExps.push({
-			regExp : new RegExp("^"
-				+ escapeRegExp("GET " + oMockData.sFilterBase + sRelativeUrlPrefix)
-				+ "(&\\$count=true)?&\\$skip=(\\d+)&\\$top=(\\d+)$"),
-			response : {
-				buildResponse : function (aMatches, oResponse) {
-					var bCount = !!aMatches[1],
-						oMessage = {},
-						iSkip = parseInt(aMatches[2]),
-						iTop = parseInt(aMatches[3]);
+	let aAllNodes;
+	let mChildrenByParentId;
+	let mNodeById;
+	let iRevision;
+	let mRevisionOfAgeById;
 
-					if (bCount) {
-						oMessage["@odata.count"] = "" + aRows.length;
-					}
-					oMessage.value = SandboxModel.update(aRows.slice(iSkip, iSkip + iTop));
-					oResponse.message = JSON.stringify(oMessage);
-				}
+	function reset() {
+		aAllNodes = aOriginalData.map((oNode) => ({...oNode}));
+		mChildrenByParentId = {};
+		mNodeById = {};
+		iRevision = 0;
+		mRevisionOfAgeById = {};
+
+		aAllNodes.forEach((oNode) => {
+			// oNode.DescendantCount = 0; // @see computeDescendantCount
+			oNode.DistanceFromRoot = oNode.ID === "0"
+				? 0
+				: oNode.ID.split(".").length; // Note: ID is hierarchical
+			oNode.DrillState = "collapsed";
+			if (oNode.ID === "0") {
+				oNode.MANAGER_ID = null;
+			} else {
+				oNode.MANAGER_ID = oNode.ID.includes(".")
+					? oNode.ID.slice(0, oNode.ID.lastIndexOf("."))
+					: "0";
 			}
+
+			if (oNode.MANAGER_ID) {
+				(mChildrenByParentId[oNode.MANAGER_ID] ??= []).push(oNode);
+			}
+			mNodeById[oNode.ID] = oNode;
+			mRevisionOfAgeById[oNode.ID] = 0;
 		});
+
+		// mark all leaves; others are by default collapsed (and expanded only via TopLevels)
+		aAllNodes.filter((oNode) => !(oNode.ID in mChildrenByParentId))
+			.forEach((oNode) => { oNode.DrillState = "leaf"; });
+
+		// compute DescendantCount of unlimited hierarchy
+		(function computeDescendantCount(sId) {
+			const aChildren = mChildrenByParentId[sId] || [];
+			mNodeById[sId].DescendantCount = aChildren.reduce((iCount, oChild) => {
+				computeDescendantCount(oChild.ID);
+				return iCount + oChild.DescendantCount;
+			}, aChildren.length);
+		})("0");
 	}
 
-	function descendants(sNode, aChildren) {
-		countSkipTop("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID%20eq%20'"
-			+ sNode + "'),1)/orderby(AGE)&$select=AGE,DrillState,ID,MANAGER_ID,Name",
-			aChildren);
-	}
+	reset();
 
-	countSkipTop("EMPLOYEES?$apply=orderby(AGE)/com.sap.vocabularies.Hierarchy.v1.TopLevels("
-		+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=3)"
-		+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name", aNodes);
-	descendants("1.1", a11Children);
-	descendants("1.2", a12Children);
-	descendants("5.1", a51Children);
+	/**
+	 * Builds a response for any GET query on the "EMPLOYEES" collection.
+	 *
+	 * @param {string[]} aMatches - The matches against the RegExp
+	 * @param {object} oResponse - Response object to fill
+	 */
+	function buildGetResponse(aMatches, oResponse) {
+		const mQueryOptions = {};
+		for (const sName_Value of aMatches[1].split("&")) {
+			const [sName, ...aValues] = sName_Value.split("=");
+			mQueryOptions[sName] = aValues.join("=");
+		}
 
-	// for side effects, allow filtering the complete collection by ID
-	aNodes.concat(a11Children, a12Children, a51Children).forEach(function (oNode) {
-		mNodeById[oNode.ID] = oNode;
-		mRevisionOfAgeById[oNode.ID] = 0;
-	});
-	oMockData.aRegExps.push({
-		regExp : new RegExp("^"
-			+ escapeRegExp("GET " + oMockData.sFilterBase
-				+ "EMPLOYEES?$select=AGE,ID,MANAGER_ID,Name&$filter=")
-			+ "([^&]+)(?:&\\$top=(\\d+))?$"), // Note: just ignore $top
-		response : {
-			buildResponse : function (aMatches, oResponse) {
-				var aResult = [],
-					// ID%20eq%20'0'%20or%20ID%20eq%20'1'%20or%20ID%20eq%20'1.1'
-					sKeyFilterList = aMatches[1];
+		if ("$apply" in mQueryOptions) {
+			if (mQueryOptions.$apply.includes("TopLevels")) {
+				// "EMPLOYEES?$apply=orderby(AGE)"
+				// + "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+				// + ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=" + iLevels + ")"
+				const iLevels = parseInt(mQueryOptions.$apply.match(/,Levels=(\d+)/)[1]);
+				selectCountSkipTop(topLevels(iLevels - 1), mQueryOptions, oResponse);
+				return;
+			}
+			// "EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
+			// + ",filter(ID%20eq%20'" + sParentId + "'),1)/orderby(AGE)"
+			const sParentId = mQueryOptions.$apply.match(/,filter\(ID%20eq%20'([^']*)'\)/)[1];
+			selectCountSkipTop(mChildrenByParentId[sParentId], mQueryOptions, oResponse);
+			return;
+		}
 
-				sKeyFilterList.split("%20or%20").forEach(function (sKeyFilter) {
-					var sId = sKeyFilter.split("%20eq%20")[1].slice(1, -1),
-						oNode = mNodeById[sId];
-
-					aResult.push({ // poor man's $select ;-)
-						AGE : oNode.AGE,
-						ID : oNode.ID,
-						MANAGER_ID : oNode.MANAGER_ID,
-						Name : oNode.Name
-					});
-				});
-
+		if ("$filter" in mQueryOptions) {
+			// ID%20eq%20'0'%20or%20ID%20eq%20'1'%20or%20ID%20eq%20'1.1'
+			const aIDs = mQueryOptions.$filter.split("%20or%20")
+				.map((sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
+			if (mQueryOptions.$select.includes("MANAGER_ID")) {
 				iRevision += 1;
-				oResponse.message = JSON.stringify({
-					value : SandboxModel.update(aResult)
-				});
+			} else {
+				if (aIDs.length !== 1) {
+					throw new Error("Unexpected ID filter length");
+				}
+				mRevisionOfAgeById[aIDs[0]] += 1;
 			}
+			const aRows = aIDs.map((sID) => mNodeById[sID]);
+			selectCountSkipTop(aRows, mQueryOptions, oResponse);
 		}
-	});
-	oMockData.aRegExps.push({
-		regExp : new RegExp("^"
-			+ escapeRegExp("GET " + oMockData.sFilterBase
-				+ "EMPLOYEES?$select=AGE,ID,Name&$filter=ID%20eq%20")
-			+ "'([0-9.]+)'$"),
-		response : {
-			buildResponse : function (aMatches, oResponse) {
-				var oNode = mNodeById[aMatches[1]];
+	}
 
-				oNode = { // poor man's $select ;-)
-					AGE : oNode.AGE,
-					ID : oNode.ID,
-					Name : oNode.Name
-				};
-
-				mRevisionOfAgeById[oNode.ID] += 1;
-				oResponse.message = JSON.stringify({
-					value : SandboxModel.update([oNode])
-				});
-			}
+	/**
+	 * Builds a response for any PATCH request on a specific "EMPLOYEE" instance.
+	 *
+	 * @param {string[]} aMatches - The matches against the RegExp
+	 * @param {object} _oResponse - Response object to fill
+	 * @param {object} oRequest - Request object to get PATCH body from
+	 */
+	function buildPatchResponse(aMatches, _oResponse, oRequest) {
+		if (oRequest.requestHeaders.Prefer !== "return=minimal") {
+			throw new Error("Unsupported Prefer header: " + oRequest.requestHeaders.Prefer);
 		}
-	});
+		// "{"Name" : "<new name>"}"
+		const oBody = JSON.parse(oRequest.requestBody);
+		if (Object.keys(oBody).length > 1 || !("Name" in oBody)) {
+			throw new Error("Unsupported PATCH body: " + oRequest.requestBody);
+		}
+		// ignore suffixes added by SandboxModel.update
+		mNodeById[aMatches[1]].Name = oBody.Name.split(" #")[0];
+		// no response required
+	}
 
-	SandboxModel = ODataModel.extend(
-		"sap.ui.core.sample.odata.v4.RecursiveHierarchy.SandboxModel", {
-			constructor : function (mParameters) {
-				return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters,
-					oMockData);
+	/**
+	 * Builds a response for any POST request on the "EMPLOYEES" collection.
+	 *
+	 * @param {string[]} _aMatches - The matches against the RegExp
+	 * @param {object} oResponse - Response object to fill
+	 * @param {object} oRequest - Request object to get POST body from
+	 */
+	function buildPostResponse(_aMatches, oResponse, oRequest) {
+		// {"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('0')"}
+		const oBody = JSON.parse(oRequest.requestBody);
+		const sParentId = oBody["EMPLOYEE_2_MANAGER@odata.bind"]
+			.slice("EMPLOYEES('".length, -"')".length);
+		const oParent = mNodeById[sParentId];
+		const oNewChild = { // same order of keys than for "old" nodes ;-)
+			AGE : 0, // see below
+			ID : "", // see below
+			Name : "", // Q: Derive default from parent's Name? A: No, it's editable!
+			DistanceFromRoot : oParent.DistanceFromRoot + 1,
+			DrillState : "leaf",
+			MANAGER_ID : sParentId,
+			DescendantCount : 0
+		};
+
+		// compares two hierarchical IDs according to the last(!) segment (numerically, ascending)
+		function compareByID(oNodeA, oNodeB) {
+			let sID_A = oNodeA.ID;
+			let sID_B = oNodeB.ID;
+			if (sID_A.includes(".")) {
+				sID_A = sID_A.slice(sID_A.lastIndexOf(".") + 1);
+				sID_B = sID_B.slice(sID_B.lastIndexOf(".") + 1);
 			}
-		});
 
-	SandboxModel.getChildrenOf1_1 = function () {
-		return a11Children.slice();
-	};
+			return parseInt(sID_A) - parseInt(sID_B);
+		}
 
-	SandboxModel.getChildrenOf1_2 = function () {
-		return a12Children.slice();
-	};
+		if (sParentId in mChildrenByParentId) {
+			// Note: "AGE determines sibling order (ascending)"
+			oNewChild.AGE = mChildrenByParentId[sParentId][0].AGE - 1;
+			// Note:
+			const sLastChildID = mChildrenByParentId[sParentId].toSorted(compareByID).at(-1).ID;
+			if (sLastChildID.includes(".")) {
+				oNewChild.ID = sParentId + "."
+					+ (parseInt(sLastChildID.slice(sLastChildID.lastIndexOf(".") + 1)) + 1);
+			} else { // sParentId === "0"
+				oNewChild.ID = "" + (parseInt(sLastChildID) + 1);
+			}
+		} else { // parent not a leaf anymore
+			oParent.DrillState = "expanded";
+			mChildrenByParentId[sParentId] = [];
+			oNewChild.AGE = oParent.AGE - 1;
+			oNewChild.ID = sParentId + ".1";
+		}
 
-	SandboxModel.getChildrenOf5_1 = function (iSkip, iTop) {
-		return a51Children.slice(iSkip, iSkip + iTop);
-	};
+		if (oNewChild.ID in mNodeById) {
+			throw new Error("Illegal state: duplicate node ID " + oNewChild.ID);
+		}
+		aAllNodes.splice(aAllNodes.indexOf(oParent) + 1, 0, oNewChild);
+		mNodeById[oNewChild.ID] = oNewChild;
+		mRevisionOfAgeById[oNewChild.ID] = 0;
+		mChildrenByParentId[sParentId].unshift(oNewChild);
 
-	SandboxModel.getNodes = function (iSkip, iTop) {
-		return aNodes.slice(iSkip, iSkip + iTop);
-	};
+		oResponse.message = JSON.stringify(SandboxModel.update([oNewChild])[0]);
+	}
+
+	/**
+	 * Fills the given response object from the given list of rows, taking $select, $count, $skip,
+	 * and $top into account.
+	 *
+	 * @param {object[]} aRows - List of row objects to build the response from
+	 * @param {Object<string>} mQueryOptions - Map of (system) query options (names to values)
+	 * @param {object} oResponse - Response object to fill
+	 */
+	function selectCountSkipTop(aRows, mQueryOptions, oResponse) {
+		const aSelect = mQueryOptions.$select.split(",");
+
+		function select(oNode) {
+			const oResult = {};
+			for (const sSelect of aSelect) {
+				oResult[sSelect] = oNode[sSelect];
+			}
+			return oResult;
+		}
+
+		const oMessage = {};
+		if ("$count" in mQueryOptions) {
+			oMessage["@odata.count"] = "" + aRows.length;
+		}
+		const iSkip = "$skip" in mQueryOptions ? parseInt(mQueryOptions.$skip) : 0;
+		const iTop = "$top" in mQueryOptions ? parseInt(mQueryOptions.$top) : Infinity;
+		oMessage.value = SandboxModel.update(aRows.slice(iSkip, iSkip + iTop).map(select), true);
+		oResponse.message = JSON.stringify(oMessage);
+	}
+
+	/**
+	 * Returns the hierarchy's top levels in preorder.
+	 *
+	 * @param {number} iMaxDistanceFromRoot - Maximum distance from root to include
+	 * @returns {object[]} - List of node objects in preorder
+	 */
+	function topLevels(iMaxDistanceFromRoot) {
+		function limitedDescendantCount(oNode) {
+			const aChildren = oNode.DistanceFromRoot < iMaxDistanceFromRoot
+				? mChildrenByParentId[oNode.ID] || [] // "expanded"
+				: [];
+
+			return aChildren.reduce((iCount, oChild) => {
+				return iCount + limitedDescendantCount(oChild);
+			}, aChildren.length);
+		}
+
+		return aAllNodes
+			.filter((oNode) => oNode.DistanceFromRoot <= iMaxDistanceFromRoot)
+			.map((oNode) => {
+				oNode = {...oNode, DescendantCount : limitedDescendantCount(oNode)};
+				if (oNode.DrillState === "collapsed"
+						&& oNode.DistanceFromRoot < iMaxDistanceFromRoot) {
+					oNode.DrillState = "expanded";
+				}
+				return oNode;
+			});
+	}
+
+	SandboxModel.getChildrenOf1_1 = () => mChildrenByParentId["1.1"];
+	SandboxModel.getChildrenOf1_2 = () => mChildrenByParentId["1.2"];
+	SandboxModel.getChildrenOf5_1
+		= (iSkip, iTop) => mChildrenByParentId["5.1"].slice(iSkip, iSkip + iTop);
+	SandboxModel.getNodes = (iSkip, iTop) => topLevels(2).slice(iSkip, iSkip + iTop);
+	SandboxModel.getTopLevels
+		= (iLevels, iSkip, iTop) => topLevels(iLevels - 1).slice(iSkip, iSkip + iTop);
+	SandboxModel.reset = reset;
 
 	/**
 	 * Returns a copy of the given nodes, updated to the current revision.
 	 *
 	 * @param {object[]} aNodes
-	 *  A list of (original or updated) nodes, might include <code>null</code> values
+	 *   A list of (original or updated) nodes, might include <code>null</code> values
+	 * @param {boolean} [bSkipCopy]
+	 *   Whether "copy on write" may safely be skipped
 	 * @returns {object[]}
 	 *   An updated copy
 	 */
-	SandboxModel.update = function (aNodes) {
-		return aNodes.map(function (oNode) {
-			if (oNode && (iRevision || mRevisionOfAgeById[oNode.ID])) {
-				oNode = Object.assign({}, oNode);
-				if ("Name" in oNode) {
-					oNode.Name = oNode.Name.split(" ")[0] + " #" + iRevision;
-					if (mRevisionOfAgeById[oNode.ID]) {
-						oNode.Name += "+" + mRevisionOfAgeById[oNode.ID];
-					}
-				}
-				if ("AGE" in oNode) {
-					oNode.AGE
-						= (oNode.AGE % 100) + 100 * (iRevision + mRevisionOfAgeById[oNode.ID]);
+	SandboxModel.update = (aNodes, bSkipCopy) => aNodes.map((oNode) => {
+		if (oNode && (iRevision || mRevisionOfAgeById[oNode.ID])) {
+			if (!bSkipCopy) {
+				oNode = {...oNode};
+			}
+			if ("Name" in oNode) {
+				oNode.Name = oNode.Name.split(" #")[0] + " #" + iRevision;
+				if (mRevisionOfAgeById[oNode.ID]) {
+					oNode.Name += "+" + mRevisionOfAgeById[oNode.ID];
 				}
 			}
+			if ("AGE" in oNode) {
+				oNode.AGE
+					= (oNode.AGE % 100) + 100 * (iRevision + mRevisionOfAgeById[oNode.ID]);
+			}
+		}
 
-			return oNode;
-		});
-	};
+		return oNode;
+	});
 
 	return SandboxModel;
 });

@@ -5,10 +5,11 @@
 	xmlns:m="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 
-	<Table id="table" ariaLabelledBy="title"
-		rows="{path : '/EMPLOYEES', parameters : {$count : false, $orderby : 'AGE'},
-			suspended : true}" selectionMode="None" threshold="0"
-		visibleRowCount="5">
+	<Table id="table" ariaLabelledBy="title" minAutoRowCount="2"
+		rows="{path : '/EMPLOYEES',
+			parameters : {$count : false, $orderby : 'AGE', $$patchWithoutSideEffects : true},
+			suspended : true}"
+		selectionMode="None" threshold="0" visibleRowCount="5" visibleRowCountMode="Interactive">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="Organizational Chart"/>
@@ -53,7 +54,7 @@
 		<Column>
 			<m:Label text="Name"/>
 			<template>
-				<m:Input value="{Name}" change="onNameChanged"/>
+				<m:Input id="name" value="{Name}" change="onNameChanged"/>
 			</template>
 		</Column>
 		<Column>
@@ -62,12 +63,19 @@
 				<m:Text text="{AGE}" wrapping="false"/>
 			</template>
 		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" id="create"
+					icon="sap-icon://create" press=".onCreate" tooltip="Create New Child"/>
+			</template>
+		</Column>
 	</Table>
 
-	<TreeTable id="treeTable" ariaLabelledBy="treeTitle"
-		rows="{path : '/EMPLOYEES', parameters : {$count : false, $orderby : 'AGE'},
-			suspended : true}" selectionMode="None" threshold="0"
-		visibleRowCount="5">
+	<TreeTable id="treeTable" ariaLabelledBy="treeTitle" minAutoRowCount="2"
+		rows="{path : '/EMPLOYEES',
+			parameters : {$count : false, $orderby : 'AGE', $$patchWithoutSideEffects : true},
+			suspended : true}"
+		selectionMode="None" threshold="0" visibleRowCount="5" visibleRowCountMode="Interactive">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="treeTitle" level="H1" text="Organizational Chart - TreeTable"/>
@@ -97,13 +105,19 @@
 		<Column>
 			<m:Label text="Name"/>
 			<template>
-				<m:Input value="{Name}" change="onNameChangedInTreeTable"/>
+				<m:Input id="nameInTreeTable" value="{Name}" change="onNameChanged"/>
 			</template>
 		</Column>
 		<Column>
 			<m:Label text="Age"/>
 			<template>
 				<m:Text text="{AGE}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" id="createInTreeTable"
+					icon="sap-icon://create" press=".onCreate" tooltip="Create New Child"/>
 			</template>
 		</Column>
 	</TreeTable>
