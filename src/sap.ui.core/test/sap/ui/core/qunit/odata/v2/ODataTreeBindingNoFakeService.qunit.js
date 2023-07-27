@@ -882,8 +882,7 @@ sap.ui.define([
 				"~ilength", "~iThreshold"),
 			"~V2Context[]");
 	});
-
-	//*********************************************************************************************
+	/** @deprecated As of version 1.102.0, reason OperationMode.Auto */
 	QUnit.test("_getContextsForNodeId: with operation mode 'Auto' and without"
 			+ " iTotalCollectionCount", function (assert) {
 		var oBinding = {

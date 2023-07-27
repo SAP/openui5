@@ -190,6 +190,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
+	/** @deprecated As of version 1.102.0, reason OperationMode.Auto */
 	{operationMode : OperationMode.Auto, useFilterParams : false},
 	{operationMode : OperationMode.Client, useFilterParams : true},
 	{operationMode : OperationMode.Default, useFilterParams : true},
@@ -1700,9 +1701,8 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(ODataListBinding.prototype.getContexts.call(oBinding, 0, 2), []);
 	});
-
-	//*********************************************************************************************
-[CountMode.Request, CountMode.Both].forEach(function (sCountMode, i) {
+	/** @deprecated As of version 1.102.0, reason OperationMode.Auto */
+	[CountMode.Request, CountMode.Both].forEach(function (sCountMode, i) {
 	QUnit.test("getContexts: return empty array; check OperationMode/CountMode; #" + i,
 			function (assert) {
 		var oBinding = {
