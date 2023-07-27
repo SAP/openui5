@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/ui/core/Popup",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Control",
 	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
-], function(qutils, Menu, MenuItem, MenuItemBase, MenuTextFieldItem, Button, Device, KeyCodes, Popup, Core, jQuery) {
+], function(qutils, Menu, MenuItem, MenuItemBase, MenuTextFieldItem, Button, Device, KeyCodes, Popup, Core, jQuery, Control) {
 	"use strict";
 
 	var Dock = Popup.Dock;
@@ -1250,6 +1251,7 @@ sap.ui.define([
 	QUnit.test("Destruction", function(assert) {
 		var sId = oRootMenu.getId();
 		var sSubId = oSubMenu.getId();
+		openRootMenu(true, assert);
 		var bHasPopup = !!oRootMenu.oPopup;
 		oRootMenu.destroy();
 		assert.ok(!Core.byId(sId), "No Menu registered in the Core anymore");
@@ -1413,5 +1415,36 @@ sap.ui.define([
 		// cleanup
 		oMenu.destroy();
 		oOpenStub.restore();
+	});
+
+
+	QUnit.test("Invalidate", function(assert) {
+		// prepare
+		var oMenu = new Menu(),
+			oInvalidateSpy = this.spy(Control.prototype, "invalidate"),
+			oPopup = oMenu.getPopup(),
+			oIsOpenStub;
+
+		// act
+		oMenu.invalidate();
+
+		// assert
+		assert.notOk(oMenu.isOpen(), "Menu isn't opened");
+		assert.strictEqual(oInvalidateSpy.callCount, 0, "Control invalidation gets skipped");
+
+		// prepare
+		oIsOpenStub = this.stub(oPopup, "isOpen").callsFake(function() {
+			return true;
+		});
+
+		// act
+		oMenu.invalidate();
+
+		// assert
+		assert.ok(oInvalidateSpy.calledOnce, "Control invalidation triggered");
+
+		// clean
+		oIsOpenStub.restore();
+		oInvalidateSpy.restore();
 	});
 });
