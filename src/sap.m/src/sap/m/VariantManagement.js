@@ -1804,7 +1804,8 @@ sap.ui.define([
 						}
 					}), new Column({
 						header: new Text({
-							text: this._oRb.getText("VARIANT_MANAGEMENT_AUTHOR")
+							text: this._oRb.getText("VARIANT_MANAGEMENT_AUTHOR"),
+							wrappingType: "Hyphenated"
 						}),
 						demandPopin: true,
 						popinDisplay: PopinDisplay.Block,
@@ -2099,7 +2100,8 @@ sap.ui.define([
 				oRolesCell,
 				new Text(sIdPrefix + "-author-" + nPos, {
 					text: '{' + sModelName + ">author}",
-					textAlign: "Begin"
+					textAlign: "Begin",
+				    wrappingType: "Hyphenated"
 				}),
 				oDeleteButton,
 				new Text({
