@@ -3732,7 +3732,34 @@ sap.ui.define([
 				"@$ui5._" : {cache : bHasGroupLevelCache ? oGroupLevelCache : undefined},
 				"@$ui5.node.level" : 23
 			};
-		oCache.aElements = ["0", "1", oParentNode, "3", "4"];
+		const oElementSkip = {
+				"@$ui5._" : {index : -3, parent : {/*not oGroupLevelCache*/}, placeholder : true},
+				"@$ui5.node.level" : 0, // must be ignored
+				ID : "skip"
+			};
+		const oElementChange = {
+				"@$ui5._" : {index : 4, parent : oGroupLevelCache, placeholder : true},
+				"@$ui5.node.level" : 0, // must be ignored
+				ID : "change"
+			};
+		const oElementNoBreak = {
+				"@$ui5.node.level" : 24,
+				ID : "no break"
+			};
+		const oElementBreak = {
+				"@$ui5.node.level" : 23, // looks like oParentNode's sibling
+				ID : "break"
+			};
+		const oElementTrap = { // this is unrealistic and acts as a trap to prove that loop ends
+				"@$ui5._" : {index : 6, parent : oGroupLevelCache, placeholder : true},
+				"@$ui5.node.level" : 0, // must be ignored
+				ID : "trap"
+			};
+		if (bHasGroupLevelCache) { // check that for-loop does not "overshoot"
+			oElementBreak["@$ui5.node.level"] = 24; // no break here
+		}
+		oCache.aElements = ["0", "1", oParentNode,
+			oElementSkip, oElementNoBreak, oElementChange, oElementBreak, oElementTrap];
 		oCache.aElements.$byPredicate = {"('42')" : oParentNode};
 		oCache.aElements.$count = 5;
 		this.mock(oCache).expects("createGroupLevelCache").exactly(bHasGroupLevelCache ? 0 : 1)
@@ -3765,8 +3792,9 @@ sap.ui.define([
 			});
 		this.mock(oCache).expects("addElements")
 			.withExactArgs(sinon.match.same(oEntityData), 3, sinon.match.same(oGroupLevelCache), 0)
-			.callsFake(function () {
-				assert.deepEqual(oCache.aElements, ["0", "1", oParentNode, null, "3", "4"]);
+			.callsFake(() => {
+				assert.deepEqual(oCache.aElements, ["0", "1", oParentNode, null,
+					oElementSkip, oElementNoBreak, oElementChange, oElementBreak, oElementTrap]);
 			});
 
 		// code under test
@@ -3786,6 +3814,32 @@ sap.ui.define([
 
 		return oResult.then(function (oEntityData0) {
 			assert.strictEqual(oEntityData0, oEntityData);
+			assert.deepEqual(oCache.aElements, ["0", "1", {
+				"@$ui5._" : {cache : oGroupLevelCache},
+				"@$ui5.node.level" : 23
+			}, null, {
+				"@$ui5._" : {index : -3, parent : {}, placeholder : true},
+				"@$ui5.node.level" : 0,
+				ID : "skip"
+			}, {
+				"@$ui5.node.level" : 24,
+				ID : "no break"
+			}, {
+				"@$ui5._" : {index : 5, parent : oGroupLevelCache, placeholder : true},
+				"@$ui5.node.level" : 0,
+				ID : "change"
+			}, {
+				"@$ui5.node.level" : bHasGroupLevelCache ? 24 : 23,
+				ID : "break"
+			}, {
+				"@$ui5._" : {
+					index : bHasGroupLevelCache ? 7 : /*unchanged!*/6,
+					parent : oGroupLevelCache,
+					placeholder : true
+				},
+				"@$ui5.node.level" : 0,
+				ID : "trap"
+			}]);
 			assert.deepEqual(oCache.aElements.$byPredicate, {
 				"('42')" : oParentNode,
 				"('ABC')" : oEntityData
