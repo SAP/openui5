@@ -14243,14 +14243,28 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: Simple test for creation at the end of the list; more complex cases are tested in
 	// all pairs tests for multi create.
 	// JIRA: CPOUI5MODELS-617
+	// Scenario 2: Contexts can be retrieved using getContextByIndex
+	// BCP: 002075129400004574672023
 	QUnit.test("Creation at the end of a list", function (assert) {
-		var oModel = createSalesOrdersModel(),
+		var oRowsBinding,
+			oModel = createSalesOrdersModel(),
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="2">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
 			that = this;
+
+		function checkContextByIndex(bCreated) {
+			assert.strictEqual(oRowsBinding.getContextByIndex(-1), undefined);
+			assert.strictEqual(oRowsBinding.getContextByIndex(0).getPath(), "/SalesOrderSet('42')");
+			if (bCreated) {
+				assert.strictEqual(oRowsBinding.getContextByIndex(1).isTransient(), true);
+			} else {
+				assert.strictEqual(oRowsBinding.getContextByIndex(1), undefined);
+			}
+			assert.strictEqual(oRowsBinding.getContextByIndex(2), undefined);
+		}
 
 		this.expectHeadRequest()
 			.expectRequest("SalesOrderSet?$skip=0&$top=102", {
@@ -14264,11 +14278,15 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectValue("note", ["First SalesOrder", ""]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oRowsBinding = that.oView.byId("table").getBinding("rows");
+
 			that.expectValue("note", "New 1", 1);
+			checkContextByIndex(false);
 
 			// code under test
-			that.oView.byId("table").getBinding("rows").create({Note : "New 1"}, /*bAtEnd*/true);
+			oRowsBinding.create({Note : "New 1"}, /*bAtEnd*/true);
 
+			checkContextByIndex(true);
 			return that.waitForChanges(assert);
 		});
 	});
