@@ -8,7 +8,7 @@
     "build": "ui5 build"
   },
   "dependencies": {
-    "@openui5/themelib_sap_fiori_3": "^1",
+    "@openui5/themelib_sap_horizon": "^1",
     "@openui5/sap.ui.core": "^1",
     "@openui5/sap.m": "^1",
     "@openui5/sap.ui.unified": "^1",

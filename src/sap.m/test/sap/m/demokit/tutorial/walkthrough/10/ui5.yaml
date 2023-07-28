@@ -8,4 +8,4 @@ framework:
   libraries:
     - name: sap.ui.core
     - name: sap.m
-    - name: themelib_sap_fiori_3
+    - name: themelib_sap_horizon
