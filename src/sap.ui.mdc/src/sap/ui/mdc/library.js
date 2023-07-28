@@ -1309,7 +1309,7 @@
 	 *   Defines if the filter is visible in the filter bar
 	 * @property {boolean} [required = false]
 	 *   Defines if the filter is mandatory
-	 * @property {int} maxConditions
+	 * @property {int} [maxConditions]
 	 *   Defines if the filter supports multiple values <code>-1</code> or single values <code>1</code>
 	 *
 	 * @public
