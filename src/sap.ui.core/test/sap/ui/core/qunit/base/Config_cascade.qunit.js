@@ -291,7 +291,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Configuration freeze", function(assert) {
-		assert.expect(8);
+		assert.expect(11);
 		assert.strictEqual(BaseConfiguration.get({
 			name: "sapUiParamD",
 			type: BaseConfiguration.Type.String,
@@ -305,8 +305,16 @@ sap.ui.define([
 			external: true
 		}), "xx-global", "BaseConfiguration.get for param 'paramE' returns correct value 'xx-global'");
 
+		assert.strictEqual(BaseConfiguration.get({
+			name: "sapUiParamProvidedAfterGet",
+			type: BaseConfiguration.Type.String,
+			freeze: true,
+			external: true
+		}), "", "BaseConfiguration.get for param 'paramProvidedAfterGet' returns correct value ''");
+
 		globalThis["sap-ui-config"]["paramD"] = "hubelDubel";
 		globalThis["sap-ui-config"]["paramE"] = "hubelDubel";
+		globalThis["sap-ui-config"]["paramProvidedAfterGet"] = "hubelDubel";
 		BaseConfiguration._.invalidate();
 
 		var oLogSpy = sinon.spy(sap.ui.loader._.logger, "error");
@@ -325,8 +333,9 @@ sap.ui.define([
 
 		GlobalConfigurationProvider.freeze();
 		BaseConfiguration._.invalidate();
-		assert.strictEqual(oLogSpy.callCount, 1, "There should be 1 log message.");
+		assert.strictEqual(oLogSpy.callCount, 2, "There should be 2 log messages.");
 		assert.ok(oLogSpy.calledWith("Configuration option 'sapUiParamD' was frozen and cannot be changed to hubelDubel!"), "Correct error message logged.");
+		assert.ok(oLogSpy.calledWith("Configuration option 'sapUiParamProvidedAfterGet' was frozen and cannot be changed to hubelDubel!"), "Correct error message logged.");
 
 		assert.strictEqual(BaseConfiguration.get({
 			name: "sapUiParamD",
@@ -339,6 +348,12 @@ sap.ui.define([
 			type: BaseConfiguration.Type.String,
 			external: true
 		}), "hubelDubel", "After freeze: BaseConfiguration.get for param 'sapUiParamE' returns correct value 'hubelDubel'");
+
+		assert.strictEqual(BaseConfiguration.get({
+			name: "sapUiParamProvidedAfterGet",
+			type: BaseConfiguration.Type.String,
+			external: true
+		}), "", "After freeze: BaseConfiguration.get for param 'sapUiParamProvidedAfterGet' returns correct value ''");
 	});
 
 	QUnit.test("Configuration write", function(assert) {
@@ -375,5 +390,27 @@ sap.ui.define([
 		assert.throws(function () {
 			oWriteableInstance1.set("sap-ui-param1", true);
 		}, new TypeError("Invalid configuration key 'sap-ui-param1'!"), "oWriteableInstance1.set for param 'sap-ui-param1' throws error 'Invalid configuration key 'sap-ui-param1'!'");
+	});
+	QUnit.test("Configuration write boot", function(assert) {
+		var oWriteableBootInstance = BaseConfiguration.getWritableBootInstance();
+
+		function fnAssert(sParamName, sConfigResult, sMessage, bFreeze) {
+			assert.strictEqual(oWriteableBootInstance.get({
+				name: sParamName,
+				type: oWriteableBootInstance.Type.String,
+				freeze: bFreeze
+			}), sConfigResult, sMessage);
+		}
+
+		fnAssert("sapUiParamNotProvided", "", "get for not existing parameter should return type default ''");
+
+		oWriteableBootInstance.set("sapUiParamnotprovided", "valueForNotFrozenParam");
+
+		fnAssert("sapUiParamNotProvided", "valueForNotFrozenParam", "get with 'freeze' after value was set should return the provided value 'valueForNotFrozenParam' and freeze 'sapUiParamNotProvided'", true);
+
+		oWriteableBootInstance.set("sapUiParamnotprovided", "valueForFrozenParam");
+
+		fnAssert("sapUiParamNotProvided", "valueForNotFrozenParam", "get should still return value 'valueForNotFrozenParam' and ignore the parameter provided after get with param freeze");
+
 	});
 });

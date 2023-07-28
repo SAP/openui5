@@ -15,6 +15,8 @@
         "xxBarFoo": "value11", // valid
         "xx-farBoo": "value12", // valid
         "sap/foo/bar": "value13", // invalid
-        "sap-ushell-foo-bar": "value14" // valid but sap-ui- prefixed
+        "sap-ushell-foo-bar": "value14", // valid but sap-ui- prefixed
+        "initialFalsyValue": false, // valid
+        "initial-falsy-value": false // duplicate
     };
 })();

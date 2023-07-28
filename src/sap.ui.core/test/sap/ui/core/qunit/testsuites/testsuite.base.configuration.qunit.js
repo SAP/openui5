@@ -14,7 +14,7 @@ sap.ui.define([], function() {
 				page: "test-resources/sap/ui/core/qunit/base/Config_meta.qunit.html?sap-ui-context=meta tag"
 			},
 			"base/Config_url": {
-				page: "test-resources/sap/ui/core/qunit/base/Config_url.qunit.html?sap-ui-context=url&sap-ui-hubelDubel=value1&sap-ui-hubeldubel=value2&sap-ui-fooBar=value3&sap-ui-FooBar=value4&sap-ui-foobar=value5&sap-ui-foo-bar=value6&sap-ui-5ooBar=value7&sap-ui-sap-ui-fooBar=value8&sap-ui-sapUiFooBar=value9&sap-ui-sap.foo.bar=value10&sap-ui-xxBarFoo=value11&sap-ui-xx-farBoo=value12&sap-ui-sap/foo/bar=value13&sap-ushell-foo-bar=value14"
+				page: "test-resources/sap/ui/core/qunit/base/Config_url.qunit.html?sap-ui-context=url&sap-ui-hubelDubel=value1&sap-ui-hubeldubel=value2&sap-ui-fooBar=value3&sap-ui-FooBar=value4&sap-ui-foobar=value5&sap-ui-foo-bar=value6&sap-ui-5ooBar=value7&sap-ui-sap-ui-fooBar=value8&sap-ui-sapUiFooBar=value9&sap-ui-sap.foo.bar=value10&sap-ui-xxBarFoo=value11&sap-ui-xx-farBoo=value12&sap-ui-sap/foo/bar=value13&sap-ushell-foo-bar=value14&sap-ui-initialFalsyValue=false&sap-ui-initial-falsy-value=true"
 			},
 			"base/Config_bootstrap": {
 				page: "test-resources/sap/ui/core/qunit/base/Config_bootstrap.qunit.html"

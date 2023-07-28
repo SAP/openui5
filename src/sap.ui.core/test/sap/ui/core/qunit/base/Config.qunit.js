@@ -19,7 +19,7 @@ sap.ui.define([
 	QUnit.module("Base Configuration");
 
 	QUnit.test("Basic: Check getter on provider level", function(assert) {
-		assert.expect(18);
+		assert.expect(20);
 
 		// sContext is derived via URL parameter to handle provider specific behavior
 		var sContext = BaseConfiguration.get({
@@ -28,7 +28,12 @@ sap.ui.define([
 			external: true
 		});
 
-		[{ duplicateParam: "sap-ui-FooBar", origParam: "sap-ui-fooBar"}, { duplicateParam: "sap-ui-foo-bar", origParam: "sap-ui-fooBar"}, { duplicateParam: "sap-ui-sapUiFooBar", origParam: "sap-ui-sap-ui-fooBar"}].forEach(function (oParams) {
+		[
+			{ duplicateParam: "sap-ui-FooBar", origParam: "sap-ui-fooBar"},
+			{ duplicateParam: "sap-ui-foo-bar", origParam: "sap-ui-fooBar"},
+			{ duplicateParam: "sap-ui-sapUiFooBar", origParam: "sap-ui-sap-ui-fooBar"},
+			{ duplicateParam: "sap-ui-initial-falsy-value", origParam: "sap-ui-initialFalsyValue"}
+		].forEach(function (oParams) {
 			var sDuplicateKey = sContext.startsWith("global") ? oParams.duplicateParam.replace("sap-ui-", "") : oParams.duplicateParam;
 			var sOrigKey = sContext.startsWith("global") ? oParams.origParam.replace("sap-ui-", "") : oParams.origParam;
 			assert.ok(oLogSpy.calledWith("Configuration option '" + sDuplicateKey + "' was already set by '" + sOrigKey + "' and will be ignored!"), "Logged invalid configuration option '" + sDuplicateKey + "'");
@@ -115,5 +120,10 @@ sap.ui.define([
 			external: true
 			// sContext is derived via URL parameter to handle provider specific behavior
 		}), sContext.startsWith("global") ? "" : "value14", "BaseConfiguration.get for param 'sapUshellFooBar' returns correct value 'value14' or '' in global context (sap-ui-prefixed)");
+		assert.strictEqual(BaseConfiguration.get({
+			name: "sapUiInitialFalsyValue",
+			type: BaseConfiguration.Type.Boolean,
+			external: true
+		}), false, "BaseConfiguration.get for param 'sapUiInitialFalsyValue' returns correct value 'false'");
 	});
 });
