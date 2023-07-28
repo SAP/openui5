@@ -319,16 +319,21 @@ sap.ui.define([
 				iEndItemOffsetLeft,
 				iAvailableWidthForEndItem;
 
+			var oLastItemComputedStyle = window.getComputedStyle(oLastItemDomRef);
 			if (Core.getConfiguration().getRTL()) {
-				iAvailableWidthForEndItem = iLastItemOffsetLeft;
+				var iLastItemMarginLeft = Number.parseFloat(oLastItemComputedStyle.marginLeft);
+				iAvailableWidthForEndItem = iLastItemOffsetLeft - iLastItemMarginLeft;
 			} else {
-				var iLastItemMarginRight = Number.parseFloat(window.getComputedStyle(oLastItemDomRef).marginRight);
-				var iRightBorderOfLastItem = iLastItemOffsetLeft + oLastItemDomRef.offsetWidth + iLastItemMarginRight;
+				var iLastItemMarginRight = Number.parseFloat(oLastItemComputedStyle.marginRight);
+				var iRightBorderOfLastItem = iLastItemOffsetLeft + oLastItemDomRef.offsetWidth + iLastItemMarginRight; // iLastItemOffsetLeft includes marginLeft
+
 				iAvailableWidthForEndItem = oDomRef.offsetWidth - iRightBorderOfLastItem;
 			}
 
-			var iEndItemMarginRight = Number.parseFloat(window.getComputedStyle(oEndItemDomRef).marginRight);
-			var bEnoughSpaceForEndItem = iAvailableWidthForEndItem >= (iEndItemWidth + iEndItemMarginRight);
+			var oEndItemComputedStyle = window.getComputedStyle(oEndItemDomRef);
+			var iEndItemMarginLeft = Number.parseFloat(oEndItemComputedStyle.marginLeft);
+			var iEndItemMarginRight = Number.parseFloat(oEndItemComputedStyle.marginRight);
+			var bEnoughSpaceForEndItem = iAvailableWidthForEndItem >= iEndItemMarginLeft + iEndItemWidth + iEndItemMarginRight;
 
 			// if the end item fits into the line
 			if (bEnoughSpaceForEndItem) {
@@ -385,6 +390,8 @@ sap.ui.define([
 			var sEndItemWidth = iEndItemWidth + "px";
 			mLastSpacerStyle.width = sEndItemWidth;
 			mLastSpacerStyle.minWidth = sEndItemWidth;
+			mLastSpacerStyle.marginLeft = iEndItemMarginLeft + "px";
+			mLastSpacerStyle.marginRight = iEndItemMarginRight + "px";
 			this.toggleDisplayOfSpacers(oDomRef);
 		};
 
@@ -416,6 +423,8 @@ sap.ui.define([
 				mLastSpacerStyle.width = "";
 				mLastSpacerStyle.height = "";
 				mLastSpacerStyle.display = "";
+				mLastSpacerStyle.marginLeft = "";
+				mLastSpacerStyle.marginRight = "";
 			}
 
 			oDomRef.classList.remove(oDomRef.classList.item(0) + "OneLine");
