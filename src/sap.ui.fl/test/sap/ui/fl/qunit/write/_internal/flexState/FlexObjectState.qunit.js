@@ -108,6 +108,7 @@ sap.ui.define([
 			ChangePersistenceFactory._instanceCache = {};
 			FlexState.clearState(sReference);
 			FlexState.clearRuntimeSteadyObjects(sReference, this.oAppComponent.getId());
+			FlexState.resetInitialNonFlCompVariantData(sReference);
 			sandbox.restore();
 		}
 	}, function() {
@@ -121,7 +122,6 @@ sap.ui.define([
 			});
 		});
 
-		// TODO some tests in this test-suite do not have sufficient cleanup, which results in an error in this test when moved further down
 		QUnit.test("when flex objects are requested and no variant management model exists", function(assert) {
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
 			var oVariant = FlexObjectFactory.createFromFileContent({

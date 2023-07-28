@@ -1261,9 +1261,6 @@ sap.ui.define([
 			.then(function() {
 				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(vSelector.appId);
 				assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then no Descriptor changes have been added to the persistence");
-				// ChangesWriteAPI.create does not work with selector which contains appId.
-				// TODO: When the fix is there, uncomment the following commented test.
-				// assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then no UI change has been added to the persistence");
 				return AppVariantWriteAPI.saveAs({selector: vSelector, id: "customer.reference.app.variant.id_456789", version: "1.0.0", layer: Layer.CUSTOMER})
 				.then(function() {
 					assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there were no Descriptor changes to be removed from the persistence");

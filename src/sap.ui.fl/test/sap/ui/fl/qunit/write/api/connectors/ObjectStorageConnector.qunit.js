@@ -126,10 +126,10 @@ sap.ui.define([
 		});
 	}
 
-	function removeListFromStorage(oStorage, aList) {
+	async function removeFlexObjectsFromStorage(oStorage) {
+		const aList = await ObjectStorageUtils.getAllFlexObjects({storage: oStorage});
 		var aPromises = aList.map(function(oFlexObject) {
-			var sKey = ObjectStorageUtils.createFlexObjectKey(oFlexObject);
-			return oStorage.removeItem(sKey);
+			return oStorage.removeItem(oFlexObject.key);
 		});
 
 		return Promise.all(aPromises);
@@ -165,6 +165,7 @@ sap.ui.define([
 		QUnit.module("loadFlexData: Given a " + sStorage, {
 			afterEach: function() {
 				sandbox.restore();
+				return removeFlexObjectsFromStorage(oConnector.storage);
 			}
 		}, function() {
 			QUnit.test("when write is called with various changes", function(assert) {
@@ -178,9 +179,6 @@ sap.ui.define([
 				.then(function(aFlexData) {
 					assert.strictEqual(aFlexData[0].changes.length, 3, "three changes are returned");
 					assert.ok(aFlexData[0].cacheKey, "the cacheKey got calculated");
-
-					// clean up
-					return removeListFromStorage(oConnector.storage, values(oTestData));
 				});
 			});
 
@@ -217,8 +215,7 @@ sap.ui.define([
 				});
 			});
 
-			// TODO: fix the getFlexInfo to take the mandatory reference parameter into account
-			QUnit.skip("when getFlexInfo is called without changes present", function(assert) {
+			QUnit.test("when getFlexInfo is called without changes present", function(assert) {
 				return oConnector.getFlexInfo({storage: oConnector.storage}).then(function(oFlexInfo) {
 					var oExpectedFlexInfo = {
 						isResetEnabled: false
@@ -227,21 +224,63 @@ sap.ui.define([
 				});
 			});
 
-			QUnit.test("when getFlexInfo is called with changes present", function(assert) {
-				return saveListWithConnector(oConnector, [
+			QUnit.test("when getFlexInfo is called with changes present", async function(assert) {
+				await saveListWithConnector(oConnector, [
 					oTestData.oChange1
-				])
-				.then(function() {
-					return oConnector.getFlexInfo({storage: oConnector.storage}).then(function(oFlexInfo) {
-						var oExpectedFlexInfo = {
-							isResetEnabled: true
-						};
-						assert.deepEqual(oFlexInfo, oExpectedFlexInfo, "the function resolves with an empty object");
+				]);
+				const oFlexInfo = await oConnector.getFlexInfo({storage: oConnector.storage});
+				var oExpectedFlexInfo = {
+					isResetEnabled: true
+				};
+				assert.deepEqual(oFlexInfo, oExpectedFlexInfo, "the function resolves with an empty object");
+			});
 
-						return removeListFromStorage(oConnector.storage, [
-							oTestData.oChange1
-						]);
+			QUnit.test("when condense is called with a single create", function(assert) {
+				var oNewChange1 = {
+					creation: "2022-05-05T12:57:32.229Z",
+					fileName: "oChange5",
+					fileType: "change",
+					reference: "sap.ui.fl.test",
+					layer: Layer.CUSTOMER,
+					selector: {
+						id: "selector1"
+					},
+					changeType: "type1"
+				};
+				var aFlexObjects = [
+					oNewChange1
+				].map(function(oChangeJson) {
+					return FlexObjectFactory.createFromFileContent(oChangeJson);
+				});
+				var mPropertyBag = {
+					allChanges: aFlexObjects,
+					condensedChanges: aFlexObjects,
+					flexObjects: {
+						namespace: "",
+						layer: "",
+						create: {
+							change: [
+								{
+									oChange5: oNewChange1
+								}
+							]
+						}
+					}
+				};
+
+				return oConnector.condense(mPropertyBag)
+
+				.then(function() {
+					return oConnector.loadFlexData({reference: "sap.ui.fl.test"});
+				})
+				.then(function(aResponses) {
+					var aFlexObjectsFileContent = aResponses[0].changes;
+					assert.strictEqual(aFlexObjectsFileContent.length, 1, "there is one more change in the storage");
+
+					var aIds = aFlexObjectsFileContent.map(function(oFlexObjectFileContent) {
+						return oFlexObjectFileContent.fileName;
 					});
+					assert.ok(aIds.indexOf("oChange5") > -1, "the change was added");
 				});
 			});
 		});
@@ -251,7 +290,7 @@ sap.ui.define([
 				return saveListWithConnector(oConnector, values(oTestData));
 			},
 			afterEach: function() {
-				return removeListFromStorage(oConnector.storage, values(oTestData));
+				return removeFlexObjectsFromStorage(oConnector.storage);
 			}
 		}, function() {
 			QUnit.test("when reset is called", function(assert) {
@@ -546,60 +585,7 @@ sap.ui.define([
 					assert.ok(aIds.indexOf("oChange2") < aIds.indexOf("oChange4"), "the changes were reordered");
 					assert.ok(aIds.indexOf("oChange4") < aIds.indexOf("oChange6"), "the changes were reordered");
 					assert.ok(aIds.indexOf("oChange6") < aIds.indexOf("oChange5"), "the changes were reordered");
-
-					return removeListFromStorage(oConnector.storage, values(oTestData).concat([oNewChange2, oNewChange1, oNewVarChange2, oNewVarChange1]));
 				});
-			});
-		});
-
-		QUnit.test("when condense is called with a single create", function(assert) {
-			var oNewChange1 = {
-				creation: "2022-05-05T12:57:32.229Z",
-				fileName: "oChange5",
-				fileType: "change",
-				reference: "sap.ui.fl.test",
-				layer: Layer.CUSTOMER,
-				selector: {
-					id: "selector1"
-				},
-				changeType: "type1"
-			};
-			var aFlexObjects = [
-				oNewChange1
-			].map(function(oChangeJson) {
-				return FlexObjectFactory.createFromFileContent(oChangeJson);
-			});
-			var mPropertyBag = {
-				allChanges: aFlexObjects,
-				condensedChanges: aFlexObjects,
-				flexObjects: {
-					namespace: "",
-					layer: "",
-					create: {
-						change: [
-							{
-								oChange5: oNewChange1
-							}
-						]
-					}
-				}
-			};
-
-			return oConnector.condense(mPropertyBag)
-
-			.then(function() {
-				return oConnector.loadFlexData({reference: "sap.ui.fl.test"});
-			})
-			.then(function(aResponses) {
-				var aFlexObjectsFileContent = aResponses[0].changes;
-				assert.strictEqual(aFlexObjectsFileContent.length, 1, "there is one more change in the storage");
-
-				var aIds = aFlexObjectsFileContent.map(function(oFlexObjectFileContent) {
-					return oFlexObjectFileContent.fileName;
-				});
-				assert.ok(aIds.indexOf("oChange5") > -1, "the change was added");
-
-				return removeListFromStorage(oConnector.storage, values(oTestData).concat([oNewChange1]));
 			});
 		});
 	}
@@ -621,6 +607,7 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.equal(oSetItemStub.getCall(0).args[1], oObject, "the write was called with the object");
+				return removeFlexObjectsFromStorage(JsObjectConnector.storage);
 			});
 		});
 
@@ -636,6 +623,7 @@ sap.ui.define([
 			.then(function() {
 				var sObject = JSON.stringify(oObject);
 				assert.strictEqual(SessionStorageWriteConnector.storage.getItem(sKey), sObject, "the write was called with the object as string");
+				return removeFlexObjectsFromStorage(SessionStorageWriteConnector.storage);
 			});
 		});
 	});

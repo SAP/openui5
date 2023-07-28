@@ -54,7 +54,6 @@ sap.ui.define([
 			aggregations: {
 				/**
 				 * Stores required data to revert variant updates.
-				 * TODO: When the FL Variant is also a FlexObject, try to consolidate RevertData from both
 				 */
 				revertData: {
 					type: "sap.ui.base.ManagedObject", // "sap.ui.fl.apply._internal.flexObjects.CompVariantRevertData"
