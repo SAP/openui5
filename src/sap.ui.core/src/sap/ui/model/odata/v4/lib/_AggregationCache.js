@@ -347,6 +347,7 @@ sap.ui.define([
 		if (oParentNode["@$ui5.node.isExpanded"] === false) {
 			throw new Error("Unsupported collapsed parent: " + sParentPath);
 		}
+		const iIndex = aElements.indexOf(oParentNode) + 1;
 
 		let oCache = _Helper.getPrivateAnnotation(oParentNode, "cache");
 		if (!oCache) {
@@ -358,30 +359,25 @@ sap.ui.define([
 
 		delete oEntityData["@$ui5.node.parent"];
 		const oResult = oCache.create(oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
-			oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback);
+			oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback, function onCancel() {
+				this.shiftIndex(iIndex, -1);
+				aElements.$count -= 1;
+				delete aElements.$byPredicate[
+					_Helper.getPrivateAnnotation(oEntityData, "transientPredicate")];
+				aElements.splice(aElements.indexOf(oEntityData), 1);
+			}.bind(this));
+
 		// add @odata.bind to POST body only
 		_Helper.getPrivateAnnotation(oEntityData, "postBody")
 			[this.oAggregation.$ParentNavigationProperty + "@odata.bind"] = sParentPath;
-		const iLevel = oEntityData["@$ui5.node.level"] = oParentNode["@$ui5.node.level"] + 1;
+		oEntityData["@$ui5.node.level"] = oParentNode["@$ui5.node.level"] + 1;
 
-		const iIndex = aElements.indexOf(oParentNode) + 1;
 		aElements.splice(iIndex, 0, null); // create a gap
 		this.addElements(oEntityData, iIndex, oCache, 0);
 		aElements.$count += 1;
-		for (let i = iIndex + 1; i < aElements.length; i += 1) {
-			if (_Helper.hasPrivateAnnotation(aElements[i], "placeholder")) {
-				if (_Helper.getPrivateAnnotation(aElements[i], "parent") === oCache) {
-					// increase "index" for all placeholders of oCache; oParentNode is expanded,
-					// thus all such placeholders are inside aElements
-					_Helper.setPrivateAnnotation(aElements[i], "index",
-						_Helper.getPrivateAnnotation(aElements[i], "index") + 1);
-				}
-			} else if (aElements[i]["@$ui5.node.level"] < iLevel) {
-				// Note: level 0 means "don't know" for initial *placeholders* of 1st level cache!
-				// Note: oCache !== this.oFirstLevel, thus "descendants" should not matter
-				break;
-			}
-		}
+		// increase "index" for all children of oCache;
+		// oParentNode is expanded, thus all such nodes or placeholders are inside aElements
+		this.shiftIndex(iIndex, +1);
 
 		return oResult.then(function () {
 			aElements.$byPredicate[_Helper.getPrivateAnnotation(oEntityData, "predicate")]
@@ -1144,6 +1140,36 @@ sap.ui.define([
 		}
 		// "super" call (like @borrows ...)
 		this.oFirstLevel.restore.call(this, bReally);
+	};
+
+	/**
+	 * Shifts the "index" of all siblings (nodes or placeholders) after the node at the given index
+	 * by the given offset.
+	 *
+	 * @param {number} iIndex
+	 *   Index in <code>this.aElements</code> of a node which is inserted (+1) or removed (-1)
+	 * @param {number} iOffset
+	 *   Offset (either -1 or +1) to add to "index"
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.shiftIndex = function (iIndex, iOffset) {
+		const aElements = this.aElements;
+		const oNode = aElements[iIndex];
+		const oCache = _Helper.getPrivateAnnotation(oNode, "parent");
+		for (let i = iIndex + 1; i < aElements.length; i += 1) {
+			const oSibling = aElements[i];
+			if (_Helper.getPrivateAnnotation(oSibling, "parent") === oCache) {
+				_Helper.setPrivateAnnotation(oSibling, "index",
+					_Helper.getPrivateAnnotation(oSibling, "index") + iOffset);
+			}
+			if (oSibling["@$ui5.node.level"] < oNode["@$ui5.node.level"]
+					&& !_Helper.hasPrivateAnnotation(oSibling, "placeholder")) {
+				// Note: level 0 means "don't know" for initial *placeholders* of 1st level cache!
+				// Note: oCache !== this.oFirstLevel, thus "descendants" should not matter
+				break;
+			}
+		}
 	};
 
 	/**

@@ -3462,18 +3462,28 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.removeCreated = function (oContext) {
-		var iIndex = oContext.getModelIndex(), // Note: MUST not be undefined, or we fail utterly!
-			i;
+		var iIndex, i;
 
-		this.iCreatedContexts -= 1;
-		if (!oContext.isInactive()) {
-			this.iActiveContexts -= 1;
-		}
-		for (i = 0; i < iIndex; i += 1) {
-			this.aContexts[i].iIndex += 1;
-		}
-		if (!this.iCreatedContexts) {
-			this.bFirstCreateAtEnd = undefined;
+		if (this.mParameters.$$aggregation) {
+			this.iMaxLength -= 1;
+			iIndex = this.aContexts.indexOf(oContext);
+			for (i = this.aContexts.length - 1; i > iIndex; i -= 1) {
+				if (this.aContexts[i]) {
+					this.aContexts[i].iIndex -= 1;
+				}
+			}
+		} else {
+			iIndex = oContext.getModelIndex(); // Note: MUST not be undefined, or we fail utterly!
+			this.iCreatedContexts -= 1; // Note: affects #getModelIndex!
+			if (!this.iCreatedContexts) {
+				this.bFirstCreateAtEnd = undefined;
+			}
+			if (!oContext.isInactive()) {
+				this.iActiveContexts -= 1;
+			}
+			for (i = 0; i < iIndex; i += 1) {
+				this.aContexts[i].iIndex += 1;
+			}
 		}
 		this.aContexts.splice(iIndex, 1);
 		if (!oContext.isEffectivelyKeptAlive()) {

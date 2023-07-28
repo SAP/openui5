@@ -482,6 +482,10 @@ sap.ui.define([
 	 *   fails
 	 * @param {function} fnSubmitCallback
 	 *   A function which is called just before a POST request for the create is sent
+	 * @param {function} [fnCancelCallback]
+	 *   A function which is called when the create has been canceled (after internal clean-up and
+	 *   just before {@link sap.ui.model.odata.v4.lib._GroupLock#cancel}), except if the entity is
+	 *   simply inactive
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved with the created entity when the POST request has been
 	 *   successfully sent and the entity has been marked as non-transient
@@ -490,7 +494,7 @@ sap.ui.define([
 	 * @public
 	 */
 	_Cache.prototype.create = function (oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
-			oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback) {
+			oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback, fnCancelCallback) {
 		var aCollection = this.getValue(sPath),
 			sGroupId = oGroupLock.getGroupId(),
 			oPostBody,
@@ -532,6 +536,9 @@ sap.ui.define([
 			}
 			delete aCollection.$byPredicate[sTransientPredicate];
 			that.adjustIndexes(sPath, aCollection, iIndex, -1);
+			if (fnCancelCallback) {
+				fnCancelCallback();
+			}
 			oGroupLock.cancel();
 		}
 
