@@ -3,11 +3,12 @@ sap.ui.define([
 	"sap/ui/layout/DynamicSideContent",
 	"sap/m/Button",
 	"sap/m/List",
+	"sap/m/Panel",
 	"sap/m/Page",
 	"sap/m/StandardListItem",
 	"sap/ui/Device",
 	"sap/ui/core/Core"
-], function(DynamicSideContent, Button, List, Page, StandardListItem, Device, oCore) {
+], function(DynamicSideContent, Button, List, Panel, Page, StandardListItem, Device, oCore) {
 	"use strict";
 
 	(function ($) {
@@ -341,11 +342,6 @@ sap.ui.define([
 			this.oDSC.addMainContent(this.oList);
 			oCore.applyChanges();
 
-			// prepare
-			this.oDSC.addMainContent(this.oList);
-			oCore.applyChanges();
-
-			// prepare
 			this.oDSC.setSideContentFallDown("BelowXL"); // sideContent goes below mainContent on L, M, S
 			this.oDSC.setSideContentVisibility("AlwaysShow"); // sideContent is dislayed always
 			oCore.applyChanges();
@@ -413,7 +409,6 @@ sap.ui.define([
 			// act
 			this.oFixture.style.width = "700px"; // L breakpoint, mainContent and sideContent are side by side
 			this.oDSC._adjustToScreenSize();
-			oCore.applyChanges();
 			this.oDSC.toggle(); // displays sideContent instead of mainContent
 			oCore.applyChanges();
 
@@ -427,11 +422,6 @@ sap.ui.define([
 			this.oDSC.addSideContent(this.oList);
 			oCore.applyChanges();
 
-			// prepare
-			this.oDSC.addMainContent(this.oList);
-			oCore.applyChanges();
-
-			// prepare
 			this.oDSC.setSideContentFallDown("BelowXL"); // sideContent goes below mainContent on L, M, S
 			this.oDSC.setSideContentVisibility("AlwaysShow"); // sideContent is dislayed always
 			oCore.applyChanges();
@@ -462,6 +452,99 @@ sap.ui.define([
 			// assert
 			assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oPage.getScrollDelegate(),
 				"S breakpoint: getScrollDelegate returns the scroll delegate of the parent Page control");
+		});
+
+		QUnit.test("getScrollDelegate: List in Panel in mainContent",function(assert) {
+			var oPanel = new Panel({
+				content: this.oList
+			});
+
+			// prepare
+			this.oDSC.addMainContent(oPanel);
+			oCore.applyChanges();
+
+			// act
+			this.oFixture.style.width = "1500px"; // XL breakpoint, mainContent and sideContent are side by side
+			this.oDSC._adjustToScreenSize();
+			oCore.applyChanges();
+
+			// assert
+			assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oMCScroller,
+				"XL breakpoint: getScrollDelegate returns the scroll delegate of the DSC's mainContent aggregation");
+
+			// act
+			this.oFixture.style.width = "1200px"; // L breakpoint, mainContent and sideContent are side by side
+			this.oDSC._adjustToScreenSize();
+			oCore.applyChanges();
+
+			// assert
+			assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oMCScroller,
+				"L breakpoint: getScrollDelegate returns the scroll delegate of the DSC's mainContent aggregation");
+
+			// act
+			this.oFixture.style.width = "900px"; // M breakpoint, mainContent and sideContent are side by side
+			this.oDSC._adjustToScreenSize();
+			oCore.applyChanges();
+
+			// assert
+			assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oMCScroller,
+				"M breakpoint: getScrollDelegate returns the scroll delegate of the DSC's mainContent aggregation");
+
+			// act
+			this.oFixture.style.width = "700px"; // L breakpoint, mainContent and sideContent are side by side
+			this.oDSC._adjustToScreenSize();
+			oCore.applyChanges();
+
+			// assert
+			assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oMCScroller,
+				"S breakpoint: getScrollDelegate returns the scroll delegate of the DSC's mainContent aggregation");
+		});
+
+		QUnit.test("getScrollDelegate: List in Panel in sideContent",function(assert) {
+			var oPanel = new Panel({
+				content: this.oList
+			});
+
+			// prepare
+			this.oDSC.addSideContent(oPanel);
+			oCore.applyChanges();
+
+			// act
+			this.oFixture.style.width = "1500px"; // XL breakpoint, mainContent and sideContent are side by side
+			this.oDSC._adjustToScreenSize();
+			oCore.applyChanges();
+
+			// assert
+			assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oSCScroller,
+				"XL breakpoint: getScrollDelegate returns the scroll delegate of the DSC's sideContent aggregation");
+
+			// act
+			this.oFixture.style.width = "1200px"; // L breakpoint, mainContent and sideContent are side by side
+			this.oDSC._adjustToScreenSize();
+			oCore.applyChanges();
+
+			// assert
+			assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oSCScroller,
+				"L breakpoint: getScrollDelegate returns the scroll delegate of the DSC's sideContent aggregation");
+
+			// act
+			this.oFixture.style.width = "900px"; // M breakpoint, mainContent and sideContent are side by side
+			this.oDSC._adjustToScreenSize();
+			oCore.applyChanges();
+
+			// assert
+			assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oSCScroller,
+				"M breakpoint: getScrollDelegate returns the scroll delegate of the DSC's sideContent aggregation");
+
+			// act
+			this.oFixture.style.width = "700px"; // L breakpoint, mainContent and sideContent are side by side
+			this.oDSC._adjustToScreenSize();
+			this.oDSC.toggle(); // displays sideContent instead of mainContent
+			oCore.applyChanges();
+
+			// assert
+			assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oSCScroller,
+				"S breakpoint: getScrollDelegate returns the scroll delegate of the DSC's sideContent aggregation");
 		});
 
 		QUnit.module("Helper functionality", {

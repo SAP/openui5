@@ -447,10 +447,16 @@ sap.ui.define([
 		 */
 		DynamicSideContent.prototype.getScrollDelegate = function (oControl) {
 			var oContainerOfDSC = this.getParent(),
-				sParentAggregation = oControl && oControl.sParentAggregationName,
-				bContentOnFullHeight = this._isContentOnFullHeight(sParentAggregation),
+				oControlParent = oControl.getParent(),
+				sParentAggregation = oControl.sParentAggregationName,
 				bMCVisible = this.getShowMainContent() && this._MCVisible,
 				bSCVisible = this.getShowSideContent() && this._SCVisible;
+
+			// Find aggregation in which effectively is placed the oControl even if it is not directly placed in main or side content
+			while (oControlParent && oControlParent.getId() !== this.getId()) {
+				sParentAggregation = oControlParent.sParentAggregationName;
+				oControlParent = oControlParent.getParent();
+			}
 
 			// for cases with main and side content - one above the other - use the scroll delegate of the parent container
 			// otherwise use the scroll delegate of the container where the control is placed
@@ -459,7 +465,7 @@ sap.ui.define([
 				return;
 			} else if ((sParentAggregation === "sideContent" && !bSCVisible) || (sParentAggregation === "mainContent" && !bMCVisible)) {
 				return;
-			} else if (!bContentOnFullHeight || (this._currentBreakpoint === M && !this._bFixedSideContent)) {
+			} else if (!this._isContentOnFullHeight(sParentAggregation)) {
 				while (oContainerOfDSC && (!oContainerOfDSC.getScrollDelegate || !oContainerOfDSC.getScrollDelegate())) {
 					oContainerOfDSC = oContainerOfDSC.getParent();
 				}
