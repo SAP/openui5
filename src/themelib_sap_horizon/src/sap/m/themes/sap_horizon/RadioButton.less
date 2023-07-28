@@ -3,6 +3,8 @@
 /* Horizon theme                      */
 /* ================================== */
 
+@_sap_m_Radio_Button_Read_Only_fill: @sapUiFieldTextColor;
+
 .sapMRb {
 	height: 2.75rem;
 
@@ -84,7 +86,7 @@
 }
 
 .sapMRb:not(.sapMRbDis) .sapMRbHoverable:hover .sapMRbBOut {
-	fill: @sapUiFieldHoverBackground;
+	fill: @sapUiContentSelectedHoverBackground;
 }
 
 .sapMRb:focus:before {
@@ -142,7 +144,7 @@
 .sapMRbWarn.sapMRbSel,
 .sapMRbWarn.sapMRbSel.sapMRbRo {
 	.sapMRbBInn {
-		fill:  @sapUiFieldTextColor;
+		fill:  @sapUiFieldWarningColor;
 		stroke: none;
 	}
 }
@@ -207,9 +209,6 @@
 	stroke-dasharray:  4,2; // parameter needed for the type of the dashes
 }
 
-.sapMRb.sapMRbRo.sapMRbSel .sapMRbBInn {
-	fill: @sapUiContentNonInteractiveIconColor;
-}
 
 html[data-sap-ui-browser^="sf"] {
 	// fix for blur caused by drop-shadow in Safari
