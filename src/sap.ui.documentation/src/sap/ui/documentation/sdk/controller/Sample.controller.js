@@ -215,7 +215,7 @@ sap.ui.define([
 							this.getView().byId("apiRefButton").setVisible(bHasAPIReference);
 						}.bind(this));
 
-						this.oModel.setData(oModelData, true);
+						this.oModel.setData(oModelData);
 						this.appendPageTitle(this.getModel().getProperty("/name"));
 					}.bind(this))
 					.catch(function (oError) {
