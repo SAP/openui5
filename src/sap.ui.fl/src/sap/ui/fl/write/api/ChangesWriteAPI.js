@@ -117,14 +117,14 @@ sap.ui.define([
 	 * The property <code>mPropertyBag.changeSpecificData.packageName</code> is set to <code>$TMP</code> and internally since flex changes are always local when they are created.
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Managed object or selector object
 	 *
-	 * @returns {Promise|sap.ui.fl.apply._internal.flexObjects.FlexObject} In case of a descriptor change, promise resolves to the created change.
-	 * In case of a flex change, the created change object is returned.
+	 * @returns {Promise|sap.ui.fl.apply._internal.flexObjects.FlexObject} Returns the FlexObject directly In case of a controller extension,
+	 * otherwise the FlexObject is wrapped in a promise
 	 * @private
 	 * @ui5-restricted
 	 */
 	ChangesWriteAPI.create = function(mPropertyBag) {
 		if (mPropertyBag.changeSpecificData.changeType === "codeExt") {
-			return Promise.resolve(FlexObjectFactory.createControllerExtensionChange(mPropertyBag.changeSpecificData));
+			return FlexObjectFactory.createControllerExtensionChange(mPropertyBag.changeSpecificData);
 		}
 
 		const oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector.view || mPropertyBag.selector);

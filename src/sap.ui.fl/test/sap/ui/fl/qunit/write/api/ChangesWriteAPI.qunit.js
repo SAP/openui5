@@ -115,9 +115,8 @@ sap.ui.define([
 					foo: "bar"
 				}
 			};
-			return ChangesWriteAPI.create(mPropertyBag).then((oFlexObject) => {
-				assert.strictEqual(oFlexObject.getChangeType(), "codeExt", "the correct change was created");
-			});
+			const oFlexObject = ChangesWriteAPI.create(mPropertyBag);
+			assert.strictEqual(oFlexObject.getChangeType(), "codeExt", "the correct change was created");
 		});
 
 		QUnit.test("when create is called and no change handler is available", function(assert) {
