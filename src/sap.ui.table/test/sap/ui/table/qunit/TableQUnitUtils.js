@@ -268,17 +268,20 @@ sap.ui.define([
 		return oClone;
 	}
 
-	TableLibrary.TableHelper = {
-		createLabel: function(mConfig) {
-			return new TestControl(mConfig);
-		},
-		createTextView: function(mConfig) {
-			return new TestControl(mConfig);
-		},
-		addTableClass: function() {
-			return "sapUiTableTest";
-		},
-		bFinal: true
+	TableUtils._getTableTemplateHelper = function() {
+		// Esure that for test purposes the table helper mechanism is still in place for now
+		return {
+			createLabel: function(mConfig) {
+				return new TestControl(mConfig);
+			},
+			createTextView: function(mConfig) {
+				return new TestControl(mConfig);
+			},
+			addTableClass: function() {
+				return "sapUiTableTest";
+			},
+			bFinal: true
+		};
 	};
 
 	[Table, TreeTable].forEach(function(TableClass) {

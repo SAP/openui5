@@ -381,7 +381,9 @@ sap.ui.define([
 			title: {type: "sap.ui.core.Control", altTypes: ["string"], multiple: false, deprecated: true},
 
 			/**
-			 * Control or text of footer section of the Table (if not set it will be hidden)
+			 * Control or text of footer section of the Table (if not set it will be hidden).
+			 *
+			 * <b>Note:</b> The <code>altType</code> string is deprecated as of version 1.118. Use a <code>Control</code> instead.
 			 */
 			footer: {type: "sap.ui.core.Control", altTypes: ["string"], multiple: false},
 
@@ -1725,7 +1727,7 @@ sap.ui.define([
 	Table.prototype.setTitle = function(vTitle) {
 		var oTitle = vTitle;
 		if (typeof (vTitle) === "string" || vTitle instanceof String) {
-			oTitle = library.TableHelper.createTextView({
+			oTitle = TableUtils._getTableTemplateHelper().createTextView({
 				text: vTitle
 			});
 			oTitle.addStyleClass("sapUiTableHdrTitle");
@@ -1740,7 +1742,7 @@ sap.ui.define([
 	Table.prototype.setFooter = function(vFooter) {
 		var oFooter = vFooter;
 		if (typeof (vFooter) === "string" || vFooter instanceof String) {
-			oFooter = library.TableHelper.createTextView({
+			oFooter = TableUtils._getTableTemplateHelper().createTextView({
 				text: vFooter
 			});
 		}

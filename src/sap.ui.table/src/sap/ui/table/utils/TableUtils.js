@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/util/restricted/_throttle"
+	"sap/base/util/restricted/_throttle",
+	"sap/base/Log"
 ], function(
 	GroupingUtils,
 	ColumnUtils,
@@ -30,7 +31,8 @@ sap.ui.define([
 	ThemeParameters,
 	ChangeReason,
 	jQuery,
-	throttle
+	throttle,
+	Log
 ) {
 	"use strict";
 
@@ -1419,6 +1421,31 @@ sap.ui.define([
 
 				return oWeakMap.get(oKey);
 			};
+		},
+
+		/**
+		 * Returns the active Table helper.
+		 *
+		 * @param {boolean} bCallByAPI Whether the call is initiated by an API setting
+		 * @throws Error when no Table helper can be found.
+		 * @returns {object} Table helper
+		 */
+		_getTableTemplateHelper: function(bCallByAPI) {
+			var sMessage = "An automatic control and template generation for the sap.ui.table.Table is not supported " +
+							"anymore for the aggragations footer and title and the aggregations label and template of " +
+							"the sap.ui.table.Columns. Use concrete controls for those aggregations instead of altType string.";
+
+			/**
+			 * @deprecated As of version 1.118
+			 */
+			if (library.TableHelper) {
+				if (!bCallByAPI) {
+					Log.warning(sMessage);
+				}
+				return library.TableHelper;
+			}
+
+			throw new Error(sMessage);
 		}
 	};
 

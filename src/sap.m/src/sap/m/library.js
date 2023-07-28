@@ -5953,6 +5953,9 @@ sap.ui.define([
 
 	//implement table helper factory with m controls
 	//possible is set before layout lib is loaded.
+	/**
+	 * @deprecated As of version 1.118
+	 */
 	ObjectPath.set("sap.ui.table.TableHelper", {
 		createLabel: function(mConfig){
 			return new sap.m.Label(mConfig);

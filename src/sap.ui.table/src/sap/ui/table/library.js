@@ -391,6 +391,9 @@ sap.ui.define([
 	};
 
 	//factory for table to create labels and textviews to be overwritten by commons and mobile library
+	/**
+	 * @deprecated As of version 1.118
+	 */
 	if (!thisLib.TableHelper) {
 		thisLib.TableHelper = {
 			addTableClass: function() { return ""; }, /* must return some additional CSS class */

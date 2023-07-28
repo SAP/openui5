@@ -19,6 +19,9 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.118
+	 */
 	QUnit.test("TableHelper", function(assert) {
 		assert.expect(5);
 

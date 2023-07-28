@@ -13,7 +13,8 @@ sap.ui.define([
 	'sap/ui/model/type/Integer',
 	'sap/ui/model/type/Time',
 	'./utils/TableUtils',
-	'./AnalyticalColumnMenu'
+	'./AnalyticalColumnMenu',
+	"sap/base/Log"
 ],
 	function(
 		Column,
@@ -25,7 +26,8 @@ sap.ui.define([
 		Integer,
 		Time,
 		TableUtils,
-		AnalyticalColumnMenu
+		AnalyticalColumnMenu,
+		Log
 	) {
 	"use strict";
 
@@ -158,21 +160,25 @@ sap.ui.define([
 	 */
 	AnalyticalColumn.prototype.getLabel = function() {
 		var oLabel = this.getAggregation("label");
-		if (!oLabel) {
-			if (!this._oBindingLabel) {
-				var oParent = this.getParent();
-				if (isInstanceOfAnalyticalTable(oParent)) {
-					var oBinding = oParent.getBinding();
-					if (oBinding) {
-						this._oBindingLabel = library.TableHelper.createLabel();
-						this.addDependent(this._oBindingLabel);
-						TableUtils.Binding.metadataLoaded(oParent).then(function() {
-							this._oBindingLabel.setText(oBinding.getPropertyLabel(this.getLeadingProperty()));
-						}.bind(this));
+		try {
+			if (!oLabel) {
+				if (!this._oBindingLabel) {
+					var oParent = this.getParent();
+					if (isInstanceOfAnalyticalTable(oParent)) {
+						var oBinding = oParent.getBinding();
+						if (oBinding) {
+							this._oBindingLabel = TableUtils._getTableTemplateHelper().createLabel();
+							this.addDependent(this._oBindingLabel);
+							TableUtils.Binding.metadataLoaded(oParent).then(function() {
+								this._oBindingLabel.setText(oBinding.getPropertyLabel(this.getLeadingProperty()));
+							}.bind(this));
+						}
 					}
 				}
+				oLabel = this._oBindingLabel;
 			}
-			oLabel = this._oBindingLabel;
+		} catch (e) {
+			Log.warning(e);
 		}
 		return oLabel;
 	};
