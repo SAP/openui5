@@ -453,26 +453,26 @@ sap.ui.define([
 		var oSplitterPaginatorItems = this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons"),
 			sContainerId = oSplitterPaginatorItems.attr("aria-controls"),
 			oContainerPages = Core.byId(sContainerId).getAggregation("_pages") || [],
-			sRole = "radiogroup",
+			sRole = "listbox",
 			sLabel = "Pane Switcher";
 
-		assert.equal(oSplitterPaginatorItems.attr("role"), sRole, "Paginator role is" + sRole);
+		assert.equal(oSplitterPaginatorItems.attr("role"), sRole, "Paginator role is " + sRole);
 		assert.equal(oSplitterPaginatorItems.attr("aria-label"), sLabel, "Paginator aria-label is " + sLabel);
 		assert.equal(oContainerPages.length > 0, true, "Paginator aria-controls is " + sContainerId);
 	});
 
 	QUnit.test("Single paginator items", function (assert) {
 		var oSplitterPaginator = this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButton "),
-			sRole = "radio";
+			sRole = "option";
 
-		assert.equal(oSplitterPaginator.attr("role"), sRole, "Single paginator items role is" + sRole);
+		assert.equal(oSplitterPaginator.attr("role"), sRole, "Single paginator items role is " + sRole);
 	});
 
 	QUnit.test("Single paginator selected items", function (assert) {
 		var oSplitterPaginatorItems = this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorSelectedButton "),
-			sChecked = "true";
+			sSelected = "true";
 
-		assert.equal(oSplitterPaginatorItems.attr("aria-checked"), sChecked, "Single paginator is selected ");
+		assert.equal(oSplitterPaginatorItems.attr("aria-selected"), sSelected, "Single paginator is selected ");
 	});
 
 

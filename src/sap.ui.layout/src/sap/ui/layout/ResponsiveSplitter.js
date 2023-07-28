@@ -497,8 +497,8 @@ sap.ui.define([
 		aPages[iPageIndex] && aPages[iPageIndex].setVisible(true);
 		$OldSelectedButton.removeClass("sapUiResponsiveSplitterPaginatorSelectedButton");
 		$PaginatorButtons.eq(iPageIndex).addClass("sapUiResponsiveSplitterPaginatorSelectedButton");
-		$OldSelectedButton.attr("aria-checked", false);
-		$PaginatorButtons.eq(iPageIndex).attr("aria-checked", true);
+		$OldSelectedButton.attr("aria-selected", false);
+		$PaginatorButtons.eq(iPageIndex).attr("aria-selected", true);
 	};
 
 	/**
