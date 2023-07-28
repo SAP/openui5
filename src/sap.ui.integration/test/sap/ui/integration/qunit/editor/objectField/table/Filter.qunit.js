@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Core",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"../../TestUtils"
 ], function (
 	x,
 	Editor,
@@ -18,7 +19,8 @@ sap.ui.define([
 	deepEqual,
 	MockServer,
 	Core,
-	deepClone
+	deepClone,
+	TestUtils
 ) {
 	"use strict";
 
@@ -116,23 +118,6 @@ sap.ui.define([
 		return oClonedValue;
 	}
 
-	function isReady(oEditor) {
-		return new Promise(function(resolve) {
-			oEditor.attachReady(function() {
-				resolve();
-			});
-		});
-	}
-
-	function openColumnMenu(oColumn) {
-		return new Promise(function(resolve) {
-			oColumn.attachEventOnce("columnMenuOpen", function() {
-				resolve();
-			});
-			oColumn._openHeaderMenu();
-		});
-	}
-
 	QUnit.module("filter", {
 		before: function() {
 			this.oMockServer = new MockServer();
@@ -189,7 +174,7 @@ sap.ui.define([
 			manifest: oManifestForObjectFieldWithValues
 		});
 
-		return isReady(oEditor).then(function () {
+		return TestUtils.isReady(oEditor).then(function () {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -314,7 +299,7 @@ sap.ui.define([
 			manifest: oManifestForObjectFieldWithValues
 		});
 
-		return isReady(oEditor).then(function () {
+		return TestUtils.isReady(oEditor).then(function () {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -357,7 +342,7 @@ sap.ui.define([
 			oURLColumn = oTable.getColumns()[4];
 			return wait();
 		}).then(function() {
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
 			oMenu = oKeyColumn.getMenu();
 			oMenu.getItems()[0].setValue("n");
@@ -371,7 +356,7 @@ sap.ui.define([
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
 			oMenu.getItems()[0].setValue("keyn*");
 			oMenu.getItems()[0].fireSelect();
@@ -384,7 +369,7 @@ sap.ui.define([
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
 			oMenu.getItems()[0].setValue("key0*");
 			oMenu.getItems()[0].fireSelect();
@@ -397,7 +382,7 @@ sap.ui.define([
 			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: selected row hided");
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(!oCell.getSelected(), "Row 1: Cell 1 is not selected");
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function () {
 			oMenu = oURLColumn.getMenu();
 			oMenu.getItems()[0].setValue("http:");
@@ -432,7 +417,7 @@ sap.ui.define([
 			manifest: oManifestForObjectFieldWithValues
 		});
 
-		return isReady(oEditor).then(function () {
+		return TestUtils.isReady(oEditor).then(function () {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -474,7 +459,7 @@ sap.ui.define([
 			oKeyColumn = oTable.getColumns()[1];
 			return wait();
 		}).then(function () {
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
 			oMenu = oKeyColumn.getMenu();
 			oMenu.getItems()[0].setValue("n");
@@ -487,7 +472,7 @@ sap.ui.define([
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
 			oMenu.getItems()[0].setValue("keyn*");
 			oMenu.getItems()[0].fireSelect();
@@ -500,7 +485,7 @@ sap.ui.define([
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
 			oMenu.getItems()[0].setValue("key0*");
 			oMenu.getItems()[0].fireSelect();

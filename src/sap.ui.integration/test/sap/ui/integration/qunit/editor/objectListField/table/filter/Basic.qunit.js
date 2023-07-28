@@ -7,7 +7,8 @@ sap.ui.define([
 	"./../../../ContextHost",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Core",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"../../../TestUtils"
 ], function (
 	x,
 	Editor,
@@ -16,7 +17,8 @@ sap.ui.define([
 	ContextHost,
 	deepEqual,
 	Core,
-	deepClone
+	deepClone,
+	TestUtils
 ) {
 	"use strict";
 
@@ -96,23 +98,6 @@ sap.ui.define([
 		return oClonedValue;
 	}
 
-	function isReady(oEditor) {
-		return new Promise(function(resolve) {
-			oEditor.attachReady(function() {
-				resolve();
-			});
-		});
-	}
-
-	function openColumnMenu(oColumn) {
-		return new Promise(function(resolve) {
-			oColumn.attachEventOnce("columnMenuOpen", function() {
-				resolve();
-			});
-			oColumn._openHeaderMenu();
-		});
-	}
-
 	QUnit.module("Basic", {
 		beforeEach: function () {
 			this.oHost = new Host("host");
@@ -152,7 +137,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithPropertiesOnly
 		});
-		return isReady(oEditor).then(function () {
+		return TestUtils.isReady(oEditor).then(function () {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -176,7 +161,7 @@ sap.ui.define([
 			oTable.filter(oKeyColumn, "n");
 			return wait();
 		}).then(function() {
-			return openColumnMenu(oKeyColumn);
+			return TestUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
 			oMenu = oKeyColumn.getMenu();
 			oMenu.close();
@@ -207,7 +192,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
 			oTextColumn = oTable.getColumns()[3];
 			oTable.filter(oTextColumn, "n");
-			return openColumnMenu(oTextColumn);
+			return TestUtils.openColumnMenu(oTextColumn);
 		}).then(function () {
 			oMenu = oTextColumn.getMenu();
 			oMenu.close();
@@ -249,7 +234,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithPropertiesOnly
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -273,7 +258,7 @@ sap.ui.define([
 			oIntColumn = oTable.getColumns()[6];
 			return wait();
 		}).then(function() {
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			oMenu = oURLColumn.getMenu();
 			oMenu.getItems()[0].setValue("https");
@@ -284,7 +269,7 @@ sap.ui.define([
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 			assert.equal(oTable.getBinding().getCount(), 5, "Table: RowCount after filtering column URL with 'https'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
-			return openColumnMenu(oIntColumn);
+			return TestUtils.openColumnMenu(oIntColumn);
 		}).then(function() {
 			oMenu = oIntColumn.getMenu();
 			oMenu.getItems()[0].setValue("4");
@@ -295,7 +280,7 @@ sap.ui.define([
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 			assert.equal(oTable.getBinding().getCount(), 1, "Table: RowCount after filtering column Integer with '4'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
-			return openColumnMenu(oIntColumn);
+			return TestUtils.openColumnMenu(oIntColumn);
 		}).then(function() {
 			oMenu.getItems()[0].setValue(">4");
 			oMenu.getItems()[0].fireSelect();

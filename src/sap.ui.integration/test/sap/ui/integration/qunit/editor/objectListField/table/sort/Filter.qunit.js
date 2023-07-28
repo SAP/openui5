@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
 	"sap/ui/core/util/MockServer",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"../../../TestUtils"
 ], function (
 	x,
 	Editor,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Core,
 	deepClone,
 	MockServer,
-	merge
+	merge,
+	TestUtils
 ) {
 	"use strict";
 
@@ -124,23 +126,6 @@ sap.ui.define([
 		return oClonedValue;
 	}
 
-	function isReady(oEditor) {
-		return new Promise(function(resolve) {
-			oEditor.attachReady(function() {
-				resolve();
-			});
-		});
-	}
-
-	function openColumnMenu(oColumn) {
-		return new Promise(function(resolve) {
-			oColumn.attachEventOnce("columnMenuOpen", function() {
-				resolve();
-			});
-			oColumn._openHeaderMenu();
-		});
-	}
-
 	QUnit.module("request values", {
 		before: function () {
 			this.oMockServer = new MockServer();
@@ -196,7 +181,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithRequestValues
 		});
-		return isReady(oEditor).then(function () {
+		return TestUtils.isReady(oEditor).then(function () {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
@@ -224,7 +209,7 @@ sap.ui.define([
 			assert.ok(oMoveDownButton.getVisible(), "Table toolbar: move down button visible");
 			assert.ok(!oMoveDownButton.getEnabled(), "Table toolbar: move down button not enabled");
 			oURLColumn = oTable.getColumns()[4];
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function () {
 			oMenu = oURLColumn.getMenu();
 			oMenu.getItems()[0].setValue("https");
@@ -296,7 +281,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithRequestValues
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
@@ -324,7 +309,7 @@ sap.ui.define([
 			assert.ok(oMoveDownButton.getVisible(), "Table toolbar: move down button visible");
 			assert.ok(!oMoveDownButton.getEnabled(), "Table toolbar: move down button not enabled");
 			oURLColumn = oTable.getColumns()[4];
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			oMenu = oURLColumn.getMenu();
 			oMenu.getItems()[0].setValue("https");
@@ -435,7 +420,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithRequestValues
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
@@ -463,7 +448,7 @@ sap.ui.define([
 			assert.ok(oMoveDownButton.getVisible(), "Table toolbar: move down button visible");
 			assert.ok(!oMoveDownButton.getEnabled(), "Table toolbar: move down button not enabled");
 			oURLColumn = oTable.getColumns()[4];
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			oMenu = oURLColumn.getMenu();
 			oMenu.getItems()[0].setValue("https");
@@ -542,7 +527,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithRequestValues
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
@@ -570,7 +555,7 @@ sap.ui.define([
 			assert.ok(oMoveDownButton.getVisible(), "Table toolbar: move down button visible");
 			assert.ok(!oMoveDownButton.getEnabled(), "Table toolbar: move down button not enabled");
 			oURLColumn = oTable.getColumns()[4];
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			oMenu = oURLColumn.getMenu();
 			oMenu.getItems()[0].setValue("https");
@@ -649,7 +634,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithRequestValues
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
@@ -677,7 +662,7 @@ sap.ui.define([
 			assert.ok(oMoveDownButton.getVisible(), "Table toolbar: move down button visible");
 			assert.ok(!oMoveDownButton.getEnabled(), "Table toolbar: move down button not enabled");
 			oURLColumn = oTable.getColumns()[4];
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			oMenu = oURLColumn.getMenu();
 			oMenu.getItems()[0].setValue("https");
@@ -752,7 +737,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithRequestValues
 		});
-		return isReady(oEditor).then(function() {
+		return TestUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
@@ -772,7 +757,7 @@ sap.ui.define([
 			return wait();
 		}).then(function () {
 			oURLColumn = oTable.getColumns()[4];
-			return openColumnMenu(oURLColumn);
+			return TestUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			oMenu = oURLColumn.getMenu();
 			oMenu.getItems()[0].setValue("https");
