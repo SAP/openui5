@@ -3013,6 +3013,7 @@ function(
 				aCustomTabs.forEach(function (oCustomTab) {
 					if (oCustomTab.getId() === vWhich) {
 						oCustomTab.getContent().forEach(function (oContent) {
+							oContent.addStyleClass("sapMVSDCustomTabContent");
 							this._getPage1().addContent(oContent);
 						}, this);
 					}
