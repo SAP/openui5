@@ -48,11 +48,17 @@ sap.ui.define([
 				defaultValue: oWritableConfig.get({
 					name: "sapUiTheme",
 					type: oWritableConfig.Type.String,
-					defaultValue: "base",
 					external: true
 				}),
 				external: true
 			});
+
+			// empty string is a valid value wrt. the <String> type
+			// this is a semantic check if we need to default to a valid theme
+			if (sTheme === "") {
+				sTheme = "base";
+			}
+
 			// It's only possible to provide a themeroot via theme parameter using
 			// the initial config provider such as Global-, Bootstrap-, Meta- and
 			// URLConfigurationProvider. The themeroot is also only validated against
@@ -198,12 +204,13 @@ sap.ui.define([
 
 			var oThemeRootConfigParam = {
 				name: "sapUiThemeRoots",
-				type: oWritableConfig.Type.Object,
-				defaultValue: {}
+				type: oWritableConfig.Type.Object
 			};
+
 			// Use get twice, for a deep copy of themeRoots object
-			var mOldThemeRoots = oWritableConfig.get(oThemeRootConfigParam);
-			var mNewThemeRoots = oWritableConfig.get(oThemeRootConfigParam);
+			// we add a new default "empty object" with each call, so we don't accidentally share it
+			var mOldThemeRoots = oWritableConfig.get(Object.assign(oThemeRootConfigParam, {defaultValue: {}}));
+			var mNewThemeRoots = oWritableConfig.get(Object.assign(oThemeRootConfigParam, {defaultValue: {}}));
 
 			// normalize parameters
 			if (typeof aLibraryNames === "boolean") {
