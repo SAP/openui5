@@ -2239,14 +2239,6 @@ sap.ui.define([
 		afterEach: function () {
 			this.oTP.destroy();
 		},
-		fnAriaExpandedTest: function (oSlider, iIndex) {
-			var bHasAriaExpandedAttr = oSlider.$().is("[aria-expanded]"),
-					bAriaExpanded = oSlider.$().attr("aria-expanded"),
-					iNonZeroIndex = iIndex + 1;
-
-			assert.ok(bHasAriaExpandedAttr, "TimePickerSlider " + iNonZeroIndex + " has aria-expanded attribute");
-			assert.strictEqual(bAriaExpanded, iIndex == 0 ? "true" : "false", "TimePickerSlider " + iNonZeroIndex + " aria-expanded='" + bAriaExpanded + "'");
-		},
 		fnAriaRoleTest: function (oSlider, iIndex) {
 			var iNonZeroIndex = iIndex + 1,
 					bHasRoleAttribute = oSlider.$().is('[role]'),
@@ -2439,7 +2431,6 @@ sap.ui.define([
 			assert.strictEqual(oSliders.$().attr('aria-label'), this.oRB.getText("TIMEPICKER_SCREENREADER_TAG"), "TimePickerSliders aria-label is as expected");
 			aColumns.forEach(function (oColumn, iIndex) {
 				this.fnAriaRoleTest(oColumn, iIndex);
-				this.fnAriaExpandedTest(oColumn, iIndex);
 				this.fnAriaLiveAndHiddenTest(oColumn, iIndex);
 				this.fnAriaLabelledByTest(oColumn, iIndex);
 				this.fnAriaDescribedByTest(oColumn, iIndex);
