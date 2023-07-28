@@ -94,6 +94,7 @@ sap.ui.define([
 	 CompVariant.getMappingInfo = function() {
 		return Object.assign(Variant.getMappingInfo(), {
 			persistencyKey: "selector.persistencyKey",
+			standardVariant: "standardVariant",
 			variantId: "variantId"
 		});
 	};

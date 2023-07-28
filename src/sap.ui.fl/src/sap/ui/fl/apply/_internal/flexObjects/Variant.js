@@ -83,7 +83,6 @@ sap.ui.define([
 		return Object.assign(FlexObject.getMappingInfo(), {
 			favorite: "favorite",
 			executeOnSelection: "executeOnSelection",
-			standardVariant: "standardVariant",
 			contexts: "contexts"
 		});
 	};
