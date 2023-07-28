@@ -282,7 +282,7 @@ sap.ui.define([
 				oRelativeBootstrapURI = new URI(sap.ui.require.toUrl("") + "/sap-ui-core.js"),
 				sBootstrapURI = oRelativeBootstrapURI.toString();
 
-			return sRawIndexFileHtml.replace(rReplaceIndex, 'src="./' + sBootstrapURI + '"');
+			return sRawIndexFileHtml.replace(rReplaceIndex, 'src="' + sBootstrapURI + '"');
 		}
 	});
 }
