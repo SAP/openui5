@@ -431,5 +431,12 @@ sap.ui.define([
 		oGridColumn.setSortOrder(sSortOrder === SortOrder.None ? undefined : sSortOrder);
 	};
 
+	GridTableType.prototype.getContextMenuParameters = function(oEvent) {
+		return {
+			bindingContext: this.getInnerTable().getContextByIndex(oEvent.getParameters().rowIndex),
+			column: this.getTable().getColumns()[oEvent.getParameters().columnIndex]
+		};
+	};
+
 	return GridTableType;
 });
