@@ -414,9 +414,16 @@ sap.ui.define([
 	 * @typedef {sap.ui.base.ManagedObject.MetadataOptions} sap.ui.core.Component.MetadataOptions
 	 *
 	 * The structure of the "metadata" object which is passed when inheriting from sap.ui.core.Component using its static "extend" method.
-	 * See {@link sap.ui.core.Component.extend} for details on its usage.
+	 * See {@link sap.ui.core.Component.extend} and {@link sap.ui.core.Component.create} for additional details on its usage.
 	 *
-	 * @property {"json"} [manifest]  When set to the string literal "json", this property indicates that the component configuration
+	 * @property {undefined|false|object|"json"} [manifest=undefined] The manifest option determines how a component manifest should be evaluated.
+	 *            Default is <code>undefined</code>.
+	 *
+	 *            When set to <code>false</code> or <code>undefined</code>, no manifest.json is present for this Component, however the Component can
+         *            still be started with a manifest given as an argument of the factory function, see {@link sap.ui.core.Component.create}.
+	 *            When set to an object, this object will be interpreted as a manifest and must adhere to the
+	 *            {@link topic:be0cf40f61184b358b5faedaec98b2da descriptor schema for components}.
+	 *            When set to the string literal <code>"json"</code>, this property indicates that the component configuration
 	 *            should be read from a manifest.json file which is assumed to exist next to the Component.js file.
 	 *
 	 * @public
