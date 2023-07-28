@@ -1,0 +1,115 @@
+<mvc:View
+	controllerName="sap.ui.table.sample.SelectCopyPaste.Controller"
+	xmlns="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:u="sap.ui.unified"
+	xmlns:c="sap.ui.core"
+	xmlns:m="sap.m"
+	height="100%">
+	<m:Page
+		showHeader="false"
+		enableScrolling="false"
+		class="sapUiContentPadding">
+		<m:content>
+			<Table
+				id="table"
+				visibleRowCount="7"
+				enableSelectAll="false"
+				rows="{
+					path: '/ProductSet',
+					parameters: {operationMode: 'Server'}
+				}"
+				threshold="15"
+				enableBusyIndicator="true"
+				ariaLabelledBy="title"
+				paste="onPaste">
+				<dependents>
+					<m:plugins.CellSelector id="cellSelector" />
+					<m:plugins.CopyProvider id="copyProvider" extractData=".extractData" copy=".onCopy" />
+				</dependents>
+				<plugins>
+					<plugins.MultiSelectionPlugin limit="100" enableNotification="true" selectionMode="MultiToggle"/>
+				</plugins>
+				<noData>
+					<m:BusyIndicator class="sapUiMediumMargin"/>
+				</noData>
+				<extension>
+					<m:OverflowToolbar id="toolbar" style="Clear">
+						<m:Title id="title" text="Products"/>
+						<m:ToolbarSpacer/>
+						<m:Select items="{ui>/SelectionMode}" selectedKey="{ui>/initial/SelectionMode}" change=".onSelectChange">
+							<c:Item key="{ui>mode}" text="{ui>mode}" />
+						</m:Select>
+						<m:Button>
+							<m:dependents>
+								<m:plugins.PasteProvider pasteFor="table" />
+							</m:dependents>
+						</m:Button>
+					</m:OverflowToolbar>
+				</extension>
+				<columns>
+					<Column
+						sortProperty="Name"
+						filterProperty="Name"
+						autoResizable="true"
+						width="11rem">
+						<m:Label text="{/#Product/Name/@sap:label}" />
+						<template>
+							<m:Text text="{Name}" wrapping="false" />
+						</template>
+					</Column>
+					<Column
+						sortProperty="ProductID"
+						filterProperty="ProductID"
+						autoResizable="true"
+						width="6rem">
+						<m:Label text="{/#Product/ProductID/@sap:label}" />
+						<template>
+							<m:Text text="{ProductID}" wrapping="false" />
+						</template>
+					</Column>
+					<Column
+						sortProperty="Category"
+						filterProperty="Category"
+						autoResizable="true"
+						width="11rem">
+						<m:Label text="{/#Product/Category/@sap:label}" />
+						<template>
+							<m:Text text="{Category}" wrapping="false" />
+						</template>
+					</Column>
+					<Column
+						sortProperty="SupplierName"
+						filterProperty="SupplierName"
+						autoResizable="true"
+						width="12rem">
+						<m:Label text="{/#Product/SupplierName/@sap:label}" />
+						<template>
+							<m:Text text="{SupplierName}" wrapping="false" />
+						</template>
+					</Column>
+					<Column
+						filterProperty="Price"
+						width="9rem">
+						<m:Label text="{/#Product/Price/@sap:label}" />
+						<template>
+							<u:Currency value="{
+								path: 'Price',
+								type: 'sap.ui.model.type.String'
+							}" currency="{CurrencyCode}"/>
+						</template>
+					</Column>
+					<Column
+						hAlign="End"
+						autoResizable="true"
+						width="9rem">
+						<m:Label text="{/#Product/Width/@sap:label}" />
+						<template>
+							<m:Text text="{Width}x{Height}x{Depth} {DimUnit}" wrapping="false" />
+						</template>
+					</Column>
+				</columns>
+			</Table>
+		</m:content>
+	</m:Page>
+</mvc:View>
