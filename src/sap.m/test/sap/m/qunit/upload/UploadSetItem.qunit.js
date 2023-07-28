@@ -303,6 +303,23 @@ sap.ui.define([
 		assert.ok(oItemUrlDefined._getFileNameLink().getEnabled(), "Link is clicklable");
 	});
 
+	QUnit.test("Wrapping should be set to true on the filenameLink", function (assert) {
+		assert.expect(2);
+
+		var oItemUrlUndefined = new UploadSetItem({
+			fileName: "fileName.txt",
+			url: undefined
+		});
+
+		var oItemUrlDefined = new UploadSetItem({
+			fileName: "fileName.txt",
+			url: "testingUrl"
+		});
+
+		assert.ok(oItemUrlUndefined._getFileNameLink().getWrapping(), "Wrapping has set to true on link");
+		assert.ok(oItemUrlDefined._getFileNameLink().getWrapping(), "Wrapping has set to true on link");
+	});
+
 	QUnit.test("Test for setThumbnailUrl API", function(assert) {
 		var oItem = this.oUploadSet.getItems()[0];
 		oItem.setThumbnailUrl("./image/test.jpg");
