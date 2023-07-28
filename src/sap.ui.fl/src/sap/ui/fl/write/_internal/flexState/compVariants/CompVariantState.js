@@ -884,8 +884,8 @@ sap.ui.define([
 						layer: oFlexObject.getLayer(),
 						reference: oFlexObject.getFlexObjectMetadata().reference
 					});
-						// TODO: use condensing route to reduce backend requests
-						// need to save first entry to generate draft version in backend
+					// TODO: use condensing route to reduce backend requests
+					// need to save first entry to generate draft version in backend
 					return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion)
 					.then(function() {
 						var aPromises = aFlexObjects.map(function(oFlexObject, index) {
@@ -894,11 +894,11 @@ sap.ui.define([
 								return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sDraftVersion);
 							}
 						});
-						return aPromises;
+						return Promise.all(aPromises);
 					});
 				}
 			});
-				// TODO Consider not rejecting with first error, but wait for all promises and collect the results
+			// TODO Consider not rejecting with first error, but wait for all promises and collect the results
 			return Promise.all(aPromises);
 		});
 	};
