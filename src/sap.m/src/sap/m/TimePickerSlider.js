@@ -870,9 +870,6 @@ sap.ui.define([
 				this._selectionOffset = 0;
 			}
 
-			//WAI-ARIA region
-			this.$().attr('aria-expanded', this.getIsExpanded());
-
 			this.setSelectedValue(sSelectedValue);
 		};
 
