@@ -623,7 +623,8 @@ sap.ui.define([
 		if (!this._oFileNameLink) {
 			this._oFileNameLink = new Link({
 				id: this.getId() + "-fileNameLink",
-				press: [this, this._handleFileNamePressed, this]
+				press: [this, this._handleFileNamePressed, this],
+				wrapping: true
 			});
 			this._oFileNameLink.setText(this.getFileName());//For handling curly braces in file name we have to use setter.Otherwise it will be treated as binding.
 			this._oFileNameLink.addStyleClass("sapMUCFileName");
