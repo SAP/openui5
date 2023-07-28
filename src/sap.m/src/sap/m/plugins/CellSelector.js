@@ -366,11 +366,7 @@ sap.ui.define([
 
 			if (mDiff.rowIndex != 0 || mDiff.colIndex != 0) {
 				const { from, to } = this._getUpdatedBounds(mDiff.rowIndex, mDiff.colIndex, oBorder);
-
 				this._selectCells(from, to);
-
-				this._oSession.border.rowIndex += mDiff.rowIndex;
-				this._oSession.border.colIndex += mDiff.colIndex;
 			}
 		} else {
 			this._startSelection(oEvent, true);
@@ -433,7 +429,11 @@ sap.ui.define([
 			var sType = bForward ? "to" : "from";
 
 			mDiff[sDirectionType] = bForward ? 1 : -1;
-			const { from, to } = this._getUpdatedBounds(mDiff[DIRECTION.ROW], mDiff[DIRECTION.COL], mBounds[sType]);
+			let mOldFocus = mBounds[sType];
+			if (this._bBorderDown) {
+				mOldFocus = this._oSession.border;
+			}
+			const { from, to } = this._getUpdatedBounds(mDiff[DIRECTION.ROW], mDiff[DIRECTION.COL], mOldFocus);
 			this._selectCells(from, to);
 		}
 	};
@@ -525,6 +525,9 @@ sap.ui.define([
 		if (!this._bBorderDown) {
 			mFocus.rowIndex = Math.max(0, mFocus.rowIndex + iRowDiff);
 			mFocus.colIndex = Math.max(0, mFocus.colIndex + iColDiff);
+		} else {
+			this._oSession.border.rowIndex += iRowDiff;
+			this._oSession.border.colIndex += iColDiff;
 		}
 
 		return {
