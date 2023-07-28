@@ -148,8 +148,6 @@ sap.ui.define([
 			 * Cleans up after a cancel or failed request.
 			 */
 			function cleanUp() {
-				var iDeletedIndex;
-
 				_Helper.removeByPath(that.mChangeRequests, sEntityPath, oRequestPromise);
 
 				if (aMessages.length) {
@@ -159,19 +157,12 @@ sap.ui.define([
 				delete oEntity["@$ui5.context.isDeleted"];
 				if (Array.isArray(vCacheData)) {
 					iIndex = oDeleted.index;
+					const iDeletedIndex = vCacheData.$deleted.indexOf(oDeleted);
 					if (iIndex !== undefined) {
-						_Helper.addToCount(that.mChangeListeners, sParentPath, vCacheData, 1);
+						that.restoreElement(vCacheData, iIndex, oEntity, sParentPath,
+							iDeletedIndex);
 					}
-					iDeletedIndex = vCacheData.$deleted.indexOf(oDeleted);
-					that.adjustIndexes(sParentPath, vCacheData, iIndex, 1, iDeletedIndex);
-					vCacheData.splice(iIndex, 0, oEntity);
 					vCacheData.$deleted.splice(iDeletedIndex, 1);
-					if (sTransientPredicate) {
-						vCacheData.$created += 1;
-						if (!sParentPath) {
-							that.iActiveElements += 1;
-						}
-					}
 				}
 				if (that.iActiveUsages) {
 					fnCallback(iIndex, 1);
@@ -396,8 +387,7 @@ sap.ui.define([
 		if (iIndex === undefined) {
 			return; // not in the list -> nothing to adjust
 		}
-		if (!sPath) {
-			// If the path is empty, we are in a _CollectionCache and aReadRequest exists
+		if (!sPath && this.aReadRequests) {
 			this.aReadRequests.forEach(function (oReadRequest) {
 				if (oReadRequest.iStart >= iIndex) {
 					oReadRequest.iStart += iOffset;
@@ -428,7 +418,7 @@ sap.ui.define([
 	 *   The meta path for the entity
 	 * @returns {string|undefined}
 	 *   The key predicate or <code>undefined</code>, if key predicate cannot be determined
-	 * @private
+	 * @protected
 	 */
 	// Note: overridden by _AggregationCache.calculateKeyPredicate
 	_Cache.prototype.calculateKeyPredicate = function (oInstance, mTypeForMetaPath, sMetaPath) {
@@ -725,7 +715,7 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with the result matching to <code>sPath</code>
 	 *
-	 * @private
+	 * @protected
 	 */
 	_Cache.prototype.drillDown = function (oData, sPath, oGroupLock, bCreateOnDemand) {
 		var oDataPromise = SyncPromise.resolve(oData),
@@ -1223,7 +1213,7 @@ sap.ui.define([
 	 * @param {object} mQueryOptions - The query options
 	 * @returns {object} The download query options derived from the given query options
 	 *
-	 * @private
+	 * @protected
 	 */
 	_Cache.prototype.getDownloadQueryOptions = function (mQueryOptions) {
 		return mQueryOptions;
@@ -1636,7 +1626,7 @@ sap.ui.define([
 	 * @param {string} sPath The path
 	 * @param {object} [oListener] The listener
 	 *
-	 * @private
+	 * @protected
 	 */
 	_Cache.prototype.registerChangeListener = function (sPath, oListener) {
 		if (!(this.bSharedRequest && sPath)) {
@@ -1645,13 +1635,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the element at the given index from the given array, taking care of
-	 * <code>$byPredicate</code>, <code>$created</code>, the array's count, and a collection cache's
-	 * limit and number of active elements (if applicable).
+	 * Removes the element at the given index from the given array, taking care of the array's
+	 * <code>$byPredicate</code>, <code>$created</code> and <code>$count</code>, and a collection
+	 * cache's limit and number of active elements (if applicable).
 	 *
 	 * @param {object[]} aElements
 	 *   The array of elements
-	 * @param {number} iIndex
+	 * @param {number} [iIndex]
 	 *   The array index of the old element to be removed or <code>undefined</code> in case the
 	 *   element is a kept-alive element without an index
 	 * @param {string} sPredicate
@@ -1659,10 +1649,10 @@ sap.ui.define([
 	 * @param {string} sPath
 	 *   The element collection's path within this cache (as used by change listeners), may be
 	 *   <code>""</code> (only in a CollectionCache)
-	 * @returns {number} The index at which the element actually was (it might have moved due to
-	 *   parallel insert/delete)
+	 * @returns {number|undefined} The index at which the element actually was (it might have moved
+	 *   due to parallel insert/delete)
 	 *
-	 * @private
+	 * @protected
 	 */
 	_Cache.prototype.removeElement = function (aElements, iIndex, sPredicate, sPath) {
 		var oElement = aElements.$byPredicate[sPredicate],
@@ -1687,11 +1677,10 @@ sap.ui.define([
 				if (!bDeleted) {
 					delete aElements.$byPredicate[sTransientPredicate];
 				}
-			}
-			this.adjustIndexes(sPath, aElements, iIndex, -1);
-			if (!sPath && !sTransientPredicate) {
+			} else if (!sPath) {
 				this.iLimit -= 1; // this doesn't change Infinity
 			}
+			this.adjustIndexes(sPath, aElements, iIndex, -1);
 		}
 		return iIndex;
 	};
@@ -1885,6 +1874,37 @@ sap.ui.define([
 				}
 			}
 		});
+	};
+
+	/**
+	 * Restores the element in the given array at the given index, taking care of the array's
+	 * <code>$created</code> and <code>$count</code>, and a collection cache's limit and number of
+	 * active elements (if applicable).
+	 *
+	 * @param {object[]} aElements - The array of elements
+	 * @param {number} iIndex - The index to restore at
+	 * @param {object} oElement - The element to restore
+	 * @param {string} sPath
+	 *   The element collection's path within this cache (as used by change listeners), may be
+	 *   <code>""</code> (only in a CollectionCache)
+	 * @param {int} [iDeletedIndex]
+	 *   The index of the entry in <code>aElements.$deleted</code> if any
+	 *
+	 * @protected
+	 */
+	_Cache.prototype.restoreElement = function (aElements, iIndex, oElement, sPath, iDeletedIndex) {
+		this.adjustIndexes(sPath, aElements, iIndex, 1, iDeletedIndex);
+		const sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
+		if (sTransientPredicate) {
+			aElements.$created += 1;
+			if (!sPath) {
+				this.iActiveElements += 1;
+			}
+		} else if (!sPath) {
+			this.iLimit += 1; // this doesn't change Infinity
+		}
+		_Helper.addToCount(this.mChangeListeners, sPath, aElements, 1);
+		aElements.splice(iIndex, 0, oElement);
 	};
 
 	/**
