@@ -30,5 +30,36 @@
         ]
       }
     ]
+  },
+  "1.114.3": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "021d6f0e6af630d4e6703d4eb6fffeb83d4a84fc",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fixed selection of today's date in Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380068648"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380066967"
+          }
+        ]
+      },
+      {
+        "id": "d30fe5317b3d931022109a652730d98b2a9640b7",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Remove overwritten border style",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380098559"
+          }
+        ]
+      }
+    ]
   }
 }

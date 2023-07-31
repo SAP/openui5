@@ -343,5 +343,69 @@
         ]
       }
     ]
+  },
+  "1.114.3": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "3ed27a02399430131f51cb92e2d54144e1a99b7e",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Error in mobile fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380088532"
+          }
+        ]
+      },
+      {
+        "id": "118f7bbea577a5ee421fa169d34b9ca52c59e700",
+        "type": "FIX",
+        "text": " sap.m.Table: busy indicator should be visible until data received",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004282162023"
+          }
+        ]
+      },
+      {
+        "id": "1e65d2fd023d0c77e8dfa383ffde9f85469cb7bc",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: Now works correct with TimeOfDay",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380083594"
+          }
+        ]
+      },
+      {
+        "id": "d0a3736aedcad8879e3e9ddaa890f034b4c624e7",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default behavior on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006450822022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400004774092023"
+          }
+        ]
+      },
+      {
+        "id": "cc18e6534e8f54e2d68aaae2f0f9f797453325b0",
+        "type": "FIX",
+        "text": " P13nFilterPanel: ignores formatter for the P13nItem type property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380085111"
+          }
+        ]
+      }
+    ]
   }
 }

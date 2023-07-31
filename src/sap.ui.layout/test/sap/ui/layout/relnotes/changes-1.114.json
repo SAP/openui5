@@ -1,0 +1,22 @@
+{
+  "1.114.3": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "fff97af238ceac6234271174c310a33a92de69ee",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: getScrollDelegate now returns proper delegate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370034572"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500006307332023"
+          }
+        ]
+      }
+    ]
+  }
+}

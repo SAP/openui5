@@ -18,5 +18,21 @@
         ]
       }
     ]
+  },
+  "1.114.3": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "754ee7927d53298dae0cf54b1abd039de566c9e3",
+        "type": "FIX",
+        "text": " sap.ui.fl - Add adaptation id to setDefault method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380100319"
+          }
+        ]
+      }
+    ]
   }
 }
