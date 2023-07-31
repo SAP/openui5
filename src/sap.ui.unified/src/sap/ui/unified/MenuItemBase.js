@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.unified.MenuItemBase.
-sap.ui.define(['sap/ui/core/Element', './library'],
-	function(Element, library) {
+sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/core/IconPool'],
+	function(Element, library, IconPool) {
 	"use strict";
 
 
@@ -155,6 +155,14 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 			this.getParent().close(true);
 		}
 		oEvent.preventDefault(); //IE focuses the address bar
+	};
+
+
+	MenuItemBase.prototype._getIcon = function(oItem) {
+		return IconPool.createControlByURI({
+			src: oItem.getIcon(),
+			useIconTooltip: false
+		});
 	};
 
 	MenuItemBase.prototype.onsaphide = MenuItemBase.prototype.onsapshow;
