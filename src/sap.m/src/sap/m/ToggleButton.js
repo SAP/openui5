@@ -162,6 +162,8 @@ sap.ui.define([
 		return true;
 	};
 
+	ToggleButton.prototype._toggleLiveChangeAnnouncement = function() {};
+
 	return ToggleButton;
 
 });
