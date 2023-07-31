@@ -93,6 +93,12 @@ sap.ui.define([
 		oHeader.setDataProviderFactory(oCard._oDataProviderFactory);
 		oHeader._setDataConfiguration(mConfiguration.data);
 
+		oHeader.setProperty("useTileLayout", oCard.isTileDisplayVariant());
+
+		if (oCard.isTileDisplayVariant() && !mConfiguration.titleMaxLines) {
+			oHeader.setTitleMaxLines(2);
+		}
+
 		var oActions = new CardActions({
 			card: oCard
 		});

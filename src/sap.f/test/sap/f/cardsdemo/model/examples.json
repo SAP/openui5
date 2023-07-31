@@ -276,5 +276,11 @@
 		"description": "Play around with Card model size limit.",
 		"route": "modelSizeLimit",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "Tiles Variants",
+		"description": "Render cards as tiles.",
+		"route": "tilesVariants",
+		"group": "Other Card Examples"
 	}
 ]

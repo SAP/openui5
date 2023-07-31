@@ -112,6 +112,8 @@ sap.ui.define([
 
 	var CardDesign = library.CardDesign;
 
+	var CardDisplayVariant = library.CardDisplayVariant;
+
 	var CardPreviewMode = library.CardPreviewMode;
 
 	var CardBlockingMessageType = library.CardBlockingMessageType;
@@ -307,6 +309,17 @@ sap.ui.define([
 					type: "sap.ui.integration.CardDesign",
 					group: "Appearance",
 					defaultValue: CardDesign.Solid
+				},
+
+				/**
+				 * Defines the display variant for card rendering and behavior.
+				 * @experimental Since 1.118. For usage only by Work Zone.
+				 * @since 1.118
+				 */
+				displayVariant: {
+					type: "sap.ui.integration.CardDisplayVariant",
+					group: "Appearance",
+					defaultValue: CardDisplayVariant.Standard
 				},
 
 				/**
@@ -2041,7 +2054,7 @@ sap.ui.define([
 		this.destroyAggregation("_content");
 		this._ariaText.setText(sAriaText);
 
-		if (!oContentManifest) {
+		if (!oContentManifest || this.isTileDisplayVariant()) {
 			this.fireEvent("_contentReady");
 			return;
 		}
@@ -2066,6 +2079,15 @@ sap.ui.define([
 		}
 
 		this._setCardContent(oContent);
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 * @returns {boolean} If the card is rendered as a tile variant
+	 */
+	Card.prototype.isTileDisplayVariant = function () {
+		return [CardDisplayVariant.TileStandard, CardDisplayVariant.TileStandardWide].indexOf(this.getDisplayVariant()) > -1;
 	};
 
 	Card.prototype.createHeader = function () {
@@ -2167,7 +2189,7 @@ sap.ui.define([
 			mMessageSettings = ErrorHandler.configureErrorInfo(mErrorInfo, this);
 		}
 
-		if (oContentSection || bIsComponentCard) {
+		if (!this.isTileDisplayVariant() && (oContentSection || bIsComponentCard)) {
 			if (oContent && oContent.isA("sap.ui.integration.cards.BaseContent")) {
 				this.showBlockingMessage(mMessageSettings);
 			} else { // case where error ocurred during content creation

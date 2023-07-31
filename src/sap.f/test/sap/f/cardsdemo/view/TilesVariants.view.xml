@@ -1,0 +1,28 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.TilesVariants"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="List Card" />
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<Panel headerText="Tiles 2x2" class="sapUiSmallMargin">
+			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample1.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample2.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card3" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample3.json" class="sapUiSmallMargin"/>
+		</Panel>
+		<Panel headerText="Tiles 4x2" class="sapUiSmallMargin">
+			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample1.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card5" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample2.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card6" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample3.json" class="sapUiSmallMargin"/>
+		</Panel>
+	</Page>
+</mvc:View>

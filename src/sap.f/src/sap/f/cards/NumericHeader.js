@@ -128,7 +128,6 @@ sap.ui.define([
 				 * The alignment of the side indicators.
 				 */
 				sideIndicatorsAlignment: { "type": "sap.f.cards.NumericHeaderSideIndicatorsAlignment", group: "Appearance", defaultValue : "Begin" }
-
 			},
 			aggregations: {
 
