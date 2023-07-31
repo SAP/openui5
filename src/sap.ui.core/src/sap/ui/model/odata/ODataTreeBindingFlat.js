@@ -3218,6 +3218,12 @@ sap.ui.define([
 
 		if (sResolvedPath) {
 			mParameters = mParameters || {};
+			if (mParameters.expand) {
+				throw new Error("Parameter 'expand' is not supported");
+			}
+			if (mParameters.inactive) {
+				throw new Error("Parameter 'inactive' is not supported");
+			}
 			mParameters.groupId = this.oModel._resolveGroup(sResolvedPath).groupId;
 			mParameters.refreshAfterChange = false;
 
