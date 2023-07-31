@@ -198,19 +198,6 @@ sap.ui.define([
 		return oPopover;
 	};
 
-	var _setContainerHeight = function () {
-		var oContainer = this.getAggregation("_container");
-		var oContent = this._getContent();
-		var oContainerConfig = oContent && this.getContainerConfig(oContent);
-		if (oContainer && oContainerConfig && oContainerConfig.getContentHeight) {
-			var iHeight = oContainerConfig.getContentHeight();
-			var iContainerHeight = oContainer.$().find(".sapMPopoverCont").height();
-			var bContainerHeightBelowLimit = iContainerHeight < Rem.toPx("30rem");
-			oContainer.setContentHeight(!iHeight || bContainerHeightBelowLimit || iContainerHeight >= iHeight ? "auto" : "30rem");
-			oContainer.invalidate(); // TODO: Better way? Popover does not always update correctly
-		}
-	};
-
 	Popover.prototype.providesScrolling = function () {
 		return true;
 	};
@@ -219,10 +206,7 @@ sap.ui.define([
 		if (oChanges.name === "content") {
 			var oContent = oChanges.child;
 			if (oChanges.mutation === "remove") {
-				oContent.detachEvent("contentUpdated", _setContainerHeight, this);
 				oContent.detachNavigated(this.handleNavigated, this);
-			} else {
-				oContent.attachEvent("contentUpdated", _setContainerHeight, this); // TODO: put event in content interface ot check existance?
 			}
 		}
 		Container.prototype.observeChanges.apply(this, arguments);
@@ -308,8 +292,6 @@ sap.ui.define([
 	};
 
 	Popover.prototype.handleOpened = function () {
-		_setContainerHeight.call(this);
-
 		Container.prototype.handleOpened.apply(this, arguments);
 
 		var oContent = this._getContent();

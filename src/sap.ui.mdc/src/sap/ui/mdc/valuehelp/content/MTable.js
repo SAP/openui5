@@ -82,8 +82,9 @@ sap.ui.define([
 			events: {
 				/**
 				 * This event is fired when the content of the table is updated.
+				 * @deprecated since 1.118.0 - This event is not fired or consumed anymore
 				 */
-				contentUpdated: {} // TODO: Better way to solve missing popover maxheight? Part of ITypeahead? Or is this explicitly for IPopoverContent?
+				contentUpdated: {}
 			},
 			defaultAggregation: "table"
 		}
@@ -243,8 +244,6 @@ sap.ui.define([
 			}
 			this._bScrollToSelectedItem = false;
 		}
-
-		this.fireContentUpdated();
 	};
 
 	MTable.prototype._getTable = function () {
@@ -831,6 +830,7 @@ sap.ui.define([
 				this._addPromise("listBinding");
 			} else {
 				this._oTable = oTable;
+				this._oTable.addStyleClass("sapMdcValueHelpMTable");
 				_adjustTable.call(this);
 				this._oTable.attachItemPress(this._handleItemPress, this);
 				this._oTable.attachSelectionChange(this._handleSelectionChange, this);
