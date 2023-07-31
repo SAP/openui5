@@ -106,6 +106,8 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', 'sap/base/util/extend', 'sap/ui/
 				mobileWebAppCapable: "default"
 			}, options);
 
+			var bAppleMobileDevice = Device.os.ios || (Device.os.macintosh && Device.browser.mobile);
+
 			// en-/disable automatic link generation for phone numbers
 			if (options.preventPhoneNumberDetection) {
 				// iOS specific meta tag
@@ -127,15 +129,17 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', 'sap/base/util/extend', 'sap/ui/
 				// UI) and auto zoom (browser zooms in the UI automatically under some circumtances, for example when an
 				// input gets the focus and the font-size of the input is less than 16px on iOS) functionalities on the
 				// mobile platform, but there's some difference between the mobile platforms:
-				//  * iOS: This does not disable manual zoom in Safari and it only disables the auto zoom function. In
-				//  Chrome browser on iOS, it does disable the manual zoom but since Chrome on iOS isn't in the support
-				//  matrix, we can ignore this.
+				//  * Apple mobile device: This does not disable manual zoom in Safari and it only disables the auto
+				//    zoom function. In Chrome browser on iOS, it does disable the manual zoom but since Chrome on iOS
+				//    isn't in the support matrix, we can ignore this. The "Request Desktop Website" is turned on by
+				//    default on iPad, therefore we need to check the (macintosh + touch) combination to detect the iPad
+				//    with "Request Desktop Website" turned on to disable the auto zoom.
 				//  * other mobile platform: it does disable the manual zoom option but there's no auto zoom function.
-				//  So we need to remove the maximum-scale=1.0:
+				//    So we need to remove the maximum-scale=1.0:
 				//
 				//  Therefore we need to add the additional settings (maximum-scale and user-scalable) only for iOS
 				//  platform
-				if (Device.os.ios) {
+				if (bAppleMobileDevice) {
 					sMeta += ", maximum-scale=1.0, user-scalable=no";
 				}
 
@@ -156,7 +160,7 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', 'sap/base/util/extend', 'sap/ui/
 				});
 			}
 
-			if (options.preventScroll && (Device.os.ios || (Device.os.mac && Device.browser.mobile))) {
+			if (options.preventScroll && bAppleMobileDevice) {
 				_ready().then(function() {
 					document.documentElement.style.position = "fixed";
 					document.documentElement.style.overflow = "hidden";
