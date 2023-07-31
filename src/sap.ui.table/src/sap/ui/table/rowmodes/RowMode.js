@@ -2,13 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"../library",
 	"../utils/TableUtils",
 	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
 ], function(
-	library,
 	TableUtils,
 	Element,
 	jQuery,
@@ -19,19 +17,19 @@ sap.ui.define([
 	var _private = TableUtils.createWeakMapFacade();
 
 	/**
-	 * Constructor for a new row mode.
+	 * Constructor for a new <code>RowMode</code>.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @abstract
 	 * @class
-	 * TODO: Class description
+	 * Base class for row modes.
+	 * Note: Do not create subclasses.
 	 * @extends sap.ui.core.Element
 	 * @constructor
-	 * @alias sap.ui.table.rowmodes.RowMode
+	 * @alias module:sap/ui/table/rowmodes/RowMode
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -39,14 +37,7 @@ sap.ui.define([
 	var RowMode = Element.extend("sap.ui.table.rowmodes.RowMode", /** @lends sap.ui.table.rowmodes.RowMode.prototype */ {
 		metadata: {
 			library: "sap.ui.table",
-			"abstract": true/*,
-			events: {
-				rowCountChange: {
-					parameters: {
-						count: {type: "int"}
-					}
-				}
-			}*/
+			"abstract": true
 		}
 	});
 
@@ -164,7 +155,7 @@ sap.ui.define([
 	 * Gets the number of contexts that should be requested at least from the rows aggregation binding of the table.
 	 *
 	 * @returns {int} The minimum request length
-	 * @protected
+	 * @private
 	 * @abstract
 	 */
 	RowMode.prototype.getMinRequestLength = function() {
@@ -177,7 +168,7 @@ sap.ui.define([
 	 * The sum of <code>scrollable</code>, <code>fixedTop</code> and <code>fixedBottom</code> is equal to <code>count</code>.
 	 *
 	 * @returns {{count: int, scrollable: int, fixedTop: int, fixedBottom: int}} The computed counts
-	 * @protected
+	 * @private
 	 * @abstract
 	 */
 	RowMode.prototype.getComputedRowCounts = function() {
@@ -189,7 +180,7 @@ sap.ui.define([
 	 *
 	 * @returns {{height: sap.ui.core.CSSSize?, minHeight: sap.ui.core.CSSSize?, maxHeight: sap.ui.core.CSSSize?}}
 	 * The styles the table should have
-	 * @protected
+	 * @private
 	 * @abstract
 	 */
 	RowMode.prototype.getTableStyles = function() {
@@ -202,11 +193,11 @@ sap.ui.define([
 	 *
 	 * @returns {{height: sap.ui.core.CSSSize?}|undefined}
 	 * The styles the table's bottom placeholder should have
-	 * @protected
+	 * @private
 	 * @abstract
 	 */
 	RowMode.prototype.getTableBottomPlaceholderStyles = function() {
-		throwNotImplementedError(this, "getTableBottomPlaceholderStyles");
+		return undefined;
 	};
 
 	/**
@@ -214,7 +205,7 @@ sap.ui.define([
 	 *
 	 * @returns {{height: sap.ui.core.CSSSize?, minHeight: sap.ui.core.CSSSize?, maxHeight: sap.ui.core.CSSSize?}}
 	 * The styles the row container should have
-	 * @protected
+	 * @private
 	 * @abstract
 	 */
 	RowMode.prototype.getRowContainerStyles = function() {
@@ -225,7 +216,7 @@ sap.ui.define([
 	 * Gets the parent table.
 	 *
 	 * @returns {sap.ui.table.Table|null} The instance of the table or <code>null</code>.
-	 * @protected
+	 * @private
 	 */
 	RowMode.prototype.getTable = function() {
 		var oParent = this.getParent();
@@ -235,7 +226,7 @@ sap.ui.define([
 	/**
 	 * Updates the table's rows aggregation according to the current computed row count, and updates the rows binding contexts.
 	 *
-	 * @protected
+	 * @private
 	 */
 	RowMode.prototype.updateTable = function(sReason /* private parameter */) {
 		var oTable = this.getTable();
@@ -277,7 +268,7 @@ sap.ui.define([
 	 *
 	 * @returns {int} The base row content height in pixels.
 	 * @see {@link sap.ui.table.rowmodes.RowMode#getBaseRowHeightOfTable}
-	 * @protected
+	 * @private
 	 */
 	RowMode.prototype.getBaseRowContentHeight = function() {
 		return 0;
@@ -290,7 +281,7 @@ sap.ui.define([
 	 *
 	 * @returns {int} The base row height in pixels.
 	 * @see {@link sap.ui.table.rowmodes.RowMode#getBaseRowContentHeight}
-	 * @protected
+	 * @private
 	 */
 	RowMode.prototype.getBaseRowHeightOfTable = function() {
 		var oTable = this.getTable();
@@ -312,7 +303,7 @@ sap.ui.define([
 	 * Gets total row count of the table. Returns 0 if this mode is not child of a table.
 	 *
 	 * @returns {int} The total row count.
-	 * @protected
+	 * @private
 	 */
 	RowMode.prototype.getTotalRowCountOfTable = function() {
 		var oTable = this.getTable();
@@ -431,7 +422,7 @@ sap.ui.define([
 	 * @param {int} iFixedTop The fixed top row count.
 	 * @param {int} iFixedBottom The fixed bottom row count.
 	 * @returns {{count: int, scrollable: int, fixedTop: int, fixedBottom: int}} The standardized counts
-	 * @protected
+	 * @private
 	 */
 	RowMode.prototype.computeStandardizedRowCounts = function(iCount, iFixedTop, iFixedBottom) {
 		var mRowCountConstraints = this.getRowCountConstraints();
@@ -492,7 +483,7 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @returns {{fixedTop: (boolean|undefined), fixedBottom: (boolean|undefined)}} The row count constraints
-	 * @protected
+	 * @private
 	 */
 	RowMode.prototype.getRowCountConstraints = function() {
 		// TODO: Add a type definition for a protected type "rowCountConstraints" in the library file to document the return value
@@ -516,6 +507,26 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.renderCellContentStyles = function(oRM) {};
+
+	/**
+	 * Renders something at the bottom of the table.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRM The render manager.
+	 * @private
+	 */
+	RowMode.prototype.renderInTableBottomArea = function(oRM) {
+		var mPlaceholderHeight = this.getTableBottomPlaceholderStyles();
+
+		if (mPlaceholderHeight === undefined) {
+			return;
+		}
+
+		oRM.openStart("div", this.getTable().getId() + "-placeholder-bottom");
+		oRM.class("sapUiTablePlaceholder");
+		this.applyTableBottomPlaceholderStyles(oRM);
+		oRM.openEnd();
+		oRM.close("div");
+	};
 
 	/**
 	 * This method can be used after a binding refresh to asynchronously create rows after the data request was sent by the binding.
@@ -710,7 +721,7 @@ sap.ui.define([
 	 * {@link sap.ui.table.Table#getShowNoData showNoData} is set to <code>true</code>. The text is hidden if it is currently shown. Has no effect for
 	 * the text that is shown when the table has no visible columns.
 	 *
-	 * @protected
+	 * @private
 	 */
 	RowMode.prototype.disableNoData = function() {
 		if (this.isNoDataDisabled()) {
@@ -729,7 +740,7 @@ sap.ui.define([
 	 * Enables the "NoData" text of the table. Whether the text is shown depends on the state of the table and its
 	 * {@link sap.ui.table.Table#getShowNoData showNoData} property.
 	 *
-	 * @protected
+	 * @private
 	 */
 	RowMode.prototype.enableNoData = function() {
 		if (!this.isNoDataDisabled()) {
@@ -748,7 +759,7 @@ sap.ui.define([
 	 * Checks whether the "NoData" text of the table is disabled.
 	 *
 	 * @returns {boolean} Whether the "NoData" text is disabled
-	 * @protected
+	 * @private
 	 */
 	RowMode.prototype.isNoDataDisabled = function() {
 		return _private(this).bNoDataDisabled;

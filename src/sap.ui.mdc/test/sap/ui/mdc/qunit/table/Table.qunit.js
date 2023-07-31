@@ -907,7 +907,7 @@ sap.ui.define([
 			this.oTable.initialized().then(function() {
 				assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
 				assert.ok(!this.oTable._oRowTemplate);
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.AutoRowMode"), "The inner GridTable has an auto row mode");
+				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Auto"), "The inner GridTable has an auto row mode");
 				assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 10);
 
 				fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
@@ -926,7 +926,7 @@ sap.ui.define([
 				fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
 
 				// inner table is updated
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.FixedRowMode"), "The inner GridTable has a fixed row mode");
+				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Fixed"), "The inner GridTable has a fixed row mode");
 				assert.equal(this.oTable._oTable.getRowMode().getRowCount(), 10);
 				assert.equal(this.oTable._oTable.getRowMode().getHideEmptyRows(), bHideEmptyRows);
 
@@ -935,7 +935,7 @@ sap.ui.define([
 
 				assert.ok(fInnerTableDestroySpy.notCalled);
 				// inner table is updated
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.FixedRowMode"), "The inner GridTable has a fixed row mode");
+				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Fixed"), "The inner GridTable has a fixed row mode");
 				assert.equal(this.oTable._oTable.getRowMode().getRowCount(), 3);
 
 				fRowModeDestroySpy = sinon.spy(this.oTable._oTable.getRowMode(), "destroy");
@@ -948,7 +948,7 @@ sap.ui.define([
 				assert.ok(fInnerTableDestroySpy.notCalled);
 				assert.ok(fRowModeDestroySpy.calledOnce);
 				// inner table is updated
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.AutoRowMode"), "The inner GridTable has an auto row mode");
+				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Auto"), "The inner GridTable has an auto row mode");
 				assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 3);
 				assert.equal(this.oTable._oTable.getRowMode().getHideEmptyRows(), bHideEmptyRows);
 
@@ -956,7 +956,7 @@ sap.ui.define([
 				this.oTable.getType().setRowCount(5);
 
 				// inner table is updated
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.AutoRowMode"), "The inner GridTable has an auto row mode");
+				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Auto"), "The inner GridTable has an auto row mode");
 				assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 5);
 
 				// Updating the table type instance also updates properties of the inner table
@@ -964,7 +964,7 @@ sap.ui.define([
 
 				assert.ok(fInnerTableDestroySpy.notCalled);
 				// inner table is updated
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.FixedRowMode"), "The inner GridTable has a fixed row mode");
+				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Fixed"), "The inner GridTable has a fixed row mode");
 				assert.equal(this.oTable._oTable.getRowMode().getRowCount(), 5);
 
 				fRowModeDestroySpy = sinon.spy(this.oTable._oTable.getRowMode(), "destroy");
@@ -977,7 +977,7 @@ sap.ui.define([
 
 				return this.oTable.initialized();
 			}.bind(this)).then(function() {
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.AutoRowMode"), "The inner GridTable has an auto row mode");
+				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Auto"), "The inner GridTable has an auto row mode");
 				assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 10);
 				done();
 			}.bind(this));

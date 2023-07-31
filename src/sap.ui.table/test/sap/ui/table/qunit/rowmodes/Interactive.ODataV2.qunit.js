@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
-	"sap/ui/table/rowmodes/InteractiveRowMode",
+	"sap/ui/table/rowmodes/Interactive",
 	"sap/ui/table/Table"
 ], function(TableQUnitUtils, InteractiveRowMode, Table) {
 	"use strict";

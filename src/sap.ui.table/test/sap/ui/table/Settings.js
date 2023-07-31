@@ -386,7 +386,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 									oTable.getRowMode().destroy();
 								}
 
-								sap.ui.require(["sap/ui/table/rowmodes/FixedRowMode"], function(FixedRowMode) {
+								sap.ui.require(["sap/ui/table/rowmodes/Fixed"], function(FixedRowMode) {
 									oTable.setRowMode(new FixedRowMode());
 
 									TABLESETTINGS.actions.ROWMODES.group.ROWMODE.selectedKey = "FIXED";
@@ -412,7 +412,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 									oTable.getRowMode().destroy();
 								}
 
-								sap.ui.require(["sap/ui/table/rowmodes/InteractiveRowMode"], function(InteractiveRowMode) {
+								sap.ui.require(["sap/ui/table/rowmodes/Interactive"], function(InteractiveRowMode) {
 									oTable.setRowMode(new InteractiveRowMode());
 
 									TABLESETTINGS.actions.ROWMODES.group.ROWMODE.selectedKey = "INTERACTIVE";
@@ -438,7 +438,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 									oTable.getRowMode().destroy();
 								}
 
-								sap.ui.require(["sap/ui/table/rowmodes/AutoRowMode"], function(AutoRowMode) {
+								sap.ui.require(["sap/ui/table/rowmodes/Auto"], function(AutoRowMode) {
 									oTable.setRowMode(new AutoRowMode());
 
 									TABLESETTINGS.actions.ROWMODES.group.ROWMODE.selectedKey = "AUTO";
@@ -464,7 +464,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 					text: "Row count",
 					input: true,
 					value: function(oTable) {
-						if (TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.FixedRowMode")) {
+						if (TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.Fixed")) {
 							return oTable.getRowMode().getRowCount();
 						}
 					},
@@ -477,7 +477,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 					text: "Hide empty rows",
 					input: "boolean",
 					value: function(oTable) {
-						if (TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.FixedRowMode")) {
+						if (TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.Fixed")) {
 							return oTable.getRowMode().getHideEmptyRows();
 						}
 					},
@@ -490,7 +490,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 					text: "Hide empty rows",
 					input: "boolean",
 					value: function(oTable) {
-						if (TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.AutoRowMode")) {
+						if (TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.Auto")) {
 							return oTable.getRowMode().getHideEmptyRows();
 						}
 					},

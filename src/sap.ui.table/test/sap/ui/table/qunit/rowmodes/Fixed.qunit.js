@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/table/rowmodes/FixedRowMode",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/RowAction",
@@ -32,8 +32,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Instance", function(assert) {
-		assert.ok(TableUtils.isA(this.oTable._getRowMode(), "sap.ui.table.rowmodes.FixedRowMode"),
-			"The table creates an instance of sap.ui.table.rowmodes.FixedRowMode");
+		assert.ok(TableUtils.isA(this.oTable._getRowMode(), "sap.ui.table.rowmodes.Fixed"),
+			"The table creates an instance of sap.ui.table.rowmodes.Fixed");
 	});
 
 	QUnit.test("Property getters", function(assert) {

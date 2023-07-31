@@ -106,8 +106,8 @@ sap.ui.define([
 			var oRowMode = oGridTable.getRowMode();
 			var bHideEmptyRows = false;
 
-			if (oRowMode && (vValue === TableRowCountMode.Fixed && !oRowMode.isA("sap.ui.table.rowmodes.FixedRowMode") ||
-							 vValue === TableRowCountMode.Auto && !oRowMode.isA("sap.ui.table.rowmodes.AutoRowMode"))) {
+			if (oRowMode && (vValue === TableRowCountMode.Fixed && !oRowMode.isA("sap.ui.table.rowmodes.Fixed") ||
+							 vValue === TableRowCountMode.Auto && !oRowMode.isA("sap.ui.table.rowmodes.Auto"))) {
 				bHideEmptyRows = oRowMode.getHideEmptyRows();
 				oRowMode.destroy();
 				oRowMode = null;
@@ -154,7 +154,7 @@ sap.ui.define([
 			return new Promise(function(resolve, reject) {
 				sap.ui.require([
 					"sap/ui/table/Table", "sap/ui/table/Column", "sap/ui/table/RowAction", "sap/ui/table/RowActionItem",
-					"sap/ui/table/rowmodes/FixedRowMode", "sap/ui/table/rowmodes/AutoRowMode", "sap/ui/table/RowSettings"
+					"sap/ui/table/rowmodes/Fixed", "sap/ui/table/rowmodes/Auto", "sap/ui/table/RowSettings"
 				], function(GridTable, GridColumn, RowAction, RowActionItem, FixedRowMode, AutoRowMode, RowSettings) {
 					InnerTable = GridTable;
 					InnerColumn = GridColumn;

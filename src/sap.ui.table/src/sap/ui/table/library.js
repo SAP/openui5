@@ -58,9 +58,9 @@ sap.ui.define([
 			"sap.ui.table.RowActionItem",
 			"sap.ui.table.RowSettings",
 			"sap.ui.table.rowmodes.RowMode",
-			"sap.ui.table.rowmodes.FixedRowMode",
-			"sap.ui.table.rowmodes.InteractiveRowMode",
-			"sap.ui.table.rowmodes.AutoRowMode",
+			"sap.ui.table.rowmodes.Fixed",
+			"sap.ui.table.rowmodes.Interactive",
+			"sap.ui.table.rowmodes.Auto",
 			"sap.ui.table.plugins.SelectionPlugin",
 			"sap.ui.table.plugins.MultiSelectionPlugin",
 			"sap.ui.table.plugins.ODataV4Selection"

@@ -8,7 +8,7 @@ sap.ui.define(function() {
 
 	return {
 		domRef: function(oTable) {
-			if (oTable._getRowMode().isA("sap.ui.table.rowmodes.AutoRowMode")) {
+			if (oTable._getRowMode().isA("sap.ui.table.rowmodes.Auto")) {
 				//control domRef has height:0px set, but footer & scrollbar is missing
 				return oTable.$("sapUiTableCnt").get(0);
 			}

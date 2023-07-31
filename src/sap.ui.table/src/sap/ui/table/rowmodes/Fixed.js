@@ -2,42 +2,59 @@
  * ${copyright}
  */
 sap.ui.define([
-	"../library",
 	"./RowMode",
 	"../utils/TableUtils"
 ], function(
-	library,
 	RowMode,
 	TableUtils
 ) {
 	"use strict";
 
 	/**
-	 * Constructor for a new fixed row mode.
+	 * Constructor for a new <code>Fixed</code> row mode.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * TODO: Class description
-	 * @extends sap.ui.table.rowmodes.RowMode
+	 * A fixed number of rows is displayed in the table.
+	 * @extends module:sap/ui/table/rowmodes/RowMode
 	 * @constructor
-	 * @alias sap.ui.table.rowmodes.FixedRowMode
+	 * @alias module:sap/ui/table/rowmodes/Fixed
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 *
 	 */
-	var FixedRowMode = RowMode.extend("sap.ui.table.rowmodes.FixedRowMode", /** @lends sap.ui.table.rowmodes.FixedRowMode.prototype */ {
+	var FixedRowMode = RowMode.extend("sap.ui.table.rowmodes.Fixed", /** @lends sap.ui.table.rowmodes.Fixed.prototype */ {
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
+				/**
+				 * The number of rows displayed in the table. The number of rows in the scrollable area is reduced by the number of fixed rows.
+				 */
 				rowCount: {type: "int", defaultValue: 10, group: "Appearance"},
+				/**
+				 * The number of rows in the fixed area at the top. If the number of fixed rows exceeds the number of displayed rows, the number of
+				 * fixed rows is reduced.
+				 * The table may limit the possible number of fixed rows.
+				 */
 				fixedTopRowCount: {type: "int", defaultValue: 0, group: "Appearance"},
+				/**
+				 * The number of rows in the fixed area at the bottom. If the number of fixed rows exceeds the number of displayed rows, the number of
+				 * fixed rows is reduced.
+				 * The table may limit the possible number of fixed rows.
+				 */
 				fixedBottomRowCount: {type: "int", defaultValue: 0, group: "Appearance"},
+				/**
+				 * The row content height in pixel. The actual row height is also influenced by other factors, such as the border width. If no value
+				 * is set (includes 0), a default height is applied based on the content density configuration.
+				 */
 				rowContentHeight: {type: "int", defaultValue: 0, group: "Appearance"},
+				/**
+				 * Whether to hide empty rows.
+				 * TODO: make hidden before making the class public
+				 */
 				hideEmptyRows: {type: "boolean", defaultValue: false, group: "Appearance"}
 			}
 		},
@@ -224,7 +241,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @this sap.ui.table.rowmodes.FixedRowMode
+	 * @this sap.ui.table.rowmodes.Fixed
 	 */
 	TableDelegate.onAfterRendering = function(oEvent) {
 		var oTable = this.getTable();

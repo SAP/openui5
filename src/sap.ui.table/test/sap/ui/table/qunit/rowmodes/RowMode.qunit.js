@@ -56,7 +56,6 @@ sap.ui.define([
 		assert.throws(oMode.getComputedRowCounts, "#getComputedRowCounts throws an error if not implemented in subclass");
 		assert.throws(oMode.getTableStyles, "#getTableStyles throws an error if not implemented in subclass");
 		assert.throws(oMode.getRowContainerStyles, "#getRowContainerStyles throws an error if not implemented in subclass");
-		assert.throws(oMode.getTableBottomPlaceholderStyles, "#getTableBottomPlaceholderStyles throws an error if not implemented in subclass");
 	});
 
 	QUnit.module("Methods", {

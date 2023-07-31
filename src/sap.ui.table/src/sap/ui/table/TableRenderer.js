@@ -8,11 +8,8 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 	function(Device, library, Column, TableUtils, ExtensionBase, Renderer, IconPool, Log) {
 	"use strict";
 
-	// shortcuts
-	var VisibleRowCountMode = library.VisibleRowCountMode;
 	var SortOrder = library.SortOrder;
 	var ColumnUtils = TableUtils.Column;
-
 	var mFlexCellContentAlignment = {
 		Begin: "flex-start",
 		End: "flex-end",
@@ -196,17 +193,10 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 			this.renderFooter(rm, oTable, oTable.getFooter());
 		}
 
-		// TODO: Move to "renderTableChildAtBottom" hook in row modes
-		if (oTable.getVisibleRowCountMode() == VisibleRowCountMode.Interactive) {
-			this.renderVariableHeight(rm, oTable);
-		}
-
-		// TODO: Move to "renderTableChildAtBottom" hook in row modes
-		this.renderBottomPlaceholder(rm, oTable);
+		oTable._getRowMode().renderInTableBottomArea(rm);
 
 		rm.close("div");
 
-		//oTable._getRowMode().renderTableChildAtBottom(rm);
 		this.renderTabElement(rm, "sapUiTableOuterAfter");
 		rm.close("div");
 	};
@@ -330,29 +320,6 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 
 		rm.renderControl(oFooter);
 
-		rm.close("div");
-	};
-
-	TableRenderer.renderVariableHeight = function(rm, oTable) {
-		rm.openStart("div", oTable.getId() + "-sb");
-		rm.attr("tabindex", "-1");
-		rm.class("sapUiTableHeightResizer");
-		rm.style("height", "5px");
-		rm.openEnd();
-		rm.close("div");
-	};
-
-	TableRenderer.renderBottomPlaceholder = function(rm, oTable) {
-		var mPlaceholderHeight = oTable._getRowMode().getTableBottomPlaceholderStyles();
-
-		if (mPlaceholderHeight === undefined) {
-			return;
-		}
-
-		rm.openStart("div", oTable.getId() + "-placeholder-bottom");
-		rm.class("sapUiTablePlaceholder");
-		oTable._getRowMode().applyTableBottomPlaceholderStyles(rm);
-		rm.openEnd();
 		rm.close("div");
 	};
 

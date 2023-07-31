@@ -2,47 +2,61 @@
  * ${copyright}
  */
 sap.ui.define([
-	"../library",
 	"./RowMode",
 	"../utils/TableUtils",
-	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	library,
 	RowMode,
 	TableUtils,
-	Log,
 	jQuery
 ) {
 	"use strict";
 
 	/**
-	 * Constructor for a new interactive row mode.
+	 * Constructor for a new <code>Interactive</code> row mode.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * TODO: Class description
-	 * @extends sap.ui.table.rowmodes.RowMode
+	 * The user can change the number of displayed rows by dragging a resizer.
+	 * @extends module:sap/ui/table/rowmodes/RowMode
 	 * @constructor
-	 * @alias sap.ui.table.rowmodes.InteractiveRowMode
+	 * @alias module:sap/ui/table/rowmodes/Interactive
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 *
 	 */
-	var InteractiveRowMode = RowMode.extend("sap.ui.table.rowmodes.InteractiveRowMode", /** @lends sap.ui.table.rowmodes.InteractiveRowMode.prototype */ {
+	var InteractiveRowMode = RowMode.extend("sap.ui.table.rowmodes.Interactive", /** @lends sap.ui.table.rowmodes.Interactive.prototype */ {
 		metadata: {
 			library: "sap.ui.table",
 			"final": true,
 			properties: {
+				/**
+				 * The number of rows displayed in the table. The number of rows in the scrollable area is reduced by the number of fixed rows.
+				 */
 				rowCount: {type: "int", defaultValue: 10, group: "Appearance"},
+				/**
+				 * The minimum number of displayed rows.
+				 */
 				minRowCount: {type: "int", defaultValue: 5, group: "Appearance"},
+				/**
+				 * The number of rows in the fixed area at the top. If the number of fixed rows exceeds the number of displayed rows, the number of
+				 * fixed rows is reduced.
+				 * The table may limit the possible number of fixed rows.
+				 */
 				fixedTopRowCount: {type: "int", defaultValue: 0, group: "Appearance"},
+				/**
+				 * The number of rows in the fixed area at the bottom. If the number of fixed rows exceeds the number of displayed rows, the number of
+				 * fixed rows is reduced.
+				 * The table may limit the possible number of fixed rows.
+				 */
 				fixedBottomRowCount: {type: "int", defaultValue: 0, group: "Appearance"},
+				/**
+				 * The row content height in pixel. The actual row height is also influenced by other factors, such as the border width. If no value
+				 * is set (includes 0), a default height is applied based on the content density configuration.
+				 */
 				rowContentHeight: {type: "int", defaultValue: 0, group: "Appearance"}
 			}
 		},
@@ -184,13 +198,6 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	InteractiveRowMode.prototype.getTableBottomPlaceholderStyles = function() {
-		return undefined;
-	};
-
-	/**
-	 * @inheritDoc
-	 */
 	InteractiveRowMode.prototype.getRowContainerStyles = function() {
 		var sHeight = this.getComputedRowCounts().count * this.getBaseRowHeightOfTable() + "px";
 
@@ -234,6 +241,18 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
+	InteractiveRowMode.prototype.renderInTableBottomArea = function(oRm) {
+		oRm.openStart("div", this.getTable().getId() + "-sb");
+		oRm.attr("tabindex", "-1");
+		oRm.class("sapUiTableHeightResizer");
+		oRm.style("height", "5px");
+		oRm.openEnd();
+		oRm.close("div");
+	};
+
+	/**
+	 * @inheritDoc
+	 */
 	InteractiveRowMode.prototype.getBaseRowContentHeight = function() {
 		return Math.max(0, this.getRowContentHeight());
 	};
@@ -263,7 +282,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @this sap.ui.table.rowmodes.InteractiveRowMode
+	 * @this sap.ui.table.rowmodes.Interactive
 	 */
 	TableDelegate.onBeforeRendering = function(oEvent) {
 		if (this.bLegacy) {
@@ -272,7 +291,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @this sap.ui.table.rowmodes.InteractiveRowMode
+	 * @this sap.ui.table.rowmodes.Interactive
 	 */
 	TableDelegate.onAfterRendering = function(oEvent) {
 		var oTable = this.getTable();
@@ -284,7 +303,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @this sap.ui.table.rowmodes.InteractiveRowMode
+	 * @this sap.ui.table.rowmodes.Interactive
 	 */
 	TableDelegate.onmousedown = function(oEvent) {
 		var oTable = this.getTable();
@@ -298,7 +317,7 @@ sap.ui.define([
 	 * Initializes the drag&drop for resizing.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {sap.ui.table.rowmodes.InteractiveRowMode} oMode The interactive row mode.
+	 * @param {sap.ui.table.rowmodes.Interactive} oMode The interactive row mode.
 	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	ResizeHelper.initInteractiveResizing = function(oTable, oMode, oEvent) {
@@ -340,7 +359,7 @@ sap.ui.define([
 	/**
 	 * Drops the previous dragged horizontal splitter bar and recalculates the amount of rows to be displayed.
 	 *
-	 * @param {sap.ui.table.rowmodes.InteractiveRowMode} oMode The interactive row mode.
+	 * @param {sap.ui.table.rowmodes.Interactive} oMode The interactive row mode.
 	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	ResizeHelper.exitInteractiveResizing = function(oMode, oEvent) {

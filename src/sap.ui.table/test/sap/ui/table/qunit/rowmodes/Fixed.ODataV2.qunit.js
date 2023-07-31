@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
-	"sap/ui/table/rowmodes/FixedRowMode",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/Table"
 ], function(TableQUnitUtils, FixedRowMode, Table) {
 	"use strict";
