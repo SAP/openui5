@@ -15,22 +15,22 @@
 			<Page
 				id="p1"
 				title="Page 1" >
-				<footer><Toolbar><Button text="Action 1" /></Toolbar></footer>
+				<footer><OverflowToolbar><Button text="Action 1" /></OverflowToolbar></footer>
 			</Page>
 			<Page
 				id="p2"
 				title="Page 2" >
-				<footer><Toolbar><Button text="Action 2" /></Toolbar></footer>
+				<footer><OverflowToolbar><Button text="Action 2" /></OverflowToolbar></footer>
 			</Page>
 			<Page
 				id="p3"
 				title="Page 3" >
-				<footer><Toolbar><Button text="Action 3" /></Toolbar></footer>
+				<footer><OverflowToolbar><Button text="Action 3" /></OverflowToolbar></footer>
 			</Page>
 			<Page
 				id="p4"
 				title="Page 4" >
-				<footer><Toolbar><Button text="Action 4" /></Toolbar></footer>
+				<footer><OverflowToolbar><Button text="Action 4" /></OverflowToolbar></footer>
 			</Page>
 		</NavContainer>
 
