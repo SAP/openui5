@@ -70,7 +70,7 @@
     "@ui5/cli": "^3.3.1",
     "@ui5/project": "^3.4.1",
     "@ui5/server": "^3.1.3",
-    "@ui5/tooling-webc": "^0.2.6",
+    "@ui5/tooling-webc": "^0.2.11",
     "@ui5/webcomponents": "1.14.2",
     "@ui5/webcomponents-base": "1.14.2",
     "@ui5/webcomponents-fiori": "1.14.2",

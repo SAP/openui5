@@ -66,6 +66,13 @@ customConfiguration:
           "^@ui5\/webcomponents-base\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/base/$1"
         reverseAliases:
           "^/resources/sap/ui/webc/common/thirdparty/base/(.*?)$": "@ui5/webcomponents-base/dist/$1"
+        cyclicDependencies:
+          "sap/ui/webc/common/thirdparty/base/config/Theme":
+            - "sap/ui/webc/common/thirdparty/base/theming/applyTheme"
+          "sap/ui/webc/common/thirdparty/base/theming/applyTheme":
+            - "sap/ui/webc/common/thirdparty/base/config/ThemeRoot"
+          "sap/ui/webc/common/thirdparty/base/config/ThemeRoot":
+            - "sap/ui/webc/common/thirdparty/base/config/Theme"
         inputPath: "dist/"
         outputPath: "src/sap/ui/webc/common/thirdparty/base/"
         inputPathFilters:
