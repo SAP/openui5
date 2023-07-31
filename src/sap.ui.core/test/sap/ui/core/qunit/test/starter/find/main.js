@@ -23,6 +23,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
+	"sap/ui/table/rowmodes/Auto",
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
@@ -32,7 +33,7 @@ sap.ui.define([
 	"require",
 	"./discovery",
 	"./filter"
-], function(App, Bar, HBox, Label, Link, Page, SearchField, SegmentedButton, SegmentedButtonItem, Text, Toolbar, Core, Element, Table, Column, Filter, JSONModel, Log, includeStylesheet, Storage, _utils, require, discovery, makeFilterFunction) {
+], function(App, Bar, HBox, Label, Link, Page, SearchField, SegmentedButton, SegmentedButtonItem, Text, Toolbar, Core, Element, Table, Column, AutoRowMode, Filter, JSONModel, Log, includeStylesheet, Storage, _utils, require, discovery, makeFilterFunction) {
 	"use strict";
 
 	function compare(s1,s2) {
@@ -208,8 +209,9 @@ sap.ui.define([
 							selectionMode: "None",
 							columnHeaderHeight: 24,
 							columnHeaderVisible: true,
-							visibleRowCountMode: "Auto",
-							rowHeight: 20,
+							rowMode: new AutoRowMode({
+								rowContentHeight: 20
+							}),
 							columns: [
 								new Column("test",{
 									//width: "85px",

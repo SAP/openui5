@@ -53,7 +53,7 @@
 		var SyncedControl = Control.extend("sap.ui.table.test.SyncedControl", /** @lends sap.ui.table.test.SyncedControl.prototype */ {
 			renderer: function(oRm, oControl) {
 				oRm.openStart("div", oControl);
-				oRm.style("height", "0"); // height=0 allows shrinking in VisibleRowCountMode=Auto
+				oRm.style("height", "0"); // height=0 allows shrinking in row mode Auto
 				oRm.openEnd();
 					oRm.openStart("div").style("display", "flex").openEnd();
 						oRm.openStart("div").style("display", "flex").style("flex-direction", "column").style("overflow", "hidden").openEnd();
@@ -272,7 +272,7 @@
 					numberOfExpandedLevels: 2
 				}
 			},
-			visibleRowCountMode: "Auto",
+			rowMode: "Auto",
 			selectionBehavior: "Row",
 			columns: [
 				new Column({
@@ -317,7 +317,7 @@
 					numberOfExpandedLevels: 2
 				}
 			},
-			visibleRowCountMode: "Auto",
+			rowMode: "Auto",
 			selectionBehavior: "Row",
 			columns: [
 				new Column({

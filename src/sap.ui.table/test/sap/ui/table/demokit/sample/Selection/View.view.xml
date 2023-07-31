@@ -24,7 +24,6 @@
 			<Table id="table1"
 				rows="{/ProductCollection}"
 				selectionMode="MultiToggle"
-				visibleRowCount="7"
 				ariaLabelledBy="title">
 				<extension>
 					<m:OverflowToolbar style="Clear">

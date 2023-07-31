@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
 	"sap/m/Button",
@@ -21,6 +22,7 @@ sap.ui.define([
 	JSONModel,
 	TreeTable,
 	Column,
+	FixedRowMode,
 	Toolbar,
 	ToolbarSpacer,
 	Button,
@@ -136,7 +138,9 @@ sap.ui.define([
 		_createTable() {
 			var oTable = new TreeTable(`${this.getId()}--table`, {
 				selectionMode: "MultiToggle",
-				visibleRowCount: 20,
+				rowMode: new FixedRowMode({
+					rowCount: 20
+				}),
 				enableSelectAll: false,
 				ariaLabelledBy: "title",
 				extension: this._createToolbar(),

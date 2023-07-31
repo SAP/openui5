@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.table.sample.Resizing.Controller"
+	controllerName="sap.ui.table.sample.RowModes.Controller"
 	xmlns="sap.ui.table"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:u="sap.ui.unified"
@@ -14,10 +14,7 @@
 				id="table"
 				selectionMode="MultiToggle"
 				rows="{/ProductCollection}"
-				visibleRowCount="7"
-				minAutoRowCount="5"
-				visibleRowCountMode="{/visibleRowCountMode}"
-				columnResize="onColumnResize"
+				rowMode="{ui>/rowMode}"
 				ariaLabelledBy="title">
 				<extension>
 					<m:OverflowToolbar style="Clear">
@@ -25,38 +22,25 @@
 					</m:OverflowToolbar>
 				</extension>
 				<columns>
-					<Column
-						width="{ui>/widths/name}"
-						filterProperty="Name"
-						resizable="true"
-						autoResizable="true">
+					<Column filterProperty="Name">
 						<m:Label text="Product Name" />
 						<template>
 							<m:Text text="{Name}" wrapping="false" />
 						</template>
 					</Column>
-					<Column
-						width="{ui>/widths/category}"
-						resizable="true"
-						filterProperty="Category">
+					<Column filterProperty="Category">
 						<m:Label text="Category" />
 						<template>
 							<m:Text text="{Category}" wrapping="false" />
 						</template>
 					</Column>
-					<Column
-						width="{ui>/widths/image}"
-						flexible="false"
-						resizable="false">
+					<Column>
 						<m:Label text="Image" />
 						<template>
 							<m:Link text="Show Image" href="{ProductPicUrl}" target="_blank"/>
 						</template>
 					</Column>
-					<Column
-						width="{ui>/widths/quantity}"
-						resizable="false"
-						hAlign="End">
+					<Column>
 						<m:Label text="Quantity" />
 						<template>
 							<m:Label text="{
@@ -65,9 +49,7 @@
 							}" />
 						</template>
 					</Column>
-					<Column
-						id="deliverydate"
-						width="{ui>/widths/date}">
+					<Column>
 						<m:Label text="Delivery Date" />
 						<template>
 							<m:Text text="{
@@ -80,24 +62,12 @@
 				</columns>
 				<footer>
 					<m:OverflowToolbar id="infobar">
-						<m:Label text="Row Count Mode:" labelFor="rowCountMode"/>
-						<m:SegmentedButton id="rowCountMode" selectedKey="{/visibleRowCountMode}">
+						<m:Label text="Row Mode:" labelFor="rowMode"/>
+						<m:SegmentedButton id="rowMode" selectedKey="{ui>/rowMode}">
 							<m:items>
 								<m:SegmentedButtonItem icon="sap-icon://locked" key="Fixed" tooltip="Fixed"/>
 								<m:SegmentedButtonItem icon="sap-icon://restart" key="Auto" tooltip="Auto"/>
 								<m:SegmentedButtonItem icon="sap-icon://resize-vertical" key="Interactive" tooltip="Interactive"/>
-							</m:items>
-						</m:SegmentedButton>
-						<m:ToolbarSpacer/>
-						<m:Label text="Column Widths:" labelFor="columnWidths"/>
-						<m:SegmentedButton
-							id="columnWidths"
-							selectedKey="Static"
-							selectionChange="onColumnWidthsChange">
-							<m:items>
-								<m:SegmentedButtonItem icon="sap-icon://color-fill" key="Static" tooltip="Static"/>
-								<m:SegmentedButtonItem icon="sap-icon://overlay" key="Flexible" tooltip="Flexible"/>
-								<m:SegmentedButtonItem icon="sap-icon://business-objects-mobile" key="Mixed" tooltip="Mixed"/>
 							</m:items>
 						</m:SegmentedButton>
 					</m:OverflowToolbar>

@@ -451,7 +451,7 @@ sap.ui.define([
 
 		oDocument = XMLHelper.parse(
 			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:plugins="sap.m.plugins"'
-			+ ' xmlns:t="sap.ui.table"'
+			+ ' xmlns:t="sap.ui.table" xmlns:trm="sap.ui.table.rowmodes"'
 			+ ' xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">'
 			+ sViewXML
 			+ "</mvc:View>",
@@ -475,17 +475,28 @@ sap.ui.define([
 	 * @param {Document} oDocument The view as XML document
 	 */
 	function xmlConvertGridTables(oDocument) {
-		var oChildNode, aChildNodes, oColumn, oElement, i, j, aTableElements, oTemplate;
+		var oChildNode, aChildNodes, oColumn, oElement, i, j, aTableElements, oTemplate,
+			oRowMode, oFixedRowMode;
 
 		aTableElements = oDocument.getElementsByTagNameNS("sap.ui.table", "Table");
 		for (i = aTableElements.length - 1; i >= 0; i -= 1) {
 			oElement = aTableElements[i];
 
+			if (oElement.hasAttribute("visibleRowCount")) {
+				oRowMode = document.createElementNS("sap.ui.table", "rowMode");
+				oElement.appendChild(oRowMode);
+				oFixedRowMode = document.createElementNS("sap.ui.table.rowmodes", "Fixed");
+				oFixedRowMode.setAttribute("rowCount", oElement.getAttribute("visibleRowCount"));
+				oRowMode.appendChild(oFixedRowMode);
+				oElement.removeAttribute("visibleRowCount");
+			}
+
 			aChildNodes = oElement.childNodes;
 			for (j = aChildNodes.length - 1; j >= 0; j -= 1) {
 				oChildNode = aChildNodes[j];
 				if (oChildNode.nodeType === Node.ELEMENT_NODE
-						&& oChildNode.localName !== "Column") {
+						&& oChildNode.localName !== "Column"
+						&& oChildNode.localName !== "rowMode") {
 					oColumn = document.createElementNS("sap.ui.table", "Column");
 					oElement.insertBefore(oColumn, oChildNode);
 					oElement.removeChild(oChildNode);
@@ -616,7 +627,7 @@ sap.ui.define([
 			// A list of expected requests with the properties method, url, headers, response
 			this.aRequests = [];
 
-			// If the "VisibleRowCountMode" of the sap.ui.table.* is "Auto", the table uses the
+			// If the "rowMode" of the sap.ui.table.* is "Auto", the table uses the
 			// screen height (Device.resize.height) to compute the amount of contexts it requests
 			// initially. Make sure that this is stable across devices.
 			this._oSandbox.stub(Device.resize, "height").value(1000);
@@ -15271,16 +15282,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: sap.ui.table.Table with VisibleRowCountMode="Auto" only calls ODLB.getContexts()
+	// Scenario: sap.ui.table.Table with rowMode="Auto" only calls ODLB.getContexts()
 	// after rendering (via setTimeout). This must not lead to separate requests for each table
 	// cell resp. console errors due to data access via virtual context.
 	// BCP 1770367083
 	// Also tests that key properties are $select'ed for a sap.ui.table.Table with query options
 	// different from $expand and $select in the binding parameters of the rows aggregation.
-	QUnit.test("sap.ui.table.Table with VisibleRowCountMode='Auto'", function (assert) {
+	QUnit.test("sap.ui.table.Table with rowMode='Auto'", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{path : \'/EMPLOYEES\', parameters : {$filter : \'AGE gt 42\'}}"\
-		visibleRowCountMode="Auto">\
+		rowMode="Auto">\
 	<t:Column>\
 		<t:label>\
 			<Label text="Name"/>\
@@ -20772,7 +20783,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: sap.ui.table.Table with VisibleRowCountMode="Auto" and submit group 'API'
+	// Scenario: sap.ui.table.Table with rowMode="Auto" and submit group 'API'
 	// In the first step resume and immediately call submitBatch.
 	// In the second step synchronously refresh with another group ID, change the filter and call
 	// submitBatch. Check that the filter request is sent with this batch nevertheless.
@@ -20792,7 +20803,7 @@ sap.ui.define([
 		var oListBinding,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<t:Table id="table" visibleRowCountMode="Auto"\
+<t:Table id="table" rowMode="Auto"\
 		rows="{path : \'/Equipments\', parameters : {$$groupId : \'api\'}, suspended : true}">\
 	<t:Column>\
 		<t:label>\
@@ -22172,8 +22183,7 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oModel = this.createAggregationModel(),
 			sView = '\
-<t:Table fixedBottomRowCount="1" fixedRowCount="' + (bGrandTotalAtBottomOnly ? 0 : 1) + '"\
-	id="table" rows="{path : \'/BusinessPartners\', parameters : {\
+<t:Table id="table" rows="{path : \'/BusinessPartners\', parameters : {\
 		$$aggregation : {\
 			aggregate : {\
 				SalesNumber : {grandTotal : true}\
@@ -22181,7 +22191,12 @@ sap.ui.define([
 			grandTotalAtBottomOnly : ' + bGrandTotalAtBottomOnly + ',\
 			group : {Country : {}}\
 		}\
-	}}" threshold="0" visibleRowCount="' + (bGrandTotalAtBottomOnly ? 4 : 5) + '">\
+	}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="' + (bGrandTotalAtBottomOnly ? 4 : 5) + '"\
+			fixedTopRowCount="' + (bGrandTotalAtBottomOnly ? 0 : 1) + '"\
+			fixedBottomRowCount="1"/>\
+	</t:rowMode>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -22597,7 +22612,7 @@ sap.ui.define([
 	QUnit.test("Data Aggregation: grandTotalAtBottomOnly=true, just two rows", function (assert) {
 		var oModel = this.createAggregationModel(),
 			sView = '\
-<t:Table fixedBottomRowCount="1" id="table" rows="{path : \'/BusinessPartners\', parameters : {\
+<t:Table id="table" rows="{path : \'/BusinessPartners\', parameters : {\
 		$$aggregation : {\
 			aggregate : {\
 				SalesNumber : {grandTotal : true}\
@@ -22606,7 +22621,10 @@ sap.ui.define([
 			groupLevels : [\'Country\',\'Region\'],\
 			subtotalsAtBottomOnly : false\
 		}\
-	}}" visibleRowCount="2">\
+	}}">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="2" fixedBottomRowCount="1"/>\
+	</t:rowMode>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -23588,7 +23606,7 @@ sap.ui.define([
 				oTable,
 				sView = '\
 <Text id="count" text="{$count}"/>\
-<t:Table fixedRowCount="1" firstVisibleRow="1" id="table" rows="{\
+<t:Table firstVisibleRow="1" id="table" rows="{\
 			path : \'/BusinessPartners\',\
 			parameters : {\
 				$$aggregation : {\
@@ -23604,7 +23622,10 @@ sap.ui.define([
 				$orderby : \'Region desc\'\
 			},\
 			filters : {path : \'AmountPerSale\', operator : \'GT\', value1 : 99}}"\
-		threshold="0" visibleRowCount="5">\
+		threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="5" fixedTopRowCount="1"/>\
+	</t:rowMode>\
 	<Text id="country" text="{Country}"/>\
 	<Text id="region" text="{Region}"/>\
 	<Text id="salesNumber" text="{SalesNumber}"/>\
@@ -23692,7 +23713,7 @@ sap.ui.define([
 				],
 				sView = '\
 <Text id="count" text="{$count}"/>\
-<t:Table fixedRowCount="0" firstVisibleRow="1" id="table" rows="{\
+<t:Table firstVisibleRow="1" id="table" rows="{\
 			path : \'/BusinessPartners\',\
 			parameters : {\
 				$$aggregation : {\
@@ -54047,7 +54068,7 @@ sap.ui.define([
 	// modify internal states of the binding. Calling ODLB#getLength afterwards works as expected.
 	//
 	// Simulate a possible infinite loop here.
-	// If a t:Table (with MDCTable wrapper) uses VisibleRowCountMode=Auto, then there is a "change"
+	// If a t:Table (with MDCTable wrapper) uses rowMode=Auto, then there is a "change"
 	// listener in RowMode#updateTable. It calls ODLB#getContexts (which calls fetchContexts ->
 	// createContexts -> modifies bLengthFinal) and fires a "rowsUpdated" event, where another
 	// listener in MDCTable#_handleUpdateFinished reacts on. That listener calls

@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/Device",
 	"sap/ui/table/library",
@@ -12,7 +13,19 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/dom/jquery/scrollLeftRTL" // provides jQuery.fn.scrollLeftRTL
-], function(TableQUnitUtils, RowAction, RowActionItem, TableUtils, Device, tableLibrary, Column, Control, jQuery, oCore) {
+], function(
+	TableQUnitUtils,
+	RowAction,
+	RowActionItem,
+	FixedRowMode,
+	TableUtils,
+	Device,
+	tableLibrary,
+	Column,
+	Control,
+	jQuery,
+	oCore
+) {
 	"use strict";
 
 	QUnit.module("Scrollbars", {
@@ -22,7 +35,7 @@ sap.ui.define([
 				columns: [TableQUnitUtils.createTextColumn().setWidth("500px")],
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(6),
-				visibleRowCount: 1,
+				rowMode: new FixedRowMode({rowCount: 1}),
 				rowActionCount: 2,
 				rowActionTemplate: new RowAction({items: [new RowActionItem({type: tableLibrary.RowActionType.Navigation})]})
 			});
@@ -182,9 +195,11 @@ sap.ui.define([
 			],
 			rows: {path: "/"},
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(1),
-			rowHeight: 10,
-			fixedColumnCount: 1,
-			visibleRowCount: 1
+			rowMode: new FixedRowMode({
+				rowCount: 1,
+				rowContentHeight: 10
+			}),
+			fixedColumnCount: 1
 		});
 
 		function test(sTitle, iColumnIndex) {

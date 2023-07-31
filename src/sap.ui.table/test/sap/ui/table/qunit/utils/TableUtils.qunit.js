@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/CreationRow",
 	"sap/ui/table/RowAction",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/library",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
@@ -23,6 +24,7 @@ sap.ui.define([
 	Column,
 	CreationRow,
 	RowAction,
+	FixedRowMode,
 	TableLibrary,
 	CoreLibrary,
 	Control,
@@ -168,13 +170,11 @@ sap.ui.define([
 		oTable._bVariableRowHeightEnabled = true;
 		assert.ok(TableUtils.isVariableRowHeightEnabled(oTable), "VariableRowHeight is enabled when bVariableRowHeight is true.");
 
-		oTable.setFixedRowCount(1);
+		oTable.getRowMode().setFixedTopRowCount(1);
 		assert.ok(!TableUtils.isVariableRowHeightEnabled(oTable), "VariableRowHeight is disabled when fixed top rows are available.");
-		oTable.setFixedRowCount(0);
-		oTable.setFixedBottomRowCount(1);
+		oTable.getRowMode().setFixedTopRowCount(0);
+		oTable.getRowMode().setFixedBottomRowCount(1);
 		assert.ok(!TableUtils.isVariableRowHeightEnabled(oTable), "VariableRowHeight is disabled when fixed bottom rows are available.");
-		oTable.setFixedRowCount(0);
-		oTable.setFixedBottomRowCount(0);
 	});
 
 	QUnit.test("getCellInfo", function(assert) {
@@ -701,8 +701,10 @@ sap.ui.define([
 
 	QUnit.test("getFirstFixedBottomRowIndex", function(assert) {
 		function initTest(iFixedBottomCount, iRowCount) {
-			oTable.setFixedBottomRowCount(iFixedBottomCount);
-			oTable.setVisibleRowCount(iRowCount);
+			oTable.setRowMode(new FixedRowMode({
+				rowCount: iRowCount,
+				fixedBottomRowCount: iFixedBottomCount
+			}));
 			oCore.applyChanges();
 		}
 
@@ -717,10 +719,10 @@ sap.ui.define([
 
 			if (i <= 3) {
 				assert.equal(TableUtils.getFirstFixedBottomRowIndex(oTable), iVisibleRows - iFixedBottomRows,
-					"Fixed buttom rows, VisibleRowCount=" + iVisibleRows);
+					"Fixed buttom rows, row count=" + iVisibleRows);
 			} else {
 				assert.equal(TableUtils.getFirstFixedBottomRowIndex(oTable), iNumberOfRows - iFixedBottomRows,
-					"Fixed buttom rows, VisibleRowCount=" + iVisibleRows);
+					"Fixed buttom rows, row count=" + iVisibleRows);
 			}
 		}
 	});
@@ -1023,9 +1025,11 @@ sap.ui.define([
 		var iFixedTop = 2;
 		var iFixedBottom = 2;
 
-		oTable.setVisibleRowCount(iVisibleRowCount);
-		oTable.setFixedRowCount(iFixedTop);
-		oTable.setFixedBottomRowCount(iFixedBottom);
+		oTable.setRowMode(new FixedRowMode({
+			rowCount: iVisibleRowCount,
+			fixedTopRowCount: iFixedTop,
+			fixedBottomRowCount: iFixedBottom
+		}));
 		oCore.applyChanges();
 
 		for (var j = 0; j < 2; j++) {
