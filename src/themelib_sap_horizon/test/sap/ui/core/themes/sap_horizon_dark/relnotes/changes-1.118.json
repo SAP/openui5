@@ -1,0 +1,18 @@
+{
+  "1.118.0": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "c707f6fb06a8abe20aa5532bd0f83d46eac99a82",
+        "type": "FIX",
+        "text": " sap.m.SelectList: Focus outline added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380105200"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "1.118.0": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "2af1327f07fa81b523c3b4d4c5eaff944d05428f",
+        "type": "FEATURE",
+        "text": " MDCTable:  new contextMenu aggregation added"
+      }
+    ]
+  }
+}

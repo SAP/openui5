@@ -1,0 +1,18 @@
+{
+  "1.118.0": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "f6b9f5a56685f6c7a6844b3a3fcc1d5f17715ea0",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Accessibility roles are now updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370015496"
+          }
+        ]
+      }
+    ]
+  }
+}

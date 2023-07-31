@@ -1,0 +1,51 @@
+{
+  "1.118.0": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "1ddea0fe4ee53f5d384c2067a8b1b522cc2fff99",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: adjsut focus outline",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270182419"
+          }
+        ]
+      },
+      {
+        "id": "38134f2c897df0dad5a8d7e3f628d7f33ff06047",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSlider: Remove disallowed aria property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011628"
+          }
+        ]
+      },
+      {
+        "id": "988ef5a3d09a76c20cdd6d376b967c3fe2ed928f",
+        "type": "FIX",
+        "text": " m.VariantManagement: correction for author column",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380052935"
+          }
+        ]
+      },
+      {
+        "id": "5fba8efd7a2a16da0ec3dc2e741ea686f8d25740",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Prevent default behaviour when dragging tabs via keyboard",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380080046"
+          }
+        ]
+      }
+    ]
+  }
+}
