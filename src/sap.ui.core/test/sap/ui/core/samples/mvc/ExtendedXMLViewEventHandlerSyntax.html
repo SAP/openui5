@@ -15,9 +15,11 @@
 		</script>
 
 		<script>
-			sap.ui.getCore().attachInit(function() {
-				var oView = sap.ui.xmlview({viewName:"mvctest.views.ExtendedXMLViewEventHandlerSyntax"});
-				oView.placeAt("content");
+			sap.ui.require(["sap/ui/core/Core"], function(Core) {
+				Core.ready().then(function() {
+					var oView = sap.ui.xmlview({viewName:"mvctest.views.ExtendedXMLViewEventHandlerSyntax"});
+					oView.placeAt("content");
+				});
 			});
 		</script>
 	</head>

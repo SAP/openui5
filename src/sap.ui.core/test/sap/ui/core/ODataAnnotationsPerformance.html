@@ -185,38 +185,38 @@
 		data-sap-ui-libs="sap.m"></script>
 
 	<script>
+		sap.ui.require(["sap/ui/core/Core"],function(Core) {
+			Core.ready().then(function() {
 
-		sap.ui.getCore().attachInit(function() {
+				var mService = {
+					serviceUrl: "fakeservice://perf/annotations/service/",
+					fakeUrls: [{
+						dataUrl: "testdata/annotations/metadata.xml",
+						match: "fakeservice://perf/annotations/service/$metadata",
+						headers: {
+							"content-type": "application/xml"
+						}
+					},{
+						dataUrl: "testdata/annotations/annotations01.xml",
+						match: /^fakeservice:\/\/perf\/annotations\/annotations.*/,
+						headers: {
+							"content-type": "application/xml"
+						}
+					}]
+				};
 
-			var mService = {
-				serviceUrl: "fakeservice://perf/annotations/service/",
-				fakeUrls: [{
-					dataUrl: "testdata/annotations/metadata.xml",
-					match: "fakeservice://perf/annotations/service/$metadata",
-					headers: {
-						"content-type": "application/xml"
-					}
-				},{
-					dataUrl: "testdata/annotations/annotations01.xml",
-					match: /^fakeservice:\/\/perf\/annotations\/annotations.*/,
-					headers: {
-						"content-type": "application/xml"
-					}
-				}]
-			};
+				var oService = new FakeService(mService);
+				var oBenchmarkV1 = new AnnotationsBenchmark(1, oService);
+				var oBenchmarkV2 = new AnnotationsBenchmark(2, oService);
 
-			var oService = new FakeService(mService);
-			var oBenchmarkV1 = new AnnotationsBenchmark(1, oService);
-			var oBenchmarkV2 = new AnnotationsBenchmark(2, oService);
-
-			// Show overview page
-			var oOverviewScreen = new BenchmarkOverview({
-				service: oService,
-				benchmarks: [oBenchmarkV1, oBenchmarkV2]
+				// Show overview page
+				var oOverviewScreen = new BenchmarkOverview({
+					service: oService,
+					benchmarks: [oBenchmarkV1, oBenchmarkV2]
+				});
+				document.querySelector("#content").appendChild(oOverviewScreen);
 			});
-			document.querySelector("#content").appendChild(oOverviewScreen);
 		});
-
 
 
 

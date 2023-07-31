@@ -14,8 +14,10 @@
 	>
 	</script>
 	<script>
-		sap.ui.getCore().attachInit(function () {
+		sap.ui.require(["sap/ui/core/Core"], function(Core) {
+			Core.ready().then(function () {
 			new sap.m.Text({text: "A simple test page that is used to trigger the Technical Information Dialog"}).placeAt("content");
+			});
 		});
 	</script>
 </head>

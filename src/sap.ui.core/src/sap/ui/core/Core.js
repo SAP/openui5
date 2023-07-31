@@ -2984,12 +2984,11 @@ sap.ui.define([
 		Rendering.addPrerenderingTask(fnPrerenderingTask, bFirst);
 	};
 
-	/** returns a Promise that resolves if the Core is initialized
+	/** Returns a Promise that resolves if the Core is initialized.
 	 *
 	 * @param {function():void} [fnReady] If the Core is ready the function will be called immediately, otherwise when the ready Promise resolves.
 	 * @returns {Promise<undefined>} The ready promise
-	 * @private
-	 * @ui5-restricted sap.ui.core
+	 * @public
 	 */
 	Core.prototype.ready = function(fnReady) {
 		if (fnReady) {

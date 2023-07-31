@@ -3,17 +3,18 @@
  */
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function () {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/ui/core/sample/common/Helper",
+	"sap/ui/core/sample/common/pages/Any",
+	"sap/ui/core/sample/odata/v4/Draft/pages/Main",
+	"sap/ui/test/opaQunit",
+	"sap/ui/test/TestUtils",
+	"sap/ui/core/sample/odata/v4/Draft/SandboxModel" // preload only
+], function (Core, Helper, Any, Main, opaTest, TestUtils) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/core/sample/common/Helper",
-		"sap/ui/core/sample/common/pages/Any",
-		"sap/ui/core/sample/odata/v4/Draft/pages/Main",
-		"sap/ui/test/opaQunit",
-		"sap/ui/test/TestUtils",
-		"sap/ui/core/sample/odata/v4/Draft/SandboxModel" // preload only
-	], function (Helper, Any, Main, opaTest, TestUtils) {
+	Core.ready().then(function () {
 		/*
 		 * The actual test run.
 		 * @param {object} Given - The OPA Given object

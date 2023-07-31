@@ -41,6 +41,12 @@ sap.ui.define([
 
 	// create boot facade
 	var boot = {
+		/** Returns a Promise that resolves if the Core is initialized.
+		 *
+		 * @param {function():void} [fnReady] If the Core is ready the function will be called immediately, otherwise when the ready Promise resolves.
+		 * @returns {Promise<undefined>} The ready promise
+		 * @private
+		 */
 		ready: function(fnReady) {
 			if (fnReady && bReady) {
 				fnReady();

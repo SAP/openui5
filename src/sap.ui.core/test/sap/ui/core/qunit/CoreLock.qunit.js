@@ -48,14 +48,15 @@ sap.ui.define([
 		assert.ok(pressed, "Button should have fired 'press'");
 	});
 
-	sap.ui.getCore().attachInit(function() {
-		// create content div
-		var oDIV = document.createElement("div");
-		oDIV.id = "content";
-		document.body.appendChild(oDIV);
+	sap.ui.require(["sap/ui/core/Core"], function(Core) {
+		Core.ready().then(function() {
+			// create content div
+			var oDIV = document.createElement("div");
+			oDIV.id = "content";
+			document.body.appendChild(oDIV);
 
-		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+			oButton.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		});
 	});
-
 });

@@ -23,7 +23,9 @@
 			throw(e);
 		}
 
-    	sap.ui.getCore().attachInit(doIt);
+		sap.ui.require(["sap/ui/core/Core"], function(Core) {
+			Core.ready().then(doIt);
+		});
 
     	var oModel = new sap.ui.model.json.JSONModel();
     	oModel.setData({

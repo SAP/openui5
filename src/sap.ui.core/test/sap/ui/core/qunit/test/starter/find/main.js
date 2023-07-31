@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/m/SegmentedButtonItem",
 	"sap/m/Text",
 	"sap/m/Toolbar",
+	"sap/ui/core/Core",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/model/Filter",
@@ -30,7 +31,7 @@ sap.ui.define([
 	"require",
 	"./discovery",
 	"./filter"
-], function(App, Bar, HBox, Label, Link, Page, SearchField, SegmentedButton, SegmentedButtonItem, Text, Toolbar, Table, Column, Filter, JSONModel, Log, includeStylesheet, Storage, _utils, require, discovery, makeFilterFunction) {
+], function(App, Bar, HBox, Label, Link, Page, SearchField, SegmentedButton, SegmentedButtonItem, Text, Toolbar, Core, Table, Column, Filter, JSONModel, Log, includeStylesheet, Storage, _utils, require, discovery, makeFilterFunction) {
 	"use strict";
 
 	function compare(s1,s2) {
@@ -309,7 +310,7 @@ sap.ui.define([
 	const url = new URL(window.location.href);
 
 	const uiCreated = new Promise( (resolve, reject) => {
-		sap.ui.getCore().attachInit(() => {
+		Core.ready().then(() => {
 			const showSuite = url.searchParams.has('showSuite');
 			createUI(showSuite).then( resolve, reject );
 		});

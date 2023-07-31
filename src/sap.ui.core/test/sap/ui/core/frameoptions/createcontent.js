@@ -1,10 +1,11 @@
-sap.ui.getCore().attachInit(function() {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/m/Button",
+	"sap/m/Input",
+	"sap/m/SearchField"
+], function(Core, Button, Input, SearchField) {
 	"use strict";
-	sap.ui.require([
-		"sap/m/Button",
-		"sap/m/Input",
-		"sap/m/SearchField"
-	], function(Button, Input, SearchField) {
+	Core.ready().then(function () {
 		new Button({text: "Press me!"}).placeAt("ui5content");
 		new Input({value: "Change me!"}).placeAt("ui5content");
 		new SearchField({value: "Change me!"}).placeAt("ui5content");

@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Control",
 	"sap/ui/core/Component",
+	"sap/ui/core/Core",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/AppCacheBuster",
 	"sap/ui/core/Manifest",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"test-resources/sap/ui/support/TestHelper",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Log, Control, Component, IconPool, AppCacheBuster, Manifest, Fragment, XMLComposite, sinon, jQuery, testRule, createAndAppendDiv) {
+], function(Log, Control, Component, Core, IconPool, AppCacheBuster, Manifest, Fragment, XMLComposite, sinon, jQuery, testRule, createAndAppendDiv) {
 	"use strict";
 
 	// the rules rely on a certain log level for analyzing issues
@@ -31,8 +32,8 @@ sap.ui.define([
 
 	QUnit.module("Renderer", {
 		beforeEach: function(assert) {
-			assert.ok(sap.ui.getCore().isInitialized(), "Core must be initialized");
-			return new Promise(function(resolve) {
+			return Core.ready().then(function() {
+				assert.ok(true, "Core must be initialized");
 
 				var No = Control.extend("NoRendererControl", {
 					metadata: {
@@ -48,7 +49,6 @@ sap.ui.define([
 					// the rule TestHelper does not support assert throwing
 					// the actual check should be on a log for a sync XHR to "NoRendererControlRenderer.js"
 					assert.ok(e, "404 should be fired for '" + e.message + "'");
-					resolve();
 				}
 			});
 

@@ -210,9 +210,6 @@ sap.ui.define([
 	/**
 	 * Registers the given event handler for resize events on the given DOM element or control.
 	 *
-	 * <b>Note:</b> This function must not be used before the UI5 framework is initialized.
-	 * Please use the {@link sap.ui.core.Core#attachInit init event} of UI5 if you are not sure whether this is the case.
-	 *
 	 * The resize handler periodically checks the dimensions of the registered reference. Whenever it detects changes, an event is fired.
 	 * Be careful when changing dimensions within the event handler which might cause another resize event and so on.
 	 *
