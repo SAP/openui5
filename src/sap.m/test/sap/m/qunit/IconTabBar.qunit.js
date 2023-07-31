@@ -2700,6 +2700,15 @@ sap.ui.define([
 		assert.notOk(oIconTabHeader.getDomRef("head").getAttribute("aria-describedby"), "aria-describedby is not set");
 	});
 
+	QUnit.test("aria-labelledby of the content", function (assert) {
+		var oNestedItem = this.oIconTabBar.getItems()[0].getItems()[1];
+		this.oIconTabBar.setSelectedKey(oNestedItem.getKey());
+		Core.applyChanges();
+		var oSelectedItem = oNestedItem;
+
+		assert.strictEqual(this.oIconTabBar.getDomRef("content").getAttribute("aria-labelledby"), oSelectedItem._getRootTab().getId(), "aria-labelledby should be set to the id of the root tab");
+	});
+
 	QUnit.module("Padding");
 
 	QUnit.test("Container Padding Classes", function (assert) {
