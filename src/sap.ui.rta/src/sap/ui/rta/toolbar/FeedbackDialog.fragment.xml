@@ -1,7 +1,7 @@
 <core:FragmentDefinition
-    xmlns:core="sap.ui.core"
-    xmlns="sap.m"
-    xmlns:util="sap.ui.fl.util">
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:util="sap.ui.fl.util">
 	<Dialog
 		id="sapUiRtaFeedbackIFrameDialog"
 		title="{i18n>TIT_FEEDBACK}"
@@ -11,7 +11,7 @@
 		<content>
 			<util:IFrame
 				id="sapUiRtaFeedbackIFrameDialog_iFrame"
-				url="{= ${feedbackModel>/url}}"
+				url="{feedbackModel>/url}"
 				height="46rem"/>
 		</content>
 		<buttons>

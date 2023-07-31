@@ -791,8 +791,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when being on a system with KeyUserConnector", function(assert) {
+			var sUrlSplit1 = "https:";
+			var sUrlSplit2 = "//example.com";
 			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "KeyUserConnector"}
+				{connector: "KeyUserConnector", url: sUrlSplit1 + sUrlSplit2}
 			]);
 			return createAndStartRTA.call(this)
 			.then(function() {
@@ -803,7 +805,7 @@ sap.ui.define([
 				return this.oToolbar.showFeedbackForm();
 			}.bind(this))
 			.then(function() {
-				var oIframeURL = new URL(this.oToolbar._oFeedbackDialog.getContent()[0].getBindingInfo("url").binding.getValue()[0]);
+				var oIframeURL = new URL(this.oToolbar._oFeedbackDialog.getContent()[0].getBindingInfo("url").binding.getValue());
 				assert.ok(
 					oIframeURL.pathname.endsWith("SV_4MANxRymEIl9K06"),
 					"then the proper form id is passed"
@@ -822,8 +824,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when being on a system with LrepConnector", function(assert) {
+			var sUrlSplit1 = "https:";
+			var sUrlSplit2 = "//example.com";
 			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
-				{ connector: "LrepConnector", url: "someUrl" }
+				{ connector: "LrepConnector", url: sUrlSplit1 + sUrlSplit2}
 			]);
 			return createAndStartRTA.call(this)
 			.then(function() {
@@ -834,7 +838,7 @@ sap.ui.define([
 				return this.oToolbar.showFeedbackForm();
 			}.bind(this))
 			.then(function() {
-				var oIframeURL = new URL(this.oToolbar._oFeedbackDialog.getContent()[0].getBindingInfo("url").binding.getValue()[0]);
+				var oIframeURL = new URL(this.oToolbar._oFeedbackDialog.getContent()[0].getBindingInfo("url").binding.getValue());
 				assert.strictEqual(
 					oIframeURL.searchParams.get("feature"),
 					"ABAP",
