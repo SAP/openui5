@@ -149,6 +149,25 @@ sap.ui.define([
 		assert.equal(this.oVM.getTitle().getText(), "Hugo", "expected text");
 	});
 
+	QUnit.test("VariantManagement check showAsText", function(assert) {
+		assert.equal(this.oVM.getShowAsText(), false, "expected default value");
+
+		assert.ok(this.oVM.getTitle());
+		assert.ok(this.oVM.getTitle().isA("sap.m.Title"), "expected type 'sap.m.Title'.");
+
+		this.oVM.setShowAsText(true);
+		assert.equal(this.oVM.getShowAsText(), true, "expected assigned value");
+
+		assert.ok(this.oVM.getTitle());
+		assert.ok(this.oVM.getTitle().isA("sap.m.Text"), "expected type 'sap.m.Text'.");
+
+		this.oVM.setShowAsText(false);
+		assert.equal(this.oVM.getShowAsText(), false, "expected assigned value");
+
+		assert.ok(this.oVM.getTitle());
+		assert.ok(this.oVM.getTitle().isA("sap.m.Title"), "expected type 'sap.m.Title'.");
+	});
+
 	QUnit.module("VariantManagement variantlist", {
 		beforeEach: function() {
 			this.oVM = new VariantManagement();
