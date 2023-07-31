@@ -2407,6 +2407,7 @@ sap.ui.define([
 		}
 	});
 
+	/** @deprecated As of version 1.102.0, reason OperationMode.Auto */
 	QUnit.test("OperationMode.Auto: Backend has fewer entries than the threshold.", function (assert) {
 		var done = assert.async();
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
