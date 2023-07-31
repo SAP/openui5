@@ -354,6 +354,15 @@ sap.ui.define([
 		return Object.keys(oFreeTypes);
 	};
 
+
+	CalendarLegend.prototype._extractItemIdsString = function(aItemArray) {
+		return aItemArray.map(
+			function (oItem) {
+				return oItem.getId();
+			}
+		).join(" ");
+	};
+
 	return CalendarLegend;
 
 });
