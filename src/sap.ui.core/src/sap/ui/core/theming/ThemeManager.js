@@ -170,22 +170,21 @@ sap.ui.define([
 				}
 
 				var sLinkId = "sap-ui-theme-" + sLibId;
-				var sOldCssUri = document.getElementById(sLinkId) && document.getElementById(sLinkId).href;
-				var sCssBasePath = new URL(ThemeManager._getThemePath(sLibName, Theming.getTheme()), document.baseURI).toString();
-				// Create a link tag and set the URL as href in order to ensure AppCacheBuster handling.
-				// AppCacheBuster ID is added to the href by defineProperty for the "href" property of
-				// HTMLLinkElement in AppCacheBuster.js
-				// Note: Considered to use AppCacheBuster.js#convertURL for adding the AppCachebuster ID
-				//       but there would be a dependency to AppCacheBuster as trade-off
-				var oTmpLink = document.createElement("link");
-				oTmpLink.href = sCssBasePath + sLibFileName + ".css" + (sQuery ? sQuery : "");
-				var sCssPathAndName = oTmpLink.href;
-				oTmpLink.href = sCssBasePath + "css_variables.css" + (sQuery ? sQuery : "");
-				var sCssVariablesPathAndName = oTmpLink.href;
+				var sSkeletonLinkId = "sap-ui-themeskeleton-" + sLibId;
+				var bCssVariables = /^(true|x|additional)$/i.test(BaseConfig.get(oGetCssVariablesParam));
+				if (!document.querySelector("LINK[id='" + sLinkId + "']") || (bCssVariables && !document.querySelector("LINK[id='" + sSkeletonLinkId + "']"))) {
+					var sCssBasePath = new URL(ThemeManager._getThemePath(sLibName, Theming.getTheme()), document.baseURI).toString();
+					// Create a link tag and set the URL as href in order to ensure AppCacheBuster handling.
+					// AppCacheBuster ID is added to the href by defineProperty for the "href" property of
+					// HTMLLinkElement in AppCacheBuster.js
+					// Note: Considered to use AppCacheBuster.js#convertURL for adding the AppCachebuster ID
+					//       but there would be a dependency to AppCacheBuster as trade-off
+					var oTmpLink = document.createElement("link");
+					oTmpLink.href = sCssBasePath + sLibFileName + ".css" + (sQuery ? sQuery : "");
+					var sCssPathAndName = oTmpLink.href;
+					oTmpLink.href = sCssBasePath + "css_variables.css" + (sQuery ? sQuery : "");
+					var sCssVariablesPathAndName = oTmpLink.href;
 
-				// includeStylesheet takes care of adding link tag for library only once but we need to take care to skip
-				// checkThemeChanged in case the link tag does not change in order to avoid fireThemeChanged
-				if (!(sCssPathAndName === sOldCssUri || sCssVariablesPathAndName === sOldCssUri)) {
 					// use the special FOUC handling for initially existing stylesheets
 					// to ensure that they are not just replaced when using the
 					// includeStyleSheet API and to be removed later
@@ -612,7 +611,8 @@ sap.ui.define([
 			sLibFileName = sStandardLibFilePrefix + sRTL + ".css";
 		}
 
-		sHref = ThemeManager._getThemePath(sLibName, sThemeName) + sLibFileName + sQuery;
+		// Transform to URL in order to ensure comparison against the fully resolved URL
+		sHref = new URL(ThemeManager._getThemePath(sLibName, sThemeName) + sLibFileName + sQuery, document.baseURI).toString();
 		if ( sHref != oLink.href ) {
 			// sap/ui/dom/includeStylesheet has a special FOUC handling
 			// which is activated once the attribute data-sap-ui-foucmarker is
