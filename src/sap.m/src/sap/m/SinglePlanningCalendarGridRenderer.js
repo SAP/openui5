@@ -404,7 +404,7 @@ sap.ui.define([
 					oRm.class("sapMSinglePCColumnToday");
 				}
 
-				if (CalendarUtils._isWeekend(oColumnCalDate, oControl._getCoreLocaleData())) {
+				if (CalendarUtils._isWeekend(oColumnCalDate, oControl._getCoreLocaleData()) || oControl._isNonWorkingDay(oColumnCalDate)) {
 					oRm.class("sapMSinglePCColumnWeekend");
 				}
 

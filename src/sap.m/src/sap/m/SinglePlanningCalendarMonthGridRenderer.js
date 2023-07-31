@@ -168,7 +168,7 @@ sap.ui.define([
 			}
 			oRm.attr("role", "gridcell");
 
-			if (CalendarUtils._isWeekend(oDay, oLocaleData) || !CalendarUtils._isSameMonthAndYear(oDay, CalendarDate.fromLocalJSDate(oControl.getStartDate()))) {
+			if (CalendarUtils._isWeekend(oDay, oLocaleData) || !CalendarUtils._isSameMonthAndYear(oDay, CalendarDate.fromLocalJSDate(oControl.getStartDate())) || oControl._isNonWorkingDay(oDay)) {
 				oRm.class("nonWorkingTimeframe");
 			}
 

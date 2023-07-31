@@ -752,6 +752,19 @@ sap.ui.define([
 			oGrid.destroy();
 		});
 
+		QUnit.test("Non working days helper method", function(assert) {
+			// Prepare
+			var oDate = UI5Date.getInstance(2018, 6, 2),
+				oGrid = new SinglePlanningCalendarMonthGrid({
+				specialDates: [
+					new DateTypeRange({ type: "NonWorking", startDate: oDate})
+				]
+			});
+
+			// assert
+			assert.ok(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oDate)), "02.06.2018 is a non working day");
+		});
+
 		QUnit.module("DOM attributes", {
 			beforeEach: function() {
 				this.oSPC = new SinglePlanningCalendar({
