@@ -584,8 +584,6 @@ sap.ui.define([
 			_oChangePersistenceFactory._instanceCache[sReference].removeDirtyChanges();
 		}
 
-		// TODO Do we need to consider partial flex state
-
 		return (_mInitPromises[sReference] || Promise.resolve())
 		.then(loadFlexData.bind(this, mPropertyBag))
 		.then(function() {

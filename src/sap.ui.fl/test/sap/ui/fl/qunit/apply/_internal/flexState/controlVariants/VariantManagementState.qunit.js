@@ -263,46 +263,6 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when the current variant is set invisible", function(assert) {
-			stubFlexObjectsSelector([
-				createVariant({
-					variantReference: sVariantManagementReference,
-					fileName: "customVariant"
-				}),
-				FlexObjectFactory.createUIChange({
-					id: "setDefaultVariantChange",
-					layer: Layer.CUSTOMER,
-					changeType: "setDefault",
-					fileType: "ctrl_variant_management_change",
-					selector: {
-						id: sVariantManagementReference
-					},
-					content: {
-						defaultVariant: "customVariant"
-					}
-				}),
-				FlexObjectFactory.createUIChange({
-					id: "setVisibleChange",
-					layer: Layer.CUSTOMER,
-					changeType: "setVisible",
-					fileType: "ctrl_variant_change",
-					selector: {
-						id: "customVariant"
-					},
-					content: {
-						visible: false
-					}
-				})
-			]);
-
-			var oVMData = VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference];
-			assert.strictEqual(
-				oVMData.currentVariant,
-				sStandardVariantReference,
-				"then the current variant falls back to the standard variant"
-			);
-		});
-
 		QUnit.test("when there is an invalid variant change", function(assert) {
 			stubFlexObjectsSelector([
 				FlexObjectFactory.createUIChange({

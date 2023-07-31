@@ -451,7 +451,6 @@ sap.ui.define([
 		return this.getDependentSelectors().originalSelector;
 	};
 
-	// TODO: check if extension point changes should have a dedicated class
 	/**
 	 * Sets the extension point information.
 	 * @param {*} oExtensionPointInfo Extension point information

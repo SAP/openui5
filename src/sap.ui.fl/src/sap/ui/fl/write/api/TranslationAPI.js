@@ -21,22 +21,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function getDirtyChangesFromPersistence(sReference) {
-		if (!sReference) {
-			return [];
-		}
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-		return oChangePersistence.getDirtyChanges();
-	}
-
-	// TODO remove as soon as the flexReferences with and without .Component are aligned
-	function getDirtyDescriptorChanges(mPropertyBag) {
-		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
-
-		return getDirtyChangesFromPersistence(sFlexReference);
-	}
-
 	/**
 	 * Provides an API for tools like {@link sap.ui.rta} to get source languages, download XLIFF files or upload translations.
 	 *
@@ -57,10 +41,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> in case translatable texts are present
 	 */
 	TranslationAPI.hasTranslationRelevantDirtyChanges = function(mPropertyBag) {
-		return [].concat(
-			FlexObjectState.getDirtyFlexObjects(mPropertyBag),
-			getDirtyDescriptorChanges(mPropertyBag)
-		).some(function(oChange) {
+		return FlexObjectState.getDirtyFlexObjects(mPropertyBag).some(function(oChange) {
 			return !isEmptyObject(oChange.getTexts());
 		});
 	};

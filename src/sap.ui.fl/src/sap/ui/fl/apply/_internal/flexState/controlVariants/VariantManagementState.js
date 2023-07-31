@@ -55,11 +55,11 @@ sap.ui.define([
 		});
 
 		// Check if variant is set via url parameter
-		var oDesiredSelectedVariantId = aVariantIds.find(function(sVariantId) {
+		var sDesiredSelectedVariantId = aVariantIds.find(function(sVariantId) {
 			return aVariantReferencesFromUrl.includes(sVariantId);
 		});
-		if (oDesiredSelectedVariantId) {
-			return oDesiredSelectedVariantId;
+		if (sDesiredSelectedVariantId) {
+			return sDesiredSelectedVariantId;
 		}
 
 		// Determine latest current variant selection based on setDefault changes
@@ -164,15 +164,13 @@ sap.ui.define([
 				break;
 			case "setVisible":
 				oVariantEntry.visible = oVariantChange.getContent().visible;
-				// Invisible variants cannot be set as the current variant
-				// TODO the control automatically selects the standard variant, if the current variant is deleted
-				// this means we can't properly set the current variant and have to react to setVisible changes
+
+				// Set standard variant as current variant if current variant is set to invisible
 				var sVMReference = oVariantEntry.instance.getVariantManagementReference();
 				if (
 					mCurrentVariantReferences[sReference][sVMReference] === oVariantEntry.key
 					&& !oVariantEntry.visible
 				) {
-					// Set standard variant as current variant
 					mCurrentVariantReferences[sReference][sVMReference] = sVMReference;
 					oVariantManagementsMap[sVMReference].currentVariant = sVMReference;
 				}
