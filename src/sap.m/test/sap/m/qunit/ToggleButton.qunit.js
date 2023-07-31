@@ -204,6 +204,18 @@ sap.ui.define([
 		oToggleButton.destroy();
 	});
 
+	QUnit.test("ToggleButton _toggleLiveChangeAnnouncement method is properly overwritten", function (assert) {
+		// Prepare
+		var oToggleButton = new ToggleButton();
+			var oLiveChangeSpy = this.spy(ToggleButton.prototype, "_toggleLiveChangeAnnouncement");
+
+		// Act
+		oToggleButton.onfocusin();
+
+		// Assert
+		assert.ok(oLiveChangeSpy.calledOnce, "Overwriting funcion should be called");
+	});
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
