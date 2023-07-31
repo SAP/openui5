@@ -1104,7 +1104,7 @@
 		  "category": "Display",
 		  "since": "1.14",
 		  "formFactors": "SML",
-		  "samples": ["sap.m.sample.ProgressIndicator"]
+		  "samples": ["sap.m.sample.ProgressIndicator", "sap.m.sample.ProgressIndicatorWithAnnouncement"]
 		},
 		{
 		  "id": "sap.m.PullToRefresh",
@@ -2316,6 +2316,11 @@
 		  "id": "sap.m.sample.ProgressIndicator",
 		  "name": "Progress Indicator",
 		  "description": "Shows the progress of a process in a graphical way. To indicate the progress, the inside of the ProgressIndicator is filled with a color."
+		},
+		{
+			"id": "sap.m.sample.ProgressIndicatorWithAnnouncement",
+			"name": "Progress Indicator With Announcement",
+			"description": "Announce the progress of the ProgressIndicator."
 		},
 		{
 		  "id": "sap.m.sample.Text",
