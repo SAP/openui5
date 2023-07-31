@@ -4968,4 +4968,17 @@ sap.ui.define([
 			DateFormat.getDateTimeWithTimezoneInstance().getSampleValue(),
 			[UI5Date.getInstance("2012-12-31T23:59:58.123"), "Europe/Berlin"]);
 	});
+
+	//*****************************************************************************************************************
+	// BCP 002075129400005085862023
+	QUnit.test("DateTime parse, format options style=long, UTC=true, locale=zh_CN", function (assert) {
+		var oParsedDate,
+			oDate = UI5Date.getInstance("2021-10-13T02:22:33Z"),
+			oFormat = DateFormat.getDateTimeInstance({style : "long", UTC : true}, new Locale("zh_CN"));
+
+		// code under test
+		oParsedDate = oFormat.parse(oFormat.format(oDate));
+
+		assert.deepEqual(oParsedDate, oDate);
+	});
 });

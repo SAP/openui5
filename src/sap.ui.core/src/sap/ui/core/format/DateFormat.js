@@ -914,6 +914,10 @@ sap.ui.define([
 			var iTZFactor = sValue.charAt(0) === "+" ? -1 : 1;
 			var sPart;
 
+			if (sValue[0] === "Z") {
+				return {length : 1, tzDiff : 0};
+			}
+
 			iLength++; //"+" or "-"
 			sPart = this.findNumbers(sValue.substr(iLength), 2);
 
