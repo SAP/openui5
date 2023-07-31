@@ -44,11 +44,18 @@ sap.ui.define([
 			this.setContent(aPanels[0]);
 			this.setLabel(oController.getUISettings().title);
 
+			aPanels.forEach((oPanel) => {
+				oPanel.attachChange((oEvt) => {
+					this.setResetButtonEnabled(true);
+				});
+			});
+
 			oController.update(oTable.getPropertyHelper());
 			oEngine.validateP13n(oTable, sKey, this.getContent());
 
-			this.changeButtonSettings({
-				reset: {visible: true}
+			oEngine.hasChanges(oTable, sKey)
+			.then((bDirty) => {
+				this.setResetButtonEnabled(bDirty);
 			});
 		}.bind(this));
 	};
@@ -66,6 +73,8 @@ sap.ui.define([
 	Item.prototype.onReset = function() {
 		var oTable = this.getTable();
 		var sKey = this.getKey();
+
+		this.setResetButtonEnabled(false);
 
 		oTable.getEngine().reset(oTable, [sKey]).then(function() {
 			oTable._oQuickActionContainer.updateQuickActions([sKey]);
