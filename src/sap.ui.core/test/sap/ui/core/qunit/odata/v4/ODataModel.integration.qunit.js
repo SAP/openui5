@@ -367,7 +367,7 @@ sap.ui.define([
 
 		oDocument = XMLHelper.parse(
 			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:plugins="sap.m.plugins"'
-			+ ' xmlns:t="sap.ui.table"'
+			+ ' xmlns:t="sap.ui.table" xmlns:trm="sap.ui.table.rowmodes"'
 			+ ' xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">'
 			+ sViewXML
 			+ "</mvc:View>",
@@ -401,7 +401,8 @@ sap.ui.define([
 			for (j = aChildNodes.length - 1; j >= 0; j -= 1) {
 				oChildNode = aChildNodes[j];
 				if (oChildNode.nodeType === Node.ELEMENT_NODE
-						&& oChildNode.localName !== "Column") {
+						&& oChildNode.localName !== "Column"
+						&& oChildNode.localName !== "rowMode") {
 					oColumn = document.createElementNS("sap.ui.table", "Column");
 					oElement.insertBefore(oColumn, oChildNode);
 					oElement.removeChild(oChildNode);
@@ -532,7 +533,7 @@ sap.ui.define([
 			// A list of expected requests with the properties method, url, headers, response
 			this.aRequests = [];
 
-			// If the "VisibleRowCountMode" of the sap.ui.table.* is "Auto", the table uses the
+			// If the "rowMode" of the sap.ui.table.* is "Auto", the table uses the
 			// screen height (Device.resize.height) to compute the amount of contexts it requests
 			// initially. Make sure that this is stable across devices.
 			this._oSandbox.stub(Device.resize, "height").value(1000);
@@ -3001,7 +3002,10 @@ sap.ui.define([
 			fnSpy = this.spy(ODataListBinding.prototype, "fetchResolvedQueryOptions"),
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="3">\
+<t:Table id="table" rows="{/SalesOrderList}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
 			that = this;
@@ -3072,7 +3076,10 @@ sap.ui.define([
 	QUnit.test("BCP: 2080228141 - autoExpandSelect & late ODLB#setContext", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
-<t:Table id="table" rows="{}" threshold="0" visibleRowCount="3">\
+<t:Table id="table" rows="{}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
 			that = this;
@@ -5585,7 +5592,10 @@ sap.ui.define([
 <t:Table id="table" rows="{\
 			path : \'/EMPLOYEES\',\
 			parameters : {$select : \'Name,__CT__FAKE__Message/__FAKE__Messages\'}\
-		}"\ threshold="0" visibleRowCount="2">\
+		}"\ threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="2"/>\
+	</t:rowMode>\
 	<Input id="name" value="{Name}"/>\
 </t:Table>',
 			that = this;
@@ -7360,7 +7370,10 @@ sap.ui.define([
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			fnSpy = this.spy(ODataPropertyBinding.prototype, "resumeInternal"),
 			sView = '\
-<t:Table id="table" rows="{/EMPLOYEES}" threshold="0" visibleRowCount="3">\
+<t:Table id="table" rows="{/EMPLOYEES}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="id" text="{ID}"/>\
 	<Text id="name" text="{Name}"/>\
 	<Text id="age" text="{AGE}"/>\
@@ -7415,7 +7428,10 @@ sap.ui.define([
 				= this.spy(ODataListBinding.prototype, "doFetchOrGetQueryOptions"),
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<t:Table id="table" rows="{/EMPLOYEES}" visibleRowCount="3">\
+<t:Table id="table" rows="{/EMPLOYEES}">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="id" text="{ID}"/>\
 	<Text id="name" text="{Name}"/>\
 	<Text id="age" text="{path:\'AGE\',type:\'sap.ui.model.odata.type.Int16\'\
@@ -9160,7 +9176,10 @@ sap.ui.define([
 			}),
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
+<t:Table id="table" rows="{/SalesOrderList}">\
+		<t:rowMode>\
+			<trm:Fixed rowCount="2"/>\
+		</t:rowMode>\
 		<Text id="id" text="{SalesOrderID}"/>\
 		<Input id="note" value="{Note}"/>\
 </t:Table>',
@@ -9298,7 +9317,10 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<t:Table id="table" rows="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}"\
-			threshold="0" visibleRowCount="2">\
+			threshold="0">\
+		<t:rowMode>\
+			<trm:Fixed rowCount="2"/>\
+		</t:rowMode>\
 		<Text id="id" text="{SalesOrderID}"/>\
 		<Text id="note" text="{Note}"/>\
 	</t:Table>\
@@ -9690,7 +9712,10 @@ sap.ui.define([
 			}),
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
+<t:Table id="table" rows="{/SalesOrderList}">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="2"/>\
+	</t:rowMode>\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -9807,7 +9832,10 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
-	<t:Table id="table" rows="{BP_2_SO}" visibleRowCount="2">\
+	<t:Table id="table" rows="{BP_2_SO}">\
+		<t:rowMode>\
+			<trm:Fixed rowCount="2"/>\
+		</t:rowMode>\
 		<Text id="id" text="{SalesOrderID}"/>\
 		<Text id="note" text="{Note}"/>\
 	</t:Table>\
@@ -10050,7 +10078,10 @@ sap.ui.define([
 			}),
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
+<t:Table id="table" rows="{/SalesOrderList}">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="2"/>\
+	</t:rowMode>\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -10287,7 +10318,10 @@ sap.ui.define([
 			}),
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
+<t:Table id="table" rows="{/SalesOrderList}">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="2"/>\
+	</t:rowMode>\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -10378,7 +10412,10 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
-	<t:Table id="table" rows="{BP_2_SO}" visibleRowCount="2">\
+	<t:Table id="table" rows="{BP_2_SO}">\
+		<t:rowMode>\
+			<trm:Fixed rowCount="2"/>\
+		</t:rowMode>\
 		<Text id="id" text="{SalesOrderID}"/>\
 		<Text id="note" text="{Note}"/>\
 	</t:Table>\
@@ -10614,8 +10651,10 @@ sap.ui.define([
 			}),
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{path : \'/SalesOrderList\', parameters : {$count : true}}"\
-		visibleRowCount="3">\
+<t:Table id="table" rows="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -10986,8 +11025,10 @@ sap.ui.define([
 			}),
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{path : \'/SalesOrderList\', parameters : {$count : true}}"\
-		visibleRowCount="2">\
+<t:Table id="table" rows="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="2"/>\
+	</t:rowMode>\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -15105,16 +15146,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: sap.ui.table.Table with VisibleRowCountMode="Auto" only calls ODLB.getContexts()
+	// Scenario: sap.ui.table.Table with rowMode="Auto" only calls ODLB.getContexts()
 	// after rendering (via setTimeout). This must not lead to separate requests for each table
 	// cell resp. console errors due to data access via virtual context.
 	// BCP 1770367083
 	// Also tests that key properties are $select'ed for a sap.ui.table.Table with query options
 	// different from $expand and $select in the binding parameters of the rows aggregation.
-	QUnit.test("sap.ui.table.Table with VisibleRowCountMode='Auto'", function (assert) {
+	QUnit.test("sap.ui.table.Table with rowMode='Auto'", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{path : \'/EMPLOYEES\', parameters : {$filter : \'AGE gt 42\'}}"\
-		visibleRowCountMode="Auto">\
+		rowMode="Auto">\
 	<t:Column>\
 		<t:label>\
 			<Label text="Name"/>\
@@ -20606,7 +20647,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: sap.ui.table.Table with VisibleRowCountMode="Auto" and submit group 'API'
+	// Scenario: sap.ui.table.Table with rowMode="Auto" and submit group 'API'
 	// In the first step resume and immediately call submitBatch.
 	// In the second step synchronously refresh with another group ID, change the filter and call
 	// submitBatch. Check that the filter request is sent with this batch nevertheless.
@@ -20626,7 +20667,7 @@ sap.ui.define([
 		var oListBinding,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<t:Table id="table" visibleRowCountMode="Auto"\
+<t:Table id="table" rowMode="Auto"\
 		rows="{path : \'/Equipments\', parameters : {$$groupId : \'api\'}, suspended : true}">\
 	<t:Column>\
 		<t:label>\
@@ -20708,7 +20749,10 @@ sap.ui.define([
 			},\
 			$count : true,\
 			$orderby : \'LifecycleStatus desc,ItemPosition asc\'\
-		}}" threshold="0" visibleRowCount="3">\
+		}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -21408,7 +21452,7 @@ sap.ui.define([
 		var oModel = this.createAggregationModel(),
 			oTable,
 			sView = '\
-<t:Table id="table" threshold="0" visibleRowCount="3"\
+<t:Table id="table" threshold="0"\
 	rows="{path : \'/BusinessPartners\',\
 		parameters : {\
 			$$aggregation : {\
@@ -21423,6 +21467,9 @@ sap.ui.define([
 			}\
 		},\
 		filters : {path : \'AccountResponsible\', operator : \'GE\', value1 : \'a\'}}">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -21628,7 +21675,10 @@ sap.ui.define([
 			},\
 			groupLevels : [\'Region\']\
 		}\
-	}}" threshold="0" visibleRowCount="3">\
+	}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -21813,7 +21863,10 @@ sap.ui.define([
 		},\
 		$count : true,\
 		$orderby : \'Country desc,Region,Currency asc,LocalCurrency desc\'\
-	}}" threshold="0" visibleRowCount="4">\
+	}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="4"/>\
+	</t:rowMode>\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -22006,8 +22059,7 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oModel = this.createAggregationModel(),
 			sView = '\
-<t:Table fixedBottomRowCount="1" fixedRowCount="' + (bGrandTotalAtBottomOnly ? 0 : 1) + '"\
-	id="table" rows="{path : \'/BusinessPartners\', parameters : {\
+<t:Table id="table" rows="{path : \'/BusinessPartners\', parameters : {\
 		$$aggregation : {\
 			aggregate : {\
 				SalesNumber : {grandTotal : true}\
@@ -22015,7 +22067,12 @@ sap.ui.define([
 			grandTotalAtBottomOnly : ' + bGrandTotalAtBottomOnly + ',\
 			group : {Country : {}}\
 		}\
-	}}" threshold="0" visibleRowCount="' + (bGrandTotalAtBottomOnly ? 4 : 5) + '">\
+	}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="' + (bGrandTotalAtBottomOnly ? 4 : 5) + '"\
+			fixedTopRowCount="' + (bGrandTotalAtBottomOnly ? 0 : 1) + '"\
+			fixedBottomRowCount="1"/>\
+	</t:rowMode>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -22431,7 +22488,7 @@ sap.ui.define([
 	QUnit.test("Data Aggregation: grandTotalAtBottomOnly=true, just two rows", function (assert) {
 		var oModel = this.createAggregationModel(),
 			sView = '\
-<t:Table fixedBottomRowCount="1" id="table" rows="{path : \'/BusinessPartners\', parameters : {\
+<t:Table id="table" rows="{path : \'/BusinessPartners\', parameters : {\
 		$$aggregation : {\
 			aggregate : {\
 				SalesNumber : {grandTotal : true}\
@@ -22440,7 +22497,10 @@ sap.ui.define([
 			groupLevels : [\'Country\',\'Region\'],\
 			subtotalsAtBottomOnly : false\
 		}\
-	}}" visibleRowCount="2">\
+	}}">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="2" fixedBottomRowCount="1"/>\
+	</t:rowMode>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -22486,7 +22546,10 @@ sap.ui.define([
 			},\
 			groupLevels : [\'Country\']\
 		}\
-	}}" threshold="0" visibleRowCount="4">\
+	}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="4"/>\
+	</t:rowMode>\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -22597,7 +22660,10 @@ sap.ui.define([
 			groupLevels : [\'Country\', \'Region\', \'Segment\']\
 		},\
 		$orderby : \'RegionText desc\'\
-	}}" threshold="0" visibleRowCount="4">\
+	}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="4"/>\
+	</t:rowMode>\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -22824,7 +22890,10 @@ sap.ui.define([
 		},\
 		$orderby :\
 \'BestPublication/DraftAdministrativeData/InProcessByUser desc,BestFriend/Name,Address/City asc\'\
-	}}" threshold="0" visibleRowCount="6">\
+	}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="6"/>\
+	</t:rowMode>\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -22963,7 +23032,10 @@ sap.ui.define([
 			groupLevels : [\'Region\'],\
 			subtotalsAtBottomOnly : false\
 		}\
-	}}" threshold="0" visibleRowCount="3">\
+	}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -23092,7 +23164,10 @@ sap.ui.define([
 			},\
 			groupLevels : [\'Country\', \'Region\']\
 		}\
-	}}" threshold="0" visibleRowCount="8">\
+	}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="8"/>\
+	</t:rowMode>\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -23264,7 +23339,10 @@ sap.ui.define([
 			},\
 			groupLevels : [\'Country\']\
 		}\
-	}}" threshold="0" visibleRowCount="4">\
+	}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="4"/>\
+	</t:rowMode>\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -23422,7 +23500,7 @@ sap.ui.define([
 				oTable,
 				sView = '\
 <Text id="count" text="{$count}"/>\
-<t:Table fixedRowCount="1" firstVisibleRow="1" id="table" rows="{\
+<t:Table firstVisibleRow="1" id="table" rows="{\
 			path : \'/BusinessPartners\',\
 			parameters : {\
 				$$aggregation : {\
@@ -23438,7 +23516,10 @@ sap.ui.define([
 				$orderby : \'Region desc\'\
 			},\
 			filters : {path : \'AmountPerSale\', operator : \'GT\', value1 : 99}}"\
-		threshold="0" visibleRowCount="5">\
+		threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="5" fixedTopRowCount="1"/>\
+	</t:rowMode>\
 	<Text id="country" text="{Country}"/>\
 	<Text id="region" text="{Region}"/>\
 	<Text id="salesNumber" text="{SalesNumber}"/>\
@@ -23526,7 +23607,7 @@ sap.ui.define([
 				],
 				sView = '\
 <Text id="count" text="{$count}"/>\
-<t:Table fixedRowCount="0" firstVisibleRow="1" id="table" rows="{\
+<t:Table firstVisibleRow="1" id="table" rows="{\
 			path : \'/BusinessPartners\',\
 			parameters : {\
 				$$aggregation : {\
@@ -23542,7 +23623,10 @@ sap.ui.define([
 				$orderby : \'Region desc\'\
 			},\
 			filters : {path : \'AmountPerSale\', operator : \'GT\', value1 : 99}}"\
-		threshold="0" visibleRowCount="5">\
+		threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="5"/>\
+	</t:rowMode>\
 	<Text id="country" text="{Country}"/>\
 	<Text id="region" text="{Region}"/>\
 	<Text id="salesNumber" text="{SalesNumber}"/>\
@@ -23630,7 +23714,10 @@ sap.ui.define([
 				$orderby : \'SalesAmountSum asc\'\
 			},\
 			filters : {path : \'AmountPerSale\', operator : \'GT\', value1 : 99}}"\
-		threshold="0" visibleRowCount="5">\
+		threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="5"/>\
+	</t:rowMode>\
 	<Text id="region" text="{Region}"/>\
 	<Text id="salesNumber" text="{SalesNumber}"/>\
 	<Text id="salesAmountSum" text="{= %{SalesAmountSum} }"/>\
@@ -24107,7 +24194,10 @@ sap.ui.define([
 				}\
 			},\
 			$count : ' + bCount + '\
-		}}" threshold="0" visibleRowCount="1">\
+		}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="1"/>\
+	</t:rowMode>\
 	<Text id="grossAmount" text="{= %{GrossAmount}}"/>\
 </t:Table>',
 				that = this;
@@ -24193,7 +24283,10 @@ sap.ui.define([
 			$orderby : \'Country asc,Region,SalesNumber desc\'\
 		},\
 		filters : {path : \'Name\', operator : \'EQ\', value1 : \'Foo\'}\
-	}" threshold="0" visibleRowCount="3">\
+	}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -24620,7 +24713,10 @@ sap.ui.define([
 				hierarchyQualifier : \'OrgChart\'\
 			},\
 			$count : true\
-		}}" threshold="0" visibleRowCount="3">\
+		}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text text="{= %{@$ui5.node.level} }"/>\
 	<Text text="{BestFriend/Name}"/>\
@@ -25192,7 +25288,10 @@ sap.ui.define([
 				expandTo : 2,\
 				hierarchyQualifier : \'OrgChart\'\
 			}\
-		}}" threshold="0" visibleRowCount="2">\
+		}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="2"/>\
+	</t:rowMode>\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text text="{= %{@$ui5.node.level} }"/>\
 	<Text text="{ArtistID}"/>\
@@ -25410,7 +25509,10 @@ sap.ui.define([
 			$$aggregation : {\
 				hierarchyQualifier : \'OrgChart\'\
 			}\
-		}}" threshold="0" visibleRowCount="2">\
+		}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="2"/>\
+	</t:rowMode>\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text text="{= %{@$ui5.node.level} }"/>\
 	<Text text="{ID}"/>\
@@ -25638,7 +25740,10 @@ sap.ui.define([
 			$$patchWithoutSideEffects : true,\
 			$count : true,\
 			$orderby : \'AGE desc\'\
-		}}" threshold="0" visibleRowCount="3">\
+		}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text text="{= %{@$ui5.node.level} }"/>\
 	<Text text="{ID}"/>\
@@ -26253,7 +26358,10 @@ sap.ui.define([
 				expandTo : 3,\
 				hierarchyQualifier : \'OrgChart\'\
 			}\
-		}}" threshold="0" visibleRowCount="5">\
+		}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="5"/>\
+	</t:rowMode>\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text text="{= %{@$ui5.node.level} }"/>\
 	<Text text="{ID}"/>\
@@ -26445,7 +26553,10 @@ sap.ui.define([
 				expandTo : 4,\
 				hierarchyQualifier : \'OrgChart\'\
 			}\
-		}}" threshold="0" visibleRowCount="5">\
+		}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="5"/>\
+	</t:rowMode>\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text text="{= %{@$ui5.node.level} }"/>\
 	<Text text="{ID}"/>\
@@ -26978,7 +27089,10 @@ sap.ui.define([
 				expandTo : 3,\
 				hierarchyQualifier : \'OrgChart\'\
 			}\
-		}}" threshold="0" visibleRowCount="4">\
+		}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="4"/>\
+	</t:rowMode>\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text text="{= %{@$ui5.node.level} }"/>\
 	<Text text="{ID}"/>\
@@ -27193,7 +27307,10 @@ sap.ui.define([
 				expandTo : 2,\
 				hierarchyQualifier : \'OrgChart\'\
 			}\
-		}}" threshold="0" visibleRowCount="4">\
+		}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="4"/>\
+	</t:rowMode>\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text text="{= %{@$ui5.node.level} }"/>\
 	<Text text="{ID}"/>\
@@ -27385,7 +27502,10 @@ sap.ui.define([
 			$$aggregation : {\
 				hierarchyQualifier : \'OrgChart\'\
 			}\
-		}}" threshold="0" visibleRowCount="2">\
+		}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="2"/>\
+	</t:rowMode>\
 	<Text text="{ID}"/>\
 </t:Table>',
 			that = this;
@@ -27547,7 +27667,10 @@ sap.ui.define([
 			$$aggregation : {
 				hierarchyQualifier : 'OrgChart'
 			}
-		}}" threshold="0" visibleRowCount="3" >
+		}}" threshold="0">
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text text="{ID}"/>
@@ -28162,7 +28285,10 @@ sap.ui.define([
 			$$aggregation : {
 				hierarchyQualifier : 'OrgChart'
 			}
-		}}" threshold="0" visibleRowCount="3">
+		}}" threshold="0">
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text id="name" text="{Name}"/>
@@ -28377,7 +28503,10 @@ sap.ui.define([
 			$$aggregation : {
 				hierarchyQualifier : 'OrgChart'
 			}
-		}}" threshold="0" visibleRowCount="3">
+		}}" threshold="0">
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text id="id" text="{ArtistID}"/>\
@@ -28879,7 +29008,10 @@ sap.ui.define([
 			$filter : \'GrossAmount lt 42\',\
 			$orderby : \'LifecycleStatus desc\'\
 ' + (i === 0 ? ",$apply : 'groupby((LifecycleStatus),aggregate(GrossAmount))'" : "") + '\
-		}}" threshold="0" visibleRowCount="4">\
+		}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="4"/>\
+	</t:rowMode>\
 	<Text id="lifecycleStatus" text="{LifecycleStatus}"/>\
 	<Text id="grossAmount" text="{GrossAmount}"/>\
 </t:Table>',
@@ -28973,7 +29105,10 @@ sap.ui.define([
 			parameters : {$count : true},\
 			filters : {path : \'AGE\', operator : \'GE\', value1 : 30},\
 			sorter : {path : \'AGE\'}\
-		}" threshold="0" visibleRowCount="3">\
+		}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="text" text="{Name}"/>\
 	<Text id="age" text="{AGE}"/>\
 </t:Table>',
@@ -33819,7 +33954,10 @@ sap.ui.define([
 				rows="{path : \'_Publication\', parameters : {$count : true,\
 					$filter : \'CurrencyCode eq \\\'EUR\\\'\', $orderby : \'PublicationID\',\
 					$$ownRequest : true}}"\
-				threshold="0" visibleRowCount="2">\
+				threshold="0">\
+			<t:rowMode>\
+				<trm:Fixed rowCount="2"/>\
+			</t:rowMode>\
 			<Input id="price" value="{Price}"/>\
 			<Text id="currency" text="{CurrencyCode}"/>\
 			<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}"/>\
@@ -34218,7 +34356,10 @@ sap.ui.define([
 			}),
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{/Artists(\'42\')/_Publication}" threshold="0" visibleRowCount="2">\
+<t:Table id="table" rows="{/Artists(\'42\')/_Publication}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="2"/>\
+	</t:rowMode>\
 	<Text id="id" text="{PublicationID}"/>\
 	<Text id="price" text="{Price}"/>\
 </t:Table>',
@@ -39386,7 +39527,10 @@ sap.ui.define([
 			oTable,
 			oTableBinding,
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="2">\
+<t:Table id="table" rows="{/SalesOrderList}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="2"/>\
+	</t:rowMode>\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -40500,7 +40644,10 @@ sap.ui.define([
 		var oListBinding,
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{/EMPLOYEES}" threshold="0" visibleRowCount="3">\
+<t:Table id="table" rows="{/EMPLOYEES}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="text" text="{Name}"/>\
 </t:Table>',
 			that = this;
@@ -40591,7 +40738,10 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-2018
 	QUnit.test("Server-driven paging with t:Table: do not read prefetch", function (assert) {
 		var sView = '\
-<t:Table id="table" rows="{/EMPLOYEES}" visibleRowCount="3">\
+<t:Table id="table" rows="{/EMPLOYEES}">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="text" text="{Name}"/>\
 </t:Table>';
 
@@ -48268,8 +48418,10 @@ sap.ui.define([
 			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{parameters : {$count : true}, path : \'/TEAMS\'}" threshold="0"\
-	visibleRowCount="3">\
+<t:Table id="table" rows="{parameters : {$count : true}, path : \'/TEAMS\'}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="id" text="{Team_Id}"/>\
 	<Text id="name" text="{Name}"/>\
 </t:Table>',
@@ -48514,14 +48666,20 @@ sap.ui.define([
 			sView = bRelative ? '\
 <FlexBox binding="{/Departments(Sector=\'EMEA\',ID=\'UI5\')}" id="objectPage">\
 	<FlexBox binding="{}">\
-		<t:Table id="table" threshold="0" visibleRowCount="4"\
+		<t:Table id="table" threshold="0"\
 			rows="{parameters : {$$ownRequest : true}, path : \'DEPARTMENT_2_TEAMS\'}">\
+			<t:rowMode>\
+				<trm:Fixed rowCount="4"/>\
+			</t:rowMode>\
 			<Text id="id" text="{Team_Id}"/>\
 			<Text id="name" text="{Name}"/>\
 		</t:Table>\
 	</FlexBox>\
 </FlexBox>' : '\
-<t:Table id="table" rows="{/TEAMS}" threshold="0" visibleRowCount="4">\
+<t:Table id="table" rows="{/TEAMS}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="4"/>\
+	</t:rowMode>\
 	<Text id="id" text="{Team_Id}"/>\
 	<Text id="name" text="{Name}"/>\
 </t:Table>',
@@ -48748,7 +48906,10 @@ sap.ui.define([
 			},
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<t:Table id="table" rows="{/TEAMS}" threshold="0" visibleRowCount="3">\
+<t:Table id="table" rows="{/TEAMS}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="3"/>\
+	</t:rowMode>\
 	<Text id="id" text="{Team_Id}"/>\
 	<Text id="memberCount" text="{MEMBER_COUNT}"/>\
 </t:Table>\
@@ -49086,7 +49247,10 @@ sap.ui.define([
 			// Note: w/o a UI on top, ODLB#destroyLater behaves differently --> see next test
 			sView = '\
 <t:Table id="table" rows="{parameters : {$filter : \'MEMBER_COUNT gt 10\'}, path : \'/TEAMS\'}"\
-		threshold="0" visibleRowCount="1">\
+		threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="1"/>\
+	</t:rowMode>\
 	<Text id="id" text="{Team_Id}"/>\
 	<Text id="memberCount" text="{MEMBER_COUNT}"/>\
 </t:Table>',
@@ -49284,7 +49448,10 @@ sap.ui.define([
 			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			// Note: threshold is either 0 or at least visibleRowCount
 			sView = '\
-<t:Table id="table" rows="{/TEAMS}" threshold="0" visibleRowCount="5">\
+<t:Table id="table" rows="{/TEAMS}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="5"/>\
+	</t:rowMode>\
 	<Text id="id" text="{Team_Id}"/>\
 	<Text id="name" text="{Name}"/>\
 </t:Table>',
@@ -49471,8 +49638,10 @@ sap.ui.define([
 			// Note: threshold is either 0 or at least visibleRowCount
 			sView = '\
 <Text id="count" text="{headerContext>$count}"/>\
-<t:Table id="table" rows="{path : \'/TEAMS\', parameters : {$count : true}}" threshold="0"\
-		visibleRowCount="5">\
+<t:Table id="table" rows="{path : \'/TEAMS\', parameters : {$count : true}}" threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="5"/>\
+	</t:rowMode>\
 	<Text id="id" text="{Team_Id}"/>\
 	<Text id="name" text="{Name}"/>\
 </t:Table>',
@@ -49747,7 +49916,10 @@ sap.ui.define([
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderList}" threshold="2" visibleRowCount="2">\
+<t:Table id="table" rows="{/SalesOrderList}" threshold="2">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="2"/>\
+	</t:rowMode>\
 	<Text id="salesOrderID" text="{SalesOrderID}"/>\
 	<Input id="grossAmount" value="{GrossAmount}"/>\
 </t:Table>',
@@ -53316,7 +53488,7 @@ sap.ui.define([
 	// modify internal states of the binding. Calling ODLB#getLength afterwards works as expected.
 	//
 	// Simulate a possible infinite loop here.
-	// If a t:Table (with MDCTable wrapper) uses VisibleRowCountMode=Auto, then there is a "change"
+	// If a t:Table (with MDCTable wrapper) uses rowMode=Auto, then there is a "change"
 	// listener in RowMode#updateTable. It calls ODLB#getContexts (which calls fetchContexts ->
 	// createContexts -> modifies bLengthFinal) and fires a "rowsUpdated" event, where another
 	// listener in MDCTable#_handleUpdateFinished reacts on. That listener calls
@@ -53330,7 +53502,10 @@ sap.ui.define([
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" rows="{path: \'/SalesOrderList\', parameters: {$count : true}}"\
-		threshold="0" visibleRowCount="4">\
+		threshold="0">\
+	<t:rowMode>\
+		<trm:Fixed rowCount="4"/>\
+	</t:rowMode>\
 	<Text id="salesOrderID" text="{SalesOrderID}"/>\
 	<Input id="grossAmount" value="{GrossAmount}"/>\
 </t:Table>',
@@ -53414,7 +53589,10 @@ sap.ui.define([
 		id="form">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<t:Table id="table" rows="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}"\
-			 threshold="0" visibleRowCount="2">\
+			 threshold="0">\
+		<t:rowMode>\
+			<trm:Fixed rowCount="2"/>\
+		</t:rowMode>\
 		<Text id="itemPosition" text="{ItemPosition}"/>\
 		<Text id="quantity" text="{Quantity}"/>\
 	</t:Table>\

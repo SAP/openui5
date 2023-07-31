@@ -2,32 +2,59 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/table/rowmodes/Interactive",
+	"sap/ui/table/qunit/rowmodes/sets/FixedRowHeight",
+	"sap/ui/table/qunit/rowmodes/sets/RowCountConstraints",
+	"sap/ui/table/qunit/rowmodes/sets/RowsUpdated",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/RowAction",
-	"sap/ui/table/plugins/PluginBase",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/table/library"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/thirdparty/jquery"
 ], function(
-	TableQUnitUtils, InteractiveRowMode, Table, Column, RowAction, PluginBase, TableUtils, library
+	TableQUnitUtils,
+	FixedRowHeightTest,
+	RowCountConstraintsTest,
+	RowsUpdatedTest,
+	Table,
+	Column,
+	RowAction,
+	TableUtils,
+	Core,
+	qutils,
+	jQuery
 ) {
 	"use strict";
 
-	var VisibleRowCountMode = library.VisibleRowCountMode;
 	var HeightTestControl = TableQUnitUtils.HeightTestControl;
 	var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 
+	TableQUnitUtils.setDefaultSettings({
+		rowMode: {Type: "sap.ui.table.rowmodes.Interactive"},
+		rows: {path: "/"}
+	});
+
+	/**
+	 * @deprecated As of version 1.119
+	 */
 	QUnit.module("Legacy support", {
+		before: function() {
+			this.mDefaultSettings = TableQUnitUtils.getDefaultSettings();
+			TableQUnitUtils.setDefaultSettings();
+		},
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
-				visibleRowCountMode: VisibleRowCountMode.Interactive,
+				visibleRowCountMode: "Interactive",
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 			});
 		},
 		afterEach: function() {
 			this.oTable.destroy();
+		},
+		after: function() {
+			TableQUnitUtils.setDefaultSettings(this.mDefaultSettings);
 		}
 	});
 
@@ -38,7 +65,7 @@ sap.ui.define([
 
 	QUnit.test("Property getters", function(assert) {
 		var oTable = TableQUnitUtils.createTable({
-			visibleRowCountMode: VisibleRowCountMode.Interactive,
+			visibleRowCountMode: "Interactive",
 			visibleRowCount: 5,
 			fixedRowCount: 1,
 			fixedBottomRowCount: 2,
@@ -170,138 +197,10 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Row height", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
-				rowMode: new InteractiveRowMode(),
-				columns: [
-					new Column({template: new HeightTestControl({height: "1px"})}),
-					new Column({template: new HeightTestControl({height: "1px"})})
-				],
-				fixedColumnCount: 1,
-				rowActionCount: 1,
-				rowActionTemplate: new RowAction(),
-				rows: {path: "/"},
-				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
-			});
-		},
-		afterEach: function() {
-			TableQUnitUtils.setDensity(this.oTable, "sapUiSizeCozy");
-			this.oTable.destroy();
-		}
-	});
-
-	QUnit.test("Content", function(assert) {
-		var oTable = this.oTable;
-		var pSequence = Promise.resolve();
-
-		function test(mTestSettings) {
-			pSequence = pSequence.then(function() {
-				oTable.getRowMode().setRowContentHeight(mTestSettings.rowContentHeight || 0);
-				oTable.getColumns()[1].setTemplate(new HeightTestControl({height: (mTestSettings.templateHeight || 1) + "px"}));
-				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
-
-				return oTable.qunit.whenRenderingFinished();
-
-			}).then(function() {
-				TableQUnitUtils.assertRowHeights(assert, oTable, mTestSettings);
-			});
-		}
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Default height",
-				density: sDensity,
-				expectedHeight: TableUtils.DefaultRowHeight[sDensity]
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Default height; With large content",
-				density: sDensity,
-				templateHeight: TableUtils.DefaultRowHeight[sDensity] * 2,
-				expectedHeight: TableUtils.DefaultRowHeight[sDensity]
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Less than default",
-				density: sDensity,
-				rowContentHeight: 20,
-				expectedHeight: 21
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Less than default; With large content",
-				density: sDensity,
-				rowContentHeight: 20,
-				templateHeight: 100,
-				expectedHeight: 21
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Greater than default",
-				density: sDensity,
-				rowContentHeight: 100,
-				expectedHeight: 101
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Greater than default; With large content",
-				density: sDensity,
-				rowContentHeight: 100,
-				templateHeight: 120,
-				expectedHeight: 101
-			});
-		});
-
-		return pSequence;
-	});
-
-	QUnit.test("Header", function(assert) {
-		var oTable = this.oTable;
-		var pSequence = Promise.resolve();
-
-		function test(mTestSettings) {
-			pSequence = pSequence.then(function() {
-				oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
-				oTable.getRowMode().setRowContentHeight(mTestSettings.rowContentHeight || 0);
-				oTable.getColumns()[1].setLabel(new HeightTestControl({height: (mTestSettings.labelHeight || 1) + "px"}));
-				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
-
-				return oTable.qunit.whenRenderingFinished();
-
-			}).then(function() {
-				TableQUnitUtils.assertColumnHeaderHeights(assert, oTable, mTestSettings);
-			});
-		}
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Row content height should not apply to header rows",
-				density: sDensity,
-				rowContentHeight: 55,
-				expectedHeight: TableUtils.DefaultRowHeight[sDensity === "sapUiSizeCondensed" ? "sapUiSizeCompact" : sDensity]
-			});
-		});
-
-		return pSequence;
-	});
-
 	QUnit.module("Get contexts", {
 		beforeEach: function() {
 			this.oGetContextsSpy = sinon.spy(Table.prototype, "_getContexts");
 			this.oTable = TableQUnitUtils.createTable({
-				rowMode: new InteractiveRowMode(),
-				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
 			});
 		},
@@ -362,19 +261,10 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Row count constraints", {
-		before: function() {
-			this.TestPlugin = PluginBase.extend("sap.ui.table.plugins.test.Plugin");
-		},
+	QUnit.module("Resize", {
 		beforeEach: function() {
-			this.oPlugin = new this.TestPlugin();
-			this.oRowMode = new InteractiveRowMode();
 			this.oTable = TableQUnitUtils.createTable({
-				dependents: [this.oPlugin],
-				rowMode: this.oRowMode,
-				rows: {path: "/"},
-				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
-				columns: [TableQUnitUtils.createTextColumn()]
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
 			});
 		},
 		afterEach: function() {
@@ -382,15 +272,52 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Force fixed rows", function(assert) {
-		this.oPlugin.setRowCountConstraints({fixedTop: true, fixedBottom: true});
+	QUnit.test("D&D Resizer", function(assert) {
+		const fnTestAdaptations = (bDuringResize) => {
+			assert.equal(this.oTable.getDomRef("rzoverlay") != null, bDuringResize,
+				"The handle to resize overlay is" + (bDuringResize ? "" : " not") + " visible");
+			assert.equal(this.oTable.getDomRef("ghost") != null, bDuringResize,
+				"The handle to resize ghost is" + (bDuringResize ? "" : " not") + " visible");
 
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			TableQUnitUtils.assertRenderedRows(assert, this.oTable, 1, 8, 1);
-		}.bind(this));
+			var oEvent = jQuery.Event({type: "selectstart"});
+			oEvent.target = this.oTable.getDomRef();
+			$Table.trigger(oEvent);
+			assert.ok(oEvent.isDefaultPrevented() && bDuringResize || !oEvent.isDefaultPrevented() && !bDuringResize,
+				"Prevent Default of selectstart event");
+			assert.ok(oEvent.isPropagationStopped() && bDuringResize || !oEvent.isPropagationStopped() && !bDuringResize,
+				"Stopped Propagation of selectstart event");
+			var sUnselectable = jQuery(document.body).attr("unselectable") || "off";
+			assert.ok(sUnselectable == (bDuringResize ? "on" : "off"), "Text Selection switched " + (bDuringResize ? "off" : "on"));
+		};
+
+		var $Table = this.oTable.$();
+		var $Resizer = $Table.find(".sapUiTableHeightResizer");
+		var iInitialHeight = $Table.height();
+		var iY = $Resizer.offset().top;
+
+		assert.equal($Resizer.length, 1, "The handle to resize the table is visible");
+		assert.equal(this.oTable._getRowCounts().count, 10, "Initial visible rows");
+		fnTestAdaptations(false);
+
+		qutils.triggerMouseEvent(this.oTable.$("sb"), "mousedown", 0, 0, 10, iY, 0);
+		for (var i = 0; i < 10; i++) {
+			iY += 10;
+			qutils.triggerMouseEvent($Table, "mousemove", 0, 0, 10, iY, 0);
+			if (i == 5) { // Just check somewhere in between
+				fnTestAdaptations(true);
+			}
+		}
+		qutils.triggerMouseEvent($Table, "mouseup", 0, 0, 10, iY + 10, 0);
+		// resized table by 110px, in cozy mode this allows 2 rows to be added
+		assert.equal(this.oTable._getRowCounts().count, 12, "Visible rows after resize");
+		Core.applyChanges();
+		assert.ok(iInitialHeight < this.oTable.$().height(), "Height of the table increased");
+		fnTestAdaptations(false);
 	});
 
-	QUnit.test("Force fixed rows if row count too low", function(assert) {
+	FixedRowHeightTest.registerTo(QUnit);
+
+	RowCountConstraintsTest.test("Force fixed rows if row count too low", function(assert) {
 		this.oRowMode.setRowCount(1);
 		this.oRowMode.setMinRowCount(1);
 		this.oPlugin.setRowCountConstraints({fixedTop: true, fixedBottom: true});
@@ -400,27 +327,6 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Disable fixed rows", function(assert) {
-		this.oRowMode.setFixedTopRowCount(2);
-		this.oRowMode.setFixedBottomRowCount(2);
-		this.oPlugin.setRowCountConstraints({fixedTop: false, fixedBottom: false});
-
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			TableQUnitUtils.assertRenderedRows(assert, this.oTable, 0, 10, 0);
-		}.bind(this));
-	});
-
-	QUnit.test("Change constraints", function(assert) {
-		var that = this;
-
-		this.oRowMode.setFixedTopRowCount(2);
-		this.oRowMode.setFixedBottomRowCount(2);
-		this.oPlugin.setRowCountConstraints({fixedTop: false, fixedBottom: false});
-
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			that.oPlugin.setRowCountConstraints({fixedTop: false});
-		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			TableQUnitUtils.assertRenderedRows(assert, that.oTable, 0, 8, 2);
-		});
-	});
+	RowCountConstraintsTest.registerTo(QUnit);
+	RowsUpdatedTest.registerTo(QUnit);
 });

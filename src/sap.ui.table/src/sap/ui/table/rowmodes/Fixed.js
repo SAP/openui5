@@ -18,10 +18,11 @@ sap.ui.define([
 	 *
 	 * @class
 	 * A fixed number of rows is displayed in the table.
-	 * @extends module:sap/ui/table/rowmodes/RowMode
+	 * @extends sap.ui.table.rowmodes.RowMode
 	 * @constructor
-	 * @alias module:sap/ui/table/rowmodes/Fixed
-	 * @private
+	 * @alias sap.ui.table.rowmodes.Fixed
+	 * @since 1.119
+	 * @public
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -59,6 +60,9 @@ sap.ui.define([
 			}
 		},
 		constructor: function(sId) {
+			/**
+			 * @deprecated As of version 1.119
+			 */
 			Object.defineProperty(this, "bLegacy", {
 				value: typeof sId === "boolean" ? sId : false
 			});
@@ -90,6 +94,9 @@ sap.ui.define([
 	};
 
 	FixedRowMode.prototype.getRowCount = function() {
+		/**
+		 * @deprecated As of version 1.119
+		 */
 		if (this.bLegacy) {
 			var oTable = this.getTable();
 			return oTable ? oTable.getVisibleRowCount() : 0;
@@ -99,6 +106,9 @@ sap.ui.define([
 	};
 
 	FixedRowMode.prototype.getFixedTopRowCount = function() {
+		/**
+		 * @deprecated As of version 1.119
+		 */
 		if (this.bLegacy) {
 			var oTable = this.getTable();
 			return oTable ? oTable.getFixedRowCount() : 0;
@@ -108,6 +118,9 @@ sap.ui.define([
 	};
 
 	FixedRowMode.prototype.getFixedBottomRowCount = function() {
+		/**
+		 * @deprecated As of version 1.119
+		 */
 		if (this.bLegacy) {
 			var oTable = this.getTable();
 			return oTable ? oTable.getFixedBottomRowCount() : 0;
@@ -117,6 +130,9 @@ sap.ui.define([
 	};
 
 	FixedRowMode.prototype.getRowContentHeight = function() {
+		/**
+		 * @deprecated As of Version 1.119
+		 */
 		if (this.bLegacy) {
 			var oTable = this.getTable();
 			return oTable ? oTable.getRowHeight() : 0;
@@ -186,11 +202,14 @@ sap.ui.define([
 	FixedRowMode.prototype.getRowContainerStyles = function() {
 		var sHeight = this.getComputedRowCounts().count * this.getBaseRowHeightOfTable() + "px";
 
+		/**
+		 * @deprecated As of version 1.119
+		 */
 		if (this.bLegacy && !TableUtils.isVariableRowHeightEnabled(this.getTable())) {
 			return {minHeight: sHeight};
-		} else {
-			return {height: sHeight};
 		}
+
+		return {height: sHeight};
 	};
 
 	FixedRowMode.prototype.renderRowStyles = function(oRM) {
@@ -204,6 +223,9 @@ sap.ui.define([
 	FixedRowMode.prototype.renderCellContentStyles = function(oRM) {
 		var iRowContentHeight = this.getRowContentHeight();
 
+		/**
+		 * @deprecated As of version 1.119
+		 */
 		if (this.bLegacy) {
 			return;
 		}

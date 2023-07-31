@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
-	"sap/ui/table/library",
 	"sap/m/Text",
 	"sap/m/Label",
 	"sap/ui/core/mvc/Controller",
@@ -12,10 +11,19 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Core",
 	"sap/ui/core/Fragment"
-], function(Table, Column, library, Text, Label, Controller, JSONModel, Measurement, Log, oCore, Fragment) {
+], function(
+	Table,
+	Column,
+	Text,
+	Label,
+	Controller,
+	JSONModel,
+	Measurement,
+	Log,
+	oCore,
+	Fragment
+) {
 	"use strict";
-
-	var VisibleRowCountMode = library.VisibleRowCountMode;
 
 	Measurement.setActive(false);
 	Log.setLevel(Log.Level.ERROR);
@@ -35,8 +43,7 @@ sap.ui.define([
 
 			if (!oSettings) {
 				oSettings = {
-					visibleRowCount: 10,
-					visibleRowCountMode: VisibleRowCountMode.Auto,
+					rowMode: {Type: "sap.ui.table.rowmodes.Auto"},
 					jsonModel: true,
 					testSequence: ["bindTable", "renderTable"],
 					dataLength: 200,
@@ -179,8 +186,7 @@ sap.ui.define([
 
 			this.createMark("CreateTableStart");
 			this.oTable = new Table({
-				visibleRowCount: oSettings.visibleRowCount,
-				visibleRowCountMode: oSettings.visibleRowCountMode,
+				rowMode: oSettings.rowMode,
 				columns: this.createColumns(oSettings.columnCount)
 			});
 			this.createMeasure("Table creation", "CreateTableStart");

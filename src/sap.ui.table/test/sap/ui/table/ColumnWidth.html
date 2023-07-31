@@ -37,10 +37,12 @@
 		editable: false,
 		selectionMode: sap.ui.table.SelectionMode.MultiToggle,
 		selectionBehavior: sap.ui.table.SelectionBehavior.RowSelector,
-		visibleRowCount: 7,
+		rowMode: new sap.ui.table.rowmodes.Fixed({
+			rowCount: 7,
+			fixedTopRowCount: 1,
+			fixedBottomRowCount: 1
+		}),
 		fixedColumnCount: 2,
-		fixedRowCount: 1,
-		fixedBottomRowCount: 1,
 		footer: new sap.m.Toolbar({content: aFooterControls})
 	});
 

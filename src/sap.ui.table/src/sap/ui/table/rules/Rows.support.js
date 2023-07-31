@@ -135,7 +135,7 @@ sap.ui.define([
 	});
 
 	/*
-	 * Checks the configuration of the sap.f.DynamicPage. If the DynamicPage contains a table with <code>visibleRowCountMode=Auto</code>, the
+	 * Checks the configuration of the sap.f.DynamicPage. If the DynamicPage contains a table with row mode <code>Auto</code>, the
 	 * <code>fitContent</code> property of the DynamicPage should be set to true, otherwise false.
 	 */
 	var oDynamicPageConfiguration = SupportHelper.normalizeRule({
@@ -144,7 +144,7 @@ sap.ui.define([
 		categories: [Categories.Usage],
 		title: "Table environment validation - 'sap.f.DynamicPage'",
 		description: "Verifies that the DynamicPage is configured correctly from the table's perspective.",
-		resolution: "If a table with visibleRowCountMode=Auto is placed inside a sap.f.DynamicPage, the fitContent property of the DynamicPage"
+		resolution: "If a table with row mode 'Auto' is placed inside a sap.f.DynamicPage, the fitContent property of the DynamicPage"
 					+ " should be set to true, otherwise false.",
 		resolutionurls: [
 			SupportHelper.createDocuRef("API Reference: sap.f.DynamicPage#getFitContent", "#/api/sap.f.DynamicPage/methods/getFitContent")

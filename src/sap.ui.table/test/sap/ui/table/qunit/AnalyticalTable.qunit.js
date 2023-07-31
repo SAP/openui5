@@ -1,7 +1,9 @@
+/*global QUnit,sinon*/
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/AnalyticalTable",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -16,9 +18,23 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/qunit/analytics/TBA_ServiceDocument", // provides mock data
 	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts" // provides mock data
-], function(TableQUnitUtils, AnalyticalTable, TableUtils, ODataModel, ODataModelV2, o4aFakeService,
-			TreeAutoExpandMode, AnalyticalColumn, Filter, FloatType, Row, library, TooltipBase, Core) {
-	/*global QUnit,sinon*/
+], function(
+	TableQUnitUtils,
+	AnalyticalTable,
+	FixedRowMode,
+	TableUtils,
+	ODataModel,
+	ODataModelV2,
+	o4aFakeService,
+	TreeAutoExpandMode,
+	AnalyticalColumn,
+	Filter,
+	FloatType,
+	Row,
+	library,
+	TooltipBase,
+	Core
+) {
 	"use strict";
 
 	// ************** Preparation Code **************
@@ -199,7 +215,6 @@ sap.ui.define([
 
 		var mParams = {
 			title: "AnalyticalTable",
-
 			columns: [
 				//dimensions + description texts
 				createColumn({grouped: true, name: "CostCenter"}),
@@ -212,8 +227,9 @@ sap.ui.define([
 				createColumn({summed: true, name: "ActualCosts"}),
 				createColumn({summed: true, name: "PlannedCosts"})
 			],
-
-			visibleRowCount: 20,
+			rowMode: new FixedRowMode({
+				rowCount: 20
+			}),
 			enableColumnReordering: true,
 			/**
 			 * @deprecated As of Version 1.117
@@ -276,12 +292,18 @@ sap.ui.define([
 		assert.equal(this.oTable.getShowOverlay(), true, "ShowOverlay set");
 	});
 
+	/**
+	 * @deprecated As of version 1.21.2
+	 */
 	QUnit.test("FixedRowCount", function(assert) {
 		assert.equal(this.oTable.getFixedRowCount(), 0, "Default fixedRowCount");
 		this.oTable.setFixedRowCount(5);
 		assert.equal(this.oTable.getFixedRowCount(), 0, "FixedRowCount cannot be changed");
 	});
 
+	/**
+	 * @deprecated As of version 1.21.2
+	 */
 	QUnit.test("FixedBottomRowCount", function(assert) {
 		var done = assert.async();
 

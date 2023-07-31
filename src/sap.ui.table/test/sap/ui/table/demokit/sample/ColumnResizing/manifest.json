@@ -1,13 +1,13 @@
 {
 	"sap.app": {
-		"id": "sap.ui.table.sample.Resizing",
+		"id": "sap.ui.table.sample.ColumnResizing",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.ui.table.sample.Resizing.View",
+			"viewName": "sap.ui.table.sample.ColumnResizing.View",
 			"type": "XML",
 			"async": true
 		},
