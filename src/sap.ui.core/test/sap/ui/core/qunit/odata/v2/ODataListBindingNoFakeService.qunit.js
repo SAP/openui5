@@ -190,8 +190,6 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	/** @deprecated As of version 1.102.0, reason OperationMode.Auto */
-	{operationMode : OperationMode.Auto, useFilterParams : false},
 	{operationMode : OperationMode.Client, useFilterParams : true},
 	{operationMode : OperationMode.Default, useFilterParams : true},
 	{operationMode : OperationMode.Server, useFilterParams : true}
@@ -231,6 +229,40 @@ sap.ui.define([
 		ODataListBinding.prototype._getLength.call(oBinding);
 	});
 });
+
+	//*********************************************************************************************
+	/** @deprecated As of version 1.102.0, reason OperationMode.Auto */
+	QUnit.test("_getLength: calls _addFilterQueryOption; operation mode=OperationMode.Auto", function (assert) {
+		var oModel = {read : function () {}},
+			oBinding = {
+				sCountMode : CountMode.Request,
+				oModel : oModel,
+				sOperationMode : OperationMode.Auto,
+				sPath : "/~Path",
+				_addFilterQueryOption : function () {},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("_addFilterQueryOption")
+			.withExactArgs([], false)
+			.callsFake(function (aParams) {
+				aParams.push("~filter"); // simulate _addFilterQueryOption implementation
+			});
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/~Path");
+
+		this.mock(oModel).expects("read").withExactArgs("/~Path/$count", {
+				canonicalRequest : undefined,
+				context : undefined,
+				error : sinon.match.func,
+				groupId : undefined,
+				success : sinon.match.func,
+				urlParameters : ["~filter"],
+				withCredentials : undefined
+			});
+
+		// code under test
+		ODataListBinding.prototype._getLength.call(oBinding);
+	});
 
 	//*********************************************************************************************
 [{
@@ -1701,8 +1733,10 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(ODataListBinding.prototype.getContexts.call(oBinding, 0, 2), []);
 	});
-	/** @deprecated As of version 1.102.0, reason OperationMode.Auto */
-	[CountMode.Request, CountMode.Both].forEach(function (sCountMode, i) {
+
+	//*********************************************************************************************
+/** @deprecated As of version 1.102.0, reason OperationMode.Auto */
+[CountMode.Request, CountMode.Both].forEach(function (sCountMode, i) {
 	QUnit.test("getContexts: return empty array; check OperationMode/CountMode; #" + i,
 			function (assert) {
 		var oBinding = {
