@@ -600,7 +600,6 @@ sap.ui.define([
 				"notifyContentDensityChanged",
 				//  - Control & App dev.
 				"getCurrentFocusedControlId",
-				"isMobile",
 				"getEventBus",
 				"byId", "byFieldGroupId",
 				//  - Libraries
@@ -639,6 +638,7 @@ sap.ui.define([
 				"includeLibraryTheme",
 
 				// @deprecated
+				"isMobile",
 				//  - Init & Plugins
 				"attachInitEvent",
 				"registerPlugin","unregisterPlugin",
@@ -2950,6 +2950,7 @@ sap.ui.define([
 	/**
 	 * Check if the script is running on mobile
 	 * @return {boolean} true or false
+	 * @deprecated As of version 1.118, use {@link sap.ui.Device.browser.mobile Device.browser.mobile} instead.
 	 * @public
 	 */
 	Core.prototype.isMobile = function() {
