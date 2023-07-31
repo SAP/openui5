@@ -33,6 +33,9 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			/**
+			 * @deprecated since 1.111
+			 */
 			ActionSelect: {
 				title: "Test Page for sap.m.ActionSelect",
 				sinon: {
