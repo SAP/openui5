@@ -3654,5 +3654,102 @@
         ]
       }
     ]
+  },
+  "1.71.58": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "3d8ec111e36a8890630def8162fb92c1803c4d7e",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSlider: Remove disallowed aria property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011628"
+          }
+        ]
+      },
+      {
+        "id": "0aa55d1532ef735285b66d37079ad54f136a828b",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: fixed JS error on IE browser caused by previous fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380092608"
+          }
+        ]
+      },
+      {
+        "id": "a1c83f109532dd05ccd17cf6be3b02905f5c0187",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default behavior on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006450822022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400004774092023"
+          }
+        ]
+      },
+      {
+        "id": "07fba221ab404ab924ad4133ea33f155e8fb376e",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004628532023"
+          }
+        ]
+      },
+      {
+        "id": "7d435b8e0412ca4c59a3c00959f522ba00ab003a",
+        "type": "FIX",
+        "text": " For redundant delimiter then status or attribute visibility set to false",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380079267"
+          }
+        ]
+      },
+      {
+        "id": "6313d3b4a3ede38cc98ede789042049cac337a6a",
+        "type": "FIX",
+        "text": " P13nFilterPanel: Exclude operations that are not supported are no longer visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004650782023"
+          }
+        ]
+      },
+      {
+        "id": "6fda71ffa516484393d800eace3dcf72792343c7",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: documentation extension",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004628532023"
+          }
+        ]
+      },
+      {
+        "id": "ef1a31c7c0a2a6007c91b025af2ee7cbbf85e3e1",
+        "type": "FIX",
+        "text": " sap.m.delegate.ValueStateMessage: Close Popup on Scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003182662023"
+          }
+        ]
+      }
+    ]
   }
 }

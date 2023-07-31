@@ -1478,5 +1478,21 @@
         ]
       }
     ]
+  },
+  "1.71.58": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "146f531d73a827ad8dfa03021dc451bdf5b2f78a",
+        "type": "FIX",
+        "text": " core.Popup: always use touch mode in mobile safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070009967"
+          }
+        ]
+      }
+    ]
   }
 }
