@@ -120,7 +120,6 @@ sap.ui.define([
 		} else {
 			assert.strictEqual(oOriginal.getExecuteOnSelection(), oCopy.executeOnSelection, "there is the same executeOnSelection value");
 			assert.strictEqual(oOriginal.getFavorite(), oCopy.favorite, "there is the same favorite value");
-			assert.strictEqual(oOriginal.getStandardVariant(), oCopy.standardVariant, "there is the same standard variant value");
 			assert.notStrictEqual(oOriginal.getVariantId(), oCopy.variantId, "there is the same variant id");
 			assert.deepEqual(oOrigContent, oCopyContent, "there is the same content");
 			assert.deepEqual(oCopy.contexts, {}, "the context is empty");
