@@ -21,6 +21,9 @@ sap.ui.define([
 	// shortcut for sap.m.FlexJustifyContent
 	var FlexJustifyContent = mLibrary.FlexJustifyContent;
 
+	// shortcut for sap.m.WrappingType
+	var WrappingType = mLibrary.WrappingType;
+
 	/**
 	 * Constructor for a new <code>FilterPanel</code>.
 	 *
@@ -157,7 +160,7 @@ sap.ui.define([
 
 	FilterPanel.prototype._createRowContainer = function(sText, sKey) {
 		// var sKey = oSelect._key;
-		var oLabel = new Label({text: sText, showColon: true, wrapping: true});
+		var oLabel = new Label({text: sText, showColon: true, wrapping: true, wrappingType: WrappingType.Hyphenated});
 		var oFieldBox = new VBox({
 			items:[oLabel.addStyleClass("sapUiTinyMarginBegin")]
 		});
