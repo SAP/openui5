@@ -10772,6 +10772,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 
+	/** @deprecated As of version 1.102.0, reason OperationMode.Auto */
 	//*********************************************************************************************
 	// Scenario: If operation mode auto and a threshold is set as binding parameter and a count
 	// request returns a count smaller than the threshold then this count is used as the $top
@@ -17732,9 +17733,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// restores the tree state for property and hierarchy changes, regardless of whether
 	// refreshAfterChange is true or false.
 	// JIRA: CPOUI5MODELS-958
-	// Scenario: To perform hierarchy changes both ODataModel#submitChanges and
-	// ODataTreeBinding#submitChanges can be used and both behave the same. For simple property
-	// changes via ODataModel#submitChanges a refresh/restoreTreeState is not needed.
+	// Scenario: To perform hierarchy changes ODataModel#submitChanges can be used. For simple property
+	// changes a refresh/restoreTreeState is not needed.
 	// JIRA: CPOUI5MODELS-745
 [false, true].forEach(function (bRefreshAfterChange) {
 	var sTitle = "ODataTreeBindingFlat: ODataModel#submitChanges for refreshAfterChange="
@@ -17877,15 +17877,15 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 });
+
 	/** @deprecated As of version 1.104.0 */
 	//*********************************************************************************************
 	// Scenario: A table using ODataTreeBindingFlat with restoreTreeStateAfterChange=true correctly
 	// restores the tree state for property and hierarchy changes, regardless of whether
 	// refreshAfterChange is true or false.
 	// JIRA: CPOUI5MODELS-958
-	// Scenario: To perform hierarchy changes both ODataModel#submitChanges and
-	// ODataTreeBinding#submitChanges can be used and both behave the same. For simple property
-	// changes via ODataModel#submitChanges a refresh/restoreTreeState is not needed.
+	// Scenario: To perform hierarchy changes ODataTreeBinding#submitChanges can be used. For simple property
+	// changes a refresh/restoreTreeState is needed.
 	// JIRA: CPOUI5MODELS-745
 [false, true].forEach(function (bRefreshAfterChange) {
 	var sTitle = "ODataTreeBindingFlat: ODataTreeBindingFlat#submitChanges for refreshAfterChange="
@@ -18051,13 +18051,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// restoreTreeStateAfterChange=false. After property / hierarchy changes have been submitted the
 	// binding gets refreshed.
 	// JIRA: CPOUI5MODELS-959
-	// Scenario: To perform hierarchy changes both ODataModel#submitChanges and
-	// ODataTreeBinding#submitChanges can be used and both behave the same. For simple property
-	// changes via ODataModel#submitChanges a refresh/restoreTreeState is not needed.
+	// Scenario: To perform hierarchy changes ODataModel#submitChanges can be used. For simple property
+	// changes a refresh/restoreTreeState is not needed.
 	// JIRA: CPOUI5MODELS-745
-[false, true].forEach(function (bSubmitOnModel) {
-	var sTitle = "ODataTreeBindingFlat: " + (bSubmitOnModel ? "ODataModel" : "ODataTreeBindingFlat")
-			+ "#submitChanges for refreshAfterChange=false and restoreTreeStateAfterChange=false";
+	var sTitle = "ODataTreeBindingFlat: ODataModel#submitChanges for refreshAfterChange=false and "
+			+ "restoreTreeStateAfterChange=false";
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding, oTable,
@@ -18116,9 +18114,164 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </t:TreeTable>',
 			that = this;
 
-		function fnSubmitChanges() {
-			(bSubmitOnModel ? oModel : oBinding).submitChanges();
-		}
+		this.expectHeadRequest()
+			.expectRequest({
+				batchNo : 1,
+				requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
+					+ "&$filter=HierarchyDistanceFromRoot le 0"
+			}, {
+				__count : "1",
+				results : [oNode100]
+			})
+			.expectValue("itemName", ["foo", "", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectRequest({
+					batchNo : 2,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
+						+ "&$filter=HierarchyParentNode eq '100'"
+				}, {
+					__count : "2",
+					results : [oNode200, oNode300]
+				})
+				.expectValue("itemName", ["bar", "baz"], 1);
+
+			oTable.expand(0);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oBinding = oTable.getBinding("rows");
+
+			that.expectRequest({
+					batchNo : 3,
+					method : "DELETE",
+					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"
+				}, NO_CONTENT)
+				.expectValue("itemName", "", 2)
+				.expectRequest({
+					batchNo : 4,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
+						+ "&$filter=HierarchyDistanceFromRoot le 0"
+				}, {
+					__count : "1",
+					results : [oNode100]
+				})
+				.expectValue("itemName", "", 1); // binding gets refreshed, no restore tree state
+
+			// code under test: hierarchy change
+			oBinding.removeContext(oTable.getContextByIndex(2));
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectRequest({
+					batchNo : 5,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
+						+ "&$filter=HierarchyParentNode eq '100'"
+				}, {
+					__count : "1",
+					results : [oNode200]
+				})
+				.expectValue("itemName", "bar", 1);
+
+			// manually expand the node again
+			oTable.expand(0);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("itemName", "bar: renamed", 1)
+				.expectRequest({
+					batchNo : 6,
+					data : {
+						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
+						ErhaOrderItemName : "bar: renamed"
+					},
+					key : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')",
+					method : "MERGE",
+					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"
+				}, NO_CONTENT);
+
+			// code under test: property change
+			oModel.setProperty("ErhaOrderItemName", "bar: renamed", oTable.getContextByIndex(1));
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	/** @deprecated As of version 1.104.0 */
+	//*********************************************************************************************
+	// Scenario: A table using ODataTreeBindingFlat with refreshAfterChange=false and
+	// restoreTreeStateAfterChange=false. After property / hierarchy changes have been submitted the
+	// binding gets refreshed.
+	// JIRA: CPOUI5MODELS-959
+	// Scenario: To perform hierarchy changes ODataTreeBinding#submitChanges can be used. For simple property
+	// changes a refresh/restoreTreeState is needed.
+	// JIRA: CPOUI5MODELS-745
+
+	var sTitle = "ODataTreeBindingFlat: ODataTreeBindingFlat#submitChanges for refreshAfterChange=false "
+			+ "and restoreTreeStateAfterChange=false";
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding, oTable,
+			oModel = createHierarchyMaintenanceModel({refreshAfterChange : false}),
+			oNode100 = {
+				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='100')"},
+				ErhaOrder : "1",
+				ErhaOrderItem : "100",
+				ErhaOrderItemName : "foo",
+				HierarchyNode : "100",
+				HierarchyParentNode : "",
+				HierarchyDescendantCount : 0,
+				HierarchyDistanceFromRoot : 0,
+				HierarchyDrillState : "collapsed",
+				HierarchyPreorderRank : 0,
+				HierarchySiblingRank : 0
+			},
+			oNode200 = {
+				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
+				ErhaOrder : "1",
+				ErhaOrderItem : "200",
+				ErhaOrderItemName : "bar",
+				HierarchyNode : "200",
+				HierarchyParentNode : "100",
+				HierarchyDescendantCount : 0,
+				HierarchyDistanceFromRoot : 1,
+				HierarchyDrillState : "leaf",
+				HierarchyPreorderRank : 0,
+				HierarchySiblingRank : 0
+			},
+			oNode300 = {
+				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"},
+				ErhaOrder : "1",
+				ErhaOrderItem : "300",
+				ErhaOrderItemName : "baz",
+				HierarchyNode : "300",
+				HierarchyParentNode : "100",
+				HierarchyDescendantCount : 0,
+				HierarchyDistanceFromRoot : 1,
+				HierarchyDrillState : "leaf",
+				HierarchyPreorderRank : 1,
+				HierarchySiblingRank : 1
+			},
+			sView = '\
+<t:TreeTable id="table"\
+		rows="{\
+			parameters : {\
+				countMode : \'Inline\',\
+				numberOfExpandedLevels : 0\
+			},\
+			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
+		}"\
+		visibleRowCount="3"\
+		visibleRowCountMode="Fixed">\
+	<Text id="itemName" text="{ErhaOrderItemName}" />\
+</t:TreeTable>',
+			that = this;
 
 		this.expectHeadRequest()
 			.expectRequest({
@@ -18168,7 +18321,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			// code under test: hierarchy change
 			oBinding.removeContext(oTable.getContextByIndex(2));
-			fnSubmitChanges();
+			oBinding.submitChanges();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -18201,7 +18354,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"
 				}, NO_CONTENT);
 
-			if (!bSubmitOnModel) {
 				that.expectRequest({
 						batchNo : 7,
 						requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
@@ -18212,26 +18364,22 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					})
 					// binding gets refreshed, no restore tree state
 					.expectValue("itemName", "", 1);
-			}
 
 			// code under test: property change
 			oModel.setProperty("ErhaOrderItemName", "bar: renamed", oTable.getContextByIndex(1));
-			fnSubmitChanges();
+			oBinding.submitChanges();
 
 			return that.waitForChanges(assert);
 		});
 	});
-});
 
 	//*********************************************************************************************
 	// Scenario: A table using ODataTreeBindingFlat with refreshAfterChange=true and
 	// restoreTreeStateAfterChange=false. After property / hierarchy changes have been submitted
-	// either via ODataModel#submitChanges or via ODataTreeBindingFlat#submitChanges the binding
-	// gets refreshed only once via <code>refreshAfterChange</code>.
+	// via ODataModel#submitChanges the binding gets refreshed only once via <code>refreshAfterChange</code>.
 	// JIRA: CPOUI5MODELS-970
-[false, true].forEach(function (bSubmitOnModel) {
-	var sTitle = "ODataTreeBindingFlat: " + (bSubmitOnModel ? "ODataModel" : "ODataTreeBindingFlat")
-			+ "#submitChanges for refreshAfterChange=true and restoreTreeStateAfterChange=false";
+	var sTitle = "ODataTreeBindingFlat: ODataModel#submitChanges for refreshAfterChange=true and "
+			+ "restoreTreeStateAfterChange=false";
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding, oTable,
@@ -18289,10 +18437,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
-
-		function fnSubmitChanges() {
-			(bSubmitOnModel ? oModel : oBinding).submitChanges();
-		}
 
 		this.expectHeadRequest()
 			.expectRequest({
@@ -18367,7 +18511,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// code under test: hierarchy change
 			oBinding.removeContext(oMoveContext);
 			oBinding.addContexts(oParentContext, [oMoveContext]);
-			fnSubmitChanges();
+			oModel.submitChanges();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -18412,12 +18556,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			// code under test: property change
 			oModel.setProperty("ErhaOrderItemName", "bar: renamed", oTable.getContextByIndex(1));
-			fnSubmitChanges();
+			oModel.submitChanges();
 
 			return that.waitForChanges(assert);
 		});
 	});
-});
 
 	//*********************************************************************************************
 	// Scenario: It has to be possible to change a property with Edm.Time type to a different value
