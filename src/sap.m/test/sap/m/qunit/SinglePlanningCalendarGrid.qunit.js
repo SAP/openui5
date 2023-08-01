@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	'sap/ui/unified/calendar/CalendarDate',
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/unified/DateTypeRange"
 ], function(
 	jQuery,
 	ResponsivePopover,
@@ -20,7 +21,8 @@ sap.ui.define([
 	KeyCodes,
 	CalendarDate,
 	oCore,
-	UI5Date
+	UI5Date,
+	DateTypeRange
 ) {
 	"use strict";
 
@@ -405,6 +407,19 @@ sap.ui.define([
 		assert.strictEqual(oGrid._oFormatAriaFullDayCell.oFormatOptions.pattern.indexOf("EEEE dd/MM/yyyy"), 0, "Full day cell Aria info pattern is correct (contains 'yyyy' instead of 'YYYY'");
 		assert.strictEqual(oGrid._getDateFormatter().oFormatOptions.pattern, "yyyyMMdd-HHmm", "Grid cell pattern is correct (contains 'yyyy' instead of 'YYYY'");
 
+	});
+
+	QUnit.test("Non working days helper method", function(assert) {
+		// Prepare
+		var oDate = UI5Date.getInstance(2018, 6, 2),
+			oGrid = new SinglePlanningCalendarGrid({
+			specialDates: [
+				new DateTypeRange({ type: "NonWorking", startDate: oDate})
+			]
+		});
+
+		// assert
+		assert.ok(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oDate)), "02.06.2018 is a non working day");
 	});
 
 	QUnit.module("Events");

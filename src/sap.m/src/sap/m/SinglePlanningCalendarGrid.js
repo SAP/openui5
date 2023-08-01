@@ -2347,6 +2347,16 @@ sap.ui.define([
 			return specialDates;
 		};
 
+		SinglePlanningCalendarGrid.prototype._isNonWorkingDay = function(oCalendarDate) {
+			return this._getSpecialDates().filter(function(oDateRange) {
+				return oDateRange.getType() === unifiedLibrary.CalendarDayType.NonWorking;
+			}).map(function(oDateRange) {
+				return CalendarDate.fromLocalJSDate(oDateRange.getStartDate());
+			}).some(function(oDate) {
+				return oDate.isSame(oCalendarDate);
+			});
+		};
+
 		function getResizeGhost() {
 			var $ghost = jQuery("<span></span>").addClass("sapUiCalAppResizeGhost");
 			$ghost.appendTo(document.body);

@@ -1096,6 +1096,16 @@ sap.ui.define([
 			return specialDates;
 		};
 
+		SinglePlanningCalendarMonthGrid.prototype._isNonWorkingDay = function(oCalendarDate) {
+			return this._getSpecialDates().filter(function(oDateRange) {
+				return oDateRange.getType() === unifiedLibrary.CalendarDayType.NonWorking;
+			}).map(function(oDateRange) {
+				return CalendarDate.fromLocalJSDate(oDateRange.getStartDate());
+			}).some(function(oDate) {
+				return oDate.isSame(oCalendarDate);
+			});
+		};
+
 		SinglePlanningCalendarMonthGrid.prototype.applyFocusInfo = function() {
 			// directly focus appointment part, if there is any selected
 			this._sSelectedAppointment && this._sSelectedAppointment.focus();
