@@ -1099,11 +1099,7 @@ sap.ui.define([
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.getChartTypeInfo = function (oChart) {
-        if (!this._getChart(oChart)) {
-            throw 'inner chart is not bound';
-        }
-
-        var sType = oChart.getChartType(),
+          var sType = oChart.getChartType(),
             oMDCResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc"),
             oChartResourceBundle = Core.getLibraryResourceBundle("sap.chart.messages");
 
@@ -1132,20 +1128,16 @@ sap.ui.define([
 
         if (this._getChart(oChart)) {
             var aAvailableChartTypes = this._getChart(oChart).getAvailableChartTypes().available;
+            var oChartResourceBundle = Core.getLibraryResourceBundle("sap.chart.messages");
 
-            if (aChartTypes) {
-
-                var oChartResourceBundle = Core.getLibraryResourceBundle("sap.chart.messages");
-
-                for (var i = 0; i < aAvailableChartTypes.length; i++) {
-                    var sType = aAvailableChartTypes[i].chart;
-                    aChartTypes.push({
-                        key: sType,
-                        icon: ChartTypeButton.mMatchingIcon[sType],
-                        text: oChartResourceBundle.getText("info/" + sType),
-                        selected: (sType == oChart.getChartType())
-                    });
-                }
+            for (var i = 0; i < aAvailableChartTypes.length; i++) {
+                var sType = aAvailableChartTypes[i].chart;
+                aChartTypes.push({
+                    key: sType,
+                    icon: ChartTypeButton.mMatchingIcon[sType],
+                    text: oChartResourceBundle.getText("info/" + sType),
+                    selected: (sType == oChart.getChartType())
+                });
             }
         }
 

@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/IllustratedMessage",
 	"sap/m/library",
 	"sap/base/util/merge",
-	"sap/ui/model/Filter"
-], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, CoreLibrary, mobileLibrary, IllustratedMessage, MLib, merge, Filter) {
+	"sap/ui/model/Filter",
+	"sap/ui/model/json/JSONModel"
+], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, CoreLibrary, mobileLibrary, IllustratedMessage, MLib, merge, Filter, JSONModel) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -38,19 +39,24 @@ sap.ui.define([
 					this.displayChartTypes(oEvent.getSource(), oChart);
 				}.bind(this),
 				id: oChart.getId() + "-btnChartType",
-				icon: '{$chart>/getChartTypeInfo/icon}',
-				tooltip: '{$chart>/getChartTypeInfo/text}',
-				text: '{$chart>/getChartTypeInfo/text}',
+				icon: '{$chart>/ChartTypeInfo/icon}',
+				tooltip: '{$chart>/ChartTypeInfo/text}',
+				text: '{$chart>/ChartTypeInfo/text}',
 				ariaHasPopup: HasPopup.ListBox
 			});
 			this.oChart = oChart;
 			OverflowToolbarButton.apply(this, [
 				mSettings
 			]);
-			this.setModel(this.oChartModel, "$chart");
 
-			this._oObserver = new ManagedObjectObserver(function() {
-				this.oChartModel.checkUpdate(true);
+			var oModel = new JSONModel();
+			oModel.setProperty("/ChartTypeInfo", this.oChart.getChartTypeInfo());
+			this.setModel(oModel, "$chart");
+
+			this._oObserver = new ManagedObjectObserver(function(oChange) {
+				if (oChange.name === "chartType") {
+					oModel.setProperty("/ChartTypeInfo", this.oChart.getChartTypeInfo());
+				}
 			}.bind(this));
 			this._oObserver.observe(this.oChart, {
 				aggregations: [
@@ -169,16 +175,16 @@ sap.ui.define([
 	 */
 	ChartTypeButton.prototype._createPopover = function(oChart) {
 		var oItemTemplate = new StandardListItem({
-			title: "{$chart>text}",
-			icon: "{$chart>icon}",
-			selected: "{$chart>selected}"
+			title: "{$chartTypes>text}",
+			icon: "{$chartTypes>icon}",
+			selected: "{$chartTypes>selected}"
 		});
 
 		var oList = new List({
 			mode: "SingleSelectMaster",
 			noData: new IllustratedMessage({title: oRb.getText("chart.NO_CHART_TYPES_AVAILABLE"), description: oRb.getText("chart.NO_CHART_TYPES_AVAILABLE_ACTION"),  illustrationType: MLib.IllustratedMessageType.AddDimensions}),
 			items: {
-				path: "$chart>/getAvailableChartTypes",
+				path: "$chartTypes>/AvailableChartTypes",
 				template: oItemTemplate
 			},
 			selectionChange: function(oEvent) {
@@ -240,7 +246,9 @@ sap.ui.define([
 			oPopover.addContent(oSearchField);
 		}
 
-		oPopover.setModel(this.oChartModel, "$chart");
+		var oModel = new JSONModel();
+		oModel.setProperty("/AvailableChartTypes", this.oChart.getAvailableChartTypes());
+		oPopover.setModel(oModel, "$chartTypes");
 
 		//Show header only in mobile scenarios
 		//still support screen reader while on desktops.
