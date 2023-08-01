@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/InvisibleText",
+	"sap/ui/core/dnd/DragDropInfo",
 	"sap/m/ListBase",
 	"sap/m/Table",
 	"sap/m/Column",
@@ -31,7 +32,7 @@ sap.ui.define([
 	"sap/m/RatingIndicator",
 	"sap/ui/core/Item",
 	"sap/m/TextArea"
-], function(Core, qutils, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, ListBase, Table, Column,
+], function(Core, qutils, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column,
 	 Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea) {
 	"use strict";
 
@@ -3786,5 +3787,28 @@ sap.ui.define([
 
 		qutils.triggerKeydown(document.activeElement, "TAB", true);
 		assert.equal(document.activeElement, oTable.getDomRef("before"), "Focus is left the table");
+	});
+
+	QUnit.test("Drag and Drop", function(assert) {
+		var done = assert.async();
+
+		this.oTable.addDragDropConfig(new DragDropInfo({
+			sourceAggregation: "items",
+			targetAggregation: "items",
+			dropPosition: "Between"
+		}));
+		Core.applyChanges();
+
+		var oCellDomRef = this.o1stItem.getDomRef("cell0");
+		qutils.triggerMouseEvent(this.o1stItem.getCells()[0].getDomRef(), "mousedown");
+		assert.notOk(oCellDomRef.getAttribute("tabindex"), "tabindex is removed on mousedown for the draggable row");
+
+		oCellDomRef.focus();
+		assert.equal(document.activeElement, this.o1stItem.getDomRef(), "focus is on the first row, not on the cell");
+
+		setTimeout(function() {
+			assert.equal(oCellDomRef.getAttribute("tabindex"), "-1", "tabindex is restored");
+			done();
+		});
 	});
 });
