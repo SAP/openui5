@@ -456,6 +456,10 @@ sap.ui.define([
 			this.hasDirtyChanges = true;
 
 			this.oToolbar.getControl("saveAsAdaptation").firePress();
+			this.oToolbar.attachSave(function(oEvent) {
+				assert.strictEqual(oEvent.sId, "save", "Dirty changes were saved");
+				oEvent.getParameter("callback")();
+			});
 
 			return new Promise(function(resolve) {
 				setTimeout(resolve, 0);
@@ -465,7 +469,33 @@ sap.ui.define([
 				assert.strictEqual(this.oShowMessageBoxStub.getCall(1).args[0], "confirm", "Migration Information is shown");
 				assert.strictEqual(this.oShowMessageBoxStub.getCall(2).args[0], "information", "Migration completed is shown");
 				assert.strictEqual(this.oOpenAddAdaptationDialogStub.callCount, 0, "Save as Dialog is not opened");
-				assert.ok(this.bRemovedAllCommands, "Reverted dirty changes");
+				assert.strictEqual(this.oMigrateStub.callCount, 1, "migrate is called");
+				assert.ok(this.sSwitchedToAdaptation, "switched adaptation");
+				assert.strictEqual(this.oOpenManageAdaptationDialog.callCount, 0, "Manage Dialog is opened (because it does not work after reload)");
+			}.bind(this));
+		});
+
+		QUnit.test("Given a migration is needed and there are dirty changes", function(assert) {
+			this.oCanMigrateStub.resolves(true);
+			this.oVersionsModel.setData({
+				backendDraft: false,
+				displayedVersion: "0"
+			});
+			this.oShowMessageBoxStub.resolves(MessageBox.Action.OK);
+			this.hasDirtyChanges = true;
+
+			this.oToolbar.getControl("saveAsAdaptation").firePress();
+			this.oToolbar.attachSave(function(oEvent) {
+				assert.strictEqual(oEvent.sId, "save", "Dirty changes were saved");
+				oEvent.getParameter("callback")();
+			});
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			}).then(function() {
+				assert.strictEqual(this.oShowMessageBoxStub.callCount, 2, "Some dialogs are show");
+				assert.strictEqual(this.oShowMessageBoxStub.getCall(0).args[0], "confirm", "Migration Information is shown");
+				assert.strictEqual(this.oShowMessageBoxStub.getCall(1).args[0], "information", "Migration completed is shown");
+				assert.strictEqual(this.oOpenAddAdaptationDialogStub.callCount, 0, "Save as Dialog is not opened");
 				assert.strictEqual(this.oMigrateStub.callCount, 1, "migrate is called");
 				assert.ok(this.sSwitchedToAdaptation, "switched adaptation");
 				assert.strictEqual(this.oOpenManageAdaptationDialog.callCount, 0, "Manage Dialog is opened (because it does not work after reload)");
