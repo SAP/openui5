@@ -1,24 +1,10 @@
-sap.ui.define(['sap/ui/core/UIComponent'],
-	function (UIComponent) {
-		"use strict";
-
-		var Component = UIComponent.extend("sap.m.tutorial.walkthrough.03.Component", {
-
-			metadata: {
-				config: {
-					sample: {
-						iframe: "webapp/index.html",
-						stretch: true,
-						files: [
-							"webapp/index.html",
-							"webapp/index.js"
-						]
-					}
-				}
-			}
-
-		});
-
-		return Component;
-
+sap.ui.define([
+	"sap/ui/core/UIComponent"
+], (UIComponent) => {
+	"use strict";
+	return UIComponent.extend("sap.m.tutorial.walkthrough.03.Component", {
+		metadata: {
+			manifest: "json"
+		}
 	});
+});

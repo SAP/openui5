@@ -2,21 +2,21 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>SAPUI5 Walkthrough</title>
+	<title>UI5 Walkthrough</title>
 	<script
 		id="sap-ui-bootstrap"
 		src="../../../../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_horizon"
-		data-sap-ui-resourceroots='{
-			"sap.ui.demo.walkthrough": "../"
-		}'
-		data-sap-ui-oninit="module:sap/ui/demo/walkthrough/test/initMockServer"
+		data-sap-ui-libs="sap.m"
 		data-sap-ui-compatVersion="edge"
-		data-sap-ui-async="true">
+		data-sap-ui-async="true"
+		data-sap-ui-onInit="module:ui5/walkthrough/test/initMockServer"
+		data-sap-ui-resourceroots='{
+			"ui5.walkthrough": "../"
+		}'>
 	</script>
 </head>
 <body class="sapUiBody" id="content">
-	<div data-sap-ui-component data-name="sap.ui.demo.walkthrough" data-id="container" data-settings='{"id" : "walkthrough"}'></div>
+	<div data-sap-ui-component data-name="ui5.walkthrough" data-id="container" data-settings='{"id" : "walkthrough"}'></div>
 </body>
 </html>

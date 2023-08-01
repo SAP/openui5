@@ -1,0 +1,18 @@
+{
+	"sap.app": {
+		"id": "sap.m.tutorial.walkthrough.01"
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"iframe": "webapp/index.html",
+				"files": [
+					"webapp/index.html",
+					"webapp/manifest.json",
+					"ui5.yaml",
+					"package.json"
+				]
+			}
+		}
+	}
+}

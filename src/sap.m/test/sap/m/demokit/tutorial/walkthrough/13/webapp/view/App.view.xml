@@ -1,8 +1,9 @@
 <mvc:View
-	controllerName="sap.ui.demo.walkthrough.controller.App"
+	controllerName="ui5.walkthrough.controller.App"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	displayBlock="true">
+	displayBlock="true"
+>
 	<Shell>
 		<App>
 			<pages>
@@ -11,19 +12,24 @@
 						<Panel
 							headerText="{i18n>helloPanelTitle}"
 							class="sapUiResponsiveMargin"
-							width="auto">
+							width="auto"
+						>
 							<content>
 								<Button
 									text="{i18n>showHelloButtonText}"
 									press=".onShowHello"
-									class="sapUiSmallMarginEnd"/>
+									class="sapUiSmallMarginEnd"
+								/>
 								<Input
 									value="{/recipient/name}"
+									description="Hello {/recipient/name}"
 									valueLiveUpdate="true"
-									width="60%"/>
+									width="60%"
+								/>
 								<Text
 									text="Hello {/recipient/name}"
-									class="sapUiSmallMargin"/>
+									class="sapUiSmallMargin"
+								/>
 							</content>
 						</Panel>
 					</content>

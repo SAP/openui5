@@ -1,14 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller"
-], function (Controller) {
+], (Controller) => {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.walkthrough.controller.App", {
-
-		onInit: function () {
+	return Controller.extend("ui5.walkthrough.controller.App", {
+		onInit() {
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
 		}
-
 	});
-
 });
