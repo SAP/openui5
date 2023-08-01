@@ -39,6 +39,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag Property bag
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @param {object} mPropertyBag.view Root view
+	 * @param {string} [mPropertyBag.viewId] View ID (XML Processing)
 	 * @returns {boolean} <true> if the change got applied successfully
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply.changes.Applyer
@@ -47,6 +48,7 @@ sap.ui.define([
 	AddXMLAtExtensionPoint.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oView = mPropertyBag.view;
 		var oModifier = mPropertyBag.modifier;
+		var sViewId = mPropertyBag.viewId || oModifier.getId(oView);
 		var oSelector = oChange.getSelector();
 		var mExtensionPointInfo;
 
@@ -64,7 +66,7 @@ sap.ui.define([
 				throw new Error("AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name '"
 					+ (oSelector && oSelector.name)
 					+ "' or multiple Extension-Points available with the given name in the view (view.id='"
-					+ (oView && oModifier.getId(oView))
+					+ (sViewId)
 					+ "'). Multiple Extension-points with the same name in one view are not supported!");
 			}
 			(mExtensionPointInfo.defaultContent || []).forEach(function(vControl) {
@@ -88,7 +90,7 @@ sap.ui.define([
 			}
 			ExtensionPointRegistryAPI.addCreatedControlsToExtensionPointInfo({
 				name: oSelector.name,
-				viewId: oModifier.getId(oView),
+				viewId: sViewId,
 				createdControlsIds: aNewControls.map((oNewControl) => oModifier.getId(oNewControl))
 			});
 			return true;

@@ -26,6 +26,7 @@ sap.ui.define([
 	var mObservers = {};
 	var mExtensionPointsByParent = {};
 	var mExtensionPointsByViewId = {};
+	var mCreatedControls = {};
 
 	function onParentDestroy(oEvent) {
 		var sParentId = oEvent.object.getId();
@@ -116,6 +117,11 @@ sap.ui.define([
 			mExtensionPointsByViewId[sViewId] = {};
 		}
 		mExtensionPointInfo.aggregation = aControlIds;
+		// If controls were created before the extension point was registered, add this information here
+		if (mCreatedControls[sViewId] && mCreatedControls[sViewId][mExtensionPointInfo.name]) {
+			mExtensionPointInfo.createdControls = mCreatedControls[sViewId][mExtensionPointInfo.name];
+			delete mCreatedControls[sViewId][mExtensionPointInfo.name];
+		}
 		mExtensionPointsByParent[sParentId].push(mExtensionPointInfo);
 		mExtensionPointsByViewId[sViewId][mExtensionPointInfo.name] = mExtensionPointInfo;
 	}
@@ -191,12 +197,18 @@ sap.ui.define([
 	 * @param {string[]} aCreatedControlsIds - IDs of the created controls
 	 */
 	ExtensionPointRegistry.addCreatedControls = function(sExtensionPointName, sViewId, aCreatedControlsIds) {
+		var aExistingCreatedControls;
 		if (
 			mExtensionPointsByViewId[sViewId] &&
 			mExtensionPointsByViewId[sViewId][sExtensionPointName]
 		) {
-			var aExistingCreatedControls = mExtensionPointsByViewId[sViewId][sExtensionPointName].createdControls || [];
+			aExistingCreatedControls = mExtensionPointsByViewId[sViewId][sExtensionPointName].createdControls || [];
 			mExtensionPointsByViewId[sViewId][sExtensionPointName].createdControls = aExistingCreatedControls.concat(aCreatedControlsIds);
+		} else {
+			// Extension Point is not registered yet - save IDs to add later
+			mCreatedControls[sViewId] = mCreatedControls[sViewId] || {};
+			aExistingCreatedControls = mCreatedControls[sViewId][sExtensionPointName] || [];
+			mCreatedControls[sViewId][sExtensionPointName] = aExistingCreatedControls.concat(aCreatedControlsIds);
 		}
 	};
 

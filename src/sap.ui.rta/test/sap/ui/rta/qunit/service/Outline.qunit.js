@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/write/_internal/extensionPoint/Registry",
+	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
@@ -38,6 +39,7 @@ sap.ui.define([
 	OverlayRegistry,
 	Loader,
 	ExtensionPointRegistry,
+	ExtensionPointRegistryAPI,
 	PersistenceWriteAPI,
 	VerticalLayout,
 	JSONModel,
@@ -205,8 +207,16 @@ sap.ui.define([
 				this.oOutline.get().then(function(aReceivedResponse) {
 					assert.ok(Array.isArray(aReceivedResponse), "then an array is received");
 					assert.equal(aReceivedResponse.length, 2, "then two items in the array for each root element");
-					assert.strictEqual(aReceivedResponse[0].id, aRootElements[0].getId(), "then outline for first item created starting from the first root element");
-					assert.strictEqual(aReceivedResponse[1].id, aRootElements[1].getId(), "then outline for second created starting from the second root element");
+					assert.strictEqual(
+						aReceivedResponse[0].id,
+						aRootElements[0].getId(),
+						"then outline for first item created starting from the first root element"
+					);
+					assert.strictEqual(
+						aReceivedResponse[1].id,
+						aRootElements[1].getId(),
+						"then outline for second created starting from the second root element"
+					);
 					assert.deepEqual(aReceivedResponse, aExpectedOutlineData, "then expected outline data received");
 				});
 			}.bind(this));
@@ -226,13 +236,19 @@ sap.ui.define([
 								assert.notOk(oChild3.elements, "then fourth level children are not returned");
 								return true;
 							}
+							return false;
 						});
 					}
+					return false;
 				});
 			}
 			var aRootElements = this.oRta._oDesignTime.getRootElements();
 			return this.oOutline.get(3).then(function(aReceivedResponse) {
-				assert.strictEqual(aReceivedResponse[0].id, aRootElements[0].getId(), "then outline for first item created starting from the first root element");
+				assert.strictEqual(
+					aReceivedResponse[0].id,
+					aRootElements[0].getId(),
+					"then outline for first item created starting from the first root element"
+				);
 
 				assert.ok(Array.isArray(aReceivedResponse[0].elements), "then first level children are returned");
 				var bDepthLevelsCovered = checkElementsFromResponse(aReceivedResponse);
@@ -243,7 +259,11 @@ sap.ui.define([
 		QUnit.test("when get() is called and initial control id is passed without depth", function(assert) {
 			return this.oOutline.get("layout2").then(function(aReceivedResponse) {
 				assert.ok(aReceivedResponse[0], "then only one item applicable to the passed parameter returned");
-				assert.strictEqual(aReceivedResponse[0].id, "layout2", "then outline for first root element tree starts from the passed overlay");
+				assert.strictEqual(
+					aReceivedResponse[0].id,
+					"layout2",
+					"then outline for first root element tree starts from the passed overlay"
+				);
 			});
 		});
 
@@ -255,7 +275,11 @@ sap.ui.define([
 
 		QUnit.test("when get() is called and both initial control id and depth (2) are passed", function(assert) {
 			return this.oOutline.get("objPage", 2).then(function(aReceivedResponse) {
-				assert.strictEqual(aReceivedResponse[0].id, "objPage", "then outline for first item created starting from the passed overlay");
+				assert.strictEqual(
+					aReceivedResponse[0].id,
+					"objPage",
+					"then outline for first item created starting from the passed overlay"
+				);
 
 				assert.ok(Array.isArray(aReceivedResponse[0].elements), "then first level children are returned");
 				var bDepthLevelsCovered = aReceivedResponse[0].elements.some(function(oChild1) {
@@ -266,6 +290,7 @@ sap.ui.define([
 						assert.notOk(oChild2.elements, "then third level children are not returned");
 						return true;
 					}
+					return false;
 				});
 
 				assert.ok(bDepthLevelsCovered, "all node depth levels are covered");
@@ -276,7 +301,11 @@ sap.ui.define([
 			var oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
 			sandbox.stub(oObjectPageSectionOverlay, "getShouldBeDestroyed").returns(true);
 			return this.oOutline.get("objPage", 2).then(function(aReceivedResponse) {
-				assert.strictEqual(aReceivedResponse[0].id, "objPage", "then outline for first item created starting from the passed overlay");
+				assert.strictEqual(
+					aReceivedResponse[0].id,
+					"objPage",
+					"then outline for first item created starting from the passed overlay"
+				);
 
 				assert.ok(Array.isArray(aReceivedResponse[0].elements), "then first level children are returned");
 				var bDepthLevelsCovered = aReceivedResponse[0].elements.some(function(oChild1) {
@@ -284,6 +313,7 @@ sap.ui.define([
 						assert.equal(oChild1.elements.length, 0, "then second level children are not returned");
 						return true;
 					}
+					return false;
 				});
 
 				assert.ok(bDepthLevelsCovered, "all node depth levels are covered");
@@ -695,24 +725,58 @@ sap.ui.define([
 					defaultContent: [
 						"myView--ep2-label1",
 						"myView--ep2-label2"
+					],
+					createdControls: [
+						"createdControl1",
+						"createdControl2"
 					]
 				}
 			};
+			// Simulate the creation of controls on the extension point
+			ExtensionPointRegistryAPI.addCreatedControlsToExtensionPointInfo({
+				name: "ExtensionPoint2",
+				viewId: this.oXmlView.getId(),
+				createdControlsIds: ["createdControl1", "createdControl2"]
+			});
 			return this.oOutline.get()
 			.then(function(aReceivedResponse) {
 				var aPanelContent = aReceivedResponse[0].elements[0].elements[0].elements[0].elements;
-				assert.strictEqual(aPanelContent[0].technicalName, "sap.ui.extensionpoint", "then in the panel content the first item is an ExtensionPoint");
-				assert.strictEqual(aPanelContent[1].technicalName, "sap.m.Label", "then in the panel content the second item is a Label");
-				assert.strictEqual(aPanelContent[2].technicalName, "sap.ui.extensionpoint", "then in the panel content the third item is an ExtensionPoint");
-				assert.strictEqual(aPanelContent[3].technicalName, "sap.m.Label", "then in the panel content the fourth item is a Label (default content)");
-				assert.strictEqual(aPanelContent[4].technicalName, "sap.m.Label", "then in the panel content the fifth item is a Label (default content)");
-				assert.deepEqual(aPanelContent[2], mExtensionPointOutlineItem, "then all properties of the extension point outline item are correct");
+				assert.strictEqual(
+					aPanelContent[0].technicalName,
+					"sap.ui.extensionpoint",
+					"then in the panel content the first item is an ExtensionPoint"
+				);
+				assert.strictEqual(
+					aPanelContent[1].technicalName,
+					"sap.m.Label",
+					"then in the panel content the second item is a Label"
+				);
+				assert.strictEqual(
+					aPanelContent[2].technicalName,
+					"sap.ui.extensionpoint",
+					"then in the panel content the third item is an ExtensionPoint"
+				);
+				assert.strictEqual(
+					aPanelContent[3].technicalName,
+					"sap.m.Label",
+					"then in the panel content the fourth item is a Label (default content)"
+				);
+				assert.strictEqual(
+					aPanelContent[4].technicalName,
+					"sap.m.Label",
+					"then in the panel content the fifth item is a Label (default content)"
+				);
+				assert.deepEqual(
+					aPanelContent[2],
+					mExtensionPointOutlineItem,
+					"then all properties of the extension point outline item are correct"
+				);
 			});
 		});
 	});
 
 	var oXmlSimpleForm =
-		'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns="sap.m">' +
+		'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns="sap.m">' +
 			'<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="1" labelSpanM="3" columnsL="1" ' +
 				'columnsM="1" emptySpanL="1" emptySpanM="0" width="100%" title="test_simpleform" maxContainerCols="1">' +
 				"<form:content>" +
@@ -742,15 +806,28 @@ sap.ui.define([
 				extensionPointInfo: {
 					defaultContent: [
 						"myView--ep3-label3"
-					]
+					],
+					createdControls: []
 				}
 			};
 			return this.oOutline.get()
 			.then(function(aReceivedResponse) {
 				var aRootElements = aReceivedResponse[0].elements;
-				assert.strictEqual(aRootElements[0].technicalName, "sap.ui.extensionpoint", "then in the view elements the first item is an ExtensionPoint");
-				assert.strictEqual(aRootElements[1].technicalName, "content", "then in the view elements the second item is an content aggregation");
-				assert.deepEqual(aRootElements[0], mExtensionPointOutlineItem, "then all properties of the extension point outline item are correct");
+				assert.strictEqual(
+					aRootElements[0].technicalName,
+					"sap.ui.extensionpoint",
+					"then in the view elements the first item is an ExtensionPoint"
+				);
+				assert.strictEqual(
+					aRootElements[1].technicalName,
+					"content",
+					"then in the view elements the second item is an content aggregation"
+				);
+				assert.deepEqual(
+					aRootElements[0],
+					mExtensionPointOutlineItem,
+					"then all properties of the extension point outline item are correct"
+				);
 				var oFormAggregation = aRootElements[1].elements[0].elements[0];
 				var oFormContainerAggregation = oFormAggregation.elements[0].elements[0];
 				var oFormElementsAggregation = oFormContainerAggregation.elements[0].elements[0];
@@ -1051,7 +1128,8 @@ sap.ui.define([
 
 				var oList2ElementInfo = aRootElements[0].elements[1];
 				assert.strictEqual(oList2ElementInfo.elements.length, 4,
-					"then second list contains 4 entries: the template element + 2 empty aggregations from the control + items aggregation");
+					"then second list contains 4 entries: the template element "
+					 + "+ 2 empty aggregations from the control + items aggregation");
 				assert.strictEqual(oList2ElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
 					"then the first list entry (aggregation binding template) has the correct icon assigned");
 				assert.strictEqual(oList2ElementInfo.elements[0].name, "List Item",
