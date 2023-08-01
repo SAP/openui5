@@ -664,15 +664,28 @@ sap.ui.define([
 		return this.getDomRef("tblBody");
 	};
 
-	Table.prototype.onmousedown = function() {
+	Table.prototype.onmousedown = function(oEvent) {
 		this._bMouseDown = true;
+		var sOldTabIndex, oFocusableCell;
+		if (oEvent.target.closest("[draggable=true]")) {
+			oFocusableCell = oEvent.target.closest(".sapMTblCellFocusable");
+			if (oFocusableCell && !document.activeElement.classList.contains("sapMTblCellFocusable")) {
+				sOldTabIndex = oFocusableCell.getAttribute("tabindex");
+				oFocusableCell.removeAttribute("tabindex");
+			}
+		}
 		setTimeout(function() {
 			this._bMouseDown = false;
+			sOldTabIndex && oFocusableCell.setAttribute("tabindex", sOldTabIndex);
 		}.bind(this));
 		ListBase.prototype.onmousedown.apply(this, arguments);
 	};
 
 	Table.prototype._onItemNavigationBeforeFocus = function(oEvent) {
+		if (this._bMouseDown && !oEvent.getParameter("event").target.hasAttribute("tabindex")) {
+			return;
+		}
+
 		var iFocusedIndex;
 		var iForwardIndex = -1;
 		var iIndex = oEvent.getParameter("index");
