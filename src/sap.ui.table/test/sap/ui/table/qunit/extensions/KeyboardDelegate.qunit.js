@@ -5118,7 +5118,7 @@ sap.ui.define([
 			});
 
 			oColumn.setSortProperty("dummy");
-			oColumn._openHeaderMenu();
+			oColumn._openHeaderMenu(oColumn.getDomRef());
 		});
 	}
 
