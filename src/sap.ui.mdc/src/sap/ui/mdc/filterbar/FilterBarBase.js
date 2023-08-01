@@ -796,7 +796,15 @@ sap.ui.define([
 		Object.keys(mConditionsInternal).forEach(function(sKey){
 			mConditionsInternal[sKey].forEach(function(oCondition, iConditionIndex){
 				var oProperty = this._getPropertyByName(sKey);
-				this._toInternal(oProperty, oCondition);
+				if (oProperty) {
+					try {
+						mConditionsInternal[sKey][iConditionIndex] = this._toInternal(oProperty, oCondition);
+					} catch (ex) {
+						Log.error(ex.message);
+					}
+				} else {
+					Log.error("Property '" + sKey + "' does not exist");
+				}
 			}, this);
 		}, this);
 

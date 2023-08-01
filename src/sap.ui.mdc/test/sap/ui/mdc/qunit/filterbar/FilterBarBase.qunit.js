@@ -3,9 +3,10 @@
 sap.ui.define([
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/FilterField",
-    "sap/ui/mdc/odata/TypeUtil"
+    "sap/ui/mdc/odata/TypeUtil",
+	'sap/base/Log'
 ], function (
-	FilterBarBase, FilterField, TypeUtil
+	FilterBarBase, FilterField, TypeUtil, Log
 ) {
 	"use strict";
 
@@ -738,5 +739,64 @@ sap.ui.define([
 		}.bind(this));
 
 	});
+
+	QUnit.test("_setXConditions with unknown properties", function(assert){
+        var done = assert.async();
+
+        var mDummyCondition = {
+            "key1": [
+                {
+                  "operator": "EQ",
+                  "values": [
+                    "SomeTestValue"
+                  ],
+                  "validated": "Validated"
+                }
+              ],
+             "unknown": [                {
+                  "operator": "EQ",
+                  "values": [
+                    "SomeTestValue"
+                  ],
+                  "validated": "Validated"
+                }]
+        };
+        var mResultCondition = {
+            "key1": [
+                {
+				  "isEmpty": false,
+                  "operator": "EQ",
+                  "values": [
+                    "SomeTestValue"
+                  ],
+                  "validated": "Validated"
+                }
+              ]
+        };
+
+        this.oFilterBarBase.initialized().then(function(){
+
+            sinon.stub(this.oFilterBarBase, "_getPropertyByName").callsFake(function(sPropertyName){
+				if (sPropertyName === "key1") {
+					return {name: "key1", typeConfig: TypeUtil.getTypeConfig("Edm.String")};
+				} else {
+					return null;
+				}
+			});
+
+			sinon.spy(Log, "error");
+			assert.ok(!Log.error.called);
+
+            this.oFilterBarBase._setXConditions(mDummyCondition)
+            .then(function(){
+                assert.deepEqual(mResultCondition, this.oFilterBarBase.getInternalConditions(), "Condition returned without persistence active");
+				assert.ok(Log.error.calledOnce);
+				Log.error.restore();
+
+                done();
+            }.bind(this));
+        }.bind(this));
+
+    });
 
 });
