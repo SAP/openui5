@@ -26,7 +26,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.ListMode
 	var ListMode = Library.ListMode,
-		UploadType = Library.UploadType;
+		UploadType = Library.UploadType,
+		UploadState = Library.UploadState,
+		ButtonType = Library.ButtonType;
 
 	function getData() {
 		return {
@@ -87,6 +89,24 @@ sap.ui.define([
 			assert.ok(!progressBox.getVisible(), "progress bar is not visible for the uploaded state");
 			done();
 		});
+	});
+
+	QUnit.test("Test for terminate upload dialog popup", function(assert) {
+		// Arrange
+		var oItem = this.oUploadSet.getItems()[0];
+		oItem.setUploadState(UploadState.Uploading);
+		var oTerminateButton = oItem._getTerminateButton();
+		assert.ok(oTerminateButton.getVisible(), "Terminate button is visible for the uploading state");
+		// Act
+		oTerminateButton.firePress();
+		// Assert
+		var oDialog = oCore.byId(this.oUploadSet.getId() + "-teminateDialog");
+		assert.ok(oDialog, "Terminate dialog should now be presented.");
+		assert.equal(oDialog.getButtons()[0].getType(), ButtonType.Emphasized, "First button is emphasized.");
+		oDialog.getButtons()[1].firePress();
+		oDialog.getButtons()[0].getParent().fireAfterClose();
+		oDialog = oCore.byId(this.oUploadSet.getId() + "-teminateDialog");
+		assert.notOk(oDialog, "Terminate dialog should now be closed.");
 	});
 
 	QUnit.test("Test for checking if the upload type is of Native by default", function (assert) {
