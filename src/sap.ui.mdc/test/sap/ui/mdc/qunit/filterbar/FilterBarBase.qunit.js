@@ -3,11 +3,10 @@
 sap.ui.define([
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/FilterField",
-    "sap/ui/mdc/DefaultTypeMap",
-	"sap/ui/mdc/enums/FilterBarValidationStatus",
+	"sap/ui/mdc/DefaultTypeMap",
 	'sap/base/Log'
 ], function (
-	FilterBarBase, FilterField, DefaultTypeMap, FilterBarValidationStatus, Log
+	FilterBarBase, FilterField, DefaultTypeMap, Log
 ) {
 	"use strict";
 
