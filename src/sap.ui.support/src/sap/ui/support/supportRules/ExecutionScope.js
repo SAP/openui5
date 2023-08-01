@@ -62,16 +62,18 @@ sap.ui.define(
 		function getPublicElementsInside(oControlRoot) {
 			var oRoot;
 
-			if (oControlRoot.getRootControl) {
+			if (oControlRoot.isA("sap.ui.core.Component")) {
 				oRoot = oControlRoot.getRootControl();
-				if (oRoot) {
-					// TODO also exclude clones of binding templates, but include
-					// the binding template
-					// TODO also exclude customData etc.?
-					return [oRoot].concat(
-						oRoot.findAggregatedObjects(true, isInPublicAggregation)
-					);
-				}
+			} else if (oControlRoot.getContent()) { // UIArea
+				oRoot = oControlRoot.getContent()[0];
+			}
+
+			if (oRoot) {
+				// TODO also exclude clones of binding templates, but include the binding template
+				// TODO also exclude customData etc.?
+				return [oRoot].concat(
+					oRoot.findAggregatedObjects(true, isInPublicAggregation)
+				);
 			}
 
 			return [];
