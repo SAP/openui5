@@ -1586,6 +1586,7 @@ sap.ui.define([
 				buttons: [
 					new Button({
 						text: this._oRb.getText("UPLOAD_SET_OKBUTTON_TEXT"),
+						type: MobileLibrary.ButtonType.Emphasized,
 						press: [onPressOk, this]
 					}),
 					new Button({
