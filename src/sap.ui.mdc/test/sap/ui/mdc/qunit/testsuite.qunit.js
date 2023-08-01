@@ -1,8 +1,6 @@
 sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, merge) {
 	"use strict";
 
-	window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
-
 	var mConfig =  {
 		name: "Library 'sap.ui.mdc'", /* Just for a nice title on the pages */
 		defaults: {

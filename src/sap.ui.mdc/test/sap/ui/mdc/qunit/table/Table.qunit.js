@@ -742,17 +742,20 @@ sap.ui.define([
 			{
 				name: "column1",
 				path: "column1",
-				label: "column1"
+				label: "column1",
+				dataType: "String"
 			},
 			{
 				name: "column2",
 				path: "column2",
-				label: "column2"
+				label: "column2",
+				dataType: "String"
 			},
 			{
 				name: "column3",
 				path: "column3",
-				label: "column3"
+				label: "column3",
+				dataType: "String"
 			}
 		]);
 
@@ -1201,12 +1204,14 @@ sap.ui.define([
 			{
 				name: "name",
 				path: "name",
-				label: "name"
+				label: "name",
+				dataType: "String"
 			},
 			{
 				name: "age",
 				path: "age",
-				label: "age"
+				label: "age",
+				dataType: "String"
 			}
 		]);
 
@@ -1242,11 +1247,13 @@ sap.ui.define([
 			{
 				name: "name",
 				label: "name",
-				path: "deepPath/name"
+				path: "deepPath/name",
+				dataType: "String"
 			},
 			{
 				name: "age",
-				label: "age"
+				label: "age",
+				dataType: "String"
 			}
 		]);
 
@@ -1281,12 +1288,14 @@ sap.ui.define([
 			{
 				name: "name",
 				path: "name",
-				label: "name"
+				label: "name",
+				dataType: "String"
 			},
 			{
 				name: "age",
 				path: "age",
-				label: "age"
+				label: "age",
+				dataType: "String"
 			}
 		]);
 
@@ -1326,10 +1335,12 @@ sap.ui.define([
 
 		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
 			name: "name",
-			label: "name"
+			label: "name",
+			dataType: "String"
 		}, {
 			name: "age",
-			label: "age"
+			label: "age",
+			dataType: "String"
 		}]);
 
 		this.oTable.initialized().then(function() {
@@ -2966,9 +2977,9 @@ sap.ui.define([
 					name: "SampleField",
 					path: "SampleField",
 					label: "SampleLabel",
-					typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
+					dataType: "Edm.String"
 				}
-			]);
+			], ODataTypeMap);
 
 			assert.ok(fnSetLabel.notCalled, "setLabel function not called");
 			assert.ok(fnSetType.notCalled, "setType function not called");
@@ -3271,6 +3282,7 @@ sap.ui.define([
 				name: "firstName",
 				path: "firstName",
 				label: "First name",
+				dataType: "String",
 				exportSettings: {
 					width: 19,
 					type: "String",
@@ -3279,7 +3291,8 @@ sap.ui.define([
 			}, {
 				name: "lastName",
 				path: "lastName",
-				label: "Last name"
+				label: "Last name",
+				dataType: "String"
 			}, {
 				name: "fullName", // complex PropertyInfo without exportSettings => 2 spreadsheet column configs will be created
 				label: "Full name",
@@ -3295,12 +3308,15 @@ sap.ui.define([
 				name: "age",
 				path: "age",
 				label: "Age",
+				dataType: "String",
 				exportSettings: {
 					type: "Number"
 				}
 			}, {
 				name: "dob",
 				path: "dob",
+				label: "dob",
+				dataType: "String",
 				exportSettings: {
 					label: "Date of Birth",
 					type: "Date",
@@ -3312,6 +3328,7 @@ sap.ui.define([
 				name: "salary",
 				path: "salary",
 				label: "Salary",
+				dataType: "String",
 				exportSettings: {
 					displayUnit: true,
 					unitProperty: "currency",
@@ -3323,6 +3340,7 @@ sap.ui.define([
 				name: "currency",
 				path: "currency",
 				label: "Currency code",
+				dataType: "String",
 				exportSettings: {
 					width: 5
 				}
@@ -3331,6 +3349,7 @@ sap.ui.define([
 				label: "NoDataColumn1",
 				sortable: false,
 				filterable: false,
+				dataType: "String",
 				exportSettings: {
 					width: 5
 				}
@@ -3338,11 +3357,13 @@ sap.ui.define([
 				name: "noDataColumn2",
 				label: "NoDataColumn2",
 				sortable: false,
-				filterable: false
+				filterable: false,
+				dataType: "String"
 			}, {
 				name: "ignoreColumn",
 				label: "IgnoreColumn",
-				exportSettings: null
+				exportSettings: null,
+				dataType: "String"
 			}
 		]);
 
@@ -3771,9 +3792,8 @@ sap.ui.define([
 				name: "firstName",
 				path: "firstName",
 				label: "First name",
-				typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
-					maxLength: 30
-				}),
+				dataType: "Edm.String",
+				constraints: {maxLength: 30},
 				visualSettings: {
 					widthCalculation: {
 						minWidth: 4,
@@ -3784,9 +3804,8 @@ sap.ui.define([
 				name: "lastName",
 				path: "lastName",
 				label: "Last name",
-				typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
-					maxLength: 30
-				}),
+				dataType: "Edm.String",
+				constraints: {maxLength: 30},
 				visualSettings: {
 					widthCalculation: {
 						minWidth: 6,
@@ -3796,7 +3815,6 @@ sap.ui.define([
 			}, {
 				name: "fullName",
 				label: "Full name",
-				typeConfig: ODataTypeMap.getTypeConfig("Edm.String"),
 				propertyInfos: ["firstName", "lastName"],
 				visualSettings: {
 					widthCalculation: {
@@ -3806,7 +3824,7 @@ sap.ui.define([
 			}, {
 				name: "numberValue",
 				label: "Number value",
-				typeConfig: ODataTypeMap.getTypeConfig("Edm.Byte"),
+				dataType: "Edm.Byte",
 				visualSettings: {
 					widthCalculation: {
 						includeLabel: false
@@ -3815,7 +3833,7 @@ sap.ui.define([
 			}, {
 				name: "booleanValue",
 				label: "Boolean value",
-				typeConfig: ODataTypeMap.getTypeConfig("Edm.Boolean"),
+				dataType: "Edm.Boolean",
 				visualSettings: {
 					widthCalculation: {
 						includeLabel: false,
@@ -3825,9 +3843,8 @@ sap.ui.define([
 			}, {
 				name: "columnGap1",
 				label: "Test gap",
-				typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
-					maxLength: 32
-				}),
+				dataType: "Edm.String",
+				constraints: {maxLength: 32},
 				visualSettings: {
 					widthCalculation: {
 						gap: 2
@@ -3836,20 +3853,18 @@ sap.ui.define([
 			}, {
 				name: "columnGap2",
 				label: "Test gap",
-				typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
-					maxLength: 32
-				})
+				dataType: "Edm.String",
+				constraints: {maxLength: 32}
 			}, {
 				name: "noWidthCalculation",
 				label: "No Width Calculation",
-				typeConfig: ODataTypeMap.getTypeConfig("Edm.String"),
+				dataType: "Edm.String",
 				visualSettings: {
 					widthCalculation: null
 				}
 			}, {
 				name: "complexNoWidthCalculation",
 				label: "Complex with no width calculation",
-				typeConfig: ODataTypeMap.getTypeConfig("Edm.String"),
 				propertyInfos: ["lastName", "noWidthCalculation"],
 				visualSettings: {
 					widthCalculation: {
@@ -3859,19 +3874,17 @@ sap.ui.define([
 			}, {
 				name: "stringValue_nomaxlength",
 				label: "String",
-				typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
+				dataType: "Edm.String"
 			}, {
 				name: "stringValue_bigmaxlength",
 				label: "String",
-				typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
-					maxLength: 255
-				})
+				dataType: "Edm.String",
+				constraints: {maxLength: 255}
 			}, {
 				name: "stringValue_nolabeltruncate",
 				label: "stringValue_nolabeltruncate",
-				typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
-					maxLength: 5
-				}),
+				dataType: "Edm.String",
+				constraints: {maxLength: 5},
 				visualSettings: {
 					widthCalculation: {
 						truncateLabel: false
@@ -3880,15 +3893,14 @@ sap.ui.define([
 			}, {
 				name: "a",
 				label: "a",
-				required: true,
-				typeConfig: ODataTypeMap.getTypeConfig("Edm.Boolean"),
+				dataType: "Edm.Boolean",
 				visualSettings: {
 					widthCalculation: {
 						minWidth: 1
 					}
 				}
 			}
-		]);
+		], ODataTypeMap);
 
 		return this.oTable._fullyInitialized().then(function() {
 			return this.oTable.propertiesFinalized();
@@ -3951,17 +3963,15 @@ sap.ui.define([
 			name: "firstName",
 			path: "firstName",
 			label: "First name",
-			typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
-				maxLength: 30
-			})
+			dataType: "Edm.String",
+			constraints: {maxLength: 30}
 		}, {
 			name: "lastName",
 			path: "lastName",
 			label: "Last name",
-			typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
-				maxLength: 30
-			})
-		}]);
+			dataType: "Edm.String",
+			constraints: {maxLength: 30}
+		}], ODataTypeMap);
 
 		function setupTable(oTable) {
 			oTable.setEnableAutoColumnWidth(true);
@@ -4467,7 +4477,8 @@ sap.ui.define([
 		TableQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "name",
-				label: "NameLabel"
+				label: "NameLabel",
+				dataType: "String"
 			}
 		]);
 
@@ -4522,13 +4533,16 @@ sap.ui.define([
 			TableQUnitUtils.stubPropertyInfos(Table.prototype, [
 				{
 					name: "name",
-					label: "NameLabel"
+					label: "NameLabel",
+					dataType: "String"
 				}, {
 					name: "age",
-					label: "AgeLabel"
+					label: "AgeLabel",
+					dataType: "String"
 				}, {
 					name: "gender",
-					label: "GenderLabel"
+					label: "GenderLabel",
+					dataType: "String"
 				}
 			]);
 
@@ -5457,6 +5471,7 @@ sap.ui.define([
 					path: "Name",
 					groupable: true,
 					aggregatable: true,
+					dataType: "String",
 					extension: {
 						customAggregate: {}
 					}
@@ -5466,6 +5481,7 @@ sap.ui.define([
 					path: "Country",
 					groupable: true,
 					aggregatable: true,
+					dataType: "String",
 					extension: {
 						customAggregate: {}
 					}
@@ -5733,7 +5749,7 @@ sap.ui.define([
 		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
 			name: "name",
 			label: "Name",
-			typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String")
+			dataType: "String"
 		}]);
 
 		this.oTable.setFilter(oFilter);
@@ -5795,7 +5811,7 @@ sap.ui.define([
 		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
 			name: "name",
 			label: "Name",
-			typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String")
+			dataType: "String"
 		}]);
 
 		this.oTable.setFilter(oFilter);
@@ -5945,6 +5961,7 @@ sap.ui.define([
 				name: "lastname",
 				path: "lastname",
 				label: "Last Name",
+				dataType: "String",
 				exportSettings: {
 					property: "lastname",
 					textAlign: "Center"
@@ -5952,14 +5969,19 @@ sap.ui.define([
 			}, {
 				name: "age",
 				path: "age",
+				dataType: "String",
 				label: "Age"
 			}];
 			this.aInitialProperties = [{
 				name: "lastname",
-				path: "lastname"
+				label: "Last Name",
+				path: "lastname",
+				dataType: "String"
 			}, {
 				name: "age",
-				path: "age"
+				path: "age",
+				label: "Age",
+				dataType: "String"
 			}];
 			TableQUnitUtils.stubPropertyInfos(Table.prototype, this.aProperties);
 		},

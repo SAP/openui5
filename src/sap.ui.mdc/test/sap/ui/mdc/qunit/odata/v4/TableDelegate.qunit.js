@@ -190,7 +190,8 @@ sap.ui.define([
 			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
 				name: "Name",
 				path: "Name_Path",
-				label: "Name_Label"
+				label: "Name_Label",
+				dataType: "String"
 			}]);
 		},
 		afterEach: function() {
@@ -593,6 +594,7 @@ sap.ui.define([
 				name: "Name",
 				label: "Name",
 				path: "Name",
+				dataType: "String",
 				groupable: true,
 				aggregatable: true,
 				extension: {
@@ -602,6 +604,7 @@ sap.ui.define([
 				name: "Country",
 				label: "Country",
 				path: "Country",
+				dataType: "String",
 				groupable: true,
 				aggregatable: true,
 				extension: {
@@ -615,6 +618,7 @@ sap.ui.define([
 				name: "Value",
 				label: "Value",
 				path: "Value",
+				dataType: "String",
 				sortable: false,
 				filterable: false
 			}]);
@@ -1130,15 +1134,18 @@ sap.ui.define([
 				name: "Name",
 				label: "Name",
 				path: "Name",
+				dataType: "String",
 				groupable: true
 			}, {
 				name: "Country",
 				label: "Country",
-				path: "Country"
+				path: "Country",
+				dataType: "String"
 			}, {
 				name: "Value",
 				label: "Value",
-				path: "Value"
+				path: "Value",
+				dataType: "String"
 			}, {
 				name: "name_country",
 				label: "Complex Title & Description",
@@ -1191,17 +1198,17 @@ sap.ui.define([
 	QUnit.module("Column state to plugin", {
 		before: function() {
 			TableQUnitUtils.stubPropertyInfos(Table.prototype, [
-				{name: "CountryKey", path: "Country", label: "CountryKey", groupable: true, text: "CountryText"},
-				{name: "CountryText", path: "CountryText", label: "CountryText", groupable: true},
+				{name: "CountryKey", path: "Country", label: "CountryKey", groupable: true, text: "CountryText", dataType: "String"},
+				{name: "CountryText", path: "CountryText", label: "CountryText", groupable: true, dataType: "String"},
 				{name: "CountryKeyAndText", label: "CountryKey+CountryText", propertyInfos: ["CountryKey", "CountryText"]},
-				{name: "SalesAmount", path: "SalesAmount", label: "SalesAmount", unit: "Currency"},
-				{name: "Currency", path: "Currency", label: "Currency", groupable: true},
+				{name: "SalesAmount", path: "SalesAmount", label: "SalesAmount", unit: "Currency", dataType: "String"},
+				{name: "Currency", path: "Currency", label: "Currency", groupable: true, dataType: "String"},
 				{name: "SalesAmountAndCurrency", label: "SalesAmount+Currency", propertyInfos: ["SalesAmount", "Currency"]},
 				{name: "SalesAmountAndRegion", label: "SalesAmount+Region", propertyInfos: ["SalesAmount", "Region"]},
 				{name: "CurrencyAndRegion", label: "Currency+Region", propertyInfos: ["Currency", "Region"]},
-				{name: "Region", path: "Region", label: "Region", groupable: true},
-				{name: "RegionText", path: "RegionText", label: "RegionText", groupable: true},
-				{name: "SalesAmountInLocalCurrency", path: "SalesAmountInLocalCurrency", label: "SalesAmountInLocalCurrency"},
+				{name: "Region", path: "Region", label: "Region", groupable: true, dataType: "String"},
+				{name: "RegionText", path: "RegionText", label: "RegionText", groupable: true, dataType: "String"},
+				{name: "SalesAmountInLocalCurrency", path: "SalesAmountInLocalCurrency", label: "SalesAmountInLocalCurrency", dataType: "String"},
 				{
 					name: "SalesAmountAndSalesAmountInLocalCurrency",
 					label: "SalesAmountAndSalesAmountInLocalCurrency",

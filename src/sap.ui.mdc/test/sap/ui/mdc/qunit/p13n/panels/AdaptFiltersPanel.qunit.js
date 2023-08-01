@@ -21,33 +21,39 @@ sap.ui.define([
 		{
 			name: "key1",
 			label: "Field 1",
-			group: "G1"
+			group: "G1",
+			dataType: "String"
 		},
 		{
 			name: "key2",
 			label: "Field 2",
-			group: "G1"
+			group: "G1",
+			dataType: "String"
 		},
 		{
 			name: "key3",
 			label: "Field 3",
-			group: "G1"
+			group: "G1",
+			dataType: "String"
 		},
 		{
 			name: "key4",
 			label: "Field 4",
-			group: "G2"
+			group: "G2",
+			dataType: "String"
 		},
 		{
 			name: "key5",
 			label: "Field 5",
-			group: "G2"
+			group: "G2",
+			dataType: "String"
 		},
 		{
 			name: "key6",
 			label: "Field 6",
 			group: "G2",
-			tooltip: "Some Tooltip"
+			tooltip: "Some Tooltip",
+			dataType: "String"
 		}
 	];
 

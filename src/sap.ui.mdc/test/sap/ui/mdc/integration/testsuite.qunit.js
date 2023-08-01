@@ -1,8 +1,6 @@
 sap.ui.define(["sap/ui/Device"], function (Device) {
 	"use strict";
 
-	window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
-
 	return {
 		name: "Library 'sap.ui.mdc'", /* Just for a nice title on the pages */
 		defaults: {
@@ -112,10 +110,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				},
 				autostart: false, // tests are added asynchronously because the V4 server needs to be found first
 				module: "test-resources/sap/ui/mdc/integration/valuehelp/SelectFromListJourney.qunit",
-				sinon: false,
-				uriParams: {
-					"sap-ui-xx-disableStrictPropertyValidation": true
-				}
+				sinon: false
 			},
 			"DefineConditionsJourney": {
 				group: "ValueHelp",

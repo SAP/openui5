@@ -24,11 +24,12 @@ sap.ui.define([
 		return oTable._isOfType(TableType.Table, true) ? "rows" : "items";
 	}
 
-	QUnitUtils.stubPropertyInfos = function(oTarget, aPropertyInfos) {
+	QUnitUtils.stubPropertyInfos = function(oTarget, aPropertyInfos, oTypeMap) {
 		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
 		var fnOriginalAwaitControlDelegate = oTarget.awaitControlDelegate;
 		var oDelegate;
 		var fnOriginalFetchProperties;
+		var fnOriginalGetTypeMap;
 		var bPropertyHelperExists;
 
 		if (typeof fnOriginalGetControlDelegate !== "function") {
@@ -59,6 +60,12 @@ sap.ui.define([
 				fnOriginalFetchProperties.apply(this, arguments);
 				return Promise.resolve(aPropertyInfos);
 			};
+
+			if (oTypeMap) {
+				fnOriginalGetTypeMap = oDelegate.getTypeMap;
+				oDelegate.getTypeMap = () => oTypeMap;
+			}
+
 			return oDelegate;
 		}
 
@@ -79,6 +86,10 @@ sap.ui.define([
 
 			if (oDelegate) {
 				oDelegate.fetchProperties = fnOriginalFetchProperties;
+
+				if (fnOriginalGetTypeMap) {
+					oDelegate.getTypeMap = fnOriginalGetTypeMap;
+				}
 			}
 		};
 	};

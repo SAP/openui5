@@ -54,6 +54,7 @@ sap.ui.define([
 				{
 					name: "test",
 					label: "Test",
+					dataType: "String",
 					path: "test"
 				}
 			]);
@@ -151,6 +152,7 @@ sap.ui.define([
 				name: "test",
 				label: "Test",
 				path: "test",
+				dataType: "String",
 				sortable: true,
 				groupable: true
 			}]);
@@ -301,6 +303,7 @@ sap.ui.define([
 					name: "test",
 					label: "Test",
 					path: "test",
+					dataType: "String",
 					groupable: true
 				}
 			]);

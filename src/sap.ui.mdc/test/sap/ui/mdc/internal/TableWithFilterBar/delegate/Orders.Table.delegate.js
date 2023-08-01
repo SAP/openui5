@@ -14,8 +14,9 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/Int32",
 	"sap/ui/model/odata/type/String",
-	"sap/m/Text"
-], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, CurrencyType, DecimalType, Int32Type, StringType, Text) {
+	"sap/m/Text",
+	"delegates/util/DelegateCache"
+], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, CurrencyType, DecimalType, Int32Type, StringType, Text, DelegateCache) {
 	"use strict";
 	var OrdersTableDelegate = Object.assign({}, ODataTableDelegate);
 	OrdersTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
@@ -43,6 +44,14 @@ sap.ui.define([
 				}
 			});
 
+			DelegateCache.add(oTable, {
+				"customer_ID": {additionalValue: "{customer/name}", display: FieldDisplay.Description}
+			}, "$Columns");
+			DelegateCache.add(oTable, {
+				"OrderNo": {valueHelp: "FH1"},
+				"currency_code": {display: FieldDisplay.Value, maxConditions: 1, operators: ["EQ"], valueHelp: "FH-Currency"}
+			}, "$Filters");
+
 			return aProperties;
 		});
 	};
@@ -60,14 +69,6 @@ sap.ui.define([
 					oFilterField.setDataTypeConstraints(oConstraints);
 					oFilterField.setDataTypeFormatOptions(oFormatOptions);
 
-					if (sPropertyName === "OrderNo") {
-						oFilterField.setValueHelp(getFullId(oTable, "FH1"));
-					} else if (sPropertyName === "currency_code") {
-						oFilterField.setValueHelp(getFullId(oTable, "FH-Currency"));
-						oFilterField.setDisplay(FieldDisplay.Value);
-						oFilterField.setMaxConditions(1);
-						oFilterField.setOperators(["EQ"]);
-					}
 					return oFilterField;
 				});
 			}
@@ -83,14 +84,14 @@ sap.ui.define([
 			});
 		}
 
-		var oCtrlProperties = {
+		var oCtrlProperties = DelegateCache.merge({
 			id: getFullId(oTable, "F_" + oProperty.name),
 			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
 			editMode: FieldEditMode.Display,
 			width:"100%",
 			multipleLines: false,
 			delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}
-		};
+		}, DelegateCache.get(oTable, oProperty.name, "$Columns"));
 
 		if (oProperty.name === "total") {
 			oCtrlProperties.value = {
@@ -102,9 +103,6 @@ sap.ui.define([
 				type: new CurrencyType(),
 				mode:'TwoWay'
 			};
-		} else if (oProperty.name === "customer_ID") {
-			oCtrlProperties.additionalValue = "{customer/name}";
-			oCtrlProperties.display = FieldDisplay.Description;
 		}
 
 		return new Field(oCtrlProperties);
