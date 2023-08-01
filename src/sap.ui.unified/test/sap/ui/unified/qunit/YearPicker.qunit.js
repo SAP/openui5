@@ -35,6 +35,9 @@ sap.ui.define([
 			assert.equal(oFirstRenderedDate.getHours(), 0, "hours are correct");
 		});
 
+		/**
+ 		 * @deprecated As of version 1.34
+		 */
 		QUnit.test("setYear", function(assert) {
 			// Prepare
 			var oGridItemRefs = this.oYP._oItemNavigation.getItemDomRefs(),
@@ -42,6 +45,8 @@ sap.ui.define([
 
 			// Act
 			this.oYP.setYear(2017);
+
+			oCore.applyChanges();
 			iFocusedIndex = this.oYP._oItemNavigation.getFocusedIndex();
 
 			// Assert
@@ -50,6 +55,9 @@ sap.ui.define([
 
 		});
 
+		/**
+ 		 * @deprecated As of version 1.34
+		 */
 		QUnit.test("setYear with interval selection", function(assert) {
 			// Prepare
 			this.oYP.setIntervalSelection(true);
@@ -103,8 +111,14 @@ sap.ui.define([
 
 			// assert
 			assert.ok(aSelectedDates[0], "sap.m.DateRange intance is created");
+			/**
+ 			 * @deprecated As of version 1.34
+			 */
 			assert.strictEqual(aSelectedDates[0].getStartDate().getFullYear(), this.YP.getYear(),
-				"sap.m.DateRange isntace start date has the same yaer as the 'year' property value");
+				"sap.m.DateRange instance start date has the same year as the 'year' property value");
+
+			assert.strictEqual(aSelectedDates[0].getStartDate().getFullYear(), this.YP.getDate().getFullYear(),
+				"sap.m.DateRange instance start date has the same year as the 'date' property value");
 			assert.notOk(aSelectedDates[0].getEndDate(), "sap.m.DateRange has no endDate set");
 		});
 
@@ -278,7 +292,8 @@ sap.ui.define([
 				oIntervalEndDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2022, 11, 31)),
 				oAfterEndDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2024, 11, 31));
 
-			this.YP.setYear(2018);
+			this.YP.getDate().setFullYear(2018);
+			this.YP.setDate(this.YP.getDate());
 			this.YP._oMinDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2018, 0, 1));
 			this.YP._oMaxDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2022, 11, 31));
 
@@ -344,7 +359,7 @@ sap.ui.define([
 
 		QUnit.test("Year is set to 0001", function(assert) {
 			// Act
-			this.oYP.setYear(1);
+			this.oYP.getDate().setFullYear(1);
 			oCore.applyChanges();
 
 			// Assert
@@ -356,7 +371,7 @@ sap.ui.define([
 			var oMaxYear;
 
 			// Act
-			this.oYP.setYear(9999);
+			this.oYP.getDate().setFullYear(9999);
 			oCore.applyChanges();
 
 			this.oYP._updatePage(true, 0, true);
@@ -388,12 +403,20 @@ sap.ui.define([
 
 			this.oYP.attachSelect(selectSpy);
 
+			/**
+ 			 * @deprecated As of version 1.34
+			 */
 			assert.equal(this.oYP.getYear(), 2000, "2000 year is initially selected");
+			assert.equal(this.oYP.getDate().getFullYear(), 2000, "2000 year is initially selected");
 
 			this.oYP._oMousedownPosition = oMousePosition;
 			this.oYP.onmouseup(oMousePosition);
 
+			/**
+ 			 * @deprecated As of version 1.34
+			 */
 			assert.equal(this.oYP.getYear(), 1993, "1993 year is selected on mouseup");
+			assert.equal(this.oYP.getDate().getFullYear(), 1993, "1993 year is selected on mouseup");
 			assert.equal(selectSpy.callCount, 1, "select event is fired once");
 
 			deviceStub.restore();
