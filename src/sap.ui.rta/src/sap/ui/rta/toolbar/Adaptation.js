@@ -350,45 +350,52 @@ sap.ui.define([
 	function confirmMigration(oRtaInformation) {
 		var bDirty = oRtaInformation.commandStack.canSave();
 
-		Utils.showMessageBox("confirm", (bDirty) ? "DAC_DIALOG_MIGRATION_DIRTY_DESCRIPTION" : "DAC_DIALOG_MIGRATION_DESCRIPTION", {
+		return Utils.showMessageBox("confirm", (bDirty) ? "DAC_DIALOG_MIGRATION_DIRTY_DESCRIPTION" : "DAC_DIALOG_MIGRATION_DESCRIPTION", {
 			titleKey: "DAC_DIALOG_MIGRATION_HEADER",
 			actionKeys: ["DAC_DIALOG_MIGRATION_HEADER"],
 			showCancel: true
 		})
 		.then(function(sAction) {
 			if (sAction !== MessageBox.Action.CANCEL) {
-				BusyIndicator.show();
-
 				if (bDirty) {
-					oRtaInformation.commandStack.removeAllCommands(true);
-				}
-
-				ContextBasedAdaptationsAPI.migrate({
-					control: oRtaInformation.rootControl,
-					layer: oRtaInformation.flexSettings.layer
-				})
-				.finally(function() {
-					BusyIndicator.hide();
-				})
-				.then(Utils.showMessageBox.bind(undefined, "information", "DAC_DIALOG_MIGRATION_SUCCESSFULL_DESCRIPTION", {
-					titleKey: "DAC_DIALOG_MIGRATION_HEADER"
-				}))
-				.then(function() {
 					return new Promise(function(resolve) {
-						this.fireEvent("switchAdaptation", {adaptationId: "DEFAULT", callback: resolve});
+						this.fireEvent("save", {callback: resolve});
+					}.bind(this))
+					.then(function() {
+						return performMigration.call(this, oRtaInformation);
 					}.bind(this));
-				}.bind(this))
-				.catch(function(oError) {
-					Log.error(oError.stack || oError);
-					var sMessage = "DAC_DIALOG_MIGRATION_ERROR_DESCRIPTION";
-					var oOptions = {
-						titleKey: "DAC_DIALOG_MIGRATION_HEADER",
-						details: oError.userMessage || oError
-					};
-					Utils.showMessageBox("error", sMessage, oOptions);
-				});
+				}
+				return performMigration.call(this, oRtaInformation);
 			}
 		}.bind(this));
+	}
+
+	function performMigration(oRtaInformation) {
+		BusyIndicator.show();
+		return ContextBasedAdaptationsAPI.migrate({
+			control: oRtaInformation.rootControl,
+			layer: oRtaInformation.flexSettings.layer
+		})
+		.finally(function() {
+			BusyIndicator.hide();
+		})
+		.then(Utils.showMessageBox.bind(undefined, "information", "DAC_DIALOG_MIGRATION_SUCCESSFULL_DESCRIPTION", {
+			titleKey: "DAC_DIALOG_MIGRATION_HEADER"
+		}))
+		.then(function() {
+			return new Promise(function(resolve) {
+				this.fireEvent("switchAdaptation", {adaptationId: "DEFAULT", callback: resolve});
+			}.bind(this));
+		}.bind(this))
+		.catch(function(oError) {
+			Log.error(oError.stack || oError);
+			var sMessage = "DAC_DIALOG_MIGRATION_ERROR_DESCRIPTION";
+			var oOptions = {
+				titleKey: "DAC_DIALOG_MIGRATION_HEADER",
+				details: oError.userMessage || oError
+			};
+			Utils.showMessageBox("error", sMessage, oOptions);
+		});
 	}
 
 	function onSaveAsAdaptation() {
