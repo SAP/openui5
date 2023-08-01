@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/Cache",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
@@ -44,7 +43,6 @@ sap.ui.define([
 	Condenser,
 	WriteStorage,
 	Version,
-	Cache,
 	ChangePersistence,
 	LayerUtils,
 	Layer,
@@ -93,51 +91,6 @@ sap.ui.define([
 			assert.ok(this.oChangePersistence, "Shall create a new instance");
 		});
 
-		QUnit.test("the cache key is returned asynchronous", function(assert) {
-			var sChacheKey = "abc123";
-
-			var oMockedWrappedContent = {
-				changes: [{}],
-				cacheKey: "abc123",
-				status: "success"
-			};
-			var oMockedAppComponent = {
-				getComponentData: function() {
-					return {};
-				},
-				getModel: function() {
-					return {
-						getCurrentControlVariantIds: function() {
-							return [];
-						},
-						getVariantManagementControlIds: function() {
-							return [];
-						}
-					};
-				}
-			};
-
-			sandbox.stub(Cache, "getChangesFillingCache").resolves(oMockedWrappedContent);
-
-			return this.oChangePersistence.getCacheKey(oMockedAppComponent).then(function(oCacheKeyResponse) {
-				assert.equal(oCacheKeyResponse, sChacheKey);
-			});
-		});
-
-		QUnit.test("the cache key returns a tag if no cache key could be determined", function(assert) {
-			var oMockedWrappedContent = {
-				changes: [{}],
-				etag: "",
-				status: "success"
-			};
-
-			sandbox.stub(Cache, "getChangesFillingCache").resolves(oMockedWrappedContent);
-
-			return this.oChangePersistence.getCacheKey().then(function(oCacheKeyResponse) {
-				assert.equal(oCacheKeyResponse, Cache.NOTAG);
-			});
-		});
-
 		QUnit.test("when getChangesForComponent is called with _bHasChangesOverMaxLayer set and ignoreMaxLayerParameter is passed as true", function(assert) {
 			this.oChangePersistence._bHasChangesOverMaxLayer = true;
 
@@ -147,12 +100,22 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Cache, "getChangesFillingCache").resolves(oMockedWrappedContent);
+			sandbox.stub(FlexState, "getStorageResponse").resolves(oMockedWrappedContent);
 
 			return this.oChangePersistence.getChangesForComponent({ignoreMaxLayerParameter: true}).then(function(sResponse) {
 				assert.strictEqual(sResponse, this.oChangePersistence.HIGHER_LAYER_CHANGES_EXIST, "then the correct response is returned");
 				assert.notOk(this.oChangePersistence._bHasChangesOverMaxLayer, "then _bHasChangesOverMaxLayer is unset");
 			}.bind(this));
+		});
+
+		QUnit.test("when getChangesForComponent is called with cache invalidation", async function(assert) {
+			const mPropertyBag = {foo: "bar"};
+			const oUpdateStub = sandbox.stub(FlexState, "update");
+			const oGetStub = sandbox.stub(FlexState, "getStorageResponse").resolves();
+			await this.oChangePersistence.getChangesForComponent(mPropertyBag, true);
+			assert.strictEqual(oUpdateStub.callCount, 1, "the update function was called to invalidate the cache");
+			assert.ok(oUpdateStub.calledWith(mPropertyBag), "the property bag was passed");
+			assert.strictEqual(oGetStub.callCount, 1, "the getter function was also called");
 		});
 
 		QUnit.test("when _getAllCtrlVariantChanges is called to get only current variant control changes", function(assert) {
@@ -202,7 +165,7 @@ sap.ui.define([
 		QUnit.test("when getChangesForComponent is called without includeCtrlVariants, max layer and current layer parameters", function(assert) {
 			var fnGetCtrlVariantChangesSpy = sandbox.spy(this.oChangePersistence, "_getAllCtrlVariantChanges");
 
-			sandbox.stub(Cache, "getChangesFillingCache").resolves(
+			sandbox.stub(FlexState, "getStorageResponse").resolves(
 				{
 					changes: {
 						changes: [
@@ -223,7 +186,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getChangesForComponent shall not bind the messagebundle as a json model into app component if no VENDOR change is available", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+			sandbox.stub(FlexState, "getStorageResponse").resolves({
 				changes: {changes: []},
 				messagebundle: {i_123: "translatedKey"}
 			});
@@ -236,7 +199,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getChangesForComponent shall not bind the messagebundle as a json model into app component if no VENDOR change is available", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+			sandbox.stub(FlexState, "getStorageResponse").resolves({
 				changes: {
 					changes: [{
 						fileName: "change_id_123",
@@ -258,7 +221,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getChangesForComponent shall return the changes for the component", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: []}});
+			sandbox.stub(FlexState, "getStorageResponse").resolves({changes: {changes: []}});
 
 			return this.oChangePersistence.getChangesForComponent().then(function(changes) {
 				assert.ok(changes);
@@ -266,7 +229,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getChangesForComponent shall return the changes for the component when variantSection is empty", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves(
+			sandbox.stub(FlexState, "getStorageResponse").resolves(
 				{
 					changes: {
 						changes: [
@@ -287,7 +250,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getChangesForComponent shall return the changes for the component, filtering changes with the current layer (CUSTOMER)", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+			sandbox.stub(FlexState, "getStorageResponse").resolves({
 				changes: {
 					changes: [
 						{
@@ -325,7 +288,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getChangesForComponent shall return the changes for the component, not filtering changes with the current layer", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+			sandbox.stub(FlexState, "getStorageResponse").resolves({
 				changes: {
 					changes: [
 						{
@@ -362,7 +325,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("After run getChangesForComponent parameter", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+			sandbox.stub(FlexState, "getStorageResponse").resolves({
 				changes: {
 					changes: [
 						{
@@ -478,7 +441,7 @@ sap.ui.define([
 				reference: this.oChangePersistence.getComponentName()
 			})
 			.returns(oVariant);
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+			sandbox.stub(FlexState, "getStorageResponse").resolves({
 				changes: oResponse
 			});
 			VariantManagementState.getInitialChanges.returns([oResponse.variantDependentControlChanges[0]]);
@@ -525,7 +488,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getChangesForComponent shall ignore max layer parameter when current layer is set", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+			sandbox.stub(FlexState, "getStorageResponse").resolves({
 				changes: {
 					changes: [
 						{
@@ -570,7 +533,7 @@ sap.ui.define([
 
 		QUnit.test("getChangesForComponent shall also pass the returned data to the fl.Settings, but only if the data comes from the back end", function(assert) {
 			var oFileContent = {};
-			sandbox.stub(Cache, "getChangesFillingCache").resolves(oFileContent);
+			sandbox.stub(FlexState, "getStorageResponse").resolves(oFileContent);
 			var oSettingsStoreInstanceStub = sandbox.stub(Settings, "_storeInstance");
 
 			return this.oChangePersistence.getChangesForComponent().then(function() {
@@ -579,7 +542,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getChangesForComponent ignore filtering when ignoreMaxLayerParameter property is available", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+			sandbox.stub(FlexState, "getStorageResponse").resolves({
 				changes: {
 					changes: [
 						{
@@ -838,7 +801,7 @@ sap.ui.define([
 			var oAppComponent = {
 				id: "mockAppComponent"
 			};
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+			sandbox.stub(FlexState, "getStorageResponse").resolves({
 				changes: {
 					changes: [
 						{
@@ -945,7 +908,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+			sandbox.stub(FlexState, "getStorageResponse").resolves({
 				changes: {
 					changes: [oChangeWithViewPrefix, oChangeWithoutViewPrefix, oChangeWithPrefixAndLocalId, oChangeWithViewAndAdditionalPrefixes]
 				}
@@ -992,7 +955,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+			sandbox.stub(FlexState, "getStorageResponse").resolves({
 				changes: {
 					changes: [oChange1View1, oChange1View2]
 				}
@@ -1094,7 +1057,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+			sandbox.stub(FlexState, "getStorageResponse").resolves({
 				changes: {
 					changes: [oChange1View1, oChange1View2, oChange2View2, oChange3View3, oChange4View3, oChange4View1]
 				}
@@ -2155,7 +2118,6 @@ sap.ui.define([
 			this.oServer.restore();
 			sandbox.restore();
 			this._oComponentInstance.destroy();
-			Cache._entries = {};
 		}
 	}, function() {
 		QUnit.test("Shall save the dirty changes when adding a new change and return a promise", function(assert) {
@@ -3060,7 +3022,6 @@ sap.ui.define([
 			var oRaisedError = {messages: [{severity: "Error", text: "Error"}]};
 
 			// this test requires a slightly different setup
-			this.oGetFlexObjectsFromStorageResponseStub.restore();
 			sandbox.stub(Storage, "loadFlexData").resolves({changes: {changes: [oChangeContent]}});
 			this.oWriteStub.restore();
 			sandbox.stub(WriteStorage, "write").rejects(oRaisedError);
@@ -3113,7 +3074,7 @@ sap.ui.define([
 			};
 
 			// this test requires a slightly different setup
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [oChangeContent]}});
+			sandbox.stub(FlexState, "getStorageResponse").resolves({changes: {changes: [oChangeContent]}});
 
 			return this.oChangePersistence.getChangesForComponent().then(function(aChanges) {
 				this.oChangePersistence.deleteChange(aChanges[0]);
