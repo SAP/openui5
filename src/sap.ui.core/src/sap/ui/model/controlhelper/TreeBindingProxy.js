@@ -81,6 +81,10 @@ sap.ui.define(["sap/base/assert", "sap/base/Log"], function (assert, Log) {
 		var oBinding = this._oControl.getBinding();
 		var sTreeBinding = this._getBindingName(oBinding);
 
+		if (iIndex < 0) {
+			return undefined;
+		}
+
 		switch (sTreeBinding) {
 			case undefined:
 				return undefined;
@@ -104,6 +108,10 @@ sap.ui.define(["sap/base/assert", "sap/base/Log"], function (assert, Log) {
 	TreeBindingProxy.prototype.getContextByIndex = function (iIndex) {
 		var oBinding = this._oControl.getBinding();
 		var sTreeBinding = this._getBindingName(oBinding);
+
+		if (iIndex < 0) {
+			return undefined;
+		}
 
 		switch (sTreeBinding) {
 			case undefined:

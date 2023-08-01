@@ -3271,19 +3271,28 @@ sap.ui.define([
 	/**
 	 * Returns the context of a row by its index. Please note that for server-based models like OData,
 	 * the supplied index might not have been loaded yet. If the context is not available at the client,
-	 * the binding will trigger a backend request and request this single context. Although this API
+	 * the binding may trigger a backend request and request this single context. Although this API
 	 * looks synchronous it may not return a context but load it and fire a change event on the binding.
 	 *
 	 * For server-based models you should consider to only make this API call when the index is within
 	 * the currently visible scroll area.
 	 *
 	 * @param {int} iIndex Index of the row to return the context from.
-	 * @returns {sap.ui.model.Context | null} The context at this index or <code>null</code>
+	 * @returns {sap.ui.model.Context | undefined} The context at this index if available
 	 * @public
 	 */
 	Table.prototype.getContextByIndex = function(iIndex) {
 		var oBinding = this.getBinding();
-		return iIndex >= 0 && oBinding ? oBinding.getContexts(iIndex, 1, 0, true)[0] : null;
+
+		if (!oBinding || iIndex < 0) {
+			return undefined;
+		}
+
+		if (oBinding.getContextByIndex) {
+			return oBinding.getContextByIndex(iIndex);
+		}
+
+		return oBinding.getContexts(iIndex, 1, 0, true)[0];
 	};
 
 	// =============================================================================
