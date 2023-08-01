@@ -626,7 +626,7 @@ sap.ui.define([
 	 * @returns {sap.m.IconTabBar|null} Aggregation for the IconTabBar.
 	 */
 	IconTabBar.prototype._getIconTabHeader = function () {
-		if (this.isDestroyed()) {
+		if (this.isDestroyStarted()) {
 			return null;
 		}
 
