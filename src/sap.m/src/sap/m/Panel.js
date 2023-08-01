@@ -224,12 +224,16 @@ sap.ui.define([
 
 		this.setProperty("expanded", bExpanded, true);
 
+		// toggle class to apply styles during animation
+		this.addStyleClass("sapMPanelAnimating");
+
 		if (!this.getExpandable()) {
 			return this;
 		}
 
 		this._toggleExpandCollapse(function () {
 			// invalidate once the animation is over so rerendering could be smoоth
+			that.removeStyleClass("sapMPanelAnimating");
 			that.invalidate();
 		});
 

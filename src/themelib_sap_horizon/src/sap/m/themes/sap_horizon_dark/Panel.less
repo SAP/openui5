@@ -64,6 +64,16 @@
 
 .sapMPanelContent {
 	padding: 0.625rem 1rem;
+	border-bottom-left-radius: inherit;
+	border-bottom-right-radius: inherit;
+}
+
+.sapMPanel.sapMPanelExpanded.sapMPanelAnimating {
+	background: transparent;
+}
+
+.sapMPanelContent::-webkit-scrollbar {
+	border-bottom-right-radius: .75rem;
 }
 
 .sapMPanel .sapMPanelHdr {
@@ -106,5 +116,7 @@
 }
 
 .sapMPanelStickyHeadingDiv {
-	background-color: @sapUiGroupTitleBackground;
+	border-top-left-radius: inherit;
+	border-top-right-radius: inherit;
+	overflow: hidden;
 }
