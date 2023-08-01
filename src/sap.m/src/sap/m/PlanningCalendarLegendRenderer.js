@@ -72,7 +72,9 @@ sap.ui.define(['sap/ui/unified/CalendarLegendRenderer', 'sap/ui/core/Renderer'],
 		PlanningCalendarLegendRenderer.renderAdditionalContent = function(oRm, oLeg) {
 			var aAppointmentItems = oLeg.getAppointmentItems(),
 				i,
-				sColumnWidth;
+				sColumnWidth,
+				sTypeClass,
+				aColorClasses = ["sapUiUnifiedLegendSquareColor", "sapMPlanCalLegendAppCircle"];
 
 			this.renderAppointmentsItemsHeader(oRm, oLeg);
 
@@ -86,7 +88,8 @@ sap.ui.define(['sap/ui/unified/CalendarLegendRenderer', 'sap/ui/core/Renderer'],
 
 			// rendering special day and colors
 			for (i = 0; i < aAppointmentItems.length; i++) {
-				this.renderLegendItem(oRm, "sapUiCalLegDayType" + oLeg._getItemType(aAppointmentItems[i], aAppointmentItems).slice(4), aAppointmentItems[i], ["sapUiUnifiedLegendSquareColor", "sapMPlanCalLegendAppCircle"]);
+				sTypeClass = "sapUiCalLegDayType" + oLeg._getItemType(aAppointmentItems[i], aAppointmentItems).slice(4);
+				this.renderLegendItem(oRm, sTypeClass, aAppointmentItems[i], aColorClasses, i + 1 ,aAppointmentItems.length);
 			}
 
 			oRm.close("div");
