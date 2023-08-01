@@ -269,32 +269,35 @@ sap.ui.define([
 		Container.prototype.openContainer.apply(this, arguments);
 
 		var oContent = this._getContent();
+		var oOpenPromise = this._retrievePromise("open");
 		Promise.resolve(oContent && oContent.onBeforeShow(true)).then(function () {// onBeforeShow should guarantee filtering is done, when we observe the table in showTypeahead
 			var oDelegate = this.getValueHelpDelegate();
 			var oValueHelp = this.getValueHelp();
 
 			return Promise.resolve(bTypeahead ? oDelegate.showTypeahead(oValueHelp, oContent) : true).then(function (bShowTypeahead) {
-				return bShowTypeahead ? Promise.resolve(bShowTypeahead) : Promise.reject(bShowTypeahead);
+				// Only continue the opening process, if delegate confirms "showTypeahead" and open promise is not canceled (might happen due to focus loss in target control).
+				return bShowTypeahead && !oOpenPromise.isCanceled() ? true : Promise.reject();
 			});
 		}.bind(this)).then(function () {
-			var oControl = this.getControl();
-			var oTarget = oControl && oControl.getFocusElementForValueHelp ? oControl.getFocusElementForValueHelp(this.isTypeahead()) : oControl;
-
-			if (oTarget && oTarget.getDomRef()) {
-				oPopover.setContentMinWidth(jQuery(oTarget.getDomRef()).outerWidth() + "px");
-				if (!this.isFocusInHelp()) {
-					oPopover.setInitialFocus(oTarget);
-				}
-				oPopover.openBy(oTarget);
-			}
+			this._openContainerByTarget(oPopover);
 		}.bind(this)).catch(function (oError) {
-			this._cancelPromise("open");
-
+			this._cancelPromise(oOpenPromise);
 			if (oError && oError instanceof Error) { // Re-throw actual errors
 				throw oError;
 			}
-
 		}.bind(this));
+	};
+
+	Popover.prototype._openContainerByTarget = function (oPopover) {
+		var oControl = this.getControl();
+		var oTarget = oControl && oControl.getFocusElementForValueHelp ? oControl.getFocusElementForValueHelp(this.isTypeahead()) : oControl;
+		if (oTarget && oTarget.getDomRef()) {
+			oPopover.setContentMinWidth(jQuery(oTarget.getDomRef()).outerWidth() + "px");
+			if (!this.isFocusInHelp()) {
+				oPopover.setInitialFocus(oTarget);
+			}
+			oPopover.openBy(oTarget);
+		}
 	};
 
 	Popover.prototype.closeContainer = function () {
