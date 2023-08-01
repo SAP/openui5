@@ -1,0 +1,16 @@
+{
+	"_version": "1.1.0",
+	"sap.app": {
+		"id": "appUnderTest",
+		"type": "application",
+		"title": "Support Assistant OPA Test Application"
+	},
+	"sap.ui": {},
+	"sap.ui5": {
+		"dependencies": {},
+		"rootView": {
+			"async": true,
+			"viewName": "appUnderTest.view.Main"
+		}
+	}
+}
