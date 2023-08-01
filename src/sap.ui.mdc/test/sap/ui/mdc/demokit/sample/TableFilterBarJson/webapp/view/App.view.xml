@@ -1,7 +1,0 @@
-<mvc:View
-	displayBlock="true"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m"
-	controllerName="sap.ui.mdc.demokit.sample.TableFilterBarJson.webapp.controller.Mountains">
-	<App id="app"></App>
-</mvc:View>

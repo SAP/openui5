@@ -1,27 +1,25 @@
 <mvc:View
 	height="100%"
 	displayBlock="true"
-	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
 	xmlns:core="sap.ui.core"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdct="sap.ui.mdc.table"
-	xmlns:vm="sap.ui.fl.variants"
-	controllerName="sap.ui.mdc.demokit.sample.TableFilterBarJson.webapp.controller.Mountains">
+	xmlns:vm="sap.ui.fl.variants">
 
-	<f:DynamicPage id="dynamicPageId">
+	<f:DynamicPage id="page">
 		<f:title>
 			<f:DynamicPageTitle>
 				<f:heading>
-					<vm:VariantManagement id="myVM" for="filterbar, table"/>
+					<vm:VariantManagement id="variants" for="filterbar, table"/>
 				</f:heading>
 			</f:DynamicPageTitle>
 		</f:title>
 		<f:header>
 			<f:DynamicPageHeader pinnable="true">
-				<mdc:FilterBar id="filterbar" delegate="{name: 'sap/ui/mdc/demokit/sample/TableFilterBarJson/webapp/delegate/JSONFilterBarDelegate'}"
-						propertyInfo = '[\{"label": "Name", "name": "name", "dataType":"sap.ui.model.type.String", "maxConditions":-1, "required":false\}]'
+				<mdc:FilterBar id="filterbar" delegate="{name: 'mdc/sample/delegate/JSONFilterBarDelegate'}"
 						p13nMode = "Item,Value">
 
 					<mdc:basicSearchField>
@@ -36,19 +34,13 @@
 						<mdc:FilterField
 							label="Name"
 							propertyKey="name"
+							dataType="sap.ui.model.type.String"
 							conditions="{$filters>/conditions/name}"
 							delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}"
 							valueHelp="name-vh"/>
-						<mdc:FilterField
-							label="Range"
-							propertyKey="range"
-							conditions="{$filters>/conditions/range}"
-							delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}"
-							valueHelp="range-vh"/>
 					</mdc:filterItems>
 					<mdc:dependents>
-						<core:Fragment fragmentName="sap.ui.mdc.demokit.sample.TableFilterBarJson.webapp.view.fragment.NameValueHelp" type="XML"/>
-						<core:Fragment fragmentName="sap.ui.mdc.demokit.sample.TableFilterBarJson.webapp.view.fragment.RangeValueHelp" type="XML"/>
+						<core:Fragment fragmentName="mdc.sample.view.fragment.NameValueHelp" type="XML"/>
 					</mdc:dependents>
 				</mdc:FilterBar>
 			</f:DynamicPageHeader>
@@ -63,7 +55,7 @@
 				filter="filterbar"
 				showRowCount="false"
 				delegate="{
-					name: 'sap/ui/mdc/demokit/sample/TableFilterBarJson/webapp/delegate/JSONTableDelegate',
+					name: 'mdc/sample/delegate/JSONTableDelegate',
 					payload: {
 						collectionPath: 'mountains>/mountains'
 					}
@@ -76,7 +68,7 @@
 				<mdct:Column
 					propertyKey="height"
 					header="Height">
-					<Text text="{path:'mountains>height', formatter: '.formatHeight'}"/>
+					<Text text="{path: 'mountains>height' , type: 'mdc.sample.model.type.LengthMeter'}"/>
 				</mdct:Column>
 				<mdct:Column
 					propertyKey="range"

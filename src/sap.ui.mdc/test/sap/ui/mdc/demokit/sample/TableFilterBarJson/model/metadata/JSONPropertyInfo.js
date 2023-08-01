@@ -32,13 +32,13 @@ sap.ui.define([
 		label: "Height",
 		visible: true,
 		path: "height",
-		dataType: "sap.ui.model.type.Integer"
+		dataType: "mdc.sample.model.type.LengthMeter"
 	},{
 		name: "prominence",
 		label: "Prominence",
 		visible: true,
 		path: "prominence",
-		dataType: "sap.ui.model.type.Integer"
+		dataType: "mdc.sample.model.type.LengthMeter"
 	},{
 		name: "range",
 		label: "Range",

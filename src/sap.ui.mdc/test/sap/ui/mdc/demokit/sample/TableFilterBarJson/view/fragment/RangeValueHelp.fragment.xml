@@ -10,7 +10,7 @@
 		<mdc:typeahead>
 			<vh:Popover title="Range">
 				<vhc:MTable keyPath="range" filterFields="*range*">
-					<Table id="range-vht-table" items='{path : "mountains>/ranges"}' width="30rem">
+					<Table id="range-vh-table" items='{path : "mountains>/ranges"}' width="30rem">
 						<columns>
 							<Column>
 								<header>

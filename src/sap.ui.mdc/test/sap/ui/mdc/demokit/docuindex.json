@@ -61,8 +61,8 @@
 			},
 			{
 				"id": "sap.ui.mdc",
-				"name": "MDC Overview",
-				"category": "Container",
+				"name": "MDC Samples",
+				"category": "Smart Controls",
 				"since": "1.116",
 				"samples": [
 					"sap.ui.mdc.demokit.sample.TableFilterBarJson"
@@ -157,8 +157,8 @@
 				"description": "example demonstrating StateUtil functionality"
 			}, {
 				"id": "sap.ui.mdc.demokit.sample.TableFilterBarJson",
-				"name": "1.1 Table with FilterBar and JSON model",
-				"description": "Table and Filterbar example with JSON model"
+                "name": "Table with FilterBar and JSON model",
+                "description": "A basic delegate setup using a combination of a table with a filter bar including variant management, with a simplified metadata definition in a separate file."
 			}
 		]
 	}
