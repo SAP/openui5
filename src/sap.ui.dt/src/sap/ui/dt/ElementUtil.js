@@ -4,21 +4,21 @@
 
 // Provides object sap.ui.dt.ElementUtil.
 sap.ui.define([
-	"sap/ui/base/Object",
-	"sap/ui/dt/Util",
-	"sap/ui/dt/DOMUtil",
-	"sap/ui/core/Element",
-	"sap/ui/core/Component",
 	"sap/base/util/isPlainObject",
-	"sap/ui/core/UIArea"
+	"sap/ui/base/Object",
+	"sap/ui/core/Component",
+	"sap/ui/core/Element",
+	"sap/ui/core/UIArea",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/Util"
 ], function(
-	BaseObject,
-	Util,
-	DOMUtil,
-	Element,
-	Component,
 	isPlainObject,
-	UIArea
+	BaseObject,
+	Component,
+	Element,
+	UIArea,
+	DOMUtil,
+	Util
 ) {
 	"use strict";
 

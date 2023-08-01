@@ -1,65 +1,65 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/dt/ElementUtil",
+	"sap/f/DynamicPage",
+	"sap/f/DynamicPageTitle",
 	"sap/m/Button",
-	"sap/m/Input",
-	"sap/m/VBox",
-	"sap/m/Text",
-	"sap/m/List",
 	"sap/m/CustomListItem",
-	"sap/m/Label",
 	"sap/m/IconTabFilter",
 	"sap/m/IconTabBar",
+	"sap/m/Input",
 	"sap/m/InputListItem",
+	"sap/m/Label",
+	"sap/m/List",
 	"sap/m/ObjectAttribute",
 	"sap/m/Select",
-	"sap/ui/layout/VerticalLayout",
-	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/layout/form/Form",
-	"sap/ui/layout/form/FormContainer",
-	"sap/ui/layout/form/FormElement",
-	"sap/ui/core/UIComponent",
+	"sap/m/Text",
+	"sap/m/VBox",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Core",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
 	"sap/ui/core/Item",
-	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/UIComponent",
+	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/Util",
-	"sap/f/DynamicPage",
-	"sap/f/DynamicPageTitle",
-	"sap/ui/base/ManagedObject",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/layout/HorizontalLayout",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/layout/form/Form",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/layout/form/FormElement",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	ElementUtil,
+	DynamicPage,
+	DynamicPageTitle,
 	Button,
-	Input,
-	VBox,
-	Text,
-	List,
 	CustomListItem,
-	Label,
 	IconTabFilter,
 	IconTabBar,
+	Input,
 	InputListItem,
+	Label,
+	List,
 	ObjectAttribute,
 	Select,
-	VerticalLayout,
-	HorizontalLayout,
-	Form,
-	FormContainer,
-	FormElement,
-	UIComponent,
+	Text,
+	VBox,
+	ManagedObject,
+	Core,
 	ComponentContainer,
 	Element,
 	Item,
-	JSONModel,
+	UIComponent,
+	ElementUtil,
 	DtUtil,
-	DynamicPage,
-	DynamicPageTitle,
-	ManagedObject,
-	sinon,
-	oCore
+	HorizontalLayout,
+	VerticalLayout,
+	Form,
+	FormContainer,
+	FormElement,
+	JSONModel,
+	sinon
 ) {
 	"use strict";
 
@@ -97,7 +97,7 @@ sap.ui.define([
 			]
 		});
 		this.oVerticalLayout.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 	};
 
 	var fnDestroyControls = function() {
@@ -160,7 +160,7 @@ sap.ui.define([
 				new FormContainer("group2")
 			]
 		});
-		this.oFormContainer1 = oCore.byId("group1");
+		this.oFormContainer1 = Core.byId("group1");
 	};
 
 	var fnDestroyForm = function() {
@@ -192,16 +192,24 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the hasInterface is called with an interface", function(assert) {
-			assert.equal(ElementUtil.hasInterface(this.oIconTabFilter, "sap.m.IconTab"), true, 'then the static method "hasInterface" returns true, if control implements this interface');
-			assert.equal(ElementUtil.hasInterface(this.oButton, "sap.m.IconTab"), false, 'then the static method "hasInterface" returns false, if control does not implement this interface');
+			assert.equal(
+				ElementUtil.hasInterface(this.oIconTabFilter, "sap.m.IconTab"),
+				true,
+				"then the static method 'hasInterface' returns true, if control implements this interface"
+			);
+			assert.equal(
+				ElementUtil.hasInterface(this.oButton, "sap.m.IconTab"),
+				false,
+				"then the static method 'hasInterface' returns false, if control does not implement this interface"
+			);
 		});
 
 		QUnit.test("when the hasInterface is called with an empty interface", function(assert) {
-			assert.equal(ElementUtil.hasInterface(this.oIconTabFilter, ""), false, 'then the static method "hasInterface" returns false');
+			assert.equal(ElementUtil.hasInterface(this.oIconTabFilter, ""), false, "then the static method 'hasInterface' returns false");
 		});
 
 		QUnit.test("when the hasInterface is called with an undefined interface", function(assert) {
-			assert.equal(ElementUtil.hasInterface(this.oIconTabFilter), false, 'then the static method "hasInterface" returns false');
+			assert.equal(ElementUtil.hasInterface(this.oIconTabFilter), false, "then the static method 'hasInterface' returns false");
 		});
 	});
 
@@ -216,13 +224,25 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when getElementInstance() is called with a control-Id", function(assert) {
-			assert.equal(ElementUtil.getElementInstance(this.oButton.getId()), this.oButton, 'then the static method "getElementInstance" returns the control');
+			assert.equal(
+				ElementUtil.getElementInstance(this.oButton.getId()),
+				this.oButton,
+				"then the static method 'getElementInstance' returns the control"
+			);
 		});
 		QUnit.test("when getElementInstance() is called with a control instance", function(assert) {
-			assert.equal(ElementUtil.getElementInstance(this.oButton), this.oButton, 'then the static method "getElementInstance" returns the control');
+			assert.equal(
+				ElementUtil.getElementInstance(this.oButton),
+				this.oButton,
+				"then the static method 'getElementInstance' returns the control"
+			);
 		});
 		QUnit.test("when getElementInstance() is called with a Component-Id", function(assert) {
-			assert.equal(ElementUtil.getElementInstance(this.oComponent.getId()), this.oComponent, 'then the static method "getElementInstance" returns the Component');
+			assert.equal(
+				ElementUtil.getElementInstance(this.oComponent.getId()),
+				this.oComponent,
+				"then the static method 'getElementInstance' returns the Component"
+			);
 		});
 	});
 
@@ -236,18 +256,30 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when getClosestElementForNode() is called with the main DOM-node of the control", function(assert) {
 			var oNode = this.oButton.getDomRef();
-			assert.equal(ElementUtil.getClosestElementForNode(oNode), this.oButton, 'then the static method "getClosestElementForNode" returns the control');
+			assert.equal(
+				ElementUtil.getClosestElementForNode(oNode),
+				this.oButton,
+				"then the static method 'getClosestElementForNode' returns the control"
+			);
 		});
 		QUnit.test("when getClosestElementForNode() is called with a DOM-node of the control", function(assert) {
 			var oNode = this.oButton.getDomRef().children[0];
-			assert.equal(ElementUtil.getClosestElementForNode(oNode), this.oButton, 'then the static method "getClosestElementForNode" returns the control');
+			assert.equal(
+				ElementUtil.getClosestElementForNode(oNode),
+				this.oButton,
+				"then the static method 'getClosestElementForNode' returns the control"
+			);
 		});
 		QUnit.test("when getClosestElementForNode() is called with a DOM-node not belonging to any control", function(assert) {
 			var oNode = document.createElement("div");
 			oNode.setAttribute("id", "testdiv");
 			oNode.innerHTML = "TEST";
 			document.querySelector("#qunit-fixture").append(oNode);
-			assert.equal(ElementUtil.getClosestElementForNode(oNode), undefined, 'then the static method "getClosestElementForNode" returns undefined');
+			assert.equal(
+				ElementUtil.getClosestElementForNode(oNode),
+				undefined,
+				"then the static method 'getClosestElementForNode' returns undefined"
+			);
 		});
 	});
 
@@ -264,13 +296,25 @@ sap.ui.define([
 		QUnit.test("when fixComponentParent() is called with a Component within a container", function(assert) {
 			this.oCompContainer.setComponent(this.oComponent);
 			this.oVerticalLayout.addContent(this.oCompContainer);
-			assert.equal(ElementUtil.fixComponentParent(this.oComponent), this.oVerticalLayout, 'then the static method "fixComponentParent" returns the Parent of the Component Container');
+			assert.equal(
+				ElementUtil.fixComponentParent(this.oComponent),
+				this.oVerticalLayout,
+				"then the static method 'fixComponentParent' returns the Parent of the Component Container"
+			);
 		});
 		QUnit.test("when fixComponentParent() is called with a Component without a container", function(assert) {
-			assert.equal(ElementUtil.fixComponentParent(this.oComponent), undefined, 'then the static method "fixComponentParent" returns undefined');
+			assert.equal(
+				ElementUtil.fixComponentParent(this.oComponent),
+				undefined,
+				"then the static method 'fixComponentParent' returns undefined"
+			);
 		});
 		QUnit.test("when fixComponentParent() is called with another Control", function(assert) {
-			assert.equal(ElementUtil.fixComponentParent(this.oVerticalLayout), this.oVerticalLayout, 'then the static method "fixComponentParent" returns the control itself');
+			assert.equal(
+				ElementUtil.fixComponentParent(this.oVerticalLayout),
+				this.oVerticalLayout,
+				"then the static method 'fixComponentParent' returns the control itself"
+			);
 		});
 	});
 
@@ -286,14 +330,26 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when fixComponentContainerElement() is called with a ComponentContainer with a Component", function(assert) {
 			this.oCompContainer.setComponent(this.oComponent);
-			var oRootControl = oCore.byId("Root");
-			assert.equal(ElementUtil.fixComponentContainerElement(this.oCompContainer), oRootControl, 'then the static method "fixComponentContainerElement" returns the Root Control of the Component');
+			var oRootControl = Core.byId("Root");
+			assert.equal(
+				ElementUtil.fixComponentContainerElement(this.oCompContainer),
+				oRootControl,
+				"then the static method 'fixComponentContainerElement' returns the Root Control of the Component"
+			);
 		});
 		QUnit.test("when fixComponentContainerElement() is called with a ComponentContainer without a Component", function(assert) {
-			assert.equal(ElementUtil.fixComponentContainerElement(this.oCompContainer), undefined, 'then the static method "fixComponentContainerElement" returns undefined');
+			assert.equal(
+				ElementUtil.fixComponentContainerElement(this.oCompContainer),
+				undefined,
+				"then the static method 'fixComponentContainerElement' returns undefined"
+			);
 		});
 		QUnit.test("when fixComponentContainerElement() is called with another Control", function(assert) {
-			assert.equal(ElementUtil.fixComponentContainerElement(this.oButton), this.oButton, 'then the static method "fixComponentContainerElement" returns the control itself');
+			assert.equal(
+				ElementUtil.fixComponentContainerElement(this.oButton),
+				this.oButton,
+				"then the static method 'fixComponentContainerElement' returns the control itself"
+			);
 		});
 	});
 
@@ -311,16 +367,16 @@ sap.ui.define([
 		QUnit.test("when it is rendered and the DOM reference is available", function(assert) {
 			var oDomRef = this.oVerticalLayout.getDomRef();
 			var oDomRefTest = ElementUtil.getDomRef(this.oVerticalLayout);
-			assert.deepEqual(oDomRefTest, oDomRef, 'then the static method "getDomRef" returns the right value');
+			assert.deepEqual(oDomRefTest, oDomRef, "then the static method 'getDomRef' returns the right value");
 		});
 		QUnit.test("when it is rendered and the RenderedDOM reference is available", function(assert) {
 			var oDomRef = this.oFormContainer1.getRenderedDomRef();
 			var oDomRefTest = ElementUtil.getDomRef(this.oFormContainer1);
-			assert.deepEqual(oDomRefTest, oDomRef, 'then the static method "getDomRef" returns the right value');
+			assert.deepEqual(oDomRefTest, oDomRef, "then the static method 'getDomRef' returns the right value");
 		});
 		QUnit.test("when getDomRef() is not available for this Element", function(assert) {
 			var oDomRefTest = ElementUtil.getDomRef(this.oHorizontalLayoutChild.getContent());
-			assert.deepEqual(oDomRefTest, undefined, 'then the static method "getDomRef" returns undefined');
+			assert.deepEqual(oDomRefTest, undefined, "then the static method 'getDomRef' returns undefined");
 		});
 	});
 
@@ -335,24 +391,28 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when a control is a successor of another control", function(assert) {
-			assert.equal(ElementUtil.hasAncestor(this.oButton, this.oVerticalLayout), true, 'then static method "hasAncestor" returns true');
+			assert.equal(
+				ElementUtil.hasAncestor(this.oButton, this.oVerticalLayout),
+				true,
+				"then static method 'hasAncestor' returns true"
+			);
 		});
 
 		QUnit.test("when a control is not a successor of another control", function(assert) {
 			var oButton = new Button({text: "Button"});
-			assert.equal(ElementUtil.hasAncestor(oButton, this.oVerticalLayout), false, 'then static method "hasAncestor" returns false');
+			assert.equal(ElementUtil.hasAncestor(oButton, this.oVerticalLayout), false, "then static method 'hasAncestor' returns false");
 		});
 
 		QUnit.test("when the reference control is a UIComponent", function(assert) {
 			var oButton = this.oComponent.getRootControl().getContent()[0];
-			assert.equal(ElementUtil.hasAncestor(oButton, this.oComponent), true, 'then static method "hasAncestor" returns true');
+			assert.equal(ElementUtil.hasAncestor(oButton, this.oComponent), true, "then static method 'hasAncestor' returns true");
 		});
 
 		QUnit.test("when the reference control is a layout that includes a UIComponent", function(assert) {
 			this.oCompContainer.setComponent(this.oComponent);
 			this.oVerticalLayout.addContent(this.oCompContainer);
 			var oButton = this.oComponent.getRootControl().getContent()[0];
-			assert.equal(ElementUtil.hasAncestor(oButton, this.oVerticalLayout), true, 'then static method "hasAncestor" returns true');
+			assert.equal(ElementUtil.hasAncestor(oButton, this.oVerticalLayout), true, "then static method 'hasAncestor' returns true");
 		});
 	});
 
@@ -369,7 +429,11 @@ sap.ui.define([
 		QUnit.test("when asking for the siblings in a container, where the container is the direct parent", function(assert) {
 			var aSiblings = ElementUtil.findAllSiblingsInContainer(this.oButton, this.oHorizontalLayoutChild);
 			assert.equal(aSiblings.length, 2, " then both controls are found (including the original control)");
-			assert.equal(aSiblings[0].getId(), this.oHorizontalLayoutChild.getContent()[0].getId(), "and the sibling is the right control ");
+			assert.equal(
+				aSiblings[0].getId(),
+				this.oHorizontalLayoutChild.getContent()[0].getId(),
+				"and the sibling is the right control "
+			);
 			assert.equal(aSiblings[1].getId(), this.oButton.getId(), "and the sibling is the right control ");
 			this.oHorizontalLayoutChild.removeContent(this.oButton);
 			this.oButton.destroy();
@@ -381,7 +445,11 @@ sap.ui.define([
 			var aChildren1 = this.oHorizontalLayoutChild1.getContent();
 			var aChildren2 = this.oHorizontalLayoutChild2.getContent();
 			var aSiblings = ElementUtil.findAllSiblingsInContainer(aChildren2[0], this.oVerticalLayout2);
-			assert.equal(aSiblings.length, 4, " then all controls in the same aggregation at the lowest level found (including the original control)");
+			assert.equal(
+				aSiblings.length,
+				4,
+				" then all controls in the same aggregation at the lowest level found (including the original control)"
+			);
 			assert.deepEqual(aSiblings, aChildren1.concat(aChildren2), " and the controls are the same");
 		});
 
@@ -413,13 +481,17 @@ sap.ui.define([
 				remove: "removeContent",
 				insert: "insertContent",
 				removeAll: "removeAllContent"
-			}, 'then the static method "getAggregationAccessors" returns all accessors of an aggregation');
+			}, "then the static method 'getAggregationAccessors' returns all accessors of an aggregation");
 
 			var aFoundAggregations = [];
 			ElementUtil.iterateOverAllPublicAggregations(this.oVerticalLayout, function(oAggregation) {
 				aFoundAggregations.push(oAggregation.name);
 			});
-			assert.deepEqual(aFoundAggregations, ["tooltip", "customData", "layoutData", "dependents", "dragDropConfig", "content"], 'then the static method "iterateOverAllPublicAggregations" finds all public aggregations');
+			assert.deepEqual(
+				aFoundAggregations,
+				["tooltip", "customData", "layoutData", "dependents", "dragDropConfig", "content"],
+				"then the static method 'iterateOverAllPublicAggregations' finds all public aggregations"
+			);
 		});
 	});
 
@@ -439,12 +511,16 @@ sap.ui.define([
 				remove: "removeElement",
 				insert: undefined,
 				removeAll: "removeAllElements"
-			}, 'then the static method "getAssociationAccessors" returns all accessors of an existing association');
+			}, "then the static method 'getAssociationAccessors' returns all accessors of an existing association");
 		});
 
 		QUnit.test("when the control has associations", function(assert) {
 			var mAccessors = ElementUtil.getAssociationAccessors(this.oCustomControl, "nonexisting");
-			assert.deepEqual(mAccessors, {}, 'then the static method "getAssociationAccessors" returns an empty object for an non existing association');
+			assert.deepEqual(
+				mAccessors,
+				{},
+				"then the static method 'getAssociationAccessors' returns an empty object for an non existing association"
+			);
 		});
 	});
 
@@ -463,11 +539,15 @@ sap.ui.define([
 			this.oCustomControl.addElement(this.oIconTabFilter);
 			var mResult = [this.oButton.getId(), this.oIconTabFilter.getId()];
 			var mAssociationElements = ElementUtil.getAssociation(this.oCustomControl, "elements");
-			assert.deepEqual(mAssociationElements, mResult, 'then the static method "getAssociation" returns the ids of the association');
+			assert.deepEqual(mAssociationElements, mResult, "then the static method 'getAssociation' returns the ids of the association");
 		});
 		QUnit.test("when the control has associations", function(assert) {
 			var mAssociationElements = ElementUtil.getAssociation(this.oCustomControl, "nonexisting");
-			assert.deepEqual(mAssociationElements, undefined, 'then the static method "getAssociation" returns undefined for non existing association');
+			assert.deepEqual(
+				mAssociationElements,
+				undefined,
+				"then the static method 'getAssociation' returns undefined for non existing association"
+			);
 		});
 	});
 
@@ -485,16 +565,28 @@ sap.ui.define([
 			this.oCustomControl.addElement(this.oButton);
 			this.oCustomControl.addElement(this.oIconTabFilter);
 			var mAssociationElements = ElementUtil.getAssociationInstances(this.oCustomControl, "elements");
-			assert.deepEqual(mAssociationElements, [this.oButton, this.oIconTabFilter], 'then the static method "getAssociationInstances" returns an array of elements if more elements are associated');
+			assert.deepEqual(
+				mAssociationElements,
+				[this.oButton, this.oIconTabFilter],
+				"then the static method 'getAssociationInstances' returns an array of elements if more elements are associated"
+			);
 		});
 		QUnit.test("when the control has association", function(assert) {
 			this.oCustomControl.addElement(this.oButton);
 			var mAssociationElements = ElementUtil.getAssociationInstances(this.oCustomControl, "elements");
-			assert.deepEqual(mAssociationElements, [this.oButton], 'then the static method "getAssociationInstances" returns an array with one elenement if only one element is associated');
+			assert.deepEqual(
+				mAssociationElements,
+				[this.oButton],
+				"then the static method 'getAssociationInstances' returns an array with one elenement if only one element is associated"
+			);
 		});
 		QUnit.test("when the control has associations", function(assert) {
 			var mAssociationElements = ElementUtil.getAssociationInstances(this.oCustomControl, "nonexisting");
-			assert.deepEqual(mAssociationElements, [], 'then the static method "getAssociationInstances" returns an empty array for non existing association');
+			assert.deepEqual(
+				mAssociationElements,
+				[],
+				"then the static method 'getAssociationInstances' returns an empty array for non existing association"
+			);
 		});
 	});
 
@@ -512,21 +604,37 @@ sap.ui.define([
 			this.oCustomControl.addElement(this.oButton);
 			this.oCustomControl.addElement(this.oIconTabFilter);
 			var nAssociationIndex = ElementUtil.getIndexInAssociation(this.oIconTabFilter, this.oCustomControl, "elements");
-			assert.deepEqual(nAssociationIndex, 1, 'then the static method "getIndexInAssociation" returns the correct index position in association for multiple elements');
+			assert.deepEqual(
+				nAssociationIndex,
+				1,
+				"then the static method 'getIndexInAssociation' returns the correct index position in association for multiple elements"
+			);
 		});
 		QUnit.test("when the control has association", function(assert) {
 			this.oCustomControl.addElement(this.oButton);
 			var nAssociationIndex = ElementUtil.getIndexInAssociation(this.oButton, this.oCustomControl, "elements");
-			assert.deepEqual(nAssociationIndex, 0, 'then the static method "getIndexInAssociation" returns zero if only one element is in an association');
+			assert.deepEqual(
+				nAssociationIndex,
+				0,
+				"then the static method 'getIndexInAssociation' returns zero if only one element is in an association"
+			);
 		});
 		QUnit.test("when the control has association", function(assert) {
 			this.oCustomControl.addElement(this.oButton);
 			var nAssociationIndex = ElementUtil.getIndexInAssociation(this.oIconTabFilter, this.oCustomControl, "elements");
-			assert.deepEqual(nAssociationIndex, -1, 'then the static method "getIndexInAssociation" returns -1 if element is not in an association');
+			assert.deepEqual(
+				nAssociationIndex,
+				-1,
+				"then the static method 'getIndexInAssociation' returns -1 if element is not in an association"
+			);
 		});
 		QUnit.test("when the control has associations", function(assert) {
 			var nAssociationIndex = ElementUtil.getIndexInAssociation(this.oButton, this.oCustomControl, "nonexisting");
-			assert.deepEqual(nAssociationIndex, -1, 'then the static method "getIndexInAssociation" returns -1 for non existing association');
+			assert.deepEqual(
+				nAssociationIndex,
+				-1,
+				"then the static method 'getIndexInAssociation' returns -1 for non existing association"
+			);
 		});
 	});
 
@@ -590,7 +698,11 @@ sap.ui.define([
 			ElementUtil.insertAggregation(this.oVerticalLayout, "content", this.oHorizontalLayoutChild, 1);
 			var iLengthAfter = this.oVerticalLayout.getContent().length;
 			assert.equal(iLengthAfter, iLengthBefore, "then the number of controls in the aggregation is right");
-			assert.strictEqual(this.oVerticalLayout.getContent()[1], this.oHorizontalLayoutChild, "and the control is at the right position");
+			assert.strictEqual(
+				this.oVerticalLayout.getContent()[1],
+				this.oHorizontalLayoutChild,
+				"and the control is at the right position"
+			);
 		});
 
 		QUnit.test("when the control is added into a child of itself at a certain position", function(assert) {
@@ -641,7 +753,10 @@ sap.ui.define([
 		QUnit.test("when there is no AggregationMutator", function(assert) {
 			var oStub = sandbox.stub(ElementUtil, "getAggregationAccessors").returns({});
 			ElementUtil.removeAggregation(this.oVerticalLayout, "content", this.oHorizontalLayoutChild);
-			assert.ok(this.oVerticalLayout.getContent().indexOf(this.oHorizontalLayoutChild) === -1, "then HorizontalLayoutChild is removed from the content");
+			assert.ok(
+				this.oVerticalLayout.getContent().indexOf(this.oHorizontalLayoutChild) === -1,
+				"then HorizontalLayoutChild is removed from the content"
+			);
 			oStub.restore();
 			this.oHorizontalLayoutChild.destroy();
 		});
@@ -656,33 +771,49 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when an element is checked if it is valid for an aggregation of a parent", function(assert) {
-			assert.equal(ElementUtil.isValidForAggregation(this.oVerticalLayout, "content", new Button({text: "Button"})), true, 'then the static method "isValidForAggregation" returns true');
+			assert.equal(
+				ElementUtil.isValidForAggregation(this.oVerticalLayout, "content", new Button({text: "Button"})),
+				true,
+				"then the static method 'isValidForAggregation' returns true"
+			);
 		});
 
 		QUnit.test("when an element is checked if it is valid for an aggregation of itself", function(assert) {
-			assert.equal(ElementUtil.isValidForAggregation(this.oVerticalLayout, "content", this.oVerticalLayout), false, 'then the static method "isValidForAggregation" returns false');
+			assert.equal(
+				ElementUtil.isValidForAggregation(this.oVerticalLayout, "content", this.oVerticalLayout),
+				false,
+				"then the static method 'isValidForAggregation' returns false"
+			);
 		});
 
 		QUnit.test("when an element is checked if it is valid for an aggregation of one of its children", function(assert) {
-			assert.equal(ElementUtil.isValidForAggregation(this.oHorizontalLayoutChild, "content", this.oVerticalLayout), false, 'then the static method "isValidForAggregation" returns false');
+			assert.equal(
+				ElementUtil.isValidForAggregation(this.oHorizontalLayoutChild, "content", this.oVerticalLayout),
+				false,
+				"then the static method 'isValidForAggregation' returns false"
+			);
 		});
 
 		QUnit.test("when an element is checked if it is valid for an aggregation, which type is an interface", function(assert) {
-			assert.equal(ElementUtil.isValidForAggregation(this.oIconTabBar, "items", this.oIconTabFilter), true, 'then the static method "isValidForAggregation" returns true');
+			assert.equal(
+				ElementUtil.isValidForAggregation(this.oIconTabBar, "items", this.oIconTabFilter),
+				true,
+				"then the static method 'isValidForAggregation' returns true"
+			);
 		});
 
 		QUnit.test("when a control has non-multiple aggregations with existing items", function(assert) {
 			var oFormElement = new FormElement({label: "InputLabel"});
 			var oLabel = new Label();
 			assert.equal(ElementUtil.isValidForAggregation(oFormElement, "label", oLabel), false,
-				'then the static method "isValidForAggregation" returns false');
+				"then the static method 'isValidForAggregation' returns false");
 		});
 
 		QUnit.test("when a control has non-multiple aggregations without an existing item", function(assert) {
 			var oFormElement = new FormElement();
 			var oLabel = new Label();
 			assert.equal(ElementUtil.isValidForAggregation(oFormElement, "label", oLabel), true,
-				'then the static method "isValidForAggregation" returns true');
+				"then the static method 'isValidForAggregation' returns true");
 		});
 	});
 
@@ -755,7 +886,11 @@ sap.ui.define([
 				return oElement.getId();
 			};
 			var oButton = new Button("testButton");
-			assert.equal(ElementUtil.getLabelForElement(oButton, fnFunction), "testButton", "then it executes the function with the desired return value");
+			assert.equal(
+				ElementUtil.getLabelForElement(oButton, fnFunction),
+				"testButton",
+				"then it executes the function with the desired return value"
+			);
 			oButton.destroy();
 		});
 
@@ -780,14 +915,22 @@ sap.ui.define([
 			this.oLabelControl = new InputListItem("id", {
 				label: "Input list item label"
 			});
-			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "Input list item label", "then it returns the label (getLabel())");
+			assert.equal(
+				ElementUtil.getLabelForElement(this.oLabelControl),
+				"Input list item label",
+				"then it returns the label (getLabel())"
+			);
 		});
 
 		QUnit.test("when getLabelForElement is called with a SimpleForm", function(assert) {
 			this.oLabelControl = new ObjectAttribute("id", {
 				title: "Object attribute title"
 			});
-			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "Object attribute title", "then it returns the label (getTitle())");
+			assert.equal(
+				ElementUtil.getLabelForElement(this.oLabelControl),
+				"Object attribute title",
+				"then it returns the label (getTitle())"
+			);
 		});
 
 		QUnit.test("when getLabelForElement is called with a Component", function(assert) {
@@ -796,7 +939,11 @@ sap.ui.define([
 			});
 
 			this.oLabelControl = new CustomComponent("componentObjectId");
-			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "componentObjectId", "then it returns the Id for a component object");
+			assert.equal(
+				ElementUtil.getLabelForElement(this.oLabelControl),
+				"componentObjectId",
+				"then it returns the Id for a component object"
+			);
 		});
 
 		QUnit.test("when getLabelForElement is called with a Label without text property set", function(assert) {
@@ -810,7 +957,11 @@ sap.ui.define([
 					text: "label"
 				})
 			});
-			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "label", "then it returns the labels text (getLabel().getText())");
+			assert.equal(
+				ElementUtil.getLabelForElement(this.oLabelControl),
+				"label",
+				"then it returns the labels text (getLabel().getText())"
+			);
 		});
 
 		QUnit.test("when getLabelForElement is called with a sap.f.DynamicPage (containing an sap.f.DynamicPageTitle, further containing an sap.m.Text)", function(assert) {
@@ -821,7 +972,11 @@ sap.ui.define([
 					})
 				})
 			});
-			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "label", "then it returns the dynamic page's title (getTitle().getHeading().getText())");
+			assert.equal(
+				ElementUtil.getLabelForElement(this.oLabelControl),
+				"label",
+				"then it returns the dynamic page's title (getTitle().getHeading().getText())"
+			);
 		});
 
 		QUnit.test("when getLabelForElement is called with a sap.f.DynamicPage (containing an sap.f.DynamicPageTitle, further containing an sap.m.Label)", function(assert) {
@@ -832,13 +987,19 @@ sap.ui.define([
 					})
 				})
 			});
-			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "label", "then it returns the dynamic page's title (getTitle().getHeading().getLabel().getText())");
+			assert.equal(
+				ElementUtil.getLabelForElement(this.oLabelControl),
+				"label",
+				"then it returns the dynamic page's title (getTitle().getHeading().getLabel().getText())"
+			);
 		});
 
 		QUnit.test("when getLabelForElement is called with an object which is not a managed object", function(assert) {
 			assert.throws(
 				ElementUtil.getLabelForElement.bind(null, {}),
-				DtUtil.createError("ElementUtil#getLabelForElement", "A valid managed object instance should be passed as parameter", "sap.ui.dt"),
+				DtUtil.createError(
+					"ElementUtil#getLabelForElement", "A valid managed object instance should be passed as parameter", "sap.ui.dt"
+				),
 				"then the correct error is thrown"
 			);
 		});
@@ -852,15 +1013,27 @@ sap.ui.define([
 		});
 		QUnit.test("when adjustIndexForMove is called with similar source and target containers, and source index lower than the target index", function(assert) {
 			var oContainer = {value: "sameContainer"};
-			assert.strictEqual(ElementUtil.adjustIndexForMove(oContainer, oContainer, 5, 10), 9, "then the passed target index is returned decremented by 1");
+			assert.strictEqual(
+				ElementUtil.adjustIndexForMove(oContainer, oContainer, 5, 10),
+				9,
+				"then the passed target index is returned decremented by 1"
+			);
 		});
 		QUnit.test("when adjustIndexForMove is called with similar source and target containers, and source index greater than the target index", function(assert) {
 			var oContainer = {value: "sameContainer"};
-			assert.strictEqual(ElementUtil.adjustIndexForMove(oContainer, oContainer, 15, 10), 10, "then the passed target index is returned");
+			assert.strictEqual(
+				ElementUtil.adjustIndexForMove(oContainer, oContainer, 15, 10),
+				10,
+				"then the passed target index is returned"
+			);
 		});
 		QUnit.test("when adjustIndexForMove is called with similar source and target containers, and source index is not greater than -1", function(assert) {
 			var oContainer = {value: "sameContainer"};
-			assert.strictEqual(ElementUtil.adjustIndexForMove(oContainer, oContainer, -1, 10), 10, "then the passed target index is returned");
+			assert.strictEqual(
+				ElementUtil.adjustIndexForMove(oContainer, oContainer, -1, 10),
+				10,
+				"then the passed target index is returned"
+			);
 		});
 	});
 
@@ -896,7 +1069,7 @@ sap.ui.define([
 			}).setModel(oModel);
 
 			this.oList.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			this.oVBox1 = this.oList.getItems()[1].getContent()[0];
 			this.oListItem0 = this.oList.getItems()[0];
@@ -910,17 +1083,29 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when extractTemplateId() is called for control on the 1st level of the template hierarchy", function(assert) {
 			var mAggregationInfo = ElementUtil.getAggregationInformation(this.oVBox1);
-			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "vbox1", "... then the id of the bound template control is returned");
+			assert.equal(
+				ElementUtil.extractTemplateId(mAggregationInfo),
+				"vbox1",
+				"... then the id of the bound template control is returned"
+			);
 		});
 
 		QUnit.test("when extractTemplateId() is called for control on the 4th level of the template hierarchy", function(assert) {
 			var mAggregationInfo = ElementUtil.getAggregationInformation(this.oText1);
-			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "text", "... then the id of the bound template control is returned");
+			assert.equal(
+				ElementUtil.extractTemplateId(mAggregationInfo),
+				"text",
+				"... then the id of the bound template control is returned"
+			);
 		});
 
 		QUnit.test("when extractTemplateId() is called for template's root control", function(assert) {
 			var mAggregationInfo = ElementUtil.getAggregationInformation(this.oListItem0);
-			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "item", "... then the id of the bound template control is returned");
+			assert.equal(
+				ElementUtil.extractTemplateId(mAggregationInfo),
+				"item",
+				"... then the id of the bound template control is returned"
+			);
 		});
 
 		QUnit.test("when extractTemplateId() is called with an empty object", function(assert) {
@@ -932,7 +1117,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when getAggregationBindingTemplate() is called for control with aggregation binding template attached", function(assert) {
-			assert.equal(ElementUtil.getAggregationBindingTemplate(this.oList, "items"), this.oItemTemplate, "then the bound template is returned");
+			assert.equal(
+				ElementUtil.getAggregationBindingTemplate(this.oList, "items"),
+				this.oItemTemplate,
+				"then the bound template is returned"
+			);
 		});
 
 		QUnit.test("when getAggregationBindingTemplate() is called for control without aggregation binding template attached", function(assert) {
@@ -951,11 +1140,11 @@ sap.ui.define([
 			assert.equal(ElementUtil.getAggregationBindingTemplate(), undefined, "then undefined is returned");
 		});
 
-		QUnit.test("when 'isElementDirectTemplateChild()' is called for the list item (direct clone)", function(assert) {
+		QUnit.test("when isElementDirectTemplateChild() is called for the list item (direct clone)", function(assert) {
 			assert.ok(ElementUtil.isElementDirectTemplateChild(this.oListItem0), "... then true is returned");
 		});
 
-		QUnit.test("when 'isElementDirectTemplateChild()' is called for the text inside the template", function(assert) {
+		QUnit.test("when isElementDirectTemplateChild() is called for the text inside the template", function(assert) {
 			assert.notOk(ElementUtil.isElementDirectTemplateChild(this.oText1), "... then false is returned");
 		});
 	});
@@ -1012,7 +1201,7 @@ sap.ui.define([
 			this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].addItem(new Button("evil-btn2"));
 
 			this.oList.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			this.oButton1 = this.oList.getItems()[3].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
 			this.oButton2 = this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
@@ -1073,7 +1262,7 @@ sap.ui.define([
 				content: [this.oBoundList, this.oUnboundList, this.oFactoryBoundList]
 			});
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			this.oBound = this.oBoundList.getItems()[0];
 			this.oBoundChild = this.oBoundList.getItems()[0].getContent()[0];
@@ -1085,6 +1274,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oVerticalLayout.destroy();
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when getAggregationInformation() is called for a bound list", function(assert) {
@@ -1113,7 +1303,11 @@ sap.ui.define([
 
 		QUnit.test("when getAggregationInformation() is called for a child element in a bound list", function(assert) {
 			var mAggregationInfo = ElementUtil.getAggregationInformation(this.oBoundChild);
-			assert.equal(mAggregationInfo.elementId, "boundlist", "... then for the bound Item content it returns the id of the bound control");
+			assert.equal(
+				mAggregationInfo.elementId,
+				"boundlist",
+				"... then for the bound Item content it returns the id of the bound control"
+			);
 			assert.equal(mAggregationInfo.aggregation, "items", "... and the bound aggregation name");
 			assert.equal(mAggregationInfo.templateId, "item", "... and the template id is set");
 			assert.equal(mAggregationInfo.stack.length, 2, "... and the traversed stack containing 3 objects");
@@ -1129,7 +1323,11 @@ sap.ui.define([
 
 		QUnit.test("when getAggregationInformation() is called for another child element in a bound list", function(assert) {
 			var mAggregationInfo = ElementUtil.getAggregationInformation(this.oAnotherBoundChild);
-			assert.equal(mAggregationInfo.elementId, "boundlist", "... then for the bound Item content it returns the id of the bound control");
+			assert.equal(
+				mAggregationInfo.elementId,
+				"boundlist",
+				"... then for the bound Item content it returns the id of the bound control"
+			);
 			assert.equal(mAggregationInfo.aggregation, "items", "... and the bound aggregation name");
 			assert.equal(mAggregationInfo.templateId, "item", "... and the template id is set");
 			assert.equal(mAggregationInfo.stack.length, 2, "... and the traversed stack containing 3 objects");
@@ -1145,7 +1343,11 @@ sap.ui.define([
 
 		QUnit.test("when getAggregationInformation() is called for bound list with factory function", function(assert) {
 			var mAggregationInfo = ElementUtil.getAggregationInformation(this.oFactoryBound);
-			assert.equal(mAggregationInfo.elementId, "factoryboundlist", "... then for the bound Item it returns the id of the bound control");
+			assert.equal(
+				mAggregationInfo.elementId,
+				"factoryboundlist",
+				"... then for the bound Item it returns the id of the bound control"
+			);
 			assert.equal(mAggregationInfo.aggregation, "items", "... and the bound aggregation name");
 			assert.equal(mAggregationInfo.templateId, undefined, "... and the template id is not set");
 			assert.equal(mAggregationInfo.stack.length, 1, "... and the traversed stack containing 2 objects");
@@ -1175,7 +1377,11 @@ sap.ui.define([
 	QUnit.module("Given a bound list control with a bound Select control inside it", {
 		beforeEach: function() {
 			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
-			var aItemTexts = [{key: "item1", text: "Item Text 1"}, {key: "item2", text: "Item Text 2"}, {key: "item3", text: "Item Text 3"}];
+			var aItemTexts = [
+				{key: "item1", text: "Item Text 1"},
+				{key: "item2", text: "Item Text 2"},
+				{key: "item3", text: "Item Text 3"}
+			];
 			var oModel = new JSONModel({
 				texts: aTexts,
 				itemTexts: aItemTexts
@@ -1209,7 +1415,7 @@ sap.ui.define([
 			}).setModel(oModel);
 
 			this.oList.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			this.oVBox1 = this.oList.getItems()[1].getContent()[0];
 			this.oVBox2 = this.oList.getItems()[2].getContent()[0];
@@ -1226,24 +1432,40 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when extractTemplateId() is called for a control on the list template", function(assert) {
 			var mAggregationInfo = ElementUtil.getAggregationInformation(this.oButton);
-			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "button", "... then the id of the bound template control is returned");
+			assert.equal(
+				ElementUtil.extractTemplateId(mAggregationInfo),
+				"button",
+				"... then the id of the bound template control is returned"
+			);
 		});
 
 		QUnit.test("when extractTemplateId() and isElementInTemplate() are called for the first item inside the first Select", function(assert) {
 			var mAggregationInfo = ElementUtil.getAggregationInformation(this.oItem1Select1);
-			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "selectItem-list-1", "... then the id of the first bound template control is returned");
+			assert.equal(
+				ElementUtil.extractTemplateId(mAggregationInfo),
+				"selectItem-list-1",
+				"... then the id of the first bound template control is returned"
+			);
 			assert.ok(ElementUtil.isElementInTemplate(this.oItem1Select1), "... then the element is found in the template");
 		});
 
 		QUnit.test("when extractTemplateId() and isElementInTemplate() are called for the second item inside the first Select", function(assert) {
 			var mAggregationInfo = ElementUtil.getAggregationInformation(this.oItem2Select1);
-			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "selectItem-list-1", "... then the id of the first bound template control is returned");
+			assert.equal(
+				ElementUtil.extractTemplateId(mAggregationInfo),
+				"selectItem-list-1",
+				"... then the id of the first bound template control is returned"
+			);
 			assert.ok(ElementUtil.isElementInTemplate(this.oItem2Select1), "... then the element is found in the template");
 		});
 
 		QUnit.test("when extractTemplateId() and isElementInTemplate() are called for the first item inside the second Select", function(assert) {
 			var mAggregationInfo = ElementUtil.getAggregationInformation(this.oItem1Select2);
-			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "selectItem-list-2", "... then the id of the second bound template control is returned");
+			assert.equal(
+				ElementUtil.extractTemplateId(mAggregationInfo),
+				"selectItem-list-2",
+				"... then the id of the second bound template control is returned"
+			);
 			assert.ok(ElementUtil.isElementInTemplate(this.oItem1Select2), "... then the element is found in the template");
 		});
 	});
