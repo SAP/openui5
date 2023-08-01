@@ -1,8 +1,9 @@
 /*global QUnit */
 sap.ui.define([
 	'sap/ui/qunit/utils/createAndAppendDiv',
+	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/core/Control'
-], function(createAndAppendDiv, Control) {
+], function(createAndAppendDiv, nextUIUpdate, Control) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -143,7 +144,7 @@ sap.ui.define([
 			this.element = new SelectorControl("testId:that:_needs-escaping");
 			this.element.placeAt("content");
 			this.element.rerender();
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.element.destroy();

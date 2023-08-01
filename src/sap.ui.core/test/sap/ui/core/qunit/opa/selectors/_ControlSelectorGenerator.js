@@ -14,10 +14,9 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/Button",
 	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/layout/VerticalLayout",
-	"sap/m/StandardListItem",
 	"sap/m/Toolbar",
 	"sap/ui/test/_ControlFinder",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	// only selector generators below; import in priority order
 	"sap/ui/test/selectors/_GlobalID",
 	"sap/ui/test/selectors/_ViewID",
@@ -26,7 +25,7 @@ sap.ui.define([
 	"sap/ui/test/selectors/_Properties",
 	"sap/ui/test/selectors/_DropdownItem"
 ], function (_ControlSelectorGenerator, _ControlSelectorValidator, Text, App, ToggleButton, Bar, Page,
-		JSONModel, List, CustomListItem, HBox, Link, Button, HorizontalLayout, VerticalLayout, StandardListItem, Toolbar, _ControlFinder) {
+		JSONModel, List, CustomListItem, HBox, Link, Button, HorizontalLayout, Toolbar, _ControlFinder, nextUIUpdate) {
 	"use strict";
 
 	var aSelectorGenerators = Array.prototype.slice.call(arguments, arguments.length - 6);
@@ -47,7 +46,7 @@ sap.ui.define([
 			this.fnFindControlsStub.returns([{control: "test"}]);
 			this.oText = new Text();
 			this.oText.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oText.destroy();
@@ -132,7 +131,7 @@ sap.ui.define([
 			this.oApp = new App("myApp", {initialPage: this.oPage});
 			this.oApp.addPage(this.oPage);
 			this.oApp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			_ControlSelectorGenerator.resetParams();
@@ -203,7 +202,7 @@ sap.ui.define([
 			});
 
 			this.oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			_ControlSelectorGenerator.resetParams();
@@ -290,7 +289,7 @@ sap.ui.define([
 			});
 
 			this.oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oLayout.destroy();

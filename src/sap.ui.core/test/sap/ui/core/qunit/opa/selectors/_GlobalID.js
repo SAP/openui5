@@ -1,8 +1,9 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/test/selectors/_ControlSelectorGenerator",
-	"sap/m/Button"
-], function (_ControlSelectorGenerator, Button) {
+	"sap/m/Button",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (_ControlSelectorGenerator, Button, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("_GlobalID", {
@@ -11,7 +12,7 @@ sap.ui.define([
 			this.oGeneratedIDButton = new Button();
 			this.oStableIDButton.placeAt("qunit-fixture");
 			this.oGeneratedIDButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oStableIDButton.destroy();

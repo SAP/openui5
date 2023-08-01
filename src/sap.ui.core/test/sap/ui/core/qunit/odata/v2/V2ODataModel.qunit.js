@@ -19,11 +19,12 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/type/DateTime",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column"
 ], function (each, isEmptyObject, UI5Date, DateTimePicker, Input, Label, List, Panel, ListItem,
 		library, Message, MockServer, ChangeReason, Filter, Sorter, UpdateMethod, ODataModel,
-		DateTime, createAndAppendDiv, Table, Column
+		DateTime, createAndAppendDiv, nextUIUpdate, Table, Column
 ) {
 
 	"use strict";
@@ -908,7 +909,7 @@ sap.ui.define([
 		oModel.attachBatchRequestCompleted(fnCheck);
 	});
 
-	QUnit.test("test oDataModel listbinding with aggregation binding and read in default batch group", function(assert) {
+	QUnit.test("test oDataModel listbinding with aggregation binding and read in default batch group", async function(assert) {
 		var done = assert.async();
 		var iCallCount = 0;
 		var bRead1 = false;
@@ -920,7 +921,7 @@ sap.ui.define([
 		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		oTable.setModel(oModel);
 		oTable.bindRows({
 			path : mEntities.categories.collection

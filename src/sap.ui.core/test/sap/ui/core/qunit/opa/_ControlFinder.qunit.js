@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/_LogCollector"
-], function ($, _ControlFinder,  mobileLibrary, Button, SearchField, List, ObjectListItem, Dialog, JSONModel, PropertyStrictEquals, _LogCollector) {
+	"sap/ui/test/_LogCollector",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function ($, _ControlFinder,  mobileLibrary, Button, SearchField, List, ObjectListItem, Dialog, JSONModel, PropertyStrictEquals, _LogCollector, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -36,7 +37,7 @@ sap.ui.define([
 			this.oButton.placeAt("qunit-fixture");
 			this.oButtonWithSpecialId.placeAt("qunit-fixture");
 			this.oObjectListItem.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -236,7 +237,7 @@ sap.ui.define([
 			this.oSearchField = new SearchField("myId");
 			this.oSearchField.placeAt("qunit-fixture");
 			this.oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSearchField.destroy();

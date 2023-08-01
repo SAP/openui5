@@ -7,11 +7,10 @@ sap.ui.define([
 	"sap/ui/test/autowaiter/_promiseWaiter",
 	"sap/m/ScrollContainer",
 	"sap/m/Panel",
-	"sap/ui/test/opaQunit",
-	"sap/ui/test/Opa5",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
-	ScrollContainer, Panel, opaTest, Opa5, Configuration) {
+	ScrollContainer, Panel, Configuration, nextUIUpdate) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();
@@ -30,7 +29,7 @@ sap.ui.define([
 				content: [new Panel({ height: "2000px" })]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 
 		afterEach: function () {
@@ -38,7 +37,7 @@ sap.ui.define([
 			this.oXHRWaiterStub.restore();
 			this.oPromiseWaiterStub.restore();
 			this.oScrollContainer.destroy();
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		}
 	});
 

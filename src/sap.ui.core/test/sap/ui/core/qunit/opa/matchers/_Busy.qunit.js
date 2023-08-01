@@ -6,8 +6,9 @@ sap.ui.define([
 	'sap/m/Toolbar',
 	'sap/m/Page',
 	'sap/m/VBox',
-	"sap/ui/core/mvc/XMLView"
-], function (_Busy, Button, Dialog, Toolbar, Page, VBox, XMLView) {
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (_Busy, Button, Dialog, Toolbar, Page, VBox, XMLView, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("_Busy", {
@@ -20,14 +21,14 @@ sap.ui.define([
 				content: [this.oToolbar]
 			});
 			this.oPage.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
 			this.oBusyMatcher = new _Busy();
 			this.oSpy = sinon.spy(this.oBusyMatcher._oLogger, "debug");
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oPage.destroy();
-			sap.ui.getCore().applyChanges();
 			this.oSpy.restore();
+			return nextUIUpdate();
 		}
 	});
 
@@ -88,20 +89,20 @@ sap.ui.define([
 			});
 
 			oContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			nextUIUpdate().then(function() {
+				// Assert
+				assert.strictEqual(oBusy.isMatching(oButton), false, "Button is not busy");
 
-			// Assert
-			assert.strictEqual(oBusy.isMatching(oButton), false, "Button is not busy");
+				// Act
+				oContainer.setBusy(true);
 
-			// Act
-			oContainer.setBusy(true);
+				// Assert
+				assert.strictEqual(oBusy.isMatching(oButton), true, "Button is busy");
 
-			// Assert
-			assert.strictEqual(oBusy.isMatching(oButton), true, "Button is busy");
-
-			// Clean up
-			oContainer.destroy();
-			fnDone();
+				// Clean up
+				oContainer.destroy();
+				fnDone();
+			});
 		});
 
 		QUnit.test("Should not block Dialog, when parent is ComponentContainer, placed in Busy control/view", function (assert) {
@@ -150,21 +151,21 @@ sap.ui.define([
 					oVBox.addItem(oContainer);
 					oVBox.placeAt("qunit-fixture");
 					oView.addDependent(oDialog);
-					sap.ui.getCore().applyChanges();
+					nextUIUpdate().then(function() {
+						// Assert
+						assert.strictEqual(oBusy.isMatching(oDialog), false, "Button is not busy");
 
-					// Assert
-					assert.strictEqual(oBusy.isMatching(oDialog), false, "Button is not busy");
+						// Act
+						oVBox.setBusy(true);
+						oDialog.open();
 
-					// Act
-					oVBox.setBusy(true);
-					oDialog.open();
+						// Assert
+						assert.strictEqual(oBusy.isMatching(oDialog), false, "Button is not busy");
 
-					// Assert
-					assert.strictEqual(oBusy.isMatching(oDialog), false, "Button is not busy");
-
-					// Clean up
-					oContainer.destroy();
-					fnDone();
+						// Clean up
+						oContainer.destroy();
+						fnDone();
+					});
 				});
 
 			});

@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/QUnitUtils"
-], function(Icon, IconPool, _IconRegistry, Log, Device, library, jQuery, qutils) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Icon, IconPool, _IconRegistry, Log, Device, library, jQuery, qutils, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for type from sap.ui.core
@@ -109,7 +110,7 @@ sap.ui.define([
 			assert.equal($icon.css("background-color"), sHoverBackgroundColor);
 		});
 
-		QUnit.test("Icon without Hover color", function(assert) {
+		QUnit.test("Icon without Hover color", async function(assert) {
 			var sColor = "#666666",
 				sBackgroundColor = "#CCCCCC",
 				oIcon = new Icon({
@@ -124,7 +125,7 @@ sap.ui.define([
 			var sTestColor = $dummy.css("color"),
 				sTestBackgroundColor = $dummy.css("background-color");
 			oIcon.placeAt("uiAreaA");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var $icon = oIcon.$();
 			qutils.triggerEvent("mousedown", oIcon.getId());
@@ -139,7 +140,7 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.test("Attach press handler", function(assert) {
+	QUnit.test("Attach press handler", async function(assert) {
 		var fn1 = function(){}, fn2 = function(){};
 		var oIcon = new Icon({
 			src: _IconRegistry.getIconURI("manager"),
@@ -147,19 +148,19 @@ sap.ui.define([
 		});
 
 		oIcon.placeAt("uiAreaA");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.equal(oIcon.$().css("cursor"), "pointer", "Icon which has press event handler should show pointer cursor");
 
 		oIcon.attachPress(fn2);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.equal(oIcon.$().css("cursor"), "pointer", "Icon which has press event handler should show pointer cursor");
 
 		oIcon.detachPress(fn1);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.equal(oIcon.$().css("cursor"), "pointer", "Icon which still has press event handler should show pointer cursor");
 
 		oIcon.detachPress(fn2);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.equal(oIcon.$().css("cursor"), "default", "Icon which has no press event handler should not show pointer cursor");
 
 		oIcon.destroy();
@@ -214,14 +215,14 @@ sap.ui.define([
 		oIcon.destroy();
 	});
 
-	QUnit.test("Set color with values in sap.ui.core.IconColor enum", function(assert) {
+	QUnit.test("Set color with values in sap.ui.core.IconColor enum", async function(assert) {
 		var oIcon = new Icon({
 			src: _IconRegistry.getIconURI("manager"),
 			color: IconColor.Critical
 		});
 
 		oIcon.placeAt("uiAreaA");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.ok(oIcon.$().hasClass("sapUiIconColorCritical"), "The color property set in instantiation is applied");
 		oIcon.setColor(IconColor.Positive);
 		assert.ok(oIcon.$().hasClass("sapUiIconColorPositive"), "Positive class is set");
@@ -243,14 +244,14 @@ sap.ui.define([
 		oIcon.destroy();
 	});
 
-	QUnit.test("Set background-color with values in sap.ui.core.IconColor enum", function(assert) {
+	QUnit.test("Set background-color with values in sap.ui.core.IconColor enum", async function(assert) {
 		var oIcon = new Icon({
 			src: _IconRegistry.getIconURI("manager"),
 			backgroundColor: IconColor.Critical
 		});
 
 		oIcon.placeAt("uiAreaA");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.ok(oIcon.$().hasClass("sapUiIconBGColorCritical"), "The backgroundColor property set in instantiation is applied");
 		oIcon.setBackgroundColor(IconColor.Positive);
 		assert.ok(oIcon.$().hasClass("sapUiIconBGColorPositive"), "Positive class is set");
@@ -272,14 +273,14 @@ sap.ui.define([
 		oIcon.destroy();
 	});
 
-	QUnit.test("set src should also change the tooltip", function(assert) {
+	QUnit.test("set src should also change the tooltip", async function(assert) {
 		var oIcon = new Icon({
 			src: _IconRegistry.getIconURI("delete"),
 			decorative: false
 		});
 
 		oIcon.placeAt("uiAreaA");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var sTitle = getIconTitle(oIcon);
 		var sLabel = oIcon.$().attr("aria-label");
@@ -290,7 +291,7 @@ sap.ui.define([
 		assert.ok(!sLabelledBy, "No aria-labelledby has been set");
 
 		oIcon.setSrc(_IconRegistry.getIconURI("add"));
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.notEqual(getIconTitle(oIcon), sTitle, "Tooltip should have changed when changing the icon src.");
 		assert.notEqual(oIcon.$().attr("aria-label"), sLabel, "ARIA label is changed when changing the icon src");
@@ -299,7 +300,7 @@ sap.ui.define([
 		oIcon.destroy();
 	});
 
-	QUnit.test("set src should not change aria-label when 'labelledby' is set", function(assert) {
+	QUnit.test("set src should not change aria-label when 'labelledby' is set", async function(assert) {
 		var sLabelledById = "foo",
 			oIcon = new Icon({
 				src: _IconRegistry.getIconURI("delete"),
@@ -308,7 +309,7 @@ sap.ui.define([
 			});
 
 		oIcon.placeAt("uiAreaA");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var sTitle = getIconTitle(oIcon);
 		var sLabel = oIcon.$().attr("aria-label");
@@ -327,7 +328,7 @@ sap.ui.define([
 		assert.equal(aLabels[0], sLabelledById, "The first label id in aLabelledBy should be the one set to ariaLabelledBy");
 
 		oIcon.setSrc(_IconRegistry.getIconURI("add"));
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.notEqual(getIconTitle(oIcon), sTitle, "Tooltip should have changed when changing the icon src.");
 		assert.equal(oIcon.$().attr("aria-label"), undefined, "ARIA label should still not be set when changing the icon src.");
@@ -338,13 +339,13 @@ sap.ui.define([
 		oIcon.destroy();
 	});
 
-	QUnit.test("src with icon name only should use default icon collection", function(assert) {
+	QUnit.test("src with icon name only should use default icon collection", async function(assert) {
 		var oIcon = new Icon({
 			src: "delete"
 		});
 
 		oIcon.placeAt("uiAreaA");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(
 			oIcon.$().attr("data-sap-ui-icon-content"),
@@ -365,7 +366,7 @@ sap.ui.define([
 			});
 
 			this.oAriaIcon.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oAriaIcon.destroy();
@@ -373,7 +374,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("When decorative is defaulting to true", function (assert) {
+	QUnit.test("When decorative is defaulting to true", async function (assert) {
 		var $icon = this.oAriaIcon.$();
 
 		assert.strictEqual($icon.attr("role"), "presentation", "role should be set to presentation");
@@ -383,17 +384,17 @@ sap.ui.define([
 		assert.notEqual($icon.attr("aria-label"), undefined, "aria-label is output");
 
 		this.oAriaIcon.setTooltip(this.sTooltip);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		$icon = this.oAriaIcon.$();
 		assert.strictEqual(getIconTitle(this.oAriaIcon), this.sTooltip, "title is rendered with property 'tooltip'");
 		assert.strictEqual($icon.attr("aria-label"), this.sTooltip, "aria-label is output with property 'tooltip'");
 	});
 
-	QUnit.test("When decorative is set to false", function (assert) {
+	QUnit.test("When decorative is set to false", async function (assert) {
 		this.oAriaIcon.setDecorative(false);
 		this.oAriaIcon.setTooltip(this.sTooltip);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var $icon = this.oAriaIcon.$();
 
@@ -405,18 +406,18 @@ sap.ui.define([
 
 		// setting alt makes the aria-label differ from the title.
 		this.oAriaIcon.setAlt(this.sAlt);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		$icon = this.oAriaIcon.$();
 		assert.strictEqual(getIconTitle(this.oAriaIcon), this.sTooltip, "title is rendered with property 'tooltip'");
 		assert.strictEqual($icon.attr("aria-label"), this.sAlt, "aria-label still doesn't exist in the DOM");
 	});
 
-	QUnit.test("press handler, noTabStop and accessbility", function(assert) {
+	QUnit.test("press handler, noTabStop and accessbility", async function(assert) {
 		var fnPressHandler = function() {};
 
 		this.oAriaIcon.attachPress(fnPressHandler);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var $icon = this.oAriaIcon.$();
 		assert.strictEqual($icon.attr("role"), "presentation", "role is set to presentation");
@@ -424,51 +425,51 @@ sap.ui.define([
 		assert.notEqual(getIconTitle(this.oAriaIcon), undefined, "title is set");
 
 		this.oAriaIcon.setNoTabStop(true);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		$icon = this.oAriaIcon.$();
 		assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex when noTabStop is set to true");
 
 		this.oAriaIcon.setNoTabStop(false);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		$icon = this.oAriaIcon.$();
 		assert.strictEqual($icon.attr("tabindex"), "0", "tabindex is restored when noTabStop is set to false");
 
 		this.oAriaIcon.detachPress(fnPressHandler);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual($icon.attr("role"), "presentation", "role is set back to presentation");
 		assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is output");
 
 		this.oAriaIcon.setDecorative(false);
 		this.oAriaIcon.attachPress(fnPressHandler);
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		$icon = this.oAriaIcon.$();
 		assert.strictEqual($icon.attr("role"), "button", "role is set to button");
 		assert.strictEqual($icon.attr("tabindex"), "0", "tabindex is set to 0");
 
 		this.oAriaIcon.detachPress(fnPressHandler);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		$icon = this.oAriaIcon.$();
 		assert.strictEqual($icon.attr("role"), "img", "role is set back to img");
 		assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is output");
 	});
 
-	QUnit.test("alt and accessbility", function(assert) {
+	QUnit.test("alt and accessbility", async function(assert) {
 		this.oAriaIcon.setAlt(this.sAlt);
 		this.oAriaIcon.setTooltip(this.sTooltip);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var $icon = this.oAriaIcon.$();
 		assert.strictEqual(getIconTitle(this.oAriaIcon), this.sTooltip, "title is output using tooltip");
 		assert.strictEqual($icon.attr("aria-label"), this.sAlt, "aria-label is output using alt property");
 	});
 
-	QUnit.test("When ariaLabelledBy IS set", function (assert) {
+	QUnit.test("When ariaLabelledBy IS set", async function (assert) {
 		var sId = "non-existing-id",
 			$Icon, $InvisibleText, sText;
 
 		this.oAriaIcon.addAriaLabelledBy(sId);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		$Icon = this.oAriaIcon.$();
 		$InvisibleText = this.oAriaIcon.$("label");
@@ -480,7 +481,7 @@ sap.ui.define([
 
 		// setting alt makes the refered aria-labelledby text differ from the title.
 		this.oAriaIcon.setAlt(this.sAlt);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		$Icon = this.oAriaIcon.$();
 		$InvisibleText = this.oAriaIcon.$("label");
@@ -492,11 +493,11 @@ sap.ui.define([
 		assert.strictEqual(sText, this.sAlt, "The content of InvisibleText is set with the given alt");
 	});
 
-	QUnit.test("Property noTabStop", function (assert) {
+	QUnit.test("Property noTabStop", async function (assert) {
 		var fnPressHandler = function() {};
 
 		this.oAriaIcon.setNoTabStop(true);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var $Icon = this.oAriaIcon.$();
 		assert.strictEqual($Icon.attr("tabindex"), undefined, "no tabindex exists");
@@ -536,9 +537,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Property 'useIconTooltip'", {
-		createIcon: function(mSettings) {
+		createIcon: async function(mSettings) {
 			this.oIcon = new Icon(mSettings).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			if (this.oIcon) {
@@ -548,10 +549,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("useIconTooltip = true (default) / without tooltip", function (assert) {
+	QUnit.test("useIconTooltip = true (default) / without tooltip", async function (assert) {
 		var oIconInfo = IconPool.getIconInfo("add");
 
-		this.createIcon({
+		await this.createIcon({
 			src: oIconInfo.uri
 		});
 
@@ -561,9 +562,9 @@ sap.ui.define([
 		assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 	});
 
-	QUnit.test("useIconTooltip = true (default) / with tooltip", function (assert) {
+	QUnit.test("useIconTooltip = true (default) / with tooltip", async function (assert) {
 		var sTooltip = "this is a tooltip";
-		this.createIcon({
+		await this.createIcon({
 			src: _IconRegistry.getIconURI("add"),
 			tooltip: sTooltip
 		});
@@ -572,8 +573,8 @@ sap.ui.define([
 		assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 	});
 
-	QUnit.test("useIconTooltip = false / without tooltip", function (assert) {
-		this.createIcon({
+	QUnit.test("useIconTooltip = false / without tooltip", async function (assert) {
+		await this.createIcon({
 			src: _IconRegistry.getIconURI("add"),
 			useIconTooltip: false
 		});
@@ -582,9 +583,9 @@ sap.ui.define([
 		assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 	});
 
-	QUnit.test("useIconTooltip = false / with tooltip", function (assert) {
+	QUnit.test("useIconTooltip = false / with tooltip", async function (assert) {
 		var sTooltip = "this is a tooltip";
-		this.createIcon({
+		await this.createIcon({
 			src: _IconRegistry.getIconURI("add"),
 			useIconTooltip: false,
 			tooltip: sTooltip
@@ -595,9 +596,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Loading of additional icon fonts", {
-		createIcon: function(mSettings, fnCallback) {
+		createIcon: async function(mSettings, fnCallback) {
 			this.oIcon = new Icon(mSettings).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			if (this.oIcon) {
@@ -607,17 +608,17 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Render icon without loading the corresponding font", function (assert) {
+	QUnit.test("Render icon without loading the corresponding font", async function (assert) {
 		assert.ok(Log, "Log module should be available");
 		var oErrorSpy = sinon.spy(Log, "error");
 
-		this.createIcon({src: "sap-icon://tnt/technicalsystem"});
+		await this.createIcon({src: "sap-icon://tnt/technicalsystem"});
 		assert.strictEqual(oErrorSpy.callCount, 1, "Rendering of an icon without loading the corresponding font throws an error");
 
 		oErrorSpy.restore();
 	});
 
-	QUnit.test("Refresh icon content after font was loaded lazily", function (assert) {
+	QUnit.test("Refresh icon content after font was loaded lazily", async function (assert) {
 		// load additional icon font
 		IconPool.registerFont({
 			collectionName: "tnt",
@@ -629,12 +630,12 @@ sap.ui.define([
 		var oLoadFontMetadataSpy = sinon.spy(_IconRegistry, "_loadFontMetadata");
 
 		// instantiate icon
-		this.createIcon({src: "sap-icon://tnt/technicalsystem"});
+		await this.createIcon({src: "sap-icon://tnt/technicalsystem"});
 		assert.strictEqual(this.oIcon.$().attr("data-sap-ui-icon-content"), undefined, "The icon content attribute is not set yet while the font is loading");
 		assert.ok(oLoadFontMetadataSpy.called, "The loading of metadata for new font is triggered");
 
-		return _IconRegistry.getIconInfo("sap-icon://tnt/technicalsystem", "async").then(function() {
-			sap.ui.getCore().applyChanges();
+		return _IconRegistry.getIconInfo("sap-icon://tnt/technicalsystem", "async").then(async function() {
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oIcon.$().attr("data-sap-ui-icon-content"), String.fromCharCode(0xe000), "Icon content has been set properly after the font is loaded");
 			assert.strictEqual(this.oIcon.$().css("font-family").replace(/"|'/g, ""), "SAP-icons-TNT", "Icon font family has been set properly after the font is loaded");
@@ -643,24 +644,24 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Render a non-existent icon", function (assert) {
+	QUnit.test("Render a non-existent icon", async function (assert) {
 		var oErrorSpy = sinon.spy(Log, "warning");
 
-		this.createIcon({src: "sap-icon://tnt/doesnotexist"});
+		await this.createIcon({src: "sap-icon://tnt/doesnotexist"});
 		assert.ok(oErrorSpy.called, "Rendering of an icon without loading the corresponding font throws warning");
 
 		oErrorSpy.restore();
 	});
 
-	QUnit.test("The same icon is displayed immediately after font was loaded lazily", function (assert) {
-		this.createIcon({src: "sap-icon://tnt/technicalsystem"});
+	QUnit.test("The same icon is displayed immediately after font was loaded lazily", async function (assert) {
+		await this.createIcon({src: "sap-icon://tnt/technicalsystem"});
 
 		assert.strictEqual(this.oIcon.$().attr("data-sap-ui-icon-content"), String.fromCharCode(0xe000), "The icon content attribute is not set yet while the font is loading");
 		assert.strictEqual(this.oIcon.$().css("font-family").replace(/"|'/g, ""), "SAP-icons-TNT", "Icon font family has been set properly after the font is loaded");
 	});
 
-	QUnit.test("A different icon is displayed immediately after font was loaded lazily", function (assert) {
-		this.createIcon({src: "sap-icon://tnt/python"});
+	QUnit.test("A different icon is displayed immediately after font was loaded lazily", async function (assert) {
+		await this.createIcon({src: "sap-icon://tnt/python"});
 
 		assert.strictEqual(this.oIcon.$().attr("data-sap-ui-icon-content"), String.fromCharCode(0xe00f), "The icon content attribute is not set yet while the font is loading");
 		assert.strictEqual(this.oIcon.$().css("font-family").replace(/"|'/g, ""), "SAP-icons-TNT", "Icon font family has been set properly after the font is loaded");

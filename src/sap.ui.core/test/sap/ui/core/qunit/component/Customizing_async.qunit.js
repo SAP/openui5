@@ -1,11 +1,12 @@
 /*global QUnit sinon */
 sap.ui.define([
 	'sap/ui/qunit/QUnitUtils',
+	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/XMLTemplateProcessor',
 	'sap/ui/core/mvc/XMLProcessingMode'
-], function(QUnitUtils, Component, ComponentContainer, XMLTemplateProcessor, XMLProcessingMode) {
+], function(QUnitUtils, nextUIUpdate, Component, ComponentContainer, XMLTemplateProcessor, XMLProcessingMode) {
 	"use strict";
 
 	/**
@@ -237,9 +238,9 @@ sap.ui.define([
 
 			return oComponent.getRootControl().loaded();
 		}.bind(this))
-		.then(function(oRootView) {
+		.then(async function(oRootView) {
+			await nextUIUpdate();
 			return new Promise(function(res, rej) {
-				sap.ui.getCore().applyChanges();
 
 				assert.equal(oRootView._sProcessingMode, XMLProcessingMode.Sequential, "Root view should be processed 'Sequential'");
 

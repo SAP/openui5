@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/ui/core/UIArea",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/testlib/TestButton",
 	"sap/ui/thirdparty/jquery"
-], function(Log, Control, Element, oCore, HTML, UIArea, createAndAppendDiv, TestButton, jQuery) {
+], function(Log, Control, Element, oCore, HTML, UIArea, createAndAppendDiv, nextUIUpdate, TestButton, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("uiArea1");
@@ -45,10 +46,10 @@ sap.ui.define([
 	 * After rendering, the two controls should be visible in the UIArea
 	 * their order should match the order in which they have been added
 	 */
-	QUnit.test("basic rendering", function(assert) {
+	QUnit.test("basic rendering", async function(assert) {
 		this.oText1.placeAt("uiArea1");
 		this.oText2.placeAt("uiArea1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#uiArea1 > button").length, 2, "two spans have been rendered");
 		assert.equal(jQuery(jQuery("#uiArea1 > button").get(0)).text(), "Text 1", "first span shows first text");
 		assert.equal(jQuery(jQuery("#uiArea1 > button").get(1)).text(), "Text 2", "second span shows second text");
@@ -58,9 +59,9 @@ sap.ui.define([
 	 * Removes the controls from the UIArea
 	 * UIArea must be empty after the rendering
 	 */
-	QUnit.test("removeAllContent", function(assert) {
+	QUnit.test("removeAllContent", async function(assert) {
 		UIArea.registry.get("uiArea1").removeAllContent();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#uiArea1").children().length, 0, "no more content");
 		assert.ok(oCore.byId("text1"), "remove must not destroy child 1");
 		assert.ok(oCore.byId("text2"), "remove must not destroy child 2");
@@ -71,14 +72,14 @@ sap.ui.define([
 	 * Rendering after addiition or removal of controls must not destroy
 	 * the content nor modify its order
 	 */
-	QUnit.test("initial DOM content", function(assert) {
+	QUnit.test("initial DOM content", async function(assert) {
 		var $originalDom = jQuery("#uiArea2").children();
 		assert.equal($originalDom.length, 1, "precondition: one span exists already in UIArea");
 		assert.equal(jQuery($originalDom.get(0)).text(), "Before", "precondition: span contains correct text");
 
 		this.oText1.placeAt("uiArea2");
 		this.oText2.placeAt("uiArea2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $currentDom = jQuery("#uiArea2").children();
 		assert.equal($currentDom.length, 3, "two more spans have been rendered");
 		assert.equal($currentDom.get(0), $originalDom.get(0), "initial DOM must still exist");
@@ -87,7 +88,7 @@ sap.ui.define([
 		assert.equal(jQuery($currentDom.get(2)).text(), "Text 2", "second span shows second text");
 
 		UIArea.registry.get("uiArea2").removeAllContent();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$currentDom = jQuery("#uiArea2").children();
 		assert.equal($currentDom.length, 1, "initial DOM still exists in UIArea");
 		assert.equal(jQuery($currentDom.get(0)).text(), "Before", "initial span still contains correct text");
@@ -97,7 +98,7 @@ sap.ui.define([
 	 * When additional pure DOM content is added to an UIArea,
 	 * that content must not be modified by the UIArea rerendering
 	 */
-	QUnit.test("additional DOM content", function(assert) {
+	QUnit.test("additional DOM content", async function(assert) {
 		// check preconditions
 		var $originalDom = jQuery("#uiArea2").children();
 		assert.equal($originalDom.length, 1, "precondition: one span exists already in UIArea");
@@ -109,10 +110,10 @@ sap.ui.define([
 
 		// do some interleaved modifications: Control / DOM / Control / DOM
 		this.oText1.placeAt("uiArea2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		jQuery("#uiArea2").append("<span>In Between</span>");
 		this.oText2.placeAt("uiArea2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		jQuery("#uiArea2").append("<span>After</span>");
 
 		// check results. Note: controls are rendered in one, contiguous block
@@ -127,7 +128,7 @@ sap.ui.define([
 
 		// now remove controls, check that the remainigs are as expected
 		UIArea.registry.get("uiArea2").removeAllContent();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$currentDom = jQuery("#uiArea2").children();
 		assert.equal($currentDom.length, 3, "initial DOM still exists in UIArea");
 		assert.equal(jQuery($currentDom.get(0)).text(), "Before", "initial span still contains correct text");
@@ -139,7 +140,7 @@ sap.ui.define([
 	 * When the UIArea contains a control that preserves its DOM,
 	 * then rerendering of the UIArea must not delete such preserved DOM
 	 */
-	QUnit.test("preserved DOM content", function(assert) {
+	QUnit.test("preserved DOM content", async function(assert) {
 		assert.ok(oCore.byId("text1"), "precondition: control 1 still exists");
 		assert.ok(!oCore.byId("text1").getParent(), "precondition: control 1 not bound");
 		assert.ok(oCore.byId("text2"), "precondition: control 2 still exists");
@@ -151,7 +152,7 @@ sap.ui.define([
 		this.oText1.placeAt("uiArea1");
 		this.oText2.placeAt("uiArea1");
 		this.oHtml3.placeAt("uiArea1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// check that the rendering had the expected result
 		var $currentDom = jQuery("#uiArea1").children();
@@ -167,7 +168,7 @@ sap.ui.define([
 
 		// rerender the whole UIArea
 		this.oText1.getUIArea().invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// check that the modified DOM is still there
 		assert.equal(jQuery($currentDom.get(0)).text(), "Text 1", "first control rendered");
@@ -180,7 +181,7 @@ sap.ui.define([
 
 		// remove content and rerender
 		UIArea.registry.get("uiArea1").removeAllContent();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// check that UIArea is empoty, but preserved content still exists
 		$currentDom = jQuery("#uiArea1").children();
@@ -196,7 +197,6 @@ sap.ui.define([
 	QUnit.module("Event Handling", {
 		beforeEach: function() {
 			this.oButton = new TestButton().placeAt("uiArea1");
-			sap.ui.getCore().applyChanges();
 			this.spy(Log, "debug");
 			this.fakeEvent = function fakeEvent(type) {
 				return new jQuery.Event(new jQuery.Event(type), { target: this.oButton.getDomRef() });
@@ -204,7 +204,8 @@ sap.ui.define([
 			this.hasBeenLogged = function hasBeenLogged(oEvent, oElement) {
 				return Log.debug.calledWith(
 					sinon.match(/Event fired:/).and(sinon.match(oEvent.type).and(sinon.match(oElement.toString()))));
-			};
+				};
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oButton.destroy();

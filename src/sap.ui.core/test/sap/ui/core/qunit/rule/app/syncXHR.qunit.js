@@ -2,18 +2,14 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Control",
-	"sap/ui/core/Component",
 	"sap/ui/core/Core",
 	"sap/ui/core/IconPool",
-	"sap/ui/core/AppCacheBuster",
 	"sap/ui/core/Manifest",
-	"sap/ui/core/Fragment",
-	"sap/ui/core/XMLComposite",
+	"sap/ui/core/UIArea",
 	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/jquery",
 	"test-resources/sap/ui/support/TestHelper",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Log, Control, Component, Core, IconPool, AppCacheBuster, Manifest, Fragment, XMLComposite, sinon, jQuery, testRule, createAndAppendDiv) {
+], function(Log, Control, Core, IconPool, Manifest, UIArea, sinon, testRule, createAndAppendDiv) {
 	"use strict";
 
 	// the rules rely on a certain log level for analyzing issues
@@ -22,6 +18,7 @@ sap.ui.define([
 	// create content div
 	createAndAppendDiv('content');
 
+	var fnOrigRerender;
 	var iIncrement = 0;
 	var fnIncrement = function(iNumber){
 		return function(){
@@ -32,6 +29,17 @@ sap.ui.define([
 
 	QUnit.module("Renderer", {
 		beforeEach: function(assert) {
+			fnOrigRerender = UIArea.prototype.rerender;
+			UIArea.prototype.rerender = function() {
+				try {
+					fnOrigRerender.apply(this, arguments);
+				} catch (e) {
+					// prevent 404 exception from breaking the test
+					// the rule TestHelper does not support assert throwing
+					// the actual check should be on a log for a sync XHR to "NoRendererControlRenderer.js"
+					assert.ok(e, "404 should be fired for '" + e.message + "'");
+				}
+			};
 			return Core.ready().then(function() {
 				assert.ok(true, "Core must be initialized");
 
@@ -42,16 +50,15 @@ sap.ui.define([
 				});
 				var n = new No();
 				n.placeAt("content");
-				try {
-					sap.ui.getCore().applyChanges();
-				} catch (e) {
-					// prevent 404 exception from breaking the test
-					// the rule TestHelper does not support assert throwing
-					// the actual check should be on a log for a sync XHR to "NoRendererControlRenderer.js"
-					assert.ok(e, "404 should be fired for '" + e.message + "'");
-				}
+				// wait for rendering
+				return new Promise(function(resolve) {
+					setTimeout(resolve);
+				});
 			});
 
+		},
+		afterEach: function() {
+			UIArea.prototype.rerender = fnOrigRerender;
 		}
 	});
 

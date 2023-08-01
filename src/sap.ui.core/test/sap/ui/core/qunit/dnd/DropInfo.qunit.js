@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/dnd/DropInfo",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ElementMetadata",
-	"sap/base/Log"
-], function(jQuery, TestControl, DropInfo, ManagedObject, ElementMetadata, Log) {
+	"sap/base/Log",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(jQuery, TestControl, DropInfo, ManagedObject, ElementMetadata, Log, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("");
@@ -129,7 +130,7 @@ sap.ui.define([
 		oParent.destroy();
 	});
 
-	QUnit.test("isDroppable - Empty Aggregation", function(assert) {
+	QUnit.test("isDroppable - Empty Aggregation", async function(assert) {
 		var oDropInfo = new DropInfo({
 			targetAggregation: "children"
 		});
@@ -139,7 +140,7 @@ sap.ui.define([
 		var oEvent = new jQuery.Event("dragenter");
 
 		oControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		oEvent.target = oControl.getDomRef("children");
 		assert.notOk(oDropInfo.isDroppable(oControl, oEvent), "Not Droppable: event target is the defined targetAggregation DOM");

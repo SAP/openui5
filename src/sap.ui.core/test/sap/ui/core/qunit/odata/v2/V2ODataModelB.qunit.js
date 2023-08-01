@@ -10,9 +10,10 @@ sap.ui.define([
 	"sap/ui/model/odata/UpdateMethod",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/table/Table",
-	"sap/ui/table/Column"
+	"sap/ui/table/Column",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(each, isEmptyObject, Input, Label, MockServer, Filter, Sorter, UpdateMethod, ODataModel,
-	Table, Column) {
+	Table, Column, nextUIUpdate) {
 
 	"use strict";
 
@@ -801,7 +802,7 @@ sap.ui.define([
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
-	QUnit.test("test oDataModel listbinding with aggregation binding and read in default batch group", function(assert) {
+	QUnit.test("test oDataModel listbinding with aggregation binding and read in default batch group", async function(assert) {
 		var done = assert.async();
 		var iCallCount = 0;
 		var bRead1 = false;
@@ -814,7 +815,7 @@ sap.ui.define([
 		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		oTable.setModel(oModel);
 		var fnTest = function() {
 			oTable.bindRows({

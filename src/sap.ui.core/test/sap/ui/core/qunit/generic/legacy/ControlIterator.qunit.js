@@ -2,8 +2,8 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/ControlIterator",
 	"sap/ui/core/Control",
-	"sap/base/util/ObjectPath"
-], function(ControlIterator, Control, ObjectPath) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(ControlIterator, Control, nextUIUpdate) {
 	"use strict";
 
 	// disable require.js to avoid issues with thirdparty
@@ -186,7 +186,7 @@ sap.ui.define([
 								function() {
 									var oRenderer = oControl.getMetadata().getRenderer();
 									oControl.placeAt("content");
-									sap.ui.getCore().applyChanges();
+									await nextUIUpdate();
 								}, sControlName + " should not be able to render"
 							);
 						}
@@ -205,15 +205,15 @@ sap.ui.define([
 			ControlIterator.run(function(sControlName, oControlClass, oInfo) {
 
 				if (oInfo.canInstantiate && oInfo.canRender) {
-					QUnit.test("Trying to render control " + sControlName, function(assert) {
+					QUnit.test("Trying to render control " + sControlName, async function(assert) {
 						var oControl = new oControlClass();
 						oControl.placeAt("content");
-						sap.ui.getCore().applyChanges();
+						await nextUIUpdate();
 
 						// nope :-(    assert.ok(oControl.getDomRef(), sControlName + " should have rendered something");
 
 						oControl.destroy();
-						sap.ui.getCore().applyChanges();
+						await nextUIUpdate();
 
 						assert.ok(true, sControlName + " seems to have rendered successfully");
 					});

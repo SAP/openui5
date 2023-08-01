@@ -2,12 +2,12 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Element",
-	"sap/ui/core/CustomData",
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/Button"
-], function(Log, Element, CustomData, library, View, JSONModel, Button) {
+	"sap/m/Button",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Log, Element, library, View, JSONModel, Button, nextUIUpdate) {
 	"use strict";
 
 	var ViewType = library.mvc.ViewType;
@@ -284,7 +284,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Write Data to HTML", function(assert) {
+	QUnit.test("Write Data to HTML", async function(assert) {
 		var btn = new Button({text:"Hello"});
 
 		btn.data("test", "some payload", true);
@@ -294,7 +294,7 @@ sap.ui.define([
 		btn.data("test5", {"test":"nope"}, true);
 
 		btn.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var $btn = btn.$();
 		assert.equal($btn.attr("data-test"), "some payload", "the 'test' data should be written to DOM");

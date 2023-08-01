@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/test/selectors/_ControlSelectorGenerator",
 	"sap/m/Label",
-	"sap/m/Input"
-], function (_ControlSelectorGenerator, Label, Input) {
+	"sap/m/Input",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (_ControlSelectorGenerator, Label, Input, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("_LabelFor", {
@@ -15,7 +16,7 @@ sap.ui.define([
 			this.oInput.placeAt("qunit-fixture");
 			this.oInputWithLabel.placeAt("qunit-fixture");
 			this.oLabel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oInput.destroy();

@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/ui/base/EventProvider",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Panel",
@@ -16,7 +15,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Popup,
 	Localization,
@@ -25,7 +25,6 @@ sap.ui.define([
 	Device,
 	jQuery,
 	Control,
-	Core,
 	EventProvider,
 	QUnitUtils,
 	Panel,
@@ -33,7 +32,8 @@ sap.ui.define([
 	Text,
 	ResizeHandler,
 	containsOrEquals,
-	KeyCodes
+	KeyCodes,
+	nextUIUpdate
 ){
 	"use strict";
 
@@ -225,7 +225,7 @@ sap.ui.define([
 		var oSpyPopAfterRendering = sinon.spy(this.oPopup, "onAfterRendering");
 		this.oPopup.setContent(oControl);
 
-		var fnOpened = function() {
+		var fnOpened = async function() {
 
 			assert.equal(oSpyControlAfterRendering.callCount, 1, "'onAfterRendering' of control was called");
 			assert.equal(oControl.$().css("height"), "100px", "Initial height set (100px)");
@@ -239,7 +239,7 @@ sap.ui.define([
 			oControl.setCounter(1);
 
 			// Make sure re-rendering happens synchronously
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.equal(oSpyControlAfterRendering.callCount, 2, "'onAfterRendering' of control was called");
 			assert.equal(oControl.$().css("height"), "200px", "Height changed to 200px");
@@ -521,7 +521,7 @@ sap.ui.define([
 
 		return oPopupWrap
 			.open()
-			.then(function() {
+			.then(async function() {
 				var oPopup = oPopupWrap.instance;
 				var oButton = oPopup.getContent();
 				var oApplyFocusInfoSpy = this.spy(oButton, "applyFocusInfo");
@@ -530,7 +530,7 @@ sap.ui.define([
 				oButton.focus();
 
 				oButton.setText("Changed");
-				sap.ui.getCore().applyChanges();
+				await nextUIUpdate();
 
 				assert.ok(oApplyFocusInfoSpy.calledOnce, "focus info applied");
 				assert.strictEqual(oApplyFocusInfoSpy.getCall(0).args[0].preventScroll, true, "preventScrolling flag is set");
@@ -542,12 +542,12 @@ sap.ui.define([
 				var oButton = oPopup.getContent();
 				var oApplyFocusInfoSpy = this.spy(oButton, "applyFocusInfo");
 
-				return oPopupWrap1.open().then(function() {
+				return oPopupWrap1.open().then(async function() {
 					assert.equal(oPopup.isOpen(), true, "Popup should be open after opening");
 					oButton.focus();
 
 					oButton.setText("Changed");
-					sap.ui.getCore().applyChanges();
+					await nextUIUpdate();
 
 					assert.ok(oApplyFocusInfoSpy.calledOnce, "focus info applied");
 					assert.strictEqual(oApplyFocusInfoSpy.getCall(0).args[0].preventScroll, true, "preventScrolling flag is set");
@@ -1034,7 +1034,7 @@ sap.ui.define([
 	// 		var oFocusEvent = jQuery.Event("focus"),
 	// 			$focus = jQuery("#focusableElement2");
 	// 		$focus.trigger(oFocusEvent);
-	// 		Core.applyChanges();
+	// 		await nextUIUpdate();
 	// 	};
 	// 	var fnClosed = function() {
 	// 		this.oPopup.detachClosed(fnClosed, this);
@@ -2403,7 +2403,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("The DOM element of extra content should be updated when it's rerendered", function(assert) {
+	QUnit.test("The DOM element of extra content should be updated when it's rerendered", async function(assert) {
 		assert.expect(4);
 
 		var that = this, done = assert.async();
@@ -2414,19 +2414,19 @@ sap.ui.define([
 			}
 		}).placeAt("uiarea");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var fnClosed = function() {
 			assert.ok(true, "Popup is closed through autoclose");
 			done();
 		};
 
-		var fnOpened = function() {
+		var fnOpened = async function() {
 			this.oPopup.detachOpened(fnOpened);
 			this.oPopup.attachClosed(fnClosed);
 
 			this.oInput.invalidate();
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oInput.focus();
 
@@ -2452,7 +2452,7 @@ sap.ui.define([
 		assert.ok(this.oPopup.isOpen(), "Popup should be opened");
 	});
 
-	QUnit.test("The previous active element isn't blurred before the opening animation, if it's the same element which gets the focus after popup open", function(assert) {
+	QUnit.test("The previous active element isn't blurred before the opening animation, if it's the same element which gets the focus after popup open", async function(assert) {
 		var done = assert.async(),
 			that = this,
 			oFocusDomElement, oBlurSpy;
@@ -2464,7 +2464,7 @@ sap.ui.define([
 			}
 		}).placeAt("uiarea");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var fnOpened = function() {
 			assert.equal(oBlurSpy.callCount, 0, "The document.activeElement isn't blurred");
@@ -2491,7 +2491,7 @@ sap.ui.define([
 		assert.ok(this.oPopup.isOpen(), "Popup should be opened");
 	});
 
-	QUnit.test("Extra content delegate should be removed when popup is destroyed", function(assert) {
+	QUnit.test("Extra content delegate should be removed when popup is destroyed", async function(assert) {
 		this.oInput = new this.CustomInput({
 			change: function () {
 				this.oPopup.open();
@@ -2500,7 +2500,7 @@ sap.ui.define([
 
 		this.oRemoveDelegateSpy = this.spy(this.oInput, "removeEventDelegate");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		this.oPopup.setExtraContent([this.oInput]);
 
@@ -2509,14 +2509,14 @@ sap.ui.define([
 		assert.equal(this.oRemoveDelegateSpy.callCount, 1, "Delegate is removed after destroy popup");
 	});
 
-	QUnit.test("Extra content delegate should be added once even when the same control is added again", function(assert) {
+	QUnit.test("Extra content delegate should be added once even when the same control is added again", async function(assert) {
 		this.oInput = new this.CustomInput({
 			change: function () {
 				this.oPopup.open();
 			}.bind(this)
 		}).placeAt("uiarea");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		this.oPopup.setExtraContent([this.oInput]);
 		// call the function again because popup control calls the function before each open action
@@ -2844,7 +2844,7 @@ sap.ui.define([
 
 	if (!Localization.getRTL()) {
 		// The test checks for "right" CSS proprety explicitly which isn't set in RTL mode
-		QUnit.test("Align the popup correctly in cases where position is more precisely than one pixel", function(assert){
+		QUnit.test("Align the popup correctly in cases where position is more precisely than one pixel", async function(assert){
 			var done = assert.async();
 			var oButton = new Button("buttonOpenPopup", {text: "Open Popup"});
 			var oText = new Text("myText", {text: "This is the text shown inside the Popup."});
@@ -2863,7 +2863,7 @@ sap.ui.define([
 			oPopup.attachOpened(fnOpened);
 
 			oButton.placeAt(document.getElementById("uiarea"));
-			Core.applyChanges();
+			await nextUIUpdate();
 			oPopup.open("end top", "end bottom", oButton);
 		});
 	}
@@ -2963,7 +2963,7 @@ sap.ui.define([
 		assert.equal(Popup.getWithinAreaDomRef(), window, "window is returned");
 	});
 
-	QUnit.test("set/getWithinArea sap.ui.core.Element", function(assert) {
+	QUnit.test("set/getWithinArea sap.ui.core.Element", async function(assert) {
 		var oControl = new Button("withinButton", {text: "within"});
 
 		Popup.setWithinArea(oControl);
@@ -2972,7 +2972,7 @@ sap.ui.define([
 		assert.equal(Popup.getWithinAreaDomRef(), window, "window is returned before the control is rendered");
 
 		oControl.placeAt("uiarea");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(Popup.getWithinAreaDomRef(), oControl.getDomRef(), "Correct Dom Element returned");
 	});
@@ -3412,7 +3412,7 @@ sap.ui.define([
 	 * @deprecated Since 1.92 as string based rendering has been deprecated
 	 * @todo-semantic-rendering discuss whether test really can be deprecated together with string based rendering
 	 */
-	QUnit.test("Global within set with a control and check after the control is rendered", function(assert) {
+	QUnit.test("Global within set with a control and check after the control is rendered", async function(assert) {
 		// need to create a custom control to create new DOM element after the control is rendered because most of the
 		// sap.m controls use the rendering api version 2 in which the DOM element is not deleted but only updated
 		var MyCustomControl = Control.extend("MyCustomControl", {
@@ -3430,7 +3430,7 @@ sap.ui.define([
 
 		var oControl = new MyCustomControl();
 		oControl.placeAt("uiarea");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oDomRef);

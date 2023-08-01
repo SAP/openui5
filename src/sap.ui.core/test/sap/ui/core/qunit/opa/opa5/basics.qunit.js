@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/_OpaUriParameterParser",
 	"sap/ui/test/autowaiter/_autoWaiter",
-	"../utils/sinon"
-], function (XMLView, Opa, Opa5, opaTest, $, Button, URI, _OpaLogger, _OpaUriParameterParser, _autoWaiter, sinonUtils) {
+	"../utils/sinon",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (XMLView, Opa, Opa5, opaTest, $, Button, URI, _OpaLogger, _OpaUriParameterParser, _autoWaiter, sinonUtils, nextUIUpdate) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -205,8 +206,7 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async();
-			Promise.all([
+			return Promise.all([
 				createXmlView("my.namespace.View"),
 				createXmlView("my.namespace2.View")
 			]).then(function(aViews) {
@@ -218,8 +218,7 @@ sap.ui.define([
 				this.oView.placeAt("qunit-fixture");
 				this.oView2.placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
-				done();
+				return nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -227,7 +226,7 @@ sap.ui.define([
 			this.oView2.destroy();
 			this.oButton.destroy();
 			Opa5.resetConfig();
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		}
 	});
 
@@ -321,28 +320,26 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async();
 			var sView = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
 				'<Button id="foo"/>',
 				'</mvc:View>'
 			].join('');
 
-			XMLView.create({
+			return XMLView.create({
 				id: "globalId",
 				definition: sView
 			}).then(function(oView) {
 				this.oView = oView;
 				this.oView.setViewName("myViewName");
 				this.oView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				done();
+				return nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach: function () {
 			this.oView.destroy();
-			sap.ui.getCore().applyChanges();
 			Opa5.resetConfig();
+			return nextUIUpdate();
 		}
 	});
 
@@ -419,32 +416,30 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async();
 			var sView = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
 					'<Button id="foo"/>',
 				'</mvc:View>'
 			].join('');
 
-			XMLView.create({
+			return XMLView.create({
 				id: "myView",
 				definition: sView
 			}).then(function(oView) {
 				this.oView = oView;
-				sap.ui.getCore().applyChanges();
 				Opa5.extendConfig({
 					// make the test fast
 					pollingInterval: 50,
 					viewNamespace: "namespace.",
 					viewName: "viewName"
 				});
-				done();
+				return nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach: function () {
 			this.oView.destroy();
-			sap.ui.getCore().applyChanges();
 			Opa5.resetConfig();
+			return nextUIUpdate();
 		}
 	});
 

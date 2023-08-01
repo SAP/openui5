@@ -7,12 +7,13 @@ sap.ui.define([
 	"composites/TemplateTest", "composites/ChildOfAbstract", "composites/TextToggleButton",
 	"composites/TextToggleButtonNested", "composites/TextToggleButtonForwarded",
 	"composites/WrapperLayouter", "composites/TranslatableText", "composites/TranslatableTextLib",
-	"composites/TranslatableTextBundle"
+	"composites/TranslatableTextBundle",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (QUnitUtils, Core, XMLPreprocessor, XMLComposite, Controller, JSONModel, Item,
 			 Text, SimpleText, SortedList, TextButton, TextList, ForwardText, Field, HiddenMetadata,
 			 TemplateTest, ChildOfAbstract, TextToggleButton, TextToggleButtonNested,
 			 TextToggleButtonForwarded, WrapperLayouter, TranslatableText, TranslatableTextLib,
-			 TranslatableTextBundle) {
+			 TranslatableTextBundle, nextUIUpdate) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -22,7 +23,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oXMLComposite = new SimpleText();
 			this.oXMLComposite.placeAt("qunit-fixture");
-			Core.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oXMLComposite.destroy();
@@ -137,7 +138,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oXMLComposite = new HiddenMetadata();
 			this.oXMLComposite.placeAt("qunit-fixture");
-			Core.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oXMLComposite.destroy();
@@ -165,7 +166,7 @@ sap.ui.define([
 				text: this.oText
 			});
 			this.oXMLComposite.placeAt("qunit-fixture");
-			Core.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oXMLComposite.destroy();
@@ -245,7 +246,7 @@ sap.ui.define([
 				textItems: this.aTexts
 			});
 			this.oXMLComposite.placeAt("qunit-fixture");
-			Core.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			//	this.oXMLComposite.destroy();  TODO: why do this destroy lead to
@@ -345,7 +346,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oXMLComposite = new Field();
 			this.oXMLComposite.placeAt("qunit-fixture");
-			Core.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oXMLComposite.destroy();
@@ -412,10 +413,10 @@ sap.ui.define([
 		oXMLComposite.destroy();
 	});
 
-	QUnit.test("outer", function (assert) {
+	QUnit.test("outer", async function (assert) {
 		var oXMLComposite = new TextToggleButton();
 		oXMLComposite.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		var done = assert.async();
 
 		oXMLComposite.attachTextChanged(function () {
@@ -430,11 +431,11 @@ sap.ui.define([
 		oXMLComposite.destroy();
 	});
 
-	QUnit.test("nested - event from deep inner to outer", function (assert) {
+	QUnit.test("nested - event from deep inner to outer", async function (assert) {
 		var fnFireTextChangedSpy = sinon.spy(TextToggleButtonNested.prototype, "fireTextChanged");
 		var oXMLComposite = new TextToggleButtonNested();
 		oXMLComposite.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act: Click on ToggleButton
 		QUnitUtils.triggerTouchEvent("tap", oXMLComposite.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getDomRef());
@@ -446,10 +447,10 @@ sap.ui.define([
 		oXMLComposite.destroy();
 	});
 
-	QUnit.test("nested - event from inner to outer", function (assert) {
+	QUnit.test("nested - event from inner to outer", async function (assert) {
 		var oXMLComposite = new TextToggleButtonNested();
 		oXMLComposite.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		var done = assert.async();
 
 		// Initial state of the nested controls
@@ -478,14 +479,14 @@ sap.ui.define([
 		oXMLComposite.destroy();
 	});
 
-	QUnit.test("forwarded - event from deep inner to outer", function (assert) {
+	QUnit.test("forwarded - event from deep inner to outer", async function (assert) {
 		var oTextToggleButton = new TextToggleButton();
 		var fnFireTextChangedSpy = sinon.spy(TextToggleButtonForwarded.prototype, "fireTextChanged");
 		var oXMLComposite = new TextToggleButtonForwarded({
 			textToggleButton: oTextToggleButton
 		});
 		oXMLComposite.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act: Click on ToggleButton
 		QUnitUtils.triggerTouchEvent("tap", oTextToggleButton.getAggregation("_content").getItems()[1].getDomRef());
@@ -497,12 +498,12 @@ sap.ui.define([
 		oXMLComposite.destroy();
 	});
 
-	QUnit.test("forwarded - event from inner to outer", function (assert) {
+	QUnit.test("forwarded - event from inner to outer", async function (assert) {
 		var oXMLComposite = new TextToggleButtonForwarded({
 			textToggleButton: new TextToggleButton()
 		});
 		oXMLComposite.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		var done = assert.async();
 
 		// Initial state of controls
@@ -558,10 +559,10 @@ sap.ui.define([
 		oXMLComposite.destroy();
 	});
 
-	QUnit.test("Abstract", function (assert) {
+	QUnit.test("Abstract", async function (assert) {
 		var oXMLComposite = new ChildOfAbstract();
 		oXMLComposite.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oXMLComposite);
 		oXMLComposite.destroy();
 	});
@@ -591,14 +592,14 @@ sap.ui.define([
 
 		var oClone = oXMLComposite.clone("MyClone");
 		assert.equal(oClone.getId(), "Frag1-MyClone", "XMLComposite cloned");
-		setTimeout(function() {
+		setTimeout(async function() {
 			var oContent = oClone._getCompositeAggregation();
 			//TEMP-CLONE-ISSUE assert.notOk(fnVBoxCloneSpy.called, "VBox clone function not called");
 			//TEMP-CLONE-ISSUE assert.equal(oContent.getId(), "Frag1-MyClone--myVBox", "VBox created, not cloned");
 
 			oXMLComposite.placeAt("qunit-fixture");
 			oClone.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			//Id access
 			oButton = oXMLComposite.byId("myButton");
@@ -673,7 +674,7 @@ sap.ui.define([
 			});
 			this.oWrapper = new Wrapper("layout");
 			this.oWrapper.placeAt("qunit-fixture");
-			Core.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oWrapper.destroy();
@@ -702,7 +703,7 @@ sap.ui.define([
 			this.oWrapper.setHeight("100%");
 			this.oWrapper.setWidth("200px");
 			this.oWrapper.setDisplayBlock(false);
-			Core.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oWrapper.destroy();
@@ -731,11 +732,11 @@ sap.ui.define([
 	});
 	//*********************************************************************************************
 
-	QUnit.test("properties", function (assert) {
+	QUnit.test("properties", async function (assert) {
 		var done = assert.async();
 		var oXMLComposite = new TranslatableText();
 		oXMLComposite.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oXMLComposite.bUsesI18n, true, "The i18n resource model is used");
 		if (oXMLComposite.getResourceBundle().then) {
 			//async loading of resource bundle
@@ -750,7 +751,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("positive tests - not in root", function (assert) {
+	QUnit.test("positive tests - not in root", async function (assert) {
 		var done = assert.async();
 
 		var sFragmentContent = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout">'
@@ -769,7 +770,7 @@ sap.ui.define([
 
 		var oXMLComposite = new TextInButton({placeholder: "custom placeholder"});
 		oXMLComposite.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oXMLComposite.bUsesI18n, true, "The i18n resource model is used");
 		if (oXMLComposite.getResourceBundle().then) {
 			//async loading of resource bundle
@@ -784,7 +785,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("positive tests - in root", function (assert) {
+	QUnit.test("positive tests - in root", async function (assert) {
 		var done = assert.async();
 		var sFragmentContent = '<m:Panel id="myTranslatableTextControl" headerText="{$this.i18n>panelText}" xmlns:m="sap.m"><m:Input id="innerInput" placeholder="{$this>/placeholder}" />'
 			+ '<m:Button text="{$this>/buttonText}" press="handleSearch" /></m:Panel>';
@@ -802,7 +803,7 @@ sap.ui.define([
 
 		var oXMLComposite = new TextInRoot({placeholder: "custom placeholder"});
 		oXMLComposite.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oXMLComposite.bUsesI18n, true, "The i18n resource model is used");
 		if (oXMLComposite.getResourceBundle().then) {
 			//async loading of resource bundle
@@ -817,10 +818,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("negative test lib not loaded when not used", function (assert) {
+	QUnit.test("negative test lib not loaded when not used", async function (assert) {
 		var oXMLComposite = new TextToggleButton();
 		oXMLComposite.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		var oContent = oXMLComposite._getCompositeAggregation();
 		assert.equal(oXMLComposite.bUsesI18n, false, "No reference for the i18n resource model is found");
 		assert.notOk(oContent.getModel("$" + oXMLComposite.alias + ".i18n"), "there is no i18n Model");
@@ -836,11 +837,11 @@ sap.ui.define([
 	});
 	//*********************************************************************************************
 
-	QUnit.test("properties", function (assert) {
+	QUnit.test("properties", async function (assert) {
 		var done = assert.async();
 		var oXMLComposite = new TranslatableTextLib();
 		oXMLComposite.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		if (oXMLComposite.getResourceBundle().then) {
 			//async loading of resource bundle
 			oXMLComposite.getResourceBundle().then(function (oBundle) {
@@ -863,11 +864,11 @@ sap.ui.define([
 	});
 	//*********************************************************************************************
 
-	QUnit.test("properties", function (assert) {
+	QUnit.test("properties", async function (assert) {
 		var done = assert.async();
 		var oXMLComposite = new TranslatableText();
 		oXMLComposite.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		if (oXMLComposite.getResourceBundle().then) {
 			//async loading of resource bundle
 			oXMLComposite.getResourceBundle().then(function (oBundle) {
@@ -889,11 +890,11 @@ sap.ui.define([
 	});
 	//*********************************************************************************************
 
-	QUnit.test("properties", function (assert) {
+	QUnit.test("properties", async function (assert) {
 		var done = assert.async();
 		var oXMLComposite = new TranslatableTextBundle();
 		oXMLComposite.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		if (oXMLComposite.getResourceBundle().then) {
 			//async loading of resource bundle
 			oXMLComposite.getResourceBundle().then(function (oBundle) {
@@ -917,11 +918,11 @@ sap.ui.define([
 	});
 	//*********************************************************************************************
 
-	QUnit.test("properties", function (assert) {
+	QUnit.test("properties", async function (assert) {
 		var done = assert.async();
 		var oXMLComposite = new TranslatableTextBundle();
 		oXMLComposite.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		if (oXMLComposite.getResourceBundle().then) {
 			//async loading of resource bundle
 			oXMLComposite.getResourceBundle().then(function (oBundle) {
@@ -944,13 +945,13 @@ sap.ui.define([
 	});
 	//*********************************************************************************************
 
-	QUnit.test("properties", function (assert) {
+	QUnit.test("properties", async function (assert) {
 		var done = assert.async();
 		var oXMLComposite0 = new TranslatableTextLib();
 		var oXMLComposite1 = new TranslatableTextLib();
 		oXMLComposite0.placeAt("qunit-fixture");
 		oXMLComposite1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//async loading of resource bundle
 		var p0 = oXMLComposite0.getResourceBundle();
@@ -1025,8 +1026,7 @@ sap.ui.define([
 					oField.addAriaLabelledBy(oAdditionalLabel);
 					this.content = new HBox({items: [oLabel,oField, oAdditionalLabel]});
 					this.content.placeAt("qunit-fixture");
-					Core.applyChanges();
-					resolve();
+					nextUIUpdate().then(resolve);
 				}.bind(this));
 			}.bind(this));
 		},

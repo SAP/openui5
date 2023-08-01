@@ -1,8 +1,9 @@
 /*global QUnit */
 sap.ui.define([
 	'sap/ui/core/library',
+	"sap/ui/qunit/utils/nextUIUpdate",
 	'./AnyView_legacyAPIs.qunit'
-], function(coreLibrary, testsuite) {
+], function(coreLibrary, nextUIUpdate, testsuite) {
 	"use strict";
 
 	var ViewType = coreLibrary.mvc.ViewType;
@@ -38,22 +39,22 @@ sap.ui.define([
 
 	QUnit.module("Custom Tests");
 
-	QUnit.test("Embedded HTML", function(assert) {
+	QUnit.test("Embedded HTML", async function(assert) {
 		assert.expect(13);
 		var oView = sap.ui.view({type:ViewType.HTML,viewName:"example.mvc_legacyAPIs.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.equal(document.getElementById("htmlRoot").innerHTML, "THIS IS A TEST" , "HTML at root level rendered");
 		assert.equal(document.getElementById("htmlNested").innerHTML, "NESTED WORKS AS WELL",   "HTML at nested level rendered");
 		assert.ok(document.getElementById("htmlEmbeddedTable"), "HTML at embedded level rendered");
 		oView.destroy();
 	});
 
-	QUnit.test("Assocations", function(assert) {
+	QUnit.test("Assocations", async function(assert) {
 		assert.expect(13);
 		var oView = sap.ui.view({type:ViewType.HTML,viewName:"example.mvc_legacyAPIs.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		var oLabel = oView.byId("MyLabel");
 		assert.equal(oLabel.getLabelFor(), oView.byId("message").getId(), "Assocation id is set right");
 		var oCombo = oView.byId("MyComboBox");
@@ -62,11 +63,11 @@ sap.ui.define([
 		oView.destroy();
 	});
 
-	QUnit.test("Custom Data", function(assert) {
+	QUnit.test("Custom Data", async function(assert) {
 		assert.expect(12);
 		var oView = sap.ui.view({type:ViewType.HTML,viewName:"example.mvc_legacyAPIs.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.equal(oView.byId("Button2").data("myData1"), "myvalue1", "Custom Data set properly");
 		assert.equal(oView.byId("Button2").data("myData2"), "formatted-value", "Custom Data Formatter works properly");
 		oView.destroy();

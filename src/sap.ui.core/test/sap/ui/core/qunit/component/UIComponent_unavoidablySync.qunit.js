@@ -3,10 +3,10 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/UIComponentMetadata",
 	"sap/ui/core/mvc/View",
-	"sap/base/Log"
-], function(Component, ManagedObject, ComponentContainer, UIComponent, UIComponentMetadata, View, Log) {
+	"sap/base/Log",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Component, ManagedObject, ComponentContainer, UIComponent, View, Log, nextUIUpdate) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -133,7 +133,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("UIComponent check for no autoPrefixId", function(assert) {
+	QUnit.test("UIComponent check for no autoPrefixId", async function(assert) {
 
 		this.oServer.respondWithJSONContent(this.oManifest);
 
@@ -145,7 +145,7 @@ sap.ui.define([
 			component: oComponent
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oComponent.getAutoPrefixId(), false, "AutoPrefixId is false!");
 
@@ -157,7 +157,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("UIComponent check for autoPrefixId=true", function(assert) {
+	QUnit.test("UIComponent check for autoPrefixId=true", async function(assert) {
 
 		this.oManifest["sap.ui5"]["autoPrefixId"] = true;
 		this.oServer.respondWithJSONContent(this.oManifest);
@@ -170,7 +170,7 @@ sap.ui.define([
 			component: oComponent
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oComponent.getAutoPrefixId(), true, "AutoPrefixId is true!");
 
@@ -182,7 +182,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("UIComponent check for autoPrefixId=false", function(assert) {
+	QUnit.test("UIComponent check for autoPrefixId=false", async function(assert) {
 
 		this.oManifest["sap.ui5"]["autoPrefixId"] = false;
 		this.oServer.respondWithJSONContent(this.oManifest);
@@ -195,7 +195,7 @@ sap.ui.define([
 			component: oComponent
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oComponent.getAutoPrefixId(), false, "AutoPrefixId is false!");
 
@@ -504,7 +504,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("UIComponent that no error is logged for View-Types other than XML when processingMode is set", function(assert) {
+	QUnit.test("UIComponent that no error is logged for View-Types other than XML when processingMode is set", async function(assert) {
 		var oSpy = sinon.spy(ManagedObject.prototype, "applySettings");
 
 		var oComponent = sap.ui.component({
@@ -515,7 +515,7 @@ sap.ui.define([
 			component: oComponent
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oSpy.calledWith({
 			async: true,
@@ -528,7 +528,7 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
-	QUnit.test("UIComponent check for not prefixing the views' auto id", function(assert) {
+	QUnit.test("UIComponent check for not prefixing the views' auto id", async function(assert) {
 
 		var oComponent = sap.ui.component({
 			name: "my.own.autoid"
@@ -538,7 +538,7 @@ sap.ui.define([
 			component: oComponent
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oRootControl = oComponent.getRootControl();
 		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
@@ -549,7 +549,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("UIComponent check for not prefixing the views' auto id (manifest first)", function(assert) {
+	QUnit.test("UIComponent check for not prefixing the views' auto id (manifest first)", async function(assert) {
 
 		var oComponent = sap.ui.component({
 			manifestUrl: "/anylocation/mf1st/autoid/manifest.json"
@@ -559,7 +559,7 @@ sap.ui.define([
 			component: oComponent
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oRootControl = oComponent.getRootControl();
 		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
@@ -570,7 +570,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("UIComponent check for prefixing view id", function(assert) {
+	QUnit.test("UIComponent check for prefixing view id", async function(assert) {
 
 		var oComponent = sap.ui.component({
 			name: "my.own.prefixid"
@@ -580,7 +580,7 @@ sap.ui.define([
 			component: oComponent
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oRootControl = oComponent.getRootControl();
 		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
@@ -594,7 +594,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("UIComponent check for prefixing view id (manifest first)", function(assert) {
+	QUnit.test("UIComponent check for prefixing view id (manifest first)", async function(assert) {
 
 		var oComponent = sap.ui.component({
 			manifestUrl: "/anylocation/mf1st/prefixid/manifest.json"
@@ -604,7 +604,7 @@ sap.ui.define([
 			component: oComponent
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oRootControl = oComponent.getRootControl();
 		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");

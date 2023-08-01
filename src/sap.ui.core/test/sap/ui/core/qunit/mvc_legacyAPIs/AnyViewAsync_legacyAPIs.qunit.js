@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/JSView",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/mvc/HTMLView",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(ObjectPath, View, JSONView, JSView, XMLView, HTMLView, jQuery) {
+], function(ObjectPath, View, JSONView, JSView, XMLView, HTMLView, nextUIUpdate, jQuery) {
 	"use strict";
 
 	// create content div
@@ -88,26 +89,26 @@ sap.ui.define([
 			assert.ok(sSource !== undefined, "View content was preloaded synchronously");
 		});
 
-		QUnit.test("Rendering - synchronous resource loading", function (assert) {
+		QUnit.test("Rendering - synchronous resource loading", async function (assert) {
 			assert.expect(3);
 			this.oView = fnFactory();
 			this.oView.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			assert.ok(this.oView, "Instance has been created");
 			assert.ok(this.oView instanceof View, "Instance is a View");
 			assert.ok(this.oView.$().children().length, "View content was rendered synchronously");
 		});
 
-		QUnit.test("Rendering - asynchronous resource loading", function (assert) {
-			assert.expect(5);
+		QUnit.test("Rendering - asynchronous resource loading", async function (assert) {
+			assert.expect(4);
 			var done = assert.async();
 			this.oView = fnFactory(true); //true for async
 
 			// event attachement needs to be done immediately, otherwise the event may be fired beforehands
 			var that = this;
-			this.oView.attachAfterInit(function() {
-				sap.ui.getCore().applyChanges();
+			this.oView.attachAfterInit(async function() {
+				await nextUIUpdate();
 				assert.ok(that.oView.$().children().length, "View content was rendered");
 				done();
 			});
@@ -116,10 +117,8 @@ sap.ui.define([
 			assert.ok(this.oView, "Instance has been created");
 			assert.ok(this.oView instanceof View, "Instance is a View");
 
-			sap.ui.getCore().applyChanges();
-			assert.ok(this.oView.$().length, "View was rendered empty");
-			assert.ok(!this.oView.$().children().length, "View content is not rendered yet");
-
+			await nextUIUpdate();
+			assert.ok(that.oView.$().length, "View was rendered");
 		});
 
 		QUnit.test("Promise - loaded() for sync view", function(assert) {

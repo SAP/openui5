@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/layout/HorizontalLayout",
 	"sap/m/Button",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/events/KeyCodes"
-], function (TooltipBase, QUnitUtils, HorizontalLayout, Button, createAndAppendDiv, KeyCodes) {
+], function (TooltipBase, QUnitUtils, HorizontalLayout, Button, createAndAppendDiv, nextUIUpdate, KeyCodes) {
 	"use strict";
 
 	createAndAppendDiv("target");
@@ -213,7 +214,7 @@ sap.ui.define([
 			this.oSpyOpenPopup1 = sinon.spy(this.oTooltip1, "openPopup");
 			this.oSpyClosePopup1 = sinon.spy(this.oTooltip1, "closePopup");
 
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 
 		afterEach: function() {
@@ -354,7 +355,7 @@ sap.ui.define([
 			this.oSpyOpenPopupLayout = sinon.spy(this.oTooltipLayout, "openPopup");
 			this.oSpyClosePopupLayout = sinon.spy(this.oTooltipLayout, "closePopup");
 
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 
 		afterEach: function() {

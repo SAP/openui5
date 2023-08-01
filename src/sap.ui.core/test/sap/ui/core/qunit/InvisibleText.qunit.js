@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
-], function(Log, InvisibleText, jQuery, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Log, InvisibleText, jQuery, Configuration, nextUIUpdate) {
 	"use strict";
 
 	var oDIV = document.createElement("div");
@@ -13,30 +14,30 @@ sap.ui.define([
 
 	QUnit.module("");
 
-	QUnit.test("Hidden Text is really hidden", function(assert) {
+	QUnit.test("Hidden Text is really hidden", async function(assert) {
 		var iWidth = jQuery("#content").width();
 		var iHeight = jQuery("#content").height();
 
 		var text = new InvisibleText({text: "Hello"});
 		text.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(iWidth, jQuery("#content").width(), "Width of container not influenced by hidden text.");
 		assert.equal(iHeight, jQuery("#content").height(), "Height of container not influenced by hidden text.");
 		assert.ok(text.$().parent().attr("id") == "content", "Invisible Text was rendered.");
 	});
 
-	QUnit.test("Render to static area", function(assert) {
+	QUnit.test("Render to static area", async function(assert) {
 		var text = new InvisibleText({text: "Hello"});
 		text.toStatic();
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.ok(text.$().parent().attr("id") == "sap-ui-static", "Invisible Text was rendered to static area");
 	});
 
-	QUnit.test("Rendering", function(assert) {
+	QUnit.test("Rendering", async function(assert) {
 		var text = new InvisibleText({text: "Hello"});
 		text.toStatic();
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.equal(text.$().text(), "Hello", "Text rendered correctly");
 		text.setText("Hello2");
 		assert.equal(text.$().text(), "Hello2", "Text rendered correctly");
@@ -44,7 +45,7 @@ sap.ui.define([
 		assert.ok(text.$().hasClass("sapUiInvisibleText"), "Class sapUiInvisibleText is set");
 	});
 
-	QUnit.test("Shared Instances", function(assert) {
+	QUnit.test("Shared Instances", async function(assert) {
 		// Note: configuration enforces initial language 'en'
 		var sExpectedTextEN = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
 
@@ -60,7 +61,7 @@ sap.ui.define([
 
 		// switch language
 		Configuration.setLanguage("de");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		var sExpectedTextDE = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
 		assert.notEqual(sExpectedTextEN, sExpectedTextDE, "texts should differ between 'en' and 'de'");
 
@@ -90,10 +91,10 @@ sap.ui.define([
 		}, this);
 	});
 
-	QUnit.test("getRendererMarkup is an equivalent of renderer output", function(assert) {
+	QUnit.test("getRendererMarkup is an equivalent of renderer output", async function(assert) {
 		var oSUT = new InvisibleText({text: "Hello"});
 		oSUT.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oDomRef = oSUT.getDomRef();
 		var oMarkupDomRef = jQuery(oSUT.getRendererMarkup())[0];

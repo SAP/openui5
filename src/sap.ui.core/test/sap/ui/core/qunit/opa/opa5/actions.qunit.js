@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/autowaiter/_timeoutWaiter",
 	"sap/m/Button",
-	"sap/ui/test/autowaiter/_autoWaiter"
-], function (Opa5, opaTest, _timeoutWaiter, Button, _autoWaiter) {
+	"sap/ui/test/autowaiter/_autoWaiter",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (Opa5, opaTest, _timeoutWaiter, Button, _autoWaiter, nextUIUpdate) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -16,7 +17,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oButton = new Button("foo");
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -124,15 +125,15 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
 			Opa5.extendConfig({
 				pollingInterval: 20
 			});
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oButton.destroy();
-			sap.ui.getCore().applyChanges();
 			Opa5.resetConfig();
+			return nextUIUpdate();
 		}
 	});
 
@@ -279,16 +280,16 @@ sap.ui.define([
 			this.oButton.placeAt("qunit-fixture");
 			this.oButton2 = new Button();
 			this.oButton2.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
 			Opa5.extendConfig({
 				pollingInterval: 20
 			});
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oButton.destroy();
 			this.oButton2.destroy();
-			sap.ui.getCore().applyChanges();
 			Opa5.resetConfig();
+			return nextUIUpdate();
 		}
 	});
 

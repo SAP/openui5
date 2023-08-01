@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"jquery.sap.dom",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils" // implicit dependency, implements jQuery#_sapTest_dataEvents
-], function (LoaderExtensions, jQuery /*, qutils */) {
+], function (LoaderExtensions, jQuery, nextUIUpdate /*, qutils */) {
 	"use strict";
 
 	return LoaderExtensions.loadResource("static/jquery.sap.dom.html", {
@@ -482,7 +483,7 @@ sap.ui.define([
 				jQuery(document.body).append(this.$Image);
 				jQuery(document.body).append(this.$ImageMap);
 
-				sap.ui.getCore().applyChanges();
+				return nextUIUpdate();
 			},
 
 			afterEach: function () {

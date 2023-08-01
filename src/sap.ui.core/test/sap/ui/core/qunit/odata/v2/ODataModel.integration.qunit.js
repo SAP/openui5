@@ -576,7 +576,7 @@ sap.ui.define([
 				}
 				delete this.mListChanges[sControlId];
 			}
-			if (Core.getUIDirty()
+			if (Rendering.isPending()
 					|| Core.getMessageManager().getMessageModel().getObject("/").length	< this.aMessages.length) {
 				setTimeout(this.checkFinish.bind(this, assert), 10);
 

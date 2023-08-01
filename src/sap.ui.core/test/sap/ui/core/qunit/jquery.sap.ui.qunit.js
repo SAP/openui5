@@ -2,8 +2,9 @@
 sap.ui.define([
 	"jquery.sap.ui",
 	"sap/ui/core/Control",
-	"sap/ui/core/UIArea"
-], function(jQuery, Control, UIArea) {
+	"sap/ui/core/UIArea",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(jQuery, Control, UIArea, nextUIUpdate) {
 	"use strict";
 
 	var TestControl = Control.extend("sap.jsunittest.Test", {
@@ -29,11 +30,10 @@ sap.ui.define([
 
 	new TestControl("preSetupCtrl1", {marker: "presetup"}).placeAt("uiAreaPreSetup1");
 	new TestControl("preSetupCtrl2", {marker: "presetup"}).placeAt("uiAreaPreSetup2");
-	sap.ui.getCore().applyChanges();
 
-	/**
-		* Some test function... TODO: implement
-		*/
+	QUnit.module("Events", {
+		before: nextUIUpdate
+	});
 
 	QUnit.test("OneRootOk", function(assert) {
 		jQuery("#uiArea1").root();
@@ -71,9 +71,9 @@ sap.ui.define([
 		assert.strictEqual(iNo3, iNo2, "No additional UIArea should have been created.");
 	});
 
-	QUnit.test("RootWithControlOk", function(assert) {
+	QUnit.test("RootWithControlOk", async function(assert) {
 		jQuery("#uiAreaTarget").root(new TestControl("testControl"));
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.notStrictEqual(jQuery("#testControl").length, 0, "There should be something rendered");
 		assert.ok(sap.ui.getCore().byId("testControl") !== null, "Control should be available");
 		assert.ok(jQuery("#testControl").control()[0] !== null, "Control should be available");
@@ -92,9 +92,9 @@ sap.ui.define([
 		assert.strictEqual(jQuery("div").root().length, iNo2, "jQuery method should return all relevant roots (i.e. UIArea DOMNodes), selector div");
 	});
 
-	QUnit.test("ControlOnOutermostDomRefOk", function(assert) {
+	QUnit.test("ControlOnOutermostDomRefOk", async function(assert) {
 		jQuery("#uiAreaTarget2").root(new TestControl("testControl2"));
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oCheckCtrl = sap.ui.getCore().byId("testControl2");
 		var oCtrl = jQuery("#testControl2").control()[0];
@@ -102,9 +102,9 @@ sap.ui.define([
 		assert.ok(oCheckCtrl === oCtrl, "Created control should be returned");
 	});
 
-	QUnit.test("ControlOnInnerDomRefOk", function(assert) {
+	QUnit.test("ControlOnInnerDomRefOk", async function(assert) {
 		jQuery("#uiAreaTarget3").root(new TestControl("testControl3"));
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oCheckCtrl = sap.ui.getCore().byId("testControl3");
 		var oCtrl = jQuery("#testControl3 > .inner").control()[0];
@@ -112,23 +112,23 @@ sap.ui.define([
 		assert.ok(oCheckCtrl === oCtrl, "Created control should be returned when queried for inner node");
 	});
 
-	QUnit.test("MultipleControlsOk", function(assert) {
+	QUnit.test("MultipleControlsOk", async function(assert) {
 		jQuery("#uiAreaTarget4").root(new TestControl("testControl4", {marker: "myClass"}));
 		jQuery("#uiAreaTarget5").root(new TestControl("testControl5", {marker: "myClass"}));
 		jQuery("#uiAreaTarget6").root(new TestControl("testControl6", {marker: "myClass"}));
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var aCtrls = jQuery(".myClass").control();
 
 		assert.strictEqual(aCtrls.length, 3, "All requested Controls should be returned");
 	});
 
-	QUnit.test("control check with data-sap-ui-related", function(assert) {
+	QUnit.test("control check with data-sap-ui-related", async function(assert) {
 		var oTestControl7 = new TestControl("testControl7");
 		var oTestControl8 = new TestControl("testControl8");
 
 		jQuery("#uiAreaTarget7").root(oTestControl7);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		oTestControl7.$().attr("data-sap-ui-related", oTestControl8.getId());
 
 		var oCtrl = oTestControl7.$().control(0, true);

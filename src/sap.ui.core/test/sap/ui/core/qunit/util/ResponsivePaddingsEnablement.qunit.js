@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/core/util/ResponsivePaddingsEnablement",
 	"sap/ui/core/Item",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Control,
 	ResponsivePaddingsEnablement,
 	Item,
 	jQuery,
-	Log
+	Log,
+	nextUIUpdate
 ){
 	"use strict";
 	var MyCustomControl = Control.extend("sap.custom.MyCustomControl", {
@@ -54,7 +56,7 @@ sap.ui.define([
 		this._initResponsivePaddingsEnablement();
 	};
 
-	QUnit.test("The enabler should be correctly applied over Control's prototype", function(assert) {
+	QUnit.test("The enabler should be correctly applied over Control's prototype", async function(assert) {
 		//System under test
 		var oControl = new MyCustomControl("_control",{}),
 			oSpy = sinon.spy(oControl, "onBeforeRendering"),
@@ -65,13 +67,15 @@ sap.ui.define([
 
 		//Act
 		oControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		this.clock.tick(1);
+		await nextUIUpdate();
 
 		oControl.addStyleClass("sapUiResponsivePadding--div1");
 		oControl.addStyleClass("sapUiResponsivePadding--div2");
 		oControl.addStyleClass("sapUiResponsivePadding--div3");
 		oControl.invalidate();
-		sap.ui.getCore().applyChanges();
+		this.clock.tick(1);
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oSpy.callCount, 2, "onBeforeRendering is called twice");
@@ -81,7 +85,7 @@ sap.ui.define([
 		$customControl = jQuery("#_control");
 		$customControl.css("width", "300px");
 		this.clock.tick(300);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		$firstElement = jQuery("[id*='the-first']");
 		$secondElement = jQuery("[id*='the-second']");
@@ -96,7 +100,7 @@ sap.ui.define([
 		//Act
 		$customControl.css("width", "700px");
 		this.clock.tick(300);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		bIsFirstElementResponsive = $firstElement.hasClass("sapUi-Std-PaddingM");
 		bIsSecondElementResponsive = $secondElement.hasClass("sapUi-Std-PaddingM");
@@ -108,7 +112,7 @@ sap.ui.define([
 		//Act
 		$customControl.css("width", "1300px");
 		this.clock.tick(300);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		bIsFirstElementResponsive = $firstElement.hasClass("sapUi-Std-PaddingL");
 		bIsSecondElementResponsive = $secondElement.hasClass("sapUi-Std-PaddingL");
@@ -120,7 +124,7 @@ sap.ui.define([
 		//Act
 		$customControl.css("width", "2000px");
 		this.clock.tick(300);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		bIsFirstElementResponsive = $firstElement.hasClass("sapUi-Std-PaddingXL");
 		bIsSecondElementResponsive = $secondElement.hasClass("sapUi-Std-PaddingXL");

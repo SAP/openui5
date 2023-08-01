@@ -12,16 +12,16 @@ sap.ui.define([
 	'sap/m/SearchField',
 	"sap/ui/thirdparty/jquery",
 	'sap/m/App',
-	'sap/ui/core/mvc/XMLView'
-], function (RecordReplay, _autoWaiter, _autoWaiterAsync, ListItem, Button, Input, MultiInput, OverflowToolbar, Popover, SearchField, $, App, XMLView) {
+	'sap/ui/core/mvc/XMLView',
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (RecordReplay, _autoWaiter, _autoWaiterAsync, ListItem, Button, Input, MultiInput, OverflowToolbar, Popover, SearchField, $, App, XMLView, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("RecordReplay - control selector", {
 		beforeEach: function (assert) {
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async();
-			XMLView.create({
+			return XMLView.create({
 				id: "myView",
 				definition:
 					'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -34,8 +34,7 @@ sap.ui.define([
 					'</mvc:View>'
 			}).then(function(oView) {
 				this.oView = oView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				done();
+				return nextUIUpdate();
 			}.bind(this), function(oErr) {
 				assert.strictEqual(oErr, undefined, "failed to load view");
 			});
@@ -72,7 +71,7 @@ sap.ui.define([
 			this.oSearchFieldMulti = new SearchField("mySecondSearch", {placeholder: "Multi"});
 			this.oSearchField.placeAt("qunit-fixture");
 			this.oSearchFieldMulti.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSearchField.destroy();
@@ -174,7 +173,7 @@ sap.ui.define([
 			this.oSearchField = new SearchField();
 			this.oSearchField.attachSearch(this.oActionSpy);
 			this.oSearchField.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSearchField.destroy();
@@ -207,7 +206,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Should open Suggestions Popover through EnterText Action on MultiInput", function (assert) {
+	QUnit.test("Should open Suggestions Popover through EnterText Action on MultiInput", async function (assert) {
 		var fnDone = assert.async(),
 			oMultiInput = new MultiInput({
 				value: "",
@@ -228,7 +227,7 @@ sap.ui.define([
 			fnDone();
 		});
 		oMultiInput.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		RecordReplay.interactWithControl({
 			selector: {controlType: "sap.m.MultiInput"},
@@ -238,7 +237,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Should enter text in Popover - Popover should remain open", function (assert) {
+	QUnit.test("Should enter text in Popover - Popover should remain open", async function (assert) {
 		var fnDone = assert.async(),
 			oButton = new Button({
 				id: "open"
@@ -257,7 +256,7 @@ sap.ui.define([
 			});
 
 		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		oPopover.openBy(oButton);
 		oPopover.$().css("display", "block");
@@ -295,7 +294,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Should interact with Control with provided idSuffix", function (assert) {
+	QUnit.test("Should interact with Control with provided idSuffix", async function (assert) {
 		var fnDone = assert.async(),
 			oOFT = new OverflowToolbar({
 				content: [
@@ -306,7 +305,7 @@ sap.ui.define([
 			oPopover = oOFT._getPopover();
 
 		oOFT.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		oPopover.attachAfterOpen(function () {
 			assert.ok(true, "Overflow button of OverflowToolbar is pressed");

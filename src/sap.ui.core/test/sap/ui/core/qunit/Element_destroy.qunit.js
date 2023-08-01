@@ -1,9 +1,9 @@
 /*global QUnit*/
 sap.ui.define([
-	'sap/ui/core/Element',
 	'sap/ui/core/Control',
-	'sap/ui/core/RenderManager'
-], function(Element, Control, RenderManager) {
+	'sap/ui/core/RenderManager',
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Control, RenderManager, nextUIUpdate) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -45,10 +45,12 @@ sap.ui.define([
 			});
 
 			this.oParent.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			this.clock.tick(0);
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oParent.destroy();
+			this.clock.runAll();
 			this.clock.restore();
 		}
 	});

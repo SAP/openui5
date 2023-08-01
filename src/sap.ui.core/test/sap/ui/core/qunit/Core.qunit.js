@@ -14,8 +14,9 @@ sap.ui.define([
 	'sap/ui/core/Rendering',
 	'sap/ui/core/RenderManager',
 	'sap/ui/core/theming/ThemeManager',
-	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Configuration, Rendering, RenderManager, ThemeManager, createAndAppendDiv) {
+	'sap/ui/qunit/utils/createAndAppendDiv',
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Configuration, Rendering, RenderManager, ThemeManager, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	var privateLoaderAPI = sap.ui.loader._;
@@ -326,7 +327,7 @@ sap.ui.define([
 		assert.equal(oHtml.getAttribute("lang"), sLocale, "lang attribute matches locale");
 	});
 
-	QUnit.test("prerendering tasks", function (assert) {
+	QUnit.test("prerendering tasks", async function (assert) {
 		var bCalled1 = false,
 			bCalled2 = false;
 
@@ -344,14 +345,16 @@ sap.ui.define([
 
 		assert.ok(!bCalled1, "not yet called");
 		assert.ok(!bCalled2, "not yet called");
-
-		oCore.applyChanges();
+		var oMyArea = UIArea.create("qunit-fixture");
+		oMyArea.invalidate();
+		await nextUIUpdate();
 
 		assert.ok(bCalled1, "first task called");
 		assert.ok(bCalled2, "second task called");
+		oMyArea.destroy();
 	});
 
-	QUnit.test("prerendering tasks: reverse order", function (assert) {
+	QUnit.test("prerendering tasks: reverse order", async function (assert) {
 		var bCalled1 = false,
 			bCalled2 = false;
 
@@ -369,11 +372,13 @@ sap.ui.define([
 
 		assert.ok(!bCalled1, "not yet called");
 		assert.ok(!bCalled2, "not yet called");
-
-		oCore.applyChanges();
+		var oMyArea = UIArea.create("qunit-fixture");
+		oMyArea.invalidate();
+		await nextUIUpdate();
 
 		assert.ok(bCalled1, "first task called");
 		assert.ok(bCalled2, "second task called");
+		oMyArea.destroy();
 	});
 
 

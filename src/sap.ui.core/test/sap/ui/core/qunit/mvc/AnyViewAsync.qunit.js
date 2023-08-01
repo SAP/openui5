@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/mvc/View",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(ObjectPath, View, createAndAppendDiv, jQuery) {
+], function(ObjectPath, View, createAndAppendDiv, nextUIUpdate, jQuery) {
 	"use strict";
 
 	// create content div
@@ -83,7 +84,7 @@ sap.ui.define([
 
 				assert.ok(this.oView, "Instance has been created");
 				assert.ok(this.oView instanceof View, "Instance is a View");
-				sap.ui.getCore().applyChanges();
+				return nextUIUpdate();
 			}.bind(this));
 		});
 

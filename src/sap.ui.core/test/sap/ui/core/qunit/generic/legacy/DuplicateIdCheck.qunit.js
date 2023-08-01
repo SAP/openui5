@@ -17,8 +17,9 @@ sap.ui.define([
 	"sap/ui/commons/TextField",
 	"sap/m/Text",
 	"sap/ui/dom/includeStylesheet",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"require"
-], function (Log, ObjectPath, VersionInfo, DataType, Element, Control, Item, Library, CommonsTextField, MobileText, includeStylesheet, require) {
+], function (Log, ObjectPath, VersionInfo, DataType, Element, Control, Item, Library, CommonsTextField, MobileText, includeStylesheet, nextUIUpdate, require) {
 	"use strict";
 
 	var aKnownLibraries = [
@@ -389,16 +390,16 @@ sap.ui.define([
 			fillControlAggregations(oControl1, assert),
 			fillControlProperties(oControl2),
 			fillControlAggregations(oControl2, assert)
-		]).then(function() {
+		]).then(async function() {
 
 			if (bCanRender) {
 				oControl1.placeAt("qunit-fixture");
 				oControl2.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				await nextUIUpdate();
 
-				oControl1.rerender();
-				oControl2.rerender();
-				sap.ui.getCore().applyChanges();
+				oControl1.invalidate();
+				oControl2.invalidate();
+				await nextUIUpdate();
 
 				iFullyTestedControls++;
 				assert.ok(true, sControlName + " can be instantiated multiple times without duplicate ID errors.");
@@ -410,7 +411,7 @@ sap.ui.define([
 			// cleanup
 			oControl1.destroy();
 			oControl2.destroy();
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 		});
 	}
 

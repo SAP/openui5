@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/PageObjectFactory",
 	"sap/base/Log",
-	"./utils/view"
-], function (Opa, Opa5, PageObjectFactory, Log, viewUtils) {
+	"./utils/view",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (Opa, Opa5, PageObjectFactory, Log, viewUtils, nextUIUpdate) {
 	"use strict";
 
 	// preset some globals to avoid issues with QUnit's 'noglobals' option
@@ -226,15 +227,13 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async();
-			Promise.all([
+			return Promise.all([
 				viewUtils.createXmlView("foo", "myFooView"),
 				viewUtils.createXmlView("bar", "myBarView")
 			]).then(function (aViews) {
 				this.oView = aViews[0].placeAt("qunit-fixture");
 				this.oView2 = aViews[1].placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				done();
+				return nextUIUpdate();
 			}.bind(this), function(oErr) {
 				assert.strictEqual(oErr, undefined, "failed to load view");
 			});

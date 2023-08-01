@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Button, CheckBox, DatePicker, Input, Label, Popover, UIArea, KeyCodes, HorizontalLayout, VerticalLayout, qutils, createAndAppendDiv) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Button, CheckBox, DatePicker, Input, Label, Popover, UIArea, KeyCodes, HorizontalLayout, VerticalLayout, qutils, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	// Prepare a UI
@@ -169,8 +170,6 @@ sap.ui.define([
 		]
 	}).placeAt("content");
 
-	sap.ui.getCore().applyChanges();
-
 	// Attach handler for testing
 	var bPauseEventing = false;
 	oVerticalLayout.attachValidateFieldGroup(function(oEvent) {
@@ -229,7 +228,11 @@ sap.ui.define([
 		}, 1);
 	}
 
-	QUnit.test("Input with valueHelp", function(assert) {
+	QUnit.module("FieldGroups", {
+		before: nextUIUpdate
+	});
+
+	QUnit.test("Input with valueHelp", async function(assert) {
 		assert.expect(1);
 		var done = assert.async();
 		var oButton = new Button({text: "Button"});
@@ -250,7 +253,7 @@ sap.ui.define([
 				oPopover.openBy(oEvent.getSource());
 			}
 		}).placeAt('content');
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		qutils.triggerEvent("click", oInput._getValueHelpIcon(), {});
 		oPopover.attachAfterOpen(function() {
 			assert.strictEqual(oButton.getId(), document.activeElement.id, "focus moved to popover and no fieldgroupchange must happen");

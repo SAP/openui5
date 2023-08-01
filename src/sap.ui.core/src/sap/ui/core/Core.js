@@ -1791,9 +1791,10 @@ sap.ui.define([
 	 *
 	 * @return {boolean} true if there are pending (or executing) rendering tasks.
 	 * @public
+	 * @deprecated since 1.118
 	 */
 	Core.prototype.getUIDirty = function() {
-		return Rendering.getUIDirty();
+		return Rendering.isPending();
 	};
 
 	/**
@@ -2078,9 +2079,10 @@ sap.ui.define([
 	/**
 	 * Enforces an immediate update of the visible UI (aka "rendering").
 	 *
-	 * In general, applications should avoid calling this method and
+	 * In general, applications and Controls should avoid calling this method and
 	 * instead let the framework manage any necessary rendering.
 	 * @public
+	 * @deprecated since 1.118
 	 */
 	Core.prototype.applyChanges = function() {
 		Rendering.renderPendingUIUpdates("forced by applyChanges");

@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/m/Button",
 	"sap/m/Input",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(BaseObject, Control, Element, Button, Input, createAndAppendDiv) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(BaseObject, Control, Element, Button, Input, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -31,7 +32,7 @@ sap.ui.define([
 	/* test creating a control from scratch */
 
 
-	QUnit.test("Extend sap.ui.core.Control", function(assert) {
+	QUnit.test("Extend sap.ui.core.Control", async function(assert) {
 		assert.expect(4);
 		assert.equal(window.my, undefined, "'my' should not be defined yet");
 
@@ -100,7 +101,7 @@ sap.ui.define([
 		var myControl = new MyLibControlClass("myControl", undefined, assert);
 
 		myControl.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(myControl.$().length, 1, "The control should be rendered");
 		myControl.destroy();
@@ -318,9 +319,9 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Render new control type", function(assert) {
+	QUnit.test("Render new control type", async function(assert) {
 		this.myControl.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var $control = this.myControl.$();
 		assert.ok($control.length === 1, "myControl should be rendered to the page");
@@ -331,11 +332,11 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Event handler methods (on...)", function(assert) {
+	QUnit.test("Event handler methods (on...)", async function(assert) {
 		var done = assert.async();
 		assert.expect(2);
 		this.myControl.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.myControl._state, "initial", "control state should be initialized");
 
 		// focus the control, which should trigger its event handler changing the _state
@@ -384,10 +385,10 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Test renderer object", function(assert) {
+	QUnit.test("Test renderer object", async function(assert) {
 		var myInput = new MyInput("myInput", {value:"test"});
 		myInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var $control = myInput.$();
 		assert.ok($control.length === 1, "myInput should be rendered to the page");

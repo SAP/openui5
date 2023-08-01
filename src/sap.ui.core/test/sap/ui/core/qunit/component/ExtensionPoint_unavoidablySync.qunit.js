@@ -2,9 +2,10 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/ExtensionPoint',
+	"sap/ui/qunit/utils/nextUIUpdate",
 	// Load ExtensionPointProvider in advance because Controller expects some extensions to be processed sync
 	'testdata/customizing/customer/ext/ExtensionPointProvider'
-], function(Component, ComponentContainer, ExtensionPoint, ExtensionPointProvider) {
+], function(Component, ComponentContainer, ExtensionPoint, nextUIUpdate, ExtensionPointProvider) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -17,7 +18,7 @@ sap.ui.define([
 	// UI Construction
 	var oComponent, oComponentContainer;
 
-	function createComponentAndContainer(bWithExtensionProvider, bWithEmptyExtensionProvider) {
+	async function createComponentAndContainer(bWithExtensionProvider, bWithEmptyExtensionProvider) {
 		// load and start the customized application
 		if (bWithExtensionProvider) {
 			ExtensionPoint.registerExtensionProvider(function() {
@@ -35,7 +36,7 @@ sap.ui.define([
 			component: oComponent
 		});
 		oComponentContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 	}
 
 	function destroyComponentAndContainer() {

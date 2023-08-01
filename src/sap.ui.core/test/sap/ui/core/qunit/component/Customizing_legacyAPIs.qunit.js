@@ -4,11 +4,11 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/XMLView",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/core/XMLTemplateProcessor',
 	'sap/ui/core/mvc/XMLProcessingMode'
-], function (Event, Component, ComponentContainer, Controller, View, XMLView, createAndAppendDiv, XMLTemplateProcessor, XMLProcessingMode) {
+], function (Event, Component, ComponentContainer, Controller, View, createAndAppendDiv, nextUIUpdate, XMLTemplateProcessor, XMLProcessingMode) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -55,9 +55,7 @@ sap.ui.define([
 			});
 			oCompCont.placeAt("content");
 			return oComp.getRootControl().loaded();
-		}).then(function() {
-			sap.ui.getCore().applyChanges();
-		});
+		}).then(nextUIUpdate);
 	}
 
 	function destroyComponentAndContainer() {

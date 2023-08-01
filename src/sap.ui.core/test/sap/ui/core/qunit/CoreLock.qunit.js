@@ -48,7 +48,7 @@ sap.ui.define([
 		assert.ok(pressed, "Button should have fired 'press'");
 	});
 
-	sap.ui.require(["sap/ui/core/Core"], function(Core) {
+	sap.ui.require(["sap/ui/core/Core", "sap/ui/qunit/utils/nextUIUpdate"], function(Core, nextUIUpdate) {
 		Core.ready().then(function() {
 			// create content div
 			var oDIV = document.createElement("div");
@@ -56,7 +56,7 @@ sap.ui.define([
 			document.body.appendChild(oDIV);
 
 			oButton.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		});
 	});
 });

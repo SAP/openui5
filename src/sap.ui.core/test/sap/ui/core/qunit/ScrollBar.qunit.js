@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/events/jquery/EventSimulation",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Configuration"
-], function(ScrollBar, Device, EventSimulation, jQuery, createAndAppendDiv, Configuration) {
+], function(ScrollBar, Device, EventSimulation, jQuery, createAndAppendDiv, nextUIUpdate, Configuration) {
 	"use strict";
 
 	// create page content
@@ -34,7 +35,7 @@ sap.ui.define([
 	QUnit.module("API and initial rendering", {
 		beforeEach: function() {
 			createTestScrollbars(this);
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oHSB.destroy();
@@ -85,7 +86,7 @@ sap.ui.define([
 	QUnit.module("Event handler", {
 		beforeEach: function() {
 			createTestScrollbars(this);
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oHSB.destroy();
@@ -134,8 +135,8 @@ sap.ui.define([
 		// Support of Huge number of steps
 		this.oVSB.setSteps(1000000); //8000000px in Chrom
 		this.oVSB.setScrollPosition(300000);
-		sap.ui.getCore().applyChanges();
-		setTimeout(function() {
+		setTimeout(async function() {
+			await nextUIUpdate();
 			assert.equal(this.oVSB.getScrollPosition(), "300000", "scroll position is 300000 step");
 			done();
 		}.bind(this), 500);
@@ -159,7 +160,7 @@ sap.ui.define([
 			this.oHSB.setSize("200px");
 			this.oHSB.setContentSize("1000px");
 			this.oHSB.placeAt("target4");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 
 		afterEach : function() {
