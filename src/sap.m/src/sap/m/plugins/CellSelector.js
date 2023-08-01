@@ -72,7 +72,6 @@ sap.ui.define([
 	*/
 
 	CellSelector.prototype.onActivate = function (oControl) {
-		this._iRtl = Core.getConfiguration().getRTL() ? -1 : 1;
 		oControl.addDelegate(this, true, this);
 		this._oSession = { cellRefs: [] };
 		this._mTimeouts = {};
@@ -115,6 +114,7 @@ sap.ui.define([
 	};
 
 	CellSelector.prototype.onBeforeRendering = function() {
+		this._iRtl = Core.getConfiguration().getRTL() ? -1 : 1;
 		if (this._oResizer) {
 			// remove resizer, as due to rerendering table element may be gone
 			this._oResizer.remove();
@@ -617,6 +617,12 @@ sap.ui.define([
 	CellSelector.prototype._updateResizers = function(mBounds, iPositionX, iPositionY) {
 		var oResizer = this._getResizer();
 
+		if (this._iRtl == -1) {
+			const iFromColIndex = mBounds.from.colIndex;
+			mBounds.from.colIndex = mBounds.to.colIndex;
+			mBounds.to.colIndex = iFromColIndex;
+		}
+
 		var oFromRef = this.getConfig("getCellRef", this.getControl(), mBounds.from, false),
 			oToRef = this.getConfig("getCellRef", this.getControl(), mBounds.to, false);
 		var mOutOfBounds = { 0: false, 1: false }; // 0: top, 1: bottom
@@ -634,9 +640,10 @@ sap.ui.define([
 		var oFromRect = oFromRef.getBoundingClientRect(),
 			oToRect = oToRef.getBoundingClientRect(),
 			oTableRect = this.getControl().getDomRef().getBoundingClientRect();
+		var iOffsetLeft = this.getControl().getDomRef().offsetLeft;
 
 		var mStyleMap = {
-			x: { 0: oFromRect.left, 1: oToRect.left + oToRect.width },
+			x: { 0: oFromRect.left - iOffsetLeft, 1: oToRect.left + oToRect.width - iOffsetLeft },
 			y: { 0: oFromRect.top - oTableRect.top, 1: oToRect.top + oToRect.height - oTableRect.top }
 		};
 		var mDiffMap = {
@@ -731,9 +738,7 @@ sap.ui.define([
 		const iMaxColumns = this.getConfig("getVisibleColumns", this.getControl()).length;
 		const iMaxRows = this.getRangeLimit() == 0 ? this.getConfig("getRowCount", this.getControl()) : this.getRangeLimit();
 
-		let toRowIndex = Math.max(mFrom.rowIndex, mTo.rowIndex);
-		let toColIndex =  Math.max(mFrom.colIndex, mTo.colIndex);
-
+		let toRowIndex = Math.max(mFrom.rowIndex, mTo.rowIndex), toColIndex = Math.max(mFrom.colIndex, mTo.colIndex);
 		if (!bKeepBounds) {
 			toRowIndex = Math.min(iMaxRows - 1, toRowIndex);
 			toColIndex = Math.min(iMaxColumns, toColIndex);
