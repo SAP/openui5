@@ -13,7 +13,7 @@
  * - Based on the dependencies (tags that should be used) automatic registration of these tags
  *   tags are additionally maintained in the library.js file
  * Usage:
- *   <script src="https://some/path/sap-ui-integration.js" id="sap-ui-bootstrap" data-sap-ui-theme="sap_fiori_3">
+ *   <script src="https://some/path/sap-ui-integration.js" id="sap-ui-bootstrap" data-sap-ui-theme="sap_horizon">
  *   </script>
  *
  *   <ui-integration-card manifest="./path/to/manifest"></ui-integration-card>

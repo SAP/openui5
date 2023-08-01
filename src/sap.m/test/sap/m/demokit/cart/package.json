@@ -13,7 +13,7 @@
     "@openui5/sap.f": "^1",
     "@openui5/sap.ui.core": "^1",
     "@openui5/sap.ui.layout": "^1",
-    "@openui5/themelib_sap_fiori_3": "^1",
+    "@openui5/themelib_sap_horizon": "^1",
     "@openui5/sap.ui.documentation": "^1"
   },
   "devDependencies": {

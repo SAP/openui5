@@ -36,7 +36,8 @@
 		"supportedThemes": [
 			"sap_hcb",
 			"sap_bluecrystal",
-			"sap_fiori_3"
+			"sap_fiori_3",
+			"sap_horizon"
 		]
 	},
 	"sap.ui5": {

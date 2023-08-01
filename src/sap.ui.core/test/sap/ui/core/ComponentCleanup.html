@@ -4,14 +4,14 @@
 	<head>
 
 		<title>Component - sap.ui.core</title>
-	
+
 		<script id="sap-ui-bootstrap" src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-preload="async"
-			data-sap-ui-theme="sap_fiori_3"
+			data-sap-ui-theme="sap_horizon"
 			data-sap-ui-language="en"></script>
-	
+
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-	
+
 		<script>
 
 		sap.ui.getCore().attachInit(function() {
@@ -23,7 +23,7 @@
 					}
 				});
 			}, true);
-		
+
 			sap.ui.define("test2/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
 				return UIComponent.extend("test2.Component", {
 					metadata : {
@@ -31,7 +31,7 @@
 					}
 				});
 			}, true);
-		
+
 			sap.ui.define("test3/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
 				return UIComponent.extend("test3.Component", {
 					metadata : {
@@ -252,13 +252,13 @@
 				});
 
 				// TODO add test which includes 2 components with the same style.css
-				
+
 			});
 
 		});
 
 		</script>
-	
+
 	</head>
 
 	<body>

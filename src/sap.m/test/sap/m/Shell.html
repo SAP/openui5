@@ -8,7 +8,7 @@
 	<script id="sap-ui-bootstrap"
 		src="../../../resources/sap-ui-core.js"
 		data-sap-ui-libs="sap.ui.core, sap.m"
-		data-sap-ui-theme="sap_fiori_3"
+		data-sap-ui-theme="sap_horizon"
 		data-sap-ui-async="true"
 		data-sap-ui-compatVersion="edge"
 		data-sap-ui-excludejquerycompat="true"
@@ -26,10 +26,10 @@
 
 				Controller.extend("myController", {
 					onInit() {
-						this.sTheme = "sap_fiori_3";
+						this.sTheme = "sap_horizon";
 					},
 					changeTheme: function() {
-						this.sTheme = this.sTheme == "sap_fiori_3_dark" ? "sap_fiori_3" : "sap_fiori_3_dark";
+						this.sTheme = this.sTheme == "sap_horizon_dark" ? "sap_horizon" : "sap_horizon_dark";
 						return sap.ui.getCore().applyTheme(this.sTheme);
 					}
 				});
