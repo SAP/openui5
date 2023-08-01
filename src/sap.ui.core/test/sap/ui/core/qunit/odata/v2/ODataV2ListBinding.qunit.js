@@ -13,13 +13,12 @@ sap.ui.define([
 	"sap/ui/model/FilterType",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/CountMode",
-	"sap/ui/model/odata/Filter",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v2/ODataModel",
 	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService"
 ], function(Log, each, extend, DisplayListItem, List, Panel, StandardListItem, Filter,
-	FilterOperator, FilterProcessor, FilterType, Sorter, CountMode, ODataFilter, OperationMode,
-	ODataModel, fakeService) {
+	FilterOperator, FilterProcessor, FilterType, Sorter, CountMode, OperationMode, ODataModel,
+	fakeService) {
 	"use strict";
 
 	var oModel;
@@ -1038,41 +1037,6 @@ sap.ui.define([
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
 
 			oBinding.detachChange(handler3);
-			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.LE, value1: "Z"}, {operator:FilterOperator.GE, value1: "A"}, {operator:FilterOperator.NE, value1: "Beverages"}]);
-			oBinding.filter([oFilter]);
-			oBinding.attachChange(handler4);
-		};
-		var handler4 = function(oEvent){
-			// contexts should be now loaded
-			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 7, "ODataFilter, ANDed");
-			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "ODataFilter, ANDed");
-
-			oBinding.detachChange(handler4);
-			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Condiments"}, {operator:FilterOperator.EQ, value1: "Beverages"}], false);
-			oBinding.filter([oFilter]);
-			oBinding.attachChange(handler5);
-		};
-		var handler5 = function(oEvent){
-			// contexts should be now loaded
-			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 2, "ODataFilter, ORed");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "ODataFilter, ORed");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "ODataFilter, ORed");
-
-			oBinding.detachChange(handler5);
-			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Condiments"}, {operator:FilterOperator.EQ, value1: "Beverages"}], false);
-			oFilter2 = new Filter("Description", FilterOperator.EndsWith, "ings");
-			oBinding.filter([oFilter, oFilter2]);
-			oBinding.attachChange(handler6);
-		};
-		var handler6 = function(oEvent){
-			// contexts should be now loaded
-			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 1, "ODataFilter + normal Filter");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "ODataFilter + normal Filter");
-
-			oBinding.detachChange(handler6);
 			//check (ProductID=male AND (SupplierID = Green OR (CategoryName = Peter OR CategoryName = Frank OR CategoryName = Gina)))
 			var oFilter1 = new Filter("CategoryName", FilterOperator.EQ, "Beverages");
 			var oFilter2 = new Filter("CategoryName", FilterOperator.EQ, "Dairy Products");
@@ -1083,14 +1047,13 @@ sap.ui.define([
 			var oFilter5 = new Filter("Description", FilterOperator.EndsWith, "s");
 			var oMultiFilter3 = new Filter([oMultiFilter2, oFilter5], true);
 			oBinding.filter(oMultiFilter3);
-			oBinding.attachChange(handler7);
+			oBinding.attachChange(handler4);
 		};
-		var handler7 = function(oEvent){
+		var handler4 = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 3, "ODataFilter + normal Filter");
-			//assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "ODataFilter + normal Filter");
-			oBinding.detachChange(handler7);
+			assert.equal(aFilteredContexts.length, 3, "normal Filter");
+			oBinding.detachChange(handler4);
 			done();
 		};
 
@@ -1346,33 +1309,6 @@ sap.ui.define([
 			assert.equal(oModel.getProperty("CategoryName", aFilteredContexts[3]), "Produce", "not startsWith and not endsWith filtered content");
 			assert.equal(oModel.getProperty("CategoryName", aFilteredContexts[4]), "Seafood", "not startsWith and not endsWith filtered content");
 
-
-			// ANDed filters
-			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.LE, value1: "Z"}, {operator:FilterOperator.GE, value1: "A"}, {operator:FilterOperator.NE, value1: "Beverages"}]);
-			oBinding.filter([oFilter]);
-
-			aFilteredContexts = oBinding.getContexts();
-			assert.equal(aFilteredContexts.length, 7, "ODataFilter, ANDed");
-			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "ODataFilter, ANDed");
-
-			// ORed filters
-			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Condiments"}, {operator:FilterOperator.EQ, value1: "Beverages"}], false);
-			oBinding.filter([oFilter]);
-
-			aFilteredContexts = oBinding.getContexts();
-			assert.equal(aFilteredContexts.length, 2, "ODataFilter, ORed");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "ODataFilter, ORed");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "ODataFilter, ORed");
-
-			// ORed + ANDed filters
-			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Condiments"}, {operator:FilterOperator.EQ, value1: "Beverages"}], false);
-			oFilter2 = new Filter("Description", FilterOperator.EndsWith, "ings");
-			oBinding.filter([oFilter, oFilter2]);
-
-			aFilteredContexts = oBinding.getContexts();
-			assert.equal(aFilteredContexts.length, 1, "ODataFilter + normal Filter");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "ODataFilter + normal Filter");
-
 			//check (ProductID=male AND (SupplierID = Green OR (CategoryName = Peter OR CategoryName = Frank OR CategoryName = Gina)))
 			var oFilter1 = new Filter("CategoryName", FilterOperator.EQ, "Beverages");
 			var oFilter2 = new Filter("CategoryName", FilterOperator.EQ, "Dairy Products");
@@ -1385,7 +1321,7 @@ sap.ui.define([
 			oBinding.filter(oMultiFilter3);
 
 			aFilteredContexts = oBinding.getContexts();
-			assert.equal(aFilteredContexts.length, 3, "ODataFilter + normal Filter");
+			assert.equal(aFilteredContexts.length, 3, "normal Filter");
 
 			done();
 		};
@@ -2228,141 +2164,6 @@ sap.ui.define([
 		oList.bindAggregation("items", {path:"/Categories", template: oItem, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
 		oList.setModel(oModel);
 		oList.getBinding("items").attachChange(fnChangeHandler);
-	});
-
-
-	QUnit.test("ListBinding filter (ODataFilter.convert)", function(assert){
-		var done = assert.async();
-		var oFilter, oFilter2;
-		var handler = function(oEvent){
-			// contexts should be now loaded
-			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 1, "EQ filtered content length");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
-
-			oBinding.detachChange(handler);
-			// NE, contains
-			oFilter = new ODataFilter("CategoryName", [{
-				operator: FilterOperator.EQ,
-				value1: "Condiments"
-			}, {
-				operator: FilterOperator.Contains,
-				value1: "ons"
-			}], false);
-			oBinding.filter(oFilter.convert());
-			oBinding.attachChange(handler1);
-		};
-		var handler1 = function(oEvent){
-			// contexts should be now loaded
-			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 2, "NE, contains, filtered content length");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
-
-			oBinding.detachChange(handler1);
-			// between
-			oFilter = new ODataFilter("CategoryName", [{
-				operator: FilterOperator.BT,
-				value1: "Beverages",
-				value2: "D"
-			}]);
-			oBinding.filter(oFilter.convert());
-			oBinding.attachChange(handler2);
-		};
-		var handler2 = function(oEvent){
-			// contexts should be now loaded
-			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 3, "between filtered content length");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "between filtered content");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "between filtered content");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
-
-			oBinding.detachChange(handler2);
-			// startsWith, endsWith
-			oFilter = new ODataFilter("CategoryName", [{operator: FilterOperator.StartsWith, value1: "C"}]);
-			oFilter2 = new ODataFilter("Description", [{operator: FilterOperator.EndsWith, value1: "ngs"}]);
-			oBinding.filter([oFilter.convert(), oFilter2.convert()]);
-			oBinding.attachChange(handler3);
-		};
-		var handler3 = function(oEvent){
-			// contexts should be now loaded
-			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
-
-			oBinding.detachChange(handler3);
-			oFilter = new ODataFilter("CategoryName", [{
-				operator:FilterOperator.LE,
-				value1: "Z"
-			}, {
-				operator:FilterOperator.GE,
-				value1: "A"
-			}, {
-				operator:FilterOperator.NE,
-				value1: "Beverages"
-			}]);
-			oBinding.filter(oFilter.convert());
-			oBinding.attachChange(handler4);
-		};
-		var handler4 = function(oEvent){
-			// contexts should be now loaded
-			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 7, "ODataFilter, ANDed");
-			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "ODataFilter, ANDed");
-
-			oBinding.detachChange(handler4);
-			oFilter = new ODataFilter("CategoryName", [{
-				operator:FilterOperator.EQ,
-				value1: "Condiments"
-			}, {
-				operator:FilterOperator.EQ,
-				value1: "Beverages"
-			}], false);
-			oBinding.filter(oFilter.convert());
-			oBinding.attachChange(handler5);
-		};
-		var handler5 = function(oEvent){
-			// contexts should be now loaded
-			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 2, "ODataFilter, ORed");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "ODataFilter, ORed");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "ODataFilter, ORed");
-
-			oBinding.detachChange(handler5);
-			oFilter = new ODataFilter("CategoryName", [{
-				operator:FilterOperator.EQ, value1: "Condiments"
-			}, {
-				operator:FilterOperator.EQ, value1: "Beverages"
-			}], false);
-			oFilter2 = new ODataFilter("Description", [{
-				operator: FilterOperator.EndsWith,
-				value1: "ings"
-			}]);
-			oBinding.filter([oFilter.convert(), oFilter2.convert()]);
-			oBinding.attachChange(handler6);
-		};
-		var handler6 = function(oEvent){
-			// contexts should be now loaded
-			var aFilteredContexts = oEvent.oSource.getContexts();
-			assert.equal(aFilteredContexts.length, 1, "ODataFilter + normal Filter");
-			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "ODataFilter + normal Filter");
-
-			oBinding.detachChange(handler6);
-			done();
-		};
-		var oBinding = oModel.bindList("/Categories");
-		//check EQ
-		var oFilter = new ODataFilter("CategoryName", [{
-			operator: FilterOperator.EQ,
-			value1: "Beverages"
-		}]);
-		var fnFilter = function() {
-			oBinding.detachRefresh(fnFilter);
-			oBinding.attachRefresh(function() {oBinding.getContexts();});
-			oBinding.filter(oFilter.convert());
-		};
-		oBinding.attachChange(handler);
-		oBinding.attachRefresh(fnFilter);
 	});
 
 	QUnit.test("Error Case: Service returns partial data, Binding should keep data, length final", function(assert){
@@ -3510,4 +3311,264 @@ sap.ui.define([
 		});
 	});
 
+/** @deprecated As of version 1.22.0, reason sap.ui.model.odata.Filter */
+sap.ui.require([
+	"sap/ui/model/odata/Filter"
+], function (ODataFilter) {
+	QUnit.module("sap.ui.model.odata.v2.ODataListBinding with sap.ui.model.odata.Filter", {
+		beforeEach : function() {
+			oModel = initModel(false);
+		},
+		afterEach : function() {
+			oModel.destroy();
+			oModel = undefined;
+		}
+	});
+
+	QUnit.test("ListBinding ODataFilter", function(assert){
+		var done = assert.async();
+		var oFilter, oFilter2, oBinding;
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aFilteredContexts = oEvent.oSource.getContexts();
+			assert.equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "startsWith, endsWith filtered content");
+
+			oBinding.detachChange(handler);
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.LE, value1: "Z"}, {operator:FilterOperator.GE, value1: "A"}, {operator:FilterOperator.NE, value1: "Beverages"}]);
+			oBinding.filter([oFilter]);
+			oBinding.attachChange(handler1);
+		};
+		var handler1 = function(oEvent){
+			// contexts should be now loaded
+			var aFilteredContexts = oEvent.oSource.getContexts();
+			assert.equal(aFilteredContexts.length, 7, "ODataFilter, ANDed");
+			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "ODataFilter, ANDed");
+
+			oBinding.detachChange(handler1);
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Condiments"}, {operator:FilterOperator.EQ, value1: "Beverages"}], false);
+			oBinding.filter([oFilter]);
+			oBinding.attachChange(handler2);
+		};
+		var handler2 = function(oEvent){
+			// contexts should be now loaded
+			var aFilteredContexts = oEvent.oSource.getContexts();
+			assert.equal(aFilteredContexts.length, 2, "ODataFilter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "ODataFilter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "ODataFilter, ORed");
+
+			oBinding.detachChange(handler2);
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Condiments"}, {operator:FilterOperator.EQ, value1: "Beverages"}], false);
+			oFilter2 = new Filter("Description", FilterOperator.EndsWith, "ings");
+			oBinding.filter([oFilter, oFilter2]);
+			oBinding.attachChange(handler3);
+		};
+		var handler3 = function(oEvent){
+			// contexts should be now loaded
+			var aFilteredContexts = oEvent.oSource.getContexts();
+			assert.equal(aFilteredContexts.length, 1, "ODataFilter + normal Filter");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "ODataFilter + normal Filter");
+
+			oBinding.detachChange(handler3);
+			done();
+		};
+
+		oBinding = oModel.bindList("/Categories");
+		//check EQ
+		oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Beverages"}]);
+
+		var fnFilter = function() {
+			oBinding.detachRefresh(fnFilter);
+			oBinding.attachRefresh(function() {oBinding.getContexts();});
+			oBinding.filter([oFilter]);
+		};
+		oBinding.attachChange(handler);
+		oBinding.attachRefresh(fnFilter);
+	});
+
+	QUnit.test("ListBinding clientside ODataFilter", function(assert){
+		var done = assert.async();
+
+		var oBinding = oModel.bindList("/Categories", null, null, null, {
+			operationMode: OperationMode.Client
+		});
+
+		var handler = function(oEvent) {
+			// contexts should be now loaded
+			var aFilteredContexts = oBinding.getContexts();
+			assert.equal(aFilteredContexts.length, 1, "EQ filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
+
+			oBinding.detachChange(handler);
+			// ANDed filters
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.LE, value1: "Z"}, {operator:FilterOperator.GE, value1: "A"}, {operator:FilterOperator.NE, value1: "Beverages"}]);
+			oBinding.filter([oFilter]);
+
+			aFilteredContexts = oBinding.getContexts();
+			assert.equal(aFilteredContexts.length, 7, "ODataFilter, ANDed");
+			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "ODataFilter, ANDed");
+
+			// ORed filters
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Condiments"}, {operator:FilterOperator.EQ, value1: "Beverages"}], false);
+			oBinding.filter([oFilter]);
+
+			aFilteredContexts = oBinding.getContexts();
+			assert.equal(aFilteredContexts.length, 2, "ODataFilter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "ODataFilter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "ODataFilter, ORed");
+
+			// ORed + ANDed filters
+			oFilter = new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Condiments"}, {operator:FilterOperator.EQ, value1: "Beverages"}], false);
+			var oFilter2 = new Filter("Description", FilterOperator.EndsWith, "ings");
+			oBinding.filter([oFilter, oFilter2]);
+
+			aFilteredContexts = oBinding.getContexts();
+			assert.equal(aFilteredContexts.length, 1, "ODataFilter + normal Filter");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "ODataFilter + normal Filter");
+			done();
+		};
+		//check EQ
+		var oFilter =  new ODataFilter("CategoryName", [{operator:FilterOperator.EQ, value1: "Beverages"}]);
+		oBinding.filter([oFilter]);
+
+		oBinding.attachChange(handler);
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+	});
+
+	QUnit.test("ListBinding filter (ODataFilter.convert)", function(assert){
+		var done = assert.async();
+		var oFilter, oFilter2;
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aFilteredContexts = oEvent.oSource.getContexts();
+			assert.equal(aFilteredContexts.length, 1, "EQ filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
+
+			oBinding.detachChange(handler);
+			// NE, contains
+			oFilter = new ODataFilter("CategoryName", [{
+				operator: FilterOperator.EQ,
+				value1: "Condiments"
+			}, {
+				operator: FilterOperator.Contains,
+				value1: "ons"
+			}], false);
+			oBinding.filter(oFilter.convert());
+			oBinding.attachChange(handler1);
+		};
+		var handler1 = function(oEvent){
+			// contexts should be now loaded
+			var aFilteredContexts = oEvent.oSource.getContexts();
+			assert.equal(aFilteredContexts.length, 2, "NE, contains, filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
+
+			oBinding.detachChange(handler1);
+			// between
+			oFilter = new ODataFilter("CategoryName", [{
+				operator: FilterOperator.BT,
+				value1: "Beverages",
+				value2: "D"
+			}]);
+			oBinding.filter(oFilter.convert());
+			oBinding.attachChange(handler2);
+		};
+		var handler2 = function(oEvent){
+			// contexts should be now loaded
+			var aFilteredContexts = oEvent.oSource.getContexts();
+			assert.equal(aFilteredContexts.length, 3, "between filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
+
+			oBinding.detachChange(handler2);
+			// startsWith, endsWith
+			oFilter = new ODataFilter("CategoryName", [{operator: FilterOperator.StartsWith, value1: "C"}]);
+			oFilter2 = new ODataFilter("Description", [{operator: FilterOperator.EndsWith, value1: "ngs"}]);
+			oBinding.filter([oFilter.convert(), oFilter2.convert()]);
+			oBinding.attachChange(handler3);
+		};
+		var handler3 = function(oEvent){
+			// contexts should be now loaded
+			var aFilteredContexts = oEvent.oSource.getContexts();
+			assert.equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
+
+			oBinding.detachChange(handler3);
+			oFilter = new ODataFilter("CategoryName", [{
+				operator:FilterOperator.LE,
+				value1: "Z"
+			}, {
+				operator:FilterOperator.GE,
+				value1: "A"
+			}, {
+				operator:FilterOperator.NE,
+				value1: "Beverages"
+			}]);
+			oBinding.filter(oFilter.convert());
+			oBinding.attachChange(handler4);
+		};
+		var handler4 = function(oEvent){
+			// contexts should be now loaded
+			var aFilteredContexts = oEvent.oSource.getContexts();
+			assert.equal(aFilteredContexts.length, 7, "ODataFilter, ANDed");
+			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "ODataFilter, ANDed");
+
+			oBinding.detachChange(handler4);
+			oFilter = new ODataFilter("CategoryName", [{
+				operator:FilterOperator.EQ,
+				value1: "Condiments"
+			}, {
+				operator:FilterOperator.EQ,
+				value1: "Beverages"
+			}], false);
+			oBinding.filter(oFilter.convert());
+			oBinding.attachChange(handler5);
+		};
+		var handler5 = function(oEvent){
+			// contexts should be now loaded
+			var aFilteredContexts = oEvent.oSource.getContexts();
+			assert.equal(aFilteredContexts.length, 2, "ODataFilter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "ODataFilter, ORed");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "ODataFilter, ORed");
+
+			oBinding.detachChange(handler5);
+			oFilter = new ODataFilter("CategoryName", [{
+				operator:FilterOperator.EQ, value1: "Condiments"
+			}, {
+				operator:FilterOperator.EQ, value1: "Beverages"
+			}], false);
+			oFilter2 = new ODataFilter("Description", [{
+				operator: FilterOperator.EndsWith,
+				value1: "ings"
+			}]);
+			oBinding.filter([oFilter.convert(), oFilter2.convert()]);
+			oBinding.attachChange(handler6);
+		};
+		var handler6 = function(oEvent){
+			// contexts should be now loaded
+			var aFilteredContexts = oEvent.oSource.getContexts();
+			assert.equal(aFilteredContexts.length, 1, "ODataFilter + normal Filter");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "ODataFilter + normal Filter");
+
+			oBinding.detachChange(handler6);
+			done();
+		};
+		var oBinding = oModel.bindList("/Categories");
+		//check EQ
+		var oFilter = new ODataFilter("CategoryName", [{
+			operator: FilterOperator.EQ,
+			value1: "Beverages"
+		}]);
+		var fnFilter = function() {
+			oBinding.detachRefresh(fnFilter);
+			oBinding.attachRefresh(function() {oBinding.getContexts();});
+			oBinding.filter(oFilter.convert());
+		};
+		oBinding.attachChange(handler);
+		oBinding.attachRefresh(fnFilter);
+	});
+});
 });
