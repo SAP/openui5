@@ -35,6 +35,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/extend", "sap/ui/core/Component"],
 				aAlignedTargets,
 				bRepeated = (oRouter._oMatchedRoute === this);
 
+			oRouter._sRouteInProgress = null;
 			oRouter._stopWaitingTitleChangedFromChild();
 
 			if (oRouter._oMatchedRoute) {

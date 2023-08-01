@@ -37,6 +37,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/extend"], function(Log, extend) {
 				aTargetControls,
 				aTargets;
 
+			oRouter._sRouteInProgress = null;
 			oRouter._oMatchedRoute = this;
 			oRouter._bMatchingProcessStarted = true;
 

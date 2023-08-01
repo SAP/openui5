@@ -3270,6 +3270,63 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Call navTo multiple times with specific route and parameter for nested component", function(assert) {
+		return Component.create({
+			name: "qunit.router.component.2LevelsMultiNavTo.Parent"
+		}).then(function(oComponent) {
+			this.oParentComponent = oComponent;
+
+			var oRouter = this.oParentComponent.getRouter(),
+				sId = "productA",
+				oNestedRouteInfo = {
+					home: {
+						route: "product",
+						parameters: {
+							id: sId
+						}
+					}
+				};
+
+			var pCategoryRouteMatched = new Promise(function(resolve, reject) {
+				var fnMatched = function(oEvent) {
+					this.detachMatched(fnMatched);
+					resolve();
+				};
+				oRouter.getRoute("category").attachMatched(fnMatched);
+			});
+
+
+			HashChanger.getInstance().setHash("category");
+
+			oRouter.initialize();
+
+			return pCategoryRouteMatched.then(function() {
+				oRouter.navTo("home", {}, oNestedRouteInfo);
+
+				return new Promise(function(resolve, reject) {
+					var fnMatched = function(oEvent) {
+						this.detachMatched(fnMatched);
+
+						var oControl = oEvent.getParameter("view");
+
+						if (oControl instanceof ComponentContainer) {
+							resolve(oControl.getComponentInstance());
+						}
+					};
+
+					oRouter.getRoute("home").attachMatched(fnMatched);
+				});
+			}).then(function(oNestedComponent) {
+				assert.ok(oNestedComponent, "nested component is loaded");
+				var oNestedRouter = oNestedComponent.getRouter();
+				var oNestedHashChanger = oNestedRouter.getHashChanger();
+
+				assert.equal(oNestedHashChanger.getHash(), oNestedRouter.getURL("product", {id: sId}));
+
+			});
+		}.bind(this));
+	});
+
 	QUnit.test("Call navTo with specific route and parameter for deep nested component", function(assert) {
 		return Component.create({
 			name: "qunit.router.component.3Levels.Parent"

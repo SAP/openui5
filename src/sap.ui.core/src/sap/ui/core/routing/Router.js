@@ -843,7 +843,6 @@ sap.ui.define([
 			 */
 			navTo : function (sName, oParameters, oComponentTargetInfo, bReplace) {
 				var that = this,
-					bRouteSwitched = this._getLastMatchedRouteName() !== sName,
 					oRoute = this.getRoute(sName),
 					pComponentHashChange, sHash;
 
@@ -856,6 +855,13 @@ sap.ui.define([
 					Log.warning("Route with name " + sName + " does not exist", this);
 					return this;
 				}
+
+				var bRouteSwitched = this._getLastMatchedRouteName() !== sName && this._sRouteInProgress !== sName;
+
+				// this property is set after navTo is called and is reset once the browser fires the next "hashChange"
+				// event. This is used to detect the parallel calls of 'navTo' when oComponentTargetInfo is given
+				// because it runs asynchronously when there's target info given to the nested component
+				this._sRouteInProgress = sName;
 
 				if (typeof oComponentTargetInfo === "boolean") {
 					bReplace = oComponentTargetInfo;
