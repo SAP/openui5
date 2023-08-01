@@ -5851,13 +5851,39 @@ sap.ui.define([
 	// implement Form helper factory with m controls
 	// possible is set before layout lib is loaded.
 	ObjectPath.set("sap.ui.layout.form.FormHelper", {
-		createLabel: function(sText, sId){
-			return new sap.m.Label(sId, {text: sText});
+		Label: undefined,
+		Button: undefined,
+		Text: undefined,
+		init: function() {
+			// normally this basic controls should be always loaded
+			this.Label = sap.ui.require("sap/m/Label");
+			this.Text = sap.ui.require("sap/m/Text");
+			this.Button = sap.ui.require("sap/m/Button");
+
+			if (!this.Label || !this.Text || !this.Button) {
+				if (!this.oInitPromise) {
+					this.oInitPromise = new Promise(function(fResolve, fReject) {
+						sap.ui.require(["sap/m/Label", "sap/m/Text", "sap/m/Button"], function(Label, Text, Button) {
+							this.Label = Label;
+							this.Text = Text;
+							this.Button = Button;
+							fResolve(true);
+						}.bind(this));
+					}.bind(this));
+				}
+				return this.oInitPromise;
+			} else if (this.oInitPromise) {
+				delete this.oInitPromise; // not longer needed
+			}
+			return null;
 		},
-		createButton: function(sId, fnPressFunction, fnCallback){
-			var oButton = new sap.m.Button(sId, {type: thisLib.ButtonType.Transparent});
-			oButton.attachEvent("press", fnPressFunction, this); // attach event this way to have the right this-reference in handler
-			fnCallback.call(this, oButton);
+		createLabel: function(sText, sId){
+			return new this.Label(sId, {text: sText});
+		},
+		createButton: function(sId, fnPressFunction, oListener){
+			var oButton = new this.Button(sId, {type: thisLib.ButtonType.Transparent});
+			oButton.attachEvent("press", fnPressFunction, oListener); // attach event this way to have the right this-reference in handler
+			return oButton;
 		},
 		setButtonContent: function(oButton, sText, sTooltip, sIcon, sIconHovered){
 			oButton.setText(sText);
@@ -5891,10 +5917,10 @@ sap.ui.define([
 			}
 		},
 		createDelimiter: function(sDelimiter, sId){
-			return new sap.m.Text(sId, {text: sDelimiter, textAlign: CoreLibrary.TextAlign.Center});
+			return new this.Text(sId, {text: sDelimiter, textAlign: CoreLibrary.TextAlign.Center});
 		},
 		createSemanticDisplayControl: function(sText, sId){
-			return new sap.m.Text(sId, {text: sText});
+			return new this.Text(sId, {text: sText});
 		},
 		updateDelimiter: function(oText, sDelimiter){
 			oText.setText(sDelimiter);

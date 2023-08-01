@@ -6,6 +6,9 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/m/library",
 	"sap/m/Toolbar",
+	"sap/m/Label", // to make FormHelper could load all modules
+	"sap/m/Text", // to make FormHelper could load all modules
+	"sap/m/Button", // to make FormHelper could load all modules
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/Core"
 	],
@@ -15,6 +18,9 @@ sap.ui.define([
 			Title,
 			mLibrary,
 			Toolbar,
+			Label,
+			Text,
+			Button,
 			Parameters,
 			oCore
 	) {
@@ -62,18 +68,6 @@ sap.ui.define([
 		afterEach: afterTest
 	});
 
-	function asyncExpanderTest(assert, fnTest) {
-		if (sap.ui.require("sap/m/Button") && oFormContainer.getAggregation("_expandButton")) {
-			fnTest(assert);
-		} else {
-			var fnDone = assert.async();
-			sap.ui.require(["sap/m/Button"], function() {
-				fnTest(assert);
-				fnDone();
-			});
-		}
-	}
-
 	function expanderCreated(assert) {
 		var oButton = oFormContainer.getAggregation("_expandButton");
 		assert.ok(oButton, "expander created");
@@ -89,7 +83,27 @@ sap.ui.define([
 	QUnit.test("Expander created", function(assert) {
 		oFormContainer.setExpandable(true);
 
-		asyncExpanderTest(assert, expanderCreated);
+		expanderCreated(assert);
+	});
+
+	QUnit.test("Expander created async", function(assert) {
+		var fnResolve;
+		oFormContainer._oInitPromise = new Promise(function(fResolve, fReject) { // fake async loading
+			fnResolve = fResolve;
+		});
+
+		oFormContainer.setExpandable(true);
+		var oButton = oFormContainer.getAggregation("_expandButton");
+		assert.notOk(oButton, "expander not created");
+
+		var fnDone = assert.async();
+		fnResolve();
+
+		setTimeout(function() {
+			expanderCreated(assert);
+
+			fnDone();
+		}, 0);
 	});
 
 	QUnit.test("Expander default", function(assert) {
@@ -111,7 +125,7 @@ sap.ui.define([
 
 	QUnit.test("destroy button", function(assert) {
 		oFormContainer.setExpandable(true);
-		asyncExpanderTest(assert, expanderDestroyButton);
+		expanderDestroyButton(assert);
 	});
 
 	function expanderIcon(assert) {
@@ -128,7 +142,7 @@ sap.ui.define([
 	QUnit.test("Expander icon", function(assert) {
 		oFormContainer.setExpanded(false);
 		oFormContainer.setExpandable(true);
-		asyncExpanderTest(assert, expanderIcon);
+		expanderIcon(assert);
 	});
 
 	function expanderPress(assert) {
@@ -152,7 +166,7 @@ sap.ui.define([
 	QUnit.test("Expander press", function(assert) {
 		oFormContainer.setExpandable(true);
 
-		asyncExpanderTest(assert, expanderPress.bind(this));
+		expanderPress.call(this, assert);
 	});
 
 	QUnit.module("Title", {

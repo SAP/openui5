@@ -1248,23 +1248,14 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	// implement Form helper factory with common controls
 	if (!sap.ui.layout.form.FormHelper || !sap.ui.layout.form.FormHelper.bFinal) {
 		sap.ui.layout.form.FormHelper = {
+			init: function() {return null;},
 			createLabel: function(sText, sId){
 				return new sap.ui.commons.Label(sId, {text: sText});
 			},
-			createButton: function(sId, fPressFunction, fnCallback){
-				var that = this;
-				var _createButton = function(Button){
-					var oButton = new Button(sId, {lite: true});
-					oButton.attachEvent('press', fPressFunction, that); // attach event this way to have the right this-reference in handler
-					fnCallback.call(that, oButton);
-				};
-				var fnButtonClass = sap.ui.require("sap/ui/commons/Button");
-				if (fnButtonClass) {
-					// already loaded -> execute synchron
-					_createButton(fnButtonClass);
-				} else {
-					sap.ui.require(["sap/ui/commons/Button"], _createButton);
-				}
+			createButton: function(sId, fPressFunction, oListener){
+				var oButton = new sap.ui.commons.Button(sId, {lite: true});
+				oButton.attachEvent('press', fPressFunction, oListener); // attach event this way to have the right this-reference in handler
+				return oButton;
 			},
 			setButtonContent: function(oButton, sText, sTooltip, sIcon, sIconHovered){
 				oButton.setText(sText);
