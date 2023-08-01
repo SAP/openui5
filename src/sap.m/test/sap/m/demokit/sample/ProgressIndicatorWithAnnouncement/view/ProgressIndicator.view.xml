@@ -1,0 +1,53 @@
+<mvc:View
+	controllerName="sap.m.sample.ProgressIndicatorWithAnnouncement.controller.ProgressIndicator"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+			<Text text="Set the ProgressIndicator to 100% with animation" class="sapUiSmallMarginBottom" />
+			<ProgressIndicator
+				id="pi-with-animation"
+				class="sapUiSmallMarginBottom"
+				displayValue="0%"
+				state="Success"
+				displayOnly="true"/>
+			<FlexBox>
+				<Button id="pi-with-animation-button0"
+				        class="sapUiSmallMarginEnd"
+				        text="Set to 0%"
+				        press="onPIChangeValueButtonPressed"/>
+				<Button id="pi-with-animation-button50"
+						class="sapUiSmallMarginEnd"
+				        text="Set to 50%"
+				        press="onPIChangeValueButtonPressed"/>
+				<Button id="pi-with-animation-button100"
+				        text="Set to 100%"
+				        press="onPIChangeValueButtonPressed"/>
+			</FlexBox>
+			<Text text="Set the ProgressIndicator to 100% without animation" class="sapUiSmallMarginBottom" />
+			<ProgressIndicator
+				id="pi-without-animation"
+				class="sapUiSmallMarginBottom"
+				displayValue="0%"
+				state="Success"
+				displayOnly="true"
+				displayAnimation= "false" />
+			<FlexBox>
+				<Button id="pi-without-animation-button0"
+				        class="sapUiSmallMarginEnd"
+				        text="Set to 0%"
+				        press="onPIChangeValueButtonPressed"/>
+				<Button id="pi-without-animation-button50"
+						class="sapUiSmallMarginEnd"
+				        text="Set to 50%"
+				        press="onPIChangeValueButtonPressed"/>
+				<Button id="pi-without-animation-button100"
+				        text="Set to 100%"
+				        press="onPIChangeValueButtonPressed"/>
+			</FlexBox>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>
