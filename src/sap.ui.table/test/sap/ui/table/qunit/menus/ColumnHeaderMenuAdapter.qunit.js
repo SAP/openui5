@@ -75,6 +75,10 @@ sap.ui.define([
 
 	QUnit.test("activateFor - default adapter", function(assert) {
 		this.oColumn1.setHeaderMenu();
+		/**
+		 * @deprecated As of Version 1.117
+		 */
+		this.oColumn1._cellPressed = this.oColumn1.getDomRef();
 
 		return ColumnHeaderMenuAdapter.activateFor(this.oColumn1).then(function() {
 			var sDefaultAdapterName = null;
@@ -137,7 +141,7 @@ sap.ui.define([
 		var oActivateSpy = sinon.spy(ColumnHeaderMenuAdapter, "activateFor");
 		var oUnlinkSpy = sinon.spy(ColumnHeaderMenuAdapter, "unlink");
 
-		this.oColumn1._openHeaderMenu(this.oColumn1);
+		this.oColumn1._openHeaderMenu(this.oColumn1.getDomRef());
 
 		assert.ok(oActivateSpy.calledOnceWith(this.oColumn1));
 		oActivateSpy.reset();
@@ -148,7 +152,7 @@ sap.ui.define([
 			assert.ok(oTestAdapterInstance, "TestAdapter is initialized");
 			assert.ok(oInjectMenuItemsSpy.calledOnce, 1, "injectMenuItems is called once");
 
-			this.oColumn2._openHeaderMenu(this.oColumn2);
+			this.oColumn2._openHeaderMenu(this.oColumn2.getDomRef());
 			assert.ok(oActivateSpy.calledOnceWith(this.oColumn2));
 			assert.deepEqual(oTestAdapterInstance, oAdapterInstance, "the same Adapter instance is used");
 

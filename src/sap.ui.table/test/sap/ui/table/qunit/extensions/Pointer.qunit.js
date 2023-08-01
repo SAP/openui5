@@ -315,15 +315,15 @@ sap.ui.define([
 	QUnit.test("Resize via Resize Button", function(assert) {
 		var done = assert.async();
 		var oColumn = this.oColumn;
+		var oColumnDomRef = oColumn.getDomRef();
 		var iWidthBeforeResize;
 
 		function resize() {
 			var $Resizer = oTable.$("rsz");
-			var oColumnDomRef = oColumn.getDomRef();
 			var $Column = oColumn.$();
 
 			iWidthBeforeResize = oColumnDomRef.offsetWidth;
-			oColumn._openHeaderMenu();
+			oColumn._openHeaderMenu(oColumnDomRef);
 			return TableQUnitUtils.wait(0).then(function() {
 				var $ResizeButton = $Column.find(".sapUiTableColResizer");
 				var $ResizeButtonOffset = $ResizeButton.offset();
@@ -369,7 +369,7 @@ sap.ui.define([
 		}.bind(this));
 
 		oColumn.setSortProperty("dummy");
-		oColumn._openHeaderMenu();
+		oColumn._openHeaderMenu(oColumnDomRef);
 	});
 
 	QUnit.test("Skip trigger resize when resizing already started", function(assert) {
@@ -497,7 +497,7 @@ sap.ui.define([
 		}.bind(this));
 
 		oColumn.setSortProperty("dummy");
-		oColumn._openHeaderMenu();
+		oColumn._openHeaderMenu(oColumn.getDomRef());
 	});
 
 	/**
@@ -520,7 +520,7 @@ sap.ui.define([
 			}.bind(this));
 
 			oColumn.setSortProperty("dummy");
-			oColumn._openHeaderMenu();
+			oColumn._openHeaderMenu(oColumn.getDomRef());
 		}.bind(this));
 	});
 
