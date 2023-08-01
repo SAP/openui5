@@ -362,12 +362,26 @@ sap.ui.define([
 		// add @odata.bind to POST body only
 		_Helper.getPrivateAnnotation(oEntityData, "postBody")
 			[this.oAggregation.$ParentNavigationProperty + "@odata.bind"] = sParentPath;
-		oEntityData["@$ui5.node.level"] = oParentNode["@$ui5.node.level"] + 1;
+		const iLevel = oEntityData["@$ui5.node.level"] = oParentNode["@$ui5.node.level"] + 1;
 
 		const iIndex = aElements.indexOf(oParentNode) + 1;
 		aElements.splice(iIndex, 0, null); // create a gap
 		this.addElements(oEntityData, iIndex, oCache, 0);
 		aElements.$count += 1;
+		for (let i = iIndex + 1; i < aElements.length; i += 1) {
+			if (_Helper.hasPrivateAnnotation(aElements[i], "placeholder")) {
+				if (_Helper.getPrivateAnnotation(aElements[i], "parent") === oCache) {
+					// increase "index" for all placeholders of oCache; oParentNode is expanded,
+					// thus all such placeholders are inside aElements
+					_Helper.setPrivateAnnotation(aElements[i], "index",
+						_Helper.getPrivateAnnotation(aElements[i], "index") + 1);
+				}
+			} else if (aElements[i]["@$ui5.node.level"] < iLevel) {
+				// Note: level 0 means "don't know" for initial *placeholders* of 1st level cache!
+				// Note: oCache !== this.oFirstLevel, thus "descendants" should not matter
+				break;
+			}
+		}
 
 		return oResult.then(function () {
 			aElements.$byPredicate[_Helper.getPrivateAnnotation(oEntityData, "predicate")]

@@ -234,7 +234,16 @@ sap.ui.define([
 			// "EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
 			// + ",filter(ID%20eq%20'" + sParentId + "'),1)/orderby(AGE)"
 			const sParentId = mQueryOptions.$apply.match(/,filter\(ID%20eq%20'([^']*)'\)/)[1];
-			selectCountSkipTop(mChildrenByParentId[sParentId], mQueryOptions, oResponse);
+			let aChildren = mChildrenByParentId[sParentId];
+			if ("$filter" in mQueryOptions) {
+				// not%20(ID%20eq%20'5.1.10'%20or%20ID%20eq%20'5.1.11')
+				const aIDs = mQueryOptions.$filter
+					.slice("not%20(".length, -")".length)
+					.split("%20or%20")
+					.map((sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
+				aChildren = aChildren.filter((oChild) => !aIDs.includes(oChild.ID));
+			}
+			selectCountSkipTop(aChildren, mQueryOptions, oResponse);
 			return;
 		}
 
@@ -299,23 +308,11 @@ sap.ui.define([
 			DescendantCount : 0
 		};
 
-		// compares two hierarchical IDs according to the last(!) segment (numerically, ascending)
-		function compareByID(oNodeA, oNodeB) {
-			let sID_A = oNodeA.ID;
-			let sID_B = oNodeB.ID;
-			if (sID_A.includes(".")) {
-				sID_A = sID_A.slice(sID_A.lastIndexOf(".") + 1);
-				sID_B = sID_B.slice(sID_B.lastIndexOf(".") + 1);
-			}
-
-			return parseInt(sID_A) - parseInt(sID_B);
-		}
-
 		if (sParentId in mChildrenByParentId) {
 			// Note: "AGE determines sibling order (ascending)"
 			oNewChild.AGE = mChildrenByParentId[sParentId][0].AGE - 1;
 			// Note:
-			const sLastChildID = mChildrenByParentId[sParentId].toSorted(compareByID).at(-1).ID;
+			const sLastChildID = mChildrenByParentId[sParentId].at(-1).ID;
 			if (sLastChildID.includes(".")) {
 				oNewChild.ID = sParentId + "."
 					+ (parseInt(sLastChildID.slice(sLastChildID.lastIndexOf(".") + 1)) + 1);
@@ -332,10 +329,11 @@ sap.ui.define([
 		if (oNewChild.ID in mNodeById) {
 			throw new Error("Illegal state: duplicate node ID " + oNewChild.ID);
 		}
-		aAllNodes.splice(aAllNodes.indexOf(oParent) + 1, 0, oNewChild);
+		aAllNodes.push(oNewChild); //TODO not good enough once we need "refresh"
 		mNodeById[oNewChild.ID] = oNewChild;
 		mRevisionOfAgeById[oNewChild.ID] = 0;
-		mChildrenByParentId[sParentId].unshift(oNewChild);
+		// Note: server's insert position must not affect UI (until refresh!)
+		mChildrenByParentId[sParentId].push(oNewChild);
 
 		oResponse.message = JSON.stringify(SandboxModel.update([oNewChild])[0]);
 	}
@@ -398,13 +396,13 @@ sap.ui.define([
 			});
 	}
 
-	SandboxModel.getChildrenOf1_1 = () => mChildrenByParentId["1.1"];
-	SandboxModel.getChildrenOf1_2 = () => mChildrenByParentId["1.2"];
-	SandboxModel.getChildrenOf5_1
-		= (iSkip, iTop) => mChildrenByParentId["5.1"].slice(iSkip, iSkip + iTop);
-	SandboxModel.getNodes = (iSkip, iTop) => topLevels(2).slice(iSkip, iSkip + iTop);
-	SandboxModel.getTopLevels
-		= (iLevels, iSkip, iTop) => topLevels(iLevels - 1).slice(iSkip, iSkip + iTop);
+	SandboxModel.getChildren = function (sParentId, iSkip = 0, iTop = Infinity) {
+		return mChildrenByParentId[sParentId].slice(iSkip, iSkip + iTop)
+			.map((oNode) => ({...oNode})); // return clones only!
+	};
+	SandboxModel.getTopLevels = function (iLevels, iSkip = 0, iTop = Infinity) {
+		return topLevels(iLevels - 1).slice(iSkip, iSkip + iTop);
+	};
 	SandboxModel.reset = reset;
 
 	/**
@@ -417,25 +415,27 @@ sap.ui.define([
 	 * @returns {object[]}
 	 *   An updated copy
 	 */
-	SandboxModel.update = (aNodes, bSkipCopy) => aNodes.map((oNode) => {
-		if (oNode && (iRevision || mRevisionOfAgeById[oNode.ID])) {
-			if (!bSkipCopy) {
-				oNode = {...oNode};
-			}
-			if ("Name" in oNode) {
-				oNode.Name = oNode.Name.split(" #")[0] + " #" + iRevision;
-				if (mRevisionOfAgeById[oNode.ID]) {
-					oNode.Name += "+" + mRevisionOfAgeById[oNode.ID];
+	SandboxModel.update = function (aNodes, bSkipCopy = false) {
+		return aNodes.map((oNode) => {
+			if (oNode && (iRevision || mRevisionOfAgeById[oNode.ID])) {
+				if (!bSkipCopy) {
+					oNode = {...oNode};
+				}
+				if ("Name" in oNode) {
+					oNode.Name = oNode.Name.split(" #")[0] + " #" + iRevision;
+					if (mRevisionOfAgeById[oNode.ID]) {
+						oNode.Name += "+" + mRevisionOfAgeById[oNode.ID];
+					}
+				}
+				if ("AGE" in oNode) {
+					oNode.AGE
+						= (oNode.AGE % 100) + 100 * (iRevision + mRevisionOfAgeById[oNode.ID]);
 				}
 			}
-			if ("AGE" in oNode) {
-				oNode.AGE
-					= (oNode.AGE % 100) + 100 * (iRevision + mRevisionOfAgeById[oNode.ID]);
-			}
-		}
 
-		return oNode;
-	});
+			return oNode;
+		});
+	};
 
 	return SandboxModel;
 });

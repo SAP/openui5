@@ -51,7 +51,7 @@ sap.ui.define([
 		});
 
 		// basics: initial data
-		aNodes = SandboxModel.getNodes(0, 5);
+		aNodes = SandboxModel.getTopLevels(3, 0, 5);
 		checkTable(aNodes);
 
 		// Note: expand 1.1 (Gamma), synch., collapse 1.1 (Gamma) => Failed to drill-down...
@@ -71,18 +71,18 @@ sap.ui.define([
 		// expand nodes "at the edge" of the top pyramid (loads children)
 		toggleExpandInRow(3, "Expand 1.2 (Zeta)");
 		oExpandedZeta = Object.assign({}, aNodes[3], {DrillState : "expanded"});
-		aNodes = aNodes.slice(0, 3).concat(oExpandedZeta, SandboxModel.getChildrenOf1_2()[0]);
+		aNodes = aNodes.slice(0, 3).concat(oExpandedZeta, SandboxModel.getChildren("1.2")[0]);
 		checkTable(aNodes, {DistanceFromRoot : 3});
 
 		toggleExpandInRow(2, "Expand 1.1 (Gamma)");
 		oExpandedGamma = Object.assign({}, aNodes[2], {DrillState : "expanded"});
 		aAfterExpandGamma
-			= aNodes.slice(0, 2).concat(oExpandedGamma, SandboxModel.getChildrenOf1_1());
+			= aNodes.slice(0, 2).concat(oExpandedGamma, SandboxModel.getChildren("1.1"));
 		checkTable(aAfterExpandGamma, {DistanceFromRoot : 3});
 
 		// show more children of newly expanded node
 		scrollToRow(5, "1.2 (Zeta) is at the top");
-		aNodes = [oExpandedZeta].concat(SandboxModel.getChildrenOf1_2());
+		aNodes = [oExpandedZeta].concat(SandboxModel.getChildren("1.2"));
 		checkTable(aNodes, {DistanceFromRoot : 3});
 
 		// collapse incl. children outside of top pyramid
@@ -92,7 +92,7 @@ sap.ui.define([
 		toggleExpandInRow(1, "Collapse 1 (Beta)");
 		oCollapsedBeta = Object.assign({}, aAfterExpandGamma[1], {DrillState : "collapsed"});
 		aAfterCollapseBeta = aAfterExpandGamma.slice(0, 1)
-			.concat(oCollapsedBeta, SandboxModel.getNodes(4, 3));
+			.concat(oCollapsedBeta, SandboxModel.getTopLevels(3, 4, 3));
 		checkTable(aAfterCollapseBeta);
 
 		toggleExpandInRow(4, "Collapse 4 (Mu)");
@@ -102,7 +102,7 @@ sap.ui.define([
 
 		// this skips 4.1 (Nu) which has not been shown so far!
 		scrollToRow(2, "Scroll to the bottom");
-		aNodes = aNodes.slice(2).concat(SandboxModel.getNodes(8, 2));
+		aNodes = aNodes.slice(2).concat(SandboxModel.getTopLevels(3, 8, 2));
 		checkTable(aNodes);
 
 		// reveal a child from the top pyramid for the 1st time
@@ -110,7 +110,8 @@ sap.ui.define([
 		oExpandedMu = Object.assign({}, aNodes[2], {DrillState : "expanded"});
 		 // 4.1 (Nu) appears, 5.1 (Omicron) disappears
 		oCollapsedOmicron = aNodes[4];
-		aNodes = aNodes.slice(0, 2).concat(oExpandedMu, SandboxModel.getNodes(7, 1)[0], aNodes[3]);
+		aNodes = aNodes.slice(0, 2)
+			.concat(oExpandedMu, SandboxModel.getTopLevels(3, 7, 1)[0], aNodes[3]);
 		checkTable(aNodes);
 
 		// load children outside top pyramid, incl. paging
@@ -124,10 +125,10 @@ sap.ui.define([
 		checkTable(aNodes);
 
 		scrollToRow(8, "Show first page of 5.1's children");
-		checkTable(SandboxModel.getChildrenOf5_1(0, 5), {DistanceFromRoot : 3});
+		checkTable(SandboxModel.getChildren("5.1", 0, 5), {DistanceFromRoot : 3});
 
 		scrollToRow(12, "Show second page of 5.1's children");
-		checkTable(SandboxModel.getChildrenOf5_1(4, 5), {DistanceFromRoot : 3});
+		checkTable(SandboxModel.getChildren("5.1", 4, 5), {DistanceFromRoot : 3});
 
 		// collapse incl. children not counted via "Descendants" property
 		scrollToRow(0, "Scroll to the top");
@@ -142,33 +143,33 @@ sap.ui.define([
 
 		// tree state must be kept, even inside collapsed node, and update must happen there as well
 		toggleExpandInRow(0, "Expand 0 (Alpha)");
-		aNodes = SandboxModel.getNodes(0, 1).concat(aAfterCollapseBeta.slice(1, 5));
+		aNodes = SandboxModel.getTopLevels(3, 0, 1).concat(aAfterCollapseBeta.slice(1, 5));
 		checkTable(aNodes);
 
 		toggleExpandInRow(1, "Expand 1 (Beta)");
 		checkTable(aAfterExpandGamma, {DistanceFromRoot : 3});
 
 		toggleExpandInRow(2, "Collapse 1.1 (Gamma)");
-		aNodes = SandboxModel.getNodes(0, 3).concat(oExpandedZeta)
-			.concat(SandboxModel.getChildrenOf1_2()[0]);
+		aNodes = SandboxModel.getTopLevels(3, 0, 3).concat(oExpandedZeta)
+			.concat(SandboxModel.getChildren("1.2")[0]);
 		checkTable(aNodes, {DistanceFromRoot : 3});
 
 		toggleExpandInRow(3, "Collapse 1.2 (Zeta)");
-		checkTable(SandboxModel.getNodes(0, 5));
+		checkTable(SandboxModel.getTopLevels(3, 0, 5));
 
 		toggleExpandInRow(2, "Expand 1.1 (Gamma)");
-		aNodes = SandboxModel.getNodes(0, 2).concat(oExpandedGamma)
-			.concat(SandboxModel.getChildrenOf1_1());
+		aNodes = SandboxModel.getTopLevels(3, 0, 2).concat(oExpandedGamma)
+			.concat(SandboxModel.getChildren("1.1"));
 		checkTable(aNodes, {DistanceFromRoot : 3});
 
 		When.onTheMainPage.synchronize("2nd time");
 		checkTable(aNodes, {DistanceFromRoot : 3});
 
 		toggleExpandInRow(2, "Collapse 1.1 (Gamma)");
-		checkTable(SandboxModel.getNodes(0, 5));
+		checkTable(SandboxModel.getTopLevels(3, 0, 5));
 
 		toggleExpandInRow(1, "Collapse 1 (Beta)");
-		aNodes = SandboxModel.getNodes(0, 1).concat(aAfterCollapseBeta.slice(1, 5));
+		aNodes = SandboxModel.getTopLevels(3, 0, 1).concat(aAfterCollapseBeta.slice(1, 5));
 		checkTable(aNodes);
 
 		// still functional
@@ -177,7 +178,7 @@ sap.ui.define([
 		checkTable(aAfterCollapseBetaMu);
 
 		scrollToRow(1, "Scroll down one row"); // 5 (Xi) appears
-		aNodes = aAfterCollapseBetaMu.slice(1).concat(SandboxModel.getNodes(8, 1));
+		aNodes = aAfterCollapseBetaMu.slice(1).concat(SandboxModel.getTopLevels(3, 8, 1));
 		checkTable(aNodes);
 
 		toggleExpandInRow(5, "Collapse 5 (Xi)");
@@ -203,7 +204,7 @@ sap.ui.define([
 
 		// hidden node 5.1 (Omicron) still expanded and properly updated
 		toggleExpandInRow(5, "Expand 5 (Xi)");
-		aNodes = aAfterCollapseBetaMu.slice(1).concat(SandboxModel.getNodes(8, 1));
+		aNodes = aAfterCollapseBetaMu.slice(1).concat(SandboxModel.getTopLevels(3, 8, 1));
 		checkTable(aNodes);
 
 		scrollToRow(2, "Scroll down one row");
@@ -211,13 +212,13 @@ sap.ui.define([
 		checkTable(aAfterShowOmicron);
 
 		scrollToRow(7, "PAGE DOWN");
-		checkTable(SandboxModel.getChildrenOf5_1(0, 5), {DistanceFromRoot : 3});
+		checkTable(SandboxModel.getChildren("5.1", 0, 5), {DistanceFromRoot : 3});
 
 		scrollToRow(11, "Scroll To The Bottom");
-		checkTable(SandboxModel.getChildrenOf5_1(4, 5), {DistanceFromRoot : 3});
+		checkTable(SandboxModel.getChildren("5.1", 4, 5), {DistanceFromRoot : 3});
 
 		scrollToRow(6, "Scroll To 5.1 (Omicron)");
-		aNodes = [oExpandedOmicron].concat(SandboxModel.getChildrenOf5_1(0, 4));
+		aNodes = [oExpandedOmicron].concat(SandboxModel.getChildren("5.1", 0, 4));
 		checkTable(aNodes, {DistanceFromRoot : 3});
 
 		toggleExpandInRow(6, "Collapse 5.1 (Omicron)");
