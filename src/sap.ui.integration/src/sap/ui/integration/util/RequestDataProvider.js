@@ -6,9 +6,18 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/ODataUtils",
 	"sap/ui/core/Core",
+	"sap/ui/core/Configuration",
 	"sap/base/util/fetch",
 	"sap/base/util/deepClone"
-], function (DataProvider, Log, ODataUtils, Core, fetch, deepClone) {
+], function (
+	DataProvider,
+	Log,
+	ODataUtils,
+	Core,
+	Configuration,
+	fetch,
+	deepClone
+) {
 	"use strict";
 
 	/**
@@ -237,7 +246,8 @@ sap.ui.define([
 	};
 
 	RequestDataProvider.prototype._request = function (oRequest, bNoRetry) {
-		var fnFetch = this._getFetchMethod();
+		var fnFetch = this._getFetchMethod(this._getRequestSettings());
+
 		return fnFetch(oRequest.url, oRequest.options)
 			.then(function (oResponse) {
 				if (this.bIsDestroyed) {
@@ -338,11 +348,11 @@ sap.ui.define([
 	/**
 	 * Gets the method which should execute the HTTP fetch.
 	 * @private
+	 * @param {object} oRequestSettings settings in manifest format
 	 * @returns {Function} The function to use for HTTP fetch.
 	 */
-	RequestDataProvider.prototype._getFetchMethod = function () {
-		var oRequestSettings = this.getSettings().request,
-			oCard = Core.byId(this.getCard()),
+	RequestDataProvider.prototype._getFetchMethod = function (oRequestSettings) {
+		var oCard = Core.byId(this.getCard()),
 			oExtension = oCard && oCard.getAggregation("_extension"),
 			oHost = Core.byId(this.getHost());
 
@@ -359,6 +369,10 @@ sap.ui.define([
 		}
 
 		return fetch;
+	};
+
+	RequestDataProvider.prototype._getRequestSettings = function () {
+		return this.getSettings().request;
 	};
 
 	/**
@@ -464,24 +478,28 @@ sap.ui.define([
 	/**
 	 * Override if modification to the request is needed.
 	 * Allows the host to modify the headers or the full request.
-	 * @param {Object} oRequest The current request.
-	 * @param {Object} oSettings The request settings
-	 * @returns {map} The modified headers
+	 * @param {object} oRequest The current request.
+	 * @param {object} oSettings The request settings
+	 * @returns {object} The modified request
 	 */
 	RequestDataProvider.prototype._modifyRequestBeforeSent = function (oRequest, oSettings) {
 		var oCard = Core.byId(this.getCard()),
-			oHost = Core.byId(this.getHost()),
-			oModifiedHeaders;
+			oHost = Core.byId(this.getHost());
 
 		if (!oHost) {
 			return oRequest;
 		}
 
+		/**
+		 * @deprecated since 1.113
+		 */
 		if (oHost.modifyRequestHeaders) {
-			oModifiedHeaders = oHost.modifyRequestHeaders(Object.fromEntries(oRequest.options.headers), oSettings, oCard);
-			oRequest.options.headers = new Headers(oModifiedHeaders);
+			oRequest.options.headers = new Headers(oHost.modifyRequestHeaders(Object.fromEntries(oRequest.options.headers), oSettings, oCard));
 		}
 
+		/**
+		 * @deprecated since 1.113
+		 */
 		if (oHost.modifyRequest) {
 			oRequest = oHost.modifyRequest(oRequest, oSettings, oCard);
 		}

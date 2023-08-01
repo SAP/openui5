@@ -325,6 +325,9 @@ sap.ui.define([
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
+	/**
+	 * @deprecated Since version 1.85
+	 */
 	QUnit.module("Actions - Legacy", {
 		beforeEach: function () {
 			this.oCard = new Card({
