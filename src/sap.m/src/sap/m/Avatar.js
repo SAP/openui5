@@ -201,7 +201,14 @@ sap.ui.define([
 					type: "sap.ui.core.ValueState",
 					group: "Appearance",
 					defaultValue: ValueState.None
-				}
+				},
+
+				/**
+				 * Determines whether the <code>Avatar</code> is enabled (default is set to <code>true</code>).
+				 * A disabled <code>Button</code> has different colors depending on the {@link sap.m.AvatarColor AvatarColor}.
+				 *
+				 */
+				enabled : {type : "boolean", group : "Behavior", defaultValue : true}
 			},
 			aggregations : {
 				/**
@@ -407,7 +414,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Avatar.prototype.ontap = function () {
-		this.firePress({/* no parameters */});
+		this._handlePress();
 	};
 
 	/**
@@ -427,7 +434,7 @@ sap.ui.define([
 		}
 
 		if (oEvent.which === KeyCodes.ENTER) {
-			this.firePress({/* no parameters */});
+			this._handlePress();
 		}
 	};
 
@@ -440,7 +447,7 @@ sap.ui.define([
 	Avatar.prototype.onkeyup = function (oEvent) {
 		if (oEvent.which === KeyCodes.SPACE) {
 			if (!this._bShouldInterupt) {
-				this.firePress({/* no parameters */});
+				this._handlePress();
 			}
 
 			this._bShouldInterupt = false;
@@ -448,6 +455,17 @@ sap.ui.define([
 
 			//stop the propagation, it is handled by the control
 			oEvent.stopPropagation();
+		}
+	};
+
+	Avatar.prototype._handlePress = function () {
+		if (!this.getEnabled()) {
+			return;
+		}
+		this.firePress({/* no parameters */});
+		if (this.hasListeners("press")) {
+			this.isPressed = !this.isPressed;
+			this.toggleStyleClass("sapMAvatarPressed", this._isPressed);
 		}
 	};
 
