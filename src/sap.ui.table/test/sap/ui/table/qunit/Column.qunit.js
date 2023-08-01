@@ -496,14 +496,14 @@ sap.ui.define([
 	 * @deprecated As of version 1.117
 	 */
 	QUnit.test("Filter on Column with ColumnMenu and UnifiedMenu", function(assert) {
-		var that = this, done = assert.async();
+		var that = this, done = assert.async(), oCellDomRef = this._oColumnWithColumnMenu.getDomRef();
 
 		this._oColumnWithColumnMenu.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
 				var oColumnMenu = that._oColumnWithColumnMenu.getMenu();
 				var oSpyColumnMenu = that.spy(oColumnMenu, "_setFilterValue");
 				that._oColumnWithColumnMenu.filter("filterValue");
-				that._oColumnWithColumnMenu._openHeaderMenu();
+				that._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
 
 				var oFilterField = oCore.byId(oColumnMenu.getId() + "-filter");
 				assert.equal(oFilterField.getValue(), "filterValue", "Filter value set on ColumnMenu");
@@ -523,7 +523,7 @@ sap.ui.define([
 			});
 		});
 
-		this._oColumnWithColumnMenu._openHeaderMenu();
+		this._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
 	});
 
 	/**
@@ -533,6 +533,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oTable = this._oTable;
 		var oColumn = this._oColumnWithColumnMenu;
+		var oCellDomRef = oColumn.getDomRef();
 		oTable.setGroupBy = function() {};
 		var oSetGroupSpy = sinon.spy(oTable, "setGroupBy");
 
@@ -550,7 +551,7 @@ sap.ui.define([
 
 				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
-						oColumn._openHeaderMenu();
+						oColumn._openHeaderMenu(oCellDomRef);
 						assert.strictEqual(oGroupMenuItem.getText(), TableUtils.getResourceBundle().getText("TBL_GROUP"), "The group menu item exists");
 						oGroupMenuItem.fireSelect();
 						assert.ok(oSetGroupSpy.calledTwice, "setGroupBy is called");
@@ -564,14 +565,14 @@ sap.ui.define([
 			});
 		});
 
-		oColumn._openHeaderMenu();
+		oColumn._openHeaderMenu(oCellDomRef);
 	});
 
 	/**
 	 * @deprecated As of version 1.117
 	 */
 	QUnit.test("Localization and Invalidation", function(assert) {
-		var done = assert.async(), that = this;
+		var done = assert.async(), that = this, oCellDomRef = this._oColumnWithColumnMenu.getDomRef();
 
 		this._oColumnWithColumnMenu.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
@@ -579,26 +580,26 @@ sap.ui.define([
 				assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
 				that._oTable._invalidateColumnMenus();
 				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
-				that._oColumnWithColumnMenu._openHeaderMenu();
+				that._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
 				assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
 
 				that._oColumnWithColumnMenu.setFilterProperty("myFilterPropertyName");
 				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
-				that._oColumnWithColumnMenu._openHeaderMenu();
+				that._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
 				that._oColumnWithColumnMenu.setShowFilterMenuEntry(false);
 				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
 
-				that._oColumnWithColumnMenu._openHeaderMenu();
+				that._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
 				that._oColumnWithColumnMenu.setSortProperty("mySortPropertyName");
 				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
-				that._oColumnWithColumnMenu._openHeaderMenu();
+				that._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
 				that._oColumnWithColumnMenu.setShowSortMenuEntry(false);
 				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
 				done();
 			});
 		});
 
-		this._oColumnWithColumnMenu._openHeaderMenu();
+		this._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
 	});
 
 	QUnit.module("Changes that affect rows", {
@@ -1192,7 +1193,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Visibility Submenu number of items", function(assert) {
-		var that = this, done = assert.async();
+		var that = this, done = assert.async(), oCellDomRef = that._oColumn1.getDomRef();
 
 		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
@@ -1201,7 +1202,7 @@ sap.ui.define([
 				assert.strictEqual(oVisibilitySubmenu.getItems().length, 2, "The visibility submenu has 2 items");
 
 				that._oTable.removeColumn(that._oColumn2);
-				that._oColumn1._openHeaderMenu();
+				that._oColumn1._openHeaderMenu(oCellDomRef);
 				var oColumnMenuAfter = that._oColumn1.getMenu();
 				oVisibilitySubmenu = oColumnMenuAfter.getItems()[0].getSubmenu();
 				assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
@@ -1216,7 +1217,7 @@ sap.ui.define([
 					label: new TableQUnitUtils.TestControl({text: "col3header"})
 				});
 				that._oTable.addColumn(that._oColumn3);
-				that._oColumn1._openHeaderMenu();
+				that._oColumn1._openHeaderMenu(oCellDomRef);
 				oColumnMenuAfter = that._oColumn1.getMenu();
 				oVisibilitySubmenu = oColumnMenuAfter.getItems()[0].getSubmenu();
 				assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
@@ -1229,11 +1230,11 @@ sap.ui.define([
 			});
 		});
 
-		this._oColumn1._openHeaderMenu();
+		this._oColumn1._openHeaderMenu(oCellDomRef);
 	});
 
 	QUnit.test("Set Visibility", function(assert) {
-		var that = this, done = assert.async();
+		var that = this, done = assert.async(), oCell1DomRef = this._oColumn1.getDomRef(), oCell2DomRef = this._oColumn2.getDomRef();
 
 		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
@@ -1243,10 +1244,10 @@ sap.ui.define([
 				assert.strictEqual(oVisibilitySubmenuBefore.getItems()[1].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
 
 				that._oColumn2.focus();
-				that._oColumn2._openHeaderMenu();
+				that._oColumn2._openHeaderMenu(oCell2DomRef);
 				oVisibilitySubmenuBefore.getItems()[1].fireSelect();
 				assert.equal(document.activeElement, that._oColumn1.getDomRef(), "Focus moves to the other column header");
-				that._oColumn1._openHeaderMenu();
+				that._oColumn1._openHeaderMenu(oCell1DomRef);
 				var oColumnMenuAfter = that._oColumn1.getMenu();
 				var oVisibilitySubmenuAfter = oColumnMenuAfter.getItems()[0].getSubmenu();
 				assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
@@ -1258,11 +1259,11 @@ sap.ui.define([
 			});
 		});
 
-		this._oColumn1._openHeaderMenu();
+		this._oColumn1._openHeaderMenu(oCell1DomRef);
 	});
 
 	QUnit.test("Reorder Columns", function(assert) {
-		var that = this, done = assert.async();
+		var that = this, done = assert.async(), oCellDomRef = this._oColumn1.getDomRef();
 
 		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
@@ -1272,7 +1273,7 @@ sap.ui.define([
 				assert.strictEqual(oVisibilitySubmenu.getItems()[1].getProperty("text"), "col2header", "The columns are initially in the correct order");
 				that._oTable.removeColumn(that._oColumn1);
 				that._oTable.insertColumn(that._oColumn1, 1);
-				that._oColumn1._openHeaderMenu();
+				that._oColumn1._openHeaderMenu(oCellDomRef);
 				var oColumnMenu = that._oColumn1.getMenu();
 				var oVisibilitySubmenu = oColumnMenu.getItems()[0].getSubmenu();
 				assert.strictEqual(oVisibilitySubmenu.getItems()[0].getProperty("text"), "col2header", "The columns are in the correct order after reordering");
@@ -1281,7 +1282,7 @@ sap.ui.define([
 			});
 		});
 
-		this._oColumn1._openHeaderMenu();
+		this._oColumn1._openHeaderMenu(oCellDomRef);
 	});
 
 	QUnit.test("Multiple tables", function(assert) {
@@ -1324,7 +1325,7 @@ sap.ui.define([
 				assert.strictEqual(oVisibilitySubmenuTable1.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
 				assert.strictEqual(oVisibilitySubmenuTable1.getItems()[1].getIcon(), "", "The visibility submenu item is not checked");
 
-				that._oColumn21._openHeaderMenu();
+				that._oColumn21._openHeaderMenu(that._oColumn21.getDomRef());
 				var oColumnMenuTable2 = that._oColumn21.getMenu();
 				var oVisibilitySubmenuTable2 = oColumnMenuTable2.getItems()[0].getSubmenu();
 				assert.strictEqual(oVisibilitySubmenuTable2.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
@@ -1342,7 +1343,7 @@ sap.ui.define([
 			});
 		});
 
-		this._oColumn1._openHeaderMenu();
+		this._oColumn1._openHeaderMenu(this._oColumn1.getDomRef());
 	});
 
 	QUnit.module("ColumnHeaderMenu Association", {

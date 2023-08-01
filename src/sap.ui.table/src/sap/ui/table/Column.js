@@ -681,6 +681,10 @@ sap.ui.define([
 
 	Column.prototype._openHeaderMenu = function(oDomRef) {
 		var oHeaderMenu = this.getHeaderMenuInstance();
+		/**
+		 * @deprecated As of Version 1.117
+		 */
+		this._cellPressed = oDomRef;
 		ColumnHeaderMenuAdapter.activateFor(this).then(function() {
 			if (oHeaderMenu) {
 				oHeaderMenu.openBy(oDomRef);

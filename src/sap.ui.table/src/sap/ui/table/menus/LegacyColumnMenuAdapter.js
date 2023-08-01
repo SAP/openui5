@@ -183,7 +183,7 @@ sap.ui.define([
 	 */
 	LegacyColumnMenuAdapter.prototype._openColumnContextMenu = function(oColumn) {
 		var oTable = oColumn._getTable();
-		var oCell = oColumn.getDomRef();
+		var oDomRef = oColumn._cellPressed;
 		var aColumns = oTable.getColumns();
 
 		// Close all menus.
@@ -194,22 +194,22 @@ sap.ui.define([
 			}
 		}
 
-		var sColspan = oCell.getAttribute("colspan");
+		var sColspan = oDomRef.getAttribute("colspan");
 		if (sColspan && sColspan !== "1") {
 			return false; // headers with span do not have connection to a column, do not open the context menu
 		}
 
-		return this._openMenu(oColumn);
+		return this._openMenu(oColumn, oDomRef);
 	};
 
 	/**
 	 * Opens the column menu.
 	 * @param {sap.ui.table.Column} oColumn The column for which the menu should open.
+	 * @param {HTMLElement} oDomRef column DOM reference
 	 * @returns {boolean} Whether the menu was opened.
 	 * @private
 	 */
-	LegacyColumnMenuAdapter.prototype._openMenu = function(oColumn) {
-		var oDomRef = oColumn.getDomRef();
+	LegacyColumnMenuAdapter.prototype._openMenu = function(oColumn, oDomRef) {
 		var oMenu = this._getMenu(oColumn);
 
 		if (!oColumn._menuHasItems()) {
