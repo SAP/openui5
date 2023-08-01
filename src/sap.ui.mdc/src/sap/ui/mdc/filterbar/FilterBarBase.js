@@ -721,10 +721,11 @@ sap.ui.define([
 
 	FilterBarBase.prototype._toInternal = function(oProperty, oCondition) {
 		var oConditionInternal = merge({}, oCondition);
+
 		oConditionInternal = ConditionConverter.toType(oConditionInternal, oProperty.typeConfig.typeInstance, this.getTypeUtil());
 
-		this. _convertInOutParameters(oCondition, oConditionInternal, "inParameters", ConditionConverter.toType);
-		this. _convertInOutParameters(oCondition, oConditionInternal, "outParameters", ConditionConverter.toType);
+		this._convertInOutParameters(oCondition, oConditionInternal, "inParameters", ConditionConverter.toType);
+		this._convertInOutParameters(oCondition, oConditionInternal, "outParameters", ConditionConverter.toType);
 
 		return oConditionInternal;
 	};
@@ -803,7 +804,15 @@ sap.ui.define([
 		Object.keys(mConditionsInternal).forEach(function(sKey){
 			mConditionsInternal[sKey].forEach(function(oCondition, iConditionIndex){
 				var oProperty = this._getPropertyByName(sKey);
-				mConditionsInternal[sKey][iConditionIndex] = this._toInternal(oProperty, oCondition);
+				if (oProperty) {
+					try {
+						mConditionsInternal[sKey][iConditionIndex] = this._toInternal(oProperty, oCondition);
+					} catch (ex) {
+						Log.error(ex.message);
+					}
+				} else {
+					Log.error("Property '" + sKey + "' does not exist");
+				}
 			}, this);
 		}, this);
 
