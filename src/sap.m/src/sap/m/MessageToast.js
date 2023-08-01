@@ -348,10 +348,12 @@ sap.ui.define([
 		MessageToast._fnKeyDown = function(oEvent) {
 			var oFocusableElement;
 			var oPopup = this._aPopups[0];
-			var bAlt = oEvent.altKey;
+			var bShift = oEvent.shiftKey;
 			var bCtrl = oEvent.ctrlKey;
 
-			if (oPopup && oPopup.isOpen() && bAlt && bCtrl && oEvent.code === "KeyM") {
+			if (oPopup && oPopup.isOpen() && bShift && bCtrl && oEvent.code === "KeyM") {
+				oEvent.preventDefault();
+
 				oFocusableElement = document.querySelector(".sapMMessageToastHiddenFocusable");
 				oPopup.getContent().classList.add("sapMFocus");
 				oFocusableElement.focus();
@@ -361,11 +363,13 @@ sap.ui.define([
 
 		// Close the message when in permanent display mode
 		function handleKbdClose(oEvent) {
-			var bAlt = oEvent.altKey;
+			var bShift = oEvent.shiftKey;
 			var bCtrl = oEvent.ctrlKey;
 			var oPopup = this._aPopups[0];
 
-			if (oEvent.code === "Escape" || (bAlt && bCtrl && oEvent.code === "KeyM")) {
+			if (oEvent.code === "Escape" || (bShift && bCtrl && oEvent.code === "KeyM")) {
+				oEvent.preventDefault();
+
 				setTimeout(function() {
 					this._mSettings.opener && this._mSettings.opener.focus();
 				}.bind(this), 0);
