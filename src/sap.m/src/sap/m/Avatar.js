@@ -35,6 +35,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.aria.HasPopup
 	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
 	// shortcut for Accent colors keys only (from AvatarColor enum)
 	var AccentColors = Object.keys(AvatarColor).filter(function (sCurrColor) {
 		return sCurrColor.indexOf("Accent") !== -1;
@@ -187,8 +190,18 @@ sap.ui.define([
 				 *
 				 * @since 1.99.0
 				 */
-				ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None}
+				ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None},
 
+				/**
+				 * Visualizes the validation state of the badge, e.g. <code>Error</code>, <code>Warning</code>,
+				 * <code>Success</code>, <code>Information</code>.
+				 *
+				 */
+				badgeValueState: {
+					type: "sap.ui.core.ValueState",
+					group: "Appearance",
+					defaultValue: ValueState.None
+				}
 			},
 			aggregations : {
 				/**
@@ -330,6 +343,16 @@ sap.ui.define([
 		}
 
 		return this.setAggregation("detailBox", oLightBox);
+	};
+
+	Avatar.prototype.setBadgeValueState = function(sValue) {
+
+		Object.keys(ValueState).forEach(function(val){
+			this.toggleStyleClass('sapFAvatar' + val, val === sValue);
+		}.bind(this));
+
+		this.setProperty("badgeValueState", sValue, true);
+		return this;
 	};
 
 	/*

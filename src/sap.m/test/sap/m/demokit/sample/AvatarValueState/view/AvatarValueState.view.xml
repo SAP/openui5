@@ -1,0 +1,84 @@
+<mvc:View
+		controllerName="sap.m.sample.AvatarValueState.controller.AvatarValueState"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		height="100%">
+
+	<ScrollContainer
+			height="100%"
+			width="100%"
+			horizontal="false"
+			vertical="true">
+		<l:Grid
+				class="sapUiSmallMarginTop"
+				defaultSpan="XL3 L3 M6 S12">
+			<l:content>
+				<VBox alignItems="Center">
+					<Avatar
+							src="{/GettyImages}"
+							displaySize="M"
+							imageFitType="Cover"
+							badgeValueState="Warning"
+							press="onPress"
+							badgeIcon="sap-icon://alert"
+							badgeTooltip= "Sabine Mayer"/>
+					<Text
+							textAlign="Center"
+							text="badgeValueState property set to 'Warning'"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							displaySize="M"
+							displayShape="Circle"
+							badgeValueState="Information"
+							press="onPress"
+							src="{/LowShutterstock}"
+							badgeIcon="sap-icon://information"
+							badgeTooltip= "Julie Armstrong"/>
+					<Text
+							textAlign="Center"
+							text="badgeValueState property set to 'Information'"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							displaySize="M"
+							backgroundColor="Accent7"
+							initials="JD"
+							press="onPress"
+							badgeValueState="None"
+							badgeIcon="sap-icon://camera" />
+					<Text
+							textAlign="Center"
+							text="badgeValueState property set to 'None'"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							displaySize="M"
+							backgroundColor="Accent3"
+							badgeValueState="Success"
+							press="onPress"
+							badgeIcon="sap-icon://message-success" />
+					<Text
+							textAlign="Center"
+							text="badgeValueState property set to 'Success'"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							displaySize="M"
+							badgeValueState="Error"
+							press="onPress"
+							badgeIcon="sap-icon://message-error" />
+					<Text
+							textAlign="Center"
+							text="badgeValueState property set to 'Error'"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+			</l:content>
+		</l:Grid>
+	</ScrollContainer>
+</mvc:View>
