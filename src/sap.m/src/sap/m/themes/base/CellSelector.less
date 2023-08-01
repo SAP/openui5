@@ -28,6 +28,15 @@
 		&.sapMPluginsNWSE {
 			cursor: nwse-resize;
 		}
+
+		// Needed, because (for some reason) RTL converts nwse-resize to the opposite nesw-resize (alhtough we do not want this to happen)
+		html[dir=rtl] &.sapMPluginsNESW {
+			cursor: nwse-resize;
+		}
+
+		html[dir=rtl] &.sapMPluginsNWSE {
+			cursor: nesw-resize;
+		}
 	}
 }
 
