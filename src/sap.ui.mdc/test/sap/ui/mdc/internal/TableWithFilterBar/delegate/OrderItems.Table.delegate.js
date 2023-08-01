@@ -34,8 +34,10 @@ sap.ui.define([
 			// TODO fieldHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
 			aProperties.forEach(function(oPropertyInfo){
 				if (oPropertyInfo.name === "book_ID") {
-					oPropertyInfo.typeConfig.typeInstance = new Int32Type({groupingEnabled: false}, {nullable: false}); // needed for Field in table
+					oPropertyInfo.dataType = "Edm.Int32";
+					// oPropertyInfo.typeConfig.typeInstance = new Int32Type({groupingEnabled: false}, {nullable: false}); // needed for Field in table
 					oPropertyInfo.formatOptions = {groupingEnabled: false}; // needed for FilterField on settings-FilterBar
+					oPropertyInfo.constraints = {nullable: false};
 					oPropertyInfo.label = "Book";
 					oPropertyInfo.visualSettings = {widthCalculation: {minWidth: 25}}; // as the title is shown
 				}
