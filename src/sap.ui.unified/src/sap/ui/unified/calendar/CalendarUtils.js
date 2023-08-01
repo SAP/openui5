@@ -231,7 +231,7 @@ sap.ui.define([
 		 * If a given date is in the beginning of January (e.g. Friday, 2 Jan 2015, week 1), the function will return
 		 * week start date in the previous year(e.g. Sunday, 28 Dec 2014, week 53).
 		 *
-		 * @returns {Date} first date of the same week as the given <code>oDate</code> in local timezone.
+		 * @returns {Date} first date of the same week as the given <code>oDate</code> in UTC timezone.
 		 * @public
 		 */
 		CalendarUtils.getFirstDateOfWeek = function (oDate, oWeekConfig) {
