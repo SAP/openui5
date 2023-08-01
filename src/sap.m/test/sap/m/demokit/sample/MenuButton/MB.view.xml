@@ -4,7 +4,7 @@
 			xmlns:core="sap.ui.core"
 			xmlns="sap.m">
 
-	<Toolbar>
+	<OverflowToolbar>
 		<ToolbarSpacer/>
 		<Label text = "In a toolbar"/>
 		<MenuButton text="File">
@@ -41,7 +41,7 @@
 			</menu>
 		</MenuButton>
 		<ToolbarSpacer/>
-	</Toolbar>
+	</OverflowToolbar>
 
 	<VBox class="sapUiSmallMargin">
 		<Label text = "With a complex menu"/>
