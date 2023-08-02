@@ -8,9 +8,13 @@
 @_sap_tnt_NavigationList_IconFontSize: 1rem;
 @_sap_tnt_NavigationList_ExpandIconColor: @sapUiContentIconColor;
 @_sap_tnt_NavigationList_ItemHeight: 3rem;
+@_sap_tnt_NavigationList_ItemBorder: none;
+@_sap_tnt_NavigationList_LastItemBorder: none;
+@_sap_tnt_NavigationList_HoverItemBorder: none;
 @_sap_tnt_NavigationList_ItemBorderRadius: 0;
 @_sap_tnt_NavigationList_ItemBottomMargin: 0;
 @_sap_tnt_NavigationList_ItemBottomMarginCompact: 0;
+@_sap_tnt_NavigationList_ItemTransition: none;
 @_sap_tnt_NavigationList_NoIconsGroupPadding: 1rem;
 @_sap_tnt_NavigationList_NoIconsNestedItemPadding: 1rem;
 @_sap_tnt_NavigationList_ItemFocusBorderOffset: 1px;
@@ -26,7 +30,14 @@
 @_sap_tnt_NavigationList_GroupBottomMarginInPopup: 0;
 @_sap_tnt_NavigationList_Padding: 0;
 @_sap_tnt_NavigationList_PaddingCompact: 0;
-@_sap_tnt_NavigationList_PopupPadding: 0;
+@_sap_tnt_NavigationList_ParentPopupPadding: 0;
+@_sap_tnt_NavigationList_ParentPopupBorderRadius: @sapUiPopoverBorderCornerRadius;
+@_sap_tnt_NavigationList_PopupItemPadding: 0 1rem;
+@_sap_tnt_NavigationList_PopupIconWidth: 1rem;
+@_sap_tnt_NavigationList_PopupBoxShadow: @sapUiContentShadow2;
+@_sap_tnt_NavigationList_PopupArrowBoxShadow: @sapUiContentShadow2;
+@_sap_tnt_NavigationList_PopupTitleTextSize: @sapMFontMediumSize;
+@_sap_tnt_NavigationList_PopupTitleLineHeight: normal;
 @_sap_tnt_NavigationList_SelectionIndicatorDisplay: none;
 
 .sapTntNavLI {
@@ -34,6 +45,20 @@
 	padding: @_sap_tnt_NavigationList_Padding;
 	list-style: none;
 	box-sizing: border-box;
+	overflow: hidden auto;
+}
+
+.sapTntNavLI.sapTntNavLICollapsed {
+	overflow: visible hidden;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.sapTnTNavLIOverflow {
+	flex: 1;
+	display: flex;
+	flex-direction: column-reverse;
 }
 
 .sapTntNavLI ul {
@@ -49,6 +74,7 @@
 	cursor: pointer;
 	background-color: @sapUiListBackground;
 	border-radius: @_sap_tnt_NavigationList_ItemBorderRadius;
+	transition: @_sap_tnt_NavigationList_ItemTransition;
 
 	span {
 		cursor: pointer;
@@ -87,13 +113,28 @@
 	}
 }
 
+.sapTntNavLIGroupItem {
+	border-bottom: @_sap_tnt_NavigationList_ItemBorder;
+
+	&:hover,
+	&:active,
+	.sapTntNavLIPopover &:last-child:hover,
+	.sapTntNavLIPopover &:last-child:active {
+		border-bottom: @_sap_tnt_NavigationList_HoverItemBorder;
+	}
+}
+
+.sapTntNavLIPopover .sapTntNavLIGroupItem:last-child {
+	border-bottom: @_sap_tnt_NavigationList_LastItemBorder;
+}
+
 .sapTntNavLIText {
 	flex: 1;
 	min-width: 0;
 }
 
-.sapTntNavLIPopup {
-	padding: @_sap_tnt_NavigationList_PopupPadding;
+.sapTntNavLIPopover .sapTntNavLIPopup.sapTntNavLI {
+	padding: @_sap_tnt_NavigationList_ParentPopupPadding;
 
 	.sapTntNavLIItem.sapTntNavLIGroup {
 		margin-bottom: @_sap_tnt_NavigationList_GroupBottomMarginInPopup;
@@ -101,11 +142,13 @@
 }
 
 .sapTntNavLIPopup .sapTntNavLIGroupItem .sapMText {
-	padding: 0 1rem;
+	padding: @_sap_tnt_NavigationList_PopupItemPadding;
 }
 
 .sapTntNavLIPopup .sapTntNavLIGroup .sapMText {
 	margin: 0 1rem 0 0;
+	font-size: @_sap_tnt_NavigationList_PopupTitleTextSize;
+	line-height: @_sap_tnt_NavigationList_PopupTitleLineHeight;
 }
 
 .sapTntNavLI {
@@ -123,17 +166,21 @@
 	}
 }
 
+.sapTnTNavLIHiddenItem {
+	display: none;
+}
+
 .sapTntNavLIPopup {
 	span.sapTntNavLIGroupIcon {
-		width: 1rem;
+		width: @_sap_tnt_NavigationList_PopupIconWidth;
+		min-width: @_sap_tnt_NavigationList_PopupIconWidth;
 		visibility: hidden;
-		min-width: 1rem;
 	}
 
 	img.sapTntNavLIGroupIcon {
-		width: 1rem;
+		width: @_sap_tnt_NavigationList_PopupIconWidth;
+		min-width: @_sap_tnt_NavigationList_PopupIconWidth;
 		visibility: hidden;
-		min-width: 1rem;
 		padding: 0;
 	}
 }
@@ -257,7 +304,6 @@
 }
 
 .sapTntNavLICollapsed .sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled) {
-	overflow: hidden;
 	border-bottom: none;
 
 	// create the selection indicator with pseudo element, in order to avoid it having border-radius
@@ -319,6 +365,21 @@
 	// nested items
 	.sapTntNavLIGroupItem .sapMText {
 		padding-left: @_sap_tnt_NavigationList_NoIconsNestedItemPadding;
+	}
+}
+
+.sapTntNavLIPopover {
+	&.sapMPopover {
+		box-shadow: @_sap_tnt_NavigationList_PopupBoxShadow;
+		border-radius: @_sap_tnt_NavigationList_ParentPopupBorderRadius;
+
+		.sapMPopoverCont {
+			border-radius: @_sap_tnt_NavigationList_ParentPopupBorderRadius;
+		}
+	}
+
+	.sapMPopoverArr:after {
+		box-shadow: @_sap_tnt_NavigationList_PopupArrowBoxShadow;
 	}
 }
 
