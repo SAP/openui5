@@ -76,6 +76,16 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * This is regression test for when the initial theme is an empty string ("").
+	 * The empty string is given in the "testsuite.theming.qunit.js" as a bootstrap parameter.
+	 *
+	 * Before fixing this regression, an empty string lead to a "Maximum call stack size exceeded" error.
+	 */
+	QUnit.test("Initial Theme - empty string fallback", function(assert) {
+		assert.equal(Theming.getTheme(), "base", "Initial Theme after bootstrapping should be 'base'");
+	});
+
 	QUnit.test("getTheme", function (assert) {
 		assert.expect(bThemeManagerNotActive ? 28 : 27);
 		BaseConfig._.invalidate();
