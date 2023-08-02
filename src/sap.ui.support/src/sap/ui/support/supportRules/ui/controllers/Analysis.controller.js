@@ -3,39 +3,53 @@
  */
 
 sap.ui.define([
+	"./BaseController",
+	"./PresetsController",
+	"../models/SharedModel",
+	"../models/TableSettingsModel",
+	"../models/SelectionUtils",
+	"../models/PresetsUtils",
+	"../models/CustomJSONListSelection",
 	"sap/base/util/deepExtend",
-	"sap/ui/support/supportRules/ui/controllers/BaseController",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/BindingMode",
 	"sap/ui/core/Fragment",
+	"sap/m/library",
 	"sap/m/MessageToast",
+	"sap/m/List",
+	"sap/m/StandardListItem",
+	"sap/m/table/columnmenu/Menu",
+	"sap/m/table/columnmenu/Item",
 	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
-	"sap/ui/support/supportRules/ui/models/SharedModel",
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
-	"sap/ui/support/supportRules/util/EvalUtils",
-	"sap/ui/support/supportRules/ui/models/SelectionUtils",
-	"sap/ui/support/supportRules/ui/controllers/PresetsController",
-	"sap/ui/support/supportRules/ui/models/PresetsUtils",
-	"sap/ui/support/supportRules/ui/models/CustomJSONListSelection"
+	"sap/ui/support/supportRules/util/EvalUtils"
 ], function (
-	deepExtend,
 	BaseController,
+	PresetsController,
+	SharedModel,
+	TableSettingsModel,
+	SelectionUtils,
+	PresetsUtils,
+	CustomJSONListSelection,
+	deepExtend,
 	JSONModel,
+	BindingMode,
 	Fragment,
+	mLibrary,
 	MessageToast,
+	List,
+	StandardListItem,
+	ColumnMenu,
+	ColumnMenuItem,
 	CommunicationBus,
 	channelNames,
-	SharedModel,
 	RuleSerializer,
 	Constants,
 	Storage,
-	EvalUtils,
-	SelectionUtils,
-	PresetsController,
-	PresetsUtils,
-	CustomJSONListSelection
+	EvalUtils
 ) {
 	"use strict";
 
@@ -49,11 +63,12 @@ sap.ui.define([
 			this.treeTable = SelectionUtils.treeTable = this.byId("ruleList");
 			this._oRuleSetsModel = new JSONModel();
 			this.treeTable.setModel(this._oRuleSetsModel, "ruleSets");
+			this.treeTable.setModel(TableSettingsModel, "tableSettings");
 			this.ruleSetView = this.byId("ruleSetsView");
 			this.rulesViewContainer = this.byId("rulesNavContainer");
 			this.bAdditionalViewLoaded = false;
 			this.bAdditionalRulesetsLoaded = false;
-			this.oApplicationinfo = {};
+			this.bInitFired = false;
 
 			/* eslint-disable no-new */
 			//attach adapter for custom selection
@@ -80,14 +95,28 @@ sap.ui.define([
 				onclick: this.onPresetVariantClick.bind(this)
 			});
 
-			this.treeTable.attachEvent("rowSelectionChange", function (oEvent) {
-				if (oEvent.getParameter("userInteraction")) {
-					PresetsUtils.syncCurrentSelectionPreset(SelectionUtils.getSelectedRules());
-				}
-			});
-
 			// "visible" property of RowAction cannot be updated trough binding, so set it directly
 			this.byId("rowActionTemplate").setVisible(!this.model.getProperty("/tempRulesDisabled"));
+
+			this._associateTableColumnsMenu();
+		},
+
+		onAfterRendering: function () {
+			if (!this.bInitFired) {
+				var fnThemeChangeHandler = function () {
+					CommunicationBus.publish(channelNames.ON_INIT_ANALYSIS_CTRL);
+					sap.ui.getCore().detachThemeChanged(fnThemeChangeHandler);
+				};
+
+				// If the theme is already applied themeChanged event won't be fired.
+				if (sap.ui.getCore().isThemeApplied()) {
+					CommunicationBus.publish(channelNames.ON_INIT_ANALYSIS_CTRL);
+				} else {
+					sap.ui.getCore().attachThemeChanged(fnThemeChangeHandler);
+				}
+
+				this.bInitFired = true;
+			}
 		},
 
 		loadAdditionalUI: function () {
@@ -113,20 +142,6 @@ sap.ui.define([
 			}
 
 			this._updateRuleList();
-		},
-
-		onAfterRendering: function () {
-			var fnThemeChangeHandler = function () {
-				CommunicationBus.publish(channelNames.ON_INIT_ANALYSIS_CTRL);
-				sap.ui.getCore().detachThemeChanged(fnThemeChangeHandler);
-			};
-
-			// If the theme is already applied themeChanged event won't be fired.
-			if (sap.ui.getCore().isThemeApplied()) {
-				CommunicationBus.publish(channelNames.ON_INIT_ANALYSIS_CTRL);
-			} else {
-				sap.ui.getCore().attachThemeChanged(fnThemeChangeHandler);
-			}
 		},
 
 		onAsyncSwitch: function (oEvent) {
@@ -217,10 +232,6 @@ sap.ui.define([
 				this.bAdditionalRulesetsLoaded = true;
 				this.model.setProperty("/availableLibrariesSet", data.libNames);
 				this.rulesViewContainer.setBusy(false);
-			}, this);
-
-			CommunicationBus.subscribe(channelNames.POST_APPLICATION_INFORMATION, function (data) {
-				this.oApplicationinfo = data;
 			}, this);
 
 			CommunicationBus.subscribe(channelNames.POST_AVAILABLE_COMPONENTS, function (data) {
@@ -823,6 +834,13 @@ sap.ui.define([
 				this.model.setProperty("/showRuleProperties", bShowRuleProperties);
 			}
 		},
+
+		onRowSelectionChange: function (oEvent) {
+			if (oEvent.getParameter("userInteraction")) {
+				PresetsUtils.syncCurrentSelectionPreset(SelectionUtils.getSelectedRules());
+			}
+		},
+
 		getMainModelFromTreeViewModel: function (selectedRule) {
 
 			var structeredRulesModel = this.model.getProperty("/libraries"),
@@ -970,20 +988,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * On column visibility change persist column visibility selection
-		 * @param {object} oEvent event
-		 **/
-		onColumnVisibilityChange: function (oEvent) {
-			var oColumn = oEvent.getParameter("column"),
-				bNewVisibilityState = oEvent.getParameter("newVisible");
-			if (!this.model.getProperty("/persistingSettings")) {
-				return;
-			}
-			oColumn.setVisible(bNewVisibilityState);
-			this.persistVisibleColumns();
-		},
-
-		/**
 		 * Handles the selection presets variant selector click.
 		 * Opens selection presets popover.
 		 */
@@ -1070,6 +1074,57 @@ sap.ui.define([
 					MessageToast.show("Update rule failed because: " + result);
 				}
 			}, this);
+		},
+
+		_associateTableColumnsMenu: function () {
+			const oColumnsData = TableSettingsModel.getProperty("/columns");
+			const oList = new List({
+				mode: mLibrary.ListMode.MultiSelect
+			});
+			oList.setModel(TableSettingsModel, "tableSettings");
+
+			for (const sColumnKey in oColumnsData) {
+				if (oColumnsData[sColumnKey].visibilityConfigurable) {
+					oList.addItem(new StandardListItem({
+						title: `{tableSettings>/columns/${sColumnKey}/title}`,
+						selected: {
+							model: "tableSettings",
+							path: `/columns/${sColumnKey}/visible`,
+							mode: BindingMode.OneWay
+						}
+					}));
+				}
+			}
+
+			const oColumnsMenu = new ColumnMenu("tableColumnMenu", {
+				beforeOpen: function () {
+					oList.getItems().forEach(function (oItem) {
+						oItem.setSelected(oItem.getBinding("selected").getValue());
+					});
+				},
+				items: [
+					new ColumnMenuItem({
+						label: "Columns",
+						content: oList,
+						showResetButton: false,
+						confirm: function () {
+							oList.getItems().forEach(function (oItem) {
+								TableSettingsModel.setProperty(oItem.getBinding("selected").getPath(), oItem.getSelected());
+							});
+
+							if (this.model.getProperty("/persistingSettings")) {
+								this.persistVisibleColumns();
+							}
+						}.bind(this)
+					})
+				]
+			});
+
+			this.getView().addDependent(oColumnsMenu);
+
+			for (const sColumnKey in oColumnsData) {
+				this.byId(sColumnKey + "Column").setHeaderMenu(oColumnsMenu);
+			}
 		}
 	});
 });

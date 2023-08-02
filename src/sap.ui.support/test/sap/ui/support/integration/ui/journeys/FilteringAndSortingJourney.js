@@ -36,8 +36,6 @@ sap.ui.define([
 		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInModel(1);
 
 		Then.onTheRulesPage.iShouldSeeRuleDeselectedInModel(1, 1);
-
-
 	});
 
 	opaTest("Should see column list menu", function (Given, When, Then) {
@@ -45,7 +43,6 @@ sap.ui.define([
 		When.onTheRulesPage.iPressTableHeader();
 
 		Then.onTheRulesPage.iShouldSeeColumnListMenu();
-
 	});
 
 	opaTest("Enter filtering value and filter", function (Given, When, Then) {
@@ -57,7 +54,6 @@ sap.ui.define([
 		When.onTheRulesPage.iFilterColumnOfTable();
 
 		Then.iTeardownSupportAssistantFrame();
-
 	});
 
 	opaTest("Should see the Tree Table of the Support Assistant with 45 rules selected", function (Given, When, Then) {
@@ -84,8 +80,6 @@ sap.ui.define([
 		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInModel(1);
 
 		Then.onTheRulesPage.iShouldSeeRuleDeselectedInModel(1, 1);
-
-
 	});
 
 	opaTest("Should see column list menu", function (Given, When, Then) {
@@ -93,12 +87,11 @@ sap.ui.define([
 		When.onTheRulesPage.iPressTableHeader();
 
 		Then.onTheRulesPage.iShouldSeeColumnListMenu();
-
 	});
 
-	opaTest("Should deselect one rule in model and view", function (Given, When, Then) {
+	opaTest("Should sort and still see rule deselected in model and view", function (Given, When, Then) {
 
-		When.onTheRulesPage.iPressSortAscendingButton();
+		When.onTheRulesPage.iPressSortDescendingButton();
 
 		//sap.ui.core - library
 		Then.onTheRulesPage.iShouldSeeLibrarySelectedInView(1);
@@ -112,7 +105,6 @@ sap.ui.define([
 		Then.onTheRulesPage.iShouldSeeRuleDeselectedInModel(1, 1);
 
 		Then.iTeardownSupportAssistantFrame();
-
 	});
 
 });
