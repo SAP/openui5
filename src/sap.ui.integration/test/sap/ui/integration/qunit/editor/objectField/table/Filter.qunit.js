@@ -201,7 +201,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), oValue), "Field 1: Value");
 			oTable = oField.getAggregation("_field");
 			assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			oClearFilterButton = oToolbar.getContent()[4];
 			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
@@ -329,7 +329,7 @@ sap.ui.define([
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
 			assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -447,7 +447,7 @@ sap.ui.define([
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
 			assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");

@@ -768,7 +768,7 @@ sap.ui.define([
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is a table");
 					assert.equal(oTable.getId(), sEditorId + "_objectWithPropertiesDefinedAndValueFromJsonList_control", "Table: id ok");
 					assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
-					var aActions = oTable.getToolbar().getContent();
+					var aActions = oTable.getExtension()[0].getContent();
 					assert.equal(aActions[1].getId(), sEditorId + "_objectWithPropertiesDefinedAndValueFromJsonList_control_table_add_btn", "Table: add button id");
 					assert.equal(aActions[2].getId(), sEditorId + "_objectWithPropertiesDefinedAndValueFromJsonList_control_table_edit_btn", "Table: edit button id");
 					assert.equal(aActions[3].getId(), sEditorId + "_objectWithPropertiesDefinedAndValueFromJsonList_control_table_delete_btn", "Table: delete button id");
@@ -949,7 +949,7 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.equal(oTable.getId(), sEditorId + "_objects_control", "Field 1: Table id");
-					var aActions = oTable.getToolbar().getContent();
+					var aActions = oTable.getExtension()[0].getContent();
 					assert.equal(aActions[1].getId(), sEditorId + "_objects_control_table_add_btn", "Table: add button id");
 					assert.equal(aActions[2].getId(), sEditorId + "_objects_control_table_edit_btn", "Table: edit button id");
 					assert.equal(aActions[3].getId(), sEditorId + "_objects_control_table_delete_btn", "Table: delete button id");
@@ -1052,7 +1052,7 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.equal(oTable.getId(), sEditorId + "_objectsWithPropertiesDefined_control", "Field 1: Table id");
-					var aActions = oTable.getToolbar().getContent();
+					var aActions = oTable.getExtension()[0].getContent();
 					assert.equal(aActions[1].getId(), sEditorId + "_objectsWithPropertiesDefined_control_table_add_btn", "Table: add button id");
 					assert.equal(aActions[2].getId(), sEditorId + "_objectsWithPropertiesDefined_control_table_edit_btn", "Table: edit button id");
 					assert.equal(aActions[3].getId(), sEditorId + "_objectsWithPropertiesDefined_control_table_delete_btn", "Table: delete button id");
@@ -1491,7 +1491,7 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is a table");
 					assert.equal(oTable.getId(), sEditorId + "_objectWithPropertiesDefinedAndValueFromJsonList_control", "Table: id ok");
-					var aActions = oTable.getToolbar().getContent();
+					var aActions = oTable.getExtension()[0].getContent();
 					var oAddButton = aActions[1];
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
@@ -1579,7 +1579,7 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is a table");
 					assert.equal(oTable.getId(), sEditorId + "_objectWithPropertiesDefined1_control", "Table: id ok");
-					var aActions = oTable.getToolbar().getContent();
+					var aActions = oTable.getExtension()[0].getContent();
 					var oAddButton = aActions[1];
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};

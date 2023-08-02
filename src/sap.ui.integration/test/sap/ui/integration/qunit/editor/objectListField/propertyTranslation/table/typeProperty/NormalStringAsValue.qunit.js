@@ -192,7 +192,7 @@ sap.ui.define([
 					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
 					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -365,7 +365,7 @@ sap.ui.define([
 					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
 					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -503,7 +503,7 @@ sap.ui.define([
 					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
 					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -631,7 +631,7 @@ sap.ui.define([
 					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
 					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -793,7 +793,7 @@ sap.ui.define([
 					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
 					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");

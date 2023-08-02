@@ -241,7 +241,7 @@ sap.ui.define([
 							assert.ok(oField1.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 							assert.ok(deepEqual(oField1._getCurrentProperty("value"), [oValueOfObject1InAdminChange]), "Field 1: Value");
 							var oTable1 = oField1.getAggregation("_field");
-							var oToolbar1 = oTable1.getToolbar();
+							var oToolbar1 = oTable1.getExtension()[0];
 							assert.equal(oTable1.getBinding().getCount(), 9, "Table 1: value length is 9");
 							assert.equal(oToolbar1.getContent().length, 9, "Table toolbar 1: content length");
 							var oEditButton1 = oToolbar1.getContent()[2];
@@ -319,7 +319,7 @@ sap.ui.define([
 											assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 2: Object List Field");
 											assert.ok(deepEqual(oField2._getCurrentProperty("value"), [oValueOfObject2InAdminChange]), "Field 2: Value");
 											var oTable2 = oField2.getAggregation("_field");
-											var oToolbar2 = oTable2.getToolbar();
+											var oToolbar2 = oTable2.getExtension()[0];
 											assert.equal(oTable2.getBinding().getCount(), 9, "Table 2: value length is 9");
 											assert.equal(oToolbar2.getContent().length, 9, "Table toolbar 2: content length");
 											var oEditButton2 = oToolbar2.getContent()[2];

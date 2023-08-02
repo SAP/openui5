@@ -187,7 +187,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 			oTable = oField.getAggregation("_field");
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			var oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
@@ -218,7 +218,7 @@ sap.ui.define([
 			assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after filtering column URL with 'http://'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			var oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -331,7 +331,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 			oTable = oField.getAggregation("_field");
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			var oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
@@ -362,7 +362,7 @@ sap.ui.define([
 			assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after filtering column URL with 'http://'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			var oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -490,7 +490,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 			oTable = oField.getAggregation("_field");
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
@@ -675,7 +675,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 			oTable = oField.getAggregation("_field");
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
@@ -876,7 +876,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 			oTable = oField.getAggregation("_field");
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
@@ -1068,7 +1068,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 			oTable = oField.getAggregation("_field");
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
@@ -1278,7 +1278,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 			oTable = oField.getAggregation("_field");
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
@@ -1361,7 +1361,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 			oTable = oField.getAggregation("_field");
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");

@@ -149,7 +149,7 @@ sap.ui.define([
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -279,7 +279,7 @@ sap.ui.define([
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -402,7 +402,7 @@ sap.ui.define([
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -585,7 +585,7 @@ sap.ui.define([
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -760,7 +760,7 @@ sap.ui.define([
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -946,7 +946,7 @@ sap.ui.define([
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -1155,7 +1155,7 @@ sap.ui.define([
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
@@ -1307,7 +1307,7 @@ sap.ui.define([
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
@@ -1447,7 +1447,7 @@ sap.ui.define([
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
@@ -1605,7 +1605,7 @@ sap.ui.define([
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
@@ -1779,7 +1779,7 @@ sap.ui.define([
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oDeleteButton = oToolbar.getContent()[3];
 					assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button disabled");
