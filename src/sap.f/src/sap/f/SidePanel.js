@@ -896,7 +896,9 @@ sap.ui.define([
 		if (iSidePanelWidth > SIDE_PANEL_SPLIT_BREAKPOINT) {
 			oSide.classList.add("sapFSPSplitView");
 		} else {
-			oSide.classList.contains("sapFSPSplitView") && this.setActionBarExpanded(false);
+			// TODO: revise the upcoming interaction as re-rendering is happening while resizing.
+			// Currently the action toolbar would not collapse if shriked via mouse. That makes the resizing via mouse usable.
+			// oSide.classList.contains("sapFSPSplitView") && this.setActionBarExpanded(false);
 			oSide.classList.remove("sapFSPSplitView");
 		}
 	};

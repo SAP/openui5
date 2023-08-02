@@ -102,7 +102,7 @@ sap.ui.define([
 
 		SidePanelRenderer.renderSide = function(oRm, oControl) {
 			var bPhone = Device.system.phone,
-				bRenderSplitter = oControl.getSidePanelResizable() && oControl._getSideContentExpanded() && !bPhone;
+				bRenderSplitter = oControl._isResizable();
 
 			oRm.openStart("aside");
 			oRm.class("sapFSPSide");

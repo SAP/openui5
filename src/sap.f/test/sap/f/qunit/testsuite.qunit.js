@@ -231,6 +231,9 @@ sap.ui.define(function () {
 				}
 			},
 			"SidePanel": {
+				sinon: {
+					version: "edge"
+				},
 				coverage: {
 					only: ["sap/f/SidePanel"]
 				}
