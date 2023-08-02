@@ -303,7 +303,7 @@ sap.ui.define([
 			});
 		});
 
-		oNameColumn._openHeaderMenu();
+		oNameColumn._openHeaderMenu(oNameColumn.getDomRef());
 	});
 
 	/**
@@ -426,7 +426,7 @@ sap.ui.define([
 			});
 		});
 
-		oNameColumn._openHeaderMenu();
+		oNameColumn._openHeaderMenu(oNameColumn.getDomRef());
 	});
 
 	QUnit.test("Manual table changes via API", function(assert) {

@@ -337,7 +337,7 @@ sap.ui.define([
 			done();
 		});
 
-		oColFirstName._openHeaderMenu();
+		oColFirstName._openHeaderMenu(oColFirstName.getDomRef());
 	});
 
 	QUnit.test("Filter", function(assert) {
@@ -900,7 +900,8 @@ sap.ui.define([
 			}).then(done);
 		});
 
-		oTable.getColumns()[0]._openHeaderMenu();
+		var oColumn = oTable.getColumns()[0];
+		oColumn._openHeaderMenu(oColumn.getDomRef());
 	});
 
 	QUnit.test("Localization Change", function(assert) {
@@ -993,7 +994,8 @@ sap.ui.define([
 				}).then(done);
 			});
 
-			oTable.getColumns()[0]._openHeaderMenu();
+			var oColumn = oTable.getColumns()[0];
+			oColumn._openHeaderMenu(oColumn.getDomRef());
 		}());
 	});
 
@@ -1099,6 +1101,7 @@ sap.ui.define([
 	QUnit.test("ColumnMenu", function(assert) {
 		var done = assert.async();
 		var oColumn = oTable.getColumns()[1];
+		var oCellDomRef = oColumn.getDomRef();
 
 		oColumn.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
@@ -1110,14 +1113,14 @@ sap.ui.define([
 
 				//Check column without sort
 				oColumn = oTable.getColumns()[5];
-				oColumn._openHeaderMenu();
+				oColumn._openHeaderMenu(oCellDomRef);
 				oMenu = oColumn.getMenu();
 				assert.equal(oMenu.getItems().length, 1, "Column menu without sort has only one filter item");
 				oMenu.close();
 
 				//Check column without filter
 				oColumn = oTable.getColumns()[6];
-				oColumn._openHeaderMenu();
+				oColumn._openHeaderMenu(oCellDomRef);
 				oMenu = oColumn.getMenu();
 				assert.equal(oMenu.getItems().length, 2, "Column menu without filter has only two sort items");
 				oMenu.close();
@@ -1126,14 +1129,14 @@ sap.ui.define([
 				oTable.setShowColumnVisibilityMenu(true);
 				oCore.applyChanges();
 				oColumn = oTable.getColumns()[5];
-				oColumn._openHeaderMenu();
+				oColumn._openHeaderMenu(oCellDomRef);
 				oMenu = oColumn.getMenu();
 				assert.equal(oMenu.getItems().length, 2, "Column menu has one filter item and one column visibility item");
 				assert.ok(oRemoveAggregationSpy.notCalled, "Initial creation of the column visibility submenu");
 				oMenu.close();
 
 				oColumn = oTable.getColumns()[6];
-				oColumn._openHeaderMenu();
+				oColumn._openHeaderMenu(oCellDomRef);
 				oMenu = oColumn.getMenu();
 				assert.ok(oRemoveAggregationSpy.withArgs("items", oTable._oColumnVisibilityMenuItem, true).notCalled,
 					"The items aggregation is not removed, the visibility submenu is only updated");
@@ -1142,7 +1145,7 @@ sap.ui.define([
 			});
 		});
 
-		oColumn._openHeaderMenu();
+		oColumn._openHeaderMenu(oCellDomRef);
 	});
 
 	/**
@@ -1163,7 +1166,7 @@ sap.ui.define([
 			});
 		});
 
-		oColumn._openHeaderMenu();
+		oColumn._openHeaderMenu(oColumn.getDomRef());
 	});
 
 	/**
@@ -1175,6 +1178,7 @@ sap.ui.define([
 
 		var oColumn0 = oTable.getColumns()[0];
 		var oColumn1 = oTable.getColumns()[1];
+		var oCellDomRef = oColumn1.getDomRef();
 
 		oTable.attachColumnVisibility(function(oEvent) {
 			var oEventColumn = oEvent.getParameter("column");
@@ -1199,7 +1203,7 @@ sap.ui.define([
 
 				assert.equal(oColumn0.getVisible(), true, "lastName column is still visible (preventDefault)");
 
-				oColumn1._openHeaderMenu();
+				oColumn1._openHeaderMenu(oCellDomRef);
 				qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
 				qutils.triggerMouseEvent(aSubmenuItems[1].$(), "click");
 
@@ -1208,7 +1212,7 @@ sap.ui.define([
 			});
 		});
 
-		oColumn1._openHeaderMenu();
+		oColumn1._openHeaderMenu(oCellDomRef);
 	});
 
 	/**
@@ -1235,10 +1239,11 @@ sap.ui.define([
 
 		oTable.setShowColumnVisibilityMenu(true);
 		var aColumns = oTable.getColumns();
+		var oColumn = aColumns[0];
 
-		aColumns[0].attachEventOnce("columnMenuOpen", function() {
+		oColumn.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oMenu = aColumns[0].getMenu();
+				var oMenu = oColumn.getMenu();
 				oMenu.open();
 				var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
 				var aSubmenuItems = oSubmenu.getItems();
@@ -1265,7 +1270,7 @@ sap.ui.define([
 			});
 		});
 
-		aColumns[0]._openHeaderMenu();
+		oColumn._openHeaderMenu(oColumn.getDomRef());
 	});
 
 	/**
@@ -1291,17 +1296,19 @@ sap.ui.define([
 
 		oTable.setShowColumnVisibilityMenu(true);
 		var aColumns = oTable.getColumns();
+		var oColumn = aColumns[0];
+		var oCellDomRef = oColumn.getDomRef();
 
-		aColumns[0].attachEventOnce("columnMenuOpen", function() {
+		oColumn.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oMenu = aColumns[0].getMenu();
-				aColumns[0]._openHeaderMenu();
+				var oMenu = oColumn.getMenu();
+				oColumn._openHeaderMenu(oCellDomRef);
 				checkSubmenuItemsOrder(oTable, assert);
 
 				for (var i = 7; i > 0; i = i - 2) {
 					oTable.removeColumn(aColumns[i]);
 				}
-				aColumns[0]._openHeaderMenu();
+				oColumn._openHeaderMenu(oCellDomRef);
 				checkSubmenuItemsOrder(oTable, assert);
 
 				oTable.addColumn(aColumns[1]);
@@ -1309,14 +1316,14 @@ sap.ui.define([
 				oTable.insertColumn(aColumns[5], 0);
 				oTable.insertColumn(aColumns[7], 3);
 
-				aColumns[0]._openHeaderMenu();
+				oColumn._openHeaderMenu(oCellDomRef);
 				checkSubmenuItemsOrder(oTable, assert);
 				oMenu.close();
 				done();
 			});
 		});
 
-		aColumns[0]._openHeaderMenu();
+		oColumn._openHeaderMenu(oCellDomRef);
 	});
 
 	/**
@@ -1371,7 +1378,7 @@ sap.ui.define([
 			});
 		});
 
-		oColumn._openHeaderMenu();
+		oColumn._openHeaderMenu(oColumn.getDomRef());
 	});
 
 	QUnit.test("After initialization", function(assert) {
