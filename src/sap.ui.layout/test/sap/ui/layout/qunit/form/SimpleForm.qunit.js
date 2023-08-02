@@ -2187,19 +2187,16 @@ sap.ui.define([
 	});
 
 	function changeLayout(assert, oOldLayout) {
-		assert.ok(oFormLayout.isA("sap.ui.layout.form.ResponsiveLayout"), "ResponsiveLayout used");
+		assert.ok(oFormLayout.isA("sap.ui.layout.form.ColumnLayout"), "ColumnLayout used");
 		assert.ok(oOldLayout._bIsBeingDestroyed, "old layout destroyed");
 
 		var oLabel = oCore.byId("L1");
 		var oLayoutData = oLabel.getLayoutData();
-		assert.ok(oLayoutData, "Label has LayoutData");
-		assert.ok(oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData"), "sap.ui.layout.ResponsiveFlowLayoutData used");
-		assert.equal(oLayoutData.getWeight(), 3, "Label LayoutData weight");
+		assert.notOk(!!oLayoutData, "Label has no LayoutData");
 
 		var aFormContainers = oForm.getFormContainers();
 		oLayoutData = aFormContainers[0].getLayoutData();
-		assert.ok(oLayoutData, "FormContainer has LayoutData");
-		assert.ok(oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData"), "sap.ui.layout.ResponsiveFlowLayoutData used");
+		assert.notOk(!!oLayoutData, "FormContainer has no LayoutData");
 
 		oOldLayout = oFormLayout;
 		oSimpleForm.setLayout("ResponsiveGridLayout");
@@ -2219,14 +2216,14 @@ sap.ui.define([
 		var fnDone;
 		if (oFormLayout) {
 			oOldLayout = oFormLayout;
-			oSimpleForm.setLayout("ResponsiveLayout");
+			oSimpleForm.setLayout(library.form.SimpleFormLayout.ColumnLayout);
 			oCore.applyChanges();
 			oFormLayout = oForm.getLayout();
 			if (oFormLayout) {
 				changeLayout(assert, oOldLayout);
 			} else {
 				fnDone = assert.async();
-				sap.ui.require(["sap/ui/layout/form/ResponsiveLayout"], function() {
+				sap.ui.require(["sap/ui/layout/form/ColumnLayout"], function() {
 					oFormLayout = oForm.getLayout();
 					changeLayout(assert, oOldLayout);
 					fnDone();
@@ -2238,7 +2235,7 @@ sap.ui.define([
 			sap.ui.require(["sap/ui/layout/form/ResponsiveGridLayout"], function() {
 				oFormLayout = oForm.getLayout();
 				oOldLayout = oFormLayout;
-				oSimpleForm.setLayout("ResponsiveLayout");
+				oSimpleForm.setLayout(library.form.SimpleFormLayout.ColumnLayout);
 				oCore.applyChanges();
 				oFormLayout = oForm.getLayout();
 
@@ -2246,7 +2243,7 @@ sap.ui.define([
 					changeLayout(assert, oOldLayout);
 					fnDone();
 				} else {
-					sap.ui.require(["sap/ui/layout/form/ResponsiveLayout"], function() {
+					sap.ui.require(["sap/ui/layout/form/ColumnLayout"], function() {
 						oFormLayout = oForm.getLayout();
 						changeLayout(assert, oOldLayout);
 						fnDone();
@@ -2309,27 +2306,20 @@ sap.ui.define([
 
 		var oLabel = aContent[1];
 		var oLayoutData = oLabel.getLayoutData();
-		assert.ok(oLayoutData, "Clone-Label has LayoutData");
-		assert.ok(oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData"), "sap.ui.layout.ResponsiveFlowLayoutData used");
-		assert.equal(oLayoutData.getWeight(), 3, "Clone-Label LayoutData weight");
+		assert.notOk(!!oLayoutData, "Clone-Label has no LayoutData");
 		var oField = aContent[12];
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData.isA("sap.ui.core.VariantLayoutData"), "sap.ui.core.VariantLayoutData used");
 		var aLayoutData = oLayoutData.getMultipleLayoutData();
-		assert.equal(aLayoutData.length, 2, "2 layoutData used");
+		assert.equal(aLayoutData.length, 1, "1 layoutData used");
 		var oGD;
-		var oRD;
 		for (var i = 0; i < aLayoutData.length; i++) {
-			if (aLayoutData[i].isA("sap.ui.layout.ResponsiveFlowLayoutData")) {
-				oRD = aLayoutData[i];
-			} else if (aLayoutData[i].isA("sap.ui.layout.GridData")) {
+			if (aLayoutData[i].isA("sap.ui.layout.GridData")) {
 				oGD = aLayoutData[i];
 			}
 		}
-		assert.ok(oRD, "sap.ui.layout.ResponsiveFlowLayoutData used");
 		assert.ok(oGD, "sap.ui.layout.GridData used");
-		assert.equal(oRD.getWeight(), 8, "Clone-Field LayoutData weight");
-		assert.equal(oClone._aLayouts.length, 10, "Clone has own LayoutData");
+		assert.equal(oClone._aLayouts.length, 0, "Clone has no own LayoutData");
 
 		//visibility change
 		oField = oCore.byId("I3");
@@ -2349,7 +2339,7 @@ sap.ui.define([
 	}
 
 	QUnit.test("clone", function(assert) {
-		oSimpleForm.setLayout("ResponsiveLayout");
+		oSimpleForm.setLayout("ColumnLayout");
 		var oToolbar = new Toolbar("TB1");
 		oSimpleForm.addContent(oToolbar);
 
@@ -2359,9 +2349,12 @@ sap.ui.define([
 		oSimpleForm.addContent(oField);
 		oCore.applyChanges();
 
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", clone);
+		asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", clone);
 	});
 
+	/**
+	 * @deprecated as of version 1.93 ResponsiveLayout is deprecated, so test should only be executed if still available
+	 */
 	QUnit.test("resize", function(assert) {
 		oSimpleForm.setLayout("ResponsiveLayout");
 		oCore.applyChanges();
