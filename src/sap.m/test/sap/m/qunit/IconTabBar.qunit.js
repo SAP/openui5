@@ -2707,6 +2707,12 @@ sap.ui.define([
 		var oSelectedItem = oNestedItem;
 
 		assert.strictEqual(this.oIconTabBar.getDomRef("content").getAttribute("aria-labelledby"), oSelectedItem._getRootTab().getId(), "aria-labelledby should be set to the id of the root tab");
+
+		var oAnotherNestedItem = this.oIconTabBar.getItems()[1].getItems()[1];
+		oSelectedItem = oAnotherNestedItem;
+		this.oIconTabBar.setSelectedItem(oAnotherNestedItem);
+
+		assert.strictEqual(this.oIconTabBar.getDomRef("content").getAttribute("aria-labelledby"), oSelectedItem._getRootTab().getId(), "aria-labelledby should be set to the id of the root tab");
 	});
 
 	QUnit.module("Padding");

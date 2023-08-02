@@ -579,7 +579,7 @@ sap.ui.define([
 			} else {
 				//change the content aria-labelled by the newly selected tab;
 				if (bIsParentIconTabBar) {
-					oParent.$("content").attr('aria-labelledby', oItem.sId);
+					oParent.$("content").attr('aria-labelledby', oItem._getRootTab().getId());
 				}
 
 				// set new item
