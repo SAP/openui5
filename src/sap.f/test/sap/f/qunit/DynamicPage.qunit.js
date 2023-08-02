@@ -763,7 +763,9 @@ function (
 			done = assert.async(),
 			DummyControl = Control.extend("sap.m.DummyControl", {
 				renderer: function(oRm) {
-					oRm.write("<div></div>");
+					oRm.openStart("div");
+					oRm.openEnd();
+					oRm.close("div");
 				}
 			});
 
@@ -2980,7 +2982,7 @@ function (
 
 			var oXmlString = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m" xmlns:f="sap.f" displayBlock="true" height="100%">',
-					'<f:DynamicPageTitle id="DynamicPageTitle" primaryArea="Begin">',
+					'<f:DynamicPageTitle id="DynamicPageTitle">',
 						'<f:expandedHeading>',
 							'<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">',
 								'<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginEnd"/>',
@@ -2995,7 +2997,7 @@ function (
 						'<f:snappedHeading>',
 							'<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">',
 								'<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">',
-									'<f:Avatar src="../../sap/f/images/Woman_avatar_02.png" displaySize="S" class="sapUiTinyMarginEnd"/>',
+									'<m:Avatar src="../../sap/f/images/Woman_avatar_02.png" displaySize="S" class="sapUiTinyMarginEnd"/>',
 									'<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginEnd"/>',
 								'</m:FlexBox>',
 								'<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">',
@@ -3093,7 +3095,7 @@ function (
 						'<f:snappedHeading>',
 							'<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">',
 								'<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">',
-									'<f:Avatar src="../../sap/f/images/Woman_avatar_02.png" displaySize="S" class="sapUiTinyMarginEnd"/>',
+									'<m:Avatar src="../../sap/f/images/Woman_avatar_02.png" displaySize="S" class="sapUiTinyMarginEnd"/>',
 									'<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginEnd"/>',
 								'</m:FlexBox>',
 								'<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">',
@@ -3170,6 +3172,9 @@ function (
 		}
 	});
 
+	/**
+	 * @deprecated since 1.58
+	 */
 	QUnit.test("Test flex-basis styles when primaryArea=Middle", function(assert) {
 		// arrange
 		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
@@ -3188,7 +3193,7 @@ function (
 		assert.equal(parseFloat(oActions.css("flex-shrink")).toFixed(1), 1.6, "Actions shrink factor is correct");
 	});
 
-	QUnit.test("Test flex-basis styles when primaryArea=Begin and areaShrinkRatio is set", function(assert) {
+	QUnit.test("Test flex-basis styles when areaShrinkRatio is set", function(assert) {
 		// arrange
 		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
 			oHeading = oTitle.$("left-inner"),
@@ -3206,6 +3211,9 @@ function (
 		assert.equal(parseFloat(oActions.css("flex-shrink")).toFixed(1), 4, "Actions shrink factor is correct");
 	});
 
+	/**
+	 * @deprecated since 1.58
+	 */
 	QUnit.test("Test flex-basis styles when primaryArea=Middle and areaShrinkRatio is set", function(assert) {
 		// arrange
 		var oTitle = Core.byId("comp---view--DynamicPageTitle"),

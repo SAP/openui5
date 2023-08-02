@@ -39,7 +39,9 @@ function (
 
 	sinon.config.useFakeTimers = false;
 
-	// shortcut for sap.f.DynamicPageTitleArea
+	/**
+	 * @deprecated As of version 1.54
+	 */
 	var DynamicPageTitleArea = fioriLibrary.DynamicPageTitleArea;
 
 	var oFactory = SemanticUtil.oFactory,

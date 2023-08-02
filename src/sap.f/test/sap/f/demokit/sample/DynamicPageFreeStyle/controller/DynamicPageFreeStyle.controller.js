@@ -1,18 +1,15 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/f/library",
 	"sap/ui/core/Fragment"
-], function (Controller, JSONModel, library, Fragment) {
+], function (Controller, JSONModel, Fragment) {
 	"use strict";
-
-	// shortcut for sap.f.DynamicPageTitleArea
-	var DynamicPageTitleArea = library.DynamicPageTitleArea;
 
 	return Controller.extend("sap.f.sample.DynamicPageFreeStyle.controller.DynamicPageFreeStyle", {
 		onInit: function () {
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
+			this.sShrinkRatio = "1:1.6:1.6";
 		},
 		getPage : function() {
 			return this.byId("dynamicPageId");
@@ -22,8 +19,9 @@ sap.ui.define([
 		},
 		toggleAreaPriority: function () {
 			var oTitle = this.getPage().getTitle(),
-				sNewPrimaryArea = oTitle.getPrimaryArea() === DynamicPageTitleArea.Begin ? DynamicPageTitleArea.Middle : DynamicPageTitleArea.Begin;
-			oTitle.setPrimaryArea(sNewPrimaryArea);
+				sDefaultShrinkRatio = oTitle.getMetadata().getProperty("areaShrinkRatio").getDefaultValue(),
+				sNewShrinkRatio = oTitle.getAreaShrinkRatio() === sDefaultShrinkRatio ? "1.6:1:1.6" : sDefaultShrinkRatio;
+			oTitle.setAreaShrinkRatio(sNewShrinkRatio);
 		},
 		onPressOpenPopover: function (oEvent) {
 			var oView = this.getView(),
