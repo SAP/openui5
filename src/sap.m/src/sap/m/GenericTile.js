@@ -244,7 +244,16 @@ sap.ui.define([
 				 * @experimental Since 1.113
 				 * @since 1.113
 				 */
-				tileBadge: { type: "string", group: "Misc", defaultValue: "" }
+				tileBadge: { type: "string", group: "Misc", defaultValue: "" },
+				/**
+				 * Sets the offset for the Drop Area associated with a Generic Tile.
+				 * The offset is applied uniformly to all the tile edges.
+				 * @experimental Since 1.113
+				 * @internal
+				 * @since 1.118
+				 * @ui5-restricted Used by S/4 MyHome (ux.eng.s4producthomes1)
+				 */
+				dropAreaOffset: { type: "int", group: "Misc", defaultValue: 0 }
 			},
 			defaultAggregation: "tileContent",
 			aggregations: {
@@ -1968,6 +1977,28 @@ GenericTile.prototype._isNavigateActionEnabled = function() {
 		oEvent.preventDefault();
 		var sURL = oEvent.getSource().getParent().getUrl();
 		URLHelper.redirect(sURL, true);
+	};
+
+	/**
+	 * Calculates and returns the bounding client rectangle
+	 * of the drop area taking the offset property into account.
+	 * @private
+	 * @param {string} sDropLayout - current drop layout
+	 * @returns {object} mDropRect - bounding rectangle information factoring in offset, if required
+	 */
+	GenericTile.prototype.getDropAreaRect = function(sDropLayout) {
+		var mDropRect = this.getDomRef().getBoundingClientRect().toJSON();
+		var iDropAreaOffset = this.getDropAreaOffset();
+
+		if (sDropLayout === "Horizontal") {
+			mDropRect.left -= iDropAreaOffset;
+			mDropRect.right += iDropAreaOffset;
+		} else {
+			mDropRect.top -= iDropAreaOffset;
+			mDropRect.bottom += iDropAreaOffset;
+		}
+
+		return mDropRect;
 	};
 
 	/**

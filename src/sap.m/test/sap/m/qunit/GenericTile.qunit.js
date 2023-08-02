@@ -5463,4 +5463,45 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.equal(document.getElementById("badge-tile-tileBadge").innerText, sTestBadge.substring(0, 3), "only first 2 characters of the badge value are displayed");
 	});
 
+	QUnit.module("Generic Tile: 'dropAreaOffset' property tests", {
+		beforeEach: function () {
+			this.oGenericTile = new GenericTile({
+				id: "drop-tile",
+				header: "Test Header",
+				subheader: "Test Subheader",
+				mode: "IconMode",
+				frameType: "OneByOne",
+				backgroundColor: "black",
+				tileIcon: "sap-icon://folder-full",
+				dropAreaOffset: 0
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("should verify that drop area bounding rectangle is influenced on change of dropAreaOffset", function (assert) {
+		assert.ok(document.getElementById("drop-tile"), "tile rendered initially");
+
+		var OFFSET = 100,
+			oBoundingRect = this.oGenericTile.getDropAreaRect();
+
+		//Update dropAreaOffset
+		this.oGenericTile.setDropAreaOffset(OFFSET);
+		oCore.applyChanges();
+
+		//Horizontal Layout
+		var oBoundingRectHorizontal = this.oGenericTile.getDropAreaRect("Horizontal");
+		assert.equal(Math.abs(oBoundingRect.left - oBoundingRectHorizontal.left), OFFSET, "left updated");
+		assert.equal(Math.abs(oBoundingRectHorizontal.right - oBoundingRect.right), OFFSET, "right updated");
+
+		//Vertical Layout
+		var oBoundingRectVertical = this.oGenericTile.getDropAreaRect("Vertical");
+		assert.equal(Math.abs(oBoundingRect.top - oBoundingRectVertical.top), OFFSET, "top updated");
+		assert.equal(Math.abs(oBoundingRectVertical.bottom - oBoundingRect.bottom), OFFSET, "bottom updated");
+	});
+
 });
