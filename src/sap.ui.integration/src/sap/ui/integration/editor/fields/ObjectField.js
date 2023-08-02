@@ -187,7 +187,7 @@ sap.ui.define([
 				columns: columns,
 				selectionBehavior: "RowOnly",
 				rowSelectionChange: that.onTableSelectionChange.bind(that),
-				toolbar: oTableToolbar,
+				extension: oTableToolbar,
 				filter: that.onFilter.bind(that)
 			}
 		};

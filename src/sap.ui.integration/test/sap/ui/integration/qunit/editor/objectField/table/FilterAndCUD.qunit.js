@@ -226,7 +226,7 @@ sap.ui.define([
 			assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -369,7 +369,7 @@ sap.ui.define([
 			assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -489,7 +489,7 @@ sap.ui.define([
 			var oSelectionColumn = oTable.getColumns()[0];
 			oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -564,7 +564,7 @@ sap.ui.define([
 			assert.ok(!oCell.getSelected(), "Row 1: Cell 1 is not selected");
 			oCell = oTable.getRows()[1].getCells()[0];
 			assert.ok(oCell.getSelected(), "Row 2: Cell 1 is selected");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button not enabled");
@@ -755,7 +755,7 @@ sap.ui.define([
 			var oSelectionColumn = oTable.getColumns()[0];
 			oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -828,7 +828,7 @@ sap.ui.define([
 			assert.ok(!oCell.getSelected(), "Row 1: Cell 1 is not selected");
 			oCell = oTable.getRows()[1].getCells()[0];
 			assert.ok(oCell.getSelected(), "Row 2: Cell 1 is selected");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button not enabled");
@@ -994,7 +994,7 @@ sap.ui.define([
 			var oSelectionColumn = oTable.getColumns()[0];
 			oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -1081,7 +1081,7 @@ sap.ui.define([
 				"iconcolor": "#E69A17",
 				"int": 3
 			}), "Field 1: Value change back");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button not enabled");
@@ -1262,7 +1262,7 @@ sap.ui.define([
 			var oSelectionColumn = oTable.getColumns()[0];
 			oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -1350,7 +1350,7 @@ sap.ui.define([
 				"iconcolor": "#E69A17",
 				"int": 3
 			}), "Field 1: Value change back");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button not enabled");
@@ -1525,7 +1525,7 @@ sap.ui.define([
 			var oSelectionColumn = oTable.getColumns()[0];
 			oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -1605,7 +1605,7 @@ sap.ui.define([
 			assert.ok(oCell.getSelected(), "Row 2: Cell 1 is selected");
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(!oCell.getSelected(), "Row 1: Cell 1 is not selected");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oDeleteButton = oToolbar.getContent()[3];
 			assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button not enabled");
@@ -1679,7 +1679,7 @@ sap.ui.define([
 			var oSelectionColumn = oTable.getColumns()[0];
 			oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -1759,7 +1759,7 @@ sap.ui.define([
 			assert.ok(oCell.getSelected(), "Row 2: Cell 1 is selected");
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(!oCell.getSelected(), "Row 1: Cell 1 is not selected");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oDeleteButton = oToolbar.getContent()[3];
 			assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button not enabled");

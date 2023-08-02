@@ -214,7 +214,7 @@ sap.ui.define([
 							assert.ok(oField1.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 							assert.ok(deepEqual(oField1._getCurrentProperty("value"), [oObject1InContentChange, oObject2InContentChange, oObject3InContentChange]), "Field 1: Value");
 							var oTable1 = oField1.getAggregation("_field");
-							var oToolbar1 = oTable1.getToolbar();
+							var oToolbar1 = oTable1.getExtension()[0];
 							assert.equal(oTable1.getBinding().getCount(), 11, "Table 1: value length is 11");
 							assert.equal(oToolbar1.getContent().length, 9, "Table toolbar 1: content length");
 							var oEditButton1 = oToolbar1.getContent()[2];

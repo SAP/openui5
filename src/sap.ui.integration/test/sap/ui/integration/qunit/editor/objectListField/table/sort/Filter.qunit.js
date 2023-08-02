@@ -196,7 +196,7 @@ sap.ui.define([
 			assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 			assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -296,7 +296,7 @@ sap.ui.define([
 			assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 			assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -435,7 +435,7 @@ sap.ui.define([
 			assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 			assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -542,7 +542,7 @@ sap.ui.define([
 			assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 			assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -649,7 +649,7 @@ sap.ui.define([
 			assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 			assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
@@ -746,7 +746,7 @@ sap.ui.define([
 			assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
 			oTable = oField.getAggregation("_field");
-			var oToolbar = oTable.getToolbar();
+			var oToolbar = oTable.getExtension()[0];
 			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");

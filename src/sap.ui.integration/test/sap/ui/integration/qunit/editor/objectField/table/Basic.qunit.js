@@ -211,7 +211,7 @@ sap.ui.define([
 					assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oTableToolbar = oTable.getToolbar();
+					var oTableToolbar = oTable.getExtension()[0];
 					var oAddButton = oTableToolbar.getContent()[1];
 					assert.ok(oAddButton.getEnabled(), "Table: Add button in toolbar enabled");
 					var oEditButton = oTableToolbar.getContent()[2];
@@ -585,7 +585,7 @@ sap.ui.define([
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oTableToolbar = oTable.getToolbar();
+					var oTableToolbar = oTable.getExtension()[0];
 					var oAddButton = oTableToolbar.getContent()[1];
 					assert.ok(oAddButton.getEnabled(), "Table: Add button in toolbar enabled");
 					var oEditButton = oTableToolbar.getContent()[2];
@@ -909,7 +909,7 @@ sap.ui.define([
 					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-					var oToolbar = oTable.getToolbar();
+					var oToolbar = oTable.getExtension()[0];
 					assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(!oAddButton.getVisible(), "Table toolbar: add button not visible");
@@ -937,7 +937,7 @@ sap.ui.define([
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oTableToolbar = oTable.getToolbar();
+					var oTableToolbar = oTable.getExtension()[0];
 					var oAddButton = oTableToolbar.getContent()[1];
 					assert.ok(oAddButton.getEnabled(), "Table: Add button in toolbar enabled");
 					var oEditButton = oTableToolbar.getContent()[2];
@@ -1253,7 +1253,7 @@ sap.ui.define([
 					var oSelectionCell1 = oNewRow.getCells()[0];
 					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					var oTableToolbar = oTable.getToolbar();
+					var oTableToolbar = oTable.getExtension()[0];
 					var oAddButton = oTableToolbar.getContent()[1];
 					assert.ok(oAddButton.getEnabled(), "Table: Add button in toolbar enabled");
 					var oEditButton = oTableToolbar.getContent()[2];
@@ -1526,7 +1526,7 @@ sap.ui.define([
 					var oSelectionCell1 = oNewRow.getCells()[0];
 					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					var oTableToolbar = oTable.getToolbar();
+					var oTableToolbar = oTable.getExtension()[0];
 					var oEditButton = oTableToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
 					var oRow = oTable.getRows()[1];
