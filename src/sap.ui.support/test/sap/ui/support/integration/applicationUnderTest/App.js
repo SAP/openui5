@@ -14,9 +14,8 @@ sap.ui.define(["sap/ui/core/Core",
 				title: 'Application under test',
 				app: new ComponentContainer({
 					name: 'appUnderTest',
-					settings: {
-						id: "appUnderTest"
-					}
+					async: true,
+					manifest: true
 				})
 			}).placeAt('content');
 		});
