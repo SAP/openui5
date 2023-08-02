@@ -2397,7 +2397,7 @@ sap.ui.define([
 
 			// Initialize the delegate and apply it to the control (only once)
 			if (!this._oItemNavigation) {
-				this._oItemNavigation = new ItemNavigation();
+				this._oItemNavigation = new ItemNavigation(undefined, undefined, true);
 				this.addDelegate(this._oItemNavigation);
 			}
 			// After each rendering the delegate needs to be initialized as well
