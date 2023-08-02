@@ -3445,7 +3445,7 @@ sap.ui.define([
 		}, true);
 
 		var oBinding = oModel.bindList("/Categories");
-		oModel.setDeferredBatchGroups(["myId"]);
+		oModel.setDeferredGroups(["myId"]);
 		var handler = function() { // delay the following test
 			// detach so that checkUpdate called from v2.Context#delete does not again call this handler
 			oBinding.detachChange(handler);
@@ -3621,7 +3621,7 @@ sap.ui.define([
 		window.fakeResponded = function() {
 			iParallelCount--;
 		};
-		oModel.setDeferredBatchGroups(["1", "2"]);
+		oModel.setDeferredGroups(["1", "2"]);
 		oModel.read("/Categories(1)", {groupId: "1"});
 		oModel.read("/Categories(9999)", {groupId: "1"});
 		oModel.read("/Categories(3)", {groupId: "2"});
@@ -4205,7 +4205,7 @@ sap.ui.define([
 		function fnSuccess() { oInfo.success++; }
 		function fnError() { oInfo.error++; }
 		oModel.attachMetadataLoaded(function() {
-			oModel.setDeferredBatchGroups(["myId"]);
+			oModel.setDeferredGroups(["myId"]);
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
 			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
 						oModel.read("/Categories(4)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
@@ -4252,7 +4252,7 @@ sap.ui.define([
 		function fnSuccess() { oInfo.success++; }
 		function fnError() { oInfo.error++; }
 		oModel.attachMetadataLoaded(function() {
-			oModel.setDeferredBatchGroups(["myId"]);
+			oModel.setDeferredGroups(["myId"]);
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
 			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
 			oModel.read("/Categories(4)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});

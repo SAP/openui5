@@ -510,7 +510,7 @@ sap.ui.define([
 	QUnit.test("test oDataModel read deferred with batchGroupId", function(assert) {
 		var done = assert.async();
 		oModel = initModel();
-		oModel.setDeferredBatchGroups([ "myId" ]);
+		oModel.setDeferredGroups([ "myId" ]);
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				batchGroupId : "myId",
@@ -534,7 +534,7 @@ sap.ui.define([
 		var bRead1 = false;
 		var bRead2 = false;
 		oModel = initModel();
-		oModel.setDeferredBatchGroups([ undefined ]);
+		oModel.setDeferredGroups([ undefined ]);
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				success : function(oData, oResponse) {
@@ -573,7 +573,7 @@ sap.ui.define([
 		var bRead1 = false;
 		var bRead2 = false;
 		oModel = initModel();
-		oModel.setDeferredBatchGroups([ "myId1" ]);
+		oModel.setDeferredGroups([ "myId1" ]);
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				batchGroupId : "myId1",
@@ -614,7 +614,7 @@ sap.ui.define([
 		var bRead1 = false;
 		var bRead2 = false;
 		oModel = initModel();
-		oModel.setDeferredBatchGroups([ "myId1", "myId2" ]);
+		oModel.setDeferredGroups([ "myId1", "myId2" ]);
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				batchGroupId : "myId1",
@@ -653,7 +653,7 @@ sap.ui.define([
 		var done = assert.async();
 		var bSuccess = false;
 		oModel = initModel();
-		oModel.setDeferredBatchGroups([ "myId" ]);
+		oModel.setDeferredGroups([ "myId" ]);
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				batchGroupId : "myId",
@@ -912,7 +912,7 @@ sap.ui.define([
 		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
-		oModel.setDeferredBatchGroups([ "myId1", "myId2" ]);
+		oModel.setDeferredGroups([ "myId1", "myId2" ]);
 		oTable.setModel(oModel);
 		var fnTest = function() {
 			oTable.bindRows({
@@ -1119,7 +1119,7 @@ sap.ui.define([
 		var bUpdate = false;
 		var bRead = false;
 		var bRead2 = false;
-		oModel.setDeferredBatchGroups(["myId1", "myId2"]);
+		oModel.setDeferredGroups(["myId1", "myId2"]);
 		var fnTest = function() {
 			oModel.update("/ProductSet('AD-1000')", {
 					Name : "Hello2"
@@ -1259,7 +1259,7 @@ sap.ui.define([
 		var iCount = 0;
 		var bRead = false;
 		var bRemove = false;
-		oModel.setDeferredBatchGroups(["myId2"]);
+		oModel.setDeferredGroups(["myId2"]);
 		var fnTest = function() {
 			oModel.read("/ProductSet('AD-1000')", {
 				success : function(oData, oResponse) {
@@ -1309,8 +1309,8 @@ sap.ui.define([
 		oModel.setDefaultBindingMode("TwoWay");
 
 		// make request non deferred...
-		oModel.setChangeBatchGroups({
-			"*" : {batchgroupId : "myId"}
+		oModel.setChangeGroups({
+			"*" : {groupId : "myId"}
 
 		});
 
@@ -1356,10 +1356,10 @@ sap.ui.define([
 		var bMetadataLoaded = false;
 		var bSetProp = false;
 		oModel.setDefaultBindingMode("TwoWay");
-		oModel.setDeferredBatchGroups(["myId"]);
-		oModel.setChangeBatchGroups({
+		oModel.setDeferredGroups(["myId"]);
+		oModel.setChangeGroups({
 			"Product": {
-				batchGroupId: "myId",
+				groupId: "myId",
 				changeSetId: "Test",
 				single: true
 			}
@@ -1408,10 +1408,10 @@ sap.ui.define([
 		var bSetProp = false;
 		var bSetProp2 = false;
 		oModel.setDefaultBindingMode("TwoWay");
-		oModel.setDeferredBatchGroups(["myId"]);
-		oModel.setChangeBatchGroups({
+		oModel.setDeferredGroups(["myId"]);
+		oModel.setChangeGroups({
 			"Product": {
-				batchGroupId: "myId",
+				groupId: "myId",
 				changeSetId: "Test",
 				single: true
 			}
@@ -1471,10 +1471,10 @@ sap.ui.define([
 		var bSetProp = false;
 		var bSetProp2 = false;
 		oModel.setDefaultBindingMode("TwoWay");
-		oModel.setDeferredBatchGroups(["myId"]);
-		oModel.setChangeBatchGroups({
+		oModel.setDeferredGroups(["myId"]);
+		oModel.setChangeGroups({
 			"Product": {
-				batchGroupId: "myId",
+				groupId: "myId",
 				changeSetId: "Test",
 				single: false
 			}
@@ -1574,8 +1574,8 @@ sap.ui.define([
 		var bSetProp = false;
 
 		// make request non deferred...
-		oModel.setChangeBatchGroups({
-			"*" : {batchgroupId : "myId"}
+		oModel.setChangeGroups({
+			"*" : {groupId : "myId"}
 
 		});
 
@@ -1613,8 +1613,8 @@ sap.ui.define([
 		oModel.setUseBatch(false);
 
 		// make request non deferred...
-		oModel.setChangeBatchGroups({
-			"*" : {batchgroupId : "myId"}
+		oModel.setChangeGroups({
+			"*" : {groupId : "myId"}
 
 		});
 		var fnTest = function() {
@@ -1655,10 +1655,10 @@ sap.ui.define([
 				success : function(oData, oResponse) {
 					assert.ok(true, "request succeeded");
 					bRead = true;
-					oModel.setDeferredBatchGroups(["myId"]);
-					oModel.setChangeBatchGroups({
+					oModel.setDeferredGroups(["myId"]);
+					oModel.setChangeGroups({
 						"Product": {
-							batchGroupId: "myId",
+							groupId: "myId",
 							changeSetId: "Test",
 							single: true
 						}
@@ -1707,10 +1707,10 @@ sap.ui.define([
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/TypeCode"), "PR", "check typecode");
 					bRead = true;
-					oModel.setDeferredBatchGroups(["myId"]);
-					oModel.setChangeBatchGroups({
+					oModel.setDeferredGroups(["myId"]);
+					oModel.setChangeGroups({
 						"Product": {
-							batchGroupId: "myId",
+							groupId: "myId",
 							changeSetId: "Test",
 							single: true
 						}
@@ -1771,10 +1771,10 @@ sap.ui.define([
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					bRead = true;
-					oModel.setDeferredBatchGroups(["myId"]);
-					oModel.setChangeBatchGroups({
+					oModel.setDeferredGroups(["myId"]);
+					oModel.setChangeGroups({
 						"Product": {
-							batchGroupId: "myId",
+							groupId: "myId",
 							changeSetId: "Test",
 							single: true
 						}
@@ -1855,10 +1855,10 @@ sap.ui.define([
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "Notebook Basic 15", "check name");
 				assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 				bRead = true;
-				oModel.setDeferredBatchGroups(["myId"]);
-				oModel.setChangeBatchGroups({
+				oModel.setDeferredGroups(["myId"]);
+				oModel.setChangeGroups({
 					"Product" : {
-						batchGroupId : "myId",
+						groupId : "myId",
 						changeSetId : "Test",
 						single : true
 					}
@@ -2003,10 +2003,10 @@ sap.ui.define([
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
 					bRead = true;
-					oModel.setDeferredBatchGroups(["myId"]);
-					oModel.setChangeBatchGroups({
+					oModel.setDeferredGroups(["myId"]);
+					oModel.setChangeGroups({
 						"Product": {
-							batchGroupId: "myId",
+							groupId: "myId",
 							changeSetId: "Test",
 							single: true
 						}
@@ -2091,10 +2091,10 @@ sap.ui.define([
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
 					bRead = true;
-					oModel.setDeferredBatchGroups(["myId"]);
-					oModel.setChangeBatchGroups({
+					oModel.setDeferredGroups(["myId"]);
+					oModel.setChangeGroups({
 						"Product" : {
-							batchGroupId : "myId",
+							groupId : "myId",
 							changeSetId : "Test",
 							single : true
 						}
@@ -2340,10 +2340,10 @@ sap.ui.define([
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
 					bRead = true;
-					oModel.setDeferredBatchGroups(["myId"]);
-					oModel.setChangeBatchGroups({
+					oModel.setDeferredGroups(["myId"]);
+					oModel.setChangeGroups({
 						"Product" : {
-							batchGroupId : "myId",
+							groupId : "myId",
 							changeSetId : "Test",
 							single : true
 						}
@@ -2432,10 +2432,10 @@ sap.ui.define([
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Price"), "956.0", "check price");
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/CurrencyCode"), "EUR", "check price");
 					bRead = true;
-					oModel.setDeferredBatchGroups(["myId"]);
-					oModel.setChangeBatchGroups({
+					oModel.setDeferredGroups(["myId"]);
+					oModel.setChangeGroups({
 						"Product" : {
-							batchGroupId : "myId",
+							groupId : "myId",
 							changeSetId : "Test",
 							single : true
 						}
@@ -2642,10 +2642,10 @@ sap.ui.define([
 		oModel = initModel();
 		oModel.setRefreshAfterChange(false);
 
-		oModel.setDeferredBatchGroups(["myId"]);
-		oModel.setChangeBatchGroups({
+		oModel.setDeferredGroups(["myId"]);
+		oModel.setChangeGroups({
 			"Product": {
-				batchGroupId: "myId",
+				groupId: "myId",
 				changeSetId: "Test",
 				single: true
 			}
@@ -2716,8 +2716,8 @@ sap.ui.define([
 		oModel = initModel();
 		oModel.setRefreshAfterChange(false);
 		// make request non deferred...
-		oModel.setChangeBatchGroups({
-			"*" : {batchgroupId : "myId"}
+		oModel.setChangeGroups({
+			"*" : {groupId : "myId"}
 
 		});
 
@@ -2762,15 +2762,16 @@ sap.ui.define([
 		});
 	});
 
+	/** @deprecated As of version 1.95.0, reason sap.ui.model.odata.v2.ODataModel#deleteCreatedEntry */
 	QUnit.test("test oDataModel createEntry and deleteCreatedEntry", function(assert) {
 		var done = assert.async();
 		var oContext;
 		oModel = initModel();
 		oModel.setRefreshAfterChange(false);
-		oModel.setDeferredBatchGroups(["myId"]);
-		oModel.setChangeBatchGroups({
+		oModel.setDeferredGroups(["myId"]);
+		oModel.setChangeGroups({
 			"Product": {
-				batchGroupId: "myId",
+				groupId: "myId",
 				changeSetId: "Test",
 				single: true
 			}
@@ -2826,15 +2827,16 @@ sap.ui.define([
 		});
 	});
 
+	/** @deprecated As of version 1.95.0, reason sap.ui.model.odata.v2.ODataModel#deleteCreatedEntry */
 	QUnit.test("test oDataModel 2 times createEntry and one deleteCreatedEntry", function(assert) {
 		var done = assert.async();
 		var oContext;
 		oModel = initModel();
 		oModel.setRefreshAfterChange(false);
-		oModel.setDeferredBatchGroups(["myId"]);
-		oModel.setChangeBatchGroups({
+		oModel.setDeferredGroups(["myId"]);
+		oModel.setChangeGroups({
 			"Product": {
-				batchGroupId: "myId",
+				groupId: "myId",
 				changeSetId: "Test",
 				single: true
 			}
@@ -3075,7 +3077,7 @@ sap.ui.define([
 		var iReqFailed = 0;
 		var sReqId = null;
 		oModel = initModel();
-		oModel.setDeferredBatchGroups([ "myId1" ]);
+		oModel.setDeferredGroups([ "myId1" ]);
 
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
@@ -3565,7 +3567,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oAbort = {};
 		oModel = initModel();
-		oModel.setDeferredBatchGroups([ "myId1" ]);
+		oModel.setDeferredGroups([ "myId1" ]);
 
 		var fnTest = function() {
 			oModel.read("/ProductSet('HT-1001')", {
@@ -3844,10 +3846,10 @@ sap.ui.define([
 		var done = assert.async();
 		var oContext;
 		oModel = initModel();
-		oModel.setDeferredBatchGroups(["myId"]);
-		oModel.setChangeBatchGroups({
+		oModel.setDeferredGroups(["myId"]);
+		oModel.setChangeGroups({
 			"Product": {
-				batchGroupId: "myId",
+				groupId: "myId",
 				changeSetId: "Test",
 				single: false
 			}
