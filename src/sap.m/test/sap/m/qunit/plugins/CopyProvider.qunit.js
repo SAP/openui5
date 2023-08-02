@@ -103,7 +103,7 @@ sap.ui.define([
 			columns: Object.keys(aData[0]).map(function(sKey) {
 				return new MDCColumn({
 					header: sKey,
-					dataProperty: sKey,
+					propertyKey: sKey,
 					template: new Text({ text: "{" + sKey + "}" }),
 					customData: new CustomData({ key: "property", value: sKey })
 				});
@@ -375,7 +375,7 @@ sap.ui.define([
 		var that = this;
 		this.oCopyProvider.setExtractData(function(oContext, oColumn) {
 			assert.ok(oColumn.isA("sap.ui.mdc.table.Column"));
-			return oContext.getProperty(oColumn.getDataProperty());
+			return oContext.getProperty(oColumn.getPropertyKey());
 		});
 		return this.oTable._fullyInitialized().then(function() {
 			return MDCTableQUnitUtils.waitForBinding(that.oTable);
@@ -398,17 +398,17 @@ sap.ui.define([
 			columns: [
 				new MDCColumn({
 					header: "Name-ID",
-					dataProperty: "name-id",
+					propertyKey: "name-id",
 					template: new Text({ text: "{name} ({id})" })
 				}),
 				new MDCColumn({
 					header: "NoCopy",
-					dataProperty: "nocopy",
+					propertyKey: "nocopy",
 					template: new Text({ text: "You cannot copy this cell" })
 				}),
 				new MDCColumn({
 					header: "ID-Name-Color",
-					dataProperty: "id-name-color",
+					propertyKey: "id-name-color",
 					template: new Text({ text: "{id} {name} {color}" })
 				})
 			],
