@@ -49,7 +49,7 @@ sap.ui.define([
 			version: "2",
 			type: Version.Type.Inactive,
 			isPublished: false,
-			activatedAt: "2022-05-10 16:00:00.000"
+			activatedAt: "2022-05-10 16:00:00.000Z"
 		}];
 		var oVersionsModel = new JSONModel({
 			versioningEnabled: true,
