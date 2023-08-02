@@ -1932,6 +1932,7 @@ sap.ui.define([
 			var oWriteStub = sandbox.stub(Storage, "write").resolves(oResponse);
 			var oUpdateStub = sandbox.stub(Storage, "update").resolves(oResponse);
 			var oRemoveStub = sandbox.stub(Storage, "remove").resolves();
+			var oLoadVersionStub = sandbox.stub(Storage.versions, "load").resolves([{}]);
 			var oVersionsOnAllChangesSaved = sandbox.stub(Versions, "onAllChangesSaved");
 
 			return CompVariantState.persist({
@@ -1958,6 +1959,7 @@ sap.ui.define([
 				assert.equal(oWriteStub.callCount, 3, "AFTER SOME CHANGES; still the write method was called three times,");
 				assert.equal(oUpdateStub.callCount, 1, "one update was called");
 				assert.equal(oRemoveStub.callCount, 1, "and one deletes were called");
+				assert.equal(oLoadVersionStub.callCount, 1, "and version.load is called");
 				assert.equal(oUpdateStub.getCalls()[0].args[0].parentVersion, sParentVersion, "and parentVersion is set correct in update");
 				assert.equal(oRemoveStub.getCalls()[0].args[0].parentVersion, Version.Number.Draft, "and parentVersion is set correct in delete");
 				assert.equal(oVersionsOnAllChangesSaved.callCount, 4, "and versions.onAllChangesSaved is called a fourth time");

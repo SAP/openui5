@@ -881,6 +881,11 @@ sap.ui.define([
 							c0: oChange0.convertToFileContent()
 						}
 					],
+					ctrl_variant: [
+						{
+							newVariant: oVariant.convertToFileContent()
+						}
+					],
 					ctrl_variant_change: [
 						{
 							c1: oChange1.convertToFileContent()

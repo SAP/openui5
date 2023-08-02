@@ -135,9 +135,6 @@ sap.ui.define([
 			var bAlreadyReordered = false;
 			mPropertyBag.allChanges.forEach(function(oChange, index) {
 				var sFileType = oChange.getFileType();
-				if (sFileType === "ctrl_variant") {
-					return;
-				}
 				var iChangeCreateIndex = findChangeCreateIndex(oChange, mPropertyBag.condensedChanges);
 				if (oChange.condenserState) {
 					var bDifferentOrder = false;
@@ -260,7 +257,11 @@ sap.ui.define([
 		if (
 			mCondense.create || mCondense.reorder || mCondense.update || mCondense.delete
 		) {
-			var oCreatedChanges = mCondense.create && mCondense.create.change ? mCondense.create.change : [];
+			var oCreatedChanges = [];
+			if (mCondense.create) {
+				oCreatedChanges = (mCondense.create.change ? mCondense.create.change : [])
+				.concat(mCondense.create.ctrl_variant ? mCondense.create.ctrl_variant : []);
+			}
 			mPropertyBag.flexObjects = mCondense;
 			return _executeActionByName("condense", mPropertyBag)
 			.then(function(oResult) {
