@@ -8,8 +8,9 @@ sap.ui.define([
 	"use strict";
 
 	return {
-		iStartMyApp: function () {
-			return this.iStartMyAppInAFrame("./test-resources/sap/m/qunit/plugins/opa/CellSelector/start.html");
+		iStartMyApp: function (dir) {
+			const sParameter = dir == "LTR" ? "" : "?sap-ui-rtl=true";
+			return this.iStartMyAppInAFrame(`./test-resources/sap/m/qunit/plugins/opa/CellSelector/start.html${sParameter}`);
 		},
 		iChangeSelectionMode: function(sSelectionMode) {
 			return Util.waitForTable.call(this, {
