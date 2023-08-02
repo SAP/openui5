@@ -687,6 +687,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resetInvalidDataState", function () {
+		new ODataBinding().resetInvalidDataState(); // the function exists and does not fail
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bAsPromise) {
 	[{
 		oTemplate : {sPath : "/absolute", bRelative : false}

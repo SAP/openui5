@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 
 <!--
-	Tested class: all UI5 services code
+	Tested class: all code maintained by the OData V4 team
 -->
 
 <html>
@@ -19,8 +19,8 @@
 		<!-- @see sap-ui-core.js, @see BootstrapMinimal.qunit.html -->
 		<script src="resources/ui5loader.js"></script>
 		<script src="test-resources/sap/ui/core/qunit/internal/1Ring_handleAbort.js"></script>
-		<!-- BEWARE: data-sap-ui-async="true" prevents code coverage! -->
 		<script id="sap-ui-bootstrap" src="resources/ui5loader-autoconfig.js"
+			data-sap-ui-async="true"
 			data-sap-ui-compatversion="edge"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-resourceroots='{
@@ -33,13 +33,11 @@
 		<script src="resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="resources/sap/ui/qunit/sinon-qunit-bridge.js"></script>
-		<script src="resources/sap/ui/qunit/qunit-coverage.js"
-			data-cover-flags="branchTracking"
+		<script src="resources/sap/ui/test/ModuleTracking.js"></script>
+		<script src="resources/sap/ui/qunit/qunit-coverage-istanbul.js"
 			data-sap-ui-cover-never="[.qunit.js]"
 			data-sap-ui-cover-only="[/odata/v4/,SyncPromise,XMLPreprocessor]"
 			></script>
-		<script src="resources/sap/ui/test/BranchTracking.js"
-			data-threshold="100"></script>
 
 		<script src="test-resources/sap/ui/core/qunit/internal/1Ring.qunit.js"></script>
 	</head>
