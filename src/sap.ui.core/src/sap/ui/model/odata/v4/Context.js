@@ -1429,8 +1429,8 @@ sap.ui.define([
 	 * If the group ID has submit mode {@link sap.ui.model.odata.v4.SubmitMode.Auto} and there are
 	 * currently running updates or creates this method first waits for them to be processed.
 	 *
-	 * The events 'dataRequested' and 'dataReceived' are not fired. Whatever should happen in the
-	 * event handler attached to...
+	 * The 'dataRequested' and 'dataReceived' events are not fired unless a binding is refreshed
+	 * completely. Whatever should happen in the event handler attached to...
 	 * <ul>
 	 *   <li> 'dataRequested', can instead be done before calling {@link #requestSideEffects}.
 	 *   <li> 'dataReceived', can instead be done once the <code>oPromise</code> returned by
