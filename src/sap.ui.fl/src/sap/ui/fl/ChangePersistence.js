@@ -573,7 +573,7 @@ sap.ui.define([
 			if (bAlreadyDeletedViaCondense) {
 				this.removeChange(oChange);
 				// Remove also from Cache if the persisted change is still there (e.g. navigate away and back to the app)
-				Cache.deleteChange(this._mComponent, oChange.convertToFileContent());
+				FlexState.updateStorageResponse(this._mComponent.name, [{flexObject: oChange.convertToFileContent(), type: "delete"}]);
 			} else {
 				this.deleteChange(oChange);
 			}
@@ -815,13 +815,22 @@ sap.ui.define([
 		if (!bSkipUpdateCache) {
 			switch (oDirtyChange.getState()) {
 				case States.LifecycleState.NEW:
-					Cache.addChange(this._mComponent, oDirtyChange.convertToFileContent());
+					FlexState.updateStorageResponse(this._mComponent.name, [{
+						type: "add",
+						flexObject: oDirtyChange.convertToFileContent()
+					}]);
 					break;
 				case States.LifecycleState.DELETED:
-					Cache.deleteChange(this._mComponent, oDirtyChange.convertToFileContent());
+					FlexState.updateStorageResponse(this._mComponent.name, [{
+						type: "delete",
+						flexObject: oDirtyChange.convertToFileContent()
+					}]);
 					break;
 				case States.LifecycleState.DIRTY:
-					Cache.updateChange(this._mComponent, oDirtyChange.convertToFileContent());
+					FlexState.updateStorageResponse(this._mComponent.name, [{
+						type: "update",
+						flexObject: oDirtyChange.convertToFileContent()
+					}]);
 					break;
 				default:
 			}
@@ -1072,52 +1081,50 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} Promise that resolves with an array of changes which need to be reverted from UI
 	 */
-	ChangePersistence.prototype.resetChanges = function(sLayer, sGenerator, aSelectorIds, aChangeTypes) {
-		var bSelectorIdsProvided = aSelectorIds && aSelectorIds.length > 0;
-		var bChangeTypesProvided = aChangeTypes && aChangeTypes.length > 0;
+	ChangePersistence.prototype.resetChanges = async function(sLayer, sGenerator, aSelectorIds, aChangeTypes) {
+		const bSelectorIdsProvided = aSelectorIds && aSelectorIds.length > 0;
+		const bChangeTypesProvided = aChangeTypes && aChangeTypes.length > 0;
 
 		// In case of application reset and PUBLIC layer available, also includes comp variant entities
-		var isPublicLayerAvailable = Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().isPublicLayerAvailable();
-		var isApplicationReset = sGenerator === undefined && aSelectorIds === undefined && aChangeTypes === undefined;
-		var aCompVariantsEntries = [];
-		if (isPublicLayerAvailable && isApplicationReset) {
-			aCompVariantsEntries = getAllCompVariantsEntities.call(this).filter(isPersistedAndInLayer.bind(this, sLayer));
+		const isPublicLayerAvailable = Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().isPublicLayerAvailable();
+		const isApplicationReset = sGenerator === undefined && aSelectorIds === undefined && aChangeTypes === undefined;
+		const aCompVariantsEntries = (isPublicLayerAvailable && isApplicationReset) ?
+			getAllCompVariantsEntities.call(this).filter(isPersistedAndInLayer.bind(this, sLayer))
+			: [];
+
+		const aUiChanges = await this.getChangesForComponent({ currentLayer: sLayer, includeCtrlVariants: true});
+		const aFlexObjects = aUiChanges.concat(aCompVariantsEntries);
+		const mParams = {
+			reference: this.getComponentName(),
+			layer: sLayer,
+			changes: aFlexObjects
+		};
+		if (sGenerator) {
+			mParams.generator = sGenerator;
+		}
+		if (bSelectorIdsProvided) {
+			mParams.selectorIds = aSelectorIds;
+		}
+		if (bChangeTypesProvided) {
+			mParams.changeTypes = aChangeTypes;
 		}
 
-		return this.getChangesForComponent({ currentLayer: sLayer, includeCtrlVariants: true}).then(function(aChanges) {
-			aChanges = aChanges.concat(aCompVariantsEntries);
-			var mParams = {
-				reference: this.getComponentName(),
-				layer: sLayer,
-				changes: aChanges
-			};
-			if (sGenerator) {
-				mParams.generator = sGenerator;
+		const oResponse = await Storage.reset(mParams);
+		// If reset changes for control, returns an array of deleted changes for reverting
+		if (aSelectorIds || aChangeTypes) {
+			const aNames = [];
+			if (oResponse && oResponse.response && oResponse.response.length > 0) {
+				oResponse.response.forEach(function(oChangeContentId) {
+					aNames.push(oChangeContentId.fileName);
+				});
 			}
-			if (bSelectorIdsProvided) {
-				mParams.selectorIds = aSelectorIds;
-			}
-			if (bChangeTypesProvided) {
-				mParams.changeTypes = aChangeTypes;
-			}
-
-			return Storage.reset(mParams);
-		}.bind(this))
-		.then(function(oResponse) {
-			var aChangesToRevert = [];
-			// If reset changes for control, returns an array of deleted changes for reverting
-			if (aSelectorIds || aChangeTypes) {
-				var aNames = [];
-				if (oResponse && oResponse.response && oResponse.response.length > 0) {
-					oResponse.response.forEach(function(oChangeContentId) {
-						aNames.push(oChangeContentId.fileName);
-					});
-				}
-				Cache.removeChanges(this._mComponent, aNames);
-				aChangesToRevert = this._getChangesFromMapByNames(aNames);
-			}
+			const aChangesToRevert = this._getChangesFromMapByNames(aNames);
+			FlexState.updateStorageResponse(this._mComponent.name, aChangesToRevert.map((oFlexObject) => {
+				return {flexObject: oFlexObject.convertToFileContent(), type: "delete"};
+			}));
 			return aChangesToRevert;
-		}.bind(this));
+		}
+		return [];
 	};
 
 	return ChangePersistence;

@@ -75,9 +75,13 @@ sap.ui.define([
 			flexObjects: oPersonalization
 		})
 		.then(function(oPersonalizationResult) {
-			var oPersonalizationSubsection = FlexState.getUI2Personalization(oPersonalizationResult.response.reference);
-			oPersonalizationSubsection[oPersonalizationResult.response.containerKey] = oPersonalizationSubsection[oPersonalizationResult.response.containerKey] || [];
+			const oPersonalizationSubsection = FlexState.getUI2Personalization(oPersonalizationResult.response.reference);
+			oPersonalizationSubsection[oPersonalizationResult.response.containerKey] ||= [];
 			oPersonalizationSubsection[oPersonalizationResult.response.containerKey].push(oPersonalizationResult.response);
+			FlexState.updateStorageResponse(oPersonalizationResult.response.reference, [{
+				type: "ui2",
+				newData: oPersonalizationSubsection
+			}]);
 		});
 	};
 
@@ -103,10 +107,15 @@ sap.ui.define([
 			containerKey: sContainerKey,
 			itemName: sItemName
 		}).then(function() {
-			var aItems = UI2PersonalizationState.getPersonalization(sReference, sContainerKey);
-			var oToBeDeletedItem = UI2PersonalizationState.getPersonalization(sReference, sContainerKey, sItemName);
-			var nIndexOfItem = aItems.indexOf(oToBeDeletedItem);
+			const oUI2Personalization = FlexState.getUI2Personalization(sReference);
+			const aItems = oUI2Personalization[sContainerKey];
+			const oToBeDeletedItem = UI2PersonalizationState.getPersonalization(sReference, sContainerKey, sItemName);
+			const nIndexOfItem = aItems.indexOf(oToBeDeletedItem);
 			aItems.splice(nIndexOfItem, 1);
+			FlexState.updateStorageResponse(sReference, [{
+				type: "ui2",
+				newData: oUI2Personalization
+			}]);
 		});
 	};
 

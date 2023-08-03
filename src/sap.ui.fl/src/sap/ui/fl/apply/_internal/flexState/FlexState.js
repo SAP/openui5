@@ -599,6 +599,64 @@ sap.ui.define([
 		});
 	};
 
+	function getChangeCategory(oChangeDefinition) {
+		switch (oChangeDefinition.fileType) {
+			case "change":
+				if (oChangeDefinition.selector && oChangeDefinition.selector.persistencyKey) {
+					return ["comp", "changes"];
+				}
+				if (oChangeDefinition.variantReference) {
+					return "variantDependentControlChanges";
+				}
+				return "changes";
+			case "ctrl_variant":
+				return "variants";
+			case "ctrl_variant_change":
+				return "variantChanges";
+			case "ctrl_variant_management_change":
+				return "variantManagementChanges";
+			case "variant":
+				return ["comp", "variants"];
+			default:
+				return "";
+		}
+	}
+
+	/**
+	 * Some save operations don't require a complete new data request, so the storage response gets a live update.
+	 * This will not invalidate the DataSelectors
+	 *
+	 * @param {string} sReference - Flex reference of the app
+	 * @param {object[]} aUpdates - All new FlexObjects in JSON format
+	 */
+	FlexState.updateStorageResponse = function(sReference, aUpdates) {
+		aUpdates.forEach((oUpdate) => {
+			if (oUpdate.type === "ui2") {
+				_mInstances[sReference].unfilteredStorageResponse.changes.ui2personalization = oUpdate.newData;
+			} else {
+				const vPath = getChangeCategory(oUpdate.flexObject);
+				const sFileName = oUpdate.flexObject.fileName;
+				const aUnfiltered = ObjectPath.get(vPath, _mInstances[sReference].unfilteredStorageResponse.changes);
+				const aFiltered = ObjectPath.get(vPath, _mInstances[sReference].storageResponse.changes);
+				switch (oUpdate.type) {
+					case "add":
+						aUnfiltered.push(oUpdate.flexObject);
+						aFiltered.push(oUpdate.flexObject);
+						break;
+					case "delete":
+						aFiltered.splice(aFiltered.find((oFlexObject) => oFlexObject.fileName === sFileName), 1);
+						aUnfiltered.splice(aUnfiltered.find((oFlexObject) => oFlexObject.fileName === sFileName), 1);
+						break;
+					case "update":
+						aFiltered.splice(aFiltered.find((oFlexObject) => oFlexObject.fileName === sFileName), 1, oUpdate.flexObject);
+						aUnfiltered.splice(aUnfiltered.find((oFlexObject) => oFlexObject.fileName === sFileName), 1, oUpdate.flexObject);
+						break;
+					default:
+				}
+			}
+		});
+	};
+
 	FlexState.clearState = function(sReference) {
 		if (sReference) {
 			deRegisterMaxLayerHandler(sReference);
@@ -755,7 +813,7 @@ sap.ui.define([
 	};
 
 	FlexState.getUI2Personalization = function(sReference) {
-		return _mInstances[sReference].unfilteredStorageResponse.changes.ui2personalization;
+		return merge({}, _mInstances[sReference].unfilteredStorageResponse.changes.ui2personalization);
 	};
 
 	FlexState.getCompVariantsMap = function(sReference) {
@@ -767,6 +825,7 @@ sap.ui.define([
 	};
 
 	// temporary function until ChangePersistence.getChangesForComponent is gone
+	// TODO: also used by the CompVariantState to mutate the storage response, this has to be changed
 	FlexState.getStorageResponse = function(sReference) {
 		if (_mInitPromises[sReference]) {
 			return _mInitPromises[sReference].then(function() {
@@ -774,11 +833,6 @@ sap.ui.define([
 			});
 		}
 		return Promise.resolve();
-	};
-
-	// temporary function until the maps are ready
-	FlexState.getFlexObjectsFromStorageResponse = function(sReference) {
-		return _mInstances[sReference] && _mInstances[sReference].unfilteredStorageResponse.changes;
 	};
 
 	FlexState.getComponentData = function(sReference) {

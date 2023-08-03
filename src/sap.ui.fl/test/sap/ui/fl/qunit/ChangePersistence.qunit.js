@@ -25,7 +25,8 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	merge,
 	UriParameters,
@@ -48,7 +49,8 @@ sap.ui.define([
 	LayerUtils,
 	Layer,
 	Utils,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 
@@ -1642,8 +1644,8 @@ sap.ui.define([
 			var aDeletedChangeContentIds = {response: [{fileName: "1"}, {fileName: "2"}]};
 
 			var oResetChangesStub = sandbox.stub(WriteStorage, "reset").resolves(aDeletedChangeContentIds);
-			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
-			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").resolves();
+			var oUpdateStorageResponseStub = sandbox.stub(FlexState, "updateStorageResponse");
+			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(aChanges);
 			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompVariantsMap").returns({
 				somePersistencyKey: {
 					byId: {
@@ -1668,7 +1670,7 @@ sap.ui.define([
 				assert.equal(oResetArgs.changes[0].getId(), "oCUSTOMERChange1");
 				assert.equal(oResetArgs.changes[1].getId(), "oCUSTOMERChange2");
 				assert.equal(oResetArgs.changes[2].getId(), "oMockCompVariant3");
-				assert.equal(oCacheRemoveChangesStub.callCount, 0, "the Cache.removeChanges is not called");
+				assert.equal(oUpdateStorageResponseStub.callCount, 0, "the FlexState is not called");
 				assert.equal(oGetChangesFromMapByNamesStub.callCount, 0, "the getChangesFromMapByNames is not called");
 				assert.deepEqual(aChanges, [], "empty array is returned");
 				done();
@@ -1716,8 +1718,8 @@ sap.ui.define([
 			var aDeletedChangeContentIds = {response: [{fileName: "1"}, {fileName: "2"}]};
 
 			var oResetChangesStub = sandbox.stub(WriteStorage, "reset").resolves(aDeletedChangeContentIds);
-			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
-			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").resolves();
+			var oUpdateStorageResponseStub = sandbox.stub(FlexState, "updateStorageResponse");
+			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(aChanges);
 
 			return this.oChangePersistence.resetChanges(Layer.VENDOR, "", ["abc123"], ["labelChange"]).then(function() {
 				assert.equal(oResetChangesStub.callCount, 1, "Storage.reset is called once");
@@ -1726,8 +1728,13 @@ sap.ui.define([
 				assert.equal(oResetArgs.layer, Layer.VENDOR);
 				assert.deepEqual(oResetArgs.selectorIds, ["abc123"]);
 				assert.deepEqual(oResetArgs.changeTypes, ["labelChange"]);
-				assert.equal(oCacheRemoveChangesStub.callCount, 1, "the Cache.removeChanges is called once");
-				assert.deepEqual(oCacheRemoveChangesStub.args[0][1], ["1", "2"], "and with the correct names");
+				assert.equal(oUpdateStorageResponseStub.callCount, 1, "the FlexState is called once");
+				assert.deepEqual(oUpdateStorageResponseStub.args[0][1],
+					aChanges.map((oFlexObject) => {
+						return {flexObject: oFlexObject.convertToFileContent(), type: "delete"};
+					}),
+					"and with the correct names"
+				);
 				assert.equal(oGetChangesFromMapByNamesStub.callCount, 1, "the getChangesFromMapByNames is called once");
 				assert.deepEqual(oGetChangesFromMapByNamesStub.args[0][0], ["1", "2"], "and with the correct names");
 			});
@@ -2124,31 +2131,27 @@ sap.ui.define([
 	}
 
 	QUnit.module("sap.ui.fl.ChangePersistence saveChanges", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oCondenserStub = sandbox.stub(Condenser, "condense").callsFake(function(oAppComponent, aChanges) {
 				return Promise.resolve(aChanges);
 			});
-			sandbox.stub(FlexState, "initialize").resolves();
-			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
-			var oBackendResponse = {changes: StorageUtils.getEmptyFlexDataResponse()};
-			this.oGetFlexObjectsFromStorageResponseStub = sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(oBackendResponse.changes);
 			this._mComponentProperties = {
 				name: "saveChangeScenario"
 			};
-			return Component.create({
+			const oComponent = await Component.create({
 				name: "sap/ui/fl/qunit/integration/testComponentComplex",
 				manifest: true
-			}).then(function(oComponent) {
-				this.oWriteStub = sandbox.stub(WriteStorage, "write").resolves();
-				this.oStorageCondenseStub = sandbox.stub(WriteStorage, "condense").resolves();
-				this.oRemoveStub = sandbox.stub(WriteStorage, "remove").resolves();
-				this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
-
-				this.oServer = sinon.fakeServer.create();
-				this._oComponentInstance = oComponent;
-			}.bind(this));
+			});
+			this.oWriteStub = sandbox.stub(WriteStorage, "write").resolves();
+			this.oStorageCondenseStub = sandbox.stub(WriteStorage, "condense").resolves();
+			this.oRemoveStub = sandbox.stub(WriteStorage, "remove").resolves();
+			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
+			this.oServer = sinon.fakeServer.create();
+			this._oComponentInstance = oComponent;
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "saveChangeScenario");
 		},
 		afterEach: function() {
+			FlexState.clearState();
 			this.oServer.restore();
 			sandbox.restore();
 			this._oComponentInstance.destroy();
@@ -2681,7 +2684,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("With two persisted changes, shall not call the storage when the condenser returns no change", function(assert) {
+		QUnit.test("With two persisted changes, shall not call the storage when the condenser returns no change", async function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
@@ -2690,31 +2693,24 @@ sap.ui.define([
 					return false;
 				}
 			});
-			var oDeleteSpy = sandbox.spy(this.oChangePersistence, "deleteChange");
-			var oRemoveSpy = sandbox.spy(this.oChangePersistence, "removeChange");
-			var oCacheDeleteSpy = sandbox.spy(Cache, "deleteChange");
+			var oUpdateStorageResponseStub = sandbox.spy(FlexState, "updateStorageResponse");
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
-			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
-				assert.equal(this.oWriteStub.callCount, 0);
-				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
-				assert.equal(oDeleteSpy.callCount, 0, "no change got deleted from persistence");
-				assert.equal(oRemoveSpy.callCount, 0, "no change got removed from the map");
-				assert.equal(oCacheDeleteSpy.callCount, 0, "no change got deleted from the cache");
+			await this.oChangePersistence.saveDirtyChanges(this._oComponentInstance);
 
-				addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
-				this.oCondenserStub.resolves([]);
-				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance);
-			}.bind(this))
-			.then(function() {
-				assert.equal(this.oWriteStub.callCount, 0);
-				assert.equal(this.oCondenserStub.callCount, 2, "the condenser was called again");
-				assert.equal(this.oChangePersistence._aDirtyChanges.length, 0, "both dirty changes were removed from the persistence");
-				assert.equal(oDeleteSpy.callCount, 0, "no change got deleted from persistence");
-				assert.equal(oRemoveSpy.callCount, 4, "four changes got removed from the map");
-				assert.equal(oCacheDeleteSpy.callCount, 4, "four changes got potentially deleted from the cache");
-			}.bind(this));
+			this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
+			this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
+			assert.equal(this.oWriteStub.callCount, 0);
+			assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+			assert.equal(oUpdateStorageResponseStub.callCount, 2, "both changes got added");
+
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+			this.oCondenserStub.resolves([]);
+
+			await this.oChangePersistence.saveDirtyChanges(this._oComponentInstance);
+			assert.equal(this.oWriteStub.callCount, 0);
+			assert.equal(this.oCondenserStub.callCount, 2, "the condenser was called again");
+			assert.equal(this.oChangePersistence._aDirtyChanges.length, 0, "both dirty changes were removed from the persistence");
+			assert.equal(oUpdateStorageResponseStub.callCount, 6, "four changes got potentially deleted from the cache");
 		});
 
 		QUnit.test("Shall save the dirty changes for a draft when adding a new change and return a promise", function(assert) {
@@ -2761,11 +2757,11 @@ sap.ui.define([
 
 			this.oServer.autoRespond = true;
 
-			var oAddChangeSpy = sandbox.spy(Cache, "addChange");
+			var oUpdateStub = sandbox.spy(FlexState, "updateStorageResponse");
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, true).then(function() {
 				assert.equal(this.oWriteStub.callCount, 1);
-				assert.equal(oAddChangeSpy.callCount, 0, "then addChange was never called for the change related to app variants");
+				assert.equal(oUpdateStub.callCount, 0, "then addChange was never called for the change related to app variants");
 			}.bind(this));
 		});
 
@@ -2913,10 +2909,9 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Shall add and remove changes to the cache depending upon change category", function(assert) {
+		QUnit.test("Shall add and remove changes to the cache depending upon change category", async function(assert) {
 			var aSavedChanges = [];
 			sandbox.stub(DependencyHandler, "addRuntimeChangeAndUpdateDependencies");
-
 			var oChangeContent1 = {
 				content: {
 					title: "variant 0"
@@ -2925,7 +2920,6 @@ sap.ui.define([
 				fileType: "ctrl_variant",
 				variantManagementReference: "variantManagementId"
 			};
-
 			var oChangeContent2 = {
 				variantReference: "variant0",
 				fileName: "controlChange0",
@@ -2934,14 +2928,12 @@ sap.ui.define([
 					id: "selectorId"
 				}
 			};
-
 			var oChangeContent3 = {
 				fileType: "ctrl_variant_change",
 				selector: {
 					id: "variant0"
 				}
 			};
-
 			var oChangeContent4 = {
 				fileName: "setDefault",
 				fileType: "ctrl_variant_management_change",
@@ -2952,7 +2944,6 @@ sap.ui.define([
 					id: "variantManagementId"
 				}
 			};
-
 			var oChangeContent5 = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
@@ -2971,21 +2962,22 @@ sap.ui.define([
 				this.oChangePersistence.addChange(oChangeContent5, this._oComponentInstance)
 			);
 
-			var oAddChangeSpy = sandbox.spy(Cache, "addChange");
-			var oDeleteChangeSpy = sandbox.spy(Cache, "deleteChange");
+			var oUpdateStub = sandbox.spy(FlexState, "updateStorageResponse");
 
-			return this.oChangePersistence.saveDirtyChanges()
-			.then(function() {
-				assert.equal(oAddChangeSpy.callCount, 5, "then addChange was called for all changes");
-				assert.strictEqual(oAddChangeSpy.lastCall.args[1].fileName, oChangeContent5.fileName, "the correct change was passed");
-				aSavedChanges.forEach(function(oSavedChange) {
-					this.oChangePersistence.deleteChange(oSavedChange);
-				}.bind(this));
-				return this.oChangePersistence.saveDirtyChanges();
-			}.bind(this))
-			.then(function() {
-				assert.ok(oDeleteChangeSpy.calledWith(this._mComponentProperties, aSavedChanges[4].convertToFileContent()));
+			await this.oChangePersistence.saveDirtyChanges();
+
+			assert.equal(oUpdateStub.callCount, 5, "then addChange was called for all changes");
+			assert.strictEqual(oUpdateStub.lastCall.args[1][0].flexObject.fileName,
+				oChangeContent5.fileName, "the correct change was passed");
+			aSavedChanges.forEach(function(oSavedChange) {
+				this.oChangePersistence.deleteChange(oSavedChange);
 			}.bind(this));
+			await this.oChangePersistence.saveDirtyChanges();
+
+			assert.ok(oUpdateStub.calledWith(
+				this._mComponentProperties.name,
+				[{type: "delete", flexObject: aSavedChanges[4].convertToFileContent()}])
+			);
 		});
 
 		QUnit.test("shall remove the change from the dirty changes, after it has been saved", function(assert) {
@@ -3121,7 +3113,6 @@ sap.ui.define([
 			};
 
 			// this test requires a slightly different setup
-			this.oGetFlexObjectsFromStorageResponseStub.resolves({changes: this.oBackendResponse});
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [oChangeContent]}});
 
 			return this.oChangePersistence.getChangesForComponent().then(function(aChanges) {

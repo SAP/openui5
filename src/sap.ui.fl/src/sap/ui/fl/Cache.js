@@ -3,14 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/base/util/ObjectPath",
 	"sap/base/Log",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/Utils"
-],
-function(
-	ObjectPath,
+], function(
 	Log,
 	FlexState,
 	ControlVariantApplyAPI,
@@ -32,36 +29,6 @@ function(
 	 * @ui5-restricted sap.ui.fl
 	 */
 	var Cache = function() {};
-
-	function getChangeCategory(oChangeDefinition) {
-		switch (oChangeDefinition.fileType) {
-			case "change":
-				if (oChangeDefinition.selector && oChangeDefinition.selector.persistencyKey) {
-					return ["comp", "changes"];
-				}
-				if (oChangeDefinition.variantReference) {
-					return "variantDependentControlChanges";
-				}
-				return "changes";
-			case "ctrl_variant":
-				return "variants";
-			case "ctrl_variant_change":
-				return "variantChanges";
-			case "ctrl_variant_management_change":
-				return "variantManagementChanges";
-			case "variant":
-				return ["comp", "variants"];
-			default:
-				return undefined;
-		}
-	}
-
-	function _getArray(sComponentName, oChange) {
-		// FIXME Don't mutate the storage response
-		var mStorageResponse = FlexState.getFlexObjectsFromStorageResponse(sComponentName);
-		var vPath = getChangeCategory(oChange);
-		return ObjectPath.get(vPath, mStorageResponse);
-	}
 
 	function concatControlVariantIdWithCacheKey(sCacheKey, sControlVariantIds) {
 		if (!sControlVariantIds) {
@@ -154,93 +121,6 @@ function(
 		}
 
 		return sCacheKey;
-	};
-
-	/**
-	 * Add a change for the given component to the cached changes.
-	 *
-	 * @param {object} oComponent - Contains component data needed for adding change
-	 * @param {string} oComponent.name - Name of the component
-	 * @param {object} oChange - The change in JSON format
-	 */
-	Cache.addChange = function(oComponent, oChange) {
-		var aChanges = _getArray(oComponent.name, oChange);
-
-		if (!aChanges) {
-			return;
-		}
-		aChanges.push(oChange);
-
-		FlexState.getFlexObjectsDataSelector().checkUpdate({ reference: oComponent.name });
-	};
-
-	/**
-	 * Updates a change for the given component in the cached changes.
-	 *
-	 * @param {object} oComponent - Contains component data needed for adding change
-	 * @param {string} oComponent.name - Name of the component
-	 * @param {object} oChange - The change in JSON format
-	 */
-	Cache.updateChange = function(oComponent, oChange) {
-		var aChanges = _getArray(oComponent.name, oChange);
-
-		if (!aChanges) {
-			return;
-		}
-
-		for (var i = 0; i < aChanges.length; i++) {
-			if (aChanges[i].fileName === oChange.fileName) {
-				aChanges.splice(i, 1, oChange);
-				break;
-			}
-		}
-
-		FlexState.getFlexObjectsDataSelector().checkUpdate({ reference: oComponent.name });
-	};
-
-	/**
-	 * Delete a change for the given component from the cached changes.
-	 *
-	 * @param {object} oComponent - Contains component data needed for adding change
-	 * @param {string} oComponent.name - Name of the component
-	 * @param {object} oChange - The change in JSON format
-	 */
-	Cache.deleteChange = function(oComponent, oChange) {
-		var aChanges = _getArray(oComponent.name, oChange);
-
-		if (!aChanges) {
-			return;
-		}
-
-		for (var i = 0; i < aChanges.length; i++) {
-			if (aChanges[i].fileName === oChange.fileName) {
-				aChanges.splice(i, 1);
-				break;
-			}
-		}
-
-		FlexState.getFlexObjectsDataSelector().checkUpdate({ reference: oComponent.name });
-	};
-
-	/**
-	 * Remove changes for the given component from the cached changes.
-	 *
-	 * @param {object} oComponent - Component data needed for adding change
-	 * @param {string} oComponent.name - Name of the component
-	 * @param {string[]} aChangeNames - Array of names of the changes to be deleted
-	 */
-	Cache.removeChanges = function(oComponent, aChangeNames) {
-		var oEntry = FlexState.getFlexObjectsFromStorageResponse(oComponent.name);
-
-		if (!oEntry) {
-			return;
-		}
-
-		oEntry.changes = oEntry.changes.filter(function(oChange) {
-			return aChangeNames.indexOf(oChange.fileName) === -1;
-		});
-
-		FlexState.getFlexObjectsDataSelector().checkUpdate({ reference: oComponent.name });
 	};
 
 	return Cache;

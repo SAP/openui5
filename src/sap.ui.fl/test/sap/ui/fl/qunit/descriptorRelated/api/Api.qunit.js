@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
@@ -9,9 +10,9 @@ sap.ui.define([
 	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Cache",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	FlexState,
 	DescriptorInlineChangeFactory,
 	DescriptorVariantFactory,
 	DescriptorChangeFactory,
@@ -20,7 +21,6 @@ sap.ui.define([
 	TransportSelection,
 	Settings,
 	Layer,
-	Cache,
 	sinon
 ) {
 	"use strict";
@@ -1939,8 +1939,6 @@ sap.ui.define([
 			this.sCreateResponse = JSON.stringify({
 				reference: "a.reference"
 			});
-			// required since we store changes via ChangePersistence --> Storage
-			sandbox.stub(Cache, "addChange");
 			sandbox.stub(Storage, "write").resolves(this.sCreateResponse);
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
@@ -1950,6 +1948,7 @@ sap.ui.define([
 					isProductiveSystem: false
 				})
 			);
+			return FlexState.initialize({reference: "a.reference"});
 		},
 		afterEach: function() {
 			sandbox.restore();

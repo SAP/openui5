@@ -1,17 +1,17 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base/util/merge",
 	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
-	merge,
 	UI2PersonalizationState,
 	FlexState,
 	LrepConnector,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 
@@ -27,18 +27,18 @@ sap.ui.define([
 	}];
 
 	QUnit.module("getPersonalization", {
-		beforeEach: function() {
-			this.oGetPersStub = sandbox.stub(FlexState, "getUI2Personalization")
-			.withArgs(sReference)
-			.returns(oFlexStatePers);
+		beforeEach: async function() {
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {ui2personalization: oFlexStatePers});
 		},
 		afterEach: function() {
+			FlexState.clearState();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when FlexState has no personalization with and without item name passed", function(assert) {
-			assert.deepEqual(UI2PersonalizationState.getPersonalization(), [], "an empty array is returned");
-			assert.equal(UI2PersonalizationState.getPersonalization(undefined, sContainerKey, "sItemName"), undefined, "an empty array is returned");
+			sandbox.stub(FlexState, "getUI2Personalization").returns({});
+			assert.deepEqual(UI2PersonalizationState.getPersonalization(sReference), [], "an empty array is returned");
+			assert.equal(UI2PersonalizationState.getPersonalization(sReference, sContainerKey, "sItemName"), undefined, "an empty array is returned");
 		});
 
 		QUnit.test("when no container was passed, with and without item name", function(assert) {
@@ -56,14 +56,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("setPersonalization", {
-		beforeEach: function() {
-			this.oPersState = merge({}, oFlexStatePers);
-			this.oGetPersStub = sandbox.stub(FlexState, "getUI2Personalization")
-			.withArgs(sReference)
-			.returns(this.oPersState);
+		beforeEach: async function() {
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {ui2personalization: oFlexStatePers});
 			this.oLrepConnectorCreateStub = sandbox.stub(LrepConnector.ui2Personalization, "create");
 		},
 		afterEach: function() {
+			FlexState.clearState();
 			sandbox.restore();
 		}
 	}, function() {
@@ -144,16 +142,18 @@ sap.ui.define([
 					itemName: "itemName",
 					reference: "reference"
 				}, "the data was passed correct");
-				assert.deepEqual(this.oPersState[sContainerKey].length, 3);
-				assert.deepEqual(this.oPersState[sContainerKey][2], mResult.response, "the correct object was set");
+				const oNewUI2 = UI2PersonalizationState.getPersonalization(sReference, sContainerKey);
+				assert.deepEqual(oNewUI2.length, 3);
+				assert.deepEqual(oNewUI2[2], mResult.response, "the correct object was set");
 			}.bind(this));
 		});
 
 		QUnit.test("with all information, LrepConnector resolving and the container not available", function(assert) {
+			const sNewContainerKey = "myFancyKey";
 			var mResult = {
 				response: {
 					reference: sReference,
-					containerKey: "sContainerKey"
+					containerKey: sNewContainerKey
 				}
 			};
 			this.oLrepConnectorCreateStub.resolves(mResult);
@@ -164,10 +164,12 @@ sap.ui.define([
 				content: "content"
 			})
 			.then(function() {
-				assert.deepEqual(this.oPersState[sContainerKey].length, 2, "the old objects were not touched");
-				assert.deepEqual(this.oPersState.sContainerKey.length, 1, "the new object was added");
-				assert.deepEqual(this.oPersState.sContainerKey[0], mResult.response, "the correct object was set");
-			}.bind(this));
+				const oOldUI2 = UI2PersonalizationState.getPersonalization(sReference, sContainerKey);
+				const oNewUI2 = UI2PersonalizationState.getPersonalization(sReference, sNewContainerKey);
+				assert.deepEqual(oOldUI2.length, 2, "the old objects were not touched");
+				assert.deepEqual(oNewUI2.length, 1, "the new object was added");
+				assert.deepEqual(oNewUI2[0], mResult.response, "the correct object was set");
+			});
 		});
 
 		QUnit.test("with all information and LrepConnector rejecting", function(assert) {
@@ -185,14 +187,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("deletePersonalization", {
-		beforeEach: function() {
-			this.oPersState = merge({}, oFlexStatePers);
-			this.oGetPersStub = sandbox.stub(FlexState, "getUI2Personalization")
-			.withArgs(sReference)
-			.returns(this.oPersState);
+		beforeEach: async function() {
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {ui2personalization: oFlexStatePers});
 			this.oLrepConnectorRemoveStub = sandbox.stub(LrepConnector.ui2Personalization, "remove");
 		},
 		afterEach: function() {
+			FlexState.clearState();
 			sandbox.restore();
 		}
 	}, function() {
@@ -228,7 +228,8 @@ sap.ui.define([
 						itemName: "item1",
 						reference: "sap.ui.fl.Reference"
 					}, "the data was passed correct");
-				assert.equal(this.oPersState[sContainerKey].length, 1, "one object was deleted");
+				const oNewUI2 = UI2PersonalizationState.getPersonalization(sReference, sContainerKey);
+				assert.equal(oNewUI2.length, 1, "one object was deleted");
 			}.bind(this));
 		});
 
