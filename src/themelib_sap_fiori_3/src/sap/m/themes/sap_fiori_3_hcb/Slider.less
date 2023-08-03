@@ -14,7 +14,8 @@
 	border-radius: 0.375rem;
 }
 
-.sapMSliderInner:not(.sapMSliderInnerDisabled):hover > .sapMSliderHandle {
+.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderProgress:hover ~ .sapMSliderHandle,
+.sapMSliderHandle:hover {
 	background: @sapUiButtonHoverBackground;
 	border-color: @sapUiButtonHoverBorderColor;
 }

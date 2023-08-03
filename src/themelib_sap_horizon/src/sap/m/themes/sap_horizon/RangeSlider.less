@@ -9,15 +9,10 @@
 @_sap_m_RangeSlider_Handle_Width_Compact: 1.5rem;
 
 .sapMRangeSlider.sapMSlider .sapMSliderInner {
-	&:not(.sapMSliderInnerDisabled):hover>.sapMSliderHandle {
+	&:not(.sapMSliderInnerDisabled).sapMSliderProgress:hover ~ .sapMSliderHandle,
+	.sapMSliderHandle:hover  {
 		border: 1px @sapContent_FocusStyle @sapUiSliderHoverHandleBorderColor;
 		background: @sapUiSliderRangeHandleBackground;
-		box-shadow: @sapUiContentSelectedShadow;
-	}
-
-	&:not(.sapMSliderInnerDisabled) .sapMSliderHandle:hover {
-		background-color: @sapUiSliderRangeHandleBackground;
-		border-color: @sapUiSliderHoverHandleBorderColor;
 		box-shadow: @sapUiContentSelectedShadow;
 	}
 
