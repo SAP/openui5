@@ -107,7 +107,7 @@ function(
 		// Direct children of template aggregations should not be movable
 		// because their order is defined based on the underlying data
 		var oElement = oOverlay.getElement();
-		if (ElementUtil.isElementDirectTemplateChild(oElement)) {
+		if (oElement.isDestroyStarted() || ElementUtil.isElementDirectTemplateChild(oElement)) {
 			return Promise.resolve(false);
 		}
 
