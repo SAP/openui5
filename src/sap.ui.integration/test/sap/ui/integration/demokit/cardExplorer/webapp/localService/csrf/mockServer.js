@@ -4,8 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	var oMockServer;
-
-	var aProductas = {
+	var aProducts = {
 		data: [
 			{
 				"Name": "Product 1",
@@ -25,6 +24,21 @@ sap.ui.define([
 			{
 				"Name": "Product 4",
 				"Weight": "6000",
+				"WeightUnit": "kg"
+			},
+			{
+				"Name": "Product 5",
+				"Weight": "3000",
+				"WeightUnit": "kg"
+			},
+			{
+				"Name": "Product 7",
+				"Weight": "4000",
+				"WeightUnit": "kg"
+			},
+			{
+				"Name": "Product 8",
+				"Weight": "2000",
 				"WeightUnit": "kg"
 			}
 		]
@@ -48,8 +62,10 @@ sap.ui.define([
 
 			aRequests.push({
 				method: "GET",
-				path: /.*/,
+				path: /.*?(\?.*)?/,
 				response: function (oXhr, sQuery) {
+					var oQueryParams = new URLSearchParams(sQuery);
+					var iTop = oQueryParams.get("$top") || aProducts.length;
 					var requestHeaders = new Headers(oXhr.requestHeaders);
 					var respondStatus = 200;
 
@@ -57,14 +73,18 @@ sap.ui.define([
 						respondStatus = 403;
 					}
 
-					oXhr.respondJSON(respondStatus, {}, aProductas);
+					var oResponse = {
+						data: aProducts.data.slice(0, iTop)
+					};
+
+					oXhr.respondJSON(respondStatus, {}, oResponse);
 				}
 			});
 
 			aRequests.push({
 				method: "HEAD",
 				path: /.*/,
-				response: function (oXhr, sQuery) {
+				response: function (oXhr) {
 					var requestHeaders = new Headers(oXhr.requestHeaders);
 					var headers = {};
 

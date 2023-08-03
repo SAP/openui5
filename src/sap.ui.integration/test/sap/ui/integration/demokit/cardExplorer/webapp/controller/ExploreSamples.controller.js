@@ -895,6 +895,7 @@ sap.ui.define([
 			}
 
 			exploreSettingsModel.setProperty("/isApplication", !!oSubSampleOrSample.isApplication);
+			exploreSettingsModel.setProperty("/isPreloadProject", !!oSubSampleOrSample.isPreloadProject);
 			this.byId("splitView").setBusy(true);
 			this.getOwnerComponent().getEventBus().publish("navEntryChanged", {
 				navigationItemKey: oSample.key,

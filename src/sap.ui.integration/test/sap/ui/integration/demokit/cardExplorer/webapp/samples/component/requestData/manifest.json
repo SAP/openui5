@@ -1,0 +1,95 @@
+{
+	"_version": "1.52.0",
+	"sap.app": {
+		"id": "my.component.sample.requestData",
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"title": "Sample of a Component Content",
+		"subTitle": "Sample of a Component Content",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Component",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://technical-object"
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"phone": true,
+			"tablet": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "my.component.sample.requestData.View",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.116",
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"products": {
+				"type": "sap.ui.model.json.JSONModel"
+			}
+		}
+	},
+	"sap.card": {
+		"type": "Component",
+		"configuration": {
+			"destinations": {
+				"ProductsMockServerWithCSRF": {
+					"name": "ProductsMockServerWithCSRF",
+					"label": "Products Mock CSRF",
+					"defaultUrl": "/getDataWithCSRF"
+				}
+			},
+			"csrfTokens": {
+				"token1": {
+					"data": {
+						"request": {
+							"url": "{{destinations.ProductsMockServerWithCSRF}}/Token",
+							"method": "HEAD",
+							"headers": {
+								"X-CSRF-Token": "Fetch"
+							}
+						}
+					}
+				}
+			},
+			"parameters": {
+				"productsCount": {
+					"description": "Number of products to show in the list",
+					"label": "Products count",
+					"value": "5"
+				}
+			}
+		},
+		"header": {
+			"title": "Top {parameters>/productsCount/value} Products"
+		},
+		"content": {
+			"minHeight": "10rem"
+		}
+	}
+}

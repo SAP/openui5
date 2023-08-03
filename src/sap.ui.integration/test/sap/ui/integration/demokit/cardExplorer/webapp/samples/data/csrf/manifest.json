@@ -47,7 +47,8 @@
 			"request": {
 				"url": "{{destinations.ProductsMockServerWithCSRF}}/Products",
 				"parameters": {
-					"$format": "json"
+					"$format": "json",
+					"$top": 4
 				},
 				"method": "GET",
 				"headers": {
