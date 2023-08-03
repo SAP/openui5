@@ -109,7 +109,7 @@ sap.ui.define([
 			assert.strictEqual(this.oLocalResetPlugin._isEditable(this.oSimpleFormOverlay), true, "... then _isEditable is called, then it returns true");
 		});
 
-		QUnit.test("when an overlay has localReset action designTime metadata, and isEnabled is function", function(assert) {
+		QUnit.test("when an overlay has localReset action designTime metadata, and isEnabled is a function", function(assert) {
 			sandbox.stub(LocalResetAPI, "isResetEnabled").returns(true);
 
 			this.oSimpleFormOverlay.setDesignTimeMetadata({
@@ -125,6 +125,21 @@ sap.ui.define([
 
 			assert.strictEqual(this.oLocalResetPlugin.isEnabled([this.oSimpleFormOverlay]), false, "... then isEnabled is called, then it returns correct value from function call");
 			assert.strictEqual(this.oLocalResetPlugin._isEditable(this.oSimpleFormOverlay), true, "... then _isEditable is called, then it returns true");
+		});
+
+		QUnit.test("when an overlay has localReset action designTime metadata but no stable id", function(assert) {
+			sandbox.stub(LocalResetAPI, "isResetEnabled").returns(true);
+			this.oSimpleFormOverlay.data("hasStableId", false);
+
+			this.oSimpleFormOverlay.setDesignTimeMetadata({
+				actions: {
+					localReset: {
+						changeType: "localReset"
+					}
+				}
+			});
+
+			assert.strictEqual(this.oLocalResetPlugin._isEditable(this.oSimpleFormOverlay), false, "... then when _isEditable is called with an unstable Id it returns false");
 		});
 
 		QUnit.test("when an overlay has localReset action designTime metadata, and isEnabled is function set to true, but there are no changes for localReset", function(assert) {
