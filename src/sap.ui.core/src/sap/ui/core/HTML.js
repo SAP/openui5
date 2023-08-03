@@ -73,6 +73,9 @@ sap.ui.define([
 				 * (e.g. <code>setContent("&lt;div>&lt;/div>&lt;div>&lt;/div>")</code>), but this is not a guaranteed feature.
 				 * The accepted content might be restricted to single root nodes in future versions.
 				 * To notify applications about this fact, a warning is written in the log when multiple root nodes are used.
+     				 * 
+	  			 * The HTML code that is passed into the content property has to be escaped in order to be rendered correctly. 
+       			 	 * To do so replace every `<` and `>` with the `&lt;` or `&gt;` notation.
 				 *
 				 * When changing the content dynamically, ensure that the ID of the root node remains the same as the HTML
 				 * control's ID. Otherwise it cannot be guaranteed that certain lifecycle events take place.
