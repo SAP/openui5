@@ -208,6 +208,27 @@ sap.ui.define([
 		// code under test - parameters are not relevant for this test
 		assert.strictEqual(ODataTreeBindingFlat.prototype.createEntry.call(oBinding), undefined);
 	});
+
+	//*********************************************************************************************
+[{
+	parameters: {expand : "~expand"},
+	error: new Error("Parameter 'expand' is not supported")
+ }, {
+	parameters: {inactive : "~inactive"},
+	error: new Error("Parameter 'inactive' is not supported")
+}].forEach((oFixture) => {
+	QUnit.test("createEntry: unsupported parameter", function (assert) {
+		const oBinding = {
+				getResolvedPath() {}
+			};
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sPath");
+
+		assert.throws(() => {
+			// code under test
+			ODataTreeBindingFlat.prototype.createEntry.call(oBinding, oFixture.parameters);
+		}, oFixture.error );
+	});
+});
 	/**
 	 * @deprecated As of version 1.104.0
 	 */
