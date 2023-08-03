@@ -254,10 +254,17 @@ sap.ui.define([
 	};
 
 	CalendarTimeInterval.prototype._initializeHeader = function() {
-		var oHeader = new Header(this.getId() + "--Head");
+		var oHeader = new Header(this.getId() + "--Head"),
+			oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 		oHeader.attachEvent("pressPrevious", this._handlePrevious, this);
 		oHeader.attachEvent("pressNext", this._handleNext, this);
 		this.setAggregation("header", oHeader);
+
+		if (oHeader) {
+			oHeader.setAriaLabelButton0(oResourceBundle.getText("DATETIMEPICKER_DATE"));
+			oHeader.setAriaLabelButton1(oResourceBundle.getText("MOBISCROLL_MONTH"));
+			oHeader.setAriaLabelButton2(oResourceBundle.getText("MOBISCROLL_YEAR"));
+		}
 	};
 
 	CalendarTimeInterval.prototype._initializeTimesRow = function() {
