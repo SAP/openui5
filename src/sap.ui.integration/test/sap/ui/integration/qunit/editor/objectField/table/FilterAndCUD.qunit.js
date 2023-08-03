@@ -568,7 +568,7 @@ sap.ui.define([
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button not enabled");
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oTable.setSelectedIndex(0);
 			oTable.fireRowSelectionChange({
 				rowIndex: 0,
@@ -832,7 +832,7 @@ sap.ui.define([
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button not enabled");
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oTable.setSelectedIndex(0);
 			oTable.fireRowSelectionChange({
 				rowIndex: 0,
@@ -1085,7 +1085,7 @@ sap.ui.define([
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button not enabled");
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oTable.setSelectedIndex(0);
 			oTable.fireRowSelectionChange({
 				rowIndex: 0,
@@ -1354,7 +1354,7 @@ sap.ui.define([
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oEditButton = oToolbar.getContent()[2];
 			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button not enabled");
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oTable.setSelectedIndex(0);
 			oTable.fireRowSelectionChange({
 				rowIndex: 0,
@@ -1609,13 +1609,13 @@ sap.ui.define([
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oDeleteButton = oToolbar.getContent()[3];
 			assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button not enabled");
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oTable.setSelectedIndex(1);
 			oTable.fireRowSelectionChange({
 				rowIndex: 1,
 				userInteraction: true
 			});
-			assert.equal(oTable.getSelectedIndex(), 1, "Table: selected row 2");
+			assert.equal(oTable.getSelectedIndices()[0], 1, "Table: selected row 2");
 			assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
 			oDeleteButton.firePress();
 			return wait();
@@ -1763,13 +1763,13 @@ sap.ui.define([
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			var oDeleteButton = oToolbar.getContent()[3];
 			assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button not enabled");
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oTable.setSelectedIndex(0);
 			oTable.fireRowSelectionChange({
 				rowIndex: 0,
 				userInteraction: true
 			});
-			assert.equal(oTable.getSelectedIndex(), 0, "Table: selected row 1");
+			assert.equal(oTable.getSelectedIndices()[0], 0, "Table: selected row 1");
 			assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
 			oDeleteButton.firePress();
 			return wait();

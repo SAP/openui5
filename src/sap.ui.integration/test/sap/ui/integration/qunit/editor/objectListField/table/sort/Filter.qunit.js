@@ -332,12 +332,12 @@ sap.ui.define([
 			});
 			assert.ok(oMoveUpButton.getEnabled(), "Table toolbar: move up button enabled");
 			assert.ok(oMoveDownButton.getEnabled(), "Table toolbar: move down button enabled");
-			assert.equal(oTable.getSelectedIndex(), 0, "Table toolbar: selected index is 0");
+			assert.equal(oTable.getSelectedIndices()[0], 0, "Table toolbar: selected index is 0");
 
 			oMoveDownButton.firePress();
 			return wait();
 		}).then(function () {
-			assert.equal(oTable.getSelectedIndex(), 1, "Table toolbar: selected index is 1");
+			assert.equal(oTable.getSelectedIndices()[0], 1, "Table toolbar: selected index is 1");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 			oSettings = oEditor.getCurrentSettings();
 			oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -366,7 +366,7 @@ sap.ui.define([
 			oMoveUpButton.firePress();
 			return wait();
 		}).then(function () {
-			assert.equal(oTable.getSelectedIndex(), 0, "Table toolbar: selected index is 0");
+			assert.equal(oTable.getSelectedIndices()[0], 0, "Table toolbar: selected index is 0");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 			oSettings = oEditor.getCurrentSettings();
 			oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -389,7 +389,7 @@ sap.ui.define([
 			oMoveUpButton.firePress();
 			return wait();
 		}).then(function () {
-			assert.equal(oTable.getSelectedIndex(), 0, "Table toolbar: selected index is 0");
+			assert.equal(oTable.getSelectedIndices()[0], 0, "Table toolbar: selected index is 0");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 			oSettings = oEditor.getCurrentSettings();
 			oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -471,12 +471,12 @@ sap.ui.define([
 			});
 			assert.ok(oMoveUpButton.getEnabled(), "Table toolbar: move up button enabled");
 			assert.ok(oMoveDownButton.getEnabled(), "Table toolbar: move down button enabled");
-			assert.equal(oTable.getSelectedIndex(), 1, "Table toolbar: selected index is 1");
+			assert.equal(oTable.getSelectedIndices()[0], 1, "Table toolbar: selected index is 1");
 
 			oMoveDownButton.firePress();
 			return wait();
 		}).then(function () {
-			assert.equal(oTable.getSelectedIndex(), 2, "Table toolbar: selected index is 2");
+			assert.equal(oTable.getSelectedIndices()[0], 2, "Table toolbar: selected index is 2");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 			oSettings = oEditor.getCurrentSettings();
 			oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -497,7 +497,7 @@ sap.ui.define([
 			oMoveUpButton.firePress();
 			return wait();
 		}).then(function () {
-			assert.equal(oTable.getSelectedIndex(), 1, "Table toolbar: selected index is 1");
+			assert.equal(oTable.getSelectedIndices()[0], 1, "Table toolbar: selected index is 1");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 			oSettings = oEditor.getCurrentSettings();
 			oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -578,12 +578,12 @@ sap.ui.define([
 			});
 			assert.ok(oMoveUpButton.getEnabled(), "Table toolbar: move up button enabled");
 			assert.ok(oMoveDownButton.getEnabled(), "Table toolbar: move down button enabled");
-			assert.equal(oTable.getSelectedIndex(), 2, "Table toolbar: selected index is 2");
+			assert.equal(oTable.getSelectedIndices()[0], 2, "Table toolbar: selected index is 2");
 
 			oMoveUpButton.firePress();
 			return wait();
 		}).then(function () {
-			assert.equal(oTable.getSelectedIndex(), 1, "Table toolbar: selected index is 1");
+			assert.equal(oTable.getSelectedIndices()[0], 1, "Table toolbar: selected index is 1");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 			oSettings = oEditor.getCurrentSettings();
 			oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -604,7 +604,7 @@ sap.ui.define([
 			oMoveDownButton.firePress();
 			return wait();
 		}).then(function () {
-			assert.equal(oTable.getSelectedIndex(), 2, "Table toolbar: selected index is 2");
+			assert.equal(oTable.getSelectedIndices()[0], 2, "Table toolbar: selected index is 2");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 			oSettings = oEditor.getCurrentSettings();
 			oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -685,12 +685,12 @@ sap.ui.define([
 			});
 			assert.ok(oMoveUpButton.getEnabled(), "Table toolbar: move up button enabled");
 			assert.ok(oMoveDownButton.getEnabled(), "Table toolbar: move down button enabled");
-			assert.equal(oTable.getSelectedIndex(), 2, "Table toolbar: selected index is 2");
+			assert.equal(oTable.getSelectedIndices()[0], 2, "Table toolbar: selected index is 2");
 
 			oMoveDownButton.firePress();
 			return wait();
 		}).then(function () {
-			assert.equal(oTable.getSelectedIndex(), 3, "Table toolbar: selected index is 3");
+			assert.equal(oTable.getSelectedIndices()[0], 3, "Table toolbar: selected index is 3");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 			oSettings = oEditor.getCurrentSettings();
 			oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -709,7 +709,7 @@ sap.ui.define([
 			oMoveUpButton.firePress();
 			return wait();
 		}).then(function () {
-			assert.equal(oTable.getSelectedIndex(), 2, "Table toolbar: selected index is 2");
+			assert.equal(oTable.getSelectedIndices()[0], 2, "Table toolbar: selected index is 2");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 			oSettings = oEditor.getCurrentSettings();
 			oFieldSettings = oSettings[oField.getConfiguration().manifestpath];

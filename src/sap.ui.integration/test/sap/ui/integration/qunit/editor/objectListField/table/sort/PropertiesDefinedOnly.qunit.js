@@ -289,11 +289,11 @@ sap.ui.define([
 						});
 						assert.ok(oMoveUpButton.getEnabled(), "Table toolbar: move up button enabled");
 						assert.ok(oMoveDownButton.getEnabled(), "Table toolbar: move down button enabled");
-						assert.equal(oTable.getSelectedIndex(), 0, "Table toolbar: selected index is 0");
+						assert.equal(oTable.getSelectedIndices()[0], 0, "Table toolbar: selected index is 0");
 
 						oMoveDownButton.firePress();
 						wait().then(function () {
-							assert.equal(oTable.getSelectedIndex(), 1, "Table toolbar: selected index is 1");
+							assert.equal(oTable.getSelectedIndices()[0], 1, "Table toolbar: selected index is 1");
 							assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value");
 							var oSettings = that.oEditor.getCurrentSettings();
 							var oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -315,7 +315,7 @@ sap.ui.define([
 
 							oMoveUpButton.firePress();
 							wait().then(function () {
-								assert.equal(oTable.getSelectedIndex(), 0, "Table toolbar: selected index is 0");
+								assert.equal(oTable.getSelectedIndices()[0], 0, "Table toolbar: selected index is 0");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value");
 								oSettings = that.oEditor.getCurrentSettings();
 								oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -337,7 +337,7 @@ sap.ui.define([
 
 								oMoveUpButton.firePress();
 								wait().then(function () {
-									assert.equal(oTable.getSelectedIndex(), 0, "Table toolbar: selected index is 0");
+									assert.equal(oTable.getSelectedIndices()[0], 0, "Table toolbar: selected index is 0");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value");
 									oSettings = that.oEditor.getCurrentSettings();
 									oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -417,11 +417,11 @@ sap.ui.define([
 							});
 							assert.ok(oMoveUpButton.getEnabled(), "Table toolbar: move up button enabled");
 							assert.ok(oMoveDownButton.getEnabled(), "Table toolbar: move down button enabled");
-							assert.equal(oTable.getSelectedIndex(), 6, "Table toolbar: selected index is 6");
+							assert.equal(oTable.getSelectedIndices()[0], 6, "Table toolbar: selected index is 6");
 
 							oMoveDownButton.firePress();
 							wait().then(function () {
-								assert.equal(oTable.getSelectedIndex(), 7, "Table toolbar: selected index is 7");
+								assert.equal(oTable.getSelectedIndices()[0], 7, "Table toolbar: selected index is 7");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value");
 								var oSettings = that.oEditor.getCurrentSettings();
 								var oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -443,7 +443,7 @@ sap.ui.define([
 
 								oMoveDownButton.firePress();
 								wait().then(function () {
-									assert.equal(oTable.getSelectedIndex(), 7, "Table toolbar: selected index is 7");
+									assert.equal(oTable.getSelectedIndices()[0], 7, "Table toolbar: selected index is 7");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value");
 									var oSettings = that.oEditor.getCurrentSettings();
 									var oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -465,7 +465,7 @@ sap.ui.define([
 
 									oMoveUpButton.firePress();
 									wait().then(function () {
-										assert.equal(oTable.getSelectedIndex(), 6, "Table toolbar: selected index is 6");
+										assert.equal(oTable.getSelectedIndices()[0], 6, "Table toolbar: selected index is 6");
 										assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value");
 										oSettings = that.oEditor.getCurrentSettings();
 										oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -596,7 +596,7 @@ sap.ui.define([
 					assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button disabled");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					oTable.setSelectedIndex(0);
 					oTable.fireRowSelectionChange({
 						rowIndex: 0,

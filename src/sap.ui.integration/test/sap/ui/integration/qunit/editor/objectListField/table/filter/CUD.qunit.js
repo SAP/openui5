@@ -158,7 +158,7 @@ sap.ui.define([
 			oClearFilterButton = oToolbar.getContent()[4];
 			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oURLColumn = oTable.getColumns()[4];
 			return wait();
 		}).then(function() {
@@ -275,7 +275,7 @@ sap.ui.define([
 			oClearFilterButton = oToolbar.getContent()[4];
 			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oURLColumn = oTable.getColumns()[4];
 			oTable.filter(oURLColumn, "https");
 			return wait();
@@ -367,7 +367,7 @@ sap.ui.define([
 			oClearFilterButton = oToolbar.getContent()[4];
 			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oURLColumn = oTable.getColumns()[4];
 			return wait();
 		}).then(function() {
@@ -571,7 +571,7 @@ sap.ui.define([
 			oClearFilterButton = oToolbar.getContent()[4];
 			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oURLColumn = oTable.getColumns()[4];
 			oTable.filter(oURLColumn, "http:");
 			return wait();
@@ -757,7 +757,7 @@ sap.ui.define([
 			oClearFilterButton = oToolbar.getContent()[4];
 			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oURLColumn = oTable.getColumns()[4];
 			oTable.filter(oURLColumn, "http:");
 			return wait();

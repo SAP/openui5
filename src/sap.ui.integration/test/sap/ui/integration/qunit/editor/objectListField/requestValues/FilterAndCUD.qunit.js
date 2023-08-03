@@ -522,7 +522,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oNewRow = oTable.getRows()[3];
 			assert.ok(deepEqual(cleanUUIDAndPosition(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 4: value");
 			oSelectionCell4 = oNewRow.getCells()[0];
@@ -707,7 +707,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oNewRow = oTable.getRows()[3];
 			assert.ok(deepEqual(cleanUUIDAndPosition(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 4: value");
 			oSelectionCell4 = oNewRow.getCells()[0];
@@ -908,7 +908,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oNewRow = oTable.getRows()[3];
 			assert.ok(deepEqual(cleanUUIDAndPosition(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 4: value");
 			oSelectionCell4 = oNewRow.getCells()[0];
@@ -1100,7 +1100,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oNewRow = oTable.getRows()[3];
 			assert.ok(deepEqual(cleanUUIDAndPosition(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 4: value");
 			oSelectionCell4 = oNewRow.getCells()[0];
@@ -1312,7 +1312,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oNewRow = oTable.getRows()[3];
 			assert.ok(deepEqual(cleanUUIDAndPosition(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 4: value");
 			oSelectionCell4 = oNewRow.getCells()[0];
@@ -1395,7 +1395,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oNewRow = oTable.getRows()[3];
 			assert.ok(deepEqual(cleanUUIDAndPosition(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 4: value");
 			oSelectionCell4 = oNewRow.getCells()[0];

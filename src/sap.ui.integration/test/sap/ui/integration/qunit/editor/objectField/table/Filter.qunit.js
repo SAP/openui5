@@ -379,7 +379,7 @@ sap.ui.define([
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 			assert.equal(oTable.getBinding().getCount(), 8, "Table: RowCount after filtering key0*");
 			assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), oValue), "Field 1: Value not changed after filtering");
-			assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: selected row hided");
+			assert.ok(oTable.getSelectedIndices().length === 0, "Table: selected row hided");
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(!oCell.getSelected(), "Row 1: Cell 1 is not selected");
 			return TestUtils.openColumnMenu(oURLColumn);

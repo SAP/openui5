@@ -897,7 +897,7 @@ sap.ui.define([
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
-					assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					oTable.setSelectedIndex(2);
 					oTable.fireRowSelectionChange({
 						rowIndex: 2,
@@ -1026,7 +1026,7 @@ sap.ui.define([
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
-					assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					oTable.setSelectedIndex(2);
 					oTable.fireRowSelectionChange({
 						rowIndex: 2,
@@ -1150,7 +1150,7 @@ sap.ui.define([
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
-					assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					oTable.setSelectedIndex(2);
 					oTable.fireRowSelectionChange({
 						rowIndex: 2,
@@ -1287,7 +1287,7 @@ sap.ui.define([
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
-					assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					oTable.setSelectedIndex(2);
 					oTable.fireRowSelectionChange({
 						rowIndex: 2,
@@ -1447,7 +1447,7 @@ sap.ui.define([
 					assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button disabled");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
-					assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
+					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					oTable.setSelectedIndex(0);
 					oTable.fireRowSelectionChange({
 						rowIndex: 0,
