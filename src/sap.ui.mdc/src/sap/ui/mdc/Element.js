@@ -7,13 +7,13 @@ sap.ui.define([
 	"use strict";
 
 	/**
- 	 * Creates and initializes a new MDC element with the given <code>sId</code> and settings.
+ 	 * Creates and initializes a new element with the given <code>sId</code> and settings.
 	 *
 	 * @param {string} [sId] Optional ID for the new element; generated automatically if no non-empty ID is given
-	 *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
+	 *      <b>Note:</b> This can be omitted, no matter whether <code>mSettings</code> is given.
 	 * @param {object} [mSettings] Object with initial settings for the new control
 	 *
-	 * @class The base class for MDC composite elements providing delegate-related functionality (see {@link sap.ui.mdc.mixin.DelegateMixin}).
+	 * @class The base class for composite elements in the <code>sap.ui.mdc</code> library providing delegate-related functionality (see {@link sap.ui.mdc.mixin.DelegateMixin}).
 	 *
 	 * @extends sap.ui.core.Element
 	 * @abstract

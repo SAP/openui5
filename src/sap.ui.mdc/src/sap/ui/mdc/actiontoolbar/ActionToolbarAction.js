@@ -16,7 +16,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class The action for an {@link sap.ui.mdc.ActionToolbar ActionToolbar} control
+	 * @class The action for an {@link sap.ui.mdc.ActionToolbar ActionToolbar} control with given layout information that determines where the wrapped control is displayed on the <code>ActionToolbar</code>.
 	 * @extends sap.ui.core.Control
 	 * @author SAP SE
 	 * @version ${version}
@@ -34,7 +34,7 @@ sap.ui.define([
 			],
 			properties: {
 				/**
-				 * Layout information
+				 * Contains the information where the action is displayed on the <code>ActionToolbar</code>.
 				 */
 				layoutInformation: {
 					type: "object",
@@ -48,7 +48,7 @@ sap.ui.define([
 			defaultAggregation: "action",
 			aggregations: {
 				/**
-				 * Action
+				 * The control that is displayed on the <code>ActionToolbar</code>.
 				 */
 				action: {
 					type: "sap.ui.core.Control",
