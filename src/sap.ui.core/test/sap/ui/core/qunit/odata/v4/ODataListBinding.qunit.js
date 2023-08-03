@@ -3923,6 +3923,39 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bIsEffectivelyKeptAlive) {
+	QUnit.test(`removeCreated: $$aggregation, ${bIsEffectivelyKeptAlive}`, function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
+				{$$aggregation : {}}), // Note: no hierarchyQualifier!
+			oContext = {
+				// no getModelIndex, isInactive
+				isEffectivelyKeptAlive : mustBeMocked
+			};
+
+		oBinding.iActiveContexts = "~iActiveContexts~";
+		oBinding.iCreatedContexts = "~iCreatedContexts~";
+		oBinding.bFirstCreateAtEnd = "~bFirstCreateAtEnd~";
+		oBinding.aContexts
+			= [{iIndex : "#0"}, {iIndex : "#1"}, oContext, {iIndex : 3},, {iIndex : 5}];
+		oBinding.iMaxLength = 43;
+		this.mock(oContext).expects("isEffectivelyKeptAlive").withExactArgs()
+			.returns(bIsEffectivelyKeptAlive);
+		this.mock(oBinding).expects("destroyLater").exactly(bIsEffectivelyKeptAlive ? 0 : 1)
+			.withExactArgs(sinon.match.same(oContext));
+
+		// code under test
+		oBinding.removeCreated(oContext);
+
+		assert.strictEqual(oBinding.iActiveContexts, "~iActiveContexts~");
+		assert.strictEqual(oBinding.iCreatedContexts, "~iCreatedContexts~");
+		assert.strictEqual(oBinding.bFirstCreateAtEnd, "~bFirstCreateAtEnd~");
+		assert.deepEqual(oBinding.aContexts,
+			[{iIndex : "#0"}, {iIndex : "#1"}, {iIndex : 2},, {iIndex : 4}]);
+		assert.strictEqual(oBinding.iMaxLength, 42);
+	});
+});
+
+	//*********************************************************************************************
 [0, 1].forEach(function (iCurrentEnd) {
 	var sTitle = "destroyLater: iCurrentEnd=" + iCurrentEnd;
 

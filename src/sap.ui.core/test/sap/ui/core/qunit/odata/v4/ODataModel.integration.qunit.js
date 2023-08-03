@@ -27481,6 +27481,8 @@ sap.ui.define([
 	// of a hierarchy directory. This way, a draft root object is available (as needed by real
 	// services).
 	// JIRA: CPOUI5ODATAV4-2225
+	//
+	// Create new child and cancel immediately (JIRA: CPOUI5ODATAV4-2272)
 	QUnit.test("Recursive Hierarchy: create new children", function (assert) {
 		var oChild, oListBinding, fnRespond, oRoot, oTable;
 
@@ -27541,6 +27543,13 @@ sap.ui.define([
 				oListBinding.create({}, /*bSkipRefresh*/true);
 			}); // TypeError: Cannot read properties of undefined (reading 'getCanonicalPath')
 
+			// code under test (JIRA: CPOUI5ODATAV4-2272)
+			const oLostChild = oListBinding.create({
+				"@$ui5.node.parent" : oRoot,
+				Name : "n/a"
+			}, /*bSkipRefresh*/true);
+			oModel.resetChanges();
+
 			that.expectChange("name", [, "Beta"])
 				.expectRequest({
 					method : "POST",
@@ -27564,7 +27573,10 @@ sap.ui.define([
 				Name : "Beta"
 			}, /*bSkipRefresh*/true);
 
-			return that.waitForChanges(assert, "create 1st child");
+			return Promise.all([
+				checkCanceled(assert, oLostChild.created()),
+				that.waitForChanges(assert, "create 1st child")
+			]);
 		}).then(function () {
 			checkTable("during creation", assert, oTable, [
 				sFriend + "(ArtistID='0',IsActiveEntity=false)",
@@ -27603,6 +27615,13 @@ sap.ui.define([
 				Name : "Beta: β"
 			});
 
+			// code under test (JIRA: CPOUI5ODATAV4-2272)
+			const oLostChild = oListBinding.create({
+				"@$ui5.node.parent" : oRoot,
+				Name : "n/a"
+			}, /*bSkipRefresh*/true);
+			oModel.resetChanges();
+
 			that.expectChange("name", [, "Gamma", "Beta: β"])
 				.expectRequest({
 					method : "POST",
@@ -27627,6 +27646,7 @@ sap.ui.define([
 			assert.strictEqual(oChild.getIndex(), 1);
 
 			return Promise.all([
+				checkCanceled(assert, oLostChild.created()),
 				oChild.created(),
 				that.waitForChanges(assert, "create 2nd child")
 			]);
@@ -27648,6 +27668,8 @@ sap.ui.define([
 	// are loaded, but some placeholders remain. Create two new child nodes underneath the root.
 	// Scroll down to load the other children.
 	// JIRA: CPOUI5ODATAV4-2260
+	//
+	// Create new child and cancel immediately (JIRA: CPOUI5ODATAV4-2272)
 	QUnit.test("Recursive Hierarchy: create new children & placeholders", function (assert) {
 		var oListBinding, oRoot, oTable;
 
@@ -27753,6 +27775,13 @@ sap.ui.define([
 				[undefined, 2, "2", "Gamma"]
 			], 6);
 
+			// code under test (JIRA: CPOUI5ODATAV4-2272)
+			const oLostChild = oListBinding.create({
+				"@$ui5.node.parent" : oRoot,
+				Name : "n/a"
+			}, /*bSkipRefresh*/true);
+			oModel.resetChanges();
+
 			that.expectChange("id", [, "", "1"])
 				.expectChange("name", [, "1st new child", "Beta"])
 				.expectRequest({
@@ -27777,6 +27806,7 @@ sap.ui.define([
 			}, /*bSkipRefresh*/true);
 
 			return Promise.all([
+				checkCanceled(assert, oLostChild.created()),
 				oChild.created(),
 				that.waitForChanges(assert, "create 1st child")
 			]);

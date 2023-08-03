@@ -3721,6 +3721,8 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bHasGroupLevelCache) {
 	QUnit.test("create: already has group level cache: " + bHasGroupLevelCache, function (assert) {
+		var fnCancelCallback;
+
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 				$ParentNavigationProperty : "myParent",
 				hierarchyQualifier : "X"
@@ -3732,37 +3734,11 @@ sap.ui.define([
 				"@$ui5._" : {cache : bHasGroupLevelCache ? oGroupLevelCache : undefined},
 				"@$ui5.node.level" : 23
 			};
-		const oElementSkip = {
-				"@$ui5._" : {index : -3, parent : {/*not oGroupLevelCache*/}, placeholder : true},
-				"@$ui5.node.level" : 0, // must be ignored
-				ID : "skip"
-			};
-		const oElementChange = {
-				"@$ui5._" : {index : 4, parent : oGroupLevelCache, placeholder : true},
-				"@$ui5.node.level" : 0, // must be ignored
-				ID : "change"
-			};
-		const oElementNoBreak = {
-				"@$ui5.node.level" : 24,
-				ID : "no break"
-			};
-		const oElementBreak = {
-				"@$ui5.node.level" : 23, // looks like oParentNode's sibling
-				ID : "break"
-			};
-		const oElementTrap = { // this is unrealistic and acts as a trap to prove that loop ends
-				"@$ui5._" : {index : 6, parent : oGroupLevelCache, placeholder : true},
-				"@$ui5.node.level" : 0, // must be ignored
-				ID : "trap"
-			};
-		if (bHasGroupLevelCache) { // check that for-loop does not "overshoot"
-			oElementBreak["@$ui5.node.level"] = 24; // no break here
-		}
-		oCache.aElements = ["0", "1", oParentNode,
-			oElementSkip, oElementNoBreak, oElementChange, oElementBreak, oElementTrap];
+		oCache.aElements = ["0", "1", oParentNode, "3", "4"];
 		oCache.aElements.$byPredicate = {"('42')" : oParentNode};
 		oCache.aElements.$count = 5;
-		this.mock(oCache).expects("createGroupLevelCache").exactly(bHasGroupLevelCache ? 0 : 1)
+		const oCacheMock = this.mock(oCache);
+		oCacheMock.expects("createGroupLevelCache").exactly(bHasGroupLevelCache ? 0 : 1)
 			.withExactArgs(sinon.match.same(oParentNode)).returns(oGroupLevelCache);
 		this.mock(_Helper).expects("updateAll").exactly(bHasGroupLevelCache ? 0 : 1)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('42')",
@@ -3776,8 +3752,9 @@ sap.ui.define([
 		this.mock(oGroupLevelCache).expects("create")
 			.withExactArgs("~oGroupLock~", "~oPostPathPromise~", "~sPath~", "~sTransientPredicate~",
 				{bar : "~bar~", foo : "~foo~"},
-				false, "~fnErrorCallback~", "~fnSubmitCallback~")
-			.callsFake(() => {
+				false, "~fnErrorCallback~", "~fnSubmitCallback~", sinon.match.func)
+			.callsFake(function () {
+				fnCancelCallback = arguments[8];
 				if (!bHasGroupLevelCache) {
 					assert.strictEqual(_Helper.getPrivateAnnotation(oParentNode, "cache"),
 						oGroupLevelCache);
@@ -3790,12 +3767,12 @@ sap.ui.define([
 					});
 				});
 			});
-		this.mock(oCache).expects("addElements")
+		oCacheMock.expects("addElements")
 			.withExactArgs(sinon.match.same(oEntityData), 3, sinon.match.same(oGroupLevelCache), 0)
-			.callsFake(() => {
-				assert.deepEqual(oCache.aElements, ["0", "1", oParentNode, null,
-					oElementSkip, oElementNoBreak, oElementChange, oElementBreak, oElementTrap]);
+			.callsFake(function () {
+				assert.deepEqual(oCache.aElements, ["0", "1", oParentNode, null, "3", "4"]);
 			});
+		oCacheMock.expects("shiftIndex").withExactArgs(3, +1);
 
 		// code under test
 		const oResult = oCache.create("~oGroupLock~", "~oPostPathPromise~", "~sPath~",
@@ -3814,37 +3791,31 @@ sap.ui.define([
 
 		return oResult.then(function (oEntityData0) {
 			assert.strictEqual(oEntityData0, oEntityData);
-			assert.deepEqual(oCache.aElements, ["0", "1", {
-				"@$ui5._" : {cache : oGroupLevelCache},
-				"@$ui5.node.level" : 23
-			}, null, {
-				"@$ui5._" : {index : -3, parent : {}, placeholder : true},
-				"@$ui5.node.level" : 0,
-				ID : "skip"
-			}, {
-				"@$ui5.node.level" : 24,
-				ID : "no break"
-			}, {
-				"@$ui5._" : {index : 5, parent : oGroupLevelCache, placeholder : true},
-				"@$ui5.node.level" : 0,
-				ID : "change"
-			}, {
-				"@$ui5.node.level" : bHasGroupLevelCache ? 24 : 23,
-				ID : "break"
-			}, {
-				"@$ui5._" : {
-					index : bHasGroupLevelCache ? 7 : /*unchanged!*/6,
-					parent : oGroupLevelCache,
-					placeholder : true
-				},
-				"@$ui5.node.level" : 0,
-				ID : "trap"
-			}]);
 			assert.deepEqual(oCache.aElements.$byPredicate, {
 				"('42')" : oParentNode,
 				"('ABC')" : oEntityData
 			});
-		});
+			assert.strictEqual(oCache.aElements.$count, 6);
+
+			oCache.aElements[3] = oEntityData;
+			oCacheMock.expects("shiftIndex").withExactArgs(3, -1)
+				.callsFake(function () {
+					assert.deepEqual(oCache.aElements,
+						["0", "1", oParentNode, oEntityData, "3", "4"], "not yet spliced");
+				});
+			this.mock(_Helper).expects("getPrivateAnnotation")
+				.withExactArgs(sinon.match.same(oEntityData), "transientPredicate")
+				.returns("('42')"); // just testing ;-)
+
+			// code under test
+			fnCancelCallback();
+
+			assert.strictEqual(oCache.aElements.$count, 5);
+			assert.deepEqual(oCache.aElements.$byPredicate, {
+				"('ABC')" : oEntityData
+			});
+			assert.deepEqual(oCache.aElements, ["0", "1", oParentNode, "3", "4"]);
+		}.bind(this));
 	});
 });
 
@@ -3882,4 +3853,85 @@ sap.ui.define([
 			oCache.create(null, null, "", "", {"@$ui5.node.parent" : "Foo('42')"});
 		}, new Error("Unsupported collapsed parent: Foo('42')"));
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bBreak) {
+	QUnit.test(`shiftIndex: break = ${bBreak}`, function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+				hierarchyQualifier : "X"
+			});
+		const oNode = {
+				"@$ui5._" : {parent : "~oGroupLevelCache~"},
+				"@$ui5.node.level" : 24,
+				ID : "node"
+			};
+		const oElementSkip = {
+				"@$ui5._" : {index : -3, parent : "not oGroupLevelCache", placeholder : true},
+				"@$ui5.node.level" : 0, // must be ignored
+				ID : "skip"
+			};
+		const oElementNoBreak = {
+				"@$ui5.node.level" : 24,
+				ID : "no break"
+			};
+		const oElementChange = {
+				"@$ui5._" : {index : 4, parent : "~oGroupLevelCache~"},
+				"@$ui5.node.level" : 24,
+				ID : "change (node)"
+			};
+		const oPlaceholderChange = {
+				"@$ui5._" : {index : 5, parent : "~oGroupLevelCache~", placeholder : true},
+				"@$ui5.node.level" : 0, // must be ignored
+				ID : "change (placeholder)"
+			};
+		const oElementBreak = {
+				"@$ui5.node.level" : bBreak
+					? 23 // looks like sibling of oNode's parent
+					: 24, // no break here (check that for-loop does not "overshoot")
+				ID : "break"
+			};
+		const oElementTrap = { // this is unrealistic and acts as a trap to prove that loop ends
+				"@$ui5._" : {index : 7, parent : "~oGroupLevelCache~", placeholder : true},
+				"@$ui5.node.level" : 0, // must be ignored
+				ID : "trap"
+			};
+		oCache.aElements = ["0", "1", oNode, oElementSkip, oElementNoBreak, oElementChange,
+			oPlaceholderChange, oElementBreak, oElementTrap];
+
+		// code under test
+		oCache.shiftIndex(2, 47);
+
+		assert.deepEqual(oCache.aElements, ["0", "1", {
+			"@$ui5._" : {parent : "~oGroupLevelCache~"},
+			"@$ui5.node.level" : 24,
+			ID : "node"
+		}, {
+			"@$ui5._" : {index : -3, parent : "not oGroupLevelCache", placeholder : true},
+			"@$ui5.node.level" : 0,
+			ID : "skip"
+		}, {
+			"@$ui5.node.level" : 24,
+			ID : "no break"
+		}, {
+			"@$ui5._" : {index : 4 + 47, parent : "~oGroupLevelCache~"},
+			"@$ui5.node.level" : 24,
+			ID : "change (node)"
+		}, {
+			"@$ui5._" : {index : 5 + 47, parent : "~oGroupLevelCache~", placeholder : true},
+			"@$ui5.node.level" : 0,
+			ID : "change (placeholder)"
+		}, {
+			"@$ui5.node.level" : bBreak ? 23 : 24,
+			ID : "break"
+		}, {
+			"@$ui5._" : {
+				index : bBreak ? /*unchanged!*/7 : 7 + 47,
+				parent : "~oGroupLevelCache~",
+				placeholder : true
+			},
+			"@$ui5.node.level" : 0,
+			ID : "trap"
+		}]);
+	});
+});
 });

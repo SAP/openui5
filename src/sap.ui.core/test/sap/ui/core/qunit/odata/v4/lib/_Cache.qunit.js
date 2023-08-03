@@ -8037,6 +8037,7 @@ sap.ui.define([
 	QUnit.test("CollectionCache#read: $count & create, bInactive=" + bInactive, function (assert) {
 		var sResourcePath = "Employees",
 			oCache = this.createCache(sResourcePath),
+			fnCancelCallback = sinon.spy(),
 			iCountAfterCreate = bInactive ? 26 : 27,
 			oCountChangeListener = {onChange : function () {}},
 			oCountChangeListenerMock = this.mock(oCountChangeListener),
@@ -8069,7 +8070,8 @@ sap.ui.define([
 				oCache.registerChangeListener("$count", oCountChangeListener);
 
 				return oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "",
-					sTransientPredicate, {}, null, false, function fnSubmitCallback() {});
+					sTransientPredicate, {}, false, null, function fnSubmitCallback() {},
+					fnCancelCallback);
 			})
 			.then(function () {
 				var oReadGroupLock = {
@@ -8086,8 +8088,14 @@ sap.ui.define([
 				assert.strictEqual(oCache.iActiveElements, bInactive ? 0 : 1);
 
 				oCountChangeListenerMock.expects("onChange").exactly(bInactive ? 0 : 1)
-					.withExactArgs(26, undefined);
-				that.mock(oGroupLock).expects("cancel").withExactArgs();
+					.withExactArgs(26, undefined)
+					.callsFake(function () {
+						assert.strictEqual(fnCancelCallback.callCount, 0, "not yet");
+					});
+				that.mock(oGroupLock).expects("cancel").withExactArgs()
+					.callsFake(function () {
+						assert.strictEqual(fnCancelCallback.callCount, 1);
+					});
 
 				// code under test - cancel the create
 				oPostRequest.args[0][6]();
