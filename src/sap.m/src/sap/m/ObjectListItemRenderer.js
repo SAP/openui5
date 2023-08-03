@@ -251,7 +251,13 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/li
 
 			if (oLI.getMarkers()) {
 				oLI.getMarkers().forEach(function(marker) {
-					aLabelledByIds.push(marker.getId() + "-text");
+					if (marker._isIconVisible()) {
+						aLabelledByIds.push(marker.getId() + "-text-icon");
+					}
+
+					if (marker._isTextVisible()) {
+						aLabelledByIds.push(marker.getId() + "-text");
+					}
 				});
 			}
 

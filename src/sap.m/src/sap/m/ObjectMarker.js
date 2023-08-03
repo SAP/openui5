@@ -644,7 +644,7 @@ sap.ui.define([
 		var oIcon = this.getAggregation("_iconControl");
 
 		if (!oIcon) {
-			oIcon = new Icon();
+			oIcon = new Icon(this.getId() + "-icon", {});
 			this.setAggregation("_iconControl", oIcon, true);
 		}
 

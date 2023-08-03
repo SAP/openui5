@@ -172,7 +172,9 @@ sap.ui.define([
 			markFlagged: true,
 			attributes: [new ObjectAttribute({id: "oAttrsAndStatuseListItemId-firstAttr", text: "First attribute text"})],
 			firstStatus: new ObjectStatus({id: "oAttrsAndStatuseListItemId-status1", text: "First status info"}),
-			secondStatus: new ObjectStatus({id: "oAttrsAndStatuseListItemId-status2", text: "Second status info"})
+			secondStatus: new ObjectStatus({id: "oAttrsAndStatuseListItemId-status2", text: "Second status info"}),
+			markFavorite: true
+
 		});
 		list.addItem(oAttrsAndStatuseListItem);
 
@@ -192,6 +194,7 @@ sap.ui.define([
 		assert.ok(sAriaLabelledByValue.indexOf(sFirstStatusId) !== -1, "ObjectListItem firstStatusId: '" + sFirstStatusId + "' is added to 'aria-labelledby' attribute");
 		assert.ok(sAriaLabelledByValue.indexOf(sSecondStatusId) !== -1, "ObjectListItem secondStatusId: '" + sSecondStatusId + "' is added to 'aria-labelledby' attribute");
 		assert.ok(sAriaLabelledByValue.indexOf(sListItemId + "-flag-text") !== -1, "ObjectListItem flagId: '" + sListItemId + "-flag-text" + "' is added to aria-labelledby attribute");
+		assert.ok(sAriaLabelledByValue.indexOf(sListItemId + "-favorite-text-icon") !== -1, "ObjectListItem flagId: '" + sListItemId + "-favorite-text-icon" + "' is added to aria-labelledby attribute");
 
 		oAttrsAndStatuseListItem.getAttributes().forEach(function(attribute) {
 			assert.ok(sAriaLabelledByValue.indexOf(attribute.getId()) !== -1, "ObjectListItem attributeId: '" + attribute.getId() + "' is added to 'aria-labelledby' attribute");
