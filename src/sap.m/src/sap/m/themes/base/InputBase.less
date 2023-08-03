@@ -129,11 +129,10 @@
 	background-color: @sapUiFieldBackground;
 	border: @sapUiFieldBorderWidth @sapUiFieldBorderStyle @sapUiFieldBorderColor;
 	border-radius: @sapUiFieldBorderCornerRadius;
-	box-shadow: @sapUiFieldShadow;
 }
 
-.sapMInputBaseContentWrapper.sapMInputBaseDisabledWrapper {
-	background-image: none;
+.sapMInputBaseContentWrapper:not(.sapMInputBaseReadonlyWrapper) {
+	box-shadow: @sapUiFieldShadow;
 }
 
 .sapMILI-CTX .sapMInputBaseContentWrapperError,
