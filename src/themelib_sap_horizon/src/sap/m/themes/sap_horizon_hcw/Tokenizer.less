@@ -36,9 +36,16 @@ html.sap-desktop .sapMTokenizer.sapMTokenizerReadonly {
 	}
 }
 
+.sapMTokenizer.sapMTokenizerReadonly .sapMToken.sapMTokenReadOnly {
+	padding: 0.25rem 0.3125rem;
+}
+
 .sapUiSizeCompact {
 	.sapMTokenizer {
 		padding-left: 0.25rem;
+		&.sapMTokenizerReadonly .sapMToken.sapMTokenReadOnly {
+			padding: 0.125rem 0.25rem;
+		}
 		.sapMToken {
 			margin-right: 0.25rem;
 			margin-top: 0.0625rem;
