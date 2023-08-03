@@ -1104,25 +1104,7 @@ sap.ui.define([
          *
          */
         Chart.prototype.getChartTypeInfo = function () {
-            var mInfo;
-
-            try {
-                mInfo = this.getControlDelegate().getChartTypeInfo(this);
-            } catch (error) {
-                //Inner chart is not yet ready
-                var oChartResourceBundle = Core.getLibraryResourceBundle("sap.chart.messages");
-
-                if (!mInfo) {
-                    mInfo = {
-                        icon: "sap-icon://vertical-bar-chart",
-                        text: MDCRb.getText("chart.CHART_TYPE_TOOLTIP", [
-                            oChartResourceBundle.getText("info/bar")
-                        ])
-                    };
-                }
-            }
-
-            return mInfo;
+            return this.getControlDelegate().getChartTypeInfo(this);
         };
 
         /**
