@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
-	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/write/_internal/extensionPoint/Registry",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/mvc/XMLView",
@@ -14,7 +13,6 @@ sap.ui.define([
 	Component,
 	JsControlTreeModifier,
 	Processor,
-	Loader,
 	ExtensionPointRegistry,
 	ManagedObjectObserver,
 	XMLView,
@@ -408,9 +406,8 @@ sap.ui.define([
 	 * @deprecated Since version 1.77 due to deprecation of sap.ui.control when create view with design mode true
 	 */
 	QUnit.module("Given an extensionPoint.Registry instantiated by the fl extensionPoint.Processor", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
-			sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
 
 			var sXmlString =
 				'<mvc:View id="myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
@@ -436,30 +433,23 @@ sap.ui.define([
 					"</Panel>" +
 				"</mvc:View>";
 
-			return Component.create({
+			this.oComponent = await Component.create({
 				name: "testComponent",
 				id: "testComponent",
 				componentData: {}
-			})
-			.then(function(_oComp) {
-				this.oComponent = _oComp;
-				return this.oComponent.runAsOwner(function() {
-					if (sap.ui.getCore().byId("myView")) {
-						sap.ui.getCore().byId("myView").destroy();
-					}
-					return XMLView.create({
-						id: "myView",
-						definition: sXmlString,
-						async: true
-					})
-					.then(function(oXMLView) {
-						this.oXMLView = oXMLView;
-						this.oHBox = this.oXMLView.getContent()[0];
-						this.oPanel = this.oXMLView.getContent()[1];
-					}.bind(this));
-				}.bind(this));
-			}.bind(this))
-			.then(function() {
+			});
+
+			return this.oComponent.runAsOwner(async () => {
+				if (sap.ui.getCore().byId("myView")) {
+					sap.ui.getCore().byId("myView").destroy();
+				}
+				this.oXMLView = await XMLView.create({
+					id: "myView",
+					definition: sXmlString,
+					async: true
+				});
+				this.oHBox = this.oXMLView.getContent()[0];
+				this.oPanel = this.oXMLView.getContent()[1];
 				oCore.applyChanges();
 			});
 		},

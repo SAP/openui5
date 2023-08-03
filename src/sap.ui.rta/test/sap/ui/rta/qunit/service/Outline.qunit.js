@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/write/_internal/extensionPoint/Registry",
 	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -37,7 +36,6 @@ sap.ui.define([
 	UIComponent,
 	DesignTime,
 	OverlayRegistry,
-	Loader,
 	ExtensionPointRegistry,
 	ExtensionPointRegistryAPI,
 	PersistenceWriteAPI,
@@ -673,10 +671,9 @@ sap.ui.define([
 		});
 	}
 
-	function _beforeEachExtensionPoint(sXmlView, oController) {
+	function beforeEachExtensionPoint(sXmlView, oController) {
 		sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 		sandbox.stub(oCore.getConfiguration(), "getSuppressDeactivationOfControllerCode").returns(true);
-		sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
 		this.oComponent = _createComponent();
 		return _createAsyncView("myView", sXmlView, this.oComponent, oController)
 		.then(function(oXmlView) {
@@ -698,7 +695,7 @@ sap.ui.define([
 		}.bind(this));
 	}
 
-	function _afterEachExtensionPoint() {
+	function afterEachExtensionPoint() {
 		this.oRta.destroy();
 		this.oComponent.destroy();
 		this.oXmlView.destroy();
@@ -708,10 +705,10 @@ sap.ui.define([
 
 	QUnit.module("Given that xmlView with extensionPoints, RuntimeAuthoring and Outline service are created ", {
 		beforeEach: function() {
-			return _beforeEachExtensionPoint.call(this, sXmlString);
+			return beforeEachExtensionPoint.call(this, sXmlString);
 		},
 		afterEach: function() {
-			return _afterEachExtensionPoint.call(this);
+			return afterEachExtensionPoint.call(this);
 		}
 	}, function() {
 		QUnit.test("when get() is called", function(assert) {
@@ -790,10 +787,10 @@ sap.ui.define([
 
 	QUnit.module("Given that xmlView with extensionPoints, RuntimeAuthoring and Outline service are created with 'simple form'", {
 		beforeEach: function() {
-			return _beforeEachExtensionPoint.call(this, oXmlSimpleForm);
+			return beforeEachExtensionPoint.call(this, oXmlSimpleForm);
 		},
 		afterEach: function() {
-			return _afterEachExtensionPoint.call(this);
+			return afterEachExtensionPoint.call(this);
 		}
 	}, function() {
 		QUnit.test("when get() is called", function(assert) {
@@ -851,7 +848,7 @@ sap.ui.define([
 
 	QUnit.module("Given that xmlView with table and extensionPoint (RuntimeAuthoring and outline service are started) - Template case", {
 		afterEach: function() {
-			return _afterEachExtensionPoint.call(this);
+			return afterEachExtensionPoint.call(this);
 		}
 	}, function() {
 		QUnit.test("for four products in the collection, when get() is called", function(assert) {
@@ -874,7 +871,7 @@ sap.ui.define([
 			};
 			return createController("myController", oData)
 			.then(function(oController) {
-				return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))
 			.then(function() {
 				return this.oOutline.get();
@@ -946,7 +943,7 @@ sap.ui.define([
 			};
 			return createController("myController", oData)
 			.then(function(oController) {
-				return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))
 			.then(function() {
 				return this.oOutline.get();
@@ -1001,7 +998,7 @@ sap.ui.define([
 			};
 			return createController("myController", oData)
 			.then(function(oController) {
-				return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))
 			.then(function() {
 				return this.oOutline.get();
@@ -1056,7 +1053,7 @@ sap.ui.define([
 			};
 			return createController("myController", oData)
 			.then(function(oController) {
-				return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))
 			.then(function() {
 				return this.oOutline.get();
@@ -1105,7 +1102,7 @@ sap.ui.define([
 			};
 			return createController("myController", oData)
 			.then(function(oController) {
-				return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))
 			.then(function() {
 				return this.oOutline.get();

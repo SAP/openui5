@@ -1,4 +1,14 @@
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/base/util/merge",
+	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/Loader"
+], function(
+	merge,
+	StorageUtils,
+	FlexState,
+	Loader
+) {
 	"use strict";
 
 	var FlQUnitUtils = {};
@@ -85,6 +95,23 @@ sap.ui.define([], function() {
 				}, 0);
 			});
 		};
+	};
+
+	/**
+	 * Stubs the Loader with the given data and initializes the FlexState with that data.
+	 * The data has to be an object containing the necessary parts of the response (like changes, variants, ...)
+	 *
+	 * @param {object} sandbox - Sinon or sandbox instance
+	 * @param {string} sReference - Flex Reference
+	 * @param {object} oData - Data that should be loaded
+	 */
+	FlQUnitUtils.initializeFlexStateWithData = async function(sandbox, sReference, oData) {
+		sandbox.stub(Loader, "loadFlexData").resolves({
+			changes: merge(StorageUtils.getEmptyFlexDataResponse(), oData || {})
+		});
+		await FlexState.initialize({
+			reference: sReference
+		});
 	};
 
 	return FlQUnitUtils;

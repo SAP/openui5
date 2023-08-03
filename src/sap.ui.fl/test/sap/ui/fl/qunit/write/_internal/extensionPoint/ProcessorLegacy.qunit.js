@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/extensionPoint/Registry",
 	"sap/ui/fl/write/_internal/extensionPoint/Processor",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
-	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -16,7 +15,6 @@ sap.ui.define([
 	ExtensionPointRegistry,
 	ExtensionPointWriteProcessor,
 	ExtensionPointApplyProcessor,
-	Loader,
 	ManifestUtils,
 	sinon
 ) {
@@ -41,7 +39,6 @@ sap.ui.define([
 		oSpyApplyProcessorExtensionPoint = sandbox.spy(ExtensionPointApplyProcessor, "applyExtensionPoint");
 		oSpyWriteProcessorExtensionPoint = sandbox.spy(ExtensionPointWriteProcessor, "applyExtensionPoint");
 		oSpyRegisterExtensionPoint = sandbox.spy(ExtensionPointRegistry, "registerExtensionPoint");
-		sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: []}});
 
 		if (bSync) {
 			oComponent = sap.ui.component({ // legacy-relevant: Sync creation of component
@@ -75,7 +72,6 @@ sap.ui.define([
 	}
 
 	function destroyComponentAndContainer() {
-		Loader.loadFlexData.restore();
 		oComponent.destroy();
 		oComponentContainer.destroy();
 		sandbox.restore();
