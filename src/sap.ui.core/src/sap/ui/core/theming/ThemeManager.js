@@ -192,7 +192,7 @@ sap.ui.define([
 
 					// include the css variables
 					oGetCssVariablesParam.type = BaseConfig.Type.String;
-					if (/^(true|x|additional)$/i.test(BaseConfig.get(oGetCssVariablesParam))) {
+					if (bCssVariables) {
 						Log.info("Including " + sCssVariablesPathAndName + " -  sap.ui.core.theming.ThemeManager.includeLibraryTheme()");
 						includeStylesheet(sCssVariablesPathAndName, sLinkId);
 						// include the skeleton css next to the css variables
