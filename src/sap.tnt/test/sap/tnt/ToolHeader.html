@@ -8,11 +8,13 @@
 	</script>
 	<script>
 		sap.ui.define([
-		"sap/ui/Device",
-		"sap/ui/core/Core",
+			"sap/ui/Device",
+			"sap/ui/core/Core",
+			"sap/m/MessageToast"
 		], function (
 			Device,
-			Core
+			Core,
+			MessageToast
 		) {
 			"use strict";
 			var oToggleBtnCompact = new sap.m.ToggleButton("toggleCompact", {
@@ -166,7 +168,7 @@
 					new sap.m.Image({
 						src: "./images/CoPilot.svg",
 						press: function () {
-							sap.m.MessageToast.show("Image pressed!");
+							MessageToast.show("Image pressed!");
 						},
 					}),
 					new sap.m.ToolbarSpacer({
@@ -185,7 +187,7 @@
 						initials: "UI",
 						displaySize: "XS",
 						press: function () {
-							sap.m.MessageToast.show("Avatar pressed!");
+							MessageToast.show("Avatar pressed!");
 						}
 					}),
 					new sap.m.Avatar({
@@ -195,7 +197,7 @@
 					new sap.m.Avatar({
 						displaySize: "XS",
 						press: function () {
-							sap.m.MessageToast.show("Avatar pressed!");
+							MessageToast.show("Avatar pressed!");
 						}
 					}),
 					new sap.m.Button({
@@ -299,7 +301,7 @@
 					new sap.ui.core.Icon({
 						src: "sap-icon://bell",
 						press: function () {
-							sap.m.MessageToast.show("Icon is pressed, but no interaction states visualized!");
+							MessageToast.show("Icon is pressed, but no interaction states visualized!");
 						}
 					}),
 				]

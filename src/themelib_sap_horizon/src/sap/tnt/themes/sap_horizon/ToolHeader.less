@@ -200,11 +200,29 @@
 	.sapMSF .sapMSFF {
 		border-radius: 2rem;
 		height: 2.5rem;
+
+		&:hover {
+			background: @sapUiShellHoverBackground;
+			box-shadow: 0 0 0.125rem 0 fade(@sapUiContentShadowColor, 16), 0 0.5rem 1rem 0 fade(@sapUiContentShadowColor, 16);
+		}
+
+		.sapMSFI {
+			color: @sapUiShellTextColor;
+		}
+	}
+
+	.sapMSF.sapMFocus .sapMSFF {
+		background: @sapUiShellActiveBackground;
 	}
 
 	.sapMSFB {
 		line-height: 2.5rem;
 		width: 1.875rem;
+	}
+
+	.sapMSFB.sapMSFBA {
+		background: none;
+		box-shadow: none;
 	}
 
 	.sapMSFSSI {
@@ -213,6 +231,7 @@
 
 	.sapMSFF  .sapMSFSSI:before {
 		content: "\e00d";
+		color: @sapUiContentNonInteractiveIconColor;
 		display: block;
 		font-style: normal;
 		width: 1rem;
@@ -252,6 +271,7 @@
 	}
 
 	.sapMSFS:active::after,
+	.sapMSFS.sapMSFBA::after,
 	.sapMSFR:active::after {
 		background: @sapActiveColor;
 		color: @sapContent_IconColor;
@@ -263,6 +283,18 @@
 		background: @sapHoverColor;
 		color: @sapContent_IconColor;
 		margin-top: 0.625rem;
+	}
+
+	.sapMSFVal.sapMFocus .sapMSFF {
+		box-shadow: 0 0 0.125rem 0 fade(@sapUiContentShadowColor, 16), 0 0.5rem 1rem 0 fade(@sapUiContentShadowColor, 16);
+
+		&::before {
+			display: none;
+		}
+
+		.sapMSFS.sapMSFB::after {
+			outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		}
 	}
 }
 

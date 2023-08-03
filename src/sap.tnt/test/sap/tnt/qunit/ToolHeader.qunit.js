@@ -24,7 +24,6 @@ sap.ui.define([
 	waitForThemeApplied,
 	oCore
 ) {
-
 	'use strict';
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -33,7 +32,9 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
 
-	jQuery("#qunit-fixture").width('300px');
+	var DOM_RENDER_LOCATION = "qunit-fixture";
+
+	jQuery("#" + DOM_RENDER_LOCATION).width('300px');
 
 	function getToolHeader() {
 		return new ToolHeader({
@@ -195,7 +196,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oApp = new App("myApp", { initialPage: "toolHeaderPage" });
 			this.oPage = new Page("toolHeaderPage", { title: "Tool Header" });
-			this.oApp.placeAt("qunit-fixture");
+			this.oApp.placeAt(DOM_RENDER_LOCATION);
 			this.oApp.addPage(this.oPage);
 
 			this.toolHeader = getToolHeader();
