@@ -9722,15 +9722,24 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("getAllCurrentContexts: no cache yet", function (assert) {
-		var oBinding = this.bindList("relativePath");
+	QUnit.test("getAllCurrentContexts: currently no cache", function (assert) {
+		const oBinding = this.bindList("relativePath");
+		oBinding.aContexts = ["~oTransientContext~"];
+
+		const oKeptContext = {isEffectivelyKeptAlive : function () {}};
+		oBinding.mPreviousContextsByPath = {"~sPath~" : oKeptContext};
 
 		this.mock(oBinding).expects("withCache").withExactArgs(sinon.match.func, "", true);
-		this.mock(oBinding).expects("createContexts").withExactArgs(0, []).returns(false);
+		this.mock(oBinding).expects("createContexts").never();
 		this.mock(oBinding).expects("_fireChange").never();
+		this.mock(oKeptContext).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
 
 		// code under test
-		assert.deepEqual(oBinding.getAllCurrentContexts(), []);
+		const aContexts = oBinding.getAllCurrentContexts();
+
+		assert.strictEqual(aContexts.length, 2);
+		assert.strictEqual(aContexts[0], "~oTransientContext~");
+		assert.strictEqual(aContexts[1], oKeptContext);
 	});
 
 	//*********************************************************************************************

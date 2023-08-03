@@ -2069,13 +2069,13 @@ sap.ui.define([
 	 * @since 1.98.0
 	 */
 	ODataListBinding.prototype.getAllCurrentContexts = function () {
-		var aElements = [];
+		var aElements;
 
 		this.withCache(function (oCache, sPath) {
 				aElements = oCache.getAllElements(sPath);
 			}, "", /*bSync*/true);
 
-		if (this.createContexts(0, aElements)) {
+		if (aElements && this.createContexts(0, aElements)) {
 			// In the case that a control has requested new data and the data request is already
 			// completed, but the new contexts are not yet created, we have to ensure that a change
 			// event is fired to inform the control about these new contexts.

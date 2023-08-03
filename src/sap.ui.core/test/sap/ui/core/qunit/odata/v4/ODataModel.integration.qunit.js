@@ -47644,6 +47644,14 @@ sap.ui.define([
 			assert.strictEqual(oBinding.hasPendingChanges(true), false);
 			oBinding.filter(new Filter("MANAGER_ID", FilterOperator.NE, 666));
 
+			// code under test BCP: 2380097809
+			const aContexts = oBinding.getAllCurrentContexts();
+
+			assert.strictEqual(aContexts.length, 3);
+			assert.strictEqual(aContexts[0], oContextC);
+			assert.strictEqual(aContexts[1], oContextB);
+			assert.strictEqual(aContexts[2], oContextA);
+
 			return that.waitForChanges(assert, "filter");
 		}).then(function () {
 			that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$orderby=Team_Id desc"
