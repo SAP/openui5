@@ -3,16 +3,14 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/library',
-	'sap/ui/Global',
-	'sap/ui/core/Configuration',
-	'sap/ui/core/ElementMetadata',
+	"sap/ui/Global",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/ElementMetadata",
 	"sap/base/util/LoaderExtensions",
 	"sap/base/util/UriParameters",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
-		library,
 		Global,
 		Configuration,
 		ElementMetadata,

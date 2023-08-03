@@ -852,8 +852,6 @@ sap.ui.define([
 
              simpleForm = new SimpleForm({
                 maxContainerCols: 2,
-                minWidth: 400,
-                labelMinWidth: 100,
                 editable: false,
                 layout: "ResponsiveGridLayout",
                 labelSpanM: 3,
@@ -986,8 +984,6 @@ sap.ui.define([
 
              simpleForm = new SimpleForm({
                 maxContainerCols: 2,
-                minWidth: 400,
-                labelMinWidth: 100,
                 editable: false,
                 layout: "ResponsiveGridLayout",
                 labelSpanM: 7,

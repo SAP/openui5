@@ -148,7 +148,12 @@ sap.ui.define([
 					 "sap/ui/core/support/plugins/Trace",
 					 "sap/ui/core/support/plugins/Selector",
 					 "sap/ui/core/support/plugins/Breakpoint",
-					 "sap/ui/core/support/plugins/ViewInfo",
+					 /**
+					  * @deprecated As of version 1.117
+					  */
+					 (function() {
+						return  "sap/ui/core/support/plugins/ViewInfo";
+					 }()),
 					 "sap/ui/core/support/plugins/LocalStorage",
 					 "sap/ui/core/support/plugins/Interaction",
 					 "sap/ui/core/support/plugins/Performance"

@@ -73,6 +73,10 @@ sap.ui.define([
 						that._isOpen = true;
 						Support.initPlugins(that, false);
 					});
+					this.attachEvent(mEvents.RELOAD, function(oEvent) {
+						close(this._oRemoteWindow);
+						window.location.reload();
+					}.bind(this));
 					this.attachEvent(mEvents.RELOAD_WITH_PARAMETER, function(oEvent) {
 						close(this._oRemoteWindow);
 						this._reloadWithParameter(oEvent.getParameter("parameterName"), oEvent.getParameter("parameterValue"));
@@ -122,6 +126,7 @@ sap.ui.define([
 		LIBS: "sapUiSupportLibs",
 		SETUP: "sapUiSupportSetup", //Event when support tool is opened
 		TEAR_DOWN: "sapUiSupportTeardown", //Event when support tool is closed
+		RELOAD: "sapUiSupportReload",
 		RELOAD_WITH_PARAMETER: "sapUiSupportReloadWithParameter"
 	};
 
