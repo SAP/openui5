@@ -55,6 +55,9 @@ sap.ui.define([
 	 * @override
 	 */
 	LocalReset.prototype._isEditable = function(oOverlay) {
+		if (!this.hasStableId(oOverlay)) {
+			return false;
+		}
 		var vLocalResetAction = this.getAction(oOverlay);
 		return !!vLocalResetAction;
 	};
