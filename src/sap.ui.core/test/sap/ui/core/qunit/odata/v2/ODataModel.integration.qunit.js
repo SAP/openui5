@@ -18054,10 +18054,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: To perform hierarchy changes ODataModel#submitChanges can be used. For simple property
 	// changes a refresh/restoreTreeState is not needed.
 	// JIRA: CPOUI5MODELS-745
-	var sTitle = "ODataTreeBindingFlat: ODataModel#submitChanges for refreshAfterChange=false and "
-			+ "restoreTreeStateAfterChange=false";
-
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("ODataTreeBindingFlat: ODataModel#submitChanges for refreshAfterChange=false and "
+			+ "restoreTreeStateAfterChange=false", function (assert) {
 		var oBinding, oTable,
 			oModel = createHierarchyMaintenanceModel({refreshAfterChange : false}),
 			oNode100 = {
@@ -18212,11 +18210,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: To perform hierarchy changes ODataTreeBinding#submitChanges can be used. For simple property
 	// changes a refresh/restoreTreeState is needed.
 	// JIRA: CPOUI5MODELS-745
-
-	var sTitle = "ODataTreeBindingFlat: ODataTreeBindingFlat#submitChanges for refreshAfterChange=false "
-			+ "and restoreTreeStateAfterChange=false";
-
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("ODataTreeBindingFlat: ODataTreeBindingFlat#submitChanges for refreshAfterChange=false and "
+			+ "restoreTreeStateAfterChange=false", function (assert) {
 		var oBinding, oTable,
 			oModel = createHierarchyMaintenanceModel({refreshAfterChange : false}),
 			oNode100 = {
@@ -18378,10 +18373,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// restoreTreeStateAfterChange=false. After property / hierarchy changes have been submitted
 	// via ODataModel#submitChanges the binding gets refreshed only once via <code>refreshAfterChange</code>.
 	// JIRA: CPOUI5MODELS-970
-	var sTitle = "ODataTreeBindingFlat: ODataModel#submitChanges for refreshAfterChange=true and "
-			+ "restoreTreeStateAfterChange=false";
-
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("ODataTreeBindingFlat: ODataModel#submitChanges for refreshAfterChange=true and "
+			+ "restoreTreeStateAfterChange=false", function (assert) {
 		var oBinding, oTable,
 			oModel = createHierarchyMaintenanceModel({refreshAfterChange : true}),
 			oNode100 = {
