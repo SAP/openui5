@@ -94,14 +94,33 @@ sap.ui.define([
 					domRef: ":sap-domref > .sapMITH",
 					actions: {
 						move: "moveControls"
+					},
+					propagateMetadata: function (oFilter) {
+						if (oFilter.isA("sap.m.IconTabFilter")) {
+							return {
+								aggregations: {
+									content: {
+										domRef: function () {
+											return ":sap-domref > .sapMITBContainerContent";
+										},
+										actions: {
+											move: "moveControls"
+										}
+									}
+								}
+							};
+						}
+
+						return null;
 					}
 				},
 				content: {
 					domRef: function(oControl) {
 						var oSelectedItem = oControl._getIconTabHeader().oSelectedItem;
 
+						// item with own content
 						if (oSelectedItem && oSelectedItem.getContent().length) {
-							return;
+							return null;
 						}
 
 						return oControl.getDomRef("content");
