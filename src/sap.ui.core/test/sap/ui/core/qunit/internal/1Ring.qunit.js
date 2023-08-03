@@ -1,11 +1,12 @@
 /*!
- * ${copyright}
- */
+* ${copyright}
+*/
 /*global QUnit */
+/* eslint-disable max-nested-callbacks */
 
 QUnit.config.autostart = false;
 
-// Note: to cover "sap/ui/base", this MUST happen after "qunit-coverage.js" is included!
+// Note: to cover "sap/ui/base", this MUST happen after "qunit-coverage-istanbul.js" is included!
 sap.ui.require([
 	"sap/ui/core/Core"
 ], function (Core) {
@@ -16,16 +17,24 @@ sap.ui.require([
 	// Note: cannot require these above as data-sap-ui-resourceroots is ignored until boot
 	sap.ui.require([
 		"sap/ui/core/qunit/internal/testsuite.feature-odata-v4.qunit",
-		"sap/ui/core/qunit/internal/ODataV4.qunit"
-	], function (oTestsuite) {
-		var aModules = Object.keys(oTestsuite.tests).filter(function (sTest) {
-				return !sTest.startsWith("OPA.");
-			}).map(function (sTest) {
-				return oTestsuite.tests[sTest].module[0];
-			});
+		"sap/ui/core/qunit/odata/v4/testsuite.odatav4.qunit"
+	], function (...aSuites) {
+		const aModules = [];
+
+		aSuites.forEach((oSuite) => {
+			for (const [sName, oTest] of Object.entries(oSuite.tests)) {
+				if (!sName.startsWith("OPA.")) {
+					aModules.push(oTest.module
+						? oTest.module[0]
+						: `sap/ui/core/qunit/odata/v4/${sName}.qunit`
+					);
+				}
+			}
+		});
 
 		sap.ui.require(aModules, function () {
 			Core.ready().then(function () {
+				QUnit.config.modules.sort((oMod1, oMod2) => (oMod1.name < oMod2.name ? -1 : 1));
 				QUnit.start(0);
 			});
 		});
