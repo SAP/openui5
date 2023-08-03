@@ -261,7 +261,10 @@ sap.ui.define([
 			}
 			const aRows = aIDs.map((sID) => mNodeById[sID]);
 			selectCountSkipTop(aRows, mQueryOptions, oResponse);
+			return;
 		}
+
+		selectCountSkipTop(aAllNodes, mQueryOptions, oResponse);
 	}
 
 	/**
@@ -275,13 +278,36 @@ sap.ui.define([
 		if (oRequest.requestHeaders.Prefer !== "return=minimal") {
 			throw new Error("Unsupported Prefer header: " + oRequest.requestHeaders.Prefer);
 		}
-		// "{"Name" : "<new name>"}"
+		// {"Name" : "<new name>"}
+		// "EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('1')"
 		const oBody = JSON.parse(oRequest.requestBody);
-		if (Object.keys(oBody).length > 1 || !("Name" in oBody)) {
-			throw new Error("Unsupported PATCH body: " + oRequest.requestBody);
+		switch (Object.keys(oBody).length === 1 && Object.keys(oBody)[0]) {
+			case "EMPLOYEE_2_MANAGER@odata.bind": {
+				const oChild = mNodeById[aMatches[1]];
+				const sParentId = oBody["EMPLOYEE_2_MANAGER@odata.bind"]
+					.slice("EMPLOYEES('".length, -"')".length);
+				//TODO prevent cycles!
+
+				if (oChild.MANAGER_ID) {
+					const aChildren = mChildrenByParentId[oChild.MANAGER_ID];
+					aChildren.splice(aChildren.indexOf(oChild), 1);
+				}
+				//TODO Note: "AGE determines sibling order (ascending)"
+				(mChildrenByParentId[sParentId] ??= []).push(oChild);
+
+				oChild.MANAGER_ID = sParentId;
+				//TODO update position in aAllNodes!
+				break;
+			}
+
+			case "Name":
+				// ignore suffixes added by SandboxModel.update
+				mNodeById[aMatches[1]].Name = oBody.Name.split(" #")[0];
+				break;
+
+			default:
+				throw new Error("Unsupported PATCH body: " + oRequest.requestBody);
 		}
-		// ignore suffixes added by SandboxModel.update
-		mNodeById[aMatches[1]].Name = oBody.Name.split(" #")[0];
 		// no response required
 	}
 
@@ -311,7 +337,8 @@ sap.ui.define([
 		if (sParentId in mChildrenByParentId) {
 			// Note: "AGE determines sibling order (ascending)"
 			oNewChild.AGE = mChildrenByParentId[sParentId][0].AGE - 1;
-			// Note:
+			//TODO use "largest" child ID which is hierarchical to parent? cf. move!
+			// .../c/openui5/+/5940246/6/src/sap.ui.core/test/sap/ui/core/demokit/sample/odata/v4/RecursiveHierarchy/SandboxModel.js#b302
 			const sLastChildID = mChildrenByParentId[sParentId].at(-1).ID;
 			if (sLastChildID.includes(".")) {
 				oNewChild.ID = sParentId + "."

@@ -1135,6 +1135,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Moves this node to the given parent (in case of a recursive hierarchy, see
+	 * {@link #setAggregation}, where <code>oAggregation.expandTo</code> must be one). No other
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#create creation} or move must be pending, and
+	 * no other modification (including collapse of some ancestor node) must happen while this move
+	 * is pending!
+	 *
+	 * @param {object} oParameters - A parameter object
+	 * @param {sap.ui.model.odata.v4.Context} oParameters.parent - The new parent's context
+	 * @returns {Promise}
+	 *   A promise which is resolved without a defined result when the move is finished, or
+	 *   rejected in case of an error
+	 * @throws (Error)
+	 *   If the parent is missing or (a descendant of) this node.
+	 *
+	 * @experimental As of version 1.118.0
+	 * @public
+	 */
+	Context.prototype.move = function ({parent : oParent}) {
+		if (oParent === this) {
+			throw new Error("Unsupported parent context: " + oParent);
+		}
+		return Promise.resolve(this.oBinding.move(this, oParent));
+	};
+
+	/**
 	 * Patches the context data with the given patch data.
 	 *
 	 * @param {object} oData

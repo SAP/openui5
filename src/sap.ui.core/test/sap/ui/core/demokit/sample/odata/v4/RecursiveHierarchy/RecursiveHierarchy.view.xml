@@ -69,6 +69,11 @@
 					icon="sap-icon://create" press=".onCreate" tooltip="Create New Child"/>
 			</template>
 		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button id="move" icon="sap-icon://move" press=".onMove" tooltip="Move"/>
+			</template>
+		</Column>
 	</Table>
 
 	<TreeTable id="treeTable" ariaLabelledBy="treeTitle" minAutoRowCount="2"
@@ -120,6 +125,19 @@
 					icon="sap-icon://create" press=".onCreate" tooltip="Create New Child"/>
 			</template>
 		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button id="moveInTreeTable" icon="sap-icon://move" press=".onMove"
+					tooltip="Move"/>
+			</template>
+		</Column>
 	</TreeTable>
 
+	<mvc:dependents>
+		<m:SelectDialog confirm=".onMoveConfirm" draggable="true" id="moveDialog"
+			items="{path : '/EMPLOYEES', parameters : {$count : true}, suspended : true}"
+			title="Select New Parent">
+			<m:StandardListItem description="{Name}" title="{ID}" type="Active" />
+		</m:SelectDialog>
+	</mvc:dependents>
 </mvc:View>
