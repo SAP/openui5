@@ -141,6 +141,23 @@ function (
 		oTitle.destroy();
 	  });
 
+	  QUnit.test("DynamicPageTitle - AriaLabelledBy is not undefined, when no heading is presented, as default heading text is available", function (assert) {
+		// Arrange
+		var oTitle = oFactory.getDynamicPageTitle();
+
+		//Act
+		oTitle.destroyAggregation("heading");
+
+		oUtil.renderObject(oTitle);
+		Core.applyChanges();
+
+		//Assert
+		assert.ok(oTitle._getFocusSpan()[0].getAttribute("aria-labelledby") != "undefined", "AriaLabelledBy is not undefined, when no heading is presented");
+
+		//Cleanup
+		oTitle.destroy();
+	  });
+
 	QUnit.module("DynamicPage - Rendering - Title with Breadcrumbs", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPageWithBreadCrumbs();
