@@ -234,6 +234,7 @@ sap.ui.define([
 
 		sinon.spy(oContent, "onShow");
 		sinon.spy(oContent, "onHide");
+		sinon.spy(oPopover, "_openContainerByTarget");
 		oContent.getContentHeight = function () {
 			return 100;
 		};
@@ -247,6 +248,7 @@ sap.ui.define([
 				setTimeout(function() { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
 					var oContainer = oPopover.getAggregation("_container");
+					assert.ok(oPopover._openContainerByTarget.called, "_openContainerByTarget was called.");
 					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
 					assert.ok(oContainer.isOpen(), "sap.m.Popover is open");
 					assert.equal(oContainer._getAllContent()[0], oContentField, "Content of sap.m.Popover");
@@ -262,12 +264,17 @@ sap.ui.define([
 						assert.equal(iClosed, 1, "Closed event fired once");
 						assert.notOk(oContainer.isOpen(), "sap.m.Popover is not open");
 						assert.ok(oContent.onHide.calledOnce, "Content onHide called");
-
+						oContent.onShow.restore();
+						oContent.onHide.restore();
+						oPopover._openContainerByTarget.restore();
 						fnDone();
 					}, iPopoverDuration);
 				}, iPopoverDuration);
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called");
+				oContent.onShow.restore();
+				oContent.onHide.restore();
+				oPopover._openContainerByTarget.restore();
 				fnDone();
 			});
 		}
@@ -361,6 +368,35 @@ sap.ui.define([
 			});
 		}
 
+	});
+
+	QUnit.test("Consider canceled opening promise with async showTypeahead", function(assert) {
+
+		var oIcon = new Icon("Icon1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
+		sinon.stub(oContent, "getContainerConfig").returns({
+			'sap.ui.mdc.valuehelp.Popover': {
+				getFooter : function () { return oIcon; }
+			}
+		});
+		sinon.spy(oPopover, "_openContainerByTarget");
+
+
+		sinon.stub(ValueHelpDelegate, "showTypeahead").callsFake(function () {
+			return new Promise((resolve) => {
+				oPopover._cancelPromise("open");
+				resolve(true);
+			});
+		});
+		var oPromise = oPopover.open(Promise.resolve(), true);
+		var fnDone = assert.async();
+		assert.ok(oPromise instanceof Promise, "open returns promise");
+		setTimeout(function() { // wait until open
+			assert.notOk(oPopover._openContainerByTarget.called, "Popover will not be opened as promise was cancelled during showTypeahead");
+			oPopover._openContainerByTarget.restore();
+			ValueHelpDelegate.showTypeahead.restore();
+			oIcon.destroy();
+			fnDone();
+		}, iPopoverDuration);
 	});
 
 	QUnit.test("removeFocus", function(assert) {
