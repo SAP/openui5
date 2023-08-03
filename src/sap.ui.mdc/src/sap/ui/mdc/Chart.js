@@ -882,7 +882,7 @@ sap.ui.define([
         Chart.prototype._getToolbar = function () {
             if (this.getAggregation("_toolbar")) {
                 return this.getAggregation("_toolbar");
-            } else {
+            } else if (!this._bIsDestroyed){
                 var oToolbar = new ChartToolbar(this.getId() + "--toolbar", {
                     design: "Transparent"
                 });
