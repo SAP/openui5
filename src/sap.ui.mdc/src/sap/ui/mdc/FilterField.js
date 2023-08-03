@@ -98,6 +98,19 @@ sap.ui.define([
 					type: "string",
 					group: "Data",
 					defaultValue: ""
+				},
+				/**
+				 * The type of data for the description part of a equal-condition
+				 * This type is used to parse, format, and validate the value.
+				 *
+				 * Here a data type instance can be provided or an object containing <code>name</code>, <code>formatOptions</code> and <code>constraints</code>.
+				 *
+				 * @since 1.118.0
+				 */
+				additionalDataType: {
+					type: "object",
+					group: "Data",
+					defaultValue: null
 				}
 			},
 			events: {
@@ -150,7 +163,7 @@ sap.ui.define([
 		FieldBase.prototype.init.apply(this, arguments);
 
 		this._oObserver.observe(this, {
-			properties: ["operators", "propertyKey"]
+			properties: ["operators", "propertyKey", "additionalDataType"]
 		});
 
 	};
@@ -200,6 +213,8 @@ sap.ui.define([
 			this.updateInternalContent();
 		} else if (oChanges.name === "propertyKey") {
 			this.updateInternalContent();
+		} else if (oChanges.name === "additionalDataType") {
+			_setAdditionalDataType.call(this, oChanges.current);
 		}
 
 	};
@@ -416,6 +431,29 @@ sap.ui.define([
 			var regexp = new RegExp("^\\*(.*)\\*|\\$search$");
 			return regexp.test(sPropertyKey) && this.getMaxConditions() === 1;
 		}
+
+	};
+
+	function _setAdditionalDataType(oType) {
+
+		if (!oType) {
+			// type removed
+			this.getContentFactory().setAdditionalDataType();
+		} else if (oType.isA && oType.isA("sap.ui.model.Type")) {
+			// type instance given
+			this.getContentFactory().setAdditionalDataType(oType);
+		} else if (oType.name) {
+			// type instance will to be created if needed in ContentFactory.retrieveAdditionalDataType
+			this.getContentFactory().setAdditionalDataType();
+		} else {
+			throw new Error("invalid type configuration");
+		}
+
+	}
+
+	FilterField.prototype.getAdditionalDataTypeConfiguration = function() {
+
+		return this.getAdditionalDataType();
 
 	};
 

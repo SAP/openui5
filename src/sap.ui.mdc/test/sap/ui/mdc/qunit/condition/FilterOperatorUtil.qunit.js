@@ -279,7 +279,7 @@ sap.ui.define([
 						assert.equal(bIsEmpty, oTest.isEmpty, "isEmpty check");
 
 						try {
-							oOperator.validate(oCondition.values, oTest.type, oTest.compositeTypes, oTest.compositePart);
+							oOperator.validate(oCondition.values, oTest.type, oTest.compositeTypes, oTest.compositePart, oTest.additionalType);
 						} catch (oException) {
 							assert.ok(!oTest.valid, "Exception fired in validation");
 						}
@@ -337,6 +337,8 @@ sap.ui.define([
 		var oDateTimeWithTimezoneType2 = new DateTimeWithTimezoneType({showTimezone: true, showDate: false, showTime: false});
 		oDateTimeWithTimezoneType2._aCurrentValue = ["2022-02-24T12:15:30Z", "Europe/Berlin"];
 		var oDateTimeOffsetType = new DateTimeOffsetType({}, {V4: true});
+		var sDateTimeFormatted = oDateTimeOffsetType.formatValue("2023-07-31T07:42:30Z", "string");
+		var sDateTimeParsed = oDateTimeOffsetType.parseValue(sDateTimeFormatted, "string");
 
 		var aFormatTest = {
 				"EQ": [{
@@ -514,6 +516,26 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
+					},
+					{
+						formatArgs: [Condition.createItemCondition(5, "2023-07-31T07:42:30Z"), oIntType, FieldDisplay.ValueDescription, true, undefined, oDateTimeOffsetType, undefined],
+						formatValue: "5 (" + sDateTimeFormatted + ")",
+						parseArgs: ["5 (" + sDateTimeFormatted + ")", oIntType, FieldDisplay.ValueDescription, true, undefined, oDateTimeOffsetType, undefined],
+						parsedValue: "5" + sDateTimeParsed,
+						condition: Condition.createCondition("EQ", [5, sDateTimeParsed], undefined, undefined, ConditionValidated.Validated),
+						isEmpty: false,
+						valid: false,
+						type: oIntType,
+						additionalType : oDateTimeOffsetType
+					},
+					{
+						formatArgs: [Condition.createItemCondition(5, "2023-07-31T07:42:30Z"), oIntType, FieldDisplay.Description, true, undefined, oDateTimeOffsetType, undefined],
+						formatValue: sDateTimeFormatted,
+						parseArgs: ["1 (X)", oIntType, FieldDisplay.ValueDescription, true, undefined, oDateTimeOffsetType, undefined],
+						exception: true,
+						valid: false,
+						type: oIntType,
+						additionalType : oDateTimeOffsetType
 					}
 				],
 				"NE": [{

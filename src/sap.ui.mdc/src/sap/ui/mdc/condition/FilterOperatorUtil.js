@@ -90,7 +90,7 @@ function(
 						alias: {Date: "DATE", DateTime: "DATETIME"},
 						filterOperator: ModelOperator.EQ,
 						tokenParse: "^=([^=].*)$",
-						tokenFormat: "{1} ({0})", // all placeholder should use the {x} format - the text could be store in the resourcebundel file.
+						tokenFormat: "{1} ({0})", // all placeholder should use the {x} format - the text could be store in the resourcebundle file.
 						valueTypes: [OperatorValueType.Self, null],
 						displayFormats: {
 							DescriptionValue: "{1} ({0})",
@@ -98,7 +98,7 @@ function(
 							Description: "{1}",
 							Value: "{0}"
 						},
-						format: function(oCondition, oType, sDisplayFormat, bHideOperator, aCompositeTypes) {
+						format: function(oCondition, oType, sDisplayFormat, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
 							sDisplayFormat = sDisplayFormat || FieldDisplay.DescriptionValue;
 							var iCount = this.valueTypes.length;
 							var aValues = oCondition.values;
@@ -117,11 +117,10 @@ function(
 									vValue = "";
 								}
 
-								if (i == 0) {
-									// only the first value can be formatted. second value is the description string
+								if (i === 0) {
 									sReplace = this._formatValue(vValue, oType, aCompositeTypes);
-								} else {
-									sReplace = vValue;
+								} else { // canot have more that 2 entries
+									sReplace = this._formatValue(vValue, oAdditionalType, aAdditionalCompositeTypes);
 								}
 
 								if (sReplace === null) {
@@ -136,14 +135,14 @@ function(
 
 							return sTokenText;
 						},
-						parse: function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes) {
+						parse: function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
 							sDisplayFormat = sDisplayFormat || FieldDisplay.DescriptionValue;
-							var aResult = Operator.prototype.parse.apply(this, [sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes]);
+							var aResult = Operator.prototype.parse.apply(this, [sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes]);
 
 							if (bDefaultOperator && (!aResult || aResult[0] === null || aResult[0] === undefined) && sDisplayFormat !== FieldDisplay.Value) {
 								// in default case and no key determined (simple-EQ case)-> use text as key (parse again to use type)
 								sDisplayFormat = FieldDisplay.Value;
-								aResult = Operator.prototype.parse.apply(this, [sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes]);
+								aResult = Operator.prototype.parse.apply(this, [sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes]);
 							}
 							if (aResult && (aResult[1] === null || aResult[1] === undefined) && sDisplayFormat === FieldDisplay.Value) {
 								aResult = [aResult[0]]; // only key
@@ -1379,7 +1378,7 @@ function(
 							oDate = UniversalDateUtils.getMonthStartDate(oDate);
 							return UniversalDateUtils.getRange(0, "MONTH", oDate);
 						},
-						format: function(oCondition, oType, sDisplayFormat, bHideOperator, aCompositeTypes) {
+						format: function(oCondition, oType, sDisplayFormat, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
 							var iValue = oCondition.values[0];
 							var sTokenText = this.tokenFormat;
 							var sReplace = _getMonths.apply(this)[iValue];
@@ -1459,7 +1458,7 @@ function(
 							oDate = UniversalDateUtils.getMonthStartDate(oDate);
 							return UniversalDateUtils.getRange(0, "MONTH", oDate);
 						},
-						format: function(oCondition, oType, sDisplayFormat, bHideOperator, aCompositeTypes) {
+						format: function(oCondition, oType, sDisplayFormat, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
 							var iValue = oCondition.values[0];
 							var iYear = oCondition.values[1];
 							var sTokenText = this.tokenFormat;

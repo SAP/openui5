@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/mdc/util/loadModules",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
-	"sap/ui/model/ParseException"
+	"sap/ui/model/ParseException",
+	"sap/base/util/deepEqual"
 ], function(
 	ListContent,
 	loadModules,
 	ConditionValidated,
 	ValueHelpSelectionType,
-	ParseException
+	ParseException,
+	deepEqual
 ) {
 	"use strict";
 
@@ -177,8 +179,9 @@ sap.ui.define([
 		if (bSelected) {
 			var oOriginalItem = _getOriginalItem.call(this, oItem);
 			var vKey = _getKey.call(this, oOriginalItem);
+			var vDescription = _getText.call(this, oOriginalItem);
 //			this.fireRemoveConditions({conditions: this.getConditions()});
-			_setConditions.call(this, vKey, oItem.getLabel());
+			_setConditions.call(this, vKey, vDescription);
 //			this.fireAddConditions({conditions: this.getConditions()});
 			this.fireSelect({type: ValueHelpSelectionType.Set, conditions: this.getConditions()});
 			this.fireConfirm();
@@ -296,6 +299,19 @@ sap.ui.define([
 
 	}
 
+	function _getText(oItem) {
+
+		// as text could have internally another type - use initial value of binding
+		// TODO: better logic?
+		var oBinding = oItem.getBinding("text");
+		if (oBinding) {
+			return oBinding.getInternalValue();
+		} else {
+			return oItem.getText();
+		}
+
+	}
+
 	FixedList.prototype.getItemForValue = function (oConfig) {
 
 		return Promise.resolve().then(function() {
@@ -309,14 +325,14 @@ sap.ui.define([
 			var oItem;
 			var i = 0;
 			var vKey;
-			var sText;
+			var vText;
 
 			for (i = 0; i < aItems.length; i++) {
 				oItem = aItems[i];
 				vKey = _getKey.call(this, oItem);
-				sText = oItem.getText();
-				if ((oConfig.checkKey && vKey === oConfig.parsedValue) || (oConfig.checkDescription && (sText === oConfig.value || vKey == oConfig.value))) {
-					return {key: vKey, description: oItem.getText()};
+				vText = _getText.call(this, oItem);
+				if ((oConfig.checkKey && deepEqual(vKey, oConfig.parsedValue)) || (oConfig.checkDescription && (deepEqual(vText, oConfig.parsedDescription) || oItem.getText() === oConfig.value))) {
+					return {key: vKey, description: vText};
 				}
 			}
 
@@ -328,10 +344,11 @@ sap.ui.define([
 			if (this.getUseFirstMatch()) {
 				for (i = 0; i < aItems.length; i++) {
 					oItem = aItems[i];
-					sText = oConfig.checkDescription ? oItem.getText() : oItem.getKey(); // don't use oConfig.checkKey as entered value non't neet to be a valid (complete) key
+					var sText = oConfig.checkDescription ? oItem.getText() : oItem.getKey(); // don't use oConfig.parsedValue as entered value non't neet to be a valid (complete) key
 					if (_filterText.call(this, sText, oConfig.value)) {
 						vKey = _getKey.call(this, oItem);
-						return {key: vKey, description: oItem.getText()};
+						vText = _getText.call(this, oItem);
+						return {key: vKey, description: vText};
 					}
 				}
 			}
@@ -460,7 +477,7 @@ sap.ui.define([
 		if (oItem) {
 			var bUseFirstMatch = this.getUseFirstMatch(); // if item for first match is selected, navigate to it needs to fire the event
 			if (oItem !== oSelectedItem || (bUseFirstMatch && !bLeaveFocus)) {
-				var oOriginalItem, vKey, sDescription;
+				var oOriginalItem, vKey, vDescription;
 
 				this._iNavigateIndex = iSelectedIndex;
 
@@ -478,8 +495,8 @@ sap.ui.define([
 				} else {
 					oOriginalItem = _getOriginalItem.call(this, oItem);
 					vKey = _getKey.call(this, oOriginalItem);
-					sDescription = oOriginalItem.getText();
-					var oCondition = _setConditions.call(this, vKey, sDescription);
+					vDescription = _getText.call(this, oOriginalItem);
+					var oCondition = _setConditions.call(this, vKey, vDescription);
 					this.fireNavigated({condition: oCondition, itemId: oItem.getId(), leaveFocus: false});
 				}
 			} else if (bLeaveFocus) {

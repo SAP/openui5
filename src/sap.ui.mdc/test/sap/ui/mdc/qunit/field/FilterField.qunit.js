@@ -450,4 +450,20 @@ sap.ui.define([
 		oFilterField._oContentFactory.getHandleEnter.restore();
 	});
 
+	QUnit.test("additionalDataType", function(assert) {
+
+		var oType = new DateType();
+		oType._bMyType = true;
+
+		oFilterField.setAdditionalDataType(oType);
+		assert.equal(oFilterField.getContentFactory().retrieveAdditionalDataType(), oType, "Given type used");
+
+		oFilterField.setAdditionalDataType({name: "sap.ui.model.type.Date", formatOptions: {style: "short"}, constraints: {minimum: new Date(1900, 0, 1)}});
+		oType = oFilterField.getContentFactory().retrieveAdditionalDataType();
+		assert.ok(oType, "Type created");
+		assert.deepEqual(oType.getFormatOptions(), {style: "short"}, "used FormatOptions");
+		assert.deepEqual(oType.getConstraints(), {minimum: new Date(1900, 0, 1)}, "used Constraints");
+
+	});
+
 });

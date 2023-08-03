@@ -953,6 +953,7 @@ sap.ui.define([
 		"JPY": { Text: "Japan Yen", UnitSpecificScale: 0 },
 		"SEK": { Text: "Swedish krona", UnitSpecificScale: 5 }
 	};
+	var oAdditionalType;
 
 	QUnit.module("Binding", {
 		beforeEach: function() {
@@ -992,10 +993,12 @@ sap.ui.define([
 
 			oType3 = new StringType({}, { maxLength: 1 });
 			oType3._bMyType = true;
+			oAdditionalType = new StringType({}, { maxLength: 20 });
+			oAdditionalType._bMyType = true;
 			var oBindingContext = oModel.getContext("/items/0/");
 			oField3 = new Field("F3", {
 				value: { path: "key", type: oType3 },
-				additionalValue: { path: "description", mode: "OneWay" },
+				additionalValue: { path: "description", type: oAdditionalType, mode: "OneWay" },
 				display: FieldDisplay.DescriptionValue,
 				change: _myChangeHandler
 			}).placeAt("content");
@@ -1048,6 +1051,8 @@ sap.ui.define([
 			oType4 = undefined;
 			oType5.destroy();
 			oType5 = undefined;
+			oAdditionalType.destroy();
+			oAdditionalType = undefined;
 			_cleanupEvents();
 		}
 	});
@@ -1138,6 +1143,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("additionalValue with oneway-binding", function(assert) {
+
+		assert.ok(oField3._oContentFactory.getAdditionalDataType()._bMyType, "Given Type is used in Field");
+		var aContent = oField3.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+		var oBindingInfo = oContent.getBindingInfo("value");
+		var oConditionsType = oBindingInfo.type;
+		var oMyType = oConditionsType.getFormatOptions().additionalValueType;
+		assert.ok(oMyType._bMyType, "Given Type is used as additionalValueType in Binding for Input");
 
 		var fnDone = assert.async();
 		setTimeout(function() { // as conditions are updated async

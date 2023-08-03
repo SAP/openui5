@@ -107,6 +107,10 @@ sap.ui.define([
 				oModifier.setAssociation(oFilterField, "valueHelp", oView.createId("FH-Currency"));
 				oModifier.setProperty(oFilterField, "display", FieldDisplay.Value);
 				oModifier.setProperty(oFilterField, "operators", ["EQ"]);
+			} else if (oProperty.name === "ID") {
+				oModifier.setProperty(oFilterField, "display", FieldDisplay.ValueDescription);
+				oModifier.setProperty(oFilterField, "additionalDataType", {name: "sap.ui.model.odata.type.String", constraints: {maxLength: 10, isDigitSequence: true}});
+				oModifier.setAssociation(oFilterField, "valueHelp", oView.createId("VH-ID"));
 			}
 		});
 

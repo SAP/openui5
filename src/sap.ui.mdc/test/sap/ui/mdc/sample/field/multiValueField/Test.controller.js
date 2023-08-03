@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/field/MultiValueFieldDelegate",
+	"./MultiValueFieldODataV2.delegate",
 	"sap/m/MessageBox",
 	"sap/m/Token",
 	"sap/base/util/merge",
@@ -25,6 +26,7 @@ sap.ui.define([
 		Operator,
 		ConditionValidated,
 		MultiValueFieldDelegate,
+		MultiValueFieldODataV2Delegate,
 		MessageBox,
 		Token,
 		merge,
@@ -41,7 +43,7 @@ sap.ui.define([
 
 			var oViewModel = new JSONModel({
 				test: true,
-				items: [{ProductId: "22134T", Name: "Webcam"}],
+				items: [{ProductId: "22134T", Name: "Webcam", Date: new Date(2014, 3, 18)}],
 				dateItems: [{date: new Date(2020, 4, 12)}]
 			});
 			oView.setModel(oViewModel, "view");
@@ -100,6 +102,8 @@ sap.ui.define([
 				}
 
 			};
+
+			MultiValueFieldODataV2Delegate.updateItems = MultiValueFieldDelegate.updateItems;
 
 		},
 
@@ -210,7 +214,7 @@ sap.ui.define([
 
 			for (var i = 0; i < aItems.length; i++) {
 				var oItem = aItems[i];
-				sText = sText + "[ProductId: " + oItem.ProductId + ", Name: " + oItem.Name + "]\n";
+				sText = sText + "[ProductId: " + oItem.ProductId + ", Name: " + oItem.Name + ", Date: " + oItem.Date + "]\n";
 			}
 
 			return sText;

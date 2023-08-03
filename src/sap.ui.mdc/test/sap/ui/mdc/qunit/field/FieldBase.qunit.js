@@ -3073,8 +3073,20 @@ sap.ui.define([
 		sinon.spy(oFieldHelp, "connect");
 		sinon.spy(oFieldHelp, "toggleOpen");
 
+		var oConfig = {
+			maxConditions: -1,
+			dataType: oField.getContentFactory().getDataType(),
+			additionalDataType: oField.getContentFactory().getAdditionalDataType(),
+			operators: oField.getSupportedOperators(),
+			display: oField.getDisplay(),
+			delegate: oField.getControlDelegate(),
+			delegateName: oField.getDelegate().name,
+			payload: oField.getPayload(),
+			defaultOperatorName: null
+		};
+
 		oField.focus(); // as FieldHelp is connected with focus
-		assert.ok(oFieldHelp.connect.calledWith(oField), "FieldHelp connected to Field");
+		assert.ok(oFieldHelp.connect.calledWith(oField, oConfig), "FieldHelp connected to Field");
 		assert.ok(oFieldHelp.attachEvent.calledWith("select"), "FieldHelp select-event attached to Field");
 		oFieldHelp.connect.reset();
 		oFieldHelp.attachEvent.reset();
@@ -3649,6 +3661,7 @@ sap.ui.define([
 		oFieldHelp.setValidateInput(false); // to show keys if not found in help
 		var oConfig = {
 			parsedValue: "I2",
+			parsedDescription: undefined,
 			value: "I2",
 			caseSensitive: true,
 			checkKey: true,
@@ -3811,6 +3824,7 @@ sap.ui.define([
 			assert.equal(oContent.getDOMValue(), "Item3", "value shown in inner control");
 			var oConfig = {
 				parsedValue: "I3",
+				parsedDescription: undefined,
 				value: "I3",
 				caseSensitive: true,
 				checkKey: true,
@@ -4246,6 +4260,7 @@ sap.ui.define([
 		assert.equal(oFieldHelp.getFilterValue(), "", "FilterValue reset");
 		var oConfig = {
 			parsedValue: "Item1",
+			parsedDescription: "Item1",
 			value: "Item1",
 			checkKey: true,
 			checkDescription: true,
@@ -4279,6 +4294,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "Invalid",
+			parsedDescription: "Invalid",
 			value: "Invalid",
 			checkKey: true,
 			checkDescription: true,
@@ -4347,6 +4363,7 @@ sap.ui.define([
 
 		var oConfig = {
 			parsedValue: "Invalid",
+			parsedDescription: "Invalid",
 			value: "Invalid",
 			checkKey: true,
 			checkDescription: true,

@@ -52,22 +52,29 @@ sap.ui.define([
 	 * @public
 	 *
 	 * @param {object} [oFormatOptions] Formatting options
-	 * @param {sap.ui.model.Type} [oFormatOptions.valueType] Type of the value of the condition (used for formatting and parsing)
+	 * @param {sap.ui.model.Type} [oFormatOptions.valueType] Type of the value of the condition (used for formatting, parsing and validating)
+	 * @param {sap.ui.model.Type} [oFormatOptions.additionalValueType] Type of the additionalValue (description) of the condition (used for formatting, parsing and validating)
 	 * @param {string[]} [oFormatOptions.operators] Possible operators to be used in the condition
 	 * @param {sap.ui.mdc.enums.FieldDisplay} [oFormatOptions.display] DisplayFormat used to visualize a value
-	 * @param {string} [oFormatOptions.ValueHelpID] ID of the value help to determine the key and description
+	 * @param {string} [oFormatOptions.valueHelpID] ID of the value help to determine the key and description
 	 * @param {boolean} [oFormatOptions.hideOperator] If set, only the value of the condition is shown, but no operator. (Use it only if just one operator is supported.)
 	 * @param {int} [oFormatOptions.maxConditions] Maximum number of allowed conditions
 	 * @param {sap.ui.model.Context} [oFormatOptions.bindingContext] <code>BindingContext</code> of field. Used to get a key or description from the value help using in/out parameters. (In a table, the value help might be connected to a different row)
 	 * @param {sap.ui.model.Type} [oFormatOptions.originalDateType] Type used on field, for example, for date types; a different type is used internally to have different <code>formatOptions</code>
-	 * @param {boolean} [oFormatOptions.isUnit] If set, the type is used for the unit part of a field
-	 * @param {function} [oFormatOptions.getConditions] Function to get the existing conditions of the field. Only used if <code>isUnit</code> is set. TODO: better solution
+	 * @param {sap.ui.model.Type} [oFormatOptions.additionalType] additional type used on other part of a field. (For example, for unit fields.)
+	 * @param {sap.ui.model.Type[]} [oFormatOptions.compositeTypes] additional types used for parts of a <code>CompositeType</code> (if valueType is a <code>CompositeType</code>)
+	 * @param {sap.ui.model.Type[]} [oFormatOptions.additionalCompositeTypes] additional types used for parts of a <code>CompositeType</code> (if additionalValueType is a <code>CompositeType</code>)
+	 * @param {function} [oFormatOptions.getConditions] Function to get the existing conditions of the field.
 	 * @param {function} [oFormatOptions.asyncParsing] Callback function to tell the <code>Field</code> the parsing is asynchronous.
 	 * @param {sap.ui.mdc.condition.ConditionObject} [oFormatOptions.navigateCondition] Condition of keyboard navigation. If this is filled, no real parsing is needed as the condition has already been determined and is just returned
 	 * @param {object} [oFormatOptions.delegate] Field delegate to handle model-specific logic
 	 * @param {object} [oFormatOptions.payload] Payload of the delegate
 	 * @param {boolean} [oFormatOptions.preventGetDescription] If set, description is not read by <code>formatValue</code> as it is known that no description exists or might be set later
 	 * @param {string} [oFormatOptions.defaultOperatorName] Name of the default <code>Operator</code>
+	 * @param {boolean} [oFormatOptions.convertWhitespaces] If set, whitespaces will be replaced by special characters to display whitespaces in HTML
+	 * @param {sap.ui.core.Control} [oFormatOptions.control] Instance of the calling control
+	 * @param {boolean} [oFormatOptions.noFormatting] If set, the conditions will not be formatted (MultiInput value-property case)
+	 * @param {string} [oFormatOptions.keepValue] If noFormatting is set, this value is used as output (To keep typed value during value help selection)
 	 * @param {object} [oConstraints] Value constraints
 	 * @alias sap.ui.mdc.field.DynamicDateRangeConditionsType
 	 */

@@ -704,6 +704,7 @@ sap.ui.define([
 		return { // TODO: is more needed?
 			maxConditions: -1, // as for tokens there should not be a limit on type side
 			valueType: oConfig.dataType,
+			additionalValueType: oConfig.additionalDataType,
 			operators: oConfig.operators,
 			display: oConfig.display,
 			valueHelpID: oParent && oParent.getId(), // needed to get description for Token (if not provided)

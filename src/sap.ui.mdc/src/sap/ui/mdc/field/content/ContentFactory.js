@@ -411,6 +411,7 @@ sap.ui.define([
 
 	};
 
+	// used for value/key
 	ContentFactory.prototype.getDataType = function() {
 		return this._oDataType;
 	};
@@ -448,6 +449,32 @@ sap.ui.define([
 		return this._oDataType;
 	};
 
+	// used for description
+	ContentFactory.prototype.getAdditionalDataType = function() {
+		return this._oAdditionalDataType;
+	};
+
+	ContentFactory.prototype.setAdditionalDataType = function(oDataType) {
+		this._oAdditionalDataType = oDataType;
+	};
+
+	ContentFactory.prototype.retrieveAdditionalDataType = function() { // make sure that data type module is loaded before
+		if (!this._oAdditionalDataType) {
+			var oDataType = this.getField().getAdditionalDataTypeConfiguration();
+
+			if (oDataType) {
+				if (oDataType.isA && oDataType.isA("sap.ui.model.Type")) {
+					this._oAdditionalDataType = oDataType;
+				} else if (oDataType.name) {
+					this._oAdditionalDataType = this.getField().getTypeMap().getDataTypeInstance(oDataType.name, oDataType.formatOptions, oDataType.constraints);
+					this._oAdditionalDataType._bCreatedByField = true;
+				}
+			}
+		}
+		return this._oAdditionalDataType;
+	};
+
+	// original data type for usage from outside
 	ContentFactory.prototype.getDateOriginalType = function() {
 		return this._oDateOriginalType;
 	};
@@ -472,12 +499,21 @@ sap.ui.define([
 		this._oUnitType = oUnitType;
 	};
 
+	// types for single parts of compositeBinding
 	ContentFactory.prototype.getCompositeTypes = function() {
 		return this._aCompositeTypes;
 	};
 
 	ContentFactory.prototype.setCompositeTypes = function(aCompositeTypes) {
 		this._aCompositeTypes = aCompositeTypes;
+	};
+
+	ContentFactory.prototype.getAdditionalCompositeTypes = function() {
+		return this._aAdditionalCompositeTypes;
+	};
+
+	ContentFactory.prototype.setAdditionalCompositeTypes = function(aCompositeTypes) {
+		this._aAdditionalCompositeTypes = aCompositeTypes;
 	};
 
 	ContentFactory.prototype.isMeasure = function() {

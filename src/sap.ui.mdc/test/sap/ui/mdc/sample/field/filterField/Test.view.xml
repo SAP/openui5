@@ -509,6 +509,37 @@
 						liveChange="handleLiveChange">
 					</mdc:FilterField>
 
+					<m:Label text="type date as additionalValue"/>
+					<mdc:FilterField id="FF-DateDescription"
+						conditions="{cm>/conditions/Name}"
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+						dataType="sap.ui.model.type.String"
+						dataTypeConstraints='\{"maxLength": 30\}'
+						additionalDataType='\{"name": "sap.ui.model.odata.type.DateTime", "formatOptions": \{"style": "long"\}, "constraints": \{"displayFormat": "Date"\}\}'
+						propertyKey="Name"
+						display="ValueDescription"
+						maxConditions="-1"
+						placeholder="{/#Product/Name/@sap:label}"
+						label="{/#Product/Name/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH-DateDescription">
+						<mdc:dependents>
+							<mdc:ValueHelp id="VH-DateDescription" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+								<mdc:typeahead>
+									<mdcValueHelp:Popover id="VH-DateDescription-Pop">
+										<mdcValueHelpContent:FixedList id="VH-DateDescription-FL" useFirstMatch="true" items="{path: '/ProductCollection'}" >
+											<mdcValueHelpContent:FixedListItem 
+												text="{path: 'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long'}, constraints: {displayFormat: 'Date'}}" 
+												additionalText="{path: 'Name', type: 'sap.ui.model.type.String', constraints: {maxLength: 30}}" 
+												key="{path: 'Name', type: 'sap.ui.model.type.String', constraints: {maxLength: 30}}"/>
+										</mdcValueHelpContent:FixedList>
+									</mdcValueHelp:Popover>
+								</mdc:typeahead>
+							</mdc:ValueHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+
 					<c:Title text="In/Out Example"/>
 					<m:Label text="{/#Product/CountryId/@sap:label}"/>
 					<mdc:FilterField
