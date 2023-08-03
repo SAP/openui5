@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/table/utils/Personalization",
+	"sap/m/table/columnmenu/Item",
 	"sap/m/Text",
 	"sap/m/plugins/ColumnResizer",
 	"sap/ui/performance/trace/FESRHelper"
@@ -16,6 +17,7 @@ sap.ui.define([
 	GridTableType,
 	Column,
 	PersonalizationUtils,
+	ItemBase,
 	Text,
 	ColumnResizer,
 	FESRHelper
@@ -315,14 +317,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialize Items", function(assert) {
-		var oTable = this.oTable;
+		var oTable = this.oTable, oMenu, oItemBaseDestroySpy = sinon.spy(ItemBase.prototype, "destroyAggregation");
 
-		oTable.getSupportedP13nModes = function() {
-			return ["Sort", "Filter", "Group", "Column"];
-		};
-
-		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
-			var aItems = oTable._oItemContainer.getItems();
+		function checkItems(aItems) {
 			var oItem;
 
 			assert.equal(aItems.length, 4, "The ItemContainer contains 3 Items");
@@ -338,6 +335,25 @@ sap.ui.define([
 			oItem = aItems[3];
 			assert.equal(oItem.getKey(), "Column", "Column");
 			assert.ok(oItem.getContent().getProperty("_useFixedWidth"), "fixed width is applied to the column panel");
+		}
+
+		oTable.getSupportedP13nModes = function() {
+			return ["Sort", "Filter", "Group", "Column"];
+		};
+
+		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
+			checkItems(oTable._oItemContainer.getItems());
+			assert.ok(oItemBaseDestroySpy.notCalled);
+
+			oMenu = oTable._oTable.getColumns()[0].getHeaderMenuInstance();
+			oMenu.close();
+			return wait(1000);
+		}).then(function() {
+			return TableQUnitUtils.openColumnMenu(oTable, 0);
+		}).then(function() {
+			assert.ok(oItemBaseDestroySpy.calledThrice); // the content of the sort, group and column items are destroyed, the content of the filter item is not
+			assert.ok(oItemBaseDestroySpy.alwaysCalledWith("content"));
+			checkItems(oTable._oItemContainer.getItems());
 
 			oTable._getP13nButton().firePress();
 			return wait(1000);
@@ -383,6 +399,7 @@ sap.ui.define([
 			assert.ok(fResetSpy.calledWithExactly(oTable, ["Sort"]), "reset called with the correct parameters");
 			assert.ok(fUpdateQuickActionsSpy.calledOnce, "updateQuickActions called once");
 			assert.ok(fUpdateQuickActionsSpy.calledWithExactly(["Sort"]), "updateQuickActions called with the correct parameters");
+			return Promise.resolve();
 		});
 	});
 });

@@ -24,7 +24,7 @@ sap.ui.define([
 
 	ItemContainer.prototype.initializeItems = function() {
 		var oTable = this.getTable();
-		this.removeAllItems();
+		this.destroyItems();
 
 		if (oTable._isP13nButtonHidden()) {
 			return Promise.resolve();
