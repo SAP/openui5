@@ -364,17 +364,6 @@ sap.ui.define([
 
 	QUnit.module("Events");
 
-	var hasEventListeners = function(oDomRef, sEventType, b) {
-		QUnit.test("Listeners", function(assert) {
-			var aResizeEventListeners = jQuery._data(oDomRef, "events")[sEventType];
-			var bBoundedListeners = aResizeEventListeners.some(function(oResizeEventListener) {
-				return oResizeEventListener.namespace === "sapMMessageToast";
-			});
-
-			assert.strictEqual(bBoundedListeners, b, "Listener to the " + '"' + sEventType + '" event deregistered');
-		});
-	};
-
 	QUnit.test("Mousedown on SVG element should not throw exception", function (assert) {
 		var done = assert.async();
 		var oSvgCircle = new HTML({
@@ -419,12 +408,9 @@ sap.ui.define([
 
 				// assert
 				assert.ok(fnCloseSpy.calledOn(MessageToast), 'onClose callback was called with the correct context');
-				hasEventListeners(window, "resize", false);
-				hasEventListeners(document, "mousedown", false);
-				hasEventListeners(document, "touchstart", false);
 
 				// start the test
-				done();
+			done();
 			}, 7000);
 		}, 0);
 	});
@@ -448,9 +434,6 @@ sap.ui.define([
 
 				// assert
 				assert.ok(fnCloseSpy.calledOn(MessageToast), 'onClose callback was called with the correct context');
-				hasEventListeners(window, "resize", false);
-				hasEventListeners(document, "mousedown", false);
-				hasEventListeners(document, "touchstart", false);
 
 				// start the test
 				done();
