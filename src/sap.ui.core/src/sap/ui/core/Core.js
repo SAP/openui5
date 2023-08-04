@@ -20,6 +20,7 @@ sap.ui.define([
 	'./RenderManager',
 	'./UIArea',
 	'./message/MessageManager',
+	"./theming/ThemeHelper",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/Log",
 	"sap/ui/performance/Measurement",
@@ -56,6 +57,7 @@ sap.ui.define([
 		RenderManager,
 		UIArea,
 		MessageManager,
+		ThemeHelper,
 		ResourceBundle,
 		Log,
 		Measurement,
@@ -905,7 +907,7 @@ sap.ui.define([
 		assert(typeof sThemeName === "string", "sThemeName must be a string");
 		assert(typeof sThemeBaseUrl === "string" || typeof sThemeBaseUrl === "undefined", "sThemeBaseUrl must be a string or undefined");
 
-		sThemeName = Configuration.normalizeTheme(sThemeName, sThemeBaseUrl);
+		sThemeName = ThemeHelper.validateAndFallbackTheme(sThemeName, sThemeBaseUrl);
 
 		// Configuration needs to be updated synchronously but only
 		// applyTheme in case theme changed

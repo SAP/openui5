@@ -684,7 +684,8 @@ sap.ui.define([
 		assert(typeof sThemeName === "string", "sThemeName must be a string");
 		assert(typeof sThemeBaseUrl === "string" || typeof sThemeBaseUrl === "undefined", "sThemeBaseUrl must be a string or undefined");
 
-		sThemeName = Configuration.normalizeTheme(sThemeName, sThemeBaseUrl);
+		// NOTE: This private API is only used by Core.js.
+		//       Core.js takes care of ensuring the validity of the given theme-name wrt. fallbacks and defaults.
 
 		if (sThemeBaseUrl) {
 			this.setThemeRoot(sThemeName, sThemeBaseUrl);
