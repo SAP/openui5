@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
-	"../../TestUtils"
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
 	Editor,
@@ -20,7 +20,7 @@ sap.ui.define([
 	MockServer,
 	Core,
 	deepClone,
-	TestUtils
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -170,14 +170,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("add 01 - match the filter key", function (assert) {
-		var oTable, oCell, oMenu, oField, oValue, oValueInTable, oKeyColumn, oRemoveValueButton;
+		var oTable, oCell, oMenu, oInput, oField, oValue, oValueInTable, oKeyColumn, oRemoveValueButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return TestUtils.isReady(oEditor).then(function () {
+		return EditorQunitUtils.isReady(oEditor).then(function () {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -214,9 +214,11 @@ sap.ui.define([
 			oTable.filter(oKeyColumn, "new");
 			return wait();
 		}).then(function () {
-			return TestUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
-			oMenu = oKeyColumn.getMenu();
+			oMenu = oKeyColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function () {
@@ -313,14 +315,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("add 02 - not match the filter key", function (assert) {
-		var oTable, oCell, oMenu, oField, oValue, oValueInTable, oKeyColumn, oRemoveValueButton;
+		var oTable, oCell, oMenu, oInput, oField, oValue, oValueInTable, oKeyColumn, oRemoveValueButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -357,9 +359,11 @@ sap.ui.define([
 			oTable.filter(oKeyColumn, "new");
 			return wait();
 		}).then(function() {
-			return TestUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
-			oMenu = oKeyColumn.getMenu();
+			oMenu = oKeyColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function() {
@@ -447,14 +451,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("update not selected object", function (assert) {
-		var oTable, oCell, oMenu, oField, oValue, oValueInTable, oKeyColumn, oRemoveValueButton, oAddButton;
+		var oTable, oCell, oMenu, oInput, oField, oValue, oValueInTable, oKeyColumn, oRemoveValueButton, oAddButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -542,10 +546,12 @@ sap.ui.define([
 			oTable.filter(oKeyColumn, "new");
 			return wait();
 		}).then(function () {
-			return TestUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
 			// check that the column menu filter input field was updated
-			oMenu = oKeyColumn.getMenu();
+			oMenu = oKeyColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function () {
@@ -713,14 +719,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("update not selected object, but been filtered out", function (assert) {
-		var oTable, oCell, oMenu, oField, oValue, oValueInTable, oKeyColumn, oRemoveValueButton, oAddButton;
+		var oTable, oCell, oMenu, oInput, oField, oValue, oValueInTable, oKeyColumn, oRemoveValueButton, oAddButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -807,9 +813,11 @@ sap.ui.define([
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
 		}).then(function() {
-			return TestUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn);
 		}).then(function() {
-			oMenu = oKeyColumn.getMenu();
+			oMenu = oKeyColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function() {
@@ -952,14 +960,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("update selected object", function (assert) {
-		var oTable, oCell, oMenu, oField, oValue, oValueInTable, oKeyColumn, oRemoveValueButton, oAddButton;
+		var oTable, oCell, oMenu, oInput, oField, oValue, oValueInTable, oKeyColumn, oRemoveValueButton, oAddButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -1045,9 +1053,11 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return TestUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
-			oMenu = oKeyColumn.getMenu();
+			oMenu = oKeyColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function () {
@@ -1220,14 +1230,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("update selected object, but been filtered out", function (assert) {
-		var oTable, oCell, oMenu, oField, oValue, oValueInTable, oKeyColumn, oAddButton, oRemoveValueButton;
+		var oTable, oCell, oMenu, oInput, oField, oValue, oValueInTable, oKeyColumn, oAddButton, oRemoveValueButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -1313,10 +1323,12 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return TestUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
 			// check that the column menu filter input field was updated
-			oMenu = oKeyColumn.getMenu();
+			oMenu = oKeyColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function () {
@@ -1483,14 +1495,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("delete selected object", function (assert) {
-		var oTable, oCell, oMenu, oField, oValue, oValueInTable, oKeyColumn, oAddButton, oRemoveValueButton;
+		var oTable, oCell, oMenu, oInput, oField, oValue, oValueInTable, oKeyColumn, oAddButton, oRemoveValueButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -1576,10 +1588,12 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return TestUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn);
 		}).then(function() {
 			// check that the column menu filter input field was updated
-			oMenu = oKeyColumn.getMenu();
+			oMenu = oKeyColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function () {
@@ -1637,14 +1651,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("delete not selected object", function (assert) {
-		var oTable, oCell, oMenu, oField, oValue, oValueInTable, oKeyColumn, oAddButton, oRemoveValueButton;
+		var oTable, oCell, oMenu, oInput, oField, oValue, oValueInTable, oKeyColumn, oAddButton, oRemoveValueButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			oValue = {
 				"text": "textnew",
@@ -1730,10 +1744,12 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return TestUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn);
 		}).then(function() {
 			// check that the column menu filter input field was updated
-			oMenu = oKeyColumn.getMenu();
+			oMenu = oKeyColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function () {

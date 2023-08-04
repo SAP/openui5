@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/ui/core/util/MockServer",
 	"sap/base/util/merge",
-	"../../../TestUtils"
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
 	Editor,
@@ -22,7 +22,7 @@ sap.ui.define([
 	deepClone,
 	MockServer,
 	merge,
-	TestUtils
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -174,14 +174,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("positions, move buttons", function (assert) {
-		var oTable, oMenu, oField, oURLColumn, oClearFilterButton, oAddButton, oMoveUpButton, oMoveDownButton;
+		var oTable, oMenu, oInput, oField, oURLColumn, oClearFilterButton, oAddButton, oMoveUpButton, oMoveDownButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithRequestValues
 		});
-		return TestUtils.isReady(oEditor).then(function () {
+		return EditorQunitUtils.isReady(oEditor).then(function () {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
@@ -209,12 +209,11 @@ sap.ui.define([
 			assert.ok(oMoveDownButton.getVisible(), "Table toolbar: move down button visible");
 			assert.ok(!oMoveDownButton.getEnabled(), "Table toolbar: move down button not enabled");
 			oURLColumn = oTable.getColumns()[4];
-			return TestUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn);
 		}).then(function () {
-			oMenu = oURLColumn.getMenu();
-			oMenu.getItems()[0].setValue("https");
-			oMenu.getItems()[0].fireSelect();
-			oMenu.close();
+			oMenu = oURLColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
 			return wait();
 		}).then(function () {
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
@@ -274,14 +273,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("move selected 01", function (assert) {
-		var oTable, oMenu, oField, oURLColumn, oClearFilterButton, oAddButton, oMoveUpButton, oMoveDownButton, oSettings, oFieldSettings, oRow1, oRow2, oValueOfRow1, oValueOfRow2;
+		var oTable, oMenu, oInput, oField, oURLColumn, oClearFilterButton, oAddButton, oMoveUpButton, oMoveDownButton, oSettings, oFieldSettings, oRow1, oRow2, oValueOfRow1, oValueOfRow2;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithRequestValues
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
@@ -309,12 +308,11 @@ sap.ui.define([
 			assert.ok(oMoveDownButton.getVisible(), "Table toolbar: move down button visible");
 			assert.ok(!oMoveDownButton.getEnabled(), "Table toolbar: move down button not enabled");
 			oURLColumn = oTable.getColumns()[4];
-			return TestUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
-			oMenu = oURLColumn.getMenu();
-			oMenu.getItems()[0].setValue("https");
-			oMenu.getItems()[0].fireSelect();
-			oMenu.close();
+			oMenu = oURLColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
 			return wait();
 		}).then(function () {
 			oRow1 = oTable.getRows()[0];
@@ -413,14 +411,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("move selected 02", function (assert) {
-		var oTable, oMenu, oField, oURLColumn, oClearFilterButton, oAddButton, oMoveUpButton, oMoveDownButton, oSettings, oFieldSettings, oRow2, oRow3, oValueOfRow2, oValueOfRow3;
+		var oTable, oMenu, oInput, oField, oURLColumn, oClearFilterButton, oAddButton, oMoveUpButton, oMoveDownButton, oSettings, oFieldSettings, oRow2, oRow3, oValueOfRow2, oValueOfRow3;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithRequestValues
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
@@ -448,12 +446,11 @@ sap.ui.define([
 			assert.ok(oMoveDownButton.getVisible(), "Table toolbar: move down button visible");
 			assert.ok(!oMoveDownButton.getEnabled(), "Table toolbar: move down button not enabled");
 			oURLColumn = oTable.getColumns()[4];
-			return TestUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
-			oMenu = oURLColumn.getMenu();
-			oMenu.getItems()[0].setValue("https");
-			oMenu.getItems()[0].fireSelect();
-			oMenu.close();
+			oMenu = oURLColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
 			return wait();
 		}).then(function () {
 			oRow2 = oTable.getRows()[1];
@@ -520,14 +517,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("move unselected 01", function (assert) {
-		var oTable, oMenu, oField, oURLColumn, oClearFilterButton, oAddButton, oMoveUpButton, oMoveDownButton, oSettings, oFieldSettings, oRow2, oRow3, oValueOfRow2, oValueOfRow3;
+		var oTable, oMenu, oInput, oField, oURLColumn, oClearFilterButton, oAddButton, oMoveUpButton, oMoveDownButton, oSettings, oFieldSettings, oRow2, oRow3, oValueOfRow2, oValueOfRow3;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithRequestValues
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
@@ -555,12 +552,11 @@ sap.ui.define([
 			assert.ok(oMoveDownButton.getVisible(), "Table toolbar: move down button visible");
 			assert.ok(!oMoveDownButton.getEnabled(), "Table toolbar: move down button not enabled");
 			oURLColumn = oTable.getColumns()[4];
-			return TestUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
-			oMenu = oURLColumn.getMenu();
-			oMenu.getItems()[0].setValue("https");
-			oMenu.getItems()[0].fireSelect();
-			oMenu.close();
+			oMenu = oURLColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
 			return wait();
 		}).then(function () {
 			oRow2 = oTable.getRows()[1];
@@ -627,14 +623,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("move unselected 02", function (assert) {
-		var oTable, oMenu, oField, oURLColumn, oClearFilterButton, oAddButton, oMoveUpButton, oMoveDownButton, oSettings, oFieldSettings, oRow3, oRow4, oValueOfRow3, oValueOfRow4;
+		var oTable, oMenu, oInput, oField, oURLColumn, oClearFilterButton, oAddButton, oMoveUpButton, oMoveDownButton, oSettings, oFieldSettings, oRow3, oRow4, oValueOfRow3, oValueOfRow4;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithRequestValues
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
@@ -662,12 +658,11 @@ sap.ui.define([
 			assert.ok(oMoveDownButton.getVisible(), "Table toolbar: move down button visible");
 			assert.ok(!oMoveDownButton.getEnabled(), "Table toolbar: move down button not enabled");
 			oURLColumn = oTable.getColumns()[4];
-			return TestUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
-			oMenu = oURLColumn.getMenu();
-			oMenu.getItems()[0].setValue("https");
-			oMenu.getItems()[0].fireSelect();
-			oMenu.close();
+			oMenu = oURLColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
 			return wait();
 		}).then(function () {
 			oRow3 = oTable.getRows()[2];
@@ -730,14 +725,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("add and delete", function (assert) {
-		var oTable, oMenu, oField, oURLColumn, oClearFilterButton, oAddButton, oDeleteButton;
+		var oTable, oMenu, oInput, oField, oURLColumn, oClearFilterButton, oAddButton, oDeleteButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithRequestValues
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			assert.ok(oEditor.isReady(), "Editor is ready");
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
@@ -757,12 +752,11 @@ sap.ui.define([
 			return wait();
 		}).then(function () {
 			oURLColumn = oTable.getColumns()[4];
-			return TestUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
-			oMenu = oURLColumn.getMenu();
-			oMenu.getItems()[0].setValue("https");
-			oMenu.getItems()[0].fireSelect();
-			oMenu.close();
+			oMenu = oURLColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
 			return wait();
 		}).then(function () {
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");

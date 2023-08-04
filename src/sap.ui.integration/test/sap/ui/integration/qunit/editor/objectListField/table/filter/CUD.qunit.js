@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
-	"../../../TestUtils"
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
 	Editor,
@@ -18,7 +18,7 @@ sap.ui.define([
 	deepEqual,
 	Core,
 	deepClone,
-	TestUtils
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -132,14 +132,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("add, match the filter key", function (assert) {
-		var oTable, oToolbar, oMenu, oField, oURLColumn, oClearFilterButton, oAddButton, oEditButton;
+		var oTable, oToolbar, oMenu, oInput, oField, oURLColumn, oClearFilterButton, oAddButton, oEditButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithPropertiesOnly
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -160,13 +160,15 @@ sap.ui.define([
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oURLColumn = oTable.getColumns()[4];
+			oTable.filter(oURLColumn, "https");
 			return wait();
 		}).then(function() {
-			return TestUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
-			oTable.filter(oURLColumn, "https");
 			// check that the column menu filter input field was updated
-			oMenu = oURLColumn.getMenu();
+			oMenu = oURLColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "https", "Table: URL Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function () {
@@ -249,14 +251,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("add, not match the filter key", function (assert) {
-		var oTable, oToolbar, oMenu, oField, oURLColumn, oClearFilterButton, oEditButton, oAddButton;
+		var oTable, oToolbar, oMenu, oInput, oField, oURLColumn, oClearFilterButton, oEditButton, oAddButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithPropertiesOnly
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -280,10 +282,12 @@ sap.ui.define([
 			oTable.filter(oURLColumn, "https");
 			return wait();
 		}).then(function() {
-			return TestUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			// check that the column menu filter input field was updated
-			oMenu = oURLColumn.getMenu();
+			oMenu = oURLColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "https", "Table: URL Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function () {
@@ -341,14 +345,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("update", function (assert) {
-		var oTable, oToolbar, oMenu, oField, oURLColumn, oClearFilterButton, oEditButton, oNewValue;
+		var oTable, oToolbar, oMenu, oInput, oField, oURLColumn, oClearFilterButton, oEditButton, oNewValue;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithPropertiesOnly
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -369,13 +373,15 @@ sap.ui.define([
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oURLColumn = oTable.getColumns()[4];
+			oTable.filter(oURLColumn, "http:");
 			return wait();
 		}).then(function() {
-			return TestUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
-			oTable.filter(oURLColumn, "http:");
 			// check that the column menu filter input field was updated
-			oMenu = oURLColumn.getMenu();
+			oMenu = oURLColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "http:", "Table: URL Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function () {
@@ -545,14 +551,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("update, but been filtered out", function (assert) {
-		var oTable, oToolbar, oMenu, oField, oURLColumn, oClearFilterButton, oEditButton, oNewValue;
+		var oTable, oToolbar, oMenu, oInput, oField, oURLColumn, oClearFilterButton, oEditButton, oNewValue;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithPropertiesOnly
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -576,10 +582,12 @@ sap.ui.define([
 			oTable.filter(oURLColumn, "http:");
 			return wait();
 		}).then(function() {
-			return TestUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			// check that the column menu filter input field was updated
-			oMenu = oURLColumn.getMenu();
+			oMenu = oURLColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "http:", "Table: URL Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function () {
@@ -729,14 +737,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("delete", function (assert) {
-		var oTable, oToolbar, oMenu, oField, oURLColumn, oClearFilterButton, oEditButton, oDeleteButton;
+		var oTable, oToolbar, oMenu, oInput, oField, oURLColumn, oClearFilterButton, oEditButton, oDeleteButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithPropertiesOnly
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -762,10 +770,12 @@ sap.ui.define([
 			oTable.filter(oURLColumn, "http:");
 			return wait();
 		}).then(function(){
-			return TestUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
 			// check that the column menu filter input field was updated
-			oMenu = oURLColumn.getMenu();
+			oMenu = oURLColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "http:", "Table: URL Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function () {

@@ -34,7 +34,8 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/CustomData",
-	"sap/ui/integration/util/Utils"
+	"sap/ui/integration/util/Utils",
+	"sap/m/table/columnmenu/Menu"
 ], function (
 	BaseField,
 	Text,
@@ -67,7 +68,8 @@ sap.ui.define([
 	CustomListItem,
 	Sorter,
 	CustomData,
-	Utils
+	Utils,
+	Menu
 ) {
 	"use strict";
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g;
@@ -137,6 +139,15 @@ sap.ui.define([
 			}));
 		} else if (oControl instanceof Table) {
 			oControl.addStyleClass("sapUiIntegrationEditorItemObjectFieldTable");
+			// create a column header menu
+			that._oMenu = new Menu();
+			var aColumns = oControl.getColumns();
+			for (var i = 0; i < aColumns.length; i++) {
+				// if column supports filter or sort, add menu as header menu for it
+				if (aColumns[i].getFilterProperty() || aColumns[i].getSortProperty()) {
+					aColumns[i].setHeaderMenu(that._oMenu.getId());
+				}
+			}
 		}
 	};
 

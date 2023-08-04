@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
-	"../../../TestUtils"
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
 	Editor,
@@ -18,7 +18,7 @@ sap.ui.define([
 	deepEqual,
 	Core,
 	deepClone,
-	TestUtils
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -130,14 +130,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("filter via api", function (assert) {
-		var oTable, oMenu, oField, oKeyColumn, oTextColumn, oClearFilterButton, oEditButton;
+		var oTable, oMenu, oInput, oField, oKeyColumn, oTextColumn, oClearFilterButton, oEditButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithPropertiesOnly
 		});
-		return TestUtils.isReady(oEditor).then(function () {
+		return EditorQunitUtils.isReady(oEditor).then(function () {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -161,9 +161,11 @@ sap.ui.define([
 			oTable.filter(oKeyColumn, "n");
 			return wait();
 		}).then(function() {
-			return TestUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn);
 		}).then(function () {
-			oMenu = oKeyColumn.getMenu();
+			oMenu = oKeyColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "n", "Table: Key Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function () {
@@ -192,9 +194,11 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
 			oTextColumn = oTable.getColumns()[3];
 			oTable.filter(oTextColumn, "n");
-			return TestUtils.openColumnMenu(oTextColumn);
+			return EditorQunitUtils.openColumnMenu(oTextColumn);
 		}).then(function () {
-			oMenu = oTextColumn.getMenu();
+			oMenu = oTextColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			assert.equal(oInput.getValue(), "n", "Table: Text Column filter value OK");
 			oMenu.close();
 			return wait();
 		}).then(function () {
@@ -227,14 +231,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("filter via ui", function (assert) {
-		var oTable, oMenu, oField, oURLColumn, oIntColumn, oClearFilterButton, oEditButton;
+		var oTable, oMenu, oInput, oField, oURLColumn, oIntColumn, oClearFilterButton, oEditButton;
 		var oEditor = this.oEditor;
 		oEditor.setJson({
 			baseUrl: sBaseUrl,
 			host: "contexthost",
 			manifest: oManifestForObjectListFieldsWithPropertiesOnly
 		});
-		return TestUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -258,33 +262,29 @@ sap.ui.define([
 			oIntColumn = oTable.getColumns()[6];
 			return wait();
 		}).then(function() {
-			return TestUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn);
 		}).then(function() {
-			oMenu = oURLColumn.getMenu();
-			oMenu.getItems()[0].setValue("https");
-			oMenu.getItems()[0].fireSelect();
-			oMenu.close();
+			oMenu = oURLColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
 			return wait();
 		}).then(function () {
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 			assert.equal(oTable.getBinding().getCount(), 5, "Table: RowCount after filtering column URL with 'https'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
-			return TestUtils.openColumnMenu(oIntColumn);
+			return EditorQunitUtils.openColumnMenu(oIntColumn);
 		}).then(function() {
-			oMenu = oIntColumn.getMenu();
-			oMenu.getItems()[0].setValue("4");
-			oMenu.getItems()[0].fireSelect();
-			oMenu.close();
+			oMenu = oIntColumn.getHeaderMenuInstance();
+			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			EditorQunitUtils.setInputValueAndConfirm(oInput, "4");
 			return wait();
 		}).then(function () {
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 			assert.equal(oTable.getBinding().getCount(), 1, "Table: RowCount after filtering column Integer with '4'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
-			return TestUtils.openColumnMenu(oIntColumn);
+			return EditorQunitUtils.openColumnMenu(oIntColumn);
 		}).then(function() {
-			oMenu.getItems()[0].setValue(">4");
-			oMenu.getItems()[0].fireSelect();
-			oMenu.close();
+			EditorQunitUtils.setInputValueAndConfirm(oInput, ">4");
 			return wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 2, "Table: RowCount after filtering column Integer with '>4'");

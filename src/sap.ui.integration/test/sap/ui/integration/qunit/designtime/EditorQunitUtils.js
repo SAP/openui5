@@ -59,5 +59,37 @@ sap.ui.define([
 		QUnitUtils.triggerKeydown(oControl.getDomRef(), KeyCodes.ENTER);
 	};
 
+	EditorQunitUtils.isReady = function(oEditor) {
+		return new Promise(function(resolve) {
+			oEditor.attachReady(function() {
+				resolve();
+			});
+		});
+	};
+
+	EditorQunitUtils.openColumnMenu = function(oColumn) {
+		return new Promise(function(resolve) {
+			var oMenu = oColumn.getHeaderMenuInstance();
+			// init popover since it may be not initialized
+			oMenu._initPopover();
+			var oPopover = oMenu._oPopover;
+			// attach to event afterOpen
+			oPopover.attachEventOnce("afterOpen", function() {
+				resolve();
+			});
+			var oElement = oColumn.getDomRef();
+			QUnitUtils.triggerMouseEvent(oElement, "mousedown", null, null, null, null, 0);
+			QUnitUtils.triggerMouseEvent(oElement, "click");
+		});
+	};
+
+	EditorQunitUtils.tableUpdated = function(oField) {
+		return new Promise(function(resolve) {
+			oField.attachEventOnce("tableUpdated", function() {
+				resolve();
+			});
+		});
+	};
+
 	return EditorQunitUtils;
 });
