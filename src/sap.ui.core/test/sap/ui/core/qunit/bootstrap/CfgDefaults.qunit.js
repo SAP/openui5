@@ -49,7 +49,7 @@
 		var oCfg = new sap.ui.core.Configuration();
 
 		// compare values where possible
-		assert.equal(oCfg.theme, "base", "theme");
+		assert.equal(oCfg.theme, "sap_fiori_3", "theme");
 		assert.equal(toLower(oCfg.language), toLower(defaultLocale()), "language");
 		assert.equal(oCfg.accessibility, true, "accessibility");
 		assert.equal(oCfg.animation, true, "animation");

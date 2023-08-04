@@ -24,6 +24,7 @@ sap.ui.define([
 	'./ThemeCheck',
 	'./UIArea',
 	'./message/MessageManager',
+	"./theming/ThemeHelper",
 	"sap/ui/util/ActivityDetection",
 	"sap/ui/dom/getScrollbarSize",
 	"sap/base/i18n/ResourceBundle",
@@ -64,6 +65,7 @@ sap.ui.define([
 		ThemeCheck,
 		UIArea,
 		MessageManager,
+		ThemeHelper,
 		ActivityDetection,
 		getScrollbarSize,
 		ResourceBundle,
@@ -937,7 +939,7 @@ sap.ui.define([
 		assert(typeof sThemeName === "string", "sThemeName must be a string");
 		assert(typeof sThemeBaseUrl === "string" || typeof sThemeBaseUrl === "undefined", "sThemeBaseUrl must be a string or undefined");
 
-		sThemeName = this.oConfiguration._normalizeTheme(sThemeName, sThemeBaseUrl);
+		sThemeName = ThemeHelper.validateAndFallbackTheme(sThemeName, sThemeBaseUrl);
 
 		if (sThemeBaseUrl) {
 			this.setThemeRoot(sThemeName, sThemeBaseUrl);
