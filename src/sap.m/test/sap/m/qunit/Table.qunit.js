@@ -3393,7 +3393,7 @@ sap.ui.define([
 		assert.notOk(this.oTable._oItemNavigation.getItemDomRefs().includes($tblHeader[0]), "column header row is not in ItemNavigation items");
 
 		qutils.triggerKeydown(document.activeElement, "END", false, false, false);
-		assert.strictEqual(document.activeElement, oFirstItem.$().find(".sapMTblCellFocusable").last()[0], "Focus is set on the last cell of the first row");
+		assert.strictEqual(document.activeElement, aItems[aItems.length - 1].getFocusDomRef(), "Focus is set on the last row");
 
 		qutils.triggerKeydown(document.activeElement, "HOME", false, false, false);
 		assert.strictEqual(document.activeElement, oFirstItem.getDomRef(), "Focus is set on the first row");
@@ -3746,11 +3746,30 @@ sap.ui.define([
 		this.oTable.focus();
 		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the first row");
 
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
+		assert.equal(document.activeElement,  this.o1stItem.getDomRef("cell0"), "Focus is on the first cell of the first row");
+
 		qutils.triggerKeydown(document.activeElement, "END");
-		assert.equal(document.activeElement, this.o1stItem.$().find(".sapMTblCellFocusable").last()[0], "Focus is on the last focusable DOM node");
+		assert.equal(document.activeElement, this.o1stItem.$().find(".sapMTblCellFocusable").last()[0], "Focus is on the last focusable DOM node of the 1st row");
+
+		qutils.triggerKeydown(document.activeElement, "END");
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the 1st row");
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
+		assert.equal(document.activeElement, this.o1stItem.getDomRef("cell1"), "Focus is on the 2nd cell of the first row");
 
 		qutils.triggerKeydown(document.activeElement, "HOME");
-		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the header row");
+		assert.equal(document.activeElement, this.o1stItem.getDomRef("cell0"), "Focus is on the 1st cell of the first row");
+
+		qutils.triggerKeydown(document.activeElement, "HOME");
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the 1st row");
+
+		qutils.triggerKeydown(document.activeElement, "HOME");
+		assert.equal(document.activeElement, oTable.getDomRef("tblHeader"), "Focus is on the header row");
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the 1st row");
 
 		aColumns.forEach(function(oColumn, iIndex) {
 			qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
@@ -3786,7 +3805,7 @@ sap.ui.define([
 		assert.equal(document.activeElement, this.o2ndItem.getDomRef("cell0"), "Focus is on the first cell of the 2nd item");
 
 		qutils.triggerKeydown(document.activeElement, "TAB", true);
-		assert.equal(document.activeElement, oTable.getDomRef("before"), "Focus is left the table");
+		assert.equal(document.activeElement, oTable.getDomRef("before"), "Focus has left the table");
 	});
 
 	QUnit.test("Drag and Drop", function(assert) {

@@ -1235,13 +1235,6 @@ function(
 
 		this.informList("FocusIn", oEvent.srcControl);
 		oEvent.setMarked();
-
-		if (oEvent.srcControl === this || !jQuery(oEvent.target).is(":sapFocusable")) {
-			return;
-		}
-
-		// inform the list async that this item should be focusable
-		setTimeout(oList["setItemFocusable"].bind(oList, this), 0);
 	};
 
 	ListItemBase.prototype.onfocusout = function(oEvent) {

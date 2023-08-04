@@ -258,7 +258,6 @@ function(
 				/**
 				 * Defines keyboard handling behavior of the control.
 				 * @since 1.38.0
-				 * @deprecated Since version 1.118. This has no more effect on the keyboard handling.
 				 */
 				keyboardMode : {type : "sap.m.ListKeyboardMode", group : "Behavior", defaultValue : "Navigation" },
 
@@ -2174,6 +2173,7 @@ function(
 
 			// set the tab index of navigation root
 			this._oItemNavigation.setTabIndex0(0);
+			this._oItemNavigation.iActiveTabIndex = -1;
 
 			// explicitly setting table mode with one column
 			// to disable up/down reaction on events of the cell
@@ -2235,28 +2235,6 @@ function(
 		return this._oItemNavigation;
 	};
 
-	ListBase.prototype._setItemNavigationTabIndex = function(iTabIndex) {
-		// this will be deleted
-	};
-
-	/*
-	 * Makes the given ListItem(row) focusable via ItemNavigation
-	 *
-	 * @since 1.26
-	 * @protected
-	 */
-	ListBase.prototype.setItemFocusable = function(oListItem) {
-		if (!this._oItemNavigation) {
-			return;
-		}
-
-		var aItemDomRefs = this._oItemNavigation.getItemDomRefs();
-		var iIndex = aItemDomRefs.indexOf(oListItem.getDomRef());
-		if (iIndex >= 0) {
-			this._oItemNavigation.setFocusedIndex(iIndex);
-		}
-	};
-
 	/*
 	 * Forward tab before or after List
 	 * This function should be called before tab key is pressed
@@ -2277,7 +2255,7 @@ function(
 			return;
 		}
 
-		if (oEvent.target.matches(".sapMLIBFocusable,.sapMTblCellFocusable")) {
+		if (oEvent.target.matches(".sapMLIBFocusable,.sapMTblCellFocusable") || oEvent.target === jQuery(this.getNavigationRoot()).find(":sapTabbable").last()[0]) {
 			this.forwardTab(true);
 			oEvent.setMarked();
 		}
@@ -2289,7 +2267,7 @@ function(
 			return;
 		}
 
-		if (oEvent.target.matches(".sapMLIBFocusable,.sapMTblCellFocusable")) {
+		if (oEvent.target.matches(".sapMLIBFocusable,.sapMTblCellFocusable") || oEvent.target === jQuery(this.getNavigationRoot()).find(":sapTabbable").first()[0]) {
 			this.forwardTab(false);
 			oEvent.setMarked();
 		}
@@ -2466,7 +2444,12 @@ function(
 		var $LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]);
 
 		this.bAnnounceDetails = true;
-		$LastFocused.trigger("focus");
+		if (this.getKeyboardMode() == "Edit") {
+			var $Tabbable = $LastFocused.find(":sapTabbable").first();
+			$Tabbable[0] ? $Tabbable.trigger("focus") : $LastFocused.trigger("focus");
+		} else {
+			$LastFocused.trigger("focus");
+		}
 	};
 
 	// Handles focus to reposition the focus to correct place
@@ -2492,6 +2475,21 @@ function(
 				sDescription = ListItemBase.getAccessibilityText(vNoData);
 			}
 			this.updateInvisibleText(sDescription, oTarget);
+		} else if (oTarget.id == this.getId("listUl") && this.getKeyboardMode() == "Edit") {
+			this.focusPrevious();
+			oEvent.stopImmediatePropagation(true);
+			return;
+		}
+
+		// update the focused index of item navigation when inner elements are focused
+		if (this._oItemNavigation && !oTarget.matches(".sapMLIBFocusable,.sapMTblCellFocusable")) {
+			var oFocusableItem = oTarget.closest(".sapMLIBFocusable,.sapMTblCellFocusable");
+			if (oFocusableItem) {
+				var iFocusableIndex = this._oItemNavigation.getItemDomRefs().indexOf(oFocusableItem);
+				if (iFocusableIndex >= 0) {
+					this._oItemNavigation.iFocusedIndex = iFocusableIndex;
+				}
+			}
 		}
 
 		// handle only for backward navigation

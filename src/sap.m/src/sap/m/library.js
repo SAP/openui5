@@ -2772,7 +2772,6 @@ sap.ui.define([
 	/**
 	 * Defines the keyboard handling behavior of the <code>sap.m.List</code> or <code>sap.m.Table</code>.
 	 *
-	 * @deprecated Since version 1.118. This has no more effect on the keyboard handling.
 	 * @enum {string}
 	 * @public
 	 * @since 1.38.0
@@ -2780,21 +2779,22 @@ sap.ui.define([
 	thisLib.ListKeyboardMode = {
 
 		/**
-		 * This default mode is suitable if the number of items is unlimited or if there is no editable field
-		 * within the item.
+		 * This default mode is suitable if the List or Table contains editable and/or non-editable fields.
 		 *
-		 * While the last/first interactive element within an item has the focus, pressing tab/shift+tab moves
-		 * the focus to the next/previous element in the tab chain after/before the <code>sap.m.List</code>
-		 * or <code>sap.m.Table</code>.
+		 * In this mode, the first focus goes to the first item.
+		 * If the focus is on the item, or cell, pressing tab/shift+tab moves the focus to the next/previous element in the tab chain after/before
+		 * the <code>sap.m.List</code> or <code>sap.m.Table</code> control.
+		 * If the focus is on the interactive element, pressing tab/shift+tab moves the focus to the next/previous element in the tab chain after/before
+		 * the focused interactive element.
 		 * @public
 		 */
 		Navigation : "Navigation",
 
 		/**
-		 * This mode is suitable if the number of items is limited and if there are editable fields within the item.
+		 * This mode is suitable if there are only editable fields within the item.
 		 *
-		 * While the last/first interactive element within an item has the focus, pressing tab/shift+tab moves
-		 * the focus to the next/previous element in the tab chain after/before the item </code>.
+		 * In this mode, the first focus goes to the first interactive element within the first item and this is the only difference between the <code>Edit</code>
+		 * and <code>Navigation</code> mode.
 		 * @public
 		 */
 		Edit : "Edit"
