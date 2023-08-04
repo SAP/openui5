@@ -3107,7 +3107,9 @@ sap.ui.define([
 	 *   <code>bindContext</code> method of the corresponding model class or with the model-specific
 	 *   subclass of <code>sap.ui.model.ContextBinding</code>
 	 * @property {Object<string,function>} [events]
-	 *   Map of event handler functions keyed by the name of the binding events that they are attached to
+	 *   Map of event handler functions keyed by the name of the binding events that they are attached to.
+	 *   The names and value ranges of the supported events depend on the model implementation and should be
+	 *   documented with the model-specific subclass of <code>sap.ui.model.ContextBinding</code>.
 	 *
 	 * @public
 	 */
@@ -3588,7 +3590,9 @@ sap.ui.define([
 	 *   control suitable to visualize a group header (e.g. a <code>sap.m.GroupHeaderListItem</code>
 	 *   for a <code>sap.m.List</code>).
 	 * @property {Object<string,function>} [events=null]
-	 *   Map of event handler functions keyed by the name of the binding events that they should be attached to
+	 *   Map of event handler functions keyed by the name of the binding events that they should be attached to.
+	 *   The names and value ranges of the supported events depend on the model implementation and should be
+	 *   documented with the model-specific subclass of <code>sap.ui.model.ListBinding</code>.
 	 *
 	 * @public
 	 */
