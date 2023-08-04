@@ -381,10 +381,12 @@ sap.ui.define([
 			parent: {children: [1, 2]},
 			positionInParent: 3
 		}, "getNodeByIndex returns context object");
+		assert.deepEqual(this.oProxy.getNodeByIndex(-1), undefined, "getNodeByIndex returns undefined for negative index");
 	});
 
 	QUnit.test("#getContextByIndex", function(assert) {
 		assert.deepEqual(this.oProxy.getContextByIndex(0), {context: "test"}, "getContextByIndex returns context object");
+		assert.deepEqual(this.oProxy.getContextByIndex(-1), undefined, "getContextByIndex returns undefined for negative index");
 	});
 
 	QUnit.test("#isExpanded", function(assert) {

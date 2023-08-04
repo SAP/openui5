@@ -459,6 +459,9 @@ sap.ui.define([
 	 * @name sap.ui.table.TreeTable#selectAll
 	 */
 
+	/**
+	 * @inheritDoc
+	 */
 	TreeTable.prototype.getContextByIndex = function(iRowIndex) {
 		return this._oProxy.getContextByIndex(iRowIndex);
 	};

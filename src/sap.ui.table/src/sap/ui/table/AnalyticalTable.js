@@ -764,19 +764,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the context of a row by its index.
-	 *
-	 * @param {int} iIndex
-	 *         Index of the row to return the context from.
-	 * @returns {sap.ui.model.Context} The context of a row by its index
-	 * @public
+	 * @inheritDoc
 	 */
 	AnalyticalTable.prototype.getContextByIndex = function(iIndex) {
-		return iIndex >= 0 && this._oProxy.getContextByIndex(iIndex);
+		return this._oProxy.getContextByIndex(iIndex);
 	};
 
+	/**
+	 * Gets a node object by an index.
+	 *
+	 * @param {int} iIndex Index of the node
+	 * @returns {undefined | object} Returns a node object if available.
+	 * @private
+	 */
 	AnalyticalTable.prototype.getContextInfoByIndex = function(iIndex) {
-		return iIndex >= 0 && this._oProxy.getNodeByIndex(iIndex);
+		return this._oProxy.getNodeByIndex(iIndex);
 	};
 
 	/**

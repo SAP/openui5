@@ -1701,6 +1701,31 @@ sap.ui.define([
 		oGetBinding.restore();
 	});
 
+	QUnit.test("#getContextByIndex", function(assert) {
+		var oFakeBinding = {
+			getContexts: sinon.stub()
+		};
+
+		sinon.stub(oTable, "getBinding").returns(undefined);
+		assert.strictEqual(oTable.getContextByIndex(0), undefined, "Without a binding");
+
+		oFakeBinding.getContexts.returns(["test"]);
+		oTable.getBinding.returns(oFakeBinding);
+		assert.strictEqual(oTable.getContextByIndex(0), "test", "With a binding that does not have a getContextByIndex method");
+		assert.ok(oFakeBinding.getContexts.calledOnceWithExactly(0, 1, 0, true), "Binding#getContexts called once with correct arguments");
+
+		oFakeBinding.getContexts.resetHistory();
+		oFakeBinding.getContextByIndex = sinon.stub();
+		oFakeBinding.getContextByIndex.returns("test2");
+		assert.strictEqual(oTable.getContextByIndex(1), "test2", "With binding that does have a getContextByIndex method");
+		assert.ok(oFakeBinding.getContexts.notCalled, "Binding#getContexts not called");
+		assert.ok(oFakeBinding.getContextByIndex.calledOnceWithExactly(1), "Binding#getContextByIndex called once with correct arguments");
+
+		assert.strictEqual(oTable.getContextByIndex(-1), undefined, "Negative index");
+
+		oTable.getBinding.restore();
+	});
+
 	QUnit.module("Fixed rows and columns", {
 		beforeEach: function() {
 			createTable({
