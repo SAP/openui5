@@ -952,41 +952,41 @@ sap.ui.define([
 		afterEach() {}
 	}, function() {
 		QUnit.test(`scenario ${Scenario.VersionedAppVariant}: New VersionedAppVariant`, function(assert) {
-			this.sErrorText += "in a versioned app variant scenario you additionally need a project ID";
+			this.sErrorText += "in the VERSIONED_APP_VARIANT scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.VersionedAppVariant, "projectId"), sLrepRootNamespace,
 				"then the root namespace got build correctly");
 			assert.throws(
 				function() {Utils.buildLrepRootNamespace("", Scenario.VersionedAppVariant, "projectId");},
 				Error(this.sNoBaseIdErrorText),
-				"without base id calling 'buildLrepRootNamespace' for app variants throws an error"
+				"without base id calling 'buildLrepRootNamespace' for VERSIONED_APP_VARIANT throws an error"
 			);
 			assert.throws(
 				function() {Utils.buildLrepRootNamespace("baseId", Scenario.VersionedAppVariant, "");},
 				Error(this.sErrorText),
-				"without project id calling 'buildLrepRootNamespace' for app variants throws an error"
+				"without project id calling 'buildLrepRootNamespace' for VERSIONED_APP_VARIANT throws an error"
 			);
 		});
 
 		QUnit.test(`scenario ${Scenario.AppVariant}: New AppVariant`, function(assert) {
-			this.sErrorText += "in an app variant scenario you additionally need a project ID";
+			this.sErrorText += "in the APP_VARIANT scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.AppVariant, "projectId"), sLrepRootNamespace,
 				"then the root namespace got build correctly");
 			assert.throws(
 				function() {Utils.buildLrepRootNamespace("", Scenario.AppVariant, "projectId");},
 				Error(this.sNoBaseIdErrorText),
-				"without base id calling 'buildLrepRootNamespace' for app variants throws an error"
+				"without base id calling 'buildLrepRootNamespace' for APP_VARIANT throws an error"
 			);
 			assert.throws(
 				function() {Utils.buildLrepRootNamespace("baseId", Scenario.AppVariant, "");},
 				Error(this.sErrorText),
-				"without project id calling 'buildLrepRootNamespace' for app variants throws an error"
+				"without project id calling 'buildLrepRootNamespace' for APP_VARIANT throws an error"
 			);
 		});
 
 		QUnit.test(`scenario ${Scenario.AdaptationProject}: Customer adapts existing app`, function(assert) {
-			this.sErrorText += "in a adaptation project scenario you additionally need a project ID";
+			this.sErrorText += "in the ADAPTATION_PROJECT scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/adapt/projectId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.AdaptationProject, "projectId"), sLrepRootNamespace,
 				"then the root namespace got build correctly");
