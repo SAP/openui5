@@ -635,7 +635,7 @@ sap.ui.define([
 		var that = this;
 		var oTable = that.getAggregation("_field");
 
-		var iSelectIndex = oTable.getSelectedIndex();
+		var iSelectIndex = oTable.getSelectedIndices()[0];
 		var oRowContexts = oTable.getBinding("rows").getContexts();
 		var oItem = oRowContexts[iSelectIndex].getObject();
 		var iFirstIndex = oTable.getFirstVisibleRow();
@@ -782,7 +782,7 @@ sap.ui.define([
 		var that = this;
 		var oTable = that.getAggregation("_field");
 		var oModel = oTable.getModel();
-		var iSelectedRowIndex = oTable.getSelectedIndex();
+		var iSelectedRowIndex = oTable.getSelectedIndices()[0];
 		var oSelectedRowContext = oTable.getContextByIndex(iSelectedRowIndex);
 
 		var iSiblingRowIndex = iSelectedRowIndex + (sDirection === "Up" ? -1 : 1);
