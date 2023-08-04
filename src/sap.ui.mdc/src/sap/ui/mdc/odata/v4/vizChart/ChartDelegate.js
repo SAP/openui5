@@ -655,7 +655,7 @@ sap.ui.define([
 
             if (oPropertyInfo.groupable) {
                 return new MDCChartItem(idPrefix + "--GroupableItem--" + oPropertyInfo.name, {
-                    name: oPropertyInfo.name,
+                    propertyKey: oPropertyInfo.name,
                     label: oPropertyInfo.label,
                     type: "groupable",
                     role: sRole ? sRole : "category"
@@ -665,7 +665,7 @@ sap.ui.define([
             if (oPropertyInfo.aggregatable) {
 
                 return new MDCChartItem(idPrefix + "--AggregatableItem--" + oPropertyInfo.name, {
-                    name: oPropertyInfo.name,
+                    propertyKey: oPropertyInfo.name,
                     label: oPropertyInfo.label,
                     type: "aggregatable",
                     role: sRole ? sRole : "axis1"

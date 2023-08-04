@@ -557,11 +557,11 @@ function(
         ChartDelegate._createMDCChartItem("Item1", this.oMDCChart).then(function(oItemGroup){
             ChartDelegate._createMDCChartItem("Item2", this.oMDCChart).then(function(oItemAggr){
                 assert.ok(oItemGroup, "Grouped Item was created");
-                assert.equal(oItemGroup.getName(), "Item1", "Name is correct");
+                assert.equal(oItemGroup.getPropertyKey(), "Item1", "Name is correct");
                 assert.equal(oItemGroup.getType(), "groupable", "Type is correct");
                 assert.equal(oItemGroup.getLabel(), "Label 1", "Label is correct");
                 assert.ok(oItemAggr, "Aggregated Item was created");
-                assert.equal(oItemAggr.getName(), "Item2", "Name is correct");
+                assert.equal(oItemAggr.getPropertyKey(), "Item2", "Name is correct");
                 assert.equal(oItemAggr.getType(), "aggregatable", "Type is correct");
                 assert.equal(oItemAggr.getLabel(), "Label 2", "Label is correct");
 
@@ -776,7 +776,7 @@ function(
         }));
 
         ChartDelegate._createMDCChartItem("Dimension1", this.oMDCChart, "series").then(function(oCreatedItem){
-            assert.equal(oCreatedItem.getName(), "Dimension1", "Name is correct");
+            assert.equal(oCreatedItem.getPropertyKey(), "Dimension1", "Name is correct");
             assert.equal(oCreatedItem.getType(), "groupable", "Item is groupable");
             assert.equal(oCreatedItem.getRole(), "series", "Role was set correctly");
             assert.equal(oCreatedItem.getLabel(), "Label 1", "Label was set correctly");
