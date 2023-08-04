@@ -263,7 +263,6 @@ sap.ui.define([
 			};
 		}
 		if (this._currentMode === "MockData") {
-			this._oCardPreview.setProperty("useMockData", true);
 			this._oCardPreview.setPreviewMode(CardPreviewMode.MockData);
 		} else if (this._currentMode === "Abstract") {
 			this._oCardPreview.setPreviewMode(CardPreviewMode.Abstract);
