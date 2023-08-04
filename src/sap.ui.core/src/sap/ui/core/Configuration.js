@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/thirdparty/URI',
 	"sap/ui/core/_ConfigurationProvider",
 	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/theming/ThemeHelper",
 	"sap/base/util/UriParameters",
 	"sap/base/util/deepEqual",
 	"sap/base/util/Version",
@@ -31,6 +32,7 @@ sap.ui.define([
 		URI,
 		_ConfigurationProvider,
 		CalendarWeekNumbering,
+		ThemeHelper,
 		UriParameters,
 		deepEqual,
 		Version,
@@ -209,7 +211,7 @@ sap.ui.define([
 	// Valid property types are: string, boolean, string[], code, object, function, function[].
 	// Objects as an enumeration list of valid values can also be provided (e.g. Configuration.AnimationMode).
 	var M_SETTINGS = {
-		"theme"                 : { type : "string",   defaultValue : "base" },
+		"theme"                 : { type : "string",   defaultValue : "" }, // default value will be evaluated correct (incl. dark-mode) during init
 		"language"              : { type : "Locale",   defaultValue : detectLanguage() },
 		"timezone"              : { type : "string",   defaultValue : TimezoneUtil.getLocalTimezone() },
 		"formatLocale"          : { type : "Locale",   defaultValue : null },
@@ -509,12 +511,18 @@ sap.ui.define([
 					config.themeRoots[config.theme] = sThemeRoot;
 				} else {
 					// fallback to non-URL parameter (if not equal to sTheme)
-					config.theme = (oCfg.theme && oCfg.theme !== sTheme) ? oCfg.theme : "base";
+					config.theme = (oCfg.theme && oCfg.theme !== sTheme) ? oCfg.theme : "";
 					iIndex = -1; // enable theme mapping below
 				}
 			}
 
-			config.theme = this.normalizeTheme(config.theme, sThemeRoot);
+			// if the theme is still undefined (or an empty string)
+			if (!config.theme) {
+				var mThemeDefaultInfo = ThemeHelper.getDefaultThemeInfo();
+				config.theme = mThemeDefaultInfo.DEFAULT_THEME + (mThemeDefaultInfo.DARK_MODE ? "_dark" : "");
+			}
+
+			config.theme = ThemeHelper.validateAndFallbackTheme(config.theme, sThemeRoot);
 
 			var aCoreLangs = config['languagesDeliveredWithCore'] = Locale._coreI18nLocales;
 			var aLangs = config['xx-supportedLanguages'];
@@ -711,20 +719,6 @@ sap.ui.define([
 		setTheme : function (sTheme) {
 			this.theme = sTheme;
 			return this;
-		},
-
-		/**
-		 * Normalize the given theme, resolve known aliases
-		 * @param {string} sTheme The theme name
-		 * @param {string} sThemeBaseUrl The theme's base url
-		 * @returns {string} The normalized theme name
-		 * @private
-		 */
-		normalizeTheme : function (sTheme, sThemeBaseUrl) {
-			if ( sTheme && sThemeBaseUrl == null && sTheme.match(/^sap_corbu$/i) ) {
-				return "sap_fiori_3";
-			}
-			return sTheme;
 		},
 
 		/**
