@@ -1457,6 +1457,25 @@ sap.ui.define([
 			assert.ok(this.oVariantManagement.getTitleStyle(), "H1");
 			assert.ok(this.oVariantManagement._getEmbeddedVM().oVariantText.getTitleStyle(), "H1");
 		});
+
+		QUnit.test("VariantManagement check showAsText", function(assert) {
+			assert.equal(this.oVariantManagement.getShowAsText(), false, "expected default value");
+
+			assert.ok(this.oVariantManagement.getTitle());
+			assert.ok(this.oVariantManagement.getTitle().isA("sap.m.Title"), "expected type 'sap.m.Title'.");
+
+			this.oVariantManagement.setShowAsText(true);
+			assert.equal(this.oVariantManagement.getShowAsText(), true, "expected assigned value");
+
+			assert.ok(this.oVariantManagement.getTitle());
+			assert.ok(this.oVariantManagement.getTitle().isA("sap.m.Text"), "expected type 'sap.m.Text'.");
+
+			this.oVariantManagement.setShowAsText(false);
+			assert.equal(this.oVariantManagement.getShowAsText(), false, "expected assigned value");
+
+			assert.ok(this.oVariantManagement.getTitle());
+			assert.ok(this.oVariantManagement.getTitle().isA("sap.m.Title"), "expected type 'sap.m.Title'.");
+		});
 	});
 
 	QUnit.done(function() {

@@ -308,6 +308,23 @@ sap.ui.define([
 				},
 
 				/**
+				 * Renders the name of the variant as a text.
+				 * The name of the variant is usually rendered as {@link sap.m.Title}
+				 * but there are use cases - related to accessibility requirements - where the
+				 * rendering should be done using {@link sap.m.Text} instead.
+				 * <b>Note:</b>:<br>
+				 * If the name of the variant is rendered as <code>sap.m.Text</code>, all the <code>sap.m.Title</code>-
+				 * specific information (<code>headerLevel</code> and <code>titleStyle</code>) is ignored.
+				 *
+				 * @since 1.118
+				 */
+				showAsText: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
+				},
+
+				/**
 				 * Defines the behavior, when the same list item is selected
                  * If set to <code>false</code> the <code>select</code> event will be omitted.
 				 */
@@ -550,6 +567,12 @@ sap.ui.define([
 		this._initializeControl();
 	};
 
+	VariantManagement.prototype.setShowAsText = function(bValue) {
+		this.setProperty("showAsText", bValue);
+		this._reCreateVariantTextControl();
+		return this;
+	};
+
 	VariantManagement.prototype.setShowFooter = function(bValue) {
 		this.setProperty("showFooter", bValue);
 		return this;
@@ -565,15 +588,9 @@ sap.ui.define([
 		return this;
 	};
 
-
-	VariantManagement.prototype._initializeControl = function() {
-		if (this.oVariantInvisibleText) {
-			return;
-		}
-
-		this.oVariantInvisibleText = new InvisibleText();
-
-		this.oVariantText = new Title(this.getId() + "-text", {
+	VariantManagement.prototype._createVariantTextControl = function() {
+		var FnVariantRenderType = this.getShowAsText() ? Text : Title;
+		var oVariantText = new FnVariantRenderType(this.getId() + "-text", {
 			text: {
 				path: '/selectedKey',
 				model: "$mVariants",
@@ -586,19 +603,35 @@ sap.ui.define([
 
 					return sText;
 				}.bind(this)
-			},
-			level: {
-				path: '/level',
-				model: "$mVariants"
-			},
-			titleStyle: {
-				path: '/titleStyle',
-				model: "$mVariants"
 			}
 		});
 
-		this.oVariantText.addStyleClass("sapMVarMngmtClickable");
-		this.oVariantText.addStyleClass("sapMVarMngmtTitle");
+		if (oVariantText.isA("sap.m.Title")) {
+			oVariantText.bindProperty("level", {
+				path: '/level',
+				model: "$mVariants"
+			});
+
+			oVariantText.bindProperty("titleStyle", {
+				path: '/titleStyle',
+				model: "$mVariants"
+			});
+		}
+
+		oVariantText.addStyleClass("sapMVarMngmtClickable");
+		oVariantText.addStyleClass("sapMVarMngmtTitle");
+
+		return oVariantText;
+	};
+
+	VariantManagement.prototype._initializeControl = function() {
+		if (this.oVariantInvisibleText) {
+			return;
+		}
+
+		this.oVariantInvisibleText = new InvisibleText();
+
+		this.oVariantText = this._createVariantTextControl();
 
 		var oVariantModifiedText = new Text(this.getId() + "-modified", {
 			text: "*",
@@ -653,7 +686,25 @@ sap.ui.define([
 		this.addDependent(this.oVariantLayout);
 	};
 
+	VariantManagement.prototype._reCreateVariantTextControl = function() {
 
+		if (!this.getShowAsText() && this.oVariantText && this.oVariantText.isA("sap.m.Title)")) {
+			return;
+		}
+		if (!this.getShowAsText() && this.oVariantText && this.oVariantText.isA("sap.m.Text)")) {
+			return;
+		}
+
+		if (this.oVariantText) {
+			this.oVariantLayout.removeContent(0);
+			this.oVariantText.destroy();
+		}
+
+		var oVariantText = this._createVariantTextControl();
+
+		this.oVariantLayout.insertContent(oVariantText, 0);
+		this.oVariantText = oVariantText;
+	};
 	/**
 	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
 	 * Registers invalidations event which is fired when width of the control is changed.
