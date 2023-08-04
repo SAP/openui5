@@ -27736,6 +27736,179 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Deferred delete of a collapsed node in a recursive hierarchy. Expand Alpha and
+	// Beta. Collapse Beta again and delete it. Cancel the delete and expand Beta again without a
+	// further request.
+	// JIRA: CPOUI5ODATAV4-2224
+	QUnit.test("Recursive Hierarchy: delete collapsed child", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}">
+	<Text id="expanded" text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{MANAGER_ID}"/>
+	<Text id="name" text="{Name}"/>
+</Table>`;
+
+		// 0 Alpha
+		//   1 Beta
+		//     2 Gamma
+		//   3 Delta
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
+				+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+				+ ",Levels=1)"
+				+ "&$select=DrillState,ID,MANAGER_ID,Name&$count=true&$skip=0&$top=100", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "0",
+					MANAGER_ID : null,
+					Name : "Alpha"
+				}]
+			})
+			.expectChange("expanded", [false])
+			.expectChange("name", ["Alpha"]);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("EMPLOYEES"
+				+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
+				+ "&$select=DrillState,ID,MANAGER_ID,Name&$count=true&$skip=0&$top=100", {
+				"@odata.count" : "2",
+				value : [{
+					DrillState : "collapsed",
+					ID : "1",
+					MANAGER_ID : "0",
+					Name : "Beta"
+				}, {
+					DrillState : "collapsed",
+					ID : "3",
+					MANAGER_ID : "0",
+					Name : "Delta"
+				}]
+			})
+			.expectChange("expanded", [true, false, false])
+			.expectChange("name", [, "Beta", "Delta"]);
+
+		const oTable = this.oView.byId("table");
+		oTable.getItems()[0].getBindingContext().expand();
+
+		await this.waitForChanges(assert, "expand Alpha");
+
+		this.expectRequest("EMPLOYEES"
+				+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)"
+				+ "&$select=DrillState,ID,MANAGER_ID,Name&$count=true&$skip=0&$top=100", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "2",
+					MANAGER_ID : "1",
+					Name : "Gamma"
+				}]
+			})
+			.expectChange("expanded", [, true,, false])
+			.expectChange("name", [,, "Gamma", "Delta"]);
+
+		const oBeta = oTable.getItems()[1].getBindingContext();
+		oBeta.expand();
+
+		await this.waitForChanges(assert, "expand Beta");
+
+		checkTable("after expand", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')"
+		], [
+			[true, 1, "0", "", "Alpha"],
+			[true, 2, "1", "0", "Beta"],
+			[false, 3, "2", "1", "Gamma"],
+			[false, 2, "3", "0", "Delta"]
+		], 4);
+
+		this.expectChange("expanded", [, false])
+			.expectChange("name", [,, "Delta"]);
+
+		oBeta.collapse();
+
+		await this.waitForChanges(assert, "collapse Beta");
+
+		checkTable("after collapse", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')"
+		], [
+			[true, 1, "0", "", "Alpha"],
+			[false, 2, "1", "0", "Beta"],
+			[false, 2, "3", "0", "Delta"]
+		], 3);
+
+		this.expectChange("name", [, "Delta"]);
+
+		// code under test
+		const oDeletePromise = oBeta.delete("doNotSubmit");
+
+		await this.waitForChanges(assert, "delete Beta");
+
+		checkTable("after delete", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('3')"
+		], [
+			[true, 1, "0", "", "Alpha"],
+			[false, 2, "3", "0", "Delta"]
+		], 2);
+
+		this.expectCanceledError("Failed to delete /EMPLOYEES('1')",
+				"Request canceled: DELETE EMPLOYEES('1'); group: doNotSubmit")
+			.expectChange("expanded", [,, false])
+			.expectChange("name", [, "Beta", "Delta"]);
+
+		// code under test
+		oBeta.resetChanges();
+
+		await Promise.all([
+			checkCanceled(assert, oDeletePromise),
+			this.waitForChanges(assert, "cancel")
+		]);
+
+		checkTable("after reset", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')"
+		], [
+			[true, 1, "0", "", "Alpha"],
+			[false, 2, "1", "0", "Beta"],
+			[false, 2, "3", "0", "Delta"]
+		], 3);
+
+		this.expectChange("expanded", [, true,, false])
+			.expectChange("name", [,, "Gamma", "Delta"]);
+
+		// code under test
+		oBeta.expand();
+
+		await this.waitForChanges(assert, "expand again");
+
+		checkTable("after reset", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')"
+		], [
+			[true, 1, "0", "", "Alpha"],
+			[true, 2, "1", "0", "Beta"],
+			[false, 3, "2", "1", "Gamma"],
+			[false, 2, "3", "0", "Delta"]
+		], 4);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Show the single root node of a recursive hierarchy, which happens to be a leaf.
 	// Create two new child nodes underneath.
 	// Note: The "_Friend" navigation property is misused in order to have an artist play the role
