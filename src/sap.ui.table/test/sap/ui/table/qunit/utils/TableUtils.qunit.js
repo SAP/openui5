@@ -688,10 +688,11 @@ sap.ui.define([
 		var MyColumn = Column.extend("My.Column");
 		var oMyColumn = new MyColumn({template: new TestControl({text: "Custom"})});
 		oTable.insertColumn(oMyColumn, 0);
+		//@deprecated As of version 1.118.
 		oTable.setEnableGrouping(false);
 		oCore.applyChanges();
 
-		oInfo = TableUtils.getRowColCell(oTable, 1, 0, true);
+		var oInfo = TableUtils.getRowColCell(oTable, 1, 0, true);
 		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
 		assert.strictEqual(oInfo.column, oMyColumn, "Instance of custom sap.ui.table.Column subclass");
 		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[0], "Cell 1,0");

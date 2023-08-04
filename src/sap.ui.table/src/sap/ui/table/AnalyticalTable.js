@@ -162,6 +162,21 @@ sap.ui.define([
 			 */
 			dirty: {type: "boolean", group: "Appearance", defaultValue: null, deprecated: true}
 		},
+		events: {
+			/**
+			 * Fired when the table is grouped.
+			 * @since 1.118
+			 */
+			group: {
+				allowPreventDefault: true,
+				parameters: {
+					/**
+					 * grouped column.
+					 */
+					column: {type: "sap.ui.table.AnalyticalColumn"}
+				}
+			}
+		},
 		designtime: "sap/ui/table/designtime/AnalyticalTable.designtime"
 	}, renderer: TableRenderer});
 
