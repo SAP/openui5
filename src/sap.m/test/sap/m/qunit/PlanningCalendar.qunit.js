@@ -3448,24 +3448,18 @@ sap.ui.define([
 		//Prepare
 		var oStartDate = this.oPC2.getStartDate();
 
-		//Arrange
+		//Arrange & Act
 		this.oPC2.setMinDate(UI5Date.getInstance(1999, 1, 1, 0, 0, 0));
 		this.oPC2.setStartDate(UI5Date.getInstance(1999, 1, 1, 0, 0, 0));
 		this.oPC2._dateNav.setCurrent(UI5Date.getInstance(1999, 1, 1, 0, 0, 0));
 
-		//Act
-		this.oPC2._applyArrowsLogic(true);
-
 		//Assert
 		assert.equal(this.oPC2._getHeader()._oPrevBtn.getEnabled(), false, "Back Arrow Is Disabled");
 
-		//Arrange
+		//Arrange  & Act
 		this.oPC2.setMaxDate(UI5Date.getInstance(2222,22,22,22,22,22));
 		this.oPC2.setStartDate(UI5Date.getInstance(2222,22,22,22,22,22));
 		this.oPC2._dateNav.setCurrent(UI5Date.getInstance(2222,22,22,22,22,22));
-
-		//Act
-		this.oPC2._applyArrowsLogic(false);
 
 		//Assert
 		assert.equal(this.oPC2._getHeader()._oNextBtn.getEnabled(), false, "Forward Arrow Is Disabled");
