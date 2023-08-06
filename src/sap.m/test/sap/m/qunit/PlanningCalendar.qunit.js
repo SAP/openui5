@@ -2860,9 +2860,6 @@ sap.ui.define([
 		this.oPC2.setStartDate(new Date(1999, 1, 1, 0, 0, 0));
 		this.oPC2._dateNav.setCurrent(new Date(1999, 1, 1, 0, 0, 0));
 
-		//Act
-		this.oPC2._applyArrowsLogic(true);
-
 		//Assert
 		assert.equal(this.oPC2._getHeader()._oPrevBtn.getEnabled(), false, "Back Arrow Is Disabled");
 
@@ -2870,9 +2867,6 @@ sap.ui.define([
 		this.oPC2.setMaxDate(new Date(2222,22,22,22,22,22));
 		this.oPC2.setStartDate(new Date(2222,22,22,22,22,22));
 		this.oPC2._dateNav.setCurrent(new Date(2222,22,22,22,22,22));
-
-		//Act
-		this.oPC2._applyArrowsLogic(false);
 
 		//Assert
 		assert.equal(this.oPC2._getHeader()._oNextBtn.getEnabled(), false, "Forward Arrow Is Disabled");
