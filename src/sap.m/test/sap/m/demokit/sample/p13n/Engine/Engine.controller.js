@@ -9,13 +9,19 @@ sap.ui.define([
 	'sap/ui/model/Sorter',
 	'sap/m/ColumnListItem',
 	'sap/m/Text',
-	'sap/ui/core/library'
-], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, ColumnListItem, Text, coreLibrary) {
+	'sap/ui/core/library',
+	'sap/ui/core/util/reflection/JsControlTreeModifier'
+], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, ColumnListItem, Text, coreLibrary, JsControlTreeModifier) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.p13n.Engine.Page", {
 
 		onInit: function() {
+
+			JsControlTreeModifier.checkControlId = function () {
+				return true;
+			};
+
 			var oData = {
 				items: [
 					{firstName: "Peter", lastName: "Mueller", size: "1.75", city: "Walldorf"},

@@ -7,13 +7,19 @@ sap.ui.define([
 	'sap/m/p13n/GroupController',
 	'sap/m/p13n/MetadataHelper',
 	'sap/ui/model/Sorter',
-	'sap/ui/table/library'
-], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, tableLibrary) {
+	'sap/ui/table/library',
+	'sap/ui/core/util/reflection/JsControlTreeModifier'
+], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, tableLibrary, JsControlTreeModifier) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.p13n.EngineGridTable.Page", {
 
 		onInit: function() {
+
+			JsControlTreeModifier.checkControlId = function () {
+				return true;
+			};
+			
 			var oData = {
 				items: [
 					{firstName: "Peter", lastName: "Mueller", size: "1.75", city: "Walldorf"},
