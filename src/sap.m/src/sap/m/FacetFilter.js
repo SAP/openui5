@@ -1785,7 +1785,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FacetFilter.prototype._createSelectAllCheckboxBar = function(oList) {
-		if (!oList.getMultiSelect()) {
+		if (oList.getMode() !== ListMode.MultiSelect) {
 			return null;
 		}
 
