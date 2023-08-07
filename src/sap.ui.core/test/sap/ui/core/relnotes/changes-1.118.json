@@ -1,0 +1,62 @@
+{
+  "1.118.0": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "b4f2c17d0867a312dee71cf0d2fcb4674a49cc7e",
+        "type": "FIX",
+        "text": " theming/ThemeManager: Avoid multiple CSS loading",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005027552023"
+          }
+        ]
+      },
+      {
+        "id": "d8d8e2cf3629a9d2ad025e752227d600139a88c5",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: parse dateTime timezone \"z\" for UTC",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005085862023"
+          }
+        ]
+      },
+      {
+        "id": "ad8a440b06096fe656ba20193c0240d160e22604",
+        "type": "FIX",
+        "text": " core/routing/Router: update the current route when 'navTo' is called",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380103731"
+          }
+        ]
+      },
+      {
+        "id": "761ebed36ef848fd500857f40c63924f792828f4",
+        "type": "FIX",
+        "text": " core/Icon: use theming variable for focus outline",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380099755"
+          }
+        ]
+      },
+      {
+        "id": "96a1d29bf838cf39f0c98e39a13d2f78a5e75c90",
+        "type": "FIX",
+        "text": " util/Mobile: set correct viewport for iPad with \"request desktop website\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005790312023"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,7 +1,23 @@
 {
   "1.118.0": {
-    "date": "July 2023",
+    "date": "August 2023",
     "notes": [
+      {
+        "id": "5e8b535ef5f8162f356be40be56eb38ecb7cc334",
+        "type": "FIX",
+        "text": " MDC: ValueHelp Popover should consider focus loss with async showTypeahead",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380102053"
+          }
+        ]
+      },
+      {
+        "id": "2a1dacc03590e771a2f41240183a022ffa0e695c",
+        "type": "FEATURE",
+        "text": " Field: support data types on additionalValue"
+      },
       {
         "id": "2af1327f07fa81b523c3b4d4c5eaff944d05428f",
         "type": "FEATURE",

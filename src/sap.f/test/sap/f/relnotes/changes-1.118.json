@@ -3,13 +3,13 @@
     "date": "August 2023",
     "notes": [
       {
-        "id": "f6b9f5a56685f6c7a6844b3a3fcc1d5f17715ea0",
+        "id": "846c123ab91a4c25f42fe9c5f3089edc80cfbb96",
         "type": "FIX",
-        "text": " sap.ui.layout.ResponsiveSplitter: Accessibility roles are now updated",
+        "text": " sap.f.SidePanel: render resize handler",
         "references": [
           {
             "type": "BCP",
-            "reference": "2370015496"
+            "reference": "2380112686"
           }
         ]
       }
