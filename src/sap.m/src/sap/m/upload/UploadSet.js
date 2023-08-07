@@ -676,8 +676,6 @@ sap.ui.define([
 			case KeyCodes.ENTER:
 				if (oItem === this._oEditedItem) {
 					this._handleItemEditConfirmation(oEvent, oItem);
-				} else {
-					oItem._handleFileNamePressed();
 				}
 				break;
 			default:
