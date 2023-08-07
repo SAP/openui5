@@ -394,10 +394,10 @@ sap.ui.define([
 	QUnit.module("Interaction", {
 		beforeEach: function() {
 			this.oButton = new Button();
+			Interaction.setActive(true);
 			jQuery.sap.measure.endInteraction(true);
 			jQuery.sap.measure.clearInteractionMeasurements();
 			jQuery.sap.measure.clear();
-			Interaction.setActive(true);
 		},
 		afterEach: function() {
 			this.oButton.destroy();
