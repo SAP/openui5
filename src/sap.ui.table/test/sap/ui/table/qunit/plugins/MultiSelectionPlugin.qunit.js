@@ -1334,23 +1334,23 @@ sap.ui.define([
 			oPopoverCloseSpy.resetHistory();
 		}
 
-		assert.notOk(oSelectionPlugin._oNotificationPopover, "Notification popover does not exist");
+		assert.notOk(oTable._oNotificationPopover, "Notification popover does not exist");
 
 		oSelectionPlugin.setEnableNotification(true);
 
 		// Ensures that the Popover control is loaded and initialized
-		return this.oTable._oSelectionPlugin._showNotificationPopoverAtIndex(0).then(function() {
-			assert.ok(oSelectionPlugin._oNotificationPopover, "Notification popover was created");
+		return TableUtils.showNotificationPopoverAtIndex(oTable, 0, oSelectionPlugin.getLimit()).then(function() {
+			assert.ok(oTable._oNotificationPopover, "Notification popover was created");
 		}).then(function() {
 			return new Promise(function(resolve) {
-				oSelectionPlugin._oNotificationPopover.attachEventOnce("afterClose", function() {
+				oTable._oNotificationPopover.attachEventOnce("afterClose", function() {
 					resolve();
 				});
-				oSelectionPlugin._oNotificationPopover.close();
+				oTable._oNotificationPopover.close();
 			});
 		}).then(function() {
-			oPopoverOpenBySpy = sinon.spy(oSelectionPlugin._oNotificationPopover, "openBy");
-			oPopoverCloseSpy = sinon.spy(oSelectionPlugin._oNotificationPopover, "close");
+			oPopoverOpenBySpy = sinon.spy(oTable._oNotificationPopover, "openBy");
+			oPopoverCloseSpy = sinon.spy(oTable._oNotificationPopover, "close");
 
 		}).then(function() {
 			oSelectionPlugin.setLimit(iLimit);
@@ -1369,11 +1369,11 @@ sap.ui.define([
 
 		}).then(function() {
 			return new Promise(function(resolve) {
-				oSelectionPlugin._oNotificationPopover.attachEventOnce("afterOpen", resolve);
+				oTable._oNotificationPopover.attachEventOnce("afterOpen", resolve);
 				oSelectionPlugin.setSelectionInterval(0, iLimit);
 			}).then(function() {
 				return new Promise(function(resolve) {
-					oSelectionPlugin._oNotificationPopover.attachEventOnce("afterClose", resolve);
+					oTable._oNotificationPopover.attachEventOnce("afterClose", resolve);
 					oTable.setFirstVisibleRow(oTable.getFirstVisibleRow() + 1);
 				});
 			}).then(function() {

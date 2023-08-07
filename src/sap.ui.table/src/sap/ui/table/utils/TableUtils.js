@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/library",
 	"sap/ui/core/theming/Parameters",
+	"sap/ui/core/Icon",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/restricted/_throttle",
@@ -29,6 +30,7 @@ sap.ui.define([
 	ResizeHandler,
 	coreLibrary,
 	ThemeParameters,
+	Icon,
 	ChangeReason,
 	jQuery,
 	throttle,
@@ -576,6 +578,138 @@ sap.ui.define([
 			if (oIN) {
 				oIN.focusItem(iIndex, oEvent);
 			}
+		},
+
+		/**
+		 * Scrolls the table to the <code>iIndex</code>.
+		 * If <code>bReverse</code> is true the <code>firstVisibleRow</code> property of the Table is set to <code>iIndex</code> - 1,
+		 * otherwise to <code>iIndex</code> - row count + 2.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {int} iIndex The index of the row to which to scroll to.
+		 * @param {boolean} bReverse Whether the row should be displayed at the bottom of the table.
+		 * @returns {Promise} A promise that resolves when the table is scrolled.
+		 */
+		scrollTableToIndex: function(oTable, iIndex, bReverse) {
+			if (!oTable) {
+				return Promise.resolve();
+			}
+
+			var iFirstVisibleRow = oTable.getFirstVisibleRow();
+			var mRowCounts = oTable._getRowCounts();
+			var iLastVisibleRow = iFirstVisibleRow + mRowCounts.scrollable - 1;
+			var bExpectRowsUpdatedEvent = false;
+
+			if (iIndex < iFirstVisibleRow || iIndex > iLastVisibleRow) {
+				var iNewIndex = bReverse ? iIndex - mRowCounts.fixedTop - 1 : iIndex - mRowCounts.scrollable - mRowCounts.fixedTop + 2;
+
+				bExpectRowsUpdatedEvent = oTable._setFirstVisibleRowIndex(Math.max(0, iNewIndex));
+			}
+
+			return new Promise(function(resolve) {
+				if (bExpectRowsUpdatedEvent) {
+					oTable.attachEventOnce("rowsUpdated", resolve);
+				} else {
+					resolve();
+				}
+			});
+		},
+
+		/**
+		 * Displays a notification Popover beside the row selector that indicates a limited selection. The given index
+		 * references the index of the data context in the binding.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {number} iIndex Index of the data context
+		 * @param {number} iLimit Maximum number of rows that can be selected at once
+		 * @returns {Promise} A Promise that resolves after the notification popover has been opened
+		 */
+		showNotificationPopoverAtIndex: function(oTable, iIndex, iLimit) {
+			var oPopover = oTable._oNotificationPopover;
+			var oRow = oTable.getRows()[iIndex - oTable._getFirstRenderedRowIndex()];
+			var sTitle = TableUtils.getResourceText("TBL_SELECT_LIMIT_TITLE");
+			var sMessage = TableUtils.getResourceText("TBL_SELECT_LIMIT", [iLimit]);
+
+			return new Promise(function(resolve) {
+				sap.ui.require([
+					"sap/m/Popover", "sap/m/Bar", "sap/m/Title", "sap/m/Text", "sap/m/HBox", "sap/ui/core/library", "sap/m/library"
+				], function(Popover, Bar, Title, Text, HBox, coreLib, mLib) {
+					if (!oPopover) {
+						oPopover = new Popover(oTable.getId() + "-notificationPopover", {
+							customHeader: [
+								new Bar({
+									contentMiddle: [
+										new HBox({
+											items: [
+												new Icon({src: "sap-icon://message-warning", color: coreLib.IconColor.Critical})
+													.addStyleClass("sapUiTinyMarginEnd"),
+												new Title({text: sTitle, level: coreLib.TitleLevel.H2})
+											],
+											renderType: mLib.FlexRendertype.Bare,
+											justifyContent: mLib.FlexJustifyContent.Center,
+											alignItems: mLib.FlexAlignItems.Center
+										})
+									]
+								})
+							],
+							content: new Text({text: sMessage})
+						});
+
+						oPopover.addStyleClass("sapUiContentPadding");
+						oTable._oNotificationPopover = oPopover;
+						oTable.addAggregation("_hiddenDependents", oTable._oNotificationPopover);
+					} else {
+						oPopover.getContent()[0].setText(sMessage);
+					}
+
+					oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, this);
+					oTable.attachFirstVisibleRowChanged(this.onFirstVisibleRowChange, this);
+
+					var oRowSelector = oRow.getDomRefs().rowSelector;
+
+					if (oRowSelector) {
+						oPopover.attachEventOnce("afterOpen", resolve);
+						oPopover.openBy(oRowSelector);
+					} else {
+						resolve();
+					}
+				}.bind(this));
+			}.bind(this));
+		},
+
+		onFirstVisibleRowChange: function(oEvent) {
+			var oTable = oEvent.getSource();
+			if (!oTable._oNotificationPopover) {
+				return;
+			}
+
+			if (oTable) {
+				oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, oTable);
+			}
+			oTable._oNotificationPopover.close();
+		},
+
+		/**
+		 * Loads <code>iLength</code> binding contexts starting from index <code>iStartIndex</code>.
+		 *
+		 * @param {object} oBinding The binding
+		 * @param {int} iStartIndex The starting index
+		 * @param {int} iLength The length
+		 * @returns {Promise<sap.ui.model.Context[]>} Promise that resolves with the row contexts once they are loaded.
+		 */
+		loadContexts: function(oBinding, iStartIndex, iLength) {
+			var aContexts = oBinding.getContexts(iStartIndex, iLength, 0, true);
+			var bContextsAvailable = aContexts.length === Math.min(iLength, oBinding.getLength()) && !aContexts.includes(undefined);
+
+			if (bContextsAvailable) {
+				return Promise.resolve(aContexts);
+			}
+
+			return new Promise(function(resolve) {
+				oBinding.attachEventOnce("dataReceived", function() {
+					resolve(this.loadContexts(oBinding, iStartIndex, iLength));
+				}.bind(this));
+			}.bind(this));
 		},
 
 		/**
