@@ -1008,7 +1008,14 @@ sap.ui.define([
 	 * @protected
 	 */
 	Column.prototype.shouldRender = function() {
-		return this.getVisible() && !this.getGrouped() && this.getTemplate() != null;
+		var bShouldRender = this.getVisible() && this.getTemplate() != null;
+
+		/**
+		 * @deprecated As of Version 1.118
+		 */
+		bShouldRender = bShouldRender && !this.getGrouped();
+
+		return bShouldRender;
 	};
 
 	/*
