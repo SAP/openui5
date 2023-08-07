@@ -595,7 +595,8 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype.onAfterRendering = function () {
-		var oObjectPageLayout = this._getObjectPageLayout();
+		var oObjectPageLayout = this._getObjectPageLayout(),
+			oParent = this.getParent();
 
 		if (ObjectPageSectionBase.prototype.onAfterRendering) {
 			ObjectPageSectionBase.prototype.onAfterRendering.call(this);
@@ -616,6 +617,12 @@ sap.ui.define([
 		}
 
 		this._bShouldFocusSeeMoreLessButton = false;
+
+		// Removes the horizontal spacing of the grid, which is needed for
+		// suport of Table inside ObjectPageSubSection scenario
+		if (oParent && oParent.hasStyleClass("sapUiTableOnObjectPageAdjustmentsForSection")) {
+			this.getAggregation("_grid").setProperty("hSpacing", 0);
+		}
 	};
 
 	ObjectPageSubSection.prototype.onBeforeRendering = function () {
