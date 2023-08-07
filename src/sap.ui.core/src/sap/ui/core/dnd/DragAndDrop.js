@@ -310,7 +310,7 @@ function(lib, Device, Element, UIArea, jQuery, Configuration) {
 			return;
 		}
 
-		var mClientRect = oValidDropControl.getDropAreaRect ? oValidDropControl.getDropAreaRect() : oDropTarget.getBoundingClientRect(),
+		var mClientRect = oValidDropControl.getDropAreaRect ? oValidDropControl.getDropAreaRect(sDropLayout) : oDropTarget.getBoundingClientRect(),
 			mIndicatorConfig = oEvent.dragSession && oEvent.dragSession.getIndicatorConfig(),
 			iPageYOffset = window.pageYOffset,
 			iPageXOffset = window.pageXOffset,
