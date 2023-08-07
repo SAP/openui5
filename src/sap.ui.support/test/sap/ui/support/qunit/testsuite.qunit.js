@@ -58,7 +58,11 @@ sap.ui.define(function() {
 					useFakeTimers: true
 				}
 			},
-			"report/DataCollector": {},
+			"report/DataCollector": {
+				sinon: {
+					version: 4
+				}
+			},
 			"util/EvalUtils": {
 				module: "./util/EvalUtils.qunit",
 				sinon: {
