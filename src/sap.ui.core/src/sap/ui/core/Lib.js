@@ -283,10 +283,9 @@ sap.ui.define([
 	 * @class
 	 * @alias sap.ui.core.Lib
 	 * @extends sap.ui.base.Object
-	 * @since 1.110
+	 * @since 1.118
 	 * @hideconstructor
-	 * @private
-	 * @ui5-restricted sap.ui.core
+	 * @public
 	 */
 	var Library = BaseObject.extend("sap.ui.core.Lib", /** @lends sap.ui.core.Lib.prototype */ {
 
@@ -1065,18 +1064,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns an instance of a Library whose "name" is the same as the given <code>sName</code>. Created library
-	 * instances are cached by its name. For one library name, there's maximum one instance created and cached.
-	 *
-	 * If no library under the given <code>sName</code> is created yet, <code>undefined</code> is returned. To load a
-	 * library, {@link #.load} can be used directly without calling this method in advance.
+	 * Checks whether the library for the given <code>sName</code> has been loaded or not.
 	 *
 	 * @param {string} sName The name of the library
-	 * @returns {Promise<sap.ui.core.Lib>|undefined} Either an instance of the library or <code>undefined</code>
+	 * @returns {boolean} Returns <code>true</code> if the library is loaded. Otherwise <code>false</code>.
 	 * @public
 	 */
-	Library.get = function(sName) {
-		return Library._get(sName);
+	Library.isLoaded = function(sName) {
+		return mLibraries[sName] ? true : false;
 	};
 
 	/**
@@ -1165,7 +1160,8 @@ sap.ui.define([
 	 *
 	 * @returns {object} A map that contains the initialized libraries. Each library is saved in the map under its name
 	 *  as key.
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.ui.support
 	 */
 	Library.all = function() {
 		// return only libraries that are initialized (settings enhanced)
@@ -1586,7 +1582,7 @@ sap.ui.define([
 	Library._registerElement = function(oElementMetadata) {
 		var sElementName = oElementMetadata.getName(),
 			sLibraryName = oElementMetadata.getLibraryName() || "",
-			oLibrary = Library.get(sLibraryName),
+			oLibrary = Library._get(sLibraryName),
 			sCategory = oElementMetadata.isA("sap.ui.core.Control") ? 'controls' : 'elements';
 
 		// if library has not been loaded yet, create a library

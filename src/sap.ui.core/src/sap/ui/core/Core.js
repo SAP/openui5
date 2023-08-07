@@ -1601,7 +1601,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oLib = Library.get(sLibName);
+		var oLib = Library._get(sLibName);
 
 		if (oLib && oLib.isSettingsEnhanced()) {
 			return ObjectPath.get(sLibName);

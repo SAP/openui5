@@ -47,7 +47,7 @@ sap.ui.define([
 		};
 
 		ShortcutHint.prototype._getShortcutHintFromMessageBundle = function(oControl, sMessageBundleKey) {
-			var oResourceBundle = Library.get(oControl.getMetadata().getLibraryName()).getResourceBundle();
+			var oResourceBundle = Library.getResourceBundleFor(oControl.getMetadata().getLibraryName());
 
 			return oResourceBundle.getText(sMessageBundleKey);
 		};

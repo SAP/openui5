@@ -756,7 +756,7 @@ sap.ui.define([
 		// Lazy load core resource bundle
 		function getCoreResourceBundle() {
 			if (!oCoreResourceBundle) {
-				oCoreResourceBundle = Library.get("sap.ui.core").getResourceBundle();
+				oCoreResourceBundle = Library.getResourceBundleFor("sap.ui.core");
 			}
 			return oCoreResourceBundle;
 		}
