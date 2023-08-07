@@ -101,7 +101,8 @@ sap.ui.define([
 	 *   The entity's edit URL to be used for the DELETE request; w/o a lock, this is mostly
 	 *   ignored.
 	 * @param {string} sPath
-	 *   The entity's path within the cache (as used by change listeners)
+	 *   The entity's path within the cache; if the entity is in a collection, the last segment is
+	 *   its index therein
 	 * @param {object} [oETagEntity]
 	 *   An entity with the ETag of the binding for which the deletion was requested. This is
 	 *   provided if the deletion is delegated from a context binding with empty path to a list
