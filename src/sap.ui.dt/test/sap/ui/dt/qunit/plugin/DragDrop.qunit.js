@@ -5,35 +5,35 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Panel",
 	"sap/ui/core/Core",
+	"sap/ui/Device",
 	"sap/ui/dt/plugin/DragDrop",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/qunit/QUnitUtils",
-	// "sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/Device"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
 	Page,
 	Panel,
-	oCore,
+	Core,
+	Device,
 	DragDrop,
 	DesignTime,
 	ElementOverlay,
 	OverlayRegistry,
 	VerticalLayout,
 	QUnitUtils,
-	// jQuery,
-	sinon,
-	Device
+	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
-	function testDragAndDropEventHandlerTriggering(sHandlerFunctionName, oOverlay, aDomDragEvents, assert, mFakeTouchEvents, oTargetOverlay) {
+	function testDragAndDropEventHandlerTriggering(
+		sHandlerFunctionName, oOverlay, aDomDragEvents, assert, mFakeTouchEvents, oTargetOverlay
+	) {
 		var done = assert.async();
 
 		this.oDragDrop[sHandlerFunctionName] = function(oOverlayInHandler) {
@@ -54,12 +54,12 @@ sap.ui.define([
 		}
 	}
 
-	QUnit.module("Given that an DragDrop is initialized ", {
+	QUnit.module("Given that a DragDrop is initialized ", {
 		beforeEach: function(assert) {
 			this.oButton = new Button();
 			this.oLayout = new VerticalLayout({content: [this.oButton]});
 			this.oLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			this.oDragDrop = new DragDrop();
 			this.oDesignTime = new DesignTime({
@@ -135,7 +135,26 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the touchstart is triggered on an overlay and touchmove is being listened", function(assert) {
-			testDragAndDropEventHandlerTriggering.call(this, "onDragStart", this.oButtonOverlay, ["touchstart", "touchmove"], assert, this.mFakeTouchEvents);
+			const fnDone = assert.async();
+			testDragAndDropEventHandlerTriggering.call(
+				this, "onDragStart", this.oButtonOverlay, ["touchstart", "touchmove"], assert, this.mFakeTouchEvents
+			);
+			assert.ok(
+				this.oLayoutOverlay.hasStyleClass("sapUiDtOverlayNotMovable"),
+				"then the non-movable Layout has the 'sapUiDtOverlayNotMovable' style class"
+			);
+			assert.notOk(
+				this.oButtonOverlay.hasStyleClass("sapUiDtOverlayNotMovable"),
+				"then the movable button does not have the 'sapUiDtOverlayNotMovable' style class"
+			);
+			this.oButtonOverlay.attachEventOnce("movableChange", () => {
+				assert.ok(
+					this.oButtonOverlay.hasStyleClass("sapUiDtOverlayNotMovable"),
+					"the now non-movable button does not have the 'sapUiDtOverlayNotMovable' style class"
+				);
+				fnDone();
+			});
+			this.oButtonOverlay.setMovable(false);
 		});
 
 		QUnit.test("when the touchmove is triggered on an overlay and dragenter is triggered on an element overlay", function(assert) {
@@ -147,7 +166,9 @@ sap.ui.define([
 
 			fnElementFromPointStub.returns(fakeIdStub);
 
-			testDragAndDropEventHandlerTriggering.call(this, "onDragEnter", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents);
+			testDragAndDropEventHandlerTriggering.call(
+				this, "onDragEnter", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents
+			);
 
 			sandbox.restore();
 		});
@@ -160,13 +181,17 @@ sap.ui.define([
 			};
 
 			fnElementFromPointStub.returns(fakeIdStub);
-			testDragAndDropEventHandlerTriggering.call(this, "onDragOver", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents);
+			testDragAndDropEventHandlerTriggering.call(
+				this, "onDragOver", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents
+			);
 
 			sandbox.restore();
 		});
 
 		QUnit.test("when the touchmove is triggered on an overlay and drag is triggered", function(assert) {
-			testDragAndDropEventHandlerTriggering.call(this, "onDrag", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents);
+			testDragAndDropEventHandlerTriggering.call(
+				this, "onDrag", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents
+			);
 		});
 
 		QUnit.test("when the touchmove is triggered on an overlay and aggregationdragenter is triggered on an aggregation overlay", function(assert) {
@@ -177,7 +202,15 @@ sap.ui.define([
 			};
 
 			fnElementFromPointStub.returns(fakeIdStub);
-			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragEnter", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents, this.oAggregationOverlay);
+			testDragAndDropEventHandlerTriggering.call(
+				this,
+				"onAggregationDragEnter",
+				this.oButtonOverlay,
+				["touchstart", "touchmove", "touchmove"],
+				assert,
+				this.mFakeTouchEvents,
+				this.oAggregationOverlay
+			);
 
 			sandbox.restore();
 		});
@@ -190,17 +223,34 @@ sap.ui.define([
 			};
 
 			fnElementFromPointStub.returns(fakeIdStub);
-			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragOver", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents, this.oAggregationOverlay);
+			testDragAndDropEventHandlerTriggering.call(
+				this,
+				"onAggregationDragOver",
+				this.oButtonOverlay,
+				["touchstart", "touchmove", "touchmove"],
+				assert,
+				this.mFakeTouchEvents,
+				this.oAggregationOverlay
+			);
 
 			sandbox.restore();
 		});
 
 		QUnit.test("when the touchend is triggered on an overlay and aggregationdrop is triggered on an aggregation overlay", function(assert) {
-			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDrop", this.oButtonOverlay, ["touchstart", "touchmove", "touchend"], assert, this.mFakeTouchEvents, this.oAggregationOverlay);
+			testDragAndDropEventHandlerTriggering.call(
+				this, "onAggregationDrop",
+				this.oButtonOverlay,
+				["touchstart", "touchmove", "touchend"],
+				assert,
+				this.mFakeTouchEvents,
+				this.oAggregationOverlay
+			);
 		});
 
 		QUnit.test("when the touchend is triggered on an overlay and dragend is triggered on an element overlay", function(assert) {
-			testDragAndDropEventHandlerTriggering.call(this, "onDragEnd", this.oButtonOverlay, ["touchstart", "touchmove", "touchend"], assert, this.mFakeTouchEvents);
+			testDragAndDropEventHandlerTriggering.call(
+				this, "onDragEnd", this.oButtonOverlay, ["touchstart", "touchmove", "touchend"], assert, this.mFakeTouchEvents
+			);
 		});
 
 		QUnit.test("when the dragstart triggered on overlay", function(assert) {
@@ -244,13 +294,13 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given that an DragDrop touchevents are initialized ", {
+	QUnit.module("Given that DragDrop touchevents are initialized ", {
 		beforeEach: function(assert) {
 			this.oButton = new Button();
 			this.oLayout1 = new VerticalLayout({content: [this.oButton]});
 			this.oLayout2 = new VerticalLayout({content: [this.oLayout1]});
 			this.oLayout2.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			this.oDragDrop = new DragDrop();
 			this.oDesignTime = new DesignTime({
@@ -314,7 +364,15 @@ sap.ui.define([
 
 			fnElementFromPointStub.returns(fakeIdStub);
 
-			testDragAndDropEventHandlerTriggering.call(this, "onDragEnter", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents, this.oLayout1Overlay);
+			testDragAndDropEventHandlerTriggering.call(
+				this,
+				"onDragEnter",
+				this.oButtonOverlay,
+				["touchstart", "touchmove", "touchmove"],
+				assert,
+				this.mFakeTouchEvents,
+				this.oLayout1Overlay
+			);
 
 			sandbox.restore();
 		});
@@ -328,7 +386,15 @@ sap.ui.define([
 
 			fnElementFromPointStub.returns(fakeIdStub);
 
-			testDragAndDropEventHandlerTriggering.call(this, "onDragOver", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents, this.oLayout1Overlay);
+			testDragAndDropEventHandlerTriggering.call(
+				this,
+				"onDragOver",
+				this.oButtonOverlay,
+				["touchstart", "touchmove", "touchmove"],
+				assert,
+				this.mFakeTouchEvents,
+				this.oLayout1Overlay
+			);
 
 			sandbox.restore();
 		});
@@ -342,7 +408,15 @@ sap.ui.define([
 
 			fnElementFromPointStub.returns(fakeIdStub);
 
-			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragEnter", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents, this.oAggregationOverlay);
+			testDragAndDropEventHandlerTriggering.call(
+				this,
+				"onAggregationDragEnter",
+				this.oButtonOverlay,
+				["touchstart", "touchmove", "touchmove"],
+				assert,
+				this.mFakeTouchEvents,
+				this.oAggregationOverlay
+			);
 
 			sandbox.restore();
 		});
@@ -356,7 +430,15 @@ sap.ui.define([
 
 			fnElementFromPointStub.returns(fakeIdStub);
 
-			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragOver", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents, this.oAggregationOverlay);
+			testDragAndDropEventHandlerTriggering.call(
+				this,
+				"onAggregationDragOver",
+				this.oButtonOverlay,
+				["touchstart", "touchmove", "touchmove"],
+				assert,
+				this.mFakeTouchEvents,
+				this.oAggregationOverlay
+			);
 
 			sandbox.restore();
 		});
@@ -390,7 +472,7 @@ sap.ui.define([
 						designTimeMetadata: { data: oDesignTimeMetadata },
 						lazyRendering: false
 					});
-					oCore.applyChanges();
+					Core.applyChanges();
 					this.oDragDrop = new DragDrop();
 					var oPageContentOverlay = this.oPageOverlay.getAggregationOverlay("content");
 					this.oDragDrop.registerAggregationOverlay(oPageContentOverlay);

@@ -4,14 +4,16 @@
 
 // Provides object sap.ui.dt.OverlayUtil.
 sap.ui.define([
-	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/core/UIArea",
+	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/ElementUtil",
-	"sap/ui/core/UIArea"
+	"sap/ui/dt/OverlayRegistry"
 ],
 function(
-	OverlayRegistry,
+	UIArea,
+	DOMUtil,
 	ElementUtil,
-	UIArea
+	OverlayRegistry
 ) {
 	"use strict";
 
@@ -680,6 +682,25 @@ function(
 		}
 
 		return findParentsWithScrollbar(oElementOverlay);
+	};
+
+	/**
+	 * Returns the first parent overlay that is draggable
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay being checked
+	 * @returns {sap.ui.dt.Overlay} - First parent overlay that is draggable or undefined
+	 */
+	OverlayUtil.getFirstDraggableParentOverlay = function(oElementOverlay) {
+		function findDraggableParentOverlay(oOverlay) {
+			if (DOMUtil.getDraggable(oOverlay.getDomRef())) {
+				return oOverlay;
+			}
+			if (!oOverlay.getParent()) {
+				return undefined;
+			}
+			return findDraggableParentOverlay(oOverlay.getParent());
+		}
+
+		return findDraggableParentOverlay(oElementOverlay);
 	};
 
 	return OverlayUtil;
