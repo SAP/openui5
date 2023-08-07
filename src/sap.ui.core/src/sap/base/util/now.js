@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /*global performance */
-sap.ui.define([], function() {
+sap.ui.define([], function () {
 	"use strict";
 
 	// @evo-todo window.performance does not exist on node.js, but there is a module performance-now. Maybe use it
@@ -20,11 +20,14 @@ sap.ui.define([], function() {
 	 * @alias module:sap/base/util/now
 	 * @returns {float} timestamp in microseconds if supported by the environment otherwise in milliseconds
 	 */
-	var fnNow = !(typeof window != "undefined" && window.performance && performance.now && performance.timing) ? Date.now : (function() {
-		var iNavigationStart = performance.timing.navigationStart;
-		return function perfnow() {
-			return iNavigationStart + performance.now();
-		};
-	}());
+	var fnNow = !(performance && performance.now && performance.getEntriesByType && performance.getEntriesByType("navigation")[0])
+		? Date.now
+		: (function () {
+			var oPerformanceTiming = performance.getEntriesByType("navigation")[0];
+			var iNavigationStart = performance.timeOrigin + oPerformanceTiming.startTime;
+			return function perfnow() {
+				return iNavigationStart + performance.now();
+			};
+		}());
 	return fnNow;
 });

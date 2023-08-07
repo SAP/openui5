@@ -13,7 +13,7 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 
 	QUnit.test("simulate environment without window.performance", function(assert) {
 
-		assert.ok(window.performance && performance.now && performance.timing, "check for presence of window.performance");
+		assert.ok(window.performance && performance.now && performance.getEntriesByType, "check for presence of window.performance");
 
 		var bCanStub = false;
 		try {
@@ -26,7 +26,7 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 			var done = assert.async();
 			sap.ui.require(["sap/base/util/now"], function(now) {
 
-				assert.notOk(performance.timing, "performance now should not be set");
+				assert.notOk(performance.getEntriesByType, "performance now should not be set");
 
 				assert.ok(new Date(now()) instanceof Date, "should be a valid date");
 				done();
@@ -37,7 +37,7 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	QUnit.test("tests for window performance object", function(assert) {
 
 
-		assert.ok(window.performance && performance.now && performance.timing, "check for presence of window.performance");
+		assert.ok(window.performance && performance.now && performance.getEntriesByType, "check for presence of window.performance");
 
 		assert.ok(new Date(now()) instanceof Date, "should be a valid date");
 
