@@ -99,6 +99,7 @@ sap.ui.define([
 			"sap.m.DialogRoleType",
 			"sap.m.DialogType",
 			"sap.m.DraftIndicatorState",
+			"sap.m.DynamicDateRangeGroups",
 			"sap.m.FacetFilterListDataType",
 			"sap.m.FacetFilterType",
 			"sap.m.FlexAlignContent",
@@ -2918,6 +2919,52 @@ sap.ui.define([
 		 * @public
 		 */
 		Delimited: "Delimited"
+	};
+
+	/**
+	 * Defines the groups in {@link sap.m.DynamicDateRange}.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.118
+	 */
+	 thisLib.DynamicDateRangeGroups = {
+
+		/**
+		 * Group of options that provide selection of single dates.
+		 * @public
+		 */
+		SingleDates: 1,
+
+		/**
+		 * Group of options that provide selection of date ranges.
+		 * @public
+		 */
+		DateRanges: 2,
+
+		/**
+		 * Group of options that provide selection of week related ranges.
+		 * @public
+		 */
+		 Weeks: 3,
+
+		/**
+		 * Group of options that provide selection of month related ranges.
+		 * @public
+		 */
+		 Month: 4,
+
+		/**
+		 * Group of options that provide selection of quarter related ranges.
+		 * @public
+		 */
+		 Quarters: 5,
+
+		/**
+		 * Group of options that provide selection of year related ranges.
+		 * @public
+		 */
+		 Years: 6
 	};
 
 	/**

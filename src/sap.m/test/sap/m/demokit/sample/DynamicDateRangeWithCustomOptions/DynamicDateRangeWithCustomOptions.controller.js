@@ -238,6 +238,7 @@ sap.ui.define([
 			});
 			var oView = this.getView();
 			var oDynamicDateRange = oView.byId("dynamic-range");
+			oDynamicDateRange.addGroup("Custom", "Custom Options");
 			var oCustomPreviousXWeekendOption = new CustomPreviousXWeekend({
 				key: "X To Last Weekend",
 				valueTypes: ["int"]

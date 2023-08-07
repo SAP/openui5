@@ -1673,5 +1673,38 @@ sap.ui.define([
 		testDate(assert, aDateRange[0], 2, "NEXTDAYS", 2022, 11, 25, 0,0,0,0);
 		testDate(assert, aDateRange[1], 2, "NEXTDAYS", 2023, 0, 7, 23,59,59,999);
 	});
+
+	QUnit.module("Groups", {
+		beforeEach: function() {
+			this.ddr = new DynamicDateRange();
+			this.ddr.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.ddr.destroy();
+		}
+	});
+
+	QUnit.test("addGroup and removeGroups", function(assert) {
+		this.ddr.addGroup("Test", "Test Group");
+
+		assert.strictEqual(this.ddr._getGroups()["Test"], 7, "A new group is added");
+
+		this.ddr.removeCustomGroups();
+
+		assert.strictEqual(Object.keys(this.ddr._getGroups()).length, 6, "All new groups are deleted");
+	});
+
+	QUnit.test("changne group header", function(assert) {
+		this.ddr.addGroup("Test", "Test Group");
+
+		assert.strictEqual(this.ddr._getGroups()["Test"], 7, "A new group is added");
+		assert.strictEqual(this.ddr._getCustomGroupHeader("Test"), "Test Group", "A new group is added");
+
+		this.ddr.setGroupHeader("Test", "Not a Test Group");
+
+		assert.strictEqual(this.ddr._getCustomGroupHeader("Test"), "Not a Test Group", "A new group is added");
+	});
+
 });
 

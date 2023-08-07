@@ -80,6 +80,9 @@ sap.ui.define([
 			aResultDateRange[1].setUTCDate(aResultDateRange[1].getUTCDate() + (iDaysInWorkWeek - 1 + iFirstWorkDay - aResultDateRange[1].getUTCDay()));
 
 			return aResultDateRange;
+		},
+		getGroup()  {
+			return "Custom";
 		}
 	});
 
