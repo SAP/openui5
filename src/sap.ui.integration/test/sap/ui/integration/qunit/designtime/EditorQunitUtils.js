@@ -67,17 +67,22 @@ sap.ui.define([
 		});
 	};
 
-	EditorQunitUtils.openColumnMenu = function(oColumn) {
+	EditorQunitUtils.openColumnMenu = function(oColumn, assert) {
 		return new Promise(function(resolve) {
 			var oMenu = oColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "EditorQunitUtils openColumnMenu: header menu instance ok");
 			// init popover since it may be not initialized
 			oMenu._initPopover();
+			assert.ok(true, "EditorQunitUtils openColumnMenu: initPopover of menu ok");
 			var oPopover = oMenu._oPopover;
+			assert.ok(oPopover, "EditorQunitUtils openColumnMenu: popover of menu ok");
 			// attach to event afterOpen
 			oPopover.attachEventOnce("afterOpen", function() {
+				assert.ok(true, "EditorQunitUtils openColumnMenu: afterOpen event of popover ok");
 				resolve();
 			});
 			var oElement = oColumn.getDomRef();
+			assert.ok(oElement, "EditorQunitUtils openColumnMenu: column domref ok");
 			QUnitUtils.triggerMouseEvent(oElement, "mousedown", null, null, null, null, 0);
 			QUnitUtils.triggerMouseEvent(oElement, "click");
 		});

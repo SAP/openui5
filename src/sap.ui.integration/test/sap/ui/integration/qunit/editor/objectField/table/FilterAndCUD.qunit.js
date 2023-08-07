@@ -214,9 +214,10 @@ sap.ui.define([
 			oTable.filter(oKeyColumn, "new");
 			return wait();
 		}).then(function () {
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
 			oMenu = oKeyColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
@@ -359,9 +360,10 @@ sap.ui.define([
 			oTable.filter(oKeyColumn, "new");
 			return wait();
 		}).then(function() {
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
 			oMenu = oKeyColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
@@ -546,10 +548,11 @@ sap.ui.define([
 			oTable.filter(oKeyColumn, "new");
 			return wait();
 		}).then(function () {
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
 			// check that the column menu filter input field was updated
 			oMenu = oKeyColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
@@ -813,9 +816,10 @@ sap.ui.define([
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
 		}).then(function() {
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function() {
 			oMenu = oKeyColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
@@ -1053,9 +1057,10 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
 			oMenu = oKeyColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
@@ -1323,10 +1328,11 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
 			// check that the column menu filter input field was updated
 			oMenu = oKeyColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
@@ -1588,10 +1594,11 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function() {
 			// check that the column menu filter input field was updated
 			oMenu = oKeyColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
@@ -1744,10 +1751,11 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function() {
 			// check that the column menu filter input field was updated
 			oMenu = oKeyColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();

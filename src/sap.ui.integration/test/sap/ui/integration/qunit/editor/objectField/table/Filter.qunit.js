@@ -342,9 +342,10 @@ sap.ui.define([
 			oURLColumn = oTable.getColumns()[4];
 			return wait();
 		}).then(function() {
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
 			oMenu = oKeyColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "n");
 			return wait();
@@ -355,7 +356,7 @@ sap.ui.define([
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "keyn*");
 			return wait();
@@ -366,7 +367,7 @@ sap.ui.define([
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "key0*");
 			return wait();
@@ -377,9 +378,10 @@ sap.ui.define([
 			assert.ok(oTable.getSelectedIndices().length === 0, "Table: selected row hided");
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(!oCell.getSelected(), "Row 1: Cell 1 is not selected");
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function () {
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "http:");
 			return wait();
@@ -453,9 +455,10 @@ sap.ui.define([
 			oKeyColumn = oTable.getColumns()[1];
 			return wait();
 		}).then(function () {
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
 			oMenu = oKeyColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "n");
 			return wait();
@@ -465,7 +468,7 @@ sap.ui.define([
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "keyn*");
 			return wait();
@@ -476,7 +479,7 @@ sap.ui.define([
 			oCell = oTable.getRows()[0].getCells()[0];
 			assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "key0*");
 			return wait();

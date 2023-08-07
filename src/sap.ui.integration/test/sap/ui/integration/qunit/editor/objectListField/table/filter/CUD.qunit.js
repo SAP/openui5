@@ -163,10 +163,11 @@ sap.ui.define([
 			oTable.filter(oURLColumn, "https");
 			return wait();
 		}).then(function() {
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
 			// check that the column menu filter input field was updated
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "https", "Table: URL Column filter value OK");
 			oMenu.close();
@@ -282,10 +283,11 @@ sap.ui.define([
 			oTable.filter(oURLColumn, "https");
 			return wait();
 		}).then(function() {
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
 			// check that the column menu filter input field was updated
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "https", "Table: URL Column filter value OK");
 			oMenu.close();
@@ -376,10 +378,11 @@ sap.ui.define([
 			oTable.filter(oURLColumn, "http:");
 			return wait();
 		}).then(function() {
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
 			// check that the column menu filter input field was updated
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "http:", "Table: URL Column filter value OK");
 			oMenu.close();
@@ -582,10 +585,11 @@ sap.ui.define([
 			oTable.filter(oURLColumn, "http:");
 			return wait();
 		}).then(function() {
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
 			// check that the column menu filter input field was updated
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "http:", "Table: URL Column filter value OK");
 			oMenu.close();
@@ -770,10 +774,11 @@ sap.ui.define([
 			oTable.filter(oURLColumn, "http:");
 			return wait();
 		}).then(function(){
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
 			// check that the column menu filter input field was updated
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "http:", "Table: URL Column filter value OK");
 			oMenu.close();

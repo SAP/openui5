@@ -207,9 +207,10 @@ sap.ui.define([
 			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 			oURLColumn = oColumns[4];
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function () {
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "http://");
 			return wait();
@@ -350,9 +351,10 @@ sap.ui.define([
 			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 			oURLColumn = oColumns[4];
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "http://");
 			return wait();
@@ -508,9 +510,10 @@ sap.ui.define([
 			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 			oURLColumn = oColumns[4];
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
 			return wait();
@@ -692,9 +695,10 @@ sap.ui.define([
 			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 			oURLColumn = oColumns[4];
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
 			return wait();
@@ -892,9 +896,10 @@ sap.ui.define([
 			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 			oURLColumn = oColumns[4];
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
 			return wait();
@@ -1083,9 +1088,10 @@ sap.ui.define([
 			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 			oURLColumn = oColumns[4];
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
 			return wait();
@@ -1294,9 +1300,10 @@ sap.ui.define([
 			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 			oURLColumn = oColumns[4];
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
 			return wait();
@@ -1376,9 +1383,10 @@ sap.ui.define([
 			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 			oURLColumn = oColumns[4];
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
 			return wait();

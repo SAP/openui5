@@ -161,9 +161,10 @@ sap.ui.define([
 			oTable.filter(oKeyColumn, "n");
 			return wait();
 		}).then(function() {
-			return EditorQunitUtils.openColumnMenu(oKeyColumn);
+			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
 			oMenu = oKeyColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "n", "Table: Key Column filter value OK");
 			oMenu.close();
@@ -194,9 +195,10 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
 			oTextColumn = oTable.getColumns()[3];
 			oTable.filter(oTextColumn, "n");
-			return EditorQunitUtils.openColumnMenu(oTextColumn);
+			return EditorQunitUtils.openColumnMenu(oTextColumn, assert);
 		}).then(function () {
 			oMenu = oTextColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "n", "Table: Text Column filter value OK");
 			oMenu.close();
@@ -262,9 +264,10 @@ sap.ui.define([
 			oIntColumn = oTable.getColumns()[6];
 			return wait();
 		}).then(function() {
-			return EditorQunitUtils.openColumnMenu(oURLColumn);
+			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
 			oMenu = oURLColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
 			return wait();
@@ -272,9 +275,10 @@ sap.ui.define([
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 			assert.equal(oTable.getBinding().getCount(), 5, "Table: RowCount after filtering column URL with 'https'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
-			return EditorQunitUtils.openColumnMenu(oIntColumn);
+			return EditorQunitUtils.openColumnMenu(oIntColumn, assert);
 		}).then(function() {
 			oMenu = oIntColumn.getHeaderMenuInstance();
+			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "4");
 			return wait();
@@ -282,7 +286,7 @@ sap.ui.define([
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 			assert.equal(oTable.getBinding().getCount(), 1, "Table: RowCount after filtering column Integer with '4'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
-			return EditorQunitUtils.openColumnMenu(oIntColumn);
+			return EditorQunitUtils.openColumnMenu(oIntColumn, assert);
 		}).then(function() {
 			EditorQunitUtils.setInputValueAndConfirm(oInput, ">4");
 			return wait();
