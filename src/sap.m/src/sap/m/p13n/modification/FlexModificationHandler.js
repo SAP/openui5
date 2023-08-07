@@ -86,11 +86,20 @@ sap.ui.define([
     };
 
     FlexModificationHandler.prototype.hasChanges = function(mPropertyBag, oModificationPayload){
+
+        var sInternalPersistenceMode = oModificationPayload.mode;
+
         return this.initialize()
         .then(function(){
-            return _requireWriteAPI().then(function(ControlPersonalizationWriteAPI){
-                return ControlPersonalizationWriteAPI.hasDirtyFlexObjects(mPropertyBag);
-            });
+            if (sInternalPersistenceMode === mode.Global) {
+                return _requireFlexRuntimeAPI().then(function(FlexRuntimeInfoAPI){
+                    return FlexRuntimeInfoAPI.isPersonalized({selectors: [mPropertyBag.selector]});
+                });
+            } else {
+                return _requireWriteAPI().then(function(ControlPersonalizationWriteAPI){
+                    return ControlPersonalizationWriteAPI.hasDirtyFlexObjects(mPropertyBag);
+                });
+            }
         });
     };
 

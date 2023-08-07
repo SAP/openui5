@@ -289,4 +289,74 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("#hasChanges based on PersistenceMode", {
+		before: function(){
+			this.oHandler = FlexModificationHandler.getInstance();
+			this.oControl = new MDCControl();
+			this.mPropertyBag = {
+				selector: this.oControl
+			};
+		},
+		after: function(){
+			this.oHandler.destroy();
+			this.oHandler = null;
+		}
+	});
+
+	QUnit.test("mode: Global --> check persisted changes", function(assert){
+
+		var done = assert.async();
+
+		var oIsPersonalizedSpy = sinon.spy(FlexRuntimeInfoAPI, "isPersonalized");
+		var oHasDirtyChangesSpy = sinon.spy(ControlPersonalizationWriteAPI, "hasDirtyFlexObjects");
+
+		var oModificationPayload = {
+			mode: "Global"
+		};
+
+		//check for persisted changes in case of global persistence
+		this.oHandler.hasChanges(this.mPropertyBag, oModificationPayload).finally(function(){
+			assert.ok(oIsPersonalizedSpy.callCount === 1);
+			assert.ok(oHasDirtyChangesSpy.callCount === 0);
+			FlexRuntimeInfoAPI.isPersonalized.restore();
+			ControlPersonalizationWriteAPI.hasDirtyFlexObjects.restore();
+			done();
+		});
+	});
+
+	QUnit.module("#hasChanges based on PersistenceMode", {
+		before: function(){
+			this.oHandler = FlexModificationHandler.getInstance();
+			this.oControl = new MDCControl();
+			this.mPropertyBag = {
+				selector: this.oControl
+			};
+		},
+		after: function(){
+			this.oHandler.destroy();
+			this.oHandler = null;
+		}
+	});
+
+	QUnit.test("mode: Auto --> check dirty changes", function(assert){
+
+		var done = assert.async();
+
+		var oIsPersonalizedSpy = sinon.spy(FlexRuntimeInfoAPI, "isPersonalized");
+		var oHasDirtyChangesSpy = sinon.spy(ControlPersonalizationWriteAPI, "hasDirtyFlexObjects");
+
+		var oModificationPayload = {
+			mode: "Auto"
+		};
+
+		//check for persisted changes in case of global persistence
+		this.oHandler.hasChanges(this.mPropertyBag, oModificationPayload).finally(function(){
+			assert.ok(oIsPersonalizedSpy.callCount === 0);
+			assert.ok(oHasDirtyChangesSpy.callCount === 1);
+			FlexRuntimeInfoAPI.isPersonalized.restore();
+			ControlPersonalizationWriteAPI.hasDirtyFlexObjects.restore();
+			done();
+		});
+	});
+
 });
