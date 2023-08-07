@@ -3281,21 +3281,24 @@ sap.ui.define([
 	 * the currently visible scroll area.
 	 *
 	 * @param {int} iIndex Index of the row to return the context from.
-	 * @returns {sap.ui.model.Context | undefined} The context at this index if available
+	 * @returns {sap.ui.model.Context | null} The context at this index if available
 	 * @public
 	 */
 	Table.prototype.getContextByIndex = function(iIndex) {
 		var oBinding = this.getBinding();
+		var oContext = null;
 
 		if (!oBinding || iIndex < 0) {
-			return undefined;
+			return oContext;
 		}
 
 		if (oBinding.getContextByIndex) {
-			return oBinding.getContextByIndex(iIndex);
+			oContext = oBinding.getContextByIndex(iIndex);
+		} else {
+			oContext = oBinding.getContexts(iIndex, 1, 0, true)[0];
 		}
 
-		return oBinding.getContexts(iIndex, 1, 0, true)[0];
+		return oContext || null;
 	};
 
 	// =============================================================================

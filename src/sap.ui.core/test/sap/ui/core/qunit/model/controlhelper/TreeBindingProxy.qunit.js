@@ -38,39 +38,39 @@ sap.ui.define([
 	// does not make sense to test with no binding
 
 	QUnit.test("#isLeaf", function(assert) {
-		assert.ok(this.oProxy.isLeaf(0), "isLeaf returns true");
+		assert.strictEqual(this.oProxy.isLeaf(0), true, "isLeaf returns true");
 	});
 
 	QUnit.test("#getNodeByIndex", function(assert) {
-		assert.equal(this.oProxy.getNodeByIndex(0), undefined, "getNodeByIndex returns undefined");
+		assert.strictEqual(this.oProxy.getNodeByIndex(0), null, "getNodeByIndex returns null");
 	});
 
 	QUnit.test("#getContextByIndex", function(assert) {
-		assert.equal(this.oProxy.getContextByIndex(0), undefined, "getContextByIndex returns undefined");
+		assert.strictEqual(this.oProxy.getContextByIndex(0), null, "getContextByIndex returns null");
 	});
 
 	QUnit.test("#isExpanded", function(assert) {
-		assert.notOk(this.oProxy.isExpanded(0), "isExpanded returns false");
+		assert.strictEqual(this.oProxy.isExpanded(0), false, "isExpanded returns false");
 	});
 
 	QUnit.test("#getContexts", function(assert) {
-		assert.equal(this.oProxy.getContexts(0).length, 0, "getContexts returns []");
+		assert.strictEqual(this.oProxy.getContexts(0).length, 0, "getContexts returns []");
 	});
 
 	QUnit.test("#getLevel", function(assert) {
-		assert.equal(this.oProxy.getLevel(0), undefined, "getLevel returns undefined");
+		assert.strictEqual(this.oProxy.getLevel(0), undefined, "getLevel returns undefined");
 	});
 
 	QUnit.test("#getSiblingCount", function(assert) {
-		assert.equal(this.oProxy.getSiblingCount(0), 0, "getSiblingCount returns 0");
+		assert.strictEqual(this.oProxy.getSiblingCount(0), 0, "getSiblingCount returns 0");
 	});
 
 	QUnit.test("#getPositionInParent", function(assert) {
-		assert.equal(this.oProxy.getPositionInParent(0), -1, "getPositionInParent returns -1");
+		assert.strictEqual(this.oProxy.getPositionInParent(0), -1, "getPositionInParent returns -1");
 	});
 
 	QUnit.test("#isSelectionSupported", function(assert) {
-		assert.notOk(this.oProxy.isSelectionSupported(), "isSelectionSupported returns false");
+		assert.strictEqual(this.oProxy.isSelectionSupported(), false, "isSelectionSupported returns false");
 	});
 
 	QUnit.test("#applyLegacySettingsToBindingInfo", function(assert) {
@@ -83,9 +83,9 @@ sap.ui.define([
 
 		this.oProxy.applyLegacySettingsToBindingInfo(oBindingInfo, mLegacySettings);
 
-		assert.equal(oBindingInfo.parameters.rootLevel, mLegacySettings.rootLevel);
-		assert.equal(oBindingInfo.parameters.collapseRecursive, mLegacySettings.collapseRecursive);
-		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, mLegacySettings.numberOfExpandedLevels);
+		assert.strictEqual(oBindingInfo.parameters.rootLevel, mLegacySettings.rootLevel);
+		assert.strictEqual(oBindingInfo.parameters.collapseRecursive, mLegacySettings.collapseRecursive);
+		assert.strictEqual(oBindingInfo.parameters.numberOfExpandedLevels, mLegacySettings.numberOfExpandedLevels);
 	});
 
 	QUnit.module("sap.ui.model.TreeBindingProxy: Behaviour for V4 bindings", {
@@ -343,7 +343,10 @@ sap.ui.define([
 				nodeHasChildren: function() {
 					return true;
 				},
-				getNodeByIndex: function() {
+				getNodeByIndex: function(iIndex) {
+					if (iIndex === 1) {
+						return undefined;
+					}
 					return {
 						node: "test",
 						level: 0,
@@ -351,7 +354,10 @@ sap.ui.define([
 						positionInParent: 3
 					};
 				},
-				getContextByIndex: function() {
+				getContextByIndex: function(iIndex) {
+					if (iIndex === 1) {
+						return undefined;
+					}
 					return {context: "test"};
 				},
 				isExpanded: function() {
@@ -381,12 +387,14 @@ sap.ui.define([
 			parent: {children: [1, 2]},
 			positionInParent: 3
 		}, "getNodeByIndex returns context object");
-		assert.deepEqual(this.oProxy.getNodeByIndex(-1), undefined, "getNodeByIndex returns undefined for negative index");
+		assert.strictEqual(this.oProxy.getNodeByIndex(-1), null, "getNodeByIndex returns null for negative index");
+		assert.strictEqual(this.oProxy.getNodeByIndex(1), null, "getNodeByIndex returns null if no node exists at this index");
 	});
 
 	QUnit.test("#getContextByIndex", function(assert) {
 		assert.deepEqual(this.oProxy.getContextByIndex(0), {context: "test"}, "getContextByIndex returns context object");
-		assert.deepEqual(this.oProxy.getContextByIndex(-1), undefined, "getContextByIndex returns undefined for negative index");
+		assert.strictEqual(this.oProxy.getContextByIndex(-1), null, "getContextByIndex returns null for negative index");
+		assert.strictEqual(this.oProxy.getContextByIndex(1), null, "getContextByIndex returns null if no context exists at this index");
 	});
 
 	QUnit.test("#isExpanded", function(assert) {
