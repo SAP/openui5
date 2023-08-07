@@ -59,7 +59,7 @@ sap.ui.define([
 	function _flattenProperties(aProperties) {
 		var aFlattenedProperties = aProperties.reduce(function(aFlattened, oProperty) {
 			if (Array.isArray(oProperty.properties)) {
-				// currently only one level supported by our dialogs, etc. => TODO make deep types possible
+				// only one level supported by our dialogs
 				// Only take the leaves, but attach the parent property name/label to it
 				aFlattened = aFlattened.concat(oProperty.properties.map(function(mInnerProp) {
 					mInnerProp.parentPropertyName = oProperty.label || oProperty.name;

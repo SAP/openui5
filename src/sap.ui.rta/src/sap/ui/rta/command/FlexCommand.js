@@ -241,10 +241,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.apply._internal.flexObjects.UIChange|Object} vChange Change object or map containing the change object
 	 * @returns {Promise} Returns an empty promise
 	 */
-	FlexCommand.prototype._applyChange = function(vChange) {
-		// TODO: remove the following compatibility code when concept is implemented
-		var oChange = vChange.change || vChange;
-
+	FlexCommand.prototype._applyChange = function(oChange) {
 		var oAppComponent = this.getAppComponent();
 		var oSelectorElement = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 
