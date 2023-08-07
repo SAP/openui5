@@ -22,7 +22,9 @@
 							"deviation": {
 								"number": 25
 							},
-							"details": "Q1, 2019"
+							"details": "Q1, 2019",
+							"appShortcut": "App Shortcut",
+							"systemInfo": "System Info"
 						}
 					}
 				},
@@ -58,7 +60,16 @@
 					}
 				}
 			],
-			"dataTimestamp": "2023-08-01T12:00:00Z"
+			"dataTimestamp": "2023-08-01T12:00:00Z",
+			"banner": [
+				{
+					"text": "{= ${appShortcut}.toUpperCase()}",
+					"diminished": true
+				},
+				{
+					"text": "{= ${systemInfo}.toUpperCase()}"
+				}
+			]
 		},
 		"content": {
 			"data": {

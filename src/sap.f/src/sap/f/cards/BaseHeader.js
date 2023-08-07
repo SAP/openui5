@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/IntervalTrigger",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/date/UniversalDate",
+	"sap/ui/core/library",
 	"sap/m/Text"
 ], function (
 	Control,
@@ -14,6 +15,7 @@ sap.ui.define([
 	IntervalTrigger,
 	DateFormat,
 	UniversalDate,
+	coreLibrary,
 	Text
 ) {
 	"use strict";
@@ -22,6 +24,8 @@ sap.ui.define([
 	 * @const int The refresh interval for dataTimestamp in ms.
 	 */
 	var DATA_TIMESTAMP_REFRESH_INTERVAL = 60000;
+
+	var TextAlign = coreLibrary.TextAlign;
 
 	/**
 	 * Constructor for a new <code>BaseHeader</code>.
@@ -99,7 +103,14 @@ sap.ui.define([
 				/**
 				 * Defines an error which will be displayed in the header.
 				 */
-				_error: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" }
+				_error: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" },
+
+				/**
+				 * Show as a banner in the header area. Use for example for system info and application shortcut.
+				 * @experimental Since 1.118. For usage only by Work Zone.
+				 * @since 1.118
+				 */
+				bannerLines: { type: "sap.m.Text", group: "Appearance", multiple: true  }
 			}
 		}
 	});
@@ -124,11 +135,18 @@ sap.ui.define([
 	};
 
 	BaseHeader.prototype.onBeforeRendering = function () {
-		var oToolbar = this.getToolbar();
+		var oToolbar = this.getToolbar(),
+			aBannerLines = this.getBannerLines();
 
 		if (oToolbar) {
 			oToolbar.addStyleClass("sapFCardHeaderToolbar");
 			oToolbar.removeEventDelegate(this._oToolbarDelegate, this);
+		}
+
+		if (aBannerLines) {
+			aBannerLines.forEach((oText) => {
+				oText.setTextAlign(TextAlign.End);
+			});
 		}
 	};
 

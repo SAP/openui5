@@ -2,13 +2,14 @@
  * ${copyright}
  */
 
-// Provides default renderer for control sap.f.cards.NumericHeader
-sap.ui.define([], function () {
+sap.ui.define([
+	"sap/f/cards/BaseHeaderRenderer",
+	"sap/ui/core/Renderer"
+], function (BaseHeaderRenderer, Renderer) {
 	"use strict";
 
-	var NumericHeaderRenderer = {
-		apiVersion: 2
-	};
+	var NumericHeaderRenderer = Renderer.extend(BaseHeaderRenderer);
+	NumericHeaderRenderer.apiVersion = 2;
 
 	/**
 	 * Render a numeric header.
@@ -58,6 +59,7 @@ sap.ui.define([], function () {
 			NumericHeaderRenderer.renderHeaderText(oRm, oNumericHeader);
 			NumericHeaderRenderer.renderIndicators(oRm, oNumericHeader);
 			NumericHeaderRenderer.renderDetails(oRm, oNumericHeader);
+			BaseHeaderRenderer.renderBanner(oRm, oNumericHeader);
 		}
 
 		oRm.close("div");

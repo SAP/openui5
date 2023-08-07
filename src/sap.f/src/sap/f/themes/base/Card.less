@@ -197,6 +197,34 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 	.sapFCardHeaderToolbarCont .sapFCardHeaderToolbar {
 		margin: -0.25rem 0 -0.25rem 0.5rem;
 	}
+
+	.sapFCardHeaderBanner {
+		display: flex;
+		justify-content: flex-end;
+		margin: 0.25rem -(@_sap_f_Card_ContentPadding) 0;
+
+		.sapFCardHeaderBannerInner {
+			padding-inline-start: 0.25rem;
+			padding-inline-end: @_sap_f_Card_ContentPadding;
+			background-color: @sapUiInfobarNonInteractiveBackground;
+			border-radius: 0.125rem 0 0 0.125rem;
+
+			.sapFCardHeaderBannerLine {
+				display: flex;
+				justify-content: flex-end;
+				padding: 0.125rem 0;
+
+				.sapMText {
+					font-size: @sapUiFontSmallSize;
+					color: @sapUiTileTitleTextColor;
+				}
+
+				.sapMText.sapFCardHeaderBannerLineDiminished {
+					color: @sapUiTileTextColor;
+				}
+			}
+		}
+	}
 }
 
 .sapFCard .sapFCardIcon.sapFAvatar {
@@ -222,7 +250,6 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 .sapFCard .sapFCardHeader.sapFCardNumericHeader {
 
 	.sapFCardHeaderContent {
-		overflow: hidden;
 		outline: none;
 		min-width: 0; // fixes Chrome issue
 		flex: 1;

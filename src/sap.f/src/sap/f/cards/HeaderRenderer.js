@@ -2,12 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define([], function () {
+sap.ui.define([
+	"sap/f/cards/BaseHeaderRenderer",
+	"sap/ui/core/Renderer"
+], function (BaseHeaderRenderer, Renderer) {
 	"use strict";
 
-	var HeaderRenderer = {
-		apiVersion: 2
-	};
+	var HeaderRenderer = Renderer.extend(BaseHeaderRenderer);
+	HeaderRenderer.apiVersion = 2;
 
 	/**
 	 * Render a header.
@@ -134,6 +136,8 @@ sap.ui.define([], function () {
 		if (bUseTileLayout) {
 			HeaderRenderer._renderAvatar(oRm, oHeader);
 		}
+
+		BaseHeaderRenderer.renderBanner(oRm, oHeader);
 
 		oRm.close("div");
 
