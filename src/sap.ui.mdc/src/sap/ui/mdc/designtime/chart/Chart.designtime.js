@@ -2,11 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/p13n/Engine"
-	], function (Engine) {
+	"sap/m/p13n/Engine",
+	"sap/ui/mdc/Chart",
+	"../Util"
+	], function (Engine, Chart, Util) {
 	"use strict";
 
-	return {
+	var oDesignTime = {
 		actions: {
 			settings: function () {
 				//RTA expects the settings to be returned as function
@@ -29,85 +31,18 @@ sap.ui.define([
 				};
 			}
 		},
-		properties: {
-			width: {
-				ignore: true
-			},
-			height: {
-				ignore: true
-			},
-			delegate: {
-				ignore: true
-			},
-			header: {
-				ignore: true
-			},
-			noDataText: {
-				ignore: true
-			},
-			p13nMode: {
-				ignore: true
-			},
-			legendVisible: {
-				ignore: true
-			},
-			ignoreToolbarActions: {
-				ignore: true
-			},
-			minWidth: {
-				ignore: true
-			},
-			minHeight: {
-				ignore: true
-			},
-			sortConditions: {
-				ignore: true
-			},
-			filterConditions: {
-				ignore: true
-			},
-			showChartTooltip: {
-				ignore: true
-			},
-			autoBindOnInit: {
-				ignore: true
-			},
-			chartType: {
-				ignore: true
-			},
-			showSelectionDetails: {
-				ignore: true
-			},
-			propertyInfo: {
-				ignore: true
-			},
-			headerLevel : {
-				ignore: false
-			},
-			headerVisible : {
-				ignore: false
-			}
-		},
 		aggregations: {
-			items: {
-				ignore: true
-			},
-			actions: {
-				ignore: true
-			},
-			selectionDetailsActions: {
-				ignore: true
-			},
 			_toolbar: {
-				ignore: false
-			},
-			_breadcrumbs: {
-				ignore: true
-			},
-			_innerChart: {
-				ignore: true
+				propagateMetadata: function(oElement) {
+					return null;
+				}
 			}
 		}
 	};
+
+	var aAllowedAggregations = [ "_toolbar" ],
+		aAllowedProperties = [ "headerLevel", "headerVisible" ];
+
+	return Util.getDesignTime(Chart, aAllowedProperties, aAllowedAggregations, oDesignTime);
 
 });
