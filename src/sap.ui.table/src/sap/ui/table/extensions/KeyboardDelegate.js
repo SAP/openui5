@@ -570,7 +570,7 @@ sap.ui.define([
 	 */
 	function getColumnIndexInVisibleAndGroupedColumns(oTable, oColumn) {
 		var aVisibleAndGroupedColumns = oTable.getColumns().filter(function(oColumn) {
-			return oColumn.getVisible() || oColumn.getGrouped();
+			return oColumn.getVisible() || (oColumn.getGrouped ? oColumn.getGrouped() : false);
 		});
 
 		for (var i = 0; i < aVisibleAndGroupedColumns.length; i++) {
