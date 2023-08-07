@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /*global performance */
-sap.ui.define([], function () {
+sap.ui.define([], function() {
 	"use strict";
 
 	// @evo-todo window.performance does not exist on node.js, but there is a module performance-now. Maybe use it
