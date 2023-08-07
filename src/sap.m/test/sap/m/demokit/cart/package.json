@@ -8,14 +8,6 @@
     "start": "ui5 serve",
     "build": "ui5 build --all --clean-dest"
   },
-  "dependencies": {
-    "@openui5/sap.m": "^1",
-    "@openui5/sap.f": "^1",
-    "@openui5/sap.ui.core": "^1",
-    "@openui5/sap.ui.layout": "^1",
-    "@openui5/themelib_sap_horizon": "^1",
-    "@openui5/sap.ui.documentation": "^1"
-  },
   "devDependencies": {
     "@ui5/cli": "^3"
   }

@@ -7,12 +7,6 @@
   "scripts": {
     "start": "ui5 serve"
   },
-  "dependencies": {
-    "@openui5/sap.m": "^1",
-    "@openui5/sap.ui.core": "^1",
-    "@openui5/sap.ui.layout": "^1",
-    "@openui5/themelib_sap_horizon": "^1"
-  },
   "devDependencies": {
     "@ui5/cli": "^3"
   }
