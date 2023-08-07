@@ -621,6 +621,7 @@ sap.ui.define([
 		assert.equal(sFilterString, "$filter=false", "Filter string should be returned.");
 	});
 
+	/** @deprecated As of version 1.22.0 reason sap.ui.model.odata.Filter*/
 	QUnit.test("createFilterParams: Use API with deprecated sap.ui.model.odata.Filter", function(assert) {
 		var oFilter1 = new ODataFilter('Customer',[{
 			operator: 'EQ',
