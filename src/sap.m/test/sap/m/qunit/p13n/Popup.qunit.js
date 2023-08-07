@@ -337,5 +337,33 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("The Popup should only provide vertical scrolling for the content if the content does not provide it itself", function(assert) {
+
+		//Create a popup with one panel
+		var oPopup = new P13nPopup({
+			panels: [
+				new SelectionPanel()
+			]
+		});
+
+		var oDialog = oPopup._createDialog({});
+		assert.equal(oDialog.getVerticalScrolling(), true, "In case there is only one panel, the dialog provides the scrolling");
+
+		//Create a popup with one panel (which can scroll by itself)
+		var oScrollablePanel = new SelectionPanel();
+		oScrollablePanel.getVerticalScrolling = function() {
+			return true;
+		};
+
+		oPopup = new P13nPopup({
+			panels: [
+				oScrollablePanel
+			]
+		});
+
+		var oDialog = oPopup._createDialog({});
+		assert.equal(oDialog.getVerticalScrolling(), false, "In case there is only one panel which is scrollable, the panel provides the scrolling");
+
+	});
 
 });

@@ -83,6 +83,15 @@ sap.ui.define([
 
 	AdaptationFilterBar.prototype.WIDTH = "30rem";
 
+	/**
+	* Interface function for <code>sap.m.p13n.Popup</code> to determine that the <code>AdaptationFilterBar</code> provides its own scrolling capabilites.
+	*
+	* @returns {boolean} The enablement of the vertical scrolling
+	*/
+	AdaptationFilterBar.prototype.getVerticalScrolling = function() {
+		return this._oFilterBarLayout.getInner().getVerticalScrolling instanceof Function ? this._oFilterBarLayout.getInner().getVerticalScrolling() : false;
+	};
+
 	AdaptationFilterBar.prototype.init = function() {
 		FilterBarBase.prototype.init.apply(this,arguments);
 		this.addStyleClass("sapUIAdaptationFilterBar");

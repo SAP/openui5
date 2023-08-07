@@ -3175,13 +3175,13 @@ sap.ui.define([
 	 * Implementation of this interface should include the following methods:
 	 * <ul>
 	 * <li><code>getTitle</code></li>
+	 * <li><code>getVerticalScrolling</code></li>
 	 * </ul>
 	 *
 	 * @since 1.97
 	 * @name sap.m.p13n.IContent
 	 * @interface
 	 * @public
-	 * @experimental
 	 */
 
 	/**
@@ -3192,7 +3192,17 @@ sap.ui.define([
 	 * @function
 	 * @name sap.m.p13n.IContent.getTitle
 	 * @public
-	 * @experimental
+	 */
+
+	/**
+	 * Optionally returns the enablement of the contents vertical scrolling in case only one panel is used to determine if the content provides its own
+	 * scrolling capabilites.
+	 *
+	 * @returns {boolean} The enablement of the vertical scrolling enablement for the <code>sap.m.p13n.Popup</code>.
+	 *
+	 * @function
+	 * @name sap.m.p13n.IContent.getVerticalScrolling?
+	 * @public
 	 */
 
 	/**

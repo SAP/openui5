@@ -72,6 +72,15 @@ sap.ui.define([
     AdaptFiltersPanel.prototype.LIST_KEY = "list";
     AdaptFiltersPanel.prototype.P13N_MODEL = "$p13n";
 
+    /**
+     * Interface function for <code>sap.m.p13n.Popup</code> to determine that the <code>AdaptFiltersPanel</code> provides its own scrolling capabilites.
+     *
+     * @returns {boolean} The enablement of the vertical scrolling
+     */
+    AdaptFiltersPanel.prototype.getVerticalScrolling = function() {
+        return true;
+    };
+
     AdaptFiltersPanel.prototype.applySettings = function(mSettings) {
 
         this.addView(new AbstractContainerItem({
