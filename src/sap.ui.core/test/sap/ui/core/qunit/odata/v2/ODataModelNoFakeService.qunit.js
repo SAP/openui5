@@ -8707,4 +8707,27 @@ sap.ui.define([
 		ODataModel.prototype._isReloadNeeded.call(oModel, "~path", oFixture.parameters);
 	});
 });
+
+	/** @deprecated As of version 1.32.0 */
+	//*********************************************************************************************
+	QUnit.test("setDeferredBatchGroups", function (assert) {
+		const oModel = {setDeferredGroups() {}};
+
+		this.mock(oModel).expects("setDeferredGroups").withExactArgs("~mParameters");
+
+		// code under test
+		ODataModel.prototype.setDeferredBatchGroups.call(oModel, "~mParameters");
+	});
+
+	/** @deprecated As of version 1.32.0 */
+	//*********************************************************************************************
+	QUnit.test("setChangeBatchGroups", function (assert) {
+		const oModel = {setChangeGroups() {}};
+
+		this.mock(oModel).expects("setChangeGroups")
+			.withExactArgs({"*" : {batchGroupId : "~groupId", groupId: "~groupId"}});
+
+		// code under test
+		ODataModel.prototype.setChangeBatchGroups.call(oModel, {"*" : {batchGroupId : "~groupId"}});
+	});
 });

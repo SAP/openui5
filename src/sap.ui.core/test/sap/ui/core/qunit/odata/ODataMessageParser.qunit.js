@@ -931,7 +931,7 @@ sap.ui.define([
 
 			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after metadata loaded");
 
-			oModel.setDeferredBatchGroups(["deferredId"]);
+			oModel.setDeferredGroups(["deferredId"]);
 			oModel.read("/Products(1)", { batchGroupId : "deferredId" });
 			oModel.read("/Products(2)", { batchGroupId : "deferredId" });
 			oModel.read("/Products(3)", { batchGroupId : "deferredId" });
@@ -993,7 +993,7 @@ sap.ui.define([
 
 			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after metadata loaded");
 
-			oModel.setDeferredBatchGroups(["deferredId"]);
+			oModel.setDeferredGroups(["deferredId"]);
 			oModel.update("/Products(1)", { ProductName: "Updated 1" }, { batchGroupId : "deferredId" });
 			oModel.update("/Products(2)", { ProductName: "Updated 2" }, { batchGroupId : "deferredId" });
 			oModel.update("/Products(3)", { ProductName: "Updated 3" }, { batchGroupId : "deferredId" });
