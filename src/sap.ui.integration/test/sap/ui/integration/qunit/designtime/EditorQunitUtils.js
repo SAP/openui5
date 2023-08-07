@@ -69,22 +69,21 @@ sap.ui.define([
 
 	EditorQunitUtils.openColumnMenu = function(oColumn, assert) {
 		return new Promise(function(resolve) {
-			var oMenu = oColumn.getHeaderMenuInstance();
-			assert.ok(oMenu, "EditorQunitUtils openColumnMenu: header menu instance ok");
-			// init popover since it may be not initialized
-			oMenu._initPopover();
-			assert.ok(true, "EditorQunitUtils openColumnMenu: initPopover of menu ok");
-			var oPopover = oMenu._oPopover;
-			assert.ok(oPopover, "EditorQunitUtils openColumnMenu: popover of menu ok");
-			// attach to event afterOpen
-			oPopover.attachEventOnce("afterOpen", function() {
-				assert.ok(true, "EditorQunitUtils openColumnMenu: afterOpen event of popover ok");
-				resolve();
+			var oHeaderMenu = oColumn.getHeaderMenuInstance();
+			assert.ok(oHeaderMenu, "EditorQunitUtils openColumnMenu: header menu instance ok");
+			// attach to event beforeOpen
+			oHeaderMenu.attachEventOnce("beforeOpen", function() {
+				setTimeout(function() {
+					assert.ok(oColumn._isHeaderMenuOpen(), "EditorQunitUtils openColumnMenu: ColumnMenu is open");
+					resolve();
+				}, 200);
 			});
 			var oElement = oColumn.getDomRef();
 			assert.ok(oElement, "EditorQunitUtils openColumnMenu: column domref ok");
+			oElement.focus();
 			QUnitUtils.triggerMouseEvent(oElement, "mousedown", null, null, null, null, 0);
 			QUnitUtils.triggerMouseEvent(oElement, "click");
+			assert.ok(oElement, "EditorQunitUtils openColumnMenu: click column ok");
 		});
 	};
 
