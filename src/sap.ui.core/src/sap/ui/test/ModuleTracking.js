@@ -139,6 +139,7 @@
 	// the initial coverage per module (identified by resource name), taken when QUnit starts
 	let mInitialCoverageByModule;
 	const mCoverageSnapshotByModule = {};
+	const bTestsFiltered = /(testId|filter)=/.test(window.location.search);
 
 	function filterCoverage() {
 		// only keep the coverage for the actually tested modules
@@ -203,6 +204,9 @@
 		}
 		const oCoverage = clone(window.__coverage__[sResourceName]);
 		mCoverageSnapshotByModule[sResourceName] = oCoverage;
+		if (bTestsFiltered) {
+			return false;
+		}
 		return Object.values(oCoverage.b).some((aCounts) => aCounts.some((iCount) => iCount === 0))
 			|| Object.values(oCoverage.f).some((iCount) => iCount === 0)
 			|| Object.values(oCoverage.s).some((iCount) => iCount === 0);
@@ -298,7 +302,8 @@
 			jQuery("#qunit-modulefilter-dropdown-list").css("max-height", "none");
 
 			jQuery("#qunit-modulefilter-dropdown").on("click", function (oMouseEvent) {
-				if (oMouseEvent.target.tagName === "LABEL") {
+				if (oMouseEvent.target.tagName === "LABEL"
+						&& oMouseEvent.target.innerText !== "All modules") {
 					setTimeout(function () {
 						// click on label instead of checkbox triggers "Apply" automatically
 						jQuery("#qunit-modulefilter-actions").children().first().trigger("click");
