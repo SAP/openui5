@@ -101,6 +101,9 @@ sap.ui.define([
 					oRowBindingContext = oRow.getBindingContext(oRowBindingInfo.model);
 				}
 
+				/**
+				 * @deprecated As of version 1.21.0
+				 */
 				if (iColumnIndex >= 0) {
 					bExecuteDefault = oTable.fireCellContextmenu({
 						rowIndex: oRow.getIndex(),
@@ -112,20 +115,25 @@ sap.ui.define([
 					});
 				}
 
-				// fire beforeOpenContextMenu event if the default is not prevented in the cellContextMenu event
-				if (bExecuteDefault) {
-					var oRowContextMenu = oTable.getContextMenu();
-
-					if (oRowContextMenu && oRowBindingInfo) {
-						oRowContextMenu.setBindingContext(oRowBindingContext, oRowBindingInfo.model);
-					}
-
-					bExecuteDefault = oTable.fireBeforeOpenContextMenu({
-						rowIndex: oRow.getIndex(),
-						columnIndex: oRowColCell.column ? iColumnIndex : null,
-						contextMenu: oRowContextMenu
-					});
+				/**
+				 * @deprecated As of version 1.21.0
+				 */
+				if (!bExecuteDefault) {
+					return true;
 				}
+
+				// fire beforeOpenContextMenu event
+				var oRowContextMenu = oTable.getContextMenu();
+
+				if (oRowContextMenu && oRowBindingInfo) {
+					oRowContextMenu.setBindingContext(oRowBindingContext, oRowBindingInfo.model);
+				}
+
+				bExecuteDefault = oTable.fireBeforeOpenContextMenu({
+					rowIndex: oRow.getIndex(),
+					columnIndex: oRowColCell.column ? iColumnIndex : null,
+					contextMenu: oRowContextMenu
+				});
 
 				if (bExecuteDefault) {
 					return MenuUtils._openContentCellContextMenu(oTable, oCell, oEvent);

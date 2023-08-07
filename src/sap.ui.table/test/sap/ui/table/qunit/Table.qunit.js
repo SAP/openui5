@@ -306,10 +306,16 @@ sap.ui.define([
 		assert.equal(oTable.getExtension()[0].$().find("button").text(), "Modify Table Properties...", "Toolbar and toolbar button are correct!");
 		assert.equal(oTable.$().find(".sapUiTableFtr").text(), "Footer", "Title of Table is correct!");
 		assert.equal(oTable.getSelectionMode(), "Single", "Selection mode is Single!");
-		assert.equal(oTable.getSelectedIndex(), -1, "Selected Index is -1!");
 		assert.equal(oTable.$().find(".sapUiTableCtrl tr.sapUiTableTr").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
 		assert.equal(oTable.$().find(".sapUiTableRowSelectionCell").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
 		assert.equal(oTable.getFirstVisibleRow(), 5, "First Visible Row correct!");
+	});
+
+	/**
+	 * @deprecated As of version 1.118
+	 */
+	QUnit.test("Properties and Extensions - Old", function(assert) {
+		assert.equal(oTable.getSelectedIndex(), -1, "Selected Index is -1!");
 	});
 
 	/**
@@ -419,7 +425,10 @@ sap.ui.define([
 		assert.deepEqual(oTable.getSelectedIndices(), [], "addSelectionInterval does not select in SelectionMode=\"None\"");
 	});
 
-	QUnit.test("SelectedIndex", function(assert) {
+	/**
+	 * @deprecated As of version 1.118
+	 */
+	QUnit.test("SelectedIndex - Old", function(assert) {
 		oTable.setSelectedIndex(8);
 		assert.equal(oTable.getSelectedIndex(), 8, "selectedIndex is 8");
 		var aRows = oTable.getRows();
@@ -427,6 +436,12 @@ sap.ui.define([
 
 		$Row.rowSelector.trigger("tap");
 		assert.equal(oTable.getProperty("selectedIndex"), -1, "selectedIndex is -1");
+	});
+
+	QUnit.test("SelectedIndex", function(assert) {
+		oTable.setSelectedIndex(8);
+		assert.equal(oTable.getSelectedIndices().length, 1, "selectedIndex is set");
+		assert.equal(oTable.getSelectedIndices()[0], 8, "selectedIndex is 8");
 	});
 
 	QUnit.test("Check Selection of Last fixedBottomRow", function(assert) {
@@ -439,7 +454,7 @@ sap.ui.define([
 
 		if ($LastRow.rowSelector) {
 			$LastRow.rowSelector.trigger("tap");
-			assert.equal(oTable.getSelectedIndex(), 199, "Selected Index is 199");
+			assert.equal(oTable.getSelectedIndices()[0], 199, "Selected Index is 199");
 		}
 	});
 
@@ -5561,8 +5576,10 @@ sap.ui.define([
 		aMethodNames.forEach(function(sMethodName) {
 			var oSpy = sinon.spy(oSelectionPlugin, sMethodName);
 
-			this.oTable[sMethodName]();
-			assert.ok(oSpy.calledOnce, "Table#" + sMethodName + " calls LegacySelectionPlugin#" + sMethodName + " once");
+			if (this.oTable[sMethodName]) {
+				this.oTable[sMethodName]();
+				assert.ok(oSpy.calledOnce, "Table#" + sMethodName + " calls LegacySelectionPlugin#" + sMethodName + " once");
+			}
 		}.bind(this));
 
 		this.oTable.addPlugin(this.oTestPlugin);

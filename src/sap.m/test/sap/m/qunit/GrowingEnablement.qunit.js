@@ -878,6 +878,9 @@ sap.ui.define([
 
 	QUnit.module("itemsPool");
 
+	/**
+	 * @deprecated as of 1.48. ODataModel V1 is deprecated.
+	 */
 	QUnit.test("should not be created for OData V1 model", function(assert) {
 		var done = assert.async();
 		var oMockServer = startMockServer();
