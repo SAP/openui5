@@ -1037,7 +1037,8 @@ sap.ui.define([
 	QUnit.test("Message with groups (write) - Batch: on,  JSON: false", fnTestWriteBatchGroups.bind(this, true,  false));
 
 
-
+/** @deprecated As of version 1.79.0, reason sap.ui.core.message.Message#getTarget */
+(function() {
 	var fnTestFunctionImport = function(assert) {
 		var done = assert.async();
 
@@ -1200,6 +1201,7 @@ sap.ui.define([
 	};
 
 	QUnit.test("Messages with 'invalid' targets",  fnTestFunctionImportWithInvalidTarget);
+}());
 
 	var fnTestRemoveMessagesWithBinding = function(assert) {
 		var done = assert.async();
