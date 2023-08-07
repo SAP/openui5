@@ -117,9 +117,53 @@ sap.ui.define([
 
 	// make _AggregationCache a _Cache, but actively disinherit some critical methods
 	_AggregationCache.prototype = Object.create(_Cache.prototype);
-	_AggregationCache.prototype._delete = null;
 	_AggregationCache.prototype.addTransientCollection = null;
 	_AggregationCache.prototype.getAndRemoveValue = null;
+
+	/**
+	 * Deletes an entity on the server and in the cached data.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID to be used for the DELETE request
+	 * @param {string} sEditUrl
+	 *   The entity's edit URL to be used for the DELETE request
+	 * @param {string} sPath
+	 *   The entity's path within the cache (as used by change listeners)
+	 * @param {object} [oETagEntity]
+	 *   An entity with the ETag of the binding for which the deletion was requested. This is
+	 *   provided if the deletion is delegated from a context binding with empty path to a list
+	 *   binding
+	 * @param {function(number,number):void} fnCallback
+	 *   A function which is called immediately when an entity has been deleted from the cache, or
+	 *   when it was re-inserted; the index of the entity and an offset (-1 for deletion, 1 for
+	 *   re-insertion) are passed as parameter
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise which is resolved without a result in case of success, or rejected with an
+	 *   instance of <code>Error</code> in case of failure
+	 * @throws {Error} If the cache is shared
+	 *
+	 * @public
+	 */
+	// @override sap.ui.model.odata.v4.lib._Cache#_delete
+	_AggregationCache.prototype._delete = function (oGroupLock, sEditUrl, sPath, oETagEntity,
+			fnCallback) {
+		const iIndex = parseInt(sPath);
+		const oElement = this.aElements[iIndex];
+		const oCache = _Helper.getPrivateAnnotation(oElement, "parent");
+		const iCacheIndex = _Helper.getPrivateAnnotation(oElement, "index");
+		return oCache._delete(oGroupLock, sEditUrl, iCacheIndex.toString(), oETagEntity,
+			(_iIndex, iOffset) => { // _iIndex is the index in oCache
+				if (iOffset < 0) { // deleting
+					this.shiftIndex(iIndex, iOffset);
+					this.removeElement(this.aElements, iIndex,
+						_Helper.getPrivateAnnotation(oElement, "predicate"), "");
+				} else { // reinserting
+					this.restoreElement(this.aElements, iIndex, oElement, "");
+					this.shiftIndex(iIndex, iOffset);
+				}
+				fnCallback(iIndex, iOffset);
+			});
+	};
 
 	/**
 	 * Copies the given elements from a cache read into <code>this.aElements</code>.
@@ -250,7 +294,7 @@ sap.ui.define([
 			iCount = 0,
 			iDescendants,
 			aElements = this.aElements,
-			oGroupNode = this.fetchValue(_GroupLock.$cached, sGroupNodePath).getResult(),
+			oGroupNode = this.getValue(sGroupNodePath),
 			iGroupNodeLevel = oGroupNode["@$ui5.node.level"],
 			iIndex = aElements.indexOf(oGroupNode),
 			i = iIndex + 1;
@@ -465,7 +509,7 @@ sap.ui.define([
 			iCount,
 			aElements = this.aElements,
 			oGroupNode = typeof vGroupNodeOrPath === "string"
-				? this.fetchValue(_GroupLock.$cached, vGroupNodeOrPath).getResult()
+				? this.getValue(vGroupNodeOrPath)
 				: vGroupNodeOrPath,
 			iIndex,
 			aSpliced = _Helper.getPrivateAnnotation(oGroupNode, "spliced"),
@@ -1127,6 +1171,14 @@ sap.ui.define([
 			this.oCountPromise.$resolve = fnResolve;
 		}
 		this.oFirstLevel = this.createGroupLevelCache();
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.lib._CollectionCache#resetChangesForPath
+	 */
+	_AggregationCache.prototype.resetChangesForPath = function (sPath) {
+		_Helper.getPrivateAnnotation(this.getValue(sPath), "parent").resetChangesForPath(sPath);
 	};
 
 	/**

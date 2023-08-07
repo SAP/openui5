@@ -24822,11 +24822,6 @@ sap.ui.define([
 
 			assert.throws(function () {
 				// code under test (JIRA: CPOUI5ODATAV4-1851)
-				oRoot.delete();
-			}, new Error("Cannot delete " + oRoot + " when using data aggregation"));
-
-			assert.throws(function () {
-				// code under test (JIRA: CPOUI5ODATAV4-1851)
 				oRoot.requestRefresh();
 			}, new Error("Cannot refresh " + oRoot + " when using data aggregation"));
 
@@ -27471,6 +27466,272 @@ sap.ui.define([
 				"/EMPLOYEES('4')",
 				"/EMPLOYEES('5')"
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Deferred delete of Gamma, a leaf in a recursive hierarchy which is not the only
+	// child of its parent. Before the delete ensure that there are two invisible elements (Delta,
+	// Epsilon). See that Gamma is deleted on the UI immediately. Request side effects so that
+	// Epsilon is removed again. Scroll down to see that Epsilon and Zeta are requested correctly.
+	// Cancel the delete and check that Gamma is restored correcty. Scroll down to the end to see
+	// that Eta and Theta are requested correctly.
+	// ("Pi" is attached to a name when it is read a second time.)
+	// JIRA: CPOUI5ODATAV4-2224
+	QUnit.test("Recursive Hierarchy: delete second leaf", function (assert) {
+		var oDeletePromise, oGamma, oTable;
+
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="3" >
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{MANAGER_ID}"/>
+	<Text id="name" text="{Name}"/>
+</t:Table>`;
+		const that = this;
+
+		// 0 Alpha
+		//    1 Beta
+		//    2 Gamma (deleted)
+		//    3 Delta (read via expand, comes into view due to delete)
+		//    4 Epsilon (exists hidden during delete, then dropped and read again via paging)
+		//    5 Zeta (read via paging after delete)
+		//    6 Eta (read via paging after reset)
+		// 7 Theta
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
+				+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+				+ ",Levels=1)"
+				+ "&$select=DrillState,ID,MANAGER_ID,Name&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "2",
+				value : [{
+					DrillState : "collapsed",
+					ID : "0",
+					MANAGER_ID : null,
+					Name : "Alpha"
+				}, {
+					DrillState : "collapsed",
+					ID : "7",
+					MANAGER_ID : null,
+					Name : "Theta"
+				}]
+			})
+			.expectChange("name", ["Alpha", "Theta"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectRequest("EMPLOYEES?"
+					+ "$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
+					+ "&$select=DrillState,ID,MANAGER_ID,Name&$count=true&$skip=0&$top=3", {
+					"@odata.count" : "6",
+					value : [{
+						DrillState : "collapsed",
+						ID : "1",
+						MANAGER_ID : "0",
+						Name : "Beta"
+					}, {
+						DrillState : "leaf",
+						ID : "2",
+						MANAGER_ID : "0",
+						Name : "Gamma"
+					}, {
+						DrillState : "leaf",
+						ID : "3",
+						MANAGER_ID : "0",
+						Name : "Delta"
+					}]
+				})
+				.expectChange("name", [, "Beta", "Gamma"]);
+
+			oTable.getRows()[0].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "expand");
+		}).then(function () {
+			that.expectRequest("EMPLOYEES"
+					+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
+					+ "&$select=DrillState,ID,MANAGER_ID,Name&$skip=3&$top=1", {
+					value : [{
+						DrillState : "leaf",
+						ID : "4",
+						MANAGER_ID : "0",
+						Name : "Epsilon"
+					}]
+				})
+				.expectChange("name", [,, "Gamma", "Delta", "Epsilon"]);
+
+			// code under test
+			oTable.setFirstVisibleRow(2);
+
+			return that.waitForChanges(assert, "scroll down");
+		}).then(function () {
+			that.expectChange("name", ["Alpha", "Beta", "Gamma"]);
+
+			// code under test
+			oTable.setFirstVisibleRow(0);
+
+			return that.waitForChanges(assert, "scroll up");
+		}).then(function () {
+			checkTable("before delete", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')",
+				"/EMPLOYEES('4')",
+				"/EMPLOYEES('7')"
+			], [
+				[true, 1, "0", "", "Alpha"],
+				[false, 2, "1", "0", "Beta"],
+				[undefined, 2, "2", "0", "Gamma"]
+			], 8);
+
+			that.expectChange("name", [,, "Delta"]);
+
+			oGamma = oTable.getRows()[2].getBindingContext();
+			// code under test
+			oDeletePromise = oGamma.delete("doNotSubmit");
+
+			return that.waitForChanges(assert, "delete");
+		}).then(function () {
+			checkTable("after delete", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('3')",
+				"/EMPLOYEES('4')",
+				"/EMPLOYEES('7')"
+			], [
+				[true, 1, "0", "", "Alpha"],
+				[false, 2, "1", "0", "Beta"],
+				[undefined, 2, "3", "0", "Delta"]
+			], 7);
+
+			that.expectRequest("EMPLOYEES?$select=ID,Name"
+					+ "&$filter=ID eq '0' or ID eq '1' or ID eq '3'&$top=3", {
+					value : [{
+						ID : "0",
+						Name : "Alpha Pi"
+					}, {
+						ID : "1",
+						Name : "Beta Pi"
+					}, {
+						ID : "3",
+						Name : "Delta Pi"
+					}]
+				})
+				.expectChange("name", ["Alpha Pi", "Beta Pi", "Delta Pi"]);
+
+			return Promise.all([
+				// code under test
+				oGamma.getBinding().getHeaderContext().requestSideEffects(["Name"]),
+				that.waitForChanges(assert, "side effects")
+			]);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES"
+					+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
+					+ "&$select=DrillState,ID,MANAGER_ID,Name&$filter=not (ID eq '2')"
+					+ "&$skip=2&$top=2", {
+					"@odata.count" : "5",
+					value : [{
+						DrillState : "leaf",
+						ID : "4",
+						MANAGER_ID : "0",
+						Name : "Epsilon Pi"
+					}, {
+						DrillState : "collapsed",
+						ID : "5",
+						MANAGER_ID : "0",
+						Name : "Zeta"
+					}]
+				})
+				.expectChange("name", [,, "Delta Pi", "Epsilon Pi", "Zeta"]);
+
+			// code under test
+			oTable.setFirstVisibleRow(2);
+
+			return that.waitForChanges(assert, "scroll while deleted");
+		}).then(function () {
+			checkTable("after scroll while deleted", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('3')",
+				"/EMPLOYEES('4')",
+				"/EMPLOYEES('5')"
+			], [
+				[undefined, 2, "3", "0", "Delta Pi"],
+				[undefined, 2, "4", "0", "Epsilon Pi"],
+				[false, 2, "5", "0", "Zeta"]
+			], 7);
+
+			that.expectCanceledError("Failed to delete /EMPLOYEES('2')",
+					"Request canceled: DELETE EMPLOYEES('2'); group: doNotSubmit")
+				.expectChange("name", [,, "Gamma", "Delta Pi", "Epsilon Pi", "Zeta"]);
+
+			// code under test
+			oGamma.resetChanges();
+
+			return checkCanceled(assert, oDeletePromise);
+		}).then(function () {
+			checkTable("after reset", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')",
+				"/EMPLOYEES('4')",
+				"/EMPLOYEES('5')"
+			], [
+				[undefined, 2, "2", "0", "Gamma"],
+				[undefined, 2, "3", "0", "Delta Pi"],
+				[undefined, 2, "4", "0", "Epsilon Pi"]
+			], 8);
+
+			that.expectRequest("EMPLOYEES"
+					+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
+					+ "&$select=DrillState,ID,MANAGER_ID,Name&$skip=5&$top=1", {
+					value : [{
+						DrillState : "collapsed",
+						ID : "6",
+						MANAGER_ID : "0",
+						Name : "Eta"
+					}]
+				})
+				.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
+					+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=1)"
+					+ "&$select=DrillState,ID,MANAGER_ID,Name&$skip=1&$top=1", {
+					value : [{
+						DrillState : "collapsed",
+						ID : "7",
+						MANAGER_ID : null,
+						Name : "Theta Pi"
+					}]
+				})
+				.expectChange("name", [,,,,,, "Eta", "Theta Pi"]);
+
+			// code under test
+			oTable.setFirstVisibleRow(5);
+
+			return that.waitForChanges(assert, "scroll to bottom");
+		}).then(function () {
+			checkTable("after scroll to bottom", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')",
+				"/EMPLOYEES('4')",
+				"/EMPLOYEES('5')",
+				"/EMPLOYEES('6')",
+				"/EMPLOYEES('7')"
+			], [
+				[false, 2, "5", "0", "Zeta"],
+				[false, 2, "6", "0", "Eta"],
+				[false, 1, "7", "", "Theta Pi"]
+			], 8);
 		});
 	});
 

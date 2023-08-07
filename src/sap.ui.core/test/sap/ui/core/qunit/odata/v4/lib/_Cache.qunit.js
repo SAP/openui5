@@ -384,12 +384,10 @@ sap.ui.define([
 				"@odata.etag" : sEtag
 			}, {}],
 			fnCallback = this.spy(),
-			oCountExpectation,
 			oDeleted = {index : "~insert~"},
 			oError = new Error(""),
 			oGroupLock = {getGroupId : function () {}},
 			oHelperMock = this.mock(_Helper),
-			oIndexExpectation,
 			oMessage1 = {code : "CODE1"},
 			oMessage2 = {code : "CODE2", persistent : true},
 			oMessageExpectation,
@@ -398,14 +396,12 @@ sap.ui.define([
 			oPromise,
 			oRequestExpectation,
 			oRequestPromise,
-			oSpliceExpectation,
+			oRestoreExpectation,
 			bSuccess = oFixture.iStatus === 200 || oFixture.iStatus === 404;
 
 		function checkCleanedUp() {
 			assert.notOk("@$ui5.context.isDeleted" in aCacheData[1]);
 			assert.deepEqual(aCacheData.$deleted, ["a", "b", "c"]);
-			assert.strictEqual(aCacheData.$created, oFixture.bCreated ? 2 : 1);
-			assert.strictEqual(oCache.iActiveElements, oFixture.bCreated && !sPath ? 2 : 1);
 			if (oFixture.bInactive) {
 				sinon.assert.calledOnceWithExactly(fnCallback, 1, -1);
 			} else {
@@ -427,16 +423,12 @@ sap.ui.define([
 				.exactly(oFixture.bMessagesToRestore ? 1 : 0)
 				.withExactArgs(undefined, oFixture.iStatus < 0
 					? [oMessage1, oMessage2] : [oMessage1]);
-			aCacheData.$count = 2; // ensure that count is updated
-			oCountExpectation = oHelperMock.expects("addToCount").exactly(iOnFailure)
-				.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath,
-					sinon.match.same(aCacheData), 1);
-			aCacheData.$created = 1;
-			oCache.iActiveElements = 1;
-			oSpliceExpectation = that.mock(aCacheData).expects("splice").exactly(iOnFailure)
-				.withExactArgs("~insert~", 0, sinon.match.same(aCacheData[1]));
-			oIndexExpectation = that.mock(oCache).expects("adjustIndexes").exactly(iOnFailure)
-				.withExactArgs(sPath, sinon.match.same(aCacheData), "~insert~", 1, 2);
+			oRestoreExpectation = that.mock(oCache).expects("restoreElement").exactly(iOnFailure)
+				.withExactArgs(sinon.match.same(aCacheData), "~insert~",
+					sinon.match.same(aCacheData[1]), sPath, 2)
+				.callsFake(() => {
+					assert.deepEqual(aCacheData.$deleted.length, 4);
+				});
 			if (oFixture.iStatus !== 200) {
 				if (oFixture.iStatus < 0) { // simulate the cancel
 					oError.canceled = true;
@@ -445,9 +437,7 @@ sap.ui.define([
 					oRequestExpectation.args[0][6]();
 
 					assert.strictEqual(oMessageExpectation.called, !!oFixture.bMessagesToRestore);
-					assert.ok(oCountExpectation.called);
-					assert.ok(oSpliceExpectation.called);
-					assert.ok(oIndexExpectation.called);
+					assert.ok(oRestoreExpectation.called);
 					checkCleanedUp();
 				}
 				throw oError;
@@ -605,8 +595,7 @@ sap.ui.define([
 		};
 
 		oCache.fetchValue = function () {};
-		aCacheData.$count = 2; // ensure that count is not updated
-		this.mock(_Helper).expects("setCount").never();
+		this.mock(oCache).expects("restoreElement").never();
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
 			.returns(SyncPromise.resolve(aCacheData));
@@ -996,6 +985,36 @@ sap.ui.define([
 		}]);
 		assert.deepEqual(aCacheData.$byPredicate, {"('2')" : aCacheData[0]});
 	});
+
+	//*********************************************************************************************
+["", "~path~"].forEach(function (sPath) {
+	[false, true].forEach(function (bTransient) {
+	QUnit.test(`_Cache#restoreElement, path=${sPath}, transient=${bTransient}`, function (assert) {
+		const oCache = new _Cache(this.oRequestor, "TEAMS");
+		oCache.iLimit = 234;
+		oCache.iActiveElements = 1;
+		const aElements = [];
+		aElements.$created = 2;
+
+		this.mock(oCache).expects("adjustIndexes")
+			.withExactArgs(sPath, sinon.match.same(aElements), 42, 1, "~iDeletedIndex~");
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs("~oElement~", "transientPredicate")
+			.returns(bTransient ? "($uid=id-1-23)" : undefined);
+		this.mock(_Helper).expects("addToCount")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath,
+				sinon.match.same(aElements), 1);
+		this.mock(aElements).expects("splice").withExactArgs(42, 0, "~oElement~");
+
+		// code under test
+		oCache.restoreElement(aElements, 42, "~oElement~", sPath, "~iDeletedIndex~");
+
+		assert.strictEqual(oCache.iLimit, bTransient || sPath ? 234 : 235);
+		assert.strictEqual(aElements.$created, bTransient ? 3 : 2);
+		assert.strictEqual(oCache.iActiveElements, bTransient && !sPath ? 2 : 1);
+	});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#registerChangeListener", function () {
@@ -5603,6 +5622,13 @@ sap.ui.define([
 
 		assert.deepEqual(aElements.$deleted, [{index : 2, created : true}, {index : 3}],
 			"insert a created entity at the end: only non-created entities move");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#adjustIndexes: no path and no aReadRequests", function () {
+		const oCache = new _Cache(this.oRequestor, "Employees"); // would be an _AggregationCache
+
+		oCache.adjustIndexes("", [], 1);
 	});
 
 	//*********************************************************************************************

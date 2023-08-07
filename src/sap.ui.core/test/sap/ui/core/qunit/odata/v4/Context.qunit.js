@@ -1114,7 +1114,7 @@ sap.ui.define([
 				getHeaderContext : function () {},
 				lockGroup : function () {},
 				onKeepAliveChanged : function () {},
-				mParameters : {}
+				mParameters : "~mParameters~"
 			},
 			oContext = Context.create("~oModel~", oBinding, "/Foo/Bar('42')", 42,
 				oFixture.transient ? new SyncPromise(function () {}) : /*oCreatePromise*/undefined),
@@ -1123,6 +1123,8 @@ sap.ui.define([
 			bSelected = !!oFixture.groupId;
 
 		oContext.setSelected(bSelected);
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(_Helper).expects("checkGroupId").exactly(oFixture.transient ? 0 : 1)
 			.withExactArgs("myGroup");
@@ -1168,13 +1170,15 @@ sap.ui.define([
 				checkSuspended : function () {},
 				delete : function () {},
 				lockGroup : function () {},
-				mParameters : {}
+				mParameters : "~mParameters~"
 			},
 			oGroupLock = {
 				unlock : function () {}
 			},
 			oContext = Context.create("~oModel~", oBinding, "/Foo/Bar('42')");
 
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("isKeepAlive").exactly(sGroupId ? 0 : 1)
 			.withExactArgs().returns(true);
@@ -1206,13 +1210,15 @@ sap.ui.define([
 				checkSuspended : function () {},
 				delete : function () {},
 				lockGroup : function () {},
-				mParameters : {}
+				mParameters : "~mParameters~"
 			},
 			oContext = Context.create("~oModel~", oBinding, "/Foo/Bar('42')", 42),
 			oGroupLock = {
 				unlock : function () {}
 			};
 
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(_Helper).expects("checkGroupId").withExactArgs("myGroup");
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
@@ -1231,13 +1237,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("delete: $$aggregation", function (assert) {
+	QUnit.test("delete: data aggregation", function (assert) {
 		var oBinding = {
-				mParameters : {
-					$$aggregation : {}
-				}
+				mParameters : "~mParameters~"
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42);
+
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs("~mParameters~").returns(true);
 
 		assert.throws(function () {
 			// code under test
@@ -1249,10 +1256,12 @@ sap.ui.define([
 	QUnit.test("delete: no lock, but not a kept-alive context", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
-				mParameters : {}
+				mParameters : "~mParameters~"
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42);
 
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 
 		// code under test
@@ -1265,10 +1274,12 @@ sap.ui.define([
 	QUnit.test("delete: no lock, but kept-alive context in the collection", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
-				mParameters : {}
+				mParameters : "~mParameters~"
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/0", 0);
 
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("isKeepAlive").withExactArgs().returns(true);
 
@@ -1282,11 +1293,13 @@ sap.ui.define([
 	QUnit.test("delete: error in checkSuspended", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
-				mParameters : {}
+				mParameters : "~mParameters~"
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42),
 			oError = new Error("suspended");
 
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs().throws(oError);
 
 		assert.throws(function () {
@@ -1298,12 +1311,14 @@ sap.ui.define([
 	QUnit.test("delete: error in checkGroupId", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
-				mParameters : {}
+				mParameters : "~mParameters~"
 			},
 			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
 			oError = new Error("invalid group");
 
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(_Helper).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
 
