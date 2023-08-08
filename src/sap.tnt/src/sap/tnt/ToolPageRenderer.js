@@ -41,7 +41,7 @@ sap.ui.define([
 			oRM.openStart("div")
 				.class("sapTntToolPageHeaderWrapper");
 
-			if (oHeader && oSubHeader) {
+			if (oHeader && oSubHeader && oSubHeader.getVisible()) {
 				oRM.class("sapTntToolPageHeaderWithSubHeaderWrapper");
 			}
 
