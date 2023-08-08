@@ -660,7 +660,7 @@ function(
 			this._bPreventValueRemove = false;
 
 			if (this.getValue() === "" || (typeof this.getValue() === "string" && oItem.getText().toLowerCase().startsWith(this.getValue().toLowerCase()))) {
-				if (ListHelpers.getListItem(oItem).isSelected()) {
+				if (ListHelpers.getListItem(oItem).getSelected()) {
 					this.setValue('');
 				} else {
 					this.setSelection(oParam);
@@ -1850,7 +1850,7 @@ function(
 	 */
 	MultiComboBox.prototype._getSelectedItemsOf = function(aItems) {
 		for ( var i = 0, iLength = aItems.length, aSelectedItems = []; i < iLength; i++) {
-			if (ListHelpers.getListItem(aItems[i]).isSelected()) {
+			if (ListHelpers.getListItem(aItems[i]).getSelected()) {
 				aSelectedItems.push(aItems[i]);
 			}
 		}
