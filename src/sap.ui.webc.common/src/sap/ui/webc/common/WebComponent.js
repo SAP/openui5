@@ -93,6 +93,10 @@ sap.ui.define([
 		/**
 		 * Constructs and initializes a Web Component Wrapper with the given <code>sId</code> and settings.
 		 *
+	 	 * @param {string} [sId] Optional ID for the new control; generated automatically if no non-empty ID is given
+	 	 *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
+	 	 * @param {object} [mSettings] Object with initial settings for the new control
+		 *
 		 * @class Base Class for Web Components.
 		 * Web Components are agnostic UI elements which can be integrated into the UI5
 		 * programming model by using this wrapper control. This wrapper control takes
@@ -145,6 +149,160 @@ sap.ui.define([
 			renderer: WebComponentRenderer
 
 		}, /* Metadata constructor */ WebComponentMetadata);
+
+		/**
+		 * @typedef {sap.ui.core.Element.MetadataOptions} sap.ui.webc.common.WebComponent.MetadataOptions
+		 *
+		 * The structure of the "metadata" object which is passed when inheriting from sap.ui.core.Element using its static "extend" method.
+		 * See {@link sap.ui.core.Element.extend} for details on its usage.
+		 *
+		 * @property {string} tag
+		 *     Tag name of the Web Component to be used in the renderer to render the HTML.
+		 * @property {Object<string, string | sap.ui.webc.common.WebComponent.MetadataOptions.Property>} [properties]
+		 *     An object literal whose properties each define a new managed property in the WebComponent subclass.
+		 *     See {@link sap.ui.base.ManagedObject.MetadataOptions.Property Property} for more details.
+		 * @property {Object<string, string | sap.ui.webc.common.WebComponent.MetadataOptions.Aggregation>} [aggregations]
+		 *     An object literal whose properties each define a new aggregation in the ManagedObject subclass.
+		 *     See {@link sap.ui.base.ManagedObject.MetadataOptions.Aggregation Aggregation} for more details.
+		 * @property {Object<string, string | sap.ui.webc.common.WebComponent.MetadataOptions.Assocation>} [associations]
+		 *     An object literal whose properties each define a new assocation in the ManagedObject subclass.
+		 *     See {@link sap.ui.base.ManagedObject.MetadataOptions.Assocation Assocation} for more details.
+		 * @property {string[]} [getters]
+		 *     Proxied public getters of the Web Component which are directly accessible on the wrapper Control.
+		 * @property {string[]} [methods]
+		 *     Proxied public methods of the Web Component which are directly accessible on the wrapper Control.
+		 *
+		 * @public
+		 */
+
+		/**
+		 * @typedef {sap.ui.base.ManagedObject.MetadataOptions.Property} sap.ui.webc.common.WebComponent.MetadataOptions.Property
+		 *
+		 * An object literal describing a property of a class derived from <code>sap.ui.webc.common.WebComponent</code>.
+		 * See {@link sap.ui.webc.common.WebComponent.MetadataOptions MetadataOptions} for details on its usage.
+		 *
+		 * @property {"attribute" | "style" | "textContent" | "slot" | "none" | sap.ui.webc.common.WebComponent.MetadataOptionsPropertyMapping} [mapping="attribute"] Defines the mapping of the attribute to be either "attribute", "style", "textContent", "slot", or "none".
+		 *     The default mapping of a property is "attribute" which just renders the value of the property into an attribute of the tag.
+		 *
+		 * @public
+		 */
+
+		/**
+		 * @typedef {object} sap.ui.webc.common.WebComponent.MetadataOptions.Property.Mapping
+		 *
+		 * An object literal describing the mapping of a property of a class derived from <code>sap.ui.webc.common.WebComponent</code>.
+		 *
+		 * @property {"attribute" | "style" | "textContent" | "slot" | "none"} [type="attribute"] Defines the mapping of the property to be either "attribute", "style", "textContent", "slot", or "none".
+		 *     The default mapping of a property is "attribute" which just renders the value into an attribute of the tag.
+		 * @property {string} [to] Defines the target of the mapping of the attribute to which it will be mapped to.
+		 * @property {string} [formatter] Defines the name of the formatter function at the WebComponent instance to format the value before its being mapped.
+		 *
+		 * @public
+		 */
+
+		/**
+		 * @typedef {sap.ui.webc.common.WebComponent.MetadataOptions.Property.Mapping} sap.ui.webc.common.WebComponent.MetadataOptionsPropertyMapping
+		 *
+		 * HACK! This mapping omits the <code>no-unnecessary-qualifier</code> error or we need to extend the <code>tslint.json</code>!
+		 *
+		 * @public
+		 */
+
+		/**
+		 * @typedef {sap.ui.base.ManagedObject.MetadataOptions.Aggregation} sap.ui.webc.common.WebComponent.MetadataOptions.Aggregation
+		 *
+		 * An object literal describing a property of a class derived from <code>sap.ui.webc.common.WebComponent</code>.
+		 * See {@link sap.ui.webc.common.WebComponent.MetadataOptions MetadataOptions} for details on its usage.
+		 *
+		 * @property {string} [slot] Flag that marks the property as deprecated (defaults to false). May lead to an additional warning
+		 *     log message at runtime when the property is still used. For the documentation, also add a <code>@deprecated</code> tag in the JSDoc,
+		 *     describing since when it is deprecated and what any alternatives are.
+		 *
+		 * @public
+		 */
+
+		/**
+		 * @typedef {sap.ui.base.ManagedObject.MetadataOptions.Association} sap.ui.webc.common.WebComponent.MetadataOptions.Association
+		 *
+		 * An object literal describing an association of a class derived from <code>sap.ui.webc.common.WebComponent</code>.
+		 * See {@link sap.ui.webc.common.WebComponent.MetadataOptions MetadataOptions} for details on its usage.
+		 *
+		 * @property {"property" | sap.ui.webc.common.WebComponent.MetadataOptionsAssociationMapping} [mapping="property"] Defines the mapping of the association which default to "property".
+		 *     The default mapping of a property is "property" which just renders the value into an attribute of the tag.
+		 *
+		 * @public
+		 */
+
+		/**
+		 * @typedef {object} sap.ui.webc.common.WebComponent.MetadataOptions.Association.Mapping
+		 *
+		 * An object literal describing the mapping of an association as property of a class derived from <code>sap.ui.webc.common.WebComponent</code>.
+		 *
+		 * @property {"property"} [type="property"] Defines the mapping of the association which defaults to "property".
+		 * @property {string} [to] Defines the target of the mapping of the association to which property it will be mapped to.
+		 * @property {string} [formatter] Defines the name of the formatter function at the WebComponent instance to format the value before its being mapped.
+		 *
+		 * @public
+		 */
+
+		/**
+		 * @typedef {sap.ui.webc.common.WebComponent.MetadataOptions.Association.Mapping} sap.ui.webc.common.WebComponent.MetadataOptionsAssociationMapping
+		 *
+		 * HACK! This mapping omits the <code>no-unnecessary-qualifier</code> error or we need to extend the <code>tslint.json</code>!
+		 *
+		 * @public
+		 */
+
+		/**
+		 * Defines a new subclass of WebComponent with the name <code>sClassName</code> and enriches it with
+		 * the information contained in <code>oClassInfo</code>.
+		 *
+		 * <code>oClassInfo</code> can contain the same information that {@link sap.ui.base.ManagedObject.extend} already accepts,
+		 * plus the <code>dnd</code> property in the metadata object literal to configure drag-and-drop behavior
+		 * (see {@link sap.ui.webc.common.WebComponent.MetadataOptions MetadataOptions} for details). Objects describing aggregations can also
+		 * have a <code>dnd</code> property when used for a class extending <code>WebComponent</code>
+		 * (see {@link sap.ui.base.ManagedObject.MetadataOptions.AggregationDnD AggregationDnD}).
+		 *
+		 * Example:
+		 * <pre>
+		 * WebComponent.extend('sap.mylib.MyElement', {
+		 *   metadata : {
+		 *     library : 'sap.mylib',
+		 *     tag : 'my-webcomponent',
+		 *     properties : {
+		 *       value : 'string',
+		 *       width : {
+		 *         type: 'sap.ui.core.CSSSize',
+		 *         mapping: 'style'
+		 *       }
+		 *     },
+		 *     defaultAggregation: "content",
+		 *     aggregations : {
+		 *       content : {
+		 *         type: 'sap.ui.core.Control',
+		 *         multiple : true
+		 *       },
+		 *       header : {
+		 *         type : 'sap.ui.core.Control',
+		 *         multiple : false,
+		 *         slot: 'header'
+		 *       }
+		 *     }
+		 *   }
+		 * });
+		 * </pre>
+		 *
+		 * @param {string} sClassName Name of the class to be created
+		 * @param {object} [oClassInfo] Object literal with information about the class
+		 * @param {sap.ui.webc.common.WebComponent.MetadataOptions} [oClassInfo.metadata] the metadata object describing the class: tag, properties, aggregations, events etc.
+		 * @param {function} [FNMetaImpl] Constructor function for the metadata object. If not given, it defaults to <code>sap.ui.core.ElementMetadata</code>.
+		 * @returns {function} Created class / constructor function
+		 *
+		 * @public
+		 * @static
+		 * @name sap.ui.webc.common.WebComponent.extend
+		 * @function
+		 */
 
 		/**
 		 * Assigns the __slot property which tells RenderManager to render the sap.ui.core.Element (oElement) with a "slot" attribute
