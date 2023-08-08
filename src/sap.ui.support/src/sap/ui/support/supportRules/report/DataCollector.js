@@ -5,7 +5,17 @@
 /**
  * Provides methods for information retrieval from the core.
  */
-sap.ui.define(["sap/ui/core/Core", "sap/ui/VersionInfo", "sap/base/util/LoaderExtensions", 'sap/base/security/encodeXML', "sap/ui/core/Component", "sap/ui/core/Configuration", "sap/ui/core/theming/ThemeManager", "sap/ui/core/support/ToolsAPI", "sap/ui/thirdparty/URI"],
+sap.ui.define([
+	"sap/ui/core/Core",
+	"sap/ui/VersionInfo",
+	"sap/base/util/LoaderExtensions",
+	"sap/base/security/encodeXML",
+	"sap/ui/core/Component",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/theming/ThemeManager",
+	"sap/ui/core/support/ToolsAPI",
+	"sap/ui/thirdparty/URI"
+],
 	function (Core, VersionInfo, LoaderExtensions, encodeXML, Component, Configuration, ThemeManager, ToolsAPI, URI) {
 	"use strict";
 
@@ -59,13 +69,13 @@ sap.ui.define(["sap/ui/core/Core", "sap/ui/VersionInfo", "sap/base/util/LoaderEx
 	};
 
 	/**
-	 * @returns {Array} All 'sap.app' and 'sap.fiori' entries from all loaded manifest.json files.
+	 * @returns {object[]} All 'sap.app' and 'sap.fiori' entries from all loaded manifest.json files.
 	 */
 	DataCollector.prototype.getAppInfo = function() {
 		var aAppInfos = [];
 		Component.registry.forEach(function(oComponent) {
-			var oSapApp = oComponent.getMetadata().getManifestEntry("sap.app"),
-				oSapFiori = oComponent.getMetadata().getManifestEntry("sap.fiori");
+			var oSapApp = oComponent.getManifestEntry("sap.app"),
+				oSapFiori = oComponent.getManifestEntry("sap.fiori");
 
 			if (oSapApp) {
 				aAppInfos.push(oSapApp);
