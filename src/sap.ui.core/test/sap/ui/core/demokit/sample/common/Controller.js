@@ -9,10 +9,11 @@ sap.ui.define([
 	"sap/m/MessagePopover",
 	"sap/m/ResponsivePopover",
 	"sap/m/TextArea",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/util/XMLHelper"
 ], function (Button, Link, library, MessageItem, MessagePopover, ResponsivePopover, TextArea,
-		Controller, XMLHelper) {
+		Messaging, Controller, XMLHelper) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -154,18 +155,16 @@ sap.ui.define([
 				}
 			}
 
-			this.messagePopover.setModel(sap.ui.getCore().getMessageManager().getMessageModel(),
-				"messages");
+			this.messagePopover.setModel(Messaging.getMessageModel(), "messages");
 			this.messagePopover.getBinding("items").attachChange(handleMessagesChange, this);
 			this.messagePopover.attachAfterClose(function () {
-				var oMessageManager = sap.ui.getCore().getMessageManager(),
-					aMessages;
+				var aMessages;
 
 				// remove all bound messages which have to be handled by the application
-				aMessages = oMessageManager.getMessageModel().getData().filter(function (oMessage) {
+				aMessages = Messaging.getMessageModel().getData().filter(function (oMessage) {
 					return oMessage.persistent;
 				});
-				oMessageManager.removeMessages(aMessages);
+				Messaging.removeMessages(aMessages);
 			});
 		},
 

@@ -13,11 +13,12 @@
 
 		<script>
 			sap.ui.require([
+				"sap/ui/core/Messaging",
 				"sap/ui/model/json/JSONModel",
 				"sap/ui/model/SimpleType",
 				"sap/ui/model/type/Float",
 				"sap/m/Input"
-			], function(JSONModel, SimpleType, Float, Input) {
+			], function(Messaging, JSONModel, SimpleType, Float, Input) {
 
 				SimpleType.extend("AsyncFloat", {
 					constructor: function(oFormatOptions, oConstraints) {
@@ -72,7 +73,7 @@
 						type: new AsyncFloat({decimals: 2}, {maximum: 5})
 					}
 				});
-				sap.ui.getCore().getMessageManager().registerObject(input, true);
+				Messaging.registerObject(input, true);
 				input.placeAt('content');
 
 			});

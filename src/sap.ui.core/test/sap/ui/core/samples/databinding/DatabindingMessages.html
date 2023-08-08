@@ -20,161 +20,166 @@
 			}
 		});
 
-		var oMessageManager = sap.ui.getCore().getMessageManager();
-		// Model
-		var oModel = new sap.ui.model.json.JSONModel({
-			form: {
-				name: "Max",
-				surname: "Mustermann",
-				street: "Musterstr.",
-				streetnr: 1,
-				birthdate: new Date(),
-				zip: "12345",
-				city: "Musterstadt",
-				country: "DE"
-			}
-		});
-
-		var oButton1 = new sap.m.Button({
-			text: "add Warning",
-			press: function() {
-				oMessageManager.addMessages(
-					new sap.ui.core.message.Message({
-						message: "Invalid order of characters in this name!",
-						type: sap.ui.core.MessageType.Warning,
-						target: "/form/name",
-						processor: oModel
-					})
-				)
-			}
-		});
-		var oButton2 = new sap.m.Button({
-			text: "add Info",
-			press: function() {
-				oMessageManager.addMessages(
-					new sap.ui.core.message.Message({
-						message: "Nice last name!",
-						type: sap.ui.core.MessageType.Information,
-						processor: oModel
-					})
-				)
-			}
-		});
-		var oButton3 = new sap.m.Button({
-			text: "add Success",
-			press: function() {
-				oMessageManager.addMessages(
-					new sap.ui.core.message.Message({
-						message: "City sucessfully updated",
-						type: sap.ui.core.MessageType.Success,
-						target: "/form/city",
-						processor: oModel
-					})
-				)
-			}
-		});
-		var oButton5 = new sap.m.Button({
-			text: "add Success for ZIP",
-			press: function() {
-				oMessageManager.addMessages(
-					new sap.ui.core.message.Message({
-						message: "de Zip is gut!",
-						type: sap.ui.core.MessageType.Success,
-						target: "/form/zip",
-						processor: oModel
-					})
-				)
-			}
-		});
-
-		var oButton4 = new sap.m.Button({
-			text: "clear Messages",
-			press: function() {
-				oMessageManager.removeAllMessages();
-			}
-		});
+		sap.ui.require([
+			"sap/ui/core/Messaging"
+		], function(Messaging) {
 
 
-		var oMessagePopoverButton = new sap.m.Button({
-			text: 'Show MessagePopover',
-			type: 'Accept',
-			press: function() {
-				oMP.openBy(this);
-			}
-		});
+			// Model
+			var oModel = new sap.ui.model.json.JSONModel({
+				form: {
+					name: "Max",
+					surname: "Mustermann",
+					street: "Musterstr.",
+					streetnr: 1,
+					birthdate: new Date(),
+					zip: "12345",
+					city: "Musterstadt",
+					country: "DE"
+				}
+			});
 
-		var oMP = new sap.m.MessagePopover({
-			items: {
-				path: "message>/",
-				template: new sap.m.MessageItem({
-					description: "{message>description}",
-					type: "{message>type}",
-					title: "{message>message}",
-					subtitle: {
-						path: 'message>additionalText'
-					}
-				})
-			}
-		});
+			var oButton1 = new sap.m.Button({
+				text: "add Warning",
+				press: function() {
+					Messaging.addMessages(
+						new sap.ui.core.message.Message({
+							message: "Invalid order of characters in this name!",
+							type: sap.ui.core.MessageType.Warning,
+							target: "/form/name",
+							processor: oModel
+						})
+					)
+				}
+			});
+			var oButton2 = new sap.m.Button({
+				text: "add Info",
+				press: function() {
+					Messaging.addMessages(
+						new sap.ui.core.message.Message({
+							message: "Nice last name!",
+							type: sap.ui.core.MessageType.Information,
+							processor: oModel
+						})
+					)
+				}
+			});
+			var oButton3 = new sap.m.Button({
+				text: "add Success",
+				press: function() {
+					Messaging.addMessages(
+						new sap.ui.core.message.Message({
+							message: "City sucessfully updated",
+							type: sap.ui.core.MessageType.Success,
+							target: "/form/city",
+							processor: oModel
+						})
+					)
+				}
+			});
+			var oButton5 = new sap.m.Button({
+				text: "add Success for ZIP",
+				press: function() {
+					Messaging.addMessages(
+						new sap.ui.core.message.Message({
+							message: "de Zip is gut!",
+							type: sap.ui.core.MessageType.Success,
+							target: "/form/zip",
+							processor: oModel
+						})
+					)
+				}
+			});
 
-		oMP.setModel(oMessageManager.getMessageModel(), "message");
+			var oButton4 = new sap.m.Button({
+				text: "clear Messages",
+				press: function() {
+					Messaging.removeAllMessages();
+				}
+			});
 
-		var oCompCont = new sap.ui.core.ComponentContainer("CompCont", {
-			name: "message",
-			id: "myMessageTest1"
-		});
-		var oCompCont2 = new sap.ui.core.ComponentContainer("CompCont2", {
-			name: "message",
-			id: "myMessageTest2",
-			handleValidation: true
-		});
-		var oCompCont3 = new sap.ui.core.ComponentContainer("CompCont3", {
-			name: "message.disabled",
-			id: "myMessageTest3",
-			handleValidation: true
-		});
-		var oCompCont4 = new sap.ui.core.ComponentContainer("CompCont4", {
-			name: "message.enabled",
-			id: "myMessageTest4",
-			handleValidation: true
-		});
 
-		var oPage = new sap.m.Page({
-			title: 'DataBinding Messages',
-			content: [oCompCont, oCompCont2, oCompCont3, oCompCont4, oButton1, oButton2, oButton3, oButton4, oButton5],
-			footer: new sap.m.Toolbar({
-				content: [
-					new sap.m.ToolbarSpacer(),
-					oMessagePopoverButton,
-					new sap.m.CheckBox({
-						selected: false,
-						text: "Compact mode",
-						select: function() {
-							jQuery("body").toggleClass("sapUiSizeCompact");
+			var oMessagePopoverButton = new sap.m.Button({
+				text: 'Show MessagePopover',
+				type: 'Accept',
+				press: function() {
+					oMP.openBy(this);
+				}
+			});
+
+			var oMP = new sap.m.MessagePopover({
+				items: {
+					path: "message>/",
+					template: new sap.m.MessageItem({
+						description: "{message>description}",
+						type: "{message>type}",
+						title: "{message>message}",
+						subtitle: {
+							path: 'message>additionalText'
 						}
-					}),
-					new sap.m.ToolbarSpacer()
-				]
-			})
-		});
+					})
+				}
+			});
 
-		var app = new sap.m.App("myApp", {
-			initialPage: oPage
-		});
+			oMP.setModel(Messaging.getMessageModel(), "message");
 
-		app.addPage(oPage).placeAt('content');
+			var oCompCont = new sap.ui.core.ComponentContainer("CompCont", {
+				name: "message",
+				id: "myMessageTest1"
+			});
+			var oCompCont2 = new sap.ui.core.ComponentContainer("CompCont2", {
+				name: "message",
+				id: "myMessageTest2",
+				handleValidation: true
+			});
+			var oCompCont3 = new sap.ui.core.ComponentContainer("CompCont3", {
+				name: "message.disabled",
+				id: "myMessageTest3",
+				handleValidation: true
+			});
+			var oCompCont4 = new sap.ui.core.ComponentContainer("CompCont4", {
+				name: "message.enabled",
+				id: "myMessageTest4",
+				handleValidation: true
+			});
 
-		sap.ui.getCore().attachValidationError(function(oEvent) {
-			alert('sap.ui.core: Validation Error');
-		});
-		sap.ui.getCore().attachParseError(function(oEvent) {
-			alert('sap.ui.core: Parse Error');
-		});
-		sap.ui.getCore().attachFormatError(function(oEvent) {
-			alert('sap.ui.core: Format Error');
-		});
-		sap.ui.getCore().attachValidationSuccess(function(oEvent) {
-			alert('sap.ui.core: Validation success');
+			var oPage = new sap.m.Page({
+				title: 'DataBinding Messages',
+				content: [oCompCont, oCompCont2, oCompCont3, oCompCont4, oButton1, oButton2, oButton3, oButton4, oButton5],
+				footer: new sap.m.Toolbar({
+					content: [
+						new sap.m.ToolbarSpacer(),
+						oMessagePopoverButton,
+						new sap.m.CheckBox({
+							selected: false,
+							text: "Compact mode",
+							select: function() {
+								jQuery("body").toggleClass("sapUiSizeCompact");
+							}
+						}),
+						new sap.m.ToolbarSpacer()
+					]
+				})
+			});
+
+			var app = new sap.m.App("myApp", {
+				initialPage: oPage
+			});
+
+			app.addPage(oPage).placeAt('content');
+
+			sap.ui.getCore().attachValidationError(function(oEvent) {
+				alert('sap.ui.core: Validation Error');
+			});
+			sap.ui.getCore().attachParseError(function(oEvent) {
+				alert('sap.ui.core: Parse Error');
+			});
+			sap.ui.getCore().attachFormatError(function(oEvent) {
+				alert('sap.ui.core: Format Error');
+			});
+			sap.ui.getCore().attachValidationSuccess(function(oEvent) {
+				alert('sap.ui.core: Validation success');
+			});
 		});
 	</script>
 </head>

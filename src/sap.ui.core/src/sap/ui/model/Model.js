@@ -949,9 +949,9 @@ sap.ui.define([
 			for (var sKey in this.mMessages) {
 				aMessages = aMessages.concat(this.mMessages[sKey]);
 			}
-			var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
-			if (MessageManager) {
-				MessageManager.updateMessages(aMessages, []);
+			var Messaging = sap.ui.require("sap/ui/core/Messaging");
+			if (Messaging) {
+				Messaging.updateMessages(aMessages, []);
 			}
 		}
 	};

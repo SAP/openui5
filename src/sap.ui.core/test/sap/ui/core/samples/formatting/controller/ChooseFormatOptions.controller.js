@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/UIComponent"
-], function (Controller, UIComponent) {
+], function (Controller, Messaging, UIComponent) {
 	"use strict";
 	return Controller.extend("sap.ui.core.samples.formatting.controller.Main", {
 		onInit: function () {},
@@ -36,7 +37,7 @@ sap.ui.define([
 		},
 
 		activate: function() {
-			sap.ui.getCore().getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 
 			// setTimeout is needed because the datastate is refreshed async
 			// without the setTimeout error states will not be removed after a rebind

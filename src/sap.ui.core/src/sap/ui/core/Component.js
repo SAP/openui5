@@ -319,7 +319,7 @@ sap.ui.define([
 				componentData: 'any'
 			},
 			version : "0.0",
-			/*enable/disable type validation by MessageManager
+			/*enable/disable type validation by Messaging
 			handleValidation: 'boolean'*/
 			includes : [],    // css, javascript files that should be used in the component
 			dependencies : {  // external dependencies
@@ -909,10 +909,10 @@ sap.ui.define([
 		// destroy the object
 		ManagedObject.prototype.destroy.apply(this, arguments);
 
-		// unregister for messaging (on MessageManager)
-		var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
-		if (MessageManager) {
-			MessageManager.unregisterObject(this);
+		// unregister for messaging (on Messaging)
+		var Messaging = sap.ui.require("sap/ui/core/Messaging");
+		if (Messaging) {
+			Messaging.unregisterObject(this);
 		}
 
 		// manifest exit (unload includes, ... / unregister customzing)
@@ -2358,7 +2358,7 @@ sap.ui.define([
 	 * @param {string} [mOptions.altManifestUrl] @since 1.61.0 Alternative URL for the manifest.json. If <code>mOptions.manifest</code>
 	 *     is set to an object value, this URL specifies the location to which the manifest object should resolve the relative
 	 *     URLs to.
-	 * @param {string} [mOptions.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>MessageManager</code>
+	 * @param {string} [mOptions.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>Messaging</code>
 	 * @param {object} [mOptions.asyncHints] Hints for asynchronous loading.
 	 *     <b>Beware:</b> This parameter is only used internally by the UI5 framework and compatibility cannot be guaranteed.
 	 *     The parameter must not be used in productive code, except in code delivered by the UI5 teams.
@@ -2462,7 +2462,7 @@ sap.ui.define([
 	 *              Component controller. Defaults to <code>sap.ui.getCore().getConfiguration().getManifestFirst()</code>
 	 *              <br/><b>DEPRECATED since 1.49.0, use <code>vConfig.manifest=true|false</code> instead!</b>
 	 *              Note that this property is ignored when <code>vConfig.manifest</code> has a value other than <code>undefined</code>.
-	 * @param {string} [vConfig.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>MessageManager</code>
+	 * @param {string} [vConfig.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>Messaging</code>
 	 * @returns {sap.ui.core.Component|Promise} the Component instance or a Promise in case of asynchronous loading
 	 *
 	 * @deprecated Since 1.56, use {@link sap.ui.core.Component.get Component.get} or {@link sap.ui.core.Component.create Component.create} instead.
@@ -2583,13 +2583,13 @@ sap.ui.define([
 			 */
 			var bHandleValidation = oInstance.getMetadata()._getManifestEntry("/sap.ui5/handleValidation");
 			if (bHandleValidation !== undefined || vConfig.handleValidation) {
-				var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
-				if (MessageManager) {
-					MessageManager.registerObject(oInstance, bHandleValidation === undefined ? vConfig.handleValidation : bHandleValidation);
+				var Messaging = sap.ui.require("sap/ui/core/Messaging");
+				if (Messaging) {
+					Messaging.registerObject(oInstance, bHandleValidation === undefined ? vConfig.handleValidation : bHandleValidation);
 				} else {
-					sap.ui.require(["sap/ui/core/message/MessageManager"], function(MessageManager) {
+					sap.ui.require(["sap/ui/core/Messaging"], function(Messaging) {
 						if (!oInstance.isDestroyed()) {
-							MessageManager.registerObject(oInstance, bHandleValidation === undefined ? vConfig.handleValidation : bHandleValidation);
+							Messaging.registerObject(oInstance, bHandleValidation === undefined ? vConfig.handleValidation : bHandleValidation);
 						}
 					});
 				}

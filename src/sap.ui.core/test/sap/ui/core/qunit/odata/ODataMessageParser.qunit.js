@@ -9,12 +9,12 @@ sap.ui.define([
 	"sap/ui/model/odata/ODataMessageParser",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/type/String",
-	"sap/ui/core/message/MessageManager",
 	"sap/m/Input",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/Messaging"
 ], function(
 	fakeService,
 	Log,
@@ -23,12 +23,12 @@ sap.ui.define([
 	ODataMessageParser,
 	BindingMode,
 	StringType,
-	MessageManager,
 	Input,
 	Button,
 	VerticalLayout,
 	HorizontalLayout,
-	library
+	library,
+	Messaging
 ) {
 	"use strict";
 
@@ -55,9 +55,6 @@ sap.ui.define([
 	};
 
 	var oModelJson, oModelXml;
-
-	// Create MessageManager instance and set Message Model in TimeOut...
-	sap.ui.getCore().getMessageManager();
 
 	var oJsonLayout = new VerticalLayout({
 		content: {
@@ -90,7 +87,7 @@ sap.ui.define([
 		oModelJson = new ODataModel(sServiceURI, mModelOptions);
 		sap.ui.getCore().setModel(oModelJson, "json");
 
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		var oMessageModel = Messaging.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No message has been added");
 
@@ -119,7 +116,7 @@ sap.ui.define([
 		mModelOptions.json = false;
 		oModelXml = new ODataModel(sServiceURI, mModelOptions);
 		sap.ui.getCore().setModel(oModelXml, "xml");
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		var oMessageModel = Messaging.getMessageModel();
 
 		assert.ok(oInput2.getValueState() === "None", "ValueState has not been set");
 
@@ -148,7 +145,7 @@ sap.ui.define([
 			useBatch: false,
 			json: false
 		});
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		var oMessageModel = Messaging.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
@@ -257,7 +254,7 @@ sap.ui.define([
 		var iExpectedMessages = 0;
 
 
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		var oMessageModel = Messaging.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
@@ -357,7 +354,7 @@ sap.ui.define([
 		var iExpectedMessages = 0;
 
 
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		var oMessageModel = Messaging.getMessageModel();
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
 		oModel.attachMetadataLoaded(function() {
@@ -422,7 +419,7 @@ sap.ui.define([
 
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		var oMessageModel = Messaging.getMessageModel();
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
 		var oMetadata = new ODataMetadata(sServiceURI + "/$metadata", {});
@@ -706,8 +703,8 @@ sap.ui.define([
 
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 
-		sap.ui.getCore().getMessageManager().removeAllMessages();
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		Messaging.removeAllMessages();
+		var oMessageModel = Messaging.getMessageModel();
 		assert.equal(oMessageModel.getProperty("/").length, 0,
 			"No messages are set at the beginning of the test");
 
@@ -822,8 +819,8 @@ sap.ui.define([
 			useBatch: false,
 			json: false
 		});
-		sap.ui.getCore().getMessageManager().removeAllMessages();
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		Messaging.removeAllMessages();
+		var oMessageModel = Messaging.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
@@ -922,8 +919,8 @@ sap.ui.define([
 			useBatch: bUseBatch,
 			json: bJSON
 		});
-		sap.ui.getCore().getMessageManager().removeAllMessages();
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		Messaging.removeAllMessages();
+		var oMessageModel = Messaging.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
@@ -984,8 +981,8 @@ sap.ui.define([
 			useBatch: bUseBatch,
 			json: bJSON
 		});
-		sap.ui.getCore().getMessageManager().removeAllMessages();
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		Messaging.removeAllMessages();
+		var oMessageModel = Messaging.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
@@ -1044,8 +1041,8 @@ sap.ui.define([
 
 		assert.expect(10);
 		var oModel = new ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
-		sap.ui.getCore().getMessageManager().removeAllMessages();
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		Messaging.removeAllMessages();
+		var oMessageModel = Messaging.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
@@ -1098,8 +1095,8 @@ sap.ui.define([
 
 		assert.expect(26);
 		var oModel = new ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
-		sap.ui.getCore().getMessageManager().removeAllMessages();
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		Messaging.removeAllMessages();
+		var oMessageModel = Messaging.getMessageModel();
 		var oMessage;
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
@@ -1233,10 +1230,10 @@ sap.ui.define([
 		sap.ui.getCore().setModel(oModel);
 
 		oInput3.placeAt("content");
-		sap.ui.getCore().getMessageManager().removeAllMessages();
-		sap.ui.getCore().getMessageManager().registerObject(oInput3, true);
+		Messaging.removeAllMessages();
+		Messaging.registerObject(oInput3, true);
 
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		var oMessageModel = Messaging.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
@@ -1302,8 +1299,8 @@ sap.ui.define([
 				oModel.read(sPath, { success: resolve });
 			});
 		};
-		sap.ui.getCore().getMessageManager().removeAllMessages();
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		Messaging.removeAllMessages();
+		var oMessageModel = Messaging.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
@@ -1354,9 +1351,8 @@ sap.ui.define([
 			});
 		};
 
-		var oMessageManager = sap.ui.getCore().getMessageManager();
-		oMessageManager.removeAllMessages();
-		var oMessageModel = oMessageManager.getMessageModel();
+		Messaging.removeAllMessages();
+		var oMessageModel = Messaging.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
@@ -1370,7 +1366,7 @@ sap.ui.define([
 			assert.equal(aMessages[2].persistent, true, "Third message should be persistent");
 			assert.equal(aMessages[2].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 
-			oMessageManager.removeAllMessages();
+			Messaging.removeAllMessages();
 
 			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after removal of all messages");
 
@@ -1387,8 +1383,8 @@ sap.ui.define([
 			assert.equal(aMessages[2].persistent, true, "Third message should be persistent");
 			assert.equal(aMessages[2].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 
-			oMessageManager.removeMessages(aMessages[0]);
-			oMessageManager.removeMessages(aMessages[2]);
+			Messaging.removeMessages(aMessages[0]);
+			Messaging.removeMessages(aMessages[2]);
 
 			aMessages = oMessageModel.getProperty("/");
 
@@ -1432,7 +1428,7 @@ sap.ui.define([
 		});
 	};
 
-	QUnit.test("Transient message removal from MessageManager", fnTestTransientMessageRemoval);
+	QUnit.test("Transient message removal from Messaging", fnTestTransientMessageRemoval);
 
 	var fnTestNormalization = function(assert) {
 		var done = assert.async();
@@ -1450,9 +1446,8 @@ sap.ui.define([
 			});
 		};
 
-		var oMessageManager = sap.ui.getCore().getMessageManager();
-		oMessageManager.removeAllMessages();
-		var oMessageModel = oMessageManager.getMessageModel();
+		Messaging.removeAllMessages();
+		var oMessageModel = Messaging.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
@@ -1463,7 +1458,7 @@ sap.ui.define([
 			assert.ok(oBinding.getDataState().getChanges(), "Messages propagated to binding");
 			assert.equal(oBinding.getDataState().getMessages().length, 1, " 1 Message propagated to binding");
 			assert.equal(oBinding.getDataState().getMessages()[0], aMessages[0], "Message propagated to binding");
-			oMessageManager.removeAllMessages();
+			Messaging.removeAllMessages();
 			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after removal of all messages");
 			return read("/Products(ContextId='CLF%2812%29SEMANTIC_OBJ%287%29Product%2810%29OBJECT_KEY%2811%29ZTEST_GD_02%289%29DRAFT_KEY%2836%29005056ba-1dcb-1ee7-8ec6-ae98ab359923')");
 		}).then(function() {
@@ -1494,9 +1489,8 @@ sap.ui.define([
 			});
 		};
 
-		var oMessageManager = sap.ui.getCore().getMessageManager();
-		oMessageManager.removeAllMessages();
-		var oMessageModel = oMessageManager.getMessageModel();
+		Messaging.removeAllMessages();
+		var oMessageModel = Messaging.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
 
@@ -1508,7 +1502,7 @@ sap.ui.define([
 			assert.equal(oBinding.getDataState().getMessages().length, 1, " 1 Message propagated to binding");
 			assert.equal(oBinding.getDataState().getMessages()[0], aMessages[0], "Message propagated to binding");
 			assert.equal(oBinding.getDataState().getMessages()[0].message, "This is a server test message", "Message has correct message text");
-			oMessageManager.removeAllMessages();
+			Messaging.removeAllMessages();
 			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after removal of all messages");
 			oModel.destroy();
 			done();

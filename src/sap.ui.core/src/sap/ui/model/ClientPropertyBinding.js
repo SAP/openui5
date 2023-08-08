@@ -62,9 +62,9 @@ sap.ui.define(['./PropertyBinding'],
 	 */
 	ClientPropertyBinding.prototype.setContext = function(oContext) {
 		if (this.oContext != oContext) {
-			var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
-			if (MessageManager) {
-				MessageManager.removeMessages(this.getDataState().getControlMessages(), true);
+			var Messaging = sap.ui.require("sap/ui/core/Messaging");
+			if (Messaging) {
+				Messaging.removeMessages(this.getDataState().getControlMessages(), true);
 			}
 			this.oContext = oContext;
 			if (this.isRelative()) {

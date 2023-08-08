@@ -1,12 +1,13 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/ClientListBinding",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/message/MessageListBinding"
-], function (Log, UI5Date, Message, ClientListBinding, JSONModel, MessageListBinding) {
+], function (Log, Messaging, UI5Date, Message, ClientListBinding, JSONModel, MessageListBinding) {
 	"use strict";
 
 	QUnit.module("sap.ui.model.message.MessageListBinding", {
@@ -14,7 +15,7 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-			sap.ui.getCore().getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 		}
 	});
 
@@ -30,13 +31,12 @@ sap.ui.define([
 
 
 	QUnit.test("test MessageListBinding", function(assert) {
-		var oMessageManager = sap.ui.getCore().getMessageManager();
-		var oModel = oMessageManager.getMessageModel();
-		oMessageManager.addMessages(createMessage("mine", "rel1"));
-		oMessageManager.addMessages(createMessage("two", "rel2"));
-		oMessageManager.addMessages(createMessage("three", "rel3"));
-		oMessageManager.addMessages(createMessage("for", "rel4"));
-		oMessageManager.addMessages(createMessage("fiv", "rel5"));
+		var oModel = Messaging.getMessageModel();
+		Messaging.addMessages(createMessage("mine", "rel1"));
+		Messaging.addMessages(createMessage("two", "rel2"));
+		Messaging.addMessages(createMessage("three", "rel3"));
+		Messaging.addMessages(createMessage("for", "rel4"));
+		Messaging.addMessages(createMessage("fiv", "rel5"));
 		var oMessageListBinding = oModel.bindList("/");
 		var aContexts = oMessageListBinding.getContexts(1, 3);
 		assert.ok(aContexts);
@@ -47,7 +47,7 @@ sap.ui.define([
 
 	QUnit.test("test MessageListBinding extended change detection", function(assert) {
 		var done = assert.async();
-		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oMessageManager = Messaging;
 		oMessageManager.addMessages(createMessage("mine", "rel1"));
 		oMessageManager.addMessages(createMessage("two", "rel2"));
 		oMessageManager.addMessages(createMessage("three", "rel3"));

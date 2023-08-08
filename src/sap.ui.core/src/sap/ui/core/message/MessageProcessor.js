@@ -130,18 +130,18 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
 	 *
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
-	 * @deprecated 1.115 Use {@link sap.ui.core.messages.MessageManager#updateMessages} instead
+	 * @deprecated 1.115 Use {@link sap.ui.core.Messaging#updateMessages} instead
 	 */
 	MessageProcessor.prototype.fireMessageChange = function(mParameters) {
-		var MessageManager =  sap.ui.require("sap/ui/core/message/MessageManager");
-		if (MessageManager) {
-			MessageManager.registerMessageProcessor(this);
-			MessageManager.updateMessages(mParameters.oldMessages, mParameters.newMessages);
+		var Messaging =  sap.ui.require("sap/ui/core/Messaging");
+		if (Messaging) {
+			Messaging.registerMessageProcessor(this);
+			Messaging.updateMessages(mParameters.oldMessages, mParameters.newMessages);
 			this.fireEvent("messageChange", mParameters);
 		} else  {
-			sap.ui.require(["sap/ui/core/message/MessageManager"], function(MessageManager)  {
-				MessageManager.registerMessageProcessor(this);
-				MessageManager.updateMessages(mParameters.oldMessages, mParameters.newMessages);
+			sap.ui.require(["sap/ui/core/Messaging"], function(Messaging)  {
+				Messaging.registerMessageProcessor(this);
+				Messaging.updateMessages(mParameters.oldMessages, mParameters.newMessages);
 				this.fireEvent("messageChange", mParameters);
 			}.bind(this));
 		}

@@ -448,7 +448,8 @@ sap.ui.define(function() {
 					language: "en",
 					preload: "async",
 					theme: "base",
-					versionedLibCss: false
+					versionedLibCss: false,
+					XxWaitForTheme: "init"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit"
@@ -460,7 +461,8 @@ sap.ui.define(function() {
 					language: "en",
 					preload: "sync",
 					theme: "base",
-					versionedLibCss: false
+					versionedLibCss: false,
+					XxWaitForTheme: "init"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit"
@@ -477,7 +479,8 @@ sap.ui.define(function() {
 							"sap.ui.core": "test-resources/sap/ui/core/qunit/testdata/customcss/"
 						}
 					},
-					versionedLibCss: true
+					versionedLibCss: true,
+					XxWaitForTheme: "init"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit",
@@ -492,7 +495,8 @@ sap.ui.define(function() {
 					language: "en",
 					theme: "base",
 					preload: "async",
-					versionedLibCss: true
+					versionedLibCss: true,
+					XxWaitForTheme: "init"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit"
@@ -512,7 +516,8 @@ sap.ui.define(function() {
 							"sap.ui.core": "test-resources/sap/ui/core/qunit/testdata/customcss/"
 						}
 					},
-					versionedLibCss: true
+					versionedLibCss: true,
+					XxWaitForTheme: "init"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit"
@@ -527,7 +532,8 @@ sap.ui.define(function() {
 					theme: "base",
 					language: "en",
 					preload: "sync",
-					versionedLibCss: true
+					versionedLibCss: true,
+					XxWaitForTheme: "init"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit"

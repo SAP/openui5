@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/Panel",
 	"sap/m/Text",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/ChangeReason",
@@ -31,7 +32,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService"
 ], function(Log, encodeURL, each, isEmptyObject, isPlainObject, Button, ListItem, HBox, Input,
-		Label, List, Panel, Text, Message, XMLView, ChangeReason, ClientModel, Context, Filter,
+		Label, List, Panel, Text, Messaging, Message, XMLView, ChangeReason, ClientModel, Context, Filter,
 		FilterOperator, Sorter, JSONModel, MessageScope, ODataUtils, ODataModel, Column, Table,
 		jQuery, fakeService) {
 	"use strict";
@@ -290,15 +291,15 @@ sap.ui.define([
 		assert.strictEqual(oModel.getMessageScope(), MessageScope.RequestedObjects,
 			"Initial message scope is: RequestedObjects");
 
-		sap.ui.getCore().getMessageManager().registerMessageProcessor(oModel);
+		Messaging.registerMessageProcessor(oModel);
 		oModel.metadataLoaded().then(function() {
 			var oContext = oModel.createEntry("/Products");
 			oMessage.setTargets([oContext.getPath()]);
 			oMessage2.setTargets([oContext.getPath()]);
-			sap.ui.getCore().getMessageManager().addMessages([oMessage, oMessage2]);
+			Messaging.addMessages([oMessage, oMessage2]);
 			assert.equal(oModel.getMessagesByEntity(oContext.getPath()).length, 2, "all messages returned");
 			assert.equal(oModel.getMessagesByEntity(oContext.getPath(), true).length, 1, "messages that are not persitent returned");
-			sap.ui.getCore().getMessageManager().unregisterMessageProcessor(oModel);
+			Messaging.unregisterMessageProcessor(oModel);
 			done();
 		});
 	});

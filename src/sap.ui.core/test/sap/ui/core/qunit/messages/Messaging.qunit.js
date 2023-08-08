@@ -4,8 +4,9 @@
 sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/message/Message",
-	"sap/ui/core/message/MessageManager"
-], function(Configuration, Message, MessageManager) {
+	"sap/ui/core/Messaging",
+	"sap/ui/model/message/MessageModel"
+], function(Configuration, Message, Messaging, MessageModel) {
 	/*global QUnit */
 	"use strict";
 
@@ -13,12 +14,11 @@ sap.ui.define([
 		beforeEach : function () {
 			// avoid attaching to validation events on UI5 core
 			this.stub(Configuration, "getHandleValidation").returns(false);
-			this.oMessageManager = new MessageManager();
 		}
 	});
 
-	var oProcessor = {getId : function () { return "id"; }},
-		oProcessorOther = {getId : function () { return "otherId"; }},
+	var oProcessor = {getId : function () { return "id"; }, setMessages: function() {}},
+		oProcessorOther = {getId : function () { return "otherId"; }, setMessages: function() {}},
 		oMessage0 = new Message({
 			processor : oProcessor,
 			target : "target0"
@@ -47,89 +47,86 @@ sap.ui.define([
 	//*********************************************************************************************
 [{ // initial message manager having no messages
 	before : undefined,
-	after : {},
+	after :[],
 	remove : oMessage0
 }, { // message manager has just the to be deleted message for the target
-	before : {id : {target0 : [oMessage0], target1 : [oMessage1]}},
-	after : {id : {target1 : [oMessage1]}},
+	before : [oMessage0, oMessage1],
+	after : [oMessage1],
 	remove : oMessage0
 }, { // message manager has more than the to be deleted message for the target
-	before : {id : {target0 : [oMessage0, oMessage0a]}},
-	after : {id : {target0 : [oMessage0a]}},
+	before : [oMessage0, oMessage0a],
+	after : [oMessage0a],
 	remove : oMessage0
 }, { // delete multi-target message from more than one target entry in the message manager
-	before : {id : {target0 : [oMessage0, oMessageMulti], target1 : [oMessageMulti]}},
-	after : {id : {target0 : [oMessage0]}},
+	before : [oMessage0, oMessageMulti, oMessageMulti],
+	after : [oMessage0],
 	remove : oMessageMulti
 }, { // delete unbound message
-	before : {id : {undefined : [oMessageUnbound]}},
-	after : {id : {}},
+	before :[oMessageUnbound],
+	after : [],
 	remove : oMessageUnbound
 }].forEach(function (oFixture, i) {
 	QUnit.test("_removeMessage, " + i, function (assert) {
+		Messaging.removeAllMessages();
 		if (oFixture.before) {
-			this.oMessageManager.mMessages = oFixture.before;
+			Messaging.addMessages(oFixture.before);
 		} else {
-			assert.deepEqual(this.oMessageManager.mMessages, {});
+			assert.deepEqual(Messaging.getMessageModel().getData(), []);
 		}
 
 		// code under test
-		this.oMessageManager._removeMessage(oFixture.remove);
+		Messaging.removeMessages(oFixture.remove);
 
-		assert.deepEqual(this.oMessageManager.mMessages, oFixture.after);
+		assert.deepEqual(Messaging.getMessageModel().getData(), oFixture.after);
 	});
 });
 
 	//*********************************************************************************************
 [{ // initial message manager having no messages
 	add : oMessage0,
-	before : {},
-	after : {id : {target0 : [oMessage0]}}
+	before : [],
+	after : [oMessage0]
 }, { // message manager already has entry for processor
 	add : oMessage0a,
-	before : {id : {target0 : [oMessage0]}},
-	after : {id : {target0 : [oMessage0, oMessage0a]}}
+	before : [oMessage0],
+	after : [oMessage0, oMessage0a]
 }, { // initial message manager having no messages, import multi-target message
 	add : oMessageMulti,
-	before : {},
-	after : {id : {target0 : [oMessageMulti], target1 : [oMessageMulti]}}
+	before : [],
+	after : [oMessageMulti]
 }, { // initial message manager having no messages, import unbound message
 	add : oMessageUnbound,
-	before : {},
-	after : {id : {undefined : [oMessageUnbound]}}
+	before : [],
+	after : [oMessageUnbound]
 }].forEach(function (oFixture, i) {
 	QUnit.test("_importMessage, " + i, function (assert) {
-		this.oMessageManager.mMessages = oFixture.before;
+		Messaging.removeAllMessages();
+		Messaging.addMessages(oFixture.before);
 
 		// code under test
-		this.oMessageManager._importMessage(oFixture.add);
+		Messaging.addMessages(oFixture.add);
 
-		assert.deepEqual(this.oMessageManager.mMessages, oFixture.after);
+		assert.deepEqual(Messaging.getMessageModel().getData(), oFixture.after);
 	});
 });
 
 	//*********************************************************************************************
 	QUnit.test("_updateMessageModel", function (assert) {
-		var oMessageManagerMock = this.mock(this.oMessageManager),
-			oMessageModel = {setData : function () {}};
+		Messaging.removeAllMessages();
+		var oModelSpy = this.spy(MessageModel.prototype, "setData");
+		Messaging.addMessages([
+			oMessageUnbound,
+			oMessage0, oMessage0a, oMessageMulti,
+			oMessage1, oMessageMulti,
+			oMessageOtherProcessor
+		]);
 
-		oMessageManagerMock.expects("getMessageModel").returns(oMessageModel);
-		oMessageManagerMock.expects("_pushMessages").withExactArgs("mProcessors");
-		this.mock(oMessageModel).expects("setData")
-			.withExactArgs([oMessageUnbound, oMessage0, oMessage0a, oMessageMulti, oMessage1,
-				oMessageOtherProcessor]);
-		this.oMessageManager.mMessages = {
-			id : {
-				undefined : [oMessageUnbound],
-				target0 : [oMessage0, oMessage0a, oMessageMulti],
-				target1 : [oMessage1, oMessageMulti]
-			},
-			otherId : {
-				targetOther : [oMessageOtherProcessor]
-			}
-		};
-
-		// code under test
-		this.oMessageManager._updateMessageModel("mProcessors");
+		assert.deepEqual(oModelSpy.getCall(0).args[0], [
+			oMessageUnbound,
+			oMessage0, oMessage0a, oMessageMulti,
+			oMessage1,
+			oMessageOtherProcessor
+		]);
+		oModelSpy.restore();
 	});
 });
