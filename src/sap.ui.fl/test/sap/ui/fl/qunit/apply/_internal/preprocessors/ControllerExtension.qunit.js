@@ -8,9 +8,9 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/ControllerExtension",
-	"sap/ui/fl/Cache",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
@@ -22,9 +22,9 @@ sap.ui.define([
 	ComponentContainer,
 	Component,
 	VariantManagementState,
+	FlexState,
 	ManifestUtils,
 	ControllerExtension,
-	Cache,
 	Layer,
 	Utils,
 	sinon
@@ -116,12 +116,6 @@ sap.ui.define([
 				}
 			};
 
-			var oChangesFillingCachePromise = new Promise(
-				function(resolve) {
-					resolve(oFileContent);
-				}
-			);
-
 			var oAppComponent = {
 				getManifest: function() {
 					return {
@@ -153,7 +147,7 @@ sap.ui.define([
 				},
 				getManifestEntry: function() {}
 			};
-			sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
+			sandbox.stub(FlexState, "getStorageResponse").returns(oFileContent);
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sControllerName);
 
@@ -239,13 +233,7 @@ sap.ui.define([
 					changes: [oOtherChange1, oCodingChange1, oOtherChange2, oCodingChange2]
 				}
 			};
-
-			var oChangesFillingCachePromise = new Promise(
-				function(resolve) {
-					resolve(oFileContent);
-				}
-			);
-			sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
+			sandbox.stub(FlexState, "getStorageResponse").resolves(oFileContent);
 
 			// view, controller and component definition
 

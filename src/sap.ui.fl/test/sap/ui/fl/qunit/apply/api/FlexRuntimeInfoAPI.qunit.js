@@ -4,8 +4,8 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
-	"sap/ui/fl/Cache",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -14,8 +14,8 @@ sap.ui.define([
 	Control,
 	UIComponent,
 	VariantUtils,
+	FlexState,
 	FlexRuntimeInfoAPI,
-	Cache,
 	FlexControllerFactory,
 	Layer,
 	Utils,
@@ -45,7 +45,6 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("When isPersonalized() is called with controls of type sap.ui.core.Element and no change type", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({});
 			this.aChangeTypes = ["changeType1", "changeType2"];
 			this.oControl = new Control("controlId1");
 			var aControls = [this.oControl, {id: "controlId2", appComponent: this.oAppComponent}];
@@ -58,7 +57,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("When isPersonalized() is called with controls as a map and no change type", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({}));
 			this.aChangeTypes = ["changeType1", "changeType2"];
 			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
 			return FlexRuntimeInfoAPI.isPersonalized({
@@ -119,7 +117,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+			sandbox.stub(FlexState, "getStorageResponse").resolves(oMockedWrappedContent);
 			return FlexRuntimeInfoAPI.isPersonalized({
 				selectors: aControls,
 				changeTypes: this.aChangeTypes
@@ -159,7 +157,7 @@ sap.ui.define([
 					changes: [oChangeContent0]
 				}
 			};
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+			sandbox.stub(FlexState, "getStorageResponse").resolves(oMockedWrappedContent);
 			return FlexRuntimeInfoAPI.isPersonalized({
 				selectors: aControls
 			}).then(function(bIsPersonalized) {
@@ -175,7 +173,7 @@ sap.ui.define([
 					changes: [oChangeContent0]
 				}
 			};
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+			sandbox.stub(FlexState, "getStorageResponse").resolves(oMockedWrappedContent);
 			return FlexRuntimeInfoAPI.isPersonalized({
 				selectors: aControls,
 				changeTypes: []
@@ -225,7 +223,7 @@ sap.ui.define([
 					}
 				}
 			};
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+			sandbox.stub(FlexState, "getStorageResponse").resolves(oMockedWrappedContent);
 			return FlexRuntimeInfoAPI.isPersonalized({
 				selectors: [this.oControl],
 				changeTypes: this.aChangeTypes

@@ -18,7 +18,6 @@ sap.ui.define([
 	"sap/ui/model/Model",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/Cache",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/library" // we have to ensure to load fl, so that change handler gets registered
@@ -37,7 +36,6 @@ sap.ui.define([
 	Model,
 	Settings,
 	PersistenceWriteAPI,
-	Cache,
 	Layer,
 	sinon
 ) {
@@ -552,7 +550,6 @@ sap.ui.define([
 			// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
 			var aChanges = [];
 			sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").resolves(aChanges);
-			sandbox.stub(ChangePersistence.prototype, "getCacheKey").resolves("etag-123");
 
 			return createViewInComponent.call(this, SYNC)
 			.then(buildCommandsAndApplyChangesOnXML.bind(this, assert, aChanges));
@@ -685,7 +682,6 @@ sap.ui.define([
 			beforeEach: function(assert) {
 				// no LREP response needed
 				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve([]));
-				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(Cache.NOTAG); // no cache key => no xml view processing
 				sandbox.stub(Settings, "getInstance").returns(Promise.resolve({_oSettings: {}}));
 
 				return createViewInComponent.call(this, SYNC)

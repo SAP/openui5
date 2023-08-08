@@ -23,7 +23,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/Cache",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -50,7 +49,6 @@ sap.ui.define([
 	Condenser,
 	Storage,
 	Version,
-	Cache,
 	LayerUtils,
 	Layer,
 	Utils,
@@ -117,18 +115,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns an cache key for caching views.
-	 *
-	 * @param {object} oAppComponent - Application component
-	 * @returns {Promise} Returns a promise with an ETag for caching
-	 * @private
-	 * @ui5-restricted sap.ui.fl
-	 */
-	ChangePersistence.prototype.getCacheKey = function(oAppComponent) {
-		return Cache.getCacheKey(this._mComponent, oAppComponent);
-	};
-
-	/**
 	 * Verifies whether a change fulfils the preconditions.
 	 *
 	 * All changes need to have a fileType;
@@ -165,6 +151,21 @@ sap.ui.define([
 		return sFileType === "change" || bControlVariantChange;
 	}
 
+	async function getChangesFromFlexState(sReference, mPropertyBag, bInvalidateCache) {
+		let oStorageResponse;
+		// TODO the CompVariantState causes an exception in the save scenario
+		try {
+			if (bInvalidateCache) {
+				await FlexState.update(mPropertyBag);
+			}
+
+			oStorageResponse = await FlexState.getStorageResponse(sReference);
+		} catch (oError) {
+			oStorageResponse = {};
+		}
+		return oStorageResponse;
+	}
+
 	/**
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
@@ -181,61 +182,57 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving with an array of changes
 	 * @public
 	 */
-	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag, bInvalidateCache) {
-		return Utils.getUShellService("URLParsing")
-		.then(function(oURLParsingService) {
-			this._oUShellURLParsingService = oURLParsingService;
-			return Cache.getChangesFillingCache(this._mComponent, mPropertyBag, bInvalidateCache);
-		}.bind(this))
-		.then(function(mPropertyBag, oWrappedChangeFileContent) {
-			var oChangeFileContent = merge({}, oWrappedChangeFileContent);
-			var oAppComponent = mPropertyBag && mPropertyBag.component && Utils.getAppComponentForControl(mPropertyBag.component);
+	ChangePersistence.prototype.getChangesForComponent = async function(mPropertyBag, bInvalidateCache) {
+		this._oUShellURLParsingService = await Utils.getUShellService("URLParsing");
+		const oWrappedChangeFileContent = await getChangesFromFlexState(this._mComponent.name, mPropertyBag, bInvalidateCache);
 
-			var bHasFlexObjects = StorageUtils.isStorageResponseFilled(oChangeFileContent.changes);
+		const oChangeFileContent = merge({}, oWrappedChangeFileContent);
+		const oAppComponent = mPropertyBag && mPropertyBag.component && Utils.getAppComponentForControl(mPropertyBag.component);
 
-			if (!bHasFlexObjects) {
-				return [];
-			}
+		const bHasFlexObjects = StorageUtils.isStorageResponseFilled(oChangeFileContent.changes);
 
-			var aChanges = oChangeFileContent.changes.changes;
+		if (!bHasFlexObjects) {
+			return [];
+		}
 
-			// Binds a json model of message bundle to the component the first time a change within the vendor layer was detected
-			// It enables the translation of changes
-			if (!this._oMessagebundle && oChangeFileContent.messagebundle && oAppComponent) {
-				if (!oAppComponent.getModel("i18nFlexVendor")) {
-					if (aChanges.some(function(oChange) {
-						return oChange.layer === Layer.VENDOR;
-					})) {
-						this._oMessagebundle = oChangeFileContent.messagebundle;
-						var oModel = new JSONModel(this._oMessagebundle);
-						oAppComponent.setModel(oModel, "i18nFlexVendor");
-					}
+		let aChanges = oChangeFileContent.changes.changes;
+
+		// Binds a json model of message bundle to the component the first time a change within the vendor layer was detected
+		// It enables the translation of changes
+		if (!this._oMessagebundle && oChangeFileContent.messagebundle && oAppComponent) {
+			if (!oAppComponent.getModel("i18nFlexVendor")) {
+				if (aChanges.some(function(oChange) {
+					return oChange.layer === Layer.VENDOR;
+				})) {
+					this._oMessagebundle = oChangeFileContent.messagebundle;
+					const oModel = new JSONModel(this._oMessagebundle);
+					oAppComponent.setModel(oModel, "i18nFlexVendor");
 				}
 			}
+		}
 
-			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
-			var bFilterMaxLayer = !(mPropertyBag && mPropertyBag.ignoreMaxLayerParameter);
-			var fnFilter = function() { return true; };
-			if (sCurrentLayer) {
-				aChanges = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aChanges, sCurrentLayer);
-			} else if (LayerUtils.isLayerFilteringRequired(this._oUShellURLParsingService) && bFilterMaxLayer) {
-				fnFilter = filterChangeForMaxLayer.bind(this);
-				// If layer filtering required, excludes changes in higher layer than the max layer
-				aChanges = aChanges.filter(fnFilter);
-			} else if (this._bHasChangesOverMaxLayer && !bFilterMaxLayer) {
-				// ignoreMaxLayerParameter = true is set from flexController.hasHigherLayerChanges(),
-				// triggered by rta.stop(), to check if reload needs to be performed
-				// as ctrl variant changes are already gone and to improve performance, just return the constant
-				this._bHasChangesOverMaxLayer = false;
-				return this.HIGHER_LAYER_CHANGES_EXIST;
-			}
+		const sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
+		const bFilterMaxLayer = !(mPropertyBag && mPropertyBag.ignoreMaxLayerParameter);
+		let fnFilter = function() { return true; };
+		if (sCurrentLayer) {
+			aChanges = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aChanges, sCurrentLayer);
+		} else if (LayerUtils.isLayerFilteringRequired(this._oUShellURLParsingService) && bFilterMaxLayer) {
+			fnFilter = filterChangeForMaxLayer.bind(this);
+			// If layer filtering required, excludes changes in higher layer than the max layer
+			aChanges = aChanges.filter(fnFilter);
+		} else if (this._bHasChangesOverMaxLayer && !bFilterMaxLayer) {
+			// ignoreMaxLayerParameter = true is set from flexController.hasHigherLayerChanges(),
+			// triggered by rta.stop(), to check if reload needs to be performed
+			// as ctrl variant changes are already gone and to improve performance, just return the constant
+			this._bHasChangesOverMaxLayer = false;
+			return this.HIGHER_LAYER_CHANGES_EXIST;
+		}
 
-			var bIncludeControlVariants = oChangeFileContent.changes && mPropertyBag && mPropertyBag.includeCtrlVariants;
-			var aFilteredVariantChanges = this._getAllCtrlVariantChanges(oChangeFileContent, bIncludeControlVariants, fnFilter);
-			aChanges = aChanges.concat(aFilteredVariantChanges);
+		const bIncludeControlVariants = oChangeFileContent.changes && mPropertyBag && mPropertyBag.includeCtrlVariants;
+		const aFilteredVariantChanges = this._getAllCtrlVariantChanges(oChangeFileContent, bIncludeControlVariants, fnFilter);
+		aChanges = aChanges.concat(aFilteredVariantChanges);
 
-			return this._checkAndGetChangeInstances(aChanges, oChangeFileContent);
-		}.bind(this, mPropertyBag));
+		return this._checkAndGetChangeInstances(aChanges, oChangeFileContent);
 	};
 
 	ChangePersistence.prototype._checkAndGetChangeInstances = function(aChanges, oChangeFileContent) {

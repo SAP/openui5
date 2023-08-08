@@ -4,17 +4,19 @@
 
 sap.ui.define([
 	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/base/Log"
 ], function(
 	Component,
+	FlexState,
 	ManifestUtils,
+	ControlVariantApplyAPI,
 	FlexControllerFactory,
 	Utils,
-	ChangePersistenceFactory,
 	Log
 ) {
 	"use strict";
@@ -30,6 +32,8 @@ sap.ui.define([
 	 * @experimental Since 1.27.0
 	 */
 	var XmlPreprocessor = function() {};
+
+	XmlPreprocessor.NOTAG = "<NoTag>";
 
 	/**
 	 * Asynchronous view processing method.
@@ -87,6 +91,17 @@ sap.ui.define([
 		}
 	};
 
+	function concatControlVariantIdWithCacheKey(sCacheKey, sControlVariantIds) {
+		if (!sControlVariantIds) {
+			return sCacheKey;
+		}
+		return sCacheKey.concat("-", sControlVariantIds);
+	}
+
+	function trimEtag(sCacheKey) {
+		return sCacheKey.replace(/(^W\/|")/g, "");
+	}
+
 	/**
 	 * Asynchronous determination of a hash key for caching purposes
 	 *
@@ -96,18 +111,40 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	XmlPreprocessor.getCacheKey = function(mProperties) {
+	XmlPreprocessor.getCacheKey = async function(mProperties) {
 		var oComponent = Component.get(mProperties.componentId);
 		var oAppComponent = Utils.getAppComponentForControl(oComponent);
 
 		// no caching possible with startup parameter based variants
 		if (Utils.isVariantByStartupParameter(oAppComponent)) {
-			return Promise.resolve();
+			return undefined;
 		}
 
 		var sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
-		return oChangePersistence.getCacheKey(oAppComponent);
+
+		let sCacheKey = XmlPreprocessor.NOTAG;
+		if (sFlexReference) {
+			const oWrappedChangeFileContent = await FlexState.getStorageResponse(sFlexReference);
+			if (oWrappedChangeFileContent?.cacheKey) {
+				sCacheKey = trimEtag(oWrappedChangeFileContent.cacheKey);
+
+				const oVariantModel = await ControlVariantApplyAPI.getVariantModel(oAppComponent);
+				// If there are no changes, the standard variant is created after the variant management control is instantiated
+				// When the cache key is calculated before this happens, the standard variant id is unknown
+				// To avoid inconsistencies between page load and navigation scenarios, all standard variants are filtered
+				var aVariantManagementControlIds = oVariantModel.getVariantManagementControlIds();
+				var aCurrentControlVariantIds = oVariantModel.getCurrentControlVariantIds()
+				.filter(function(sVariantId) {
+					// FIXME: The standard variant flag should be part of the variant instance
+					// This can be changed once the variant data selector is ready
+					// For now rely on the fact that standard variants have the same name as the vm control
+					return !aVariantManagementControlIds.includes(sVariantId);
+				});
+				sCacheKey = concatControlVariantIdWithCacheKey(sCacheKey, aCurrentControlVariantIds.join("-"));
+			}
+		}
+
+		return sCacheKey;
 	};
 
 	return XmlPreprocessor;

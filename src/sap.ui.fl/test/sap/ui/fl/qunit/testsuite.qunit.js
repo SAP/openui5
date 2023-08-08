@@ -1110,11 +1110,6 @@ sap.ui.define([
 			},
 
 			// CLOUD IOI tests:
-			Cache: {
-				coverage: {
-					only: ["sap/ui/fl/Cache"]
-				}
-			},
 			library: {
 				coverage: {
 					only: ["sap/ui/fl/library"]
