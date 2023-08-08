@@ -140,8 +140,8 @@ sap.ui.define([
 				oBindContext = oEvent.getSource().getSelectedItem().getBindingContext();
 			}
 			var oModel = oBindContext.getModel();
-			var sCategoryId = oModel.getData(oBindContext.getPath()).Category;
-			var sProductId = oModel.getData(oBindContext.getPath()).ProductId;
+			var sCategoryId = oModel.getProperty(oBindContext.getPath()).Category;
+			var sProductId = oModel.getProperty(oBindContext.getPath()).ProductId;
 
 			// keep the cart context when showing a product
 			var bCartVisible = this.getModel("appView").getProperty("/layout").startsWith("Three");

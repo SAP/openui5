@@ -70,7 +70,7 @@ sap.ui.define([
 		onCategoryListItemPress: function (oEvent) {
 			var oBindContext = oEvent.getSource().getBindingContext();
 			var oModel = oBindContext.getModel();
-			var sCategoryId = oModel.getData(oBindContext.getPath()).Category;
+			var sCategoryId = oModel.getProperty(oBindContext.getPath()).Category;
 
 			this._router.navTo("category", {id: sCategoryId});
 		},
