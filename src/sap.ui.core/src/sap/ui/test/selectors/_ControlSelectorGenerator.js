@@ -457,6 +457,7 @@
      /**
      * Iterate through all controls a a given level and attempt to generate a unique selector for each one.
      * stop the cycle as soon as one unique selector is found
+     * @param {object} oOptions Object with options
      * @param {Array} oOptions.siblings the children at a given tree level
      * @param {object} oOptions.options filter options
      * @param {number} oOptions.index index of the child for which to start the search
@@ -517,6 +518,7 @@
     /**
      * Filters valid selectors.
      * @param {object} vSelector a control selector or array of selectors
+     * @param {object} oOptions Object with options
      * @param {object} oOptions.validationRoot the subtree root. If not defined, the selector will be valid for the entire app.
      * @param {boolean} oOptions.multiple whether the selector can match multiple controls. False by default.
      * @returns {array} an array of valid selectors
