@@ -1805,7 +1805,8 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Check correct initial tree-build in OperationMode.Client", function(assert) {
+	/** @deprecated As of version 1.102.0, reason sap.ui.model.odata.OperationMode.Auto */
+	QUnit.test("Check correct initial tree-build in OperationMode.Auto", function(assert) {
 		var done = assert.async();
 		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
 			operationMode: "Auto",
@@ -1870,118 +1871,175 @@ sap.ui.define([
 		// trigger $count in op mode auto
 		oBinding.attachChange(countChangeHandler);
 		oBinding.getContexts(1, 10);
+	});
 
-		QUnit.test("Empty binding should not cause exceptions", function(assert) {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				displayRootNode: true,
-				numberOfExpandedLevels: 2,
-				rootLevel: 1
-			});
-
-			// Keep the binding empty, so that the adapter can't find any nodes
-
-			// The following function calls should fail but not throw an exception
-			oBinding.expand(999);
-			oBinding.collapse(999);
-			oBinding.toggleIndex(999);
-			oBinding.setNodeSelection({});
-
-			assert.ok(true, "No exceptions thrown");
+	QUnit.test("Check correct initial tree-build in OperationMode.Client", function(assert) {
+		var done = assert.async();
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			operationMode: "Client",
+			rootLevel: 2,
+			numberOfExpandedLevels: 1,
+			threshold: 300
 		});
 
-		QUnit.test("Group ID calculation should not add forward slashes from property values", function(assert) {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				displayRootNode: true,
-				numberOfExpandedLevels: 2,
-				rootLevel: 1
-			});
+		// change handler called after the data returned
+		function fnChangeHandler() {
+			oBinding.detachChange(fnChangeHandler);
 
-			var oFakeNode = {
-				context: {
-					getProperty: function(/* property name will be "GLAccount"*/) {
-						return "something/containing/forward/slashes";
-					}
-				},
-				parent: null // no parent -> no nesting with existing group IDs
-			};
+			// retrieve the data and check it
+			var aContexts = oBinding.getContexts(1, 10);
 
+			// check return value of getContexts call
+			assert.equal(aContexts[0].getProperty("HierarchyNode"), "000003", "Node 1 is 000003");
+			assert.equal(aContexts[0].getProperty("FinancialStatementItemText"), "Ausstehende Kapital-Einlagen",
+				"Node 1 is 'Ausstehende Kapital-Einlagen'");
+			assert.equal(aContexts[0].getProperty("FinStatementHierarchyLevelVal"), 3, "Node 1 is a 1st level node");
+
+			assert.equal(aContexts[7].getProperty("HierarchyNode"), "000362", "Node 8 is 'P A S S I V A'");
+			assert.equal(aContexts[7].getProperty("FinancialStatementItemText"), "P A S S I V A", "Node 8 is 'P A S S I V A'");
+			assert.equal(aContexts[7].getProperty("FinStatementHierarchyLevelVal"), 2, "Node 8 is a top-level node");
+
+			// check internal tree state
+			var oN000002 = oBinding.findNode(0);
+			var oN000003 = oBinding.findNode(1);
+
+			assert.equal(oN000002.groupID, "/000002/", "Correct node for index 0 found.");
+			assert.equal(oN000003.groupID, "/000002/000003/", "Correct node for index 1 found.");
+
+			var oN000002_test2 = oBinding.getNodeByIndex(0);
+			var oN000003_test2 = oBinding.getNodeByIndex(1);
+
+			assert.deepEqual(oN000002, oN000002_test2, "Correct node for index 0 found via getNodeByIndex.");
+			assert.deepEqual(oN000003, oN000003_test2, "Correct node for index 1 found via getNodeByIndex.");
+
+			// check if contexts are correctly returned via getContextByIndex vs getContexts
+			// Beware: Indices are shifted by 1, as the context array starts with 0
+			var oContext000003 = oBinding.getContextByIndex(1);
+			var oContext000008 = oBinding.getContextByIndex(2);
+
+			assert.equal(oContext000003.getProperty("HierarchyNode"), aContexts[0].getProperty("HierarchyNode"),
+				"Context 000003 via different API calls is identical.");
+			assert.equal(oContext000008.getProperty("HierarchyNode"), aContexts[1].getProperty("HierarchyNode"),
+				"Context 000008 via different API calls is identical.");
+
+			done();
+		}
+
+		// trigger $count in op mode auto
+		oBinding.attachChange(fnChangeHandler);
+		oBinding.getContexts(1, 10);
+	});
+
+	QUnit.test("Empty binding should not cause exceptions", function(assert) {
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			displayRootNode: true,
+			numberOfExpandedLevels: 2,
+			rootLevel: 1
+		});
+
+		// Keep the binding empty, so that the adapter can't find any nodes
+
+		// The following function calls should fail but not throw an exception
+		oBinding.expand(999);
+		oBinding.collapse(999);
+		oBinding.toggleIndex(999);
+		oBinding.setNodeSelection({});
+
+		assert.ok(true, "No exceptions thrown");
+	});
+
+	QUnit.test("Group ID calculation should not add forward slashes from property values", function(assert) {
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			displayRootNode: true,
+			numberOfExpandedLevels: 2,
+			rootLevel: 1
+		});
+
+		var oFakeNode = {
+			context: {
+				getProperty: function(/* property name will be "GLAccount"*/) {
+					return "something/containing/forward/slashes";
+				}
+			},
+			parent: null // no parent -> no nesting with existing group IDs
+		};
+
+		var sResultGroupId = oBinding._calculateGroupID(oFakeNode);
+		assert.equal(sResultGroupId.match(/\//g).length, 2, "Group ID contains exactly two forward slashes");
+		// Group ID should contain exactly two forward slashes. One at the beginning and one at the end.
+		//	Level is then calculated with (slash count)-1
+
+		// Current implementation encodes the slashes, so let's also explicitly check for that:
+		assert.equal(sResultGroupId, "/something%2Fcontaining%2Fforward%2Fslashes/", "Slashes got encoded");
+	});
+
+	QUnit.test("Group ID calculation should also be able to handle integer property values", function(assert) {
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			displayRootNode: true,
+			numberOfExpandedLevels: 2,
+			rootLevel: 1
+		});
+
+		var oFakeNode = {
+			context: {
+				getProperty: function(/* property name will be "GLAccount"*/) {
+					return 1;
+				}
+			},
+			parent: null // no parent -> no nesting with existing group IDs
+		};
+
+		try {
 			var sResultGroupId = oBinding._calculateGroupID(oFakeNode);
-			assert.equal(sResultGroupId.match(/\//g).length, 2, "Group ID contains exactly two forward slashes");
-			// Group ID should contain exactly two forward slashes. One at the beginning and one at the end.
-			//	Level is then calculated with (slash count)-1
+			assert.ok(true, "No exceptions thrown");
+			assert.equal(sResultGroupId, "/1/", "Integer got handled correctly");
+		} catch (e) {
+			assert.ok(false, "Threw exception: " + e);
+		}
+	});
 
-			// Current implementation encodes the slashes, so let's also explicitly check for that:
-			assert.equal(sResultGroupId, "/something%2Fcontaining%2Fforward%2Fslashes/", "Slashes got encoded");
+	QUnit.test("Expand with bSuppressChange flag should suppress the change event", function(assert) {
+		var done = assert.async();
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			rootLevel: 2,
+			numberOfExpandedLevels: 2
 		});
 
-		QUnit.test("Group ID calculation should also be able to handle integer property values", function(assert) {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				displayRootNode: true,
-				numberOfExpandedLevels: 2,
-				rootLevel: 1
-			});
+		oBinding.attachChange(changeHandler);
+		oBinding.getContexts(0, 10);
 
-			var oFakeNode = {
-				context: {
-					getProperty: function(/* property name will be "GLAccount"*/) {
-						return 1;
-					}
-				},
-				parent: null // no parent -> no nesting with existing group IDs
-			};
-
-			try {
-				var sResultGroupId = oBinding._calculateGroupID(oFakeNode);
-				assert.ok(true, "No exceptions thrown");
-				assert.equal(sResultGroupId, "/1/", "Integer got handled correctly");
-			} catch (e) {
-				assert.ok(false, "Threw exception: " + e);
-			}
-		});
-
-		QUnit.test("Expand with bSuppressChange flag should suppress the change event", function(assert) {
-			var done = assert.async();
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				rootLevel: 2,
-				numberOfExpandedLevels: 2
-			});
-
-			oBinding.attachChange(changeHandler);
+		function changeHandler() {
+			oBinding.detachChange(changeHandler);
 			oBinding.getContexts(0, 10);
+			assert.ok(oBinding.findNode(1), "Node can be found"); // If the binding does not find a node, it also does not fire a change event
 
-			function changeHandler() {
-				oBinding.detachChange(changeHandler);
-				oBinding.getContexts(0, 10);
-				assert.ok(oBinding.findNode(1), "Node can be found"); // If the binding does not find a node, it also does not fire a change event
+			var oSpy = sinon.spy(oBinding, "_fireChange");
+			oBinding.expand(1, true);
+			assert.ok(oSpy.notCalled, "No change event fired");
+			done();
+		}
+	});
 
-				var oSpy = sinon.spy(oBinding, "_fireChange");
-				oBinding.expand(1, true);
-				assert.ok(oSpy.notCalled, "No change event fired");
-				done();
-			}
+	QUnit.test("Collapse with bSuppressChange flag should suppress the change event", function(assert) {
+		var done = assert.async();
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			rootLevel: 2,
+			numberOfExpandedLevels: 2
 		});
 
-		QUnit.test("Collapse with bSuppressChange flag should suppress the change event", function(assert) {
-			var done = assert.async();
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				rootLevel: 2,
-				numberOfExpandedLevels: 2
-			});
+		oBinding.attachChange(changeHandler);
+		oBinding.getContexts(0, 10);
 
-			oBinding.attachChange(changeHandler);
+		function changeHandler() {
+			oBinding.detachChange(changeHandler);
 			oBinding.getContexts(0, 10);
+			assert.ok(oBinding.findNode(0), "Node can be found"); // If the binding does not find a node, it also does not fire a change event
 
-			function changeHandler() {
-				oBinding.detachChange(changeHandler);
-				oBinding.getContexts(0, 10);
-				assert.ok(oBinding.findNode(0), "Node can be found"); // If the binding does not find a node, it also does not fire a change event
-
-				var oSpy = sinon.spy(oBinding, "_fireChange");
-				oBinding.collapse(0, true);
-				assert.ok(oSpy.notCalled, "No change event fired");
-				done();
-			}
-		});
+			var oSpy = sinon.spy(oBinding, "_fireChange");
+			oBinding.collapse(0, true);
+			assert.ok(oSpy.notCalled, "No change event fired");
+			done();
+		}
 	});
 
 	QUnit.test("expandNodeToLevel: Correct filter creation", function(assert) {
