@@ -11,6 +11,7 @@
 @_sap_tnt_SideNavigation_NavigationSeparatorRadius: unset;
 @_sap_tnt_SideNavigation_NavigationSeparatorHeight: 1px;
 @_sap_tnt_SideNavigation_TriangleColor: @sapUiContentIconColor;
+@_sap_tnt_SideNavigation_BorderRight: 1px solid @sapUiGroupContentBorderColor;
 @_sap_tnt_SideNavigation_BorderRadius: 0;
 @_sap_tnt_SideNavigation_PhoneBorderRadius: 0;
 @_sap_tnt_SideNavigation_BoxShadow: none;
@@ -24,7 +25,7 @@
   box-sizing: border-box;
   overflow: hidden;
   background: @sapUiListBackground;
-  border-right: 1px solid @sapUiGroupContentBorderColor;
+	border-right: @_sap_tnt_SideNavigation_BorderRight;
 	box-shadow: @_sap_tnt_SideNavigation_BoxShadow;
 	border-radius: @_sap_tnt_SideNavigation_BorderRadius;
 	width: @_sap_tnt_SideNavigation_Width;

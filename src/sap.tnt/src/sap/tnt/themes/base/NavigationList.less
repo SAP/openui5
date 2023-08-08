@@ -7,10 +7,14 @@
 @_sap_tnt_NavigationList_IconColor: @sapUiContentIconColor;
 @_sap_tnt_NavigationList_IconFontSize: 1rem;
 @_sap_tnt_NavigationList_ExpandIconColor: @sapUiContentIconColor;
+@_sap_tnt_NavigationList_HoverBorderStyleColor: none;
+@_sap_tnt_NavigationList_HoverBorderWidth: 0;
+@_sap_tnt_NavigationList_GroupBorderStyleColor: solid @sapUiListBorderColor;
+@_sap_tnt_NavigationList_GroupBorderWidth: 0 0 0.0625rem 0;
+@_sap_tnt_NavigationList_ItemBorderStyleColor: none;
+@_sap_tnt_NavigationList_ItemBorderWidth: 0;
 @_sap_tnt_NavigationList_ItemHeight: 3rem;
-@_sap_tnt_NavigationList_ItemBorder: none;
-@_sap_tnt_NavigationList_LastItemBorder: none;
-@_sap_tnt_NavigationList_HoverItemBorder: none;
+@_sap_tnt_NavigationList_LastItemBorderStyleColor: none;
 @_sap_tnt_NavigationList_ItemBorderRadius: 0;
 @_sap_tnt_NavigationList_ItemBottomMargin: 0;
 @_sap_tnt_NavigationList_ItemBottomMarginCompact: 0;
@@ -18,13 +22,16 @@
 @_sap_tnt_NavigationList_NoIconsGroupPadding: 1rem;
 @_sap_tnt_NavigationList_NoIconsNestedItemPadding: 1rem;
 @_sap_tnt_NavigationList_ItemFocusBorderOffset: 1px;
+@_sap_tnt_NavigationList_ItemFocusBorderRadius: @_sap_tnt_NavigationList_ItemBorderRadius;
+@_sap_tnt_NavigationList_Collapsed_SelectedItemBackground: ~"0 100% / 100% 0.125rem" no-repeat linear-gradient(0deg, @sapUiListSelectionBorderColor, @sapUiListSelectionBorderColor), @sapUiListSelectionBackgroundColor;
 @_sap_tnt_NavigationList_SelectedItemBorderColor: @sapUiListSelectionBorderColor;
-@_sap_tnt_NavigationList_SelectedItemBorder: 1px solid @_sap_tnt_NavigationList_SelectedItemBorderColor;
-@_sap_tnt_NavigationList_Collapsed_SelectedItemBorder: 1px solid @_sap_tnt_NavigationList_SelectedItemBorderColor;
+@_sap_tnt_NavigationList_SelectedBorderStyleColor: solid @_sap_tnt_NavigationList_SelectedItemBorderColor;
+@_sap_tnt_NavigationList_SelectedBorderWidth: 0 0 0.0625rem 0;
+@_sap_tnt_NavigationList_Collapsed_SelectedItemBorderStyleColor: solid @_sap_tnt_NavigationList_SelectedItemBorderColor;
 @_sap_tnt_NavigationList_Collapsed_SelectedGroupBorderColor: @_sap_tnt_NavigationList_SelectedItemBorderColor;
-@_sap_tnt_NavigationList_Collapsed_GroupBorderColor: @sapUiListBorderColor;
+@_sap_tnt_NavigationList_Collapsed_GroupBorderWidth: @sapUiListBorderColor;
+@_sap_tnt_NavigationList_GroupExpandedBorderWidth: @_sap_tnt_NavigationList_GroupBorderWidth;
 @_sap_tnt_NavigationList_GroupIconWidth: @_sap_tnt_NavigationList_CollapsedWidth;
-@_sap_tnt_NavigationList_GroupBorder: 1px solid @sapUiListBorderColor;
 @_sap_tnt_NavigationList_GroupBottomBorderColor: @sapUiListBorderColor;
 @_sap_tnt_NavigationList_GroupTextWeight: unset;
 @_sap_tnt_NavigationList_GroupBottomMarginInPopup: 0;
@@ -68,7 +75,7 @@
 }
 
 .sapTntNavLIItem {
-	width : 100%;
+	width: 100%;
 	height: @_sap_tnt_NavigationList_ItemHeight;
 	box-sizing: border-box;
 	cursor: pointer;
@@ -76,13 +83,22 @@
 	border-radius: @_sap_tnt_NavigationList_ItemBorderRadius;
 	transition: @_sap_tnt_NavigationList_ItemTransition;
 
+	// borders are drawn using a pseudo element.
+	// in some themes, the border is drawn only on the bottom.
+	// in high contrast themes the border is on all sides and there is extra border on hover
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+	}
+
 	span {
 		cursor: pointer;
 	}
 
 	&.sapTntNavLIItemDisabled {
 		cursor: auto;
-	  	opacity: @sapContent_DisabledOpacity;
+		opacity: @sapContent_DisabledOpacity;
 
 		span {
 			cursor: auto;
@@ -103,7 +119,7 @@
 	}
 
 	a {
-		width : 100%;
+		width: 100%;
 		height: 100%;
 		text-decoration: none;
 		outline: none;
@@ -113,19 +129,54 @@
 	}
 }
 
-.sapTntNavLIGroupItem {
-	border-bottom: @_sap_tnt_NavigationList_ItemBorder;
+// defines the styles for border when selected, border when hovering (hover used in high contrast themes)
+.sapTntNavLI li .sapTntNavLIItem:not(.sapTntNavLIItemDisabled) {
+	&.sapTntNavLIItemSelected::before {
+		border: @_sap_tnt_NavigationList_SelectedBorderStyleColor;
+		border-width: @_sap_tnt_NavigationList_SelectedBorderWidth;
+	}
 
 	&:hover,
 	&:active,
 	.sapTntNavLIPopover &:last-child:hover,
 	.sapTntNavLIPopover &:last-child:active {
-		border-bottom: @_sap_tnt_NavigationList_HoverItemBorder;
+		&:not(.sapTntNavLIItemSelected)::before {
+			border: @_sap_tnt_NavigationList_HoverBorderStyleColor;
+			border-width: @_sap_tnt_NavigationList_HoverBorderWidth;
+		}
 	}
 }
 
-.sapTntNavLIPopover .sapTntNavLIGroupItem:last-child {
-	border-bottom: @_sap_tnt_NavigationList_LastItemBorder;
+.sapTntNavLIGroupItem {
+	&::before {
+		border: @_sap_tnt_NavigationList_ItemBorderStyleColor;
+		border-width: @_sap_tnt_NavigationList_ItemBorderWidth;
+	}
+}
+
+.sapTntNavLIGroup::before {
+	border: @_sap_tnt_NavigationList_GroupBorderStyleColor;
+	border-width: @_sap_tnt_NavigationList_GroupBorderWidth;
+
+	.sapTntNavLICollapsed & {
+		border-width: @_sap_tnt_NavigationList_Collapsed_GroupBorderWidth;
+	}
+}
+
+// When a group is expanded, defines the border of the group and of its last item
+.sapTntNavLI:not(.sapTntNavLIPopup) {
+	.sapTntNavLIGroup[aria-expanded="true"]::before {
+		border-width: @_sap_tnt_NavigationList_GroupExpandedBorderWidth;
+	}
+
+	.sapTntNavLIGroupItem:last-child::before {
+		border: @_sap_tnt_NavigationList_GroupBorderStyleColor;
+		border-width: @_sap_tnt_NavigationList_GroupBorderWidth;
+	}
+}
+
+.sapTntNavLIPopover .sapTntNavLIGroupItem:last-child::before {
+	border: @_sap_tnt_NavigationList_LastItemBorderStyleColor;
 }
 
 .sapTntNavLIText {
@@ -187,7 +238,6 @@
 
 .sapTntNavLI .sapTntNavLIExpandIcon {
 	min-width: 2rem;
-	// padding: 0.75rem 0;
 	font-size: 0.875rem;
 
 	pointer-events: all;
@@ -211,20 +261,8 @@
 	position: relative;
 }
 
-.sapTntNavLIGroup {
-	border-bottom: @_sap_tnt_NavigationList_GroupBorder;
-
-	.sapTntNavLIText {
-		font-weight: @_sap_tnt_NavigationList_GroupTextWeight;
-	}
-}
-
-.sapTntNavLI:not(.sapTntNavLIPopup) .sapTntNavLIGroup[aria-expanded="true"] {
-	border-color: @_sap_tnt_NavigationList_GroupBottomBorderColor;
-}
-
-.sapTntNavLICollapsed .sapTntNavLIGroup {
-	border-color: @_sap_tnt_NavigationList_Collapsed_GroupBorderColor;
+.sapTntNavLIGroup .sapTntNavLIText {
+	font-weight: @_sap_tnt_NavigationList_GroupTextWeight;
 }
 
 .sapTntNavLIItem:not(.sapTntNavLIItemDisabled):hover {
@@ -232,9 +270,15 @@
 }
 
 .sapTntNavLIItem:not(.sapTntNavLIItemDisabled).sapTntNavLIActive,
+.sapTntNavLICollapsed.sapTntNavLIGroup.sapTntNavLIItemSelected,
 .sapTntNavLI .sapTntNavLIGroup.sapTntNavLIItem:not(.sapTntNavLIItemDisabled):active,
-.sapTntNavLI .sapTntNavLIGroupItem.sapTntNavLIItem:not(.sapTntNavLIItemDisabled):active{
-	background-color: @sapUiListActiveBackground;
+.sapTntNavLI .sapTntNavLIGroupItem.sapTntNavLIItem:not(.sapTntNavLIItemDisabled):active {
+	background: @sapUiListActiveBackground;
+
+	&::before {
+		border: @_sap_tnt_NavigationList_SelectedBorderStyleColor;
+		border-width: @_sap_tnt_NavigationList_SelectedBorderWidth;
+	}
 
 	.sapMText {
 		color: @sapUiListActiveTextColor;
@@ -286,42 +330,13 @@
 }
 
 .sapTntNavLI:not(.sapTntNavLIPopup) {
-	.sapTntNavLIGroupItem.sapTntNavLIItem:last-child {
-		border-bottom: @_sap_tnt_NavigationList_GroupBorder;
-
-		&.sapTntNavLIItemSelected {
-			border-color: @sapUiListSelectionBorderColor;
-		}
-	}
-
 	li:not(:last-of-type) .sapTntNavLIItem {
 		margin-bottom: @_sap_tnt_NavigationList_ItemBottomMargin;
 	}
 }
 
-.sapTntNavLI:not(.sapTntNavLICollapsed) .sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled) {
-	border-bottom: @_sap_tnt_NavigationList_SelectedItemBorder;
-}
-
-.sapTntNavLICollapsed .sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled) {
-	border-bottom: none;
-
-	// create the selection indicator with pseudo element, in order to avoid it having border-radius
-	&::after {
-		content: "";
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		border-bottom: @_sap_tnt_NavigationList_Collapsed_SelectedItemBorder;
-	}
-}
-
-.sapTntNavLICollapsed,
-.sapTntNavLIPopup {
-	.sapTntNavLIGroup.sapTntNavLIItemSelected {
-		border-color: @_sap_tnt_NavigationList_Collapsed_SelectedGroupBorderColor;
-	}
+.sapTntNavLICollapsed .sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled):not(.sapTntNavLIActive) {
+	background: @_sap_tnt_NavigationList_Collapsed_SelectedItemBackground;
 }
 
 .sapTntNavLI li:focus,
@@ -329,18 +344,15 @@
 	outline: none;
 }
 
-.sapTntNavLI li:focus .sapTntNavLIItem::before,
-.sapTntNavLIItem:focus::before {
+.sapTntNavLI li:focus .sapTntNavLIItem::after,
+.sapTntNavLIItem:focus::after {
 	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 	position: absolute;
-	content: " ";
-	top: @_sap_tnt_NavigationList_ItemFocusBorderOffset;
-	right: @_sap_tnt_NavigationList_ItemFocusBorderOffset;
-	bottom: @_sap_tnt_NavigationList_ItemFocusBorderOffset;
-	left: @_sap_tnt_NavigationList_ItemFocusBorderOffset;
+	content: "";
+	inset: @_sap_tnt_NavigationList_ItemFocusBorderOffset;
 	z-index: 2;
 	pointer-events: none;
-	border-radius: @_sap_tnt_NavigationList_ItemBorderRadius;
+	border-radius: @_sap_tnt_NavigationList_ItemFocusBorderRadius;
 }
 
 // NavigationList with icons
@@ -397,7 +409,6 @@
 
 	.sapUiMnuLst {
 		li.sapUiMnuItm {
-			border-bottom: @_sap_tnt_NavigationList_LastItemBorder;
 			display: flex;
 			align-items: center;
 			height: @_sap_tnt_NavigationList_ItemHeight;
@@ -427,7 +438,8 @@
 
 			&:not(:last-child) {
 				margin-bottom: 0.1875rem;
-				border-bottom: @_sap_tnt_NavigationList_ItemBorder;
+				border: @_sap_tnt_NavigationList_ItemBorderStyleColor;
+				border-width: @_sap_tnt_NavigationList_ItemBorderWidth;
 			}
 		}
 
@@ -470,7 +482,13 @@
 
 			&.sapUiMnuItmSubMnuOpen,
 			&.sapUiMnuItmSubMnuOpen.sapUiMnuItmHov {
-				border-bottom: @_sap_tnt_NavigationList_SelectedItemBorder;
+				&::before {
+					position: absolute;
+					content: "";
+					inset: 0;
+					border: @_sap_tnt_NavigationList_SelectedBorderStyleColor;
+					border-width: @_sap_tnt_NavigationList_SelectedBorderWidth;
+				}
 			}
 		}
 	}
