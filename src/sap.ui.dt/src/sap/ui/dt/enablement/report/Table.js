@@ -140,7 +140,7 @@ sap.ui.define([
 				visibleRowCount: 20,
 				enableSelectAll: false,
 				ariaLabelledBy: "title",
-				toolbar: this._createToolbar(),
+				extension: this._createToolbar(),
 				rows: "{path:'/', parameters: {arrayNames:['children']}}",
 				columns: [
 					this._createTextColumn("name", "Name", "{name}"),
