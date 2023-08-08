@@ -298,18 +298,20 @@
 
 		QUnit.begin(() => {
 			// allow easier module selection: larger list, one click selection
-			jQuery("body").css("overflow", "scroll"); // always show scrollbar, avoid flickering
-			jQuery("#qunit-modulefilter-dropdown-list").css("max-height", "none");
+			document.body.style.overflow = "scroll"; // always show scrollbar, avoid flickering
+			document.getElementById("qunit-modulefilter-dropdown-list").style.maxHeight = "none";
 
-			jQuery("#qunit-modulefilter-dropdown").on("click", function (oMouseEvent) {
-				if (oMouseEvent.target.tagName === "LABEL"
-						&& oMouseEvent.target.innerText !== "All modules") {
-					setTimeout(function () {
-						// click on label instead of checkbox triggers "Apply" automatically
-						jQuery("#qunit-modulefilter-actions").children().first().trigger("click");
-					});
-				}
-			});
+			document.getElementById("qunit-modulefilter-dropdown")
+				.addEventListener("click", function (oMouseEvent) {
+					if (oMouseEvent.target.tagName === "LABEL"
+							&& oMouseEvent.target.innerText !== "All modules") {
+						setTimeout(function () {
+							// click on label instead of checkbox triggers "Apply" automatically
+							document.getElementById("qunit-modulefilter-actions").firstChild
+								.dispatchEvent(new MouseEvent("click"));
+						});
+					}
+				});
 
 			// remember which lines have been covered initially, at load time
 			saveInitialCoverage();
