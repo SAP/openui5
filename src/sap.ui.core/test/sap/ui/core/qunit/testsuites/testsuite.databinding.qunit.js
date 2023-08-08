@@ -146,10 +146,11 @@ sap.ui.define(function() {
 					"test-resources/sap/ui/core/qunit/odata/ODataModel_legacyAPIs.qunit"
 				]
 			},
+			/** @deprecated As of version 1.48.0 reason sap.ui.model.odata.ODataModel */
 			ODataSharedMetadata: {
 				title: "sap.ui.model.odata.ODataModel - Shared Metadata QUnit Tests",
 				module: [
-					"test-resources/sap/ui/core/qunit/odata/ODataSharedMetadata.qunit"
+					"test-resources/sap/ui/core/qunit/odata/ODataSharedMetadata_legacyAPIs.qunit"
 				],
 				sinon: {
 					useFakeTimers: true
