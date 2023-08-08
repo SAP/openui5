@@ -3,17 +3,18 @@
  */
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function () {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/ui/core/sample/common/Helper",
+	"sap/ui/core/sample/common/pages/Any",
+	"sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/pages/Main",
+	"sap/base/Log",
+	"sap/ui/test/opaQunit",
+	"sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/SandboxModel" // preload only
+], function (Core, Helper, Any, Main, Log, opaTest) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/core/sample/common/Helper",
-		"sap/ui/core/sample/common/pages/Any",
-		"sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/pages/Main",
-		"sap/base/Log",
-		"sap/ui/test/opaQunit",
-		"sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/SandboxModel" // preload only
-	], function (Helper, Any, Main, Log, opaTest) {
+	Core.ready().then(function () {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrderTP100_V2");
 
 		//*****************************************************************************

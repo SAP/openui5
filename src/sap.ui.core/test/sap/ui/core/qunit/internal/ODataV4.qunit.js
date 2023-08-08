@@ -23,7 +23,9 @@
 		sap.ui.require(aModules, function () {
 			// don't start if autostart was stopped elsewhere (then the module is part of 1Ring)
 			if (!bAlreadyStopped) {
-				Core.attachInit(QUnit.start.bind(QUnit, /*count*/0));
+				Core.ready().then(function () {
+					QUnit.start(0);
+				});
 			}
 		});
 	});

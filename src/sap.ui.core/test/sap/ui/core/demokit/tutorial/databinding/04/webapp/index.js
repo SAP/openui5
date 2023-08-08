@@ -1,11 +1,12 @@
 sap.ui.require([
+	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/XMLView"
-], function (JSONModel, XMLView) {
+], function (Core, JSONModel, XMLView) {
 	"use strict";
 
-	// Attach an anonymous function to the SAPUI5 'init' event
-	sap.ui.getCore().attachInit(function () {
+	// Chain an anonymous function to the SAPUI5 'ready' Promise
+	Core.ready().then(function () {
 		// Create a JSON model from an object literal
 		var oModel = new JSONModel({
 			firstName: "Harry",

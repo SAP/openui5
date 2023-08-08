@@ -3,19 +3,20 @@
  */
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function () {
+sap.ui.require([
+	"sap/base/Log",
+	"sap/ui/core/Core",
+	"sap/ui/core/library",
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/sample/common/pages/Any",
+	"sap/ui/core/sample/ViewTemplate/types/pages/Main",
+	"sap/ui/test/opaQunit",
+	"sap/ui/test/TestUtils"
+], function (Log, Core, library, UI5Date, DateFormat, Any, Main, opaTest, TestUtils) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/base/Log",
-		"sap/ui/core/library",
-		"sap/ui/core/date/UI5Date",
-		"sap/ui/core/format/DateFormat",
-		"sap/ui/core/sample/common/pages/Any",
-		"sap/ui/core/sample/ViewTemplate/types/pages/Main",
-		"sap/ui/test/opaQunit",
-		"sap/ui/test/TestUtils"
-	], function (Log, library, UI5Date, DateFormat, Any, Main, opaTest, TestUtils) {
+	Core.ready().then(function () {
 		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 			MessageType = library.MessageType, // shortcut for sap.ui.core.MessageType
 			ValueState = library.ValueState; // shortcut for sap.ui.core.ValueState

@@ -21,11 +21,13 @@
 		assert.strictEqual(typeof sap.ui.getCore, "function", "...the function sap.ui.getCore should exist");
 
 		var done = assert.async();
-		sap.ui.getCore().attachInit(function() {
-			assert.ok(true, "...then the Core should fire the init event");
-			assert.strictEqual(typeof sap.m, "object", "...the library sap.m should have been loaded");
-			assert.strictEqual(typeof sap.ui.layout, "object", "...the library sap.ui.layout should have been loaded");
-			done();
+		sap.ui.require(['sap/ui/core/Core'], function(Core) {
+			Core.ready().then(function() {
+				assert.ok(true, "...then the Core should fire the init event");
+				assert.strictEqual(typeof sap.m, "object", "...the library sap.m should have been loaded");
+				assert.strictEqual(typeof sap.ui.layout, "object", "...the library sap.ui.layout should have been loaded");
+				done();
+			});
 		});
 	});
 

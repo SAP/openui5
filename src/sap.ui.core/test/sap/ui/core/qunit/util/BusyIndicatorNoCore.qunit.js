@@ -10,7 +10,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var bInitialized = oCore.isInitialized();
+	var bInitialized = false;
 
 	var oSpyShow = sinon.spy(BusyIndicator, "show");
 	var oSpyShowNowIfRequested = sinon.spy(BusyIndicator, "_showNowIfRequested");
@@ -45,7 +45,7 @@ sap.ui.define([
 	QUnit.test("Check if 'show' waits for DOM", function (assert) {
 		var done = assert.async();
 
-		oCore.attachInit(function () {
+		oCore.ready().then(function () {
 			assert.notOk(bInitialized, "Core wasn't ready when 'show' was called");
 			assert.ok(oSpyShow.callCount > 1, "'show' called more than once");
 

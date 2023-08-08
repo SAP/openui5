@@ -12,8 +12,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		this.stub(Device, "support").value({ touch: true });
 
 		// load and boot the core
-		sap.ui.require(["sap/ui/core/Core", "sap/ui/thirdparty/jquery"], function (core, jQuery) {
-			sap.ui.getCore().attachInit(function () {
+		sap.ui.require(["sap/ui/core/Core", "sap/ui/thirdparty/jquery"], function (Core, jQuery) {
+			Core.ready().then(function () {
 				assert.ok(true, "Core should initialize after loading and booting it");
 
 				// its a touch device (tablet, hybrid)
@@ -24,7 +24,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 
 				done();
 			});
-			core.boot();
+			Core.boot();
 		}, function (oErr) {
 			assert.strictEqual(oErr, {}, "Requiring the Core must not fail");
 		});

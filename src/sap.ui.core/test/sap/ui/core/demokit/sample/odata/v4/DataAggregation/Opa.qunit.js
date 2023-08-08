@@ -3,16 +3,17 @@
  */
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function () {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/ui/core/sample/common/Helper",
+	"sap/ui/core/sample/odata/v4/DataAggregation/tests/expandPageCollapse",
+	"sap/ui/core/sample/odata/v4/DataAggregation/tests/filter",
+	"sap/ui/test/opaQunit",
+	"sap/ui/core/sample/odata/v4/DataAggregation/SandboxModel" // preload only
+], function (Core, Helper, expandPageCollapse, filter, opaTest) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/core/sample/common/Helper",
-		"sap/ui/core/sample/odata/v4/DataAggregation/tests/expandPageCollapse",
-		"sap/ui/core/sample/odata/v4/DataAggregation/tests/filter",
-		"sap/ui/test/opaQunit",
-		"sap/ui/core/sample/odata/v4/DataAggregation/SandboxModel" // preload only
-	], function (Helper, expandPageCollapse, filter, opaTest) {
+	Core.ready().then(function () {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.DataAggregation");
 
 		["", "true", "false"].forEach(function (sGrandTotalAtBottomOnly) {

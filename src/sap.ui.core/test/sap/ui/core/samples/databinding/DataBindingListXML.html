@@ -25,7 +25,9 @@
 		}
 
     	jQuery.sap.require("sap.ui.model.xml.XMLModel");
-    	sap.ui.getCore().attachInit(doIt);
+    	sap.ui.require(["sap/ui/core/Core"], function(Core) {
+			Core.ready().then(doIt);
+		});
     	var oModel;
     	function doIt(){
     		oModel = new sap.ui.model.xml.XMLModel();

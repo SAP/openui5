@@ -2,12 +2,13 @@
 
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function() {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/ui/core/sample/RoutingNestedComponent/test/integration/AllJourneys"
+], function(Core) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/core/sample/RoutingNestedComponent/test/integration/AllJourneys"
-	], function() {
+	Core.ready().then(function() {
 		QUnit.start();
 	});
 });

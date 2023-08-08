@@ -3,17 +3,18 @@
  */
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function () {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/ui/core/sample/common/Helper",
+	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/pages/Main",
+	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/createEdit",
+	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/pageExpandCollapse",
+	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/SandboxModel",
+	"sap/ui/test/opaQunit"
+], function (Core, Helper, Main, createEdit, pageExpandCollapse, SandboxModel, opaTest) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/core/sample/common/Helper",
-		"sap/ui/core/sample/odata/v4/RecursiveHierarchy/pages/Main",
-		"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/createEdit",
-		"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/pageExpandCollapse",
-		"sap/ui/core/sample/odata/v4/RecursiveHierarchy/SandboxModel",
-		"sap/ui/test/opaQunit"
-	], function (Helper, Main, createEdit, pageExpandCollapse, SandboxModel, opaTest) {
+	Core.ready().then(function () {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.RecursiveHierarchy",
 			/*iTestTimeout*/undefined, /*fnBeforeEach*/null,
 			function fnAfterEach() {

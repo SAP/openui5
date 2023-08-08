@@ -7,7 +7,7 @@ sap.ui.define([
 
 	QUnit.config.autostart = false;
 
-	Core.attachInit(function() {
+	Core.ready().then(function() {
 
 		QUnit.module("Configuration From Tag Attributes");
 

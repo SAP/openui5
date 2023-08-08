@@ -9,9 +9,9 @@
 				sap.ui.require(["sap/base/Log", "sap/ui/Device"], function(Log, Device) {
 					Log.logSupportInfo(true);
 					Log.setLevel(4);
-					sap.ui.require(["sap/ui/core/Core"], function(core) {
-						core.boot();
-						core.attachInit(resolve);
+					sap.ui.require(["sap/ui/core/Core"], function(Core) {
+						Core.boot();
+						Core.ready().then(resolve);
 					});
 				});
 			});

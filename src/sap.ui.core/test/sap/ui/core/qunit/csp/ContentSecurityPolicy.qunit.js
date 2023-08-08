@@ -1,5 +1,9 @@
 /*global QUnit*/
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/ui/core/Core"
+], function(
+	Core
+) {
 	"use strict";
 
 	QUnit.module("CSP Compliance");
@@ -24,20 +28,21 @@ sap.ui.define([], function() {
 				// the browser completely ignores the header and won't report violations
 				if (sCsp || (sCspReportOnly && sCspReportOnly.indexOf("report-uri") !== -1)) {
 					// Check for reported CSP violations
-					assert.ok(sap.ui.getCore().isInitialized(), "UI5 Core has been initialized");
-					assert.ok(window["ui5-core-csp-violations"].length === 0,
-						"Found " + window["ui5-core-csp-violations"].length + " CSP violation(s)"
-					);
-					window["ui5-core-csp-violations"].forEach(function(oViolation) {
-						assert.ok(
-							false,
-							oViolation.sourceFile + ":" + oViolation.lineNumber + ":" +
-							oViolation.columnNumber + ": " +
-							oViolation.effectiveDirective + " - " + oViolation.blockedURI
+					Core.ready().then(function() {
+						assert.ok(sap.ui.getCore().isInitialized(), "UI5 Core has been initialized");
+						assert.ok(window["ui5-core-csp-violations"].length === 0,
+							"Found " + window["ui5-core-csp-violations"].length + " CSP violation(s)"
 						);
+						window["ui5-core-csp-violations"].forEach(function(oViolation) {
+							assert.ok(
+								false,
+								oViolation.sourceFile + ":" + oViolation.lineNumber + ":" +
+								oViolation.columnNumber + ": " +
+								oViolation.effectiveDirective + " - " + oViolation.blockedURI
+							);
+						});
+						done();
 					});
-
-					done();
 				} else {
 					// Fail test as headers are not set as required
 					oReq.abort();

@@ -16,16 +16,19 @@
 			data-sap-ui-preload='async'>
 		</script>
 		<script>
-			sap.ui.getCore().attachInit(function () {
-				new sap.m.Shell('Shell', {
-					title: 'Application under test',
-					app: new sap.ui.core.ComponentContainer({
-						name: 'appUnderTest',
-						settings : {
-							id : "appUnderTest"
-						}
-					})
-				}).placeAt('content');
+			sap.ui.require(["sap/ui/core/Core"], function (Core) {
+				"use strict";
+				Core.ready().then(function () {
+					new sap.m.Shell('Shell', {
+						title: 'Application under test',
+						app: new sap.ui.core.ComponentContainer({
+							name: 'appUnderTest',
+							settings : {
+								id : "appUnderTest"
+							}
+						})
+					}).placeAt('content');
+				});
 			});
 		</script>
 	</head>

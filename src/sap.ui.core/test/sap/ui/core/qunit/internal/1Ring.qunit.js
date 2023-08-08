@@ -24,6 +24,10 @@ sap.ui.require([
 				return oTestsuite.tests[sTest].module[0];
 			});
 
-		sap.ui.require(aModules, Core.attachInit.bind(Core, QUnit.start.bind(QUnit, /*count*/0)));
+		sap.ui.require(aModules, function () {
+			Core.ready().then(function () {
+				QUnit.start(0);
+			});
+		});
 	});
 });
