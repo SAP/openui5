@@ -104,6 +104,8 @@ sap.ui.define([
 
 		if (oOverlay.isMovable()) {
 			this._attachDragEvents(oOverlay);
+		} else {
+			oOverlay.addStyleClass("sapUiDtOverlayNotMovable");
 		}
 
 		oOverlay.attachBrowserEvent("dragover", this._onDragOver, this);
@@ -247,8 +249,12 @@ sap.ui.define([
 		var oOverlay = oEvent.getSource();
 		if (oOverlay.isMovable()) {
 			this._attachDragEvents(oOverlay);
+			oOverlay.removeStyleClass("sapUiDtOverlayNotMovable");
 		} else {
 			this._detachDragEvents(oOverlay);
+			if (!oOverlay.hasStyleClass("sapUiDtOverlayNotMovable")) {
+				oOverlay.addStyleClass("sapUiDtOverlayNotMovable");
+			}
 		}
 
 		this.onMovableChange(oOverlay);
