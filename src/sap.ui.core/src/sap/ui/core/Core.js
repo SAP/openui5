@@ -1133,6 +1133,7 @@ sap.ui.define([
 	 *
 	 * @return {boolean} whether the Core has already been initialized
 	 * @public
+	 * @deprecated since 1.118. Please use {@link sap.ui.core.Core.ready Core.ready} instead.
 	 */
 	Core.prototype.isInitialized = function () {
 		return this.bInitialized;
@@ -1189,6 +1190,7 @@ sap.ui.define([
 	 * @param {function} fnFunction Function to be after initialization of the framework
 	 * @public
 	 * @since 1.13.2
+	 * @deprecated since 1.118. Please use {@link sap.ui.core.Core.ready Core.ready} instead.
 	 */
 	Core.prototype.attachInit = function (fnFunction) {
 		assert(typeof fnFunction === "function", "fnFunction must be a function");
