@@ -6986,7 +6986,7 @@ sap.ui.define([
 			var oKeyboardExtension = oTable._getKeyboardExtension();
 			var iActionItemCount = bTableHasRowActions ? oTable.getRowActionTemplate()._getVisibleItems().length : 0;
 			var iColumnCount = oTable.getColumns().filter(function(oColumn) {
-				return oColumn.getVisible() || oColumn.getGrouped();
+				return oColumn.getVisible() || (oColumn.getGrouped ? oColumn.getGrouped() : false);
 			}).length;
 			var iLastColumnIndex = iColumnCount + Math.max(0, iActionItemCount - 1); // Action items are treated as columns in this test.
 			var iRowCount = oTable._getTotalRowCount();
