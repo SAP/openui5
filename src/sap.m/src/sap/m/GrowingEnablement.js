@@ -137,19 +137,23 @@ sap.ui.define([
 			// Navigate from last item to growing trigger and vice versa via arrow keys
 			var oControl = this._oControl;
 			if (oControl._oItemNavigation && !oEvent.isMarked()) {
-				var aItemDomRefs = oControl._oItemNavigation.getItemDomRefs();
+				var oItemNavigation = oControl._oItemNavigation;
+				var aItemDomRefs = oItemNavigation.getItemDomRefs();
+				var oFirstItemDomRef = aItemDomRefs[0];
+				var oLastItemDomRef = aItemDomRefs[aItemDomRefs.length - oItemNavigation.iColumns];
 				var sDir = oControl.getGrowingDirection();
-				if ((sDir != ListGrowingDirection.Upwards && oEvent.type == "sapdown" && oEvent.target === aItemDomRefs[aItemDomRefs.length - 1])
-						|| (sDir == ListGrowingDirection.Upwards && oEvent.type == "sapup" && oEvent.target === aItemDomRefs[0])) {
+				if ((sDir != ListGrowingDirection.Upwards && oEvent.type == "sapdown" && oEvent.target === oLastItemDomRef)
+						|| (sDir == ListGrowingDirection.Upwards && oEvent.type == "sapup" && oEvent.target === oFirstItemDomRef)) {
 					var $Trigger = oControl.$("trigger");
 					$Trigger.trigger("focus");
 					oEvent.setMarked();
 					oEvent.stopImmediatePropagation(); // to prevent ItemNavigation
-				} else if ((sDir == ListGrowingDirection.Upwards && oEvent.type == "sapdown")
-						|| (sDir != ListGrowingDirection.Upwards && oEvent.type == "sapup")
+				} else if (((sDir == ListGrowingDirection.Upwards && oEvent.type == "sapdown")
+						|| (sDir != ListGrowingDirection.Upwards && oEvent.type == "sapup"))
 						&& oEvent.target === oControl.getDomRef("trigger")) {
-					jQuery(aItemDomRefs[oEvent.type == "sapdown" ? 0 : aItemDomRefs.length - 1]).trigger("focus");
+					jQuery(oEvent.type == "sapdown" ? oFirstItemDomRef : oLastItemDomRef).trigger("focus");
 					oEvent.setMarked();
+					oEvent.stopImmediatePropagation(); // to prevent ItemNavigation
 				}
 			}
 		},

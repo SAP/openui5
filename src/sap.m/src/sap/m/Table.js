@@ -681,16 +681,17 @@ sap.ui.define([
 		ListBase.prototype.onmousedown.apply(this, arguments);
 	};
 
-	Table.prototype._onItemNavigationBeforeFocus = function(oEvent) {
-		if (this._bMouseDown && !oEvent.getParameter("event").target.hasAttribute("tabindex")) {
+	Table.prototype._onItemNavigationBeforeFocus = function(oUI5Event) {
+		var oEvent = oUI5Event.getParameter("event");
+		if (this._bMouseDown && !oEvent.target.hasAttribute("tabindex")) {
 			return;
 		}
 
 		var iFocusedIndex;
 		var iForwardIndex = -1;
-		var iIndex = oEvent.getParameter("index");
+		var iIndex = oUI5Event.getParameter("index");
 		var iColumnCount = this._colHeaderAriaOwns.length + 1;
-		var oItemNavigation = oEvent.getSource();
+		var oItemNavigation = oUI5Event.getSource();
 
 		if (this._bMouseDown) {
 			var iRowIndex = iIndex - iIndex % iColumnCount;
@@ -698,8 +699,26 @@ sap.ui.define([
 				iForwardIndex = iRowIndex;
 			}
 		} else {
-			var oTarget = oItemNavigation.getItemDomRefs()[iIndex];
-			if (oTarget.classList.contains("sapMGHLICell")) {
+			var aItemDomRefs = oItemNavigation.getItemDomRefs();
+			var oNavigationTarget = aItemDomRefs[iIndex];
+			if (oEvent.target.classList.contains("sapMTblCellFocusable")) {
+				var iTargetIndex = aItemDomRefs.indexOf(oEvent.target);
+				if (oEvent.type == "saphome" && iTargetIndex % iColumnCount != 1) {
+					iForwardIndex = iIndex - iIndex % iColumnCount + 1;
+				} else if (oEvent.type == "sapend" && iTargetIndex % iColumnCount == iColumnCount - 1) {
+					iForwardIndex = iTargetIndex - iColumnCount + 1;
+				} else if (oEvent.type.startsWith("sappage") && iTargetIndex % iColumnCount != iIndex % iColumnCount) {
+					iForwardIndex = iIndex - iIndex % iColumnCount + iTargetIndex % iColumnCount;
+				}
+			} else if (oEvent.target.classList.contains("sapMLIBFocusable")) {
+				if (oEvent.type.startsWith("sappage")) {
+					iForwardIndex = iIndex - iIndex % iColumnCount;
+				} else if (oEvent.type == "saphome") {
+					iForwardIndex = 0;
+				} else if (oEvent.type == "sapend") {
+					iForwardIndex = aItemDomRefs.length - iColumnCount;
+				}
+			} else if (oNavigationTarget.classList.contains("sapMGHLICell")) {
 				iForwardIndex = iIndex - 1;
 				iFocusedIndex = iForwardIndex + oItemNavigation.getFocusedIndex() % iColumnCount;
 			}
@@ -707,7 +726,7 @@ sap.ui.define([
 
 		if (iForwardIndex != -1) {
 			oEvent.preventDefault();
-			oEvent.getParameter("event").preventDefault();
+			oUI5Event.preventDefault();
 			oItemNavigation.setFocusedIndex(iForwardIndex);
 			oItemNavigation.getItemDomRefs()[iForwardIndex].focus();
 			iFocusedIndex && oItemNavigation.setFocusedIndex(iFocusedIndex);
@@ -731,6 +750,8 @@ sap.ui.define([
 
 		oItemNavigation.detachEvent("BeforeFocus", this._onItemNavigationBeforeFocus, this);
 		oItemNavigation.attachEvent("BeforeFocus", this._onItemNavigationBeforeFocus, this);
+		oItemNavigation.detachEvent("FocusAgain", this._onItemNavigationBeforeFocus, this);
+		oItemNavigation.attachEvent("FocusAgain", this._onItemNavigationBeforeFocus, this);
 
 		// header and footer are in the item navigation but
 		// initial focus should be at the first item row

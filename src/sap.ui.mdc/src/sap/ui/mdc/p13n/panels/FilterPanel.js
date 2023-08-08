@@ -18,6 +18,9 @@ sap.ui.define([
 	//shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
+	// shortcut for sap.m.ListKeyboardMode
+	var ListKeyboardMode = mLibrary.ListKeyboardMode;
+
 	// shortcut for sap.m.FlexJustifyContent
 	var FlexJustifyContent = mLibrary.FlexJustifyContent;
 
@@ -95,6 +98,7 @@ sap.ui.define([
 
 	FilterPanel.prototype._createInnerListControl = function () {
 		var oList = QueryPanel.prototype._createInnerListControl.apply(this, arguments);
+		oList.setKeyboardMode(ListKeyboardMode.Edit);
 		return oList;
 	};
 
@@ -200,6 +204,13 @@ sap.ui.define([
 				oQueryRowGrid.insertContent(oFilterItem, 1);
 
 			}
+
+			//FIXME: Check why this workaround is necessary
+			setTimeout(function(){
+				if (this._oListControl && !this._oListControl.bIsDestroyed) {
+					this._oListControl.setKeyboardMode(ListKeyboardMode.Edit);
+				}
+			}.bind(this), 20);
 
 			delete this._oComboBox;
 		}

@@ -170,13 +170,13 @@ sap.ui.define([
 		oLI._destroyClonedHeaders();
 
 		aColumns.forEach(function(oColumn, iColumnIndex) {
-			var oCell = aCells[oColumn.getInitialOrder()];
-			if (!oCell || !oColumn.getVisible() || oColumn.isHidden()) {
+			if (!oColumn.getVisible() || oColumn.isHidden()) {
 				return;
 			}
 
 			var aStyleClass = oColumn.getStyleClass().split(" ").filter(Boolean),
 				sCellId = oLI.getId() + "-cell" + iColumnIndex,
+				oCell = aCells[oColumn.getInitialOrder()],
 				vAlign = oColumn.getVAlign();
 
 			this.openStartGridCell(rm, oLI, "td", sCellId, "sapMListTblCell");
@@ -190,7 +190,7 @@ sap.ui.define([
 			}
 
 			// merge duplicate cells
-			if (!oTable.hasPopin() && oColumn.getMergeDuplicates()) {
+			if (oCell && !oTable.hasPopin() && oColumn.getMergeDuplicates()) {
 				var sFuncWithParam = oColumn.getMergeFunctionName(),
 					aFuncWithParam = sFuncWithParam.split("#"),
 					sFuncParam = aFuncWithParam[1],
@@ -216,7 +216,7 @@ sap.ui.define([
 			rm.openEnd();
 
 			// it is not necessary to render the cell content but screen readers need the content to announce it
-			if (Core.getConfiguration().getAccessibility()) {
+			if (oCell && Core.getConfiguration().getAccessibility()) {
 				this.applyAriaLabelledBy(oColumn.getHeader(), oCell, true);
 				rm.renderControl(oCell);
 			}

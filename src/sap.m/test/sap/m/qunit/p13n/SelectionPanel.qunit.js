@@ -313,6 +313,19 @@ sap.ui.define([
 		assert.equal(this.oSelectionPanel.getAggregation("_template").aDelegates.length, 0, "No hover event delegate registered");
 	});
 
+	QUnit.test("Check keyboard mode upon 'Show Values' switch", function(assert){
+		this.oSelectionPanel.setEnableReorder(true);
+
+		this.oSelectionPanel.showFactory(true);
+
+		assert.equal(this.oSelectionPanel._oListControl.getKeyboardMode(), "Edit", "List is in edit mode");
+
+		this.oSelectionPanel.showFactory(false);
+
+		assert.equal(this.oSelectionPanel._oListControl.getKeyboardMode(), "Navigation", "List is in navigation mode");
+
+	});
+
 	QUnit.test("Use growing only when necessary (e.g. factory provided)", function(assert){
 
 		assert.ok(this.oSelectionPanel._oListControl.getGrowing(), "Growing enabled as factory is provided");
