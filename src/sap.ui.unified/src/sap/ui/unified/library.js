@@ -117,10 +117,17 @@ sap.ui.define([
 		None : "None",
 
 		/**
-		 * Non-working dates.
+		 * Non-working days.
 		 * @public
+		 * @since 1.121
 		 */
 		NonWorking : "NonWorking",
+
+		/**
+		 * Working days.
+		 * @public
+		 */
+		Working : "Working",
 
 		/**
 		 * The semantic meaning must be defined by the app. It can be displayed in a legend.
