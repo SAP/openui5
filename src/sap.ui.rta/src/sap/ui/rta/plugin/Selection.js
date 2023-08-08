@@ -3,24 +3,20 @@
  */
 
 sap.ui.define([
-	"sap/base/util/restricted/_intersection",
-	"sap/m/InstanceManager",
-	"sap/ui/dt/DOMUtil",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/OverlayUtil",
-	"sap/ui/events/KeyCodes",
 	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/Utils"
+	"sap/ui/rta/Utils",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/events/KeyCodes",
+	"sap/base/util/restricted/_intersection",
+	"sap/m/InstanceManager"
 ],
 function(
-	_intersection,
-	InstanceManager,
-	DOMUtil,
-	OverlayRegistry,
-	OverlayUtil,
-	KeyCodes,
 	Plugin,
-	Utils
+	Utils,
+	OverlayRegistry,
+	KeyCodes,
+	_intersection,
+	InstanceManager
 ) {
 	"use strict";
 
@@ -95,20 +91,6 @@ function(
 		return aElementOverlays.every(function(oElementOverlay) {
 			return oElementOverlay.getElement().getMetadata().getName() === aElementOverlays[0].getElement().getMetadata().getName();
 		});
-	}
-
-	// If a parent overlay is draggable it should not influence the current overlay mouse over behavior
-	function setOrResetFirstParentDraggable(oOverlay, bSet) {
-		if (bSet) {
-			const oFirstDraggableParent = OverlayUtil.getFirstDraggableParentOverlay(oOverlay);
-			if (oFirstDraggableParent) {
-				oOverlay._firstDraggableParent = oFirstDraggableParent;
-				DOMUtil.setDraggable(oFirstDraggableParent.getDomRef(), false);
-			}
-		} else if (oOverlay._firstDraggableParent) {
-			DOMUtil.setDraggable(oOverlay._firstDraggableParent.getDomRef(), true);
-			delete oOverlay._firstDraggableParent;
-		}
 	}
 
 	Selection.prototype.init = function() {
@@ -346,7 +328,6 @@ function(
 				this._oHoverTarget = oOverlay;
 				oOverlay.addStyleClass("sapUiRtaOverlayHover");
 			}
-			setOrResetFirstParentDraggable(oOverlay, true);
 			preventEventDefaultAndPropagation(oEvent);
 		}
 	};
@@ -367,7 +348,6 @@ function(
 		}
 		if (oOverlay.isSelectable()) {
 			this._removePreviousHover();
-			setOrResetFirstParentDraggable(oOverlay);
 			preventEventDefaultAndPropagation(oEvent);
 		}
 	};
