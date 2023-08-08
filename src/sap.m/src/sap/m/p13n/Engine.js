@@ -162,6 +162,13 @@ sap.ui.define([
 			}
 
 		}.bind(this));
+
+		//In case the control is marked as modified, the state change event is triggered once initially to apply the default state
+		var oXConfig = oControl.getCustomData().find((oCustomData) => oCustomData.getKey() == "xConfig");
+		if (oXConfig && JSON.parse((oXConfig.getValue()).replace(/\\/g, ''))?.modified) {
+			this.fireStateChange(oControl);
+		}
+
 	};
 
 
@@ -262,7 +269,8 @@ sap.ui.define([
 		if (changeOperations) {
 			changeTypes = Object.values(changeOperations);
 		}
-		return this.getModificationHandler(control).hasChanges({selector: control, changeTypes}).then((enableReset) => {
+		var oModificationSetting = this._determineModification(control);
+		return this.getModificationHandler(control).hasChanges({selector: control, changeTypes}, oModificationSetting?.payload).then((enableReset) => {
 			return enableReset;
 		});
 	};
@@ -733,6 +741,7 @@ sap.ui.define([
 					//to simplify debugging
 					oRegistryEntry.xConfig = oConfig;
 				}
+				return oConfig;
 			});
 	};
 
@@ -829,7 +838,8 @@ sap.ui.define([
 
 	Engine.prototype.checkControlInitialized = function (vControl) {
 		var oControl = Engine.getControlInstance(vControl);
-		return oControl.initialized instanceof Function ? oControl.initialized() : Promise.resolve();
+		var pInitialize = oControl.initialized instanceof Function ? oControl.initialized() : Promise.resolve();
+		return pInitialize || Promise.resolve();
 	};
 
 	Engine.prototype.checkPropertyHelperInitialized = function (vControl) {
@@ -1086,12 +1096,14 @@ sap.ui.define([
 
 	Engine.prototype.getTrace = function (vControl, oChange) {
 		var oRegistryEntry = this._getRegistryEntry(vControl);
-		return Object.keys(oRegistryEntry.pendingAppliance);
+		return oRegistryEntry ? Object.keys(oRegistryEntry.pendingAppliance) : {};
 	};
 
 	Engine.prototype.clearTrace = function (vControl, oChange) {
 		var oRegistryEntry = this._getRegistryEntry(vControl);
-		oRegistryEntry.pendingAppliance = {};
+		if (oRegistryEntry) {
+			oRegistryEntry.pendingAppliance = {};
+		}
 	};
 
 	/**
