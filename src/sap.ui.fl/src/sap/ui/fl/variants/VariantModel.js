@@ -271,6 +271,16 @@ sap.ui.define([
 		}));
 	}
 
+	function getAdaptationId(sLayer, oControl, sReference) {
+		var mContextBasedAdaptationBag = {
+			layer: sLayer,
+			control: oControl,
+			reference: sReference
+		};
+		var bHasAdaptationsModel = ContextBasedAdaptationsAPI.hasAdaptationsModel(mContextBasedAdaptationBag);
+		return bHasAdaptationsModel && ContextBasedAdaptationsAPI.getDisplayedAdaptationId(mContextBasedAdaptationBag);
+	}
+
 	/**
 	 * Constructor for a new sap.ui.fl.variants.VariantModel model.
 	 * @class Variant model implementation for JSON format.
@@ -642,17 +652,6 @@ sap.ui.define([
 		if (mPropertyBag.currentVariantComparison === 1) {
 			mPropertyBag.sourceVariantSource = this.getVariant(oSourceVariant.instance.getVariantReference());
 		}
-		var mContextBasedAdaptationBag = {
-			layer: mPropertyBag.layer,
-			control: this.oAppComponent,
-			reference: this.sFlexReference
-		};
-		var bHasAdaptationsModel = ContextBasedAdaptationsAPI.hasAdaptationsModel(mContextBasedAdaptationBag);
-		if (bHasAdaptationsModel) {
-			mPropertyBag.adaptationId = ContextBasedAdaptationsAPI.getDisplayedAdaptationId(mContextBasedAdaptationBag);
-		} else {
-			_omit(mPropertyBag, "adaptationId");
-		}
 		var oDuplicateVariant = {
 			instance: createNewVariant(oSourceVariant.instance, mPropertyBag),
 			controlChanges: aVariantChanges,
@@ -731,7 +730,10 @@ sap.ui.define([
 
 		// sets copied variant and associated changes as dirty
 		aChanges = this.oChangePersistence.addDirtyChanges(
-			aChanges.concat([oDuplicateVariantData.instance].concat(oDuplicateVariantData.controlChanges))
+			aChanges
+			.concat([oDuplicateVariantData.instance]
+			.concat(oDuplicateVariantData.controlChanges)
+			.concat(mPropertyBag.additionalVariantChanges))
 		);
 
 		return this.updateCurrentVariant({
@@ -878,14 +880,7 @@ sap.ui.define([
 		if (mPropertyBag.adaptationId !== undefined) {
 			mNewChangeData.adaptationId = mPropertyBag.adaptationId;
 		} else {
-			var mContextBasedAdaptationBag = {
-				layer: mPropertyBag.layer,
-				control: mPropertyBag.appComponent,
-				reference: this.sFlexReference
-			};
-			if (ContextBasedAdaptationsAPI.hasAdaptationsModel(mContextBasedAdaptationBag)) {
-				mNewChangeData.adaptationId = ContextBasedAdaptationsAPI.getDisplayedAdaptationId(mContextBasedAdaptationBag);
-			}
+			mNewChangeData.adaptationId = getAdaptationId(mPropertyBag.layer, mPropertyBag.appComponent, this.sFlexReference);
 		}
 
 		if (mPropertyBag.changeType === "setDefault") {
@@ -910,7 +905,6 @@ sap.ui.define([
 	 * Sets the variant properties and adds a variant change
 	 * @param {string} sVariantManagementReference - Variant management reference
 	 * @param {object} mPropertyBag - Map of properties
-	 * @param {string} [mPropertyBag.adaptationId] - Adaptation ID to set which overrules the currently display adaptation
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} Created Change object
 	 */
 	VariantModel.prototype.addVariantChange = function(sVariantManagementReference, mPropertyBag) {
@@ -1194,9 +1188,6 @@ sap.ui.define([
 		var aNewVariantDirtyChanges;
 
 		return executeAfterSwitch(function(sVariantManagementReference, oAppComponent, mParameters) {
-			var bSetDefault = mParameters.def;
-			var bSetExecuteOnSelect = mParameters.execute;
-
 			var sSourceVariantReference = this.getCurrentVariantReference(sVariantManagementReference);
 			var aSourceVariantChanges = VariantManagementState.getControlChangesForVariant({
 				reference: this.sFlexReference,
@@ -1230,36 +1221,45 @@ sap.ui.define([
 				contexts: mParameters.contexts,
 				sourceVariantReference: sSourceVariantReference,
 				newVariantReference: sNewVariantReference,
-				generator: mParameters.generator
+				generator: mParameters.generator,
+				additionalVariantChanges: [],
+				adaptationId: getAdaptationId(sVariantChangeLayer, oAppComponent, this.sFlexReference)
 			};
+
+			var oBaseChangeProperties = {
+				content: {},
+				reference: this.sFlexReference,
+				generator: mPropertyBag.generator,
+				layer: sVariantChangeLayer,
+				adaptationId: mPropertyBag.adaptationId
+			};
+
+			if (mParameters.def) {
+				var mPropertyBagSetDefault = merge({
+					changeType: "setDefault",
+					content: {
+						defaultVariant: sNewVariantReference
+					},
+					fileType: "ctrl_variant_management_change",
+					selector: JsControlTreeModifier.getSelector(sVariantManagementReference, mPropertyBag.appComponent)
+				}, oBaseChangeProperties);
+				mPropertyBag.additionalVariantChanges.push(FlexObjectFactory.createUIChange(mPropertyBagSetDefault));
+			}
+			if (mParameters.execute) {
+				var mPropertyBagSetExecute = merge({
+					changeType: "setExecuteOnSelect",
+					content: {
+						executeOnSelect: true
+					},
+					fileType: "ctrl_variant_change",
+					selector: JsControlTreeModifier.getSelector(mPropertyBag.newVariantReference, mPropertyBag.appComponent)
+				}, oBaseChangeProperties);
+				mPropertyBag.additionalVariantChanges.push(FlexObjectFactory.createUIChange(mPropertyBagSetExecute));
+			}
 
 			return this.copyVariant(mPropertyBag)
 			.then(function(aCopiedVariantDirtyChanges) {
-				var aNewChangeInfos = [];
-				if (bSetDefault) {
-					var mPropertyBagSetDefault = {
-						changeType: "setDefault",
-						defaultVariant: sNewVariantReference,
-						originalDefaultVariant: this.oData[sVariantManagementReference].defaultVariant,
-						appComponent: oAppComponent,
-						layer: sVariantChangeLayer,
-						variantManagementReference: sVariantManagementReference
-					};
-					aNewChangeInfos.push(mPropertyBagSetDefault);
-				}
-				if (bSetExecuteOnSelect) {
-					var mPropertyBagSetExecute = {
-						changeType: "setExecuteOnSelect",
-						executeOnSelect: true,
-						variantReference: sNewVariantReference,
-						appComponent: oAppComponent,
-						layer: sVariantChangeLayer,
-						variantManagementReference: sVariantManagementReference
-					};
-					aNewChangeInfos.push(mPropertyBagSetExecute);
-				}
-				var aNewChanges = this.addVariantChanges(sVariantManagementReference, aNewChangeInfos);
-				aNewVariantDirtyChanges = aCopiedVariantDirtyChanges.concat(aNewChanges);
+				aNewVariantDirtyChanges = aCopiedVariantDirtyChanges;
 				// unsaved changes on the source variant are removed before copied variant changes are saved
 				return eraseDirtyChanges({
 					changes: aSourceVariantChanges,
