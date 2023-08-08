@@ -17,7 +17,7 @@
 			<p>
 				With this card type, card developers can display a whole
 				UI5 <a data-demokit-href="#/api/sap.ui.core.Component">Component</a> as content for the card.
-				The card itself will load the specified component and display it.
+				The card will load the specified component and display it in the card content area.
 				This allows great flexibility and as such, the developer is responsible to follow the guidelines to achieve
 				consistent user experience.
 			</p>
@@ -28,6 +28,17 @@
 				<li>The component in the card must be simple. The card should be used only to navigate to an application
 					where the actual work can be done.</li>
 			</ul>
+
+			<h2 id="declaration">Component Card Declaration</h2>
+			<p>
+				Like cards, UI5 Components are also described by manifest file. When making a card, the same manifest is shared by the card and the component.
+				The following mandatory properties has to be set on top of the component manifest:
+				<ul>
+					<li>"sap.app/type" has to be set to "card"</li>
+					<li>"sap.card/type" property has to be "Component"</li>
+					<li>"sap.card/header" should be provided</li>
+				</ul>
+			</p>
 
 			<h2 id="lifeCycleAndApi">Component lifecycle and API</h2>
 			<ul>
@@ -79,33 +90,54 @@
 				For production environments all the resources of the card should be packed into one single file called Component-preload.js.
 				For instructions how to build it read <a href="../../../index.html#/learn/bundle/componentPreload" target="_parent">Component Preload</a>.
 			</p>
-			
+
 			<h2 id="example">Example</h2>
 			<p>Create the manifest file. It is the same for the card and the component</p>
 			<pre class="lang-json">{
-	"sap.card": {
-		"type": "Component",
-		"header": {
-			"title": "Buy bus ticket on-line",
-			"subTitle": "Buy a single drive ticket for a date"
-		}
-	},
 	"sap.app": {
-		"id": "sap.myapp.bookingComponent",
-		"type": "Card",
+		"id": "my.component.sample.cardContent",
+		"type": "card",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
+	"sap.card": {
+		"type": "Component",
+		"header": {
+			"title": "Visit our workshop"
+		}
+	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.myapp.bookingComponent.Main",
+			"viewName": "my.component.sample.cardContent.View",
 			"type": "XML",
-			"async": true
+			"async": true,
+			"id": "app"
 		}
 	}
 }</pre>
-			<p>Create the view to display the card:</p>
+
+			<p>Create the Component.js file</p>
+			<pre class="lang-js">
+sap.ui.define([
+	"sap/ui/core/UIComponent"
+], function (UIComponent) {
+	"use strict";
+
+	var Component = UIComponent.extend("my.component.sample.cardContent.Component");
+
+	return Component;
+});
+</pre>
+
+		<p>Create the root view</p>
+		<pre class="lang-xml">
+&lt;mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"&gt;
+	&lt;Image src="..."&gt;&lt;/Image&gt;
+&lt;/mvc:View&gt;
+</pre>
+
+			<p>Display the card in your application:</p>
 			<pre class="lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="400px" height="auto" /&gt;
