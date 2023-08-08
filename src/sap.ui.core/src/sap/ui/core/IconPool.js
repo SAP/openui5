@@ -255,8 +255,7 @@ sap.ui.define([
 			// create an initial configuration for the font
 			if (!mFontRegistry[oConfig.collectionName] || mFontRegistry[oConfig.collectionName].metadataLoaded === false) {
 				mFontRegistry[oConfig.collectionName] = {
-					config: oConfig,
-					inserted: false
+					config: oConfig
 				};
 			} else {
 				Log.warning("The font '" + oConfig.collectionName + "' is already registered");
