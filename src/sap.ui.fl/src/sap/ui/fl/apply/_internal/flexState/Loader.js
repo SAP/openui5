@@ -97,7 +97,6 @@ sap.ui.define([
 	 * Class for loading Flex Data from the backend via the Connectors.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.flexState.Loader
-	 * @experimental
 	 * @since 1.74
 	 * @version ${version}
 	 * @private

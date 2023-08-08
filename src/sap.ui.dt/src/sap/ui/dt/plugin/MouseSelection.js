@@ -26,7 +26,6 @@ function(Plugin) {
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.plugin.MouseSelection
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var MouseSelection = Plugin.extend("sap.ui.dt.plugin.MouseSelection", /** @lends sap.ui.dt.plugin.MouseSelection.prototype */ {
 		metadata: {

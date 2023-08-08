@@ -2,7 +2,6 @@
  * ${copyright}
  *
  * @private
- * @experimental
  */
 sap.ui.define([
 ], function() {

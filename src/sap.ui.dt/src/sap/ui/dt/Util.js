@@ -23,7 +23,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.54
 	 * @alias sap.ui.dt.DOMUtil
-	 * @experimental Since 1.54. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 
 	var Util = {};

@@ -30,7 +30,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.101
 	 * @alias sap.ui.rta.plugin.Resize
-	 * @experimental Since 1.101. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var Resize = Plugin.extend("sap.ui.rta.plugin.Resize", /** @lends sap.ui.rta.plugin.Resize.prototype */ {
 		metadata: {

@@ -23,7 +23,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.36
 	 * @private
-	 * @experimental Since 1.36. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var PropertyChange = {};
 

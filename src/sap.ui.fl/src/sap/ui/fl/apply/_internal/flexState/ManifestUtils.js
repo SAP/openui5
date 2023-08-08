@@ -66,7 +66,6 @@ function(
 	 * Provides utility functions for handling manifests; All function work with Manifest Objects or raw manifests
 	 *
 	 * @namespace sap.ui.fl.apply._internal.flexState.ManifestUtils
-	 * @experimental
 	 * @since 1.74
 	 * @version ${version}
 	 * @private

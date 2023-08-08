@@ -62,8 +62,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.34
 	 * @alias sap.ui.rta.command.Stack
-	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var Stack = ManagedObject.extend("sap.ui.rta.command.Stack", {
 		metadata: {

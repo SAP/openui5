@@ -35,7 +35,6 @@ function(
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.rta.plugin.CutPaste
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var CutPaste = ControlCutPaste.extend("sap.ui.rta.plugin.CutPaste", /** @lends sap.ui.rta.plugin.CutPaste.prototype */ {
 		metadata: {

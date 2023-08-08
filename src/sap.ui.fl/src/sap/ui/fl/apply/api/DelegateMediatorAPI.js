@@ -13,7 +13,6 @@ sap.ui.define([
 	 * Provides an API to handle default delegates.
 	 *
 	 * @namespace sap.ui.fl.apply.api.DelegateMediatorAPI
-	 * @experimental Since 1.80
 	 * @since 1.80
 	 * @private
 	 * @ui5-restricted

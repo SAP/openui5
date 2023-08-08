@@ -53,7 +53,6 @@ sap.ui.define([
 	 * Provides an API to handle specific functionalities for {@link sap.ui.comp.smartvariants.SmartVariantManagement}.
 	 *
 	 * @namespace sap.ui.fl.write.api.SmartVariantManagementWriteAPI
-	 * @experimental
 	 * @since 1.69.0
 	 * @private
 	 * @ui5-restricted sap.ui.comp, sap.ui.rta
@@ -369,7 +368,6 @@ sap.ui.define([
 		 * Opens Transport Dialog for transport selection.
 		 * @private
 		 * @ui5-restricted sap.ui.comp
-		 * @experimental
 		 * @returns {sap.ui.fl.write._internal.transport.TransportSelection} TransportSelection dialog.
 		 */
 		_getTransportSelection: function() {

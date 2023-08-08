@@ -20,6 +20,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.appComponent App component
 	 * @param {object} mPropertyBag.view Root view
 	 * @return {Promise} Promise resolving to true if change has been reverted successfully
+	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return function(oChange, oControl, mPropertyBag) {

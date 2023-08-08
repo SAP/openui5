@@ -39,7 +39,6 @@ sap.ui.define([
 	 * Provides an API for controls to implement personalization.
 	 *
 	 * @namespace sap.ui.fl.write.api.ControlPersonalizationWriteAPI
-	 * @experimental Since 1.69
 	 * @since 1.69
 	 * @private
 	 * @ui5-restricted UI5 controls that allow personalization

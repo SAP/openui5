@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @constructor
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.27.0
+	 * @since 1.27.0
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.core
 	 */

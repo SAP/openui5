@@ -37,7 +37,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.53
 	 * @alias sap.ui.dt.plugin.ContextMenu
-	 * @experimental Since 1.53. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var ContextMenu = Plugin.extend("sap.ui.dt.plugin.ContextMenu", /** @lends sap.ui.rta.plugin.ContextMenu.prototype */ {
 		metadata: {

@@ -15,7 +15,6 @@ sap.ui.define([
 	 * Connector for saving data to the <code>window.localStorage</code>.
 	 *
 	 * @namespace sap.ui.fl.write._internal.connectors.LocalStorageConnector
-	 * @experimental Since 1.70
 	 * @since 1.70
 	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Connector

@@ -32,7 +32,6 @@ sap.ui.define([
 	 * Provides an API for tools to create, update, delete app variants.
 	 *
 	 * @namespace sap.ui.fl.write.api.AppVariantWriteAPI
-	 * @experimental Since 1.72
 	 * @since 1.72
 	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools

@@ -31,7 +31,6 @@ sap.ui.define([
 	 * Handler class to manipulate control variant changes in a variants map. See also {@link sap.ui.fl.variants.VariantManagement}.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.flexState.controlVariants.VariantManagementState
-	 * @experimental Since 1.74
 	 * @since 1.74
 	 * @version ${version}
 	 * @private

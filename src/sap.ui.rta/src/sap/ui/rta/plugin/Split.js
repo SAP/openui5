@@ -26,7 +26,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.46
 	 * @alias sap.ui.rta.plugin.Split
-	 * @experimental Since 1.46. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var Split = Plugin.extend("sap.ui.rta.plugin.Split", /** @lends sap.ui.rta.plugin.Split.prototype */ {
 		metadata: {

@@ -33,7 +33,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.48
 	 * @alias sap.ui.rta.toolbar.Base
-	 * @experimental Since 1.48. This class is experimental. The API might be changed in future.
 	 */
 
 	var Base = HBox.extend("sap.ui.rta.toolbar.Base", {

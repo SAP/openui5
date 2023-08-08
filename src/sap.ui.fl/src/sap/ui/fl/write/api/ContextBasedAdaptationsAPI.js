@@ -48,7 +48,6 @@ sap.ui.define([
 	 * Provides an API for creating and managing context-based adaptation.
 	 *
 	 * @namespace sap.ui.fl.write.api.ContextBasedAdaptationsAPI
-	 * @experimental Since 1.106
 	 * @since 1.106
 	 * @private
 	 * @ui5-restricted sap.ui.rta

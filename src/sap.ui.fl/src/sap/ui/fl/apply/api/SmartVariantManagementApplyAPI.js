@@ -74,7 +74,6 @@ sap.ui.define([
 	 * Provides an API to handle specific functionalities for the <code>sap.ui.comp</code> library.
 	 *
 	 * @namespace sap.ui.fl.apply.api.SmartVariantManagementApplyAPI
-	 * @experimental
 	 * @since 1.69.0
 	 * @private
 	 * @ui5-restricted sap.ui.comp

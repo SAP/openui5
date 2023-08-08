@@ -49,8 +49,8 @@ sap.ui.define([
 	 * Provides an API for tools like {@link sap.ui.rta} to create, apply and revert {@link sap.ui.fl.apply._internal.flexObjects.FlexObject}.
 	 *
 	 * @namespace sap.ui.fl.write.api.ChangesWriteAPI
-	 * @experimental Since 1.68
 	 * @since 1.68
+	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools
 	 *
 	 */

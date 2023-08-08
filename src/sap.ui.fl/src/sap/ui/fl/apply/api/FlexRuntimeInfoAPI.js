@@ -27,7 +27,6 @@ sap.ui.define([
 	 * Provides an API to get specific information about the <code>sap.ui.fl</code> runtime.
 	 *
 	 * @namespace sap.ui.fl.apply.api.FlexRuntimeInfoAPI
-	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @private
 	 * @ui5-restricted UI5 controls, sap.ovp, tests

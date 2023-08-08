@@ -119,7 +119,7 @@ sap.ui.define([
 	 * @private
 	 * @since 1.75
 	 * @alias sap.ui.rta.plugin.AddIFrame
-	 * @experimental Since 1.75. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 *  Since 1.75. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var AddIFrame = BaseCreate.extend("sap.ui.rta.plugin.AddIFrame", /** @lends sap.ui.rta.plugin.AddIFrame.prototype */{
 		metadata: {

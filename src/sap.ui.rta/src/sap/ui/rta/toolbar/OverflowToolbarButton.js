@@ -27,7 +27,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.94
 	 * @alias sap.ui.rta.toolbar.OverflowToolbarButton
-	 * @experimental Since 1.94. This class is experimental. The API might be changed in the future.
 	 */
 
 	var OverflowToolbarButton = SapMOverflowToolbarButton.extend("sap.ui.rta.toolbar.OverflowToolbarButton", {

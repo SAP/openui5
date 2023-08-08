@@ -28,7 +28,6 @@ function(
 	 * @private
 	 * @since 1.69
 	 * @alias sap.ui.dt.TaskManager
-	 * @experimental Since 1.69. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var TaskRunner = function(mParam) {
 		if (!mParam || !mParam.taskManager || !(mParam.taskManager instanceof TaskManager)) {

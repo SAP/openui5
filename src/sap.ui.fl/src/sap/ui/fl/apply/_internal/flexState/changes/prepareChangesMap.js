@@ -10,7 +10,6 @@ sap.ui.define([
 	/**
 	 * Prepares the ChangesMap from the flex response
 	 *
-	 * @experimental since 1.74
 	 * @function
 	 * @since 1.74
 	 * @private

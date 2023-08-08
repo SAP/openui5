@@ -15,7 +15,6 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	 * @private
 	 * @since 1.62
 	 * @alias sap.ui.rta.command.CustomAdd
-	 * @experimental Since 1.62. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var CustomAdd = FlexCommand.extend("sap.ui.rta.command.CustomAdd", {
 		metadata: {

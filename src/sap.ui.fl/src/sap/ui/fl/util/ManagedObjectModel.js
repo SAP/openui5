@@ -29,7 +29,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.64
 	 * @alias sap.ui.fl.util.ManagedObjectModel
-	 * @experimental Since 1.64. This class is experimental. The API might be changed in future.
 	 */
 	var ManagedObjectModelFantomas = Element.extend("sap.ui.fl.util.ManagedObjectModel", {
 		metadata: {

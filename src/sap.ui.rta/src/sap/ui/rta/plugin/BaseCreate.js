@@ -26,7 +26,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.75
 	 * @alias sap.ui.rta.plugin.BaseCreate
-	 * @experimental Since 1.75. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 * @abstract
 	 */
 	var BaseCreate = Plugin.extend("sap.ui.rta.plugin.BaseCreate", /** @lends sap.ui.rta.plugin.BaseCreate.prototype */ {

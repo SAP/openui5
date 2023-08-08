@@ -11,16 +11,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	/**
-	 * Util class for Connector implementations (apply).
-	 *
-	 * @namespace sap.ui.fl.initial._internal.connectors.Utils
-	 * @since 1.70
-	 * @version ${version}
-	 * @private
-	 * @ui5-restricted sap.ui.fl.initial._internal.connectors, sap.ui.fl.write._internal.connectors, sap.ui.fl.write._internal.transport
-	 */
-
 	var DEFAULT_TIMEOUT = 20000; // 20 seconds
 
 	/**
@@ -47,6 +37,15 @@ sap.ui.define([
 		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl").getText(sTextKey);
 	};
 
+	/**
+	 * Util class for Connector implementations (apply).
+	 *
+	 * @namespace sap.ui.fl.initial._internal.connectors.Utils
+	 * @since 1.70
+	 * @version ${version}
+	 * @private
+	 * @ui5-restricted sap.ui.fl.initial._internal.connectors, sap.ui.fl.write._internal.connectors, sap.ui.fl.write._internal.transport
+	 */
 	return {
 		/**
 		 * Adds current BCP-47 standard language code into request parameters as value of <code>sap-language</code> parameter.
@@ -86,7 +85,6 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.fileName] Filename of an existing flex object
 		 * @param {object} [mParameters] Query-parameters which will be added to the url
 		 * @returns {string} Complete request url
-		 * @private
 		 * @ui5-restricted sap.ui.fl.initial._internal, sap.ui.fl.write._internal
 		 */
 		getUrl: function(sRoute, mPropertyBag, mParameters) {

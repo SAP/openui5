@@ -47,7 +47,6 @@ sap.ui.define([
 	 * Provides an API for tools to query, provide, save or reset {@link sap.ui.fl.apply._internal.flexObjects.FlexObject}s.
 	 *
 	 * @namespace sap.ui.fl.write.api.PersistenceWriteAPI
-	 * @experimental Since 1.68
 	 * @since 1.68
 	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools

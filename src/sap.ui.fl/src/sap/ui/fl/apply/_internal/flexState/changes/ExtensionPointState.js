@@ -24,7 +24,6 @@ sap.ui.define([
 	 * Extension point changes are extended by the extension point information that is required when the flex change is applied.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.flexState.changes.ExtensionPointState
-	 * @experimental Since 1.79
 	 * @since 1.79
 	 * @version ${version}
 	 * @private

@@ -85,6 +85,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Changes to be merged
 	 * @param {Array} aSupportedProperties - Array of supported properties by change merger
 	 * @param {Array} aSupportedOperations - Array of supported operations by change merger
+	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
 	 */
 	function checkEntityPropertyChange(oChange, aSupportedProperties, aSupportedOperations) {
@@ -112,6 +113,7 @@ sap.ui.define([
 	 * The target layer is derived from the change.
 	 * @param {string} sId - The ID to check
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - The change from where to derive the layer
+	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
 	 */
 	function checkIdNamespaceCompliance(sId, oChange) {

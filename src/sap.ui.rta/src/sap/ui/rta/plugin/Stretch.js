@@ -35,7 +35,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.60
 	 * @alias sap.ui.rta.plugin.Stretch
-	 * @experimental Since 1.60. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var Stretch = Plugin.extend("sap.ui.rta.plugin.Stretch", /** @lends sap.ui.rta.plugin.Stretch.prototype */ {
 		metadata: {

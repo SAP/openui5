@@ -37,7 +37,6 @@ function(
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.AggregationOverlay
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var AggregationOverlay = Overlay.extend("sap.ui.dt.AggregationOverlay", /** @lends sap.ui.dt.AggregationOverlay.prototype */ {
 		metadata: {
