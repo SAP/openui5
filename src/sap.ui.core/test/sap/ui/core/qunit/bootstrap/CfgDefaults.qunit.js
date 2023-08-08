@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Locale",
+	"sap/ui/core/theming/ThemeHelper",
 	"sap/ui/Device"
-], function(Configuration, Locale, Device) {
+], function(Configuration, Locale, ThemeHelper, Device) {
 	"use strict";
 
 	/*
@@ -45,7 +46,7 @@ sap.ui.define([
 
 	QUnit.test("Settings", function(assert) {
 		// compare values where possible
-		assert.equal(Configuration.getTheme(), "base", "theme");
+		assert.equal(Configuration.getTheme(), ThemeHelper.getDefaultThemeInfo().DEFAULT_THEME, "theme");
 		assert.equal(toLower(Configuration.getLanguage()), toLower(defaultLocale()), "language");
 		assert.equal(Configuration.getAccessibility(), true, "accessibility");
 		assert.equal(Configuration.getAnimationMode(), Configuration.AnimationMode.full, "animationMode");

@@ -85,9 +85,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			"Theming": {
 				title: "sap.ui.core.Theming",
 				ui5: {
-					theme: "",
+					theme: "", // Note: this is intentionally an empty string, regression test for theme defaulting
 					themeRoots: {
-						"sap_initialThemeRoot": "/somewhere/outside"
+						"theme_with_initial_themeRoot": "/somewhere/outside"
 					}
 				},
 				qunit: {
@@ -97,9 +97,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			"ThemingWoThemeManager": {
 				title: "sap.ui.core.Theming w/o sap.ui.core.theming.ThemeManager",
 				ui5: {
-					theme: "",
+					theme: "", // Note: this is intentionally an empty string, regression test for theme defaulting
 					themeRoots: {
-						"sap_initialThemeRoot": "/somewhere/outside"
+						"theme_with_initial_themeRoot": "/somewhere/outside"
 					}
 				},
 				testConfig: {
@@ -110,6 +110,29 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				},
 				beforeBootstrap: "testdata/core/Theming.beforeBootstrap.qunit",
 				module: "testdata/core/Theming.qunit"
+			},
+			"Theming_default_and_fallback": {
+				title: "sap.ui.core.Theming - defaulting and fallbacks",
+				ui5: {
+					theme: "sap_goldreflection" // Note: deprecated and deleted theme: used for fallback test!
+				},
+				qunit: {
+					reorder: false
+				}
+			},
+			"Theming_default_and_fallback_wo_ThemeManager": {
+				title: "sap.ui.core.Theming - defaulting and fallbacks",
+				ui5: {
+					theme: "sap_goldreflection" // Note: deprecated and deleted theme: used for fallback test!
+				},
+				testConfig: {
+					themeManagerNotActive: true
+				},
+				qunit: {
+					reorder: false
+				},
+				beforeBootstrap: "testdata/core/Theming.beforeBootstrap.qunit",
+				module: "testdata/core/Theming_default_and_fallback.qunit"
 			}
 		}
 	};
