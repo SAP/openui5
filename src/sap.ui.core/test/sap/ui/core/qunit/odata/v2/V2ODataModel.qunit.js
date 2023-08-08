@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/core/date/UI5Date",
-	"sap/m/DateTimeInput",
+	"sap/m/DateTimePicker",
 	"sap/m/Input",
 	"sap/m/Label",
 	"sap/m/List",
@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column"
-], function (each, isEmptyObject, UI5Date, DateTimeInput, Input, Label, List, Panel, ListItem,
+], function (each, isEmptyObject, UI5Date, DateTimePicker, Input, Label, List, Panel, ListItem,
 		library, Message, MockServer, ChangeReason, Filter, Sorter, UpdateMethod, ODataModel,
 		DateTime, createAndAppendDiv, Table, Column
 ) {
@@ -1253,8 +1253,13 @@ sap.ui.define([
 	QUnit.test("test oDataModel setProperty - hasPendingChanges", function(assert) {
 		var done = assert.async();
 		oModel.setDefaultBindingMode("TwoWay");
-		var oDateType = new DateTime();
-		var oInput = new DateTimeInput({type: "DateTime", value: {path:"/ProductSet('AD-1000')/CreatedAt", type: oDateType, formatOptions: { style: 'medium', strictParsing: true}}});
+		var oInput = new DateTimePicker({value: {
+				path:"/ProductSet('AD-1000')/CreatedAt",
+				type: new DateTime(),
+				formatOptions: {
+					style: 'medium',
+					strictParsing: true
+			}}});
 		oInput.setModel(oModel);
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
