@@ -1722,21 +1722,28 @@ sap.ui.define([
 		};
 
 		sinon.stub(oTable, "getBinding").returns(undefined);
-		assert.strictEqual(oTable.getContextByIndex(0), undefined, "Without a binding");
+		assert.strictEqual(oTable.getContextByIndex(0), null, "Without a binding");
 
-		oFakeBinding.getContexts.returns(["test"]);
 		oTable.getBinding.returns(oFakeBinding);
+
+		oFakeBinding.getContexts.returns([]);
+		assert.strictEqual(oTable.getContextByIndex(0), null, "With a binding that does not have a getContextByIndex method; No context found");
+		oFakeBinding.getContexts.returns(["test"]);
+		oFakeBinding.getContexts.resetHistory();
 		assert.strictEqual(oTable.getContextByIndex(0), "test", "With a binding that does not have a getContextByIndex method");
 		assert.ok(oFakeBinding.getContexts.calledOnceWithExactly(0, 1, 0, true), "Binding#getContexts called once with correct arguments");
 
 		oFakeBinding.getContexts.resetHistory();
 		oFakeBinding.getContextByIndex = sinon.stub();
+		oFakeBinding.getContextByIndex.returns(undefined);
+		assert.strictEqual(oTable.getContextByIndex(1), null, "With binding that does have a getContextByIndex method; No context found");
 		oFakeBinding.getContextByIndex.returns("test2");
+		oFakeBinding.getContextByIndex.resetHistory();
 		assert.strictEqual(oTable.getContextByIndex(1), "test2", "With binding that does have a getContextByIndex method");
 		assert.ok(oFakeBinding.getContexts.notCalled, "Binding#getContexts not called");
 		assert.ok(oFakeBinding.getContextByIndex.calledOnceWithExactly(1), "Binding#getContextByIndex called once with correct arguments");
 
-		assert.strictEqual(oTable.getContextByIndex(-1), undefined, "Negative index");
+		assert.strictEqual(oTable.getContextByIndex(-1), null, "Negative index");
 
 		oTable.getBinding.restore();
 	});
