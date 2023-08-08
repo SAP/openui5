@@ -107,19 +107,11 @@ sap.ui.define([
 				}
 			};
 
-			var oMockFlexController = {
-				_oChangePersistence: {
-					getComponentName: function() {
-						return "someComponentName";
-					}
-				}
-			};
-
 			this.oDummyControl = new VariantManagement("dummyControl");
 
 			this.oAppComponent = new Component("AppComponent");
 			this.oModel = new VariantModel(this.oData, {
-				flexController: oMockFlexController,
+				flexController: {},
 				appComponent: this.oAppComponent
 			});
 			return this.oModel.initialize()

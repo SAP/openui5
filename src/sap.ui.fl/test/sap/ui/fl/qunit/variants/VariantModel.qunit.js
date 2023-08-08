@@ -1955,10 +1955,9 @@ sap.ui.define([
 	QUnit.module("_duplicateVariant", {
 		beforeEach: function() {
 			sandbox.stub(Settings, "getInstance").resolves({});
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("foo");
 			this.oModel = new VariantModel({}, {
-				flexController: {
-					_oChangePersistence: {getComponentName: function() {return "foo";}}
-				},
+				flexController: {},
 				appComponent: {getId: function() {}}
 			});
 
@@ -3148,10 +3147,9 @@ sap.ui.define([
 
 	QUnit.module("Given a VariantModel without data and with Ushell available", {
 		beforeEach: function() {
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("foo");
 			this.oModel = new VariantModel({}, {
-				flexController: {
-					_oChangePersistence: {getComponentName: function() {return "foo";}}
-				},
+				flexController: {},
 				appComponent: {getId: function() {}}
 			});
 

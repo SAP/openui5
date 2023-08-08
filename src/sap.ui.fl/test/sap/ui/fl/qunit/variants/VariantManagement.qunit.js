@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/Layer",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ], function(
 	ControlVariantApplyAPI,
+	ManifestUtils,
 	VariantManagement,
 	VariantModel,
 	Layer,
@@ -70,13 +72,9 @@ sap.ui.define([
 
 			this.oVariantManagement = new VariantManagement("One", {});
 			var oFlexController = {
-				setVariantSwitchPromise: function() {},
-				_oChangePersistence: {
-					getComponentName: function() {
-						return "mockComponentName";
-					}
-				}
+				setVariantSwitchPromise: function() {}
 			};
+			sinon.stub(ManifestUtils, "getFlexReferenceForControl").returns("mockComponentName");
 
 			this._oVM = this.oVariantManagement._getEmbeddedVM();
 
@@ -160,6 +158,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oVariantManagement.destroy();
 			flSettings.getInstance.restore();
+			ManifestUtils.getFlexReferenceForControl.restore();
 		}
 	}, function() {
 		QUnit.test("Shall be instantiable", function(assert) {

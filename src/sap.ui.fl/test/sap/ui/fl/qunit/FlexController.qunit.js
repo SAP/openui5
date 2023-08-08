@@ -299,8 +299,7 @@ sap.ui.define([
 			var oPrepChange = this.oFlexController.addPreparedChange(oChange, oComponent);
 			assert.ok(oPrepChange);
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
-			var aDirtyChanges = oChangePersistence.getDirtyChanges();
+			var aDirtyChanges = this.oFlexController._oChangePersistence.getDirtyChanges();
 
 			assert.strictEqual(aDirtyChanges.length, 1);
 			assert.strictEqual(aDirtyChanges[0].getSelector().id, "abc123");

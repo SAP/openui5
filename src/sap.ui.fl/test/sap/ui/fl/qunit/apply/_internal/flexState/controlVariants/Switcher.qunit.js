@@ -50,9 +50,6 @@ sap.ui.define([
 						return this.oChangesMap;
 					}.bind(this)
 				},
-				getComponentName: function() {
-					return "componentName";
-				},
 				applyVariantChanges: sandbox.stub()
 			};
 			this.oAppComponent = {type: "appComponent"};

@@ -438,7 +438,7 @@ sap.ui.define([
 			.withArgs({
 				vReference: "variantManagementId",
 				vmReference: "variantManagementId",
-				reference: this.oChangePersistence.getComponentName()
+				reference: this.oChangePersistence._mComponent.name
 			})
 			.returns(oVariant);
 			sandbox.stub(FlexState, "getStorageResponse").resolves({

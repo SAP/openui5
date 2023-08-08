@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
@@ -43,6 +44,7 @@ sap.ui.define([
 	FlexObjectFactory,
 	Switcher,
 	VariantManagementState,
+	ManifestUtils,
 	VariantUtil,
 	Layer,
 	LayerUtils,
@@ -314,7 +316,7 @@ sap.ui.define([
 			// FlexControllerFactory creates a VariantModel instance for this application component.
 			this.oFlexController = mPropertyBag.flexController;
 			this.oChangePersistence = this.oFlexController._oChangePersistence;
-			this.sFlexReference = this.oChangePersistence.getComponentName();
+			this.sFlexReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.appComponent);
 			this.oAppComponent = mPropertyBag.appComponent;
 			this._oResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
 			this._oVariantSwitchPromise = Promise.resolve();

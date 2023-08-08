@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
@@ -18,6 +19,7 @@ sap.ui.define([
 	Component,
 	URLHandler,
 	VariantManagementState,
+	ManifestUtils,
 	ControlVariantApplyAPI,
 	VariantManagement,
 	VariantModel,
@@ -300,12 +302,7 @@ sap.ui.define([
 
 			// variant model
 			var oFlexController = {
-				setVariantSwitchPromise: function() {},
-				_oChangePersistence: {
-					getComponentName: function() {
-						return "mockComponentName";
-					}
-				}
+				setVariantSwitchPromise: function() {}
 			};
 
 			// mock ushell services
@@ -727,13 +724,9 @@ sap.ui.define([
 
 	QUnit.module("Given URLHandler.updateVariantInURL() to update a new variant parameter in the URL", {
 		beforeEach: function() {
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("someComponentName");
 			var oFlexController = {
-				setVariantSwitchPromise: function() {},
-				_oChangePersistence: {
-					getComponentName: function() {
-						return "someComponentName";
-					}
-				}
+				setVariantSwitchPromise: function() {}
 			};
 			this.oModel = new VariantModel({
 				variantMgmtId1: {

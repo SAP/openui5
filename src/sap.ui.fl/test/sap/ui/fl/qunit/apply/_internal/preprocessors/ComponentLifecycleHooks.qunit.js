@@ -215,8 +215,7 @@ sap.ui.define([
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl");
 				sandbox.stub(FlexControllerFactory, "createForControl").returns({
 					_oChangePersistence: {
-						loadChangesMapForComponent: sandbox.stub().resolves(),
-						getComponentName: function() {return "foo";}
+						loadChangesMapForComponent: sandbox.stub().resolves()
 					}
 				});
 				var oExistingModel;
@@ -336,9 +335,6 @@ sap.ui.define([
 				_oChangePersistence: {
 					loadChangesMapForComponent: function() {
 						return Promise.resolve();
-					},
-					getComponentName: function() {
-						return sMockComponentName;
 					}
 				}
 			};
