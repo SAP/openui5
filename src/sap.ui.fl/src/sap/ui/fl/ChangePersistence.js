@@ -104,17 +104,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Return the name of the SAPUI5 component. All changes are assigned to 1 SAPUI5 component. The SAPUI5 component also serves as authorization
-	 * object.
-	 *
-	 * @returns {string} component name
-	 * @public
-	 */
-	ChangePersistence.prototype.getComponentName = function() {
-		return this._mComponent.name;
-	};
-
-	/**
 	 * Verifies whether a change fulfils the preconditions.
 	 *
 	 * All changes need to have a fileType;
@@ -553,7 +542,7 @@ sap.ui.define([
 
 			if (bNoFlPropagationListenerAttached) {
 				var oFlexControllerFactory = sap.ui.require("sap/ui/fl/FlexControllerFactory");
-				var oFlexController = oFlexControllerFactory.create(this.getComponentName());
+				var oFlexController = oFlexControllerFactory.create(this._mComponent.name);
 				var fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, this.getChangesMapForComponent.bind(this), oAppComponent, oFlexController);
 				fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
 				oAppComponent.addPropagationListener(fnPropagationListener);
@@ -968,7 +957,7 @@ sap.ui.define([
 
 	function getAllCompVariantsEntities() {
 		var aCompVariantEntities = [];
-		var mCompVariantsMap = FlexState.getCompVariantsMap(this.getComponentName());
+		var mCompVariantsMap = FlexState.getCompVariantsMap(this._mComponent.name);
 		for (var sPersistencyKey in mCompVariantsMap) {
 			for (var sId in mCompVariantsMap[sPersistencyKey].byId) {
 				aCompVariantEntities.push(mCompVariantsMap[sPersistencyKey].byId[sId]);
@@ -998,7 +987,7 @@ sap.ui.define([
 					styleClass: sStyleClass
 				},
 				layer: sLayer,
-				reference: this.getComponentName(),
+				reference: this._mComponent.name,
 				localChanges: aLocalChanges,
 				appVariantDescriptors: aAppVariantDescriptors
 			});
@@ -1092,7 +1081,7 @@ sap.ui.define([
 		const aUiChanges = await this.getChangesForComponent({ currentLayer: sLayer, includeCtrlVariants: true});
 		const aFlexObjects = aUiChanges.concat(aCompVariantsEntries);
 		const mParams = {
-			reference: this.getComponentName(),
+			reference: this._mComponent.name,
 			layer: sLayer,
 			changes: aFlexObjects
 		};

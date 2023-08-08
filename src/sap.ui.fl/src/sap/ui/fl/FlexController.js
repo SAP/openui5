@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -11,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
-	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -19,7 +17,6 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/base/Log"
 ], function(
-	ChangeHandlerStorage,
 	Utils,
 	Layer,
 	ChangePersistenceFactory,
@@ -27,7 +24,6 @@ sap.ui.define([
 	Applier,
 	Reverter,
 	URLHandler,
-	FlexObjectFactory,
 	States,
 	ControlVariantApplyAPI,
 	JsControlTreeModifier,
@@ -86,18 +82,8 @@ sap.ui.define([
 		this._oChangePersistence = undefined;
 		this._sComponentName = sComponentName || "";
 		if (this._sComponentName) {
-			this._oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.getComponentName());
+			this._oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this._sComponentName);
 		}
-	};
-
-	/**
-	 * Returns the component name of the FlexController
-	 *
-	 * @returns {string} the name of the component
-	 * @public
-	 */
-	FlexController.prototype.getComponentName = function() {
-		return this._sComponentName;
 	};
 
 	/**
