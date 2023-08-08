@@ -127,8 +127,8 @@ sap.ui.define([
 	 *   A lock for the group ID to be used for the DELETE request
 	 * @param {string} sEditUrl
 	 *   The entity's edit URL to be used for the DELETE request
-	 * @param {string} sPath
-	 *   The entity's path within the cache (as used by change listeners)
+	 * @param {string} sIndex
+	 *   The entity's index
 	 * @param {object} [oETagEntity]
 	 *   An entity with the ETag of the binding for which the deletion was requested. This is
 	 *   provided if the deletion is delegated from a context binding with empty path to a list
@@ -145,21 +145,36 @@ sap.ui.define([
 	 * @public
 	 */
 	// @override sap.ui.model.odata.v4.lib._Cache#_delete
-	_AggregationCache.prototype._delete = function (oGroupLock, sEditUrl, sPath, oETagEntity,
+	_AggregationCache.prototype._delete = function (oGroupLock, sEditUrl, sIndex, oETagEntity,
 			fnCallback) {
-		const iIndex = parseInt(sPath);
+		const iIndex = parseInt(sIndex);
 		const oElement = this.aElements[iIndex];
 		const oCache = _Helper.getPrivateAnnotation(oElement, "parent");
 		const iCacheIndex = _Helper.getPrivateAnnotation(oElement, "index");
+		const oParentWithOneChild = oCache.getValue("$count") === 1
+			? this.aElements[iIndex - 1]
+			: null;
 		return oCache._delete(oGroupLock, sEditUrl, iCacheIndex.toString(), oETagEntity,
 			(_iIndex, iOffset) => { // _iIndex is the index in oCache
 				if (iOffset < 0) { // deleting
 					this.shiftIndex(iIndex, iOffset);
 					this.removeElement(this.aElements, iIndex,
 						_Helper.getPrivateAnnotation(oElement, "predicate"), "");
+					if (oParentWithOneChild) {
+						_Helper.updateAll(this.mChangeListeners,
+							_Helper.getPrivateAnnotation(oParentWithOneChild, "predicate"),
+							oParentWithOneChild, {"@$ui5.node.isExpanded" : undefined});
+						// _Helper.updateAll only sets it to undefined
+						delete oParentWithOneChild["@$ui5.node.isExpanded"];
+					}
 				} else { // reinserting
 					this.restoreElement(this.aElements, iIndex, oElement, "");
 					this.shiftIndex(iIndex, iOffset);
+					if (oParentWithOneChild) {
+						_Helper.updateAll(this.mChangeListeners,
+							_Helper.getPrivateAnnotation(oParentWithOneChild, "predicate"),
+							oParentWithOneChild, {"@$ui5.node.isExpanded" : true});
+					}
 				}
 				fnCallback(iIndex, iOffset);
 			});

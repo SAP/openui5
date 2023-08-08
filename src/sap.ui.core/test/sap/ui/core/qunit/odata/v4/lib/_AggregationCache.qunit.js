@@ -3918,21 +3918,28 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_delete: leaf", function (assert) {
+[42, 1].forEach(function (iChildCount) {
+	QUnit.test(`_delete: leaf, childCount=${iChildCount}`, function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X"
 		});
 		const fnCallback = sinon.spy();
 		const oElementCache = {
-			_delete : mustBeMocked
+			_delete : mustBeMocked,
+			getValue : mustBeMocked
+		};
+		const oParent = {
+			"@$ui5.node.isExpanded" : true
 		};
 
+		oCache.aElements[1] = oParent;
 		oCache.aElements[2] = "~oElement~";
 		const oHelperMock = this.mock(_Helper);
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "parent")
 			.returns(oElementCache);
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "index")
 			.returns(42);
+		this.mock(oElementCache).expects("getValue").withExactArgs("$count").returns(iChildCount);
 		const oDeletedExpectation = this.mock(oElementCache).expects("_delete")
 			.withExactArgs("~groupLock~", "~editUrl~", "42", "~etagEntity~", sinon.match.func)
 			.returns("~promise~");
@@ -3948,6 +3955,11 @@ sap.ui.define([
 			.returns("~predicate~");
 		const oRemoveExpectation = oCacheMock.expects("removeElement")
 			.withExactArgs(sinon.match.same(oCache.aElements), 2, "~predicate~", "");
+		oHelperMock.expects("getPrivateAnnotation").exactly(iChildCount === 1 ? 1 : 0)
+			.withExactArgs(sinon.match.same(oParent), "predicate").returns("~predicate~");
+		oHelperMock.expects("updateAll").exactly(iChildCount === 1 ? 1 : 0)
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~predicate~",
+				sinon.match.same(oParent), {"@$ui5.node.isExpanded" : undefined});
 
 		// code under test - callback deleting
 		oDeletedExpectation.firstCall.args[4](88, -1);
@@ -3955,10 +3967,18 @@ sap.ui.define([
 		assert.ok(oShiftExpectation1.calledBefore(oRemoveExpectation));
 		assert.strictEqual(fnCallback.callCount, 1);
 		assert.deepEqual(fnCallback.args[0], [2, -1]);
+		if (iChildCount === 1) {
+			assert.notOk("@$ui5.node.isExpanded" in oParent);
+		}
 
 		const oRestoreExpecation = this.mock(oCache).expects("restoreElement")
 			.withExactArgs(sinon.match.same(oCache.aElements), 2, "~oElement~", "");
 		const oShiftExpectation2 = oCacheMock.expects("shiftIndex").withExactArgs(2, 1);
+		oHelperMock.expects("getPrivateAnnotation").exactly(iChildCount === 1 ? 1 : 0)
+			.withExactArgs(sinon.match.same(oParent), "predicate").returns("~predicate~");
+		oHelperMock.expects("updateAll").exactly(iChildCount === 1 ? 1 : 0)
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~predicate~",
+				sinon.match.same(oParent), {"@$ui5.node.isExpanded" : true});
 
 		// code under test - callback reinserting
 		oDeletedExpectation.firstCall.args[4](88, 1);
@@ -3967,6 +3987,7 @@ sap.ui.define([
 		assert.strictEqual(fnCallback.callCount, 2);
 		assert.deepEqual(fnCallback.args[1], [2, 1]);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("resetChangesForPath", function () {

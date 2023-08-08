@@ -27736,11 +27736,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Deferred delete of a collapsed node in a recursive hierarchy. Expand Alpha and
-	// Beta. Collapse Beta again and delete it. Cancel the delete and expand Beta again without a
-	// further request.
+	// Scenario: Deferred delete of a collapsed node in a recursive hierarchy which is the only
+	// child of its parent. Expand Alpha and Beta. Collapse Beta again and delete it. See that Alpha
+	// becomes a leaf. Cancel the delete and expand Beta again without a further request.
 	// JIRA: CPOUI5ODATAV4-2224
-	QUnit.test("Recursive Hierarchy: delete collapsed child", async function (assert) {
+	QUnit.test("Recursive Hierarchy: delete single collapsed child", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
 <Table id="table" items="{path : '/EMPLOYEES',
@@ -27757,43 +27757,43 @@ sap.ui.define([
 </Table>`;
 
 		// 0 Alpha
-		//   1 Beta
+		//   1 Beta (deleted while collapsed and hiding Gamma)
 		//     2 Gamma
-		//   3 Delta
+		// 3 Delta (only helps with the eventing)
 		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
 				+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
 				+ ",Levels=1)"
 				+ "&$select=DrillState,ID,MANAGER_ID,Name&$count=true&$skip=0&$top=100", {
-				"@odata.count" : "1",
+				"@odata.count" : "2",
 				value : [{
 					DrillState : "collapsed",
 					ID : "0",
 					MANAGER_ID : null,
 					Name : "Alpha"
+				}, {
+					DrillState : "collapsed",
+					ID : "3",
+					MANAGER_ID : null,
+					Name : "Delta"
 				}]
 			})
-			.expectChange("expanded", [false])
-			.expectChange("name", ["Alpha"]);
+			.expectChange("expanded", [false, false])
+			.expectChange("name", ["Alpha", "Delta"]);
 
 		await this.createView(assert, sView, oModel);
 
 		this.expectRequest("EMPLOYEES"
 				+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
 				+ "&$select=DrillState,ID,MANAGER_ID,Name&$count=true&$skip=0&$top=100", {
-				"@odata.count" : "2",
+				"@odata.count" : "1",
 				value : [{
 					DrillState : "collapsed",
 					ID : "1",
 					MANAGER_ID : "0",
 					Name : "Beta"
-				}, {
-					DrillState : "collapsed",
-					ID : "3",
-					MANAGER_ID : "0",
-					Name : "Delta"
 				}]
 			})
-			.expectChange("expanded", [true, false, false])
+			.expectChange("expanded", [true,, false])
 			.expectChange("name", [, "Beta", "Delta"]);
 
 		const oTable = this.oView.byId("table");
@@ -27829,7 +27829,7 @@ sap.ui.define([
 			[true, 1, "0", "", "Alpha"],
 			[true, 2, "1", "0", "Beta"],
 			[false, 3, "2", "1", "Gamma"],
-			[false, 2, "3", "0", "Delta"]
+			[false, 1, "3", "", "Delta"]
 		], 4);
 
 		this.expectChange("expanded", [, false])
@@ -27846,10 +27846,11 @@ sap.ui.define([
 		], [
 			[true, 1, "0", "", "Alpha"],
 			[false, 2, "1", "0", "Beta"],
-			[false, 2, "3", "0", "Delta"]
+			[false, 1, "3", "", "Delta"]
 		], 3);
 
-		this.expectChange("name", [, "Delta"]);
+		this.expectChange("expanded", [undefined]) // Alpha is now a leaf
+			.expectChange("name", [, "Delta"]);
 
 		// code under test
 		const oDeletePromise = oBeta.delete("doNotSubmit");
@@ -27860,13 +27861,13 @@ sap.ui.define([
 			"/EMPLOYEES('0')",
 			"/EMPLOYEES('3')"
 		], [
-			[true, 1, "0", "", "Alpha"],
-			[false, 2, "3", "0", "Delta"]
+			[undefined, 1, "0", "", "Alpha"], // now a leaf
+			[false, 1, "3", "", "Delta"]
 		], 2);
 
 		this.expectCanceledError("Failed to delete /EMPLOYEES('1')",
 				"Request canceled: DELETE EMPLOYEES('1'); group: doNotSubmit")
-			.expectChange("expanded", [,, false])
+			.expectChange("expanded", [true,, false]) // Alpha is expanded again
 			.expectChange("name", [, "Beta", "Delta"]);
 
 		// code under test
@@ -27882,9 +27883,9 @@ sap.ui.define([
 			"/EMPLOYEES('1')",
 			"/EMPLOYEES('3')"
 		], [
-			[true, 1, "0", "", "Alpha"],
+			[true, 1, "0", "", "Alpha"], // expanded again
 			[false, 2, "1", "0", "Beta"],
-			[false, 2, "3", "0", "Delta"]
+			[false, 1, "3", "", "Delta"]
 		], 3);
 
 		this.expectChange("expanded", [, true,, false])
@@ -27904,7 +27905,7 @@ sap.ui.define([
 			[true, 1, "0", "", "Alpha"],
 			[true, 2, "1", "0", "Beta"],
 			[false, 3, "2", "1", "Gamma"],
-			[false, 2, "3", "0", "Delta"]
+			[false, 1, "3", "", "Delta"]
 		], 4);
 	});
 
