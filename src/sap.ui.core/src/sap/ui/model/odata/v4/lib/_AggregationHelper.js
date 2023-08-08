@@ -591,7 +591,7 @@ sap.ui.define([
 					throw new Error("Not a matching value for '" + sPath + "'");
 				}
 			} else if (typeof vType === "object") {
-				var bIsMap = "*" in vType;
+				const bIsMap = "*" in vType;
 
 				if (typeof vValue !== "object" || !vValue || Array.isArray(vValue)) {
 					throw new Error("Not an object value for '" + sPath + "'");

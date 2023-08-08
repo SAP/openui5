@@ -442,7 +442,7 @@ sap.ui.define([
 			case "creatable":
 			case "deletable":
 			case "updatable":
-				// do not consume it here, it might be needed for xxx-path
+				// do not consume it here, it might be needed for xyz-path
 				if (oAnnotatable.peek(sName) === "false") {
 					oAnnotatable.convert(sName, false);
 				}
