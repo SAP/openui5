@@ -1438,7 +1438,7 @@ sap.ui.define([
 	 *     <code>oPromise.then(function () {...}, function () {...})</code>).
 	 * </ul>
 	 *
-	 * @param {object[]|string[]} aPathExpressions
+	 * @param {Array<sap.ui.model.odata.v4.ts.NavigationPropertyPathExpression|sap.ui.model.odata.v4.ts.PropertyPathExpression|string>} aPathExpressions
 	 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
 	 *   "14.5.13 Expression edm:PropertyPath" objects describing which properties need to be
 	 *   loaded because they may have changed due to side effects of a previous update, for example
