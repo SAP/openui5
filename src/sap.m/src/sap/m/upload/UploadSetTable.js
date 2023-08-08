@@ -22,10 +22,11 @@ sap.ui.define([
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/dnd/DropInfo",
 	"sap/ui/core/dnd/DragInfo",
-	"sap/m/upload/FilePreviewDialog"
+	"sap/m/upload/FilePreviewDialog",
+	"sap/ui/base/Event"
 ], function (Table, ToolbarSpacer, UploadSetTableRenderer, FileUploader,
     UploadSetToolbarPlaceholder, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetTableItem, deepEqual, Log, Library, IllustratedMessageType,
-	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo, FilePreviewDialog) {
+	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo, FilePreviewDialog, Event) {
     "use strict";
 
 	/**
@@ -103,24 +104,21 @@ sap.ui.define([
 				 */
 				uploadButtonInvisible: {type: "boolean", group: "Appearance", defaultValue: false},
 				/**
-				 * Defines whether the upload process should be triggered as soon as the file is added.<br>
-				 * If set to <code>false</code>, no upload is triggered when a file is added.
-				 */
-				instantUpload: {type: "boolean", defaultValue: true},
-				/**
-				 * Function callback invoked with dropped files, by the control to provide custom handling for drag and drop of files into the control area
-				 */
-				customDropFilesHandler: {type: "function", defaultValue: null},
-				/**
 				 * Defines whether the upload action is allowed.
 				 */
-				uploadEnabled: {type: "boolean", defaultValue: true}
-			},
-			aggregations: {
-				headerToolbar : {
-					type: "sap.m.OverflowToolbar",
-					multiple: false
-				},
+				uploadEnabled: {type: "boolean", defaultValue: true},
+				/**
+				 * Property as function will be invoked with UploadSetTableItem queued for upload.
+				 * Expects promise to be returned to the control with function invocation, when promise resolved control will initiate the upload process.
+				 * configure this property only when additional configuration to be performed before upload of each item / manually trigger the upload process by resolving the promise returned to the control.
+				 */
+				onItemValidationSuccess: {type: "function", defaultValue: null}
+            },
+            aggregations: {
+                headerToolbar : {
+                    type: "sap.m.OverflowToolbar",
+                    multiple: false
+                },
 				/**
 				 * Defines the uploader to be used. If not specified, the default implementation is used.
 				 */
@@ -573,48 +571,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Invokes fileselection handler and return the selected files through the callback function passed (selectedItemsCallback)
-	 * @param {function} fnSelectedItemsCallback Callback funtion which is invoked and returned with selected items from the fileselectionhandler
+	 * Invokes native files selection handler.
 	 * @public
 	 */
-	UploadSetTable.prototype.fileSelectionHandler = function(fnSelectedItemsCallback) {
-		if (!(typeof fnSelectedItemsCallback === "function")) {
-			Log.warning("Invalid Callback function passed.");
-			return;
-		}
-		this._fnSelectedItemsCallback = fnSelectedItemsCallback;
+	UploadSetTable.prototype.fileSelectionHandler = function() {
 		var oUploaderInstance = this.getDefaultFileUploader();
 		if (oUploaderInstance && oUploaderInstance.oFileUpload && oUploaderInstance.oFileUpload.click) {
 			oUploaderInstance.oFileUpload.click();
 		}
-	};
-
-	/**
-	 * Uploads each item passed by validting the pre conditions set for file and instant upload configured.
-	 * @param {sap.m.upload.UploadSetTableItem[]} aItemTobeUploaded Array of items to be uploaded individually
-	 * @public
-	 */
-	UploadSetTable.prototype.uploadItems = function(aItemTobeUploaded) {
-
-		if (!this.getUploadEnabled()) {
-			Log.warning("Upload is currently disabled for this upload set with Table.");
-			return;
-		}
-
-		if (!Array.isArray(aItemTobeUploaded)) {
-			return;
-		}
-
-		// only items of instance UploadSetTableItem are accepted.
-		aItemTobeUploaded = aItemTobeUploaded.filter(function(item) {
-			return item instanceof UploadSetTableItem;
-		});
-
-		aItemTobeUploaded.forEach(function(oItem) {
-			if (this.getInstantUpload()) {
-				this._uploadItemIfGoodToGo(oItem);
-			}
-		}.bind(this));
 	};
 
 	/**
@@ -642,25 +606,47 @@ sap.ui.define([
 	/**
 	 * API to upload File via URL
 	 * @param {string} sName file name to be set for the file to be uploaded.
-	 * @param {sap.ui.core.Item[]} aHeaders addition headers to be set
+	 * @param {string} sUrl Url for the file.
+	 * @param {Promise} oPromise Promise when resolved, control to initate the upload process.
+	 * @returns {UploadSetTableItem} oItem, UploadSetTableItem instance created with file object.
 	 * @public
 	 */
-	UploadSetTable.prototype.uploadItemViaUrl = function (sName, aHeaders) {
+	UploadSetTable.prototype.uploadItemViaUrl = function (sName, sUrl, oPromise) {
 		var oFileObject = new File([new Blob([])], sName);
-		// resetting custom callback
-		this._fnSelectedItemsCallback = null;
-		this._processSelectedFileObjects([oFileObject], aHeaders);
+
+		var oItem = new UploadSetTableItem({
+			uploadState: UploadState.Ready
+		});
+		oItem._setFileObject(oFileObject);
+		oItem.setFileName(oFileObject.name);
+		oItem.setUrl(sUrl);
+
+		oPromise
+		.then(() => this._initateItemUpload(oItem).bind(this))
+		.catch(() => oItem.destroy()); // cancelling the upload.
+
+		return oItem;
 	};
 
 	/**
 	 * API to upload Item without file
-	 * @param {sap.ui.core.Item[]} aHeaders addition headers to be set
+	 * @param {Promise} oPromise promise when resolved, Control to initate the upload process.
+	 * @return {UploadSetTableItem} oItem, UploadSetTableItem instance created with file object.
 	 * @public
 	 */
-	UploadSetTable.prototype.uploadItemWithoutFile = function (aHeaders) {
+	UploadSetTable.prototype.uploadItemWithoutFile = function (oPromise) {
 		var oFileObject = new File([new Blob([])], '-');
-		this._fnSelectedItemsCallback = null;
-		this._processSelectedFileObjects([oFileObject], aHeaders);
+		var oItem = new UploadSetTableItem({
+			uploadState: UploadState.Ready
+		});
+		oItem._setFileObject(oFileObject);
+		oItem.setFileName(oFileObject.name);
+
+		oPromise
+		.then(() => this._initateItemUpload(oItem))
+		.catch(() => oItem.destroy()); // cancelling the upload.
+
+		return oItem;
 	};
 
 	/* ============== */
@@ -683,16 +669,22 @@ sap.ui.define([
 
     UploadSetTable.prototype._onFileUploaderChange = function (oEvent) {
         var oFiles = oEvent.getParameter("files");
+
 		if (oFiles && oFiles.length) {
+			var aSelectedItems = this.getSelectedItems();
+			var oSelectedItem = aSelectedItems && aSelectedItems.length == 1 ? aSelectedItems[0] : null;
+			var bEmptyFileSelected = oSelectedItem ? oSelectedItem && oSelectedItem.getFileName && oSelectedItem.getFileName() === "-" : false;
+
+			// update existing file after upload
+			if (bEmptyFileSelected) {
+				this._oItemToUpdate = oFiles[0];
+			}
 			this._processSelectedFileObjects(oFiles);
-		} else {
-			// resetting the callback funtion if cancel clicked
-			this._fnSelectedItemsCallback = null;
 		}
     };
 
-    UploadSetTable.prototype._processSelectedFileObjects = function (oFiles, aHeaders) {
-        var aFiles = [];
+    UploadSetTable.prototype._processSelectedFileObjects = function (oFiles) {
+		var aFiles = [];
 
 		// Need to explicitly copy the file list, FileUploader deliberately resets its form completely
 		// along with 'files' parameter when it (mistakenly) thinks that all is done.
@@ -700,34 +692,56 @@ sap.ui.define([
 			aFiles.push(oFiles[i]);
 		}
 
-		var selectedFiles = [];
-		aFiles.forEach(function (oFile) {
+		aFiles.forEach((oFile) => {
 			var oItem = new UploadSetTableItem({
 				uploadState: UploadState.Ready
 			});
 			oItem._setFileObject(oFile);
 			oItem.setFileName(oFile.name);
-			selectedFiles.push(oItem);
 
-			if (aHeaders && aHeaders.length) {
-				aHeaders.forEach(function(oHeader){
-					oItem.addHeaderField(oHeader);
+
+			if (this.getOnItemValidationSuccess() && typeof this.getOnItemValidationSuccess() === "function" ) {
+
+				const oEvent = new Event("onItemValidation", this, {
+					item: oItem,
+					totalItemsForUpload: aFiles.length
 				});
-			}
 
-			this.fireBeforeInitiatingItemUpload({item: oItem});
-			if (this.getInstantUpload() && !this._fnSelectedItemsCallback) {
-				this._uploadItemIfGoodToGo(oItem);
+				var oPromise = this.getOnItemValidationSuccess()(oEvent);
+				if (oPromise && oPromise instanceof Promise) {
+					oPromise
+					.then((item) => {
+						if (item instanceof UploadSetTableItem) {
+							this._initateItemUpload(item);
+						}
+					})
+					.catch((item) => {
+						// Reset variable to avoid update if upload rejected.
+						if (item && this._oItemToUpdate && item instanceof UploadSetTableItem && item.getId() === this._oItemToUpdate.getId()) {
+							this._oItemToUpdate = null;
+						}
+					});
+				} else {
+					oItem.destroy();
+					// if promise is not returned to the onItemValidationSuccess hook log error and destroy the item
+					Log.error("Invalid usage, missing Promise: onItemvalidationSuccess expects Promise to be returned.");
+				}
+			} else {
+				/* if no validation handler is provided control continues with normal upload else waits for the application to manually
+				trigger the upload by resolving the promise */
+				this._initateItemUpload(oItem);
 			}
-		}.bind(this));
+		});
+	};
 
-		// fire the fncallback stored set through fileSelectionHandler invocation
-		if (this._fnSelectedItemsCallback) {
-			this._fnSelectedItemsCallback({selectedItems: selectedFiles});
-			this._fnSelectedItemsCallback = null;
+	UploadSetTable.prototype._initateItemUpload = function(oItem) {
+		this.fireBeforeInitiatingItemUpload({item: oItem});
+		if (this._oItemToUpdate) {
+			// Registering item to be update with selected file contents post successful upload.
+			this._oItemToUpdate = oItem;
 		}
-
-    };
+		this._uploadItemIfGoodToGo(oItem);
+	};
 
     UploadSetTable.prototype._fireFileTypeMismatch = function (oItem) {
         var aMediaTypes = this.getMediaTypes();
@@ -781,6 +795,11 @@ sap.ui.define([
 			"status": oResponseXHRParams.status,
 			"headers": oResponseXHRParams.headers
 		};
+		if (this._oItemToUpdate) {
+			this._oItemToUpdate.setFileName(oItem.getFileName());
+			this._oItemToUpdate._setFileObject(oItem.getFileObject());
+			this._oItemToUpdate = null;
+		}
 		oItem.setUploadState(UploadState.Complete);
 		this.fireUploadCompleted(oXhrParams);
 	};
@@ -889,38 +908,7 @@ sap.ui.define([
 
 
 			if (aItems && aItems.length) {
-				var oFileUploaderInstance = this.getDefaultFileUploader();
-						if (oFileUploaderInstance && oFileUploaderInstance._areFilesAllowed && oFileUploaderInstance._areFilesAllowed(aItems)) {
-							var aFiles = [];
-
-							// Need to explicitly copy the file list, FileUploader deliberately resets its form completely
-							// along with 'files' parameter when it (mistakenly) thinks that all is done.
-							for (var i = 0; i < aItems.length; i++) {
-								aFiles.push(aItems[i]);
-							}
-
-							var selectedFiles = [];
-							aFiles.forEach(function (oFile) {
-								var oItem = new UploadSetTableItem({
-									uploadState: UploadState.Ready
-								});
-								oItem._setFileObject(oFile);
-								oItem.setFileName(oFile.name);
-								selectedFiles.push(oItem);
-								/* fire the beforeInitiatingUpload to support use case for non instant uploads,
-								where additional item properties can be set by the consumer of the control */
-								this.fireBeforeInitiatingItemUpload({item: oItem});
-								if (this.getInstantUpload() && !this.getCustomDropFilesHandler()) {
-									this._uploadItemIfGoodToGo(oItem);
-								}
-							}.bind(this));
-
-							// fire the fncallback stored set through customDropFileHandler invocation
-							// this would be use for the consumers to get the files dropped into the area and to have custom inputs taken for each file dropped.
-							if (this.getCustomDropFilesHandler()) {
-								this.getCustomDropFilesHandler()({selectedItems: selectedFiles});
-							}
-						}
+				this._processSelectedFileObjects(aItems);
 			}
 		}
 	};

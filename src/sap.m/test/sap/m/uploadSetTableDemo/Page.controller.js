@@ -43,6 +43,7 @@ sap.ui.define([
 			this._oFilesTobeuploaded = [];
 			this._oFileRevisionMapping = {};
 			this._oRevisedVersions = {};
+			this.oItemsProcessor = [];
 
 			this.loadOverflowMenu();
 			this.oMockServer = new MockServer();
@@ -214,20 +215,7 @@ sap.ui.define([
 			oUploadSet.downloadItems(oUploadSet.getSelectedItems());
 		},
 		onBeforeInitiatingItemUpload: function(oEvent) {
-			var oUploadSetTableInstance = this.byId("UploadSetTable");
-			var oItem = oEvent.getParameter("item");
-			var aSelectedItems = oUploadSetTableInstance.getSelectedItems();
-			var bEmptyFileSelected = aSelectedItems && aSelectedItems.length === 1 && aSelectedItems[0].getFileName() == "-" ? true : false;
-			if (bEmptyFileSelected) {
-				var oContext = aSelectedItems[0].getBindingContext();
-				var data = oContext && oContext.getObject ? oContext.getObject() : {};
-				oItem.addHeaderField(new CoreItem(
-					{
-						key: "existingDocumentID",
-						text: data ? data.id : ""
-					}
-				));
-			}
+			// Event triggered before initiating each upload.
 		},
 		// UploadCompleted event handler
 		onUploadCompleted: function(oEvent) {
@@ -302,28 +290,26 @@ sap.ui.define([
 				{categoryId: "Legal Document", categoryText: "Legal Document"}
 			];
 		},
-		openFileUploadDialog: function(oItems) {
-			var oUploadSet = this.byId("UploadSetTable");
-			if (oItems && oItems.selectedItems && oItems.selectedItems.length) {
-				var isSameFileNameFound = false;
+		openFileUploadDialog: function() {
+			var items = this.oItemsProcessor;
 
-				this._oFilesTobeuploaded = this._oFilesTobeuploaded.concat(oItems.selectedItems);
-				// check for same filename upload, perform check only if UploadSetTable multiple is turned off
-				if (oUploadSet && !oUploadSet.getMultiple() && this._oFilesTobeuploaded.length === 1) {
-					isSameFileNameFound = this.checkForSameFileName(oItems.selectedItems[0].getFileName());
-				}
-				var oItemsMap = this._oFilesTobeuploaded.map(function(oItem) {
+			if (items && items.length) {
+
+				this._oFilesTobeuploaded = items;
+
+				var oItemsMap = this._oFilesTobeuploaded.map(function(oItemProcessor) {
+
 					return {
-						fileName: oItem.getFileName(),
+						fileName: oItemProcessor.item.getFileName(),
 						fileCategorySelected: this.documentTypes[0].categoryId,
-						itemInstance: oItem
+						itemInstance: oItemProcessor.item,
+						fnResolve: oItemProcessor.resolve,
+						fnReject: oItemProcessor.reject
 					};
 				}.bind(this));
 				var oModel = new JSONModel({
 					"selectedItems": oItemsMap,
-					"types": this.documentTypes,
-					"sameFileNameFound": isSameFileNameFound,
-					"sameFileNameUploadChoice": "Create Copy"
+					"types": this.documentTypes
 
 				});
 				if (!this._fileUploadFragment) {
@@ -348,10 +334,12 @@ sap.ui.define([
 			this._fileUploadFragment.destroy();
 			this._fileUploadFragment = null;
 			this._oFilesTobeuploaded = [];
+			this.oItemsProcessor = [];
 		},
 		handleRemove: function(oEvent) {
 			var oSource = oEvent.getSource();
 			var oItemInstance = oSource.data().item;
+			var fnReject = oSource.data().reject;
 			var oFragmentModel = this._fileUploadFragment.getModel();
 			var oSelectedItems = oFragmentModel.getData().selectedItems;
 			var iSelectedItemIndex = oSelectedItems.findIndex(function(oItem){
@@ -365,6 +353,9 @@ sap.ui.define([
 
 			});
 			this._fileUploadFragment.setModel(oModel);
+
+			// cancel the upload of the current item selected for upload.
+			fnReject(oItemInstance);
 		},
 		isAddButtonEnabled: function(aSelectedItems) {
 			if (aSelectedItems && aSelectedItems.length) {
@@ -383,19 +374,9 @@ sap.ui.define([
 			this._fileUploadFragment.getBeginButton().setEnabled(isAddButtnEnabled);
 		},
 		handleConfirmation: function() {
-			var aFileToBeUploaded = [];
-			var oUploadSetTableInstance = this.byId("UploadSetTable");
 			var oData = this._fileUploadFragment.getModel().getData();
 			var oSelectedItems = oData.selectedItems;
-			if (oData && oData.sameFileNameFound) {
-				switch (oData.sameFileNameUploadChoice) {
-					case "Create Copy": // continue with default upload and model updates the version of the same files through backend.
-						break;
-					case "Replace": // logic to replace items
-					default:
-						break;
-				}
-			}
+
 			if (oSelectedItems && oSelectedItems.length) {
 				oSelectedItems.forEach(function(oItem) {
 					var oItemToUploadRef = oItem.itemInstance;
@@ -404,31 +385,57 @@ sap.ui.define([
 						key: "documentType",
 						text: oItem.fileCategorySelected
 					}));
-					aFileToBeUploaded.push(oItemToUploadRef);
+					oItem.fnResolve(oItemToUploadRef);
 				});
-			}
-			if (aFileToBeUploaded.length) {
-				oUploadSetTableInstance.uploadItems(aFileToBeUploaded);
 			}
 			this._fileUploadFragment.destroy();
 			this._fileUploadFragment = null;
 			this._oFilesTobeuploaded = [];
+			this.oItemsProcessor = [];
 		},
 		uploadFilesHandler: function() {
 			var oUploadSetTableInstance = this.byId("UploadSetTable");
 
-			var aSelectedItems = oUploadSetTableInstance.getSelectedItems();
-			var oSelectedItem = aSelectedItems && aSelectedItems.length == 1 ? aSelectedItems[0] : null;
-			var bEmptyFileSelected = oSelectedItem && oSelectedItem.getFileName && oSelectedItem.getFileName() === "-";
-
-			if (bEmptyFileSelected) {
-				oUploadSetTableInstance.fileSelectionHandler(this.updateEmptyDocument.bind(this));
-			} else {
-				oUploadSetTableInstance.fileSelectionHandler(this.selectedFilesFromHandler.bind(this));
-			}
+			oUploadSetTableInstance.fileSelectionHandler();
 		},
-		selectedFilesFromHandler: function(oItems) {
-			this.openFileUploadDialog(oItems);
+		onItemValidationhandler: function(oEvent) {
+			const oItem = oEvent?.getParameter("item");
+			const totalFilesSelectedForUpload = oEvent?.getParameter("totalItemsForUpload");
+			var oUploadSetTableInstance = this.byId("UploadSetTable");
+			var oSelectedItems = oUploadSetTableInstance.getSelectedItems();
+			var oSelectedItemForUpdate = oSelectedItems.length === 1 ? oSelectedItems[0] : null;
+			if (oSelectedItemForUpdate && oSelectedItemForUpdate.getFileName() === "-" && totalFilesSelectedForUpload === 1) {
+				return new Promise((resolve) => {
+					if (oSelectedItemForUpdate) {
+						var oContext = oSelectedItemForUpdate.getBindingContext();
+						var data = oContext && oContext.getObject ? oContext.getObject() : {};
+
+						/* Demonstration use case of Setting the header field if required to be passed in API request headers to
+			   			inform backend with document type captured through user input */
+						oItem.addHeaderField(new CoreItem(
+							{
+								key: "existingDocumentID",
+								text: data ? data.id : ""
+							}
+						));
+					}
+					resolve(oItem);
+				});
+			} else {
+				var oItemPromise = new Promise((resolve, reject) => {
+					this.oItemsProcessor.push({
+						item: oItem,
+						resolve: resolve,
+						reject: reject
+					});
+				});
+				if (totalFilesSelectedForUpload === 1) {
+					this.openFileUploadDialog();
+				} else if (totalFilesSelectedForUpload === this.oItemsProcessor.length) {
+					this.openFileUploadDialog();
+				}
+				return oItemPromise;
+			}
 		},
 		_openChangeStatusDialog: function(oModel,sModelName){
 			if (!this._oChangeStatusDialog) {
@@ -658,31 +665,6 @@ sap.ui.define([
 		getFileSizeWithUnits: function(iFileSize) {
 			return UploadSetTable.getFileSizeWithUnits(iFileSize);
 		},
-		// Util method to check if same filename exists in the uploaded items
-		// Check performed at the application level as the control might be limited to uploaded items to current page delegate and not have actualy items untill loaded
-		checkForSameFileName: function(sFilename) {
-			var oUploadedItems = this.getView().getModel().getData().items; // fetching all the data for the check
-
-			if (oUploadedItems.length === 0 || !sFilename) {
-				return false;
-			}
-
-			var iLength = oUploadedItems.length;
-			sFilename = sFilename.replace(/^\s+/, "");
-
-			for (var i = 0; i < iLength; i++) {
-				if (sFilename === oUploadedItems[i].fileName) {
-					return true;
-				}
-			}
-			return false;
-		},
-		onChoiceChange: function(oEvent) {
-			var oModelData = oEvent.getSource().getModel();
-			if (oEvent.getSource().getSelected()) {
-				oModelData.setProperty("/sameFileNameUploadChoice", oEvent.getSource().getText());
-			}
-		},
 		onOverflowPress: function(oEvent) {
 			var oButton = oEvent.getSource();
 			this._oMenuFragment.openBy(oButton);
@@ -838,16 +820,35 @@ sap.ui.define([
 			bHasError = oValidateObject.error;
 			if (!bHasError) {
 				setTimeout(function(){
+
 					var oUploadSetTableInstance = this.byId("UploadSetTable");
-					oUploadSetTableInstance.uploadItemViaUrl(sName, [ new CoreItem({
-						key: 'documentUrl',
-						text: sUrl
-					}), new CoreItem({
-						key: 'documentType',
-						text: sDocType
-					})]);
+
+					let fnResolve, fnReject;
+					var oPromise = new Promise(function(resolve, reject) {
+						fnResolve = resolve;
+						fnReject = reject;
+					});
+					var oItem = oUploadSetTableInstance.uploadItemViaUrl(sName, sUrl, oPromise);
+					if (oItem) {
+
+						/* Demonstration use case of Setting the header field if required to be passed in API request headers to
+						inform backend with the file url and document type captured through user input */
+						oItem.addHeaderField(new CoreItem({
+							key: 'documentUrl',
+							text: sUrl
+						}));
+						oItem.addHeaderField(new CoreItem({
+							key: 'documentType',
+							text: sDocType
+						}));
+						// resolve to initiate the upload.
+						fnResolve(true);
+					} else {
+						fnReject(true);
+					}
 					this._addViaUrlFragment.destroy();
 					this._addViaUrlFragment = null;
+
 				}.bind(this), 1000);
 			}
 		},
@@ -935,25 +936,29 @@ sap.ui.define([
 			 };
 			 this.openAddOrEditDialog();
 		},
-		updateEmptyDocument: function(oItem) {
-			var aSelectedItems = oItem.selectedItems;
-			var oUploadSetTableInstance = this.byId("UploadSetTable");
-			if (aSelectedItems && aSelectedItems.length === 1) {
-				var aFileToBeUploaded = [aSelectedItems[0]];
-				oUploadSetTableInstance.uploadItems(aFileToBeUploaded);
-			}
-		},
 		addEmptyDocument: function() {
 			var oUploadSetTableInstance = this.byId("UploadSetTable");
 			var oData = this._documentWithoutFileFragment.getModel().getData();
 
-			var oHeader = new CoreItem({
-				key: "documentType",
-				text: oData.fileCategorySelected
+			let fnResolve, fnReject;
+			const oPromise = new Promise((resolve, reject) => {
+				fnResolve = resolve;
+				fnReject = reject;
 			});
 
-			// Invoking public API which creates and uploads document without file and passing optonal additionalparams to be set for the item
-			oUploadSetTableInstance.uploadItemWithoutFile([oHeader]);
+			/* Demonstration use case of Setting the header field if required to be passed in API request headers to
+			   inform backend with document type captured through user input */
+			var oItem = oUploadSetTableInstance.uploadItemWithoutFile(oPromise);
+			if (oItem) {
+				oItem.addHeaderField(new CoreItem({
+					key: "documentType",
+					text: oData.fileCategorySelected
+				}));
+				fnResolve(true);
+			} else {
+				fnReject(true);
+			}
+
 			this.closeDocumentWithoutFileUplaodFragment();
 		},
 		openDocumentWithoutFileDialog: function() {
@@ -983,12 +988,6 @@ sap.ui.define([
 			this._documentWithoutFileFragment.destroy();
 			this._documentWithoutFileFragment = null;
 			this._oFilesTobeuploaded = [];
-		},
-		isSameFileNameCheckSectionVisible: function(sSameFileNameAllowed, aItems) {
-			if (sSameFileNameAllowed && aItems &&  aItems.length) {
-				return true;
-			}
-			return false;
 		},
 		onRemoveButtonFromMenuDocumentHandler: function(oEvent) {
 			var oUploadSet = this.byId("UploadSetTable");
