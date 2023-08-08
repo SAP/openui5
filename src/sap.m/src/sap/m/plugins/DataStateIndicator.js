@@ -269,12 +269,13 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			return;
 		}
 
-
 		var oParent = this.getParent();
 		var oControl = this.getControl();
 		var oBinding = oControl && oControl.getBinding(this._getBindingName());
 		if (oBinding && oBinding.bIsBeingDestroyed) {
-			return;
+			oDataState.getAllMessages().forEach(function(oMessage) {
+				oMessage.removeControlId(oControl.getId());
+			});
 		}
 
 		var aMessages = oDataState.getMessages();
