@@ -38,7 +38,10 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			page: "test-resources/sap/ui/mdc/qunit/teststarter.qunit.html?testsuite={suite}&test={name}",
 			autostart: true,
-			module: "./{name}.qunit"
+			module: "./{name}.qunit",
+			uriParams: {
+				"sap-ui-xx-disableStrictPropertyValidation": true
+			}
 			// Whether to call QUnit.start() when the test setup is done
 		},
 		tests: {

@@ -102,7 +102,10 @@ sap.ui.define(function() {
 			"Table Journey": {
 				group: "OPA",
 				module: "./OpaTests/TableJourney.qunit",
-				autostart: false
+				autostart: false,
+				uriParams: {
+					"sap-ui-xx-disableStrictPropertyValidation": true
+				}
 			},
 			"TableFlex": {
 				group: "Flexibility",
@@ -121,7 +124,10 @@ sap.ui.define(function() {
 						"sap.ui.mdc"
 					]
 				},
-				autostart: false
+				autostart: false,
+				uriParams: {
+					"sap-ui-xx-disableStrictPropertyValidation": true
+				}
 			},
 			"ChangeCondenser": {
 				group: "Flexibility",
