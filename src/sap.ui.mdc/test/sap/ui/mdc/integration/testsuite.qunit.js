@@ -112,7 +112,10 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				},
 				autostart: false, // tests are added asynchronously because the V4 server needs to be found first
 				module: "test-resources/sap/ui/mdc/integration/valuehelp/SelectFromListJourney.qunit",
-				sinon: false
+				sinon: false,
+				uriParams: {
+					"sap-ui-xx-disableStrictPropertyValidation": true
+				}
 			},
 			"DefineConditionsJourney": {
 				group: "ValueHelp",
