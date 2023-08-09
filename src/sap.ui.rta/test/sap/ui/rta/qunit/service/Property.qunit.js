@@ -72,7 +72,6 @@ sap.ui.define([
 			oPage.addContent(
 				this.oLayout = new VerticalLayout("layout1", {
 					content: [
-						// FIXME: don't create an instance of an abstract class!
 						this.oControl = new Control("mockControl")
 					]
 				})

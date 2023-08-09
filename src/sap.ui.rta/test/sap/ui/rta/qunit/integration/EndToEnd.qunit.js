@@ -75,11 +75,6 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		// FIXME: change as soon as a public method for this is available
-		function fnWaitForExecutionAndSerializationBeingDone() {
-			return this.oRta.getCommandStack()._oLastCommand;
-		}
-
 		function startVisualization(oRta) {
 			oRta.setMode("visualization");
 			return waitForMethodCall(oRta.getToolbar(), "setModel");
@@ -124,12 +119,10 @@ sap.ui.define([
 								oCommandStack.attachModified(function() {
 									var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 									if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "rename") {
-										fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-											assert.strictEqual(this.oCompanyCodeField._getLabel().getText(), sText, "then label of the group element is " + sText);
-											var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oControl}).length;
-											assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
-											fnResolveOnCommandAdded();
-										}.bind(this));
+										assert.strictEqual(this.oCompanyCodeField._getLabel().getText(), sText, "then label of the group element is " + sText);
+										var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oControl}).length;
+										assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+										fnResolveOnCommandAdded();
 									}
 								}.bind(this));
 							}.bind(this)),
@@ -187,23 +180,21 @@ sap.ui.define([
 									aCommands.length === 3) {
 									oCore.applyChanges();
 
-									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-										var oGroupElements = this.oGeneralGroup.getGroupElements();
-										var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
-										assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
-										assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
-										assert.equal(this.oBoundButton35Field.__label, oFieldToAdd.label, "the new field is the one that got deleted");
-										iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
-										assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
-										stubShowMessageBoxOnRtaClose(this.oRta);
-										return this.oRta.stop();
-									}.bind(this))
+									var oGroupElements = this.oGeneralGroup.getGroupElements();
+									var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
+									assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
+									assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
+									assert.equal(this.oBoundButton35Field.__label, oFieldToAdd.label, "the new field is the one that got deleted");
+									iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+									assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
+									stubShowMessageBoxOnRtaClose(this.oRta);
+									return this.oRta.stop()
 									.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 									.then(function(iNumberOfChanges) {
 										// hide and unhide get condensed, so only the add is saved
 										assert.equal(iNumberOfChanges, 1);
-									})
-									.then(fnDone);
+										fnDone();
+									});
 								}
 							}.bind(this));
 
@@ -295,20 +286,16 @@ sap.ui.define([
 			oCommandStack.attachModified(function() {
 				var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 				if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "remove") {
-					// TODO fix timing as modified is called before serializer is triggered...
-					fnWaitForExecutionAndSerializationBeingDone.call(this)
-					.then(function() {
-						assert.strictEqual(this.oVictim.getVisible(), false, " then field is not visible");
-						iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oVictim}).length;
-						assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
-						stubShowMessageBoxOnRtaClose(this.oRta);
-						return this.oRta.stop();
-					}.bind(this))
+					assert.strictEqual(this.oVictim.getVisible(), false, " then field is not visible");
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oVictim}).length;
+					assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+					stubShowMessageBoxOnRtaClose(this.oRta);
+					return this.oRta.stop()
 					.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 					.then(function(iNumberOfChanges) {
 						assert.equal(iNumberOfChanges, 1);
-					})
-					.then(fnDone);
+						fnDone();
+					});
 				}
 			}.bind(this));
 
@@ -328,19 +315,17 @@ sap.ui.define([
 				var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 				if (oFirstExecutedCommand &&
 					oFirstExecutedCommand.getName() === "move") {
-					fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-						var iIndex = 0;
-						assert.equal(this.oDatesGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved to first place");
-						iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
-						assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
-						stubShowMessageBoxOnRtaClose(this.oRta);
-						return this.oRta.stop();
-					}.bind(this))
+					var iIndex = 0;
+					assert.equal(this.oDatesGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved to first place");
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+					assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+					stubShowMessageBoxOnRtaClose(this.oRta);
+					return this.oRta.stop()
 					.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 					.then(function(iNumberOfChanges) {
 						assert.equal(iNumberOfChanges, 1);
-					})
-					.then(fnDone);
+						fnDone();
+					});
 				}
 			}.bind(this));
 
@@ -375,12 +360,10 @@ sap.ui.define([
 								var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 								if (oFirstExecutedCommand &&
 									oFirstExecutedCommand.getName() === "rename") {
-									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-										assert.strictEqual(this.oDatesGroup.getTitle(), "Test", "then title of the group is Test");
-										iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
-										assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
-										fnResolveOnCommandAdded();
-									}.bind(this));
+									assert.strictEqual(this.oDatesGroup.getTitle(), "Test", "then title of the group is Test");
+									iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+									assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+									fnResolveOnCommandAdded();
 								}
 							}.bind(this));
 						}.bind(this)),
@@ -437,15 +420,12 @@ sap.ui.define([
 					oCommandStack.attachModified(function() {
 						var aCommands = oCommandStack.getAllExecutedCommands();
 						if (aCommands && aCommands.length === 1) {
-							fnWaitForExecutionAndSerializationBeingDone.call(this)
-							.then(function() {
-								oCore.applyChanges();
+							oCore.applyChanges();
 
-								iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
-								assert.strictEqual(iDirtyChangesCount, 1, "then there are three dirty changes in the flex persistence");
-								stubShowMessageBoxOnRtaClose(this.oRta);
-								return this.oRta.stop();
-							}.bind(this))
+							iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+							assert.strictEqual(iDirtyChangesCount, 1, "then there are three dirty changes in the flex persistence");
+							stubShowMessageBoxOnRtaClose(this.oRta);
+							return this.oRta.stop()
 							.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 							.then(function(iNumberOfChanges) {
 								assert.equal(iNumberOfChanges, 1);
@@ -491,11 +471,8 @@ sap.ui.define([
 					"move",
 					"then the move command is added to the stack"
 				);
-				fnWaitForExecutionAndSerializationBeingDone.call(this)
-				.then(function() {
-					this.oChangeVisualization = this.oRta.getChangeVisualization();
-					return startVisualization(this.oRta);
-				}.bind(this))
+				this.oChangeVisualization = this.oRta.getChangeVisualization();
+				return startVisualization(this.oRta)
 				.then(function() {
 					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 					assert.strictEqual(aVizModel[2].count, 1, "then one move change is registered");
@@ -512,10 +489,7 @@ sap.ui.define([
 							"move",
 							"then the second move command is added to the stack"
 						);
-						fnWaitForExecutionAndSerializationBeingDone.call(this)
-						.then(function() {
-							return startVisualization(this.oRta);
-						}.bind(this))
+						return startVisualization(this.oRta)
 						.then(function() {
 							aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 							assert.strictEqual(aVizModel[2].count, 2, "then two move changes are registered");
@@ -581,19 +555,16 @@ sap.ui.define([
 
 			var oCommandStack = this.oRta.getCommandStack();
 			oCommandStack.attachCommandExecuted(function() {
-				fnWaitForExecutionAndSerializationBeingDone.call(this)
-				.then(function() {
-					oCore.applyChanges();
-					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oCombinedElement}).length;
-					assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
-					stubShowMessageBoxOnRtaClose(this.oRta);
-					return this.oRta.stop();
-				}.bind(this))
+				oCore.applyChanges();
+				iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oCombinedElement}).length;
+				assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+				stubShowMessageBoxOnRtaClose(this.oRta);
+				return this.oRta.stop()
 				.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 				.then(function(iNumberOfChanges) {
 					assert.equal(iNumberOfChanges, 1);
-				})
-				.then(fnDone);
+					fnDone();
+				});
 			}, this);
 
 			// open context menu (expanded context menu) on fucused overlay
