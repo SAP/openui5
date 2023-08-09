@@ -15,8 +15,8 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/m/TileContainer",
-	"sap/m/StandardTile",
+	"sap/f/GridContainer",
+	"sap/m/GenericTile",
 	"sap/m/SearchField",
 	"sap/m/Page",
 	"sap/m/App",
@@ -56,8 +56,8 @@ function(Press,
 		 Item,
 		 Label,
 		 Input,
-		 TileContainer,
-		 StandardTile,
+		 GridContainer,
+		 GenericTile,
 		 SearchField,
 		 Page,
 		 App,
@@ -417,14 +417,14 @@ function(Press,
 
 	QUnit.test("Should press a Tile in a Tile container", function (assert) {
 		var done = assert.async(),
-				oTile = new StandardTile(),
-				oTileContainer = new TileContainer({
-					tiles: oTile
+				oTile = new GenericTile(),
+				oGridContainer = new GridContainer({
+					items: oTile
 				});
 
-		oTileContainer.placeAt("qunit-fixture");
+		oGridContainer.placeAt("qunit-fixture");
 
-		aControlsToClean.push(oTileContainer);
+		aControlsToClean.push(oGridContainer);
 
 		sap.ui.getCore().applyChanges();
 
