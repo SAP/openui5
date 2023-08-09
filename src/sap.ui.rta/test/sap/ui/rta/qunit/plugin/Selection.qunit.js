@@ -4,58 +4,56 @@ sap.ui.define([
 	"sap/m/Bar",
 	"sap/m/Button",
 	"sap/m/HBox",
+	"sap/m/InstanceManager",
+	"sap/m/Popover",
 	"sap/m/Text",
 	"sap/m/VBox",
-	"sap/ui/Device",
+	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Combine",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/plugin/Rename",
 	"sap/ui/rta/plugin/Selection",
 	"sap/ui/rta/Utils",
-	"sap/m/InstanceManager",
-	"sap/m/Popover",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Bar,
 	Button,
 	HBox,
+	InstanceManager,
+	Popover,
 	Text,
 	VBox,
-	Device,
+	Core,
 	KeyCodes,
 	DesignTime,
+	DOMUtil,
 	ElementOverlay,
 	OverlayRegistry,
 	ChangesWriteAPI,
 	Layer,
-	QUnitUtils,
 	CommandFactory,
 	Combine,
 	Remove,
 	Rename,
 	Selection,
 	Utils,
-	InstanceManager,
-	Popover,
 	sinon,
-	RtaQunitUtils,
-	oCore
+	RtaQunitUtils
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
-	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
+	QUnit.module("Given a Selection plugin, DT in MultiSelection mode and controls with custom dt metadata for different cases...", {
 		beforeEach: function(assert) {
 			var done = assert.async();
 
@@ -114,7 +112,7 @@ sap.ui.define([
 				]
 			});
 			this.oVBox.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				plugins: [
@@ -544,6 +542,16 @@ sap.ui.define([
 			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is still not not set after mouse-over event");
 			oOverlay.getDomRef().dispatchEvent(new Event("mouseout"));
 			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is still not not set after mouse-leave event");
+		});
+
+		QUnit.test("Invoking Mouse-Over and Mouse-Leave on an Overlay which is selectable and has a movable parent", function(assert) {
+			var oHBoxOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("container1"));
+			oHBoxOverlay.setMovable(true);
+			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			oOverlay.getDomRef().dispatchEvent(new Event("mouseover"));
+			assert.notOk(oHBoxOverlay.getMovable(), "then the movable parent is temporarily not movable on mouse-over event");
+			oOverlay.getDomRef().dispatchEvent(new Event("mouseout"));
+			assert.ok(oHBoxOverlay.getMovable(), "then the parent is movable again after mouse-leave event");
 		});
 
 		QUnit.test("Invoking Mouse-Over on an Overlay which is not selectable", function(assert) {

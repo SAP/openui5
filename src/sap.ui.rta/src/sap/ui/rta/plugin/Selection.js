@@ -3,20 +3,24 @@
  */
 
 sap.ui.define([
-	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/Utils",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/events/KeyCodes",
 	"sap/base/util/restricted/_intersection",
-	"sap/m/InstanceManager"
+	"sap/m/InstanceManager",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/Utils"
 ],
 function(
-	Plugin,
-	Utils,
-	OverlayRegistry,
-	KeyCodes,
 	_intersection,
-	InstanceManager
+	InstanceManager,
+	DOMUtil,
+	OverlayRegistry,
+	OverlayUtil,
+	KeyCodes,
+	Plugin,
+	Utils
 ) {
 	"use strict";
 
@@ -90,6 +94,20 @@ function(
 		return aElementOverlays.every(function(oElementOverlay) {
 			return oElementOverlay.getElement().getMetadata().getName() === aElementOverlays[0].getElement().getMetadata().getName();
 		});
+	}
+
+	// If a parent overlay is movable it should not be draggable by a non-movable child
+	function setOrResetFirstParentMovable(oOverlay, bSet) {
+		if (bSet) {
+			const oFirstMovableParentOverlay = OverlayUtil.getFirstMovableParentOverlay(oOverlay);
+			if (oFirstMovableParentOverlay) {
+				oOverlay._firstMovableParentOverlay = oFirstMovableParentOverlay;
+				oFirstMovableParentOverlay.setMovable(false);
+			}
+		} else if (oOverlay._firstMovableParentOverlay) {
+			oOverlay._firstMovableParentOverlay.setMovable(true);
+			delete oOverlay._firstMovableParentOverlay;
+		}
 	}
 
 	Selection.prototype.init = function() {
@@ -322,6 +340,7 @@ function(
 			return;
 		}
 		if (oOverlay.isSelectable()) {
+			setOrResetFirstParentMovable(oOverlay, true);
 			if (oOverlay !== this._oHoverTarget) {
 				this._removePreviousHover();
 				this._oHoverTarget = oOverlay;
@@ -346,6 +365,7 @@ function(
 			return;
 		}
 		if (oOverlay.isSelectable()) {
+			setOrResetFirstParentMovable(oOverlay);
 			this._removePreviousHover();
 			preventEventDefaultAndPropagation(oEvent);
 		}
