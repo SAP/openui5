@@ -7,6 +7,12 @@ describe("sap.m.Panel", function() {
 		expect(takeScreenshot()).toLookAs("initial");
 	});
 
+	it('should show Panel sticky header properly', function () {
+		browser.executeScript('document.getElementById("page-cont").scrollTop=35').then(function() {
+			expect(takeScreenshot(element(by.id("panelSticky")))).toLookAs('panel-sticky-header');
+		});
+	});
+
 	it("should show Panel with Input and Text controls inside", function() {
 		element(by.id("panel1")).click();
 		expect(takeScreenshot(element(by.id("panel1")))).toLookAs("panel-with-text-and-input");
@@ -60,12 +66,5 @@ describe("sap.m.Panel", function() {
 
 	it("should show Panel with a button not expanded", function() {
 		expect(takeScreenshot(element(by.id("panel16")))).toLookAs("panel-not-expanded2");
-	});
-
-	it('should show Panel sticky header properly', function () {
-		browser.executeScript(function() { // scroll page down
-			document.getElementById("page-cont").scrollTop = 250;
-		});
-		expect(takeScreenshot(element(by.id("panel3")))).toLookAs('panel-sticky-header');
 	});
 });
