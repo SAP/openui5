@@ -215,6 +215,20 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/base/ManagedObjectObserv
 			return Item.prototype.destroy.apply(this, arguments);
 		};
 
+		MenuItem.prototype.addEventDelegate = function (oDelegate) {
+			var oVisualControl = sap.ui.getCore().byId(this._getVisualControl());
+			oVisualControl.addEventDelegate(oDelegate, this);
+
+			return this;
+		};
+
+		MenuItem.prototype.removeEventDelegate = function (oDelegate) {
+			var oVisualControl = sap.ui.getCore().byId(this._getVisualControl());
+			oVisualControl.removeEventDelegate(oDelegate);
+
+			return this;
+		};
+
 		/**
 		 * Observes the value property of the passed menu item
 		 *
