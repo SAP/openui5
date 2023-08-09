@@ -2934,37 +2934,37 @@ sap.ui.define([
 		 * Group of options that provide selection of single dates.
 		 * @public
 		 */
-		SingleDates: 1,
+		SingleDates: "SingleDates",
 
 		/**
 		 * Group of options that provide selection of date ranges.
 		 * @public
 		 */
-		DateRanges: 2,
+		DateRanges: "DateRanges",
 
 		/**
 		 * Group of options that provide selection of week related ranges.
 		 * @public
 		 */
-		 Weeks: 3,
+		Weeks: "Weeks",
 
 		/**
 		 * Group of options that provide selection of month related ranges.
 		 * @public
 		 */
-		 Month: 4,
+		Month: "Month",
 
 		/**
 		 * Group of options that provide selection of quarter related ranges.
 		 * @public
 		 */
-		 Quarters: 5,
+		Quarters: "Quarters",
 
 		/**
 		 * Group of options that provide selection of year related ranges.
 		 * @public
 		 */
-		 Years: 6
+		Years: "Years"
 	};
 
 	/**
