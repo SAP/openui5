@@ -1277,10 +1277,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("value binding with timestamps", function(assert) {
+		var oTestStartDate = UI5Date.getInstance(2022, 10, 10),
+			oTestEndDate = UI5Date.getInstance(2022,10, 15 );
 
 		var oModel = new JSONModel({
-				start: 1668038400000,
-				end: 1668470400000
+				start: oTestStartDate.getTime(),
+				end: oTestEndDate.getTime()
 			}),
 			oDRS = new DateRangeSelection({
 				value: {
