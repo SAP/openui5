@@ -2,3 +2,12 @@ specVersion: '3.0'
 metadata:
   name: worklist
 type: application
+framework:
+  name: OpenUI5
+  version: '1.118.0-SNAPSHOT' #DependencyVersion,groupId:com.sap.openui5,artifactId:sap.ui.core#
+  libraries:
+    - name: sap.m
+    - name: sap.f
+    - name: sap.ui.layout
+    - name: sap.ui.core
+    - name: themelib_sap_horizon

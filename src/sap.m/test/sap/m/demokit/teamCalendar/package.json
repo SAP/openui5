@@ -2,18 +2,11 @@
   "name": "team-calendar",
   "version": "1.0.0",
   "author": "SAP SE",
+  "private": true,
   "description": "Team Calendar",
   "scripts": {
     "start": "ui5 serve",
     "build": "ui5 build"
-  },
-  "dependencies": {
-    "@openui5/themelib_sap_horizon": "^1",
-    "@openui5/sap.ui.core": "^1",
-    "@openui5/sap.m": "^1",
-    "@openui5/sap.ui.unified": "^1",
-    "@openui5/sap.f": "^1",
-    "@openui5/sap.ui.layout": "^1"
   },
   "devDependencies": {
     "@ui5/cli": "^3"
