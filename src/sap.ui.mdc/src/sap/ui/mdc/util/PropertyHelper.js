@@ -273,19 +273,17 @@ sap.ui.define([
 	function reportInvalidProperty(sMessage, oAdditionalInfo) {
 		var mLoadedLibraries = Core.getLoadedLibraries();
 
-		var bValidationEnabled = !(window['sap-ui-mdc-config'] && window['sap-ui-mdc-config'].disableStrictPropertyInfoValidation) &&
-								 !(window.top['sap-ui-mdc-config'] && window.top['sap-ui-mdc-config'].disableStrictPropertyInfoValidation);
-
-		//Check if:
-		//1. validation in general is enabled
-		//2. check that we're not in any library that is allowed to bypass (fe & df)
-		//3. Check if the explicit enablement via url param is activated --> overrules the first to conditions
+		// Enable strict validation if
+		// 1. it is not disabled explicitly
+		// 2. we're not in any library that is temporarily allowed to bypass (fe & df)
+		// 3. the explicit enablement via url param is activated --> overrules the first to conditions
 		if (
 			(
-				bValidationEnabled &&
-				!("sap.fe.core" in mLoadedLibraries
-				|| "sap.fe.macros" in mLoadedLibraries
-				|| "sap.sac.df" in mLoadedLibraries)
+				!(window['sap-ui-mdc-config'] && window['sap-ui-mdc-config'].disableStrictPropertyInfoValidation
+					|| UriParameters.fromQuery(window.location.search).get("sap-ui-xx-disableStrictPropertyValidation") == "true")
+				&& !("sap.fe.core" in mLoadedLibraries
+					|| "sap.fe.macros" in mLoadedLibraries
+					|| "sap.sac.df" in mLoadedLibraries)
 			)
 				||
 				(UriParameters.fromQuery(window.location.search).get("sap-ui-xx-enableStrictPropertyValidation") == "true")

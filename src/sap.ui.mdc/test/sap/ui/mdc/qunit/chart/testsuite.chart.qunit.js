@@ -80,6 +80,9 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 					libs: [
 						"sap.ui.fl", "sap.ui.mdc"
 					]
+				},
+				uriParams: {
+					"sap-ui-xx-disableStrictPropertyValidation": true
 				}
 			}
         }
