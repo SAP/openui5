@@ -462,7 +462,26 @@ sap.ui.define([
 				 * The event is fired when the Edit Header button is pressed
 				 */
 				editHeaderButtonPress: {},
+				/**
+				 * The event is fired before the selected section is changed using the navigation.
+				 * This event can be aborted by the application with preventDefault(), which means that there will be no navigation.
+				 * @since 1.118
+				 */
+				beforeNavigate: {
+					allowPreventDefault: true,
+					parameters: {
 
+						/**
+						 * The selected section object.
+						 */
+						section: {type: "sap.uxap.ObjectPageSection"},
+
+						/**
+						 * The selected subsection object.
+						 */
+						subSection: {type: "sap.uxap.ObjectPageSubSection"}
+					}
+				},
 				/**
 				 * The event is fired when the selected section is changed using the navigation.
 				 * @since 1.40
@@ -2260,6 +2279,15 @@ sap.ui.define([
 
 		oSection = bIsSubSection ? oSectionBase.getParent() : oSectionBase;
 		oSubSection = bIsSubSection ? oSectionBase : this._getFirstVisibleSubSection(oSectionBase);
+
+		var bExecuteDefault = this.fireBeforeNavigate({
+			section: oSection,
+			subSection: oSubSection
+		});
+
+		if (!bExecuteDefault) {
+			return;
+		}
 
 		// we set *direct* scrolling by which we instruct the page to *skip* processing of intermediate sections (sections between current and requested)
 		this.setDirectScrollingToSection(oSection.getId());
