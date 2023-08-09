@@ -1,0 +1,11 @@
+<svg width="45" height="46" viewBox="0 0 45 46" fill="none" xmlns="http://www.w3.org/2000/svg" id="tnt-Dot-ChartFlow-alternate">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M22.998 34.0126V24.1053H23.998V34.0126C23.998 34.4339 24.3395 34.7753 24.7607 34.7753H34.1907V35.7753H24.7607C23.7872 35.7753 22.998 34.9861 22.998 34.0126Z" style="fill:var(--sapContent_Illustrative_Color4)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M5.83008 21.2216L5.83008 12.1902L6.83008 12.1902L6.83008 21.2216L5.83008 21.2216Z" style="fill:var(--sapContent_Illustrative_Color4)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.28526 22.4161L40.0215 22.4161V23.4161L7.28526 23.4161V22.4161Z" style="fill:var(--sapContent_Illustrative_Color4)"/>
+<path d="M1.04297 8.45337C1.04297 7.90109 1.49068 7.45337 2.04297 7.45337H15.7535C16.3058 7.45337 16.7535 7.90108 16.7535 8.45337V12.6292C16.7535 13.1815 16.3058 13.6292 15.7535 13.6292H2.04297C1.49068 13.6292 1.04297 13.1815 1.04297 12.6292V8.45337Z" style="fill:var(--sapContent_Illustrative_Color8)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M2.04297 6.45337H15.7535C16.8581 6.45337 17.7535 7.3488 17.7535 8.45337V12.6292C17.7535 13.7338 16.8581 14.6292 15.7535 14.6292H2.04297C0.938398 14.6292 0.0429688 13.7338 0.0429688 12.6292V8.45337C0.0429688 7.3488 0.938398 6.45337 2.04297 6.45337ZM2.04297 7.45337C1.49068 7.45337 1.04297 7.90109 1.04297 8.45337V12.6292C1.04297 13.1815 1.49068 13.6292 2.04297 13.6292H15.7535C16.3058 13.6292 16.7535 13.1815 16.7535 12.6292V8.45337C16.7535 7.90108 16.3058 7.45337 15.7535 7.45337H2.04297Z" style="fill:var(--sapContent_Illustrative_Color4)"/>
+<rect x="0.734375" y="19.7612" width="11.5269" height="5.99293" rx="1" style="fill:var(--sapContent_Illustrative_Color2)"/>
+<rect x="34.0479" y="19.7612" width="10.8555" height="5.99293" rx="1" style="fill:var(--sapContent_Illustrative_Color2)"/>
+<rect x="29.2041" y="32.0348" width="15.6278" height="5.99293" rx="1" style="fill:var(--sapContent_Illustrative_Color3)"/>
+<rect x="23.2822" y="17.5046" width="7.68895" height="7.68895" rx="1" transform="rotate(45 23.2822 17.5046)" style="fill:var(--sapContent_Illustrative_Color14)"/>
+</svg>

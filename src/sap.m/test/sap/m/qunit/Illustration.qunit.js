@@ -4,14 +4,16 @@ sap.ui.define([
 	"sap/m/Illustration",
 	"sap/m/IllustrationPool",
 	"sap/ui/core/Core",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Theming"
 ],
 function (
 	Log,
 	Illustration,
 	IllustrationPool,
 	Core,
-	InvisibleText
+	InvisibleText,
+	Theming
 ) {
 	"use strict";
 
@@ -59,9 +61,28 @@ function (
 
 		// Assert
 		assert.ok(fnLoadAssetSpy.calledOnce, "loadAsset function of the IllustrationPool class called once onBeforeRendering _sSymbolId isn't empty");
-		assert.ok(fnLoadAssetSpy.calledWithExactly(this.oIllustration._sSymbolId, this.oIllustration._sId),
-			"loadAsset function of the IllustrationPool class called with the correct arguments (_sSymbolId and _sId)");
+		assert.ok(fnLoadAssetSpy.calledWithExactly(this.oIllustration._sSymbolId, this.oIllustration._sId, this.oIllustration._sIdPrefix),
+			"loadAsset function of the IllustrationPool class called with the correct arguments (_sSymbolId, _sId, _sIdPrefix)");
 		assert.strictEqual(fnWarningStub.callCount, 0, "warning function of the Log class isn't called when the symbol isn't empty");
+
+		// Clean
+		fnBuildSymbolSpy.restore();
+		fnLoadAssetSpy.restore();
+		fnWarningStub.restore();
+	});
+
+	QUnit.test("onThemeChanged", function (assert) {
+		// Arrange
+		var fnInvalidateSpy = this.spy(this.oIllustration, "invalidate");
+
+		// Act
+		this.oIllustration.onThemeChanged();
+
+		// Assert
+		assert.ok(fnInvalidateSpy.calledOnce, "invalidate function called once onThemeChanged");
+
+		// Clean
+		fnInvalidateSpy.restore();
 	});
 
 	/* --------------------------- Illustration Private methods -------------------------------------- */
@@ -104,34 +125,68 @@ function (
 			"_sSymbolId is built as expected when all of the Illustration properties are present");
 	});
 
-		/* --------------------------- Illustrattion Associations -------------------------------------- */
-		QUnit.module("Illustrattion - Associations ", {
-			beforeEach: function () {
-				// Arrange
-				this.oIllustration = new Illustration();
-				this.oIllustration.placeAt("qunit-fixture");
-				Core.applyChanges();
-			},
-			afterEach: function () {
-				// Clean
-				this.oIllustration.destroy();
-				this.oIllustration = null;
-			}
-		});
+	QUnit.test("_buildSymbolId formats to mapped values", function (assert) {
+		// load metadata with mappings
+		var sDummySet = "sapIllus",
+			sDummyMedia = "Dialog",
+			sDummyType = "TestSymbol",
+			metadata = {
+			symbols: [
+				"TestSymbol"
+			],
+			collections: [{
+				prefix: "v5/",
+				mappings: {
+					"TestSymbol": "TestSymbol_fiori3"
+				}
+			}]
+		};
 
-		QUnit.test("Testing ariaLabelledBy association", function (assert) {
+		// Act
+		IllustrationPool._metadataLoaded('sapIllus', metadata, false);
+		this.oIllustration
+			.setSet(sDummySet, true)
+			.setMedia(sDummyMedia, true)
+			.setType(sDummyType);
 
+		Theming.setTheme("sap_horizon");
+		Core.applyChanges();
+
+		this.oIllustration._buildSymbolId();
+
+		// Assert
+		assert.strictEqual(this.oIllustration._sSymbolId, "sapIllus-Dialog-TestSymbol_fiori3", "Symbol ID is built with mapped value");
+		assert.strictEqual(this.oIllustration._sIdPrefix, "v5/", "ID prefix is built with mapped value");
+	});
+
+	/* --------------------------- Illustrattion Associations -------------------------------------- */
+	QUnit.module("Illustrattion - Associations ", {
+		beforeEach: function () {
 			// Arrange
-			new InvisibleText("illustration_label", {text: "My label"}).toStatic();
-
-			var $illustration = this.oIllustration.$();
-
-			// Act
-			this.oIllustration.addAriaLabelledBy('illustration_label');
+			this.oIllustration = new Illustration();
+			this.oIllustration.placeAt("qunit-fixture");
 			Core.applyChanges();
+		},
+		afterEach: function () {
+			// Clean
+			this.oIllustration.destroy();
+			this.oIllustration = null;
+		}
+	});
 
-			// Assert
-			assert.equal($illustration.attr("aria-labelledby"), 'illustration_label');
-		});
+	QUnit.test("Testing ariaLabelledBy association", function (assert) {
+
+		// Arrange
+		new InvisibleText("illustration_label", {text: "My label"}).toStatic();
+
+		var $illustration = this.oIllustration.$();
+
+		// Act
+		this.oIllustration.addAriaLabelledBy('illustration_label');
+		Core.applyChanges();
+
+		// Assert
+		assert.equal($illustration.attr("aria-labelledby"), 'illustration_label');
+	});
 
 });
