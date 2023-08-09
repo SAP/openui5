@@ -1784,9 +1784,13 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bKeepAlive
 	 *   Whether to keep the context alive
-	 * @param {function} [fnOnBeforeDestroy]
-	 *   Callback function that is executed once for a kept-alive context just before it is
-	 *   destroyed, see {@link #destroy}. Supported since 1.84.0
+	 * @param {function((sap.ui.model.odata.v4.Context|undefined))} [fnOnBeforeDestroy]
+	 *   Callback function that is executed once for a kept-alive context without any argument just
+	 *   before the context is destroyed; see {@link #destroy}. If a context has been replaced in a
+	 *   list binding (see {@link #replaceWith} and
+	 *   {@link sap.ui.odata.v4.ODataContextBinding#execute}), the callback will later also be
+	 *   called just before the replacing context is destroyed, but with that context as the only
+	 *   argument. Supported since 1.84.0
 	 * @param {boolean} [bRequestMessages]
 	 *   Whether to request messages for this entity. Only used if <code>bKeepAlive</code> is
 	 *   <code>true</code>. Determines the messages property from the annotation
