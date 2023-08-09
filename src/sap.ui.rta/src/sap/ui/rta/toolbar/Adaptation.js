@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/translation/Translation",
 	"sap/ui/rta/toolbar/versioning/Versioning",
 	"sap/ui/rta/Utils",
-	"sap/m/MessageBox"
+	"sap/m/MessageBox",
+	"sap/ui/performance/Measurement"
 ], function(
 	AdaptationRenderer,
 	Log,
@@ -37,7 +38,8 @@ sap.ui.define([
 	Translation,
 	Versioning,
 	Utils,
-	MessageBox
+	MessageBox,
+	Measurement
 ) {
 	"use strict";
 
@@ -371,11 +373,14 @@ sap.ui.define([
 
 	function performMigration(oRtaInformation) {
 		BusyIndicator.show();
+		Measurement.start("onCBAMigration", "Measurement of migration to context-based adaptation");
 		return ContextBasedAdaptationsAPI.migrate({
 			control: oRtaInformation.rootControl,
 			layer: oRtaInformation.flexSettings.layer
 		})
 		.finally(function() {
+			Measurement.end("onCBAMigration");
+			Measurement.getActive() && Log.info("onCBAMigration: " + Measurement.getMeasurement("onCBAMigration").time + " ms");
 			BusyIndicator.hide();
 		})
 		.then(Utils.showMessageBox.bind(undefined, "information", "DAC_DIALOG_MIGRATION_SUCCESSFULL_DESCRIPTION", {
@@ -400,8 +405,11 @@ sap.ui.define([
 	function onSaveAsAdaptation() {
 		var oRtaInformation = this.getRtaInformation();
 		Utils.checkDraftOverwrite(this.getModel("versions")).then(function() {
+			Measurement.start("onCBACanMigrate", "Measurement if its possible to migrate to context-based adaptation");
 			return ContextBasedAdaptationsAPI.canMigrate({ control: oRtaInformation.rootControl, layer: oRtaInformation.flexSettings.layer });
 		}).then(function(bCanMigrate) {
+			Measurement.end("onCBACanMigrate");
+			Measurement.getActive() && Log.info("onCBACanMigrate: " + Measurement.getMeasurement("onCBACanMigrate").time + " ms");
 			if (bCanMigrate) {
 				confirmMigration.call(this, oRtaInformation);
 			} else {

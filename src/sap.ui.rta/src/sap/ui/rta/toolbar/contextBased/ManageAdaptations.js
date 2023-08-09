@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/performance/Measurement"
 ],
 function(
 	Log,
@@ -29,7 +30,8 @@ function(
 	Filter,
 	FilterOperator,
 	JSONModel,
-	UI5Date
+	UI5Date,
+	Measurement
 ) {
 	"use strict";
 
@@ -62,6 +64,7 @@ function(
 	});
 
 	ManageAdaptations.prototype.openManageAdaptationDialog = function() {
+		Measurement.start("onCBAOpenManageAdaptationDialog", "Measurement of opening the manage context-based adaptation dialog");
 		if (!this._oManageAdaptationDialogPromise) {
 			this._oManageAdaptationDialogPromise = Fragment.load({
 				name: "sap.ui.rta.toolbar.contextBased.ManageAdaptationsDialog",
@@ -102,6 +105,8 @@ function(
 			this._oManageAdaptationDialog.setModel(this.oAdaptationsModel, "contextBased");
 			this._oManageAdaptationDialog.setModel(this._oControlConfigurationModel, "controlConfiguration");
 			getAdaptationsTable.call(this).attachSelectionChange(onSelectionChange.bind(this));
+			Measurement.end("onCBAOpenManageAdaptationDialog");
+			Measurement.getActive() && Log.info("onCBAOpenManageAdaptationDialog: " + Measurement.getMeasurement("onCBAOpenManageAdaptationDialog").time + " ms");
 			return this._oManageAdaptationDialog.open();
 		}.bind(this)
 		).catch(function(oError) {
