@@ -347,8 +347,8 @@
 												<layout:VerticalLayout width="100%">
 													<custom:JSDocText sanitizeContent="false" text="{description}"/>
 													<m:MessageStrip
-															visible="{=${deprecated} !== undefined}"
-															text="Deprecated as of version {deprecated/since}"
+															visible="{=${deprecatedText} !== undefined}"
+															text="{path : 'deprecatedText', formatter: 'sap.ui.documentation.sdk.model.formatter.formatMessageStripLinks'}"
 															type="Error"
 															showIcon="true"
 															showCloseButton="false"
