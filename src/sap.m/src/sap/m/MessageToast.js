@@ -348,33 +348,28 @@ sap.ui.define([
 		MessageToast._fnKeyDown = function(oEvent) {
 			var oFocusableElement;
 			var oPopup = this._aPopups[0];
-			var bAlt = oEvent.altKey;
-			var bCtrl = oEvent.ctrlKey;
+			var bShift = oEvent.shiftKey;
+			var bMetaKey = Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
 
-			if (oPopup && oPopup.isOpen() && bAlt && bCtrl && oEvent.code === "KeyM") {
+			if (oPopup && oPopup.isOpen() && bShift && bMetaKey && oEvent.code === "KeyM") {
+				oEvent.preventDefault();
+
 				oFocusableElement = document.querySelector(".sapMMessageToastHiddenFocusable");
 				oPopup.getContent().classList.add("sapMFocus");
 				oFocusableElement.focus();
-				clearTimeout(this._iCloseTimeoutId);
-			}
-
-			if (!oPopup && bAlt && bCtrl && oEvent.code === "KeyM") {
-				this.show(this._sMessage, this._mOptions, oEvent);
-				oPopup = this._aPopups[0];
-				oFocusableElement = document.querySelector(".sapMMessageToastHiddenFocusable");
-				oFocusableElement && oFocusableElement.focus();
-				oPopup.getContent().classList.add("sapMFocus");
 				clearTimeout(this._iCloseTimeoutId);
 			}
 		};
 
 		// Close the message when in permanent display mode
 		function handleKbdClose(oEvent) {
-			var bAlt = oEvent.altKey;
-			var bCtrl = oEvent.ctrlKey;
+			var bShift = oEvent.shiftKey;
+			var bMetaKey = Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
 			var oPopup = this._aPopups[0];
 
-			if (oEvent.code === "Escape" || (bAlt && bCtrl && oEvent.code === "KeyM")) {
+			if (oEvent.code === "Escape" || (bShift && bMetaKey && oEvent.code === "KeyM")) {
+				oEvent.preventDefault();
+
 				setTimeout(function() {
 					this._mSettings.opener && this._mSettings.opener.focus();
 				}.bind(this), 0);
@@ -420,8 +415,6 @@ sap.ui.define([
 				sPointerEvents = "mousedown." + CSSCLASS + " touchstart." + CSSCLASS,
 				iMouseLeaveTimeoutId;
 
-			MessageToast._mOptions = mOptions;
-			MessageToast._sMessage = sMessage;
 			MessageToast._mSettings.opener = oOpener;
 
 			// Find the uppper-most parent to attach the keyboard shortcut as we need to be
