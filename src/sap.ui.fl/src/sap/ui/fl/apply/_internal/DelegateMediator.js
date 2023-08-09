@@ -25,9 +25,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @experimental Since 1.80 This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
-	 *
 	 */
 	var DelegateMediator = {};
 

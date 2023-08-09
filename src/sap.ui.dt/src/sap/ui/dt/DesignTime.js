@@ -73,7 +73,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.DesignTime
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 
 	var DesignTime = ManagedObject.extend("sap.ui.dt.DesignTime", /** @lends sap.ui.dt.DesignTime.prototype */ {

@@ -112,6 +112,7 @@ sap.ui.define([], function() {
 		 * @param {object} oFlexObject - The definition of the flex Object
 		 * @param {string} sReference - The input reference
 		 * @returns {boolean} <code>true</code> when flex object reference is equivalent with the input reference
+		 * @private
 		 * @ui5-restricted sap.ui.fl.FakeLrepConnector
 		 */
 		isSameReference: function(oFlexObject, sReference) {

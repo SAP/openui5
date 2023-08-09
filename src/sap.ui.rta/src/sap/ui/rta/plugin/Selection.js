@@ -33,7 +33,6 @@ function(
 	 * @private
 	 * @since 1.34
 	 * @alias sap.ui.rta.plugin.Selection
-	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var Selection = Plugin.extend("sap.ui.rta.plugin.Selection", {
 		metadata: {

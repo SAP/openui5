@@ -25,7 +25,6 @@ sap.ui.define([
 	 * Provides an API to reset containers.
 	 *
 	 * @namespace sap.ui.fl.write.api.LocalResetAPI
-	 * @experimental Since 1.90
 	 * @since 1.90
 	 * @private
 	 * @ui5-restricted sap.ui.rta

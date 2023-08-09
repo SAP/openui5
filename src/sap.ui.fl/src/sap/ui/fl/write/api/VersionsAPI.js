@@ -72,8 +72,8 @@ sap.ui.define([
 	 * Provides an API for tools like {@link sap.ui.rta} to activate, discard and retrieve versions.
 	 *
 	 * @namespace sap.ui.fl.write.api.VersionsAPI
-	 * @experimental Since 1.74
 	 * @since 1.74
+	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools
 	 *
 	 */

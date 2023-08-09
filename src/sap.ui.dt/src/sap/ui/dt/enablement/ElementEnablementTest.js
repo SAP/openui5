@@ -41,7 +41,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.38
 	 * @alias sap.ui.dt.test.ElementEnablementTest
-	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var ElementEnablementTest = Test.extend("sap.ui.dt.test.ElementEnablementTest", /** @lends sap.ui.dt.test.ElementEnablementTest.prototype */ {
 		metadata: {

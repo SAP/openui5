@@ -17,7 +17,6 @@ sap.ui.define([
 	 *
 	 * @returns {object} The prepared map of App Descriptors
 	 *
-	 * @experimental since 1.74
 	 * @function
 	 * @since 1.74
 	 * @private

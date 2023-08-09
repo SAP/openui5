@@ -21,7 +21,6 @@ sap.ui.define([
 	 * Provides a UI component for context sharing.
 	 *
 	 * @namespace sap.ui.fl.variants.context.Component
-	 * @experimental
 	 * @since 1.88.0
 	 * @private
 	 * @ui5-restricted sap.ui.comp, sap.ui.fl

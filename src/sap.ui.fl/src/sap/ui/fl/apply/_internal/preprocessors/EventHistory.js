@@ -10,7 +10,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 	 *
 	 * @namespace
 	 * @alias sap.ui.fl.apply._internal.preprocessors.EventHistory
-	 * @experimental Since 1.47.0
+	 * @since 1.47.0
 	 * @author SAP SE
 	 * @version ${version}
 	 *

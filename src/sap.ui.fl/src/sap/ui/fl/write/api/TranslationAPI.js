@@ -25,8 +25,8 @@ sap.ui.define([
 	 * Provides an API for tools like {@link sap.ui.rta} to get source languages, download XLIFF files or upload translations.
 	 *
 	 * @namespace sap.ui.fl.write.api.TranslationAPI
-	 * @experimental Since 1.97
 	 * @since 1.97
+	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools
 	 *
 	 */

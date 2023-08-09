@@ -29,8 +29,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.plugin.ControlDragDrop
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var ControlDragDrop = DragDrop.extend("sap.ui.dt.plugin.ControlDragDrop", /** @lends sap.ui.dt.plugin.ControlDragDrop.prototype */ {
 		metadata: {

@@ -34,7 +34,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @alias sap.ui.fl.util.resolveBinding
-	 * @experimental
 	 * @since 1.91
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta, sap.ui.dt

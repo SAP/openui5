@@ -84,7 +84,6 @@ sap.ui.define([
 	 *	}
 	 *
 	 * @namespace sap.ui.fl.apply._internal.flexState.FlexState
-	 * @experimental
 	 * @since 1.73
 	 * @version ${version}
 	 * @private

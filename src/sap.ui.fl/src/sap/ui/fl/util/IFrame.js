@@ -95,7 +95,8 @@ sap.ui.define([
 				/**
 				 * Backup of the initial settings for the dialogs.
 				 *
-				 * @ui5-restricted sap.ui.fl
+				 *  @private
+				 *  @ui5-restricted sap.ui.fl
 				 */
 				_settings: {type: "object", group: "Data", defaultValue: null}
 			},

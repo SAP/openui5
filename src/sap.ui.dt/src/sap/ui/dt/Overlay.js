@@ -49,7 +49,6 @@ sap.ui.define([
 	 * @abstract
 	 * @since 1.30
 	 * @alias sap.ui.dt.Overlay
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var Overlay = Element.extend("sap.ui.dt.Overlay", /** @lends sap.ui.dt.Overlay.prototype */ {
 		metadata: {

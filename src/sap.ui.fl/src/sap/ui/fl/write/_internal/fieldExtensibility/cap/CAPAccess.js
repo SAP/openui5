@@ -17,7 +17,7 @@ sap.ui.define([
 
 	/**
 	 * @namespace sap.ui.fl.write._internal.fieldExtensibility.CAPAccess
-	 * @experimental Since 1.93
+	 * @since 1.93
 	 * @private
 	 * @author SAP SE
 	 * @version ${version}

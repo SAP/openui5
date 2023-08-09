@@ -33,8 +33,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.34
 	 * @alias sap.ui.dt.plugin.ElementMover
-	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var ElementMover = ManagedObject.extend("sap.ui.dt.plugin.ElementMover", /** @lends sap.ui.dt.plugin.ElementMover.prototype */ {
 		metadata: {

@@ -50,7 +50,6 @@ sap.ui.define([
 	 * Provides an API for tools to create, update, delete app variants only for ABAP systems.
 	 *
 	 * @namespace sap.ui.fl.write.api.SmartBusinessWriteAPI
-	 * @experimental Since 1.74
 	 * @since 1.74
 	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools

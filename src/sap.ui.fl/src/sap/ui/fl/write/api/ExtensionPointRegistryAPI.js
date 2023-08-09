@@ -13,7 +13,6 @@ sap.ui.define([
 	 * Provides an API to handle specific information about the extension points into the application.
 	 *
 	 * @namespace sap.ui.fl.write.api.ExtensionPointRegistryAPI
-	 * @experimental Since 1.78
 	 * @since 1.78
 	 * @private
 	 * @ui5-restricted

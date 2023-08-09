@@ -19,7 +19,6 @@ sap.ui.define([
 	 * Includes functionality needed for all change dependency handling
 	 *
 	 * @namespace sap.ui.fl.apply._internal.flexState.changes.DependencyHandler
-	 * @experimental
 	 * @since 1.74
 	 * @version ${version}
 	 * @private

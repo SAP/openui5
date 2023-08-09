@@ -37,7 +37,6 @@ function(
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.rta.plugin.DragDrop
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var DragDrop = ControlDragDrop.extend("sap.ui.rta.plugin.DragDrop", /** @lends sap.ui.rta.plugin.DragDrop.prototype */ {
 		metadata: {

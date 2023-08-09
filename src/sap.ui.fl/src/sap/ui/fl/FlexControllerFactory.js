@@ -18,7 +18,7 @@ sap.ui.define([
 	 * Factory to create new instances of {sap.ui.fl.FlexController}
 	 * @constructor
 	 * @alias sap.ui.fl.FlexControllerFactory
-	 * @experimental Since 1.27.0
+	 * @since 1.27.0
 	 * @author SAP SE
 	 * @version ${version}
 	 *

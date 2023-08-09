@@ -50,8 +50,6 @@ function(
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.rta.Utils
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality.
-	 * API of this class might be changed in the future.
 	 */
 
 	var Utils = {};

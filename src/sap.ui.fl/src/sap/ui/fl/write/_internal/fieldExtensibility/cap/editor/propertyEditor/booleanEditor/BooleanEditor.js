@@ -19,7 +19,6 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @private
-	 * @experimental 1.93
 	 * @ui5-restricted sap.ui.fl
 	 */
 	var BooleanEditor = BasePropertyEditor.extend("sap.ui.fl.write._internal.fieldExtensibility.cap.editor.propertyEditor.booleanEditor.BooleanEditor", {

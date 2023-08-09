@@ -27,7 +27,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.38
 	 * @alias sap.ui.dt.plugin.TabHandling
-	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var TabHandling = Plugin.extend("sap.ui.dt.plugin.TabHandling", /** @lends sap.ui.dt.plugin.TabHandling.prototype */ {
 		metadata: {

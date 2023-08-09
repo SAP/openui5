@@ -11,7 +11,6 @@ sap.ui.define(function() {
 	 * @namespace
 	 * @name sap.ui.rta.service.Selection
 	 * @author SAP SE
-	 * @experimental Since 1.58
 	 * @since 1.58
 	 * @version ${version}
 	 * @private

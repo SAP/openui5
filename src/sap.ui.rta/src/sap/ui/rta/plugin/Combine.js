@@ -28,7 +28,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.46
 	 * @alias sap.ui.rta.plugin.Combine
-	 * @experimental Since 1.46. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var Combine = Plugin.extend("sap.ui.rta.plugin.Combine", /** @lends sap.ui.rta.plugin.Combine.prototype */ {
 		metadata: {

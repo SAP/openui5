@@ -26,7 +26,6 @@ sap.ui.define([
 	/**
 	 * Includes functionality for testing purposes. Must not be used in productive coding
 	 *
-	 * @experimental
 	 * @since 1.77
 	 * @version ${version}
 	 * @private

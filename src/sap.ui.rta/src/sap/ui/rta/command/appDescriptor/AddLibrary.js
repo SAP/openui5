@@ -21,8 +21,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.49
 	 * @alias sap.ui.rta.command.appDescriptor.AddLibrary
-	 * @experimental Since 1.49. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var AddLibrary = AppDescriptorCommand.extend("sap.ui.rta.command.appDescriptor.AddLibrary", {
 		metadata: {

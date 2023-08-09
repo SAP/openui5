@@ -50,7 +50,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.78
 	 * @alias sap.ui.rta.plugin.AddXMLAtExtensionPoint
-	 * @experimental Since 1.77. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var AddXMLAtExtensionPoint = Plugin.extend("sap.ui.rta.plugin.AddXMLAtExtensionPoint", /** @lends sap.ui.rta.plugin.AddXMLAtExtensionPoint.prototype */ {
 		metadata: {

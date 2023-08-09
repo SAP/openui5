@@ -19,8 +19,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.46
 	 * @alias sap.ui.rta.command.Combine
-	 * @experimental Since 1.46. This class is experimental and provides only limited functionality. Also the API might be
-	 *							 changed in future.
 	 */
 	var Combine = FlexCommand.extend("sap.ui.rta.command.Combine", {
 		metadata: {

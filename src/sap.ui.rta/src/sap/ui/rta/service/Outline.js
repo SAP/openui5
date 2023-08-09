@@ -40,7 +40,6 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.rta.service.Outline
 	 * @author SAP SE
-	 * @experimental Since 1.56
 	 * @since 1.56
 	 * @version ${version}
 	 * @private

@@ -15,8 +15,6 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	 * @private
 	 * @since 1.44
 	 * @alias sap.ui.rta.command.Settings
-	 * @experimental Since 1.44. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var Settings = FlexCommand.extend("sap.ui.rta.command.Settings", {
 		metadata: {

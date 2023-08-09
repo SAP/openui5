@@ -35,7 +35,6 @@ sap.ui.define([
 	 * Connector that saves the data in an internal object.
 	 *
 	 * @namespace sap.ui.fl.write._internal.connectors.JsObjectConnector
-	 * @experimental Since 1.70
 	 * @since 1.70
 	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Connector

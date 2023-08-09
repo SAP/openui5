@@ -28,6 +28,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]|sap.ui.fl.apply._internal.flexObjects.FlexObject} vChanges - Changes to be merged which includes propertyPath and propertyValue
 	 * @param {string} oRootPath - root context where the propertyPath starts
+	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
 	 */
 	return function(vChanges, oRootPath) {

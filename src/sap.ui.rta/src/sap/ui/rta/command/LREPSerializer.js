@@ -30,8 +30,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.42
 	 * @alias sap.ui.rta.command.LREPSerializer
-	 * @experimental Since 1.42. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var LREPSerializer = ManagedObject.extend("sap.ui.rta.command.LREPSerializer", {
 		metadata: {

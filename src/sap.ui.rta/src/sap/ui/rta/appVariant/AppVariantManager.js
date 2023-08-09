@@ -27,8 +27,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.53
 	 * @alias sap.ui.rta.appVariant.AppVariantManager
-	 * @experimental Since 1.53. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var AppVariantManager = ManagedObject.extend("sap.ui.rta.appVariant.AppVariantManager", {
 		metadata: {

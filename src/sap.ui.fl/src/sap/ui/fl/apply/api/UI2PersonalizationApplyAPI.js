@@ -17,7 +17,6 @@ sap.ui.define([
 	 * Provides an API to access UI2 personalization.
 	 *
 	 * @namespace sap.ui.fl.apply.api.UI2PersonalizationApplyAPI
-	 * @experimental Since 1.71
 	 * @since 1.71
 	 * @private
 	 * @ui5-restricted

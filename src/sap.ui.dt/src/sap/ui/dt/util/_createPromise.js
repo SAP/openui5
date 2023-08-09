@@ -6,7 +6,6 @@ sap.ui.define(function() {
 
 	/**
 	 * @function
-	 * @experimental
 	 * @param {function} fn - Function that should be wrapped in a promise
 	 * @returns {object} Cancelable Promise
 	 * @private

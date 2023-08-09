@@ -17,8 +17,8 @@ sap.ui.define([
 	 * @extends sap.ui.fl.apply._internal.flexObjects.UIChange
 	 * @alias sap.ui.fl.apply._internal.flexObjects.UpdatableChange
 	 * @private
+	 * @since 1.90.0
 	 * @ui5-restricted
-	 * @experimental Since 1.90.0
 	 */
 	var UpdatableChange = UIChange.extend("sap.ui.fl.apply._internal.flexObjects.UpdatableChange", /** @lends sap.ui.fl.apply._internal.flexObjects.UpdatableChange.prototype */ {
 		metadata: {

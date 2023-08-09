@@ -25,7 +25,6 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.rta.service.SupportTools
 	 * @author SAP SE
-	 * @experimental Since 1.106
 	 * @since 1.106
 	 * @version ${version}
 	 * @private

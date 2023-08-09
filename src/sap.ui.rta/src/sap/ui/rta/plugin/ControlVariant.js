@@ -50,7 +50,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.50
 	 * @alias sap.ui.rta.plugin.ControlVariant
-	 * @experimental Since 1.50. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 
 	/* Mix-in Variant Methods */

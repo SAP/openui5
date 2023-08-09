@@ -26,7 +26,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @private
 	 * @since 1.94
-	 * @experimental Since 1.94. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var CommandBuilder = {};
 

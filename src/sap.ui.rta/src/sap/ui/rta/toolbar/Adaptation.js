@@ -55,7 +55,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.48
 	 * @alias sap.ui.rta.toolbar.Adaptation
-	 * @experimental Since 1.48. This class is experimental. API might be changed in future.
 	 */
 	var Adaptation = Base.extend("sap.ui.rta.toolbar.Adaptation", {
 		renderer: AdaptationRenderer,

@@ -107,6 +107,7 @@ sap.ui.define([
 		/**
 		 * Determine the <code>maxLayer</code> based on the url parameter <code>sap-ui-fl-max-layer</code> or if is not set by <code>topLayer</code>.
 		 *
+		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal.Connector
 		 * @param {sap.ui.core.service.Service} oURLParsingService Unified Shell URL Parsing Service
 		 * @return {string} maxLayer

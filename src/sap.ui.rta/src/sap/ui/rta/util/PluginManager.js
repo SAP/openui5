@@ -71,8 +71,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.86
 	 * @alias sap.ui.rta.util.PluginManager
-	 * @experimental Since 1.86. This class is experimental and provides only limited functionality. Also the API might
-	 *               be changed in future.
 	 */
 	var PluginManager = ManagedObject.extend("sap.ui.rta.util.PluginManager", {
 		metadata: {

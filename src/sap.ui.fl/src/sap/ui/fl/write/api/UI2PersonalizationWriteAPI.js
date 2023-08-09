@@ -19,7 +19,6 @@ sap.ui.define([
 	 * Provides an API to write UI2 personalization.
 	 *
 	 * @namespace sap.ui.fl.write.api.UI2PersonalizationWriteAPI
-	 * @experimental Since 1.71
 	 * @since 1.71
 	 * @private
 	 * @ui5-restricted

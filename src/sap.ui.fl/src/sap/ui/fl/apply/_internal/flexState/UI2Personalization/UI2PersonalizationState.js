@@ -15,7 +15,6 @@ sap.ui.define([
 	 * Handler class to UI2 Personalization
 	 *
 	 * @namespace sap.ui.fl.apply._internal.flexState.UI2Personalization.UI2PersonalizationState
-	 * @experimental Since 1.75
 	 * @since 1.75
 	 * @version ${version}
 	 * @private
