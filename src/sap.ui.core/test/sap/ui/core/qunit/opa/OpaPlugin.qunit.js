@@ -326,6 +326,9 @@ sap.ui.define([
 		});
 
 		assert.strictEqual(oResult.length, 0, "Result was null");
+		/**
+		 * @deprecated since 1.56 together with lazy loading as it implies sync loading
+		 */
 		sinon.assert.calledWith(this.fnLogSpy, "The control type sap.m.MessageToast must be a function.");
 	});
 
