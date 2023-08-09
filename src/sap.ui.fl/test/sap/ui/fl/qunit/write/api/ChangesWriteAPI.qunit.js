@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
-	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
@@ -40,7 +40,7 @@ sap.ui.define([
 	AppVariantInlineChangeFactory,
 	ChangesWriteAPI,
 	ContextBasedAdaptationsAPI,
-	FlexControllerFactory,
+	ChangePersistenceFactory,
 	Layer,
 	FlexUtils,
 	sinon,
@@ -54,7 +54,7 @@ sap.ui.define([
 	var oComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Control---demo--test");
 
 	function mockFlexController(oControl, oReturn) {
-		sandbox.stub(FlexControllerFactory, "createForSelector")
+		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl")
 		.throws("invalid parameters for flex persistence function")
 		.withArgs(oControl)
 		.returns(oReturn);

@@ -110,9 +110,7 @@ sap.ui.define([
 				})]
 			});
 			var oRemoveStub = sandbox.stub(this.oModel, "removeVariant").resolves();
-			var oDeleteChangesStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChanges");
-			var oAddChangesStub = sandbox.stub(this.oModel.oChangePersistence, "addChanges");
-			var oApplyChangeStub = sandbox.stub(this.oModel.oFlexController, "applyChange");
+			var oApplyChangeStub = sandbox.stub(this.oModel, "addAndApplyChangesOnVariant");
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "saveAs", {
 				sourceVariantReference: oSourceVariantReference,
@@ -154,8 +152,6 @@ sap.ui.define([
 
 				return oSaveAsCommand.undo();
 			}.bind(this)).then(function() {
-				assert.strictEqual(oDeleteChangesStub.lastCall.args[0].length, 1, "one change got deleted");
-
 				var mExpectedProperties = {
 					variant: aChanges[0],
 					sourceVariantReference: "mySourceReference",
@@ -165,7 +161,6 @@ sap.ui.define([
 				assert.strictEqual(oRemoveStub.callCount, 1, "removeVariant was called");
 				assert.deepEqual(oRemoveStub.firstCall.args[0], mExpectedProperties, "the correct properties were passed-1");
 				assert.deepEqual(oRemoveStub.firstCall.args[1], true, "the correct properties were passed-2");
-				assert.strictEqual(oAddChangesStub.lastCall.args[0].length, 1, "one change was added back");
 				assert.strictEqual(oApplyChangeStub.callCount, 1, "one change was applied again");
 			});
 		});

@@ -1,8 +1,8 @@
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -16,10 +16,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Core"
 ], function(
+	XmlPreprocessor,
 	ControlVariantApplyAPI,
 	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
-	FlexControllerFactory,
 	Layer,
 	FlUtils,
 	ChangePersistenceFactory,
@@ -212,11 +212,10 @@ sap.ui.define([
 		window.performance.mark(sMeasure + ".start");
 	};
 
-	FlexPerformanceTestUtil.startMeasurementForXmlPreprocessing = function(oComponent) {
+	FlexPerformanceTestUtil.startMeasurementForXmlPreprocessing = function() {
 		// Monkey patching of FlexController.processXmlView function
-		var oFlexController = FlexControllerFactory.createForControl(oComponent);
-		var fnOriginalProcessXmlView = oFlexController.processXmlView.bind(oFlexController);
-		oFlexController.processXmlView = function() {
+		var fnOriginalProcessXmlView = XmlPreprocessor.process;
+		XmlPreprocessor.process = function() {
 			FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
 			return fnOriginalProcessXmlView.apply(this, arguments)
 			.then(function(vReturn) {

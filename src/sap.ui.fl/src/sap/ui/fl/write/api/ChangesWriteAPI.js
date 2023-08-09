@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
-	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Utils"
 ], function(
 	_omit,
@@ -40,7 +40,7 @@ sap.ui.define([
 	ChangeHandlerStorage,
 	ContextBasedAdaptationsAPI,
 	AppVariantInlineChangeFactory,
-	FlexControllerFactory,
+	ChangePersistenceFactory,
 	Utils
 ) {
 	"use strict";
@@ -184,7 +184,6 @@ sap.ui.define([
 			return Promise.reject("Please provide an Element");
 		}
 
-		var oFlexController = FlexControllerFactory.createForSelector(mPropertyBag.element);
 		mPropertyBag.appComponent = Utils.getAppComponentForSelector(mPropertyBag.element);
 		if (!mPropertyBag.modifier) {
 			mPropertyBag.modifier = JsControlTreeModifier;
@@ -192,7 +191,8 @@ sap.ui.define([
 		// TODO: Descriptor apply function
 		return Applier.applyChangeOnControl(mPropertyBag.change, mPropertyBag.element, _omit(mPropertyBag, ["element", "change"]))
 		.then(function(oResult) {
-			var aDependentChanges = oFlexController.getOpenDependentChangesForControl(mPropertyBag.change.getSelector(), mPropertyBag.appComponent);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.element);
+			var aDependentChanges = oChangePersistence.getOpenDependentChangesForControl(mPropertyBag.change.getSelector(), mPropertyBag.appComponent);
 			if (aDependentChanges.length > 0) {
 				return ChangesWriteAPI.revert({
 					change: mPropertyBag.change,

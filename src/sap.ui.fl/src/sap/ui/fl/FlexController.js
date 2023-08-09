@@ -13,8 +13,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/ui/core/Component",
 	"sap/base/Log"
 ], function(
 	Utils,
@@ -27,8 +25,6 @@ sap.ui.define([
 	States,
 	ControlVariantApplyAPI,
 	JsControlTreeModifier,
-	XmlTreeModifier,
-	Component,
 	Log
 ) {
 	"use strict";
@@ -105,65 +101,6 @@ sap.ui.define([
 			this._oVariantSwitchPromise = Promise.resolve();
 		}
 		return this._oVariantSwitchPromise;
-	};
-
-	/**
-	 * Adds an already prepared change to the flex persistence (not yet saved). This method will not call
-	 * createChange again, but expects a fully computed and appliable change.
-	 * Will be saved with #saveAll.
-	 *
-	 * @param {object} oChange property bag (nvp) holding the change information
-	 * The property "oPropertyBag.packageName" is set to $TMP internally since flex changes are always local when they are created.
-	 * @param {sap.ui.core.Component} oAppComponent - Application component
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} the created change
-	 * @public
-	 */
-	FlexController.prototype.addPreparedChange = function(oChange, oAppComponent) {
-		this._oChangePersistence.addChange(oChange, oAppComponent);
-		return oChange;
-	};
-
-	/**
-	 * Prepares a change to be deleted with the next call to
-	 * @see {ChangePersistence#saveDirtyChanges};
-	 *
-	 * If the given change is already in the dirty changes and
-	 * has the 'NEW' state it will be removed, assuming,
-	 * it has just been created in the current session;
-	 *
-	 * Otherwise it will be marked for deletion.
-	 *
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - the change to be deleted
-	 */
-	FlexController.prototype.deleteChange = function(oChange) {
-		this._oChangePersistence.deleteChange(oChange);
-	};
-
-	/**
-	 * Must ONLY be used together with FlexController.prototype.addChange.
-	 * Applies a change that was previously created, added to the map and queued.
-	 *
-	 * @param {object} oChange Change Instance
-	 * @param {sap.ui.core.Control} oControl The control where the change will be applied to
-	 * @returns {Promise} Returns Promise resolving to the change that was created and applied successfully or a Promise reject with the error object
-	 * @public
-	 */
-	FlexController.prototype.applyChange = function(oChange, oControl) {
-		var mPropertyBag = {
-			modifier: JsControlTreeModifier,
-			appComponent: Utils.getAppComponentForControl(oControl),
-			view: Utils.getViewForControl(oControl)
-		};
-
-		return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag)
-		.then(function(oReturn) {
-			if (!oReturn.success) {
-				var oException = oReturn.error || new Error("The change could not be applied.");
-				this._oChangePersistence.deleteChange(oChange, true);
-				throw oException;
-			}
-			return oChange;
-		}.bind(this));
 	};
 
 	function checkDependencies(oChange, mDependencies, mChanges, oAppComponent, aRelevantChanges) {
@@ -331,61 +268,6 @@ sap.ui.define([
 			}
 			return oResult;
 		});
-	};
-
-	/**
-	 * Loads and applies all changes for the specified xml tree view
-	 *
-	 * @param {object} oView - the view to process as XML tree
-	 * @param {object} mPropertyBag - collection of cross-functional attributes
-	 * @param {string} mPropertyBag.viewId - id of the processed view
-	 * @param {string} mPropertyBag.componentId - name of the root component of the view
-	 * @returns {Promise} Promise resolves once all changes of the view have been applied
-	 * @public
-	 */
-	FlexController.prototype.processXmlView = function(oView, mPropertyBag) {
-		var oViewComponent = Component.get(mPropertyBag.componentId);
-		var oAppComponent = Utils.getAppComponentForControl(oViewComponent);
-
-		mPropertyBag.appComponent = oAppComponent;
-		mPropertyBag.modifier = XmlTreeModifier;
-		mPropertyBag.view = oView;
-
-		return this._oChangePersistence.getChangesForView(mPropertyBag)
-		.then(Applier.applyAllChangesForXMLView.bind(Applier, mPropertyBag))
-		.catch(handleXMLApplyError.bind(this, mPropertyBag.view));
-	};
-
-	function handleXMLApplyError(oView, oError) {
-		Log.error("Error processing view " + oError + ".");
-		return oView;
-	}
-
-	/**
-	 * Retrieves the changes for the complete UI5 component
-	 *
-	 * also used by OVP!
-	 *
-	 * @param {object} mPropertyBag - (optional) contains additional data that are needed for reading of changes
-	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to the current running component
-	 * @param {string} [mPropertyBag.siteId] ID of the site belonging to the current running component
-	 * @param {boolean} bInvalidateCache - (optional) should the cache be invalidated
-	 * @returns {Promise} Promise resolves with a map of all {sap.ui.fl.apply._internal.flexObjects.FlexObject} having the changeId as key
-	 * @public
-	 */
-	FlexController.prototype.getComponentChanges = function(mPropertyBag, bInvalidateCache) {
-		return this._oChangePersistence.getChangesForComponent(mPropertyBag, bInvalidateCache);
-	};
-
-	/**
-	 * Calls the same function in the change persistence, which actually does the work.
-	 *
-	 * @param {object} oSelector selector of the control
-	 * @param {sap.ui.core.Component} oComponent - component instance that is currently loading
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of all open dependent changes for the control
-	 */
-	FlexController.prototype.getOpenDependentChangesForControl = function(oSelector, oComponent) {
-		return this._oChangePersistence.getOpenDependentChangesForControl(oSelector, oComponent);
 	};
 
 	/**
