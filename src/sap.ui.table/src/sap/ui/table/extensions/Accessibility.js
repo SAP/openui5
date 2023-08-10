@@ -1125,11 +1125,12 @@ sap.ui.define([
 
 		var oTable = this.getTable();
 		var aRows = oTable.getRows();
-		var oRow, i;
+		var oRow, i, $Ref;
 
 		for (i = 0; i < aRows.length; i++) {
 			oRow = aRows[i];
-			oRow.getDomRefs(true).row.attr("aria-rowindex", ExtensionHelper.getRowIndex(oRow));
+			$Ref = oRow.getDomRefs(true);
+			$Ref.row.not($Ref.rowHeaderPart).not($Ref.rowActionPart).attr("aria-rowindex", ExtensionHelper.getRowIndex(oRow));
 		}
 	};
 
@@ -1294,7 +1295,7 @@ sap.ui.define([
 			var bIsSelected = oTable._getSelectionPlugin().isSelected(oRow);
 
 			if ($Ref.row) {
-				$Ref.row.add($Ref.row.children(".sapUiTableCell")).attr("aria-selected", bIsSelected ? "true" : "false");
+				$Ref.row.not($Ref.rowHeaderPart).not($Ref.rowActionPart).add($Ref.row.children(".sapUiTableCell")).attr("aria-selected", bIsSelected ? "true" : "false");
 			}
 
 			if (!bIsSelected) {
@@ -1332,7 +1333,7 @@ sap.ui.define([
 			});
 		}
 
-		oDomRefs.row.attr({
+		oDomRefs.row.not(oDomRefs.rowHeaderPart).not(oDomRefs.rowActionPart).attr({
 			"aria-expanded": oRow.isExpandable() ? oRow.isExpanded() + "" : null,
 			"aria-level": oRow.getLevel()
 		});
