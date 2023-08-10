@@ -98,7 +98,6 @@ sap.ui.define([
 
 	FilterPanel.prototype._createInnerListControl = function () {
 		var oList = QueryPanel.prototype._createInnerListControl.apply(this, arguments);
-		oList.setKeyboardMode(ListKeyboardMode.Edit);
 		return oList;
 	};
 
