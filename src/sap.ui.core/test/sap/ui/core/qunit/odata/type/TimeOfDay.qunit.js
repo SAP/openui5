@@ -518,19 +518,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	"09:15:30.000Z",
-	"15:15:45.12345Z",
-	"23:00:00.123-01:00",
-	"12:30:45.12345+01:00"
-].forEach(function (sISOString, i) {
-	QUnit.test("getISOStringFromModelValue/getModelValueFromISOString: integrative test " + i, function (assert) {
-		var oType = new TimeOfDay({}, {precision: 3});
-
-		assert.strictEqual(oType.getISOStringFromModelValue(sISOString), sISOString);
-		assert.strictEqual(oType.getModelValueFromISOString(sISOString), sISOString);
+	QUnit.test("getISOStringFromModelValue: integrative test", function (assert) {
+		assert.strictEqual(new TimeOfDay().getISOStringFromModelValue("09:15:30"), "09:15:30");
 	});
-});
 
 	//*********************************************************************************************
 ["getISOStringFromModelValue", "getModelValueFromISOString"].forEach(function (sMethod) {
@@ -542,4 +532,35 @@ sap.ui.define([
 		assert.strictEqual(oType[sMethod](""), null);
 	});
 });
+
+	//*********************************************************************************************
+	// Enhance existing integration test for TimeOfDay#getModelValueFromISOString with and without precision
+	// constraints. It is expected that the milliseconds in the ISO string are either truncated or padded with 0
+	// according to the set precision.
+	// BCP: 2380114882
+	[{
+		sISOString: "09:15:30.12",
+		sModelValue: "09:15:30.12",
+		iPrecision: 2
+	}, {
+		sISOString: "09:15:30.123",
+		sModelValue: "09:15:30.12",
+		iPrecision: 2
+	}, {
+		sISOString: "09:15:30.12",
+		sModelValue: "09:15:30.1200",
+		iPrecision: 4
+	}, {
+		sISOString: "09:15:30.12",
+		sModelValue: "09:15:30",
+		iPrecision: undefined
+	}].forEach(function (oFixture, i) {
+		const sTitle = "getModelValueFromISOString: integrative test #" + i;
+		QUnit.test(sTitle, function (assert) {
+			const oType = new TimeOfDay({}, {precision: oFixture.iPrecision});
+
+			// code under test
+			assert.strictEqual(oType.getModelValueFromISOString(oFixture.sISOString), oFixture.sModelValue);
+		});
+	});
 });
