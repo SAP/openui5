@@ -1,4 +1,5 @@
 sap.ui.define([
+	'sap/ui/base/ManagedObject',
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/odata/type/Currency", // to have it loaded
 	"sap/ui/model/odata/type/Decimal", // to have it loaded
@@ -12,9 +13,9 @@ sap.ui.define([
 	"sap/ui/mdc/field/ConditionsType", // as used in XML view
 	"sap/ui/mdc/link/FakeFlpConnector",
 	"sap/base/util/LoaderExtensions",
-	"sap/base/util/UriParameters",
 	"sap/m/routing/Router" // make sure Router is loaded
 ], function (
+	ManagedObject,
 	UIComponent,
 	ODataCurrencyType,
 	ODataDecimalType,
@@ -28,28 +29,15 @@ sap.ui.define([
 	ConditionsType,
 	FakeFlpConnector,
 	LoaderExtensions,
-	UriParameters,
 	Router
 ) {
 	"use strict";
 
 	var fnLoadManifest = function() {
-		var oDefaultManifest;
-		// TODO: remove this handling after adoption in sapui5.runtime
-		try {
-			oDefaultManifest = LoaderExtensions.loadResource("sap/ui/v4demo/templateManifest.json");
-		} catch (e) {
-			if (e.status === "Not Found") {
-				oDefaultManifest = LoaderExtensions.loadResource("sap/ui/v4demo/manifest.json");
-			}
+		var oDefaultManifest = LoaderExtensions.loadResource("sap/ui/v4demo/templateManifest.json");
+		if (self['sap-ui-mdc-config'] && self['sap-ui-mdc-config'].tenantBaseUrl) {
+			oDefaultManifest["sap.app"].dataSources.default.uri = self['sap-ui-mdc-config'].tenantBaseUrl + "catalog-test/";
 		}
-
-		var oUriParams = UriParameters.fromQuery(window.location.search);
-		if (oUriParams.get("service") === "tenant") {
-			var sRandomString = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-			oDefaultManifest["sap.app"].dataSources.default.uri = "/tenant(" + sRandomString + ")/catalog-test/";
-		}
-
 		return oDefaultManifest;
 	};
 
@@ -62,9 +50,7 @@ sap.ui.define([
 		init : function () {
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
-
 			this.getRouter().initialize();
-
 			this.__initFakeFlpConnector();
 		},
 		__initFakeFlpConnector: function() {
