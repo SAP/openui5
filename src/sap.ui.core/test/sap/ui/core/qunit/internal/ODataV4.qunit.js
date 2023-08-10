@@ -5,8 +5,7 @@
 (function () {
 	"use strict";
 	/*global QUnit */
-
-	var bAlreadyStopped = QUnit.config.autostart === false;
+	/* eslint-disable max-nested-callbacks */
 
 	QUnit.config.autostart = false;
 
@@ -14,19 +13,15 @@
 		"sap/ui/core/Core",
 		"sap/ui/core/qunit/odata/v4/testsuite.odatav4.qunit"
 	], function (Core, oTestsuite) {
-		var aModules = Object.keys(oTestsuite.tests).filter(function (sTest) {
-				return !sTest.startsWith("OPA.");
-			}).map(function (sTest) {
-				return "sap/ui/core/qunit/odata/v4/" + sTest + ".qunit";
-			});
+		const aModules = Object.keys(oTestsuite.tests)
+			.filter((sTest) => !sTest.startsWith("OPA."))
+			.map((sTest) => `sap/ui/core/qunit/odata/v4/${sTest}.qunit`);
 
 		sap.ui.require(aModules, function () {
-			// don't start if autostart was stopped elsewhere (then the module is part of 1Ring)
-			if (!bAlreadyStopped) {
-				Core.ready().then(function () {
-					QUnit.start(0);
-				});
-			}
+			Core.ready().then(function () {
+				QUnit.config.modules.sort((oMod1, oMod2) => (oMod1.name < oMod2.name ? -1 : 1));
+				QUnit.start(0);
+			});
 		});
 	});
 }());
