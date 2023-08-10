@@ -37,6 +37,7 @@ sap.ui.define([
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/m/plugins/CopyProvider",
 	"sap/m/plugins/PasteProvider",
+	"sap/m/plugins/CellSelector",
 	"../util/createAppEnvironment",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/m/plugins/DataStateIndicator",
@@ -96,6 +97,7 @@ sap.ui.define([
 	ActionToolbarAction,
 	CopyProvider,
 	PasteProvider,
+	CellSelector,
 	createAppEnvironment,
 	ControlPersonalizationWriteAPI,
 	DataStateIndicator,
@@ -2140,8 +2142,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("RowPress event test", function(assert) {
-		function checkRowPress(bIsMTable, oTable, oRow) {
+		function checkRowPress(bIsMTable, oTable, oRow, bExpected) {
 			const fRowPressSpy = sinon.spy(oTable, "fireRowPress");
+			bExpected = bExpected ?? true;
 
 			if (bIsMTable) {
 				oTable._oTable.fireItemPress({
@@ -2152,7 +2155,8 @@ sap.ui.define([
 					rowBindingContext: oRow.getBindingContext()
 				});
 			}
-			assert.ok(fRowPressSpy.calledOnce);
+
+			assert.equal(fRowPressSpy.calledOnce, bExpected);
 			fRowPressSpy.restore();
 		}
 
@@ -2202,13 +2206,15 @@ sap.ui.define([
 		Core.applyChanges();
 
 		const oTable = this.oTable;
+		const fnEvent = function() {};
 
 		return this.oTable.initialized().then(function() {
 			return new Promise(function(resolve) {
 				oTable._oTable.attachEventOnce("updateFinished", resolve);
 			});
 		}).then(function() {
-			checkRowPress(true, oTable, oTable._oTable.getItems()[0]);
+			checkRowPress(true, oTable, oTable._oTable.getItems()[0], true);
+
 			oTable.setType("Table");
 			return oTable.initialized();
 		}).then(function() {
@@ -2216,6 +2222,7 @@ sap.ui.define([
 				oTable._oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(function() {
+			oTable.attachRowPress(fnEvent);
 			checkRowPress(false, oTable, oTable._oTable.getRows()[0]);
 			// no row action present
 			assert.ok(!checkRowActionPress(oTable));
@@ -2230,6 +2237,10 @@ sap.ui.define([
 
 			// row action triggers same rowPress event
 			assert.ok(checkRowActionPress(oTable, oTable._oTable.getRows()[1]));
+
+			// remove row press event. event should not be fired anymore
+			oTable.detachRowPress(fnEvent);
+			checkRowPress(false, oTable, oTable._oTable.getRows()[0], false);
 		});
 	});
 
@@ -2625,6 +2636,84 @@ sap.ui.define([
 			assert.ok(oCopyButton, "Copy button is created");
 			assert.equal(this.oTable._oToolbar.indexOfEnd(oCopyButton), 0, "Copy button is added to the toolbar, as a first element of the end aggreagtion");
 		}.bind(this));
+	});
+
+	QUnit.test("CellSelector - Table fully initialized", function(assert) {
+		const oCellSelector = new CellSelector();
+		this.oTable.addDependent(oCellSelector);
+
+		return this.oTable._fullyInitialized().then(() => {
+			assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
+			assert.ok(oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
+			assert.ok(oCellSelector.isActive(), "CellSelector is active");
+
+			this.oTable.removeDependent(oCellSelector);
+			this.oTable.setType(TableType.ResponsiveTable);
+
+			return this.oTable._fullyInitialized().then(() => {
+				assert.throws(() => {
+					this.oTable.addDependent(oCellSelector);
+				},
+				Error(oCellSelector + " is not applicable to " + this.oTable._oTable),
+				"CellSelector cannot be activated for ResponsiveTable");
+				assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
+				assert.notOk(oCellSelector.isActive(), "CellSelector is not active");
+				this.oTable.removeDependent(oCellSelector);
+			});
+		});
+	});
+
+	QUnit.test("CellSelector - owner returns promise", function(assert) {
+		const oCellSelector = new CellSelector();
+		this.oTable.addDependent(oCellSelector);
+
+		return this.oTable.getCellSelectorPluginOwner().then((oTable) => {
+			assert.equal(oTable, this.oTable, "Correct table instance returned from promise");
+			assert.equal(oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
+			assert.ok(oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
+			assert.ok(oCellSelector.isActive(), "CellSelector is active");
+
+			oTable.removeDependent(oCellSelector);
+			oTable.setType(TableType.ResponsiveTable);
+
+			return oTable.getCellSelectorPluginOwner().then((oTable) => {
+				assert.throws(() => {
+					oTable.addDependent(oCellSelector);
+				},
+				Error(oCellSelector + " is not applicable to " + this.oTable._oTable),
+				"CellSelector cannot be activated for ResponsiveTable");
+				assert.equal(oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
+				assert.notOk(oCellSelector.isActive(), "CellSelector is not active");
+				this.oTable.removeDependent(oCellSelector);
+			});
+		});
+	});
+
+	QUnit.test("CellSelector - rowPress event", function(assert) {
+		const oCellSelector = new CellSelector();
+		this.oTable.addDependent(oCellSelector);
+
+		return this.oTable._fullyInitialized().then(() => {
+			assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
+			assert.notOk(this.oTable.hasListeners("rowPress"), "Table has no rowPress listener");
+			assert.ok(oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
+			assert.ok(oCellSelector.isActive(), "CellSelector is active");
+
+			this.oTable.removeDependent(oCellSelector);
+			this.oTable.attachRowPress(function() {});
+
+			return this.oTable._fullyInitialized().then(() => {
+				assert.ok(this.oTable.hasListeners("rowPress"), "Table has rowPress listener");
+				assert.throws(() => {
+					this.oTable.addDependent(oCellSelector);
+				},
+				Error(oCellSelector + " is not applicable to " + this.oTable._oTable),
+				"CellSelector cannot be activated when rowPress event is registered");
+				assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
+				assert.notOk(oCellSelector.isActive(), "CellSelector is not active");
+				this.oTable.removeDependent(oCellSelector);
+			});
+		});
 	});
 
 	QUnit.test("showPasteButton", function(assert) {
