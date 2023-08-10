@@ -57,7 +57,7 @@ sap.ui.define([
                     }
                 },
                 /**
-                 * This event is fired when the user clicks on the RemoveAllfilters button.
+                 * This event is fired when the user presses the <code>RemoveAllfilters</code> button.
                  */
                 removeAllFilters: {
                     parameters: {

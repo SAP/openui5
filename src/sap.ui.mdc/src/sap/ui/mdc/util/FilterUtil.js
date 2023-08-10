@@ -24,7 +24,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 	};
 
 	/**
-	 * Utility class used by mdc controls to create the filter statement
+	 * Utility class used by controls in the <code>sap.ui.mdc</code> library to create a filter statement
 	 *
 	 * @namespace
 	 * @private
@@ -35,7 +35,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 		var FilterUtil = {
 
 				/**
-				 * Returns a specific PropertyInfo object by a given name<br>
+				 * Returns a specific <code>PropertyInfo</code> object by a given name.<br>
 				 *
 				 * @param {array} aPropertiesMetadata - array with all the property metadata
 				 * @param {string} sKey - name of the property
@@ -72,8 +72,8 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 				 * <b>Note:</b><br>The operation information will be returned as they are contained in the internal conditions model.
 				 * This has to be considered, in case custom operations are used.
 				 *
-				 * @param {sap.ui.mdc.FilterBar} oFilterBar instance of the filter bar
-				 * @param {array} aPropertyNames list of property names to be considered
+				 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of the filter bar
+				 * @param {array} aPropertyNames List of property names to be taken into consideration
 				 * @returns {map} mResultingConditions with property names as key and a list of internal conditions for each property
 				 * @returns {array} mResultingConditions.["propertyName"] conditions addressed by the property name
 				 * @returns {string} mResultingConditions.["propertyName"].operator operator for a single condition
@@ -117,10 +117,10 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 				/**
 				 * Creates the filter statements based on the externalize conditions.<br>
 				 *
-				 * @param {sap.ui.mdc.Control|module:sap/ui/mdc/util/TypeMap} vTypeProvider the MDC control instance or <code>TypeMap</code>
-				 * @param {map} mConditionsPerKey - map with externalized conditions
-				 * @param {array} aPropertiesMetadata - array with all the property metadata
-				 * @param {array} aIgnoreProperties - an array of property names which should be not considered for filtering
+				 * @param {sap.ui.mdc.Control|module:sap/ui/mdc/util/TypeMap} vTypeProvider the <code>Control</code>instance or <code>TypeMap</code>
+				 * @param {map} mConditionsPerKey - Map with externalized conditions
+				 * @param {array} aPropertiesMetadata - Array with all the property metadata
+				 * @param {array} aIgnoreProperties - Array of property names not taken into consideration for filtering
 				 * @returns {object} Object with filters
 				 * @public
 				 */
