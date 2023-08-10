@@ -1109,6 +1109,11 @@ sap.ui.define([
 			return oContext.oDeletePromise; // do not delete twice
 		}
 
+		const bExpanded = oContext.isExpanded();
+		if (bExpanded) {
+			that.collapse(oContext);
+		}
+
 		this.iDeletedContexts += 1;
 
 		return oContext.doDelete(oGroupLock, sEditUrl, sPath, oETagEntity, this,
@@ -1179,6 +1184,9 @@ sap.ui.define([
 				that.oCache.reset(that.getKeepAlivePredicates());
 				that.reset(ChangeReason.Change);
 			} else {
+				if (bExpanded) {
+					that.expand(oContext); // runs synchronously because it was expanded before
+				}
 				that._fireChange({reason : ChangeReason.Add});
 			}
 			throw oError;

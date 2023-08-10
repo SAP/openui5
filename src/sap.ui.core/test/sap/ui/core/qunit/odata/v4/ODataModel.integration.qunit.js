@@ -27736,11 +27736,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Deferred delete of a collapsed node in a recursive hierarchy which is the only
-	// child of its parent. Expand Alpha and Beta. Collapse Beta again and delete it. See that Alpha
-	// becomes a leaf. Cancel the delete and expand Beta again without a further request.
+	// Scenario: Deferred delete of a non-leaf node with loaded children in a recursive hierarchy
+	// which is the only child of its parent. Two variants: delete while collapsed and while
+	// expanded.
+	// * Expand Alpha and Beta.
+	// * Collapse Beta (in variant 1).
+	// * Delete Beta in an API group. See that Alpha becomes a leaf.
+	// * Cancel the delete.
+	// * Expand Beta without a further request (in variant 1).
+	// * See that Alpha is expanded, and that Gamma is shown again.
 	// JIRA: CPOUI5ODATAV4-2224
-	QUnit.test("Recursive Hierarchy: delete single collapsed child", async function (assert) {
+[false, true].forEach(function (bExpanded) {
+	const sState = bExpanded ? "expanded" : "collapsed";
+	QUnit.test(`Recursive Hierarchy: delete single ${sState} child`, async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
 <Table id="table" items="{path : '/EMPLOYEES',
@@ -27757,8 +27765,8 @@ sap.ui.define([
 </Table>`;
 
 		// 0 Alpha
-		//   1 Beta (deleted while collapsed and hiding Gamma)
-		//     2 Gamma
+		//   1 Beta (deleted while Gamma is loaded)
+		//     2 Gamma (must not get lost)
 		// 3 Delta (only helps with the eventing)
 		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
 				+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
@@ -27832,22 +27840,26 @@ sap.ui.define([
 			[false, 1, "3", "", "Delta"]
 		], 4);
 
-		this.expectChange("expanded", [, false])
-			.expectChange("name", [,, "Delta"]);
+		if (bExpanded) {
+			this.expectChange("expanded", [, false]); // Beta is collapsed before being deleted
+		} else {
+			this.expectChange("expanded", [, false])
+				.expectChange("name", [,, "Delta"]);
 
-		oBeta.collapse();
+			oBeta.collapse();
 
-		await this.waitForChanges(assert, "collapse Beta");
+			await this.waitForChanges(assert, "collapse Beta");
 
-		checkTable("after collapse", assert, oTable, [
-			"/EMPLOYEES('0')",
-			"/EMPLOYEES('1')",
-			"/EMPLOYEES('3')"
-		], [
-			[true, 1, "0", "", "Alpha"],
-			[false, 2, "1", "0", "Beta"],
-			[false, 1, "3", "", "Delta"]
-		], 3);
+			checkTable("after collapse", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('3')"
+			], [
+				[true, 1, "0", "", "Alpha"],
+				[false, 2, "1", "0", "Beta"],
+				[false, 1, "3", "", "Delta"]
+			], 3);
+		}
 
 		this.expectChange("expanded", [undefined]) // Alpha is now a leaf
 			.expectChange("name", [, "Delta"]);
@@ -27866,9 +27878,15 @@ sap.ui.define([
 		], 2);
 
 		this.expectCanceledError("Failed to delete /EMPLOYEES('1')",
-				"Request canceled: DELETE EMPLOYEES('1'); group: doNotSubmit")
-			.expectChange("expanded", [true,, false]) // Alpha is expanded again
-			.expectChange("name", [, "Beta", "Delta"]);
+				"Request canceled: DELETE EMPLOYEES('1'); group: doNotSubmit");
+		if (bExpanded) {
+			// Alpha is expanded again, Beta is expanded after being restored
+			this.expectChange("expanded", [true, true, false, false])
+				.expectChange("name", [, "Beta", "Gamma", "Delta"]);
+		} else {
+			this.expectChange("expanded", [true,, false]) // Alpha is expanded again
+				.expectChange("name", [, "Beta", "Delta"]);
+		}
 
 		// code under test
 		oBeta.resetChanges();
@@ -27878,25 +27896,27 @@ sap.ui.define([
 			this.waitForChanges(assert, "cancel")
 		]);
 
-		checkTable("after reset", assert, oTable, [
-			"/EMPLOYEES('0')",
-			"/EMPLOYEES('1')",
-			"/EMPLOYEES('3')"
-		], [
-			[true, 1, "0", "", "Alpha"], // expanded again
-			[false, 2, "1", "0", "Beta"],
-			[false, 1, "3", "", "Delta"]
-		], 3);
+		if (!bExpanded) {
+			checkTable("after reset", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('3')"
+			], [
+				[true, 1, "0", "", "Alpha"], // expanded again
+				[false, 2, "1", "0", "Beta"],
+				[false, 1, "3", "", "Delta"]
+			], 3);
 
-		this.expectChange("expanded", [, true,, false])
-			.expectChange("name", [,, "Gamma", "Delta"]);
+			this.expectChange("expanded", [, true, , false])
+				.expectChange("name", [, , "Gamma", "Delta"]);
 
-		// code under test
-		oBeta.expand();
+			// code under test
+			oBeta.expand();
 
-		await this.waitForChanges(assert, "expand again");
+			await this.waitForChanges(assert, "expand again");
+		}
 
-		checkTable("after reset", assert, oTable, [
+		checkTable("finally", assert, oTable, [
 			"/EMPLOYEES('0')",
 			"/EMPLOYEES('1')",
 			"/EMPLOYEES('2')",
@@ -27908,6 +27928,7 @@ sap.ui.define([
 			[false, 1, "3", "", "Delta"]
 		], 4);
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Show the single root node of a recursive hierarchy, which happens to be a leaf.

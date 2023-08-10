@@ -4362,7 +4362,12 @@ sap.ui.define([
 // undefined -> the reinsertion callback is not called because the binding already has another cache
 [undefined, false, true].forEach(function (bSuccess) {
 	[false, true].forEach(function (bCreated) { // the deleted context is created-persisted
-		var sTitle = "delete: success=" + bSuccess + ", created=" + bCreated;
+		[false, true].forEach(function (bExpanded) {
+			const sTitle = "delete: success=" + bSuccess + ", created=" + bCreated
+				+ ", expanded=" + bExpanded;
+			if (bCreated && bExpanded) {
+				return;
+			}
 
 		QUnit.test(sTitle, function (assert) {
 			var oBinding = this.bindList("/EMPLOYEES"),
@@ -4398,7 +4403,11 @@ sap.ui.define([
 				oContext1.iIndex = -1;
 				sPath = "-1";
 			}
-			oContext1Mock.expects("isDeleted").withExactArgs().returns(false);
+			// also called from sinon.match.same() via toString()
+			oContext1Mock.expects("isDeleted").atLeast(1).withExactArgs().returns(false);
+			oContext1Mock.expects("isExpanded").withExactArgs().returns(bExpanded);
+			oBindingMock.expects("collapse").exactly(bExpanded ? 1 : 0)
+				.withExactArgs(sinon.match.same(oContext1));
 			oBindingMock.expects("destroyPreviousContexts").never();
 			oContext1Mock.expects("resetKeepAlive").never();
 			oDeleteCall = oContext1Mock.expects("doDelete")
@@ -4427,6 +4436,8 @@ sap.ui.define([
 					oBindingMock.expects("destroyPreviousContextsLater").exactly(bSuccess ? 1 : 0)
 						.withExactArgs([sContext1Path]);
 					// expectations for catch
+					oBindingMock.expects("expand").exactly(!bSuccess && bExpanded ? 1 : 0)
+						.withExactArgs(sinon.match.same(oContext1));
 					oBindingMock.expects("_fireChange").exactly(bSuccess ? 0 : 1)
 						.withExactArgs({reason : ChangeReason.Add});
 
@@ -4502,6 +4513,7 @@ sap.ui.define([
 				sinon.assert.calledWithExactly(fnUndelete); // might be called twice
 			});
 		});
+		});
 	});
 });
 	//TODO check the row of a pending update with higher index
@@ -4555,10 +4567,11 @@ sap.ui.define([
 			oKeptAliveContext = {
 				iIndex : undefined,
 				created : function () { return undefined; },
-				doDelete : function () {},
+				doDelete : mustBeMocked,
 				getPath : function () { return "~contextPath~"; },
-				isDeleted : function () {},
-				resetKeepAlive : function () {}
+				isDeleted : mustBeMocked,
+				isExpanded : mustBeMocked,
+				resetKeepAlive : mustBeMocked
 			},
 			iOldMaxLength = oFixture.lengthFinal ? 42 : Infinity,
 			oPromise,
@@ -4576,6 +4589,7 @@ sap.ui.define([
 		};
 
 		this.mock(oKeptAliveContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oKeptAliveContext).expects("isExpanded").withExactArgs().returns(false);
 		oBindingMock.expects("destroyPreviousContexts").never();
 		oHelperMock.expects("getRelativePath")
 			.withExactArgs("~contextPath~", "/EMPLOYEES").returns("~predicate~");
@@ -5655,6 +5669,7 @@ sap.ui.define([
 		// code under test - create a second entity without bAtEnd
 		oContext2 = oBinding.create(undefined);
 
+		this.mock(oContext1).expects("isExpanded").withExactArgs().returns(false);
 		this.mock(oContext1).expects("doDelete")
 			.callsArgWith(5, 0, -1) // the callback removing the context
 			.returns(SyncPromise.resolve());
@@ -5667,6 +5682,7 @@ sap.ui.define([
 		// code under test
 		oBinding.create(undefined, false, /*bAtEnd*/true);
 
+		this.mock(oContext2).expects("isExpanded").withExactArgs().returns(false);
 		this.mock(oContext2).expects("doDelete")
 			.callsArgWith(5, 0, -1) // the callback removing the context
 			.returns(SyncPromise.resolve());
@@ -5700,10 +5716,12 @@ sap.ui.define([
 		oContext1 = oBinding.create(undefined, false, /*bAtEnd*/true);
 		oContext2 = oBinding.create(undefined, false, /*bAtEnd*/true);
 
+		this.mock(oContext1).expects("isExpanded").withExactArgs().returns(false);
 		this.mock(oContext1).expects("doDelete")
 			.withArgs(sinon.match.same(oGroupLock), "~1")
 			.callsArgWith(5, 0, -1) // the callback removing the context
 			.returns(SyncPromise.resolve(Promise.resolve()));
+		this.mock(oContext2).expects("isExpanded").withExactArgs().returns(false);
 		this.mock(oContext2).expects("doDelete")
 			.withArgs(null, "~2")
 			.callsArgWith(5, 0, -1) // the callback removing the context
