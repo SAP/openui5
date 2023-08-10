@@ -164,9 +164,9 @@ sap.ui.define([
 		 * @property {Object<string, string | sap.ui.webc.common.WebComponent.MetadataOptions.Aggregation>} [aggregations]
 		 *     An object literal whose properties each define a new aggregation in the ManagedObject subclass.
 		 *     See {@link sap.ui.base.ManagedObject.MetadataOptions.Aggregation Aggregation} for more details.
-		 * @property {Object<string, string | sap.ui.webc.common.WebComponent.MetadataOptions.Assocation>} [associations]
-		 *     An object literal whose properties each define a new assocation in the ManagedObject subclass.
-		 *     See {@link sap.ui.base.ManagedObject.MetadataOptions.Assocation Assocation} for more details.
+		 * @property {Object<string, string | sap.ui.webc.common.WebComponent.MetadataOptions.Association>} [associations]
+		 *     An object literal whose properties each define a new association in the ManagedObject subclass.
+		 *     See {@link sap.ui.base.ManagedObject.MetadataOptions.Association Association} for more details.
 		 * @property {string[]} [getters]
 		 *     Proxied public getters of the Web Component which are directly accessible on the wrapper Control.
 		 * @property {string[]} [methods]
