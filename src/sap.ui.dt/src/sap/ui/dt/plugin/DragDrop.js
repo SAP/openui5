@@ -56,7 +56,7 @@ sap.ui.define([
 	var bPreventScrollOnTouch = false;
 
 	// previous target overlay drag enter was called for
-	var oPreviosTargetOverlayForTouch;
+	var oPreviousTargetOverlayForTouch;
 
 	/*
 	 * @private
@@ -364,15 +364,15 @@ sap.ui.define([
 			return;
 		}
 
-		if (oTargetOverlay !== oPreviosTargetOverlayForTouch) {
-			if (oPreviosTargetOverlayForTouch) {
-				if (BaseObject.isA(oPreviosTargetOverlayForTouch, "sap.ui.dt.AggregationOverlay")) {
-					this.onAggregationDragLeave(oPreviosTargetOverlayForTouch);
+		if (oTargetOverlay !== oPreviousTargetOverlayForTouch) {
+			if (oPreviousTargetOverlayForTouch) {
+				if (BaseObject.isA(oPreviousTargetOverlayForTouch, "sap.ui.dt.AggregationOverlay")) {
+					this.onAggregationDragLeave(oPreviousTargetOverlayForTouch);
 				} else {
-					this.onDragLeave(oPreviosTargetOverlayForTouch);
+					this.onDragLeave(oPreviousTargetOverlayForTouch);
 				}
 			}
-			oPreviosTargetOverlayForTouch = oTargetOverlay;
+			oPreviousTargetOverlayForTouch = oTargetOverlay;
 
 			if (BaseObject.isA(oTargetOverlay, "sap.ui.dt.AggregationOverlay")) {
 				this.onAggregationDragEnter(oTargetOverlay);
@@ -409,7 +409,7 @@ sap.ui.define([
 		this.onDragEnd(oOverlay);
 		this._detachTouchDragEvents(oOverlay);
 
-		oPreviosTargetOverlayForTouch = undefined;
+		oPreviousTargetOverlayForTouch = undefined;
 
 		bPreventScrollOnTouch = false;
 	};
@@ -558,6 +558,8 @@ sap.ui.define([
 			if (!this.onDragLeave(oOverlay)) {
 				oEvent.stopPropagation();
 			}
+		} else {
+			oEvent.stopPropagation();
 		}
 
 		oEvent.preventDefault();
@@ -573,6 +575,8 @@ sap.ui.define([
 			if (!this.onDragOver(oOverlay)) {
 				oEvent.stopPropagation();
 			}
+		} else {
+			oEvent.stopPropagation();
 		}
 
 		oEvent.preventDefault();
