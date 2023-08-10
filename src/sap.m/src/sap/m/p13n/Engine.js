@@ -262,7 +262,8 @@ sap.ui.define([
 		if (changeOperations) {
 			changeTypes = Object.values(changeOperations);
 		}
-		return this.getModificationHandler(control).hasChanges({selector: control, changeTypes}).then((enableReset) => {
+		var oModificationSetting = this._determineModification(control);
+		return this.getModificationHandler(control).hasChanges({selector: control, changeTypes}, oModificationSetting?.payload).then((enableReset) => {
 			return enableReset;
 		});
 	};
