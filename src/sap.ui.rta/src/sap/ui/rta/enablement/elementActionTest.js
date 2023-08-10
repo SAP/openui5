@@ -549,7 +549,7 @@ sap.ui.define([
 		function applyChangeOnXML(assert) {
 			// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
 			var aChanges = [];
-			sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").resolves(aChanges);
+			sandbox.stub(ChangePersistence.prototype, "getChangesForView").resolves(aChanges);
 
 			return createViewInComponent.call(this, SYNC)
 			.then(buildCommandsAndApplyChangesOnXML.bind(this, assert, aChanges));

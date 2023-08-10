@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/Core",
+	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -39,6 +40,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	BusyIndicator,
 	Core,
+	Applier,
 	Reverter,
 	URLHandler,
 	FlexObjectFactory,
@@ -590,7 +592,18 @@ sap.ui.define([
 		return aChanges.reduce(function(oPreviousPromise, oChange) {
 			return oPreviousPromise.then(function() {
 				var oControl = Core.byId(JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), this.oAppComponent));
-				return this.oFlexController.applyChange(oChange, oControl);
+				return Applier.applyChangeOnControl(oChange, oControl, {
+					modifier: JsControlTreeModifier,
+					appComponent: this.oAppComponent,
+					view: Utils.getViewForControl(oControl)
+				})
+				.then((oReturn) => {
+					if (!oReturn.success) {
+						var oException = oReturn.error || new Error("The change could not be applied.");
+						this._oChangePersistence.deleteChange(oChange, true);
+						throw oException;
+					}
+				});
 			}.bind(this));
 		}.bind(this), Promise.resolve());
 	};

@@ -66,7 +66,7 @@ sap.ui.define([
 
 	function registerXMLPreprocessor() {
 		if (XMLView.registerPreprocessor) {
-			XMLView.registerPreprocessor("viewxml", "sap.ui.fl.apply._internal.preprocessors.XmlPreprocessor", true);
+			XMLView.registerPreprocessor("viewxml", "sap.ui.fl.apply._internal.preprocessors.XmlPreprocessor");
 		}
 	}
 

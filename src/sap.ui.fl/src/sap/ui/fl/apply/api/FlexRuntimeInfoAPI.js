@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
@@ -17,6 +18,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	VariantUtils,
 	ManifestUtils,
+	ChangePersistenceFactory,
 	FlexControllerFactory,
 	Layer,
 	Utils
@@ -78,8 +80,8 @@ sap.ui.define([
 				return logAndReject("App Component could not be determined");
 			}
 
-			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-			return oFlexController.getComponentChanges({currentLayer: Layer.USER, includeCtrlVariants: true})
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
+			return oChangePersistence.getChangesForComponent({currentLayer: Layer.USER, includeCtrlVariants: true})
 			.then(function(aChanges) {
 				return aChanges
 				.filter(filterBySelectors.bind(this, oAppComponent, mPropertyBag.selectors))

@@ -3,19 +3,25 @@
  */
 
 sap.ui.define([
+	"sap/base/util/merge",
+	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/apply/_internal/changes/Applier",
+	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Utils",
 	"sap/base/Log"
 ], function(
+	merge,
+	XmlTreeModifier,
 	Component,
 	FlexState,
 	ManifestUtils,
 	ControlVariantApplyAPI,
-	FlexControllerFactory,
+	Applier,
+	ChangePersistenceFactory,
 	Utils,
 	Log
 ) {
@@ -46,14 +52,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	XmlPreprocessor.process = function(oView, mProperties) {
+	XmlPreprocessor.process = async function(oView, mProperties) {
 		try {
-			if (!mProperties || mProperties.sync) {
-				Log.warning("Flexibility feature for applying changes on an XML view is only available for " +
-					"asynchronous views; merge is be done later on the JS controls.");
-				return (oView);
-			}
-
 			// align view id attribute with the js processing (getting the id passed in "viewId" instead of "id"
 			mProperties.viewId = mProperties.id;
 
@@ -61,33 +61,32 @@ sap.ui.define([
 
 			if (!oComponent) {
 				Log.warning("View is generated without a component. Flexibility features are not possible.");
-				return Promise.resolve(oView);
+				return oView;
 			}
 
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			if (!Utils.isApplication(oAppComponent.getManifestObject())) {
 				// we only consider components whose type is application. Otherwise, we might send request for components that can never have changes.
-				return Promise.resolve(oView);
+				return oView;
 			}
 
-			var sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
-			var oFlexController = FlexControllerFactory.create(sFlexReference);
+			const mPropertyBag = merge({
+				appComponent: oAppComponent,
+				modifier: XmlTreeModifier,
+				view: oView
+			}, mProperties);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
+			const aChanges = await oChangePersistence.getChangesForView(mPropertyBag);
 
-			return oFlexController.processXmlView(oView, mProperties)
-			.then(function() {
-				Log.debug("flex processing view " + mProperties.id + " finished");
-				return oView;
-			})
-			.catch(function() {
-				Log.warning("Error happens when getting flex cache key! flexibility XML view preprocessing is skipped. " +
-				"The processing will be done later on the JS controls.");
-				return Promise.resolve(oView);
-			});
+			await Applier.applyAllChangesForXMLView(mPropertyBag, aChanges);
+
+			Log.debug("flex processing view " + mProperties.id + " finished");
+			return oView;
 		} catch (error) {
 			var sError = "view " + mProperties.id + ": " + error;
 			Log.info(sError); // to allow control usage in applications that do not work with UI flex and components
 			// throw new Error(sError); // throw again, when caller handles the promise
-			return Promise.resolve(oView);
+			return oView;
 		}
 	};
 

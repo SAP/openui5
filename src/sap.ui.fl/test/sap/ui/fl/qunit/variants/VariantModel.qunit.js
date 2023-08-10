@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/resource/ResourceModel",
+	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
@@ -43,6 +44,7 @@ sap.ui.define([
 	Manifest,
 	UIComponent,
 	ResourceModel,
+	Applier,
 	Reverter,
 	URLHandler,
 	VariantUtil,
@@ -1655,7 +1657,6 @@ sap.ui.define([
 			var oResponse = {response: [{fileName: sCopyVariantName, support: {user: sUserName}}]};
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
-			sandbox.spy(this.oModel.oFlexController, "deleteChange");
 			var oCopyVariantSpy = sandbox.spy(this.oModel, "copyVariant");
 			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves(oResponse);
 
@@ -1941,7 +1942,7 @@ sap.ui.define([
 				}
 			];
 			var oAddChangesStub = sandbox.stub(this.oModel.oChangePersistence, "addChanges");
-			var oApplyChangeStub = sandbox.stub(this.oModel.oFlexController, "applyChange").resolves();
+			var oApplyChangeStub = sandbox.stub(Applier, "applyChangeOnControl").resolves({success: true});
 			sandbox.stub(JsControlTreeModifier, "getControlIdBySelector");
 
 			return this.oModel.addAndApplyChangesOnVariant(aDummyChanges)

@@ -1,27 +1,21 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base/Log",
 	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/ui/fl/ChangePersistence",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Log,
 	Component,
+	Applier,
 	FlexState,
 	ManifestUtils,
 	XmlPreprocessor,
 	ControlVariantApplyAPI,
-	ChangePersistence,
-	ChangePersistenceFactory,
-	FlexControllerFactory,
 	Utils,
 	sinon
 ) {
@@ -133,40 +127,13 @@ sap.ui.define([
 					return oComponentData;
 				}
 			};
-			var oChangePersistence = new ChangePersistence({name: sFlexReference});
-			var oFlexControllerCreationStub = sandbox.stub(FlexControllerFactory, "create").returns({
-				processXmlView: function(oView) {
-					return Promise.resolve(oView);
-				}
-			});
 			sandbox.stub(Component, "get").returns(oMockedComponent);
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(Utils, "isApplication").returns(true);
-			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 
 			return XmlPreprocessor.process(oView, mProperties).then(function(oProcessedView) {
-				assert.equal(oFlexControllerCreationStub.callCount, 1, "a flex controller creation was triggered for the xml processing");
-				assert.equal(oFlexControllerCreationStub.getCall(0).args[0], sFlexReference, "the controller for the variant was created");
 				assert.deepEqual(oProcessedView, oView, "the original view is returned");
 			});
-		});
-
-		QUnit.test("skips the processing in case of a synchronous view", function(assert) {
-			var oView = {
-				sId: "testView"
-			};
-			var mProperties = {
-				sync: true
-			};
-
-			var oLoggerSpy = sandbox.spy(Log, "warning");
-
-			var oProcessedView = XmlPreprocessor.process(oView, mProperties);
-
-			assert.equal(oLoggerSpy.callCount, 1, "one warning was raised");
-			assert.equal(oLoggerSpy.getCall(0).args[0], "Flexibility feature for applying changes on an XML view is only available for " +
-				"asynchronous views; merge is be done later on the JS controls.");
-			assert.deepEqual(oProcessedView, oView, "the original view is returned");
 		});
 
 		QUnit.test("skips the processing in case of a component whose type is not application", function(assert) {
@@ -202,9 +169,11 @@ sap.ui.define([
 			sandbox.stub(Component, "get").returns(oMockedAppComponent);
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(Utils, "isApplication").returns(true);
+			const oApplierStub = sandbox.stub(Applier, "applyAllChangesForXMLView");
 
 			return XmlPreprocessor.process(oView, mProperties).then(function(oProcessedView) {
 				assert.deepEqual(oProcessedView, oView, "the original view is returned");
+				assert.strictEqual(oApplierStub.callCount, 0, "the applier was not called");
 			});
 		});
 	});

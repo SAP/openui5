@@ -279,33 +279,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("applyChange shall not crash if Applier.applyChangeOnControl throws an error", function(assert) {
-			var oControl = new Control();
-			var oChange = {};
-
-			sandbox.stub(Applier, "applyChangeOnControl").rejects();
-			sandbox.stub(this.oFlexController._oChangePersistence, "deleteChange");
-
-			return this.oFlexController.applyChange(oChange, oControl)
-			.catch(function() {
-				assert.ok(true, "then Promise was rejected");
-			});
-		});
-
-		QUnit.test("addPreparedChange shall add a change to flex persistence", function(assert) {
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
-			var oChange = FlexObjectFactory.createFromFileContent(labelChangeContent);
-
-			var oPrepChange = this.oFlexController.addPreparedChange(oChange, oComponent);
-			assert.ok(oPrepChange);
-
-			var aDirtyChanges = this.oFlexController._oChangePersistence.getDirtyChanges();
-
-			assert.strictEqual(aDirtyChanges.length, 1);
-			assert.strictEqual(aDirtyChanges[0].getSelector().id, "abc123");
-			assert.strictEqual(aDirtyChanges[0].getNamespace(), "b");
-		});
-
 		QUnit.test("resetChanges for control shall call ChangePersistence.resetChanges(), reset control variant URL parameters, and revert changes", function(assert) {
 			var oVariantModel = {
 				id: "variantModel"
@@ -374,50 +347,6 @@ sap.ui.define([
 					updateHashEntry: true,
 					model: oVariantModel
 				}, "then URLHandler._setTechnicalURLParameterValues with the correct parameters");
-			});
-		});
-	});
-
-	QUnit.module("processXmlView", {
-		beforeEach: function() {
-			this.oDOMParser = new DOMParser();
-			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
-			this.oXmlString = '<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" />';
-			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
-		},
-		afterEach: function() {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when processXmlView is called with changes", function(assert) {
-			var oGetChangesForViewStub = sandbox.stub(this.oFlexController._oChangePersistence, "getChangesForView").resolves();
-			var oApplyAllChangesForXMLView = sandbox.stub(Applier, "applyAllChangesForXMLView").resolves();
-			var oLogStub = sandbox.stub(Log, "error");
-			var mPropertyBag = {
-				viewId: "myView",
-				componentId: "testComponent"
-			};
-
-			return this.oFlexController.processXmlView(this.oView, mPropertyBag).then(function() {
-				assert.ok(oGetChangesForViewStub.calledOnce, "then getChangesForView is called once");
-				assert.ok(oApplyAllChangesForXMLView.calledOnce, "then _resolveGetChangesForView is called once");
-				assert.equal(oLogStub.callCount, 0, "then error handling is skipped");
-			});
-		});
-
-		QUnit.test("when processXmlView is called without changes", function(assert) {
-			var oGetChangesForViewStub = sandbox.stub(this.oFlexController._oChangePersistence, "getChangesForView").returns(Promise.reject());
-			var oApplyAllChangesForXMLView = sandbox.spy(Applier, "applyAllChangesForXMLView");
-			var oLogStub = sandbox.stub(Log, "error");
-			var mPropertyBag = {
-				viewId: "myView",
-				componentId: "testComponent"
-			};
-
-			return this.oFlexController.processXmlView(this.oView, mPropertyBag).then(function() {
-				assert.ok(oGetChangesForViewStub.calledOnce, "then getChangesForView is called once");
-				assert.equal(oApplyAllChangesForXMLView.callCount, 0, "then _resolveGetChangesForView is skipped");
-				assert.ok(oLogStub.calledOnce, "then error handling is called");
 			});
 		});
 	});
