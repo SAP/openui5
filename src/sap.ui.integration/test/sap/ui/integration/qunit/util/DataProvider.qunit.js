@@ -1061,6 +1061,9 @@ sap.ui.define([
 		oDataProvider.triggerDataUpdate();
 	});
 
+	/**
+	 * @deprecated Since 1.113
+	 */
 	QUnit.test("Host can modify request headers", function (assert) {
 		var done = assert.async(),
 			oDataProvider = this.oDataProviderFactory.create({
@@ -1095,6 +1098,9 @@ sap.ui.define([
 		oDataProvider.triggerDataUpdate();
 	});
 
+	/**
+	 * @deprecated Since 1.113
+	 */
 	QUnit.test("Host can modify request", function (assert) {
 		var done = assert.async(),
 			oDataProvider = this.oDataProviderFactory.create({
