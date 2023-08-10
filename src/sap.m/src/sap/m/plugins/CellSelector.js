@@ -18,11 +18,21 @@ sap.ui.define([
 	/**
 	 * Constructor for a new CellSelector plugin.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new <code>CellSelector</code>, generated automatically if no id is given
+	 * @param {object} [mSettings] Initial settings for the new <code>CellSelector</code>
 	 *
-	 * The CellSelector plugins enables cell selection inside the table, when it is added as a dependent to the control.
+	 * The <code>CellSelector</code> plugin enables cell selection inside the table when it is added as a dependent to the control.
 	 * It allows the user to individually select a cell block.
+	 *
+	 * The <code>CellSelector</code> plugin currently does not offer touch support.
+	 *
+	 * The <code>CellSelector</code> plugin cannot be used if the following applies:
+	 * <ul>
+	 * 	<li>Drag and drop is active</li>
+	 * 	<li>The target control is not a {@link sap.ui.table.Table}</li>
+	 *	<li>If used in combination with {@link sap.ui.table.Table#cellClick}</li>
+	 *	<li>If used in combination with the following selection behavior: <code>sap.ui.table.SelectionBehavior.RowOnly</code> and <code>sap.ui.table.SelectionBehavior.Row</code>
+	 * </ul>
 	 *
 	 * @extends sap.m.plugins.PluginBase
 	 * @class
@@ -31,6 +41,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @experimental
+	 * @since 1.118
 	 * @alias sap.m.plugins.CellSelector
 	 */
 	var CellSelector = PluginBase.extend("sap.m.plugins.CellSelector", {
@@ -71,6 +82,15 @@ sap.ui.define([
 	- Edge: Extend/reduce selection freely.
 	*/
 
+	CellSelector.prototype.isApplicable = function() {
+		if (this.getControl().getDragDropConfig().length > 0
+			|| !this.getControl().isA("sap.ui.table.Table")) {
+			return false;
+		}
+
+		return this.getConfig("isApplicable", this.getControl());
+	};
+
 	CellSelector.prototype.onActivate = function (oControl) {
 		oControl.addDelegate(this, true, this);
 		this._oSession = { cellRefs: [] };
@@ -103,7 +123,7 @@ sap.ui.define([
 	};
 
 	CellSelector.prototype.destroy = function() {
-		if (this.getControl()  && !this.getControl().isDestroyed()) {
+		if (this.getControl()  && !this.getControl().isDestroyed() && this._oSession) {
 			this.removeSelection();
 		}
 		this._deregisterEvents();
@@ -767,6 +787,14 @@ sap.ui.define([
 			selectableCells: ".sapUiTableDataCell",
 			scrollArea: "sapUiTableCtrlScr",
 			scrollEvent: "_rowsUpdated",
+			/**
+			 * Checks if the table is compatible with cell selection.
+			 * @param {sap.ui.table.Table} oTable table instance
+			 * @returns {boolean} compatibility with cell selection
+			 */
+			isApplicable: function(oTable) {
+				return !oTable.hasListeners("cellClick") && oTable.getSelectionBehavior() == "RowSelector";
+			},
 			/**
 			 * Get visible columns of the table.
 			 * @param {sap.ui.table.Table} oTable table instance
