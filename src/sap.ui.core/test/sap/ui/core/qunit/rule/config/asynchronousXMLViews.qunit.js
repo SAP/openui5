@@ -22,7 +22,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("sap.ui.core asynchronousXMLViews rule tests", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			Log.setLevel(4);
 
 			var sViewContent =
@@ -43,31 +43,22 @@ sap.ui.define([
 				]
 			});
 
-			this.pComponent = sap.ui.getCore().createComponent({
-				name: "testdata.routing",
-				async: true
+			this.oSyncComponent = await Component.create({
+				name: "testdata.routing"
 			});
 
-			this.pComponent.then(function(oComponent) {
-				oComponent.getRouter()._oConfig._async = false;
-			});
+			this.oSyncComponent.getRouter()._oConfig._async = false;
 
-			this.pComponentAsyncConfig = sap.ui.getCore().createComponent({
-				name: "testdata.routing",
-				async: true
+			this.oAsyncComponent = await Component.create({
+					name: "testdata.routing"
 			});
 
 			this.oComponentWithoutRouter = new Component();
-
 		},
 		afterEach: function() {
 			this.oRootControl.destroy();
-			this.pComponent.then(function(oComponent) {
-				oComponent.destroy();
-			});
-			this.pComponentAsyncConfig.then(function(oComponent) {
-				oComponent.destroy();
-			});
+			this.oSyncComponent.destroy();
+			this.oAsyncComponent.destroy();
 			this.oComponentWithoutRouter.destroy();
 		}
 	});
@@ -76,6 +67,6 @@ sap.ui.define([
 		executionScopeType: "global",
 		libName: "sap.ui.core",
 		ruleId: "asynchronousXMLViews",
-		expectedNumberOfIssues: 1
+		expectedNumberOfIssues: 2
 	});
 });
