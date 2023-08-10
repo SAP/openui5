@@ -120,26 +120,26 @@ sap.ui.define([
 	 */
 	_Cache.prototype._delete = function (oGroupLock, sEditUrl, sPath, oETagEntity, fnCallback) {
 		var aSegments = sPath.split("/"),
-			vDeleteProperty = aSegments.pop(),
+			// either a :1 nav.prop, the index as string, or a key-predicate (kept-alive and hidden)
+			sDeleteProperty = aSegments.pop(),
 			sParentPath = aSegments.join("/"),
 			that = this;
 
 		this.checkSharedRequest();
 
 		return this.fetchValue(_GroupLock.$cached, sParentPath).then(function (vCacheData) {
-			var vCachePath = _Cache.from$skip(vDeleteProperty, vCacheData),
-				oDeleted,
-				oEntity = vDeleteProperty
-					? vCacheData[vCachePath] || vCacheData.$byPredicate[vCachePath]
+			var oDeleted,
+				oEntity = sDeleteProperty
+					? vCacheData[sDeleteProperty] || vCacheData.$byPredicate[sDeleteProperty]
 					: vCacheData, // deleting at root level
 				oError,
 				sGroupId,
 				aMessages,
 				mHeaders,
-				iIndex = typeof vCachePath === "number" ? vCachePath : undefined,
+				iIndex = rNumber.test(sDeleteProperty) ? Number(sDeleteProperty) : undefined,
 				sKeyPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
 				sEntityPath = _Helper.buildPath(sParentPath,
-					Array.isArray(vCacheData) ? sKeyPredicate : vDeleteProperty),
+					Array.isArray(vCacheData) ? sKeyPredicate : sDeleteProperty),
 				oModelInterface = that.oRequestor.getModelInterface(),
 				oRequestPromise,
 				sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient"),
@@ -212,7 +212,6 @@ sap.ui.define([
 			}
 			mHeaders = {"If-Match" : oETagEntity || oEntity};
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
-			// the existence of an onCancel callback causes a pending change in the requestor
 			oRequestPromise = oGroupLock
 				? that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders, undefined,
 					undefined, cleanUp, undefined,
@@ -230,10 +229,10 @@ sap.ui.define([
 					vCacheData.$deleted.splice(vCacheData.$deleted.indexOf(oDeleted), 1);
 					delete vCacheData.$byPredicate[sKeyPredicate];
 					delete vCacheData.$byPredicate[sTransientPredicate];
-				} else if (vDeleteProperty) {
+				} else if (sDeleteProperty) {
 					// set to null and notify listeners
 					_Helper.updateExisting(that.mChangeListeners, sParentPath,
-						vCacheData, _Helper.makeUpdateData([vDeleteProperty], null));
+						vCacheData, _Helper.makeUpdateData([sDeleteProperty], null));
 				} else { // deleting at root level
 					oEntity["$ui5.deleted"] = true;
 				}

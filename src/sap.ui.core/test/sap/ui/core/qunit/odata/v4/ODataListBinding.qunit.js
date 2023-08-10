@@ -4385,7 +4385,6 @@ sap.ui.define([
 					fnReject = reject;
 				}),
 				oETagEntity = {},
-				sPath = "1",
 				aPreviousContexts,
 				oPromise,
 				fnUndelete = sinon.spy(),
@@ -4404,8 +4403,8 @@ sap.ui.define([
 			sContext1Path = oContext1.getPath();
 			if (bCreated) { // fake a created context: it needs a negative index
 				oContext1.iIndex = -1;
-				sPath = "-1";
 			}
+			oContext1Mock.expects("getModelIndex").withExactArgs().returns(42);
 			// also called from sinon.match.same() via toString()
 			oContext1Mock.expects("isDeleted").atLeast(1).withExactArgs().returns(false);
 			oContext1Mock.expects("isExpanded").withExactArgs().returns(bExpanded);
@@ -4414,7 +4413,7 @@ sap.ui.define([
 			oBindingMock.expects("destroyPreviousContexts").never();
 			oContext1Mock.expects("resetKeepAlive").never();
 			oDeleteCall = oContext1Mock.expects("doDelete")
-				.withExactArgs("myGroup", "EMPLOYEES('1')", sPath, sinon.match.same(oETagEntity),
+				.withExactArgs("myGroup", "EMPLOYEES('1')", "42", sinon.match.same(oETagEntity),
 					sinon.match.same(oBinding), sinon.match.func)
 				.callsFake(function () {
 					// Although delete works with existing cache data and the cache immediately
@@ -4490,7 +4489,7 @@ sap.ui.define([
 							assert.strictEqual(oBinding.aContexts[5], aPreviousContexts[5]);
 							assert.notOk(oContext1.getPath() in oBinding.mPreviousContextsByPath);
 							oBinding.aContexts.forEach(function (oContext, i) {
-								assert.strictEqual(oContext.getModelIndex(), i);
+								assert.strictEqual(oContext.iIndex + oBinding.iCreatedContexts, i);
 							});
 							sinon.assert.calledOnceWithExactly(fnUndelete);
 						}
@@ -4526,8 +4525,9 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oContext = {
 				oDeletePromise : "~oDeletePromise~",
+				getModelIndex : function () {}, // result does not matter
 				iIndex : 1,
-				isDeleted : function () {}
+				isDeleted : mustBeMocked
 			};
 
 		this.mock(oContext).expects("isDeleted").withExactArgs().returns(true);

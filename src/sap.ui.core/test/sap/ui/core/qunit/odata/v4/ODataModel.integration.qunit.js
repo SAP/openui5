@@ -27997,6 +27997,7 @@ sap.ui.define([
 	//
 	// Create new child and cancel immediately (JIRA: CPOUI5ODATAV4-2272)
 	// @odata.bind in POST relative to resource path (BCP: 2380119648)
+	// Delete the second child again. (JIRA: CPOUI5ODATAV4-2224)
 	QUnit.test("Recursive Hierarchy: create new children", function (assert) {
 		var oChild, oListBinding, fnRespond, oRoot, oTable;
 
@@ -28145,6 +28146,7 @@ sap.ui.define([
 						Name : "Gamma"
 					}
 				}, {
+					"@odata.etag" : "etag2.0",
 					ArtistID : "2",
 					IsActiveEntity : false,
 					Name : "Gamma: γ" // side effect
@@ -28173,6 +28175,30 @@ sap.ui.define([
 				[true, 1, "Alpha"],
 				[undefined, 2, "Gamma: γ"],
 				[undefined, 2, "Beta: β"]
+			]);
+
+			that.expectChange("name", [, "Beta: β"])
+				.expectRequest({
+					method : "DELETE",
+					headers : {
+						"If-Match" : "etag2.0"
+					},
+					url : "Artists(ArtistID='2',IsActiveEntity=false)"
+				});
+
+			return Promise.all([
+				// code under test
+				oChild.delete(),
+				that.waitForChanges(assert, "delete 2nd child")
+			]);
+		}).then(function () {
+			checkTable("after deletion", assert, oTable, [
+				sFriend + "(ArtistID='0',IsActiveEntity=false)",
+				sFriend + "(ArtistID='1',IsActiveEntity=false)"
+			], [
+				[true, 1, "Alpha"],
+				[undefined, 2, "Beta: β"],
+				["", "", ""]
 			]);
 		});
 	});

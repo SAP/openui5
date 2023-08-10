@@ -1122,7 +1122,7 @@ sap.ui.define([
 		const sPath = oContext.iIndex === undefined
 			// context is not in aContexts -> use the predicate
 			? _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())
-			: String(oContext.iIndex);
+			: String(oContext.getModelIndex());
 
 		this.iDeletedContexts += 1;
 

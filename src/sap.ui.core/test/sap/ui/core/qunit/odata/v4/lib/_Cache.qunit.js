@@ -452,9 +452,6 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), sPath)
 			.returns(SyncPromise.resolve(aCacheData));
-		this.mock(_Cache).expects("from$skip")
-			.withExactArgs(oFixture.bCreated ? "-1" : "0", sinon.match.same(aCacheData))
-			.returns(1);
 		oError.status = oFixture.iStatus;
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(aCacheData[1], "predicate").callThrough();
@@ -497,9 +494,8 @@ sap.ui.define([
 				sinon.match.same(oRequestPromise));
 
 		// code under test
-		oPromise = oCache._delete(oGroupLock, "Equipments('1')",
-			(sPath && sPath + "/") + (oFixture.bCreated ? "-1" : "0"), oFixture.oEntity,
-			fnCallback);
+		oPromise = oCache._delete(oGroupLock, "Equipments('1')", (sPath && sPath + "/") + "1",
+			oFixture.oEntity, fnCallback);
 
 		assert.strictEqual(aCacheData[1]["@$ui5.context.isDeleted"], true);
 		sinon.assert.calledOnceWithExactly(fnCallback, 1, -1);
@@ -659,9 +655,6 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
 			.returns(SyncPromise.resolve(aCacheData));
-		this.mock(_Cache).expects("from$skip")
-			.withExactArgs("1", sinon.match.same(aCacheData))
-			.returns(1);
 		// not interested in buildQueryString
 		this.oRequestorMock.expects("request").never();
 		this.mock(oCache).expects("requestCount").never();
@@ -710,8 +703,6 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "SO_2_SOITEM")
 			.returns(SyncPromise.resolve(aElements));
-		this.mock(_Cache).expects("from$skip").withExactArgs("-1", sinon.match.same(aElements))
-			.returns(1);
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oElement), "predicate").returns("n/a");
 		oHelperMock.expects("getPrivateAnnotation")
@@ -727,7 +718,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement), "Deleted from deep create");
 
 		// code under test
-		oPromise = oCache._delete(oGroupLock, undefined, "SO_2_SOITEM/-1", null, fnCallback);
+		oPromise = oCache._delete(oGroupLock, undefined, "SO_2_SOITEM/1", null, fnCallback);
 
 		assert.strictEqual(oPromise.getResult(), undefined);
 		assert.deepEqual(aPostBodyCollection, ["~a~", "~c~"]);
@@ -8586,7 +8577,7 @@ sap.ui.define([
 
 		// code under test
 		oCache._delete(null, "TEAMS('0')/TEAM_2_EMPLOYEES",
-			sPathInCache + "/-1", //TODO sPathInCache + sTransientPredicate
+			sPathInCache + "/1", //TODO sPathInCache + sTransientPredicate
 			null, false, fnDeleteCallback);
 
 		assert.strictEqual(aCollection.$count, 41);
@@ -9007,7 +8998,7 @@ sap.ui.define([
 						"No 'update' allowed while waiting for server response",
 						oError.message);
 				});
-			oCache._delete(oDeleteGroupLock, "n/a", /*TODO sTransientPredicate*/"-1")
+			oCache._delete(oDeleteGroupLock, "n/a", /*TODO sTransientPredicate*/"0")
 				.then(function () {
 					assert.ok(false, "unexpected success - _delete");
 				}, function (oError) {
@@ -9678,7 +9669,7 @@ sap.ui.define([
 
 		// code under test
 		oDeletePromise = oCache._delete(null, "n/a",
-			/*TODO sTransientPredicate*/"-1", null, false, function () {
+			/*TODO sTransientPredicate*/"0", null, false, function () {
 				throw new Error();
 			});
 
@@ -9761,7 +9752,7 @@ sap.ui.define([
 				.returns(Promise.resolve());
 
 			// code under test
-			return oCache._delete(oDeleteGroupLock, sEditUrl, /*TODO sTransientPredicate*/"-1",
+			return oCache._delete(oDeleteGroupLock, sEditUrl, /*TODO sTransientPredicate*/"0",
 					null, fnCallback)
 				.then(function () {
 					sinon.assert.calledOnceWithExactly(fnCallback, 0, -1);
