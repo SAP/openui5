@@ -1,0 +1,396 @@
+{
+    "@odata.context": "$metadata#P_SADL_RS_HIER_BIND_ACTION",
+    "@odata.metadataEtag": "W/\"20230803123333\"",
+    "value": [
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "1",
+            "ParentId": "",
+            "Description": "D55",
+            "Material": "M55",
+            "MaterialGroup": "",
+            "Quantity": 55,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "1.1",
+            "ParentId": "1",
+            "Description": "D60",
+            "Material": "M60",
+            "MaterialGroup": "",
+            "Quantity": 60,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "1.1.1",
+            "ParentId": "1.1",
+            "Description": "D72",
+            "Material": "M72",
+            "MaterialGroup": "",
+            "Quantity": 72,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "1.1.2",
+            "ParentId": "1.1",
+            "Description": "D85",
+            "Material": "M85",
+            "MaterialGroup": "",
+            "Quantity": 85,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "1.1.3",
+            "ParentId": "1.1",
+            "Description": "D61",
+            "Material": "M61",
+            "MaterialGroup": "",
+            "Quantity": 61,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "1.2",
+            "ParentId": "1",
+            "Description": "D86",
+            "Material": "M86",
+            "MaterialGroup": "",
+            "Quantity": 86,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "1.2.1",
+            "ParentId": "1.2",
+            "Description": "D55",
+            "Material": "M55",
+            "MaterialGroup": "",
+            "Quantity": 55,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "1.2.2",
+            "ParentId": "1.2",
+            "Description": "D85",
+            "Material": "M85",
+            "MaterialGroup": "",
+            "Quantity": 85,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "1.2.3",
+            "ParentId": "1.2",
+            "Description": "D43",
+            "Material": "M43",
+            "MaterialGroup": "",
+            "Quantity": 43,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "1.3",
+            "ParentId": "1",
+            "Description": "D63",
+            "Material": "M63",
+            "MaterialGroup": "",
+            "Quantity": 63,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "1.3.1",
+            "ParentId": "1.3",
+            "Description": "D65",
+            "Material": "M65",
+            "MaterialGroup": "",
+            "Quantity": 65,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "1.3.2",
+            "ParentId": "1.3",
+            "Description": "D39",
+            "Material": "M39",
+            "MaterialGroup": "",
+            "Quantity": 39,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "1.3.3",
+            "ParentId": "1.3",
+            "Description": "D44",
+            "Material": "M44",
+            "MaterialGroup": "",
+            "Quantity": 44,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "2",
+            "ParentId": "",
+            "Description": "D30",
+            "Material": "M30",
+            "MaterialGroup": "",
+            "Quantity": 30,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "2.1",
+            "ParentId": "2",
+            "Description": "D90",
+            "Material": "M90",
+            "MaterialGroup": "",
+            "Quantity": 90,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "2.1.1",
+            "ParentId": "2.1",
+            "Description": "D6",
+            "Material": "M6",
+            "MaterialGroup": "",
+            "Quantity": 6,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "2.1.2",
+            "ParentId": "2.1",
+            "Description": "D97",
+            "Material": "M97",
+            "MaterialGroup": "",
+            "Quantity": 97,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "2.1.3",
+            "ParentId": "2.1",
+            "Description": "D28",
+            "Material": "M28",
+            "MaterialGroup": "",
+            "Quantity": 28,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "2.2",
+            "ParentId": "2",
+            "Description": "D39",
+            "Material": "M39",
+            "MaterialGroup": "",
+            "Quantity": 39,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "2.2.1",
+            "ParentId": "2.2",
+            "Description": "D48",
+            "Material": "M48",
+            "MaterialGroup": "",
+            "Quantity": 48,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "2.2.2",
+            "ParentId": "2.2",
+            "Description": "D80",
+            "Material": "M80",
+            "MaterialGroup": "",
+            "Quantity": 80,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "2.2.3",
+            "ParentId": "2.2",
+            "Description": "D82",
+            "Material": "M82",
+            "MaterialGroup": "",
+            "Quantity": 82,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "2.3",
+            "ParentId": "2",
+            "Description": "D53",
+            "Material": "M53",
+            "MaterialGroup": "",
+            "Quantity": 53,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "2.3.1",
+            "ParentId": "2.3",
+            "Description": "D48",
+            "Material": "M48",
+            "MaterialGroup": "",
+            "Quantity": 48,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "2.3.2",
+            "ParentId": "2.3",
+            "Description": "D57",
+            "Material": "M57",
+            "MaterialGroup": "",
+            "Quantity": 57,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        },
+        {
+            "#com.sap.gateway.srvd.zjb_sd_sadl_rs_hier_bind_act.v0001.reduceQuantity(integer_number)": {},
+            "Id": "2.3.3",
+            "ParentId": "2.3",
+            "Description": "D40",
+            "Material": "M40",
+            "MaterialGroup": "",
+            "Quantity": 40,
+            "QuantityUnit": "PC",
+            "__HierarchyPropertiesForR_SADL_RS_HIERVIEW_BIND": null,
+            "__OperationControl": {
+                "reduceQuantity": true
+            },
+            "SAP__Messages": []
+        }
+    ]
+}

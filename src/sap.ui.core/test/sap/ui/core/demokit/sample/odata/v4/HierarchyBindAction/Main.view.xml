@@ -1,0 +1,85 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.HierarchyBindAction.Main"
+	xmlns="sap.ui.table"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<TreeTable id="table" ariaLabelledBy="title" minAutoRowCount="2"
+		rows="{path : '/P_SADL_RS_HIER_BIND_ACTION',
+			parameters : {$count : true, $$patchWithoutSideEffects : true}, suspended : true}"
+		selectionMode="None" threshold="0" visibleRowCount="5" visibleRowCountMode="Interactive">
+		<extension>
+			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+				<m:Title id="title" level="H1" text="{header>$count} Items"/>
+			</m:Toolbar>
+		</extension>
+		<Column width="20em">
+			<m:Label text="ID"/>
+			<template>
+				<m:Text text="{Id}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Parent's ID"/>
+			<template>
+				<m:Text text="{ParentId}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Description"/>
+			<template>
+				<m:Input value="{Description}"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Material"/>
+			<template>
+				<m:Input value="{Material}"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Quantity"/>
+			<template>
+				<m:Input value="{Quantity}"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Quantity Unit"/>
+			<template>
+				<m:Input value="{QuantityUnit}"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" id="create"
+					icon="sap-icon://create" press=".onCreate" tooltip="Create New Child"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== true}" id="cut"
+					icon="sap-icon://scissors" press=".onCut" tooltip="Cut"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button id="move" icon="sap-icon://move" press=".onMove" tooltip="Move"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== true}" id="delete"
+					icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
+			</template>
+		</Column>
+	</TreeTable>
+
+	<mvc:dependents>
+		<m:SelectDialog confirm=".onMoveConfirm" draggable="true" id="moveDialog"
+			items="{path : '/P_SADL_RS_HIER_BIND_ACTION', parameters : {$count : true}, suspended : true}"
+			title="Select New Parent">
+			<m:StandardListItem description="{Description}" title="{Id}" type="Active" />
+		</m:SelectDialog>
+	</mvc:dependents>
+</mvc:View>
