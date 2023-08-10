@@ -81,6 +81,15 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 						"testlibs/themeParameters": "test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters"
 					}
 				}
+			},
+			"Theming_default_and_fallback": {
+				title: "Theming - defaulting and fallbacks",
+				ui5: {
+					theme: "sap_goldreflection" // Note: deprecated and deleted theme: used for fallback test!
+				},
+				qunit: {
+					reorder: false
+				}
 			}
 		}
 	};
