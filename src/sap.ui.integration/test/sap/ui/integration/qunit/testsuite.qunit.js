@@ -305,6 +305,7 @@ sap.ui.define([
 			"util/ContentFactory": {},
 			"util/ManifestResolver": {},
 			"util/SkeletonCard": {},
+			"util/loadCardEditor": {},
 			"model/ContextModel": {
 				coverage: {
 					only: [

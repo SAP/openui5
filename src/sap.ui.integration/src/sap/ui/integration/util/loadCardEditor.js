@@ -29,7 +29,7 @@ function (includeScript) {
 	 * @public
 	 */
 	return function () {
-		return includeScript("sap-ui-integration-cardEditor.js")
+		return includeScript({ url: "sap-ui-integration-cardEditor.js" })
 			.then(loadCardEditor)
 			.catch(loadCardEditor);
 	};
