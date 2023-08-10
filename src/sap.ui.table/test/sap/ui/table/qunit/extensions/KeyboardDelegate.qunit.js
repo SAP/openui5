@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/CreationRow",
-	"sap/ui/table/rowmodes/FixedRowMode",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",

@@ -2,13 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"../library",
 	"../utils/TableUtils",
 	"./RowMode",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	library,
 	TableUtils,
 	RowMode,
 	Device,
@@ -19,31 +17,59 @@ sap.ui.define([
 	var _private = TableUtils.createWeakMapFacade();
 
 	/**
-	 * Constructor for a new auto row mode.
+	 * Constructor for a new <code>Auto</code> row mode.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * TODO: Class description
-	 * @extends sap.ui.table.rowmodes.RowMode
+	 * The number of rows displayed in the table is calculated based on the space it is allowed to cover (limited by the surrounding container).
+	 * The table must be rendered without siblings in the DOM. The only exception is if the table's parent element is a flexbox, and the table is a
+	 * flex item allowed to grow and shrink.
+	 * The number of rows to be displayed can only be determined after the layout has been completed. The data can already be requested before that.
+	 * To avoid multiple data requests, the amount of initially requested data is based on the maximum number of potentially displayed rows,
+	 * which takes the window size into consideration, for example.
+	 * @extends module:sap/ui/table/rowmodes/RowMode
 	 * @constructor
-	 * @alias sap.ui.table.rowmodes.AutoRowMode
+	 * @alias module:sap/ui/table/rowmodes/Auto
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 */
-	var AutoRowMode = RowMode.extend("sap.ui.table.rowmodes.AutoRowMode", /** @lends sap.ui.table.rowmodes.AutoRowMode.prototype */ {
+	var AutoRowMode = RowMode.extend("sap.ui.table.rowmodes.Auto", /** @lends sap.ui.table.rowmodes.Auto.prototype */ {
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
+				/**
+				 * The minimum number of displayed rows.
+				 */
 				minRowCount: {type: "int", defaultValue: 5, group: "Appearance"},
+				/**
+				 * The maximum number of displayed rows. The <code>minRowCount</code> is ignored if the maximum is lower than the minimum.
+				 */
 				maxRowCount: {type: "int", defaultValue: -1, group: "Appearance"},
+				/**
+				 * The number of rows in the fixed area at the top. If the number of fixed rows exceeds the number of displayed rows, the number of
+				 * fixed rows is reduced.
+				 * The table may limit the possible number of fixed rows.
+				 */
 				fixedTopRowCount: {type: "int", defaultValue: 0, group: "Appearance"},
+				/**
+				 * The number of rows in the fixed area at the bottom. If the number of fixed rows exceeds the number of displayed rows, the number of
+				 * fixed rows is reduced.
+				 * The table may limit the possible number of fixed rows.
+				 */
 				fixedBottomRowCount: {type: "int", defaultValue: 0, group: "Appearance"},
+				/**
+				 * The row content height in pixel. The actual row height is also influenced by other factors, such as the border width. If no value
+				 * is set (includes 0), a default height is applied based on the content density configuration.
+				 */
 				rowContentHeight: {type: "int", defaultValue: 0, group: "Appearance"},
+				/**
+				 * Whether to hide empty rows.
+				 * TODO: make hidden before making the class public
+				 */
 				hideEmptyRows: {type: "boolean", defaultValue: false, group: "Appearance"}
 			}
 		},
@@ -565,7 +591,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @this sap.ui.table.rowmodes.AutoRowMode
+	 * @this sap.ui.table.rowmodes.Auto
 	 */
 	TableDelegate.onBeforeRendering = function(oEvent) {
 		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
@@ -576,7 +602,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @this sap.ui.table.rowmodes.AutoRowMode
+	 * @this sap.ui.table.rowmodes.Auto
 	 */
 	TableDelegate.onAfterRendering = function(oEvent) {
 		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");

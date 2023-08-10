@@ -18,7 +18,7 @@ sap.ui.define([
 	 *
 	 * @class
 	 * // TODO: Class description
-	 * @extends sap.ui.table.rowmodes.RowMode
+	 * @extends module:sap/ui/table/rowmodes/RowMode
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -26,9 +26,9 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @experimental
-	 * @alias sap.ui.table.rowmodes.VariableRowMode
+	 * @alias module:sap/ui/table/rowmodes/Variable
 	 */
-	var VariableRowMode = RowMode.extend("sap.ui.table.rowmodes.VariableRowMode", {
+	var VariableRowMode = RowMode.extend("sap.ui.table.rowmodes.Variable", {
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
@@ -47,20 +47,6 @@ sap.ui.define([
 			}
 		}
 	});
-
-	/**
-	 * @inheritDoc
-	 */
-	VariableRowMode.prototype.getComputedRowCounts = function() {
-		var iTotalRowCount = this.getTotalRowCountOfTable();
-		var iRowCount = this.getHideEmptyRows() ? Math.min(this.getRowCount(), iTotalRowCount) : this.getRowCount();
-
-		return {
-			count: iRowCount,
-			fixedTopCount: this.getFixedTopRowCount(),
-			fixedBottomCount: this.getFixedBottomRowCount()
-		};
-	};
 
 	/**
 	 * @inheritDoc

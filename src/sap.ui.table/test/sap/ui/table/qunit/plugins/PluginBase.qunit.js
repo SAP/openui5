@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/plugins/PluginBase",
 	"sap/ui/table/Table",
-	"sap/ui/table/rowmodes/FixedRowMode",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/core/Control"
 ], function(TableQUnitUtils, PluginBase, Table, FixedRowMode, Control) {
 	"use strict";
@@ -17,6 +17,7 @@ sap.ui.define([
 			this.oTable = new Table();
 		},
 		afterEach: function() {
+			this.oPluginMock.verify();
 			this.oPluginMock.restore();
 			this.oPlugin.destroy();
 			this.oTable.destroy();

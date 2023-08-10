@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
-	"sap/ui/table/rowmodes/AutoRowMode",
+	"sap/ui/table/rowmodes/Auto",
 	"sap/ui/table/Table",
 	"sap/ui/Device"
 ], function(TableQUnitUtils, AutoRowMode, Table, Device) {

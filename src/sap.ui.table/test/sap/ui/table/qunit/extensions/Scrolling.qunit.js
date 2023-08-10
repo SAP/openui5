@@ -4,8 +4,8 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-	"sap/ui/table/rowmodes/FixedRowMode",
-	"sap/ui/table/rowmodes/AutoRowMode",
+	"sap/ui/table/rowmodes/Fixed",
+	"sap/ui/table/rowmodes/Auto",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/TableRenderer",
 	"sap/ui/Device",
@@ -1763,7 +1763,7 @@ sap.ui.define([
 		}
 
 		this.forEachTestedRowMode(function(oRowModeConfig) {
-			if (oRowModeConfig.rowMode.isA("sap.ui.table.rowmodes.AutoRowMode")) {
+			if (oRowModeConfig.rowMode.isA("sap.ui.table.rowmodes.Auto")) {
 				return;
 			}
 			pTestSequence = pTestSequence.then(function() {

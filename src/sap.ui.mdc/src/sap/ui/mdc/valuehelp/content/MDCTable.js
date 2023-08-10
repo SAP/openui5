@@ -213,7 +213,7 @@ sap.ui.define([
 				if (!oRowMode) {
 					oInnerTable.setVisibleRowCountMode(UITableVisibleRowCountMode.Auto);
 					oInnerTable.setMinAutoRowCount(3);
-				} else if (oRowMode.isA("sap.ui.table.rowmodes.AutoRowMode")) {
+				} else if (oRowMode.isA("sap.ui.table.rowmodes.Auto")) {
 					oRowMode.setMinRowCount(3);
 				}
 

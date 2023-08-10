@@ -162,12 +162,12 @@ sap.ui.define([
 			}
 
 			function checkConfiguration(oTable, oDynamicPage) {
-				if (oTable._getRowMode().isA("sap.ui.table.rowmodes.AutoRowMode") && !oDynamicPage.getFitContent()) {
+				if (oTable._getRowMode().isA("sap.ui.table.rowmodes.Auto") && !oDynamicPage.getFitContent()) {
 					SupportHelper.reportIssue(oIssueManager,
 						"A table with an auto row mode is placed inside a sap.f.DynamicPage with fitContent=\"false\"",
 						Severity.High, oTable.getId());
-				} else if ((oTable._getRowMode().isA("sap.ui.table.rowmodes.FixedRowMode")
-							|| oTable._getRowMode().isA("sap.ui.table.rowmodes.InteractiveRowMode"))
+				} else if ((oTable._getRowMode().isA("sap.ui.table.rowmodes.Fixed")
+							|| oTable._getRowMode().isA("sap.ui.table.rowmodes.Interactive"))
 						   && oDynamicPage.getFitContent()) {
 					SupportHelper.reportIssue(oIssueManager,
 						"A table with a fixed or interactive row mode is placed inside a sap.f.DynamicPage with fitContent=\"true\"",
