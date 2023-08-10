@@ -3990,6 +3990,33 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("_delete: expandTo > 1", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+				expandTo : 2,
+				hierarchyQualifier : "X"
+			});
+		this.mock(oCache).expects("removeElement").never();
+		this.mock(_Helper).expects("updateAll").never();
+
+		assert.throws(function () {
+			oCache._delete();
+		}, new Error("Unsupported expandTo: 2"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_delete: kept-alive not in collection", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+				hierarchyQualifier : "X"
+			});
+		this.mock(oCache).expects("removeElement").never();
+		this.mock(_Helper).expects("updateAll").never();
+
+		assert.throws(function () {
+			oCache._delete("~oGroupLock~", "~sEditUrl~", "('1')");
+		}, new Error("Unsupported kept-alive entity: Foo('1')"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("resetChangesForPath", function () {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X"

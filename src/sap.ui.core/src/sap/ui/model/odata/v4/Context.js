@@ -240,6 +240,11 @@ sap.ui.define([
 	 * model itself ensures that all bindings depending on this context become unresolved, but no
 	 * attempt is made to restore these bindings in case of reset or failure.
 	 *
+	 * Deleting a child node is supported (@experimental as of version 1.118.0) in a recursive
+	 * hierarchy (see {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}). As a
+	 * precondition, <code>oAggregation.expandTo</code> must be equal to one, and the context must
+	 * not be {@link #setKeepAlive kept-alive} and hidden (for example due to a filter).
+	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the DELETE request; if not specified, the update group ID for
 	 *   the context's binding is used, see {@link #getUpdateGroupId}. Since 1.81, if this context
@@ -273,7 +278,8 @@ sap.ui.define([
 	 *     <li> a <code>null</code> group ID is used with a context which is not
 	 *       {@link #isKeepAlive kept alive},
 	 *     <li> the context is already being deleted,
-	 *     <li> the context's binding is a list binding with data aggregation.
+	 *     <li> the context's binding is a list binding with data aggregation,
+	 *     <li> the restrictions for deleting from a recursive hierarchy (see above) are not met.
 	 *   </ul>
 	 *
 	 * @function

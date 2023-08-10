@@ -1094,25 +1094,35 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.delete = function (oGroupLock, sEditUrl, oContext, oETagEntity,
 			bDoNotRequestCount, fnUndelete) {
-		// When deleting a context with negative index, iCreatedContexts et al. must be adjusted.
-		// However, when re-inserting, the context has lost its index. Beware: Do NOT use the
-		// created() promise, because doReplaceWith places a context w/o the promise here.
-		var bCreated = oContext.iIndex < 0,
-			sPath = oContext.iIndex === undefined
-				// context is not in aContexts -> use the predicate
-				? _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())
-				: String(oContext.iIndex),
-			bReset = false,
+		var bReset = false,
 			that = this;
 
+		const oAggregation = this.mParameters.$$aggregation;
+		if (oAggregation) {
+			if (oAggregation.expandTo > 1) {
+				throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
+			}
+			if (oContext.iIndex === undefined) {
+				throw new Error("Unsupported kept-alive context: " + oContext);
+			}
+		}
 		if (oContext.isDeleted()) {
 			return oContext.oDeletePromise; // do not delete twice
 		}
 
 		const bExpanded = oContext.isExpanded();
 		if (bExpanded) {
-			that.collapse(oContext);
+			this.collapse(oContext);
 		}
+
+		// When deleting a context with negative index, iCreatedContexts et al. must be adjusted.
+		// However, when re-inserting, the context has lost its index. Beware: Do NOT use the
+		// created() promise, because doReplaceWith places a context w/o the promise here.
+		const bCreated = oContext.iIndex < 0;
+		const sPath = oContext.iIndex === undefined
+			// context is not in aContexts -> use the predicate
+			? _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())
+			: String(oContext.iIndex);
 
 		this.iDeletedContexts += 1;
 
