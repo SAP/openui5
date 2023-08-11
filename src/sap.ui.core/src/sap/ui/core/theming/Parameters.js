@@ -787,7 +787,6 @@ sap.ui.define([
 				sTheme = Theming.getTheme();
 				aParametersToLoad = [];
 				mParameters = null;
-				ThemeHelper.reset();
 			}
 		};
 
