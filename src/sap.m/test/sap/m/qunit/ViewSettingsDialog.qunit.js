@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/StaticArea"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -42,7 +43,8 @@ sap.ui.define([
 	ManagedObject,
 	Log,
 	KeyCodes,
-	oCore
+	oCore,
+	StaticArea
 ) {
 	"use strict";
 
@@ -3480,7 +3482,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		//assert
-		assert.equal(jQuery(oCore.getStaticAreaRef()).find(".sapMVSD").length, 1, "ViewSettingsDialog is rendered first time");
+		assert.equal(jQuery(StaticArea.getDomRef()).find(".sapMVSD").length, 1, "ViewSettingsDialog is rendered first time");
 
 		//act
 		oVSD._dialog.getEndButton().firePress();
@@ -3491,7 +3493,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		//assert
-		assert.equal(jQuery(oCore.getStaticAreaRef()).find(".sapMVSD").length, 1, "ViewSettingsDialog is rendered second time");
+		assert.equal(jQuery(StaticArea.getDomRef()).find(".sapMVSD").length, 1, "ViewSettingsDialog is rendered second time");
 
 		//clean
 		oVSD.destroy();
@@ -3857,7 +3859,8 @@ sap.ui.define([
 
 		setTimeout(function () {
 			this.focusItem(oListItem.getId());
-			this.oVSD._dialog.rerender();
+			this.oVSD._dialog.invalidate();
+			oCore.applyChanges();
 			this.checkItemFocus(oListItem.getId());
 			done();
 		}.bind(this), 500);
@@ -3874,7 +3877,8 @@ sap.ui.define([
 
 		setTimeout(function () {
 			this.focusItem(sItemToSelect + "-list-item");
-			this.oVSD._dialog.rerender();
+			this.oVSD._dialog.invalidate();
+			oCore.applyChanges();
 			this.checkItemFocus(sItemToSelect + "-list-item");
 			done();
 		}.bind(this), 500);

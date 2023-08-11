@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
+	"sap/m/Label",
 	"sap/ui/events/jquery/EventExtension" // side effect: provides jQuery.event.prototype.getMark
 ], function(
 	qutils,
@@ -23,7 +24,8 @@ sap.ui.define([
 	Panel,
 	mobileLibrary,
 	KeyCodes,
-	oCore
+	oCore,
+	Label
 ) {
 	"use strict";
 
@@ -651,7 +653,7 @@ sap.ui.define([
 	QUnit.test("Labelling using aria-labelledby", function (assert) {
 		// Arrange
 		var sId = "oslab",
-		oLabel = new sap.m.Label("info", {
+		oLabel = new Label("info", {
 			text: "Label",
 			labelFor: sId
 		}).placeAt("qunit-fixture"),

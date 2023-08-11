@@ -154,17 +154,20 @@ sap.ui.define([
 
 			var bar = oCore.byId("myBar");
 			bar.setHTMLTag('Header');
-			bar.rerender();
+			bar.invalidate();
+			oCore.applyChanges();
 			assert.ok(jQuery("#myBar").is("header"), "bar should be rendered as header");
 
 			var bar1 = oCore.byId("myBar1");
 			bar1.setHTMLTag('Footer');
-			bar1.rerender();
+			bar1.invalidate();
+			oCore.applyChanges();
 			assert.ok(jQuery("#myBar1").is("footer"), "bar1 should be rendered as footer");
 
 			var bar2 = oCore.byId("myBar2");
 			bar2.setHTMLTag('H1');
-			bar2.rerender();
+			bar2.invalidate();
+			oCore.applyChanges();
 			assert.ok(jQuery("#myBar2").is("H1"), "bar2 should be rendered as H1");
 			assert.equal(bar2.getHTMLTag(), "H1", "Even when sap.m.Bar has HTML tag set with value different than header and footer, " +
 				"the getHTMLTag should behave in one and the same way- should return the tag value itself");

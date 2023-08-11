@@ -29,6 +29,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Element",
 	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
 ], function(
@@ -61,6 +62,7 @@ sap.ui.define([
 	KeyCodes,
 	oCore,
 	UI5Date,
+	Configuration,
 	Element
 ) {
 	"use strict";
@@ -1367,7 +1369,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("decrease time", function(assert) {
-		var oGetTimezoneStub = this.stub(sap.ui.getCore().getConfiguration(), "getTimezone").callsFake(function () { return "Europe/Sofia"; });
+		var oGetTimezoneStub = this.stub(Configuration, "getTimezone").callsFake(function () { return "Europe/Sofia"; });
 
 		var oTp = new TimePicker();
 		oTp.placeAt("qunit-fixture");
