@@ -1365,6 +1365,21 @@ sap.ui.define([
 		assert.strictEqual(oResult, null, "(datetime) When year is > 9999, parsing returns null (value is not parsed)");
 	});
 
+
+	QUnit.test("DynamicDateFormat doesn't cut ' in different language", function (assert) {
+		var sLanguage = oCore.getConfiguration().getLanguage();
+
+		oCore.getConfiguration().setLanguage("fr_FR");
+
+		// act
+		this.ddr.setValue({values: Array(0), operator: 'TODAY'});
+
+		// assert
+		assert.ok(this.ddr._oInput.getValue().indexOf("Aujourd'hui") !== -1, "The year is correct");
+
+		oCore.getConfiguration().setLanguage(sLanguage);
+	});
+
 	QUnit.test("Open DynamicDateRange from Button", function(assert) {
 		// Prepare
 		var oDDR = new DynamicDateRange("HDDR", {

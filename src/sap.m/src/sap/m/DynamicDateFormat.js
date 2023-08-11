@@ -252,6 +252,10 @@ sap.ui.define([
 				}, this);
 			}
 
+			if (aFormattedParams.length === 0) {
+				aFormattedParams = null;
+			}
+
 			return this._resourceBundle.getText("DYNAMIC_DATE_" + sKey.toUpperCase() + "_FORMAT", aFormattedParams);
 		};
 
