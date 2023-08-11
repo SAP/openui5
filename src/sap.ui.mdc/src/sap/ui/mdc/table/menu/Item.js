@@ -81,12 +81,11 @@ sap.ui.define([
 		});
 	};
 
-	Item.prototype.destroyContent = function() {
-		// The AdaptationFilterBar must not be destroyed! A new one cannot be created.
-		if (this.getKey() === "Filter") {
+	Item.prototype.destroyAggregation = function(sAggregationName) {
+		if (this.getKey() === "Filter" && sAggregationName === "content") {
 			return this;
 		}
-		return this.destroyAggregation("content");
+		return ItemBase.prototype.destroyAggregation.apply(this, arguments);
 	};
 
 	Item.prototype.getTable = function() {

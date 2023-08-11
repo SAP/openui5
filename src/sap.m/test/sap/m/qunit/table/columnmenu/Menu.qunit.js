@@ -225,14 +225,17 @@ sap.ui.define([
 		assert.ok(this.oColumnMenu._oPopover.getShowHeader(), "Header is shown on mobile");
 	});
 
-	QUnit.test("Form containers are created on open and destroyed on close", function(assert) {
+	QUnit.test("Form containers and item container are created on open and destroyed on close", function(assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
 		assert.ok(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length);
+		assert.ok(this.oColumnMenu._oItemsContainer);
 
 		var oDestroyFormElementsSpy = sinon.spy(this.oColumnMenu._oQuickActionContainer, "destroyFormContainers");
+		var oDestroyItemContainerSpy = sinon.spy(this.oColumnMenu._oItemsContainer, "destroy");
 		this.oColumnMenu.close();
 		assert.ok(oDestroyFormElementsSpy.calledOnce);
+		assert.ok(oDestroyItemContainerSpy.calledOnce);
 	});
 
 	QUnit.test("Check hidden header and footer in default view", function (assert) {
@@ -816,9 +819,14 @@ sap.ui.define([
 	QUnit.module("Events", {
 		beforeEach: function () {
 			this.oColumnMenu = new Menu({
-				items: new ActionItem({
-					label: "Test"
-				})
+				items: [
+					new ActionItem({
+						label: "Test ActionItem"
+					}),
+					new Item({
+						label: "Test Item"
+					})
+				]
 			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
@@ -891,6 +899,82 @@ sap.ui.define([
 
 		clock.tick(1000);
 		assert.ok(this.oColumnMenu.isOpen(), "The column menu is still open because preventDefault was called in the event handler");
+	});
+
+	QUnit.test("Item buttons", function (assert) {
+		var clock = sinon.useFakeTimers();
+		var oMenu = this.oColumnMenu;
+		var oButton = this.oButton;
+		oMenu.openBy(oButton);
+		oCore.applyChanges();
+
+		// Navigate to first item
+		var oItem = oMenu.getItems()[1];
+		var sId = oItem.getId();
+		oMenu._oItemsContainer.switchView(sId);
+		oCore.applyChanges();
+
+		return new Promise(function(resolve) {
+			oItem.attachEventOnce("confirm", function(oEvent) {
+				oEvent.preventDefault();
+				assert.ok("confirm event fired");
+				resolve();
+			});
+			oMenu._oBtnOk.firePress();
+		}).then(function() {
+			clock.tick(500);
+			assert.ok(oMenu.isOpen(), "default prevented");
+
+			return new Promise(function (resolve) {
+				oItem.attachEventOnce("confirm", function () {
+					assert.ok("confirm event fired");
+					resolve();
+				});
+				oMenu._oBtnOk.firePress();
+			});
+		}).then(function() {
+			clock.tick(500);
+			assert.notOk(oMenu.isOpen(), "menu is closed");
+
+			oMenu.openBy(oButton);
+			oMenu._oItemsContainer.switchView(sId);
+			oCore.applyChanges();
+
+			return new Promise(function(resolve) {
+				oItem.attachEventOnce("cancel", function(oEvent) {
+					oEvent.preventDefault();
+					assert.ok("cancel event fired");
+					resolve();
+				});
+				oMenu._oBtnCancel.firePress();
+			});
+		}).then(function() {
+			clock.tick(500);
+			assert.ok(oMenu.isOpen(), "default prevented");
+
+			return new Promise(function (resolve) {
+				oItem.attachEventOnce("cancel", function () {
+					assert.ok("cancel event fired");
+					resolve();
+				});
+				oMenu._oBtnCancel.firePress();
+			});
+		}).then(function () {
+			clock.tick(500);
+			assert.notOk(oMenu.isOpen(), "menu is closed");
+
+			oMenu.openBy(oButton);
+			oMenu._oItemsContainer.switchView(sId);
+			oCore.applyChanges();
+
+			return new Promise(function(resolve) {
+				oItem.attachEventOnce("reset", function() {
+					assert.ok("reset event fired");
+					resolve();
+				});
+				oMenu._oItemsContainer.getHeader().getContentRight()[0].firePress();
+			});
+		});
 	});
 
 	QUnit.module("Auto close behavior", {
