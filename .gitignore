@@ -62,3 +62,6 @@ src/sap.ui.documentation/src/sap/ui/documentation/sdk/model/data/guide/
 .reuse/spdx.txt
 .reuse/dep5_test
 .reuse/THIRDPARTY_test.txt
+
+# Ignore eslint cache file
+.eslintcache
