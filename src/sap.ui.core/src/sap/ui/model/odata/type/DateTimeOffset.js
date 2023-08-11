@@ -237,6 +237,9 @@ sap.ui.define([
 	/**
 	 * Returns the model value for the given ISO string.
 	 *
+	 * In case the <code>V4</code> constraint is set to <code>true</code>, the milliseconds part of the string is
+	 * either truncated or padded with <code>0</code>, so that its length fits the types precision constraint.
+	 *
 	 * @param {string|null} sISOString
 	 *   A string according to ISO 8601, as returned by {@link #getISOStringFromModelValue}
 	 * @returns {string|Date|module:sap/ui/core/date/UI5Date|null}
@@ -252,7 +255,9 @@ sap.ui.define([
 			return null;
 		}
 
-		return this.bV4 ? sISOString : UI5Date.getInstance(sISOString);
+		return this.bV4
+			? this.getModelFormat().format(UI5Date.getInstance(sISOString), true)
+			: UI5Date.getInstance(sISOString);
 	};
 
 	/**
