@@ -2,8 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/util/merge",
+	"sap/base/util/ObjectPath",
 	"sap/ui/base/ManagedObject"
 ], function(
+	merge,
+	ObjectPath,
 	ManagedObject
 ) {
 	"use strict";
@@ -94,6 +98,18 @@ sap.ui.define([
 		}
 	});
 
+	const sNoParameter = "DataSelector_no_parameter";
+
+	function getAllParameterValues(oDataSelector, mParameters) {
+		const aReturn = [];
+		let oCurrentDataSelector = oDataSelector;
+		do {
+			aReturn.unshift(oCurrentDataSelector.getParameterKey() ? mParameters[oCurrentDataSelector.getParameterKey()] : sNoParameter);
+			oCurrentDataSelector = oCurrentDataSelector.getParentDataSelector();
+		} while (oCurrentDataSelector);
+		return aReturn;
+	}
+
 	/**
 	 * Registers a callback listener to get notified about changes to the state
 	 * @param {function} fnListener - Callback function that is called in case of state updates
@@ -124,13 +140,19 @@ sap.ui.define([
 	};
 
 	DataSelector.prototype._getParameterizedCachedResult = function(mParameters) {
-		var sParameterKey = this.getParameterKey();
-		if (sParameterKey) {
-			var sParameter = mParameters[sParameterKey];
-			return this.getCachedResult()[sParameter];
-		}
-		// If the data selector is not parameterized, return the whole cache
-		return this.getCachedResult();
+		const aParameterValues = getAllParameterValues(this, mParameters);
+		return ObjectPath.get(aParameterValues, this.getCachedResult());
+	};
+
+	DataSelector.prototype._setParameterizedCachedResult = function(mParameters, vValue) {
+		const aParameterValues = getAllParameterValues(this, mParameters);
+		const mNewData = {};
+		ObjectPath.set(aParameterValues, vValue, mNewData);
+		return this.setCachedResult(merge(
+			{},
+			this.getCachedResult(),
+			mNewData
+		));
 	};
 
 	DataSelector.prototype._clearCache = function(mParameters) {
@@ -157,21 +179,6 @@ sap.ui.define([
 		this.getUpdateListeners().forEach(function(fnUpdateFunction) {
 			fnUpdateFunction();
 		});
-	};
-
-	DataSelector.prototype._setParameterizedCachedResult = function(mParameters, vValue) {
-		var sParameterKey = this.getParameterKey();
-		if (sParameterKey && mParameters) {
-			var mNewData = {};
-			var sParameter = mParameters[sParameterKey];
-			mNewData[sParameter] = vValue;
-			return this.setCachedResult(Object.assign(
-				{},
-				this.getCachedResult(),
-				mNewData
-			));
-		}
-		return this.setCachedResult(vValue);
 	};
 
 	/**
