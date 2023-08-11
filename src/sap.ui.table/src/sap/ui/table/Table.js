@@ -2178,9 +2178,6 @@ sap.ui.define([
 			return;
 		}
 
-		/**
-		 * @deprecated As of version 1.118
-		 */
 		if (vRowMode === null) {
 			switch (this.getVisibleRowCountMode()) {
 				case RowModeType.Fixed:
