@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Rendering",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/message/MessageManager",
@@ -23,9 +24,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/core/library",
 	"sap/ui/test/TestUtils"
-], function (Log, SyncPromise, Configuration, CacheManager, Message, MessageManager, Binding,
-		BindingMode, BaseContext, Model, OperationMode, Context, ODataMetaModel, ODataModel,
-		SubmitMode, _Helper, _MetadataRequestor, _Parser, _Requestor, library, TestUtils) {
+], function (Log, SyncPromise, Configuration, Rendering, CacheManager, Message, MessageManager,
+		Binding, BindingMode, BaseContext, Model, OperationMode, Context, ODataMetaModel,
+		ODataModel, SubmitMode, _Helper, _MetadataRequestor, _Parser, _Requestor, library,
+		TestUtils) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -2281,7 +2283,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("addPrerenderingTask: queue", function (assert) {
-		var oExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+		var oExpectation = this.mock(Rendering).expects("addPrerenderingTask")
 				.withExactArgs(sinon.match.func),
 			fnFirstPrerenderingTask = "first",
 			fnPrerenderingTask0 = "0",
@@ -2323,7 +2325,7 @@ sap.ui.define([
 				oModel.addPrerenderingTask(fnLastTask);
 			});
 
-		oAddTaskMock = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+		oAddTaskMock = this.mock(Rendering).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func);
 		this.mock(window).expects("setTimeout").withExactArgs(sinon.match.func, 0).returns(42);
 		oModel.addPrerenderingTask(fnPrerenderingTask0);
@@ -2363,7 +2365,7 @@ sap.ui.define([
 			fnTask = this.spy(),
 			oWindowMock = this.mock(window);
 
-		oAddTaskExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+		oAddTaskExpectation = this.mock(Rendering).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func);
 		oSetTimeoutExpectation = oWindowMock.expects("setTimeout")
 			.withExactArgs(sinon.match.func, 0);
@@ -2395,7 +2397,7 @@ sap.ui.define([
 			fnTask1 = this.spy(),
 			fnTask2 = "~task~2~";
 
-		oAddTaskExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask").twice()
+		oAddTaskExpectation = this.mock(Rendering).expects("addPrerenderingTask").twice()
 			.withExactArgs(sinon.match.func);
 		oSetTimeoutExpectation = this.mock(window).expects("setTimeout").thrice()
 			.withExactArgs(sinon.match.func, 0);

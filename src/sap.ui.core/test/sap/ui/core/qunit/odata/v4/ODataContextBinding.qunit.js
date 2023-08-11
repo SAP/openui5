@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Rendering",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
@@ -14,7 +15,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (Log, SyncPromise, Binding, ChangeReason, ContextBinding, Context,
+], function (Log, SyncPromise, Rendering, Binding, ChangeReason, ContextBinding, Context,
 		ODataContextBinding, ODataModel, asODataParentBinding, _Cache, _GroupLock, _Helper) {
 	"use strict";
 
@@ -51,10 +52,10 @@ sap.ui.define([
 		 */
 		bindContext : function () {
 			try {
-				this.stub(sap.ui.getCore(), "addPrerenderingTask");
+				this.stub(Rendering, "addPrerenderingTask");
 				return this.oModel.bindContext.apply(this.oModel, arguments);
 			} finally {
-				sap.ui.getCore().addPrerenderingTask.restore();
+				Rendering.addPrerenderingTask.restore();
 			}
 		}
 	});

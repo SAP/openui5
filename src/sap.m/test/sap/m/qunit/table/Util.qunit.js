@@ -64,8 +64,8 @@ sap.ui.define([
 		oThemeParametersStub = sinon.stub(ThemeParameters, "get");
 		oThemeParametersStub.withArgs({ name: "sapMFontMediumSize" }).returns("1rem");
 		oThemeParametersStub.withArgs({ name: "sapUiFontFamily" }).returns("Helvetica");
-		Theming.attachApplied(fnNewThemeApplied);
 		Theming.notifyContentDensityChanged();
+		Theming.attachApplied(fnNewThemeApplied);
 	});
 
 	QUnit.test("calcTypeWidth - Boolean", function(assert) {
@@ -84,8 +84,8 @@ sap.ui.define([
 
 		oThemeParametersStub.withArgs({ name: "sapMFontMediumSize" }).returns("1rem");
 		oThemeParametersStub.withArgs({ name: "sapUiFontFamily" }).returns("Arial");
-		Theming.attachApplied(fnNewThemeApplied);
 		Theming.notifyContentDensityChanged();
+		Theming.attachApplied(fnNewThemeApplied);
 	});
 
 	QUnit.test("calcTypeWidth - String", function(assert) {
@@ -179,8 +179,8 @@ sap.ui.define([
 		oThemeParametersStub.withArgs({ name: "sapMFontMediumSize" }).returns("0.875rem");
 		oThemeParametersStub.withArgs({ name: "sapUiFontFamily" }).returns("Arial");
 		oThemeParametersStub.withArgs({ name: "sapUiColumnHeaderFontWeight" }).returns("bold");
-		Theming.attachApplied(fnNewThemeApplied);
 		Theming.notifyContentDensityChanged();
+		Theming.attachApplied(fnNewThemeApplied);
 	});
 
 	QUnit.test("calcColumnWidth", function(assert) {

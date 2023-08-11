@@ -36,6 +36,7 @@ sap.ui.define([
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
+	"sap/ui/core/Rendering",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/message/MessageManager",
 	"sap/ui/model/BindingMode",
@@ -45,8 +46,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI"
 ], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
 		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
-		SyncPromise, CacheManager, Configuration, coreLibrary, Message, MessageManager, BindingMode,
-		BaseContext, Model, OperationMode, URI) {
+		SyncPromise, CacheManager, Configuration, coreLibrary, Rendering, Message, MessageManager,
+		BindingMode, BaseContext, Model, OperationMode, URI) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -616,7 +617,7 @@ sap.ui.define([
 		if (!this.aPrerenderingTasks) {
 			this.aPrerenderingTasks = [];
 			fnRunTasks = runTasks.bind(null, this.aPrerenderingTasks);
-			sap.ui.getCore().addPrerenderingTask(fnRunTasks);
+			Rendering.addPrerenderingTask(fnRunTasks);
 			// Add a watchdog to run the tasks in case there is no rendering. Ensure that the task
 			// runs after all setTimeout(0) tasks scheduled from within the current task, even those
 			// that were scheduled afterwards. A simple setTimeout(n) with n > 0 is not sufficient

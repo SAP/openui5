@@ -64,14 +64,16 @@ sap.ui.define([
 	/**
 	 * Maps wellknown private use extensions to pseudo language tags.
 	 * @param {string} sPrivateUse A Locale
-	 * @returns {string} the pseudo language tag
+	 * @returns {string|undefined} the pseudo language tag or undefined
 	 * @private
 	 */
 	function getPseudoLanguageTag(sPrivateUse) {
+		var sPseudoLanguageTag;
 		if ( sPrivateUse ) {
 			var m = /-(saptrc|sappsd|saprigi)(?:-|$)/i.exec(sPrivateUse);
-			return m && "en-US-x-" + m[1].toLowerCase();
+			sPseudoLanguageTag = m && "en-US-x-" + m[1].toLowerCase();
 		}
+		return sPseudoLanguageTag;
 	}
 
 	/**
@@ -112,34 +114,6 @@ sap.ui.define([
 	 * @private
 	 */
 	var _coreI18nLocales = getDesigntimePropertyAsArray("$core-i18n-locales:,ar,bg,ca,cs,da,de,el,en,en_GB,es,es_MX,et,fi,fr,hi,hr,hu,it,iw,ja,kk,ko,lt,lv,ms,nl,no,pl,pt,ro,ru,sh,sk,sl,sv,th,tr,uk,vi,zh_CN,zh_TW$");
-
-	/**
-	 * Checks whether the given language tag implies a character orientation
-	 * of 'right-to-left' ('RTL').
-	 *
-	 * The implementation of config method and the configuration above assume
-	 * that when a language (e.g. 'ar') is marked as 'RTL', then all language/region
-	 * combinations for that language (e.g. 'ar_SA') will be 'RTL' as well,
-	 * even if the combination is not mentioned in the above configuration.
-	 * There is no means to define RTL=false for a language/region, when RTL=true for
-	 * the language alone.
-	 *
-	 * As of 3/2013 config is true for all locales/regions supported by UI5.
-	 *
-	 * @param {module:sap/base/i18n/LanguageTag} oLanguageTag LanguageTag to check
-	 * @returns {boolean} <code>true</code> if <code>vLanguage</code> implies RTL,
-	 *  otherwise <code>false</code>
-	 * @private
-	 */
-	function impliesRTL(oLanguageTag) {
-		var sLanguage = oLanguageTag.language || "";
-		sLanguage = Localization.getModernLanguage(oLanguageTag.language);
-		var sRegion = oLanguageTag.region || "";
-		if ( sRegion && A_RTL_LOCALES.indexOf(sLanguage + "_" + sRegion) >= 0 ) {
-			return true;
-		}
-		return A_RTL_LOCALES.indexOf(sLanguage) >= 0;
-	}
 
 	/**
 	 * Retrieves a Locale for the given SAP logon language or BCP47 tag.
@@ -202,6 +176,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sTimezone The IANA timezone ID
 	 * @returns {boolean} Returns true if the timezone is valid
+	 * @private
 	 */
 	function checkTimezone(sTimezone) {
 		var bIsValidTimezone = TimezoneUtils.isValidTimezone(sTimezone);
@@ -214,7 +189,8 @@ sap.ui.define([
 
 	/**
 	 * Configuration for localization specific parameters
-	 * @private
+	 * @public
+	 * @since 1.118
 	 * @ui5-restricted sap.ui.core
 	 * @alias module:sap/base/i18n/Localization
 	 * @namespace
@@ -233,8 +209,7 @@ sap.ui.define([
 		 *
 		 * @name module:sap/base/i18n/Localization.change
 		 * @event
-		 * @private
-		 * @ui5-restricted sap.ui.core
+		 * @public
 		 */
 
 		/**
@@ -243,8 +218,7 @@ sap.ui.define([
 		 *
 		 * @param {function} fnFunction
 		 *   The function to be called when the event occurs
-		 * @private
-		 * @ui5-restricted sap.ui.core
+		 * @public
 		 */
 		attachChange: function(fnFunction) {
 			Localization.attachEvent("change", fnFunction);
@@ -255,8 +229,7 @@ sap.ui.define([
 		 * this <code>module:sap/base/i18n/Localization</code>.
 		 *
 		 * @param {function} fnFunction Function to be called when the event occurs
-		 * @private
-		 * @ui5-restricted sap.ui.core
+		 * @public
 		 */
 		detachChange: function(fnFunction) {
 			Localization.detachEvent("change", fnFunction);
@@ -444,7 +417,6 @@ sap.ui.define([
 		 *
 		 * @returns {string} The configured IANA timezone ID, e.g. "America/New_York"
 		 * @public
-		 * @since 1.99.0
 		 */
 		getTimezone : function () {
 			var sTimezone = oWritableConfig.get({
@@ -481,7 +453,6 @@ sap.ui.define([
 		 *   An invalid IANA timezone ID will fall back to the browser's timezone.
 		 * @public
 		 * @returns {this} <code>this</code> to allow method chaining
-		 * @since 1.99.0
 		 */
 		setTimezone : function (sTimezone) {
 			check(sTimezone == null || typeof sTimezone === 'string',
@@ -674,6 +645,8 @@ sap.ui.define([
 		 *
 		 * @returns {string[]|undefined} List of Languages delivered with core
 		 * @experimental
+		 * @private
+		 * @ui5-restricted sap.ui.core
 		 */
 		getLanguagesDeliveredWithCore : function() {
 			return _coreI18nLocales;
@@ -682,6 +655,8 @@ sap.ui.define([
 		/**
 		 * @returns {string[]} List of supported languages
 		 * @experimental
+		 * @private
+		 * @ui5-restricted sap.ui.core
 		 */
 		getSupportedLanguages : function() {
 			var aLangs = BaseConfig.get({
@@ -697,6 +672,34 @@ sap.ui.define([
 			return aLangs;
 		}
 	};
+
+	/**
+	 * Checks whether the given language tag implies a character orientation
+	 * of 'right-to-left' ('RTL').
+	 *
+	 * The implementation of config method and the configuration above assume
+	 * that when a language (e.g. 'ar') is marked as 'RTL', then all language/region
+	 * combinations for that language (e.g. 'ar_SA') will be 'RTL' as well,
+	 * even if the combination is not mentioned in the above configuration.
+	 * There is no means to define RTL=false for a language/region, when RTL=true for
+	 * the language alone.
+	 *
+	 * As of 3/2013 config is true for all locales/regions supported by UI5.
+	 *
+	 * @param {module:sap/base/i18n/LanguageTag} oLanguageTag LanguageTag to check
+	 * @returns {boolean} <code>true</code> if <code>vLanguage</code> implies RTL,
+	 *  otherwise <code>false</code>
+	 * @private
+	 */
+	function impliesRTL(oLanguageTag) {
+		var sLanguage = oLanguageTag.language || "";
+		sLanguage = Localization.getModernLanguage(oLanguageTag.language);
+		var sRegion = oLanguageTag.region || "";
+		if ( sRegion && A_RTL_LOCALES.indexOf(sLanguage + "_" + sRegion) >= 0 ) {
+			return true;
+		}
+		return A_RTL_LOCALES.indexOf(sLanguage) >= 0;
+	}
 
 	function fireChange() {
 		Localization.fireEvent("change", mChanges);

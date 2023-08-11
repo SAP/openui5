@@ -1,7 +1,8 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Rendering",
 	"sap/ui/testlib/TestButton"
-], function(TestButton) {
+], function(Rendering, TestButton) {
 	"use strict";
 
 	QUnit.test("UI dirty state - initial", function(assert) {
@@ -13,12 +14,12 @@ sap.ui.define([
 			this.handler = function() {
 				assert.ok(true, "(UIUpdated event is fired)");
 			};
-			sap.ui.getCore().attachEvent("UIUpdated", this.handler);
+			Rendering.attachUIUpdated(this.handler);
 			this.button = new TestButton("myButton");
 		},
 		afterEach: function() {
 			this.button.destroy();
-			sap.ui.getCore().detachEvent("UIUpdated", this.handler);
+			Rendering.detachUIUpdated(this.handler);
 		}
 	});
 
