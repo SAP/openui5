@@ -3,6 +3,8 @@
 /* Base theme                     */
 /* ============================== */
 
+@_sap_m_Toolbar_ShrinkItem_MinWidth: 2.5rem;
+
 //we want the first visible element on the row to have specific padding-left value
 .sapMIBar.sapMTB .sapMBarChild{
 	margin-left: 0.25rem;
@@ -78,7 +80,7 @@
 }
 
 .sapMTBShrinkItem:not(.sapMSF) {
-	min-width: 2.5rem; /* default min-width value for the shrinkable items */
+	min-width: @_sap_m_Toolbar_ShrinkItem_MinWidth; /* default min-width value for the shrinkable items */
 }
 
 /* NewFlex */
