@@ -713,6 +713,9 @@ sap.ui.define([
 
 	var aToolBarBetweenAggregations = ["variant", "quickFilter"];
 
+	/**
+	 * @borrows sap.ui.mdc.mixin.FilterIntegrationMixin#rebind as #rebind
+	 */
 	FilterIntegrationMixin.call(Table.prototype);
 
 	/**
