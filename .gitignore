@@ -54,3 +54,6 @@ src/sap.ui.documentation/src/sap/ui/documentation/sdk/model/data/guide/
 
 # Ignore default target directory for the npm package 'ui5-schemas'
 .tmp
+
+# Ignore eslint cache file
+.eslintcache
