@@ -22,3 +22,42 @@
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
+
+.sapFCard.sapUiIntCardDisplayVariantTileStandard,
+.sapFCard.sapUiIntCardDisplayVariantTileStandardWide {
+	.sapFCardHeader {
+		height: 100%;
+		box-sizing: border-box;
+
+		.sapFCardDataTimestamp,
+		.sapFCardStatus,
+		.sapFCardHeaderToolbarCont {
+			display: none;
+		}
+
+		.sapFCardHeaderWrapper {
+			flex-direction: column;
+			justify-content: space-between;
+			height: 100%;
+
+			.sapFCardHeaderText {
+				justify-content: flex-start;
+			}
+		}
+
+		&.sapFCardNumericHeader {
+			.sapFCardHeaderContent {
+				display: flex;
+				flex-direction: column;
+
+				.sapFCardSubtitle {
+					align-items: flex-start;
+				}
+			}
+		}
+	}
+}
+
+.sapFCard.sapUiIntCardDisplayVariantTileStandard .sapFCardHeader .sapFCardNumericIndicatorsSide {
+	display: none;
+}

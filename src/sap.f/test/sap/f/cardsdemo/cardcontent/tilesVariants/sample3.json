@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.tilesVariants.sample2",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"data": {
+			"request": {
+				"url": "/error_url"
+			}
+		},
+		"header": {
+			"type": "Numeric",
+			"title": "Error in header",
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "http://sap.com"
+					}
+				}
+			]
+		},
+		"content": {
+			"item": {
+				"title": "{Name}"
+			}
+		}
+	}
+}

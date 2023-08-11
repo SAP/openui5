@@ -22,13 +22,12 @@ sap.ui.define([], function () {
 			oTitle = oHeader.getAggregation("_title"),
 			oSubtitle = oHeader.getAggregation("_subtitle"),
 			bHasSubtitle = oHeader.getSubtitle() || oBindingInfos.subtitle,
-			oAvatar = oHeader.getAggregation("_avatar"),
 			oDataTimestamp = oHeader.getAggregation("_dataTimestamp"),
 			bHasDataTimestamp = oHeader.getDataTimestamp() || oBindingInfos.dataTimestamp,
 			bLoading = oHeader.isLoading(),
 			oError = oHeader.getAggregation("_error"),
 			oToolbar = oHeader.getToolbar(),
-			bIconVisible = oHeader.shouldShowIcon();
+			bUseTileLayout = oHeader.getProperty("useTileLayout");
 
 		oRm.openStart("div", oHeader)
 			.class("sapFCardHeader");
@@ -69,17 +68,8 @@ sap.ui.define([], function () {
 			return;
 		}
 
-		if (bIconVisible && (!oHeader.isPropertyInitial("iconSrc") || !oHeader.isPropertyInitial("iconInitials"))) {
-			oRm.openStart("div")
-				.class("sapFCardHeaderImage")
-				.openEnd();
-
-			if (oBindingInfos.iconSrc && oBindingInfos.iconSrc.binding && !oBindingInfos.iconSrc.binding.getValue()) {
-				oAvatar.addStyleClass("sapFCardHeaderItemBinded");
-			}
-			oRm.renderControl(oAvatar);
-			oRm.renderControl(oHeader._oAriaAvatarText);
-			oRm.close("div");
+		if (!bUseTileLayout) {
+			HeaderRenderer._renderAvatar(oRm, oHeader);
 		}
 
 		oRm.openStart("div")
@@ -141,6 +131,10 @@ sap.ui.define([], function () {
 
 		oRm.close("div");
 
+		if (bUseTileLayout) {
+			HeaderRenderer._renderAvatar(oRm, oHeader);
+		}
+
 		oRm.close("div");
 
 		if (oToolbar) {
@@ -153,6 +147,25 @@ sap.ui.define([], function () {
 		}
 
 		oRm.close("div");
+	};
+
+	HeaderRenderer._renderAvatar = function (oRm, oHeader) {
+		var oAvatar = oHeader.getAggregation("_avatar"),
+			oBindingInfos = oHeader.mBindingInfos,
+			bIconVisible = oHeader.shouldShowIcon();
+
+		if (bIconVisible && (!oHeader.isPropertyInitial("iconSrc") || !oHeader.isPropertyInitial("iconInitials"))) {
+			oRm.openStart("div")
+				.class("sapFCardHeaderImage")
+				.openEnd();
+
+			if (oBindingInfos.iconSrc && oBindingInfos.iconSrc.binding && !oBindingInfos.iconSrc.binding.getValue()) {
+				oAvatar.addStyleClass("sapFCardHeaderItemBinded");
+			}
+			oRm.renderControl(oAvatar);
+			oRm.renderControl(oHeader._oAriaAvatarText);
+			oRm.close("div");
+		}
 	};
 
 	return HeaderRenderer;

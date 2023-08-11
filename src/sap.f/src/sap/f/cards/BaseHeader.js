@@ -75,7 +75,13 @@ sap.ui.define([
 				 * Set to false if header shouldn't be focusable.
 				 * @private
 				 */
-				focusable: { type: "boolean", defaultValue: true, visibility: "hidden" }
+				focusable: { type: "boolean", defaultValue: true, visibility: "hidden" },
+
+				/**
+				 * If the header should be rendered as a tile.
+				 * @private
+				 */
+				useTileLayout: { type: "boolean", group: "Appearance", visibility: "hidden" }
 			},
 			aggregations: {
 				/**

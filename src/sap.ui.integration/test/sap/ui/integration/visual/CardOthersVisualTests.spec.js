@@ -213,4 +213,23 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 		utils.navigateBack();
 	});
 
+	it("TilesVariants", function () {
+		utils.navigateTo("Tiles Variants");
+
+		var aCardIds = ["card1", "card2", "card3", "card4", "card5", "card6"];
+
+		aCardIds.forEach(function (sId) {
+			utils.takePictureOfElement({
+				control: {
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "TilesVariants",
+					interaction: "root",
+					id: sId
+				}
+			}, "11_TilesVariants_" + sId);
+		});
+
+		utils.navigateBack();
+	});
+
 });
