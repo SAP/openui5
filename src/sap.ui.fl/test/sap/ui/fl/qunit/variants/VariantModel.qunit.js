@@ -82,7 +82,7 @@ sap.ui.define([
 	function createVariant(mVariantProperties) {
 		return FlexObjectFactory.createFlVariant({
 			id: mVariantProperties.fileName || mVariantProperties.key,
-			reference: mVariantProperties.reference || "myReference",
+			reference: mVariantProperties.reference || "MyComponent",
 			layer: mVariantProperties.layer,
 			user: mVariantProperties.author,
 			variantReference: mVariantProperties.variantReference,
