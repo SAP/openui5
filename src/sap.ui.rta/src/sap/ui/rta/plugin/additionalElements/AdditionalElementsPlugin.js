@@ -112,7 +112,7 @@ sap.ui.define([
 
 			function getGenericText() {
 				oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-				return oTextResources.getText("CTX_ADD_ELEMENTS", oTextResources.getText("MULTIPLE_CONTROL_NAME"));
+				return oTextResources.getText("CTX_ADD_ELEMENTS", [oTextResources.getText("MULTIPLE_CONTROL_NAME")]);
 			}
 
 			// When adding custom fields to a parent we don't know which control type will be added,
@@ -264,7 +264,7 @@ sap.ui.define([
 				if (sDisplayText) {
 					// Aggregation is part of title
 					var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-					var sDialogTitle = oTextResources.getText("HEADER_ADDITIONAL_ELEMENTS_WITH_AGGREGATION", sDisplayText);
+					var sDialogTitle = oTextResources.getText("HEADER_ADDITIONAL_ELEMENTS_WITH_AGGREGATION", [sDisplayText]);
 					this.getDialog().setTitle(sDialogTitle);
 				} else if (sAggregationName || sControlName) {
 					// Only one aggregation, no aggregation in title

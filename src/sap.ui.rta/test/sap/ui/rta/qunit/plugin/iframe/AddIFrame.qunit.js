@@ -127,8 +127,8 @@ sap.ui.define([
 
 			var oRtaTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(oRtaTextResources, "getText")
-			.withArgs("CTX_ADDIFRAME", "as foo").returns(sExpectedSectionText)
-			.withArgs("CTX_ADDIFRAME", "as bar").returns(sExpectedHeaderText);
+			.withArgs("CTX_ADDIFRAME", ["as foo"]).returns(sExpectedSectionText)
+			.withArgs("CTX_ADDIFRAME", ["as bar"]).returns(sExpectedHeaderText);
 
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations: {
@@ -245,7 +245,7 @@ sap.ui.define([
 
 			var sExpectedText = "Section text";
 			var oRtaTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
-			sandbox.stub(oRtaTextResources, "getText").withArgs("CTX_ADDIFRAME", sText).returns(sExpectedText);
+			sandbox.stub(oRtaTextResources, "getText").withArgs("CTX_ADDIFRAME", [sText]).returns(sExpectedText);
 
 			this.oButtonOverlay.setDesignTimeMetadata({
 				actions: {

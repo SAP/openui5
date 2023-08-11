@@ -217,8 +217,8 @@ sap.ui.define([
 				`TXT_CHANGEVISUALIZATION_CHANGE_${
 				 sCommandName.toUpperCase()}`
 			);
-			sDescriptionText = oRtaResourceBundle.getText(sChangeTextKey, sShortenedElementLabel);
-			sDescriptionTooltip = oRtaResourceBundle.getText(sChangeTextKey, sElementLabel);
+			sDescriptionText = oRtaResourceBundle.getText(sChangeTextKey, [sShortenedElementLabel]);
+			sDescriptionTooltip = oRtaResourceBundle.getText(sChangeTextKey, [sElementLabel]);
 		}
 		sDescriptionTooltip = sDescriptionText.length < sDescriptionTooltip.length ? sDescriptionTooltip : null;
 		var sDetailButtonText = oDescription && oDescription.buttonText;

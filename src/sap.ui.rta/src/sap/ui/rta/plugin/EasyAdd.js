@@ -162,7 +162,7 @@ sap.ui.define([
 		oHtmlButtonOuter.setAttribute("draggable", "true");
 		oHtmlButtonOuter.setAttribute("tabindex", -1);
 		oOverlay._oAddButton = new Button(sId, {
-			text: oTextResources.getText("CTX_ADD_ELEMENTS", sControlName),
+			text: oTextResources.getText("CTX_ADD_ELEMENTS", [sControlName]),
 			icon: "sap-icon://add",
 			enabled: bIsEditable
 		})

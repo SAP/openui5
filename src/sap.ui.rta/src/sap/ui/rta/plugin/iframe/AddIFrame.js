@@ -22,7 +22,7 @@ sap.ui.define([
 	function getCreateMenuItemText(sAggregationName, sTextKey, oTextResources, oOverlay) {
 		var bSibling = !sAggregationName;
 		var oAction = this.getCreateAction(bSibling, oOverlay, sAggregationName);
-		return oTextResources.getText(sTextKey, oAction.text);
+		return oTextResources.getText(sTextKey, [oAction.text]);
 	}
 
 	function getAddIFrameCommand(oModifiedElement, mSettings, oDesignTimeMetadata, sVariantManagementKey) {

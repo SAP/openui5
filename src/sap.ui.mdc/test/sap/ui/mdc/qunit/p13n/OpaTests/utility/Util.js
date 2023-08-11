@@ -47,7 +47,7 @@ sap.ui.define([
 	};
 
 	Util.getTextFromResourceBundle = function(sLibraryName, sTextKey, iCount) {
-		return Core.getLibraryResourceBundle(sLibraryName).getText(sTextKey, iCount);
+		return Core.getLibraryResourceBundle(sLibraryName).getText(sTextKey, [iCount]);
 	};
 
 	Util.getTextOfChartType = function(sChartType) {

@@ -482,9 +482,9 @@ sap.ui.define([
 		}
 	};
 
-	Menu.prototype._getResourceText = function(sText, vValue) {
+	Menu.prototype._getResourceText = function(sText, aValue) {
 		this.oResourceBundle = this.oResourceBundle ? this.oResourceBundle : sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		return sText ? this.oResourceBundle.getText(sText, vValue) : this.oResourceBundle;
+		return sText ? this.oResourceBundle.getText(sText, aValue) : this.oResourceBundle;
 	};
 
 	var mSortOrder = {};

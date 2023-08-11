@@ -401,7 +401,7 @@ sap.ui.define([
 
 	AppVariantUtils.getText = function(sMessageKey, sText) {
 		var oTextResources = this.getTextResources();
-		return sText ? oTextResources.getText(sMessageKey, sText) : oTextResources.getText(sMessageKey);
+		return sText ? oTextResources.getText(sMessageKey, [sText]) : oTextResources.getText(sMessageKey);
 	};
 
 	AppVariantUtils._getErrorMessageText = function(oError) {

@@ -1257,9 +1257,9 @@ sap.ui.define([
 		return oAvailableRoles[sKey];
 	};
 
-	ChartItemPanel.prototype._getResourceTextMDC = function(sText, vValue) {
+	ChartItemPanel.prototype._getResourceTextMDC = function(sText, aValue) {
 		this.oResourceBundleMDC = this.oResourceBundleMDC ? this.oResourceBundleMDC : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		return sText ? this.oResourceBundleMDC.getText(sText, vValue) : this.oResourceBundleMDC;
+		return sText ? this.oResourceBundleMDC.getText(sText, aValue) : this.oResourceBundleMDC;
 	};
 
 	ChartItemPanel.prototype.exit = function() {

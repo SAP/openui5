@@ -545,7 +545,7 @@ sap.ui.define([
 		oTA.onfocusin();
 
 		// assertions
-		assert.strictEqual(oCounter.text(), oBundle.getText(sMessageBundleKey, 13), "the counter content is correct");
+		assert.strictEqual(oCounter.text(), oBundle.getText(sMessageBundleKey, [13]), "the counter content is correct");
 
 		qutils.triggerEvent("paste", oTA.getFocusDomRef(), {
 			originalEvent: {
@@ -570,7 +570,7 @@ sap.ui.define([
 		assert.strictEqual(oTA.getValue(), sInitValue + sPasteText, "The Textarea value is correct");
 
 		assert.strictEqual(oCounterStyle.visibility, "visible", "The counter is visible");
-		assert.strictEqual(oCounter.text(), oBundle.getText(sMessageBundleKey, 37), "The counter content is correct");
+		assert.strictEqual(oCounter.text(), oBundle.getText(sMessageBundleKey, [37]), "The counter content is correct");
 
 		// cleanup
 		oTA.destroy();

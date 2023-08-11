@@ -73,11 +73,11 @@ sap.ui.define([
 				oContext = oSelected.getBindingContext();
 				sUserName = oContext.getProperty("UserName");
 				oContext.delete().then(function () {
-					MessageToast.show(this._getText("deletionSuccessMessage", sUserName));
+					MessageToast.show(this._getText("deletionSuccessMessage", [sUserName]));
 				}.bind(this), function (oError) {
 					this._setUIChanges();
 					if (oError.canceled) {
-						MessageToast.show(this._getText("deletionRestoredMessage", sUserName));
+						MessageToast.show(this._getText("deletionRestoredMessage", [sUserName]));
 						return;
 					}
 					MessageBox.error(oError.message + ": " + sUserName);

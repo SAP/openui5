@@ -250,7 +250,7 @@ sap.ui.define([
 					return DtUtil.waitForSynced(this.oDesignTime, fnReturnOverlay)();
 				}.bind(this))
 				.then(function(oOverlay) {
-					var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", "I18N_KEY_USER_FRIENDLY_CONTROL_NAME");
+					var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", ["I18N_KEY_USER_FRIENDLY_CONTROL_NAME"]);
 					assert.equal(this.oPlugin.getContextMenuText(test.sibling, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
 					assert.ok(this.oPlugin.isAvailable([oOverlay], test.sibling), "then the action is available");
 					assert.notOk(this.oPlugin.isEnabled([oOverlay], test.sibling, sAggregationName), "then the action is disabled");
@@ -982,7 +982,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.then(function() {
-				var sExpectedText = oOriginalRTATexts.getText("HEADER_ADDITIONAL_ELEMENTS", "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL");
+				var sExpectedText = oOriginalRTATexts.getText("HEADER_ADDITIONAL_ELEMENTS", ["I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"]);
 				assert.equal(this.oDialog.getTitle(), sExpectedText, "then the translated title is properly set");
 			}.bind(this));
 		});
