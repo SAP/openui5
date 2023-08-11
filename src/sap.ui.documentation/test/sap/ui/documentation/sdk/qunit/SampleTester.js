@@ -176,8 +176,7 @@ sap.ui.define([
 				var done = assert.async();
 
 				Component.create({
-					name: sampleConfig.id,
-					manifest: false
+					name: sampleConfig.id
 				}).then(function(oComponent) {
 					// if root control is a view, wait for it being loaded
 					if ( oComponent.getRootControl() && typeof oComponent.getRootControl().loaded === "function" ) {
