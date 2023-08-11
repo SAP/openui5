@@ -32,6 +32,10 @@ sap.ui.define(function () {
 			autostart : true
 		},
 		tests : {
+			// SyncPromise coverage only via this testsuite:
+			// resources/sap/ui/test/starter/Test.qunit.html
+			// ?testsuite=test-resources/sap/ui/core/qunit/internal/testsuite.feature-odata-v4.qunit
+			// &test=SyncPromise&coverage
 			"SyncPromise" : {
 				module : ["sap/ui/core/qunit/util/SyncPromise.qunit"]
 			},

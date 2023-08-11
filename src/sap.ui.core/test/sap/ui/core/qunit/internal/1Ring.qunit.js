@@ -1,24 +1,23 @@
 /*!
 * ${copyright}
 */
-/*global QUnit */
-/* eslint-disable max-nested-callbacks */
 
-QUnit.config.autostart = false;
-
-// Note: to cover "sap/ui/base", this MUST happen after "qunit-coverage-istanbul.js" is included!
-sap.ui.require([
-	"sap/ui/core/Core"
-], function (Core) {
+(function () {
 	"use strict";
+	/*global QUnit */
+	/* eslint-disable max-nested-callbacks */
 
-	Core.boot();
+	QUnit.config.autostart = false;
 
-	// Note: cannot require these above as data-sap-ui-resourceroots is ignored until boot
-	sap.ui.require([
-		"sap/ui/core/qunit/internal/testsuite.feature-odata-v4.qunit",
+	const aRequires = [
+		"sap/ui/core/Core",
 		"sap/ui/core/qunit/odata/v4/testsuite.odatav4.qunit"
-	], function (...aSuites) {
+	];
+	if (window.location.pathname.includes("1Ring")) {
+		aRequires.push("sap/ui/core/qunit/internal/testsuite.feature-odata-v4.qunit");
+	}
+
+	sap.ui.require(aRequires, function (Core, ...aSuites) {
 		const aModules = [];
 
 		aSuites.forEach((oSuite) => {
@@ -39,4 +38,4 @@ sap.ui.require([
 			});
 		});
 	});
-});
+}());
