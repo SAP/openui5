@@ -1474,7 +1474,7 @@ sap.ui.define([
 	};
 
 	DynamicPageTitle.prototype._updateARIAState = function (bExpanded) {
-		var sARIAText = this._getARIALabelReferences(bExpanded) || DynamicPageTitle.DEFAULT_HEADER_TEXT_ID,
+		var sARIAText = this._getARIALabelReferences(bExpanded),
 			$oFocusSpan = this._getFocusSpan();
 
 		if ($oFocusSpan) {
@@ -1500,7 +1500,7 @@ sap.ui.define([
 			sReferences += sTitleId || oHeading.getId();
 		}
 
-		return sReferences;
+		return sReferences || DynamicPageTitle.DEFAULT_HEADER_TEXT_ID;
 	};
 
 	DynamicPageTitle.prototype._focus = function () {

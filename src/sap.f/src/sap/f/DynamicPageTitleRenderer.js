@@ -23,7 +23,7 @@ sap.ui.define([
 		var oDynamicPageTitleState = oDynamicPageTitle._getState(),
 			sSapFDynamicPageTitle = "sapFDynamicPageTitle",
 			sBackgroundDesign = oDynamicPageTitle.getBackgroundDesign(),
-			sLabelledBy = oDynamicPageTitle._getARIALabelReferences(oDynamicPageTitle._bExpandedState) || oDynamicPageTitle.DEFAULT_HEADER_TEXT_ID,
+			sLabelledBy = oDynamicPageTitle._getARIALabelReferences(oDynamicPageTitle._bExpandedState),
 			sDescribedBy = oDynamicPageTitle._getAriaDescribedByReferences();
 
 		// DynamicPageTitle Root DOM Element.
