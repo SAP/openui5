@@ -76,6 +76,7 @@ sap.ui.define([
 		this._bNameLengthRestricted = false;
 		this._bSizeRestricted = false;
 		this._bMediaTypeRestricted = false;
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
     };
 
     UploadSetTableItem.prototype.onBeforeRendering = function () {
