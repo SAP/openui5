@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericHeaderRenderer",
 	"sap/f/cards/NumericSideIndicator",
+	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/LoadingProvider"
@@ -16,6 +17,7 @@ sap.ui.define([
 	FNumericHeader,
 	FNumericHeaderRenderer,
 	NumericSideIndicator,
+	Text,
 	JSONModel,
 	BindingResolver,
 	LoadingProvider
@@ -78,6 +80,21 @@ sap.ui.define([
 			if (mConfiguration.sideIndicators) {
 				mSettings.sideIndicators = mConfiguration.sideIndicators.map(function (mIndicator) { // TODO validate that it is an array and with no more than 2 elements
 					return new NumericSideIndicator(mIndicator);
+				});
+			}
+
+			if (mConfiguration.banner) {
+				mSettings.bannerLines = mConfiguration.banner.map(function (mBannerLine) { // TODO validate that it is an array and with no more than 2 elements
+					var oBannerLine = new Text({
+						text: mBannerLine.text,
+						visible: mBannerLine.visible
+					});
+
+					if (mBannerLine.diminished) {
+						oBannerLine.addStyleClass("sapFCardHeaderBannerLineDiminished");
+					}
+
+					return oBannerLine;
 				});
 			}
 

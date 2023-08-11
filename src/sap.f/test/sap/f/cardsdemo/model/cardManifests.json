@@ -13,7 +13,16 @@
 					"status": {
 						"text": "Count"
 					},
-					"dataTimestamp": "{parameters>/NOW_ISO}"
+					"dataTimestamp": "{parameters>/NOW_ISO}",
+					"banner": [
+						{
+							"text": "APP SHORTCUT",
+							"diminished": true
+						},
+						{
+							"text": "SYSTEM INFO"
+						}
+					]
 				},
 				"type": "List",
 				"content": {}
@@ -533,6 +542,15 @@
 							"title": "Deviation",
 							"number": "{deviation/number}",
 							"unit": "%"
+						}
+					],
+					"banner": [
+						{
+							"text": "{= ${appInfo}.toUpperCase()}",
+							"diminished": true
+						},
+						{
+							"text": "{= ${systemInfo}.toUpperCase()}"
 						}
 					]
 				},

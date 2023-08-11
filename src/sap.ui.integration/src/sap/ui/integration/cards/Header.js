@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/f/cards/Header",
 	"sap/f/cards/HeaderRenderer",
 	"sap/m/library",
+	"sap/m/Text",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/LoadingProvider",
@@ -20,6 +21,7 @@ sap.ui.define([
 	FHeader,
 	FHeaderRenderer,
 	mLibrary,
+	Text,
 	BindingHelper,
 	BindingResolver,
 	LoadingProvider,
@@ -84,6 +86,21 @@ sap.ui.define([
 			if (mSettings.iconSrc) {
 				mSettings.iconSrc = BindingHelper.formattedProperty(mSettings.iconSrc, function (sValue) {
 					return oIconFormatter.formatSrc(sValue);
+				});
+			}
+
+			if (mConfiguration.banner) {
+				mSettings.bannerLines = mConfiguration.banner.map(function (mBannerLine) { // TODO validate that it is an array and with no more than 2 elements
+					var oBannerLine = new Text({
+						text: mBannerLine.text,
+						visible: mBannerLine.visible
+					});
+
+					if (mBannerLine.diminished) {
+						oBannerLine.addStyleClass("sapFCardHeaderBannerLineDiminished");
+					}
+
+					return oBannerLine;
 				});
 			}
 
