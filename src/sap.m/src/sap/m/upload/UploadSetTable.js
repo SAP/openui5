@@ -359,6 +359,7 @@ sap.ui.define([
 		this._setDragDropConfig();
         this._filesTobeUploaded = [];
 		this._filePreviewDialogControl = null;
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
     };
 
 	UploadSetTable.prototype.onBeforeRendering = function() {
@@ -835,8 +836,8 @@ sap.ui.define([
 			this._illustratedMessage = new IllustratedMessage({
 				illustrationType: IllustratedMessageType.UploadCollection,
 				illustrationSize: IllustratedMessageSize.Spot,
-				title: this.getNoDataText() ? this.getNoDataText() : "No Data Available",
-				description: this.getNoDataDescription() ? this.getNoDataDescription() : "Drag and Drop files here to upload"
+				title: this.getNoDataText() ? this.getNoDataText() : this._oRb.getText("UPLOADSET_WITH_TABLE_NO_DATA_TEXT"),
+				description: this.getNoDataDescription() ? this.getNoDataDescription() : this._oRb.getText("UPLOADSET_WITH_TABLE_NO_DATA_DESCRIPTION")
 			});
 		}
 
