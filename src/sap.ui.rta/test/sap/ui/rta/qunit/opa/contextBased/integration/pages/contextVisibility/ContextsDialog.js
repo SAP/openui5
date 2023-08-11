@@ -80,7 +80,7 @@ sap.ui.define([
 						},
 						searchOpenDialogs: true,
 						success: function() {
-							Opa5.assert.ok(true, "I see role title: " + sRoleTitle);
+							Opa5.assert.ok(true, `I see role title: ${sRoleTitle}`);
 						}
 					});
 				}

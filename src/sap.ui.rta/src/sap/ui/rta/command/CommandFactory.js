@@ -403,7 +403,7 @@ sap.ui.define([
 		var mAllFlexSettings = mFlexSettings;
 
 		if (!mCommand) {
-			return Promise.reject(DtUtil.createError("CommandFactory#getCommandFor", "Command '" + sCommand + "' doesn't exist, check typing", "sap.ui.rta"));
+			return Promise.reject(DtUtil.createError("CommandFactory#getCommandFor", `Command '${sCommand}' doesn't exist, check typing`, "sap.ui.rta"));
 		}
 
 		return new Promise(function(fnResolve) {
@@ -556,7 +556,7 @@ sap.ui.define([
 		if (mFlexSettings.scenario || mFlexSettings.baseId) {
 			var sLRepRootNamespace = FlexUtils.buildLrepRootNamespace(mFlexSettings.baseId, mFlexSettings.scenario, mFlexSettings.projectId);
 			mFlexSettings.rootNamespace = sLRepRootNamespace;
-			mFlexSettings.namespace = sLRepRootNamespace + "changes/";
+			mFlexSettings.namespace = `${sLRepRootNamespace}changes/`;
 		}
 
 		return getCommandFor(vElement, sCommand, mSettings, oDesignTimeMetadata, mFlexSettings);

@@ -26,8 +26,8 @@ sap.ui.define([
 			});
 			var sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test/rtaOpenUI5Only");
 
-			oMockServer.simulate(sResourcePath + "/mockserver/metadata.xml", {
-				sMockdataBaseUrl: sResourcePath + "/mockserver",
+			oMockServer.simulate(`${sResourcePath}/mockserver/metadata.xml`, {
+				sMockdataBaseUrl: `${sResourcePath}/mockserver`,
 				bGenerateMissingMockData: true
 			});
 

@@ -101,7 +101,7 @@ sap.ui.define([
 				this.oCommandStack.pushAndExecute(oRemoveCommand);
 			}.bind(this))
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -130,7 +130,7 @@ sap.ui.define([
 			var aInputs = [this.oInput1, this.oInput2];
 			this.oCommandStack.attachCommandExecuted(function(oEvent) {
 				var bFirstCommand = oEvent.getParameter("command").getElement() === aInputs[0];
-				assert.ok(bFirstCommand, "then command number " + (iCounter + 1) + " gets executed");
+				assert.ok(bFirstCommand, `then command number ${iCounter + 1} gets executed`);
 				iCounter++;
 
 				if (iCounter === 2) {
@@ -155,7 +155,7 @@ sap.ui.define([
 				return this.oCommandStack.pushAndExecute(oRemoveCommand);
 			}.bind(this))
 			.catch(function(oError) {
-				assert.ok(true, "catch has be called during execution of second command - Error: " + oError);
+				assert.ok(true, `catch has be called during execution of second command - Error: ${oError}`);
 				assert.equal(this.oCommandStack._toBeExecuted, -1, "the Variable '_toBeExecuted' is not descreased a second time");
 				done();
 			}.bind(this));

@@ -75,7 +75,7 @@ sap.ui.define([
 			),
 			descriptionTooltip: aLabels
 			.map(function(sLabel) {
-				return "\"" + sLabel + "\"";
+				return `"${sLabel}"`;
 			})
 			.join(",\n")
 		};

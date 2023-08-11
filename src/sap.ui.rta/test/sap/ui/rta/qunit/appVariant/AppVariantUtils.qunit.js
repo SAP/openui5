@@ -420,7 +420,7 @@ sap.ui.define([
 
 			oError.iamAppId = "Test IAM error message";
 			sErrorMessage = AppVariantUtils._getErrorMessageText(oError);
-			assert.strictEqual(sErrorMessage, "IAM App Id: " + oError.iamAppId, "then the error message with IAM AppID is returned");
+			assert.strictEqual(sErrorMessage, `IAM App Id: ${oError.iamAppId}`, "then the error message with IAM AppID is returned");
 			delete oError.iamAppId;
 
 			oError.stack = "Error: this is test stack message";

@@ -40,7 +40,7 @@ sap.ui.define([
 				},
 				iPressOnAdaptUi: function(bPersonalize) {
 					var sButtonType = bPersonalize ? "PERSONALIZE" : "RTA";
-					var sId = sButtonType + "_Plugin_ActionButton";
+					var sId = `${sButtonType}_Plugin_ActionButton`;
 					return this.waitFor({
 						controlType: "sap.m.StandardListItem",
 						matchers: function(oListItem) {
@@ -286,7 +286,7 @@ sap.ui.define([
 								actions: new Press(),
 								success: function(aButtons) {
 									Opa5.assert.ok(aButtons.length > 0,
-										"Messagebox closed with click on '" + oResources.getText(sButtonTextKey) + "' ");
+										`Messagebox closed with click on '${oResources.getText(sButtonTextKey)}' `);
 								}
 							});
 						}
@@ -301,7 +301,7 @@ sap.ui.define([
 						},
 						success: function(aOverlays) {
 							var oOverlay = aOverlays[0];
-							var sQueryString = "#" + oOverlay.getId() + "-DeleteIcon";
+							var sQueryString = `#${oOverlay.getId()}-DeleteIcon`;
 							oOverlay.getDomRef().querySelector(sQueryString).click();
 						},
 						errorMessage: "Did not find the Remove Button on the section"
@@ -316,7 +316,7 @@ sap.ui.define([
 						},
 						success: function(aOverlays) {
 							var oOverlay = aOverlays[0];
-							var sQueryString = "#" + oOverlay.getId() + "-AddButton";
+							var sQueryString = `#${oOverlay.getId()}-AddButton`;
 							oOverlay.getDomRef().querySelector(sQueryString).click();
 						},
 						errorMessage: "Did not find the Add Button on the section"
@@ -561,7 +561,7 @@ sap.ui.define([
 							oMenu[0].getItems().forEach(function(oItem) {
 								aIsContextEntries.push(oItem.getText());
 							});
-							Opa5.assert.deepEqual(aIsContextEntries, aContextEntries, "expected [" + aContextEntries + "] context entries found");
+							Opa5.assert.deepEqual(aIsContextEntries, aContextEntries, `expected [${aContextEntries}] context entries found`);
 						},
 						errorMessage: "Did not find the Context Menu entries"
 					});
@@ -579,7 +579,7 @@ sap.ui.define([
 									iItems++;
 								}
 							});
-							Opa5.assert.deepEqual(iActions, iItems, "expected " + iItems + " context entries found");
+							Opa5.assert.deepEqual(iActions, iItems, `expected ${iItems} context entries found`);
 						},
 						errorMessage: "Did not find the Context Menu entries"
 					});

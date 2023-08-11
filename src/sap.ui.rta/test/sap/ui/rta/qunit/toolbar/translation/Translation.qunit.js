@@ -30,11 +30,11 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	function getDownloadDialogControl(oToolbar, sId) {
-		return sap.ui.getCore().byId(oToolbar.getId() + "_download_translation_fragment--" + sId);
+		return sap.ui.getCore().byId(`${oToolbar.getId()}_download_translation_fragment--${sId}`);
 	}
 
 	function getUploadDialogControl(oToolbar, sId) {
-		return sap.ui.getCore().byId(oToolbar.getId() + "_upload_translation_fragment--" + sId);
+		return sap.ui.getCore().byId(`${oToolbar.getId()}_upload_translation_fragment--${sId}`);
 	}
 
 	QUnit.module("Given a Toolbar with a translation extension", {

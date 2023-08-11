@@ -84,9 +84,9 @@ sap.ui.define([
 		},
 
 		_createResourceBundle: function() {
-			sModulePath = sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/") + "webapp";
+			sModulePath = `${sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/")}webapp`;
 			oI18n = ResourceBundle.create({
-				url: sModulePath + "/i18n/i18n.properties"
+				url: `${sModulePath}/i18n/i18n.properties`
 			});
 		},
 
@@ -213,7 +213,7 @@ sap.ui.define([
 			var sItemPath = "";
 
 			while (oItem instanceof MenuItem) {
-				sItemPath = oItem.getText() + " > " + sItemPath;
+				sItemPath = `${oItem.getText()} > ${sItemPath}`;
 				oItem = oItem.getParent();
 			}
 

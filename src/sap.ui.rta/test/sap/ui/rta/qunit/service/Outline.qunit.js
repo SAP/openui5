@@ -551,7 +551,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 

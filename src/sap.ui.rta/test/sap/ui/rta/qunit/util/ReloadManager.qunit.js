@@ -526,7 +526,7 @@ sap.ui.define([
 		QUnit.test("with USER layer", function(assert) {
 			FlexRuntimeInfoAPI.getFlexReference.returns("flexReference");
 			ReloadManager.enableAutomaticStart(Layer.USER, {});
-			var sValue = window.sessionStorage.getItem("sap.ui.rta.restart." + Layer.USER);
+			var sValue = window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.USER}`);
 			assert.strictEqual(sValue, "flexReference", "the value is correct");
 			assert.strictEqual(ReloadManager.needsAutomaticStart(Layer.USER), true, "restart is needed in the USER layer");
 			assert.strictEqual(ReloadManager.needsAutomaticStart(Layer.CUSTOMER), false, "restart is not needed in a different layer");
@@ -538,8 +538,8 @@ sap.ui.define([
 
 		QUnit.test("without reference", function(assert) {
 			ReloadManager.enableAutomaticStart(Layer.CUSTOMER, {});
-			window.sessionStorage.getItem("sap.ui.rta.restart." + Layer.CUSTOMER);
-			var sValue = window.sessionStorage.getItem("sap.ui.rta.restart." + Layer.CUSTOMER);
+			window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.CUSTOMER}`);
+			var sValue = window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.CUSTOMER}`);
 			assert.strictEqual(sValue, "true", "the value is correct");
 		});
 	});

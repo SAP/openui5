@@ -288,7 +288,7 @@ sap.ui.define([
 				assert.strictEqual(oStub2.callCount, 1, "fireElementModified is called once with correct arguments");
 			})
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 

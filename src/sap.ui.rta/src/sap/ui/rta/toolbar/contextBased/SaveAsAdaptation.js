@@ -67,7 +67,7 @@ sap.ui.define([
 		if (!this._oAddAdaptationDialogPromise) {
 			this._oAddAdaptationDialogPromise = Fragment.load({
 				name: "sap.ui.rta.toolbar.contextBased.SaveAsAdaptationDialog",
-				id: this.getToolbar().getId() + "_fragment--sapUiRta_addAdaptationDialog",
+				id: `${this.getToolbar().getId()}_fragment--sapUiRta_addAdaptationDialog`,
 				controller: {
 					onAdaptationTitleChange: onAdaptationTitleChange.bind(this),
 					onSaveAsAdaptation: onSaveAsAdaptation.bind(this),
@@ -177,7 +177,7 @@ sap.ui.define([
 				if (oResponse.status === 200) {
 					this.oAdaptationsModel.updateAdaptationContent(oContextBasedAdaptation);
 					Measurement.end("onCBAUpdateAdaptation");
-					Measurement.getActive() && Log.info("onCBAUpdateAdaptation: " + Measurement.getMeasurement("onCBAUpdateAdaptation").time + " ms");
+					Measurement.getActive() && Log.info(`onCBAUpdateAdaptation: ${Measurement.getMeasurement("onCBAUpdateAdaptation").time} ms`);
 				}
 			}.bind(this, oContextBasedAdaptation))
 			.catch(function(oError) {
@@ -198,7 +198,7 @@ sap.ui.define([
 				BusyIndicator.hide();
 				this.getToolbar().fireEvent("switchAdaptation", {adaptationId: oContextBasedAdaptation.id, trigger: "SaveAs"});
 				Measurement.end("onCBASaveAsAdaptation");
-				Measurement.getActive() && Log.info("onCBASaveAsAdaptation: " + Measurement.getMeasurement("onCBASaveAsAdaptation").time + " ms");
+				Measurement.getActive() && Log.info(`onCBASaveAsAdaptation: ${Measurement.getMeasurement("onCBASaveAsAdaptation").time} ms`);
 			}.bind(this)).catch(function(oError) {
 				BusyIndicator.hide();
 				Log.error(oError.stack);

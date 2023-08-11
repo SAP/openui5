@@ -87,7 +87,7 @@ sap.ui.define([
 						},
 						searchOpenDialogs: true,
 						success: function() {
-							Opa5.assert.ok(true, "I see role title: " + sRoleTitle);
+							Opa5.assert.ok(true, `I see role title: ${sRoleTitle}`);
 						}
 					});
 				},
@@ -99,7 +99,7 @@ sap.ui.define([
 							id: "contextSharing---ContextVisibility--restrictedToolbar"
 						},
 						success: function(aControls) {
-							Opa5.assert.equal(aControls.length, iExpectedRoleLength, "I see expected assigned context role count of " + iExpectedRoleLength);
+							Opa5.assert.equal(aControls.length, iExpectedRoleLength, `I see expected assigned context role count of ${iExpectedRoleLength}`);
 						}
 					});
 				}

@@ -88,7 +88,7 @@ sap.ui.define([
 
 	EasyRemove.prototype._addButton = function(oOverlay) {
 		var bEnabled = this.isEnabled([oOverlay]);
-		var sId = oOverlay.getId() + "-DeleteIcon";
+		var sId = `${oOverlay.getId()}-DeleteIcon`;
 		var oHtmlIconWrapper = document.createElement("div");
 		oHtmlIconWrapper.classList.add("sapUiRtaPersDeleteClick");
 		oHtmlIconWrapper.setAttribute("draggable", "true");

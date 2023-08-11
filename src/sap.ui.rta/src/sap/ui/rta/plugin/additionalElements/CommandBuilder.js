@@ -60,9 +60,9 @@ sap.ui.define([
 			if (oMoveCommandForInvisible) {
 				oCompositeCommand.addCommand(oMoveCommandForInvisible);
 			} else {
-				Log.warning("No move action configured for "
-						+ mParents.parent.getMetadata().getName()
-						+ ", aggregation: " + oSelectedElement.aggregation, "sap.ui.rta");
+				Log.warning(`No move action configured for ${
+						 mParents.parent.getMetadata().getName()
+						 }, aggregation: ${oSelectedElement.aggregation}`, "sap.ui.rta");
 			}
 			return oCompositeCommand;
 		});
@@ -276,7 +276,7 @@ sap.ui.define([
 								createCommandsForAddViaDelegate.bind(this, mPropertyBag));
 							break;
 						default:
-							Log.error("Can't create command for untreated element.type " + oSelectedElement.type);
+							Log.error(`Can't create command for untreated element.type ${oSelectedElement.type}`);
 					}
 				}, this);
 				return oPromise.then(function() { return oCompositeCommand; });

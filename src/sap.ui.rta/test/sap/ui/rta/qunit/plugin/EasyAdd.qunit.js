@@ -96,7 +96,7 @@ sap.ui.define([
 		QUnit.test("when an ObjectPageSection is rendered and the EasyAddPlugin is used on the Layout", function(assert) {
 			var done = assert.async();
 
-			var oButton = oCore.byId(this.oLayoutOverlay.getId() + "-AddButton");
+			var oButton = oCore.byId(`${this.oLayoutOverlay.getId()}-AddButton`);
 			assert.ok(oButton.getVisible(), "then the Add-Button of the Layout is displayed");
 
 			this.oEasyAddPlugin.getDialog().attachOpened(function() {
@@ -112,7 +112,7 @@ sap.ui.define([
 
 		QUnit.test("when an ObjectPageSection is rendered and the EasyAddPlugin is used on the Section", function(assert) {
 			var done = assert.async();
-			var oButton = oCore.byId(this.oSectionOverlay.getId() + "-AddButton");
+			var oButton = oCore.byId(`${this.oSectionOverlay.getId()}-AddButton`);
 			assert.ok(oButton.getVisible(), "then the Add-Button of the Layout is displayed");
 
 			this.oEasyAddPlugin.getDialog().attachOpened(function() {
@@ -127,8 +127,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the second section gets added and removed", function(assert) {
-			var oButton = oCore.byId(this.oLayoutOverlay.getId() + "-AddButton");
-			var oButton2 = oCore.byId(this.oSectionOverlay.getId() + "-AddButton");
+			var oButton = oCore.byId(`${this.oLayoutOverlay.getId()}-AddButton`);
+			var oButton2 = oCore.byId(`${this.oSectionOverlay.getId()}-AddButton`);
 
 			assert.ok(oButton.getVisible(), "then the Add-Button on the layout is still there");
 			assert.ok(oButton.getEnabled(), "then the Button is enabled");
@@ -208,7 +208,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the ObjectPageLayout has no Sections initially", function(assert) {
-			var oButton = oCore.byId(this.oLayoutOverlay.getId() + "-AddButton");
+			var oButton = oCore.byId(`${this.oLayoutOverlay.getId()}-AddButton`);
 			assert.ok(oButton.getVisible(), "then the Add-Button is displayed on the layout");
 			assert.notOk(oButton.getEnabled(), "then the Add-Button is disabled");
 		});
@@ -250,7 +250,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when an ObjectPageSection is rendered and the EasyAddPlugin is used", function(assert) {
-			var oButton = oCore.byId(this.oSectionOverlay.getId() + "-AddButton");
+			var oButton = oCore.byId(`${this.oSectionOverlay.getId()}-AddButton`);
 			assert.notOk(oButton, "then the Add-Button is not displayed");
 		});
 	});

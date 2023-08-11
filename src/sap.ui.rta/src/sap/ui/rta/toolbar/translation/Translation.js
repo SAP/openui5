@@ -33,8 +33,8 @@ sap.ui.define([
 		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		Log.error(sErrorMessage);
-		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
-			+ oTextResources.getText("MSG_ERROR_REASON", sErrorMessage);
+		var sMsg = `${oTextResources.getText("MSG_LREP_TRANSFER_ERROR")}\n${
+			 oTextResources.getText("MSG_ERROR_REASON", sErrorMessage)}`;
 		MessageBox.error(sMsg, {
 			styleClass: Utils.getRtaStyleClassName()
 		});
@@ -72,7 +72,7 @@ sap.ui.define([
 		var oModel = oEvent.getSource().getModel("translation");
 		var sSourceLanguage = oModel.getProperty("/sourceLanguage");
 		var sTargetLanguage = oModel.getProperty("/targetLanguage");
-		var sFileName = sSourceLanguage + "_" + sTargetLanguage + "_" + "TranslationXLIFF";
+		var sFileName = `${sSourceLanguage}_${sTargetLanguage}_` + `TranslationXLIFF`;
 
 		var mPropertyBag = {
 			layer: Layer.CUSTOMER,
@@ -104,7 +104,7 @@ sap.ui.define([
 	Translation.prototype._createDownloadTranslationDialog = function() {
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.translation.DownloadTranslationDialog",
-			id: this.getToolbar().getId() + "_download_translation_fragment",
+			id: `${this.getToolbar().getId()}_download_translation_fragment`,
 			controller: {
 				onDownloadFile: downloadFile.bind(this),
 				onCancelDownloadDialog: function() {
@@ -120,7 +120,7 @@ sap.ui.define([
 	};
 
 	Translation.prototype._createUploadTranslationDialog = function() {
-		var sUploadId = this.getToolbar().getId() + "_upload_translation_fragment";
+		var sUploadId = `${this.getToolbar().getId()}_upload_translation_fragment`;
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.translation.UploadTranslationDialog",
 			id: sUploadId,
@@ -129,7 +129,7 @@ sap.ui.define([
 					this._oUploadDialog.close();
 				}.bind(this),
 				formatUploadEnabled: function() {
-					var oFileUploader = sap.ui.getCore().byId(sUploadId + "--fileUploader");
+					var oFileUploader = sap.ui.getCore().byId(`${sUploadId}--fileUploader`);
 					return oFileUploader.checkFileReadable();
 				},
 				saveFiles: function(oEvent) {
@@ -146,7 +146,7 @@ sap.ui.define([
 	};
 
 	function handleUploadPress(sUploadId) {
-		var oFileUploader = sap.ui.getCore().byId(sUploadId + "--fileUploader");
+		var oFileUploader = sap.ui.getCore().byId(`${sUploadId}--fileUploader`);
 		oFileUploader.checkFileReadable().then(function() {
 			if (this._oTranslationModel.getProperty("/file")) {
 				var mPropertyBag = {

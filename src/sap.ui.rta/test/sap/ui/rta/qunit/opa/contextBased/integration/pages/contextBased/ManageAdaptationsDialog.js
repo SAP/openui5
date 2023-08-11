@@ -85,7 +85,7 @@ sap.ui.define([
 							controlType: "sap.m.ColumnListItem",
 							bindingPath: {
 								modelName: "contextBased",
-								path: "/adaptations/" + parseInt(iPriority - 1)
+								path: `/adaptations/${parseInt(iPriority - 1)}`
 							},
 							ancestor: {
 								controlType: "sap.m.Table",
@@ -246,7 +246,7 @@ sap.ui.define([
 							Opa5.assert.equal(sTitle, sExpectedTitle, "I see correct context-based adaptation title");
 							if (iRoleCount) {
 								var sRoleAndCountryDescription = aCells[2].getText();
-								var sExpectedSubstring = iRoleCount === 1 ? iRoleCount + " Role" : iRoleCount + " Roles";
+								var sExpectedSubstring = iRoleCount === 1 ? `${iRoleCount} Role` : `${iRoleCount} Roles`;
 								Opa5.assert.equal(true, sRoleAndCountryDescription.includes(sExpectedSubstring), "I see correct assigned role count");
 							}
 						}
@@ -263,7 +263,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function(vControl) {
 							var oControl = vControl[0] || vControl;
-							Opa5.assert.strictEqual(oControl.getProperty("enabled"), bIsEnabled, "I see save button with enabled status: " + bIsEnabled);
+							Opa5.assert.strictEqual(oControl.getProperty("enabled"), bIsEnabled, `I see save button with enabled status: ${bIsEnabled}`);
 							if (bIsEnabled) {
 								Opa5.assert.strictEqual(oControl.getAggregation("tooltip"), null, "I see the save button with no tooltip");
 							} else {
@@ -292,7 +292,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.m.Text",
 						bindingPath: {
-							path: "/adaptations/" + iColumnRow,
+							path: `/adaptations/${iColumnRow}`,
 							propertyPath: sPropertyPath,
 							modelName: "contextBased"
 						},
@@ -317,7 +317,7 @@ sap.ui.define([
 							Opa5.assert.equal(aTables.length, 2, "Dialog should have 2 tables");
 							var oDefaultTable = aTables.find(function(oTable) { return oTable.getId().endsWith("defaultContext"); });
 							Opa5.assert.ok(oDefaultTable, "Default context table with id='defaultContext' exists");
-							Opa5.assert.equal(oDefaultTable.getVisible(), bIsVisible, "The visibility of default context table should be:" + bIsVisible);
+							Opa5.assert.equal(oDefaultTable.getVisible(), bIsVisible, `The visibility of default context table should be:${bIsVisible}`);
 						}
 					});
 				},
@@ -331,7 +331,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.equal(oControl.getEnabled(), bIsEnabled, "The enablement of the move up button should be: " + bIsEnabled);
+							Opa5.assert.equal(oControl.getEnabled(), bIsEnabled, `The enablement of the move up button should be: ${bIsEnabled}`);
 						}
 					});
 				},
@@ -345,7 +345,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.equal(oControl.getEnabled(), bIsEnabled, "The enablement of the move Down button should be: " + bIsEnabled);
+							Opa5.assert.equal(oControl.getEnabled(), bIsEnabled, `The enablement of the move Down button should be: ${bIsEnabled}`);
 						}
 					});
 				},
@@ -362,7 +362,7 @@ sap.ui.define([
 							var oManageAdaptationsTable = vControls[0] || vControls;
 							var oDragAndDropConfig = oManageAdaptationsTable.getDragDropConfig()[0];
 							Opa5.assert.ok(oDragAndDropConfig, "Drag&Drop config for table with id='manageAdaptationsTable' exists");
-							Opa5.assert.equal(oDragAndDropConfig.getEnabled(), bIsEnabled, "The enablement of the drag&drop should be: " + bIsEnabled);
+							Opa5.assert.equal(oDragAndDropConfig.getEnabled(), bIsEnabled, `The enablement of the drag&drop should be: ${bIsEnabled}`);
 						}
 					});
 				},
@@ -404,7 +404,7 @@ sap.ui.define([
 							var sSelectedContextPath = oManageAdaptationsTable.getSelectedContextPaths()[0];
 							var iIndexOfAdaptation = sSelectedContextPath.split("/")[sSelectedContextPath.split("/").length - 1];
 							var sTitleOfSelectedAdaptation = oManageAdaptationsTable.getModel("contextBased").getData().adaptations[iIndexOfAdaptation].title;
-							Opa5.assert.equal(sTitleOfSelectedAdaptation, sTitle, "The selected adaptation should be: " + sTitleOfSelectedAdaptation);
+							Opa5.assert.equal(sTitleOfSelectedAdaptation, sTitle, `The selected adaptation should be: ${sTitleOfSelectedAdaptation}`);
 						}
 					});
 				},

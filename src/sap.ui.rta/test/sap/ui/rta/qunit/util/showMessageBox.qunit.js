@@ -52,7 +52,7 @@ function(
 		var aMessageBoxTypes = ["show", "alert", "confirm", "error", "information", "success", "warning"];
 
 		aMessageBoxTypes.forEach(function(sType) {
-			QUnit.test("call with a link - " + sType, function(assert) {
+			QUnit.test(`call with a link - ${sType}`, function(assert) {
 				var fnDone = assert.async();
 				var sMessageWithLink = "My [custom](http://example.com/) message";
 				var messageBoxSpy = sandbox.spy(MessageBox, sType);

@@ -119,7 +119,7 @@ sap.ui.define([
 				return oAddLibraryCommand.execute();
 			})
 			.catch(function(e) {
-				assert.ok(e, "then trying to load a non-existing library causes the error " + e);
+				assert.ok(e, `then trying to load a non-existing library causes the error ${e}`);
 			});
 		});
 	});

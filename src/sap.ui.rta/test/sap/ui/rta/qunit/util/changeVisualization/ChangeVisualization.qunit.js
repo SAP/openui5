@@ -603,7 +603,7 @@ sap.ui.define([
 			oGetCommandNameStub.callsFake(function(sChangeType, oElement, sAggregationName) {
 				// For simplicity, lookup known change types by element id
 				// and combination of aggregation name and change type name
-				var sIdentifier = (sAggregationName ? sAggregationName + " " : "") + sChangeType;
+				var sIdentifier = (sAggregationName ? `${sAggregationName} ` : "") + sChangeType;
 				var oMockResponse = ({
 					// Case 1: Command is defined on the element itself
 					ctdbutton1: {
@@ -1148,8 +1148,8 @@ sap.ui.define([
 				var iXPosIndicator2 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].x);
 				assert.ok(
 					(iYPosIndicator1 === iYPosIndicator2) && (iXPosIndicator1 < iXPosIndicator2),
-					"When two indicators have the same Y-Position, the X-Position is used for sort" +
-					iYPosIndicator1 + iXPosIndicator1 + iYPosIndicator2 + iXPosIndicator2
+					`When two indicators have the same Y-Position, the X-Position is used for sort${
+						iYPosIndicator1}${iXPosIndicator1}${iYPosIndicator2}${iXPosIndicator2}`
 				);
 
 				assert.ok(

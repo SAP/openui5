@@ -177,10 +177,10 @@ sap.ui.define([
 
 			return oAppVariantManager.createAllInlineChanges(oAppVariantData, oAppComponent)
 			.then(function(aAllInlineChanges) {
-				assert.equal(fnCreateChangesSpy.callCount, aAllInlineChanges.length, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
+				assert.equal(fnCreateChangesSpy.callCount, aAllInlineChanges.length, `then ChangesWriteAPI.create method is called ${fnCreateChangesSpy.callCount} times`);
 				aAllInlineChanges.forEach(function(oInlineChange) {
 					var sChangeType = oInlineChange._oInlineChange.getMap().changeType;
-					assert.equal(includes(DescriptorChangeTypes.getChangeTypes(), sChangeType), true, "then inline change " + sChangeType + " got successfully created");
+					assert.equal(includes(DescriptorChangeTypes.getChangeTypes(), sChangeType), true, `then inline change ${sChangeType} got successfully created`);
 				});
 				assert.equal(aAllInlineChanges.some(function(oInlineChange) {
 					var sChangeType = oInlineChange._oInlineChange.getMap().changeType;

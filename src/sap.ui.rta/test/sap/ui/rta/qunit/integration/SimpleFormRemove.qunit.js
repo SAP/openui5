@@ -39,7 +39,7 @@ sap.ui.define([
 
 		var oCommandFactory = new CommandFactory();
 
-		QUnit.module("Given the SimpleForm in RTA using " + oSimpleFormLayout, {
+		QUnit.module(`Given the SimpleForm in RTA using ${oSimpleFormLayout}`, {
 			beforeEach: function(assert) {
 				oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
@@ -127,7 +127,7 @@ sap.ui.define([
 			var aFormContainers = [];
 
 			for (var i = 0; i <= 3; i++) {
-				sID = "qunit-fixture--Group" + i;
+				sID = `qunit-fixture--Group${i}`;
 				oElementGroup = oCore.byId(oComponent.createId(sID));
 				oElementOverlay = OverlayRegistry.getOverlay(oElementGroup.getParent());
 				aElements.push(oElementOverlay);

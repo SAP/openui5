@@ -34,7 +34,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	function getToolbarRelatedControl(oToolbar, sControlID) {
-		return oToolbar.getControl("addAdaptationDialog--" + sControlID);
+		return oToolbar.getControl(`addAdaptationDialog--${sControlID}`);
 	}
 
 	function getControl(sId) {

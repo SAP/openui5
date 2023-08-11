@@ -28,7 +28,7 @@ sap.ui.define([
 	var ValueState = coreLibrary.ValueState;
 	var _oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 	var _sDocumentationURL = "https://help.sap.com/docs/search?q=Embedding%20Content%20%28Object%20Pages%29";
-	var _sDocumentationHTML = _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_TEXT") + " (" + "<a href=" + _sDocumentationURL + ">" + _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_LINKTEXT") + "</a>" + ")";
+	var _sDocumentationHTML = `${_oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_TEXT")} (` + `<a href=${_sDocumentationURL}>${_oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_LINKTEXT")}</a>` + `)`;
 	var _mText = {
 		dialogTitle: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TITLE"),
 		dialogCreateTitle: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TITLE"),
@@ -244,7 +244,7 @@ sap.ui.define([
 			.map(function(sUserSetting) {
 				return {
 					label: sUserSetting,
-					key: "{$user>/" + sUserSetting + "}",
+					key: `{$user>/${sUserSetting}}`,
 					value: oUserInfo[sUserSetting]
 				};
 			});
@@ -259,7 +259,7 @@ sap.ui.define([
 				.map(function(sProperty) {
 					return {
 						label: sProperty,
-						key: "{" + sProperty + "}",
+						key: `{${sProperty}}`,
 						value: oDefaultBoundObject[sProperty]
 					};
 				});

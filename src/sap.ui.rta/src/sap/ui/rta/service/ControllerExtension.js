@@ -38,13 +38,13 @@ sap.ui.define([
 			return new Promise(function(resolve, reject) {
 				var sUrl;
 				jQuery.ajax({
-					url: sUrl = sap.ui.require.toUrl(sPath) + ".js",
+					url: sUrl = `${sap.ui.require.toUrl(sPath)}.js`,
 					async: true,
 					success: function(data) {
 						resolve(data);
 					},
 					error: function(xhr, textStatus, error) {
-						var oError = new Error("resource " + sPath + " could not be loaded from " + sUrl + ". Check for 'file not found' or parse errors. Reason: " + error);
+						var oError = new Error(`resource ${sPath} could not be loaded from ${sUrl}. Check for 'file not found' or parse errors. Reason: ${error}`);
 						oError.status = textStatus;
 						oError.error = error;
 						oError.statusCode = xhr.status;
@@ -124,7 +124,7 @@ sap.ui.define([
 					}
 
 					var sControllerExtensionTemplatePath = oViewOverlay.getDesignTimeMetadata().getControllerExtensionTemplate();
-					return makeAjaxCall(sControllerExtensionTemplatePath + "-dbg")
+					return makeAjaxCall(`${sControllerExtensionTemplatePath}-dbg`)
 					.catch(function() {
 						return makeAjaxCall(sControllerExtensionTemplatePath);
 					});

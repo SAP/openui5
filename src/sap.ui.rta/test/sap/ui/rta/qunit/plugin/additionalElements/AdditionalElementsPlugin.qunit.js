@@ -537,7 +537,7 @@ sap.ui.define([
 		].forEach(function(test) {
 			var sPrefix = test.sibling ? "On sibling: " : "On child: ";
 
-			QUnit.test(sPrefix + "when the control's dt metadata has NO addViaDelegate and a reveal action", function(assert) {
+			QUnit.test(`${sPrefix}when the control's dt metadata has NO addViaDelegate and a reveal action`, function(assert) {
 				var done = assert.async();
 
 				function fnExecuteAssertions(oEvent) {
@@ -582,7 +582,7 @@ sap.ui.define([
 				}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "when the control's dt metadata has NO addViaDelegate or reveal add actions", function(assert) {
+			QUnit.test(`${sPrefix}when the control's dt metadata has NO addViaDelegate or reveal add actions`, function(assert) {
 				var fnElementModifiedStub = sandbox.stub();
 				this.oPlugin.attachEventOnce("elementModified", fnElementModifiedStub);
 				var sAggregationName = test.sibling ? "content" : "contentLeft";
@@ -602,7 +602,7 @@ sap.ui.define([
 				}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "when the control's dt metadata has only an add via delegate action", function(assert) {
+			QUnit.test(`${sPrefix}when the control's dt metadata has only an add via delegate action`, function(assert) {
 				var done = assert.async();
 				sandbox.stub(RTAPlugin.prototype, "getVariantManagementReference").returns(sVariantManagementReference);
 				var sAggregationName = "contentLeft";
@@ -669,13 +669,13 @@ sap.ui.define([
 					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
 					assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 					var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function(oElement, iIndex) {
-						return oElement.label === "delegate" + iIndex;
+						return oElement.label === `delegate${iIndex}`;
 					});
 					assert.ok(bValidDialogElements, "then all elements in the dialog are valid");
 				}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "when the control's dt metadata has only an add via delegate action and a default delegate is available", function(assert) {
+			QUnit.test(`${sPrefix}when the control's dt metadata has only an add via delegate action and a default delegate is available`, function(assert) {
 				var done = assert.async();
 				var sChangeType = "addFields";
 				var sAggregationName = "contentLeft";
@@ -743,12 +743,12 @@ sap.ui.define([
 					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
 					assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 					var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function(oElement, iIndex) {
-						return oElement.label === "delegate" + iIndex;
+						return oElement.label === `delegate${iIndex}`;
 					});
 					assert.ok(bValidDialogElements, "then all elements in the dialog are valid");
 				}.bind(this));
 			});
-			QUnit.test(sPrefix + "when the control's dt metadata has addViaDelegate with a valid delegate configured", function(assert) {
+			QUnit.test(`${sPrefix}when the control's dt metadata has addViaDelegate with a valid delegate configured`, function(assert) {
 				var done = assert.async();
 				var sChangeType = "addFields";
 				var sAggregationName = "contentLeft";
@@ -777,13 +777,13 @@ sap.ui.define([
 					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
 					assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 					var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function(oElement, iIndex) {
-						return oElement.label === "delegate" + iIndex;
+						return oElement.label === `delegate${iIndex}`;
 					});
 					assert.ok(bValidDialogElements, "then all elements in the dialog are valid");
 				}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "when the control's dt metadata has addViaDelegate with an invalid delegate configured", function(assert) {
+			QUnit.test(`${sPrefix}when the control's dt metadata has addViaDelegate with an invalid delegate configured`, function(assert) {
 				var done = assert.async();
 				var sChangeType = "addFields";
 				var sDelegatePath = "misconfigured/module/path";
@@ -1560,8 +1560,8 @@ sap.ui.define([
 					entityType: "Header"
 				}
 			};
-			this.STUB_EXTENSIBILITY_USHELL_URL = "someURLToCheckOurParameterPassing:"
-				+ JSON.stringify(this.STUB_EXTENSIBILITY_USHELL_PARAMS);
+			this.STUB_EXTENSIBILITY_USHELL_URL = `someURLToCheckOurParameterPassing:${
+				 JSON.stringify(this.STUB_EXTENSIBILITY_USHELL_PARAMS)}`;
 
 			givenSomeBoundControls.call(this, assert);
 
@@ -1589,7 +1589,7 @@ sap.ui.define([
 			.then(function() {
 				assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
 				assert.ok(fnServiceUpToDateStub.notCalled, "up to date service is not called");
-				var oCustomFieldButton = oCore.byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
+				var oCustomFieldButton = oCore.byId(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
 				assert.equal(oCustomFieldButton.getVisible(), false, "then the button to create custom fields is not shown");
 			}.bind(this));
 		});
@@ -1612,7 +1612,7 @@ sap.ui.define([
 			.then(function() {
 				assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
 				assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addViaDelegate is dependent on up to date service, it should be called with a control");
-				var oCustomFieldButton = oCore.byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
+				var oCustomFieldButton = oCore.byId(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
 				assert.equal(oCustomFieldButton.getVisible(), false, "the Button to create custom Fields is not shown");
 			}.bind(this));
 		});
@@ -1636,7 +1636,7 @@ sap.ui.define([
 
 			.then(function() {
 				assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
-				var oCustomFieldButton = oCore.byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
+				var oCustomFieldButton = oCore.byId(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
 				assert.equal(oCustomFieldButton.getVisible(), true, "the Button to create custom Fields is shown");
 			}.bind(this));
 		});
@@ -1708,7 +1708,7 @@ sap.ui.define([
 
 			.then(function() {
 				assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addViaDelegate is dependent on up to date service, it should be called with a control");
-				var oBCContainer = oCore.byId(this.oDialog.getId() + "--" + "rta_businessContextContainer");
+				var oBCContainer = oCore.byId(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
 				assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
 				assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
 				assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
@@ -1746,7 +1746,7 @@ sap.ui.define([
 
 				.then(function() {
 					assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
-					var oBCContainer = oCore.byId(this.oDialog.getId() + "--" + "rta_businessContextContainer");
+					var oBCContainer = oCore.byId(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
 					assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
 					assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
 					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);

@@ -238,11 +238,11 @@ sap.ui.define([
 			["variant management is modified", true, "enabled"],
 			["variant management is not modified", false, "disabled"]
 		].forEach(function(obj) {
-			QUnit.test("when isVariantSaveEnabled is called with VariantManagement overlay and " + obj[0], function(assert) {
+			QUnit.test(`when isVariantSaveEnabled is called with VariantManagement overlay and ${obj[0]}`, function(assert) {
 				this.oModel.oData[this.sLocalVariantManagementId].modified = obj[1];
 				this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 				var bVMEnabled = this.oControlVariantPlugin.isVariantSaveEnabled([this.oVariantManagementOverlay]);
-				assert.strictEqual(bVMEnabled, obj[1], "then variant save is " + obj[2] + " for VariantManagement control");
+				assert.strictEqual(bVMEnabled, obj[1], `then variant save is ${obj[2]} for VariantManagement control`);
 			});
 		});
 
@@ -978,7 +978,7 @@ sap.ui.define([
 
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("Modified Source Variant Title Copy");
 			sandbox.stub(this.oModel, "getCurrentVariantReference").returns("varMgtKey");
-			this.oControlVariantPlugin.setOldValue(sExistingVariantTitle + " Copy");
+			this.oControlVariantPlugin.setOldValue(`${sExistingVariantTitle} Copy`);
 			oCore.applyChanges();
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
@@ -1169,7 +1169,7 @@ sap.ui.define([
 				this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
 				var oEditableWrapperDOM = this.oVariantManagementOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
-				assert.equal(oEditableWrapperDOM.getBoundingClientRect().width + "px", sInnerControlOverlayWidth, "then correct width is set for the editable field wrapper, outer control width not considered");
+				assert.equal(`${oEditableWrapperDOM.getBoundingClientRect().width}px`, sInnerControlOverlayWidth, "then correct width is set for the editable field wrapper, outer control width not considered");
 			}.bind(this));
 		});
 

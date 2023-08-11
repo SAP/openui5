@@ -28,7 +28,7 @@ sap.ui.define([
 	"use strict";
 	function setTableModelData(oModel, sResourcePath) {
 		var xhr = new XMLHttpRequest();
-		xhr.open("GET", sResourcePath + "/TableData.json", true);
+		xhr.open("GET", `${sResourcePath}/TableData.json`, true);
 		xhr.onload = function() {
 			if (xhr.readyState === 4) {
 				if (xhr.status >= 200 && xhr.status < 400) {
@@ -81,7 +81,7 @@ sap.ui.define([
 						}
 						// else if *Other types can be inserted here, like Annotations*
 						oMockServer.start();
-						Log.info("Running the app with mock data for " + property);
+						Log.info(`Running the app with mock data for ${property}`);
 
 						if (property === "mainService") {
 							var oModel;
@@ -113,7 +113,7 @@ sap.ui.define([
 							this.oView.setModel(oStateModel, "state");
 							this.oView.bindElement("/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')");
 
-							return fetch(this._sResourcePath + "/countriesExtendedCollection.json")
+							return fetch(`${this._sResourcePath}/countriesExtendedCollection.json`)
 							.then(function(oResponse) {
 								return oResponse.json();
 							}).then(function(oJson) {
@@ -132,7 +132,7 @@ sap.ui.define([
 							}
 						}
 					} else {
-						Log.error("Running the app with mock data for " + property);
+						Log.error(`Running the app with mock data for ${property}`);
 					}
 				}
 			}
@@ -366,7 +366,7 @@ sap.ui.define([
 		},
 
 		sampleFormatter: function(sValue) {
-			return "This text was changed by a formatter: " + (sValue && sValue.toUpperCase());
+			return `This text was changed by a formatter: ${sValue && sValue.toUpperCase()}`;
 		}
 	});
 });

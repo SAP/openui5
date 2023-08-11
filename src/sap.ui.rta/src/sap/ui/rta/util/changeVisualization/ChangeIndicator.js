@@ -130,7 +130,7 @@ sap.ui.define([
 				}
 				oRm.openEnd();
 				if (sTooltip) {
-					oRm.openStart("span", oControl.getId() + "-tooltip");
+					oRm.openStart("span", `${oControl.getId()}-tooltip`);
 					oRm.class("sapUiInvisibleText");
 					oRm.openEnd();
 					oRm.text(sTooltip);
@@ -214,8 +214,8 @@ sap.ui.define([
 		} else {
 			var sShortenedElementLabel = ChangeVisualizationUtils.shortenString(sElementLabel);
 			var sChangeTextKey = (
-				"TXT_CHANGEVISUALIZATION_CHANGE_"
-				+ sCommandName.toUpperCase()
+				`TXT_CHANGEVISUALIZATION_CHANGE_${
+				 sCommandName.toUpperCase()}`
 			);
 			sDescriptionText = oRtaResourceBundle.getText(sChangeTextKey, sShortenedElementLabel);
 			sDescriptionTooltip = oRtaResourceBundle.getText(sChangeTextKey, sElementLabel);
@@ -223,8 +223,8 @@ sap.ui.define([
 		sDescriptionTooltip = sDescriptionText.length < sDescriptionTooltip.length ? sDescriptionTooltip : null;
 		var sDetailButtonText = oDescription && oDescription.buttonText;
 		var sIconTooltip = oRtaResourceBundle.getText(
-			"TXT_CHANGEVISUALIZATION_OVERVIEW_"
-			+ mChangeInformation.changeCategory.toUpperCase()
+			`TXT_CHANGEVISUALIZATION_OVERVIEW_${
+			 mChangeInformation.changeCategory.toUpperCase()}`
 		);
 
 		return {
@@ -403,7 +403,7 @@ sap.ui.define([
 			this._iOldTabIndex = this.getDomRef().getAttribute("tabindex");
 			Fragment.load({
 				name: "sap.ui.rta.util.changeVisualization.ChangeIndicatorPopover",
-				id: this.sId + "Info",
+				id: `${this.sId}Info`,
 				controller: this
 			}).then(function(oPopover) {
 				oPopover._bOpenedByChangeIndicator = true;

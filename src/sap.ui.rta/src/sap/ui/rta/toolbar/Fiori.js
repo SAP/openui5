@@ -78,10 +78,10 @@ function(
 
 				// first control is the left HBox
 				this.getControl("iconBox").addItem(
-					new Image(this.getId() + "_fragment--sapUiRta_icon", {
+					new Image(`${this.getId()}_fragment--sapUiRta_icon`, {
 						src: sLogoPath,
-						width: iWidth ? iWidth + "px" : iWidth,
-						height: iHeight ? iHeight + "px" : iHeight
+						width: iWidth ? `${iWidth}px` : iWidth,
+						height: iHeight ? `${iHeight}px` : iHeight
 					})
 				);
 			}
@@ -106,8 +106,8 @@ function(
 		if (iWidth !== iNaturalWidth || iHeight !== iNaturalHeight) {
 			Log.error([
 				"sap.ui.rta: please check Fiori Launchpad logo, expected size is",
-				iWidth + "x" + iHeight + ",",
-				"but actual is " + iNaturalWidth + "x" + iNaturalHeight
+				`${iWidth}x${iHeight},`,
+				`but actual is ${iNaturalWidth}x${iNaturalHeight}`
 			].join(" "));
 		}
 	};

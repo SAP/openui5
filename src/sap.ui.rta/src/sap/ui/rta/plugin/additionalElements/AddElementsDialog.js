@@ -95,7 +95,7 @@ sap.ui.define([
 
 			// retrieve List to set the sorting for the 'items' aggregation, since sap.ui.model.Sorter
 			// does not support binding to a model property...
-			this._oList = sap.ui.getCore().byId(this.getId() + "--rta_addElementsDialogList");
+			this._oList = sap.ui.getCore().byId(`${this.getId()}--rta_addElementsDialogList`);
 			this._bDescendingSortOrder = false;
 		}.bind(this));
 	};

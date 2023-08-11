@@ -360,8 +360,8 @@ sap.ui.define([
 			this.oOutsideDom = document.createElement("button");
 			document.getElementById("qunit-fixture").append(this.oOutsideDom);
 
-			this.oInsideDom.style.marginBottom = document.getElementById("qunit-fixture").clientHeight + "px";
-			this.oInsideDom.style.marginRight = document.getElementById("qunit-fixture").clientWidth + "px";
+			this.oInsideDom.style.marginBottom = `${document.getElementById("qunit-fixture").clientHeight}px`;
+			this.oInsideDom.style.marginRight = `${document.getElementById("qunit-fixture").clientWidth}px`;
 			this.oInsideDom.style.marginTop = "10px";
 		},
 		afterEach: function() {
@@ -661,7 +661,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("called with 'warning' and some actions (with emphasizedAction and without cancel)", function(assert) {
 			sandbox.stub(this.oRtaMessageBundle, "getText").callsFake(function(sKey) {
-				return sKey + "_Text";
+				return `${sKey}_Text`;
 			});
 			this.oWarningStub.callsFake(function(sText, mOptions) {
 				mOptions.onClose("ACTIONKEY_Text");
@@ -710,7 +710,7 @@ sap.ui.define([
 
 		QUnit.test("called with 'error' and some actions (without emphasized action and with cancel)", function(assert) {
 			sandbox.stub(this.oRtaMessageBundle, "getText").callsFake(function(sKey) {
-				return sKey + "_Text";
+				return `${sKey}_Text`;
 			});
 			this.oErrorStub.callsFake(function(sText, mOptions) {
 				mOptions.onClose("ACTIONKEY_Text");

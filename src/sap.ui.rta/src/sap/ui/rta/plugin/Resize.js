@@ -186,7 +186,7 @@ sap.ui.define([
 		// Initially set the current size of the element
 		var iNewWidth = getWidth(oOverlay);
 		// Place the middle of the handle on the mouse position
-		oHandle.style[sBeginDirection] = (iMousePosition - iOverlayBoundary) * iDirectionFactor - iHalfOffsetWidth + "px";
+		oHandle.style[sBeginDirection] = `${(iMousePosition - iOverlayBoundary) * iDirectionFactor - iHalfOffsetWidth}px`;
 
 		this.setDragging(true);
 		oOverlay.focus();
@@ -199,7 +199,7 @@ sap.ui.define([
 			var iHandleExtensionHeight = oAction.getHandleExtensionHeight(oElement);
 			oExtension = document.createElement("div");
 			oExtension.className = HANDLE_EXTENSION_CLASS_NAME;
-			oExtension.style.height = iHandleExtensionHeight + "px";
+			oExtension.style.height = `${iHandleExtensionHeight}px`;
 			oExtension.style["pointer-events"] = "none";
 		}
 
@@ -215,7 +215,7 @@ sap.ui.define([
 			iNewWidth = this._limitNewWidth(oOverlay, iNewWidth);
 
 			// The middle of the handle is on the mouse cursor
-			oHandle.style[sBeginDirection] = iNewWidth - oHandle.offsetWidth + "px";
+			oHandle.style[sBeginDirection] = `${iNewWidth - oHandle.offsetWidth}px`;
 		}
 
 		function onMouseUp() {
@@ -302,7 +302,7 @@ sap.ui.define([
 			var oNewHandle = document.createElement("div");
 			oNewHandle.className = HANDLE_CLASS_NAME;
 			oOverlayDomElement.append(oNewHandle);
-			oNewHandle.style[sBeginDirection] = oOverlayDomElement.clientWidth - oNewHandle.clientWidth + "px";
+			oNewHandle.style[sBeginDirection] = `${oOverlayDomElement.clientWidth - oNewHandle.clientWidth}px`;
 			oNewHandle.style["z-index"] = ZIndexManager.getNextZIndex();
 			oNewHandle.addEventListener("mousedown", this._onHandleMouseDown.bind(this, oOverlay));
 			this.setHandle(oNewHandle);

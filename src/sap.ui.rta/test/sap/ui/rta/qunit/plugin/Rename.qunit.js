@@ -537,7 +537,7 @@ sap.ui.define([
 		QUnit.test("when the title is not on the currently visible viewport and gets renamed", function(assert) {
 			var oButtonDom = this.oButton.getDomRef();
 			var oLabelDom = this.oLabel.getDomRef();
-			oButtonDom.style.marginBottom = document.documentElement.clientHeight + "px";
+			oButtonDom.style.marginBottom = `${document.documentElement.clientHeight}px`;
 			var oScrollSpy = sinon.spy(oLabelDom, "scrollIntoView");
 
 			return triggerAndWaitForStartEdit(this.oRenamePlugin, this.oLayoutOverlay).then(function() {

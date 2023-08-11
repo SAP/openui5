@@ -74,7 +74,7 @@ sap.ui.define([
 						}
 						// else if *Other types can be inserted here, like Annotations*
 						oMockServer.start();
-						Log.info("Running the app with mock data for " + property);
+						Log.info(`Running the app with mock data for ${property}`);
 
 						if (property === "mainService") {
 							var oModel;
@@ -106,7 +106,7 @@ sap.ui.define([
 							this._dataPromise = fnGetDataPromise(oView);
 						}
 					} else {
-						Log.error("Running the app with mock data for " + property);
+						Log.error(`Running the app with mock data for ${property}`);
 					}
 				}
 			}
@@ -117,7 +117,7 @@ sap.ui.define([
 				var sUriParam = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-ccf");
 				startAdaptation({
 					rootControl: oCore.byId("Comp1---idMain1"),
-					customFieldUrl: this._sResourcePath + "/testdata/rta/CustomField.html",
+					customFieldUrl: `${this._sResourcePath}/testdata/rta/CustomField.html`,
 					showCreateCustomField: sUriParam === "true",
 					stop: function() {
 						this.destroy();

@@ -289,7 +289,7 @@ sap.ui.define([
 						submenu: formatSubMenuItems(oSettingsAction.submenu)
 					});
 				} else {
-					BaseLog.warning("Handler not found for settings action '" + sSettingsAction + "' or relevant container has no stable id");
+					BaseLog.warning(`Handler not found for settings action '${sSettingsAction}' or relevant container has no stable id`);
 				}
 			}, this);
 		}
@@ -301,7 +301,7 @@ sap.ui.define([
 		if (aSubMenu) {
 			return aSubMenu.map(function(oSubMenu, iIndex) {
 				return {
-					id: oSubMenu.key || sPluginId + "_SUB_" + iIndex,
+					id: oSubMenu.key || `${sPluginId}_SUB_${iIndex}`,
 					icon: oSubMenu.icon || "blank",
 					text: oSubMenu.name || "",
 					enabled: oSubMenu.hasOwnProperty("enabled") ? oSubMenu.enabled : true

@@ -64,7 +64,7 @@ sap.ui.define([
 				// ... Reject if publishing return an error or is locked
 				}).catch(function(oError) {
 					var sText = bAppVarCreation ? "creation" : "deletion";
-					Log.error("Catalog publishing failed for app variant " + sText + ". AppVarStatus is " + oError.message);
+					Log.error(`Catalog publishing failed for app variant ${sText}. AppVarStatus is ${oError.message}`);
 					reject({ iamAppId: sIamAppId, error: oError.message});
 				});
 			}
@@ -77,7 +77,7 @@ sap.ui.define([
 	S4HanaCloudBackend._isAppReady = function(oAppStatusResponse, bAppVarCreation) {
 		var aCatalogList = oAppStatusResponse.data.results;
 		if (!Array.isArray(aCatalogList)) {
-			throw new Error(oAppStatusResponse.requestUri + " returned unexpected result: " + oAppStatusResponse);
+			throw new Error(`${oAppStatusResponse.requestUri} returned unexpected result: ${oAppStatusResponse}`);
 		}
 
 		var bIsUnpublished = aCatalogList.every(function(oCatalog) {
@@ -133,7 +133,7 @@ sap.ui.define([
 				reject(oError);
 			};
 
-			oModel.read("/aps_iam_app_ddl('" + sIamAppId + "')/to_BusinessCatalogAssignment", {success: fnSuccess, error: fnFailure});
+			oModel.read(`/aps_iam_app_ddl('${sIamAppId}')/to_BusinessCatalogAssignment`, {success: fnSuccess, error: fnFailure});
 		});
 	};
 

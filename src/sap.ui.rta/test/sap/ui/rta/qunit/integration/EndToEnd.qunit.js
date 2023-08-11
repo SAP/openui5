@@ -119,7 +119,11 @@ sap.ui.define([
 								oCommandStack.attachModified(function() {
 									var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 									if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "rename") {
-										assert.strictEqual(this.oCompanyCodeField._getLabel().getText(), sText, "then label of the group element is " + sText);
+										assert.strictEqual(
+											this.oCompanyCodeField._getLabel().getText(),
+											sText,
+											`then label of the group element is ${sText}`
+										);
 										var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oControl}).length;
 										assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 										fnResolveOnCommandAdded();
@@ -127,14 +131,16 @@ sap.ui.define([
 								}.bind(this));
 							}.bind(this)),
 							new Promise(function(fnResolveWhenRenamed) {
-								oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function(sChannel, sEvent, mParams) {
-									if (mParams.overlay === this.oCompanyCodeFieldOverlay) {
-										assert.strictEqual(document.activeElement, this.oCompanyCodeFieldOverlay.getDomRef(), " and focus is on field overlay");
-										var aEditableFields = Array.from(oFieldOverlay.querySelectorAll(".sapUiRtaEditableField"));
-										assert.strictEqual(aEditableFields.length, 0, " and the editable field is removed from dom");
-										fnResolveWhenRenamed();
-									}
-								}, this);
+								oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit",
+									function(sChannel, sEvent, mParams) {
+										if (mParams.overlay === this.oCompanyCodeFieldOverlay) {
+											assert.strictEqual(document.activeElement, this.oCompanyCodeFieldOverlay.getDomRef(),
+												" and focus is on field overlay");
+											var aEditableFields = Array.from(oFieldOverlay.querySelectorAll(".sapUiRtaEditableField"));
+											assert.strictEqual(aEditableFields.length, 0, " and the editable field is removed from dom");
+											fnResolveWhenRenamed();
+										}
+									}, this);
 							}.bind(this))
 						]).then(function() {
 							stubShowMessageBoxOnRtaClose(this.oRta);
@@ -182,9 +188,17 @@ sap.ui.define([
 
 									var oGroupElements = this.oGeneralGroup.getGroupElements();
 									var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
-									assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
+									assert.equal(
+										oGroupElements[iIndex].getLabelText(),
+										oFieldToAdd.label,
+										"the added element is at the correct position"
+									);
 									assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
-									assert.equal(this.oBoundButton35Field.__label, oFieldToAdd.label, "the new field is the one that got deleted");
+									assert.equal(
+										this.oBoundButton35Field.__label,
+										oFieldToAdd.label,
+										"the new field is the one that got deleted"
+									);
 									iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 									assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
 									stubShowMessageBoxOnRtaClose(this.oRta);
@@ -196,11 +210,12 @@ sap.ui.define([
 										fnDone();
 									});
 								}
+								return undefined;
 							}.bind(this));
 
 							// select the field in the list and close the dialog with OK
 							oFieldToAdd.selected = true;
-							var oOkButton = oCore.byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
+							var oOkButton = oCore.byId(`${oDialog.getId()}--rta_addDialogOkButton`);
 							QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 							oCore.applyChanges();
 						}.bind(this));
@@ -264,7 +279,7 @@ sap.ui.define([
 					// select the field in the list and close the dialog with OK
 					oFieldToAdd.focus();
 					QUnitUtils.triggerKeydown(oFieldToAdd.getDomRef(), KeyCodes.ENTER, false, false, false);
-					var oOkButton = oCore.byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
+					var oOkButton = oCore.byId(`${oDialog.getId()}--rta_addDialogOkButton`);
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 					oCore.applyChanges();
 				}.bind(this));
@@ -297,6 +312,7 @@ sap.ui.define([
 						fnDone();
 					});
 				}
+				return undefined;
 			}.bind(this));
 
 			this.oVictimOverlay.focus();
@@ -316,7 +332,11 @@ sap.ui.define([
 				if (oFirstExecutedCommand &&
 					oFirstExecutedCommand.getName() === "move") {
 					var iIndex = 0;
-					assert.equal(this.oDatesGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved to first place");
+					assert.equal(
+						this.oDatesGroup.getGroupElements()[iIndex].getId(),
+						this.oCompanyCodeField.getId(),
+						" then the field is moved to first place"
+					);
 					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 					assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 					stubShowMessageBoxOnRtaClose(this.oRta);
@@ -327,6 +347,7 @@ sap.ui.define([
 						fnDone();
 					});
 				}
+				return undefined;
 			}.bind(this));
 
 			var oCutPastePlugin = this.oRta.getPlugins().cutPaste;
@@ -370,7 +391,11 @@ sap.ui.define([
 						new Promise(function(fnResolveWhenRenamed) {
 							oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function(sChannel, sEvent, mParams) {
 								if (mParams.overlay === this.oDatesGroupOverlay) {
-									assert.strictEqual(this.oDatesGroupOverlay.getDomRef(), document.activeElement, " and focus is on group overlay");
+									assert.strictEqual(
+										this.oDatesGroupOverlay.getDomRef(),
+										document.activeElement,
+										" and focus is on group overlay"
+									);
 									aEditableFields = Array.from(oGroupOverlay.querySelectorAll(".sapUiRtaEditableField"));
 									assert.strictEqual(aEditableFields.length, 0, " and the editable field is removed from dom");
 									fnResolveWhenRenamed();
@@ -432,11 +457,12 @@ sap.ui.define([
 								fnDone();
 							});
 						}
+						return undefined;
 					}.bind(this));
 
 					// select the field in the list and close the dialog with OK
 					oFieldToAdd.selected = true;
-					var oOkButton = oCore.byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
+					var oOkButton = oCore.byId(`${oDialog.getId()}--rta_addDialogOkButton`);
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 					oCore.applyChanges();
 				}.bind(this));

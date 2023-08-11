@@ -107,7 +107,7 @@ function(
 				label: "Some Label",
 				visible: false,
 				fields: [
-					new Input({value: "{" + sModelName + ">Property02}"})
+					new Input({value: `{${sModelName}>Property02}`})
 				]
 			});
 			var oForm = new Form({
@@ -124,7 +124,7 @@ function(
 							new FormElement({
 								id: "visible",
 								fields: [
-									new Input({value: "{" + sModelName + ">Property01}"})
+									new Input({value: `{${sModelName}>Property01}`})
 								]
 							}),
 							oInvisibleElement

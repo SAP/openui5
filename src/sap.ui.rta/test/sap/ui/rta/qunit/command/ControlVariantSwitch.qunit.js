@@ -72,7 +72,7 @@ sap.ui.define([
 				}, "then updateCurrentVariant after undo command is called with the correct parameters");
 			}.bind(this))
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -155,7 +155,7 @@ sap.ui.define([
 				assert.equal(this.oUpdateCurrentVariantStub.callCount, 0, "then updateCurrentVariant after undo command is not called");
 			}.bind(this))
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 	});

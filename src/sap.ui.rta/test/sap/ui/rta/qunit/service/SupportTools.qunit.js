@@ -394,9 +394,9 @@ sap.ui.define([
 					var aCollectedTableData = oEvent.data.content;
 					assert.strictEqual(aCollectedTableData.length, aTableMockData.length, "correct number of overlays is collected");
 					for (var iIndex = 0; iIndex < aCollectedTableData.length; iIndex++) {
-						assert.strictEqual(aCollectedTableData[iIndex].id, aTableMockData[iIndex].id, "the entry number " + (iIndex + 1) + " has the correct id");
-						assert.strictEqual(aCollectedTableData[iIndex].elementId, aTableMockData[iIndex].elementId, "the entry number " + (iIndex + 1) + " has the correct elementId");
-						assert.strictEqual(aCollectedTableData[iIndex].visible, aTableMockData[iIndex].visible, "the entry number " + (iIndex + 1) + " has the correct visible status");
+						assert.strictEqual(aCollectedTableData[iIndex].id, aTableMockData[iIndex].id, `the entry number ${iIndex + 1} has the correct id`);
+						assert.strictEqual(aCollectedTableData[iIndex].elementId, aTableMockData[iIndex].elementId, `the entry number ${iIndex + 1} has the correct elementId`);
+						assert.strictEqual(aCollectedTableData[iIndex].visible, aTableMockData[iIndex].visible, `the entry number ${iIndex + 1} has the correct visible status`);
 					}
 					window.removeEventListener("message", onCollectMessage);
 					fnDone();

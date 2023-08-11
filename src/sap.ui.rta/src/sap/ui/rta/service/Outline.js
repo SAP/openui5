@@ -143,7 +143,7 @@ sap.ui.define([
 				if (!oPassedOverlay) {
 					throw DtUtil.createError(
 						"services.Outline#get",
-						"Cannot find element with id= " + sId + ". A valid or empty value for the initial element id should be provided.", "sap.ui.rta"
+						`Cannot find element with id= ${sId}. A valid or empty value for the initial element id should be provided.`, "sap.ui.rta"
 					);
 				}
 				aInitialOverlays.push(oPassedOverlay);

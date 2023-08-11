@@ -44,7 +44,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.ui.core.Item",
 						bindingPath: {
-							path: "/priority/" + iZeroBasedPriority,
+							path: `/priority/${iZeroBasedPriority}`,
 							propertyPath: "key",
 							modelName: "dialogModel"
 						},
@@ -87,7 +87,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getText(), sTitle, "the correct dialog title is displayed: " + sTitle);
+							Opa5.assert.strictEqual(oControl.getText(), sTitle, `the correct dialog title is displayed: ${sTitle}`);
 						}
 					});
 				},
@@ -100,7 +100,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getValue(), sContextBasedTitle, "I see entered adaptation title: " + sContextBasedTitle);
+							Opa5.assert.strictEqual(oControl.getValue(), sContextBasedTitle, `I see entered adaptation title: ${sContextBasedTitle}`);
 						}
 					});
 				},
@@ -113,8 +113,8 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getValueState(), valueState, "I see input value state " + valueState);
-							Opa5.assert.strictEqual(oControl.getValueStateText(), valueStateText, "I see value state text " + valueStateText);
+							Opa5.assert.strictEqual(oControl.getValueState(), valueState, `I see input value state ${valueState}`);
+							Opa5.assert.strictEqual(oControl.getValueStateText(), valueStateText, `I see value state text ${valueStateText}`);
 						}
 					});
 				},
@@ -127,7 +127,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function(vControl) {
 							var oControl = vControl[0] || vControl;
-							Opa5.assert.strictEqual(oControl.getSelectedItem().getText(), sRoleText, "I see entered adaptation title: " + sRoleText);
+							Opa5.assert.strictEqual(oControl.getSelectedItem().getText(), sRoleText, `I see entered adaptation title: ${sRoleText}`);
 						}
 					});
 				},
@@ -151,7 +151,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getProperty("enabled"), bIsEnabled, "I see save button with enabled status: " + bIsEnabled);
+							Opa5.assert.strictEqual(oControl.getProperty("enabled"), bIsEnabled, `I see save button with enabled status: ${bIsEnabled}`);
 						}
 					});
 				},
@@ -190,7 +190,7 @@ sap.ui.define([
 						},
 						searchOpenDialogs: true,
 						success: function(vControls) {
-							Opa5.assert.strictEqual(vControls.length, nPriorities, "I see " + nPriorities + " priority etries.");
+							Opa5.assert.strictEqual(vControls.length, nPriorities, `I see ${nPriorities} priority etries.`);
 						}
 					});
 				}
