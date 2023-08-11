@@ -9,7 +9,7 @@ sap.ui.define(function() {
 	 *
 	 * @enum {string}
 	 * @alias sap.ui.table.rowmodes.Type
-	 * @public
+	 * @private
 	 */
 	var Type = {
 		/**
