@@ -492,6 +492,13 @@
                 <module>sap/ui/core/hyphenation/*</module>
             </modules>
         </component>
+
+        <component>
+            <name>CA-UI5-CTR-PIR</name>
+            <modules>
+                <module>sap/ui/core/delegate/ScrollEnablement</module>
+            </modules>
+        </component>
     </ownership>
 
   </appData>
