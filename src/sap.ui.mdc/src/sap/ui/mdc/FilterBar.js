@@ -218,7 +218,6 @@ sap.ui.define([
 			}.bind(this)
 		})
 		.then(function(oPopup){
-			oPopup.setVerticalScrolling(false);
 			return oPopup;
 		});
 		}.bind(this));
