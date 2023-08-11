@@ -10,7 +10,7 @@
 		<mdc:typeahead>
 			<vh:Popover title="Name">
 				<vhc:MTable keyPath="name" filterFields="*name*">
-					<Table id="name-vht-table" items='{path : "mountains>/mountains", length: 10}' width="30rem">
+					<Table id="name-vh-table" items='{path : "mountains>/mountains", length: 10}' width="30rem">
 						<columns>
 							<Column>
 								<header>
@@ -33,7 +33,7 @@
 			<vh:Dialog title="Name">
 				<vhc:MDCTable keyPath="name">
 					<vhc:filterBar>
-						<vhfb:FilterBar id="name-vhd-fb" liveMode="true" delegate="{name: 'sap/ui/mdc/demokit/sample/TableFilterBarJson/webapp/delegate/JSONFilterBarDelegate'}">
+						<vhfb:FilterBar id="name-vhd-fb" liveMode="true" delegate="{name: 'mdc/sample/delegate/JSONFilterBarDelegate'}">
 							<vhfb:filterItems>
 								<mdc:FilterField label="Name" conditions="{$filters>/conditions/name}" />
 							</vhfb:filterItems>
@@ -45,7 +45,7 @@
 						height="100%"
 						selectionMode="Multi"
 						delegate="{
-							name: 'sap/ui/mdc/demokit/sample/TableFilterBarJson/webapp/delegate/JSONTableDelegate',
+							name: 'mdc/sample/delegate/JSONTableDelegate',
 							payload: {
 								collectionPath: 'mountains>/mountains'
 							}
