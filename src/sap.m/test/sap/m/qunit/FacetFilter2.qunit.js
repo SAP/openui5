@@ -1709,7 +1709,8 @@ sap.ui.define([
 				// setSelectedKey - this will make the list active if it is in multiselect mode
 				oSelectedKey['{"key1"}'] = "key1";
 				oFFL2.setSelectedKeys(oSelectedKey);
-				oFF.rerender();
+				oFF.invalidate();
+				oCore.applyChanges();
 				setTimeout(function () {
 					// Assert
 					assert.ok(oFF.getAggregation("buttons")[1].getDomRef(), 'The button for the second list is rendered');

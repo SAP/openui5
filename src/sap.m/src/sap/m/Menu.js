@@ -547,7 +547,7 @@ sap.ui.define([
 				oList.insertItem(oMenuListItem, iIndex);
 			}
 
-			oList.rerender();
+			oList.invalidate();
 		};
 
 		/**
@@ -744,7 +744,7 @@ sap.ui.define([
 					}
 
 					if (vMenuOrList) { //if it is not destroyed already in the statement above
-						vMenuOrList.rerender();
+						vMenuOrList.invalidate();
 					}
 				}
 			}
@@ -908,7 +908,7 @@ sap.ui.define([
 					this._initPageForParent(oParentItem);
 					oParentItem._setVisualChild(oParentItem.getItems()[0]._getVisualParent());
 					oLI = sap.ui.getCore().byId(oParentItem._getVisualControl());
-					oLI.rerender();
+					oLI.invalidate();
 				} else {
 					this._initMenuForItems(oParentItem.getItems(), sap.ui.getCore().byId(oParentItem._getVisualControl()));
 					oParentItem._setVisualChild(oParentItem.getItems()[0]._getVisualParent());
@@ -932,7 +932,7 @@ sap.ui.define([
 			oItem._setVisualChild(null);
 
 			if (oVisualItem && oVisualItem.setMenuItem) {
-				oVisualItem.rerender();
+				oVisualItem.invalidate();
 				oVisualItem.setMenuItem(oItem);
 			}
 		};
