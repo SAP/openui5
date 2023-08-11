@@ -497,11 +497,7 @@ sap.ui.define([
 		}
 
 		if (this._oInnerColumn) {
-			this._oInnerColumn.destroy("KeepDom");
-
-			if (!oTable.isInvalidateSuppressed()) {
-				oTable.invalidate();
-			}
+			this._oInnerColumn.destroy();
 		}
 	};
 

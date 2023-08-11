@@ -1095,8 +1095,11 @@ sap.ui.define([
 	};
 
 	Engine.prototype.getTrace = function (vControl, oChange) {
-		var oRegistryEntry = this._getRegistryEntry(vControl);
-		return oRegistryEntry ? Object.keys(oRegistryEntry.pendingAppliance) : {};
+		var oRegistryEntry = this._getRegistryEntry(vControl), oTrace;
+		if (oRegistryEntry) {
+			oTrace = Object.keys(oRegistryEntry.pendingAppliance);
+		}
+		return oTrace;
 	};
 
 	Engine.prototype.clearTrace = function (vControl, oChange) {

@@ -1,4 +1,4 @@
-/* global QUnit, sinon */
+/* global QUnit */
 sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
 	"sap/ui/mdc/DefaultTypeMap",
@@ -244,49 +244,4 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Add and remove columns", function(assert) {
-		var oTableInvalidate = sinon.spy(this.oTable, "invalidate");
-		var oInnerTableInvalidate = sinon.spy(this.oTable._oTable, "invalidate");
-		var aRemovedInnerColumns = [this.oTable._oTable.getColumns()[1], this.oTable._oTable.getColumns()[2]];
-		var fnAddColumn = this.oTable.addColumn;
-		var fnRemoveColumn = this.oTable.removeColumn;
-
-		assert.expect(9);
-
-		this.oTable.addColumn = function() {
-			fnAddColumn.apply(this, arguments);
-			assert.equal(oTableInvalidate.callCount, 0, "Table is not invalidated when a column is added");
-			assert.equal(oInnerTableInvalidate.callCount, 0, "Inner table is not invalidated when a column is added");
-		};
-		this.oTable.removeColumn = function() {
-			fnRemoveColumn.apply(this, arguments);
-			assert.equal(oTableInvalidate.callCount, 0, "Table is not invalidated when a column is removed");
-			assert.equal(oInnerTableInvalidate.callCount, 0, "Inner table is not invalidated when a column is removed");
-		};
-
-		return StateUtil.applyExternalState(this.oTable, {
-			items: [
-				{name: "column1", visible: false},
-				{name: "column2", visible: false}
-			]
-		}).then(function(aChanges){
-			assert.ok(oTableInvalidate.called, "Table is invalidated after all columns are removed");
-			assert.ok(oTableInvalidate.called, "Inner table is invalidated after all columns are removed");
-			assert.ok(aRemovedInnerColumns.every(function(oInnerColumn) {
-				return oInnerColumn.isDestroyed();
-			}), "Inner columns are destroyed");
-
-			oTableInvalidate.reset();
-			oInnerTableInvalidate.reset();
-			return StateUtil.applyExternalState(this.oTable, {
-				items: [
-					{name: "column1", visible: true},
-					{name: "column2", visible: true}
-				]
-			});
-		}.bind(this)).then(function() {
-			assert.ok(oTableInvalidate.called, "Table is invalidated after all columns are removed");
-			assert.ok(oTableInvalidate.called, "Inner table is invalidated after all columns are removed");
-		});
-	});
 });
