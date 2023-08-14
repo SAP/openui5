@@ -48,6 +48,11 @@ customConfiguration:
           "^@ui5\/webcomponents\/dist\/(.*?).js$": "sap/ui/webc/main/thirdparty/$1"
         reverseAliases: # used by the middleware to serve third-party files as UI5 modules
           "^/resources/sap/ui/webc/main/thirdparty/(.*?)$": "@ui5/webcomponents/dist/$1"
+        cyclicDependencies:
+          "sap/ui/webc/main/thirdparty/popup-utils/PopoverRegistry":
+           - "sap/ui/webc/main/thirdparty/Popover"
+          "sap/ui/webc/main/thirdparty/Popover":
+            - "sap/ui/webc/main/thirdparty/popup-utils/PopoverRegistry"
         inputPath: "dist/" # where to find the web components
         inputPathFilters: # relative to the inputPath, can be inclusive or exclusive(!) filters
           - "**/*{.js,.json,.css}"
