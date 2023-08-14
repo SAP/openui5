@@ -546,12 +546,10 @@ sap.ui.define([
 	 * @returns {Promise} A promise which will return the created command
 	 */
 	CommandFactory.getCommandFor = function(vElement, sCommand, mSettings, oDesignTimeMetadata, mFlexSettings) {
-		if (!mFlexSettings) {
-			mFlexSettings = {
-				layer: Layer.CUSTOMER,
-				developerMode: true
-			};
-		}
+		mFlexSettings ||= {
+			layer: Layer.CUSTOMER,
+			developerMode: true
+		};
 
 		if (mFlexSettings.scenario || mFlexSettings.baseId) {
 			var sLRepRootNamespace = FlexUtils.buildLrepRootNamespace(mFlexSettings.baseId, mFlexSettings.scenario, mFlexSettings.projectId);

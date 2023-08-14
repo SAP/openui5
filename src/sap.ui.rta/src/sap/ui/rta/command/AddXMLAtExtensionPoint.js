@@ -54,11 +54,12 @@ sap.ui.define([
 	 * Overridden to suppress the {} being recognized as binding strings.
 	 * @override
 	 */
-	AddXMLAtExtensionPoint.prototype.bindProperty = function(sName, oBindingInfo) {
+	AddXMLAtExtensionPoint.prototype.bindProperty = function(...aArgs) {
+		const [sName, oBindingInfo] = aArgs;
 		if (sName === "fragment") {
 			return this.setFragment(oBindingInfo.bindingString);
 		}
-		return FlexCommand.prototype.bindProperty.apply(this, arguments);
+		return FlexCommand.prototype.bindProperty.apply(this, aArgs);
 	};
 
 	AddXMLAtExtensionPoint.prototype.getAppComponent = function() {

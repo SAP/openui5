@@ -58,8 +58,9 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function() {
-			ManagedObject.prototype.constructor.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			ManagedObject.prototype.constructor.apply(this, aArgs);
 
 			// List of entries with indicator data, grouped by Change ID
 			this._oRegisteredChanges = {};
@@ -192,9 +193,7 @@ sap.ui.define([
 				sChangeCategory = Object.keys(aCategories).find(function(sChangeCategoryName) {
 					return includes(aCategories[sChangeCategoryName], sCommandName);
 				});
-				if (!sChangeCategory) {
-					sChangeCategory = ChangeCategories.OTHER;
-				}
+				sChangeCategory ||= ChangeCategories.OTHER;
 			}
 			var aChangeStates;
 			var aDraftChangesList = [];
@@ -257,9 +256,7 @@ sap.ui.define([
 
 	function getInfoFromChangeHandler(oAppComponent, oChange) {
 		var oSelector = oChange.getOriginalSelector && oChange.getOriginalSelector();
-		if (!oSelector) {
-			oSelector = oChange.getSelector && oChange.getSelector();
-		}
+		oSelector ||= oChange.getSelector && oChange.getSelector();
 		var oControl = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
 		if (oControl) {
 			return ChangesWriteAPI.getChangeHandler({

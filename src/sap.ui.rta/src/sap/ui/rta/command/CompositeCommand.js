@@ -89,9 +89,7 @@ sap.ui.define([
 	};
 
 	CompositeCommand.prototype._addCompositeIdToChange = function(oCommand) {
-		if (!this._sCompositeId) {
-			this._sCompositeId = FlUtils.createDefaultFileName("composite");
-		}
+		this._sCompositeId ||= FlUtils.createDefaultFileName("composite");
 		var oPreparedChange = oCommand.getPreparedChange && oCommand.getPreparedChange();
 		if (oPreparedChange) {
 			var oChangeSupportInformation = oPreparedChange.getSupportInformation();

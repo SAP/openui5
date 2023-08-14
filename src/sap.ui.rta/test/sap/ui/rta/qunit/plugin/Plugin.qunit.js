@@ -52,14 +52,14 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a Plugin and 'hasChangeHandler' is called", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oPlugin = new Plugin({
 				commandFactory: new CommandFactory()
 			});
 			this.oButton = new Button();
 			this.oGetChangeHandlerStub = sandbox.stub(ChangesWriteAPI, "getChangeHandler");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 			sandbox.restore();
 		}
@@ -85,7 +85,7 @@ sap.ui.define([
 
 		QUnit.test("when 'getVariantManagement' is called", function(assert) {
 			var oObjectWithVM = {
-				getVariantManagement: function() {
+				getVariantManagement() {
 					return "variant-test";
 				}
 			};
@@ -97,7 +97,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the Plugin is initialized with move registered for a control", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oButton = new Button();
@@ -127,7 +127,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -294,7 +294,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the Designtime is initialized with 2 Plugins with _isEditable not stubbed", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oButton = new Button("button");
@@ -327,7 +327,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -343,7 +343,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the Designtime is initialized with 2 Plugins with _isEditable stubbed asynchronous", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			var oModel = new JSONModel([{text: "item1"}, {text: "item2"}, {text: "item3"}]);
 			this.oCustomListItemTemplate = new CustomListItem("boundListItem", {content: [new Button("boundListItem-btn", {text: "{text}"})]});
@@ -390,7 +390,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -454,8 +454,8 @@ sap.ui.define([
 			var oEvaluateEditableStub = sandbox.stub(Plugin.prototype, "evaluateEditable")
 			.callThrough()
 			.onSecondCall()
-			.callsFake(function() {
-				oEvaluateEditableStub.wrappedMethod.apply(this.oRemovePlugin, arguments);
+			.callsFake(function(...aArgs) {
+				oEvaluateEditableStub.wrappedMethod.apply(this.oRemovePlugin, aArgs);
 				assert.strictEqual(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
 				assert.strictEqual(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
 				assert.strictEqual(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
@@ -472,8 +472,8 @@ sap.ui.define([
 		QUnit.test("when the elementModified event is thrown multiple times in a row", function(assert) {
 			var fnDone = assert.async();
 			var oEvaluateEditableStub = sandbox.stub(this.oRenamePlugin, "evaluateEditable")
-			.callsFake(function() {
-				oEvaluateEditableStub.wrappedMethod.apply(this.oRemovePlugin, arguments);
+			.callsFake(function(...aArgs) {
+				oEvaluateEditableStub.wrappedMethod.apply(this.oRemovePlugin, aArgs);
 				assert.ok(oEvaluateEditableStub.calledOnce, "then the evaluation is only executed once");
 				fnDone();
 			}.bind(this));
@@ -555,7 +555,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the Plugin is initialized", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oGroup = new FormContainer("group");
 			this.oForm = new Form("Form", {
 				formContainers: [this.oGroup]
@@ -582,7 +582,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oForm.destroy();
 			sandbox.restore();
@@ -639,7 +639,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the Plugin is initialized.", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTitle0 = new Title({id: "Title0"});
 			this.oLabel0 = new Label({id: "Label0"});
 			this.oInput0 = new Input({id: "Input0"});
@@ -656,7 +656,7 @@ sap.ui.define([
 			oCore.applyChanges();
 
 			this.oForm = this.oSimpleForm.getAggregation("form");
-			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
+			[this.oFormContainer] = this.oSimpleForm.getAggregation("form").getAggregation("formContainers");
 
 			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
@@ -664,7 +664,7 @@ sap.ui.define([
 				commandFactory: new CommandFactory()
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPlugin.destroy();
 			this.oVerticalLayout.destroy();
 			sandbox.restore();
@@ -711,7 +711,7 @@ sap.ui.define([
 				aggregations: {
 					form: {
 						actions: {
-							getStableElements: function(oElement) {
+							getStableElements(oElement) {
 								var aStableElements = [];
 								var oLabel;
 								var oTitleOrToolbar;
@@ -766,7 +766,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given this the Plugin is initialized.", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oTitle0 = new Title();
 			this.oLabel0 = new Label();
 			this.oInput0 = new Input();
@@ -782,7 +782,7 @@ sap.ui.define([
 
 			oCore.applyChanges();
 
-			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
+			[this.oFormContainer] = this.oSimpleForm.getAggregation("form").getAggregation("formContainers");
 
 			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
@@ -802,7 +802,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -813,7 +813,7 @@ sap.ui.define([
 				aggregations: {
 					form: {
 						actions: {
-							getStableElements: function(oElement) {
+							getStableElements(oElement) {
 								var aStableElements = [];
 								var oLabel;
 								var oTitleOrToolbar;

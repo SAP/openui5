@@ -13,16 +13,16 @@ sap.ui.define(
 		"use strict";
 
 		// shortcut for sap.ui.core.ValueState
-		var ValueState = coreLibrary.ValueState;
+		var {ValueState} = coreLibrary;
 
 		var arrangements = new Opa5({
-			iStartMyApp: function() {
+			iStartMyApp() {
 				return this.iStartMyAppInAFrame("test-resources/sap/ui/rta/qunit/opa/contextBased/index.html");
 			}
 		});
 
 		Opa5.extendConfig({
-			arrangements: arrangements,
+			arrangements,
 			autoWait: true
 		});
 

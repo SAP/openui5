@@ -48,11 +48,12 @@ sap.ui.define([
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	Remove.prototype.registerElementOverlay = function(oOverlay) {
+	Remove.prototype.registerElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		if (this.isEnabled([oOverlay])) {
 			oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
 		}
-		Plugin.prototype.registerElementOverlay.apply(this, arguments);
+		Plugin.prototype.registerElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -157,11 +158,12 @@ sap.ui.define([
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	Remove.prototype.deregisterElementOverlay = function(oOverlay) {
+	Remove.prototype.deregisterElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		if (this.isEnabled([oOverlay])) {
 			oOverlay.detachBrowserEvent("keydown", this._onKeyDown, this);
 		}
-		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
+		Plugin.prototype.deregisterElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -295,9 +297,7 @@ sap.ui.define([
 				}).shift();
 			}
 		}
-		if (!oNextOverlaySelection) {
-			oNextOverlaySelection = OverlayRegistry.getOverlay(aSelectedOverlays[0].getRelevantContainer());
-		}
+		oNextOverlaySelection ||= OverlayRegistry.getOverlay(aSelectedOverlays[0].getRelevantContainer());
 		return oNextOverlaySelection;
 	};
 

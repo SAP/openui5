@@ -38,7 +38,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a Toolbar with a translation extension", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oToolbar = new Adaptation({
 				textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
 				rtaInformation: {
@@ -60,18 +60,18 @@ sap.ui.define([
 
 			return this.oToolbar._pFragmentLoaded;
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.module("a download dialog is created", {
-			beforeEach: function() {
+			beforeEach() {
 				sandbox.stub(TranslationAPI, "hasTranslationRelevantDirtyChanges").returns(false);
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 				return this.oToolbar._pFragmentLoaded;
 			},
-			afterEach: function() {
+			afterEach() {
 				this.oToolbar.destroy();
 				sandbox.restore();
 			}
@@ -235,7 +235,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("a upload dialog is created", {
-			beforeEach: function() {
+			beforeEach() {
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 			}
 		}, function() {

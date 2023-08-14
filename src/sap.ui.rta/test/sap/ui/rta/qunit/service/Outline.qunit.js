@@ -56,7 +56,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that RuntimeAuthoring and Outline service are created and get function is called", {
-		before: function(assert) {
+		before(assert) {
 			QUnit.config.fixture = null;
 			var done = assert.async();
 			var MockComponent = UIComponent.extend("MockController", {
@@ -70,7 +70,7 @@ sap.ui.define([
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new Page("mainPage");
 				}
 			});
@@ -187,7 +187,7 @@ sap.ui.define([
 
 			this.oRta.start();
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 			this.oRta.destroy();
 			this.oComponentContainer.destroy();
@@ -320,10 +320,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring and Outline service are created and get function is called", {
-		before: function() {
+		before() {
 
 		},
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
@@ -336,7 +336,7 @@ sap.ui.define([
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new Page("mainPage");
 				}
 			});
@@ -401,12 +401,12 @@ sap.ui.define([
 
 			this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 
 		}
 	}, function() {
@@ -704,10 +704,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that xmlView with extensionPoints, RuntimeAuthoring and Outline service are created ", {
-		beforeEach: function() {
+		beforeEach() {
 			return beforeEachExtensionPoint.call(this, sXmlString);
 		},
-		afterEach: function() {
+		afterEach() {
 			return afterEachExtensionPoint.call(this);
 		}
 	}, function() {
@@ -786,10 +786,10 @@ sap.ui.define([
 		"</mvc:View>";
 
 	QUnit.module("Given that xmlView with extensionPoints, RuntimeAuthoring and Outline service are created with 'simple form'", {
-		beforeEach: function() {
+		beforeEach() {
 			return beforeEachExtensionPoint.call(this, oXmlSimpleForm);
 		},
-		afterEach: function() {
+		afterEach() {
 			return afterEachExtensionPoint.call(this);
 		}
 	}, function() {
@@ -838,7 +838,7 @@ sap.ui.define([
 
 	function createController(sController, oData) {
 		Controller.extend(sController, {
-			onInit: function() {
+			onInit() {
 				var oModel = new JSONModel(oData);
 				this.getView().setModel(oModel);
 			}
@@ -847,7 +847,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that xmlView with table and extensionPoint (RuntimeAuthoring and outline service are started) - Template case", {
-		afterEach: function() {
+		afterEach() {
 			return afterEachExtensionPoint.call(this);
 		}
 	}, function() {

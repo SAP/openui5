@@ -26,7 +26,7 @@ sap.ui.define([
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.rta.contextBased.Page", {
-		onInit: function() {
+		onInit() {
 			ContextBasedAdaptationsAPI.clearInstances();
 			this.oRolesModel = new JSONModel();
 			this.oRolesModel.loadData("./model/roles.json", "", false);
@@ -47,27 +47,27 @@ sap.ui.define([
 			var aAdaptations = oTempAdaptationsModel.getProperty("/adaptations");
 			this.oModel = ContextBasedAdaptationsAPI.createModel(aAdaptations, aAdaptations[0], true);
 		},
-		onManageAdaptations: function() {
+		onManageAdaptations() {
 			setStubsWithData.call(this);
 			this.oManageAdaptationsDialog.openManageAdaptationDialog();
 		},
-		onManageAdaptationsWithOnlyOneAdaptation: function() {
+		onManageAdaptationsWithOnlyOneAdaptation() {
 			setStubsWithData.call(this, "./model/onlyOneAdaptation.json");
 			this.oManageAdaptationsDialog.openManageAdaptationDialog();
 		},
-		onManageAdaptationsWithTwoAdaptations: function() {
+		onManageAdaptationsWithTwoAdaptations() {
 			setStubsWithData.call(this, "./model/twoAdaptations.json");
 			this.oManageAdaptationsDialog.openManageAdaptationDialog();
 		},
-		onManageAdaptationsWithBackendError: function() {
+		onManageAdaptationsWithBackendError() {
 			setStubWithError.call(this);
 			this.oManageAdaptationsDialog.openManageAdaptationDialog();
 		},
-		onAddAdaptation: function() {
+		onAddAdaptation() {
 			setStubsWithData.call(this);
 			this.oAddAdaptationsDialog.openAddAdaptationDialog();
 		},
-		onAddAdaptationWithBackendError: function() {
+		onAddAdaptationWithBackendError() {
 			setStubWithError.call(this);
 			this.oAddAdaptationsDialog.openAddAdaptationDialog();
 		}

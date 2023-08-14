@@ -25,7 +25,7 @@ sap.ui.define([
 	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Dummy");
 
 	QUnit.module("FLVariant Set Title", {
-		beforeEach: function() {
+		beforeEach() {
 			var oData = {
 				variantMgmtId1: {
 					currentVariant: "variant0",
@@ -51,7 +51,7 @@ sap.ui.define([
 				sandbox.stub(oMockedAppComponent, "getModel").returns(this.oModel);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

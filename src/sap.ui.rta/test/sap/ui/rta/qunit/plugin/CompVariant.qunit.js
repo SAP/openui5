@@ -73,7 +73,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a designTime and ControlVariant plugin are instantiated", {
-		before: function() {
+		before() {
 			this.oVariantManagementControl = new SmartVariantManagement("svm", {
 				persistencyKey: "myPersistencyKey"
 			});
@@ -83,8 +83,8 @@ sap.ui.define([
 				standardVariant: {}
 			});
 		},
-		beforeEach: function(assert) {
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({getUserId: function() {return undefined;}});
+		beforeEach(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({getUserId() {return undefined;}});
 			var done = assert.async();
 			this.oPlugin = new CompVariant({
 				commandFactory: new CommandFactory()
@@ -117,11 +117,11 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oDesignTime.destroy();
 		},
-		after: function() {
+		after() {
 			this.oVariantManagementControl.destroy();
 		}
 	}, function() {
@@ -262,10 +262,10 @@ sap.ui.define([
 			}, "the third variant is there and correct");
 
 			var oEvent = {
-				getParameters: function() {
+				getParameters() {
 					return {
 						item: {
-							getProperty: function() {
+							getProperty() {
 								return "id3";
 							}
 						}
@@ -316,10 +316,10 @@ sap.ui.define([
 			var oMenuItem = getContextMenuEntryById.call(this, "CTX_COMP_VARIANT_SWITCH");
 
 			var oEvent = {
-				getParameters: function() {
+				getParameters() {
 					return {
 						item: {
-							getProperty: function() {
+							getProperty() {
 								return "id2";
 							}
 						}
@@ -456,7 +456,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a control implementing the 'variantContent' action", {
-		before: function() {
+		before() {
 			this.oVariantManagementControl = new SmartVariantManagement("svm", {
 				persistencyKey: "myPersistencyKey"
 			});
@@ -472,8 +472,8 @@ sap.ui.define([
 				standardVariant: {}
 			});
 		},
-		beforeEach: function(assert) {
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({getUserId: function() {return undefined;}});
+		beforeEach(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({getUserId() {return undefined;}});
 			var done = assert.async();
 			this.oPlugin = new CompVariant({
 				commandFactory: new CommandFactory()
@@ -517,11 +517,11 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oDesignTime.destroy();
 		},
-		after: function() {
+		after() {
 			this.oHBox.destroy();
 		}
 	}, function() {

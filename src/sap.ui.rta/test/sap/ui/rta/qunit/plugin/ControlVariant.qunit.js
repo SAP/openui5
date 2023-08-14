@@ -83,7 +83,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Given a designTime and ControlVariant plugin are instantiated", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
@@ -175,7 +175,7 @@ sap.ui.define([
 				oCore.applyChanges();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oMockedAppComponent.destroy();
 			this.oLayoutOuter.destroy();
@@ -239,6 +239,7 @@ sap.ui.define([
 			["variant management is not modified", false, "disabled"]
 		].forEach(function(obj) {
 			QUnit.test(`when isVariantSaveEnabled is called with VariantManagement overlay and ${obj[0]}`, function(assert) {
+				// eslint-disable-next-line prefer-destructuring
 				this.oModel.oData[this.sLocalVariantManagementId].modified = obj[1];
 				this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 				var bVMEnabled = this.oControlVariantPlugin.isVariantSaveEnabled([this.oVariantManagementOverlay]);
@@ -558,10 +559,10 @@ sap.ui.define([
 			// Switch SubMenu
 			var mPropertyBag = {
 				eventItem: {
-					getParameters: function() {
+					getParameters() {
 						return {
 							item: {
-								getProperty: function() {
+								getProperty() {
 									return "variant2";
 								}
 							}
@@ -616,7 +617,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime where variant management control is not part of responsible control tree and ControlVariant plugin are instantiated", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
@@ -698,7 +699,7 @@ sap.ui.define([
 				oCore.applyChanges();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oMockedAppComponent.destroy();
 			this.oLayoutOuter.destroy();
@@ -723,7 +724,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given variant management control rename is started", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
@@ -761,7 +762,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oMockedAppComponent.destroy();
 			sandbox.restore();
 			this.oVariantManagementControl.destroy();
@@ -1033,7 +1034,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given variant management control is renamed", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
@@ -1070,7 +1071,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oMockedAppComponent.destroy();
 			sandbox.restore();
 			this.oVariantManagementControl.destroy();
@@ -1183,9 +1184,9 @@ sap.ui.define([
 				pluginMethodName: "plugin.ControlVariant.startEdit"
 			};
 
-			sandbox.stub(RenameHandler, "startEdit").callsFake(function() {
+			sandbox.stub(RenameHandler, "startEdit").callsFake(function(...aArgs) {
 				assert.ok(true, "RenameHandler.startEdit called in the end");
-				assert.deepEqual(arguments[0], mPropertyBag, "then correct map argument passed to RenameHandler");
+				assert.deepEqual(aArgs[0], mPropertyBag, "then correct map argument passed to RenameHandler");
 				done();
 			});
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
@@ -1193,7 +1194,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and ControlVariant plugin are instantiated and the model has only one visible variant", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
@@ -1251,7 +1252,7 @@ sap.ui.define([
 				oCore.applyChanges();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oMockedAppComponent.destroy();
 			this.oVariantManagementControl.destroy();

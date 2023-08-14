@@ -11,7 +11,7 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheSelectRoleDialogPage: {
 			actions: {
-				iEnterRoleTitle: function(sRoleTitle) {
+				iEnterRoleTitle(sRoleTitle) {
 					this.waitFor({
 						id: "contextSharing---ContextVisibility--selectContexts-searchField",
 						searchOpenDialogs: true,
@@ -29,7 +29,7 @@ sap.ui.define([
 						})
 					});
 				},
-				iSelectRoleByName: function(sRoleTitle) {
+				iSelectRoleByName(sRoleTitle) {
 					return this.waitFor({
 						controlType: "sap.m.CheckBox",
 						viewId: "contextSharing---ContextVisibility",
@@ -50,7 +50,7 @@ sap.ui.define([
 						}
 					});
 				},
-				iSelectRoles: function() {
+				iSelectRoles() {
 					return this.waitFor({
 						id: "contextSharing---ContextVisibility--selectContexts-ok",
 						searchOpenDialogs: true,
@@ -61,17 +61,17 @@ sap.ui.define([
 				}
 			},
 			assertions: {
-				iShouldSeeSelectRoleDialog: function() {
+				iShouldSeeSelectRoleDialog() {
 					return this.waitFor({
 						id: "contextSharing---ContextVisibility--selectContexts-dialog-title",
 						searchOpenDialogs: true,
-						success: function(vControls) {
+						success(vControls) {
 							var oControl = vControls[0] || vControls;
 							Opa5.assert.strictEqual(oControl.getText(), "Select Roles", "I see role dialog");
 						}
 					});
 				},
-				iShouldSeeRoleTitle: function(sRoleTitle) {
+				iShouldSeeRoleTitle(sRoleTitle) {
 					return this.waitFor({
 						controlType: "sap.m.StandardListItem",
 						viewId: "contextSharing---ContextVisibility",
@@ -79,7 +79,7 @@ sap.ui.define([
 							title: sRoleTitle
 						},
 						searchOpenDialogs: true,
-						success: function() {
+						success() {
 							Opa5.assert.ok(true, `I see role title: ${sRoleTitle}`);
 						}
 					});

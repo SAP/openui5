@@ -88,6 +88,7 @@ sap.ui.define([
 						}
 					});
 
+					// eslint-disable-next-line prefer-spread
 					aSymbols.splice.apply(aSymbols, [i, 1].concat(aInsert));
 					i += aInsert.length;
 				}

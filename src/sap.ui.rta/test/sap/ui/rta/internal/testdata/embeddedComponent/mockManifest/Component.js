@@ -10,18 +10,19 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		constructor: function() {
-			UIComponent.prototype.constructor.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			UIComponent.prototype.constructor.apply(this, aArgs);
 		},
 
-		init: function() {
-			UIComponent.prototype.init.apply(this, arguments);
+		init(...aArgs) {
+			UIComponent.prototype.init.apply(this, aArgs);
 			this.getRouter().initialize();
 		},
 
-		destroy: function() {
+		destroy(...aArgs) {
 			// call the base component's destroy function
-			UIComponent.prototype.destroy.apply(this, arguments);
+			UIComponent.prototype.destroy.apply(this, aArgs);
 		}
 	});
 });

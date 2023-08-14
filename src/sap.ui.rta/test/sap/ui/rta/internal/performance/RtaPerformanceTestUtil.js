@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	var Util = {
-		startRta: function(oHorizontalLayout, aPlugins) {
+		startRta(oHorizontalLayout, aPlugins) {
 			var oRuntimeAuthoring = new RuntimeAuthoring({
 				rootControl: oHorizontalLayout,
 				showToolbars: false
@@ -41,7 +41,7 @@ sap.ui.define([
 			});
 		},
 
-		startRtaWithoutStretch: function(oRootControl) {
+		startRtaWithoutStretch(oRootControl) {
 			var oRuntimeAuthoring = new RuntimeAuthoring({
 				rootControl: oRootControl,
 				showToolbars: false
@@ -67,7 +67,7 @@ sap.ui.define([
 			});
 		},
 
-		startRtaConstructorOnly: function(oHorizontalLayout) {
+		startRtaConstructorOnly(oHorizontalLayout) {
 			var iRtaStartCounter = 1000;
 			var sMeasureName = `RTA init function called ${iRtaStartCounter} times`;
 			window.performance.clearMeasures();

@@ -54,7 +54,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a Selection plugin, DT in MultiSelection mode and controls with custom dt metadata for different cases...", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
@@ -150,7 +150,7 @@ sap.ui.define([
 							},
 							remove: null,
 							rename: {
-								domRef: function(oElement) {
+								domRef(oElement) {
 									return oElement.getDomRef();
 								}
 							}
@@ -173,7 +173,7 @@ sap.ui.define([
 			this.oEvent.shiftKey = false;
 			this.oEvent.altKey = false;
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oComponent.destroy();
 			this.oVBox.destroy();
@@ -344,7 +344,7 @@ sap.ui.define([
 				isRoot: false
 			});
 			sandbox.stub(oOverlay, "getDesignTimeMetadata").returns({
-				markedAsNotAdaptable: function() { return false; }
+				markedAsNotAdaptable() { return false; }
 			});
 			var oAttachEditableChangeStub = sandbox.stub(oOverlay, "attachEditableChange");
 			this.oSelectionPlugin.registerElementOverlay(oOverlay);
@@ -362,7 +362,7 @@ sap.ui.define([
 				isRoot: false
 			});
 			sandbox.stub(oOverlay, "getDesignTimeMetadata").returns({
-				markedAsNotAdaptable: function() { return true; }
+				markedAsNotAdaptable() { return true; }
 			});
 			var oAttachEditableChangeStub = sandbox.stub(oOverlay, "attachEditableChange");
 			this.oSelectionPlugin.registerElementOverlay(oOverlay);

@@ -35,19 +35,19 @@ sap.ui.define([
 	var oDTMetadata = {};
 
 	QUnit.module("Given DesignTime Metadata structures with valid and invalid actions...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.fnLogErrorStub = sandbox.stub(Log, "error");
 			sandbox.stub(ActionExtractor, "_getRevealActions").returns(Promise.resolve());
 			sandbox.stub(ActionExtractor, "_getAddViaDelegateActions").returns(Promise.resolve());
 			sandbox.stub(AdditionalElementsUtils, "getParents").returns({
 				parentOverlay: {
-					getDesignTimeMetadata: function() {
+					getDesignTimeMetadata() {
 						return oDTMetadata;
 					}
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -94,7 +94,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a bar with a visible and invisible buttons", {
-		before: function(assert) {
+		before(assert) {
 			givenBarWithButtons.call(this);
 			var done = assert.async();
 
@@ -112,7 +112,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -129,14 +129,14 @@ sap.ui.define([
 			var oGetRevealActionsStub = sandbox.stub(ActionExtractor, "_getRevealActions");
 			oGetRevealActionsStub.callThrough();
 
-			oGetRevealActionsStub.onFirstCall().callsFake(function() {
+			oGetRevealActionsStub.onFirstCall().callsFake(function(...aArgs) {
 				var oHasChangeHandlerStub = sandbox.stub(this.oPlugin, "hasChangeHandler");
 				oHasChangeHandlerStub.callThrough();
-				oHasChangeHandlerStub.onFirstCall().callsFake(function() {
+				oHasChangeHandlerStub.onFirstCall().callsFake(function(...aArgs) {
 					this.oInvisibleLeftButton.destroy();
-					return oHasChangeHandlerStub.wrappedMethod.apply(this.oPlugin, arguments);
+					return oHasChangeHandlerStub.wrappedMethod.apply(this.oPlugin, aArgs);
 				}.bind(this));
-				return oGetRevealActionsStub.wrappedMethod.apply(this, arguments);
+				return oGetRevealActionsStub.wrappedMethod.apply(this, aArgs);
 			}.bind(this));
 
 			return this.oPlugin._isEditableCheck(this.oVisibleLeftButtonOverlay, true)

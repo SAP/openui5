@@ -66,10 +66,10 @@ sap.ui.define([
 				}
 			}
 		},
-		createContent: function() {
+		createContent() {
 			var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + "</mvc:View>";
 			oView = new XMLView(this.createId("mockview"), {
-				viewContent: viewContent
+				viewContent
 			});
 			return oView;
 		}
@@ -102,37 +102,37 @@ sap.ui.define([
 		}
 		if (bSettingsInstance) {
 			var oSettings = {
-				isVersioningEnabled: function() {
+				isVersioningEnabled() {
 					return false;
 				},
-				isProductiveSystem: function() {
+				isProductiveSystem() {
 					return true;
 				},
-				isCustomerSystem: function() {
+				isCustomerSystem() {
 					return false;
 				},
-				isAppVariantSaveAsEnabled: function() {
+				isAppVariantSaveAsEnabled() {
 					return true;
 				},
-				isVariantAdaptationEnabled: function() {
+				isVariantAdaptationEnabled() {
 					return false;
 				},
-				isKeyUserTranslationEnabled: function() {
+				isKeyUserTranslationEnabled() {
 					return false;
 				},
-				isSystemWithTransports: function() {
+				isSystemWithTransports() {
 					return false;
 				},
-				isPublicLayerAvailable: function() {
+				isPublicLayerAvailable() {
 					return false;
 				},
-				isContextBasedAdaptationEnabled: function() {
+				isContextBasedAdaptationEnabled() {
 					return false;
 				},
-				isLocalResetEnabled: function() {
+				isLocalResetEnabled() {
 					return false;
 				},
-				isPublishAvailable: function() {
+				isPublishAvailable() {
 					return false;
 				}
 			};
@@ -160,10 +160,10 @@ sap.ui.define([
 	document.body.classList.add("sapUiRtaMode");
 
 	QUnit.module("Given PopupManager exists", {
-		beforeEach: function() {
+		beforeEach() {
 			this.fnAddPopupFilterStub = sandbox.stub(ZIndexManager, "addPopupFilter");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -180,7 +180,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA instance is created without starting", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl")
 			});
@@ -189,7 +189,7 @@ sap.ui.define([
 			this.fnRemovePopupInstanceSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideRemovePopupInstance");
 			this.fnCreateDialogSpy = sandbox.spy(this.oRta.getPopupManager(), "_createPopupOverlays");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -234,7 +234,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA instance is initialized", {
-		beforeEach: function() {
+		beforeEach() {
 			stubBefore(true/* bPersistenceAPI */);
 
 			// mock RTA instance
@@ -285,7 +285,7 @@ sap.ui.define([
 				this.fnToolsMenuBringToFrontSpy = sandbox.spy(this.oRta.getToolbar(), "bringToFront");
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			if (this.oRta) {
 				this.oRta.destroy();
 			}
@@ -465,7 +465,7 @@ sap.ui.define([
 			var done = assert.async();
 			this.oPopover.oPopup.setAutoClose(true); /* Required to re-activate to check the number of calls to Popup.prototype._addFocusEventListeners() */
 			this.oPopover.attachAfterOpen(function() {
-				var oPopup = this.oPopover.oPopup;
+				var {oPopup} = this.oPopover;
 				var vPopupElement = oPopup.getContent().getDomRef();
 
 				this.oRta.getPopupManager().fnOriginalPopupOnAfterRendering = oPopup.onAfterRendering;
@@ -533,7 +533,7 @@ sap.ui.define([
 			var done = assert.async();
 			sandbox.stub(this.oRta, "getMode").returns("adaptation");
 			var fnDefaultOnAfterRendering = this.oPopover.oPopup.onAfterRendering;
-			var oPopup = this.oPopover.oPopup;
+			var {oPopup} = this.oPopover;
 			this.oPopover.attachAfterOpen(function() {
 				var oOverlayContainerDomRef = Overlay.getOverlayContainer().get(0);
 				this.oRta.getPopupManager().addAutoCloseArea(new Button("autoCloseButton"));
@@ -602,7 +602,7 @@ sap.ui.define([
 
 			this.oRta.getPopupManager().attachEventOnce("open", function(oEvent) {
 				this.oRta.getPopupManager()._applyPopupAttributes.restore();
-				var oPopup = oEvent.getParameters().getSource().oPopup;
+				var {oPopup} = oEvent.getParameters().getSource();
 
 				// change mode to 'adaptation'
 				var oModeChangeEvent = new Event("testevent", this.oRta, { mode: "adaptation" });
@@ -637,7 +637,7 @@ sap.ui.define([
 
 			this.oPopover.attachAfterOpen(function() {
 				this.oRta.getPopupManager()._applyPopupAttributes.restore();
-				var oPopup = this.oPopover.oPopup;
+				var {oPopup} = this.oPopover;
 
 				// change mode to 'adaptation'
 				var oEvent = new Event("testevent", this.oRta, { mode: "adaptation" });
@@ -666,7 +666,7 @@ sap.ui.define([
 	// integration tests
 	// when RTA is started and then dialogs are opened
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
-		beforeEach: function() {
+		beforeEach() {
 			stubBefore(true/* bPersistenceAPI */, true/* bAppComponentForControl */, true/* bSettingsInstance */);
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl")
@@ -678,7 +678,7 @@ sap.ui.define([
 			this.oButton = createDialogOpenButton.call(this);
 			return this.oRta.start().then(spyBefore.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oRta.destroy();
 			if (this.oDialog) {
@@ -731,7 +731,7 @@ sap.ui.define([
 
 	// Dialog open -> RTA started
 	QUnit.module("Given that a dialog is open and then RTA is started", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			stubBefore(true/* bPersistenceAPI */, true/* bAppComponentForControl */);
 
 			this.oDialog = new Dialog("testDialog");
@@ -744,7 +744,7 @@ sap.ui.define([
 				fnOpenDone();
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			if (this.oDialog) {
 				this.oDialog.destroy();
@@ -818,7 +818,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			stubBefore(true/* bPersistenceAPI */);
 
 			// mock RTA instance
@@ -836,7 +836,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			if (this.oRta) {
 				this.oRta.destroy();
 			}

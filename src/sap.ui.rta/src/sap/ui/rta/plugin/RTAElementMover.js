@@ -118,11 +118,9 @@ function(
 
 		return this.isMoveAvailableOnRelevantContainer(oOverlay)
 		.then(function(bValid) {
-			if (bValid) {
-				bValid = this.oBasePlugin.hasStableId(oOverlay) &&
+			bValid &&= this.oBasePlugin.hasStableId(oOverlay) &&
 					this.oBasePlugin.hasStableId(oParentElementOverlay) &&
 					this.oBasePlugin.hasStableId(oRelevantContainerOverlay);
-			}
 			return bValid;
 		}.bind(this))
 		.then(function(bValid) {

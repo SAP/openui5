@@ -26,9 +26,9 @@ function(
 	}
 
 	QUnit.module("Basic functionality", {
-		beforeEach: function() {
+		beforeEach() {
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

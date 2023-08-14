@@ -30,7 +30,7 @@ sap.ui.define([
 	var oView;
 
 	QUnit.module("Given RTA is started...", {
-		before: function() {
+		before() {
 			QUnit.config.fixture = null;
 			return RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
 			.then(function(oCompContainer) {
@@ -39,12 +39,12 @@ sap.ui.define([
 				return oView.getController().isDataReady();
 			});
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 			oCompCont.destroy();
 			oView.destroy();
 		},
-		beforeEach: function() {
+		beforeEach() {
 			return RtaQunitUtils.clear(oView, true).then(function() {
 				this.oVictim = oCore.byId("Comp1---idMain1--Victim");
 				this.oCompanyCodeField = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
@@ -70,7 +70,7 @@ sap.ui.define([
 				]);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -86,9 +86,9 @@ sap.ui.define([
 			// Doesn't work with event handlers
 			return new Promise(function(resolve) {
 				sandbox.stub(oObject, sMethodName)
-				.callsFake(function() {
+				.callsFake(function(...aArgs) {
 					if (oObject[sMethodName].wrappedMethod) {
-						var oResult = oObject[sMethodName].wrappedMethod.apply(this, arguments);
+						var oResult = oObject[sMethodName].wrappedMethod.apply(this, aArgs);
 						resolve(oResult);
 					}
 				});
@@ -503,9 +503,8 @@ sap.ui.define([
 					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 					assert.strictEqual(aVizModel[2].count, 1, "then one move change is registered");
 					// SimpleForm recreates all elements after cut&paste, thus we need to fetch them again
-					oFormContainer = oForm.getFormContainers()[0];
-					oFormField = oFormContainer.getFormElements()[0];
-					oFormField2 = oFormContainer.getFormElements()[1];
+					[oFormContainer] = oForm.getFormContainers();
+					[oFormField, oFormField2] = oFormContainer.getFormElements();
 					oFieldOverlay = OverlayRegistry.getOverlay(oFormField);
 					oFieldOverlay2 = OverlayRegistry.getOverlay(oFormField2);
 
@@ -554,7 +553,7 @@ sap.ui.define([
 
 			this.oCompanyCodeFieldOverlay.focus();
 
-			var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+			var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "ContextMenu is open");
 				// press rename button
@@ -597,7 +596,7 @@ sap.ui.define([
 			oCombinedElementOverlay.focus();
 			oCombinedElementOverlay.setSelected(true);
 
-			var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+			var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
 				var oContextMenuItem = oContextMenuControl._getVisualParent().getItems().filter(function(oItem) {
 					return oItem.getText() === "Split";

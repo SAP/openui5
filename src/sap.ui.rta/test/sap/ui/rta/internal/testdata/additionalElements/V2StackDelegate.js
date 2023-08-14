@@ -222,11 +222,11 @@ sap.ui.define([
 		* @param {string} mPropertyBag.aggregationName - Name of the aggregation the delegate should provide additional elements
 		* @returns {Promise<sap.ui.fl.delegate.PropertyInfo>} Metadata in a deep structure of nodes and properties
 		*/
-		getPropertyInfo: function(mPropertyBag) {
+		getPropertyInfo(mPropertyBag) {
 			return _getODataPropertiesOfModel(mPropertyBag.element, mPropertyBag.aggregationName, mPropertyBag.payload);
 		},
 
-		createLabel: function(mPropertyBag) {
+		createLabel(mPropertyBag) {
 			return mPropertyBag.modifier.createControl("sap.ui.comp.smartfield.SmartLabel",
 				mPropertyBag.appComponent,
 				mPropertyBag.view,
@@ -235,7 +235,7 @@ sap.ui.define([
 				ASYNC
 			);
 		},
-		createControlForProperty: function(mPropertyBag) {
+		createControlForProperty(mPropertyBag) {
 			// see SmartField.flexibility.js fnCreateFieldWithLabel function
 			var oModifier = mPropertyBag.modifier;
 			return oModifier.createControl("sap.ui.comp.smartfield.SmartField",
@@ -251,7 +251,7 @@ sap.ui.define([
 			});
 		},
 
-		createLayout: function(mPropertyBag) {
+		createLayout(mPropertyBag) {
 			var oModifier = mPropertyBag.modifier;
 			if (_isFormRelatedElement(mPropertyBag)) {
 				// Don't provide form handling

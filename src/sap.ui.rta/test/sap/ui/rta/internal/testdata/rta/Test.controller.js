@@ -4,7 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("rta.view.Test", {
-		onInit: function() {
+		onInit() {
 		}
 	});
 });

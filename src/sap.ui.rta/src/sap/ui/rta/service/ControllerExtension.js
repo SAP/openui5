@@ -40,10 +40,10 @@ sap.ui.define([
 				jQuery.ajax({
 					url: sUrl = `${sap.ui.require.toUrl(sPath)}.js`,
 					async: true,
-					success: function(data) {
+					success(data) {
 						resolve(data);
 					},
-					error: function(xhr, textStatus, error) {
+					error(xhr, textStatus, error) {
 						var oError = new Error(`resource ${sPath} could not be loaded from ${sUrl}. Check for 'file not found' or parse errors. Reason: ${error}`);
 						oError.status = textStatus;
 						oError.error = error;
@@ -70,7 +70,7 @@ sap.ui.define([
 				 * @return {object} Definition of the newly created change
 				 * @public
 				 */
-				add: function(sCodeRef, sViewId) {
+				add(sCodeRef, sViewId) {
 					var oFlexSettings = oRta.getFlexSettings();
 					if (!oFlexSettings.developerMode) {
 						throw DtUtil.createError("service.ControllerExtension#add", "code extensions can only be created in developer mode", "sap.ui.rta");
@@ -117,7 +117,7 @@ sap.ui.define([
 				 * @return {Promise<string>} Promise that resolves with the template as string or rejects when the file was not found
 				 * @public
 				 */
-				getTemplate: function(sViewId) {
+				getTemplate(sViewId) {
 					var oViewOverlay = OverlayRegistry.getOverlay(sViewId);
 					if (!oViewOverlay) {
 						throw DtUtil.createError("service.ControllerExtension#getTemplate", "no overlay found for the given view ID", "sap.ui.rta");

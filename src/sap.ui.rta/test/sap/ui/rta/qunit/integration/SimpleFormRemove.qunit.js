@@ -27,7 +27,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
+	var {SimpleFormLayout} = layoutLibrary.form;
 	var sandbox = sinon.createSandbox();
 
 	function fnParamerizedTest(oSimpleFormLayout) {
@@ -40,7 +40,7 @@ sap.ui.define([
 		var oCommandFactory = new CommandFactory();
 
 		QUnit.module(`Given the SimpleForm in RTA using ${oSimpleFormLayout}`, {
-			beforeEach: function(assert) {
+			beforeEach(assert) {
 				oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
 				var done = assert.async();
@@ -76,7 +76,7 @@ sap.ui.define([
 				});
 			},
 
-			afterEach: function() {
+			afterEach() {
 				sandbox.restore();
 				oComponent.destroy();
 				oView.destroy();

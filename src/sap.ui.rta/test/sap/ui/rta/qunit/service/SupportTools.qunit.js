@@ -38,7 +38,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("basic functionality", {
-		before: function() {
+		before() {
 			QUnit.config.fixture = null;
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2");
@@ -58,7 +58,7 @@ sap.ui.define([
 			this.oComponentContainer.placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(BasePlugin.prototype, "hasChangeHandler").resolves(true);
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,
@@ -75,11 +75,11 @@ sap.ui.define([
 				return this.oRta.getService("supportTools");
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 			this.oComponentContainer.destroy();
 		}

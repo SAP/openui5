@@ -62,8 +62,9 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function() {
-			ManagedObject.prototype.constructor.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			ManagedObject.prototype.constructor.apply(this, aArgs);
 			this._oTranslationModel = new JSONModel(getInitialTranslationModelData());
 		}
 	});
@@ -128,7 +129,7 @@ sap.ui.define([
 				onCancelUploadDialog: function() {
 					this._oUploadDialog.close();
 				}.bind(this),
-				formatUploadEnabled: function() {
+				formatUploadEnabled() {
 					var oFileUploader = sap.ui.getCore().byId(`${sUploadId}--fileUploader`);
 					return oFileUploader.checkFileReadable();
 				},
@@ -205,9 +206,7 @@ sap.ui.define([
 	};
 
 	Translation.prototype.openUploadTranslationDialog = function() {
-		if (!this._oUploadDialogPromise) {
-			this._oUploadDialogPromise = this._createUploadTranslationDialog();
-		}
+		this._oUploadDialogPromise ||= this._createUploadTranslationDialog();
 		return this._oUploadDialogPromise.then(function(oUploadDialog) {
 			this.getToolbar().addDependent(oUploadDialog);
 			return oUploadDialog.open();

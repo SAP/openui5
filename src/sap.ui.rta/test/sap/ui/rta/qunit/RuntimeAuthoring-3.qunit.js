@@ -71,13 +71,13 @@ sap.ui.define([
 	}, new Page("mockPage"));
 
 	QUnit.module("startService()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: oComp
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -110,14 +110,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("startService() - RTA is pre-started", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: oComp
 			});
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -176,7 +176,7 @@ sap.ui.define([
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
 			RtaQunitUtils.stubSapUiRequire(sandbox, [{
 				name: [sServiceLocation],
-				stub: function() {
+				stub() {
 					throw new Error("some error");
 				}
 			}]);
@@ -203,7 +203,7 @@ sap.ui.define([
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
 			RtaQunitUtils.stubSapUiRequire(sandbox, [{
 				name: [sServiceLocation],
-				stub: function() {
+				stub() {
 					return {};
 				}
 			}]);
@@ -240,8 +240,8 @@ sap.ui.define([
 			var fnMockService = function() {
 				return {
 					exports: {
-						method1: function() { return "value1"; },
-						method2: function() { return "value2"; }
+						method1() { return "value1"; },
+						method2() { return "value2"; }
 					}
 				};
 			};
@@ -274,7 +274,7 @@ sap.ui.define([
 			var fnMockService = function() {
 				return {
 					exports: {
-						method1: function() { return "value1"; }
+						method1() { return "value1"; }
 					}
 				};
 			};
@@ -419,7 +419,7 @@ sap.ui.define([
 			var fnMockService = function() {
 				return Promise.resolve({
 					exports: {
-						serviceMethod: function() {
+						serviceMethod() {
 							return "value";
 						}
 					}
@@ -479,7 +479,7 @@ sap.ui.define([
 			var fnServicePublish;
 			RtaQunitUtils.stubSapUiRequire(sandbox, [{
 				name: [sServiceLocation],
-				stub: function(oRta, fnPublish) {
+				stub(oRta, fnPublish) {
 					fnServicePublish = fnPublish;
 					return {
 						events: ["eventName"]
@@ -505,7 +505,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("stopService()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: oComp
@@ -513,7 +513,7 @@ sap.ui.define([
 
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -548,7 +548,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("getService()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: oComp
@@ -556,15 +556,15 @@ sap.ui.define([
 
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("check alias to startService()", function(assert) {
-			var oStartServiceStub = sandbox.stub(this.oRta, "startService").callsFake(function() {
+			var oStartServiceStub = sandbox.stub(this.oRta, "startService").callsFake(function(...aArgs) {
 				return Promise.resolve({
-					arguments: arguments
+					arguments: aArgs
 				});
 			});
 
@@ -576,7 +576,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Undo/Redo functionality", {
-		beforeEach: function() {
+		beforeEach() {
 			this.bMacintoshOriginal = Device.os.macintosh;
 			Device.os.macintosh = false;
 
@@ -620,7 +620,7 @@ sap.ui.define([
 
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			Device.os.macintosh = this.bMacintoshOriginal;
 			this.oRta.destroy();
@@ -702,7 +702,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("miscellaneous", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -731,12 +731,12 @@ sap.ui.define([
 			var oStartPromise = new Promise(function(resolve) {
 				fnResolve = resolve;
 			});
-			var fnStartRtaStub = sandbox.stub(RuntimeAuthoring.prototype, "start").callsFake(function() {
+			var fnStartRtaStub = sandbox.stub(RuntimeAuthoring.prototype, "start").callsFake(function(...aArgs) {
 				assert.ok(
 					RuntimeAuthoring.willRTAStartAfterReload(Layer.CUSTOMER),
 					"then the starting flag is still set while RTA is starting"
 				);
-				fnStartRtaStub.wrappedMethod.apply(this, arguments)
+				fnStartRtaStub.wrappedMethod.apply(this, aArgs)
 				.then(fnResolve)
 				.then(function() {
 					this.destroy();
@@ -892,7 +892,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("restore functionality", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp,
 				showToolbars: false
@@ -902,7 +902,7 @@ sap.ui.define([
 			this.oReloadPageStub = sandbox.stub(ReloadManager, "triggerReload");
 			this.oRta._oVersionsModel = new JSONModel();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -965,8 +965,8 @@ sap.ui.define([
 		QUnit.test("when calling restore successfully", function(assert) {
 			assert.expect(4);
 			var oRemoveStub = sandbox.spy(this.oRta.getCommandStack(), "removeAllCommands");
-			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
-				assert.deepEqual(arguments[0], {
+			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function(...aArgs) {
+				assert.deepEqual(aArgs[0], {
 					selector: oComp,
 					layer: Layer.CUSTOMER
 				}, "then the correct parameters were passed");
@@ -986,8 +986,8 @@ sap.ui.define([
 
 		QUnit.test("when calling restore successfully in AppVariant", function(assert) {
 			assert.expect(2);
-			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
-				assert.deepEqual(arguments[0], {
+			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function(...aArgs) {
+				assert.deepEqual(aArgs[0], {
 					selector: oComp,
 					layer: Layer.CUSTOMER
 				}, "then the correct generator and layer was passed");

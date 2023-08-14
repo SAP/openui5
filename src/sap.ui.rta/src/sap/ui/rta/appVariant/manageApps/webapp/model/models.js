@@ -8,7 +8,7 @@ sap.ui.define([
 
 	return {
 
-		createModel: function(oData) {
+		createModel(oData) {
 			var oModel = new JSONModel(oData);
 			oModel.setDefaultBindingMode("OneWay");
 			return oModel;

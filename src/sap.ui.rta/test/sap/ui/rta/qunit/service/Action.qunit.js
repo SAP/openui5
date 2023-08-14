@@ -27,7 +27,7 @@ function(
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("basic functionality", {
-		before: function() {
+		before() {
 			QUnit.config.fixture = null;
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
@@ -37,7 +37,7 @@ function(
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new Page("page", {
 						content: [
 							new Button("button")
@@ -48,7 +48,7 @@ function(
 
 			this.oComponent = new FixtureComponent();
 			this.oPage = this.oComponent.getRootControl();
-			this.oButton = this.oPage.getContent()[0];
+			[this.oButton] = this.oPage.getContent();
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
 				component: this.oComponent
@@ -58,7 +58,7 @@ function(
 
 			sandbox.stub(BasePlugin.prototype, "hasChangeHandler").resolves(true);
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oPage
@@ -80,10 +80,10 @@ function(
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 			this.oComponentContainer.destroy();
 			sandbox.restore();

@@ -18,7 +18,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.rta.test.variantManagement.controller.Main", {
 		_data: [],
 
-		onInit: function() {
+		onInit() {
 			this.iCounter = 0;
 			var oView = this.getView();
 			oView.addStyleClass("sapUiSizeCompact");
@@ -53,11 +53,11 @@ sap.ui.define([
 			);
 		},
 
-		switchToAdaptionMode: function() {
+		switchToAdaptionMode() {
 			startKeyUserAdaptation({rootControl: this.getOwnerComponent()});
 		},
 
-		createChanges: function(oEvent) {
+		createChanges(oEvent) {
 			var oButton = oEvent.getSource();
 			var mChangeSpecificData = {};
 
@@ -139,7 +139,7 @@ sap.ui.define([
 			});
 		},
 
-		isDataReady: function() {
+		isDataReady() {
 			return Promise.all(this._data);
 		}
 	});

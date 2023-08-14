@@ -37,7 +37,7 @@ sap.ui.define([
 	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	QUnit.module("Given a designTime and EasyRemove plugin are instantiated", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			//	layout
@@ -80,7 +80,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -129,7 +129,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and EasyRemove plugin are instantiated with a OP-Section without stableID", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oEasyRemovePlugin = new EasyRemove({
@@ -157,7 +157,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 		}

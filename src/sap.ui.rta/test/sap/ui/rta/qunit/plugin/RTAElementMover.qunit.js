@@ -93,7 +93,7 @@ sap.ui.define([
 	// test app only used in the first module
 	QUnit.module("Given a complex test view rendered and data ready", {
 		// One model with EntityType01, EntityType02 (default) and EntityTypeNav + one i18n model ("i18n")
-		before: function() {
+		before() {
 			QUnit.config.fixture = null;
 			return Component.create({
 				name: "sap.ui.rta.test.additionalElements",
@@ -117,7 +117,7 @@ sap.ui.define([
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			this.oDragDropPlugin = new DragDropPlugin({
 				commandFactory: new CommandFactory()
@@ -134,12 +134,14 @@ sap.ui.define([
 				Core.applyChanges();
 				var oNavGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[0];
 				var oOtherGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1];
-				var oBoundGroupElement = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1].getGroupElements()[0];
+				var [oBoundGroupElement] = this.oView.byId("ObjectPageSubSectionForNavigation")
+				.getBlocks()[0].getGroups()[1].getGroupElements();
 				var oGroupEntityType01 = this.oView.byId("GroupEntityType01");
 				var oGroupEntityType02 = this.oView.byId("GroupEntityType02");
 				var oForm = this.oView.byId("MainForm");
 
-				this.oOtherGroupButton = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1].getGroupElements()[1];
+				[, this.oOtherGroupButton] = this.oView.byId("ObjectPageSubSectionForNavigation")
+				.getBlocks()[0].getGroups()[1].getGroupElements();
 				this.oNavGroupAggrOverlay = OverlayRegistry.getOverlay(oNavGroup).getAggregationOverlay("formElements");
 				this.oOtherGroupAggrOverlay = OverlayRegistry.getOverlay(oOtherGroup).getAggregationOverlay("formElements");
 				this.oBoundGroupElementOverlay = OverlayRegistry.getOverlay(oBoundGroupElement);
@@ -151,11 +153,11 @@ sap.ui.define([
 				done();
 			}, this);
 		},
-		after: function() {
+		after() {
 			this.oCompCont.destroy();
 			QUnit.config.fixture = "";
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oDragDropPlugin.destroy();
@@ -220,7 +222,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a group element, overlays, RTAElementMover", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oSmartGroupElement = new GroupElement("stableField", {
 				elements: [new Button("button1", {text: "mybutton"})]
 			});
@@ -271,7 +273,7 @@ sap.ui.define([
 
 				this.oGroup1 = Core.byId("group1");
 				this.oGroup2 = Core.byId("group2");
-				this.oGroup3 = Core.byId("form1").getGroups()[1];
+				[, this.oGroup3] = Core.byId("form1").getGroups();
 
 				this.oGroup1AggrOverlay = OverlayRegistry.getOverlay(this.oGroup1).getAggregationOverlay("formElements");
 				this.oGroup2AggrOverlay = OverlayRegistry.getOverlay(this.oGroup2).getAggregationOverlay("formElements");
@@ -284,7 +286,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
 		}
@@ -327,7 +329,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given verticalLayout with Buttons (first scenario) without relevantContainer propagation", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			// first scenario
 			// VerticalLayout
 			//    MovedButton1
@@ -375,7 +377,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oMovedButton1Overlay.destroy();
 			this.oLayoutAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
@@ -434,7 +436,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given verticalLayout with Button and another verticalLayout inside (second scenario) without relevantContainer propagation", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			// second scenario
 			// VerticalLayout (outerLayout)
 			//    MovedButton1
@@ -487,7 +489,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oMovedButton1Overlay.destroy();
 			this.oInnerLayoutAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
@@ -505,7 +507,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given smartForm, Groups and GroupElements (third scenario) with relevantContainer propagation", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			// third scenario
 			// SmartForm
 			//    Group1
@@ -580,7 +582,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oMovedGroupElement1Overlay.destroy();
 			this.oGroupAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
@@ -614,8 +616,8 @@ sap.ui.define([
 				return this.oElementMover.buildMoveCommand();
 			}.bind(this))
 
-			.then(function() {
-				assert.strictEqual(arguments[0], undefined, "then a promise is received resolving to undefined");
+			.then(function(...aArgs) {
+				assert.strictEqual(aArgs[0], undefined, "then a promise is received resolving to undefined");
 				assert.ok(
 					fnGetCommandForStub.calledWith(this.oMovedGroupElement1Overlay.getRelevantContainer(), "Move", {
 						movedElements: [{
@@ -642,14 +644,14 @@ sap.ui.define([
 		QUnit.test("when DT is loaded and moving a group element to the same Group, to where it originally belonged", function(assert) {
 			this.oElementMover.setMovedOverlay(this.oMovedGroupElement1Overlay);
 			return this.oElementMover.buildMoveCommand()
-			.then(function() {
-				assert.strictEqual(arguments[0], undefined, "then a promise is received resolving to undefined");
+			.then(function(...aArgs) {
+				assert.strictEqual(aArgs[0], undefined, "then a promise is received resolving to undefined");
 			});
 		});
 	});
 
 	QUnit.module("Given Bar with Buttons (fourth scenario) without relevantContainer propagation", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			// fourth scenario
 			// Bar
 			//    Aggregation1 (contentLeft)
@@ -716,7 +718,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oMovedButton1Overlay.destroy();
 			this.oBarRightAggregationOverlay.destroy();
 			this.oBarMiddleAggregationOverlay.destroy();
@@ -757,7 +759,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a Bar with Buttons scenario", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			// another scenario
@@ -822,7 +824,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oButton1Overlay.destroy();
 			this.oBarOverlay.destroy();
@@ -850,7 +852,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a list with template", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			// create list with bound items
 			var oData = [
@@ -897,7 +899,7 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oVerticalLayout.destroy();
 			sandbox.restore();

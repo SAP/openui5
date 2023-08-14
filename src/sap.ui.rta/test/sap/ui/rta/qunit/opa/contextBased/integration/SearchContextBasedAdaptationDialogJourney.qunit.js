@@ -16,13 +16,13 @@ sap.ui.define(
 		var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 		var arrangements = new Opa5({
-			iStartMyApp: function() {
+			iStartMyApp() {
 				return this.iStartMyAppInAFrame("test-resources/sap/ui/rta/qunit/opa/contextBased/index.html");
 			}
 		});
 
 		Opa5.extendConfig({
-			arrangements: arrangements,
+			arrangements,
 			autoWait: true
 		});
 

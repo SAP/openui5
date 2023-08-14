@@ -12,7 +12,7 @@ sap.ui.define([
 
 	// Test
 	QUnit.module("Given the S4HanaCloudBackend class", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

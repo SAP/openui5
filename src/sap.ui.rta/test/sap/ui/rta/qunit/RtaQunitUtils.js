@@ -209,7 +209,7 @@ sap.ui.define([
 			oTarget.setSelected(true);
 			RtaQunitUtils.openContextMenuWithKeyboard.call(this, oTarget)
 			.then(function() {
-				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+				var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 				iItemCount = oContextMenuControl.getItems().length;
 				return oContextMenuControl;
 			}.bind(this))
@@ -221,8 +221,8 @@ sap.ui.define([
 	};
 
 	RtaQunitUtils.createAndStubAppComponent = function(sandbox, sId, oManifest, oContent) {
-		sId = sId || "someName";
-		oManifest = oManifest || {
+		sId ||= "someName";
+		oManifest ||= {
 			"sap.app": {
 				id: sId
 			}
@@ -231,7 +231,7 @@ sap.ui.define([
 			metadata: {
 				manifest: oManifest
 			},
-			createContent: function() {
+			createContent() {
 				return oContent;
 			}
 		});
@@ -246,13 +246,13 @@ sap.ui.define([
 		return FlexObjectFactory.createFromFileContent(oFileContent);
 	};
 
-	RtaQunitUtils.stubSapUiRequire = function() {
-		return FlQUnitUtils.stubSapUiRequire.apply(undefined, arguments);
+	RtaQunitUtils.stubSapUiRequire = function(...aArgs) {
+		return FlQUnitUtils.stubSapUiRequire.apply(undefined, aArgs);
 	};
 
 	RtaQunitUtils.showActionsMenu = function(oToolbar) {
 		return oToolbar.showActionsMenu({
-			getSource: function() {
+			getSource() {
 				return oToolbar.getControl("actionsMenu");
 			}
 		});

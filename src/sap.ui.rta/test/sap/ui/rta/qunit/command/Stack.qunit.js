@@ -36,7 +36,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
@@ -65,7 +65,7 @@ sap.ui.define([
 				rootControl: this.oPanel
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oCommandStack.destroy();
 			this.oSerializer.destroy();
 			this.oComponent.destroy();
@@ -197,7 +197,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an array of dirty changes...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
 			this.oChangeDefinition1 = {
@@ -259,7 +259,7 @@ sap.ui.define([
 
 			this.oControl = {id: "a Control"};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponent.destroy();
 			sandbox.restore();
 		}
@@ -312,10 +312,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a command stack", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oCommandStack = new CommandStack();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oCommandStack.destroy();
 			sandbox.restore();
 		}

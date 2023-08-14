@@ -239,7 +239,7 @@ sap.ui.define([
 				}.bind(this))
 
 				.catch(function(oError) {
-					oError = oError || new Error("Executing of the change failed.");
+					oError ||= new Error("Executing of the change failed.");
 					oError.index = this._toBeExecuted;
 					oError.command = this.removeCommand(this._toBeExecuted); // remove failing command
 					this._toBeExecuted--;

@@ -178,7 +178,7 @@ sap.ui.define([
 					oInboundInfo.addNewInboundRequired = true;
 					break;
 				case 1:
-					oInboundInfo.currentRunningInbound = aInboundsFound[0];
+					[oInboundInfo.currentRunningInbound] = aInboundsFound;
 					oInboundInfo.addNewInboundRequired = false;
 					break;
 				default:
@@ -341,16 +341,16 @@ sap.ui.define([
 
 	AppVariantUtils.getTransportInput = function(sPackageName, sNameSpace, sName, sType) {
 		return {
-			getPackage: function() {
+			getPackage() {
 				return sPackageName;
 			},
-			getNamespace: function() {
+			getNamespace() {
 				return sNameSpace;
 			},
-			getId: function() {
+			getId() {
 				return sName;
 			},
-			getDefinition: function() {
+			getDefinition() {
 				return {
 					fileType: sType
 				};

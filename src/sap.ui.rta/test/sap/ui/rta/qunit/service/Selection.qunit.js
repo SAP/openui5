@@ -28,7 +28,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("basic functionality", {
-		before: function() {
+		before() {
 			QUnit.config.fixture = null;
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
@@ -61,7 +61,7 @@ sap.ui.define([
 
 			this.oHasChangeHandlerStud = sinon.stub(BasePlugin.prototype, "hasChangeHandler").resolves(true);
 		},
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,
 				isPublishEnabled: true
@@ -83,11 +83,11 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 			this.oComponentContainer.destroy();
 			this.oHasChangeHandlerStud.restore();

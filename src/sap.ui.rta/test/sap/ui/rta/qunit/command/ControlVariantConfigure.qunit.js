@@ -25,7 +25,7 @@ sap.ui.define([
 	const oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Dummy");
 
 	QUnit.module("ControlVariantConfigure, when calling command factory for configure and undo", {
-		beforeEach: async function() {
+		async beforeEach() {
 			this.oModel = await FlexTestAPI.createVariantModel({
 				data: {
 					variantMgmtId1: {
@@ -58,7 +58,7 @@ sap.ui.define([
 			this.oDeleteVariantChangeStub = sandbox.stub(this.oModel, "deleteVariantChange");
 			this.oSwitchStub = sandbox.stub(this.oModel, "updateCurrentVariant").resolves();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVariantManagement.destroy();
 			sandbox.restore();
 		}

@@ -25,18 +25,18 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var FlexWrap = mobileLibrary.FlexWrap;
+	var {FlexWrap} = mobileLibrary;
 
 	return UIComponent.extend("rta.performance.dragAndDrop.Component", {
 		metadata: {
 			manifest: "json"
 		},
 
-		onAfterRendering: function() {
+		onAfterRendering() {
 			window.fnResolve(RtaPerformanceTestUtil.startRta(oCore.byId("HBox")));
 		},
 
-		createContent: function() {
+		createContent() {
 			// create Vertical Layout
 			var oLayout1 = new VerticalLayout("Layout1");
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout1, 6);

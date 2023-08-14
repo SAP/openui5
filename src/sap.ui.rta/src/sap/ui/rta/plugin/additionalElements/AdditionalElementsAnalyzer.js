@@ -428,7 +428,7 @@ sap.ui.define([
 		 *
 		 * @return {Promise} - returns a Promise which resolves with a list of hidden controls are available to display
 		 */
-		enhanceInvisibleElements: function(oElement, mActions) {
+		enhanceInvisibleElements(oElement, mActions) {
 			var mRevealData = mActions.reveal;
 			var mAddViaDelegate = mActions.addViaDelegate;
 
@@ -476,7 +476,7 @@ sap.ui.define([
 		 *
 		 * @return {Promise} - returns a Promise which resolves with a list of available to display delegate properties
 		 */
-		getUnrepresentedDelegateProperties: function(oElement, mAction) {
+		getUnrepresentedDelegateProperties(oElement, mAction) {
 			var sModelName = _getModelName(mAction);
 			var oDefaultAggregation = oElement.getMetadata().getAggregation();
 			var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mAction.action.aggregation;

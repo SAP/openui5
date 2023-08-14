@@ -18,12 +18,12 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		init: function() {
+		init(...aArgs) {
 			this._bShowAdaptButton = !!this.getComponentData().showAdaptButton;
-			UIComponent.prototype.init.apply(this, arguments);
+			UIComponent.prototype.init.apply(this, aArgs);
 		},
 
-		createContent: function() {
+		createContent() {
 			var oModel = new JSONModel({
 				showAdaptButton: this._bShowAdaptButton
 			});

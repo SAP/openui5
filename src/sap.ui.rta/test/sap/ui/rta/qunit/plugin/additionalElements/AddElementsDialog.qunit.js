@@ -68,14 +68,14 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that a AddElementsDialog is available...", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(FieldExtensibility, "getTexts").resolves({
 				headerText: "extensibilityHeaderText",
 				tooltip: "extensibilityTooltip"
 			});
 			this.oAddElementsDialog = createDialog();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oAddElementsDialog.destroy();
 			sandbox.restore();
 		}
@@ -248,15 +248,15 @@ sap.ui.define([
 
 			this.oAddElementsDialog.attachOpened(function() {
 				assert.equal(this._oList.getItems().length, 5, "then initially 5 entries are there");
-				this._updateModelFilter({getParameter: function() {return "2";}});
+				this._updateModelFilter({getParameter() {return "2";}});
 				assert.equal(this._oList.getItems().length, 1, "when filtering for '2' then 1 entry is shown");
-				this._updateModelFilter({getParameter: function() {return null;}});
+				this._updateModelFilter({getParameter() {return null;}});
 				assert.equal(this._oList.getItems().length, 5, "then after clearing 5 entries are there");
-				this._updateModelFilter({getParameter: function() {return "complex";}});
+				this._updateModelFilter({getParameter() {return "complex";}});
 				assert.equal(this._oList.getItems().length, 1, "when filtering for 'complex' then 1 entry is shown");
 				assert.equal(this._oList.getItems()[0].getContent()[0].getItems()[0].getText(), "label4 (duplicateComplexPropName)", "then only label4 where complex is part of the label (duplicateName)");
-				this._updateModelFilter({getParameter: function() {return null;}});
-				this._updateModelFilter({getParameter: function() {return "orig";}});
+				this._updateModelFilter({getParameter() {return null;}});
+				this._updateModelFilter({getParameter() {return "orig";}});
 				assert.equal(this._oList.getItems().length, 1, "when filtering for 'orig' then 1 entry is shown");
 				assert.equal(this._oList.getItems()[0].getContent()[0].getItems()[0].getText(), "label1", "then only label1 with original name");
 				done();

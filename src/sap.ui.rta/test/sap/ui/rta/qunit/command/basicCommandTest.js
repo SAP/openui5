@@ -93,7 +93,7 @@ sap.ui.define([
 	function basicCommandTest(mInfo, mCommandProperties, mExpectedSpecificData) {
 		var sMsg = mInfo.moduleName || `Test for '${mInfo.commandName}' command`;
 		QUnit.module(sMsg, {
-			beforeEach: function() {
+			beforeEach() {
 				this.mCurrentInfo = Object.assign({}, mInfo);
 				this.mCurrentCommandProperties = Object.assign({}, mCommandProperties);
 				this.mCurrentExpectedSpecificData = Object.assign({}, mExpectedSpecificData);
@@ -107,7 +107,7 @@ sap.ui.define([
 				this.oCreateStub = sandbox.stub(ChangesWriteAPI, "create").resolves();
 				this.oControl = new Control("myFancyControlId");
 			},
-			afterEach: function() {
+			afterEach() {
 				sandbox.restore();
 				this.oControl.destroy();
 				this.oMockedAppComponent.destroy();

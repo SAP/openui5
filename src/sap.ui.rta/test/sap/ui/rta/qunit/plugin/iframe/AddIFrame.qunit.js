@@ -58,7 +58,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a designTime and addIFrame plugin are instantiated for an ObjectPageLayout", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
 			this.oOpenStub = sandbox.stub(AddIFrameDialog.prototype, "open").callsFake(function() {
@@ -113,7 +113,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oMockedAppComponent.destroy();
 			this.oVerticalLayout.destroy();
@@ -300,7 +300,7 @@ sap.ui.define([
 						actions: {
 							addIFrame: {
 								changeType: "addIFrame",
-								isEnabled: function(oElement) {
+								isEnabled(oElement) {
 									return oElement.getMetadata().getName() === "sap.uxap.ObjectPageLayout";
 								},
 								text: "foo"
@@ -427,7 +427,7 @@ sap.ui.define([
 		QUnit.test("when the designTimeMetadata has a getContainerIndex property and a function _determineIndex() is called", function(assert) {
 			var vAction = {
 				aggregationName: "sections",
-				getIndex: function(oForm, oFormContainer) {
+				getIndex(oForm, oFormContainer) {
 					var sAggregationName = vAction.aggregationName;
 					var oMetadata = oForm.getMetadata();
 					var oAggregation = oMetadata.getAggregation(sAggregationName);
@@ -457,7 +457,7 @@ sap.ui.define([
 
 		QUnit.test("when the designTimeMetadata has a getCreatedContainerId property and a function getCreatedContainerId() is called", function(assert) {
 			var vAction = {
-				getCreatedContainerId: function(sNewControlID) {
+				getCreatedContainerId(sNewControlID) {
 					return sNewControlID;
 				}
 			};
@@ -527,7 +527,7 @@ sap.ui.define([
 						actions: {
 							addIFrame: {
 								changeType: "addIFrame",
-								getCreatedContainerId: function() {},
+								getCreatedContainerId() {},
 								text: "foo"
 							}
 						}

@@ -82,7 +82,7 @@ sap.ui.define([
 
 	var DEFAULT_ADAPTATION = { id: "DEFAULT", type: "DEFAULT" };
 	QUnit.module("Given a Toolbar with enabled context-based adaptations feature", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oGetAppComponentStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.test.app");
 			this.oModel = ContextBasedAdaptationsAPI.createModel([DEFAULT_ADAPTATION], DEFAULT_ADAPTATION, true);
 			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oModel);
@@ -97,13 +97,13 @@ sap.ui.define([
 				return this.oToolbar.show();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.module("the save as adaptation dialog is created with empty data", {
-			beforeEach: function() {
+			beforeEach() {
 				this.oSaveAsAdaptation = new SaveAsAdaptation({ toolbar: this.oToolbar });
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 				return this.oSaveAsAdaptation.openAddAdaptationDialog().then(function(oDialog) {
@@ -135,7 +135,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("the save as adaptation dialog is opened and two context-based adaptations already exist", {
-			beforeEach: function() {
+			beforeEach() {
 				this.clock = sinon.useFakeTimers();
 				this.sManageAdaptationsDialog = "manageAdaptationDialog";
 				this.oContextBasedAdaptatations = {
@@ -179,7 +179,7 @@ sap.ui.define([
 					return this.oSaveAsAdaptation._oContextComponentInstance.rootControlLoaded();
 				}.bind(this));
 			},
-			afterEach: function() {
+			afterEach() {
 				this.clock.restore();
 			}
 		}, function() {
@@ -329,7 +329,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("the save as adaptation dialog is opened for edit mode (edit adaptation dialog)", {
-			beforeEach: function() {
+			beforeEach() {
 				this.clock = sinon.useFakeTimers();
 				this.sManageAdaptationsDialog = "manageAdaptationDialog";
 				this.oContextBasedAdaptatations = {
@@ -390,7 +390,7 @@ sap.ui.define([
 					return this.oSaveAsAdaptation._oContextComponentInstance.rootControlLoaded();
 				}.bind(this));
 			},
-			afterEach: function() {
+			afterEach() {
 				this.clock.restore();
 			}
 		}, function() {

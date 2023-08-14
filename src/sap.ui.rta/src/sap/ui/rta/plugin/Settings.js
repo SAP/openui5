@@ -182,6 +182,7 @@ sap.ui.define([
 				} else if (mChangeSpecificData.appDescriptorChangeType) {
 					return this._handleAppDescriptorChangeCommand(mChange, oElement, oCompositeCommand);
 				}
+				return undefined;
 			}, this);
 		}.bind(this))
 
@@ -208,15 +209,13 @@ sap.ui.define([
 	 * @return {Promise} Returns promise resolving with the creation of the commands
 	 */
 	Settings.prototype.handler = function(aElementOverlays, mPropertyBag, oSettingsAction) {
-		mPropertyBag = mPropertyBag || {};
+		mPropertyBag ||= {};
 		var oElement = aElementOverlays[0].getElement();
-		var fnHandler = mPropertyBag.fnHandler;
+		var {fnHandler} = mPropertyBag;
 
+		fnHandler ||= aElementOverlays[0].getDesignTimeMetadata().getAction("settings").handler;
 		if (!fnHandler) {
-			fnHandler = aElementOverlays[0].getDesignTimeMetadata().getAction("settings").handler;
-			if (!fnHandler) {
-				throw new Error("Handler not found for settings action");
-			}
+			throw new Error("Handler not found for settings action");
 		}
 		mPropertyBag.getUnsavedChanges = this._getUnsavedChanges.bind(this);
 		mPropertyBag.styleClass = Utils.getRtaStyleClassName();
@@ -227,6 +226,7 @@ sap.ui.define([
 			if (aChanges.length > 0) {
 				return this._handleCompositeCommand(aElementOverlays, oElement, aChanges, oSettingsAction);
 			}
+			return undefined;
 		}.bind(this))
 
 		.catch(function(vError) {
@@ -282,7 +282,7 @@ sap.ui.define([
 							|| this.isEnabled([oElementOverlay])
 						),
 						handler: function(fnHandler, aElementOverlays, mPropertyBag) {
-							mPropertyBag = mPropertyBag || {};
+							mPropertyBag ||= {};
 							mPropertyBag.fnHandler = fnHandler;
 							return this.handler(aElementOverlays, mPropertyBag, oSettingsAction);
 						}.bind(this, oSettingsAction.handler),
@@ -308,6 +308,7 @@ sap.ui.define([
 				};
 			});
 		}
+		return undefined;
 	}
 
 	function getActionIcon(oSettingsAction) {

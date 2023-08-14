@@ -19,7 +19,7 @@ sap.ui.define([
 	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 	QUnit.module("Base tests", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -110,11 +110,12 @@ sap.ui.define([
 			var oButton = new Button("someId");
 			var oLabelStub = sandbox.stub(ElementUtil, "getLabelForElement")
 			.withArgs(oButton)
-			.callsFake(function(oElement) {
+			.callsFake(function(...aArgs) {
+				const [oElement] = aArgs;
 				if (oElement === oButton) {
 					return "someLabel";
 				}
-				return oLabelStub.wrappedMethod.apply(this, arguments);
+				return oLabelStub.wrappedMethod.apply(this, aArgs);
 			});
 			var mDescription = CombineVisualization.getDescription(
 				{ originalSelectors: [oButton.getId(), "someOtherId"] },

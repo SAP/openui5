@@ -48,12 +48,12 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.uxap.ObjectPageSubSectionLayout
-	var ObjectPageSubSectionLayout = uxapLibrary.ObjectPageSubSectionLayout;
+	var {ObjectPageSubSectionLayout} = uxapLibrary;
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a test app...", {
-		before: function() {
+		before() {
 			this.oCompContPromise = RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture");
 			return this.oCompContPromise.then(function() {
 				this.oView = oCore.byId("Comp1---idMain1");
@@ -62,11 +62,11 @@ sap.ui.define([
 				return this.oView.getModel().getMetaModel().loaded();
 			}.bind(this));
 		},
-		after: function() {
+		after() {
 			this.oView.destroy();
 			this.oCompContPromise = undefined;
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -110,7 +110,7 @@ sap.ui.define([
 			var isServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(false);
 			var oBoundControl = oCore.byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 			var oBoundModel = oBoundControl.getModel();
-			var sServiceUrl = oBoundModel.sServiceUrl;
+			var {sServiceUrl} = oBoundModel;
 			delete oBoundModel.sServiceUrl;
 			return Utils.isServiceUpToDate(oBoundControl).then(function() {
 				assert.ok(true, "then the service is recognized as up to date");
@@ -138,7 +138,7 @@ sap.ui.define([
 
 	// -------------------------- Tests that don't need the runtimeAuthoring page --------------------------
 	QUnit.module("Given that the ObjectPage with overlays is given...", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			//	ObjectPageLayout
 			//		ObjectPageSection1
 			//			ObjectPageSubSection1
@@ -196,7 +196,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		afterEach: function() {
+		afterEach() {
 			this.oObjectPageLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -263,7 +263,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an ObjectPageLayout with Overlays created, but all except for the button overlays are not selectable", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 
 			//		Layout0
@@ -335,7 +335,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout0.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -354,7 +354,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given some dom elements in and out of viewport...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oInsideDom = document.createElement("input");
 			document.getElementById("qunit-fixture").append(this.oInsideDom);
 			this.oOutsideDom = document.createElement("button");
@@ -364,7 +364,7 @@ sap.ui.define([
 			this.oInsideDom.style.marginRight = `${document.getElementById("qunit-fixture").clientWidth}px`;
 			this.oInsideDom.style.marginTop = "10px";
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oInsideDom.remove();
 			this.oOutsideDom.remove();
 		}
@@ -398,7 +398,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("openRemoveConfirmationDialog", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -452,17 +452,17 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given two generic objects...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oObject1 = {
-				function11: function() {
+				function11() {
 					return "function11Object1";
 				},
-				function12: function() {}
+				function12() {}
 			};
 
 			this.oObject2 = {
-				function21: function() {},
-				function11: function() {
+				function21() {},
+				function11() {
 					return "function11Object2";
 				}
 			};
@@ -492,12 +492,12 @@ sap.ui.define([
 
 	// One model with EntityType01 and EntityType02 (default) + one i18n model ("i18n")
 	QUnit.module("Given a complex test view with oData Model...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oSource = new Label({text: "Label1" });
 			this.oTarget = new Label({text: "Label2" });
 		},
 
-		afterEach: function() {
+		afterEach() {
 			this.oSource.destroy();
 			this.oTarget.destroy();
 			sandbox.restore();
@@ -581,11 +581,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given stubbed fiori renderer available", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRenderer = {
-				getRootControl: function() {
+				getRootControl() {
 					return {
-						getShellHeader: function() {
+						getShellHeader() {
 							return { id: "mockedRenderer" };
 						}
 					};
@@ -597,7 +597,7 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -611,7 +611,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given stubbed but invalid fiori renderer available", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRenderer = { id: "mockedInvalidRenderer" };
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({
 				getRenderer: function() {
@@ -619,7 +619,7 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -633,10 +633,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given fiori renderer is not available", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({ id: "mockedContainer" });
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -646,7 +646,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("showMessageBox", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Utils, "getRtaStyleClassName").returns("RtaStyleClass");
 			this.oWarningStub = sandbox.stub(MessageBox, "warning");
 			this.oErrorStub = sandbox.stub(MessageBox, "error");
@@ -655,7 +655,7 @@ sap.ui.define([
 				this.oRtaMessageBundle = oBundle;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

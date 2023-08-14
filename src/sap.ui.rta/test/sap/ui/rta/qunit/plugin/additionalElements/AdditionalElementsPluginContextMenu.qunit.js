@@ -29,7 +29,7 @@ sap.ui.define([
 	 */
 
 	QUnit.module("Given the method 'getMenuItems' is called on the AdditionalElements Plugin", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oDialog = new AddElementsDialog();
 
 			this.oPlugin = new AdditionalElementsPlugin({
@@ -40,7 +40,7 @@ sap.ui.define([
 
 			this.oDummySelectedOverlay = "DummySelectedOverlay";
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDialog.destroy();
 			this.oPlugin.destroy();
 			sandbox.restore();
@@ -55,9 +55,9 @@ sap.ui.define([
 
 			sandbox.stub(AdditionalElementsUtils, "getParents").returns({
 				responsibleElementOverlay: {
-					getParentAggregationOverlay: function() {
+					getParentAggregationOverlay() {
 						return {
-							getAggregationName: function() {
+							getAggregationName() {
 								return sAggregationName;
 							}
 						};
@@ -113,16 +113,16 @@ sap.ui.define([
 			var sAggregationName = "DummyAggregation";
 
 			var oDummyOverlay = {
-				getDesignTimeMetadata: function() {
+				getDesignTimeMetadata() {
 					return {
-						getAggregationDisplayName: function() {
+						getAggregationDisplayName() {
 							return {
 								singular: sExpectedContextMenuText
 							};
 						}
 					};
 				},
-				getElement: function() {
+				getElement() {
 					return "DummyElement";
 				}
 			};
@@ -183,32 +183,32 @@ sap.ui.define([
 			var sSiblingAggregationName = "SiblingAggregationName";
 
 			var oDummyOverlay = {
-				getParentElementOverlay: function() {
+				getParentElementOverlay() {
 					return {
-						getDesignTimeMetadata: function() {
+						getDesignTimeMetadata() {
 							return {
-								getAggregationDisplayName: function() {
+								getAggregationDisplayName() {
 									return {
 										singular: sExpectedContextMenuTextSibling
 									};
 								}
 							};
 						},
-						getElement: function() {
+						getElement() {
 							return "DummyElement";
 						}
 					};
 				},
-				getDesignTimeMetadata: function() {
+				getDesignTimeMetadata() {
 					return {
-						getAggregationDisplayName: function() {
+						getAggregationDisplayName() {
 							return {
 								singular: sExpectedContextMenuTextChild
 							};
 						}
 					};
 				},
-				getElement: function() {
+				getElement() {
 					return "DummyElement";
 				}
 			};
@@ -282,16 +282,16 @@ sap.ui.define([
 			var sExpectedIcon = "sap-icon://add";
 
 			var oDummyOverlay = {
-				getDesignTimeMetadata: function() {
+				getDesignTimeMetadata() {
 					return {
-						getAggregationDisplayName: function() {
+						getAggregationDisplayName() {
 							return {
 								singular: sExpectedContextMenuTextChild
 							};
 						}
 					};
 				},
-				getElement: function() {
+				getElement() {
 					return "DummyElement";
 				}
 			};
@@ -367,32 +367,32 @@ sap.ui.define([
 			var sExpectedIcon = "sap-icon://add";
 
 			var oDummyOverlay = {
-				getParentElementOverlay: function() {
+				getParentElementOverlay() {
 					return {
-						getDesignTimeMetadata: function() {
+						getDesignTimeMetadata() {
 							return {
-								getAggregationDisplayName: function() {
+								getAggregationDisplayName() {
 									return {
 										singular: sExpectedContextMenuTextSibling
 									};
 								}
 							};
 						},
-						getElement: function() {
+						getElement() {
 							return "DummyElement";
 						}
 					};
 				},
-				getDesignTimeMetadata: function() {
+				getDesignTimeMetadata() {
 					return {
-						getAggregationDisplayName: function() {
+						getAggregationDisplayName() {
 							return {
 								singular: sExpectedContextMenuTextChild
 							};
 						}
 					};
 				},
-				getElement: function() {
+				getElement() {
 					return "DummyElement";
 				}
 			};
@@ -472,9 +472,9 @@ sap.ui.define([
 
 			sandbox.stub(AdditionalElementsUtils, "getParents").returns({
 				responsibleElementOverlay: {
-					getParentAggregationOverlay: function() {
+					getParentAggregationOverlay() {
 						return {
-							getAggregationName: function() {
+							getAggregationName() {
 								return "dummyAggregation";
 							}
 						};

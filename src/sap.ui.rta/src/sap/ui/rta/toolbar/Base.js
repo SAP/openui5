@@ -65,9 +65,10 @@ sap.ui.define([
 				textResources: "object"
 			}
 		},
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			// call parent constructor
-			HBox.apply(this, arguments);
+			HBox.apply(this, aArgs);
 
 			this._oExtensions = {};
 			this.setAlignItems("Center");
@@ -94,23 +95,23 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	Base.prototype.init = function() {
+	Base.prototype.init = function(...aArgs) {
 		this._oResourceModel = new ResourceModel({
 			bundle: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 		});
-		HBox.prototype.init.apply(this, arguments);
+		HBox.prototype.init.apply(this, aArgs);
 		// Assign the model object to the SAPUI5 core using the name "i18n"
 		this.setModel(this._oResourceModel, "i18n");
 		return this.buildContent();
 	};
 
-	Base.prototype.exit = function() {
+	Base.prototype.exit = function(...aArgs) {
 		Object.values(this._oExtensions).forEach(function(oExtension) {
 			oExtension.destroy();
 		});
 		this._oExtensions = {};
 
-		HBox.prototype.exit.apply(this, arguments);
+		HBox.prototype.exit.apply(this, aArgs);
 	};
 
 	/**
@@ -191,7 +192,7 @@ sap.ui.define([
 		// 1) create Promise and wait until DomRef is available
 		return new Promise(function(fnResolve) {
 			var oDelegate = {
-				onAfterRendering: function() {
+				onAfterRendering() {
 					this.removeEventDelegate(oDelegate);
 					fnResolve();
 				}

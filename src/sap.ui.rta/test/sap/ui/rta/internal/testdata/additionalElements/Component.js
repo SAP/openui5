@@ -26,11 +26,11 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		init: function() {
+		init(...aArgs) {
 			this._enableExtensibility();
 
 			this._bShowAdaptButton = !!this.getComponentData().showAdaptButton;
-			UIComponent.prototype.init.apply(this, arguments);
+			UIComponent.prototype.init.apply(this, aArgs);
 		},
 
 		/**
@@ -38,7 +38,7 @@ sap.ui.define([
 		 *
 		 * @returns {sap.ui.core.Control} the content
 		 */
-		createContent: function() {
+		createContent() {
 			var oApp = new App();
 
 			var oModel = new JSONModel({
@@ -60,7 +60,7 @@ sap.ui.define([
 		 * Create stub answers from extensibility service
 		 * @private
 		 */
-		_enableExtensibility: function() {
+		_enableExtensibility() {
 			var aExtensionData;
 			ABAPAccess.getExtensionData = function(sServiceUri, sEntityTypeName, sEntitySetName) {
 				aExtensionData = [{ businessContext: `${sEntityTypeName} EntityTypeContext`, description: "Other BusinessContext description" }, { businessContext: `${sEntitySetName} EntitySetContext`, description: "Some BusinessContext description"}];
@@ -82,15 +82,15 @@ sap.ui.define([
 					return Promise.resolve(true);
 				};
 				sap.ushell.Container = Object.assign({}, sap.ushell.Container, {
-					getLogonSystem: function() {
+					getLogonSystem() {
 						return {
-							getName: function() {
+							getName() {
 								return "ABC";
 							},
-							getClient: function() {
+							getClient() {
 								return "123";
 							},
-							isTrial: function() {
+							isTrial() {
 								return false;
 							}
 						};

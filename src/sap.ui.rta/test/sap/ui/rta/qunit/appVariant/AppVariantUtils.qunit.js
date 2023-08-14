@@ -33,12 +33,12 @@ sap.ui.define([
 
 	function stubUshellContainer() {
 		var oUshellContainerStub = {
-			getServiceAsync: function() {
+			getServiceAsync() {
 				return Promise.resolve({
-					getHash: function() {
+					getHash() {
 						return "testSemanticObject-testAction";
 					},
-					parseShellHash: function() {
+					parseShellHash() {
 						return {
 							semanticObject: "testSemanticObject",
 							action: "testAction"
@@ -46,9 +46,9 @@ sap.ui.define([
 					}
 				});
 			},
-			getLogonSystem: function() {
+			getLogonSystem() {
 				return {
-					isTrial: function() {
+					isTrial() {
 						return false;
 					}
 				};
@@ -58,10 +58,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given the ushell container is stubbed", {
-		beforeEach: function() {
+		beforeEach() {
 			stubUshellContainer();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -564,12 +564,12 @@ sap.ui.define([
 			var bUShellNavigationTriggered = false;
 
 			sandbox.stub(FlUtils, "getUshellContainer").returns({
-				getServiceAsync: function() {
+				getServiceAsync() {
 					return Promise.resolve({
-						toExternal: function() {
+						toExternal() {
 							bUShellNavigationTriggered = true;
 						},
-						getCurrentApplication: function() {
+						getCurrentApplication() {
 							return {
 								componentInstance: "testInstance"
 							};
@@ -588,15 +588,15 @@ sap.ui.define([
 			var bUShellNavigationTriggered = false;
 
 			sandbox.stub(FlUtils, "getUshellContainer").returns({
-				getServiceAsync: function() {
+				getServiceAsync() {
 					return Promise.resolve({
-						toExternal: function() {
+						toExternal() {
 							bUShellNavigationTriggered = true;
 						},
-						getCurrentApplication: function() {
+						getCurrentApplication() {
 							return {
 								componentHandle: {
-									getInstance: function() {
+									getInstance() {
 										return undefined;
 									}
 								}
@@ -722,11 +722,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the ushell container and an UIComponent is stubbed", {
-		beforeEach: function() {
+		beforeEach() {
 			stubUshellContainer();
 			this.oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, "TestId");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oAppComponent.destroy();
 			sandbox.restore();
 		}

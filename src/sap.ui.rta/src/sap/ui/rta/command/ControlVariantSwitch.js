@@ -43,8 +43,9 @@ sap.ui.define([
 			associations: {},
 			events: {}
 		},
-		constructor: function() {
-			BaseCommand.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			BaseCommand.apply(this, aArgs);
 			this.setRelevantForSave(false);
 		}
 	});

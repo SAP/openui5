@@ -80,9 +80,11 @@ sap.ui.define([
 	 * @alias sap.ui.rta.plugin.additionalElements.AdditionalElementsPlugin
 	 */
 	var AdditionalElementsPlugin = Plugin.extend("sap.ui.rta.plugin.additionalElements.AdditionalElementsPlugin", {
-		constructor: function(oPropertyBag) {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			const [oPropertyBag] = aArgs;
 			oPropertyBag.dialog = new AddElementsDialog();
-			Plugin.apply(this, arguments);
+			Plugin.apply(this, aArgs);
 		},
 		metadata: {
 			// ---- object ----
@@ -100,14 +102,14 @@ sap.ui.define([
 		},
 
 		// For add elements plugin, include other aggregations which are potentially valid targets for hidden elements
-		_getRelevantOverlays: function(oOverlay) {
+		_getRelevantOverlays(oOverlay) {
 			var aRelevantOverlays = OverlayUtil.findAllOverlaysInContainer(oOverlay, /* bIncludeOtherAggregations= */true);
 
 			oOverlay.setRelevantOverlays(aRelevantOverlays);
 			return aRelevantOverlays;
 		},
 
-		getContextMenuText: function(bOverlayIsSibling, oOverlay, sAggregationName, bHasSubMenu) {
+		getContextMenuText(bOverlayIsSibling, oOverlay, sAggregationName, bHasSubMenu) {
 			var oTextResources;
 
 			function getGenericText() {
@@ -128,9 +130,7 @@ sap.ui.define([
 			}
 			var mParents = AdditionalElementsUtils.getParents(bOverlayIsSibling, oOverlay, this);
 			var mAllActions = ActionExtractor.getActionsOrUndef(bOverlayIsSibling, oOverlay);
-			if (!sAggregationName) {
-				sAggregationName = Object.keys(mAllActions)[0];
-			}
+			sAggregationName ||= Object.keys(mAllActions)[0];
 			var mActions = mAllActions[sAggregationName];
 
 			// Safeguarding
@@ -141,13 +141,13 @@ sap.ui.define([
 			return AdditionalElementsUtils.getText("CTX_ADD_ELEMENTS", mActions, mParents.parent, SINGULAR);
 		},
 
-		isAvailable: function(aElementOverlays, bOverlayIsSibling) {
+		isAvailable(aElementOverlays, bOverlayIsSibling) {
 			return aElementOverlays.every(function(oElementOverlay) {
 				return this._isEditableByPlugin(oElementOverlay, bOverlayIsSibling);
 			}, this);
 		},
 
-		isEnabled: function(aElementOverlays, bOverlayIsSibling, sAggregationName) {
+		isEnabled(aElementOverlays, bOverlayIsSibling, sAggregationName) {
 			if (aElementOverlays.length > 1) {
 				return false;
 			}
@@ -178,7 +178,7 @@ sap.ui.define([
 
 			var oCachedElements = this.getCachedElements(bOverlayIsSibling);
 			var bElementsAvailable = !!(oCachedElements && oCachedElements.length > 0);
-			bIsEnabled = bIsEnabled && bElementsAvailable;
+			bIsEnabled &&= bElementsAvailable;
 			return bIsEnabled;
 		},
 
@@ -190,7 +190,8 @@ sap.ui.define([
 		 * @param  {sap.ui.dt.Overlay} oOverlay Overlay object
 		 * @override
 		 */
-		registerElementOverlay: function(oOverlay) {
+		registerElementOverlay(...aArgs) {
+			const [oOverlay] = aArgs;
 			var oModel = oOverlay.getElement().getModel();
 			if (oModel) {
 				var oMetaModel = oModel.getMetaModel();
@@ -200,10 +201,10 @@ sap.ui.define([
 					}.bind(this));
 				}
 			}
-			Plugin.prototype.registerElementOverlay.apply(this, arguments);
+			Plugin.prototype.registerElementOverlay.apply(this, aArgs);
 		},
 
-		_checkIfCreateFunctionIsAvailable: function(mChangeHandlerSettings) {
+		_checkIfCreateFunctionIsAvailable(mChangeHandlerSettings) {
 			return !mChangeHandlerSettings ||
 				(
 					mChangeHandlerSettings &&
@@ -224,7 +225,7 @@ sap.ui.define([
 		 * @return {Promise} Returns a promise that resolves when the dialog closes
 		 * @private
 		 */
-		showAvailableElements: function(bOverlayIsSibling, sAggregationName, aResponsibleElementOverlays, iIndex, sControlName, sDisplayText) {
+		showAvailableElements(bOverlayIsSibling, sAggregationName, aResponsibleElementOverlays, iIndex, sControlName, sDisplayText) {
 			var oResponsibleElementOverlay = aResponsibleElementOverlays[0];
 			var mParents = AdditionalElementsUtils.getParents(bOverlayIsSibling, oResponsibleElementOverlay, this);
 			var vSiblingElement = bOverlayIsSibling && oResponsibleElementOverlay.getElement();
@@ -300,13 +301,13 @@ sap.ui.define([
 			});
 		},
 
-		_setDialogTitle: function(mActions, oParentElement, sControlName) {
+		_setDialogTitle(mActions, oParentElement, sControlName) {
 			var sDialogTitle = AdditionalElementsUtils.getText("HEADER_ADDITIONAL_ELEMENTS", mActions, oParentElement, PLURAL, sControlName);
 			this.getDialog().setTitle(sDialogTitle);
 		},
 
 		// Function called when custom field button was pressed
-		_onOpenCustomField: function(oEvent, bOverlayIsSibling) {
+		_onOpenCustomField(oEvent, bOverlayIsSibling) {
 			var sRtaStyleClassName = Utils.getRtaStyleClassName();
 			return FieldExtensibility.onTriggerCreateExtensionData(this.getExtensibilityInfo(bOverlayIsSibling), sRtaStyleClassName);
 		},
@@ -318,7 +319,7 @@ sap.ui.define([
 		 * @returns {object} Returns object with editable boolean values for "asChild" and "asSibling"
 		 * @protected
 		 */
-		_isEditable: function(oOverlay, mPropertyBag) {
+		_isEditable(oOverlay, mPropertyBag) {
 			return Promise.all([this._isEditableCheck(mPropertyBag.sourceElementOverlay, true), this._isEditableCheck(mPropertyBag.sourceElementOverlay, false)])
 			.then(function(aPromiseValues) {
 				return {
@@ -331,7 +332,7 @@ sap.ui.define([
 			});
 		},
 
-		_isEditableCheck: function(oOverlay, bOverlayIsSibling) {
+		_isEditableCheck(oOverlay, bOverlayIsSibling) {
 			return Promise.resolve()
 			.then(function() {
 				var mParents = AdditionalElementsUtils.getParents(bOverlayIsSibling, oOverlay, this);
@@ -363,11 +364,9 @@ sap.ui.define([
 					}.bind(this));
 				}.bind(this))
 				.then(function(bEditable) {
-					if (bEditable) {
-						bEditable =
-									this.hasStableId(oOverlay) // don't confuse the user/Web IDE by an editable overlay without stable ID
-									&& this.hasStableId(mParents.parentOverlay);
-					}
+					bEditable &&=
+								this.hasStableId(oOverlay) // don't confuse the user/Web IDE by an editable overlay without stable ID
+								&& this.hasStableId(mParents.parentOverlay);
 					return bEditable;
 				}.bind(this));
 			}.bind(this));
@@ -380,7 +379,7 @@ sap.ui.define([
 		 * @returns {Array} An array with all elements
 		 * @protected
 		 */
-		getAllElements: function(bOverlayIsSibling, aElementOverlays) {
+		getAllElements(bOverlayIsSibling, aElementOverlays) {
 			var oElementOverlay = aElementOverlays[0];
 			var mParents = AdditionalElementsUtils.getParents(bOverlayIsSibling, oElementOverlay, this);
 			var mActions;
@@ -439,7 +438,7 @@ sap.ui.define([
 		 * @param  {sap.ui.dt.ElementOverlay} aElementOverlays - List of overlays for which the context menu was opened
 		 * @return {object[]} Array containing the items with required data
 		 */
-		getMenuItems: function(aElementOverlays) {
+		getMenuItems(aElementOverlays) {
 			var aMenuItems = [];
 			var oMenuItem;
 			this.clearCachedElements();
@@ -471,7 +470,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		_buildMenuItem: function(sPluginId, bOverlayIsSibling, aElementOverlays, aElementsWithAggregations, bHasSubMenu) {
+		_buildMenuItem(sPluginId, bOverlayIsSibling, aElementOverlays, aElementsWithAggregations, bHasSubMenu) {
 			var aSubMenuItems;
 			var vHandler;
 			var sAggregationName;
@@ -516,7 +515,7 @@ sap.ui.define([
 			return oMenuItem;
 		},
 
-		_buildSubmenuItems: function(bOverlayIsSibling, aElementOverlays, aElementsWithAggregation) {
+		_buildSubmenuItems(bOverlayIsSibling, aElementOverlays, aElementsWithAggregation) {
 			var aSubMenuItems = [];
 			var sPluginId = bOverlayIsSibling ? "CTX_ADD_ELEMENTS_AS_SIBLING" : "CTX_ADD_ELEMENTS_AS_CHILD";
 			var iPosition = 0;
@@ -586,7 +585,7 @@ sap.ui.define([
 		// 		elements: [...]
 		// 	}
 		// ]
-		_combineAnalyzerResults: function(aAllPromises) {
+		_combineAnalyzerResults(aAllPromises) {
 			var aCollectedPromises = [];
 
 			aAllPromises.forEach(function(aPromisesByAggregation) {
@@ -613,44 +612,44 @@ sap.ui.define([
 			});
 		},
 
-		clearCachedElements: function() {
+		clearCachedElements() {
 			this._oCachedElements = undefined;
 		},
 
-		setCachedElements: function(aElements, bOverlayIsSibling) {
-			this._oCachedElements = this._oCachedElements || {};
+		setCachedElements(aElements, bOverlayIsSibling) {
+			this._oCachedElements ||= {};
 			this._oCachedElements[bOverlayIsSibling ? "asSibling" : "asChild"] = aElements;
 		},
 
-		getCachedElements: function(bOverlayIsSibling) {
+		getCachedElements(bOverlayIsSibling) {
 			if (this._oCachedElements) {
 				return this._oCachedElements[bOverlayIsSibling ? "asSibling" : "asChild"];
 			}
 			return undefined;
 		},
 
-		clearExtensibilityInfo: function(bOverlayIsSibling) {
+		clearExtensibilityInfo(bOverlayIsSibling) {
 			if (this._oExtensibilityInfo) {
 				this._oExtensibilityInfo[bOverlayIsSibling ? "asSibling" : "asChild"] = undefined;
 			}
 		},
 
-		setExtensibilityInfo: function(bOverlayIsSibling, oExtensibilityInfo) {
-			this._oExtensibilityInfo = this._oExtensibilityInfo || {};
+		setExtensibilityInfo(bOverlayIsSibling, oExtensibilityInfo) {
+			this._oExtensibilityInfo ||= {};
 			this._oExtensibilityInfo[bOverlayIsSibling ? "asSibling" : "asChild"] = oExtensibilityInfo;
 		},
 
-		getExtensibilityInfo: function(bOverlayIsSibling) {
+		getExtensibilityInfo(bOverlayIsSibling) {
 			if (this._oExtensibilityInfo) {
 				return this._oExtensibilityInfo[bOverlayIsSibling ? "asSibling" : "asChild"];
 			}
 			return undefined;
 		},
 
-		exit: function() {
+		exit(...aArgs) {
 			this.getDialog().destroy();
 			if (Plugin.prototype.exit) {
-				Plugin.prototype.exit.apply(this, arguments);
+				Plugin.prototype.exit.apply(this, aArgs);
 			}
 		}
 

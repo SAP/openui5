@@ -24,7 +24,7 @@ sap.ui.define([
 	"use strict";
 
 	Controller.extend("sap.ui.rta.qunitrta.ComplexTest", {
-		onInit: function() {
+		onInit() {
 			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
 			var oManifest = FlUtils.getAppComponentForControl(this.getView()).getManifest();
 			var iServerDelay = UriParameters.fromQuery(window.location.search).get("serverDelay");
@@ -112,21 +112,21 @@ sap.ui.define([
 			}
 		},
 
-		switchToAdaptionMode: function() {
+		switchToAdaptionMode() {
 			sap.ui.require(["sap/ui/rta/api/startAdaptation"], function(startAdaptation) {
 				var sUriParam = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-ccf");
 				startAdaptation({
 					rootControl: oCore.byId("Comp1---idMain1"),
 					customFieldUrl: `${this._sResourcePath}/testdata/rta/CustomField.html`,
 					showCreateCustomField: sUriParam === "true",
-					stop: function() {
+					stop() {
 						this.destroy();
 					}
 				});
 			}.bind(this));
 		},
 
-		isDataReady: function() {
+		isDataReady() {
 			return this._dataPromise;
 		}
 	});

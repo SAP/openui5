@@ -45,7 +45,7 @@ sap.ui.define(function() {
 				 * @return {string[]} Selected control IDs
 				 * @public
 				 */
-				get: function() {
+				get() {
 					return getControlIds(oSelectionManager.get());
 				},
 

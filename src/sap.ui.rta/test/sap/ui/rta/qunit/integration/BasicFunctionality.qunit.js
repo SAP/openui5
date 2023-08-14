@@ -46,10 +46,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started...", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oField = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
 			this.oGroup = oCore.byId("Comp1---idMain1--Dates");
 			this.oForm = oCore.byId("Comp1---idMain1--MainForm");
@@ -67,7 +67,7 @@ sap.ui.define([
 				this.oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			this.oCommandStack.destroy();
 			sandbox.restore();
@@ -157,10 +157,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available and CTRL-Z/CTRL-Y are pressed...", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.bMacintoshOriginal = Device.os.macintosh;
 			Device.os.macintosh = false;
 
@@ -182,7 +182,7 @@ sap.ui.define([
 				this.oElementOverlay = OverlayRegistry.getOverlay(oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode"));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oRta.destroy();
 			Device.os.macintosh = this.bMacintoshOriginal;

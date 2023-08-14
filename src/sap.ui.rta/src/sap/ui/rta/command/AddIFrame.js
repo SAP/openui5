@@ -63,7 +63,8 @@ sap.ui.define([
 	});
 
 	// Override to avoid url to be 'bound'
-	AddIFrame.prototype.applySettings = function(mSettings) {
+	AddIFrame.prototype.applySettings = function(...aArgs) {
+		const mSettings = aArgs[0];
 		var mSettingsWithoutUrl = {};
 		Object.keys(mSettings)
 		.filter(function(sSettingName) {
@@ -72,9 +73,8 @@ sap.ui.define([
 		.forEach(function(sSettingName) {
 			mSettingsWithoutUrl[sSettingName] = mSettings[sSettingName];
 		});
-		var aArguments = [].slice.call(arguments);
-		aArguments[0] = mSettingsWithoutUrl;
-		FlexCommand.prototype.applySettings.apply(this, aArguments);
+		aArgs[0] = mSettingsWithoutUrl;
+		FlexCommand.prototype.applySettings.apply(this, aArgs);
 		this.setUrl(mSettings.url);
 	};
 

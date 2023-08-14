@@ -29,7 +29,7 @@ sap.ui.define([
 	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Dummy");
 
 	QUnit.module("FlVariant Save as", {
-		beforeEach: function() {
+		beforeEach() {
 			var oData = {
 				variantMgmtId1: {
 					defaultVariant: "variantMgmtId1",
@@ -61,7 +61,7 @@ sap.ui.define([
 				this.oModel._bDesignTimeMode = true;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oModel.destroy();
 			this.oVariantManagement.destroy();
 			sandbox.restore();

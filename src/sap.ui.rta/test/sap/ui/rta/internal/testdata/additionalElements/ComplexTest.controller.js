@@ -18,7 +18,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.rta.test.additionalElements.ComplexTest", {
 		_data: [],
 
-		onInit: function() {
+		onInit() {
 			var sURL;
 			var oModel;
 			var oView;
@@ -136,20 +136,20 @@ sap.ui.define([
 			);
 		},
 
-		_getUrlParameter: function(sParam) {
+		_getUrlParameter(sParam) {
 			var sReturn = "";
 			var sPageURL = window.location.search.substring(1);
 			var sURLVariables = sPageURL.split("&");
 			for (var i = 0; i < sURLVariables.length; i++) {
 				var sParameterName = sURLVariables[i].split("=");
 				if (sParameterName[0] === sParam) {
-					sReturn = sParameterName[1];
+					[, sReturn] = sParameterName;
 				}
 			}
 			return sReturn;
 		},
 
-		switchToAdaptationMode: function() {
+		switchToAdaptationMode() {
 			sap.ui.require([
 				"sap/ui/rta/api/startKeyUserAdaptation"
 			], function(startKeyUserAdaptation) {
@@ -159,7 +159,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		isDataReady: function() {
+		isDataReady() {
 			return Promise.all(this._data);
 		}
 	});

@@ -22,14 +22,14 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Given a list of libraries that needs to be added to the app descriptor...", {
-		before: function() {
+		before() {
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 		},
-		after: function() {
+		after() {
 			this.oMockedAppComponent._restoreGetAppComponentStub();
 			this.oMockedAppComponent.destroy();
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.sReference = "appReference";
 			this.sLayer = Layer.CUSTOMER;
 			this.sChangeType = "appdescr_ui5_addLibraries";
@@ -43,7 +43,7 @@ sap.ui.define([
 
 			this.oButton = new Button("myButton");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 		}
 	}, function() {
@@ -52,7 +52,7 @@ sap.ui.define([
 			var oAddLibraryCommand;
 
 			var oMockDescriptorChange = {
-				store: function() {
+				store() {
 					assert.ok(true, "the descriptor change was submitted");
 					oAddLibraryCommand.execute()
 					.then(function() {

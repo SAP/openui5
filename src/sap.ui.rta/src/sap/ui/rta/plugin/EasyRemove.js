@@ -40,7 +40,8 @@ sap.ui.define([
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	EasyRemove.prototype.registerElementOverlay = function(oOverlay) {
+	EasyRemove.prototype.registerElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		var oControl = oOverlay.getElement();
 		if (oControl.getMetadata().getName() === "sap.uxap.ObjectPageSection" && this.hasStableId(oOverlay)) {
 			oOverlay.addStyleClass("sapUiRtaPersDelete");
@@ -70,7 +71,7 @@ sap.ui.define([
 			.attachBrowserEvent("tap", fnOnClick);
 		}
 
-		Remove.prototype.registerElementOverlay.apply(this, arguments);
+		Remove.prototype.registerElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -79,11 +80,12 @@ sap.ui.define([
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	EasyRemove.prototype._isEditable = function(oOverlay) {
+	EasyRemove.prototype._isEditable = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		if (oOverlay._oDeleteButton) {
 			oOverlay._oDeleteButton.setEnabled(this.isEnabled([oOverlay]));
 		}
-		return Remove.prototype._isEditable.apply(this, arguments);
+		return Remove.prototype._isEditable.apply(this, aArgs);
 	};
 
 	EasyRemove.prototype._addButton = function(oOverlay) {
@@ -116,7 +118,8 @@ sap.ui.define([
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	EasyRemove.prototype.deregisterElementOverlay = function(oOverlay) {
+	EasyRemove.prototype.deregisterElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		var oControl = oOverlay.getElement();
 		if (oControl.getMetadata().getName() === "sap.uxap.ObjectPageSection") {
 			oOverlay.removeStyleClass("sapUiRtaPersDelete");
@@ -125,7 +128,7 @@ sap.ui.define([
 			}
 		}
 
-		Remove.prototype.deregisterElementOverlay.apply(this, arguments);
+		Remove.prototype.deregisterElementOverlay.apply(this, aArgs);
 	};
 
 	return EasyRemove;

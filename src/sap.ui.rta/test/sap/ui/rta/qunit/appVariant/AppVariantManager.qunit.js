@@ -52,13 +52,13 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an AppVariantManager is instantiated", {
-		beforeEach: function() {
+		beforeEach() {
 			var oRootControl = new Control();
 			var oRtaCommandStack = new Stack();
 			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
 			this.oAppVariantManager = new AppVariantManager({commandSerializer: this.oCommandSerializer, layer: Layer.CUSTOMER});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oAppVariantManager.destroy();
 		}
@@ -112,7 +112,7 @@ sap.ui.define([
 				};
 
 				var oResult = {
-					getParameters: function() {
+					getParameters() {
 						return oParameters;
 					}
 				};
@@ -136,7 +136,7 @@ sap.ui.define([
 	var oServer;
 
 	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, "TestId");
 
 			var oRtaCommandStack = new Stack();
@@ -159,7 +159,7 @@ sap.ui.define([
 				icon: "App Variant Icon"
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oAppComponent.destroy();
 			this.oAppVariantManager.destroy();
@@ -233,7 +233,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRootControl = new Control();
 			var oRtaCommandStack = new Stack();
 			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: this.oRootControl});
@@ -241,7 +241,7 @@ sap.ui.define([
 			this.oAppVariantManager = new AppVariantManager({commandSerializer: this.oCommandSerializer, layer: Layer.CUSTOMER});
 			oServer = sinon.fakeServer.create();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			oServer.restore();
 		}

@@ -28,11 +28,11 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		onAfterRendering: function() {
+		onAfterRendering() {
 			window.fnResolve(RtaPerformanceTestUtil.startRta(oCore.byId("opLayout")));
 		},
 
-		createContent: function() {
+		createContent() {
 			var oHeaderLayout = new Panel("layout-header");
 			DtPerformanceTestUtil.addMixedControlsTo(oHeaderLayout, 1, 10, true /* visible */);
 			DtPerformanceTestUtil.addMixedControlsTo(oHeaderLayout, 11, 20, false /* invisible */);

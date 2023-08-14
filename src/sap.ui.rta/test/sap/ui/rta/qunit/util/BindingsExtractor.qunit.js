@@ -25,7 +25,7 @@ sap.ui.define([
 
 	// One model with EntityType01 and EntityType02 (default) + one i18n model ("i18n")
 	QUnit.module("Given a complex test view with oData Model...", {
-		before: function() {
+		before() {
 			return XMLView.create({
 				id: "idMain1",
 				viewName: "sap.ui.rta.test.additionalElements.ComplexTest"
@@ -38,10 +38,10 @@ sap.ui.define([
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			this.oView.destroy();
 		}
 	}, function() {
@@ -177,7 +177,7 @@ sap.ui.define([
 
 		QUnit.test("when collectBindingPaths is called for element with bindings not containing a path property", function(assert) {
 			var oElement = {
-				getParent: function() {
+				getParent() {
 					return undefined;
 				}
 			};

@@ -63,7 +63,7 @@ sap.ui.define([
 			combine: {
 				changeType: "combineStuff",
 				changeOnRelevantContainer: true,
-				isEnabled: function() {
+				isEnabled() {
 					return false;
 				}
 			}
@@ -76,7 +76,7 @@ sap.ui.define([
 			combine: {
 				changeType: "combineStuff",
 				changeOnRelevantContainer: true,
-				isEnabled: function() {
+				isEnabled() {
 					return true;
 				}
 			}
@@ -98,7 +98,7 @@ sap.ui.define([
 		actions: {
 			combine: {
 				changeType: "combineStuff",
-				isEnabled: function() {
+				isEnabled() {
 					return true;
 				}
 			}
@@ -117,7 +117,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Given a designTime and combine plugin are instantiated", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oCommandFactory = new CommandFactory();
@@ -216,7 +216,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oPanel.destroy();

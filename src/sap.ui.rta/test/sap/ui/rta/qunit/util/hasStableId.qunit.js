@@ -39,7 +39,7 @@ function(
 	});
 
 	QUnit.module("Control with unstable ID", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
@@ -50,7 +50,7 @@ function(
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new VerticalLayout();
 				}
 			});
@@ -75,7 +75,7 @@ function(
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
@@ -87,7 +87,7 @@ function(
 	});
 
 	QUnit.module("Control with stable ID", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
@@ -98,7 +98,7 @@ function(
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new VerticalLayout("layout");
 				}
 			});
@@ -123,7 +123,7 @@ function(
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
@@ -139,7 +139,7 @@ function(
 	});
 
 	QUnit.module("Control in binding template (template has stable ID, control has stable ID)", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			var oModel = new JSONModel([
 				{ text: "item1-bound" },
@@ -154,7 +154,7 @@ function(
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new XMLView({
 						id: "myView",
 						viewContent:
@@ -179,7 +179,7 @@ function(
 			this.oComponentContainer.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			this.oText1 = this.oView.byId("layout").getItems()[0].getContent()[0];
+			[this.oText1] = this.oView.byId("layout").getItems()[0].getContent();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -192,7 +192,7 @@ function(
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
@@ -204,7 +204,7 @@ function(
 	});
 
 	QUnit.module("Control in binding template (template has stable ID, control has unstable ID)", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			var oModel = new JSONModel([
 				{ text: "item1-bound" },
@@ -219,7 +219,7 @@ function(
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new XMLView({
 						id: "myView",
 						viewContent:
@@ -244,7 +244,7 @@ function(
 			this.oComponentContainer.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			this.oText1 = this.oView.byId("layout").getItems()[0].getContent()[0];
+			[this.oText1] = this.oView.byId("layout").getItems()[0].getContent();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -257,7 +257,7 @@ function(
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
@@ -269,7 +269,7 @@ function(
 	});
 
 	QUnit.module("Control in binding template (template has unstable ID, control has stable ID)", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			var oModel = new JSONModel([
 				{ text: "item1-bound" },
@@ -284,7 +284,7 @@ function(
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new XMLView({
 						id: "myView",
 						viewContent:
@@ -309,7 +309,7 @@ function(
 			this.oComponentContainer.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			this.oText1 = this.oView.byId("layout").getItems()[0].getContent()[0];
+			[this.oText1] = this.oView.byId("layout").getItems()[0].getContent();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -322,7 +322,7 @@ function(
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();

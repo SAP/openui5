@@ -20,7 +20,7 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
+	var {ValueState} = coreLibrary;
 
 	var oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 	var aTextInputFields = ["frameUrl"];
@@ -185,7 +185,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that a AddIFrameDialog is available...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAddIFrameDialog = new AddIFrameDialog();
 		}
 	}, function() {

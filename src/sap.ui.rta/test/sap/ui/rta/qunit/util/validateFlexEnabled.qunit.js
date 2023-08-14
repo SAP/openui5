@@ -93,7 +93,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("flexEnabled set to `true` and there is unstable control when RTA is started", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oComponent = getMockedComponent(true, true);
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
@@ -113,7 +113,7 @@ sap.ui.define([
 
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			return this.oRta.stop().then(function() {
 				this.oComponentContainer.destroy();
 				sandbox.restore();
@@ -204,7 +204,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("flexEnabled set to `true` and there are no unstable controls", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oComponent = this.oComponent = getMockedComponent(true, false);
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
@@ -227,7 +227,7 @@ sap.ui.define([
 				MessageBox.show.resetHistory();
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			return this.oRta.stop().then(function() {
 				this.oComponentContainer.destroy();
 				sandbox.restore();
@@ -296,7 +296,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("flexEnabled is not set and there is an unstable control", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oComponent = this.oComponent = getMockedComponent(false, false);
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
@@ -319,7 +319,7 @@ sap.ui.define([
 				MessageBox.show.resetHistory();
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			return this.oRta.stop().then(function() {
 				this.oComponentContainer.destroy();
 				sandbox.restore();

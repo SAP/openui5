@@ -461,7 +461,7 @@ sap.ui.define([
 					// Only send new root overlays as updates; children elements are part of their outlines already
 					if (mParams.elementOverlay.isRoot()) {
 						var sRootElementId = mParams.elementOverlay.getElement().getId();
-						oResponse.element = oOutline._getOutline(sRootElementId)[0];
+						[oResponse.element] = oOutline._getOutline(sRootElementId);
 						oResponse.type = "new";
 						break;
 					}
@@ -469,13 +469,13 @@ sap.ui.define([
 
 				case "elementOverlayAdded":
 					// Overlays added to existing aggregations
-					oResponse.element = oOutline._getOutline(sElementId)[0];
+					[oResponse.element] = oOutline._getOutline(sElementId);
 					oResponse.targetId = sTargetId;
 					oResponse.type = "new";
 					break;
 
 				case "elementOverlayMoved":
-					oResponse.element = oOutline._getOutline(sElementId, 0)[0];
+					[oResponse.element] = oOutline._getOutline(sElementId, 0);
 					oResponse.targetId = sTargetId;
 					oResponse.type = "move";
 					break;
@@ -496,7 +496,8 @@ sap.ui.define([
 						oResponse.element.id =
 							oResponse.elementOverlay.getElement()
 								? oResponse.elementOverlay.getElement().getId()
-								: oResponse.elementOverlay.getAssociation("element"); // Triggered via DesignTime elementOverlayDestroyed event
+								// Triggered via DesignTime elementOverlayDestroyed event
+								: oResponse.elementOverlay.getAssociation("element");
 						oResponse.type = "destroy";
 						break;
 					}
@@ -513,7 +514,7 @@ sap.ui.define([
 
 				case "elementPropertyChanged":
 					// Trigger origin is ManagedObjectObserver
-					oResponse.element = oOutline._getOutline(sElementId, 0)[0];
+					[oResponse.element] = oOutline._getOutline(sElementId, 0);
 					oResponse.type = "elementPropertyChange";
 					break;
 

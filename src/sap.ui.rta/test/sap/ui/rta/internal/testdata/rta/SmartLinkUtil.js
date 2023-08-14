@@ -36,13 +36,13 @@ sap.ui.define([
 			switch (sServiceName) {
 				case "CrossApplicationNavigation":
 					return {
-						hrefForExternal: function(oTarget) {
+						hrefForExternal(oTarget) {
 							if (!oTarget || !oTarget.target || !oTarget.target.shellHash) {
 								return null;
 							}
 							return oTarget.target.shellHash;
 						},
-						getDistinctSemanticObjects: function() {
+						getDistinctSemanticObjects() {
 							var aSemanticObjects = [];
 							for (var sSemanticObject in mSetting) {
 								aSemanticObjects.push(sSemanticObject);
@@ -53,7 +53,7 @@ sap.ui.define([
 								}, 0);
 							});
 						},
-						getLinks: function(aParams) {
+						getLinks(aParams) {
 							var aLinks = [];
 							if (!Array.isArray(aParams)) {
 								aLinks = mSetting[aParams.semanticObject] ? mSetting[aParams.semanticObject].links : [];
@@ -75,7 +75,7 @@ sap.ui.define([
 					};
 				case "URLParsing":
 					return {
-						parseShellHash: function(sIntent) {
+						parseShellHash(sIntent) {
 							var sAction;
 							for (var sSemanticObject in mSetting) {
 								mSetting[sSemanticObject].links.some(function(oLink) { // eslint-disable-line no-loop-func

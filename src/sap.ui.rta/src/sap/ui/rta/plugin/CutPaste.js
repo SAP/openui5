@@ -65,8 +65,8 @@ function(
 	/**
 	 * @override
 	 */
-	CutPaste.prototype.init = function() {
-		ControlCutPaste.prototype.init.apply(this, arguments);
+	CutPaste.prototype.init = function(...aArgs) {
+		ControlCutPaste.prototype.init.apply(this, aArgs);
 		this.setElementMover(new RTAElementMover({commandFactory: this.getCommandFactory()}));
 	};
 
@@ -115,9 +115,9 @@ function(
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	CutPaste.prototype.registerElementOverlay = function() {
-		ControlCutPaste.prototype.registerElementOverlay.apply(this, arguments);
-		Plugin.prototype.registerElementOverlay.apply(this, arguments);
+	CutPaste.prototype.registerElementOverlay = function(...aArgs) {
+		ControlCutPaste.prototype.registerElementOverlay.apply(this, aArgs);
+		Plugin.prototype.registerElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -125,9 +125,9 @@ function(
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	CutPaste.prototype.deregisterElementOverlay = function() {
-		ControlCutPaste.prototype.deregisterElementOverlay.apply(this, arguments);
-		Plugin.prototype.removeFromPluginsList.apply(this, arguments);
+	CutPaste.prototype.deregisterElementOverlay = function(...aArgs) {
+		ControlCutPaste.prototype.deregisterElementOverlay.apply(this, aArgs);
+		Plugin.prototype.removeFromPluginsList.apply(this, aArgs);
 	};
 
 	/**
@@ -154,8 +154,9 @@ function(
 	/**
 	 * @override
 	 */
-	CutPaste.prototype.cut = function(oOverlay) {
-		return ControlCutPaste.prototype.cut.apply(this, arguments)
+	CutPaste.prototype.cut = function(...aArgs) {
+		const [oOverlay] = aArgs;
+		return ControlCutPaste.prototype.cut.apply(this, aArgs)
 		.then(function() {
 			oOverlay.setSelected(false);
 		});
@@ -190,7 +191,7 @@ function(
 				handler: function(aElementOverlays) {
 					return this.cut(aElementOverlays[0]);
 				}.bind(this),
-				enabled: function(aElementOverlays) {
+				enabled(aElementOverlays) {
 					return aElementOverlays.length === 1;
 				},
 				rank: 70,

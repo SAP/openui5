@@ -85,10 +85,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a command factory", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton = new Button(oMockedAppComponent.createId("myButton"));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oButton.destroy();
 		}
@@ -154,7 +154,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a flex command", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton = new Button("mockButton");
 			this.fnApplyChangeSpy = sandbox.spy(HideControl, "applyChange");
 			this.oFlexCommand = new FlexCommand({
@@ -162,7 +162,7 @@ sap.ui.define([
 				changeType: "hideControl"
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oFlexCommand.destroy();
 			this.oButton.destroy();
@@ -192,7 +192,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a command stack", {
-		beforeEach: function() {
+		beforeEach() {
 			this.stack = new Stack();
 			this.command = new BaseCommand();
 			this.failingCommand = this.command.clone();
@@ -202,7 +202,7 @@ sap.ui.define([
 			this.command2 = new BaseCommand();
 			sandbox.stub(MessageBox, "error");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.command.destroy();
 			this.command2.destroy();
@@ -383,7 +383,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a property command", {
-		beforeEach: function() {
+		beforeEach() {
 			var oFlexSettings = {
 				developerMode: true,
 				layer: Layer.VENDOR
@@ -404,7 +404,7 @@ sap.ui.define([
 				this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oControl.destroy();
 			this.oPropertyCommand.destroy();
@@ -438,7 +438,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a bind property command", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var oFlexSettings = {
 				developerMode: true,
 				layer: Layer.VENDOR
@@ -503,7 +503,7 @@ sap.ui.define([
 				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oInput.destroy();
 			this.oBindShowValueHelpCommandWithoutOldValueSet.destroy();
@@ -564,7 +564,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given variant model, variant management reference and flex settings for a rename command", {
-		beforeEach: function() {
+		beforeEach() {
 			this.sCurrentVMReference = "dummyVariantManagementReference";
 			this.oFlexSettings = {
 				layer: Layer.VENDOR,
@@ -572,7 +572,7 @@ sap.ui.define([
 			};
 
 			var oVariantModel = {
-				getCurrentVariantReference: function() {}
+				getCurrentVariantReference() {}
 			};
 			sandbox.stub(oMockedAppComponent, "getModel")
 			.callThrough()
@@ -597,7 +597,7 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oButton.destroy();
 			this.oCommandFactory.destroy();
@@ -666,7 +666,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a command stack with multiple already executed commands", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.renamedButton = new Button();
 			this.stack = new Stack();
 			this.command = new BaseCommand();
@@ -682,7 +682,7 @@ sap.ui.define([
 				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.command.destroy();
 			this.command2.destroy();
@@ -802,7 +802,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an empty command stack and commands", {
-		beforeEach: function() {
+		beforeEach() {
 			this.stack = new Stack();
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 			this.command = new BaseCommand();
@@ -813,7 +813,7 @@ sap.ui.define([
 			this.compositeCommand = new CompositeCommand();
 			sandbox.stub(MessageBox, "error");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.command.destroy();
 			this.command2.destroy();
@@ -1014,7 +1014,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given controls and designTimeMetadata", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oMovable = new Button(oMockedAppComponent.createId("attribute"));
@@ -1043,7 +1043,7 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oRootElement.destroy();
 			this.oSourceParentDesignTimeMetadata.destroy();
@@ -1081,7 +1081,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a command stack with a hideControl flex command", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oCommandStack = new Stack();
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button(oMockedAppComponent.createId("button"));
@@ -1097,7 +1097,7 @@ sap.ui.define([
 			sandbox.stub(ChangesWriteAPI, "apply").resolves({success: true});
 			this.oWriteAPIRevertStub = sandbox.stub(ChangesWriteAPI, "revert").resolves({success: true});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oFlexCommand.destroy();
 			this.oCompositeCommand.destroy();
@@ -1140,7 +1140,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a command factory and a bound control containing a template binding", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 
 			var done = assert.async();
@@ -1177,9 +1177,8 @@ sap.ui.define([
 			this.oList.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			this.oVBox31 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0];
-			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
-			this.oText2 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[1];
+			[this.oVBox31] = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems();
+			[this.oText1, this.oText2] = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems();
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oList]
 			});
@@ -1192,7 +1191,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
@@ -1391,7 +1390,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a command factory and a bound control containing multiple template bindings", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
@@ -1437,7 +1436,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
@@ -1471,7 +1470,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a command factory and a bound control containing an aggregation binding with a factory function", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 
 			var done = assert.async();
@@ -1509,14 +1508,14 @@ sap.ui.define([
 			this.oList.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0];
+			[this.oText1] = this.oList.getItems()[1].getContent()[0].getItems();
 			var oDesignTime = new DesignTime({
 				rootElements: [this.oList]
 			});
 
 			oDesignTime.attachEventOnce("synced", done);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oList.destroy();
 		}
