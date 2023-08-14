@@ -421,8 +421,8 @@ sap.ui.define([
 		 */
 		WebComponent.prototype.__onAfterRenderingDelegate = function() {
 			this.__attachCustomEventsListeners();
-
 			var oDomRef = this.getDomRef();
+			this.__updateObjectProperties(oDomRef);
 			window.customElements.whenDefined(oDomRef.localName).then(function() {
 				if (typeof oDomRef.attachInvalidate === "function") {
 					oDomRef.attachInvalidate(this.__onInvalidationBound);
@@ -431,7 +431,6 @@ sap.ui.define([
 				if (oDomRef._individualSlot) {
 					this.__slot = oDomRef._individualSlot; // If the component creates individual slots for children, f.e. columns-3 or default-1, update the __slot property, otherwise RenderManager will set the normal slot name, f.e. columns or ""
 				}
-				this.__updateObjectProperties(oDomRef);
 			}.bind(this));
 		};
 
