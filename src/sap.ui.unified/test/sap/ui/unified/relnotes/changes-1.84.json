@@ -514,5 +514,21 @@
         ]
       }
     ]
+  },
+  "1.84.38": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "4e49e9e9021d4255575ae1a6c6988caf0dee6c44",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: skip invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005658702023"
+          }
+        ]
+      }
+    ]
   }
 }

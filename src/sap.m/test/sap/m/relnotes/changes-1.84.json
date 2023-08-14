@@ -2013,5 +2013,54 @@
         ]
       }
     ]
+  },
+  "1.84.38": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "7ace5c9ecdd9fe97ea9e64b22725bd6ca31534eb",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSlider: Remove disallowed aria property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011628"
+          }
+        ]
+      },
+      {
+        "id": "c777567b4d7e1ea0ad58506785c366c771e3b747",
+        "type": "FIX",
+        "text": " sap.m.Slider: Adjust failing QUnit test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "c0696df6f89e9627dfe350c2a9fe85a4663fda7f",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Fix unstable QUnit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380097636"
+          }
+        ]
+      },
+      {
+        "id": "810af11907b23863813566c52858324caab59724",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004628532023"
+          }
+        ]
+      }
+    ]
   }
 }
