@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ActionToolbarActionAlignment",
 	"sap/m/ToolbarSeparator",
 	"sap/ui/fl/variants/VariantManagement",
-	"sap/m/IllustratedMessage"
+	"sap/m/IllustratedMessage",
+	"sap/ui/mdc/chart/DrillBreadcrumbs"
 ],
 	function (
 		Core,
@@ -28,7 +29,8 @@ sap.ui.define([
 		Alignment,
 		ToolbarSeparator,
 		VM,
-		IllustratedMessage
+		IllustratedMessage,
+		Breadcrumbs
 	) {
 		"use strict";
 
@@ -769,6 +771,8 @@ sap.ui.define([
 
 		QUnit.test("_checkStyleClassesForDimensions with dimension after removal", function (assert) {
 			//Arrange
+			this.oMDCChart._oBreadcrumbs = new Breadcrumbs(this.oMDCChart.getId() + "--breadcrumbs");
+
 			this.oMDCChart.removeAllItems();
 			this.oMDCChart.addStyleClass("sapUiMDCChartGrid");
 			this.oMDCChart._checkStyleClassesForDimensions();
@@ -785,6 +789,8 @@ sap.ui.define([
 			assert.ok(removeStyleClassSpy.calledOnceWith("sapUiMDCChartGridNoBreadcrumbs"), "sapUiMDCChartGridNoBreadcrumbs removed");
 			assert.ok(this.oMDCChart.hasStyleClass("sapUiMDCChartGrid"), "Styleclass in DOM");
 			assert.ok(!this.oMDCChart.hasStyleClass("sapUiMDCChartGridNoBreadcrumbs"), "Styleclass not in DOM");
+
+			delete this.oMDCChart._oBreadcrumbs;
 		});
 
 		QUnit.test("_getSortedProperties", function (assert) {
