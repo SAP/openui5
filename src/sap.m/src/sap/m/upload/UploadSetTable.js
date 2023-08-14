@@ -112,7 +112,16 @@ sap.ui.define([
 				 * Expects promise to be returned to the control with function invocation, when promise resolved control will initiate the upload process.
 				 * configure this property only when additional configuration to be performed before upload of each item / manually trigger the upload process by resolving the promise returned to the control.
 				 */
-				onItemValidationSuccess: {type: "function", defaultValue: null}
+				onItemValidationSuccess: {type: "function", defaultValue: null},
+				/**
+				 * Show or hide carousel's arrows on preview dialog.
+				 */
+				showCarouselArrows: {type: "boolean", defaultValue: true},
+				/**
+				 * Size limit of the file in megabytes that is allowed to be previewed
+				 * <br>If set to <code>null</code> or <code>0</code>, files of any size can be previewed.
+				 */
+				maxFileSizeforPreview: {type: "float", defaultValue: 0}
             },
             aggregations: {
                 headerToolbar : {
@@ -925,13 +934,16 @@ sap.ui.define([
 			this._filePreviewDialogControl = new FilePreviewDialog({
 				previewItem: oItem,
 				items: this.getItems(),
-				additionalFooterButtons: this.getPreviewDialogAdditionalFooterButtons()
+				additionalFooterButtons: this.getPreviewDialogAdditionalFooterButtons(),
+				showCarouselArrows: this.getShowCarouselArrows(),
+				maxFileSizeforPreview: this.getMaxFileSizeforPreview()
 			});
 			this.addDependent(this._filePreviewDialogControl);
 			this._filePreviewDialogControl.open();
 		} else {
 			this._filePreviewDialogControl.setPreviewItem(oItem);
 			this._filePreviewDialogControl.setItems(this.getItems());
+			this._filePreviewDialogControl.setShowCarouselArrows(this.getShowCarouselArrows());
 			aitems.forEach((item) => this._filePreviewDialogControl.insertAddDiitionalFooterButton(item));
 			this._filePreviewDialogControl.open();
 		}

@@ -51,7 +51,11 @@ sap.ui.define([
 					/**
 					 * Specifies whether the item can be previewed.
 					 */
-					previewable: {type: "boolean", defaultValue: true}
+					previewable: {type: "boolean", defaultValue: true},
+					/**
+					 * Specifies file size of the item in bytes.
+					 */
+					fileSize: {type: "float", defaultValue: 0}
 				},
 				aggregations: {
 					/**
@@ -231,6 +235,7 @@ sap.ui.define([
 		this._oFileObject = oFileObject;
 		if (oFileObject) {
 			this._fFileSize = oFileObject.size / UploadSetTableItem.MEGABYTE;
+			this.setFileSize(oFileObject.size);
 			this.setMediaType(oFileObject.type);
 		} else {
 			this._fFileSize = null;

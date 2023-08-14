@@ -129,6 +129,7 @@
                     type="Navigation"
                     highlight="{=${uploadState} === 'Complete' ? 'Indication05' : null }"
                     previewable="{previewable}"
+                    fileSize="{fileSize}"
                 >
                 <cells>
                 

@@ -58,9 +58,19 @@ sap.ui.define([
 				*/
 				previewItem: {type: "sap.m.upload.UploadSetTableItem", defaultValue: null},
 				/**
-				 * Items set to build the preview Carousel.
+				 * Items set to build the preview carousel.
 				 * */
-				items: {type: "sap.m.upload.UploadSetTableItem[]", defaultValue: []}
+				items: {type: "sap.m.upload.UploadSetTableItem[]", defaultValue: []},
+
+				/**
+				 * Show or hide carousel's arrows.
+				 */
+				showCarouselArrows: {type: "boolean", defaultValue: true},
+				/**
+				 * Size limit of the file in megabytes that is allowed to be previewed
+				 * <br>If set to <code>null</code> or <code>0</code>, files of any size can be previewed.
+				 */
+				maxFileSizeforPreview: {type: "float", defaultValue: 0}
 			},
 			aggregations: {
 				/**
@@ -87,9 +97,9 @@ sap.ui.define([
 				if (!this._oDialog) {
 					this._oDialog = this._createDialog();
 				} else {
-					// set title of the dialog to the current previewable item filename.
+					// Sets the title of the dialog to the currently previewed item filename.
 					this._oDialog.setTitle(this.getPreviewItem()?.getFileName() || "");
-					// remove all the existing content and set the new content on the dialog
+					// Removes all the existing content and set the new content on the dialog.
 					this._oDialog.removeAllContent();
 					this._oDialog.insertContent(this._oCarousel);
 				}
@@ -149,7 +159,7 @@ sap.ui.define([
 			const oIllustratedMessage = new IllustratedMessage({
 				illustrationType: IllustratedMessageType.NoData,
 				title: sFileName,
-				description: "No preview available for this file.",
+				description: oLibraryResourceBundle.getText("FILE_PREVIEW_DIALOG_NO_PREVIEW_AVAILABLE_MSG"),
 				enableVerticalResponsiveness: true
 			});
 			return oIllustratedMessage;
@@ -229,7 +239,7 @@ sap.ui.define([
      	*/
 		_createCarousel: async function () {
 			const oPreviewItem = this.getPreviewItem();
-			const aItems = this.getItems();
+			const aItems = !this.getShowCarouselArrows() ? [this.getPreviewItem()] : this.getItems();
 			var sActivePageId = "";
 			var aPagePromises = aItems.map(async (oItem) => {
 				var sMediaType = oItem.getMediaType();
@@ -237,7 +247,7 @@ sap.ui.define([
 				var sFileName = oItem.getFileName();
 				var oPage = this._createIllustratedMessage(sFileName);
 
-				if (oItem.getPreviewable()) {
+				if (oItem.getPreviewable() && this.isFileSizeWithinMaxLimit(oItem)) {
 					switch (sMediaType?.toLowerCase()) {
 						case PreviewableMediaType.Png:
 						case PreviewableMediaType.Bmp:
@@ -286,6 +296,8 @@ sap.ui.define([
 					}
 				}
 
+				oPage = !this.isFileSizeWithinMaxLimit(oItem) ? this._getMaxSizePageIllustration(oItem) : oPage;
+
 				sActivePageId = oItem?.getId() === oPreviewItem?.getId() ? oPage?.getId() : sActivePageId;
 
 				return oPage;
@@ -294,7 +306,7 @@ sap.ui.define([
 			const aPages = await Promise.all(aPagePromises);
 
 			const oCarousel = new Carousel({
-				showPageIndicator: true,
+				showPageIndicator: this.getShowCarouselArrows() ? true : false,
 				pages: [
 					aPages
 				],
@@ -308,6 +320,13 @@ sap.ui.define([
 					this._oDialog.setTitle(sNewDialogTitle);
 				}
 			});
+
+			// prevent all swipe related events so carousel movement is disabled.
+			if (!this.getShowCarouselArrows()) {
+				oCarousel.ontouchstart = oCarousel.ontouchmove = oCarousel.ontouchend = (oEvent) => {
+					oEvent.preventDefault();
+				};
+			}
 
 			return oCarousel;
 		},
@@ -323,8 +342,10 @@ sap.ui.define([
 			var oDialog = new Dialog({
 				title: oActiveItem.getFileName(),
 				content: that._oCarousel,
-				horizontalScrolling: true,
-				verticalScrolling: true,
+				horizontalScrolling: false,
+				verticalScrolling: false,
+				contentWidth: "100%",
+				contentHeight: "100%",
 				buttons: [
 					that.getAdditionalFooterButtons(),
 					new Button({
@@ -357,8 +378,33 @@ sap.ui.define([
 				return oPage.sId === sActivePageId;
 			});
 			return this.getItems()[iIndex];
+		},
+		isFileSizeWithinMaxLimit: function(oItem) {
+			let maxFileSize = this.getMaxFileSizeforPreview();
+			const iFileSize = oItem && oItem.getFileSize ? oItem.getFileSize() : 0; // if no file size
+
+			// if maxfilesize or filesize is not defined any file size can be previwed.
+			if (!maxFileSize || !iFileSize) {
+				return true;
+			}
+
+			maxFileSize = maxFileSize * (FilePreviewDialog.MEGABYTE);
+
+			return iFileSize <= maxFileSize;
+
+		},
+		_getMaxSizePageIllustration: function(oItem) {
+			const oIllustratedMessage = new IllustratedMessage({
+				illustrationType: IllustratedMessageType.NoData,
+				title: oItem?.getFileName(),
+				description: oLibraryResourceBundle.getText("FILE_PREVIEW_DIALOG_MAX_PREVIEW_SIZE_EXCEEDED", this.getMaxFileSizeforPreview()),
+				enableVerticalResponsiveness: true
+			});
+			return oIllustratedMessage;
 		}
 	});
+
+	FilePreviewDialog.MEGABYTE = 1048576;
 
   return FilePreviewDialog;
 });
