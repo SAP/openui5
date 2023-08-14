@@ -3,6 +3,44 @@
     "date": "August 2023",
     "notes": [
       {
+        "id": "b6c45eb11750590be5ef2dacf52f012b46402896",
+        "type": "FEATURE",
+        "text": " sap.m Tokenizer: Allow custom press events in the n-more tokens list"
+      },
+      {
+        "id": "7e73ad754fdde80a08a5cce2ba0b578d447a5d9b",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: using a stable date in a test scenario",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380110601"
+          }
+        ]
+      },
+      {
+        "id": "b6c0068181b5e80cb41cbbc214bdec5101fbedd4",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Wrap long text in large version of control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370074893"
+          }
+        ]
+      },
+      {
+        "id": "3e5088fe67db151bb36ae0bf32d7e4e7c96b76c6",
+        "type": "FIX",
+        "text": " sap.m.MenuItem: addEventDelegate is handled correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380112907"
+          }
+        ]
+      },
+      {
         "id": "ea13864b7b1e79c5d258a9c192c4b4bcd581fb25",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: getVisibleIntervalsCount now returns the correct value ignoring daylight saving",
@@ -50,6 +88,11 @@
             "reference": "2280066615"
           }
         ]
+      },
+      {
+        "id": "1ae635c355e433d83f0626982480648cb65415ce",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRangne: Improve group creation"
       },
       {
         "id": "d1cad98f32c2e05399490421aa424c3d24f71769",

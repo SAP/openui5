@@ -3,6 +3,49 @@
     "date": "August 2023",
     "notes": [
       {
+        "id": "3771ed477b5c2b77e90de008bdc80a0fd2162099",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.TimeOfDay#getModelValueFromISOString: Fix issue for set precisions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114882"
+          }
+        ]
+      },
+      {
+        "id": "c986256f809a94a0c63e96bf0a92fe9bd7bc28f4",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.DateTimeOffset#getModelValueFromISOString: Fix issue for V4 with set precisions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114882"
+          }
+        ]
+      },
+      {
+        "id": "0b08233862b0dcaa05fd6d2de97a80556468e096",
+        "type": "FIX",
+        "text": " asynchronousXMLView.qunit.js: Stabelize execution order",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380111981"
+          }
+        ]
+      },
+      {
+        "id": "01e9de75c05ec6cacc563f533e73ff1ed01c849d",
+        "type": "FEATURE",
+        "text": " Theming: Support for default theme and fallback themes"
+      },
+      {
+        "id": "5020e2e02038513984acebc5508d607aaaec5901",
+        "type": "FIX",
+        "text": " jquery.sap.measure.qunit: Stabilize tests"
+      },
+      {
         "id": "b4f2c17d0867a312dee71cf0d2fcb4674a49cc7e",
         "type": "FIX",
         "text": " theming/ThemeManager: Avoid multiple CSS loading",

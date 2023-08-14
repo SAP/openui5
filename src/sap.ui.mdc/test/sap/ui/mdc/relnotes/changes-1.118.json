@@ -3,6 +3,28 @@
     "date": "August 2023",
     "notes": [
       {
+        "id": "8ba59bbea93d6baa33e04750dff4fd9435333c3b",
+        "type": "FIX",
+        "text": " AlignedFlowLayout / FilterBar: Adjust item layouts according to filterbar specs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380106247"
+          }
+        ]
+      },
+      {
+        "id": "2a380182361e233d719677e74b065938cbe84eab",
+        "type": "FIX",
+        "text": " MDC: FilterableListContent considers container opening state with filter value updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380097809"
+          }
+        ]
+      },
+      {
         "id": "5e8b535ef5f8162f356be40be56eb38ecb7cc334",
         "type": "FIX",
         "text": " MDC: ValueHelp Popover should consider focus loss with async showTypeahead",

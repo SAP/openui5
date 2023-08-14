@@ -3,6 +3,17 @@
     "date": "August 2023",
     "notes": [
       {
+        "id": "e82406ae06f4d925fe303f11e9b578ee17336dd1",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Aria-labelledby fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006038202023"
+          }
+        ]
+      },
+      {
         "id": "846c123ab91a4c25f42fe9c5f3089edc80cfbb96",
         "type": "FIX",
         "text": " sap.f.SidePanel: render resize handler",
