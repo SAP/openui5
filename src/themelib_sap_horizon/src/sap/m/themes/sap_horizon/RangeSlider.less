@@ -12,14 +12,14 @@
 	&:not(.sapMSliderInnerDisabled).sapMSliderProgress:hover ~ .sapMSliderHandle,
 	.sapMSliderHandle:hover  {
 		border: 1px @sapContent_FocusStyle @sapUiSliderHoverHandleBorderColor;
-		background: @sapUiSliderRangeHandleBackground;
+		background: @sapUiSliderHoverRangeHandleBackground;
 		box-shadow: @sapUiContentSelectedShadow;
 	}
 
 	&:not(.sapMSliderInnerDisabled) .sapMSliderHandle.sapMSliderHandlePressed {
 		&:not(:focus) {
 			background: transparent;
-			border: 0.125rem solid #0070F2;
+			border: 0.125rem solid @sapUiSliderActiveHandleBorderColor;
 			outline: none;
 			box-shadow: none;
 			top: -0.625rem;
@@ -28,7 +28,7 @@
 
 	&:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
 		background: @sapUiSliderActiveRangeHandleBackground;
-		border: 0.125rem solid #0070F2;
+		border: 0.125rem solid @sapUiSliderActiveHandleBorderColor;
 		outline: none;
 		box-shadow: none;
 		top: -0.625rem;
@@ -68,7 +68,7 @@
 	.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle.sapMSliderHandlePressed {
 		&:not(:focus) {
 			background: transparent;
-			border: 0.125rem solid #0070F2;
+			border: 0.125rem solid @sapUiSliderActiveHandleBorderColor;
 			outline: none;
 			box-shadow: none;
 			top: -0.5rem;
@@ -85,7 +85,7 @@
 
 	.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
 		background: @sapUiSliderActiveRangeHandleBackground;
-		border: 0.125rem solid #0070F2;
+		border: 0.125rem solid @sapUiSliderActiveHandleBorderColor;
 		outline: none;
 		box-shadow: none;
 		top: -0.5rem;
