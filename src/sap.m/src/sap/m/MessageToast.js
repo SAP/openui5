@@ -515,8 +515,8 @@ sap.ui.define([
 			this._iCloseTimeoutId = setTimeout(oPopup["close"].bind(oPopup), mSettings.duration);
 
 			function fnClearTimeout() {
-				clearTimeout(this._iCloseTimeoutId);
-				this._iCloseTimeoutId = null;
+				clearTimeout(that._iCloseTimeoutId);
+				that._iCloseTimeoutId = null;
 
 				function fnMouseLeave() {
 					iMouseLeaveTimeoutId = setTimeout(oPopup["close"].bind(oPopup), mSettings.duration);
