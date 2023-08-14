@@ -26,7 +26,8 @@ sap.ui.define([
 	 * The CustomData is also persisted in the view cache if it's active
 	 *
 	 * @alias sap.ui.fl.FlexCustomData
-	 * @experimental Since 1.61.0
+	 * @since 1.61.0
+	 * @private
 	 * @author SAP SE
 	 * @version ${version}
 	 */

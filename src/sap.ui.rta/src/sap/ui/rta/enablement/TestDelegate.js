@@ -39,7 +39,6 @@ function(
 	 * sap.ui.fl Delegate to be used in elementActionTests.
 	 * @namespace sap.ui.rta.enablement.TestDelegate
 	 * @implements sap.ui.fl.interfaces.Delegate
-	 * @experimental Since 1.77
 	 * @since 1.77
 	 * @public
 	 * @borrows sap.ui.fl.interfaces.Delegate#getPropertyInfo as #getPropertyInfo

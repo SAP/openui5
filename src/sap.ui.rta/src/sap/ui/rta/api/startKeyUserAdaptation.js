@@ -15,7 +15,6 @@ sap.ui.define([
 	 * It subsequently extends to all valid child controls.
 	 *
 	 * @function
-	 * @experimental since 1.71
 	 * @since 1.71
 	 * @alias module:sap/ui/rta/api/startKeyUserAdaptation
 	 *
