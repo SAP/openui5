@@ -984,20 +984,11 @@ sap.ui.define([
 	 * @private
 	 */
 	PlanningCalendar.prototype._applyArrowsLogic = function(bBackwards) {
+
 		if (bBackwards) {
 			this._dateNav.previous(this._getPrimaryCalendarType());
 		} else {
 			this._dateNav.next(this._getPrimaryCalendarType());
-		}
-
-		if (this.getMinDate() && this._dateNav.getStart().getTime() <= this.getMinDate().getTime()) {
-			this._dateNav.setStart(this.getMinDate());
-			this._dateNav.setCurrent(this.getMinDate());
-		}
-
-		if (this.getMaxDate() && this._dateNav.getEnd().getTime() >= this.getMaxDate().getTime()) {
-			this._dateNav.setStart(this.getMaxDate());
-			this._dateNav.setCurrent(this.getMaxDate());
 		}
 
 		var oRow = this._getRowInstanceByViewKey(this.getViewKey());
@@ -1330,6 +1321,7 @@ sap.ui.define([
 		}
 
 		this._adjustColumnHeadersTopOffset();
+		this._updateHeaderButtons();
 	};
 
 	PlanningCalendar.prototype.onThemeChanged = function() {
