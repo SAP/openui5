@@ -232,7 +232,7 @@
 			<f:footer>
 				<OverflowToolbar>
 					<ToolbarSpacer/>
-					<Button text="Previous" visible="{/backButtonVisible}" press="onDialogBackButton" />
+					<Button text="Previous Step" visible="{/backButtonVisible}" press="onDialogBackButton" />
 					<Button text="Next Step" type="Emphasized" enabled="{/nextButtonEnabled}" visible="{/nextButtonVisible}" press="onDialogNextButton" />
 					<Button text="Review" type="Emphasized" visible="{/reviewButtonVisible}" press="onDialogNextButton" />
 					<Button text="Finish" type="Emphasized" visible="{/finishButtonVisible}" press="handleWizardSubmit" />
