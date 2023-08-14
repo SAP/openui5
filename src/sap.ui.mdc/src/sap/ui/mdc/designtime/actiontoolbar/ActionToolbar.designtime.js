@@ -41,8 +41,8 @@ sap.ui.define([
         aAllowedAggregations = [
             "actions", "between"
         ],
-        aAllProperties = [];
+        aAllowedProperties = [];
 
-    return Util.getDesignTime(ActionToolbar, aAllProperties, aAllowedAggregations, oDesignTime);
+    return Util.getDesignTime(ActionToolbar, aAllowedProperties, aAllowedAggregations, oDesignTime);
 
 });
