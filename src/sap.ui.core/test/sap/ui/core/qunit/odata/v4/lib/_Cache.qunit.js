@@ -10708,6 +10708,17 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache#setEmpty", function (assert) {
+		const oCache = this.createCache("Employees");
+
+		// code under test
+		oCache.setEmpty();
+
+		assert.strictEqual(oCache.aElements.$count, 0);
+		assert.strictEqual(oCache.iLimit, 0);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("SingleCache", function (assert) {
 		var oCache,
 			mQueryOptions = {};

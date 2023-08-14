@@ -3594,6 +3594,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the cache's $count at the root level to 0.
+	 *
+	 * @protected
+	 */
+	_CollectionCache.prototype.setEmpty = function () {
+		this.iLimit = this.aElements.$count = 0;
+	};
+
+	/**
 	 * Sets the isInactive annotation at the entity with the given path, which might activate it.
 	 *
 	 * @param {string} sPath - The path
@@ -3618,6 +3627,8 @@ sap.ui.define([
 	 * Sets the cache's elements to the given collection after a deep create.
 	 *
 	 * @param {object} aElements - The elements from the deep create
+	 *
+	 * @public
 	 */
 	_CollectionCache.prototype.setPersistedCollection = function (aElements) {
 		this.aElements = aElements;
