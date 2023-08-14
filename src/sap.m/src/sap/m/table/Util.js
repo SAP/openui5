@@ -5,12 +5,13 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Core",
+	"sap/ui/core/LocaleData",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
 	"sap/m/IllustratedMessage",
 	"sap/m/Button",
 	"sap/ui/core/InvisibleMessage"
-], function(MLibrary, Core, Theming, ThemeParameters, IllustratedMessage, Button, InvisibleMessage) {
+], function(MLibrary, Core, LocaleData, Theming, ThemeParameters, IllustratedMessage, Button, InvisibleMessage) {
 	"use strict";
 	/*global Intl*/
 
@@ -32,6 +33,7 @@ sap.ui.define([
 	var fBaseFontSize = parseFloat(MLibrary.BaseFontSize);
 	var oSelectAllNotificationPopover = null;
 	var pGetSelectAllPopover = null;
+
 	/**
 	 * Measures the given text width in a canvas and returns the value in rem.
 	 *
@@ -72,12 +74,23 @@ sap.ui.define([
 	 * @private
 	 */
 	Util.calcTypeWidth = (function() {
+		const oTimezones = LocaleData.getInstance(Core.getConfiguration().getLocale()).getTimezoneTranslations();
+		let sLongestTimezone;
 		var fBooleanWidth = 0;
 		var aDateParameters = [2023, 9, 26, 22, 47, 58, 999];
 		var oUTCDate = new Date(Date.UTC.apply(0, aDateParameters));
 		var oLocalDate = new (Function.prototype.bind.apply(Date, [null].concat(aDateParameters)))();
 		var mNumericLimits = { Byte: 3, SByte: 3, Int16: 5, Int32: 9, Int64: 12, Single: 6, Float: 12, Double: 13, Decimal: 15, Integer: 9 };
 		Theming.attachApplied(function() { fBooleanWidth = 0; });
+
+		const getLongestTimezone = function() {
+			if (!sLongestTimezone) {
+				[sLongestTimezone] = Object.entries(oTimezones).reduce(([sTimezone, iLength], [sKey, sValue]) => {
+					return typeof sValue === "string" && sValue.length > iLength ? [sKey, sValue.length] : [sTimezone, iLength];
+				}, ["", 0]);
+			}
+			return sLongestTimezone;
+		};
 
 		return function(oType, mSettings) {
 
@@ -123,6 +136,10 @@ sap.ui.define([
 					sSample = oType.formatValue(sSample, "string");
 				} else if (oType.isA("sap.ui.model.odata.type.Time")) {
 					sSample = oType.formatValue({ __edmType: "Edm.Time", ms: oUTCDate.valueOf() }, "string");
+				} else if (oType.isA("sap.ui.model.odata.type.DateTimeWithTimezone")) {
+
+					// Use IANA timezone with highest translated length
+					sSample = oType.formatValue([oDate, getLongestTimezone()], "string");
 				} else {
 					sSample = oType.formatValue(mFormatOptions.interval ? [oDate, new Date(oDate * 1.009)] : oDate, "string");
 					((oType.oFormat && oType.oFormat.oFormatOptions && oType.oFormat.oFormatOptions.pattern) || "").replace(/[MELVec]{3,4}/, function(sWideFormat) {
