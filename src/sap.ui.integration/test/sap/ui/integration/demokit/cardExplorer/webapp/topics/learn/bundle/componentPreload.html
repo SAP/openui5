@@ -70,8 +70,13 @@ yourCardPackage
 </pre>
 				</li>
 				<li>
-					Execute <code>npm build</code>. This will generate "dist" folder, which contains the production-ready Component-preload.js and
-					the rest of the files that are not part of it, like images.
+					Execute <code>npm build</code>. This will generate "dist" folder, which contains the production-ready Component-preload.js,
+					the rest of the files that are not part of it, like images, and manifest.json
+				</li>
+				<li>
+					In the end, the files from the "dist" folder should be used.
+					In your application, make the <code>manifest</code> property of the card point to the one in the "dist" folder,
+					or if uploading a card to SAP Build Work Zone, upload the entire "dist" folder, for example.
 				</li>
 			</ol>
 			<p>
