@@ -161,7 +161,6 @@ sap.ui.define([
 
 				/**
 				 * Map with flex-related settings
-				 * @experimental
 				 */
 				flexSettings: {
 					type: "object",

@@ -70,7 +70,8 @@ sap.ui.define([
 	 * @constructor
 	 * @class
 	 * @alias sap.ui.fl.FlexController
-	 * @experimental Since 1.27.0
+	 * @since 1.27.0
+	 * @private
 	 * @author SAP SE
 	 * @version ${version}
 	 */

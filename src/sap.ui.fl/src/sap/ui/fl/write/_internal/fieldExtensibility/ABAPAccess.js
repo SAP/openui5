@@ -36,9 +36,10 @@ sap.ui.define([
 
 	/**
 	 * @namespace sap.ui.fl.write._internal.fieldExtensibility.ABAPAccess
-	 * @experimental Since 1.87.0
+	 * @since 1.87.0
 	 * @author SAP SE
 	 * @version ${version}
+	 * @private
 	 */
 	var ABAPAccess = {};
 
