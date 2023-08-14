@@ -8,31 +8,33 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/LayerUtils"
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Utils"
 ], function(
 	UriParameters,
 	CompVariantMerger,
 	CompVariantUtils,
 	FlexState,
 	ManifestUtils,
-	Utils,
-	LayerUtils
+	LayerUtils,
+	Utils
 ) {
 	"use strict";
 
 	/**
 	 * Returns the SmartVariant <code>ChangeMap</code> from the Change Persistence.
 	 *
-	 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
+	 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+	 * 	sap.ui.comp.smartfilterbar.SmartFilterBar|
+	 * 	sap.ui.comp.smarttable.SmartTable|
+	 * 	sap.ui.comp.smartchart.SmartChart} oControl - Variant management control
 	 * @returns {object} <code>persistencyKey</code> map and corresponding changes, or an empty object
-	 * @param {object[]} aVariants - Variant data from other data providers like an OData service
 	 * @private
 	 */
 	function getVariantsMapForKey(oControl) {
-		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
-		var sPersistencyKey = CompVariantUtils.getPersistencyKey(oControl);
-		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
+		const sReference = ManifestUtils.getFlexReferenceForControl(oControl);
+		const sPersistencyKey = CompVariantUtils.getPersistencyKey(oControl);
+		const mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
 		return mCompVariantsMap._getOrCreate(sPersistencyKey);
 	}
 
@@ -52,9 +54,30 @@ sap.ui.define([
 			var sPersistencyKey = CompVariantUtils.getPersistencyKey(oControl);
 			var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
 			// Store external input data to FlexState so they can be restored after invalidating cache
-			FlexState.setInitialNonFlCompVariantData(sReference, sPersistencyKey, mPropertyBag.standardVariant, mPropertyBag.variants, sSVMControlId);
+			FlexState.setInitialNonFlCompVariantData(
+				sReference,
+				sPersistencyKey,
+				mPropertyBag.standardVariant,
+				mPropertyBag.variants,
+				sSVMControlId
+			);
 			return mCompVariantsMap._initialize(sPersistencyKey, mPropertyBag.variants, sSVMControlId);
 		});
+	}
+
+	/**
+	 * Retrieves the default variant ID for the current control.
+	 *
+	 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+	 * 	sap.ui.comp.smartfilterbar.SmartFilterBar|
+	 * 	sap.ui.comp.smarttable.SmartTable|
+	 * 	sap.ui.comp.smartchart.SmartChart} oControl - Variant management control to load variants for
+	 * @returns {string} ID of the default variant
+	 */
+	function getDefaultVariantId(oControl) {
+		const aDefaultVariantChanges = getVariantsMapForKey(oControl).defaultVariants;
+		const oChange = aDefaultVariantChanges[aDefaultVariantChanges.length - 1];
+		return oChange ? oChange.getContent().defaultVariantName : "";
 	}
 
 	/**
@@ -92,27 +115,36 @@ sap.ui.define([
 		 * @typedef {object} sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsResponse
 		 * @property {sap.ui.fl._internal.flexObjects.Variant} standardVariant - The instance of the passed or exchanged standard variant
 		 * @property {sap.ui.fl._internal.flexObjects.Variant[]} variants - instances of the passed, loaded and changed variants
+		 * @property {string} defaultVariantId - ID of the default variant
 		 */
 
 		/**
-		 * Calls the back end asynchronously and fetches all {@link sap.ui.fl.apply._internal.flexObjects.FlexObject}s and variants pointing to this control.
+		 * Calls the back end asynchronously and fetches all {@link sap.ui.fl.apply._internal.flexObjects.FlexObject}s
+		 * and variants pointing to this control.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
-		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
-		 * 			sap.ui.comp.smarttable.SmartTable|
-		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variants should be loaded
+		 * 	sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 	sap.ui.comp.smarttable.SmartTable|
+		 * 	sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control to load variants for
 		 * @param {sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsInput} mPropertyBag.standardVariant - The standard variant of the control;
-		 * a standard variant is created into the response but may be replaced later in case data is loaded afterwards instructing the SVM to do so
+		 * a standard variant is created into the response but may be replaced later if data is loaded afterwards
+		 * instructing the SVM to do so
 		 * @param {sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsInput[]} mPropertyBag.variants - Variant data from other data providers like an OData service
 		 * @returns {Promise<sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsResponse>} Object with the standard variant and the variants
 		 */
-		loadVariants: function(mPropertyBag) {
-			return getCompEntities(mPropertyBag)
-			.then(function(mCompMaps) {
-				var sPersistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
-				return CompVariantMerger.merge(sPersistencyKey, mCompMaps, mPropertyBag.standardVariant, mPropertyBag.control);
-			});
+		loadVariants: async function(mPropertyBag) {
+			const mCompMaps = await getCompEntities(mPropertyBag);
+			const sPersistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
+			const sDefaultVariantId = getDefaultVariantId(mPropertyBag.control);
+			const mMergedCompVariants = CompVariantMerger.merge(
+				sPersistencyKey,
+				mCompMaps,
+				mPropertyBag.standardVariant,
+				mPropertyBag.control
+			);
+			mMergedCompVariants.defaultVariantId = sDefaultVariantId;
+			return mMergedCompVariants;
 		},
 
 		/**
@@ -127,7 +159,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Indicates whether the variant downport scenario is enabled or not. This scenario is only enabled if the current layer is the VENDOR layer
+		 * Indicates whether the variant downport scenario is enabled or not.
+		 * This scenario is only enabled if the current layer is the VENDOR layer
 		 * and the URL parameter hotfix is set to <code>true</code>.
 		 *
 		 * @returns {boolean} <code>true</code> if the variant downport scenario is enabled
@@ -142,8 +175,8 @@ sap.ui.define([
 
 		/**
 		 * Retrieves the default variant for the current control synchronously. WARNING: The consumer has to make sure that the
-		 * changes have already been retrieved with <code>getChanges</code>. It's recommended to use the async API <code>getDefaultVariantId</code>, which works regardless of any
-		 * preconditions.
+		 * changes have already been retrieved with <code>getChanges</code>.
+		 * It's recommended to use the async API <code>getDefaultVariantId</code>, which works regardless of any preconditions.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
