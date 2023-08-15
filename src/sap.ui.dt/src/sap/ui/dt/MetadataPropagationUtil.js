@@ -47,11 +47,11 @@ sap.ui.define([
 			mNewPropagationInfo.relevantContainerFunction = function() { return true; };
 			mNewPropagationInfo.relevantContainerElement = oElement;
 		} else {
-			var oError = Util.wrapError("Wrong type: it should be either a function or a boolean value and it is:" +
-				typeof mElementDtMetadataForAggregation.propagateRelevantContainer);
+			var oError = Util.wrapError(`Wrong type: it should be either a function or a boolean value and it is:${
+				typeof mElementDtMetadataForAggregation.propagateRelevantContainer}`);
 
 			var sLocation = "sap.ui.dt.MetadataPropagationUtil#_getCurrentRelevantContainerPropagation";
-			oError.name = "Error in " + sLocation;
+			oError.name = `Error in ${sLocation}`;
 			oError.message = Util.printf("{0} / {1}", sLocation, oError.message);
 			throw oError;
 		}
@@ -66,11 +66,11 @@ sap.ui.define([
 			mNewPropagationInfo.relevantContainerElement = oElement;
 			mNewPropagationInfo.metadataFunction = mElementDtMetadataForAggregation.propagateMetadata;
 		} else {
-			var oError = Util.wrapError("Wrong type: it should be a function and it is:" +
-				typeof mElementDtMetadataForAggregation.propagateRelevantContainer);
+			var oError = Util.wrapError(`Wrong type: it should be a function and it is:${
+				typeof mElementDtMetadataForAggregation.propagateRelevantContainer}`);
 
 			var sLocation = "sap.ui.dt.MetadataPropagationUtil#_getCurrentDesigntimePropagation";
-			oError.name = "Error in " + sLocation;
+			oError.name = `Error in ${sLocation}`;
 			oError.message = Util.printf("{0} / {1}", sLocation, oError.message);
 			throw oError;
 		}

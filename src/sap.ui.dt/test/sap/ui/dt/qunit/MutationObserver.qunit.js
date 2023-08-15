@@ -252,7 +252,7 @@ sap.ui.define([
 	QUnit.module("Given a Vertical Layout with a scrollable Panel and another Vertical Layout with two scrollable panels for which DT is started...", {
 		beforeEach: function(assert) {
 			var aButtons0 = [20, 21, 22, 23, 24, 25].map(function(i) {
-				return new Button("button" + i);
+				return new Button(`button${i}`);
 			});
 			this.Panel0 = new Panel({
 				id: "SmallPanel",
@@ -262,7 +262,7 @@ sap.ui.define([
 			});
 
 			var aButtons1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19].map(function(i) {
-				return new Button("button" + i);
+				return new Button(`button${i}`);
 			});
 			this.Panel1 = new Panel({
 				id: "BigPanel",
@@ -272,7 +272,7 @@ sap.ui.define([
 			});
 
 			var aOutsideButtons = [26, 27, 28, 29, 30, 31].map(function(i) {
-				return new Button("button" + i);
+				return new Button(`button${i}`);
 			});
 
 			this.oOutsidePanel = new Panel({

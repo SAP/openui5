@@ -82,7 +82,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_createTest: function(oGroup) {
-			QUnit.test(oGroup.name + ": " + oGroup.message, function(assert) {
+			QUnit.test(`${oGroup.name}: ${oGroup.message}`, function(assert) {
 				oGroup.children.forEach(function(oGroup) {
 					this._createAssertion(assert, oGroup);
 				}, this);
@@ -95,10 +95,10 @@ sap.ui.define([
 		_createAssertion: function(assert, oGroup) {
 			if (oGroup.children.length > 0) {
 				oGroup.children.forEach(function(oTest) {
-					assert.ok(oTest.result, oGroup.name + ": " + oTest.message);
+					assert.ok(oTest.result, `${oGroup.name}: ${oTest.message}`);
 				});
 			} else {
-				assert.ok(true, oGroup.name + ": " + oGroup.message);
+				assert.ok(true, `${oGroup.name}: ${oGroup.message}`);
 			}
 		}
 	});

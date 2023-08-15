@@ -83,21 +83,21 @@ sap.ui.define([
 		},
 
 		_createForm: function() {
-			var oForm = new SimpleForm(this.getId() + "--form", {
+			var oForm = new SimpleForm(`${this.getId()}--form`, {
 				editable: false,
 				layout: "ResponsiveGridLayout",
 				title: "Statistics",
 				content: [
-					new Label(this.getId() + "--form-supported-label", {text: "Supported"}),
-					new Text(this.getId() + "--form-supported-value", {text: "{/statistic/SUPPORTED}"}),
-					new Label(this.getId() + "--form-partial-supported-label", {text: "Partial Supported"}),
-					new Text(this.getId() + "--form-partial-supported-value", {text: "{/statistic/PARTIAL_SUPPORTED}"}),
-					new Label(this.getId() + "--form-not-supported-label", {text: "Not Supported"}),
-					new Text(this.getId() + "--form-not-supported-value", {text: "{/statistic/NOT_SUPPORTED}"}),
-					new Label(this.getId() + "--form-unknown-label", {text: "Unknown"}),
-					new Text(this.getId() + "--form-unknown-value", {text: "{/statistic/UNKNOWN}"}),
-					new Label(this.getId() + "--form-error-label", {text: "Error"}),
-					new Text(this.getId() + "--form-error-value", {text: "{/statistic/ERROR}"})
+					new Label(`${this.getId()}--form-supported-label`, {text: "Supported"}),
+					new Text(`${this.getId()}--form-supported-value`, {text: "{/statistic/SUPPORTED}"}),
+					new Label(`${this.getId()}--form-partial-supported-label`, {text: "Partial Supported"}),
+					new Text(`${this.getId()}--form-partial-supported-value`, {text: "{/statistic/PARTIAL_SUPPORTED}"}),
+					new Label(`${this.getId()}--form-not-supported-label`, {text: "Not Supported"}),
+					new Text(`${this.getId()}--form-not-supported-value`, {text: "{/statistic/NOT_SUPPORTED}"}),
+					new Label(`${this.getId()}--form-unknown-label`, {text: "Unknown"}),
+					new Text(`${this.getId()}--form-unknown-value`, {text: "{/statistic/UNKNOWN}"}),
+					new Label(`${this.getId()}--form-error-label`, {text: "Error"}),
+					new Text(`${this.getId()}--form-error-value`, {text: "{/statistic/ERROR}"})
 				]
 			});
 			return oForm;

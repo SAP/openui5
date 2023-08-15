@@ -824,7 +824,7 @@ sap.ui.define([
 		} else if (oElement.bIsDestroyed) {
 			sReason = "Cannot create overlay — the element is already destroyed.";
 		} else if (oElement instanceof ManagedObject && !ElementUtil.isElementInTemplate(oElement)) {
-			sReason = "Element is in a bound aggregation, but not found in the binding template. Skipping overlay creation for element with id='" + oElement.getId() + "'. Please report to CA-UI5-FL-RTA component.";
+			sReason = `Element is in a bound aggregation, but not found in the binding template. Skipping overlay creation for element with id='${oElement.getId()}'. Please report to CA-UI5-FL-RTA component.`;
 		} else {
 			sReason = Util.printf(
 				"Cannot create overlay without a valid element. Expected a descendant of sap.ui.core.Element or sap.ui.core.Component, but {0} was given",

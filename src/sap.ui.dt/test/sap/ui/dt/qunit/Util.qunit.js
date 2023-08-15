@@ -126,7 +126,7 @@ sap.ui.define([
 		QUnit.test("Error object as parameter", function(assert) {
 			var oError = new Error("error message");
 			var sStack = oError.stack;
-			oError.stack = oError.toString() + "\t\n \t\n" + oError.stack + "  \n";
+			oError.stack = `${oError.toString()}\t\n \t\n${oError.stack}  \n`;
 			assert.ok(oError.toString() + sStack, "duplicate text and whitespaces are trimmed");
 		});
 		QUnit.test("called with wrong parameter", function(assert) {

@@ -140,8 +140,8 @@ sap.ui.define([
 
 			// altType getter returns not element (TODO: clarify if getAggregationNameControl getter is a convention)
 			if (oAggregationMetadata.altTypes && oAggregationMetadata.altTypes.length
-					&& oElement[oAggregationMetadata._sGetter + "Control"]) {
-				sGetter = oAggregationMetadata._sGetter + "Control";
+					&& oElement[`${oAggregationMetadata._sGetter}Control`]) {
+				sGetter = `${oAggregationMetadata._sGetter}Control`;
 			}
 
 			return {

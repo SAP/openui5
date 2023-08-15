@@ -266,7 +266,7 @@ sap.ui.define([
 		.catch(function(oError) {
 			throw DtUtil.createError(
 				"ContextMenu#open",
-				"An error occurred during calling getMenuItems: " + oError
+				`An error occurred during calling getMenuItems: ${oError}`
 			);
 		});
 	};
@@ -490,7 +490,7 @@ sap.ui.define([
 				this.addMenuItem(oGroupedItem.aGroupedItems[0], true);
 			} else {
 				this.addMenuItem({
-					id: oGroupedItem.sGroupName + "-groupItem",
+					id: `${oGroupedItem.sGroupName}-groupItem`,
 					enabled: true,
 					text: oGroupedItem.sGroupName,
 					icon: oGroupedItem.aGroupedItems[0].icon,

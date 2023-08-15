@@ -116,7 +116,7 @@ sap.ui.define([
 			var mElementTest = this.addGroup(
 				this._mResult.children,
 				this.getType(),
-				"Given that a DesignTime is created for " + this.getType()
+				`Given that a DesignTime is created for ${this.getType()}`
 			);
 
 			this._testAggregations(mElementTest.children);
@@ -148,7 +148,7 @@ sap.ui.define([
 				resolve(new Element());
 			}, function() {
 				// fall back to global name
-				Log.warning("[Deprecated] Control " + sType + " could only be loaded via global name");
+				Log.warning(`[Deprecated] Control ${sType} could only be loaded via global name`);
 				var Element = ObjectPath.get(sType || "");
 				resolve(new Element());
 			});
@@ -166,7 +166,7 @@ sap.ui.define([
 	ElementEnablementTest.prototype._getTestArea = function() {
 		if (!this._oTestAreaDomRef) {
 			this._oTestAreaDomRef = document.createElement("div");
-			this._oTestAreaDomRef.id = this.getId() + "--testArea";
+			this._oTestAreaDomRef.id = `${this.getId()}--testArea`;
 			this._oTestAreaDomRef.style.height = "500px";
 			this._oTestAreaDomRef.style.width = "1000px";
 			document.body.append(this._oTestAreaDomRef);

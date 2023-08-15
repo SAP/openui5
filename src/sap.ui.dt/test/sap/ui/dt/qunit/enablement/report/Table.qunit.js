@@ -41,12 +41,12 @@ function(
 				assert.equal(oTable._getTable().getModel().getData().length, 1, "and the table can be filtered");
 				oTable.filter("");
 				assert.equal(oTable._getTable().getModel().getData().length, iBeforeFiltered, "and the filter can be reset");
-				QUnitUtils.triggerTouchEvent("tap", oTable.$().find("#" + oTable.getId() + "--toolbar-expand-button"));
+				QUnitUtils.triggerTouchEvent("tap", oTable.$().find(`#${oTable.getId()}--toolbar-expand-button`));
 				oCore.applyChanges();
 				window.setTimeout(function() {
 					assert.ok(oTable._getTable().isExpanded(1), "and when the expand button is pressed then the table is expanded");
 
-					QUnitUtils.triggerTouchEvent("tap", oTable.$().find("#" + oTable.getId() + "--toolbar-collapse-button"));
+					QUnitUtils.triggerTouchEvent("tap", oTable.$().find(`#${oTable.getId()}--toolbar-collapse-button`));
 					oCore.applyChanges();
 					window.setTimeout(function() {
 						assert.ok(!oTable._getTable().isExpanded(0), "and when the collapse button is pressed then the table is collapsed again");

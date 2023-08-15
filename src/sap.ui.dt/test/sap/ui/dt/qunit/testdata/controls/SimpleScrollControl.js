@@ -110,7 +110,7 @@ sap.ui.define([
 
 				function renderAggregations(aNames) {
 					aNames.forEach(function(sName) {
-						sId = oControl.getId() + "-" + sName;
+						sId = `${oControl.getId()}-${sName}`;
 						oRm.openStart("div", sId);
 						oRm.openEnd();
 						aContent = oControl.getAggregation(sName, []);
@@ -122,7 +122,7 @@ sap.ui.define([
 				}
 
 				if (oControl.getScrollcontainerEnabled()) {
-					oRm.openStart("div", oControl.getId() + "-scrollContainer");
+					oRm.openStart("div", `${oControl.getId()}-scrollContainer`);
 					oRm.class("sapUiDtTestSSCScrollContainer");
 					oRm.style("height", "600px");
 					oRm.style("width", "450px");
@@ -131,7 +131,7 @@ sap.ui.define([
 					renderAggregations(["content1", "content2"]);
 					oRm.close("div");
 
-					oRm.openStart("div", oControl.getId() + "-scrollContainer2");
+					oRm.openStart("div", `${oControl.getId()}-scrollContainer2`);
 					oRm.class("sapUiDtTestSSCScrollContainer2");
 					oRm.style("height", "600px");
 					oRm.style("width", "450px");
@@ -143,7 +143,7 @@ sap.ui.define([
 					renderAggregations(["content1", "content2", "content3", "content4", "content5"]);
 				}
 
-				sId = oControl.getId() + "-footer";
+				sId = `${oControl.getId()}-footer`;
 				oRm.openStart("div", sId);
 				oRm.openEnd();
 

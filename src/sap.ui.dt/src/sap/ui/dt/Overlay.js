@@ -219,7 +219,7 @@ sap.ui.define([
 					this.fireInitFailed({
 						error: Util.createError(
 							"Overlay#asyncInit",
-							"ElementOverlay is destroyed during initialization ('" + this.getId() + "')"
+							`ElementOverlay is destroyed during initialization ('${this.getId()}')`
 						)
 					});
 				} else {
@@ -427,7 +427,7 @@ sap.ui.define([
 	};
 
 	Overlay.prototype.toggleStyleClass = function(sClassName) {
-		this[(this.hasStyleClass(sClassName) ? "remove" : "add") + "StyleClass"](sClassName);
+		this[`${this.hasStyleClass(sClassName) ? "remove" : "add"}StyleClass`](sClassName);
 	};
 
 	Overlay.prototype.setElement = function(vElement) {
@@ -442,7 +442,7 @@ sap.ui.define([
 
 	Overlay.prototype.destroy = function() {
 		if (this.bIsDestroyed) {
-			Log.error("FIXME: Do not destroy overlay twice (overlayId = " + this.getId() + ")!");
+			Log.error(`FIXME: Do not destroy overlay twice (overlayId = ${this.getId()})!`);
 			return;
 		}
 
@@ -623,7 +623,7 @@ sap.ui.define([
 		.catch(function(vError) {
 			Log.error(Util.createError(
 				"Overlay#applyStyles",
-				"An error occurred during applySizes calculation: " + vError
+				`An error occurred during applySizes calculation: ${vError}`
 			));
 		})
 		.then(function() {
@@ -684,8 +684,8 @@ sap.ui.define([
 		var mSize = oGeometry.size;
 
 		// ASSIGN SIZE
-		$Target.css("width", mSize.width + "px");
-		$Target.css("height", mSize.height + "px");
+		$Target.css("width", `${mSize.width}px`);
+		$Target.css("height", `${mSize.height}px`);
 	};
 
 	/**
@@ -697,7 +697,7 @@ sap.ui.define([
 	 */
 	Overlay.prototype._setPosition = function($Target, oGeometry, $Parent) {
 		var mPosition = DOMUtil.getOffsetFromParent(oGeometry, $Parent ? $Parent.get(0) : null);
-		$Target.css("transform", "translate(" + mPosition.left + "px, " + mPosition.top + "px)");
+		$Target.css("transform", `translate(${mPosition.left}px, ${mPosition.top}px)`);
 	};
 
 	/**

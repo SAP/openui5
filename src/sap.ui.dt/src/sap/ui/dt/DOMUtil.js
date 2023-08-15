@@ -150,11 +150,11 @@ sap.ui.define([
 
 	DOMUtil._getElementDimensions = function(oDomRef, sMeasure, aDirection) {
 		var oRelevantDomRef = oDomRef[0] || oDomRef;
-		var iOffsetWidth = oRelevantDomRef["offset" + sMeasure];
+		var iOffsetWidth = oRelevantDomRef[`offset${sMeasure}`];
 		var iValue = 0;
 		for (var i = 0; i < 2; i++) {
 			// remove border
-			var sBorderMeasure = window.getComputedStyle(oRelevantDomRef, null)["border" + aDirection[ i ] + sMeasure];
+			var sBorderMeasure = window.getComputedStyle(oRelevantDomRef, null)[`border${aDirection[ i ]}${sMeasure}`];
 			iValue -= sBorderMeasure ? parseInt(sBorderMeasure.slice(0, -2)) : 0;
 		}
 		return iOffsetWidth + iValue;
@@ -361,7 +361,7 @@ sap.ui.define([
 		// Styles is an array, but has some special access functions
 		for (var i = 0; i < iLength; i++) {
 			sStyle = oStyles[i];
-			sStyles = sStyles + sStyle + ":" + oStyles.getPropertyValue(sStyle) + ";";
+			sStyles = `${sStyles + sStyle}:${oStyles.getPropertyValue(sStyle)};`;
 		}
 
 		oDest.style.cssText = sStyles;

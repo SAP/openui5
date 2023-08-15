@@ -13,7 +13,7 @@ function(
 	"use strict";
 
 	var fnTestInterface = function(assert, oEntry) {
-		assert.ok(true, "... then '" + oEntry.name + " Entry' : Test Interface");
+		assert.ok(true, `... then '${oEntry.name} Entry' : Test Interface`);
 		assert.ok(oEntry.hasOwnProperty("status"), "and an entry has a property 'status'");
 		assert.ok(oEntry.hasOwnProperty("type"), "and an entry has a property 'type'");
 		assert.ok(oEntry.hasOwnProperty("message"), "and an entry has a property 'message'");

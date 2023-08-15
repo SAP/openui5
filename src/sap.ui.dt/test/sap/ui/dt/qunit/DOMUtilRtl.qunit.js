@@ -43,8 +43,8 @@ sap.ui.define([
 			var iExpectedOffsetLeft = (Device.browser.safari && !Device.browser.mobile) ? RELATIVE_POS_LEFT - SCROLLBAR_WIDTH : RELATIVE_POS_LEFT;
 			// in some cases (special physical devices) the offset is returend as decimal value
 			// actually we need to round the offset for chrome browser on mac
-			assert.strictEqual(Math.ceil(mOffset.left), iExpectedOffsetLeft, "the left offset is correct - result: " +
-				Math.ceil(mOffset.left) + " / expected value: " + iExpectedOffsetLeft);
+			assert.strictEqual(Math.ceil(mOffset.left), iExpectedOffsetLeft, `the left offset is correct - result: ${
+				Math.ceil(mOffset.left)} / expected value: ${iExpectedOffsetLeft}`);
 			assert.strictEqual(mOffset.top, 40, "the top offset is correct");
 		});
 
@@ -62,7 +62,7 @@ sap.ui.define([
 			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer);
 			// round for offset value is actually nedded for chrome browser on mac
 			assert.strictEqual(Math.ceil(mOffset.left), iExpectedOffsetLeft,
-				"the left offset is correct - result: " + Math.ceil(mOffset.left) + " / expected value: " + iExpectedOffsetLeft);
+				`the left offset is correct - result: ${Math.ceil(mOffset.left)} / expected value: ${iExpectedOffsetLeft}`);
 			assert.strictEqual(mOffset.top, 100, "the top offset is correct");
 		});
 	});

@@ -128,7 +128,7 @@ sap.ui.define([
 				for (var sAggregation in oData.aggregations) {
 					var oAggr = oData.aggregations[sAggregation];
 					if (oAggr.propagateMetadata) {
-						sPropagate = (sPropagate) ? sPropagate + ", " + sAggregation : "propagate (" + sAggregation;
+						sPropagate = (sPropagate) ? `${sPropagate}, ${sAggregation}` : `propagate (${sAggregation}`;
 					}
 					for (var sAggregationAction in oAggr.actions) {
 						i = aActions.indexOf(sAggregationAction);
@@ -140,7 +140,7 @@ sap.ui.define([
 								aggregation: sAggregation
 							};
 						} else {
-							mActions[i].aggregation = mActions[i].aggregation + ", " + sAggregation;
+							mActions[i].aggregation = `${mActions[i].aggregation}, ${sAggregation}`;
 						}
 						bAggregations = true;
 					}
@@ -153,13 +153,13 @@ sap.ui.define([
 			}
 
 			mActions.forEach(function(oAction) {
-				sActionsResult = (sActionsResult) ? sActionsResult + ", " : "";
-				sActionsResult = sActionsResult + oAction.action + " (" + oAction.aggregation + ")";
+				sActionsResult = (sActionsResult) ? `${sActionsResult}, ` : "";
+				sActionsResult = `${sActionsResult + oAction.action} (${oAction.aggregation})`;
 			});
 
 			if (sPropagate) {
-				sPropagate = sPropagate + ")";
-				sActionsResult = sActionsResult + " + " + sPropagate;
+				sPropagate = `${sPropagate})`;
+				sActionsResult = `${sActionsResult} + ${sPropagate}`;
 			}
 
 			return sActionsResult;

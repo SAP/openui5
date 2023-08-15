@@ -74,11 +74,11 @@ sap.ui.define([
 								return {
 									singular: function() {
 										// fake own resource bundle handling
-										return "I18N_KEY" + oElement.getText();
+										return `I18N_KEY${oElement.getText()}`;
 									},
 									plural: function() {
 										// fake own resource bundle handling
-										return "I18N_KEY_PLURAL" + oElement.getText();
+										return `I18N_KEY_PLURAL${oElement.getText()}`;
 									}
 								};
 							},
@@ -89,11 +89,11 @@ sap.ui.define([
 								return {
 									singular: function() {
 										// fake own resource bundle handling
-										return "I18N_KEY" + oElement.getText();
+										return `I18N_KEY${oElement.getText()}`;
 									},
 									plural: function() {
 										// fake own resource bundle handling
-										return "I18N_KEY_PLURAL" + oElement.getText();
+										return `I18N_KEY_PLURAL${oElement.getText()}`;
 									}
 								};
 							}

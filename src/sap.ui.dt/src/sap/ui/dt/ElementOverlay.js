@@ -625,7 +625,7 @@ sap.ui.define([
 	 * @return {jQuery} - returns DOM Node of scroll container by its index
 	 */
 	ElementOverlay.prototype.getScrollContainerById = function(iIndex) {
-		return jQuery(this.getChildrenDomRef()).find(">." + S_SCROLLCONTAINER_CLASSNAME + '[data-sap-ui-dt-scrollcontainerindex="' + iIndex + '"]');
+		return jQuery(this.getChildrenDomRef()).find(`>.${S_SCROLLCONTAINER_CLASSNAME}[data-sap-ui-dt-scrollcontainerindex="${iIndex}"]`);
 	};
 
 	/**
@@ -861,7 +861,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ElementOverlay.prototype.getAggregationOverlay = function(sAggregationName, sAggregationType) {
-		var sGetterFunction = "get" + (sAggregationType || "Children");
+		var sGetterFunction = `get${sAggregationType || "Children"}`;
 		return this[sGetterFunction]().filter(function(oAggregationOverlay) {
 			return oAggregationOverlay.getAggregationName() === sAggregationName;
 		}).pop();

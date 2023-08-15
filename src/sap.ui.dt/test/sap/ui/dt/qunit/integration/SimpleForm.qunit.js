@@ -32,7 +32,7 @@ sap.ui.define([
 	var aMovableTypes = ["sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer"];
 
 	function parameterizedTest(oSimpleFormLayout) {
-		QUnit.module("Given the SimpleForm using " + oSimpleFormLayout, {
+		QUnit.module(`Given the SimpleForm using ${oSimpleFormLayout}`, {
 			beforeEach: function(assert) {
 				var done = assert.async();
 

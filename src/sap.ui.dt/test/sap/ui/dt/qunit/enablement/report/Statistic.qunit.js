@@ -11,7 +11,7 @@ function(
 	"use strict";
 
 	var getValue = function(oControl, sStatus) {
-		return oCore.byId(oControl.getId() + "--form-" + sStatus + "-value").getText();
+		return oCore.byId(`${oControl.getId()}--form-${sStatus}-value`).getText();
 	};
 
 	QUnit.module("Given that a statistic report is created", {

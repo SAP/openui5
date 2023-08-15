@@ -260,7 +260,7 @@ function(
 	};
 
 	DesignTimeMetadata.prototype._getTextFromLibrary = function(sLibraryName, sKey, aArgs) {
-		var oLibResourceBundle = sap.ui.getCore().getLibraryResourceBundle(sLibraryName + ".designtime");
+		var oLibResourceBundle = sap.ui.getCore().getLibraryResourceBundle(`${sLibraryName}.designtime`);
 		if (oLibResourceBundle && oLibResourceBundle.hasText(sKey)) {
 			return oLibResourceBundle.getText(sKey, aArgs);
 		}
