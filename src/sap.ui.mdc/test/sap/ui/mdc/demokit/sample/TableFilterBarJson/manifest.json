@@ -26,18 +26,18 @@
 		"config": {
 			"sample": {
 				"files": [
-					"manifest.json",
-					"Component.js",
-					"model/mountains.json",
 					"view/Mountains.view.xml",
-					"view/fragment/NameValueHelp.fragment.xml",
-					"view/fragment/RangeValueHelp.fragment.xml",
-					"delegate/JSONBaseDelegate.js",
 					"delegate/JSONFilterBarDelegate.js",
 					"delegate/JSONTableDelegate.js",
+					"delegate/JSONBaseDelegate.js",
 					"model/metadata/JSONPropertyInfo.js",
+					"view/fragment/NameValueHelp.fragment.xml",
+					"view/fragment/RangeValueHelp.fragment.xml",
 					"model/type/TypeMap.js",
-					"model/type/LengthMeter.js"
+					"model/type/LengthMeter.js",
+					"model/mountains.json",
+					"manifest.json",
+					"Component.js"
 				]
 			}
 		},

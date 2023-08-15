@@ -44,11 +44,7 @@ sap.ui.define([
 			});
 
 			if (sName === "name" || sName === "range") {
-				pFilterField = _addValueHelp(oFilterField, sName).then(function (oValueHelp) {
-					oFilterBar.addDependent(oValueHelp);
-					oFilterField.setValueHelp(oValueHelp);
-					return oFilterField;
-				});
+				pFilterField = _addValueHelp(oFilterBar, oFilterField, sName);
 			} else {
 				pFilterField = Promise.resolve(oFilterField);
 			}
@@ -56,19 +52,25 @@ sap.ui.define([
 		return pFilterField;
 	}
 
-	function _addValueHelp(oFilterField, sName) {
-		var oValueHelp = Core.byId(oFilterField.getValueHelp());
-		var pValueHelp;
+	function _addValueHelp(oFilterBar, oFilterField, sName) {
+		var oValueHelp = oFilterBar.getDependents().find((oD) => oD.getId().includes(sName));
+		var pFieldWithVH;
 
-		if (oValueHelp) {
-			pValueHelp = Promise.resolve(oValueHelp);
-		} else {
+		if (!oValueHelp) {
 			var sPath = "mdc.sample.view.fragment.";
-			pValueHelp = Fragment.load({
+			pFieldWithVH = Fragment.load({
 				name: sPath + (sName.charAt(0).toUpperCase() + sName.slice(1)) + "ValueHelp"
+			}).then(function(oValueHelp) {
+				oFilterBar.addDependent(oValueHelp);
+				oFilterField.setValueHelp(oValueHelp);
+				return oFilterField;
 			});
+		} else {
+			oFilterField.setValueHelp(oValueHelp);
+			pFieldWithVH = Promise.resolve(oFilterField);
 		}
-		return pValueHelp;
+
+		return pFieldWithVH;
 	}
 
 	return JSONFilterBarDelegate;
