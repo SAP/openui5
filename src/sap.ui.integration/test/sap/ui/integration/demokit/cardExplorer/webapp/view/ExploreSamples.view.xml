@@ -75,33 +75,6 @@
 									<OverflowToolbarLayoutData priority="High" />
 								</layoutData>
 							</MenuButton>
-							<!--
-							<MenuButton
-								id="openConfigurationEditorButton"
-								text="Configuration Editor"
-								type="Transparent"
-								visible="{= ${settings>/editable} &amp;&amp; !${settings>/isApplication} &amp;&amp; ${settings>/designtimeEnabled} }"
-							>
-								<menu>
-									<Menu>
-										<MenuItem text="Administrator" press=".onOpenConfigurationEditor" visible="{=  ${settings>/configMode} === 'Admin' || ${settings>/configMode} === 'All'}">
-											<customData><core:CustomData key="mode" value="admin" /></customData>
-											<customData><core:CustomData key="previewPosition" value="{settings>/previewPosition}" /></customData>
-										</MenuItem>
-										<MenuItem text="Page/Content Administrator" press=".onOpenConfigurationEditor" visible="{=  ${settings>/configMode} === 'Content' || ${settings>/configMode} === 'All'}">
-											<customData><core:CustomData key="mode" value="content" /></customData>
-											<customData><core:CustomData key="previewPosition" value="{settings>/previewPosition}" /></customData>
-										</MenuItem>
-										<MenuItem text="Translator" press=".onOpenConfigurationEditor" visible="{=  ${settings>/configMode} === 'Translation' || ${settings>/configMode} === 'All'}">
-											<customData><core:CustomData key="mode" value="translation" /></customData>
-										</MenuItem>
-									</Menu>
-								</menu>
-								<layoutData>
-									<OverflowToolbarLayoutData priority="High" />
-								</layoutData>
-							</MenuButton>
-							-->
 							<OverflowToolbarButton
 								text="{= ${settings>/editorType} === 'TEXT' ? 'Switch to Visual BAS Editor' : 'Switch to Text Editor'}"
 								tooltip="{= ${settings>/editorType} === 'TEXT' ? 'Switch to Visual BAS Editor' : 'Switch to Text Editor'}"
