@@ -298,6 +298,24 @@ sap.ui.define([
 		}
 	});
 
+	var oVariantDependentFlexObjectsDataSelector = new DataSelector({
+		id: "variantDependentFlexObjects",
+		parentDataSelector: FlexState.getFlexObjectsDataSelector(),
+		executeFunction: function(aFlexObjects) {
+			return aFlexObjects.filter(function(oFlexObject) {
+				const sVariantReference = oFlexObject.getVariantReference?.();
+				const bVariantRelatedChange = ["ctrl_variant", "ctrl_variant_change", "ctrl_variant_management_change"]
+				.indexOf(oFlexObject.getFileType()) > -1;
+
+				return bVariantRelatedChange || sVariantReference;
+			});
+		}
+	});
+
+	VariantManagementState.getVariantDependentFlexObjects = function(sReference) {
+		return oVariantDependentFlexObjectsDataSelector.get({reference: sReference});
+	};
+
 	/**
 	 * Test function to reset all current variant references.
 	 */
