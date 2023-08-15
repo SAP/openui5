@@ -682,14 +682,10 @@ sap.ui.define([
 	};
 
 	Table.prototype._onItemNavigationBeforeFocus = function(oUI5Event) {
-		var oEvent = oUI5Event.getParameter("event");
-		if (this._bMouseDown && !oEvent.target.hasAttribute("tabindex")) {
-			return;
-		}
-
 		var iFocusedIndex;
 		var iForwardIndex = -1;
 		var iIndex = oUI5Event.getParameter("index");
+		var oEvent = oUI5Event.getParameter("event");
 		var iColumnCount = this._colHeaderAriaOwns.length + 1;
 		var oItemNavigation = oUI5Event.getSource();
 
