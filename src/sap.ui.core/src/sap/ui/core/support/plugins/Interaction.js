@@ -46,8 +46,6 @@ sap.ui.define([
 			constructor : function(oSupportStub) {
 				Plugin.apply(this, ["sapUiSupportInteraction", "Interaction", oSupportStub]);
 
-				this._oStub = oSupportStub;
-
 				if (this.runsAsToolPlugin()) {
 
 					this._aEventIds = [this.getId() + "SetMeasurements",
@@ -161,7 +159,12 @@ sap.ui.define([
 			this.dom("odata").checked = this._bODATA_Stats_On;
 			this.dom("odata").addEventListener("click", function(oEvent) {
 				this._bODATA_Stats_On = !this._bODATA_Stats_On;
-				this.confirmReload("sap-statistics", this._bODATA_Stats_On);
+				this.confirmReload(function () {
+					this._oStub.sendEvent(this._oStub.getMetadata().getClass().EventType.RELOAD_WITH_PARAMETER, {
+						parameterName: "sap-statistics",
+						parameterValue: this._bODATA_Stats_On
+					});
+				}.bind(this));
 			}.bind(this));
 
 
@@ -319,8 +322,6 @@ sap.ui.define([
 		 * @private
 		 */
 		Interaction.prototype.onsapUiSupportInteractionEnd = function(oEvent) {
-
-			//jQuery.sap.measure.end(this.getId() + "-perf");
 			Interaction.end(/* bForce= */true);
 		};
 

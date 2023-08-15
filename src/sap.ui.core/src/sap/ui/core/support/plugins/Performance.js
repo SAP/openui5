@@ -64,8 +64,6 @@ sap.ui.define([
 
 				_that = this;
 
-				this._oStub = oSupportStub;
-
 				if (this.runsAsToolPlugin()) {
 					this._aEventIds = [
 						this.getId() + "SetMeasurements",

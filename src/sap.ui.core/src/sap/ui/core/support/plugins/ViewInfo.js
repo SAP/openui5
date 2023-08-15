@@ -4,13 +4,24 @@
 
 // Provides class sap.ui.core.support.plugins.ViewInfo (ViewInfo support plugin)
 sap.ui.define([
-	'sap/ui/core/support/Plugin',
-	'sap/ui/core/support/controls/TreeViewer',
-	'sap/ui/core/support/controls/ObjectViewer',
-	'sap/ui/Device',
-	'sap/base/Log',
-	'sap/ui/thirdparty/jquery'
-], function(Plugin, TreeViewer, ObjectViewer, Device, Log, $) {
+	"sap/ui/core/support/Plugin",
+	"sap/ui/core/support/controls/TreeViewer",
+	"sap/ui/core/support/controls/ObjectViewer",
+	"sap/ui/Device",
+	"sap/base/Log",
+	"sap/ui/base/DataType",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/thirdparty/jquery"
+], function(
+	Plugin,
+	TreeViewer,
+	ObjectViewer,
+	Device,
+	Log,
+	DataType,
+	ManagedObject,
+	$
+) {
 	"use strict";
 
 		/**
@@ -19,13 +30,15 @@ sap.ui.define([
 		 * @extends sap.ui.core.support.Plugin
 		 * @version ${version}
 		 * @private
+		 * @deprecated As of version 1.118
 		 * @alias sap.ui.core.support.plugins.ViewInfo
 		 */
 		var ViewInfo = Plugin.extend("sap.ui.core.support.plugins.ViewInfo", {
+			metadata: {
+				deprecated: true
+			},
 			constructor : function(oSupportStub) {
 				Plugin.apply(this, [ "sapUiSupportViewInfo", "XML View and Templating Support Tools", oSupportStub]);
-
-				this._oStub = oSupportStub;
 			}
 		});
 
@@ -110,6 +123,7 @@ sap.ui.define([
 				return aInfos;
 			}
 		};
+
 		ViewInfo.prototype.highlightTemplateTreeNode = function(oTemplateTree, oData, i) {
 			oTemplateTree.clearHighlights();
 			var aInfos = this.getSupportInfos(oData);
@@ -404,9 +418,6 @@ sap.ui.define([
 		};
 
 		ViewInfo.prototype.parseScalarType = function(sType, sValue, sName, oController) {
-			var DataType = window.opener.sap.ui.base.DataType;
-			var ManagedObject = window.opener.sap.ui.base.ManagedObject;
-
 			// check for a binding expression (string)
 			try {
 				var oBindingInfo =  ManagedObject.bindingParser(sValue, oController, true);
@@ -433,6 +444,7 @@ sap.ui.define([
 			// Note: to avoid double resolution of binding expressions, we have to escape string values once again
 			return {value: vValue};
 		};
+
 		ViewInfo.prototype.getObjectInfo = function(oNode, sId) {
 			var that = this;
 			function fnChangeProperty(oProperty, aControls, oNode) {
@@ -918,6 +930,7 @@ sap.ui.define([
 				},100);
 			}
 		};
+
 		ViewInfo.prototype._onMainViewInfo = function(oEvent) {
 			var oDomRef = oEvent.target,
 				sRaise = oDomRef.getAttribute("raise");
@@ -927,6 +940,7 @@ sap.ui.define([
 				return;
 			}
 		};
+
 		ViewInfo.prototype._onToggleViewInfo = function(oEvent) {
 			var oDomRef = oEvent.target,
 			sRaise = oDomRef.getAttribute("raise");
