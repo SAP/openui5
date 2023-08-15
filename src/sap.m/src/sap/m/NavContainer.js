@@ -640,6 +640,8 @@ sap.ui.define([
 			this._applyAutoFocus(oNavInfo);
 		}
 
+		this.enhancePagesAccessibility();
+
 		this.fireNavigationFinished(oNavInfo);
 		this.fireAfterNavigate(oNavInfo);
 		this._dequeueNavigation();
@@ -659,6 +661,20 @@ sap.ui.define([
 			Log.warning(this.toString() + ": target page '" + oNavInfo.toId + "' still has CSS class 'sapMNavItemHidden' after transition. This should not be the case, please check the preceding log statements.");
 			oNavInfo.to.removeStyleClass("sapMNavItemHidden");
 		}
+	};
+
+	NavContainer.prototype.enhancePagesAccessibility = function () {
+		var oCurrentPage = this.getCurrentPage();
+
+		this.getPages().forEach(function (oPage) {
+			var oFocusDomRef = oPage?.getFocusDomRef();
+
+			if (oCurrentPage === oPage) {
+				oFocusDomRef?.removeAttribute("aria-hidden");
+			} else {
+				oFocusDomRef?.setAttribute("aria-hidden", true);
+			}
+		});
 	};
 
 	NavContainer.prototype._dequeueNavigation = function () {
