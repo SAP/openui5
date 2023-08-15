@@ -91,7 +91,7 @@ sap.ui.define([], function() {
 		 */
 		createFlexKey: function(sId) {
 			if (sId) {
-				return FL_PREFIX + "." + sId;
+				return `${FL_PREFIX}.${sId}`;
 			}
 		},
 
@@ -116,7 +116,7 @@ sap.ui.define([], function() {
 		 * @ui5-restricted sap.ui.fl.FakeLrepConnector
 		 */
 		isSameReference: function(oFlexObject, sReference) {
-			var sEquivalentReference = sReference.endsWith(".Component") ? sReference.replace(/\.Component$/, "") : sReference + ".Component";
+			var sEquivalentReference = sReference.endsWith(".Component") ? sReference.replace(/\.Component$/, "") : `${sReference}.Component`;
 			return oFlexObject.reference === sReference || oFlexObject.reference === sEquivalentReference;
 		}
 	};

@@ -188,7 +188,7 @@ sap.ui.define([
 			return this.oChangeHandler.applyChange(oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 			.catch(function(oError) {
 				assert.equal(oError.message,
-					"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
+					`Error during execPromiseQueueSequentially processing occurred: ${sTypeError}${this.sAggregationType}`,
 					"then apply change throws an error");
 				assert.equal(this.oHBox.getItems().length, 1, "after the change there is still only 1 item in the hbox");
 			}.bind(this));
@@ -220,7 +220,7 @@ sap.ui.define([
 			return this.oChangeHandler.applyChange(oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 			.catch(function(oError) {
 				assert.equal(oError.message,
-					"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
+					`Error during execPromiseQueueSequentially processing occurred: ${sTypeError}${this.sAggregationType}`,
 					"then apply change throws an error");
 				assert.equal(this.oHBox.getItems().length, 1, "after the change there is still only 1 item in the hbox");
 				return this.oChangeHandler.revertChange(oChange, this.oHBox, this.oPropertyBag);
@@ -273,16 +273,16 @@ sap.ui.define([
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 				this.oXmlString =
-					'<mvc:View id="testComponentAsync---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
-						'<HBox id="' + this.sHBoxId + '">' +
-							"<tooltip>" +	// 0..1 aggregation
-								'<TooltipBase xmlns="sap.ui.core"></TooltipBase>' + // inline namespace as sap.ui.core is use case for not existing namespace
-							"</tooltip>" +
-							"<items>" +
-								'<Button id="button123"></Button>' + // content in default aggregation
-							"</items>" +
-						"</HBox>" +
-					"</mvc:View>";
+					`<mvc:View id="testComponentAsync---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">` +
+						`<HBox id="${this.sHBoxId}">` +
+							`<tooltip>` +	// 0..1 aggregation
+								`<TooltipBase xmlns="sap.ui.core"></TooltipBase>` + // inline namespace as sap.ui.core is use case for not existing namespace
+							`</tooltip>` +
+							`<items>` +
+								`<Button id="button123"></Button>` + // content in default aggregation
+							`</items>` +
+						`</HBox>` +
+					`</mvc:View>`;
 				this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
 				this.oHBox = this.oXmlView.childNodes[0];
 				this.sAggregationType = "sap.ui.core.Control";
@@ -331,7 +331,7 @@ sap.ui.define([
 			return this.oChangeHandler.applyChange(oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 			.catch(function(oError) {
 				assert.equal(oError.message,
-					"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
+					`Error during execPromiseQueueSequentially processing occurred: ${sTypeError}${this.sAggregationType}`,
 					"then apply change throws an error");
 			}.bind(this));
 		});
@@ -366,7 +366,7 @@ sap.ui.define([
 			return this.oChangeHandler.applyChange(oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 			.catch(function(oError) {
 				assert.equal(oError.message,
-					"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
+					`Error during execPromiseQueueSequentially processing occurred: ${sTypeError}${this.sAggregationType}`,
 					"then apply change throws an error");
 				var oHBoxItems = this.oHBox.childNodes[1];
 				assert.equal(oHBoxItems.childNodes.length, 1, "after the change there is still only 1 item in the hbox");
@@ -391,7 +391,7 @@ sap.ui.define([
 			return this.oChangeHandler.applyChange(oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 			.catch(function(oError) {
 				assert.equal(oError.message,
-					"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
+					`Error during execPromiseQueueSequentially processing occurred: ${sTypeError}${this.sAggregationType}`,
 					"then apply change throws an error");
 				return this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
 			}.bind(this))

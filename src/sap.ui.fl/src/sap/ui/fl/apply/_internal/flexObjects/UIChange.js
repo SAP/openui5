@@ -334,7 +334,7 @@ sap.ui.define([
 		var oCurrentDependentSelectors = Object.assign({}, this.getDependentSelectors());
 
 		if (oCurrentDependentSelectors[sAlias]) {
-			throw new Error("Alias '" + sAlias + "' already exists in the change.");
+			throw new Error(`Alias '${sAlias}' already exists in the change.`);
 		}
 
 		var oModifier = mPropertyBag.modifier;

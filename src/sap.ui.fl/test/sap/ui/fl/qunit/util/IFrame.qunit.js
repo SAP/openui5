@@ -23,12 +23,12 @@ sap.ui.define([
 
 	var sTitle = "IFrame Title";
 	var sProtocol = "https";
-	var sOpenUI5Url = sProtocol + "://openu5/";
+	var sOpenUI5Url = `${sProtocol}://openu5/`;
 	var sDefaultSize = "500px";
 	var sUserFirstName = "John";
 	var sUserLastName = "Doe";
-	var sUserFullName = sUserFirstName + " " + sUserLastName;
-	var sUserEmail = (sUserFirstName + "." + sUserLastName).toLowerCase() + "@sap.com";
+	var sUserFullName = `${sUserFirstName} ${sUserLastName}`;
+	var sUserEmail = `${(`${sUserFirstName}.${sUserLastName}`).toLowerCase()}@sap.com`;
 
 	function checkUrl(assert, oIFrame, sExpectedUrl, sDescription) {
 		return (oIFrame._oSetUrlPromise || Promise.resolve())
@@ -64,7 +64,7 @@ sap.ui.define([
 
 		QUnit.test("when changing a navigation parameter", function(assert) {
 			var oSetUrlSpy = sandbox.spy(this.oIFrame, "setProperty").withArgs("url");
-			var sNewUrl = sOpenUI5Url + "#someNavParameter";
+			var sNewUrl = `${sOpenUI5Url}#someNavParameter`;
 			this.oIFrame.setUrl(sNewUrl);
 			return checkUrl(assert, this.oIFrame, sNewUrl)
 			.then(function() {
@@ -153,7 +153,7 @@ sap.ui.define([
 
 		QUnit.test("URL should refresh if bound to a changing model without rewriting the iframe", function(assert) {
 			var oFocusDomRef = this.oIFrame.getFocusDomRef();
-			var sSapUI5Url = sProtocol + "://sapui5/";
+			var sSapUI5Url = `${sProtocol}://sapui5/`;
 
 			this.oModel.setProperty("/flavor", "sapui5");
 
@@ -173,7 +173,7 @@ sap.ui.define([
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
-				url: sOpenUI5Url + "?domain={$user>/domain}"
+				url: `${sOpenUI5Url}?domain={$user>/domain}`
 			});
 			this.oIFrame.placeAt("qunit-fixture");
 			Core.applyChanges();
@@ -185,7 +185,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("URL should contain user information", function(assert) {
-			assert.strictEqual(this.oIFrame.getUrl(), sOpenUI5Url + "?domain=sap.com", "URL is the expected one");
+			assert.strictEqual(this.oIFrame.getUrl(), `${sOpenUI5Url}?domain=sap.com`, "URL is the expected one");
 		});
 	});
 
@@ -196,7 +196,7 @@ sap.ui.define([
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
-				url: sOpenUI5Url + "?domain={$user>/domain}"
+				url: `${sOpenUI5Url}?domain={$user>/domain}`
 			});
 			this.oIFrame.placeAt("qunit-fixture");
 			Core.applyChanges();
@@ -208,7 +208,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("URL should contain user information", function(assert) {
-			assert.strictEqual(this.oIFrame.getUrl(), sOpenUI5Url + "?domain=", "URL is the expected one");
+			assert.strictEqual(this.oIFrame.getUrl(), `${sOpenUI5Url}?domain=`, "URL is the expected one");
 		});
 	});
 
@@ -218,7 +218,7 @@ sap.ui.define([
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
-				url: sOpenUI5Url + "?domain={$user>/domain}"
+				url: `${sOpenUI5Url}?domain={$user>/domain}`
 			});
 			this.oIFrame.placeAt("qunit-fixture");
 			Core.applyChanges();
@@ -230,7 +230,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("URL should not contain user information", function(assert) {
-			assert.strictEqual(this.oIFrame.getUrl(), sOpenUI5Url + "?domain=", "URL is the expected one");
+			assert.strictEqual(this.oIFrame.getUrl(), `${sOpenUI5Url}?domain=`, "URL is the expected one");
 		});
 	});
 
@@ -239,13 +239,13 @@ sap.ui.define([
 			sandbox.stub(Utils, "getUshellContainer").returns(true);
 			stubGetUShellService(sUserEmail, sUserFullName, sUserFirstName, sUserLastName);
 			return XMLView.create({
-				definition: '<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.fl.util">' +
-					'<IFrame id="iframe1" url="' + sOpenUI5Url + '" />' +
-					'<IFrame id="iframe2" url="' + sOpenUI5Url + '?fullName={$user>/fullName}" />' +
-					'<IFrame id="iframe3" url="' + sOpenUI5Url + '?domain={$user>/domain}&amp;{anyModel>/anyProperty}" />' +
-					'<IFrame id="iframe4" url="{= \'' + sOpenUI5Url + '?domain=\' + ${$user>/domain} }" />' +
-					'<IFrame id="iframe5" url="{= \'' + sOpenUI5Url + '?domain=\' + (${$user>/domain}.indexOf(\'sap.com\') !== -1 ? \'SAP\' : \'EXTERNAL\') }" />' +
-				"</mvc:View>"
+				definition: `<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.fl.util">` +
+					`<IFrame id="iframe1" url="${sOpenUI5Url}" />` +
+					`<IFrame id="iframe2" url="${sOpenUI5Url}?fullName={$user>/fullName}" />` +
+					`<IFrame id="iframe3" url="${sOpenUI5Url}?domain={$user>/domain}&amp;{anyModel>/anyProperty}" />` +
+					`<IFrame id="iframe4" url="{= '${sOpenUI5Url}?domain=' + \${$user>/domain} }" />` +
+					`<IFrame id="iframe5" url="{= '${sOpenUI5Url}?domain=' + (\${$user>/domain}.indexOf('sap.com') !== -1 ? 'SAP' : 'EXTERNAL') }" />` +
+				`</mvc:View>`
 			}).then(function(oView) {
 				this.myView = oView;
 				var iFrame = this.myView.byId("iframe1");
@@ -266,34 +266,34 @@ sap.ui.define([
 		});
 		QUnit.test("Simple binding URL should be reverted back to binding in settings", function(assert) {
 			var iFrame = this.myView.byId("iframe2");
-			var sExpectedUrl = encodeURI(sOpenUI5Url + "?fullName=" + sUserFullName);
+			var sExpectedUrl = encodeURI(`${sOpenUI5Url}?fullName=${sUserFullName}`);
 			assert.strictEqual(
 				iFrame.getUrl(),
 				sExpectedUrl,
 				"Displayed URL is correct and parameters are properly encoded"
 			);
-			assert.strictEqual(iFrame.get_settings().url, sOpenUI5Url + "?fullName={$user>/fullName}", "Settings' URL is correct");
+			assert.strictEqual(iFrame.get_settings().url, `${sOpenUI5Url}?fullName={$user>/fullName}`, "Settings' URL is correct");
 		});
 		QUnit.test("when a passed  url is already encoded", function(assert) {
 			var iFrame = this.myView.byId("iframe2");
-			var sEncodedUrl = encodeURI(sOpenUI5Url + "?someParameter=" + sUserFullName);
+			var sEncodedUrl = encodeURI(`${sOpenUI5Url}?someParameter=${sUserFullName}`);
 			iFrame.setUrl(sEncodedUrl);
 			return checkUrl(assert, iFrame, sEncodedUrl, "then it is not encoded again");
 		});
 		QUnit.test("Simple binding URL (with unexpected reference) should be reverted back to binding in settings", function(assert) {
 			var iFrame = this.myView.byId("iframe3");
 			assert.strictEqual(iFrame.getUrl(), "", "Displayed URL is empty since the binding can't be resolved");
-			assert.strictEqual(iFrame.get_settings().url, sOpenUI5Url + "?domain={$user>/domain}&{anyModel>/anyProperty}", "Settings' URL is correct");
+			assert.strictEqual(iFrame.get_settings().url, `${sOpenUI5Url}?domain={$user>/domain}&{anyModel>/anyProperty}`, "Settings' URL is correct");
 		});
 		QUnit.test("Complex binding URL is 'converted' to simple binding ('simple' use case)", function(assert) {
 			var iFrame = this.myView.byId("iframe4");
-			assert.strictEqual(iFrame.getUrl(), sOpenUI5Url + "?domain=sap.com", "Displayed URL is correct");
-			assert.strictEqual(iFrame.get_settings().url, sOpenUI5Url + "?domain={$user>/domain}", "Settings' URL is correct");
+			assert.strictEqual(iFrame.getUrl(), `${sOpenUI5Url}?domain=sap.com`, "Displayed URL is correct");
+			assert.strictEqual(iFrame.get_settings().url, `${sOpenUI5Url}?domain={$user>/domain}`, "Settings' URL is correct");
 		});
 		QUnit.test("Complex binding URL is 'converted' to simple binding ('advanced' use case)", function(assert) {
 			var iFrame = this.myView.byId("iframe5");
-			assert.strictEqual(iFrame.getUrl(), sOpenUI5Url + "?domain=SAP", "Displayed URL is correct");
-			assert.strictEqual(iFrame.get_settings().url, sOpenUI5Url + "?domain=EXTERNAL", "Settings' URL looks corrupted");
+			assert.strictEqual(iFrame.getUrl(), `${sOpenUI5Url}?domain=SAP`, "Displayed URL is correct");
+			assert.strictEqual(iFrame.get_settings().url, `${sOpenUI5Url}?domain=EXTERNAL`, "Settings' URL looks corrupted");
 		});
 	});
 

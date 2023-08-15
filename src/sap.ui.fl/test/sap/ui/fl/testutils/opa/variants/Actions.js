@@ -48,7 +48,7 @@ sap.ui.define([
 					});
 				}
 			}.bind(this),
-			errorMessage: "No variant with name " + sVariantName + " was found in 'Manage Views'"
+			errorMessage: `No variant with name ${sVariantName} was found in 'Manage Views'`
 		});
 	};
 
@@ -159,7 +159,7 @@ sap.ui.define([
 
 		iCreateNewVariant: function(sFlVMId, sVariantTitle, bDefault, bApplyAuto, bPublic) {
 			return this.waitFor({
-				id: sFlVMId + "-vm-name",
+				id: `${sFlVMId}-vm-name`,
 				success: function(oInput) {
 					new EnterText({
 						text: sVariantTitle
@@ -167,27 +167,27 @@ sap.ui.define([
 
 					if (bDefault) {
 						this.waitFor({
-							id: sFlVMId + "-vm-default",
+							id: `${sFlVMId}-vm-default`,
 							actions: new Press()
 						});
 					}
 
 					if (bApplyAuto) {
 						this.waitFor({
-							id: sFlVMId + "-vm-execute",
+							id: `${sFlVMId}-vm-execute`,
 							actions: new Press()
 						});
 					}
 
 					if (bPublic) {
 						this.waitFor({
-							id: sFlVMId + "-vm-public",
+							id: `${sFlVMId}-vm-public`,
 							actions: new Press()
 						});
 					}
 
 					return this.waitFor({
-						id: sFlVMId + "-vm-variantsave",
+						id: `${sFlVMId}-vm-variantsave`,
 						actions: new Press()
 					});
 				},

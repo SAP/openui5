@@ -143,7 +143,9 @@ sap.ui.define([
 		});
 
 		[true, false].forEach(function(bResolve) {
-			var sMsg = "addRegistrationPromise + waitForChangeHandlerRegistration - " + bResolve ? "resolving promise" : "rejecting promise";
+			var sMsg = `addRegistrationPromise + waitForChangeHandlerRegistration - ${
+				bResolve ? "resolving promise" : "rejecting promise"
+			}`;
 			QUnit.test(sMsg, function(assert) {
 				var done = assert.async();
 				var sKey = "myFancyName";

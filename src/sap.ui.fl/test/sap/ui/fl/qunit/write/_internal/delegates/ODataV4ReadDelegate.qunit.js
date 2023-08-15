@@ -37,7 +37,7 @@ sap.ui.define(["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"], funct
 									oItem = oItem[sProp]; // e.g. property
 									if (sProp === "$Path") {
 										// resolve path
-										oItem = oTestContext.testGetObject("/TestEntityT1/" + oItem);
+										oItem = oTestContext.testGetObject(`/TestEntityT1/${oItem}`);
 									}
 									sPart = sPart.substr(iIndex); // annotation
 									if (oItem) {
@@ -61,7 +61,7 @@ sap.ui.define(["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"], funct
 
 						if (oItem.$kind === "EntityType") {
 							oContext = {
-								_testInfo: "Context: " + sPath,
+								_testInfo: `Context: ${sPath}`,
 								getPath: function() {
 									return "/TestEntityT1";
 								},
@@ -74,7 +74,7 @@ sap.ui.define(["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"], funct
 							};
 						} else if (oItem.$kind === "Property") {
 							oContext = {
-								_testInfo: "Context: " + sPath,
+								_testInfo: `Context: ${sPath}`,
 								getPath: function() {
 									return "/TestEntityT1/TestProperty1";
 								},
@@ -84,7 +84,7 @@ sap.ui.define(["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"], funct
 										if (sInnerPath.startsWith("/")) {
 											sFinalPath = sInnerPath;
 										} else {
-											sFinalPath += "/" + sInnerPath;
+											sFinalPath += `/${sInnerPath}`;
 										}
 									}
 									return oTestContext.testGetObject(sFinalPath);
@@ -98,7 +98,7 @@ sap.ui.define(["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"], funct
 					},
 					getMetaContext: function(sPath) {
 						return {
-							_testInfo: "MetaContext: " + sPath,
+							_testInfo: `MetaContext: ${sPath}`,
 							getObject: function(sPath) {
 								// e.g. "testService1.TestEntityT1" or undefined
 								return oTestContext.testGetObject(sPath);
@@ -161,7 +161,7 @@ sap.ui.define(["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"], funct
 						return "/TestEntityT1(ID=...,IsActiveEntity=...)";
 					},
 					getProperty: function(sPath) {
-						return oTestContext.testGetObject("/TestEntityT1/" + sPath);
+						return oTestContext.testGetObject(`/TestEntityT1/${sPath}`);
 					}
 				},
 				getModel: function() {
@@ -343,7 +343,7 @@ sap.ui.define(["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"], funct
 				oInfo = aPropertyInfo[i];
 				sResult = stringifySortedObjectProperties(oInfo);
 
-				assert.strictEqual(sResult, sExpected, "getPropertyInfo: " + oInfo.name + " (hideFromReveal=" + oInfo.hideFromReveal + " unsupported=" + oInfo.unsupported + ")");
+				assert.strictEqual(sResult, sExpected, `getPropertyInfo: ${oInfo.name} (hideFromReveal=${oInfo.hideFromReveal} unsupported=${oInfo.unsupported})`);
 			}
 			done();
 		});

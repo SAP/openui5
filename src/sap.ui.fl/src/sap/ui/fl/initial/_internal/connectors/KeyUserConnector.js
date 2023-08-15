@@ -31,7 +31,7 @@ sap.ui.define([
 		],
 		API_VERSION: API_VERSION,
 		ROUTES: {
-			DATA: PREFIX + API_VERSION + "/data/"
+			DATA: `${PREFIX + API_VERSION}/data/`
 		},
 		isLanguageInfoRequired: true,
 		loadFlexData: function(mPropertyBag) {

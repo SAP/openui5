@@ -40,7 +40,7 @@ sap.ui.define([
 				oModifier.setProperty(oControl, sPropertyName, vPropertyValue);
 			}
 		} catch (ex) {
-			throw new Error("Applying property changes failed: " + ex);
+			throw new Error(`Applying property changes failed: ${ex}`);
 		}
 	}
 

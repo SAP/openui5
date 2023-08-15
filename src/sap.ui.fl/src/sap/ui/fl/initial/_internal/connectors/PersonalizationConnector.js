@@ -29,7 +29,7 @@ sap.ui.define([
 			Layer.USER
 		],
 		ROUTES: {
-			DATA: PREFIX + API_VERSION + "/data/"
+			DATA: `${PREFIX + API_VERSION}/data/`
 		}
 	});
 

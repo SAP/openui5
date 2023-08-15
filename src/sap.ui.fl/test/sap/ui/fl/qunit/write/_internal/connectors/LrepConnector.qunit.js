@@ -1342,8 +1342,8 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.create(mPropertyBag).then(function() {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/?parentVersion="
-					+ mPropertyBag.parentVersion + "&sap-language=EN", "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], `/sap/bc/lrep/flex/apps/${this.sAppId}/adaptations/?parentVersion=${
+					 mPropertyBag.parentVersion}&sap-language=EN`, "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "POST", "the correct http method was passed");
 				assert.deepEqual(oCallArguments[2].payload, JSON.stringify(contextBasedAdaptationData), "the correct payload was passed");
 			}.bind(this));
@@ -1371,8 +1371,8 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.update(mPropertyBag).then(function() {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/" + mPropertyBag.adaptationId + "?parentVersion="
-					+ mPropertyBag.parentVersion + "&sap-language=EN", "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], `/sap/bc/lrep/flex/apps/${this.sAppId}/adaptations/${mPropertyBag.adaptationId}?parentVersion=${
+					 mPropertyBag.parentVersion}&sap-language=EN`, "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "PUT", "the correct http method was passed");
 				assert.deepEqual(oCallArguments[2].payload, JSON.stringify(contextBasedAdaptationData), "the correct payload was passed");
 			}.bind(this));
@@ -1389,7 +1389,7 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.load(mPropertyBag).then(function() {
 				assert.equal(this.oStubInitialUtilsSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubInitialUtilsSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/?version=" + mPropertyBag.version, "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], `/sap/bc/lrep/flex/apps/${this.sAppId}/adaptations/?version=${mPropertyBag.version}`, "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "GET", "the correct http method was passed");
 			}.bind(this));
 		});
@@ -1406,7 +1406,7 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.remove(mPropertyBag).then(function() {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/" + mPropertyBag.adaptationId + "?parentVersion=" + mPropertyBag.parentVersion + "&sap-language=EN", "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], `/sap/bc/lrep/flex/apps/${this.sAppId}/adaptations/${mPropertyBag.adaptationId}?parentVersion=${mPropertyBag.parentVersion}&sap-language=EN`, "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "DELETE", "the correct http method was passed");
 			}.bind(this));
 		});
@@ -1424,7 +1424,7 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.reorder(mPropertyBag).then(function() {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/?sap-language=EN", "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], `/sap/bc/lrep/flex/apps/${this.sAppId}/adaptations/?sap-language=EN`, "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "PUT", "the correct http method was passed");
 				assert.deepEqual(oCallArguments[2].payload, JSON.stringify(oFlexObject), "the correct payload was passed");
 			}.bind(this));
@@ -1552,7 +1552,7 @@ sap.ui.define([
 				version: sActivateVersion
 			};
 
-			var sExpectedUrl = "/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=EN";
+			var sExpectedUrl = `/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=${sActivateVersion}&sap-language=EN`;
 			var mExpectedPropertyBag = {
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app",
@@ -1583,7 +1583,7 @@ sap.ui.define([
 				version: sActivateVersion
 			};
 
-			var sExpectedUrl = "/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=EN";
+			var sExpectedUrl = `/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=${sActivateVersion}&sap-language=EN`;
 			var mExpectedPropertyBag = {
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app",
@@ -1614,7 +1614,7 @@ sap.ui.define([
 				version: sActivateVersion
 			};
 
-			var sExpectedUrl = "/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=EN";
+			var sExpectedUrl = `/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=${sActivateVersion}&sap-language=EN`;
 			var mExpectedPropertyBag = {
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app",

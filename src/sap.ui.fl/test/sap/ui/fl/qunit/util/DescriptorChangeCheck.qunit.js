@@ -18,10 +18,10 @@ sap.ui.define([
 	}
 
 	function assertReserverd(sId, oChange, sPrefix, assert) {
-		assertNotCompliant(sId, oChange, "Id " + sId + " must not start with reserved " + sPrefix, "throws error that there is reserved '" + sPrefix + "' prefix", assert);
+		assertNotCompliant(sId, oChange, `Id ${sId} must not start with reserved ${sPrefix}`, `throws error that there is reserved '${sPrefix}' prefix`, assert);
 	}
 	function assertMissing(sId, oChange, sPrefix, assert) {
-		assertNotCompliant(sId, oChange, "Id " + sId + " must start with " + sPrefix, "throws error that there is no mandatory '" + sPrefix + "' prefix", assert);
+		assertNotCompliant(sId, oChange, `Id ${sId} must start with ${sPrefix}`, `throws error that there is no mandatory '${sPrefix}' prefix`, assert);
 	}
 
 	QUnit.module("sap.ui.fl.DescriptorChangeCheck.checkIdNamespaceCompliance", {}, function() {

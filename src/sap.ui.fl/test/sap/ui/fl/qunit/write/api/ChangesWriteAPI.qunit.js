@@ -134,7 +134,7 @@ sap.ui.define([
 			const sName = "when create is called ";
 			const sCBASuffix = bCBA ? " and ContextBasedAdaptations available" : "";
 
-			QUnit.test(sName + "with a control or selector object" + sCBASuffix, function(assert) {
+			QUnit.test(`${sName}with a control or selector object${sCBASuffix}`, function(assert) {
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
 				const oControl = new Element("controlId");
 				const mPropertyBag = {
@@ -160,7 +160,7 @@ sap.ui.define([
 				});
 			});
 
-			QUnit.test(sName + "with an extension point selector" + sCBASuffix, function(assert) {
+			QUnit.test(`${sName}with an extension point selector${sCBASuffix}`, function(assert) {
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
 				const mPropertyBag = {
 					changeSpecificData: {changeType: "addXMLAtExtensionPoint", name: "foo"},
@@ -191,7 +191,7 @@ sap.ui.define([
 				});
 			});
 
-			QUnit.test(sName + "with a component + sCBASuffix", function(assert) {
+			QUnit.test(`${sName}with a component + sCBASuffix`, function(assert) {
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
 				const mPropertyBag = {
 					changeSpecificData: {changeType: "changeSpecificData"},

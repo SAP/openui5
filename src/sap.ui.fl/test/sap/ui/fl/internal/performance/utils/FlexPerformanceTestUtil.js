@@ -51,7 +51,7 @@ sap.ui.define([
 	function _writeData(sControlId) {
 		sControlId = sControlId || sIdForStatus;
 		var oLayout = oCore.byId("idMain1--Layout");
-		var sDurationText = sMassiveLabel + " = " + window.wpp.customMetrics[sMassiveLabel] + " ms";
+		var sDurationText = `${sMassiveLabel} = ${window.wpp.customMetrics[sMassiveLabel]} ms`;
 		Log.info(sDurationText);
 		_addLabel(oLayout, sControlId, sDurationText);
 		window.performance.clearMarks();
@@ -112,13 +112,13 @@ sap.ui.define([
 	 */
 	function _createControlsForDiverse(sControlId) {
 		var oLayout = oCore.byId("idMain1--Layout");
-		var oTitleLabel = new Label(sControlId + ".title", {text: sControlId + ".title"});
-		var oInnerLabel = new Label(sControlId + ".label", {text: sControlId + ".label"});
-		var oDatePicker = new DatePicker(sControlId + ".datePicker");
-		var oSlider = new Slider(sControlId + ".slider");
-		var oRatingIndicator = new RatingIndicator(sControlId + ".ratingIndicator");
-		var oButton = new Button(sControlId + ".button", {text: sControlId + ".button"});
-		var oVBox = new VBox(sControlId + ".vbox", {
+		var oTitleLabel = new Label(`${sControlId}.title`, {text: `${sControlId}.title`});
+		var oInnerLabel = new Label(`${sControlId}.label`, {text: `${sControlId}.label`});
+		var oDatePicker = new DatePicker(`${sControlId}.datePicker`);
+		var oSlider = new Slider(`${sControlId}.slider`);
+		var oRatingIndicator = new RatingIndicator(`${sControlId}.ratingIndicator`);
+		var oButton = new Button(`${sControlId}.button`, {text: `${sControlId}.button`});
+		var oVBox = new VBox(`${sControlId}.vbox`, {
 			items: [
 				oInnerLabel,
 				oDatePicker,
@@ -128,7 +128,7 @@ sap.ui.define([
 			]
 		});
 		var oInnerLayout = new VerticalLayout({
-			id: sControlId + ".layout",
+			id: `${sControlId}.layout`,
 			content: [
 				oTitleLabel,
 				oVBox
@@ -203,13 +203,13 @@ sap.ui.define([
 
 	FlexPerformanceTestUtil.stopMeasurement = function(sMeasure) {
 		sMeasure = sMeasure || sMassiveLabel;
-		window.performance.measure(sMeasure, sMeasure + ".start");
+		window.performance.measure(sMeasure, `${sMeasure}.start`);
 		window.wpp.customMetrics[sMeasure] = window.performance.getEntriesByName(sMeasure)[0].duration;
 	};
 
 	FlexPerformanceTestUtil.startMeasurement = function(sMeasure) {
 		sMeasure = sMeasure || sMassiveLabel;
-		window.performance.mark(sMeasure + ".start");
+		window.performance.mark(`${sMeasure}.start`);
 	};
 
 	FlexPerformanceTestUtil.startMeasurementForXmlPreprocessing = function() {

@@ -190,7 +190,7 @@ sap.ui.define([
 	DataSelector.prototype.get = function(mParameters) {
 		var sParameterKey = this.getParameterKey();
 		if (sParameterKey && !(mParameters || {})[sParameterKey]) {
-			throw new Error("Parameter '" + sParameterKey + "' is missing");
+			throw new Error(`Parameter '${sParameterKey}' is missing`);
 		}
 		var vResult = this._getParameterizedCachedResult(mParameters);
 		// Check for undefined or null as indicators for an empty cache

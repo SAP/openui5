@@ -66,7 +66,7 @@ sap.ui.define([
 			if (oManifest["sap.app"].crossNavigation.inbounds[sInboundId]) {
 				merge(oManifest, sInboundId);
 			} else {
-				throw new Error("No inbound exists with the ID \"" + sInboundId + "\" in sap.app/crossNavigation/inbounds");
+				throw new Error(`No inbound exists with the ID "${sInboundId}" in sap.app/crossNavigation/inbounds`);
 			}
 			return oManifest;
 		}

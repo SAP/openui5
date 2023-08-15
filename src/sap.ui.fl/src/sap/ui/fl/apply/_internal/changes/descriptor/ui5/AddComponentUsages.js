@@ -43,7 +43,7 @@ sap.ui.define([
 
 			Object.keys(oChangeComponentUsages).forEach(function(sComponentUsageName) {
 				if (oManifestComponentUsages[sComponentUsageName]) {
-					throw new Error("Component usage '" + sComponentUsageName + "' already exists");
+					throw new Error(`Component usage '${sComponentUsageName}' already exists`);
 				} else {
 					oManifestComponentUsages[sComponentUsageName] = oChangeComponentUsages[sComponentUsageName];
 				}

@@ -218,7 +218,7 @@ sap.ui.define([
 
 			if (this._mServiceInfo.serviceType === UriParser.mServiceType.v4) {
 				// ResourcePath='/sap/opu/odata4/sap/aps_integration_test/sadl/sap/i_cfd_tsm_so_core/0001/'&EntitySetName=''&EntityTypeName='BusinessPartner'
-				oParameters.ResourcePath = UriParser.sODataV4ResourcePathPrefix + this._mServiceInfo.serviceName + "/" + this._mServiceInfo.serviceVersion;
+				oParameters.ResourcePath = `${UriParser.sODataV4ResourcePathPrefix + this._mServiceInfo.serviceName}/${this._mServiceInfo.serviceVersion}`;
 			} else {
 				// ServiceName='CFD_TSM_BUPA_MAINT_SRV'&ServiceVersion='0001'&EntitySetName=''&EntityTypeName='BusinessPartner'
 				oParameters.ServiceName = this._mServiceInfo.serviceName;
@@ -231,11 +231,11 @@ sap.ui.define([
 		_getExtensionDataServiceUri: function() {
 			if (this._mServiceInfo.serviceType === UriParser.mServiceType.v4) {
 				// sap/opu/odata/SAP/APS_CUSTOM_FIELD_MAINTENANCE_SRV/GetBusinessContextsByResourcePath
-				return sExtensionDataServiceUri + "GetBusinessContextsByResourcePath";
+				return `${sExtensionDataServiceUri}GetBusinessContextsByResourcePath`;
 			}
 
 			// sap/opu/odata/SAP/APS_CUSTOM_FIELD_MAINTENANCE_SRV/GetBusinessContextsByEntityType
-			return sExtensionDataServiceUri + "GetBusinessContextsByEntityType";
+			return `${sExtensionDataServiceUri}GetBusinessContextsByEntityType`;
 		}
 	});
 

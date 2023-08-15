@@ -53,7 +53,7 @@ sap.ui.define([
 				};
 			})
 			.catch(function(vError) {
-				Log.error("Unexpected exception when reading shell user info: " + vError.toString());
+				Log.error(`Unexpected exception when reading shell user info: ${vError.toString()}`);
 				return {};
 			});
 		}

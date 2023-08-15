@@ -345,7 +345,7 @@ sap.ui.define([
 
 		this.attachModelContextChange(this._setModel, this);
 
-		this._oVM = new MVariantManagement(this.getId() + "-vm");
+		this._oVM = new MVariantManagement(`${this.getId()}-vm`);
 		this.setAggregation("_embeddedVM", this._oVM, true);
 
 		this._aCancelEventHandlers = [];
@@ -832,7 +832,7 @@ sap.ui.define([
 			if (oModel) {
 				sLocalId = this._getLocalId(oModel);
 				if (sLocalId) {
-					this.oContext = new Context(oModel, "/" + sLocalId);
+					this.oContext = new Context(oModel, `/${sLocalId}`);
 					this.setBindingContext(this.oContext, sModelName);
 
 					if (oModel.registerToModel) { // Relevant for key user adaptation
@@ -848,32 +848,32 @@ sap.ui.define([
 					this._createItemsModel(sModelName);
 
 					this._oVM.bindProperty("selectedKey", {
-						path: this.oContext + "/currentVariant",
+						path: `${this.oContext}/currentVariant`,
 						model: sModelName
 					});
 
 					this._oVM.bindProperty("defaultKey", {
-						path: this.oContext + "/defaultVariant",
+						path: `${this.oContext}/defaultVariant`,
 						model: sModelName
 					});
 
 					this._oVM.bindProperty("modified", {
-						path: this.oContext + "/modified",
+						path: `${this.oContext}/modified`,
 						model: sModelName
 					});
 
 					this._oVM.bindProperty("supportFavorites", {
-						path: this.oContext + "/showFavorites",
+						path: `${this.oContext}/showFavorites`,
 						model: sModelName
 					});
 
 					this._oVM.bindProperty("supportApplyAutomatically", {
-						path: this.oContext + "/showExecuteOnSelection",
+						path: `${this.oContext}/showExecuteOnSelection`,
 						model: sModelName
 					});
 
 					this._oVM.bindProperty("showFooter", {
-						path: this.oContext + "/variantsEditable",
+						path: `${this.oContext}/variantsEditable`,
 						model: sModelName
 					});
 
@@ -885,25 +885,25 @@ sap.ui.define([
 
 	VariantManagement.prototype._createItemsModel = function(sModelName) {
 		var oItemsTemplate = new VariantItem({
-			key: "{" + sModelName + ">key}",
-			title: "{" + sModelName + ">title}",
-			sharing: "{" + sModelName + ">sharing}",
-			remove: "{" + sModelName + ">remove}",
-			favorite: "{" + sModelName + ">favorite}",
-			originalFavorite: "{" + sModelName + ">originalFavorite}",
-			executeOnSelect: "{" + sModelName + ">executeOnSelect}",
-			originalExecuteOnSelect: "{" + sModelName + ">originalExecuteOnSelect}",
-			rename: "{" + sModelName + ">rename}",
-			originalTitle: "{" + sModelName + ">originalTitle}",
-			visible: "{" + sModelName + ">visible}",
-			changeable: "{" + sModelName + ">change}",
-			author: "{" + sModelName + ">author}",
-			contexts: "{" + sModelName + ">contexts}",
-			originalContexts: "{" + sModelName + ">originalContexts}"
+			key: `{${sModelName}>key}`,
+			title: `{${sModelName}>title}`,
+			sharing: `{${sModelName}>sharing}`,
+			remove: `{${sModelName}>remove}`,
+			favorite: `{${sModelName}>favorite}`,
+			originalFavorite: `{${sModelName}>originalFavorite}`,
+			executeOnSelect: `{${sModelName}>executeOnSelect}`,
+			originalExecuteOnSelect: `{${sModelName}>originalExecuteOnSelect}`,
+			rename: `{${sModelName}>rename}`,
+			originalTitle: `{${sModelName}>originalTitle}`,
+			visible: `{${sModelName}>visible}`,
+			changeable: `{${sModelName}>change}`,
+			author: `{${sModelName}>author}`,
+			contexts: `{${sModelName}>contexts}`,
+			originalContexts: `{${sModelName}>originalContexts}`
 		});
 
 		this._oVM.bindAggregation("items", {
-			path: this.oContext + "/variants",
+			path: `${this.oContext}/variants`,
 			model: sModelName,
 			template: oItemsTemplate,
 			filters: new Filter({

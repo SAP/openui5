@@ -85,7 +85,7 @@ sap.ui.define([
 			apiFunctionName: "setDefaultVariantId",
 			compVariantStateFunctionName: "setDefault"
 		}].forEach(function(testData) {
-			QUnit.test("When " + testData.details + " is called", function(assert) {
+			QUnit.test(`When ${testData.details} is called`, function(assert) {
 				// mock control
 				var sPersistencyKey = "thePersistencyKey";
 				var oSVMControl = {
@@ -359,7 +359,7 @@ sap.ui.define([
 				}
 			}
 		}].forEach(function(testData) {
-			QUnit.test("When updateVariant is called, " + testData.details, function(assert) {
+			QUnit.test(`When updateVariant is called, ${testData.details}`, function(assert) {
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 				var oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
@@ -664,7 +664,7 @@ sap.ui.define([
 				variantAdaptationId: undefined
 			}
 		}].forEach(function(testData) {
-			QUnit.test("When updateVariant is called with adaptationId, " + testData.details, function(assert) {
+			QUnit.test(`When updateVariant is called with adaptationId, ${testData.details}`, function(assert) {
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 				var oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
@@ -769,7 +769,7 @@ sap.ui.define([
 			packageName: "PACKAGE_A",
 			expectedChange: true
 		}].forEach(function(oTestData) {
-			QUnit.test("When updateVariant is called " + oTestData.testDetails, function(assert) {
+			QUnit.test(`When updateVariant is called ${oTestData.testDetails}`, function(assert) {
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 				var oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
@@ -1081,7 +1081,7 @@ sap.ui.define([
 				action: undefined
 			}
 		}].forEach(function(testData) {
-			QUnit.test("When updateVariant is called with " + testData.details, function(assert) {
+			QUnit.test(`When updateVariant is called with ${testData.details}`, function(assert) {
 				testData.propertyBag.reference = sReference;
 				testData.propertyBag.persistencyKey = sPersistencyKey;
 				oControl = new Control("controlId1");

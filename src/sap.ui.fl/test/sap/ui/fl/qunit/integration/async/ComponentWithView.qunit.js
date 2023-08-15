@@ -131,7 +131,7 @@ sap.ui.define([
 
 		if (!CacheManager._isSupportedEnvironment()) {
 			QUnit.test("All further tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function(assert) {
-				assert.ok(true, "Environment: system [" + JSON.stringify(Device.system) + "],  browser: " + JSON.stringify(Device.browser));
+				assert.ok(true, `Environment: system [${JSON.stringify(Device.system)}],  browser: ${JSON.stringify(Device.browser)}`);
 			});
 		} else {
 			QUnit.test("working cache", function(assert) {

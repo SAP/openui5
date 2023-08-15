@@ -2001,7 +2001,7 @@ sap.ui.define([
 
 				function assertExpected(expectedList, checkFnc, sMessagePart) {
 					expectedList.forEach(function(sExpectedParam) {
-						assert.ok(aObjectsForAdaptation.find(checkFnc.bind(undefined, sExpectedParam)), "Adaptation " + sTitle + " has " + sMessagePart + " " + sExpectedParam);
+						assert.ok(aObjectsForAdaptation.find(checkFnc.bind(undefined, sExpectedParam)), `Adaptation ${sTitle} has ${sMessagePart} ${sExpectedParam}`);
 					});
 				}
 				var oExpectedChanges = oExpectedContextBasedAdaptation.changes;
@@ -2016,7 +2016,7 @@ sap.ui.define([
 					oExpectedChanges.hides4CompVar.length +
 					oExpectedChanges.hides4FLVar.length;
 				iTotal += iAdaptationTotal;
-				assert.strictEqual(aObjectsForAdaptation.length, iAdaptationTotal, "Adaptation " + sTitle + " has correct number of changes");
+				assert.strictEqual(aObjectsForAdaptation.length, iAdaptationTotal, `Adaptation ${sTitle} has correct number of changes`);
 			}.bind(this));
 
 			assert.strictEqual(aWrittenObjects.length, iTotal, "Written files has correct number");

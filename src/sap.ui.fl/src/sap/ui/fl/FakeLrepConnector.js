@@ -81,7 +81,7 @@ sap.ui.define([
 			return function(iNumberOfExpectedObjects, iCallIndex) {
 				iCallIndex = iCallIndex || 0;
 				var iNumberOfObjects = oSpy.getCall(iCallIndex).args[0].flexObjects.length;
-				assert.equal(iNumberOfObjects, iNumberOfExpectedObjects, sMethod + " was called " + iNumberOfExpectedObjects + " times");
+				assert.equal(iNumberOfObjects, iNumberOfExpectedObjects, `${sMethod} was called ${iNumberOfExpectedObjects} times`);
 			};
 		},
 		clear: function(oConnector, mPropertyBag) {

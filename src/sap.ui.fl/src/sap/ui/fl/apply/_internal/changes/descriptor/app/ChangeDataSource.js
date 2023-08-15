@@ -55,7 +55,7 @@ sap.ui.define([
 				if (oDataSource) {
 					changePropertyValueByPath(oChangeContent.entityPropertyChange, oDataSource);
 				} else {
-					throw new Error("Nothing to update. DataSource with ID \"" + oChangeContent.dataSourceId + "\" does not exist.");
+					throw new Error(`Nothing to update. DataSource with ID "${oChangeContent.dataSourceId}" does not exist.`);
 				}
 			} else {
 				throw Error("No sap.app/dataSource found in manifest.json");

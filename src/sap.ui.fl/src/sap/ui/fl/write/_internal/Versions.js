@@ -251,7 +251,7 @@ sap.ui.define([
 		var sLayer = mPropertyBag.layer;
 
 		if (!Versions.hasVersionsModel(mPropertyBag)) {
-			throw Error("Versions Model for reference '" + sReference + "' and layer '" + sLayer + "' were not initialized.");
+			throw Error(`Versions Model for reference '${sReference}' and layer '${sLayer}' were not initialized.`);
 		}
 
 		var oDirtyChangesInfo = _getDirtyChangesInfo(mPropertyBag);

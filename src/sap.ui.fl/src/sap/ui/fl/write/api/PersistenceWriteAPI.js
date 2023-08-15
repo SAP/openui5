@@ -190,7 +190,7 @@ sap.ui.define([
 					return oFlexInfo;
 				})
 				.catch(function(oError) {
-					Log.error("Sending request to flex/info route failed: " + oError.message);
+					Log.error(`Sending request to flex/info route failed: ${oError.message}`);
 					return oFlexInfo;
 				});
 			}
@@ -209,7 +209,7 @@ sap.ui.define([
 	 */
 	PersistenceWriteAPI.getResetAndPublishInfoFromSession = function(oControl) {
 		var sParameter = ManifestUtils.getFlexReferenceForControl(oControl) || "true";
-		return JSON.parse(window.sessionStorage.getItem("sap.ui.fl.info." + sParameter));
+		return JSON.parse(window.sessionStorage.getItem(`sap.ui.fl.info.${sParameter}`));
 	};
 
 	/**
@@ -321,13 +321,14 @@ sap.ui.define([
 			}
 			if (!mPropertyBag.selector) {
 				return Promise.reject(
-					new Error("An invalid selector was passed so change could not be removed with id: " + mPropertyBag.change.getId()));
+					new Error(`An invalid selector was passed so change could not be removed with id: ${mPropertyBag.change.getId()}`));
 			}
 			var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
 			if (!oAppComponent) {
 				return Promise.reject(
-					new Error("Invalid application component for selector, change could not be removed with id: "
-					+ mPropertyBag.change.getId()));
+					new Error(
+						`Invalid application component for selector, change could not be removed with id: ${mPropertyBag.change.getId()}`
+					));
 			}
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);

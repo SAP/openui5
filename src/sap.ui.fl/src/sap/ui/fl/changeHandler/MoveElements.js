@@ -54,8 +54,9 @@ sap.ui.define([
 			return Promise.reject(new Error("Change format invalid - moveElements element has no id attribute"));
 		}
 		if (typeof mMovedElement.targetIndex !== "number") {
-			return Promise.reject(new Error("Missing targetIndex for element with id '" + mMovedElement.selector.id
-				+ "' in movedElements supplied"));
+			return Promise.reject(new Error(
+				`Missing targetIndex for element with id '${mMovedElement.selector.id}' in movedElements supplied`
+			));
 		}
 
 		return Promise.resolve()
@@ -64,7 +65,16 @@ sap.ui.define([
 		});
 	}
 
-	function fnHandleMovedElement(mMovedElement, oModifier, oAppComponent, oView, oSourceParent, oTargetParent, sSourceAggregation, sTargetAggregation) {
+	function fnHandleMovedElement(
+		mMovedElement,
+		oModifier,
+		oAppComponent,
+		oView,
+		oSourceParent,
+		oTargetParent,
+		sSourceAggregation,
+		sTargetAggregation
+	) {
 		var oMovedElement;
 		return fnGetElementControlOrThrowError(mMovedElement, oModifier, oAppComponent, oView)
 		.then(function(oRetrievedMovedElement) {
@@ -74,8 +84,20 @@ sap.ui.define([
 				return Promise.reject();
 			}
 			return Promise.resolve()
-			.then(oModifier.removeAggregation.bind(oModifier, oSourceParent, sSourceAggregation, oMovedElement))
-			.then(oModifier.insertAggregation.bind(oModifier, oTargetParent, sTargetAggregation, oMovedElement, mMovedElement.targetIndex, oView));
+			.then(oModifier.removeAggregation.bind(
+				oModifier,
+				oSourceParent,
+				sSourceAggregation,
+				oMovedElement
+			))
+			.then(oModifier.insertAggregation.bind(
+				oModifier,
+				oTargetParent,
+				sTargetAggregation,
+				oMovedElement,
+				mMovedElement.targetIndex,
+				oView
+			));
 		});
 	}
 

@@ -32,7 +32,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
 		applyChange: function(oManifest) {
-			oManifest["sap.app"].title = "{{" + oManifest["sap.app"].id + "_sap.app.title}}";
+			oManifest["sap.app"].title = `{{${oManifest["sap.app"].id}_sap.app.title}}`;
 			return oManifest;
 		}
 

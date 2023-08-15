@@ -189,11 +189,11 @@ sap.ui.define([
 					return this;
 				},
 				style: function(p, v) {
-					sString += ('style=\"\{' + p + "=" + v + '\}\"');
+					sString += (`style=\"\{${p}=${v}\}\"`);
 					return this;
 				},
 				"class": function(s) {
-					sString += ('class=\"' + s + '\"');
+					sString += (`class=\"${s}\"`);
 					return this;
 				},
 				attr: function() {

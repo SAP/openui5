@@ -502,7 +502,7 @@ sap.ui.define([
 		// a few checks for the selector/instance handling should be sufficient
 		[true, false].forEach(function(bAsInstance) {
 			var sPrefix = bAsInstance ? "as instance" : "as selector";
-			QUnit.test(sPrefix + " with no changes", function(assert) {
+			QUnit.test(`${sPrefix} with no changes`, function(assert) {
 				return this.oFlexController.waitForChangesToBeApplied([{selector: getControl(this.oComponent, this.oControl, bAsInstance)}])
 				.then(function(oReturn) {
 					assert.ok(true, "then the function resolves");
@@ -510,7 +510,7 @@ sap.ui.define([
 				});
 			});
 
-			QUnit.test(sPrefix + "with 3 async queued changes", function(assert) {
+			QUnit.test(`${sPrefix}with 3 async queued changes`, function(assert) {
 				assert.expect(2);
 				this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
 				Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
@@ -521,7 +521,7 @@ sap.ui.define([
 				}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "together with another control, with 3 async queued changes and another independent control with a change", function(assert) {
+			QUnit.test(`${sPrefix}together with another control, with 3 async queued changes and another independent control with a change`, function(assert) {
 				assert.expect(2);
 				this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
 				this.mChanges.mChanges[this.sOtherControlId] = [this.oChangeOnOtherControl];

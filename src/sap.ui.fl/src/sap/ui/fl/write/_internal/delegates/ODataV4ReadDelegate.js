@@ -66,7 +66,7 @@ sap.ui.define(["sap/ui/base/Object"], function(BaseObject) {
 		var sLabel =
 			(mDataFieldDefaultAnnotation && mDataFieldDefaultAnnotation.Label) ||
 			mPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"];
-		mProp.label = sLabel || "[LABEL_MISSING: " + sPropertyPath + "]";
+		mProp.label = sLabel || `[LABEL_MISSING: ${sPropertyPath}]`;
 		// evaluate Hidden annotation
 		var mHiddenAnnotation = mPropertyAnnotations["@com.sap.vocabularies.UI.v1.Hidden"];
 		mProp.hideFromReveal = mHiddenAnnotation;
@@ -133,7 +133,7 @@ sap.ui.define(["sap/ui/base/Object"], function(BaseObject) {
 		for (sElementName in mODataEntityType) {
 			mElement = mODataEntityType[sElementName];
 			if (mElement.$kind === "Property") {
-				var mPropAnnotations = oMetaModel.getObject("/" + sEntityType + "/" + sElementName + "@");
+				var mPropAnnotations = oMetaModel.getObject(`/${sEntityType}/${sElementName}@`);
 				var mProp = _enrichProperty(
 					sElementName,
 					mElement,

@@ -167,11 +167,11 @@ sap.ui.define([
 			.then(function(oInlineChange) {
 				oInlineChange.replaceHostingIdForTextKey("customer.ZDEMOOVP_RESIZE.id_1559043616388_1827", "ZDEMOOVP_RESIZE", oInlineChange.getContent(), oInlineChange.getTexts());
 				Object.keys(oInlineChange.getTexts()).forEach(function(sTextKey, index) {
-					assert.strictEqual(sTextKey, "customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value", "then the text keys are properly set and are correct");
+					assert.strictEqual(sTextKey, `customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs.${index}.value`, "then the text keys are properly set and are correct");
 				});
 				var aProperties = oInlineChange.getContent().entityPropertyChange.propertyValue.tabs;
 				aProperties.forEach(function(oProperty, index) {
-					assert.strictEqual(oProperty.value, "{{customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value}}", "then the property values are correctly set");
+					assert.strictEqual(oProperty.value, `{{customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs.${index}.value}}`, "then the property values are correctly set");
 				});
 			});
 		});
@@ -219,11 +219,11 @@ sap.ui.define([
 			.then(function(oInlineChange) {
 				oInlineChange.replaceHostingIdForTextKey("customer.ZDEMOOVP_RESIZE.id_1559043616388_1827", "ZDEMOOVP_RESIZE", oInlineChange.getContent(), oInlineChange.getTexts());
 				Object.keys(oInlineChange.getTexts()).forEach(function(sTextKey, index) {
-					assert.strictEqual(sTextKey, "customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value", "then the text keys are properly set and are correct");
+					assert.strictEqual(sTextKey, `customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs.${index}.value`, "then the text keys are properly set and are correct");
 				});
 				var aProperties = oInlineChange.getContent().entityPropertyChange.propertyValue.tabs;
 				aProperties.forEach(function(oProperty, index) {
-					assert.strictEqual(oProperty.value, "ZDEMOOVP_RESIZE_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value", "then the property values are correctly set");
+					assert.strictEqual(oProperty.value, `ZDEMOOVP_RESIZE_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs.${index}.value`, "then the property values are correctly set");
 				});
 			});
 		});

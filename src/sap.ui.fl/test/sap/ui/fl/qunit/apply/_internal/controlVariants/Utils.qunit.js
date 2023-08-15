@@ -21,12 +21,12 @@ sap.ui.define([
 	"use strict";
 
 	function assertVMControlFound(sLocalControlId, sLocalVMControlId, aVMControlIds, assert) {
-		var oControl = Core.byId("testComponent2---mockview--" + sLocalControlId);
-		assert.equal(VariantUtils.getRelevantVariantManagementControlId(oControl, aVMControlIds), "testComponent2---mockview--" + sLocalVMControlId, "the correct VM Control was found");
+		var oControl = Core.byId(`testComponent2---mockview--${sLocalControlId}`);
+		assert.equal(VariantUtils.getRelevantVariantManagementControlId(oControl, aVMControlIds), `testComponent2---mockview--${sLocalVMControlId}`, "the correct VM Control was found");
 	}
 
 	function assertNoVMControlFound(sLocalControlId, aVMControlIds, assert) {
-		var oControl = Core.byId("testComponent2---mockview--" + sLocalControlId);
+		var oControl = Core.byId(`testComponent2---mockview--${sLocalControlId}`);
 		assert.notOk(VariantUtils.getRelevantVariantManagementControlId(oControl, aVMControlIds), "no VM Control was found");
 	}
 

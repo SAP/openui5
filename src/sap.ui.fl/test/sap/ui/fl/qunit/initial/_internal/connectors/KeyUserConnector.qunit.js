@@ -33,7 +33,7 @@ sap.ui.define([
 				version: Version.Number.Draft,
 				"sap-language": "en"
 			};
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v2/data/reference?version=" + Version.Number.Draft;
+			var sExpectedUrl = `/flexKeyuser/flex/keyuser/v2/data/reference?version=${Version.Number.Draft}`;
 			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
 				response: {
@@ -81,7 +81,7 @@ sap.ui.define([
 				version: Version.Number.Original
 			};
 
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?version=" + Version.Number.Original;
+			var sExpectedUrl = `/flexKeyuser/flex/keyuser/v1/data/reference?version=${Version.Number.Original}`;
 			sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
 				response: {

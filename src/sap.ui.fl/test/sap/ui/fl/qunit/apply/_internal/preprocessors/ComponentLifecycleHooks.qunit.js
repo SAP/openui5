@@ -102,7 +102,7 @@ sap.ui.define([
 			config: {},
 			manifest: this.oManifest
 		}].forEach(function(oTestInput) {
-			var sName = "componentLoadedHook does nothing if " + oTestInput.text;
+			var sName = `componentLoadedHook does nothing if ${oTestInput.text}`;
 			QUnit.test(sName, function(assert) {
 				ComponentLifecycleHooks.componentLoadedHook(oTestInput.config, oTestInput.manifest);
 				assert.strictEqual(this.oInitializeStub.callCount, 0, "then flex state was not initialized");
@@ -209,7 +209,7 @@ sap.ui.define([
 			"outer",
 			"inner"
 		].forEach(function(sFirstComponent) {
-			var sName = "when an outer and an inner component are initialized at the same time, " + sFirstComponent + " component being first";
+			var sName = `when an outer and an inner component are initialized at the same time, ${sFirstComponent} component being first`;
 			QUnit.test(sName, function(assert) {
 				assert.expect(5);
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl");

@@ -34,7 +34,7 @@ sap.ui.define([
 
 			this.oButton = new Button({text: this.OLD_VALUE});
 			this.oDOMParser = new DOMParser();
-			this.oXmlDocument = this.oDOMParser.parseFromString("<Button xmlns='sap.m' text='" + this.OLD_VALUE + "' enabled='true' />", "application/xml");
+			this.oXmlDocument = this.oDOMParser.parseFromString(`<Button xmlns='sap.m' text='${this.OLD_VALUE}' enabled='true' />`, "application/xml");
 			this.oXmlButton = this.oXmlDocument.childNodes[0];
 
 			this.mExpectedSelector = {
@@ -212,7 +212,7 @@ sap.ui.define([
 
 		QUnit.test("When applying and reverting a property change which changes a binding on a xml control tree, Then", function(assert) {
 			this.OLD_VALUE = "{i18n>textKey}";
-			this.oXmlDocument = this.oDOMParser.parseFromString("<Button xmlns='sap.m' text='" + this.OLD_VALUE + "' enabled='true' />", "application/xml");
+			this.oXmlDocument = this.oDOMParser.parseFromString(`<Button xmlns='sap.m' text='${this.OLD_VALUE}' enabled='true' />`, "application/xml");
 			this.oXmlButton = this.oXmlDocument.childNodes[0];
 
 			this.mExpectedChangeContent = {

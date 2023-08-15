@@ -122,7 +122,7 @@ sap.ui.define([
 			var oMockResponse = {changes: StorageUtils.getEmptyFlexDataResponse()};
 			Object.keys(oMockResponse.changes).forEach(function(sType) {
 				if (Array.isArray(oMockResponse.changes[sType])) {
-					oMockResponse.changes[sType].push(sType + "1", sType + "2");
+					oMockResponse.changes[sType].push(`${sType}1`, `${sType}2`);
 				}
 			});
 			VariantManagementState.getInitialChanges.returns(oMockResponse.changes.variantDependentControlChanges);
@@ -136,7 +136,7 @@ sap.ui.define([
 			var oMockResponse = {changes: StorageUtils.getEmptyFlexDataResponse()};
 			Object.keys(oMockResponse.changes).forEach(function(sType) {
 				if (Array.isArray(oMockResponse.changes[sType])) {
-					oMockResponse.changes[sType].push(sType + "1", sType + "2");
+					oMockResponse.changes[sType].push(`${sType}1`, `${sType}2`);
 				}
 			});
 			var aChangesForComponent = this.oChangePersistence._getAllCtrlVariantChanges(oMockResponse, true, function() {
@@ -149,7 +149,7 @@ sap.ui.define([
 			var oMockResponse = {changes: StorageUtils.getEmptyFlexDataResponse()};
 			Object.keys(oMockResponse.changes).forEach(function(sType) {
 				if (Array.isArray(oMockResponse.changes[sType])) {
-					oMockResponse.changes[sType].push(sType + "1", sType + "2");
+					oMockResponse.changes[sType].push(`${sType}1`, `${sType}2`);
 				}
 			});
 			var aChangesForComponent = this.oChangePersistence._getAllCtrlVariantChanges(oMockResponse, true, function(sChangeString) {
@@ -1069,7 +1069,7 @@ sap.ui.define([
 				modifier: {
 					getControlIdBySelector: function(oSelector) {
 						if (oSelector.idIsLocal) {
-							return "appComponentReference---" + oSelector.id;
+							return `appComponentReference---${oSelector.id}`;
 						}
 						return oSelector.id;
 					}

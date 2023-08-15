@@ -630,7 +630,7 @@ sap.ui.define([
 				} catch (oError) {
 					// an error here has to be treated similar to if there were some unclassified changes
 					// TODO: could be improved to only add all the changes of that specific container
-					Log.error("Error during Condensing: " + oError.message, "No Condensing performed for index-relevant changes.");
+					Log.error(`Error during Condensing: ${oError.message}`, "No Condensing performed for index-relevant changes.");
 					bSuccess = false;
 				}
 				Measurement.end("Condenser_sort");

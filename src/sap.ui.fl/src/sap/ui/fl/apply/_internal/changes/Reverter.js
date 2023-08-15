@@ -82,7 +82,7 @@ sap.ui.define([
 			return mControl.control;
 		})
 		.catch(function(oError) {
-			var sErrorMessage = "Change could not be reverted: " + oError.message;
+			var sErrorMessage = `Change could not be reverted: ${oError.message}`;
 			Log.error(sErrorMessage);
 			oChange.markRevertFinished(sErrorMessage);
 			return false;
@@ -108,7 +108,7 @@ sap.ui.define([
 				var oSelector = oChange.getSelector && oChange.getSelector();
 				var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent);
 				if (!oControl) {
-					Log.warning("A flexibility change tries to revert changes on a nonexistent control with id " + oSelector.id);
+					Log.warning(`A flexibility change tries to revert changes on a nonexistent control with id ${oSelector.id}`);
 					return (FlUtils.FakePromise ? new FlUtils.FakePromise() : Promise.resolve());
 				}
 				var mRevertProperties = {

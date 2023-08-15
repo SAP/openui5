@@ -27,7 +27,7 @@ sap.ui.define([
 				return oUser && oUser.getId();
 			})
 			.catch(function(oError) {
-				Log.error("Error getting service from Unified Shell: " + oError.message);
+				Log.error(`Error getting service from Unified Shell: ${oError.message}`);
 			});
 		}
 		return Promise.resolve();

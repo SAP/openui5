@@ -24,7 +24,7 @@ sap.ui.define([
 			var sManifest = JSON.stringify(oManifest);
 			Object.keys(oChangeTexts).forEach(function(sTextKey) {
 				if (oChangeTexts[sTextKey].value[""]) {
-					 sManifest = sManifest.replace("{{" + sTextKey + "}}", oChangeTexts[sTextKey].value[""]);
+					 sManifest = sManifest.replace(`{{${sTextKey}}}`, oChangeTexts[sTextKey].value[""]);
 				} else {
 					Log.error("Text change has to contain default language");
 				}

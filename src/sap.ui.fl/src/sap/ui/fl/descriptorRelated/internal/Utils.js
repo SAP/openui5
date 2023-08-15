@@ -14,7 +14,7 @@ sap.ui.define([
 		// namespace and file name according to namespace concept: apps/<Descriptor ID>/appVariants/<Descriptor Variant ID>/manifest.appdescr_variant
 		return {
 			fileName: "manifest", // appdescr_variant" is the file type
-			namespace: "apps/" + sReference + "/appVariants/" + sId + "/"
+			namespace: `apps/${sReference}/appVariants/${sId}/`
 		};
 	};
 
@@ -45,11 +45,11 @@ sap.ui.define([
 	Utils.prototype.checkParameterAndType = function(mParameters, sParameterName, sType) {
 		if (sType === "array") {
 			if (mParameters === undefined || mParameters[sParameterName] === undefined || !Array.isArray(mParameters[sParameterName])) {
-				throw new Error("No parameter \"" + sParameterName + "\" of type " + sType + " provided");
+				throw new Error(`No parameter "${sParameterName}" of type ${sType} provided`);
 			}
 		// eslint-disable-next-line valid-typeof
 		} else if (mParameters === undefined || mParameters[sParameterName] === undefined || typeof mParameters[sParameterName] !== sType) {
-			throw new Error("No parameter \"" + sParameterName + "\" of type " + sType + " provided");
+			throw new Error(`No parameter "${sParameterName}" of type ${sType} provided`);
 		}
 	};
 
@@ -70,7 +70,7 @@ sap.ui.define([
 		// corresponding data element in ABAP: DEVCLASS, CHAR30
 		// partial check: length le 30, alphanumeric, upper case, / for namespace, underscore, hyphen, no space
 		if (!/^[A-Z0-9/_$-]{1,30}$/.test(sPackage) && sPackage !== "$TMP") {
-			throw new Error("Wrong format for provided \"sPackage\" parameter. '" + sPackage + "' as package name is not allowed.");
+			throw new Error(`Wrong format for provided "sPackage" parameter. '${sPackage}' as package name is not allowed.`);
 		}
 	};
 	return new Utils();

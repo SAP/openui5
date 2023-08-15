@@ -69,7 +69,7 @@ sap.ui.define([
 			return oController._onRouteMatched(routeParameters).then(function() {
 				assert.ok(oStubbedGetContent.calledOnce, "then a request for getting lrep data is sent");
 				assert.equal(oStubbedGetContent.getCall(0).args[0], sLayer, "with correct layer");
-				assert.equal(oStubbedGetContent.getCall(0).args[1], sNamespace + sFileName + "." + sFileType, "and with correct suffix");
+				assert.equal(oStubbedGetContent.getCall(0).args[1], `${sNamespace + sFileName}.${sFileType}`, "and with correct suffix");
 				assert.ok(oStubbedOnContentReceived.calledOnce, "and correct handler function for received data is called");
 			});
 		});

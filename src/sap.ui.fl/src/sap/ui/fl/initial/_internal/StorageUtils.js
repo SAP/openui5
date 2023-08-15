@@ -84,7 +84,11 @@ sap.ui.define([
 			var sConnectorModuleName;
 
 			// the applyConnector / loadConnector is used for a custom connector
-			if (!mConnectorConfiguration.loadConnector && !mConnectorConfiguration.applyConnector && !mConnectorConfiguration.loadConnector) {
+			if (
+				!mConnectorConfiguration.loadConnector
+				&& !mConnectorConfiguration.applyConnector
+				&& !mConnectorConfiguration.loadConnector
+			) {
 				sConnectorModuleName = bLoadConnectors ? mConnectorNamespaces.load[sConnector] : mConnectorNamespaces.write[sConnector];
 			} else if (bLoadConnectors) {
 				// fallback for configured custom connectors which specify a apply connector
@@ -142,8 +146,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Provides all mandatory connectors required to read data for the initial case; these are the static file connector as well as all connectors
-		 * mentioned in the core-Configuration.
+		 * Provides all mandatory connectors required to read data for the initial case; these are the static
+		 * file connector as well as all connectors mentioned in the core-Configuration.
 		 *
 		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured initial connectors and their requested modules
 		 */
@@ -170,8 +174,10 @@ sap.ui.define([
 		 * @returns {object} oResponse Response from the endpoint
 		 */
 		logAndResolveDefault: function(oResponse, oConnectorConfig, sFunctionName, sErrorMessage) {
-			Log.error("Connector (" + oConnectorConfig.connector + ") failed call '" + sFunctionName + "': "
-				+ sErrorMessage + "\nApplication startup continues without data from this storage.");
+			Log.error(
+				`Connector (${oConnectorConfig.connector}) failed call '${sFunctionName}': ${sErrorMessage}
+				Application startup continues without data from this storage.`
+			);
 			return oResponse;
 		},
 

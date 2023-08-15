@@ -49,7 +49,7 @@ sap.ui.define([
 				// potential cFLP scenario with the instance running in an iFrame where the top has no access to the componentInstance
 				return oCurrentApp.getIntent().then(function(oIntent) {
 					// The iFrame ID is not public API and may change in the future. Until there is an API, this is the way how to get any hold on the app at all
-					var iFrame = document.getElementById("application-" + oIntent.semanticObject + "-" + oIntent.action);
+					var iFrame = document.getElementById(`application-${oIntent.semanticObject}-${oIntent.action}`);
 					if (!iFrame) {
 						Log.error("the iFrame in the cFLP scenario could not be determined");
 						return;

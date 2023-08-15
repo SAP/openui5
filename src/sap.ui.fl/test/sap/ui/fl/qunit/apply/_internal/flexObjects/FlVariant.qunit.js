@@ -33,7 +33,7 @@ sap.ui.define([
 			assert.strictEqual(oVariant.getVisible(), true, "the default for visible is correctly set");
 			assert.strictEqual(oVariant.getFavorite(), true, "the default for favorite is correctly set");
 			assert.strictEqual(oVariant.getExecuteOnSelection(), false, "the default for executeOnSelection is correctly set");
-			assert.strictEqual(oVariant.getFlexObjectMetadata().namespace, "apps/" + sReference + "/variants/", "the namespace is correctly set");
+			assert.strictEqual(oVariant.getFlexObjectMetadata().namespace, `apps/${sReference}/variants/`, "the namespace is correctly set");
 			assert.strictEqual(oVariant.getVariantReference(), "myVariantReference", "the variantReference is correctly set");
 			assert.strictEqual(oVariant.getVariantManagementReference(), "myVariantManagementReference", "the variantManagementReference is correctly set");
 			assert.strictEqual(oVariant.getFileType(), "ctrl_variant", "the fileType is correctly set");

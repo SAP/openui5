@@ -81,10 +81,10 @@ sap.ui.define([
 
 			await Applier.applyAllChangesForXMLView(mPropertyBag, aChanges);
 
-			Log.debug("flex processing view " + mProperties.id + " finished");
+			Log.debug(`flex processing view ${mProperties.id} finished`);
 			return oView;
 		} catch (error) {
-			var sError = "view " + mProperties.id + ": " + error;
+			var sError = `view ${mProperties.id}: ${error}`;
 			Log.info(sError); // to allow control usage in applications that do not work with UI flex and components
 			// throw new Error(sError); // throw again, when caller handles the promise
 			return oView;

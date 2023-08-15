@@ -52,34 +52,34 @@ sap.ui.define([
 			sandbox.stub(Processor, "applyExtensionPoint");
 
 			var sXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
-					'<HBox id="hbox">' +
-						"<items>" +
-							'<Label id="label1" />' +
-							'<core:ExtensionPoint name="' + sExtensionPointName1 + '" />' +
-							'<Label id="label2" />' +
-						"</items>" +
-						"<dependents>" +
-							'<Label id="label3" />' +
-							'<core:ExtensionPoint name="' + sExtensionPointName4 + '" />' +
-						"</dependents>" +
-					"</HBox>" +
-					'<Panel id="panel">' +
-						"<content>" +
-							'<core:ExtensionPoint name="' + sExtensionPointName2 + '" />' +
-							'<Label id="label4" />' +
-							'<core:ExtensionPoint name="' + sExtensionPointName3 + '" >' +
-								'<Label id="ep3-label1" text="Extension point label1 - default content" />' +
-								'<Label id="ep3-label2" text="Extension point label2 - default content" />' +
-							"</core:ExtensionPoint>" +
-						"</content>" +
-					"</Panel>" +
-					'<HBox id="hbox1">' +
-						"<items>" +
-							'<core:ExtensionPoint name="' + sExtensionPointName5 + '" />' +
-						"</items>" +
-					"</HBox>" +
-				"</mvc:View>";
+				`<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">` +
+					`<HBox id="hbox">` +
+						`<items>` +
+							`<Label id="label1" />` +
+							`<core:ExtensionPoint name="${sExtensionPointName1}" />` +
+							`<Label id="label2" />` +
+						`</items>` +
+						`<dependents>` +
+							`<Label id="label3" />` +
+							`<core:ExtensionPoint name="${sExtensionPointName4}" />` +
+						`</dependents>` +
+					`</HBox>` +
+					`<Panel id="panel">` +
+						`<content>` +
+							`<core:ExtensionPoint name="${sExtensionPointName2}" />` +
+							`<Label id="label4" />` +
+							`<core:ExtensionPoint name="${sExtensionPointName3}" >` +
+								`<Label id="ep3-label1" text="Extension point label1 - default content" />` +
+								`<Label id="ep3-label2" text="Extension point label2 - default content" />` +
+							`</core:ExtensionPoint>` +
+						`</content>` +
+					`</Panel>` +
+					`<HBox id="hbox1">` +
+						`<items>` +
+							`<core:ExtensionPoint name="${sExtensionPointName5}" />` +
+						`</items>` +
+					`</HBox>` +
+				`</mvc:View>`;
 			return XMLView.create({id: "testComponent---myView", definition: sXmlString})
 			.then(function(oXMLView) {
 				this.oXMLView = oXMLView;

@@ -560,10 +560,9 @@ sap.ui.define([
 			sandbox.stub(JsControlTreeModifier, "getExtensionPointInfo").returns(undefined);
 			return this.oChangeHandler.applyChange(oChange1, this.oHBox, this.oPropertyBag)
 			.catch(function(oError) {
-				var sErrorText = "AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name 'ExtensionPoint1' "
-						+ "or multiple Extension-Points available with the given name in the view (view.id='"
-						+ this.oXmlView.getId() + "'). "
-						+ "Multiple Extension-points with the same name in one view are not supported!";
+				var sErrorText = `AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name 'ExtensionPoint1' `
+						+ `or multiple Extension-Points available with the given name in the view (view.id='${this.oXmlView.getId()}'). `
+						+ `Multiple Extension-points with the same name in one view are not supported!`;
 				assert.equal(oError.message, sErrorText, "then the changehandler throws an appropriate Error");
 			}.bind(this));
 		});

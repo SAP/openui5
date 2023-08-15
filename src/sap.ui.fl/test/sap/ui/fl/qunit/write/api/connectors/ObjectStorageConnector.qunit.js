@@ -162,7 +162,7 @@ sap.ui.define([
 	}
 
 	function parameterizedTest(oConnector, sStorage, bPublicLayer) {
-		QUnit.module("loadFlexData: Given a " + sStorage, {
+		QUnit.module(`loadFlexData: Given a ${sStorage}`, {
 			afterEach: function() {
 				sandbox.restore();
 				return removeFlexObjectsFromStorage(oConnector.storage);
@@ -285,7 +285,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.module("Given some changes in a " + sStorage, {
+		QUnit.module(`Given some changes in a ${sStorage}`, {
 			beforeEach: function() {
 				return saveListWithConnector(oConnector, values(oTestData));
 			},

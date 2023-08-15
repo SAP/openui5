@@ -246,7 +246,7 @@ sap.ui.define([
 						component: oComponent
 					}
 				}).then(function() {
-					assert.ok(true, "the extension of the " + sText + " controller was applied and executed");
+					assert.ok(true, `the extension of the ${sText} controller was applied and executed`);
 				});
 			}
 

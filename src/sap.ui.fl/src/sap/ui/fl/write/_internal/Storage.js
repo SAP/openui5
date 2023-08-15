@@ -46,11 +46,11 @@ sap.ui.define([
 		}
 
 		if (aFilteredConnectors.length === 0) {
-			throw new Error("No Connector configuration could be found to write into layer: " + sLayer);
+			throw new Error(`No Connector configuration could be found to write into layer: ${sLayer}`);
 		}
 
 		if (aFilteredConnectors.length > 1) {
-			throw new Error("sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: Multiple Connector configurations were found to write into layer: " + sLayer);
+			throw new Error(`sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: Multiple Connector configurations were found to write into layer: ${sLayer}`);
 		}
 	}
 
@@ -96,7 +96,7 @@ sap.ui.define([
 						if (bDraftEnabled) {
 							resolve();
 						} else {
-							reject("Draft is not supported for the given layer: " + mPropertyBag.layer);
+							reject(`Draft is not supported for the given layer: ${mPropertyBag.layer}`);
 						}
 					});
 				});

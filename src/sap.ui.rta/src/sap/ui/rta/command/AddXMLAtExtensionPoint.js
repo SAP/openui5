@@ -98,6 +98,7 @@ sap.ui.define([
 			if (!oResult.success) {
 				return Promise.reject(oResult.error);
 			}
+			return undefined;
 		});
 	};
 

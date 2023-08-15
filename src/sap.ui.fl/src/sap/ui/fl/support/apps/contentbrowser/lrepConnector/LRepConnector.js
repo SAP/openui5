@@ -67,14 +67,14 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 				fnReject();
 			}
 
-			var sContentSuffix = sNamespace + sFilename + "." + sFileType;
+			var sContentSuffix = `${sNamespace + sFilename}.${sFileType}`;
 			sContentSuffix = encodeURI(sContentSuffix);
 			var sLayerSuffix = this._getLayerSuffix(sLayer);
 			var sChangeListSuffix = this._getChangeListSuffix(sTransportId);
 			var sPackageSuffix = this._getPackageSuffix(sPackageName);
 			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix + sChangeListSuffix + sPackageSuffix;
 			if (bSupport) {
-				sUrl = sUrl + "&support=true";
+				sUrl = `${sUrl}&support=true`;
 			}
 			this._getTokenAndSendPutRequest(sUrl, sContent, fnResolve, fnReject);
 		}.bind(this));
@@ -98,13 +98,13 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 				fnReject();
 			}
 
-			var sContentSuffix = sNamespace + sFileName + "." + sFileType;
+			var sContentSuffix = `${sNamespace + sFileName}.${sFileType}`;
 			sContentSuffix = encodeURI(sContentSuffix);
 			var sLayerSuffix = this._getLayerSuffix(sLayer);
 			var sChangeListSuffix = this._getChangeListSuffix(sTransportId);
 			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix + sChangeListSuffix;
 			if (bSupport) {
-				sUrl = sUrl + "&support=true";
+				sUrl = `${sUrl}&support=true`;
 			}
 			this._getTokenAndSendDeletionRequest(sUrl, fnResolve, fnReject);
 		}.bind(this));
@@ -156,7 +156,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 		if (sLayer === "All") {
 			return "";
 		}
-		return "?layer=" + sLayer;
+		return `?layer=${sLayer}`;
 	};
 
 	/**
@@ -166,7 +166,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 * @private
 	 */
 	LrepConnector._getChangeListSuffix = function(sChangeList) {
-		return sChangeList ? "&changelist=" + sChangeList : "";
+		return sChangeList ? `&changelist=${sChangeList}` : "";
 	};
 
 	/**
@@ -176,7 +176,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 * @private
 	 */
 	LrepConnector._getPackageSuffix = function(sPackage) {
-		return sPackage ? "&package=" + sPackage : "";
+		return sPackage ? `&package=${sPackage}` : "";
 	};
 
 	/**
@@ -211,7 +211,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 */
 	LrepConnector._reportError = function(oJqXHR, sTextStatus, oErrorThrown) {
 		sap.ui.require(["sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils"], function(ErrorUtils) {
-			ErrorUtils.displayError("Error", oJqXHR.status, sTextStatus + ": " + oErrorThrown);
+			ErrorUtils.displayError("Error", oJqXHR.status, `${sTextStatus}: ${oErrorThrown}`);
 		});
 	};
 

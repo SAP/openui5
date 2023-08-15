@@ -559,7 +559,7 @@ sap.ui.define([
 			expectedVMReferences: [],
 			expectedVariantsCount: 0
 		}].forEach(function(oTestInput) {
-			var sName = "when the storageResponse contains " + oTestInput.testName;
+			var sName = `when the storageResponse contains ${oTestInput.testName}`;
 			QUnit.test(sName, function(assert) {
 				var oInitialPrepareSpy = sandbox.spy(InitialPrepareFunctions, "variants");
 

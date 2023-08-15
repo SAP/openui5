@@ -260,7 +260,7 @@ sap.ui.define([
 		var sReference = mPropertyBag.reference;
 		var sLayer = mPropertyBag.layer;
 		if (!ContextBasedAdaptationsAPI.hasAdaptationsModel(mPropertyBag)) {
-			throw Error("Adaptations model for reference '" + sReference + "' and layer '" + sLayer + "' were not initialized.");
+			throw Error(`Adaptations model for reference '${sReference}' and layer '${sLayer}' were not initialized.`);
 		}
 		return _mInstances[sReference][sLayer];
 	};
