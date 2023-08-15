@@ -61,5 +61,43 @@
         ]
       }
     ]
+  },
+  "1.114.4": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "17507c107eeb707c9b10cbfb146f5b36158e4029",
+        "type": "FIX",
+        "text": " sap.m.SelectList: Focus outline added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380105200"
+          }
+        ]
+      },
+      {
+        "id": "8a04b4a247846a8a93371cc824bf9ee74ab850f3",
+        "type": "FIX",
+        "text": " sap.m.Select: Icon and text centered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380061756"
+          }
+        ]
+      },
+      {
+        "id": "bb0889b6d7de4ad034f3d03ba0c5e83925f0b9ac",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Correct line-height for mirror element in Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

@@ -39,5 +39,32 @@
         ]
       }
     ]
+  },
+  "1.114.4": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "f3ac12e7cc141b71bfe799db9903fb60e888562a",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Button of type \"Default\" now has correct styles in Fiori 3 themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380105890"
+          }
+        ]
+      },
+      {
+        "id": "8a04b4a247846a8a93371cc824bf9ee74ab850f3",
+        "type": "FIX",
+        "text": " sap.m.Select: Icon and text centered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380061756"
+          }
+        ]
+      }
+    ]
   }
 }

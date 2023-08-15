@@ -407,5 +407,54 @@
         ]
       }
     ]
+  },
+  "1.114.4": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "abbcbda21a32bde5ae53776a992204df039ee206",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: show correct time with bound timezone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380098723"
+          }
+        ]
+      },
+      {
+        "id": "73d9af728a61af51009ada18fbd89ba83852c09e",
+        "type": "FIX",
+        "text": " sap.m.Select: Initial line-height fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380078133"
+          }
+        ]
+      },
+      {
+        "id": "2c923e651724241cf7b0639b89403a07005f35db",
+        "type": "FIX",
+        "text": " sap.m.Select: Redundant truncation removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380073850"
+          }
+        ]
+      },
+      {
+        "id": "8a04b4a247846a8a93371cc824bf9ee74ab850f3",
+        "type": "FIX",
+        "text": " sap.m.Select: Icon and text centered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380061756"
+          }
+        ]
+      }
+    ]
   }
 }

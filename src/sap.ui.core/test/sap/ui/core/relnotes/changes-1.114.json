@@ -100,5 +100,43 @@
         ]
       }
     ]
+  },
+  "1.114.4": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "57f27d009c13a17000819ce16103aa40aa456918",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: parse dateTime timezone \"z\" for UTC",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005085862023"
+          }
+        ]
+      },
+      {
+        "id": "4ceba58b1f2f6def10d29f99f293aba43b27286e",
+        "type": "FIX",
+        "text": " core/Icon: use theming variable for focus outline",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380099755"
+          }
+        ]
+      },
+      {
+        "id": "a75c4301d755fc09238e87f517f454683dadea0e",
+        "type": "FIX",
+        "text": " util/Mobile: set correct viewport for iPad with \"request desktop website\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005790312023"
+          }
+        ]
+      }
+    ]
   }
 }
