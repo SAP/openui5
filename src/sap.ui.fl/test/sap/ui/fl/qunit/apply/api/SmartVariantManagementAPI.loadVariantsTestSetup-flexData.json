@@ -23,6 +23,17 @@
       },
       "creation":"2020-12-11T06:21:52.183Z"
     }],
+    "defaultVariants": [{
+      "fileName": "defaultVariant1",
+      "fileType": "change",
+      "changeType": "defaultVariant",
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "content": {
+        "defaultVariantName": "variant_1"
+      }
+    }],
     "variants": [{
       "fileName": "variant_1",
       "fileType": "variant",
