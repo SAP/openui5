@@ -5465,8 +5465,15 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("processOptimisticBatch: n+1 start, optimistic batch matches", function (assert) {
-		var sKey = window.location.href,
+[false, true, undefined].forEach((bEnabled) => { // undefined -> no enabler assigned
+	[false, true].forEach((bCacheManagerRejects) => {
+	const sTitle = `processOptimisticBatch: n+1 start, optimistic batch matches, 
+		enabler=${bEnabled}, del rejects=${bCacheManagerRejects}`;
+	QUnit.test(sTitle, function (assert) {
+		var done = assert.async(),
+			oError = new Error("CacheManager.del rejected"),
+			iGetReporterCount,
+			sKey = window.location.href,
 			oOptimisticBatch = {
 				firstBatch : {
 					requests : "~optimisticRequests~",
@@ -5475,26 +5482,108 @@ sap.ui.define([
 				key : sKey,
 				result : "~optimisticBatchResult~"
 			},
-			oRequestor = _Requestor.create("/", oModelInterface);
+			fnEnabler = bEnabled === undefined ? undefined : sinon.stub().resolves(bEnabled),
+			oRequestor = _Requestor.create("/", oModelInterface),
+			fnReporter = function (oError0) {
+				assert.strictEqual(oError0, oError);
+				done();
+			};
+
+		if (bEnabled) {
+			iGetReporterCount = 1;
+		} else {
+			iGetReporterCount = bEnabled !== undefined ? 1 : 0;
+		}
 
 		oRequestor.oOptimisticBatch = oOptimisticBatch;
+
 		this.mock(_Requestor).expects("matchesOptimisticBatch")
 			.withExactArgs("~requests~", "~group~", "~optimisticRequests~", "~optimisticGroup~")
 			.returns(true);
+
+		this.mock(oModelInterface).expects("getOptimisticBatchEnabler").returns(fnEnabler);
+		this.mock(oModelInterface).expects("getReporter").exactly(iGetReporterCount)
+			.withExactArgs().returns(fnReporter);
+		if (bEnabled === false) {
+			if (bCacheManagerRejects) {
+				this.mock(CacheManager).expects("del")
+					.withExactArgs("sap.ui.model.odata.v4.optimisticBatch:" + sKey).rejects(oError);
+			} else {
+				this.mock(CacheManager).expects("del")
+					.withExactArgs("sap.ui.model.odata.v4.optimisticBatch:" + sKey).resolves();
+				this.oLogMock.expects("info")
+					.withExactArgs("optimistic batch: disabled, response deleted", sKey,
+						sClassName);
+				done();
+			}
+		}
 		this.oLogMock.expects("info")
 			.withExactArgs("optimistic batch: success, response consumed", sKey, sClassName);
 		this.mock(CacheManager).expects("set").never();
-		this.mock(oModelInterface).expects("getOptimisticBatchEnabler").never();
 
 		// code under test
 		assert.strictEqual(oRequestor.processOptimisticBatch("~requests~", "~group~"),
 			"~optimisticBatchResult~");
 
 		assert.strictEqual(oRequestor.oOptimisticBatch, null);
+
+		if (bEnabled !== undefined) {
+			assert.strictEqual(fnEnabler.calledOnce, true);
+		}
+		if (bEnabled !== false) {
+			done();
+		}
+	});
+	});
+});
+
+	//*****************************************************************************************
+	const sTitle = "processOptimisticBatch: n+1 start, optimistic batch matches, enabler rejects";
+	QUnit.test(sTitle, function (assert) {
+		var oError = new Error("Enabler rejects"),
+			sKey = window.location.href,
+			oOptimisticBatch = {
+				firstBatch : {
+					requests : "~optimisticRequests~",
+					groupId : "~optimisticGroup~"
+				},
+				key : sKey,
+				result : "~optimisticBatchResult~"
+			},
+			fnEnabler = sinon.stub().rejects(oError),
+			oRequestor = _Requestor.create("/", oModelInterface),
+			fnReporter = function (oError0) {
+				assert.strictEqual(oError0, oError);
+			};
+
+		oRequestor.oOptimisticBatch = oOptimisticBatch;
+
+		this.mock(_Requestor).expects("matchesOptimisticBatch")
+			.withExactArgs("~requests~", "~group~", "~optimisticRequests~", "~optimisticGroup~")
+			.returns(true);
+
+		this.mock(oModelInterface).expects("getOptimisticBatchEnabler").returns(fnEnabler);
+		this.mock(oModelInterface).expects("getReporter").withExactArgs().returns(fnReporter);
+
+		this.oLogMock.expects("info")
+			.withExactArgs("optimistic batch: disabled, response deleted", sKey, sClassName)
+			.never();
+		this.oLogMock.expects("info")
+			.withExactArgs("optimistic batch: success, response consumed", sKey, sClassName);
+		this.mock(CacheManager).expects("set").never();
+		this.mock(CacheManager).expects("del").never();
+
+		// code under test
+		assert.strictEqual(oRequestor.processOptimisticBatch("~requests~", "~group~"),
+			"~optimisticBatchResult~");
+
+		assert.strictEqual(fnEnabler.calledOnce, true);
 	});
 
 	//*****************************************************************************************
-	QUnit.test("processOptimisticBatch: mismatch, CacheManager.del rejects", function (assert) {
+[false, true].forEach((bRejects) => {
+	const sTitle = `processOptimisticBatch: mismatch, CacheManager.del rejects=${bRejects}`;
+	QUnit.test(sTitle, function (assert) {
 		// Note: this test covers also the successful CacheManager.del case
 		var oCacheManagerMock = this.mock(CacheManager),
 			done = assert.async(),
@@ -5519,11 +5608,19 @@ sap.ui.define([
 		this.mock(_Requestor).expects("matchesOptimisticBatch")
 			.withExactArgs("~requests~", "~group~", "~optimisticRequests~", "~optimisticGroup~")
 			.returns(false);
-		this.oLogMock.expects("warning")
-			.withExactArgs("optimistic batch: mismatch, response skipped", sKey, sClassName);
-		oCacheManagerMock.expects("del")
-			.withExactArgs("sap.ui.model.odata.v4.optimisticBatch:" + sKey)
-			.rejects(oError);
+
+		if (bRejects) {
+			oCacheManagerMock.expects("del")
+				.withExactArgs("sap.ui.model.odata.v4.optimisticBatch:" + sKey)
+				.rejects(oError);
+		} else {
+			oCacheManagerMock.expects("del")
+				.withExactArgs("sap.ui.model.odata.v4.optimisticBatch:" + sKey)
+				.resolves();
+			this.oLogMock.expects("warning")
+				.withExactArgs("optimistic batch: mismatch, response skipped", sKey, sClassName);
+			done();
+		}
 		oModelInterfaceMock.expects("getReporter")
 			.withExactArgs()
 			.returns(fnReporter);
@@ -5537,6 +5634,7 @@ sap.ui.define([
 
 		assert.strictEqual(oRequestor.oOptimisticBatch, null);
 	});
+});
 
 	//*****************************************************************************************
 	QUnit.test("hasOnlyPatchesWithoutSideEffects", function (assert) {
