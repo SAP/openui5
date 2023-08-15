@@ -404,8 +404,7 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGridRenderer.renderDayNames = function(oRm, oControl, oLocaleData) {
-			var iAPIFirstDayOfWeek = oControl.getFirstDayOfWeek(),
-				iFirstDayOfWeek,
+			var iFirstDayOfWeek = oControl._getFirstDayOfWeek(),
 				sId = oControl.getId(),
 				sDayId,
 				sCalendarType = Core.getConfiguration().getCalendarType(),
@@ -414,19 +413,6 @@ sap.ui.define([
 				oStartDate = UI5Date.getInstance(oControl.getStartDate()),
 				oFirstRenderedDate,
 				iDayIndex;
-
-
-				if (iAPIFirstDayOfWeek < 0 || iAPIFirstDayOfWeek > 6) {
-					var oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(oControl.getCalendarWeekNumbering(), new Locale(Configuration.getFormatSettings().getFormatLocale().toString()));
-
-					if (oWeekConfigurationValues) {
-						iFirstDayOfWeek = oWeekConfigurationValues.firstDayOfWeek;
-					} else {
-						iFirstDayOfWeek = oControl._getCoreLocaleData().getFirstDayOfWeek();
-					}
-				} else {
-					iFirstDayOfWeek = iAPIFirstDayOfWeek;
-				}
 
 			oStartDate.setDate(oStartDate.getDate() - oStartDate.getDay() + iFirstDayOfWeek);
 			oFirstRenderedDate = CalendarDate.fromLocalJSDate(oStartDate);

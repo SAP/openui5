@@ -176,6 +176,21 @@ sap.ui.define([
 				.classList.contains("sapUiCalendarSpecialDayType05"), "the cell is special");
 		});
 
+		QUnit.test("_getFirstDayOfWeek output when firstDayOfWeek is set", function(assert) {
+			// prepare
+			var oStartDate = UI5Date.getInstance(2023, 7, 1);
+			this.oSPC.setStartDate(oStartDate);
+			this.oSPC.setFirstDayOfWeek(1);
+			oCore.applyChanges();
+
+			// act
+			var aVisibleDays = this.oSPC._getVisibleDays(oStartDate).map((oDate) => oDate.toLocalJSDate());
+
+			// assert
+			assert.strictEqual(aVisibleDays[0].getDate(), 31, "The first visible day is 31st");
+			assert.strictEqual(aVisibleDays[aVisibleDays.length - 1].getDate(), 10, "The last visible day is 10th");
+		});
+
 		QUnit.module("Appointments", {
 			beforeEach: function() {
 				this.oSPC = new SinglePlanningCalendarMonthGrid({
