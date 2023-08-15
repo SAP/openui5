@@ -102,8 +102,8 @@ sap.ui.define([
 	 * @since 1.58.0
 	 * @abstract
 	 *
-	 * @borrows sap.ui.core.ISemanticFormContent.getFormFormattedValue as #getFormFormattedValue
-	 * @borrows sap.ui.core.ISemanticFormContent.getFormValueProperty as #getFormValueProperty
+	 * @borrows sap.ui.core.ISemanticFormContent#getFormFormattedValue as #getFormFormattedValue
+	 * @borrows sap.ui.core.ISemanticFormContent#getFormValueProperty as #getFormValueProperty
 	 *
 	 * @public
 	 */

@@ -408,6 +408,9 @@ sap.ui.define([
 
         var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
+        /**
+         * @borrows sap.ui.mdc.mixin.FilterIntegrationMixin#rebind as #rebind
+         */
         FilterIntegrationMixin.call(Chart.prototype);
 
 	/**

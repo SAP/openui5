@@ -21,22 +21,22 @@ sap.ui.define([
 	 * @version ${version}
 	 * @alias sap.ui.mdc.Control
 	 *
-	 * @borrows sap.ui.mdc.mixin.DelegateMixin.awaitControlDelegate as awaitControlDelegate
-	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getControlDelegate as getControlDelegate
-	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getPayload as getPayload
-	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getTypeUtil as getTypeUtil
- 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getTypeMap as getTypeMap
-	 * @borrows sap.ui.mdc.mixin.DelegateMixin.initControlDelegate as initControlDelegate
+	 * @borrows sap.ui.mdc.mixin.DelegateMixin#awaitControlDelegate as #awaitControlDelegate
+	 * @borrows sap.ui.mdc.mixin.DelegateMixin#getControlDelegate as #getControlDelegate
+	 * @borrows sap.ui.mdc.mixin.DelegateMixin#getPayload as #getPayload
+	 * @borrows sap.ui.mdc.mixin.DelegateMixin#getTypeUtil as #getTypeUtil
+ 	 * @borrows sap.ui.mdc.mixin.DelegateMixin#getTypeMap as #getTypeMap
+	 * @borrows sap.ui.mdc.mixin.DelegateMixin#initControlDelegate as #initControlDelegate
 	 *
-	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin.initPropertyHelper as initPropertyHelper
-	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin.awaitPropertyHelper as awaitPropertyHelper
-	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin.getPropertyHelper as getPropertyHelper
-	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin.finalizePropertyHelper as finalizePropertyHelper
-	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin.isPropertyHelperFinal as isPropertyHelperFinal
+	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin#initPropertyHelper as #initPropertyHelper
+	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin#awaitPropertyHelper as #awaitPropertyHelper
+	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin#getPropertyHelper as #getPropertyHelper
+	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin#finalizePropertyHelper as #finalizePropertyHelper
+	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin#isPropertyHelperFinal as #isPropertyHelperFinal
 	 *
-	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getEngine as getInstance
-	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.retrieveInbuiltFilter as retrieveInbuiltFilter
- 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getInbuiltFilter as getInbuiltFilter
+	 * @borrows sap.ui.mdc.mixin.AdaptationMixin#getEngine as #getInstance
+	 * @borrows sap.ui.mdc.mixin.AdaptationMixin#retrieveInbuiltFilter as #retrieveInbuiltFilter
+ 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin#getInbuiltFilter as #getInbuiltFilter
 	 *
 	 * @since 1.61
 	 * @public

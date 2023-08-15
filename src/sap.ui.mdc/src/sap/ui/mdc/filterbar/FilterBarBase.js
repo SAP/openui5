@@ -1836,7 +1836,7 @@ sap.ui.define([
 	/**
 	 * Returns the external conditions.
 	 *
-	 * @private
+	 * @public
 	 * @returns {map} Map containing the external conditions
 	 */
 	FilterBarBase.prototype.getConditions = function() {
