@@ -131,7 +131,7 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: true,
 					mapping: {
-						type: "attribute",
+						type: "property",
 						to: "disabled",
 						formatter: "_mapEnabled"
 					}
@@ -181,7 +181,7 @@ sap.ui.define([
 					type: "sap.ui.core.TextDirection",
 					defaultValue: TextDirection.Inherit,
 					mapping: {
-						type: "attribute",
+						type: "property",
 						to: "dir",
 						formatter: "_mapTextDirection"
 					}
