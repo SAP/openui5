@@ -50,6 +50,11 @@
 		"quotes": ["error", "double", {
 			"avoidEscape": true,
 			"allowTemplateLiterals": true
-		}]
+		}],
+		"no-unsafe-optional-chaining": "error",
+		"prefer-const": ["error", { "ignoreReadBeforeAssign": true }],
+		"prefer-template": "error",
+		"rest-spread-spacing": ["error", "never"],
+		"template-curly-spacing": "error"
 	}
 }

@@ -61,7 +61,7 @@ sap.ui.define([
 			return iCurrent;
 		}
 
-		Log.error("sap.ui.dt.util.ZIndexManager: z-index limit has been exceeded, therefore all following calls receive the same z-Index = " + iMax);
+		Log.error(`sap.ui.dt.util.ZIndexManager: z-index limit has been exceeded, therefore all following calls receive the same z-Index = ${iMax}`);
 		return iMax;
 	}
 

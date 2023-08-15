@@ -29,14 +29,14 @@ sap.ui.define([
 			//		unboundList
 			//			customListItem-1
 			//			customListItem-2
-			sIdPrefix = sIdPrefix ? sIdPrefix + "-" : "";
+			sIdPrefix = sIdPrefix ? `${sIdPrefix}-` : "";
 			var oData = [
 				{text: "item1-bound"},
 				{text: "item2-bound"}
 			];
 			var oModel = new JSONModel(oData);
-			this.oCustomListItemTemplate = new CustomListItem(sIdPrefix + "boundListItem", {content: [new Button(sIdPrefix + "boundListItem-btn", {text: "{text}"})]});
-			this.oBoundList = new List(sIdPrefix + "boundlist").setModel(oModel);
+			this.oCustomListItemTemplate = new CustomListItem(`${sIdPrefix}boundListItem`, {content: [new Button(`${sIdPrefix}boundListItem-btn`, {text: "{text}"})]});
+			this.oBoundList = new List(`${sIdPrefix}boundlist`).setModel(oModel);
 			this.oBoundList.bindAggregation("items", {
 				path: "/",
 				template: this.oCustomListItemTemplate,
@@ -44,12 +44,12 @@ sap.ui.define([
 			});
 
 			// create list with unbound items
-			this.oUnBoundList = new List(sIdPrefix + "unboundlist");
-			this.oUnBoundList.addItem(new CustomListItem(sIdPrefix + "unboundlist-0", {content: [new Button(sIdPrefix + "item1-btn", {text: "item1-unbound"})]}));
-			this.oUnBoundList.addItem(new CustomListItem(sIdPrefix + "unboundlist-1", {content: [new Button(sIdPrefix + "item2-btn", {text: "item2-unbound"})]}));
+			this.oUnBoundList = new List(`${sIdPrefix}unboundlist`);
+			this.oUnBoundList.addItem(new CustomListItem(`${sIdPrefix}unboundlist-0`, {content: [new Button(`${sIdPrefix}item1-btn`, {text: "item1-unbound"})]}));
+			this.oUnBoundList.addItem(new CustomListItem(`${sIdPrefix}unboundlist-1`, {content: [new Button(`${sIdPrefix}item2-btn`, {text: "item2-unbound"})]}));
 
 			// create a HorizontalLayout containing the two lists
-			this.oHorizontalLayout = new HorizontalLayout(sIdPrefix + "horizontalLayout", {
+			this.oHorizontalLayout = new HorizontalLayout(`${sIdPrefix}horizontalLayout`, {
 				content: [this.oBoundList, this.oUnBoundList]
 			});
 			this.oHorizontalLayout.placeAt("qunit-fixture");

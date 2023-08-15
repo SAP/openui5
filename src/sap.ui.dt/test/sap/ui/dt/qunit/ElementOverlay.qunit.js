@@ -1683,7 +1683,10 @@ sap.ui.define([
 
 			// In internet explorer/edge, the checks happen before the overlays inside the scroll container
 			// are properly placed, so we must wait until they are finalized before checking
-			if (Math.ceil(DOMUtil.getOffset(this.oButtonOverlay.getDomRef()).left) !== Math.ceil(DOMUtil.getOffset(this.oButton.getDomRef()).left)) {
+			if (
+				Math.ceil(DOMUtil.getOffset(this.oButtonOverlay.getDomRef()).left)
+				!== Math.ceil(DOMUtil.getOffset(this.oButton.getDomRef()).left)
+			) {
 				this.oButton2Overlay.attachEventOnce("geometryChanged", function() {
 					fnAssertPositions.apply(this);
 					fnDone();
@@ -1759,18 +1762,18 @@ sap.ui.define([
 				assert.equal(oSelectedOverlay.isSelectable(), true, "then the overlay is selectable");
 				assert.equal(oSelectedOverlay.isSelected(), true, "then the overlay is selected");
 				assert.strictEqual(oSelectedOverlay.hasStyleClass("sapUiDtOverlayHighlighted"), options.selected.highlighted,
-					"then the selected Overlay " +
-						options.selected.highlighted ? "do have the highlighted StyleClss" : "does not have the highlighted StyleClass"
+					`then the selected Overlay ${options.selected.highlighted
+						? "do have the highlighted StyleClss" : "does not have the highlighted StyleClass"}`
 				);
 				assert.strictEqual(oFirstListItemButtonOverlay.hasStyleClass("sapUiDtOverlayHighlighted"), options.twin.highlighted,
-					"then the first twin Overlay " +
-						options.twin.highlighted ? "do have the highlighted StyleClss" : "does not have the highlighted StyleClass"
+					`then the first twin Overlay ${options.twin.highlighted
+						? "do have the highlighted StyleClss" : "does not have the highlighted StyleClass"}`
 				);
 				if (options.twin1) {
 					var oSecondListItemButtonOverlay = OverlayRegistry.getOverlay(options.twin1.id);
 					assert.strictEqual(oSecondListItemButtonOverlay.hasStyleClass("sapUiDtOverlayHighlighted"), options.twin1.highlighted,
-						"then the second twin Overlay " +
-							options.twin1.highlighted ? "do have the highlighted StyleClss" : "does not have the highlighted StyleClass"
+						`then the second twin Overlay ${options.twin1.highlighted
+							? "do have the highlighted StyleClss" : "does not have the highlighted StyleClass"}`
 					);
 				}
 			});

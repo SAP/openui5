@@ -81,8 +81,8 @@ sap.ui.define([
 	 */
 	Util.createError = function(sLocation, sMessage, sLibraryName) {
 		var oError = new Error();
-		var sLocationFull = (sLibraryName || S_LIBRARY_NAME) + (sLocation ? "." + sLocation : "");
-		oError.name = "Error in " + sLocationFull;
+		var sLocationFull = (sLibraryName || S_LIBRARY_NAME) + (sLocation ? `.${sLocation}` : "");
+		oError.name = `Error in ${sLocationFull}`;
 		oError.message = sMessage;
 
 		return oError;
@@ -99,7 +99,7 @@ sap.ui.define([
 		} else if (vError instanceof Error) {
 			var sError = vError.toString();
 			if (vError.stack) {
-				sError += "\n" + vError.stack.replace(sError, "").trim();
+				sError += `\n${vError.stack.replace(sError, "").trim()}`;
 			}
 			return sError;
 		}
@@ -120,12 +120,12 @@ sap.ui.define([
 
 		// Adding payload only if it wasn't added before explicitly.
 		if (Util.isForeignError(oError, sLibraryName)) {
-			var sLocationFull = (sLibraryName || S_LIBRARY_NAME) + "." + sLocation;
+			var sLocationFull = `${sLibraryName || S_LIBRARY_NAME}.${sLocation}`;
 			var sOriginalMessage = [
 				oError.name,
 				oError.message
 			].join(" - ");
-			oError.name = "Error in " + sLocationFull;
+			oError.name = `Error in ${sLocationFull}`;
 			oError.message = Util.printf("{0}. Original error: {1}", sMessage, sOriginalMessage || "¯\\_(ツ)_/¯");
 		}
 

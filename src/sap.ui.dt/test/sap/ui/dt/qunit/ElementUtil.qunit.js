@@ -1248,7 +1248,7 @@ sap.ui.define([
 			this.oFactoryBoundList.bindAggregation("items", {
 				path: "/",
 				factory: function(sId) {
-					return new CustomListItem(sId, {content: [new Button(sId + "-btn", {text: "{text}"})]});
+					return new CustomListItem(sId, {content: [new Button(`${sId}-btn`, {text: "{text}"})]});
 				}
 			});
 

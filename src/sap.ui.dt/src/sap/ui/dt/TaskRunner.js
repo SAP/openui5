@@ -79,7 +79,7 @@ function(
 				}.bind(this))
 				.catch(function(vError) {
 					this._oTaskManager.complete(oTask.id);
-					BaseLog.error(DtUtil.errorToString(vError) + " / related task: " + JSON.stringify(oTask));
+					BaseLog.error(`${DtUtil.errorToString(vError)} / related task: ${JSON.stringify(oTask)}`);
 				}.bind(this));
 			}
 		}.bind(this));

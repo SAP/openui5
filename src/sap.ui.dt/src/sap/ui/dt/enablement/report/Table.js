@@ -134,7 +134,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_createTable: function() {
-			var oTable = new TreeTable(this.getId() + "--table", {
+			var oTable = new TreeTable(`${this.getId()}--table`, {
 				selectionMode: "MultiToggle",
 				visibleRowCount: 20,
 				enableSelectAll: false,
@@ -156,18 +156,18 @@ sap.ui.define([
 		 * @private
 		 */
 		_createToolbar: function() {
-			return new Toolbar(this.getId() + "--toolbar", {
+			return new Toolbar(`${this.getId()}--toolbar`, {
 				content: [
-					new ToolbarSpacer(this.getId() + "--toolbar-spacer"),
-					new Button(this.getId() + "--toolbar-collapse-button", {
+					new ToolbarSpacer(`${this.getId()}--toolbar-spacer`),
+					new Button(`${this.getId()}--toolbar-collapse-button`, {
 						text: "Collapse all",
 						press: this._onCollapseAll.bind(this)
 					}),
-					new Button(this.getId() + "--toolbar-expand-button", {
+					new Button(`${this.getId()}--toolbar-expand-button`, {
 						text: "Expand",
 						press: this._onExpandSecondLevel.bind(this)
 					}),
-					new SearchField(this.getId() + "--toolbar-search-field", {
+					new SearchField(`${this.getId()}--toolbar-search-field`, {
 						liveChange: this._onSearch.bind(this)
 					})
 				]
@@ -214,7 +214,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_createColumn: function(sId, sColumnText, oTemplate) {
-			return new Column(this.getId() + "--table-column-" + sId, {
+			return new Column(`${this.getId()}--table-column-${sId}`, {
 				label: new Label({text: sColumnText}),
 				width: "13em",
 				template: oTemplate

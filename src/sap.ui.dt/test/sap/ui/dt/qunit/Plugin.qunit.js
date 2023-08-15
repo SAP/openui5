@@ -394,7 +394,7 @@ sap.ui.define([
 			this.fnGetAction = function() {
 				return {
 					name: function(oElement) {
-						return oElement + "name";
+						return `${oElement}name`;
 					}
 				};
 			};

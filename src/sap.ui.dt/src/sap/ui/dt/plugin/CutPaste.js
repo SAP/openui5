@@ -81,7 +81,7 @@ sap.ui.define([
 		.catch(function(oError) {
 			throw DtUtil.createError(
 				"CutPaste#registerElementOverlay",
-				"An error occurred during checkMovable: " + oError
+				`An error occurred during checkMovable: ${oError}`
 			);
 		});
 	};

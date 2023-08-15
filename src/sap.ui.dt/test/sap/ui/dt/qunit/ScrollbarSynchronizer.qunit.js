@@ -25,7 +25,7 @@ function(
 				}).appendTo($content);
 
 				jQuery("<div></div>", {
-					id: sId + "-sub"
+					id: `${sId}-sub`
 				}).css({
 					width: "200px",
 					height: "200px",

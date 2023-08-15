@@ -110,7 +110,7 @@ sap.ui.define([
 	Test.prototype.addGroup = function(aParentChildren, sName, sMessage, sNamePostfix) {
 		return this.add(aParentChildren,
 			true,
-			sName + (sNamePostfix ? (" (" + sNamePostfix + ")") : ""),
+			sName + (sNamePostfix ? (` (${sNamePostfix})`) : ""),
 			sMessage,
 			null,
 			Test.TYPE.GROUP
