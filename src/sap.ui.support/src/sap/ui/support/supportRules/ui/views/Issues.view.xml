@@ -67,8 +67,8 @@
 											<menu>
 												<Menu itemSelected="onReportPress">
 													<items>
-														<MenuItem text="View" press="onViewReport"/>
-														<MenuItem text="Download" press="onDownloadReport"/>
+														<MenuItem text="View" />
+														<MenuItem text="Download" />
 													</items>
 												</Menu>
 											</menu>
@@ -121,7 +121,6 @@
 							selectionMode="Single"
 							selectionBehavior="RowOnly"
 							enableColumnReordering="false"
-							expandFirstLevel="true"
 							rows="{path: '/issues'}"
 							rowSelectionChange="onRowSelectionChanged"
 							rowHeight="24"

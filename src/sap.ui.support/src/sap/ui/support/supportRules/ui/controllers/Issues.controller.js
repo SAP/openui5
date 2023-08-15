@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"sap/ui/support/supportRules/ui/controllers/BaseController",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/ui/models/SharedModel",
 	"sap/ui/support/supportRules/ui/external/ElementTree",
@@ -13,7 +12,17 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/m/OverflowToolbarAssociativePopoverControls",
 	"sap/base/util/deepExtend"
-], function (BaseController, JSONModel, CommunicationBus, SharedModel, ElementTree, channelNames, formatter, constants, OverflowToolbarAssociativePopoverControls, deepExtend) {
+], function (
+	BaseController,
+	CommunicationBus,
+	SharedModel,
+	ElementTree,
+	channelNames,
+	formatter,
+	constants,
+	OverflowToolbarAssociativePopoverControls,
+	deepExtend
+) {
 	"use strict";
 
 	var mIssueSettings = {
@@ -190,14 +199,15 @@ sap.ui.define([
 				this.model.setProperty("/filterBarHeight", "4rem");
 		},
 		onReportPress: function(oEvent) {
-				var oItem = oEvent.getParameter("item"),
-					actionToTake = oItem.getText(),
-					data = this._getReportData();
-				if (actionToTake === 'View') {
-					CommunicationBus.publish(channelNames.ON_SHOW_REPORT_REQUEST, data);
-				} else {
-					CommunicationBus.publish(channelNames.ON_DOWNLOAD_REPORT_REQUEST, data);
-				}
+			var oItem = oEvent.getParameter("item"),
+				actionToTake = oItem.getText(),
+				data = this._getReportData();
+
+			if (actionToTake === 'View') {
+				CommunicationBus.publish(channelNames.ON_SHOW_REPORT_REQUEST, data);
+			} else {
+				CommunicationBus.publish(channelNames.ON_DOWNLOAD_REPORT_REQUEST, data);
+			}
 		},
 		_getReportData: function () {
 			return {
