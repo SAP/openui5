@@ -2249,26 +2249,15 @@ function(
 		this.$(bForward ? "after" : "before").trigger("focus");
 	};
 
-	// move focus out of the table for nodata row
-	ListBase.prototype.onsaptabnext = function(oEvent) {
-		if (oEvent.isMarked() || oEvent.target.id == this.getId("trigger") || oEvent.target.id == this.getId("nodata")) {
-			return;
-		}
-
-		if (oEvent.target.matches(".sapMLIBFocusable,.sapMTblCellFocusable") || oEvent.target === jQuery(this.getNavigationRoot()).find(":sapTabbable").last()[0]) {
-			this.forwardTab(true);
-			oEvent.setMarked();
-		}
-	};
-
-	// move focus out of the table for nodata row
-	ListBase.prototype.onsaptabprevious = function(oEvent) {
+	// move focus out of the list
+	ListBase.prototype.onsaptabnext = ListBase.prototype.onsaptabprevious = function(oEvent) {
 		if (oEvent.isMarked() || oEvent.target.id == this.getId("trigger")) {
 			return;
 		}
 
-		if (oEvent.target.matches(".sapMLIBFocusable,.sapMTblCellFocusable") || oEvent.target === jQuery(this.getNavigationRoot()).find(":sapTabbable").first()[0]) {
-			this.forwardTab(false);
+		if (oEvent.target.matches(".sapMLIBFocusable,.sapMTblCellFocusable") ||
+			oEvent.target === jQuery(this.getNavigationRoot()).find(":sapTabbable").get(oEvent.type == "saptabnext" ? -1 : 0)) {
+			this.forwardTab(oEvent.type == "saptabnext");
 			oEvent.setMarked();
 		}
 	};
@@ -2441,6 +2430,7 @@ function(
 		// get the last focused element from the ItemNavigation and focus
 		var aNavigationDomRefs = this._oItemNavigation.getItemDomRefs();
 		var iLastFocusedIndex = this._oItemNavigation.getFocusedIndex();
+		iLastFocusedIndex -= iLastFocusedIndex % this._oItemNavigation.iColumns;
 		var $LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]);
 
 		this.bAnnounceDetails = true;
