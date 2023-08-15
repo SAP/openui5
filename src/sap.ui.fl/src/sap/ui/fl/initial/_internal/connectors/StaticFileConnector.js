@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	function _getBundle(sReference, sBundleName) {
-		var sBundleResourcePath = sReference.replace(/\./g, "/") + "/changes/" + sBundleName + ".json";
+		var sBundleResourcePath = `${sReference.replace(/\./g, "/")}/changes/${sBundleName}.json`;
 		var bBundleLoaded = !!sap.ui.loader._.getModuleState(sBundleResourcePath);
 		var oConfiguration = Configuration;
 		// the bundle is usually part of the component-preload
@@ -27,7 +27,7 @@ sap.ui.define([
 				if (e.name.includes("SyntaxError")) {
 					Log.error(e);
 				}
-				Log.warning("flexibility did not find a " + sBundleName + ".json for the application: " + sReference);
+				Log.warning(`flexibility did not find a ${sBundleName}.json for the application: ${sReference}`);
 			}
 		}
 	}

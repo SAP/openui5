@@ -38,7 +38,7 @@ sap.ui.define([
 			var mViewProperties = {
 				id: "idMain1",
 				async: true,
-				viewName: "fl.performance.view." + (sTestProcessing === "js" ? "jsBaseView" : sTestCase + "-scenario")
+				viewName: `fl.performance.view.${sTestProcessing === "js" ? "jsBaseView" : `${sTestCase}-scenario`}`
 			};
 			if (sTestProcessing === "js") {
 				XMLView.create(mViewProperties).then(function(oView) {

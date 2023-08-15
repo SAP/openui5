@@ -62,11 +62,11 @@ sap.ui.define([
 		.then(function(mRetrievedExtensionPointInfo) {
 			mExtensionPointInfo = mRetrievedExtensionPointInfo;
 			if (!mExtensionPointInfo) {
-				throw new Error("AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name '"
-					+ (oSelector && oSelector.name)
-					+ "' or multiple Extension-Points available with the given name in the view (view.id='"
-					+ (sViewId)
-					+ "'). Multiple Extension-points with the same name in one view are not supported!");
+				throw new Error(`AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name '${
+					 oSelector && oSelector.name
+					 }' or multiple Extension-Points available with the given name in the view (view.id='${
+					 sViewId
+					 }'). Multiple Extension-points with the same name in one view are not supported!`);
 			}
 			(mExtensionPointInfo.defaultContent || []).forEach(function(vControl) {
 				// Remove default implementation of extension points in async apply (xml-preprocessing) and create (via action handler) scenarios

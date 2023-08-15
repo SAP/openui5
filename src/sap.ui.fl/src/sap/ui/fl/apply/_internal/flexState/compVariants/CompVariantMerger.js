@@ -65,9 +65,8 @@ sap.ui.define([
 	}
 
 	function logNoChangeHandler(oVariant, oChange) {
-		Log.error("No change handler for change with the ID '" + oChange.getId() +
-			"' and type '" + oChange.getChangeType() + "' defined.\n" +
-			"The variant '" + oVariant.getId() + "'was not modified'");
+		Log.error(`No change handler for change with the ID '${oChange.getId()}' and type '${oChange.getChangeType()}' defined.
+			The variant '${oVariant.getId()}'was not modified'`);
 	}
 
 	function createVariant(sPersistencyKey, oVariantInput) {

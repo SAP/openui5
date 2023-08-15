@@ -170,7 +170,7 @@ sap.ui.define([
 				return Promise.reject("App Variant ID must be provided");
 			}
 
-			var sAppUrl = "/sap/bc/lrep/content/apps/" + mPropertyBag.appId + "/appVariants/" + mPropertyBag.id + "/manifest.appdescr_variant";
+			var sAppUrl = `/sap/bc/lrep/content/apps/${mPropertyBag.appId}/appVariants/${mPropertyBag.id}/manifest.appdescr_variant`;
 			return LrepConnector.appVariant.getManifest({
 				appVarUrl: sAppUrl
 			});

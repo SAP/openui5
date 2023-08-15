@@ -66,7 +66,7 @@ sap.ui.define([
 				DescriptorChangeCheck.checkIdNamespaceCompliance(sInboundId, oChange);
 				oManifest["sap.app"].crossNavigation.inbounds[sInboundId] = oChangeContent.inbound[sInboundId];
 			} else {
-				throw new Error("Inbound with ID \"" + sInboundId + "\" already exist.");
+				throw new Error(`Inbound with ID "${sInboundId}" already exist.`);
 			}
 			return oManifest;
 		}

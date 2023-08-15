@@ -269,7 +269,7 @@ sap.ui.define([
 				BusyIndicator.hide();
 				var sMessage = oResourceBundle.getText("MSG_TRANSPORT_ERROR", oError ? [oError.message || oError] : undefined);
 				var sTitle = oResourceBundle.getText("HEADER_TRANSPORT_ERROR");
-				Log.error("transport error: " + oError);
+				Log.error(`transport error: ${oError}`);
 				MessageBox.show(sMessage, {
 					icon: MessageBox.Icon.ERROR,
 					title: sTitle,
@@ -487,7 +487,7 @@ sap.ui.define([
 		},
 		appVariant: {
 			getManifirstSupport: function(mPropertyBag) {
-				var sManifirstUrl = ROUTES.MANI_FIRST_SUPPORTED + "/?id=" + mPropertyBag.appId;
+				var sManifirstUrl = `${ROUTES.MANI_FIRST_SUPPORTED}/?id=${mPropertyBag.appId}`;
 				return InitialUtils.sendRequest(sManifirstUrl, "GET", {initialConnector: InitialConnector}).then(function(oResponse) {
 					return oResponse.response;
 				});
@@ -710,7 +710,7 @@ sap.ui.define([
 					BusyIndicator.hide();
 					var sMessage = oResourceBundle.getText("MSG_TRANSPORT_ERROR", oError ? [oError.message || oError] : undefined);
 					var sTitle = oResourceBundle.getText("HEADER_TRANSPORT_ERROR");
-					Log.error("transport error" + oError);
+					Log.error(`transport error${oError}`);
 					MessageBox.show(sMessage, {
 						icon: MessageBox.Icon.ERROR,
 						title: sTitle,

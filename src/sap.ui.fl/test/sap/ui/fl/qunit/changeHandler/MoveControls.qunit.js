@@ -657,15 +657,15 @@ sap.ui.define([
 				return MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 			}.bind(this))
 			.catch(function(oError) {
-				var sError = "Error during execPromiseQueueSequentially processing occurred: Missing targetIndex for element with id '" + this.oObjectAttribute.getId()
-						+ "' in movedElements supplied";
+				var sError = `Error during execPromiseQueueSequentially processing occurred: Missing targetIndex for element with id '${this.oObjectAttribute.getId()
+						 }' in movedElements supplied`;
 				assert.equal(oError.message, sError, "missing target index error captured");
 				oChange = new UIChange({
 					selector: this.mSelectorWithGlobalId,
 					content: {
 						movedElements: [{
 							selector: {
-								id: this.oObjectAttribute.getId() + "foo"
+								id: `${this.oObjectAttribute.getId()}foo`
 							},
 							sourceIndex: 0,
 							targetIndex: 1
@@ -687,7 +687,7 @@ sap.ui.define([
 				return MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 			}.bind(this))
 			.catch(function(oError) {
-				var sError = "Error during execPromiseQueueSequentially processing occurred: Control to move was not found. Id: '" + this.oObjectAttribute.getId() + "foo" + "'";
+				var sError = `Error during execPromiseQueueSequentially processing occurred: Control to move was not found. Id: '${this.oObjectAttribute.getId()}foo` + `'`;
 				assert.equal(oError.message, sError, "Control with the given ID not found and error is raised");
 			}.bind(this));
 		});
@@ -708,20 +708,20 @@ sap.ui.define([
 			// -- -- Button
 
 			var oXmlString =
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
-						'xmlns:layout="sap.ui.layout" ' +
-						'xmlns="sap.m">' +
-					'<layout:VerticalLayout id="' + myLayoutId + '">' +
-						"<layout:content>" +
-							'<ObjectHeader id="' + myObjectHeaderId + '">' +
-								'<ObjectAttribute id="' + myObjectAttributeId + '" />' +
-								'<ObjectAttribute id="' + myObjectAttributeId2 + '" />' +
-							"</ObjectHeader>" +
-							'<Button id="' + myButtonId + '">' +
-							"</Button>" +
-						"</layout:content>" +
-					"</layout:VerticalLayout>" +
-				"</mvc:View>";
+				`<mvc:View xmlns:mvc="sap.ui.core.mvc" ` +
+						`xmlns:layout="sap.ui.layout" ` +
+						`xmlns="sap.m">` +
+					`<layout:VerticalLayout id="${myLayoutId}">` +
+						`<layout:content>` +
+							`<ObjectHeader id="${myObjectHeaderId}">` +
+								`<ObjectAttribute id="${myObjectAttributeId}" />` +
+								`<ObjectAttribute id="${myObjectAttributeId2}" />` +
+							`</ObjectHeader>` +
+							`<Button id="${myButtonId}">` +
+							`</Button>` +
+						`</layout:content>` +
+					`</layout:VerticalLayout>` +
+				`</mvc:View>`;
 			var oViewPromise;
 
 			var Comp = UIComponent.extend("sap.ui.rta.control.enabling.comp", {

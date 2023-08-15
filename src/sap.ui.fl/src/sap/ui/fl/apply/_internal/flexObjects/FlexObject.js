@@ -412,7 +412,7 @@ sap.ui.define([
 		return typeof this[sFunctionName] === "function"
 			? this[sFunctionName].bind(this)
 			: function() {
-				throw new Error(sFunctionName + " is not a valid mutator");
+				throw new Error(`${sFunctionName} is not a valid mutator`);
 			};
 	}
 
@@ -420,8 +420,8 @@ sap.ui.define([
 		var aInstanceParts = sPropertyName.split(".");
 		aInstanceParts[0] = capitalize(aInstanceParts[0]);
 		var sFunctionName = aInstanceParts.shift();
-		var fnGetter = getOriginalMutator.call(this, "get" + sFunctionName);
-		var fnSetter = getOriginalMutator.call(this, "set" + sFunctionName);
+		var fnGetter = getOriginalMutator.call(this, `get${sFunctionName}`);
+		var fnSetter = getOriginalMutator.call(this, `set${sFunctionName}`);
 		return {
 			getValue: function() {
 				var vCurrentValue = deepClone(fnGetter());
@@ -478,7 +478,7 @@ sap.ui.define([
 		var mPropertyMap = {};
 
 		var fnMapProperty = function(sKey, vValue, sPath) {
-			var sNewPath = sPath ? sPath + "." + sKey : sKey;
+			var sNewPath = sPath ? `${sPath}.${sKey}` : sKey;
 			var iIndex = aValidFileProperties.indexOf(sNewPath);
 			if (iIndex >= 0) {
 				var sPropertyName = Object.keys(oMappingInfo)[iIndex];

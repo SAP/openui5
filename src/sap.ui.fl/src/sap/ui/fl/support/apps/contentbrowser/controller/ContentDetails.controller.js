@@ -89,7 +89,7 @@ sap.ui.define([
 			if (oModelData.namespace[oModelData.namespace.length - 1] !== "/") {
 				oModelData.namespace += "/";
 			}
-			var sContentSuffix = oModelData.namespace + oModelData.fileName + "." + oModelData.fileType;
+			var sContentSuffix = `${oModelData.namespace + oModelData.fileName}.${oModelData.fileType}`;
 			var oPage = that.getView().getContent()[0];
 			oPage.setBusy(true);
 

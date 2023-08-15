@@ -760,7 +760,7 @@ sap.ui.define([
 				fileType: "ctrl_variant_management_change"
 			}
 		].forEach(function(oTestParams) {
-			QUnit.test("when calling 'addVariantChange' for " + oTestParams.inputParams.changeType + " to add a change", function(assert) {
+			QUnit.test(`when calling 'addVariantChange' for ${oTestParams.inputParams.changeType} to add a change`, function(assert) {
 				oTestParams.inputParams.appComponent = this.oComponent;
 				var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
 				if (!oTestParams.inputParams.adaptationId) {
@@ -3006,7 +3006,7 @@ sap.ui.define([
 
 		QUnit.test("when 'attachVariantApplied' is called with executeOnSelectionForStandardDefault set, standard being default and no flex change for apply automatically", function(assert) {
 			var sVMReference1 = "mockview--VariantManagement2";
-			var sVMControlId = "testComponent---" + sVMReference1;
+			var sVMControlId = `testComponent---${sVMReference1}`;
 			this.oView.byId(sVMControlId).setExecuteOnSelectionForStandardDefault(true);
 			var fnCallback1 = sandbox.stub();
 			var fnCallback2 = sandbox.stub();
@@ -3038,7 +3038,7 @@ sap.ui.define([
 
 		QUnit.test("when 'attachVariantApplied' is called with executeOnSelectionForStandardDefault set, standard being default, no flex change for apply automatically and a different current variant", function(assert) {
 			var sVMReference1 = "mockview--VariantManagement2";
-			var sVMControlId = "testComponent---" + sVMReference1;
+			var sVMControlId = `testComponent---${sVMReference1}`;
 			this.oView.byId(sVMControlId).setExecuteOnSelectionForStandardDefault(true);
 			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns({});
 			VariantManagementState.getCurrentVariantReference.restore();
@@ -3059,7 +3059,7 @@ sap.ui.define([
 
 		QUnit.test("when 'attachVariantApplied' is called without executeOnSelectionForStandardDefault set, standard being default and no flex change for apply automatically", function(assert) {
 			var sVMReference1 = "mockview--VariantManagement2";
-			var sVMControlId = "testComponent---" + sVMReference1;
+			var sVMControlId = `testComponent---${sVMReference1}`;
 			var fnCallback1 = sandbox.stub();
 			var fnCallback2 = sandbox.stub();
 			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns({});
@@ -3092,7 +3092,7 @@ sap.ui.define([
 
 		QUnit.test("when 'attachVariantApplied' is called with executeOnSelectionForStandardDefault set, standard being default and a flex change for apply automatically", function(assert) {
 			var sVMReference1 = "mockview--VariantManagement2";
-			var sVMControlId = "testComponent---" + sVMReference1;
+			var sVMControlId = `testComponent---${sVMReference1}`;
 			var fnCallback1 = sandbox.stub();
 			var fnCallback2 = sandbox.stub();
 			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns({setExecuteOnSelect: {}});
@@ -3119,7 +3119,7 @@ sap.ui.define([
 
 		QUnit.test("when 'attachVariantApplied' is called with executeOnSelectionForStandardDefault set, standard not being default and no flex change for apply automatically", function(assert) {
 			var sVMReference1 = "mockview--VariantManagement1";
-			var sVMControlId = "testComponent---" + sVMReference1;
+			var sVMControlId = `testComponent---${sVMReference1}`;
 			var oVMControl = oCore.byId(sVMControlId);
 			oVMControl.setExecuteOnSelectionForStandardDefault(true);
 			var fnCallback1 = sandbox.stub();

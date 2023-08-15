@@ -400,22 +400,22 @@ sap.ui.define([
 	}, function() {
 		["isApplicationComponent", "isEmbeddedComponent"]
 		.forEach(function(sFunctionName) {
-			QUnit.test("when Utils." + sFunctionName + " is called and there is no manifest", function(assert) {
+			QUnit.test(`when Utils.${sFunctionName} is called and there is no manifest`, function(assert) {
 				assert.notOk(Utils[sFunctionName](), "then false is returned");
 			});
 
-			QUnit.test("when Utils." + sFunctionName + " is called and the manifest has no getEntry method", function(assert) {
+			QUnit.test(`when Utils.${sFunctionName} is called and the manifest has no getEntry method`, function(assert) {
 				assert.notOk(Utils[sFunctionName]({}), "then false is returned");
 			});
 
-			QUnit.test("when Utils." + sFunctionName + " is called and there is no manifest['sap.app']", function(assert) {
+			QUnit.test(`when Utils.${sFunctionName} is called and there is no manifest['sap.app']`, function(assert) {
 				sandbox.stub(this.oManifest, "getEntry")
 				.returns({});
 
 				assert.notOk(Utils[sFunctionName](this.oComponent), "then false is returned");
 			});
 
-			QUnit.test("when Utils." + sFunctionName + " is called and there is no manifest['sap.app'].type", function(assert) {
+			QUnit.test(`when Utils.${sFunctionName} is called and there is no manifest['sap.app'].type`, function(assert) {
 				sandbox.stub(this.oManifest, "getEntry")
 				.callThrough()
 				.withArgs("sap.app")
@@ -424,7 +424,7 @@ sap.ui.define([
 				assert.notOk(Utils[sFunctionName](this.oComponent), "then false is returned");
 			});
 
-			QUnit.test("when Utils." + sFunctionName + " is called and manifest type is incorrect", function(assert) {
+			QUnit.test(`when Utils.${sFunctionName} is called and manifest type is incorrect`, function(assert) {
 				sandbox.stub(this.oManifest, "getEntry")
 				.callThrough()
 				.withArgs("sap.app")
@@ -625,7 +625,7 @@ sap.ui.define([
 
 		[42, undefined, {then: 42}, {then: function() {}}]
 		.forEach(function(vResult) {
-			QUnit.test("when instanciated with " + vResult + " value as parameter", function(assert) {
+			QUnit.test(`when instanciated with ${vResult} value as parameter`, function(assert) {
 				var oFakePromise = new Utils.FakePromise(vResult)
 				.then(function(vValue) {
 					assert.strictEqual(vValue, vResult, "then the parameter is passed to the 'then' method");
@@ -633,7 +633,7 @@ sap.ui.define([
 				assert.ok(oFakePromise instanceof Utils.FakePromise, "then the FakePromise returns itself");
 			});
 
-			QUnit.test("when instanciated with " + vResult + " error value as second parameter", function(assert) {
+			QUnit.test(`when instanciated with ${vResult} error value as second parameter`, function(assert) {
 				vResult = vResult || "undefined";
 				var oFakePromise = new Utils.FakePromise(undefined, vResult)
 				.then(function() {
@@ -939,7 +939,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when called with not existing Change keys", function(assert) {
-			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId() + "foo"), undefined,
+			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, `${this.oChange1.getId()}foo`), undefined,
 				"then no change is returned");
 		});
 	});
@@ -951,7 +951,7 @@ sap.ui.define([
 		},
 		afterEach: function() {}
 	}, function() {
-		QUnit.test("scenario " + Scenario.VersionedAppVariant + ": New VersionedAppVariant", function(assert) {
+		QUnit.test(`scenario ${Scenario.VersionedAppVariant}: New VersionedAppVariant`, function(assert) {
 			this.sErrorText += "in a versioned app variant scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.VersionedAppVariant, "projectId"), sLrepRootNamespace,
@@ -968,7 +968,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("scenario " + Scenario.AppVariant + ": New AppVariant", function(assert) {
+		QUnit.test(`scenario ${Scenario.AppVariant}: New AppVariant`, function(assert) {
 			this.sErrorText += "in an app variant scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.AppVariant, "projectId"), sLrepRootNamespace,
@@ -985,7 +985,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("scenario " + Scenario.AdaptationProject + ": Customer adapts existing app", function(assert) {
+		QUnit.test(`scenario ${Scenario.AdaptationProject}: Customer adapts existing app`, function(assert) {
 			this.sErrorText += "in a adaptation project scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/adapt/projectId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.AdaptationProject, "projectId"), sLrepRootNamespace,
@@ -1002,7 +1002,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("scenario " + Scenario.FioriElementsFromScratch + ": Customer adapts new Fiori elements app", function(assert) {
+		QUnit.test(`scenario ${Scenario.FioriElementsFromScratch}: Customer adapts new Fiori elements app`, function(assert) {
 			var sLrepRootNamespace = "apps/baseId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.FioriElementsFromScratch), sLrepRootNamespace,
 				"then the root namespace got build correctly");
@@ -1013,7 +1013,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("scenario " + Scenario.UiAdaptation + ": Customer adapts existing app using RTA", function(assert) {
+		QUnit.test(`scenario ${Scenario.UiAdaptation}: Customer adapts existing app using RTA`, function(assert) {
 			var sLrepRootNamespace = "apps/baseId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.UiAdaptation), sLrepRootNamespace,
 				"then the root namespace got build correctly");
@@ -1073,7 +1073,7 @@ sap.ui.define([
 		before: function() {
 			this.sParameterName = "parameterName";
 			this.sParameterValue = "parameterValue";
-			this.sSearchParameter = this.sParameterName + "=" + this.sParameterValue;
+			this.sSearchParameter = `${this.sParameterName}=${this.sParameterValue}`;
 			this.sAnotherParameter = "test=true";
 		},
 		afterEach: function() {
@@ -1081,45 +1081,45 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with hasUrlParameterWithValue is true", function(assert) {
-			var sUrl = "?" + this.sSearchParameter;
+			var sUrl = `?${this.sSearchParameter}`;
 			sandbox.stub(Utils, "hasParameterAndValue").returns(true);
 			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
 			assert.equal(bResult, "", "no change in the url");
 		});
 
 		QUnit.test("with hasUrlParameterWithValue is true and another parameter", function(assert) {
-			var sUrl = "?" + this.sAnotherParameter + "&" + this.sSearchParameter;
+			var sUrl = `?${this.sAnotherParameter}&${this.sSearchParameter}`;
 			sandbox.stub(Utils, "hasParameterAndValue").returns(true);
 			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
-			assert.equal(bResult, "?" + this.sAnotherParameter, "no change in the url");
+			assert.equal(bResult, `?${this.sAnotherParameter}`, "no change in the url");
 		});
 
 		QUnit.test("with hasUrlParameterWithValue is true and another parameter at the end", function(assert) {
-			var sUrl = "?" + this.sSearchParameter + "&" + this.sAnotherParameter;
+			var sUrl = `?${this.sSearchParameter}&${this.sAnotherParameter}`;
 			sandbox.stub(Utils, "hasParameterAndValue").returns(true);
 			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
-			assert.equal(bResult, "?" + this.sAnotherParameter, "no change in the url");
+			assert.equal(bResult, `?${this.sAnotherParameter}`, "no change in the url");
 		});
 
 		QUnit.test("with hasUrlParameterWithValue is false", function(assert) {
 			var sUrl = "";
 			sandbox.stub(Utils, "hasParameterAndValue").returns(false);
 			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
-			assert.equal(bResult, "?" + this.sSearchParameter, "no change in the url");
+			assert.equal(bResult, `?${this.sSearchParameter}`, "no change in the url");
 		});
 
 		QUnit.test("with hasUrlParameterWithValue is false and another parameter", function(assert) {
-			var sUrl = "?" + this.sAnotherParameter;
+			var sUrl = `?${this.sAnotherParameter}`;
 			sandbox.stub(Utils, "hasParameterAndValue").returns(false);
 			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
-			assert.equal(bResult, "?" + this.sAnotherParameter + "&" + this.sSearchParameter, "no change in the url");
+			assert.equal(bResult, `?${this.sAnotherParameter}&${this.sSearchParameter}`, "no change in the url");
 		});
 
 		QUnit.test("with hasUrlParameterWithValue is false and two another parameters at the end", function(assert) {
-			var sUrl = "?" + this.sAnotherParameter + "&" + this.sAnotherParameter;
+			var sUrl = `?${this.sAnotherParameter}&${this.sAnotherParameter}`;
 			sandbox.stub(Utils, "hasParameterAndValue").returns(true);
 			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
-			assert.equal(bResult, "?" + this.sAnotherParameter + "&" + this.sAnotherParameter, "no change in the url");
+			assert.equal(bResult, `?${this.sAnotherParameter}&${this.sAnotherParameter}`, "no change in the url");
 		});
 	});
 
@@ -1131,7 +1131,7 @@ sap.ui.define([
 						case "validService":
 							return Promise.resolve("validServiceResult");
 						default:
-							return Promise.reject(new Error("Not available service: " + sServiceName));
+							return Promise.reject(new Error(`Not available service: ${sServiceName}`));
 					}
 				}
 			});
@@ -1183,7 +1183,7 @@ sap.ui.define([
 						case "validService3":
 							return Promise.resolve("validService3Result");
 						default:
-							return Promise.reject(new Error("Invalid service: " + sServiceName));
+							return Promise.reject(new Error(`Invalid service: ${sServiceName}`));
 					}
 				}
 			});

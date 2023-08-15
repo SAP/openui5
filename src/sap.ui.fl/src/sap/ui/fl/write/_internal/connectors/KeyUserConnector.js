@@ -46,21 +46,21 @@ sap.ui.define([
 			Layer.PUBLIC
 		],
 		ROUTES: {
-			CHANGES: PREFIX + InitialConnector.API_VERSION + "/changes/",
-			SETTINGS: PREFIX + InitialConnector.API_VERSION + "/settings",
-			TOKEN: PREFIX + InitialConnector.API_VERSION + "/settings",
+			CHANGES: `${PREFIX + InitialConnector.API_VERSION}/changes/`,
+			SETTINGS: `${PREFIX + InitialConnector.API_VERSION}/settings`,
+			TOKEN: `${PREFIX + InitialConnector.API_VERSION}/settings`,
 			VERSIONS: {
-				GET: PREFIX + InitialConnector.API_VERSION + "/versions/",
-				ACTIVATE: PREFIX + InitialConnector.API_VERSION + "/versions/activate/",
-				DISCARD: PREFIX + InitialConnector.API_VERSION + "/versions/draft/",
-				PUBLISH: PREFIX + InitialConnector.API_VERSION + "/versions/publish/"
+				GET: `${PREFIX + InitialConnector.API_VERSION}/versions/`,
+				ACTIVATE: `${PREFIX + InitialConnector.API_VERSION}/versions/activate/`,
+				DISCARD: `${PREFIX + InitialConnector.API_VERSION}/versions/draft/`,
+				PUBLISH: `${PREFIX + InitialConnector.API_VERSION}/versions/publish/`
 			},
 			TRANSLATION: {
-				UPLOAD: PREFIX + InitialConnector.API_VERSION + "/translation/texts",
-				DOWNLOAD: PREFIX + InitialConnector.API_VERSION + "/translation/texts/",
-				GET_SOURCELANGUAGE: PREFIX + InitialConnector.API_VERSION + "/translation/sourcelanguages/"
+				UPLOAD: `${PREFIX + InitialConnector.API_VERSION}/translation/texts`,
+				DOWNLOAD: `${PREFIX + InitialConnector.API_VERSION}/translation/texts/`,
+				GET_SOURCELANGUAGE: `${PREFIX + InitialConnector.API_VERSION}/translation/sourcelanguages/`
 			},
-			CONTEXTS: PREFIX + InitialConnector.API_VERSION + "/contexts/"
+			CONTEXTS: `${PREFIX + InitialConnector.API_VERSION}/contexts/`
 		},
 		isLanguageInfoRequired: true,
 		loadFeatures: function(mPropertyBag) {
@@ -163,7 +163,7 @@ sap.ui.define([
 				BusyIndicator.hide();
 				var sMessage = oResourceBundle.getText("MSG_CF_PUBLISH_ERROR", oError ? [oError.message || oError] : undefined);
 				var sTitle = oResourceBundle.getText("HEADER_TRANSPORT_ERROR");
-				Log.error("publish version error" + oError);
+				Log.error(`publish version error${oError}`);
 				MessageBox.show(sMessage, {
 					icon: MessageBox.Icon.ERROR,
 					title: sTitle,

@@ -12,7 +12,7 @@ sap.ui.define([
 						id: sId,
 						viewName: sViewName,
 						actions: [new Press()],
-						errorMessage: "button with id: " + sId + " in view: " + sViewName + " can not be pressed!"
+						errorMessage: `button with id: ${sId} in view: ${sViewName} can not be pressed!`
 					});
 				}
 			},
@@ -38,9 +38,9 @@ sap.ui.define([
 							return bIsPersonalized === bStatus;
 						}],
 						success: function() {
-							Opa5.assert.ok(true, "View: " + sViewName + " , ContronlId: " + sId + " has correct Personalization status");
+							Opa5.assert.ok(true, `View: ${sViewName} , ContronlId: ${sId} has correct Personalization status`);
 						},
-						errorMessage: "View: " + sViewName + " , ContronlId: " + sId + " has incorrect Personalization status"
+						errorMessage: `View: ${sViewName} , ContronlId: ${sId} has incorrect Personalization status`
 					});
 				},
 
@@ -52,9 +52,9 @@ sap.ui.define([
 							return oControl.getText().indexOf(sText) !== -1;
 						}],
 						success: function() {
-							Opa5.assert.ok(true, "Changes have been applied correctly for View: " + sViewName + " , ContronlId: " + sId);
+							Opa5.assert.ok(true, `Changes have been applied correctly for View: ${sViewName} , ContronlId: ${sId}`);
 						},
-						errorMessage: "Changes have not been applied correctly for View: " + sViewName + " , ContronlId: " + sId
+						errorMessage: `Changes have not been applied correctly for View: ${sViewName} , ContronlId: ${sId}`
 					});
 				},
 
@@ -66,9 +66,9 @@ sap.ui.define([
 							return oControl.getText().indexOf("X") === -1;
 						}],
 						success: function() {
-							Opa5.assert.ok(true, "No changes has been applied for View: " + sViewName + " , ContronlId: " + sId);
+							Opa5.assert.ok(true, `No changes has been applied for View: ${sViewName} , ContronlId: ${sId}`);
 						},
-						errorMessage: "Some changes have been applied correctly for View: " + sViewName + " , ContronlId: " + sId
+						errorMessage: `Some changes have been applied correctly for View: ${sViewName} , ContronlId: ${sId}`
 					});
 				}
 			}

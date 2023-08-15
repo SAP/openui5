@@ -209,7 +209,7 @@ sap.ui.define([
 				params: Version.UrlParameter
 			};
 
-			var oUriWithVersionUrlParameter = UriParameters.fromQuery("?" + Version.UrlParameter + "=" + Version.Number.Draft);
+			var oUriWithVersionUrlParameter = UriParameters.fromQuery(`?${Version.UrlParameter}=${Version.Number.Draft}`);
 			sandbox.stub(UriParameters, "fromQuery").returns(oUriWithVersionUrlParameter);
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
@@ -829,13 +829,13 @@ sap.ui.define([
 			oReturn = {};
 			oReturn[sKey] = [sValue];
 		} else {
-			oReturn = "?" + sKey + "=" + sValue;
+			oReturn = `?${sKey}=${sValue}`;
 		}
 		return oReturn;
 	}
 
 	["flp", "standalone"].forEach(function(sScenario) {
-		var sName = sScenario + ": handleParametersOnStart - ";
+		var sName = `${sScenario}: handleParametersOnStart - `;
 		QUnit.module(sName, {
 			beforeEach: function() {
 				this.oReloadInfo = {
@@ -876,7 +876,7 @@ sap.ui.define([
 			});
 		});
 
-		var sName2 = sScenario + ": handleUrlParameters - ";
+		var sName2 = `${sScenario}: handleUrlParameters - `;
 		QUnit.module(sName2, {
 			beforeEach: function() {
 				this.oReloadInfo = {

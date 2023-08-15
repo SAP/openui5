@@ -200,16 +200,16 @@ sap.ui.define([
 	function logApplyChangeError(oError, oChange) {
 		var sChangeType = oChange.getChangeType();
 		var sTargetControlId = oChange.getSelector().id;
-		var fullQualifiedName = oChange.getNamespace() + oChange.getId() + "." + oChange.getFileType();
+		var fullQualifiedName = `${oChange.getNamespace() + oChange.getId()}.${oChange.getFileType()}`;
 
 		var sWarningMessage = "A flexibility change could not be applied.";
 		sWarningMessage += "\nThe displayed UI might not be displayed as intedend.";
 		if (oError.message) {
-			sWarningMessage += "\n   occurred error message: '" + oError.message + "'";
+			sWarningMessage += `\n   occurred error message: '${oError.message}'`;
 		}
-		sWarningMessage += "\n   type of change: '" + sChangeType + "'";
-		sWarningMessage += "\n   LRep location of the change: " + fullQualifiedName;
-		sWarningMessage += "\n   id of targeted control: '" + sTargetControlId + "'.";
+		sWarningMessage += `\n   type of change: '${sChangeType}'`;
+		sWarningMessage += `\n   LRep location of the change: ${fullQualifiedName}`;
+		sWarningMessage += `\n   id of targeted control: '${sTargetControlId}'.`;
 
 		Log.warning(sWarningMessage, undefined, "sap.ui.fl.apply._internal.changes.Applier");
 	}
@@ -414,7 +414,7 @@ sap.ui.define([
 		 */
 		applyAllChangesForXMLView: function(mPropertyBag, aChanges) {
 			if (!Array.isArray(aChanges)) {
-				var sErrorMessage = "No list of changes was passed for processing the flexibility on view: " + mPropertyBag.view + ".";
+				var sErrorMessage = `No list of changes was passed for processing the flexibility on view: ${mPropertyBag.view}.`;
 				Log.error(sErrorMessage, undefined, "sap.ui.fl.apply._internal.changes.Applier");
 				aChanges = [];
 			}

@@ -54,7 +54,7 @@ sap.ui.define([
 				if (oInbound) {
 					changePropertyValueByPath(oChangeContent.entityPropertyChange, oInbound);
 				} else {
-					throw new Error("Nothing to update. Inbound with ID \"" + oChangeContent.inboundId + "\" does not exist.");
+					throw new Error(`Nothing to update. Inbound with ID "${oChangeContent.inboundId}" does not exist.`);
 				}
 			} else {
 				throw new Error("sap.app/crossNavigation or sap.app/crossNavigation/inbounds sections have not been found in manifest.json");

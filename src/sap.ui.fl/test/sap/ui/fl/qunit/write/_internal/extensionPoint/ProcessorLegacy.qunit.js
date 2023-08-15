@@ -84,29 +84,29 @@ sap.ui.define([
 
 		var checkView = function(sView) {
 			var aPanelContent = oView.byId(sView).byId("Panel").getContent();
-			assert.strictEqual(aPanelContent.length, 15, "ExtensionPoint content added to" + sView + " view");
-			assert.strictEqual(aPanelContent[0].getId(), sReference + "---mainView--" + sView + "--button1", "view content is in correct order"); // Main
-			assert.strictEqual(aPanelContent[1].getId(), sReference + "---mainView--" + sView + "--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
-			assert.strictEqual(aPanelContent[2].getId(), sReference + "---mainView--" + sView + "--button2", "view content is in correct order"); // Main
-			assert.strictEqual(aPanelContent[3].getId(), sReference + "---mainView--" + sView + "--button3", "view content is in correct order"); // Main
-			assert.strictEqual(aPanelContent[4].getId(), sReference + "---mainView--" + sView + "--button4", "view content is in correct order"); // Main
-			assert.strictEqual(aPanelContent[5].getId(), sReference + "---mainView--" + sView + "--fragmentWithExtensionPoint1--defaultButton1", "view content is in correct order"); // Main
-			assert.strictEqual(aPanelContent[6].getId(), sReference + "---mainView--" + sView + "--fragmentWithExtensionPoint2--defaultButton1", "view content is in correct order"); // Main
-			assert.strictEqual(aPanelContent[7].getId(), sReference + "---mainView--" + sView + "--fragmentWithExtensionPoint3--customTable"); // Main
-			assert.strictEqual(aPanelContent[8].getId(), sReference + "---mainView--" + sView + "--button5", "view content is in correct order"); // Main
-			assert.strictEqual(aPanelContent[9].getId(), sReference + "---mainView--" + sView + "--EPinEPButton6", "view content is in correct order"); // Main
-			assert.strictEqual(aPanelContent[10].getId(), sReference + "---mainView--" + sView + "--EPinEPButton7", "view content is in correct order"); // Main
-			assert.strictEqual(aPanelContent[11].getId(), sReference + "---mainView--" + sView + "--EPinEPButton8", "view content is in correct order"); // Main
-			assert.strictEqual(aPanelContent[12].getId(), sReference + "---mainView--" + sView + "--EPinEPButton9", "view content is in correct order"); // Main
-			assert.strictEqual(aPanelContent[13].getId(), sReference + "---mainView--" + sView + "--button7", "view content is in correct order"); // Main
-			assert.strictEqual(aPanelContent[14].getId(), sReference + "---mainView--" + sView + "--button8", "view content is in correct order"); // Main
+			assert.strictEqual(aPanelContent.length, 15, `ExtensionPoint content added to${sView} view`);
+			assert.strictEqual(aPanelContent[0].getId(), `${sReference}---mainView--${sView}--button1`, "view content is in correct order"); // Main
+			assert.strictEqual(aPanelContent[1].getId(), `${sReference}---mainView--${sView}--defaultFragment--defaultButton`, "EP2 default content is in correct order"); // EP2
+			assert.strictEqual(aPanelContent[2].getId(), `${sReference}---mainView--${sView}--button2`, "view content is in correct order"); // Main
+			assert.strictEqual(aPanelContent[3].getId(), `${sReference}---mainView--${sView}--button3`, "view content is in correct order"); // Main
+			assert.strictEqual(aPanelContent[4].getId(), `${sReference}---mainView--${sView}--button4`, "view content is in correct order"); // Main
+			assert.strictEqual(aPanelContent[5].getId(), `${sReference}---mainView--${sView}--fragmentWithExtensionPoint1--defaultButton1`, "view content is in correct order"); // Main
+			assert.strictEqual(aPanelContent[6].getId(), `${sReference}---mainView--${sView}--fragmentWithExtensionPoint2--defaultButton1`, "view content is in correct order"); // Main
+			assert.strictEqual(aPanelContent[7].getId(), `${sReference}---mainView--${sView}--fragmentWithExtensionPoint3--customTable`); // Main
+			assert.strictEqual(aPanelContent[8].getId(), `${sReference}---mainView--${sView}--button5`, "view content is in correct order"); // Main
+			assert.strictEqual(aPanelContent[9].getId(), `${sReference}---mainView--${sView}--EPinEPButton6`, "view content is in correct order"); // Main
+			assert.strictEqual(aPanelContent[10].getId(), `${sReference}---mainView--${sView}--EPinEPButton7`, "view content is in correct order"); // Main
+			assert.strictEqual(aPanelContent[11].getId(), `${sReference}---mainView--${sView}--EPinEPButton8`, "view content is in correct order"); // Main
+			assert.strictEqual(aPanelContent[12].getId(), `${sReference}---mainView--${sView}--EPinEPButton9`, "view content is in correct order"); // Main
+			assert.strictEqual(aPanelContent[13].getId(), `${sReference}---mainView--${sView}--button7`, "view content is in correct order"); // Main
+			assert.strictEqual(aPanelContent[14].getId(), `${sReference}---mainView--${sView}--button8`, "view content is in correct order"); // Main
 
 			var aTableItems = oView.byId(sView).byId("fragmentWithExtensionPoint3--customTable").getItems();
 			var aTableCells = aTableItems[0].getCells();
-			assert.strictEqual(aTableCells.length, 1, "ExtensionPoint default content added to" + sView + " view into aggregation binding template");
-			var sTemplatePrefix = sReference + "---mainView--" + sView + "--fragmentWithExtensionPoint3--";
+			assert.strictEqual(aTableCells.length, 1, `ExtensionPoint default content added to${sView} view into aggregation binding template`);
+			var sTemplatePrefix = `${sReference}---mainView--${sView}--fragmentWithExtensionPoint3--`;
 			var sCellPrefix = sTemplatePrefix;
-			assert.strictEqual(aTableCells[0].getId(), sCellPrefix + "customListCellContent" + "-" + sTemplatePrefix + "customTable-0", "table item is in correct order"); // Main
+			assert.strictEqual(aTableCells[0].getId(), `${sCellPrefix}customListCellContent` + `-${sTemplatePrefix}customTable-0`, "table item is in correct order"); // Main
 		};
 
 		var fnAssert = function() {

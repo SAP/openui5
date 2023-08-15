@@ -179,7 +179,7 @@ sap.ui.define([
 			details: "with a manifest JSON",
 			manifest: {"sap.ovp": {}}
 		}].forEach(function(oTestData) {
-			QUnit.test("when loadFlexData is called with a ovp app and " + oTestData.details, function(assert) {
+			QUnit.test(`when loadFlexData is called with a ovp app and ${oTestData.details}`, function(assert) {
 				var mPropertyBag = {
 					manifest: oTestData.manifest,
 					otherValue: "a",

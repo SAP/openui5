@@ -454,7 +454,7 @@ sap.ui.define([
 			_oURLParsingService = aServices[1];
 		})
 		.catch(function(oError) {
-			Log.error("Error getting service from Unified Shell: " + oError.message);
+			Log.error(`Error getting service from Unified Shell: ${oError.message}`);
 		});
 	}
 
@@ -476,7 +476,7 @@ sap.ui.define([
 			_oChangePersistenceFactory = oModule;
 		})
 		.catch(function(oError) {
-			Log.error("Error loading modules: " + oError.message);
+			Log.error(`Error loading modules: ${oError.message}`);
 		});
 	}
 

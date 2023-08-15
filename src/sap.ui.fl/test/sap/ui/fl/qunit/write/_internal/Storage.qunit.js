@@ -148,7 +148,7 @@ sap.ui.define([
 				{connector: "PersonalizationConnector", url: sUrl}
 			]);
 
-			var sExpectedUrl = sUrl + "/changes/";
+			var sExpectedUrl = `${sUrl}/changes/`;
 			var sExpectedMethod = "POST";
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
@@ -183,7 +183,7 @@ sap.ui.define([
 				{connector: "KeyUserConnector", url: sUrl}
 			]);
 
-			var sExpectedWriteUrl = sUrl + "/v2/changes/";
+			var sExpectedWriteUrl = `${sUrl}/v2/changes/`;
 			var sExpectedMethod = "POST";
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
@@ -217,7 +217,7 @@ sap.ui.define([
 				{connector: "KeyUserConnector", url: sUrl}
 			]);
 
-			var sExpectedWriteUrl = sUrl + "/v2/changes/";
+			var sExpectedWriteUrl = `${sUrl}/v2/changes/`;
 			var sExpectedMethod = "POST";
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
@@ -305,7 +305,7 @@ sap.ui.define([
 				{connector: "PersonalizationConnector", url: sUrl2}
 			]);
 
-			var sExpectedUrl = sUrl1 + "/v2/changes/";
+			var sExpectedUrl = `${sUrl1}/v2/changes/`;
 			var sExpectedMethod = "POST";
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
@@ -338,7 +338,7 @@ sap.ui.define([
 				{connector: "PersonalizationConnector", url: sUrl2}
 			]);
 
-			var sExpectedUrl = sUrl1 + "/flex/keyuser/v2/changes/";
+			var sExpectedUrl = `${sUrl1}/flex/keyuser/v2/changes/`;
 			var sExpectedMethod = "POST";
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
@@ -368,12 +368,12 @@ sap.ui.define([
 			aChanges[i] = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.CUSTOMER,
-				fileName: "c" + i.toString(),
+				fileName: `c${i.toString()}`,
 				namespace: "a.name.space",
 				changeType: "labelChange",
 				dependentSelector: aDependentSelectors && aDependentSelectors[i] || {},
 				content: {
-					prop: "some Content " + i
+					prop: `some Content ${i}`
 				}
 			});
 			if (sState === "update") {
@@ -1589,7 +1589,7 @@ sap.ui.define([
 				{connector: "LrepConnector", url: sUrl}
 			]);
 
-			var sExpectedUrl = sUrl + "/changes/";
+			var sExpectedUrl = `${sUrl}/changes/`;
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves([]);

@@ -92,7 +92,7 @@ sap.ui.define([
 		});
 
 		[["readonly", "readonly"], ["writeonly", "complete"], ["complete", "writeonly"]].forEach(function(sDelegateType) {
-			QUnit.test("When try to register the same modelType with with already existing '" + sDelegateType[0] + "' delegate", function(assert) {
+			QUnit.test(`When try to register the same modelType with with already existing '${sDelegateType[0]}' delegate`, function(assert) {
 				this.mPropertyBag.delegateType = sDelegateType[0];
 				DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
 				assert.throws(function() {

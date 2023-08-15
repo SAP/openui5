@@ -76,9 +76,9 @@ sap.ui.define([
 			return oController._onRouteMatched(oRouteParameters).then(function() {
 				assert.equal(oSubbedLRepConGetContent.callCount, 2, "then the Lrep getcontent called twice");
 				assert.equal(oSubbedLRepConGetContent.getCall(0).args[0], sLayer, "first call has correct layer");
-				assert.equal(oSubbedLRepConGetContent.getCall(0).args[1], sNamespace + sFileName + "." + sFileType, "first call has correct suffix");
+				assert.equal(oSubbedLRepConGetContent.getCall(0).args[1], `${sNamespace + sFileName}.${sFileType}`, "first call has correct suffix");
 				assert.equal(oSubbedLRepConGetContent.getCall(1).args[0], sLayer, "second call has correct layer");
-				assert.equal(oSubbedLRepConGetContent.getCall(1).args[1], sNamespace + sFileName + "." + sFileType, "second call has correct suffix");
+				assert.equal(oSubbedLRepConGetContent.getCall(1).args[1], `${sNamespace + sFileName}.${sFileType}`, "second call has correct suffix");
 				assert.equal(oSubbedLRepConGetContent.getCall(1).args[2], true, "second call includes correct third param");
 				assert.ok(oSubbedFormatData.calledOnce, "then format data called one");
 				assert.ok(oSubbedSetData.calledOnce, "and setData to model called");

@@ -31,9 +31,9 @@ sap.ui.define([
 		if (vValue.parts && vValue.formatter) {
 			return vValue.formatter.apply(null, vValue.parts.map(function(oPart) {
 				if (oPart.model) {
-					return "{" + oPart.model + ">" + oPart.path + "}";
+					return `{${oPart.model}>${oPart.path}}`;
 				}
-				return "{" + oPart.path + "}";
+				return `{${oPart.path}}`;
 			}));
 		}
 		return vValue;

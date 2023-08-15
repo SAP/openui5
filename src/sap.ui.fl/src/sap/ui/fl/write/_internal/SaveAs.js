@@ -166,7 +166,7 @@ sap.ui.define([
 
 	function _addPackageAndTransport(oAppVariant, mPropertyBag) {
 		if (!oAppVariant) {
-			throw new Error("App variant with ID: " + mPropertyBag.id + "does not exist");
+			throw new Error(`App variant with ID: ${mPropertyBag.id}does not exist`);
 		}
 
 		mPropertyBag.package = oAppVariant.getPackage();
@@ -266,7 +266,7 @@ sap.ui.define([
 			})
 			.then(function(oAppVariant) {
 				if (!oAppVariant) {
-					throw new Error("App variant with ID: " + mPropertyBag.id + "does not exist");
+					throw new Error(`App variant with ID: ${mPropertyBag.id}does not exist`);
 				}
 
 				oAppVariantClosure = merge({}, oAppVariant);

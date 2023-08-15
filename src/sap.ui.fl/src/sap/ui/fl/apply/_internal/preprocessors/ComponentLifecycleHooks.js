@@ -61,14 +61,13 @@ sap.ui.define([
 			return Promise.resolve(oResult);
 		}
 
-		var sRestartingComponent = window.sessionStorage.getItem("sap.ui.rta.restart." + Layer.CUSTOMER);
+		var sRestartingComponent = window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.CUSTOMER}`);
 		if (sRestartingComponent) {
 			var sComponentId = ManifestUtils.getFlexReferenceForControl(oComponent);
 			if (sRestartingComponent !== sComponentId && sRestartingComponent !== "true") {
-				Log.error("an application component was started " +
-					"which does not match the component for which the restart was triggered:\n" +
-					"Triggering component: " + sRestartingComponent + "\n" +
-					"Started component: " + sComponentId);
+				Log.error(`an application component was started which does not match the component for which the restart was triggered:
+					Triggering component: ${sRestartingComponent}
+					Started component: ${sComponentId}`);
 
 				return Promise.resolve(oResult);
 			}
@@ -101,7 +100,12 @@ sap.ui.define([
 		var oVariantModel;
 		return oFlexController._oChangePersistence.loadChangesMapForComponent(oAppComponent)
 		.then(function(fnGetChangesMap) {
-			var fnPropagationListener = ChangesApplier.applyAllChangesForControl.bind(ChangesApplier, fnGetChangesMap, oAppComponent, oFlexController);
+			var fnPropagationListener = ChangesApplier.applyAllChangesForControl.bind(
+				ChangesApplier,
+				fnGetChangesMap,
+				oAppComponent,
+				oFlexController
+			);
 			fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
 			oAppComponent.addPropagationListener(fnPropagationListener);
 			oVariantModel = ComponentLifecycleHooks._createVariantModel(oFlexController, oAppComponent);
@@ -118,7 +122,8 @@ sap.ui.define([
 
 	function getChangesAndPropagate(oComponent, vConfig) {
 		// if component's manifest is of type 'application' then only a flex controller and change persistence instances are created.
-		// if component's manifest is of type 'component' then no flex controller and change persistence instances are created. The variant model is fetched from the outer app component and applied on this component type.
+		// if component's manifest is of type 'component' then no flex controller and change persistence instances are created.
+		// The variant model is fetched from the outer app component and applied on this component type.
 		if (Utils.isApplicationComponent(oComponent)) {
 			var sComponentId = oComponent.getId();
 			// TODO: remove this line when the maps and filtered response are always up to data
@@ -172,7 +177,8 @@ sap.ui.define([
 		});
 
 		// manifest descriptor changes for ABAP mixed mode can only be applied in this hook,
-		// because at this point all libs have been loaded (in contrast to the first Component._fnPreprocessManifest hook), but the manifest is still adaptable
+		// because at this point all libs have been loaded (in contrast to the first Component._fnPreprocessManifest hook),
+		// but the manifest is still adaptable
 		return AppDescriptorApplier.applyChangesIncludedInManifest(oManifest, ApplyStrategyFactory.getRuntimeStrategy());
 	}
 

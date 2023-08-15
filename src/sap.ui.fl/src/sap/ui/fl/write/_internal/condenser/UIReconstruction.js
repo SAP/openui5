@@ -361,7 +361,7 @@ sap.ui.define([
 			}
 
 			if (!bCorrectSortingFound) {
-				throw Error("no correct sorting found for the container: " + sContainerKey);
+				throw Error(`no correct sorting found for the container: ${sContainerKey}`);
 			}
 
 			aCondenserInfos = aCondenserInfos.filter(function(oCondenserInfo) {

@@ -125,14 +125,14 @@ sap.ui.define([
 
 			var oDOMParser = new DOMParser();
 			var oXmlString =
-					'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns="sap.m">' +
-						'<layout:VerticalLayout id="' + this.oLayout.getId() + '">' +
-							"<layout:content>" +
-								'<Button id="' + this.oButton.getId() + '"' + ' text="Initial Text"' + ">" +
-								"</Button>" +
-							"</layout:content>" +
-						"</layout:VerticalLayout>" +
-					"</mvc:View>";
+					`<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns="sap.m">` +
+						`<layout:VerticalLayout id="${this.oLayout.getId()}">` +
+							`<layout:content>` +
+								`<Button id="${this.oButton.getId()}"` + ` text="Initial Text"` + `>` +
+								`</Button>` +
+							`</layout:content>` +
+						`</layout:VerticalLayout>` +
+					`</mvc:View>`;
 
 			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
 			this.oXmlView = oXmlDocument.documentElement;
@@ -163,14 +163,14 @@ sap.ui.define([
 
 			var oDOMParser = new DOMParser();
 			var oXmlString =
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns="sap.m">' +
-					'<layout:VerticalLayout id="' + this.oLayout.getId() + '">' +
-						"<layout:content>" +
-							'<Button id="' + this.oButton.getId() + '"' + ' text="{/text}"' + ">" +
-							"</Button>" +
-						"</layout:content>" +
-					"</layout:VerticalLayout>" +
-				"</mvc:View>";
+				`<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns="sap.m">` +
+					`<layout:VerticalLayout id="${this.oLayout.getId()}">` +
+						`<layout:content>` +
+							`<Button id="${this.oButton.getId()}"` + ` text="{/text}"` + `>` +
+							`</Button>` +
+						`</layout:content>` +
+					`</layout:VerticalLayout>` +
+				`</mvc:View>`;
 
 			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
 			this.oXmlView = oXmlDocument.documentElement;

@@ -652,7 +652,7 @@ sap.ui.define([
 	QUnit.module("Calling the Storage: Given Versions.discardDraft is called", {
 		before: function() {
 			this.reference = "com.sap.app";
-			this.nonNormalizedReference = this.reference + ".Component";
+			this.nonNormalizedReference = `${this.reference}.Component`;
 			this.sComponentId = "sComponentId";
 			this.oAppComponent = {
 				getManifest: function() {

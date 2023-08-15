@@ -127,7 +127,7 @@ sap.ui.define([
 		 * @public
 		 */
 		formatItemTitle: function(mModelData) {
-			return mModelData.namespace + mModelData.fileName + "." + mModelData.fileType;
+			return `${mModelData.namespace + mModelData.fileName}.${mModelData.fileType}`;
 		},
 
 		/**

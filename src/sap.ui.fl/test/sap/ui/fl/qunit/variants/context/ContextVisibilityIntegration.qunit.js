@@ -36,20 +36,20 @@ sap.ui.define([
 	}
 
 	function setInitialControls() {
-		this.oVisibilityPanel = oCore.byId(sCompName + "visibilityPanel");
-		this.oVisibilityMessageStrip = oCore.byId(sCompName + "visibilityMessageStrip");
-		this.oSelectedRolesList = oCore.byId(sCompName + "selectedContextsList");
-		this.oAddBtn = oCore.byId(sCompName + "addContextsButton");
-		this.oRemoveAllBtn = oCore.byId(sCompName + "removeAllButton");
+		this.oVisibilityPanel = oCore.byId(`${sCompName}visibilityPanel`);
+		this.oVisibilityMessageStrip = oCore.byId(`${sCompName}visibilityMessageStrip`);
+		this.oSelectedRolesList = oCore.byId(`${sCompName}selectedContextsList`);
+		this.oAddBtn = oCore.byId(`${sCompName}addContextsButton`);
+		this.oRemoveAllBtn = oCore.byId(`${sCompName}removeAllButton`);
 	}
 
 	function setTableSelectDialogControls() {
-		this.oSelectDialog = oCore.byId(sCompName + "selectContexts");
-		this.oDialog = oCore.byId(sCompName + "selectContexts-dialog");
-		this.oSearchField = oCore.byId(sCompName + "selectContexts-searchField");
-		this.oList = oCore.byId(sCompName + "selectContexts-list");
-		this.oConfirmBtn = oCore.byId(sCompName + "selectContexts-ok");
-		this.oMoreListItem = oCore.byId(sCompName + "selectContexts-list-trigger");
+		this.oSelectDialog = oCore.byId(`${sCompName}selectContexts`);
+		this.oDialog = oCore.byId(`${sCompName}selectContexts-dialog`);
+		this.oSearchField = oCore.byId(`${sCompName}selectContexts-searchField`);
+		this.oList = oCore.byId(`${sCompName}selectContexts-list`);
+		this.oConfirmBtn = oCore.byId(`${sCompName}selectContexts-ok`);
+		this.oMoreListItem = oCore.byId(`${sCompName}selectContexts-list-trigger`);
 	}
 
 	function hookAsyncEventHandler(oStub, fnCallback) {

@@ -147,7 +147,7 @@ sap.ui.define([
 				oRouter.navTo("ContentDetails", mRouteParameters);
 			} else {
 				// navigation to a namespace
-				this.sNamespace += sContentName + "/";
+				this.sNamespace += `${sContentName}/`;
 				oRouter.navTo("LayerContentMaster", {layer: this.sLayer, namespace: encodeURIComponent(this.sNamespace)});
 			}
 		},
@@ -177,16 +177,16 @@ sap.ui.define([
 		 */
 		_shortenNamespace: function() {
 			if (!this.sNamespace || this.sNamespace === "/") {
-				return "[" + this.sLayer + "] /";
+				return `[${this.sLayer}] /`;
 			}
 
 			var aSplittedNamespace = this.sNamespace.split("/");
 			var sNamespaceDepth = aSplittedNamespace.length;
 			if (sNamespaceDepth > 2) {
-				return "[" + this.sLayer + "] .../" + aSplittedNamespace[sNamespaceDepth - 2];
+				return `[${this.sLayer}] .../${aSplittedNamespace[sNamespaceDepth - 2]}`;
 			}
 
-			return "[" + this.sLayer + "] /" + this.sNamespace[sNamespaceDepth - 1];
+			return `[${this.sLayer}] /${this.sNamespace[sNamespaceDepth - 1]}`;
 		},
 
 		/**

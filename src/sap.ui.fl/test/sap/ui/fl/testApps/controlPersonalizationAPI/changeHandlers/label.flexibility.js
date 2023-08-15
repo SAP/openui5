@@ -11,7 +11,7 @@ sap.ui.define([
 		changeLabel: {
 			changeHandler: {
 				applyChange: function(oChange, oControl) {
-					oControl.setText(oControl.getText() + " X");
+					oControl.setText(`${oControl.getText()} X`);
 				},
 				completeChangeContent: function() {
 				},

@@ -204,7 +204,7 @@ sap.ui.define([
 				ABAPAccess.isServiceOutdated(mService);
 				assert.propEqual(oStub.lastCall.args[0], mService, "the function was called with the correct parameters");
 			} catch (oError) {
-				assert.ok(false, "Should not run into fail branch. Error" + oError);
+				assert.ok(false, `Should not run into fail branch. Error${oError}`);
 			}
 		});
 
@@ -219,7 +219,7 @@ sap.ui.define([
 				ABAPAccess.setServiceValid(mService);
 				assert.propEqual(oStub.lastCall.args[0], mService, "the function was called with the correct parameters");
 			} catch (oError) {
-				assert.ok(false, "Should not run into fail branch. Error" + oError);
+				assert.ok(false, `Should not run into fail branch. Error${oError}`);
 			}
 		});
 
@@ -234,7 +234,7 @@ sap.ui.define([
 				ABAPAccess.setServiceInvalid(mService);
 				assert.propEqual(oStub.lastCall.args[0], mService, "the function was called with the correct parameters");
 			} catch (oError) {
-				assert.ok(false, "Should not run into fail branch. Error" + oError);
+				assert.ok(false, `Should not run into fail branch. Error${oError}`);
 			}
 		});
 	});

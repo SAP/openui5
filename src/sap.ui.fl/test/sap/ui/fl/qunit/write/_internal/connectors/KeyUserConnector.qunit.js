@@ -505,7 +505,7 @@ sap.ui.define([
 				version: sActivateVersion
 			};
 
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v2/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
+			var sExpectedUrl = `/flexKeyuser/flex/keyuser/v2/versions/activate/com.sap.test.app?version=${sActivateVersion}&sap-language=en`;
 			var mExpectedPropertyBag = Object.assign({
 				initialConnector: InitialConnector,
 				tokenUrl: KeyUserConnector.ROUTES.TOKEN,
@@ -536,7 +536,7 @@ sap.ui.define([
 				version: sActivateVersion
 			};
 
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v2/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
+			var sExpectedUrl = `/flexKeyuser/flex/keyuser/v2/versions/activate/com.sap.test.app?version=${sActivateVersion}&sap-language=en`;
 			var mExpectedPropertyBag = Object.assign({
 				initialConnector: InitialConnector,
 				tokenUrl: KeyUserConnector.ROUTES.TOKEN,
@@ -567,7 +567,7 @@ sap.ui.define([
 				version: sActivateVersion
 			};
 
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v2/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
+			var sExpectedUrl = `/flexKeyuser/flex/keyuser/v2/versions/activate/com.sap.test.app?version=${sActivateVersion}&sap-language=en`;
 			var mExpectedPropertyBag = Object.assign({
 				initialConnector: InitialConnector,
 				tokenUrl: KeyUserConnector.ROUTES.TOKEN,

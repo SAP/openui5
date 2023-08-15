@@ -52,7 +52,7 @@ sap.ui.define([
 		}
 	}, function() {
 		aFunctionNames.forEach(function(sFunctionName) {
-			var sText = "when the function " + sFunctionName + " is called";
+			var sText = `when the function ${sFunctionName} is called`;
 			QUnit.test(sText, function(assert) {
 				return FieldExtensibility[sFunctionName]().then(function() {
 					assert.ok(true, "the function returns a promise");
@@ -83,7 +83,7 @@ sap.ui.define([
 		}
 	}, function() {
 		aFunctionNames.forEach(function(sFunctionName) {
-			var sText = "when the function " + sFunctionName + " is called";
+			var sText = `when the function ${sFunctionName} is called`;
 			QUnit.test(sText, function(assert) {
 				return FieldExtensibility[sFunctionName]().then(function() {
 					assert.ok(true, "the function returns a promise");

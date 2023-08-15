@@ -203,7 +203,7 @@ sap.ui.define([
 	 * @returns {string} Returns the key for the Custom Data
 	 */
 	FlexCustomData._getCustomDataKey = function(oChange, sIdentifier) {
-		return sIdentifier + "." + oChange.getId();
+		return `${sIdentifier}.${oChange.getId()}`;
 	};
 
 	return FlexCustomData;

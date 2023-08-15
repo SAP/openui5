@@ -95,7 +95,7 @@ sap.ui.define([
 
 			// If any of the following properties are available in mPropertyBag we append them to the Url
 			if (mPropertyBag.cacheKey) {
-				sUrl += "~" + mPropertyBag.cacheKey + "~/";
+				sUrl += `~${mPropertyBag.cacheKey}~/`;
 			}
 			if (mPropertyBag.reference) {
 				sUrl += mPropertyBag.reference;
@@ -113,7 +113,7 @@ sap.ui.define([
 				var sQueryParameters = encodeURLParameters(mParameters);
 
 				if (sQueryParameters.length > 0) {
-					sUrl += "?" + sQueryParameters;
+					sUrl += `?${sQueryParameters}`;
 				}
 			}
 			return sUrl;
@@ -206,7 +206,7 @@ sap.ui.define([
 							var oResponse = typeof xhr.response === "string" ? JSON.parse(xhr.response) : xhr.response;
 							if (Array.isArray(oResponse.messages) && oResponse.messages.length) {
 								sErrorMessage = oResponse.messages.reduce(function(sConcatenatedMessage, oErrorResponse) {
-									return sConcatenatedMessage.concat(oErrorResponse.severity === "Error" ? oErrorResponse.text + "\n" : "");
+									return sConcatenatedMessage.concat(oErrorResponse.severity === "Error" ? `${oErrorResponse.text}\n` : "");
 								}, sErrorMessage);
 							}
 						} catch (e) {

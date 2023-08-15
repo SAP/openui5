@@ -28,7 +28,7 @@ sap.ui.define([
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
 				iOpenMyView: function(sFlVMId) {
-					return Actions.iPressButtonWithID.call(this, sFlVMId + "-vm-trigger");
+					return Actions.iPressButtonWithID.call(this, `${sFlVMId}-vm-trigger`);
 				},
 
 				/**
@@ -39,7 +39,7 @@ sap.ui.define([
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
 				iOpenSaveView: function(sFlVMId) {
-					return Actions.iPressButtonWithID.call(this, sFlVMId + "-vm-saveas");
+					return Actions.iPressButtonWithID.call(this, `${sFlVMId}-vm-saveas`);
 				},
 
 				/**
@@ -50,7 +50,7 @@ sap.ui.define([
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
 				iOpenManageViews: function(sFlVMId) {
-					return Actions.iPressButtonWithID.call(this, sFlVMId + "-vm-manage");
+					return Actions.iPressButtonWithID.call(this, `${sFlVMId}-vm-manage`);
 				},
 
 				/**
@@ -61,7 +61,7 @@ sap.ui.define([
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
 				iPressTheManageViewsSave: function(sFlVMId) {
-					return Actions.iPressButtonWithID.call(this, sFlVMId + "-vm-managementsave");
+					return Actions.iPressButtonWithID.call(this, `${sFlVMId}-vm-managementsave`);
 				},
 
 				/**
@@ -72,7 +72,7 @@ sap.ui.define([
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
 				iPressTheManageViewsCancel: function(sFlVMId) {
-					return Actions.iPressButtonWithID.call(this, sFlVMId + "-vm-managementcancel");
+					return Actions.iPressButtonWithID.call(this, `${sFlVMId}-vm-managementcancel`);
 				},
 
 				/**
@@ -188,7 +188,7 @@ sap.ui.define([
 				 * @public
 				 */
 				theOpenSaveViewDialog: function(sFlVMId) {
-					return Assertions.theOpenDialog.call(this, sFlVMId + "-vm-savedialog");
+					return Assertions.theOpenDialog.call(this, `${sFlVMId}-vm-savedialog`);
 				},
 
 				/**
@@ -199,7 +199,7 @@ sap.ui.define([
 				 * @public
 				 */
 				theOpenManageViewsDialog: function(sFlVMId) {
-					return Assertions.theOpenDialog.call(this, sFlVMId + "-vm-managementdialog");
+					return Assertions.theOpenDialog.call(this, `${sFlVMId}-vm-managementdialog`);
 				},
 
 				/**

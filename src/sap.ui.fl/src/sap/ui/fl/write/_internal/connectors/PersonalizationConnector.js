@@ -34,8 +34,8 @@ sap.ui.define([
 		layers: InitialConnector.layers,
 
 		ROUTES: {
-			CHANGES: PREFIX + API_VERSION + "/changes/",
-			TOKEN: PREFIX + API_VERSION + "/actions/getcsrftoken"
+			CHANGES: `${PREFIX + API_VERSION}/changes/`,
+			TOKEN: `${PREFIX + API_VERSION}/actions/getcsrftoken`
 		},
 
 		/**

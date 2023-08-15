@@ -402,12 +402,12 @@ sap.ui.define([
 
 		Object.keys(mParameters).forEach(function(sName) {
 			if (sName) {
-				var sValue = "'" + encodeURL(mParameters[sName] || "") + "'";
-				aUrlParameters.push(encodeURL(sName) + "=" + sValue);
+				var sValue = `'${encodeURL(mParameters[sName] || "")}'`;
+				aUrlParameters.push(`${encodeURL(sName)}=${sValue}`);
 			}
 		});
 
-		return aUrlParameters.length === 0 ? "" : "?" + aUrlParameters.join("&");
+		return aUrlParameters.length === 0 ? "" : `?${aUrlParameters.join("&")}`;
 	};
 
 	/**

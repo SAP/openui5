@@ -174,7 +174,7 @@ sap.ui.define([
 					// Check if the change is applicable
 					if (mPropertyBag.modifier.bySelector(mFieldSelector, oAppComponent, mPropertyBag.view)) {
 						return Base.markAsNotApplicable(
-							"Control to be created already exists:" + (mFieldSelector.id || mFieldSelector),
+							`Control to be created already exists:${mFieldSelector.id || mFieldSelector}`,
 							/* bAsync */true
 						);
 					}

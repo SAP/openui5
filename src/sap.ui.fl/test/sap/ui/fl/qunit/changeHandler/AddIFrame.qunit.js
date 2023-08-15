@@ -84,14 +84,14 @@ sap.ui.define([
 		}
 	}, function() {
 		["targetAggregation", "baseId", "url"].forEach(function(sRequiredProperty) {
-			QUnit.test("When calling 'completeChangeContent' without '" + sRequiredProperty + "'", function(assert) {
+			QUnit.test(`When calling 'completeChangeContent' without '${sRequiredProperty}'`, function(assert) {
 				delete this.mChangeSpecificContent[sRequiredProperty];
 				assert.throws(
 					function() {
 						this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
 					},
-					Error("Attribute missing from the change specific content '" + sRequiredProperty + "'"),
-					"without " + sRequiredProperty + " 'completeChangeContent' throws an error"
+					Error(`Attribute missing from the change specific content '${sRequiredProperty}'`),
+					`without ${sRequiredProperty} 'completeChangeContent' throws an error`
 				);
 			});
 		});
@@ -195,7 +195,7 @@ sap.ui.define([
 			.catch(function(vError) {
 				assert.equal(
 					vError.message,
-					"The given Aggregation is not available in the given control: " + this.oHBox.getId(),
+					`The given Aggregation is not available in the given control: ${this.oHBox.getId()}`,
 					"then apply change throws an error");
 			}.bind(this));
 		});
@@ -246,13 +246,13 @@ sap.ui.define([
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 				this.oXmlString =
-					'<mvc:View id="testComponentAsync---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
-					'<HBox id="' + this.sHBoxId + '">' +
-					"<items>" +
-					"<Button />" +
-					"</items>" +
-					"</HBox>" +
-					"</mvc:View>";
+					`<mvc:View id="testComponentAsync---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">` +
+					`<HBox id="${this.sHBoxId}">` +
+					`<items>` +
+					`<Button />` +
+					`</items>` +
+					`</HBox>` +
+					`</mvc:View>`;
 				this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
 				this.oHBox = this.oXmlView.childNodes[0];
 
@@ -300,7 +300,7 @@ sap.ui.define([
 			.catch(function(vError) {
 				assert.equal(
 					vError.message,
-					"The given Aggregation is not available in the given control: " + this.oHBox.id,
+					`The given Aggregation is not available in the given control: ${this.oHBox.id}`,
 					"then apply change throws an error");
 			}.bind(this));
 		});

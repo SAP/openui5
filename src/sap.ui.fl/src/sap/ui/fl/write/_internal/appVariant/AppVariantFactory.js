@@ -53,7 +53,7 @@ sap.ui.define([
 	 */
 	AppVariantFactory.load = function(mPropertyBag) {
 		if (mPropertyBag.id === undefined || typeof mPropertyBag.id !== "string") {
-			throw new Error("Parameter " + mPropertyBag.id + " must be provided of type string");
+			throw new Error(`Parameter ${mPropertyBag.id} must be provided of type string`);
 		}
 
 		return _getAppVariant({

@@ -65,8 +65,8 @@ sap.ui.define([
 			);
 
 			["data", "name", "object"].forEach(function(sName) {
-				this["set" + capitalize(sName)] = function() {
-					throw new Error("sap.ui.fl.util.ManagedObjectModel: Can't change the value of `" + sName + "` after the object is initialized. Please recreate the object with correct values in the constructor.");
+				this[`set${capitalize(sName)}`] = function() {
+					throw new Error(`sap.ui.fl.util.ManagedObjectModel: Can't change the value of \`${sName}\` after the object is initialized. Please recreate the object with correct values in the constructor.`);
 				};
 			}, this);
 		}

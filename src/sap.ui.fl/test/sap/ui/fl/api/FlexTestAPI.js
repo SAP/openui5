@@ -142,7 +142,7 @@ sap.ui.define([
 				return;
 			}
 			var oFlexObject = JSON.parse(oStorage.getItem(sKey));
-			if (oFlexObject.reference === sReference || oFlexObject.reference + ".Component" === sReference) {
+			if (oFlexObject.reference === sReference || `${oFlexObject.reference}.Component` === sReference) {
 				iCount++;
 			}
 		});

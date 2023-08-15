@@ -354,7 +354,7 @@ sap.ui.define([
 			} else if (oTransports.errorCode) {
 				this.getButtons()[1].setEnabled(false);
 				this._oPackage.setValueState(ValueState.Error);
-				this._oPackage.setValueStateText(this._oResources.getText("TRANSPORT_DIALOG_" + oTransports.errorCode));
+				this._oPackage.setValueStateText(this._oResources.getText(`TRANSPORT_DIALOG_${oTransports.errorCode}`));
 				this._setTransports(oTransports);
 			} else {
 				MessageToast.show(this._oResources.getText("TRANSPORT_DIALOG_NO_TRANSPORTS"));

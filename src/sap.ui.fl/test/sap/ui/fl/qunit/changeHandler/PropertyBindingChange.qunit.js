@@ -65,7 +65,7 @@ sap.ui.define([
 			this.oButton.setModel(oNamedModel, "namedModel");
 
 			var oDOMParser = new DOMParser();
-			var sXML = "<Input xmlns='sap.m' showValueHelp=\"" + this.OLD_BOOLEAN_VALUE + "\" value=\"" + this.OLD_VALUE_BINDING + "\" enabled=\"true\" />";
+			var sXML = `<Input xmlns='sap.m' showValueHelp="${this.OLD_BOOLEAN_VALUE}" value="${this.OLD_VALUE_BINDING}" enabled="true" />`;
 			var oXmlDocument = oDOMParser.parseFromString(sXML, "application/xml");
 			this.oXmlInput = oXmlDocument.childNodes[0];
 

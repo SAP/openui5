@@ -255,7 +255,7 @@ sap.ui.define([
 				setUShellService("ShellNavigation", aServices[3]);
 			})
 			.catch(function(vError) {
-				throw new Error("Error getting service from Unified Shell: " + vError);
+				throw new Error(`Error getting service from Unified Shell: ${vError}`);
 			});
 		}
 	}

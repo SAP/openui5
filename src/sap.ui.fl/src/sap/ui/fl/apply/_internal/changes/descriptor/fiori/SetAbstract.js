@@ -40,7 +40,7 @@ sap.ui.define([
 			}
 
 			if (oChange.getContent().abstract !== false) {
-				throw new Error("The current change value of property abstract is '" + oChange.getContent().abstract + "'. Only allowed value for property abstract is boolean 'false'");
+				throw new Error(`The current change value of property abstract is '${oChange.getContent().abstract}'. Only allowed value for property abstract is boolean 'false'`);
 			}
 
 			ObjectPath.set(["sap.fiori", "abstract"], oChange.getContent().abstract, oManifest);

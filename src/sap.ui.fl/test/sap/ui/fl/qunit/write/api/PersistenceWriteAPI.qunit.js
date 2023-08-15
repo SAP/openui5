@@ -117,7 +117,7 @@ sap.ui.define([
 
 			this.oUIChange = FlexObjectFactory.createFromFileContent(this.oUIChangeSpecificData);
 
-			window.sessionStorage.removeItem("sap.ui.fl.info." + this.oAppComponent.getId());
+			window.sessionStorage.removeItem(`sap.ui.fl.info.${this.oAppComponent.getId()}`);
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -250,7 +250,7 @@ sap.ui.define([
 
 				return PersistenceWriteAPI.hasHigherLayerChanges(mPropertyBag)
 				.then(function(bHasHigherLayerChanges) {
-					assert.strictEqual(bHasHigherLayerChanges, testSetup.expectedResult, "it resolves with " + testSetup.expectedResult);
+					assert.strictEqual(bHasHigherLayerChanges, testSetup.expectedResult, `it resolves with ${testSetup.expectedResult}`);
 				});
 			});
 		});
@@ -492,7 +492,7 @@ sap.ui.define([
 					};
 				},
 				store: function() {
-					return "storeWasCalled" + i++;
+					return `storeWasCalled${i++}`;
 				}
 			};
 			var aChanges = [oChange, oChange];
@@ -964,7 +964,7 @@ sap.ui.define([
 				isResetEnabled: true,
 				isPublishEnabled: false
 			};
-			window.sessionStorage.setItem("sap.ui.fl.info." + sReference, JSON.stringify(oFlexInfoResponse));
+			window.sessionStorage.setItem(`sap.ui.fl.info.${sReference}`, JSON.stringify(oFlexInfoResponse));
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 
 			var oFlexInfo = PersistenceWriteAPI.getResetAndPublishInfoFromSession(this.vSelector);

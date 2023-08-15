@@ -47,7 +47,7 @@ sap.ui.define([
 		.then(oModifier.findAggregation.bind(oModifier, oControl, sAggregationName))
 		.then(function(oAggregationDefinition) {
 			if (!oAggregationDefinition) {
-				throw new Error("The given Aggregation is not available in the given control: " + oModifier.getId(oControl));
+				throw new Error(`The given Aggregation is not available in the given control: ${oModifier.getId(oControl)}`);
 			}
 			return getTargetAggregationIndex(oChange, oControl, mPropertyBag);
 		})
@@ -98,7 +98,7 @@ sap.ui.define([
 		// Required settings
 		["targetAggregation", "baseId", "url"].forEach(function(sRequiredProperty) {
 			if (!Object.hasOwn(oSpecificChangeInfo.content, sRequiredProperty)) {
-				throw new Error("Attribute missing from the change specific content '" + sRequiredProperty + "'");
+				throw new Error(`Attribute missing from the change specific content '${sRequiredProperty}'`);
 			}
 		});
 		var oContent = Object.assign({}, oSpecificChangeInfo.content);

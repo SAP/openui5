@@ -180,7 +180,7 @@ sap.ui.define([
 				assert.strictEqual(mResult.statusCode, 400, "Status code");
 				done();
 			}).catch(function(oError) {
-				assert.ok(false, "Should not run into fail branch. Error" + oError);
+				assert.ok(false, `Should not run into fail branch. Error${oError}`);
 			});
 		});
 
@@ -204,7 +204,7 @@ sap.ui.define([
 				assert.deepEqual(mResult.result, oResponse.d, "Error messages");
 				done();
 			}).catch(function(oError) {
-				assert.ok(false, "Should not run into fail branch. Error" + oError);
+				assert.ok(false, `Should not run into fail branch. Error${oError}`);
 			});
 		});
 	});

@@ -364,7 +364,7 @@ sap.ui.define([
 		createDefaultFileName: function(sNameAddition) {
 			var sFileName = uid().replace(/-/g, "_");
 			if (sNameAddition) {
-				sFileName += "_" + sNameAddition;
+				sFileName += `_${sNameAddition}`;
 			}
 			return sFileName;
 		},
@@ -375,7 +375,7 @@ sap.ui.define([
 				sSubfolder = "variants";
 			}
 			var sReferenceName = oPropertyBag.reference.replace(".Component", "");
-			var sNamespace = "apps/" + sReferenceName + "/" + sSubfolder + "/";
+			var sNamespace = `apps/${sReferenceName}/${sSubfolder}/`;
 			return sNamespace;
 		},
 
@@ -402,26 +402,26 @@ sap.ui.define([
 						oError.message += "in a versioned app variant scenario you additionally need a project ID";
 						throw oError;
 					}
-					sRootNamespace += sBaseId + "/appVariants/" + sProjectId + "/";
+					sRootNamespace += `${sBaseId}/appVariants/${sProjectId}/`;
 					break;
 				case Scenario.AppVariant:
 					if (!sProjectId) {
 						oError.message += "in an app variant scenario you additionally need a project ID";
 						throw oError;
 					}
-					sRootNamespace += sBaseId + "/appVariants/" + sProjectId + "/";
+					sRootNamespace += `${sBaseId}/appVariants/${sProjectId}/`;
 					break;
 				case Scenario.AdaptationProject:
 					if (!sProjectId) {
 						oError.message += "in a adaptation project scenario you additionally need a project ID";
 						throw oError;
 					}
-					sRootNamespace += sBaseId + "/adapt/" + sProjectId + "/";
+					sRootNamespace += `${sBaseId}/adapt/${sProjectId}/`;
 					break;
 				case Scenario.FioriElementsFromScratch:
 				case Scenario.UiAdaptation:
 				default:
-					sRootNamespace += sBaseId + "/";
+					sRootNamespace += `${sBaseId}/`;
 			}
 
 			return sRootNamespace;
@@ -542,7 +542,7 @@ sap.ui.define([
 				})
 				.catch(function(e) {
 					var sErrorMessage = "Error during execPromiseQueueSequentially processing occurred";
-					sErrorMessage += e ? ": " + e.message : "";
+					sErrorMessage += e ? `: ${e.message}` : "";
 					Log.error(sErrorMessage, e);
 
 					if (bThrowError) {
@@ -672,14 +672,14 @@ sap.ui.define([
 					sParameters = sParameters.substr(1, sParameters.length);
 				}
 				var aFilterUrl = sParameters.split("&").filter(function(sParameter) {
-					return sParameter !== sParameterName + "=" + sParameterValue;
+					return sParameter !== `${sParameterName}=${sParameterValue}`;
 				});
 				sParameters = "";
 				if (aFilterUrl.length > 0) {
-					sParameters = "?" + aFilterUrl.join("&");
+					sParameters = `?${aFilterUrl.join("&")}`;
 				}
 			} else {
-				sParameters += (sParameters.length > 0 ? "&" : "?") + sParameterName + "=" + sParameterValue;
+				sParameters += `${(sParameters.length > 0 ? "&" : "?") + sParameterName}=${sParameterValue}`;
 			}
 			return sParameters;
 		},

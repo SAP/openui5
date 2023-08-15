@@ -65,15 +65,16 @@ function(
 			return Promise.reject(new Error("Change format invalid - moveElements element has no id attribute"));
 		}
 		if (typeof mMovedElement.targetIndex !== "number") {
-			return Promise.reject(new Error("Missing targetIndex for element with id '" + mMovedElement.selector.id
-					+ "' in movedElements supplied"));
+			return Promise.reject(new Error(
+				`Missing targetIndex for element with id '${mMovedElement.selector.id}' in movedElements supplied`
+			));
 		}
 
 		return Promise.resolve()
 		.then(oModifier.bySelector.bind(oModifier, mMovedElement.selector || mMovedElement.id, oAppComponent, oView))
 		.then(function(oControl) {
 			if (!oControl) {
-				return Promise.reject(new Error("Control to move was not found. Id: '" + mMovedElement.selector.id + "'"));
+				return Promise.reject(new Error(`Control to move was not found. Id: '${mMovedElement.selector.id}'`));
 			}
 			return oControl;
 		});
@@ -209,8 +210,8 @@ function(
 						iInsertIndex = mMovedElement.targetIndex;
 						if (iSourceIndex > -1) {
 							// if iIndex === iInsertIndex and source===target the operation was already performed (e.g. drag&drop in RTA)
-							// in this case we need the sourceIndex and sourceParent that is saved in the change in order to revert it to the correct index
-							// and we can't use the current aggregations/parents
+							// in this case we need the sourceIndex and sourceParent that is saved in the change in order to revert it
+							// to the correct index and we can't use the current aggregations/parents
 							if (
 								iSourceIndex === iInsertIndex
 										&& sSourceAggregation === sTargetAggregation
@@ -237,8 +238,20 @@ function(
 						}
 						if (!bChangeAlreadyPerformed) {
 							return Promise.resolve()
-							.then(oModifier.removeAggregation.bind(oModifier, oSourceParent, sSourceAggregation, oMovedElement))
-							.then(oModifier.insertAggregation.bind(oModifier, oTargetParent, sTargetAggregation, oMovedElement, iInsertIndex, oView));
+							.then(oModifier.removeAggregation.bind(
+								oModifier,
+								oSourceParent,
+								sSourceAggregation,
+								oMovedElement
+							))
+							.then(oModifier.insertAggregation.bind(
+								oModifier,
+								oTargetParent,
+								sTargetAggregation,
+								oMovedElement,
+								iInsertIndex,
+								oView
+							));
 						}
 						return Promise.resolve();
 					});
