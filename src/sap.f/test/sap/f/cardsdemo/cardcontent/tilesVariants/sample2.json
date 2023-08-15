@@ -32,12 +32,12 @@
 			},
 			"title": "Top 5 products sales",
 			"subTitle": "By average price",
+			"icon": {
+				"src": "sap-icon://line-charts"
+			},
 			"unitOfMeasurement": "EUR",
 			"mainIndicator": {
-				"number": "{number}",
-				"unit": "{unit}",
-				"trend": "{trend}",
-				"state": "{state}"
+				"number": "1762"
 			},
 			"sideIndicators": [
 				{

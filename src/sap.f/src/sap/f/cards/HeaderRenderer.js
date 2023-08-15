@@ -71,7 +71,7 @@ sap.ui.define([
 		}
 
 		if (!bUseTileLayout) {
-			HeaderRenderer._renderAvatar(oRm, oHeader);
+			BaseHeaderRenderer.renderAvatar(oRm, oHeader);
 		}
 
 		oRm.openStart("div")
@@ -134,7 +134,7 @@ sap.ui.define([
 		oRm.close("div");
 
 		if (bUseTileLayout) {
-			HeaderRenderer._renderAvatar(oRm, oHeader);
+			BaseHeaderRenderer.renderAvatar(oRm, oHeader);
 		}
 
 		BaseHeaderRenderer.renderBanner(oRm, oHeader);
@@ -151,25 +151,6 @@ sap.ui.define([
 		}
 
 		oRm.close("div");
-	};
-
-	HeaderRenderer._renderAvatar = function (oRm, oHeader) {
-		var oAvatar = oHeader.getAggregation("_avatar"),
-			oBindingInfos = oHeader.mBindingInfos,
-			bIconVisible = oHeader.shouldShowIcon();
-
-		if (bIconVisible && (!oHeader.isPropertyInitial("iconSrc") || !oHeader.isPropertyInitial("iconInitials"))) {
-			oRm.openStart("div")
-				.class("sapFCardHeaderImage")
-				.openEnd();
-
-			if (oBindingInfos.iconSrc && oBindingInfos.iconSrc.binding && !oBindingInfos.iconSrc.binding.getValue()) {
-				oAvatar.addStyleClass("sapFCardHeaderItemBinded");
-			}
-			oRm.renderControl(oAvatar);
-			oRm.renderControl(oHeader._oAriaAvatarText);
-			oRm.close("div");
-		}
 	};
 
 	return HeaderRenderer;

@@ -57,7 +57,7 @@ sap.ui.define([
 			oRm.renderControl(oError);
 		} else {
 			NumericHeaderRenderer.renderHeaderText(oRm, oNumericHeader);
-			NumericHeaderRenderer.renderIndicators(oRm, oNumericHeader);
+			NumericHeaderRenderer.renderAvatarAndIndicatorsLine(oRm, oNumericHeader);
 			NumericHeaderRenderer.renderDetails(oRm, oNumericHeader);
 			BaseHeaderRenderer.renderBanner(oRm, oNumericHeader);
 		}
@@ -178,6 +178,23 @@ sap.ui.define([
 			}
 			oRm.close("div");
 		}
+	};
+
+	/**
+	 * Render avatar, main indicator and side indicators if any.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.f.cards.NumericHeader} oNH An object representation of the control that should be rendered
+	 */
+	NumericHeaderRenderer.renderAvatarAndIndicatorsLine = function(oRm, oNH) {
+		oRm.openStart("div")
+			.class("sapFCardAvatarAndIndicatorsLine")
+			.openEnd();
+
+		BaseHeaderRenderer.renderAvatar(oRm, oNH);
+		NumericHeaderRenderer.renderIndicators(oRm, oNH);
+
+		oRm.close("div");
 	};
 
 	/**

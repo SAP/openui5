@@ -164,10 +164,8 @@ sap.ui.define([
 	Header.prototype.exit = function () {
 		BaseHeader.prototype.exit.apply(this, arguments);
 
-		if (this._oAriaAvatarText) {
-			this._oAriaAvatarText.destroy();
-			this._oAriaAvatarText = null;
-		}
+		this._oAriaAvatarText.destroy();
+		this._oAriaAvatarText = null;
 	};
 
 	/**

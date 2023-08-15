@@ -10,6 +10,25 @@ sap.ui.define([], function () {
 		apiVersion: 2
 	};
 
+	BaseHeaderRenderer.renderAvatar = function (oRm, oHeader) {
+		var oAvatar = oHeader.getAggregation("_avatar"),
+			oBindingInfos = oHeader.mBindingInfos,
+			bIconVisible = oHeader.shouldShowIcon();
+
+		if (bIconVisible && (!oHeader.isPropertyInitial("iconSrc") || !oHeader.isPropertyInitial("iconInitials"))) {
+			oRm.openStart("div")
+				.class("sapFCardHeaderImage")
+				.openEnd();
+
+			if (oBindingInfos.iconSrc && oBindingInfos.iconSrc.binding && !oBindingInfos.iconSrc.binding.getValue()) {
+				oAvatar.addStyleClass("sapFCardHeaderItemBinded");
+			}
+			oRm.renderControl(oAvatar);
+			oRm.renderControl(oHeader._oAriaAvatarText);
+			oRm.close("div");
+		}
+	};
+
 	BaseHeaderRenderer.renderBanner = function(oRm, oHeader) {
 		const aBannerLines = oHeader.getBannerLines() || [];
 		const aVisibleLines = aBannerLines.filter((oText) => {
