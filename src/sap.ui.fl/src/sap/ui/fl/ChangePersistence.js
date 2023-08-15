@@ -872,7 +872,6 @@ sap.ui.define([
 
 			return Storage.publish({
 				transportDialogSettings: {
-					rootControl: oRootControl, // TODO not used value, should be removed.
 					styleClass: sStyleClass
 				},
 				layer: sLayer,

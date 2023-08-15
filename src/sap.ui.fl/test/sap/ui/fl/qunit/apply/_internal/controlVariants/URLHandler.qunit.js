@@ -294,6 +294,16 @@ sap.ui.define([
 		});
 	});
 
+	function stubURLParsing(aParameterValues) {
+		this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+			parseShellHash: () => {
+				const params = {};
+				params[URLHandler.variantTechnicalParameterName] = aParameterValues;
+				return {params};
+			}
+		});
+	}
+
 	QUnit.module("Given multiple variant management controls", {
 		beforeEach() {
 			this.oAppComponent = new Component("appComponent");
@@ -360,13 +370,6 @@ sap.ui.define([
 			sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves();
 			this.sDefaultStatus = sDefaultStatus;
 			this.oGetUShellServiceStub = sandbox.stub(this.oModel, "getUShellService");
-			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
-				parseShellHash(oHashParams) {
-					return {
-						params: oHashParams.params
-					};
-				}
-			});
 			this.oGetUShellServiceStub.withArgs("ShellNavigation").returns({
 				NavigationFilterStatus: {
 					Continue: sDefaultStatus
@@ -555,53 +558,64 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the registered navigationFilter function is called and there is a variant parameter, belonging to no variant", function(assert) {
-			var aParametersBelongingToNoVariant = ["paramValue1", "paramValue2"];
-			sandbox.stub(URLHandler, "update").callsFake(function(mParameters) {
-				assert.deepEqual(mParameters, {
-					updateURL: true,
-					parameters: aParametersBelongingToNoVariant,
-					updateHashEntry: true,
-					model: this.oModel
-				}, "URLHandler.update() was called irrespectively");
-			}.bind(this));
+			sandbox.stub(URLHandler, "update").callsFake(() => {
+				assert.notOk(true, "then update is incorrectly called");
+			});
 
-			var oHash = {params: {}};
-			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
-			oHash.params[URLHandler.variantTechnicalParameterName] = aParametersBelongingToNoVariant;
+			const fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
+			stubURLParsing.call(this, ["nonExistingVariant"]);
 			assert.strictEqual(
-				fnVariantIdChangeHandler(oHash),
+				fnVariantIdChangeHandler("DummyHash"),
 				this.sDefaultStatus,
 				"then the default navigation filter status was returned"
 			);
 		});
 
-		QUnit.test("when the registered navigationFilter function is called and there are unchanged variant URL parameters", function(assert) {
+		QUnit.test("when the registered navigationFilter function is called and there is an unchanged variant URL parameter", function(assert) {
 			var aParameterValues = [this.oModel.oData.variantMgmtId1.currentVariant, "paramValue2"];
-			sandbox.stub(URLHandler, "update").callsFake(function(mParameters) {
-				assert.deepEqual(mParameters, {
-					updateURL: true,
-					parameters: aParameterValues,
-					updateHashEntry: true,
-					model: this.oModel
-				}, "URLHandler.update() was called irrespectively");
-			}.bind(this));
+			stubURLParsing.call(this, aParameterValues);
+			sandbox.stub(URLHandler, "update").callsFake(function() {
+				assert.notOk(true, "then update is called incorrectly");
+			});
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
-			var oHash = {params: {}};
-			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
 			assert.strictEqual(
-				fnVariantIdChangeHandler(oHash),
+				fnVariantIdChangeHandler("DummyHash"),
 				this.sDefaultStatus,
 				"then the default navigation filter status was returned"
 			);
 		});
 
-		// TODO: Check this test - in real code the method "registerNavigationFilter" is never called with a second parameter
+		QUnit.test("when the registered navigationFilter function is called and there are unchanged variant URL parameters for two different variant managements", function(assert) {
+			var aParameterValues = [
+				this.oModel.oData.variantMgmtId1.currentVariant,
+				this.oModel.oData.variantMgmtId2.currentVariant,
+				"otherParamValue"
+			];
+
+			stubURLParsing.call(this, aParameterValues);
+
+			sandbox.stub(URLHandler, "update").callsFake(function() {
+				assert.notOk(true, "then update is called incorrectly");
+			});
+
+			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
+			assert.strictEqual(
+				fnVariantIdChangeHandler("DummyHash"),
+				this.sDefaultStatus,
+				"then the default navigation filter status was returned"
+			);
+		});
+
 		QUnit.test("when the registered navigationFilter function is called and there are changed variant URL parameters", function(assert) {
 			assert.expect(2);
 			var aParameterValues = [
 				this.oModel.oData.variantMgmtId1.defaultVariant,
-				this.oModel.oData.variantMgmtId2.defaultVariant, "otherParamValue"
+				this.oModel.oData.variantMgmtId2.defaultVariant,
+				"otherParamValue"
 			];
+
+			stubURLParsing.call(this, aParameterValues);
+
 			var mExpectedPropertyBag = {
 				model: this.oModel,
 				updateURL: true,
@@ -617,10 +631,40 @@ sap.ui.define([
 			});
 
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
-			var oHash = {params: {}};
-			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
 			assert.strictEqual(
-				fnVariantIdChangeHandler(oHash),
+				fnVariantIdChangeHandler("DummyHash"),
+				this.sDefaultStatus,
+				"then the default navigation filter status was returned"
+			);
+		});
+
+		QUnit.test("when the registered navigationFilter function is called and there is one changed variant URL parameter", function(assert) {
+			assert.expect(2);
+			var aParameterValues = [
+				this.oModel.oData.variantMgmtId1.defaultVariant, // changed
+				this.oModel.oData.variantMgmtId2.currentVariant,
+				"otherParamValue"
+			];
+
+			stubURLParsing.call(this, aParameterValues);
+
+			var mExpectedPropertyBag = {
+				model: this.oModel,
+				updateURL: true,
+				updateHashEntry: true,
+				parameters: [
+					this.oModel.oData.variantMgmtId1.currentVariant,
+					this.oModel.oData.variantMgmtId2.currentVariant,
+					"otherParamValue"
+				]
+			};
+			sandbox.stub(URLHandler, "update").callsFake(function(mPropertyBag) {
+				assert.deepEqual(mPropertyBag, mExpectedPropertyBag, "then URLHandler.update() was called with right parameters");
+			});
+
+			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
+			assert.strictEqual(
+				fnVariantIdChangeHandler("DummyHash"),
 				this.sDefaultStatus,
 				"then the default navigation filter status was returned"
 			);
@@ -637,17 +681,20 @@ sap.ui.define([
 				model: this.oModel,
 				updateURL: true,
 				updateHashEntry: true,
-				parameters: [this.oModel.oData.variantMgmtId1.currentVariant, "otherParamValue"]
+				parameters: [
+					this.oModel.oData.variantMgmtId1.currentVariant,
+					"otherParamValue"
+				]
 			};
 			sandbox.stub(URLHandler, "update").callsFake(function(mPropertyBag) {
 				assert.deepEqual(mPropertyBag, mExpectedPropertyBag, "then URLHandler.update() was called with right parameters");
 			});
 
+			stubURLParsing.call(this, aParameterValues);
+
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
-			var oHash = {params: {}};
-			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
 			assert.strictEqual(
-				fnVariantIdChangeHandler(oHash),
+				fnVariantIdChangeHandler("DummyHash"),
 				this.sDefaultStatus,
 				"then the default navigation filter status was returned"
 			);
@@ -679,11 +726,11 @@ sap.ui.define([
 				);
 			});
 
-			var oHash = {params: aParameterValues};
+			stubURLParsing.call(this, aParameterValues);
+
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
-			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
 			assert.strictEqual(
-				fnVariantIdChangeHandler(oHash),
+				fnVariantIdChangeHandler("DummyHash"),
 				this.sDefaultStatus,
 				"then the default navigation filter status was returned"
 			);
@@ -711,11 +758,11 @@ sap.ui.define([
 				);
 			});
 
-			var oHash = {params: aParameterValues};
+			stubURLParsing.call(this, aParameterValues);
+
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
-			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
 			assert.strictEqual(
-				fnVariantIdChangeHandler(oHash),
+				fnVariantIdChangeHandler("DummyHash"),
 				this.sDefaultStatus,
 				"then the default navigation filter status was returned"
 			);
