@@ -210,56 +210,42 @@ sap.ui.define([
 		return undefined;
 	};
 
-	ValueHelpDelegate.isFilterableListItemSelected = function (oValueHelp, oContent, oItem, aConditions) {
+	ValueHelpDelegate.findConditionsForContext = function (oValueHelp, oContent, oContext, aConditions) {
 		var oPayload = oValueHelp.getPayload();
-		if (oPayload.in) {
-			var sModelName = oContent.getListBindingInfo().model;
-			var oContext = oItem && oItem.getBindingContext(sModelName);
-			var oItemData = oContent.getItemFromContext(oContext);
-			var oInConditions = this.getFilterConditions(oValueHelp, oContent, {control: oContent && oContent.getControl()}); // to use if no payload is provided
-			aConditions = merge([], aConditions);
-			_mapInOutToPayload(aConditions, oPayload);
-
-			for (var i = 0; i < aConditions.length; i++) {
-				var oCondition = aConditions[i];
-				if (oCondition.validated === ConditionValidated.Validated && oItemData.key === oCondition.values[0]) { // TODO: check for specific EQ operator
-					if (oCondition.payload && oCondition.payload.in && oItemData.payload && oItemData.payload.in) {
-						if (deepEqual(oCondition.payload.in, oItemData.payload.in)) {
-							return true;
-						}
-					} else if (oItemData.payload && oItemData.payload.in) { // check with global inParameters
-						var bSelected = true;
-						for (var sIn in oItemData.payload.in) {
-							if (oInConditions.hasOwnProperty(sIn)) {
-								var bFound = false;
-								for (var j = 0; j < oInConditions[sIn].length; j++) {
-									var oInCondition = oInConditions[sIn][j];
-									if (oInCondition.operator === "EQ" && oInCondition.values[0] === oItemData.payload.in[sIn]) { // TODO: check for other operators than EQ
-										// at least one in-condition fit to the item
-										// TODO: check payload of there coditions too?
-										bFound = true;
-										break;
-									}
-								}
-								if (!bFound) {
-									// not fit at least one in-parameter
-									bSelected = false;
+		return MDCValueHelpDelegate.findConditionsForContext.apply(this, arguments).filter(function (oCondition) {
+			if (oPayload && oPayload.in) {
+				var oItemData = oContent.getItemFromContext(oContext);
+				var oInConditions = ValueHelpDelegate.getFilterConditions(oValueHelp, oContent, {control: oContent && oContent.getControl()}); // to use if no payload is provided
+				if (oCondition.payload && oCondition.payload.in && oItemData.payload && oItemData.payload.in) {
+					return deepEqual(oCondition.payload.in, oItemData.payload.in);
+				} else if (oItemData.payload && oItemData.payload.in) { // check with global inParameters
+					var bSelected = true;
+					for (var sIn in oItemData.payload.in) {
+						if (oInConditions.hasOwnProperty(sIn)) {
+							var bFound = false;
+							for (var j = 0; j < oInConditions[sIn].length; j++) {
+								var oInCondition = oInConditions[sIn][j];
+								if (oInCondition.operator === "EQ" && oInCondition.values[0] === oItemData.payload.in[sIn]) { // TODO: check for other operators than EQ
+									// at least one in-condition fit to the item
+									// TODO: check payload of there coditions too?
+									bFound = true;
 									break;
 								}
 							}
+							if (!bFound) {
+								// not fit at least one in-parameter
+								bSelected = false;
+								break;
+							}
 						}
-						return bSelected;
-					} else {
-						return true;
 					}
+					return bSelected;
+				} else {
+					return true;
 				}
 			}
-		} else {
-			return MDCValueHelpDelegate.isFilterableListItemSelected.apply(this, arguments);
-		}
-
-		return false;
-
+			return true;
+		});
 	};
 
 	function _mapInOutToPayload(aConditions, oPayload) {

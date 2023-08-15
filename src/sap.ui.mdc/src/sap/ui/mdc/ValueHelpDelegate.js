@@ -235,25 +235,37 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
  	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
-	 * @param {sap.ui.core.Element} oItem Entry of a given list
+	 * @param {object} oItem - Entry of a given list
+ 	 * @param {method} oItem.getBindingContext - Get the binding context of this object for the given model name.
 	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions current conditions
 	 * @returns {boolean} <code>true</code> if item is selected
 	 * @public
 	 * @since 1.101.0
+  	 * @deprecated (since 1.118.0) - replaced by {@link sap.ui.mdc.ValueHelpDelegate.findConditionsForContext}
+	 * @name sap.ui.mdc.ValueHelpDelegate#isFilterableListItemSelected
+	 * @function
 	 */
-	ValueHelpDelegate.isFilterableListItemSelected = function (oValueHelp, oContent, oItem, aConditions) {
-		var sModelName = oContent.getListBindingInfo().model;
-		var oContext = oItem && oItem.getBindingContext(sModelName);
-		var oItemData = oContent.getItemFromContext(oContext);
 
-		for (var i = 0; i < aConditions.length; i++) {
-			var oCondition = aConditions[i];
-			if (oCondition.validated === ConditionValidated.Validated && oItemData.key === oCondition.values[0]) { // TODO: check for specific EQ operator
-				return true;
-			}
-		}
-
-		return false;
+	/**
+	 * Find all conditions, which are represented by the given context for 'Select from list' scenarios.
+	 * By default, only condition keys are considered. This may be extended with payload dependent filters.
+	 *
+	 * Note: this method replaces the former <code>isFilterableListItemSelected</code>
+	 *
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
+ 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
+	 * @param {sap.ui.model.Context} oContext Entry of a given list
+	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions current conditions
+	 * @returns {sap.ui.mdc.condition.ConditionObject[]} Conditions represented by the given context
+	 * @private
+	 * @public
+	 * @since 1.118.0
+	 */
+	ValueHelpDelegate.findConditionsForContext = function (oValueHelp, oContent, oContext, aConditions) {
+		var vKey = oContext.getObject(oContent.getKeyPath());
+		return aConditions.filter(function (oCondition) {
+			return oCondition.validated === ConditionValidated.Validated && vKey === oCondition.values[0];
+		});
 	};
 
 	/**

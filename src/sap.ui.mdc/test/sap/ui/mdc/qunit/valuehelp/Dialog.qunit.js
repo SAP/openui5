@@ -754,12 +754,31 @@ sap.ui.define([
 
 						iSelect = 0;
 						iConfirm = 0;
-						oContent2.fireSelect({conditions: [Condition.createItemCondition("Y", "Text")], type: ValueHelpSelectionType.Set});
-						assert.equal(iSelect, 1, "select event fired");
-						assert.deepEqual(aConditions, [Condition.createItemCondition("Y", "Text")], "select event conditions");
+
+						oContent2.fireSelect({conditions: [], type: ValueHelpSelectionType.Set});
+						assert.deepEqual(aConditions, [], "select event conditions");
 						assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
 						assert.equal(iConfirm, 0, "ConfirmEvent not fired");
 						assert.notOk(bClose, "Close parameter not set");
+
+						oContent2.fireSelect({conditions: [], type: ValueHelpSelectionType.Add});
+						assert.deepEqual(aConditions, [], "select event conditions");
+						assert.equal(sType, ValueHelpSelectionType.Add, "select event type");
+						assert.equal(iConfirm, 0, "ConfirmEvent not fired");
+						assert.notOk(bClose, "Close parameter not set");
+
+						oContent2.fireSelect({conditions: [Condition.createItemCondition("Y", "Text")], type: ValueHelpSelectionType.Set});
+						assert.deepEqual(aConditions, [Condition.createItemCondition("Y", "Text")], "select event conditions");
+						assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
+						assert.equal(iConfirm, 1, "ConfirmEvent fired");
+						assert.ok(bClose, "Close parameter set");
+
+						bClose = false;
+						oContent2.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: ValueHelpSelectionType.Add});
+						assert.deepEqual(aConditions, [Condition.createItemCondition("X", "Text")], "select event conditions");
+						assert.equal(sType, ValueHelpSelectionType.Add, "select event type");
+						assert.equal(iConfirm, 2, "ConfirmEvent fired");
+						assert.ok(bClose, "Close parameter set");
 
 						oContent2.destroy();
 						fnDone();

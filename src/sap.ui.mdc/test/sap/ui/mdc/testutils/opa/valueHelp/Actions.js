@@ -64,13 +64,13 @@ sap.ui.define([
                 }.bind(this)
             });
         },
-        iToggleTheValueHelpListItem: function (sText, sValueHelpId) {
+        iToggleTheValueHelpListItem: function (sText, sValueHelpId, oOptions) {
             return doWait(this).forValueHelpListItemWithTexts(sText, {
                 success: function(oResult) {
                     if (oResult.isA('sap.m.ColumnListItem')) {
                         new Press().executeOn(oResult);
                     } else {
-                        new TriggerEvent({event: "tap"}).executeOn(oResult.getCells()[0]);
+                        new TriggerEvent({event: "tap", payload: oOptions}).executeOn(oResult.getCells()[0]);
                     }
                     Opa5.assert.ok(oResult, "The listitem with text " + sText + " was pressed. ");
                 }

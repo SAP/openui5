@@ -109,7 +109,7 @@ sap.ui.define([
 						label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
 						sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
 						filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
-						typeConfig: oTable.getTypeMap().getTypeConfig(oObj.$Type),
+						dataType: oObj.$Type,
 						maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1
 					});
 				}
@@ -173,6 +173,8 @@ sap.ui.define([
 		if (aFilters && aFilters.length > 0) {
 			oBindingInfo.filters = new Filter(aFilters, true);
 		}
+
+		oBindingInfo.parameters.$count = true;
 	};
 
 	ODataTableDelegate.getFilterDelegate = function() {

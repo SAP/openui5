@@ -5,266 +5,27 @@
 sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/FilterableListContent',
 	'sap/ui/mdc/util/loadModules',
-	'sap/ui/mdc/enums/ValueHelpSelectionType',
-	'sap/m/library',
-	'sap/base/util/restricted/_throttle',
 	'sap/ui/mdc/util/Common',
 	'sap/base/Log',
 	'sap/ui/core/Element',
 	'sap/ui/mdc/enums/TableSelectionMode',
-	'sap/ui/mdc/enums/TableType'
+	'sap/ui/mdc/enums/TableType',
+	'sap/ui/mdc/enums/ValueHelpSelectionType',
+	'sap/ui/mdc/enums/TableRowCountMode',
+	'sap/base/util/restricted/_throttle'
 ], function(
 	FilterableListContent,
 	loadModules,
-	ValueHelpSelectionType,
-	mLibrary,
-	throttle,
 	Common,
 	Log,
 	Element,
 	TableSelectionMode,
-	TableType
+	TableType,
+	ValueHelpSelectionType,
+	TableRowCountMode,
+	_throttle
 ) {
 	"use strict";
-
-	var ListMode = mLibrary.ListMode;
-	var Sticky = mLibrary.Sticky;
-
-	var _getMDCTableType = function(oTable) {
-		var sType, oType = sType = oTable && oTable.getType();
-		if (!oType) {
-			sType = TableType.Table; // back to the default behaviour
-		} else if (typeof oType === "object") {
-			if (oType.isA("sap.ui.mdc.table.ResponsiveTableType")) {
-				sType = TableType.ResponsiveTable;
-			} else {
-				sType = TableType.Table;
-			}
-		}
-		return sType;
-	};
-
-	var _setupTableHelper = function () {
-		var oTable = this._getTable();
-		var oInnerTable = oTable && oTable._oTable;
-		var oListBinding = oTable.getRowBinding();
-
-		var _getUITableSelectionHandler = function () {
-			return this._oUITableSelectionPlugin || oInnerTable;
-		}.bind(this);
-
-		var _fireSelect = function (aConditions, bSelected) {
-			var sMultiSelectType = bSelected ? ValueHelpSelectionType.Add : ValueHelpSelectionType.Remove;
-			this._fireSelect({type: sMultiSelectType, conditions: aConditions});
-		};
-
-		var MDCTableHelperConfig = {};
-
-		MDCTableHelperConfig[TableType.ResponsiveTable] = {
-			getListBindingInfo: function () {
-				return oInnerTable && oInnerTable.getBindingInfo("items");
-			},
-			getItems: function () {
-				return oInnerTable.getItems();
-			},
-			getSelectedItems: function () {
-				return oInnerTable.getSelectedItems();
-			},
-			modifySelection: function (oItem, bSelected) {
-				if (oItem.getSelected() !== bSelected) {
-					oItem.setSelected(bSelected);
-				}
-			},
-			handleItemPress: function (oEvent) {
-				var oItem = oEvent.getParameter("listItem");
-				if (!this.isTypeahead() || !this.isSingleSelect()) {
-					oItem.setSelected(!oItem.getSelected());
-				}
-
-				var oItemContext = this._getListItemBindingContext(oItem);
-				var oValues = this.getItemFromContext(oItemContext);
-				var oCondition = oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
-
-				_fireSelect.call(this, [oCondition], oItem.getSelected());
-
-			},
-			handleSelectionChange: function (oEvent) {
-				if (!this.isTypeahead() || !this.isSingleSelect()) { // single-suggestion handled in this._handleItemPress
-					var oParams = oEvent.getParameters();
-					var aListItems = oParams.listItems || oParams.listItem && [oParams.listItem];
-					var aConditions = aListItems.map(function (oItem) {
-						var oItemContext = this._getListItemBindingContext(oItem);
-						var oValues = this.getItemFromContext(oItemContext);
-						return oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
-					}.bind(this));
-					_fireSelect.call(this, aConditions, oParams.selected);
-				}
-			},
-			adjustTable: function () {
-				var aSticky = oInnerTable.getSticky();
-				if (!aSticky || aSticky.length === 0) {
-					// make headers sticky
-					oInnerTable.setSticky([Sticky.ColumnHeaders]);
-				}
-				if (this.isSingleSelect()) {
-					oInnerTable.setMode(ListMode.SingleSelectLeft);
-				} else {
-					oInnerTable.setMode(ListMode.MultiSelect);
-				}
-			},
-			handleScrolling: function (iIndex) {
-				var oScrollDelegate = this.getScrollDelegate();
-				if (oScrollDelegate) {
-					oInnerTable.scrollToIndex(iIndex).catch(function (oError) {
-						// TODO: Handle scroll error?
-					});
-					return true;
-				}
-			},
-			handleListBinding: function () {
-
-			}
-		};
-
-		MDCTableHelperConfig[TableType.Table] = {
-			getListBindingInfo: function () {
-				return oInnerTable && oInnerTable.getBindingInfo("rows");
-			},
-			getItems: function () {
-				return oInnerTable.getRows().filter(function (oRow) {
-					var oRowBindingContext = this._getListItemBindingContext(oRow);
-					return oRowBindingContext && oRowBindingContext.getObject();	// don't return empty rows
-				}.bind(this));
-			}.bind(this),
-			getSelectedItems: function () {
-				var aSelectedIndices = _getUITableSelectionHandler().getSelectedIndices();
-				var aSelectedContexts = aSelectedIndices.reduce(function(aResult, iCurrent) {
-					var oContext = oInnerTable.getContextByIndex(iCurrent);
-					return oContext ? aResult.concat(oContext) : aResult;
-				}, []);
-				return MDCTableHelperConfig[TableType.Table].getItems().filter(function (oRow) {
-					return aSelectedContexts.indexOf(this._getListItemBindingContext(oRow)) >= 0;
-				}.bind(this));
-			}.bind(this),
-			modifySelection: function (oItem, bSelected) {
-				var oContext = this._getListItemBindingContext(oItem);
-				var iContextIndex = MDCTableHelperConfig[TableType.Table].getContexts().indexOf(oContext);
-				var bInSelectedIndices = _getUITableSelectionHandler().getSelectedIndices().indexOf(iContextIndex) >= 0;
-				if (bSelected && !bInSelectedIndices) {
-					return this.isSingleSelect() ? _getUITableSelectionHandler().setSelectedIndex(iContextIndex) : _getUITableSelectionHandler().addSelectionInterval(iContextIndex,iContextIndex);
-				} else if (!bSelected && bInSelectedIndices) {
-					return _getUITableSelectionHandler().removeSelectionInterval(iContextIndex,iContextIndex);
-				}
-			},
-			handleItemPress: function (oEvent) {
-			},
-			handleSelectionChange: function (oEvent) {
-				var bIsMultiSelectionPlugin = oEvent.getSource().isA('sap.ui.table.plugins.MultiSelectionPlugin');
-				var oParameters = oEvent.getParameters();
-
-				if (bIsMultiSelectionPlugin ? oParameters._internalTrigger : !oParameters.userInteraction) { // Ignore internal events
-					return;
-				}
-
-				var aRowIndices = oEvent.getParameter("rowIndices"); // rowIndices are actually context indices
-				var aContexts = aRowIndices.map(function (iIndex) {
-					return oInnerTable.getContextByIndex(iIndex);
-				});
-				var aRows = MDCTableHelperConfig[TableType.Table].getItems().filter(function (oRow, iIndex) {
-					return aContexts.indexOf(this._getListItemBindingContext(oRow)) >= 0;
-				}.bind(this));
-				var aAddConditions = [], aRemoveConditions = [];
-				var aSelectedRows = MDCTableHelperConfig[TableType.Table].getSelectedItems();
-				var aCurrentConditions = this.getConditions();
-				aRows.forEach(function (oRow, i) {
-					var bIsInSelectedConditions = this._isItemSelected(oRow, aCurrentConditions);
-					var bIsRowSelected = aSelectedRows.indexOf(oRow) !== -1;
-					if (bIsInSelectedConditions !== bIsRowSelected) {
-						var aBucket = aSelectedRows.indexOf(oRow) !== -1 ? aAddConditions : aRemoveConditions;
-						var oRowBindingContext = this._getListItemBindingContext(oRow);
-						var oValues = this.getItemFromContext(oRowBindingContext);
-						var oCondition = oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
-						aBucket.push(oCondition);
-					}
-				}.bind(this));
-
-				var bSingle = this.isSingleSelect();
-
-				if (aAddConditions.length) {
-					_fireSelect.call(this, aAddConditions, true);
-					if (bSingle) {
-						return;
-					}
-				}
-
-				if (aRemoveConditions.length) {
-					_fireSelect.call(this, aRemoveConditions, false);
-				}
-			},
-			adjustTable: function () {
-				// lazy dependency to sap.ui.table library
-				// as the oInnerTable exists already, probing access to the library module should be enough
-				var uiTableLibrary = sap.ui.require("sap/ui/table/library");
-				var UITableVisibleRowCountMode = uiTableLibrary.VisibleRowCountMode;
-				var UITableSelectionMode = uiTableLibrary.SelectionMode;
-				var UITableSelectionBehavior = uiTableLibrary.SelectionBehavior;
-
-				var oRowMode = oInnerTable.getRowMode();
-				if (!oRowMode) {
-					oInnerTable.setVisibleRowCountMode(UITableVisibleRowCountMode.Auto);
-					oInnerTable.setMinAutoRowCount(3);
-				} else if (oRowMode.isA("sap.ui.table.rowmodes.Auto")) {
-					oRowMode.setMinRowCount(3);
-				}
-
-				var sMDCTableSelectionMode = oTable.getSelectionMode();
-				var sSelectionMode = this.isSingleSelect() ? UITableSelectionMode.Single : UITableSelectionMode.MultiToggle;
-				if (sMDCTableSelectionMode !== TableSelectionMode.SingleMaster) {
-					// only for multi we can set selectionBehavior to Row
-					oInnerTable.setSelectionBehavior(UITableSelectionBehavior.Row);
-				}
-				_getUITableSelectionHandler().setSelectionMode(sSelectionMode);
-			},
-			handleScrolling: function (iIndex) {
-				var iFirstVisibleRowIndex = oInnerTable.getFirstVisibleRow();
-				if (typeof iIndex === "undefined" || iIndex < 0) {
-					iIndex = iFirstVisibleRowIndex - 1;
-				}
-				if (iIndex >= 0 && iIndex != iFirstVisibleRowIndex) {
-					oInnerTable.setFirstVisibleRow(iIndex);
-					return Promise.resolve();
-				}
-				return false;
-			},
-			getContexts: function () {
-				return oListBinding && oListBinding.getAllCurrentContexts();
-			},
-			handleListBinding: function () {
-				oListBinding.attachEvent("change", this._handleUpdateFinished.bind(this));
-			}
-		};
-
-		return MDCTableHelperConfig[this._sTableType];
-	};
-
-	function _updateSelection () {
-		if (this._oTableHelper && !this._bSelectionIsUpdating) {
-			this._bSelectionIsUpdating = true;
-			var aItems = this._oTableHelper.getItems();
-			var aConditions = this.getSelectableConditions();
-			var aModifications = [];
-			for (var iId in aItems) {
-				var oItem = aItems[iId];
-				var bSelected = this._isItemSelected(oItem, aConditions);
-				aModifications.push(this._oTableHelper.modifySelection.call(this, oItem, bSelected));
-			}
-			Promise.all(aModifications).then(function() {
-				this._bSelectionIsUpdating = false;
-			}.bind(this));
-		}
-	}
-
-	var _updateSelectionThrottled = throttle(_updateSelection, 100, {leading: true});
 
 	/**
 	 * Constructor for a new <code>MDCTable</code> content.
@@ -319,168 +80,130 @@ sap.ui.define([
 
 	MDCTable.prototype.init = function () {
 		FilterableListContent.prototype.init.apply(this, arguments);
-
 		this._oObserver.observe(this, {
 			aggregations: ["table"]
 		});
-
-		this._addPromise("listBinding");
-
 		this._bRebindTable = false;
 	};
 
-	var handleListBinding = function () {
-		var oListBinding = this._getTable().getRowBinding();
-		if (oListBinding) {
-			this._oTableHelper = _setupTableHelper.call(this);
-			this._oTableHelper.handleListBinding.call(this);
-			_adjustTable.call(this);
-			this._resolvePromise("listBinding", oListBinding);
-		}
-	};
 
-	var handleTableHeader = function () {
-		if (this._oTable && !this._oTable.getHeader()) {
-			this._oTable.setHeader( this._oResourceBundle.getText("valuehelp.TABLETITLENONUMBER"));
+	MDCTable.prototype._setTableSelectionState = function () {
+		this._bSelectionIsUpdating = true;
+		var aAllCurrentContexts = this._getAllCurrentContexts();
+		if (aAllCurrentContexts) {
+			this._oTable._setSelectedContexts(aAllCurrentContexts.filter(function (oContext) {
+				return this._isContextSelected(oContext, this.getConditions());
+			}.bind(this)));
 		}
+		this._bSelectionIsUpdating = false;
 	};
 
 	MDCTable.prototype.handleConditionsUpdate = function() {
-		_updateSelectionThrottled.call(this);
+		if (!this._bIgnoreNextConditionChange) {
+			// When new conditions are set from outside (connected control or dialog tokenizer) we have to sync all the table selection once
+			this._setTableSelectionState();
+		} else {
+			// If the Table updated the conditions itself because of an interaction, we do not need to update anything
+			this._bIgnoreNextConditionChange = false;
+		}
 	};
 	MDCTable.prototype._handleUpdateFinished = function (oEvent) {
-		_updateSelectionThrottled.call(this);
-	};
+		this._resolvePromise("listBinding", this._oTable.getRowBinding());
 
-	MDCTable.prototype._handleFirstVisibleRowChanged = function (oEvent) {
-		_updateSelectionThrottled.call(this);
-	};
-
-	var handleInnerTable = function (oInnerTable, sMutation) {
-
-		if (!oInnerTable) {
-			return;
-		}
-
-		if (sMutation === "remove") {
-			if (this._sTableType === TableType.Table) {
-				oInnerTable.detachEvent("cellClick", this._handleItemPress, this);
-				oInnerTable.detachEvent("rowSelectionChange", this._handleSelectionChange, this);
-				oInnerTable.detachEvent("rowsUpdated", this._handleUpdateFinished, this);
-				oInnerTable.detachEvent("firstVisibleRowChanged", this._handleFirstVisibleRowChanged, this);
-				if (this._oUITableSelectionPlugin) {
-					this._oUITableSelectionPlugin.detachEvent("selectionChange", this._handleSelectionChange, this);
-				}
-				this._oUITableSelectionPlugin = undefined;
-			} else if (this._sTableType === TableType.ResponsiveTable) {
-				oInnerTable.detachEvent("itemPress", this._handleItemPress, this);
-				oInnerTable.detachEvent("selectionChange", this._handleSelectionChange, this);
-				oInnerTable.detachEvent("updateFinished", this._handleUpdateFinished, this);
-			}
-			this._oObserver.unobserve(oInnerTable);
-		} else {
-			// eslint-disable-next-line no-lonely-if
-			if (this._sTableType === TableType.Table) {
-				this._oObserver.observe(oInnerTable, {bindings: ["rows"], aggregations: ["plugins"]});
-				oInnerTable.attachEvent("cellClick", this._handleItemPress, this);
-				oInnerTable.attachEvent("rowSelectionChange", this._handleSelectionChange, this);
-				oInnerTable.attachEvent("rowsUpdated", this._handleUpdateFinished, this);
-				oInnerTable.attachEvent("firstVisibleRowChanged", this._handleFirstVisibleRowChanged, this);
-				this._oUITableSelectionPlugin = oInnerTable.getPlugins().find(function (oPlugin) {
-					return oPlugin.isA("sap.ui.table.plugins.SelectionPlugin");
-				});
-				if (this._oUITableSelectionPlugin) {
-					this._oUITableSelectionPlugin.attachEvent("selectionChange", this._handleSelectionChange, this);
-				}
-			} else if (this._sTableType === TableType.ResponsiveTable) {
-				this._oObserver.observe(oInnerTable, {bindings: ["items"]});
-				oInnerTable.attachEvent("itemPress", this._handleItemPress, this);
-				oInnerTable.attachEvent("selectionChange", this._handleSelectionChange, this);
-				oInnerTable.attachEvent("updateFinished", this._handleUpdateFinished, this);
-			}
+		if (!this._bQueryingContexts) {
+			// In every case update table selection state for eventual newly loaded contexts
+			this._setTableSelectionState();
 		}
 	};
 
 	MDCTable.prototype.observeChanges = function (oChanges) {
-
-		if (["_defaultFilterBar", "filterBar"].indexOf(oChanges.name) !== -1) {
-			_updateTableFilter.call(this);
-		}
-
 		if (oChanges.name === "table") { // outer table
 			var oTable = oChanges.child;
 			if (oChanges.mutation === "remove") {
-				this._oObserver.unobserve(oTable);
+				this._oTable.detachEvent('selectionChange', this._handleSelectionChange, this);
 				this._oTable = null;
-				this._oTableHelper = null;
-				this._addPromise("listBinding");
 			} else {
 				this._oTable = oTable;
-				oTable._enableV4LegacySelection();
-
+				this._addPromise("listBinding");
 				if (this._oTable.getAutoBindOnInit()) {
 					Log.warning("Usage of autobound tables may lead to unnecessary requests.");
 				} else if (this.getForceBind()) {
 					this._bRebindTable = true;
 				}
 
-				this._oObserver.observe(oTable, {aggregations: ["_content"]});
-				this._sTableType = _getMDCTableType(oTable);
 				oTable.addDelegate({ onmouseover: function (oEvent) {	// Fix m.Table itemPress
 					var oItem = Element.closestTo(oEvent.target);
 					if (oItem && oItem.isA("sap.m.ColumnListItem")) {
 						oItem.setType("Active");
 					}
 				}});
-				handleInnerTable.call(this, this._oTable._oTable, "insert");
-				handleListBinding.call(this);
-				handleTableHeader.call(this);
-				_updateTableFilter.call(this);
+
+				this._oTable.initialized().then(function () {
+					this._oTable.attachEvent('_bindingChange', _throttle(this._handleUpdateFinished, 100, {leading: false}), this);
+					this._oTable.attachEvent('selectionChange', this._handleSelectionChange, this);
+				}.bind(this));
 			}
 			return;
-		}
-
-		if (oChanges.name === "_content") {	// inner table
-			handleInnerTable.call(this, oChanges.child, oChanges.mutation);
-			return;
-		}
-
-		if (["rows", "items"].indexOf(oChanges.name) !== -1 && oChanges.mutation === "ready") {	// inner table's binding
-			handleListBinding.call(this);
-			return;
-		}
-
-		if (oChanges.name === "config") {
-			_adjustTable.call(this);
-		}
-
-		if (oChanges.name === "plugins") {
-			this._oUITableSelectionPlugin = oChanges.mutation === "remove" || !oChanges.child.isA("sap.ui.table.plugins.SelectionPlugin") ? undefined :  oChanges.child;
-			if (this._oUITableSelectionPlugin) {
-				this._oUITableSelectionPlugin.attachEvent("selectionChange", this._handleSelectionChange, this);
-			}
 		}
 
 		FilterableListContent.prototype.observeChanges.apply(this, arguments);
 	};
 
+	MDCTable.prototype._getAllCurrentContexts = function () {
+		var oRowBinding = this._oTable && this._oTable.getRowBinding();
+		if (oRowBinding) {
+			return oRowBinding.getAllCurrentContexts ? oRowBinding.getAllCurrentContexts() : oRowBinding.getContexts();
+		}
+		return undefined;
+	};
+
+	MDCTable.prototype._handleSelectionChange = function (oEvent) {
+		if (!this._bSelectionIsUpdating) { // TODO: New handling for internally triggered events on MDC Table's events?
+			this._bQueryingContexts = true; // In ODataV4 getAllCurrentContexts may lead to a binding change event
+			var aAllCurrentContexts = this._getAllCurrentContexts();
+			var aSelectedTableContexts = aAllCurrentContexts && this._oTable.getSelectedContexts();
+			this._bQueryingContexts = false;
+
+			if (aAllCurrentContexts) {
+				var aCurrentConditions = this.getConditions();
+				var aModifiedConditions = aCurrentConditions;
+				var bFireSelect = false;
+
+				aAllCurrentContexts.forEach(function (oContext) {
+					var aConditionsForContext = this._findConditionsForContext(oContext, aCurrentConditions);
+					var bIsInSelectedConditions = !!aConditionsForContext.length;
+					var bSelectedInTable = aSelectedTableContexts.indexOf(oContext) >= 0;
+					if (!bIsInSelectedConditions && bSelectedInTable) {
+						var oItem = this.getItemFromContext(oContext);
+						var oCondition = oItem && this.createCondition(oItem.key, oItem.description, oItem.payload);
+						aModifiedConditions = this.isSingleSelect() ? [oCondition] : aModifiedConditions.concat(oCondition);
+						bFireSelect = true;
+					} else if (bIsInSelectedConditions && !bSelectedInTable) {
+						aModifiedConditions = aModifiedConditions.filter(function (oCondition) {
+							return aConditionsForContext.indexOf(oCondition) === -1;
+						});
+						bFireSelect = true;
+					}
+				}.bind(this));
+
+				if (bFireSelect) {
+					this._prepareSelect(aModifiedConditions, ValueHelpSelectionType.Set);
+				}
+			}
+		}
+	};
+
+
+	MDCTable.prototype._prepareSelect = function (aConditions, vSelected) {
+		var sMultiSelectType = typeof vSelected === 'string' && vSelected;
+		sMultiSelectType = sMultiSelectType || (vSelected ? ValueHelpSelectionType.Add : ValueHelpSelectionType.Remove);
+		this._bIgnoreNextConditionChange = true;
+		this._fireSelect({type: sMultiSelectType, conditions: aConditions});
+	};
+
 	MDCTable.prototype._getTable = function () {
 		return this._oTable;
 	};
-
-	function _updateTableFilter () {
-		var oFilterBar = this._getPriorityFilterBar();
-
-		if (this._oTable && oFilterBar && this._oTable.getFilter() !== oFilterBar.getId()) {
-			this._oTable.setFilter(oFilterBar);
-		}
-	}
-
-	function _adjustTable () {
-		if (this._oTableHelper) {
-			this._oTableHelper.adjustTable.call(this);
-		}
-	}
 
 	MDCTable.prototype.getContent = function () {
 		return this._retrievePromise("wrappedContent", function () {
@@ -509,7 +232,7 @@ sap.ui.define([
 					this._oTableBox.addStyleClass("sapMdcValueHelpPanelTableBox");
 					this._oTableBox._oWrapper = this;
 					this._oTableBox.getItems = function () {
-						var oTable = this._oWrapper._sTableType === TableType.ResponsiveTable ? this._oWrapper._oScrollContainer : this._oWrapper._oTable;
+						var oTable = this._oWrapper._oTable._isOfType(TableType.ResponsiveTable) ? this._oWrapper._oScrollContainer : this._oWrapper._oTable;
 						var aItems = oTable ? [oTable] : [];
 						return aItems;
 					};
@@ -551,11 +274,61 @@ sap.ui.define([
 		return oTable && oTable.getRowBinding();
 	};
 
-	MDCTable.prototype.getListBindingInfo = function () {
-		return this._oTableHelper && this._oTableHelper.getListBindingInfo();
+	MDCTable.prototype._configureTable = function () {
+		if (this._oTable) {
+			var bSingleSelect = FilterableListContent.prototype.isSingleSelect.apply(this);
+			var oTableType = this._oTable.getType();
+
+			// Connect filterBar
+			var oFilterBar = this._getPriorityFilterBar();
+			if (oFilterBar && this._oTable.getFilter() !== oFilterBar.getId()) {
+				this._oTable.setFilter(oFilterBar);
+			}
+
+			// Adjust header
+			if (!this._oTable.getHeader()) {
+				this._oTable.setHeader( this._oResourceBundle.getText("valuehelp.TABLETITLENONUMBER"));
+			}
+
+			// Adjust selection
+			var sSelectionMode = bSingleSelect ? TableSelectionMode.SingleMaster : TableSelectionMode.Multi;
+			if (this._oTable.getSelectionMode() === TableSelectionMode.None) { // only set automatically if not provided from outside (and do it only once)
+				this._oTable.setSelectionMode(sSelectionMode);
+			}
+
+			if (this._oTable.getSelectionMode() !== sSelectionMode) {
+				throw new Error("Table selectionMode needs to be " + sSelectionMode);
+			}
+
+			var bGridTableType = this._oTable._isOfType(TableType.Table);
+			var bResponsiveTableType = !bGridTableType && this._oTable._isOfType(TableType.ResponsiveTable);
+
+			if (bGridTableType) {
+				var oRowCountMode = oTableType.getRowCountMode();
+				if (oRowCountMode === TableRowCountMode.Auto) {
+					oTableType.setRowCount(3);
+				}
+			}
+
+			// Wait for internal table creation to apply the selectionBehavior
+			this._oTable.initialized().then(() => {
+				if (bGridTableType) {
+					if (sSelectionMode !== TableSelectionMode.SingleMaster) {
+						this._oTable._setInternalProperty("selectionBehavior", "Row"); // We want to be able to click anywhere on the row for selection in Multi mode
+					}
+				} else if (bResponsiveTableType) {
+					this._oTable._setInternalProperty("includeItemInSelection", true);
+				}
+			});
+		}
+	};
+
+	MDCTable.prototype.onShow = function () {
+		FilterableListContent.prototype.onShow.apply(this, arguments);
 	};
 
 	MDCTable.prototype.onBeforeShow = function (bInitial) {
+		this._configureTable();
 		return Promise.resolve(FilterableListContent.prototype.onBeforeShow.apply(this, arguments)).then(function () {
 			var oTable = this.getTable();
 			if (oTable) {
@@ -565,7 +338,7 @@ sap.ui.define([
 					oTable.rebind();
 					this._bRebindTable = false;
 				} else if (bInitial) {
-					if (this._sTableType === TableType.ResponsiveTable) {
+					if (oTable._isOfType(TableType.ResponsiveTable)) {
 						this._oScrollContainer.scrollTo(0, 0);
 					} else if (bTableBound) { //scrollToIndex throws error if internal table doesn't exist
 						return oTable.scrollToIndex(0);
@@ -575,41 +348,11 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	MDCTable.prototype.onShow = function (bInitial) {
-		if (this._oTable) {
-			_adjustTable.call(this);
-			// check if selection mode is fine
-			var sSelectionMode = FilterableListContent.prototype.isSingleSelect.apply(this) ? TableSelectionMode.SingleMaster : TableSelectionMode.Multi;
-			if (this._oTable.getSelectionMode() === TableSelectionMode.None) { // only set automatically if not provided from outside (and do it only once)
-				this._oTable.setSelectionMode(sSelectionMode);
-			}
-			if (this._oTable.getSelectionMode() !== sSelectionMode) {
-				throw new Error("Table selectionMode needs to be " + sSelectionMode);
-			}
-		}
-
-		FilterableListContent.prototype.onShow.apply(this, arguments);
-	};
-
-	MDCTable.prototype._handleScrolling = function (oItem) {
-		return this._oTableHelper && this._oTableHelper.handleScrolling.call(this, oItem);
-	};
-
 	MDCTable.prototype.getScrollDelegate = function() {
 		if (!this.isTypeahead() && this._oScrollContainer) {
 			return this._oScrollContainer.getScrollDelegate();
 		}
 		return FilterableListContent.prototype.getScrollDelegate.apply(this, arguments);
-	};
-
-	MDCTable.prototype._handleItemPress = function (oEvent) {
-		this._oTableHelper.handleItemPress.call(this, oEvent);
-	};
-
-	MDCTable.prototype._handleSelectionChange = function (oEvent) {
-		if (!this._bSelectionIsUpdating) {
-			this._oTableHelper.handleSelectionChange.call(this, oEvent);
-		}
 	};
 
 	MDCTable.prototype.isQuickSelectSupported = function() {
@@ -618,7 +361,6 @@ sap.ui.define([
 
 	MDCTable.prototype.setParent = function(oParent) {
 		FilterableListContent.prototype.setParent.apply(this, arguments);
-		_adjustTable.call(this);
 	};
 
 	MDCTable.prototype.isSingleSelect = function() {
@@ -648,7 +390,10 @@ sap.ui.define([
 			"_sTableType",
 			"_oUITableSelectionPlugin",
 			"_oTable",
-			"_bRebindTable"
+			"_bRebindTable",
+			"_mKnownContexts",
+			"_bIgnoreNextConditionChange",
+			"_bQueryingContexts"
 		]);
 
 		FilterableListContent.prototype.exit.apply(this, arguments);

@@ -64,6 +64,8 @@ sap.ui.define([
 			oBindingInfo.parameters.$select = oPayload.$select;
 		}
 
+		oBindingInfo.parameters.$count = true;
+
 	};
 
 	ODataTableDelegate._updateSearch = function(oBindingInfo, oFilterBar) {
