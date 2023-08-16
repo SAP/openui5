@@ -12,27 +12,27 @@
 		opacity: 0.9;
 	}
 
-	.sapMRISel, .sapMRIHov {
-		color: @sapUiContentRatedColor;
+	.sapMRIUnsel {
+		color: @sapContent_UnratedColor;
 	}
 
-	.sapMRIUnsel,
-	&.sapMRIReadOnly .sapMRIUnsel,
-	&.sapMRIDisplayOnly .sapMRIUnsel {
-		color: @sapUiContentUnratedColor;
+	.sapMRISel {
+		color: @sapContent_RatedColor;
 	}
+}
 
-	&.sapMRIDisplayOnly {
-		.sapMRIIconSel {
-			color: @sapUiContentIconColor;
-		}
+.sapMRI.sapMRIDisplayOnly,
+.sapMRI.sapMRIReadOnly {
+	.sapMRIIconSel {
+		color: @sapContent_RatedColor;
 	}
+	.sapMRIUnsel {
+		color: @sapContent_UnratedColor;
+	}
+}
 
-	&.sapMRIDisabled {
-		.sapMRIUnsel, .sapMRISel {
-			color: @sapUiContentDisabledTextColor;
-		}
-	}
+.sapMRIDisabled {
+	opacity: 0.4;
 }
 
 /* Custom focus outline */
@@ -50,30 +50,22 @@ html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly) {
 }
 
 /* As font-size is set as an inline style, we need to override it for horizon only using important */
-.sapMRINoCustomIconSize {
-	&.sapMRIReadOnly .sapMRIUnsel .sapMRIunratedIcon,
-	&.sapMRIDisabled .sapMRIUnsel .sapMRIunratedIcon {
-		font-size: 1.125rem !important;
-	}
-
-	&.sapMRIDisplayOnly .sapMRIUnsel .sapMRIunratedIcon {
-		font-size: 1.125rem !important;
-	}
+.sapMRIReadOnly .sapMRIUnsel .sapMRIunratedIcon,
+.sapMRIDisplayOnly .sapMRIUnsel .sapMRIunratedIcon,
+.sapMRIDisabled .sapMRIUnsel .sapMRIunratedIcon {
+	font-size: 75% !important;
+	vertical-align: baseline;
 }
 
-.sapUiSizeCompact .sapMRINoCustomIconSize {
+.sapUiSizeCompact {
 	&.sapMRIReadOnly .sapMRIUnsel .sapMRIunratedIcon,
 	&.sapMRIReadOnly .sapMRIIconSel .sapMRIunratedIcon,
 	&.sapMRIDisplayOnly .sapMRIUnsel .sapMRIunratedIcon,
 	&.sapMRIDisplayOnly .sapMRIIconSel .sapMRIunratedIcon,
 	&.sapMRIDisabled .sapMRIUnsel .sapMRIunratedIcon,
 	&.sapMRIDisabled .sapMRIIconSel .sapMRIunratedIcon {
-		font-size: .75rem !important;
-	}
-
-	& .sapUiIcon,
-	& .sapUiIcon {
-		font-size: 1rem !important;
+		font-size: 75% !important;
+		vertical-align: baseline;
 	}
 
 	& .sapMRISel,
