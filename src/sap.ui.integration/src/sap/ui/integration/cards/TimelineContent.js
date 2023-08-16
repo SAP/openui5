@@ -153,6 +153,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	TimelineContent.prototype.getItemsLength = function () {
+		return this._getTimeline().getContent().length;
+	};
+
+	/**
 	 * Handler for when data is changed.
 	 */
 	TimelineContent.prototype.onDataChanged = function () {
