@@ -241,11 +241,6 @@ sap.ui.define([
 				Core.prototype[sFuncName] = _oEventProvider[sFuncName].bind(_oEventProvider);
 			});
 
-			var bHandleValidation = Configuration.getHandleValidation();
-			if (bHandleValidation) {
-				Messaging.registerObject(this, true);
-			}
-
 			/**
 			 * Whether the core has been booted
 			 * @private
@@ -332,6 +327,21 @@ sap.ui.define([
 			var GlobalConfigurationProvider = sap.ui.require("sap/base/config/GlobalConfigurationProvider");
 			GlobalConfigurationProvider.freeze();
 			Configuration.setCore(this);
+
+			/**
+			 * @deprecated as of version 1.118
+			 */
+			(function() {
+				var bHandleValidation = BaseConfig.get({
+					name: "sapUiXxHandleValidation",
+					type: BaseConfig.Type.Boolean,
+					external: true
+				});
+				if (bHandleValidation) {
+					Messaging.registerObject(this, true);
+				}
+			}.bind(this))();
+
 			// initialize frameOptions script (anti-clickjacking, etc.)
 			var oFrameOptionsConfig = Configuration.getValue("frameOptionsConfig") || {};
 			oFrameOptionsConfig.mode = Configuration.getFrameOptions();
@@ -472,7 +482,10 @@ sap.ui.define([
 
 			function postConstructorTasks() {
 				// when a boot task is configured, add it to syncpoint2
-				var fnCustomBootTask = Configuration.getValue("xx-bootTask");
+				var fnCustomBootTask = BaseConfig.get({
+					name: "sapUiXxBootTask",
+					type: BaseConfig.Type.Function
+				});
 				if ( fnCustomBootTask ) {
 					var iCustomBootTask = oSyncPoint2.startTask("custom boot task");
 					fnCustomBootTask( function(bSuccess) {
@@ -1004,7 +1017,10 @@ sap.ui.define([
 	};
 
 	Core.prototype._executeOnInit = function() {
-		var vOnInit = Configuration.getValue("onInit");
+		var vOnInit = BaseConfig.get({
+			name: "sapUiOnInit",
+			type: BaseConfig.Type.Code
+		});
 
 		// execute a configured init hook
 		if ( vOnInit ) {
@@ -1058,7 +1074,10 @@ sap.ui.define([
 			});
 			this.oRootComponent = oComponent;
 
-			var sRootNode = Configuration.getValue("xx-rootComponentNode");
+			var sRootNode = BaseConfig.get({
+				name: "sapUiXxRootComponentNode",
+				type: BaseConfig.Type.String
+			});
 			if (sRootNode && oComponent.isA('sap.ui.core.UIComponent')) {
 				var oRootNode = document.getElementById(sRootNode);
 				if (oRootNode) {

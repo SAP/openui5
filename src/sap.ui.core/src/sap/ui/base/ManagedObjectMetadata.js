@@ -2025,7 +2025,8 @@ function(
 	 * Get the prefix used for the generated IDs from configuration
 	 *
 	 * @return {string} The prefix for the generated IDs
-	 * @private
+	 * @public
+	 * @since 1.119.0
 	 */
 	ManagedObjectMetadata.getUIDPrefix = function() {
 		if (sUIDPrefix === undefined) {

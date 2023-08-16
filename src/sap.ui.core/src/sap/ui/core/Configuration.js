@@ -916,9 +916,11 @@ sap.ui.define([
 		 *
 		 * @returns {string} the prefix to be used
 		 * @public
+		 * @deprecated since 1.119.0. Please use {@link sap.ui.base.ManagedObjectMetadata.getUIDPrefix ManagedObjectMetadata.getUIDPrefix} instead.
 		 */
 		getUIDPrefix : function() {
-			return Configuration.getValue("uidPrefix");
+			var ManagedObjectMetadata = sap.ui.require("sap/ui/base/ManagedObjectMetadata");
+			return ManagedObjectMetadata.getUIDPrefix();
 		},
 
 
@@ -1289,17 +1291,6 @@ sap.ui.define([
 		 */
 		getNoNativeScroll : function() {
 			return false;
-		},
-
-		/**
-		 * Return whether type validation is handled by core.
-		 *
-		 * @returns {boolean} whether whether type validation is handled by core
-		 * @since 1.28.0
-		 * @private
-		 */
-		getHandleValidation : function() {
-			return Configuration.getValue("xx-handleValidation");
 		},
 
 		/**
