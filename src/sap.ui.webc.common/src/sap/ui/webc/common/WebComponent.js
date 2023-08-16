@@ -124,7 +124,7 @@ sap.ui.define([
 						visibility: "hidden",
 						defaultValue: false,
 						mapping: {
-							type: "attribute",
+							type: "property",
 							to: "__is-busy"
 						}
 					}
@@ -181,8 +181,8 @@ sap.ui.define([
 		 * An object literal describing a property of a class derived from <code>sap.ui.webc.common.WebComponent</code>.
 		 * See {@link sap.ui.webc.common.WebComponent.MetadataOptions MetadataOptions} for details on its usage.
 		 *
-		 * @property {"attribute" | "style" | "textContent" | "slot" | "none" | sap.ui.webc.common.WebComponent.MetadataOptionsPropertyMapping} [mapping="attribute"] Defines the mapping of the attribute to be either "attribute", "style", "textContent", "slot", or "none".
-		 *     The default mapping of a property is "attribute" which just renders the value of the property into an attribute of the tag.
+		 * @property {"property" | "style" | "textContent" | "slot" | "none" | sap.ui.webc.common.WebComponent.MetadataOptionsPropertyMapping} [mapping="property"] Defines the mapping of the attribute to be either "property", "style", "textContent", "slot", or "none".
+		 *     The default mapping of a property is "property" which just renders the value of the property into an attribute of the tag.
 		 *
 		 * @public
 		 */
@@ -192,9 +192,9 @@ sap.ui.define([
 		 *
 		 * An object literal describing the mapping of a property of a class derived from <code>sap.ui.webc.common.WebComponent</code>.
 		 *
-		 * @property {"attribute" | "style" | "textContent" | "slot" | "none"} [type="attribute"] Defines the mapping of the property to be either "attribute", "style", "textContent", "slot", or "none".
-		 *     The default mapping of a property is "attribute" which just renders the value into an attribute of the tag.
-		 * @property {string} [to] Defines the target of the mapping of the attribute to which it will be mapped to.
+		 * @property {"property" | "style" | "textContent" | "slot" | "none"} [type="property"] Defines the mapping of the property to be either "property", "style", "textContent", "slot", or "none".
+		 *     The default mapping of a property is "property" which just renders the value into an attribute of the tag.
+		 * @property {string} [to] Defines the target of the mapping of the property to which it will be mapped to.
 		 * @property {string} [formatter] Defines the name of the formatter function at the WebComponent instance to format the value before its being mapped.
 		 *
 		 * @public
@@ -440,7 +440,7 @@ sap.ui.define([
 		 * @private
 		 */
 		WebComponent.prototype.__updateObjectProperties = function(oDomRef) {
-			var oAttrProperties = this.getMetadata().getPropertiesByMapping("attribute");
+			var oAttrProperties = this.getMetadata().getPropertiesByMapping("property");
 			for (var sPropName in oAttrProperties) {
 				if (this.isPropertyInitial(sPropName)) {
 					continue; // do not set properties that were not explicitly set/bound

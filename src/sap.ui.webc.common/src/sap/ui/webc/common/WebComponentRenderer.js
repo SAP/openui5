@@ -31,7 +31,7 @@ sap.ui.define([
 			// Opening custom element tag
 			oRm.openStart(sTag, oWebComponent);
 
-			// Properties with mapping="attribute"
+			// Properties with mapping="property"
 			this.renderAttributeProperties(oRm, oWebComponent);
 			// Properties with mapping="style"
 			this.renderStyleProperties(oRm, oWebComponent);
@@ -68,7 +68,7 @@ sap.ui.define([
 		 * @param oWebComponent
 		 */
 		WebComponentRenderer.renderAttributeProperties = function(oRm, oWebComponent) {
-			var oAttrProperties = oWebComponent.getMetadata().getPropertiesByMapping("attribute");
+			var oAttrProperties = oWebComponent.getMetadata().getPropertiesByMapping("property");
 			var aPropsToAlwaysSet = ["enabled"]; // some properties can be initial and still have a non-default value due to side effects (e.g. EnabledPropagator)
 			for (var sPropName in oAttrProperties) {
 				if (oWebComponent.isPropertyInitial(sPropName) && !aPropsToAlwaysSet.includes(sPropName)) {

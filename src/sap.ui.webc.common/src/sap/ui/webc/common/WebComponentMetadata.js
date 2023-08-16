@@ -11,7 +11,7 @@ sap.ui.define([
 	function(ElementMetadata, WebComponentRenderer, camelize) {
 		"use strict";
 
-		var MAPPING_TYPES = ["attribute", "style", "textContent", "slot", "none"];
+		var MAPPING_TYPES = ["property", "style", "textContent", "slot", "none"];
 
 		/**
 		 * Creates a new metadata object for a WebComponent Wrapper subclass.
@@ -165,7 +165,7 @@ sap.ui.define([
 			for (var propName in mProperties) {
 				if (mProperties.hasOwnProperty(propName)) {
 					var propData = mProperties[propName];
-					if (propData._sMapping === "attribute" && (propData._sMapTo === sAttr || camelize(sAttr) === propName)) {
+					if (propData._sMapping === "property" && (propData._sMapTo === sAttr || camelize(sAttr) === propName)) {
 						return true;
 					}
 				}
