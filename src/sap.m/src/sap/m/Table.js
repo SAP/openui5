@@ -682,10 +682,14 @@ sap.ui.define([
 	};
 
 	Table.prototype._onItemNavigationBeforeFocus = function(oUI5Event) {
+		var oEvent = oUI5Event.getParameter("event");
+		if (this._bMouseDown && !oEvent.target.hasAttribute("tabindex") && !oEvent.target.closest(".sapMListTblSubCnt")) {
+			return;
+		}
+
 		var iFocusedIndex;
 		var iForwardIndex = -1;
 		var iIndex = oUI5Event.getParameter("index");
-		var oEvent = oUI5Event.getParameter("event");
 		var iColumnCount = this._colHeaderAriaOwns.length + 1;
 		var oItemNavigation = oUI5Event.getSource();
 
@@ -714,7 +718,8 @@ sap.ui.define([
 				} else if (oEvent.type == "sapend") {
 					iForwardIndex = aItemDomRefs.length - iColumnCount;
 				}
-			} else if (oNavigationTarget.classList.contains("sapMGHLICell")) {
+			}
+			if (iForwardIndex == -1 && oNavigationTarget.classList.contains("sapMGHLICell")) {
 				iForwardIndex = iIndex - 1;
 				iFocusedIndex = iForwardIndex + oItemNavigation.getFocusedIndex() % iColumnCount;
 			}

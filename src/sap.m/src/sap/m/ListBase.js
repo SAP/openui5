@@ -2430,7 +2430,6 @@ function(
 		// get the last focused element from the ItemNavigation and focus
 		var aNavigationDomRefs = this._oItemNavigation.getItemDomRefs();
 		var iLastFocusedIndex = this._oItemNavigation.getFocusedIndex();
-		iLastFocusedIndex -= iLastFocusedIndex % this._oItemNavigation.iColumns;
 		var $LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]);
 
 		this.bAnnounceDetails = true;
@@ -2477,7 +2476,7 @@ function(
 			if (oFocusableItem) {
 				var iFocusableIndex = this._oItemNavigation.getItemDomRefs().indexOf(oFocusableItem);
 				if (iFocusableIndex >= 0) {
-					this._oItemNavigation.iFocusedIndex = iFocusableIndex;
+					this._oItemNavigation.iFocusedIndex = (this.getKeyboardMode() == "Edit") ? iFocusableIndex : iFocusableIndex - iFocusableIndex % this._oItemNavigation.iColumns;
 				}
 			}
 		}

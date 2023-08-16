@@ -998,8 +998,8 @@ function(
 			// active feedback
 			this.setActive(true);
 
-			// even though the tabindex=-1, list items are not focusable on iPhone
-			if (Device.os.ios) {
+			// make sure that the list item is focused
+			if (document.activeElement != this.getFocusDomRef()) {
 				this.focus();
 			}
 
