@@ -701,7 +701,6 @@ sap.ui.define([
 
 		SinglePlanningCalendarMonthGrid.prototype._getVisibleDays = function(oStartDate) {
 			var oCalStartDate,
-				iAPIFirstDayOfWeek,
 				oDay,
 				oCalDate,
 				iDaysOldMonth,
@@ -714,20 +713,8 @@ sap.ui.define([
 				return aVisibleDays;
 			}
 
+			iFirstDayOfWeek = this._getFirstDayOfWeek();
 			oCalStartDate = CalendarDate.fromLocalJSDate(oStartDate);
-			iAPIFirstDayOfWeek = this.getFirstDayOfWeek();
-
-			if (iAPIFirstDayOfWeek < 0 || iAPIFirstDayOfWeek > 6) {
-				var oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(Configuration.getFormatSettings().getFormatLocale().toString()));
-
-				if (oWeekConfigurationValues) {
-					iFirstDayOfWeek = oWeekConfigurationValues.firstDayOfWeek;
-				} else {
-					var oLocaleData = this._getCoreLocaleData();
-					iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
-				}
-			}
-
 
 			// determine weekday of first day in month
 			oFirstDay = new CalendarDate(oCalStartDate);
@@ -750,6 +737,26 @@ sap.ui.define([
 			}
 
 			return aVisibleDays;
+		};
+
+		SinglePlanningCalendarMonthGrid.prototype._getFirstDayOfWeek = function() {
+			var oWeekConfigurationValues, oLocaleData;
+
+			if (this.getFirstDayOfWeek() < 0 || this.getFirstDayOfWeek() > 6) {
+				oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(
+					this.getCalendarWeekNumbering(),
+					new Locale(Configuration.getFormatSettings().getFormatLocale().toString())
+				);
+
+				if (oWeekConfigurationValues) {
+					return oWeekConfigurationValues.firstDayOfWeek;
+				} else {
+					oLocaleData = this._getCoreLocaleData();
+					return oLocaleData.getFirstDayOfWeek();
+				}
+			} else {
+				return this.getFirstDayOfWeek();
+			}
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getAppointmentsToRender = function() {
