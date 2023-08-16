@@ -55,7 +55,7 @@ sap.ui.define([
 				sLibrary = sTestLibrary;
 				sap.ui.require(aElements.map(function(s) {
 					return s.replace(/\./g, "/");
-				}), function() {
+				}), function(...aArgs) {
 					// all controls are loaded, now all libs are loaded
 					var mLazyLibraries = sap.ui.getCore().getLoadedLibraries();
 					try {
@@ -86,10 +86,10 @@ sap.ui.define([
 					}
 					var aDesigntimePromises = [];
 					var aControlMetadata = [];
-					for (var i = 0; i < arguments.length; i++) {
-						if (arguments[i].getMetadata()._oDesignTime) {
-							aDesigntimePromises.push(arguments[i].getMetadata().loadDesignTime());
-							aControlMetadata.push(arguments[i].getMetadata());
+					for (var i = 0; i < aArgs.length; i++) {
+						if (aArgs[i].getMetadata()._oDesignTime) {
+							aDesigntimePromises.push(aArgs[i].getMetadata().loadDesignTime());
+							aControlMetadata.push(aArgs[i].getMetadata());
 						}
 					}
 					Promise.all(aDesigntimePromises).then(function(aElements) {
@@ -112,19 +112,19 @@ sap.ui.define([
 	var mModelChecks = {
 		"/": {
 			optional: false,
-			check: function(assert, oObject, sControlName) {
+			check(assert, oObject, sControlName) {
 				assert.strictEqual(typeof oObject, "object", `${sControlName} is an object`);
 			}
 		},
 		"/designtimeModule": {
 			optional: false,
-			check: function(assert, sString, sControlName) {
+			check(assert, sString, sControlName) {
 				assert.strictEqual(typeof sString, "string", `${sControlName} defines /designtimeModule : ${sString}`);
 			}
 		},
 		"/actions": {
 			optional: true,
-			check: function(assert, mActions, sControlName) {
+			check(assert, mActions, sControlName) {
 				Object.keys(mActions).forEach(function(sAction) {
 					if (mActions[sAction].changeType) {
 						assert.strictEqual(typeof mActions[sAction].changeType, "string", `${sControlName} defines ${sAction} with changetype:${mActions[sAction].changeType}`);
@@ -140,7 +140,7 @@ sap.ui.define([
 		},
 		"/name": {
 			optional: true,
-			check: function(assert, mEntry, sControlName) {
+			check(assert, mEntry, sControlName) {
 				// name can be a string like this "{name}"
 				// TODO: be more strict here
 				if (typeof mEntry === "string" && mEntry.indexOf("{") === 0 && mEntry.indexOf("}") === mEntry.length - 1) {
@@ -188,7 +188,7 @@ sap.ui.define([
 		},
 		"/palette": {
 			optional: true,
-			check: function(assert, mEntry, sControlName) {
+			check(assert, mEntry, sControlName) {
 				var aValidGroups = ["ACTION", "DISPLAY", "LAYOUT", "LIST", "INPUT", "CONTAINER", "CHART", "TILE", "DIALOG"];
 				assert.strictEqual(typeof mEntry, "object", `${sControlName} defines optional entry /palette/`);
 				assert.strictEqual(aValidGroups.indexOf(mEntry.group) > -1, true, `palette entry defines valid group ${mEntry.group}`);
@@ -220,7 +220,7 @@ sap.ui.define([
 		},
 		"/templates": {
 			optional: true,
-			check: function(assert, mEntry /* ,sControlName */) {
+			check(assert, mEntry /* ,sControlName */) {
 				if (mEntry.create) { // icons in palette optional
 					var sCreateTemplate = mEntry.create;
 					assert.strictEqual(typeof sCreateTemplate, "string", `templates/create entry defines fragment path to ${sCreateTemplate}`);

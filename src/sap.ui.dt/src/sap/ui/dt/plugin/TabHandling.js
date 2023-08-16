@@ -55,8 +55,9 @@ sap.ui.define([
 		}
 	};
 
-	TabHandling.prototype.setDesignTime = function(oDesignTime) {
-		Plugin.prototype.setDesignTime.apply(this, arguments);
+	TabHandling.prototype.setDesignTime = function(...aArgs) {
+		const [oDesignTime] = aArgs;
+		Plugin.prototype.setDesignTime.apply(this, aArgs);
 		if (oDesignTime) {
 			if (!this._oMutationObserver) {
 				this._oMutationObserver = Overlay.getMutationObserver();

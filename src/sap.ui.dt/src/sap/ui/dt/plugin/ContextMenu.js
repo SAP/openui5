@@ -97,7 +97,7 @@ sap.ui.define([
 		var mMenuItemEntry = {
 			menuItem: mMenuItem,
 			fromPlugin: !!bRetrievedFromPlugin,
-			bPersistOneTime: bPersistOneTime
+			bPersistOneTime
 		};
 		this._aMenuItems.push(mMenuItemEntry);
 	};
@@ -467,9 +467,7 @@ sap.ui.define([
 	 */
 	ContextMenu.prototype._addSubMenu = function(mMenuItem) {
 		mMenuItem.submenu.forEach(function(oSubMenuItem) {
-			if (!oSubMenuItem.handler) {
-				oSubMenuItem.handler = mMenuItem.handler;
-			}
+			oSubMenuItem.handler ||= mMenuItem.handler;
 		});
 
 		this._aSubMenus.push({

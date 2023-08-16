@@ -34,7 +34,7 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
-	var TitleLevel = coreLibrary.TitleLevel;
+	var {TitleLevel} = coreLibrary;
 
 	var initFormWithGivenLayout = function(assert, oLayout) {
 		var fnDone = assert.async();
@@ -154,11 +154,11 @@ sap.ui.define([
 	};
 
 	QUnit.module("Given that overlays are created for a form with ColumnLayout with formContainers", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			initFormWithGivenLayout.call(this, assert, new ColumnLayout());
 		},
 
-		afterEach: function() {
+		afterEach() {
 			cleanup.call(this);
 		}
 	}, function() {
@@ -168,10 +168,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that overlays are created for a form with ResponsiveGridLayout with formContainers", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			initFormWithGivenLayout.call(this, assert, new ResponsiveGridLayout());
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanup.call(this);
 		}
 	}, function() {
@@ -181,10 +181,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that overlays are created for a form with FormLayout with formContainers", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			initFormWithGivenLayout.call(this, assert, new FormLayout());
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanup.call(this);
 		}
 	}, function() {

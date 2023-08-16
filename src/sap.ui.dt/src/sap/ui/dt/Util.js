@@ -162,8 +162,9 @@ sap.ui.define([
 	 * @param {...*} var_args - Values for placeholders
 	 * @return {string} - Concatenated string
 	 */
-	Util.printf = function(sString) {
-		var aArgs = Array.prototype.slice.call(arguments, 1);
+	Util.printf = function(...aArgs) {
+		const [sString] = aArgs;
+		aArgs = aArgs.slice(1);
 		return sString.replace(/{(\d+)}/g, function(sMatch, iIndex) {
 			return typeof aArgs[iIndex] !== "undefined"
 				? aArgs[iIndex]
@@ -210,10 +211,9 @@ sap.ui.define([
 				"sap.ui.dt"
 			);
 		}
-		return function() {
-			var aArguments = Array.prototype.slice.call(arguments);
+		return function(...aArgs) {
 			return Promise.resolve().then(function() {
-				return fnHandler.apply(null, aArguments);
+				return fnHandler(...aArgs); // args from the outer function scope
 			});
 		};
 	};
@@ -228,24 +228,24 @@ sap.ui.define([
 
 	/**
 	 * Checks if the passed designTime instance's status is syncing.
-	 * Returns a promise resolving to the return value of the passed function, when the passed designTime instances's status changes to synced.
+	 * Returns a promise resolving to the return value of the passed function, when the passed designTime instances's
+	 * status changes to synced.
 	 *
 	 * @param {sap.ui.dt.DesignTime} oDtInstance designTime instance
 	 * @param {function} fnOriginal function for which value needs to be returned
 	 * @returns {Promise} Returns a Promise.resolve() to the passed function's return value or a Promise.reject() when designTime fails to sync
 	 */
 	Util.waitForSynced = function(oDtInstance, fnOriginal) {
-		return function() {
-			fnOriginal = fnOriginal || function() {};
-			var aArguments = arguments;
+		return function(...aArgs) {
+			fnOriginal ||= function() {};
 			return new Promise(function(fnResolve, fnReject) {
 				if (oDtInstance.getStatus() === DesignTimeStatus.SYNCING) {
 					oDtInstance.attachEventOnce("synced", function() {
-						fnResolve(fnOriginal.apply(null, aArguments));
+						fnResolve(fnOriginal(...aArgs)); // args from the outer function scope
 					});
 					oDtInstance.attachEventOnce("syncFailed", fnReject);
 				} else {
-					fnResolve(fnOriginal.apply(null, aArguments));
+					fnResolve(fnOriginal(...aArgs)); // args from the outer function scope
 				}
 			});
 		};

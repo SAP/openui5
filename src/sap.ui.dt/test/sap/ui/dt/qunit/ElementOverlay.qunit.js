@@ -72,10 +72,10 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Creation of the overlay container", {
-		beforeEach: function() {
+		beforeEach() {
 			Overlay.getOverlayContainer();
 		},
-		afterEach: function() {
+		afterEach() {
 			Overlay.removeOverlayContainer();
 		}
 	}, function() {
@@ -86,7 +86,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an overlay is created for a control", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton = new Button({
 				text: "Button"
@@ -97,7 +97,7 @@ sap.ui.define([
 			this.oElementOverlay = new ElementOverlay({
 				isRoot: true,
 				element: this.oButton,
-				init: function(oEvent) {
+				init(oEvent) {
 					oEvent.getSource().placeInOverlayContainer();
 					// Wait until the overlay styles are applied (fixes IE11 timing issue)
 					this.attachEventOnce("geometryChanged", function() {
@@ -107,7 +107,7 @@ sap.ui.define([
 			});
 			this.oElementOverlay.attachEvent("applyStylesRequired", this.oElementOverlay.applyStyles.bind(this.oElementOverlay));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oElementOverlay.detachEvent("applyStylesRequired", this.oElementOverlay.applyStyles.bind(this.oElementOverlay));
 			this.oElementOverlay.destroy();
 			this.oButton.destroy();
@@ -481,7 +481,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oLabel = new Label();
 			this.oLabel.placeAt("qunit-fixture");
@@ -494,7 +494,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oLabel.destroy();
 		}
@@ -510,7 +510,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created for a control with a shadow root (e.g. web component)", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oCheckBox = new WebComponentCheckBox();
 			this.oCheckBox.placeAt("qunit-fixture");
@@ -523,7 +523,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oCheckBox.destroy();
 		}
@@ -541,7 +541,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created for a layout with an invisible domRef", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oLabel = new Label({ text: "text" });
 			this.oVerticalLayout = new VerticalLayout({ content: [this.oLabel] });
@@ -558,7 +558,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oVerticalLayout.destroy();
 		}
@@ -583,7 +583,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created for a layout with a visible domRef", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oLabel1 = new Label({ text: "text 1" });
 			this.oLabel2 = new Label({ text: "text 2" });
@@ -603,7 +603,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -691,7 +691,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created for a layout with child controls", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton1 = new Button({
 				text: "Button 1"
@@ -716,7 +716,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton1.destroy();
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
@@ -735,7 +735,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created for a control with custom design time metadata", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oButton = new Button({
 				text: "Button"
 			});
@@ -750,13 +750,13 @@ sap.ui.define([
 					}
 				}),
 				init: assert.async(),
-				initFailed: function(oEvent) {
+				initFailed(oEvent) {
 					assert.ok(false);
 					throw new Error(oEvent.getParameter("error"));
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oOverlay.destroy();
 			this.oButton.destroy();
 		}
@@ -768,7 +768,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created for a control marked as ignored in the designtime Metadata", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton = new Button({
 				text: "Button"
@@ -788,13 +788,13 @@ sap.ui.define([
 					this.oOverlay.placeInOverlayContainer();
 					fnDone();
 				}.bind(this),
-				initFailed: function(oEvent) {
+				initFailed(oEvent) {
 					assert.ok(false);
 					throw new Error(oEvent.getParameter("error"));
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oOverlay.destroy();
 			this.oButton.destroy();
 		}
@@ -806,7 +806,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created for two layouts with two child controls", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton1 = new Button({
 				text: "Button 1",
@@ -855,7 +855,7 @@ sap.ui.define([
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVerticalLayout2.destroy();
 			this.oVerticalLayout1.destroy();
 			this.oDesignTime.destroy();
@@ -887,7 +887,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created for a control in the content of a scrollable container", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oContainer = document.createElement("div");
 			this.oContainer.style.height = "400px";
@@ -917,7 +917,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oContainer.remove();
 			this.oButton.destroy();
@@ -936,7 +936,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a SimpleScrollControl with Overlays", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 
 			this.oSimpleScrollControl = new SimpleScrollControl("scrollControl");
@@ -972,7 +972,7 @@ sap.ui.define([
 				}
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
@@ -1019,7 +1019,7 @@ sap.ui.define([
 			this.oSimpleScrollControlOverlay.attachEventOnce("scrollSynced", scrollHandler.bind(this, assert, fnDone, mInitialValues));
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").off();
 			var oDelegate = {
-				onAfterRendering: function() {
+				onAfterRendering() {
 					this.oSimpleScrollControl.removeEventDelegate(oDelegate);
 					this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scrollTop(100);
 				}
@@ -1055,7 +1055,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Postponed an aggregation overlay rendering", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oPanel = new Panel({
 				height: "300px",
@@ -1082,7 +1082,7 @@ sap.ui.define([
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oPanel.destroy();
 		}
@@ -1111,7 +1111,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Aggregation sorting", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			var fnDone2 = assert.async();
 
@@ -1159,7 +1159,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oVBox.destroy();
 		}
@@ -1204,7 +1204,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given another SimpleScrollControl with Overlays and one scroll container aggregation is ignored", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var ScrollControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.ScrollControl", {
 				metadata: {
 					designtime: {
@@ -1247,7 +1247,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -1260,7 +1260,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a control with control domRef defined in dt-metadata", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var AnyControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.AnyControl", {
 				metadata: {
 					designtime: {
@@ -1291,7 +1291,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -1606,7 +1606,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created when scrolling is present", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton = new Button({
 				text: "Button"
@@ -1636,7 +1636,7 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPanel.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -1717,7 +1717,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Highlighting on selection - Given a List with bound items and a List with unbound items", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oHorizontalLayout = TestUtil.createListWithBoundItems();
 			this.oDesignTime = new DesignTime({
@@ -1725,7 +1725,7 @@ sap.ui.define([
 			});
 			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oHorizontalLayout.destroy();
 			sandbox.restore();
@@ -1781,7 +1781,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a DynamicPage with scrolling", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 
 			function getDynamicPageTitle() {
@@ -1818,7 +1818,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oDynamicPage.destroy();
 		}

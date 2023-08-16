@@ -23,10 +23,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var IconColor = coreLibrary.IconColor;
+	var {IconColor} = coreLibrary;
 
 	QUnit.module("Given the IconTabBar is created with 3 filters and different content..", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oList = new List({
 				items: [
 					new StandardListItem({
@@ -82,7 +82,7 @@ sap.ui.define([
 				done();
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oList.destroy();
 			this.oButton.destroy();
 			this.oIconTabBar.destroy();

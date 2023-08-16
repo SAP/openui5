@@ -45,14 +45,14 @@ sap.ui.define([
 	 * getSize
 	 */
 	QUnit.module("Given that a container is rendered", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oContainer = document.createElement("div");
 			this.oContainer.style.background = "blue";
 			this.oContainer.style.width = "200px";
 			this.oContainer.style.height = "200px";
 			document.getElementById("qunit-fixture").append(this.oContainer);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oContainer.remove();
 		}
 	}, function() {
@@ -70,7 +70,7 @@ sap.ui.define([
 	 * getOffsetFromParent
 	 */
 	QUnit.module("Given that a container is rendered with a bigger content element (for scrollbars)", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oContent = document.createElement("div");
 			this.oContent.style.background = "red";
 			this.oContent.style.width = "200px";
@@ -86,7 +86,7 @@ sap.ui.define([
 			this.oContainer.append(this.oContent);
 			document.getElementById("qunit-fixture").append(this.oContainer);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oContainer.remove();
 		}
 	}, function() {
@@ -121,7 +121,7 @@ sap.ui.define([
 	 * getZIndex
 	 */
 	QUnit.module("Given that a control is rendered", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton = new Button({
 				text: "Button"
 			});
@@ -130,7 +130,7 @@ sap.ui.define([
 			// Render Controls
 			oCore.applyChanges();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 		}
 	}, function() {
@@ -171,7 +171,7 @@ sap.ui.define([
 	 * getDomRefForCSSSelector
 	 */
 	QUnit.module("Given that some DOM element with child nodes is rendered...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oDomElement = document.createElement("div");
 			this.oDomElement.setAttribute("id", "parent");
 			this.oDomElement.classList.add("parent");
@@ -187,7 +187,7 @@ sap.ui.define([
 
 			document.getElementById("qunit-fixture").append(this.oDomElement);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDomElement.remove();
 		}
 	}, function() {
@@ -231,7 +231,7 @@ sap.ui.define([
 	 * cloneDOMAndStyles
 	 */
 	QUnit.module("Given that some DOM element with child nodes is rendered...", {
-		beforeEach: function() {
+		beforeEach() {
 			// TODO: check why classes are not considered when using JS
 			jQuery("<div style='float: left; width: 50%; height: 100%;' id='left-part'></div>").appendTo("#qunit-fixture");
 			jQuery("<div style='float: left; width: 50%; height: 100%;' id='right-part'></div>").appendTo("#qunit-fixture");
@@ -239,7 +239,7 @@ sap.ui.define([
 			this.oDomElement = jQuery("<div data-find='div' class='withBeforeElement' style='width:200px; height: 200px;'><span data-find='span' class='withAfterElement' style='color: rgb(255, 0, 0);'>Text</span></div>");
 			this.oDomElement.appendTo("#left-part");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDomElement.remove();
 			jQuery("#qunit-fixture").empty();
 		}
@@ -269,7 +269,7 @@ sap.ui.define([
 	 * hasScrollBar
 	 */
 	QUnit.module("Given that a container and a content are rendered", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oContent = document.createElement("div");
 			this.oContent.style.background = "red";
 			this.oContent.style.width = "200px";
@@ -282,7 +282,7 @@ sap.ui.define([
 			this.oContainer.append(this.oContent);
 			document.getElementById("qunit-fixture").append(this.oContainer);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oContainer.remove();
 		}
 	}, function() {
@@ -308,7 +308,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("copyComputedStyle()", {
-		beforeEach: function() {
+		beforeEach() {
 			// TODO: check why classes are not considered when using JS
 			this.oSrcDomElement = jQuery("<div class='child' id='first-child' " +
 				"style='background: #000; width: 200px; height: 200px;'" +
@@ -353,7 +353,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("getScrollLeft()", {
-		beforeEach: function() {
+		beforeEach() {
 			var oInnerDiv = document.createElement("div");
 			oInnerDiv.style.width = "200px";
 			oInnerDiv.style.height = "200px";
@@ -364,7 +364,7 @@ sap.ui.define([
 			this.oPanel.append(oInnerDiv);
 			document.getElementById("qunit-fixture").append(this.oPanel);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPanel.remove();
 		}
 	}, function() {
@@ -382,7 +382,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("hasHorizontalScrollBar()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oInnerPanel = document.createElement("div");
 			this.oInnerPanel.style.width = "100px";
 			this.oInnerPanel.style.backgroundColor = "blue";
@@ -419,7 +419,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("hasVerticalScrollBar()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oInnerPanel = document.createElement("div");
 			this.oInnerPanel.style.width = "100px";
 			this.oInnerPanel.style.height = "100px";
@@ -457,7 +457,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("appendChild()", {
-		beforeEach: function() {
+		beforeEach() {
 			var oChildInner = document.createElement("div");
 			oChildInner.style.width = "1000px";
 			oChildInner.style.height = "1000px";
@@ -487,7 +487,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("when isVisible is called with ", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oNode = document.createElement("div");
 			document.getElementById("qunit-fixture").appendChild(this.oNode);
 		}
@@ -525,7 +525,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("when isVisible is called with svg", {
-		beforeEach: function() {
+		beforeEach() {
 			var ns = "http://www.w3.org/2000/svg";
 
 			var svg01 = document.createElementNS(ns, "svg");

@@ -53,8 +53,8 @@ sap.ui.define([
 
 	var sDROP_ZONE_STYLE = "sapUiDtOverlayDropZone";
 
-	ControlDragDrop.prototype.init = function() {
-		DragDrop.prototype.init.apply(this, arguments);
+	ControlDragDrop.prototype.init = function(...aArgs) {
+		DragDrop.prototype.init.apply(this, aArgs);
 		this.setElementMover(new ElementMover());
 	};
 
@@ -102,8 +102,9 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	ControlDragDrop.prototype.deregisterElementOverlay = function(oOverlay) {
-		DragDrop.prototype.deregisterElementOverlay.apply(this, arguments);
+	ControlDragDrop.prototype.deregisterElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
+		DragDrop.prototype.deregisterElementOverlay.apply(this, aArgs);
 		oOverlay.setMovable(false);
 
 		if (this.oDraggedElement) {

@@ -24,7 +24,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that the DesignTimeMetadata is created for a fake control", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
 				data: {
 					testField: "testValue",
@@ -34,7 +34,7 @@ sap.ui.define([
 						action2: {
 							changeType: "secondChangeType"
 						},
-						action3: function(oElement) {
+						action3(oElement) {
 							return {
 								changeType: oElement.name
 							};
@@ -45,7 +45,7 @@ sap.ui.define([
 							}
 						},
 						actionWithASubActionInsideFunction: {
-							subAction: function(oElement) {
+							subAction(oElement) {
 								return {
 									changeType: oElement.name
 								};
@@ -55,7 +55,7 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oDesignTimeMetadata.destroy();
 		}
@@ -193,7 +193,7 @@ sap.ui.define([
 		QUnit.test("when ignore is a function returning false", function(assert) {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
 				data: {
-					ignore: function() {return false; }
+					ignore() {return false; }
 				}
 			});
 			assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), false, "then ignore property is returned right");
@@ -202,7 +202,7 @@ sap.ui.define([
 		QUnit.test("when ignore is a function returning true", function(assert) {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
 				data: {
-					ignore: function() {return true; }
+					ignore() {return true; }
 				}
 			});
 			assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), true, "then ignore property is returned right");
@@ -245,7 +245,7 @@ sap.ui.define([
 				data: {
 					actions: {
 						rename: {
-							domRef: function(oElement) {
+							domRef(oElement) {
 								return oElement.getDomRef();
 							}
 						}
@@ -257,7 +257,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a dedicated rendered control and designtime metadata is created", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton = new Button({
 				text: "myButton"
 			});
@@ -265,7 +265,7 @@ sap.ui.define([
 			this.oButton.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 		}
 	}, function() {
@@ -274,7 +274,7 @@ sap.ui.define([
 				data: {
 					actions: {
 						rename: {
-							domRef: function(oElement) {
+							domRef(oElement) {
 								return oElement.getDomRef();
 							}
 						}
@@ -292,7 +292,7 @@ sap.ui.define([
 				data: {
 					actions: {
 						rename: {
-							domRef: function(oElement) {
+							domRef(oElement) {
 								return oElement.getDomRef();
 							}
 						}
@@ -309,7 +309,7 @@ sap.ui.define([
 				data: {
 					actions: {
 						rename: {
-							domRef: function() {
+							domRef() {
 								throw new Error("Something wrong");
 							}
 						}
@@ -387,7 +387,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a dedicated rendered control and an AggregationDesignTimeMetadata is created for a control", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTitle0 = new Title({id: "Title0", text: "Title 0"});
 			this.oLabel0 = new Label({id: "Label0", text: "Label 0"});
 			this.oInput0 = new Input({id: "Input0"});
@@ -402,7 +402,7 @@ sap.ui.define([
 			this.oSimpleForm.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oSimpleForm.destroy();
 		}
 	}, function() {
@@ -410,9 +410,9 @@ sap.ui.define([
 			var oDesignTimeMetadata = new DesignTimeMetadata({
 				data: {
 					actions: {
-						rename: function() {
+						rename() {
 							return {
-								domRef: function(oElement) {
+								domRef(oElement) {
 									return oElement.getDomRef();
 								}
 							};
@@ -431,7 +431,7 @@ sap.ui.define([
 			var oDesignTimeMetadata = new DesignTimeMetadata({
 				data: {
 					actions: {
-						rename: function() {
+						rename() {
 							return {
 								domRef: ":sap-domref"
 							};
@@ -448,11 +448,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given responsible element is requested", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oDesignTimeMetadataWithResponsibleElement = new DesignTimeMetadata({
 				data: {
 					actions: {
-						getResponsibleElement: function(oElement) {
+						getResponsibleElement(oElement) {
 							return oElement;
 						},
 						actionsFromResponsibleElement: ["dummyActionEnabled"]

@@ -22,7 +22,7 @@ sap.ui.define([
 		 * @param {string} [sIdPrefix] - Prefix for IDs defined with this function
 		 * @returns {sap.ui.layout.HorizontalLayout} Root control
 		 */
-		createListWithBoundItems: function(sIdPrefix) {
+		createListWithBoundItems(sIdPrefix) {
 			//	horizontalLayout
 			// 		boundList
 			//			(bound template) customListItem (model with 2 entries)

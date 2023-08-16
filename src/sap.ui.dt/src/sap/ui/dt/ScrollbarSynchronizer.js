@@ -50,9 +50,10 @@ function(
 			}
 		},
 		_bSyncing: false,
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			this._scrollEventHandler = this._scrollEventHandler.bind(this);
-			ManagedObject.apply(this, arguments);
+			ManagedObject.apply(this, aArgs);
 		}
 	});
 
@@ -75,7 +76,7 @@ function(
 		this.getTargets().forEach(this.removeTarget.bind(this));
 
 		// 2. attach scroll events to new targets
-		this.addTarget.apply(this, aTargets);
+		this.addTarget(...aTargets);
 	};
 
 	/**
@@ -96,8 +97,8 @@ function(
 	 * Add an arbitrary number of elements as targets
 	 * Pass any number of elements to this function to add them as targets
 	 */
-	ScrollbarSynchronizer.prototype.addTarget = function() {
-		var aTargets = Array.prototype.slice.call(arguments);
+	ScrollbarSynchronizer.prototype.addTarget = function(...aArgs) {
+		var aTargets = Array.prototype.slice.call(aArgs);
 
 		if (!aTargets.length) {
 			return;
@@ -180,14 +181,14 @@ function(
 	/**
 	 * Destroys the Scrollbar Synchronizer
 	 */
-	ScrollbarSynchronizer.prototype.destroy = function() {
+	ScrollbarSynchronizer.prototype.destroy = function(...aArgs) {
 		this.getTargets().forEach(function(oDomNode) {
 			this.removeTarget(oDomNode);
 		}, this);
 		this._abortSync();
 		this.fireDestroyed();
 
-		ManagedObject.prototype.destroy.apply(this, arguments);
+		ManagedObject.prototype.destroy.apply(this, aArgs);
 	};
 
 	ScrollbarSynchronizer.prototype.isSyncing = function() {

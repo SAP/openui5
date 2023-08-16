@@ -34,7 +34,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a MutationObserver is created", {
-		beforeEach: function() {
+		beforeEach() {
 			this.sNodeId = "node-id";
 			this.$Node = jQuery("<div></div>", {
 				id: this.sNodeId
@@ -42,7 +42,7 @@ sap.ui.define([
 
 			this.oMutationObserver = new MutationObserver();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oMutationObserver.destroy();
 		}
 	}, function() {
@@ -201,7 +201,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Static area mutations", {
-		beforeEach: function() {
+		beforeEach() {
 			this.$StaticUIArea = jQuery("<div></div>", {
 				id: StaticArea.STATIC_UIAREA_ID
 			}).appendTo("#qunit-fixture");
@@ -212,7 +212,7 @@ sap.ui.define([
 
 			this.oMutationObserver = new MutationObserver();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oMutationObserver.destroy();
 			sandbox.restore();
 		}
@@ -250,7 +250,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a Vertical Layout with a scrollable Panel and another Vertical Layout with two scrollable panels for which DT is started...", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var aButtons0 = [20, 21, 22, 23, 24, 25].map(function(i) {
 				return new Button(`button${i}`);
 			});
@@ -315,7 +315,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oOuterPanel.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -354,7 +354,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a outer Panel and VerticalLayout inside containing inner Panel with Button...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton = new Button("Button0");
 			this.oInnerPanel = new Panel({
 				id: "InnerPanel",
@@ -379,7 +379,7 @@ sap.ui.define([
 
 			this.oMutationObserver = new MutationObserver();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oOuterPanel.destroy();
 			this.oMutationObserver.destroy();
 		}
@@ -452,7 +452,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given two layouts as siblings...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton0 = new Button("button0", { text: "button0-text" });
 			this.oButton1 = new Button("button1", { text: "button1-text" });
 
@@ -474,7 +474,7 @@ sap.ui.define([
 
 			this.oMutationObserver = new MutationObserver();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVerticalLayout0.destroy();
 			this.oVerticalLayout1.destroy();
 			this.oMutationObserver.destroy();

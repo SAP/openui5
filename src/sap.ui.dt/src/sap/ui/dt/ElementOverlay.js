@@ -187,9 +187,10 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			this._aMetadataEnhancers = [];
-			Overlay.apply(this, arguments);
+			Overlay.apply(this, aArgs);
 		}
 	});
 
@@ -321,10 +322,10 @@ sap.ui.define([
 		}
 	};
 
-	ElementOverlay.prototype._getAttributes = function() {
+	ElementOverlay.prototype._getAttributes = function(...aArgs) {
 		return merge(
 			{},
-			Overlay.prototype._getAttributes.apply(this, arguments),
+			Overlay.prototype._getAttributes.apply(this, aArgs),
 			{
 				"data-sap-ui-dt-for": this.getElement().getId(),
 				draggable: this.getMovable()
@@ -332,16 +333,16 @@ sap.ui.define([
 		);
 	};
 
-	ElementOverlay.prototype.render = function() {
+	ElementOverlay.prototype.render = function(...aArgs) {
 		this.addStyleClass("sapUiDtElementOverlay");
-		return Overlay.prototype.render.apply(this, arguments);
+		return Overlay.prototype.render.apply(this, aArgs);
 	};
 
 	/**
 	 * Called when the ElementOverlay is destroyed
 	 * @protected
 	 */
-	ElementOverlay.prototype.exit = function() {
+	ElementOverlay.prototype.exit = function(...aArgs) {
 		this._unsubscribeFromMutationObserver();
 		this._destroyControlObserver();
 
@@ -349,7 +350,7 @@ sap.ui.define([
 			window.cancelAnimationFrame(this._iApplyStylesRequest);
 		}
 
-		Overlay.prototype.exit.apply(this, arguments);
+		Overlay.prototype.exit.apply(this, aArgs);
 	};
 
 	ElementOverlay.prototype._loadDesignTimeMetadata = function() {
@@ -384,13 +385,17 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	ElementOverlay.prototype._setPosition = function($Target, oGeometry, $Parent, bForceScrollbarSync) {
+	ElementOverlay.prototype._setPosition = function(...aArgs) {
+		const [, , , bForceScrollbarSync] = aArgs;
 		// Apply Overlay position first, then extra logic based on this new position
-		Overlay.prototype._setPosition.apply(this, arguments);
+		Overlay.prototype._setPosition.apply(this, aArgs);
 
 		this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
 			// TODO: write Unit test for the case when getAssociatedDomRef() returns undefined (domRef func returns undefined)
-			var $ScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef) || jQuery();
+			var $ScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(
+				this.getElement(),
+				mScrollContainer.domRef
+			) || jQuery();
 			var $ScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
 
 			if ($ScrollContainerDomRef.length) {
@@ -407,8 +412,8 @@ sap.ui.define([
 		}, this);
 	};
 
-	ElementOverlay.prototype._applySizes = function() {
-		return Overlay.prototype._applySizes.apply(this, arguments)
+	ElementOverlay.prototype._applySizes = function(...aArgs) {
+		return Overlay.prototype._applySizes.apply(this, aArgs)
 		.then(function() {
 			this._sortChildren(this.getChildrenDomRef());
 			if (!this.bIsDestroyed) {
@@ -591,8 +596,8 @@ sap.ui.define([
 	 * @return {jQuery[]} - returns array of children DOM Nodes each wrapped into jQuery object.
 	 * @private
 	 */
-	ElementOverlay.prototype._renderChildren = function() {
-		var a$Children = Overlay.prototype._renderChildren.apply(this, arguments);
+	ElementOverlay.prototype._renderChildren = function(...aArgs) {
+		var a$Children = Overlay.prototype._renderChildren.apply(this, aArgs);
 
 		this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
 			var $ScrollContainer = jQuery("<div></div>", {
@@ -637,9 +642,7 @@ sap.ui.define([
 		var oDesignTimeMetadata = this.getDesignTimeMetadata();
 		var vDomRef = oDesignTimeMetadata.getDomRef();
 		var oDomRef = oDesignTimeMetadata.getAssociatedDomRef(this.getElement(), vDomRef);
-		if (!oDomRef) {
-			oDomRef = ElementUtil.getDomRef(this.getElement());
-		}
+		oDomRef ||= ElementUtil.getDomRef(this.getElement());
 
 		if (oDomRef) {
 			return jQuery(oDomRef);
@@ -798,12 +801,13 @@ sap.ui.define([
 	 * and a new child is added to that aggregation. We then render the aggregation here.
 	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay - The aggregation overlay where the child is being added.
 	 */
-	ElementOverlay.prototype.addChild = function(oAggregationOverlay) {
+	ElementOverlay.prototype.addChild = function(...aArgs) {
+		const [oAggregationOverlay] = aArgs;
 		// Since we can't check whether the listener was attached before or not, we re-attach it to avoid multiple listeners
 		oAggregationOverlay.detachChildAdded(this._onChildAdded, this);
 		oAggregationOverlay.attachChildAdded(this._onChildAdded, this);
 
-		Overlay.prototype.addChild.apply(this, arguments);
+		Overlay.prototype.addChild.apply(this, aArgs);
 	};
 
 	/**
@@ -981,9 +985,9 @@ sap.ui.define([
 		return bVisible;
 	};
 
-	ElementOverlay.prototype.isVisible = function() {
+	ElementOverlay.prototype.isVisible = function(...aArgs) {
 		return (
-			Overlay.prototype.isVisible.apply(this, arguments)
+			Overlay.prototype.isVisible.apply(this, aArgs)
 			&& this.isElementVisible()
 		);
 	};

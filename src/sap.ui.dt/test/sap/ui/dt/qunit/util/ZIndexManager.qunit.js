@@ -49,7 +49,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a non-adaptable popup is open", {
-		beforeEach: function() {
+		beforeEach() {
 			Popup.getNextZIndex(); // To force sap.ui.core.Popup to generate new z-index for BusyIndicator
 			BusyIndicator.show(0); // "0" is required to disable async behaviour
 			var oLogStub = sandbox.stub(Log, "error");
@@ -63,7 +63,7 @@ sap.ui.define([
 			.returns();
 			this.iBusyIndicatorZIndex = BusyIndicator.oPopup._iZIndex;
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			BusyIndicator.hide();
 		}
@@ -101,7 +101,7 @@ sap.ui.define([
 		});
 	});
 	QUnit.module("Given an adaptable popup is open", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			sandbox.stub(Log, "error")
 			.callThrough()
@@ -122,7 +122,7 @@ sap.ui.define([
 
 			this.oDialog.open();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDialog.destroy();
 			sandbox.restore();
 			ZIndexManager.removePopupFilter(fnFilter);
@@ -156,7 +156,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an adaptable popup with greater z-index than a non-adaptable popup", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			ZIndexManager.addPopupFilter(fnFilter);
 			Popup.getNextZIndex(); // To force sap.ui.core.Popup to generate new z-index for BusyIndicator
@@ -171,7 +171,7 @@ sap.ui.define([
 
 			this.oDialog.open();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDialog.destroy();
 			BusyIndicator.hide();
 			ZIndexManager.removePopupFilter(fnFilter);
@@ -190,7 +190,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a non-adaptable popup with greater z-index than an adaptable popup", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			ZIndexManager.addPopupFilter(fnFilter);
 			this.oDialog = new Dialog(sAdaptableDialogId);
@@ -203,7 +203,7 @@ sap.ui.define([
 
 			this.oDialog.open();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDialog.destroy();
 			BusyIndicator.hide();
 			ZIndexManager.removePopupFilter(fnFilter);

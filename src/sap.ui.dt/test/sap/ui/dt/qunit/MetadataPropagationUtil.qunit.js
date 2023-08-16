@@ -30,12 +30,12 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given empty propagation map (without 'propagateRelevantContainer' designTimeMetadata and without parent propagationInfos)", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oVerticalLayout = new VerticalLayout("layout");
 			this.oPage = new Page("test-page");
 			this.mAggregationData = {};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVerticalLayout.destroy();
 			this.oPage.destroy();
 			sandbox.restore();
@@ -93,11 +93,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given propagation map with 'propagateRelevantContainer' as boolean and without parent propagationInfos", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oPropObject = { propagateRelevantContainer: true };
 			this.oButton = new Button("test-button2");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 			sandbox.restore();
 		}
@@ -126,14 +126,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given propagation map with 'propagateRelevantContainer' as function and without parent propagationInfos", {
-		beforeEach: function() {
+		beforeEach() {
 			this.fnPropagateRelevantContainer = function() {
 				return true;
 			};
 			this.oButton = new Button("test-button3");
 			this.oPropObject = { propagateRelevantContainer: this.fnPropagateRelevantContainer };
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 			sandbox.restore();
 		}
@@ -154,11 +154,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given propagation map with 'propagateRelevantContainer' as object and without parent propagationInfo", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oPropObject = { propagateRelevantContainer: {} };
 			this.oButton = new Button("test-button4");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 		}
 	}, function() {
@@ -171,11 +171,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given propagation map with 'propagateMetadata' as function", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oElement = new VerticalLayout("layout");
 			this.oMetadataFunction = MetadataTestUtil.createPropagateMetadataObject("sap.m.Button");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oElement.destroy();
 			sandbox.restore();
 		}
@@ -193,11 +193,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given propagation map with 'propagateMetadata' as string", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oElement = new VerticalLayout("layout");
 			this.oMetadataFunction = { propagateMetadata: "propagateMatadata" };
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oElement.destroy();
 		}
 	}, function() {
@@ -210,12 +210,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given aggregationMetadata map without propagationInfos", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton = new Button("test-button8");
 			this.mAggregationData = { test: "test" };
 			this.mElementData = {};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 		}
 	}, function() {
@@ -231,7 +231,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given aggregationMetadata map with valid propagation information for relevantContainer propagation", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oVerticalLayout = new VerticalLayout("layout1");
 			this.oButton = new Button("test-button1");
 
@@ -239,7 +239,7 @@ sap.ui.define([
 				propagationInfos: [
 					{
 						relevantContainerElement: this.oVerticalLayout,
-						relevantContainerFunction: function() {
+						relevantContainerFunction() {
 							return true;
 						}
 					}
@@ -247,7 +247,7 @@ sap.ui.define([
 			};
 			this.mElementData = {};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 			this.oVerticalLayout.destroy();
 		}
@@ -267,7 +267,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given aggregationMetadata map for metadata propagation", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton = new Button("button");
 			this.oElement = new VerticalLayout("vertlay", {
 				content: [this.oButton]
@@ -279,7 +279,7 @@ sap.ui.define([
 			};
 			this.mElementData = MetadataTestUtil.buildMetadataObject("contentValue", "testValue").data;
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oElement.destroy();
 			this.oButton.destroy();
 		}
@@ -295,7 +295,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given aggregationMetadata map with actions delete for metadata propagation", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton = new Button("button");
 			this.oElement = new VerticalLayout("vertlay", {
 				content: [this.oButton]
@@ -307,7 +307,7 @@ sap.ui.define([
 			};
 			this.mElementData = MetadataTestUtil.buildMetadataObject({ actions: { myAction: "testAction" }}).data;
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oElement.destroy();
 			this.oButton.destroy();
 		}
@@ -327,7 +327,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given aggregationMetadata map with actions 'not-adaptable' for metadata propagation", {
-		beforeEach: function() {
+		beforeEach() {
 			this.sNotAdaptable = "not-adaptable";
 			this.oButton = new Button("button");
 			this.oElement = new VerticalLayout("vertlay", {
@@ -340,7 +340,7 @@ sap.ui.define([
 			};
 			this.mElementData = MetadataTestUtil.buildMetadataObject({ actions: { myAction: "testAction" }}).data;
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oElement.destroy();
 			this.oButton.destroy();
 		}
@@ -360,7 +360,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given complex test with only 'propagateRelevantContainer' as function in the designTimeMetadata", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			this.fnPropagateRelevantContainer = function() {
 				return true;
@@ -383,7 +383,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oPage.destroy();
 		}
@@ -401,7 +401,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a complex test has been created with different relevantContainer and metadata propagations", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			// page				--> propagate relevant container for toolbar
 			//					--> propagate metadata for toolbar
 			//	verticalLayout 	--> propagate relevant container for buttons
@@ -457,7 +457,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton1Overlay.destroy();
 			this.oButton2Overlay.destroy();
 			this.oButton3Overlay.destroy();
@@ -546,7 +546,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a page with a vertical layout with toolbar, all containing propagateMetadata for button...", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			// page				--> propagate metadata for buttons
 			//	verticalLayout 	--> propagate metadata for buttons
 			//		toolbar     --> propagate metadata for buttons
@@ -598,7 +598,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton1Overlay.destroy();
 			this.oToolbarOverlay.destroy();
 			this.oVerticalLayoutOverlay.destroy();

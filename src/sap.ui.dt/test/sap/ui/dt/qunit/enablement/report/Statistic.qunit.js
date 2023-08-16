@@ -15,7 +15,7 @@ function(
 	};
 
 	QUnit.module("Given that a statistic report is created", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oResult = {
 				statistic: {
 					SUPPORTED: 10,
@@ -31,12 +31,12 @@ function(
 			this.oStatistic.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oStatistic.destroy();
 		}
 	}, function() {
 		QUnit.test("when data are set", function(assert) {
-			var oStatistic = this.oStatistic;
+			var {oStatistic} = this;
 			assert.equal(getValue(oStatistic, "supported"), this.oResult.statistic.SUPPORTED, "then the supported value is displayed correctly");
 			assert.equal(getValue(oStatistic, "partial-supported"), this.oResult.statistic.PARTIAL_SUPPORTED, "and the partial supported value is displayed correctly");
 			assert.equal(getValue(oStatistic, "not-supported"), this.oResult.statistic.NOT_SUPPORTED, "and the not-supported value is displayed correctly");

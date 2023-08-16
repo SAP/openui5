@@ -27,7 +27,7 @@ sap.ui.define([
 		 *
 		 * @returns {sap.ui.core.Control} the content
 		 */
-		createContent: function() {
+		createContent() {
 			return new VerticalLayout({
 				content: [
 					new Button({ text: "Text" })
@@ -37,7 +37,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the ComponentContainer is created..", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oComponent = new CustomComponent();
@@ -55,7 +55,7 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", done);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
 			this.oComponent.destroy();
@@ -90,7 +90,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the ComponentContainer with late components is created..", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oComponentContainer = new ComponentContainer("CompCont1");
@@ -107,7 +107,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
 			this.oComponent.destroy();
@@ -140,11 +140,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the ComponentContainer with component with late root control is created..", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			var LateComponent = UIComponent.extend("sap.ui.dt.test.LateComponent", {
-				createContent: function() {
+				createContent() {
 					return null; // do it like fiori elements and add it later
 				}
 			});
@@ -166,7 +166,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oComponent.destroy();
 		}

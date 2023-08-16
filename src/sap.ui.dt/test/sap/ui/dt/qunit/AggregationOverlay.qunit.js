@@ -27,7 +27,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation without domRef DT metadata and without children", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oPage = new Page();
 			this.oPage.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -38,7 +38,7 @@ sap.ui.define([
 			});
 			Overlay.getOverlayContainer().append(this.oAggregationOverlay.render());
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPage.destroy();
 			this.oAggregationOverlay.destroy();
 			Overlay.removeOverlayContainer();
@@ -51,7 +51,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation with domRef DT metadata", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oPage = new Page();
 			this.oPage.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -69,7 +69,7 @@ sap.ui.define([
 
 			this.oAggregationOverlay.applyStyles();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPage.destroy();
 			this.oAggregationOverlay.destroy();
 			Overlay.removeOverlayContainer();
@@ -82,7 +82,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation and a rendered child is added", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 
 			this.oButton1 = new Button({text: "button1"});
@@ -102,7 +102,7 @@ sap.ui.define([
 						// eslint-disable-next-line no-new
 						new ElementOverlay({
 							element: oElement,
-							init: function(oEvent) {
+							init(oEvent) {
 								fnResolve(oEvent.getSource());
 							}
 						});
@@ -120,10 +120,10 @@ sap.ui.define([
 						fnDone();
 					}.bind(this)
 				});
-				this.oChildNotAdded = aOverlays[1];
+				[, this.oChildNotAdded] = aOverlays;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPage.destroy();
 			this.oAggregationOverlay.destroy();
 			Overlay.removeOverlayContainer();
@@ -136,7 +136,8 @@ sap.ui.define([
 		QUnit.test("when an un-rendered ElementOverlay is added as child into the AggregationOverlay", function(assert) {
 			var done = assert.async();
 			this.oChildNotAdded.attachEventOnce("afterRendering", function(oEvent) {
-				assert.deepEqual(oEvent.getSource(), this.oChildNotAdded, "then 'afterRendering' event is fired for the added un-rendered ElementOverlay");
+				assert.deepEqual(oEvent.getSource(), this.oChildNotAdded,
+					"then 'afterRendering' event is fired for the added un-rendered ElementOverlay");
 				done();
 			}, this);
 			assert.notOk(this.oChildNotAdded.isRendered(), "then the child ElementOverlay to be added is not rendered");
@@ -160,7 +161,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation where scroll is needed", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.aPanels = [];
 			for (var i = 0; i < 50; i++) {
@@ -189,7 +190,7 @@ sap.ui.define([
 			this.oPageContentOverlay = this.oAggregationOverlay.getDomRef();
 			this.oPageContent = this.oAggregationOverlay.getGeometry().domRef;
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPage.destroy();
 			this.oAggregationOverlay.destroy();
 			Overlay.removeOverlayContainer();
@@ -221,7 +222,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation-like association", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oPage = new Page();
 
 			this.oAggregationLikeOverlay = new AggregationOverlay({
@@ -238,7 +239,7 @@ sap.ui.define([
 				designTimeMetadata: new AggregationDesignTimeMetadata()
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPage.destroy();
 			this.oAggregationOverlay.destroy();
 			this.oAggregationLikeOverlay.destroy();
@@ -252,7 +253,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created and is not rendered", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oPage = new Page();
 
 			this.oAggregationOverlay = new AggregationOverlay({
@@ -265,7 +266,7 @@ sap.ui.define([
 				})
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPage.destroy();
 			this.oAggregationOverlay.destroy();
 			Overlay.removeOverlayContainer();

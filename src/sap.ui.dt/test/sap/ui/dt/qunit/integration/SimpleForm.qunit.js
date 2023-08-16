@@ -33,7 +33,7 @@ sap.ui.define([
 
 	function parameterizedTest(oSimpleFormLayout) {
 		QUnit.module(`Given the SimpleForm using ${oSimpleFormLayout}`, {
-			beforeEach: function(assert) {
+			beforeEach(assert) {
 				var done = assert.async();
 
 				XMLView.create({id: "testView", viewName: "dt.view.TestSimpleForm"})
@@ -68,7 +68,7 @@ sap.ui.define([
 				}.bind(this));
 			},
 
-			afterEach: function() {
+			afterEach() {
 				this.oView.destroy();
 				this.oDesignTime.destroy();
 			}
@@ -172,7 +172,7 @@ sap.ui.define([
 	}
 
 	// shortcut for sap.ui.layout.form.SimpleFormLayout
-	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
+	var {SimpleFormLayout} = layoutLibrary.form;
 
 	parameterizedTest(SimpleFormLayout.ResponsiveGridLayout);
 	parameterizedTest(SimpleFormLayout.ColumnLayout);

@@ -71,7 +71,7 @@ sap.ui.define([
 		 * Called when the Table is initialized
 		 * @protected
 		 */
-		init: function() {
+		init() {
 			this.setAggregation("_table", this._createTable());
 		},
 
@@ -79,7 +79,7 @@ sap.ui.define([
 		 * Called when the Table is destroyed
 		 * @protected
 		 */
-		exit: function() {
+		exit() {
 			clearTimeout(this._iFilterTimeout);
 			this.setData(null);
 		},
@@ -90,7 +90,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		setData: function(oData) {
+		setData(oData) {
 			if (this._oModel) {
 				this._oModel.destroy();
 				delete this._oModel;
@@ -111,7 +111,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		filter: function(sFilter) {
+		filter(sFilter) {
 			var oModel = this._getTable().getModel();
 			if (oModel) {
 				if (sFilter.length > 0) {
@@ -133,7 +133,7 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_createTable: function() {
+		_createTable() {
 			var oTable = new TreeTable(`${this.getId()}--table`, {
 				selectionMode: "MultiToggle",
 				visibleRowCount: 20,
@@ -155,7 +155,7 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_createToolbar: function() {
+		_createToolbar() {
 			return new Toolbar(`${this.getId()}--toolbar`, {
 				content: [
 					new ToolbarSpacer(`${this.getId()}--toolbar-spacer`),
@@ -177,7 +177,7 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_onSearch: function(oEvt) {
+		_onSearch(oEvt) {
 			var sFilter = oEvt.getParameter("newValue");
 			clearTimeout(this._iFilterTimeout);
 			this._iFilterTimeout = setTimeout(function() {
@@ -188,7 +188,7 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_createTextColumn: function(sId, sColumnText, sRowText) {
+		_createTextColumn(sId, sColumnText, sRowText) {
 			return this._createColumn(sId, sColumnText,
 				new Text({
 					text: sRowText
@@ -199,7 +199,7 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_createRatingIndicatorColumn: function(sId, sColumnText, sRowText, sTooltip) {
+		_createRatingIndicatorColumn(sId, sColumnText, sRowText, sTooltip) {
 			return this._createColumn(sId, sColumnText,
 				new RatingIndicator({
 					maxValue: 3,
@@ -213,7 +213,7 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_createColumn: function(sId, sColumnText, oTemplate) {
+		_createColumn(sId, sColumnText, oTemplate) {
 			return new Column(`${this.getId()}--table-column-${sId}`, {
 				label: new Label({text: sColumnText}),
 				width: "13em",
@@ -224,14 +224,14 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_getTable: function() {
+		_getTable() {
 			return this.getAggregation("_table");
 		},
 
 		/**
 		 * @private
 		 */
-		_onCollapseAll: function() {
+		_onCollapseAll() {
 			var oTable = this._getTable();
 			oTable.collapseAll();
 		},
@@ -239,7 +239,7 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_onExpandSecondLevel: function() {
+		_onExpandSecondLevel() {
 			var oTable = this._getTable();
 			oTable.expandToLevel(2);
 		},

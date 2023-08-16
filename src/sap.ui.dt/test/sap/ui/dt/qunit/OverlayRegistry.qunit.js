@@ -16,13 +16,13 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Basic functionality", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton = new Button();
 			this.oOverlay = new ElementOverlay({
 				element: this.oButton
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oOverlay.destroy();
 			this.oButton.destroy();
 		}
@@ -86,9 +86,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("getOverlay() for Component", {
-		beforeEach: function() {
+		beforeEach() {
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
-				createContent: function() {}
+				createContent() {}
 			});
 
 			this.oComponent = new CustomComponent();
@@ -97,7 +97,7 @@ sap.ui.define([
 				element: this.oComponent
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oElementOverlay.destroy();
 			this.oComponent.destroy();
 			OverlayRegistry.deregister(this.oElementOverlay);

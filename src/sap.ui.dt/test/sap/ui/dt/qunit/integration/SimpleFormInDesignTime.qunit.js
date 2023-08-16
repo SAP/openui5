@@ -26,7 +26,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Given that a DesignTime is created for a SimpleForm and designTimeMetadata for SimpleForm hidden form is provided", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oLabel = new Label({text: "Name"});
 
 			this.oSimpleForm = new SimpleForm("Form1", {
@@ -72,7 +72,7 @@ sap.ui.define([
 				done();
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oSimpleForm.destroy();
 		}

@@ -19,7 +19,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Given that the design time is active ", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oButton1 = new Button();
 			this.oButton2 = new Button();
 			this.oLayout = new VerticalLayout({
@@ -52,7 +52,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 		}

@@ -55,7 +55,7 @@ sap.ui.define([
 			}
 		},
 
-		init: function() {
+		init() {
 			this._oModel = null;
 			this.setAggregation("_form", this._createForm());
 		},
@@ -64,11 +64,11 @@ sap.ui.define([
 		 * Called when the Statistic is destroyed
 		 * @protected
 		 */
-		exit: function() {
+		exit() {
 			this.setData(null);
 		},
 
-		setData: function(oData) {
+		setData(oData) {
 			if (this._oModel) {
 				this._oModel.destroy();
 				delete this._oModel;
@@ -82,7 +82,7 @@ sap.ui.define([
 			this.setProperty("data", oData);
 		},
 
-		_createForm: function() {
+		_createForm() {
 			var oForm = new SimpleForm(`${this.getId()}--form`, {
 				editable: false,
 				layout: "ResponsiveGridLayout",
@@ -103,7 +103,7 @@ sap.ui.define([
 			return oForm;
 		},
 
-		_getForm: function() {
+		_getForm() {
 			return this.getAggregation("_form");
 		},
 

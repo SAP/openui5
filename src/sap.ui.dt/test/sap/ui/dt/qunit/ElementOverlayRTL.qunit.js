@@ -23,7 +23,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Given that an Overlay is created on RTL mode", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton = new Button({
 				text: "Button"
@@ -41,7 +41,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 		}
 	}, function() {
@@ -67,7 +67,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created on RTL mode and scrolling is present", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			this.oButton = new Button({
 				text: "Button"
@@ -111,7 +111,7 @@ sap.ui.define([
 				}
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oOuterPanel.destroy();
 		}

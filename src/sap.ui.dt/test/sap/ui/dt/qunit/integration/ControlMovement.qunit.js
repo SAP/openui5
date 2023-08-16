@@ -38,15 +38,15 @@ sap.ui.define([
 			currentTarget: {
 				id: oOverlay.getId()
 			},
-			preventDefault: function() {
+			preventDefault() {
 			},
-			stopPropagation: function() {
+			stopPropagation() {
 			}
 		};
 	}
 
 	QUnit.module("Given overlays are created for controls that fit into aggregations of each other and don't fit to the other control", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 
 			// Test Setup:
@@ -128,7 +128,7 @@ sap.ui.define([
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oParentLayout.destroy();
 			this.checkMovableDragStub.restore();
@@ -389,7 +389,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given overlays are created for a control with two aggregations", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 
 			// Test Setup:
@@ -445,7 +445,7 @@ sap.ui.define([
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oSplitContainer.destroy();
 			this.oControlDragDrop.destroy();

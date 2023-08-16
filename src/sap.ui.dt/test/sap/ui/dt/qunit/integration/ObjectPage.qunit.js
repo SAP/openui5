@@ -25,7 +25,7 @@ function(
 	"use strict";
 
 	QUnit.module("Basic functionality", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 
 			this.oButton = new Button({text: "foo"});
@@ -61,7 +61,7 @@ function(
 			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
 
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oVBox.destroy();
 		}

@@ -84,10 +84,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that the DesignTime is created", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oDesignTime = new DesignTime();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 		}
 	}, function() {
@@ -156,7 +156,7 @@ sap.ui.define([
 		QUnit.test("when getBusyPlugins() is called", function(assert) {
 			var CustomPlugin1 = Plugin.extend("qunit.CustomPlugin1");
 			var CustomPlugin2 = Plugin.extend("qunit.CustomPlugin2", {
-				isBusy: function() {
+				isBusy() {
 					return true;
 				}
 			});
@@ -170,7 +170,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a Designtime with plugins", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTabHandlingPlugin = new TabHandling();
 			this.oContextMenuPlugin = new ContextMenuPlugin();
 			this.oDragDropPlugin = new DragDrop();
@@ -180,7 +180,7 @@ sap.ui.define([
 				]
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 		}
 	}, function() {
@@ -211,7 +211,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that the DesignTime is created for a root control", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 
 			this.oButton1 = new Button("button1");
@@ -237,7 +237,7 @@ sap.ui.define([
 				fnDone();
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oOuterLayout.destroy();
 			sandbox.restore();
@@ -380,7 +380,7 @@ sap.ui.define([
 
 			var CustomPlugin = Plugin.extend("qunit.CustomPlugin", {
 				registerElementOverlay: oStub,
-				_registerOverlays: function() {} // to avoid registration of existent overlays
+				_registerOverlays() {} // to avoid registration of existent overlays
 			});
 			var oCustomPlugin = new CustomPlugin();
 			this.oDesignTime.addPlugin(oCustomPlugin);
@@ -533,8 +533,9 @@ sap.ui.define([
 				]
 			});
 
-			sandbox.stub(this.oDesignTime, "_createChildren").callsFake(function(oElementOverlay) {
-				return this.oDesignTime._createChildren.wrappedMethod.apply(this.oDesignTime, arguments)
+			sandbox.stub(this.oDesignTime, "_createChildren").callsFake(function(...aArgs) {
+				const [oElementOverlay] = aArgs;
+				return this.oDesignTime._createChildren.wrappedMethod.apply(this.oDesignTime, aArgs)
 				.then(function() {
 					if (oElementOverlay.getElement().getId() === "innerButton21") {
 						oElementOverlay.getElement().getParent().destroy();
@@ -564,7 +565,7 @@ sap.ui.define([
 			var oButton = new Button("button");
 			var oElementOverlayCreatedSpy = sandbox.spy();
 			var CustomPlugin = Plugin.extend("qunit.CustomPlugin", {
-				registerElementOverlay: function(oElementOverlay) {
+				registerElementOverlay(oElementOverlay) {
 					mExpectedResponse = {
 						editable: !oElementOverlay.getEditable(),
 						id: oElementOverlay.getId()
@@ -572,7 +573,7 @@ sap.ui.define([
 					assert.strictEqual(oElementOverlay.getElement().getId(), oButton.getId(), "registerElementOverlay called with a new overlay");
 					oElementOverlay.setEditable(mExpectedResponse.editable);
 				},
-				_registerOverlays: function() {} // to avoid registration of existent overlays
+				_registerOverlays() {} // to avoid registration of existent overlays
 			});
 			var oCustomPlugin = new CustomPlugin();
 			var oSyncedSpy = sandbox.spy();
@@ -675,9 +676,9 @@ sap.ui.define([
 			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime")
 			.callThrough()
 			.withArgs(oButton)
-			.callsFake(function() {
+			.callsFake(function(...aArgs) {
 				oLayout.setVisible(false);
-				return fnLoadDesignTime.apply(this, arguments);
+				return fnLoadDesignTime.apply(this, aArgs);
 			});
 
 			this.oDesignTime.attachElementOverlayCreated(oElementOverlayCreatedSpy);
@@ -893,8 +894,8 @@ sap.ui.define([
 			var fnOriginalCheckIfOverlayShouldBeDestroyed = this.oDesignTime._checkIfOverlayShouldBeDestroyed;
 
 			// stub the important async functionality to get a trigger that it was called
-			sandbox.stub(DesignTime.prototype, "_checkIfOverlayShouldBeDestroyed").callsFake(function() {
-				fnOriginalCheckIfOverlayShouldBeDestroyed.apply(this, arguments);
+			sandbox.stub(DesignTime.prototype, "_checkIfOverlayShouldBeDestroyed").callsFake(function(...aArgs) {
+				fnOriginalCheckIfOverlayShouldBeDestroyed.apply(this, aArgs);
 
 				var oOverlayAfterwards = OverlayRegistry.getOverlay(oElement);
 				assert.strictEqual(oOverlayBefore, oOverlayAfterwards, "overlay for moved control is not destroyed");
@@ -911,8 +912,8 @@ sap.ui.define([
 			var fnOriginalCheckIfOverlayShouldBeDestroyed = this.oDesignTime._checkIfOverlayShouldBeDestroyed;
 
 			// stub the important async functionality to get a trigger that it was called
-			sandbox.stub(DesignTime.prototype, "_checkIfOverlayShouldBeDestroyed").callsFake(function() {
-				fnOriginalCheckIfOverlayShouldBeDestroyed.apply(this, arguments);
+			sandbox.stub(DesignTime.prototype, "_checkIfOverlayShouldBeDestroyed").callsFake(function(...aArgs) {
+				fnOriginalCheckIfOverlayShouldBeDestroyed.apply(this, aArgs);
 				var oOverlayAfterwards = OverlayRegistry.getOverlay(sElementId);
 				assert.ok(oOverlayAfterwards, "overlay for recreated control is not destroyed");
 				fnDone();
@@ -1084,7 +1085,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a layout and a button", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton1 = new Button("button");
 
 			this.oLayout1 = new VerticalLayout("layout", {
@@ -1094,7 +1095,7 @@ sap.ui.define([
 
 			oCore.applyChanges();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout1.destroy();
 			if (this.oDesignTime) {
 				this.oDesignTime.destroy();
@@ -1150,7 +1151,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that the DesignTime is initalized for two root controls", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 
 			this.oLayout1 = new VerticalLayout({
@@ -1177,7 +1178,7 @@ sap.ui.define([
 				fnDone();
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oOuterLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -1260,7 +1261,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that the DesignTime is initialized with control including aggregation bindinding", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			var oModel = getJsonModelWithData(2);
 			this.oCustomListItemTemplate = new CustomListItem("boundListItem", {content: [new Button("boundListItem-btn", {text: "{text}"})]});
@@ -1289,7 +1290,7 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oHorizontalLayout.destroy();
 			sandbox.restore();
@@ -1359,7 +1360,7 @@ sap.ui.define([
 	//				[headerToolbar] (AO)
 	//				[infoToolbar] (AO)
 	QUnit.module("Given that the DesignTime is initialized with controls including aggregation binding and nested aggregation binding", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			// create list with bound items
 			var oRootModel = getJsonModelWithData(2, "outer", "");
@@ -1408,7 +1409,7 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oVerticalLayout.destroy();
 			sandbox.restore();
@@ -1525,7 +1526,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that the DesignTime is initialized with custom DesignTime Metadata for sap.m.Page", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oPage = new Page();
 			this.oPage.getMetadata().loadDesignTime().then(function() {
@@ -1546,7 +1547,7 @@ sap.ui.define([
 				}, this);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPage.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -1573,7 +1574,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that the DesignTime is created with hidden layout", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton1 = new Button({ text: "Button1" });
 			this.oLayout1 = new VerticalLayout({
@@ -1590,7 +1591,7 @@ sap.ui.define([
 					"sap.ui.layout.VerticalLayout": {
 						aggregations: {
 							content: {
-								domRef: function() {}
+								domRef() {}
 							}
 						}
 					}
@@ -1602,7 +1603,7 @@ sap.ui.define([
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oLayoutOuter.destroy();
 		}
@@ -1689,7 +1690,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Metadata propagation - Given independent controls consisting of vertical layout and buttons", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 
 			this.oButton1 = new Button("button1");
@@ -1722,7 +1723,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton1.destroy();
 			this.oButton2.destroy();
 			this.oLayout1.destroy();
@@ -1760,7 +1761,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Metadata propagation - Given two verticalLayouts with different designTimeMetadata", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 
 			this.oPropagateMetadataFunctionForLayout1 = MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", "layout1");
@@ -1796,7 +1797,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPage.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -1835,10 +1836,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Public API - createOverlay()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oDesignTime = new DesignTime();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
@@ -1920,7 +1921,7 @@ sap.ui.define([
 		QUnit.test("when called with incorrect element", function(assert) {
 			var fnDone = assert.async();
 			this.oDesignTime.createOverlay({
-				element: function() {}
+				element() {}
 			}).then(
 				// Fulfilled
 				function() {
@@ -2199,11 +2200,12 @@ sap.ui.define([
 			});
 
 			var fnCreateOverlayOriginal = this.oDesignTime.createOverlay;
-			sandbox.stub(this.oDesignTime, "createOverlay").callsFake(function(mParams) {
+			sandbox.stub(this.oDesignTime, "createOverlay").callsFake(function(...aArgs) {
+				const [mParams] = aArgs;
 				if (mParams.element === oButton) {
 					oLayout.destroy();
 				}
-				return fnCreateOverlayOriginal.apply(this, arguments);
+				return fnCreateOverlayOriginal.apply(this, aArgs);
 			});
 
 			// Avoid error about destroyed element in console (as it's a managed destroy during the test)
@@ -2408,7 +2410,7 @@ sap.ui.define([
 				oNewDesigntime = merge(oNewDesigntime, oDesignTimeMetadata, {
 					actions: {
 						actionsFromResponsibleElement: "rename",
-						getResponsibleElement: function(oButton) {
+						getResponsibleElement(oButton) {
 							return oButton.getParent();
 						}
 					}
@@ -2440,7 +2442,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Check overlay styles for new overlays after initial sync", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oPanel = new Panel({
 				width: "300px",
@@ -2455,7 +2457,7 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", fnDone, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oPanel.destroy();
 			sandbox.restore();
@@ -2489,7 +2491,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Overlays registration", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton1 = new Button("button");
 
 			this.oLayout = new VerticalLayout("layout", {
@@ -2499,7 +2501,7 @@ sap.ui.define([
 
 			oCore.applyChanges();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			if (this.oDesignTime) {
 				this.oDesignTime.destroy();
