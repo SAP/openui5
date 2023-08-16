@@ -1187,7 +1187,8 @@ sap.ui.define([
         };
 
         Chart.prototype._checkStyleClassesForDimensions = function() {
-            var bHasDimension = this.getItems().some(function(oItem){ return oItem.getType() === "groupable"; });
+            var bHasDimension = this._oBreadcrumbs && this._oBreadcrumbs.getVisible() // breadcrump must be visible and dimension exist
+                                && this.getItems().some(function(oItem){ return oItem.getType() === "groupable"; });
 
             if (!bHasDimension && this.hasStyleClass("sapUiMDCChartGrid")) {
                 this.removeStyleClass("sapUiMDCChartGrid");
