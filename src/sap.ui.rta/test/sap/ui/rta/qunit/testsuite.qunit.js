@@ -754,12 +754,6 @@ sap.ui.define([
 					only: ["sap/ui/rta/util/showMessageBox"]
 				}
 			},
-			"util/UrlParser": {
-				group: "util",
-				coverage: {
-					only: ["sap/ui/rta/util/UrlParser"]
-				}
-			},
 			"util/changeVisualization/commands/CombineVisualization": {
 				group: "Change visualization",
 				coverage: {
