@@ -103,7 +103,7 @@
 								justifyContent="Center"
 								width="100%">
 								<SegmentedButton
-										select="setPaymentMethod"
+										selectionChange="setPaymentMethod"
 										id="paymentMethodSelection"
 										selectedKey="{/SelectedPayment}">
 										<items>
