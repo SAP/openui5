@@ -344,7 +344,7 @@ sap.ui.define([
 		}
 
 		var oSettings = {
-			id: this.getId() + "-details"
+			id: this._getDetailsId()
 		};
 
 		if (bUseObjectStatus) {
@@ -365,6 +365,15 @@ sap.ui.define([
 	 */
 	NumericHeader.prototype._getDetails = function () {
 		return this.getAggregation("_details");
+	};
+
+	/**
+	 * Gets the id for details control.
+	 * @private
+	 * @return {string} The id for details control.
+	 */
+	NumericHeader.prototype._getDetailsId = function () {
+		return this.getId() + "-details";
 	};
 
 	/**
@@ -418,7 +427,7 @@ sap.ui.define([
 		}
 
 		if (this.getDetails()) {
-			sDetailsId = this._getDetails().getId();
+			sDetailsId = this._getDetailsId();
 		}
 
 		if (this.getNumber() || this.getScale()) {
