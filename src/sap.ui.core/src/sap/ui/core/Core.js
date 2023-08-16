@@ -22,6 +22,7 @@ sap.ui.define([
 	'./UIArea',
 	'./Messaging',
 	'./StaticArea',
+	"sap/ui/core/Security",
 	"sap/ui/core/Theming",
 	"sap/base/Log",
 	"sap/ui/performance/Measurement",
@@ -56,6 +57,7 @@ sap.ui.define([
 		UIArea,
 		Messaging,
 		StaticArea,
+		Security,
 		Theming,
 		Log,
 		Measurement,
@@ -366,9 +368,12 @@ sap.ui.define([
 			}.bind(this))();
 
 			// initialize frameOptions script (anti-clickjacking, etc.)
-			var oFrameOptionsConfig = Configuration.getValue("frameOptionsConfig") || {};
-			oFrameOptionsConfig.mode = Configuration.getFrameOptions();
-			oFrameOptionsConfig.allowlistService = Configuration.getAllowlistService();
+			var oFrameOptionsConfig = BaseConfig.get({
+				name: "sapUiFrameOptionsConfig",
+				type: BaseConfig.Type.Object
+			});
+			oFrameOptionsConfig.mode = Security.getFrameOptions();
+			oFrameOptionsConfig.allowlistService = Security.getAllowlistService();
 			this.oFrameOptions = new FrameOptions(oFrameOptionsConfig);
 
 			// let Element and Component get friend access to the respective register/deregister methods
