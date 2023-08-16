@@ -56,11 +56,11 @@ sap.ui.define([
 	}
 
 	QUnit.module("sap.ui.fl.ControllerExtension", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 			this.oExtensionProvider = new ControllerExtension();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -99,8 +99,8 @@ sap.ui.define([
 			var sModuleName = "sap/ui/fl/qunit/ControllerExtension/1.0.0/codeExtensions/firstCodeExt";
 			sap.ui.define(sModuleName, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) { // legacy-relevant: simulates a loaded code extension. no option to replace this regarding legacy free coding
 				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension1", {
-					extHookOnInit: function() {},
-					onInit: function() {}
+					extHookOnInit() {},
+					onInit() {}
 				});
 			});
 			var oChange = createCodeExtChangeContent({
@@ -111,35 +111,35 @@ sap.ui.define([
 			});
 
 			var oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {
 						"sap.app": {
 							applicationVersion: {
 								version: "1.2.3"
 							}
 						},
-						getEntry: function() {
+						getEntry() {
 							return {
 								type: "application"
 							};
 						}
 					};
 				},
-				getManifestObject: function() {
+				getManifestObject() {
 					return {
 						"sap.app": {
 							applicationVersion: {
 								version: "1.2.3"
 							}
 						},
-						getEntry: function() {
+						getEntry() {
 							return {
 								type: "application"
 							};
 						}
 					};
 				},
-				getManifestEntry: function() {}
+				getManifestEntry() {}
 			};
 			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "ui.s2p.mm.purchorder.approve.view.S2", {changes: [oChange]});
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
@@ -182,7 +182,7 @@ sap.ui.define([
 			sap.ui.define(sModuleName1, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) { // legacy-relevant: simulates a loaded code extension. no option to replace this regarding legacy free coding
 				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension2", {
 					overrides: {
-						onInit: function() {
+						onInit() {
 							assert.strictEqual(this.base.getView().getId(), "testView1", "View1 is available and ID of View1 is correct");
 							done1();
 						}
@@ -204,7 +204,7 @@ sap.ui.define([
 			sap.ui.define(sModuleName2, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) { // legacy-relevant: simulates a loaded code extension. no option to replace this regarding legacy free coding
 				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension3", {
 					overrides: {
-						onInit: function() {
+						onInit() {
 							assert.strictEqual(this.base.getView().getId(), "testView2", "View2 is available and ID of View2 is correct");
 							done2();
 						}
@@ -284,7 +284,7 @@ sap.ui.define([
 			var oExtensionProvider = new ControllerExtension();
 
 			var oComponent = {
-				getManifestObject: function() {
+				getManifestObject() {
 					return {
 						"sap.app": {
 							applicationVersion: {
@@ -294,7 +294,7 @@ sap.ui.define([
 						}
 					};
 				},
-				getManifest: function() {
+				getManifest() {
 					return {
 						"sap.app": {
 							applicationVersion: {
@@ -304,7 +304,7 @@ sap.ui.define([
 						}
 					};
 				},
-				getManifestEntry: function() {}
+				getManifestEntry() {}
 			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
@@ -322,13 +322,13 @@ sap.ui.define([
 			var oExtensionProvider = new ControllerExtension();
 
 			var oComponent = {
-				getManifest: function() {
+				getManifest() {
 					return undefined;
 				},
-				getManifestObject: function() {
+				getManifestObject() {
 					return undefined;
 				},
-				getManifestEntry: function() {}
+				getManifestEntry() {}
 			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);

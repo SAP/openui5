@@ -44,7 +44,9 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function(sId, mSettings) {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			let [sId, mSettings] = aArgs;
 			if (typeof sId !== "string" && sId !== undefined) {
 				mSettings = sId;
 				sId = mSettings && mSettings.id;
@@ -54,7 +56,7 @@ sap.ui.define([
 				mSettings.favorite = true;
 			}
 
-			Variant.apply(this, arguments);
+			Variant.apply(this, aArgs);
 
 			if (!this.getName() && mSettings.content && mSettings.content.title) {
 				this.setName(mSettings.content.title);
@@ -92,8 +94,8 @@ sap.ui.define([
 		return FlVariant.getMappingInfo();
 	};
 
-	FlVariant.prototype.cloneFileContentWithNewId = function() {
-		var mFileContent = Variant.prototype.cloneFileContentWithNewId.apply(this, arguments);
+	FlVariant.prototype.cloneFileContentWithNewId = function(...aArgs) {
+		var mFileContent = Variant.prototype.cloneFileContentWithNewId.apply(this, aArgs);
 		return mFileContent;
 	};
 

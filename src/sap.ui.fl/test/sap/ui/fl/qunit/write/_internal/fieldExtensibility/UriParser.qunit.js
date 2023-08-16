@@ -34,7 +34,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.fl.write._internal.fieldExtensibility.UriParser", {}, function() {
 		QUnit.test("parseServiceName can extract a service name from an uri without a namespace", function(assert) {
-			var sServiceName = oServiceUri.sServiceName;
+			var {sServiceName} = oServiceUri;
 			var sDeterminedServiceName = UriParser.parseServiceUri(sServiceName).serviceName;
 			assert.equal(sDeterminedServiceName, sServiceName);
 		});
@@ -54,7 +54,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("parseServiceName can extract a service name from an 'sap/opu/odata/SAP/' uri", function(assert) {
-			var sServiceName = oServiceUri.sServiceName;
+			var {sServiceName} = oServiceUri;
 			var sServiceUri = `${oServiceUri.sPrefix + oServiceUri.sODataPrefix + oServiceUri.sSapPrefix}/${sServiceName}`;
 			var sDeterminedServiceName = UriParser.parseServiceUri(sServiceUri).serviceName;
 			assert.equal(sDeterminedServiceName, sServiceName);
@@ -62,7 +62,7 @@ sap.ui.define([
 
 		QUnit.test("parseServiceName can extract a simple service name from an 'sap/opu/odata/SAP/' uri with version information", function(
 			assert) {
-			var sServiceName = oServiceUri.sServiceName;
+			var {sServiceName} = oServiceUri;
 			var sServiceUri = `${oServiceUri.sPrefix + oServiceUri.sODataPrefix + oServiceUri.sSapPrefix}/${sServiceName}${oServiceUri.sVersion}`;
 			var sDeterminedServiceName = UriParser.parseServiceUri(sServiceUri).serviceName;
 			assert.equal(sDeterminedServiceName, sServiceName);

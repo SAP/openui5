@@ -39,7 +39,7 @@ sap.ui.define([
 	var oMockUIComponent = new UIComponent("mockComponent");
 
 	QUnit.module("sap.ui.fl.changeHandler.StashControl", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeHandler = StashControlChangeHandler;
 			var oChangeJson = {
 				selector: {
@@ -79,13 +79,12 @@ sap.ui.define([
 			var oDOMParser = new DOMParser();
 			this.xmlDocument = oDOMParser.parseFromString(this.xmlString, "application/xml");
 			this.oXmlView = this.xmlDocument.documentElement;
-			this.oXmlLayout = this.oXmlView.childNodes[0];
-			this.oXmlNodeControl0 = this.oXmlLayout.childNodes[0].childNodes[0];
-			this.oXmlNodeToBeStashed = this.oXmlLayout.childNodes[0].childNodes[2];
+			[this.oXmlLayout] = this.oXmlView.childNodes;
+			[this.oXmlNodeControl0, , this.oXmlNodeToBeStashed] = this.oXmlLayout.childNodes[0].childNodes;
 
 			this.oSetStashedSpy = sandbox.spy(JsControlTreeModifier, "setStashed");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oChange = null;
 			this.oVerticalLayout.destroy();
 			sandbox.restore();

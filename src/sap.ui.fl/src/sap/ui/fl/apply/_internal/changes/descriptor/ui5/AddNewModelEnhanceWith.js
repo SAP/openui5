@@ -39,7 +39,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		applyChange: function(oManifest, oChange) {
+		applyChange(oManifest, oChange) {
 			var sModelId = oChange.getContent().modelId;
 			var sI18N = ApplyUtil.formatBundleName(oManifest["sap.app"].id, oChange.getTexts().i18n);
 

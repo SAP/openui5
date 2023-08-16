@@ -36,7 +36,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise<boolean>} Promise resolves with false
 		 */
-		isContextSharingEnabled: function() {
+		isContextSharingEnabled() {
 			return Promise.resolve(false);
 		},
 		/**
@@ -44,7 +44,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise<object>} Promise rejects
 		 */
-		loadContextDescriptions: function(/* mPropertyBag */) {
+		loadContextDescriptions(/* mPropertyBag */) {
 			return Promise.reject("loadContextsDescriptions is not implemented");
 		},
 
@@ -53,21 +53,21 @@ sap.ui.define([
 		 *
 		 * @returns {Promise<object>} Promise rejects
 		 */
-		getContexts: function(/* mPropertyBag */) {
+		getContexts(/* mPropertyBag */) {
 			return Promise.reject("getContexts is not implemented");
 		},
 		contextBasedAdaptation: {
-			create: function() {
+			create() {
 				return Promise.reject("contextBasedAdaptation.create is not implemented");
 			},
-			reorder: function() {
+			reorder() {
 				return Promise.reject("contextBasedAdaptation.reorder is not implemented");
 			},
-			load: function() {
+			load() {
 				return Promise.reject("contextBasedAdaptation.load is not implemented");
 			}
 		},
-		loadFeatures: function(mPropertyBag) {
+		loadFeatures(mPropertyBag) {
 			if (InitialConnector.settings) {
 				return Promise.resolve(InitialConnector.settings);
 			}

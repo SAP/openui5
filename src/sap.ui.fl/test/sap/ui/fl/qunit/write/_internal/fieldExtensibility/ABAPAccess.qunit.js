@@ -25,42 +25,42 @@ sap.ui.define([
 
 	QUnit.module("Interface Functions", {
 		oControl: {
-			getBindingContext: function() {
+			getBindingContext() {
 				return {
-					getPath: function() {
+					getPath() {
 						return "/someService/someEntity";
 					}
 				};
 			},
-			getModel: function() {
+			getModel() {
 				return {
 					sServiceUrl: "/someService",
 					oMetadata: {
-						_getEntitySetByPath: function() {
+						_getEntitySetByPath() {
 							return {
 								name: "someEntitySet"
 							};
 						},
-						_getEntityTypeByPath: function() {
+						_getEntityTypeByPath() {
 							return {
 								name: "someEntityType"
 							};
 						}
 					},
-					metadataLoaded: function() {
+					metadataLoaded() {
 						return Promise.resolve();
 					},
-					isA: function() {
+					isA() {
 						return true;
 					}
 				};
 			}
 		},
 		oCrossApp: {
-			hrefForExternal: function(mIntentWithParameter) {
+			hrefForExternal(mIntentWithParameter) {
 				return JSON.stringify(mIntentWithParameter);
 			},
-			isNavigationSupported: function(aIntents) {
+			isNavigationSupported(aIntents) {
 				var aResults = aIntents.map(function(oIntent) {
 					return {
 						supported: oIntent.semanticObject === "CustomField" || false
@@ -71,7 +71,7 @@ sap.ui.define([
 		},
 		oGetTextStub: null,
 		oServer: null,
-		beforeEach: function() {
+		beforeEach() {
 			ABAPAccess.reset();
 			ABAPExtensibilityVariantFactory.reset();
 			oSandbox.stub(ExtUtils, "getText").callsFake(function(sTextKey) {
@@ -92,7 +92,7 @@ sap.ui.define([
 				}
 			}));
 		},
-		afterEach: function() {
+		afterEach() {
 			oSandbox.restore();
 			this.oServer.restore();
 		}
@@ -137,7 +137,7 @@ sap.ui.define([
 		QUnit.test("isExtensibilityEnabled with navigation URI", function(assert) {
 			var done = assert.async();
 			var oExtensibilityVariant = {
-				getNavigationUri: function() {
+				getNavigationUri() {
 					return Promise.resolve("validUri");
 				}
 			};
@@ -152,7 +152,7 @@ sap.ui.define([
 		QUnit.test("isExtensibilityEnabled without navigation URI", function(assert) {
 			var done = assert.async();
 			var oExtensibilityVariant = {
-				getNavigationUri: function() {
+				getNavigationUri() {
 					return Promise.resolve(null);
 				}
 			};
@@ -241,10 +241,10 @@ sap.ui.define([
 
 	QUnit.module("Given a complex test view with oData Model...", {
 		oCrossApp: {
-			hrefForExternal: function(mIntentWithParameter) {
+			hrefForExternal(mIntentWithParameter) {
 				return JSON.stringify(mIntentWithParameter);
 			},
-			isNavigationSupported: function(aIntents) {
+			isNavigationSupported(aIntents) {
 				var aResults = aIntents.map(function(oIntent) {
 					return {
 						supported: oIntent.semanticObject === "CustomField" || false
@@ -255,7 +255,7 @@ sap.ui.define([
 		},
 		oServer: null,
 		oView: null,
-		before: function() {
+		before() {
 			return XMLView.create({
 				id: "idMain1",
 				viewName: "sap.ui.rta.test.additionalElements.ComplexTest"
@@ -266,15 +266,15 @@ sap.ui.define([
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},
-		beforeEach: function() {
+		beforeEach() {
 			ABAPExtensibilityVariantFactory.reset();
 			oSandbox.stub(FlexUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(this.oCrossApp));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oServer.restore();
 			oSandbox.restore();
 		},
-		after: function() {
+		after() {
 			this.oView.destroy();
 		}
 	}, function() {

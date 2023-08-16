@@ -40,10 +40,10 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Storage checks the input parameters", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -57,7 +57,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Storage merges results from different connectors", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			JsObjectConnector.storage.clear();
 		}
@@ -507,10 +507,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given all connector stubs", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oGetStaticFileConnectorSpy = sandbox.spy(StorageUtils, "getStaticFileConnector");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -533,9 +533,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Connector disassembles the variantSections", {
-		beforeEach: function() {
+		beforeEach() {
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -722,9 +722,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Disassemble & merge the comp variants", {
-		beforeEach: function() {
+		beforeEach() {
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -764,7 +764,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Storage with a custom & broken connector", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([{
 				loadConnector: "my/connectors/BrokenInitialConnector",
 				layers: []}
@@ -772,7 +772,7 @@ sap.ui.define([
 			// enforce the bundle loading by simulating the no-preload scenario
 			sandbox.stub(Core.getConfiguration(), "getComponentPreload").returns("off");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

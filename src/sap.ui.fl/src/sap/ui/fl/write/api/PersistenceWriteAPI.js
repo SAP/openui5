@@ -107,7 +107,7 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	PersistenceWriteAPI.hasHigherLayerChanges = function(mPropertyBag) {
-		mPropertyBag.upToLayer = mPropertyBag.upToLayer || LayerUtils.getCurrentLayer();
+		mPropertyBag.upToLayer ||= LayerUtils.getCurrentLayer();
 
 		return FlexObjectState.getFlexObjects(mPropertyBag)
 		.then(function(aFlexObjects) {
@@ -231,8 +231,13 @@ sap.ui.define([
 	PersistenceWriteAPI.reset = function(mPropertyBag) {
 		var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
 		var oFlexController = FlexControllerFactory.createForSelector(oAppComponent);
-		var aArguments = [mPropertyBag.layer, mPropertyBag.generator, oAppComponent, mPropertyBag.selectorIds, mPropertyBag.changeTypes];
-		return oFlexController.resetChanges.apply(oFlexController, aArguments);
+		return oFlexController.resetChanges(
+			mPropertyBag.layer,
+			mPropertyBag.generator,
+			oAppComponent,
+			mPropertyBag.selectorIds,
+			mPropertyBag.changeTypes
+		);
 	};
 
 	/**
@@ -250,7 +255,7 @@ sap.ui.define([
 	 * - "Error" in case of a problem
 	 */
 	PersistenceWriteAPI.publish = function(mPropertyBag) {
-		mPropertyBag.styleClass = mPropertyBag.styleClass || "";
+		mPropertyBag.styleClass ||= "";
 		return ChangePersistenceFactory.getChangePersistenceForControl(Utils.getAppComponentForSelector(mPropertyBag.selector))
 		.transportAllUIChanges({}, mPropertyBag.styleClass, mPropertyBag.layer, mPropertyBag.appVariantDescriptors);
 	};

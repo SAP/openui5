@@ -43,7 +43,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.comp, sap.ui.fl
 		 */
-		createComponent: function(mPropertyBag) {
+		createComponent(mPropertyBag) {
 			if (mPropertyBag.layer !== Layer.CUSTOMER) {
 				return Promise.resolve();
 			}

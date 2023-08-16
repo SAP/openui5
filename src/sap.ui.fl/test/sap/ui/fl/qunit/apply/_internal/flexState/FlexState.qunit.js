@@ -57,11 +57,11 @@ sap.ui.define([
 	}
 
 	QUnit.module("Clear FlexState with Data Selector", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
 			this.oClearCachedResultSpy = sandbox.spy(DataSelector.prototype, "clearCachedResult");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -76,11 +76,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("FlexState with Data Selector and FlexObjects", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oCheckUpdateSelectorStub = sandbox.spy(DataSelector.prototype, "checkUpdate");
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			this.oAppComponent.destroy();
 			sandbox.restore();
@@ -236,7 +236,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("FlexState with loadFlexData, callPrepareFunction and filtering stubbed", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "callPrepareFunction").callsFake(mockPrepareFunctions);
 			this.oAppComponent = new UIComponent(sComponentId);
@@ -244,7 +244,7 @@ sap.ui.define([
 			this.oFilterStub = sandbox.spy(LayerUtils, "filterChangeDefinitionsByMaxLayer");
 			this.sFlexReference = "flexReference";
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			FlexState.resetInitialNonFlCompVariantData(this.sFlexReference);
 			this.oAppComponent.destroy();
@@ -502,7 +502,7 @@ sap.ui.define([
 
 	function getUshellContainerStub(oRegistrationHandlerStub, oDeRegistrationHandlerStub) {
 		var oUShellService = {
-			getServiceAsync: function(sService) {
+			getServiceAsync(sService) {
 				if (sService === "ShellNavigation") {
 					return Promise.resolve({
 						registerNavigationFilter: oRegistrationHandlerStub,
@@ -519,7 +519,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("FlexState with loadFlexData and callPrepareFunction stubbed, filtering active", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
 			this.ogetUShellServiceStub = sandbox.stub(Utils, "getUShellService").withArgs("URLParsing").returns(Promise.resolve("DummyURLParsingService"));
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "callPrepareFunction").callsFake(mockPrepareFunctions);
@@ -528,7 +528,7 @@ sap.ui.define([
 			this.oFilterStub = sandbox.spy(LayerUtils, "filterChangeDefinitionsByMaxLayer");
 			getUshellContainerStub(sandbox.stub(), sandbox.stub());
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			this.oAppComponent.destroy();
 			sandbox.restore();
@@ -578,7 +578,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("FlexState with a ushell container", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
 			sandbox.stub(FlexState, "callPrepareFunction").callsFake(mockPrepareFunctions);
 			sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(false);
@@ -593,7 +593,7 @@ sap.ui.define([
 
 			getUshellContainerStub(this.oRegistrationHandlerStub, this.oDeRegistrationHandlerStub);
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			this.oAppComponent.destroy();
 			sandbox.restore();
@@ -706,7 +706,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("FlexState without stubs and a ushell container", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oLoaderSpy = sandbox.spy(Loader, "loadFlexData");
 			this.oApplyStorageLoadFlexDataSpy = sandbox.spy(Storage, "loadFlexData");
@@ -715,7 +715,7 @@ sap.ui.define([
 			this.oDeRegistrationHandlerStub = sandbox.stub();
 			getUshellContainerStub(this.oRegistrationHandlerStub, this.oDeRegistrationHandlerStub);
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			this.oAppComponent.destroy();
 			sandbox.restore();
@@ -788,14 +788,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("FlexState with Storage stubs", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = new UIComponent(sComponentId);
 
 			this.oLoaderSpy = sandbox.spy(Loader, "loadFlexData");
 			this.oApplyStorageLoadFlexDataStub = sandbox.stub(Storage, "loadFlexData");
 			this.oApplyStorageCompleteFlexDataSpy = sandbox.spy(Storage, "completeFlexData");
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			this.oAppComponent.destroy();
 			sandbox.restore();
@@ -853,7 +853,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Fake Standard Variants", {
-		beforeEach: function() {
+		beforeEach() {
 			sComponentId = "componentId";
 			this.sReference = "flexReference";
 			this.oVariant = FlexObjectFactory.createFlVariant({
@@ -869,7 +869,7 @@ sap.ui.define([
 				componentId: sComponentId
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oAppComponent.destroy();
 			FlexState.rebuildFilteredResponse(this.sReference);
@@ -935,13 +935,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("FlexState update", {
-		beforeEach: function() {
+		beforeEach() {
 			this.sComponentId = "componentId";
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
 			this.sPersistencyKey = "persistencyKey";
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			this.oAppComponent.destroy();
 			sandbox.restore();
@@ -1270,7 +1270,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("FlexState.updateStorageResponse", {
-		beforeEach: async function() {
+		async beforeEach() {
 			sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
 			await FlexState.initialize({
 				reference: sReference
@@ -1303,7 +1303,7 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

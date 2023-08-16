@@ -11,11 +11,11 @@ sap.ui.define([
 	var oUnsubscribeStub;
 
 	QUnit.module("EventHistory", {
-		beforeEach: function() {
+		beforeEach() {
 			oSubscribeStub = sinon.stub(oCore.getEventBus(), "subscribe");
 			oUnsubscribeStub = sinon.stub(oCore.getEventBus(), "unsubscribe");
 		},
-		afterEach: function() {
+		afterEach() {
 			oCore.getEventBus().subscribe.restore();
 			oCore.getEventBus().unsubscribe.restore();
 			EventHistory._oHistory = {};
@@ -54,14 +54,14 @@ sap.ui.define([
 			var mParameters1 = {
 				param11: "value11",
 				param12: "value12",
-				getId: function() {
+				getId() {
 					return "id1";
 				}
 			};
 			var mParameters2 = {
 				param21: "value21",
 				param22: "value22",
-				getId: function() {
+				getId() {
 					return "id2";
 				}
 			};
@@ -83,7 +83,7 @@ sap.ui.define([
 			EventHistory.saveEvent(sChannelId, "anotherEventId", mParameters1);
 			EventHistory.saveEvent(sChannelId, sEventId, mParameters2);
 
-			sEventId = EventHistory._aEventIds[0];
+			[sEventId] = EventHistory._aEventIds;
 			var oHistory = EventHistory._oHistory[sEventId];
 			assert.equal(oHistory.length, 2);
 			assert.deepEqual(oHistory[0], oExpectedEvent1);
@@ -96,14 +96,14 @@ sap.ui.define([
 			var mParameters1 = {
 				param11: "value11",
 				param12: "value12",
-				getId: function() {
+				getId() {
 					return "id1";
 				}
 			};
 			var mParameters2 = {
 				param21: "value21",
 				param22: "value22",
-				getId: function() {
+				getId() {
 					return "id2";
 				}
 			};
@@ -141,14 +141,14 @@ sap.ui.define([
 			var mParameters1 = {
 				param11: "value11",
 				param12: "value12",
-				getId: function() {
+				getId() {
 					return "id1";
 				}
 			};
 			var mParameters2 = {
 				param21: "value21",
 				param22: "value22",
-				getId: function() {
+				getId() {
 					return "id2";
 				}
 			};
@@ -176,7 +176,7 @@ sap.ui.define([
 			EventHistory.saveEvent(sChannelId, sEventId, mParameters2);
 			EventHistory.saveEvent(sChannelId, sEventId, mParameters2);
 
-			sEventId = EventHistory._aEventIds[0];
+			[sEventId] = EventHistory._aEventIds;
 			var oHistory = EventHistory._oHistory[sEventId];
 			assert.equal(oHistory.length, 2);
 			assert.deepEqual(oHistory[0], oExpectedEvent1);

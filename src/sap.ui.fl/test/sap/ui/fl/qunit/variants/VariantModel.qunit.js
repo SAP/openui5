@@ -95,14 +95,14 @@ sap.ui.define([
 	function stubFlexObjectsSelector(aFlexObjects) {
 		var oFlexObjectsSelector = FlexState.getFlexObjectsDataSelector();
 		var oGetFlexObjectsStub = sandbox.stub(oFlexObjectsSelector, "get");
-		oGetFlexObjectsStub.callsFake(function() {
-			return aFlexObjects.concat(oGetFlexObjectsStub.wrappedMethod.apply(this, arguments));
+		oGetFlexObjectsStub.callsFake(function(...aArgs) {
+			return aFlexObjects.concat(oGetFlexObjectsStub.wrappedMethod.apply(this, aArgs));
 		});
 		oFlexObjectsSelector.checkUpdate();
 	}
 
 	QUnit.module("Given an instance of VariantModel", {
-		beforeEach: function() {
+		beforeEach() {
 			return FlexState.initialize({
 				reference: "MyComponent",
 				componentId: "RTADemoAppMD",
@@ -121,13 +121,13 @@ sap.ui.define([
 
 				this.oComponent = {
 					name: "MyComponent",
-					getId: function() {
+					getId() {
 						return "RTADemoAppMD";
 					},
-					getManifest: function() {
+					getManifest() {
 						return oManifest;
 					},
-					getLocalId: function() {}
+					getLocalId() {}
 				};
 				sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.oComponent.name);
@@ -227,7 +227,7 @@ sap.ui.define([
 				return this.oModel.initialize();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			FlexState.clearRuntimeSteadyObjects("MyComponent", "RTADemoAppMD");
 			VariantManagementState.getVariantManagementMap().clearCachedResult();
@@ -398,16 +398,16 @@ sap.ui.define([
 		QUnit.test("when calling 'setModelPropertiesForControl'", function(assert) {
 			var fnDone = assert.async();
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isKeyUser: function() {
+				isKeyUser() {
 					return false;
 				},
-				isPublicFlVariantEnabled: function() {
+				isPublicFlVariantEnabled() {
 					return false;
 				},
-				isVariantPersonalizationEnabled: function() {
+				isVariantPersonalizationEnabled() {
 					return false;
 				},
-				getUserId: function() {
+				getUserId() {
 					return undefined;
 				}
 			});
@@ -436,16 +436,16 @@ sap.ui.define([
 			var bIsPublicFlVariantEnabled = true;
 			var sUserId;
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isKeyUser: function() {
+				isKeyUser() {
 					return bIsKeyUser;
 				},
-				isPublicFlVariantEnabled: function() {
+				isPublicFlVariantEnabled() {
 					return bIsPublicFlVariantEnabled;
 				},
-				getUserId: function() {
+				getUserId() {
 					return sUserId;
 				},
-				isVariantPersonalizationEnabled: function() {
+				isVariantPersonalizationEnabled() {
 					return true;
 				}
 			});
@@ -529,7 +529,7 @@ sap.ui.define([
 			var oParams = {};
 			oParams[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = "foo";
 			var oMockedURLParser = {
-				parseShellHash: function() {
+				parseShellHash() {
 					return {
 						params: oParams
 					};
@@ -811,7 +811,7 @@ sap.ui.define([
 
 		QUnit.test("when calling 'deleteVariantChange'", function(assert) {
 			var fnChangeStub = sandbox.stub().returns({
-				convertToFileContent: function() {}
+				convertToFileContent() {}
 			});
 			var mPropertyBag = {foo: "bar"};
 			var oDeleteChangeStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChange");
@@ -830,7 +830,7 @@ sap.ui.define([
 				variantManagementReference: sVMReference,
 				appComponent: this.oComponent,
 				change: {
-					convertToFileContent: function() {}
+					convertToFileContent() {}
 				}
 			};
 			sandbox.stub(URLHandler, "getStoredHashParams").returns([]);
@@ -861,7 +861,7 @@ sap.ui.define([
 				variantManagementReference: sVMReference,
 				appComponent: this.oComponent,
 				change: {
-					convertToFileContent: function() {}
+					convertToFileContent() {}
 				}
 			};
 			// current variant already exists in hash parameters
@@ -1063,7 +1063,7 @@ sap.ui.define([
 		[true, false].forEach(function(bVendorLayer) {
 			QUnit.test(bVendorLayer ? "when calling 'copyVariant' in VENDOR layer" : "when calling 'copyVariant'", function(assert) {
 				sandbox.stub(Settings, "getInstanceOrUndef").returns({
-					getUserId: function() {return "test user";}
+					getUserId() {return "test user";}
 				});
 				sandbox.stub(JsControlTreeModifier, "getSelector").returns({id: sVMReference});
 				var oAddDirtyChangesSpy = sandbox.spy(this.oModel.oChangePersistence, "addDirtyChanges");
@@ -1150,16 +1150,16 @@ sap.ui.define([
 				fileName: "change0",
 				variantReference: "variant0",
 				layer: Layer.VENDOR,
-				getId: function() {
+				getId() {
 					return this.fileName;
 				},
-				getVariantReference: function() {
+				getVariantReference() {
 					return this.variantReference;
 				}
 			};
 			var oVariant = {
 				fileName: "variant0",
-				getId: function() {
+				getId() {
 					return this.fileName;
 				}
 			};
@@ -1210,7 +1210,7 @@ sap.ui.define([
 
 		QUnit.test("when calling 'collectModelChanges' and public variant is enabled", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isPublicFlVariantEnabled: function() {
+				isPublicFlVariantEnabled() {
 					return true;
 				}
 			});
@@ -1440,7 +1440,7 @@ sap.ui.define([
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
 			var oEvent = {
-				getParameters: function() {
+				getParameters() {
 					return {
 						overwrite: false,
 						name: "Test",
@@ -1451,7 +1451,7 @@ sap.ui.define([
 						}
 					};
 				},
-				getSource: function() {
+				getSource() {
 					return oVariantManagement;
 				}
 			};
@@ -1519,7 +1519,7 @@ sap.ui.define([
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
 			var oEvent = {
-				getParameters: function() {
+				getParameters() {
 					return {
 						overwrite: false,
 						"public": true,
@@ -1531,7 +1531,7 @@ sap.ui.define([
 						}
 					};
 				},
-				getSource: function() {
+				getSource() {
 					return oVariantManagement;
 				}
 			};
@@ -1608,13 +1608,13 @@ sap.ui.define([
 			createChanges(this.oModel.oChangePersistence);
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var oEvent = {
-				getParameters: function() {
+				getParameters() {
 					return {
 						overwrite: true,
 						name: "Test"
 					};
 				},
-				getSource: function() {
+				getSource() {
 					return oVariantManagement;
 				}
 			};
@@ -1641,7 +1641,7 @@ sap.ui.define([
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
 			var oEvent = {
-				getParameters: function() {
+				getParameters() {
 					return {
 						name: "Test",
 						def: true,
@@ -1649,7 +1649,7 @@ sap.ui.define([
 						execute: true
 					};
 				},
-				getSource: function() {
+				getSource() {
 					return oVariantManagement;
 				}
 			};
@@ -1678,7 +1678,7 @@ sap.ui.define([
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
 			var oEvent = {
-				getParameters: function() {
+				getParameters() {
 					return {
 						overwrite: false,
 						name: "Test",
@@ -1689,7 +1689,7 @@ sap.ui.define([
 						}
 					};
 				},
-				getSource: function() {
+				getSource() {
 					return oVariantManagement;
 				}
 			};
@@ -1756,14 +1756,14 @@ sap.ui.define([
 			var fnDone = assert.async();
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var oEvent = {
-				getParameters: function() {
+				getParameters() {
 					return {
 						overwrite: false,
 						name: "Test",
 						def: false
 					};
 				},
-				getSource: function() {
+				getSource() {
 					return oVariantManagement;
 				}
 			};
@@ -1934,11 +1934,11 @@ sap.ui.define([
 			var aDummyChanges = [
 				{
 					fileName: "c1",
-					getSelector: function() {}
+					getSelector() {}
 				},
 				{
 					fileName: "c2",
-					getSelector: function() {}
+					getSelector() {}
 				}
 			];
 			var oAddChangesStub = sandbox.stub(this.oModel.oChangePersistence, "addChanges");
@@ -1954,12 +1954,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("_duplicateVariant", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("foo");
 			this.oModel = new VariantModel({}, {
 				flexController: {},
-				appComponent: {getId: function() {}}
+				appComponent: {getId() {}}
 			});
 
 			var oChange0 = FlexObjectFactory.createFromFileContent({
@@ -2001,7 +2001,7 @@ sap.ui.define([
 
 			return this.oModel.initialize();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oModel.destroy();
 			sandbox.restore();
 		}
@@ -2146,8 +2146,8 @@ sap.ui.define([
 				}
 				return {
 					instance: {
-						getLayer: function() {return Layer.PUBLIC;},
-						getVariantReference: function() {return "publicVariantReference";}
+						getLayer() {return Layer.PUBLIC;},
+						getVariantReference() {return "publicVariantReference";}
 					}
 				};
 			}.bind(this));
@@ -2172,7 +2172,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a VariantModel with no data and a VariantManagement control", {
-		beforeEach: function() {
+		beforeEach() {
 			return FlexState.initialize({
 				reference: "MyComponent",
 				componentId: "RTADemoAppMD",
@@ -2193,10 +2193,10 @@ sap.ui.define([
 				this.oVariantManagement = new VariantManagement(this.sVMReference);
 				var oComponent = {
 					name: "MyComponent",
-					getId: function() {
+					getId() {
 						return "RTADemoAppMD";
 					},
-					getManifest: function() {
+					getManifest() {
 						return oManifest;
 					},
 					getLocalId: function(sId) {
@@ -2223,7 +2223,7 @@ sap.ui.define([
 				return this.oModel.initialize();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oModel.destroy();
 			this.oVariantManagement.destroy();
@@ -2391,7 +2391,7 @@ sap.ui.define([
 
 		QUnit.test("when calling 'getVariantManagementReferenceForControl' with a variant management control with no app component prefix", function(assert) {
 			assert.strictEqual(this.oModel.getVariantManagementReferenceForControl({
-				getId: function() {
+				getId() {
 					return "mockControl";
 				}
 			}), "mockControl", "then control's id is returned");
@@ -2583,7 +2583,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a variant management control in personalization mode", {
-		beforeEach: function() {
+		beforeEach() {
 			return FlexState.initialize({
 				reference: "MockController",
 				componentId: "testComponent",
@@ -2602,7 +2602,7 @@ sap.ui.define([
 							}
 						}
 					},
-					createContent: function() {
+					createContent() {
 						oView = new XMLView({
 							viewName: "sap.ui.test.VariantManagementTestApp",
 							id: this.createId("mockview")
@@ -2668,7 +2668,7 @@ sap.ui.define([
 				oCore.applyChanges();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oCompContainer.destroy();
 			FlexState.clearState();
 			sandbox.restore();
@@ -3047,7 +3047,7 @@ sap.ui.define([
 			return this.oVariantModel.attachVariantApplied({
 				vmControlId: sVMControlId,
 				control: this.oView.byId("MainForm"),
-				callback: function() {},
+				callback() {},
 				callAfterInitialVariant: true
 			}).then(function() {
 				assert.ok(
@@ -3147,11 +3147,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a VariantModel without data and with Ushell available", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("foo");
 			this.oModel = new VariantModel({}, {
 				flexController: {},
-				appComponent: {getId: function() {}}
+				appComponent: {getId() {}}
 			});
 
 			sandbox.stub(Utils, "getUShellService").callsFake(function(sServiceName) {
@@ -3161,7 +3161,7 @@ sap.ui.define([
 			sandbox.stub(URLHandler, "initialize");
 			return this.oModel.initialize();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oModel.destroy();
 			sandbox.restore();
 		}

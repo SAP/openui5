@@ -42,12 +42,12 @@ sap.ui.define([
 	}
 
 	QUnit.module("getPersistencyKey with a control implementing...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oGetVariantManagementStub = sandbox.stub();
 			this.oGetPersonalizableControlPersistencyKeyStub = sandbox.stub().returns("myFancyPeristencyKey");
 			this.oGetPersistencyKeyStub = sandbox.stub().returns("myNotSoFancyPersistencyKey");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

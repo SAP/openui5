@@ -104,9 +104,9 @@ sap.ui.define([
 			designtime: "sap/ui/fl/designtime/util/IFrame.designtime"
 		},
 
-		init: function() {
+		init(...aArgs) {
 			if (Control.prototype.init) {
-				Control.prototype.init.apply(this, arguments);
+				Control.prototype.init.apply(this, aArgs);
 			}
 			this._oInitializePromise = getContainerUserInfo()
 			.then(function(oUserInfo) {
@@ -115,11 +115,11 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		waitForInit: function() {
+		waitForInit() {
 			return this._oInitializePromise ? this._oInitializePromise : Promise.reject();
 		},
 
-		setUrl: function(sUrl) {
+		setUrl(sUrl) {
 			// Could contain special characters from bindings that need to be encoded
 			// Make sure that it was not encoded before
 			var sEncodedUrl = decodeURI(sUrl) === sUrl ? encodeURI(sUrl) : sUrl;
@@ -155,8 +155,9 @@ sap.ui.define([
 			return this;
 		},
 
-		applySettings: function(mSettings) {
-			Control.prototype.applySettings.apply(this, arguments);
+		applySettings(...aArgs) {
+			const [mSettings] = aArgs;
+			Control.prototype.applySettings.apply(this, aArgs);
 			if (mSettings) {
 				var mMergedSettings = this.getProperty("_settings") || {};
 				if (mSettings._settings) {
@@ -174,7 +175,7 @@ sap.ui.define([
 			}
 		},
 
-		exit: function() {
+		exit() {
 			if (this._oUserModel) {
 				this._oUserModel.destroy();
 				delete this._oUserModel;

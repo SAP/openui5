@@ -63,14 +63,14 @@ sap.ui.define([
 			CONTEXTS: `${PREFIX + InitialConnector.API_VERSION}/contexts/`
 		},
 		isLanguageInfoRequired: true,
-		loadFeatures: function(mPropertyBag) {
+		loadFeatures(mPropertyBag) {
 			return BackendConnector.loadFeatures.call(KeyUserConnector, mPropertyBag).then(function(oFeatures) {
 				oFeatures.isContextSharingEnabled = true;
 				return oFeatures;
 			});
 		},
 
-		getContexts: function(mPropertyBag) {
+		getContexts(mPropertyBag) {
 			var aParameters = ["type", "$skip", "$filter"];
 			var mParameters = _pick(mPropertyBag, aParameters);
 
@@ -80,7 +80,7 @@ sap.ui.define([
 			});
 		},
 
-		loadContextDescriptions: function(mPropertyBag) {
+		loadContextDescriptions(mPropertyBag) {
 			var mParameters = {};
 			InitialUtils.addLanguageInfo(mParameters);
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
@@ -99,11 +99,11 @@ sap.ui.define([
 		 * @returns {Promise<boolean>} Promise resolves with true
 		 * @deprecated
 		 */
-		 isContextSharingEnabled: function() {
+		 isContextSharingEnabled() {
 			return Promise.resolve(true);
 		},
 
-		getFlexInfo: function(mPropertyBag) {
+		getFlexInfo(mPropertyBag) {
 			return FlexInfoSession.get(mPropertyBag.selector) || {};
 		}
 	});
@@ -129,7 +129,7 @@ sap.ui.define([
 	}
 
 	KeyUserConnector.versions = {
-		load: function(mPropertyBag) {
+		load(mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			var mParameters = {};
 			InitialUtils.addLanguageInfo(mParameters);
@@ -141,7 +141,7 @@ sap.ui.define([
 				});
 			});
 		},
-		activate: function(mPropertyBag) {
+		activate(mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			_enhancePropertyBagForDraftActivation(mPropertyBag);
 			var mParameters = {version: mPropertyBag.version};
@@ -152,12 +152,12 @@ sap.ui.define([
 				return renameVersionNumberProperty(oVersion);
 			});
 		},
-		discardDraft: function(mPropertyBag) {
+		discardDraft(mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.DISCARD, mPropertyBag);
 			return WriteUtils.sendRequest(sVersionsUrl, "DELETE", mPropertyBag);
 		},
-		publish: function(mPropertyBag) {
+		publish(mPropertyBag) {
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 			var fnHandleAllErrors = function(oError) {
 				BusyIndicator.hide();
@@ -183,7 +183,7 @@ sap.ui.define([
 	};
 
 	KeyUserConnector.translation = {
-		getTexts: function(mPropertyBag) {
+		getTexts(mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			var mParameters = _pick(mPropertyBag, ["sourceLanguage", "targetLanguage"]);
 			var sTranslationUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.TRANSLATION.DOWNLOAD, mPropertyBag, mParameters);
@@ -192,7 +192,7 @@ sap.ui.define([
 			});
 		},
 
-		getSourceLanguages: function(mPropertyBag) {
+		getSourceLanguages(mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			var mParameters = {};
 			var sTranslationUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.TRANSLATION.GET_SOURCELANGUAGE, mPropertyBag, mParameters);
@@ -201,7 +201,7 @@ sap.ui.define([
 			});
 		},
 
-		postTranslationTexts: function(mPropertyBag) {
+		postTranslationTexts(mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			var sTranslationUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.TRANSLATION.UPLOAD, mPropertyBag, {});
 			return InitialUtils.sendRequest(sTranslationUrl, "POST", mPropertyBag);

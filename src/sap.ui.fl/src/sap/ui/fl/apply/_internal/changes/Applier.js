@@ -264,7 +264,7 @@ sap.ui.define([
 		 *
 		 * @param {Promise} oPromise - Promise which is resolved when precondition fulfilled
 		 */
-		addPreConditionForInitialChangeApplying: function(oPromise) {
+		addPreConditionForInitialChangeApplying(oPromise) {
 			oLastPromise = oLastPromise.then(function() {
 				return oPromise;
 			});
@@ -282,7 +282,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag.appComponent - Component instance that is currently loading
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario
 		 */
-		applyChangeOnControl: function(oChange, oControl, mPropertyBag) {
+		applyChangeOnControl(oChange, oControl, mPropertyBag) {
 			var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
 			var pHandlerPromise = mPropertyBag.changeHandler
 				? Promise.resolve(mPropertyBag.changeHandler)
@@ -337,7 +337,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.Control} oControl Instance of the control to which changes should be applied
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Resolves as soon as all changes for the control are applied
 		 */
-		applyAllChangesForControl: function(fnGetChangesMap, oAppComponent, oFlexController, oControl) {
+		applyAllChangesForControl(fnGetChangesMap, oAppComponent, oFlexController, oControl) {
 			// the changes have to be queued synchronously
 			var mChangesMap = fnGetChangesMap();
 			var sControlId = oControl.getId();
@@ -412,7 +412,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges List of flexibility changes on controls for the current processed view
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario including view object in both cases
 		 */
-		applyAllChangesForXMLView: function(mPropertyBag, aChanges) {
+		applyAllChangesForXMLView(mPropertyBag, aChanges) {
 			if (!Array.isArray(aChanges)) {
 				var sErrorMessage = `No list of changes was passed for processing the flexibility on view: ${mPropertyBag.view}.`;
 				Log.error(sErrorMessage, undefined, "sap.ui.fl.apply._internal.changes.Applier");

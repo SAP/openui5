@@ -76,14 +76,15 @@ sap.ui.define([
 				 */
 				checkInvalidation: {
 					type: "function",
-					defaultValue: function() {
+					defaultValue() {
 						return true;
 					}
 				}
 			}
 		},
-		constructor: function() {
-			ManagedObject.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			ManagedObject.apply(this, aArgs);
 			this._mInitialized = {};
 			if (this.getParameterKey()) {
 				// If value is parameterized, create a map for easier access

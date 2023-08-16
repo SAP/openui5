@@ -15,32 +15,32 @@ sap.ui.define([
 		oSandbox: sinon.createSandbox(),
 		oServer: null,
 		oControl: {
-			getBindingContext: function() {
+			getBindingContext() {
 				return {
-					getPath: function() {
+					getPath() {
 						return "/someService/someEntity";
 					}
 				};
 			},
-			getModel: function() {
+			getModel() {
 				return {
 					sServiceUrl: "/someService",
 					oMetadata: {
-						_getEntitySetByPath: function() {
+						_getEntitySetByPath() {
 							return {
 								name: "someEntity"
 							};
 						},
-						_getEntityTypeByPath: function() {
+						_getEntityTypeByPath() {
 							return {
 								name: "someEntityType"
 							};
 						}
 					},
-					metadataLoaded: function() {
+					metadataLoaded() {
 						return Promise.resolve();
 					},
-					isA: function() {
+					isA() {
 						return true;
 					}
 				};
@@ -48,7 +48,7 @@ sap.ui.define([
 		},
 		oCrossApp: {
 			mIntents: {},
-			isNavigationSupported: function(aIntents) {
+			isNavigationSupported(aIntents) {
 				var aResults = aIntents.map(function(oIntent) {
 					return {
 						supported: this.mIntents[oIntent.semanticObject] || false
@@ -57,12 +57,12 @@ sap.ui.define([
 				return Promise.resolve(aResults);
 			}
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oSandbox.stub(Utils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(this.oCrossApp));
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oSandbox.restore();
 			this.oServer.restore();
 			ABAPExtensibilityVariantFactory.reset();

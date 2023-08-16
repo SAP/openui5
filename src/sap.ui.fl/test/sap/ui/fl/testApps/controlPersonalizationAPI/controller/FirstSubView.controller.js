@@ -14,14 +14,14 @@ sap.ui.define([
 		oVariantLabel: null,
 		oAppComponent: null,
 
-		onInit: function() {
+		onInit() {
 			this.oView = this.getView();
 			this.oLabel = this.oView.byId("label");
 			this.oVariantLabel = this.oView.byId("variantLabel");
 			this.oAppComponent = Utils.getAppComponentForControl(this.getView());
 		},
 
-		onAfterRendering: function() {
+		onAfterRendering() {
 			var oModel = this.oView.getModel();
 			var oModelData = {
 				firstView: {
@@ -32,7 +32,7 @@ sap.ui.define([
 			oModel.setData(oModelData, true);
 		},
 
-		createPersonalizationForLabel: function() {
+		createPersonalizationForLabel() {
 			var mChangeData = {
 				changeType: "changeLabel",
 				layer: Layer.USER
@@ -40,11 +40,11 @@ sap.ui.define([
 			this.oAppComponent.createChangesAndSave(mChangeData, this.oLabel);
 		},
 
-		resetPersonalizationForLabel: function() {
+		resetPersonalizationForLabel() {
 			this.oAppComponent.resetPersonalization([this.oLabel]);
 		},
 
-		createPersonalizationForVariantLabel: function() {
+		createPersonalizationForVariantLabel() {
 			var mChangeData = {
 				changeType: "changeLabel",
 				layer: Layer.USER
@@ -52,32 +52,32 @@ sap.ui.define([
 			this.oAppComponent.createChangesAndSave(mChangeData, this.oVariantLabel);
 		},
 
-		resetPersonalizationForVariantLabel: function() {
+		resetPersonalizationForVariantLabel() {
 			this.oAppComponent.resetPersonalization([this.oVariantLabel]);
 		},
 
-		formatStatusState: function(aChanges, oLabelId) {
+		formatStatusState(aChanges, oLabelId) {
 			return Helper.formatStatusState(aChanges, [oLabelId]);
 		},
 
-		formatStatusText: function(aChanges, oLabelId) {
+		formatStatusText(aChanges, oLabelId) {
 			var sPersonalizationMessage = "The label IS personalized.";
 			var sNoPersonalizationMessage = "The label is NOT personalized";
 			return Helper.formatStatusText(aChanges, [oLabelId], sPersonalizationMessage, sNoPersonalizationMessage);
 		},
 
-		formatStatusStateCombined: function(aChanges, oLabelId, oVariantLabelId) {
+		formatStatusStateCombined(aChanges, oLabelId, oVariantLabelId) {
 			return Helper.formatStatusState(aChanges, [oLabelId, oVariantLabelId]);
 		},
 
-		formatStatusTextCombined: function(aChanges, oLabelId, oVariantLabelId) {
+		formatStatusTextCombined(aChanges, oLabelId, oVariantLabelId) {
 			var sPersonalizationMessage = "At least one label in the view IS personalized.";
 			var sNoPersonalizationMessage = "NOT A SINGLE label in the view is personalized";
 			return Helper.formatStatusText(aChanges, [oLabelId, oVariantLabelId],
 				sPersonalizationMessage, sNoPersonalizationMessage);
 		},
 
-		updateLabels: function() {
+		updateLabels() {
 			this.oView.getModel().updateBindings();
 		}
 	});

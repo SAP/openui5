@@ -430,13 +430,11 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.variants.VariantModel
 	 */
 	 URLHandler.update = function(mPropertyBag) {
-		if (!mPropertyBag.model._oHashData) {
-			mPropertyBag.model._oHashData = {
-				hashParams: [],
-				controlPropertyObservers: [],
-				variantControlIds: []
-			};
-		}
+		mPropertyBag.model._oHashData ||= {
+			hashParams: [],
+			controlPropertyObservers: [],
+			variantControlIds: []
+		};
 		if (!mPropertyBag || !Array.isArray(mPropertyBag.parameters)) {
 			Log.info("Variant URL parameters could not be updated since invalid parameters were received");
 			return;

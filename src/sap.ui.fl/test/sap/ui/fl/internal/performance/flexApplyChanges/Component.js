@@ -22,16 +22,17 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			var sCurrentVariantFromURL = FlUtils.getUrlParameter(URLHandler.variantTechnicalParameterName);
 			if (sCurrentVariantFromURL) {
-				arguments[0].componentData = {technicalParameters: {}};
-				arguments[0].componentData.technicalParameters[URLHandler.variantTechnicalParameterName] = [sCurrentVariantFromURL];
+				aArgs[0].componentData = {technicalParameters: {}};
+				aArgs[0].componentData.technicalParameters[URLHandler.variantTechnicalParameterName] = [sCurrentVariantFromURL];
 			}
-			UIComponent.prototype.constructor.apply(this, arguments);
+			UIComponent.prototype.constructor.apply(this, aArgs);
 		},
 
-		createContent: function() {
+		createContent() {
 			var oApp = new App();
 			var sTestCase = FlUtils.getUrlParameter("sap-ui-fl-test-case") || "rename";
 			var sTestProcessing = FlUtils.getUrlParameter("sap-ui-fl-test-processing") || "js";

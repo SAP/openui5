@@ -50,13 +50,11 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.componentName] Component name of the current application which may differ in case of an app variant
 		 * @returns {Promise<Object>} Resolving with an object containing a data contained in the bundle
 		 */
-		loadFlexData: function(mPropertyBag) {
+		loadFlexData(mPropertyBag) {
 			var sComponentName = mPropertyBag.componentName;
 
-			if (!sComponentName) {
-				// fallback in case the loadFlexData was called without passing the component name
-				sComponentName = mPropertyBag.reference.replace(/.Component/g, "");
-			}
+			// fallback in case the loadFlexData was called without passing the component name
+			sComponentName ||= mPropertyBag.reference.replace(/.Component/g, "");
 
 			var oFlexBundle = _getBundle(sComponentName, "flexibility-bundle");
 			if (oFlexBundle) {

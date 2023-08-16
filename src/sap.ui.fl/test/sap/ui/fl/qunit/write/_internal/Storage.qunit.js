@@ -44,7 +44,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("ApplyStorage.getWriteConnectors", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -57,12 +57,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when write is called", {
-		beforeEach: function() {
+		beforeEach() {
 			InitialLrepConnector.xsrfToken = "123";
 			InitialKeyUserConnector.xsrfToken = "123";
 			InitialPersonalizationConnector.xsrfToken = "123";
 		},
-		afterEach: function() {
+		afterEach() {
 			InitialLrepConnector.xsrfToken = undefined;
 			InitialKeyUserConnector.xsrfToken = undefined;
 			InitialPersonalizationConnector.xsrfToken = undefined;
@@ -387,10 +387,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given Storage when condense is called", {
-		beforeEach: function() {
+		beforeEach() {
 			this.sLayer = Layer.CUSTOMER;
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -914,12 +914,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when loadFeatures is called", {
-		beforeEach: function() {
+		beforeEach() {
 			this.url = "/some/url";
 			InitialLrepConnector.xsrfToken = "123";
 			InitialPersonalizationConnector.xsrfToken = "123";
 		},
-		afterEach: function() {
+		afterEach() {
 			InitialLrepConnector.xsrfToken = undefined;
 			InitialPersonalizationConnector.xsrfToken = undefined;
 			sandbox.restore();
@@ -1054,7 +1054,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when contextBasedAdaptation.create is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1155,7 +1155,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when contextBasedAdaptation.reorder is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1237,7 +1237,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when contextBasedAdaptation.load is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1338,7 +1338,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when versions.load is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1378,7 +1378,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when versions.activate is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1418,7 +1418,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when versions.discardDraft is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1457,7 +1457,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when versions.publish is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1496,12 +1496,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when reset is called", {
-		beforeEach: function() {
+		beforeEach() {
 			InitialLrepConnector.xsrfToken = "123";
 			InitialKeyUserConnector.xsrfToken = "123";
 			InitialPersonalizationConnector.xsrfToken = "123";
 		},
-		afterEach: function() {
+		afterEach() {
 			InitialLrepConnector.xsrfToken = undefined;
 			InitialKeyUserConnector.xsrfToken = undefined;
 			InitialPersonalizationConnector.xsrfToken = undefined;
@@ -1726,7 +1726,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when variant management context sharing is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1794,7 +1794,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when translation.getSourceLanguage is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1835,7 +1835,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when translation.getTranslationTexts is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1874,7 +1874,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when translation.postTranslationTexts is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

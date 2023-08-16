@@ -16,13 +16,13 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
+	var {ValueState} = coreLibrary;
 
 	QUnit.module("sap.ui.fl.write._internal.transport.TransportDialog", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oDialog = new TransportDialog();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDialog.destroy();
 			sandbox.restore();
 		}

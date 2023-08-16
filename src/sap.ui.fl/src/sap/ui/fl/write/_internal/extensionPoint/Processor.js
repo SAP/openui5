@@ -29,7 +29,7 @@ function(
 	 * @version ${version}
 	 */
 	var Processor = {
-		applyExtensionPoint: function(oExtensionPoint) {
+		applyExtensionPoint(oExtensionPoint) {
 			return applyExtensionPoint(oExtensionPoint, false);
 		}
 	};

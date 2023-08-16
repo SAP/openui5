@@ -56,7 +56,7 @@ sap.ui.define([
 	const oVariantIndependentUIChangesDataSelector = new DataSelector({
 		id: "variantIndependentUIChanges",
 		parentDataSelector: FlexState.getFlexObjectsDataSelector(),
-		executeFunction: function(aFlexObjects) {
+		executeFunction(aFlexObjects) {
 			return aFlexObjects.filter(function(oFlexObject) {
 				const bIsUIChange = oFlexObject.isA("sap.ui.fl.apply._internal.flexObjects.UIChange");
 				const bIsControllerExtension = oFlexObject.isA("sap.ui.fl.apply._internal.flexObjects.ControllerExtensionChange");
@@ -206,7 +206,7 @@ sap.ui.define([
 			if (!JsControlTreeModifier.bySelector(oDependentControlSelector, oAppComponent)) {
 				sControlId = JsControlTreeModifier.getControlIdBySelector(oDependentControlSelector, oAppComponent);
 				aNewValidControlDependencies.push(oDependentControlSelector);
-				this._mChanges.mControlsWithDependencies[sControlId] = this._mChanges.mControlsWithDependencies[sControlId] || [];
+				this._mChanges.mControlsWithDependencies[sControlId] ||= [];
 				if (!includes(this._mChanges.mControlsWithDependencies[sControlId], oChange.getId())) {
 					this._mChanges.mControlsWithDependencies[sControlId].push(oChange.getId());
 				}
@@ -236,7 +236,7 @@ sap.ui.define([
 			var aNewValidDependencies = [];
 			oInitialDependency.dependencies.forEach(function(sChangeId) {
 				if (fnDependencyValidation(sChangeId)) {
-					this._mChanges.mDependentChangesOnMe[sChangeId] = this._mChanges.mDependentChangesOnMe[sChangeId] || [];
+					this._mChanges.mDependentChangesOnMe[sChangeId] ||= [];
 					this._mChanges.mDependentChangesOnMe[sChangeId].push(oChange.getId());
 					aNewValidDependencies.push(sChangeId);
 				}
@@ -928,7 +928,7 @@ sap.ui.define([
 			}
 
 			if (aChangeTypes) {
-				bChangeValid = bChangeValid && aChangeTypes.indexOf(oChange.getChangeType()) !== -1;
+				bChangeValid &&= aChangeTypes.indexOf(oChange.getChangeType()) !== -1;
 			}
 
 			return bChangeValid;

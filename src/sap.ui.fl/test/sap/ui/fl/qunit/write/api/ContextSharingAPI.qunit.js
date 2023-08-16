@@ -28,10 +28,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given ContextSharingAPI.createComponent is called", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(WriteStorage, "loadContextDescriptions").resolves({});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			if (this.oCompCont) {
 				this.oCompCont.destroy();

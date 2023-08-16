@@ -259,7 +259,7 @@ sap.ui.define([
 		if (!(mPropertyBag.modelType && mPropertyBag.delegate)) {
 			throw new Error("'modelType' and 'delegate' properties are required for registration!");
 		}
-		mPropertyBag.delegateType = mPropertyBag.delegateType || DelegateMediator.types.COMPLETE;
+		mPropertyBag.delegateType ||= DelegateMediator.types.COMPLETE;
 		if (mPropertyBag.delegateType && !isValidType(mPropertyBag)) {
 			throw new Error(`default 'delegateType': ${mPropertyBag.delegateType} is invalid!`);
 		}
@@ -267,9 +267,7 @@ sap.ui.define([
 		if (isCompetingDelegateAlreadyRegistered(mPropertyBag)) {
 			throw new Error(`modelType ${mPropertyBag.modelType}is already defined!`);
 		}
-		if (!DelegateMediator._mDefaultDelegateItems[mPropertyBag.modelType]) {
-			DelegateMediator._mDefaultDelegateItems[mPropertyBag.modelType] = [];
-		}
+		DelegateMediator._mDefaultDelegateItems[mPropertyBag.modelType] ||= [];
 		DelegateMediator._mDefaultDelegateItems[mPropertyBag.modelType].push({
 			name: mPropertyBag.delegate,
 			requiredLibraries: mPropertyBag.requiredLibraries,

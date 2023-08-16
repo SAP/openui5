@@ -26,7 +26,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("KeyUserConnector", {
-		afterEach: function() {
+		afterEach() {
 			WriteUtils.sendRequest.restore();
 			sandbox.restore();
 		}
@@ -153,7 +153,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.translation", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -241,7 +241,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.getContexts", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -290,7 +290,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.loadContextDescriptions", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -321,7 +321,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector handing xsrf token in combination of the apply connector", {
-		afterEach: function() {
+		afterEach() {
 			InitialConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}
@@ -365,7 +365,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector loadFeatures", {
-		afterEach: function() {
+		afterEach() {
 			InitialConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}
@@ -458,7 +458,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.versions.load", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -492,7 +492,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.versions.activate", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -591,7 +591,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.versions.discardDraft", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -614,7 +614,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.versions.publish", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

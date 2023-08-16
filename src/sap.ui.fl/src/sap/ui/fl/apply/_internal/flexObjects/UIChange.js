@@ -96,8 +96,9 @@ sap.ui.define([
 			associations: {},
 			events: {}
 		},
-		constructor: function() {
-			FlexObject.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			FlexObject.apply(this, aArgs);
 
 			this._oChangeProcessingPromises = {};
 			this.setInitialApplyState();
@@ -158,7 +159,7 @@ sap.ui.define([
 		this._oChangeProcessedPromise = {};
 		this._oChangeProcessedPromise.promise = new Promise(function(resolve) {
 			this._oChangeProcessedPromise.resolveFunction = {
-				resolve: resolve
+				resolve
 			};
 		}.bind(this));
 	};
@@ -257,7 +258,7 @@ sap.ui.define([
 			this._oChangeProcessingPromises[sKey] = {};
 			this._oChangeProcessingPromises[sKey].promise = new Promise(function(resolve) {
 				this._oChangeProcessingPromises[sKey].resolveFunction = {
-					resolve: resolve
+					resolve
 				};
 			}.bind(this));
 		}

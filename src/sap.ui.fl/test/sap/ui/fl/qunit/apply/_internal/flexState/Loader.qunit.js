@@ -30,7 +30,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Loader", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRawManifest = {
 				property: "value"
 			};
@@ -102,7 +102,7 @@ sap.ui.define([
 			this.oGetBaseCompNameStub = sandbox.stub(ManifestUtils, "getBaseComponentNameFromManifest").returns("baseName");
 			this.oGetCacheKeyStub = sandbox.stub(ManifestUtils, "getCacheKeyFromAsyncHints").returns("cacheKey");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -284,7 +284,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("partialFlexState", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oStorageCompleteFlexDataStub = sandbox.spy(ApplyStorage, "completeFlexData");
 			this.oStorageLoadFlexDataStub = sandbox.spy(ApplyStorage, "loadFlexData");
 			this.oRawManifest = {
@@ -292,7 +292,7 @@ sap.ui.define([
 			};
 			this.oManifest = new Manifest(this.oRawManifest);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -368,13 +368,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given new connector configuration in bootstrap", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRawManifest = {
 				property: "value"
 			};
 			this.oManifest = new Manifest(this.oRawManifest);
 		},
-		afterEach: function() {
+		afterEach() {
 			JsObjectConnector.storage.clear();
 			sandbox.restore();
 		}

@@ -32,7 +32,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		isPublishAvailable: function() {
+		isPublishAvailable() {
 			return Settings.getInstance().then(function(oSettings) {
 				return (
 					oSettings.isPublishAvailable() ||
@@ -55,7 +55,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		isSaveAsAvailable: function(sLayer) {
+		isSaveAsAvailable(sLayer) {
 			return Promise.all([
 				Settings.getInstance(),
 				Utils.getUShellService("CrossApplicationNavigation")
@@ -84,7 +84,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		isContextBasedAdaptationAvailable: function(sLayer) {
+		isContextBasedAdaptationAvailable(sLayer) {
 			return Settings.getInstance().then(function(oSettings) {
 				if (oSettings.isContextBasedAdaptationEnabled() && sLayer === Layer.CUSTOMER) {
 					return true;
@@ -102,7 +102,7 @@ sap.ui.define([
 		 * @returns {Promise<boolean>} Resolves to a boolean indicating if the key user role is assigned to the user
 		 * @public
 		 */
-		isKeyUser: function() {
+		isKeyUser() {
 			return Settings.getInstance()
 			.then(function(oSettings) {
 				return oSettings.isKeyUser();
@@ -117,7 +117,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.rta
 		 */
-		isVersioningEnabled: function(sLayer) {
+		isVersioningEnabled(sLayer) {
 			return Settings.getInstance()
 			.then(function(oSettings) {
 				return oSettings.isVersioningEnabled(sLayer);
@@ -132,7 +132,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.rta
 		 */
-		isKeyUserTranslationEnabled: function(sLayer) {
+		isKeyUserTranslationEnabled(sLayer) {
 			if (sLayer === Layer.CUSTOMER) {
 				return Settings.getInstance()
 				.then(function(oSettings) {
@@ -151,7 +151,7 @@ sap.ui.define([
 		 * @deprecated
 		 * @ui5-restricted sap.ui.fl.write.api.ContextSharingAPI
 		 */
-		isContextSharingEnabled: function(sLayer) {
+		isContextSharingEnabled(sLayer) {
 			if (sLayer !== Layer.CUSTOMER) {
 				return Promise.resolve(false);
 			}

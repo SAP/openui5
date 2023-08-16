@@ -79,10 +79,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("getFlexObjects / saveFlexObjects", {
-		before: function() {
+		before() {
 			return Settings.getInstance();
 		},
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForSelector").returns(sReference);
 			const Component = UIComponent.extend(sComponentId, {
 				metadata: {
@@ -99,7 +99,7 @@ sap.ui.define([
 				reference: sReference
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			SessionStorageConnector.reset({
 				reference: sReference,
 				layer: Layer.USER
@@ -337,7 +337,7 @@ sap.ui.define([
 				persistencyKey: sPersistencyKey
 			});
 			sandbox.stub(UriParameters, "fromQuery").returns({
-				get: function() {
+				get() {
 					return Layer.VENDOR;
 				}
 			});
@@ -455,7 +455,7 @@ sap.ui.define([
 			);
 			sandbox.stub(VariantManagementState, "getVariantManagementReferences").returns(["variantReference1"]);
 			sandbox.stub(this.oAppComponent, "getModel").returns({
-				getCurrentVariantReference: function(sVariantManagementReference) {
+				getCurrentVariantReference(sVariantManagementReference) {
 					if (sVariantManagementReference === "variantReference1") {
 						return "variant1";
 					}
@@ -623,7 +623,7 @@ sap.ui.define([
 
 		QUnit.test("hasDirtyObjects - Given flex objects and dirty changes are present in the ChangePersistence", function(assert) {
 			var oStubGetChangePersistenceForComponent = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns({
-				getDirtyChanges: function() {
+				getDirtyChanges() {
 					return ["mockDirty"];
 				}
 			});
@@ -635,7 +635,7 @@ sap.ui.define([
 
 		QUnit.test("hasDirtyObjects - Given flex objects and dirty changes are present in the CompVariantState", function(assert) {
 			var oStubGetChangePersistenceForComponent = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns({
-				getDirtyChanges: function() {
+				getDirtyChanges() {
 					return [];
 				}
 			});

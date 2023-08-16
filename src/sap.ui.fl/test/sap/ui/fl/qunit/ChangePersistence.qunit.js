@@ -56,7 +56,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("sap.ui.fl.ChangePersistence", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 			this._mComponentProperties = {
@@ -75,7 +75,7 @@ sap.ui.define([
 				aControls.push(this.oControlWithComponentId);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this._oComponentInstance.destroy();
 			aControls.forEach(function(control) {
@@ -154,15 +154,15 @@ sap.ui.define([
 
 		QUnit.test("copyDependenciesFromInitialChangesMap", function(assert) {
 			var oChange0 = {
-				getId: function() {
+				getId() {
 					return "fileNameChange0";
 				}
 			};
 			var oChange1 = {
-				getId: function() {
+				getId() {
 					return "fileNameChange1";
 				},
-				getDependentControlSelectorList: function() {
+				getDependentControlSelectorList() {
 					return [{
 						id: "group3"
 					}, {
@@ -171,10 +171,10 @@ sap.ui.define([
 				}
 			};
 			var oChange2 = {
-				getId: function() {
+				getId() {
 					return "fileNameChange2";
 				},
-				getDependentControlSelectorList: function() {
+				getDependentControlSelectorList() {
 					return [{
 						id: "group2"
 					}, {
@@ -187,7 +187,7 @@ sap.ui.define([
 				group1: [oChange0]
 			};
 			var mInitialChangesMap = getInitialChangesMap({
-				mChanges: mChanges,
+				mChanges,
 				mDependencies: {
 					fileNameChange1: {
 						changeObject: oChange1,
@@ -218,10 +218,10 @@ sap.ui.define([
 				}
 			});
 			var mCurrentChangesMap = getInitialChangesMap({
-				mChanges: mChanges
+				mChanges
 			});
 			var mExpectedDependenciesMapAfterFirstChange = getInitialChangesMap({
-				mChanges: mChanges,
+				mChanges,
 				mDependencies: {
 					fileNameChange1: {
 						changeObject: oChange1,
@@ -240,7 +240,7 @@ sap.ui.define([
 			});
 
 			var mExpectedDependenciesMapAfterSecondChange = getInitialChangesMap({
-				mChanges: mChanges,
+				mChanges,
 				mDependencies: {
 					fileNameChange1: {
 						changeObject: oChange1,
@@ -304,7 +304,7 @@ sap.ui.define([
 
 			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
 			.then(function(fnGetChangesMap) {
-				var mChanges = fnGetChangesMap().mChanges;
+				var {mChanges} = fnGetChangesMap();
 				var oChangeForDeletion = mChanges.controlId[1]; // second change for 'controlId' shall be removed
 				this.oChangePersistence.deleteChange(oChangeForDeletion, true);
 				assert.ok(this.oChangePersistence._deleteChangeInMap.calledWith(oChangeForDeletion, true), "then _deleteChangeInMap() was called with the correct parameters");
@@ -334,7 +334,7 @@ sap.ui.define([
 
 		QUnit.test("when getChangesForView is called with a view ID and an app component", function(assert) {
 			var oAppComponent = {
-				getLocalId: function() {
+				getLocalId() {
 					return "viewId";
 				},
 				id: "componentId"
@@ -449,7 +449,7 @@ sap.ui.define([
 
 			var mPropertyBag = {
 				modifier: {
-					getControlIdBySelector: function(oSelector) {
+					getControlIdBySelector(oSelector) {
 						if (oSelector.idIsLocal) {
 							return `appComponentReference---${oSelector.id}`;
 						}
@@ -540,37 +540,37 @@ sap.ui.define([
 			var sLayer = Layer.CUSTOMER;
 
 			var oMockCompVariant1 = {
-				getRequest: function() {
+				getRequest() {
 					return "$TMP";
 				},
-				getLayer: function() {
+				getLayer() {
 					return sLayer;
 				}
 			};
 
 			var oMockCompVariant2 = {
-				getRequest: function() {
+				getRequest() {
 					return "some_transport_id";
 				},
-				getLayer: function() {
+				getLayer() {
 					return sLayer;
 				}
 			};
 
 			var oMockCompVariant3 = {
-				getRequest: function() {
+				getRequest() {
 					return "";
 				},
-				getLayer: function() {
+				getLayer() {
 					return sLayer;
 				}
 			};
 
 			var oMockCompVariant4 = {
-				getRequest: function() {
+				getRequest() {
 					return "";
 				},
-				getLayer: function() {
+				getLayer() {
 					return Layer.USER;
 				}
 			};
@@ -946,40 +946,40 @@ sap.ui.define([
 				}
 			});
 			var oMockCompVariant1 = {
-				getRequest: function() {
+				getRequest() {
 					return "$TMP";
 				},
-				getState: function() {
+				getState() {
 					return States.LifecycleState.NEW;
 				},
-				getLayer: function() {
+				getLayer() {
 					return Layer.CUSTOMER;
 				}
 			};
 
 			var oMockCompVariant2 = {
-				getRequest: function() {
+				getRequest() {
 					return "some_transport_id";
 				},
-				getState: function() {
+				getState() {
 					return States.LifecycleState.PERSISTED;
 				},
-				getLayer: function() {
+				getLayer() {
 					return Layer.VENDOR;
 				}
 			};
 
 			var oMockCompVariant3 = {
-				getId: function() {
+				getId() {
 					return "oMockCompVariant3";
 				},
-				getRequest: function() {
+				getRequest() {
 					return "some_transport_id";
 				},
-				getState: function() {
+				getState() {
 					return States.LifecycleState.PERSISTED;
 				},
-				getLayer: function() {
+				getLayer() {
 					return Layer.CUSTOMER;
 				}
 			};
@@ -1001,7 +1001,7 @@ sap.ui.define([
 				}
 			});
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isPublicLayerAvailable: function() {
+				isPublicLayerAvailable() {
 					return true;
 				}
 			});
@@ -1087,7 +1087,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("When getChangesForComponent is called", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oFlexObjectDataSelectorStub = sandbox.stub(FlexState.getFlexObjectsDataSelector(), "get").returns([
 				createChange("customerUI", Layer.CUSTOMER),
 				createChange("customerUI2", Layer.CUSTOMER),
@@ -1112,7 +1112,7 @@ sap.ui.define([
 			]);
 			this.oChangePersistence = new ChangePersistence({name: "foo"});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1180,7 +1180,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("sap.ui.fl.ChangePersistence addChange", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(FlexState, "getAppDescriptorChanges").returns([]);
 			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
@@ -1196,7 +1196,7 @@ sap.ui.define([
 				this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this._oAppComponentInstance.destroy();
 			sandbox.restore();
 		}
@@ -1518,8 +1518,8 @@ sap.ui.define([
 
 	function setURLParameterForCondensing(sValue) {
 		sandbox.stub(UriParameters, "fromURL").returns({
-			has: function() {return true;},
-			get: function() {return sValue;}
+			has() {return true;},
+			get() {return sValue;}
 		});
 	}
 
@@ -1557,7 +1557,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("sap.ui.fl.ChangePersistence saveChanges", {
-		beforeEach: async function() {
+		async beforeEach() {
 			this.oCondenserStub = sandbox.stub(Condenser, "condense").callsFake(function(oAppComponent, aChanges) {
 				return Promise.resolve(aChanges);
 			});
@@ -1576,7 +1576,7 @@ sap.ui.define([
 			this._oComponentInstance = oComponent;
 			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "saveChangeScenario");
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			this.oServer.restore();
 			sandbox.restore();
@@ -1604,10 +1604,10 @@ sap.ui.define([
 
 		QUnit.test("Shall call the condense route of the storage in case of enabled condensing on the backend", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: function() {
+				isCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector: function() {
+				hasPersoConnector() {
 					return false;
 				}
 			});
@@ -1622,10 +1622,10 @@ sap.ui.define([
 
 		QUnit.test("Shall call the condense route of the storage in case of dirty change and persisted draft filename", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: function() {
+				isCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector: function() {
+				hasPersoConnector() {
 					return false;
 				}
 			});
@@ -1667,10 +1667,10 @@ sap.ui.define([
 
 		QUnit.test("Shall call the condense route of the storage in case of dirty change and one persisted draft filename", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: function() {
+				isCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector: function() {
+				hasPersoConnector() {
 					return false;
 				}
 			});
@@ -1713,10 +1713,10 @@ sap.ui.define([
 
 		QUnit.test("Shall call the condense route of the storage in case of dirty change and no persisted draft filename", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: function() {
+				isCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector: function() {
+				hasPersoConnector() {
 					return false;
 				}
 			});
@@ -1759,10 +1759,10 @@ sap.ui.define([
 
 		QUnit.test("Shall not call the condense route of the storage in case one dirty change and no equal persisted draft filename", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: function() {
+				isCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector: function() {
+				hasPersoConnector() {
 					return false;
 				}
 			});
@@ -1812,10 +1812,10 @@ sap.ui.define([
 			QUnit.test(sName, function(assert) {
 				if (bBackendEnablement) {
 					sandbox.stub(Settings, "getInstanceOrUndef").returns({
-						isCondensingEnabled: function() {
+						isCondensingEnabled() {
 							return true;
 						},
-						hasPersoConnector: function() {
+						hasPersoConnector() {
 							return false;
 						}
 					});
@@ -1847,10 +1847,10 @@ sap.ui.define([
 			QUnit.test(sName2, function(assert) {
 				if (bBackendEnablement) {
 					sandbox.stub(Settings, "getInstanceOrUndef").returns({
-						isCondensingEnabled: function() {
+						isCondensingEnabled() {
 							return true;
 						},
-						hasPersoConnector: function() {
+						hasPersoConnector() {
 							return false;
 						}
 					});
@@ -1865,10 +1865,10 @@ sap.ui.define([
 		QUnit.test("Shall call condenser without dirty changes but backend condensing enabled and condenseAnyLayer set and persisted changes available", function(assert) {
 			addTwoChanges(this.oChangePersistence, this._oComponentInstance, Layer.VENDOR);
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: function() {
+				isCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector: function() {
+				hasPersoConnector() {
 					return false;
 				}
 			});
@@ -1887,10 +1887,10 @@ sap.ui.define([
 
 		QUnit.test("Shall not call condenser when persisted changes contain different namespaces", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: function() {
+				isCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector: function() {
+				hasPersoConnector() {
 					return false;
 				}
 			});
@@ -1933,10 +1933,10 @@ sap.ui.define([
 
 		QUnit.test("Shall do backend condensing with 'bSkipUpdateCache' flag present", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: function() {
+				isCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector: function() {
+				hasPersoConnector() {
 					return false;
 				}
 			});
@@ -1975,10 +1975,10 @@ sap.ui.define([
 
 		QUnit.test("Shall save the dirty changes when adding two new changes with different layers with 2 requests when PersoConnector exists and return a promise", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: function() {
+				isCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector: function() {
+				hasPersoConnector() {
 					return true;
 				}
 			});
@@ -2017,10 +2017,10 @@ sap.ui.define([
 
 		QUnit.test("Shall call the condenser with only one layer of changes if lower level change is already saved - backend condensing enabled", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: function() {
+				isCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector: function() {
+				hasPersoConnector() {
 					return false;
 				}
 			});
@@ -2047,10 +2047,10 @@ sap.ui.define([
 
 		QUnit.test("Shall not call the condenser without any changes - backend condensing enabled", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: function() {
+				isCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector: function() {
+				hasPersoConnector() {
 					return false;
 				}
 			});
@@ -2071,10 +2071,10 @@ sap.ui.define([
 
 		QUnit.test("Shall call the condenser with only one layer of changes if lower level change is already saved - backend condensing enabled - only one dirty change passed", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: function() {
+				isCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector: function() {
+				hasPersoConnector() {
 					return false;
 				}
 			});
@@ -2111,10 +2111,10 @@ sap.ui.define([
 
 		QUnit.test("With two persisted changes, shall not call the storage when the condenser returns no change", async function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: function() {
+				isCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector: function() {
+				hasPersoConnector() {
 					return false;
 				}
 			});

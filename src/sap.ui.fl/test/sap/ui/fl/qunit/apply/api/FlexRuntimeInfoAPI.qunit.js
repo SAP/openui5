@@ -36,12 +36,12 @@ sap.ui.define([
 	}
 
 	QUnit.module("isPersonalized", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = new UIComponent("AppComponent21");
 			this.oGetAppComponentStub = sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("AppComponent21");
 		},
-		afterEach: function() {
+		afterEach() {
 			if (this.oControl) {
 				this.oControl.destroy();
 			}
@@ -211,10 +211,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("waitForChanges", {
-		beforeEach: function() {
+		beforeEach() {
 			this.aObjectsToDestroy = [];
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.aObjectsToDestroy.forEach(function(oObject) {oObject.destroy();});
 		}
@@ -288,7 +288,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("isFlexSupported", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -304,7 +304,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("hasVariantManagement", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

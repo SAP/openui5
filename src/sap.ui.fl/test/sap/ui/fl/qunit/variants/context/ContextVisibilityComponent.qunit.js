@@ -24,14 +24,14 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a ContextVisibility component is given", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oComp = new ContextVisibilityComponent("test");
 			this.oComp.setSelectedContexts({role: []});
 			sandbox.stub(WriteStorage, "loadContextDescriptions").resolves({});
 			// Ensure view is fully loaded
 			return this.oComp.getRootControl().oAsyncState.promise;
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oComp.destroy();
 		}

@@ -14,7 +14,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("applyChange", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeRelPath = new AppDescriptorChange({
 				content: {
 					modelId: "random"
@@ -42,7 +42,7 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

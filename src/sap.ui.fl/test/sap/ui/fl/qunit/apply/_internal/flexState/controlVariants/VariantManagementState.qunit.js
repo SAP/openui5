@@ -74,8 +74,8 @@ sap.ui.define([
 	function stubFlexObjectsSelector(aFlexObjects) {
 		var oFlexObjectsSelector = FlexState.getFlexObjectsDataSelector();
 		var oGetFlexObjectsStub = sandbox.stub(oFlexObjectsSelector, "get");
-		oGetFlexObjectsStub.callsFake(function() {
-			return aFlexObjects.concat(oGetFlexObjectsStub.wrappedMethod.apply(this, arguments));
+		oGetFlexObjectsStub.callsFake(function(...aArgs) {
+			return aFlexObjects.concat(oGetFlexObjectsStub.wrappedMethod.apply(this, aArgs));
 		});
 		oFlexObjectsSelector.checkUpdate();
 	}
@@ -90,12 +90,12 @@ sap.ui.define([
 	}
 
 	QUnit.module("VariantsMapSelector", {
-		beforeEach: function() {
+		beforeEach() {
 			return initializeFlexStateWithStandardVariant().then(function(oStandardVariant) {
 				this.oStandardVariant = oStandardVariant;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanup();
 		}
 	}, function() {
@@ -427,7 +427,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Fake standard variant", {
-		afterEach: function() {
+		afterEach() {
 			cleanup();
 		}
 	}, function() {
@@ -572,8 +572,8 @@ sap.ui.define([
 				var oInitialPrepareSpy = sandbox.spy(InitialPrepareFunctions, "variants");
 
 				var oLoaderStub = sandbox.stub(Loader, "loadFlexData");
-				function fakeLoadFlexData() {
-					return oLoaderStub.wrappedMethod.apply(this, arguments)
+				function fakeLoadFlexData(...aArgs) {
+					return oLoaderStub.wrappedMethod.apply(this, aArgs)
 					// eslint-disable-next-line max-nested-callbacks
 					.then(function(oOriginalResponse) {
 						var oResponseAddition = { changes: {} };
@@ -717,12 +717,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Initial current variant handling", {
-		beforeEach: function() {
+		beforeEach() {
 			return initializeFlexStateWithStandardVariant().then(function(oStandardVariant) {
 				this.oStandardVariant = oStandardVariant;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanup();
 		}
 	}, function() {
@@ -900,10 +900,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Variant-related selectors", {
-		beforeEach: function() {
+		beforeEach() {
 			return initializeFlexStateWithStandardVariant();
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanup();
 		}
 	}, function() {
@@ -1110,7 +1110,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Initial changes handling", {
-		beforeEach: function() {
+		beforeEach() {
 			return initializeFlexStateWithStandardVariant()
 			.then(function() {
 				VariantManagementState.addRuntimeSteadyObject(
@@ -1153,7 +1153,7 @@ sap.ui.define([
 				stubFlexObjectsSelector(aUIChanges);
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanup();
 		}
 	}, function() {

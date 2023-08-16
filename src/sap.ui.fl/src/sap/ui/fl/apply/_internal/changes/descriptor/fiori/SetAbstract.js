@@ -34,7 +34,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		applyChange: function(oManifest, oChange) {
+		applyChange(oManifest, oChange) {
 			if (!oChange.getContent().hasOwnProperty("abstract")) {
 				throw new Error("No abstract in change content provided");
 			}

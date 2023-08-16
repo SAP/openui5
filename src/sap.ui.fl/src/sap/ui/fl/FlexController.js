@@ -98,9 +98,7 @@ sap.ui.define([
 	 * @returns {Promise} variant switch promise
 	 */
 	FlexController.prototype.waitForVariantSwitch = function() {
-		if (!this._oVariantSwitchPromise) {
-			this._oVariantSwitchPromise = Promise.resolve();
-		}
+		this._oVariantSwitchPromise ||= Promise.resolve();
 		return this._oVariantSwitchPromise;
 	};
 
@@ -166,12 +164,12 @@ sap.ui.define([
 			&& (mPropertyBag.changeTypes.length === 0 || mPropertyBag.changeTypes.includes(oChange.getChangeType()));
 		}
 
-		mPropertyBag.changeTypes = mPropertyBag.changeTypes || [];
+		mPropertyBag.changeTypes ||= [];
 		var oControl = mPropertyBag.selector.id && sap.ui.getCore().byId(mPropertyBag.selector.id) || mPropertyBag.selector;
 		var mChangesMap = this._oChangePersistence.getChangesMapForComponent();
 		var aPromises = [];
 		var mDependencies = Object.assign({}, mChangesMap.mDependencies);
-		var mChanges = mChangesMap.mChanges;
+		var {mChanges} = mChangesMap;
 		var aChangesForControl = mChanges[oControl.getId()] || [];
 
 		// filter out already applied changes and, if given, filter by change type
@@ -259,7 +257,7 @@ sap.ui.define([
 						aDraftFilenames.push(change.fileName);
 					});
 					// the reference and layer of all items are the same
-					vChangeDefinition = vChangeDefinition[0];
+					[vChangeDefinition] = vChangeDefinition;
 				}
 				Versions.onAllChangesSaved({
 					reference: vChangeDefinition.reference,

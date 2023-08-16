@@ -42,7 +42,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Basic properties", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
@@ -51,7 +51,7 @@ sap.ui.define([
 			});
 			return this.oIFrame._oSetUrlPromise;
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oIFrame.destroy();
 			sandbox.restore();
 		}
@@ -79,7 +79,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Visibility property set to false", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
@@ -89,7 +89,7 @@ sap.ui.define([
 			this.oIFrame.placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oIFrame.destroy();
 		}
 	}, function() {
@@ -100,7 +100,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Title Parameter of IFrame is set", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
@@ -110,7 +110,7 @@ sap.ui.define([
 			this.oIFrame.placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oIFrame.destroy();
 		}
 	}, function() {
@@ -123,7 +123,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Bindings", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oIFrame = new IFrame({
 				width: "{model>/width}",
 				height: "{model>/height}",
@@ -139,7 +139,7 @@ sap.ui.define([
 			this.oIFrame.placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oIFrame.destroy();
 			this.oModel.destroy();
 		}
@@ -167,7 +167,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("UserInfo binding (UserInfo service available)", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Utils, "getUshellContainer").returns(true);
 			stubGetUShellService(sUserEmail, sUserFullName, sUserFirstName, sUserLastName);
 			this.oIFrame = new IFrame({
@@ -179,7 +179,7 @@ sap.ui.define([
 			Core.applyChanges();
 			return this.oIFrame.waitForInit();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oIFrame.destroy();
 			sandbox.restore();
 		}
@@ -190,7 +190,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("UserInfo binding (UserInfo service available but no email)", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Utils, "getUshellContainer").returns(true);
 			stubGetUShellService(undefined, sUserFullName, sUserFirstName, sUserLastName);
 			this.oIFrame = new IFrame({
@@ -202,7 +202,7 @@ sap.ui.define([
 			Core.applyChanges();
 			return this.oIFrame.waitForInit();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oIFrame.destroy();
 			sandbox.restore();
 		}
@@ -213,7 +213,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("UserInfo binding (UserInfo service not available)", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Utils, "getUshellContainer").returns(false);
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
@@ -224,7 +224,7 @@ sap.ui.define([
 			Core.applyChanges();
 			return this.oIFrame.waitForInit();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oIFrame.destroy();
 			sandbox.restore();
 		}
@@ -235,7 +235,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("URL binding in XML view", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Utils, "getUshellContainer").returns(true);
 			stubGetUShellService(sUserEmail, sUserFullName, sUserFirstName, sUserLastName);
 			return XMLView.create({
@@ -254,7 +254,7 @@ sap.ui.define([
 				return iFrame.waitForInit();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.myView.destroy();
 			sandbox.restore();
 		}
@@ -327,12 +327,12 @@ sap.ui.define([
 
 	function stubGetUShellService(sEmail, sFullName, sFirstName, sLastName) {
 		sandbox.stub(Utils, "getUShellService").resolves({
-			getUser: function() {
+			getUser() {
 				return {
-					getEmail: function() { return sEmail; },
-					getFullName: function() { return sFullName; },
-					getFirstName: function() { return sFirstName; },
-					getLastName: function() { return sLastName; }
+					getEmail() { return sEmail; },
+					getFullName() { return sFullName; },
+					getFirstName() { return sFirstName; },
+					getLastName() { return sLastName; }
 				};
 			}
 		});

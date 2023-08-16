@@ -230,7 +230,7 @@ sap.ui.define([
 				resolve();
 			} else {
 				oControl.addEventDelegate({
-					onAfterRendering: function() {
+					onAfterRendering() {
 						resolve();
 					}
 				});
@@ -302,6 +302,7 @@ sap.ui.define([
 	 * @alias sap.ui.fl.variants.VariantModel
 	 */
 	var VariantModel = JSONModel.extend("sap.ui.fl.variants.VariantModel", /** @lends sap.ui.fl.variants.VariantModel.prototype */ {
+		// eslint-disable-next-line object-shorthand
 		constructor: function(oData, mPropertyBag) {
 			// JSON model internal properties
 			this.pSequentialImportCompleted = Promise.resolve();
@@ -339,9 +340,7 @@ sap.ui.define([
 		Object.entries(oNewVariantsMap).forEach(function(aVariants) {
 			var sVariantManagementKey = aVariants[0];
 			var oVariantMapEntry = Object.assign({}, aVariants[1]);
-			if (!oCurrentData[sVariantManagementKey]) {
-				oCurrentData[sVariantManagementKey] = {};
-			}
+			oCurrentData[sVariantManagementKey] ||= {};
 			oCurrentData[sVariantManagementKey].variants = oVariantMapEntry.variants.map(function(oVariant) {
 				var oCurrentVariantData = (oCurrentData[sVariantManagementKey].variants || [])
 				.find(function(oVariantToCheck) {
@@ -495,9 +494,7 @@ sap.ui.define([
 		var sVMReference = this.getVariantManagementReferenceForControl(oVariantManagementControl);
 
 		return this.waitForVMControlInit(sVMReference).then(function(sVMReference, mPropertyBag) {
-			if (!this._oVariantAppliedListeners[sVMReference]) {
-				this._oVariantAppliedListeners[sVMReference] = {};
-			}
+			this._oVariantAppliedListeners[sVMReference] ||= {};
 
 			var bInitialLoad = handleInitialLoadScenario.call(this, sVMReference, oVariantManagementControl);
 
@@ -518,12 +515,18 @@ sap.ui.define([
 			// first check if the passed vmControlId is correct, then save the callback
 			// for this check the control has to be in the control tree already
 			return waitForControlToBeRendered(mPropertyBag.control).then(function() {
-				if (VariantUtil.getRelevantVariantManagementControlId(mPropertyBag.control, this.getVariantManagementControlIds()) === mPropertyBag.vmControlId) {
+				if (
+					VariantUtil.getRelevantVariantManagementControlId(
+						mPropertyBag.control,
+						this.getVariantManagementControlIds()
+					) === mPropertyBag.vmControlId
+				) {
 					this.oData[sVMReference].showExecuteOnSelection = true;
 					this.checkUpdate(true);
 					this._oVariantAppliedListeners[sVMReference][mPropertyBag.control.getId()] = mPropertyBag.callback;
 				} else {
-					Log.error("Error in attachVariantApplied: The passed VariantManagement ID does not match the responsible VariantManagement control");
+					Log.error("Error in attachVariantApplied: The passed VariantManagement ID does not match the "
+					+ "responsible VariantManagement control");
 				}
 			}.bind(this));
 		}.bind(this, sVMReference, mPropertyBag));
@@ -683,9 +686,7 @@ sap.ui.define([
 				// ensure that the layer is set to the current variants (USER may becomes PUBLIC)
 				oDuplicateChangeData.layer = mPropertyBag.layer;
 				oDuplicateChangeData.variantReference = oDuplicateVariant.instance.getId();
-				if (!oDuplicateChangeData.support) {
-					oDuplicateChangeData.support = {};
-				}
+				oDuplicateChangeData.support ||= {};
 				oDuplicateChangeData.support.sourceChangeFileName = oChange.fileName;
 				// For new change instances the package name needs to be reset to $TMP, BCP: 1870561348
 				oDuplicateChangeData.packageName = "$TMP";
@@ -867,7 +868,7 @@ sap.ui.define([
 		// called from the ControlVariant plugin in Adaptation mode
 		return new Promise(function(resolve) {
 			oVariantManagementControl.attachEventOnce("manage", {
-				resolve: resolve,
+				resolve,
 				variantManagementReference: sVariantManagementReference,
 				layer: sLayer
 			}, this.fnManageClickRta, this);

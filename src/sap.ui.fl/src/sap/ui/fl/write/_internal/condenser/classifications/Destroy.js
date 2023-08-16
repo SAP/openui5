@@ -17,7 +17,7 @@ sap.ui.define([
 		 * @param {object} oCondenserInfo - Condenser specific information
  		 * @returns {Promise} resolves when a destroy change is added to UI Reconstruction Map
 		 */
-		addToReconstructionMap: function(mUIReconstructions, oCondenserInfo) {
+		addToReconstructionMap(mUIReconstructions, oCondenserInfo) {
 			return CondenserUtils.getContainerElementIds(
 				oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation,
 				oCondenserInfo.customAggregation, oCondenserInfo.affectedControlIdProperty
@@ -46,7 +46,7 @@ sap.ui.define([
 		 * @param {object} oCondenserInfo - Condenser specific information
 		 * @param {string[]} aInitialUIElementIds - Array with the Ids of the initial elements in the container
 		 */
-		simulate: function(aContainerElements, oCondenserInfo, aInitialUIElementIds) {
+		simulate(aContainerElements, oCondenserInfo, aInitialUIElementIds) {
 			var iCurrentSourceIndex = aContainerElements.indexOf(oCondenserInfo.affectedControl);
 			if (iCurrentSourceIndex === -1) {
 				var sUnknown = CondenserUtils.PLACEHOLDER + aInitialUIElementIds.indexOf(oCondenserInfo.affectedControl);

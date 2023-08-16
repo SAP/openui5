@@ -37,7 +37,7 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		load: function(mPropertyBag) {
+		load(mPropertyBag) {
 			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 
 			if (

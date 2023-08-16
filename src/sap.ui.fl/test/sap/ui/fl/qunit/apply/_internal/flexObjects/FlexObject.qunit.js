@@ -54,7 +54,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Basic tests", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -122,10 +122,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Custom getters/setters", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oFlexObject = FlexObjectFactory.createFromFileContent(oFileContent);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -252,10 +252,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("State handling", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oFlexObject = FlexObjectFactory.createFromFileContent(oFileContent);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -361,10 +361,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Updates and export", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oFlexObject = FlexObjectFactory.createFromFileContent(oFileContent);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

@@ -19,7 +19,7 @@ sap.ui.define([
 		 * @param {object} oCondenserInfo - Condenser specific information
 		 * @returns {Promise} resolves when a create change is added to UI Reconstruction Map
 		 */
-		addToReconstructionMap: function(mUIReconstructions, oCondenserInfo) {
+		addToReconstructionMap(mUIReconstructions, oCondenserInfo) {
 			var oAffectedControl = Core.byId(oCondenserInfo.affectedControl);
 			var sAggregationName = oCondenserInfo.targetAggregation || oAffectedControl && oAffectedControl.sParentAggregationName;
 			return CondenserUtils.getContainerElementIds(
@@ -42,7 +42,7 @@ sap.ui.define([
 		 * @param {string[]} aContainerElements - Array with the Ids of the current elements in the container
 		 * @param {object} oCondenserInfo - Condenser specific information
 		 */
-		simulate: function(aContainerElements, oCondenserInfo) {
+		simulate(aContainerElements, oCondenserInfo) {
 			aContainerElements.splice(oCondenserInfo.getTargetIndex(oCondenserInfo.change), 0, oCondenserInfo.affectedControl);
 		}
 	};

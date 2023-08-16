@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.fl.sample.variantmanagement.VariantManagement", {
-		onInit: function() {
+		onInit() {
 			var sResourceUrl = "i18n/i18n.properties";
 			var sLocale = oCore.getConfiguration().getLanguage();
 			var oResourceModel = new ResourceModel({

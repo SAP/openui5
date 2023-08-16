@@ -90,9 +90,7 @@ sap.ui.define([
 	}
 
 	function _setInstance(sServiceUri, mBindingInfo, oInstance) {
-		if (!_mExtensibilityVariants[sServiceUri]) {
-			_mExtensibilityVariants[sServiceUri] = {};
-		}
+		_mExtensibilityVariants[sServiceUri] ||= {};
 
 		_mExtensibilityVariants[sServiceUri][mBindingInfo.entityTypeName] = oInstance;
 	}

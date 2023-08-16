@@ -149,10 +149,10 @@ sap.ui.define([
 	}
 
 	return {
-		checkEntityPropertyChange: checkEntityPropertyChange,
-		checkIdNamespaceCompliance: checkIdNamespaceCompliance,
-		getNamespacePrefixForLayer: getNamespacePrefixForLayer,
-		getClearedGenericPath: getClearedGenericPath,
-		isGenericPropertyPathSupported: isGenericPropertyPathSupported
+		checkEntityPropertyChange,
+		checkIdNamespaceCompliance,
+		getNamespacePrefixForLayer,
+		getClearedGenericPath,
+		isGenericPropertyPathSupported
 	};
 });

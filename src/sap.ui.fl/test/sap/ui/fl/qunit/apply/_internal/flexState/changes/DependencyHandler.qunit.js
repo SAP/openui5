@@ -30,7 +30,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given some changes and a changes map with some dependencies", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChange1 = createChange({
 				fileName: "fileNameChange1",
 				selector: {
@@ -119,7 +119,7 @@ sap.ui.define([
 			});
 			this.oAppComponent = new UIComponent("appComponent");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oAppComponent.destroy();
 			sandbox.restore();
 		}

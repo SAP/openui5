@@ -51,9 +51,7 @@ sap.ui.define([
 	}
 
 	function addChangeIntoSelectorList(mChangesMap, oChange, sSelectorId) {
-		if (!mChangesMap.mChanges[sSelectorId]) {
-			mChangesMap.mChanges[sSelectorId] = [];
-		}
+		mChangesMap.mChanges[sSelectorId] ||= [];
 
 		if (!includes(mChangesMap.mChanges[sSelectorId], oChange)) {
 			mChangesMap.mChanges[sSelectorId].push(oChange);
@@ -130,7 +128,7 @@ sap.ui.define([
 			mChangesMap.mDependencies[oDependentChange.getId()].controlsDependencies = aDependentIdList;
 
 			aDependentIdList.forEach(function(sId) {
-				mChangesMap.mControlsWithDependencies[sId] = mChangesMap.mControlsWithDependencies[sId] || [];
+				mChangesMap.mControlsWithDependencies[sId] ||= [];
 				mChangesMap.mControlsWithDependencies[sId].push(oDependentChange.getId());
 			});
 		}
@@ -326,7 +324,7 @@ sap.ui.define([
 					if (iIndex > -1) {
 						oDependency.controlsDependencies.splice(iIndex, 1);
 						delete mChangesMap.mControlsWithDependencies[sControlId];
-						mChangesMap.dependencyRemovedInLastBatch[sControlId] = mChangesMap.dependencyRemovedInLastBatch[sControlId] || [];
+						mChangesMap.dependencyRemovedInLastBatch[sControlId] ||= [];
 						if (!includes(mChangesMap.dependencyRemovedInLastBatch[sControlId], sChangeKey)) {
 							mChangesMap.dependencyRemovedInLastBatch[sControlId].push(sChangeKey);
 						}
@@ -351,11 +349,12 @@ sap.ui.define([
 			mDependentChangesOnMe.forEach(function(sKey) {
 				var oDependency = mChangesMap.mDependencies[sKey];
 
-				// oDependency might be undefined, since initial dependencies were not copied yet from applyAllChangesForControl() for change with ID sKey
+				// oDependency might be undefined, since initial dependencies were not copied yet from applyAllChangesForControl()
+				// for change with ID sKey
 				var iIndex = oDependency ? oDependency.dependencies.indexOf(sChangeKey) : -1;
 				if (iIndex > -1) {
 					oDependency.dependencies.splice(iIndex, 1);
-					mChangesMap.dependencyRemovedInLastBatch[sControlId] = mChangesMap.dependencyRemovedInLastBatch[sControlId] || [];
+					mChangesMap.dependencyRemovedInLastBatch[sControlId] ||= [];
 					if (!includes(mChangesMap.dependencyRemovedInLastBatch[sControlId], sKey)) {
 						mChangesMap.dependencyRemovedInLastBatch[sControlId].push(sKey);
 					}

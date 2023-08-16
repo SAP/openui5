@@ -60,7 +60,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		applyChange: function(oManifest, oChange) {
+		applyChange(oManifest, oChange) {
 			checkManifestPath(oManifest);
 			var sInboundId = getAndCheckInboundId(oChange.getContent());
 			if (oManifest["sap.app"].crossNavigation.inbounds[sInboundId]) {

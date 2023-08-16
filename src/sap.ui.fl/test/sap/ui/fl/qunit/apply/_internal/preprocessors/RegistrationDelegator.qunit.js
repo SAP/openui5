@@ -32,7 +32,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.apply._internal.preprocessors.RegistrationDelegator", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -70,13 +70,13 @@ sap.ui.define([
 	var sApplyProcessorPath = "sap/ui/fl/apply/_internal/extensionPoint/Processor";
 
 	QUnit.module("sap.ui.fl.RegistrationDelegator getExtensionPointProvider function", {
-		beforeEach: function() {
+		beforeEach() {
 			var oRegisterExtensionProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
 			DelegateMediator._mDefaultDelegateItems = [];
 			RegistrationDelegator.registerAll();
-			this.fnExtensionProvider = oRegisterExtensionProviderStub.firstCall.args[0];
+			[this.fnExtensionProvider] = oRegisterExtensionProviderStub.firstCall.args;
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

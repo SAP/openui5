@@ -38,7 +38,7 @@ sap.ui.define([
 		 * @param {function} mStrategy.processTexts - Text postprocessing strategy
 		 * @returns {Promise<object>} - Processed manifest with descriptor changes
 		 */
-		applyChanges: function(oUpdatedManifest, aAppDescriptorChanges, mStrategy) {
+		applyChanges(oUpdatedManifest, aAppDescriptorChanges, mStrategy) {
 			return mStrategy.registry()
 			.then(function(Registry) {
 				var aChangeHandlerPromises = aAppDescriptorChanges.map(function(oChange) {
@@ -71,7 +71,7 @@ sap.ui.define([
 		 * @param {function} mStrategy.processTexts - Text postprocessing strategy
 		 * @returns {Promise} Resolves as soon as the changes are applied
 		 */
-		applyChangesIncludedInManifest: function(oManifest, mStrategy) {
+		applyChangesIncludedInManifest(oManifest, mStrategy) {
 			var aDescriptorChanges = getDescriptorChanges(oManifest);
 			var oManifestJSON = oManifest.getJson();
 			delete oManifestJSON[CHANGES_NAMESPACE];

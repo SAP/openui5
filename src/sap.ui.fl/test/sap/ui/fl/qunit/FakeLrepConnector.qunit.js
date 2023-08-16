@@ -10,7 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Given a FakeLrepConnector", {
-		beforeEach: function() {
+		beforeEach() {
 			FakeLrepConnectorLocalStorage.disableFakeConnector();
 		}
 	}, function() {

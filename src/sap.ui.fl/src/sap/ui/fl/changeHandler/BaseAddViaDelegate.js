@@ -57,7 +57,7 @@ sap.ui.define([
 		 * @return {any} The addViaDelegate change handler object
 		 * @public
 		 */
-		createAddViaDelegateChangeHandler: function(mAddViaDelegateSettings) {
+		createAddViaDelegateChangeHandler(mAddViaDelegateSettings) {
 			/** **************** Utility functions with access to mAddViaDelegateSettings ******************/
 
 			function getNewFieldId(sNewPropertyId) {
@@ -158,7 +158,7 @@ sap.ui.define([
 				 * @returns {Promise<undefined>} to wait for execution
 				 * @public
 				 */
-				applyChange: function(oChange, oControl, mPropertyBag) {
+				applyChange(oChange, oControl, mPropertyBag) {
 					var oAppComponent = mPropertyBag.appComponent;
 					var oChangeContent = oChange.getContent();
 					var oChangeODataInformation = oChange.getSupportInformation().oDataInformation;
@@ -231,7 +231,7 @@ sap.ui.define([
 				 * @return {boolean} True if successful
 				 * @public
 				 */
-				revertChange: function(oChange, oControl, mPropertyBag) {
+				revertChange(oChange, oControl, mPropertyBag) {
 					var oAppComponent = mPropertyBag.appComponent;
 					var oModifier = mPropertyBag.modifier;
 					var mFieldSelector = oChange.getRevertData().newFieldSelector;
@@ -294,7 +294,7 @@ sap.ui.define([
 				 * @param {object} mPropertyBag.view Application view
 				 * @public
 				 */
-				completeChangeContent: function(oChange, mSpecificChangeInfo, mPropertyBag) {
+				completeChangeContent(oChange, mSpecificChangeInfo, mPropertyBag) {
 					var oAppComponent = mPropertyBag.appComponent;
 					var oContent = {};
 					if (mSpecificChangeInfo.parentId) {
@@ -339,7 +339,7 @@ sap.ui.define([
 					oChange.setContent(oContent);
 				},
 
-				getChangeVisualizationInfo: function(oChange) {
+				getChangeVisualizationInfo(oChange) {
 					var oRevertData = oChange.getRevertData();
 					if (oRevertData && oRevertData.labelSelector) {
 						return {
@@ -351,7 +351,7 @@ sap.ui.define([
 					};
 				},
 
-				getCondenserInfo: function(oChange, mPropertyBag) {
+				getCondenserInfo(oChange, mPropertyBag) {
 					return checkCondensingEnabled(oChange, mPropertyBag)
 					.then(function(bCondensingEnabled) {
 						if (!bCondensingEnabled) {
@@ -371,12 +371,12 @@ sap.ui.define([
 							classification: CondenserClassification.Create,
 							targetContainer: oChange.getContent().parentId,
 							targetAggregation: mAddViaDelegateSettings.aggregationName,
-							setTargetIndex: function(oChange, iNewTargetIndex) {
+							setTargetIndex(oChange, iNewTargetIndex) {
 								var oChangeContent = oChange.getContent();
 								oChangeContent.newFieldIndex = iNewTargetIndex;
 								oChange.setContent(oChangeContent);
 							},
-							getTargetIndex: function(oChange) {
+							getTargetIndex(oChange) {
 								return oChange.getContent().newFieldIndex;
 							}
 						};

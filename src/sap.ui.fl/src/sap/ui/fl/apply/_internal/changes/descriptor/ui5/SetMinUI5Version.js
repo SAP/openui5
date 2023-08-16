@@ -37,7 +37,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		applyChange: function(oManifest, oChange) {
+		applyChange(oManifest, oChange) {
 			// TODO: Should existens of minui5version be checked in manifest and change or is the check during deployment enough and I can expect minui5version to be set in both?
 			var vCurrentVersion = new Version(oManifest["sap.ui5"].dependencies.minUI5Version);
 			if (vCurrentVersion.compareTo(oChange.getContent().minUI5Version) <= 0) {

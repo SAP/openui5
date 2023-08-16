@@ -26,7 +26,7 @@ sap.ui.define([
 	var oMockUIComponent = new UIComponent("mockComponent");
 
 	QUnit.module("sap.ui.fl.changeHandler.UnstashControl", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeHandler = UnstashControlChangeHandler;
 			var oChangeJson = {
 				selector: {
@@ -73,21 +73,27 @@ sap.ui.define([
 			this.xmlDocument = oDOMParser.parseFromString(this.xmlString, "application/xml");
 			this.oXmlView = this.xmlDocument.documentElement;
 
-			this.oXmlLayout = this.oXmlView.childNodes[0];
-			this.oXmlObjectPageSection1 = this.oXmlLayout.childNodes[0].childNodes[0];
-			this.oXmlObjectPageSection2 = this.oXmlLayout.childNodes[0].childNodes[1];
-			this.oXmlObjectPageSection3 = this.oXmlLayout.childNodes[0].childNodes[2];
-			this.oXmlObjectPageSection4 = this.oXmlLayout.childNodes[0].childNodes[3];
+			[this.oXmlLayout] = this.oXmlView.childNodes;
+			[
+				this.oXmlObjectPageSection1,
+				this.oXmlObjectPageSection2,
+				this.oXmlObjectPageSection3,
+				this.oXmlObjectPageSection4
+			] = this.oXmlLayout.childNodes[0].childNodes;
 
 			oCore.applyChanges();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oChange = null;
 			this.oObjectPageLayout.destroy();
 		}
 	}, function() {
 		QUnit.test("applyChange is called with a stashed ObjectPageSection on an xml control tree", function(assert) {
-			return this.oChangeHandler.applyChange(this.oChange, this.oXmlObjectPageSection3, {modifier: XmlTreeModifier, view: this.oXmlView})
+			return this.oChangeHandler.applyChange(
+				this.oChange,
+				this.oXmlObjectPageSection3,
+				{modifier: XmlTreeModifier, view: this.oXmlView}
+			)
 			.then(function(oControl) {
 				assert.deepEqual(oControl, this.oXmlObjectPageSection3, "then the passed control node is returned");
 			}.bind(this));

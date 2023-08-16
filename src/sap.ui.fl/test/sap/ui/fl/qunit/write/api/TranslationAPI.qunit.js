@@ -26,10 +26,10 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("TranslationAPI rejects", {
-		before: function() {
+		before() {
 			this.oControl = new Control();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -108,21 +108,21 @@ sap.ui.define([
 	});
 
 	QUnit.module("TranslationAPI", {
-		before: function() {
+		before() {
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getId: function() {
+				getId() {
 					return "sComponentId";
 				},
-				getComponentData: function() {
+				getComponentData() {
 					return {};
 				}
 			};
 			this.oControl = new Control();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

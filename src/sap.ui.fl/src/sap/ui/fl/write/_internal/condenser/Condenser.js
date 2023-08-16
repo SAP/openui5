@@ -159,9 +159,7 @@ sap.ui.define([
 	 * @returns {Promise} returns when change is added to the map
 	 */
 	function addNonIndexRelatedChange(mClassifications, oCondenserInfo, oChange) {
-		if (!mClassifications[oCondenserInfo.classification]) {
-			mClassifications[oCondenserInfo.classification] = {};
-		}
+		mClassifications[oCondenserInfo.classification] ||= {};
 		var mProperties = mClassifications[oCondenserInfo.classification];
 		NON_INDEX_RELEVANT[oCondenserInfo.classification].addToChangesMap(mProperties, oCondenserInfo, oChange);
 		return Promise.resolve();
@@ -178,9 +176,7 @@ sap.ui.define([
 	 * @returns {Promise} returns when change is added to the data structures
 	 */
 	function addClassifiedChange(mTypes, mUIReconstructions, aIndexRelatedChanges, oCondenserInfo, oChange) {
-		if (!mTypes[oCondenserInfo.type]) {
-			mTypes[oCondenserInfo.type] = {};
-		}
+		mTypes[oCondenserInfo.type] ||= {};
 		var mClassifications = mTypes[oCondenserInfo.type];
 
 		if (oCondenserInfo.type === CondenserUtils.NOT_INDEX_RELEVANT) {
@@ -189,9 +185,7 @@ sap.ui.define([
 
 		aIndexRelatedChanges.push(oChange);
 		// with custom aggregations multiple aggregations can have the same affectedControl
-		if (!mClassifications[oCondenserInfo.targetAggregation]) {
-			mClassifications[oCondenserInfo.targetAggregation] = {};
-		}
+		mClassifications[oCondenserInfo.targetAggregation] ||= {};
 		return addIndexRelatedChange(mClassifications[oCondenserInfo.targetAggregation], mUIReconstructions, oCondenserInfo, oChange);
 	}
 
@@ -203,9 +197,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
 	 */
 	function addUnclassifiedChange(mTypes, sKey, oChange) {
-		if (!mTypes[sKey]) {
-			mTypes[sKey] = [];
-		}
+		mTypes[sKey] ||= [];
 		mTypes[sKey].push(oChange);
 		oChange.condenserState = "select";
 	}
@@ -274,9 +266,7 @@ sap.ui.define([
 		var sAffectedControlId = oCondenserInfo !== undefined
 			? oCondenserInfo.affectedControl
 			: JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), oAppComponent);
-		if (!mReducedChanges[sAffectedControlId]) {
-			mReducedChanges[sAffectedControlId] = {};
-		}
+		mReducedChanges[sAffectedControlId] ||= {};
 		// If an updateControl is present, it means that the update has a different selector from the other changes
 		// (e.g. iFrame added as Section) and the changes must be brought to the same group (= same affected control)
 		if (oCondenserInfo && oCondenserInfo.updateControl) {

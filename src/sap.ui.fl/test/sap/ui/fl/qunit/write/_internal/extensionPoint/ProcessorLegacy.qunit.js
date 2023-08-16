@@ -139,7 +139,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("ExtensionPoints with sync and async view when component is created sync with 'flexExtensionPointEnabled: false'", {
-		before: function() {
+		before() {
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
 			return createComponentAndContainer(SYNC);
 		},
@@ -151,7 +151,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ExtensionPoints with sync and async view when component is created async with 'flexExtensionPointEnabled: false'", {
-		before: function() {
+		before() {
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
 			return createComponentAndContainer(ASYNC);
 		},

@@ -133,7 +133,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsInput[]} mPropertyBag.variants - Variant data from other data providers like an OData service
 		 * @returns {Promise<sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsResponse>} Object with the standard variant and the variants
 		 */
-		loadVariants: async function(mPropertyBag) {
+		async loadVariants(mPropertyBag) {
 			const mCompMaps = await getCompEntities(mPropertyBag);
 			const sPersistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
 			const sDefaultVariantId = getDefaultVariantId(mPropertyBag.control);
@@ -154,7 +154,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		isVendorLayer: function() {
+		isVendorLayer() {
 			return LayerUtils.isVendorLayer();
 		},
 
@@ -167,7 +167,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		isVariantDownport: function() {
+		isVariantDownport() {
 			var oUriParams = UriParameters.fromQuery(window.location.search);
 			var sIsHotfixMode = oUriParams.get("hotfix");
 			return SmartVariantManagementApplyAPI.isVendorLayer() && (sIsHotfixMode === "true");
@@ -185,7 +185,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 * @deprecated
 		 */
-		getDefaultVariantId: function(mPropertyBag) {
+		getDefaultVariantId(mPropertyBag) {
 			var aDefaultVariantChanges = getVariantsMapForKey(mPropertyBag.control).defaultVariants;
 			var oChange = aDefaultVariantChanges[aDefaultVariantChanges.length - 1];
 			return oChange ? oChange.getContent().defaultVariantName : "";

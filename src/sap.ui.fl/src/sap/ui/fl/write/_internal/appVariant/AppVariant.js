@@ -38,6 +38,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	var AppVariant = ManagedObject.extend("sap.ui.fl.write._internal.appVariant.AppVariant", /** @lends sap.ui.fl.write._internal.appVariant.AppVariant */ {
+		// eslint-disable-next-line object-shorthand
 		constructor: function(mPropertyBag) {
 			ManagedObject.apply(this);
 			if (!isPlainObject(mPropertyBag)) {

@@ -60,7 +60,7 @@ function(
 	}
 
 	QUnit.module("applyChange", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oManifest1 = {
 				"sap.app": {
 					dataSources: {

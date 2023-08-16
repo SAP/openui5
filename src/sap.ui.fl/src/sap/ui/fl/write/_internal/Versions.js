@@ -161,7 +161,8 @@ sap.ui.define([
 		};
 
 		if (mPropertyBag.reference) {
-			var oChangePersistenceForAppDescriptorChanges = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
+			var oChangePersistenceForAppDescriptorChanges =
+				ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
 			if (oChangePersistenceForAppDescriptorChanges.getDirtyChanges().length > 0) {
 				oDirtyChangesInfo.dirtyChangesExist = true;
 				oDirtyChangesInfo.changePersistences.push(oChangePersistenceForAppDescriptorChanges);
@@ -230,8 +231,8 @@ sap.ui.define([
 				return createModel(bVersionsEnabled, aVersions);
 			})
 			.then(function(oModel) {
-				_mInstances[sReference] = _mInstances[sReference] || {};
-				_mInstances[sReference][sLayer] = _mInstances[sReference][sLayer] || {};
+				_mInstances[sReference] ||= {};
+				_mInstances[sReference][sLayer] ||= {};
 				_mInstances[sReference][sLayer] = oModel;
 				return _mInstances[sReference][sLayer];
 			});
@@ -288,6 +289,7 @@ sap.ui.define([
 				return _prepareVersionsModel(oVersionsModel.getProperty("/versioningEnabled"), aVersions, oVersionsModel);
 			});
 		}
+		return undefined;
 	};
 
 	/**

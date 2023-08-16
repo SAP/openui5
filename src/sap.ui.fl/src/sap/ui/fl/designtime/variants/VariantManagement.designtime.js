@@ -62,25 +62,25 @@ sap.ui.define([
 				ignore: false
 			}
 		},
-		variantRenameDomRef: function(oVariantManagement) {
+		variantRenameDomRef(oVariantManagement) {
 			return oVariantManagement.getTitle().getDomRef("inner");
 		},
 		customData: {},
 		tool: {
-			start: function(oVariantManagement) {
+			start(oVariantManagement) {
 				// In personalization mode the variant management overlay cannot be selected
 				var bDesignTimeMode = true;
 				fnSetControlAttributes(oVariantManagement, bDesignTimeMode);
 				oVariantManagement.enteringDesignMode();
 			},
-			stop: function(oVariantManagement) {
+			stop(oVariantManagement) {
 				var bDesignTimeMode = false;
 				fnSetControlAttributes(oVariantManagement, bDesignTimeMode);
 				oVariantManagement.leavingDesignMode();
 			}
 		},
 		actions: {
-			controlVariant: function(oVariantManagement) {
+			controlVariant(oVariantManagement) {
 				var oAppComponent = flUtils.getAppComponentForControl(oVariantManagement);
 				var sControlId = oVariantManagement.getId();
 				var oModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
@@ -89,7 +89,7 @@ sap.ui.define([
 					validators: [
 						"noEmptyText",
 						{
-							validatorFunction: function(sNewText) {
+							validatorFunction(sNewText) {
 								var iDuplicateCount = oModel._getVariantTitleCount(sNewText, sVariantManagementReference) || 0;
 								return iDuplicateCount === 0;
 							},

@@ -80,9 +80,9 @@ function(
 		 * @private
 		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
-		getAppIdFromManifest: getAppIdFromManifest,
+		getAppIdFromManifest,
 
-		getFlexReference: getFlexReference,
+		getFlexReference,
 
 		/**
 		 * Determines the flex reference for a given control by
@@ -91,7 +91,7 @@ function(
 		 * @param {sap.ui.core.Control} oControl - Control for the application determination
 		 * @returns {string} Reference of the application
 		 */
-		getFlexReferenceForControl: function(oControl) {
+		getFlexReferenceForControl(oControl) {
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			return oAppComponent && getFlexReference({
 				manifest: oAppComponent.getManifestObject(),
@@ -107,32 +107,32 @@ function(
 		 * @param {sap.ui.fl.Selector} oSelector - Selector object
 		 * @returns {string} Reference of the application
 		 */
-		getFlexReferenceForSelector: function(oSelector) {
+		getFlexReferenceForSelector(oSelector) {
 			if (oSelector.appId) {
 				return oSelector.appId;
 			}
 			return ManifestUtils.getFlexReferenceForControl(oSelector.appComponent || oSelector);
 		},
 
-		getOvpEntry: function(oManifest) {
+		getOvpEntry(oManifest) {
 			return oManifest.getEntry ? oManifest.getEntry("sap.ovp") : oManifest["sap.ovp"];
 		},
 
-		getCacheKeyFromAsyncHints: function(sReference, oAsyncHints) {
+		getCacheKeyFromAsyncHints(sReference, oAsyncHints) {
 			var oFlAsyncHint = getFlAsyncHintRequest(oAsyncHints, sReference);
 			if (oFlAsyncHint) {
 				return oFlAsyncHint.cachebusterToken || "<NO CHANGES>";
 			}
 		},
 
-		getPreviewSectionFromAsyncHints: function(oAsyncHints) {
+		getPreviewSectionFromAsyncHints(oAsyncHints) {
 			var oFlAsyncHint = getFlAsyncHintRequest(oAsyncHints);
 			if (oFlAsyncHint) {
 				return oFlAsyncHint.preview;
 			}
 		},
 
-		getChangeManifestFromAsyncHints: function(oAsyncHints) {
+		getChangeManifestFromAsyncHints(oAsyncHints) {
 			// whenever there is a back end providing a fl async hint it is also not necessary to merge on client side
 			var oFlAsyncHint = getFlAsyncHintRequest(oAsyncHints);
 			if (oFlAsyncHint) {
@@ -141,12 +141,12 @@ function(
 			return true;
 		},
 
-		getBaseComponentNameFromManifest: function(oManifest) {
+		getBaseComponentNameFromManifest(oManifest) {
 			var oSapUi5Entry = oManifest.getEntry ? oManifest.getEntry("sap.ui5") : oManifest["sap.ui5"];
 			return oSapUi5Entry && oSapUi5Entry.componentName || getAppIdFromManifest(oManifest);
 		},
 
-		isFlexExtensionPointHandlingEnabled: function(oView) {
+		isFlexExtensionPointHandlingEnabled(oView) {
 			var oAppComponent = Utils.getAppComponentForControl(oView);
 			return !!(oAppComponent
 				&& oAppComponent.getManifestEntry("sap.ui5")

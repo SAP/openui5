@@ -13,7 +13,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Basic functionality", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -70,7 +70,7 @@ sap.ui.define([
 			var oUpdateStubInitial = sandbox.stub();
 			var oUpdatedStubAdded = sandbox.stub();
 			var oDataSelector = new DataSelector({
-				executeFunction: function() {},
+				executeFunction() {},
 				updateListeners: [oUpdateStubInitial]
 			});
 			oDataSelector.get();
@@ -94,7 +94,7 @@ sap.ui.define([
 		QUnit.test("when an update listener is added twice", function(assert) {
 			var oUpdateStub = sandbox.stub();
 			var oDataSelector = new DataSelector({
-				executeFunction: function() {},
+				executeFunction() {},
 				updateListeners: [oUpdateStub]
 			});
 			oDataSelector.addUpdateListener(oUpdateStub);
@@ -108,7 +108,7 @@ sap.ui.define([
 		QUnit.test("when an update listener is cleaned up", function(assert) {
 			var oUpdateStub = sandbox.stub();
 			var oDataSelector = new DataSelector({
-				executeFunction: function() {},
+				executeFunction() {},
 				updateListeners: [oUpdateStub]
 			});
 			oDataSelector.removeUpdateListener(oUpdateStub);
@@ -148,7 +148,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Parameterized selector", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oExpectedResult = {
 				foo: {
 					bar: "bar"
@@ -164,7 +164,7 @@ sap.ui.define([
 				parameterKey: "sampleKey"
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDataSelector.destroy();
 			sandbox.restore();
 		}
@@ -264,7 +264,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Dependent selectors", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oExpectedResult = {
 				foo: {
 					noParameter: {
@@ -307,7 +307,7 @@ sap.ui.define([
 				parameterKey: "sampleKey"
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDataSelector.destroy();
 			this.oParentDataSelector.destroy();
 			this.oGrandParentDataSelector.destroy();
@@ -361,7 +361,7 @@ sap.ui.define([
 		QUnit.test("when duplicate parameter names are used", function(assert) {
 			var oBrokenChildSelector = new DataSelector({
 				parentDataSelector: this.oGrandParentDataSelector,
-				executeFunction: function() {},
+				executeFunction() {},
 				parameterKey: "grandParentSampleKey"
 			});
 			assert.throws(
@@ -376,7 +376,7 @@ sap.ui.define([
 			var oUpdateSpy = sandbox.spy(DataSelector.prototype, "checkUpdate");
 			var oChildSelector = new DataSelector({
 				parentDataSelector: this.oGrandParentDataSelector,
-				executeFunction: function() {},
+				executeFunction() {},
 				parameterKey: "someOtherKey"
 			});
 

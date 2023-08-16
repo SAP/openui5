@@ -19,10 +19,10 @@ sap.ui.define([
 	 * @deprecated As of version 1.107
 	 */
 	QUnit.module("sap.ui.fl.changeHandler.Base", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oBaseHandler = Base;
 		},
-		afterEach: function() {
+		afterEach() {
 		}
 	}, function() {
 		QUnit.test("setTextInChange", function(assert) {
@@ -39,7 +39,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.fl.changeHandler.Base.instantiateFragment on JSControlTreeModifier", {
-		before: function() {
+		before() {
 			// predefine some modules
 			var mPreloadedModules = {};
 			this.sFragmentMultiplePath = "sap/somePath/toSomewhereFragmentMultiple";
@@ -53,7 +53,7 @@ sap.ui.define([
 			this.sNonExistingPath = "sap/somePath/toSomewhereNonExisting";
 			sap.ui.require.preload(mPreloadedModules);
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeJson = {
 				projectId: "projectId"
 			};
@@ -61,14 +61,14 @@ sap.ui.define([
 			this.mPropertyBag = {
 				modifier: JsControlTreeModifier,
 				view: {
-					getController: function() {
+					getController() {
 					},
-					getId: function() {
+					getId() {
 					}
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 		}
 	}, function() {
 		QUnit.test("When applying the change on a js control tree without a fragment", function(assert) {
@@ -127,14 +127,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.fl.changeHandler.Base.instantiateFragment namespace check", {
-		before: function() {
+		before() {
 			// predefine some modules
 			var mPreloadedModules = {};
 			this.sFragmentMultiplePath = "sap/somePath/toSomewhereFragment";
 			mPreloadedModules[this.sFragmentMultiplePath] = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core"></core:FragmentDefinition>';
 			sap.ui.require.preload(mPreloadedModules);
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oInstantiateFragmentStub = sandbox.stub().resolves();
 			this.mPropertyBag = {
 				modifier: { instantiateFragment: this.oInstantiateFragmentStub },
@@ -142,7 +142,7 @@ sap.ui.define([
 				viewId: "componentId--viewId"
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

@@ -99,7 +99,7 @@ sap.ui.define([
 		if (mPropertyBag.appComponent) {
 			mPropertyBag.selector.appComponent = mPropertyBag.appComponent;
 		}
-		mPropertyBag.changeSpecificData.layer = mPropertyBag.changeSpecificData.layer || Layer.CUSTOMER;
+		mPropertyBag.changeSpecificData.layer ||= Layer.CUSTOMER;
 		return ChangesWriteAPI.create({
 			changeSpecificData: mPropertyBag.changeSpecificData,
 			selector: mPropertyBag.selector

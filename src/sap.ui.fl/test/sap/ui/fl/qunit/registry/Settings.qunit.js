@@ -16,7 +16,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.registry.Settings", {
-		beforeEach: function() {
+		beforeEach() {
 			var oSettings = {
 				isKeyUser: false,
 				isAtoAvailable: false,
@@ -36,7 +36,7 @@ sap.ui.define([
 			};
 			this.cut = new Settings(oSettings);
 		},
-		afterEach: function() {
+		afterEach() {
 			Settings._instance = undefined;
 			Settings._oLoadSettingsPromise = undefined;
 
@@ -384,7 +384,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that Settings loading failed", {
-		afterEach: function() {
+		afterEach() {
 			delete Settings._instance;
 			sandbox.restore();
 		}

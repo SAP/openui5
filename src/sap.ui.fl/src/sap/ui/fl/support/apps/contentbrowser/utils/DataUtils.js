@@ -36,7 +36,7 @@ sap.ui.define([
 		 * @returns {Object} Data after formatting
 		 * @public
 		 */
-		formatData: function(oData, sFileType) {
+		formatData(oData, sFileType) {
 			// code extension and properties files do not need formation
 			if ((sFileType === "js") || (sFileType === "properties")) {
 				return oData;
@@ -58,7 +58,7 @@ sap.ui.define([
 		 * @returns {sap.m.GroupHeaderListItem} New GroupHeaderListItem
 		 * @public
 		 */
-		getGroupHeader: function(oGroup) {
+		getGroupHeader(oGroup) {
 			var sTitle = "{i18n>systemData}";
 
 			if (oGroup.key === "custom") {
@@ -77,7 +77,7 @@ sap.ui.define([
 		 * @returns {boolean} <code>true</code> if the item is not excluded
 		 * @public
 		 */
-		isNotExcluded: function(oContentItem) {
+		isNotExcluded(oContentItem) {
 			var bNotExcluded = true;
 			aExcludeList.forEach(function(mExcludeListElement) {
 				var bAllPropertiesMatched = true;
@@ -85,7 +85,7 @@ sap.ui.define([
 				Object.entries(mExcludeListElement).forEach(function(aEntry) {
 					var sProperty = aEntry[0];
 					var sValue = aEntry[1];
-					bAllPropertiesMatched = bAllPropertiesMatched && oContentItem[sProperty] === sValue;
+					bAllPropertiesMatched &&= oContentItem[sProperty] === sValue;
 				});
 
 				if (bAllPropertiesMatched) {
@@ -102,7 +102,7 @@ sap.ui.define([
 		 * @returns {string} String after removing leading and trailing slashes
 		 * @public
 		 */
-		cleanLeadingAndTrailingSlashes: function(sNamespace) {
+		cleanLeadingAndTrailingSlashes(sNamespace) {
 			if (!sNamespace) {
 				return "";
 			}
@@ -126,7 +126,7 @@ sap.ui.define([
 		 * @returns {string} Item title after formatting
 		 * @public
 		 */
-		formatItemTitle: function(mModelData) {
+		formatItemTitle(mModelData) {
 			return `${mModelData.namespace + mModelData.fileName}.${mModelData.fileType}`;
 		},
 
@@ -138,7 +138,7 @@ sap.ui.define([
 		 * @returns {boolean} <code>true</code> if the passed suffix is the last part of the passed string
 		 * @public
 		 */
-		endsStringWith: function(sString, sSuffix) {
+		endsStringWith(sString, sSuffix) {
 			return sString.indexOf(sSuffix, sString.length - sSuffix.length) !== -1;
 		}
 	};

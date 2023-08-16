@@ -99,7 +99,7 @@ sap.ui.define([
 		};
 		var oInfoObject = concatFlexObjects(aResponses, "info");
 		if (oInfoObject.length > 0) {
-			oResult.info = oInfoObject[0];
+			[oResult.info] = oInfoObject;
 		}
 		return oResult;
 	};

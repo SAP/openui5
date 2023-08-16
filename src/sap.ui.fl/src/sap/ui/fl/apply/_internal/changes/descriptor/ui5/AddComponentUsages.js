@@ -32,13 +32,11 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		applyChange: function(oManifest, oChange) {
+		applyChange(oManifest, oChange) {
 			var oChangeComponentUsages = oChange.getContent().componentUsages;
 
 			// sap.ui5 node is mandatory in UI5 manifest
-			if (!oManifest["sap.ui5"].componentUsages) {
-				oManifest["sap.ui5"].componentUsages = {};
-			}
+			oManifest["sap.ui5"].componentUsages ||= {};
 			var oManifestComponentUsages = oManifest["sap.ui5"].componentUsages;
 
 			Object.keys(oChangeComponentUsages).forEach(function(sComponentUsageName) {

@@ -11,7 +11,7 @@ function(
 	"use strict";
 
 	QUnit.module("applyChange", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeUri = new AppDescriptorChange({
 				flexObjectMetadata: {
 					changeType: "appdescr_app_changeDataSource"

@@ -40,7 +40,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		create: function(mPropertyBag) {
+		create(mPropertyBag) {
 			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 
 			if (
@@ -74,7 +74,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		deletePersonalization: function(mPropertyBag) {
+		deletePersonalization(mPropertyBag) {
 			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 
 			if (

@@ -17,7 +17,7 @@ sap.ui.define([
 	var sReference = "my.reference";
 
 	QUnit.module("FlVariant - constructor", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -116,7 +116,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("FlexObjectFactory - createFlVariant", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -170,7 +170,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Updates and export", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

@@ -14,13 +14,13 @@ sap.ui.define([
 	"use strict";
 
 	var mChangeHandlers = {
-		addFavorite: function(oVariant) {
+		addFavorite(oVariant) {
 			oVariant.setFavorite(true);
 		},
-		removeFavorite: function(oVariant) {
+		removeFavorite(oVariant) {
 			oVariant.setFavorite(false);
 		},
-		updateVariant: function(oVariant, oChange) {
+		updateVariant(oVariant, oChange) {
 			var oChangeContent = oChange.getContent();
 			if (oChangeContent.executeOnSelection !== undefined) {
 				oVariant.setExecuteOnSelection(oChangeContent.executeOnSelection);
@@ -43,7 +43,7 @@ sap.ui.define([
 				oVariant.setName(sVariantName, /* bSkipStateChange = */ true);
 			}
 		},
-		standardVariant: function(oVariant, oChange) {
+		standardVariant(oVariant, oChange) {
 			// legacy change on standard variants
 			oVariant.setExecuteOnSelection(oChange.getContent().executeOnSelect);
 		}
@@ -54,9 +54,7 @@ sap.ui.define([
 
 		mCompVariants.changes.forEach(function(oChange) {
 			var sVariantId = oChange.getSelector().variantId || oChange.getContent().key;
-			if (!mChanges[sVariantId]) {
-				mChanges[sVariantId] = [];
-			}
+			mChanges[sVariantId] ||= [];
 
 			mChanges[sVariantId].push(oChange);
 		});
@@ -126,7 +124,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return {
-		merge: function(sPersistencyKey, mCompData, oStandardVariantInput) {
+		merge(sPersistencyKey, mCompData, oStandardVariantInput) {
 			var aVariants = mCompData.nonPersistedVariants.concat(mCompData.variants);
 			var mChanges = getChangesMappedByVariant(mCompData);
 
@@ -206,9 +204,9 @@ sap.ui.define([
 		 *
 		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The created variant object
 		 */
-		createVariant: function(sPersistencyKey, oVariantInput) {
+		createVariant(sPersistencyKey, oVariantInput) {
 			return createVariant(sPersistencyKey, oVariantInput);
 		},
-		applyChangeOnVariant: applyChangeOnVariant
+		applyChangeOnVariant
 	};
 });

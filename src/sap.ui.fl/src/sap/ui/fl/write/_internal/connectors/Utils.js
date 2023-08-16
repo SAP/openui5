@@ -69,7 +69,7 @@ sap.ui.define([
 		 * @param {string} [sDataType] Expected data type of the response
 		 * @returns {object} Resolving with an object of options
 		 */
-		getRequestOptions: function(oInitialConnector, sTokenUrl, vFlexObjects, sContentType, sDataType) {
+		getRequestOptions(oInitialConnector, sTokenUrl, vFlexObjects, sContentType, sDataType) {
 			var oOptions = {
 				tokenUrl: sTokenUrl,
 				initialConnector: oInitialConnector
@@ -100,7 +100,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.dataType] Expected data type of the response
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
 		 */
-		sendRequest: function(sUrl, sMethod, mPropertyBag) {
+		sendRequest(sUrl, sMethod, mPropertyBag) {
 			if (
 				!mPropertyBag.initialConnector
 				|| (
@@ -130,7 +130,7 @@ sap.ui.define([
 		 * @param {object[]} aResponses All responses provided by the different connectors
 		 * @returns {object} Merged result
 		 */
-		mergeResults: function(aResponses) {
+		mergeResults(aResponses) {
 			var oResult = {};
 			aResponses.forEach(function(oResponse) {
 				Object.keys(oResponse).forEach(function(sKey) {

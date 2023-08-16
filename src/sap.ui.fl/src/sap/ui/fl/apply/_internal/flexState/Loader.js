@@ -122,7 +122,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.allContexts] - Includes also restricted context
 		 * @returns {Promise<object>} resolves with the change file for the given component from the Storage
 		 */
-		loadFlexData: function(mPropertyBag) {
+		loadFlexData(mPropertyBag) {
 			var sComponentName = ManifestUtils.getBaseComponentNameFromManifest(mPropertyBag.manifest);
 
 			if (mPropertyBag.partialFlexData) {

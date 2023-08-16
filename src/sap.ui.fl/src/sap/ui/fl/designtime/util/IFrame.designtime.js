@@ -93,7 +93,7 @@ sap.ui.define([
 
 	return {
 		actions: {
-			settings: function() {
+			settings() {
 				return {
 					icon: "sap-icon://write-new",
 					name: "CTX_EDIT_IFRAME",

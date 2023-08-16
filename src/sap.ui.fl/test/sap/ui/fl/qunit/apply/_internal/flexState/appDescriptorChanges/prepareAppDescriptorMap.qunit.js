@@ -12,7 +12,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("prepareAppDescriptorMap: ", {
-		beforeEach: function() {
+		beforeEach() {
 			this.mPropertyBag = {
 				storageResponse: {
 					changes: {
@@ -21,7 +21,7 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

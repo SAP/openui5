@@ -7,20 +7,20 @@ sap.ui.define([], function() {
 
 	return {
 		doSomething: {
-			applyChange: function() {
+			applyChange() {
 			},
-			completeChangeContent: function() {
+			completeChangeContent() {
 			},
-			revertChange: function() {
+			revertChange() {
 			},
 			dummyId: "testChangeHandler-doSomething"
 		},
 		doSomethingElse: {
-			applyChange: function() {
+			applyChange() {
 			},
-			completeChangeContent: function() {
+			completeChangeContent() {
 			},
-			revertChange: function() {
+			revertChange() {
 			}
 		}
 	};

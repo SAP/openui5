@@ -29,7 +29,7 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
-	var TitleLevel = coreLibrary.TitleLevel;
+	var {TitleLevel} = coreLibrary;
 
 	/**
 	 * Constructor for a new <code>VariantManagement</code>.
@@ -322,7 +322,7 @@ sap.ui.define([
 		},
 		renderer: {
 			apiVersion: 2,
-			render: function(oRm, oControl) {
+			render(oRm, oControl) {
 				oRm.openStart("div", oControl);
 				oRm.style("max-width", oControl.getMaxWidth());
 				oRm.openEnd();
@@ -441,8 +441,9 @@ sap.ui.define([
 		this._handleAllListeners(oEvent, this._aSaveEventHandlers);
 	};
 
-	VariantManagement.prototype.hasListeners = function(sEvent) {
-		var aInnerEvents = ["save", "select", "cancel", "manage"];
+	VariantManagement.prototype.hasListeners = function(...aArgs) {
+		const [sEvent] = aArgs;
+		const aInnerEvents = ["save", "select", "cancel", "manage"];
 		if (aInnerEvents.indexOf(sEvent) > -1) {
 			var aEventHandler = null;
 
@@ -458,11 +459,13 @@ sap.ui.define([
 
 			return (aEventHandler.length > 0);
 		}
-		return Control.prototype.hasListeners.apply(this, arguments);
+		return Control.prototype.hasListeners.apply(this, aArgs);
 	};
 
-	VariantManagement.prototype.attachEvent = function(sEvent, mProps, fnCallback, oObj) {
-		var aInnerEvents = ["save", "select", "cancel", "manage"];
+	VariantManagement.prototype.attachEvent = function(...aArgs) {
+		const [sEvent, , fnCallback] = aArgs;
+		let [, mProps, , oObj] = aArgs;
+		const aInnerEvents = ["save", "select", "cancel", "manage"];
 
 		if (aInnerEvents.indexOf(sEvent) > -1) {
 			var aEventHandler = null;
@@ -488,15 +491,16 @@ sap.ui.define([
 			aEventHandler.push({
 				fCallback: fnFunction,
 				fCallbackBound: oObj ? fnFunction.bind(oObj) : fnFunction,
-				oObj: oObj,
-				mProps: mProps
+				oObj,
+				mProps
 			});
 		} else {
-			Control.prototype.attachEvent.apply(this, arguments);
+			Control.prototype.attachEvent.apply(this, aArgs);
 		}
 	};
 
-	VariantManagement.prototype.attachEventOnce = function(sEvent, mPros, fnCallback, oObj) {
+	VariantManagement.prototype.attachEventOnce = function(...aArgs) {
+		const [sEvent, mPros, fnCallback, oObj] = aArgs;
 		var nIdx;
 		if (sEvent === "manage") {
 			nIdx = this._findCallback(this._aManageEventHandlers, fnCallback, oObj);
@@ -532,7 +536,7 @@ sap.ui.define([
 				this._aSelectEventHandlers[nIdx].bOnce = true;
 			}
 		} else {
-			Control.prototype.attachEventOnce.apply(this, arguments);
+			Control.prototype.attachEventOnce.apply(this, aArgs);
 		}
 	};
 
@@ -995,13 +999,13 @@ sap.ui.define([
 	};
 
 	// exit destroy all controls created in init
-	VariantManagement.prototype.exit = function() {
+	VariantManagement.prototype.exit = function(...aArgs) {
 		this._oVM.detachManage(this._fireManage, this);
 		this._oVM.detachCancel(this._fireCancel, this);
 		this._oVM.detachSelect(this._fireSelect, this);
 		this._oVM.detachSave(this._fireSave, this);
 
-		Control.prototype.exit.apply(this, arguments);
+		Control.prototype.exit.apply(this, aArgs);
 		this._oVM = undefined;
 
 		this._fRegisteredApplyAutomaticallyOnStandardVariant = null;

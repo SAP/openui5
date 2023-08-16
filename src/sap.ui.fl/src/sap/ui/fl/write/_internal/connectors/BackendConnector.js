@@ -91,7 +91,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.changeTypes] - Change types of the changes which should be reset (comma-separated list)
 		 * @returns {Promise} Promise resolves as soon as the reset has completed
 		 */
-		reset: function(mPropertyBag) {
+		reset(mPropertyBag) {
 			var aParameters = ["reference", "generator"];
 			var mParameters = _pick(mPropertyBag, aParameters);
 			if (mPropertyBag.selectorIds) {
@@ -123,7 +123,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.parentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
 		 * @returns {Promise} Promise resolves as soon as the writing was completed
 		 */
-		write: function(mPropertyBag) {
+		write(mPropertyBag) {
 			mPropertyBag.method = "POST";
 			return _doWrite.call(this, mPropertyBag).then(function(oResponse) {
 				// Single save of Personalization and Keyuser service return single JSON object
@@ -143,7 +143,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.url - Configured url for the connector
 		 * @returns {Promise} Resolves as soon as the writing is completed without data
 		 */
-		update: function(mPropertyBag) {
+		update(mPropertyBag) {
 			mPropertyBag.method = "PUT";
 			return _doSingleWrite.call(this, mPropertyBag);
 		},
@@ -157,7 +157,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.parentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
 		 * @returns {Promise} Resolves as soon as the deletion is completed without data
 		 */
-		remove: function(mPropertyBag) {
+		remove(mPropertyBag) {
 			var mParameters = {
 				namespace: mPropertyBag.flexObject.namespace
 			};
@@ -184,7 +184,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Property bag
 		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
 		 */
-		loadFeatures: function(mPropertyBag) {
+		loadFeatures(mPropertyBag) {
 			if (this.initialConnector.settings) {
 				return Promise.resolve({response: this.initialConnector.settings});
 			}

@@ -61,7 +61,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given ChangesWriteAPI", {
-		beforeEach: function() {
+		beforeEach() {
 			this.vSelector = {
 				id: "selector",
 				controlType: "sap.ui.core.Control",
@@ -70,7 +70,7 @@ sap.ui.define([
 			this.aObjectsToDestroy = [];
 			sandbox.stub(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId").returns("adaptationId");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.aObjectsToDestroy.forEach((oObject) => {oObject.destroy();});
 		}
@@ -143,7 +143,7 @@ sap.ui.define([
 				};
 				this.aObjectsToDestroy.push(oControl);
 				const oGetChangeHandlerStub = sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
-					completeChangeContent: function(oFlexObject, oChangeSpecificData) {
+					completeChangeContent(oFlexObject, oChangeSpecificData) {
 						oFlexObject.setContent(oChangeSpecificData.name);
 					}
 				});
@@ -171,7 +171,7 @@ sap.ui.define([
 				};
 				this.aObjectsToDestroy.push(mPropertyBag.selector.view);
 				const oGetChangeHandlerStub = sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
-					completeChangeContent: function(oFlexObject, oChangeSpecificData) {
+					completeChangeContent(oFlexObject, oChangeSpecificData) {
 						oFlexObject.setContent(oChangeSpecificData.name);
 					}
 				});
@@ -254,7 +254,7 @@ sap.ui.define([
 		QUnit.test("when apply is called with no dependencies on control", function(assert) {
 			var mPropertyBag = {
 				change: {
-					getSelector: function() {
+					getSelector() {
 						return "selector";
 					}
 				},
@@ -264,7 +264,7 @@ sap.ui.define([
 			sandbox.stub(Applier, "applyChangeOnControl").resolves(sReturnValue);
 
 			mockFlexController(mPropertyBag.element, {
-				getOpenDependentChangesForControl: function() {return [];}
+				getOpenDependentChangesForControl() {return [];}
 			});
 
 			return ChangesWriteAPI.apply(mPropertyBag).then(function(sValue) {
@@ -275,10 +275,10 @@ sap.ui.define([
 		QUnit.test("when apply is called with dependencies on control", function(assert) {
 			var mPropertyBag = {
 				change: {
-					getSelector: function() {
+					getSelector() {
 						return "selector";
 					},
-					getId: function() {
+					getId() {
 						return "changeId";
 					}
 				},
@@ -290,12 +290,12 @@ sap.ui.define([
 			var oRevertStub = sandbox.stub(Reverter, "revertChangeOnControl").resolves();
 			var aDependentChanges = [
 				{
-					getId: function() {
+					getId() {
 						return "changeId1";
 					}
 				},
 				{
-					getId: function() {
+					getId() {
 						return "changeId2";
 					}
 				}
@@ -303,7 +303,7 @@ sap.ui.define([
 			var oFlResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
 
 			mockFlexController(mPropertyBag.element, {
-				getOpenDependentChangesForControl: function() {return aDependentChanges;}
+				getOpenDependentChangesForControl() {return aDependentChanges;}
 			});
 
 			return ChangesWriteAPI.apply(mPropertyBag).catch(function(oError) {
@@ -481,12 +481,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given ChangesWriteAPI for smart business", {
-		beforeEach: function() {
+		beforeEach() {
 			this.vSelector = {
 				appId: "reference.app"
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			delete this.vSelector;
 			sandbox.restore();
 		}

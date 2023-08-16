@@ -50,8 +50,10 @@ sap.ui.define([
 		}
 
 		if (aFilteredConnectors.length > 1) {
-			throw new Error(`sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: Multiple Connector configurations were found to write into layer: ${sLayer}`);
+			throw new Error(`sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: Multiple `
+				+ `Connector configurations were found to write into layer: ${sLayer}`);
 		}
+		return undefined;
 	}
 
 	function _sendLoadFeaturesToConnector(aConnectors) {
@@ -139,13 +141,12 @@ sap.ui.define([
 				if (oChange.condenserState) {
 					var bDifferentOrder = false;
 					if (oChange.condenserState === "delete") {
-						if (oChange.getState() === States.LifecycleState.PERSISTED || oChange.getState() === States.LifecycleState.DELETED) {
-							if (!mCondense.delete) {
-								mCondense.delete = {};
-							}
-							if (!mCondense.delete[sFileType]) {
-								mCondense.delete[sFileType] = [];
-							}
+						if (
+							oChange.getState() === States.LifecycleState.PERSISTED
+							|| oChange.getState() === States.LifecycleState.DELETED
+						) {
+							mCondense.delete ||= {};
+							mCondense.delete[sFileType] ||= [];
 							mCondense.delete[sFileType].push(oChange.getId());
 						}
 						iOffset++;
@@ -159,31 +160,19 @@ sap.ui.define([
 						var aReorderedChanges = mPropertyBag.condensedChanges.slice(index - iOffset).map(function(oChange) {
 							return oChange.getId();
 						});
-						if (!mCondense.reorder) {
-							mCondense.reorder = {};
-						}
-						if (!mCondense.reorder[sFileType]) {
-							mCondense.reorder[sFileType] = [];
-						}
+						mCondense.reorder ||= {};
+						mCondense.reorder[sFileType] ||= [];
 						mCondense.reorder[sFileType] = aReorderedChanges;
 						bAlreadyReordered = true;
 					}
 					if (oChange.condenserState === "select" && oChange.getState() === States.LifecycleState.NEW) {
-						if (!mCondense.create) {
-							mCondense.create = {};
-						}
-						if (!mCondense.create[sFileType]) {
-							mCondense.create[sFileType] = [];
-						}
+						mCondense.create ||= {};
+						mCondense.create[sFileType] ||= [];
 						mCondense.create[sFileType][iChangeCreateIndex] = {};
 						mCondense.create[sFileType][iChangeCreateIndex][oChange.getId()] = oChange.convertToFileContent();
 					} else if (oChange.condenserState === "update") {
-						if (!mCondense.update) {
-							mCondense.update = {};
-						}
-						if (!mCondense.update[sFileType]) {
-							mCondense.update[sFileType] = [];
-						}
+						mCondense.update ||= {};
+						mCondense.update[sFileType] ||= [];
 						var iChangeUpdateIndex = mCondense.update[sFileType].length;
 						mCondense.update[sFileType][iChangeUpdateIndex] = {};
 						mCondense.update[sFileType][iChangeUpdateIndex][oChange.getId()] = {
@@ -193,12 +182,8 @@ sap.ui.define([
 
 					delete oChange.condenserState;
 				} else if (oChange.getState() === States.LifecycleState.NEW) {
-					if (!mCondense.create) {
-						mCondense.create = {};
-					}
-					if (!mCondense.create[sFileType]) {
-						mCondense.create[sFileType] = [];
-					}
+					mCondense.create ||= {};
+					mCondense.create[sFileType] ||= [];
 					mCondense.create[sFileType][iChangeCreateIndex] = {};
 					mCondense.create[sFileType][iChangeCreateIndex][oChange.getId()] = oChange.convertToFileContent();
 				}
@@ -349,7 +334,8 @@ sap.ui.define([
 	 * indicating that the result is paginated and whether there are more contexts that can be fetched from the backend.
 	 * The context also contains a JSON object 'types' which has a string property 'type' denoting the type of context (e.g. 'ROLE')
 	 * and an array property 'values' containing the id and description of each context.
-	 * The context can be filtered by setting the $filter parameter and the next page of results can be retrieved by setting the $skip parameter.
+	 * The context can be filtered by setting the $filter parameter and the next page of results can be retrieved by setting
+	 * the $skip parameter.
 	 *
 	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer
@@ -417,23 +403,23 @@ sap.ui.define([
 	};
 
 	Storage.contextBasedAdaptation = {
-		create: function(mPropertyBag) {
+		create(mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.create", mPropertyBag));
 		},
-		reorder: function(mPropertyBag) {
+		reorder(mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.reorder", mPropertyBag));
 		},
-		update: function(mPropertyBag) {
+		update(mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.update", mPropertyBag));
 		},
-		load: function(mPropertyBag) {
+		load(mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.load", mPropertyBag));
 		},
-		remove: function(mPropertyBag) {
+		remove(mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.remove", mPropertyBag));
 		}
@@ -450,7 +436,7 @@ sap.ui.define([
 		 * @returns {Promise<sap.ui.fl.Version[]>} Promise resolving with a list of versions if available;
 		 * rejects if an error occurs or the layer does not support draft handling
 		 */
-		load: function(mPropertyBag) {
+		load(mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "versions.load", mPropertyBag));
 		},
@@ -465,7 +451,7 @@ sap.ui.define([
 		 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the activated version;
 		 * rejects if an error occurs or the layer does not support draft handling
 		 */
-		activate: function(mPropertyBag) {
+		activate(mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "versions.activate", mPropertyBag));
 		},
@@ -479,12 +465,12 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolving after the draft is discarded;
 		 * rejects if an error occurs or the layer does not support draft handling
 		 */
-		discardDraft: function(mPropertyBag) {
+		discardDraft(mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "versions.discardDraft", mPropertyBag));
 		},
 
-		publish: function(mPropertyBag) {
+		publish(mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "versions.publish", mPropertyBag));
 		}
@@ -500,7 +486,7 @@ sap.ui.define([
 		 * @returns {Promise} Resolving after the languages are retrieved;
 		 * rejects if an error occurs
 		 */
-		getSourceLanguages: function(mPropertyBag) {
+		getSourceLanguages(mPropertyBag) {
 			// TODO: cache the request & invalidate it in case of a writing operation
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "translation.getSourceLanguages", mPropertyBag));
@@ -517,7 +503,7 @@ sap.ui.define([
 		 * @returns {Promise} Resolving after the languages are retrieved;
 		 * rejects if an error occurs
 		 */
-		getTexts: function(mPropertyBag) {
+		getTexts(mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "translation.getTexts", mPropertyBag));
 		},
@@ -531,7 +517,7 @@ sap.ui.define([
 		 * @returns {Promise} Resolves after the file was uploaded;
 		 * rejects if an error occurs or the parameter is missing
 		 */
-		postTranslationTexts: function(mPropertyBag) {
+		postTranslationTexts(mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "translation.postTranslationTexts", mPropertyBag));
 		}

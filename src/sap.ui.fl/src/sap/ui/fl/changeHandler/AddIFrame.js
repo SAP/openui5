@@ -120,13 +120,13 @@ sap.ui.define([
 			affectedControl: oContent.selector,
 			targetContainer: oChange.getSelector(),
 			targetAggregation: oContent.targetAggregation,
-			setTargetIndex: function(oChange, iNewTargetIndex) {
+			setTargetIndex(oChange, iNewTargetIndex) {
 				oChange.getContent().index = iNewTargetIndex;
 			},
-			getTargetIndex: function(oChange) {
+			getTargetIndex(oChange) {
 				return oChange.getContent().index;
 			},
-			update: function(oChange, oNewContent) {
+			update(oChange, oNewContent) {
 				Object.assign(oChange.getContent(), oNewContent);
 			}
 		};

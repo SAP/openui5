@@ -113,7 +113,7 @@ sap.ui.define([
 		var mPropertyBag = {
 			flexController: {
 				_oChangePersistence: {
-					_deleteChangeInMap: function() {
+					_deleteChangeInMap() {
 					}
 				}
 			},
@@ -190,16 +190,16 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given an app with a SmartForm", {
-		before: function() {
+		before() {
 			return RtaQunitUtils.renderTestAppAtAsync("qunit-fixture").then(function(oComp) {
 				oAppComponent = oComp.getComponentInstance();
 			});
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.aChanges = [];
 			this.bSkipRevertOnEnd = false;
 		},
-		afterEach: function(assert) {
+		afterEach(assert) {
 			if (!this.bSkipRevertOnEnd) {
 				return revertMultipleChanges(this.aChanges).then(function() {
 					checkInitialStateAfterRevert(assert);
@@ -208,7 +208,7 @@ sap.ui.define([
 			}
 			return sandbox.restore();
 		},
-		after: function() {
+		after() {
 			oAppComponent.destroy();
 		}
 	}, function() {
@@ -802,20 +802,20 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an app with controls with templates", {
-		before: function() {
+		before() {
 			return RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture").then(function(oComp) {
 				oAppComponent = oComp.getComponentInstance();
 			});
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.aChanges = [];
 		},
-		afterEach: function() {
+		afterEach() {
 			return revertMultipleChanges(this.aChanges).then(function() {
 				sandbox.restore();
 			});
 		},
-		after: function() {
+		after() {
 			oAppComponent.destroy();
 		}
 	}, function() {
@@ -832,7 +832,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an ObjectPageLayout", {
-		before: function() {
+		before() {
 			return XMLView.create({
 				viewName: "sap.ui.fl.testResources.condenser.ObjectPageLayout",
 				id: "myView"
@@ -840,15 +840,15 @@ sap.ui.define([
 				oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "componentId", undefined, oView);
 			});
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.aChanges = [];
 		},
-		afterEach: function() {
+		afterEach() {
 			return revertMultipleChanges(this.aChanges).then(function() {
 				sandbox.restore();
 			});
 		},
-		after: function() {
+		after() {
 			oAppComponent._restoreGetAppComponentStub();
 			oAppComponent.destroy();
 		}
@@ -940,7 +940,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a mdc Table", {
-		before: function() {
+		before() {
 			return XMLView.create({
 				viewName: "sap.ui.fl.testResources.condenser.MdcTable",
 				id: "view"
@@ -948,7 +948,7 @@ sap.ui.define([
 				oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "componentId", undefined, oView);
 			});
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.aChanges = [];
 			sandbox.stub(TableDelegate, "fetchProperties").resolves([
 				{
@@ -975,7 +975,7 @@ sap.ui.define([
 			]);
 			sandbox.stub(TableDelegate, "updateBindingInfo");
 		},
-		afterEach: function(assert) {
+		afterEach(assert) {
 			return revertMultipleChanges(this.aChanges).then(function() {
 				assert.ok(true, "after the test, the Initial UI is shown again");
 				var oTable = sap.ui.getCore().byId("view--mdcTable");
@@ -987,7 +987,7 @@ sap.ui.define([
 				sandbox.restore();
 			});
 		},
-		after: function() {
+		after() {
 			oAppComponent._restoreGetAppComponentStub();
 			oAppComponent.destroy();
 		}

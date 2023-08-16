@@ -21,7 +21,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		formatBundleName: function(sId, sBundleUrl) {
+		formatBundleName(sId, sBundleUrl) {
 			if (sBundleUrl.startsWith("/")) {
 				throw Error("Absolute paths are not supported");
 			}

@@ -201,9 +201,7 @@ sap.ui.define([
 		var oVariantManagementsMap = {};
 		aVariants.forEach(function(oVariantInstance) {
 			var sVMReference = oVariantInstance.getVariantManagementReference();
-			if (!oVariantManagementsMap[sVMReference]) {
-				oVariantManagementsMap[sVMReference] = createVariantManagement(aFlexObjects, aVariants, sReference, sVMReference);
-			}
+			oVariantManagementsMap[sVMReference] ||= createVariantManagement(aFlexObjects, aVariants, sReference, sVMReference);
 			oVariantManagementsMap[sVMReference].variants.push(
 				createVariantEntry(aFlexObjects, oVariantInstance)
 			);
@@ -282,7 +280,7 @@ sap.ui.define([
 		id: "variantManagements",
 		parameterKey: "variantManagementReference",
 		parentDataSelector: oVariantManagementMapDataSelector,
-		executeFunction: function(oVariantManagementsMap, sVMReference) {
+		executeFunction(oVariantManagementsMap, sVMReference) {
 			return oVariantManagementsMap[sVMReference];
 		}
 	});
@@ -291,7 +289,7 @@ sap.ui.define([
 		id: "variants",
 		parameterKey: "variantReference",
 		parentDataSelector: oVariantManagementsDataSelector,
-		executeFunction: function(oVariantManagement, sVariantReference) {
+		executeFunction(oVariantManagement, sVariantReference) {
 			return oVariantManagement.variants.find(function(oVariant) {
 				return oVariant.instance.getId() === sVariantReference;
 			});
@@ -301,7 +299,7 @@ sap.ui.define([
 	var oVariantDependentFlexObjectsDataSelector = new DataSelector({
 		id: "variantDependentFlexObjects",
 		parentDataSelector: FlexState.getFlexObjectsDataSelector(),
-		executeFunction: function(aFlexObjects) {
+		executeFunction(aFlexObjects) {
 			return aFlexObjects.filter(function(oFlexObject) {
 				const sVariantReference = oFlexObject.getVariantReference?.();
 				const bVariantRelatedChange = ["ctrl_variant", "ctrl_variant_change", "ctrl_variant_management_change"]

@@ -94,13 +94,9 @@ sap.ui.define([
 	}
 
 	function mergeAnnotationArray(oManifestDataSourceId, aChangeAnnotations, sChangeAnnotationsInsertPosition) {
-		if (!oManifestDataSourceId.settings) {
-			oManifestDataSourceId.settings = {};
-		}
+		oManifestDataSourceId.settings ||= {};
 
-		if (!oManifestDataSourceId.settings.annotations) {
-			oManifestDataSourceId.settings.annotations = [];
-		}
+		oManifestDataSourceId.settings.annotations ||= [];
 
 		var aNotExistingAnnotationsInChange = oManifestDataSourceId.settings.annotations.filter(function(annotation) {
 			return (aChangeAnnotations.indexOf(annotation) < 0);
@@ -158,7 +154,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		applyChange: function(oManifest, oChange) {
+		applyChange(oManifest, oChange) {
 			var sChangeDataSourceId = oChange.getContent().dataSourceId;
 			var aChangeAnnotations = oChange.getContent().annotations;
 			var sChangeAnnotationsInsertPosition = oChange.getContent().annotationsInsertPosition;

@@ -48,7 +48,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("sap.ui.fl.write._internal.extensionPoint.Registry", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Processor, "applyExtensionPoint");
 
 			var sXmlString =
@@ -83,12 +83,10 @@ sap.ui.define([
 			return XMLView.create({id: "testComponent---myView", definition: sXmlString})
 			.then(function(oXMLView) {
 				this.oXMLView = oXMLView;
-				this.oHBox = this.oXMLView.getContent()[0];
-				this.oPanel = this.oXMLView.getContent()[1];
-				this.oHBoxWithSingleEP = this.oXMLView.getContent()[2];
+				[this.oHBox, this.oPanel, this.oHBoxWithSingleEP] = this.oXMLView.getContent();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oXMLView.destroy();
 			ExtensionPointRegistry.clear();
 			sandbox.restore();
@@ -252,7 +250,7 @@ sap.ui.define([
 			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo("not_registered_EP", this.oXMLView), undefined,
 				"undefined is returned for an invalid extension point name");
 			var oFakeView = {
-				getId: function() {
+				getId() {
 					return "not_registered_view";
 				}
 			};
@@ -313,15 +311,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("when destroying a default control of an extension point (e.g. because another content is added to it)", function(assert) {
-			this.oPanel = this.oXMLView.getContent()[1];
-			this.oLabel = this.oXMLView.getContent()[1].getContent()[1];
-			this.oLabel2 = this.oXMLView.getContent()[1].getContent()[2];
-			var aDefaultContent = [this.oLabel, this.oLabel2];
+			[, this.oPanel] = this.oXMLView.getContent();
+			[, this.oLabel, this.oLabel2] = this.oXMLView.getContent()[1].getContent();
+			const aDefaultContent = [this.oLabel, this.oLabel2];
 			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName3, this.oPanel, "content", 1, aDefaultContent);
-			var mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
+			let [mExtensionPointInfo] = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId());
 			assert.strictEqual(mExtensionPointInfo.defaultContent.length, 2, "before the destroy there are two default controls");
 			this.oLabel.destroy();
-			mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
+			[mExtensionPointInfo] = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId());
 			assert.strictEqual(mExtensionPointInfo.defaultContent.length, 1,
 				"then the removed default control is also removed from the registry entry");
 			assert.strictEqual(mExtensionPointInfo.defaultContent[0].getId(), this.oLabel2.getId(),
@@ -329,7 +326,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when controls are added to an extension point (e.g. called by the Change Handler)", function(assert) {
-			this.oPanel = this.oXMLView.getContent()[1];
+			[, this.oPanel] = this.oXMLView.getContent();
 			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			ExtensionPointRegistry.addCreatedControls(sExtensionPointName2, "testComponent---myView", ["newControlId"]);
 			var mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
@@ -339,7 +336,7 @@ sap.ui.define([
 				"then the first control is added to the registry"
 			);
 			ExtensionPointRegistry.addCreatedControls(sExtensionPointName2, "testComponent---myView", ["newControlId2"]);
-			mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
+			[mExtensionPointInfo] = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId());
 			assert.strictEqual(
 				mExtensionPointInfo.createdControls[0],
 				"newControlId",
@@ -353,7 +350,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when controls are added to an extension point (e.g. called by the Change Handler) which was not registered yet", function(assert) {
-			this.oPanel = this.oXMLView.getContent()[1];
+			[, this.oPanel] = this.oXMLView.getContent();
 			ExtensionPointRegistry.addCreatedControls(sExtensionPointName2, "testComponent---myView", ["newControlId", "newControlId2"]);
 			ExtensionPointRegistry.addCreatedControls(sExtensionPointName2, "testComponent---myView", ["newControlId3"]);
 			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
@@ -376,7 +373,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a previously added control is removed from the extension point", function(assert) {
-			this.oPanel = this.oXMLView.getContent()[1];
+			[, this.oPanel] = this.oXMLView.getContent();
 			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			var oNewControl = new Label("addedLabel");
 			var oNewControl2 = new Label("addedLabel2");
@@ -406,7 +403,7 @@ sap.ui.define([
 	 * @deprecated Since version 1.77 due to deprecation of sap.ui.control when create view with design mode true
 	 */
 	QUnit.module("Given an extensionPoint.Registry instantiated by the fl extensionPoint.Processor", {
-		beforeEach: async function() {
+		async beforeEach() {
 			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 
 			var sXmlString =
@@ -448,12 +445,11 @@ sap.ui.define([
 					definition: sXmlString,
 					async: true
 				});
-				this.oHBox = this.oXMLView.getContent()[0];
-				this.oPanel = this.oXMLView.getContent()[1];
+				[this.oHBox, this.oPanel] = this.oXMLView.getContent();
 				oCore.applyChanges();
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponent.destroy();
 			this.oXMLView.destroy();
 			ExtensionPointRegistry.clear();

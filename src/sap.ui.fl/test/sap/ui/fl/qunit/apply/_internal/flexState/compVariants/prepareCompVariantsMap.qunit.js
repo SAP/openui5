@@ -20,7 +20,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("prepareCompVariantsMap", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

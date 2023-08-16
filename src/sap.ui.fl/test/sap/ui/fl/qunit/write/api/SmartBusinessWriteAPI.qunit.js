@@ -38,7 +38,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given SmartBusinessWriteAPI", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oDescrChangeSpecificData1 = {
 				changeType: "appdescr_ovp_addNewCard",
 				content: {
@@ -106,7 +106,7 @@ sap.ui.define([
 				originalLanguage: "EN"
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

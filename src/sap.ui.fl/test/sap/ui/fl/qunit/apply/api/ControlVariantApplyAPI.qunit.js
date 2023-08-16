@@ -50,12 +50,12 @@ sap.ui.define([
 				case "URLParsing":
 					return {
 						parseShellHash: this.fnParseShellHashStub,
-						constructShellHash: function() {return "constructedHash";}
+						constructShellHash() {return "constructedHash";}
 					};
 				case "ShellNavigation":
-					return {registerNavigationFilter: function() {}, unregisterNavigationFilter: function() {}};
+					return {registerNavigationFilter() {}, unregisterNavigationFilter() {}};
 				case "CrossApplicationNavigation":
-					return {toExternal: function() {}};
+					return {toExternal() {}};
 				default:
 					return undefined;
 			}
@@ -81,7 +81,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given an instance of VariantModel", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oData = {
 				variantMgmtId1: {
 					defaultVariant: "variantMgmtId1",
@@ -125,7 +125,7 @@ sap.ui.define([
 				.withArgs(this.oComponent).returns(this.oAppComponent);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oModel.destroy();
 			this.oAppComponent.destroy();

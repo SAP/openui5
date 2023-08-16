@@ -16,18 +16,18 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.library", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oSetConfigurationtub = sandbox.stub(oCore.getConfiguration(), "setFlexibilityServices");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("isTrialSystem with ushellContainer available and returning true", function(assert) {
 			sandbox.stub(Utils, "getUshellContainer").returns({
-				getLogonSystem: function() {
+				getLogonSystem() {
 					return {
-						isTrial: function() {
+						isTrial() {
 							return true;
 						}
 					};

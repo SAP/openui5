@@ -51,10 +51,9 @@ sap.ui.define([
 		return _oCurrentScenario;
 	}
 
-	function callFunctionInImplementation() {
-		var aArgs = Array.from(arguments);
+	function callFunctionInImplementation(...aArgs) {
 		var sFunctionName = aArgs.shift();
-		var oImplementation = getImplementationForCurrentScenario.apply(null, aArgs);
+		var oImplementation = getImplementationForCurrentScenario(...aArgs);
 		if (!oImplementation) {
 			return Promise.reject("Could not determine field extensibility scenario");
 		}

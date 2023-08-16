@@ -15,7 +15,7 @@ sap.ui.define([
 	var oSetRequestHeaderSpy;
 
 	QUnit.module("URLHandling", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -66,12 +66,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("sendRequest", {
-		beforeEach: function() {
+		beforeEach() {
 			this.server = sinon.fakeServer.create();
 			this.server.autoRespond = true;
 			oSetRequestHeaderSpy = sandbox.spy(XMLHttpRequest.prototype, "setRequestHeader");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	},

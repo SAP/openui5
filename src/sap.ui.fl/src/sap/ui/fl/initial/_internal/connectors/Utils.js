@@ -53,7 +53,7 @@ sap.ui.define([
 		 * @param {object} mParameters - Parameters of the request
 		 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
-		addLanguageInfo: function(mParameters) {
+		addLanguageInfo(mParameters) {
 			if (!mParameters) {
 				throw new Error("No parameters map were passed");
 			}
@@ -66,7 +66,7 @@ sap.ui.define([
 		 * @param {object} mParameters - Parameters of the request
 		 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
-		addSAPLogonLanguageInfo: function(mParameters) {
+		addSAPLogonLanguageInfo(mParameters) {
 			if (!mParameters) {
 				throw new Error("No parameters map were passed");
 			}
@@ -87,7 +87,7 @@ sap.ui.define([
 		 * @returns {string} Complete request url
 		 * @ui5-restricted sap.ui.fl.initial._internal, sap.ui.fl.write._internal
 		 */
-		getUrl: function(sRoute, mPropertyBag, mParameters) {
+		getUrl(sRoute, mPropertyBag, mParameters) {
 			if (!sRoute || !mPropertyBag.url) {
 				throw new Error("Not all necessary parameters were passed");
 			}
@@ -133,8 +133,8 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
 		 */
-		sendRequest: function(sUrl, sMethod, mPropertyBag) {
-			sMethod = sMethod || "GET";
+		sendRequest(sUrl, sMethod, mPropertyBag) {
+			sMethod ||= "GET";
 			sMethod = sMethod.toUpperCase();
 
 			return new Promise(function(resolve, reject) {

@@ -136,18 +136,19 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function() {
-			ManagedObject.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			ManagedObject.apply(this, aArgs);
 			var oFlexObjectMetadata = this.getFlexObjectMetadata();
 			var sReference = oFlexObjectMetadata.reference;
 			if (sReference) {
-				oFlexObjectMetadata.namespace = oFlexObjectMetadata.namespace || Utils.createNamespace({ reference: sReference }, this.getFileType());
-				oFlexObjectMetadata.projectId = oFlexObjectMetadata.projectId || sReference;
+				oFlexObjectMetadata.namespace ||= Utils.createNamespace({ reference: sReference }, this.getFileType());
+				oFlexObjectMetadata.projectId ||= sReference;
 			}
 			this.setFlexObjectMetadata(oFlexObjectMetadata);
 
 			var oSupportInformation = this.getSupportInformation();
-			oSupportInformation.originalLanguage = oSupportInformation.originalLanguage || Utils.getCurrentLanguage();
+			oSupportInformation.originalLanguage ||= Utils.getCurrentLanguage();
 
 			this.setSupportInformation(oSupportInformation);
 		}
@@ -423,7 +424,7 @@ sap.ui.define([
 		var fnGetter = getOriginalMutator.call(this, `get${sFunctionName}`);
 		var fnSetter = getOriginalMutator.call(this, `set${sFunctionName}`);
 		return {
-			getValue: function() {
+			getValue() {
 				var vCurrentValue = deepClone(fnGetter());
 				if (aInstanceParts.length > 0) {
 					return ObjectPath.get(aInstanceParts, vCurrentValue);

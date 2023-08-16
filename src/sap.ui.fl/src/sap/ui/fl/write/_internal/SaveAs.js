@@ -181,7 +181,7 @@ sap.ui.define([
 	}
 
 	var SaveAs = {
-		saveAs: function(mPropertyBag) {
+		saveAs(mPropertyBag) {
 			var oAppVariantClosure;
 			var oAppVariantResultClosure;
 
@@ -255,7 +255,7 @@ sap.ui.define([
 				throw oError;
 			});
 		},
-		updateAppVariant: function(mPropertyBag) {
+		updateAppVariant(mPropertyBag) {
 			var oAppVariantClosure;
 			var oAppVariantResultClosure;
 
@@ -319,7 +319,7 @@ sap.ui.define([
 				throw oError;
 			});
 		},
-		deleteAppVariant: function(mPropertyBag) {
+		deleteAppVariant(mPropertyBag) {
 			return AppVariantFactory.prepareDelete(_omit(mPropertyBag, "selector"))
 			.catch(function(oError) {
 				oError.messageKey = "MSG_LOAD_APP_VARIANT_FAILED";

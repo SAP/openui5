@@ -20,7 +20,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given FeaturesAPI", {
-		afterEach: function() {
+		afterEach() {
 			Settings._instance = undefined;
 			sandbox.restore();
 		}
@@ -28,13 +28,13 @@ sap.ui.define([
 		[true, false].forEach(function(bValueToBeSet) {
 			QUnit.test(`when isPublishAvailable() is called for ${bValueToBeSet ? "a" : "not a"} productive system with transports and no publish available info`, function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isProductiveSystem: function() {
+					isProductiveSystem() {
 						return bValueToBeSet;
 					},
-					isSystemWithTransports: function() {
+					isSystemWithTransports() {
 						return true;
 					},
-					isPublishAvailable: function() {
+					isPublishAvailable() {
 						return false;
 					}
 				});
@@ -46,13 +46,13 @@ sap.ui.define([
 
 			QUnit.test(`when isPublishAvailable() is called for ${bValueToBeSet ? "a" : "not a"} productive system without transports and no publish available info`, function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isProductiveSystem: function() {
+					isProductiveSystem() {
 						return bValueToBeSet;
 					},
-					isSystemWithTransports: function() {
+					isSystemWithTransports() {
 						return false;
 					},
-					isPublishAvailable: function() {
+					isPublishAvailable() {
 						return false;
 					}
 				});
@@ -64,13 +64,13 @@ sap.ui.define([
 
 			QUnit.test(`when isPublishAvailable() is called for ${bValueToBeSet ? "a" : "not a"} productive system with transports and publish available info`, function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isProductiveSystem: function() {
+					isProductiveSystem() {
 						return bValueToBeSet;
 					},
-					isSystemWithTransports: function() {
+					isSystemWithTransports() {
 						return true;
 					},
-					isPublishAvailable: function() {
+					isPublishAvailable() {
 						return true;
 					}
 				});
@@ -82,13 +82,13 @@ sap.ui.define([
 
 			QUnit.test(`when isPublishAvailable() is called for ${bValueToBeSet ? "a" : "not a"} productive system without transports and publish available info`, function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isProductiveSystem: function() {
+					isProductiveSystem() {
 						return bValueToBeSet;
 					},
-					isSystemWithTransports: function() {
+					isSystemWithTransports() {
 						return false;
 					},
-					isPublishAvailable: function() {
+					isPublishAvailable() {
 						return true;
 					}
 				});
@@ -100,7 +100,7 @@ sap.ui.define([
 
 			QUnit.test(`when isSaveAsAvailable() is called for ${bValueToBeSet ? "not a" : "a"} steampunk system`, function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isAppVariantSaveAsEnabled: function() {
+					isAppVariantSaveAsEnabled() {
 						return bValueToBeSet;
 					}
 				});
@@ -114,7 +114,7 @@ sap.ui.define([
 
 			QUnit.test(`when isSaveAsAvailable() is called for ${bValueToBeSet ? "not a" : "a"} steampunk system and standalone app without CrossApplicationNavigation service`, function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isAppVariantSaveAsEnabled: function() {
+					isAppVariantSaveAsEnabled() {
 						return bValueToBeSet;
 					}
 				});
@@ -128,7 +128,7 @@ sap.ui.define([
 
 			QUnit.test(`when isKeyUser() is called for ${bValueToBeSet ? "a" : "not a"} key user`, function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isKeyUser: function() {
+					isKeyUser() {
 						return bValueToBeSet;
 					}
 				});
@@ -140,7 +140,7 @@ sap.ui.define([
 
 			QUnit.test(`when isKeyUserTranslationEnabled() is called for ${bValueToBeSet ? "a" : "not a"} admin key user`, function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isKeyUserTranslationEnabled: function() {
+					isKeyUserTranslationEnabled() {
 						return bValueToBeSet;
 					}
 				});
@@ -153,7 +153,7 @@ sap.ui.define([
 			QUnit.test(`when isVersioningEnabled(sLayer) is called in a ${
 				bValueToBeSet ? "draft enabled" : "non draft enabled"} layer`, function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isVersioningEnabled: function() {
+					isVersioningEnabled() {
 						return bValueToBeSet;
 					}
 				});
@@ -171,7 +171,7 @@ sap.ui.define([
 					bValueToBeSet ? {connector: "LrepConnector"} : {connector: "NeoLrepConnector"}
 				]);
 				sandbox.stub(Settings, "getInstance").resolves({
-					isContextSharingEnabled: function() {
+					isContextSharingEnabled() {
 						return bValueToBeSet;
 					}
 				});
@@ -179,7 +179,7 @@ sap.ui.define([
 				var aSetupForLayers = [];
 				for (var layer in Layer) {
 					aSetupForLayers.push({
-						layer: layer,
+						layer,
 						expectedResult: (layer === Layer.CUSTOMER && bValueToBeSet) // only the ABAP Key USer should have the feature
 					});
 				}

@@ -53,7 +53,7 @@ sap.ui.define([
 		 *
 		 * @returns {string} Name of the Variant Model
 		 */
-		getVariantModelName: function() {
+		getVariantModelName() {
 			return VARIANT_MODEL_NAME;
 		},
 
@@ -63,7 +63,7 @@ sap.ui.define([
 		 * @param {object} oAppComponent - Application component
 		 * @returns {Promise} Promise resolving to the Variant Model
 		 */
-		getVariantModel: function(oAppComponent) {
+		getVariantModel(oAppComponent) {
 			return waitForVariantModel(oAppComponent);
 		},
 
@@ -78,7 +78,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		clearVariantParameterInURL: function(mPropertyBag) {
+		clearVariantParameterInURL(mPropertyBag) {
 			var aUpdatedVariantParameters;
 			var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
 			var oVariantModel = oAppComponent && oAppComponent.getModel(VARIANT_MODEL_NAME);
@@ -120,7 +120,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		activateVariant: function(mPropertyBag) {
+		activateVariant(mPropertyBag) {
 			function logAndReject(oError) {
 				Log.error(oError);
 				return Promise.reject(oError);
@@ -185,7 +185,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		attachVariantApplied: function(mPropertyBag) {
+		attachVariantApplied(mPropertyBag) {
 			var oControl = mPropertyBag.selector.id && sap.ui.getCore().byId(mPropertyBag.selector.id) || mPropertyBag.selector;
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 
@@ -208,7 +208,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		detachVariantApplied: function(mPropertyBag) {
+		detachVariantApplied(mPropertyBag) {
 			var oControl = mPropertyBag.selector.id && sap.ui.getCore().byId(mPropertyBag.selector.id) || mPropertyBag.selector;
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			waitForVariantModel(oAppComponent).then(function(oVariantModel) {

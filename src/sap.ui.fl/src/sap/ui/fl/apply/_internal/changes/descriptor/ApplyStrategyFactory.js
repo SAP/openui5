@@ -13,13 +13,13 @@ sap.ui.define([
 	"use strict";
 
 	var RuntimeStrategy = {
-		registry: function() {
+		registry() {
 			return requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/Registration");
 		},
-		handleError: function(oError) {
+		handleError(oError) {
 			Log.error(oError);
 		},
-		processTexts: function(oManifest, oChangeTexts) {
+		processTexts(oManifest, oChangeTexts) {
 			// TODO: optimize performance by creating map not using JSON.stringify/parse
 			var sManifest = JSON.stringify(oManifest);
 			Object.keys(oChangeTexts).forEach(function(sTextKey) {
@@ -38,7 +38,7 @@ sap.ui.define([
 		 * Strategy to apply descriptor changes during runtime.
 		 * @returns {object} Runtime strategy
 		 */
-		getRuntimeStrategy: function() {
+		getRuntimeStrategy() {
 			return RuntimeStrategy;
 		}
 	};

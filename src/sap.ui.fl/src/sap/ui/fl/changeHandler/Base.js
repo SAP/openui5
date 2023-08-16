@@ -29,13 +29,9 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		setTextInChange: function(oChange, sKey, sText, sType) {
-			if (!oChange.texts) {
-				oChange.texts = {};
-			}
-			if (!oChange.texts[sKey]) {
-				oChange.texts[sKey] = {};
-			}
+		setTextInChange(oChange, sKey, sText, sType) {
+			oChange.texts ||= {};
+			oChange.texts[sKey] ||= {};
 			oChange.texts[sKey].value = sText;
 			oChange.texts[sKey].type = sType;
 		},
@@ -50,7 +46,7 @@ sap.ui.define([
 		 * @returns {Element[]|sap.ui.core.Element[]} Array with the nodes/instances of the controls of the fragment
 		 * @public
 		 */
-		instantiateFragment: function(oChange, mPropertyBag) {
+		instantiateFragment(oChange, mPropertyBag) {
 			var oFlexObjectMetadata = oChange.getFlexObjectMetadata();
 			var sModuleName = oFlexObjectMetadata.moduleName;
 			if (!sModuleName) {
@@ -84,7 +80,7 @@ sap.ui.define([
 		 * @param {boolean} bAsync - Determines whether a non-applicable object should be thrown (synchronous), or whether an asynchronous promise reject with the same object should be returned
 		 * @returns {Promise} Returns rejected promise with non-applicable message inside
 		 */
-		markAsNotApplicable: function(sNotApplicableCauseMessage, bAsync) {
+		markAsNotApplicable(sNotApplicableCauseMessage, bAsync) {
 			var oReturn = { message: sNotApplicableCauseMessage };
 			if (!bAsync) {
 				throw oReturn;

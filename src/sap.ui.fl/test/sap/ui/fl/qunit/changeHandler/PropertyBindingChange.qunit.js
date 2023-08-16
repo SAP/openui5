@@ -28,7 +28,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a Property Binding Change Handler", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeHandler = PropertyBindingChange;
 			this.sNoBindingError = "Please use 'PropertyChange' to set properties without binding";
 
@@ -67,7 +67,7 @@ sap.ui.define([
 			var oDOMParser = new DOMParser();
 			var sXML = `<Input xmlns='sap.m' showValueHelp="${this.OLD_BOOLEAN_VALUE}" value="${this.OLD_VALUE_BINDING}" enabled="true" />`;
 			var oXmlDocument = oDOMParser.parseFromString(sXML, "application/xml");
-			this.oXmlInput = oXmlDocument.childNodes[0];
+			[this.oXmlInput] = oXmlDocument.childNodes;
 
 			this.mExpectedSelector = {
 				id: this.oInput.getId(),
@@ -115,7 +115,7 @@ sap.ui.define([
 				selector: this.mExpectedSelector
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oInput.destroy();
 			this.oButton.destroy();
 			this.oChange = null;

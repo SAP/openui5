@@ -105,20 +105,20 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given ContextVisibility Component without selected contexts", {
-		before: function() {
+		before() {
 			QUnit.config.fixture = null;
 			this.oMockResponse = duplicateRoles(51, oDuplicates);
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 		},
 
-		beforeEach: function() {
+		beforeEach() {
 			this.fnGetContextsStub = sandbox.stub(WriteStorage, "getContexts").resolves(this.oMockResponse);
 			sandbox.stub(WriteStorage, "loadContextDescriptions").resolves(oDescriptionResponse);
 			return renderComponent.call(this, []).then(setInitialControls.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oCompCont.destroy();
 			sandbox.restore();
 		}
@@ -163,16 +163,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given SelectContexts Dialog", {
-		before: function() {
+		before() {
 			QUnit.config.fixture = null;
 			this.oMockResponse = duplicateRoles(51, oDuplicates);
 			this.oMockSearchResponse = {values: [{ id: "KPI", description: "KPI Framework"}]};
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 		},
 
-		beforeEach: function() {
+		beforeEach() {
 			this.fnLoadContextDescriptionStub = sandbox.stub(WriteStorage, "loadContextDescriptions").resolves(oDescriptionResponse);
 			this.fnGetContextsStub = sandbox.stub(WriteStorage, "getContexts");
 			this.fnGetContextsStub.withArgs({layer: Layer.CUSTOMER, type: "role"}).resolves(this.oMockResponse);
@@ -185,7 +185,7 @@ sap.ui.define([
 				oCore.applyChanges();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oCompCont.destroy();
 			sandbox.restore();
 		}
@@ -313,20 +313,20 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given ContextVisibility Component with selected contexts", {
-		before: function() {
+		before() {
 			QUnit.config.fixture = null;
 			this.oMockResponse = duplicateRoles(51, oDuplicates);
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 		},
 
-		beforeEach: function() {
+		beforeEach() {
 			this.fnGetContextsStub = sandbox.stub(WriteStorage, "getContexts").resolves(this.oMockResponse);
 			this.fnLoadContextDescriptionStub = sandbox.stub(WriteStorage, "loadContextDescriptions").resolves({role: []});
 			return renderComponent.call(this, ["Random Test ID", "REMOTE"]).then(setInitialControls.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oCompCont.destroy();
 			sandbox.restore();
 		}

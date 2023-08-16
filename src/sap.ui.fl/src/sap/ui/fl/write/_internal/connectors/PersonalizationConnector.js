@@ -43,7 +43,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
 		 */
-		loadFeatures: function() {
+		loadFeatures() {
 			return Promise.resolve(FEATURES);
 		}
 	});

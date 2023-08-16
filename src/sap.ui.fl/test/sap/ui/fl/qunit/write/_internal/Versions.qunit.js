@@ -47,7 +47,7 @@ sap.ui.define([
 
 	function setVersioningEnabled(oVersioning) {
 		sandbox.stub(Settings, "getInstance").resolves({
-			isVersioningEnabled: function(sLayer) {
+			isVersioningEnabled(sLayer) {
 				return oVersioning[sLayer];
 			}
 		});
@@ -62,18 +62,18 @@ sap.ui.define([
 
 	function _prepareUriParametersFromQuery(sValue) {
 		sandbox.stub(UriParameters, "fromQuery").returns({
-			get: function() {
+			get() {
 				return sValue;
 			}
 		});
 	}
 
 	QUnit.module("Initialization", {
-		beforeEach: function() {
+		beforeEach() {
 			this.aReturnedVersions = [];
 			this.oStorageLoadVersionsStub = sandbox.stub(Storage.versions, "load").resolves(this.aReturnedVersions);
 		},
-		afterEach: function() {
+		afterEach() {
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -218,21 +218,21 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calling the Storage: Given Versions.initialize is called", {
-		beforeEach: function() {
+		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
 			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getId: function() {
+				getId() {
 					return this.sComponentId;
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -404,23 +404,23 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calling the Storage: Given Versions.activate is called", {
-		before: function() {
+		before() {
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getId: function() {
+				getId() {
 					return this.sComponentId;
 				}
 			};
 		},
-		beforeEach: function() {
+		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
 			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},
-		afterEach: function() {
+		afterEach() {
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -650,26 +650,26 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calling the Storage: Given Versions.discardDraft is called", {
-		before: function() {
+		before() {
 			this.reference = "com.sap.app";
 			this.nonNormalizedReference = `${this.reference}.Component`;
 			this.sComponentId = "sComponentId";
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getId: function() {
+				getId() {
 					return this.sComponentId;
 				}
 			};
 		},
-		beforeEach: function() {
+		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
 			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},
-		afterEach: function() {
+		afterEach() {
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -928,23 +928,23 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calling the Storage: Given Versions.publish is called", {
-		before: function() {
+		before() {
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getId: function() {
+				getId() {
 					return this.sComponentId;
 				}
 			};
 		},
-		beforeEach: function() {
+		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
 			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: ["ALL"], url: "/sap/bc/lrep"}
 			]);
 		},
-		afterEach: function() {
+		afterEach() {
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -1013,24 +1013,24 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calling the Storage: Given Versions.initialize is called", {
-		before: function() {
+		before() {
 			this.aReturnedVersions = [];
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getId: function() {
+				getId() {
 					return this.sComponentId;
 				}
 			};
 		},
-		beforeEach: function() {
+		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
 			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: ["ALL"], url: "/sap/bc/lrep"}
 			]);
 		},
-		afterEach: function() {
+		afterEach() {
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -1125,16 +1125,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calling the Storage:", {
-		before: function() {
+		before() {
 			this.sReference = "com.sap.app";
 		},
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Versions, "hasVersionsModel").returns(true);
 			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: ["ALL"], url: "/sap/bc/lrep"}
 			]);
 		},
-		afterEach: function() {
+		afterEach() {
 			Versions.clearInstances();
 			sandbox.restore();
 		}

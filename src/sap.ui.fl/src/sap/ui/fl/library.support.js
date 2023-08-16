@@ -22,9 +22,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var Categories = SupportLib.Categories;
-	var Audiences = SupportLib.Audiences;
-	var Severity = SupportLib.Severity;
+	const {Categories, Audiences, Severity} = SupportLib;
 
 	function findAppComponent(aElements) {
 		var oAppComponent;
@@ -58,7 +56,7 @@ sap.ui.define([
 			href: "https://sdk.openui5.org/topic/f51dbb78e7d5448e838cdc04bdf65403"
 		}],
 		async: true,
-		check: function(issueManager, oCoreFacade, oScope, resolve) {
+		check(issueManager, oCoreFacade, oScope, resolve) {
 			var oUshellContainer = ObjectPath.get("sap.ushell.Container");
 
 			Promise.resolve()

@@ -31,7 +31,7 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		getExtensionData: function() {
+		getExtensionData() {
 			return this._oExtensionDataPromise.then(function(mExtensionData) {
 				if (this._containsData(mExtensionData)) {
 					return this._convertExtensionData(mExtensionData);
@@ -44,7 +44,7 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		getNavigationUri: function() {
+		getNavigationUri() {
 			return this._oExtensionDataPromise.then(function(mExtensionData) {
 				if (this._containsData(mExtensionData)) {
 					return Utils.getNavigationUriForIntent({
@@ -65,7 +65,7 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		getTexts: function() {
+		getTexts() {
 			return this._oExtensionDataPromise.then(function(mExtensionData) {
 				if (this._containsData(mExtensionData)) {
 					return {
@@ -81,17 +81,17 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		isActive: function() {
+		isActive() {
 			return this._oExtensionDataPromise.then(function(mExtensionData) {
 				return this._containsData(mExtensionData);
 			}.bind(this));
 		},
 
-		_containsData: function(mExtensionData) {
+		_containsData(mExtensionData) {
 			return Boolean(mExtensionData && mExtensionData.BusinessObjectNodeName && mExtensionData.CdsEntityName);
 		},
 
-		_convertExtensionData: function(mExtensionData) {
+		_convertExtensionData(mExtensionData) {
 			return {
 				extensionData: [{
 					businessContext: mExtensionData.BusinessObjectNodeName,
@@ -100,7 +100,7 @@ sap.ui.define([
 			};
 		},
 
-		_determineExtensionData: function() {
+		_determineExtensionData() {
 			return new Promise(function(fResolve, fReject) {
 				Utils.isNavigationSupportedForIntents([mNavigationIntent]).then(function(aNavigationSupportedForIntents) {
 					var bIsSupported = aNavigationSupportedForIntents.some(function(bResult) {
@@ -125,7 +125,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		_extractExtensionDataFromResponse: function(oResponse) {
+		_extractExtensionDataFromResponse(oResponse) {
 			return oResponse.GetExtensionDataByResourcePath;
 		}
 	});

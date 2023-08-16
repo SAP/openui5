@@ -23,8 +23,9 @@ sap.ui.define([
 		storage: window.sessionStorage
 	});
 
-	SessionStorageConnector.loadFeatures = function() {
-		return ObjectStorageConnector.loadFeatures.apply(this, arguments).then(function(oFeatures) {
+	SessionStorageConnector.loadFeatures = function(...aArgs) {
+		return ObjectStorageConnector.loadFeatures.apply(this, aArgs)
+		.then(function(oFeatures) {
 			return merge({
 				isPublicLayerAvailable: true,
 				isVariantAdaptationEnabled: true

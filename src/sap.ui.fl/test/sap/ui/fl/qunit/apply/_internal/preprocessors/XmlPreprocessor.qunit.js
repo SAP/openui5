@@ -88,7 +88,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("XmlPreprocessor.process", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -109,21 +109,21 @@ sap.ui.define([
 			};
 
 			var oMockedComponent = {
-				getComponentClassName: function() {
+				getComponentClassName() {
 					return sComponentName;
 				}
 			};
 			var oMockedAppComponent = {
-				getManifestObject: function() {
+				getManifestObject() {
 					return {};
 				},
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getManifestEntry: function() {
+				getManifestEntry() {
 					return undefined;
 				},
-				getComponentData: function() {
+				getComponentData() {
 					return oComponentData;
 				}
 			};
@@ -152,16 +152,16 @@ sap.ui.define([
 			};
 
 			var oMockedAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getManifestEntry: function() {
+				getManifestEntry() {
 					return undefined;
 				},
-				getComponentData: function() {
+				getComponentData() {
 					return oComponentData;
 				},
-				getComponentClassName: function() {
+				getComponentClassName() {
 					return sComponentName;
 				}
 			};

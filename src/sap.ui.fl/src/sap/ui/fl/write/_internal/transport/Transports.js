@@ -51,7 +51,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.write._internal.transport
 		 */
-		getTransports: function(mParameters) {
+		getTransports(mParameters) {
 			if (FlexUtils.getClient()) {
 				mParameters["sap-client"] = FlexUtils.getClient();
 			}
@@ -60,12 +60,8 @@ sap.ui.define([
 			sGetTransportsUrl = decodeURIComponent(sGetTransportsUrl);
 			return InitialUtils.sendRequest(sGetTransportsUrl, "GET").then(function(oResponse) {
 				if (oResponse.response) {
-					if (!oResponse.response.localonly) {
-						oResponse.response.localonly = false;
-					}
-					if (!oResponse.response.errorCode) {
-						oResponse.response.errorCode = "";
-					}
+					oResponse.response.localonly ||= false;
+					oResponse.response.errorCode ||= "";
 					return Promise.resolve(oResponse.response);
 				}
 
@@ -86,7 +82,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.write._internal.transport
 		 */
-		makeChangesTransportable: function(mParameters) {
+		makeChangesTransportable(mParameters) {
 			if (!mParameters.transportId) {
 				return Promise.reject(new Error("no transportId provided as attribute of mParameters"));
 			}
@@ -119,7 +115,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.write._internal.transport
 		 */
-		convertToChangeTransportData: function(aLocalChanges, aAppVariantDescriptors) {
+		convertToChangeTransportData(aLocalChanges, aAppVariantDescriptors) {
 			var aTransportData = [];
 			var i;
 

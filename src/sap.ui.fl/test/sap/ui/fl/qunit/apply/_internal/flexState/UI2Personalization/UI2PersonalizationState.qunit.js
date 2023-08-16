@@ -27,10 +27,10 @@ sap.ui.define([
 	}];
 
 	QUnit.module("getPersonalization", {
-		beforeEach: async function() {
+		async beforeEach() {
 			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {ui2personalization: oFlexStatePers});
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			sandbox.restore();
 		}
@@ -56,11 +56,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("setPersonalization", {
-		beforeEach: async function() {
+		async beforeEach() {
 			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {ui2personalization: oFlexStatePers});
 			this.oLrepConnectorCreateStub = sandbox.stub(LrepConnector.ui2Personalization, "create");
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			sandbox.restore();
 		}
@@ -187,11 +187,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("deletePersonalization", {
-		beforeEach: async function() {
+		async beforeEach() {
 			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {ui2personalization: oFlexStatePers});
 			this.oLrepConnectorRemoveStub = sandbox.stub(LrepConnector.ui2Personalization, "remove");
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			sandbox.restore();
 		}

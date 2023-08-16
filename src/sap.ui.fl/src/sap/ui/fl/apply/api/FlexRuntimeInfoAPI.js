@@ -46,7 +46,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		isPersonalized: function(mPropertyBag) {
+		isPersonalized(mPropertyBag) {
 			function logAndReject(sMessage) {
 				Log.error(sMessage);
 				return Promise.reject(sMessage);
@@ -106,7 +106,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		waitForChanges: function(mPropertyBag) {
+		waitForChanges(mPropertyBag) {
 			var aComplexSelectors;
 			var oFirstElement;
 			if (mPropertyBag.element) {
@@ -120,7 +120,7 @@ sap.ui.define([
 						selector: oSelector
 					};
 				});
-				oFirstElement = mPropertyBag.selectors[0];
+				[oFirstElement] = mPropertyBag.selectors;
 			} else if (mPropertyBag.complexSelectors) {
 				aComplexSelectors = mPropertyBag.complexSelectors;
 				oFirstElement = mPropertyBag.complexSelectors[0].selector;
@@ -138,7 +138,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		isFlexSupported: function(mPropertyBag) {
+		isFlexSupported(mPropertyBag) {
 			return !!Utils.getAppComponentForControl(mPropertyBag.element);
 		},
 
@@ -152,7 +152,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		hasVariantManagement: function(mPropertyBag) {
+		hasVariantManagement(mPropertyBag) {
 			return VariantUtils.belongsToVariantManagement(mPropertyBag.element);
 		},
 
@@ -163,7 +163,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.ManagedObject} mPropertyBag.element - Element or component instance
 		 * @returns {string} Flex reference
 		 */
-		getFlexReference: function(mPropertyBag) {
+		getFlexReference(mPropertyBag) {
 			return ManifestUtils.getFlexReferenceForControl(mPropertyBag.element);
 		}
 	};

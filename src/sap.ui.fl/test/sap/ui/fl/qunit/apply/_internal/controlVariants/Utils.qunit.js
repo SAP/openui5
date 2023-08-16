@@ -63,7 +63,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a view with variant management controls", {
-		before: function(assert) {
+		before(assert) {
 			var done = assert.async();
 			var oViewPromise;
 			var MockComponent = UIComponent.extend("MockController", {
@@ -76,7 +76,7 @@ sap.ui.define([
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					var oApp = new App(this.createId("mockapp"));
 					oViewPromise = XMLView.create({
 						id: this.createId("mockview"),
@@ -95,7 +95,7 @@ sap.ui.define([
 
 			oViewPromise.then(done);
 		},
-		after: function() {
+		after() {
 			this.oComp.destroy();
 			this.oCompContainer.destroy();
 		}

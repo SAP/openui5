@@ -59,7 +59,7 @@ sap.ui.define([
 	// in the code this is done in the command.
 
 	QUnit.module("Given a BaseAddXml Change Handler", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeHandler = BaseAddXml;
 			this.oHBox = new HBox("hbox", {
 				items: [this.oButton]
@@ -84,7 +84,7 @@ sap.ui.define([
 
 			this.oChange = FlexObjectFactory.createFromFileContent(oChangeJson);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oHBox.destroy();
 		}
 	}, function() {
@@ -109,7 +109,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a BaseAddXml Change Handler with JSTreeModifier", {
-		beforeEach: function() {
+		beforeEach() {
 			// general modifier beforeEach (can be extracted as soon as nested modules are supported)
 			this.oChangeHandler = BaseAddXml;
 
@@ -151,13 +151,13 @@ sap.ui.define([
 
 			this.oPropertyBag = {
 				modifier: JsControlTreeModifier, view: {
-					getController: function() {
-					}, getId: function() {
+					getController() {
+					}, getId() {
 					}
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oHBox.destroy();
 		}
 	}, function() {
@@ -232,7 +232,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a BaseAddXml Change Handler with XMLTreeModifier", {
-		beforeEach: function() {
+		beforeEach() {
 			// general modifier beforeEach (can be extracted as soon as nested modules are supported)
 			this.oChangeHandler = BaseAddXml;
 
@@ -284,7 +284,7 @@ sap.ui.define([
 						`</HBox>` +
 					`</mvc:View>`;
 				this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
-				this.oHBox = this.oXmlView.childNodes[0];
+				[this.oHBox] = this.oXmlView.childNodes;
 				this.sAggregationType = "sap.ui.core.Control";
 
 				this.oPropertyBag = {
@@ -294,7 +294,7 @@ sap.ui.define([
 				};
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponent.destroy();
 			sandbox.restore();
 		}

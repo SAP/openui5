@@ -126,12 +126,12 @@ sap.ui.define([
 
 	function prepareChangeDefinitions(sStorageResponseKey, vStorageResponsePart) {
 		var fnPreparation = {
-			comp: function() {
+			comp() {
 				return Object.values(vStorageResponsePart).reduce(function(aChangeDefinitions, oChangeDefinition) {
 					return aChangeDefinitions.concat(oChangeDefinition);
 				}, []);
 			},
-			variants: function() {
+			variants() {
 				return vStorageResponsePart.map(function(oVariant) {
 					var bParentVariantExists = (
 						oVariant.variantReference === oVariant.variantManagementReference
@@ -164,7 +164,7 @@ sap.ui.define([
 		var oComponent = Component.get(mPropertyBag.componentId);
 		mPropertyBag.componentData = mPropertyBag.componentData || (oComponent && oComponent.getComponentData()) || {};
 		mPropertyBag.manifest = mPropertyBag.manifest || mPropertyBag.rawManifest || (oComponent && oComponent.getManifestObject()) || {};
-		mPropertyBag.reference = mPropertyBag.reference || ManifestUtils.getFlexReference(mPropertyBag);
+		mPropertyBag.reference ||= ManifestUtils.getFlexReference(mPropertyBag);
 	}
 
 	function createFlexObjects(oStorageResponse) {
@@ -196,7 +196,7 @@ sap.ui.define([
 	var oFlexObjectsDataSelector = new DataSelector({
 		id: "flexObjects",
 		parameterKey: "reference",
-		executeFunction: function(oData, sReference) {
+		executeFunction(oData, sReference) {
 			if (!_mInstances[sReference]) {
 				return [];
 			}
@@ -450,8 +450,7 @@ sap.ui.define([
 			Utils.getUShellService("URLParsing")
 		])
 		.then(function(aServices) {
-			_oShellNavigationService = aServices[0];
-			_oURLParsingService = aServices[1];
+			[_oShellNavigationService, _oURLParsingService] = aServices;
 		})
 		.catch(function(oError) {
 			Log.error(`Error getting service from Unified Shell: ${oError.message}`);
@@ -681,7 +680,7 @@ sap.ui.define([
 	};
 
 	FlexState.setInitialNonFlCompVariantData = function(sReference, sPersistencyKey, oStandardVariant, aVariants, sSVMControlId) {
-		_mExternalData.compVariants[sReference] = _mExternalData.compVariants[sReference] || {};
+		_mExternalData.compVariants[sReference] ||= {};
 		_mExternalData.compVariants[sReference][sPersistencyKey] = {};
 		_mExternalData.compVariants[sReference][sPersistencyKey].standardVariant = oStandardVariant;
 		_mExternalData.compVariants[sReference][sPersistencyKey].variants = aVariants;
@@ -708,12 +707,8 @@ sap.ui.define([
 	 * @param {object} oFlexObject - Flex object to be added as runtime-steady
 	 */
 	FlexState.addRuntimeSteadyObject = function(sReference, sComponentId, oFlexObject) {
-		if (!_mExternalData.flexObjects[sReference]) {
-			_mExternalData.flexObjects[sReference] = {};
-		}
-		if (!_mExternalData.flexObjects[sReference][sComponentId]) {
-			_mExternalData.flexObjects[sReference][sComponentId] = [];
-		}
+		_mExternalData.flexObjects[sReference] ||= {};
+		_mExternalData.flexObjects[sReference][sComponentId] ||= [];
 		_mExternalData.flexObjects[sReference][sComponentId].push(oFlexObject);
 		oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
 	};

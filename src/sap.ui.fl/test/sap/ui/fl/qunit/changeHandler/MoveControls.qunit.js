@@ -172,10 +172,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a Move Controls Change Handler on jsControlTree", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		beforeEach: function() {
+		beforeEach() {
 			// Test Setup:
 			// VerticalLayout
 			// -- content
@@ -226,7 +226,7 @@ sap.ui.define([
 				false, this.oObjectAttribute.getId(), this.oObjectAttribute2.getId(),
 				this.oObjectHeader.getId(), this.oLayout.getId());
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			sandbox.restore();
 		}
@@ -694,10 +694,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a Move Controls Change Handler on xmlControlTree", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		beforeEach: function() {
+		beforeEach() {
 			// Test Setup:
 			// VerticalLayout
 			// -- content
@@ -733,7 +733,7 @@ sap.ui.define([
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					oViewPromise = XMLView.create({
 						id: this.createId("view"),
 						definition: oXmlString
@@ -765,8 +765,8 @@ sap.ui.define([
 				var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").childNodes[0];
 				this.oXmlView = XMLTemplateProcessor.enrichTemplateIds(oXmlDocument, this.oRootControl);
 
-				this.oXmlLayout = this.oXmlView.childNodes[0].childNodes[0];
-				this.oXmlObjectHeader = this.oXmlLayout.childNodes[0];
+				[this.oXmlLayout] = this.oXmlView.childNodes[0].childNodes;
+				[this.oXmlObjectHeader] = this.oXmlLayout.childNodes;
 
 				this.mSelectorWithLocalId = getSelector(true, myLayoutId);
 				this.mSelectorWithGlobalId = getSelector(false, oGlobalLayoutId);
@@ -776,7 +776,7 @@ sap.ui.define([
 				this.mMultiMoveChangeContentWithGlobalId = getMultiMoveChangeContent(false, oGlobalAttributeId, oGlobalAttribute2Id, oGlobalObjectHeaderId, oGlobalLayoutId);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oUiComponentContainer.destroy();
 			this.oRootControl.destroy();
 			sandbox.restore();
@@ -856,10 +856,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a control with move over different aggregations", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		beforeEach: function() {
+		beforeEach() {
 			// Test Setup:
 			// Bar
 			// -- contentLeft
@@ -885,7 +885,7 @@ sap.ui.define([
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oBar.destroy();
 			sandbox.restore();
 		}

@@ -52,12 +52,14 @@ sap.ui.define([
 			},
 			associations: {
 				object: {
-					type: "sap.ui.core.Element" // Should be an element, because only elements have a `dependents` aggregation to store the object.
+					// Should be an element, because only elements have a `dependents` aggregation to store the object.
+					type: "sap.ui.core.Element"
 				}
 			}
 		},
-		constructor: function() {
-			Element.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			Element.apply(this, aArgs);
 
 			this._oManagedObjectModel = new ManagedObjectModel(
 				sap.ui.getCore().byId(this.getObject()),
@@ -66,14 +68,16 @@ sap.ui.define([
 
 			["data", "name", "object"].forEach(function(sName) {
 				this[`set${capitalize(sName)}`] = function() {
-					throw new Error(`sap.ui.fl.util.ManagedObjectModel: Can't change the value of \`${sName}\` after the object is initialized. Please recreate the object with correct values in the constructor.`);
+					throw new Error(`sap.ui.fl.util.ManagedObjectModel: Can't change the value of \`${sName}\` after the object is `
+						+ `initialized. Please recreate the object with correct values in the constructor.`);
 				};
 			}, this);
 		}
 	});
 
-	ManagedObjectModelFantomas.prototype.setParent = function(oNewParent) {
-		var oOldParent = this.getParent();
+	ManagedObjectModelFantomas.prototype.setParent = function(...aArgs) {
+		const [oNewParent] = aArgs;
+		const oOldParent = this.getParent();
 
 		if (oOldParent) {
 			oOldParent.setModel(null, this.getName());
@@ -83,7 +87,7 @@ sap.ui.define([
 			oNewParent.setModel(this._oManagedObjectModel, this.getName());
 		}
 
-		Element.prototype.setParent.apply(this, arguments);
+		Element.prototype.setParent.apply(this, aArgs);
 	};
 
 	ManagedObjectModelFantomas.prototype.exit = function() {

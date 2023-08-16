@@ -4,7 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.fl.ControllerExtension.testResources.view2", {
-		onInit: function() {
+		onInit() {
 		}
 	});
 });

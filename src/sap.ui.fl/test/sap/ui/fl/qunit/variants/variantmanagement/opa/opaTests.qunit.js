@@ -22,14 +22,14 @@ sap.ui.require([
 		async: false,
 		timeout: 15,
 		arrangements: new Opa5({
-			iStartMyApp: function() {
+			iStartMyApp() {
 				return this.iStartMyAppInAFrame(
 					sap.ui.require.toUrl(
 						"test-resources/sap/ui/fl/qunit/variants/variantmanagement/index.html"
 					)
 				);
 			},
-			iClearTheSessionLRep: function() {
+			iClearTheSessionLRep() {
 				FlexTestAPI.clearStorage("SessionStorage");
 				window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
 				window.sessionStorage.removeItem("sap.ui.rta.restart.USER");

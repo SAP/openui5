@@ -48,7 +48,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.reference reference of the application
 		 * @returns {Promise<Object>} resolving with an object containing a data contained in the changes-bundle
 		 */
-		loadFlexData: function(mPropertyBag) {
+		loadFlexData(mPropertyBag) {
 			return loadDataFromStorage({
 				storage: this.oStorage,
 				reference: mPropertyBag.reference

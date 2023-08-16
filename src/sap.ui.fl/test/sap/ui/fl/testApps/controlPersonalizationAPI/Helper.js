@@ -6,10 +6,10 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/ui/core/library"],
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
+	var {ValueState} = coreLibrary;
 
 	return {
-		formatStatusState: function(aChanges, aControlIds) {
+		formatStatusState(aChanges, aControlIds) {
 			var bParameterMissing = !aChanges || aControlIds.some(
 				function(sControlId) {
 					return !sControlId;
@@ -24,7 +24,7 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/ui/core/library"],
 			});
 		},
 
-		formatStatusText: function(aChanges, aControlIds, sPersonalizationMessage, sNoPersonalizationMessage) {
+		formatStatusText(aChanges, aControlIds, sPersonalizationMessage, sNoPersonalizationMessage) {
 			var bParameterMissing = !aChanges || aControlIds.some(
 				function(sControlId) {
 					return !sControlId;

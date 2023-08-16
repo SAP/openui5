@@ -339,7 +339,7 @@ sap.ui.define([
 		if (!mPropertyBag.version) {
 			return Promise.reject("No version was provided");
 		}
-		mPropertyBag.styleClass = mPropertyBag.styleClass || "";
+		mPropertyBag.styleClass ||= "";
 		mPropertyBag.reference = getFlexReferenceForControl(mPropertyBag.selector);
 
 		return Versions.publish(mPropertyBag);

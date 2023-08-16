@@ -27,7 +27,7 @@ sap.ui.define([
 				 * @param {string} sFlVMId The fl variant management control ID.
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
-				iOpenMyView: function(sFlVMId) {
+				iOpenMyView(sFlVMId) {
 					return Actions.iPressButtonWithID.call(this, `${sFlVMId}-vm-trigger`);
 				},
 
@@ -38,7 +38,7 @@ sap.ui.define([
 				 * @param {string} sFlVMId The fl variant management control ID
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
-				iOpenSaveView: function(sFlVMId) {
+				iOpenSaveView(sFlVMId) {
 					return Actions.iPressButtonWithID.call(this, `${sFlVMId}-vm-saveas`);
 				},
 
@@ -49,7 +49,7 @@ sap.ui.define([
 				 * @param {string} sFlVMId The fl variant management control ID
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
-				iOpenManageViews: function(sFlVMId) {
+				iOpenManageViews(sFlVMId) {
 					return Actions.iPressButtonWithID.call(this, `${sFlVMId}-vm-manage`);
 				},
 
@@ -60,7 +60,7 @@ sap.ui.define([
 				 * @param {string} sFlVMId The fl variant management control ID
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
-				iPressTheManageViewsSave: function(sFlVMId) {
+				iPressTheManageViewsSave(sFlVMId) {
 					return Actions.iPressButtonWithID.call(this, `${sFlVMId}-vm-managementsave`);
 				},
 
@@ -71,7 +71,7 @@ sap.ui.define([
 				 * @param {string} sFlVMId The fl variant management control ID
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
-				iPressTheManageViewsCancel: function(sFlVMId) {
+				iPressTheManageViewsCancel(sFlVMId) {
 					return Actions.iPressButtonWithID.call(this, `${sFlVMId}-vm-managementcancel`);
 				},
 
@@ -84,7 +84,7 @@ sap.ui.define([
 				 * @param {boolean} bValue The state of the Favorite checkbox
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
-				iSetFavoriteVariant: function(sVariantName, bValue) {
+				iSetFavoriteVariant(sVariantName, bValue) {
 					return Actions.iSetFavoriteVariant.call(this, sVariantName, bValue);
 				},
 
@@ -97,7 +97,7 @@ sap.ui.define([
 				 * @param {string} sNewVariantName The new name of a variant
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
-				iRenameVariant: function(sOriginalVariantName, sNewVariantName) {
+				iRenameVariant(sOriginalVariantName, sNewVariantName) {
 					return Actions.iRenameVariant.call(this, sOriginalVariantName, sNewVariantName);
 				},
 
@@ -109,7 +109,7 @@ sap.ui.define([
 				 * @param {string} sVariantName The name of the new default variant
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
-				iSetDefaultVariant: function(sVariantName) {
+				iSetDefaultVariant(sVariantName) {
 					return Actions.iSetDefaultVariant.call(this, sVariantName);
 				},
 
@@ -121,7 +121,7 @@ sap.ui.define([
 				 * @param {string} sVariantName The name of the new default variant
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
-				iRemoveVariant: function(sVariantName) {
+				iRemoveVariant(sVariantName) {
 					return Actions.iRemoveVariant.call(this, sVariantName);
 				},
 
@@ -134,7 +134,7 @@ sap.ui.define([
 				 * @param {boolean} bApplyAuto The Apply Automatically checkbox for the variant
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
-				iApplyAutomaticallyVariant: function(sVariantName, bApplyAuto) {
+				iApplyAutomaticallyVariant(sVariantName, bApplyAuto) {
 					return Actions.iApplyAutomaticallyVariant.call(this, sVariantName, bApplyAuto);
 				},
 
@@ -149,7 +149,7 @@ sap.ui.define([
 				 * @param {boolean} bPublic The Public information for the variant
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 */
-				iCreateNewVariant: function(sFlVMId, sVariantTitle, bDefault, bApplyAuto, bPublic) {
+				iCreateNewVariant(sFlVMId, sVariantTitle, bDefault, bApplyAuto, bPublic) {
 					return Actions.iCreateNewVariant.call(this, sFlVMId, sVariantTitle, bDefault, bApplyAuto, bPublic);
 				}
 			},
@@ -163,7 +163,7 @@ sap.ui.define([
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 * @public
 				 */
-				theVariantShouldBeDisplayed: function(sFlVMId, sVariantTitle) {
+				theVariantShouldBeDisplayed(sFlVMId, sVariantTitle) {
 					return Assertions.theVariantShouldBeDisplayed.call(this, sFlVMId, sVariantTitle);
 				},
 
@@ -176,7 +176,7 @@ sap.ui.define([
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 * @public
 				 */
-				theMyViewShouldContain: function(sFlVMId, aVariantNames) {
+				theMyViewShouldContain(sFlVMId, aVariantNames) {
 					return Assertions.theMyViewShouldContain.call(this, sFlVMId, aVariantNames);
 				},
 
@@ -187,7 +187,7 @@ sap.ui.define([
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 * @public
 				 */
-				theOpenSaveViewDialog: function(sFlVMId) {
+				theOpenSaveViewDialog(sFlVMId) {
 					return Assertions.theOpenDialog.call(this, `${sFlVMId}-vm-savedialog`);
 				},
 
@@ -198,7 +198,7 @@ sap.ui.define([
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 * @public
 				 */
-				theOpenManageViewsDialog: function(sFlVMId) {
+				theOpenManageViewsDialog(sFlVMId) {
 					return Assertions.theOpenDialog.call(this, `${sFlVMId}-vm-managementdialog`);
 				},
 
@@ -210,7 +210,7 @@ sap.ui.define([
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 * @public
 				 */
-				theOpenManageViewsDialogTitleShouldContain: function(aVariantNames) {
+				theOpenManageViewsDialogTitleShouldContain(aVariantNames) {
 					return Assertions.theOpenManageViewsDialogTitleShouldContain.call(this, aVariantNames);
 				},
 
@@ -222,7 +222,7 @@ sap.ui.define([
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 * @public
 				 */
-				theOpenManageViewsDialogFavoritesShouldContain: function(aVariantFavorites) {
+				theOpenManageViewsDialogFavoritesShouldContain(aVariantFavorites) {
 					return Assertions.theOpenManageViewsDialogFavoritesShouldContain.call(this, aVariantFavorites);
 				},
 
@@ -234,7 +234,7 @@ sap.ui.define([
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 * @public
 				 */
-				theOpenManageViewsDialogApplyAutomaticallyShouldContain: function(aVariantApplayAutos) {
+				theOpenManageViewsDialogApplyAutomaticallyShouldContain(aVariantApplayAutos) {
 					return Assertions.theOpenManageViewsDialogApplyAutomaticallyShouldContain.call(this, aVariantApplayAutos);
 				},
 
@@ -246,7 +246,7 @@ sap.ui.define([
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 * @public
 				 */
-				theOpenManageViewsDialogSharingShouldContain: function(aVariantSharing) {
+				theOpenManageViewsDialogSharingShouldContain(aVariantSharing) {
 					return Assertions.theOpenManageViewsDialogSharingShouldContain.call(this, aVariantSharing);
 				},
 
@@ -258,7 +258,7 @@ sap.ui.define([
 				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 				 * @public
 				 */
-				theOpenManageViewsDialogDefaultShouldBe: function(sVariantName) {
+				theOpenManageViewsDialogDefaultShouldBe(sVariantName) {
 					return Assertions.theOpenManageViewsDialogDefaultShouldBe.call(this, sVariantName);
 				}
 			}

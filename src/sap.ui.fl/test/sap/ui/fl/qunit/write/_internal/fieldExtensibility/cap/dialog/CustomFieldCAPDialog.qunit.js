@@ -32,8 +32,9 @@ sap.ui.define([
 			sandbox.stub(oCAPDialog, "setProperty")
 			.callThrough()
 			.withArgs("_dialog")
-			.callsFake(function(sPropertyName, oDialog) {
-				oCAPDialog.setProperty.wrappedMethod.apply(this, arguments);
+			.callsFake(function(...aArgs) {
+				const [, oDialog] = aArgs;
+				oCAPDialog.setProperty.wrappedMethod.apply(this, aArgs);
 				oDialog.attachEventOnce("afterOpen", function() {
 					resolve(oDialog);
 				});
@@ -42,10 +43,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("Custom field dialog", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oCAPDialog = new CustomFieldCAPDialog();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oCAPDialog.destroy();
 			sandbox.restore();
 		}
@@ -101,7 +102,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Custom field creation", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oCAPDialog = new CustomFieldCAPDialog();
 			var oDialogPromise = waitForDialog(this.oCAPDialog);
 			this.oCAPDialog.open(oSampleEntityTypeInfo);
@@ -119,7 +120,7 @@ sap.ui.define([
 				return this.oCAPDialog._oEditor.ready();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oCAPDialog.destroy();
 			sandbox.restore();
 		}

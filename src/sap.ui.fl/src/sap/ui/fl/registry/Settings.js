@@ -136,9 +136,7 @@ sap.ui.define([
 	 *
 	 */
 	Settings._storeInstance = function(oSettings) {
-		if (!Settings._instance) {
-			Settings._instance = new Settings(oSettings);
-		}
+		Settings._instance ||= new Settings(oSettings);
 		return Settings._instance;
 	};
 

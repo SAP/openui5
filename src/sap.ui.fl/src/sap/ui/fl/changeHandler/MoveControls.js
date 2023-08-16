@@ -421,15 +421,15 @@ function(
 			sourceIndex: oRevertData.index,
 			sourceAggregation: oRevertData.aggregation,
 			targetAggregation: oChangeContent.target.selector.aggregation,
-			setTargetIndex: function(oChange, iNewTargetIndex) {
+			setTargetIndex(oChange, iNewTargetIndex) {
 				var oChangeContent = oChange.getContent();
 				oChangeContent.movedElements[0].targetIndex = iNewTargetIndex;
 				oChange.setContent(oChangeContent);
 			},
-			getTargetIndex: function(oChange) {
+			getTargetIndex(oChange) {
 				return oChange.getContent().movedElements[0].targetIndex;
 			},
-			setIndexInRevertData: function(oChange, iIndex) {
+			setIndexInRevertData(oChange, iIndex) {
 				var aRevertData = oChange.getRevertData();
 				aRevertData[0].index = iIndex;
 				oChange.setRevertData(aRevertData);

@@ -37,7 +37,7 @@ sap.ui.define([
 					sControlId = vRevertData;
 				} else {
 					sControlId = vRevertData.id;
-					sAggregationName = sAggregationName || vRevertData.aggregationName;
+					sAggregationName ||= vRevertData.aggregationName;
 				}
 				// when we apply the change in XML and revert in JS, the saved ID is not yet concatenated with the view
 				return oModifier.bySelector(sControlId, oAppComponent, oView) || oView && oView.createId && oModifier.bySelector(oView.createId(sControlId));

@@ -29,13 +29,13 @@ sap.ui.define([
 		oServer: null,
 		sServiceUri: "/sap/opu/odata/sap/C_CFDTSM_BUPA/",
 
-		before: function() {
+		before() {
 			this. oCrossApp = {
 				mIntents: {},
-				hrefForExternal: function(mIntentWithParameter) {
+				hrefForExternal(mIntentWithParameter) {
 					return JSON.stringify(mIntentWithParameter);
 				},
-				isNavigationSupported: function(aIntents) {
+				isNavigationSupported(aIntents) {
 					var aResults = aIntents.map(function(oIntent) {
 						return {
 							supported: this.mIntents[oIntent.semanticObject] || false
@@ -47,7 +47,7 @@ sap.ui.define([
 			this.oSandbox = sinon.createSandbox();
 		},
 
-		beforeEach: function() {
+		beforeEach() {
 			this.oGetTextStub = this.oSandbox.stub(Utils, "getText").callsFake(function(sTextKey) {
 				return sTextKey;
 			});
@@ -56,7 +56,7 @@ sap.ui.define([
 			this.oServer.autoRespond = true;
 		},
 
-		afterEach: function() {
+		afterEach() {
 			this.oSandbox.restore();
 			this.oServer.restore();
 		}

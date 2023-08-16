@@ -60,14 +60,14 @@ sap.ui.define([
 	};
 
 	QUnit.module("UIChange Creation", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				getUserId: function() {
+				getUserId() {
 					return "userId";
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -112,9 +112,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("ApplyState handling", {
-		beforeEach: function() {
+		beforeEach() {
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -249,7 +249,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Dependent Selector handling", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oControl = new Control("myId");
 			this.oControl2 = new Control("myId2");
 			this.oUIChange = FlexObjectFactory.createUIChange(Object.assign({}, oFileContent));
@@ -257,7 +257,7 @@ sap.ui.define([
 				modifier: JsControlTreeModifier
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oControl.destroy();
 			this.oControl2.destroy();
 			this.oUIChange.destroy();

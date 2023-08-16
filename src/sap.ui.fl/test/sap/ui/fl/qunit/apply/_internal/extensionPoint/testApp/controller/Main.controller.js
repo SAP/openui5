@@ -4,7 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	var MainController = Controller.extend("sap.ui.fl.qunit.extensionPoint.testApp.controller.Main", {
-		onInit: function() {
+		onInit() {
 			// set explored app's demo model on this sample
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/fl/qunit/extensionPoint/testApp/mock/products.json"));
 			this.getView().setModel(oModel);

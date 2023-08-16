@@ -43,10 +43,10 @@ sap.ui.define([
 	var mPropertyBag = {modifier: JsControlTreeModifier, appComponent: oComponent};
 
 	QUnit.module("Given that update change handlers for an IFrame is created", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oIFrame = new IFrame(oComponent.createId("iframe"), {
 				width: sDefaultSize,
 				height: sDefaultSize,
@@ -79,7 +79,7 @@ sap.ui.define([
 			this.oChange = new UIChange(oChangeJson);
 			return this.oIFrame._oSetUrlPromise;
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oIFrame.destroy();
 			this.oModel.destroy();
 			sandbox.restore();
@@ -175,8 +175,8 @@ sap.ui.define([
 
 			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
 			this.oXmlView = oXmlDocument.documentElement;
-			this.oXmlLayout = this.oXmlView.childNodes[0];
-			this.oXmlIFrame = this.oXmlLayout.childNodes[0].childNodes[0];
+			[this.oXmlLayout] = this.oXmlView.childNodes;
+			[this.oXmlIFrame] = this.oXmlLayout.childNodes[0].childNodes;
 			UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
 
 			return UpdateIFrame.applyChange(this.oChange, this.oXmlIFrame, {modifier: XmlTreeModifier})

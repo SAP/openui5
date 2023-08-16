@@ -98,9 +98,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.model.json.JSONModel>} Model of adaptations enhanced with additional properties
 	 */
 	ContextBasedAdaptationsAPI.initialize = function(mPropertyBag) {
-		if (!_oResourceBundle) {
-			_oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
-		}
+		_oResourceBundle ||= sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}
@@ -135,8 +133,8 @@ sap.ui.define([
 			return ContextBasedAdaptationsAPI.createModel(oAdaptations.adaptations, oDisplayedAdaptation, bContextBasedAdaptationsEnabled);
 		})
 		.then(function(oModel) {
-			_mInstances[sReference] = _mInstances[sReference] || {};
-			_mInstances[sReference][sLayer] = _mInstances[sReference][sLayer] || {};
+			_mInstances[sReference] ||= {};
+			_mInstances[sReference][sLayer] ||= {};
 			_mInstances[sReference][sLayer] = oModel;
 			return _mInstances[sReference][sLayer];
 		});
@@ -958,9 +956,7 @@ sap.ui.define([
 			appId: mPropertyBag.appId,
 			version: getParentVersion(mPropertyBag)
 		}).then(function(oAdaptations) {
-			if (!oAdaptations) {
-				oAdaptations = { adaptations: [] };
-			}
+			oAdaptations ||= { adaptations: [] };
 			return oAdaptations;
 		});
 	};

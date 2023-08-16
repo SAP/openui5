@@ -28,9 +28,9 @@ sap.ui.define([
 	var sUrl = "testURL";
 
 	QUnit.module("Given a AddIFrame Change Handler", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oMockedAppComponent = {
-				getLocalId: function() {
+				getLocalId() {
 					return undefined;
 				}
 			};
@@ -79,7 +79,7 @@ sap.ui.define([
 				appComponent: this.oMockedAppComponent
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oHBox.destroy();
 		}
 	}, function() {
@@ -98,9 +98,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddIFrame Change Handler with JSTreeModifier", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oMockedAppComponent = {
-				getLocalId: function() {
+				getLocalId() {
 					return undefined;
 				}
 			};
@@ -149,16 +149,16 @@ sap.ui.define([
 			this.mPropertyBag = {
 				modifier: JsControlTreeModifier,
 				view: {
-					getController: function() {},
-					getId: function() {},
-					createId: function(sId) { return sId; }
+					getController() {},
+					getId() {},
+					createId(sId) { return sId; }
 				},
 				appComponent: this.oMockedAppComponent
 			};
 
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oHBox.destroy();
 		}
 	}, function() {
@@ -211,7 +211,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddIFrame Change Handler with XMLTreeModifier", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeHandler = AddIFrame;
 			this.sHBoxId = "hbx";
 			var mExpectedSelector = {
@@ -254,7 +254,7 @@ sap.ui.define([
 					`</HBox>` +
 					`</mvc:View>`;
 				this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
-				this.oHBox = this.oXmlView.childNodes[0];
+				[this.oHBox] = this.oXmlView.childNodes;
 
 				this.mPropertyBag = {
 					modifier: XmlTreeModifier,
@@ -265,7 +265,7 @@ sap.ui.define([
 				this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponent.destroy();
 		}
 	}, function() {

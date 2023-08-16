@@ -185,9 +185,7 @@ sap.ui.define([
 		}
 
 		mPropertyBag.appComponent = Utils.getAppComponentForSelector(mPropertyBag.element);
-		if (!mPropertyBag.modifier) {
-			mPropertyBag.modifier = JsControlTreeModifier;
-		}
+		mPropertyBag.modifier ||= JsControlTreeModifier;
 		// TODO: Descriptor apply function
 		return Applier.applyChangeOnControl(mPropertyBag.change, mPropertyBag.element, _omit(mPropertyBag, ["element", "change"]))
 		.then(function(oResult) {

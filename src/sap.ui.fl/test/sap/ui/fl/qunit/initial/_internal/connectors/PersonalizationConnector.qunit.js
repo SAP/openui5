@@ -26,11 +26,11 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given Personalization connector with a fake XHR", {
-		beforeEach: function() {
+		beforeEach() {
 			this.xhr = sandbox.useFakeXMLHttpRequest();
 			mockResponse.call(this, '{"changes":[]}');
 		},
-		afterEach: function() {
+		afterEach() {
 			PersonalizationConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}

@@ -36,11 +36,11 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a getReloadReasonsForStart is called on RTA start,", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(null);
 			this.oCheckSVMStub = sandbox.stub(CompVariantState, "checkSVMControlsForDirty").returns(false);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			window.sessionStorage.removeItem("sap.ui.fl.info.true");
 		}
@@ -334,7 +334,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that getReloadMethod is called in FLP", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRELOAD = {
 				NOT_NEEDED: "NO_RELOAD",
 				RELOAD_PAGE: "HARD_RELOAD",
@@ -344,7 +344,7 @@ sap.ui.define([
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(null);
 			window.sessionStorage.removeItem("sap.ui.fl.info.true");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -457,7 +457,7 @@ sap.ui.define([
 				versioningEnabled: true,
 				activeVersion: "2",
 				URLParsingService: {
-					parseShellHash: function() {
+					parseShellHash() {
 						return {
 							params: {
 								"sap-ui-fl-version": ["2"]
@@ -632,7 +632,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that initialDraftGotActivated is called", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRELOAD = {
 				NOT_NEEDED: "NO_RELOAD",
 				RELOAD_PAGE: "HARD_RELOAD",
@@ -640,7 +640,7 @@ sap.ui.define([
 			};
 			sandbox.stub(FlexUtils, "getUshellContainer").returns(false);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -698,9 +698,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a hasVersionParameterWithValue is called in FLP and the version parameter is in the hash", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oURLParsingService = {
-				parseShellHash: function() {
+				parseShellHash() {
 					return {
 						params: {
 							"sap-ui-fl-version": [Version.Number.Draft]
@@ -709,7 +709,7 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -725,9 +725,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a hasMaxLayerParameterWithValue is called in FLP and the version parameter is in the hash", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oURLParsingService = {
-				parseShellHash: function() {
+				parseShellHash() {
 					return {
 						params: {
 							"sap-ui-fl-max-layer": [Layer.CUSTOMER]
@@ -736,7 +736,7 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -752,9 +752,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a hasVersionParameterWithValue is called in FLP and the version parameter is not in the hash", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oURLParsingService = {
-				parseShellHash: function() {
+				parseShellHash() {
 					return {
 						params: {
 						}
@@ -762,7 +762,7 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -778,7 +778,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that removeInfoSessionStorage is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -837,13 +837,13 @@ sap.ui.define([
 	["flp", "standalone"].forEach(function(sScenario) {
 		var sName = `${sScenario}: handleParametersOnStart - `;
 		QUnit.module(sName, {
-			beforeEach: function() {
+			beforeEach() {
 				this.oReloadInfo = {
 					parameters: sScenario === "flp" ? {} : "",
 					layer: Layer.CUSTOMER
 				};
 			},
-			afterEach: function() {
+			afterEach() {
 				sandbox.restore();
 			}
 		}, function() {
@@ -878,7 +878,7 @@ sap.ui.define([
 
 		var sName2 = `${sScenario}: handleUrlParameters - `;
 		QUnit.module(sName2, {
-			beforeEach: function() {
+			beforeEach() {
 				this.oReloadInfo = {
 					parameters: sScenario === "flp" ? {} : "",
 					layer: Layer.CUSTOMER
@@ -887,7 +887,7 @@ sap.ui.define([
 					return UriParameters.fromQuery.wrappedMethod(this.oReloadInfo.parameters);
 				}.bind(this));
 			},
-			afterEach: function() {
+			afterEach() {
 				sandbox.restore();
 			}
 		}, function() {
@@ -1008,9 +1008,9 @@ sap.ui.define([
 		var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves();
 		sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 		return {
-			oReloadInfo: oReloadInfo,
-			oHasHigherLayerChangesAPIStub: oHasHigherLayerChangesAPIStub,
-			oGetResetAndPublishInfoAPIStub: oGetResetAndPublishInfoAPIStub
+			oReloadInfo,
+			oHasHigherLayerChangesAPIStub,
+			oGetResetAndPublishInfoAPIStub
 		};
 	}
 });

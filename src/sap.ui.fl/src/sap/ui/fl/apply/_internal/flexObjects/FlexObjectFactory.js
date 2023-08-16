@@ -138,11 +138,9 @@ sap.ui.define([
 	};
 
 	FlexObjectFactory.createUIChange = function(mPropertyBag) {
-		mPropertyBag.packageName = mPropertyBag.packageName || "$TMP";
+		mPropertyBag.packageName ||= "$TMP";
 		var mProperties = createBasePropertyBag(mPropertyBag);
-		if (!mProperties.layer) {
-			mProperties.layer = mPropertyBag.isUserDependent ? Layer.USER : LayerUtils.getCurrentLayer();
-		}
+		mProperties.layer ||= mPropertyBag.isUserDependent ? Layer.USER : LayerUtils.getCurrentLayer();
 		mProperties.selector = mPropertyBag.selector;
 		mProperties.jsOnly = mPropertyBag.jsOnly;
 		mProperties.variantReference = mPropertyBag.variantReference;
@@ -152,7 +150,7 @@ sap.ui.define([
 	};
 
 	FlexObjectFactory.createAppDescriptorChange = function(mPropertyBag) {
-		mPropertyBag.compositeCommand = mPropertyBag.compositeCommand || mPropertyBag.support && mPropertyBag.support.compositeCommand;
+		mPropertyBag.compositeCommand ||= mPropertyBag.support && mPropertyBag.support.compositeCommand;
 		var mProperties = createBasePropertyBag(mPropertyBag);
 		return new AppDescriptorChange(mProperties);
 	};
@@ -170,7 +168,7 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.ControllerExtensionChange} Created ControllerExtensionChange instance
 	 */
 	FlexObjectFactory.createControllerExtensionChange = function(mPropertyBag) {
-		mPropertyBag.generator = mPropertyBag.generator || "FlexObjectFactory.createControllerExtensionChange";
+		mPropertyBag.generator ||= "FlexObjectFactory.createControllerExtensionChange";
 		mPropertyBag.changeType = "codeExt";
 		mPropertyBag.content = {
 			codeRef: mPropertyBag.codeRef
@@ -198,7 +196,7 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlVariant} Variant instance
 	 */
 	FlexObjectFactory.createFlVariant = function(mPropertyBag) {
-		mPropertyBag.generator = mPropertyBag.generator || "FlexObjectFactory.createFlVariant";
+		mPropertyBag.generator ||= "FlexObjectFactory.createFlVariant";
 		var mProperties = createBasePropertyBag(mPropertyBag);
 		mProperties.variantManagementReference = mPropertyBag.variantManagementReference;
 		mProperties.variantReference = mPropertyBag.variantReference;
@@ -244,7 +242,7 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} Created comp variant object
 	 */
 	FlexObjectFactory.createCompVariant = function(oFileContent) {
-		oFileContent.generator = oFileContent.generator || "FlexObjectFactory.createCompVariant";
+		oFileContent.generator ||= "FlexObjectFactory.createCompVariant";
 		oFileContent.user = ObjectPath.get("support.user", oFileContent);
 		var mCompVariantContent = createBasePropertyBag(oFileContent);
 

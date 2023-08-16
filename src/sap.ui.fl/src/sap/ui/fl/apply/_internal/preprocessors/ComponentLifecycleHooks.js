@@ -219,8 +219,8 @@ sap.ui.define([
 	 * @param {object} vConfig - Configuration of loaded component
 	 * @returns {Promise} Promise which resolves when all relevant tasks for changes propagation have been processed
 	 */
-	ComponentLifecycleHooks.instanceCreatedHook = function() {
-		return getChangesAndPropagate.apply(undefined, arguments);
+	ComponentLifecycleHooks.instanceCreatedHook = function(...aArgs) {
+		return getChangesAndPropagate(...aArgs);
 	};
 
 	/**
@@ -233,8 +233,8 @@ sap.ui.define([
 	 * @param {object} oManifest - Copy of the manifest of loaded component
 	 * @returns {Promise} Resolves after all Manifest changes are applied
 	 */
-	ComponentLifecycleHooks.componentLoadedHook = function() {
-		return onLoadComponent.apply(undefined, arguments);
+	ComponentLifecycleHooks.componentLoadedHook = function(...aArgs) {
+		return onLoadComponent(...aArgs);
 	};
 
 	return ComponentLifecycleHooks;

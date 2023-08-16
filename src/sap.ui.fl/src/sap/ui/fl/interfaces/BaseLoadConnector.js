@@ -29,7 +29,7 @@ sap.ui.define([], function() {
 		 * @private
 		 * @ui5-restricted SAP Web IDE (Visual Editor), UX Tools
 		 */
-		loadFlexData: function(/* mPropertyBag */) {
+		loadFlexData(/* mPropertyBag */) {
 			return Promise.reject("loadFlexData is not implemented");
 		}
 	};

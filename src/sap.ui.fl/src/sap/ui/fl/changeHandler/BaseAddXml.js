@@ -153,7 +153,7 @@ sap.ui.define([
 	 * @name sap.ui.fl.changeHandler.BaseAddXml#completeChangeContent
 	 */
 	BaseAddXml.completeChangeContent = function(oChange, oSpecificChangeInfo, oContent) {
-		oContent = oContent || {};
+		oContent ||= {};
 		if (oSpecificChangeInfo.fragmentPath) {
 			oContent.fragmentPath = oSpecificChangeInfo.fragmentPath;
 		} else {

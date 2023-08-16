@@ -21,20 +21,20 @@ sap.ui.define([
 
 	function getURLParsingService(mParsedShellHash) {
 		return {
-			getHash: function() {
+			getHash() {
 				return "";
 			},
-			parseShellHash: function() {
+			parseShellHash() {
 				return mParsedShellHash;
 			}
 		};
 	}
 
 	QUnit.module("sap.ui.fl.LayerUtils", {
-		beforeEach: function() {
+		beforeEach() {
 			Settings._instance = new Settings({});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -116,10 +116,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("LayerUtils.isLayerFilteringRequired", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oURLParsingService = getURLParsingService();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -137,10 +137,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("LayerUtils.isOverMaxLayer", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oURLParsingService = getURLParsingService();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -178,10 +178,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("LayerUtils.getMaxLayer", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oURLParsingService = getURLParsingService();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -206,7 +206,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LayerUtils.doesCurrentLayerRequirePackage", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -242,7 +242,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LayerUtils.filterChangeDefinitionsByMaxLayer", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -281,7 +281,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer", {
-		beforeEach: function() {
+		beforeEach() {
 			this.vChanges = [
 				{layer: Layer.USER},
 				{layer: Layer.CUSTOMER},

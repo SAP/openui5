@@ -28,11 +28,11 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("SmartVariantManagementApplyAPI", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = new UIComponent("AppComponent21");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			if (this.oControl) {
 				this.oControl.destroy();
@@ -286,12 +286,12 @@ sap.ui.define([
 	 * @deprecated Since version 1.86
 	 */
 	QUnit.module("SmartVariantManagementApplyAPI.getDefaultVariantId", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = new UIComponent("AppComponent21");
 			this.oControl = new Control("controlId1");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState("sap.ui.core");
 			this.oControl.destroy();
 			this.oAppComponent.destroy();

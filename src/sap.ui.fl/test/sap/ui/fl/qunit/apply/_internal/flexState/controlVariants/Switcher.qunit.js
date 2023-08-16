@@ -20,22 +20,22 @@ sap.ui.define([
 	QUnit.dump.maxDepth = 20;
 
 	QUnit.module("Given Switcher.switchVariant()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangesMap = {
 				mChanges: {
 					control1: [{
-						getId: function() {
+						getId() {
 							return "change1";
 						},
 						id: "change1"
 					}],
 					control2: [{
-						getId: function() {
+						getId() {
 							return "change2";
 						},
 						id: "change2"
 					}, {
-						getId: function() {
+						getId() {
 							return "change3";
 						},
 						id: "change3"
@@ -80,7 +80,7 @@ sap.ui.define([
 			))
 			.returns(this.aTargetControlChangesForVariant);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

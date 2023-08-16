@@ -28,7 +28,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Preprocessor", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oConfig = {
 				componentData: {},
 				asyncHints: {},
@@ -52,7 +52,7 @@ sap.ui.define([
 
 			this.fnStorageStub = sandbox.stub(Storage, "loadFlexData");
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			sandbox.restore();
 		}
@@ -151,7 +151,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Applier", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oConfig = {
 				componentData: {},
 				asyncHints: {},
@@ -163,7 +163,7 @@ sap.ui.define([
 			this.fnApplyChangeSpy = sandbox.spy(AddLibrary, "applyChange");
 			this.fnApplierUtilsSpy = sandbox.spy(Applier, "applyChanges");
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			sandbox.restore();
 		}
@@ -231,7 +231,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Preprocessor", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			fetch("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
 			.then(function(oTestApplierManifestResponse) {
@@ -245,7 +245,7 @@ sap.ui.define([
 			this.fnFlexStateStub = sandbox.stub(FlexState, "initialize").resolves();
 			this.fnGetAppDescriptorChangesSpy = sandbox.stub(FlexState, "getAppDescriptorChanges").returns([]);
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			sandbox.restore();
 		}

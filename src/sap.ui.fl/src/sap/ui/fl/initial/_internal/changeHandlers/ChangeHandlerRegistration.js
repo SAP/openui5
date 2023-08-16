@@ -88,7 +88,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise} Returns an empty promise when all changeHandlers from all libraries are registered.
 		 */
-		getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs: function() {
+		getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs() {
 			var oAlreadyLoadedLibraries = Core.getLoadedLibraries();
 			Core.attachLibraryChanged(handleLibraryRegistrationAfterFlexLibraryIsLoaded);
 			var aPromises = [];
@@ -102,7 +102,7 @@ sap.ui.define([
 			return Promise.all(aPromises);
 		},
 
-		waitForChangeHandlerRegistration: function(sKey) {
+		waitForChangeHandlerRegistration(sKey) {
 			if (mRegistrationPromises[sKey]) {
 				return mRegistrationPromises[sKey].catch(function() {});
 			}
@@ -113,7 +113,7 @@ sap.ui.define([
 		 * Registers the predefined change handlers to the <code>ChangeHandlerStorage</code>.
 		 * This includes both default (e.g. <code>UnhideControl</code> or <code>MoveControls</code>) and <code>DeveloperMode</code> change handlers (e.g. <code>AddXML</code> or <code>propertyChange</code>)
 		 */
-		registerPredefinedChangeHandlers: function() {
+		registerPredefinedChangeHandlers() {
 			ChangeHandlerStorage.registerPredefinedChangeHandlers(mDefaultHandlers, mDeveloperModeHandlers);
 		}
 	};

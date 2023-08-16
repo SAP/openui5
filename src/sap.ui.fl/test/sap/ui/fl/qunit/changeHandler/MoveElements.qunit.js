@@ -37,10 +37,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a Move Elements Change Handler", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		beforeEach: function() {
+		beforeEach() {
 			// Test Setup:
 			// VerticalLayout
 			// -- content
@@ -81,9 +81,8 @@ sap.ui.define([
 			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
 
 			this.oXmlView = oXmlDocument.documentElement;
-			this.oXmlLayout = this.oXmlView.childNodes[0];
-			this.oXmlObjectHeader = this.oXmlLayout.childNodes[0].childNodes[0];
-			this.oXmlButton = this.oXmlLayout.childNodes[0].childNodes[1];
+			[this.oXmlLayout] = this.oXmlView.childNodes;
+			[this.oXmlObjectHeader, this.oXmlButton] = this.oXmlLayout.childNodes[0].childNodes;
 
 			this.mSelectorWithLocalId = {
 				id: "myObjectHeader",
@@ -187,7 +186,7 @@ sap.ui.define([
 			};
 		},
 
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			sandbox.restore();
 		}
@@ -202,10 +201,12 @@ sap.ui.define([
 		return MoveElements.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent})
 		.then(function() {
 			assert.equal(this.oObjectHeader.getAttributes().length, 1, "object attribute is removed from the header");
-			assert.equal(this.oObjectHeader.getAttributes()[0].getId(), this.oObjectAttribute2.getId(), "object attribute 2 is still in the header");
+			assert.equal(this.oObjectHeader.getAttributes()[0].getId(), this.oObjectAttribute2.getId(),
+				"object attribute 2 is still in the header");
 			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
 			assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
-			assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
+			assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(),
+				"object attribute is inserted at the 3. position");
 		}.bind(this));
 	});
 

@@ -26,7 +26,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given sap.ui.fl.apply._internal.flexObjects.CompVariant.constructor is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -108,7 +108,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given 'CompVariant' created by FlexObjectFactory.createCompVariant", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -527,7 +527,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given isEditEnabled/isRenameEnabled/isDeleteEnabled is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -616,7 +616,7 @@ sap.ui.define([
 				stubCurrentUser(mTestSetup.currentUser);
 				if (mTestSetup.sapUiLayerUrlParameter) {
 					sandbox.stub(UriParameters, "fromQuery").returns({
-						get: function() {
+						get() {
 							return mTestSetup.sapUiLayerUrlParameter;
 						}
 					});

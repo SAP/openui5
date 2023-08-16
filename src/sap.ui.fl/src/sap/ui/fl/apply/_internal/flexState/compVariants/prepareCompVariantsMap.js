@@ -16,7 +16,7 @@ sap.ui.define([
 	"use strict";
 
 	function getOrCreate(mMap, sPersistencyKey) {
-		mMap[sPersistencyKey] = mMap[sPersistencyKey] || {
+		mMap[sPersistencyKey] ||= {
 			byId: {},
 			variants: [],
 			nonPersistedVariants: [],
@@ -30,7 +30,7 @@ sap.ui.define([
 	}
 
 	function initialize(mMap, sPersistencyKey, aVariants, sSVMControlId) {
-		aVariants = aVariants || [];
+		aVariants ||= [];
 		var mMapOfKey = getOrCreate(mMap, sPersistencyKey);
 		mMapOfKey.controlId = sSVMControlId;
 

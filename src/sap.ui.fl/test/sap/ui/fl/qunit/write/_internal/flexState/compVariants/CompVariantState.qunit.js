@@ -52,7 +52,7 @@ sap.ui.define([
 	var oComponent = new UIComponent(sComponentId);
 
 	QUnit.module("add", {
-		beforeEach: function() {
+		beforeEach() {
 			return Settings.getInstance()
 			.then(function() {
 				return FlexState.initialize({
@@ -61,7 +61,7 @@ sap.ui.define([
 				});
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState(sComponentId);
 			sandbox.restore();
 		}
@@ -244,8 +244,8 @@ sap.ui.define([
 
 		QUnit.test("also stores passed executeOnSelection, favorite, contexts and author", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				getUserId: function() {return "test user";},
-				isPublicLayerAvailable: function() {return false;}
+				getUserId() {return "test user";},
+				isPublicLayerAvailable() {return false;}
 			});
 			var sPersistencyKey = "persistency.key";
 			sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
@@ -286,7 +286,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("persist", {
-		beforeEach: function() {
+		beforeEach() {
 			FlexState.clearState(sComponentId);
 
 			return Promise.all([
@@ -297,7 +297,7 @@ sap.ui.define([
 				Settings.getInstance()
 			]);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -519,18 +519,18 @@ sap.ui.define([
 	});
 
 	QUnit.module("setDefault", {
-		before: function() {
+		before() {
 			this.sPersistencyKey = "persistency.key";
 			this.sVariantId1 = "variantId1";
 			this.sVariantId2 = "variantId2";
 		},
-		beforeEach: function() {
+		beforeEach() {
 			return FlexState.initialize({
 				componentId: sComponentId,
 				reference: sComponentId
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState(sComponentId);
 			sandbox.restore();
 		}
@@ -538,7 +538,7 @@ sap.ui.define([
 		QUnit.test("Given setDefault is called twice and adaptationId is not provided", function(assert) {
 			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVersioningEnabled: function() {
+				isVersioningEnabled() {
 					return false;
 				}
 			});
@@ -578,7 +578,7 @@ sap.ui.define([
 		QUnit.test("Given setDefault is called twice with adaptationId", function(assert) {
 			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVersioningEnabled: function() {
+				isVersioningEnabled() {
 					return false;
 				}
 			});
@@ -748,7 +748,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("updateVariant", {
-		beforeEach: function() {
+		beforeEach() {
 			this.sPersistencyKey = "persistency.key";
 			this.oVariantData = {
 				changeSpecificData: {
@@ -771,7 +771,7 @@ sap.ui.define([
 				this.oVariant = CompVariantState.addVariant(this.oVariantData);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState(sComponentId);
 			sandbox.restore();
 		}
@@ -930,7 +930,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("discardVariantContent", {
-		beforeEach: function() {
+		beforeEach() {
 			this.sPersistencyKey = "persistency.key";
 			this.oVariantData = {
 				changeSpecificData: {
@@ -966,7 +966,7 @@ sap.ui.define([
 				reference: sComponentId
 			}).then(Settings.getInstance);
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState(sComponentId);
 			sandbox.restore();
 		}
@@ -1228,7 +1228,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("revert", {
-		beforeEach: function() {
+		beforeEach() {
 			this.sPersistencyKey = "persistency.key";
 			this.oVariantData = {
 				changeSpecificData: {
@@ -1251,7 +1251,7 @@ sap.ui.define([
 				reference: sComponentId
 			}).then(Settings.getInstance);
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState(sComponentId);
 			sandbox.restore();
 		}
@@ -1597,17 +1597,17 @@ sap.ui.define([
 	});
 
 	QUnit.module("overrideStandardVariant", {
-		before: function() {
+		before() {
 			this.sPersistencyKey = "persistency.key";
 			FlexState.clearState(sComponentId);
 		},
-		beforeEach: function() {
+		beforeEach() {
 			return FlexState.initialize({
 				componentId: sComponentId,
 				reference: sComponentId
 			}).then(Settings.getInstance);
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState(sComponentId);
 			sandbox.restore();
 		}
@@ -1802,7 +1802,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Versioning is enabled", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Versions, "hasVersionsModel").returns(true);
 			this.sPersistencyKey = "persistency.key";
 			var oVariantData = {
@@ -1828,7 +1828,7 @@ sap.ui.define([
 				this.oVariant = CompVariantState.addVariant(oVariantData);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState(sComponentId);
 			sandbox.restore();
 		}
@@ -2029,26 +2029,26 @@ sap.ui.define([
 	});
 
 	QUnit.module("checkSVMControlsForDirty", {
-		before: function() {
+		before() {
 			this.oControl1 = new Control("controlId1");
 			this.oControl1.getModified = function() {return true;};
 			this.oControl2 = new Control("controlId2");
 			this.oControl2.getModified = function() {return false;};
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oGetMapStub = sandbox.stub(FlexState, "getCompVariantsMap");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			this.oControl1.destroy();
 			this.oControl2.destroy();
 		}
 	}, function() {
 		QUnit.test("with a modified control", function(assert) {
 			this.oGetMapStub.returns({
-				foo: function() {},
+				foo() {},
 				bar: false,
 				key1: {
 					controlId: "controlId1"
@@ -2065,7 +2065,7 @@ sap.ui.define([
 
 		QUnit.test("without modified control", function(assert) {
 			this.oGetMapStub.returns({
-				foo: function() {},
+				foo() {},
 				bar: false,
 				key2: {
 					controlId: "controlId2"
@@ -2079,7 +2079,7 @@ sap.ui.define([
 
 		QUnit.test("without any control", function(assert) {
 			this.oGetMapStub.returns({
-				foo: function() {},
+				foo() {},
 				bar: false
 			});
 			assert.notOk(CompVariantState.checkSVMControlsForDirty(), "no modified control is found");

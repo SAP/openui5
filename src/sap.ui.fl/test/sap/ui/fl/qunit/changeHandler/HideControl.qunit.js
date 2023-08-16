@@ -19,7 +19,7 @@ function(
 	"use strict";
 
 	QUnit.module("sap.ui.fl.changeHandler.HideControl", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeHandler = HideControlChangeHandler;
 			var oDOMParser = new DOMParser();
 			this.oXmlString =
@@ -32,7 +32,7 @@ function(
 				selector: {id: "key"}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oChange.destroy();
 		}
 	}, function() {
@@ -68,12 +68,13 @@ function(
 		});
 
 		QUnit.test("applyChange on a xml tree", function(assert) {
-			this.oXmlButton = this.oXmlDocument.childNodes[0];
+			[this.oXmlButton] = this.oXmlDocument.childNodes;
 			return this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {
 				modifier: XmlTreeModifier,
 				view: this.oXmlDocument
 			}).then(function() {
-				assert.equal(this.oXmlButton.getAttribute("visible"), "false", "xml button node has the visible attribute added and set to false");
+				assert.equal(this.oXmlButton.getAttribute("visible"), "false",
+				 "xml button node has the visible attribute added and set to false");
 			}.bind(this));
 		});
 

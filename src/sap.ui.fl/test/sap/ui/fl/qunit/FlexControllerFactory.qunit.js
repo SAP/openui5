@@ -14,9 +14,9 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.FlexControllerFactory", {
-		beforeEach: function() {
+		beforeEach() {
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -39,7 +39,7 @@ sap.ui.define([
 				id: "MockControlId"
 			};
 			var oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return oMockManifest;
 				}
 			};

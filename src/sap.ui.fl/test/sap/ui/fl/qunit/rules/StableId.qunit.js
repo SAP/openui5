@@ -36,10 +36,10 @@ sap.ui.define([
 	 * @deprecated Since version 1.54. Due to <code>sap.ui.dt.ElementOverlay.getAggregationOverlays</code> deprecation
 	 */
 	QUnit.module("Base functionality for app component's root view", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
-				createContent: function() {
+				createContent() {
 					return new VerticalLayout({
 						id: this.createId("layoutId"),
 						content: [
@@ -72,7 +72,7 @@ sap.ui.define([
 				onReady: fnDone
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponentContainer.destroy();
 		}
 	}, function() {
@@ -85,10 +85,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Base functionality for popups", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
-				createContent: function() {
+				createContent() {
 					return new VerticalLayout({
 						id: this.createId("layoutId")
 					});
@@ -158,7 +158,7 @@ sap.ui.define([
 			}.bind(this));
 			this.oDialog.open();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPopover.destroy();
 			this.oPopoverAdaptationDisabled.destroy();
 			this.oDialog.destroy();
@@ -192,10 +192,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Aggregation Binding via template", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
-				createContent: function() {
+				createContent() {
 					return new XMLView({
 						id: this.createId("view"),
 						viewContent:
@@ -231,7 +231,7 @@ sap.ui.define([
 				onReady: fnDone
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponentContainer.destroy();
 			this.oComponent.destroy();
 		}
@@ -245,10 +245,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Aggregation Binding via factory function", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
-				createContent: function() {
+				createContent() {
 					return new XMLView({
 						id: this.createId("view"),
 						viewContent:
@@ -289,7 +289,7 @@ sap.ui.define([
 				onReady: fnDone
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponentContainer.destroy();
 			this.oComponent.destroy();
 		}

@@ -65,8 +65,9 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function() {
-			FlexObject.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			FlexObject.apply(this, aArgs);
 
 			if (!this.getVariantId()) {
 				this.setVariantId(this.getId());

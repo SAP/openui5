@@ -106,9 +106,7 @@ sap.ui.define([
 				oEntitySet = oModel.oMetadata._getEntitySetByType(oEntityType);
 			}
 
-			if (!oEntitySet) {
-				oEntitySet = oModel.oMetadata._getEntitySetByPath(sBindingPath);
-			}
+			oEntitySet ||= oModel.oMetadata._getEntitySetByPath(sBindingPath);
 
 			return oEntitySet ? oEntitySet.name : null;
 		});
@@ -154,9 +152,7 @@ sap.ui.define([
 				oEntityType = oModel.oMetadata._getEntityTypeByName(sEntityType);
 			}
 
-			if (!oEntityType) {
-				oEntityType = oModel.oMetadata._getEntityTypeByPath(sBindingPath);
-			}
+			oEntityType ||= oModel.oMetadata._getEntityTypeByPath(sBindingPath);
 
 			return oEntityType ? oEntityType.name : null;
 		});

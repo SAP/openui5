@@ -84,9 +84,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	CAPAccess.onTriggerCreateExtensionData = function(aBusinessContextInfos, sRtaStyleClassName) {
-		if (!oCAPDialog) {
-			oCAPDialog = new CustomFieldCAPDialog();
-		}
+		oCAPDialog ||= new CustomFieldCAPDialog();
 		oCAPDialog.open(aBusinessContextInfos, sRtaStyleClassName);
 	};
 

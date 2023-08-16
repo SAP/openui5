@@ -29,7 +29,7 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
+	var {ValueState} = coreLibrary;
 
 	/**
 	 * Constructor for a new transport/TransportDialog.
@@ -153,7 +153,7 @@ sap.ui.define([
 		this._oLocalObjectButton = new Button({
 			text: this._oResources.getText("TRANSPORT_DIALOG_LOCAL_OBJECT"),
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_LOCAL_OBJECT"),
-			press: function() {
+			press() {
 				that._onLocal();
 			}
 		});
@@ -162,14 +162,14 @@ sap.ui.define([
 			text: this._oResources.getText("TRANSPORT_DIALOG_OK"),
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_OK"),
 			enabled: false,
-			press: function() {
+			press() {
 				that._onOkay();
 			}
 		}));
 		this.addButton(new Button({
 			text: this._oResources.getText("TRANSPORT_DIALOG_CANCEL"),
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_CANCEL"),
-			press: function() {
+			press() {
 				that.fireCancel();
 				that.close();
 				that.destroy();
@@ -245,7 +245,7 @@ sap.ui.define([
 			enabled: false,
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_TRANSPORT_TT"),
 			width: "100%",
-			selectionChange: function() {
+			selectionChange() {
 				// if package field is visible but has no value, the OK button is disable
 				if (that._oPackageListItem.getVisible() && !that._oPackage.getValue()) {
 					return;
@@ -254,7 +254,7 @@ sap.ui.define([
 				that.getButtons()[1].setEnabled(true);
 				that._oTransport.setValueState(ValueState.None);
 			},
-			change: function(oEvent) {
+			change(oEvent) {
 				var fCheck = function(oItem) {
 					if ((oItem && oEvent.mParameters.newValue !== oItem.getText()) || !oItem) {
 						return true;
@@ -286,7 +286,7 @@ sap.ui.define([
 		return new Input({
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_PACKAGE_TT"),
 			width: "100%",
-			change: function() {
+			change() {
 				var oPromise;
 				var oObject;
 
@@ -298,7 +298,7 @@ sap.ui.define([
 					that._onPackageChangeError(oResult);
 				});
 			},
-			liveChange: function(oEvent) {
+			liveChange(oEvent) {
 				if (oEvent.mParameters.liveValue && oEvent.mParameters.liveValue.length > 3) {
 					that._oTransport.setEnabled(true);
 				}

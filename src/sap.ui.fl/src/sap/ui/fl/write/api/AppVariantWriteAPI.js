@@ -50,7 +50,7 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		saveAs: function(mPropertyBag) {
+		saveAs(mPropertyBag) {
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}
@@ -77,7 +77,7 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		deleteAppVariant: function(mPropertyBag) {
+		deleteAppVariant(mPropertyBag) {
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}
@@ -95,7 +95,7 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		listAllAppVariants: function(mPropertyBag) {
+		listAllAppVariants(mPropertyBag) {
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}
@@ -111,7 +111,7 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		getManifest: function(mPropertyBag) {
+		getManifest(mPropertyBag) {
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}
@@ -133,7 +133,7 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		assignCatalogs: function(mPropertyBag) {
+		assignCatalogs(mPropertyBag) {
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}
@@ -156,7 +156,7 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		unassignCatalogs: function(mPropertyBag) {
+		unassignCatalogs(mPropertyBag) {
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}

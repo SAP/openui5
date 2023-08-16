@@ -46,8 +46,8 @@ sap.ui.define([
 	var aControls = [];
 
 	QUnit.module("sap.ui.fl.Utils", {
-		beforeEach: function() {},
-		afterEach: function() {
+		beforeEach() {},
+		afterEach() {
 			aControls.forEach(function(oControl) {
 				oControl.destroy();
 			});
@@ -56,7 +56,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("isVariantByStartupParameter can detect a variant by the startup parameter", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns({
-				getComponentData: function() {
+				getComponentData() {
 					return {
 						startupParameters: {
 							"sap-app-id": ["someId"]
@@ -72,7 +72,7 @@ sap.ui.define([
 
 		QUnit.test("isVariantByStartupParameter returns false if no variant by the startup parameter is present", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns({
-				getComponentData: function() {
+				getComponentData() {
 					return {
 						startupParameters: {
 							"some-other-param": ["test"]
@@ -188,17 +188,17 @@ sap.ui.define([
 		QUnit.test("getAppDescriptor shall return the an appDescriptor instance", function(assert) {
 			var oAppDescriptor = {
 				id: "sap.ui.smartFormOData",
-				getEntry: function(sEntryKey) {
+				getEntry(sEntryKey) {
 					return sEntryKey === "sap.ui5" ? {} : undefined;
 				}
 			};
 			var oControl = {};
 			var oComponentMock = {
-				getMetadata: function() {
+				getMetadata() {
 					return {
-						getManifestObject: function() {
+						getManifestObject() {
 							return {
-								getJson: function() {
+								getJson() {
 									return oAppDescriptor;
 								}
 							};
@@ -306,7 +306,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("get/set URL Technical Parameter values", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -318,10 +318,10 @@ sap.ui.define([
 			};
 
 			var oURLParsingService = {
-				getHash: function() {
+				getHash() {
 					return "";
 				},
-				parseShellHash: function() {
+				parseShellHash() {
 					return oParameters;
 				}
 			};
@@ -332,8 +332,8 @@ sap.ui.define([
 
 		QUnit.test("when calling 'getParsedURLHash' with a ushell container and a URL which cannot be parsed properly", function(assert) {
 			var oURLParsingService = {
-				getHash: function() {},
-				parseShellHash: function() {}
+				getHash() {},
+				parseShellHash() {}
 			};
 
 			assert.ok(isEmptyObject(Utils.getParsedURLHash(oURLParsingService)), "then an empty object is received");
@@ -361,7 +361,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Utils.isApplication", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -387,14 +387,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Utils.isApplicationComponent and Utils.isEmbeddedComponent", {
-		before: function() {
+		before() {
 			this.oComponent = new Component();
 			this.oManifest = this.oComponent.getManifestObject();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			this.oComponent.destroy();
 		}
 	}, function() {
@@ -486,7 +486,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Utils.execPromiseQueueSequentially", {
-		beforeEach: function() {
+		beforeEach() {
 			var fnResolve = function() {
 				return Promise.resolve();
 			};
@@ -515,7 +515,7 @@ sap.ui.define([
 			sandbox.spyLog = sandbox.spy(Log, "error");
 		},
 
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -623,7 +623,7 @@ sap.ui.define([
 			});
 		});
 
-		[42, undefined, {then: 42}, {then: function() {}}]
+		[42, undefined, {then: 42}, {then() {}}]
 		.forEach(function(vResult) {
 			QUnit.test(`when instanciated with ${vResult} value as parameter`, function(assert) {
 				var oFakePromise = new Utils.FakePromise(vResult)
@@ -634,7 +634,7 @@ sap.ui.define([
 			});
 
 			QUnit.test(`when instanciated with ${vResult} error value as second parameter`, function(assert) {
-				vResult = vResult || "undefined";
+				vResult ||= "undefined";
 				var oFakePromise = new Utils.FakePromise(undefined, vResult)
 				.then(function() {
 					assert.notOk(true, "then the 'then' method shouldn't be called");
@@ -890,7 +890,7 @@ sap.ui.define([
 			var oPromise = new Utils.FakePromise()
 			.then(function() {
 				return {
-					then: function() {}
+					then() {}
 				};
 			});
 
@@ -899,24 +899,24 @@ sap.ui.define([
 	});
 
 	QUnit.module("Utils.getChangeFromChangesMap", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChange1 = {
-				getId: function() {
+				getId() {
 					return "fileNameChange1";
 				}
 			};
 			this.oChange2 = {
-				getId: function() {
+				getId() {
 					return "fileNameChange2";
 				}
 			};
 			this.oChange3 = {
-				getId: function() {
+				getId() {
 					return "fileNameChange3";
 				}
 			};
 			this.oChange4 = {
-				getId: function() {
+				getId() {
 					return "fileNameChange4";
 				}
 			};
@@ -925,7 +925,7 @@ sap.ui.define([
 				c2: [this.oChange3]
 			};
 		},
-		afterEach: function() {}
+		afterEach() {}
 	}, function() {
 		QUnit.test("when called with existing Change keys", function(assert) {
 			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId()), this.oChange1,
@@ -945,11 +945,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Utils.buildLrepRootNamespace", {
-		beforeEach: function() {
+		beforeEach() {
 			this.sErrorText = "Error in sap.ui.fl.Utils#buildLrepRootNamespace: ";
 			this.sNoBaseIdErrorText = "Error in sap.ui.fl.Utils#buildLrepRootNamespace: for every scenario you need a base ID";
 		},
-		afterEach: function() {}
+		afterEach() {}
 	}, function() {
 		QUnit.test(`scenario ${Scenario.VersionedAppVariant}: New VersionedAppVariant`, function(assert) {
 			this.sErrorText += "in a versioned app variant scenario you additionally need a project ID";
@@ -1036,11 +1036,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("_hasParameterAndValue is called", {
-		before: function() {
+		before() {
 			this.sParameterName = "parameterName";
 			this.sParameterValue = "parameterValue";
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1070,13 +1070,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("handleUrlParameter is called", {
-		before: function() {
+		before() {
 			this.sParameterName = "parameterName";
 			this.sParameterValue = "parameterValue";
 			this.sSearchParameter = `${this.sParameterName}=${this.sParameterValue}`;
 			this.sAnotherParameter = "test=true";
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1124,9 +1124,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Utils.getUShellService", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Utils, "getUshellContainer").returns({
-				getServiceAsync: function(sServiceName) {
+				getServiceAsync(sServiceName) {
 					switch (sServiceName) {
 						case "validService":
 							return Promise.resolve("validServiceResult");
@@ -1136,7 +1136,7 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1172,9 +1172,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Utils.getUShellServices", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Utils, "getUshellContainer").returns({
-				getServiceAsync: function(sServiceName) {
+				getServiceAsync(sServiceName) {
 					switch (sServiceName) {
 						case "validService1":
 							return Promise.resolve("validService1Result");
@@ -1188,7 +1188,7 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

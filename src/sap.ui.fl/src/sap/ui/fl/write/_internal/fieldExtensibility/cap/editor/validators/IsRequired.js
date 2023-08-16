@@ -7,7 +7,7 @@ sap.ui.define([], function() {
 	return {
 		async: false,
 		errorMessage: "CAP_ERR_REQUIRED",
-		validate: function(vValue) {
+		validate(vValue) {
 			return (
 				vValue === false
 				|| vValue === 0

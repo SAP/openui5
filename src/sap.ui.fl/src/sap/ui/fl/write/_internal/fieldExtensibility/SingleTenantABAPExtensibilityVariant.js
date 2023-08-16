@@ -51,7 +51,7 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		getExtensionData: function() {
+		getExtensionData() {
 			return this._oExtensionDataPromise.then(function(aBusinessContexts) {
 				if (this._containsData(aBusinessContexts)) {
 					return this._convertBusinessContextsToExtensionData(aBusinessContexts);
@@ -64,7 +64,7 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		getNavigationUri: function() {
+		getNavigationUri() {
 			return this._oExtensionDataPromise.then(function(aBusinessContexts) {
 				if (this._containsData(aBusinessContexts) && this._iExtensibilityType !== mExtensibilityType.None) {
 					return Utils.getNavigationUriForIntent({
@@ -87,7 +87,7 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		getTexts: function() {
+		getTexts() {
 			return this._oExtensionDataPromise.then(function(aBusinessContexts) {
 				if (this._containsData(aBusinessContexts)) {
 					return {
@@ -103,13 +103,13 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		isActive: function() {
+		isActive() {
 			return this._oExtensionDataPromise.then(function(aBusinessContexts) {
 				return this._containsData(aBusinessContexts);
 			}.bind(this));
 		},
 
-		_adjustExtensibilityTypeByAuthorizations: function(aNavigationSupportedForIntents, iExtensibilityType) {
+		_adjustExtensibilityTypeByAuthorizations(aNavigationSupportedForIntents, iExtensibilityType) {
 			if (aNavigationSupportedForIntents[iExtensibilityType]) {
 				return iExtensibilityType; // authorization matches Business Context features
 			} else if (aNavigationSupportedForIntents[mExtensibilityType.Both]) {
@@ -125,11 +125,11 @@ sap.ui.define([
 			return mExtensibilityType.None; // authorizations contradict Business Context features
 		},
 
-		_containsData: function(aBusinessContexts) {
+		_containsData(aBusinessContexts) {
 			return Boolean(aBusinessContexts && aBusinessContexts.length > 0);
 		},
 
-		_convertBusinessContextsToExtensionData: function(aBusinessContexts) {
+		_convertBusinessContextsToExtensionData(aBusinessContexts) {
 			var aExtensionData = aBusinessContexts.map(function(oBusinessContext) {
 				return {
 					description: oBusinessContext.BusinessContextDescription,
@@ -142,7 +142,7 @@ sap.ui.define([
 			};
 		},
 
-		_determineExtensionData: function() {
+		_determineExtensionData() {
 			return new Promise(function(fResolve, fReject) {
 				Utils.isNavigationSupportedForIntents(aNavigationIntents).then(function(aNavigationSupportedForIntents) {
 					var bIsSupported = aNavigationSupportedForIntents.some(function(bResult) {
@@ -173,7 +173,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		_determineExtensibilityType: function(aNavigationSupportedForIntents, aBusinessContexts) {
+		_determineExtensibilityType(aNavigationSupportedForIntents, aBusinessContexts) {
 			var iExtensibilityType = this._determineExtensibilityTypeFromBusinessContexts(aBusinessContexts);
 			if (iExtensibilityType !== mExtensibilityType.None) {
 				return this._adjustExtensibilityTypeByAuthorizations(aNavigationSupportedForIntents, iExtensibilityType);
@@ -182,7 +182,7 @@ sap.ui.define([
 			return iExtensibilityType;
 		},
 
-		_determineExtensibilityTypeFromBusinessContexts: function(aBusinessContexts) {
+		_determineExtensibilityTypeFromBusinessContexts(aBusinessContexts) {
 			var bSupportsLogicEnhancements = false;
 			var bSupportsStructuralEnhancements = false;
 
@@ -206,11 +206,11 @@ sap.ui.define([
 			return null;
 		},
 
-		_extractBusinessContextsFromResponse: function(oResponse) {
+		_extractBusinessContextsFromResponse(oResponse) {
 			return oResponse.results || [];
 		},
 
-		_getExtensionDataServiceParameters: function() {
+		_getExtensionDataServiceParameters() {
 			var oParameters = {
 				EntitySetName: "", // required by backend
 				EntityTypeName: this._mBindingInfo.entityTypeName
@@ -228,7 +228,7 @@ sap.ui.define([
 			return oParameters;
 		},
 
-		_getExtensionDataServiceUri: function() {
+		_getExtensionDataServiceUri() {
 			if (this._mServiceInfo.serviceType === UriParser.mServiceType.v4) {
 				// sap/opu/odata/SAP/APS_CUSTOM_FIELD_MAINTENANCE_SRV/GetBusinessContextsByResourcePath
 				return `${sExtensionDataServiceUri}GetBusinessContextsByResourcePath`;

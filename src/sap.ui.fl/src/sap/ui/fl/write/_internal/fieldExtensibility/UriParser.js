@@ -54,7 +54,7 @@ sap.ui.define([
 			if (aServiceSegments[1].toLowerCase() !== "sap") { // 1.) Case
 				sServiceNameWithVersion = `/${aServiceSegments[1]}/${aServiceSegments[2]}`;
 			} else { // 2.) Case
-				sServiceNameWithVersion = aServiceSegments[2];
+				[, , sServiceNameWithVersion] = aServiceSegments;
 			}
 		} else { // 3. Case
 			// Remove last slash

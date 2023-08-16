@@ -59,9 +59,7 @@ sap.ui.define([
 	}
 
 	function merge(oManifest, oChange, sRootPath, sChildPath, sModelPath) {
-		if (!oManifest[sRootPath][sChildPath]) {
-			oManifest[sRootPath][sChildPath] = {};
-		}
+		oManifest[sRootPath][sChildPath] ||= {};
 		mergeChange(oManifest[sRootPath][sChildPath], oChange.getContent()[sModelPath], sModelPath);
 		return oManifest[sRootPath][sChildPath];
 	}
@@ -114,7 +112,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		applyChange: function(oManifest, oChange) {
+		applyChange(oManifest, oChange) {
 			var oChangeModel = oChange.getContent().model;
 			var oChangeDataSource = oChange.getContent().dataSource;
 

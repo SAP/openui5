@@ -115,10 +115,10 @@ sap.ui.define([
 				selectedPackage: oObjectInfo.package,
 				dialog: false
 			},
-			getParameters: function() {
+			getParameters() {
 				return this.mParameters;
 			},
-			getParameter: function(sName) {
+			getParameter(sName) {
 				return this.mParameters[sName];
 			}
 		};

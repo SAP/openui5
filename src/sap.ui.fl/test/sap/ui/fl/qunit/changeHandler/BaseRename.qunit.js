@@ -29,7 +29,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 	QUnit.module("Given that a rename change handler for a button is created based on the BaseRename", {
-		before: function() {
+		before() {
 			return Component.create({
 				name: "testComponentAsync",
 				id: "testComponentAsync"
@@ -38,7 +38,7 @@ sap.ui.define([
 				this.mPropertyBag = {modifier: JsControlTreeModifier, appComponent: oComponent};
 			}.bind(this));
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton = new Button(this.oComponent.createId("myButton"));
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
@@ -62,7 +62,7 @@ sap.ui.define([
 				value: "Button New Text"
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 			sandbox.restore();
 		}
@@ -136,11 +136,13 @@ sap.ui.define([
 
 			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
 			this.oXmlView = oXmlDocument.documentElement;
-			this.oXmlLayout = this.oXmlView.childNodes[0];
-			this.oXmlButton = this.oXmlLayout.childNodes[0].childNodes[0];
+			[this.oXmlLayout] = this.oXmlView.childNodes;
+			[this.oXmlButton] = this.oXmlLayout.childNodes[0].childNodes;
 
 			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag)
-			.then(this.oDefaultRenameChangeHandler.applyChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oXmlButton, {modifier: XmlTreeModifier}))
+			.then(this.oDefaultRenameChangeHandler.applyChange.bind(
+				this.oDefaultRenameChangeHandler, this.oChange, this.oXmlButton, {modifier: XmlTreeModifier}
+			))
 			.then(function() {
 				assert.equal(this.oXmlButton.getAttribute("text"), this.mSpecificChangeInfo.value, "then the button text changes");
 				return this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
@@ -174,11 +176,13 @@ sap.ui.define([
 
 			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
 			this.oXmlView = oXmlDocument.documentElement;
-			this.oXmlLayout = this.oXmlView.childNodes[0];
-			this.oXmlButton = this.oXmlLayout.childNodes[0].childNodes[0];
+			[this.oXmlLayout] = this.oXmlView.childNodes;
+			[this.oXmlButton] = this.oXmlLayout.childNodes[0].childNodes;
 
 			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag)
-			.then(this.oDefaultRenameChangeHandler.applyChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oXmlButton, {modifier: XmlTreeModifier}))
+			.then(this.oDefaultRenameChangeHandler.applyChange.bind(
+				this.oDefaultRenameChangeHandler, this.oChange, this.oXmlButton, {modifier: XmlTreeModifier}
+			))
 			.then(function() {
 				assert.equal(this.oXmlButton.getAttribute("text"), this.mSpecificChangeInfo.value, "then the button text changes");
 				return this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});

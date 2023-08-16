@@ -51,7 +51,7 @@ sap.ui.define([
 	var sReference = "odata.app";
 
 	QUnit.module("SmartVariantManagementWriteAPI", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			if (oControl) {
 				oControl.destroy();
@@ -89,14 +89,14 @@ sap.ui.define([
 				// mock control
 				var sPersistencyKey = "thePersistencyKey";
 				var oSVMControl = {
-					getPersonalizableControlPersistencyKey: function() {
+					getPersonalizableControlPersistencyKey() {
 						return sPersistencyKey;
 					}
 				};
 				var oControl = oSVMControl;
 				if (testData.bIsNoSVM) {
 					oControl = {
-						getVariantManagement: function() {
+						getVariantManagement() {
 							return oSVMControl;
 						}
 					};
@@ -804,10 +804,10 @@ sap.ui.define([
 					}
 				}));
 				sandbox.stub(Settings, "getInstanceOrUndef").returns({
-					isVersioningEnabled: function() {
+					isVersioningEnabled() {
 						return false;
 					},
-					getUserId: function() {}
+					getUserId() {}
 				});
 				return FlexState.initialize({
 					reference: sReference,
@@ -1205,12 +1205,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("loadVariants with legacy content", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = new UIComponent("AppComponent21");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			FlexState.clearState();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oControl && this.oControl.destroy();
 		}
@@ -1224,7 +1224,9 @@ sap.ui.define([
 
 			var mFlexData = Object.assign(StorageUtils.getEmptyFlexDataResponse(), LoaderExtensions.loadResource({
 				dataType: "json",
-				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/apply/api/SmartVariantManagementAPI.loadVariantsTestSetup-flexData.json")
+				url: sap.ui.require.toUrl(
+					"test-resources/sap/ui/fl/qunit/apply/api/SmartVariantManagementAPI.loadVariantsTestSetup-flexData.json"
+				)
 			}));
 
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(mFlexData);
@@ -1235,7 +1237,7 @@ sap.ui.define([
 				standardVariant: {}
 			})
 			.then(function(oResponse) {
-				oVariant = oResponse.variants[0]; // user variant with 2 legacy changes (addFavorite & removeFavorite)
+				[oVariant] = oResponse.variants; // user variant with 2 legacy changes (addFavorite & removeFavorite)
 			})
 			.then(function() {
 				SmartVariantManagementWriteAPI.updateVariant({
@@ -1254,12 +1256,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("revert", {
-		beforeEach: function() {
+		beforeEach() {
 			if (oControl) {
 				oControl.destroy();
 			}
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1410,12 +1412,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("discardVariantContent", {
-		beforeEach: function() {
+		beforeEach() {
 			if (oControl) {
 				oControl.destroy();
 			}
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1438,7 +1440,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("_getTransportSelection", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1459,7 +1461,7 @@ sap.ui.define([
 			// returns empty to not trigger further functionality within the selectTransport
 			var oUtilsStub = sandbox.stub(Utils, "getLrepUrl").returns("");
 			sandbox.stub(UriParameters, "fromQuery").returns({
-				get: function() {
+				get() {
 					return Layer.VENDOR;
 				}
 			});

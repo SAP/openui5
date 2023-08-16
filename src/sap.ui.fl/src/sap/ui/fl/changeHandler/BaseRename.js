@@ -30,8 +30,8 @@ sap.ui.define([
 		 *                  mRenameSettings.translationTextType The translation text type in change (e.g. "XFLD")
 		 * @return {any} the rename change handler object
 		 */
-		createRenameChangeHandler: function(mRenameSettings) {
-			mRenameSettings.changePropertyName = mRenameSettings.changePropertyName || "newText";
+		createRenameChangeHandler(mRenameSettings) {
+			mRenameSettings.changePropertyName ||= "newText";
 
 			return {
 				/**
@@ -44,7 +44,7 @@ sap.ui.define([
 				 * @returns {Promise} Promise resolving when the change is applied
 				 * @public
 				 */
-				applyChange: function(oChange, oControl, mPropertyBag) {
+				applyChange(oChange, oControl, mPropertyBag) {
 					var oModifier = mPropertyBag.modifier;
 					var sPropertyName = mRenameSettings.propertyName;
 					var sValue = oChange.getText(mRenameSettings.changePropertyName);
@@ -71,7 +71,7 @@ sap.ui.define([
 				 * @param {object} mPropertyBag.modifier modifier for the controls
 				 * @public
 				 */
-				revertChange: function(oChange, oControl, mPropertyBag) {
+				revertChange(oChange, oControl, mPropertyBag) {
 					var oModifier = mPropertyBag.modifier;
 					var sPropertyName = mRenameSettings.propertyName;
 					var vOldValue = oChange.getRevertData();
@@ -95,7 +95,7 @@ sap.ui.define([
 				 * @returns {Promise} A promise resolving when the change content is completed
 				 * @public
 				 */
-				completeChangeContent: function(oChange, mSpecificChangeInfo, mPropertyBag) {
+				completeChangeContent(oChange, mSpecificChangeInfo, mPropertyBag) {
 					var sChangePropertyName = mRenameSettings.changePropertyName;
 					var sTranslationTextType = mRenameSettings.translationTextType;
 
@@ -125,7 +125,7 @@ sap.ui.define([
 				 * @returns {object} - Condenser-specific information
 				 * @public
 				 */
-				getCondenserInfo: function(oChange) {
+				getCondenserInfo(oChange) {
 					return {
 						affectedControl: oChange.getSelector(),
 						classification: CondenserClassification.LastOneWins,
@@ -140,7 +140,7 @@ sap.ui.define([
 				 * @returns {object} Object with a description payload containing the information required for the change visualization
 				 * @public
 				 */
-				getChangeVisualizationInfo: function(oChange) {
+				getChangeVisualizationInfo(oChange) {
 					var oNewLabel = (
 						oChange.getTexts()
 						&& oChange.getTexts()[mRenameSettings.changePropertyName]

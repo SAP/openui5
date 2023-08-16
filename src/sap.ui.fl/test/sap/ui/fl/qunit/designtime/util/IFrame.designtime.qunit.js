@@ -18,7 +18,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an IFrame with renameInfo, when the UpdateIFrame dialog gets opened and closed", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oOpenDialogStub = sandbox.stub(AddIFrameDialog.prototype, "open");
 			this.oBuildUrlStub = sandbox.stub(AddIFrameDialog, "buildUrlBuilderParametersFor").resolves({});
 			this.oIFrame = new IFrame({
@@ -35,7 +35,7 @@ sap.ui.define([
 			this.oLabel = new Label("labelId", {text: "myInitialTitle"});
 			this.oIFrame.placeAt("qunit-fixture");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oIFrame.destroy();
 			this.oLabel.destroy();
 			sandbox.restore();

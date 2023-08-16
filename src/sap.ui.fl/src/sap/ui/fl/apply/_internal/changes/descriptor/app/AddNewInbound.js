@@ -50,14 +50,9 @@ sap.ui.define([
 		* @private
 		* @ui5-restricted sap.ui.fl.apply._internal
 		*/
-		applyChange: function(oManifest, oChange) {
-			if (!oManifest["sap.app"].crossNavigation) {
-				oManifest["sap.app"].crossNavigation = {};
-			}
-
-			if (!oManifest["sap.app"].crossNavigation.inbounds) {
-				oManifest["sap.app"].crossNavigation.inbounds = {};
-			}
+		applyChange(oManifest, oChange) {
+			oManifest["sap.app"].crossNavigation ||= {};
+			oManifest["sap.app"].crossNavigation.inbounds ||= {};
 
 			var oChangeContent = oChange.getContent();
 			var sInboundId = getAndCheckInboundId(oChangeContent);

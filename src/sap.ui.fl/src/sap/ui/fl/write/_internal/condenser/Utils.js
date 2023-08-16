@@ -40,20 +40,12 @@ sap.ui.define([
 	 * @returns {string[]} Array of container element IDs of initial UI reconstruction
 	 */
 	Utils.getInitialUIContainerElementIds = function(mUIReconstructions, sContainerKey, sAggregationName, aContainerElements) {
-		if (!mUIReconstructions[sContainerKey]) {
-			mUIReconstructions[sContainerKey] = {};
-		}
+		mUIReconstructions[sContainerKey] ||= {};
 		var mUIStates = mUIReconstructions[sContainerKey];
-		if (!mUIStates[sAggregationName]) {
-			mUIStates[sAggregationName] = {};
-		}
+		mUIStates[sAggregationName] ||= {};
 		var mUIAggregationState = mUIStates[sAggregationName];
-		if (!mUIAggregationState[Utils.TARGET_UI]) {
-			mUIAggregationState[Utils.TARGET_UI] = aContainerElements;
-		}
-		if (!mUIAggregationState[Utils.INITIAL_UI]) {
-			mUIAggregationState[Utils.INITIAL_UI] = aContainerElements.slice(0);
-		}
+		mUIAggregationState[Utils.TARGET_UI] ||= aContainerElements;
+		mUIAggregationState[Utils.INITIAL_UI] ||= aContainerElements.slice(0);
 		return mUIAggregationState[Utils.INITIAL_UI];
 	};
 

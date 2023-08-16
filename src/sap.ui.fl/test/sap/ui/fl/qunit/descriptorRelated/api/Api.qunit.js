@@ -31,7 +31,7 @@ sap.ui.define([
 	* @deprecated Since version 1.73
 	*/
 	QUnit.module("DescriptorInlineChangeFactory", {
-		beforeEach: function() {
+		beforeEach() {
 			// define sandboxes and stubs explicitly for each modules
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
@@ -42,7 +42,7 @@ sap.ui.define([
 				})
 			);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1619,7 +1619,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("DescriptorVariant", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id: "a.id",
@@ -1635,7 +1635,7 @@ sap.ui.define([
 				})
 			);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1729,7 +1729,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("DescriptorVariantFactory", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id: "a.id",
@@ -1745,7 +1745,7 @@ sap.ui.define([
 				})
 			);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1935,7 +1935,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("DescriptorChange", {
-		beforeEach: function() {
+		beforeEach() {
 			this.sCreateResponse = JSON.stringify({
 				reference: "a.reference"
 			});
@@ -1950,7 +1950,7 @@ sap.ui.define([
 			);
 			return FlexState.initialize({reference: "a.reference"});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -2066,7 +2066,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("DescriptorChangeFactory", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser: false,
@@ -2076,7 +2076,7 @@ sap.ui.define([
 				})
 			);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -2103,7 +2103,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("DescriptorVariantFactory - ATO false", {
-		beforeEach: function() {
+		beforeEach() {
 			this._fStubSend = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id: "a.id",
@@ -2120,7 +2120,7 @@ sap.ui.define([
 				})
 			);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -2211,7 +2211,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("DescriptorVariantFactory - ATO true and app variant not yet published", {
-		beforeEach: function() {
+		beforeEach() {
 			this._fStubSend = sandbox.stub(WriteUtils, "sendRequest");
 			this._fStubSend.resolves({
 				response: JSON.stringify({
@@ -2230,7 +2230,7 @@ sap.ui.define([
 				})
 			);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -2294,7 +2294,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("DescriptorVariantFactory - ATO true and app variant already published", {
-		beforeEach: function() {
+		beforeEach() {
 			this._fStubSend = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id: "a.id",
@@ -2312,7 +2312,7 @@ sap.ui.define([
 				})
 			);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -2366,7 +2366,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("DescriptorChangeFactory - ATO false", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id: "a.id",
@@ -2382,7 +2382,7 @@ sap.ui.define([
 				})
 			);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -2398,7 +2398,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("DescriptorChangeFactory - ATO true", {
-		beforeEach: function() {
+		beforeEach() {
 			this._fStubSend = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id: "a.id",
@@ -2414,7 +2414,7 @@ sap.ui.define([
 				})
 			);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

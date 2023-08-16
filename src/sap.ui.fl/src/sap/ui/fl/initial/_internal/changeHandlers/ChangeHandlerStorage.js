@@ -108,7 +108,7 @@ sap.ui.define([
 		var oRegistryItem = createChangeRegistryItem(sControlType, sChangeType, oChangeHandler);
 
 		if (oRegistryItem) {
-			mRegisteredItems[sControlType] = mRegisteredItems[sControlType] || {};
+			mRegisteredItems[sControlType] ||= {};
 			mRegisteredItems[sControlType][sChangeType] = oRegistryItem;
 		}
 	}

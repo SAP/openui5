@@ -42,14 +42,14 @@ sap.ui.define([
 	function _areAllChangesApplied() {
 		var oInstanceCache = ChangePersistenceFactory._instanceCache;
 		var sComponent = Object.keys(oInstanceCache)[0];
-		var aChanges = oInstanceCache[sComponent]._mChanges.aChanges;
+		var {aChanges} = oInstanceCache[sComponent]._mChanges;
 		return !aChanges.some(function(oChange) {
 			return !oChange.isSuccessfullyApplied();
 		});
 	}
 
 	function _writeData(sControlId) {
-		sControlId = sControlId || sIdForStatus;
+		sControlId ||= sIdForStatus;
 		var oLayout = oCore.byId("idMain1--Layout");
 		var sDurationText = `${sMassiveLabel} = ${window.wpp.customMetrics[sMassiveLabel]} ms`;
 		Log.info(sDurationText);
@@ -202,22 +202,22 @@ sap.ui.define([
 	}
 
 	FlexPerformanceTestUtil.stopMeasurement = function(sMeasure) {
-		sMeasure = sMeasure || sMassiveLabel;
+		sMeasure ||= sMassiveLabel;
 		window.performance.measure(sMeasure, `${sMeasure}.start`);
 		window.wpp.customMetrics[sMeasure] = window.performance.getEntriesByName(sMeasure)[0].duration;
 	};
 
 	FlexPerformanceTestUtil.startMeasurement = function(sMeasure) {
-		sMeasure = sMeasure || sMassiveLabel;
+		sMeasure ||= sMassiveLabel;
 		window.performance.mark(`${sMeasure}.start`);
 	};
 
 	FlexPerformanceTestUtil.startMeasurementForXmlPreprocessing = function() {
 		// Monkey patching of FlexController.processXmlView function
 		var fnOriginalProcessXmlView = XmlPreprocessor.process;
-		XmlPreprocessor.process = function() {
+		XmlPreprocessor.process = function(...aArgs) {
 			FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
-			return fnOriginalProcessXmlView.apply(this, arguments)
+			return fnOriginalProcessXmlView.apply(this, aArgs)
 			.then(function(vReturn) {
 				FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
 				return vReturn;

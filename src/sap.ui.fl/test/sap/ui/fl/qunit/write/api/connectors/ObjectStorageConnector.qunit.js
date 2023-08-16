@@ -163,7 +163,7 @@ sap.ui.define([
 
 	function parameterizedTest(oConnector, sStorage, bPublicLayer) {
 		QUnit.module(`loadFlexData: Given a ${sStorage}`, {
-			afterEach: function() {
+			afterEach() {
 				sandbox.restore();
 				return removeFlexObjectsFromStorage(oConnector.storage);
 			}
@@ -286,10 +286,10 @@ sap.ui.define([
 		});
 
 		QUnit.module(`Given some changes in a ${sStorage}`, {
-			beforeEach: function() {
+			beforeEach() {
 				return saveListWithConnector(oConnector, values(oTestData));
 			},
-			afterEach: function() {
+			afterEach() {
 				return removeFlexObjectsFromStorage(oConnector.storage);
 			}
 		}, function() {
@@ -591,7 +591,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("write: Given a connector where _itemsStoredAsObjects", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -631,7 +631,7 @@ sap.ui.define([
 	var oAsyncStorage = {
 		_itemsStoredAsObjects: true,
 		_items: {},
-		setItem: function(sKey, vValue) {
+		setItem(sKey, vValue) {
 			return new Promise(function(resolve) {
 				setTimeout(function() {
 					oAsyncStorage._items[sKey] = vValue;
@@ -639,7 +639,7 @@ sap.ui.define([
 				});
 			});
 		},
-		removeItem: function(sKey) {
+		removeItem(sKey) {
 			return new Promise(function(resolve) {
 				setTimeout(function() {
 					delete oAsyncStorage._items[sKey];
@@ -647,7 +647,7 @@ sap.ui.define([
 				});
 			});
 		},
-		clear: function() {
+		clear() {
 			return new Promise(function(resolve) {
 				setTimeout(function() {
 					oAsyncStorage._items = {};
@@ -655,10 +655,10 @@ sap.ui.define([
 				});
 			});
 		},
-		getItem: function(sKey) {
+		getItem(sKey) {
 			return Promise.resolve(oAsyncStorage._items[sKey]);
 		},
-		getItems: function() {
+		getItems() {
 			return Promise.resolve(oAsyncStorage._items);
 		}
 	};

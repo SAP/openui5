@@ -204,7 +204,7 @@ sap.ui.define(["sap/ui/base/Object"], function(BaseObject) {
 		 * @param {object} mPropertyBag.payload Payload parameter attached to the delegate, empty object if no payload was assigned
 		 * @returns {Promise<sap.ui.fl.delegate.PropertyInfo[]>} Metadata in a deep structure of nodes and properties
 		 */
-		getPropertyInfo: function(mPropertyBag) {
+		getPropertyInfo(mPropertyBag) {
 			return Promise.resolve().then(function() {
 				return _getODataPropertiesOfModel(mPropertyBag.element, mPropertyBag.aggregationName, mPropertyBag.payload);
 			});
