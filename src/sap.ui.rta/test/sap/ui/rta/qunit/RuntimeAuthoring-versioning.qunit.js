@@ -377,81 +377,56 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given onStackModified", {
-		beforeEach() {
+	QUnit.module("Given onStackModified, when the stack was modified", {
+		async beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp
 			});
-			return this.oRta.start();
+			await this.oRta.start();
 		},
 		afterEach() {
+			VersionsAPI.clearInstances();
 			this.oRta.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		[{
-			testName: "when the stack was modified and a new draft is created, an old draft exists and the user has not yet confirmed the discarding of the old draft",
+			testName: "and a new draft is created, an old draft exists and the user has not yet confirmed the discarding of the old draft",
 			input: {
 				versionDisplayed: Version.Number.Original,
 				backendDraft: true,
-				canUndo: true,
-				userConfirmedDiscard: false
+				canUndo: true
 			},
 			expectation: {
 				dialogCreated: true
 			}
 		}, {
-			testName: "when the stack was modified and a new draft is created, an old draft exists and the user has not yet confirmed the discarding of the old draft and clicks on OK",
+			testName: "and a new draft is created, an old draft exists and clicks on OK",
 			input: {
 				versionDisplayed: Version.Number.Original,
 				backendDraft: true,
 				canUndo: true,
-				userConfirmedDiscard: false,
 				discardConfirmed: true
 			},
 			expectation: {
 				dialogCreated: true
 			}
 		}, {
-			testName: "when the stack was modified and a new draft is created, an old draft exists and the user has already confirmed the discarding of the old draft",
-			input: {
-				versionDisplayed: Version.Number.Original,
-				backendDraft: true,
-				canUndo: true,
-				userConfirmedDiscard: true
-			},
-			expectation: {
-				dialogCreated: false
-			}
-		}, {
-			testName: "when the stack was modified in the current draft",
+			testName: "in the current draft",
 			input: {
 				versionDisplayed: Version.Number.Draft,
 				backendDraft: true,
-				canUndo: true,
-				userConfirmedDiscard: false
+				canUndo: true
 			},
 			expectation: {
 				dialogCreated: false
 			}
 		}, {
-			testName: "when the stack was modified but nothing can be undone",
-			input: {
-				versionDisplayed: Version.Number.Original,
-				backendDraft: true,
-				canUndo: false,
-				userConfirmedDiscard: false
-			},
-			expectation: {
-				dialogCreated: false
-			}
-		}, {
-			testName: "when the stack was modified and a new draft is created, an old draft does not exist",
+			testName: "and a new draft is created, an old draft does not exist",
 			input: {
 				versionDisplayed: Version.Number.Original,
 				backendDraft: false,
-				canUndo: true,
-				userConfirmedDiscard: false
+				canUndo: true
 			},
 			expectation: {
 				dialogCreated: false
@@ -459,16 +434,17 @@ sap.ui.define([
 		}].forEach(function(mSetup) {
 			QUnit.test(mSetup.testName, function(assert) {
 				var fnDone = assert.async();
-				var oUserAction = mSetup.input.discardConfirmed || mSetup.input.userConfirmedDiscard ? MessageBox.Action.OK : MessageBox.Action.CANCEL;
+				var oUserAction = mSetup.input.discardConfirmed ? MessageBox.Action.OK : MessageBox.Action.CANCEL;
 				var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(oUserAction);
 				this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
 				this.oRta._oVersionsModel.setProperty("/displayedVersion", mSetup.input.versionDisplayed);
 				this.oRta._oVersionsModel.setProperty("/backendDraft", mSetup.input.backendDraft);
-				this.oRta._bUserDiscardedDraft = mSetup.input.userConfirmedDiscard ? true : undefined;
 				sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(mSetup.input.canUndo);
 
 				function doAssertions() {
-					assert.equal(oShowMessageBoxStub.callCount, mSetup.expectation.dialogCreated ? 1 : 0, "the message box display was handled correct");
+					assert.equal(oShowMessageBoxStub.callCount,
+						mSetup.expectation.dialogCreated ? 1 : 0, "the message box display was handled correct"
+					);
 					fnDone();
 				}
 
