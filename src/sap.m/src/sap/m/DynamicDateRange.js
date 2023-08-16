@@ -203,6 +203,21 @@ sap.ui.define([
 				"DATETIME"
 			];
 
+			var oDynamicDateRangeGroups = {
+
+				SingleDates: 1,
+
+				DateRanges: 2,
+
+				Weeks: 3,
+
+				Month: 4,
+
+				Quarters: 5,
+
+				Years: 6
+			};
+
 		/**
 		 * Constructor for a new DynamicDateRange.
 		 *
@@ -840,7 +855,7 @@ sap.ui.define([
 		 */
 		DynamicDateRange.prototype._getGroups = function() {
 			if (!this.oDynamicDateRangeGroups) {
-				this.oDynamicDateRangeGroups = JSON.parse(JSON.stringify(library.DynamicDateRangeGroups)); // making a copy of the object to break the reference
+				this.oDynamicDateRangeGroups = JSON.parse(JSON.stringify(oDynamicDateRangeGroups)); // making a copy of the object to break the reference
 			}
 
 			return this.oDynamicDateRangeGroups;
@@ -897,7 +912,7 @@ sap.ui.define([
 		 * @public
 		 */
 		DynamicDateRange.prototype.removeCustomGroups = function() {
-			const iCountOfStandardGroups = Object.keys(library.DynamicDateRangeGroups).length;
+			const iCountOfStandardGroups = Object.keys(oDynamicDateRangeGroups).length;
 
 			for (const group in this._getGroups()) {
 				if (this._getGroups()[group] > iCountOfStandardGroups) {
@@ -1297,7 +1312,9 @@ sap.ui.define([
 				aOptions = aOptions.reduce(function(aResult, oCurrent) {
 					var iGroup = Number(oCurrent.getGroup()) ? oCurrent.getGroup() : this._getGroups()[oCurrent.getGroup()];
 					var sGroupName = Object.keys(this._getGroups()).find((key) => this._getGroups()[key] === iGroup);
-					var sGroupHeader = this._customGroupHeaders ? this.getGroupHeader(sGroupName) : oCurrent.getGroupHeader();
+					var bGroupHasHeader = this._customGroupHeaders && this._customGroupHeaders.find((group) => group.name === sGroupName);
+					var sGroupHeader = bGroupHasHeader ? this.getGroupHeader(sGroupName) : oCurrent.getGroupHeader();
+
 					if (aGroupHeaders.indexOf(sGroupHeader) === -1) {
 						aGroupHeaders.push(sGroupHeader);
 						aResult.push(sGroupHeader);

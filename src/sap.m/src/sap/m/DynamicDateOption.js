@@ -257,7 +257,7 @@ sap.ui.define([
 		 * 5 - Quarters
 		 * 6 - Years
 		 *
-		 * @returns {int} A group index
+		 * @returns { int | string} A group key from {@link sap.m.DynamicDateRangeGroups}
 		 * @public
 		 */
 		DynamicDateOption.prototype.getGroup = function() {
