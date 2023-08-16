@@ -591,7 +591,8 @@ sap.ui.define([
 				// parse result contains additionally a Promise with all asynchronously loaded types
 				return {
 					bindingInfo: oBindingInfo,
-					resolved: Promise.all(oEnv.aTypePromises)
+					resolved: Promise.all(oEnv.aTypePromises),
+					wait : oEnv.aTypePromises.length > 0
 				};
 			}
 

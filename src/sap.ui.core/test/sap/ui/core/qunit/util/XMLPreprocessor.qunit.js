@@ -15,13 +15,11 @@ sap.ui.define([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
 	"sap/ui/model/json/JSONModel",
-	// explicit import for type Boolean to resolve import issues with legacy-free UI5
-	"sap/ui/model/type/Boolean",
 	"sap/ui/performance/Measurement",
 	"sap/ui/util/XMLHelper"
 ], function (Log, ObjectPath, BindingParser, ManagedObject, SyncPromise, Component,
 		XMLTemplateProcessor, UI5Date, XMLPreprocessor, BindingMode, ChangeReason, Context,
-		JSONModel, _Boolean, Measurement, XMLHelper) {
+		JSONModel, Measurement, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint consistent-this: 0, max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";
@@ -483,6 +481,8 @@ sap.ui.define([
 			}
 
 			this.oDebugExpectation.never();
+			this.oLogMock.expects("debug").atLeast(0)
+					.withArgs(sinon.match.string, sinon.match.func, "sap.ui.Rendering");
 			if (!bDebug) {
 				Log.setLevel(Log.Level.WARNING, sComponent);
 			} else {
@@ -704,10 +704,14 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Note: "X" is really nothing special
+[false, true].forEach(function (bAsync) {
 	["true", true, 1, "X"].forEach(function (oFlag) {
 		QUnit.test("XML with template:if test='{/flag}', truthy, flag = " + oFlag,
 			function (assert) {
-				this.check(assert, [
+				this.oSapUiMock.expects("require").on(sap.ui)
+					.atLeast(0) // only for the 1st run
+					.withArgs(["sap/ui/model/type/Boolean"]).callThrough();
+				return this.check(assert, [
 					mvcView("t"),
 					'<t:if test="{path: \'/flag\', type: \'sap.ui.model.type.Boolean\'}">',
 					'<In id="flag"/>',
@@ -715,10 +719,11 @@ sap.ui.define([
 					'</mvc:View>'
 				], {
 					models: new JSONModel({flag: oFlag})
-				});
+				}, undefined, /*bAsync*/bAsync);
 			}
 		);
 	});
+});
 
 	//*********************************************************************************************
 	// Note: " " intentionally not included yet, should not matter for OData!
@@ -3142,6 +3147,32 @@ sap.ui.define([
 				oElement.setAttribute("test", vValue);
 				return oInterface.visitAttributes(oElement);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("plugIn, async getResult uncaught promise", function (assert) {
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 1] Calling visitor", d : 1},
+			{m : "[ 1] Finished", d : "</f:Bar>"},
+			{m : "[ 0] Finished processing qux"}
+		], [
+			mvcView(),
+			'<f:Bar xmlns:f="foo" test="{/hello}" tooltip="{/sync}"/>',
+			'</mvc:View>'
+		], {
+			models : asyncModel({hello : "world", sync : "sync"})
+		}, [
+			'<f:Bar xmlns:f="foo" test="{/hello}" tooltip="{/sync}"/>'
+		], true, function (oElement, oInterface) { // visitor for f:Bar
+
+			// code under test
+			const oPromise = oInterface.getResult(); // will fail, first param is not optional
+			assert.strictEqual(oPromise.isRejected(), true);
+			oPromise.caught();
+
+			return SyncPromise.resolve();
 		});
 	});
 
