@@ -140,14 +140,23 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
-	 * @throws {Error} If the cache is shared
+	 * @throws {Error} If the cache is shared, <code>this.oAggregation.expandTo > 1</code>, or
+	 *   <code>sIndex</code> is not a number.
 	 *
 	 * @public
 	 */
 	// @override sap.ui.model.odata.v4.lib._Cache#_delete
 	_AggregationCache.prototype._delete = function (oGroupLock, sEditUrl, sIndex, oETagEntity,
 			fnCallback) {
+		if (this.oAggregation.expandTo > 1) {
+			throw new Error("Unsupported expandTo: " + this.oAggregation.expandTo);
+		}
+
 		const iIndex = parseInt(sIndex);
+		if (isNaN(iIndex)) {
+			throw new Error(`Unsupported kept-alive entity: ${this.sResourcePath}${sIndex}`);
+		}
+
 		const oElement = this.aElements[iIndex];
 		const oCache = _Helper.getPrivateAnnotation(oElement, "parent");
 		const iCacheIndex = _Helper.getPrivateAnnotation(oElement, "index");

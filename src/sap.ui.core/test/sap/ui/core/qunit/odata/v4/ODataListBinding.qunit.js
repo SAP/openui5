@@ -4362,7 +4362,7 @@ sap.ui.define([
 // undefined -> the reinsertion callback is not called because the binding already has another cache
 [undefined, false, true].forEach(function (bSuccess) {
 	[false, true].forEach(function (bCreated) { // the deleted context is created-persisted
-		[false, true].forEach(function (bExpanded) {
+		[undefined, false, true].forEach(function (bExpanded) { // undefined -> no hierarchy
 			const sTitle = "delete: success=" + bSuccess + ", created=" + bCreated
 				+ ", expanded=" + bExpanded;
 			if (bCreated && bExpanded) {
@@ -4391,6 +4391,9 @@ sap.ui.define([
 				fnUndelete = sinon.spy(),
 				that = this;
 
+			if (bExpanded !== undefined) {
+				oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+			}
 			oBinding.createContexts(0, aData.slice(0, 3));
 			aData2.$count = 5; // non-empty short read adds $count
 			oBinding.createContexts(4, aData2);
@@ -4657,6 +4660,32 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_delete: recursive hierarchy, restrictions not met", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+
+		const oContext = {
+			// noIndex
+			toString : function () { return "~toString~"; } // cannot be mocked?
+		};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.delete("~oGroupLock~", "~sEditUrl~", oContext);
+		}, new Error("Unsupported kept-alive context: ~toString~"));
+
+		oBinding.mParameters.$$aggregation = {expandTo : 2, hierarchyQualifier : "X"};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.delete("~oGroupLock~", "~sEditUrl~", {/*oContext*/});
+		}, new Error("Unsupported $$aggregation.expandTo: 2"));
+	});
 
 	//*********************************************************************************************
 	QUnit.test("create: callbacks and eventing", function (assert) {
