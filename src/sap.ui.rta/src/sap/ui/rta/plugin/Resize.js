@@ -389,7 +389,8 @@ sap.ui.define([
 	 *
 	 * @override
 	 */
-	Resize.prototype.registerElementOverlay = function(oOverlay) {
+	Resize.prototype.registerElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		if (this.isEnabled([oOverlay])) {
 			oOverlay.attachBrowserEvent("mousemove", this._onOverlayMouseMove, this);
 			oOverlay.attachBrowserEvent("mouseleave", this._onOverlayMouseLeave, this);
@@ -398,7 +399,7 @@ sap.ui.define([
 			oOverlay.attachEvent("selectionChange", this._onOverlaySelectionChange, this);
 			oOverlay.attachEvent("geometryChanged", this._onOverlayGeometryChanged, this);
 		}
-		Plugin.prototype.registerElementOverlay.apply(this, arguments);
+		Plugin.prototype.registerElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -407,14 +408,15 @@ sap.ui.define([
 	 *
 	 * @override
 	 */
-	Resize.prototype.deregisterElementOverlay = function(oOverlay) {
+	Resize.prototype.deregisterElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		oOverlay.detachBrowserEvent("mousemove", this._onOverlayMouseMove, this);
 		oOverlay.detachBrowserEvent("mouseleave", this._onOverlayMouseLeave, this);
 		oOverlay.detachBrowserEvent("keydown", this._onOverlayKeyDown, this);
 		oOverlay.detachBrowserEvent("focus", this._onOverlayFocus, this);
 		oOverlay.detachEvent("selectionChange", this._onOverlaySelectionChange, this);
 		oOverlay.detachEvent("geometryChanged", this._onOverlayGeometryChanged, this);
-		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
+		Plugin.prototype.deregisterElementOverlay.apply(this, aArgs);
 	};
 
 	/**

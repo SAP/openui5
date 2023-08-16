@@ -14,11 +14,11 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		onAfterRendering: function() {
+		onAfterRendering() {
 			window.fnResolve();
 		},
 
-		createContent: function() {
+		createContent() {
 			var oLayout = new VerticalLayout("visibleLayout");
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout, 100);
 			return oLayout;

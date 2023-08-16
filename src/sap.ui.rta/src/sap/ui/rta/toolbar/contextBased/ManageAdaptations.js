@@ -38,13 +38,13 @@ function(
 	var oRanking = {
 		Initial: 0,
 		Default: 1024,
-		Before: function(iRank) {
+		Before(iRank) {
 			return iRank + 1024;
 		},
-		Between: function(iRank1, iRank2) {
+		Between(iRank1, iRank2) {
 			return (iRank1 + iRank2) / 2;
 		},
-		After: function(iRank) {
+		After(iRank) {
 			return iRank + 0.5;
 		}
 	};
@@ -57,8 +57,9 @@ function(
 				}
 			}
 		},
-		constructor: function() {
-			ManagedObject.prototype.constructor.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			ManagedObject.prototype.constructor.apply(this, aArgs);
 			this.oTextResources = this.getToolbar().getTextResources();
 		}
 	});
@@ -185,7 +186,7 @@ function(
 			var oFilterByTitle = new Filter("title", FilterOperator.Contains, sQuery);
 			var oFilterByContextId = new Filter({
 				path: "contexts/role",
-				test: function(aRoles) {
+				test(aRoles) {
 					return aRoles.some(function(sRole) {
 						return sRole.includes(sQuery.toUpperCase());
 					});

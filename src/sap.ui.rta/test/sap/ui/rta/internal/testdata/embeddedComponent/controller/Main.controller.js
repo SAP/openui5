@@ -10,7 +10,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.rta.test.embeddedComponent.controller.Main", {
 		_data: [],
 
-		onInit: function() {
+		onInit() {
 			this.iCounter = 0;
 			var oView = this.getView();
 			this._data.push(
@@ -40,11 +40,11 @@ sap.ui.define([
 			);
 		},
 
-		switchToAdaptionMode: function() {
+		switchToAdaptionMode() {
 			startKeyUserAdaptation({rootControl: this.getOwnerComponent()});
 		},
 
-		isDataReady: function() {
+		isDataReady() {
 			return Promise.all(this._data);
 		}
 	});

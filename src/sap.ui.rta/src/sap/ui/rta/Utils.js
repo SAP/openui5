@@ -142,11 +142,11 @@ function(
 
 				// create a controller for the action in the Dialog
 				var oFragmentController = {
-					removeField: function() {
+					removeField() {
 						fnCleanUp();
 						resolve(true);
 					},
-					closeDialog: function() {
+					closeDialog() {
 						fnCleanUp();
 						resolve(false);
 					}
@@ -283,9 +283,7 @@ function(
 		while (oNextFocusableSiblingOverlay && !this.isOverlaySelectable(oNextFocusableSiblingOverlay)) {
 			oNextFocusableSiblingOverlay = OverlayUtil.getNextSiblingOverlay(oNextFocusableSiblingOverlay);
 		}
-		if (!oNextFocusableSiblingOverlay) {
-			oNextFocusableSiblingOverlay = this._findSiblingOverlay(oOverlay, NEXT);
-		}
+		oNextFocusableSiblingOverlay ||= this._findSiblingOverlay(oOverlay, NEXT);
 		return oNextFocusableSiblingOverlay;
 	};
 
@@ -304,9 +302,7 @@ function(
 			oPreviousFocusableSiblingOverlay = OverlayUtil
 			.getPreviousSiblingOverlay(oPreviousFocusableSiblingOverlay);
 		}
-		if (!oPreviousFocusableSiblingOverlay) {
-			oPreviousFocusableSiblingOverlay = this._findSiblingOverlay(oOverlay, PREVIOUS);
-		}
+		oPreviousFocusableSiblingOverlay ||= this._findSiblingOverlay(oOverlay, PREVIOUS);
 		return oPreviousFocusableSiblingOverlay;
 	};
 
@@ -487,7 +483,7 @@ function(
 	Utils.showMessageBox = function(sMessageType, sMessageKey, mPropertyBag) {
 		return Core.getLibraryResourceBundle("sap.ui.rta", true)
 		.then(function(oResourceBundle) {
-			mPropertyBag = mPropertyBag || {};
+			mPropertyBag ||= {};
 			var sMessage = oResourceBundle.getText(sMessageKey, mPropertyBag.error ? [mPropertyBag.error.userMessage || mPropertyBag.error.message || mPropertyBag.error] : undefined);
 			var sTitle = mPropertyBag.titleKey && oResourceBundle.getText(mPropertyBag.titleKey);
 			var vActionTexts =
@@ -501,7 +497,7 @@ function(
 			var mOptions = _omit(mPropertyBag, ["titleKey", "error", "actionKeys", "emphasizedAction", "emphasizedActionKey", "showCancel"]);
 			mOptions.title = sTitle;
 			mOptions.styleClass = Utils.getRtaStyleClassName();
-			mOptions.actions = mOptions.actions || vActionTexts;
+			mOptions.actions ||= vActionTexts;
 			mOptions.emphasizedAction = sEmphasizedAction || mPropertyBag.emphasizedAction;
 			if (bShowCancel) {
 				mOptions.actions.push(MessageBox.Action.CANCEL);
@@ -527,7 +523,7 @@ function(
 	 * @returns{boolean} <code>true</code> when the controls have compatible bindings.
 	 */
 	Utils.checkSourceTargetBindingCompatibility = function(oSource, oTarget, oModel) {
-		oModel = oModel || oSource.getModel();
+		oModel ||= oSource.getModel();
 		var mSourceBindings = BindingsExtractor.collectBindingPaths(oSource, oModel);
 		var sSourceContextBindingPath;
 		var sTargetContextBindingPath;
@@ -616,7 +612,7 @@ function(
 
 			// determine target relevantContainer
 			var vTargetRelevantContainerAfterMove = MetadataPropagationUtil.getRelevantContainerForPropagation(oAggregationDtMetadata.getData(), oMovedElement);
-			vTargetRelevantContainerAfterMove = vTargetRelevantContainerAfterMove || oTargetElement;
+			vTargetRelevantContainerAfterMove ||= oTargetElement;
 
 			// check for same relevantContainer
 			if (

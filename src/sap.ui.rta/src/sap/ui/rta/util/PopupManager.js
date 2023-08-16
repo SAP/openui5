@@ -140,7 +140,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Filters the passed array and returns an object containing list of adaptable popups and all supported popup controls (also includes non-adaptable popups).
+	 * Filters the passed array and returns an object containing list of adaptable popups and all supported
+	 * popup controls (also includes non-adaptable popups).
 	 *
 	 * @param {sap.ui.core.Popup[]} aOpenPopups Specifies open popups
 	 * @returns {object} Returns an object containing all adaptation relevant popups and all supported popup controls
@@ -156,6 +157,7 @@ sap.ui.define([
 				// all modal type popups are supported for which modal property is later turned true, when in Adaptation mode
 				aAllSupportedPopups.push(oPopupElement);
 			}
+			return undefined;
 		}.bind(this));
 
 		return {
@@ -179,6 +181,7 @@ sap.ui.define([
 					if (oContent instanceof ComponentContainer) {
 						return this.oRtaRootAppComponent === this._getAppComponentForControl(Component.get(oContent.getComponent()));
 					}
+					return undefined;
 				}.bind(this))
 			: false;
 	};
@@ -246,9 +249,11 @@ sap.ui.define([
 			}
 		};
 
-		sNewMode === "navigation"
-			? this._applyPatchesToOpenPopups(_curry(fnApplyFocusAndSetModal)(sNewMode))
-			: this._removePatchesToOpenPopups(_curry(fnApplyFocusAndSetModal)(sNewMode));
+		if (sNewMode === "navigation") {
+			this._applyPatchesToOpenPopups(_curry(fnApplyFocusAndSetModal)(sNewMode));
+		} else {
+			this._removePatchesToOpenPopups(_curry(fnApplyFocusAndSetModal)(sNewMode));
+		}
 	};
 
 	/**
@@ -310,8 +315,9 @@ sap.ui.define([
 	 * @private
 	 */
 	PopupManager.prototype._overrideAddFunctions = function(fnOriginalFunction) {
-		return function(oPopupElement) {
-			var vOriginalReturn = fnOriginalFunction.apply(InstanceManager, arguments);
+		return function(...aArgs) {
+			const [oPopupElement] = aArgs;
+			var vOriginalReturn = fnOriginalFunction.apply(InstanceManager, aArgs);
 			if (this._isSupportedPopup(oPopupElement)) {
 				if (this._isPopupAdaptable(oPopupElement)
 					&& this.getRta()._oDesignTime) {
@@ -385,7 +391,7 @@ sap.ui.define([
 	 */
 	PopupManager.prototype._applyPopupPatch = function(oPopupElement) {
 		var oOverlayContainer = Overlay.getOverlayContainer();
-		var oPopup = oPopupElement.oPopup;
+		var {oPopup} = oPopupElement;
 		var aAutoCloseAreas = [
 			oPopup.oContent.getDomRef(),
 			oOverlayContainer.get(0)
@@ -409,11 +415,9 @@ sap.ui.define([
 		oPopup.setExtraContent(aAutoCloseAreas);
 
 		// cases when onAfterRendering is called after this function - app inside popup
-		if (!this.fnOriginalPopupOnAfterRendering) {
-			this.fnOriginalPopupOnAfterRendering = oPopup.onAfterRendering;
-		}
-		oPopup.onAfterRendering = function() {
-			var vOriginalReturn = this.fnOriginalPopupOnAfterRendering.apply(oPopup, arguments);
+		this.fnOriginalPopupOnAfterRendering ||= oPopup.onAfterRendering;
+		oPopup.onAfterRendering = function(...aArgs) {
+			var vOriginalReturn = this.fnOriginalPopupOnAfterRendering.apply(oPopup, aArgs);
 			oPopup[this._getFocusEventName("remove")]();
 			return vOriginalReturn;
 		}.bind(this);
@@ -447,8 +451,9 @@ sap.ui.define([
 	 * @private
 	 */
 	PopupManager.prototype._overrideRemoveFunctions = function(fnOriginalFunction) {
-		return function(oPopupElement) {
-			var vOriginalReturn = fnOriginalFunction.apply(InstanceManager, arguments);
+		return function(...aArgs) {
+			const [oPopupElement] = aArgs;
+			var vOriginalReturn = fnOriginalFunction.apply(InstanceManager, aArgs);
 			if (this._isSupportedPopup(oPopupElement)) {
 				if (this._isPopupAdaptable(oPopupElement)
 					&& this.getRta()._oDesignTime) {
@@ -544,7 +549,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Restores the Instance Manager AddDialogInstance/AddPopoverInstance, RemoveDialogInstance/RemovePopoverInstance methods and default blur event for popups
+	 * Restores the Instance Manager AddDialogInstance/AddPopoverInstance, RemoveDialogInstance/RemovePopoverInstance
+	 * methods and default blur event for popups
 	 *
 	 * @private
 	 */
@@ -575,7 +581,7 @@ sap.ui.define([
 	 * @private
 	 */
 	PopupManager.prototype._removePopupPatch = function(oPopupElement) {
-		var oPopup = oPopupElement.oPopup;
+		var {oPopup} = oPopupElement;
 		oPopup[this._getFocusEventName("add")]();
 		if (this.fnOriginalPopupOnAfterRendering) {
 			oPopup.onAfterRendering = this.fnOriginalPopupOnAfterRendering;

@@ -33,7 +33,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a control", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oControl = new Control();
 			this.sPersistencyKey = "myKey";
 			this.oNewContent = { content: "newContent" };
@@ -55,7 +55,7 @@ sap.ui.define([
 			this.oGetVariantContent = sandbox.stub();
 			this.oControl._getVariantContent = this.oGetVariantContent;
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oControl.destroy();
 			sandbox.restore();
 		}
@@ -66,13 +66,13 @@ sap.ui.define([
 			this.oControl.setModified = oSetModifiedStub;
 			var oUpdateFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "updateVariantContent");
 			var oUndoVariantFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "revert").returns({
-				getRevertData: function() {
+				getRevertData() {
 					return [];
 				},
-				getContent: function() {
+				getContent() {
 					return { myKey: {content: "oldContent"} };
 				},
-				getDirtyStatus: function() {
+				getDirtyStatus() {
 					return false;
 				}
 			});
@@ -128,13 +128,13 @@ sap.ui.define([
 			this.oControl.setModified = oSetModifiedStub;
 			var oUpdateFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "updateVariantContent");
 			var oUndoVariantFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "revert").returns({
-				getRevertData: function() {
+				getRevertData() {
 					return [];
 				},
-				getContent: function() {
+				getContent() {
 					return { content: "oldContent"};
 				},
-				getDirtyStatus: function() {
+				getDirtyStatus() {
 					return false;
 				}
 			});

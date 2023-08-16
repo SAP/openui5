@@ -56,7 +56,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started...", {
-		before: function(assert) {
+		before(assert) {
 			var fnDone = assert.async();
 			this.oPage = oCore.byId("Comp1---idMain1--mainPage");
 			this.oSmartForm = oCore.byId("Comp1---idMain1--MainForm");
@@ -86,19 +86,19 @@ sap.ui.define([
 				}
 			}.bind(this));
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVariantAdaptationEnabled: function() {
+				isVariantAdaptationEnabled() {
 					return true;
 				},
-				isLocalResetEnabled: function() {
+				isLocalResetEnabled() {
 					return true;
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			return RtaQunitUtils.closeContextMenu.call(this, this.oContextMenuControl);
 		},
-		after: function() {
+		after() {
 			this.oRta.destroy();
 		}
 	}, function() {
@@ -371,11 +371,11 @@ sap.ui.define([
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves(PropertyChange);
 			var oGroupDesigntime = {
-				settings: function() {
+				settings() {
 					return {
 						changeType: "changeSettings",
 						isEnabled: true,
-						handler: function() {}
+						handler() {}
 					};
 				}
 			};
@@ -555,7 +555,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started for Object Page...", {
-		before: function() {
+		before() {
 			// View
 			// 	Page
 			// 		ObjectPageLayout
@@ -625,7 +625,7 @@ sap.ui.define([
 			clock.restore();
 			return this.oRta.start();
 		},
-		after: function() {
+		after() {
 			this.oObjectPageLayout.destroy();
 			this.oMockedAppComponent._restoreGetAppComponentStub();
 			this.oMockedAppComponent.destroy();
@@ -640,7 +640,7 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+				var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
 					sText = `${sText} - ${oItem.getKey()}`;
@@ -671,7 +671,7 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+				var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
 					sText = `${sText} - ${oItem.getKey()}`;
@@ -702,7 +702,7 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+				var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
 					sText = `${sText} - ${oItem.getKey()}`;
@@ -728,7 +728,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started for Object Page without stable ids...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
 			var oSubSection = new ObjectPageSubSection({
@@ -772,7 +772,7 @@ sap.ui.define([
 
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			this.oMockedAppComponent.destroy();
 			this.oObjectPageLayout.destroy();
@@ -786,7 +786,7 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+				var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
 					sText = `${sText} - ${oItem.getKey()}`;
@@ -806,7 +806,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started for Object Page...", {
-		beforeEach: function() {
+		beforeEach() {
 			var oEmbeddedView = oCore.byId("Comp1---idMain1");
 
 			this.oObjectPageSection1 = new ObjectPageSection({
@@ -843,7 +843,7 @@ sap.ui.define([
 
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			this.oObjectPageLayout.destroy();
 		}
@@ -855,7 +855,7 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+				var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 				assert.ok(oOverlay.isEditable(), "then the overlay is editable");
 				if (oContextMenuControl.getItems().length === 2) {
 					assert.equal(oContextMenuControl.getItems().length, 2, " and 2 Menu Items are available");

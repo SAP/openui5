@@ -18,7 +18,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.rta.test.rtaOpenUI5Only.ComplexTest", {
 		_aData: [],
 
-		onInit: function() {
+		onInit() {
 			var sURL = "/destinations/E91/sap/opu/odata/SAP/rtaOpenUI5OnlyTest/";
 
 			var oMockServer = new MockServer({
@@ -81,7 +81,7 @@ sap.ui.define([
 			);
 		},
 
-		switchToAdaptionMode: function() {
+		switchToAdaptionMode() {
 			sap.ui.require([
 				"sap/ui/rta/api/startKeyUserAdaptation"
 			], function(startKeyUserAdaptation) {
@@ -91,7 +91,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		isDataReady: function() {
+		isDataReady() {
 			return Promise.all(this._aData);
 		}
 	});

@@ -54,11 +54,12 @@ sap.ui.define([
 	 * Overridden to suppress the {} being recognized as binding strings.
 	 * @override
 	 */
-	AddXML.prototype.bindProperty = function(sName, oBindingInfo) {
+	AddXML.prototype.bindProperty = function(...aArgs) {
+		const [sName, oBindingInfo] = aArgs;
 		if (sName === "fragment") {
 			return this.setFragment(oBindingInfo.bindingString);
 		}
-		return FlexCommand.prototype.bindProperty.apply(this, arguments);
+		return FlexCommand.prototype.bindProperty.apply(this, aArgs);
 	};
 
 	/**
@@ -66,13 +67,14 @@ sap.ui.define([
 	 * When first applying a change we need to do the same.
 	 * @override
 	 */
-	AddXML.prototype._applyChange = function(vChange) {
+	AddXML.prototype._applyChange = function(...aArgs) {
+		const vChange = aArgs[0];
 		// preload the module to be applicable in this session
 		var mModulePreloads = {};
 		mModulePreloads[vChange.getFlexObjectMetadata().moduleName] = this.getFragment();
 		sap.ui.require.preload(mModulePreloads);
 
-		return FlexCommand.prototype._applyChange.apply(this, arguments);
+		return FlexCommand.prototype._applyChange.apply(this, aArgs);
 	};
 
 	return AddXML;

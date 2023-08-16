@@ -29,10 +29,10 @@ sap.ui.define([
 	};
 
 	QUnit.module("handleUrlParametersOnExit", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oReloadStub = sandbox.stub(ReloadManager, "triggerReload");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -54,12 +54,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("checkReloadOnExit", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves();
 			this.oGetReloadMethodStub = sandbox.stub(ReloadInfoAPI, "getReloadMethod");
 			ReloadManager.setUShellServices({URLParsing: "foo"});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -207,7 +207,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("handleReloadOnStart", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves();
 			this.oGetReloadReasonsStub = sandbox.stub(ReloadInfoAPI, "getReloadReasonsForStart");
 			this.oReloadStub = sandbox.stub(ReloadManager, "triggerReload");
@@ -225,7 +225,7 @@ sap.ui.define([
 			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication").callsFake(fnSlowCall);
 			ReloadManager.setUShellServices({URLParsing: "foo", CrossApplicationNavigation: "bar"});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -386,7 +386,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("FLP: triggerReload", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(FlUtils, "getUshellContainer").returns(true);
 			this.oHardReloadStub = sandbox.stub(ReloadManager, "reloadPage");
 			this.oHandleParamsOnStartStub = sandbox.stub(ReloadInfoAPI, "handleParametersOnStart");
@@ -406,7 +406,7 @@ sap.ui.define([
 				CrossApplicationNavigation: {toExternal: this.oToExternalStub}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -468,14 +468,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Standalone: triggerReload", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(FlUtils, "getUshellContainer").returns(false);
 			this.oHardReloadStub = sandbox.stub(ReloadManager, "reloadPage");
 			this.oSetUriStub = sandbox.stub(ReloadManager, "setUriParameters");
 			this.oHandleParamsOnStartStub = sandbox.stub(ReloadInfoAPI, "handleParametersOnStart");
 			this.oHandleUrlParamsStub = sandbox.stub(ReloadInfoAPI, "handleUrlParameters");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -514,12 +514,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("automatic start", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference");
 			ReloadManager.disableAutomaticStart(Layer.USER);
 			ReloadManager.disableAutomaticStart(Layer.CUSTOMER);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

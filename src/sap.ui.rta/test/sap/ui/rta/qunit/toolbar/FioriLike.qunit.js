@@ -11,14 +11,14 @@ function(
 	"use strict";
 
 	QUnit.module("Given FioriLike toolbar is instantiated", {
-		beforeEach: function() {
+		beforeEach() {
 			oCore.applyChanges();
 			this.oToolbar = new FioriLike({
 				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")
 			});
 			return this.oToolbar.onFragmentLoaded();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 		}
 	}, function() {

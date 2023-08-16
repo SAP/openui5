@@ -339,7 +339,7 @@ sap.ui.define([
 		onRtaStart();
 
 		return {
-			destroy: function() {
+			destroy() {
 				window.removeEventListener("message", fnOnMessageReceivedBound);
 			}
 		};

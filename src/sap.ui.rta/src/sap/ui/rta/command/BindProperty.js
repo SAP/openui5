@@ -54,11 +54,12 @@ sap.ui.define([
 	 * Overridden to suppress the binding strings to be used as binding.
 	 * @override
 	 */
-	BindProperty.prototype.bindProperty = function(sName, oBindingInfo) {
+	BindProperty.prototype.bindProperty = function(...aArgs) {
+		const [sName, oBindingInfo] = aArgs;
 		if (sName === "newBinding") {
 			return this.setNewBinding(oBindingInfo.bindingString);
 		}
-		return FlexCommand.prototype.bindProperty.apply(this, arguments);
+		return FlexCommand.prototype.bindProperty.apply(this, aArgs);
 	};
 
 	BindProperty.prototype._getChangeSpecificData = function() {

@@ -37,13 +37,13 @@ function(
 	});
 
 	QUnit.module("CutPaste Plugin Tests", {
-		beforeEach: function() {
+		beforeEach() {
 			this.CutPastePlugin = new CutPastePlugin({
 				commandFactory: oCommandFactory
 			});
 		},
 
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -51,7 +51,7 @@ function(
 			assert.expect(10);
 			var bIsAvailable = true;
 			var oMockOverlay = {
-				getDesignTimeMetadata: function() {}
+				getDesignTimeMetadata() {}
 			};
 
 			// Cut
@@ -93,7 +93,7 @@ function(
 		QUnit.test("When retrieving the context menu items and a responsible element is available", function(assert) {
 			assert.expect(7);
 			var oMockOverlay = {
-				getDesignTimeMetadata: function() {}
+				getDesignTimeMetadata() {}
 			};
 			var oResponsibleElementOverlay = {type: "responsibleElementOverlay"};
 
@@ -126,7 +126,7 @@ function(
 
 	// Integration scenario to check _isPasteEditable
 	QUnit.module("Given a single layout with two elements", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.CutPastePlugin = new CutPastePlugin({
@@ -168,7 +168,7 @@ function(
 			}.bind(this));
 		},
 
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oPage.destroy();
 			sandbox.restore();
@@ -225,7 +225,7 @@ function(
 	});
 
 	QUnit.module("Given a single layout without stable id", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.CutPastePlugin = new CutPastePlugin({
@@ -261,7 +261,7 @@ function(
 			}.bind(this));
 		},
 
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oPage.destroy();
 			sandbox.restore();

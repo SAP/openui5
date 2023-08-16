@@ -99,7 +99,7 @@ sap.ui.define([
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
 		if (aNonDuplicateNames.length === 1) {
-			sControlType = aNonDuplicateNames[0];
+			[sControlType] = aNonDuplicateNames;
 		} else if (sControlName) {
 			sControlType = sControlName;
 		} else {

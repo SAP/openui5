@@ -98,12 +98,12 @@ sap.ui.define([
 
 	function prepareMockEvent(sKey) {
 		var oMockEvent = {
-			getSource: function() {
+			getSource() {
 				return {
-					getBindingContext: function(sParameterName) {
+					getBindingContext(sParameterName) {
 						if (sParameterName === "visualizationModel") {
 							return {
-								getObject: function() {
+								getObject() {
 									return {
 										key: sKey
 									};
@@ -136,7 +136,7 @@ sap.ui.define([
 		var oLoadComponentStub = sandbox.stub(ChangeVisualization.prototype, "_getComponent");
 		oLoadComponentStub.returns(Object.assign(
 			{
-				createId: function(sId) {
+				createId(sId) {
 					return sId;
 				}
 			},
@@ -150,7 +150,7 @@ sap.ui.define([
 		});
 		var oMergedChangeHandler = Object.assign(
 			{
-				getChangeVisualizationInfo: function() { }
+				getChangeVisualizationInfo() { }
 			},
 			oChangeHandler
 		);
@@ -178,9 +178,9 @@ sap.ui.define([
 		// Doesn't work with event handlers
 		return new Promise(function(resolve) {
 			sandbox.stub(oObject, sMethodName)
-			.callsFake(function() {
+			.callsFake(function(...aArgs) {
 				if (oObject[sMethodName].wrappedMethod) {
-					var oResult = oObject[sMethodName].wrappedMethod.apply(this, arguments);
+					var oResult = oObject[sMethodName].wrappedMethod.apply(this, aArgs);
 					resolve(oResult);
 				}
 			});
@@ -223,10 +223,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("Change Viz - Menu Button & Model Test", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oCheckModelAll = {
 				key: "all",
 				title: oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [0]),
@@ -255,7 +255,7 @@ sap.ui.define([
 				this.oChangeVisualization = this.oRta.getChangeVisualization();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 			return RtaQunitUtils.clear();
@@ -562,7 +562,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Command type detection", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			// Create a custom structure to test with deeply nested containers
 			var oContainer = new VBox("container", {
 				items: [
@@ -592,7 +592,7 @@ sap.ui.define([
 				fnDone();
 			}, oContainer);
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanupTest.call(this);
 		}
 	}, function() {
@@ -600,7 +600,8 @@ sap.ui.define([
 			var fnDone = assert.async();
 			// Stub getCommandName to simulate special use cases
 			var oGetCommandNameStub = sandbox.stub(DesignTimeMetadata.prototype, "getCommandName");
-			oGetCommandNameStub.callsFake(function(sChangeType, oElement, sAggregationName) {
+			oGetCommandNameStub.callsFake(function(...aArgs) {
+				const [sChangeType, oElement, sAggregationName] = aArgs;
 				// For simplicity, lookup known change types by element id
 				// and combination of aggregation name and change type name
 				var sIdentifier = (sAggregationName ? `${sAggregationName} ` : "") + sChangeType;
@@ -619,7 +620,7 @@ sap.ui.define([
 						"items someMoveChangeType": "move"
 					}
 				}[oElement.getId()] || {})[sIdentifier];
-				return oMockResponse || DesignTimeMetadata.prototype.getCommandName.wrappedMethod.apply(this, arguments);
+				return oMockResponse || DesignTimeMetadata.prototype.getCommandName.wrappedMethod.apply(this, aArgs);
 			});
 
 			// Changes have no command name defined as it is the case for pre 1.84 changes
@@ -650,9 +651,9 @@ sap.ui.define([
 				})
 			]);
 			this.oChangeVisualization.triggerModeChange("MockComponent", {
-				getControl: function() {},
-				getModel: function() {},
-				setModel: function(oData) {
+				getControl() {},
+				getModel() {},
+				setModel(oData) {
 					assert.strictEqual(
 						oData.getData().changeCategories[3].count,
 						1,
@@ -670,16 +671,16 @@ sap.ui.define([
 					);
 					fnDone();
 				},
-				adjustToolbarSectionWidths: function() {}
+				adjustToolbarSectionWidths() {}
 			});
 		});
 	});
 
 	QUnit.module("Change indicator management", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.aMockChanges = [
 				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1", undefined, FlStates.LifecycleState.NEW),
 				createMockChange("testReveal", "reveal", "Comp1---idMain1--rb2", undefined, FlStates.LifecycleState.PERSISTED),
@@ -697,7 +698,7 @@ sap.ui.define([
 				this.oToolbar = this.oRta.getToolbar();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 			return RtaQunitUtils.clear();
@@ -781,7 +782,7 @@ sap.ui.define([
 				this.oRta.setMode("adaptation");
 				var oElement = Core.byId(sElementId);
 				var oParent = oElement.getParent();
-				var sParentAggregationName = oElement.sParentAggregationName;
+				var {sParentAggregationName} = oElement;
 				oElement.destroy();
 				oParent.addAggregation(sParentAggregationName, new Button(sElementId));
 				var oDesignTimePromise = new Promise(function(fnResolve) {
@@ -828,7 +829,7 @@ sap.ui.define([
 				],
 				undefined,
 				{
-					getChangeVisualizationInfo: function() {
+					getChangeVisualizationInfo() {
 						return {
 							affectedControls: [sElementId],
 							displayControls: [oParent.getId()]
@@ -883,9 +884,9 @@ sap.ui.define([
 					"then the indicator for the dirty change is added"
 				);
 
-				oChangeIndicator = collectIndicatorReferences().filter(function(oIndicator) {
+				[oChangeIndicator] = collectIndicatorReferences().filter(function(oIndicator) {
 					return oIndicator.mProperties.selectorId === "Comp1---idMain1--lb2";
-				})[0];
+				});
 				oOverlay = Core.byId(oChangeIndicator.getOverlayId()).getDomRef();
 				var oCreatePopoverPromise = waitForMethodCall(oChangeIndicator, "setAggregation");
 				QUnitUtils.triggerEvent("click", oOverlay);
@@ -1011,7 +1012,7 @@ sap.ui.define([
 				],
 				undefined,
 				{
-					getChangeVisualizationInfo: function(oChange) {
+					getChangeVisualizationInfo(oChange) {
 						return {
 							dependentControls: [Core.byId("Comp1---idMain1--rb2")], // Test if vis can handle elements
 							affectedControls: [oChange.getSelector()] // Test if vis can handle IDs
@@ -1117,10 +1118,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Keyboard and focus handling", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 			return RtaQunitUtils.clear();
@@ -1182,7 +1183,7 @@ sap.ui.define([
 			.then(startVisualization.bind(this, this.oRta))
 			.then(function() {
 				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
-				oChangeIndicator = collectIndicatorReferences()[0];
+				[oChangeIndicator] = collectIndicatorReferences();
 				iInitialTabindex = oChangeIndicator.getDomRef().getAttribute("tabindex");
 				var oOpenPopoverPromise = waitForMethodCall(oChangeIndicator, "setAggregation");
 				QUnitUtils.triggerEvent("click", oChangeIndicator.getDomRef());
@@ -1250,7 +1251,7 @@ sap.ui.define([
 			return startRta.call(this)
 			.then(startVisualization.bind(this, this.oRta))
 			.then(function() {
-				oChangeIndicator = collectIndicatorReferences()[0];
+				[oChangeIndicator] = collectIndicatorReferences();
 				var oChangeIndicatorElement = oChangeIndicator.getDomRef();
 				var oOverlay = Core.byId(oChangeIndicator.getOverlayId());
 
@@ -1283,7 +1284,7 @@ sap.ui.define([
 		QUnit.test("when a change indicator with a related indicator (two display controls for the same change) is hovered/focused", function(assert) {
 			var aDisplayControls = ["Comp1---idMain1--rb1", "Comp1---idMain1--bar"];
 			var oChangeHandler = {
-				getChangeVisualizationInfo: function() {
+				getChangeVisualizationInfo() {
 					return {
 						displayControls: aDisplayControls,
 						affectedControls: ["Comp1---idMain1--rb1"]
@@ -1345,10 +1346,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("On Save", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp,
 				flexSettings: this.oFlexSettings
@@ -1366,7 +1367,7 @@ sap.ui.define([
 				this.oRta.setMode("navigation");
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 			return RtaQunitUtils.clear();
@@ -1396,10 +1397,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("On Version Change", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		beforeEach: function() {
+		beforeEach() {
 			prepareChanges([
 				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1")
 			]);
@@ -1415,7 +1416,7 @@ sap.ui.define([
 				this.oToolbar = this.oRta.getToolbar();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 			return RtaQunitUtils.clear();
@@ -1426,7 +1427,7 @@ sap.ui.define([
 			var oVersionsModelStub = sandbox.stub(ChangeVisualization.prototype, "setVersionsModel");
 			oVersionsModelStub.callsFake(function() {
 				this.oChangeVisualization.oVersionsModel = {
-					getData: function() {
+					getData() {
 						return {
 							versioningEnabled: true,
 							displayedVersion: 2
@@ -1443,10 +1444,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Cleanup", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		beforeEach: function() {
+		beforeEach() {
 			prepareChanges([
 				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1")
 			]);
@@ -1467,7 +1468,7 @@ sap.ui.define([
 				Core.applyChanges();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 			return RtaQunitUtils.clear();

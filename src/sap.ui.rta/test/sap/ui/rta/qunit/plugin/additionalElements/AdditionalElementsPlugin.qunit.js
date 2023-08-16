@@ -120,10 +120,10 @@ sap.ui.define([
 	function registerControlsForChanges() {
 		sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 		sandbox.stub(ChangesWriteAPI, "create").resolves({
-			getSupportInformation: function() {
+			getSupportInformation() {
 				return {};
 			},
-			setSupportInformation: function() {}
+			setSupportInformation() {}
 		});
 	}
 
@@ -133,7 +133,7 @@ sap.ui.define([
 	var ON_IRRELEVANT = "IRRELEVANT";
 
 	QUnit.module("Context Menu Operations: Given a plugin whose dialog always close with OK", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			registerControlsForChanges();
 			this.oRTATexts = oCore.getLibraryResourceBundle("sap.ui.rta");
 			var fnOriginalGetLibraryResourceBundle = oCore.getLibraryResourceBundle;
@@ -141,18 +141,19 @@ sap.ui.define([
 				getText: sandbox.stub().returnsArg(0),
 				hasText: sandbox.stub().returns(true)
 			};
-			sandbox.stub(oCore, "getLibraryResourceBundle").callsFake(function(sLibraryName) {
+			sandbox.stub(oCore, "getLibraryResourceBundle").callsFake(function(...aArgs) {
+				const [sLibraryName] = aArgs;
 				if (sLibraryName === "sap.ui.layout" || sLibraryName === "sap.m") {
 					return oFakeLibBundle;
 				}
-				return fnOriginalGetLibraryResourceBundle.apply(this, arguments);
+				return fnOriginalGetLibraryResourceBundle.apply(this, aArgs);
 			});
 			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").resolves(true);
 			givenSomeBoundControls.call(this, assert);
 
 			givenThePluginWithOKClosingDialog.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oPlugin.destroy();
 			this.oPseudoPublicParent.destroy();
@@ -340,7 +341,7 @@ sap.ui.define([
 
 		QUnit.test(" when the control's dt metadata has a reveal action with function allowing reveal only for some instances", function(assert) {
 			return createOverlayWithAggregationActions.call(this, {
-				reveal: function(oControl) {
+				reveal(oControl) {
 					if (oControl.getId() === "Invisible1") {
 						return {
 							changeType: "unhideControl"
@@ -421,13 +422,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a plugin whose dialog always close with CANCEL", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			registerControlsForChanges();
 			givenSomeBoundControls.call(this, assert);
 
 			givenThePluginWithCancelClosingDialog.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oPlugin.destroy();
 			this.oPseudoPublicParent.destroy();
@@ -489,7 +490,7 @@ sap.ui.define([
 			this.fnEnhanceInvisibleElementsStub = sandbox.stub(AdditionalElementsAnalyzer, "enhanceInvisibleElements").resolves([]);
 
 			return createOverlayWithAggregationActions.call(this, {
-				reveal: function(oControl) {
+				reveal(oControl) {
 					if (oControl.getId() === REVEALABLE_CTRL_ID) {
 						return {
 							changeType: "unhideControl"
@@ -512,14 +513,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a plugin whose dialog always close with OK", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			registerControlsForChanges();
 			givenSomeBoundControls.call(this, assert);
 			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").resolves(true);
 
 			givenThePluginWithOKClosingDialog.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPlugin.destroy();
 			this.oPseudoPublicParent.destroy();
 			sandbox.restore();
@@ -849,8 +850,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has a reveal action on a responsible element and getMenuItems() is called", function(assert) {
-			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function() {
-				if (arguments[0][0] === this.oPseudoPublicParentOverlay) {
+			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function(...aArgs) {
+				if (aArgs[0][0] === this.oPseudoPublicParentOverlay) {
 					return true;
 				}
 				return undefined;
@@ -876,8 +877,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has a disabled reveal action along with an enabled reveal action on the responsible element and getActions() is called", function(assert) {
-			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function() {
-				if (arguments[0][0] === this.oPseudoPublicParentOverlay) {
+			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function(...aArgs) {
+				if (aArgs[0][0] === this.oPseudoPublicParentOverlay) {
 					return true;
 				}
 				return undefined;
@@ -960,11 +961,12 @@ sap.ui.define([
 				getText: sandbox.stub().returnsArg(0),
 				hasText: sandbox.stub().returns(true)
 			};
-			sandbox.stub(oCore, "getLibraryResourceBundle").callsFake(function(sLibraryName) {
+			sandbox.stub(oCore, "getLibraryResourceBundle").callsFake(function(...aArgs) {
+				const [sLibraryName] = aArgs;
 				if (sLibraryName === "sap.ui.layout" || sLibraryName === "sap.m") {
 					return oFakeLibBundle;
 				}
-				return fnOriginalGetLibraryResourceBundle.apply(this, arguments);
+				return fnOriginalGetLibraryResourceBundle.apply(this, aArgs);
 			});
 
 			return createOverlayWithAggregationActions.call(this, {
@@ -988,11 +990,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has a reveal and addViaDelegate and the default delegate is not available", function(assert) {
-			sandbox.stub(oCore, "loadLibrary").callsFake(function(sLibraryName) {
+			sandbox.stub(oCore, "loadLibrary").callsFake(function(...aArgs) {
+				const [sLibraryName] = aArgs;
 				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), sLibraryName)) {
 					return Promise.reject();
 				}
-				return oCore.loadLibrary.wrappedMethod.apply(this, arguments);
+				return oCore.loadLibrary.wrappedMethod.apply(this, aArgs);
 			});
 
 			return createOverlayWithAggregationActions.call(this, {
@@ -1019,16 +1022,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has an instance-specific delegate and an unavailable default delegate", function(assert) {
-			sandbox.stub(oCore, "loadLibrary").callsFake(function(sLibraryName) {
+			sandbox.stub(oCore, "loadLibrary").callsFake(function(...aArgs) {
+				const [sLibraryName] = aArgs;
 				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), sLibraryName)) {
 					return Promise.reject();
 				}
-				return oCore.loadLibrary.wrappedMethod.apply(this, arguments);
+				return oCore.loadLibrary.wrappedMethod.apply(this, aArgs);
 			});
 
 			RtaQunitUtils.stubSapUiRequire(sandbox, [{
 				name: ["path/to/instancespecific/delegate"],
-				stub: { getPropertyInfo: function() {} }
+				stub: { getPropertyInfo() {} }
 			}]);
 
 			return createOverlayWithAggregationActions.call(this, {
@@ -1443,17 +1447,17 @@ sap.ui.define([
 
 		QUnit.test("when 'registerElementOverlay' is called and the metamodel is not loaded yet", function(assert) {
 			var fnDone = assert.async();
-			var oSibling = this.oSibling;
+			var {oSibling} = this;
 			var oSiblingOverlay = {
-				getElement: function() {
+				getElement() {
 					return oSibling;
 				}
 			};
 
 			sandbox.stub(this.oSibling, "getModel").returns({
-				getMetaModel: function() {
+				getMetaModel() {
 					return {
-						loaded: function() {
+						loaded() {
 							return Promise.resolve();
 						}
 					};
@@ -1540,7 +1544,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an app that is field extensible enabled...", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			registerControlsForChanges();
 			this.STUB_EXTENSIBILITY_BUSINESS_CTXT = {
 				extensionData: [{BusinessContext: "some context", description: "some description"}], // BusinessContext API returns this structure
@@ -1567,7 +1571,7 @@ sap.ui.define([
 
 			givenThePluginWithOKClosingDialog.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			sandbox.restore();
 			this.oPlugin.destroy();
@@ -1869,7 +1873,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a Plugin and a DT with one control", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton = new Button("control1", {text: "foo"});
 			this.oButton.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -1885,7 +1889,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oButton.destroy();
 			this.oDesignTime.destroy();
@@ -2026,7 +2030,7 @@ sap.ui.define([
 			var oSourceDTMetadata = oSourceElementOverlay.getDesignTimeMetadata().getData();
 
 			var oActions = Object.assign({
-				getResponsibleElement: function() {
+				getResponsibleElement() {
 					return mActions.responsibleElement.target;
 				},
 				actionsFromResponsibleElement: mActions.responsibleElement.actionsFromResponsibleElement || []
@@ -2055,7 +2059,7 @@ sap.ui.define([
 				key: "sap-ui-custom-settings",
 				value: oCustomDataValue
 			});
-			var oControl = this.oControl;
+			var {oControl} = this;
 			oControl.insertAggregation("customData", oCustomData, 0, /* bSuppressInvalidate= */true);
 		}
 	}
@@ -2094,10 +2098,10 @@ sap.ui.define([
 					propagateRelevantContainer: bPropagateRelevantContainer,
 					actions: null,
 					childNames: null,
-					getStableElements: function() {
+					getStableElements() {
 						return [];
 					},
-					getIndex: function(oBar, oBtn) {
+					getIndex(oBar, oBtn) {
 						if (oBtn) {
 							return oBar.getContentLeft().indexOf(oBtn) + 1;
 						}

@@ -184,7 +184,7 @@ sap.ui.define([
 				 * @public
 				 * @function
 				 */
-				get: get,
+				get,
 
 				/**
 				 * Returns a list of available actions for the specified control(s).
@@ -196,7 +196,7 @@ sap.ui.define([
 				 * @public
 				 * @function
 				 */
-				execute: execute
+				execute
 			}
 		};
 	};

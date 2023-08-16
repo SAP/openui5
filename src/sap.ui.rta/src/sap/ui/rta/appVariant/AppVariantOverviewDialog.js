@@ -34,8 +34,9 @@ sap.ui.define([
 				cancel: {}
 			}
 		},
-		constructor: function() {
-			Dialog.prototype.constructor.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			Dialog.prototype.constructor.apply(this, aArgs);
 			this._oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
 			// Create manage apps component
@@ -61,8 +62,8 @@ sap.ui.define([
 
 			this.addStyleClass(RtaUtils.getRtaStyleClassName());
 		},
-		destroy: function() {
-			Dialog.prototype.destroy.apply(this, arguments);
+		destroy(...aArgs) {
+			Dialog.prototype.destroy.apply(this, aArgs);
 		},
 		renderer: DialogRenderer
 	});

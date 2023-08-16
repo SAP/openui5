@@ -177,6 +177,7 @@ function(
 		// Adding the tooltip to every icon which is shown on the App Variant Overview Dialog
 		var sIconUrl = oAppVariantInfo.iconUrl;
 		if (sIconUrl && IconPool.isIconURI(sIconUrl)) {
+			// eslint-disable-next-line prefer-destructuring
 			oAppVariantInfo.iconText = sIconUrl.split("//")[1];
 		}
 

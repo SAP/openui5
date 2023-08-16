@@ -24,14 +24,14 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		init: function() {
+		init(...aArgs) {
 			this._adaptButtonConfiguration();
 			SmartLinkUtil.mockUShellServices();
 			this._setModels(this._startMockServer());
-			UIComponent.prototype.init.apply(this, arguments);
+			UIComponent.prototype.init.apply(this, aArgs);
 		},
 
-		_startMockServer: function() {
+		_startMockServer() {
 			var sURL = "/destinations/E91/sap/opu/odata/SAP/VariantManagementTest/";
 			var oMockServer = new MockServer({
 				rootUri: sURL
@@ -45,7 +45,7 @@ sap.ui.define([
 			return sURL;
 		},
 
-		_setModels: function(sURL) {
+		_setModels(sURL) {
 			var oModel = new ODataModel(sURL, {
 				json: true,
 				loadMetadataAsync: true
@@ -68,7 +68,7 @@ sap.ui.define([
 			this.setModel(oStateModel, "state");
 		},
 
-		_adaptButtonConfiguration: function() {
+		_adaptButtonConfiguration() {
 			var oAppModel = new JSONModel({
 				showAdaptButton: false
 			});

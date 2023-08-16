@@ -84,9 +84,7 @@ sap.ui.define([
 
 		this._oDialogPromise.then(function(oDialog) {
 			oDialog.setModel(this._oDialogModel);
-			if (!oRTAResourceModel) {
-				oRTAResourceModel = new ResourceModel({bundleName: "sap.ui.rta.messagebundle"});
-			}
+			oRTAResourceModel ||= new ResourceModel({bundleName: "sap.ui.rta.messagebundle"});
 			oDialog.setModel(oRTAResourceModel, "i18n");
 
 			oDialog.addStyleClass(Utils.getRtaStyleClassName());
@@ -100,13 +98,13 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	AddElementsDialog.prototype.exit = function() {
+	AddElementsDialog.prototype.exit = function(...aArgs) {
 		this._oDialogPromise.then(function(oDialog) {
 			oDialog.destroy();
 		});
 
 		if (ManagedObject.prototype.exit) {
-			ManagedObject.prototype.exit.apply(this, arguments);
+			ManagedObject.prototype.exit.apply(this, aArgs);
 		}
 	};
 

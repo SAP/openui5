@@ -18,7 +18,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a VariantManagement control and its designtime metadata are created...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.sVariantManagementReference = "variantManagementReference-1";
 			this.oVariantManagement = new VariantManagement(this.sVariantManagementReference, {});
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
@@ -32,7 +32,7 @@ sap.ui.define([
 				this.oUpdateCurrentVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant").resolves();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oMockedAppComponent.destroy();
 			this.oVariantManagement.destroy();
 			sandbox.restore();

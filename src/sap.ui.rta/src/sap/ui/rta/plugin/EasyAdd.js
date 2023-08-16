@@ -42,7 +42,8 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay object
 	 * @override
 	 */
-	EasyAdd.prototype.registerElementOverlay = function(oOverlay) {
+	EasyAdd.prototype.registerElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		var oControl = oOverlay.getElement();
 		if (oControl.getMetadata().getName() === "sap.uxap.ObjectPageSection" && this.hasStableId(oOverlay)) {
 			oOverlay.addStyleClass("sapUiRtaPersAdd");
@@ -92,7 +93,7 @@ sap.ui.define([
 			}
 		}
 
-		AdditionalElementsPlugin.prototype.registerElementOverlay.apply(this, arguments);
+		AdditionalElementsPlugin.prototype.registerElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -101,7 +102,8 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay object
 	 * @override
 	 */
-	EasyAdd.prototype.deregisterElementOverlay = function(oOverlay) {
+	EasyAdd.prototype.deregisterElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		var oControl = oOverlay.getElement();
 		if (oOverlay._oAddButton) {
 			oOverlay._oAddButton.destroy();
@@ -116,7 +118,7 @@ sap.ui.define([
 			});
 		}
 
-		AdditionalElementsPlugin.prototype.deregisterElementOverlay.apply(this, arguments);
+		AdditionalElementsPlugin.prototype.deregisterElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -125,8 +127,9 @@ sap.ui.define([
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	EasyAdd.prototype._isEditable = function(oOverlay) {
-		return AdditionalElementsPlugin.prototype._isEditable.apply(this, arguments).then(function(bIsEditable) {
+	EasyAdd.prototype._isEditable = function(...aArgs) {
+		const [oOverlay] = aArgs;
+		return AdditionalElementsPlugin.prototype._isEditable.apply(this, aArgs).then(function(bIsEditable) {
 			if (oOverlay._oAddButton) {
 				var bIsLayout = oOverlay.hasStyleClass("sapUiRtaPersAddTop");
 				var sOverlayIsSibling = bIsLayout ? "asChild" : "asSibling";

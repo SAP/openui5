@@ -56,7 +56,7 @@ function(
 				return {
 					getShellHeader: function() {
 						return {
-							getLogo: function() {
+							getLogo() {
 								return "logo";
 							},
 							addStyleClass: function(sText) {
@@ -65,7 +65,7 @@ function(
 							removeStyleClass: function(sText) {
 								this.sRemove = sText;
 							}.bind(this),
-							getShowLogo: function() {
+							getShowLogo() {
 								return true;
 							},
 							$: function() {
@@ -83,14 +83,14 @@ function(
 	}
 
 	QUnit.module("Basic functionality", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			oCore.applyChanges();
 
 			this.oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 
 			stubFioriRenderer.call(this, assert);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oImage.destroy();
 			sandbox.restore();
 		}
@@ -136,8 +136,8 @@ function(
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 
-			var oAdaptationDestroyStub = sandbox.stub(Adaptation.prototype, "destroy").callsFake(function() {
-				oAdaptationDestroyStub.wrappedMethod.apply(this, arguments);
+			var oAdaptationDestroyStub = sandbox.stub(Adaptation.prototype, "destroy").callsFake(function(...aArgs) {
+				oAdaptationDestroyStub.wrappedMethod.apply(this, aArgs);
 				assert.ok(true, "then the destroy is executed without errors");
 			});
 
@@ -181,7 +181,7 @@ function(
 	}
 
 	QUnit.module("Different Screen Sizes", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
 				this.placeAt("qunit-fixture");
 			});
@@ -193,7 +193,7 @@ function(
 			sandbox.stub(VersionsAPI, "initialize").resolves(oVersionsModel);
 			stubFioriRenderer.call(this, assert);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oContainer.destroy();
 			this.oComponent.destroy();
 			this.oRta.destroy();
@@ -212,8 +212,8 @@ function(
 			var fnDone = assert.async();
 			document.getElementById("qunit-fixture").style.width = "600px";
 			var oSetLogoVisibilityStub = sandbox.stub(Fiori.prototype, "_setLogoVisibility")
-			.callsFake(function() {
-				oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, arguments);
+			.callsFake(function(...aArgs) {
+				oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, aArgs);
 				assert.notOk(this.oToolbar.getControl("iconBox").getVisible(), "then the logo is not visible");
 				fnDone();
 			}.bind(this));
@@ -224,11 +224,11 @@ function(
 			var fnDone = assert.async();
 			document.getElementById("qunit-fixture").style.width = "1600px";
 			var oSetLogoVisibilityStub = sandbox.stub(Fiori.prototype, "_setLogoVisibility")
-			.callsFake(function() {
-				oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, arguments);
+			.callsFake(function(...aArgs) {
+				oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, aArgs);
 				assert.notOk(this.oToolbar.getControl("iconBox").getVisible(), "then the logo disappears");
-				oSetLogoVisibilityStub.callsFake(function() {
-					oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, arguments);
+				oSetLogoVisibilityStub.callsFake(function(...aArgs) {
+					oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, aArgs);
 					assert.ok(this.oToolbar.getControl("iconBox").getVisible(), "then the logo is visible again");
 					fnDone();
 				}.bind(this));

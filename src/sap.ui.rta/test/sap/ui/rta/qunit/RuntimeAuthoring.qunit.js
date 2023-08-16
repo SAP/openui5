@@ -81,10 +81,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available together with a CommandStack with changes...", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			Versions.clearInstances();
 			var fnDone = assert.async();
 
@@ -131,7 +131,7 @@ sap.ui.define([
 				.then(fnDone);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanInfoSessionStorage();
 			sandbox.restore();
 			this.oRemoveCommand.destroy();
@@ -289,7 +289,7 @@ sap.ui.define([
 			var oLogStub = sandbox.stub(Log, "error");
 			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox");
 			var oCommandStack = {
-				pushAndExecute: function() {
+				pushAndExecute() {
 					return Promise.reject(Error("Some stuff.... The following Change cannot be applied because of a dependency .... some other stuff"));
 				}
 			};
@@ -308,7 +308,7 @@ sap.ui.define([
 			var oLogStub = sandbox.stub(Log, "error");
 			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox");
 			var oCommandStack = {
-				pushAndExecute: function() {
+				pushAndExecute() {
 					return Promise.reject(Error("Some stuff........ some other stuff"));
 				}
 			};
@@ -629,10 +629,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started with a scope set...", {
-		before: function() {
+		before() {
 			return oComponentPromise;
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl"),
 				metadataScope: "someScope"
@@ -641,7 +641,7 @@ sap.ui.define([
 			return RtaQunitUtils.clear()
 			.then(this.oRta.start.bind(this.oRta));
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanInfoSessionStorage();
 			this.oRta.destroy();
 			sandbox.restore();

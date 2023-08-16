@@ -97,7 +97,7 @@ sap.ui.define([
 
 	return {
 		// To see the overview of app variants, a key user has created from an app
-		onGetOverview: function(bAsKeyUser, sLayer) {
+		onGetOverview(bAsKeyUser, sLayer) {
 			var oDescriptor = fnGetDescriptor();
 
 			return new Promise(function(resolve) {
@@ -113,9 +113,7 @@ sap.ui.define([
 				};
 
 				sap.ui.require([sOverviewPath], function(AppVariantOverviewDialog) {
-					if (!oAppVariantOverviewDialog) {
-						oAppVariantOverviewDialog = new AppVariantOverviewDialog(oProperties);
-					}
+					oAppVariantOverviewDialog ||= new AppVariantOverviewDialog(oProperties);
 
 					oAppVariantOverviewDialog.attachCancel(fnCancel);
 
@@ -135,7 +133,7 @@ sap.ui.define([
 		 * When this method returns <code>true</code> then a drop down menu button on the UI is shown where a user can choose app variant overview for either a key user or SAP developer.
 		 * When this method returns <code>false</code>, an app variant overview is shown only for a key user.
 		 */
-		isOverviewExtended: function() {
+		isOverviewExtended() {
 			var oUriParams = UriParameters.fromQuery(window.location.search);
 			var sMode = oUriParams.get("sap-ui-xx-app-variant-overview-extended");
 			if (!sMode) {
@@ -144,7 +142,7 @@ sap.ui.define([
 
 			return sMode.toLowerCase() === "true";
 		},
-		isManifestSupported: function() {
+		isManifestSupported() {
 			var oDescriptor = fnGetDescriptor();
 			return AppVariantUtils.getManifirstSupport(oDescriptor["sap.app"].id);
 		},
@@ -154,7 +152,7 @@ sap.ui.define([
 		 * @param {object} oLrepSerializer - Layered repository serializer
 		 * @returns {boolean} Boolean value
 		 */
-		isSaveAsAvailable: function(oRootControl, sCurrentLayer, oLrepSerializer) {
+		isSaveAsAvailable(oRootControl, sCurrentLayer, oLrepSerializer) {
 			oRootControlRunningApp = oRootControl;
 			oCommandSerializer = oLrepSerializer;
 
@@ -180,7 +178,7 @@ sap.ui.define([
 		 * @returns {Promise} Resolved promise with an app variant descriptor
 		 * @description Getting here an app variant descriptor from the layered repository.
 		 */
-		getAppVariantDescriptor: function(oRootControl) {
+		getAppVariantDescriptor(oRootControl) {
 			oRootControlRunningApp = oRootControl;
 			var oDescriptor = fnGetDescriptor();
 			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
@@ -190,7 +188,7 @@ sap.ui.define([
 			}
 			return Promise.resolve(false);
 		},
-		_determineSelector: function(bIsRunningApp, oDescriptor) {
+		_determineSelector(bIsRunningApp, oDescriptor) {
 			return bIsRunningApp ? oRootControlRunningApp : {
 				appId: oDescriptor["sap.app"].id,
 				appVersion: oDescriptor["sap.app"].applicationVersion.version
@@ -206,7 +204,7 @@ sap.ui.define([
 		 * When 'Save As' triggered from the UI adaptation header bar, we set both flags <code>bSaveAsFromRta</code> and <code>bCopyUnsavedChanges</code> equal to <code>true</code>.
 		 * The flag <code>bCopyUnsavedChanges</code> is <code>true</code> if a key user presses 'Save As' from the running app entry in the app variant overview dialog.
 		 */
-		onSaveAs: function(bSaveAsFromRta, bCopyUnsavedChanges, sCurrentLayer, oSelectedAppVariant) {
+		onSaveAs(bSaveAsFromRta, bCopyUnsavedChanges, sCurrentLayer, oSelectedAppVariant) {
 			var bIsS4HanaCloud;
 			var oAppVariantSaveClosure;
 			var oDescriptor = fnGetDescriptor();
@@ -252,9 +250,7 @@ sap.ui.define([
 					return oAppVariantManager.createAppVariant(sAppVariantId, vSelector)
 					.catch(function(oError) {
 						var sMessageKey = oError.messageKey;
-						if (!sMessageKey) {
-							sMessageKey = "MSG_SAVE_APP_VARIANT_FAILED";
-						}
+						sMessageKey ||= "MSG_SAVE_APP_VARIANT_FAILED";
 
 						return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);
 					});
@@ -319,12 +315,10 @@ sap.ui.define([
 				};
 
 				sap.ui.require(["sap/ui/rta/appVariant/AppVariantManager"], function(AppVariantManager) {
-					if (!oAppVariantManager) {
-						oAppVariantManager = new AppVariantManager({
-							commandSerializer: oCommandSerializer,
-							layer: sCurrentLayer
-						});
-					}
+					oAppVariantManager ||= new AppVariantManager({
+						commandSerializer: oCommandSerializer,
+						layer: sCurrentLayer
+					});
 
 					return fnProcessSaveAsDialog()
 					.then(fnCreateInlineChanges) // Create the inline changes for application variant
@@ -353,17 +347,15 @@ sap.ui.define([
 		 * @returns {Promise} Resolved promise
 		 * @description Triggers a delete operation of the app variant.
 		 */
-		onDeleteFromOverviewDialog: function(sAppVariantId, bCurrentlyAdapting, sCurrentLayer) {
+		onDeleteFromOverviewDialog(sAppVariantId, bCurrentlyAdapting, sCurrentLayer) {
 			var bIsS4HanaCloud;
 			return new Promise(function(resolve) {
 				sap.ui.require(["sap/ui/rta/appVariant/AppVariantManager"], function(AppVariantManager) {
-					if (!oAppVariantManager) {
-						oAppVariantManager = new AppVariantManager({
-							rootControl: oRootControlRunningApp,
-							commandSerializer: oCommandSerializer,
-							layer: sCurrentLayer
-						});
-					}
+					oAppVariantManager ||= new AppVariantManager({
+						rootControl: oRootControlRunningApp,
+						commandSerializer: oCommandSerializer,
+						layer: sCurrentLayer
+					});
 
 					var fnDeleteAppVariant = function() {
 						return oAppVariantManager.deleteAppVariant(sAppVariantId)
@@ -372,9 +364,7 @@ sap.ui.define([
 								return Promise.reject("cancel");
 							}
 							var sMessageKey = oError.messageKey;
-							if (!sMessageKey) {
-								sMessageKey = "MSG_DELETE_APP_VARIANT_FAILED";
-							}
+							sMessageKey ||= "MSG_DELETE_APP_VARIANT_FAILED";
 							return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);
 						});
 					};

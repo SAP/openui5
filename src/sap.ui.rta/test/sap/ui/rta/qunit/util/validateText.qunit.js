@@ -44,7 +44,7 @@ function(
 			}
 			var oAction = {
 				validators: [{
-					validatorFunction: validatorFunction,
+					validatorFunction,
 					errorMessage: "Not a Potato"
 				}]
 			};

@@ -37,7 +37,7 @@ sap.ui.define([
 	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	QUnit.module("Given a designTime and remove plugin are instantiated", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oRemovePlugin = new RemovePlugin({
@@ -63,7 +63,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oVerticalLayout.destroy();
@@ -242,7 +242,7 @@ sap.ui.define([
 				actions: {
 					remove: {
 						changeType: "hideControl",
-						getConfirmationText: function(oElementInstance) {
+						getConfirmationText(oElementInstance) {
 							return oElementInstance.getText();
 						}
 					}
@@ -275,7 +275,7 @@ sap.ui.define([
 				actions: {
 					remove: {
 						changeType: "hideControl",
-						getConfirmationText: function(oElementInstance) {
+						getConfirmationText(oElementInstance) {
 							return oElementInstance.getText();
 						}
 					}
@@ -358,7 +358,7 @@ sap.ui.define([
 				actions: {
 					remove: {
 						changeType: "hideControl",
-						isEnabled: function(oElementInstance) {
+						isEnabled(oElementInstance) {
 							return oElementInstance.getMetadata().getName() !== "sap.m.Button";
 						}
 					}
@@ -458,7 +458,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and a Layout with 3 Buttons in it, when _getElementToFocus is called...", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oButton1 = new Button("button1", {text: "Button1"});
@@ -481,7 +481,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();

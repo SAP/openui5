@@ -30,7 +30,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var MessageType = coreLibrary.MessageType;
+	var {MessageType} = coreLibrary;
 	var DRAFT_ACCENT_COLOR = "sapUiRtaDraftVersionAccent";
 	var ACTIVE_ACCENT_COLOR = "sapUiRtaActiveVersionAccent";
 
@@ -79,7 +79,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("VersionHistory", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oToolbar = initializeToolbar();
 			this.oEvent = {
 				getSource: function() {
@@ -90,7 +90,7 @@ sap.ui.define([
 				return this.oToolbar.show();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}
@@ -186,13 +186,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("ActivateVersionDialog", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oToolbar = initializeToolbar();
 			return this.oToolbar.onFragmentLoaded().then(function() {
 				return this.oToolbar.show();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}
@@ -275,14 +275,14 @@ sap.ui.define([
 	}
 
 	QUnit.module("Formatting of direct Toolbar content", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oToolbar = initializeToolbar();
 			this.oTextResources = this.oToolbar.getTextResources();
 			return this.oToolbar.onFragmentLoaded().then(function() {
 				return this.oToolbar.show();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}

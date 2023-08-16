@@ -32,10 +32,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("Basic functionality", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oToolbar = new BaseToolbar();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 		}
 	}, function() {
@@ -186,7 +186,7 @@ sap.ui.define([
 	 ********************************************************************************************************/
 
 	QUnit.module("Inheritance functionality", {
-		beforeEach: function() {
+		beforeEach() {
 			var CustomToolbar = BaseToolbar.extend("CustomToolbar", {
 				renderer: "sap.ui.rta.toolbar.BaseRenderer",
 				metadata: {
@@ -213,7 +213,7 @@ sap.ui.define([
 
 			this.oToolbar = new CustomToolbar();
 		},
-		afterEach: function() {
+		afterEach() {
 			// by default RuntimeAuthoring takes care of destroying the controls
 			this.oButton.destroy();
 			this.oToolbar.destroy();
@@ -242,7 +242,7 @@ sap.ui.define([
 	 ********************************************************************************************************/
 
 	QUnit.module("Animation functionality", {
-		beforeEach: function() {
+		beforeEach() {
 			var CustomToolbar = BaseToolbar.extend("CustomToolbar", {
 				renderer: "sap.ui.rta.toolbar.BaseRenderer",
 				animation: true,
@@ -251,7 +251,7 @@ sap.ui.define([
 
 			this.oToolbar = new CustomToolbar();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}

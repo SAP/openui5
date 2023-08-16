@@ -28,7 +28,7 @@ sap.ui.define([
 			split: {
 				changeType: "splitStuff",
 				changeOnRelevantContainer: true,
-				getControlsCount: function() {
+				getControlsCount() {
 					return 3;
 				}
 			}
@@ -43,7 +43,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Given a designTime and split plugin are instantiated", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oSplitPlugin = new SplitPlugin({
@@ -82,7 +82,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oView.destroy();
 			this.oDesignTime.destroy();
@@ -119,7 +119,7 @@ sap.ui.define([
 						changeType: "splitStuff",
 						changeOnRelevantContainer: true,
 						isEnabled: true,
-						getControlsCount: function() {
+						getControlsCount() {
 							return 2;
 						}
 					}
@@ -153,7 +153,7 @@ sap.ui.define([
 						changeType: "splitStuff",
 						changeOnRelevantContainer: true,
 						isEnabled: true,
-						getControlsCount: function() {
+						getControlsCount() {
 							return 2;
 						}
 					}
@@ -189,10 +189,10 @@ sap.ui.define([
 					split: {
 						changeType: "splitField",
 						changeOnRelevantContainer: true,
-						isEnabled: function() {
+						isEnabled() {
 							return true;
 						},
-						getControlsCount: function() {
+						getControlsCount() {
 							return 1;
 						}
 					}
@@ -222,7 +222,7 @@ sap.ui.define([
 					split: {
 						changeType: "splitField",
 						changeOnRelevantContainer: true,
-						isEnabled: function() {
+						isEnabled() {
 							return true;
 						}
 					}
@@ -305,7 +305,7 @@ sap.ui.define([
 				actions: {
 					split: {
 						changeType: "splitStuff",
-						getControlsCount: function() {
+						getControlsCount() {
 							return 2;
 						}
 					}

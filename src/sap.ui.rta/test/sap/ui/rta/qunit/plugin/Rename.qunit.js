@@ -72,7 +72,7 @@ sap.ui.define([
 	}
 
 	function triggerEventOnEditableField(oPlugin, sKeyCode) {
-		sKeyCode = sKeyCode || KeyCodes.ENTER;
+		sKeyCode ||= KeyCodes.ENTER;
 		var oEvent = new Event("keydown");
 		oEvent.keyCode = sKeyCode;
 		oPlugin._oEditableField.dispatchEvent(oEvent);
@@ -80,7 +80,7 @@ sap.ui.define([
 
 	function addResponsibleElement(oDesignTimeMetadata, oTargetElement, oResponsibleElement) {
 		Object.assign(oDesignTimeMetadata.getData().actions, {
-			getResponsibleElement: function(oElement) {
+			getResponsibleElement(oElement) {
 				if (oElement === oTargetElement) {
 					return oResponsibleElement;
 				}
@@ -96,7 +96,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a designTime and rename plugin are instantiated using a form", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
@@ -134,7 +134,7 @@ sap.ui.define([
 				done();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
@@ -143,7 +143,7 @@ sap.ui.define([
 		QUnit.test("when _onDesignTimeSelectionChange is called", function(assert) {
 			var aSelection = [this.oFormContainerOverlay];
 			var oEvent = {
-				getParameter: function() {
+				getParameter() {
 					return aSelection;
 				}
 			};
@@ -159,7 +159,7 @@ sap.ui.define([
 				actions: {
 					rename: {
 						changeType: "renameGroup",
-						domRef: function(oFormContainer) {
+						domRef(oFormContainer) {
 							return oFormContainer.getRenderedDomRef().querySelector(".sapUiFormTitle");
 						}
 					}
@@ -208,10 +208,10 @@ sap.ui.define([
 				actions: {
 					rename: {
 						changeType: "renameGroup",
-						isEnabled: function(oFormContainer) {
+						isEnabled(oFormContainer) {
 							return !(oFormContainer.getToolbar() || !oFormContainer.getTitle());
 						},
-						domRef: function(oFormContainer) {
+						domRef(oFormContainer) {
 							return oFormContainer.getRenderedDomRef().querySelector(".sapUiFormTitle");
 						}
 					}
@@ -242,11 +242,11 @@ sap.ui.define([
 			var done = assert.async();
 			var oDesignTimeMetadata = {
 				actions: {
-					rename: function(oFormContainer) {
+					rename(oFormContainer) {
 						return {
 							changeType: "renameGroup",
 							isEnabled: !(oFormContainer.getToolbar() || !oFormContainer.getTitle()),
-							domRef: function(oFormContainer) {
+							domRef(oFormContainer) {
 								return oFormContainer.getRenderedDomRef().querySelector(".sapUiFormTitle");
 							}
 						};
@@ -335,7 +335,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and rename plugin are instantiated using a VerticalLayout", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oRenamePlugin = new RenamePlugin({
@@ -394,7 +394,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -421,12 +421,12 @@ sap.ui.define([
 			sandbox.stub(oDesignTimeMetadata, "getAction")
 			.callThrough()
 			.withArgs("rename")
-			.callsFake(function() {
+			.callsFake(function(...aArgs) {
 				return Object.assign(
 					{},
-					oDesignTimeMetadata.getAction.wrappedMethod.apply(this, arguments),
+					oDesignTimeMetadata.getAction.wrappedMethod.apply(this, aArgs),
 					{
-						getTextMutators: function() {
+						getTextMutators() {
 							return {
 								getText: oGetTextStub,
 								setText: oSetTextStub
@@ -618,7 +618,7 @@ sap.ui.define([
 		QUnit.test("when the Label gets renamed and the new value is invalid and multiple validators are available", function(assert) {
 			addValidators(this.oLayoutOverlay.getDesignTimeMetadata(), [
 				{
-					validatorFunction: function() {
+					validatorFunction() {
 						return false;
 					},
 					errorMessage: "invalid"

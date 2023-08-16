@@ -91,11 +91,11 @@ sap.ui.define([
 	// Size of three icons + spacing in pixels
 	var SWITCHER_ICON_WIDTH = 124;
 
-	Adaptation.prototype.init = function() {
+	Adaptation.prototype.init = function(...aArgs) {
 		this._mSizeLimits = {
 			switchToIcons: undefined
 		};
-		this._pFragmentLoaded = Base.prototype.init.apply(this, arguments)
+		this._pFragmentLoaded = Base.prototype.init.apply(this, aArgs)
 		.then(function() {
 			this._onResize = this._onResize.bind(this);
 			window.addEventListener("resize", this._onResize);
@@ -112,12 +112,12 @@ sap.ui.define([
 		return this._pFragmentLoaded;
 	};
 
-	Adaptation.prototype.exit = function() {
+	Adaptation.prototype.exit = function(...aArgs) {
 		window.removeEventListener("resize", this._onResize);
 		this._aIntersectionObservers.forEach(function(oInstersectionObserver) {
 			oInstersectionObserver.disconnect();
 		});
-		Base.prototype.exit.apply(this, arguments);
+		Base.prototype.exit.apply(this, aArgs);
 	};
 
 	Adaptation.prototype._restoreHiddenElements = function() {
@@ -253,7 +253,7 @@ sap.ui.define([
 					overviewForKeyUser: onOverviewForKeyUserPressed.bind(this),
 					overviewForDeveloper: onOverviewForDeveloperPressed.bind(this),
 					restore: this.eventHandler.bind(this, "Restore"),
-					formatSaveAsEnabled: formatSaveAsEnabled,
+					formatSaveAsEnabled,
 					saveAs: onSaveAsPressed.bind(this)
 				}
 			}).then(function(oMenu) {
@@ -484,11 +484,11 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	Adaptation.prototype.hide = function() {
+	Adaptation.prototype.hide = function(...aArgs) {
 		this._aIntersectionObservers.forEach(function(oInstersectionObserver) {
 			oInstersectionObserver.disconnect();
 		});
-		return Base.prototype.hide.apply(this, arguments);
+		return Base.prototype.hide.apply(this, aArgs);
 	};
 
 	Adaptation.prototype.showFeedbackForm = function() {

@@ -33,9 +33,9 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	/**
 	 * @override
 	 */
-	Settings.prototype.execute = function() {
+	Settings.prototype.execute = function(...aArgs) {
 		if (this.getElement()) {
-			return FlexCommand.prototype.execute.apply(this, arguments);
+			return FlexCommand.prototype.execute.apply(this, aArgs);
 		}
 		return Promise.resolve();
 	};
@@ -43,9 +43,9 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	/**
 	 * @override
 	 */
-	Settings.prototype.undo = function() {
+	Settings.prototype.undo = function(...aArgs) {
 		if (this.getElement()) {
-			return FlexCommand.prototype.undo.apply(this, arguments);
+			return FlexCommand.prototype.undo.apply(this, aArgs);
 		}
 		return Promise.resolve();
 	};

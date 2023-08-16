@@ -247,9 +247,7 @@ sap.ui.define([
 							} else {
 								bRevealEnabled = true;
 							}
-							if (!mRevealAction.getAggregationName) {
-								mRevealAction.getAggregationName = defaultGetAggregationName;
-							}
+							mRevealAction.getAggregationName ||= defaultGetAggregationName;
 
 							// Check if the invisible element can be moved to the target aggregation
 							if (bRevealEnabled && (sSourceAggregation !== sTargetAggregation)) {
@@ -326,7 +324,7 @@ sap.ui.define([
 		]).then(function(aAllActions) {
 			// join and condense all action data
 			var mAllActions = merge(aAllActions[0], aAllActions[1]);
-			oSourceElementOverlay._mAddActions = oSourceElementOverlay._mAddActions || {asSibling: {}, asChild: {}};
+			oSourceElementOverlay._mAddActions ||= {asSibling: {}, asChild: {}};
 			oSourceElementOverlay._mAddActions[sSiblingOrChild] = mAllActions;
 			return mAllActions;
 		});
@@ -426,9 +424,7 @@ sap.ui.define([
 					.then(function(mAction) {
 						if (mAction) {
 							mAction.addPropertyActionData.relevantContainer = mParents.relevantContainer;
-							if (!oReturn[mAction.aggregationName]) {
-								oReturn[mAction.aggregationName] = {};
-							}
+							oReturn[mAction.aggregationName] ||= {};
 							oReturn[mAction.aggregationName].addViaDelegate = mAction.addPropertyActionData;
 						}
 						return oReturn;

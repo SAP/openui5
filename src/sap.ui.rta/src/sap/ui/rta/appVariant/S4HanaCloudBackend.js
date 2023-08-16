@@ -20,8 +20,9 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.rta"
 		},
-		constructor: function() {
-			ManagedObject.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			ManagedObject.apply(this, aArgs);
 		}
 	});
 
@@ -36,7 +37,12 @@ sap.ui.define([
 	 *                    or rejects if the required ODATA service /sap/opu/odata/sap/APS_IAM_APP_SRV is not there
 	 * @async
 	 */
-	S4HanaCloudBackend.prototype.notifyFlpCustomizingIsReady = function(sIamAppId, bAppVarCreation, iCheckIntervallMsec, iMaxNumberOfChecks) {
+	S4HanaCloudBackend.prototype.notifyFlpCustomizingIsReady = function(
+		sIamAppId,
+		bAppVarCreation,
+		iCheckIntervallMsec,
+		iMaxNumberOfChecks
+	) {
 		var that = this;
 		return new Promise(function(resolve, reject) {
 			// Check inputs and determine defaults
@@ -109,18 +115,16 @@ sap.ui.define([
 	};
 
 	S4HanaCloudBackend._getODataModel = function() {
-		if (!oModelPromise) {
-			oModelPromise = new Promise(function(resolve, reject) {
-				var oModel = new ODataModel("/sap/opu/odata/sap/APS_IAM_APP_SRV");
-				oModel.attachMetadataFailed(function(oError) {
-					reject(oError);
-					oModelPromise = null;
-				});
-				oModel.metadataLoaded().then(function() {
-					resolve(oModel);
-				});
+		oModelPromise ||= new Promise(function(resolve, reject) {
+			var oModel = new ODataModel("/sap/opu/odata/sap/APS_IAM_APP_SRV");
+			oModel.attachMetadataFailed(function(oError) {
+				reject(oError);
+				oModelPromise = null;
 			});
-		}
+			oModel.metadataLoaded().then(function() {
+				resolve(oModel);
+			});
+		});
 		return oModelPromise;
 	};
 

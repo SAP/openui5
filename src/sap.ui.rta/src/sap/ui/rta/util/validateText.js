@@ -13,7 +13,7 @@ sap.ui.define([
 	var sEmptyTextKey = "\xa0";
 	var oValidators = {
 		noEmptyText: {
-			validatorFunction: function(sNewText) {
+			validatorFunction(sNewText) {
 				return sNewText !== sEmptyTextKey;
 			},
 			errorMessage: Core.getLibraryResourceBundle("sap.ui.rta").getText("RENAME_EMPTY_ERROR_TEXT")

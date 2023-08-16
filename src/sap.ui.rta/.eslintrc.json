@@ -55,6 +55,24 @@
 		"prefer-const": ["error", { "ignoreReadBeforeAssign": true }],
 		"prefer-template": "error",
 		"rest-spread-spacing": ["error", "never"],
-		"template-curly-spacing": "error"
+		"template-curly-spacing": "error",
+		"object-shorthand": ["error", "always", { "ignoreConstructors": false, "avoidQuotes": true }],
+		"prefer-destructuring": ["error", {
+			"VariableDeclarator": {
+				"array": false,
+				"object": true
+			},
+			"AssignmentExpression": {
+				"array": true,
+				"object": false
+			}
+			}, {
+				"enforceForRenamedProperties": false
+			}
+		],
+		"prefer-rest-params": "error",
+		"prefer-spread": "error",
+		"logical-assignment-operators":["error", "always", { "enforceForIfStatements": true } ],
+		"require-await": "error"
 	}
 }

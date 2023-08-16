@@ -40,8 +40,9 @@ function(
 				restore: {}
 			}
 		},
-		constructor: function() {
-			Base.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			Base.apply(this, aArgs);
 			this.setJustifyContent("End");
 		}
 	});

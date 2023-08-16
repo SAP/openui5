@@ -42,32 +42,33 @@ sap.ui.define([
 				})
 			]).then(function(aArgs) {
 				mShared.mAddViaDelegateAction = aArgs[0].aggregations.formElements.actions.add.delegate;
-				mShared.delegate = aArgs[1];
+				[, mShared.delegate] = aArgs;
 				return mShared;
 			});
 		});
 	}
 
 	var TestUtil = {
-		assertElementsEqual: function(mActualAdditionalElement, mExpected, msg, assert) {
+		assertElementsEqual(mActualAdditionalElement, mExpected, msg, assert) {
 			assert.equal(mActualAdditionalElement.selected, mExpected.selected, `${msg} -selected`);
 			assert.equal(mActualAdditionalElement.label, mExpected.label, `${msg} -label`);
 			assert.equal(mActualAdditionalElement.tooltip, mExpected.tooltip, `${msg} -tooltip`);
 			assert.equal(mActualAdditionalElement.type, mExpected.type, `${msg} -type`);
 			assert.equal(mActualAdditionalElement.elementId, mExpected.elementId, `${msg} -element id`);
-			assert.equal(mActualAdditionalElement.bindingPath, mExpected.bindingPath, `${msg} -bindingPath (used for OPA tests and debugging)`);
+			assert.equal(mActualAdditionalElement.bindingPath, mExpected.bindingPath,
+				`${msg} -bindingPath (used for OPA tests and debugging)`);
 		},
 
-		isFieldPresent: function(oControl, oInvisibleElement) {
+		isFieldPresent(oControl, oInvisibleElement) {
 			var sLabel = oControl.getLabelText && oControl.getLabelText() || oControl.getLabel();
 			return oInvisibleElement.label === sLabel;
 		},
 
 		setupSharedObjects: _setupSharedObjects,
 
-		commonHooks: function() {
+		commonHooks() {
 			return {
-				before: function() {
+				before() {
 					return _setupSharedObjects().then(function(mShared) {
 						// Shared objects for all tests => Don't modify them, it will have side-effects on other tests!
 						this.oView = mShared.view;
@@ -76,10 +77,10 @@ sap.ui.define([
 						this.sandbox = sinon.createSandbox();
 					}.bind(this));
 				},
-				afterEach: function() {
+				afterEach() {
 					this.sandbox.restore();
 				},
-				after: function() {
+				after() {
 					this.oView.getController().destroy();
 					this.oView.destroy();
 				}

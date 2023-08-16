@@ -28,13 +28,13 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a SimpleForm with designtime metadata for localReset ...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oSimpleForm = new Control();
 			var oOverlay = new ElementOverlay({element: this.oSimpleForm});
 			sandbox.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 			this.oLogStub = sandbox.stub(Log, "error");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oSimpleForm.destroy();
 			sandbox.restore();
 		}

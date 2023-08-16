@@ -34,13 +34,13 @@ sap.ui.define([
 
 	function givenAnFLP(fnFLPReloadStub, mShellParams) {
 		sandbox.stub(FlexUtils, "getUshellContainer").returns({
-			getServiceAsync: function() {
+			getServiceAsync() {
 				return Promise.resolve({
-					toExternal: function() {},
-					getHash: function() {
+					toExternal() {},
+					getHash() {
 						return "Action-somestring";
 					},
-					parseShellHash: function() {
+					parseShellHash() {
 						var mHash = {
 							semanticObject: "Action",
 							action: "somestring"
@@ -51,18 +51,18 @@ sap.ui.define([
 						}
 						return mHash;
 					},
-					unregisterNavigationFilter: function() {},
-					registerNavigationFilter: function() {},
+					unregisterNavigationFilter() {},
+					registerNavigationFilter() {},
 					reloadCurrentApp: fnFLPReloadStub,
-					getUser: function() {},
-					getCurrentApplication: function() {}
+					getUser() {},
+					getCurrentApplication() {}
 				});
 			}
 		});
 	}
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch adaptation event from the toolbar in the FLP", {
-		beforeEach: function() {
+		beforeEach() {
 			ContextBasedAdaptationsAPI.clearInstances();
 			var oDefaultAdaptation = {
 				id: "DEFAULT",
@@ -100,7 +100,7 @@ sap.ui.define([
 				this.oRta._oContextBasedAdaptationsModel = oAdaptationsModel;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -158,7 +158,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch adaptation event from the toolbar in the FLP, save is enabled and a dialog fires an event", {
-		beforeEach: function() {
+		beforeEach() {
 			givenAnFLP(sandbox.stub(), {});
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp
@@ -171,7 +171,7 @@ sap.ui.define([
 			this.sAdaptationId = "id_1234";
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -237,7 +237,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring gets a delete adaptation event from the toolbar in the FLP", {
-		beforeEach: function() {
+		beforeEach() {
 			ContextBasedAdaptationsAPI.clearInstances();
 			givenAnFLP(sandbox.stub(), {});
 			this.oRta = new RuntimeAuthoring({
@@ -275,7 +275,7 @@ sap.ui.define([
 				this.oRta._oContextBasedAdaptationsModel = oAdaptationsModel;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}

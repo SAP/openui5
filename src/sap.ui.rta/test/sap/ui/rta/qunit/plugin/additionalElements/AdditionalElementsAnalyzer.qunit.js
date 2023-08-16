@@ -500,12 +500,12 @@ sap.ui.define([
 
 			// Simulate that the field control property is returned after the regular value property
 			var oDelegateMediatorStub = this.sandbox.stub(DelegateMediatorAPI, "getDelegateForControl");
-			function getDelegateForControl() {
-				return oDelegateMediatorStub.wrappedMethod.apply(this, arguments)
+			function getDelegateForControl(...aArgs) {
+				return oDelegateMediatorStub.wrappedMethod.apply(this, aArgs)
 				.then(function(oDelegateInfo) {
 					var fnGetPropertyInfo = oDelegateInfo.instance.getPropertyInfo;
-					oDelegateInfo.instance.getPropertyInfo = function() {
-						return fnGetPropertyInfo.apply(this, arguments)
+					oDelegateInfo.instance.getPropertyInfo = function(...aArgs) {
+						return fnGetPropertyInfo.apply(this, aArgs)
 						.then(function(aProperties) {
 							return aProperties.concat({
 								name: "UxFcThatMakeFieldVisible",
@@ -644,8 +644,8 @@ sap.ui.define([
 				}
 			};
 
-			this.sandbox.stub(oGroup, "getBindingContext").returns({ getPath: function() { return "/fake/binding/path/group"; }});
-			this.sandbox.stub(oGroupElement1, "getBindingContext").returns({ getPath: function() { return "/fake/binding/path/groupElement1"; }});
+			this.sandbox.stub(oGroup, "getBindingContext").returns({ getPath() { return "/fake/binding/path/group"; }});
+			this.sandbox.stub(oGroupElement1, "getBindingContext").returns({ getPath() { return "/fake/binding/path/groupElement1"; }});
 			this.sandbox.stub(BindingsExtractor, "getBindings").returns(["fakeBinding"]);
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
@@ -837,7 +837,7 @@ sap.ui.define([
 			var mAddViaDelegateAction = {
 				action: {
 					aggregation: "items",
-					getLabel: function() {
+					getLabel() {
 						return "testLabel";
 					}
 				},

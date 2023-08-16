@@ -100,8 +100,8 @@ sap.ui.define([
 		}
 		var sandbox = sinon.createSandbox();
 
-		mOptions.before = mOptions.before || function() {};
-		mOptions.after = mOptions.after || function() {};
+		mOptions.before ||= function() {};
+		mOptions.after ||= function() {};
 
 		// Do QUnit tests
 		QUnit.module(sMsg, function() {
@@ -138,7 +138,7 @@ sap.ui.define([
 					}
 				}
 			},
-			createContent: function() {
+			createContent() {
 				var mViewSettings = Object.assign({}, mOptions.xmlView);
 				mViewSettings.id = this.createId("view");
 
@@ -584,17 +584,17 @@ sap.ui.define([
 		// XML View checks
 		if (!mOptions.jsOnly) {
 			QUnit.module(`${sMsg} on async views`, {
-				before: function(assert) {
+				before(assert) {
 					this.hookContext = {};
 					return mOptions.before.call(this.hookContext, assert);
 				},
-				after: function(assert) {
+				after(assert) {
 					return mOptions.after.call(this.hookContext, assert);
 				},
-				beforeEach: function() {
+				beforeEach() {
 					sandbox.stub(Settings, "getInstance").resolves({_oSettings: {}});
 				},
-				afterEach: function() {
+				afterEach() {
 					this.oUiComponentContainer.destroy();
 					this.oDesignTime.destroy();
 					destroyCommands(this.aCommands);
@@ -672,14 +672,14 @@ sap.ui.define([
 		}
 
 		QUnit.module(sMsg, {
-			before: function(assert) {
+			before(assert) {
 				this.hookContext = {};
 				return mOptions.before.call(this.hookContext, assert);
 			},
-			after: function(assert) {
+			after(assert) {
 				return mOptions.after.call(this.hookContext, assert);
 			},
-			beforeEach: function(assert) {
+			beforeEach(assert) {
 				// no LREP response needed
 				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve([]));
 				sandbox.stub(Settings, "getInstance").returns(Promise.resolve({_oSettings: {}}));
@@ -690,7 +690,7 @@ sap.ui.define([
 					this.aCommands = aCommands;
 				}.bind(this));
 			},
-			afterEach: function() {
+			afterEach() {
 				this.oDesignTime.destroy();
 				this.oUiComponentContainer.destroy();
 				destroyCommands(this.aCommands);

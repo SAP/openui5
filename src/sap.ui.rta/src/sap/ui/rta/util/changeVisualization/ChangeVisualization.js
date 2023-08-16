@@ -108,12 +108,13 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			this._oChangeIndicatorRegistry = new ChangeIndicatorRegistry({
 				changeCategories: ChangeCategories.getCategories()
 			});
 
-			Control.prototype.constructor.apply(this, arguments);
+			Control.prototype.constructor.apply(this, aArgs);
 
 			this._oTextBundle = Core.getLibraryResourceBundle("sap.ui.rta");
 			this.setModel(new ResourceModel({
@@ -324,10 +325,8 @@ sap.ui.define([
 	};
 
 	ChangeVisualization.prototype.openChangeCategorySelectionPopover = function(oEvent) {
-		if (!this._oToolbarButton) {
-			// Event bubbled through the toolbar, get original source
-			this._oToolbarButton = Core.byId(oEvent.getParameter("id"));
-		}
+		// Event bubbled through the toolbar, get original source
+		this._oToolbarButton ||= Core.byId(oEvent.getParameter("id"));
 		var oPopover = this.getPopover();
 
 		if (!oPopover) {

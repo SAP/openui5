@@ -15,10 +15,10 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a AppVariantDialog is instantiated", {
-		beforeEach: function() {
+		beforeEach() {
 			oAppVariantDialog = new AppVariantDialog();
 		},
-		afterEach: function() {
+		afterEach() {
 			oAppVariantDialog.destroy();
 			sandbox.restore();
 		}

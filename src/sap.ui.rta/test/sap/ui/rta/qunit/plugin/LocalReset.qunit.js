@@ -32,10 +32,10 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a designTime and localReset plugin are instantiated", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			this.oVariantModel = {
-				getCurrentVariantReference: function() {
+				getCurrentVariantReference() {
 					return undefined;
 				}
 			};
@@ -64,7 +64,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oMockedAppComponent.destroy();
 			this.oDesignTime.destroy();
@@ -116,7 +116,7 @@ sap.ui.define([
 				actions: {
 					localReset: {
 						changeType: "localReset",
-						isEnabled: function(oElementInstance) {
+						isEnabled(oElementInstance) {
 							return oElementInstance.getMetadata().getName() !== "sap.m.VBox";
 						}
 					}
@@ -149,7 +149,7 @@ sap.ui.define([
 				actions: {
 					localReset: {
 						changeType: "localReset",
-						isEnabled: function(oElementInstance) {
+						isEnabled(oElementInstance) {
 							return oElementInstance.getMetadata().getName() === "sap.ui.core.Control";
 						}
 					}

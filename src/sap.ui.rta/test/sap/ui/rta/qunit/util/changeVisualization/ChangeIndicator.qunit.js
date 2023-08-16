@@ -35,7 +35,7 @@ sap.ui.define([
 			commandName: sCommandName,
 			changeCategory: sChangeCategory,
 			change: {
-				getCreation: function() {
+				getCreation() {
 					return oCreationDate;
 				}
 			},
@@ -47,15 +47,15 @@ sap.ui.define([
 	function waitForMethodCall(oObject, sMethodName) {
 		return new Promise(function(resolve) {
 			sandbox.stub(oObject, sMethodName)
-			.onFirstCall().callsFake(function() {
-				resolve(oObject[sMethodName].wrappedMethod.apply(this, arguments));
+			.onFirstCall().callsFake(function(...aArgs) {
+				resolve(oObject[sMethodName].wrappedMethod.apply(this, aArgs));
 			})
 			.callThrough();
 		});
 	}
 
 	QUnit.module("Basic tests", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton = new Button("TestButton");
 			this.oButton.placeAt("qunit-fixture");
@@ -83,7 +83,7 @@ sap.ui.define([
 			this.oDesignTime.addRootElement(this.oButton);
 		},
 
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 			this.oChangeIndicator.destroy();
 			this.oDesignTime.destroy();
@@ -95,7 +95,7 @@ sap.ui.define([
 			.callThrough()
 			.withArgs({ relative: "true" })
 			.returns({
-				format: function() { return "myTime"; }
+				format() { return "myTime"; }
 			});
 			var mPayload = {
 				originalLabel: "BeforeValue",
@@ -178,7 +178,7 @@ sap.ui.define([
 			.callThrough()
 			.withArgs({ relative: "true" })
 			.returns({
-				format: function() { return "myTime"; }
+				format() { return "myTime"; }
 			});
 			var mPayload = {
 				originalLabel: "BeforeValueOfAFieldWithAnExtremelyLongButtonNameOrIDWhichThePopoverCouldNotCorrectlyDisplayWithoutAnyIssues",
@@ -253,7 +253,7 @@ sap.ui.define([
 					createMockChange("someChangeId", this.oButton.getId(), "remove", "remove"),
 					{
 						change: {
-							getCreation: function() { }
+							getCreation() { }
 						}
 					}
 				)]
@@ -613,7 +613,7 @@ sap.ui.define([
 			.callThrough()
 			.withArgs({ relative: "true" })
 			.returns({
-				format: function() { return "myTime"; }
+				format() { return "myTime"; }
 			});
 			var mPayload = {
 				originalLabel: "BeforeValue",

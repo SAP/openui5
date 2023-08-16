@@ -42,7 +42,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.rta.test.ComplexTest", {
 
-		onInit: function() {
+		onInit() {
 			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
 			var oManifest = FlUtils.getAppComponentForControl(this.getView()).getManifest();
 			var iServerDelay = UriParameters.fromQuery(window.location.search).get("serverDelay");
@@ -138,7 +138,7 @@ sap.ui.define([
 			}
 		},
 
-		toggleUpdateMode: function() {
+		toggleUpdateMode() {
 			var oSmartFilterbar = this.byId("smartFilterBar");
 			var oButton = this.byId("toggleUpdateMode");
 
@@ -156,7 +156,7 @@ sap.ui.define([
 			oSmartFilterbar.setLiveMode(!bLiveMode);
 		},
 
-		_setButtonText: function() {
+		_setButtonText() {
 			var oSmartFilterbar = this.byId("smartFilterBar");
 			var oButton = this.byId("toggleUpdateMode");
 
@@ -172,7 +172,7 @@ sap.ui.define([
 			}
 		},
 
-		_undoRedoStack: function(oStack) {
+		_undoRedoStack(oStack) {
 			function undo(oStack) {
 				if (oStack.canUndo()) {
 					return oStack.undo().then(function() {
@@ -201,7 +201,7 @@ sap.ui.define([
 			});
 		},
 
-		switchToAdaptionMode: function() {
+		switchToAdaptionMode() {
 			sap.ui.require([
 				"sap/ui/rta/api/startAdaptation",
 				"sap/ui/rta/command/Stack"
@@ -229,7 +229,7 @@ sap.ui.define([
 					startAdaptation({
 						rootControl: this.getOwnerComponent(),
 						commandStack: oStack,
-						stop: function() {
+						stop() {
 							this.destroy();
 						}
 					}).then(function() {
@@ -239,7 +239,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		openSmartFormDialog: function() {
+		openSmartFormDialog() {
 			sap.ui.require([
 				"sap/m/Dialog"
 			], function(
@@ -273,7 +273,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		createOrDeleteContent: function(oEvent) {
+		createOrDeleteContent(oEvent) {
 			var oTargetControl = oEvent.getSource();
 			sap.ui.require([
 				"sap/ui/comp/smartform/SmartForm",
@@ -334,7 +334,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		openSmartFormPopover: function(oEvent) {
+		openSmartFormPopover(oEvent) {
 			var oTargetButton = oEvent.getSource();
 			return sap.ui.require([
 				"sap/m/Popover"
@@ -365,7 +365,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		sampleFormatter: function(sValue) {
+		sampleFormatter(sValue) {
 			return `This text was changed by a formatter: ${sValue && sValue.toUpperCase()}`;
 		}
 	});

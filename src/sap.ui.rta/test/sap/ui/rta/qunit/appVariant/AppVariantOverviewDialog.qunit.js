@@ -18,11 +18,11 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a AppVariantOverviewDialog is available", {
-		afterEach: function() {
+		afterEach() {
 			this.oAppVariantOverviewDialog.destroy();
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			if (document.getElementById("sapUiBusyIndicator")) {
 				document.getElementById("sapUiBusyIndicator").style.display = "none";
 			}

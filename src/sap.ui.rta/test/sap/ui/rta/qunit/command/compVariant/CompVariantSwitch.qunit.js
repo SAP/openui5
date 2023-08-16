@@ -15,7 +15,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a control", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oControl = new Control();
 			this.oActivateStub = sandbox.stub();
 			this.oControl.activateVariant = this.oActivateStub;
@@ -24,7 +24,7 @@ sap.ui.define([
 			this.oDiscardVariantContentStub = sandbox.stub(SmartVariantManagementWriteAPI, "discardVariantContent");
 			this.oRevertStub = sandbox.stub(SmartVariantManagementWriteAPI, "revert");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oControl.destroy();
 			sandbox.restore();
 		}

@@ -24,7 +24,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Private methods", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oOTB = new OverflowToolbar({
 				content: [
 					new OverflowToolbarButton({
@@ -42,7 +42,7 @@ sap.ui.define([
 			this.oOTB.placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oOTB.destroy();
 		}
 	});

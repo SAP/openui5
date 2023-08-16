@@ -47,8 +47,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	OverflowToolbarButton.prototype._onBeforeEnterOverflow = function() {
-		SapMOverflowToolbarButton.prototype._onBeforeEnterOverflow.apply(this, arguments);
+	OverflowToolbarButton.prototype._onBeforeEnterOverflow = function(...aArgs) {
+		SapMOverflowToolbarButton.prototype._onBeforeEnterOverflow.apply(this, aArgs);
 		this.setVisibleIcon(this.getIcon());
 		this.setIcon("");
 	};
@@ -58,8 +58,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	OverflowToolbarButton.prototype._onAfterExitOverflow = function() {
-		SapMOverflowToolbarButton.prototype._onAfterExitOverflow.apply(this, arguments);
+	OverflowToolbarButton.prototype._onAfterExitOverflow = function(...aArgs) {
+		SapMOverflowToolbarButton.prototype._onAfterExitOverflow.apply(this, aArgs);
 		this.setIcon(this.getVisibleIcon());
 	};
 

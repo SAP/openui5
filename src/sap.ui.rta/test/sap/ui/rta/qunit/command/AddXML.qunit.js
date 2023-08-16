@@ -39,12 +39,12 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an AddXML command with a valid entry in the change registry,", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 			this.oButton = new Button(this.oComponent.createId("myButton"));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponent.destroy();
 			this.oButton.destroy();
 			sandbox.restore();
@@ -207,7 +207,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an AddXML command for a bound control,", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
@@ -240,7 +240,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponent.destroy();
 			this.oList.destroy();
 			this.oItemTemplate.destroy();

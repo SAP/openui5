@@ -34,13 +34,13 @@ sap.ui.define([
 
 	function givenAnFLP(fnFLPReloadStub, mShellParams) {
 		sandbox.stub(FlexUtils, "getUshellContainer").returns({
-			getServiceAsync: function() {
+			getServiceAsync() {
 				return Promise.resolve({
-					toExternal: function() {},
-					getHash: function() {
+					toExternal() {},
+					getHash() {
 						return "Action-somestring";
 					},
-					parseShellHash: function() {
+					parseShellHash() {
 						var mHash = {
 							semanticObject: "Action",
 							action: "somestring"
@@ -51,18 +51,18 @@ sap.ui.define([
 						}
 						return mHash;
 					},
-					unregisterNavigationFilter: function() {},
-					registerNavigationFilter: function() {},
+					unregisterNavigationFilter() {},
+					registerNavigationFilter() {},
 					reloadCurrentApp: fnFLPReloadStub,
-					getUser: function() {},
-					getCurrentApplication: function() {}
+					getUser() {},
+					getCurrentApplication() {}
 				});
 			}
 		});
 	}
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch version event from the toolbar in the FLP", {
-		beforeEach: function() {
+		beforeEach() {
 			Versions.clearInstances();
 			this.oRestartFlpStub = sandbox.stub();
 			givenAnFLP(this.oRestartFlpStub, {});
@@ -81,7 +81,7 @@ sap.ui.define([
 			}.bind(this));
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -156,7 +156,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch version event from the toolbar in the FLP, save is enabled and a dialog fires an event", {
-		beforeEach: function() {
+		beforeEach() {
 			givenAnFLP(sandbox.stub(), {});
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp
@@ -168,7 +168,7 @@ sap.ui.define([
 			this.nVersionParameter = 1;
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -223,7 +223,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started with a draft", {
-		beforeEach: function() {
+		beforeEach() {
 			givenAnFLP();
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp
@@ -240,7 +240,7 @@ sap.ui.define([
 				this.oSaveStub = sandbox.stub(this.oRta._oSerializer, "saveCommands").resolves();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -378,13 +378,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given onStackModified", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp
 			});
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}

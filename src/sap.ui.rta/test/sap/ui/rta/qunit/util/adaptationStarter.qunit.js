@@ -57,12 +57,12 @@ sap.ui.define([
 	}
 
 	QUnit.module("When adaptationStarter is called... ", {
-		beforeEach: function() {
+		beforeEach() {
 			this.fnRtaStartStub = sandbox.stub(RuntimeAuthoring.prototype, "start").resolves();
 			this.fnMessageBoxStub = sandbox.stub(MessageBox, "warning");
 			setIsKeyUser(true);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -223,12 +223,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Negative Tests", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRtaStartStub = sandbox.stub(RuntimeAuthoring.prototype, "start");
 			this.fnMessageBoxStub = sandbox.stub(MessageBox, "error");
 			this.oLogStub = sandbox.stub(Log, "error");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

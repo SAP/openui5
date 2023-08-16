@@ -104,11 +104,12 @@ sap.ui.define([
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	ControlVariant.prototype.registerElementOverlay = function(oOverlay) {
+	ControlVariant.prototype.registerElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		var oControl = oOverlay.getElement();
 		var sVariantManagementReference;
 
-		Plugin.prototype.registerElementOverlay.apply(this, arguments);
+		Plugin.prototype.registerElementOverlay.apply(this, aArgs);
 
 		if (oControl instanceof VariantManagement) {
 			var vAssociationElement = oControl.getFor();
@@ -130,7 +131,8 @@ sap.ui.define([
 
 			// Propagate variant management reference to all children overlays starting from the "for" association element as the root
 			aVariantManagementTargetElements.forEach(function(sVariantManagementTargetElement) {
-				var oVariantManagementTargetElement = sVariantManagementTargetElement instanceof ManagedObject ? sVariantManagementTargetElement : sap.ui.getCore().byId(sVariantManagementTargetElement);
+				var oVariantManagementTargetElement = sVariantManagementTargetElement instanceof ManagedObject
+					? sVariantManagementTargetElement : sap.ui.getCore().byId(sVariantManagementTargetElement);
 				var oVariantManagementTargetOverlay = OverlayRegistry.getOverlay(oVariantManagementTargetElement);
 				this._propagateVariantManagement(oVariantManagementTargetOverlay, sVariantManagementReference);
 			}.bind(this));
@@ -164,7 +166,9 @@ sap.ui.define([
 		aElementOverlaysRendered = OverlayUtil.getAllChildOverlays(oParentElementOverlay);
 
 		aElementOverlaysRendered.forEach(function(oElementOverlay) {
-			aElementOverlaysRendered = aElementOverlaysRendered.concat(this._propagateVariantManagement(oElementOverlay, sVariantManagementReference));
+			aElementOverlaysRendered = aElementOverlaysRendered.concat(
+				this._propagateVariantManagement(oElementOverlay, sVariantManagementReference)
+			);
 		}.bind(this));
 
 		return aElementOverlaysRendered;
@@ -191,14 +195,15 @@ sap.ui.define([
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	ControlVariant.prototype.deregisterElementOverlay = function(oOverlay) {
+	ControlVariant.prototype.deregisterElementOverlay = function(...aArgs) {
+		const oOverlay = aArgs[0];
 		if (this._isVariantManagementControl(oOverlay)) {
 			destroyManageDialog(oOverlay);
 		}
 		oOverlay.detachEvent("editableChange", RenameHandler._manageClickEvent, this);
 		oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
 		this.removeFromPluginsList(oOverlay);
-		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
+		Plugin.prototype.deregisterElementOverlay.apply(this, aArgs);
 	};
 
 	ControlVariant.prototype._getVariantModel = function(oElement) {

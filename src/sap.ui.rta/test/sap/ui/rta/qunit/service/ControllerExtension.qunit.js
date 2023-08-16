@@ -43,7 +43,7 @@ sap.ui.define([
 					}
 				}
 			},
-			createContent: function() {
+			createContent() {
 				var oApp = new App(this.createId("mockapp"));
 				oViewPromise = XMLView.create({
 					id: this.createId("mockview"),
@@ -71,9 +71,9 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that RuntimeAuthoring and ControllerExtension service are created and 'add' is called", {
-		before: before,
-		after: after,
-		beforeEach: function() {
+		before,
+		after,
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oComponent
@@ -84,7 +84,7 @@ sap.ui.define([
 				this.iCreateChangeCounter++;
 				this.oCreateChangeParameter = mPropertyBag.changeSpecificData;
 				return {
-					convertToFileContent: function() {
+					convertToFileContent() {
 						return {definition: "definition"};
 					}
 				};
@@ -104,16 +104,16 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("with correct parameters and developer mode = true", function(assert) {
 			sandbox.stub(this.oView, "getController").returns({
-				getMetadata: function() {
+				getMetadata() {
 					return {
-						getName: function() {
+						getName() {
 							return "controllerName";
 						}
 					};
@@ -178,9 +178,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring and ControllerExtension service are created and 'getTemplate' is called", {
-		before: before,
-		after: after,
-		beforeEach: function() {
+		before,
+		after,
+		beforeEach() {
 			server = sinon.fakeServer.create();
 			server.respondImmediately = true;
 
@@ -201,7 +201,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 			server.restore();

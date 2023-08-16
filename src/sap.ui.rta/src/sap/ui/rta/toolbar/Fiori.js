@@ -45,19 +45,19 @@ function(
 		type: "fiori"
 	});
 
-	Fiori.prototype.init = function() {
+	Fiori.prototype.init = function(...aArgs) {
 		this._oRenderer = Utils.getFiori2Renderer();
 		this._oFioriHeader = this._oRenderer.getRootControl().getShellHeader();
-		Adaptation.prototype.init.apply(this, arguments);
+		Adaptation.prototype.init.apply(this, aArgs);
 	};
 
-	Fiori.prototype.show = function() {
+	Fiori.prototype.show = function(...aArgs) {
 		this._oFioriHeader.addStyleClass(FIORI_HIDDEN_CLASS);
-		return Adaptation.prototype.show.apply(this, arguments);
+		return Adaptation.prototype.show.apply(this, aArgs);
 	};
 
-	Fiori.prototype.buildControls = function() {
-		return Adaptation.prototype.buildControls.apply(this, arguments).then(function(aControls) {
+	Fiori.prototype.buildControls = function(...aArgs) {
+		return Adaptation.prototype.buildControls.apply(this, aArgs).then(function(aControls) {
 			var sLogoPath = this._oFioriHeader.getLogo();
 
 			if (this._oFioriHeader.getShowLogo() && sLogoPath) {
@@ -92,8 +92,8 @@ function(
 	/**
 	 * @inheritDoc
 	 */
-	Fiori.prototype.hide = function() {
-		return Adaptation.prototype.hide.apply(this, arguments)
+	Fiori.prototype.hide = function(...aArgs) {
+		return Adaptation.prototype.hide.apply(this, aArgs)
 		.then(function() {
 			this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
 		}.bind(this));
@@ -120,7 +120,8 @@ function(
 		Adaptation.prototype._restoreHiddenElements.apply(this);
 	};
 
-	Fiori.prototype._hideElementsOnIntersection = function(sSectionName, aEntries) {
+	Fiori.prototype._hideElementsOnIntersection = function(...aArgs) {
+		const [sSectionName, aEntries] = aArgs;
 		var bWiderThanLogo;
 
 		if (aEntries[0].intersectionRatio === 0) {
@@ -138,12 +139,12 @@ function(
 				this._iLogoVisibilityLimit = this._calculateWindowWidth(aEntries);
 				this._setLogoVisibility(false);
 				if (bWiderThanLogo) {
-					Adaptation.prototype._hideElementsOnIntersection.apply(this, arguments);
+					Adaptation.prototype._hideElementsOnIntersection.apply(this, aArgs);
 				}
 				return;
 			}
 		}
-		Adaptation.prototype._hideElementsOnIntersection.apply(this, arguments);
+		Adaptation.prototype._hideElementsOnIntersection.apply(this, aArgs);
 	};
 
 	Fiori.prototype._setLogoVisibility = function(bVisible) {
@@ -153,11 +154,11 @@ function(
 		oIconSpacer.setVisible(bVisible);
 	};
 
-	Fiori.prototype.destroy = function() {
+	Fiori.prototype.destroy = function(...aArgs) {
 		// In case of destroy() without normal hide() call
 		this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
 
-		Adaptation.prototype.destroy.apply(this, arguments);
+		Adaptation.prototype.destroy.apply(this, aArgs);
 	};
 
 	return Fiori;

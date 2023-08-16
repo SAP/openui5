@@ -71,11 +71,11 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given Versions Model binding & formatter", {
-		before: function() {
+		before() {
 			this.oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 		},
-		after: function() {
+		after() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}
@@ -137,7 +137,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Test Adaptation Model binding & formatter and save as", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
 				this.placeAt("qunit-fixture");
@@ -183,7 +183,7 @@ sap.ui.define([
 			this.oToolbar.setModel(this.oVersionsModel, "versions");
 			return this.oToolbar._pFragmentLoaded;
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}
@@ -504,14 +504,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA and context-based adaptation is enabled and filled", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
 				this.placeAt("qunit-fixture");
 			});
 			this.oControlsModel = RtaQunitUtils.createToolbarControlsModel();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oContainer.destroy();
 			this.oComponent.destroy();
 			this.oRta.destroy();
@@ -587,7 +587,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Setting AppVariant properties", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oToolbar = new Adaptation({
 				textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
 				rtaInformation: {
@@ -601,7 +601,7 @@ sap.ui.define([
 			this.oToolbar.setModel(new JSONModel({}), "versions");
 			return this.oToolbar._pFragmentLoaded;
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}
@@ -688,7 +688,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Setting different modes", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oToolbar = new Adaptation({
 				textResources: Core.getLibraryResourceBundle("sap.ui.rta")
 			});
@@ -719,7 +719,7 @@ sap.ui.define([
 			this.oToolbar.setModel(this.oControlsModel, "controls");
 			return this.oToolbar._pFragmentLoaded;
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}
@@ -800,7 +800,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Feedback Button", {
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.closeFeedbackForm();
 			this.oRta.destroy();
 			this.oComponent.destroy();
@@ -879,7 +879,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Different screen sizes and common buttons", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
 				this.placeAt("qunit-fixture");
@@ -890,7 +890,7 @@ sap.ui.define([
 			oVersionsModel.setDirtyChanges = function() {};
 			sandbox.stub(VersionsAPI, "initialize").resolves(oVersionsModel);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oContainer.destroy();
 			this.oComponent.destroy();
 			this.oRta.destroy();
@@ -934,8 +934,8 @@ sap.ui.define([
 			var fnDone = assert.async();
 			document.getElementById("qunit-fixture").style.width = "600px";
 			var oSwitchIconsStub = sandbox.stub(Adaptation.prototype, "_switchToIcons")
-			.callsFake(function() {
-				oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
+			.callsFake(function(...aArgs) {
+				oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, aArgs);
 				var oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
 				var oNavigationSwitcherButton = this.oToolbar.getControl("navigationSwitcherButton");
 				var oVisualizationSwitcherButton = this.oToolbar.getControl("visualizationSwitcherButton");
@@ -1000,11 +1000,11 @@ sap.ui.define([
 			};
 
 			var oSwitchIconsStub = sandbox.stub(Adaptation.prototype, "_switchToIcons")
-			.callsFake(function() {
-				oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
+			.callsFake(function(...aArgs) {
+				oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, aArgs);
 				fnCheckIcon.call(this);
-				var oSwitchTextsStub = sandbox.stub(Adaptation.prototype, "_switchToTexts").callsFake(function() {
-					oSwitchTextsStub.wrappedMethod.apply(this.oToolbar, arguments);
+				var oSwitchTextsStub = sandbox.stub(Adaptation.prototype, "_switchToTexts").callsFake(function(...aArgs) {
+					oSwitchTextsStub.wrappedMethod.apply(this.oToolbar, aArgs);
 					fnCheckText.call(this);
 					fnDone();
 				}.bind(this));
@@ -1022,7 +1022,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Different screen sizes and common buttons with context-based adaptation enabled", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
 				this.placeAt("qunit-fixture");
@@ -1040,7 +1040,7 @@ sap.ui.define([
 			sandbox.stub(ContextBasedAdaptationsAPI, "initialize").resolves(oAdaptationsModel);
 			sandbox.stub(VersionsAPI, "initialize").resolves(oVersionsModel);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oContainer.destroy();
 			this.oComponent.destroy();
 			this.oRta.destroy();
@@ -1084,8 +1084,8 @@ sap.ui.define([
 			var fnDone = assert.async();
 			document.getElementById("qunit-fixture").style.width = "600px";
 			var oSwitchIconsStub = sandbox.stub(Adaptation.prototype, "_switchToIcons")
-			.callsFake(function() {
-				oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
+			.callsFake(function(...aArgs) {
+				oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, aArgs);
 				var oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
 				var oNavigationSwitcherButton = this.oToolbar.getControl("navigationSwitcherButton");
 				var oVisualizationSwitcherButton = this.oToolbar.getControl("visualizationSwitcherButton");
@@ -1150,11 +1150,11 @@ sap.ui.define([
 			};
 
 			var oSwitchIconsStub = sandbox.stub(Adaptation.prototype, "_switchToIcons")
-			.callsFake(function() {
-				oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
+			.callsFake(function(...aArgs) {
+				oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, aArgs);
 				fnCheckIcon.call(this);
-				var oSwitchTextsStub = sandbox.stub(Adaptation.prototype, "_switchToTexts").callsFake(function() {
-					oSwitchTextsStub.wrappedMethod.apply(this.oToolbar, arguments);
+				var oSwitchTextsStub = sandbox.stub(Adaptation.prototype, "_switchToTexts").callsFake(function(...aArgs) {
+					oSwitchTextsStub.wrappedMethod.apply(this.oToolbar, aArgs);
 					fnCheckText.call(this);
 					fnDone();
 				}.bind(this));

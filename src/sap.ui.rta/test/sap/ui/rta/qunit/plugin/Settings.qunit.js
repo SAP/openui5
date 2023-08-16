@@ -64,13 +64,13 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a designTime and settings plugin are instantiated", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			sandbox.stub(ChangesWriteAPI, "create").resolves({
-				getSupportInformation: function() {
+				getSupportInformation() {
 					return {};
 				},
-				setSupportInformation: function() {}
+				setSupportInformation() {}
 			});
 			sandbox.stub(ChangesWriteAPI, "apply").resolves({success: true});
 
@@ -85,7 +85,7 @@ sap.ui.define([
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oVerticalLayout.destroy();
 		}
@@ -126,9 +126,9 @@ sap.ui.define([
 				designTimeMetadata: {
 					"sap.m.Button": {
 						actions: {
-							settings: function() {
+							settings() {
 								return {
-									handler: function() {}
+									handler() {}
 								};
 							}
 						}
@@ -159,10 +159,10 @@ sap.ui.define([
 				designTimeMetadata: {
 					"sap.m.Button": {
 						actions: {
-							settings: function() {
+							settings() {
 								return {
 									isEnabled: false,
-									handler: function() {}
+									handler() {}
 								};
 							}
 						}
@@ -194,9 +194,9 @@ sap.ui.define([
 				designTimeMetadata: {
 					"sap.m.Button": {
 						actions: {
-							settings: function() {
+							settings() {
 								return {
-									isEnabled: function(oElementInstance) {
+									isEnabled(oElementInstance) {
 										return oElementInstance.getMetadata().getName() !== "sap.m.Button";
 									}
 								};
@@ -230,11 +230,11 @@ sap.ui.define([
 				designTimeMetadata: {
 					"sap.m.Button": {
 						actions: {
-							settings: function() {
+							settings() {
 								return {
 									isEnabled: true,
 									icon: sIcon,
-									handler: function() {}
+									handler() {}
 								};
 							}
 						}
@@ -269,7 +269,7 @@ sap.ui.define([
 
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
 				isEnabled: true,
-				handler: function() {
+				handler() {
 					return new Promise(function(resolve) {
 						resolve([oSettingsChange]);
 					});
@@ -297,7 +297,7 @@ sap.ui.define([
 		QUnit.test("when the handle settings function is called and the handler returns a an empty change object,", function(assert) {
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
 				isEnabled: true,
-				handler: function() {
+				handler() {
 					return new Promise(function(resolve) {
 						resolve([]);
 					});
@@ -337,7 +337,7 @@ sap.ui.define([
 		QUnit.test("when the handle settings function is called and the handler returns a rejected promise with error object,", function(assert) {
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
 				isEnabled: true,
-				handler: function() {
+				handler() {
 					return new Promise(function(resolve, reject) {
 						reject(Error("Test"));
 					});
@@ -370,7 +370,7 @@ sap.ui.define([
 
 				var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
 					isEnabled: true,
-					handler: function() {
+					handler() {
 						return new Promise(function(resolve) {
 							resolve([oSettingsChange]);
 						});
@@ -381,7 +381,7 @@ sap.ui.define([
 					return "myVMR";
 				};
 				sandbox.stub(oMockedAppComponent, "getModel").returns({
-					getCurrentVariantReference: function() {
+					getCurrentVariantReference() {
 						return "currentVR";
 					}
 				});
@@ -417,7 +417,7 @@ sap.ui.define([
 				new ElementDesignTimeMetadata({
 					data: {
 						actions: {
-							settings: function() {}
+							settings() {}
 						}
 					}
 				})
@@ -442,7 +442,7 @@ sap.ui.define([
 					new ElementDesignTimeMetadata({
 						data: {
 							actions: {
-								settings: function() {}
+								settings() {}
 							}
 						}
 					})
@@ -478,7 +478,7 @@ sap.ui.define([
 
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
 				isEnabled: true,
-				handler: function() {
+				handler() {
 					return new Promise(function(resolve) {
 						resolve([mAppDescriptorChange]);
 					});
@@ -531,7 +531,7 @@ sap.ui.define([
 
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
 				isEnabled: true,
-				handler: function() {
+				handler() {
 					return new Promise(function(resolve) {
 						resolve([mAppDescriptorChange, mSettingsChange]);
 					});
@@ -560,7 +560,7 @@ sap.ui.define([
 
 		QUnit.test("when retrieving the context menu item for single 'settings' action", function(assert) {
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
-				handler: function() {}
+				handler() {}
 			});
 
 			var bIsAvailable = true;
@@ -590,7 +590,7 @@ sap.ui.define([
 
 		QUnit.test("when retrieving the context menu item for single 'settings' action with a submenu", function(assert) {
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
-				handler: function() {},
+				handler() {},
 				submenu: [
 					{
 						name: "subEntry0",
@@ -659,7 +659,7 @@ sap.ui.define([
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, [
 				{
 					name: "CTX_ACTION1",
-					handler: function() {
+					handler() {
 						return new Promise(function(resolve) {
 							resolve([mAction1Change]);
 						});
@@ -667,10 +667,10 @@ sap.ui.define([
 					runtimeOnly: true
 				},
 				{
-					name: function() {
+					name() {
 						return "Action 2 Name";
 					},
-					handler: function() {
+					handler() {
 						return new Promise(function(resolve) {
 							resolve([mAction2Change]);
 						});
@@ -729,7 +729,7 @@ sap.ui.define([
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
 				CTX_ACTION1: {
 					name: "CTX_ACTION1",
-					handler: function() {
+					handler() {
 						return new Promise(function(resolve) {
 							resolve([mAction1Change]);
 						});
@@ -762,12 +762,12 @@ sap.ui.define([
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
 				Action1: {
 					name: "CTX_ACTION1",
-					handler: function() {}
+					handler() {}
 				},
 				Action2: {
 					name: "CTX_ACTION2",
 					changeOnRelevantContainer: true,
-					handler: function() {}
+					handler() {}
 				}
 			});
 
@@ -795,12 +795,12 @@ sap.ui.define([
 				Action1: {
 					name: "CTX_ACTION1",
 					changeOnRelevantContainer: true,
-					handler: function() {}
+					handler() {}
 				},
 				Action2: {
 					name: "CTX_ACTION2",
 					changeOnRelevantContainer: true,
-					handler: function() {}
+					handler() {}
 				}
 			});
 
@@ -822,25 +822,25 @@ sap.ui.define([
 		});
 
 		QUnit.test("when retrieving the context menu items for two 'settings' actions, but one is disabled", function(assert) {
-			var oButton = this.oButton;
+			var {oButton} = this;
 
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
 				"Button Settings 1": {
-					name: function() { return "CTX_ACTION1"; },
-					handler: function() {
+					name() { return "CTX_ACTION1"; },
+					handler() {
 						return new Promise(function(resolve) {
 							resolve([]);
 						});
 					}
 				},
 				"Another Button Settings Action": {
-					name: function() { return "CTX_ACTION2"; },
-					handler: function() {
+					name() { return "CTX_ACTION2"; },
+					handler() {
 						return new Promise(function(resolve) {
 							resolve([]);
 						});
 					},
-					isEnabled: function(oElement) {
+					isEnabled(oElement) {
 						assert.equal(oElement, oButton, "isEnabled is called with the correct element");
 						return false;
 					}
@@ -863,28 +863,28 @@ sap.ui.define([
 				{
 					name: "CTX_ACTION1",
 					icon: sIconAction1,
-					handler: function() {
+					handler() {
 						return new Promise(function(resolve) {
 							resolve([]);
 						});
 					}
 				},
 				{
-					name: function() {
+					name() {
 						return "Action 2 Name";
 					},
-					handler: function() {
+					handler() {
 						return new Promise(function(resolve) {
 							resolve([]);
 						});
 					}
 				},
 				{
-					name: function() {
+					name() {
 						return "Action 3 Name";
 					},
 					icon: { name: "icon should be a STRING not an Object" },
-					handler: function() {
+					handler() {
 						return new Promise(function(resolve) {
 							resolve([]);
 						});

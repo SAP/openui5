@@ -113,7 +113,7 @@ sap.ui.define([
 		},
 		renderer: {
 			apiVersion: 2,
-			render: function(oRm, oControl) {
+			render(oRm, oControl) {
 				oRm.openStart("div", oControl);
 				oRm.class("sapUiRtaChangeIndicator");
 				oRm.class("sapUiRtaChangeIndicatorChange");
@@ -139,12 +139,13 @@ sap.ui.define([
 				oRm.close("div");
 			}
 		},
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			this._oDetailModel = new JSONModel();
 			this._oDetailModel.setDefaultBindingMode("OneWay");
 			this._fnHoverTrue = this._setHoverStyleClasses.bind(this, true);
 			this._fnHoverFalse = this._setHoverStyleClasses.bind(this, false);
-			Control.prototype.constructor.apply(this, arguments);
+			Control.prototype.constructor.apply(this, aArgs);
 			// is needed to prevent that multiple events listeners are attached
 			// to the same overlay because setVisible is called multiple times
 			this._bEventAttachedToElement = false;
@@ -269,8 +270,9 @@ sap.ui.define([
 		handleBrowserEventsOnIndicator.call(this, this, "attachBrowserEvent");
 	};
 
-	ChangeIndicator.prototype.setVisible = function(bVisible) {
-		Control.prototype.setVisible.apply(this, arguments);
+	ChangeIndicator.prototype.setVisible = function(...aArgs) {
+		const [bVisible] = aArgs;
+		Control.prototype.setVisible.apply(this, aArgs);
 		var oOverlay = Core.byId(this.getOverlayId());
 		// needed because the change indicator cleanup is only triggered on save and exit
 		if (oOverlay) {
@@ -289,10 +291,10 @@ sap.ui.define([
 		return this;
 	};
 
-	ChangeIndicator.prototype.focus = function() {
+	ChangeIndicator.prototype.focus = function(...aArgs) {
 		if (this.getDomRef()) {
 			// Element is rendered, focus immediately
-			Control.prototype.focus.apply(this, arguments);
+			Control.prototype.focus.apply(this, aArgs);
 			this._bScheduledForFocus = false;
 			return;
 		}

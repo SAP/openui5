@@ -11,10 +11,10 @@ sap.ui.define([
 	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 	QUnit.module("Base tests", {
-		beforeEach: function() {
+		beforeEach() {
 			this.mPropertyBag = { appComponent: null };
 		},
-		afterEach: function() {
+		afterEach() {
 		}
 	}, function() {
 		QUnit.test("when no payload and property bag are set", function(assert) {

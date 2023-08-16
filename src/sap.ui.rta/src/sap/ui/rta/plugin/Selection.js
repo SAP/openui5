@@ -110,9 +110,9 @@ function(
 		}
 	}
 
-	Selection.prototype.init = function() {
+	Selection.prototype.init = function(...aArgs) {
 		this._multiSelectionValidator = this._multiSelectionValidator.bind(this);
-		Plugin.prototype.init.apply(this, arguments);
+		Plugin.prototype.init.apply(this, aArgs);
 	};
 
 	/**
@@ -385,14 +385,14 @@ function(
 	/**
 	 * @override
 	 */
-	Selection.prototype.setDesignTime = function() {
+	Selection.prototype.setDesignTime = function(...aArgs) {
 		// detach from listener from old DesignTime instance
 		if (this.getDesignTime()) {
 			this.getDesignTime().getSelectionManager().removeValidator(this._multiSelectionValidator);
 		}
 
 		// set new DesignTime instance in parent class
-		Plugin.prototype.setDesignTime.apply(this, arguments);
+		Plugin.prototype.setDesignTime.apply(this, aArgs);
 
 		// attach listener back to the new DesignTime instance
 		if (this.getDesignTime()) {

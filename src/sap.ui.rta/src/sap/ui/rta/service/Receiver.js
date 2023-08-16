@@ -170,7 +170,7 @@ sap.ui.define([
 		oPostMessageBus.subscribe(CHANNEL_ID, "unsubscribe", fnReceiver);
 
 		return {
-			destroy: function() {
+			destroy() {
 				if (oPostMessageBus) {
 					oPostMessageBus.unsubscribe(CHANNEL_ID, "getService", fnReceiver);
 					oPostMessageBus.unsubscribe(CHANNEL_ID, "callMethod", fnReceiver);

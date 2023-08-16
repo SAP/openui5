@@ -229,9 +229,10 @@ sap.ui.define([
 		_dependents: null,
 		_sStatus: STOPPED,
 		_bNavigationModeWarningShown: false,
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			// call parent constructor
-			ManagedObject.apply(this, arguments);
+			ManagedObject.apply(this, aArgs);
 
 			this._dependents = {};
 			this._mServices = {};
@@ -427,9 +428,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype.getRootControlInstance = function() {
-		if (!this._oRootControl) {
-			this._oRootControl = ElementUtil.getElementInstance(this.getRootControl());
-		}
+		this._oRootControl ||= ElementUtil.getElementInstance(this.getRootControl());
 		return this._oRootControl;
 	};
 
@@ -801,7 +800,7 @@ sap.ui.define([
 	 *
 	 * @protected
 	 */
-	RuntimeAuthoring.prototype.destroy = function() {
+	RuntimeAuthoring.prototype.destroy = function(...aArgs) {
 		var aDependentKeys = Object.keys(this._dependents);
 		aDependentKeys.forEach(function(sDependentKey) {
 			// Destroy should be called with suppress invalidate = true here to prevent static UI Area invalidation
@@ -844,7 +843,7 @@ sap.ui.define([
 
 		window.onbeforeunload = this._oldUnloadHandler;
 
-		ManagedObject.prototype.destroy.apply(this, arguments);
+		ManagedObject.prototype.destroy.apply(this, aArgs);
 	};
 
 	// ---- API ----
@@ -943,10 +942,10 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted Visual Editor
 	 */
-	RuntimeAuthoring.prototype.condenseAndSaveChanges = function(/* aChanges */) {
+	RuntimeAuthoring.prototype.condenseAndSaveChanges = function(...aArgs/* aChanges */) {
 		// for now there is no functionality to only consider passed changes during condensing,
 		// so the standard save functionality is triggered
-		return this._serializeToLrep.apply(this, arguments);
+		return this._serializeToLrep(...aArgs);
 	};
 
 	/**
@@ -1215,9 +1214,7 @@ sap.ui.define([
 			var sVersion = bActivateVersion ? this._oVersionsModel.getProperty("/displayedVersion") : undefined;
 
 			// If a draft is being processed, saving without exiting must retrieve the updated state of the draft version
-			if (!sVersion) {
-				sVersion = bIsExit ? undefined : Version.Number.Draft;
-			}
+			sVersion ||= bIsExit ? undefined : Version.Number.Draft;
 			mPropertyBag.version = sVersion;
 
 			// Save changes on the current layer and discard dirty changes on other layers
@@ -1903,9 +1900,7 @@ sap.ui.define([
 					function(fnServiceFactory) {
 						mService.factory = fnServiceFactory;
 
-						if (!this._oServiceEventBus) {
-							this._oServiceEventBus = new ServiceEventBus();
-						}
+						this._oServiceEventBus ||= new ServiceEventBus();
 
 						DtUtil.wrapIntoPromise(fnServiceFactory)(
 							this,

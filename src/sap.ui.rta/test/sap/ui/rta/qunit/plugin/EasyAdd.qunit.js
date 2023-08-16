@@ -37,7 +37,7 @@ sap.ui.define([
 	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	QUnit.module("Given a designTime and EasyAdd plugin are instantiated", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oEasyAddPlugin = new EasyAdd({
@@ -87,7 +87,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
@@ -178,7 +178,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and EasyAdd plugin are instantiated", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oEasyAddPlugin = new EasyAdd({
@@ -202,7 +202,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -215,7 +215,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and AddPlugin plugin are instantiated with a OP without stableID", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oEasyAddPlugin = new EasyAdd({
@@ -244,7 +244,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 		}

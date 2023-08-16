@@ -61,7 +61,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a table in Design Time with a Resize Plugin...", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			givenTableWithResizableColumns.call(this);
 			var fnDone = assert.async();
 
@@ -79,7 +79,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oResizePlugin.destroy();
@@ -157,7 +157,7 @@ sap.ui.define([
 			this.oColumn0Overlay.setDesignTimeMetadata({
 				actions: {
 					resize: {
-						handler: function() {
+						handler() {
 							return;
 						}
 					}
@@ -245,7 +245,7 @@ sap.ui.define([
 			assert.ok(oRemoveHandleSpy.called, "on mouse leave, the handle is removed");
 			this.oColumn0OverlayDomElement.dispatchEvent(new Event("mousemove"));
 			aHandle = this.oColumn0OverlayDomElement.getElementsByClassName("sapUiRtaResizeHandle");
-			oHandle = aHandle[0];
+			[oHandle] = aHandle;
 			assert.strictEqual(aHandle.length, 1, "on new mousemove, handle is recreated on the overlay");
 			oRemoveHandleSpy = sandbox.spy(this.oResizePlugin.getHandle(), "remove");
 
@@ -307,7 +307,7 @@ sap.ui.define([
 
 	// Some tests need RTA as the calculations are dependent on the style class (handle position)
 	QUnit.module("Given a table in RTA...", {
-		beforeEach: function() {
+		beforeEach() {
 			givenTableWithResizableColumns.call(this);
 
 			this.oRta = new RuntimeAuthoring({
@@ -323,7 +323,7 @@ sap.ui.define([
 				this.oResizePlugin = this.oRta.getPlugins().resize;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			this.oComponent.destroy();
 			this.oContainer.destroy();
@@ -437,7 +437,7 @@ sap.ui.define([
 
 		QUnit.test("when _finalizeResize is called and the handler returns no changes... ", function(assert) {
 			sandbox.stub(this.oResizePlugin, "getAction").returns({
-				handler: function() {
+				handler() {
 					return Promise.resolve([]);
 				}
 			});
@@ -457,7 +457,7 @@ sap.ui.define([
 		QUnit.test("when _finalizeResize is called with a change in width but the handler fails... ", function(assert) {
 			var sErrorMessage = "I failed!";
 			sandbox.stub(this.oResizePlugin, "getAction").returns({
-				handler: function() {
+				handler() {
 					return Promise.reject(sErrorMessage);
 				}
 			});
@@ -684,7 +684,7 @@ sap.ui.define([
 					iMouseInitialPosition = oHandle.getBoundingClientRect().left;
 
 					function onSecondMouseDown() {
-						oFullScreenDiv = document.getElementsByClassName("sapUiRtaFullScreenDiv")[0];
+						[oFullScreenDiv] = document.getElementsByClassName("sapUiRtaFullScreenDiv");
 						iMouseFinalPosition = iMouseInitialPosition - 60;
 						iExpectedHandlePosition = iMinWidth - oHandle.offsetWidth;
 						oFullScreenDiv.dispatchEvent(new MouseEvent("mousemove", { clientX: iMouseFinalPosition }));
@@ -756,7 +756,7 @@ sap.ui.define([
 					iMouseInitialPosition = oHandle.getBoundingClientRect().left;
 
 					function onSecondMouseDown() {
-						oFullScreenDiv = document.getElementsByClassName("sapUiRtaFullScreenDiv")[0];
+						[oFullScreenDiv] = document.getElementsByClassName("sapUiRtaFullScreenDiv");
 						// Move handle outside of the control border
 						iMouseFinalPosition = iMouseInitialPosition - 175;
 						iExpectedHandlePosition = 15 - oHandle.offsetWidth;
@@ -791,7 +791,7 @@ sap.ui.define([
 				actions: {
 					resize: {
 						changeType: "myChangeType",
-						getHandleExtensionHeight: function(oElement) {
+						getHandleExtensionHeight(oElement) {
 							return oElement.getParent().getDomRef().offsetHeight;
 						}
 					}
@@ -878,7 +878,7 @@ sap.ui.define([
 						actions: {
 							resize: {
 								changeType: "myChangeType",
-								getSizeLimits: function() {
+								getSizeLimits() {
 									return {
 										minimumWidth: iColumn0OverlayOldWidth
 									};

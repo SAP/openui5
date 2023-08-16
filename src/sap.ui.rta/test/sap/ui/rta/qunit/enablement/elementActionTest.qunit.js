@@ -35,29 +35,29 @@ sap.ui.define([
 		action: {
 			name: "remove",
 			controlId: "formelement",
-			parameter: function(oView) {
+			parameter(oView) {
 				return {
 					removedElement: oView.byId("formelement")
 				};
 			}
 		},
-		beforeAction: function() {
+		beforeAction() {
 
 		},
-		afterAction: function() {
-			fnConfirmFormElementIsInvisible.apply(this, arguments);
+		afterAction(...aArgs) {
+			fnConfirmFormElementIsInvisible.apply(this, aArgs);
 		},
-		beforeUndo: function() {
+		beforeUndo() {
 
 		},
-		afterUndo: function() {
-			fnConfirmFormElementIsVisible.apply(this, arguments);
+		afterUndo(...aArgs) {
+			fnConfirmFormElementIsVisible.apply(this, aArgs);
 		},
-		beforeRedo: function() {
+		beforeRedo() {
 
 		},
-		afterRedo: function() {
-			fnConfirmFormElementIsInvisible.apply(this, arguments);
+		afterRedo(...aArgs) {
+			fnConfirmFormElementIsInvisible.apply(this, aArgs);
 		},
 
 		changeVisualization: {
@@ -99,21 +99,21 @@ sap.ui.define([
 		},
 		action: {
 			name: "remove",
-			control: function(oView) {
+			control(oView) {
 				return Promise.resolve(oView.byId("container"));
 			},
-			parameter: function(oView) {
+			parameter(oView) {
 				return {
 					removedElement: oView.byId("container")
 				};
 			}
 		},
-		before: function() {
+		before() {
 			window.oPressSpy = sinon.spy();
 
 			this.sSomeProperty = "some property";
 		},
-		after: function(assert) {
+		after(assert) {
 			delete window.oPressSpy;
 
 			assert.strictEqual(this.sSomeProperty, "some property", "then context between hooks is shared");

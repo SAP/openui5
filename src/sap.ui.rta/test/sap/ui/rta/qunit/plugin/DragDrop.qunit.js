@@ -45,7 +45,7 @@ sap.ui.define([
 		// 			[oLeftButton]
 		// 		contentMiddle
 		// 			[oMiddleButton1, oMiddleButton2]
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oLeftButton = new Button({id: "LeftButton", visible: true, text: "Left"});
 			this.oMiddleButton1 = new Button({id: "MiddleButton1", visible: true, text: "Middle1"});
 			this.oMiddleButton2 = new Button({id: "MiddleButton2", visible: true, text: "Middle2"});
@@ -89,7 +89,7 @@ sap.ui.define([
 			sandbox.stub(this.oElementMover, "buildMoveCommand").resolves();
 		},
 
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();

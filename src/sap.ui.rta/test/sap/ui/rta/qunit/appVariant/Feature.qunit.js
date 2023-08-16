@@ -45,14 +45,14 @@ sap.ui.define([
 
 	function stubUshellContainer() {
 		var oUshellContainerStub = {
-			getServiceAsync: function() {
+			getServiceAsync() {
 				return Promise.resolve({
-					toExternal: function() {
+					toExternal() {
 					},
-					getHash: function() {
+					getHash() {
 						return "Action-somestring";
 					},
-					parseShellHash: function() {
+					parseShellHash() {
 						return {
 							semanticObject: "Action",
 							action: "somestring"
@@ -60,7 +60,7 @@ sap.ui.define([
 					}
 				});
 			},
-			setDirtyFlag: function() {
+			setDirtyFlag() {
 				return false;
 			}
 		};
@@ -79,11 +79,11 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that a RtaAppVariantFeature is instantiated", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.stub(FlUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(undefined));
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			if (document.getElementById("sapUiBusyIndicator")) {
 				document.getElementById("sapUiBusyIndicator").style.display = "none";
 			}
@@ -360,13 +360,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that the ushell is stubbed", {
-		beforeEach: function() {
+		beforeEach() {
 			stubUshellContainer();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			if (document.getElementById("sapUiBusyIndicator")) {
 				document.getElementById("sapUiBusyIndicator").style.display = "none";
 			}
@@ -589,15 +589,15 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that the ushell and an UIComponent is stubbed", {
-		beforeEach: function() {
+		beforeEach() {
 			stubUshellContainer();
 			this.oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oAppComponent.destroy();
 		},
-		after: function() {
+		after() {
 			if (document.getElementById("sapUiBusyIndicator")) {
 				document.getElementById("sapUiBusyIndicator").style.display = "none";
 			}
