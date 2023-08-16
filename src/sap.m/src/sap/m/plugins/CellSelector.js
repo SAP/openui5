@@ -85,7 +85,9 @@ sap.ui.define([
 	CellSelector.prototype.isApplicable = function() {
 		if (this.getControl().getDragDropConfig().length > 0
 			|| !this.getControl().isA("sap.ui.table.Table")) {
-			return false;
+			return !this.getControl()
+				.getDragDropConfig()
+				.some((oConfig) => oConfig.getSourceAggregation() == this.getConfig("dataCellAggregation"));
 		}
 
 		return this.getConfig("isApplicable", this.getControl());
