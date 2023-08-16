@@ -8,12 +8,12 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/ControllerExtension",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	Log,
 	ManagedObject,
@@ -22,12 +22,12 @@ sap.ui.define([
 	ComponentContainer,
 	Component,
 	VariantManagementState,
-	FlexState,
 	ManifestUtils,
 	ControllerExtension,
 	Layer,
 	Utils,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 
@@ -95,7 +95,7 @@ sap.ui.define([
 		/**
 		 * @deprecated Since version 1.58 due to <code>sap.ui.base.Metadata.getPublicMethods</code> deprecation
 		 */
-		QUnit.test("When a component id is provided and one code extension with two methods is present", function(assert) {
+		QUnit.test("When a component id is provided and one code extension with two methods is present", async function(assert) {
 			var sModuleName = "sap/ui/fl/qunit/ControllerExtension/1.0.0/codeExtensions/firstCodeExt";
 			sap.ui.define(sModuleName, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) { // legacy-relevant: simulates a loaded code extension. no option to replace this regarding legacy free coding
 				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension1", {
@@ -109,12 +109,6 @@ sap.ui.define([
 					codeRef: "myCodeRef.js"
 				}
 			});
-
-			var oFileContent = {
-				changes: {
-					changes: [oChange]
-				}
-			};
 
 			var oAppComponent = {
 				getManifest: function() {
@@ -147,7 +141,7 @@ sap.ui.define([
 				},
 				getManifestEntry: function() {}
 			};
-			sandbox.stub(FlexState, "getStorageResponse").returns(oFileContent);
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "ui.s2p.mm.purchorder.approve.view.S2", {changes: [oChange]});
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sControllerName);
 
@@ -164,7 +158,7 @@ sap.ui.define([
 		/**
 		 * @deprecated Since version 1.58 due to <code>sap.ui.base.Metadata.getAllPublicMethods</code> deprecation
 		 */
-		QUnit.test("apply multiple changes on different controllers", function(assert) {
+		QUnit.test("apply multiple changes on different controllers", async function(assert) {
 			// expect both extensions to be called
 			var done1 = assert.async();
 			var done2 = assert.async();
@@ -229,11 +223,9 @@ sap.ui.define([
 				changeType: "notCodeExt"
 			};
 			var oFileContent = {
-				changes: {
-					changes: [oOtherChange1, oCodingChange1, oOtherChange2, oCodingChange2]
-				}
+				changes: [oOtherChange1, oCodingChange1, oOtherChange2, oCodingChange2]
 			};
-			sandbox.stub(FlexState, "getStorageResponse").resolves(oFileContent);
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "<sap-app-id> or <component name>", oFileContent);
 
 			// view, controller and component definition
 

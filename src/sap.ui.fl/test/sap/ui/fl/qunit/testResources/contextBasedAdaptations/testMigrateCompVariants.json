@@ -28,6 +28,179 @@
         "jsOnly": false,
         "versionId": "42010AEECAD31EEDB4C0D62078C26CE2",
         "creation": "2023-04-03T10:02:50.2573770Z"
+    },
+    {
+        "changeType": "dragOrResize",
+        "reference": "ZDEMOOVP_RESIZE",
+        "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
+        "projectId": "ZDEMOOVP_RESIZE",
+        "packageName": "",
+        "support": {
+            "generator": "sap.ui.rta.command",
+            "sapui5Version": "1.113.0-SNAPSHOT",
+            "compositeCommand": "id_1680516161898_921_composite",
+            "command": "settings",
+            "user": "TESTUSER2"
+        },
+        "originalLanguage": "EN",
+        "layer": "CUSTOMER",
+        "fileType": "change",
+        "fileName": "unrestricted_customer_page_UIChange",
+        "content": {},
+        "texts": {},
+        "selector": {
+            "id": "mainView--ovpLayout",
+            "idIsLocal": true,
+            "variantId": "unrestricted_customer_page"
+        },
+        "dependentSelector": {},
+        "jsOnly": false,
+        "versionId": "42010AEECAD31EEDB4C0D62078C26CE2",
+        "creation": "2023-04-03T10:02:50.2573770Z"
+    },
+    {
+        "changeType": "dragOrResize",
+        "reference": "ZDEMOOVP_RESIZE",
+        "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
+        "projectId": "ZDEMOOVP_RESIZE",
+        "packageName": "",
+        "support": {
+            "generator": "sap.ui.rta.command",
+            "sapui5Version": "1.113.0-SNAPSHOT",
+            "compositeCommand": "id_1680516161898_921_composite",
+            "command": "settings",
+            "user": "TESTUSER2"
+        },
+        "originalLanguage": "EN",
+        "layer": "CUSTOMER",
+        "fileType": "change",
+        "fileName": "restricted4managerKeyUser_customer_page_UIChange",
+        "content": {},
+        "texts": {},
+        "selector": {
+            "id": "mainView--ovpLayout",
+            "idIsLocal": true,
+            "variantId": "restricted4managerKeyUser_customer_page"
+        },
+        "dependentSelector": {},
+        "jsOnly": false,
+        "versionId": "42010AEECAD31EEDB4C0D62078C26CE2",
+        "creation": "2023-04-03T10:02:50.2573770Z"
+    },
+    {
+        "changeType": "dragOrResize",
+        "reference": "ZDEMOOVP_RESIZE",
+        "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
+        "projectId": "ZDEMOOVP_RESIZE",
+        "packageName": "",
+        "support": {
+            "generator": "sap.ui.rta.command",
+            "sapui5Version": "1.113.0-SNAPSHOT",
+            "compositeCommand": "id_1680516161898_921_composite",
+            "command": "settings",
+            "user": "TESTUSER2"
+        },
+        "originalLanguage": "EN",
+        "layer": "CUSTOMER",
+        "fileType": "change",
+        "fileName": "restricted_invisible_customer_page_UIChange",
+        "content": {},
+        "texts": {},
+        "selector": {
+            "id": "mainView--ovpLayout",
+            "idIsLocal": true,
+            "variantId": "restricted_invisible_customer_page"
+        },
+        "dependentSelector": {},
+        "jsOnly": false,
+        "versionId": "42010AEECAD31EEDB4C0D62078C26CE2",
+        "creation": "2023-04-03T10:02:50.2573770Z"
+    },
+    {
+        "changeType": "dragOrResize",
+        "reference": "ZDEMOOVP_RESIZE",
+        "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
+        "projectId": "ZDEMOOVP_RESIZE",
+        "packageName": "",
+        "support": {
+            "generator": "sap.ui.rta.command",
+            "sapui5Version": "1.113.0-SNAPSHOT",
+            "compositeCommand": "id_1680516161898_921_composite",
+            "command": "settings",
+            "user": "TESTUSER2"
+        },
+        "originalLanguage": "EN",
+        "layer": "CUSTOMER",
+        "fileType": "change",
+        "fileName": "restricted4viewerKeyUser_customer_page_UIChange",
+        "content": {},
+        "texts": {},
+        "selector": {
+            "id": "mainView--ovpLayout",
+            "idIsLocal": true,
+            "variantId": "restricted4viewerKeyUser_customer_page"
+        },
+        "dependentSelector": {},
+        "jsOnly": false,
+        "versionId": "42010AEECAD31EEDB4C0D62078C26CE2",
+        "creation": "2023-04-03T10:02:50.2573770Z"
+    },
+    {
+        "changeType": "dragOrResize",
+        "reference": "ZDEMOOVP_RESIZE",
+        "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
+        "projectId": "ZDEMOOVP_RESIZE",
+        "packageName": "",
+        "support": {
+            "generator": "sap.ui.rta.command",
+            "sapui5Version": "1.113.0-SNAPSHOT",
+            "compositeCommand": "id_1680516161898_921_composite",
+            "command": "settings",
+            "user": "TESTUSER2"
+        },
+        "originalLanguage": "EN",
+        "layer": "VENDOR",
+        "fileType": "change",
+        "fileName": "nonVariantVENDORUIChange",
+        "content": {},
+        "texts": {},
+        "selector": {
+            "id": "mainView--ovpLayout",
+            "idIsLocal": true
+        },
+        "dependentSelector": {},
+        "jsOnly": false,
+        "versionId": "42010AEECAD31EEDB4C0D62078C26CE2",
+        "creation": "2023-04-03T10:02:50.2573770Z"
+    },
+    {
+        "changeType": "dragOrResize",
+        "reference": "ZDEMOOVP_RESIZE",
+        "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
+        "projectId": "ZDEMOOVP_RESIZE",
+        "packageName": "",
+        "support": {
+            "generator": "sap.ui.rta.command",
+            "sapui5Version": "1.113.0-SNAPSHOT",
+            "compositeCommand": "id_1680516161898_921_composite",
+            "command": "settings",
+            "user": "TESTUSER2"
+        },
+        "originalLanguage": "EN",
+        "layer": "VENDOR",
+        "fileType": "change",
+        "fileName": "unrestricted_vendor_page_vendor_UIChange",
+        "content": {},
+        "texts": {},
+        "selector": {
+            "id": "mainView--ovpLayout",
+            "idIsLocal": true,
+            "variantId": "unrestricted_vendor_page"
+        },
+        "dependentSelector": {},
+        "jsOnly": false,
+        "versionId": "42010AEECAD31EEDB4C0D62078C26CE2",
+        "creation": "2023-04-03T10:02:50.2573770Z"
     }
 ],
 "ui2personalization": {},
@@ -386,179 +559,6 @@
             "dependentSelector": {},
             "versionId": "42010AEECAD31EDDB4C49805A204EBDE",
             "creation": "2023-04-03T13:38:00.5713900Z"
-        },
-        {
-            "changeType": "dragOrResize",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
-            "packageName": "",
-            "support": {
-                "generator": "sap.ui.rta.command",
-                "sapui5Version": "1.113.0-SNAPSHOT",
-                "compositeCommand": "id_1680516161898_921_composite",
-                "command": "settings",
-                "user": "TESTUSER2"
-            },
-            "originalLanguage": "EN",
-            "layer": "CUSTOMER",
-            "fileType": "change",
-            "fileName": "unrestricted_customer_page_UIChange",
-            "content": {},
-            "texts": {},
-            "selector": {
-                "id": "mainView--ovpLayout",
-                "idIsLocal": true,
-                "variantId": "unrestricted_customer_page"
-            },
-            "dependentSelector": {},
-            "jsOnly": false,
-            "versionId": "42010AEECAD31EEDB4C0D62078C26CE2",
-            "creation": "2023-04-03T10:02:50.2573770Z"
-        },
-        {
-            "changeType": "dragOrResize",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
-            "packageName": "",
-            "support": {
-                "generator": "sap.ui.rta.command",
-                "sapui5Version": "1.113.0-SNAPSHOT",
-                "compositeCommand": "id_1680516161898_921_composite",
-                "command": "settings",
-                "user": "TESTUSER2"
-            },
-            "originalLanguage": "EN",
-            "layer": "CUSTOMER",
-            "fileType": "change",
-            "fileName": "restricted4managerKeyUser_customer_page_UIChange",
-            "content": {},
-            "texts": {},
-            "selector": {
-                "id": "mainView--ovpLayout",
-                "idIsLocal": true,
-                "variantId": "restricted4managerKeyUser_customer_page"
-            },
-            "dependentSelector": {},
-            "jsOnly": false,
-            "versionId": "42010AEECAD31EEDB4C0D62078C26CE2",
-            "creation": "2023-04-03T10:02:50.2573770Z"
-        },
-        {
-            "changeType": "dragOrResize",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
-            "packageName": "",
-            "support": {
-                "generator": "sap.ui.rta.command",
-                "sapui5Version": "1.113.0-SNAPSHOT",
-                "compositeCommand": "id_1680516161898_921_composite",
-                "command": "settings",
-                "user": "TESTUSER2"
-            },
-            "originalLanguage": "EN",
-            "layer": "CUSTOMER",
-            "fileType": "change",
-            "fileName": "restricted_invisible_customer_page_UIChange",
-            "content": {},
-            "texts": {},
-            "selector": {
-                "id": "mainView--ovpLayout",
-                "idIsLocal": true,
-                "variantId": "restricted_invisible_customer_page"
-            },
-            "dependentSelector": {},
-            "jsOnly": false,
-            "versionId": "42010AEECAD31EEDB4C0D62078C26CE2",
-            "creation": "2023-04-03T10:02:50.2573770Z"
-        },
-        {
-            "changeType": "dragOrResize",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
-            "packageName": "",
-            "support": {
-                "generator": "sap.ui.rta.command",
-                "sapui5Version": "1.113.0-SNAPSHOT",
-                "compositeCommand": "id_1680516161898_921_composite",
-                "command": "settings",
-                "user": "TESTUSER2"
-            },
-            "originalLanguage": "EN",
-            "layer": "CUSTOMER",
-            "fileType": "change",
-            "fileName": "restricted4viewerKeyUser_customer_page_UIChange",
-            "content": {},
-            "texts": {},
-            "selector": {
-                "id": "mainView--ovpLayout",
-                "idIsLocal": true,
-                "variantId": "restricted4viewerKeyUser_customer_page"
-            },
-            "dependentSelector": {},
-            "jsOnly": false,
-            "versionId": "42010AEECAD31EEDB4C0D62078C26CE2",
-            "creation": "2023-04-03T10:02:50.2573770Z"
-        },
-        {
-            "changeType": "dragOrResize",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
-            "packageName": "",
-            "support": {
-                "generator": "sap.ui.rta.command",
-                "sapui5Version": "1.113.0-SNAPSHOT",
-                "compositeCommand": "id_1680516161898_921_composite",
-                "command": "settings",
-                "user": "TESTUSER2"
-            },
-            "originalLanguage": "EN",
-            "layer": "VENDOR",
-            "fileType": "change",
-            "fileName": "nonVariantVENDORUIChange",
-            "content": {},
-            "texts": {},
-            "selector": {
-                "id": "mainView--ovpLayout",
-                "idIsLocal": true
-            },
-            "dependentSelector": {},
-            "jsOnly": false,
-            "versionId": "42010AEECAD31EEDB4C0D62078C26CE2",
-            "creation": "2023-04-03T10:02:50.2573770Z"
-        },
-        {
-            "changeType": "dragOrResize",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
-            "packageName": "",
-            "support": {
-                "generator": "sap.ui.rta.command",
-                "sapui5Version": "1.113.0-SNAPSHOT",
-                "compositeCommand": "id_1680516161898_921_composite",
-                "command": "settings",
-                "user": "TESTUSER2"
-            },
-            "originalLanguage": "EN",
-            "layer": "VENDOR",
-            "fileType": "change",
-            "fileName": "unrestricted_vendor_page_vendor_UIChange",
-            "content": {},
-            "texts": {},
-            "selector": {
-                "id": "mainView--ovpLayout",
-                "idIsLocal": true,
-                "variantId": "unrestricted_vendor_page"
-            },
-            "dependentSelector": {},
-            "jsOnly": false,
-            "versionId": "42010AEECAD31EEDB4C0D62078C26CE2",
-            "creation": "2023-04-03T10:02:50.2573770Z"
         }
     ],
     "defaultVariants": [

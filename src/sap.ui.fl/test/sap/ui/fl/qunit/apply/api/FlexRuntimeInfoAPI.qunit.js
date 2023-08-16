@@ -5,21 +5,25 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	Control,
 	UIComponent,
 	VariantUtils,
 	FlexState,
+	ManifestUtils,
 	FlexRuntimeInfoAPI,
 	FlexControllerFactory,
 	Layer,
 	Utils,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 
@@ -35,12 +39,14 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oAppComponent = new UIComponent("AppComponent21");
 			this.oGetAppComponentStub = sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("AppComponent21");
 		},
 		afterEach: function() {
 			if (this.oControl) {
 				this.oControl.destroy();
 			}
 			this.oAppComponent.destroy();
+			FlexState.clearState();
 			sandbox.restore();
 		}
 	}, function() {
@@ -67,7 +73,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When isPersonalized() is called with an array of control ids and change type", function(assert) {
+		QUnit.test("When isPersonalized() is called with an array of control ids and change type", async function(assert) {
 			this.aChangeTypes = ["changeType1", "changeType2"];
 			this.oControl = new Control("controlId1");
 			var aControls = [this.oControl];
@@ -80,44 +86,29 @@ sap.ui.define([
 			var oVariantManagementChangeContent0 = {fileName: "variantManagementChange0", fileType: "ctrl_variant_management_change", layer: Layer.USER, changeType: "changeType1", selector: {id: "variantManagementId"}, content: {defaultVariant: "defaultVariant0"}};
 
 			var oMockedWrappedContent = {
-				changes: {
-					changes: [oChangeContent0],
-					variantSection: {
-						variantManagementId: {
-							variants: [{
-								content: {
-									fileName: "variantManagementId",
-									fileType: "ctrl_variant",
-									content: {
-										title: "variant 0"
-									}
-								},
-								controlChanges: [oChangeContent1, oChangeContent2],
-								variantChanges: {
-									setTitle: [oVariantChangeContent0]
-								}
-							},
-							{
-								content: {
-									fileName: "variant1",
-									fileType: "ctrl_variant",
-									variantReference: "variantManagementId",
-									content: {
-										title: "variant 1"
-									}
-								},
-								controlChanges: [oChangeContent3],
-								variantChanges: {}
-							}],
-							variantManagementChanges: {
-								setDefault: [oVariantManagementChangeContent0]
-							}
+				changes: [oChangeContent0],
+				variants: [
+					{
+						fileName: "variantManagementId",
+						fileType: "ctrl_variant",
+						content: {
+							title: "variant 0"
+						}
+					}, {
+						fileName: "variant1",
+						fileType: "ctrl_variant",
+						variantReference: "variantManagementId",
+						content: {
+							title: "variant 1"
 						}
 					}
-				}
+				],
+				variantChanges: [oVariantChangeContent0],
+				variantManagementChanges: [oVariantManagementChangeContent0],
+				variantDependentControlChanges: [oChangeContent1, oChangeContent2, oChangeContent3]
 			};
 
-			sandbox.stub(FlexState, "getStorageResponse").resolves(oMockedWrappedContent);
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "AppComponent21", oMockedWrappedContent);
 			return FlexRuntimeInfoAPI.isPersonalized({
 				selectors: aControls,
 				changeTypes: this.aChangeTypes
@@ -149,15 +140,13 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("When isPersonalized() is called with undefined change types", function(assert) {
+		QUnit.test("When isPersonalized() is called with undefined change types", async function(assert) {
 			var oChangeContent0 = {fileName: "change0", fileType: "change", variantReference: "", selector: {id: "controlId1", idIsLocal: false}, changeType: "changeType1", layer: Layer.USER};
 			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
 			var oMockedWrappedContent = {
-				changes: {
-					changes: [oChangeContent0]
-				}
+				changes: [oChangeContent0]
 			};
-			sandbox.stub(FlexState, "getStorageResponse").resolves(oMockedWrappedContent);
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "AppComponent21", oMockedWrappedContent);
 			return FlexRuntimeInfoAPI.isPersonalized({
 				selectors: aControls
 			}).then(function(bIsPersonalized) {
@@ -165,15 +154,13 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When isPersonalized() is called with an empty array of change types", function(assert) {
+		QUnit.test("When isPersonalized() is called with an empty array of change types", async function(assert) {
 			var oChangeContent0 = {fileName: "change0", fileType: "change", variantReference: "", selector: {id: "controlId1", idIsLocal: false}, changeType: "changeType1", layer: Layer.USER};
 			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
 			var oMockedWrappedContent = {
-				changes: {
-					changes: [oChangeContent0]
-				}
+				changes: [oChangeContent0]
 			};
-			sandbox.stub(FlexState, "getStorageResponse").resolves(oMockedWrappedContent);
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "AppComponent21", oMockedWrappedContent);
 			return FlexRuntimeInfoAPI.isPersonalized({
 				selectors: aControls,
 				changeTypes: []
@@ -182,7 +169,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When isPersonalized() is called with variant control changes", function(assert) {
+		QUnit.test("When isPersonalized() is called with variant control changes", async function(assert) {
 			this.aChangeTypes = ["change0", "changeType2"];
 			this.oControl = new Control("controlId1");
 
@@ -193,37 +180,27 @@ sap.ui.define([
 			var oChangeContent4 = {fileName: "change4", variantReference: "variant1"};
 
 			var oMockedWrappedContent = {
-				changes: {
-					changes: [oChangeContent0],
-					variantSection: {
-						variantManagementId: {
-							variants: [{
-								content: {
-									fileName: "variantManagementId",
-									content: {
-										title: "variant 0"
-									}
-								},
-								controlChanges: [oChangeContent1, oChangeContent2],
-								variantChanges: {}
-							},
-							{
-								content: {
-									fileName: "variant1",
-									variantReference: "variant0",
-									content: {
-										title: "variant 1"
-									}
-								},
-								controlChanges: [oChangeContent3, oChangeContent4],
-								variantChanges: {}
-							}],
-							variantManagementChanges: {}
+				changes: [oChangeContent0],
+				variants: [
+					{
+						fileName: "variantManagementId",
+						content: {
+							title: "variant 0"
+						}
+					},
+					{
+						fileName: "variant1",
+						variantReference: "variant0",
+						content: {
+							title: "variant 1"
 						}
 					}
-				}
+				],
+				variantChanges: [],
+				variantManagementChanges: [],
+				variantDependentControlChanges: [oChangeContent1, oChangeContent2, oChangeContent3, oChangeContent4]
 			};
-			sandbox.stub(FlexState, "getStorageResponse").resolves(oMockedWrappedContent);
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "AppComponent21", oMockedWrappedContent);
 			return FlexRuntimeInfoAPI.isPersonalized({
 				selectors: [this.oControl],
 				changeTypes: this.aChangeTypes

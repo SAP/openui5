@@ -222,6 +222,10 @@ sap.ui.define([
 				},
 				"then the variant changes are applied on the variant map"
 			);
+			assert.strictEqual(
+				VariantManagementState.getVariantDependentFlexObjects({reference: sReference}).length, 4,
+				"all changes are returned"
+			);
 		});
 
 		QUnit.test("when there are variant management changes", function(assert) {
@@ -260,6 +264,10 @@ sap.ui.define([
 				oVMData.variantManagementChanges[0],
 				oVariantManagementChange,
 				"then the change is returned as part of the variant management map"
+			);
+			assert.strictEqual(
+				VariantManagementState.getVariantDependentFlexObjects({reference: sReference}).length, 2,
+				"all changes are returned"
 			);
 		});
 
@@ -961,7 +969,18 @@ sap.ui.define([
 					fileName: "customVariant"
 				}),
 				oPersistedUIChange,
-				oDirtyUIChange
+				oDirtyUIChange,
+				FlexObjectFactory.createUIChange({
+					id: "someNonVariantRelatedUIChange",
+					layer: Layer.CUSTOMER
+				}),
+				FlexObjectFactory.createUIChange({
+					id: "someCompChange",
+					layer: Layer.CUSTOMER,
+					selector: {
+						persistencyKey: "foo"
+					}
+				})
 			]);
 
 			assert.strictEqual(
@@ -988,6 +1007,10 @@ sap.ui.define([
 				aControlChanges[0].getId(),
 				"somePersistedUIChange",
 				"then the persisted UI change is still returned"
+			);
+			assert.strictEqual(
+				VariantManagementState.getVariantDependentFlexObjects({reference: sReference}).length, 3,
+				"all three changes are returned"
 			);
 		});
 
