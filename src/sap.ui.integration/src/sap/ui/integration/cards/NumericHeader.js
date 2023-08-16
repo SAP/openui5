@@ -64,10 +64,15 @@ sap.ui.define([
 
 			extend(mSettings, {
 				unitOfMeasurement: mConfiguration.unitOfMeasurement,
-				details: mConfiguration.details,
-				detailsMaxLines: mConfiguration.detailsMaxLines,
+				details: mConfiguration.details?.text || mConfiguration.details,
+				detailsMaxLines: mConfiguration.details?.maxLines || mConfiguration.detailsMaxLines,
 				sideIndicatorsAlignment: mConfiguration.sideIndicatorsAlignment
 			});
+
+
+			if (mConfiguration.details?.state) {
+				mSettings.detailsState = mConfiguration.details.state;
+			}
 
 			if (mConfiguration.mainIndicator) {
 				mSettings.number = mConfiguration.mainIndicator.number;

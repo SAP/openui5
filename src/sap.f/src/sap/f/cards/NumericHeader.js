@@ -4,15 +4,23 @@
 sap.ui.define([
 	"./BaseHeader",
 	"./NumericIndicators",
+	"sap/base/Log",
 	"sap/m/Text",
-	"sap/f/cards/NumericHeaderRenderer"
+	"sap/m/ObjectStatus",
+	"sap/f/cards/NumericHeaderRenderer",
+	"sap/ui/core/library"
 ], function (
 	BaseHeader,
 	NumericIndicators,
+	Log,
 	Text,
-	NumericHeaderRenderer
+	ObjectStatus,
+	NumericHeaderRenderer,
+	coreLibrary
 ) {
 	"use strict";
+
+	var ValueState = coreLibrary.ValueState;
 
 	/**
 	 * Constructor for a new <code>NumericHeader</code>.
@@ -119,6 +127,13 @@ sap.ui.define([
 				details: { "type": "string", group: "Appearance" },
 
 				/**
+				 * The semantic color which represents the state of the details text.
+				 * @experimental Since 1.118. For usage only by Work Zone.
+				 * @since 1.118
+				 */
+				detailsState: { type : "sap.ui.core.ValueState", group: "Appearance", defaultValue: ValueState.None },
+
+				/**
 				 * Limits the number of lines for the details.
 				 * @experimental since 1.101
 				 */
@@ -161,7 +176,7 @@ sap.ui.define([
 				/**
 				 * Display details
 				 */
-				_details: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
+				_details: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" },
 
 				/**
 				 * Displays the main and side indicators
@@ -209,9 +224,20 @@ sap.ui.define([
 			.setMaxLines(this.getSubtitleMaxLines());
 
 		this._getUnitOfMeasurement().setText(this.getUnitOfMeasurement());
-		this._getDetails()
-			.setText(this.getDetails())
-			.setMaxLines(this.getDetailsMaxLines());
+
+		if (!this.isPropertyInitial("detailsState") && !this.isPropertyInitial("detailsMaxLines")) {
+			Log.error("Both details state and details max lines can not be used at the same time. Max lines setting will be ignored.");
+		}
+
+		if (!this.isPropertyInitial("detailsState")) {
+			this._createDetails(true)
+				.setText(this.getDetails())
+				.setState(this.getDetailsState());
+		} else {
+			this._createDetails()
+				.setText(this.getDetails())
+				.setMaxLines(this.getDetailsMaxLines());
+		}
 
 		this._getNumericIndicators()
 			.setNumber(this.getNumber())
@@ -303,22 +329,42 @@ sap.ui.define([
 	};
 
 	/**
-	 * Lazily create details and return it.
-	 *
+	 * Create details and return it.
 	 * @private
-	 * @return {sap.m.Text} The details aggregation
+	 * @param {boolean} bUseObjectStatus If set to true the details will be sap.m.ObjectStatus
+	 * @return {sap.m.Text|sap.m.ObjectStatus} The details aggregation
 	 */
-	NumericHeader.prototype._getDetails = function () {
+	NumericHeader.prototype._createDetails = function (bUseObjectStatus) {
 		var oControl = this.getAggregation("_details");
 
-		if (!oControl) {
-			oControl = new Text({
-				id: this.getId() + "-details"
-			});
-			this.setAggregation("_details", oControl);
+		if (oControl?.isA("sap.m.Text") && bUseObjectStatus) {
+			oControl.destroy();
+		} else if (oControl) {
+			return oControl;
 		}
 
+		var oSettings = {
+			id: this.getId() + "-details"
+		};
+
+		if (bUseObjectStatus) {
+			oControl = new ObjectStatus(oSettings);
+		} else {
+			oControl = new Text(oSettings);
+		}
+
+		this.setAggregation("_details", oControl);
+
 		return oControl;
+	};
+
+	/**
+	 * Gets the control create for showing details.
+	 * @private
+	 * @return {sap.m.Text|sap.m.ObjectStatus} The details aggregation
+	 */
+	NumericHeader.prototype._getDetails = function () {
+		return this.getAggregation("_details");
 	};
 
 	/**

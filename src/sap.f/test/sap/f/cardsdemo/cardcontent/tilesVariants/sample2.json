@@ -51,7 +51,10 @@
 					"unit": "%"
 				}
 			],
-			"details": "{details}",
+			"details": {
+				"text": "{details}",
+				"state": "Warning"
+			},
 			"actions": [
 				{
 					"type": "Navigation",
