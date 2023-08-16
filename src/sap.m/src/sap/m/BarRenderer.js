@@ -47,6 +47,9 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBo
 			"level":  oControl._getRootAriaLevel()
 		});
 
+		/**
+		 * @deprecated since version 1.18.6.
+		 */
 		if (oControl.getTranslucent() && Device.support.touch) {
 			oRM.class("sapMBarTranslucent");
 		}
@@ -84,7 +87,13 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBo
 		oRM.openStart("div", oControl.getId() + "-BarMiddle");
 		oRM.class("sapMBarMiddle");
 		oRM.openEnd();
+
+		var bFlexBox = false;
+		/**
+		 * @deprecated As of version 1.16
+		 */
 		if (oControl.getEnableFlexBox()) {
+			bFlexBox = true;
 			oControl._oflexBox = oControl._oflexBox
 				|| new HBox(oControl.getId() + "-BarPH", {
 					alignItems: "Center"
@@ -101,7 +110,9 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBo
 			});
 
 			oRM.renderControl(oControl._oflexBox);
-		} else {
+		}
+
+		if (!bFlexBox) {
 			oRM.openStart("div", oControl.getId() + "-BarPH");
 			oRM.class("sapMBarPH");
 			oRM.class("sapMBarContainer");

@@ -571,7 +571,7 @@ sap.ui.define([
 
 	/**
 	 * Function is called when tap occurs on button.
-	 * @param {jQuery.Event} oEvent - the touch event.
+	 * @param {jQuery.Event} oEvent - the touch event
 	 * @private
 	 */
 	Button.prototype.ontap = function(oEvent, bFromTouchEnd) {
@@ -590,6 +590,9 @@ sap.ui.define([
 					this.focus();
 			}
 
+			/**
+			 * @deprecated As of version 1.20 the <code>tap</code> event has been replaced by the <code>press</code> event
+			 */
 			this.fireTap({/* no parameters */}); // (This event is deprecated, use the "press" event instead)
 			this.firePress({/* no parameters */ });
 		}
