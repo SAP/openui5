@@ -9207,6 +9207,9 @@ sap.ui.define([
 				that.oRequestorMock.expects("relocate")
 					.withExactArgs(sParkedGroupId, sinon.match.same(oPostBody), sUpdateGroupId);
 
+				if (oFixture.createGroupId === "$inactive.$auto") {
+					oCache.setInactive(sTransientPredicate, false); // activate
+				}
 				// code under test - first update -> relocate
 				aPromises.push(oCache.update(oGroupLock1, "Name", "John Doe", that.spy(), "n/a",
 					sTransientPredicate));
@@ -9227,15 +9230,9 @@ sap.ui.define([
 	//*********************************************************************************************
 	//TODO move to _Cache!
 [false, true].forEach(function (bInactive) {
-	[false, true].forEach(function (bStayInactive) {
-		[false, true].forEach(function (bAtEndOfCreated) {
-			var sTitle = "CollectionCache: create entity without initial data, bInactive="
-				+ bInactive + ", bStayInactive= " + bStayInactive + ", bAtEndOfCreated="
-				+ bAtEndOfCreated;
-
-			if (!bInactive && bStayInactive) {
-				return;
-			}
+	[false, true].forEach(function (bAtEndOfCreated) {
+		var sTitle = "CollectionCache: create entity without initial data, bInactive="
+			+ bInactive + ", bAtEndOfCreated=" + bAtEndOfCreated;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = _Cache.create(this.oRequestor, "Employees"),
@@ -9302,27 +9299,13 @@ sap.ui.define([
 		}
 
 		this.mock(oUpdateGroupLock).expects("getGroupId").withExactArgs().returns("updateGroup");
-		oHelperMock.expects("updateAll").exactly(bStayInactive ? 1 : 0)
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
-				sinon.match.same(oCache.aElements[bAtEndOfCreated ? 1 : 0]),
-				{"@$ui5.context.isInactive" : 1}).callThrough();
-		this.oRequestorMock.expects("relocate").exactly(bInactive && !bStayInactive ? 1 : 0)
-			.withExactArgs("$inactive.updateGroup",
-				sinon.match.same(oCache.aElements[bAtEndOfCreated ? 1 : 0]["@$ui5._"].postBody),
-				"updateGroup");
 		oHelperMock.expects("updateAll")
 			.withExactArgs({}, sTransientPredicate, sinon.match.object, {Name : "foo"});
-		this.mock(oCountChangeListener).expects("onChange")
-			.exactly(bInactive && !bStayInactive ? 1 : 0)
-			.withExactArgs(43, undefined);
 		oCache.registerChangeListener("$count", oCountChangeListener);
 		oHelperMock.expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
-				sinon.match.same(oCache.aElements[bAtEndOfCreated ? 1 : 0]),
-					bInactive && !bStayInactive
-						? {Name : "foo", "@$ui5.context.isInactive" : false}
-						: {Name : "foo"}
-				).callThrough();
+				sinon.match.same(oCache.aElements[bAtEndOfCreated ? 1 : 0]), {Name : "foo"})
+			.callThrough();
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
 				sinon.match.same(oCache.aElements[bAtEndOfCreated ? 1 : 0]),
@@ -9335,29 +9318,20 @@ sap.ui.define([
 		this.mock(oUpdateGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
-		oCache.update(oUpdateGroupLock, "Name", "foo", this.spy(), undefined, sTransientPredicate,
-			undefined, undefined, undefined, undefined, bStayInactive);
+		oCache.update(oUpdateGroupLock, "Name", "foo", this.spy(), undefined, sTransientPredicate);
 
 		assert.strictEqual(oCache.aElements[bAtEndOfCreated ? 1 : 0]["@$ui5._"].transient,
-			bStayInactive ? "$inactive.updateGroup" : "updateGroup");
-
-		if (bInactive) {
-			assert.strictEqual(
-				_Helper.hasPrivateAnnotation(oCache.aElements[bAtEndOfCreated ? 1 : 0],
-					"initialData"), bStayInactive);
-			assert.strictEqual(
-				oCache.aElements[bAtEndOfCreated ? 1 : 0]["@$ui5.context.isInactive"],
-				bStayInactive ? 1 : false, "isInactive");
-			assert.strictEqual(oCache.iActiveElements, bStayInactive ? 0 : 1);
-		} else {
-			assert.strictEqual(
-				oCache.aElements[bAtEndOfCreated ? 1 : 0]["@$ui5.context.isInactive"], undefined);
-			assert.strictEqual(oCache.iActiveElements, 1);
-		}
+			bInactive ? "$inactive.updateGroup" : "updateGroup");
+		assert.strictEqual(
+			_Helper.hasPrivateAnnotation(oCache.aElements[bAtEndOfCreated ? 1 : 0],
+				"initialData"), bInactive);
+		assert.strictEqual(
+			oCache.aElements[bAtEndOfCreated ? 1 : 0]["@$ui5.context.isInactive"],
+			bInactive ? true : undefined, "isInactive");
+		assert.strictEqual(oCache.iActiveElements, bInactive ? 0 : 1);
 
 		return oPromise;
 	});
-		});
 	});
 });
 
@@ -10709,6 +10683,29 @@ sap.ui.define([
 		oCache.aElements.$deleted = {a : {groupId : "group"}, b : {groupId : "otherGroup"}};
 		assert.strictEqual(oCache.isDeletingInOtherGroup("group"), true);
 	});
+
+	//*********************************************************************************************
+[false, 1].forEach(function (bInactive) {
+	QUnit.test(`CollectionCache#setInactive(${bInactive})`, function (assert) {
+		const iActivateCount = bInactive ? 0 : 1;
+		const oCache = this.createCache("Employees");
+		oCache.iActiveElements = 42;
+		this.mock(oCache).expects("getValue").withExactArgs("($uid=id-1-23)").returns("~oElement~");
+		this.mock(_Helper).expects("updateAll")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "($uid=id-1-23)",
+				"~oElement~", {"@$ui5.context.isInactive" : bInactive});
+		this.mock(_Helper).expects("deletePrivateAnnotation").exactly(iActivateCount)
+			.withExactArgs("~oElement~", "initialData");
+		this.mock(_Helper).expects("addToCount").exactly(iActivateCount)
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
+				sinon.match.same(oCache.aElements), 1);
+
+		// code under test
+		oCache.setInactive("($uid=id-1-23)", bInactive);
+
+		assert.strictEqual(oCache.iActiveElements, bInactive ? 42 : 43);
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("SingleCache", function (assert) {

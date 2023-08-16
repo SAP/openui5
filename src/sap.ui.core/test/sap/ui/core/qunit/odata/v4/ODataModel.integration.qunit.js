@@ -50209,9 +50209,16 @@ sap.ui.define([
 			oBinding = that.oView.byId("table").getBinding("items");
 
 			oBinding.attachCreateActivate(function (oEvent) {
-				if (!oEvent.getParameter("context").getProperty("Team_Id")) {
+				const oContext = oEvent.getParameter("context");
+				assert.ok(oContext.isInactive());
+				assert.strictEqual(
+					oContext.isInactive(),
+					oContext.getProperty("@$ui5.context.isInactive"));
+				if (!oContext.getProperty("Team_Id")) {
 					// code under test
 					oEvent.preventDefault();
+				} else {
+					oContext.setProperty("BudgetCurrency", "EUR");
 				}
 			});
 
@@ -50259,6 +50266,7 @@ sap.ui.define([
 						method : "POST",
 						url : "TEAMS",
 						payload : {
+							BudgetCurrency : "EUR",
 							Name : "Team #1 edited",
 							Team_Id : "TEAM_01"
 						}
@@ -50311,6 +50319,7 @@ sap.ui.define([
 				method : "POST",
 				url : "TEAMS",
 				payload : {
+					BudgetCurrency : "EUR",
 					Name : "Team #2 inactive",
 					Team_Id : "TEAM_02"
 				}

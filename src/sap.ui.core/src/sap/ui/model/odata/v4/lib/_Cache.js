@@ -2075,9 +2075,6 @@ sap.ui.define([
 	 *   If no back-end request is needed, the function is not called.
 	 * @param {function} fnIsKeepAlive
 	 *   A function to tell whether the entity is kept-alive
-	 * @param {boolean} [bInactive]
-	 *   If <code>true</code>, the cache and the POST request will be updated, but the entity stays
-	 *   inactive
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise for the PATCH request (resolves with <code>undefined</code>); rejected in case of
 	 *   cancellation or if no <code>fnErrorCallback</code> is given
@@ -2087,7 +2084,7 @@ sap.ui.define([
 	 */
 	_Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback,
 			sEditUrl, sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects, fnPatchSent,
-			fnIsKeepAlive, bInactive) {
+			fnIsKeepAlive) {
 		var oPromise,
 			aPropertyPath = sPropertyPath.split("/"),
 			aUnitOrCurrencyPath,
@@ -2279,12 +2276,6 @@ sap.ui.define([
 			if (oPostBody) {
 				// change listeners are informed later
 				_Helper.updateAll({}, sEntityPath, oPostBody, oUpdateData);
-				if (oEntity["@$ui5.context.isInactive"] && !bInactive) {
-					oUpdateData["@$ui5.context.isInactive"] = false;
-					_Helper.deletePrivateAnnotation(oEntity, "initialData");
-					that.iActiveElements += 1;
-					_Helper.addToCount(that.mChangeListeners, "", that.aElements, 1);
-				}
 			}
 			// write the changed value into the cache
 			_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
@@ -2305,13 +2296,8 @@ sap.ui.define([
 			}
 			if (sTransientGroup) {
 				// When updating a transient entity, the above _Helper.updateAll has already updated
-				// the POST request.
-				// If the entity remains inactive, update the request, but keep it parked
-				if (bInactive) {
-					_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity,
-						{"@$ui5.context.isInactive" : 1}
-					);
-				} else if (sParkedGroup) {
+				// the POST request. An inactive entity must remain parked.
+				if (sParkedGroup && !oEntity["@$ui5.context.isInactive"]) {
 					_Helper.setPrivateAnnotation(oEntity, "transient", sTransientGroup);
 					that.oRequestor.relocate(sParkedGroup, oPostBody, sTransientGroup);
 				}
@@ -3605,6 +3591,27 @@ sap.ui.define([
 			this.iLimit = this.oBackup.iLimit;
 		}
 		this.oBackup = null;
+	};
+
+	/**
+	 * Sets the isInactive annotation at the entity with the given path, which might activate it.
+	 *
+	 * @param {string} sPath - The path
+	 * @param {boolean|number} bInactive
+	 *   The new value, either <code>false</code> to activate it, or <code>1</code> to mark it as
+	 *   inactive, but changed
+	 *
+	 * @public
+	 */
+	_CollectionCache.prototype.setInactive = function (sPath, bInactive) {
+		const oElement = this.getValue(sPath);
+		_Helper.updateAll(this.mChangeListeners, sPath, oElement,
+			{"@$ui5.context.isInactive" : bInactive});
+		if (!bInactive) { // activate
+			_Helper.deletePrivateAnnotation(oElement, "initialData");
+			this.iActiveElements += 1;
+			_Helper.addToCount(this.mChangeListeners, "", this.aElements, 1);
+		}
 	};
 
 	/**
