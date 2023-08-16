@@ -151,9 +151,7 @@ sap.ui.define([
 					 /**
 					  * @deprecated As of version 1.117
 					  */
-					 (function() {
-						return  "sap/ui/core/support/plugins/ViewInfo";
-					 }()),
+					 "sap/ui/core/support/plugins/ViewInfo",
 					 "sap/ui/core/support/plugins/LocalStorage",
 					 "sap/ui/core/support/plugins/Interaction",
 					 "sap/ui/core/support/plugins/Performance"
