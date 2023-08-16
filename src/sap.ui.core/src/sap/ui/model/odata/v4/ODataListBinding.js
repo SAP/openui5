@@ -374,7 +374,9 @@ sap.ui.define([
 	 * detailed reason as parameters.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
+	 *    The event object
 	 * @param {object} oEvent.getParameters
+	 *    Object containing all event parameters
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
 	 *   The reason for the 'change' event is
 	 *   <ul>
@@ -406,6 +408,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
+	 * @param {object} oEvent.getParameters Object containing all event parameters
 	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters.context The affected context
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#createActivate
@@ -470,9 +473,11 @@ sap.ui.define([
 	 * {@link sap.ui.base.Event#cancelBubble oEvent.cancelBubble()}.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
+	 *    The event object
 	 * @param {function} oEvent.cancelBubble
 	 *   A callback function to prevent that the event is bubbled up to the model
 	 * @param {object} oEvent.getParameters
+	 *    Object containing all event parameters
 	 * @param {object} [oEvent.getParameters.data]
 	 *   An empty data object if a back-end request succeeds
 	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
@@ -542,7 +547,9 @@ sap.ui.define([
 	 * binding. Registered event handlers are called with the change reason as parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
+	 *    The event object
 	 * @param {object} oEvent.getParameters
+	 *    Object containing all event parameters
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
 	 *   The reason for the 'refresh' event could be
 	 *   <ul>
