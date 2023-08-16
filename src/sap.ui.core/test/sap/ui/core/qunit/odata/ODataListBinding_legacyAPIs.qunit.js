@@ -1,6 +1,7 @@
 /* global QUnit */
 sap.ui.define([
 	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
+	"sap/ui/model/odata/ODataListBinding",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/Filter",
 	"sap/ui/model/Filter",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/m/DisplayListItem"
 ], function(
 	fakeService,
+	ODataListBinding,
 	ODataModel,
 	ODataFilter,
 	Filter,
@@ -836,5 +838,30 @@ sap.ui.define([
 			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
+	});
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.model.odata.ODataListBinding (Unit tests)");
+
+	//*********************************************************************************************
+	QUnit.test("getAllCurrentContexts: Return correct contexts", function (assert) {
+		var aAllCurrentContexts,
+			oBinding = {
+				// eslint-disable-next-line no-sparse-arrays
+				aKeys : ["foo(bar)", /* empty */, "foo(baz)"],
+				oModel : {
+					getContext : function () {}
+				}
+			},
+			oModelMock = this.mock(oBinding.oModel);
+
+		oModelMock.expects("getContext").withExactArgs("/foo(bar)").returns("~context(bar)");
+		oModelMock.expects("getContext").withExactArgs("/foo(baz)").returns("~context(baz)");
+
+		// code under test
+		aAllCurrentContexts = ODataListBinding.prototype.getAllCurrentContexts.call(oBinding);
+
+		assert.strictEqual(aAllCurrentContexts.length, 2);
+		assert.deepEqual(aAllCurrentContexts, ["~context(bar)", "~context(baz)"]);
 	});
 });
