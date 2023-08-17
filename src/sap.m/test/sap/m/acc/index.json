@@ -608,11 +608,6 @@
 			}
 		},
 		{
-			"control": "sap.m.TileContainer",
-			"url": "../TileContainer.html",
-			"appComponent": "CA-UI5-CTR-BAL"
-		},
-		{
 			"control": "sap.m.TileContent",
 			"url": "../TileContent.html",
 			"appComponent": "CA-UI5-SC"
