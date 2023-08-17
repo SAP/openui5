@@ -27470,6 +27470,63 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Deferred delete and reinsert of a top-level node in a recursive hierarchy. Only
+	// one node, so that the parent would have to become a leaf if there were one.
+	// JIRA: CPOUI5ODATAV4-2224
+	QUnit.test("Recursive Hierarchy: delete top-level", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}">
+	<Text text="{ID}"/>
+	<Text id="name" text="{Name}"/>
+</Table>`;
+
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
+				+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+				+ ",Levels=1)"
+				+ "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=100", {
+				"@odata.count" : "1",
+				value : [{
+					ID : "0",
+					Name : "Alpha"
+				}]
+			})
+			.expectChange("name", ["Alpha"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oAlpha = oTable.getItems()[0].getBindingContext();
+		// code under test
+		const oDeletePromise = oAlpha.delete("doNotSubmit");
+
+		await resolveLater(); // no observable changes
+
+		checkTable("after delete", assert, oTable, [], [], 0);
+
+		this.expectCanceledError("Failed to delete /EMPLOYEES('0')",
+				"Request canceled: DELETE EMPLOYEES('0'); group: doNotSubmit")
+			.expectChange("name", ["Alpha"]);
+
+		// code under test
+		oAlpha.resetChanges();
+
+		await Promise.all([
+			checkCanceled(assert, oDeletePromise),
+			this.waitForChanges(assert, "cancel delete")
+		]);
+
+		checkTable("after reinsert", assert, oTable, ["/EMPLOYEES('0')"], [
+			["0", "Alpha"]
+		], 1);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Deferred delete of Gamma, a leaf in a recursive hierarchy which is not the only
 	// child of its parent. Before the delete ensure that there are two invisible elements (Delta,
 	// Epsilon). See that Gamma is deleted on the UI immediately. Request side effects so that
