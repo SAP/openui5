@@ -19,12 +19,12 @@ sap.ui.define(
 		 * @experimental
 		 * @ui5-restricted sap.ui.mdc
 		 *
-		 * @borrows sap.ui.mdc.util.PromiseCache#add as #addPromise
-		 * @borrows sap.ui.mdc.util.PromiseCache#remove as #removePromise
-		 * @borrows sap.ui.mdc.util.PromiseCache#resolve as #resolvePromise
-		 * @borrows sap.ui.mdc.util.PromiseCache#reject as #rejectPromise
-		 * @borrows sap.ui.mdc.util.PromiseCache#retrieve as #retrievePromise
-		 * @borrows sap.ui.mdc.util.PromiseCache#retrieveMany as #retrievePromises
+		 * @borrows sap.ui.mdc.util.PromiseCache.add as addPromise
+		 * @borrows sap.ui.mdc.util.PromiseCache.remove as removePromise
+		 * @borrows sap.ui.mdc.util.PromiseCache.resolve as resolvePromise
+		 * @borrows sap.ui.mdc.util.PromiseCache.reject as rejectPromise
+		 * @borrows sap.ui.mdc.util.PromiseCache.retrieve as retrievePromise
+		 * @borrows sap.ui.mdc.util.PromiseCache.retrieveMany as retrievePromises
 		 */
 		var PromiseMixin = {};
 		PromiseMixin.addPromise = function (sName, fnCreate) {
