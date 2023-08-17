@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Byte",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/model/odata/type/DateTime",
+	"sap/ui/model/odata/type/DateTimeWithTimezone",
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/Double",
 	"sap/ui/model/odata/type/Single",
@@ -20,7 +21,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/core/InvisibleMessage"
-], function(Core, Theming, List, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, InvisibleMessage) {
+], function(Core, Theming, List, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, InvisibleMessage) {
 	"use strict";
 	/* global QUnit,sinon */
 
@@ -120,6 +121,12 @@ sap.ui.define([
 		assert.ok(Util.calcTypeWidth(new DateTime()) > Util.calcTypeWidth(new Time()) + Util.calcTypeWidth(new DateType(null, { displayFormat : "Date" })));
 
 		assert.equal(Util.calcTypeWidth(new TimeOfDay()), Util.measureText("10:47:58 PM"));
+
+		assert.ok(Util.calcTypeWidth(new DateTimeWithTimezone()) > Util.calcTypeWidth(new DateTime()), "Column with timezone has a higher width");
+		assert.ok(Util.calcTypeWidth(new DateTimeWithTimezone()) > Util.calcTypeWidth(new DateTimeWithTimezone({
+			showDate: false,
+			showTime: false
+		})), "Column with timezone has a higher width");
 	});
 
 	QUnit.test("calcTypeWidth - Numeric", function(assert) {
