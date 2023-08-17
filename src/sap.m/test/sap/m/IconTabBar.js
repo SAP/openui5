@@ -1363,6 +1363,7 @@ sap.ui.define([
 						text: "Tab1",
 						iconColor: IconColor.Neutral
 					}),
+					new IconTabSeparator(),
 					new IconTabFilter({
 						text: "Tab2",
 						iconColor: IconColor.Critical
