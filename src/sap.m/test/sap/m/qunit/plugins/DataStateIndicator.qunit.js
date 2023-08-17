@@ -286,6 +286,8 @@ sap.ui.define([
 				})
 			});
 
+			this.oPlugin.refresh();
+
 			setTimeout(function() {
 				assert.notOk(oMsgStrp.getText(), "There is no Message Text after rebind");
 				done();
