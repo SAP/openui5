@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -35,6 +35,8 @@ sap.ui.define(function() {
          */
         ResponsiveTable: "ResponsiveTable"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.TableType", TableType);
 
     return TableType;
 

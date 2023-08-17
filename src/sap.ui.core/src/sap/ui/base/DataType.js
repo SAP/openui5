@@ -405,6 +405,8 @@ sap.ui.define([
 		return oType;
 	}
 
+	const mEnumRegistry = Object.create(null);
+
 	function createEnumType(sTypeName, oEnum) {
 
 		var mValues = {},
@@ -522,11 +524,26 @@ sap.ui.define([
 					mTypes[sTypeName] = oType;
 				}
 			} else if ( sTypeName !== 'array') {
-				oType = ObjectPath.get(sTypeName);
+				// check if we have a valid pre-registered enum
+				oType = mEnumRegistry[sTypeName];
+
+				/**
+				 * If an enum was not registered beforehand (either explicitly via registerEnum or
+				 * via a Proxy in the library namespace), we have to look it up in the global object.
+				 * @deprecated since 1.120
+				 */
+				if (oType == null) {
+					oType = ObjectPath.get(sTypeName);
+					if (oType != null) {
+						Log.error(`The type '${sTypeName}' was accessed via globals. Defining enums via globals is deprecated. Please require the module 'sap/ui/base/DataType' and call the static 'DataType.registerEnum' API.`);
+					}
+				}
+
 				if ( oType instanceof DataType ) {
 					mTypes[sTypeName] = oType;
 				} else if ( isPlainObject(oType) ) {
 					oType = mTypes[sTypeName] = createEnumType(sTypeName, oType);
+					delete mEnumRegistry[sTypeName];
 				} else if ( oType ) {
 					Log.warning("'" + sTypeName + "' is not a valid data type. Falling back to type 'any'.");
 					oType = mTypes.any;
@@ -631,6 +648,45 @@ sap.ui.define([
 			// This has never been a public feature and it is strongly discouraged it be relied upon.
 			// An interface must always be referenced by a string literal, not via the global namespace.
 			ObjectPath.set(sType, sType);
+		});
+	};
+
+	/**
+	 * Registers an enum under the given name.
+	 * With version 2.0, registering an enum becomes mandatory when said enum is to be used in
+	 * properties of a {@link sap.ui.base.ManagedObject ManagedObject} subclass.
+	 *
+	 * Example:<br>
+	 * <pre>
+	 *    DataType.registerEnum("my.enums.Sample", {
+	 *       "A": "A",
+	 *       "B": "B",
+	 *       ...
+	 *    });
+	 * </pre>
+	 *
+	 * @param {string} sTypeName the type name in dot syntax, e.g. sap.ui.my.EnumType
+	 * @param {object} mContent the enum content
+	 * @public
+	 * @since 1.120.0
+	 */
+	DataType.registerEnum = function(sTypeName, mContent) {
+		mEnumRegistry[sTypeName] = mContent;
+	};
+
+	/**
+	 * Checks if the given object contains only static content
+	 * and can be regarded as an enum candidate.
+	 *
+	 * @param {object} oObject the enum candidate
+	 * @returns {boolean} whether the given object can be regarded as an enum candidate
+	 * @private
+	 * @ui5-restricted sap.ui.core.Lib
+	 */
+	DataType._isEnumCandidate = function(oObject) {
+		return !Object.keys(oObject).some((key) => {
+			const propertyType = typeof oObject[key];
+			return propertyType === "object" || propertyType === "function";
 		});
 	};
 

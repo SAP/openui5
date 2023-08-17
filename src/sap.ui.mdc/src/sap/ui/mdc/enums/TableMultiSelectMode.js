@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -27,6 +27,8 @@ sap.ui.define(function() {
          */
         ClearAll: "ClearAll"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.TableMultiSelectMode", TableMultiSelectMode);
 
     return TableMultiSelectMode;
 

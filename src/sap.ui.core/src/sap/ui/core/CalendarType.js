@@ -4,8 +4,10 @@
 
 // Provides type sap.ui.core.CalendarType.
 sap.ui.define([
+	"sap/ui/base/DataType",
 	"sap/base/i18n/date/CalendarType"
 ], function(
+	DataType,
 	CalendarType
 ) {
 	"use strict";
@@ -21,5 +23,8 @@ sap.ui.define([
 	 * @borrows module:sap/base/i18n/date/CalendarType.Persian as Persian
 	 * @borrows module:sap/base/i18n/date/CalendarType.Buddhist as Buddhist
 	 */
+
+	DataType.registerEnum("sap.ui.core.CalendarType", CalendarType);
+
 	return CalendarType;
 }, /* bExport= */ true);

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -37,6 +37,8 @@ sap.ui.define(function() {
          */
         Multi: "Multi"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.TableSelectionMode", TableSelectionMode);
 
     return TableSelectionMode;
 

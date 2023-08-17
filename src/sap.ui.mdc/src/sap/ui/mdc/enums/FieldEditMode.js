@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 	/**
@@ -47,6 +47,8 @@ sap.ui.define(function() {
 		 */
 		EditableDisplay: "EditableDisplay"
 	};
+
+	DataType.registerEnum("sap.ui.mdc.enums.FieldEditMode", FieldEditMode);
 
 	return FieldEditMode;
 

@@ -4,8 +4,10 @@
 
 // Provides type sap.ui.core.date.CalendarWeekNumbering.
 sap.ui.define([
+	"sap/ui/base/DataType",
 	"sap/base/i18n/date/CalendarWeekNumbering"
 ], function(
+	DataType,
 	CalendarWeekNumbering
 ) {
 	"use strict";
@@ -28,5 +30,8 @@ sap.ui.define([
 	 * @borrows module:sap/base/i18n/date/CalendarWeekNumbering.WesternTraditional as WesternTraditional
 	 * @borrows module:sap/base/i18n/date/CalendarWeekNumbering.getWeekConfigurationValues as getWeekConfigurationValues
 	 */
+
+	DataType.registerEnum("sap.ui.core.date.CalendarWeekNumbering", CalendarWeekNumbering);
+
 	return CalendarWeekNumbering;
 }, /* bExport= */ true);

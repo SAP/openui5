@@ -32,6 +32,11 @@ sap.ui.define([
 		 name: "sap.ui.core",
 		 version: "${version}",
 		 designtime: "sap/ui/core/designtime/library.designtime",
+		 // "apiVersion" is still WIP and in 1.120 restricted to the sap.ui.core library only!
+		 // TODO: Remove spread operator once UI5 Tooling can validate this new property
+		 ...{
+			"apiVersion": 2
+		 },
 		 types: [
 
 			 // builtin types
@@ -607,6 +612,7 @@ sap.ui.define([
 		TreeItem : "TreeItem"
 
 	};
+	DataType.registerEnum("sap.ui.core.AccessibleRole", thisLib.AccessibleRole);
 
 	/**
 	 * Defines the accessible landmark roles for ARIA support. This enumeration is used with the AccessibleRole control property.
@@ -700,6 +706,7 @@ sap.ui.define([
 		ContentInfo : "ContentInfo"
 
 	};
+	DataType.registerEnum("sap.ui.core.AccessibleLandmarkRole", thisLib.AccessibleLandmarkRole);
 
 	thisLib.aria = thisLib.aria || {};
 
@@ -751,6 +758,7 @@ sap.ui.define([
 		Dialog : "Dialog"
 
 	};
+	DataType.registerEnum("sap.ui.core.aria.HasPopup", thisLib.aria.HasPopup);
 
 	/**
 	 * The object contains accessibility information for a control.
@@ -833,6 +841,7 @@ sap.ui.define([
 		NEGATIVE : "NEGATIVE"
 
 	};
+	DataType.registerEnum("sap.ui.core.BarColor", thisLib.BarColor);
 
 	/**
 	 * Configuration options for the <code>BusyIndicator</code> size.
@@ -871,6 +880,7 @@ sap.ui.define([
 		 */
 		Section : "Section"
 	};
+	DataType.registerEnum("sap.ui.core.BusyIndicatorSize", thisLib.BusyIndicatorSize);
 
 	// this assignment here is kept so that imports via the library module continue to work
 	// even when the export via globals is abandoned
@@ -1028,6 +1038,7 @@ sap.ui.define([
 		Monospace : "Monospace"
 
 	};
+	DataType.registerEnum("sap.ui.core.Design", thisLib.Design);
 
 
 	/**
@@ -1091,6 +1102,7 @@ sap.ui.define([
 		Center : "Center"
 
 	};
+	DataType.registerEnum("sap.ui.core.HorizontalAlign", thisLib.HorizontalAlign);
 
 
 	/**
@@ -1195,6 +1207,7 @@ sap.ui.define([
 		Marker : "Marker"
 
 	};
+	DataType.registerEnum("sap.ui.core.IconColor", thisLib.IconColor);
 
 
 	/**
@@ -1232,6 +1245,8 @@ sap.ui.define([
 		Disabled : "Disabled"
 
 	};
+	DataType.registerEnum("sap.ui.core.ImeMode", thisLib.ImeMode);
+
 	/**
 	 * Marker interface for controls which are suitable for use as label.
 	 *
@@ -1303,6 +1318,7 @@ sap.ui.define([
 		 */
 		Indication08 : "Indication08"
 	};
+	DataType.registerEnum("sap.ui.core.IndicationColor", thisLib.IndicationColor);
 
 	/**
 	 * Defines the different possible states of an element that can be open or closed and does not only
@@ -1338,7 +1354,7 @@ sap.ui.define([
 		CLOSING : "CLOSING"
 
 	};
-
+	DataType.registerEnum("sap.ui.core.OpenState", thisLib.OpenState);
 
 	/**
 	 * Orientation of a UI element.
@@ -1362,6 +1378,7 @@ sap.ui.define([
 		Vertical : "Vertical"
 
 	};
+	DataType.registerEnum("sap.ui.core.Orientation", thisLib.Orientation);
 
 	/**
 	 * @classdesc A string type that represents a percentage value.
@@ -1411,6 +1428,7 @@ sap.ui.define([
 		 */
 		High: "High"
 	};
+	DataType.registerEnum("sap.ui.core.Priority", thisLib.Priority);
 
 
 	/**
@@ -1458,7 +1476,7 @@ sap.ui.define([
 		Drag : "Drag"
 
 	};
-
+	DataType.registerEnum("sap.ui.core.ScrollBarAction", thisLib.ScrollBarAction);
 
 	/**
 	 * Defines the possible values for horizontal and vertical scrolling behavior.
@@ -1493,7 +1511,7 @@ sap.ui.define([
 		Hidden : "Hidden"
 
 	};
-
+	DataType.registerEnum("sap.ui.core.Scrolling", thisLib.Scrolling);
 
 	/**
 	 * Sort order of a column.
@@ -1524,6 +1542,7 @@ sap.ui.define([
 		Descending : "Descending"
 
 	};
+	DataType.registerEnum("sap.ui.core.SortOrder", thisLib.SortOrder);
 
 
 	/**
@@ -1572,6 +1591,7 @@ sap.ui.define([
 		Initial : "Initial"
 
 	};
+	DataType.registerEnum("sap.ui.core.TextAlign", thisLib.TextAlign);
 
 
 	/**
@@ -1601,6 +1621,7 @@ sap.ui.define([
 		Inherit : "Inherit"
 
 	};
+	DataType.registerEnum("sap.ui.core.TextDirection", thisLib.TextDirection);
 
 
 	/**
@@ -1655,6 +1676,7 @@ sap.ui.define([
 		H6 : "H6"
 
 	};
+	DataType.registerEnum("sap.ui.core.TitleLevel", thisLib.TitleLevel);
 
 	/**
 	 *
@@ -2022,6 +2044,7 @@ sap.ui.define([
 		None : "None"
 
 	};
+	DataType.registerEnum("sap.ui.core.ValueState", thisLib.ValueState);
 
 
 	/**
@@ -2065,7 +2088,7 @@ sap.ui.define([
 		Inherit : "Inherit"
 
 	};
-
+	DataType.registerEnum("sap.ui.core.VerticalAlign", thisLib.VerticalAlign);
 
 	/**
 	 * Configuration options for text wrapping.
@@ -2100,6 +2123,7 @@ sap.ui.define([
 		Off : "Off"
 
 	};
+	DataType.registerEnum("sap.ui.core.Wrapping", thisLib.Wrapping);
 
 
 	thisLib.dnd = thisLib.dnd || {};
@@ -2131,6 +2155,7 @@ sap.ui.define([
 		 */
 		OnOrBetween : "OnOrBetween"
 	};
+	DataType.registerEnum("sap.ui.core.dnd.DropPosition", thisLib.dnd.DropPosition);
 
 	/**
 	 * Drop positions relative to a dropped element.
@@ -2159,6 +2184,7 @@ sap.ui.define([
 		 */
 		After : "After"
 	};
+	DataType.registerEnum("sap.ui.core.dnd.RelativeDropPosition", thisLib.dnd.RelativeDropPosition);
 
 	/**
 	 * Configuration options for the layout of the droppable controls.
@@ -2186,6 +2212,7 @@ sap.ui.define([
 		 */
 		Horizontal : "Horizontal"
 	};
+	DataType.registerEnum("sap.ui.core.dnd.DropLayout", thisLib.dnd.DropLayout);
 
 	/**
 	 * Configuration options for visual drop effects that are given during a drag and drop operation.
@@ -2220,6 +2247,7 @@ sap.ui.define([
 		 */
 		None : "None"
 	};
+	DataType.registerEnum("sap.ui.core.dnd.DropEffect", thisLib.dnd.DropEffect);
 
 	thisLib.mvc = thisLib.mvc || {};
 
@@ -2316,6 +2344,7 @@ sap.ui.define([
 		Container : "Container"
 
 	};
+	DataType.registerEnum("sap.ui.core.ComponentLifecycle", thisLib.ComponentLifecycle);
 
 	/**
 	 * Enumeration for different mode behaviors of the <code>InvisibleMessage</code>.
@@ -2341,6 +2370,7 @@ sap.ui.define([
 		Assertive : "Assertive"
 
 	};
+	DataType.registerEnum("sap.ui.core.InvisibleMessageMode", thisLib.InvisibleMessageMode);
 
 	/**
 	 * @deprecated since 1.56 as lazy loading implies sync loading
