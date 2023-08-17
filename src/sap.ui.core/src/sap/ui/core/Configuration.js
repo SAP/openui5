@@ -11,6 +11,7 @@ sap.ui.define([
 	'./Locale',
 	"./format/TimezoneUtil",
 	"sap/ui/core/_ConfigurationProvider",
+	"sap/ui/core/getCompatibilityVersion",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/Theming",
 	"sap/base/util/Version",
@@ -18,7 +19,6 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/config",
 	"sap/base/Event",
-	"sap/base/strings/camelize",
 	"sap/base/util/deepClone",
 	"sap/base/i18n/Localization",
 	"sap/base/i18n/Formatting"
@@ -31,6 +31,7 @@ sap.ui.define([
 		Locale,
 		TimezoneUtil,
 		_ConfigurationProvider,
+		getCompatibilityVersion,
 		CalendarWeekNumbering,
 		Theming,
 		Version,
@@ -38,7 +39,6 @@ sap.ui.define([
 		assert,
 		BaseConfig,
 		BaseEvent,
-		camelize,
 		deepClone,
 		Localization,
 		Formatting
@@ -47,37 +47,6 @@ sap.ui.define([
 
 	var M_SETTINGS;
 	var VERSION = "${version}";
-	var mCompatVersion;
-
-	// Helper Functions
-	function _calcCompatVersions() {
-		var PARAM_CVERS = "sapUiCompatversion";
-
-		function _getCVers(key){
-			var v = !key ? DEFAULT_CVERS || BASE_CVERS.toString()
-					: BaseConfig.get({
-						name: camelize(PARAM_CVERS + "-" + key.toLowerCase()),
-						type: BaseConfig.Type.String
-					}) || DEFAULT_CVERS || M_COMPAT_FEATURES[key] || BASE_CVERS.toString();
-			v = Version(v.toLowerCase() === "edge" ? VERSION : v);
-			//Only major and minor version are relevant
-			return Version(v.getMajor(), v.getMinor());
-		}
-
-		var DEFAULT_CVERS = BaseConfig.get({
-			name: PARAM_CVERS,
-			type: BaseConfig.Type.String
-		});
-		var BASE_CVERS = Version("1.14");
-		mCompatVersion = {};
-
-		mCompatVersion._default = _getCVers();
-		for (var n in M_COMPAT_FEATURES) {
-			mCompatVersion[n] = _getCVers(n);
-		}
-
-		return mCompatVersion;
-	}
 
 	function detectLanguage() {
 
@@ -255,17 +224,6 @@ sap.ui.define([
 		"xx-measure-cards"      : { type : "boolean",  defaultValue : false }
 	};
 
-	var M_COMPAT_FEATURES = {
-		"xx-test"               : "1.15", //for testing purposes only
-		"flexBoxPolyfill"       : "1.14",
-		"sapMeTabContainer"     : "1.14",
-		"sapMeProgessIndicator" : "1.14",
-		"sapMGrowingList"       : "1.14",
-		"sapMListAsTable"       : "1.14",
-		"sapMDialogWithPadding" : "1.14",
-		"sapCoreBindingSyntax"  : "1.24"
-	};
-
 	// Lazy dependency to core
 	var oCore;
 
@@ -336,6 +294,7 @@ sap.ui.define([
 	 * @borrows module:sap/ui/core/Theming.getTheme as getTheme
 	 * @borrows module:sap/ui/core/Theming.setTheme as setTheme
 	 * @borrows module:sap/ui/core/ControlBehavior.isAccessibilityEnabled as getAccessibility
+	 * @borrows module:sap/ui/core/getCompatibilityVersion as getCompatibilityVersion
 	 */
 	var Configuration = BaseObject.extend("sap.ui.core.Configuration", /** @lends sap.ui.core.Configuration.prototype */ {
 
@@ -502,20 +461,7 @@ sap.ui.define([
 			return config._version;
 		},
 
-		/**
-		 * Returns the used compatibility version for the given feature.
-		 *
-		 * @param {string} sFeature the key of desired feature
-		 * @return {module:sap/base/util/Version} the used compatibility version
-		 * @public
-		 */
-		getCompatibilityVersion : function (sFeature) {
-			var mCompatVersion = _calcCompatVersions();
-			if (typeof (sFeature) === "string" && mCompatVersion[sFeature]) {
-				return mCompatVersion[sFeature];
-			}
-			return mCompatVersion._default;
-		},
+		getCompatibilityVersion : getCompatibilityVersion,
 
 		getTheme : Theming.getTheme,
 
@@ -1351,19 +1297,6 @@ sap.ui.define([
 					"Not a function: " + fnSecurityTokenHandler);
 			});
 			config.securityTokenHandlers = aSecurityTokenHandlers.slice();
-		},
-
-		getBindingSyntax: function() {
-			var sBindingSyntax = BaseConfig.get({
-				name: "sapUiBindingSyntax",
-				type: BaseConfig.Type.String,
-				defaultValue: "default",
-				freeze: true
-			});
-			if ( sBindingSyntax === "default" ) {
-				sBindingSyntax = (Configuration.getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") < 0) ? "simple" : "complex";
-			}
-			return sBindingSyntax;
 		},
 
 		/**
