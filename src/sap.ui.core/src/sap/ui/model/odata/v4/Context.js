@@ -92,6 +92,7 @@ sap.ui.define([
 		this.oSyncCreatePromise = oCreatePromise;
 		// a promise waiting for the deletion, also used as indicator for #isDeleted
 		this.oDeletePromise = null;
+		this.bFiringCreateActivate = false; // see #doSetProperty
 		this.iGeneration = iGeneration || 0;
 		this.bInactive = bInactive || undefined; // be in sync with the annotation
 		this.iIndex = iIndex;
@@ -540,17 +541,16 @@ sap.ui.define([
 							bUpdating);
 					}
 
-					if (that.isInactive()) {
+					if (that.isInactive() && !that.bFiringCreateActivate) {
 						// early cache update so that the new value is properly available on the
 						// event listener
 						// runs synchronously - setProperty calls fetchValue with $cached
 						oCache.setProperty(oResult.propertyPath, vValue, sEntityPath, bUpdating)
 							.catch(that.oModel.getReporter());
-						if (oBinding.fireCreateActivate(that)) {
-							that.bInactive = false;
-						} else {
-							that.bInactive = 1;
-						}
+						that.bFiringCreateActivate = true;
+						that.bInactive = oBinding.fireCreateActivate(that) ? false : 1;
+						oCache.setInactive(sEntityPath, that.bInactive);
+						that.bFiringCreateActivate = false;
 					}
 
 					// if request is canceled fnPatchSent and fnErrorCallback are not called and
@@ -559,7 +559,7 @@ sap.ui.define([
 						bSkipRetry ? undefined : errorCallback, oResult.editUrl, sEntityPath,
 						oMetaModel.getUnitOrCurrencyPath(that.oModel.resolve(sPath, that)),
 						oBinding.isPatchWithoutSideEffects(), patchSent,
-						that.isEffectivelyKeptAlive.bind(that), that.isInactive()
+						that.isEffectivelyKeptAlive.bind(that)
 					).then(function () {
 						firePatchCompleted(true);
 					}, function (oError) {
