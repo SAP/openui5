@@ -274,15 +274,15 @@ sap.ui.define([
 
 				if (sThemeName.includes("horizon")){
 					if (oToday) {
-						iBorderThickness = sThemeName.indexOf("_hc") ? 5 : 1;
+						iBorderThickness = sThemeName.indexOf("_hc") ? 0.4375 : 0.0625;
 					} else {
-						iBorderThickness = sThemeName.indexOf("_hc") ? 3 : 1;
+						iBorderThickness = sThemeName.indexOf("_hc") ? 0.1875 : 0.0625;
 					}
 				} else {
 					if (oToday) {
-						iBorderThickness = sThemeName.indexOf("_hc") ? 3 : 1;
+						iBorderThickness = sThemeName.indexOf("_hc") ? 0.3125 : 0.0625;
 					} else {
-						iBorderThickness = sThemeName.indexOf("_hc") ? 2 : 1;
+						iBorderThickness = sThemeName.indexOf("_hc") ? 0.125 : 0.0625;
 					}
 				}
 
@@ -331,8 +331,8 @@ sap.ui.define([
 					oRm.style("border-left-color", sColor);
 				}
 			}
-			oRm.style(bIsRTL ? "right" : "left", "calc(" + (iColumn * 100) / iColumns + "% + " + iBorderThickness + "px)");
-			oRm.style(bIsRTL ? "left" : "right", "calc(" + (iRight * 100) / iColumns + "% + " + iBorderThickness + "px)");
+			oRm.style(bIsRTL ? "right" : "left", "calc(" + (iColumn * 100) / iColumns + "% + " + iBorderThickness + "rem)");
+			oRm.style(bIsRTL ? "left" : "right", "calc(" + (iRight * 100) / iColumns + "% + " + iBorderThickness + "rem)");
 			oRm.style("top", (iLevel * oDensitySizes.appHeight + oDensitySizes.cellHeaderHeight) + "rem");
 			oRm.openEnd();
 
