@@ -6707,4 +6707,46 @@ sap.ui.define([
 			this.assertTextSelection(assert, "");
 		}.bind(this));
 	});
+
+	QUnit.module("ContextMenu", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
+				models: TableQUnitUtils.createJSONModel(11),
+				columns: [
+					TableQUnitUtils.createTextColumn({text: "name", bind: true, label: "Name"}).setFilterProperty("name")
+				],
+				enableCellFilter: true
+			});
+
+			return this.oTable.qunit.whenRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+	QUnit.test("DefaultContextMenu", function(assert) {
+
+		var oCell = this.oTable.qunit.getDataCell(0, 0);
+		TableUtils.Menu.openContextMenu(this.oTable, oCell);
+		this.oTable.setFirstVisibleRow(1);
+
+		return this.oTable.qunit.whenRenderingFinished().then(() => {
+			assert.notOk(this.oTable._oCellContextMenu.isOpen(), "CellContextMenu is closed");
+		});
+	});
+
+	QUnit.test("CustomContextMenu", function(assert) {
+
+		var oCell = this.oTable.qunit.getDataCell(0, 0);
+		this.oTable.setContextMenu(new Menu({items: new MenuItem({text: "CustomMenu"})}));
+
+		TableUtils.Menu.openContextMenu(this.oTable, oCell);
+		this.oTable.setFirstVisibleRow(1);
+
+		return this.oTable.qunit.whenRenderingFinished().then(() => {
+			assert.notOk(this.oTable.getContextMenu().isOpen(), "CellContextMenu is closed");
+		});
+	});
+
 });

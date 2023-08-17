@@ -422,20 +422,20 @@ sap.ui.define([
 			// Open the menu with the left mouse button.
 			this.triggerMouseDownEvent(oElem, 0);
 			qutils.triggerMouseEvent(oElem, "click");
-			assert.ok(oColumnMenu.bOpen, "Menu is opened");
+			assert.ok(oColumnMenu.isOpen(), "Menu is opened");
 			bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
 			assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
 
 			// Close the menu with the left mouse button.
 			this.triggerMouseDownEvent(oElem, 0);
 			qutils.triggerMouseEvent(oElem, "click");
-			assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+			assert.ok(!oColumnMenu.isOpen(), "Menu is closed");
 			checkFocus(oElem, assert);
 
 			// Open the menu with the right mouse button.
 			this.triggerMouseDownEvent(oElem, 2);
 			jQuery(oElem).trigger("contextmenu");
-			assert.ok(oColumnMenu.bOpen, "Menu is opened");
+			assert.ok(oColumnMenu.isOpen(), "Menu is opened");
 			bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
 			assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
 			oContextMenuEventArgument = oContextMenuEvent.args[0][0];
@@ -445,7 +445,7 @@ sap.ui.define([
 			// Close the menu with the right mouse button.
 			this.triggerMouseDownEvent(oElem, 2);
 			jQuery(oElem).trigger("contextmenu");
-			assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+			assert.ok(!oColumnMenu.isOpen(), "Menu is closed");
 			checkFocus(oElem, assert);
 			oContextMenuEventArgument = oContextMenuEvent.args[0][0];
 			oContextMenuEvent.resetHistory();
@@ -454,14 +454,14 @@ sap.ui.define([
 			// Open the menu with the left mouse button.
 			this.triggerMouseDownEvent(oElem, 0);
 			qutils.triggerMouseEvent(oElem, "click");
-			assert.ok(oColumnMenu.bOpen, "Menu is opened");
+			assert.ok(oColumnMenu.isOpen(), "Menu is opened");
 			bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
 			assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
 
 			// Close the menu with the right mouse button.
 			this.triggerMouseDownEvent(oElem, 2);
 			jQuery(oElem).trigger("contextmenu");
-			assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+			assert.ok(!oColumnMenu.isOpen(), "Menu is closed");
 			checkFocus(oElem, assert);
 			oContextMenuEventArgument = oContextMenuEvent.args[0][0];
 			oContextMenuEvent.resetHistory();
@@ -475,7 +475,7 @@ sap.ui.define([
 			this.triggerMouseDownEvent(oElem, 0);
 			qutils.triggerMouseEvent(oElem, "click");
 			oColumnMenu = oColumn.getMenu();
-			assert.ok(oColumnMenu.bOpen, "Menu is opened if there are invisible columns in the aggregation before this column");
+			assert.ok(oColumnMenu.isOpen(), "Menu is opened if there are invisible columns in the aggregation before this column");
 
 			oColumn = oTable.getColumns()[1];
 			oElem = getColumnHeader(1, true);
@@ -515,7 +515,7 @@ sap.ui.define([
 
 				this.triggerMouseDownEvent(oElem, 0);
 				qutils.triggerMouseEvent(oElem, "click");
-				assert.ok(oColumnMenu.bOpen, "Menu is opened");
+				assert.ok(oColumnMenu.isOpen(), "Menu is opened");
 				done();
 			}.bind(this));
 
@@ -559,7 +559,7 @@ sap.ui.define([
 		// Open the menu with the right mouse button.
 		this.triggerMouseDownEvent(oElem, 2);
 		jQuery(oElem).trigger("contextmenu");
-		assert.ok(oTable._oCellContextMenu.bOpen, "Menu is opened");
+		assert.ok(oTable._oCellContextMenu.isOpen(), "Menu is opened");
 		bFirstItemHovered = oTable._oCellContextMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
 		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
@@ -569,7 +569,7 @@ sap.ui.define([
 		// Open the menu with the right mouse button on the same element.
 		this.triggerMouseDownEvent(oElem, 2);
 		jQuery(oElem).trigger("contextmenu");
-		assert.ok(oTable._oCellContextMenu.bOpen, "Menu is opened");
+		assert.ok(oTable._oCellContextMenu.isOpen(), "Menu is opened");
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
 		oContextMenuEvent.resetHistory();
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
@@ -583,7 +583,7 @@ sap.ui.define([
 			$CellContent.toggleClass(aKnownClickableControls[i], true);
 			this.triggerMouseDownEvent($CellContent, 2);
 			jQuery($CellContent).trigger("contextmenu");
-			assert.ok(!oTable._oCellContextMenu.bOpen, "Menu is closed");
+			assert.ok(!oTable._oCellContextMenu.isOpen(), "Menu is closed");
 			oContextMenuEventArgument = oContextMenuEvent.args[0][0];
 			oContextMenuEvent.resetHistory();
 			assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
@@ -610,6 +610,8 @@ sap.ui.define([
 		var oPointerExtension = oTable._getPointerExtension();
 		var oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
 
+		oColumn.setSortProperty('dummy');
+
 		oPointerExtension.doReorderColumn = function() {
 			bColumnReorderingTriggered = true;
 		};
@@ -622,7 +624,7 @@ sap.ui.define([
 			assert.ok(!oPointerExtension._bShowMenu, "ShowMenu flag reset again");
 			assert.ok(bColumnReorderingTriggered, "Column Reordering triggered");
 
-			oColumn.getMenu().bOpen = true;
+			assert.ok(oColumn.getMenu().isOpen(), "Menu is open");
 			oTable.setEnableColumnReordering(false);
 			oCore.applyChanges();
 			bColumnReorderingTriggered = false;

@@ -293,7 +293,7 @@ sap.ui.define([
 		 */
 		_closeCustomContentCellContextMenu: function(oTable) {
 			var oCustomMenu = oTable.getContextMenu();
-			var bCustomContextMenuOpen = oCustomMenu ? oCustomMenu.bOpen : false;
+			var bCustomContextMenuOpen = oCustomMenu ? oCustomMenu.isOpen() : false;
 
 			if (bCustomContextMenuOpen) {
 				oCustomMenu.close();
@@ -308,7 +308,7 @@ sap.ui.define([
 		 */
 		_closeDefaultContentCellContextMenu: function(oTable) {
 			var oDefaultMenu = oTable._oCellContextMenu;
-			var bDefaultMenuOpen = oDefaultMenu ? oDefaultMenu.bOpen : false;
+			var bDefaultMenuOpen = oDefaultMenu ? oDefaultMenu.isOpen() : false;
 
 			if (bDefaultMenuOpen) {
 				oDefaultMenu.close();
