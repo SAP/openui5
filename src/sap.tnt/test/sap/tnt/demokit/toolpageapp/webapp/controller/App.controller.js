@@ -224,7 +224,7 @@ sap.ui.define([
 				authorPicture: oBindingObject.icon,
 				press: function () {
 					this.getModel("i18n").getResourceBundle().then(function(oBundle){
-						MessageToast.show(oBundle.getText("notificationItemClickedMessage", oBindingObject.title));
+						MessageToast.show(oBundle.getText("notificationItemClickedMessage", [oBindingObject.title]));
 					});
 				},
 				customData : [

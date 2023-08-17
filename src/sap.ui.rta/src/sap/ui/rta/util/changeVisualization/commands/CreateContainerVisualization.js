@@ -28,8 +28,8 @@ sap.ui.define([
 		var sShortenedElementLabel = ChangeVisualizationUtils.shortenString(sElementLabel);
 		var sTextKey = "TXT_CHANGEVISUALIZATION_CHANGE_CREATECONTAINER";
 		return {
-			descriptionText: oRtaResourceBundle.getText(sTextKey, sShortenedElementLabel),
-			descriptionTooltip: oRtaResourceBundle.getText(sTextKey, sElementLabel)
+			descriptionText: oRtaResourceBundle.getText(sTextKey, [sShortenedElementLabel]),
+			descriptionTooltip: oRtaResourceBundle.getText(sTextKey, [sElementLabel])
 		};
 	};
 

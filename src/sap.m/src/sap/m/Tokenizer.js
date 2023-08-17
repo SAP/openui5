@@ -733,7 +733,7 @@ sap.ui.define([
 				}
 			}
 
-			this._oIndicator.html(oRb.getText(sLabelKey, iHiddenTokensCount));
+			this._oIndicator.html(oRb.getText(sLabelKey, [iHiddenTokensCount]));
 		}
 
 		return this;
@@ -1642,7 +1642,7 @@ sap.ui.define([
 			oInvisibleText = this.getAggregation("_tokensInfo");
 
 			sTranslation = oTranslationMapping[iTokenCount] ? oTranslationMapping[iTokenCount] : "TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS";
-			sTokenizerAria = oRb.getText(sTranslation, iTokenCount);
+			sTokenizerAria = oRb.getText(sTranslation, [iTokenCount]);
 
 			oInvisibleText.setText(sTokenizerAria);
 		}
