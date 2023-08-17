@@ -276,6 +276,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			oDataState.getAllMessages().forEach(function(oMessage) {
 				oMessage.removeControlId(oControl.getId());
 			});
+			return;
 		}
 
 		var aMessages = oDataState.getMessages();
