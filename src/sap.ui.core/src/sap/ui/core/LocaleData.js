@@ -1830,7 +1830,7 @@ sap.ui.define([
 			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", this.oLocale.toString()),
 				sKey = "date.week.calendarweek." + sStyle;
 
-			return oMessageBundle.getText(sKey, iWeekNumber);
+			return oMessageBundle.getText(sKey, iWeekNumber ? [iWeekNumber] : undefined);
 		},
 
 		/**
