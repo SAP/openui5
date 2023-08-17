@@ -34,6 +34,18 @@ sap.ui.define([
 		 */
 		_Helper;
 
+	/**
+	 * Ensures that the key predicates in the given URL are not %-encoded.
+	 *
+	 * @param {string} sUrl - The URL
+	 * @returns {string} The converted URL
+	 */
+	function preserveKeyPredicates(sUrl) {
+		return sUrl.replace(rEscapedTick, "'")
+			.replace(rEscapedOpenBracket, "(")
+			.replace(rEscapedCloseBracket, ")");
+	}
+
 	_Helper = {
 		/**
 		 * Adds an item to the given map by path.
@@ -2116,10 +2128,24 @@ sap.ui.define([
 		 * @public
 		 */
 		makeAbsolute : function (sUrl, sBase) {
-			return new URI(sUrl).absoluteTo(sBase).toString()
-				.replace(rEscapedTick, "'")
-				.replace(rEscapedOpenBracket, "(")
-				.replace(rEscapedCloseBracket, ")");
+			return preserveKeyPredicates(new URI(sUrl).absoluteTo(sBase).toString());
+		},
+
+		/**
+		 * Make the given absolute URL relative to the given base URL. The URLs must not contain a
+		 * host or protocol part. Ensures that key predicates are not %-encoded.
+		 *
+		 * @param {string} sUrl
+		 *   The URL
+		 * @param {string} sBase
+		 *   The base URL
+		 * @returns {string}
+		 *   The relative URL
+		 *
+		 * @public
+		 */
+		makeRelativeUrl : function (sUrl, sBase) {
+			return preserveKeyPredicates(new URI(sUrl).relativeTo(sBase).toString());
 		},
 
 		/**

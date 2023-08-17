@@ -2010,6 +2010,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("makeRelativeUrl", function (assert) {
+		assert.strictEqual(_Helper.makeRelativeUrl("/foo/baz", "/foo/bar"), "baz");
+		assert.strictEqual(_Helper.makeRelativeUrl("/foo/bar/qux", "/foo/baz"), "bar/qux");
+		assert.strictEqual(_Helper.makeRelativeUrl("/foo/baz", "/foo/bar/qux"), "../baz");
+		assert.strictEqual(
+			_Helper.makeRelativeUrl("/Bar(baz='2',qux=3)", "/Foo"),
+			"Bar(baz='2',qux=3)");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("drillDown", function (assert) {
 		var oObject = {
 				foo : "bar",

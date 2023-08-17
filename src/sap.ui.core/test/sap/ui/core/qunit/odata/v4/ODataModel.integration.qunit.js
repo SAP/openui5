@@ -27939,6 +27939,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2225
 	//
 	// Create new child and cancel immediately (JIRA: CPOUI5ODATAV4-2272)
+	// @odata.bind in POST relative to resource path (BCP: 2380119648)
 	QUnit.test("Recursive Hierarchy: create new children", function (assert) {
 		var oChild, oListBinding, fnRespond, oRoot, oTable;
 
@@ -28011,7 +28012,7 @@ sap.ui.define([
 					method : "POST",
 					url : sFriend.slice(1),
 					payload : {
-						"BestFriend@odata.bind" : "Artists(ArtistID='0',IsActiveEntity=false)",
+						"BestFriend@odata.bind" : "../Artists(ArtistID='0',IsActiveEntity=false)",
 						Name : "Beta"
 					}
 				}, new Promise(function (resolve) {
@@ -28083,7 +28084,7 @@ sap.ui.define([
 					method : "POST",
 					url : sFriend.slice(1),
 					payload : {
-						"BestFriend@odata.bind" : "Artists(ArtistID='0',IsActiveEntity=false)",
+						"BestFriend@odata.bind" : "../Artists(ArtistID='0',IsActiveEntity=false)",
 						Name : "Gamma"
 					}
 				}, {

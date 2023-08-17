@@ -3749,6 +3749,8 @@ sap.ui.define([
 					});
 				});
 			});
+		this.mock(_Helper).expects("makeRelativeUrl").withExactArgs("/Foo('42')", "/Foo")
+			.returns("~relativeUrl~");
 		oCacheMock.expects("addElements")
 			.withExactArgs(sinon.match.same(oEntityData), 3, sinon.match.same(oGroupLevelCache), 0)
 			.callsFake(function () {
@@ -3761,7 +3763,7 @@ sap.ui.define([
 			"~sTransientPredicate~", oEntityData, /*bAtEndOfCreated*/false, "~fnErrorCallback~",
 			"~fnSubmitCallback~");
 
-		assert.deepEqual(oPostBody, {"myParent@odata.bind" : "Foo('42')"});
+		assert.deepEqual(oPostBody, {"myParent@odata.bind" : "~relativeUrl~"});
 		assert.deepEqual(oEntityData, {
 			"@$ui5._" : {postBody : oPostBody},
 			"@$ui5.node.level" : 24,

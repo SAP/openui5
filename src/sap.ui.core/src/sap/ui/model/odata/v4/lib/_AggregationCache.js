@@ -437,7 +437,8 @@ sap.ui.define([
 
 		// add @odata.bind to POST body only
 		_Helper.getPrivateAnnotation(oEntityData, "postBody")
-			[this.oAggregation.$ParentNavigationProperty + "@odata.bind"] = sParentPath;
+			[this.oAggregation.$ParentNavigationProperty + "@odata.bind"]
+				= _Helper.makeRelativeUrl("/" + sParentPath, "/" + this.sResourcePath);
 		oEntityData["@$ui5.node.level"] = oParentNode["@$ui5.node.level"] + 1;
 
 		aElements.splice(iIndex, 0, null); // create a gap
