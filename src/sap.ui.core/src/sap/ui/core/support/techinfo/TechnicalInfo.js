@@ -471,7 +471,7 @@ sap.ui.define([
 		 * @returns {string} Locale-dependent text for the key
 		 */
 		_getText: function (sKey, aParameters) {
-			return Library.get("sap.ui.core").getResourceBundle().getText(sKey, aParameters);
+			return Library.getResourceBundleFor("sap.ui.core").getText(sKey, aParameters);
 		},
 
 		/**

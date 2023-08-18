@@ -586,7 +586,7 @@ sap.ui.define([
 
 		return {
 			role: bHasPressListeners ? "button" : "img",
-			type: Library.get("sap.ui.core").getResourceBundle().getText(bHasPressListeners ? "ACC_CTR_TYPE_BUTTON" : "ACC_CTR_TYPE_IMAGE"),
+			type: Library.getResourceBundleFor("sap.ui.core").getText(bHasPressListeners ? "ACC_CTR_TYPE_BUTTON" : "ACC_CTR_TYPE_IMAGE"),
 			description: this.getAlt() || this.getTooltip_AsString() || (oIconInfo ? oIconInfo.text || oIconInfo.name : ""),
 			focusable: bHasPressListeners
 		};

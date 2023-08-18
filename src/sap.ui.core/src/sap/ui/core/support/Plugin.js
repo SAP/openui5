@@ -258,7 +258,7 @@ sap.ui.define([
 	};
 
 	Plugin.prototype._getText = function (sKey, aParameters) {
-		return Library.get("sap.ui.core").getResourceBundle().getText(sKey, aParameters);
+		return Library.getResourceBundleFor("sap.ui.core").getText(sKey, aParameters);
 	};
 
 	return Plugin;

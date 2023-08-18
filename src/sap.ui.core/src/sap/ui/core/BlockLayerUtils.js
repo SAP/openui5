@@ -129,7 +129,7 @@ sap.ui.define([
 	 * @private
 	 */
 	BlockLayerUtils.addAriaAttributes = function(oDOM) {
-		var oResourceBundle = Library.get("sap.ui.core").getResourceBundle();
+		var oResourceBundle = Library.getResourceBundleFor("sap.ui.core");
 
 		oDOM.setAttribute("role", "progressbar");
 		oDOM.setAttribute("aria-valuemin", "0");
