@@ -6,8 +6,8 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
-	"./thirdparty/ColorPalette",
-	"./thirdparty/features/ColorPaletteMoreColors"
+	"./thirdparty/features/ColorPaletteMoreColors",
+	"./thirdparty/ColorPalette"
 ], function(WebComponent, library) {
 	"use strict";
 
