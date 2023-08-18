@@ -9,6 +9,8 @@
         "paramD": "global",
         "xx-paramE": "xx-global",
         "xxParamF": "xxGlobal",
+        "paramG": "global",
+        "paramH": "global",
         "paramBoolean": "true",
         "paramBooleanAsString": "X",
         "paramFunction": function () {
@@ -32,6 +34,7 @@
         "paramStringArrayAsString": "stringArrayAsString,stringArrayAsStr",
         "paramInteger": 5,
         "paramNull": null,
-        "paramEnum": "enumValue"
+        "paramEnum": "enumValue",
+        "paramlowercase": "lowercase"
     };
 })();

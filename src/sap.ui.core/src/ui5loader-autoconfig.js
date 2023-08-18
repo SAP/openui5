@@ -156,6 +156,7 @@
 		"sap/base/strings/_camelize"
 	], function (camelize) {
 		var oConfig;
+		var oWriteableConfig = Object.create(null);
 		var rAlias = /^(sapUiXx|sapUi|sap)((?:[A-Z0-9][a-z]*)+)$/; //for getter
 		var mFrozenProperties = Object.create(null);
 		var bFrozen = false;
@@ -196,12 +197,12 @@
 			if (Object.hasOwn(mFrozenProperties,sKey)) {
 				return mFrozenProperties[sKey];
 			}
-			var vValue = oConfig[sKey];
-			if (!Object.hasOwn(oConfig, sKey)) {
+			var vValue = oWriteableConfig[sKey] || oConfig[sKey];
+			if (!Object.hasOwn(oConfig, sKey) && !Object.hasOwn(oWriteableConfig, sKey)) {
 				var vMatch = sKey.match(rAlias);
 				var sLowerCaseAlias = vMatch ? vMatch[1] + vMatch[2][0] + vMatch[2].slice(1).toLowerCase() : undefined;
 				if (sLowerCaseAlias) {
-					vValue = oConfig[sLowerCaseAlias];
+					vValue = oWriteableConfig[sLowerCaseAlias] || oConfig[sLowerCaseAlias];
 				}
 			}
 			if (bFreeze) {
@@ -211,10 +212,10 @@
 		}
 
 		function set(sKey, vValue) {
-			if (Object.hasOwn(mFrozenProperties,sKey)) {
+			if (Object.hasOwn(mFrozenProperties, sKey) || bFrozen) {
 				ui5loader._.logger.error("Configuration option '" + sKey + "' was frozen and cannot be changed to " + vValue + "!");
 			} else {
-				oConfig[sKey] = vValue;
+				oWriteableConfig[sKey] = vValue;
 			}
 		}
 
