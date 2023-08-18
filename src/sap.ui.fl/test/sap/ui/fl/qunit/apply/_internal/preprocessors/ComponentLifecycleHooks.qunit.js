@@ -327,7 +327,6 @@ sap.ui.define([
 			sandbox.stub(this.oAppComponent, "addPropagationListener");
 			sandbox.stub(this.oAppComponent, "setModel");
 			sandbox.stub(FlexState, "initialize").resolves();
-			sandbox.stub(Utils, "isApplicationComponent").returns(true);
 			this.oCreateVariantModelStub = sandbox.stub(ComponentLifecycleHooks, "_createVariantModel").returns({
 				initialize: sandbox.stub()
 			});
@@ -343,8 +342,8 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
-			this.oAppComponent._restoreGetAppComponentStub();
 			this.oAppComponent.destroy();
+			FlexControllerFactory._instanceCache = {};
 			sandbox.restore();
 		}
 	}, function() {
@@ -498,6 +497,65 @@ sap.ui.define([
 			.then(function() {
 				assert.equal(this.oLoadLibStub.callCount, 0, "rta library is requested");
 			}.bind(this));
+		});
+	});
+
+	QUnit.module("instanceCreatedHook: i18nVendorModel", {
+		beforeEach: function() {
+			const sMockComponentName = "MockCompName";
+			this.oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, sMockComponentName);
+			sandbox.stub(FlexState, "initialize").resolves();
+		},
+		afterEach: function() {
+			this.oAppComponent.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with messagebundle and a vendor change", async function(assert) {
+			sandbox.stub(FlexState, "getStorageResponse").returns({
+				changes: {
+					changes: [
+						{
+							layer: Layer.VENDOR
+						}
+					]
+				},
+				messagebundle: {i_123: "translatedKey"}
+			});
+
+			await ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {});
+			assert.ok(this.oAppComponent.getModel("i18nFlexVendor"), "the model is available");
+		});
+
+		QUnit.test("with messagebundle and no vendor change", async function(assert) {
+			sandbox.stub(FlexState, "getStorageResponse").returns({
+				changes: {
+					changes: [
+						{
+							layer: Layer.CUSTOMER
+						}
+					]
+				},
+				messagebundle: {i_123: "translatedKey"}
+			});
+
+			await ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {});
+			assert.notOk(this.oAppComponent.getModel("i18nFlexVendor"), "the model is not available");
+		});
+
+		QUnit.test("with no messagebundle and a vendor change", async function(assert) {
+			sandbox.stub(FlexState, "getStorageResponse").returns({
+				changes: {
+					changes: [
+						{
+							layer: Layer.VENDOR
+						}
+					]
+				}
+			});
+
+			await ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {});
+			assert.notOk(this.oAppComponent.getModel("i18nFlexVendor"), "the model is not available");
 		});
 	});
 
