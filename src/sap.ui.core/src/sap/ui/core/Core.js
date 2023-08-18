@@ -22,6 +22,7 @@ sap.ui.define([
 	'./UIArea',
 	'./Messaging',
 	'./StaticArea',
+	"sap/ui/core/Supportability",
 	"sap/ui/core/Theming",
 	"sap/base/Log",
 	"sap/ui/performance/Measurement",
@@ -57,6 +58,7 @@ sap.ui.define([
 		UIArea,
 		Messaging,
 		StaticArea,
+		Supportability,
 		Theming,
 		Log,
 		Measurement,
@@ -381,7 +383,7 @@ sap.ui.define([
 
 			// handle modules
 			var aModules = this.aModules = Configuration.getValue("modules");
-			if ( Configuration.getDebug() ) {
+			if ( Supportability.isDebugModeEnabled() ) {
 				// add debug module if configured
 				aModules.unshift("sap.ui.debug.DebugEnv");
 			}
@@ -563,13 +565,13 @@ sap.ui.define([
 				}
 
 				// Initialize support info stack
-				if (Configuration.getSupportMode() !== null) {
+				if (Supportability.getSupportSettings() !== null) {
 					var iSupportInfoTask = oSyncPoint2.startTask("support info script");
 
 					var fnCallbackSupportBootstrapInfo = function(Support, Bootstrap) {
-						Support.initializeSupportMode(Configuration.getSupportMode(), bAsync);
+						Support.initializeSupportMode(Supportability.getSupportSettings(), bAsync);
 
-						Bootstrap.initSupportRules(Configuration.getSupportMode());
+						Bootstrap.initSupportRules(Supportability.getSupportSettings());
 
 						oSyncPoint2.finishTask(iSupportInfoTask);
 					};
@@ -593,11 +595,11 @@ sap.ui.define([
 				}
 
 				// Initialize test tools
-				if (Configuration.getTestRecorderMode() !== null) {
+				if (Supportability.getTestRecorderSettings() !== null) {
 					var iTestRecorderTask = oSyncPoint2.startTask("test recorder script");
 
 					var fnCallbackTestRecorder = function (Bootstrap) {
-						Bootstrap.init(Configuration.getTestRecorderMode());
+						Bootstrap.init(Supportability.getTestRecorderSettings());
 						oSyncPoint2.finishTask(iTestRecorderTask);
 					};
 

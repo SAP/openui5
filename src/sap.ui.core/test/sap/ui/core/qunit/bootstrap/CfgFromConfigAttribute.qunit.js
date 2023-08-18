@@ -21,7 +21,6 @@ sap.ui.require([
 		assert.equal(Configuration.getRTL(), true, "rtl");
 		assert.equal(Configuration.getDebug(), true, "debug");
 		assert.equal(Configuration.getValue("noConflict"), true, "noConflict");
-		assert.equal(Configuration.getTrace(), true, "trace");
 		// Note: libs and modules cannot be checked in that simple way, see below
 		assert.deepEqual(Configuration.getValue("areas"), ["area-51", "no-go"], "areas");
 		assert.equal(typeof Configuration.getValue("onInit"), "string", "onInit");

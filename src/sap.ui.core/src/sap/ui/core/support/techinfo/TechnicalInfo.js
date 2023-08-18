@@ -23,6 +23,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Element",
+	"sap/ui/core/Supportability",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Messaging"
 ], function(
@@ -46,6 +47,7 @@ sap.ui.define([
 	jQuery,
 	Configuration,
 	Element,
+	Supportability,
 	Library,
 	Messaging
 ) {
@@ -726,7 +728,7 @@ sap.ui.define([
 			oViewModel.setProperty("/SupportAssistantPopoverURLs", aSupportedUrls);
 			oViewModel.setProperty("/ApplicationURL", document.location.href);
 			oViewModel.setProperty("/UserAgent", navigator.userAgent);
-			oViewModel.setProperty("/DebugMode", Configuration.getDebug());
+			oViewModel.setProperty("/DebugMode", Supportability.isDebugModeEnabled());
 
 			// If ui version is smaller than 1.48 this sets the default location from where the SA will be loaded
 			// to OpenUI5 (Nightly) because the SA is not available in 1.44 or lower version

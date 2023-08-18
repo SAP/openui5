@@ -15,11 +15,11 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/Configuration",
+	"sap/ui/core/Supportability",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Model",
 	"./ResourcePropertyBinding"
-], function (Log, ResourceBundle, SyncPromise, Configuration, BindingMode, Model, ResourcePropertyBinding) {
+], function (Log, ResourceBundle, SyncPromise, Supportability, BindingMode, Model, ResourcePropertyBinding) {
 	"use strict";
 
 	var sClassname = "sap.ui.model.resource.ResourceModel",
@@ -374,8 +374,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.core.Component
 	 */
 	ResourceModel.loadResourceBundle = function (oData, bAsync) {
-		var oConfiguration = Configuration,
-			sLocale = oData.bundleLocale,
+		var sLocale = oData.bundleLocale,
 			mParams;
 
 		// sanitize bundleName for backward compatibility
@@ -383,7 +382,7 @@ sap.ui.define([
 
 		mParams = Object.assign({
 			async: bAsync,
-			includeInfo: oConfiguration.getOriginInfo(),
+			includeInfo: Supportability.collectOriginInfo(),
 			locale: sLocale
 		}, oData);
 
