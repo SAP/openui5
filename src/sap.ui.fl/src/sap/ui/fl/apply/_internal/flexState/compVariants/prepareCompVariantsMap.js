@@ -65,7 +65,9 @@ sap.ui.define([
 		});
 
 		aFlexObjects.forEach(function(oFlexObject) {
-			var sPersistencyKey = oFlexObject.getPersistencyKey ? oFlexObject.getPersistencyKey() : oFlexObject.getSelector().persistencyKey;
+			var sPersistencyKey = oFlexObject.getPersistencyKey
+				? oFlexObject.getPersistencyKey()
+				: oFlexObject.getSelector().persistencyKey;
 			getOrCreate(
 				mCompVariants,
 				sPersistencyKey
