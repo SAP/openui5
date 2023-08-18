@@ -1714,7 +1714,12 @@ sap.ui.define([
 
 	};
 
-	FilterBarBase.prototype._cleanUpAllFilterFieldsInErrorState = function() {
+	/**
+	 * Clears non-model value for any filter field and resets the value state to none.
+	 *
+	 * @public
+	 */
+	FilterBarBase.prototype.cleanUpAllFilterFieldsInErrorState = function() {
 
 		this._getConditionModel().checkUpdate(true);
 
@@ -1789,7 +1794,7 @@ sap.ui.define([
 
 		return this.awaitPendingModification().then(function(aAffectedControllers){
 			//clean-up fields in error state
-			this._cleanUpAllFilterFieldsInErrorState();
+			this.cleanUpAllFilterFieldsInErrorState();
 
 			// ensure that the initial filters are applied --> only trigger search & validate when no filterbar changes exists.
 			// Filterbar specific changes will be handled via _onModifications.

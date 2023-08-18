@@ -695,6 +695,26 @@ sap.ui.define([
 
 	});
 
+    QUnit.test("Check cleanUpAllFilterFieldsInErrorState", function(assert){
+
+		var oFilterField = new FilterField("key1", {
+			label: "key1",
+			conditions: "{$filters>/conditions/key1}",
+			propertyKey: "key1",
+			dataTypeConstraints: { maxLength: 2},
+			dataType: "sap.ui.model.type.String",
+			required: false
+		});
+
+		oFilterField.setValueState("Error");
+		this.oFilterBarBase.addFilterItem(oFilterField);
+
+		assert.equal(oFilterField.getValueState(), "Error");
+		this.oFilterBarBase.cleanUpAllFilterFieldsInErrorState();
+
+		assert.equal(oFilterField.getValueState(), "None");
+    });
+
     QUnit.test("Check required missing handling on filter changes", function(assert){
 
         var done = assert.async();
