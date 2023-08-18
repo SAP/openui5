@@ -958,6 +958,36 @@ sap.ui.define([
 	testInputRerender("setEnabled", false);
 	testInputRerender("setPlaceholder", "placeholder");
 
+	QUnit.test("Drop file over the browse button", function(assert) {
+		// prepare
+		var oFileUploader = new FileUploader();
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oEventParams = {
+			originalEvent: {
+				dataTransfer: {
+					files: new DataTransfer().files
+				}
+			},
+			preventDefault: function() {}
+		};
+		var oHandleChangeSpy = this.spy(oFileUploader, "handlechange");
+		var oPreventDefaultSpy = this.spy(oEventParams, "preventDefault");
+
+		// act
+		qutils.triggerEvent("drop", oFileUploader.oBrowse.getId(), oEventParams);
+
+		// assert
+		assert.ok(oPreventDefaultSpy.calledOnce, "The default is prevented");
+		assert.ok(oHandleChangeSpy.calledOnce, "Change event is triggered");
+
+		// clean
+		oFileUploader.destroy();
+		oHandleChangeSpy.restore();
+		oPreventDefaultSpy.restore();
+	});
+
 	QUnit.module("BlindLayer", {
 		beforeEach: function() {
 			this.oFileUploader = createFileUploader();
