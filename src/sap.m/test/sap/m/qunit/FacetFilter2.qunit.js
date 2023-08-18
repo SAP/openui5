@@ -582,6 +582,9 @@ sap.ui.define([
 		destroyFF(oFF);
 	});
 
+	/**
+	 * @deprecated As of version 1.20 the property <code>multiSelect</code> has been replaced by the property <code>mode</code>
+	 */
 	QUnit.test("FacetFilterList.multiSelect", function(assert) {
 
 		var oFFL = new FacetFilterList();
@@ -599,6 +602,9 @@ sap.ui.define([
 
 		assert.ok(oFFL.setMode(ListMode.SingleSelectMaster), "setMode should support method chaining");
 		assert.strictEqual(oFFL.getMode(), ListMode.SingleSelectMaster, "List mode should be SingleSelectMaster");
+		/**
+		 * @deprecated As of version 1.20
+		 */
 		assert.strictEqual(oFFL.getMultiSelect(), false, "List multiSelect should be changed to false");
 
 		oFFL.setMode(ListMode.None);
@@ -1300,7 +1306,7 @@ sap.ui.define([
 		var oFF = oSCHelper.createFFWithModel();
 		var oFFL = oFF.getLists()[0];
 		oFFL.setActive(false);
-		oFFL.setMultiSelect(false);
+		oFFL.setMode(ListMode.SingleSelectMaster);
 
 		var oKeys = oFFL.getSelectedKeys();
 		assert.equal(Object.getOwnPropertyNames(oKeys).length, 0, "There are no keys selected");
@@ -1554,7 +1560,7 @@ sap.ui.define([
 	QUnit.test("'All' checkbox initial state", function(assert) {
 		var oFF = new FacetFilter(),
 			oFFL = new FacetFilterList({
-				multiSelect: true
+				mode: ListMode.MultiSelect
 			}),
 			//sut
 			oAllCheckbox;
@@ -1604,7 +1610,7 @@ sap.ui.define([
 
 		var oFFL = new FacetFilterList({
 			active: false,
-			multiSelect: true,
+			mode: ListMode.MultiSelect,
 			title : "List"
 		});
 		var oFF = new FacetFilter({
@@ -1663,14 +1669,14 @@ sap.ui.define([
 		});
 		var oFFL = new FacetFilterList({
 			active: false,
-			multiSelect: true,
+			mode: ListMode.MultiSelect,
 			title: "List",
 			listOpen: fetchDimensionData
 		});
 
 		var oFFL2 = new FacetFilterList({
 			active: false,
-			multiSelect: true,
+			mode: ListMode.MultiSelect,
 			title: "List3",
 			listOpen: fetchDimensionData
 		});
@@ -1732,7 +1738,7 @@ sap.ui.define([
 		});
 		var oFFL = new FacetFilterList({
 			active: true,
-			multiSelect: true,
+			mode: ListMode.MultiSelect,
 			title : "List"
 		});
 

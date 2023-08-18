@@ -202,13 +202,13 @@ sap.ui.define([
 		return this;
 	};
 
-	/*
+	/**
 	 * Sets the multiSelect property (default value is <code>true</code>).
+	 * @deprecated As of version 1.20, replaced by <code>setMode</code>
 	 * @param {boolean}	bVal New value for property multiSelect
-	 * @returns {this}	this to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 */
 	FacetFilterList.prototype.setMultiSelect = function(bVal) {
-
 		this.setProperty("multiSelect", bVal, true);
 		var mode = bVal ? ListMode.MultiSelect : ListMode.SingleSelectMaster;
 		this.setMode(mode);
@@ -227,6 +227,9 @@ sap.ui.define([
 		if (mode === ListMode.MultiSelect || mode === ListMode.SingleSelectMaster) {
 
 			List.prototype.setMode.call(this, mode);
+			/**
+			 * @deprecated As of version 1.20
+			 */
 			this.setProperty("multiSelect", mode === ListMode.MultiSelect ? true : false, true);
 		}
 		return this;
@@ -702,7 +705,7 @@ sap.ui.define([
 			return oItem.getSelected();
 		}
 
-		if (this.getMultiSelect()) {
+		if (this.getMode() === ListMode.MultiSelect) {
 			oCheckbox = sap.ui.getCore().byId(this.getAssociation("allcheckbox"));
 			bAtLeastOneItemIsSelected = iItemsCount > 0 && iItemsCount === aItems.filter(isSelected).length;
 			bSelectAllSelected = this.getActive() && bAtLeastOneItemIsSelected;
