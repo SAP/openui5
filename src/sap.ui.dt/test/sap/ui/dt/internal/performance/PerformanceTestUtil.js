@@ -38,7 +38,7 @@ sap.ui.define([
 	"use strict";
 
 	var Util = {
-		addButtons: function(oParentControl, sAggregation, iNumberOfButtons) {
+		addButtons(oParentControl, sAggregation, iNumberOfButtons) {
 			if (iNumberOfButtons > 0) {
 				oParentControl.addAggregation(sAggregation, new Button({
 					id: `${oParentControl.getId()}button${iNumberOfButtons}`,
@@ -48,7 +48,7 @@ sap.ui.define([
 			}
 		},
 
-		createNestedPanels: function(oParentControl, sAggregation, iNumberOfControls, oLastElement) {
+		createNestedPanels(oParentControl, sAggregation, iNumberOfControls, oLastElement) {
 			//  add element to the inner most panel
 			if (iNumberOfControls === 0) {
 				oParentControl.addAggregation(sAggregation, oLastElement);
@@ -60,7 +60,7 @@ sap.ui.define([
 			Util.createNestedPanels(oPanel, sAggregation, iNumberOfControls - 1, oLastElement);
 		},
 
-		addMixedControlsTo: function(oLayout, iFrom, iTo, bVisible) {
+		addMixedControlsTo(oLayout, iFrom, iTo, bVisible) {
 			var aControlTypes = [Button, Label, DatePicker, Slider, RatingIndicator];
 
 			var oControl = null;
@@ -80,7 +80,7 @@ sap.ui.define([
 			}
 		},
 
-		addBoxesWithMixedControls: function(oParent, iCount, iOffset) {
+		addBoxesWithMixedControls(oParent, iCount, iOffset) {
 			var i = iOffset || 0;
 			iCount = iOffset ? iOffset + iCount : iCount;
 			for (i; i < iCount; i++) {
@@ -98,7 +98,7 @@ sap.ui.define([
 			}
 		},
 
-		startDesignTime: function(oRootControl, sSelectedOverlayId) {
+		startDesignTime(oRootControl, sSelectedOverlayId) {
 			window.wpp = {
 				customMetrics: {}
 			};
@@ -149,7 +149,7 @@ sap.ui.define([
 			});
 		},
 
-		measureApplyStylePerformance: function(sCustomMetricName, iWaitUntilDoneInMs) {
+		measureApplyStylePerformance(sCustomMetricName, iWaitUntilDoneInMs) {
 			window.wpp = {
 				customMetrics: {}
 			};

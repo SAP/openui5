@@ -16,7 +16,7 @@ sap.ui.define([
 	var RELATIVE_POS_LEFT = -35;
 
 	QUnit.module("Given that a container is rendered with a bigger content element (for scrollbars)", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oContent = document.createElement("div");
 			this.oContent.style.background = "red";
 			this.oContent.style.width = "200px";
@@ -32,7 +32,7 @@ sap.ui.define([
 			this.oContainer.append(this.oContent);
 			document.getElementById("qunit-fixture").append(this.oContainer);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oContainer.remove();
 		}
 	}, function() {
@@ -68,7 +68,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("getScrollLeft()", {
-		beforeEach: function() {
+		beforeEach() {
 			var oInnerPanel = document.createElement("div");
 			oInnerPanel.style.width = "200px";
 			oInnerPanel.style.height = "200px";
@@ -79,7 +79,7 @@ sap.ui.define([
 			this.oPanel.append(oInnerPanel);
 			document.getElementById("qunit-fixture").append(this.oPanel);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPanel.remove();
 		}
 	}, function() {

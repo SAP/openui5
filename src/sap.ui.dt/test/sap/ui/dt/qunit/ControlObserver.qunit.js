@@ -13,7 +13,7 @@ function(
 	"use strict";
 
 	QUnit.module("Given that a Button is observed", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton = new Button();
 			this.oControlObserver = new ControlObserver({
 				target: this.oButton
@@ -21,7 +21,7 @@ function(
 			this.oButton.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oControlObserver.destroy();
 			this.oButton.destroy();
 		}

@@ -145,9 +145,7 @@ sap.ui.define([
 		if (sElementId && this._mMutationHandlers[sElementId]) {
 			sRegisteredParentId = sElementId;
 			// remember the closest registered element id on mutated dom node
-			if (!mElementIds.closestElementInWhitlist) {
-				mElementIds.closestElementInWhitlist = sElementId;
-			}
+			mElementIds.closestElementInWhitlist ||= sElementId;
 		}
 		mElementIds.result = bScrollbarOnElement ? sRegisteredParentId : mElementIds.closestElementInWhitlist;
 		return mElementIds;

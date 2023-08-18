@@ -55,7 +55,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that a DragDrop is initialized ", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oButton = new Button();
 			this.oLayout = new VerticalLayout({content: [this.oButton]});
 			this.oLayout.placeAt("qunit-fixture");
@@ -125,7 +125,7 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButtonOverlay.destroy();
 			this.oLayoutOverlay.destroy();
 			this.oLayout.destroy();
@@ -278,7 +278,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that DragDrop touchevents are initialized ", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oButton = new Button();
 			this.oLayout1 = new VerticalLayout({content: [this.oButton]});
 			this.oLayout2 = new VerticalLayout({content: [this.oLayout1]});
@@ -329,7 +329,7 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButtonOverlay.destroy();
 			this.oLayout1Overlay.destroy();
 			this.oLayout2.destroy();
@@ -432,7 +432,7 @@ sap.ui.define([
 		 * scroll on drag
 		 */
 		QUnit.module("Given that overlay is created for a m.Page with Panels", {
-			beforeEach: function(assert) {
+			beforeEach(assert) {
 				var done = assert.async();
 				this.aPanels = [];
 				this.aPanelOverlays = [];
@@ -462,7 +462,7 @@ sap.ui.define([
 					done();
 				}.bind(this));
 			},
-			afterEach: function() {
+			afterEach() {
 				this.oPage.destroy();
 				this.oPageOverlay.destroy();
 				for (var i = 0; i < 10; i++) {

@@ -45,32 +45,32 @@ sap.ui.define([
 			designtime: {
 				aggregations: {
 					content1: {
-						domRef: function(oElement) {
+						domRef(oElement) {
 							return oElement.$("content1").get(0);
 						}
 					},
 					content2: {
-						domRef: function(oElement) {
+						domRef(oElement) {
 							return oElement.$("content2").get(0);
 						}
 					},
 					content3: {
-						domRef: function(oElement) {
+						domRef(oElement) {
 							return oElement.$("content3").get(0);
 						}
 					},
 					content4: {
-						domRef: function(oElement) {
+						domRef(oElement) {
 							return oElement.$("content4").get(0);
 						}
 					},
 					content5: {
-						domRef: function(oElement) {
+						domRef(oElement) {
 							return oElement.$("content5").get(0);
 						}
 					},
 					footer: {
-						domRef: function(oElement) {
+						domRef(oElement) {
 							return oElement.$("footer").get(0);
 						}
 					}
@@ -82,7 +82,7 @@ sap.ui.define([
 					},
 					{
 						domRef: "> .sapUiDtTestSSCScrollContainer2",
-						aggregations: function(oControl, fnUpdateScrollContainer) {
+						aggregations(oControl, fnUpdateScrollContainer) {
 							oControl._updateFunction = fnUpdateScrollContainer;
 							if (oControl.getUseAlternateScrollContainer()) {
 								return ["content4", "content5"];
@@ -101,7 +101,7 @@ sap.ui.define([
 
 		renderer: {
 			apiVersion: 2,
-			render: function(oRm, oControl) {
+			render(oRm, oControl) {
 				var sId;
 				var aContent;
 				oRm.openStart("div", oControl);

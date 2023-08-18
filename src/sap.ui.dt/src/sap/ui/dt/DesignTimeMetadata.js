@@ -130,7 +130,8 @@ function(
 	 * @return {jQuery} Returns associated DOM references wrapped by jQuery object
 	 * @public
 	 */
-	DesignTimeMetadata.prototype.getAssociatedDomRef = function(oElement, vDomRef, sAggregationName) {
+	DesignTimeMetadata.prototype.getAssociatedDomRef = function(...aArgs) {
+		const [oElement, vDomRef, sAggregationName] = aArgs;
 		if (oElement) {
 			var oElementDomRef = ElementUtil.getDomRef(oElement);
 			var aArguments = [];
@@ -141,7 +142,7 @@ function(
 
 			if (typeof (vDomRef) === "function") {
 				try {
-					var vRes = vDomRef.apply(null, aArguments);
+					var vRes = vDomRef(...aArgs);
 					return vRes && jQuery(vRes);
 				} catch (error) {
 					return undefined;
@@ -279,10 +280,10 @@ function(
 	 * @return {string|undefined} Returns the label calculated from getLabel() in designtime metadata
 	 * @public
 	 */
-	DesignTimeMetadata.prototype.getLabel = function() {
+	DesignTimeMetadata.prototype.getLabel = function(...aArgs) {
 		var vLabel = this.getData().getLabel;
 		return typeof vLabel === "function"
-			? vLabel.apply(this, arguments)
+			? vLabel.apply(this, aArgs)
 			: undefined;
 	};
 

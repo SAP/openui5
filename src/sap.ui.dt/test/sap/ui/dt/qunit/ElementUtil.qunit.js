@@ -135,7 +135,7 @@ sap.ui.define([
 
 	var fnCreateComponent = function() {
 		var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
-			createContent: function() {
+			createContent() {
 				return new VerticalLayout("Root", {
 					content: [
 						new Button({ text: "Text" })
@@ -184,10 +184,10 @@ sap.ui.define([
 	};
 
 	QUnit.module("hasInterface()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateMinimumControls.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyMinimumControls.call(this);
 		}
 	}, function() {
@@ -214,11 +214,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("getElementInstance()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateMinimumControls.call(this);
 			fnCreateComponent.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyMinimumControls.call(this);
 			fnDestroyComponent.call(this);
 		}
@@ -247,10 +247,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("getClosestElementForNode()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateControls.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyControls.call(this);
 		}
 	}, function() {
@@ -284,11 +284,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("fixComponentParent()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateControls.call(this);
 			fnCreateComponent.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyControls.call(this);
 			fnDestroyComponent.call(this);
 		}
@@ -319,11 +319,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("fixComponentContainerElement()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateMinimumControls.call(this);
 			fnCreateComponent.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyMinimumControls.call(this);
 			fnDestroyComponent.call(this);
 		}
@@ -354,12 +354,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("getDomRef()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateControls.call(this);
 			fnCreateForm.call(this);
 			this.oVerticalLayout.addContent(this.oForm);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyControls.call(this);
 			fnDestroyForm.call(this);
 		}
@@ -381,11 +381,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("hasAncestor()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateControls.call(this);
 			fnCreateComponent.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyControls.call(this);
 			fnDestroyComponent.call(this);
 		}
@@ -417,11 +417,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("findAllSiblingsInContainer()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateControls.call(this);
 			fnCreateMoreControls.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyControls.call(this);
 			fnDestroyMoreControls.call(this);
 		}
@@ -466,10 +466,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("getAggregationAccessors()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateControls.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyControls.call(this);
 		}
 	}, function() {
@@ -496,10 +496,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("getAssociationAccessors()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateCustomControl.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyCustomControl.call(this);
 		}
 	}, function() {
@@ -525,11 +525,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("getAssociation()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateMinimumControls.call(this);
 			fnCreateCustomControl.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyMinimumControls.call(this);
 			fnDestroyCustomControl.call(this);
 		}
@@ -552,11 +552,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("getAssociationInstances()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateMinimumControls.call(this);
 			fnCreateCustomControl.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyMinimumControls.call(this);
 			fnDestroyCustomControl.call(this);
 		}
@@ -591,11 +591,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("getIndexInAssociation()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateMinimumControls.call(this);
 			fnCreateCustomControl.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyMinimumControls.call(this);
 			fnDestroyCustomControl.call(this);
 		}
@@ -639,10 +639,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("addAggregation()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateControls.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyControls.call(this);
 		}
 	}, function() {
@@ -677,10 +677,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("insertAggregation()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateControls.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyControls.call(this);
 		}
 	}, function() {
@@ -736,10 +736,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("removeAggregation()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateControls.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyControls.call(this);
 		}
 	}, function() {
@@ -763,10 +763,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("isValidForAggregation()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateControls.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyControls.call(this);
 		}
 	}, function() {
@@ -818,11 +818,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("getParent()", {
-		beforeEach: function() {
+		beforeEach() {
 			fnCreateMinimumControls.call(this);
 			fnCreateComponent.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			fnDestroyMinimumControls.call(this);
 			fnDestroyComponent.call(this);
 		}
@@ -838,7 +838,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("isElementValid()", {
-		afterEach: function() {
+		afterEach() {
 			if (this.oObject) {
 				this.oObject.destroy();
 			}
@@ -873,9 +873,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given getLabelForElement()", {
-		beforeEach: function() {
+		beforeEach() {
 		},
-		afterEach: function() {
+		afterEach() {
 			if (this.oLabelControl) {
 				this.oLabelControl.destroy();
 			}
@@ -935,7 +935,7 @@ sap.ui.define([
 
 		QUnit.test("when getLabelForElement is called with a Component", function(assert) {
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
-				createContent: function() {}
+				createContent() {}
 			});
 
 			this.oLabelControl = new CustomComponent("componentObjectId");
@@ -1038,7 +1038,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a bound list control", {
-		beforeEach: function() {
+		beforeEach() {
 			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
 			var oModel = new JSONModel({
 				texts: aTexts
@@ -1071,11 +1071,11 @@ sap.ui.define([
 			this.oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
-			this.oVBox1 = this.oList.getItems()[1].getContent()[0];
-			this.oListItem0 = this.oList.getItems()[0];
-			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
+			[this.oVBox1] = this.oList.getItems()[1].getContent();
+			[this.oListItem0] = this.oList.getItems();
+			[this.oText1] = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
 			sandbox.restore();
@@ -1150,7 +1150,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a bound list control and a control inside of the list which is not in the template", {
-		beforeEach: function() {
+		beforeEach() {
 			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
 			var oModel = new JSONModel({
 				texts: aTexts
@@ -1203,10 +1203,10 @@ sap.ui.define([
 			this.oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
-			this.oButton1 = this.oList.getItems()[3].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
-			this.oButton2 = this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
+			[this.oButton1] = this.oList.getItems()[3].getContent()[0].getItems()[0].getItems()[0].getItems();
+			[this.oButton2] = this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
 			this.oButton1.destroy();
@@ -1230,7 +1230,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a List with bound items and a List with unbound items", {
-		beforeEach: function() {
+		beforeEach() {
 			// create list with bound items
 			var oData = [
 				{text: "item1-bound"},
@@ -1247,7 +1247,7 @@ sap.ui.define([
 			this.oFactoryBoundList = new List("factoryboundlist").setModel(oModel);
 			this.oFactoryBoundList.bindAggregation("items", {
 				path: "/",
-				factory: function(sId) {
+				factory(sId) {
 					return new CustomListItem(sId, {content: [new Button(`${sId}-btn`, {text: "{text}"})]});
 				}
 			});
@@ -1264,15 +1264,14 @@ sap.ui.define([
 			this.oVerticalLayout.placeAt("qunit-fixture");
 			Core.applyChanges();
 
-			this.oBound = this.oBoundList.getItems()[0];
-			this.oBoundChild = this.oBoundList.getItems()[0].getContent()[0];
-			this.oAnotherBound = this.oBoundList.getItems()[1];
-			this.oAnotherBoundChild = this.oBoundList.getItems()[1].getContent()[0];
-			this.oUnbound = this.oUnboundList.getItems()[0];
-			this.oUnboundChild = this.oUnboundList.getItems()[0].getContent()[0];
-			this.oFactoryBound = this.oFactoryBoundList.getItems()[0];
+			[this.oBound, this.oAnotherBound] = this.oBoundList.getItems();
+			[this.oBoundChild] = this.oBoundList.getItems()[0].getContent();
+			[this.oAnotherBoundChild] = this.oBoundList.getItems()[1].getContent();
+			[this.oUnbound] = this.oUnboundList.getItems();
+			[this.oUnboundChild] = this.oUnboundList.getItems()[0].getContent();
+			[this.oFactoryBound] = this.oFactoryBoundList.getItems();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVerticalLayout.destroy();
 			sandbox.restore();
 		}
@@ -1375,7 +1374,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a bound list control with a bound Select control inside it", {
-		beforeEach: function() {
+		beforeEach() {
 			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
 			var aItemTexts = [
 				{key: "item1", text: "Item Text 1"},
@@ -1417,14 +1416,13 @@ sap.ui.define([
 			this.oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
-			this.oVBox1 = this.oList.getItems()[1].getContent()[0];
-			this.oVBox2 = this.oList.getItems()[2].getContent()[0];
-			this.oButton = this.oVBox1.getItems()[0];
-			this.oItem1Select1 = this.oVBox1.getItems()[1].getSelectableItems()[0];
-			this.oItem2Select1 = this.oVBox1.getItems()[1].getSelectableItems()[1];
-			this.oItem1Select2 = this.oVBox2.getItems()[1].getSelectableItems()[0];
+			[this.oVBox1] = this.oList.getItems()[1].getContent();
+			[this.oVBox2] = this.oList.getItems()[2].getContent();
+			[this.oButton] = this.oVBox1.getItems();
+			[this.oItem1Select1, this.oItem2Select1] = this.oVBox1.getItems()[1].getSelectableItems();
+			[this.oItem1Select2] = this.oVBox2.getItems()[1].getSelectableItems();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
 			sandbox.restore();

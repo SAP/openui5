@@ -18,7 +18,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Given that a DesignTime is created for a SplitContainer with 2 pages, one is hidden and one is visible", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oButton1 = new Button("button1", {text: "button"});
 			this.oButton2 = new Button("button2", {text: "button"});
 
@@ -64,7 +64,7 @@ sap.ui.define([
 				done();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oSplitContainer.destroy();
 		}

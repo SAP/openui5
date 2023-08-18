@@ -17,12 +17,12 @@ function(
 	"use strict";
 
 	QUnit.module("Given that a sap.m Library is tested", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oLibraryReport = new LibraryReport({
 				libraryName: "sap.ui.testLibrary"
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLibraryReport.destroy();
 		}
 	}, function() {

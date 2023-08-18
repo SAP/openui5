@@ -17,7 +17,7 @@ function(
 	"use strict";
 
 	QUnit.module("Given that a sap.mButton is tested", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oButton = new Button({text: "my button"});
 			this.oButton.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -27,7 +27,7 @@ function(
 			});
 			this.oDesignTime.attachEventOnce("synced", assert.async());
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oButton.destroy();
 		}
@@ -43,14 +43,14 @@ function(
 			var aAggregationNames = Object.keys(oAggregationsTestInfo);
 			var bNotIgnoredAggregationFound = false;
 			aAggregationNames.forEach(function(sAggregationName) {
-				bNotIgnoredAggregationFound = bNotIgnoredAggregationFound || !oAggregationsTestInfo[sAggregationName].ignored;
+				bNotIgnoredAggregationFound ||= !oAggregationsTestInfo[sAggregationName].ignored;
 			});
 			assert.strictEqual(bNotIgnoredAggregationFound, false, "no not-ignored aggregations found");
 		});
 	});
 
 	QUnit.module("Given that a sap.ui.layout.VerticalLayout without content is tested", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oVerticalLayout = new VerticalLayout();
 			this.oVerticalLayout.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -60,7 +60,7 @@ function(
 			});
 			this.oDesignTime.attachEventOnce("synced", assert.async());
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oVerticalLayout.destroy();
 		}
@@ -83,7 +83,7 @@ function(
 	});
 
 	QUnit.module("Given that a sap.ui.layout.VerticalLayout with content is tested", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oButton = new Button({text: "my button"});
 			this.oVerticalLayout = new VerticalLayout({
 				content: [this.oButton]
@@ -96,7 +96,7 @@ function(
 			});
 			this.oDesignTime.attachEventOnce("synced", assert.async());
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oVerticalLayout.destroy();
 		}

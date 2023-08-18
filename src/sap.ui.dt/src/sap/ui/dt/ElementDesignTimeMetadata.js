@@ -46,8 +46,8 @@ sap.ui.define([
 	 * @return {Object} default data
 	 * @override
 	 */
-	ElementDesignTimeMetadata.prototype.getDefaultData = function() {
-		var oDefaultData = DesignTimeMetadata.prototype.getDefaultData.apply(this, arguments);
+	ElementDesignTimeMetadata.prototype.getDefaultData = function(...aArgs) {
+		var oDefaultData = DesignTimeMetadata.prototype.getDefaultData.apply(this, aArgs);
 
 		oDefaultData.aggregations = {
 			layout: {
@@ -154,7 +154,7 @@ sap.ui.define([
 					if (aArgs) {
 						aActionParameters = aActionParameters.concat(aArgs);
 					}
-					vAction = vAction.apply(null, aActionParameters);
+					vAction = vAction(...aActionParameters);
 				}
 				if (typeof (vAction) === "string") {
 					vAction = { changeType: vAction };
@@ -223,8 +223,8 @@ sap.ui.define([
 
 	ElementDesignTimeMetadata.prototype.getToolHooks = function() {
 		return this.getData().tool || {
-			start: function() {},
-			stop: function() {}
+			start() {},
+			stop() {}
 		};
 	};
 
@@ -276,8 +276,9 @@ sap.ui.define([
 	 * @return {string|undefined} Returns the label as string or undefined
 	 * @public
 	 */
-	ElementDesignTimeMetadata.prototype.getLabel = function(oElement) {
-		return DesignTimeMetadata.prototype.getLabel.apply(this, arguments) || ElementUtil.getLabelForElement(oElement);
+	ElementDesignTimeMetadata.prototype.getLabel = function(...aArgs) {
+		const [oElement] = aArgs;
+		return DesignTimeMetadata.prototype.getLabel.apply(this, aArgs) || ElementUtil.getLabelForElement(oElement);
 	};
 
 	/**

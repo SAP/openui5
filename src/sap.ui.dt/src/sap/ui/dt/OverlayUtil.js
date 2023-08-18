@@ -552,7 +552,7 @@ function(
 	 * @private
 	 */
 	OverlayUtil._findAllChildrenInContainer = function(oElementOverlay, oRelevantContainer, _aRelevantOverlays) {
-		_aRelevantOverlays = _aRelevantOverlays || [];
+		_aRelevantOverlays ||= [];
 		if (oElementOverlay.getChildren().length > 0) {
 			oElementOverlay.getChildren().forEach(function(oAggregationOverlay) {
 				oAggregationOverlay.getChildren().forEach(function(oChildElementOverlay) {

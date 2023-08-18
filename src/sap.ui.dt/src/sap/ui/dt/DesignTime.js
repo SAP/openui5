@@ -255,7 +255,8 @@ sap.ui.define([
 				syncFailed: {}
 			}
 		},
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			// Storage for promises of pending overlays (overlays that are in creation phase)
 			this._sStatus = DesignTimeStatus.SYNCED;
 			this._mPendingOverlays = {};
@@ -293,7 +294,7 @@ sap.ui.define([
 			// Syncing batch of overlays
 			this._aOverlaysCreatedInLastBatch = [];
 
-			ManagedObject.apply(this, arguments);
+			ManagedObject.apply(this, aArgs);
 
 			// Create overlays for root elements
 			this.getRootElements().forEach(this._createOverlaysForRootElement, this);
@@ -1238,9 +1239,9 @@ sap.ui.define([
 				delete oParams.target;
 
 				if (this.getStatus() === DesignTimeStatus.SYNCING) {
-					this.attachEventOnce("synced", oParams, function() {
+					this.attachEventOnce("synced", oParams, function(...aArgs) {
 						if (!oElementOverlay.bIsDestroyed) {
-							this.fireElementPropertyChanged(arguments[1]);
+							this.fireElementPropertyChanged(aArgs[1]);
 						}
 					}, this);
 				} else {
@@ -1261,9 +1262,9 @@ sap.ui.define([
 		var oElementOverlay = oEvent.getSource();
 		oParams.id = oElementOverlay.getId();
 		if (this.getStatus() === DesignTimeStatus.SYNCING) {
-			this.attachEventOnce("synced", oParams, function() {
+			this.attachEventOnce("synced", oParams, function(...aArgs) {
 				if (!oElementOverlay.bIsDestroyed) {
-					this.fireElementOverlayEditableChanged(arguments[1]);
+					this.fireElementOverlayEditableChanged(aArgs[1]);
 				}
 			}, this);
 		} else {

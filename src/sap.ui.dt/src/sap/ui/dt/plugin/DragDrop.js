@@ -70,8 +70,8 @@ sap.ui.define([
 	/*
 	 * @private
 	 */
-	DragDrop.prototype.init = function() {
-		Plugin.prototype.init.apply(this, arguments);
+	DragDrop.prototype.init = function(...aArgs) {
+		Plugin.prototype.init.apply(this, aArgs);
 
 		// We want to prevent the page from scrolling before getting to its children (=> useCapture "true")
 		document.addEventListener("touchmove", this._preventScrollOnTouch, true);
@@ -84,8 +84,8 @@ sap.ui.define([
 	/*
 	 * @private
 	 */
-	DragDrop.prototype.exit = function() {
-		Plugin.prototype.exit.apply(this, arguments);
+	DragDrop.prototype.exit = function(...aArgs) {
+		Plugin.prototype.exit.apply(this, aArgs);
 
 		document.removeEventListener("touchmove", this._preventScrollOnTouch);
 
@@ -355,8 +355,8 @@ sap.ui.define([
 		// changedTouches will have the information related to the moved finger, because it’s what caused the event "touchmove"
 		var aTouches = oEvent.touches || oEvent.changedTouches;
 
-		var pageX = aTouches[0].pageX;
-		var pageY = aTouches[0].pageY;
+		var {pageX} = aTouches[0];
+		var {pageY} = aTouches[0];
 
 		var oTargetOverlay = this._findTargetOverlayFromCoordinates(pageX, pageY);
 

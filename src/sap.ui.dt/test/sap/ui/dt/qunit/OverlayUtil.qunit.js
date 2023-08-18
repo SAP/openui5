@@ -35,7 +35,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that an Overlay is created for a control", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			//	Layout2
 			//		Layout1
 			//			Layout0
@@ -99,7 +99,7 @@ sap.ui.define([
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout2.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -343,7 +343,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a VBox with an ObjectPageLayout with Overlays created", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 
 			//	VBox0
@@ -436,7 +436,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oVBox0.destroy();
 			this.oDesignTime.destroy();
@@ -704,7 +704,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("getClosestBoundControl() - Given is a list with bounded items", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oHorizontalLayout = TestUtil.createListWithBoundItems();
 			this.oDesignTime = new DesignTime({
@@ -712,7 +712,7 @@ sap.ui.define([
 			});
 			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oHorizontalLayout.destroy();
 			sandbox.restore();

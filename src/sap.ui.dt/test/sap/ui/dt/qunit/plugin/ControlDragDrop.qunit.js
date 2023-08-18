@@ -20,7 +20,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Given that a ControlDragDrop is initialized ", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oButton0 = new Button();
 			this.oButton1 = new Button();
 			this.oLayout = new VerticalLayout({content: [this.oButton0, this.oButton1]});
@@ -51,7 +51,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			OverlayRegistry.getOverlay(this.oParentLayout).destroy();
 			this.oButtonOverlay0.destroy();
 			this.oButtonOverlay1.destroy();

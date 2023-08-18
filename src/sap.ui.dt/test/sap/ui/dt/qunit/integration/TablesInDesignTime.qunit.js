@@ -84,11 +84,11 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given the sap.ui.table.Table is created", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oModel = _createJSONModel();
 			this.oTable = _createTable(this.oModel);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oTable.destroy();
 			sandbox.restore();
 		}
@@ -105,18 +105,19 @@ sap.ui.define([
 				assert.ok(true, "then sync event should be thrown");
 				var oTableOverlay = OverlayRegistry.getOverlay(this.oTable);
 				var oColumnsOverlay = oTableOverlay.getAggregationOverlay("columns");
-				assert.strictEqual(oColumnsOverlay.getChildren().length, 5, "then there should be 5 children overlays for column available");
+				assert.strictEqual(oColumnsOverlay.getChildren().length, 5,
+					"then there should be 5 children overlays for column available");
 				done();
 			}.bind(this));
 		});
 	});
 
 	QUnit.module("Given that design time is created for a sap.ui.table.Table", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oTable = _createTable();
-			this.oColumn = this.oTable.getColumns()[0];
+			[this.oColumn] = this.oTable.getColumns();
 			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
@@ -127,7 +128,7 @@ sap.ui.define([
 				done();
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oTable.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -144,7 +145,8 @@ sap.ui.define([
 
 			var fnCallback = function() {
 				assert.strictEqual(this.oColumn.$().offset().left + 20, oInitialColumnOffset.left, "then columns are also scrolled");
-				assert.strictEqual(this.oColumn.$().offset().left + 20, oInitialColumnOffset.left, "if this test fails, check Table.designtime.js : hScroll and vScroll domRefs!");
+				assert.strictEqual(this.oColumn.$().offset().left + 20, oInitialColumnOffset.left,
+					"if this test fails, check Table.designtime.js : hScroll and vScroll domRefs!");
 
 				oColumnsOverlay.$().off("scroll", fnCallback);
 				done();
@@ -156,7 +158,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that design time is created for a sap.ui.table.AnalyticalTable", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oTable = new AnalyticalTable({
@@ -209,7 +211,7 @@ sap.ui.define([
 				setTimeout(done, 16);
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oTable.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -226,7 +228,8 @@ sap.ui.define([
 
 			var fnCallback = function() {
 				assert.strictEqual(this.oColumn.$().offset().left + 20, oInitialColumnOffset.left, "then columns are also scrolled");
-				assert.strictEqual(this.oColumn.$().offset().left + 20, oInitialColumnOffset.left, "if this test fails, check AnalyticalTable.designtime.js : hScroll and vScroll domRefs!");
+				assert.strictEqual(this.oColumn.$().offset().left + 20, oInitialColumnOffset.left,
+					"if this test fails, check AnalyticalTable.designtime.js : hScroll and vScroll domRefs!");
 
 				oColumnsOverlay.$().off("scroll", fnCallback);
 				done();

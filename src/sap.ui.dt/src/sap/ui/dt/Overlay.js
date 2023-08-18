@@ -195,19 +195,21 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			this._aStyleClasses = this._aStyleClasses.slice(0);
 			this._oScrollbarSynchronizers = new Map();
 			this._aBindParameters = [];
 
-			Element.apply(this, arguments);
+			Element.apply(this, aArgs);
 
 			if (!this.getElement()) {
 				throw Util.createError(
 					"Overlay#constructor",
 					Util.printf(
-						"Cannot create overlay without a valid element. Expected a descendant of sap.ui.core.Element or sap.ui.core.Component, but {0} was given",
-						Util.getObjectType(arguments[0].element)
+						"Cannot create overlay without a valid element. Expected a descendant of "
+						+ "sap.ui.core.Element or sap.ui.core.Component, but {0} was given",
+						Util.getObjectType(aArgs[0].element)
 					)
 				);
 			}
@@ -296,9 +298,7 @@ sap.ui.define([
 	 * @static
 	 */
 	Overlay.getOverlayContainer = function() {
-		if (!$OverlayContainer) {
-			$OverlayContainer = jQuery("<div></div>").attr("id", OVERLAY_CONTAINER_ID).appendTo("body");
-		}
+		$OverlayContainer ||= jQuery("<div></div>").attr("id", OVERLAY_CONTAINER_ID).appendTo("body");
 		return $OverlayContainer;
 	};
 
@@ -320,9 +320,7 @@ sap.ui.define([
 	 * @static
 	 */
 	Overlay.getMutationObserver = function() {
-		if (!oMutationObserver) {
-			oMutationObserver = new MutationObserver();
-		}
+		oMutationObserver ||= new MutationObserver();
 		return oMutationObserver;
 	};
 
@@ -440,7 +438,7 @@ sap.ui.define([
 		}
 	};
 
-	Overlay.prototype.destroy = function() {
+	Overlay.prototype.destroy = function(...aArgs) {
 		if (this.bIsDestroyed) {
 			Log.error(`FIXME: Do not destroy overlay twice (overlayId = ${this.getId()})!`);
 			return;
@@ -448,7 +446,7 @@ sap.ui.define([
 
 		this.fireBeforeDestroy();
 
-		Element.prototype.destroy.apply(this, arguments);
+		Element.prototype.destroy.apply(this, aArgs);
 	};
 
 	/**
@@ -666,7 +664,7 @@ sap.ui.define([
 		if (Util.isInteger(iZIndex)) {
 			$overlayDomRef.css("z-index", iZIndex);
 		} else if (this.isRoot()) {
-			this._iZIndex = this._iZIndex || ZIndexManager.getZIndexBelowPopups();
+			this._iZIndex ||= ZIndexManager.getZIndexBelowPopups();
 			$overlayDomRef.css("z-index", this._iZIndex);
 		}
 	};
@@ -714,19 +712,17 @@ sap.ui.define([
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
 			if (typeof fnHandler === "function") { // also do nothing if the second parameter is not a function
 				// store the parameters for on()
-				if (!this._aBindParameters) {
-					this._aBindParameters = [];
-				}
-				oListener = oListener || this;
+				this._aBindParameters ||= [];
+				oListener ||= this;
 
 				// FWE jQuery.proxy can't be used as it breaks our contract when used with same function but different listeners
 				var fnProxy = fnHandler.bind(oListener);
 
 				this._aBindParameters.push({
-					sEventType: sEventType,
-					fnHandler: fnHandler,
-					oListener: oListener,
-					fnProxy: fnProxy
+					sEventType,
+					fnHandler,
+					oListener,
+					fnProxy
 				});
 
 				// if control is rendered, directly call on()
@@ -752,7 +748,7 @@ sap.ui.define([
 	Overlay.prototype.detachBrowserEvent = function(sEventType, fnHandler, oListener) {
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
 			if (typeof (fnHandler) === "function") { // also do nothing if the second parameter is not a function
-				oListener = oListener || this;
+				oListener ||= this;
 
 				// remove the bind parameters from the stored array
 				if (this._aBindParameters) {

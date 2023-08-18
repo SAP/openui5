@@ -42,9 +42,9 @@ function(Plugin) {
 	/*
 	 * @private
 	 */
-	MouseSelection.prototype.init = function() {
+	MouseSelection.prototype.init = function(...aArgs) {
 		// TODO: check if somebody is inherited from this plugin, if not then we can remove this init() function
-		Plugin.prototype.init.apply(this, arguments);
+		Plugin.prototype.init.apply(this, aArgs);
 	};
 
 	/*
