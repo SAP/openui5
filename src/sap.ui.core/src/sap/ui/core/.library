@@ -455,6 +455,7 @@
                 <module>sap/ui/core/StandardMargins</module>
                 <module>sap/ui/core/ContainerPadding</module>
                 <module>sap/ui/core/InvisibleText</module>
+                <module>sap/ui/core/webc/*</module>
             </modules>
         </component>
 
