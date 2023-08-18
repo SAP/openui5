@@ -1034,18 +1034,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Flag, representing the status of the view cache.
-		 * @see {sap.ui.xmlview}
-		 *
-		 * @returns {boolean} true if view cache is enabled
-		 * @private
-		 * @experimental Since 1.44
-		 */
-		getViewCache : function() {
-			return Configuration.getValue("xx-viewCache");
-		},
-
-		/**
 		 * Currently active preload mode for libraries or falsy value.
 		 *
 		 * @returns {string} preload mode
