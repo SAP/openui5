@@ -150,7 +150,7 @@ sap.ui.define([
 	 * @return {array} Array of context menu items
 	 * @override
 	 */
-	AddIFrame.prototype.getMenuItems = function(aElementOverlays) {
+	AddIFrame.prototype.getMenuItems = async function(aElementOverlays) {
 		function getCommonProperties(sAggregationName) {
 			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			var sIFrameGroupText = oTextResources.getText("CTX_ADDIFRAME_GROUP");
@@ -169,8 +169,9 @@ sap.ui.define([
 			collectionName: "tnt",
 			fontFamily: "SAP-icons-TNT",
 			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
-			lazy: true
+			lazy: false
 		});
+		await IconPool.fontLoaded("tnt");
 
 		var iBaseRank = 140;
 		var aMenuItems = [];
