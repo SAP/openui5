@@ -26,6 +26,7 @@
 		"max-len": ["warn", {
 			"code": 140,
 			"ignorePattern": "@param|@returns|@description|&lt;|QUnit.test",
+			"ignoreTemplateLiterals": true,
 			"ignoreUrls": true
 		}],
 		"space-before-function-paren": ["error", {
