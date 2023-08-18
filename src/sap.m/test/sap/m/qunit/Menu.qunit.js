@@ -437,6 +437,36 @@ sap.ui.define([
 		assert.ok(true, "Error isn't thrown.");
 	});
 
+	QUnit.test("Adding event delegates", function(assert) {
+		// Prepare
+		var oMenuItem = new MenuItem({text: "text"}),
+			oBeforeDelegate = {
+				onBeforeRendering: function() {}
+			};
+
+		oMenuItem.addEventDelegate(oBeforeDelegate);
+
+		// Act
+		var oUnifiedItem = this.sut._createVisualMenuItemFromItem(oMenuItem);
+
+		// Assert
+		assert.strictEqual(oMenuItem.aDelegates.length, oUnifiedItem.aDelegates.length, "Equal number of delegates with the unified item");
+		assert.deepEqual(oMenuItem.aDelegates[0], oUnifiedItem.aDelegates[0], "The delegate is added to the unified item");
+
+		// Act
+		var oListItem = this.sut._createMenuListItemFromItem(oMenuItem);
+
+		// Assert
+		assert.strictEqual(oMenuItem.aDelegates.length, oListItem.aDelegates.length, "Equal number of delegates with the list item");
+		assert.deepEqual(oMenuItem.aDelegates[0], oListItem.aDelegates[0], "The delegate is added to the list item");
+
+		// Act
+		oMenuItem.removeEventDelegate(oBeforeDelegate);
+
+		// Assert
+		assert.notOk(oMenuItem.aDelegates.length, "There are no delegates left");
+	});
+
 	QUnit.module("[PHONE] Custom mutators", {
 		beforeEach: function() {
 			prepareMobilePlatform.call(this);
