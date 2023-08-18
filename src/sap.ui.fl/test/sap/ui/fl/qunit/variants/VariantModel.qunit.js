@@ -1217,7 +1217,7 @@ sap.ui.define([
 			this.oModel.getData()[sVMReference].defaultVariant = "variant0";
 			// changes in public layer
 			this.oModel.getData()[sVMReference].variants[2].title = "test";
-			this.oModel.getData()[sVMReference].variants[2].favorite = true;
+			this.oModel.getData()[sVMReference].variants[2].favorite = false; // variant1 was favorite because it is default
 			this.oModel.getData()[sVMReference].variants[2].visible = false;
 			// change in user layer
 			this.oModel.getData()[sVMReference].variants[4].visible = false;
