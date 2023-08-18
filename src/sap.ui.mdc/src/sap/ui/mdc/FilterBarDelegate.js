@@ -158,7 +158,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 						 styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : "",
 						 onClose: function() {
 							 delete oFilterBar._hasOpenMessageBox;
-							 oFilterBar.setFocusOnFirstErroneousField.bind(oFilterBar);
+							 oFilterBar.setFocusOnFirstErroneousField();
 						 }
 					 });
 				 } catch (x) {
