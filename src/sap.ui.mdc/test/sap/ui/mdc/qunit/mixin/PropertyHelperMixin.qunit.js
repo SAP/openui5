@@ -17,6 +17,9 @@ sap.ui.define([
 ) {
     "use strict";
 
+	//karma testing seems tnot to know window.top   ....
+	window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
+
     var TestClass;
     var oSomeInstance;
 	var oFlexPromiseStub;
