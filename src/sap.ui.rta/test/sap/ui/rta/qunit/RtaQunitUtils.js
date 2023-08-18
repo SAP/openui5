@@ -224,7 +224,8 @@ sap.ui.define([
 		sId ||= "someName";
 		oManifest ||= {
 			"sap.app": {
-				id: sId
+				id: sId,
+				type: "application"
 			}
 		};
 		var Component = UIComponent.extend("component", {

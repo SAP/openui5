@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement"
 ], function(
 	Log,
@@ -27,6 +28,7 @@ sap.ui.define([
 	FlexControllerFactory,
 	Layer,
 	Utils,
+	JSONModel,
 	Measurement
 ) {
 	"use strict";
@@ -94,6 +96,25 @@ sap.ui.define([
 		return Promise.resolve(oResult);
 	}
 
+	/**
+	 * Binds a json model to the component if a vendor change is loaded. This will enable the translation for those changes.
+	 * Used on the NEO stack
+	 * @param {sap.ui.core.Component} oAppComponent - Component instance
+	 */
+	function createVendorTranslationModelIfNecessary(oAppComponent) {
+		const sReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
+		const oStorageResponse = FlexState.getStorageResponse(sReference);
+		if (
+			oStorageResponse.messagebundle
+			&& !oAppComponent.getModel("i18nFlexVendor")
+			&& oStorageResponse.changes?.changes?.some((oChange) => {
+				return oChange.layer === Layer.VENDOR;
+			})
+		) {
+			oAppComponent.setModel(new JSONModel(oStorageResponse.messagebundle), "i18nFlexVendor");
+		}
+	}
+
 	function propagateChangesForAppComponent(oAppComponent) {
 		// only manifest with type = "application" will fetch changes
 		var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
@@ -134,6 +155,7 @@ sap.ui.define([
 				asyncHints: vConfig.asyncHints
 			})
 			.then(propagateChangesForAppComponent.bind(this, oComponent))
+			.then(createVendorTranslationModelIfNecessary.bind(this, oComponent))
 			.then(function() {
 				// update any potential embedded component waiting for this app component
 				if (oEmbeddedComponentsPromises[sComponentId]) {
