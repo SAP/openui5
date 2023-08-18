@@ -4,6 +4,7 @@ sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Util",
 	"sap/ui/fl/changeHandler/PropertyChange",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/FieldExtensibility",
@@ -21,6 +22,7 @@ sap.ui.define([
 	RtaQunitUtils,
 	KeyCodes,
 	OverlayRegistry,
+	DtUtil,
 	PropertyChange,
 	ChangesWriteAPI,
 	FieldExtensibility,
@@ -93,6 +95,9 @@ sap.ui.define([
 					return true;
 				}
 			});
+		},
+		beforeEach() {
+			return DtUtil.waitForSynced(this.oRta._oDesignTime)();
 		},
 		afterEach() {
 			sandbox.restore();
