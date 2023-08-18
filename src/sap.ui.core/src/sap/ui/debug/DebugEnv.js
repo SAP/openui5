@@ -3,8 +3,8 @@
  */
 
 // A core plugin that bundles debug features and connects with an embedding testsuite
-sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree', './LogViewer', './PropertyList', "sap/base/Log", "sap/ui/thirdparty/jquery", "sap/ui/core/Configuration"],
-	function(Interface, ControlTree, LogViewer, PropertyList, Log, jQuery, Configuration) {
+sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree', './LogViewer', './PropertyList', "sap/base/Log", "sap/ui/thirdparty/jquery", "sap/ui/core/Configuration", 'sap/ui/core/Rendering'],
+	function(Interface, ControlTree, LogViewer, PropertyList, Log, jQuery, Configuration, Rendering) {
 	"use strict";
 
 
@@ -200,7 +200,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree'
 		// To compensate this, we register for both, the UIUpdated and for a timer (if we are not called during Core.init)
 		// Whatever happens first.
 		// TODO should be part of core
-		this.oCore.attachUIUpdated(this.enableLogViewer, this);
+		Rendering.attachUIUpdated(this.enableLogViewer, this);
 		if ( !bOnInit ) {
 			var that = this;
 			this.oTimer = setTimeout(function() {

@@ -68,6 +68,10 @@ sap.ui.define([
 				assert.strictEqual(mEventCalls.aApplied[0].theme, Theming.getTheme(), "In case there is no ThemeManager, the applied event should be called immediately.");
 				mEventCalls.aApplied.pop();
 			}
+			mEventCalls = {
+				aChange: [],
+				aApplied: []
+			};
 		},
 		afterEach: function () {
 			Theming.detachChange(checkChange);

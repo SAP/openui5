@@ -55,20 +55,24 @@ sap.ui.define([
 
 	function setupTestsBeforeEach(assert) {
 		mConfigStubValues = {};
-		mEventCalls = {
-			aChange: [],
-			aApplied: []
-		};
 		oURLConfigurationProviderStub = sinon.stub(URLConfigurationProvider, "get");
 		oURLConfigurationProviderStub.callsFake(function(sKey) {
 				return mConfigStubValues.hasOwnProperty(sKey) ? mConfigStubValues[sKey] : oURLConfigurationProviderStub.wrappedMethod.call(this, sKey);
 		});
+		mEventCalls = {
+			aChange: [],
+			aApplied: []
+		};
 		Theming.attachChange(checkChange);
 		Theming.attachApplied(checkApplied);
 		if (bThemeManagerNotActive) {
 			assert.strictEqual(mEventCalls.aApplied[0].theme, Theming.getTheme(), "In case there is no ThemeManager, the applied event should be called immediately.");
 			mEventCalls.aApplied.pop();
 		}
+		mEventCalls = {
+			aChange: [],
+			aApplied: []
+		};
 	}
 
 	function setupTestsAfterEach() {
@@ -256,15 +260,26 @@ sap.ui.define([
 	});
 
 	QUnit.test("isApplied", async function(assert) {
-		assert.ok(Theming.isApplied(), "Theming should be applied.");
+		function isApplied() {
+			var bApplied = false;
+			function fnCheckApplied() {
+				bApplied = true;
+			}
+			// if theme is applied fnCheckApplied is called sync
+			Theming.attachApplied(fnCheckApplied);
+			Theming.detachApplied(fnCheckApplied);
+			return bApplied;
+		}
+
+		assert.ok(isApplied(), "Theming should be applied.");
 
 		// check if isApplied flag is reset after setting a new theme
 		Theming.setTheme("my_test_theme_for_applied");
-		assert.strictEqual(Theming.isApplied(), bThemeManagerNotActive, "'true' if ThemeManager is active; else 'false'");
+		assert.strictEqual(isApplied(), bThemeManagerNotActive, "'true' if ThemeManager is active; else 'false'");
 
 		await themeApplied();
 
-		assert.ok(Theming.isApplied(), "Theming should be applied.");
+		assert.ok(isApplied(), "Theming should be applied.");
 	});
 
 });

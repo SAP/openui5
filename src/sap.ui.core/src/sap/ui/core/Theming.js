@@ -33,8 +33,8 @@ sap.ui.define([
 	 *
 	 * @alias module:sap/ui/core/Theming
 	 * @namespace
-	 * @private
-	 * @ui5-restricted sap.ui.core
+	 * @public
+	 * @since 1.118
 	 */
 	var Theming = {
 		/**
@@ -116,19 +116,6 @@ sap.ui.define([
 				}
 			}
 			return this;
-		},
-
-		/**
-		 * Returns true, if the styles of the current theme are already applied, false otherwise.
-		 *
-		 * If the styles are not yet applied a theme changed event will follow when the styles will be applied.
-		 *
-		 * @return {boolean} whether the styles of the current theme are already applied
-		 * @private
-		 * @ui5-restricted sap.ui.core.Core
-		 */
-		isApplied: function() {
-			return !oThemeManager || oThemeManager.themeLoaded;
 		},
 
 		/**
@@ -299,7 +286,11 @@ sap.ui.define([
 		attachAppliedOnce: function(fnFunction) {
 			var sId = "applied";
 			if (oThemeManager) {
-				Theming.attachEventOnce(sId, fnFunction);
+				if (oThemeManager.themeLoaded) {
+					fnFunction.call(Theming, new BaseEvent(sId, Theming, {theme: Theming.getTheme()}));
+				} else {
+					Theming.attachEventOnce(sId, fnFunction);
+				}
 			} else {
 				fnFunction.call(Theming, new BaseEvent(sId, Theming, {theme: Theming.getTheme()}));
 			}
@@ -314,7 +305,11 @@ sap.ui.define([
 		attachApplied: function(fnFunction) {
 			var sId = "applied";
 			Theming.attachEvent(sId, fnFunction);
-			if (!oThemeManager) {
+			if (oThemeManager) {
+				if (oThemeManager.themeLoaded) {
+					fnFunction.call(Theming, new BaseEvent(sId, Theming, {theme: Theming.getTheme()}));
+				}
+			} else {
 				fnFunction.call(Theming, new BaseEvent(sId, Theming, {theme: Theming.getTheme()}));
 			}
 		},

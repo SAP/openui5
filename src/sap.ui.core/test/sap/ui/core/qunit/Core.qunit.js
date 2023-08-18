@@ -11,10 +11,11 @@ sap.ui.define([
 	'sap/ui/core/UIArea',
 	'sap/ui/core/Element',
 	'sap/ui/core/Configuration',
+	'sap/ui/core/Rendering',
 	'sap/ui/core/RenderManager',
 	'sap/ui/core/theming/ThemeManager',
 	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Configuration, RenderManager, ThemeManager, createAndAppendDiv) {
+], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Configuration, Rendering, RenderManager, ThemeManager, createAndAppendDiv) {
 	"use strict";
 
 	var privateLoaderAPI = sap.ui.loader._;
@@ -338,8 +339,8 @@ sap.ui.define([
 			bCalled2 = true;
 		}
 
-		oCore.addPrerenderingTask(task1);
-		oCore.addPrerenderingTask(task2);
+		Rendering.addPrerenderingTask(task1);
+		Rendering.addPrerenderingTask(task2);
 
 		assert.ok(!bCalled1, "not yet called");
 		assert.ok(!bCalled2, "not yet called");
@@ -363,8 +364,8 @@ sap.ui.define([
 			bCalled2 = true;
 		}
 
-		oCore.addPrerenderingTask(task2);
-		oCore.addPrerenderingTask(task1, true);
+		Rendering.addPrerenderingTask(task2);
+		Rendering.addPrerenderingTask(task1, true);
 
 		assert.ok(!bCalled1, "not yet called");
 		assert.ok(!bCalled2, "not yet called");

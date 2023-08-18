@@ -6,12 +6,13 @@
 sap.ui.define('sap/ui/debug/ControlTree', [
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/Element',
+	'sap/ui/core/Rendering',
 	'sap/ui/core/UIArea',
 	'./Highlighter',
 	"sap/ui/dom/getOwnerWindow",
 	"sap/base/Log"
 ],
-	function(EventProvider, Element, UIArea, Highlighter, getOwnerWindow, Log) {
+	function(EventProvider, Element, Rendering, UIArea, Highlighter, getOwnerWindow, Log) {
 	"use strict";
 
 
@@ -53,7 +54,7 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 			this.oParentDomRef.addEventListener("mouseover", this.onmouseover);
 			this.oParentDomRef.addEventListener("mouseout", this.onmouseout);
 			this.enableInplaceControlSelection();// see below...
-			this.oCore.attachUIUpdated(this.renderDelayed, this);
+			Rendering.attachUIUpdated(this.renderDelayed, this);
 			this.sSelectedNodeId = "";
 			// Note: window.top is assumed to refer to the app window in embedded mode or to the testsuite window otherwise
 			this.sResourcePath = window.top.sap.ui.require.toUrl("") + "/";
