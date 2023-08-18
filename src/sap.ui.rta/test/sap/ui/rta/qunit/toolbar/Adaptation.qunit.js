@@ -76,7 +76,6 @@ sap.ui.define([
 			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 		},
 		after() {
-			this.oToolbar.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -94,6 +93,7 @@ sap.ui.define([
 				this.oToolbar.setModel(this.oVersionsModel, "versions");
 				this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 				assert.ok(this.oToolbar.getControl("versionButton").getEnabled(), "then the version button is enabled");
+				this.oToolbar.destroy();
 			}.bind(this));
 		});
 
@@ -112,6 +112,7 @@ sap.ui.define([
 				this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 				this.oVersionButton = this.oToolbar.getControl("versionButton");
 				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "then the version button is not visible");
+				this.oToolbar.destroy();
 			}.bind(this));
 		});
 
@@ -132,6 +133,7 @@ sap.ui.define([
 				assert.strictEqual(this.oToolbar.getControl("save").getTooltip(), "Save", "then without versioning enabled tooltip on save button is correct");
 				this.oVersionsModel.setProperty("/versioningEnabled", true);
 				assert.strictEqual(this.oToolbar.getControl("save").getTooltip(), "Save Draft", "then with versioning enabled tooltip on save button is correct");
+				this.oToolbar.destroy();
 			}.bind(this));
 		});
 	});
@@ -546,9 +548,6 @@ sap.ui.define([
 			];
 			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations, aAdaptations[0], true);
 
-			this.oToolbar = new Adaptation({
-				textResources: this.oTextResources
-			});
 			sandbox.stub(FlexState, "update");
 			sandbox.stub(ContextBasedAdaptationsAPI, "remove").resolves({status: 204});
 			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(oAdaptationsModel);

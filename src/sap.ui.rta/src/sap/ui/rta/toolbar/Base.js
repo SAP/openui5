@@ -102,6 +102,8 @@ sap.ui.define([
 		HBox.prototype.init.apply(this, aArgs);
 		// Assign the model object to the SAPUI5 core using the name "i18n"
 		this.setModel(this._oResourceModel, "i18n");
+		this._fnOnScrollBound = this._onScroll.bind(this);
+		window.addEventListener("scroll", this._fnOnScrollBound, true);
 		return this.buildContent();
 	};
 
@@ -110,6 +112,7 @@ sap.ui.define([
 			oExtension.destroy();
 		});
 		this._oExtensions = {};
+		window.removeEventListener("scroll", this._fnOnScrollBound, true);
 
 		HBox.prototype.exit.apply(this, aArgs);
 	};
@@ -256,6 +259,17 @@ sap.ui.define([
 	 */
 	Base.prototype.bringToFront = function() {
 		this.setZIndex(ZIndexManager.getNextZIndex());
+	};
+
+	Base.prototype._onScroll = function() {
+		var oDomElement = this.getDomRef();
+		// In some cases, there is a scroll event before
+		// the DOM Element is created
+		if (!oDomElement) {
+			return;
+		}
+		var sScrollClass = "sapUiRtaToolbar_scrolling";
+		oDomElement.classList.toggle(sScrollClass, window.scrollY > 0);
 	};
 
 	return Base;

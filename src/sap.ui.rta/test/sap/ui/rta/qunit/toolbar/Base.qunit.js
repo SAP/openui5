@@ -91,6 +91,31 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when the page is scrolled", function(assert) {
+			var fnDone = assert.async();
+			var oPromise = this.oToolbar.show();
+			return oPromise.then(function() {
+				oCore.applyChanges();
+				document.body.style.height = "1400px";
+				var sClassname = "sapUiRtaToolbar_scrolling";
+				var oObserver = new MutationObserver(function(aMutations) {
+					aMutations.forEach(function(oMutation) {
+						if (oMutation.target.classList.contains(sClassname)) {
+							assert.ok(true, "then the Toolbar gets the correct classname");
+							document.body.style.height = "";
+							fnDone();
+						}
+					});
+				});
+
+				oObserver.observe(this.oToolbar.getDomRef(), {
+					attributes: true,
+					attributeFilter: ["class"]
+				});
+				window.scrollTo(0, 1000);
+			}.bind(this));
+		});
+
 		QUnit.test("setZIndex() method", function(assert) {
 			return this.oToolbar.show().then(function() {
 				var iInitialZIndex = parseInt(getComputedStyle(this.oToolbar.getDomRef())["z-index"]);
