@@ -12,14 +12,14 @@
 	&:not(.sapMSliderInnerDisabled).sapMSliderProgress:hover ~ .sapMSliderHandle,
 	.sapMSliderHandle:hover  {
 		border: 1px @sapContent_FocusStyle @sapUiSliderHoverHandleBorderColor;
-		background: @sapUiSliderRangeHandleBackground;
+		background: @sapUiSliderHoverRangeHandleBackground;
 		box-shadow: @sapUiContentSelectedShadow;
 	}
 
 	&:not(.sapMSliderInnerDisabled) .sapMSliderHandle.sapMSliderHandlePressed {
 		&:not(:focus) {
 			background: transparent;
-			border: 0.125rem solid #4DB1FF;
+			border: 0.125rem solid @sapUiSliderActiveHandleBorderColor;
 			outline: none;
 			box-shadow: none;
 			top: -0.625rem;
@@ -28,7 +28,7 @@
 
 	&:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
 		background: @sapUiSliderActiveRangeHandleBackground;
-		border: 0.125rem solid #4DB1FF;
+		border: 0.125rem solid @sapUiSliderActiveHandleBorderColor;
 		outline: none;
 		box-shadow: none;
 		top: -0.625rem;
@@ -50,20 +50,42 @@
 	background-color: @sapUiContentMeasureIndicatorColor;
 }
 
+.sapMRangeSlider .sapMSliderLabels {
+	width: 100%;
+	position: absolute;
+	top: 2.125rem;
+}
+
+.sapMRangeSlider .sapMSliderTickLabel .sapMSliderLabel {
+	top: 1rem;
+}
+
+.sapMRangeSlider .sapMSliderRangeLabel {
+	padding-top: 0.4375rem;
+}
+
 .sapUiSizeCompact {
 	.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle.sapMSliderHandlePressed {
 		&:not(:focus) {
 			background: transparent;
-			border: 0.125rem solid #4DB1FF;
+			border: 0.125rem solid @sapUiSliderActiveHandleBorderColor;
 			outline: none;
 			box-shadow: none;
 			top: -0.5rem;
 		}
 	}
 
+	.sapMRangeSlider .sapMSliderLabels {
+		margin: 0 -0.875rem;
+	}
+
+	.sapMRangeSlider .sapMSliderRangeLabel {
+		padding-top: 0.375rem;
+	}
+
 	.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
 		background: @sapUiSliderActiveRangeHandleBackground;
-		border: 0.125rem solid #4DB1FF;
+		border: 0.125rem solid @sapUiSliderActiveHandleBorderColor;
 		outline: none;
 		box-shadow: none;
 		top: -0.5rem;
