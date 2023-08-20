@@ -5672,6 +5672,117 @@ sap.ui.define([
 		oInput = null;
 	});
 
+	QUnit.test("Dynamic typeahead and item selection with delayed loading of tabular suggestions", function (assert) {
+		var oTabularPopover;
+
+		var oData = {
+			items: [
+				{key: "key1", value: "test1"},
+				{key: "key2", value: "test2"},
+				{key: "key3", value: "test3"},
+				{key: "key4", value: "test4"},
+				{key: "key5", value: "test5"},
+				{key: "key6", value: "test6"},
+				{key: "key7", value: "test7"}
+			]
+		};
+		var oModel = new JSONModel();
+		var oInputWithTabularSuggestions = new sap.m.Input({
+			showSuggestion: true,
+			suggestionRows: {
+				path: "/items",
+				template: new sap.m.ColumnListItem({
+					cells: [
+						new sap.m.Text({text:"{value}"})
+					]
+				})
+			},
+			suggestionColumns: [
+				new sap.m.Column({
+					header: new sap.m.Label({text: "Text"})
+				})
+			],
+			suggest: function (oEvent) {
+				// simulate some backend logic to filter the suggestions
+				var aItems = oData.items.filter(function(oItem) {
+					return oItem.value.includes(oEvent.getParameter("suggestValue"));
+				}).slice(0, 5);
+
+				setTimeout(function () {
+					oModel.setData({
+						items: aItems
+					});
+				}, 0);
+			}
+		});
+
+		oInputWithTabularSuggestions.setModel(oModel);
+		oInputWithTabularSuggestions.placeAt('content');
+		oCore.applyChanges();
+
+		oTabularPopover = oInputWithTabularSuggestions._getSuggestionsPopover();
+
+		oInputWithTabularSuggestions._$input.trigger("focus").trigger("keydown").val("test6").trigger("input");
+		oCore.applyChanges();
+		this.clock.tick(300);
+
+		assert.strictEqual(oTabularPopover.getItemsContainer().getItems()[0].getSelected(), true, "Correct item in the Suggested list is selected");
+
+		oInputWithTabularSuggestions.destroy();
+	});
+
+	QUnit.test("Dynamic typeahead and item selection with delayed loading of list items", function (assert) {
+		var oPopover;
+
+		var oData = {
+			items: [
+				{key: "key1", value: "test1"},
+				{key: "key2", value: "test2"},
+				{key: "key3", value: "test3"},
+				{key: "key4", value: "test4"},
+				{key: "key5", value: "test5"},
+				{key: "key6", value: "test6"},
+				{key: "key7", value: "test7"}
+			]
+		};
+		var oModel = new JSONModel();
+		var oInput = new Input("dynamic-input", {
+			showSuggestion: true,
+			filterSuggests: false,
+			suggestionItems: {
+				path: "/items",
+				template: new Item({key: "{key}", text: "{value}"})
+			},
+			suggest: function (oEvent) {
+				var aItems = oData.items.filter(function(oItem) {
+					return oItem.value.includes(oEvent.getParameter("suggestValue").slice(0, 5));
+				});
+
+				setTimeout(function () {
+					oModel.setData({
+						items: aItems
+					});
+				}, 0);
+			}
+		});
+
+		oInput.setModel(oModel);
+		oInput.placeAt('content');
+		oCore.applyChanges();
+
+		oPopover = oInput._getSuggestionsPopover();
+		oPopover.getPopover().open();
+		this.clock.tick(300);
+
+		oInput._$input.trigger("focus").trigger("keydown").val("test6").trigger("input");
+		this.clock.tick(300);
+
+		assert.strictEqual(getVisibleItems(oPopover.getPopover())[0].getSelected(), true, "Correct item in the Suggested list is selected");
+
+		oInput.destroy();
+	});
+
+
 	QUnit.test("Autocomplete with dynamic loading of items on mobile", function (assert) {
 		var oPopover;
 		var oPopupInput;
