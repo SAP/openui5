@@ -3,6 +3,17 @@
     "date": "August 2023",
     "notes": [
       {
+        "id": "3154d64beb332195666bccdb75242f48648c024e",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: adjust grid cell selection display",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122447"
+          }
+        ]
+      },
+      {
         "id": "589dcfce01b17df2ce797c2b2adc29b9a7ebb02e",
         "type": "FIX",
         "text": " sap.m.ProgressIndicator: Fixed misalignment in table cell",

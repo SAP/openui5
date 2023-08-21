@@ -3,6 +3,11 @@
     "date": "August 2023",
     "notes": [
       {
+        "id": "cfea48d7e5044413f637a727468f0111fe29c45f",
+        "type": "FEATURE",
+        "text": " sap.ui.core: generic Web Components support for UI5"
+      },
+      {
         "id": "ae5fdb747080b08e4073dd4db8d140044bb25ca1",
         "type": "FIX",
         "text": " sap.ui.webc.common: fix typo in MetadataOptions JSDoc"

@@ -3,9 +3,86 @@
     "date": "August 2023",
     "notes": [
       {
+        "id": "40ccd2236bb01c11e29b04ce61bcad3e068112a7",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: adjust avatar size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380119504"
+          }
+        ]
+      },
+      {
+        "id": "3154d64beb332195666bccdb75242f48648c024e",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: adjust grid cell selection display",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122447"
+          }
+        ]
+      },
+      {
+        "id": "1e439fc91dde2343b80854ef61f11ed60ed11682",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Remove link to ACC testing page",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011673"
+          }
+        ]
+      },
+      {
+        "id": "5441fb397ad80ac656ac5a995c15a1ed7954eb6a",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: first day of the week properly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370048685"
+          }
+        ]
+      },
+      {
+        "id": "199d51ecc8b9a3a8ad3d96474ee9f5cda490df31",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Fix navigation skipping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005568382023"
+          }
+        ]
+      },
+      {
         "id": "b6c45eb11750590be5ef2dacf52f012b46402896",
         "type": "FEATURE",
         "text": " sap.m Tokenizer: Allow custom press events in the n-more tokens list"
+      },
+      {
+        "id": "beaf9fa024b7eaf822e81998a44f181238c79c39",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: translation no longer escapes special symbol",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370061635"
+          }
+        ]
+      },
+      {
+        "id": "e17a968224f43b47c0919a5e7c2e2bf09571d874",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Correct designtime overlays",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380070944"
+          }
+        ]
       },
       {
         "id": "7e73ad754fdde80a08a5cce2ba0b578d447a5d9b",
