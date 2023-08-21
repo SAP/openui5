@@ -981,6 +981,10 @@ sap.ui.define([
 	FilterBarBase.prototype._checkFieldsInErrorState = function() {
 		var vRetErrorState = FilterBarValidationStatus.NoError;
 
+		if (this._bFieldInErrorState) {
+			return FilterBarValidationStatus.FieldInErrorState;
+		}
+
 		this.getFilterItems().some(function(oFilterField) {
 			if (oFilterField && (oFilterField.getValueState() !== ValueState.None)) {
 				if (oFilterField.getValueStateText() !== this._getRequiredFilterFieldValueText(oFilterField)) {
@@ -1038,7 +1042,16 @@ sap.ui.define([
 			this._aFIChanges = [];
 		}
 
-		this._aFIChanges.push({ name: oFilterField.getPropertyKey(), promise: oEvent.getParameter("promise")});
+		var sFilterName = oFilterField.getPropertyKey();
+		this._aFIChanges.some(function(oFieldInfo, nIdx) {
+			if (oFieldInfo.name === sFilterName) {
+				this._aFIChanges.splice(nIdx, 1);    //this entry will be replaced with the latest values
+				return true;
+			}
+			return false;
+		}.bind(this));
+
+		this._aFIChanges.push({ name: sFilterName, promise: oEvent.getParameter("promise")});
 	};
 
 	 /**
@@ -1110,9 +1123,14 @@ sap.ui.define([
 					}
 				}, this);
 				fnCallBack(bFireSearch);
-			}.bind(this)).catch(function(oEx) {
+			}.bind(this),
+			function() {
+				this._bFieldInErrorState = true;
 				fnCallBack(bFireSearch);
-			});
+			}.bind(this)).catch(function(oEx) {
+				this._bFieldInErrorState = true;
+				fnCallBack(bFireSearch);
+			}.bind(this));
 		}
 	};
 
@@ -1133,9 +1151,14 @@ sap.ui.define([
 
 			Promise.all(aChangePromises).then(function() {
 				fnCallBack(bFireSearch);
-			}).catch(function(oEx) {
+			},
+			function() {
+				this._bFieldInErrorState = true;
 				fnCallBack(bFireSearch);
-			});
+			}.bind(this)).catch(function(oEx) {
+				this._bFieldInErrorState = true;
+				fnCallBack(bFireSearch);
+			}.bind(this));
 		}
 	};
 
@@ -1180,6 +1203,7 @@ sap.ui.define([
 		 }.bind(this);
 
 		 var fnCleanup = function() {
+			 this._bFieldInErrorState = false;
 			 this._oValidationPromise = null;
 			 this._fRejectedSearchPromise = null;
 			 this._fResolvedSearchPromise = null;
