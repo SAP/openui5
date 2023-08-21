@@ -6,6 +6,7 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/DeclarativeSupport',
+	"sap/ui/core/Element",
 	'sap/ui/core/UIArea',
 	'./DOMElement',
 	"./TemplateControlRenderer",
@@ -19,6 +20,7 @@ sap.ui.define([
 	function(
 		Control,
 		DeclarativeSupport,
+		Element,
 		UIArea,
 		DOMElement,
 		TemplateControlRenderer,
@@ -192,7 +194,7 @@ sap.ui.define([
 	 * @private
 	 */
 	TemplateControl.prototype._compile = function() {
-		var oTemplate = sap.ui.getCore().byId(this.getTemplate()),
+		var oTemplate = Element.getElementById(this.getTemplate()),
 			bDeclarativeSupport = oTemplate && oTemplate.getDeclarativeSupport();
 		if (bDeclarativeSupport) {
 			var that = this;

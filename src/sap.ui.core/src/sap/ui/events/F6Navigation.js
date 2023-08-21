@@ -306,7 +306,8 @@ sap.ui.define([
 		}
 
 		if (oNextFastNavGroup && oNextFastNavGroup.getAttribute("data-sap-ui-customfastnavgroup") === "true" && oNextFastNavGroup.id) {
-			var oControl = sap.ui.getCore().byId(oNextFastNavGroup.id);
+			var Element = sap.ui.require("sap/ui/core/Element");
+			var oControl = Element?.getElementById(oNextFastNavGroup.id);
 			if (oControl) {
 				oFastNavEvent = jQuery.Event("BeforeFastNavigationFocus");
 				oFastNavEvent.target = oNextTabbable;

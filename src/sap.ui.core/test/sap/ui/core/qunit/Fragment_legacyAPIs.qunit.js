@@ -11,13 +11,14 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/Element",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/mvc/Controller",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/jquery",
 	"testdata/fragments_legacyAPIs/TypedView"
-], function (Log, qutils, Component, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, nextUIUpdate, View, XMLView, Controller, LoaderExtensions, jQuery, TypedView) {
+], function (Log, qutils, Component, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, nextUIUpdate, Element, View, XMLView, Controller, LoaderExtensions, jQuery, TypedView) {
 	"use strict";
 
 	createAndAppendDiv(["content1", "content2", "content3", "content4", "binding"]);
@@ -126,7 +127,7 @@ sap.ui.define([
 		assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
 
 		// find controls by ID
-		var btn = sap.ui.getCore().byId("btnInXmlFragment");
+		var btn = Element.getElementById("btnInXmlFragment");
 		assert.ok(btn, "Button should be found by ID");
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
@@ -194,7 +195,7 @@ sap.ui.define([
 		assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
 
 		// find controls by ID
-		var btn = sap.ui.getCore().byId("btnInHtmlFragment");
+		var btn = Element.getElementById("btnInHtmlFragment");
 		assert.ok(btn, "Button should be found by ID");
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
@@ -267,7 +268,7 @@ sap.ui.define([
 		assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
 
 		// find controls by ID
-		var btn = sap.ui.getCore().byId("btnInJsFragment");
+		var btn = Element.getElementById("btnInJsFragment");
 		assert.ok(btn, "Button should be found by ID");
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
@@ -804,9 +805,9 @@ sap.ui.define([
 		sap.ui.xmlview("unnamedView", "my.UnnamedView").placeAt("binding");
 		await nextUIUpdate();
 
-		var oLabel = sap.ui.getCore().byId("unnamedView--unnamedName");
+		var oLabel = Element.getElementById("unnamedView--unnamedName");
 		assert.ok(oLabel.getText().indexOf("<Named>") == -1, "Binding of unnamed model set for 'name'");
-		oLabel = sap.ui.getCore().byId("unnamedView--unnamedPhone");
+		oLabel = Element.getElementById("unnamedView--unnamedPhone");
 		assert.ok(oLabel.getText().indexOf("<Named>") == -1, "Binding of unnamed model set for 'phone'");
 
 	});
@@ -815,9 +816,9 @@ sap.ui.define([
 		sap.ui.xmlview("namedView", "my.View").placeAt("binding");
 		await nextUIUpdate();
 
-		var oLabel = sap.ui.getCore().byId("namedView--namedName");
+		var oLabel = Element.getElementById("namedView--namedName");
 		assert.ok(oLabel.getText().indexOf("<Named>") > -1, "Binding of named model set for 'name'");
-		oLabel = sap.ui.getCore().byId("namedView--namedPhone");
+		oLabel = Element.getElementById("namedView--namedPhone");
 		assert.ok(oLabel.getText().indexOf("<Named>") > -1, "Binding of named model set for 'phone'");
 	});
 
@@ -1192,10 +1193,10 @@ sap.ui.define([
 			// In the async case if we encounter an error during XML processing, the processing is stopped (forcefully).
 			// We do not (yet) have a way to clean up any controls which have been created until the exception was raised.
 			/*
-			assert.equal(sap.ui.getCore().byId("panel"), null);
-			assert.equal(sap.ui.getCore().byId("button1"), null);
-			assert.equal(sap.ui.getCore().byId("button2"), null);
-			assert.equal(sap.ui.getCore().byId("button3"), null);
+			assert.equal(Element.getElementById("panel"), null);
+			assert.equal(Element.getElementById("button1"), null);
+			assert.equal(Element.getElementById("button2"), null);
+			assert.equal(Element.getElementById("button3"), null);
 			*/
 		});
 	});

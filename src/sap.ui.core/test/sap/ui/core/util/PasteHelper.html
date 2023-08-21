@@ -15,6 +15,7 @@
         sap.ui.require([
                     'sap/ui/core/util/PasteHelper',
                     'sap/ui/core/Core',
+                    'sap/ui/core/Element',
                     'sap/ui/model/json/JSONModel',
                     'sap/ui/table/Table',
                     'sap/ui/table/Column',
@@ -22,7 +23,7 @@
                     'sap/m/Text',
                     'sap/m/Label',
                     'sap/m/MessageBox'],
-                function(PasteHelper, Core, JSONModel, Table, Column, TextArea, Text, Label, MessageBox) {
+                function(PasteHelper, Core, Element, JSONModel, Table, Column, TextArea, Text, Label, MessageBox) {
 
                     // Test Data if not using Excel spreadsheet for copying.
                     //var aData3_OK = [["Luis", "10", "yes", "2018-12-03", "5 USD"],["Leo", "8", "no","2018-12-18", "15.53 EUR"]];
@@ -105,9 +106,9 @@
                                 showDataInTable(aData);
                                 var msg = "";
                                 var myJSON = JSON.stringify(oResult.parsedData);
-                                Core.byId("ta2").setValue(myJSON);
+                                Element.getElementById("ta2").setValue(myJSON);
                                 if (e.target.id == "ta1-inner") {
-                                    Core.byId("ta1").setValue(e.clipboardData.getData("text"));
+                                    Element.getElementById("ta1").setValue(e.clipboardData.getData("text"));
                                 }
                                 e.preventDefault();
 
@@ -117,7 +118,7 @@
                                     msg = msg + "\n" + (oResult.errors)[i].message;
                                 }
                                 MessageBox.error(msg);
-                                Core.byId("ta2").setValue(msg);
+                                Element.getElementById("ta2").setValue(msg);
                                 e.preventDefault();
                             }
                         });

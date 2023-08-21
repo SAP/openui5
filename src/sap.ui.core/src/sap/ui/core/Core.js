@@ -2162,8 +2162,9 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Element|undefined} Element with the given ID or <code>undefined</code>
 	 * @public
 	 * @function
+	 * @deprecated Since 1.119. Please use {@link sap.ui.core.Element.getElementById Element.getElementById} instead.
 	 */
-	Core.prototype.byId = Element.registry.get;
+	Core.prototype.byId = Element.getElementById;
 
 	/**
 	 * Returns the registered element for the given ID, if any.
@@ -2174,7 +2175,7 @@ sap.ui.define([
 	 * @function
 	 * @public
 	 */
-	Core.prototype.getControl = Element.registry.get;
+	Core.prototype.getControl = Element.getElementById;
 
 	/**
 	 * Returns the registered element for the given ID, if any.
@@ -2185,7 +2186,7 @@ sap.ui.define([
 	 * @function
 	 * @public
 	 */
-	Core.prototype.getElementById = Element.registry.get;
+	Core.prototype.getElementById = Element.getElementById;
 
 	/**
 	 * Returns the registered object for the given ID, if any.

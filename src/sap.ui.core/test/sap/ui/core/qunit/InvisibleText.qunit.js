@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Log, InvisibleText, jQuery, Configuration, nextUIUpdate) {
+], function(Log, InvisibleText, jQuery, Configuration, Element, nextUIUpdate) {
 	"use strict";
 
 	var oDIV = document.createElement("div");
@@ -51,7 +52,7 @@ sap.ui.define([
 
 		var textId = InvisibleText.getStaticId("sap.ui.core", "VALUE_STATE_ERROR");
 		assert.ok(textId && typeof textId === 'string', "getStaticId must return an ID");
-		var oText = sap.ui.getCore().byId(textId);
+		var oText = Element.getElementById(textId);
 		assert.ok(oText instanceof InvisibleText, "ID must refer to an instance of InvisibleText");
 		assert.equal(oText.$().text(), sExpectedTextEN, "Text rendered correctly");
 		assert.equal(oText.$().attr("aria-hidden"), "true", "aria-hidden=true is set");
@@ -72,10 +73,10 @@ sap.ui.define([
 		// but rather reflect the behavior of the current implementation
 
 		var textId3 = InvisibleText.getStaticId("not.a.library", "TEXT_FROM_A_NON_EXISTING_LIBRARY");
-		assert.equal(sap.ui.getCore().byId(textId3).$().text(), "TEXT_FROM_A_NON_EXISTING_LIBRARY", "retrieving a text from a non-existing library results in a text that equals the key");
+		assert.equal(Element.getElementById(textId3).$().text(), "TEXT_FROM_A_NON_EXISTING_LIBRARY", "retrieving a text from a non-existing library results in a text that equals the key");
 
 		var textId4 = InvisibleText.getStaticId("sap.ui.core", "THIS_TEXT_DOES_NOT_EXIST");
-		assert.equal(sap.ui.getCore().byId(textId4).$().text(), "THIS_TEXT_DOES_NOT_EXIST", "retrieving a non-existing key results in a text that equals the key");
+		assert.equal(Element.getElementById(textId4).$().text(), "THIS_TEXT_DOES_NOT_EXIST", "retrieving a non-existing key results in a text that equals the key");
 	});
 
 	QUnit.test("Deactivated Control APIs", function(assert) {

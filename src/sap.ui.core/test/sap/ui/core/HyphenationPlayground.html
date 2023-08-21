@@ -57,12 +57,13 @@
 
 	<script>
 		sap.ui.require([
+			"sap/ui/core/Element",
 			"sap/ui/core/hyphenation/Hyphenation",
 			"sap/ui/core/hyphenation/HyphenationTestingWords",
 			"sap/m/FlexBox",
 			"sap/base/util/UriParameters",
 		],
-			function (HyphenationDelegate, HyphenationTestingWords, FlexBox, UriParameters) {
+			function (Element, HyphenationDelegate, HyphenationTestingWords, FlexBox, UriParameters) {
 				"use strict";
 
 				// create and add app
@@ -178,25 +179,25 @@
 
 				var fnChangeText = function (evt) {
 					var sLng = evt.getSource().getId().slice(4);
-					var sNewText = sap.ui.getCore().byId("inpChTxt-" + sLng).getValue();
-					sap.ui.getCore().byId("txt-" + sLng).setContent("<div style='font-size: 14px;' lang='" + sLng +
+					var sNewText = Element.getElementById("inpChTxt-" + sLng).getValue();
+					Element.getElementById("txt-" + sLng).setContent("<div style='font-size: 14px;' lang='" + sLng +
 						"' class='sapUiHyphenation'>" + sNewText + "</div>");
 					var sHyphenatedText = hyph.hyphenate(sNewText, sLng);
-					sap.ui.getCore().byId("hyph-" + sLng).setContent("<div style='font-size: 14px;'>" + sHyphenatedText + "</div>");
-					sap.ui.getCore().byId("slider-" + sLng).setValue(100);
+					Element.getElementById("hyph-" + sLng).setContent("<div style='font-size: 14px;'>" + sHyphenatedText + "</div>");
+					Element.getElementById("slider-" + sLng).setValue(100);
 				};
 
 				var fnApplyConfig = function (evt) {
 					var lang = evt.getParameters().id.split("button-")[1];
 					hyph.initialize(lang).then(function () {
-						var sNewText = sap.ui.getCore().byId("inpChTxt-" + lang).getValue();
-						sap.ui.getCore().byId("txt-" + lang).setContent("<div style='font-size: 14px; 'lang='" + lang +
+						var sNewText = Element.getElementById("inpChTxt-" + lang).getValue();
+						Element.getElementById("txt-" + lang).setContent("<div style='font-size: 14px; 'lang='" + lang +
 							"' class='sapUiHyphenation' >" + sNewText + "</div>");
 						var sHyphenatedText = hyph.hyphenate(sNewText, lang);
-						sap.ui.getCore().byId("hyph-" + lang).setContent("<div style='font-size: 14px;'>" + sHyphenatedText +
+						Element.getElementById("hyph-" + lang).setContent("<div style='font-size: 14px;'>" + sHyphenatedText +
 							"</div>");
 					});
-					sap.ui.getCore().byId("slider-" + lang).setValue(100);
+					Element.getElementById("slider-" + lang).setValue(100);
 				};
 				var fnSliderChange = function (oEvent) {
 					var value = oEvent.getParameter("value");

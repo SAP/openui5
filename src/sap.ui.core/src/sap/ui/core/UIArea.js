@@ -6,7 +6,6 @@
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/base/ManagedObjectRegistry',
-	'./Configuration',
 	'./Element',
 	'./RenderManager',
 	'./FocusHandler',
@@ -28,7 +27,6 @@ sap.ui.define([
 	function(
 		ManagedObject,
 		ManagedObjectRegistry,
-		Configuration,
 		Element,
 		RenderManager,
 		FocusHandler,
@@ -103,7 +101,7 @@ sap.ui.define([
 
 			for (n in mControls) {
 				// resolve oControl anew as it might have changed
-				oControl = Element.registry.get(n);
+				oControl = Element.getElementById(n);
 				/*eslint-disable no-nested-ternary */
 				mReport[n] = {
 					type: oControl ? oControl.getMetadata().getName() : (mControls[n].obj === that ? "UIArea" : "(no such control)"),
@@ -525,7 +523,7 @@ sap.ui.define([
 		this.iSuppressedControlsLength--;
 		delete this.mSuppressedControls[sId];
 		mControlsSuppressedFromInvalidation.forEach(function(sControlId) {
-			var oControl = oCore.byId(sControlId);
+			var oControl = Element.getElementById(sControlId);
 			if (oControl) {
 				this.addInvalidatedControl(oControl);
 			}
@@ -762,7 +760,7 @@ sap.ui.define([
 
 			var aControlsRenderedTogetherWithAncestor = [];
 			for (var n in mInvalidatedControls) {
-				var oControl = Element.registry.get(n);
+				var oControl = Element.getElementById(n);
 				// CSN 0000834961 2011: control may have been destroyed since invalidation happened -> check whether it still exists
 				if ( oControl ) {
 					if ( !isRenderedTogetherWithAncestor(oControl) ) {

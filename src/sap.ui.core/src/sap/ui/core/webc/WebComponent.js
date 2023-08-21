@@ -35,8 +35,8 @@ function(
 	 * @private
 	 */
 	var fnGetControlFor = function(obj) {
-		if (obj.id && Element.registry.get(obj.id)) {
-			return Element.registry.get(obj.id);
+		if (obj.id && Element.getElementById(obj.id)) {
+			return Element.getElementById(obj.id);
 		}
 	};
 

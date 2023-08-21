@@ -130,13 +130,13 @@ sap.ui.define([
 
 	AccessKeysEnablement.getElementToBeFocused = function (sText) {
 		return [].filter.call(document.querySelectorAll("[data-ui5-accesskey='" + sText.toLowerCase() + "']"), function(oDom) {
-			var oControl = Element.registry.get(oDom.getAttribute("id"));
+			var oControl = Element.getElementById(oDom.getAttribute("id"));
 			var bEnabled = oControl.getEnabled ? oControl.getEnabled() : true;
 			var bVisible = oControl.getVisible();
 
 			return bEnabled && bVisible;
 		}).map(function(oElement) {
-			oElement = Element.registry.get(oElement.getAttribute("id"));
+			oElement = Element.getElementById(oElement.getAttribute("id"));
 			return oElement.getAccessKeysFocusTarget ? oElement.getAccessKeysFocusTarget() : oElement.getFocusDomRef();
 		});
 	};

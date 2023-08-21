@@ -272,7 +272,7 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 			}
 			var oParent = oSource.parentNode,
 				sId = oParent.getAttribute("sap-id"),
-				oElement = this.oCore.byId(sId),
+				oElement = Element.getElementById(sId),
 				sNodeId = oParent.getAttribute("sap-type") === "Link" ? "sap-debug-controltree-" + sId : oParent.id;
 			this.oSelectionHighlighter.hide();
 			if (oElement instanceof Element) {
@@ -360,7 +360,7 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 	ControlTree.prototype.getTargetDomRef = function(oTreeNodeDomRef) {
 		var sType = oTreeNodeDomRef.getAttribute("sap-type"),
 			sId = oTreeNodeDomRef.getAttribute("sap-id"),
-			oSomething = sType === "UIArea" ? UIArea.registry.get(sId) : this.oCore.byId(sId);
+			oSomething = sType === "UIArea" ? UIArea.registry.get(sId) : Element.getElementById(sId);
 
 		while (oSomething instanceof Element) {
 			var oDomRef = oSomething.getDomRef();
@@ -388,10 +388,10 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 		if ( oEvt ) {
 		  if ( oEvt.ctrlKey && oEvt.shiftKey && !oEvt.altKey ) {
 			  var oControl = oEvt.srcElement || oEvt.target;
-			  while (oControl && (!oControl.id || !this.oCore.byId(oControl.id)) ) {
+			  while (oControl && (!oControl.id || !Element.getElementById(oControl.id)) ) {
 				oControl = oControl.parentNode;
 			}
-			 if ( oControl && oControl.id && this.oCore.byId(oControl.id) ) {
+			 if ( oControl && oControl.id && Element.getElementById(oControl.id) ) {
 				this.oHoverHighlighter.highlight(oControl);
 			 } else {
 			// this.selectControlInTreeByCtrlId(sId);

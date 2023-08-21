@@ -1205,7 +1205,7 @@ sap.ui.define([
 		};
 
 		ControlTree.prototype.onsapUiSupportControlTreeRequestControlTreeSerialize = function(oEvent) {
-			var oControl = this.oCore.byId(oEvent.getParameter("controlID"));
+			var oControl = Element.getElementById(oEvent.getParameter("controlID"));
 			var sType = oEvent.getParameter("sType");
 
 			var oViewSerializer;
@@ -1266,7 +1266,7 @@ sap.ui.define([
 		ControlTree.prototype.onsapUiSupportControlTreeChangeProperty = function(oEvent) {
 
 			var sId = oEvent.getParameter("id");
-			var oControl = this.oCore.byId(sId);
+			var oControl = Element.getElementById(sId);
 
 			if (oControl) {
 
@@ -1332,8 +1332,7 @@ sap.ui.define([
 
 		ControlTree.prototype.getControlTree = function() {
 
-			var oCore = this.oCore,
-				aControlTree = [],
+			var aControlTree = [],
 				mAllElements = {};
 
 			function serializeElement(oElement) {
@@ -1409,7 +1408,7 @@ sap.ui.define([
 						switch (sStereotype) {
 						case "element":
 						case "control":
-							oObj = oCore.byId(mAssoc.id);
+							oObj = Element.getElementById(mAssoc.id);
 							break;
 						case "component":
 							oObj = Component.get(mAssoc.id);
@@ -1452,7 +1451,7 @@ sap.ui.define([
 
 			var aControlProps = [];
 
-			var oControl = this.oCore.byId(sId);
+			var oControl = Element.getElementById(sId);
 
 			if (!oControl && UIArea.registry.get(sId)) {
 
@@ -1542,7 +1541,7 @@ sap.ui.define([
 				contexts: []
 			};
 
-			var oControl = this.oCore.byId(sId);
+			var oControl = Element.getElementById(sId);
 
 			if (!oControl) {
 				return mControlBindingInfos;
@@ -1743,7 +1742,7 @@ sap.ui.define([
 
 		ControlTree.prototype.refreshBinding = function(sId, sBindingName) {
 
-			var oControl = this.oCore.byId(sId);
+			var oControl = Element.getElementById(sId);
 			var mBindingInfo = oControl.mBindingInfos[sBindingName];
 
 			if (!oControl || !mBindingInfo) {

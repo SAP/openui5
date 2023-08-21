@@ -3,8 +3,8 @@
  */
 
 // Provides the implementation for the ControlControlMessageProcessor implementations
-sap.ui.define(['sap/ui/core/message/MessageProcessor'],
-	function(MessageProcessor) {
+sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/message/MessageProcessor'],
+	function(Element, MessageProcessor) {
 	"use strict";
 
 
@@ -86,7 +86,7 @@ sap.ui.define(['sap/ui/core/message/MessageProcessor'],
 			if (!aParts[0]) {
 				aParts.shift();
 			}
-			oControl = sap.ui.getCore().byId(aParts[0]);
+			oControl = Element.getElementById(aParts[0]);
 
 			//if control does not exist: nothing to do
 			if  (!oControl || oControl._bIsBeingDestroyed) {

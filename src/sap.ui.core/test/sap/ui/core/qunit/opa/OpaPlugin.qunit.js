@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Input",
 	"sap/m/Dialog",
+	"sap/ui/core/Element",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
 	"./utils/view",
@@ -21,6 +22,7 @@ sap.ui.define([
 			 Button,
 			 Input,
 			 Dialog,
+			 Element,
 			 View,
 			 XMLView,
 			 viewUtils,
@@ -803,7 +805,7 @@ sap.ui.define([
 	QUnit.test("Should only match controls in open dialog", function (assert) {
 		var oPlugin = new OpaPlugin();
 		var fnStart = assert.async();
-		var oDialog = sap.ui.getCore().byId("viewWithDialog--myDialog");
+		var oDialog = Element.getElementById("viewWithDialog--myDialog");
 		oDialog.attachAfterOpen(function () {
 			var aControls = oPlugin.getMatchingControls({
 				searchOpenDialogs: true,
@@ -822,7 +824,7 @@ sap.ui.define([
 	QUnit.test("Should match controls in open dialog by ID and view", function (assert) {
 		var oPlugin = new OpaPlugin();
 		var fnStart = assert.async();
-		var oDialog = sap.ui.getCore().byId("viewWithDialog--myDialog");
+		var oDialog = Element.getElementById("viewWithDialog--myDialog");
 		oDialog.attachAfterOpen(function () {
 			var oControlWithViewName = oPlugin.getMatchingControls({
 				searchOpenDialogs: true,
@@ -856,7 +858,7 @@ sap.ui.define([
 	QUnit.test("Should match controls in open dialog by ID with no viewName or viewID", function (assert) {
 		var oPlugin = new OpaPlugin();
 		var fnStart = assert.async();
-		var oDialog = sap.ui.getCore().byId("viewWithDialog--myDialog");
+		var oDialog = Element.getElementById("viewWithDialog--myDialog");
 		oDialog.attachAfterOpen(function () {
 			var oControlWithStrictID = oPlugin.getMatchingControls({
 				searchOpenDialogs: true,
@@ -1178,7 +1180,7 @@ sap.ui.define([
 
 	QUnit.test("Should match controls by fragment ID inside static area", function (assert) {
 		var fnStart = assert.async();
-		var oDialog = sap.ui.getCore().byId("myView--myDialog");
+		var oDialog = Element.getElementById("myView--myDialog");
 		oDialog.attachAfterOpen(function () {
 			testWithFragmentId(new OpaPlugin(), assert);
 			fnStart();

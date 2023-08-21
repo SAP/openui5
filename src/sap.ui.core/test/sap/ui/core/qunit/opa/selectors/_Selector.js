@@ -1,12 +1,13 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/test/selectors/_Selector",
+	"sap/ui/core/Element",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function (_Selector, View, XMLView, Button, Dialog, nextUIUpdate) {
+], function (_Selector, Element, View, XMLView, Button, Dialog, nextUIUpdate) {
 	"use strict";
 
 	var singleStub = sinon.stub();
@@ -193,7 +194,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should skip viewName when multiple views will match", function (assert) {
-		var oTile = sap.ui.getCore().byId("tile-0");
+		var oTile = Element.getElementById("tile-0");
 		singleStub.returns({
 			property: "value"
 		});

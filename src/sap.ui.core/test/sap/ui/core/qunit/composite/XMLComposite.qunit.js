@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils", "sap/ui/core/Core",
+	"sap/ui/qunit/QUnitUtils", "sap/ui/core/Core", "sap/ui/core/Element",
 	"sap/ui/core/util/XMLPreprocessor", "sap/ui/core/XMLComposite", "sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel", "sap/ui/core/Item", "sap/m/Text", "composites/SimpleText",
 	"composites/SortedList", "composites/TextButton", "composites/TextList",
@@ -9,7 +9,7 @@ sap.ui.define([
 	"composites/WrapperLayouter", "composites/TranslatableText", "composites/TranslatableTextLib",
 	"composites/TranslatableTextBundle",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function (QUnitUtils, Core, XMLPreprocessor, XMLComposite, Controller, JSONModel, Item,
+], function (QUnitUtils, Core, Element, XMLPreprocessor, XMLComposite, Controller, JSONModel, Item,
 			 Text, SimpleText, SortedList, TextButton, TextList, ForwardText, Field, HiddenMetadata,
 			 TemplateTest, ChildOfAbstract, TextToggleButton, TextToggleButtonNested,
 			 TextToggleButtonForwarded, WrapperLayouter, TranslatableText, TranslatableTextLib,
@@ -38,7 +38,7 @@ sap.ui.define([
 		assert.strictEqual(this.oXMLComposite.bIsDestroyed, true, "The XMLComposite control is destroyed");
 		assert.strictEqual(oInnerText.bIsDestroyed, true, "The text is destroyed");
 		assert.strictEqual(oInnerText.getParent(), undefined, "Inner Control has no parent anymore");
-		assert.strictEqual(Core.byId(oInnerText.getId()), undefined, "Inner Control is destroyed");
+		assert.strictEqual(Element.getElementById(oInnerText.getId()), undefined, "Inner Control is destroyed");
 		try {
 			oInnerText.placeAt("qunit-fixture");
 			assert.ok(false, "This is not supposed to happen");
@@ -187,7 +187,7 @@ sap.ui.define([
 		this.oText.destroy();
 		assert.strictEqual(this.oXMLComposite.getText(), null, "The text is destroyed and the forwarded is null");
 		assert.strictEqual(this.oText.getParent(), undefined, "Inner Control has no parent anymore"); //remember: oInnerText===oText
-		assert.strictEqual(Core.byId(this.oText.getId()), undefined, "Inner Control is destroyed");
+		assert.strictEqual(Element.getElementById(this.oText.getId()), undefined, "Inner Control is destroyed");
 		try {
 			this.oText.placeAt("qunit-fixture");
 			assert.ok(false);
@@ -276,7 +276,7 @@ sap.ui.define([
 				assert.strictEqual(this.oXMLComposite.getTextItems()[j], oInnerVBox.getItems()[j], "Forwarding has reflected the destroy correctly");
 			}
 			assert.strictEqual(this.aTexts[i].getParent(), undefined, "Inner Control has no parent anymore");
-			assert.strictEqual(Core.byId(this.aTexts[i].getId()), undefined, "Inner Control is destroy");
+			assert.strictEqual(Element.getElementById(this.aTexts[i].getId()), undefined, "Inner Control is destroy");
 			try {
 				this.aTexts[i].placeAt("qunit-fixture");
 			} catch (ex) {

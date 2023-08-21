@@ -21,13 +21,16 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 		"sap.ui.webc.main.Link"
 	];
 
+	var Element;
+
 	// Returns the control for the given id (if available) and invalidates it if desired
 	function toControl(sId, bInvalidate) {
 		if (!sId) {
 			return null;
 		}
 
-		var oControl = sap.ui.getCore().byId(sId);
+		Element = Element ? Element : sap.ui.require("sap/ui/core/Element");
+		var oControl = Element.getElementById(sId);
 		// a control must only be invalidated if there is already a DOM Ref. If there is no DOM Ref yet, it will get
 		// rendered later in any case. Elements must always be invalidated because they have no own renderer.
 		if (oControl && bInvalidate && (!oControl.isA('sap.ui.core.Control') || oControl.getDomRef())) {
@@ -213,8 +216,10 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 		var aLabelIds = LabelEnablement.getReferencingLabels(oElement),
 			oLabel;
 
+		Element = Element ? Element : sap.ui.require("sap/ui/core/Element");
+
 		for (var i = 0; i < aLabelIds.length; i++) {
-			oLabel = sap.ui.getCore().byId(aLabelIds[i]);
+			oLabel = Element.getElementById(aLabelIds[i]);
 			if (checkRequired(oLabel)) {
 				return true;
 			}
@@ -300,8 +305,10 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 			var oControl = toControl(sId);
 			var oLabelForControl;
 
+			Element = Element ? Element : sap.ui.require("sap/ui/core/Element");
+
 			if (oControl && oControl.getIdForLabel && oControl.getIdForLabel()) {
-				oLabelForControl = sap.ui.getCore().byId(oControl.getIdForLabel());
+				oLabelForControl = Element.getElementById(oControl.getIdForLabel());
 				if (oLabelForControl) {
 					oControl = oLabelForControl;
 				}

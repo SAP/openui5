@@ -439,7 +439,7 @@ sap.ui.define([
 				Element = sap.ui.require("sap/ui/core/Element");
 			}
 			if (Element) {
-				oControl = Element.registry.get(sControlId);
+				oControl = Element.getElementById(sControlId);
 			}
 			return oControl || null;
 		}

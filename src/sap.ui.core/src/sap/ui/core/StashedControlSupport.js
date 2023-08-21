@@ -3,8 +3,8 @@
  */
 
 // Provides inactive support for controls
-sap.ui.define(["sap/base/assert"],
-	function(assert) {
+sap.ui.define(["sap/base/assert", "sap/ui/core/Element"],
+	function(assert, Element) {
 		"use strict";
 
 		/**
@@ -13,7 +13,7 @@ sap.ui.define(["sap/base/assert"],
 		 * NOTE: stashingh of <code>sap.ui.core.Fragments</code> and <code>sap.ui.core.mvc.View</code> is not supported!
 		 *
 		 * <code>stashed</code> Controls are created as placeholder control without any content and bindings
-		 * and added to the Control tree. That means it is available with <code>sap.ui.getCore().byId</code>
+		 * and added to the Control tree. That means it is available with <code>Element.getElementById</code>
 		 * and as child in the parents aggregation. It is unstashable by calling <code>unstash</code>.
 		 * Currently this is a one-time operation. Once unstashed, a control cannot be re-stashed again.
 		 *
@@ -129,7 +129,7 @@ sap.ui.define(["sap/base/assert"],
 			var aStashedChildren = [];
 			for (var sId in stashedControls) {
 				// get placeholder for stashed-control
-				var oPlaceholder = sap.ui.getCore().byId(stashedControls[sId].wrapperId);
+				var oPlaceholder = Element.getElementById(stashedControls[sId].wrapperId);
 				var vInstanceOrId = bAsInstance ? oPlaceholder : sId;
 				// A stashed-control without a placeholder can happen if the placeholder was already destroyed.
 				// In this case we also don't have a parent.

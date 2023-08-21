@@ -105,7 +105,7 @@ sap.ui.define([
 
 		function highlight(sId, oPlugin, bSend){
 			if (sId) {
-				var oElem = Core.byId(sId);
+				var oElem = Element.getElementById(sId);
 				if (oElem) {
 					var jPopupRef = jQuery(document.getElementById(oPlugin._sPopupId));
 					var jRef = oElem.$();

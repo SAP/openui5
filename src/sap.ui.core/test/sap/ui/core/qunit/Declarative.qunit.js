@@ -1,11 +1,11 @@
 /* global QUnit */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/DeclarativeSupport",
+	"sap/ui/core/Element",
 	"sap/ui/core/UIArea",
 	"sap/ui/model/json/JSONModel"
-], function(jQuery, oCore, DeclarativeSupport, UIArea, JSONModel) {
+], function(jQuery, DeclarativeSupport, Element, UIArea, JSONModel) {
 	"use strict";
 	QUnit.config.reorder = false;
 	QUnit.module("Basic");
@@ -26,12 +26,12 @@ sap.ui.define([
 	QUnit.test("Simple Button", function(assert) {
 		assert.expect(3);
 
-		var oButton = oCore.byId("simpleButton");
+		var oButton = Element.getElementById("simpleButton");
 		assert.equal(!!oButton, false, 'No control with id "simpleButton" found.');
 
 		DeclarativeSupport.compile(jQuery("#simple-button"));
 
-		var oButton = oCore.byId("simpleButton");
+		var oButton = Element.getElementById("simpleButton");
 		assert.ok(!!oButton, 'Control with id "simpleButton" found.');
 		assert.equal(oButton.getText(), "My Button", "Text is set right");
 	});
@@ -45,10 +45,10 @@ sap.ui.define([
 			DeclarativeSupport.attributes["data-tooltip"] = function() {
 				assert.ok(true, "Called special attribute handling");
 			};
-			var oButton = oCore.byId("buttonWithTooltip");
+			var oButton = Element.getElementById("buttonWithTooltip");
 			assert.equal(!!oButton, false, 'No control with id "buttonWithTooltip" found.');
 			DeclarativeSupport.compile(jQuery("#button-with-tooltip"));
-			var oButton = oCore.byId("buttonWithTooltip");
+			var oButton = Element.getElementById("buttonWithTooltip");
 			assert.ok(!!oButton, 'Control with id "buttonWithTooltip" found.');
 		} finally {
 			if (backup) {
@@ -61,12 +61,12 @@ sap.ui.define([
 	QUnit.test("Button with style and class", function(assert) {
 		assert.expect(3);
 
-		var oButton = oCore.byId("buttonStyleClass");
+		var oButton = Element.getElementById("buttonStyleClass");
 		assert.equal(!!oButton, false, 'No control with id "buttonStyleClass" found.');
 
 		DeclarativeSupport.compile(jQuery("#button-with-style-class"));
 
-		var oButton = oCore.byId("buttonStyleClass");
+		var oButton = Element.getElementById("buttonStyleClass");
 		assert.ok(!!oButton, 'Control with id "buttonStyleClass" found.');
 		assert.ok(!!oButton.hasStyleClass("mybutton"), 'Control has right classes.');
 	});
@@ -74,15 +74,15 @@ sap.ui.define([
 
 	QUnit.test("HTML Content", function(assert) {
 		assert.expect(7);
-		var oButton = oCore.byId("htmlContentButton");
+		var oButton = Element.getElementById("htmlContentButton");
 		assert.equal(!!oButton, false, 'No control with id "htmlContentButton" found.');
 
 		DeclarativeSupport.compile(jQuery("#html-content"));
 
-		var oButton = oCore.byId("htmlContentButton");
+		var oButton = Element.getElementById("htmlContentButton");
 		assert.ok(!!oButton, 'Control with id "htmlContentButton" found.');
 
-		var oPanel = oCore.byId("htmlContentPanel");
+		var oPanel = Element.getElementById("htmlContentPanel");
 		assert.ok(!!oPanel, 'Control with id "htmlContentPanel" found.');
 		assert.ok(oPanel.getHeaderToolbar(), "Toolbar is set right");
 		assert.equal(oPanel.getHeaderToolbar().getContent().length, 1, "Toolbar content is set right");
@@ -93,12 +93,12 @@ sap.ui.define([
 
 	QUnit.test("Panel aggregation", function(assert) {
 		assert.expect(6);
-		var oPanel = oCore.byId("panelAggregation");
+		var oPanel = Element.getElementById("panelAggregation");
 		assert.equal(!!oPanel, false, 'No control with id "panelAggregation" found.');
 
 		DeclarativeSupport.compile(jQuery("#panel-aggregation"));
 
-		var oPanel = oCore.byId("panelAggregation");
+		var oPanel = Element.getElementById("panelAggregation");
 		assert.ok(!!oPanel, 'Control with id "panelAggregation" found.');
 		assert.ok(oPanel.getHeaderToolbar(), "Toolbar is set right");
 		assert.equal(oPanel.getHeaderToolbar().getContent().length, 1, "Toolbar content is set right");
@@ -109,12 +109,12 @@ sap.ui.define([
 
 	QUnit.test("Panel with default aggregation", function(assert) {
 		assert.expect(6);
-		var oPanel = oCore.byId("panelWithDefaultAggregation");
+		var oPanel = Element.getElementById("panelWithDefaultAggregation");
 		assert.equal(!!oPanel, false, 'No control with id "panelWithDefaultAggregation" found.');
 
 		DeclarativeSupport.compile(jQuery("#panel-with-default-aggregation"));
 
-		var oPanel = oCore.byId("panelWithDefaultAggregation");
+		var oPanel = Element.getElementById("panelWithDefaultAggregation");
 		assert.ok(!!oPanel, 'Control with id "panelWithDefaultAggregation" found.');
 		assert.ok(oPanel.getHeaderToolbar(), "Toolbar is set right");
 		assert.equal(oPanel.getHeaderToolbar().getContent().length, 1, "Toolbar content is set right");
@@ -124,12 +124,12 @@ sap.ui.define([
 
 	QUnit.test("Panel with association", function(assert) {
 		assert.expect(6);
-		var oPanel = oCore.byId("panelWithAssociation");
+		var oPanel = Element.getElementById("panelWithAssociation");
 		assert.equal(!!oPanel, false, 'No control with id "panelWithAssociation" found.');
 
 		DeclarativeSupport.compile(jQuery("#panel-with-association"));
 
-		var oPanel = oCore.byId("panelWithAssociation");
+		var oPanel = Element.getElementById("panelWithAssociation");
 		assert.ok(!!oPanel, 'Control with id "panelWithAssociation" found.');
 
 		assert.equal(oPanel.getContent().length, 3, "Number of child controls is right");
@@ -147,10 +147,10 @@ sap.ui.define([
 		var oUIArea = UIArea.registry.get("uiAreaSimple");
 		assert.equal(!!oUIArea, false, 'No control with id "uiAreaSimple" found.');
 
-		var oButton1 = oCore.byId("uiAreaSimpleButton2");
+		var oButton1 = Element.getElementById("uiAreaSimpleButton2");
 		assert.equal(!!oButton1, false, 'No control with id "uiAreaSimpleButton2" found.');
 
-		var oButton2 = oCore.byId("uiAreaSimpleButton2");
+		var oButton2 = Element.getElementById("uiAreaSimpleButton2");
 		assert.equal(!!oButton2, false, 'No control with id "uiAreaSimpleButton2" found.');
 
 		DeclarativeSupport.compile(jQuery("#ui-area-simple"));
@@ -158,10 +158,10 @@ sap.ui.define([
 		var oUIArea = UIArea.registry.get("uiAreaSimple");
 		assert.ok(!!oUIArea, 'UIArea with id "uiAreaSimple" found.');
 
-		var oButton1 = oCore.byId("uiAreaSimpleButton2");
+		var oButton1 = Element.getElementById("uiAreaSimpleButton2");
 		assert.ok(!!oButton1, 'Control with id "uiAreaSimpleButton2" found.');
 
-		var oButton2 = oCore.byId("uiAreaSimpleButton2");
+		var oButton2 = Element.getElementById("uiAreaSimpleButton2");
 		assert.ok(!!oButton2, 'Control with id "uiAreaSimpleButton2" found.');
 
 		assert.equal(oButton2.getUIArea().getId(), "uiAreaSimple", "UI Areas are the same");
@@ -173,13 +173,13 @@ sap.ui.define([
 		var oUIArea = UIArea.registry.get("complexDeclarationUIArea");
 		assert.equal(!!oUIArea, false, 'No UIArea with id "complexDeclarationUIArea" found.');
 
-		var oPanel1 = oCore.byId("complexDeclarationPanel1");
+		var oPanel1 = Element.getElementById("complexDeclarationPanel1");
 		assert.equal(!!oPanel1, false, 'No control with id "complexDeclarationPanel1" found.');
 
-		var oPanel2 = oCore.byId("complexDeclarationPanel2");
+		var oPanel2 = Element.getElementById("complexDeclarationPanel2");
 		assert.equal(!!oPanel2, false, 'No control with id "complexDeclarationPanel2" found.');
 
-		var oPanel3 = oCore.byId("complexDeclarationPanel3");
+		var oPanel3 = Element.getElementById("complexDeclarationPanel3");
 		assert.equal(!!oPanel2, false, 'No control with id "complexDeclarationPanel3" found.');
 
 		window.handlePress = function(evt) {
@@ -191,13 +191,13 @@ sap.ui.define([
 		var oUIArea = UIArea.registry.get("complexDeclarationUIArea");
 		assert.ok(!!oUIArea, 'UIArea with id "complexDeclarationUIArea" found.');
 
-		var oPanel1 = oCore.byId("complexDeclarationPanel1");
+		var oPanel1 = Element.getElementById("complexDeclarationPanel1");
 		assert.ok(!!oPanel1, 'Control with id "complexDeclarationPanel1" found.');
 
-		var oPanel2 = oCore.byId("complexDeclarationPanel2");
+		var oPanel2 = Element.getElementById("complexDeclarationPanel2");
 		assert.ok(!!oPanel2, 'Control with id "complexDeclarationPanel2" found.');
 
-		var oPanel3 = oCore.byId("complexDeclarationPanel3");
+		var oPanel3 = Element.getElementById("complexDeclarationPanel3");
 		assert.ok(!!oPanel3, 'Control with id "complexDeclarationPanel3" found.');
 
 		delete window.handlePress;
@@ -205,7 +205,7 @@ sap.ui.define([
 
 	QUnit.test("Events", function(assert) {
 		assert.expect(3);
-		var oButton1 = oCore.byId("buttonWithEvent");
+		var oButton1 = Element.getElementById("buttonWithEvent");
 		assert.equal(!!oButton1, false, 'No control with id "buttonWithEvent" found.');
 
 		window.handlePress = function(evt) {
@@ -214,7 +214,7 @@ sap.ui.define([
 
 		DeclarativeSupport.compile(jQuery("#events"));
 
-		var oButton1 = oCore.byId("buttonWithEvent");
+		var oButton1 = Element.getElementById("buttonWithEvent");
 		assert.ok(!!oButton1, 'Control with id "buttonWithEvent" found.');
 		oButton1.firePress();
 
@@ -224,12 +224,12 @@ sap.ui.define([
 
 	QUnit.test("AltType", function(assert) {
 		assert.expect(3);
-		var oForm = oCore.byId("form");
+		var oForm = Element.getElementById("form");
 		assert.equal(!!oForm, false, 'No control with id "form" found.');
 
 		DeclarativeSupport.compile(jQuery("#altType"));
 
-		var oForm = oCore.byId("form");
+		var oForm = Element.getElementById("form");
 		assert.ok(!!oForm, 'Control with id "form" found.');
 
 		assert.equal(oForm.getTitle(), "Alt type works", "Title is set right");
@@ -265,10 +265,10 @@ sap.ui.define([
 
 	QUnit.test("DataBinding", function(assert) {
 		assert.expect(8);
-		var oButton1 = oCore.byId("buttonDataBinding");
+		var oButton1 = Element.getElementById("buttonDataBinding");
 		assert.equal(!!oButton1, false, 'No control with id "buttonDataBinding" found.');
 
-		var oCarousel = oCore.byId("aggregationDataBinding");
+		var oCarousel = Element.getElementById("aggregationDataBinding");
 		assert.equal(!!oCarousel, false, 'No control with id "aggregationDataBinding" found.');
 
 		var oModel1 = new JSONModel({
@@ -288,7 +288,7 @@ sap.ui.define([
 
 		DeclarativeSupport.compile(jQuery("#databinding"));
 
-		var oButton1 = oCore.byId("buttonDataBinding");
+		var oButton1 = Element.getElementById("buttonDataBinding");
 		assert.ok(!!oButton1, 'Control with id "buttonWithEvent" found.');
 
 		oButton1.setModel(oModel1);
@@ -297,9 +297,9 @@ sap.ui.define([
 		assert.equal(oButton1.getText(), oModel1.getData().stringValue, "Check 'text' property of button 'buttonDataBinding'");
 
 
-		var oCarousel = oCore.byId("aggregationDataBinding");
+		var oCarousel = Element.getElementById("aggregationDataBinding");
 
-		var oCarousel = oCore.byId("aggregationDataBinding");
+		var oCarousel = Element.getElementById("aggregationDataBinding");
 		assert.ok(!!oCarousel, 'Control with id "aggregationDataBinding" found.');
 
 
@@ -320,7 +320,7 @@ sap.ui.define([
 
 	QUnit.test("Custom Data", function(assert) {
 		assert.expect(2);
-		var oButton = oCore.byId("simpleButton");
+		var oButton = Element.getElementById("simpleButton");
 		assert.equal(oButton.data("customData1"), "customvalue", 'Custom Data not applied!');
 		assert.equal(oButton.data("CustomData2"), "customvalue", 'Custom Data not applied!');
 	});
