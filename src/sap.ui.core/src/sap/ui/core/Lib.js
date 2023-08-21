@@ -6,6 +6,7 @@
 sap.ui.define([
 	'sap/base/assert',
 	'sap/base/config',
+	'sap/base/i18n/Localization',
 	'sap/base/i18n/ResourceBundle',
 	'sap/base/Log',
 	'sap/base/util/deepExtend',
@@ -25,6 +26,7 @@ sap.ui.define([
 ], function (
 	assert,
 	BaseConfig,
+	Localization,
 	ResourceBundle,
 	Log,
 	deepExtend,
@@ -1030,7 +1032,7 @@ sap.ui.define([
 						fallbackLocale: vI18n.fallbackLocale,
 						locale: sLocale,
 						async: !bSync,
-						activeTerminologies: Configuration.getActiveTerminologies()
+						activeTerminologies: Localization.getActiveTerminologies()
 					});
 
 					if (vResult instanceof Promise) {
@@ -1706,7 +1708,7 @@ sap.ui.define([
 					// text verticalization information
 					mParams.terminologies = mParams.terminologies || vI18n.terminologies;
 					mParams.enhanceWith = mParams.enhanceWith || vI18n.enhanceWith;
-					mParams.activeTerminologies = mParams.activeTerminologies || Configuration.getActiveTerminologies();
+					mParams.activeTerminologies = mParams.activeTerminologies || Localization.getActiveTerminologies();
 				}
 			}
 		}
