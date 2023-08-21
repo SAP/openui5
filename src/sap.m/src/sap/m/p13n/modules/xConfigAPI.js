@@ -25,6 +25,7 @@ sap.ui.define([
 	 * @param {object} oModificationPayload.property The affected property name (such as <code>width</code> or <code>lable</code>)
 	 * @param {object} oModificationPayload.value The value that should be written in nthe xConfig
 	 * @param {object} [oModificationPayload.propertyBag] Optional propertybag for different modification handler derivations
+	 * @param {boolean} [oModificationPayload.markAsModified] Optional flag that triggers a state change event for the engine registration process
 	 *
 	 * @returns {Promise<object>} Promise resolving to the adapted xConfig object
 	 */
@@ -67,6 +68,10 @@ sap.ui.define([
 					oConfig = xConfigAPI.createAggregationConfig(oControl, oModificationPayload, oExistingConfig);
 				} else {
 					oConfig = xConfigAPI.createPropertyConfig(oControl, oModificationPayload, oExistingConfig);
+				}
+
+				if (oModificationPayload.markAsModified) {
+					oConfig.modified = true;
 				}
 
 				var oAppComponent = mPropertyBag ? mPropertyBag.appComponent : undefined;
