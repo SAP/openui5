@@ -2671,6 +2671,30 @@ sap.ui.define([
 		beforeEach: function() {
 			this.ftnPressHandler = function() {
 			};
+			this.applyTheme = function(sTheme, fnCallback) {
+				this.sRequiredTheme = sTheme;
+				if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+					if (typeof fnCallback === "function") {
+						fnCallback.bind(this)();
+						fnCallback = undefined;
+					}
+				} else {
+					oCore.attachThemeChanged(fnThemeApplied.bind(this));
+					oCore.applyTheme(sTheme);
+				}
+
+				function fnThemeApplied(oEvent) {
+					oCore.detachThemeChanged(fnThemeApplied);
+					if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+						if (typeof fnCallback === "function") {
+							fnCallback.bind(this)();
+							fnCallback = undefined;
+						}
+					} else {
+						setTimeout(fnThemeApplied.bind(this, oEvent), 1500);
+					}
+				}
+			};
 			this.hasAttribute = function(sAttribute, oCurrentObject) {
 				var sAttributeValue = oCurrentObject.$().attr(sAttribute);
 				if (typeof sAttributeValue !== typeof undefined && sAttributeValue !== false) {
@@ -3242,6 +3266,22 @@ QUnit.test("Content Proritisation -  Footer rendered in OneByHalf", function(ass
 	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
 	assert.equal(this.oGenericTile._oSubTitle.getDomRef(), null);
 	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, true);
+});
+
+QUnit.test("Height of the system Info Container for OneByOne tile", function(assert){
+		this.oGenericTile.setFrameType("OneByOne");
+		this.oGenericTile.setAppShortcut("app shortcut");
+		this.oGenericTile.setSystemInfo("system info");
+		oCore.applyChanges();
+		assert.equal(this.oGenericTile.$().find(".sapMGTTInfoContainer").css("height"),"44px","Sufficient Height applied");
+});
+
+QUnit.test("Height of the system Info Container for TwoByOne tile", function(assert){
+		this.oGenericTile.setFrameType("TwoByOne");
+		this.oGenericTile.setAppShortcut("app shortcut");
+		this.oGenericTile.setSystemInfo("system info");
+		oCore.applyChanges();
+		assert.equal(this.oGenericTile.$().find(".sapMGTTInfo").css("margin-bottom"),"8px","Sufficient Height applied");
 });
 
 QUnit.test("App shortcut and System info only rendered in OneByOne", function(assert) {
