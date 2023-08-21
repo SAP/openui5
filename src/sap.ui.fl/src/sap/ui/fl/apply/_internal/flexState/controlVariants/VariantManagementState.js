@@ -248,6 +248,16 @@ sap.ui.define([
 			oVariantManagement.modified = aCurrentVariantChanges.some(function(oChange) {
 				return !oChange.isPersisted() && !oChange.getSavedToVariant();
 			});
+
+			// the default variant must always be a favorite
+			// e.g. end user sets variant to default, then key user removes it from favorites
+			oVariantManagement.variants.some((oVariant) => {
+				if (!oVariant.favorite && oVariant.key === oVariantManagement.defaultVariant) {
+					oVariant.favorite = true;
+					return true;
+				}
+				return false;
+			});
 		});
 
 		return oVariantManagementsMap;

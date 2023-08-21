@@ -156,18 +156,6 @@ sap.ui.define([
 					}
 				}),
 				FlexObjectFactory.createUIChange({
-					id: "setFavoriteChange",
-					layer: Layer.CUSTOMER,
-					changeType: "setFavorite",
-					fileType: "ctrl_variant_change",
-					selector: {
-						id: sStandardVariantReference
-					},
-					content: {
-						favorite: false
-					}
-				}),
-				FlexObjectFactory.createUIChange({
 					id: "setExecuteOnSelectChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setExecuteOnSelect",
@@ -208,7 +196,7 @@ sap.ui.define([
 								contexts: { role: ["ADMIN"], country: ["DE"] },
 								controlChanges: [],
 								executeOnSelect: true,
-								favorite: false,
+								favorite: true,
 								instance: this.oStandardVariant,
 								isStandardVariant: true,
 								key: "vmReference",
@@ -223,7 +211,7 @@ sap.ui.define([
 				"then the variant changes are applied on the variant map"
 			);
 			assert.strictEqual(
-				VariantManagementState.getVariantDependentFlexObjects({reference: sReference}).length, 4,
+				VariantManagementState.getVariantDependentFlexObjects({reference: sReference}).length, 3,
 				"all changes are returned"
 			);
 		});
@@ -417,6 +405,68 @@ sap.ui.define([
 			.get({ reference: sReference })[sVariantManagementReference].variants;
 			assert.strictEqual(aVariants[0].controlChanges.length, 2, "there is one control change on standard");
 			assert.strictEqual(aVariants[1].controlChanges.length, 1, "the referenced control change is also in the depending variant");
+		});
+
+		QUnit.test("when variants are set to favorite = false (default and non-default)", function(assert) {
+			var oVariantManagementChange = FlexObjectFactory.createUIChange({
+				id: "setDefaultVariantChange",
+				layer: Layer.USER,
+				changeType: "setDefault",
+				fileType: "ctrl_variant_management_change",
+				selector: {
+					id: sVariantManagementReference
+				},
+				content: {
+					defaultVariant: "variant2"
+				}
+			});
+			var oVariantSetFavoriteDefaultVariant = FlexObjectFactory.createUIChange({
+				id: "setFavoriteChangeOnDefaultVariant",
+				layer: Layer.CUSTOMER,
+				changeType: "setFavorite",
+				fileType: "ctrl_variant_change",
+				selector: {
+					id: "variant2"
+				},
+				content: {
+					favorite: false
+				}
+			});
+			var oVariantSetFavoriteNonDefaultVariant = FlexObjectFactory.createUIChange({
+				id: "setFavoriteChangeOnNonDefaultVariant",
+				layer: Layer.CUSTOMER,
+				changeType: "setFavorite",
+				fileType: "ctrl_variant_change",
+				selector: {
+					id: "variant1"
+				},
+				content: {
+					favorite: false
+				}
+			});
+			stubFlexObjectsSelector([
+				oVariantManagementChange,
+				createVariant({
+					variantReference: sVariantManagementReference,
+					fileName: "variant1"
+				}),
+				createVariant({
+					variantReference: sVariantManagementReference,
+					fileName: "variant2"
+				}),
+				oVariantSetFavoriteDefaultVariant,
+				oVariantSetFavoriteNonDefaultVariant
+			]);
+
+			var oVMData = VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference];
+			assert.notOk(
+				oVMData.variants[1].favorite,
+				"then the non-default variant is no longer a favorite"
+			);
+			assert.ok(
+				oVMData.variants[2].favorite,
+				"then the default variant is still a favorite"
+			);
 		});
 	});
 
