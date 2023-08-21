@@ -498,8 +498,30 @@ sap.ui.define([
 					bFilterChanged = false,
 					bGroupChanged = false,
 					oList = this._oView.byId("exploredMasterList"),
-					oBinding = oList.getBinding("items");
+					oBinding = oList.getBinding("items"),
+					fnNumericSort;
 
+					// fnNumericSort is needed to sort the entities only if the numeric sorter is requiered -
+					// it is selected the items to be sorted by release
+					if (this._oListSettings.groupProperty === "since") {
+						fnNumericSort = function(a,b) {
+							const aVersionA = a.split('.').map(Number);
+							const aVersionB = b.split('.').map(Number);
+
+							for (let i = 0; i < Math.max(aVersionA.length, aVersionB.length); i++) {
+								const iPartA = aVersionA[i] || 0;
+								const iPartB = aVersionB[i] || 0;
+
+								if (iPartA < iPartB) {
+									return -1;
+								} else if (iPartA > iPartB) {
+									return 1;
+								}
+							}
+
+							return 0;
+						};
+					}
 				bFilterChanged = true;
 				aFilters.push(new Filter("searchTags", FilterOperator.Contains, this._sFilterValue));
 
@@ -535,7 +557,8 @@ sap.ui.define([
 					oSorter = new Sorter(
 						this._oListSettings.groupProperty,
 						this._oListSettings.groupDescending,
-						this._mGroupFunctions[this._oListSettings.groupProperty]);
+						this._mGroupFunctions[this._oListSettings.groupProperty],
+						fnNumericSort);
 					aSorters.push(oSorter);
 					aSorters.push(new Sorter("name", false));
 					oBinding.sort(aSorters);
