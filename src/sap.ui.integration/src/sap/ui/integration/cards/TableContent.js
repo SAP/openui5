@@ -124,7 +124,6 @@ sap.ui.define([
 		});
 	};
 
-
 	TableContent.prototype._getTable = function () {
 		if (this._bIsBeingDestroyed) {
 			return null;
@@ -258,6 +257,10 @@ sap.ui.define([
 		}
 
 		return oStaticConfiguration;
+	};
+
+	TableContent.prototype.getItemsLength = function () {
+		return this._getTable().getItems().filter((item) => !item.isA("sap.m.GroupHeaderListItem")).length;
 	};
 
 	/**

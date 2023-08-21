@@ -219,6 +219,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	ListContent.prototype.getItemsLength = function () {
+		return this._getList().getItems().filter((item) => !item.isA("sap.m.GroupHeaderListItem")).length;
+	};
+
+	/**
 	 * Handler for when data is changed.
 	 */
 	ListContent.prototype.onDataChanged = function () {

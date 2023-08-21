@@ -994,4 +994,126 @@ sap.ui.define([
 		this.oCard.setManifest(oManifest_TableCard);
 	});
 
+	QUnit.module("Data and items length", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Data and items length when there is grouping", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oManifest = {
+				"sap.app": {
+					"id": "testTableCardItemsLength"
+				},
+				"sap.card": {
+					"type": "Table",
+					"header": {
+						"title": "Items Length"
+					},
+					"data": {
+						"json": [
+							{
+								"salesOrder": "5000010050",
+								"deliveryProgress": 100
+							},
+							{
+								"salesOrder": "5000010051",
+								"deliveryProgress": 0
+							},
+							{
+								"salesOrder": "5000010052",
+								"deliveryProgress": 33
+							}
+						]
+					},
+					"content": {
+						"row": {
+							"columns": [
+								{
+									"title": "Sales Order",
+									"value": "{salesOrder}"
+								}
+							]
+						},
+						"group": {
+							"title": "{= ${deliveryProgress} > 10 ? 'In Delivery' : 'Not in Delivery'}",
+							"order": {
+								"path": "statusState"
+							}
+						}
+					}
+				}
+			};
+
+		this.oCard.attachEvent("_ready", function () {
+			assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 3, "#getItemsLength result should be correct");
+			assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
+	});
+
+	QUnit.test("Data and items length when maxItems property is set", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oManifest = {
+				"sap.app": {
+					"id": "testTableCardItemsLength"
+				},
+				"sap.card": {
+					"type": "Table",
+					"header": {
+						"title": "Items Length"
+					},
+					"data": {
+						"json": [
+							{
+								"salesOrder": "5000010050"
+							},
+							{
+								"salesOrder": "5000010051"
+							},
+							{
+								"salesOrder": "5000010052"
+							}
+						]
+					},
+					"content": {
+						"row": {
+							"columns": [
+								{
+									"title": "Sales Order",
+									"value": "{salesOrder}"
+								}
+							]
+						},
+						"maxItems": 2
+					}
+				}
+			};
+
+		this.oCard.attachEvent("_ready", function () {
+			assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 2, "#getItemsLength result should be correct");
+			assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
+	});
+
 });

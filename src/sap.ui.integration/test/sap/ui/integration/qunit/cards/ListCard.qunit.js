@@ -1375,6 +1375,116 @@ sap.ui.define([
 		this.oCard.setManifest(oManifest);
 	});
 
+	QUnit.module("Data and items length", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Data and items length when there is grouping", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oManifest = {
+				"sap.app": {
+					"id":  "test.cards.list.itemsLengthGrouping"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"title": "Items Length"
+					},
+					"content": {
+						"data": {
+							"json": [{
+									"Name": "Product 1",
+									"Price": "100"
+								},
+								{
+									"Name": "Product 2",
+									"Price": "200"
+								},
+								{
+									"Name": "Product 3",
+									"Price": "200"
+								}
+							]
+						},
+						"item": {
+							"title": "{Name}"
+						},
+						"group": {
+							"title": "{= ${Price} > 150 ? 'Expensive' : 'Cheap'}",
+							"order": {
+								"path": "Price"
+							}
+						}
+					}
+				}
+			};
+
+		this.oCard.attachEvent("_ready", function () {
+			assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 3, "#getItemsLength result should be correct");
+			assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
+	});
+
+	QUnit.test("Data and items length when maxItems property is set", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oManifest = {
+				"sap.app": {
+					"id":  "test.cards.list.itemsLengthGrouping"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"title": "Items Length"
+					},
+					"content": {
+						"data": {
+							"json": [{
+									"Name": "Product 1"
+								},
+								{
+									"Name": "Product 2"
+								},
+								{
+									"Name": "Product 3"
+								}
+							]
+						},
+						"item": {
+							"title": "{Name}"
+						},
+						"maxItems": 2
+					}
+				}
+			};
+
+		this.oCard.attachEvent("_ready", function () {
+			assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 2, "#getItemsLength result should be correct");
+			assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
+	});
+
 	QUnit.module("Icons", {
 		beforeEach: function () {
 			this.oCard = new Card({
