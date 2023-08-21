@@ -136,20 +136,6 @@ sap.ui.define([
 		if (this._bPrevented) {
 			return;
 		}
-		var oParent = this.getParent();
-		if (oParent && oParent.isA("sap.ui.core.Control")){
-			oParent.invalidate();
-
-			// invalidate dependents as well
-			var aDependents = oParent.getDependents();
-			if (aDependents) {
-				aDependents.forEach(function (oDependent) {
-					if (oDependent && oDependent.isA("sap.ui.core.Control")) {
-						oDependent.invalidate();
-					}
-				});
-			}
-		}
 		this.getLayout().setShowHeader(sKey !== this.DEFAULT_KEY); //Don't show header in default view
 		this.getLayout().setShowFooter(sKey !== this.DEFAULT_KEY); //Don't show footer in default view
 		this._getTabBar().setSelectedKey(sKey);

@@ -433,7 +433,7 @@ sap.ui.define([
 			}),
 			beforeViewSwitch: [function (oEvent) {
 				var mParameters = oEvent.getParameters();
-
+				this.invalidate();
 				if (mParameters.target !== "$default") {
 					var oContainerItem = this._oItemsContainer.getView(mParameters.target);
 					var oColumnMenuItem = this._getItemFromContainerItem(oContainerItem);
@@ -443,6 +443,14 @@ sap.ui.define([
 				}
 			}, this],
 			afterViewSwitch: [function (oEvent) {
+				var aDependents = this.getDependents();
+				if (aDependents) {
+					aDependents.forEach(function (oDependent) {
+						if (oDependent && oDependent.isA("sap.ui.core.Control")) {
+							oDependent.invalidate();
+						}
+					});
+				}
 				var mParameters = oEvent.getParameters();
 				this._oItemsContainer.getLayout().setShowFooter(mParameters.target !== "$default");
 
