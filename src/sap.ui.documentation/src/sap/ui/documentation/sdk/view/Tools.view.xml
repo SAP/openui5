@@ -443,7 +443,7 @@
 					</VBox>
 				</f:content>
 			</f:Card>
-			<!-- UI5 Test Recorder -->
+			<!-- Test Recorder -->
 			<f:Card class="threeColumnLayoutCard"
 				visible="{
 							path: '/ui5TestRecorder',

@@ -79,7 +79,7 @@ sap.ui.define([],
 			},
 			{
 				"id": "ui5TestRecorder",
-				"text": "UI5 Test Recorder",
+				"text": "Test Recorder",
 				"href": "topic/2535ef9272064cb6bd6b44e5402d531d",
 				"hideOnPhone": true
 			}
