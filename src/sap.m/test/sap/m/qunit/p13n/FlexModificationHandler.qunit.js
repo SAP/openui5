@@ -324,21 +324,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("#hasChanges based on PersistenceMode", {
-		before: function(){
-			this.oHandler = FlexModificationHandler.getInstance();
-			this.oControl = new MDCControl();
-			this.mPropertyBag = {
-				selector: this.oControl
-			};
-		},
-		after: function(){
-			this.oHandler.destroy();
-			this.oHandler = null;
-		}
-	});
-
-	QUnit.test("mode: Auto --> check dirty changes", function(assert){
+	QUnit.test("mode: Auto (with VM) --> check dirty changes", function(assert){
 
 		var done = assert.async();
 
@@ -346,13 +332,36 @@ sap.ui.define([
 		var oHasDirtyChangesSpy = sinon.spy(ControlPersonalizationWriteAPI, "hasDirtyFlexObjects");
 
 		var oModificationPayload = {
-			mode: "Auto"
+			mode: "Auto",
+			hasVM: true
 		};
 
 		//check for persisted changes in case of global persistence
 		this.oHandler.hasChanges(this.mPropertyBag, oModificationPayload).finally(function(){
 			assert.ok(oIsPersonalizedSpy.callCount === 0);
 			assert.ok(oHasDirtyChangesSpy.callCount === 1);
+			FlexRuntimeInfoAPI.isPersonalized.restore();
+			ControlPersonalizationWriteAPI.hasDirtyFlexObjects.restore();
+			done();
+		});
+	});
+
+	QUnit.test("mode: Auto (without VM) --> check dirty changes", function(assert){
+
+		var done = assert.async();
+
+		var oIsPersonalizedSpy = sinon.spy(FlexRuntimeInfoAPI, "isPersonalized");
+		var oHasDirtyChangesSpy = sinon.spy(ControlPersonalizationWriteAPI, "hasDirtyFlexObjects");
+
+		var oModificationPayload = {
+			mode: "Auto",
+			hasVM: false
+		};
+
+		//check for persisted changes in case of global persistence
+		this.oHandler.hasChanges(this.mPropertyBag, oModificationPayload).finally(function(){
+			assert.ok(oIsPersonalizedSpy.callCount === 1);
+			assert.ok(oHasDirtyChangesSpy.callCount === 0);
 			FlexRuntimeInfoAPI.isPersonalized.restore();
 			ControlPersonalizationWriteAPI.hasDirtyFlexObjects.restore();
 			done();

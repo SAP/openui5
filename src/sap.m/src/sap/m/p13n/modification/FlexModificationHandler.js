@@ -89,6 +89,10 @@ sap.ui.define([
 
         var sInternalPersistenceMode = oModificationPayload.mode;
 
+        if (sInternalPersistenceMode === mode.Auto) {
+            sInternalPersistenceMode = oModificationPayload.hasVM ? "Standard" : mode.Global;
+        }
+
         return this.initialize()
         .then(function(){
             if (sInternalPersistenceMode === mode.Global) {
