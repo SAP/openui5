@@ -9,7 +9,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 
 
 	/**
-	 * Constructor for Context class.
+	 * Constructor for Context class. The constructor must only be called by model-internal methods.
 	 *
 	 * @class
 	 * The Context is a pointer to an object in the model data. A relative binding needs a context
