@@ -406,6 +406,30 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("a child is moved inside the default aggregation", async function (assert) {
+			const oVBox = XmlTreeModifier._children(this.oXmlView)[0];
+			const oLabel = XmlTreeModifier._children(this.oXmlView)[0].childNodes[2];
+			await XmlTreeModifier.moveAggregation(oVBox, "items", oVBox, "items", oLabel, 1);
+			const aChildNodes = XmlTreeModifier._children(oVBox);
+			assert.strictEqual(aChildNodes.length, 3);
+			assert.strictEqual(aChildNodes[1].localName, "Label", "Label was moved to the right index");
+			assert.strictEqual(aChildNodes[1].namespaceURI, "sap.m");
+		});
+
+		QUnit.test("a child is moved from one control to another", async function (assert) {
+			const oSourceVBox = XmlTreeModifier._children(this.oXmlView)[0];
+			const oTargetHBox = XmlTreeModifier._children(this.oXmlView)[1];
+			const oLabel = XmlTreeModifier._children(this.oXmlView)[0].childNodes[2];
+			await XmlTreeModifier.moveAggregation(oSourceVBox, "items", oTargetHBox, "items", oLabel, 1);
+			const aTargetHBoxChildNodes = XmlTreeModifier._children(oTargetHBox);
+			const aTargetItemChildNodes = XmlTreeModifier._children(aTargetHBoxChildNodes[1]);
+			assert.strictEqual(aTargetItemChildNodes.length, 2);
+			assert.strictEqual(aTargetItemChildNodes[1].localName, "Label", "Label was added to target parent with the right index");
+			assert.strictEqual(aTargetItemChildNodes[1].namespaceURI, "sap.m");
+			const aSourceItemChildNodes = XmlTreeModifier._children(oSourceVBox);
+			assert.strictEqual(aSourceItemChildNodes.length, 2, "Label was removed from source parent");
+		});
+
 		QUnit.test("a child is removed from the aggregation and then destroyed + destroy without removing", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
 			var oLabel = XmlTreeModifier._children(this.oXmlView)[0].childNodes[2];
