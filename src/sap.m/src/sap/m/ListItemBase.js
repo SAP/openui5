@@ -1266,14 +1266,10 @@ function(
 		}
 
 		// allow the context menu to open on the SingleSelect or MultiSelect control
-		// is(":focusable") check is required as IE sets activeElement also to text controls
-		if (jQuery(document.activeElement).is(":focusable") &&
-			document.activeElement !== this.getDomRef() &&
-			oEvent.srcControl !== this.getModeControl()) {
-			return;
+		if (oEvent.srcControl == this.getModeControl() ||
+			document.activeElement.matches(".sapMLIB,.sapMListTblCell,.sapMListTblSubRow")) {
+			this.informList("ContextMenu", oEvent);
 		}
-
-		this.informList("ContextMenu", oEvent);
 	};
 
 	return ListItemBase;

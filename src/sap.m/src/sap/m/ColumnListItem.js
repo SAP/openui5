@@ -83,6 +83,9 @@ sap.ui.define([
 			if (oEvent.isMarked() || ListItemBase.detectTextSelection(this.getDomRef())) {
 				return oEvent.stopImmediatePropagation(true);
 			}
+			if (oEvent.srcControl === this || !jQuery(oEvent.target).is(":sapFocusable")) {
+				this.getParent().focus();
+			}
 		}
 	});
 

@@ -6,11 +6,12 @@ sap.ui.define([
 	"sap/ui/core/Renderer",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
+	"sap/ui/Device",
 	"sap/base/Log",
 	"./library",
 	"./ListItemBaseRenderer"
 ],
-	function(Renderer, coreLibrary, Core, Log, library, ListItemBaseRenderer) {
+	function(Renderer, coreLibrary, Core, Device, Log, library, ListItemBaseRenderer) {
 	"use strict";
 
 	// shortcut for sap.m.PopinDisplay
@@ -49,8 +50,10 @@ sap.ui.define([
 	};
 
 	ColumnListItemRenderer.makeFocusable = function(rm) {
-		rm.attr("tabindex", "-1");
-		rm.class("sapMTblCellFocusable");
+		if (Device.system.desktop) {
+			rm.attr("tabindex", "-1");
+			rm.class("sapMTblCellFocusable");
+		}
 	};
 
 	ColumnListItemRenderer.openStartGridCell = function(rm, oLI, sTag, sId, sClass) {
@@ -259,6 +262,7 @@ sap.ui.define([
 		rm.openStart("tr", oLI.getPopin());
 		rm.class("sapMListTblSubRow");
 		rm.attr("role", "none");
+		rm.attr("tabindex", "-1");
 		rm.attr("data-sap-ui-related", oLI.getId());
 		rm.openEnd();
 
