@@ -666,13 +666,11 @@ sap.ui.define([
 
 	Table.prototype.onmousedown = function(oEvent) {
 		this._bMouseDown = true;
-		var sOldTabIndex, oFocusableCell;
-		if (oEvent.target.closest("[draggable=true]")) {
-			oFocusableCell = oEvent.target.closest(".sapMTblCellFocusable");
-			if (oFocusableCell && !document.activeElement.classList.contains("sapMTblCellFocusable")) {
-				sOldTabIndex = oFocusableCell.getAttribute("tabindex");
-				oFocusableCell.removeAttribute("tabindex");
-			}
+		var sOldTabIndex;
+		var oFocusableCell = oEvent.target.closest(".sapMTblCellFocusable:not([aria-haspopup])");
+		if (oFocusableCell && !document.activeElement.classList.contains("sapMTblCellFocusable")) {
+			sOldTabIndex = oFocusableCell.getAttribute("tabindex");
+			oFocusableCell.removeAttribute("tabindex");
 		}
 		setTimeout(function() {
 			this._bMouseDown = false;
@@ -683,7 +681,7 @@ sap.ui.define([
 
 	Table.prototype._onItemNavigationBeforeFocus = function(oUI5Event) {
 		var oEvent = oUI5Event.getParameter("event");
-		if (this._bMouseDown && !oEvent.target.hasAttribute("tabindex") && !oEvent.target.closest(".sapMListTblSubCnt")) {
+		if (this._bMouseDown && !oEvent.target.hasAttribute("tabindex")) {
 			return;
 		}
 
