@@ -52,5 +52,25 @@
         ]
       }
     ]
+  },
+  "1.96.23": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "967ce4b826c974d046cfbbc057c63c0034146208",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: getScrollDelegate now returns proper delegate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370034572"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500006307332023"
+          }
+        ]
+      }
+    ]
   }
 }
