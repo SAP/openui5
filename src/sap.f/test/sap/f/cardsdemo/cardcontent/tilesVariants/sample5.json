@@ -1,0 +1,59 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.tilesVariants.sample5",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"type": "Numeric",
+			"title": "Large image in numeric header",
+			"icon": {
+				"src": "./images/sap-logo.svg",
+				"shape": "Square"
+			},
+			"unitOfMeasurement": "EUR",
+			"mainIndicator": {
+				"number": "200",
+				"unit": "K",
+				"trend": "Up",
+				"state": "Good"
+			},
+			"sideIndicators": [
+				{
+					"title": "Target",
+					"number": "210",
+					"unit": "K"
+				},
+				{
+					"title": "Deviation",
+					"number": "5",
+					"unit": "%"
+				}
+			],
+			"details": {
+				"text": "{details}",
+				"state": "Success"
+			},
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "http://sap.com"
+					}
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"json": [{
+						"Name": "Comfort Easy"
+					}
+				]
+			},
+			"item": {
+				"title": "{Name}"
+			}
+		}
+	}
+}

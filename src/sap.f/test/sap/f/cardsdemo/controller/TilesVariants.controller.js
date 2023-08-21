@@ -6,15 +6,16 @@ sap.ui.define([
 
 	return Controller.extend("sap.f.cardsdemo.controller.TilesVariants", {
 		onInit: function () {
-			var aCards = ["card1", "card2", "card3", "card4", "card5", "card6"];
-			aCards.forEach(function (sCardId) {
-				var oCard = this.getView().byId(sCardId);
+			var aCards = this.getView().findAggregatedObjects(true, function (e) {
+				return e.isA("sap.ui.integration.widgets.Card");
+			});
 
+			aCards.forEach(function (oCard) {
 				// Adds a toolbar with actions for testing
 				oCard.attachManifestApplied(function () {
 					oCard.addActionDefinition(new ActionDefinition({ text: "Test" }));
 				});
-			}.bind(this));
+			});
 		}
 	});
 });

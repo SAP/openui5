@@ -18,11 +18,15 @@
 			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample1.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample2.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card3" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample3.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card7" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample4.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card9" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample5.json" class="sapUiSmallMargin"/>
 		</Panel>
 		<Panel headerText="Tiles 4x2" class="sapUiSmallMargin">
 			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample1.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card5" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample2.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card6" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample3.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card8" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample4.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card10" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample5.json" class="sapUiSmallMargin"/>
 		</Panel>
 	</Page>
 </mvc:View>
