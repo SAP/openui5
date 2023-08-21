@@ -28211,7 +28211,11 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2260
 	//
 	// Create new child and cancel immediately (JIRA: CPOUI5ODATAV4-2272)
-	QUnit.test("Recursive Hierarchy: create new children & placeholders", function (assert) {
+	// Also delete instead of cancelling (JIRA: CPOUI5ODATAV4-2274)
+[false, true].forEach(function (bDelete) {
+	const sTitle = `Recursive Hierarchy: create new children & placeholders, delete=${bDelete}`;
+
+	QUnit.test(sTitle, function (assert) {
 		var oListBinding, oRoot, oTable;
 
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
@@ -28316,12 +28320,16 @@ sap.ui.define([
 				[undefined, 2, "2", "Gamma"]
 			], 6);
 
-			// code under test (JIRA: CPOUI5ODATAV4-2272)
+			// code under test (JIRA: CPOUI5ODATAV4-2272, JIRA: CPOUI5ODATAV4-2274)
 			const oLostChild = oListBinding.create({
 				"@$ui5.node.parent" : oRoot,
 				Name : "n/a"
 			}, /*bSkipRefresh*/true);
-			oModel.resetChanges();
+			if (bDelete) {
+				oLostChild.delete();
+			} else {
+				oModel.resetChanges();
+			}
 
 			that.expectChange("id", [, "", "1"])
 				.expectChange("name", [, "1st new child", "Beta"])
@@ -28462,6 +28470,7 @@ sap.ui.define([
 			]);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Application tries to overwrite client-side instance annotations.
