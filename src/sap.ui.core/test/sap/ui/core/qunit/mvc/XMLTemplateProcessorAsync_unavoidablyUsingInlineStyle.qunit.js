@@ -1,7 +1,8 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/mvc/XMLView"
-], function(XMLView) {
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(XMLView, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("HTML nesting in XMLView");
@@ -20,9 +21,9 @@ sap.ui.define([
 					}
 				}]
 			}
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			oView.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 			var oDomRef = oView.getDomRef();
 
 			// <style> on top-level

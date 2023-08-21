@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/uxap/ObjectPageLayout",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/createAndAppendDiv"],
-function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem, JSONModel, Button, SegmentedButton, SegmentedButtonItem, Select, Panel, ObjectPageLayout, Log, createAndAppendDiv) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate"],
+function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem, JSONModel, Button, SegmentedButton, SegmentedButtonItem, Select, Panel, ObjectPageLayout, Log, createAndAppendDiv, nextUIUpdate) {
 	/* global QUnit sinon*/
 	"use strict";
 
@@ -593,11 +594,11 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			models: {
 				"undefined": oJSONModel
 			}
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			this.oView = oView;
 
 			oView.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var oOPL = this.oView.byId("ObjectPageLayout");
 			var aAllSections = oOPL.getSections();
@@ -621,7 +622,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			stashed[0].unstash();
 
 			// force rendering
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			// get sections anew, instances now have changed after unstash
 			aAllSections = oOPL.getSections();

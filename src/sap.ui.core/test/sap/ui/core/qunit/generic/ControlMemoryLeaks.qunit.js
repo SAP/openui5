@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/test/generic/TestBase",
 	"sap/ui/test/generic/Utils",
-	"sap/ui/core/Element"
-], function(TestBase, Utils, Element) {
+	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(TestBase, Utils, Element, nextUIUpdate) {
 	"use strict";
 
 	 // asserts that both given maps have the same entries
@@ -80,7 +81,7 @@ sap.ui.define([
 				mPreElements,
 				createAndTestControl = function (bFinalIteration) {
 					var oControl = Utils.createControlOrElement(oClassInfo.fnClass, this.getObjectCapabilities(sControlName)),
-					testControl = function (oControl) {
+					testControl = async function (oControl) {
 						// check whether this control can be rendered
 						if (oControl.placeAt && !bFinalIteration) {
 							try {
@@ -96,17 +97,17 @@ sap.ui.define([
 
 						if (bCanRender) {
 							oControl.placeAt("qunit-fixture");
-							sap.ui.getCore().applyChanges();
+							await nextUIUpdate();
 
 							if (bFinalIteration) {
 								oControl.rerender();  // just re-render again - this finds problems
-								sap.ui.getCore().applyChanges();
+								await nextUIUpdate();
 							}
 						} else if (bFinalIteration) {
 							assert.ok(true, "Info: " + sControlName + " cannot be rendered");
 						}
 						oControl.destroy();
-						sap.ui.getCore().applyChanges();
+						await nextUIUpdate();
 
 						if (bFinalIteration) {
 							var mPostElements = Element.registry.all();

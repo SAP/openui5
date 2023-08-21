@@ -10,13 +10,14 @@ sap.ui.define([
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/mvc/Controller",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/jquery",
 	"testdata/fragments_legacyAPIs/TypedView"
-], function (Log, qutils, Component, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, View, XMLView, Controller, LoaderExtensions, jQuery, TypedView) {
+], function (Log, qutils, Component, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, nextUIUpdate, View, XMLView, Controller, LoaderExtensions, jQuery, TypedView) {
 	"use strict";
 
 	createAndAppendDiv(["content1", "content2", "content3", "content4", "binding"]);
@@ -105,10 +106,10 @@ sap.ui.define([
 
 
 
-	QUnit.test("XML Fragment loaded from file", function(assert) {
+	QUnit.test("XML Fragment loaded from file", async function(assert) {
 		var oFragment = sap.ui.xmlfragment("testdata.fragments_legacyAPIs.XMLTestFragment", this.oDummyController);
 		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var id = oFragment.getId();
 
@@ -130,10 +131,10 @@ sap.ui.define([
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
 
-	QUnit.test("XML Fragment loaded from file with given Fragment ID", function(assert) {
+	QUnit.test("XML Fragment loaded from file with given Fragment ID", async function(assert) {
 		var oFragment = sap.ui.xmlfragment("myXmlFrag", "testdata.fragments_legacyAPIs.XMLTestFragment", this.oDummyController);
 		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var id = oFragment.getId();
 
@@ -155,10 +156,10 @@ sap.ui.define([
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
 
-	QUnit.test("XML Fragment loaded from file with given Fragment ID and root control ID", function(assert) {
+	QUnit.test("XML Fragment loaded from file with given Fragment ID and root control ID", async function(assert) {
 		var oFragment = sap.ui.xmlfragment("myXmlFrag1", "testdata.fragments_legacyAPIs.XMLTestFragmentWithId", this.oDummyController);
 		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var id = oFragment.getId();
 		assert.equal(id, "myXmlFrag1--layout", "Root control ID should be prefixed");
@@ -173,10 +174,10 @@ sap.ui.define([
 	/**
 	 * @deprecated Since version 1.108
 	 */
-	QUnit.test("HTML Fragment loaded from file", function(assert) {
+	QUnit.test("HTML Fragment loaded from file", async function(assert) {
 		var oFragment = sap.ui.htmlfragment("testdata.fragments_legacyAPIs.HTMLTestFragment", this.oDummyController);
 		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var id = oFragment.getId();
 
@@ -201,10 +202,10 @@ sap.ui.define([
 	/**
 	 * @deprecated Since version 1.108
 	 */
-	QUnit.test("HTML Fragment loaded from file with given Fragment ID", function(assert) {
+	QUnit.test("HTML Fragment loaded from file with given Fragment ID", async function(assert) {
 		var oFragment = sap.ui.htmlfragment("myHtmlFrag", "testdata.fragments_legacyAPIs.HTMLTestFragment", this.oDummyController);
 		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var id = oFragment.getId();
 
@@ -230,10 +231,10 @@ sap.ui.define([
 	/**
 	 * @deprecated Since version 1.108
 	 */
-	QUnit.test("HTML Fragment loaded from file with given Fragment ID and root control ID", function(assert) {
+	QUnit.test("HTML Fragment loaded from file with given Fragment ID and root control ID", async function(assert) {
 		var oFragment = sap.ui.htmlfragment("myHtmlFrag1", "testdata.fragments_legacyAPIs.HTMLTestFragmentWithId", this.oDummyController);
 		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var id = oFragment.getId();
 		assert.equal(id, "myHtmlFrag1--layout", "Root control ID should be prefixed");
@@ -246,10 +247,10 @@ sap.ui.define([
 
 
 
-	QUnit.test("JS Fragment loaded from file", function(assert) {
+	QUnit.test("JS Fragment loaded from file", async function(assert) {
 		var oFragment = sap.ui.jsfragment("testdata.fragments_legacyAPIs.JSTestFragment", this.oDummyController);
 		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var id = oFragment.getId();
 
@@ -271,10 +272,10 @@ sap.ui.define([
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
 
-	QUnit.test("JS Fragment loaded from file with given Fragment ID", function(assert) {
+	QUnit.test("JS Fragment loaded from file with given Fragment ID", async function(assert) {
 		var oFragment = sap.ui.jsfragment("myJsFrag", "testdata.fragments_legacyAPIs.JSTestFragment", this.oDummyController);
 		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var id = oFragment.getId();
 
@@ -297,10 +298,10 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("JS Fragment loaded from file with given Fragment ID and root control ID", function(assert) {
+	QUnit.test("JS Fragment loaded from file with given Fragment ID and root control ID", async function(assert) {
 		var oFragment = sap.ui.jsfragment("myJsFrag1", "testdata.fragments_legacyAPIs.JSTestFragmentWithId", this.oDummyController);
 		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var id = oFragment.getId();
 		assert.equal(id, "myJsFrag1--layout", "Root control ID should be prefixed");
@@ -314,7 +315,7 @@ sap.ui.define([
 
 	QUnit.module("Inline Fragments");
 
-	QUnit.test("Inline Fragments within JSView", function(assert) {
+	QUnit.test("Inline Fragments within JSView", async function(assert) {
 		assert.expect(10); // incl. Button click handler
 
 		// Inline Fragments preconditions
@@ -325,7 +326,7 @@ sap.ui.define([
 		// JSView creation with Fragments used inside
 		var oViewWithFragments = sap.ui.jsview("myView", "example.fragment_legacyAPIs.test");
 		oViewWithFragments.placeAt("content2");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.ok(document.getElementById("myView"), "JSView should be rendered");
 
 		// Inline JS Fragment
@@ -346,7 +347,7 @@ sap.ui.define([
 		oViewWithFragments.destroy();
 	});
 
-	QUnit.test("Inline Fragments within synchronous Typed View", function(assert) {
+	QUnit.test("Inline Fragments within synchronous Typed View", async function(assert) {
 		assert.expect(10); // incl. Button click handler
 
 		// Inline Fragments preconditions
@@ -358,7 +359,7 @@ sap.ui.define([
 		var oViewWithFragments = new TypedView("myView");
 
 		oViewWithFragments.placeAt("content2");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.ok(document.getElementById("myView"), "JSView should be rendered");
 
 		// Inline JS Fragment
@@ -391,9 +392,9 @@ sap.ui.define([
 		return View.create({
 			id: "myView",
 			viewName: "module:testdata/fragments_legacyAPIs/TypedView"
-		}).then(function (oViewWithFragments) {
+		}).then(async function (oViewWithFragments) {
 			oViewWithFragments.placeAt("content2");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 			assert.ok(document.getElementById("myView"), "JSView should be rendered");
 
 			// Inline JS Fragment
@@ -422,10 +423,10 @@ sap.ui.define([
 
 	var DATABOUND_TEXT_IN_VIEW = "Text from Databinding in View";
 
-	QUnit.test("XMLView Rendering", function(assert) {
+	QUnit.test("XMLView Rendering", async function(assert) {
 		oXmlView = sap.ui.xmlview("testdata.fragments_legacyAPIs.XMLViewWithFragments");
 		oXmlView.placeAt("content3");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var data = {
 			someText: DATABOUND_TEXT_IN_VIEW
@@ -435,7 +436,7 @@ sap.ui.define([
 		oModel.setData(data);
 		oXmlView.setModel(oModel);
 
-		sap.ui.getCore().applyChanges(); // update data binding in DOM
+		await nextUIUpdate(); // update data binding in DOM
 
 		var aContent = oXmlView.getContent();
 		oXmlFragmentInXmlView = aContent[0];
@@ -613,12 +614,12 @@ sap.ui.define([
 		oDialog.open();
 		assert.ok(document.getElementById("jsDialog"), "Fragment should be rendered now");
 
-		window.setTimeout(function() {
+		window.setTimeout(async function() {
 			assert.ok(oDialog.isOpen(), "Dialog should be open now");
 
 			assert.equal(jQuery("#jsDialogTxt").text(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
 			oDialog.setModel(oDialogModel);
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 			assert.equal(jQuery("#jsDialogTxt").text(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
 
 			triggerClickEvent("jsDialogBtn"); // close it
@@ -646,12 +647,12 @@ sap.ui.define([
 		oDialog.open();
 		assert.ok(document.getElementById("xmlDialog"), "Fragment should be rendered now");
 
-		window.setTimeout(function() {
+		window.setTimeout(async function() {
 			assert.ok(oDialog.isOpen(), "Dialog should be open now");
 
 			assert.equal(jQuery("#xmlDialogTxt").text(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
 			oDialog.setModel(oDialogModel);
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 			assert.equal(jQuery("#xmlDialogTxt").text(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
 
 			triggerClickEvent("xmlDialogBtn"); // close it
@@ -682,12 +683,12 @@ sap.ui.define([
 		oDialog.open();
 		assert.ok(document.getElementById("htmlDialog"), "Fragment should be rendered now");
 
-		window.setTimeout(function() {
+		window.setTimeout(async function() {
 			assert.ok(oDialog.isOpen(), "Dialog should be open now");
 
 			assert.equal(jQuery("#htmlDialogTxt").text(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
 			oDialog.setModel(oDialogModel);
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 			assert.equal(jQuery("#htmlDialogTxt").text(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
 
 			triggerClickEvent("htmlDialogBtn"); // close it
@@ -739,11 +740,11 @@ sap.ui.define([
 
 	QUnit.module("Fragments with no Controller");
 
-	QUnit.test("XML Fragment loaded from file", function(assert) {
+	QUnit.test("XML Fragment loaded from file", async function(assert) {
 		assert.expect(2);
 		var oFragment = sap.ui.xmlfragment("testdata.fragments_legacyAPIs.XMLTestFragmentNoController");
 		oFragment.placeAt("content4");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var id = oFragment.getId();
 		assert.ok(document.getElementById(id), "Fragment should be rendered");
@@ -755,11 +756,11 @@ sap.ui.define([
 		oFragment.destroy();
 	});
 
-	QUnit.test("JS Fragment loaded from file", function(assert) {
+	QUnit.test("JS Fragment loaded from file", async function(assert) {
 		assert.expect(3); // including one check in the View' createContent method
 		var oFragment = sap.ui.jsfragment("testdata.fragments_legacyAPIs.JSTestFragmentNoController");
 		oFragment.placeAt("content4");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var id = oFragment.getId();
 		assert.ok(document.getElementById(id), "Fragment should be rendered");
@@ -774,11 +775,11 @@ sap.ui.define([
 	/**
 	 * @deprecated Since version 1.108
 	 */
-	QUnit.test("HTML Fragment loaded from file", function(assert) {
+	QUnit.test("HTML Fragment loaded from file", async function(assert) {
 		assert.expect(2);
 		var oFragment = sap.ui.htmlfragment("testdata.fragments_legacyAPIs.HTMLTestFragmentNoController");
 		oFragment.placeAt("content4");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var id = oFragment.getId();
 		assert.ok(document.getElementById(id), "Fragment should be rendered");
@@ -799,9 +800,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Unnamed Model", function(assert) {
+	QUnit.test("Unnamed Model", async function(assert) {
 		sap.ui.xmlview("unnamedView", "my.UnnamedView").placeAt("binding");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oLabel = sap.ui.getCore().byId("unnamedView--unnamedName");
 		assert.ok(oLabel.getText().indexOf("<Named>") == -1, "Binding of unnamed model set for 'name'");
@@ -810,9 +811,9 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Named Model", function(assert) {
+	QUnit.test("Named Model", async function(assert) {
 		sap.ui.xmlview("namedView", "my.View").placeAt("binding");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oLabel = sap.ui.getCore().byId("namedView--namedName");
 		assert.ok(oLabel.getText().indexOf("<Named>") > -1, "Binding of named model set for 'name'");
@@ -844,9 +845,9 @@ sap.ui.define([
 		return Fragment.load({
 			name: "testdata.fragments_legacyAPIs.HTMLTestFragmentNoController",
 			type: "HTML"
-		}).then(function(oFragment) {
+		}).then(async function(oFragment) {
 			oFragment.placeAt("content4");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var id = oFragment.getId();
 			assert.ok(document.getElementById(id), "Fragment should be rendered");
@@ -866,9 +867,9 @@ sap.ui.define([
 			type: "JS",
 			id: "myJsFragLoadApi",
 			controller: this.oDummyController
-		}).then(function(oFragment) {
+		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var id = oFragment.getId();
 
@@ -900,9 +901,9 @@ sap.ui.define([
 		return Fragment.load({
 			definition: myXml,
 			controller: this.oDummyController
-		}).then(function(oFragment) {
+		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var id = oFragment.getId();
 			assert.ok(document.getElementById(id), "XML Fragment should be rendered");

@@ -3,8 +3,9 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Control, Parameters, createAndAppendDiv) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Control, Parameters, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -48,7 +49,7 @@ sap.ui.define([
 			this.myControl = new MyControlClass("myControl", assert);
 
 			this.myControl.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 

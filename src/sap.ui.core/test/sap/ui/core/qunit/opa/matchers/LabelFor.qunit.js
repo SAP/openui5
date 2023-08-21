@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/layout/library",
 	"sap/ui/layout/form/SimpleForm",
-	"sap/m/Link"
-], function (LabelFor, Input, Label, Button, ResourceModel, App, Page, layoutLibrary, SimpleForm, Link) {
+	"sap/m/Link",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (LabelFor, Input, Label, Button, ResourceModel, App, Page, layoutLibrary, SimpleForm, Link, nextUIUpdate) {
 	"use strict";
 
 	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
@@ -68,7 +69,7 @@ sap.ui.define([
 				]
 			})).setModel(this.oModel, "i18n").placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oApp.destroy();

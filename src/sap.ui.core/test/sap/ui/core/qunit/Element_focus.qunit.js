@@ -4,9 +4,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Input",
 	"sap/m/Panel"
-], function(BusyIndicator, Button, Dialog, createAndAppendDiv, Input, Panel) {
+], function(BusyIndicator, Button, Dialog, createAndAppendDiv, nextUIUpdate, Input, Panel) {
 	"use strict";
 
 	QUnit.module("Focus Issue");
@@ -42,7 +43,7 @@ sap.ui.define([
 
 	QUnit.module("Focus with preventScroll");
 
-	QUnit.test("Focus an element with preventScroll should NOT cause scrolling", function(assert) {
+	QUnit.test("Focus an element with preventScroll should NOT cause scrolling", async function(assert) {
 		var oContainerElement = createAndAppendDiv("scroll_container");
 		oContainerElement.style.overflow = "scroll";
 		oContainerElement.style.height = "400px";
@@ -53,7 +54,7 @@ sap.ui.define([
 
 		var oInput = new Input();
 		oInput.placeAt("input_uiarea");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		oInputAtEnd.scrollIntoView();
 
@@ -79,17 +80,17 @@ sap.ui.define([
 
 	QUnit.module("#isFocusable");
 
-	QUnit.test("Element isn't focusable when it's invisible", function(assert) {
+	QUnit.test("Element isn't focusable when it's invisible", async function(assert) {
 		var oUIArea = createAndAppendDiv("uiarea_focus");
 
 		var oInput = new Input();
 		oInput.placeAt("uiarea_focus");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
 
 		oInput.setVisible(false);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because it's invisible");
 
@@ -97,19 +98,19 @@ sap.ui.define([
 		oUIArea.remove();
 	});
 
-	QUnit.test("Element isn't focusable when it's busy", function(assert) {
+	QUnit.test("Element isn't focusable when it's busy", async function(assert) {
 		var oUIArea = createAndAppendDiv("uiarea_focus");
 
 		var oInput = new Input();
 		oInput.setBusyIndicatorDelay(0);
 		oInput.placeAt("uiarea_focus");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
 
 
 		oInput.setBusy(true);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because it's busy");
 
@@ -120,17 +121,17 @@ sap.ui.define([
 	/**
 	 * @deprecated As of 1.69
 	 */
-	QUnit.test("Element isn't focusable when it's blocked", function(assert) {
+	QUnit.test("Element isn't focusable when it's blocked", async function(assert) {
 		var oUIArea = createAndAppendDiv("uiarea_focus");
 
 		var oInput = new Input();
 		oInput.placeAt("uiarea_focus");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
 
 		oInput.setBlocked(true);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because it's blocked");
 
@@ -138,7 +139,7 @@ sap.ui.define([
 		oUIArea.remove();
 	});
 
-	QUnit.test("Element isn't focusable when its parent is busy", function(assert) {
+	QUnit.test("Element isn't focusable when its parent is busy", async function(assert) {
 		var oUIArea = createAndAppendDiv("uiarea_focus");
 
 		var oInput = new Input();
@@ -147,13 +148,13 @@ sap.ui.define([
 		});
 		oPanel.setBusyIndicatorDelay(0);
 		oPanel.placeAt("uiarea_focus");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!oPanel.isFocusable(), "Panel doesn't have focusable DOM element");
 		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
 
 		oPanel.setBusy(true);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because its parent is busy");
 
@@ -164,7 +165,7 @@ sap.ui.define([
 	/**
 	 * @deprecated As of 1.69
 	 */
-	QUnit.test("Element isn't focusable when its parent is blocked", function(assert) {
+	QUnit.test("Element isn't focusable when its parent is blocked", async function(assert) {
 		var oUIArea = createAndAppendDiv("uiarea_focus");
 
 		var oInput = new Input();
@@ -172,13 +173,13 @@ sap.ui.define([
 			content: oInput
 		});
 		oPanel.placeAt("uiarea_focus");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!oPanel.isFocusable(), "Panel doesn't have focusable DOM element");
 		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
 
 		oPanel.setBlocked(true);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because its parent is busy");
 
@@ -186,12 +187,12 @@ sap.ui.define([
 		oUIArea.remove();
 	});
 
-	QUnit.test("Element isn't focusable when global BusyIndicator is open", function(assert) {
+	QUnit.test("Element isn't focusable when global BusyIndicator is open", async function(assert) {
 		var oUIArea = createAndAppendDiv("uiarea_focus");
 
 		var oInput = new Input();
 		oInput.placeAt("uiarea_focus");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
 
@@ -205,13 +206,13 @@ sap.ui.define([
 		oUIArea.remove();
 	});
 
-	QUnit.test("Element isn't focusable when modal Popup is open", function(assert) {
+	QUnit.test("Element isn't focusable when modal Popup is open", async function(assert) {
 		var done = assert.async();
 		var oUIArea = createAndAppendDiv("uiarea_focus");
 
 		var oInput = new Input();
 		oInput.placeAt("uiarea_focus");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
 
@@ -249,7 +250,7 @@ sap.ui.define([
 		oDialog.open();
 	});
 
-	QUnit.test("Element is focusable even when it's covered due to scrolling", function(assert) {
+	QUnit.test("Element is focusable even when it's covered due to scrolling", async function(assert) {
 		var done = assert.async();
 		var sContent =
 			"<div style='overflow-y: scroll; height: 400px; position:relative'>" +
@@ -264,7 +265,7 @@ sap.ui.define([
 
 		var oInput = new Input();
 		oInput.placeAt("uiarea11");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// focus the last <input> causes the "uiarea11" to scorlled out of the view port
 		document.getElementById("input11").focus();

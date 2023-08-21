@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/List",
 	"sap/m/StandardListItem",
-	"sap/m/Text"
-], function (extend, _ControlSelectorValidator, _ControlFinder, JSONModel, List, StandardListItem, Text) {
+	"sap/m/Text",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (extend, _ControlSelectorValidator, _ControlFinder, JSONModel, List, StandardListItem, Text, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("_ControlSelectorValidator", {
@@ -36,7 +37,7 @@ sap.ui.define([
 			this.oText.placeAt("qunit-fixture");
 			this.oTextNoSelector1.placeAt("qunit-fixture");
 			this.oTextNoSelector2.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			sap.ui.getCore().setModel();

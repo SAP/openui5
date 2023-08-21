@@ -12,13 +12,14 @@ sap.ui.define([
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/mvc/JSView",
 	"sap/ui/core/mvc/Controller",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/jquery"
-], function (Log, qutils, Core, Component, Fragment, Element, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, View, XMLView, JSView, Controller, LoaderExtensions, jQuery) {
+], function (Log, qutils, Core, Component, Fragment, Element, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, nextUIUpdate, View, XMLView, JSView, Controller, LoaderExtensions, jQuery) {
 	"use strict";
 
 	createAndAppendDiv(["content1", "content2", "content3", "content4", "binding"]);
@@ -57,9 +58,9 @@ sap.ui.define([
 		return Fragment.load({
 			fragmentName: "testdata.fragments.XMLTestFragment",
 			controller: this.oDummyController
-		}).then(function(oFragment) {
+		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var id = oFragment.getId();
 
@@ -87,9 +88,9 @@ sap.ui.define([
 			id: "myXmlFrag",
 			fragmentName: "testdata.fragments.XMLTestFragment",
 			controller: this.oDummyController
-		}).then(function(oFragment) {
+		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var id = oFragment.getId();
 
@@ -117,9 +118,9 @@ sap.ui.define([
 			id: "myXmlFrag1",
 			fragmentName: "testdata.fragments.XMLTestFragmentWithId",
 			controller: this.oDummyController
-		}).then(function(oFragment) {
+		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var id = oFragment.getId();
 			assert.equal(id, "myXmlFrag1--layout", "Root control ID should be prefixed");
@@ -136,9 +137,9 @@ sap.ui.define([
 			fragmentName: "testdata.fragments.JSTestFragment",
 			type: "JS",
 			controller: this.oDummyController
-		}).then(function(oFragment) {
+		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var id = oFragment.getId();
 
@@ -167,9 +168,9 @@ sap.ui.define([
 			id: "myJsFrag",
 			type: "JS",
 			controller: this.oDummyController
-		}).then(function(oFragment) {
+		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var id = oFragment.getId();
 
@@ -198,9 +199,9 @@ sap.ui.define([
 			id: "myJsFrag1",
 			type: "JS",
 			controller: this.oDummyController
-		}).then(function(oFragment) {
+		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var id = oFragment.getId();
 			assert.equal(id, "myJsFrag1--layout", "Root control ID should be prefixed");
@@ -226,9 +227,9 @@ sap.ui.define([
 		return View.create({
 			id: "myView",
 			viewName: "module:my/TypedView"
-		}).then(function (oViewWithFragments) {
+		}).then(async function (oViewWithFragments) {
 			oViewWithFragments.placeAt("content2");
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.ok(document.getElementById("myView"), "JSView should be rendered");
 
 			// Inline JS Fragment
@@ -255,11 +256,11 @@ sap.ui.define([
 	QUnit.test("XMLView Rendering", function(assert) {
 		return XMLView.create({
 			viewName: "testdata.fragments.XMLViewWithFragments"
-		}).then(function(oResult) {
+		}).then(async function(oResult) {
 			oXmlView = oResult;
 
 			oXmlView.placeAt("content3");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var data = {
 				someText: DATABOUND_TEXT_IN_VIEW
@@ -269,7 +270,7 @@ sap.ui.define([
 			oModel.setData(data);
 			oXmlView.setModel(oModel);
 
-			Core.applyChanges(); // update data binding in DOM
+			await nextUIUpdate(); // update data binding in DOM
 
 			var aContent = oXmlView.getContent();
 			oXmlFragmentInXmlView = aContent[0];
@@ -399,12 +400,12 @@ sap.ui.define([
 			oDialog.open();
 			assert.ok(document.getElementById("jsDialog"), "Fragment should be rendered now");
 
-			window.setTimeout(function() {
+			window.setTimeout(async function() {
 				assert.ok(oDialog.isOpen(), "Dialog should be open now");
 
 				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
 				oDialog.setModel(oDialogModel);
-				Core.applyChanges();
+				await nextUIUpdate();
 				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
 
 				triggerClickEvent("jsDialogBtn"); // close it
@@ -437,12 +438,12 @@ sap.ui.define([
 			oDialog.open();
 			assert.ok(document.getElementById("xmlDialog"), "Fragment should be rendered now");
 
-			window.setTimeout(function() {
+			window.setTimeout(async function() {
 				assert.ok(oDialog.isOpen(), "Dialog should be open now");
 
 				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
 				oDialog.setModel(oDialogModel);
-				Core.applyChanges();
+				await nextUIUpdate();
 				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
 
 				triggerClickEvent("xmlDialogBtn"); // close it
@@ -463,9 +464,9 @@ sap.ui.define([
 		assert.expect(2);
 		return Fragment.load({
 			fragmentName: "testdata.fragments.XMLTestFragmentNoController"
-		}).then(function(oFragment) {
+		}).then(async function(oFragment) {
 			oFragment.placeAt("content4");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var id = oFragment.getId();
 			assert.ok(document.getElementById(id), "Fragment should be rendered");
@@ -483,9 +484,9 @@ sap.ui.define([
 		return Fragment.load({
 			fragmentName: "testdata.fragments.JSTestFragmentNoController",
 			type: "JS"
-		}).then(function(oFragment) {
+		}).then(async function(oFragment) {
 			oFragment.placeAt("content4");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var id = oFragment.getId();
 			assert.ok(document.getElementById(id), "Fragment should be rendered");
@@ -511,9 +512,9 @@ sap.ui.define([
 		return XMLView.create({
 			id: "unnamedView",
 			viewName: "my.UnnamedView"
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			oView.placeAt("binding");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var oLabel = Core.byId("unnamedView--unnamedName");
 			assert.ok(oLabel.getText().indexOf("<Named>") == -1, "Binding of unnamed model set for 'name'");
@@ -526,9 +527,9 @@ sap.ui.define([
 		return XMLView.create({
 			id: "namedView",
 			viewName: "my.View"
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			oView.placeAt("binding");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var oLabel = Core.byId("namedView--namedName");
 			assert.ok(oLabel.getText().indexOf("<Named>") > -1, "Binding of named model set for 'name'");
@@ -560,9 +561,9 @@ sap.ui.define([
 			type: "JS",
 			id: "myJsFragLoadApi",
 			controller: this.oDummyController
-		}).then(function(oFragment) {
+		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var id = oFragment.getId();
 
@@ -594,9 +595,9 @@ sap.ui.define([
 		return Fragment.load({
 			definition: myXml,
 			controller: this.oDummyController
-		}).then(function(oFragment) {
+		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var id = oFragment.getId();
 			assert.ok(document.getElementById(id), "XML Fragment should be rendered");

@@ -3,10 +3,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Control",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/dom/includeStylesheet",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"require"
-], function(Log, Control, ResizeHandler, includeStylesheet, createAndAppendDiv, require) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Log, Control, ResizeHandler, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	// setup page content
@@ -367,14 +366,14 @@ sap.ui.define([
 
 	QUnit.module("Control Resize");
 
-	QUnit.test("Check Control Resize - With Rerendering", function(assert) {
+	QUnit.test("Check Control Resize - With Rerendering", async function(assert) {
 		var done = assert.async();
 		assert.expect(3);
 		var sResizeListenerId = _register(control);
 
 		control.setWidth("150px");
 		control.setHeight("150px");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		setTimeout(function() {
 			assert.ok(lastResizeTargetCtrl == control, "Listener should be called on DOM Resize");
@@ -399,16 +398,16 @@ sap.ui.define([
 		}, 300);
 	});
 
-	QUnit.test("Check Control Resize - After Destroy no resize should be triggered", function(assert) {
+	QUnit.test("Check Control Resize - After Destroy no resize should be triggered", async function(assert) {
 		assert.expect(4);
 		var done = assert.async();
 		_register(control);
 
 		control.setWidth("151px");
 		control.setHeight("150px");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
-		setTimeout(function() {
+		setTimeout(async function() {
 			assert.ok(lastResizeTargetCtrl == control, "Listener should be called on DOM Resize");
 			assert.ok(lastSize && lastSize.width == 151 && lastSize.height == 150, "New Size given");
 
@@ -420,7 +419,7 @@ sap.ui.define([
 			// after destruction, this should not lead to another resize-handler call
 			control.setWidth("150px");
 			control.setHeight("150px");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			setTimeout(function() {
 				assert.ok(lastResizeTargetCtrl == null, "Listener should not have been called on control resize");

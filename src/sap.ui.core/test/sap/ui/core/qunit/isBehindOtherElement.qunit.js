@@ -5,17 +5,17 @@ sap.ui.define([
     "sap/m/Input",
     "sap/m/MessagePopover",
     "sap/m/Page",
-    "sap/ui/core/Core",
 	"sap/ui/dom/isBehindOtherElement",
-    "sap/ui/thirdparty/jquery"
-], function(App, Button, Input, MessagePopover, Page, oCore, isBehindOtherElement, jQuery) {
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/qunit/utils/nextUIUpdate"
+], function(App, Button, Input, MessagePopover, Page, isBehindOtherElement, jQuery, nextUIUpdate) {
 	"use strict";
 
 	// Test functions
 
 	QUnit.module("API");
 
-	QUnit.test("isBehindOtherElement returns correct value", function (assert) {
+	QUnit.test("isBehindOtherElement returns correct value", async function (assert) {
         // Arrange
         var oInput = new Input(),
             oMessagePopover = new MessagePopover({
@@ -48,7 +48,7 @@ sap.ui.define([
 
         assert.expect(2);
         oApp.placeAt("qunit-fixture");
-        oCore.applyChanges();
+        await nextUIUpdate();
         jQuery("#qunit-fixture").css("top", "0");
         jQuery("#qunit-fixture").css("left", "0");
 
@@ -56,13 +56,13 @@ sap.ui.define([
         oButton.firePress();
 	});
 
-    QUnit.test("isBehindOtherElement returns 'false', if element is outside the visible viewport", function (assert) {
+    QUnit.test("isBehindOtherElement returns 'false', if element is outside the visible viewport", async function (assert) {
         // Arrange
         var oButton = new Button({ text: "My Button" });
 
         // QUnit fixture is usually positioned outside of the visible viewport
         oButton.placeAt("qunit-fixture");
-        oCore.applyChanges();
+        await nextUIUpdate();
 
         // Assert
         assert.strictEqual(isBehindOtherElement(oButton.getDomRef()), false, "Button is outside the visible viewport");

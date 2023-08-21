@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Event, Component, ComponentContainer, Controller, View, createAndAppendDiv) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Event, Component, ComponentContainer, Controller, View, createAndAppendDiv, nextUIUpdate) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -52,9 +53,7 @@ sap.ui.define([
 			});
 			oCompCont.placeAt("content");
 			return oComp.getRootControl().loaded();
-		}).then(function() {
-			sap.ui.getCore().applyChanges();
-		});
+		}).then(nextUIUpdate);
 	}
 
 	function destroyComponentAndContainer() {

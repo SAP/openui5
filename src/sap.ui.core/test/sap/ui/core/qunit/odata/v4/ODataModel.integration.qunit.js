@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Rendering",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/ChangeReason",
@@ -34,10 +35,10 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
 ], function (Log, uid, UriParameters, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text,
-		Device, EventProvider, SyncPromise, Configuration, Controller, View, ChangeReason, Filter,
-		FilterOperator, FilterType, Sorter, OperationMode, AnnotationHelper, ODataListBinding,
-		ODataMetaModel, ODataModel, ODataPropertyBinding, ValueListType, _Helper, TestUtils,
-		XMLHelper) {
+		Device, EventProvider, SyncPromise, Configuration, Rendering, Controller, View,
+		ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode, AnnotationHelper,
+		ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, ValueListType, _Helper,
+		TestUtils, XMLHelper) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
@@ -665,7 +666,7 @@ sap.ui.define([
 				}
 				delete this.mListChanges[sControlId];
 			}
-			if (sap.ui.getCore().getUIDirty() || this.oModel && this.oModel.aPrerenderingTasks
+			if (Rendering.isPending() || this.oModel && this.oModel.aPrerenderingTasks
 					|| sap.ui.getCore().getMessageManager().getMessageModel().getObject("/").length
 						< this.aMessages.length) {
 				setTimeout(this.checkFinish.bind(this, assert), 10);

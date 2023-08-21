@@ -4,8 +4,9 @@ sap.ui.define([
 	'sap/m/Input',
 	'sap/m/Text',
 	'sap/ui/layout/library',
-	'sap/ui/layout/form/SimpleForm'
-], function (_Editable, Input, Text, layoutLibrary, SimpleForm) {
+	'sap/ui/layout/form/SimpleForm',
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (_Editable, Input, Text, layoutLibrary, SimpleForm, nextUIUpdate) {
 	"use strict";
 
 	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
@@ -21,12 +22,12 @@ sap.ui.define([
 			this.oForm.placeAt("qunit-fixture");
 			this.oEditableMatcher = new _Editable();
 			this.oSpy = sinon.spy(this.oEditableMatcher._oLogger, "debug");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSpy.restore();
 			this.oForm.destroy();
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		}
 	});
 
@@ -36,26 +37,26 @@ sap.ui.define([
 		sinon.assert.notCalled(this.oSpy);
 	});
 
-	QUnit.test("Should not match non-editable control", function (assert) {
+	QUnit.test("Should not match non-editable control", async function (assert) {
 		this.oForm.setEditable(true);
 		this.oInput.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!this.oEditableMatcher.isMatching(this.oInput));
 		sinon.assert.calledWith(this.oSpy, "Control 'Element sap.m.Input#myInput' is not editable");
 	});
 
-	QUnit.test("Should not match control with non-editable ancestor", function (assert) {
+	QUnit.test("Should not match control with non-editable ancestor", async function (assert) {
 		this.oForm.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!this.oEditableMatcher.isMatching(this.oInput));
 		sinon.assert.calledWith(this.oSpy, "Control 'Element sap.m.Input#myInput' has a parent 'Element sap.ui.layout.form.Form#myForm--Form' that is not editable");
 	});
 
-	QUnit.test("Should not match control when a parent is disabled and it has no Disabled propagator", function (assert) {
+	QUnit.test("Should not match control when a parent is disabled and it has no Disabled propagator", async function (assert) {
 		this.oForm.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!this.oEditableMatcher.isMatching(this.oText));
 		sinon.assert.calledWith(this.oSpy, "Control 'Element sap.m.Text#myText' has a parent 'Element sap.ui.layout.form.Form#myForm--Form' that is not editable");

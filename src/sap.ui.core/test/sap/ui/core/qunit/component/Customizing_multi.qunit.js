@@ -2,12 +2,11 @@ sap.ui.define([
 	"sap/ui/base/Event",
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
-	'sap/ui/core/mvc/Controller',
-	'sap/ui/core/mvc/View',
 	'sap/ui/core/mvc/XMLView',
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/qunit/QUnitUtils'
-], function(Event, Component, ComponentContainer, Controller, View, XMLView, createAndAppendDiv, qutils) {
+], function(Event, Component, ComponentContainer, XMLView, createAndAppendDiv, nextUIUpdate, qutils) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -81,9 +80,7 @@ sap.ui.define([
 						component: this.oCompSub
 					}).placeAt("content");
 					return this.oCompSub.getRootControl().loaded();
-				}.bind(this)).then(function() {
-					sap.ui.getCore().applyChanges();
-				})
+				}.bind(this)).then(nextUIUpdate)
 			]);
 		},
 		after: function() {

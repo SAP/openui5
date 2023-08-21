@@ -2,8 +2,9 @@
 
 sap.ui.define([
 	'sap/ui/core/Control',
-	'sap/ui/core/EnabledPropagator'
-	], function(Control, EnabledPropagator) {
+	'sap/ui/core/EnabledPropagator',
+	"sap/ui/qunit/utils/nextUIUpdate"
+	], function(Control, EnabledPropagator, nextUIUpdate) {
 	"use strict";
 
 	var CustomControl = Control.extend("CustomControl", {
@@ -121,21 +122,21 @@ sap.ui.define([
 			oParentControl.destroy();
 		});
 
-		QUnit.test("Move Focus to next focusable parent control - " + ControlClass.getMetadata().getName(), function(assert) {
+		QUnit.test("Move Focus to next focusable parent control - " + ControlClass.getMetadata().getName(), async function(assert) {
 			var oChildControl = new ControlClass();
 			var oParentControl = new CustomContainerControl();
 
 			oParentControl.setContent(oChildControl);
 			oParentControl.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			oChildControl.focus();
 			assert.ok(oChildControl.getDomRef().contains(document.activeElement), "Child control should be focused.");
 
 			oChildControl.setEnabled(false);
-			// applyChanges as 'setEnabled' invalidates the control
-			sap.ui.getCore().applyChanges();
+			// flush as 'setEnabled' invalidates the control
+			await nextUIUpdate();
 
 			assert.ok(oParentControl.getDomRef().contains(document.activeElement), "Focus should be moved to parent control.");
 			oParentControl.destroy();

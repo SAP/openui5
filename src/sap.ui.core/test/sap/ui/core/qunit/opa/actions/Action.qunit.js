@@ -3,8 +3,9 @@
 
 sap.ui.define([
 	"sap/ui/test/actions/Action",
-	"sap/ui/core/Control"
-], function(Action, Control){
+	"sap/ui/core/Control",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Action, Control, nextUIUpdate){
 	"use strict";
 
 	var MyControl = Control.extend("my.Control", {
@@ -39,8 +40,8 @@ sap.ui.define([
 		beforeEach: function () {
 			var oMyControl = new MyControl("myId");
 			oMyControl.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
 			this.oMyControl = oMyControl;
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oMyControl.destroy();
@@ -86,14 +87,14 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Artificial focus should synchronously trigger focusout for the old focused", function (assert) {
+	QUnit.test("Artificial focus should synchronously trigger focusout for the old focused", async function (assert) {
 		var oAction = new Action();
 		var async = assert.async();
 		var oInitiallyFocused = this.oMyControl;
 		var oNewlyFocused = new MyControl("myId2");
 
 		oNewlyFocused.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		oInitiallyFocused.focus();
 		oInitiallyFocused.onsapfocusleave = sinon.spy();

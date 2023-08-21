@@ -4,8 +4,9 @@ sap.ui.define([
 	'sap/ui/core/XMLTemplateProcessor',
 	'sap/ui/core/ExtensionPoint',
 	'sap/ui/core/mvc/XMLView',
-	'sap/ui/core/Fragment'
-], function(Component, ComponentContainer, XMLTemplateProcessor, ExtensionPoint, XMLView, Fragment) {
+	'sap/ui/core/Fragment',
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Component, ComponentContainer, XMLTemplateProcessor, ExtensionPoint, XMLView, Fragment, nextUIUpdate) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -37,9 +38,7 @@ sap.ui.define([
 			});
 			oComponentContainer.placeAt("content");
 			return oComponent.getRootControl().loaded();
-		}).then(function() {
-			sap.ui.getCore().applyChanges();
-		});
+		}).then(nextUIUpdate);
 	}
 
 	function destroyComponentAndContainer() {

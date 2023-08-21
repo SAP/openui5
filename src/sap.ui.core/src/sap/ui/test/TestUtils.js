@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Lib",
-	"sap/ui/core/Core" // provides sap.ui.getCore()
-], function (Log, merge, UriParameters, SyncPromise, jQuery, Library) {
+	"sap/ui/core/Rendering"
+], function (Log, merge, UriParameters, SyncPromise, jQuery, Library, Rendering) {
 	"use strict";
 	/*global QUnit, sinon */
 	// Note: The dependency to Sinon.JS has been omitted deliberately. Most test files load it via
@@ -143,7 +143,7 @@ sap.ui.define([
 		awaitRendering : function () {
 			return new Promise(function (resolve) {
 				function check() {
-					if (sap.ui.getCore().getUIDirty()) {
+					if (Rendering.isPending()) {
 						setTimeout(check, 1);
 					} else {
 						resolve();

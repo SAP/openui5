@@ -1,13 +1,13 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	'sap/ui/core/Component',
 	"sap/ui/core/mvc/View",
 	"sap/m/InstanceManager",
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/routing/HashChanger"
-], function(Component, View, InstanceManager, Log, merge, JSONModel, HashChanger) {
+	"sap/ui/core/routing/HashChanger",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(View, InstanceManager, Log, merge, JSONModel, HashChanger, nextUIUpdate) {
 	"use strict";
 
 	var TESTDATA_PREFIX = "testdata.xml-require";
@@ -124,9 +124,9 @@ sap.ui.define([
 				create: createView
 			}
 		},
-		runAssertions: function (oView, mSpies, assert, bAsync) {
+		runAssertions: async function (oView, mSpies, assert, bAsync) {
 			oView.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var aContent = oView.getContent();
 			var aDependents = oView.getDependents();
@@ -146,7 +146,7 @@ sap.ui.define([
 			});
 
 			oView.setModel(oModel);
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			aContent = oView.getContent();
 			assert.equal(aContent.length, 2, "content under binding is created");
@@ -173,7 +173,7 @@ sap.ui.define([
 			aContent = oView.getContent();
 			assert.equal(aContent.length, 3, "content under binding is created");
 			assert.equal(aContent[2].getText(), "NAME3", "The bound value is formatted by the given formatter");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			assert.ok(aContent[0].getDomRef(), "The control created from binding template should be rendered");
 			assert.ok(aContent[1].getDomRef(), "The control created from binding template should be rendered");

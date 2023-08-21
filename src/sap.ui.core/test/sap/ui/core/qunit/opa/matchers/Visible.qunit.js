@@ -1,8 +1,9 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	'sap/ui/test/matchers/Visible',
-	'sap/m/Button'
-], function (Visible, Button) {
+	'sap/m/Button',
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (Visible, Button, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Visible", {
@@ -11,7 +12,7 @@ sap.ui.define([
 			this.oSpy = sinon.spy(this.oVisibleMatcher._oLogger, "debug");
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 
 		afterEach: function () {
@@ -19,9 +20,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should not match a Button without domref", function (assert) {
+	QUnit.test("Should not match a Button without domref", async function (assert) {
 		this.oButton.destroy();
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		// Act
 		var oResult = this.oVisibleMatcher.isMatching(this.oButton);
 

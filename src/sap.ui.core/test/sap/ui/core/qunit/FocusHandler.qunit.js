@@ -1,8 +1,9 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/core/FocusHandler",
-	"sap/m/Input"
-], function(FocusHandler, Input) {
+	"sap/m/Input",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(FocusHandler, Input, nextUIUpdate) {
 	"use strict";
 
 	// Control initialization
@@ -134,7 +135,7 @@ sap.ui.define([
 
 	QUnit.module("Extending Focus Info");
 
-	QUnit.test("add/remove extender for focus info", function(assert) {
+	QUnit.test("add/remove extender for focus info", async function(assert) {
 		var oDomRef;
 		var oSpy = this.spy(function(oEvent, oData) {
 			oDomRef = oEvent.getParameter("domRef");
@@ -148,7 +149,7 @@ sap.ui.define([
 		oControls.oControl1.focus();
 
 		oControls.oControl1.invalidate();
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oSpy.calledOnce, "focus info extender is called");
 		assert.equal(oDomRef, oControls.oControl1.getDomRef(), "DOM element is given to the registered focus info extender");
@@ -158,7 +159,7 @@ sap.ui.define([
 
 		// trigger the focus info extender again
 		oControls.oControl1.invalidate();
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oSpy.callCount, 2, "focus info extender is called, again");
 		assert.equal(oDomRef, oControls.oControl1.getDomRef(), "DOM element is given to the registered focus info extender");
@@ -170,7 +171,7 @@ sap.ui.define([
 		FocusHandler.removeFocusInfoExtender(oSpy);
 
 		oControls.oControl1.invalidate();
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oSpy.notCalled, "Focus info extender isn't called anymore after it's removed");
 	});

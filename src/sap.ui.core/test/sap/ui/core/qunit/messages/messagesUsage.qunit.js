@@ -12,8 +12,9 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/UIComponent',
 	'sap/ui/qunit/utils/createAndAppendDiv',
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/test/TestUtils"
-], function(isPlainObject, Input, Model, Integer, Message, MessageManager, library, Component, ComponentContainer, JSONModel, UIComponent, createAndAppendDiv, TestUtils){
+], function(isPlainObject, Input, Model, Integer, Message, MessageManager, library, Component, ComponentContainer, JSONModel, UIComponent, createAndAppendDiv, nextUIUpdate, TestUtils){
 	"use strict";
 
 	// create content div
@@ -74,9 +75,7 @@ sap.ui.define([
 				sap.ui.getCore().setModel(this.oModel);
 			};
 
-			return Promise.all([pCompContRendered, pCompContEnabledRendered, pCompContDisabledRendered]).then(function() {
-				sap.ui.getCore().applyChanges();
-			});
+			return Promise.all([pCompContRendered, pCompContEnabledRendered, pCompContDisabledRendered]).then(nextUIUpdate);
 		},
 
 		beforeEach : function() {

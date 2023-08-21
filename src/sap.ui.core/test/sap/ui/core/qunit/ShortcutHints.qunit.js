@@ -3,12 +3,14 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ShortcutHintsMixin",
 	"sap/ui/core/Fragment",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Component,
 	ShortcutHintsMixin,
 	Fragment,
-	Device
+	Device,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -257,13 +259,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("focusin", function(assert) {
-		return waitForViewReady().then(function(oView) {
+		return waitForViewReady().then(async function(oView) {
 			var oCtrl2 = oView.byId("myControl2");
 			var oSpy = sinon.spy(ShortcutHintsMixin.prototype, "showShortcutHint");
 
 			//render
 			oView.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			ShortcutHintsMixin.addConfig(oCtrl2, { event: "myEvent" }, oCtrl2);
 			oCtrl2._handleEvent({
@@ -282,7 +284,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("popup content", function(assert) {
-		return waitForViewReady().then(function(oView) {
+		return waitForViewReady().then(async function(oView) {
 			var oCtrl2 = oView.byId("myControl2");
 
 			var oEl = document.createElement('div');
@@ -291,7 +293,7 @@ sap.ui.define([
 
 			//render
 			oView.placeAt('container');
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			ShortcutHintsMixin.addConfig(oCtrl2, { event: "myEvent" }, oCtrl2);
 			oCtrl2._handleEvent({
@@ -306,7 +308,7 @@ sap.ui.define([
 
 			//with tooltip
 			oCtrl2.setTooltip("some tooltip");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			oCtrl2._handleEvent({
 				type: "focusin",
@@ -343,7 +345,7 @@ sap.ui.define([
 		//the inner control wants to show a hint for the command
 		//of the outer control
 
-		return waitForViewReady().then(function(oView) {
+		return waitForViewReady().then(async function(oView) {
 			var oCtrl = oView.byId("myControl");
 			var oButton1 = oView.byId("b1");
 
@@ -352,7 +354,7 @@ sap.ui.define([
 			}, oButton1);
 
 			oView.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			// assert
 			assert.ok(ShortcutHintsMixin.isDOMIDRegistered(oCtrl.getId()),
@@ -369,14 +371,14 @@ sap.ui.define([
 	QUnit.module("integration");
 
 	QUnit.test("sap.m.Button accessibility", function(assert) {
-		return waitForViewReady().then(function(oView) {
+		return waitForViewReady().then(async function(oView) {
 			var oButton1 = oView.byId("b1"); //icon-only
 			var oButton2 = oView.byId("b2"); //text with user tooltip
 			var oButton3 = oView.byId("b3"); //icon-only with user tooltip
 
 			//render
 			oView.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			assert.ok(!oButton1.getDomRef().getAttribute('title'),
 				"no native tooltip");

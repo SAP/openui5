@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/dom/includeStylesheet",
 	"sap/m/Bar",
-	"sap/ui/thirdparty/URI"
-], function(Parameters, Control, Element, Icon, Library, includeStylesheet, Bar, URI) {
+	"sap/ui/thirdparty/URI",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Parameters, Control, Element, Icon, Library, includeStylesheet, Bar, URI, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Parmeters.get", {
@@ -555,7 +556,7 @@ sap.ui.define([
 		sap.ui.getCore().attachThemeChanged(fnAssertThemeChanged);
 	});
 
-	QUnit.test("getActiveScopesFor: Check scope chain for given rendered control", function(assert) {
+	QUnit.test("getActiveScopesFor: Check scope chain for given rendered control", async function(assert) {
 		assert.expect(18);
 		var done = assert.async();
 
@@ -571,7 +572,7 @@ sap.ui.define([
 		oOuterBar.addStyleClass("TestScope2"); // No valid TestScope ==> only checking that this is not part of the ScopeChain
 		oOuterBar.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var fnAssertThemeChanged = function () {
 			// CSS is loaded and scope 'TestScope1' is defined therefore different scope chains expected

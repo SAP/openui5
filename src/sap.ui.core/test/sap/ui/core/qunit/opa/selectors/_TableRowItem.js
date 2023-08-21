@@ -2,10 +2,10 @@
 sap.ui.define([
 	"sap/ui/test/selectors/_TableRowItem",
 	"sap/ui/test/selectors/_ControlSelectorGenerator",
-	"sap/m/App",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/model/json/JSONModel"
-], function (_TableRowItem, _ControlSelectorGenerator, App, XMLView, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (_TableRowItem, _ControlSelectorGenerator, XMLView, JSONModel, nextUIUpdate) {
 	"use strict";
 
 	function getViewContent() {
@@ -38,14 +38,12 @@ sap.ui.define([
 			});
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async();
-			XMLView.create({
+			return XMLView.create({
 				id: "myView",
 				definition: getViewContent()
 			}).then(function(oView) {
 				this.oView = oView.setModel(oJSONModel).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				done();
+				return nextUIUpdate();
 			}.bind(this), function(oErr) {
 				assert.strictEqual(oErr, undefined, "failed to load view");
 			});

@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/core/Placeholder",
 	"sap/m/NavContainer",
 	"sap/m/routing/TargetHandler",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/routing/Router" /* need to require this module to correctly resolve router class in manifest */
 	], function(
 		LoaderExtensions,
 		ComponentContainer,
 		Placeholder,
 		NavContainer,
-		MTargetHandler
+		MTargetHandler,
+		nextUIUpdate
 	) {
 
 	"use strict";
@@ -22,7 +24,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("xx-placeholder config set to 'false'", function(assert) {
+	QUnit.test("xx-placeholder config set to 'false'", async function(assert) {
 		var oNavConShowPlaceholderSpy = sinon.spy(NavContainer.prototype, "showPlaceholder");
 		var oMTargetHandlerSpy = sinon.spy(MTargetHandler.prototype, "showPlaceholder");
 
@@ -34,7 +36,7 @@ sap.ui.define([
 
 		oComponentContainer.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		return new Promise(function(resolve, reject) {
 			oComponentContainer.attachEvent("componentCreated", function(oEvent) {

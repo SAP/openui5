@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Descendant",
 	"sap/ui/test/matchers/MatcherFactory",
-	"sap/ui/layout/HorizontalLayout"
-], function (Opa, Opa5, Button, Input, PropertyStrictEquals, Ancestor, Descendant, MatcherFactory, HorizontalLayout) {
+	"sap/ui/layout/HorizontalLayout",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (Opa, Opa5, Button, Input, PropertyStrictEquals, Ancestor, Descendant, MatcherFactory, HorizontalLayout, nextUIUpdate) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -22,7 +23,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oButton = new Button("testButton", {text : "foo"});
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -111,7 +112,7 @@ sap.ui.define([
 			this.oButton.placeAt(this.oLayout1);
 			this.oLayout1.placeAt("qunit-fixture");
 			this.oButton2.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach : function () {
 			sinon.config.useFakeTimers = false;
@@ -530,7 +531,7 @@ sap.ui.define([
 			this.oButton2.placeAt("qunit-fixture");
 			this.oInput.placeAt("qunit-fixture");
 			this.oInput2.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach : function () {
 			this.oButton.destroy();

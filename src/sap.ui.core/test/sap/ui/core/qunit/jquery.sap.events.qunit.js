@@ -6,9 +6,10 @@ sap.ui.define([
 	"sap/ui/events/F6Navigation",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Configuration",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	// provides jQuery.sap.keyCodes
 	"jquery.sap.keycodes"
-], function(jQuery, Device, Control, F6Navigation, qutils, Configuration) {
+], function(jQuery, Device, Control, F6Navigation, qutils, Configuration, nextUIUpdate) {
 	"use strict";
 
 	// Initialization
@@ -1010,7 +1011,7 @@ sap.ui.define([
 
 				this.oControl.setChild(this.oChildControl);
 				this.oControl.placeAt("uiArea");
-				sap.ui.getCore().applyChanges();
+				return nextUIUpdate();
 			},
 			afterEach: function() {
 				this.oControl.destroy();

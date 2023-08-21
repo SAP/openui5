@@ -3,16 +3,17 @@ sap.ui.define([
 	"sap/ui/test/selectors/_ControlSelectorGenerator",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/m/Text",
-	"../fixture/bindingPath"
-], function (_ControlSelectorGenerator, ResourceModel, Text, fixture) {
+	"../fixture/bindingPath",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (_ControlSelectorGenerator, ResourceModel, Text, fixture, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("_BindingPath - properties", {
 		beforeEach: function () {
-			fixture.PropertyFixture.beforeEach.call(this);
+			return fixture.PropertyFixture.beforeEach.call(this);
 		},
 		afterEach: function () {
-			fixture.PropertyFixture.afterEach.call(this);
+			return fixture.PropertyFixture.afterEach.call(this);
 		}
 	});
 
@@ -81,7 +82,7 @@ sap.ui.define([
 			sap.ui.getCore().setModel(oResourceModel, "i18n");
 			this.oPropertyText = new Text({text: "{i18n>propertyText}"});
 			this.oPropertyText.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			sap.ui.getCore().setModel();
@@ -101,10 +102,10 @@ sap.ui.define([
 
 	QUnit.module("_BindingPath - object binding", {
 		beforeEach: function () {
-			fixture.ObjectFixture.beforeEach.call(this);
+			return fixture.ObjectFixture.beforeEach.call(this);
 		},
 		afterEach: function () {
-			fixture.ObjectFixture.afterEach.call(this);
+			return fixture.ObjectFixture.afterEach.call(this);
 		}
 	});
 
@@ -135,10 +136,10 @@ sap.ui.define([
 
 	QUnit.module("_BindingPath - aggregation", {
 		beforeEach: function () {
-			fixture.AggregationFixture.beforeEach.call(this);
+			return fixture.AggregationFixture.beforeEach.call(this);
 		},
 		afterEach: function () {
-			fixture.AggregationFixture.afterEach.call(this);
+			return fixture.AggregationFixture.afterEach.call(this);
 		}
 	});
 

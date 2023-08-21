@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/model/odata/ODataAnnotations",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/util/XMLHelper"
-], function(Log, Configuration, fakeService, ODataAnnotations, V1ODataModel, V2ODataModel, XMLHelper) {
+	"sap/ui/util/XMLHelper",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Log, Configuration, fakeService, ODataAnnotations, V1ODataModel, V2ODataModel, XMLHelper, nextUIUpdate) {
 	"use strict";
 
 	/*global QUnit, sinon */
@@ -4973,7 +4974,7 @@ sap.ui.define([
 			oModel3.setHeaders({});
 			Configuration.setLanguage("en");
 			return oModel3.addAnnotationUrl("fakeService://replay-headers");
-		}).then(function() {
+		}).then(async function() {
 			var oAnnotations = oModel3.getServiceAnnotations();
 			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "en", "Accept-Language header set correctly");
 			assert.equal(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header removed correctly");
@@ -4984,7 +4985,7 @@ sap.ui.define([
 			oModel2.destroy();
 			oModel3.destroy();
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 			done();
 		});
 	};

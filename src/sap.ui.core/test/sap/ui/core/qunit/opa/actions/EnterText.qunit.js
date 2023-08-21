@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"sap/m/library",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/strings/capitalize"
+	"sap/base/strings/capitalize",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 	extend,
 	EnterText,
@@ -32,7 +33,8 @@ sap.ui.define([
 	opaTest,
 	mobileLibrary,
 	$,
-	capitalize) {
+	capitalize,
+	nextUIUpdate) {
 	"use strict";
 
 	var InputType = mobileLibrary.InputType;
@@ -92,7 +94,7 @@ sap.ui.define([
 		clearTextFirst: true
 	}].forEach(function (testInfo) {
 
-		function testBobyForValidAction(bClearText, assert) {
+		async function testBobyForValidAction(bClearText, assert) {
 			var fnDone = assert.async();
 			var sTextToEnter = testInfo.textToEnter || "foo";
 			var sTextBeforeAction = testInfo.textInControl || "A";
@@ -112,7 +114,7 @@ sap.ui.define([
 			var fnOnSapFocusLeaveSpy = sinon.spy(oControl, "onsapfocusleave");
 
 			oControl.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var oEnterText = new EnterText({
 				text: sTextToEnter,
@@ -155,22 +157,22 @@ sap.ui.define([
 
 		if (!testInfo.clearTextFirst) {
 			QUnit.test("Should enter a text and preserve the value in a " + testInfo.Control.getMetadata().getName(), function (assert) {
-				testBobyForValidAction.call(this, false, assert);
+				return testBobyForValidAction.call(this, false, assert);
 			});
 		}
 
 		QUnit.test("Should enter a text and clear the value in a " + testInfo.Control.getMetadata().getName(), function (assert) {
-			testBobyForValidAction.call(this, true, assert);
+			return testBobyForValidAction.call(this, true, assert);
 		});
 
-		function testBodyForInvalidAction(fnModifyControl, assert) {
+		async function testBodyForInvalidAction(fnModifyControl, assert) {
 			var fnDone = assert.async();
 			fnModifyControl();
 			var fnOnLiveChange = testInfo.liveChangeEventParameter ? sinon.spy(this.oControl, "fireLiveChange") : sinon.spy();
 			var fnOnChange = sinon.spy(this.oControl, "on" + capitalize(testInfo.changeEvent));
 
 			this.oControl.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var oEnterText = new EnterText({
 				text: testInfo.textToEnter || "foo"
@@ -193,7 +195,7 @@ sap.ui.define([
 			this.oControl = oControl; // should be destroyed at end of test
 
 			if (oControl.getMetadata()._mAllProperties.editable) {
-				testBodyForInvalidAction.call(this, function () {
+				return testBodyForInvalidAction.call(this, function () {
 					oControl.setEditable(false);
 				}, assert);
 			} else {
@@ -201,26 +203,26 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Should not enter text when " + testInfo.Control.getMetadata().getName() + " is not enabled", function (assert) {
+		QUnit.test("Should not enter text when " + testInfo.Control.getMetadata().getName() + " is not enabled", async function (assert) {
 			this.sTextBeforeAction = testInfo.textInControl || "A";
 			var oControl = new testInfo.Control({
 				value: this.sTextBeforeAction
 			});
 			this.oControl = oControl; // should be destroyed at end of test
 
-			testBodyForInvalidAction.call(this, function () {
+			await testBodyForInvalidAction.call(this, function () {
 				oControl.setEnabled(false);
 			}, assert);
 			oControl.setEnabled(false);
 		});
 	});
 
-	QUnit.test("Should not fire enter on a control", function (assert) {
+	QUnit.test("Should not fire enter on a control", async function (assert) {
 		this.oControl = new Input();
 		var fnEnterSpy = sinon.spy(this.oControl, "onsapenter");
 
 		this.oControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		new EnterText({ text: "foo" }).executeOn(this.oControl);
 
@@ -238,7 +240,6 @@ sap.ui.define([
 			]
 		});
 		this.oControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
 
 		var sTextInControl = "T";
 		oOpa.waitFor({
@@ -258,11 +259,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Should enter binding symbols", function (assert) {
+	QUnit.test("Should enter binding symbols", async function (assert) {
 		this.oControl = new Input();
 
 		this.oControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		new EnterText({ text: "{" }).executeOn(this.oControl);
 
@@ -276,7 +277,7 @@ sap.ui.define([
 			this.oErrorLog = sinon.spy(this.oEnterText.oLogger, "error");
 			this.oControl = new Input();
 			this.oControl.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oDebugLog.restore();
@@ -285,9 +286,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should log an error if a control is not rendered", function (assert) {
+	QUnit.test("Should log an error if a control is not rendered", async function (assert) {
 		this.oControl.destroy();
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		this.oEnterText.setText("foo");
 
@@ -334,7 +335,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oStepInput = new StepInput();
 			this.oStepInput.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oStepInput.destroy();
@@ -373,7 +374,7 @@ sap.ui.define([
 			});
 			$("#qunit-fixture").css("position", "static");
 			this.target.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.target.destroy();

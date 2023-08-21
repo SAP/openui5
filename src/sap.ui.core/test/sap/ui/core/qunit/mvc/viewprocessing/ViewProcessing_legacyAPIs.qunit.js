@@ -1,20 +1,15 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/View",
-	"sap/ui/core/UIArea",
 	"sap/ui/core/UIComponent",
 	'sap/ui/core/Component',
-	'sap/ui/core/ComponentContainer',
-	"sap/m/Label",
 	"sap/m/Panel",
 	"sap/m/HBox",
 	'sap/ui/core/qunit/mvc/viewprocessing/MyGlobal',
 	'sap/ui/base/SyncPromise',
-	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/mvc/XMLProcessingMode",
-	"sap/ui/core/StashedControlSupport"
-], function(JSONModel, View, UIArea, UIComponent, Component, ComponentContainer, Label, Panel, HBox, MyGlobal, SyncPromise, XMLView, XMLProcessingMode, StashedControlSupport) {
+	"sap/ui/core/StashedControlSupport",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(UIComponent, Component, Panel, HBox, MyGlobal, SyncPromise, XMLProcessingMode, StashedControlSupport, nextUIUpdate) {
 
 	"use strict";
 
@@ -93,10 +88,10 @@ sap.ui.define([
 				});
 				this.viewFactory = testViewFactoryFn(bAsyncView, sProcessingMode);
 				this._cleanup = [];
-				this.renderSync = function(ctrl) {
+				this.render = async function(ctrl) {
 					this._cleanup.push(ctrl);
 					ctrl.placeAt("content");
-					sap.ui.getCore().applyChanges();
+					await nextUIUpdate();
 				};
 
 				// create fake server for extension point manifests
@@ -126,7 +121,7 @@ sap.ui.define([
 		/**
 		 * check that all aggregations are created in the correct order
 		 */
-		QUnit.test("Simple Aggregation order with async view", function(assert) {
+		QUnit.test("Simple Aggregation order with async view", async function(assert) {
 
 			// view
 			var oView = this.viewFactory("myViewSimpleAggrs", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingSimpleAggregations");
@@ -153,7 +148,7 @@ sap.ui.define([
 
 			});
 
-			this.renderSync(
+			await this.render(
 				new HBox({
 					renderType: "Bare",
 					items: oView
@@ -167,7 +162,7 @@ sap.ui.define([
 		/**
 		 * check that all aggregations are created in the correct order
 		 */
-		QUnit.test("Aggregation order with async view", function(assert) {
+		QUnit.test("Aggregation order with async view", async function(assert) {
 
 			// view
 			var oView = this.viewFactory("myViewAggrs", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingManyAggregations");
@@ -216,7 +211,7 @@ sap.ui.define([
 
 			});
 
-			this.renderSync(
+			await this.render(
 				new HBox({
 					renderType: "Bare",
 					items: oView
@@ -230,7 +225,7 @@ sap.ui.define([
 		/**
 		 * check that all aggregations are created in the correct order
 		 */
-		QUnit.test("ExtensionPoint with async view tests", function(assert) {
+		QUnit.test("ExtensionPoint with async view tests", async function(assert) {
 
 			// view
 			var oView = this.viewFactory("myViewEP", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingExtensionPoint");
@@ -263,7 +258,7 @@ sap.ui.define([
 
 			});
 
-			this.renderSync(
+			await this.render(
 				new HBox({
 					renderType: "Bare",
 					items: oView
@@ -277,7 +272,7 @@ sap.ui.define([
 		/**
 		 * check that all events are properly called within controller and that the view is correctly connected
 		 */
-		QUnit.test("controller event test", function(assert) {
+		QUnit.test("controller event test", async function(assert) {
 
 			// controller
 			var oControllerImpl = testControllerImplFactory(assert, "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessing");
@@ -304,7 +299,7 @@ sap.ui.define([
 			// view
 			var oView = this.viewFactory("myViewWithController", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessing", oController);
 
-			this.renderSync(
+			await this.render(
 				new HBox({
 					renderType: "Bare",
 					items: oView
@@ -323,12 +318,12 @@ sap.ui.define([
 		/**
 		 * Tests parsing of a control which is not properly defined (does not return its class)
 		 */
-		QUnit.test("Bad control processing", function(assert) {
+		QUnit.test("Bad control processing", async function(assert) {
 
 			// view
 			var oView = this.viewFactory("myViewBadControl", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingBadControl");
 
-			this.renderSync(oView);
+			await this.render(oView);
 
 			return oView.loaded().then(function() {
 				var myBadControl = oView.byId("myBadControl");
@@ -460,7 +455,7 @@ sap.ui.define([
 
 		});
 
-		QUnit.test("Owner component setting for ExtensionPoints", function(assert) {
+		QUnit.test("Owner component setting for ExtensionPoints", async function(assert) {
 			var done = assert.async();
 
 			// responds changed parent manifest
@@ -537,20 +532,20 @@ sap.ui.define([
 					name:"sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child"
 				}).then(function(oComponent) {
 					oComponent.getRootControl().loaded().then(function(oView) {
-						fnAssertions(oComponent, oView);
+						return fnAssertions(oComponent, oView);
 					});
 				});
 			} else {
 				var oComponent = sap.ui.component({
 					name:"sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child"
 				});
-				sap.ui.getCore().applyChanges();
+				await nextUIUpdate();
 				fnAssertions(oComponent, oComponent.getRootControl());
 			}
 
 		});
 
-		QUnit.test("Owner component setting for stashed control", function(assert) {
+		QUnit.test("Owner component setting for stashed control", async function(assert) {
 			var done = assert.async();
 
 			var sComponentName = "sap.ui.core.qunit.mvc.viewprocessing.StashedControl" + bAsyncView + sProcessingMode;
@@ -674,7 +669,7 @@ sap.ui.define([
 					manifest: oManifest,
 					async: false
 				});
-				sap.ui.getCore().applyChanges();
+				await nextUIUpdate();
 				fnAssertions(oComponent, oComponent.getRootControl());
 			}
 

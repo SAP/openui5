@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/tmpl/Template",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/handlebars"
-], function(Element, Template, JSONModel, jQuery, Handlebars) {
+	"sap/ui/thirdparty/handlebars",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Element, Template, JSONModel, jQuery, Handlebars, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("handlebars validation");
@@ -143,7 +144,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Rerendering on aggregation change", function(assert) {
+	QUnit.test("Rerendering on aggregation change", async function(assert) {
 
 		// create a model to validate data binding
 		var oModel = new JSONModel({
@@ -162,8 +163,8 @@ sap.ui.define([
 			type: "text/x-handlebars-template"
 		});
 
-		// force the re-rendering
-		sap.ui.getCore().applyChanges();
+		// wait for the re-rendering
+		await nextUIUpdate();
 
 		var $tmpl = jQuery("#templateWithListBinding");
 		assert.equal($tmpl.find("b").length, 1, "Found 1 B elements!");
@@ -178,8 +179,8 @@ sap.ui.define([
 		});
 		oModel.checkUpdate();
 
-		// force the re-rendering
-		sap.ui.getCore().applyChanges();
+		// wait for the re-rendering
+		await nextUIUpdate();
 
 		$tmpl = jQuery("#templateWithListBinding");
 		assert.equal($tmpl.find("b").length, 1, "Found 1 B elements!");
@@ -191,8 +192,8 @@ sap.ui.define([
 		oModel.getData()["subvalues"].pop();
 		oModel.checkUpdate();
 
-		// force the re-rendering
-		sap.ui.getCore().applyChanges();
+		// wait for the re-rendering
+		await nextUIUpdate();
 
 		$tmpl = jQuery("#templateWithListBinding");
 		assert.equal($tmpl.find("b").length, 1, "Found 1 B elements!");
@@ -242,20 +243,20 @@ sap.ui.define([
 				type: "text/x-handlebars-template"
 			});
 
-			// force the re-rendering
-			sap.ui.getCore().applyChanges();
+			// wait for the re-rendering
+			nextUIUpdate().then(function() {
+				var oTmplDom = document.getElementById("templateWithListBindingAndControls");
+				var aChildDoms = oTmplDom.querySelectorAll("[data-sap-ui]");
+				assert.equal(aChildDoms.length, 2, "Found 2 UI5 controls!");
+				assert.equal(Element.closestTo(aChildDoms[0]).getText(), "First subvalue", "Text for 1st control is correct!");
+				assert.equal(Element.closestTo(aChildDoms[1]).getText(), "Second subvalue", "Text for 2st control is correct!");
+				assert.ok(aChildDoms[0].classList.contains("test1"), "First Custom Style Classes is set!");
+				assert.ok(aChildDoms[0].classList.contains("test2"), "Second Custom Style Classes is set!");
+				assert.ok(Element.closestTo(aChildDoms[0]).hasStyleClass("test1"), "First Custom Style Classes is set!");
+				assert.ok(Element.closestTo(aChildDoms[0]).hasStyleClass("test2"), "Second Custom Style Classes is set!");
 
-			var oTmplDom = document.getElementById("templateWithListBindingAndControls");
-			var aChildDoms = oTmplDom.querySelectorAll("[data-sap-ui]");
-			assert.equal(aChildDoms.length, 2, "Found 2 UI5 controls!");
-			assert.equal(Element.closestTo(aChildDoms[0]).getText(), "First subvalue", "Text for 1st control is correct!");
-			assert.equal(Element.closestTo(aChildDoms[1]).getText(), "Second subvalue", "Text for 2st control is correct!");
-			assert.ok(aChildDoms[0].classList.contains("test1"), "First Custom Style Classes is set!");
-			assert.ok(aChildDoms[0].classList.contains("test2"), "Second Custom Style Classes is set!");
-			assert.ok(Element.closestTo(aChildDoms[0]).hasStyleClass("test1"), "First Custom Style Classes is set!");
-			assert.ok(Element.closestTo(aChildDoms[0]).hasStyleClass("test2"), "Second Custom Style Classes is set!");
-
-			done();
+				done();
+			});
 		});
 	});
 
@@ -300,20 +301,20 @@ sap.ui.define([
 				type: "text/x-handlebars-template"
 			});
 
-			// force the re-rendering
-			sap.ui.getCore().applyChanges();
+			// wait for the re-rendering
+			nextUIUpdate().then(function() {
+				var oTmplDom = document.getElementById("templateWithListBindingAndControls");
+				var aChildDoms = oTmplDom.querySelectorAll("[data-sap-ui]");
+				assert.equal(aChildDoms.length, 2, "Found 2 UI5 controls!");
+				assert.equal(Element.closestTo(aChildDoms[0]).getText(), "First subvalue", "Text for 1st control is correct!");
+				assert.equal(Element.closestTo(aChildDoms[1]).getText(), "Second subvalue", "Text for 2st control is correct!");
+				assert.ok(aChildDoms[0].classList.contains("test1"), "First Custom Style Classes is set!");
+				assert.ok(aChildDoms[0].classList.contains("test2"), "Second Custom Style Classes is set!");
+				assert.ok(Element.closestTo(aChildDoms[0]).hasStyleClass("test1"), "First Custom Style Classes is set!");
+				assert.ok(Element.closestTo(aChildDoms[0]).hasStyleClass("test2"), "Second Custom Style Classes is set!");
 
-			var oTmplDom = document.getElementById("templateWithListBindingAndControls");
-			var aChildDoms = oTmplDom.querySelectorAll("[data-sap-ui]");
-			assert.equal(aChildDoms.length, 2, "Found 2 UI5 controls!");
-			assert.equal(Element.closestTo(aChildDoms[0]).getText(), "First subvalue", "Text for 1st control is correct!");
-			assert.equal(Element.closestTo(aChildDoms[1]).getText(), "Second subvalue", "Text for 2st control is correct!");
-			assert.ok(aChildDoms[0].classList.contains("test1"), "First Custom Style Classes is set!");
-			assert.ok(aChildDoms[0].classList.contains("test2"), "Second Custom Style Classes is set!");
-			assert.ok(Element.closestTo(aChildDoms[0]).hasStyleClass("test1"), "First Custom Style Classes is set!");
-			assert.ok(Element.closestTo(aChildDoms[0]).hasStyleClass("test2"), "Second Custom Style Classes is set!");
-
-			done();
+				done();
+			});
 		});
 	});
 

@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeXML",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/Log",
 	"sap/ui/core/Configuration"
-], function(Device, Control, Core, RenderManager, Element, HTML, IconPool, XMLView, jQuery, encodeXML, createAndAppendDiv, Log, Configuration) {
+], function(Device, Control, Core, RenderManager, Element, HTML, IconPool, XMLView, jQuery, encodeXML, createAndAppendDiv, nextUIUpdate, Log, Configuration) {
 	"use strict";
 
 	// prepare DOM
@@ -1085,13 +1086,13 @@ sap.ui.define([
 		}, Device.browser.safari ? 500 : 0);
 	});
 
-	QUnit.test("RenderManager lock", function(assert) {
+	QUnit.test("RenderManager lock", async function(assert) {
 		var oCtrl1 = new TestControl();
 		var oCtrl2 = new TestControl();
 
 		oCtrl1.placeAt("area5");
 		oCtrl2.placeAt("area5");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oCtrl1.doBeforeRendering = function() {
 			oCtrl2.rerender();
@@ -1315,13 +1316,13 @@ sap.ui.define([
 		}, Device.browser.safari ? 500 : 0);
 	});
 
-	QUnit.test("RenderManager lock", function(assert) {
+	QUnit.test("RenderManager lock", async function(assert) {
 		var oCtrl1 = new TestControlSemanticRendering();
 		var oCtrl2 = new TestControlSemanticRendering();
 
 		oCtrl1.placeAt("area5");
 		oCtrl2.placeAt("area5");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oCtrl1.doBeforeRendering = function() {
 			oCtrl2.rerender();
@@ -1525,7 +1526,7 @@ sap.ui.define([
 		assert.equal($img1.attr("alt"), "test alt message", "Attribute should be changed");
 	});
 
-	QUnit.test("RenderManager should not break for controls with invalid renderer", function(assert) {
+	QUnit.test("RenderManager should not break for controls with invalid renderer", async function(assert) {
 
 		var Log = sap.ui.require("sap/base/Log");
 		assert.ok(Log, "Log module should be available");
@@ -1550,7 +1551,7 @@ sap.ui.define([
 
 		// rendering should not lead to an error
 		oControl.placeAt("area8");
-		Core.applyChanges();
+		await nextUIUpdate();
 		oControl.destroy();
 
 		// check the error message
@@ -1612,10 +1613,10 @@ sap.ui.define([
 	 */
 	QUnit.module("Invisible - String based rendering");
 
-	QUnit.test("Render visible control", function(assert) {
+	QUnit.test("Render visible control", async function(assert) {
 		var oControl = new TestControl("testVisible");
 		oControl.placeAt("testArea");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oDomRef = document.getElementById("testVisible"),
 			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
@@ -1625,13 +1626,13 @@ sap.ui.define([
 		assert.ok(!oInvisbleRef, "Invisible DOM reference doesn't exist");
 
 		oControl.destroy();
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("Render invisible control", function(assert) {
+	QUnit.test("Render invisible control", async function(assert) {
 		var oControl = new TestControl("testVisible", {visible: false});
 		oControl.placeAt("testArea");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oDomRef = document.getElementById("testVisible"),
 			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
@@ -1641,19 +1642,19 @@ sap.ui.define([
 		assert.ok(oInvisbleRef instanceof HTMLElement, "Invisible DOM reference is an HTML element");
 
 		oControl.destroy();
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("Render control made visible in onBeforeRendering", function(assert) {
+	QUnit.test("Render control made visible in onBeforeRendering", async function(assert) {
 		var oControl = new TestControl("testVisible", {visible: false});
 		oControl.placeAt("testArea");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oControl.doBeforeRendering = function() {
 			this.setVisible(true);
 		};
 		oControl.rerender();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oDomRef = document.getElementById("testVisible"),
 			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
@@ -1663,19 +1664,19 @@ sap.ui.define([
 		assert.ok(!oInvisbleRef, "Invisible DOM reference doesn't exist");
 
 		oControl.destroy();
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("Render control made invisible in onBeforeRendering", function(assert) {
+	QUnit.test("Render control made invisible in onBeforeRendering", async function(assert) {
 		var oControl = new TestControl("testVisible", {visible: true});
 		oControl.placeAt("testArea");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oControl.doBeforeRendering = function() {
 			this.setVisible(false);
 		};
 		oControl.rerender();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oDomRef = document.getElementById("testVisible"),
 			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
@@ -1685,15 +1686,15 @@ sap.ui.define([
 		assert.ok(oInvisbleRef instanceof HTMLElement, "Invisible DOM reference is an HTML element");
 
 		oControl.destroy();
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
 	QUnit.module("Invisible - Semantic Rendering");
 
-	QUnit.test("Render visible control", function(assert) {
+	QUnit.test("Render visible control", async function(assert) {
 		var oControl = new TestControlSemanticRendering("testVisible");
 		oControl.placeAt("testArea");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oDomRef = document.getElementById("testVisible"),
 			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
@@ -1703,13 +1704,13 @@ sap.ui.define([
 		assert.ok(!oInvisbleRef, "Invisible DOM reference doesn't exist");
 
 		oControl.destroy();
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("Render invisible control", function(assert) {
+	QUnit.test("Render invisible control", async function(assert) {
 		var oControl = new TestControlSemanticRendering("testVisible", {visible: false});
 		oControl.placeAt("testArea");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oDomRef = document.getElementById("testVisible"),
 			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
@@ -1719,16 +1720,16 @@ sap.ui.define([
 		assert.ok(oInvisbleRef instanceof HTMLElement, "Invisible DOM reference is an HTML element");
 
 		oControl.destroy();
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("Render control made visible in onBeforeRendering", function(assert) {
+	QUnit.test("Render control made visible in onBeforeRendering", async function(assert) {
 		var oControl = new TestControlSemanticRendering("testVisible", {visible: false});
 		oControl.doBeforeRendering = function() {
 			this.setVisible(true);
 		};
 		oControl.placeAt("testArea");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oDomRef = document.getElementById("testVisible"),
 			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
@@ -1738,16 +1739,16 @@ sap.ui.define([
 		assert.ok(!oInvisbleRef, "Invisible DOM reference doesn't exist");
 
 		oControl.destroy();
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("Render control made invisible in onBeforeRendering", function(assert) {
+	QUnit.test("Render control made invisible in onBeforeRendering", async function(assert) {
 		var oControl = new TestControlSemanticRendering("testVisible", {visible: true});
 		oControl.doBeforeRendering = function() {
 			this.setVisible(false);
 		};
 		oControl.placeAt("testArea");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oDomRef = document.getElementById("testVisible"),
 			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
@@ -1757,7 +1758,7 @@ sap.ui.define([
 		assert.ok(oInvisbleRef instanceof HTMLElement, "Invisible DOM reference is an HTML element");
 
 		oControl.destroy();
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
 	/**
@@ -1828,13 +1829,13 @@ sap.ui.define([
 			this.oContainer = null;
 		},
 
-		executeTest: function (assert, fnApplyLuckyOne) {
+		executeTest: async function (assert, fnApplyLuckyOne) {
 			var oView1 = this.oView1;
 			var oView2 = this.oView2;
 			var oContainer = this.oContainer;
 			// initially show view 1. view 2 has not been rendered yet
 			oContainer.placeAt("area9");
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.ok(oView1.getDomRef(), "view1 should have DOM");
 			assert.ok(oView1.bOutput, "view1 should be marked with bOutput");
 			assert.notOk(RenderManager.isPreservedContent(oView1.getDomRef()), "DOM of view1 should not be in preserve area");
@@ -1842,7 +1843,7 @@ sap.ui.define([
 			assert.notOk(oView2.bOutput, "view2 should not be marked with bOutput");
 
 			// show view 2. view 1 will be moved to preserve area
-			fnApplyLuckyOne(1);
+			await fnApplyLuckyOne(1);
 			assert.ok(oView1.getDomRef(), "view1 still should have DOM");
 			assert.ok(RenderManager.isPreservedContent(oView1.getDomRef()), "DOM of view1 should be in preserve area");
 			assert.ok(oView1.bOutput, "view1 should be marked with bOutput");
@@ -1851,7 +1852,7 @@ sap.ui.define([
 			assert.notOk(RenderManager.isPreservedContent(oView2.getDomRef()), "DOM of view2 should not be in preserve area");
 
 			// show view 1 again (includes restore from preserve area
-			fnApplyLuckyOne(0);
+			await fnApplyLuckyOne(0);
 			assert.ok(oView1.getDomRef(), "view1 still should have DOM");
 			assert.ok(oView1.bOutput, "view1 should be marked with bOutput");
 			assert.notOk(RenderManager.isPreservedContent(oView1.getDomRef()), "DOM of view1 should not be in preserve area");
@@ -1860,7 +1861,7 @@ sap.ui.define([
 			assert.ok(RenderManager.isPreservedContent(oView2.getDomRef()), "DOM of view2 should be in preserve area");
 
 			// show view 3 (which does not exists). view 1 & 2 are moved to the preserve area
-			fnApplyLuckyOne(2);
+			await fnApplyLuckyOne(2);
 			assert.ok(oView1.getDomRef(), "view1 still should have DOM");
 			assert.ok(oView1.bOutput, "view1 should be marked with bOutput");
 			assert.ok(RenderManager.isPreservedContent(oView1.getDomRef()), "DOM of view1 should be in preserve area");
@@ -1875,43 +1876,43 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("default rendering (string)", function(assert) {
+	QUnit.test("default rendering (string)", async function(assert) {
 		TestContainer.getMetadata().getRenderer().apiVersion = 1;
-		this.executeTest(assert, function(value) {
+		await this.executeTest(assert, async function(value) {
 			// use normal invalidation
 			this.oContainer.setTheLuckyOne(value);
 			// and force re-rendering
-			Core.applyChanges();
+			await nextUIUpdate();
 		}.bind(this));
 	});
 
-	QUnit.test("custom rendering (string)", function(assert) {
+	QUnit.test("custom rendering (string)", async function(assert) {
 		TestContainer.getMetadata().getRenderer().apiVersion = 1;
-		this.executeTest(assert, function(value) {
+		await this.executeTest(assert, function(value) {
 			// use custom rendering (leaves the preservation to the flush call)
 			this.oContainer.setTheLuckyOneAndRender(value);
 		}.bind(this));
 	});
 
-	QUnit.test("default rendering (patcher)", function(assert) {
+	QUnit.test("default rendering (patcher)", async function(assert) {
 		TestContainer.getMetadata().getRenderer().apiVersion = 2;
-		this.executeTest(assert, function(value) {
+		await this.executeTest(assert, async function(value) {
 			// use normal invalidation
 			this.oContainer.setTheLuckyOne(value);
 			// and force re-rendering
-			Core.applyChanges();
+			await nextUIUpdate();
 		}.bind(this));
 	});
 
-	QUnit.test("custom rendering (patcher)", function(assert) {
+	QUnit.test("custom rendering (patcher)", async function(assert) {
 		TestContainer.getMetadata().getRenderer().apiVersion = 2;
-		this.executeTest(assert, function(value) {
+		await this.executeTest(assert, function(value) {
 			// use custom rendering (leaves the preservation to the flush call)
 			this.oContainer.setTheLuckyOneAndRender(value);
 		}.bind(this));
 	});
 
-	QUnit.test("preservation of not-rendered, indirect descendants (grand children etc.)", function(assert) {
+	QUnit.test("preservation of not-rendered, indirect descendants (grand children etc.)", async function(assert) {
 		TestContainer.getMetadata().getRenderer().apiVersion = 2;
 		var oHtml1 = new HTML({content: "<div></div>"}),
 			oHtml2 = new HTML({content: "<div></div>"}),
@@ -1928,7 +1929,7 @@ sap.ui.define([
 
 		// act 1: initial rendering
 		oContainer.placeAt("area9");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert 1: HTML1 rendered, HTML2 not yet rendered
 		assert.ok(oHtml1.getDomRef() && !RenderManager.isPreservedContent(oHtml1.getDomRef()),
@@ -1938,7 +1939,7 @@ sap.ui.define([
 
 		// act 2: switch rendered control
 		oContainer.setTheLuckyOne(1);
-		Core.applyChanges();
+		await nextUIUpdate();
 		oHtml2.$().append("<span></span>");
 		oHtml2.$().append("<span></span>");
 		oHtml2.$().append("<span></span>");
@@ -1954,7 +1955,7 @@ sap.ui.define([
 
 		// act 3: switch again
 		oContainer.setTheLuckyOne(0);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert 3: HTML1 rendered, HTML2 not rendered, but preserved
 		assert.ok(oHtml1.getDomRef() && !RenderManager.isPreservedContent(oHtml1.getDomRef()),
@@ -1966,7 +1967,7 @@ sap.ui.define([
 
 		// act 4: switch again
 		oContainer.setTheLuckyOne(1);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert 3: HTML1 not rendered but preserved, HTML2 rendered incl. dynamic modifications
 		assert.ok(oHtml1.getDomRef() && RenderManager.isPreservedContent(oHtml1.getDomRef()),

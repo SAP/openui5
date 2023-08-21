@@ -12,10 +12,11 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/ui/test/opaQunit",
-	"sap/ui/test/Opa5"
+	"sap/ui/test/Opa5",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter,
 		_promiseWaiter, _cssTransitionWaiter, _cssAnimationWaiter,
-		NavContainer, App, Page, Button, opaTest, Opa5) {
+		NavContainer, App, Page, Button, opaTest, Opa5, nextUIUpdate) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();
@@ -46,7 +47,7 @@ sap.ui.define([
 					pages: [oInitialPage, this.oSecondPage]
 				}).placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
+				return nextUIUpdate();
 			},
 
 			afterEach: function () {
@@ -56,7 +57,7 @@ sap.ui.define([
 				this.oCssTransitionWaiterStub.restore();
 				this.oCssAnimationWaiterStub.restore();
 				this.oNavContainer.destroy();
-				sap.ui.getCore().applyChanges();
+				return nextUIUpdate();
 			}
 		});
 

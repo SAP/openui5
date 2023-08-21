@@ -195,14 +195,16 @@ sap.ui.define([
 		resume: function(sReason) {
 			Rendering.renderPendingUIUpdates(sReason, 0);
 		},
+
 		/**
 		 * Returns <code>true</code> if there are any pending rendering tasks or when
 		 * such rendering tasks are currently being executed.
 		 *
 		 * @return {boolean} true if there are pending (or executing) rendering tasks.
 		 * @private
+		 * @ui5-restricted sap.ui.core
 		 */
-		getUIDirty: function() {
+		isPending: function() {
 			return !!(_sRerenderTimer || _bRendering);
 		},
 
@@ -212,7 +214,6 @@ sap.ui.define([
 		 * @private
 		 * @function
 		 */
-
 		attachUIUpdated: function(fnFunction, oListener) {
 			_oEventProvider.attachEvent("UIUpdated", fnFunction, oListener);
 		},

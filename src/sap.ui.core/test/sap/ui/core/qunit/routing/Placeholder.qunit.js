@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/SplitApp",
 	"sap/m/routing/TargetHandler",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/routing/Router", /* need to require this module to correctly resolve router class in manifest */
 	"sap/f/routing/Router" /* need to require this module to correctly resolve router class in manifest */
 	], function(
@@ -18,7 +19,8 @@ sap.ui.define([
 		NavContainer,
 		Page,
 		SplitApp,
-		MTargetHandler
+		MTargetHandler,
+		nextUIUpdate
 	) {
 
 	"use strict";
@@ -67,7 +69,7 @@ sap.ui.define([
 		oButton.addEventDelegate(oButtonDelegate);
 	});
 
-	QUnit.test("NavContainer - showPlaceholder / hidePlaceholder", function(assert) {
+	QUnit.test("NavContainer - showPlaceholder / hidePlaceholder", async function(assert) {
 		var oNavContainer = new NavContainer();
 		var oPlaceholder = new Placeholder({
 			html: "my/placeholder.fragment.html"
@@ -78,7 +80,7 @@ sap.ui.define([
 
 		// render NavContainer
 		oNavContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// show placeholder
 		oNavContainer.showPlaceholder({
@@ -216,7 +218,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("NavContainer", function(assert) {
+	QUnit.test("NavContainer", async function(assert) {
 		var oNavConShowPlaceholderSpy = sinon.spy(NavContainer.prototype, "showPlaceholder"),
 			oNavConHidePlaceholderSpy = sinon.spy(NavContainer.prototype, "hidePlaceholder");
 
@@ -228,7 +230,7 @@ sap.ui.define([
 
 		oComponentContainer.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		return new Promise(function(resolve, reject) {
 			oComponentContainer.attachEvent("componentCreated", function(oEvent) {
@@ -301,7 +303,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("SplitContainer", function(assert) {
+	QUnit.test("SplitContainer", async function(assert) {
 		var oSplitApp;
 
 		// spies creation
@@ -320,7 +322,7 @@ sap.ui.define([
 
 		oComponentContainer.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		return new Promise(function(resolve, reject) {
 			oComponentContainer.attachEvent("componentCreated", function(oEvent) {
@@ -460,7 +462,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("FlexibleColumnLayout", function(assert) {
+	QUnit.test("FlexibleColumnLayout", async function(assert) {
 		var oFlexColumnLayout;
 
 		// spies creation
@@ -477,7 +479,7 @@ sap.ui.define([
 
 		oComponentContainer.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		return new Promise(function(resolve, reject) {
 			oComponentContainer.attachEvent("componentCreated", function(oEvent) {
