@@ -815,6 +815,9 @@ sap.ui.define([
 				},
 
 				/* ODataListBinding#create: Test Case III */
+				"SalesOrderSet?$skip=4&$top=1&$orderby=SalesOrderID%20desc&$filter=LifecycleStatus%20eq%20%27N%27&$select=CurrencyCode%2cCustomerName%2cGrossAmount%2cLifecycleStatus%2cNote%2cSalesOrderID" : {
+					source : "ODLB.create/TC3/SalesOrderSet_desc_4-1.json"
+				},
 				"SalesOrderSet('205')" : {
 					source : "ODLB.create/TC3/SalesOrder('205').json"
 				},
