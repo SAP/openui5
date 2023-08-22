@@ -26,6 +26,7 @@ sap.ui.require([
 					name : "sap.ui.core.sample.odata.v4.ListBinding"
 				}
 			});
+			Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 			Then.onTheMainPage.checkTeamIDInForm("TEAM_01");
 			Then.onTheMainPage.checkEmployeeNameInRow(0, "Walter\"s Win's");
@@ -60,7 +61,6 @@ sap.ui.require([
 
 			Then.onAnyPage.checkLog();
 			Then.onAnyPage.analyzeSupportAssistant();
-			Then.iTeardownMyUIComponent();
 		});
 
 		QUnit.start();

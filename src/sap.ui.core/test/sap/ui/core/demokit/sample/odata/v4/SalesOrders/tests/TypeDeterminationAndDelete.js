@@ -261,6 +261,7 @@ sap.ui.define([
 					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
 				}
 			});
+			Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 			//*****************************************************************************
 			// Check type determination
@@ -367,8 +368,6 @@ sap.ui.define([
 				deleteBusinessPartner();
 			}
 			Then.onAnyPage.checkLog();
-
-			Then.iTeardownMyUIComponent();
 		}
 	};
 });

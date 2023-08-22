@@ -24,6 +24,7 @@ sap.ui.define([
 					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
 				}
 			});
+			Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 			Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
@@ -268,7 +269,6 @@ sap.ui.define([
 			Then.onAnyPage.checkLog(bRealOData
 				? [oExpectedLog, oExpectedLog, oExpectedLog]
 				: undefined);
-			Then.iTeardownMyUIComponent();
 		}
 	};
 });

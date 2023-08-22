@@ -41,6 +41,7 @@ sap.ui.require([
 				},
 				hash : sHash
 			});
+			Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 			if (!sHash) {
 				When.onTheListReport.selectProduct(0);
@@ -143,7 +144,6 @@ sap.ui.require([
 			if (!sHash) {
 				Then.onAnyPage.analyzeSupportAssistant();
 			}
-			Then.iTeardownMyUIComponent();
 		}
 
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.Draft");
@@ -179,13 +179,12 @@ sap.ui.require([
 						name : "sap.ui.core.sample.odata.v4.Draft"
 					}
 				});
+				Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 				// Select part with read error
 				When.onTheListReport.selectProduct(3);
 				Then.onTheErrorPage.checkError("Entity: /Products(ID=40,IsActiveEntity=true)"
 					+ " Error: Communication error: 500 ");
-
-				Then.iTeardownMyUIComponent();
 			});
 
 			//*****************************************************************************
@@ -197,13 +196,12 @@ sap.ui.require([
 					},
 					hash : "/Products(ID=40,IsActiveEntity=true)"
 				});
+				Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 				When.onAnyPage.applySupportAssistant();
 				Then.onTheErrorPage.checkError("Entity: /Products(ID=40,IsActiveEntity=true)"
 					+ " Error: Communication error: 500 ");
 				Then.onAnyPage.analyzeSupportAssistant();
-
-				Then.iTeardownMyUIComponent();
 			});
 		}
 
