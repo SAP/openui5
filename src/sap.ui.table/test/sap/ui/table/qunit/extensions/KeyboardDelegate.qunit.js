@@ -404,7 +404,13 @@ sap.ui.define([
 			"Returned False: Pressing a key on a column header cell can not toggle a group");
 		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTable, getSelectAll()[0]),
 			"Returned False: Pressing a key on the SelectAll cell can not toggle a group");
+	});
 
+	/**
+	 * @deprecated As of version 1.118.
+	 */
+	QUnit.test("_allowsToggleExpandedState with grouping", function(assert) {
+		initRowActions(oTable, 2, 2);
 		oTable.setEnableGrouping(true);
 		oTable.setGroupBy(oTable.getColumns()[0]);
 		oCore.applyChanges();

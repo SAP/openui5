@@ -68,15 +68,13 @@ sap.ui.define([
 
 		function test(bShouldRender, bVisible, bGrouped, vTemplate) {
 			that._oColumn.setVisible(bVisible);
-			that._oColumn.setGrouped(bGrouped);
+			if (that._oColumn.setGrouped) {
+				that._oColumn.setGrouped(bGrouped);
+			}
 			that._oColumn.setTemplate(vTemplate);
 
-			assert.strictEqual(that._oColumn.shouldRender(), bShouldRender,
-				"Returned " + bShouldRender + ": "
-				+ (bVisible ? "Visible" : "Not visible")
-				//@deprecated As of version 1.118.
-				+ ", " + (bGrouped ? "grouped" : "not grouped")
-				+ ", " + (vTemplate != null ? ",has template" : "has no template"));
+			var sMessage = "Returned " + bShouldRender + ": " + (bVisible ? "Visible" : "Not visible") + (that._oColumn.setGrouped ? ", " + (bGrouped ? "grouped" : "not grouped") : "") + ", " + (vTemplate != null ? ",has template" : "has no template");
+			assert.strictEqual(that._oColumn.shouldRender(), bShouldRender, sMessage);
 		}
 
 		test(true, true, false, "dummy");
