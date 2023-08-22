@@ -47,6 +47,7 @@ sap.ui.define([
 			beforeEach: function() {
 				this.oSPC = new SinglePlanningCalendarMonthGrid({
 					startDate: o2Aug2018_00_00,
+					firstDayOfWeek: 1,
 					appointments: [
 						new CalendarAppointment({
 							startDate: o2Aug2018_00_00,
@@ -134,7 +135,8 @@ sap.ui.define([
 		QUnit.module("Grid days", {
 			beforeEach: function() {
 				this.oSPC = new SinglePlanningCalendarMonthGrid({
-					startDate: o2Aug2018_00_00
+					startDate: o2Aug2018_00_00,
+					firstDayOfWeek: 1
 				}).placeAt("qunit-fixture");
 
 				oCore.applyChanges();
@@ -194,6 +196,7 @@ sap.ui.define([
 			beforeEach: function() {
 				this.oSPC = new SinglePlanningCalendarMonthGrid({
 					startDate: o2Aug2018_00_00,
+					firstDayOfWeek: 1,
 					appointments: [
 						new CalendarAppointment({
 							startDate: o2Aug2018_00_00,
@@ -362,7 +365,8 @@ sap.ui.define([
 		QUnit.module("Other", {
 			beforeEach: function() {
 				this.oSPCMG = new SinglePlanningCalendarMonthGrid({
-					startDate: o2Aug2018_00_00
+					startDate: o2Aug2018_00_00,
+					firstDayOfWeek: 1
 				}).placeAt("qunit-fixture");
 
 				oCore.applyChanges();
@@ -400,6 +404,7 @@ sap.ui.define([
 			// arrange
 			var oGrid = new SinglePlanningCalendarMonthGrid({
 				startDate: UI5Date.getInstance(2022,0,1),
+				firstDayOfWeek: 1,
 				enableMultiDaySelection: true
 			});
 			oGrid.placeAt("qunit-fixture");
@@ -435,6 +440,7 @@ sap.ui.define([
 			// arrange
 			var oGrid = new SinglePlanningCalendarMonthGrid({
 				startDate: UI5Date.getInstance(2022,0,1),
+				firstDayOfWeek: 1,
 				enableMultiDaySelection: true,
 				selectedDates: [
 					new DateRange({startDate: UI5Date.getInstance(2022, 0, 10)}),
@@ -474,10 +480,11 @@ sap.ui.define([
 				iCellIndexEndWeek = 6,
 				i,
 				oGrid = new SinglePlanningCalendarMonthGrid({
-				startDate: UI5Date.getInstance(2022,0,1),
-				enableMultiDaySelection: true,
-				dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect
-			});
+					startDate: UI5Date.getInstance(2022,0,1),
+					firstDayOfWeek: 1,
+					enableMultiDaySelection: true,
+					dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect
+				});
 
 			oGrid.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -507,21 +514,22 @@ sap.ui.define([
 				iCellIndexEndWeek = iCellIndexStartWeek + 7,
 				i,
 				oGrid = new SinglePlanningCalendarMonthGrid({
-				startDate: UI5Date.getInstance(2022,0,1),
-				enableMultiDaySelection: true,
-				dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect,
-				selectedDates: [
-					new DateRange({startDate: UI5Date.getInstance(2022, 0, 9)}),
-					new DateRange({startDate: UI5Date.getInstance(2022, 0, 10)}),
-					new DateRange({startDate: UI5Date.getInstance(2022, 0, 11)}),
-					new DateRange({startDate: UI5Date.getInstance(2022, 0, 12)}),
-					new DateRange({startDate: UI5Date.getInstance(2022, 0, 13)}),
-					new DateRange({startDate: UI5Date.getInstance(2022, 0, 14)}),
-					new DateRange({startDate: UI5Date.getInstance(2022, 0, 15)}),
-					new DateRange({startDate: UI5Date.getInstance(2022, 0, 16)}),
-					new DateRange({startDate: UI5Date.getInstance(2022, 0, 17)})
-				]
-			});
+					startDate: UI5Date.getInstance(2022,0,1),
+					enableMultiDaySelection: true,
+					firstDayOfWeek: 1,
+					dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect,
+					selectedDates: [
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 9)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 10)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 11)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 12)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 13)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 14)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 15)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 16)}),
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 17)})
+					]
+				});
 
 			oGrid.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -553,10 +561,11 @@ sap.ui.define([
 				$oWeekRow,
 				oFakeEvent,
 				oGrid = new SinglePlanningCalendarMonthGrid({
-				startDate: UI5Date.getInstance(2022,0,1),
-				enableMultiDaySelection: true,
-				dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect
-			});
+					startDate: UI5Date.getInstance(2022,0,1),
+					firstDayOfWeek: 1,
+					enableMultiDaySelection: true,
+					dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect
+				});
 
 			oGrid.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -599,6 +608,7 @@ sap.ui.define([
 				oFakeEvent,
 				oGrid = new SinglePlanningCalendarMonthGrid({
 					startDate: UI5Date.getInstance(2022,0,1),
+					firstDayOfWeek: 1,
 					enableMultiDaySelection: true,
 					dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect,
 					selectedDates: [
@@ -651,6 +661,7 @@ sap.ui.define([
 			var oTestSelectedDate = new CalendarDate(2022, 0, 10),
 				oTestNotSelectdDate = new CalendarDate(2022, 0, 11),
 				oGrid = new SinglePlanningCalendarMonthGrid({
+					firstDayOfWeek: 1,
 					enableMultiDaySelection: true,
 					selectedDates: [
 						new DateRange({startDate: UI5Date.getInstance(2022, 0, 10)})
@@ -668,6 +679,7 @@ sap.ui.define([
 		QUnit.test("appointmentSelect: select a single appointment", function (assert) {
 			var oAppointment = new CalendarAppointment(),
 				oGrid = new SinglePlanningCalendarMonthGrid({
+					firstDayOfWeek: 1,
 					appointments: [
 						oAppointment
 					]
@@ -701,6 +713,7 @@ sap.ui.define([
 
 		QUnit.test("appointmentSelect: deselect all appointments", function (assert) {
 			var oGrid = new SinglePlanningCalendarMonthGrid({
+					firstDayOfWeek: 1,
 					appointments: [
 						new CalendarAppointment({
 							startDate: UI5Date.getInstance(2018, 6, 8, 5),
@@ -745,6 +758,7 @@ sap.ui.define([
 				}),
 				oGrid = new SinglePlanningCalendarMonthGrid({
 					startDate: UI5Date.getInstance(2022,0,25),
+					firstDayOfWeek: 1,
 					appointments: [oAppointment]
 				}),
 				oFireAppointmentSelectSpy = this.spy(oGrid, "fireAppointmentSelect");
@@ -770,8 +784,9 @@ sap.ui.define([
 			// Prepare
 			var oDate = UI5Date.getInstance(2018, 6, 2),
 				oGrid = new SinglePlanningCalendarMonthGrid({
-				specialDates: [
-					new DateTypeRange({ type: "NonWorking", startDate: oDate})
+					firstDayOfWeek: 1,
+					specialDates: [
+						new DateTypeRange({ type: "NonWorking", startDate: oDate})
 				]
 			});
 
