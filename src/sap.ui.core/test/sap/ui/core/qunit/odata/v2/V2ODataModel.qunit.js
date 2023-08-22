@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/StandardListItem",
 	"sap/ui/core/library",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/ChangeReason",
@@ -23,7 +24,7 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column"
 ], function (each, isEmptyObject, UI5Date, DateTimePicker, Input, Label, List, Panel, ListItem,
-		library, Message, MockServer, ChangeReason, Filter, Sorter, UpdateMethod, ODataModel,
+		library, Messaging, Message, MockServer, ChangeReason, Filter, Sorter, UpdateMethod, ODataModel,
 		DateTime, createAndAppendDiv, nextUIUpdate, Table, Column
 ) {
 
@@ -1965,7 +1966,7 @@ sap.ui.define([
 		oModel.read("/ProductSet('HT-1000')");
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
-				sap.ui.getCore().getMessageManager().addMessages([oMessage, oMessage2, oMessage3]);
+				Messaging.addMessages([oMessage, oMessage2, oMessage3]);
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName");
 				oModel.setProperty("/ProductSet('HT-1000')/Name", "NewName");
 				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
@@ -2013,7 +2014,7 @@ sap.ui.define([
 				target: oContextPath,
 				processor: oModel
 			});
-			sap.ui.getCore().getMessageManager().addMessages([oMessage, oMessage2]);
+			Messaging.addMessages([oMessage, oMessage2]);
 			assert.ok(oModel.hasPendingChanges(), "model has pending changes");
 			assert.ok(oModel.getMessagesByEntity(oContextPath), "Messages set");
 			assert.strictEqual(oModel.getMessagesByEntity(oContextPath).length, 2, "2 Messages set");
@@ -2050,7 +2051,7 @@ sap.ui.define([
 		oModel.read("/ProductSet('HT-1000')");
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
-				sap.ui.getCore().getMessageManager().addMessages([oMessage, oMessage2, oMessage3]);
+				Messaging.addMessages([oMessage, oMessage2, oMessage3]);
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName");
 				oModel.setProperty("/ProductSet('HT-1000')/Name", "NewName");
 				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
@@ -2103,7 +2104,7 @@ sap.ui.define([
 		oModel.read("/ProductSet('HT-1000')");
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
-				sap.ui.getCore().getMessageManager().addMessages([oMessage, oMessage2, oMessage3]);
+				Messaging.addMessages([oMessage, oMessage2, oMessage3]);
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName");
 				oModel.setProperty("/ProductSet('HT-1000')/Name", "NewName");
 				assert.ok(oModel.hasPendingChanges(), "model has pending changes");

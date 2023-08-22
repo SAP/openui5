@@ -218,9 +218,9 @@ sap.ui.define([
 		var mChangeParameters;
 
 		if (this.oContext != oContext) {
-			var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
-			if (MessageManager) {
-				MessageManager
+			var Messaging = sap.ui.require("sap/ui/core/Messaging");
+			if (Messaging) {
+				Messaging
 					.removeMessages(this.getDataState().getControlMessages(), true);
 			}
 			this.oContext = oContext;
@@ -781,9 +781,9 @@ sap.ui.define([
 		this.bIsBeingDestroyed = true;
 
 		if (oDataState) {
-			var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
-			if (MessageManager) {
-				MessageManager
+			var Messaging = sap.ui.require("sap/ui/core/Messaging");
+			if (Messaging) {
+				Messaging
 					.removeMessages(oDataState.getControlMessages(), true);
 			}
 			oDataState.setModelMessages();

@@ -625,15 +625,15 @@ sap.ui.define([
 				aBindings = [],
 				fnModelChangeHandler = function(oEvent){
 					that.updateProperty(sName);
-					//clear Messages from messageManager
+					//clear Messages from Messaging
 					var oDataState = oBinding.getDataState();
 					if (oDataState) {
 						var oControlMessages = oDataState.getControlMessages();
 						if (oControlMessages && oControlMessages.length > 0) {
 							oDataState.setControlMessages([]); //remove the controlMessages before informing manager to avoid 'dataStateChange' event to fire
-							var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
-							if (MessageManager) {
-								MessageManager.removeMessages(oControlMessages);
+							var Messaging = sap.ui.require("sap/ui/core/Messaging");
+							if (Messaging) {
+								Messaging.removeMessages(oControlMessages);
 							}
 						}
 						oDataState.setInvalidValue(undefined); //assume that the model always sends valid data

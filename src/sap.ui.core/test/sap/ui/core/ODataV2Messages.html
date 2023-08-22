@@ -16,6 +16,7 @@
 	</script>
 	<script>
 		sap.ui.require([
+			'sap/ui/core/Messaging',
 			'sap/ui/core/util/MockServer',
 			'sap/ui/model/odata/v2/ODataModel',
 			'sap/ui/layout/ResponsiveSplitter',
@@ -35,7 +36,7 @@
 			'sap/m/Panel',
 			'sap/ui/model/json/JSONModel',
 			'sap/ui/codeeditor/CodeEditor'
-		], function (MockServer, ODataModel, ResponsiveSplitter, SplitPane, PaneContainer, VerticalLayout, HorizontalLayout, Item, Column, ColumnListItem, Text, Input, Label, Select, Button, Table, Panel, JSONModel, CodeEditor) {
+		], function (Messaging, MockServer, ODataModel, ResponsiveSplitter, SplitPane, PaneContainer, VerticalLayout, HorizontalLayout, Item, Column, ColumnListItem, Text, Input, Label, Select, Button, Table, Panel, JSONModel, CodeEditor) {
 
 			// 1. Mocking
 			var sServiceUri = "/SalesOrderSrv/";
@@ -156,7 +157,7 @@
 				text: "Clear history",
 				icon: "sap-icon://delete",
 				press: function(){
-					sap.ui.getCore().getMessageManager().removeAllMessages();
+					Messaging.removeAllMessages();
 					var aHistoryModel = sap.ui.getCore().getModel("history");
 					aHistoryModel.setData([]);
 				}
@@ -164,7 +165,7 @@
 
 
 			// 4. Show front-end messages
-			sap.ui.getCore().setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "message");
+			sap.ui.getCore().setModel(Messaging.getMessageModel(), "message");
 
 			var oTableMM = new Table({
 				items: {

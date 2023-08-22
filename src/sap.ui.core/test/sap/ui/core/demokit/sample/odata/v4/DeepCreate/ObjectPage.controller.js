@@ -3,10 +3,11 @@
  */
 sap.ui.define([
 	"sap/m/MessageToast",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/sample/common/Controller"
-], function (MessageToast, UIComponent, UI5Date, Controller) {
+], function (MessageToast, Messaging, UIComponent, UI5Date, Controller) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.DeepCreate.ObjectPage", {
@@ -62,7 +63,7 @@ sap.ui.define([
 			var oRouter = UIComponent.getRouterFor(this);
 
 			this.initMessagePopover("showMessages");
-			this.getView().setModel(sap.ui.getCore().getMessageManager().getMessageModel(),
+			this.getView().setModel(Messaging.getMessageModel(),
 				"messages");
 			oRouter.getRoute("create").attachPatternMatched(this.onPatternMatched, this);
 			oRouter.getRoute("objectPage").attachPatternMatched(this.onPatternMatched, this);

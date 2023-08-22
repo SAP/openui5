@@ -10,8 +10,8 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
@@ -19,7 +19,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/ODataUtils"
 ], function (Log, encodeURL, isEmptyObject, DynamicDateRange, mobileLibrary, MessageBox, MessageToast,
-		coreLibrary, Core, Element, Message, Controller, Filter, FilterOperator, Sorter, ODataUtils) {
+		coreLibrary, Element, Messaging, Message, Controller, Filter, FilterOperator, Sorter, ODataUtils) {
 	"use strict";
 	var sClassname = "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main.controller",
 		MessageType = coreLibrary.MessageType,
@@ -34,7 +34,7 @@ sap.ui.define([
 		clearPersistentMessages : function (bUnboundOnly) {
 			var aMessages = this.getView().getModel("messages").getObject("/");
 
-			Core.getMessageManager().removeMessages(aMessages.filter(function (oMessage) {
+			Messaging.removeMessages(aMessages.filter(function (oMessage) {
 				return (oMessage.technical || oMessage.persistent)
 					&& (!bUnboundOnly || !oMessage.target);
 			}));

@@ -1,6 +1,7 @@
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	"sap/ui/core/UIComponent"
-], function (UIComponent) {
+], function (Messaging, UIComponent) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.Component", {
@@ -15,7 +16,7 @@ sap.ui.define([
 			UIComponent.prototype.init.apply(this, arguments);
 
 			// set message model
-			this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "message");
+			this.setModel(Messaging.getMessageModel(), "message");
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();

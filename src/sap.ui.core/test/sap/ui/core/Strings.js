@@ -1,9 +1,9 @@
 sap.ui.define([
 	"./Strings.controller",
 	"./FormatHelper",
-	"sap/ui/core/Core",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/XMLView"
-], function(StringsController, FormatHelper, oCore, XMLView) {
+], function(StringsController, FormatHelper, Messaging, XMLView) {
 	"use strict";
 
 	sap.ui.define("local/LocaleListItem", function() {
@@ -14,7 +14,7 @@ sap.ui.define([
 		viewName: "local.Strings",
 		controller: new StringsController()
 	}).then(function(oView) {
-		oCore.getMessageManager().registerObject(oView.getContent()[0], true);
+		Messaging.registerObject(oView.getContent()[0], true);
 		oView.placeAt("content");
 	});
 });

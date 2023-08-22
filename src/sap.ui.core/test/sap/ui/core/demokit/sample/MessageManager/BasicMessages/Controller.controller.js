@@ -2,10 +2,11 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/library",
 	"sap/ui/core/Fragment"
-], function(Controller, JSONModel, BindingMode, Message, library, Fragment) {
+], function(Controller, JSONModel, BindingMode, Messaging, Message, library, Fragment) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -17,16 +18,15 @@ sap.ui.define([
 	return Controller.extend("sap.ui.core.sample.MessageManager.BasicMessages.Controller", {
 
 		onInit : function () {
-			var oMessageManager, oModel, oView;
+			var oModel, oView;
 
 			oView = this.getView();
 
 			// set message model
-			oMessageManager = sap.ui.getCore().getMessageManager();
-			oView.setModel(oMessageManager.getMessageModel(), "message");
+			oView.setModel(Messaging.getMessageModel(), "message");
 
 			// or just do it for the whole view
-			oMessageManager.registerObject(oView, true);
+			Messaging.registerObject(oView, true);
 
 			// create a default model with somde demo data
 			oModel = new JSONModel({
@@ -54,7 +54,7 @@ sap.ui.define([
 				target: "/Dummy",
 				processor: this.getView().getModel()
 			});
-			sap.ui.getCore().getMessageManager().addMessages(oMessage);
+			Messaging.addMessages(oMessage);
 		},
 
 		onErrorPress : function(){
@@ -64,7 +64,7 @@ sap.ui.define([
 				target: "/Dummy",
 				processor: this.getView().getModel()
 			});
-			sap.ui.getCore().getMessageManager().addMessages(oMessage);
+			Messaging.addMessages(oMessage);
 		},
 
 		onWarningPress : function(){
@@ -74,7 +74,7 @@ sap.ui.define([
 				target: "/Dummy",
 				processor: this.getView().getModel()
 			});
-			sap.ui.getCore().getMessageManager().addMessages(oMessage);
+			Messaging.addMessages(oMessage);
 		},
 
 		onInfoPress : function(){
@@ -84,7 +84,7 @@ sap.ui.define([
 				target: "/Dummy",
 				processor: this.getView().getModel()
 			});
-			sap.ui.getCore().getMessageManager().addMessages(oMessage);
+			Messaging.addMessages(oMessage);
 		},
 
 		onValueStatePress : function(){
@@ -95,7 +95,7 @@ sap.ui.define([
 
 		onClearPress : function(){
 			// does not remove the manually set ValueStateText we set in onValueStatePress():
-			sap.ui.getCore().getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 		},
 
 		//################ Private APIs ###################

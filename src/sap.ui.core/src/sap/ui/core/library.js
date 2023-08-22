@@ -8,10 +8,11 @@
 sap.ui.define([
 	'sap/ui/base/DataType',
 	'sap/ui/core/Lib',
+	'sap/ui/core/message/MessageType', // provides sap.ui.core.message.MessageType
 	'sap/ui/core/mvc/ViewType', // provides sap.ui.core.mvc.ViewType
 	'./CalendarType' // provides sap.ui.core.CalendarType
 ],
-	function(DataType, Library, ViewType) {
+	function(DataType, Library, MessageType, ViewType) {
 	"use strict";
 
 	/**
@@ -1303,49 +1304,6 @@ sap.ui.define([
 		Indication08 : "Indication08"
 	};
 
-
-	/**
-	 * Defines the different message types.
-	 *
-	 * @enum {string}
-	 * @public
-	 * @since 1.10
-	 */
-	thisLib.MessageType = {
-
-		/**
-		 * Message should be just an information
-		 * @public
-		 */
-		Information : "Information",
-
-		/**
-		 * Message is a warning
-		 * @public
-		 */
-		Warning : "Warning",
-
-		/**
-		 * Message is an error
-		 * @public
-		 */
-		Error : "Error",
-
-		/**
-		 * Message has no specific level
-		 * @public
-		 */
-		None : "None",
-
-		/**
-		 * Message is a success message
-		 * @public
-		 */
-		Success : "Success"
-
-	};
-
-
 	/**
 	 * Defines the different possible states of an element that can be open or closed and does not only
 	 * toggle between these states, but also spends some time in between (e.g. because of an animation).
@@ -2264,6 +2222,15 @@ sap.ui.define([
 	};
 
 	thisLib.mvc = thisLib.mvc || {};
+
+	/**
+	 * Specifies possible message types.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @alias sap.ui.core.MessageType
+	 */
+	thisLib.MessageType = MessageType;
 
 	/**
 	 * Specifies possible view types.

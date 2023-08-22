@@ -14,6 +14,7 @@
 	<script>
 
 		sap.ui.require([
+			'sap/ui/core/Messaging',
 			'sap/ui/core/util/MockServer',
 			'sap/ui/model/odata/v2/ODataModel',
 			'sap/ui/model/Filter',
@@ -32,7 +33,7 @@
 			'sap/m/Label',
 			'sap/m/Table',
 			'sap/ui/model/json/JSONModel'
-		], function (MockServer, ODataModel, Filter, ResponsiveSplitter, SplitPane, PaneContainer, VerticalLayout,
+		], function (Messaging, MockServer, ODataModel, Filter, ResponsiveSplitter, SplitPane, PaneContainer, VerticalLayout,
 			HorizontalLayout, Column, ColumnListItem, Text, SimpleForm, Button, Panel, Input, Label, Table, JSONModel) {
 
 				var sServiceUri = "/SalesOrderSrv/";
@@ -206,7 +207,7 @@
 				});
 				sap.ui.getCore().setModel(oModel);
 
-				sap.ui.getCore().setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "message");
+				sap.ui.getCore().setModel(Messaging.getMessageModel(), "message");
 				var oTableMM = new Table({
 					items: {
 						path: 'message>/',

@@ -321,7 +321,7 @@ sap.ui.define([
 			this.oSapUiMock = this.mock(sap.ui);
 			// @see sap.ui.base.Event#init
 			this.oSapUiMock.expects("require").on(sap.ui).atLeast(0)
-				.withExactArgs("sap/ui/core/message/MessageManager").callThrough();
+				.withExactArgs("sap/ui/core/Messaging").callThrough();
 		},
 
 		/**

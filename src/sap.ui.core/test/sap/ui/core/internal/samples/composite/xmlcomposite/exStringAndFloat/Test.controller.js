@@ -1,6 +1,7 @@
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/Controller"
-], function (Controller) {
+], function (Messaging, Controller) {
 	"use strict";
 	return Controller.extend("sap.ui.core.internal.samples.composite.xmlcomposite.ex2.Test",
 		{
@@ -8,7 +9,7 @@ sap.ui.define([
 				var oView = this.getView();
 
 				// Register the view with the message manager
-				sap.ui.getCore().getMessageManager().registerObject(oView, true);
+				Messaging.registerObject(oView, true);
 			},
 
 			handlePress: function (oEvent) {

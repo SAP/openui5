@@ -38,7 +38,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Rendering",
 	"sap/ui/core/message/Message",
-	"sap/ui/core/message/MessageManager",
+	"sap/ui/core/Messaging",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
 	"sap/ui/model/Model",
@@ -46,7 +46,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI"
 ], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
 		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
-		SyncPromise, CacheManager, Configuration, coreLibrary, Rendering, Message, MessageManager,
+		SyncPromise, CacheManager, Configuration, coreLibrary, Rendering, Message, Messaging,
 		BindingMode, BaseContext, Model, OperationMode, URI) {
 	"use strict";
 
@@ -378,7 +378,7 @@ sap.ui.define([
 			reportStateMessages : this.reportStateMessages.bind(this),
 			reportTransitionMessages : this.reportTransitionMessages.bind(this),
 			updateMessages : function (aOldMessages, aNewMessages) {
-				MessageManager.updateMessages(aOldMessages, aNewMessages);
+				Messaging.updateMessages(aOldMessages, aNewMessages);
 			}
 		};
 		this.oRequestor = _Requestor.create(this.sServiceUrl, this.oInterface, this.mHeaders,
@@ -2418,7 +2418,7 @@ sap.ui.define([
 			});
 		});
 		if (aNewMessages.length || aOldMessages.length) {
-			MessageManager.updateMessages(aOldMessages, aNewMessages);
+			Messaging.updateMessages(aOldMessages, aNewMessages);
 		}
 	};
 
@@ -2437,7 +2437,7 @@ sap.ui.define([
 		var that = this;
 
 		if (aMessages && aMessages.length) {
-			MessageManager.updateMessages(undefined, aMessages.map(function (oMessage) {
+			Messaging.updateMessages(undefined, aMessages.map(function (oMessage) {
 				oMessage.transition = true;
 				return that.createUI5Message(oMessage, sResourcePath);
 			}));

@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/Rendering",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
@@ -35,7 +36,7 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
 ], function (Log, uid, UriParameters, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text,
-		Device, EventProvider, SyncPromise, Configuration, Rendering, Controller, View,
+		Device, EventProvider, SyncPromise, Configuration, Messaging, Rendering, Controller, View,
 		ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode, AnnotationHelper,
 		ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, ValueListType, _Helper,
 		TestUtils, XMLHelper) {
@@ -555,7 +556,7 @@ sap.ui.define([
 				if (that.oModel) {
 					that.oModel.destroy();
 				}
-				sap.ui.getCore().getMessageManager().removeAllMessages();
+				Messaging.removeAllMessages();
 				// reset the language
 				Configuration.setLanguage(sDefaultLanguage);
 			}
@@ -666,9 +667,9 @@ sap.ui.define([
 				}
 				delete this.mListChanges[sControlId];
 			}
+
 			if (Rendering.isPending() || this.oModel && this.oModel.aPrerenderingTasks
-					|| sap.ui.getCore().getMessageManager().getMessageModel().getObject("/").length
-						< this.aMessages.length) {
+					|| Messaging.getMessageModel().getObject("/").length < this.aMessages.length) {
 				setTimeout(this.checkFinish.bind(this, assert), 10);
 			} else if (this.resolve) {
 				this.resolve();
@@ -682,7 +683,7 @@ sap.ui.define([
 		 * @param {object} assert The QUnit assert object
 		 */
 		checkMessages : function (assert) {
-			var aCurrentMessages = sap.ui.getCore().getMessageManager().getMessageModel()
+			var aCurrentMessages = Messaging.getMessageModel()
 					.getObject("/").map(function (oMessage) {
 						var aTargets = oMessage.getTargets().map(function (sTarget) {
 							return normalizeUID(sTarget);
@@ -1584,7 +1585,7 @@ sap.ui.define([
 
 				oView.setModel(that.oModel);
 				// enable parse error messages in the message manager
-				sap.ui.getCore().getMessageManager().registerObject(oView, true);
+				Messaging.registerObject(oView, true);
 				// Place the view in the page so that it is actually rendered. In some situations,
 				// esp. for the sap.ui.table.Table this is essential.
 				oView.placeAt("qunit-fixture");
@@ -24870,7 +24871,7 @@ sap.ui.define([
 			assert.strictEqual(oRoot.getProperty("defaultChannel"), "260", "360 has been ignored");
 
 			that.expectMessages([]);
-			sap.ui.getCore().getMessageManager().removeAllMessages(); // clean up
+			Messaging.removeAllMessages(); // clean up
 
 			// Note: why is there no separate GET? because we have already loaded messages above!
 			// that.expectRequest("Artists(ArtistID='0',IsActiveEntity=true)?$select=Messages");
@@ -29724,8 +29725,6 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oMessageManager = sap.ui.getCore().getMessageManager();
-
 			// 4c. Patching a property via the wrong context must not succeed
 			// We're not interested in the exact errors, only in some failure
 			that.oLogMock.expects("error").twice();
@@ -29734,8 +29733,8 @@ sap.ui.define([
 				.setProperty("BestFriend/Name", "n/a")
 				.then(mustFail(assert), function () {
 					// expect one message and remove it again
-					assert.strictEqual(oMessageManager.getMessageModel().getObject("/").length, 1);
-					oMessageManager.removeAllMessages();
+					assert.strictEqual(Messaging.getMessageModel().getObject("/").length, 1);
+					Messaging.removeAllMessages();
 
 					assert.strictEqual(oReturnValueContext.getProperty("BestFriend/Name"),
 						"Sgt. Pepper (modified)");
@@ -32990,7 +32989,7 @@ sap.ui.define([
 				]);
 		}).then(function () {
 			// remove persistent, technical messages from above
-			sap.ui.getCore().getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 
 			that.expectMessages([]);
 
@@ -35771,7 +35770,7 @@ sap.ui.define([
 						type : "Error"
 					}]);
 
-				sap.ui.getCore().getMessageManager().removeAllMessages();
+				Messaging.removeAllMessages();
 
 				return Promise.all([
 					// code under test
@@ -35804,7 +35803,7 @@ sap.ui.define([
 						type : "Warning"
 					}]);
 
-				sap.ui.getCore().getMessageManager().removeAllMessages();
+				Messaging.removeAllMessages();
 
 				// code under test
 				oTable.getItems("items")[0].getCells()[1].getBinding("value")
@@ -39184,7 +39183,7 @@ sap.ui.define([
 			assert.equal(oTableBinding.getLength(), 3);
 
 			// remove persistent, technical messages from above
-			sap.ui.getCore().getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 			that.expectMessages([]);
 
 			oCausingError = oFixture.expectations.call(that);
@@ -39288,7 +39287,7 @@ sap.ui.define([
 			var oError = createErrorInsideBatch();
 
 			// remove persistent, technical messages from above
-			sap.ui.getCore().getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'SalesOrderList' failed; will be repeated automatically",
@@ -42326,7 +42325,7 @@ sap.ui.define([
 					type : "Success"
 				}]);
 
-			sap.ui.getCore().getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 			oInput.getBinding("value").setValue("F3");
 
 			return Promise.all([

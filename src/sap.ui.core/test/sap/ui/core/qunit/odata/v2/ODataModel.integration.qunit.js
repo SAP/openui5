@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/mvc/Controller",
@@ -36,8 +37,8 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
 ], function (Log, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration,
-		Core, coreLibrary, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter, FilterOperator,
-		FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Context,
+		Core, coreLibrary, Messaging, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter,
+		FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Context,
 		ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
@@ -576,8 +577,9 @@ sap.ui.define([
 				}
 				delete this.mListChanges[sControlId];
 			}
+
 			if (Rendering.isPending()
-					|| Core.getMessageManager().getMessageModel().getObject("/").length	< this.aMessages.length) {
+					|| Messaging.getMessageModel().getObject("/").length < this.aMessages.length) {
 				setTimeout(this.checkFinish.bind(this, assert), 10);
 
 				return;
@@ -595,7 +597,7 @@ sap.ui.define([
 		 * @param {object} assert The QUnit assert object
 		 */
 		checkMessages : function (assert) {
-			var aCurrentMessages = Core.getMessageManager().getMessageModel()
+			var aCurrentMessages = Messaging.getMessageModel()
 					.getObject("/").sort(compareMessages),
 				aExpectedMessages = this.aMessages.slice().sort(compareMessages);
 
@@ -1088,7 +1090,7 @@ sap.ui.define([
 					that.oView.setModel(mNamedModels[sModelName], sModelName);
 				}
 				// enable parse error messages in the message manager
-				Core.getMessageManager().registerObject(that.oView, true);
+				Messaging.registerObject(that.oView, true);
 				// Place the view in the page so that it is actually rendered. In some situations,
 				// esp. for the table.Table this is essential.
 				that.oView.placeAt("qunit-fixture");
@@ -1665,12 +1667,11 @@ sap.ui.define([
 		 * Removes all persistent and technical message from the message model.
 		 */
 		removePersistentAndTechnicalMessages : function () {
-			var oMessageManager = Core.getMessageManager(),
-				aMessages = oMessageManager.getMessageModel().getObject("/").filter(function (oMessage) {
+			var aMessages = Messaging.getMessageModel().getObject("/").filter(function (oMessage) {
 					return oMessage.getPersistent() || oMessage.getTechnical();
 				});
 
-			oMessageManager.removeMessages(aMessages);
+			Messaging.removeMessages(aMessages);
 		},
 
 		/**
@@ -4714,7 +4715,7 @@ usePreliminaryContext : false}}">\
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oMessage = Core.getMessageManager().getMessageModel().getObject("/")[0];
+			oMessage = Messaging.getMessageModel().getObject("/")[0];
 			oObjectPage = that.oView.byId("objectPage");
 
 			assert.deepEqual(oMessage.getControlIds(), []);
@@ -10496,7 +10497,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}])
 				.expectValueState("note", "Error", "Some message");
 
-			Core.getMessageManager().addMessages(new Message({
+			Messaging.addMessages(new Message({
 				message : "Some message",
 				processor : oModel,
 				target : "/Note",
@@ -10534,7 +10535,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}])
 				.expectValueState("note", "Error", "Some message");
 
-			Core.getMessageManager().addMessages(new Message({
+			Messaging.addMessages(new Message({
 				message : "Some message",
 				processor : oModel,
 				target : "/Note",
@@ -11583,7 +11584,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}])
 				.expectValueState("quantity", "Error", "Some message");
 
-			Core.getMessageManager().addMessages(new Message({
+			Messaging.addMessages(new Message({
 				message : "Some message",
 				processor : oModel,
 				target : "/RequestedQuantity",

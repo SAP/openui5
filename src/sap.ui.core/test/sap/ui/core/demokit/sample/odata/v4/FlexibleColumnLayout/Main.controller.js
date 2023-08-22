@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/f/library",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Filter",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/TestUtils"
-], function (_Formatter, library, MessageBox, MessageToast, UI5Date, Controller, Filter,
+], function (_Formatter, library, MessageBox, MessageToast, Messaging, UI5Date, Controller, Filter,
 		FilterOperator, Sorter, JSONModel, TestUtils) {
 	"use strict";
 
@@ -192,8 +193,7 @@ sap.ui.define([
 			this.getView().setModel(this.oUIModel, "ui");
 			this.getView().setModel(this.getView().getModel(), "headerContext");
 			// TODO initMessagePopover should expose its "messages" model to the complete view
-			this.getView().setModel(sap.ui.getCore().getMessageManager().getMessageModel(),
-				"messages");
+			this.getView().setModel(Messaging.getMessageModel(), "messages");
 			this.byId("salesOrderListTitle").setBindingContext(
 				this.byId("SalesOrderList").getBinding("items").getHeaderContext(),
 				"headerContext");

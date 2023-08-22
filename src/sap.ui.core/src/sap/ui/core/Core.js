@@ -20,7 +20,7 @@ sap.ui.define([
 	'./RenderManager',
 	'./ControlBehavior',
 	'./UIArea',
-	'./message/MessageManager',
+	'./Messaging',
 	'./StaticArea',
 	"sap/ui/core/Theming",
 	"sap/base/Log",
@@ -54,7 +54,7 @@ sap.ui.define([
 		RenderManager,
 		ControlBehavior,
 		UIArea,
-		MessageManager,
+		Messaging,
 		StaticArea,
 		Theming,
 		Log,
@@ -241,10 +241,9 @@ sap.ui.define([
 				Core.prototype[sFuncName] = _oEventProvider[sFuncName].bind(_oEventProvider);
 			});
 
-			this.oMessageManager = MessageManager;
 			var bHandleValidation = Configuration.getHandleValidation();
 			if (bHandleValidation) {
-				MessageManager.registerObject(this, true);
+				Messaging.registerObject(this, true);
 			}
 
 			/**
@@ -630,8 +629,6 @@ sap.ui.define([
 				"ready",
 				//  - UIArea & Rendering
 				"addPrerenderingTask",
-				//  - Messaging
-				"setMessageManager",
 				//  - Libraries
 				"attachLibraryChanged", "detachLibraryChanged",
 				"loadLibraries",
@@ -2529,19 +2526,16 @@ sap.ui.define([
 		return this;
 	};
 
-	Core.prototype.setMessageManager = function(oMessageManager) {
-		this.oMessageManager = oMessageManager;
-	};
-
 	/**
 	 * Returns the active <code>MessageManager</code> instance.
 	 *
 	 * @return {sap.ui.core.message.MessageManager}
 	 * @public
 	 * @since 1.33.0
+	 * @deprecated since 1.119. Please use {@link sap.ui.core.Messaging Messaging} instead.
 	 */
 	Core.prototype.getMessageManager = function() {
-		return this.oMessageManager;
+		return Messaging;
 	};
 
 	/**

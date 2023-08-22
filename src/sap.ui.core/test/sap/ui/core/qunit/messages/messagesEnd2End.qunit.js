@@ -4,9 +4,9 @@ sap.ui.define([
 	'sap/ui/core/util/MockServer',
 	'sap/ui/model/odata/v2/ODataModel',
 	'sap/m/Input',
-	"sap/ui/core/message/Message",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/Item"
-], function (MockServer, ODataModel, Input, Message, Item) {
+], function (MockServer, ODataModel, Input, Messaging, Item) {
 	"use strict";
 
 	QUnit.module("Messaging End2End", {
@@ -154,7 +154,7 @@ sap.ui.define([
 			});
 			that.oMockServer.start();
 		}, afterEach : function(){
-			sap.ui.getCore().getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 		}
 
 	});
@@ -194,7 +194,7 @@ sap.ui.define([
 						that.oModelCanonical.read("ToProduct", {
 							context: oSalesOrderLineItemSetCtx,
 							success: function () {
-								var aMessages = sap.ui.getCore().getMessageManager().getMessageModel().oData;
+								var aMessages = Messaging.getMessageModel().getData();
 								assert.equal(aMessages.length, 4, "Correct message count.");
 								checkMessages(aMessages, assert);
 							}
@@ -217,7 +217,7 @@ sap.ui.define([
 		this.oModelCanonical.metadataLoaded().then(function () {
 			that.oModelCanonical.read("/SalesOrderSet");
 			var fnRequestCompleted = function () {
-				var aMessages = sap.ui.getCore().getMessageManager().getMessageModel().oData;
+				var aMessages = Messaging.getMessageModel().getData();
 				assert.equal(aMessages.length, 3, "Correct message count.");
 				assert.equal(aMessages[1].aTargets[0], "/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ID");
 				assert.equal(aMessages[1].aFullTargets[0], "/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ID");
@@ -238,7 +238,7 @@ sap.ui.define([
 		this.oModelCanonical.metadataLoaded().then(function () {
 			that.oModelCanonical.read("/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct");
 			var fnRequestCompleted = function () {
-				var aMessages = sap.ui.getCore().getMessageManager().getMessageModel().oData;
+				var aMessages = Messaging.getMessageModel().getData();
 				assert.equal(aMessages.length, 3, "Correct message count.");
 				assert.equal(aMessages[1].aTargets[0], "/ProductSet('HT-1030')/ID");
 				assert.equal(aMessages[1].aFullTargets[0], "/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ID");
@@ -259,7 +259,7 @@ sap.ui.define([
 		oModel.createBindingContext("/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')", function(oContext) {
 			var oInput = new Input({ value: "{ToProduct/ID}" });
 			oInput.setBindingContext(oContext);
-			sap.ui.getCore().getMessageManager().registerObject(oInput);
+			Messaging.registerObject(oInput);
 			oInput.setModel(oModel);
 
 			oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct");
@@ -289,7 +289,7 @@ sap.ui.define([
 
 		oModel.metadataLoaded().then(function(){
 
-			var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+			var oMessageModel = Messaging.getMessageModel();
 
 			oModel.createEntry("/ContactSet", oCreateEntryProduct);
 			oModel.submitChanges({success: function(){
@@ -310,7 +310,7 @@ sap.ui.define([
 
 		oModel.metadataLoaded().then(function(){
 
-			var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+			var oMessageModel = Messaging.getMessageModel();
 
 			oModel.read("/ProductSet('HT-1000')/ToSupplier", {
 				success: function(){
@@ -427,7 +427,7 @@ sap.ui.define([
 				fnOriginalRefreshDataState = oInput.refreshDataState;
 
 			oInput.setModel(oModel);
-			sap.ui.getCore().getMessageManager().registerObject(oInput);
+			Messaging.registerObject(oInput);
 
 			oInput.refreshDataState = function (sName, oDataState) {
 				fnOriginalRefreshDataState.apply(this, arguments);

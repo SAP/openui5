@@ -91,7 +91,7 @@ sap.ui.define([
 				async : {type : "boolean", defaultValue : false},
 
 				/**
-				 * Enable/disable validation handling by MessageManager for this component.
+				 * Enable/disable validation handling by Messaging for this component.
 				 * The resulting Messages will be propagated to the controls.
 				 * This property can only be applied initially.
 				 */

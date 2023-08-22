@@ -8,9 +8,10 @@
  * @version @version@
  */
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel"
-], function (UIComponent, JSONModel) {
+], function (Messaging, UIComponent, JSONModel) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.core.internal.samples.odata.v2.TreeTable.Component", {
@@ -34,7 +35,7 @@ sap.ui.define([
 			this.setModel(new JSONModel({
 				nodes : []
 			}), "clipboard");
-			this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "messages");
+			this.setModel(Messaging.getMessageModel(), "messages");
 		}
 	});
 });

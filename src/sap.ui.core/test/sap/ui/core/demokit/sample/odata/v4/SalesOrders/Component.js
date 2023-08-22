@@ -11,11 +11,12 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/HBox",
 	"sap/ui/core/library",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/TestUtils"
-], function (Log, HBox, library, UIComponent, View, JSONModel, TestUtils) {
+], function (Log, HBox, library, Messaging, UIComponent, View, JSONModel, TestUtils) {
 	"use strict";
 
 	var MessageType = library.MessageType, // shortcut for sap.ui.core.MessageType
@@ -45,7 +46,7 @@ sap.ui.define([
 			// the same model can be accessed via two names to allow for different binding contexts
 			this.setModel(oModel, "headerContext");
 			this.setModel(oModel, "parameterContext");
-			this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "messageModel");
+			this.setModel(Messaging.getMessageModel(), "messageModel");
 
 			// simulate a Fiori Elements app, where the view is only created after
 			// $metadata has been loaded

@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
@@ -7,8 +8,8 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/json/JSONModel"
-], function (Controller, MessageToast, MessageBox, Sorter, Filter, FilterOperator, FilterType,
-	JSONModel) {
+], function (Messaging, Controller, MessageToast, MessageBox, Sorter, Filter, FilterOperator,
+	FilterType, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.tutorial.odatav4.controller.App", {
@@ -17,8 +18,7 @@ sap.ui.define([
 		 *  Hook for initializing the controller
 		 */
 		onInit : function () {
-			var oMessageManager = sap.ui.getCore().getMessageManager(),
-				oMessageModel = oMessageManager.getMessageModel(),
+			var oMessageModel = Messaging.getMessageModel(),
 				oMessageModelBinding = oMessageModel.bindList("/", undefined, [],
 					new Filter("technical", FilterOperator.EQ, true)),
 				oViewModel = new JSONModel({
@@ -212,7 +212,7 @@ sap.ui.define([
 			aMessages = aContexts.map(function (oContext) {
 				return oContext.getObject();
 			});
-			sap.ui.getCore().getMessageManager().removeMessages(aMessages);
+			Messaging.removeMessages(aMessages);
 
 			this._setUIChanges(true);
 			this._bTechnicalErrors = true;

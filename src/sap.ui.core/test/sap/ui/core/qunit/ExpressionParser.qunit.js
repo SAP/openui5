@@ -700,7 +700,7 @@ sap.ui.define([
 			.atLeast(0)
 			.callThrough();
 		oSapUiMock.expects("require")
-			.withExactArgs("sap/ui/core/message/MessageManager")
+			.withExactArgs("sap/ui/core/Messaging")
 			.atLeast(0)
 			.callThrough();
 

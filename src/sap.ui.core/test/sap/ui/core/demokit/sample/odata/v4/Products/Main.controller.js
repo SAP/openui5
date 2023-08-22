@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/core/library",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/sample/common/Controller"
-], function (coreLibrary, Controller) {
+], function (coreLibrary, Messaging, Controller) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -64,7 +65,7 @@ sap.ui.define([
 				if (oContent.getValueState) {
 					oContent.setValue("");
 					oContent.setValueState(ValueState.None);
-					sap.ui.getCore().getMessageManager().removeMessages(
+					Messaging.removeMessages(
 						oContent.getBinding("value").getDataState().getMessages());
 				}
 			});

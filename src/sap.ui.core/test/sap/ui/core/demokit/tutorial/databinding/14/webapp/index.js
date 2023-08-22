@@ -1,9 +1,10 @@
 sap.ui.require([
 	"sap/ui/core/Core",
+	"sap/ui/core/Messaging",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/resource/ResourceModel"
-], function (Core, JSONModel, XMLView, ResourceModel) {
+], function (Core, Messaging, JSONModel, XMLView, ResourceModel) {
 	"use strict";
 
 	// Chain an anonymous function to the SAPUI5 'ready' Promise
@@ -45,7 +46,7 @@ sap.ui.require([
 		});
 
 		// Register the view with the message manager
-		sap.ui.getCore().getMessageManager().registerObject(oView, true);
+		Messaging.registerObject(oView, true);
 
 		// Insert the view into the DOM
 		oView.placeAt("content");
