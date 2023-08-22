@@ -152,40 +152,45 @@ sap.ui.define([
 			throw new Error("Unsupported expandTo: " + this.oAggregation.expandTo);
 		}
 
-		const iIndex = parseInt(sIndex);
-		if (isNaN(iIndex)) {
+		let iFlatIndex = parseInt(sIndex);
+		if (isNaN(iFlatIndex)) {
 			throw new Error(`Unsupported kept-alive entity: ${this.sResourcePath}${sIndex}`);
 		}
 
-		const oElement = this.aElements[iIndex];
-		const oCache = _Helper.getPrivateAnnotation(oElement, "parent");
-		const iCacheIndex = _Helper.getPrivateAnnotation(oElement, "index");
-		const oParentWithOneChild = oCache.getValue("$count") === 1
-			? this.aElements[iIndex - 1]
-			: null;
-		return oCache._delete(oGroupLock, sEditUrl, iCacheIndex.toString(), oETagEntity,
-			(_iIndex, iOffset) => { // _iIndex is the index in oCache
+		const oElement = this.aElements[iFlatIndex];
+		const oLevelCache = _Helper.getPrivateAnnotation(oElement, "parent");
+		const iLevelIndex = _Helper.getPrivateAnnotation(oElement, "index");
+		let iParentIndex = iFlatIndex - iLevelIndex - 1;
+		const oParent = this.aElements[iParentIndex];
+		return oLevelCache._delete(oGroupLock, sEditUrl, iLevelIndex.toString(), oETagEntity,
+			(iIndex, iOffset) => {
 				if (iOffset < 0) { // deleting
-					this.shiftIndex(iIndex, iOffset);
-					this.removeElement(this.aElements, iIndex,
+					this.shiftIndex(iFlatIndex, iOffset);
+					this.removeElement(this.aElements, iFlatIndex,
 						_Helper.getPrivateAnnotation(oElement, "predicate"), "");
-					if (oParentWithOneChild) {
+					if (oParent && !oLevelCache.getValue("$count")) {
 						_Helper.updateAll(this.mChangeListeners,
-							_Helper.getPrivateAnnotation(oParentWithOneChild, "predicate"),
-							oParentWithOneChild, {"@$ui5.node.isExpanded" : undefined});
+							_Helper.getPrivateAnnotation(oParent, "predicate"), oParent,
+							{"@$ui5.node.isExpanded" : undefined});
 						// _Helper.updateAll only sets it to undefined
-						delete oParentWithOneChild["@$ui5.node.isExpanded"];
+						delete oParent["@$ui5.node.isExpanded"];
 					}
 				} else { // reinserting
-					this.restoreElement(this.aElements, iIndex, oElement, "");
-					this.shiftIndex(iIndex, iOffset);
-					if (oParentWithOneChild) {
-						_Helper.updateAll(this.mChangeListeners,
-							_Helper.getPrivateAnnotation(oParentWithOneChild, "predicate"),
-							oParentWithOneChild, {"@$ui5.node.isExpanded" : true});
+					if (oParent) {
+						if (oParent !== this.aElements[iParentIndex]) { // parent moved
+							iParentIndex = this.aElements.indexOf(oParent);
+						}
+						if (oLevelCache.getValue("$count") === 1) {
+							_Helper.updateAll(this.mChangeListeners,
+								_Helper.getPrivateAnnotation(oParent, "predicate"), oParent,
+								{"@$ui5.node.isExpanded" : true});
+						}
 					}
+					iFlatIndex = iParentIndex + iIndex + 1;
+					this.restoreElement(this.aElements, iFlatIndex, oElement, "");
+					this.shiftIndex(iFlatIndex, iOffset);
 				}
-				fnCallback(iIndex, iOffset);
+				fnCallback(iFlatIndex, iOffset);
 			});
 	};
 
@@ -420,6 +425,7 @@ sap.ui.define([
 		let oCache = _Helper.getPrivateAnnotation(oParentNode, "cache");
 		if (!oCache) {
 			oCache = this.createGroupLevelCache(oParentNode);
+			oCache.setEmpty();
 			_Helper.setPrivateAnnotation(oParentNode, "cache", oCache);
 			_Helper.updateAll(this.mChangeListeners, sParentPredicate, oParentNode,
 				{"@$ui5.node.isExpanded" : true}); // not a leaf anymore
