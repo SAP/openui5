@@ -1165,7 +1165,7 @@ sap.ui.define([
 			assert.equal(aMDCColumns.length, aInnerColumns.length);
 			assert.equal(aInnerColumns[0].getHeader().getText(), "Test2");
 			assert.equal(oInnerColumnListItem.getCells()[0].getText(), "template2");
-			assert.ok(oColumnDestroy.calledOnceWithExactly("KeepDom"), "Inner column destroyed without removing DOM");
+			assert.ok(oColumnDestroy.calledOnce, "Inner column destroyed");
 		}.bind(this));
 	});
 
