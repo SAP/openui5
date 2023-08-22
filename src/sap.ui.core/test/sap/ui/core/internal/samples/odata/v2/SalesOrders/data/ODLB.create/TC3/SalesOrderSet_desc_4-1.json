@@ -1,0 +1,16 @@
+{
+	"d": {
+		"results": [{
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('201')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('201')",
+				"type" : "GWSAMPLE_BASIC.SalesOrder"
+			},
+			"SalesOrderID" : "201",
+			"CustomerName" : "Telecomunicaciones Star",
+			"Note" : "Inline Creation Rows 201",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "98710.62"
+		}]
+	}
+}
