@@ -5,16 +5,16 @@
 sap.ui.define([
 	"./ColumnHeaderMenuAdapter",
 	"sap/ui/table/ColumnMenu",
+	"sap/ui/table/AnalyticalColumnMenu",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/table/utils/_MenuUtils",
 	"sap/ui/core/Popup",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObjectObserver"
 ], function(
 	ColumnHeaderMenuAdapter,
 	ColumnMenu,
+	AnalyticalColumnMenu,
 	TableUtils,
-	MenuUtils,
 	Popup,
 	Device,
 	ManagedObjectObserver
@@ -263,7 +263,8 @@ sap.ui.define([
 	 * @returns {sap.ui.table.ColumnMenu} The created column menu.
 	 */
 	LegacyColumnMenuAdapter.prototype._createMenu = function(oColumn) {
-		return new ColumnMenu(oColumn.getId() + "-menu", {ariaLabelledBy: oColumn});
+		var ColumnMenuClass = oColumn.isA("sap.ui.table.AnalyticalColumn") ? AnalyticalColumnMenu : ColumnMenu;
+		return new ColumnMenuClass(oColumn.getId() + "-menu", {ariaLabelledBy: oColumn});
 	};
 
 	return LegacyColumnMenuAdapter;

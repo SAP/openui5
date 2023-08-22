@@ -13,7 +13,6 @@ sap.ui.define([
 	'sap/ui/model/type/Integer',
 	'sap/ui/model/type/Time',
 	'./utils/TableUtils',
-	'./AnalyticalColumnMenu',
 	"sap/base/Log"
 ],
 	function(
@@ -26,7 +25,6 @@ sap.ui.define([
 		Integer,
 		Time,
 		TableUtils,
-		AnalyticalColumnMenu,
 		Log
 	) {
 	"use strict";
@@ -103,15 +101,6 @@ sap.ui.define([
 		"Float": new Float(),
 		"Integer": new Integer(),
 		"Boolean": new BooleanType()
-	};
-
-	/*
-	 * Factory method. Creates the column menu.
-	 *
-	 * @returns {sap.ui.table.AnalyticalColumnMenu} The created column menu.
-	 */
-	AnalyticalColumn.prototype._createMenu = function() {
-		return new AnalyticalColumnMenu(this.getId() + "-menu");
 	};
 
 	AnalyticalColumn.prototype._setGrouped = function(bGrouped) {
