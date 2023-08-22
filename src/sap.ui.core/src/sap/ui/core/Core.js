@@ -3014,6 +3014,7 @@ sap.ui.define([
 	 *
 	 * @param {function():void} [fnReady] If the Core is ready the function will be called immediately, otherwise when the ready Promise resolves.
 	 * @returns {Promise<undefined>} The ready promise
+	 * @since 1.118.0
 	 * @public
 	 */
 	Core.prototype.ready = function(fnReady) {
