@@ -549,15 +549,18 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 2, "header and subheader are rendered");
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeaderWrapper.sapTntToolPageHeaderWithSubHeaderWrapper").length, 1, "wrapper has an extra css class");
 
 		oToolHeader.setVisible(false);
 		Core.applyChanges();
 
 		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 1, "subheader is not rendered");
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeaderWrapper.sapTntToolPageHeaderWithSubHeaderWrapper").length, 0, "wrapper does not have an extra css class");
 
 		oToolHeader.setVisible(true);
 		Core.applyChanges();
 		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 2, "header and subheader are rendered");
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeaderWrapper.sapTntToolPageHeaderWithSubHeaderWrapper").length, 1, "wrapper has an extra css class");
 	});
 
 	QUnit.test("set side navigation visibility to true|false", function (assert) {
