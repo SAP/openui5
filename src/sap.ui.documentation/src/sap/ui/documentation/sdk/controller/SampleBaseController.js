@@ -245,7 +245,7 @@ sap.ui.define([
 
 		_formatCustomUI5Yaml: function(sYamlFile){
 			const sCommentReplacement = this._isOpenUI5NightlySDK() ? this._getSnapshotNote() : "";
-			return sYamlFile.replace(/ #DependencyVersion,groupId:com.sap.openui5,artifactId:sap.ui.core#/g, sCommentReplacement);
+			return sYamlFile.replace(/ #MainVersion#/g, sCommentReplacement);
 		},
 
 		_formatManifestJsFile: function (sRawManifestFileJs) {
