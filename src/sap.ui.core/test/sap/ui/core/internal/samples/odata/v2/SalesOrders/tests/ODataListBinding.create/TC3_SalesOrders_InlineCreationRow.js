@@ -56,6 +56,15 @@ sap.ui.define([
 			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "", "Inactive");
 			Then.onMainPage.checkSalesOrderAtRow(1, "205", "SAP", "Inline Creation Rows 205",
 				"From Server");
+			Then.onMainPage.checkSalesOrderAtRow(2, "204", "Telecomunicaciones Star", "Inline Creation Rows 204",
+				"From Server");
+			Then.onMainPage.checkSalesOrderAtRow(3, "203", "Talpa", "Inline Creation Rows 203",
+				"From Server");
+			Then.onMainPage.checkSalesOrderAtRow(4, "202", "Asia High tech", "Inline Creation Rows 202",
+				"From Server");
+			// Table has 6 visible rows - 1 inactive + 4 known rows are available -> read last one from server
+			Then.onMainPage.checkSalesOrderAtRow(5, "201", "Telecomunicaciones Star", "Inline Creation Rows 201",
+				"From Server");
 			Then.onMainPage.checkSalesOrdersCountChangedBy(-2);
 			Then.onMainPage.checkSalesOrdersTableLengthDiffersBy(1);
 
