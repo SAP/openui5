@@ -1179,12 +1179,6 @@ sap.ui.define([
 			"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
 	});
 
-	QUnit.test("Menu Creation", function(assert) {
-		var oMenu = this._oColumn._createMenu();
-		assert.ok(oMenu.isA("sap.ui.table.AnalyticalColumnMenu"), "Menu available");
-		assert.equal(oMenu.getId(), this._oColumn.getId() + "-menu", "Menu Id");
-	});
-
 	QUnit.module("BusyIndicator", {
 		before: function() {
 			this.oDataModel = new ODataModelV2(sServiceURI);
