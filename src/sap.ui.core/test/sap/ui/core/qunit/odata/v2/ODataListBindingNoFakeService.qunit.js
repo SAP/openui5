@@ -2413,16 +2413,15 @@ sap.ui.define([
 		var oBinding = {
 				aKeys : [],
 				bLengthFinal : true,
-				iLength : "~length",
+				iLength : 42,
 				_getCreatedContexts : function () {},
 				isFirstCreateAtEnd : function () {}
 			};
 
-		this.mock(oBinding).expects("_getCreatedContexts").withExactArgs(); // return value unused
+		this.mock(oBinding).expects("_getCreatedContexts").withExactArgs().returns(["~oCreated1"]);
 		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 		this.mock(ODataUtils).expects("_getReadIntervals")
-			.withExactArgs(sinon.match.same(oBinding.aKeys), "~startIndex", "~length",
-				"~maximumPrefetchSize", "~length")
+			.withExactArgs(sinon.match.same(oBinding.aKeys), "~startIndex", "~length", "~maximumPrefetchSize", 43)
 			.returns("~aIntervals");
 		this.mock(ODataUtils).expects("_mergeIntervals")
 			.withExactArgs("~aIntervals")
@@ -2437,27 +2436,27 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{interval : {start : 222, end : 333}, result : {skip : 222 - 1, top : 111}},
+	{interval : {start : 222, end : 333}, result : {skip : 222 - 2, top : 111}},
 	{interval : undefined, result : undefined}
 ].forEach(function (oFixture, i) {
 	QUnit.test("_getSkipAndTop, creation at start, binding has data: #" + i, function (assert) {
 		var oBinding = {
 				aKeys : ["key0", "key1"],
 				bLengthFinal : true,
-				iLength : "~length",
+				iLength : 42,
 				_getCreatedContexts : function () {},
 				isFirstCreateAtEnd : function () {}
 			};
 
 		this.mock(oBinding).expects("_getCreatedContexts")
 			.withExactArgs()
-			.returns(["created0"]);
+			.returns(["created0", "created1"]);
 		this.mock(oBinding).expects("isFirstCreateAtEnd")
 			.withExactArgs()
 			.returns(false);
 		this.mock(ODataUtils).expects("_getReadIntervals")
-			.withExactArgs(["created0", "key0", "key1"], "~startIndex", "~length",
-				"~maximumPrefetchSize", "~length")
+			.withExactArgs(["created0", "created1", "key0", "key1"], "~startIndex", "~length",
+				"~maximumPrefetchSize", 44)
 			.returns("~aIntervals");
 		this.mock(ODataUtils).expects("_mergeIntervals")
 			.withExactArgs("~aIntervals")
@@ -2507,7 +2506,7 @@ sap.ui.define([
 		var oBinding = {
 				aKeys : [],
 				bLengthFinal : true,
-				iLength : "~length",
+				iLength : 42,
 				_getCreatedContexts : function () {},
 				isFirstCreateAtEnd : function () {}
 			};
@@ -2515,8 +2514,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("_getCreatedContexts").withExactArgs().returns([]);
 		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 		this.mock(ODataUtils).expects("_getReadIntervals")
-			.withExactArgs(sinon.match.same(oBinding.aKeys) , 0, 10, "~maximumPrefetchSize",
-				"~length")
+			.withExactArgs(sinon.match.same(oBinding.aKeys) , 0, 10, "~maximumPrefetchSize", 42)
 			.returns("~aIntervals");
 		this.mock(ODataUtils).expects("_mergeIntervals")
 			.withExactArgs("~aIntervals")

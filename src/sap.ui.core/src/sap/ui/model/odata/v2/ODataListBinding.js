@@ -2113,10 +2113,15 @@ sap.ui.define([
 			bFirstCreateAtStart = this.isFirstCreateAtEnd() === false,
 			aKeys = bFirstCreateAtStart && this.aKeys.length
 				? aCreatedContexts.concat(this.aKeys)
-				: this.aKeys;
+				: this.aKeys,
+			iLimit = this.bLengthFinal ? this.iLength : undefined;
 
-		aIntervals = ODataUtils._getReadIntervals(aKeys, iStartIndex, iLength, iMaximumPrefetchSize,
-			/*iLimit*/this.bLengthFinal ? this.iLength : undefined);
+		if (bFirstCreateAtStart && iLimit) {
+			// when adding the created contexts to aKeys the final length has to be increased too
+			iLimit += aCreatedContexts.length;
+		}
+
+		aIntervals = ODataUtils._getReadIntervals(aKeys, iStartIndex, iLength, iMaximumPrefetchSize, iLimit);
 		oInterval = ODataUtils._mergeIntervals(aIntervals);
 
 		if (oInterval && bFirstCreateAtStart && this.aKeys.length) {
