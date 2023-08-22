@@ -493,7 +493,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Pretty-prints the content of the editor
+	 * Pretty-prints the content of the editor.
+	 *
+	 * <b>Note:</b> Works well only for PHP. For other programming languages, the content might not be formatted well.
+	 * In such cases it is recommended to use your own formatting.
 	 * @public
 	 * @since 1.54.1
 	 */
