@@ -66,6 +66,11 @@
 				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="320px"
 				class="sapUiSmallMargin" />
+			<w:Card
+				id="withLargeIcon"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample4.json"
+				width="320px"
+				class="sapUiSmallMargin" />
 		</Panel>
 	</Page>
 </mvc:View>

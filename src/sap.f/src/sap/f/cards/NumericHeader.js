@@ -29,6 +29,7 @@ sap.ui.define([
 	var ValueState = coreLibrary.ValueState;
 	var AvatarShape = mLibrary.AvatarShape;
 	var AvatarColor = mLibrary.AvatarColor;
+	var AvatarImageFitType = mLibrary.AvatarImageFitType;
 
 	/**
 	 * Constructor for a new <code>NumericHeader</code>.
@@ -395,7 +396,9 @@ sap.ui.define([
 	NumericHeader.prototype._getAvatar = function () {
 		var oAvatar = this.getAggregation("_avatar");
 		if (!oAvatar) {
-			oAvatar = new Avatar().addStyleClass("sapFCardIcon");
+			oAvatar = new Avatar({
+				imageFitType: AvatarImageFitType.Contain
+			}).addStyleClass("sapFCardIcon");
 			this.setAggregation("_avatar", oAvatar);
 		}
 		return oAvatar;

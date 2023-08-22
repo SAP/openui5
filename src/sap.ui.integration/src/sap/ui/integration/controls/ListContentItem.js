@@ -30,6 +30,7 @@ sap.ui.define([
 	var AttributesLayoutType = library.AttributesLayoutType;
 	var ValueState = coreLibrary.ValueState;
 	var EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
+	var AvatarImageFitType = mLibrary.AvatarImageFitType;
 
 	/**
 	 * Constructor for a new ListContentItem.
@@ -237,7 +238,9 @@ sap.ui.define([
 		var oAvatar = this.getAggregation("_avatar");
 
 		if (!oAvatar) {
-			oAvatar = new Avatar().addStyleClass("sapFCardIcon");
+			oAvatar = new Avatar({
+				imageFitType: AvatarImageFitType.Contain
+			}).addStyleClass("sapFCardIcon");
 			this.setAggregation("_avatar", oAvatar);
 		}
 
