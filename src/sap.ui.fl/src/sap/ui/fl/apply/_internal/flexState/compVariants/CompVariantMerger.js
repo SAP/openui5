@@ -5,10 +5,12 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/base/Log"
 ], function(
 	CompVariant,
 	FlexObjectFactory,
+	CompVariantUtils,
 	Log
 ) {
 	"use strict";
@@ -182,6 +184,15 @@ sap.ui.define([
 			applyChangesOnVariant(mChanges, oStandardVariant);
 
 			mCompData.standardVariant = oStandardVariant;
+
+			// the default variant must always be a favorite
+			// e.g. end user sets variant to default, then key user removes it from favorites
+			const sDefaultVariantId = CompVariantUtils.getDefaultVariantId(mCompData);
+			aVariants.some((oVariant) => {
+				if (!oVariant.getFavorite() && oVariant.getId() === sDefaultVariantId) {
+					oVariant.setFavorite(true);
+				}
+			});
 
 			return {
 				standardVariant: oStandardVariant,

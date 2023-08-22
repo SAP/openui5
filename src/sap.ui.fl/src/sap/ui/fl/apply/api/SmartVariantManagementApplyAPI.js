@@ -66,21 +66,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Retrieves the default variant ID for the current control.
-	 *
-	 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
-	 * 	sap.ui.comp.smartfilterbar.SmartFilterBar|
-	 * 	sap.ui.comp.smarttable.SmartTable|
-	 * 	sap.ui.comp.smartchart.SmartChart} oControl - Variant management control to load variants for
-	 * @returns {string} ID of the default variant
-	 */
-	function getDefaultVariantId(oControl) {
-		const aDefaultVariantChanges = getVariantsMapForKey(oControl).defaultVariants;
-		const oChange = aDefaultVariantChanges[aDefaultVariantChanges.length - 1];
-		return oChange ? oChange.getContent().defaultVariantName : "";
-	}
-
-	/**
 	 * Object containing data for a SmartVariantManagement control.
 	 *
 	 * @typedef {object} sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.Response
@@ -136,7 +121,7 @@ sap.ui.define([
 		async loadVariants(mPropertyBag) {
 			const mCompMaps = await getCompEntities(mPropertyBag);
 			const sPersistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
-			const sDefaultVariantId = getDefaultVariantId(mPropertyBag.control);
+			const sDefaultVariantId = CompVariantUtils.getDefaultVariantId(getVariantsMapForKey(mPropertyBag.control));
 			const mMergedCompVariants = CompVariantMerger.merge(
 				sPersistencyKey,
 				mCompMaps,

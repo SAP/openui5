@@ -7,7 +7,7 @@ sap.ui.define([], function() {
 
 	var Utils = {};
 
-	Utils.getPersistencyKey = function(oControl) {
+	Utils.getPersistencyKey = (oControl) => {
 		if (oControl) {
 			var oVMControl = oControl.getVariantManagement && oControl.getVariantManagement() || oControl;
 			if (oVMControl.getPersonalizableControlPersistencyKey) {
@@ -15,6 +15,19 @@ sap.ui.define([], function() {
 			}
 			return oVMControl.getPersistencyKey && oVMControl.getPersistencyKey();
 		}
+		return undefined;
+	};
+
+	/**
+	* Retrieves the default variant ID for a variant map.
+	*
+	* @param {object} mCompVariantsMap Prepared map for compVariants
+	* @returns {string} ID of the default variant
+	*/
+	Utils.getDefaultVariantId = (mCompVariantsMap) => {
+		const aDefaultVariantChanges = mCompVariantsMap.defaultVariants;
+		const oChange = aDefaultVariantChanges[aDefaultVariantChanges.length - 1];
+		return oChange?.getContent().defaultVariantName || "";
 	};
 
 	return Utils;

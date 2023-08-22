@@ -26,6 +26,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
+	const sStandardVariantTitle = "this is a localized standard variant title";
 
 	QUnit.module("SmartVariantManagementApplyAPI", {
 		beforeEach() {
@@ -72,7 +73,6 @@ sap.ui.define([
 				content: {}
 			}];
 
-			var sStandardVariantTitle = "this is a localized standard variant title";
 			var oExternalDataStored = {
 				variants: aVariants,
 				standardVariant: {
@@ -105,7 +105,7 @@ sap.ui.define([
 				assert.strictEqual(oStandardVariant.getChanges().length, 1, "one change was applied on the standard variant");
 				assert.strictEqual(oStandardVariant.getChanges()[0].getId(), "id_1607667712160_48_standardVariant", "with the correct id");
 
-				assert.strictEqual(oResponse.defaultVariantId, "variant_1", "the correct variant is returned as default");
+				assert.strictEqual(oResponse.defaultVariantId, "variant_2", "the correct variant is returned as default");
 
 				assert.strictEqual(oStandardVariant.getVariantId(), "*standard*", "the first is the standard variant passed");
 				assert.strictEqual(oStandardVariant.getText("variantName"), sStandardVariantTitle, "with the passed title");
@@ -208,8 +208,6 @@ sap.ui.define([
 				content: {}
 			}];
 
-			var sStandardVariantTitle = "this is a localized standard variant title";
-
 			return SmartVariantManagementApplyAPI.loadVariants({
 				control: this.oControl,
 				standardVariant: {
@@ -263,6 +261,35 @@ sap.ui.define([
 					true,
 					"and is executed on selection, because it is flagged within the content"
 				);
+			});
+		});
+
+		QUnit.test("When loadVariants() is called and an end user default variant was set to favorite = false by a key user", function(assert) {
+			this.oControl = new Control("controlId1");
+			var sPersistencyKey = "variantManagement1";
+			this.oControl.getPersonalizableControlPersistencyKey = function() {
+				return sPersistencyKey;
+			};
+
+			var mFlexData = LoaderExtensions.loadResource({
+				dataType: "json",
+				url: sap.ui.require.toUrl(
+					"test-resources/sap/ui/fl/qunit/apply/api/" +
+					"SmartVariantManagementAPI.loadVariantsTestSetup-default-notfavorite.json"
+				)
+			});
+
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(mFlexData);
+
+			return SmartVariantManagementApplyAPI.loadVariants({
+				control: this.oControl,
+				standardVariant: {
+					name: sStandardVariantTitle
+				}
+			})
+			.then(function(oResponse) {
+				var aVariants = oResponse.variants;
+				assert.ok(aVariants[0].getFavorite(), "then the default variant is set to favorite");
 			});
 		});
 

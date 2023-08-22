@@ -1,0 +1,85 @@
+{
+  "comp": {
+    "standardVariants": [{
+      "fileName":"id_1607667712160_48_standardVariant",
+      "fileType":"change",
+      "changeType":"standardVariant",
+      "layer":"USER",
+      "reference":"sap.ui.demoapps.rta.fiorielements.Component",
+      "selector":  {
+        "persistencyKey":"variantManagement1"
+      },
+      "support": {
+        "generator": "Change.createInitialFileContent",
+        "service": "",
+        "user": "some.user@sap.com",
+        "sapui5Version": "1.82.2",
+        "sourceChangeFileName": "",
+        "compositeCommand": ""
+      },
+      "favorite": true,
+      "content": {
+        "executeOnSelect": true
+      },
+      "creation":"2020-12-11T06:21:52.183Z"
+    }],
+    "defaultVariants": [{
+      "fileName": "defaultVariant1",
+      "fileType": "change",
+      "changeType": "defaultVariant",
+      "layer": "USER",
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "content": {
+        "defaultVariantName": "variant_1"
+      }
+    }],
+    "variants": [{
+      "fileName": "variant_1",
+      "fileType": "variant",
+      "layer": "USER",
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "content": {},
+      "favorite": true,
+      "texts": {
+        "variantName": {
+          "value": "B Variant"
+        }
+      }
+    },{
+      "fileName": "variant_2",
+      "fileType": "variant",
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "content": {
+        "executeOnSelect": true
+      },
+      "favorite": true,
+      "texts": {
+        "variantName": {
+          "value": "B Variant2"
+        }
+      }
+    }],
+    "changes": [{
+      "fileName": "id_1606828544793_205_updateVariant",
+      "fileType": "change",
+      "changeType": "updateVariant",
+      "moduleName": "",
+      "reference": "sap.ui.demoapps.rta.fiorielements.Component",
+      "packageName": "",
+      "content": {
+        "key": "variant_1",
+        "favorite": false
+      },
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "layer": "USER"
+    }]
+  }
+}
