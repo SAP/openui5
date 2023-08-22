@@ -470,19 +470,30 @@ sap.ui.define([
 		};
 
 		Menu.prototype._createMenuListItemFromItem = function(oItem) {
-			var sMenuListItemId = this._generateListItemId(oItem.getId());
-			return Element.registry.get(sMenuListItemId)
-				|| new MenuListItem({
-					id  : sMenuListItemId,
-					type: oItem.getEnabled() ? ListType.Active : ListType.Inactive,
-					icon: oItem.getIcon(),
-					title: oItem.getText(),
-					startsSection: oItem.getStartsSection(),
-					menuItem: oItem,
-					tooltip: oItem.getTooltip(),
-					visible: oItem.getVisible(),
-					enabled: oItem.getEnabled()
-				});
+			var sMenuListItemId = this._generateListItemId(oItem.getId()),
+				oListItem = Element.registry.get(sMenuListItemId);
+
+			if (oListItem) {
+				return oListItem;
+			}
+
+			oListItem = new MenuListItem({
+				id  : sMenuListItemId,
+				type: oItem.getEnabled() ? ListType.Active : ListType.Inactive,
+				icon: oItem.getIcon(),
+				title: oItem.getText(),
+				startsSection: oItem.getStartsSection(),
+				menuItem: oItem,
+				tooltip: oItem.getTooltip(),
+				visible: oItem.getVisible(),
+				enabled: oItem.getEnabled()
+			});
+
+			oItem.aDelegates.forEach(function(oDelegateObject) {
+				oListItem.addEventDelegate(oDelegateObject.oDelegate);
+			});
+
+			return oListItem;
 		};
 
 		Menu.prototype._createVisualMenuItemFromItem = function(oItem) {
@@ -507,6 +518,10 @@ sap.ui.define([
 			for (i = 0; i < aCustomData.length; i++) {
 				oItem._addCustomData(oUfMenuItem, aCustomData[i]);
 			}
+
+			oItem.aDelegates.forEach(function(oDelegateObject) {
+				oUfMenuItem.addEventDelegate(oDelegateObject.oDelegate);
+			});
 
 			return oUfMenuItem;
 		};
