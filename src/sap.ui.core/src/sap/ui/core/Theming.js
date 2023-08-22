@@ -268,7 +268,7 @@ sap.ui.define([
 		 *       has been applied for it</li>
 		 * </ul>
 		 *
-		 * @name sap.ui.core.Theming#applied
+		 * @name module:sap/ui/core/Theming.applied
 		 * @event
 		 * @param {module:sap/base/Event} oEvent
 		 * @param {sap.ui.base.EventProvider} oEvent.target
