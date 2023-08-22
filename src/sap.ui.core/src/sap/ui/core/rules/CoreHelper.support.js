@@ -4,8 +4,8 @@
 /**
  * Helper for core functionality in Support Tool infrastructure.
  */
-sap.ui.define(["sap/ui/core/Element", "sap/ui/thirdparty/jquery", "sap/ui/core/Configuration"],
-	function(Element, jQuery, Configuration) {
+sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Theming", "sap/ui/thirdparty/jquery"],
+	function(Element, Theming, jQuery) {
 		"use strict";
 
 		var CoreHelper = {
@@ -42,7 +42,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/thirdparty/jquery", "sap/ui/core/C
 			 */
 			getExternalStyleSheets : function () {
 				return Array.from(document.styleSheets).filter(function (styleSheet) {
-					var themeName = Configuration.getTheme(),
+					var themeName = Theming.getTheme(),
 						styleSheetEnding = "/themes/" + themeName + "/library.css",
 						hasHref = !styleSheet.href || !(styleSheet.href.indexOf(styleSheetEnding) !== -1),
 						hasRules = !!styleSheet.rules;

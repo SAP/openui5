@@ -5,11 +5,12 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Icon",
 	"sap/ui/core/Lib",
+	"sap/ui/core/Theming",
 	"sap/ui/dom/includeStylesheet",
 	"sap/m/Bar",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Parameters, Control, Element, Icon, Library, includeStylesheet, Bar, URI, nextUIUpdate) {
+], function(Parameters, Control, Element, Icon, Library, Theming, includeStylesheet, Bar, URI, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Parmeters.get", {
@@ -165,22 +166,22 @@ sap.ui.define([
 	QUnit.test("After Theme Change", function(assert) {
 		var done = assert.async();
 		var fnContinue = function() {
-			sap.ui.getCore().detachThemeChanged(fnContinue);
+			Theming.detachApplied(fnContinue);
 			done();
 		};
-		var fnAssertThemeChanged = function() {
+		var fnAssertApplied = function() {
 
 			// parameters of base theme should now be present
 			assert.equal(getParameterInUnifiedHexNotation("sapUiBaseText"), "#000000", "sapUiBaseText must be defined as 'black - #000000'");
 			assert.equal(getParameterInUnifiedHexNotation("sapUiBaseBG"), "#ffffff", "sapUiBaseBG must be defined as 'white - #ffffff'");
 
-			sap.ui.getCore().detachThemeChanged(fnAssertThemeChanged);
-			sap.ui.getCore().attachThemeChanged(fnContinue);
-			sap.ui.getCore().applyTheme("sap_hcb");
+			Theming.detachApplied(fnAssertApplied);
+			Theming.attachApplied(fnContinue);
+			Theming.setTheme("sap_hcb");
 		};
 
-		sap.ui.getCore().attachThemeChanged(fnAssertThemeChanged);
-		sap.ui.getCore().applyTheme("base");
+		Theming.attachApplied(fnAssertApplied);
+		Theming.setTheme("base");
 	});
 
 	QUnit.test("Dynamically Loaded Library", function(assert) {
@@ -390,7 +391,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Get parameter while CSS after themeChanged finished loading and before ThemeManager processed themeChanged event", function(assert) {
+	QUnit.test("Get parameter while CSS after Applied finished loading and before ThemeManager processed Applied event", function(assert) {
 		var sPrefixedLibId = "sap-ui-theme-testlibs.themeParameters.lib17";
 
 		// Setup
@@ -541,19 +542,19 @@ sap.ui.define([
 
 	QUnit.test("Read parameter first time from lib which CSS is already loaded shouldn't trigger a library-parameters.json request", function(assert) {
 		var done = assert.async();
-		var fnAssertThemeChanged = function() {
+		var fnAssertApplied = function() {
 
 			// parameters of base theme should now be present
 			assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParam1ForLib10"), "#123321", "sapUiThemeParam1ForLib10 must be defined as '#123321'");
 			assert.strictEqual(checkLibraryParametersJsonRequestForLib("10").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib10");
 
-			sap.ui.getCore().detachThemeChanged(fnAssertThemeChanged);
+			Theming.detachApplied(fnAssertApplied);
 			done();
 		};
 
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib10");
 
-		sap.ui.getCore().attachThemeChanged(fnAssertThemeChanged);
+		Theming.attachApplied(fnAssertApplied);
 	});
 
 	QUnit.test("getActiveScopesFor: Check scope chain for given rendered control", async function(assert) {
@@ -574,7 +575,7 @@ sap.ui.define([
 
 		await nextUIUpdate();
 
-		var fnAssertThemeChanged = function () {
+		var fnAssertApplied = function () {
 			// CSS is loaded and scope 'TestScope1' is defined therefore different scope chains expected
 			assert.deepEqual(Parameters.getActiveScopesFor(oOuterBar, true), [], "OuterBar - no own scope - empty scope chain");
 			assert.deepEqual(Parameters.getActiveScopesFor(oInnerBar, true), [["TestScope1"]], "InnerBar - TestScope1 - [['TestScope1']]");
@@ -591,13 +592,13 @@ sap.ui.define([
 			assert.deepEqual(Parameters.get("sapUiThemeParam1ForLib11", oInnerIcon2), "#312111", "InnerIcon2 - TestScope1 - TestScope1 value #312111");
 
 			oOuterBar.destroy();
-			sap.ui.getCore().detachThemeChanged(fnAssertThemeChanged);
+			Theming.detachApplied(fnAssertApplied);
 			done();
 		};
 
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib11");
 
-		sap.ui.getCore().attachThemeChanged(fnAssertThemeChanged);
+		Theming.attachApplied(fnAssertApplied);
 
 		// No scope in css defined therefore empty scope chain for all combinations
 		assert.deepEqual(Parameters.getActiveScopesFor(oOuterBar, true), [], "OuterBar - no own scope - no scope defined ==> empty scope chain");
@@ -612,12 +613,12 @@ sap.ui.define([
 	QUnit.test("After Theme Change: Using Parameters.get", function(assert) {
 		var done = assert.async();
 		var fnContinue = function() {
-			sap.ui.getCore().detachThemeChanged(fnContinue);
+			Theming.detachApplied(fnContinue);
 			done();
 		};
 
-		var fnThemeChanged = function () {
-			sap.ui.getCore().detachThemeChanged(fnThemeChanged);
+		var fnApplied = function () {
+			Theming.detachApplied(fnApplied);
 
 			sap.ui.getCore().loadLibraries(["testlibs.themeParameters.lib14"]).then(function () {
 				Parameters.get({
@@ -626,21 +627,21 @@ sap.ui.define([
 						assert.deepEqual(oParamResult, "#dfdfdf", "Value for the given param 'sapUiThemeParamForLib14' must be defined as '#dfdfdf' for theme 'base'");
 						assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#efefef", "sapUiThemeParamForLib13 must be defined as '#efefef' for theme 'base'");
 
-						sap.ui.getCore().attachThemeChanged(fnContinue);
-						sap.ui.getCore().applyTheme("sap_hcb");
+						Theming.attachApplied(fnContinue);
+						Theming.setTheme("sap_hcb");
 					}
 				});
 				assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#fefefe", "sapUiThemeParamForLib13 must be defined as '#fefefe' for theme 'hcb'");
-				sap.ui.getCore().applyTheme("base");
+				Theming.setTheme("base");
 			});
 		};
 
 		sap.ui.getCore().loadLibraries(["testlibs.themeParameters.lib13"]).then(function () {
-			sap.ui.getCore().attachThemeChanged(fnThemeChanged);
+			Theming.attachApplied(fnApplied);
 		});
 	});
 
-	QUnit.test("Get parameter while CSS after themeChanged finished loading and before ThemeManager processed themeChanged event", function(assert) {
+	QUnit.test("Get parameter while CSS after Applied finished loading and before ThemeManager processed Applied event", function(assert) {
 		var sPrefixedLibId = "sap-ui-theme-testlibs.themeParameters.lib17";
 
 		// Setup

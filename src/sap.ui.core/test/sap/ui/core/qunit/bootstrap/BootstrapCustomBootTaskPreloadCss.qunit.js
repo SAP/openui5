@@ -1,9 +1,9 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/core/Configuration",
+	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters"
-], function(Core, Configuration, Parameters) {
+], function(Core, Theming, Parameters) {
 	"use strict";
 
 	/**
@@ -19,7 +19,7 @@ sap.ui.define([
 	 * take the configured "themeroots" into account.
 	 */
 	QUnit.test("Theme Modulepath should be registered accordingly", function(assert) {
-		var sTheme = Configuration.getTheme();
+		var sTheme = Theming.getTheme();
 
 		assert.equal(sap.ui.require.toUrl("sap/ui/core/themes/" + sTheme), "foo/bar/sap/ui/core/themes/" + sTheme,
 			"Modulepath of 'sap/ui/core/themes/" + sTheme + "' should be set to themeroot.");
@@ -40,7 +40,7 @@ sap.ui.define([
 				done();
 		});
 
-		Core.applyTheme("sap_hcb");
+		Theming.setTheme("sap_hcb");
 	});
 
 });

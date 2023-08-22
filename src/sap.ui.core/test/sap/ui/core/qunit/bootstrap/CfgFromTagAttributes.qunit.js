@@ -1,8 +1,9 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/core/Configuration"
-], function(Core, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Theming"
+], function(Core, Configuration, Theming) {
 	"use strict";
 
 	QUnit.config.autostart = false;
@@ -13,7 +14,7 @@ sap.ui.define([
 
 		QUnit.test("Settings", function(assert) {
 			// compare values where possible
-			assert.equal(Configuration.getTheme(), "fantasy", "theme");
+			assert.equal(Theming.getTheme(), "fantasy", "theme");
 			assert.equal(Configuration.getLanguage(), "klingon", "language");
 			assert.equal(Configuration.getAccessibility(), true, "accessibility");
 			assert.equal(Configuration.getAnimationMode(), Configuration.AnimationMode.minimal, "animation mode set to 'minimal'");
