@@ -616,7 +616,7 @@ sap.ui.define([
 				} else if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {
 					oColumn = this.getColumns()[oCellInfo.columnIndex];
 					oMenu = oColumn.getAggregation("menu");
-					bMenuOpen = oMenu && oMenu.bOpen;
+					bMenuOpen = oMenu && oMenu.isOpen();
 
 					if (!bMenuOpen) {
 						// A long click starts column reordering, so it should not also open the menu in the onclick event handler.
@@ -654,7 +654,7 @@ sap.ui.define([
 				if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {
 					oColumn = this.getColumns()[oCellInfo.columnIndex];
 					oMenu = oColumn.getAggregation("menu");
-					bMenuOpen = oMenu && oMenu.bOpen;
+					bMenuOpen = oMenu && oMenu.isOpen();
 
 					if (!bMenuOpen) {
 						oPointerExtension._bShowMenu = true;

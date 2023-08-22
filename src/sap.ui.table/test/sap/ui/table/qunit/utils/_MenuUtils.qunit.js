@@ -375,8 +375,8 @@ sap.ui.define([
 			oTable.setContextMenu(oContextMenu);
 			var fnOpenAsContextMenu = that.spy(oContextMenu, "openAsContextMenu");
 			var fnOpen = that.spy(oContextMenu, "openBy");
-
 			return fakeGroupRow(0).then(function() {
+				resetSpies();
 				assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(oTable, oCell), false, "Returned false");
 				assertCloseMenuSpiesNotCalled();
 				assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
@@ -388,6 +388,7 @@ sap.ui.define([
 				oCell = getCell(1, 0)[0];
 				return fakeSumRow(1);
 			}).then(function() {
+				resetSpies();
 				assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(oTable, oCell), false, "Returned false");
 				assertCloseMenuSpiesNotCalled();
 				assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
@@ -479,8 +480,8 @@ sap.ui.define([
 		resetSpies();
 		fnOpenAsContextMenu.resetHistory();
 		fnOpen.resetHistory();
-
 		return fakeGroupRow(0).then(function() {
+			resetSpies();
 			assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), false, "Returned false");
 			assert.ok(oContentCellContextMenu, oTable._oCellContextMenu, "The cell content context menu still exists");
 			assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
