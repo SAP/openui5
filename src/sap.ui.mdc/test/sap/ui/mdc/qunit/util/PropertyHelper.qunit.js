@@ -14,7 +14,7 @@ sap.ui.define([
 ], function(_PropertyHelper, ManagedObject, StringType, merge, Log) {
 	"use strict";
 
-	window.top['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: false};
+	window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: false};
 
 	var PropertyHelper = _PropertyHelper.extend("sap.ui.mdc.util.test.PropertyHelper", {
 		constructor: function(aProperties, oParent, mAdditionalAttributes) {
