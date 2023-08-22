@@ -8,7 +8,7 @@
 sap.ui.define([
 	'sap/ui/base/DataType',
 	'sap/ui/core/Lib',
-	'sap/ui/core/message/MessageType', // provides sap.ui.core.message.MessageType
+	'sap/ui/core/message/MessageType',
 	'sap/ui/core/mvc/ViewType', // provides sap.ui.core.mvc.ViewType
 	'./CalendarType' // provides sap.ui.core.CalendarType
 ],
@@ -2228,7 +2228,12 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @alias sap.ui.core.MessageType
+	 * @name sap.ui.core.MessageType
+	 * @borrows module:sap/ui/core/message/MessageType.Information as Information
+	 * @borrows module:sap/ui/core/message/MessageType.Error as Error
+	 * @borrows module:sap/ui/core/message/MessageType.Warning as Warning
+	 * @borrows module:sap/ui/core/message/MessageType.Success as Success
+	 * @borrows module:sap/ui/core/message/MessageType.None as None
 	 */
 	thisLib.MessageType = MessageType;
 

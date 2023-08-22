@@ -2527,9 +2527,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the active <code>MessageManager</code> instance.
+	 * Returns the <code>Messaging</code> module.
 	 *
-	 * @return {sap.ui.core.message.MessageManager}
+	 * @return {module:sap/ui/core/Messaging}
 	 * @public
 	 * @since 1.33.0
 	 * @deprecated since 1.119. Please use {@link sap.ui.core.Messaging Messaging} instead.

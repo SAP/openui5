@@ -2,8 +2,7 @@
  * ${copyright}
  */
 
- // Provides type sap.ui.core.message.MessageType
- sap.ui.define([], function () {
+ sap.ui.define([], () => {
 	"use strict";
 
 	/**
@@ -11,7 +10,8 @@
 	 *
 	 * @enum {string}
 	 * @public
-	 * @alias sap.ui.core.message.MessageType
+	 * @since 1.118
+	 * @alias module:sap/ui/core/message/MessageType
 	 */
 	var MessageType = {
 

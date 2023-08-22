@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/core/message/MessageType",
 	"sap/ui/core/message/MessageProcessor",
 	"sap/ui/model/message/MessageModel"
-], function(
+], (
 	Log,
 	deepEqual,
 	merge,
@@ -21,7 +21,7 @@ sap.ui.define([
 	MessageType,
 	MessageProcessor,
 	MessageModel
-) {
+) => {
 	"use strict";
 
 	var oMessageModel;
@@ -198,7 +198,7 @@ sap.ui.define([
 		 */
 		getMessageModel: function() {
 			if (!oMessageModel) {
-				oMessageModel = new MessageModel(this);
+				oMessageModel = new MessageModel();
 				oMessageModel.setData([]);
 			}
 			return oMessageModel;

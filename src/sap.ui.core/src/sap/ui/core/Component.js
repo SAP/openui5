@@ -910,10 +910,8 @@ sap.ui.define([
 		ManagedObject.prototype.destroy.apply(this, arguments);
 
 		// unregister for messaging (on Messaging)
-		var Messaging = sap.ui.require("sap/ui/core/Messaging");
-		if (Messaging) {
-			Messaging.unregisterObject(this);
-		}
+		const Messaging = sap.ui.require("sap/ui/core/Messaging");
+		Messaging?.unregisterObject(this);
 
 		// manifest exit (unload includes, ... / unregister customzing)
 		//   => either call exit on the instance specific manifest or the static one on the ComponentMetadata
@@ -2583,7 +2581,7 @@ sap.ui.define([
 			 */
 			var bHandleValidation = oInstance.getMetadata()._getManifestEntry("/sap.ui5/handleValidation");
 			if (bHandleValidation !== undefined || vConfig.handleValidation) {
-				var Messaging = sap.ui.require("sap/ui/core/Messaging");
+				const Messaging = sap.ui.require("sap/ui/core/Messaging");
 				if (Messaging) {
 					Messaging.registerObject(oInstance, bHandleValidation === undefined ? vConfig.handleValidation : bHandleValidation);
 				} else {
