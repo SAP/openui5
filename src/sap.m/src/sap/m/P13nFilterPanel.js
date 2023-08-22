@@ -540,7 +540,13 @@ sap.ui.define([
 				this._modifyFieldOperationsBasedOnMaxLength(oField);
 			}, this);
 
-			this.setKeyFields(aKeyFields, aKeyFieldsExclude);
+            /**
+             * @deprecated Since 1.34. This method does not work anymore - you should use the Items aggregation
+             * @private
+             */
+            (function() {
+                this.setKeyFields && this.setKeyFields(aKeyFields, aKeyFieldsExclude);
+            }.bind(this))();
 
 			var aConditions = [];
 			sModelName = (this.getBindingInfo("filterItems") || {}).model;
