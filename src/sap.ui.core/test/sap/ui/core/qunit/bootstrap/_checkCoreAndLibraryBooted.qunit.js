@@ -18,7 +18,7 @@
 		var id = document.querySelector("html").getAttribute("data-sap-ui-browser");
 		sap.ui.require(["sap/ui/Device"], function (Device) {
 			if ( Device.browser.name ) {
-				assert.strictEqual(id, Device.browser.name + Device.browser.versionStr, "browser is known: data-sap-ui-browser should have been set and must not be empty");
+				assert.strictEqual(id, Device.browser.name + Math.floor(Device.browser.versionStr), "browser is known: data-sap-ui-browser should have been set and must not be empty");
 			} else {
 				assert.ok(!id, "browser is unknown: data-sap-ui-browser should not have been set (or empty)");
 			}
