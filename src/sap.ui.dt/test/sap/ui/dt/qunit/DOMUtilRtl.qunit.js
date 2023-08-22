@@ -39,8 +39,9 @@ sap.ui.define([
 		QUnit.test("when getOffsetFromParent is called for the content without scrolling", function(assert) {
 			var oContentGeometry = DOMUtil.getGeometry(this.oContent);
 			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer);
-			// TODO: Remove when bug in Chrome and Safari is fixed
-			var iExpectedOffsetLeft = (Device.browser.safari && !Device.browser.mobile) ? RELATIVE_POS_LEFT - SCROLLBAR_WIDTH : RELATIVE_POS_LEFT;
+			var iExpectedOffsetLeft = (Device.browser.safari && !Device.browser.mobile)
+				? RELATIVE_POS_LEFT - SCROLLBAR_WIDTH
+				: RELATIVE_POS_LEFT;
 			// in some cases (special physical devices) the offset is returend as decimal value
 			// actually we need to round the offset for chrome browser on mac
 			assert.strictEqual(Math.ceil(mOffset.left), iExpectedOffsetLeft, `the left offset is correct - result: ${
@@ -52,8 +53,9 @@ sap.ui.define([
 			var oContentGeometry = DOMUtil.getGeometry(this.oContent);
 			var iScrollValue = -50;
 			var iRelativePosLeft = iScrollValue + RELATIVE_POS_LEFT;
-			// TODO: Remove when bug in Chrome and Safari is fixed
-			var iExpectedOffsetLeft = (Device.browser.safari && !Device.browser.mobile) ? iRelativePosLeft - SCROLLBAR_WIDTH : iRelativePosLeft;
+			var iExpectedOffsetLeft = (Device.browser.safari && !Device.browser.mobile)
+				? iRelativePosLeft - SCROLLBAR_WIDTH
+				: iRelativePosLeft;
 			var iMaxScrollWidth = this.oContainer.scrollWidth - this.oContainer.clientWidth;
 			iScrollValue = iMaxScrollWidth + iScrollValue;
 			// scrollLeftRTL is a function from UI5 Core JQuery

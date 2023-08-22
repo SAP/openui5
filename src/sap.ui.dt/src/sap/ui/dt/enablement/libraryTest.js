@@ -142,7 +142,6 @@ sap.ui.define([
 			optional: true,
 			check(assert, mEntry, sControlName) {
 				// name can be a string like this "{name}"
-				// TODO: be more strict here
 				if (typeof mEntry === "string" && mEntry.indexOf("{") === 0 && mEntry.indexOf("}") === mEntry.length - 1) {
 					return true;
 				}
@@ -167,7 +166,6 @@ sap.ui.define([
 					}
 					// proceed normally with a translation key
 					if (mEntry[sKey].toUpperCase() !== mEntry[sKey]) {
-						// TODO:this should be enabled before a release of the new design time data
 						assert.ok(true, `Assuming that ${sKey} with ${mEntry[sKey]} needs currently no translation`);
 						return;
 					}
@@ -184,6 +182,7 @@ sap.ui.define([
 						}
 					}
 				});
+				return undefined;
 			}
 		},
 		"/palette": {
@@ -216,6 +215,7 @@ sap.ui.define([
 						});
 					}));
 				}
+				return undefined;
 			}
 		},
 		"/templates": {
@@ -240,15 +240,8 @@ sap.ui.define([
 
 						xhr.send();
 					});
-					/*
-					var oControl = sap.ui.xmlfragment({
-						fragmentContent: oData.data.documentElement,
-						oController: this
-					});
-					//check the controls type
-					assert.strictEqual((oControl instanceof ObjectPath.get(sControlName)) ||  , true, sCreateTemplate + " created a control with the right type " + sControlName + "/" + oControl.getMetadata().getName());
-					*/
 				}
+				return undefined;
 			}
 		}
 	};
@@ -288,6 +281,7 @@ sap.ui.define([
 						assert.equal(true, true, `${sControlName} does define mandatory entry ${sPath}`);
 						return oCheck.check(assert, vValue, sControlName);
 					}
+					return undefined;
 				}));
 			});
 		});

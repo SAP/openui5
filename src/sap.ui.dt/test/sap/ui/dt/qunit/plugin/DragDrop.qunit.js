@@ -434,9 +434,10 @@ sap.ui.define([
 		QUnit.module("Given that overlay is created for a m.Page with Panels", {
 			beforeEach(assert) {
 				var done = assert.async();
+
 				this.aPanels = [];
 				this.aPanelOverlays = [];
-				for (var i = 0; i < 10; i++) {
+				for (var i = 0; i < 30; i++) {
 					var oPanel = new Panel();
 					this.aPanels.push(oPanel);
 					var oPanelOverlay = new ElementOverlay({
@@ -449,65 +450,49 @@ sap.ui.define([
 					content: this.aPanels
 				}).placeAt("qunit-fixture");
 
-				this.oPage.getMetadata().loadDesignTime().then(function(oDesignTimeMetadata) {
-					this.oPageOverlay = new ElementOverlay({
-						element: this.oPage,
-						designTimeMetadata: { data: oDesignTimeMetadata },
-						lazyRendering: false
-					});
-					Core.applyChanges();
-					this.oDragDrop = new DragDrop();
-					var oPageContentOverlay = this.oPageOverlay.getAggregationOverlay("content");
-					this.oDragDrop.registerAggregationOverlay(oPageContentOverlay);
+				this.oDragDrop = new DragDrop();
+				this.oDesignTime = new DesignTime({
+					rootElements: [this.oPage],
+					plugins: [this.oDragDrop]
+				});
+
+				this.oDesignTime.attachEventOnce("synced", () => {
+					this.oPageOverlay = OverlayRegistry.getOverlay(this.oPage);
 					done();
-				}.bind(this));
+				});
 			},
 			afterEach() {
+				this.oDesignTime.destroy();
 				this.oPage.destroy();
-				this.oPageOverlay.destroy();
-				for (var i = 0; i < 10; i++) {
-					this.aPanels[i].destroy();
-					this.aPanelOverlays[i].destroy();
-				}
-				this.oDragDrop.destroy();
 			}
 		}, function() {
-			// FIXME: in FireFox
-			// QUnit.test("when a dragover event happens in a an overlay with a scrollbar near the edge...", function(assert) {
-			// 	var done = assert.async();
-			// 	var oPageContentOverlay = this.oPageOverlay.getAggregationOverlay("content");
-			// 	var $PageContentOverlay = oPageContentOverlay.$();
-			// 	var $PageContent = jQuery(oPageContentOverlay.getGeometry().domRef);
-			// 	var oEvent;
-			//
-			// 	var oOffset = $PageContentOverlay.offset();
-			//
-			// 	var iX = oOffset.left + 10;
-			// 	var iY = oOffset.top + $PageContentOverlay.height() - 10;
-			//
-			// 	if (document.createEvent) {
-			// 		oEvent = document.createEvent("MouseEvent");
-			// 		oEvent.initMouseEvent("dragover", true, true, window, 0,
-			// 			iX, iY,
-			// 			iX, iY, false, false, false, false, 0, null);
-			// 	} else {
-			// 		oEvent = new MouseEvent("dragover", {
-			// 		   "view" : window,
-			// 		   "bubbles" : true,
-			// 		   "cancelable": true,
-			// 		   clientX : iX,
-			// 		   clientY : iY
-			// 		});
-			// 	}
-			//
-			// 	$PageContentOverlay.get(0).dispatchEvent(oEvent);
-			//
-			// 	$PageContent.one("scroll", function() {
-			// 		assert.notStrictEqual($PageContent.scrollTop(), 0, "page content is scrolled after drag event");
-			// 		done();
-			// 	});
-			//
-			// });
+			QUnit.test("when a dragover event happens in a an overlay with a scrollbar near the edge...", function(assert) {
+				var done = assert.async();
+				var oPageContentOverlay = this.oPageOverlay.getAggregationOverlay("content");
+				var $PageContentOverlay = oPageContentOverlay.$();
+				var $PageContent = jQuery(oPageContentOverlay.getGeometry().domRef);
+				var oEvent;
+
+				var oOffset = $PageContentOverlay.offset();
+
+				var iX = oOffset.left + 10;
+				var iY = oOffset.top + $PageContentOverlay.height() - 10;
+
+				$PageContent.on("scroll", function() {
+					assert.notStrictEqual($PageContent.scrollTop(), 0, "page content is scrolled after drag event");
+					done();
+				});
+
+				oEvent = new MouseEvent("dragover", {
+					view: window,
+					bubbles: true,
+					cancelable: true,
+					clientX: iX,
+					clientY: iY
+				});
+
+				$PageContentOverlay.get(0).dispatchEvent(oEvent);
+			});
 		});
 	}
 

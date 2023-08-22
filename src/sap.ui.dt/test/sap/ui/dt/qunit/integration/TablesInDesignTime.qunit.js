@@ -206,9 +206,7 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				oCore.applyChanges();
-
-				// TODO: Temporal solution. Remove when the synced event in DesignTime waits for all async processes to be completed.
-				setTimeout(done, 16);
+				done();
 			});
 		},
 		afterEach() {
