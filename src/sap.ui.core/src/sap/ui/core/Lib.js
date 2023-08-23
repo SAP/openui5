@@ -6,6 +6,7 @@
 sap.ui.define([
 	'sap/base/assert',
 	'sap/base/config',
+	'sap/base/i18n/Localization',
 	'sap/base/i18n/ResourceBundle',
 	'sap/base/Log',
 	'sap/base/util/deepExtend',
@@ -25,6 +26,7 @@ sap.ui.define([
 ], function (
 	assert,
 	BaseConfig,
+	Localization,
 	ResourceBundle,
 	Log,
 	deepExtend,
@@ -140,7 +142,11 @@ sap.ui.define([
 	var mLibraryPreloadFileTypes = {};
 
 	// evaluate configuration for library preload file types
-	Configuration.getValue("xx-libraryPreloadFiles").forEach(function(v){
+	BaseConfig.get({
+		name: "sapUiXxLibraryPreloadFiles",
+		type: BaseConfig.Type.StringArray,
+		external: true
+	}).forEach(function(v){
 		var fields = String(v).trim().split(/\s*:\s*/),
 			name = fields[0],
 			fileType = fields[1];
@@ -1001,7 +1007,7 @@ sap.ui.define([
 				sKey;
 
 			assert(sLocale === undefined || typeof sLocale === "string", "sLocale must be a string or omitted");
-			sLocale = sLocale || Configuration.getLanguage();
+			sLocale = sLocale || Localization.getLanguage();
 			sNotLoadedCacheKey = sLocale + "/manifest-not-available";
 
 			// If the library was loaded in the meantime (or the first time around), we can delete the old ResourceBundle
