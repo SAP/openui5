@@ -70,6 +70,7 @@ module.exports = function(grunt, config) {
 					middlewares.splice(grunt.option('watch') ? 3 : 2, 0,
 						createReplacementMiddleware("sap/ui/Global.js"),
 						createReplacementMiddleware("sap/ui/core/Configuration.js"),
+						createReplacementMiddleware("sap/ui/core/getCompatibilityVersion.js"),
 						[ '/' + testsuiteName + '/resources/sap-ui-version.json', function(req, res, next) {
 
 							var version = grunt.config('package.version');
