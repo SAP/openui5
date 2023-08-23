@@ -1203,6 +1203,10 @@ sap.ui.define([
 		}
 	};
 
+	GenericTile.prototype.ondragend = function() {
+		this.onDragComplete();
+	};
+
 	GenericTile.prototype.ontap = function (event) {
 		if (!_isInnerTileButtonPressed(event, this)) {
 			var oParams;

@@ -5317,6 +5317,32 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		//Removing the focus on the tile
 		simulateCssEvent("stop");
 	});
+
+	QUnit.module("Testing the ondragend event on the iconMode tiles", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile("tile",{
+				header: "GenericTile",
+				subheader: "GenericTile subHeader",
+				mode: "IconMode",
+				tileIcon: "sap-icon://table-view",
+				backgroundColor: "sapLegendColor1",
+				frameType: FrameType.TwoByHalf
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+		}
+	});
+
+	QUnit.test("Simulating a drag and drop scenario", function (assert) {
+		this.oGenericTile.addStyleClass("sapMGTPressActive");
+		//Style class for Generic Tile when it is dragged.
+		assert.ok(this.oGenericTile.hasStyleClass("sapMGTPressActive"), "Generic tile contains Press Active Style Class");
+		this.oGenericTile.ondragend();
+		//Style Classes for Generic Tile should be removed once Drag is completed.
+		assert.notOk(this.oGenericTile.hasStyleClass("sapMGTPressActive"), "Press state from Generic Tile is removed.");
+	});
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
 		for (var i = 0; i < aContainers.length; i++) {
