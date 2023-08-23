@@ -1555,23 +1555,23 @@ sap.ui.define([
 		var oResourceBundle = that.getResourceBundle();
 		var oTranslatonsModel = new JSONModel(oTranslatedValues);
 		oTranslatonsModel.attachPropertyChange(function(oEvent) {
-			//update the status of each translation for grouping
-			//update the isUpdated property
-			var oData = oTranslatonsModel.getData();
-			var sUpdatedStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_UPDATED");
-			var sNotUpdatedStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED");
+			var oContext = oEvent.getParameter("context");
+			var oLanguageChanged = oTranslatonsModel.getProperty(oContext.getPath());
+			var sStatusStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED");
+			if (oLanguageChanged.value !== oLanguageChanged.originValue) {
+				sStatusStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_UPDATED");
+			}
 			var bIsUpdated = false;
-			oData.translatedLanguages.forEach(function(oLanguage) {
+			var oData = oTranslatonsModel.getData();
+			for (var i = 0; i < oData.translatedLanguages.length; i++) {
+				var oLanguage = oData.translatedLanguages[i];
 				if (oLanguage.value !== oLanguage.originValue) {
-					oLanguage.status = sUpdatedStr;
 					bIsUpdated = true;
-				} else {
-					oLanguage.status = sNotUpdatedStr;
+					break;
 				}
-			});
-			oData.isUpdated = bIsUpdated;
-			oTranslatonsModel.setData(oData);
-			oTranslatonsModel.checkUpdate(true);
+			}
+			oTranslatonsModel.setProperty(oContext.getPath("status"), sStatusStr, null, /*async:*/true);
+			oTranslatonsModel.setProperty("/isUpdated", bIsUpdated, null, /*async:*/true);
 		});
 		return oTranslatonsModel;
 	};
@@ -1581,8 +1581,11 @@ sap.ui.define([
 		var sParameterId = that.getParameterId();
 		var sIdPrefix = bIsInTranslationPopover ? sParameterId + "_control_translation_popover" : sParameterId + "_control_objectdetails_popover_translation_page";
 		return new List(sIdPrefix + "_value_list", {
+			growing: true, // required to enable Extended Change Detection (ECD)
+			growingThreshold: 60,
 			items: {
 				path: "languages>/translatedLanguages",
+				key: "key", // ECD
 				template: new CustomListItem({
 					content: [
 						new VBox({

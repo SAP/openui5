@@ -462,12 +462,12 @@ sap.ui.define([
 			}
 		});
 
-		var aTranslatedValues = {
+		var oTranslatedValues = {
 			"currentLanguage": {},
 			"isUpdated": false,
 			"translatedLanguages": []
 		};
-		var oModel;
+		var oTranslatonsModel;
 		if (aTempTranslatedLanguages) {
 			//check the updated language list, update the data model
 			aTempTranslatedLanguages.forEach(function (translatedValue) {
@@ -477,18 +477,20 @@ sap.ui.define([
 				}
 				if (translatedValue.key === oResourceBundle.sLocale.replaceAll('_', '-')) {
 					translatedValue.value = oControl.getValue();
-					aTranslatedValues.currentLanguage = translatedValue;
+					oTranslatedValues.currentLanguage = translatedValue;
 				} else {
-					aTranslatedValues.translatedLanguages.push(translatedValue);
+					oTranslatedValues.translatedLanguages.push(translatedValue);
 				}
 			});
 		}
 		var sPlacement = oField.getPopoverPlacement(oControl._oValueHelpIcon);
 		if (!that._oTranslationPopover) {
 			var oList = new List(sParameterId + "_translation_popover_value_list", {
-				//mode: "Delete",
+				growing: true, // required to enable Extended Change Detection (ECD)
+				growingThreshold: 60,
 				items: {
 					path: "languages>/translatedLanguages",
+					key: "key", // ECD
 					template: new CustomListItem({
 						content: [
 							new VBox({
@@ -583,32 +585,32 @@ sap.ui.define([
 					]
 				})
 			}).addStyleClass("sapUiIntegrationFieldTranslation");
-			oModel = new JSONModel(aTranslatedValues);
-			oModel.attachPropertyChange(function(oEvent) {
-				//update the status of each translation for grouping
-				//update the isUpdated property
-				var oData = oModel.getData();
-				var sUpdatedStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_UPDATED");
-				var sNotUpdatedStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED");
+			oTranslatonsModel = new JSONModel(oTranslatedValues);
+			oTranslatonsModel.attachPropertyChange(function(oEvent) {
+				var oContext = oEvent.getParameter("context");
+				var oLanguageChanged = oTranslatonsModel.getProperty(oContext.getPath());
+				var sStatusStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED");
+				if (oLanguageChanged.value !== oLanguageChanged.originValue) {
+					sStatusStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_UPDATED");
+				}
 				var bIsUpdated = false;
-				oData.translatedLanguages.forEach(function(oLanguage) {
+				var oData = oTranslatonsModel.getData();
+				for (var i = 0; i < oData.translatedLanguages.length; i++) {
+					var oLanguage = oData.translatedLanguages[i];
 					if (oLanguage.value !== oLanguage.originValue) {
-						oLanguage.status = sUpdatedStr;
 						bIsUpdated = true;
-					} else {
-						oLanguage.status = sNotUpdatedStr;
+						break;
 					}
-				});
-				oData.isUpdated = bIsUpdated;
-				oModel.setData(oData);
-				oModel.checkUpdate(true);
+				}
+				oTranslatonsModel.setProperty(oContext.getPath("status"), sStatusStr, null, /*async:*/true);
+				oTranslatonsModel.setProperty("/isUpdated", bIsUpdated, null, /*async:*/true);
 			});
-			that._oTranslationPopover.setModel(oModel, "languages");
+			that._oTranslationPopover.setModel(oTranslatonsModel, "languages");
 		} else {
 			that._oTranslationPopover.setPlacement(sPlacement);
-			oModel = that._oTranslationPopover.getModel("languages");
-			oModel.setData(aTranslatedValues);
-			oModel.checkUpdate(true);
+			oTranslatonsModel = that._oTranslationPopover.getModel("languages");
+			oTranslatonsModel.setData(oTranslatedValues);
+			oTranslatonsModel.checkUpdate(true);
 		}
 		that._oTranslationPopover.openBy(oControl._oValueHelpIcon);
 	};
