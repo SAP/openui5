@@ -4732,50 +4732,34 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("doDeregisterChangeListener: super", function () {
-		var oBinding = this.bindContext("/EMPLOYEES('42')"),
-			oListener = {},
-			sPath = "foo";
+		var oBinding = this.bindContext("/EMPLOYEES('42')");
 
 		this.mock(asODataParentBinding.prototype).expects("doDeregisterChangeListener")
-			.on(oBinding).withExactArgs(sPath, sinon.match.same(oListener));
+			.on(oBinding).withExactArgs("/absolute/path", "~oListener~");
 
 		// code under test
-		oBinding.doDeregisterChangeListener(sPath, oListener);
+		oBinding.doDeregisterChangeListener("/absolute/path", "~oListener~");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doDeregisterChangeListener: operation binding", function () {
-		var oBinding = this.bindContext("/Operation(...)"),
-			oHelperMock = this.mock(_Helper),
-			oListener = {};
+[undefined, "", "relative/path"].forEach(function (sRelativePath, i) {
+	QUnit.test("doDeregisterChangeListener: operation binding, " + sRelativePath, function () {
+		var oBinding = this.bindContext("/Operation(...)");
 
+		this.mock(_Helper).expects("getRelativePath")
+			.withExactArgs("/absolute/path", "/Operation(...)/$Parameter")
+			.returns(sRelativePath);
+		this.mock(_Helper).expects("removeByPath").exactly(i ? 1 : 0)
+			.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), sRelativePath,
+				"~oListener~");
 		this.mock(asODataParentBinding.prototype).expects("doDeregisterChangeListener")
-			.on(oBinding).withExactArgs("$Parameterfoo", sinon.match.same(oListener));
+			.exactly(i ? 0 : 1)
+			.on(oBinding).withExactArgs("/absolute/path", sinon.match.same("~oListener~"));
 
 		// code under test
-		oBinding.doDeregisterChangeListener("$Parameterfoo", oListener);
-
-		oHelperMock.expects("removeByPath")
-			.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), "bar",
-					sinon.match.same(oListener));
-
-		// code under test
-		oBinding.doDeregisterChangeListener("$Parameter/bar", oListener);
-
-		oHelperMock.expects("removeByPath")
-			.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), "bar/foo",
-				sinon.match.same(oListener));
-
-		// code under test
-		oBinding.doDeregisterChangeListener("$Parameter/bar/foo", oListener);
-
-		oHelperMock.expects("removeByPath")
-			.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), "",
-				sinon.match.same(oListener));
-
-		// code under test
-		oBinding.doDeregisterChangeListener("$Parameter", oListener);
+		oBinding.doDeregisterChangeListener("/absolute/path", "~oListener~");
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("doSetProperty: non operational binding", function (assert) {

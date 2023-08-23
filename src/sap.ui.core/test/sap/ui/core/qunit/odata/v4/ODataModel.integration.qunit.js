@@ -32795,6 +32795,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Path reduction and change listener
+	// "defaultChannel" has a reducible path. See that it is properly deregistered with the delete,
+	// so that the refresh promise resolves.
+	// BCP: 2370061110
+	QUnit.test("BCP: 2370061110", function (assert) {
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/Artists(ArtistID=\'1\',IsActiveEntity=false)}">\
+	<Text id="defaultChannel" text="{_Publication/_Artist/defaultChannel}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='1',IsActiveEntity=false)"
+				+ "?$select=ArtistID,IsActiveEntity,defaultChannel", {
+				ArtistID : "1",
+				IsActiveEntity : false,
+				defaultChannel : "test"
+			})
+			.expectChange("defaultChannel", "test");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("form").getBindingContext();
+
+			that.expectChange("defaultChannel", null)
+				.expectRequest({
+					method : "DELETE",
+					url : "Artists(ArtistID='1',IsActiveEntity=false)"
+				});
+
+			return Promise.all([
+				oContext.delete(),
+				oContext.getBinding().requestRefresh(),
+				that.waitForChanges(assert, "delete")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Operation on reduceable path. The operation path will not be reduced, but the
 	// reduced path must be used to access the binding parameter.
 	// JIRA: CPOUI5UISERVICESV3-1877
