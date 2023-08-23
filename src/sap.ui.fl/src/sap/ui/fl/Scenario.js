@@ -5,8 +5,6 @@
 sap.ui.define([], function() {
 	"use strict";
 
-	// TODO: move to an api-folder for external consumption
-
 	/**
 	 * Available scenarios
 	 *

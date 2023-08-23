@@ -607,7 +607,6 @@ sap.ui.define([
 				assert.equal(fnPublishStub.callCount, 1, "then publish called once");
 				assert.ok(fnPublishStub.calledWith({
 					transportDialogSettings: {
-						rootControl: oRootControl,
 						styleClass: sStyleClass
 					},
 					layer: sLayer,
