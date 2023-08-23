@@ -780,10 +780,14 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#doDeregisterChangeListener
 	 */
 	ODataContextBinding.prototype.doDeregisterChangeListener = function (sPath, oListener) {
-		if (this.oOperation && (sPath === "$Parameter" || sPath.startsWith("$Parameter/"))) {
-			_Helper.removeByPath(this.oOperation.mChangeListeners,
-				sPath.slice(/*"$Parameter/".length*/11), oListener);
-			return;
+        var sRelativePath;
+
+		if (this.oOperation) {
+			sRelativePath = _Helper.getRelativePath(sPath, this.oParameterContext.getPath());
+			if (sRelativePath !== undefined) {
+				_Helper.removeByPath(this.oOperation.mChangeListeners, sRelativePath, oListener);
+				return;
+			}
 		}
 		asODataParentBinding.prototype.doDeregisterChangeListener.apply(this, arguments);
 	};
