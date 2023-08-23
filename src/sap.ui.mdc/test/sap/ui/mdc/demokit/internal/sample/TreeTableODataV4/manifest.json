@@ -15,9 +15,10 @@
 		"dependencies": {
 			"libs": {
 				"sap.m": {},
-				"sap.ui.table": {},
+				"sap.ui.core": {},
+				"sap.ui.fl": {},
 				"sap.ui.mdc": {},
-				"sap.ui.fl": {}
+				"sap.ui.table": {}
 			}
 		},
 		"config": {

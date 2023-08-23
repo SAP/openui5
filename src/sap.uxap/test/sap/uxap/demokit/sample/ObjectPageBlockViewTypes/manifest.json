@@ -16,6 +16,7 @@
 		"dependencies": {
 			"libs": {
 				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.uxap": {}
 			}
 		},

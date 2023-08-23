@@ -15,7 +15,8 @@
 			"libs": {
 				"sap.f": {},
 				"sap.m": {},
-				"sap.tnt": {}
+				"sap.tnt": {},
+				"sap.ui.core": {}
 			}
 		},
 		"config": {

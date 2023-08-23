@@ -42,15 +42,15 @@
 		"dependencies": {
 			"minUI5Version": "1.60.0",
 			"libs": {
-				"sap.ui.core": {},
-				"sap.m": {},
 				"sap.f": {},
-				"sap.ui.layout": {},
+				"sap.m": {},
 				"sap.tnt": {},
-				"sap.ui.unified": {},
+				"sap.ui.core": {},
 				"sap.ui.integration": {
 					"lazy": true
-				}
+				},
+				"sap.ui.layout": {},
+				"sap.ui.unified": {}
 			}
 		},
 		"componentUsages": {
