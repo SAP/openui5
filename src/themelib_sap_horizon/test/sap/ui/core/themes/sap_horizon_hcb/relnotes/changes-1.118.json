@@ -3,6 +3,28 @@
     "date": "August 2023",
     "notes": [
       {
+        "id": "28011c2391622fe8b58dfd5f153d12c8959a00fc",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Tab text no longer gets clipped in high contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114498"
+          }
+        ]
+      },
+      {
+        "id": "cf1401eee936fe6b6921ad751f4e678ba933528c",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Apply correct theme parameters for Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122290"
+          }
+        ]
+      },
+      {
         "id": "3154d64beb332195666bccdb75242f48648c024e",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendar: adjust grid cell selection display",
@@ -10,6 +32,28 @@
           {
             "type": "BCP",
             "reference": "2380122447"
+          }
+        ]
+      },
+      {
+        "id": "3915d9c95515e7a09315b86bd7af94e2973b693f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Seaparator adjused for text only tabs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380085007"
+          }
+        ]
+      },
+      {
+        "id": "3c0f8d3339265c972834750b8cf5b0df867dd85a",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Visual adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114498"
           }
         ]
       },

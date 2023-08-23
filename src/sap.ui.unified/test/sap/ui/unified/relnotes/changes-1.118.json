@@ -3,6 +3,28 @@
     "date": "August 2023",
     "notes": [
       {
+        "id": "34da7add092e917a243bedd5b169eac96c8dd1f0",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Remove horizontal scrollbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011657"
+          }
+        ]
+      },
+      {
+        "id": "c381b090a5392ed4676971f90e7044f2b1ca0a14",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: enable drop over the browse button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006011772023"
+          }
+        ]
+      },
+      {
         "id": "ea13864b7b1e79c5d258a9c192c4b4bcd581fb25",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: getVisibleIntervalsCount now returns the correct value ignoring daylight saving",

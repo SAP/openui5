@@ -3,6 +3,28 @@
     "date": "August 2023",
     "notes": [
       {
+        "id": "34da7add092e917a243bedd5b169eac96c8dd1f0",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Remove horizontal scrollbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011657"
+          }
+        ]
+      },
+      {
+        "id": "5a920e8b8a8c855166fd2feec9a729a88a825daa",
+        "type": "FIX",
+        "text": " sap.m.Menu: enable adding event delegates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122563"
+          }
+        ]
+      },
+      {
         "id": "40ccd2236bb01c11e29b04ce61bcad3e068112a7",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: adjust avatar size",
@@ -32,6 +54,17 @@
           {
             "type": "BCP",
             "reference": "2370011673"
+          }
+        ]
+      },
+      {
+        "id": "3915d9c95515e7a09315b86bd7af94e2973b693f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Seaparator adjused for text only tabs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380085007"
           }
         ]
       },

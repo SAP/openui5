@@ -1,0 +1,18 @@
+{
+  "1.118.0": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "20188caa08955460b5ca7cd25063cee15f38c488",
+        "type": "FIX",
+        "text": " Integration Cards: Placeholders of List and Table cards no longer reserve space for group headers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122439"
+          }
+        ]
+      }
+    ]
+  }
+}
