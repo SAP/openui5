@@ -431,16 +431,25 @@ sap.ui.define([
 	 * Deregisters the given change listener from the given path.
 	 *
 	 * @param {string} sPath
-	 *   The path relative to the binding
+	 *   The absolute path
 	 * @param {object} oListener
 	 *   The change listener
 	 *
 	 * @private
 	 */
 	ODataBinding.prototype.doDeregisterChangeListener = function (sPath, oListener) {
-		if (this.oCache) {
-			this.oCache.deregisterChangeListener(sPath, oListener);
-		}
+		this.oCachePromise.then((oCache) => {
+			if (oCache) {
+				const sRelativePath = _Helper.getRelativePath(sPath, this.getResolvedPath());
+				if (sRelativePath !== undefined) {
+					oCache.deregisterChangeListener(sRelativePath, oListener);
+					return;
+				}
+			}
+			if (this.bRelative && this.oContext && this.oContext.getBinding) {
+				this.oContext.getBinding().doDeregisterChangeListener(sPath, oListener);
+			}
+		});
 	};
 
 	/**

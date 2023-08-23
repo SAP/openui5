@@ -366,12 +366,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.deregisterChangeListener = function () {
-		var that = this;
-
-		this.withCache(function (_oCache, sPath, oBinding) {
-				oBinding.doDeregisterChangeListener(sPath, that);
-			}, /*sPath*/"", /*bSync*/false, /*bWithOrWithoutCache*/true)
-			.catch(this.oModel.getReporter());
+		if (this.sReducedPath) {
+			this.doDeregisterChangeListener(this.sReducedPath, this);
+		}
 	};
 
 	/**

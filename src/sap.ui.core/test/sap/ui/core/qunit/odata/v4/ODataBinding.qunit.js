@@ -3010,25 +3010,71 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach(function (bHasCache) {
-	QUnit.test("doDeregisterChangeListener: cache=" + bHasCache, function () {
-		var oBinding = new ODataBinding(),
-			oCache = {
-				deregisterChangeListener : function () {}
-			},
-			oListener = {},
-			sPath = "foo";
+["", "relative/path"].forEach(function (sRelativePath) {
+	QUnit.test(`doDeregisterChangeListener: matching cache, path=${sRelativePath}`, function () {
+		const oCache = {
+			deregisterChangeListener : mustBeMocked
+		};
+		const oBinding = new ODataBinding({
+			oCachePromise : SyncPromise.resolve(oCache)
+		});
 
-		if (bHasCache) {
-			oBinding.oCache = oCache;
-		}
-		this.mock(oCache).expects("deregisterChangeListener").exactly(bHasCache ? 1 : 0)
-			.withExactArgs(sPath, sinon.match.same(oListener));
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/path");
+		this.mock(_Helper).expects("getRelativePath")
+			.withExactArgs("/absolute/path", "/resolved/path").returns(sRelativePath);
+		this.mock(oCache).expects("deregisterChangeListener")
+			.withExactArgs(sRelativePath, "~oListener~");
 
 		// code under test
-		oBinding.doDeregisterChangeListener(sPath, oListener);
+		oBinding.doDeregisterChangeListener("/absolute/path", "~oListener~");
 	});
 });
+
+	//*********************************************************************************************
+[false, true].forEach(function (bCache) {
+	QUnit.test(`doDeregisterChangeListener: no ${bCache ? "matching " : ""} cache`, function () {
+		const oBinding = new ODataBinding({
+			oCachePromise : SyncPromise.resolve(bCache ? {} : null),
+			oContext : {
+				getBinding : mustBeMocked
+			},
+			bRelative : true
+		});
+		const oParentBinding = {
+			doDeregisterChangeListener : mustBeMocked
+		};
+
+		this.mock(oBinding).expects("getResolvedPath").exactly(bCache ? 1 : 0)
+			.withExactArgs().returns("/resolved/path");
+		this.mock(_Helper).expects("getRelativePath").exactly(bCache ? 1 : 0)
+			.withExactArgs("/absolute/path", "/resolved/path").returns(undefined);
+		this.mock(oBinding.oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
+		this.mock(oParentBinding).expects("doDeregisterChangeListener")
+			.withExactArgs("/absolute/path", "~oListener~");
+
+		// code under test
+		oBinding.doDeregisterChangeListener("/absolute/path", "~oListener~");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("doDeregisterChangeListener: no cache and no valid context", function () {
+		const oBinding = new ODataBinding();
+
+		// code under test - unresolved
+		oBinding.doDeregisterChangeListener();
+
+		oBinding.oContext = {getBinding : "do not call"};
+
+		// code under test - absolute with context
+		oBinding.doDeregisterChangeListener();
+
+		oBinding.bRelative = true;
+		oBinding.oContext = {};
+
+		// code under test - base context
+		oBinding.doDeregisterChangeListener();
+	});
 
 	//*********************************************************************************************
 	QUnit.test("allow for super calls", function (assert) {
