@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Label",
-	"sap/m/QuickViewPage",
+	"sap/m/DynamicDateRange",
 	"sap/ui/base/Event",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -17,7 +17,7 @@ sap.ui.define([
 ], function(
 	Button,
 	Label,
-	QuickViewPage,
+	DynamicDateRange,
 	Event,
 	XMLView,
 	JsControlTreeModifier,
@@ -598,20 +598,20 @@ sap.ui.define([
 		});
 
 		QUnit.test("when getProperty is called for a property of type object", function(assert) {
-			this.oControl = new QuickViewPage();
+			this.oControl = new DynamicDateRange();
 			var oSomeObject = new Button();
 			this.oControl.addDependent(oSomeObject); //for later cleanup
 
 			var mData = { key : "value"};
-			JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", mData);
-			assert.deepEqual(this.oControl.getCrossAppNavCallback(), mData, "then serializable data (plain object) can be passed");
+			JsControlTreeModifier.setProperty(this.oControl, "value", mData);
+			assert.deepEqual(this.oControl.getValue(), mData, "then serializable data (plain object) can be passed");
 
 			var aData = [mData];
-			JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", aData);
-			assert.deepEqual(this.oControl.getCrossAppNavCallback(), aData, "then serializable data (array) can be passed");
+			JsControlTreeModifier.setProperty(this.oControl, "value", aData);
+			assert.deepEqual(this.oControl.getValue(), aData, "then serializable data (array) can be passed");
 
 			assert.throws(function() {
-				JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", oSomeObject);
+				JsControlTreeModifier.setProperty(this.oControl, "value", oSomeObject);
 			},
 			/TypeError/,
 			"then passing non JSON data will throw a message");
