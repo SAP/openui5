@@ -3078,9 +3078,11 @@ function(
 					}
 
 					if (iInputWidth <= parseInt(sPopoverMaxWidth) && !Device.system.phone) {
-						oSuggPopover.getPopover().getDomRef().style.setProperty("max-width", "40rem");
+						oSuggPopover.getPopover().addStyleClass("sapMSuggestionPopoverDefaultWidth");
 					} else {
 						oSuggPopover.getPopover().getDomRef().style.setProperty("max-width", iInputWidth + "px");
+						oSuggPopover.getPopover().addStyleClass("sapMSuggestionPopoverInputWidth");
+
 					}
 
 					oSuggPopover.getPopover().getDomRef().style.setProperty("min-width", iInputWidth + "px");
