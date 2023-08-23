@@ -1326,17 +1326,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Gets if performance measurement for UI5 Integration Cards should happen.
-		 *
-		 * @returns {boolean} whether measurement should be executed
-		 * @since 1.112.0
-		 * @experimental
-		 */
-		getMeasureCards: function () {
-			return Configuration.getValue("xx-measure-cards");
-		},
-
-		/**
 		 * Sets the security token handlers for an OData V4 model. See chapter
 		 * {@link topic:9613f1f2d88747cab21896f7216afdac/section_STH Security Token Handling}.
 		 *

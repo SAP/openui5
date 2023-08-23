@@ -3,11 +3,11 @@
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
-	"sap/ui/core/Configuration"
+	"sap/base/config"
 ], function (
 	Card,
 	Core,
-	Configuration
+	BaseConfig
 ) {
 	"use strict";
 
@@ -15,12 +15,15 @@ sap.ui.define([
 
 	QUnit.module("Card measurements", {
 		beforeEach: function () {
+			var that = this;
 			this.oCard = new Card({
 				dataMode: "Active"
 			});
 
-			this.stubbedMeasureCards = this.stub(Configuration, "getMeasureCards").callsFake(function () {
-				return true;
+			BaseConfig._.invalidate();
+			this.bMeasureCards = true;
+			this.stubbedMeasureCards = this.stub(BaseConfig, "get").callsFake(function(mParams) {
+				return mParams.name === "sapUiXxMeasureCards" ? that.bMeasureCards : that.stubbedMeasureCards.wrappedMethod.call(this, mParams);
 			});
 
 			this.spyMark = this.spy(performance, "mark").withArgs(sinon.match(this.oCard._sPerformanceId));
@@ -29,6 +32,7 @@ sap.ui.define([
 		afterEach: function () {
 			this.oCard.destroy();
 			this.oCard = null;
+			this.stubbedMeasureCards.restore();
 		}
 	});
 
@@ -89,9 +93,8 @@ sap.ui.define([
 		}.bind(this));
 
 		// act
-		this.stubbedMeasureCards.callsFake(function () {
-			return false;
-		});
+		BaseConfig._.invalidate();
+		this.bMeasureCards = false;
 
 		this.oCard.setManifest({
 			"sap.app": {

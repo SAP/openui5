@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Configuration"
-], function (Configuration) {
+	"sap/base/config"
+], function (BaseConfig) {
 	"use strict";
 
 	var bMarkAPIExists = performance && performance.mark;
@@ -83,7 +83,11 @@ sap.ui.define([
 		 * @returns {boolean} True if it should be active. False otherwise.
 		 */
 		getActive: function () {
-			var bActive = Configuration.getMeasureCards(); // @todo
+			var bActive = BaseConfig.get({
+				name: "sapUiXxMeasureCards",
+				type: BaseConfig.Type.Boolean,
+				external: true
+			}); // @todo
 
 			return bActive && bMarkAPIExists && bMeasureAPIExists;
 		}
