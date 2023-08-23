@@ -8,6 +8,7 @@ sap.ui.define([
 	'./ComponentMetadata',
 	'./Element',
 	'sap/base/config',
+	'sap/base/i18n/Localization',
 	'sap/base/util/extend',
 	'sap/base/util/deepExtend',
 	'sap/base/util/merge',
@@ -33,6 +34,7 @@ sap.ui.define([
 	ComponentMetadata,
 	Element,
 	BaseConfig,
+	Localization,
 	extend,
 	deepExtend,
 	merge,
@@ -2509,15 +2511,15 @@ sap.ui.define([
 		var oOwnerComponent = Component.get(ManagedObject._sOwnerId);
 
 		if (Array.isArray(vConfig.activeTerminologies) && vConfig.activeTerminologies.length &&
-			Array.isArray(Configuration.getActiveTerminologies()) && Configuration.getActiveTerminologies().length) {
-			if (JSON.stringify(vConfig.activeTerminologies) !== JSON.stringify(Configuration.getActiveTerminologies())) {
+			Array.isArray(Localization.getActiveTerminologies()) && Localization.getActiveTerminologies().length) {
+			if (JSON.stringify(vConfig.activeTerminologies) !== JSON.stringify(Localization.getActiveTerminologies())) {
 				Log.warning(bLegacy ? "sap.ui.component: " : "Component.create: " +
-					"The 'activeTerminolgies' passed to the component factory differ from the ones defined on the global 'sap.ui.core.Configuration#getActiveTerminologies';" +
+					"The 'activeTerminolgies' passed to the component factory differ from the ones defined on the global 'sap/base/i18n/Localization.getActiveTerminologies';" +
 					"This might lead to inconsistencies; ResourceModels that are not defined in the manifest and created by the component will use the globally configured terminologies.");
 			}
 		}
 		// get terminologies information: API -> Owner Component -> Configuration
-		var aActiveTerminologies = vConfig.activeTerminologies || (oOwnerComponent && oOwnerComponent.getActiveTerminologies()) || Configuration.getActiveTerminologies();
+		var aActiveTerminologies = vConfig.activeTerminologies || (oOwnerComponent && oOwnerComponent.getActiveTerminologies()) || Localization.getActiveTerminologies();
 
 		// Inherit cacheTokens from owner component if not defined in asyncHints
 		if (!vConfig.asyncHints || !vConfig.asyncHints.cacheTokens) {

@@ -1245,10 +1245,10 @@ sap.ui.define([
 		 * @returns {string[]|undefined} if no active terminologies are set, the default value <code>undefined</code> is returned.
 		 * @since 1.77.0
 		 * @public
+		 * @function
+		 * @deprecated Since 1.118. Please use {@link module:sap/base/i18n/Localization.getActiveTerminologies} instead.
 		 */
-		getActiveTerminologies : function() {
-			return BaseConfig.get({name: "sapUiActiveTerminologies", type: BaseConfig.Type.StringArray, defaultValue: undefined, external: true});
-		},
+		getActiveTerminologies : Localization.getActiveTerminologies,
 
 		/**
 		 * Returns the security token handlers of an OData V4 model.
