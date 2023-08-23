@@ -175,15 +175,21 @@ sap.ui.define([
 		}
 	};
 
+	var iAdditionalContentAreaIndex = 0,
+		iSeparatorIndex = 1,
+		iLinkAreaIndex = 2,
+		iFooterAreaIndex = 3;
+
 	Panel.prototype._createContent = function() {
+		var oVerticalLayoutContent = [];
+		oVerticalLayoutContent[iAdditionalContentAreaIndex] = this._createAdditionalContentArea();
+		oVerticalLayoutContent[iSeparatorIndex] = this._createSeparator();
+		oVerticalLayoutContent[iLinkAreaIndex] = this._createLinkArea();
+		oVerticalLayoutContent[iFooterAreaIndex] = this._createFooterArea();
+
 		var oVerticalLayout = new VerticalLayout({
 			width: "100%",
-			content: [
-				this._createAdditionalContentArea(),
-				this._createSeparator(),
-				this._createLinkArea(),
-				this._createFooterArea()
-			]
+			content: oVerticalLayoutContent
 		});
 		this.setAggregation("_content", oVerticalLayout);
 	};
@@ -499,7 +505,7 @@ sap.ui.define([
 						switch (oChanges.mutation) {
 							case "insert":
 								// "forward" additional content to the additionalContentArea
-								this.getAggregation("_content").getContent()[0].addItem(oAdditionalContent);
+								this._getAdditionalContentArea().addItem(oAdditionalContent);
 								break;
 							case "remove":
 								// Don't remove additional content as this will also be called when we forward it to the additionalContentArea
@@ -583,7 +589,13 @@ sap.ui.define([
 
 	Panel.prototype.getContentTitle = function() {
 		var oModel = this._getInternalModel();
-		return oModel.getProperty("/contentTitle");
+		var oContentTitle = oModel.getProperty("/contentTitle");
+		if (oContentTitle) {
+			return oContentTitle;
+		} else {
+			this._updateContentTitle();
+			return this.getContentTitle();
+		}
 	};
 
 	Panel.prototype.getCurrentState = function() {
@@ -636,23 +648,47 @@ sap.ui.define([
 
 	Panel.prototype._updateContentTitle = function() {
 		var oModel = this._getInternalModel();
-		var aAdditionalContent = this.getAggregation("_content").getContent()[0].getItems();
-		var oContentTitle = this._getPersonalizationButton().getId();
+		var aAdditionalContent = this._getAdditionalContentArea().getItems();
+		var oContentTitle = this._getPersonalizationButton();
 
 		if (aAdditionalContent.length > 0) {
 			oContentTitle = aAdditionalContent[0];
 		} else {
-			var aItems = this.getItems();
-			if (aItems.length > 0) {
-				oContentTitle = aItems[0];
+			var aLinkControls = this._getLinkControls();
+			if (aLinkControls.length > 0) {
+				oContentTitle = aLinkControls[0];
 			}
 		}
 
 		oModel.setProperty("/contentTitle", oContentTitle);
 	};
 
+	Panel.prototype._getAdditionalContentArea = function() {
+		return this.getAggregation("_content").getContent()[iAdditionalContentAreaIndex];
+	};
+
+	Panel.prototype._getSeparator = function() {
+		return this.getAggregation("_content").getContent()[iSeparatorIndex];
+	};
+
+	Panel.prototype._getLinkArea = function() {
+		return this.getAggregation("_content").getContent()[iLinkAreaIndex];
+	};
+
+	Panel.prototype._getLinkControls = function() {
+		return this._getLinkArea().getItems().map((HorizontalLayout /* see _fnLinkItemFactory */) => {
+			return HorizontalLayout.getContent()[0] // HBox
+				.getItems()[1] // VBox
+				.getItems()[0]; // Link
+		});
+	};
+
+	Panel.prototype._getFooterArea = function() {
+		return this.getAggregation("_content").getContent()[iFooterAreaIndex];
+	};
+
 	Panel.prototype._getPersonalizationButton = function() {
-		return this.getAggregation("_content").getContent()[3].getItems()[0];
+		return this._getFooterArea().getItems()[0];
 	};
 
 	return Panel;
