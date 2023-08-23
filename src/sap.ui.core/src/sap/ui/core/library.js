@@ -2354,6 +2354,7 @@ sap.ui.define([
 		}
 
 		// lazy imports
+		lazy("sap.ui.core.message.MessageManager");
 		lazy("sap.ui.core.BusyIndicator", "show hide attachOpen detachOpen attachClose detachClose");
 		lazy("sap.ui.core.tmpl.Template", "registerType unregisterType");
 		lazy("sap.ui.core.Fragment", "registerType byId createId");
