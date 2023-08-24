@@ -123,7 +123,7 @@ sap.ui.define([
 		var oCurrentData = this.getModel("currentSettings").getData(),
 			sParameterId = oParent.getParameterId();
 		//prepare fields in key
-		if (oCurrentData.values) {
+		if (oCurrentData.values && oCurrentData.values.item) {
 			this.prepareFieldsInKey(oCurrentData);
 		}
 		oCurrentInstance = this;
@@ -136,7 +136,7 @@ sap.ui.define([
 		bCancel = true;
 		oControl.addDependent(this);
 		//adjust page admin values table height
-		if (!oCurrentData.allowDynamicValues && oCurrentData.values) {
+		if (!oCurrentData.allowDynamicValues && oCurrentData.values && oCurrentData.values.item) {
 			Core.byId(sParameterId + "_settings_popover_scroll_container").setHeight("155px");
 		}
 		//force update of all bindings
@@ -238,7 +238,7 @@ sap.ui.define([
 								}
 							} else {
 								//handle page admin values
-								if (oData.values) {
+								if (oData.values && oData.values.item) {
 									var oTable = Core.byId(sParameterId + "_settings_popover_pav_table"),
 									selectedContexts = oTable.getSelectedContexts(),
 									selectedKeys = [];
@@ -279,7 +279,7 @@ sap.ui.define([
 				});
 
 				//handle page admin values selection
-				if (oData.values) {
+				if (oData.values && oData.values.item) {
 					var oTable = Core.byId(sParameterId + "_settings_popover_pav_table"),
 					paValues = oCurrentModel.getProperty("/_next/pageAdminValues");
 					if (paValues !== undefined && paValues.length > 0) {
@@ -406,10 +406,14 @@ sap.ui.define([
 						oCurrentModel.setProperty("/_changed", false);
 					} else {
 						oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_beforeValue"));
+						if (oData.type.indexOf("object") > -1) {
+							oField.setValue(oCurrentModel.getProperty("/_beforeValue"));
+							oField.resetControl();
+						}
 					}
 
 					//reset table selection
-					if (oData.values) {
+					if (oData.values && oData.values.item) {
 						var oTable = Core.byId(sParameterId + "_settings_popover_pav_table"),
 							sItems = oCurrentModel.getProperty("/_next/pageAdminValues"),
 							aItems = oTable.getItems();
@@ -722,7 +726,7 @@ sap.ui.define([
 		}).addStyleClass("cbrow"));
 
 		//Binding page admin data to table
-		if (oData.values) {
+		if (oData.values && oData.values.item) {
 			var vData;
 			if (oData.values.data) {
 				var sPath = oData.values.data.path,

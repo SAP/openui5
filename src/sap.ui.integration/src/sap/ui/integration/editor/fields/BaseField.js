@@ -3,6 +3,8 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
+	"sap/m/Text",
+	"sap/m/Input",
 	"sap/m/MultiInput",
 	"sap/m/Token",
 	"sap/ui/core/Core",
@@ -12,9 +14,17 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/util/deepClone",
 	"sap/ui/core/Fragment",
-	"sap/ui/integration/util/Validators"
+	"sap/ui/integration/util/Validators",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/List",
+	"sap/m/CustomListItem",
+	"sap/m/VBox",
+	"sap/ui/core/CustomData",
+	"sap/ui/model/Sorter"
 ], function (
 	Control,
+	Text,
+	Input,
 	MultiInput,
 	Token,
 	Core,
@@ -24,7 +34,13 @@ sap.ui.define([
 	deepEqual,
 	deepClone,
 	Fragment,
-	Validators
+	Validators,
+	JSONModel,
+	List,
+	CustomListItem,
+	VBox,
+	CustomData,
+	Sorter
 ) {
 	"use strict";
 
@@ -853,6 +869,69 @@ sap.ui.define([
 			sPlacement = "Left";
 		}
 		return sPlacement;
+	};
+
+	BaseField.prototype.buildTranslationsList = function (sId) {
+		return new List(sId + "", {
+			growing: true, // required to enable Extended Change Detection (ECD)
+			growingThreshold: 60,
+			items: {
+				path: "languages>/translatedLanguages",
+				key: "key", // ECD
+				template: new CustomListItem({
+					content: [
+						new VBox({
+							items: [
+								new Text({
+									text: "{languages>description}"
+								}),
+								new Input({
+									value: "{languages>value}",
+									editable: "{languages>editable}"
+								})
+							]
+						})
+					],
+					customData: [
+						new CustomData({
+							key: "{languages>key}",
+							value: "{languages>description}"
+						})
+					]
+				}),
+				sorter: [new Sorter({
+					path: 'status',
+					descending: true,
+					group: true
+				})]
+			}
+		});
+	};
+
+	BaseField.prototype.buildTranslationsModel = function (oTranslatedValues) {
+		var that = this;
+		var oResourceBundle = that.getResourceBundle();
+		var oTranslatonsModel = new JSONModel(oTranslatedValues);
+		oTranslatonsModel.attachPropertyChange(function(oEvent) {
+			var oContext = oEvent.getParameter("context");
+			var oLanguageChanged = oTranslatonsModel.getProperty(oContext.getPath());
+			var sStatusStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED");
+			if (oLanguageChanged.value !== oLanguageChanged.originValue) {
+				sStatusStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_UPDATED");
+			}
+			var bIsUpdated = false;
+			var oData = oTranslatonsModel.getData();
+			for (var i = 0; i < oData.translatedLanguages.length; i++) {
+				var oLanguage = oData.translatedLanguages[i];
+				if (oLanguage.value !== oLanguage.originValue) {
+					bIsUpdated = true;
+					break;
+				}
+			}
+			oTranslatonsModel.setProperty(oContext.getPath("status"), sStatusStr, null, /*async:*/true);
+			oTranslatonsModel.setProperty("/isUpdated", bIsUpdated, null, /*async:*/true);
+		});
+		return oTranslatonsModel;
 	};
 
 	return BaseField;

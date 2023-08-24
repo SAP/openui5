@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/m/Label",
-	"sap/m/VBox",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/base/util/deepEqual",
@@ -30,10 +29,7 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/base/util/merge",
-	"sap/m/List",
-	"sap/m/CustomListItem",
 	"sap/ui/model/Sorter",
-	"sap/ui/core/CustomData",
 	"sap/ui/integration/util/Utils",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/ComboBox",
@@ -53,7 +49,6 @@ sap.ui.define([
 	Table,
 	Column,
 	Label,
-	VBox,
 	Filter,
 	FilterOperator,
 	deepEqual,
@@ -66,10 +61,7 @@ sap.ui.define([
 	Link,
 	SimpleForm,
 	merge,
-	List,
-	CustomListItem,
 	Sorter,
-	CustomData,
 	Utils,
 	Menu,
 	ComboBox,
@@ -222,7 +214,7 @@ sap.ui.define([
 		var fnChange = function() {
 			var oModel = this.getAggregation("_field").getModel();
 			oModel.checkUpdate(true);
-			var oValue = oModel.getProperty("/value");
+			var oValue = oModel.getProperty("/value") || {};
 			// generate uuid if not exists
 			if (!oValue._dt) {
 				oValue._dt = {
@@ -891,9 +883,9 @@ sap.ui.define([
 		var oConfig = that.getConfiguration();
 		var oTable = that.getAggregation("_field");
 		var oModel = oTable.getModel();
+		var sPath = oTable.getBinding("rows").getPath();
 		if (oConfig.value && (typeof oConfig.value === "object") && !deepEqual(oConfig.value, {})) {
-			var oValue = deepClone(oConfig.value, 500),
-				sPath = oTable.getBinding("rows").getPath();
+			var oValue = deepClone(oConfig.value, 500);
 			if (Array.isArray(tResult) && tResult.length > 0) {
 				if (oValue._dt && oValue._dt._editable === false) {
 					var sUUID = oValue._dt._uuid || Utils.generateUuidV4();
@@ -933,6 +925,8 @@ sap.ui.define([
 				tResult.forEach(function(oResult) {
 					oResult._dt._uuid = Utils.generateUuidV4();
 				});
+			} else {
+				oModel.setProperty(sPath, {});
 			}
 			oModel.setProperty("/_hasSelected", false);
 		}
@@ -1445,7 +1439,7 @@ sap.ui.define([
 				that._oNavContainer.back();
 				that._oObjectDetailsPage.focus();
 			};
-			var oList = that.buildTranslationsList(false);
+			var oList = that.buildTranslationsList(sParameterId + "_control_objectdetails_popover_translation_page_value_list");
 			var oTranslationsFooter = that.buildTranslationsFooter(oList, false);
 			that._oTranslationListPage = new Page({
 				title: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TRANSLATION_LIST_TITLE", "{languages>/property}"),
@@ -1600,72 +1594,6 @@ sap.ui.define([
 		return sKey;
 	};
 
-	ObjectField.prototype.buildTranslationsModel = function (oTranslatedValues) {
-		var that = this;
-		var oResourceBundle = that.getResourceBundle();
-		var oTranslatonsModel = new JSONModel(oTranslatedValues);
-		oTranslatonsModel.attachPropertyChange(function(oEvent) {
-			var oContext = oEvent.getParameter("context");
-			var oLanguageChanged = oTranslatonsModel.getProperty(oContext.getPath());
-			var sStatusStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED");
-			if (oLanguageChanged.value !== oLanguageChanged.originValue) {
-				sStatusStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_UPDATED");
-			}
-			var bIsUpdated = false;
-			var oData = oTranslatonsModel.getData();
-			for (var i = 0; i < oData.translatedLanguages.length; i++) {
-				var oLanguage = oData.translatedLanguages[i];
-				if (oLanguage.value !== oLanguage.originValue) {
-					bIsUpdated = true;
-					break;
-				}
-			}
-			oTranslatonsModel.setProperty(oContext.getPath("status"), sStatusStr, null, /*async:*/true);
-			oTranslatonsModel.setProperty("/isUpdated", bIsUpdated, null, /*async:*/true);
-		});
-		return oTranslatonsModel;
-	};
-
-	ObjectField.prototype.buildTranslationsList = function (bIsInTranslationPopover) {
-		var that = this;
-		var sParameterId = that.getParameterId();
-		var sIdPrefix = bIsInTranslationPopover ? sParameterId + "_control_translation_popover" : sParameterId + "_control_objectdetails_popover_translation_page";
-		return new List(sIdPrefix + "_value_list", {
-			growing: true, // required to enable Extended Change Detection (ECD)
-			growingThreshold: 60,
-			items: {
-				path: "languages>/translatedLanguages",
-				key: "key", // ECD
-				template: new CustomListItem({
-					content: [
-						new VBox({
-							items: [
-								new Text({
-									text: "{languages>description}"
-								}),
-								new Input({
-									value: "{languages>value}",
-									editable: "{languages>editable}"
-								})
-							]
-						})
-					],
-					customData: [
-						new CustomData({
-							key: "{languages>key}",
-							value: "{languages>description}"
-						})
-					]
-				}),
-				sorter: [new Sorter({
-					path: 'status',
-					descending: true,
-					group: true
-				})]
-			}
-		});
-	};
-
 	ObjectField.prototype.buildTranslationsFooter = function (oList, bIsInTranslationPopover) {
 		var that = this;
 		var sParameterId = that.getParameterId();
@@ -1711,6 +1639,9 @@ sap.ui.define([
 				// update preview and dependent fields
 				if (bUpdateDependentFieldsAndPreview && that._oValueBinding) {
 					that._oValueBinding.fireEvent("change");
+				}
+				if (bIsInTranslationPopover) {
+					that._oTranslationPopover.close();
 				}
 			}
 		});
@@ -1772,9 +1703,10 @@ sap.ui.define([
 		var oTranslatonsModel;
 		var sPlacement = this.getPopoverPlacement(oControl._oValueHelpIcon);
 		if (!that._oTranslationPopover) {
-			var oList = that.buildTranslationsList(true);
+			var sParameterId = that.getParameterId();
+			var oList = that.buildTranslationsList(sParameterId + "_control_translation_popover_value_list");
 			var oTranslationsFooter = that.buildTranslationsFooter(oList, true);
-			that._oTranslationPopover = new Popover(that.getParameterId() + "_control_translation_popover", {
+			that._oTranslationPopover = new Popover(sParameterId + "_control_translation_popover", {
 				placement: sPlacement,
 				contentWidth: "300px",
 				contentHeight: "345px",
@@ -1962,6 +1894,34 @@ sap.ui.define([
 			}
 		}
 		that.setValue(oValue);
+	};
+
+	ObjectField.prototype.resetControl = function () {
+		var that = this;
+		var oControl = that.getAggregation("_field");
+		var oValue = that._getCurrentProperty("value");
+		var oModel = oControl.getModel();
+		if (oControl instanceof SimpleForm) {
+			// delete the translation texts when deleting the object
+			var oObject = oModel.getProperty("/value");
+			if (oObject && oObject._dt && oObject._dt._uuid) {
+				that.deleteTranslationValueInTexts(undefined, oObject._dt._uuid);
+			}
+			oValue = oValue || {};
+			oModel.setProperty("/value", oValue);
+			oModel.checkUpdate(true);
+		} else if (oControl instanceof Table) {
+			var oConfig = that.getConfiguration();
+			var oData;
+			if (oConfig.values) {
+				var sPath = oControl.getBinding("rows").getPath();
+				oData = oModel.getProperty(sPath);
+				oData.forEach(function(oItem) {
+					delete oItem._dt._selected;
+				});
+			}
+			that.mergeValueWithRequestResult(oData);
+		}
 	};
 
 	ObjectField.prototype.clearAllFilters = function(oEvent) {
