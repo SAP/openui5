@@ -90,7 +90,7 @@ sap.ui.define([
 				var oElementOverlay = OverlayRegistry.getOverlay(sControlId);
 
 				if (!oElementOverlay) {
-					throw new Error(DtUtil.printf('Control with id="{0}" is not under the one of root elements or ignored.', sControlId));
+					throw new Error(`Control with id="${sControlId}" is not under a root element or ignored.'`);
 				}
 
 				return oElementOverlay;
@@ -110,7 +110,7 @@ sap.ui.define([
 				var oElementOverlay = OverlayRegistry.getOverlay(sControlId);
 
 				if (!oElementOverlay) {
-					throw new Error(DtUtil.printf('Control with id="{0}" is not under the one of root elements or ignored.', sControlId));
+					throw new Error(`Control with id="${sControlId}" is not under a root element or ignored.`);
 				}
 
 				return oElementOverlay;

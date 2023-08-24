@@ -412,12 +412,7 @@ sap.ui.define([
 					var oError = Util.propagateError(
 						vError,
 						"DesignTime#_registerElementOverlays",
-						Util.printf(
-							"registerElementOverlay() method of the plugin {0} has failed for overlay with id='{1}' (element id='{2}')",
-							oPlugin.getMetadata().getName(),
-							oElementOverlay.getId(),
-							oElementOverlay.getElement().getId()
-						)
+						`registerElementOverlay() method of the plugin ${oPlugin.getMetadata().getName()} has failed for overlay with id='${oElementOverlay.getId()}' (element id='${oElementOverlay.getElement().getId()}')`
 					);
 					Log.error(Util.errorToString(oError));
 				}
@@ -434,11 +429,7 @@ sap.ui.define([
 				var oError = Util.propagateError(
 					vError,
 					"DesignTime#_registerElementOverlays",
-					Util.printf(
-						'One of the listeners of elementOverlayCreated event failed while precessing the overlay with id="{0}" for element with id="{1}"',
-						oElementOverlay.getId(),
-						oElementOverlay.getElement().getId()
-					)
+					`One of the listeners of elementOverlayCreated event failed while processing the overlay with id='${oElementOverlay.getId()}' for element with id='${oElementOverlay.getElement().getId()}'`
 				);
 				Log.error(Util.errorToString(oError));
 			}
@@ -647,7 +638,7 @@ sap.ui.define([
 				var oError = Util.propagateError(
 					vError,
 					"DesignTime#_createOverlaysForRootElement",
-					Util.printf("Root element with id = '{0}' initialization is failed", oRootElement.getId())
+					`Initialization failed for root element with id '${oRootElement.getId()}'`
 				);
 				Log.error(Util.errorToString(oError));
 				this._oTaskManager.cancel(iTaskId);
@@ -796,7 +787,7 @@ sap.ui.define([
 			var oError = Util.propagateError(
 				vError,
 				"DesignTime#createOverlay",
-				Util.printf("Failed attempt to create overlay for '{0}'", sElementId)
+				`Failed attempt to create overlay for element '${sElementId}'`
 			);
 
 			// If it crashes by any reason, we must always remove pending Promise, otherwise
@@ -827,10 +818,7 @@ sap.ui.define([
 		} else if (oElement instanceof ManagedObject && !ElementUtil.isElementInTemplate(oElement)) {
 			sReason = `Element is in a bound aggregation, but not found in the binding template. Skipping overlay creation for element with id='${oElement.getId()}'. Please report to CA-UI5-FL-RTA component.`;
 		} else {
-			sReason = Util.printf(
-				"Cannot create overlay without a valid element. Expected a descendant of sap.ui.core.Element or sap.ui.core.Component, but {0} was given",
-				Util.getObjectType(oElement)
-			);
+			sReason = `Cannot create overlay without a valid element. Expected a descendant of sap.ui.core.Element or sap.ui.core.Component, but ${Util.getObjectType(oElement)} was given`;
 		}
 
 		return Promise.reject(
@@ -928,7 +916,7 @@ sap.ui.define([
 					var oError = Util.propagateError(
 						oEvent.getParameter("error"),
 						"DesignTime#_createElementOverlay",
-						Util.printf("Can't create overlay properly (id='{0}') for '{1}'", oElementOverlay.getId(), sElementId)
+						`Error creating overlay (id='${oElementOverlay.getId()}') for '${sElementId}'`
 					);
 
 					oElementOverlay.detachEvent("destroyed", this._onElementOverlayDestroyed, this);
@@ -1078,16 +1066,7 @@ sap.ui.define([
 			sSeverity = "warning";
 			oError = Util.createError(
 				"DesignTime#_createChildren",
-				Util.printf(
-					[
-						"Child element in aggregation '{0}' of {1} must be a descendant of sap.ui.core.Element or ",
-						"sap.ui.core.Component, but {2} was give. Consider ignoring the aggregation '{0}' ",
-						"in the .designtime configuration of the control."
-					].join(""),
-					sAggregationName,
-					sParentElementClassName,
-					Util.getObjectType(oElement)
-				)
+				`Child element in aggregation '${sAggregationName}' of ${sParentElementClassName} must be a descendant of sap.ui.core.Element or sap.ui.core.Component, but ${Util.getObjectType(oElement)} was given. Consider ignoring aggregation ${sAggregationName} in the .designtime configuration of the control.`
 			);
 			sError = oError.toString(); // excluding stack trace
 		} else if (oError.message.startsWith("Element is in a bound aggregation")) {
@@ -1350,11 +1329,7 @@ sap.ui.define([
 				var oError = Util.propagateError(
 					vError,
 					"DesignTime#_onAddAggregation",
-					Util.printf(
-						"Failed to add new element overlay (elementId='{0}') into aggregation overlay (id='{1}')",
-						sElementId,
-						sAggregationOverlayId
-					)
+					`Failed to add new element overlay (elementId='${sElementId}') into aggregation overlay (id='${sAggregationOverlayId}')`
 				);
 
 				// Omit error message if the element was destroyed during overlay initialisation
