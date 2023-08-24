@@ -193,7 +193,7 @@ function initialize(from){
 	var mobile = aInfo[1];
 
 	function init(){
-		Theming.detachApplied(init);
+		sap.ui.getCore().detachThemeChanged(init);
 		currentControl = aInfo[0];
 		var ctrl;
 		if(!currentMobile){
@@ -211,7 +211,7 @@ function initialize(from){
 	};
 
 	if(currentMobile === null || currentMobile != mobile){
-		Theming.attachApplied(init);
+		sap.ui.getCore().attachThemeChanged(init);
 
 		if(!currentMobile && oShell){
 			oShell._getSearchTool().close();
@@ -219,7 +219,7 @@ function initialize(from){
 
 		currentMobile = mobile;
 		jQuery("#root").html("");
-		Theming.setTheme(mobile ? "sap_belize" : "sap_bluecrystal");
+		sap.ui.getCore().applyTheme(mobile ? "sap_belize" : "sap_bluecrystal");
 	}else{
 		init();
 	}

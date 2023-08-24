@@ -68,7 +68,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Settings", function(assert) {
-		assert.equal(Theming.getTheme(), "SapSampleTheme2", "tag config should override global config");
+		assert.equal(Configuration.getTheme(), "SapSampleTheme2", "tag config should override global config");
 		assert.deepEqual(Configuration.getValue("modules"), ["sap.ui.core.library"], "Module List in configuration matches configured modules/libraries");
 	});
 

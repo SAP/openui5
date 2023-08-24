@@ -13,11 +13,10 @@ sap.ui.define([
 	'sap/ui/core/Configuration',
 	'sap/ui/core/Rendering',
 	'sap/ui/core/RenderManager',
-	'sap/ui/core/Theming',
 	'sap/ui/core/theming/ThemeManager',
 	'sap/ui/qunit/utils/createAndAppendDiv',
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Configuration, Rendering, RenderManager, Theming, ThemeManager, createAndAppendDiv, nextUIUpdate) {
+], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Configuration, Rendering, RenderManager, ThemeManager, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	var privateLoaderAPI = sap.ui.loader._;
@@ -184,12 +183,12 @@ sap.ui.define([
 		var oBtn = new TestButton("testMyButton", {text:"Hallo JSUnit"});
 		oBtn.onThemeChanged = function(oCtrlEvent) {
 			assert.ok(oCtrlEvent, "TestButton#onThemeChanged is called");
-			assert.equal(oCtrlEvent.theme, Theming.getTheme(), "Default theme is passed along control event");
+			assert.equal(oCtrlEvent.theme, oCore.getConfiguration().getTheme(), "Default theme is passed along control event");
 		};
 
 		function handler(oEvent) {
 			assert.ok(oEvent, "attachThemeChanged is called");
-			assert.equal(oEvent.getParameter("theme"), Theming.getTheme(), "Default theme is passed along Core event");
+			assert.equal(oEvent.getParameter("theme"), oCore.getConfiguration().getTheme(), "Default theme is passed along Core event");
 
 			// cleanup
 			oCore.detachThemeChanged(handler);
