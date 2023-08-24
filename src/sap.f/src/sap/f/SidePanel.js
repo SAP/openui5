@@ -1288,20 +1288,18 @@ sap.ui.define([
 	SidePanel.prototype._onTouchStart = function(oEvent) {
 		oEvent.preventDefault();
 		if (oEvent.button === 0 || oEvent.type === "touchstart") {
-			this.getDomRef().querySelector(".sapFSPSplitterBar").classList.add("sapFSPSplitterActive");
+			if ((Device.system.desktop || Device.system.combi) &&
+				!(Device.system.tablet || Device.system.phone)){
+				this.getDomRef().querySelector(".sapFSPSplitterBar").focus();
+			}
 			this._bResizeStarted = true;
 			this._iStartPositionX = oEvent.touches ? oEvent.touches[0].pageX : oEvent.pageX;
 		}
 	};
 
 	SidePanel.prototype._onTouchEnd = function(oEvent) {
-		var oDomRef = this.getDomRef(),
-			oSplitter = oDomRef && oDomRef.querySelector(".sapFSPSplitterBar");
-
 		this._bResizeStarted && oEvent.preventDefault();
 		this._bResizeStarted = false;
-
-		oSplitter && oSplitter.classList.remove("sapFSPSplitterActive");
 	};
 
 	SidePanel.prototype._onTouchMove = function(oEvent) {
