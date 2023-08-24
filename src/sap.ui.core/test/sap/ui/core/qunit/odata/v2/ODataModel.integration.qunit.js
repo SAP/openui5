@@ -14273,6 +14273,57 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: If a list binding contains created entries at the start of the list and the
+	// binding's length is final, ensure that all data is requested if the user scrolls to the end
+	// of the list.
+	// BCP: 002075129400006921272023
+	QUnit.test("Created entries at start: scrolling to the end reads all data", function (assert) {
+		var oTable,
+			oModel = createSalesOrdersModel({defaultCountMode : CountMode.Inline}),
+			sView = '\
+<Table growing="true" growingThreshold="3" id="table" items="{/SalesOrderSet}">\
+	<Input id="note" value="{Note}"/>\
+</Table>',
+		that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=3&$inlinecount=allpages", {
+				__count : "5",
+				results : [
+					{__metadata : {uri : "SalesOrderSet('1')"}, Note : "SO1", SalesOrderID : "1"},
+					{__metadata : {uri : "SalesOrderSet('2')"}, Note : "SO2", SalesOrderID : "2"},
+					{__metadata : {uri : "SalesOrderSet('3')"}, Note : "SO3", SalesOrderID : "3"}
+				]
+			})
+			.expectValue("note", ["SO1", "SO2", "SO3"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectValue("note", ["SONew", "SO1", "SO2", "SO3"]);
+
+			// code under test - create an item at the start of the list
+			oTable.getBinding("items").create({Note : "SONew"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderSet?$skip=3&$top=2", {
+				results : [
+					{__metadata : {uri : "SalesOrderSet('4')"}, Note : "SO4", SalesOrderID : "4"},
+					{__metadata : {uri : "SalesOrderSet('5')"}, Note : "SO5", SalesOrderID : "5"}
+				]
+			});
+
+			that.expectValue("note", ["SO3", "SO4", "SO5"], 3);
+
+			// code under test - scroll down to get all data from server
+			oTable.requestItems();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: If the table displays only transient entities (no threshold is set) and a new
 	// control filter is set on the table the number of available entities is properly displayed.
 	// CPOUI5MODELS-692
