@@ -94,54 +94,42 @@ sap.ui.define([
 						{
 							key: "One",
 							title: "Standard",
-							originalTitle: "Standard",
 							author: "A",
 							layer: Layer.VENDOR,
 							favorite: true,
-							originalFavorite: true,
 							visible: true
 						}, {
 							key: "1",
 							title: "One",
-							originalTitle: "One",
 							author: "A",
 							layer: Layer.USER,
 							change: true,
 							favorite: true,
-							originalFavorite: true,
 							visible: true,
 							executeOnSelect: true
 						}, {
 							key: "2",
 							title: "Two",
-							originalTitle: "Two",
 							author: "V",
 							layer: Layer.CUSTOMER,
 							favorite: true,
-							originalFavorite: true,
 							visible: true,
-							contexts: { role: ["V"] },
-							originalContexts: { role: ["V"] }
+							contexts: { role: ["V"] }
 						}, {
 							key: "3",
 							title: "Three",
-							originalTitle: "Three",
 							author: "U",
 							layer: Layer.CUSTOMER,
 							favorite: true,
-							originalFavorite: true,
 							visible: true,
-							contexts: { role: [] },
-							originalContexts: { role: [] }
+							contexts: { role: [] }
 						}, {
 							key: "4",
 							title: "Four",
-							originalTitle: "Four",
 							author: "Z",
 							layer: Layer.USER,
 							change: true,
 							favorite: true,
-							originalFavorite: true,
 							visible: true
 						}
 					]
@@ -251,7 +239,7 @@ sap.ui.define([
 			assert.ok(this._oVM._openVariantList.called);
 		});
 
-		QUnit.skip("Check title", function(assert) {
+		QUnit.test("Check title", function(assert) {
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this.oVariantManagement.setCurrentVariantKey("2");
@@ -260,11 +248,12 @@ sap.ui.define([
 			assert.equal(this.oVariantManagement.getTitle(), this._oVM.oVariantText);
 			assert.equal(this.oVariantManagement.getTitle().getText(), "Two");
 
-			var aItems = this.oVariantManagement.getVariants();
+			var aItems = this.oVariantManagement._getInnerItems();
 			assert.ok(aItems);
 			assert.equal(aItems.length, 5);
 
 			aItems[2].title = "Hugo";
+			oModel.getData().One.currentVariant = "2"; // one way binding!
 			oModel.checkUpdate(true);
 			sap.ui.getCore().applyChanges();
 
@@ -277,15 +266,16 @@ sap.ui.define([
 			assert.equal(aItems.length, 0);
 
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
+			sap.ui.getCore().applyChanges();
 
 			aItems = this.oVariantManagement.getVariants();
 			assert.ok(aItems);
 			assert.equal(aItems.length, 5);
-			assert.equal(aItems[0].key, this.oVariantManagement.getStandardVariantKey());
-			assert.equal(aItems[1].key, "1");
-			assert.equal(aItems[1].visible, true);
-			assert.equal(aItems[1].originalTitle, aItems[1].title);
-			assert.equal(aItems[2].key, "2");
+			assert.equal(aItems[0].getKey(), this.oVariantManagement.getStandardVariantKey());
+			assert.equal(aItems[1].getKey(), "1");
+			assert.equal(aItems[1].getVisible(), true);
+			assert.equal(aItems[1]._getOriginalTitle(), aItems[1].getTitle());
+			assert.equal(aItems[2].getKey(), "2");
 		});
 
 		QUnit.test("Check acc text", function(assert) {
@@ -451,31 +441,6 @@ sap.ui.define([
 			oModel.checkUpdate(true);
 
 			assert.ok(!this._oVM.oVariantSelectionPage.getShowFooter());
-		});
-
-		QUnit.skip("Check 'variantBusy'", function(assert) {
-			var oInput = new Input();
-
-			this.oVariantManagement.addAssociation("for", oInput);
-
-			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
-			this.oVariantManagement._openVariantList();
-
-			assert.ok(!oInput.getBusy());
-
-			var oData = this.oVariantManagement.getBindingContext(ControlVariantApplyAPI.getVariantModelName()).getObject();
-			oData.variantBusy = !oData.variantBusy;
-
-			oModel.checkUpdate(true);
-
-			assert.ok(oInput.getBusy());
-
-			oData.variantBusy = !oData.variantBusy;
-			oModel.checkUpdate(true);
-
-			assert.ok(!oInput.getBusy());
-
-			oInput.destroy();
 		});
 
 		QUnit.test("Check 'editable'", function(assert) {
@@ -776,14 +741,13 @@ sap.ui.define([
 			assert.ok(aItems);
 			assert.equal(aItems.length, 5);
 
-			// oItemDel.visible = false;
-			oItemRen.setTitle("Not Three");
-
 			this._oVM._createManagementDialog();
 			assert.ok(this._oVM.oManagementDialog);
 			sinon.stub(this._oVM.oManagementDialog, "open");
 
 			this._oVM._openManagementDialog();
+
+			oItemRen.setTitle("Not Three");
 
 			var sItemKey = "1";
 			var oListItem = this._oVM._getRowForKey(sItemKey);
@@ -816,7 +780,7 @@ sap.ui.define([
 			var oItem = this._oVM._getItemByKey("3");
 			assert.ok(oItem);
 			assert.equal(oItem.getTitle(), "Three");
-			assert.equal(oItem.getOriginalTitle(), oItem.getTitle());
+			assert.equal(oItem._getOriginalTitle(), oItem.getTitle());
 		});
 
 		QUnit.test("Checking _handleManageSavePressed; deleted item is NOT selected", function(assert) {
@@ -1091,11 +1055,11 @@ sap.ui.define([
 		QUnit.test("Checking _triggerSearchInManageDialog", function(assert) {
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
-			assert.ok(!this._oVM._bDeleteOccured);
+			assert.ok(!this._oVM._bRebindRequired);
 
 			this._oVM._createManagementDialog();
 			this._oVM._triggerSearchInManageDialog(null, this._oVM.oManagementTable);
-			assert.ok(!this._oVM._bDeleteOccured);
+			assert.ok(!this._oVM._bRebindRequired);
 
 			var oEvent = {
 				getParameters() {
@@ -1103,12 +1067,12 @@ sap.ui.define([
 				}
 			};
 			this._oVM._triggerSearchInManageDialog(oEvent, this._oVM.oManagementTable);
-			assert.ok(!this._oVM._bDeleteOccured);
+			assert.ok(!this._oVM._bRebindRequired);
 
 			sinon.stub(oEvent, "getParameters").returns({});
 
 			this._oVM._triggerSearchInManageDialog(oEvent, this._oVM.oManagementTable);
-			assert.ok(this._oVM._bDeleteOccured);
+			assert.ok(this._oVM._bRebindRequired);
 		});
 
 		QUnit.test("Checking _handleManageSavePressed; deleted item is default variant and Standard marked as non favorite", function(assert) {

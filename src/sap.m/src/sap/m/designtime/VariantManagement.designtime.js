@@ -50,12 +50,6 @@ sap.ui.define([
 			inErrorState: {
 				ignore: false
 			},
-			executeOnSelectionForStandardDefault: {
-				ignore: false
-			},
-			displayTextForExecuteOnSelectionForStandardVariant: {
-				ignore: false
-			},
 			level: {
 				ignore: false
 			},

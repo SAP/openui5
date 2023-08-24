@@ -619,18 +619,10 @@ sap.ui.define([
 	 * @returns {array} All variants. In case the model is not yet set, an empty array will be returned.
 	 */
 	VariantManagement.prototype.getVariants = function() {
-		var aItems = [];
-		if (this.oContext && this.oContext.getObject()) {
-			aItems = this.oContext.getObject().variants.filter(function(oItem) {
-				if (!oItem.hasOwnProperty("visible")) {
-					return true;
-				}
-
-				return oItem.visible;
-			});
-		}
-
-		return aItems;
+		return this._oVM ? this._oVM.getItems() : [];
+	};
+	VariantManagement.prototype.getVariantByKey = function(sKey) {
+		return this._oVM ? this._oVM._getItemByKey(sKey) : null;
 	};
 
 	VariantManagement.prototype.getTitle = function() {
@@ -895,16 +887,12 @@ sap.ui.define([
 			sharing: `{${sModelName}>sharing}`,
 			remove: `{${sModelName}>remove}`,
 			favorite: `{${sModelName}>favorite}`,
-			originalFavorite: `{${sModelName}>originalFavorite}`,
 			executeOnSelect: `{${sModelName}>executeOnSelect}`,
-			originalExecuteOnSelect: `{${sModelName}>originalExecuteOnSelect}`,
 			rename: `{${sModelName}>rename}`,
-			originalTitle: `{${sModelName}>originalTitle}`,
 			visible: `{${sModelName}>visible}`,
 			changeable: `{${sModelName}>change}`,
 			author: `{${sModelName}>author}`,
-			contexts: `{${sModelName}>contexts}`,
-			originalContexts: `{${sModelName}>originalContexts}`
+			contexts: `{${sModelName}>contexts}`
 		});
 
 		this._oVM.bindAggregation("items", {

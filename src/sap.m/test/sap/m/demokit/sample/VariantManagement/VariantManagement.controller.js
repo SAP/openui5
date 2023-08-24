@@ -15,40 +15,9 @@ sap.ui.define([
 				closeOnBrowserNavigation: true
 			});
 		},
-		_getItemByKey: function(sKey) {
-			var oItem = null;
-			var aItems = this._oVM.getItems();
-			if (aItems) {
-				aItems.some(function(oEntry) {
-					if (oEntry.getKey() === sKey) {
-						oItem = oEntry;
-					}
-
-					return (oItem !== null);
-				});
-			}
-
-			return oItem;
-		},
-		_getFirstVisibleItem: function() {
-			var oItem = null;
-			var aItems = this._oVM.getItems();
-			if (aItems) {
-				aItems.some(function(oEntry) {
-					if (oEntry.getFavorite()) {
-						oItem = oEntry;
-					}
-
-					return (oItem !== null);
-				});
-			}
-
-			return oItem;
-		},
-
 		_checkCurrentVariant: function() {
 			var sSelectedKey = this._oVM.getSelectedKey();
-			var oItem = this._getItemByKey(sSelectedKey);
+			var oItem = this._oVM.getItemByKey(sSelectedKey);
 			if (!oItem) {
 				var sKey = this._oVM.getStandardVariantKey();
 				if (sKey) {
@@ -59,40 +28,10 @@ sap.ui.define([
 		_updateItems: function(mParams) {
 			if (mParams.deleted) {
 				mParams.deleted.forEach(function(sKey) {
-						var oItem = this._getItemByKey(sKey);
+						var oItem = this._oVM.getItemByKey(sKey);
 						if (oItem) {
 							this._oVM.removeItem(oItem);
 							oItem.destroy();
-						}
-				}.bind(this));
-			}
-
-			if (mParams.renamed) {
-				mParams.renamed.forEach(function(oElement) {
-						var oItem = this._getItemByKey(oElement.key);
-						if (oItem) {
-							oItem.setTitle(oElement.name);
-							oItem.setOriginalTitle(oElement.name);
-						}
-				}.bind(this));
-			}
-
-			if (mParams.exe) {
-				mParams.exe.forEach(function(oElement) {
-						var oItem = this._getItemByKey(oElement.key);
-						if (oItem) {
-							oItem.setExecuteOnSelect(oElement.exe);
-							oItem.setOriginalExecuteOnSelect(oElement.exe);
-						}
-				}.bind(this));
-			}
-
-			if (mParams.fav) {
-				mParams.fav.forEach(function(oElement) {
-						var oItem = this._getItemByKey(oElement.key);
-						if (oItem) {
-							oItem.setFavorite(oElement.visible);
-							oItem.setOriginalFavorite(oElement.visible);
 						}
 				}.bind(this));
 			}
@@ -109,8 +48,6 @@ sap.ui.define([
 			var oItem = new VariantItem({
 				key: sKey,
 				title: mParams.name,
-				originalTitle: mParams.name,
-				originalExecuteOnSelect: mParams.execute,
 				executeOnSelect: mParams.execute,
 				author: "sample",
 				changeable: true,
@@ -121,7 +58,7 @@ sap.ui.define([
 				oItem.setSharing(mParams.public);
 			}
 			if (mParams.def) {
-				this._oVM.setDefaultKey(mParams.def);
+				this._oVM.setDefaultKey(sKey);
 			}
 
 			this._oVM.addItem(oItem);
@@ -144,7 +81,7 @@ sap.ui.define([
 		onSave: function(event) {
 			var params = event.getParameters();
 			if (params.overwrite) {
-				var oItem = this._getItemByKey(params.key);
+				var oItem = this._oVM.getItemByKey(params.key);
 				this._showMessagesMessage("View '" + oItem.getTitle() +  "' updated.");
 			} else {
 				this._createNewItem(params);

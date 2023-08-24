@@ -52,27 +52,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * Contains the initial value of the property <code>favorite</code>. Is used for cancel operations.
-				 */
-				originalFavorite: {
-					type: "boolean",
-					group: "Misc",
-					defaultValue: true
-				},
-
-				/**
 				 * Indicates if the item is marked as apply automatically.
 				 */
 				executeOnSelect: {
-					type: "boolean",
-					group: "Misc",
-					defaultValue: false
-				},
-
-				/**
-				 * Contains the initial value of the property <code>executeOnSelect</code>. Is used for cancel operations.
-				 */
-				originalExecuteOnSelect: {
 					type: "boolean",
 					group: "Misc",
 					defaultValue: false
@@ -96,14 +78,6 @@ sap.ui.define([
 					defaultValue: null
 				},
 
-				/**
-				 * Contains the initial value of the property <code>title</code>. Is used for cancel operations.
-				 */
-				originalTitle: {
-					type: "string",
-					group: "Misc",
-					defaultValue: null
-				},
 
 				/**
 				 * Indicates if the item is visible.
@@ -142,20 +116,118 @@ sap.ui.define([
 				},
 
 				/**
+				 * Contains the initial value of the property <code>favorite</code>. Is used for cancel operations.
+				 */
+				_originalFavorite: {
+					type: "boolean",
+					visibility: "hidden",
+					defaultValue: true
+				},
+
+				/**
+				 * Contains the initial value of the property <code>executeOnSelect</code>. Is used for cancel operations.
+				 */
+				_originalExecuteOnSelect: {
+					type: "boolean",
+					visibility: "hidden",
+					defaultValue: false
+				},
+
+				/**
+				 * Contains the initial value of the property <code>title</code>. Is used for cancel operations.
+				 */
+				_originalTitle: {
+					type: "string",
+					visibility: "hidden",
+					defaultValue: null
+				},
+
+				/**
 				 * Contains the initial value of the property <code>contexts</code>. Is used for cancel operations.
 				 */
-				originalContexts:{
+				_originalContexts:{
 					type: "object",
 					group: "Misc",
+					visibility: "hidden",
 					defaultValue: {}
 				}
 			}
 		}
 	});
 
+	VariantItem.prototype.init = function() {
+		Item.prototype.init.apply(this);
+		this._bOriginalTitleSet = false;
+		this._bOriginalFavoriteSet = false;
+		this._bOiginalExecuteOnSelectSet = false;
+		this._oOriginalContextsSet = false;
+	};
+
 	VariantItem.prototype.setText = function(sText) {
 		this.setProperty("text", sText);
 		this.setTitle(sText);
+		return this;
+	};
+
+	VariantItem.prototype.setTitle = function(sValue) {
+		this.setProperty("title", sValue);
+		if (!this._bOriginalTitleSet) {
+			this._bOriginalTitleSet = true;
+			this._setOriginalTitle(sValue);
+		}
+		return this;
+	};
+	VariantItem.prototype.setFavorite = function(bValue) {
+		this.setProperty("favorite", bValue);
+		if (!this._bOriginalFavoriteSet) {
+			this._bOriginalFavoriteSet = true;
+			this._setOriginalFavorite(bValue);
+		}
+		return this;
+	};
+	VariantItem.prototype.setExecuteOnSelect = function(bValue) {
+		this.setProperty("executeOnSelect", bValue);
+		if (!this._bOiginalExecuteOnSelectSet) {
+			this._bOiginalExecuteOnSelectSet = true;
+			this._setOriginalExecuteOnSelect(bValue);
+		}
+		return this;
+	};
+	VariantItem.prototype.setContexts = function(oValue) {
+		this.setProperty("contexts", oValue);
+		if (!this._oOriginalContextsSet) {
+			this._oOriginalContextsSet = true;
+			this._setOriginalContexts(oValue);
+		}
+		return this;
+	};
+
+	VariantItem.prototype._getOriginalFavorite = function() {
+		return 	this.getProperty("_originalFavorite");
+	};
+	VariantItem.prototype._setOriginalFavorite = function(vValue) {
+		this.setProperty("_originalFavorite", vValue);
+		return this;
+	};
+	VariantItem.prototype._getOriginalExecuteOnSelect = function() {
+		return 	this.getProperty("_originalExecuteOnSelect");
+	};
+	VariantItem.prototype._setOriginalExecuteOnSelect = function(vValue) {
+		this.setProperty("_originalExecuteOnSelect", vValue);
+		return this;
+	};
+	VariantItem.prototype._getOriginalTitle = function() {
+		return 	this.getProperty("_originalTitle");
+	};
+	VariantItem.prototype._setOriginalTitle = function(vValue) {
+		this.setProperty("_originalTitle", vValue);
+		return this;
+	};
+	VariantItem.prototype._getOriginalContexts = function() {
+		return this.getProperty("_originalContexts");
+	};
+	VariantItem.prototype._setOriginalContexts = function(vValue) {
+		this.setProperty("_originalContexts", vValue);
 		return this;
 	};
 
