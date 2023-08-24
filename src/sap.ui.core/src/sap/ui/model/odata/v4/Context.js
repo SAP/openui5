@@ -1725,7 +1725,8 @@ sap.ui.define([
 
 		if (this.iIndex === iVIRTUAL || this.isTransient() && !this.isInactive()
 			|| this.oBinding.getHeaderContext && this === this.oBinding.getHeaderContext()
-			|| this.oBinding.getParameterContext && this === this.oBinding.getParameterContext()) {
+			// only operation bindings have a parameter context, for others the function fails
+			|| this.oBinding.oOperation && this === this.oBinding.getParameterContext()) {
 			throw new Error("Cannot reset: " + this);
 		}
 

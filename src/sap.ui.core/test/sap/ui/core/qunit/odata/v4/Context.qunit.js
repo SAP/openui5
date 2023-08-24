@@ -3715,6 +3715,7 @@ sap.ui.define([
 	QUnit.test("resetChanges, w/o oDeletePromise, bInactive=" + bInactive, function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
+				getParameterContext : "must not be called",
 				resetChangesForPath : function () {}
 			},
 			oModel = {
@@ -3848,7 +3849,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("resetChanges: throws error on parameter context", function (assert) {
-		var oBinding = {getParameterContext : function () {}},
+		var oBinding = {oOperation : {}, getParameterContext : function () {}},
 			oContext = Context.create({/*oModel*/}, oBinding, "/Operation(...)/$Parameter");
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
