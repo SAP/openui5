@@ -2,18 +2,18 @@
 	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.sample.odata.v4.DataAggregation.DataAggregation"
 	xmlns="sap.ui.table"
+	xmlns:rm="sap.ui.table.rowmodes"
 	xmlns:m="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 
 	<!-- TODO: enable sorting in table -->
 	<!-- TODO: enhance auto type detection for @$ui5.node.*? -->
 	<!-- Note: for $$aggregation, see controller's onInit! -->
-	<Table id="table" ariaLabelledBy="title" fixedRowCount="1"
+	<Table id="table" ariaLabelledBy="title"
 		rows="{path : '/BusinessPartners', parameters : {
 				$count : false,
 				$orderby : 'Country desc,Region desc,Segment,AccountResponsible'
-			}, suspended : true}" selectionMode="None" threshold="0"
-		visibleRowCount="{ui>/iVisibleRowCount}">
+			}, suspended : true}" selectionMode="None" threshold="0">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="Sales Amount by Account Responsible"/>
@@ -26,6 +26,9 @@
 					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
 			</m:Toolbar>
 		</extension>
+		<rowMode>
+			<rm:Fixed rowCount="{ui>/iVisibleRowCount}" fixedTopRowCount="1"/>
+		</rowMode>
 		<Column hAlign="End" width="5em">
 			<m:Label text="Level"/>
 			<template>

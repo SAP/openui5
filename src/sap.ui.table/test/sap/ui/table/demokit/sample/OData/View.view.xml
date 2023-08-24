@@ -14,7 +14,6 @@
 			<Table
 				id="table"
 				selectionMode="MultiToggle"
-				visibleRowCount="7"
 				enableSelectAll="false"
 				rows="{
 					path: '/ProductSet',

@@ -15,7 +15,6 @@
 					id="table"
 					rows="{/ProductCollection}"
 					selectionMode="MultiToggle"
-					visibleRowCount="7"
 					setEnableGrouping="true"
 					ariaLabelledBy="title">
 				<extension>

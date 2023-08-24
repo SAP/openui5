@@ -27,8 +27,10 @@
 	var sColumnWidth = "150px";
 
 	new sap.ui.table.Table({
-		visibleRowCount: 1,
-		rowHeight: 40,
+		rowMode: new sap.ui.table.rowmodes.Fixed({
+			rowCount: 1,
+			rowContentHeight: 40
+		}),
 		selectionMode: "None",
 		columns: [
 			new sap.ui.table.Column({
@@ -125,7 +127,9 @@
 	}).placeAt("body");
 
 	new sap.ui.table.Table({
-		visibleRowCount: 1,
+		rowMode: new sap.ui.table.rowmodes.Fixed({
+			rowCount: 1
+		}),
 		selectionMode: "None",
 		columns: [
 			new sap.ui.table.Column({
@@ -196,7 +200,9 @@
 	}).placeAt("body");
 
 	new sap.ui.table.Table({
-		visibleRowCount: 1,
+		rowMode: new sap.ui.table.rowmodes.Fixed({
+			rowCount: 1
+		}),
 		selectionMode: "None",
 		columns: [
 			new sap.ui.table.Column({
@@ -271,7 +277,9 @@
 	}).placeAt("body");
 
 	new sap.ui.table.Table({
-		visibleRowCount: 1,
+		rowMode: new sap.ui.table.rowmodes.Fixed({
+			rowCount: 1
+		}),
 		selectionMode: "None",
 		columns: [
 			new sap.ui.table.Column({
@@ -354,7 +362,9 @@
 	}).placeAt("body");
 
 	new sap.ui.table.Table({
-		visibleRowCount: 1,
+		rowMode: new sap.ui.table.rowmodes.Fixed({
+			rowCount: 1
+		}),
 		selectionMode: "None",
 		columns: [
 			new sap.ui.table.Column({
@@ -399,7 +409,9 @@
 	}).placeAt("body");
 
 	new sap.ui.table.TreeTable({
-		visibleRowCount: 1,
+		rowMode: new sap.ui.table.rowmodes.Fixed({
+			rowCount: 1
+		}),
 		selectionMode: "None",
 		columns: [
 			new sap.ui.table.Column({
@@ -486,7 +498,9 @@
 	}).placeAt("body");
 
 	new sap.ui.table.TreeTable({
-		visibleRowCount: 1,
+		rowMode: new sap.ui.table.rowmodes.Fixed({
+			rowCount: 1
+		}),
 		selectionMode: "None",
 		columns: [
 			new sap.ui.table.Column({
@@ -563,7 +577,9 @@
 	}).placeAt("body");
 
 	new sap.ui.table.TreeTable({
-		visibleRowCount: 1,
+		rowMode: new sap.ui.table.rowmodes.Fixed({
+			rowCount: 1
+		}),
 		selectionMode: "None",
 		columns: [
 			new sap.ui.table.Column({
@@ -644,7 +660,9 @@
 	}).placeAt("body");
 
 	new sap.ui.table.TreeTable({
-		visibleRowCount: 1,
+		rowMode: new sap.ui.table.rowmodes.Fixed({
+			rowCount: 1
+		}),
 		selectionMode: "None",
 		columns: [
 			new sap.ui.table.Column({
@@ -773,7 +791,9 @@
 	}).placeAt("body");
 
 	new sap.ui.table.TreeTable({
-		visibleRowCount: 1,
+		rowMode: new sap.ui.table.rowmodes.Fixed({
+			rowCount: 1
+		}),
 		selectionMode: "None",
 		columns: [
 			new sap.ui.table.Column({

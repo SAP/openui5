@@ -4,11 +4,21 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/CreationRow",
 	"sap/ui/table/Column",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/m/Toolbar",
 	"sap/ui/core/Core"
-], function(TableQUnitUtils, CreationRow, Column, qutils, KeyCodes, Toolbar, oCore) {
+], function(
+	TableQUnitUtils,
+	CreationRow,
+	Column,
+	FixedRowMode,
+	qutils,
+	KeyCodes,
+	Toolbar,
+	oCore
+) {
 	"use strict";
 
 	var TestControl = TableQUnitUtils.TestControl;
@@ -17,7 +27,9 @@ sap.ui.define([
 	QUnit.module("Public API", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
-				visibleRowCount: 1,
+				rowMode: new FixedRowMode({
+					rowCount: 1
+				}),
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 			}, function(oTable) {
@@ -62,7 +74,9 @@ sap.ui.define([
 	QUnit.module("Private API", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
-				visibleRowCount: 1,
+				rowMode: new FixedRowMode({
+					rowCount: 1
+				}),
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 			}, function(oTable) {
@@ -197,7 +211,9 @@ sap.ui.define([
 	QUnit.module("Accessibility", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
-				visibleRowCount: 1,
+				rowMode: new FixedRowMode({
+					rowCount: 1
+				}),
 				fixedColumnCount: 1,
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
@@ -253,7 +269,9 @@ sap.ui.define([
 	QUnit.module("Keyboard", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
-				visibleRowCount: 1,
+				rowMode: new FixedRowMode({
+					rowCount: 1
+				}),
 				fixedColumnCount: 1,
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
@@ -402,7 +420,9 @@ sap.ui.define([
 	QUnit.module("Cells", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
-				visibleRowCount: 1,
+				rowMode: new FixedRowMode({
+					rowCount: 1
+				}),
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 			}, function(oTable) {

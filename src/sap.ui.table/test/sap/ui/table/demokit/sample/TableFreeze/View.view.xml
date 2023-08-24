@@ -1,6 +1,7 @@
 <mvc:View
 	controllerName="sap.ui.table.sample.TableFreeze.Controller"
 	xmlns="sap.ui.table"
+	xmlns:rowmodes="sap.ui.table.rowmodes"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:u="sap.ui.unified"
 	xmlns:c="sap.ui.core"
@@ -15,7 +16,6 @@
 			<Table id="table1"
 				rows="{/ProductCollection}"
 				selectionMode="MultiToggle"
-				visibleRowCount="7"
 				ariaLabelledBy="title">
 				<extension>
 					<m:OverflowToolbar style="Clear">
@@ -32,14 +32,16 @@
 							placeholder="fixed row count"
 							tooltip="fixed row count"/>
 						<m:Input
-							id="inputButtomRow"
+							id="inputBottomRow"
 							width="20%"
 							placeholder="fixed bottom row count"
 							tooltip="fixed bottom row count"/>
 						<m:Button id="button" text="Apply" press="buttonPress"/>
 					</m:OverflowToolbar>
 				</extension>
-
+				<rowMode>
+					<rowmodes:Fixed/>
+				</rowMode>
 				<columns>
 					<Column width="11rem">
 						<m:Label text="Product Name" />

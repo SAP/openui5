@@ -93,7 +93,7 @@
 								}"
 								enableColumnReordering="false"
 								class="sapUiSizeCondensed"
-								visibleRowCountMode="Auto"
+								rowMode="Auto"
 								selectionBehavior="RowSelector"
 								rowActionCount="1"
 								visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"

@@ -4,16 +4,17 @@
 sap.ui.define(function() {
 	"use strict";
 
-	/**
-	 * Defines the row mode.
-	 *
-	 * @enum {string}
-	 * @alias sap.ui.table.rowmodes.Type
-	 * @private
-	 */
-	var Type = {
-		/**
-		 * Equivalent to the default configuration of {@link module:sap/ui/table/rowmodes/Fixed}
+    /**
+     * Defines the row mode.
+     *
+     * @enum {string}
+     * @alias sap.ui.table.rowmodes.Type
+	 * @since 1.119
+     * @public
+     */
+    var Type = {
+        /**
+         * Equivalent to the default configuration of {@link module:sap/ui/table/rowmodes/Fixed}
 		 *
 		 * @public
 		 */

@@ -37,7 +37,7 @@ sap.ui.define([
 
 			const oTable = this.byId("table");
 			if (sVisibleRowCount) {
-				oTable.setVisibleRowCount(parseInt(sVisibleRowCount));
+				oTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
 			}
 			const oRowsBinding = oTable.getBinding("rows");
 			oRowsBinding.setAggregation(this._oAggregation);
@@ -53,7 +53,7 @@ sap.ui.define([
 			// enable V4 tree table flag
 			oTreeTable._oProxy._bEnableV4 = true;
 			if (sVisibleRowCount) {
-				oTreeTable.setVisibleRowCount(parseInt(sVisibleRowCount));
+				oTreeTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
 			}
 			const oTreeRowsBinding = oTreeTable.getBinding("rows");
 			oTreeRowsBinding.setAggregation(this._oAggregation);

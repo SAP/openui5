@@ -16,9 +16,11 @@ sap.ui.define([
 						controlType : "sap.ui.table.Table",
 						id : "businessPartnerTable",
 						success : function (oTable) {
+							var iRowCount = oTable.getRowMode().getRowCount();
+
 							oTable.setFirstVisibleRow(Math.min(
-								oTable.getFirstVisibleRow() + oTable.getVisibleRowCount(),
-								oTable.getBinding("rows").getCount() - oTable.getVisibleRowCount()
+								oTable.getFirstVisibleRow() + iRowCount,
+								oTable.getBinding("rows").getCount() - iRowCount
 							));
 							Opa5.assert.ok(true, "Page down on grid table");
 						},
