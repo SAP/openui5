@@ -402,6 +402,10 @@ sap.ui.define([
 		return false;
 	};
 
+	AnalyticalColumn.prototype._isGroupableByMenu = function() {
+		return this.isGroupableByMenu();
+	};
+
 	// This column sets its own cell content visibility settings.
 	AnalyticalColumn.prototype._setCellContentVisibilitySettings = function() {};
 
