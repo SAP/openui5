@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/testlib/TestButton",
+	"sap/ui/test/actions/Press",
 	"sap/ui/thirdparty/jquery"
-], function(Log, Control, Element, oCore, HTML, UIArea, createAndAppendDiv, nextUIUpdate, TestButton, jQuery) {
+], function(Log, Control, Element, oCore, HTML, UIArea, createAndAppendDiv, nextUIUpdate, TestButton, Press, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("uiArea1");
@@ -268,6 +269,29 @@ sap.ui.define([
 		UIArea.configureEventLogging({mouseover: 1});
 	});
 
+	QUnit.test("Control Events should be blocked depending on UIArea lock", function(assert) {
+		let bPressed = false;
+		const oPress = new Press();
+		const fnPress = () => {
+			bPressed = true;
+		};
+
+		this.oButton.getUIArea().lock();
+		this.oButton.attachPress(fnPress);
+
+		assert.ok(!bPressed, "Button must not have fired 'press' yet");
+		oPress.executeOn(this.oButton);
+		assert.ok(!bPressed, "Button still must not have fired 'press'");
+
+		this.oButton.getUIArea().unlock();
+
+		assert.ok(!bPressed, "Button still must not have fired 'press'");
+		oPress.executeOn(this.oButton);
+		assert.ok(bPressed, "Button should have fired 'press'");
+
+		this.oButton.detachPress(fnPress);
+	});
+
 
 	QUnit.module("Dependents", {
 		beforeEach: function() {
@@ -357,7 +381,7 @@ sap.ui.define([
 			this.oParent.placeAt("uiArea1");
 			oCore.applyChanges();
 
-			this.oRenderingSpy.resetHistory();
+			this.oRenderingSpy.reset();
 			this.oUiArea = this.oParent.getUIArea();
 		},
 		afterEach: function () {
@@ -417,7 +441,7 @@ sap.ui.define([
 		var oCloneParent = this.oParent.clone();
 		oCloneParent.placeAt("uiArea1");
 		oCore.applyChanges();
-		this.oRenderingSpy.resetHistory();
+		this.oRenderingSpy.reset();
 
 		this.oUiArea.suppressInvalidationFor(this.oParent);
 		this.oUiArea.suppressInvalidationFor(oCloneParent);
@@ -433,7 +457,7 @@ sap.ui.define([
 		this.oUiArea.resumeInvalidationFor(this.oParent);
 		oCore.applyChanges();
 		assert.equal(this.oRenderingSpy.callCount, 2);
-		this.oRenderingSpy.resetHistory();
+		this.oRenderingSpy.reset();
 
 		this.oUiArea.resumeInvalidationFor(oCloneParent);
 		oCore.applyChanges();
@@ -449,7 +473,7 @@ sap.ui.define([
 
 		this.oParent.invalidate();
 		oCore.applyChanges();
-		this.oRenderingSpy.resetHistory();
+		this.oRenderingSpy.reset();
 		this.oUiArea.resumeInvalidationFor(this.oChild1);
 		oCore.applyChanges();
 		assert.equal(this.oRenderingSpy.callCount, 0);
@@ -469,7 +493,7 @@ sap.ui.define([
 		this.oUiArea.resumeInvalidationFor(this.oParent);
 		oCore.applyChanges();
 		assert.ok(this.oRenderingSpy.called);
-		this.oRenderingSpy.resetHistory();
+		this.oRenderingSpy.reset();
 
 		this.oUiArea.resumeInvalidationFor(this.oChild1);
 		oCore.applyChanges();
@@ -484,7 +508,7 @@ sap.ui.define([
 		this.oDeepestChild1 = new TestControl({ header: "DeepestChild1" });
 		this.oGrandChild1.addItem(this.oDeepestChild1);
 		oCore.applyChanges();
-		this.oRenderingSpy.resetHistory();
+		this.oRenderingSpy.reset();
 
 		this.oUiArea.suppressInvalidationFor(this.oParent);
 		this.oUiArea.suppressInvalidationFor(this.oGrandChild1);
@@ -506,7 +530,7 @@ sap.ui.define([
 		this.oDeepestChild1 = new TestControl({ header: "DeepestChild1" });
 		this.oGrandChild1.addItem(this.oDeepestChild1);
 		oCore.applyChanges();
-		this.oRenderingSpy.resetHistory();
+		this.oRenderingSpy.reset();
 
 		this.oUiArea.suppressInvalidationFor(this.oParent);
 		this.oUiArea.suppressInvalidationFor(this.oGrandChild1);
@@ -518,11 +542,10 @@ sap.ui.define([
 		this.oUiArea.resumeInvalidationFor(this.oParent);
 		oCore.applyChanges();
 		assert.equal(this.oRenderingSpy.callCount, 3);
-		this.oRenderingSpy.resetHistory();
+		this.oRenderingSpy.reset();
 
 		this.oUiArea.resumeInvalidationFor(this.oGrandChild1);
 		oCore.applyChanges();
 		assert.equal(this.oRenderingSpy.callCount, 0);
 	});
-
 });

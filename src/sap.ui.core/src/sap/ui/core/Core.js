@@ -1238,8 +1238,10 @@ sap.ui.define([
 	 * @deprecated since 1.118
 	 */
 	Core.prototype.lock = function () {
-		// TODO clarify it the documentation is really (still?) true
 		this.bLocked = true;
+		UIArea.registry.forEach((oUiArea) => {
+			oUiArea.lock();
+		});
 	};
 
 	/**
@@ -1251,6 +1253,9 @@ sap.ui.define([
 	 */
 	Core.prototype.unlock = function () {
 		this.bLocked = false;
+		UIArea.registry.forEach((oUiArea) => {
+			oUiArea.unlock();
+		});
 	};
 
 	/**
