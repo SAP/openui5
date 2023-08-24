@@ -339,11 +339,10 @@ sap.ui.define([
 		}
 	}
 
-	// TODO turn into utility or put it somewhere central
 	function filterByMaxLayer(mResponse) {
-		var mFilteredReturn = merge({}, mResponse);
-		var mFlexObjects = mFilteredReturn.changes;
-		var oURLParsingService = getUShellService("URLParsing");
+		const mFilteredReturn = merge({}, mResponse);
+		const mFlexObjects = mFilteredReturn.changes;
+		const oURLParsingService = getUShellService("URLParsing");
 		if (LayerUtils.isLayerFilteringRequired(oURLParsingService)) {
 			each(_mFlexObjectInfo, function(iIndex, mFlexObjectInfo) {
 				mFlexObjectInfo.pathInResponse.forEach(function(sPath) {
