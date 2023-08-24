@@ -133,9 +133,6 @@ sap.ui.define([
 			this._prepareQuickFilter(oColumn);
 		}
 
-		/**
-		 * @deprecated As of version 1.118
-		 */
 		this._prepareQuickGroup(oColumn);
 
 		this._prepareQuickTotal(oColumn);
@@ -149,9 +146,6 @@ sap.ui.define([
 		this._oQuickActionContainer.addQuickAction(this._oQuickSort);
 		this._oQuickActionContainer.addQuickAction(this._oQuickFilter);
 
-		/**
-		 * @deprecated As of version 1.118
-		 */
 		this._oQuickActionContainer.addQuickAction(this._oQuickGroup);
 
 		this._oQuickActionContainer.addQuickAction(this._oQuickTotal);
