@@ -664,8 +664,8 @@ sap.ui.define([
 		// Therefore, the width is set of the content table is set back to be the same as the header table.
 		// BCP: 2380079867
 		if (Device.browser.safari) {
-			var oHdrCol = oDomRef.querySelector("#" + oTable.getId() + "-header");
-			var oHdrCnt = oDomRef.querySelector("#" + oTable.getId() + "-table");
+			var oHdrCol = document.getElementById(oTable.getId() + "-header");
+			var oHdrCnt = document.getElementById(oTable.getId() + "-table");
 
 			oHdrCnt.style.width = oHdrCol.style.width;
 		}
