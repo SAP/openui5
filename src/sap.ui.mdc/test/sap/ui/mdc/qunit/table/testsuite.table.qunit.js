@@ -135,6 +135,16 @@ sap.ui.define(function() {
 					}
 				},
 				sinon: false
+			},
+			"DragDropConfig": {
+				group: "DragAndDrop",
+				module: "./DragDropConfig.qunit",
+				ui5: {
+					libs: ["sap.m", "sap.ui.table", "sap.ui.mdc"]
+				},
+				coverage: {
+					only: ["sap/ui/mdc/table/DragDropConfig"]
+				}
 			}
 		}
 	};
