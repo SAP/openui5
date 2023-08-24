@@ -149,7 +149,7 @@ sap.ui.define([], function() {
         "Products(4)?$expand=Category":
           [200, oXMLHeaders, sProducts4ExpCategoryXML],
         "Invoices/$count":
-          [200, oCountHeaders, "9"],
+          [200, oCountHeaders, "8"],
         "Invoices?$skip=0&$top=100":
           [200, oJSONHeaders, sInvoicesJSON],
         "Invoices":
