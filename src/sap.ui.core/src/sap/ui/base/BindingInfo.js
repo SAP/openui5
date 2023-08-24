@@ -178,6 +178,9 @@ sap.ui.define([
 		UI5ObjectMarker: sUI5ObjectMarker
 	};
 
+	/**
+	 * @deprecated As of Version 1.119
+	 */
 	function getBindingSyntax() {
 		var sBindingSyntax = BaseConfig.get({
 			name: "sapUiBindingSyntax",
@@ -194,7 +197,11 @@ sap.ui.define([
 	Object.defineProperty(BindingInfo, "parse", {
 		get: function () {
 			if (!this.oParser) {
-				// Note: "simple" binding syntax is deprecated since 1.24
+				this.oParser = BindingParser.complexParser;
+				/**
+				 * Note: "simple" binding syntax is deprecated since 1.24
+				 * @deprecated As of Version 1.119
+				 */
 				this.oParser = getBindingSyntax() === "simple" ? BindingParser.simpleParser : BindingParser.complexParser;
 				if ( Configuration.getDesignMode() == true ) {
 					BindingParser._keepBindingStrings = true;
