@@ -130,6 +130,386 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("loadData: Client mode with server side paging - single read", function (assert) {
+		var oCallAfterUpdateCall, oData, oEntry, oReadCall, aRequestHandleKeys,
+			oModel = {
+				iSizeLimit: 100,
+				_getKey: function () {},
+				callAfterUpdate: function () {},
+				read: function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oBinding = {
+				bCanonicalRequest: "~CanonicalRequest",
+				oContext: "~Context",
+				sCustomParams: "~Custom",
+				bLengthFinal: false,
+				oModel : oModel,
+				sPath: "/~Path",
+				sRefreshGroupId : "~RefreshGroup",
+				mRequestHandles: {},
+				sSortParams: "~Sorter",
+				bTransitionMessagesOnly: true,
+				_addFilterQueryOption: function () {},
+				applyFilter: function () {},
+				applySort: function () {},
+				fireDataReceived: function () {},
+				fireDataRequested: function () {},
+				isRelative: function () {},
+				updateExpandedList: function () {},
+				useClientMode: function () {}
+			},
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("useClientMode").withExactArgs().returns(true);
+		oBindingMock.expects("_addFilterQueryOption")
+			.withExactArgs(["~Sorter"], /*!useClientMode()*/false)
+			.callsFake(function (aParams) {
+				aParams.push("~Filter"); // simulate _addFilterQueryOption implementation
+			});
+		oBindingMock.expects("isRelative").withExactArgs().returns(false);
+		oBindingMock.expects("fireDataRequested").withExactArgs();
+
+		oReadCall = oModelMock.expects("read").withExactArgs("/~Path", {
+				canonicalRequest: "~CanonicalRequest",
+				context: "~Context",
+				error: sinon.match.func,
+				groupId: "~RefreshGroup",
+				headers: {"sap-messages" : "transientOnly"},
+				success: sinon.match.func,
+				updateAggregatedMessages: undefined,
+				urlParameters: ["~Sorter", "~Filter", "~Custom"]
+			}).returns("~Read1");
+
+		// code under test
+		ODataListBinding.prototype.loadData.call(oBinding);
+
+		assert.strictEqual(oBinding.bPendingRequest, true);
+		assert.strictEqual(oBinding.bSkipDataEvents, false);
+		aRequestHandleKeys = Object.keys(oBinding.mRequestHandles);
+		assert.strictEqual(aRequestHandleKeys.length, 1);
+		assert.strictEqual(oBinding.mRequestHandles[aRequestHandleKeys[0]], "~Read1");
+
+		oBindingMock.expects("updateExpandedList").withExactArgs(["~Key"]);
+		oBindingMock.expects("applyFilter").withExactArgs();
+		oBindingMock.expects("applySort").withExactArgs();
+		oEntry = {};
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oEntry)).returns("~Key");
+		oCallAfterUpdateCall = oModelMock.expects("callAfterUpdate").withExactArgs(sinon.match.func);
+		oData = {results: [oEntry]};
+
+		// code under test - all data read
+		oReadCall.args[0][1].success(oData);
+
+		assert.strictEqual(oBinding.iLength, 1);
+		assert.strictEqual(oBinding.bLengthFinal, true);
+		assert.deepEqual(oBinding.aKeys, ["~Key"]);
+		assert.deepEqual(oBinding.aAllKeys, ["~Key"]);
+		assert.deepEqual(oBinding.mRequestHandles, {});
+		assert.strictEqual(oBinding.bPendingRequest, false);
+		assert.strictEqual(oBinding.bNeedsUpdate, true);
+		assert.strictEqual(oBinding.bIgnoreSuspend, true);
+
+		oBindingMock.expects("fireDataReceived").withExactArgs({data: sinon.match.same(oData)});
+
+		// code under test
+		oCallAfterUpdateCall.args[0][0]();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("loadData: Client mode with server side paging - first read returns enough data", function (assert) {
+		var oCallAfterUpdateCall, oData, oReadCall, aRequestHandleKeys,
+			aEntries = ["~0", "~1", "~2", "~3", "~4"],
+			oModel = {
+				iSizeLimit: 3,
+				_getKey: function () {},
+				callAfterUpdate: function () {},
+				read: function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oBinding = {
+				bCanonicalRequest: "~CanonicalRequest",
+				oContext: "~Context",
+				sCustomParams: "~Custom",
+				bLengthFinal: false,
+				oModel : oModel,
+				sPath: "/~Path",
+				sRefreshGroupId : "~RefreshGroup",
+				mRequestHandles: {},
+				sSortParams: "~Sorter",
+				bTransitionMessagesOnly: true,
+				_addFilterQueryOption: function () {},
+				applyFilter: function () {},
+				applySort: function () {},
+				fireDataReceived: function () {},
+				fireDataRequested: function () {},
+				isRelative: function () {},
+				updateExpandedList: function () {},
+				useClientMode: function () {}
+			},
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("useClientMode").withExactArgs().returns(true);
+		oBindingMock.expects("_addFilterQueryOption")
+			.withExactArgs(["~Sorter"], /*!useClientMode()*/false)
+			.callsFake(function (aParams) {
+				aParams.push("~Filter"); // simulate _addFilterQueryOption implementation
+			});
+		oBindingMock.expects("isRelative").withExactArgs().returns(false);
+		oBindingMock.expects("fireDataRequested").withExactArgs();
+
+		oReadCall = oModelMock.expects("read").withExactArgs("/~Path", {
+				canonicalRequest: "~CanonicalRequest",
+				context: "~Context",
+				error: sinon.match.func,
+				groupId: "~RefreshGroup",
+				headers: {"sap-messages" : "transientOnly"},
+				success: sinon.match.func,
+				updateAggregatedMessages: undefined,
+				urlParameters: ["~Sorter", "~Filter", "~Custom"]
+			}).returns("~Read1");
+
+		// code under test
+		ODataListBinding.prototype.loadData.call(oBinding);
+
+		assert.strictEqual(oBinding.bPendingRequest, true);
+		assert.strictEqual(oBinding.bSkipDataEvents, false);
+		aRequestHandleKeys = Object.keys(oBinding.mRequestHandles);
+		assert.strictEqual(aRequestHandleKeys.length, 1);
+		assert.strictEqual(oBinding.mRequestHandles[aRequestHandleKeys[0]], "~Read1");
+
+		oBindingMock.expects("updateExpandedList").withExactArgs(["~Key0", "~Key1", "~Key2", "~Key3", "~Key4"]);
+		oBindingMock.expects("applyFilter").withExactArgs();
+		oBindingMock.expects("applySort").withExactArgs();
+		oModelMock.expects("_getKey").withExactArgs("~0").returns("~Key0");
+		oModelMock.expects("_getKey").withExactArgs("~1").returns("~Key1");
+		oModelMock.expects("_getKey").withExactArgs("~2").returns("~Key2");
+		oModelMock.expects("_getKey").withExactArgs("~3").returns("~Key3");
+		oModelMock.expects("_getKey").withExactArgs("~4").returns("~Key4");
+		oCallAfterUpdateCall = oModelMock.expects("callAfterUpdate").withExactArgs(sinon.match.func);
+		oData = {
+			__next: "~NextLink", // more data on server
+			results: aEntries // but model size limit reached
+		};
+
+		// code under test
+		oReadCall.args[0][1].success(oData);
+
+		assert.strictEqual(oBinding.iLength, 5);
+		assert.strictEqual(oBinding.bLengthFinal, true);
+		assert.deepEqual(oBinding.aKeys, ["~Key0", "~Key1", "~Key2", "~Key3", "~Key4"]);
+		assert.deepEqual(oBinding.aAllKeys, ["~Key0", "~Key1", "~Key2", "~Key3", "~Key4"]);
+		assert.deepEqual(oBinding.mRequestHandles, {});
+		assert.strictEqual(oBinding.bPendingRequest, false);
+		assert.strictEqual(oBinding.bNeedsUpdate, true);
+		assert.strictEqual(oBinding.bIgnoreSuspend, true);
+
+		oBindingMock.expects("fireDataReceived").withExactArgs({data: sinon.match.same(oData)});
+
+		// code under test
+		oCallAfterUpdateCall.args[0][0]();
+	});
+
+	//*********************************************************************************************
+[CountMode.InlineRepeat, CountMode.Inline, CountMode.None, CountMode.Request].forEach(function (sCountMode) {
+	var sTitle = "loadData: Client mode, server side paging, more reads, count mode: " + sCountMode;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCallAfterUpdateCall, oData, oEntry0, oEntry1, oEntry2, oEntry3, oEntry4, oEntry5,
+			sHandleKey, oReadCall, oReadCall2, oReadCall3, aRequestHandleKeys, fnSuccess,
+			oModel = {
+				iSizeLimit: 30,
+				_getKey: function () {},
+				callAfterUpdate: function () {},
+				read: function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oBinding = {
+				bCanonicalRequest: "~CanonicalRequest",
+				oContext: "~Context",
+				sCountMode: sCountMode,
+				sCustomParams: "~Custom",
+				bLengthFinal: false,
+				oModel : oModel,
+				sPath: "/~Path",
+				sRefreshGroupId : "~RefreshGroup",
+				mRequestHandles: {},
+				sSortParams: "~Sorter",
+				bTransitionMessagesOnly: true,
+				_addFilterQueryOption: function () {},
+				applyFilter: function () {},
+				applySort: function () {},
+				fireDataReceived: function () {},
+				fireDataRequested: function () {},
+				isRelative: function () {},
+				updateExpandedList: function () {},
+				useClientMode: function () {}
+			},
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("useClientMode").withExactArgs().returns(true);
+		oBindingMock.expects("_addFilterQueryOption")
+			.withExactArgs(["~Sorter"], /*!useClientMode()*/false)
+			.callsFake(function (aParams) {
+				aParams.push("~Filter"); // simulate _addFilterQueryOption implementation
+			});
+		oBindingMock.expects("isRelative").withExactArgs().returns(false);
+		oBindingMock.expects("fireDataRequested").withExactArgs();
+		oReadCall = oModelMock.expects("read").withExactArgs("/~Path", {
+				canonicalRequest: "~CanonicalRequest",
+				context: "~Context",
+				error: sinon.match.func,
+				groupId: "~RefreshGroup",
+				headers: {"sap-messages" : "transientOnly"},
+				success: sinon.match.func,
+				updateAggregatedMessages: undefined,
+				urlParameters: sCountMode === CountMode.None || sCountMode === CountMode.Request
+					? ["~Sorter", "~Filter", "~Custom"]
+					: ["~Sorter", "~Filter", "~Custom", "$inlinecount=allpages"]
+			}).returns("~Read1");
+
+		// code under test - initial loading
+		ODataListBinding.prototype.loadData.call(oBinding);
+
+		assert.strictEqual(oBinding.bPendingRequest, true);
+		assert.strictEqual(oBinding.bSkipDataEvents, false);
+		aRequestHandleKeys = Object.keys(oBinding.mRequestHandles);
+		assert.strictEqual(aRequestHandleKeys.length, 1);
+		sHandleKey = aRequestHandleKeys[0];
+		assert.strictEqual(oBinding.mRequestHandles[sHandleKey], "~Read1");
+
+		fnSuccess = oReadCall.args[0][1].success;
+		oEntry0 = {};
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oEntry0)).returns("~Key0");
+		oData = {
+			__next: "~NextLink",
+			results: [oEntry0]
+		};
+		if (sCountMode !== CountMode.None && sCountMode !== CountMode.Request) {
+			oData.__count = "123";
+		}
+		oBindingMock.expects("_addFilterQueryOption")
+			.withExactArgs(["$skip=1&$top=29", "~Sorter"], /*!useClientMode()*/false)
+			.callsFake(function (aParams) {
+				aParams.push("~Filter"); // simulate _addFilterQueryOption implementation
+			});
+		// read call for the missing entries up to model size limit
+		oReadCall2 = oModelMock.expects("read").withExactArgs("/~Path", {
+			canonicalRequest: "~CanonicalRequest",
+			context: "~Context",
+			error: sinon.match.func,
+			groupId: "~RefreshGroup",
+			headers: {"sap-messages" : "transientOnly"},
+			success: sinon.match.func,
+			updateAggregatedMessages: undefined,
+			urlParameters: sCountMode === CountMode.InlineRepeat
+				? ["$skip=1&$top=29", "~Sorter", "~Filter", "~Custom", "$inlinecount=allpages"]
+				: ["$skip=1&$top=29", "~Sorter", "~Filter", "~Custom"]
+		}).returns("~Read2");
+
+		// code under test - server side paging (here 3, in real maybe 5000); response contains a __next link
+		fnSuccess(oData);
+
+		assert.strictEqual(oBinding.mRequestHandles[sHandleKey], "~Read2");
+		assert.strictEqual(oBinding.iLength,
+			sCountMode === CountMode.None || sCountMode === CountMode.Request ? undefined : 123);
+		assert.strictEqual(oBinding.bLengthFinal, sCountMode !== CountMode.None && sCountMode !== CountMode.Request);
+		assert.deepEqual(oBinding.aKeys, ["~Key0"]);
+		assert.strictEqual(oBinding.aAllKeys, undefined);
+		// success and error handlers are the same
+		assert.strictEqual(oReadCall2.args[0][1].success, fnSuccess);
+		assert.strictEqual(oReadCall2.args[0][1].error, oReadCall.args[0][1].error);
+
+		oData = {
+			__next: "~NextLink2",
+			results: [oEntry1, oEntry2, oEntry3]
+		};
+		if (sCountMode === CountMode.InlineRepeat) {
+			oData.__count = "123";
+		}
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oEntry1)).returns("~Key1");
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oEntry2)).returns("~Key2");
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oEntry3)).returns("~Key3");
+		oBindingMock.expects("_addFilterQueryOption")
+			.withExactArgs(["$skip=4&$top=26", "~Sorter"], /*!useClientMode()*/false)
+			.callsFake(function (aParams) {
+				aParams.push("~Filter"); // simulate _addFilterQueryOption implementation
+			});
+		// read call for the next junk of data
+		oReadCall3 = oModelMock.expects("read").withExactArgs("/~Path", {
+			canonicalRequest: "~CanonicalRequest",
+			context: "~Context",
+			error: sinon.match.func,
+			groupId: "~RefreshGroup",
+			headers: {"sap-messages" : "transientOnly"},
+			success: sinon.match.func,
+			updateAggregatedMessages: undefined,
+			urlParameters: sCountMode === CountMode.InlineRepeat
+				? ["$skip=4&$top=26", "~Sorter", "~Filter", "~Custom", "$inlinecount=allpages"]
+				: ["$skip=4&$top=26", "~Sorter", "~Filter", "~Custom"]
+		}).returns("~Read3");
+
+		// code under test - all data up to model size limit are read
+		fnSuccess(oData);
+
+		assert.strictEqual(oBinding.mRequestHandles[sHandleKey], "~Read3");
+		assert.strictEqual(oBinding.iLength,
+			sCountMode === CountMode.None || sCountMode === CountMode.Request ? undefined : 123);
+		assert.strictEqual(oBinding.bLengthFinal, sCountMode !== CountMode.None && sCountMode !== CountMode.Request);
+		assert.deepEqual(oBinding.aKeys, ["~Key0", "~Key1", "~Key2", "~Key3"]);
+		assert.strictEqual(oBinding.aAllKeys, undefined);
+		// success and error handlers are the same
+		assert.strictEqual(oReadCall3.args[0][1].success, fnSuccess);
+		assert.strictEqual(oReadCall3.args[0][1].error, oReadCall.args[0][1].error);
+
+		oData = { // less data than requested
+			results: [oEntry4, oEntry5]
+		};
+		if (sCountMode === CountMode.InlineRepeat) {
+			oData.__count = "123";
+		}
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oEntry4)).returns("~Key4");
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oEntry5)).returns("~Key5");
+		oBindingMock.expects("updateExpandedList")
+			.withExactArgs(["~Key0", "~Key1", "~Key2", "~Key3", "~Key4", "~Key5"]);
+		oBindingMock.expects("applyFilter").withExactArgs();
+		oBindingMock.expects("applySort").withExactArgs();
+		oCallAfterUpdateCall = oModelMock.expects("callAfterUpdate").withExactArgs(sinon.match.func);
+
+		// code under test - short read stops reading
+		fnSuccess(oData);
+
+		assert.strictEqual(oBinding.iLength, 6);
+		assert.strictEqual(oBinding.bLengthFinal, true);
+		assert.deepEqual(oBinding.aKeys, ["~Key0", "~Key1", "~Key2", "~Key3", "~Key4", "~Key5"]);
+		assert.deepEqual(oBinding.aAllKeys, ["~Key0", "~Key1", "~Key2", "~Key3", "~Key4", "~Key5"]);
+		assert.notStrictEqual(oBinding.aAllKeys, oBinding.aKeys);
+		assert.deepEqual(oBinding.mRequestHandles, {});
+		assert.strictEqual(oBinding.bPendingRequest, false);
+		assert.strictEqual(oBinding.bNeedsUpdate, true);
+		assert.strictEqual(oBinding.bIgnoreSuspend, true);
+
+		oBindingMock.expects("fireDataReceived").withExactArgs(sinon.match(function (oParameter) {
+			var aResult = oParameter.data.results;
+
+			assert.strictEqual(aResult.length, 6);
+			assert.strictEqual(aResult[0], oEntry0);
+			assert.strictEqual(aResult[1], oEntry1);
+			assert.strictEqual(aResult[2], oEntry2);
+			assert.strictEqual(aResult[3], oEntry3);
+			assert.strictEqual(aResult[4], oEntry4);
+			assert.strictEqual(aResult[5], oEntry5);
+			assert.strictEqual(oParameter.data.__count, "6");
+
+			return true;
+		}));
+
+		// code under test
+		oCallAfterUpdateCall.args[0][0]();
+	});
+});
+
+	//*********************************************************************************************
 [
 	{operationMode : OperationMode.Auto, useFilterParams : false},
 	{operationMode : OperationMode.Client, useFilterParams : true},
@@ -296,10 +676,8 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.sFilterParams, null);
 		assert.strictEqual(oBinding.sSortParams, null);
-		assert.strictEqual(oBinding.sRangeParams, null);
 		assert.strictEqual(oBinding.sCustomParams, "~custom");
 		assert.strictEqual(oBinding.mCustomParams, undefined);
-		assert.strictEqual(oBinding.iStartIndex, 0);
 		assert.strictEqual(oBinding.iLength, 0);
 		assert.strictEqual(oBinding.bPendingChange, false);
 		assert.strictEqual(oBinding.aAllKeys, null);
@@ -1462,7 +1840,6 @@ sap.ui.define([
 		assert.deepEqual(ODataListBinding.prototype._getContexts.call(oBinding, 0, 2),
 			["~V2Context0", "~V2Context1"]);
 	});
-
 
 	//*********************************************************************************************
 [{
