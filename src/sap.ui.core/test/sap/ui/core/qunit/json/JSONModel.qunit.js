@@ -276,7 +276,7 @@ sap.ui.define([
 		oModel.setProperty("1/firstName", "Petri", oLabel.getBindingContext());
 		assert.equal(oLabel.getText(), "Petri", "new text value from model");
 	});
-
+	/** @deprecated As of version 1.88.0, reason Model.prototype.setLegacySyntax */
 	QUnit.test("test model setProperty onlabel with bindingContext and relative path (legacySyntax = true)", function(assert) {
 		oModel.setLegacySyntax(true);
 		var oContext = oModel.createBindingContext("/teamMembers");
@@ -288,9 +288,7 @@ sap.ui.define([
 		assert.equal(oLabel.getText(), "Petro", "new text value from model");
 		oModel.setLegacySyntax(false);
 	});
-	/**
-	 * @deprecated As of version 1.88.0
-	 */
+	/** @deprecated As of version 1.88.0, reason Model.prototype.setLegacySyntax */
 	QUnit.test("test model setProperty onlabel without bindingContext and relative path (legacySyntax = true)", function(assert) {
 		oModel.setLegacySyntax(true);
 		oLabel.setBindingContext(undefined);
@@ -301,7 +299,7 @@ sap.ui.define([
 		assert.equal(oLabel.getText(), "Petre", "new text value from model");
 		oModel.setLegacySyntax(false);
 	});
-
+	/** @deprecated As of version 1.88.0, reason Model.prototype.setLegacySyntax */
 	QUnit.test("test model setProperty onlabel with bindingContext and absolute path (legacySyntax = true)", function(assert) {
 		oModel.setLegacySyntax(true);
 		var oContext = oModel.createBindingContext("/teamMembers/HorstDerGrosse");
@@ -867,9 +865,7 @@ sap.ui.define([
 		oModel.setJSON(sJSON,false);
 		assert.equal(oModel.getData().name, "John", "get Data test");
 	});
-	/**
-	 * @deprecated As of version 1.88.0
-	 */
+	/** @deprecated As of version 1.88.0, reason Model.prototype.setLegacySyntax */
 	QUnit.test("test JSON compatible syntax", function(assert) {
 		var oModel = new JSONModel(aTestData);
 		oModel.setLegacySyntax(true);
@@ -882,7 +878,7 @@ sap.ui.define([
 		value = oModel.getProperty("lastName", oContext);
 		assert.equal(value, "Wallace", "model value");
 	});
-
+	/** @deprecated As of version 1.88.0, reason Model.prototype.setLegacySyntax */
 	QUnit.test("test JSON compatible syntax fail", function(assert) {
 		var oModel = new JSONModel(aTestData);
 		oModel.setLegacySyntax(false);
