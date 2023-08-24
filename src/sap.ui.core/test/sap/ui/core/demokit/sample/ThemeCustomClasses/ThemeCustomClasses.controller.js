@@ -1,8 +1,7 @@
 sap.ui.define([
-		'sap/ui/core/Theming',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(Theming, Controller, JSONModel) {
+	], function(Controller, JSONModel) {
 	"use strict";
 
 	var ThemeCustomClassesController = Controller.extend("sap.ui.core.sample.ThemeCustomClasses.ThemeCustomClasses", {
@@ -15,8 +14,9 @@ sap.ui.define([
 		// ###############################################
 		onInit: function () {
 
+			var it = this;
 			// subscribe to theme change event
-			Theming.attachApplied(this._reloadSample.bind(this));
+			sap.ui.getCore().attachThemeChanged(this._reloadSample, it);
 
 			var oThemeClasses = this._fetchClasses();
 

@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.core.CustomStyleClassSupport
-sap.ui.define(['./Element', "sap/ui/core/Theming", "sap/base/assert", "sap/base/Log"],
-	function(Element, Theming, assert, Log) {
+sap.ui.define(['./Element', "sap/base/assert", "sap/base/Log"],
+	function(Element, assert, Log) {
 	"use strict";
 
 
@@ -259,7 +259,7 @@ sap.ui.define(['./Element', "sap/ui/core/Theming", "sap/base/assert", "sap/base/
 	}
 
 	function fireThemeScopingChangedEvent(oElement, aScopeClasses, bIsAdded) {
-		Theming.fireThemeScopingChanged({
+		sap.ui.getCore().fireThemeScopingChanged({
 			scopes: aScopeClasses,
 			added: bIsAdded,
 			element: oElement

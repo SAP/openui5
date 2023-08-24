@@ -1,11 +1,21 @@
 sap.ui.define([
-	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/core/Configuration"
-], function(Theming, Parameters, themeApplied, Configuration) {
+], function(Parameters, themeApplied, Configuration) {
 	"use strict";
 	/* global QUnit */
+
+	// Wait until the theme is changed
+	function themeChanged() {
+		return new Promise(function(resolve) {
+			function onChanged() {
+				sap.ui.getCore().detachThemeChanged(onChanged);
+				resolve();
+			}
+			sap.ui.getCore().attachThemeChanged(onChanged);
+		});
+	}
 
 	var sPath = new URL(sap.ui.require.toUrl("testdata/core"), document.baseURI).toString();
 
@@ -28,7 +38,7 @@ sap.ui.define([
 
 		// check precondition for test
 		assert.equal(
-			Theming.getTheme(),
+			Configuration.getTheme(),
 			"customcss",
 			"[precondition] initial theme must be 'customcss'");
 
@@ -83,9 +93,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Theme change after fallback (with second fallback)", function(assert) {
-		Theming.setTheme("legacy");
 
-		return themeApplied().then(function() {
+		var p = themeChanged().then(function() {
 
 			// Check for library themes and their correct order
 			var aLinks = document.querySelectorAll("link[id^=sap-ui-theme-]");
@@ -120,6 +129,9 @@ sap.ui.define([
 
 		});
 
+		sap.ui.getCore().applyTheme("legacy");
+
+		return p;
 	});
 
 });

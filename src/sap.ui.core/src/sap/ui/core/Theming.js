@@ -150,8 +150,8 @@ sap.ui.define([
 		 *
 		 * Example:
 		 * <pre>
-		 *   Theming.setThemeRoot("my_theme", "https://mythemeserver.com/allThemes");
-		 *   Theming.setTheme("my_theme");
+		 *   sap.ui.getCore().setThemeRoot("my_theme", "https://mythemeserver.com/allThemes");
+		 *   sap.ui.getCore().applyTheme("my_theme");
 		 * </pre>
 		 *
 		 * will cause the following file to be loaded (assuming that the bootstrap is configured to load
@@ -167,7 +167,7 @@ sap.ui.define([
 		 * different location than the UI5 resources), you can also specify for which control libraries the setting
 		 * should be used, by giving an array with the names of the respective control libraries as second parameter:
 		 * <pre>
-		 *   Theming.setThemeRoot("sap_belize", ["my.own.library"], "https://mythemeserver.com/allThemes");
+		 *   sap.ui.getCore().setThemeRoot("sap_belize", ["my.own.library"], "https://mythemeserver.com/allThemes");
 		 * </pre>
 		 *
 		 * This will cause the Belize theme to be loaded from the UI5 location for all standard libraries.
@@ -182,7 +182,7 @@ sap.ui.define([
 		 *
 		 * If the custom theme should be loaded initially (via bootstrap attribute), the <code>themeRoots</code>
 		 * property of the <code>window["sap-ui-config"]</code> object must be used instead of calling
-		 * <code>Theming.setThemeRoot(...)</code> in order to configure the theme location early enough.
+		 * <code>sap.ui.getCore().setThemeRoot(...)</code> in order to configure the theme location early enough.
 		 *
 		 * @param {string} sThemeName Name of the theme for which to configure the location
 		 * @param {string} sThemeBaseUrl Base URL below which the CSS file(s) will be loaded from
@@ -365,67 +365,12 @@ sap.ui.define([
 			Theming.detachEvent("change", fnFunction);
 		},
 
-		/**
-		 * Fired when a scope class has been added or removed on a control/element
-		 * by using the custom style class API <code>addStyleClass</code>,
-		 * <code>removeStyleClass</code> or <code>toggleStyleClass</code>.
-		 *
-		 * Scope classes are defined by the library theme parameters coming from the
-		 * current theme.
-		 *
-		 * <b>Note:</b> The event will only be fired after the
-		 * <code>sap.ui.core.theming.Parameters</code> module has been loaded.
-		 * By default this is not the case.
-		 *
-		 * @name module:sap/ui/core/Theming.themeScopingChanged
-		 * @event
-		 * @param {module:sap/base/Event} oEvent
-		 * @param {string[]} oEvent.scopes Array of the CSS scope classes
-		 * @param {boolean} oEvent.added Whether the class has been added or removed
-		 * @param {sap.ui.core.Element} oEvent.element Element instance on which the scope change happened
-		 * @private
-		 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-		 */
-
-		/**
-		 * Attaches the <code>fnFunction</code> event handler to the {@link #event:themeScopingChanged change} event
-		 * of <code>sap.ui.core.Theming</code>.
-		 *
-		 * @param {function} fnFunction The function to be called when the event occurs
-		 * @private
-		 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-		 */
-		attachThemeScopingChanged: function(fnFunction) {
-			Theming.attachEvent("themeScopingChanged", fnFunction);
-		},
-
-		/**
-		 * Detaches event handler <code>fnFunction</code> from the {@link #event:themeScopingChanged change} event of
-		 * this <code>sap.ui.core.Theming</code>.
-		 *
-		 * @param {function} fnFunction Function to be called when the event occurs
-		 * @private
-		 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-		 */
-		detachThemeScopingChanged: function(fnFunction) {
-			Theming.detachEvent("themeScopingChanged", fnFunction);
-		},
-
-		/**
-		 * Fire themeScopingChanged event.
-		 *
-		 * @param {function} fnFunction Function to be called when the event occurs
-		 * @private
-		 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-		 */
-		fireThemeScopingChanged: function(mParameters) {
-			Theming.fireEvent("themeScopingChanged", mParameters);
-		},
 
 		/**
 		 * Notify content density changes
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.core.Core
 		 */
 		notifyContentDensityChanged: function() {
 			fireApplied({theme: Theming.getTheme()});
@@ -438,7 +383,7 @@ sap.ui.define([
 		*/
 		registerThemeManager: function(oManager) {
 			oThemeManager = oManager;
-			oThemeManager.attachEvent("applied", function(oEvent) {
+			oThemeManager.attachEvent("ThemeChanged", function(oEvent) {
 				fireApplied(BaseEvent.getParameters(oEvent));
 			});
 			// handle RTL changes

@@ -2,14 +2,12 @@
 // load Parameters API to test ThemeScopingChanged event
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Control, Theming, Parameters, createAndAppendDiv, nextUIUpdate) {
+], function(Control, Parameters, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
-	var oMyControl, aCurrentDOMClasses, aCurrentAPIClasses;
 	createAndAppendDiv("content");
 
 	// trigger parameter loading to enable event
@@ -38,29 +36,29 @@ sap.ui.define([
 
 	QUnit.module("CustomStyleClassSupport", {
 		onThemeScopingChanged: function() {
-			var oDomRef = oMyControl.getDomRef();
-			aCurrentDOMClasses = oDomRef ? Array.prototype.slice.call(oDomRef.classList) : [];
-			aCurrentAPIClasses = oMyControl.aCustomStyleClasses;
+			var oDomRef = this.myControl.getDomRef();
+			this.aCurrentDOMClasses = oDomRef ? Array.prototype.slice.call(oDomRef.classList) : [];
+			this.aCurrentAPIClasses = this.myControl.aCustomStyleClasses;
 		},
 		beforeEach: function(assert) {
 
-			Theming.attachThemeScopingChanged(this.onThemeScopingChanged);
+			sap.ui.getCore().attachThemeScopingChanged(this.onThemeScopingChanged, this);
 
-			this.fireThemeScopingChangedSpy = sinon.spy(Theming, "fireThemeScopingChanged");
+			this.fireThemeScopingChangedSpy = sinon.spy(sap.ui.getCore(), "fireThemeScopingChanged");
 
-			oMyControl = new MyControlClass("myControl", assert);
+			this.myControl = new MyControlClass("myControl", assert);
 
-			oMyControl.placeAt("content");
+			this.myControl.placeAt("content");
 			return nextUIUpdate();
 		},
 		afterEach: function() {
 
-			Theming.detachThemeScopingChanged(this.onThemeScopingChanged);
+			sap.ui.getCore().detachThemeScopingChanged(this.onThemeScopingChanged, this);
 
 			this.fireThemeScopingChangedSpy.restore();
 			this.fireThemeScopingChangedSpy = null;
 
-			oMyControl.destroy();
+			this.myControl.destroy();
 		}
 	});
 
@@ -69,30 +67,30 @@ sap.ui.define([
 
 		assert.expect(4); // control shouldn't rerender itself
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass), false, "control should not have the class");
-		assert.equal(oMyControl.$().hasClass(sMyClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
+		assert.equal(this.myControl.$().hasClass(sMyClass), false, "class should not be in HTML");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 	});
 
 	QUnit.test("call hasStyleClass with whitespace", function(assert) {
-		assert.equal(oMyControl.hasStyleClass(" "), false, "white space should be ignored");
+		assert.equal(this.myControl.hasStyleClass(" "), false, "white space should be ignored");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 	});
 
 	QUnit.test("call addStyleClass with whitespaces and check with hasStyleClass", function(assert) {
-		oMyControl.addStyleClass("\r \n \t \f  ");
+		this.myControl.addStyleClass("\r \n \t \f  ");
 
-		assert.equal(oMyControl.$()[0].className, "", "class in HTML shouldn't be changed");
-		assert.equal(oMyControl.hasStyleClass(" "), false, "White space(s) class name should be ignored");
-		assert.equal(oMyControl.hasStyleClass("\r"), false, "White space(s) class name should be ignored");
-		assert.equal(oMyControl.hasStyleClass("\n"), false, "White space(s) class name should be ignored");
-		assert.equal(oMyControl.hasStyleClass("\t"), false, "White space(s) class name should be ignored");
-		assert.equal(oMyControl.hasStyleClass("\f"), false, "White space(s) class name should be ignored");
-		assert.equal(oMyControl.hasStyleClass("\r \n \t \f  "), false, "White space(s) class name should be ignored");
+		assert.equal(this.myControl.$()[0].className, "", "class in HTML shouldn't be changed");
+		assert.equal(this.myControl.hasStyleClass(" "), false, "White space(s) class name should be ignored");
+		assert.equal(this.myControl.hasStyleClass("\r"), false, "White space(s) class name should be ignored");
+		assert.equal(this.myControl.hasStyleClass("\n"), false, "White space(s) class name should be ignored");
+		assert.equal(this.myControl.hasStyleClass("\t"), false, "White space(s) class name should be ignored");
+		assert.equal(this.myControl.hasStyleClass("\f"), false, "White space(s) class name should be ignored");
+		assert.equal(this.myControl.hasStyleClass("\r \n \t \f  "), false, "White space(s) class name should be ignored");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
@@ -103,11 +101,11 @@ sap.ui.define([
 
 		assert.expect(5); // this also verifies there is no rerendering
 
-		oMyControl.addStyleClass(sMyClass);
+		this.myControl.addStyleClass(sMyClass);
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass), true, "control should now have the class");
-		assert.equal(oMyControl.hasStyleClass(" "), false, "white space class should be ignored");
-		assert.equal(oMyControl.$().hasClass(sMyClass), true, "class should now be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class");
+		assert.equal(this.myControl.hasStyleClass(" "), false, "white space class should be ignored");
+		assert.equal(this.myControl.$().hasClass(sMyClass), true, "class should now be in HTML");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
@@ -116,19 +114,19 @@ sap.ui.define([
 	QUnit.test("remove an added class", function(assert) {
 		var sMyClass = "abc";
 
-		oMyControl.addStyleClass(sMyClass);
+		this.myControl.addStyleClass(sMyClass);
 
 		assert.expect(4); // this also verifies there is no rerendering
 
-		oMyControl.removeStyleClass(sMyClass);
+		this.myControl.removeStyleClass(sMyClass);
 
 		// remove white space class shouldn't have any effect
-		oMyControl.removeStyleClass(" ");
+		this.myControl.removeStyleClass(" ");
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass), false, "control should not have the class");
-		assert.equal(oMyControl.$().hasClass(sMyClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
+		assert.equal(this.myControl.$().hasClass(sMyClass), false, "class should not be in HTML");
 
-		oMyControl.removeStyleClass(sMyClass); // should not cause an error or rendering
+		this.myControl.removeStyleClass(sMyClass); // should not cause an error or rendering
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
@@ -139,15 +137,15 @@ sap.ui.define([
 
 		assert.expect(6); // this also verifies there is no rerendering
 
-		oMyControl.toggleStyleClass(sMyClass);
+		this.myControl.toggleStyleClass(sMyClass);
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass), true, "control should now have the class");
-		assert.equal(oMyControl.$().hasClass(sMyClass), true, "class should now be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class");
+		assert.equal(this.myControl.$().hasClass(sMyClass), true, "class should now be in HTML");
 
-		oMyControl.toggleStyleClass(sMyClass);
+		this.myControl.toggleStyleClass(sMyClass);
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass), false, "control should not have the class");
-		assert.equal(oMyControl.$().hasClass(sMyClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
+		assert.equal(this.myControl.$().hasClass(sMyClass), false, "class should not be in HTML");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
@@ -158,15 +156,15 @@ sap.ui.define([
 
 		assert.expect(6); // this also verifies there is no rerendering
 
-		oMyControl.toggleStyleClass(sMyClass, true);
+		this.myControl.toggleStyleClass(sMyClass, true);
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass), true, "control should now have the class");
-		assert.equal(oMyControl.$().hasClass(sMyClass), true, "class should now be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class");
+		assert.equal(this.myControl.$().hasClass(sMyClass), true, "class should now be in HTML");
 
-		oMyControl.toggleStyleClass(sMyClass, false);
+		this.myControl.toggleStyleClass(sMyClass, false);
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass), false, "control should not have the class");
-		assert.equal(oMyControl.$().hasClass(sMyClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
+		assert.equal(this.myControl.$().hasClass(sMyClass), false, "class should not be in HTML");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
@@ -177,15 +175,15 @@ sap.ui.define([
 
 		assert.expect(5); // this also verifies there is no rerendering
 
-		oMyControl.addStyleClass(sMyClass);
-		oMyControl.addStyleClass(sMyClass);
+		this.myControl.addStyleClass(sMyClass);
+		this.myControl.addStyleClass(sMyClass);
 
-		assert.equal(oMyControl.$()[0].className, "abc", "class should be in HTML only once");
+		assert.equal(this.myControl.$()[0].className, "abc", "class should be in HTML only once");
 
-		oMyControl.removeStyleClass(sMyClass);
+		this.myControl.removeStyleClass(sMyClass);
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass), false, "control should not have the class");
-		assert.equal(oMyControl.$().hasClass(sMyClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
+		assert.equal(this.myControl.$().hasClass(sMyClass), false, "class should not be in HTML");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
@@ -196,29 +194,29 @@ sap.ui.define([
 			sMyClass1 = "bcd",
 			sCombinedClass = sMyClass + " " + sMyClass1;
 
-		oMyControl.addStyleClass(sCombinedClass);
-		oMyControl.removeStyleClass(""); // call with empty string shouldn't have any effect
+		this.myControl.addStyleClass(sCombinedClass);
+		this.myControl.removeStyleClass(""); // call with empty string shouldn't have any effect
 
-		assert.equal(oMyControl.hasStyleClass(sCombinedClass), true, "control should now have the combined class " + sCombinedClass);
-		assert.equal(oMyControl.$().hasClass(sCombinedClass), true, "class should now be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sCombinedClass), true, "control should now have the combined class " + sCombinedClass);
+		assert.equal(this.myControl.$().hasClass(sCombinedClass), true, "class should now be in HTML");
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass), true, "control should now have the class " + sMyClass);
-		assert.equal(oMyControl.$().hasClass(sMyClass), true, "class should now be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class " + sMyClass);
+		assert.equal(this.myControl.$().hasClass(sMyClass), true, "class should now be in HTML");
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass1), true, "control should now have the class " + sMyClass);
-		assert.equal(oMyControl.$().hasClass(sMyClass1), true, "class should now be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass1), true, "control should now have the class " + sMyClass);
+		assert.equal(this.myControl.$().hasClass(sMyClass1), true, "class should now be in HTML");
 
 
-		oMyControl.removeStyleClass(sCombinedClass + " unknownClass"); // remove unknown class shouldn't have any effect
+		this.myControl.removeStyleClass(sCombinedClass + " unknownClass"); // remove unknown class shouldn't have any effect
 
-		assert.equal(oMyControl.hasStyleClass(sCombinedClass), false, "control should not have the combined class " + sCombinedClass);
-		assert.equal(oMyControl.$().hasClass(sCombinedClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sCombinedClass), false, "control should not have the combined class " + sCombinedClass);
+		assert.equal(this.myControl.$().hasClass(sCombinedClass), false, "class should not be in HTML");
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass), false, "control should not have the class " + sMyClass);
-		assert.equal(oMyControl.$().hasClass(sMyClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class " + sMyClass);
+		assert.equal(this.myControl.$().hasClass(sMyClass), false, "class should not be in HTML");
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass1), false, "control should not have the class " + sMyClass1);
-		assert.equal(oMyControl.$().hasClass(sMyClass1), false, "class should not be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass1), false, "control should not have the class " + sMyClass1);
+		assert.equal(this.myControl.$().hasClass(sMyClass1), false, "class should not be in HTML");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
@@ -229,41 +227,41 @@ sap.ui.define([
 			sMyClass1 = "bcd",
 			sCombinedClass = sMyClass + " " + sMyClass1;
 
-		oMyControl.addStyleClass(sCombinedClass);
-		oMyControl.removeStyleClass(""); // call with empty string shouldn't have any effect
+		this.myControl.addStyleClass(sCombinedClass);
+		this.myControl.removeStyleClass(""); // call with empty string shouldn't have any effect
 
-		assert.equal(oMyControl.hasStyleClass(sCombinedClass), true, "control should now have the combined class " + sCombinedClass);
-		assert.equal(oMyControl.$().hasClass(sCombinedClass), true, "class should now be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sCombinedClass), true, "control should now have the combined class " + sCombinedClass);
+		assert.equal(this.myControl.$().hasClass(sCombinedClass), true, "class should now be in HTML");
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass), true, "control should now have the class " + sMyClass);
-		assert.equal(oMyControl.$().hasClass(sMyClass), true, "class should now be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class " + sMyClass);
+		assert.equal(this.myControl.$().hasClass(sMyClass), true, "class should now be in HTML");
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass1), true, "control should now have the class " + sMyClass);
-		assert.equal(oMyControl.$().hasClass(sMyClass1), true, "class should now be in HTML");
-
-
-		oMyControl.removeStyleClass(sMyClass1 + " unknownClass"); // remove unknown class shouldn't have any effect
-
-		assert.equal(oMyControl.hasStyleClass(sCombinedClass), false, "control should not have the combined class " + sCombinedClass);
-		assert.equal(oMyControl.$().hasClass(sCombinedClass), false, "class should not be in HTML");
-
-		assert.equal(oMyControl.hasStyleClass(sMyClass), true, "control should still have the class " + sMyClass);
-		assert.equal(oMyControl.$().hasClass(sMyClass), true, "class should still be in HTML");
-
-		assert.equal(oMyControl.hasStyleClass(sMyClass1), false, "control should not have the class " + sMyClass1);
-		assert.equal(oMyControl.$().hasClass(sMyClass1), false, "class should not be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass1), true, "control should now have the class " + sMyClass);
+		assert.equal(this.myControl.$().hasClass(sMyClass1), true, "class should now be in HTML");
 
 
-		oMyControl.removeStyleClass(sMyClass + " unknownClass"); // remove unknown class shouldn't have any effect
+		this.myControl.removeStyleClass(sMyClass1 + " unknownClass"); // remove unknown class shouldn't have any effect
 
-		assert.equal(oMyControl.hasStyleClass(sCombinedClass), false, "control should not have the combined class " + sCombinedClass);
-		assert.equal(oMyControl.$().hasClass(sCombinedClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sCombinedClass), false, "control should not have the combined class " + sCombinedClass);
+		assert.equal(this.myControl.$().hasClass(sCombinedClass), false, "class should not be in HTML");
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass), false, "control should not have the class " + sMyClass);
-		assert.equal(oMyControl.$().hasClass(sMyClass), false, "class should not be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should still have the class " + sMyClass);
+		assert.equal(this.myControl.$().hasClass(sMyClass), true, "class should still be in HTML");
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass1), false, "control should not have the class " + sMyClass1);
-		assert.equal(oMyControl.$().hasClass(sMyClass1), false, "class should not be in HTML");
+		assert.equal(this.myControl.hasStyleClass(sMyClass1), false, "control should not have the class " + sMyClass1);
+		assert.equal(this.myControl.$().hasClass(sMyClass1), false, "class should not be in HTML");
+
+
+		this.myControl.removeStyleClass(sMyClass + " unknownClass"); // remove unknown class shouldn't have any effect
+
+		assert.equal(this.myControl.hasStyleClass(sCombinedClass), false, "control should not have the combined class " + sCombinedClass);
+		assert.equal(this.myControl.$().hasClass(sCombinedClass), false, "class should not be in HTML");
+
+		assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class " + sMyClass);
+		assert.equal(this.myControl.$().hasClass(sMyClass), false, "class should not be in HTML");
+
+		assert.equal(this.myControl.hasStyleClass(sMyClass1), false, "control should not have the class " + sMyClass1);
+		assert.equal(this.myControl.$().hasClass(sMyClass1), false, "class should not be in HTML");
 
 		// ThemeScopingChanged Event should not be fired
 		sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
@@ -275,8 +273,8 @@ sap.ui.define([
 			sCombinedClass = sMyClass + " " + sMyClass1,
 			oClonedControl;
 
-		oMyControl.addStyleClass(sCombinedClass);
-		oClonedControl = oMyControl.clone();
+		this.myControl.addStyleClass(sCombinedClass);
+		oClonedControl = this.myControl.clone();
 
 		assert.equal(oClonedControl.hasStyleClass(sMyClass), true, "the cloned control has the style class 'abc'");
 		assert.equal(oClonedControl.hasStyleClass(sMyClass1), true, "the cloned control has the style class 'bcd'");
@@ -291,12 +289,12 @@ sap.ui.define([
 	QUnit.test("Cloned Control and the original control should handle the style class separately", function(assert) {
 		var sMyClass = "abc",
 			sMyClass1 = "bcd",
-			oClonedControl = oMyControl.clone();
+			oClonedControl = this.myControl.clone();
 
-		oMyControl.addStyleClass(sMyClass);
+		this.myControl.addStyleClass(sMyClass);
 		oClonedControl.addStyleClass(sMyClass1);
 
-		assert.equal(oMyControl.hasStyleClass(sMyClass1), false, "the original control shouldn't have the class which is added on the cloned one");
+		assert.equal(this.myControl.hasStyleClass(sMyClass1), false, "the original control shouldn't have the class which is added on the cloned one");
 		assert.equal(oClonedControl.hasStyleClass(sMyClass), false, "the cloned control shouldn't have the class which is added on the original one");
 
 		oClonedControl.destroy();
@@ -310,27 +308,27 @@ sap.ui.define([
 
 		assert.expect(8); // this also verifies there is no rerendering
 
-		oMyControl.addStyleClass(sMyClass);
+		this.myControl.addStyleClass(sMyClass);
 
-		assert.deepEqual(aCurrentDOMClasses, [sMyClass], "Class should have been applied to DOM before event has been fired");
-		assert.deepEqual(aCurrentAPIClasses, [sMyClass], "Class should have been applied to internal object before event has been fired");
+		assert.deepEqual(this.aCurrentDOMClasses, [sMyClass], "Class should have been applied to DOM before event has been fired");
+		assert.deepEqual(this.aCurrentAPIClasses, [sMyClass], "Class should have been applied to internal object before event has been fired");
 
-		oMyControl.removeStyleClass(sMyClass);
+		this.myControl.removeStyleClass(sMyClass);
 
-		assert.deepEqual(aCurrentDOMClasses, [], "Class should have been removed from DOM before event has been fired");
-		assert.deepEqual(aCurrentAPIClasses, [], "Class should have been removed from internal object before event has been fired");
+		assert.deepEqual(this.aCurrentDOMClasses, [], "Class should have been removed from DOM before event has been fired");
+		assert.deepEqual(this.aCurrentAPIClasses, [], "Class should have been removed from internal object before event has been fired");
 
-		oMyControl.removeStyleClass(sMyClass); // should not cause an error or rendering
+		this.myControl.removeStyleClass(sMyClass); // should not cause an error or rendering
 
 		// ThemeScopingChanged Event should be be fired twice (added + removed)
 		sinon.assert.callCount(this.fireThemeScopingChangedSpy, 2);
 		sinon.assert.calledWith(this.fireThemeScopingChangedSpy, {
-			element: oMyControl,
+			element: this.myControl,
 			scopes: ["sapTestScope"],
 			added: true
 		});
 		sinon.assert.calledWith(this.fireThemeScopingChangedSpy, {
-			element: oMyControl,
+			element: this.myControl,
 			scopes: ["sapTestScope"],
 			added: false
 		});
@@ -341,63 +339,63 @@ sap.ui.define([
 		assert.expect(18); // this also verifies there is no rerendering
 
 		// add all-in-one
-		oMyControl.addStyleClass("sapTestScope abc sapTestScopePlus def");
+		this.myControl.addStyleClass("sapTestScope abc sapTestScopePlus def");
 
-		assert.deepEqual(aCurrentDOMClasses, ["sapTestScope", "abc", "sapTestScopePlus", "def"], "Classes should have been applied to DOM before event has been fired");
-		assert.deepEqual(aCurrentAPIClasses, ["sapTestScope", "abc", "sapTestScopePlus", "def"], "Classes should have been applied to internal object before event has been fired");
+		assert.deepEqual(this.aCurrentDOMClasses, ["sapTestScope", "abc", "sapTestScopePlus", "def"], "Classes should have been applied to DOM before event has been fired");
+		assert.deepEqual(this.aCurrentAPIClasses, ["sapTestScope", "abc", "sapTestScopePlus", "def"], "Classes should have been applied to internal object before event has been fired");
 
 		// ThemeScopingChanged Event should be fired once
 		sinon.assert.callCount(this.fireThemeScopingChangedSpy, 1);
 		sinon.assert.calledWith(this.fireThemeScopingChangedSpy, {
-			element: oMyControl,
+			element: this.myControl,
 			scopes: ["sapTestScope", "sapTestScopePlus"],
 			added: true
 		});
 
 		// remove abc
-		oMyControl.removeStyleClass("abc");
+		this.myControl.removeStyleClass("abc");
 
 		// ThemeScopingChanged Event should be still fired once
 		sinon.assert.callCount(this.fireThemeScopingChangedSpy, 1);
 
 		// remove sapTestScopePlus
-		oMyControl.removeStyleClass("sapTestScopePlus");
+		this.myControl.removeStyleClass("sapTestScopePlus");
 
-		assert.deepEqual(aCurrentDOMClasses, ["sapTestScope", "def"], "Class should have been removed from DOM before event has been fired");
-		assert.deepEqual(aCurrentAPIClasses, ["sapTestScope", "def"], "Class should have been removed from internal object before event has been fired");
+		assert.deepEqual(this.aCurrentDOMClasses, ["sapTestScope", "def"], "Class should have been removed from DOM before event has been fired");
+		assert.deepEqual(this.aCurrentAPIClasses, ["sapTestScope", "def"], "Class should have been removed from internal object before event has been fired");
 
 		// ThemeScopingChanged Event should now be fired twice
 		sinon.assert.callCount(this.fireThemeScopingChangedSpy, 2);
 		sinon.assert.calledWith(this.fireThemeScopingChangedSpy, {
-			element: oMyControl,
+			element: this.myControl,
 			scopes: ["sapTestScopePlus"],
 			added: false
 		});
 
 		// add both scopes again
-		oMyControl.addStyleClass("sapTestScope sapTestScopePlus");
+		this.myControl.addStyleClass("sapTestScope sapTestScopePlus");
 
-		assert.deepEqual(aCurrentDOMClasses, ["sapTestScope", "def", "sapTestScopePlus"], "Class should have been applied to DOM before event has been fired");
-		assert.deepEqual(aCurrentAPIClasses, ["sapTestScope", "def", "sapTestScopePlus"], "Class should have been applied to internal object before event has been fired");
+		assert.deepEqual(this.aCurrentDOMClasses, ["sapTestScope", "def", "sapTestScopePlus"], "Class should have been applied to DOM before event has been fired");
+		assert.deepEqual(this.aCurrentAPIClasses, ["sapTestScope", "def", "sapTestScopePlus"], "Class should have been applied to internal object before event has been fired");
 
 		// ThemeScopingChanged Event should be be fired 3 times
 		sinon.assert.callCount(this.fireThemeScopingChangedSpy, 3);
 		sinon.assert.calledWith(this.fireThemeScopingChangedSpy, {
-			element: oMyControl,
+			element: this.myControl,
 			scopes: ["sapTestScopePlus"],
 			added: true
 		});
 
 		// remove both scopes again
-		oMyControl.removeStyleClass("sapTestScopePlus sapTestScope");
+		this.myControl.removeStyleClass("sapTestScopePlus sapTestScope");
 
-		assert.deepEqual(aCurrentDOMClasses, ["def"], "Classes should have been removed from DOM before event has been fired");
-		assert.deepEqual(aCurrentAPIClasses, ["def"], "Classes should have been removed from internal object before event has been fired");
+		assert.deepEqual(this.aCurrentDOMClasses, ["def"], "Classes should have been removed from DOM before event has been fired");
+		assert.deepEqual(this.aCurrentAPIClasses, ["def"], "Classes should have been removed from internal object before event has been fired");
 
 		// ThemeScopingChanged Event should be be fired 3 times
 		sinon.assert.callCount(this.fireThemeScopingChangedSpy, 4);
 		sinon.assert.calledWith(this.fireThemeScopingChangedSpy, {
-			element: oMyControl,
+			element: this.myControl,
 			scopes: ["sapTestScopePlus", "sapTestScope"],
 			added: false
 		});

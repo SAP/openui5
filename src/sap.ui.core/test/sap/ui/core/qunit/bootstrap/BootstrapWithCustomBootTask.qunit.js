@@ -1,7 +1,7 @@
 /*global QUnit, testresults */
 sap.ui.define([
-	"sap/ui/core/Theming"
-], function(Theming) {
+
+], function() {
 	"use strict";
 
 	/**
@@ -12,6 +12,7 @@ sap.ui.define([
 		var checkBootstrap = function () {
 			assert.ok(testresults.bHookCalled, "boottask should be called");
 			assert.ok(testresults.bSapUiCoreExists, "sap.ui.getCore() should exist in the boot task");
+			assert.ok(testresults.bApplyThemeExists, "sap.ui.getCore().applyTheme() should exist when the boot task is executed");
 			assert.equal(testresults.sThemeBefore, "SapSampleTheme1", "theme before applyTheme should be as configured");
 			assert.equal(testresults.sThemeAfter, "SapSampleTheme2", "theme should have changed after apply theme");
 			assert.equal(testresults.oLinksBefore && testresults.oLinksBefore.length, 0, "there should be no link tags for theme styles when the hook is called");
@@ -20,11 +21,15 @@ sap.ui.define([
 			assert.notOk(testresults.bIconPoolLoaded, "IconPool module should not have been loaded on entry into bootTask");
 			assert.ok(sap.ui.require("sap/ui/core/IconPool"), "IconPool module should have been loaded by bootTask");
 
-			Theming.detachApplied(checkBootstrap);
+			sap.ui.getCore().detachThemeChanged(checkBootstrap);
 			done();
 		};
 
-		Theming.attachApplied(checkBootstrap);
+		if (sap.ui.getCore().isThemeApplied()) {
+			checkBootstrap();
+		} else {
+			sap.ui.getCore().attachThemeChanged(checkBootstrap);
+		}
 
 	});
 
