@@ -1,10 +1,11 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/base/EventProvider"
-], function(EventProvider) {
+	"sap/ui/base/EventProvider",
+	"sap/ui/core/EventBus"
+], function(EventProvider, EventBus) {
 	"use strict";
 
-	var oBus = sap.ui.getCore().getEventBus();
+	var oBus = EventBus.getInstance();
 
 	function checkNumberOfListeners(assert, oEventProvider, sEventId, iExpected) {
 		if (oEventProvider) {

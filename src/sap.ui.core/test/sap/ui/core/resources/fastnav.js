@@ -1,10 +1,11 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/EventBus",
 	"sap/ui/core/Popup",
 	"sap/ui/dom/includeStylesheet",
 	"sap/ui/events/F6Navigation",
 	"require"
-], function(jQuery, Popup, includeStylesheet, F6Navigation, require) {
+], function(jQuery, EventBus, Popup, includeStylesheet, F6Navigation, require) {
 	"use strict";
 
 	var counter = 0;
@@ -190,7 +191,7 @@ sap.ui.define([
 
 
 		setTimeout(function(){
-			sap.ui.getCore().getEventBus().publish("fastnav", "screenready");
+			EventBus.getInstance().publish("fastnav", "screenready");
 		}, 0);
 	});
 

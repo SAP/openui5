@@ -2621,6 +2621,8 @@ sap.ui.define([
 	 * @return {sap.ui.core.EventBus} the event bus
 	 * @since 1.8.0
 	 * @public
+	 * @deprecated since 1.119.0. Please use {@link sap.ui.core.EventBus.getInstance EventBus.getInstance} for global usage instead.
+	 * Creating an own local instance is the preferred usage.
 	 */
 	Core.prototype.getEventBus = function() {
 		if (!this.oEventBus) {
@@ -2635,7 +2637,7 @@ sap.ui.define([
 				});
 				EventBus = sap.ui.requireSync('sap/ui/core/EventBus'); // legacy-relevant: fallback for missing dependency
 			}
-			var oEventBus = this.oEventBus = new EventBus();
+			var oEventBus = this.oEventBus = EventBus.getInstance();
 			this._preserveHandler = function(event) {
 				// for compatibility reasons
 				oEventBus.publish("sap.ui", "__preserveContent", {domNode: event.domNode});
