@@ -319,7 +319,6 @@ sap.ui.define([
 
 		// apply settings from global config object (already merged with script tag attributes)
 		var oCfg = window["sap-ui-config"] || {};
-		oCfg.oninit = oCfg.oninit || oCfg["evt-oninit"];
 		for (var n in M_SETTINGS) {
 			// collect the defaults
 			config[n] = Array.isArray(M_SETTINGS[n].defaultValue) ? [] : M_SETTINGS[n].defaultValue;

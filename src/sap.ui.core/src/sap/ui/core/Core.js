@@ -1017,7 +1017,11 @@ sap.ui.define([
 	Core.prototype._executeOnInit = function() {
 		var vOnInit = BaseConfig.get({
 			name: "sapUiOnInit",
-			type: BaseConfig.Type.Code
+			type: BaseConfig.Type.Code,
+			defaultValue: BaseConfig.get({
+				name: "sapUiEvtOninit",
+				type: BaseConfig.Type.Code
+			})
 		});
 
 		// execute a configured init hook
