@@ -12552,6 +12552,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Enter an invalid value for worker-age for an ODataPropertyBinding and check that
+	// parent Context.resetChanges() restores the value before.
+	//*********************************************************************************************
+	QUnit.test("reset invalid data state via context", function (assert) {
+		return this.checkResetInvalidDataState(assert, function (oView) {
+			return oView.byId("form").getBindingContext();
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Enter an invalid value for worker-age for an ODataPropertyBinding and check that
 	// ODataModel.resetChanges() restores the value before.
 	// The Types application does have such a scenario (within the V4 view).
 	//*********************************************************************************************
