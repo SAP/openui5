@@ -227,7 +227,7 @@ sap.ui.define([
 	QUnit.module("Rendering", {
 		beforeEach: function() {
 			createTables();
-			oTreeTable.getRowMode().setRowCount(12);
+			oTreeTable.setVisibleRowCount(12);
 			oCore.applyChanges();
 		},
 		afterEach: function() {
@@ -458,7 +458,7 @@ sap.ui.define([
 			}
 			oModel.setData(oData);
 			oTable.getColumns()[0].setSortProperty(aFields[0]);
-			oTable.getRowMode().setRowCount(12);
+			oTable.setVisibleRowCount(12);
 			oTable.setFixedColumnCount(0);
 			oTable.setEnableGrouping(true);
 			oCore.applyChanges();

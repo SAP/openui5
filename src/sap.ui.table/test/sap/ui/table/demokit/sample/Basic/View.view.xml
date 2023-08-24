@@ -14,6 +14,7 @@
 			<Table
 				rows="{/ProductCollection}"
 				selectionMode="MultiToggle"
+				visibleRowCount="7"
 				paste="onPaste"
 				ariaLabelledBy="title">
 				<extension>

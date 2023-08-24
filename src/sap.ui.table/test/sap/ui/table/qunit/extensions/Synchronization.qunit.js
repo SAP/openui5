@@ -3,22 +3,11 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/extensions/ExtensionBase",
-	"sap/ui/table/rowmodes/Type",
-	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/Device",
 	"sap/ui/core/Core"
-], function(
-	TableQUnitUtils,
-	ExtensionBase,
-	RowModeType,
-	FixedRowMode,
-	TableUtils,
-	library,
-	Device,
-	oCore
-) {
+], function(TableQUnitUtils, ExtensionBase, TableUtils, library, Device, oCore) {
 	"use strict";
 
 	QUnit.module("Initialization", {
@@ -93,9 +82,7 @@ sap.ui.define([
 	QUnit.module("Synchronization hooks", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
-				rowMode: new FixedRowMode({
-					rowCount: 3
-				}),
+				visibleRowCount: 3,
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 			});
@@ -137,25 +124,24 @@ sap.ui.define([
 			oSyncInterface = _oSyncInterface;
 			oSyncInterface.rowCount = sinon.spy();
 
-			oTable.getRowMode().setRowCount(4);
-			oCore.applyChanges();
+			oTable.setVisibleRowCount(4);
 			assert.ok(oSyncInterface.rowCount.calledWithExactly(4), "Row count changed: The correct row count was synced");
 			assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "The row count was synced once");
 			oSyncInterface.rowCount.resetHistory();
 
-			oTable.getRowMode().setRowCount(4);
-			oCore.applyChanges();
-			assert.ok(oSyncInterface.rowCount.notCalled, "Row count not changed (but setter called): The row count was not synced");
+			oTable.setVisibleRowCount(4);
+			assert.ok(oSyncInterface.rowCount.calledWithExactly(4), "Row count not changed (but setter called): The correct row count was synced");
+			assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "The row count was synced once");
 			oSyncInterface.rowCount.resetHistory();
 
-			oTable.setRowMode(RowModeType.Auto);
+			oTable.setVisibleRowCountMode(library.VisibleRowCountMode.Auto);
 			oCore.applyChanges();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.ok(oSyncInterface.rowCount.calledWithExactly(0),
-				"Switched to row mode Auto: A count of 0 was synced");
+				"Switched to VisibleRowCountMode=Auto: A count of 0 was synced");
 			assert.ok(oSyncInterface.rowCount.calledWithExactly(oTable.getRows().length),
-				"Switched to row mode Auto: The correct row count was synced");
+				"Switched to VisibleRowCountMode=Auto: The correct row count was synced");
 			assert.strictEqual(oSyncInterface.rowCount.callCount, 2, "The row count was synced 2 times");
 			oSyncInterface.rowCount.resetHistory();
 
@@ -167,6 +153,11 @@ sap.ui.define([
 			assert.ok(oSyncInterface.rowCount.calledWithExactly(oTable.getRows().length),
 				"Variable row heights enabled: The correct row count was synced");
 			assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "The row count was synced once");
+			oSyncInterface.rowCount.resetHistory();
+
+		}).then(function() {
+			oTable.setVisibleRowCount(oTable.getVisibleRowCount() + 1);
+			assert.ok(oSyncInterface.rowCount.notCalled, "Row count setter called in VisibleRowCountMode=Auto: The row count was not synced");
 			oSyncInterface.rowCount.resetHistory();
 
 		}).then(function() {
@@ -377,9 +368,7 @@ sap.ui.define([
 	QUnit.module("Synchronization methods", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
-				rowMode: new FixedRowMode({
-					rowCount: 3
-				}),
+				visibleRowCount: 3,
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 			});

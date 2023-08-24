@@ -347,7 +347,7 @@ sap.ui.define([
 
 		oDocument = XMLHelper.parse(
 			'<mvc:View xmlns="sap.m" xmlns:f="sap.f" xmlns:mvc="sap.ui.core.mvc" \
-				xmlns:t="sap.ui.table" xmlns:trm="sap.ui.table.rowmodes">'
+				xmlns:t="sap.ui.table">'
 			+ sViewXML
 			+ '</mvc:View>',
 			"application/xml"
@@ -376,8 +376,7 @@ sap.ui.define([
 				for (j = aChildNodes.length - 1; j >= 0; j -= 1) {
 					oChildNode = aChildNodes[j];
 					if (oChildNode.nodeType === Node.ELEMENT_NODE
-							&& oChildNode.localName !== "Column"
-							&& oChildNode.localName !== "rowMode") {
+							&& oChildNode.localName !== "Column") {
 						oColumn = document.createElementNS("sap.ui.table", "Column");
 						oElement.insertBefore(oColumn, oChildNode);
 						oElement.removeChild(oChildNode);
@@ -528,7 +527,7 @@ sap.ui.define([
 			// {string} sText with the expected text
 			this.aValueStates = [];
 
-			// If the "rowMode" of the sap.ui.table.* is "Auto", the table uses the
+			// If the "VisibleRowCountMode" of the sap.ui.table.* is "Auto", the table uses the
 			// screen height (Device.resize.height) to compute the amount of contexts it requests
 			// initially. Make sure that this is stable across devices.
 			this._oSandbox.stub(Device.resize, "height").value(1000);
@@ -6718,10 +6717,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				fnResolve = resolve;
 			}),
 			sView = '\
-<t:Table id="table" rows="{path : \'$result\', templateShareable : true}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{path : \'$result\', templateShareable : true}" visibleRowCount="2">\
 	<Text id="userId" text="{UserId}" />\
 </t:Table>',
 			that = this;
@@ -8352,10 +8348,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '\
 <t:AnalyticalTable id="table" rows="{path : \'/Items\',\
 		parameters : {useBatchRequests : true}, sorter : {path : \'AccountingDocumentItem\', descending : true}}"\
-		threshold="10">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+		threshold="10" visibleRowCount="2">\
 	<t:AnalyticalColumn grouped="true" leadingProperty="AccountingDocumentItem">\
 		<Label text="AccountingDocumentItem"/>\
 		<t:template><Text wrapping="false" text="{AccountingDocumentItem}"/></t:template>\
@@ -8492,10 +8485,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oBinding, oTable,
 			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
 			sView = '\
-<t:AnalyticalTable id="table" threshold="6">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="4"/>\
-	</t:rowMode>\
+<t:AnalyticalTable id="table" threshold="6" visibleRowCount="4">\
 	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
 		<Label text="CompanyCode"/>\
 		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
@@ -8721,10 +8711,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oBinding, oTable,
 			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
 			sView = '\
-<t:AnalyticalTable id="table" threshold="1">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="4"/>\
-	</t:rowMode>\
+<t:AnalyticalTable id="table" threshold="1" visibleRowCount="4">\
 	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
 		<Label text="CompanyCode"/>\
 		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
@@ -8881,10 +8868,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oBinding, oTable,
 			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
 			sView = '\
-<t:AnalyticalTable id="table" threshold="10">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="4"/>\
-	</t:rowMode>\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
 	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
 		<Label text="CompanyCode"/>\
 		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
@@ -9011,10 +8995,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oBinding, oTable,
 			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
 			sView = '\
-<t:AnalyticalTable id="table" threshold="10">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="4"/>\
-	</t:rowMode>\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
 	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
 		<Label text="CompanyCode"/>\
 		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
@@ -9219,10 +9200,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oTable,
 			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
 			sView = '\
-<t:AnalyticalTable id="table" threshold="10">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="4"/>\
-	</t:rowMode>\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
 	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
 		<Label text="CompanyCode"/>\
 		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
@@ -9300,10 +9278,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	QUnit.test("AnalyticalBinding: sort additional selected text properties (Sequential)", function (assert) {
 		const oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS");
 		const sView = '\
-<t:AnalyticalTable id="table" threshold="10">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="4"/>\
-	</t:rowMode>\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
 	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
 		<Label text="CompanyCode"/>\
 		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
@@ -9373,10 +9348,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	QUnit.test("AnalyticalBinding: sort additional selected text properties (Bundled)", function (assert) {
 		const oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS");
 		const sView = '\
-<t:AnalyticalTable id="table" threshold="10">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="4"/>\
-	</t:rowMode>\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
 	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
 		<Label text="CompanyCode"/>\
 		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
@@ -9460,10 +9432,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			iDataReceivedError = 0,
 			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
 			sView = '\
-<t:AnalyticalTable id="table" threshold="10">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="4"/>\
-	</t:rowMode>\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
 	<t:AnalyticalColumn grouped="false" leadingProperty="CompanyCode">\
 		<Label text="CompanyCode"/>\
 		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
@@ -10146,10 +10115,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	<Text id="reqID" text="{DfsAllwncReqID}" />\
 	<t:TreeTable id="table"\
 			rows="{path : \'to_AllwncReqToFe\', parameters : \
-				{countMode : \'Inline\', groupId : \'myGroup\', usePreliminaryContext : true}}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="1"/>\
-		</t:rowMode>\
+				{countMode : \'Inline\', groupId : \'myGroup\', usePreliminaryContext : true}}"\
+			visibleRowCount="1"\
+			visibleRowCountMode="Fixed">\
 		<Text id="orgID" text="{ForceElementOrgID}" />\
 	</t:TreeTable>\
 </FlexBox>';
@@ -10217,10 +10185,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
 		}"\
-		threshold="0">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="1"/>\
-	</t:rowMode>\
+		threshold="0"\
+		visibleRowCount="1"\
+		visibleRowCountMode="Fixed">\
 	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
 </t:TreeTable>',
 			that = this;
@@ -10322,10 +10289,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					}\
 				},\
 				path : \'to_C_RSHMaintSchedSmltdOrdAndOp\'\
-			}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="1"/>\
-		</t:rowMode>\
+			}"\
+			visibleRowCount="1"\
+			visibleRowCountMode="Fixed">\
 		<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
 	</t:TreeTable>\
 </FlexBox>',
@@ -10716,10 +10682,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
 		}"\
-		threshold="0">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+		threshold="0"\
+		visibleRowCount="2"\
+		visibleRowCountMode="Fixed">\
 	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
 </t:TreeTable>',
 			that = this;
@@ -10833,10 +10798,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}\
 			},\
 			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
-		}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+		}"\
+		visibleRowCount="2"\
+		visibleRowCountMode="Fixed">\
 	<Text text="{MaintenanceOrder}" />\
 </t:TreeTable>';
 
@@ -11481,10 +11445,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				tokenHandling : false
 			}),
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet(\'1\')/ToLineItems}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet(\'1\')/ToLineItems}" visibleRowCount="2">\
 	<Input id="note" value="{Note}" />\
 </t:Table>',
 			that = this;
@@ -11678,10 +11639,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '\
 <FlexBox id="objectPage">\
 	<Text id="salesOrderId" text="{SalesOrderID}" />\
-	<t:Table id="table" rows="{ToLineItems}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+	<t:Table id="table" rows="{ToLineItems}" visibleRowCount="2">\
 		<Text id="itemPosition" text="{ItemPosition}" />\
 	</t:Table>\
 </FlexBox>',
@@ -11801,10 +11759,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oModel = createSalesOrdersModel({defaultCountMode : CountMode.Inline}),
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}" threshold="10">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" threshold="10" visibleRowCount="2">\
 	<Text id="textId" text="{SalesOrderID}" />\
 </t:Table>',
 			that = this;
@@ -12398,10 +12353,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oBinding, oCreatedContext0, oCreatedContext1, oTable,
 			oModel = createSalesOrdersModel(),
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="5"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="5">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -12645,10 +12597,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oBinding, oCreatedContext1, oTable,
 			oModel = createSalesOrdersModel(),
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="5"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="5">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -12773,10 +12722,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oBinding, oCreatedContext0, oCreatedContext1, oCreatedContext2, oTable,
 			oModel = createSalesOrdersModel(),
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="5"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="5">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -12915,10 +12861,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oBinding, oCreatedContext0, oCreatedContext1, oTable,
 			oModel = createSalesOrdersModel({defaultCountMode : CountMode.Inline}),
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="5"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="5">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -13108,10 +13051,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oBinding, oCreatedContext0, oCreatedContext1, oTable,
 			oModel = createSalesOrdersModel({defaultCountMode : CountMode.Inline}),
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="5"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="5">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -13229,10 +13169,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oBinding, oCreatedContext0, oCreatedContext1, oCreatedContext2, oTable,
 			oModel = createSalesOrdersModel({defaultCountMode : CountMode.Inline}),
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="5"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="5">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -13589,10 +13526,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oBinding, oCreatedContext0, oCreatedContext1, oTable,
 			oModel = createSalesOrdersModel(),
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="5"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="5">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -13991,10 +13925,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				parameters : {countMode : \'Request\'},\
 				path : \'ToSalesOrders\'\
 			}"\
-			threshold="0">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="1"/>\
-		</t:rowMode>\
+			threshold="0" visibleRowCount="1" >\
 		<Text id="id" text="{SalesOrderID}"/>\
 		<Text id="note" text="{Note}"/>\
 	</t:Table>\
@@ -14151,13 +14082,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	QUnit.test("Sorting has to read persisted contexts from server again", function (assert) {
 		var oBinding, oCreatedContext0, oCreatedContext1, oTable,
 			oModel = createSalesOrdersModel(),
-			// use rowCount="2" to avoid the control's default of 10 lines for which the
+			// use visibleRowCount="2" to avoid the control's default of 10 lines for which the
 			// expectations need to be defined
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="2">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -14262,10 +14190,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel = createSalesOrdersModel({defaultCountMode : CountMode.Inline}),
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}" threshold="0">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" threshold="0" visibleRowCount="2">\
 	<Input id="note" value="{Note}" />\
 </t:Table>',
 			that = this;
@@ -14479,10 +14404,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oRowsBinding,
 			oModel = createSalesOrdersModel(),
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="2">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -14538,10 +14460,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{/BusinessPartnerSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/BusinessPartnerSet}" visibleRowCount="2">\
 	<Text id="id" text="{BusinessPartnerID}"/>\
 	<Input id="company" value="{CompanyName}"/>\
 	<Input id="mail" value="{EmailAddress}"/>\
@@ -14686,10 +14605,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oBinding, oCreatedContext, oTable,
 			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
 			sView = '\
-<t:Table id="table" rows="{/BusinessPartnerSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/BusinessPartnerSet}" visibleRowCount="2">\
 	<Text id="id" text="{BusinessPartnerID}"/>\
 	<Input id="company" value="{CompanyName}"/>\
 </t:Table>',
@@ -14753,10 +14669,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oCreatedContext, oObjectPage, oTable,
 			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
 			sView = '\
-<t:Table id="table" rows="{/BusinessPartnerSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/BusinessPartnerSet}" visibleRowCount="2">\
 	<Text id="id" text="{BusinessPartnerID}"/>\
 	<Text id="company" text="{CompanyName}"/>\
 </t:Table>\
@@ -14854,10 +14767,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oCreatedContext, oTable,
 			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}" threshold="0">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" threshold="0" visibleRowCount="2">\
 	<Input id="note" value="{Note}"/>\
 	<Text id="inactive" text="{= %{@$ui5.context.isInactive} }"/>\
 	<Text id="transient" text="{= %{@$ui5.context.isTransient} }"/>\
@@ -14937,10 +14847,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oContext, sContextPath, oTable, oTableBinding,
 			oModel = createSalesOrdersModel(),
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}" threshold="0">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="3"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" threshold="0" visibleRowCount="3">\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
 			that = this;
@@ -15226,10 +15133,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					expand : \'ToBusinessPartner\',\
 					select : \'SalesOrderID,Note,ToBusinessPartner/CompanyName\'\
 				}\
-			}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="4"/>\
-		</t:rowMode>\
+			}" visibleRowCount="4">\
 		<Text id="salesOrderID" text="{SalesOrderID}"/>\
 		<Text id="note" text="{Note}"/>\
 		<Select items="{path : \'ToLineItems\', templateShareable : true}">\
@@ -15497,10 +15401,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '\
 <FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
 	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
-	<t:Table id="table" rows="{ToSalesOrders}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="5"/>\
-		</t:rowMode>\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="5">\
 		<Text id="salesOrderID" text="{SalesOrderID}"/>\
 		<Input id="note" value="{Note}"/>\
 	</t:Table>\
@@ -15688,10 +15589,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oModel = createSalesOrdersModel({defaultOperationMode : "Client"}),
 			sView = '\
 <FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
-	<t:Table id="table" rows="{ToSalesOrders}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="2">\
 		<Input id="note" value="{Note}"/>\
 	</t:Table>\
 </FlexBox>',
@@ -15758,10 +15656,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	<t:Table id="table" rows="{\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
-		}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+		}" visibleRowCount="2">\
 		<Text id="itemPosition" text="{ItemPosition}"/>\
 		<Input id="note" value="{Note}"/>\
 	</t:Table>\
@@ -15855,10 +15750,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						\'foo\' : \'bar\'\
 					}\
 				}\
-			}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="5"/>\
-		</t:rowMode>\
+			}" visibleRowCount="5">\
 		<Text id="salesOrderID" text="{SalesOrderID}"/>\
 		<Input id="note" value="{Note}"/>\
 	</t:Table>\
@@ -15991,10 +15883,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '\
 <FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
 	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
-	<t:Table id="table" rows="{ToSalesOrders}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="2">\
 		<Text id="salesOrderID" text="{SalesOrderID}"/>\
 		<Input id="note" value="{Note}"/>\
 	</t:Table>\
@@ -16126,10 +16015,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '\
 <FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
 	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
-	<t:Table id="table" rows="{ToSalesOrders}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="2">\
 		<Text id="salesOrderID" text="{SalesOrderID}"/>\
 		<Input id="note" value="{Note}"/>\
 	</t:Table>\
@@ -16212,10 +16098,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '\
 <FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
 	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
-	<t:Table id="table" rows="{ToSalesOrders}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="2">\
 		<Text id="salesOrderID" text="{SalesOrderID}"/>\
 		<Input id="note" value="{Note}"/>\
 	</t:Table>\
@@ -16303,10 +16186,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 <FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
 	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
 	<Text id="count" text="{ui>/itemsCount}"/>\
-	<t:Table id="table" rows="{ToSalesOrders}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="2">\
 		<Text id="salesOrderID" text="{SalesOrderID}"/>\
 		<Input id="note" value="{Note}"/>\
 	</t:Table>\
@@ -16417,10 +16297,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						\'foo\' : \'bar\'\
 					}\
 				}\
-			}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+			}" visibleRowCount="2">\
 		<Text id="salesOrderID" text="{SalesOrderID}"/>\
 		<Input id="note" value="{Note}"/>\
 	</t:Table>\
@@ -16531,10 +16408,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '\
 <FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
 	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
-	<t:Table id="table" rows="{ToSalesOrders}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="2">\
 		<Text id="salesOrderID" text="{SalesOrderID}"/>\
 		<Input id="note" value="{Note}"/>\
 	</t:Table>\
@@ -16653,10 +16527,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '\
 <FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
 	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
-	<t:Table id="table" rows="{ToSalesOrders}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="5"/>\
-		</t:rowMode>\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="5">\
 		<Text id="salesOrderID" text="{SalesOrderID}"/>\
 		<Text id="note" text="{Note}"/>\
 	</t:Table>\
@@ -16847,10 +16718,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </Select>\
 <FlexBox id="objectPage">\
 	<Text id="customer" text="{CustomerName}"/>\
-	<t:Table rows="{ToLineItems}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+	<t:Table rows="{ToLineItems}" visibleRowCount="2">\
 		<Text id="itemPosition" text="{ItemPosition}"/>\
 		<Text id="itemNote" text="{Note}"/>\
 	</t:Table>\
@@ -16950,10 +16818,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel = createSalesOrdersModel(),
 			sView = '\
 <FlexBox id="objectPage" binding="{/SalesOrderSet(\'1\')}"/>\
-<t:Table id="lineItems" rows="{path : \'ToLineItems\', suspended : true}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="1"/>\
-	</t:rowMode>\
+<t:Table id="lineItems" rows="{path : \'ToLineItems\', suspended : true}" visibleRowCount="1">\
 	<Text id="itemPosition" text="{ItemPosition}"/>\
 </t:Table>',
 			that = this;
@@ -17018,10 +16883,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oBinding,
 			oModel = createSalesOrdersModel(),
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet(\'1\')/ToLineItems}" threshold="0">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="1"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet(\'1\')/ToLineItems}" threshold="0" visibleRowCount="1">\
 	<Text id="itemPosition" text="{ItemPosition}"/>\
 </t:Table>',
 			that = this;
@@ -17159,10 +17021,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}
 			},
 			sView = '\
-<t:Table id="table" binding="{/SalesOrderSet(\'1\')}" rows="{ToLineItems}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" binding="{/SalesOrderSet(\'1\')}" rows="{ToLineItems}" visibleRowCount="2">\
 	<Text id="itemPosition" text="{ItemPosition}" />\
 	<Text id="itemNote" text="{Note}" />\
 </t:Table>',
@@ -17634,10 +17493,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	QUnit.test("ODataListBinding#getContexts: bKeepCurrent=true", function (assert) {
 		var oModel = createSalesOrdersModel(),
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}" threshold="0">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" threshold="0" visibleRowCount="2">\
 	<Text id="id" text="{SalesOrderID}"/>\
 </t:Table>',
 			that = this;
@@ -17684,10 +17540,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				data : [{ID : "1"}, {ID : "2"}, {ID : "3"}]
 			}),
 			sView = '\
-<t:Table id="table" rows="{/data}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/data}" visibleRowCount="2">\
 	<Text id="id" text="{ID}"/>\
 </t:Table>',
 			that = this;
@@ -17772,10 +17625,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	QUnit.test("XMLListBinding#getContexts: bKeepCurrent=true", function (assert) {
 		var oModel = new XMLModel(),
 			sView = '\
-<t:Table id="table" rows="{/data}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/data}" visibleRowCount="2">\
 	<Text id="id" text="{@ID}"/>\
 </t:Table>',
 			that = this;
@@ -17819,10 +17669,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			],
 			oModel = new MessageModel(),
 			sView = '\
-<t:Table id="table" rows="{/}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/}" visibleRowCount="2">\
 	<Text id="code" text="{code}"/>\
 </t:Table>',
 			that = this;
@@ -17866,10 +17713,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 <FlexBox id="objectPage">\
 	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
 	<Text id="companyName" text="{CompanyName}"/>\
-	<t:Table id="table">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+	<t:Table id="table" visibleRowCount="2">\
 		<Text id="salesOrderID" text="{SalesOrderID}"/>\
 		<Input id="note" value="{Note}"/>\
 	</t:Table>\
@@ -17999,10 +17843,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				restoreTreeStateAfterChange : true\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
-		}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="3"/>\
-	</t:rowMode>\
+		}"\
+		visibleRowCount="3"\
+		visibleRowCountMode="Fixed">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -18151,10 +17994,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				restoreTreeStateAfterChange : true\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
-		}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="3"/>\
-	</t:rowMode>\
+		}"\
+		visibleRowCount="3"\
+		visibleRowCountMode="Fixed">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -18315,10 +18157,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				numberOfExpandedLevels : 0\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
-		}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="3"/>\
-	</t:rowMode>\
+		}"\
+		visibleRowCount="3"\
+		visibleRowCountMode="Fixed">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -18472,10 +18313,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				numberOfExpandedLevels : 0\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
-		}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="3"/>\
-	</t:rowMode>\
+		}"\
+		visibleRowCount="3"\
+		visibleRowCountMode="Fixed">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -18636,10 +18476,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				numberOfExpandedLevels : 0\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
-		}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="3"/>\
-	</t:rowMode>\
+		}"\
+		visibleRowCount="3"\
+		visibleRowCountMode="Fixed">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -18902,10 +18741,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				restoreTreeStateAfterChange : true\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
-		}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="4"/>\
-	</t:rowMode>\
+		}"\
+		visibleRowCount="4"\
+		visibleRowCountMode="Fixed">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -19068,10 +18906,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				restoreTreeStateAfterChange : true\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
-		}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="3"/>\
-	</t:rowMode>\
+		}"\
+		visibleRowCount="3"\
+		visibleRowCountMode="Fixed">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -19204,10 +19041,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				restoreTreeStateAfterChange : true\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
-		}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+		}"\
+		visibleRowCount="2"\
+		visibleRowCountMode="Fixed">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -19365,10 +19201,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			aCreateActivateCalledBy = [],
 			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
 			sView = '\
-<t:Table id="table" rows="{/BusinessPartnerSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/BusinessPartnerSet}" visibleRowCount="2">\
 	<Input id="company" value="{CompanyName}"/>\
 </t:Table>',
 			that = this;
@@ -19428,10 +19261,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 <FlexBox id="objectPage">\
 	<Text id="salesOrderID" text="{SalesOrderID}"/>\
 	<Text id="customerName" text="{CustomerName}"/>\
-	<t:Table id="table" rows="{ToLineItems}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+	<t:Table id="table" rows="{ToLineItems}" visibleRowCount="2">\
 		<Text id="itemPosition" text="{ItemPosition}"/>\
 		<Text id="note" text="{Note}"/>\
 	</t:Table>\
@@ -19572,10 +19402,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 <FlexBox id="objectPage">\
 	<Text id="salesOrderID" text="{SalesOrderID}"/>\
 	<Text id="customerName" text="{CustomerName}"/>\
-	<t:Table id="table" rows="{ToLineItems}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+	<t:Table id="table" rows="{ToLineItems}" visibleRowCount="2">\
 		<Text id="itemPosition" text="{ItemPosition}"/>\
 		<Text id="note" text="{Note}"/>\
 	</t:Table>\
@@ -19711,10 +19538,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 <FlexBox id="objectPage">\
 	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
 	<Text id="companyName" text="{CompanyName}"/>\
-	<t:Table id="salesOrdersTable" rows="{ToSalesOrders}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+	<t:Table id="salesOrdersTable" rows="{ToSalesOrders}" visibleRowCount="2">\
 		<Text id="note_table" text="{Note}"/>\
 	</t:Table>\
 </FlexBox>\
@@ -19826,10 +19650,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 <FlexBox id="objectPage">\
 	<Text id="productID" text="{ProductID}"/>\
 	<Text id="productName" text="{Name}"/>\
-	<t:Table id="tableSOItems" rows="{ToSalesOrderLineItems}">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+	<t:Table id="tableSOItems" rows="{ToSalesOrderLineItems}" visibleRowCount="2">\
 		<Text id="itemNote" text="{Note}"/>\
 		<Text id="customerName" text="{ToHeader/CustomerName}"/>\
 	</t:Table>\
@@ -19937,10 +19758,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oBinding, oTable,
 			oModel = createSalesOrdersModel(),
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="2">\
 	<Text id="salesOrderID" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </t:Table>',
@@ -20080,10 +19898,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '\
 <FlexBox id="objectPage">\
 	<Text id="id" text="{SalesOrderID}"/>\
-	<t:Table id="table">\
-		<t:rowMode>\
-			<trm:Fixed rowCount="2"/>\
-		</t:rowMode>\
+	<t:Table id="table" visibleRowCount="2">\
 		<Text id="itemPosition" text="{ItemPosition}" />\
 	</t:Table>\
 </FlexBox>',
@@ -20158,10 +19973,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			iCreateActivateCalled = 0,
 			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
 			sView = '\
-<t:Table id="table" rows="{/BusinessPartnerSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/BusinessPartnerSet}" visibleRowCount="2">\
 	<Text id="id" text="{BusinessPartnerID}"/>\
 	<Input id="company" value="{CompanyName}"/>\
 	<Input id="mail" value="{EmailAddress}"/>\
@@ -20415,10 +20227,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				{path : \'CreatedByUser\', operator : \'EQ\', value1 : \'user0\'},\
 				{path : \'CreatedByUser\', operator : \'EQ\', value1 : \'user1\'}\
 			]\
-		}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="4"/>\
-	</t:rowMode>\
+		}"\
+		visibleRowCount="4"\
+		visibleRowCountMode="Fixed">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -20497,10 +20308,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oTable,
 			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
 			sView = '\
-<t:Table id="table" rows="{/BusinessPartnerSet}">\
-	<t:rowMode>\
-		<trm:Fixed rowCount="2"/>\
-	</t:rowMode>\
+<t:Table id="table" rows="{/BusinessPartnerSet}" visibleRowCount="2">\
 	<Text id="id" text="{BusinessPartnerID}"/>\
 	<Input id="company" value="{CompanyName}"/>\
 	<Input id="mail" value="{EmailAddress}"/>\

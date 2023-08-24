@@ -9,8 +9,7 @@
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:plugins="sap.m.plugins"
-	xmlns:t="sap.ui.table"
-	xmlns:trm="sap.ui.table.rowmodes">
+	xmlns:t="sap.ui.table">
 <App>
 	<Page id="page" floatingFooter="true" showHeader="false">
 		<content>
@@ -200,10 +199,8 @@
 						},
 						parameters : {transitionMessagesOnly : true, usePreliminaryContext : true},
 						path : 'ToLineItems'
-					}" rowSelectionChange="onSelectItem" selectionMode="Single" threshold="0">
-					<t:rowMode>
-						<trm:Interactive rowCount="4"/>
-					</t:rowMode>
+					}" rowSelectionChange="onSelectItem" selectionMode="Single" threshold="0"
+					visibleRowCount="4">
 					<t:dependents>
 						<plugins:DataStateIndicator />
 					</t:dependents>

@@ -7,7 +7,6 @@
 	xmlns:c="sap.ui.core"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:t="sap.ui.table"
-	xmlns:trm="sap.ui.table.rowmodes"
 	xmlns:mvc="sap.ui.core.mvc">
 	<l:Splitter>
 		<l:contentAreas>
@@ -123,10 +122,9 @@
 							selectionBehavior="RowOnly"
 							enableColumnReordering="false"
 							rows="{path: '/issues'}"
-							rowSelectionChange="onRowSelectionChanged">
-						<t:rowMode>
-							<trm:Auto rowContentHeight="24"/>
-						</t:rowMode>
+							rowSelectionChange="onRowSelectionChanged"
+							rowHeight="24"
+							visibleRowCountMode="Auto">
 						<t:columns>
 							<t:Column resizable="false">
 								<Label text="Issues"/>
@@ -152,13 +150,12 @@
 						<t:Table
 							rows="{path: '/selectedIssue/issues'}"
 							selectionMode="Single"
+							rowHeight="24"
 							selectionBehavior="RowOnly"
 							enableColumnReordering="false"
+							visibleRowCount="{/visibleRowCount}"
 							rowSelectionChange="onRowSelection"
 							id="issueTable">
-							<t:rowMode>
-								<trm:Fixed rowContentHeight="24" rowCount="{/visibleRowCount}"/>
-							</t:rowMode>
 							<t:columns>
 								<t:Column
 									width="36px"

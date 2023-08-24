@@ -11,9 +11,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/table/Column",
-	"sap/ui/table/rowmodes/Fixed",
 	"sap/m/Text"
-], function (Core, qutils, KeyCodes, CellSelector, GridTable, ODataModel, MockServer, GridColumn, GridFixedRowMode, Text) {
+], function (Core, qutils, KeyCodes, CellSelector, GridTable, ODataModel, MockServer, GridColumn, Text) {
 	"use strict";
 
 	function getCell(oTable, iRow, iCol) {
@@ -35,9 +34,7 @@ sap.ui.define([
 			this.oCellSelector = new CellSelector({ rangeLimit: 15 });
 			this.oTable = new GridTable({
 				threshold: 5,
-				rowMode: new GridFixedRowMode({
-					rowCount: 5
-				}),
+				visibleRowCount: 5,
 				columns: [
 					new GridColumn({ template: new Text({text: "{ProductId}"}) }),
 					new GridColumn({ template: new Text({text: "{Name}"}) }),
@@ -65,7 +62,7 @@ sap.ui.define([
 
 			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
 			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
-			assert.equal(oBinding.getAllCurrentContexts().length, this.oTable.getThreshold() + this.oTable.getRowMode().getRowCount());
+			assert.equal(oBinding.getAllCurrentContexts().length, this.oTable.getThreshold() + this.oTable.getVisibleRowCount());
 
 			qutils.triggerKeyup(oCell, KeyCodes.SPACE, false, false, true /* Ctrl */); // enlarge selection to all rows and cells
 			assert.equal(oGetContextsSpy.callCount, 1);

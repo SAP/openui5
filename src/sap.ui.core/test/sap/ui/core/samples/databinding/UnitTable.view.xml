@@ -1,6 +1,5 @@
 <mvc:View
 	xmlns="sap.ui.table"
-	xmlns:trm="sap.ui.table.rowmodes"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:u="sap.ui.unified"
 	xmlns:c="sap.ui.core"
@@ -111,10 +110,7 @@
 	<m:Panel>
 		<m:content>
 
-			<Table rows="{meters>/data}" >
-				<rowMode>
-					<trm:Fixed rowCount="{meters>/size}" />
-				</rowMode>
+			<Table rows="{meters>/data}" visibleRowCount="{meters>/size}" >
 				<toolbar>
 					<m:Toolbar>
 						<m:content>
@@ -270,10 +266,7 @@
 	<m:Panel>
 		<m:content>
 
-			<Table rows="{months>/data}" >
-				<rowMode>
-					<trm:Fixed rowCount="{months>/size}" />
-				</rowMode>
+			<Table rows="{months>/data}" visibleRowCount="{months>/size}" >
 				<toolbar>
 					<m:Toolbar>
 						<m:content>

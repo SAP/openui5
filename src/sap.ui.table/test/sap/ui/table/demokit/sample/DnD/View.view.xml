@@ -19,7 +19,8 @@
 					rows="{
 						path: '/ProductCollection',
 						filters: {path: 'Rank', operator: 'EQ', value1: '0'}
-					}">
+					}"
+					visibleRowCount="10">
 					<extension>
 						<m:OverflowToolbar id="infobar" style="Clear">
 							<m:Title id="title" text="Available Products"/>
@@ -85,6 +86,7 @@
 						filters: {path: 'Rank', operator: 'GT', value1: '0'},
 						sorter: {path: 'Rank', descending: true}
 					}"
+					visibleRowCount="10"
 					noData="Please drag-and-drop products here.">
 					<extension>
 						<m:OverflowToolbar style="Clear">

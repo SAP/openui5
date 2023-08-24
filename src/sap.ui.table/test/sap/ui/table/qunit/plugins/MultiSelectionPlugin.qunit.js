@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/table/Table",
-	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -15,7 +14,6 @@ sap.ui.define([
 	TableQUnitUtils,
 	MultiSelectionPlugin,
 	Table,
-	FixedRowMode,
 	TableUtils,
 	library,
 	ODataModel,
@@ -361,8 +359,7 @@ sap.ui.define([
 				},
 				models: new ODataModel(sServiceURI, {
 					json: true
-				}),
-				rowMode: new FixedRowMode()
+				})
 			});
 
 			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
@@ -599,7 +596,7 @@ sap.ui.define([
 		var oFirstVisibleRowChangedSpy = sinon.spy();
 		var oRowsUpdatedSpy = sinon.spy();
 
-		oTable.getRowMode().setRowCount(3);
+		oTable.setVisibleRowCount(3);
 		oSelectionPlugin.setLimit(5);
 		oCore.applyChanges();
 
@@ -1178,7 +1175,8 @@ sap.ui.define([
 		var $Cell;
 		var that = this;
 
-		this.oTable.getRowMode().setRowCount(3);
+		this.oTable.setVisibleRowCountMode(library.VisibleRowCountMode.Fixed);
+		this.oTable.setVisibleRowCount(3);
 		oSelectionPlugin.setLimit(5);
 		oCore.applyChanges();
 
@@ -1203,7 +1201,7 @@ sap.ui.define([
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
-				that.oTable.getRowMode().setRowCount(10);
+				that.oTable.setVisibleRowCount(10);
 				var oScrollSpy = sinon.spy(that.oTable, "setFirstVisibleRow");
 				oSelectionPlugin.setSelectionInterval(5, 10);
 				setTimeout(function() {
@@ -1220,7 +1218,8 @@ sap.ui.define([
 		var $Cell;
 		var that = this;
 
-		this.oTable.getRowMode().setRowCount(3);
+		this.oTable.setVisibleRowCountMode(library.VisibleRowCountMode.Fixed);
+		this.oTable.setVisibleRowCount(3);
 		oSelectionPlugin.setLimit(5);
 		oCore.applyChanges();
 
@@ -1247,7 +1246,7 @@ sap.ui.define([
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
-				that.oTable.getRowMode().setRowCount(10);
+				that.oTable.setVisibleRowCount(10);
 				var oScrollSpy = sinon.spy(that.oTable, "setFirstVisibleRow");
 				oSelectionPlugin.setSelectionInterval(10, 5);
 				setTimeout(function() {

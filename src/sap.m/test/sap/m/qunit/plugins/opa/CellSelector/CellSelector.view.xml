@@ -9,6 +9,7 @@
 	<m:App class="sapUiContentPadding">
 		<Table
 			id="table"
+			visibleRowCount="10"
 			rows="{path: '/ProductSet'}"
 			threshold="20"
 			enableBusyIndicator="true">

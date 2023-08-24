@@ -15,6 +15,7 @@
 				id="table"
 				selectionMode="MultiToggle"
 				rows="{/ProductCollection}"
+				visibleRowCount="7"
 				sort="sortDeliveryDate"
 				ariaLabelledBy="title">
 				<extension>

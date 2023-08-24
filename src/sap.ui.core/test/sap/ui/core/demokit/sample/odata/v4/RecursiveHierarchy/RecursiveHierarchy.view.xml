@@ -2,15 +2,14 @@
 	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.sample.odata.v4.RecursiveHierarchy.RecursiveHierarchy"
 	xmlns="sap.ui.table"
-	xmlns:trm="sap.ui.table.rowmodes"
 	xmlns:m="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 
-	<Table id="table" ariaLabelledBy="title"
+	<Table id="table" ariaLabelledBy="title" minAutoRowCount="2"
 		rows="{path : '/EMPLOYEES',
 			parameters : {$count : false, $orderby : 'AGE', $$patchWithoutSideEffects : true},
 			suspended : true}"
-		selectionMode="None" threshold="0">
+		selectionMode="None" threshold="0" visibleRowCount="5" visibleRowCountMode="Interactive">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="Organizational Chart"/>
@@ -19,9 +18,6 @@
 					tooltip="Synchronize"/>
 			</m:Toolbar>
 		</extension>
-		<rowMode>
-			<trm:Interactive rowCount="5" minRowCount="2"/>
-		</rowMode>
 		<Column hAlign="End" width="5em">
 			<m:Label text="Level"/>
 			<template>
@@ -75,11 +71,11 @@
 		</Column>
 	</Table>
 
-	<TreeTable id="treeTable" ariaLabelledBy="treeTitle"
+	<TreeTable id="treeTable" ariaLabelledBy="treeTitle" minAutoRowCount="2"
 		rows="{path : '/EMPLOYEES',
 			parameters : {$count : false, $orderby : 'AGE', $$patchWithoutSideEffects : true},
 			suspended : true}"
-		selectionMode="None" threshold="0">
+		selectionMode="None" threshold="0" visibleRowCount="5" visibleRowCountMode="Interactive">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="treeTitle" level="H1" text="Organizational Chart - TreeTable"/>
@@ -88,9 +84,6 @@
 					press="onSynchronizeTreeTable" tooltip="SynchronizeTreeTable"/>
 			</m:Toolbar>
 		</extension>
-		<rowMode>
-			<trm:Interactive rowCount="5" minRowCount="2"/>
-		</rowMode>
 		<Column>
 			<m:Label text="ID"/>
 			<template>

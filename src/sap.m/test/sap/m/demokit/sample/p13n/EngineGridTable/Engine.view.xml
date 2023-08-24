@@ -10,7 +10,7 @@
     controllerName="sap.m.sample.p13n.EngineGridTable.Engine">
 
     <m:Page showHeader="false">
-        <Table id="persoTable" sort="onSort" columnMove="onColumnMove" rowMode="Auto" ariaLabelledBy="title" sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex" rows="{/items}">
+        <Table id="persoTable" sort="onSort" columnMove="onColumnMove" visibleRowCountMode="Auto" ariaLabelledBy="title" sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex" rows="{/items}">
             <extension>
                 <m:OverflowToolbar>
                     <m:Title id="title" text="Persons"/>

@@ -2,25 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
-	"sap/ui/table/qunit/rowmodes/sets/RowsUpdated.ODataV2",
 	"sap/ui/table/rowmodes/Auto",
 	"sap/ui/table/Table",
-	"sap/ui/table/utils/TableUtils",
 	"sap/ui/Device"
-], function(
-	TableQUnitUtils,
-	RowsUpdatedTest,
-	AutoRowMode,
-	Table,
-	TableUtils,
-	Device
-) {
+], function(TableQUnitUtils, AutoRowMode, Table, Device) {
 	"use strict";
-
-	TableQUnitUtils.setDefaultSettings({
-		rowMode: {Type: "sap.ui.table.rowmodes.Auto"},
-		rows: {path: "/Products"}
-	});
 
 	var iDeviceHeight = 550;
 	var iComputedRequestLength = 22; // Based on the device height.
@@ -33,172 +19,173 @@ sap.ui.define([
 			this.iOriginalDeviceHeight = Device.resize.height;
 			Device.resize.height = iDeviceHeight;
 
+			TableQUnitUtils.setDefaultSettings({
+				rowMode: new AutoRowMode(),
+				rows: {path: "/Products"},
+				models: this.oDataModel
+			});
+
 			return this.oDataModel.metadataLoaded();
 		},
 		beforeEach: function() {
 			this.oGetContextsSpy.resetHistory();
-		},
-		afterEach: function() {
-			if (this.oTable) {
-				this.oTable.destroy();
-			}
 		},
 		after: function() {
 			this.oMockServer.destroy();
 			this.oDataModel.destroy();
 			this.oGetContextsSpy.restore();
 			Device.resize.height = this.iOriginalDeviceHeight;
-		},
-		createTable: function(mSettings, fnBeforePlaceAt) {
-			if (this.oTable) {
-				this.oTable.destroy();
-			}
-
-			this.oTable = TableQUnitUtils.createTable(Object.assign({}, {
-				models: this.oDataModel,
-				columns: [
-					TableQUnitUtils.createTextColumn({
-						label: "Name",
-						text: "Name",
-						bind: true
-					})
-				]
-			}, mSettings), fnBeforePlaceAt);
-
-			return this.oTable;
+			TableQUnitUtils.setDefaultSettings();
 		}
 	});
 
 	QUnit.test("Initialization if metadata not yet loaded", function(assert) {
-		this.createTable({models: TableQUnitUtils.createODataModel(null, true)});
+		var oTable = TableQUnitUtils.createTable({models: TableQUnitUtils.createODataModel(null, true)});
+		var oGetContextsSpy = this.oGetContextsSpy;
 
 		// auto rerender, refreshRows, updateRows
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(1), 0, iComputedRequestLength, 100);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(2), 0, this.oTable.getRowMode().getComputedRowCounts().count, 100);
-			assert.notEqual(this.oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, oTable.getRowMode().getComputedRowCounts().count, 100);
+			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
 		});
 	});
 
 	QUnit.test("Initialization if metadata not yet loaded; Variable row heights", function(assert) {
-		this.createTable({
+		var oTable = TableQUnitUtils.createTable({
 			models: TableQUnitUtils.createODataModel(null, true),
 			_bVariableRowHeightEnabled: true
 		});
+		var oGetContextsSpy = this.oGetContextsSpy;
 
 		// auto rerender, refreshRows, updateRows
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(1), 0, iComputedRequestLength, 100);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(2), 0, this.oTable.getRowMode().getComputedRowCounts().count + 1, 100);
-			assert.notEqual(this.oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, oTable.getRowMode().getComputedRowCounts().count + 1, 100);
+			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
 		});
 	});
 
-	QUnit.test("Initialization", function(assert) {
-		this.createTable();
+	QUnit.test("Initialization if metadata already loaded", function(assert) {
+		var oTable = TableQUnitUtils.createTable();
+		var oGetContextsSpy = this.oGetContextsSpy;
 
 		// refreshRows, auto rerender, updateRows
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(1), 0, iComputedRequestLength, 100);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(2), 0, this.oTable.getRowMode().getComputedRowCounts().count, 100);
-			assert.notEqual(this.oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, oTable.getRowMode().getComputedRowCounts().count, 100);
+			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
 		});
 	});
 
-	QUnit.test("Initialization; Variable row heights", function(assert) {
-		this.createTable({_bVariableRowHeightEnabled: true});
+	QUnit.test("Initialization if metadata already loaded; Variable row heights", function(assert) {
+		var oTable = TableQUnitUtils.createTable({_bVariableRowHeightEnabled: true});
+		var oGetContextsSpy = this.oGetContextsSpy;
 
 		// refreshRows, auto rerender, updateRows
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(1), 0, iComputedRequestLength, 100);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(2), 0, this.oTable.getRowMode().getComputedRowCounts().count + 1, 100);
-			assert.notEqual(this.oTable.getRowMode().getComputedRowCounts().count + 1, iComputedRequestLength,
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, oTable.getRowMode().getComputedRowCounts().count + 1, 100);
+			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count + 1, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
 		});
 	});
 
-	QUnit.test("Initialization; Bound on initialization; threshold = 1", function(assert) {
-		this.createTable({threshold: 1});
+	QUnit.test("Initialization if metadata already loaded; Bound on initialization; threshold = 1", function(assert) {
+		var oTable = TableQUnitUtils.createTable({threshold: 1});
+		var oGetContextsSpy = this.oGetContextsSpy;
 
 		// refreshRows, auto rerender, updateRows
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			var iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			var iComputedRowCount = oTable.getRowMode().getComputedRowCounts().count;
 
-			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(1), 0, iComputedRequestLength, iComputedRowCount);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(2), 0, iComputedRowCount, iComputedRowCount);
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, iComputedRowCount);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, iComputedRowCount, iComputedRowCount);
 			assert.notEqual(iComputedRowCount, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
 		});
 	});
 
-	QUnit.test("Initialization; Bound on initialization; Variable row heights; threshold = 1", function(assert) {
-		this.createTable({threshold: 1, _bVariableRowHeightEnabled: true});
+	QUnit.test("Initialization if metadata already loaded; Bound on initialization; Variable row heights; threshold = 1", function(assert) {
+		var oTable = TableQUnitUtils.createTable({threshold: 1, _bVariableRowHeightEnabled: true});
+		var oGetContextsSpy = this.oGetContextsSpy;
 
 		// refreshRows, auto rerender, updateRows
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			var iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			var iComputedRowCount = oTable.getRowMode().getComputedRowCounts().count;
 
-			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(1), 0, iComputedRequestLength, iComputedRowCount + 1);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(2), 0, iComputedRowCount + 1, iComputedRowCount + 1);
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, iComputedRowCount + 1);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, iComputedRowCount + 1, iComputedRowCount + 1);
 			assert.notEqual(iComputedRowCount, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
 		});
 	});
 
-	QUnit.test("Initialization; Bound between initialization and rendering; threshold = 1", function(assert) {
-		this.createTable({threshold: 1, rows: undefined}, function(oTable) {
+	QUnit.test("Initialization if metadata already loaded; Bound between initialization and rendering; threshold = 1", function(assert) {
+		var oTable = TableQUnitUtils.createTable({threshold: 1, rows: undefined}, function(oTable) {
 			oTable.bindRows({path: "/Products"});
 		});
+		var oGetContextsSpy = this.oGetContextsSpy;
 
 		// refreshRows, auto rerender, updateRows
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			var iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			var iComputedRowCount = oTable.getRowMode().getComputedRowCounts().count;
 
-			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
 			// Threshold is 5, because of the value of the "minRowCount" property.
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(1), 0, iComputedRequestLength, iComputedRowCount);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(2), 0, iComputedRowCount, iComputedRowCount);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, iComputedRowCount);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, iComputedRowCount, iComputedRowCount);
 			assert.notEqual(iComputedRowCount, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
 		});
 	});
 
-	QUnit.test("Initialization; Bound after rendering; threshold = 1", function(assert) {
-		this.createTable({threshold: 1, rows: undefined});
-		this.oTable.bindRows({path: "/Products"});
+	QUnit.test("Initialization if metadata already loaded; Bound after rendering; threshold = 1", function(assert) {
+		var oTable = TableQUnitUtils.createTable({threshold: 1, rows: undefined});
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		oTable.bindRows({path: "/Products"});
 
 		// refreshRows, auto rerender, updateRows
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			var iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			var iComputedRowCount = oTable.getRowMode().getComputedRowCounts().count;
 
-			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
 			// Threshold is 5, because of the value of the "minRowCount" property.
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(1), 0, iComputedRequestLength, iComputedRowCount);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(2), 0, iComputedRowCount, iComputedRowCount);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, iComputedRowCount);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, iComputedRowCount, iComputedRowCount);
 			assert.notEqual(iComputedRowCount, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
 		});
 	});
 
-	QUnit.test("Initialization; Bound after rendering; With fixed rows; threshold = 1", function(assert) {
-		this.createTable({
+	QUnit.test("Initialization if metadata already loaded; Bound after rendering; With fixed rows; threshold = 1", function(assert) {
+		var oTable = TableQUnitUtils.createTable({
 			threshold: 1,
 			rows: undefined,
 			rowMode: new AutoRowMode({
@@ -206,24 +193,27 @@ sap.ui.define([
 				fixedBottomRowCount: 1
 			})
 		});
-		this.oTable.bindRows({path: "/Products"});
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		oTable.bindRows({path: "/Products"});
 
 		// refreshRows, auto rerender, updateRows
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			var mRowCounts = this.oTable.getRowMode().getComputedRowCounts();
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			var mRowCounts = oTable.getRowMode().getComputedRowCounts();
 
-			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
 			// Threshold is 5, because of the value of the "minRowCount" property.
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(1), 0, iComputedRequestLength - 1, mRowCounts.scrollable);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(2), 0, mRowCounts.scrollable + 1, mRowCounts.scrollable);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength - 1, mRowCounts.scrollable);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, mRowCounts.scrollable + 1, mRowCounts.scrollable);
 			assert.notEqual(mRowCounts.count, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
 		});
 	});
 
-	QUnit.test("Initialization; Bound after rendering; With fixed rows; threshold = 1, minRowCount: 30", function(assert) {
-		this.createTable({
+	QUnit.test("Initialization if metadata already loaded; Bound after rendering; With fixed rows; threshold = 1, minRowCount: 30", function(assert) {
+		var oTable = TableQUnitUtils.createTable({
 			threshold: 1,
 			rows: undefined,
 			rowMode: new AutoRowMode({
@@ -232,89 +222,102 @@ sap.ui.define([
 				minRowCount: 30
 			})
 		});
-		this.oTable.bindRows({path: "/Products"});
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		oTable.bindRows({path: "/Products"});
 
 		// refreshRows, auto rerender, updateRows
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			var iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			var iComputedRowCount = oTable.getRowMode().getComputedRowCounts().count;
 
-			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
 			// Threshold is 30, because of the value of the "minRowCount" property.
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, 30, 30);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(1), 0, 29, 28);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(2), 0, 29, 28);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, 30, 30);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, 29, 28);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, 29, 28);
 			assert.notEqual(iComputedRowCount, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
 		});
 	});
 
 	QUnit.test("Resize", function(assert) {
-		this.createTable();
+		var oTable = TableQUnitUtils.createTable();
+		var oGetContextsSpy = this.oGetContextsSpy;
 
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			this.oGetContextsSpy.resetHistory();
-		}).then(this.oTable.qunit.$resize({height: "756px"})).then(() => {
-			assert.equal(this.oGetContextsSpy.callCount, 1, "Method to get contexts called once");
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, this.oTable.getRowMode().getComputedRowCounts().count, 100);
-			this.oGetContextsSpy.resetHistory();
-		}).then(this.oTable.qunit.resetSize).then(() => {
-			assert.equal(this.oGetContextsSpy.callCount, 1, "Method to get contexts called once");
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, this.oTable.getRowMode().getComputedRowCounts().count, 100);
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.resetHistory();
+		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
+			assert.equal(oGetContextsSpy.callCount, 1, "Method to get contexts called once");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, oTable.getRowMode().getComputedRowCounts().count, 100);
+			oGetContextsSpy.resetHistory();
+
+		}).then(oTable.qunit.resetSize).then(function() {
+			assert.equal(oGetContextsSpy.callCount, 1, "Method to get contexts called once");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, oTable.getRowMode().getComputedRowCounts().count, 100);
+			oTable.destroy();
 		});
 	});
 
 	QUnit.test("Refresh", function(assert) {
-		this.createTable();
+		var oTable = TableQUnitUtils.createTable();
+		var oGetContextsSpy = this.oGetContextsSpy;
 
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			this.oGetContextsSpy.resetHistory();
-			this.oTable.getBinding().refresh();
-		}).then(this.oTable.qunit.whenRenderingFinished).then(() => {
-			assert.equal(this.oGetContextsSpy.callCount, 2, "Call count of method to get contexts"); // refreshRows, updateRows
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(1), 0, this.oTable.getRowMode().getComputedRowCounts().count, 100);
-			assert.notEqual(this.oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.resetHistory();
+			oTable.getBinding().refresh();
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.equal(oGetContextsSpy.callCount, 2, "Call count of method to get contexts"); // refreshRows, updateRows
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, oTable.getRowMode().getComputedRowCounts().count, 100);
+			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
 		});
 	});
 
 	QUnit.test("Refresh; Variable row heights", function(assert) {
-		this.createTable({_bVariableRowHeightEnabled: true});
+		var oTable = TableQUnitUtils.createTable({_bVariableRowHeightEnabled: true});
+		var oGetContextsSpy = this.oGetContextsSpy;
 
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			this.oGetContextsSpy.resetHistory();
-			this.oTable.getBinding().refresh();
-		}).then(this.oTable.qunit.whenRenderingFinished).then(() => {
-			assert.equal(this.oGetContextsSpy.callCount, 2, "Call count of method to get contexts"); // refreshRows, updateRows
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(1), 0, this.oTable.getRowMode().getComputedRowCounts().count + 1, 100);
-			assert.notEqual(this.oTable.getRowMode().getComputedRowCounts().count + 1, iComputedRequestLength,
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.resetHistory();
+			oTable.getBinding().refresh();
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.equal(oGetContextsSpy.callCount, 2, "Call count of method to get contexts"); // refreshRows, updateRows
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, oTable.getRowMode().getComputedRowCounts().count + 1, 100);
+			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count + 1, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
 		});
 	});
 
 	QUnit.test("Refresh; With fixed rows; threshold = 1", function(assert) {
-		this.createTable({
+		var oTable = TableQUnitUtils.createTable({
 			threshold: 1,
 			rowMode: new AutoRowMode({
 				fixedTopRowCount: 1,
 				fixedBottomRowCount: 1
 			})
 		});
+		var oGetContextsSpy = this.oGetContextsSpy;
 
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			this.oGetContextsSpy.resetHistory();
-			this.oTable.getBinding().refresh();
-		}).then(this.oTable.qunit.whenRenderingFinished).then(() => {
-			var mRowCounts = this.oTable.getRowMode().getComputedRowCounts();
-			assert.equal(this.oGetContextsSpy.callCount, 2, "Call count of method to get contexts"); // refreshRows, updateRows
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength - 1, mRowCounts.scrollable);
-			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(1), 0, mRowCounts.scrollable + 1, mRowCounts.scrollable);
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.resetHistory();
+			oTable.getBinding().refresh();
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			var mRowCounts = oTable.getRowMode().getComputedRowCounts();
+
+			assert.equal(oGetContextsSpy.callCount, 2, "Call count of method to get contexts"); // refreshRows, updateRows
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength - 1, mRowCounts.scrollable);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, mRowCounts.scrollable + 1, mRowCounts.scrollable);
+			oTable.destroy();
 		});
 	});
 
 	QUnit.test("Refresh; With fixed rows; threshold = 1, minRowCount: 30", function(assert) {
-		this.createTable({
+		var oTable = TableQUnitUtils.createTable({
 			threshold: 1,
 			rowMode: new AutoRowMode({
 				fixedTopRowCount: 1,
@@ -322,55 +325,15 @@ sap.ui.define([
 				minRowCount: 30
 			})
 		});
+		var oGetContextsSpy = this.oGetContextsSpy;
 
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			this.oGetContextsSpy.resetHistory();
-			this.oTable.getBinding().refresh();
-		}).then(this.oTable.qunit.whenRenderingFinished).then(() => {
-			assert.equal(this.oGetContextsSpy.callCount, 2, "Call count of method to get contexts"); // refreshRows, updateRows
-			sinon.assert.alwaysCalledWithExactly(this.oGetContextsSpy, 0, 29, 28);
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.resetHistory();
+			oTable.getBinding().refresh();
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.equal(oGetContextsSpy.callCount, 2, "Call count of method to get contexts"); // refreshRows, updateRows
+			sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 0, 29, 28);
+			oTable.destroy();
 		});
 	});
-
-	RowsUpdatedTest.registerTo(QUnit, function(assert, fnOriginalTest) {
-		switch (QUnit.config.current.testName) {
-			case "Initial rendering":
-				return testWithStableRowCount(fnOriginalTest);
-			case "Initial rendering in invisible container":
-				return RowsUpdatedTestInvisibleInitialRendering.apply(this, arguments);
-			default:
-				return fnOriginalTest();
-		}
-	});
-
-	// To add a test case where the table does not need to adjust the row count to the avialable space after rendering.
-	function testWithStableRowCount(fnTest) {
-		return fnTest().then(() => {
-			var oRowMode = TableQUnitUtils.getDefaultSettings().rowMode;
-
-			oRowMode.minRowCount = 10;
-			oRowMode.maxRowCount = 10;
-
-			return fnTest().then(() => {
-				delete oRowMode.minRowCount;
-				delete oRowMode.maxRowCount;
-			});
-		});
-	}
-
-	function RowsUpdatedTestInvisibleInitialRendering(assert, fnOriginalTest) {
-		return testWithStableRowCount(() => {
-			return TableQUnitUtils.hideTestContainer().then(() => {
-				this.createTable();
-				return this.checkRowsUpdated(assert, []);
-			}).then(() => {
-				this.resetRowsUpdatedSpy();
-				return TableQUnitUtils.showTestContainer();
-			}).then(() => {
-				return this.checkRowsUpdated(assert, [
-					TableUtils.RowsUpdateReason.Render
-				]);
-			});
-		});
-	}
 });

@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
-	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/AnalyticalColumn",
 	"sap/m/Label",
@@ -20,7 +19,6 @@ sap.ui.define([
 	OverlayRegistry,
 	Table,
 	Column,
-	FixedRowMode,
 	AnalyticalTable,
 	AnalyticalColumn,
 	Label,
@@ -47,9 +45,7 @@ sap.ui.define([
 			extension: [
 				new Title({text: "Example Table"})
 			],
-			rowMode: new FixedRowMode({
-				rowCount: 5
-			}),
+			visibleRowCount: 5,
 			width: "200px",
 			rows: "{/}"
 		});
@@ -169,9 +165,7 @@ sap.ui.define([
 				extension: [
 					new Title({text: "Example Table"})
 				],
-				rowMode: new FixedRowMode({
-					rowCount: 5
-				}),
+				visibleRowCount: 5,
 				width: "200px"
 			});
 
