@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/core/UIArea",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/testlib/TestButton",
+	"sap/ui/test/actions/Press",
 	"sap/ui/thirdparty/jquery"
-], function(Log, Control, oCore, HTML, UIArea, createAndAppendDiv, TestButton, jQuery) {
+], function(Log, Control, oCore, HTML, UIArea, createAndAppendDiv, TestButton, Press, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("uiArea1");
@@ -264,6 +265,29 @@ sap.ui.define([
 
 		// cleanup
 		UIArea.configureEventLogging({mouseover: 1});
+	});
+
+	QUnit.test("Control Events should be blocked depending on UIArea lock", function(assert) {
+		let bPressed = false;
+		const oPress = new Press();
+		const fnPress = () => {
+			bPressed = true;
+		};
+
+		this.oButton.getUIArea().lock();
+		this.oButton.attachPress(fnPress);
+
+		assert.ok(!bPressed, "Button must not have fired 'press' yet");
+		oPress.executeOn(this.oButton);
+		assert.ok(!bPressed, "Button still must not have fired 'press'");
+
+		this.oButton.getUIArea().unlock();
+
+		assert.ok(!bPressed, "Button still must not have fired 'press'");
+		oPress.executeOn(this.oButton);
+		assert.ok(bPressed, "Button should have fired 'press'");
+
+		this.oButton.detachPress(fnPress);
 	});
 
 

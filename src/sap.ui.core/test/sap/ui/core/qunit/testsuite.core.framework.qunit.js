@@ -59,12 +59,6 @@ sap.ui.define(function() {
 				 */
 				page: "test-resources/sap/ui/core/qunit/Core_unavoidablyUsingEval.qunit.html"
 			},
-			CoreLock: {
-				title: "sap.ui.core.Core: Core unlocks unconditionally itself upon load/init",
-				ui5: {
-					libs: "sap.m"
-				}
-			},
 			/**
 			 * The tests for the preload files all share the same test configuration.
 			 * There is only one HTML test page, which is opened with different URL parameters.
