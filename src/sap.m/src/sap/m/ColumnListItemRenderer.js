@@ -180,7 +180,8 @@ sap.ui.define([
 			var aStyleClass = oColumn.getStyleClass().split(" ").filter(Boolean),
 				sCellId = oLI.getId() + "-cell" + iColumnIndex,
 				oCell = aCells[oColumn.getInitialOrder()],
-				vAlign = oColumn.getVAlign();
+				vAlign = oColumn.getVAlign(),
+				bRenderCell = true;
 
 			this.openStartGridCell(rm, oLI, "td", sCellId, "sapMListTblCell");
 			rm.attr("data-sap-ui-column", oColumn.getId());
@@ -206,6 +207,8 @@ sap.ui.define([
 						vCellValue = oCell[sFuncName](sFuncParam);
 
 					if (vLastColumnValue === vCellValue) {
+						// it is not necessary to render the cell content but screen readers need the content to announce it
+						bRenderCell = Core.getConfiguration().getAccessibility();
 						oCell.addStyleClass("sapMListTblCellDupCnt");
 						rm.class("sapMListTblCellDup");
 					} else {
@@ -218,8 +221,7 @@ sap.ui.define([
 
 			rm.openEnd();
 
-			// it is not necessary to render the cell content but screen readers need the content to announce it
-			if (oCell && Core.getConfiguration().getAccessibility()) {
+			if (oCell && bRenderCell) {
 				this.applyAriaLabelledBy(oColumn.getHeader(), oCell, true);
 				rm.renderControl(oCell);
 			}
