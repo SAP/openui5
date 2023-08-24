@@ -704,7 +704,6 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Note: "X" is really nothing special
-[false, true].forEach(function (bAsync) {
 	["true", true, 1, "X"].forEach(function (oFlag) {
 		QUnit.test("XML with template:if test='{/flag}', truthy, flag = " + oFlag,
 			function (assert) {
@@ -719,11 +718,10 @@ sap.ui.define([
 					'</mvc:View>'
 				], {
 					models: new JSONModel({flag: oFlag})
-				}, undefined, /*bAsync*/bAsync);
+				}, undefined, true);
 			}
 		);
 	});
-});
 
 	//*********************************************************************************************
 	// Note: " " intentionally not included yet, should not matter for OData!
