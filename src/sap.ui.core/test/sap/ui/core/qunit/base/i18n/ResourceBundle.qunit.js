@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/util/Properties",
-	"sap/base/util/merge"
-], function(Localization, ResourceBundle, Properties, merge) {
+	"sap/base/util/merge",
+	"sap/base/Log"
+], function(Localization, ResourceBundle, Properties, merge, Log) {
 	"use strict";
 
 	QUnit.module("sap/base/i18n/ResourceBundle", {
@@ -1124,16 +1125,25 @@ sap.ui.define([
 	 */
 	QUnit.test("getText - with placeholder values as positional parameters (not supported)", function(assert) {
 		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({sayHello: "Hello {0}"}));
-
+		var oErrorLogSpy = this.spy(Log, "error");
 		return ResourceBundle.create({url: 'my.properties', locale: "", async: true, supportedLocales: [""], fallbackLocale: ""}).then(function(oResourceBundle) {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my.properties", "raw properties file is requested");
+			assert.equal(oErrorLogSpy.callCount, 0, "Log.error should be called once");
 
 			// non-falsy, non-array value for 2nd parameter of #getText
 			assert.equal(oResourceBundle.getText("sayHello", "Peter"), "Hello Peter");
+			assert.equal(oErrorLogSpy.callCount, 1, "Log.error should be called");
+			assert.equal(oErrorLogSpy.getCall(0).args[0],
+				"sap/base/i18n/ResourceBundle: value for parameter 'aArgs' is not of type array",
+				"Log.error should be called with expected message");
 
 			// non-nullish but "falsy" value for 2nd parameter of #getText
 			assert.equal(oResourceBundle.getText("sayHello", ""), "Hello {0}");
+			assert.equal(oErrorLogSpy.callCount, 2, "Log.error should be called");
+			assert.equal(oErrorLogSpy.getCall(1).args[0],
+				"sap/base/i18n/ResourceBundle: value for parameter 'aArgs' is not of type array",
+				"Log.error should be called with expected message");
 		});
 	});
 
