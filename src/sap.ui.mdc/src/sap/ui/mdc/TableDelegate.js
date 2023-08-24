@@ -82,34 +82,25 @@ sap.ui.define([
 	 * @protected
 	 */
 	TableDelegate.getFilters = function(oTable) {
-		var bFilterEnabled = oTable.isFilteringEnabled();
-		var aP13nFilters = [], aFilterBarFilters = [];
+		var bTableFilterEnabled = oTable.isFilteringEnabled();
+		var aTableFilters = [], aFilterBarFilters = [];
 
-		if (bFilterEnabled) {
+		if (bTableFilterEnabled) {
+			var mTableConditions = oTable.getConditions();
 			var aTableProperties = oTable.getPropertyHelper().getProperties();
-			var oP13nFilter = oTable.getConditions() || {};
-			var oInnerFilterInfo = FilterUtil.getFilterInfo(oTable, oP13nFilter, aTableProperties);
-
-			if (oInnerFilterInfo.filters) {
-				aP13nFilters.push(oInnerFilterInfo.filters);
-			}
+			var oTableFilters = FilterUtil.getFilterInfo(oTable, mTableConditions, aTableProperties).filters;
+			aTableFilters = oTableFilters ? [oTableFilters] : [];
 		}
 
 		var oFilterBar = Core.byId(oTable.getFilter());
 		if (oFilterBar) {
-			var mConditions = oFilterBar.getConditions();
-
-			if (mConditions) {
-				var aPropertiesMetadata = oFilterBar.getPropertyInfoSet ? oFilterBar.getPropertyInfoSet() : null;
-				var oFilterInfo = FilterUtil.getFilterInfo(oTable, mConditions, aPropertiesMetadata);
-
-				if (oFilterInfo.filters) {
-					aFilterBarFilters.push(oFilterInfo.filters);
-				}
-			}
+			var mFilterBarConditions = oFilterBar.getConditions();
+			var aFilterBarProperties = oTable.getPropertyHelper().getProperties();
+			var oFilterBarFilters = FilterUtil.getFilterInfo(oTable, mFilterBarConditions, aFilterBarProperties).filters;
+			aFilterBarFilters = oFilterBarFilters ? [oFilterBarFilters] : [];
 		}
 
-		return aP13nFilters.concat(aFilterBarFilters);
+		return aTableFilters.concat(aFilterBarFilters);
 	};
 
 	/**
