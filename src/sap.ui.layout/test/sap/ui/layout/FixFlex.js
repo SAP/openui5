@@ -18,9 +18,8 @@ sap.ui.require([
 	"sap/m/Text",
 	"sap/ui/core/library",
 	"sap/ui/layout/FixFlex",
-	"sap/ui/table/AnalyticalTable",
-	"sap/ui/table/rowmodes/Auto"
-], function(App, Bar, Button, Carousel, Dialog, FlexItemData, IconTabBar, IconTabFilter, Image, Input,  ObjectAttribute, ObjectHeader, ObjectStatus, Page, Panel, RatingIndicator,  Text, coreLibrary, FixFlex, AnalyticalTable, AutoRowMode) {
+	"sap/ui/table/AnalyticalTable"
+], function(App, Bar, Button, Carousel, Dialog, FlexItemData, IconTabBar, IconTabFilter, Image, Input,  ObjectAttribute, ObjectHeader, ObjectStatus, Page, Panel, RatingIndicator,  Text, coreLibrary, FixFlex, AnalyticalTable) {
 	"use strict";
 
 	var IconColor = coreLibrary.IconColor;
@@ -164,10 +163,9 @@ sap.ui.require([
 				count: '3',
 				key: 'k1',
 				content: [new AnalyticalTable({
-					rowMode: new AutoRowMode({
-						rowContentHeight: 32
-					}),
-					selectionMode: 'MultiToggle'
+					visibleRowCountMode: 'Auto',
+					selectionMode: 'MultiToggle',
+					rowHeight: 32
 				})]
 			}), new IconTabFilter({
 				iconColor: IconColor.Default,
@@ -219,10 +217,9 @@ sap.ui.require([
 				count: '3',
 				key: 'k1',
 				content: [new AnalyticalTable({
-					rowMode: new AutoRowMode({
-						rowContentHeight: 32
-					}),
-					selectionMode: 'MultiToggle'
+					visibleRowCountMode: 'Auto',
+					selectionMode: 'MultiToggle',
+					rowHeight: 32
 				})]
 			}), new IconTabFilter({
 				iconColor: IconColor.Default,
@@ -281,10 +278,9 @@ sap.ui.require([
 				count: '3',
 				key: 'k1',
 				content: [new AnalyticalTable({
-					rowMode: new AutoRowMode({
-						rowContentHeight: 32
-					}),
-					selectionMode: 'MultiToggle'
+					visibleRowCountMode: 'Auto',
+					selectionMode: 'MultiToggle',
+					rowHeight: 32
 				})]
 			}), new IconTabFilter({
 				iconColor: IconColor.Default,

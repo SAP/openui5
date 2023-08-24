@@ -9,16 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
     "sap/ui/table/RowAction",
     "sap/ui/table/RowActionItem"
-], function(
-	TableQUnitUtils,
-	RowSettings,
-	TableUtils,
-	CoreLibrary,
-	ThemeParameters,
-	oCore,
-	RowAction,
-	RowActionItem
-) {
+], function(TableQUnitUtils, RowSettings, TableUtils, CoreLibrary, ThemeParameters, oCore, RowAction, RowActionItem) {
 	"use strict";
 
 	// mapping of global function calls
@@ -37,7 +28,7 @@ sap.ui.define([
 	 * Sets up the row settings template in the table.
 	 */
 	function initRowSettings() {
-		oTable.getRowMode().setRowCount(iRowsWithHighlight + 2);
+		oTable.setVisibleRowCount(iRowsWithHighlight + 2);
 
 		oTable.setRowSettingsTemplate(new RowSettings({
 			highlight: {
@@ -408,7 +399,7 @@ sap.ui.define([
 		beforeEach: function() {
 			createTables(false, false, 3);
 
-			oTable.getRowMode().setRowCount(3);
+			oTable.setVisibleRowCount(3);
 			oTable.setRowActionTemplate(new RowAction({
 				items: [
 					new RowActionItem({

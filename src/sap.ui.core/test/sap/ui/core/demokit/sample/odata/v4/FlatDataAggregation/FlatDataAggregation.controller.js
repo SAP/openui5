@@ -72,7 +72,6 @@ sap.ui.define([
 					= UriParameters.fromQuery(window.location.search)
 						.get("grandTotalAtBottomOnly"),
 				oTTable = this.byId("tTable"),
-				oTTableMode = oTTable.getRowMode(),
 				oRowsBinding = oTTable.getBinding("rows"),
 				that = this;
 
@@ -97,9 +96,8 @@ sap.ui.define([
 						that._oAggregation4Grid.aggregate[sAlias].grandTotal = !sFilter;
 					});
 				oRowsBinding.setAggregation(this._oAggregation4Grid);
-				oTTableMode.setFixedTopRowCount(sGrandTotalAtBottomOnly !== "true"
-												&& !sFilter ? 1 : 0);
-				oTTableMode.setFixedBottomRowCount(sGrandTotalAtBottomOnly && !sFilter ? 1 : 0);
+				oTTable.setFixedRowCount(sGrandTotalAtBottomOnly !== "true" && !sFilter ? 1 : 0);
+				oTTable.setFixedBottomRowCount(sGrandTotalAtBottomOnly && !sFilter ? 1 : 0);
 			}
 			oRowsBinding.resume();
 		},
@@ -164,14 +162,14 @@ sap.ui.define([
 			});
 			if (sGrandTotalAtBottomOnly) {
 				this._oAggregation4Grid.grandTotalAtBottomOnly = bGrandTotalAtBottomOnly;
-				oTTable.getRowMode().setFixedBottomRowCount(1);
+				oTTable.setFixedBottomRowCount(1);
 			}
 			// Note: this triggers a "refresh" event with reason "filter" which resets
 			// firstVisibleRow to 0
 			oRowsBinding.setAggregation(this._oAggregation4Grid);
 			oTTable.setFirstVisibleRow(1); //TODO does not help?
 			if (sGrandTotalAtBottomOnly !== "true") {
-				oTTable.getRowMode().setFixedTopRowCount(1);
+				oTTable.setFixedRowCount(1);
 			}
 			oRowsBinding.resume();
 			oTTable.setBindingContext(oRowsBinding.getHeaderContext(), "headerContext");

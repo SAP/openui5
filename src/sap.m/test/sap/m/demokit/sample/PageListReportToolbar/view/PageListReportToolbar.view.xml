@@ -2,7 +2,6 @@
 	xmlns="sap.m"
 	xmlns:c="sap.ui.core"
 	xmlns:t="sap.ui.table"
-	xmlns:trm="sap.ui.table.rowmodes"
 	xmlns:f="sap.ui.layout.form"
 	height="100%">
 	<Page enableScrolling="true" title="Title" class="sapUiResponsivePadding--header sapUiResponsivePadding--footer">
@@ -38,10 +37,7 @@
 						<FlexItemData shrinkFactor="0" backgroundDesign="Solid" styleClass="sapContrastPlus"/>
 					</f:layoutData>
 				</f:SimpleForm>
-				<t:AnalyticalTable selectionMode="MultiToggle">
-					<t:rowMode>
-						<trm:Auto rowContentHeight="32"/>
-					</t:rowMode>
+				<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
 					<t:toolbar>
 						<OverflowToolbar>
 							<Title text="Title Bar Here"/>

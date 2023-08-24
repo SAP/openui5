@@ -35,7 +35,7 @@
 					</form:SimpleForm>
 				</content>
 			</Panel>
-			<t:TreeTable id="treetable" rowMode="Auto" selectionBehavior="Row"
+			<t:TreeTable id="treetable" visibleRowCountMode="Auto" selectionBehavior="Row"
 				selectionMode="Single" rowSelectionChange="onRowSelection" threshold="10">
 				<t:extension>
 					<Toolbar>

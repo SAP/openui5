@@ -2,22 +2,18 @@
 	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.sample.odata.v4.HierarchyBindAction.Main"
 	xmlns="sap.ui.table"
-	xmlns:rm="sap.ui.table.rowmodes"
 	xmlns:m="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 
-	<TreeTable id="table" ariaLabelledBy="title"
+	<TreeTable id="table" ariaLabelledBy="title" minAutoRowCount="2"
 		rows="{path : '/P_SADL_RS_HIER_BIND_ACTION',
 			parameters : {$count : true, $$patchWithoutSideEffects : true}, suspended : true}"
-		selectionMode="None" threshold="0">
+		selectionMode="None" threshold="0" visibleRowCount="5" visibleRowCountMode="Interactive">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="{header>$count} Items"/>
 			</m:Toolbar>
 		</extension>
-		<rowMode>
-			<rm:Interactive rowCount="5" minRowCount="2"/>
-		</rowMode>
 		<Column width="20em">
 			<m:Label text="ID"/>
 			<template>

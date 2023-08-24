@@ -219,7 +219,7 @@ sap.ui.define([
 			oOpenDefaultContentCellContextMenu.resetHistory();
 		}
 
-		oTable.getRowMode().setRowCount(iNumberOfRows + 1);
+		oTable.setVisibleRowCount(iNumberOfRows + 1);
 		oCore.applyChanges();
 		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, getCell(iNumberOfRows, 0)[0]), false, "Returned false");
 		assert.ok(oOpenCustomContentCellContextMenu.notCalled, "_openCustomContentCellContextMenu was not called");

@@ -2,7 +2,6 @@
 		controllerName="sap.ui.test.BlanketReporterUI"
 		xmlns="sap.m"
 		xmlns:table="sap.ui.table"
-		xmlns:tablerm="sap.ui.table.rowmodes"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:form="sap.ui.layout.form">
@@ -35,7 +34,8 @@
 			visible="{= %{/branchTracking}}"/>
 	</form:SimpleForm>
 	<table:Table id="Files" selectionMode="Single" selectionBehavior="RowOnly" rows="{/files}"
-			rowSelectionChange="onRowSelection">
+			rowSelectionChange="onRowSelection" visibleRowCountMode="Interactive"
+			minAutoRowCount="1" visibleRowCount="{/visible}">
 		<table:extension>
 			<HBox>
 				<CheckBox selected="{/filterThreshold}" text="Below Threshold ({/threshold} %)"
@@ -43,9 +43,6 @@
 				<CheckBox select="onRowSelection" selected="{/showHits}" text="Show Hits"/>
 			</HBox>
 		</table:extension>
-		<table:rowMode>
-			<tablerm:Interactive rowCount="{/visible}" minRowCount="1"/>
-		</table:rowMode>
 		<table:columns>
 			<table:Column width="5em" hAlign="Right">
 				<table:label>

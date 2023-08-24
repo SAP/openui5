@@ -51,9 +51,7 @@
 	}
 
 	var oTable = new sap.ui.table.Table({
-		rowMode: new sap.ui.table.rowmodes.Fixed({
-			rowCount: nRows
-		}),
+		visibleRowCount: nRows,
 		rows: {path: "/rows"},
 		columns: createColumns(nCols, sap.ui.table.Column)
 	});

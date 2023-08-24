@@ -14,6 +14,7 @@
 				ariaLabelledBy="title"
 				selectionMode="MultiToggle"
 				rows="{/modelData}"
+				visibleRowCount="5"
 				enableColumnFreeze="true"
 				showColumnVisibilityMenu="true">
 				<extension>

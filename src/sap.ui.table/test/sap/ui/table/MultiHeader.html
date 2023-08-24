@@ -107,15 +107,12 @@
 		}));
 	}
 
-	var oTable1 = new sap.ui.table.Table({
-		rowMode: new sap.ui.table.rowmodes.Fixed({
-			fixedTopRowCount: 1,
-			fixedBottomRowCount: 1
-		})
-	});
+	var oTable1 = new sap.ui.table.Table();
 	oTable1.setTitle("Table 1");
 	oTable1.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
-		oTable1.setFixedColumnCount(0);
+	oTable1.setFixedColumnCount(0);
+	oTable1.setFixedRowCount(1);
+	oTable1.setFixedBottomRowCount(1);
 	oTable1.setEnableColumnFreeze(true);
 	/**
 	 * @deprecated As of Version 1.117

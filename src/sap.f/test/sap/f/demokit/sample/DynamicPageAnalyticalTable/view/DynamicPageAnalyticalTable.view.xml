@@ -90,7 +90,7 @@
 				<t:Table
 						rows="{/ProductCollection}"
 						selectionMode="MultiToggle"
-						rowMode="Auto">
+						visibleRowCountMode="Auto">
 					<t:extension>
 						<OverflowToolbar style="Clear">
 							<Title text="Products"/>

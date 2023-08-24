@@ -29,11 +29,10 @@ sap.ui.define([
 	 * The number of rows to be displayed can only be determined after the layout has been completed. The data can already be requested before that.
 	 * To avoid multiple data requests, the amount of initially requested data is based on the maximum number of potentially displayed rows,
 	 * which takes the window size into consideration, for example.
-	 * @extends sap.ui.table.rowmodes.RowMode
+	 * @extends module:sap/ui/table/rowmodes/RowMode
 	 * @constructor
-	 * @alias sap.ui.table.rowmodes.Auto
-	 * @since 1.119
-	 * @public
+	 * @alias module:sap/ui/table/rowmodes/Auto
+	 * @private
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -75,9 +74,6 @@ sap.ui.define([
 			}
 		},
 		constructor: function(sId) {
-			/**
-			 * @deprecated As of version 1.119
-			 */
 			Object.defineProperty(this, "bLegacy", {
 				value: typeof sId === "boolean" ? sId : false
 			});
@@ -175,9 +171,6 @@ sap.ui.define([
 	};
 
 	AutoRowMode.prototype.getFixedTopRowCount = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
 		if (this.bLegacy) {
 			var oTable = this.getTable();
 			return oTable ? oTable.getFixedRowCount() : 0;
@@ -187,9 +180,6 @@ sap.ui.define([
 	};
 
 	AutoRowMode.prototype.getFixedBottomRowCount = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
 		if (this.bLegacy) {
 			var oTable = this.getTable();
 			return oTable ? oTable.getFixedBottomRowCount() : 0;
@@ -199,9 +189,6 @@ sap.ui.define([
 	};
 
 	AutoRowMode.prototype.getMinRowCount = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
 		if (this.bLegacy) {
 			var oTable = this.getTable();
 			return oTable ? oTable.getMinAutoRowCount() : 0;
@@ -211,9 +198,6 @@ sap.ui.define([
 	};
 
 	AutoRowMode.prototype.getRowContentHeight = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
 		if (this.bLegacy) {
 			var oTable = this.getTable();
 			return oTable ? oTable.getRowHeight() : 0;
@@ -353,17 +337,7 @@ sap.ui.define([
 	AutoRowMode.prototype.renderCellContentStyles = function(oRM) {
 		var iRowContentHeight = this.getRowContentHeight();
 
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			if (iRowContentHeight > 0) {
-				oRM.style("max-height", iRowContentHeight + "px");
-			}
-			return;
-		}
-
-		if (iRowContentHeight <= 0) {
+		if (!this.bLegacy && iRowContentHeight <= 0) {
 			iRowContentHeight = this.getDefaultRowContentHeightOfTable();
 		}
 
@@ -536,9 +510,6 @@ sap.ui.define([
 		_private(this).rowCount = iNewRowCount;
 		iNewComputedRowCount = this.getComputedRowCounts().count;
 
-		/**
-		 * @deprecated As of version 1.119
-		 */
 		if (this.bLegacy) {
 			oTable.setProperty("visibleRowCount", iNewComputedRowCount, true);
 		}

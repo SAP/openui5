@@ -1,20 +1,12 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/table/rowmodes/Type",
-	"sap/ui/table/rowmodes/Fixed",
+	"sap/ui/table/library",
 	'sap/ui/Device',
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/model/Filter",
 	"sap/ui/core/Core"
-], function(
-	TableQUnitUtils,
-	RowModeType,
-	FixedRowMode,
-	Device,
-	Filter,
-	oCore
-) {
+], function(library, Device, TableQUnitUtils, Filter, oCore) {
 	"use strict";
 
 	QUnit.module("Initialization and Destruction", {
@@ -54,9 +46,7 @@ sap.ui.define([
 				columns: [TableQUnitUtils.createTextColumn()],
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(6),
-				rowMode: new FixedRowMode({
-					rowCount: 6
-				})
+				visibleRowCount: 6
 			});
 
 			return Promise.all([
@@ -97,7 +87,7 @@ sap.ui.define([
 		assert.ok(oVSbIOS.parentElement.classList.contains("sapUiTableHidden") && oVSbThumb.style.height === "0px",
 			"Table content fits height -> Vertical scrollbar is not visible");
 
-		oTable.getRowMode().setRowCount(3);
+		oTable.setVisibleRowCount(3);
 		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
@@ -126,7 +116,8 @@ sap.ui.define([
 			this.oTable = TableQUnitUtils.createTable({
 				columns: [TableQUnitUtils.createTextColumn()],
 				rows: {path: "/"},
-				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
+				visibleRowCount: 10
 			});
 
 			return Promise.all([
@@ -245,7 +236,7 @@ sap.ui.define([
 		var oTable = this.oTable;
 		var oTarget;
 
-		oTable.setRowMode(RowModeType.Auto);
+		oTable.setVisibleRowCountMode(library.VisibleRowCountMode.Auto);
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTarget = oTable._getScrollIOSExtension().getVerticalScrollbar();

@@ -107,6 +107,21 @@
 											<Input value="{/filterValue}" id="filterValue"/>
 										</f:fields>
 									</f:FormElement>
+									<f:FormElement label="VisibleRowCount">
+										<f:fields>
+											<Input value="{path: '/visibleRowCount', type:'sap.ui.model.type.Integer'}" id="visibleRowCount"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="VisibleRowCountMode">
+										<f:fields>
+											<Select width="100%" id="visibleRowCountMode" selectedKey="{/visibleRowCountMode}">
+												<items>
+													<core:Item text="Fixed" key="Fixed"/>
+													<core:Item text="Auto" key="Auto"/>
+												</items>
+											</Select>
+										</f:fields>
+									</f:FormElement>
 									<f:FormElement label="RestoreTreeStateAfterChange">
 										<f:fields>
 											<CheckBox selected="{/restoreTreeStateAfterChange}" id="restoreTreeStateAfterChange"/>
@@ -200,6 +215,8 @@
 					<table:TreeTable
 						id="tableOData"
 						selectionMode="MultiToggle"
+						visibleRowCount="{path:'/visibleRowCount', type:'sap.ui.model.type.Integer'}"
+						visibleRowCountMode="{/visibleRowCountMode}"
 						threshold="{/tableThreshold}"
 						rootLevel="{/rootLevel}">
 						<table:extension>

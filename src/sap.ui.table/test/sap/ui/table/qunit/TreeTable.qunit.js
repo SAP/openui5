@@ -4,23 +4,12 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
-	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(
-	TableQUnitUtils,
-	TreeTable,
-	Column,
-	FixedRowMode,
-	TableUtils,
-	JSONModel,
-	library,
-	jQuery,
-	oCore
-) {
+], function(TableQUnitUtils, TreeTable, Column, TableUtils, JSONModel, library, jQuery, oCore) {
 	"use strict";
 
 	// Shortcuts
@@ -541,12 +530,15 @@ sap.ui.define([
 			return this.oTable;
 		},
 		checkRowsUpdated: function(assert, aActualReasons, aExpectedReasons) {
+			var that = this;
+
 			return new Promise(function(resolve) {
 				setTimeout(function() {
 					assert.deepEqual(aActualReasons, aExpectedReasons,
-						aExpectedReasons.length > 0
+						"VisibleRowCountMode: " + that.oTable.getVisibleRowCountMode() + " - "
+						+ (aExpectedReasons.length > 0
 						   ? "The event _rowsUpdated has been fired in order with reasons: " + aExpectedReasons.join(", ")
-						   : "The event _rowsUpdated has not been fired"
+						   : "The event _rowsUpdated has not been fired")
 					);
 
 					resolve();
@@ -810,7 +802,7 @@ sap.ui.define([
 			this.oTable = TableQUnitUtils.createTable(TreeTable, {
 				rows: {path: "/"},
 				models: new TableQUnitUtils.createJSONModel(8),
-				rowMode: new FixedRowMode({rowCount: 5})
+				visibleRowCount: 5
 			});
 			var oBinding = this.oTable.getBinding();
 

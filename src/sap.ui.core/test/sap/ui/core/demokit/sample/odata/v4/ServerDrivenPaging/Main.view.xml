@@ -3,7 +3,6 @@
 	controllerName="sap.ui.core.sample.odata.v4.ServerDrivenPaging.Main"
 	xmlns="sap.m"
 	xmlns:t="sap.ui.table"
-	xmlns:trm="sap.ui.table.rowmodes"
 	xmlns:mvc="sap.ui.core.mvc">
 	<IconTabBar select=".onTabSelect">
 		<items>
@@ -29,13 +28,11 @@
 				</Table>
 			</IconTabFilter>
 			<IconTabFilter id="table" key="table" text="table.Table">
-				<t:Table ariaLabelledBy="title" id="businessPartnerTable" selectionMode="None">
+				<t:Table ariaLabelledBy="title" id="businessPartnerTable" selectionMode="None"
+						visibleRowCount="21">
 					<t:extension>
 						<Title id="title" text="{$count} Business Partners" level="H1"/>
 					</t:extension>
-					<t:rowMode>
-						<trm:Fixed rowCount="21"/>
-					</t:rowMode>
 					<t:Column>
 						<Label text="Index"/>
 						<t:template>

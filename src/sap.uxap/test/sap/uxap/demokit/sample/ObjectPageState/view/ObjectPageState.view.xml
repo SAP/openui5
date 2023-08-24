@@ -3,7 +3,6 @@
 	xmlns:layout="sap.ui.layout"
 	xmlns:m="sap.m"
 	xmlns:ui="sap.ui.table"
-	xmlns:uirm="sap.ui.table.rowmodes"
 	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
 	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
 	xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
@@ -156,15 +155,14 @@
 				<subSections>
 					<ObjectPageSubSection title="Personal Belongings" titleUppercase="false">
 					<ui:Table id="idProductsTable"
+						visibleRowCountMode="Auto"
+						minAutoRowCount="2"
 						rows="{
 							path: 'TableModel>/ProductCollection',
 							sorter: {
 								path: 'Name'
 							}
 						}">
-						<ui:rowMode>
-							<uirm:Auto minRowCount="2" />
-						</ui:rowMode>
 						<ui:columns>
 							<ui:Column
 								label="Product">
