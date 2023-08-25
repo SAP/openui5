@@ -459,13 +459,13 @@ sap.ui.define([
 				const oInsertFontFaceStyleSpy = sinon.spy(_IconRegistry, "insertFontFaceStyle");
 				const sExpectedFontURI = sap.ui.require.toUrl("sap/tnt/themes/base/fonts/horizon/");
 
-				Theming.setTheme("sap_horizon");
-
-				Theming.attachApplied(() => {
-					assert.ok(oInsertFontFaceStyleSpy.calledWith("SAP-icons-TNT", sExpectedFontURI, "sap-tnt-icons-horizon-2"));
-					res();
+				Theming.attachApplied((oEvent) => {
+					if (oEvent.theme === "sap_horizon") {
+						assert.ok(oInsertFontFaceStyleSpy.calledWith("SAP-icons-TNT", sExpectedFontURI, "sap-tnt-icons-horizon-2"));
+						res();
+					}
 				});
-
+				Theming.setTheme("sap_horizon");
 			});
 		});
 	});

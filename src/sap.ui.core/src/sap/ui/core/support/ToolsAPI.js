@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/Global",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/ElementMetadata",
+	"sap/ui/core/Theming",
 	"sap/base/util/LoaderExtensions",
 	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/jquery"
@@ -14,6 +15,7 @@ sap.ui.define([
 		Global,
 		Configuration,
 		ElementMetadata,
+		Theming,
 		LoaderExtensions,
 		UriParameters,
 		jQuery
@@ -91,7 +93,7 @@ sap.ui.define([
 				},
 				configurationBootstrap: window['sap-ui-config'] || Object.create(null),
 				configurationComputed: {
-					theme: Configuration.getTheme(),
+					theme: Theming.getTheme(),
 					language: Configuration.getLanguage(),
 					formatLocale: Configuration.getFormatLocale(),
 					accessibility: Configuration.getAccessibility(),
