@@ -24,7 +24,7 @@ sap.ui.require([
 			}
 		});
 
-		Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
+		Given.iStartMyAppInAFrame({ source: "applicationUnderTest/index.html", autoWait: true });
 
 		When.waitFor({
 			controlType: "sap.m.Button",
