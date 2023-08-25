@@ -28160,7 +28160,6 @@ sap.ui.define([
 	//
 	// Create new child and cancel immediately (JIRA: CPOUI5ODATAV4-2272)
 	// @odata.bind in POST relative to resource path (BCP: 2380119648)
-	// Delete the second child again. (JIRA: CPOUI5ODATAV4-2224)
 	QUnit.test("Recursive Hierarchy: create new children", function (assert) {
 		var oChild, oListBinding, fnRespond, oRoot, oTable;
 
@@ -28339,30 +28338,6 @@ sap.ui.define([
 				[undefined, 2, "Gamma: γ"],
 				[undefined, 2, "Beta: β"]
 			]);
-
-			that.expectChange("name", [, "Beta: β"])
-				.expectRequest({
-					method : "DELETE",
-					headers : {
-						"If-Match" : "etag2.0"
-					},
-					url : "Artists(ArtistID='2',IsActiveEntity=false)"
-				});
-
-			return Promise.all([
-				// code under test
-				oChild.delete(),
-				that.waitForChanges(assert, "delete 2nd child")
-			]);
-		}).then(function () {
-			checkTable("after deletion", assert, oTable, [
-				sFriend + "(ArtistID='0',IsActiveEntity=false)",
-				sFriend + "(ArtistID='1',IsActiveEntity=false)"
-			], [
-				[true, 1, "Alpha"],
-				[undefined, 2, "Beta: β"],
-				["", "", ""]
-			]);
 		});
 	});
 
@@ -28374,6 +28349,7 @@ sap.ui.define([
 	//
 	// Create new child and cancel immediately (JIRA: CPOUI5ODATAV4-2272)
 	// Also delete instead of cancelling (JIRA: CPOUI5ODATAV4-2274)
+	// Delete a created persisted child (JIRA: CPOUI5ODATAV4-2224)
 [false, true].forEach(function (bDelete) {
 	const sTitle = `Recursive Hierarchy: create new children & placeholders, delete=${bDelete}`;
 
@@ -28532,6 +28508,7 @@ sap.ui.define([
 						Name : "2nd new child"
 					}
 				}, {
+					"@odata.etag" : "etag2.0",
 					ArtistID : "12",
 					IsActiveEntity : false,
 					Name : "Second new child" // side effect
@@ -28629,6 +28606,46 @@ sap.ui.define([
 				[undefined, 2, "3", "Delta"],
 				[undefined, 2, "4", "Epsilon"],
 				[undefined, 2, "5", "Zeta"]
+			]);
+		}).then(function () {
+			that.expectChange("id", ["0", "12", "11"])
+				.expectChange("name", ["Alpha", "Second new child", "First new child"]);
+
+			oTable.setFirstVisibleRow(0);
+
+			return that.waitForChanges(assert, "scroll to top");
+		}).then(function () {
+			const oCreatedPersisted = oTable.getRows()[1].getBindingContext();
+			assert.strictEqual(oCreatedPersisted.isTransient(), false);
+
+			that.expectChange("id", [, "11", "1"])
+				.expectChange("name", [, "First new child", "Beta"])
+				.expectRequest({
+					method : "DELETE",
+					headers : {
+						"If-Match" : "etag2.0"
+					},
+					url : "Artists(ArtistID='12',IsActiveEntity=false)"
+				});
+
+			return Promise.all([
+				// code under test (JIRA: CPOUI5ODATAV4-2224)
+				oCreatedPersisted.delete(),
+				that.waitForChanges(assert, "delete created persisted child")
+			]);
+		}).then(function () {
+			checkTable("after deletion of created persisted", assert, oTable, [
+				"/Artists(ArtistID='0',IsActiveEntity=false)",
+				"/Artists(ArtistID='11',IsActiveEntity=false)",
+				"/Artists(ArtistID='1',IsActiveEntity=false)",
+				"/Artists(ArtistID='2',IsActiveEntity=false)",
+				"/Artists(ArtistID='3',IsActiveEntity=false)",
+				"/Artists(ArtistID='4',IsActiveEntity=false)",
+				"/Artists(ArtistID='5',IsActiveEntity=false)"
+			], [
+				[true, 1, "0", "Alpha"],
+				[undefined, 2, "11", "First new child"],
+				[undefined, 2, "1", "Beta"]
 			]);
 		});
 	});
