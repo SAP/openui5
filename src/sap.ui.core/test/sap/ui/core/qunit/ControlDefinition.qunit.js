@@ -1,5 +1,6 @@
-/*global QUnit, my */
+/*global QUnit */
 sap.ui.define([
+	"sap/base/util/ObjectPath",
 	"sap/ui/base/Object",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
@@ -7,7 +8,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(BaseObject, Control, Element, Button, Input, createAndAppendDiv, nextUIUpdate) {
+], function(ObjectPath, BaseObject, Control, Element, Button, Input, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -30,14 +31,20 @@ sap.ui.define([
 
 
 	/* test creating a control from scratch */
-
+	var MyControl;
 
 	QUnit.test("Extend sap.ui.core.Control", async function(assert) {
-		assert.expect(4);
+		let expectedAsserts = 4;
+		/**
+		 * @deprecated global exports are deprecated, therefore one assert will disappear in 2.0
+		 */
+		expectedAsserts += 1;
+
+		assert.expect(expectedAsserts);
 		assert.equal(window.my, undefined, "'my' should not be defined yet");
 
 		// define control
-		var MyLibControlClass = Control.extend("my.lib.MyControl", {
+		MyControl = Control.extend("my.lib.MyControl", {
 			metadata : {
 				properties : {
 					"text" : "string",
@@ -83,12 +90,12 @@ sap.ui.define([
 
 				apiVersion: 2,
 
-				render: function(rm, c) {
-					if (c._assert) {
-						c._assert.ok(true, "Renderer was called");
+				render: function(rm, ctrl) {
+					if (ctrl._assert) {
+						ctrl._assert.ok(true, "Renderer was called");
 					}
-					rm.openStart("span", c).attr("tabindex", "0").openEnd();
-						rm.text(c.getText());
+					rm.openStart("span", ctrl).attr("tabindex", "0").openEnd();
+						rm.text(ctrl.getText());
 					rm.close("span");
 				}
 
@@ -96,9 +103,13 @@ sap.ui.define([
 		});
 
 		// check control type
-		assert.ok(my.lib.MyControl, "my.lib.MyControl should be defined now");
+		assert.ok(MyControl, "MyControl should be defined now");
+		/**
+		 * @deprecated global exports are deprecated
+		 */
+		assert.strictEqual(MyControl, ObjectPath.get("my.lib.MyControl"), "returned class and globally exported class should be identical");
 
-		var myControl = new MyLibControlClass("myControl", undefined, assert);
+		var myControl = new MyControl("myControl", undefined, assert);
 
 		myControl.placeAt("content");
 		await nextUIUpdate();
@@ -109,7 +120,7 @@ sap.ui.define([
 
 	QUnit.module("", {
 		beforeEach: function() {
-			this.myControl = new my.lib.MyControl("myControl", {
+			this.myControl = new MyControl("myControl", {
 				text : "test"
 			});
 		},
@@ -123,15 +134,21 @@ sap.ui.define([
 
 		// check control instance
 		assert.ok(this.myControl, "myControl should be a control instance now");
-		assert.ok(this.myControl instanceof my.lib.MyControl, "myControl should be an instance of my.lib.MyControl");
 		assert.ok(this.myControl instanceof Control, "myControl should inherit from sap.ui.Core.Control");
 
 		// renderer should not be added as function...
 		assert.equal(this.myControl.renderer, undefined, "renderer should not be added as function");
 
 		// ...but a renderer should exist now
-		assert.ok(my.lib.MyControlRenderer, "my.lib.MyControlRenderer should be defined"); // TODO: is this the case?
-		assert.equal(typeof my.lib.MyControlRenderer.render, "function", "my.lib.MyControlRenderer.render must be a function");
+		const MyControlRenderer = MyControl.getMetadata().getRenderer();
+		assert.ok(MyControlRenderer, "renderer of my.lib.MyControl should be defined");
+		assert.equal(typeof MyControlRenderer.render, "function", "render property must be a function");
+		/**
+		 * @deprecated global exports are deprecated
+		 */
+		assert.strictEqual(MyControlRenderer, ObjectPath.get("my.lib.MyControlRenderer"),
+			"even embedded renderers should be exported under the default global name");
+
 	});
 
 
@@ -159,7 +176,7 @@ sap.ui.define([
 
 
 	QUnit.test("Methods", function(assert) {
-		assert.equal(this.myControl.add, my.lib.MyControl.prototype.add, "myControl's add function should actually be a function of the my.lib.MyControl.prototype");
+		assert.equal(this.myControl.add, MyControl.prototype.add, "myControl's add function should actually be a function of the my.lib.MyControl.prototype");
 		assert.equal(this.myControl.add(1, 2), 3, "myControl's add function should work");
 	});
 
@@ -358,7 +375,7 @@ sap.ui.define([
 	var MyInput;
 
 	QUnit.test("Extend sap.m.Input", function(assert) {
-		var result = MyInput = Input.extend("my.lib.MyInput", {
+		MyInput = Input.extend("my.lib.MyInput", {
 
 			setValue : function(value) {
 				value = value + valueSuffix;
@@ -372,13 +389,16 @@ sap.ui.define([
 				}
 			}
 		});
-		assert.strictEqual(typeof result, "function", "result is a function (a constructor)");
+		assert.strictEqual(typeof MyInput, "function", "result is a function (a constructor)");
+		/**
+		 * @deprecated global exports are deprecated
+		 */
+		assert.strictEqual(MyInput, ObjectPath.get("my.lib.MyInput"), "returned class should be the same as the globally exported class");
 	});
 
 	QUnit.test("Instantiate MyInput", function(assert) {
 		var myInput = new MyInput("myInput", {value:"test"});
 		assert.ok(myInput, "myInput should be a control instance now");
-		assert.ok(myInput instanceof my.lib.MyInput, "myInput should be an instance of my.lib.MyTextField");
 		assert.ok(myInput instanceof Input, "myInput should inherit from sap.m.Input");
 		assert.equal(myInput.getValue(), "test" + valueSuffix, "value should be modified by overridden method");
 		myInput.destroy();
