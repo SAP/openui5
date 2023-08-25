@@ -86,7 +86,7 @@ sap.ui.define([
 		var aTableFilters = [], aFilterBarFilters = [];
 
 		if (bTableFilterEnabled) {
-			var mTableConditions = oTable.getConditions();
+			var mTableConditions = oTable.getConditions() || {};
 			var aTableProperties = oTable.getPropertyHelper().getProperties();
 			var oTableFilters = FilterUtil.getFilterInfo(oTable, mTableConditions, aTableProperties).filters;
 			aTableFilters = oTableFilters ? [oTableFilters] : [];
@@ -94,7 +94,7 @@ sap.ui.define([
 
 		var oFilterBar = Core.byId(oTable.getFilter());
 		if (oFilterBar) {
-			var mFilterBarConditions = oFilterBar.getConditions();
+			var mFilterBarConditions = oFilterBar.getConditions() || {};
 			var aFilterBarProperties = oTable.getPropertyHelper().getProperties();
 			var oFilterBarFilters = FilterUtil.getFilterInfo(oTable, mFilterBarConditions, aFilterBarProperties).filters;
 			aFilterBarFilters = oFilterBarFilters ? [oFilterBarFilters] : [];
