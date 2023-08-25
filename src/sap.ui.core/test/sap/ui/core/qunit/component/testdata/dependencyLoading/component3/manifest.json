@@ -6,6 +6,7 @@
 		"dependencies": {
 			"libs": {
 				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
@@ -16,7 +17,7 @@
 			"css": [{
 				"uri": "css/comp3extended.css"
 			}],
-			
+
 			"js": [{
 				"uri": "scripts/component3_1_extendedScript.js"
 			}]
