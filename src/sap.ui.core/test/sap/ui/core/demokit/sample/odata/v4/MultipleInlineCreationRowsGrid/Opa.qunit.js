@@ -49,6 +49,8 @@ sap.ui.require([
 						name : "sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid"
 					}
 				});
+				Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
+
 				Then.onTheListReport.checkProductsTableTitle("3 Products");
 				Then.onTheListReport.checkProductsLength(5);
 				Then.onTheListReport.checkProduct(0, "", "Inactive");
@@ -324,7 +326,6 @@ sap.ui.require([
 
 				Then.onAnyPage.checkLog(aExpectedLogs);
 				Then.onAnyPage.analyzeSupportAssistant();
-				Then.iTeardownMyUIComponent();
 			});
 	});
 });
@@ -341,6 +342,8 @@ sap.ui.require([
 				name : "sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid"
 			}
 		});
+		Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
+
 		Then.onTheListReport.checkProductsTableTitle("3 Products");
 		Then.onTheListReport.checkProductsLength(5);
 		Then.onTheListReport.checkProduct(0, "", "Inactive");
@@ -419,7 +422,6 @@ sap.ui.require([
 
 		Then.onAnyPage.checkLog(aExpectedLogs);
 		Then.onAnyPage.analyzeSupportAssistant();
-		Then.iTeardownMyUIComponent();
 	});
 });
 			QUnit.start();

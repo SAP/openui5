@@ -52,6 +52,7 @@ sap.ui.define([
 				name : "sap.ui.core.sample.odata.v4.RecursiveHierarchy"
 			}
 		});
+		Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 		checkTable(aNodes);
 
@@ -123,6 +124,5 @@ sap.ui.define([
 		checkTable(aNodes);
 
 		Then.onAnyPage.checkLog();
-		Then.iTeardownMyUIComponent();
 	};
 });

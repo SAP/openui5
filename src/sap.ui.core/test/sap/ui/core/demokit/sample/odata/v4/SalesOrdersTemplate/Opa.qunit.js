@@ -25,13 +25,13 @@ sap.ui.require([
 					name : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate"
 				}
 			});
+			Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 			When.onTheMainPage.pressValueHelpOnCurrencyCode();
 			When.onTheMainPage.pressValueHelpOnRole();
 
 			Then.onAnyPage.checkLog();
 			Then.onAnyPage.analyzeSupportAssistant();
-			Then.iTeardownMyUIComponent();
 		});
 
 		QUnit.start();

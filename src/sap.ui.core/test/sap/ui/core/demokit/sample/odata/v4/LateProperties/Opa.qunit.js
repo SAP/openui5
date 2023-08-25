@@ -25,6 +25,7 @@ sap.ui.require([
 					name : "sap.ui.core.sample.odata.v4.LateProperties"
 				}
 			});
+			Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 			When.onTheMainPage.selectSalesOrderRow(2);
 			When.onTheMainPage.pressEditDeliveryInRow(1);
@@ -45,7 +46,6 @@ sap.ui.require([
 
 			Then.onAnyPage.checkLog();
 			Then.onAnyPage.analyzeSupportAssistant();
-			Then.iTeardownMyUIComponent();
 		});
 
 		QUnit.start();

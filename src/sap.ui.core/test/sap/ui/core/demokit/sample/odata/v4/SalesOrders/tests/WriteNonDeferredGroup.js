@@ -27,6 +27,7 @@ sap.ui.define([
 					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
 				}
 			});
+			Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 			TestUtils.setData("sap.ui.core.sample.odata.v4.SalesOrders.updateGroupId", sGroupId);
 
@@ -94,7 +95,6 @@ sap.ui.define([
 			Then.onTheMainPage.checkTableLength(0, "SalesOrderList");
 
 			Then.onAnyPage.checkLog(aExpectedLogs);
-			Then.iTeardownMyUIComponent();
 		}
 	};
 });

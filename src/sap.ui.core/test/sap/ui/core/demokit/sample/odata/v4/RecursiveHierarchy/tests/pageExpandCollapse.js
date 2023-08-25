@@ -49,6 +49,7 @@ sap.ui.define([
 				name : "sap.ui.core.sample.odata.v4.RecursiveHierarchy"
 			}
 		});
+		Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 		// basics: initial data
 		aNodes = SandboxModel.getTopLevels(3, 0, 5);
@@ -242,6 +243,5 @@ sap.ui.define([
 		checkTable(aNodes);
 
 		Then.onAnyPage.checkLog();
-		Then.iTeardownMyUIComponent();
 	};
 });

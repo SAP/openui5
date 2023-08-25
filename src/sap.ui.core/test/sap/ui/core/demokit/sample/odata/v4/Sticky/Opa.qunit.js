@@ -29,6 +29,7 @@ sap.ui.require([
 						name : "sap.ui.core.sample.odata.v4.Sticky"
 					}
 				});
+				Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 				When.onTheMainPage.selectStickyType(0);
 				When.onTheMainPage.pressPrepare();
@@ -42,7 +43,6 @@ sap.ui.require([
 
 				Then.onAnyPage.checkLog();
 				Then.onAnyPage.analyzeSupportAssistant();
-				Then.iTeardownMyUIComponent();
 			});
 		}
 

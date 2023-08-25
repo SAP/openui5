@@ -289,6 +289,9 @@ sap.ui.define([
 							});
 						}
 					});
+				},
+				iTeardownMyUIComponentInTheEnd : function () {
+					Helper.addToCleanUp(() => this.iTeardownMyUIComponent());
 				}
 			}
 		},

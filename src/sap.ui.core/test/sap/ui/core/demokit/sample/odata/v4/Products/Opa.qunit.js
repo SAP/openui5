@@ -30,6 +30,7 @@ sap.ui.require([
 						name : "sap.ui.core.sample.odata.v4.Products"
 					}
 				});
+				Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 				// Test Units
 				When.onTheMainPage.changeMeasure("12.3 NO");
@@ -148,7 +149,6 @@ sap.ui.require([
 					details : "Error occurred while processing the request"
 				}]);
 				Then.onAnyPage.analyzeSupportAssistant();
-				Then.iTeardownMyUIComponent();
 			});
 		}
 
