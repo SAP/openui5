@@ -499,6 +499,7 @@ sap.ui.define([
 				// Mark the event to ensure that parent handlers (e.g. FLP) can skip their processing if needed. Also prevent potential browser defaults
 				oEvent.setMarked();
 				oEvent.preventDefault();
+				oEvent.stopPropagation();
 
 				oButton.firePress();
 			}
