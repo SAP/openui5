@@ -5,6 +5,11 @@ sap.ui.define(["sap/ui/integration/Designtime"
 		return new Designtime({
 			"form": {
 				"items": {
+					"destination.group": {
+						"label": "Destinations group label defined in DT",
+						"type": "group",
+						"expanded": false
+					},
 					"stringParameter": {
 						"manifestpath": "/sap.card/configuration/parameters/stringParameter/value",
 						"type": "string",
@@ -14,10 +19,14 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"type": "destination",
 						"label": "dest1 label defined in DT"
 					},
-					"destination.group": {
-						"label": "Destinations group label defined in DT",
-						"type": "group",
-						"expanded": false
+					"group": {
+						"label": "Group",
+						"type": "group"
+					},
+					"booleanParameter": {
+						"manifestpath": "/sap.card/configuration/parameters/booleanParameter/value",
+						"description": "Description",
+						"type": "boolean"
 					}
 				}
 			}

@@ -6,6 +6,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 		return new Designtime({
 			"form": {
 				"items": {
+					"destination.group": {
+						"label": "Destinations group label defined in DT",
+						"type": "group"
+					},
 					"generalGroup": {
 						"type": "group",
 						"label": "General",
@@ -19,10 +23,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"allowDynamicValues": true,
 						"editableToUser": false,
 						"visibleToUser": false
-					},
-					"destination.group": {
-						"label": "Destinations group label defined in DT",
-						"type": "group"
 					},
 					"local.destination": {
 						"type": "destination",
