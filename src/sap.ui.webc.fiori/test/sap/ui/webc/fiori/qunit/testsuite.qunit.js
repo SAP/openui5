@@ -101,13 +101,13 @@ sap.ui.define(function() {
 				coverage: {
 					only: ["sap/ui/webc/fiori/ViewSettingsDialog"]
 				}
-			},
-
-			"Wizard": {
-				coverage: {
-					only: ["sap/ui/webc/fiori/Wizard"]
-				}
 			}
+			// Prevent the test from running prior webc 1.114.2 update because of ResizeHandler error
+			// "Wizard": {
+			// 	coverage: {
+			// 		only: ["sap/ui/webc/fiori/Wizard"]
+			// 	}
+			// },
 		}
 	};
 });
