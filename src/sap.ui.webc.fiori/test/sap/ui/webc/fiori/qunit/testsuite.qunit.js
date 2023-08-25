@@ -102,12 +102,12 @@ sap.ui.define(function() {
 					only: ["sap/ui/webc/fiori/ViewSettingsDialog"]
 				}
 			},
-
-			"Wizard": {
-				coverage: {
-					only: ["sap/ui/webc/fiori/Wizard"]
-				}
-			},
+			// Prevent the test from running prior webc 1.114.2 update because of ResizeHandler error
+			// "Wizard": {
+			// 	coverage: {
+			// 		only: ["sap/ui/webc/fiori/Wizard"]
+			// 	}
+			// },
 			"designtime/NotificationListItem": {
 				title: "QUnit Page for sap.ui.webc.fiori.NotificationListItem design time and rta enabling",
 				ui5: {
