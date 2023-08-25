@@ -6,31 +6,44 @@
 @_sap_tnt_InfoLabel_NarrowPadding: 0 0.1875rem;
 @_sap_tnt_InfoLabel_LineHeight: normal;
 @_sap_tnt_InfoLabel_LineHeightDisplayOnly: 1rem;
+@_sap_tnt_InfoLabel_Height: 1rem;
 @_sap_tnt_InfoLabel_HeightWithoutBorders: 0.875rem;
+@_sap_tnt_InfoLabel_FontFamily: @sapUiFontFamily;
+@_sap_tnt_InfoLabel_FontSize: @sapFontSmallSize;
+@_sap_tnt_InfoLabel_DisplayFontSize: @_sap_tnt_InfoLabel_FontSize;
+@_sap_tnt_InfoLabel_DisplayFontSizeIcon: @_sap_tnt_InfoLabel_FontSize;
+@_sap_tnt_InfoLabel_Padding: 0 0.3125rem;
+@_sap_tnt_InfoLabel_DisplayPadding: @_sap_tnt_InfoLabel_Padding;
+@_sap_tnt_InfoLabel_IconMargin: 0.125rem;
+@_sap_tnt_InfoLabel_DisplayIconMargin: 0.1875rem;
 @_sap_tnt_InfoLabel_PaddingWhenEmpty: 0 @_sap_tnt_InfoLabel_HeightWithoutBorders/2;
 @_sap_tnt_InfoLabel_DisplayModeBorder: none;
 @_sap_tnt_InfoLabel_DisplayModeBackground: @sapTextColor;
 @_sap_tnt_InfoLabel_DisplayModeColor: @sapContent_ContrastTextColor;
+@_sap_tnt_InfoLabel_BorderRadius: 0.5rem;
+@_sap_tnt_InfoLabel_DisplayBorderRadius: @_sap_tnt_InfoLabel_BorderRadius;
+@_sap_tnt_InfoLabel_Text: uppercase;
 
 /* ==========================================================================
    Root element
    ========================================================================== */
 .sapTntInfoLabel {
 	box-sizing: border-box;
-	padding: 0 0.3125rem;
+	padding: @_sap_tnt_InfoLabel_Padding;
 	text-align: center;
-	border-radius: 0.5rem;
-	height: 1rem;
+	border-radius: @_sap_tnt_InfoLabel_BorderRadius;
+	height: @_sap_tnt_InfoLabel_Height;
 	display: inline-block;
 	max-width: 100%;
 	line-height: @_sap_tnt_InfoLabel_LineHeight;
 
 	.sapTntInfoLabelInner {
-		font-size: @sapFontSmallSize;
+		font-size: @_sap_tnt_InfoLabel_FontSize;
 		font-weight: bold;
+		font-family: @_sap_tnt_InfoLabel_FontFamily;
 		vertical-align: top;
 		letter-spacing: 0.0125rem;
-		text-transform: uppercase;
+		text-transform: @_sap_tnt_InfoLabel_Text;
 		display: inline-block;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -49,10 +62,14 @@
 .sapTntInfoLabel.sapTntInfoLabelDisplayOnly {
 	border: @_sap_tnt_InfoLabel_DisplayModeBorder;
 	background: @_sap_tnt_InfoLabel_DisplayModeBackground;
+	height: 1rem;
+	border-radius: @_sap_tnt_InfoLabel_DisplayBorderRadius;
+	padding: @_sap_tnt_InfoLabel_DisplayPadding;
 
 	.sapTntInfoLabelInner {
 		color: @_sap_tnt_InfoLabel_DisplayModeColor;
 		line-height: @_sap_tnt_InfoLabel_LineHeightDisplayOnly;
+		font-size: @_sap_tnt_InfoLabel_DisplayFontSize;
 	}
 }
 
@@ -74,22 +91,25 @@
 	}
 
 	.sapUiIcon {
-		padding-right: 0.125rem;
+		padding-right: @_sap_tnt_InfoLabel_IconMargin;
 		line-height: @_sap_tnt_InfoLabel_HeightWithoutBorders;
 		vertical-align: top;
+		font-size: @_sap_tnt_InfoLabel_FontSize;
 	}
 
 	&.sapTntInfoLabelNoText {
 		padding: @_sap_tnt_InfoLabel_NarrowPadding;
 
-		.sapUiIcon {
-			padding-right: 0;
+		.sapTntInfoLabelInner .sapUiIcon {
+			padding-right: 0 !important;
 		}
 	}
 
-	&.sapTntInfoLabelDisplayOnly {
-		.sapUiIcon {
+	&.sapTntInfoLabelDisplayOnly .sapTntInfoLabelInner {
+		.sapUiIcon:not(.sapMBtnIcon) { // needs this to override Form styles
 			line-height: @_sap_tnt_InfoLabel_LineHeightDisplayOnly;
+			padding-right: @_sap_tnt_InfoLabel_DisplayIconMargin;
+			font-size: @_sap_tnt_InfoLabel_DisplayFontSizeIcon;
 		}
 	}
 }
