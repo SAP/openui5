@@ -895,6 +895,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sThemeName the name of the theme to be loaded
 	 * @param {string} [sThemeBaseUrl] the (optional) base location of the theme
+	 * @deprecated since 1.119. Please use {@link module:sap/ui/core/Theming.setTheme Theming.setTheme} instead.
 	 * @public
 	 */
 	Core.prototype.applyTheme = function(sThemeName, sThemeBaseUrl) {
@@ -953,6 +954,7 @@ sap.ui.define([
 	 * @param {boolean} [bForceUpdate=false] Force updating URLs of currently loaded theme
 	 * @return {this} the Core, to allow method chaining
 	 * @since 1.10
+	 * @deprecated since 1.119
 	 * @public
 	 */
 	Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl, bForceUpdate) {
@@ -1168,6 +1170,7 @@ sap.ui.define([
 	 * If the styles are not yet applied a theme changed event will follow when the styles will be applied.
 	 *
 	 * @return {boolean} whether the styles of the current theme are already applied
+	 * @deprecated since 1.119: Please use {@link module:sap/ui/core/Theming.attachApplied Theming.attachApplied} instead.
 	 * @public
 	 */
 	Core.prototype.isThemeApplied = function() {
@@ -1176,8 +1179,7 @@ sap.ui.define([
 			bApplied = true;
 		}
 		// if theme is applied fnCheckApplied is called sync
-		Theming.attachApplied(fnCheckApplied);
-		Theming.detachApplied(fnCheckApplied);
+		Theming.attachAppliedOnce(fnCheckApplied);
 		return bApplied;
 	};
 
@@ -1650,6 +1652,7 @@ sap.ui.define([
 	 * @param {string} [sVariant] the variant to include (optional)
 	 * @param {string} [sQuery] to be used only by the Core
 	 * @public
+	 * @deprecated since 1.119
 	 */
 	Core.prototype.includeLibraryTheme = function(sLibName, sVariant, sQuery) {
 		var oLib = Library._get(sLibName, true /* bCreate */);
@@ -1829,6 +1832,7 @@ sap.ui.define([
 	 *  for example changing the cozy/compact CSS class at a single control
 	 * @public
 	 * @function
+	 * @deprecated since 1.119. Please use {@link module:sap/ui/core/Theming.notifyContentDensityChanged Theming.notifyContentDensityChanged} instead.
 	 */
 	Core.prototype.notifyContentDensityChanged = Theming.notifyContentDensityChanged;
 
@@ -1911,6 +1915,7 @@ sap.ui.define([
 	 * @param {string[]} oEvent.getParameters.scopes Array of the CSS scope classes
 	 * @param {boolean} oEvent.getParameters.added Whether the class has been added or removed
 	 * @param {sap.ui.core.Element} oEvent.getParameters.element Element instance on which the scope change happened
+	 * @deprecated since 1.119. Moved to {@link module:/sap/ui/core/Theming.event:themeScopingChanged themeScopingChanged}.
 	 */
 
 	Core.prototype.attachThemeScopingChanged = function(fnFunction, oListener) {
@@ -1921,9 +1926,9 @@ sap.ui.define([
 		_oEventProvider.detachEvent(Core.M_EVENTS.ThemeScopingChanged, fnFunction, oListener);
 	};
 
-	Core.prototype.fireThemeScopingChanged = function(mParameters) {
-		_oEventProvider.fireEvent(Core.M_EVENTS.ThemeScopingChanged, mParameters);
-	};
+	Theming.attachThemeScopingChanged(function(oEvent) {
+		_oEventProvider.fireEvent(Core.M_EVENTS.ThemeScopingChanged, BaseEvent.getParameters(oEvent));
+	});
 
 	/**
 	 * Fired when any of the localization relevant configuration settings has changed

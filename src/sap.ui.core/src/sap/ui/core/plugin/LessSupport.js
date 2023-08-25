@@ -145,7 +145,7 @@
 					if (ok) {
 						ThemeManager.themeLoaded = true;
 						setTimeout(function () {
-							ThemeManager.fireThemeChanged({theme: Theming.getTheme()});
+							ThemeManager.fireThemeApplied({theme: Theming.getTheme()});
 						}, 0);
 					} else {
 						that.iCheckThemeAppliedTimeout = setTimeout(checkThemeApplied, 100);
@@ -513,7 +513,7 @@
 			 */
 			LessSupport.refresh = function() {
 				oThis.refreshLess(true);
-				ThemeManager.checkThemeChanged();
+				ThemeManager.checkThemeApplied();
 			};
 
 			return LessSupport;

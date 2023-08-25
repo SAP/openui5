@@ -50,7 +50,7 @@ sap.ui.define([
 	 * Helper class used by the UI5 Core to check whether the themes are applied correctly.
 	 *
 	 * It could happen that e.g. in onAfterRendering not all themes are available. In these cases the
-	 * check waits until the CSS is applied and fires an onThemeChanged event.
+	 * check waits until the CSS is applied and fires an onThemeApplied event.
 	 *
 	 * @namespace
 	 * @author SAP SE
@@ -72,11 +72,11 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 */
-		checkThemeChanged : function() {
+		checkThemeApplied : function() {
 			ThemeManager.reset();
 			delayedCheckTheme(true);
 			if (!_sThemeCheckId) {
-				ThemeManager.fireThemeChanged();
+				ThemeManager.fireThemeApplied();
 			}
 		},
 
@@ -209,7 +209,7 @@ sap.ui.define([
 					if (Parameters) {
 						Parameters._addLibraryTheme(sLibId);
 					}
-					ThemeManager.checkThemeChanged();
+					ThemeManager.checkThemeApplied();
 				}
 			}
 		},
@@ -254,7 +254,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 */
-		fireThemeChanged: function () {
+		fireThemeApplied: function () {
 			// special hook for resetting theming parameters before the controls get
 			// notified (lightweight coupling to static Parameters module)
 			var ThemeParameters = sap.ui.require("sap/ui/core/theming/Parameters");
@@ -262,7 +262,7 @@ sap.ui.define([
 				ThemeParameters._reset(/* bOnlyWhenNecessary= */ true);
 			}
 
-			ThemeManager.fireEvent("ThemeChanged", {
+			ThemeManager.fireEvent("applied", {
 				theme: Theming.getTheme()
 			});
 		}
@@ -497,7 +497,7 @@ sap.ui.define([
 		} else if (!bFirst) {
 			ThemeManager.reset();
 			ThemeManager.themeLoaded = true;
-			ThemeManager.fireThemeChanged();
+			ThemeManager.fireThemeApplied();
 			if (bEmergencyExit) {
 				Log.error("ThemeManager: max. check cycles reached.");
 			}
@@ -545,7 +545,7 @@ sap.ui.define([
 		html.classList.add("sapUiTheme-" + sTheme);
 
 		// notify the listeners
-		ThemeManager.checkThemeChanged();
+		ThemeManager.checkThemeApplied();
 	}
 
 
