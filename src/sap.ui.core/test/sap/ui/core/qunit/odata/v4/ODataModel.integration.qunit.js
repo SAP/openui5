@@ -82,6 +82,86 @@ sap.ui.define([
 	}
 
 	/**
+	 * Checks that the given list binding's _AggregationCache has a consistent state.
+	 *
+	 * @param {string} sTitle - A test title
+	 * @param {object} assert - The QUnit assert object
+	 * @param {sap.ui.model.odata.v4.ODataListBinding} oListBinding - A list binding
+	 */
+	function checkAggregationCache(sTitle, assert, oListBinding) {
+		const aParentByLevel = [];
+
+		function isKeepAlive(sPredicate) {
+			return oListBinding.getAllCurrentContexts()
+				.filter((oContext) => oContext.isEffectivelyKeptAlive())
+				.some((oContext) => oContext.getPath().endsWith(sPredicate));
+		}
+
+		function strictEqual(vActual, vExpected, sMyTitle) {
+			if (vActual !== vExpected) {
+				assert.strictEqual(vActual, vExpected, sMyTitle);
+			} // else: do not spam the output ;-)
+		}
+
+		function visitElements(aElements, bSkipByPredicate) {
+			aElements.forEach((oElement) => {
+				const iIndex = _Helper.getPrivateAnnotation(oElement, "index");
+				const iLevel = oElement["@$ui5.node.level"];
+				const oParent = aParentByLevel[iLevel];
+				const bPlaceholder = _Helper.hasPrivateAnnotation(oElement, "placeholder");
+
+				if (oParent) {
+					strictEqual(_Helper.getPrivateAnnotation(oElement, "parent"), oParent,
+						`${sTitle}: "parent" @ level ${iLevel}, index ${iIndex}`);
+					strictEqual(oParent.aElements.indexOf(oElement),
+						bPlaceholder
+						? -1
+						: iIndex,
+						`${sTitle}: "index" @ level ${iLevel}, index ${iIndex}`);
+				} else {
+					assert.ok(false, `${sTitle}: no known parent for level ${iLevel}`);
+				}
+
+				if (!bPlaceholder && !bSkipByPredicate) {
+					const checkByPredicate = function (sKey) {
+						const sPredicate = _Helper.getPrivateAnnotation(oElement, sKey);
+						if (sPredicate === undefined) {
+							return;
+						}
+						strictEqual(oListBinding.oCache.aElements.$byPredicate[sPredicate],
+							oElement, `${sTitle}: ${sPredicate} in $byPredicate`);
+					};
+
+					checkByPredicate("predicate");
+					checkByPredicate("transientPredicate");
+				}
+
+				aParentByLevel[iLevel + 1] ??= _Helper.getPrivateAnnotation(oElement, "cache");
+
+				const aSpliced = _Helper.getPrivateAnnotation(oElement, "spliced");
+				if (aSpliced) {
+					visitElements(aSpliced, true);
+				}
+			});
+		}
+
+		const aElements = oListBinding.oCache.aElements;
+		strictEqual(aElements.length, aElements.$count, `${sTitle}: $count`);
+		for (const sPredicate in aElements.$byPredicate) {
+			const oElement = aElements.$byPredicate[sPredicate];
+			strictEqual(oElement["@$ui5.context.isDeleted"] || aElements.includes(oElement)
+					|| isKeepAlive(sPredicate),
+				true, `${sTitle}: $byPredicate[${sPredicate}] in aElements`);
+		}
+
+		for (let i = 0, n = oListBinding.getAggregation().expandTo || 1; i <= n; i += 1) {
+			// Note: level 0 or 1 is used for initial placeholders of 1st level cache!
+			aParentByLevel[i] = oListBinding.oCache.oFirstLevel;
+		}
+		visitElements(aElements);
+	}
+
+	/**
 	 * Checks that the given promise is rejected with a cancellation error.
 	 *
 	 * @param {object} assert - The QUnit assert object
@@ -125,6 +205,10 @@ sap.ui.define([
 				return oCell.getText ? oCell.getText() : oCell.getValue();
 			});
 		}), aExpectedContent, sTitle);
+
+		if (oListBinding.getAggregation() && oListBinding.getAggregation().hierarchyQualifier) {
+			checkAggregationCache(sTitle, assert, oListBinding);
+		}
 	}
 
 	/**

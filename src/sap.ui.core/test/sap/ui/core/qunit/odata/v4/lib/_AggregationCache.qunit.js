@@ -4010,6 +4010,7 @@ sap.ui.define([
 		oHelperMock.expects("updateAll").exactly(oFixture.parentExpand ? 1 : 0)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~predicate~",
 				sinon.match.same(oParent), {"@$ui5.node.isExpanded" : true});
+		oHelperMock.expects("setPrivateAnnotation").withExactArgs("~oElement~", "index", 3);
 
 		// code under test - callback reinserting
 		oDeleteExpectation.firstCall.args[4](3, 1);
