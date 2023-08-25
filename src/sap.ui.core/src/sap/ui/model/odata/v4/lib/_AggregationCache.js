@@ -118,7 +118,7 @@ sap.ui.define([
 	// make _AggregationCache a _Cache, but actively disinherit some critical methods
 	_AggregationCache.prototype = Object.create(_Cache.prototype);
 	_AggregationCache.prototype.addTransientCollection = null;
-	_AggregationCache.prototype.getAndRemoveValue = null;
+	_AggregationCache.prototype.getAndRemoveCollection = null;
 
 	/**
 	 * Deletes an entity on the server and in the cached data.

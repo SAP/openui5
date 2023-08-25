@@ -4363,9 +4363,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getAndRemoveValue", function (assert) {
+	QUnit.test("getAndRemoveCollection", function (assert) {
 		var oCache = {
-				getAndRemoveValue : function () {}
+				getAndRemoveCollection : function () {}
 			},
 			oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path"),
 			oExpectation;
@@ -4375,9 +4375,10 @@ sap.ui.define([
 			.returns(SyncPromise.resolve("~valueFromWithCache~"));
 
 		// code under test
-		assert.strictEqual(oContext.getAndRemoveValue("relative/path"), "~valueFromWithCache~");
+		assert.strictEqual(oContext.getAndRemoveCollection("relative/path"),
+			"~valueFromWithCache~");
 
-		this.mock(oCache).expects("getAndRemoveValue").withExactArgs("cache/path")
+		this.mock(oCache).expects("getAndRemoveCollection").withExactArgs("cache/path")
 			.returns("~value~");
 
 		// code under test

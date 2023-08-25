@@ -5777,22 +5777,67 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#getAndRemoveValue", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "SalesOrders('1')"),
-			oParent = {
-				value : "~value~"
-			};
+[false, true].forEach(function (bTransferable) {
+	QUnit.test(`Cache#getAndRemoveCollection: transferable=${bTransferable}`, function (assert) {
+		const oCache = new _Cache(this.oRequestor, "SalesOrders('1')");
+			oCache.fetchValue = function () {};
+		const aCollection = [];
+		if (bTransferable) {
+			aCollection.$transfer = true;
+		}
+		const oParent = {
+			collection : aCollection
+		};
 
-		oCache.fetchValue = function () {};
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to")
 			.returns(SyncPromise.resolve(oParent));
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 
 		// code under test
-		assert.strictEqual(oCache.getAndRemoveValue("path/to/value"), "~value~");
+		assert.strictEqual(oCache.getAndRemoveCollection("path/to/collection"),
+			bTransferable ? aCollection : undefined);
 
-		assert.notOk("value" in oParent);
+		if (bTransferable) {
+			assert.notOk("collection" in oParent);
+		} else {
+			assert.strictEqual(oParent.collection, aCollection);
+		}
+		assert.notOk("$transfer" in aCollection);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#getAndRemoveCollection: empty", function (assert) {
+		const oCache = new _Cache(this.oRequestor, "SalesOrders('1')");
+		oCache.fetchValue = function () {};
+
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to")
+			.returns(SyncPromise.resolve({}));
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
+
+		// code under test
+		assert.strictEqual(oCache.getAndRemoveCollection("path/to/collection"), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#getAndRemoveCollection: not a collection", function (assert) {
+		const oCache = new _Cache(this.oRequestor, "SalesOrders('1')");
+		oCache.fetchValue = function () {};
+		const oParent = {
+			value : "foo"
+		};
+
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to")
+			.returns(SyncPromise.resolve(oParent));
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
+
+		assert.throws(function () {
+			// code under test
+			oCache.getAndRemoveCollection("path/to/value");
+		}, new Error("path/to/value must point to a collection"));
 	});
 
 	//*********************************************************************************************
