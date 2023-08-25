@@ -189,6 +189,7 @@ sap.ui.define([
 					iFlatIndex = iParentIndex + iIndex + 1;
 					this.restoreElement(this.aElements, iFlatIndex, oElement, "");
 					this.shiftIndex(iFlatIndex, iOffset);
+					_Helper.setPrivateAnnotation(oElement, "index", iIndex);
 				}
 				fnCallback(iFlatIndex, iOffset);
 			});
