@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/webc/fiori/Wizard",
 	"sap/ui/webc/fiori/WizardStep",
 	"sap/ui/webc/main/Button"
+
 ], function(createAndAppendDiv, Core, Wizard, WizardStep, Button) {
 	"use strict";
 
@@ -104,6 +105,7 @@ sap.ui.define([
 					// console.log("Event stepChange fired for Wizard with parameters: ", oEvent.getParameters());
 				}
 			});
+
 			this.oWizard.placeAt("uiArea");
 			Core.applyChanges();
 		},
