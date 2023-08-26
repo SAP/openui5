@@ -243,6 +243,7 @@ sap.ui.define([
 
 	QUnit.test("parseError", function(assert) {
 		var done = assert.async();
+		Messaging.registerObject(oZip, true);
 		TestUtils.withNormalizedMessages(function() {
 			spyDataState(oZip, function(sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 1, 'ParseError Message propagated to control');
@@ -256,6 +257,7 @@ sap.ui.define([
 				assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
 				assert.ok(oZip.getValueState() === ValueState.None, 'Input: ValueState set correctly');
 				assert.ok(oZip.getValueStateText() === '', 'Input: ValueStateText set correctly');
+				Messaging.unregisterObject(oZip);
 				done();
 			});
 			oZip.setValue('123');
@@ -264,6 +266,7 @@ sap.ui.define([
 
 	QUnit.test("validationError", function(assert) {
 		var done = assert.async();
+		Messaging.registerObject(oStreet, true);
 		TestUtils.withNormalizedMessages(function() {
 			spyDataState(oStreet, function(sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 1, 'Validation Message propagated to control');
@@ -277,6 +280,7 @@ sap.ui.define([
 				assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
 				assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly');
 				assert.ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly');
+				Messaging.unregisterObject(oStreet);
 				done();
 			});
 			oStreet.setValue('Busch');
@@ -285,6 +289,7 @@ sap.ui.define([
 
 	QUnit.test("validationError - multiple input", function(assert) {
 		var done = assert.async();
+		Messaging.registerObject(oStreet, true);
 
 		TestUtils.withNormalizedMessages(function() {
 			spyDataState(oStreet, function(sName, oDataState) {
@@ -314,6 +319,7 @@ sap.ui.define([
 					spyDataState(oStreet, function(sName, oDataState) {
 						assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly');
 						assert.ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly');
+						Messaging.unregisterObject(oStreet);
 						done();
 					});
 					oStreet.setValue('Busch');

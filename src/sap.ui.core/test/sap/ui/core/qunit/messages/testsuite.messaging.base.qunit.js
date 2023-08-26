@@ -25,6 +25,13 @@ sap.ui.define(function() {
 				title: "Messaging: General",
 				ui5: {
 					libs: "sap.m,sap.ui.layout",
+					language: "en"
+				}
+			},
+			messagesGeneral_legacyAPIs: {
+				title: "Messaging: General",
+				ui5: {
+					libs: "sap.m,sap.ui.layout",
 					language: "en",
 					"xx-handleValidation": true
 				}
