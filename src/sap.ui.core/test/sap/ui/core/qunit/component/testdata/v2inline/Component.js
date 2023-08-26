@@ -65,7 +65,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							"uri": "i18n/i18n.properties"
 						},
 						"sfapi": {
-							"type": "sap.ui.model.odata.ODataModel",
+							"type": "sap.ui.model.odata.v2.ODataModel",
 							"uri": "./some/odata/service"
 						}
 					},

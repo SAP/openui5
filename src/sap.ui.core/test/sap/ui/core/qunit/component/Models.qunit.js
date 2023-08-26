@@ -48,6 +48,9 @@ sap.ui.define([
 		spyModels: function() {
 			BaseConfig._.invalidate();
 			this.modelSpy = {
+				/**
+				 * @deprecated As of version 1.48
+				 */
 				odata: sinon.spy(sap.ui.model.odata, "ODataModel"),
 				odataV2: sinon.spy(sap.ui.model.odata.v2, "ODataModel"),
 				odataV4: sinon.spy(sap.ui.model.odata.v4, "ODataModel"),
@@ -154,6 +157,9 @@ sap.ui.define([
 						"sap/ui/core/CustomData",
 						"sap/ui/core/mvc/XMLView",
 						"sap/ui/core/routing/Router",
+						/**
+						 * @deprecated As of version 1.66
+						 */
 						"sap/ui/model/odata/ODataAnnotations"
 					], function() {
 						resolve();
@@ -183,18 +189,22 @@ sap.ui.define([
 
 			this.oComponent = oComponent;
 
-			// sap.ui.model.odata.ODataModel
-			sinon.assert.callCount(this.modelSpy.odata, 1);
+			/**
+			 * @deprecated As of version 1.48
+			 */
+			if ( this.modelSpy.odata ) {
+				// sap.ui.model.odata.ODataModel
+				sinon.assert.callCount(this.modelSpy.odata, 1);
 
-			// model: "ODataModel"
-			sinon.assert.calledWithExactly(this.modelSpy.odata, {
-				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
-				annotationURI: [ '/path/to/odata/annotations/1', 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2' ],
-				useBatch: false,
-				refreshAfterChange: false,
-				json: true
-			});
-
+				// model: "ODataModel"
+				sinon.assert.calledWithExactly(this.modelSpy.odata, {
+					serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
+					annotationURI: [ '/path/to/odata/annotations/1', 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2' ],
+					useBatch: false,
+					refreshAfterChange: false,
+					json: true
+				});
+			}
 
 			// sap.ui.model.odata.v2.ODataModel
 			sinon.assert.callCount(this.modelSpy.odataV2, 9);
@@ -360,6 +370,9 @@ sap.ui.define([
 				"": ODataModelV2,
 				"default-with-annotations": ODataModelV2,
 				"old-uri-syntax": ODataModelV2,
+				/**
+				 * @deprecated As of version 1.48
+				 */
 				"ODataModel": ODataModelV1,
 				"v2-ODataModel": ODataModelV2,
 				"invalid-annotations": ODataModelV2,
@@ -402,6 +415,9 @@ sap.ui.define([
 		}).then(function(oComponent) {
 			this.oComponent = oComponent;
 
+			/**
+			 * @deprecated As of version 1.48
+			 */
 			// model: "ODataModel"
 			sinon.assert.calledWithExactly(this.modelSpy.odata, {
 				serviceUrl: '/path/to/odata/service;o=BLA_123?sap-client=foo&sap-server=bar',
@@ -477,6 +493,9 @@ sap.ui.define([
 		}).then(function(oComponent) {
 			this.oComponent = oComponent;
 
+			/**
+			 * @deprecated As of version 1.48
+			 */
 			// model: "ODataModel"
 			sinon.assert.calledWithExactly(this.modelSpy.odata, {
 				serviceUrl: '/path/to/odata/service;o=STARTUP456?sap-client=foo&sap-server=bar',
@@ -557,6 +576,9 @@ sap.ui.define([
 		}).then(function(oComponent) {
 			this.oComponent = oComponent;
 
+			/**
+			 * @deprecated As of version 1.48
+			 */
 			// V1 ODataModel should not be affected by cache tokens
 			// model: "ODataModel"
 			sinon.assert.calledWithExactly(this.modelSpy.odata, {
@@ -637,6 +659,9 @@ sap.ui.define([
 		}).then(function(oComponent) {
 			this.oComponent = oComponent;
 
+			/**
+			 * @deprecated As of version 1.48
+			 */
 			// V1 ODataModel should not be affected by cache tokens
 			// model: "ODataModel"
 			sinon.assert.calledWithExactly(this.modelSpy.odata, {
@@ -752,18 +777,23 @@ sap.ui.define([
 		}).then(function(oComponent) {
 			this.oComponent = oComponent;
 
-			// sap.ui.model.odata.ODataModel
-			sinon.assert.callCount(this.modelSpy.odata, 1);
+			/**
+			 * @deprecated As of version 1.48
+			 */
+			if ( this.modelSpy.odata ) {
+				// sap.ui.model.odata.ODataModel
+				sinon.assert.callCount(this.modelSpy.odata, 1);
 
-			// model: "ODataModel"
-			sinon.assert.calledWithExactly(this.modelSpy.odata, {
-				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
-				annotationURI: [ '/path/to/odata/annotations/1', 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2' ],
-				useBatch: true,
-				skipMetadataAnnotationParsing: true,
-				refreshAfterChange: false,
-				json: true
-			});
+				// model: "ODataModel"
+				sinon.assert.calledWithExactly(this.modelSpy.odata, {
+					serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
+					annotationURI: [ '/path/to/odata/annotations/1', 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2' ],
+					useBatch: true,
+					skipMetadataAnnotationParsing: true,
+					refreshAfterChange: false,
+					json: true
+				});
+			}
 
 
 			// sap.ui.model.odata.v2.ODataModel
@@ -914,6 +944,9 @@ sap.ui.define([
 				"": ODataModelV2,
 				"default-with-annotations": ODataModelV2,
 				"old-uri-syntax": ODataModelV2,
+				/**
+				 * @deprecated As of version 1.48
+				 */
 				"ODataModel": ODataModelV1,
 				"v2-ODataModel": ODataModelV2,
 				"invalid-annotations": ODataModelV2,
@@ -952,8 +985,12 @@ sap.ui.define([
 		}).then(function(oComponent) {
 			this.oComponent = oComponent;
 
+			/**
+			 * @deprecated As of version 1.48
+			 */
 			// sap.ui.model.odata.ODataModel
 			sinon.assert.callCount(this.modelSpy.odata, 0);
+
 			// sap.ui.model.odata.v2.ODataModel
 			sinon.assert.callCount(this.modelSpy.odataV2, 0);
 			// sap.ui.model.json.JSONModel
@@ -984,14 +1021,19 @@ sap.ui.define([
 		}).then(function(oComponent) {
 			this.oComponent = oComponent;
 
-			// sap.ui.model.odata.ODataModel
-			sinon.assert.callCount(this.modelSpy.odata, 1);
+			/**
+			 * @deprecated As of version 1.48
+			 */
+			if ( this.modelSpy.odata ) {
+				// sap.ui.model.odata.ODataModel
+				sinon.assert.callCount(this.modelSpy.odata, 1);
 
-			// model: "sfapi"
-			sinon.assert.calledWithExactly(this.modelSpy.odata, {
-				serviceUrl: 'test-resources/sap/ui/core/qunit/component/testdata/v1/some/odata/service',
-				json: true
-			});
+				// model: "sfapi"
+				sinon.assert.calledWithExactly(this.modelSpy.odata, {
+					serviceUrl: 'test-resources/sap/ui/core/qunit/component/testdata/v1/some/odata/service',
+					json: true
+				});
+			}
 
 
 			// sap.ui.model.resource.ResourceModel
@@ -1005,6 +1047,9 @@ sap.ui.define([
 			// check if models are set on component (and save them internally)
 			this.assertModelInstances({
 				"i18n": ResourceModel,
+				/**
+				 * @deprecated As of version 1.48
+				 */
 				"sfapi": ODataModelV1
 			});
 
@@ -1028,8 +1073,12 @@ sap.ui.define([
 		}).then(function(oComponent) {
 			this.oComponent = oComponent;
 
+			/**
+			 * @deprecated As of version 1.48
+			 */
 			// sap.ui.model.odata.ODataModel
 			sinon.assert.callCount(this.modelSpy.odata, 0);
+
 			// sap.ui.model.odata.v2.ODataModel
 			sinon.assert.callCount(this.modelSpy.odataV2, 0);
 			// sap.ui.model.json.JSONModel
@@ -1248,18 +1297,22 @@ sap.ui.define([
 			this.oLogSpy.restore();
 		},
 		assertAll: function(assert) {
-			// sap.ui.model.odata.ODataModel
-			sinon.assert.callCount(this.modelSpy.odata, 1);
+			/**
+			 * @deprecated As of version 1.48
+			 */
+			if ( this.modelSpy.odata ) {
+				// sap.ui.model.odata.ODataModel
+				sinon.assert.callCount(this.modelSpy.odata, 1);
 
-			// model: "ODataModel"
-			sinon.assert.calledWithExactly(this.modelSpy.odata, {
-				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
-				annotationURI: [ '/path/to/odata/annotations/1', 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2' ],
-				useBatch: false,
-				refreshAfterChange: false,
-				json: true
-			});
-
+				// model: "ODataModel"
+				sinon.assert.calledWithExactly(this.modelSpy.odata, {
+					serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
+					annotationURI: [ '/path/to/odata/annotations/1', 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2' ],
+					useBatch: false,
+					refreshAfterChange: false,
+					json: true
+				});
+			}
 
 			// sap.ui.model.odata.v2.ODataModel
 			sinon.assert.callCount(this.modelSpy.odataV2, 9);
@@ -1406,6 +1459,9 @@ sap.ui.define([
 				"": ODataModelV2,
 				"default-with-annotations": ODataModelV2,
 				"old-uri-syntax": ODataModelV2,
+				/**
+				 * @deprecated As of version 1.48
+				 */
 				"ODataModel": ODataModelV1,
 				"v2-ODataModel": ODataModelV2,
 				"invalid-annotations": ODataModelV2,
@@ -3744,6 +3800,9 @@ sap.ui.define([
 						"sap/ui/core/CustomData",
 						"sap/ui/core/mvc/XMLView",
 						"sap/ui/core/routing/Router",
+						/**
+						 * @deprecated As of version 1.66
+						 */
 						"sap/ui/model/odata/ODataAnnotations"
 					], function() {
 						resolve();
