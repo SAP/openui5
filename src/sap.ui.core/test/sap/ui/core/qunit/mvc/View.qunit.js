@@ -863,7 +863,7 @@ sap.ui.define([
 		return XMLView.create({
 			viewName : "testdata.mvc.XMLViewEmbeddingTypedViews"
 		}).then(function(oXMLView) {
-			assert.expect(14);
+			assert.expect(15);
 			assert.equal(this.oAfterInitSpy.callCount, 5, "AfterInit event fired before resolving");
 
 			var oPanel = oXMLView.getContent()[0];
@@ -888,6 +888,10 @@ sap.ui.define([
 			assert.ok(oTypedView4.isA("testdata.mvc.TypedViewWithRenderer"), "embedded view is a typed view");
 			assert.ok(oTypedView4.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
 			assert.equal(oTypedView4.getMetadata().getRendererName(), "testdata.mvc.TypedViewWithRendererRenderer", "Own Renderer set correctly");
+			assert.strictEqual(
+				oTypedView4.getMetadata().getRenderer(),
+				sap.ui.require("testdata/mvc/TypedViewWithRendererRenderer"),
+				"Own Renderer set correctly");
 
 			oXMLView.destroy();
 		}.bind(this));
