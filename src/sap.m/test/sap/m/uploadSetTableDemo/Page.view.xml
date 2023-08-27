@@ -30,7 +30,7 @@
             inset="true"
             beforeInitiatingItemUpload="onBeforeInitiatingItemUpload"
             beforeUploadStarts="onBeforeUploadStarts"
-            onItemValidationSuccess=".onItemValidationhandler"
+            itemValidationHandler=".itemValidationCallback"
         >
             <!-- ToolBar for Table -->
             <headerToolbar>

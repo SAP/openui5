@@ -398,13 +398,12 @@ sap.ui.define([
 
 			oUploadSetTableInstance.fileSelectionHandler();
 		},
-		onItemValidationhandler: function(oEvent) {
-			const oItem = oEvent?.getParameter("item");
-			const totalFilesSelectedForUpload = oEvent?.getParameter("totalItemsForUpload");
+		itemValidationCallback: function(oItemInfo) {
+			const {oItem, iTotalItemsForUpload} = oItemInfo;
 			var oUploadSetTableInstance = this.byId("UploadSetTable");
 			var oSelectedItems = oUploadSetTableInstance.getSelectedItems();
 			var oSelectedItemForUpdate = oSelectedItems.length === 1 ? oSelectedItems[0] : null;
-			if (oSelectedItemForUpdate && oSelectedItemForUpdate.getFileName() === "-" && totalFilesSelectedForUpload === 1) {
+			if (oSelectedItemForUpdate && oSelectedItemForUpdate.getFileName() === "-" && iTotalItemsForUpload === 1) {
 				return new Promise((resolve) => {
 					if (oSelectedItemForUpdate) {
 						var oContext = oSelectedItemForUpdate.getBindingContext();
@@ -429,9 +428,9 @@ sap.ui.define([
 						reject: reject
 					});
 				});
-				if (totalFilesSelectedForUpload === 1) {
+				if (iTotalItemsForUpload === 1) {
 					this.openFileUploadDialog();
-				} else if (totalFilesSelectedForUpload === this.oItemsProcessor.length) {
+				} else if (iTotalItemsForUpload === this.oItemsProcessor.length) {
 					this.openFileUploadDialog();
 				}
 				return oItemPromise;
