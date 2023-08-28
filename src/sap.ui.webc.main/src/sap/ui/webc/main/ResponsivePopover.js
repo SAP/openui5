@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.ResponsivePopover.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"./thirdparty/ResponsivePopover"
 ], function(WebComponent, library) {
@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> The <code>sap.ui.webc.main.ResponsivePopover</code> acts as a Popover on desktop and tablet, while on phone it acts as a Dialog. The component improves tremendously the user experience on mobile.

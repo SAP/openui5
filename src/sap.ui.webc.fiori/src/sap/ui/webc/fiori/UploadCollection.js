@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.fiori.UploadCollection.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/webc/main/library",
 	"./thirdparty/UploadCollection"
@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> This component allows you to represent files before uploading them to a server, with the help of <code>sap.ui.webc.fiori.UploadCollectionItem</code>. It also allows you to show already uploaded files.

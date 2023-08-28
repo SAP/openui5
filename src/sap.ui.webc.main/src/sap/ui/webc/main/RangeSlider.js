@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.RangeSlider.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"./thirdparty/RangeSlider"
@@ -17,7 +17,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> Represents a numerical interval and two handles (grips) to select a sub-range within it. The purpose of the component to enable visual selection of sub-ranges within a given interval.

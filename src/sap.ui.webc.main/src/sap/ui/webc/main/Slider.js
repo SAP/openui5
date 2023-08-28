@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.Slider.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"./thirdparty/Slider"
@@ -17,7 +17,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> The Slider component represents a numerical range and a handle (grip). The purpose of the component is to enable visual selection of a value in a continuous numerical range by moving an adjustable handle.

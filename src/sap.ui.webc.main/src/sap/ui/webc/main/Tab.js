@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.Tab.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"./thirdparty/Tab"
@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * The <code>sap.ui.webc.main.Tab</code> represents a selectable item inside a <code>sap.ui.webc.main.TabContainer</code>. It defines both the item in the tab strip (top part of the <code>sap.ui.webc.main.TabContainer</code>) and the content that is presented to the user once the tab is selected.

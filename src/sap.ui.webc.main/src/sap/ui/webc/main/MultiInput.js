@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.MultiInput.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/base/ManagedObjectObserver",
@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> A <code>sap.ui.webc.main.MultiInput</code> field allows the user to enter multiple values, which are displayed as <code>sap.ui.webc.main.Token</code>.

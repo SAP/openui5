@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.StandardListItem.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/library",
 	"./thirdparty/StandardListItem"
@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * The <code>sap.ui.webc.main.StandardListItem</code> represents the simplest type of item for a <code>sap.ui.webc.main.List</code>.

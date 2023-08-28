@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.TimePicker.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/library",
@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> The <code>sap.ui.webc.main.TimePicker</code> component provides an input field with assigned sliders which are opened on user action. The <code>sap.ui.webc.main.TimePicker</code> allows users to select a localized time using touch, mouse, or keyboard input. It consists of two parts: the time input field and the sliders.

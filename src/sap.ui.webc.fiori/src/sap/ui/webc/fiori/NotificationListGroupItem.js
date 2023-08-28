@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.fiori.NotificationListGroupItem.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/webc/main/library",
 	"./thirdparty/NotificationListGroupItem"
@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> The <code>sap.ui.webc.fiori.NotificationListGroupItem</code> is a special type of list item, that unlike others can group items within self, usually <code>sap.ui.webc.fiori.NotificationListItem</code> items. <br>

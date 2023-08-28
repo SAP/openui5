@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.CustomListItem.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"./thirdparty/CustomListItem"
 ], function(WebComponent, library) {
@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * A component to be used as custom list item within the <code>sap.ui.webc.main.List</code> the same way as the standard <code>sap.ui.webc.main.StandardListItem</code>.
