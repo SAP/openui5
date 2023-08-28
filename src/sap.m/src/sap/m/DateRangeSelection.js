@@ -98,7 +98,8 @@ sap.ui.define([
 	 *
 	 * <ul><li>Use the <code>value</code> property if the date range is already provided as
 	 * a formatted string</li>
-	 * @example <caption> binding the <code>value</code> property by using types </caption>
+	 * <caption> binding the <code>value</code> property by using types </caption>
+	 * <pre>
 	 * new sap.ui.model.json.JSONModel({start:'2022-11-10', end:'2022-11-15'});
 	 *
 	 * new sap.m.DateRangeSelection({
@@ -123,7 +124,7 @@ sap.ui.define([
 	 *         }}]
 	 *     }
 	 * });
-	 *
+	 * </pre>
 	 * <b>Note:</b> There are multiple binding type choices, such as:
 	 * sap.ui.model.type.Date
 	 * sap.ui.model.odata.type.DateTime

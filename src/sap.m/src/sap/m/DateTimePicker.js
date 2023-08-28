@@ -103,7 +103,8 @@ sap.ui.define([
 	 * <ul><li>Use the <code>value</code> property if you want to bind the
 	 * <code>DateTimePicker</code> to a model using the
 	 * <code>sap.ui.model.type.DateTime</code></li>
-	 * @example <caption> binding the <code>value</code> property by using types </caption>
+     * <caption> binding the <code>value</code> property by using types </caption>
+	 * <pre>
 	 * new sap.ui.model.json.JSONModel({date: sap.ui.core.date.UI5Date.getInstance(2022,10,10,12,10,10)});
 	 *
 	 * new sap.m.DateTimePicker({
@@ -112,10 +113,11 @@ sap.ui.define([
 	 *         path: "/date"
 	 *     }
 	 * });
-	 *
+	 * </pre>
 	 * <li>Use the <code>value</code> property if the date is provided as a string from
 	 * the backend or inside the app (for example, as ABAP type DATS field)</li>
-	 * @example <caption> binding the <code>value</code> property by using types </caption>
+     * <caption> binding the <code>value</code> property by using types </caption>
+	 * <pre>
 	 * new sap.ui.model.json.JSONModel({date:"2022-11-10-12-10-10"});
 	 *
 	 * new sap.m.DateTimePicker({
@@ -129,7 +131,7 @@ sap.ui.define([
 	 *          }
 	 *     }
 	 * });
-	 *
+	 * </pre>
 	 * <b>Note:</b> There are multiple binding type choices, such as:
 	 * sap.ui.model.type.Date
 	 * sap.ui.model.odata.type.DateTime
