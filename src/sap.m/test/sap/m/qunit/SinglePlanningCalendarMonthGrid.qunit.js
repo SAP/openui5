@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/calendar/CalendarDate",
-	"sap/ui/events/KeyCodes",
-	"sap/m/LinkAccessibleRole"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	SinglePlanningCalendar,
@@ -27,13 +26,13 @@ sap.ui.define([
 	UI5Date,
 	DateRange,
 	CalendarDate,
-	KeyCodes,
-	LinkAccessibleRole
+	KeyCodes
 ) {
 		"use strict";
 
 		var CalendarDayType = unifiedLibrary.CalendarDayType;
 		var SinglePlanningCalendarSelectionMode = mobileLibrary.SinglePlanningCalendarSelectionMode;
+		var LinkAccessibleRole = mobileLibrary.LinkAccessibleRole;
 
 		var o2Aug2018_00_00 = UI5Date.getInstance(2018, 7, 2);
 		var o2Aug2018_18_00 = UI5Date.getInstance(2018, 7, 2, 18, 0, 0);
