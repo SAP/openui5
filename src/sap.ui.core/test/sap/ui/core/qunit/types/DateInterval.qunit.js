@@ -130,7 +130,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("parseValue", function (assert) {
 		var oDate1 = UI5Date.getInstance(2003, 10, 6),
-			oDate2 = UI5Date.getInstance(2003, 11, 6, 23, 59, 59, 999),
+			oDate2 = UI5Date.getInstance(2003, 11, 6, 23, 59, 59, 0),
 			oDateInterval = new DateInterval({format: "yMMMd"});
 
 		assert.deepEqual(oDateInterval.parseValue("", "string"), [null, null],
@@ -158,7 +158,7 @@ sap.ui.define([
 	QUnit.test("parseValue: UTC", function (assert) {
 		var oDateInterval = new DateInterval({UTC: true}),
 			oUTCDate1 = UI5Date.getInstance(Date.UTC(2003, 10, 6, 0, 0, 0, 0)),
-			oUTCDate2 = UI5Date.getInstance(Date.UTC(2003, 11, 6, 23, 59, 59, 999));
+			oUTCDate2 = UI5Date.getInstance(Date.UTC(2003, 11, 6, 23, 59, 59, 0));
 
 		// code under test
 		assert.deepEqual(oDateInterval.parseValue("Nov 6, 2003 - Dec 6, 2003", "string"), [oUTCDate1, oUTCDate2]);
